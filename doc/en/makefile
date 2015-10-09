@@ -4,10 +4,6 @@ BIBTEX_COMMAND = bibtex
 DVIPDF_COMMAND = dvipdfmx
 
 TEX_FILES = \
-abst01_en.tex  \
-ackn01_en.tex  \
-ap01_en.tex  \
-bib01_en.tex  \
 chap01_en.tex  \
 chap02_en.tex  \
 chap02_1_en.tex  \
