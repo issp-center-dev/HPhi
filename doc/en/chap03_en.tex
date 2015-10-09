@@ -1,0 +1,341 @@
+% !TEX root = userguide_en.tex
+%----------------------------------------------------------
+\chapter{Tutorial}
+\label{Ch:model}
+\section{Common works}
+In this section, we describe the procedure for constructing calculation environments after installation.
+\begin{enumerate}
+\item Make a directory for a calculation scenario.
+%
+\item Move to the directory.
+\end{enumerate}
+Here, we show a simple example for commands on a terminal below.\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+mkdir ./CalcScenario
+mv ./CalcScenario
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\section{{\it Standard} mode}
+\input{chap03_2_en.tex}
+
+%----------------------------------------------------------
+\section{{\it Expert} mode}
+For expert mode, following input files are needed
+\begin{enumerate}
+\item A file list for input files,
+\item Files for basic parameters,
+\item Files for constructing Hamiltonian,
+\item Files for setting output components.
+\end{enumerate}
+The process after calculation is same as standard mode. In this section, we show the demonstration for one dimensional antiferromagnetic Heisenberg chain model which has a nearest neighbor spin coupling, 
+\begin{equation}
+H=\sum_{i=0}^{15} J {\bm S}_i\cdot {\bm S}_{i+1},
+\end{equation}
+where $J=2$, ${\bm S}_{16}={\bm S}_{0}$.\\
+We use following input files in samples/Expert/Spin/HeisenbergChain.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+calcmod.def   greentwo.def  namelist.def  zTrans.def
+greenone.def  modpara.def   zInterAll.def zlocspn.def
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsection{A file list for input files}
+In namelist.def, kinds of input files and filenames are defined as shown below.
+By writing keyword and filenames at each lines, kinds of files are distinguished. The details for namelist.def are shown in  \ref{Subsec:InputFileList}.
+\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin zlocspn.def
+Trans zTrans.def
+InterAll zInterAll.def
+OneBodyG greenone.def
+TwoBodyG greentwo.def
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsection{Files for basic parameters}
+In this subsection, we show the way to set a calculation mode, parameters for calculation and positions of localized spins.
+\begin{description}
+\item {\bf Setting a calculation mode}\\
+Calculation mode is set in a CalcMod file (in this sample file, calcmod.def). The contents of files are shown as below.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag
+#CalcMod = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 
+4:SpinGC, 5:KondoGC 
+CalcType   0
+CalcModel   1
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+We select a calculation method by CalcType and a target model by CalcModel. In this sample, we set Lanczos method as a calculation method and a target model as a spin system (canonical ensemble). The details of a CalcMod file are shown in \ref{Subsec:calcmod}.\\
+
+\item {\bf Setting parameters for calculation}\\
+Parameter for calculation are set in a ModPara file (in this sample, modpara.def). The contents of files are shown as below.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+--------------------
+Model_Parameters   0
+--------------------
+VMC_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite          16   
+Nup            8    
+Ndown          8    
+Lanczos_max    1000 
+initial_iv     12   
+nvec           1    
+exct           1    
+LanczosEps     14   
+LanczosTarget  2    
+LargeValue     12   
+NumAve         5    
+ExpecInterval  20 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+In this file, we set parameters for calculation such as a site number, a total number of up spin,  a total number of down spin and a number of Lanczos step etc. The details of ModPara file are shown in \ref{Subsec:modpara}.\\
+
+\item {\bf Setting positions of localized spins}\\
+Positions of localized spins are defined by a LocSpin file (in this sample, locspn.def). The contents of files are shown as below.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+================================ 
+NlocalSpin    16  
+================================ 
+========i_0LocSpn_1IteElc ====== 
+================================ 
+    0      0
+    1      0
+    2      0
+    3      0
+    4      0
+    5      0
+…
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+When CalcModel in a CalcMod file is set as spin system, all sites automatically treated as localized spins. The details of a LosSpn file is shown in \ref{Subsec:locspn}.
+\end{description}
+
+\subsection{Files for constructing Hamiltonian}
+After setting basic parameters, we make input files for constructing Hamiltonian. Since calculations are done by the representation of fermion  operators in $\HPhi$, we must rewrite spin operator using the following relation
+\begin{align}
+S_z^{(i)}&=(c_{i\uparrow}^{\dag}c_{i\uparrow}-c_{i\downarrow}^{\dag}c_{i\downarrow})/2,\\
+S_+^{(i)}&=c_{i\uparrow}^{\dag}c_{i\downarrow},\\
+S_-^{(i)}&=c_{i\downarrow}^{\dag}c_{i\uparrow}.
+\end{align}
+
+\begin{description}
+\item {\bf Setting transfer integrals}\\
+In a Trans file (in this sample, zTrans.def), we set a transfer part of Hamiltonian,
+\begin{align}
+H +=-\sum_{ij\sigma_1\sigma2} t_{ij\sigma_1\sigma2}c_{i\sigma_1}^{\dag}c_{j\sigma_2}.
+\end{align}
+The contents of files are shown as below.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+======================== 
+NTransfer       0  
+======================== 
+========i_j_s_tijs====== 
+======================== 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+We can use this term when an electric magnetic field is added in spin system. For example, when an magnetic field is added at a site 1 such as $-0.5 S_z^{(1)}$, this term can be rewritten as $-0.5/2(c_{1\uparrow}^{\dag}c_{1\uparrow}-c_{1\downarrow}^{\dag}c_{1\downarrow})$. Thus, the input file becomes as follows.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+======================== 
+NTransfer      1   
+======================== 
+========i_j_s_tijs====== 
+======================== 
+1 0 1 0 -0.25 0
+1 1 1 1 0.25 0
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+The details for a Trans file are shown in \ref{Subsec:Trans}.
+
+\item {\bf Setting general two-body interactions}\\
+In an InterAll file (in this sample, zInterall.def), we set a general two-body interaction part of Hamiltonian,
+\begin{equation}
+H+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
+I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.
+\end{equation}
+The contents of files are shown as below.\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NInterAll      96  
+====================== 
+========zInterAll===== 
+====================== 
+    0     0     0     0     1     0     1     0   0.500000  0.000000
+    0     0     0     0     1     1     1     1  -0.500000  0.000000
+    0     1     0     1     1     0     1     0  -0.500000  0.000000
+    0     1     0     1     1     1     1     1   0.500000  0.000000
+    0     0     0     1     1     1     1     0   1.000000  0.000000
+    0     1     0     0     1     0     1     1   1.000000  0.000000
+…
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+Here, we explain an interaction between a site $i$ and a site $j$, for simplicity. Using fermion operators, interaction terms for spin operators can be rewritten as
+\begin{align}
+H_{i,i+1}&=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
+&=J \left( \frac{1}{2}S_+^{(i)}S_-^{(i+1)}+\frac{1}{2}S_-^{(i)}S_+^{(i+1)}+S_z^{(i)}S_z^{(i+1)} \right) \nonumber\\
+&=J \left[ \frac{1}{2}c_{i\uparrow}^{\dag}c_{i\downarrow}c_{i+1\downarrow}^{\dag}c_{i+1\uparrow}+\frac{1}{2}c_{i\downarrow}^{\dag}c_{i\uparrow}c_{i+1\uparrow}^{\dag}c_{i+1\downarrow}+\frac{1}{4}(c_{i\uparrow}^{\dag}c_{i\uparrow}-c_{i\downarrow}^{\dag}c_{i\downarrow})(c_{i+1\uparrow}^{\dag}c_{i+1\uparrow}-c_{i+1\downarrow}^{\dag}c_{i+1\downarrow}) \right]. \nonumber 
+\end{align}
+Thus, the interaction $S_z^{(i)}S_z^{(i+1)}$ for $J=2$ can be written as \\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+    i     0     i     0    i+1     0    i+1     0   0.500000  0.000000
+    i     0     i     0    i+1     1    i+1     1  -0.500000  0.000000
+    i     1     i     1    i+1     0    i+1     0  -0.500000  0.000000
+    i     1     i     1    i+1     1    i+1     1   0.500000  0.000000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+in the format of an InterAll file. The other terms can be written as below.\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+    i     0     i     1    i+1     1    i+1     0   1.000000  0.000000
+    i     1     i     0    i+1     0    i+1     1   1.000000  0.000000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+There are other file formats for constructing Hamiltonian. The details for input formats of two-body interactions are shown in \ref{Subsec:interall}-\ref{Subsec:pairlift}.
+
+\end{description}
+
+\subsection{Setting output components}
+In OneBodyG and TwoBodyG files, calculating components for one-body and two-body Green's functions are defined, respectively. 
+\begin{description}
+\item {\bf Setting calculating components for one-body Green's functions}\\
+In a OneBodyG file (in this sample, greenone.def), calculating components for $\langle c_{i\sigma_1}^{\dag}c_{j\sigma_2} \rangle$ are defined. The contents of files are shown as below.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+===============================
+NCisAjs         32
+===============================
+======== Green functions ======
+===============================
+    0     0     0     0
+    0     1     0     1
+    1     0     1     0
+    1     1     1     1
+    2     0     2     0
+…
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+The details for input formats of a OneBodyG file are shown in \ref{Subsec:onebodyg}.
+\item {\bf Setting calculating components for two-body Green's functions}\\
+In a TwoBodyG file (in this sample, greentwo.def), calculating components for $\langle c_{i\sigma_1}^{\dag}c_{j\sigma_2}c_{k\sigma_3}^{\dag}c_{l\sigma_4} \rangle$ are defined. The contents of files are shown as below.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+=============================================
+NCisAjsCktAltDC       1024
+=============================================
+======== Green functions for Sq AND Nq ======
+=============================================
+    0     0     0     0     0     0     0     0
+    0     0     0     0     0     1     0     1
+    0     0     0     0     1     0     1     0
+    0     0     0     0     1     1     1     1
+    0     0     0     0     2     0     2     0
+    …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+~\\
+The details for input formats of a TwoBodyG file are shown in \ref{Subsec:twobodyg}.
+\end{description}
+
+\subsection{Running}
+After making all input files above, we ready to run a program. For expert mode, we must set an option ``-e" and a file name list (in this sample, namelist.def) as arguments to run $\HPhi$.\\
+\verb|$ |\textit{Path}\verb|/HPhi -e namelist.def|\\
+The process after calculating is same as that of standard mode.
+
+\subsection{Other tutorials}
+
+There are following tutorials in \verb|samples/Expert/|.
+
+\begin{itemize}
+\item The Hubbard model on the two dimensional square lattice
+
+  (\verb|samples/Expert/Hubbard/square/|)
+\item The Hubbard model on the two dimensional triangular lattice
+  
+  (\verb|samples/Expert/Hubbard/triangular/|)
+\item The one dimensional Kondo chain
+
+  (\verb|samples/Expert/Kondo/chain/|)
+\item The one dimensional antiferromagnetic Heisenberg chain
+  
+  (\verb|samples/Expert/Spin/HeisenbergChain/HeisenbergChain/|)
+\item The antiferromagnetic Heisenberg model on the two dimensional square lattice
+  
+  (\verb|samples/Expert/Spin/HeisenbergSquare/|)
+      
+\item The Kitaev model with 2$\times$3 unit cells to Honeycomb lattice
+
+  (\verb|samples/Expert/Spin/Kitaev/|)
+
+\end{itemize}
+
+We can perform these tutorials in the same way to the previous one.
+
+\newpage
+\section{Making input files for {\it Expert} mode}
+This mode is to make input files for {\it Expert} mode. A set of input files made by this mode gives a model provided in {\it Standard} mode.
+The usage is shown as below.
+\begin{enumerate}
+\item{Make an input file for {\it Standard} mode.}
+\item{Setting an option ``-sdry" and an input file (in this example, StdFace.def), run $\HPhi$.}\\
+\verb|$ |\textit{Path}\verb|/HPhi -sdry StdFace.def|
+\item{Following files are made as input files for {\it Expert} mode in the present working directory.}\\
+\begin{minipage}{12cm}
+\begin{screen}
+\begin{verbatim}
+calcmod.def   greentwo.def  namelist.def  zTrans.def
+greenone.def  modpara.def   zInterAll.def zlocspn.def
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\end{enumerate}

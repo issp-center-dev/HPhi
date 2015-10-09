@@ -1,0 +1,31 @@
+
+TEX_COMMAND = platex
+BIBTEX_COMMAND = bibtex
+DVIPDF_COMMAND = dvipdfmx
+
+TEX_FILES = \
+abst01_en.tex  \
+ackn01_en.tex  \
+ap01_en.tex  \
+bib01_en.tex  \
+chap01_en.tex  \
+chap02_en.tex  \
+chap02_1_en.tex  \
+chap03_en.tex  \
+chap03_2_en.tex  \
+chap04_en.tex  \
+chap04_1_en.tex  \
+chap05_en.tex \
+userguide_en.tex
+
+userguide_en.pdf:userguide_en.dvi
+	dvipdfmx userguide_en.dvi
+
+userguide_en.dvi:userguide_en.tex $(TEX_FILES)
+	platex userguide_en.tex
+	bibtex userguide_en.aux
+	platex userguide_en.tex; platex userguide_en.tex; platex userguide_en.tex
+
+clean:
+	rm -f *.aux *.bbl *.blg *.dvi *.log *.pdf *.toc 
+

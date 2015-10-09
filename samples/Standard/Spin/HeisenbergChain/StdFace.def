@@ -1,0 +1,8 @@
+L = 16
+model = "Spin"
+method = "Lanczos"
+//method = "TPQ"
+//method = "FullDiag"
+lattice = "chain lattice"
+J = 1.0
+2Sz = 0
