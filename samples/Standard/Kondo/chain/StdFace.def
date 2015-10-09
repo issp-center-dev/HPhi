@@ -1,0 +1,10 @@
+L = 6
+model = "Kondolattice"
+method = "Lanczos"
+//method = "TPQ"
+//method = "FullDiag"
+lattice = "chain lattice"
+t = 1.0
+J = 4.0
+nelec = 6
+2Sz = 0

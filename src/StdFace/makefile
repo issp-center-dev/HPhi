@@ -1,0 +1,25 @@
+include ../make.sys
+
+StdFace_OBJS = StdFace_main.o StdFace_ModelUtil.o
+Lattice_OBJS = SquareLattice.o ChainLattice.o TriangularLattice.o \
+	HoneycombLattice.o
+
+libStdFace.a:$(StdFace_OBJS) $(Lattice_OBJS)
+	ar rv $@ $^
+	ranlib $@
+	cp -f -v $@ ../
+
+SUFFIXES: .o .c
+
+.c.o:
+	$(CC) $(FLAGS) -c $<
+
+clean:
+	rm -f *.o *.a
+
+StdFace_main.o:StdFace_main.c StdFace_vals.h StdFace_ModelUtil.h
+StdFace_ModelUtil.o:StdFace_ModelUtil.c StdFace_vals.h
+SquareLattice.o:SquareLattice.c StdFace_vals.h StdFace_ModelUtil.h
+ChainLattice.o:ChainLattice.c StdFace_vals.h StdFace_ModelUtil.h
+TriangularLattice.o:TriangularLattice.c StdFace_vals.h StdFace_ModelUtil.h
+HoneycombLattice.o:HoneycombLattice.c StdFace_vals.h StdFace_ModelUtil.h

@@ -1,0 +1,231 @@
+% !TEX root = userguide_en.tex
+%----------------------------------------------------------
+\chapter{ Algorithm}
+\label{Ch:algorithm}
+\section{Lanczos method}
+\label{Ch:Lanczos}
+\subsection{Details of Lanczos method}
+Some parts of this section are based on the manual
+of titpack~\cite{titpack} and textbook by M. Sugihara and 
+K. Murota~\cite{SugiharaMurota_en}(These references are written in Japanese).
+
+In the Lanczos method, by successively operating the Hamiltonian 
+to the initial vector, we obtain the accurate eigenvalues around
+the maximum and minimum eigenvalues and associated eigenvectors.  
+Because we can perform Lanczos method by using only two
+vectors whose dimensions are the dimension of the total Hilbert space
+~\footnote{In $\HPhi$, to reduce the numerical cost,
+we use some additional vectors; vector for accumulating the 
+real-space diagonal elements of the Hamiltonian, 
+vector for specifying the given $S_{z}$ space and given particle space.
+The dimension of these vectors is that of the Hilbert space.},
+Lanczos method is frequently used for the 
+diagonalization of the large matrices.
+As we detail below,
+one additional vector is necessary for
+obtaining the eigenvector.
+
+The principle of the Lanczos method is
+based on the power method.
+In the power method,
+by successively operating the Hamiltonian $\Ham$ to the
+arbitrary vector $\vec{x}_{0}$, we generate $\Ham^{n}\vec{x}_{0}$.
+The obtained space 
+$\mathcal{K}_{n+1}(\Ham,\vec{x}_{0})=\{\vec{x}_{0},\Ham^{1}\vec{x}_{0},\dots,\Ham^{n}\vec{x}_{0}\}$
+is called Krylov subspace.
+Initial vector is represented by the superposition 
+of the eigenvectors 
+$\vec{e}_{i}$ (corresponding eigenvalues are $E_{i}$) of $\Ham$ as 
+\begin{align}
+\vec{x}_{0}=\sum_{i}a_{i}\vec{e}_{i}.
+\end{align}
+Here, $E_{0}$ is maximum absolute values of the eigenvalues.
+We note that all the eigenvalues are real number because Hamiltonian is Hermite.
+By operating $\Ham^{n}$ to the initial vector,
+we obtain the relation as
+\begin{align}
+\Ham^{n}\vec{x}_{0}=E_{0}^{n}\Big[ a_{0}\vec{e}_{0}+\sum_{i\neq0}\left(\frac{E_{i}}{E_{0}}\right)^na_{i}\vec{e}_{i}\Big].
+\end{align}
+This relation indicates that
+the eigenvector of $E_{0}$ becomes dominant for sufficiently large $n$. 
+In the Lanczos method,
+we obtain the eigenvalues and eigenvectors 
+by performing the proper transformation for obtained Krylov subspace.
+
+In the Lanczos method,
+we successively generate the normalized orthogonal basis 
+${\vec{v}_{0},\dots,\vec{v}_{n-1}}$ from the Krylov subspace $\mathcal{K}_{n}(\Ham,\vec{x}_{0})$.
+We defines initial vector and associated components as 
+$\vec{v}_{0} =\vec{x}_{0}/|\vec{x}_{0}|$,
+$\beta_{0}=0,\vec{x}_{-1}=0$.
+From this initial condition,
+we can obtain the normalized orthogonal basis  as follows:
+\begin{align}
+\alpha_{k} &= (\Ham\vec{v}_{k},\vec{v}_{k}), \\
+\vec{w}   &= \Ham\vec{v}_{k}-\beta_{k}\vec{v}_{k-1}-\alpha_{k}\vec{v}_{k}, \\
+\beta_{k+1} &= |\vec{w}|, \\
+\vec{v}_{k+1} &= \frac{\vec{v}_{k}}{|\vec{v}_{k}|}.
+\end{align}
+From these definitions, it it obvious that $\alpha_{k}$, $\beta_{k}$ are real number.
+
+In the subspace spanned by these normalized orthogonal basis,
+the Hamiltonian is transformed as
+\begin{align}
+T_{n}=V_{n}^{\dagger}\Ham V_{n}.
+\end{align}
+Here,
+$V_{n}$ is matrix whose column vectors are 
+$\vec{v}_{i}(i=0,1,\dots,n-1)$.
+$T_{n}$ is tridiagonal matrix and its diagonal elements
+are $\alpha_{i}$ and
+subdiagonal elements are $\beta_{i}$.
+It is known that
+the eigenvalues of $\Ham$ are well approximated by 
+the eigenvalues of $T_{n}$ for sufficiently large $n$.
+(We note that $V^{\dagger}V=I$,$I$ is identity matrix).
+The original eigenvectors of $\Ham$ is obtained 
+by $\vec{e}_{i}=V\tilde{\vec{e}}_{i}$,
+where  $\tilde{\vec{e}}_{i}$ are
+the eigenvectors of $T_{n}$.
+From $V$, 
+we can obtain the eigenvectors of $\Ham$
+by performing the Lanczos method.
+However, in the actual calculations,
+it is difficult to keep $V$ because its dimension
+is large [dimension of $V$ = (dimension of the total Hilbert space) $\times$ ($\#$ of Lanczos iterations)].
+Thus, to obtain the eigenvectors, 
+we again perform the same Lanczos calculations
+after we obtain the eigenvalues from the Lanczos methods.
+In the first Lanczos calculation, we keep $\tilde{\vec{e}_{i}}$
+because its dimension is small
+\footnote{upper bound of the dimensions of $\tilde{\vec{e}_{i}}$ is $\#$ of Lanczos iterations.}.
+From this procedure, we obtain the eigenvectors  from $V$.
+
+In the Lanczos method,
+within a few hundred or thousand Lanczos iterations,
+we obtain the accurate eigenvalues near the maximum and minimum values of eigenvalues.
+The necessary number of iterations is small enough 
+compared to the dimensions
+of the total Hilbert space.
+%Thus, the dimension of $T_{n}$ is 
+%typically less than 100-1000.
+We note that it is shown that
+the errors of the maximum and minimum eigenvalues
+becomes exponentially small as a function of Lanczos iteration 
+(for details, see Ref.~\cite{SugiharaMurota_en}).
+
+\subsection{Inverse iteration method}
+
+From the approximate value of the eigenvalues ($E_{n}$),
+by successively operating $(\Ham-E_{n})^{-1}$
+to the initial vector $\vec{y}_{0}$,
+we can obtain the accurate eigenvector for $E_{n}$.
+
+From $(\Ham-E_{n})^{-1}\vec{y}_{0}$,
+we obtain the linear simultaneous equations such as  
+\begin{align}
+\vec{y}_{k}&=(\Ham-E_{n})\vec{y}_{k+1}.
+\end{align}
+By solving this equation by using the
+conjugate gradient method (CG method),
+we obtain the eigenvector.
+From the obtained eigenvector,
+we can calculate the eigenvalues and correlation functions. 
+We note that additional four vectors are necessary to
+perform the CG method.
+For large system size,
+it may be impossible to allocate memory to the
+additional vectors.
+
+\subsection{Details of implementation}
+In $\HPhi$,
+we use \verb|dsyev| (routine of lapack)
+for diagonalization of $T_{n}$.
+We use the energy of the first excited state of $T_{n}$
+as a criteria of convergence. 
+In the standard setting,
+after five Lanczos step,
+we diagonalize $T_{n}$ every two Lanczos step.
+If the energy of the first excited states coincides with
+the previous energy within the specified accuracy,
+the Lanczos iteration finishes.
+The accuracy of the convergence can be specified by 
+$\verb|CDataFileHead|$~(ModPara file in the expert mode).
+
+After obtaining the eigenvalues,
+we again perform the Lanczos iteration
+to obtain the eigenvector.
+From the eigenvectors $|n\rangle$,
+we calculate 
+energy $E_{n}=\langle n|\Ham|n\rangle $ and
+variance $\Delta=\langle n|\Ham^{2}|n\rangle -(\langle n|\Ham|n\rangle)^2$.
+If $E_{n}$ coincides with the eigenvalues obtained by the Lanczos iteration and 
+$\Delta$ is smaller than the specified value,
+we finish diagonalization.
+
+If the accuracy of Lanczos method is not enough,
+we perform the CG method to obtain the eigenvector.
+As an initial vector of the CG method,
+we use the eigenvectors obtained by the Lanczos method in the standard setting.
+This often accelerates the convergence.
+%----------------------------------------------------------
+\section{Full Diagonalization method}
+\label{Ch:AllDiagonalization}
+\subsection{Over view}
+We generate matrix of ${\hat{H}}$ by using the real space configuration 
+$| \psi_j \rangle$($j=1\cdots d_{\rm H}$, $d_{\rm H}$ is dimension of the Hilbert space): 
+$H_{ij}= \langle \psi_i | {\hat H} | \psi_j \rangle$.
+By diagonalizing this matrix,
+we can obtain all the eigenvalues $E_{i}$ and eigenvectors $|\Phi_i\rangle$ ($i=1 \cdots d_{\rm H}$). 
+In the diagonalization, we use lapack routine such as \verb|dsyev| or \verb|zheev|.
+We also calculate and out put
+the expectation values $\la A_i\ra \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle$.
+These values are used for the finite-temperature calculations.
+
+\subsection{Finite-temperature calculations}
+From
+$\la A_i\ra \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle$,
+we calculate finite-temperature properties by using the relation 
+\begin{equation}
+\langle {\hat A}\rangle=\frac{\sum_{i=1}^N \la A_i\ra {\rm  e}^{-\beta E_i}}{\sum_{i=1}^N{\rm  e}^{-\beta E_i}}.
+\end{equation}
+In the actual calculation are performed as the post scripts.
+
+%----------------------------------------------------------
+\section{Finite-temperature calculations by TPQ method}
+\label{Ch:TPQ}
+%----------------------------------------------------------
+Sugiura and Shimizu show that
+it is possible to calculate the finite-temperature properties
+from a few wavefunctions (in the thermodynamic limit, only one wave function is necessary)~\cite{Sugiura2012}.
+The wavefunction is called thermal pure quantum (TPQ) state.
+Because TPQ state can be generated by operating the Hamiltonian 
+to the random initial wavefunction,
+we directly use the routine Lanczos method to the TPQ calculations.
+Here, we explain how to construct micro canonical TPQ (mTPQ) state,
+which offers the simplest way for finite-temperature calculations.
+
+Let $|\psi_{0}\rangle$ a random initial vector.
+By operating $(l-\hat{H}/N_{s})^{k}$($l$ is constant、
+$N_{s}$ represents number of sites) 
+to $|\psi_{0}\rangle$,
+we obtain the $k$th TPQ states as
+\begin{align}
+|\psi_{k}\rangle \equiv \frac{(l-\hat{H}/N_{s})|\psi_{k-1}\rangle}{|(l-\hat{H}/N_{s})|\psi_{k-1}\rangle|}.
+\end{align}
+From  $|\psi_{k}\rangle$, we estimate corresponding inverse temperature $\beta_{k}$ as
+\begin{align}
+\beta_{k}\sim \frac{2k/N_{s}}{l-u_{k}},~~
+u_{k} = \langle \psi_{k}|\hat{H}|\psi_{k}\rangle/N_{s},
+\end{align}
+where $u_{k}$ is the internal energy.
+Arbitrary local physical properties at $\beta_{k}$ is also estimated as
+\begin{align}
+\langle \hat{A}\rangle_{\beta_{k}} =  \langle \psi_{k}|\hat{A}|\psi_{k}\rangle/N_{s}.
+\end{align}
+
+In finite-size system,
+error is caused by the choice of the initial random vector.
+To estimate the average value and error of the physical properties,
+we perform some independent calculations by changing $|\psi_{0}\rangle$.
+%----------------------------------------------------------

@@ -1,0 +1,2181 @@
+% !TEX root = userguide_jp.tex
+%----------------------------------------------------------
+\chapter{ファイル仕様}
+
+%----------------------------------------------------------
+\section{スタンダードモード用入力ファイル}
+\label{Ch:HowToStandard}
+\input{chap04_1_jp.tex}
+
+\newpage
+\section{エキスパートモード用入力ファイル}
+\label{Ch:HowToExpert}
+
+$\HPhi$のエキスパートモードで使用する入力ファイル(*def)に関して説明します。
+入力ファイルの種別は以下の4つで分類されます。
+\begin{description}
+\item[(1)~List:]
+~\\{キーワード指定なし}:
+使用するinput fileの名前のリストを書きます。なお、ファイル名は任意に指定することができます。
+\item[(2)~Basic parameters:]
+~\\{\bf CalcMod}: 計算モードを指定するパラメーターを設定します。
+~\\{\bf ModPara}: 計算時に必要な基本的なパラメーター(サイトの数、電子数、Lanczosステップを何回やるかなど)を設定します。
+~\\{\bf LocSpin}: 局在スピンの位置を設定します(近藤模型でのみ利用)。
+\item[(3)~Hamiltonian:] 
+$\HPhi$のHamiltonianを電子系の表式により指定します。
+~\\具体的には以下のファイルで指定されます。
+~\\{\bf Trans}: $c_{i\sigma_1}^{\dag}c_{j\sigma_2}$で表される一体項を指定します。
+~\\{\bf InterAll}: $c_ {i \sigma_1}^{\dag}c_{j\sigma_2}c_{k \sigma_3}^{\dag}c_{l \sigma_4}$で表される一般二体相互作用を指定します。\\
+~\\なお、使用頻度の高い相互作用に関しては下記のキーワードで指定することも可能です。
+~\\{\bf CoulombIntra}: $n_ {i \uparrow}n_{i \downarrow}$で表される相互作用を指定します($n_{i \sigma}=c_{i\sigma}^{\dag}c_{i\sigma}$)。
+~\\{\bf CoulombInter}: $n_ {i}n_{j}$で表される相互作用を指定します($n_i=n_{i\uparrow}+n_{i\downarrow}$)。
+~\\{\bf Hund}: $n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}$で表される相互作用を指定します。
+~\\{\bf PairHop}:  $c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}$で表される相互作用を指定します。
+~\\{\bf Exchange}: $S_i^+ S_j^-$で表される相互作用を指定します。
+~\\{\bf PairLift}: $c_ {i \uparrow}^{\dag}c_{i\downarrow}c_{j \uparrow}^{\dag}c_{j \downarrow}$で表される相互作用を指定します。
+\item[(4)~Output:]
+~\\{\bf OneBodyG }:出力する一体Green関数を指定します。
+ $\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle$が出力されます。
+
+ {\bf TwoBodyG }:出力する二体Green関数を指定します。
+ $\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k \sigma_3}c_{l\sigma_4}\rangle$
+が出力されます。
+\end{description}
+%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+~\subsection{入力ファイル指定用ファイル}
+\label{Subsec:InputFileList}
+計算で使用する入力ファイル一式を指定します。ファイル形式に関しては、以下のようなフォーマットをしています。\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+CalcMod  calcmod.def
+ModPara  modpara.def
+LocSpin  zlocspn.def
+Trans    ztransfer.def
+InterAll zinterall.def
+OneBodyG zcisajs.def
+TwoBodyG	zcisajscktaltdc.def
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\
+\subsubsection{ファイル形式}
+[string01]~[string02]
+\subsubsection{パラメータ}
+ \begin{itemize}
+   \item  $[$string01$]$
+   
+   {\bf 形式 :} string型 (固定)
+   
+   {\bf 説明 :} キーワードを指定します。
+   
+   \item  $[$string02$]$
+   
+    {\bf 形式 :} string型 
+
+   {\bf 説明 :} キーワードにひも付けられるファイル名を指定します(任意)。
+ \end{itemize}
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item キーワードを記載後、半角空白を開けた後にファイル名を書きます。ファイル名は自由に設定できます。
+\item ファイル読込用キーワードはTable\ref{Table:Defs}により指定します。
+\item 必ず指定しなければいけないパラメーターはCalcMod, ModPara, LocSpinです。
+\item 各キーワードは順不同に記述できます。
+\item 指定したキーワード、ファイルが存在しない場合はエラー終了します。
+\item $\#$で始まる行は読み飛ばされます。
+\end{itemize}
+
+ \begin{table*}[h!]
+\begin{center}
+  \begin{tabular}{ll|} \hline
+           Keywords     & Details for corresponding files       \\   \hline\hline
+           CalcMod      &   Parameters for modes of calculation.  \\  \hline  
+           ModPara       &  Parameters for calculation.        \\ \hline   
+           LocSpin         &  Configurations of the local spins for Hamiltonian.         \\ 
+           Trans       &   Transfer and chemical potential for Hamiltonian.  \\
+           InterAll  &   Two-body interactions for Hamiltonian. \\  
+           CoulombIntra  &   CoulombIntra interactions. \\  
+           CoulombInter  &   CoulombInter  interactions. \\  
+           Hund  &   Hund couplings. \\  
+           PairHop  &  Pair hopping couplings. \\  
+           Exchange  &  Exchange couplings. \\  
+           PairLift  &   Pair lift couplings. \\  
+           OneBodyG         &   Output components for Green functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
+           TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\   \hline
+  \end{tabular}
+\end{center}
+\caption{List of the definition files.}
+\label{Table:Defs}
+\end{table*}%
+
+\newpage
+%----------------------------------
+\subsection{CalcModファイル}
+\label{Subsec:calcmod}
+計算手法、計算モデル、出力モードを指定します。以下のようなフォーマットをしています。\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+CalcType   0
+CalcModel   2
+OutputMode   1
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\
+%----------------------------------
+\subsubsection{ファイル形式}
+[string01]~[int01]
+\subsubsection{パラメータ}
+ \begin{itemize}
+   \item  $[$string01$]$
+   
+   {\bf 形式 :} string型 (固定)
+   
+   {\bf 説明 :} キーワードを指定します。
+   
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 
+
+   {\bf 説明 :} キーワードにひも付けられるパラメータを指定します。\\
+
+   
+  \end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item キーワードを記載後、半角空白を開けた後に整数値を書きます。
+\item 各キーワードは順不同に記述できます。
+\item 指定したキーワード、ファイルが存在しない場合はエラー終了します。
+\item キーワードCalcType, CalcModelは省略できません。 省略した場合はエラー終了します。
+\item $\#$で始まる行は読み飛ばされます。
+\end{itemize}
+~\subsubsection{キーワード}
+次に各キーワードで指定されるパラメータに関して説明します。
+\begin{itemize}
+\item  \verb|CalcType|
+
+{\bf 形式 :} int型 
+
+{\bf 説明 :} 計算手法の指定を行います。\\
+0: Lanczos法\\
+1: TPQを利用した有限温度解析\\
+2: 全対角化\\
+で選択することができます。
+
+\item  \verb|CalcModel|
+
+{\bf 形式 :} int型 
+
+{\bf 説明 :} 計算モデルの指定を行います。\\
+0: fermion Hubbard模型(カノニカル：粒子数・$S_z$保存)\\
+1: スピン模型(カノニカル：$S_z$保存)\\
+2: 近藤模型(カノニカル：粒子数・$S_z$保存)\\
+3: fermion Hubbard模型(グランドカノニカル：粒子数・$S_z$非保存)\\
+4: スピン模型(グランドカノニカル：$S_z$非保存)\\
+5: 近藤模型(グランドカノニカル：粒子数・$S_z$非保存)\\
+で選択することが出来ます。
+
+\item  \verb|Outputmode|
+
+{\bf 形式 :} int型 (デフォルト値 0)
+
+{\bf 説明 :} 計算時に出力するモードの指定を行います。\\
+0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力。\\
+1: 電荷電荷相関、スピンスピン相関とキーワードOneBodyG, TwoBodyGで指定されたGreen関数の出力(ver.0.1では未対応)\\
+で選択することが出来ます。
+\end{itemize}
+
+\newpage
+\subsection{ModParaファイル}
+\label{Subsec:modpara}
+計算で使用するパラメータを指定します。以下のようなフォーマットをしています。\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+--------------------
+Model_Parameters   0
+--------------------
+VMC_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite          16   
+Nup            8    
+Ndown          8    
+Lanczos_max    1000 
+initial_iv     12   
+nvec           1    
+exct           1    
+LanczosEps     14   
+LanczosTarget  2    
+LargeValue     12   
+NumAve         5    
+ExpecInterval  20   
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1 - 5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行:  [string01]~[string02]
+   \item  7 - 8行: ヘッダ(何が書かれても問題ありません)
+   \item  9行以降: [string01]~[int01]
+  \end{itemize}
+各項目の対応関係は以下の通りです。
+\begin{itemize}
+   \item  $[$string01$]$
+   
+   {\bf 形式 :} string型 (固定)
+
+  {\bf 説明 :} キーワードの指定を行います。
+   
+   \item  $[$string02$]$
+   
+   {\bf 形式 :} string型 (空白不可)
+
+  {\bf 説明 :} アウトプットファイルのヘッダを指定します。
+
+   \item  $[$int01$]$
+   
+   {\bf 形式 :} int型 (空白不可)
+
+  {\bf 説明 :} キーワードでひも付けられるパラメータを指定します。
+
+  \end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 9行目以降ではキーワードを記載後、半角空白を開けた後に整数値を書きます。
+\item 行数固定で読み込みを行う為、パラメータの省略はできません。
+\end{itemize}
+
+~\subsubsection{キーワード}
+ \begin{itemize}
+  \item  \verb|CDataFileHead|
+
+ {\bf 形式 :} string型 (空白不可)
+
+{\bf 説明 :} アウトプットファイルのヘッダ。例えば、一体のGreen関数の出力ファイル名が{\bf xxx\_Lanczos\_cisajs.dat}として出力されます(xxxに\verb|CDataFileHead|で指定した文字が記載)。
+   
+ \item  \verb|Nsite|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} サイト数を指定する整数。  
+
+ \item  \verb|Nup|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} アップスピンの電子数を指定する整数。
+グランドカノニカルの場合には使用されません。  
+
+ \item  \verb|Ndown|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} ダウンスピンの電子数を指定する整数。
+グランドカノニカルの場合には使用されません。  
+
+ \item  \verb|Lanczos_max|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :}  Lanczosステップを行う回数の最大値。
+指定した精度内で収束した場合には、これより短い回数で終了します。
+この回数以内で収束しない場合はエラー終了します。
+
+ \item  \verb|initial_iv|
+
+{\bf 形式 :} int型 (整数)
+
+{\bf 説明 :} 初期条件のベクトルでノンゼロの成分を指定する整数。
+グランドカノニカルの場合は初期状態として多くの状態を持つよう、乱数の種を与えます。
+
+ \item  \verb|nvec|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} Lanczos法の段階で下からいくつの固有値を求めるかの数を指定する整数。
+
+ \item  \verb|exct|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} Lanczos法で求める固有ベクトルの番号を指定する整数。
+例えば、1なら基底状態のベクトル、2なら第一励起状態のベクトルを求めます。
+   \verb|nvec| $>=$ \verb|exct| とする必要があります。
+
+\item   \verb|LanczosEps|
+   
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} Lanczos法の収束判定条件を指定する整数。
+一つ前のステップの固有値との相対誤差が, $10^{- \verb|LanczosEps|}$以下になった場合に収束したと判定します。
+
+ \item  \verb|LanczosTarget| 
+   
+ {\bf 形式 :} int型 (自然数)
+
+  {\bf 説明 :} 何番目の固有値でランチョスの収束判定を行うかを指定する整数。1なら基底状態。2なら第一励起状態を示します。
+     
+\item \verb|LargeValue|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} (TPQ法のみで使用) TPQで使用する$l-\hat{H}/N_{s}$の$l$を指定する整数。
+ 
+\item \verb|NumAve|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} (TPQ法のみで使用)独立なrunを何回行うかを指定する整数。
+
+\item \verb|ExpecInterval|
+
+{\bf 形式 :} int型 (自然数)
+
+{\bf 説明 :} (TPQ法のみで使用)相関関数の計算を何回のTPQステップおきに行うかの指定する整数。
+頻度を上げると計算コストが増大するので注意してください。
+ 
+ \end{itemize}
+
+
+\newpage
+%----------------------------------
+\subsection{LocSpin指定ファイル}
+\label{Subsec:locspn}
+局在スピンを指定します。以下のようなフォーマットをしています。\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+================================ 
+NlocalSpin     6  
+================================ 
+========i_0LocSpn_1IteElc ====== 
+================================ 
+    0      1
+    1      0
+    2      1
+    3      0
+    4      1
+    5      0
+    6      1
+    7      0
+    8      1
+    9      0
+   10      1
+   11      0
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:  [int02]~[int03]
+  \end{itemize}
+ \subsubsection{パラメータ}
+ \begin{itemize}
+
+ \item  $[$string01$]$
+
+ {\bf 形式 :} string型 (空白不可)
+
+{\bf 説明 :} 局在スピンの総数を示すキーワード(任意)。
+
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} 局在スピンの総数を指定する整数。
+
+ 
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+
+ 
+  \item  $[$int03$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} 局在スピンか遍歴電子かを指定する整数。\\
+0: 局在スピン\\
+1: 遍歴電子\\
+を選択することが出来ます。
+ \end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item $[$int01$]$と$[$int03$]$で指定される局在電子数の総数が異なる場合はエラー終了します。
+\item $[$int02$]$の総数が全サイト数と異なる場合はエラー終了します。\footnote{将来的には局在電子のみ指定するように変更する予定です。}
+\item $[$int02$]$が全サイト数以上もしくは負の値をとる場合はエラー終了します。
+\end{itemize}
+
+
+\newpage
+\subsection{Trans指定ファイル}
+\label{Subsec:Trans}
+ここではハミルトニアン
+\begin{align}
+H +=-\sum_{ij\sigma_1\sigma2} t_{ij\sigma_1\sigma2}c_{i\sigma_1}^{\dag}c_{j\sigma_2}
+\end{align}
+に対するTransfer積分$t_{ij\sigma_1\sigma2}$を指定します。以下にファイル名を記載します。\\
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+======================== 
+NTransfer      24  
+======================== 
+========i_j_s_tijs====== 
+======================== 
+    0     0     2     0   1.000000  0.000000
+    2     0     0     0   1.000000  0.000000
+    0     1     2     1   1.000000  0.000000
+    2     1     0     1   1.000000  0.000000
+    2     0     4     0   1.000000  0.000000
+    4     0     2     0   1.000000  0.000000
+    2     1     4     1   1.000000  0.000000
+    4     1     2     1   1.000000  0.000000
+    4     0     6     0   1.000000  0.000000
+    6     0     4     0   1.000000  0.000000
+    4     1     6     1   1.000000  0.000000
+    6     1     4     1   1.000000  0.000000
+    6     0     8     0   1.000000  0.000000
+    8     0     6     0   1.000000  0.000000
+…
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降: [int02]~~[int03]~~[int04]~~[int05]~~[double01]~~[double02] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} Transfer総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} Transferの総数を指定します。
+
+  \item  $[$int02$]$, $[$int04$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+  \item  $[$int03$]$, $[$int05$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} スピンを指定する整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を選択することが出来ます。
+
+
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $t_{ij\sigma_1\sigma_2}$の実部を指定します。
+
+ \item  $[$double02$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $t_{ij\sigma_1\sigma_2}$の虚部を指定します。
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item Hamiltonianがエルミートという制限から$t_{ij\sigma_1\sigma_2}=t_{ji\sigma_2\sigma_1}^{\dagger}$の関係を満たす必要があります。上記の関係が成立しない場合にはエラー終了します。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているTrasferの総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int05$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\subsection{InterAll指定ファイル}
+\label{Subsec:interall}
+ここでは一般二体相互作用をハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+\begin{equation}
+H+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
+I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}
+\end{equation}
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NInterAll      36  
+====================== 
+========zInterAll===== 
+====================== 
+0    0    0    1    1    1    1    0   0.50  0.0
+0    1    0    0    1    0    1    1   0.50  0.0
+0    0    0    0    1    0    1    0   0.25  0.0
+0    0    0    0    1    1    1    1  -0.25  0.0
+0    1    0    1    1    0    1    0  -0.25  0.0
+0    1    0    1    1    1    1    1   0.25  0.0
+2    0    2    1    3    1    3    0   0.50  0.0
+2    1    2    0    3    0    3    1   0.50  0.0
+2    0    2    0    3    0    3    0   0.25  0.0
+2    0    2    0    3    1    3    1  -0.25  0.0
+2    1    2    1    3    0    3    0  -0.25  0.0
+2    1    2    1    3    1    3    1   0.25  0.0
+4    0    4    1    5    1    5    0   0.50  0.0
+4    1    4    0    5    0    5    1   0.50  0.0
+4    0    4    0    5    0    5    0   0.25  0.0
+4    0    4    0    5    1    5    1  -0.25  0.0
+4    1    4    1    5    0    5    0  -0.25  0.0
+4    1    4    1    5    1    5    1   0.25  0.0
+…
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:
+   [int02]~[int03]~[int04]~[int05]~[int06]~[int07]~[int08]~[int09]~[double01]~[double02] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} 二体相互作用の総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} 二体相互作用の総数を指定します。
+
+  \item  $[$int02$]$, $[$int04$]$, $[$int06$]$, $[$int08$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+  \item  $[$int03$]$, $[$int05$]$, $[$int07$]$, $[$int09$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} スピンを指定する整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を選択することが出来ます。
+
+
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}$の実部を指定します。
+
+ \item  $[$double02$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}$の虚部を指定します。
+\end{itemize}
+
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item Hamiltonianがエルミートという制限から$I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$の関係を満たす必要があります。上記の関係が成立しない場合にはエラー終了します。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているInterAllの総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int09$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+
+\newpage
+\subsection{CoulombIntra指定ファイル}
+\label{Subsec:coulombintra}
+オンサイトクーロン相互作用をハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+\begin{equation}
+H+=\sum_{i}U_i n_ {i \uparrow}n_{i \downarrow}
+\end{equation}
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NCoulombIntra 6  
+====================== 
+========i_0LocSpn_1IteElc ====== 
+====================== 
+   0  4.000000
+   1  4.000000
+   2  4.000000
+   3  4.000000
+   4  4.000000
+   5  4.000000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:
+   [int02]~[double01] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} オンサイトクーロン相互作用の総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} オンサイトクーロン相互作用の総数を指定します。
+
+  \item  $[$int02$]$
+  
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $U_i$を指定します。
+  
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているオンサイトクーロン相互作用の総数が異なる場合はエラー終了します。
+\item $[$int02$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+
+\newpage
+\subsection{CoulombInter指定ファイル}
+オフサイトクーロン相互作用をハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+\begin{equation}
+H+=\sum_{i,j}V_{ij} n_ {i}n_{j}
+\end{equation}
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NCoulombInter 6  
+====================== 
+========CoulombInter ====== 
+====================== 
+   0     1 -0.125000
+   1     2 -0.125000
+   2     3 -0.125000
+   3     4 -0.125000
+   4     5 -0.125000
+   5     0 -0.125000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:
+   [int02]~[int03]~[double01] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} オフサイトクーロン相互作用の総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} オフサイトクーロン相互作用の総数を指定します。
+
+  \item  $[$int02$]$, $[$int03$]$
+  
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $V_{ij}$を指定します。
+  
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているオフサイトクーロン相互作用の総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int03$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\subsection{Hund指定ファイル}
+Hundカップリングをハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+\begin{equation}
+H+=-\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow})
+\end{equation}
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NHund 6  
+====================== 
+========Hund ====== 
+====================== 
+   0     1 -0.250000
+   1     2 -0.250000
+   2     3 -0.250000
+   3     4 -0.250000
+   4     5 -0.250000
+   5     0 -0.250000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:
+   [int02]~[int03]~[double01] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} Hundカップリングの総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} Hundカップリングの総数を指定します。
+
+  \item  $[$int02$]$, $[$int03$]$
+  
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $J_{ij}^{\rm Hund}$を指定します。
+  
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているHundカップリングの総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int03$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\subsection{PairHop指定ファイル}
+PairHopカップリングをハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+\begin{equation}
+H+=\sum_{i,j}J_{ij}^{\rm Pair} c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}
+\end{equation}
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NPairhop 6  
+====================== 
+========Pairhop ====== 
+====================== 
+   0     1  0.50000
+   1     2  0.50000
+   2     3  0.50000
+   3     4  0.50000
+   4     5  0.50000
+   5     0  0.50000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:
+   [int02]~[int03]~[double01] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} PairHopカップリングの総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} PairHopカップリングの総数を指定します。
+
+  \item  $[$int02$]$, $[$int03$]$
+  
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $_{ij}^{\rm Pair}$を指定します。
+  
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているPairHopカップリングの総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int03$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\subsection{Exchange指定ファイル}
+Exchangeカップリングをハミルトニアンに付け加えます。
+電子系の場合には
+\begin{equation}
+H+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}+c_ {i \downarrow}^{\dag}c_{j\downarrow}c_{j \uparrow}^{\dag}c_{i  \uparrow})
+\end{equation}
+が付け加えられ、スピン系の場合には
+\begin{equation}
+H+=\sum_{i,j}J_{ij}^{\rm Ex} (S_i^+S_j^-+S_i^-S_j^+)
+\end{equation}
+が付け加えられます。
+{\bf スピン系の$(S_i^+S_j^-+S_i^-S_j^+)$を
+電子系の演算子で書き直すと、
+$-(c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}+c_ {i \downarrow}^{\dag}c_{j\downarrow}c_{j \uparrow}^{\dag}c_{i  \uparrow})$
+となることに注意して下さい。}
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NExchange 6  
+====================== 
+========Exchange ====== 
+====================== 
+   0     1  0.50000
+   1     2  0.50000
+   2     3  0.50000
+   3     4  0.50000
+   4     5  0.50000
+   5     0  0.50000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:
+   [int02]~[int03]~[double01] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} Exchangeカップリングの総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} Exchangeカップリングの総数を指定します。
+
+  \item  $[$int02$]$, $[$int03$]$
+  
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $J_{ij}^{\rm Ex}$を指定します。
+  
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているExchangeカップリングの総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int03$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\subsection{PairLift指定ファイル}
+\label{Subsec:pairlift}
+PairLiftカップリングをハミルトニアンに付け加えます。
+付け加える項は以下で与えられます。
+\begin{equation}
+H+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dag}c_{i\downarrow}c_{j \uparrow}^{\dag}c_{j \downarrow}+c_ {i \downarrow}^{\dag}c_{i\uparrow}c_{j \downarrow}^{\dag}c_{j \uparrow})
+\end{equation}
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NPairLift 6  
+====================== 
+========NPairLift ====== 
+====================== 
+   0     1  0.50000
+   1     2  0.50000
+   2     3  0.50000
+   3     4  0.50000
+   4     5  0.50000
+   5     0  0.50000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降:
+   [int02]~[int03]~[double01] 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} PairLiftカップリングの総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} PairLiftカップリングの総数を指定します。
+
+  \item  $[$int02$]$, $[$int03$]$
+  
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+ \item  $[$double01$]$
+   
+   {\bf 形式 :} double型 (空白不可)
+
+  {\bf 説明 :}  $J_{ij}^{\rm PairLift}$を指定します。
+  
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item スピン系のみで使用可能です。電子系、近藤系で指定した場合は計算に使用されません。
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているPairLiftカップリングの総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int03$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\subsection{OneBodyG指定ファイル}
+\label{Subsec:onebodyg}
+一体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$を計算します。以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+===============================
+NCisAjs         24
+===============================
+======== Green functions ======
+===============================
+    0     0     0     0
+    0     1     0     1
+    1     0     1     0
+    1     1     1     1
+    2     0     2     0
+    2     1     2     1
+    3     0     3     0
+    3     1     3     1
+    4     0     4     0
+    4     1     4     1
+    5     0     5     0
+    5     1     5     1
+    6     0     6     0
+    6     1     6     1
+    7     0     7     0
+    7     1     7     1
+    8     0     8     0
+    8     1     8     1
+    9     0     9     0
+    9     1     9     1
+   10     0    10     0
+   10     1    10     1
+   11     0    11     0
+   11     1    11     1
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降: [int02]~~[int03]~~[int04]~~[int05]
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} 一体グリーン関数成分総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} 一体グリーン関数成分の総数を指定します。
+
+  \item  $[$int02$]$, $[$int04$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+  \item  $[$int03$]$, $[$int05$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} スピンを指定する整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を選択することが出来ます。
+
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されている一体グリーン関数成分の総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int05$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\subsection{TwoBodyG指定ファイル}
+\label{Subsec:twobodyg}
+二体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$を計算します。以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+=============================================
+NCisAjsCktAltDC        576
+=============================================
+======== Green functions for Sq AND Nq ======
+=============================================
+    0     0     0     0     0     0     0     0
+    0     0     0     0     0     1     0     1
+    0     0     0     0     1     0     1     0
+    0     0     0     0     1     1     1     1
+    0     0     0     0     2     0     2     0
+    0     0     0     0     2     1     2     1
+    0     0     0     0     3     0     3     0
+    0     0     0     0     3     1     3     1
+    0     0     0     0     4     0     4     0
+    0     0     0     0     4     1     4     1
+    0     0     0     0     5     0     5     0
+    0     0     0     0     5     1     5     1
+    0     0     0     0     6     0     6     0
+    0     0     0     0     6     1     6     1
+    0     0     0     0     7     0     7     0
+    0     0     0     0     7     1     7     1
+    0     0     0     0     8     0     8     0
+    0     0     0     0     8     1     8     1
+    0     0     0     0     9     0     9     0
+    0     0     0     0     9     1     9     1
+    0     0     0     0    10     0    10     0
+    0     0     0     0    10     1    10     1
+    0     0     0     0    11     0    11     0
+    0     0     0     0    11     1    11     1
+    0     1     0     1     0     0     0     0
+    …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降: [int02]~~[int03]~~[int04]~~[int05]~~[int06]~~[int07]~~[int08]~~[int09]
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} 二体グリーン関数成分総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} 二体グリーン関数成分の総数を指定します。
+
+  \item  $[$int02$]$, $[$int04$]$,$[$int06$]$, $[$int08$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+ 
+  \item  $[$int03$]$, $[$int05$]$,$[$int07$]$, $[$int09$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} スピンを指定する整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を選択することが出来ます。
+
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されているニ体グリーン関数成分の総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int09$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+\newpage
+\section{出力ファイル}
+\label{Sec:outputfile}
+出力ファイルに関するファイル形式を記載します。
+\subsection{CHECK\_Chemi.dat}
+\label{Subsec:checkchemi}
+Hamiltonianのうち化学ポテンシャル
+\begin{equation}
+H+=\sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}
+\end{equation}
+に関する入力確認を行います。$\mu_{i\sigma}$が出力されます。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+i=0 spin=0 isite1=1 tmp_V=0.000000 
+i=1 spin=0 isite1=2 tmp_V=0.000000 
+i=2 spin=0 isite1=3 tmp_V=0.000000 
+i=3 spin=0 isite1=4 tmp_V=0.000000 
+i=4 spin=0 isite1=5 tmp_V=0.000000 
+i=5 spin=0 isite1=6 tmp_V=0.000000 
+…
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のようなファイル形式をとります。
+ \begin{itemize}
+   \item  i=$[$int01$]$ spin=$[$int02$]$ isite1=$[$int03$]$ tmp\_V=$[$double01$]$ 
+ \end{itemize}
+  
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$int01$]$ 
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} 入力番号。
+   
+   \item  $[$int02$]$ 
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} $\mu_{i\sigma}$のスピン番号$\sigma$を表す整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を表します。
+   
+   \item  $[$int03$]$ 
+   
+    {\bf 形式 :} int型
+
+    {\bf 説明 :}  $\mu_{i\sigma}$のサイト番号$i$を表す整数。
+ 
+   \item  $[$double01$]$ 
+   
+    {\bf 形式 :} double型
+
+   {\bf 説明 :} $\mu_{i\sigma}$の値。
+     
+\end{itemize}
+
+\subsection{CHECK\_InterAll.dat}
+Hamiltonianの一般ニ体相互作用のうち対角成分
+\begin{equation}
+H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}
+\end{equation}
+に関する入力確認を行います。$ I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$が出力されます。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+i=0 isite1=1 A_spin=0 isite2=2 B_spin=0 tmp_V=0.500000 
+i=1 isite1=1 A_spin=0 isite2=2 B_spin=1 tmp_V=-0.500000 
+i=2 isite1=1 A_spin=1 isite2=2 B_spin=0 tmp_V=-0.500000 
+i=3 isite1=1 A_spin=1 isite2=2 B_spin=1 tmp_V=0.500000 
+i=4 isite1=2 A_spin=0 isite2=3 B_spin=0 tmp_V=0.500000 
+i=5 isite1=2 A_spin=0 isite2=3 B_spin=1 tmp_V=-0.500000 
+…
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のようなファイル形式をとります。
+ \begin{itemize}
+   \item  i=$[$int01$]$ isite1=$[$int02$]$  A\_spin=$[$int03$]$ isite2=$[$int04$]$  B\_spin=$[$int05$]$ tmp\_V=$[$double01$]$ 
+ \end{itemize}
+ 
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+    \item  $[$int01$]$ 
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} 入力番号。
+      
+   \item  $[$int02$]$, $[$int04$]$
+   
+    {\bf 形式 :} int型
+
+    {\bf 説明 :}   $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$のサイト番号を表す整数。 \\
+    $[$int02$]$が$i$, $[$int04$]$が$j$を表します。
+ 
+   \item  $[$int03$]$, $[$int05$]$  
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :}  $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$のスピン番号を表す整数。\\
+   $[$int03$]$が$\sigma_1$, $[$int05$]$が$\sigma_2$に対応し、それぞれ\\
+0: アップスピン\\
+1: ダウンスピン\\
+を表します。
+ 
+   \item  $[$double01$]$ 
+   
+    {\bf 形式 :} double型
+
+   {\bf 説明 :} $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$の値。
+  
+\end{itemize}
+
+\newpage
+\subsection{CHECK\_CoulombIntra.dat}
+Hamiltonianのオンサイトクーロン相互作用
+\begin{equation}
+H+=\sum_{i} U_i n_{i\uparrow} n_{j \downarrow}
+\end{equation}
+に関する入力確認を行います。$U_i$が出力されます。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+i=0 isite1=1 tmp_V=4.000000 
+i=1 isite1=2 tmp_V=4.000000 
+i=2 isite1=3 tmp_V=4.000000 
+i=3 isite1=4 tmp_V=4.000000 
+i=4 isite1=5 tmp_V=4.000000 
+i=5 isite1=6 tmp_V=4.000000 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のようなファイル形式をとります。
+ \begin{itemize}
+   \item  i=$[$int01$]$ isite1=$[$int02$]$  tmp\_V=$[$double01$]$ 
+ \end{itemize}
+ 
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+    \item  $[$int01$]$ 
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} 入力番号。
+      
+   \item  $[$int02$]$
+   
+    {\bf 形式 :} int型
+
+    {\bf 説明 :}   $U_i$のサイト番号$i$を表す整数。
+    
+   \item  $[$double01$]$ 
+   
+    {\bf 形式 :} double型
+
+   {\bf 説明 :} $U_i$の値。  
+\end{itemize}
+
+\newpage
+\subsection{CHECK\_Hund.dat}
+HamiltonianのHundカップリング
+\begin{align}
+H += -\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow})
+\end{align}
+に関する入力確認を行います。$J_{ij}^{\rm Hund}$が出力されます。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+i=0 isite1=1 isite2=2 tmp_V=0.250000 
+i=1 isite1=2 isite2=3 tmp_V=0.250000 
+i=2 isite1=3 isite2=4 tmp_V=0.250000 
+i=3 isite1=4 isite2=5 tmp_V=0.250000 
+i=4 isite1=5 isite2=6 tmp_V=0.250000 
+i=5 isite1=6 isite2=1 tmp_V=0.250000 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のようなファイル形式をとります。
+ \begin{itemize}
+   \item  i=$[$int01$]$ isite1=$[$int02$]$ isite2=$[$int03$]$ tmp\_V=$[$double01$]$ 
+ \end{itemize}
+ 
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+    \item  $[$int01$]$ 
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} 入力番号。
+      
+   \item  $[$int02$]$, $[$int03$]$
+   
+    {\bf 形式 :} int型
+
+    {\bf 説明 :}  $J_{ij}^{\rm Hund}$のサイト番号を表す整数。 \\
+    $[$int02$]$が$i$, $[$int03$]$が$j$を表します。
+ 
+   \item  $[$double01$]$ 
+   
+    {\bf 形式 :} double型
+
+   {\bf 説明 :} $J_{ij}^{\rm Hund}$の値。
+\end{itemize}
+
+\newpage
+\subsection{CHECK\_INTER\_U.dat}
+Hamiltonianのオフサイトクーロン相互作用
+\begin{equation}
+H+=\sum_{i} V_{ij} n_{i} n_{j}
+\end{equation}
+に関する入力確認を行います。$V_{ij}$が出力されます。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+i=0 isite1=1 isite2=2 tmp_V=-0.125000 
+i=1 isite1=2 isite2=3 tmp_V=-0.125000 
+i=2 isite1=3 isite2=4 tmp_V=-0.125000 
+i=3 isite1=4 isite2=5 tmp_V=-0.125000 
+i=4 isite1=5 isite2=6 tmp_V=-0.125000 
+i=5 isite1=6 isite2=1 tmp_V=-0.125000 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のようなファイル形式をとります。
+ \begin{itemize}
+   \item  i=$[$int01$]$ isite1=$[$int02$]$ isite2=$[$int03$]$ tmp\_V=$[$double01$]$ 
+ \end{itemize}
+ 
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+    \item  $[$int01$]$ 
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} 入力番号。
+      
+   \item  $[$int02$]$, $[$int03$]$
+   
+    {\bf 形式 :} int型
+
+    {\bf 説明 :}  $V_{ij}$のサイト番号を表す整数。 \\
+    $[$int02$]$が$i$, $[$int03$]$が$j$を表します。
+ 
+   \item  $[$double01$]$ 
+   
+    {\bf 形式 :} double型
+
+   {\bf 説明 :} $V_{ij}$の値。
+\end{itemize}
+
+
+\newpage
+\subsection{CHECK\_Memory.dat}
+使用するメモリサイズの出力を行います。配列サイズおよび必要なメモリを出力します。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+MAX DIMENSION idim_max=400 
+REQUIRED MEMORY  max_mem=0.000019 GB 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のようなファイル形式をとります。
+ \begin{itemize}
+   \item  MAX DIMENSION idim\_max=$[$int01$]$
+   \item  REQUIRED MEMORY  max\_mem =$[$double01$]$ GB 
+ \end{itemize}
+ 
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+    \item  $[$int01$]$ 
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} ヒルベルトスペースの数を表します。
+      
+   \item  $[$double01$]$
+   
+    {\bf 形式 :} double型
+
+    {\bf 説明 :}  ヒルベルトスペースの確保に必要とするメモリサイズを表します(単位はGB)。
+ 
+\end{itemize}
+
+\newpage
+\subsection{WarningOnTransfer.dat}
+Transferの成分が重複している場合に出力されます。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+double conuntings in transfers: i=0 j=2 spni 0 spnj 0  
+double conuntings in transfers: i=2 j=0 spni 0 spnj 0  
+double conuntings in transfers: i=0 j=2 spni 1 spnj 1  
+double conuntings in transfers: i=2 j=0 spni 1 spnj 1  
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のようなファイル形式をとります。
+ \begin{itemize}
+   \item  double conuntings in transfers: i=$[$int01$]$ j=$[$int02$]$ spni $[$int03$]$  spnj $[$int04$]$   
+ \end{itemize}
+ 
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+    \item  $[$int01$]$, $[$int02$]$
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} 重複しているTransferのサイト番号を表します。
+      
+         \item  $[$int03$]$, $[$int04$]$  
+   
+    {\bf 形式 :} int型
+
+   {\bf 説明 :} 重複しているTransferのスピン番号を表します。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を表します。
+ 
+\end{itemize}
+
+\newpage
+\subsection{TimeKeeper.dat}
+計算経過情報が出力されます。
+以下にLanczos法の場合の出力例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+diagonal calculation finishes: Wed Sep 16 22:58:49 2015
+Lanczos Eigen Value start: Wed Sep 16 22:58:49 2015
+1 th Lanczos step: Wed Sep 16 22:58:49 2015
+  …
+122 th Lanczos step: Wed Sep 16 22:58:49 2015
+Lanczos Eigenvalue finishes: Wed Sep 16 22:58:49 2015
+Lanczos Eigenvector finishes: Wed Sep 16 22:58:49 2015
+Lanczos expec energy finishes: Wed Sep 16 22:58:49 2015
+CG Eigenvector finishes: Wed Sep 16 22:58:49 2015
+CG expec energy finishes: Wed Sep 16 22:58:50 2015
+CG expec_cisajs finishes: Wed Sep 16 22:58:50 2015
+CG expec_cisajacktalt begins: Wed Sep 16 22:58:50 2015
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item  \#\#\_TimeKeeper.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+
+\subsection{sz\_TimeKeeper.dat}
+ヒルベルトスペースを確保する際の経過情報が出力されます。
+以下に出力例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+initial sz : Wed Sep 16 22:58:49 2015
+num_threads==4
+omp parallel sz finishes: Wed Sep 16 22:58:49 2015
+mid omp parallel sz : Wed Sep 16 22:58:49 2015
+omp parallel sz finishes: Wed Sep 16 22:58:49 2015
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item  \#\#\_sz\_TimeKeeper.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+\newpage
+\subsection{Time\_CG\_EigenVector.dat}
+\label{Subsec:timecgeigenv}
+(Lanczos法のみ) CG法で固有ベクトルを計算する際のログを出力します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+allocate succeed !!! 
+b[4341]=1.000000 bnorm== 1.000000 
+i_itr=0 itr=5 0.0411202543 0.0000100000 
+…
+i_itr=0 itr=155 0.0000000058 0.0000100000 
+CG OK:   t_itr=155 
+i_itr=0 itr=155 time=0.000000  
+fabs(fabs(xb)-1.0)=0.9955114473313577
+b[4341]=0.004489 bnorm== 1.000000 
+i_itr=1 itr=5 13.0033983157 0.0000100000 
+…
+CG OK:   t_itr=275 
+i_itr=1 itr=120 time=0.000000  
+fabs(fabs(xb)-1.0)=0.0000000000001295
+number of iterations in inv1:i_itr=1 itr=120 
+t_itr=275 0.000000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item  \#\#\_Time\_CG\_EigenVector.dat
+ \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+
+\newpage
+\subsection{energy.dat}
+\label{subsec:energy.dat}
+(Lanczos法のみ) Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギーとダブロンを出力します。
+以下にファイル例を記載します。\\
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+Energy  -7.1043675920 
+Doublon  0.4164356536 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item  \#\#\_energy.dat
+ \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item Energy $[$double01$]$
+   \item Doublon $[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} Lanczos法・CG法で求めた固有ベクトルを用い計算したエネルギー。
+ 
+  \item  $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} Lanczos法・CG法で求めた固有ベクトルを用い計算したダブロン
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$はサイト数)。
+ \end{itemize}
+
+\newpage
+\subsection{Lanczos\_Step.dat}
+(Lanczos法でのみ出力) Lanczos法で固有ベクトルを求めている際のログを出力します。以下にファイル例を示します。\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+stp=4 -4.7732163164 -1.7790936582 1.2246691944 4.4823068739
+stp=6 -5.8159638812 -3.6807425834 -1.3738652472 0.9326262962
+stp=8 -6.2772935672 -4.8650501184 -3.1096996066 -1.1940653342
+…
+stp=120 -7.1043675920 -7.0817672578 -7.0646589929 -7.0008766356
+stp=122 -7.1043675920 -7.0817672578 -7.0646589929 -7.0008766356
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item  \#\#\_Lanczos\_Step.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item stp= $[$int01$]$ $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+  
+ {\bf 形式 :} int型
+
+{\bf 説明 :} Lanczos法での計算ステップ数。
+ 
+  \item  $[$double01$]$, $[$double02$]$, $[$double03$]$, $[$double04$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} Lanczos法で計算時に求められた固有値。\\
+$[$double01$]$が基底エネルギー、$[$double02$]$、$[$double03$]$、$[$double04$]$が1, 2, 3番目の励起エネルギーをそれぞれ表します。
+
+ \end{itemize}
+
+\newpage
+\subsection{Norm\_rand.dat}
+\label{Subsec:normrand}
+(TPQ法でのみ出力) TPQ法での有限温度計算時のログを出力します。以下にファイル例を示します。\\
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+ # inv_temp, global_norm, global_1st_norm, step_i 
+0.017471 19.046586 11.288975 1
+0.034863 19.089752 11.288975 2
+…
+31.999572 20.802362 11.288975 1997
+32.015596 20.802362 11.288975 1998
+32.031620 20.802362 11.288975 1999
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item Norm\_rand??.dat
+  \end{itemize}
+  ??はTPQ法計算時のrunの番号を表します。
+
+
+\subsubsection{ファイル形式}
+1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$int01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} 逆温度$1/{k_{\rm B}T}$。
+ 
+  \item $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  TPQ法で計算される規格化前の波動関数(ベクトル)のノルム:
+ $\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle$。ただし、$|\tilde{\psi}_{k}\rangle \equiv(l-\hat{H}/N_{s})|\psi_{k-1}\rangle$。
+
+  \item $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 規格化前の初期波動関数(ランダムベクトル)のノルム：$\langle \tilde{\psi}_{0} |\tilde{\psi}_{0}\rangle$。ただし、$|\tilde{\psi}_{0}\rangle$は規格化前の初期波動関数。
+
+  \item $[$int01$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} 初期ランダムベクトルに$(l-\hat{H}/N_{s})$($l$はModParaファイルの\verb|LargeValue|、$N_{s}$はサイト数)を作用させた回数。
+
+ \end{itemize}
+
+
+\newpage
+\subsection{SS\_rand.dat}
+\label{Subsec:ssrand}
+(TPQ法でのみ出力)TPQ法での有限温度計算結果を出力します。以下にファイル例を示します。\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+# inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i
+0.017471  5.526334 45.390269 1.464589 6.000000 1
+0.034863  5.266718 42.655559 1.434679 6.000000 2
+…
+31.999572  -4.814170 23.176231 0.590568 6.000000 1997
+32.015596  -4.814170 23.176231 0.590568 6.000000 1998
+32.031620  -4.814170 23.176231 0.590568 6.000000 1999
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item SS\_rand??.dat
+  \end{itemize}
+  ??はTPQ法計算時のrunの番号を表します。
+
+\subsubsection{ファイル形式}
+1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$int01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} 逆温度$1/{k_{\rm B}T}$。
+ 
+  \item $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  エネルギーの期待値$\langle H \rangle$。
+
+  \item $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} ハミルトニアンの2乗の期待値$\langle H^2 \rangle$。
+
+  \item $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} ダブロン
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N_s$はサイト数)。
+
+  \item $[$double05$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 粒子数$\langle {\hat n} \rangle$。
+
+
+  \item $[$int01$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} 初期ランダムベクトルに$(l-\hat{H}/N_{s})$($l$はModParaファイルの\verb|LargeValue|、$N_{s}$はサイト数)を作用させた回数。
+
+ \end{itemize}
+
+\newpage
+\subsection{Eigenvalue.dat}
+\label{Subsec:eigenvalue}
+(FullDiagでのみ出力)全対角法で計算したエネルギーを出力します。以下にファイル例を記載します。\\
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+ 0 -4.8141698096 
+ 1 -3.7968502453 
+ 2 -3.2462822372 
+ …
+ 397 13.9898305290 
+ 398 14.4896221034 
+ 399 14.8525199079 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$int01$]$ $[$double01$]$ 
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+  
+ {\bf 形式 :} int型
+
+{\bf 説明 :} 固有値のindex。基底エネルギーを0として、エネルギーの低い順から採番する。
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} エネルギー$\langle H \rangle$。
+ 
+ \end{itemize}
+
+
+
+\newpage
+\subsection{phys.dat}
+\label{Subsec:phys}
+(FullDiagでのみ出力)全対角法で計算したエネルギーと物理量を出力します。エネルギーの低い基底エネルギーから順に出力されます。以下にファイル例を記載します。\\
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+ <H>         <N>        <Sz>       <S2>       <D> 
+  -4.814170   0.000000   0.000000  -0.000000   0.590568
+  -3.796850   0.000000   0.000000   1.333333   0.423804
+ …
+ 14.489622   0.000000   0.000000   0.000000   2.550240
+ 14.852520   0.000000   0.000000   0.000000   2.329157
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item {カノニカル:} \#\#\_phys\_Nup\_\$\$Ndown\%\%.dat
+   \item {グランドカノニカル:} \#\#\_phys.dat
+ \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はNup、\%\%はNdownを表します。
+
+\subsubsection{ファイル形式}
+1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} エネルギーの期待値$\langle H\rangle$。
+ 
+  \item $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  粒子数の期待値$\langle \hat{n}\rangle$。
+
+  \item $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  スピンのz成分の期待値$\langle S_z\rangle$。
+
+  \item $[$double04$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  スピンの2乗の期待値$\langle {\bm S}^2\rangle$。
+
+  \item $[$double05$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  ダブロン
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N_s$はサイト数)。
+
+
+ \end{itemize}
+
+
+\newpage
+\subsection{cisajs.dat}
+\label{Subsec:cgcisajs}
+OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$の計算結果を出力します。以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+    0    0    0    0 0.4452776740 0.0000000000
+    0    1    0    1 0.4452776740 0.0000000000
+    1    0    1    0 0.5000000000 0.0000000000
+    1    1    1    1 0.5000000000 0.0000000000
+    2    0    2    0 0.4452776740 0.0000000000
+    2    1    2    1 0.4452776740 0.0000000000
+    3    0    3    0 0.5000000000 0.0000000000
+    3    1    3    1 0.5000000000 0.0000000000
+    …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item{Lanczos法:}  \#\#\_cisajs.dat
+   \item{TPQ法:} \#\#\_cisajs\_set??step\%\%.dat
+   \item{全対角化法:}  \#\#\_cisajs\_eigen{\&\&}.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
+
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  $[$int01$]$~~$[$int02$]$~~$[$int03$]$~~$[$int04$]$~~$[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$, $[$int03$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} サイト番号を指定する整数。$[$int01$]$が$i$サイト、$[$int03$]$が$j$サイトを表します。
+ 
+  \item  $[$int02$]$, $[$int04$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} スピンを指定する整数。$[$int02$]$が$\sigma_1$、$[$int03$]$が$\sigma_2$に対応します。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を表します。
+
+  \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+\end{itemize}
+
+\newpage
+\subsection{cisajscktalt.dat}
+\label{Subsec:cisajscktalt}
+TwoBodyGで指定された二体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$の計算結果を出力します。以下にファイル例を記載します。
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+    0    0    0    0    0    0    0    0 0.4452776740 0.0000000000
+    0    0    0    0    0    1    0    1 0.1843355815 0.0000000000
+    0    0    0    0    1    0    1    0 0.1812412105 0.0000000000
+    0    0    0    0    1    1    1    1 0.2640364635 0.0000000000
+    0    0    0    0    2    0    2    0 0.0279690007 0.0000000000
+    0    0    0    0    2    1    2    1 0.2009271524 0.0000000000
+    0    0    0    0    3    0    3    0 0.2512810778 0.0000000000
+    0    0    0    0    3    1    3    1 0.1939965962 0.0000000000
+    …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item{Lanczos法:}  \#\#\_cisajscktalt.dat
+   \item{TPQ法:} \#\#\_cisajscktalt\_set??step\%\%.dat
+   \item{全対角化法:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
+
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  $[$int01$]$~~$[$int02$]$~~$[$int03$]$~~$[$int04$]$~~$[$int05$]$~~$[$int06$]$~~$[$int07$]$~~$[$int08$]$~~$[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$, $[$int03$]$,$[$int05$]$, $[$int07$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} サイト番号を指定する整数。
+$[$int01$]$が$i$サイト、$[$int03$]$が$j$サイト、$[$int05$]$が$k$サイト、$[$int07$]$が$l$サイトを表します。
+ 
+  \item  $[$int02$]$, $[$int04$]$,$[$int06$]$, $[$int08$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} スピンを指定する整数。
+$[$int02$]$が$\sigma_1$、$[$int04$]$が$\sigma_2$、$[$int06$]$が$\sigma_3$、$[$int08$]$が$\sigma_4$に対応します。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を表します。
+
+  \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+\end{itemize}
+
+\newpage
+\section{エラーメッセージ一覧}
+
+\input{chap04_4_jp.tex}
+
+ 
+ 
+%----------------------------------------------------------
+%----------------------------------------------------------
+%----------------------------------------------------------

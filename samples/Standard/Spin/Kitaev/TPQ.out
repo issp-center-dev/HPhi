@@ -1,0 +1,157 @@
+
+######  Standard Intarface Mode STARTS  ######
+
+  Open Standard-Mode Inputfile StdFace.def 
+
+  KEYWORD : w                    | VALUE : 2 
+  KEYWORD : l                    | VALUE : 3 
+  KEYWORD : model                | VALUE : spingc 
+  KEYWORD : method               | VALUE : tpq 
+  KEYWORD : lattice              | VALUE : honeycomblattice 
+  KEYWORD : jx0                  | VALUE : -1.0 
+  KEYWORD : jy0                  | VALUE : 0.0 
+  KEYWORD : jz0                  | VALUE : 0.0 
+  KEYWORD : jx1                  | VALUE : 0.0 
+  KEYWORD : jy1                  | VALUE : -1.0 
+  KEYWORD : jz1                  | VALUE : 0.0 
+  KEYWORD : jx2                  | VALUE : 0.0 
+  KEYWORD : jy2                  | VALUE : 0.0 
+  KEYWORD : jz2                  | VALUE : -1.0 
+  KEYWORD : largevalue           | VALUE : 12 
+
+#######  Parameter Summary  #######
+
+                L = 3  
+                W = 2  
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+                h = 0.00000     ######  DEFAULT VALUE IS USED  ######
+            Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                D = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                J = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               J0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               J1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               J2 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Jz = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jz0 = 0.00000   
+              Jz1 = 0.00000   
+              Jz2 = -1.00000  
+              Jxy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+             Jxy0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+             Jxy1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+             Jxy2 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Jx = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jx0 = -1.00000  
+              Jx1 = 0.00000   
+              Jx2 = 0.00000   
+               Jy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jy0 = 0.00000   
+              Jy1 = -1.00000  
+              Jy2 = 0.00000   
+       LargeValue = 12        
+
+         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
+       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+             exct = 1           ######  DEFAULT VALUE IS USED  ######
+       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
+    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
+           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
+    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expart input files  ######
+
+    zlocspin.def is written.
+      zTrans.def is written.
+   zInterAll.def is written.
+    namelist.def is written.
+     calcmod.def is written.
+     modpara.def is written.
+    greenone.def is written.
+    greentwo.def is written.
+
+######  Input files are generated.  ######
+
+Start: Read File 'namelist.def'.
+End: Read File 'namelist.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans.def' for Trans.
+Read File 'zInterAll.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Nsite= 12.
+Read File 'zTrans.def'.
+Read File 'zInterAll.def'.
+Read File 'greenone.def'.
+Read File 'greentwo.def'.
+comb_sum= 4096 
+MAX DIMENSION idim_max=4096 
+APPROXIMATE REQUIRED MEMORY  max_mem=0.000393 GB 
+sdim=64 =2^6
+Indices and Parameters of Definition files(*.def) are complete.
+LARGE ALLOCATE FINISH !
+EDTrans EDNTransfer=0 
+EDTrans EDNChemi=0 
+Start: Calc Sz. 
+idim=4096.000000 irght=63 ilft=4032 ihfbit=64 
+num_threads==24
+Xicnt=4096 
+End  : Calc Sz. 
+Start: calc diagaonal components of Hamiltonian. 
+End  : calc diagaonal components of Hamiltonian. 
+rand_i=0 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=1 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=2 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=3 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=4 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+Finish: Elapsed time is 30 [s].

@@ -1,0 +1,98 @@
+Start: Read File 'namelist.def'.
+End: Read File 'namelist.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans.def' for Trans.
+Read File 'zInterAll.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Nsite= 12.
+Read File 'zTrans.def'.
+X->NTransfer =24, X->Nsite= 12.
+Read File 'zInterAll.def'.
+Read File 'greenone.def'.
+Read File 'greentwo.def'.
+comb_sum= 15184 
+MAX DIMENSION idim_max=15184 
+APPROXIMATE REQUIRED MEMORY  max_mem=0.001458 GB 
+sdim=4096 =2^12
+Indices and Parameters of Definition files(*.def) are complete.
+LARGE ALLOCATE FINISH !
+EDTrans EDNTransfer=24 
+EDTrans EDNChemi=0 
+Start: Calc sgn. 
+End  : Calc sgn. 
+Start: Calc Sz. 
+j = 0 loc 1 
+j = 1 loc 0 
+j = 2 loc 1 
+j = 3 loc 0 
+j = 4 loc 1 
+j = 5 loc 0 
+j = 6 loc 1 
+j = 7 loc 0 
+j = 8 loc 1 
+j = 9 loc 0 
+j = 10 loc 1 
+j = 11 loc 0 
+idim=16777216.000000 irght=4095 ilft=16773120 ihfbit=4096 
+num_threads==24
+N_all_up=6 N_all_down=6 
+Xicnt=15184 
+End  : Calc Sz. 
+Start: calc diagaonal components of Hamiltonian. 
+End  : calc diagaonal components of Hamiltonian. 
+rand_i=0 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=1 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=2 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=3 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=4 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+Finish: Elapsed time is 30 [s].

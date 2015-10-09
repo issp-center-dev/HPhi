@@ -1,0 +1,178 @@
+% !TEX root = userguide_jp.tex
+%----------------------------------------------------------
+\chapter{How to use $\HPhi$?}
+\label{Ch:HowTo}
+
+\section{要件}
+
+$\HPhi$のコンパイル$\cdot$使用には次のものが必要です。
+\begin{itemize}
+\item Cコンパイラ (インテル、富士通、GNUなど)
+\item LAPACKライブラリ (インテルMKL, 富士通TCL, ATLASなど)
+\end{itemize}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+{\bf 例/ intelコンパイラーでの設定}
+
+intelコンパイラを使用する場合には、コンパイラに付属の設定用スクリプトを使用するのが簡単です。
+
+64ビットOSでbashを使っている場合には
+\begin{verbatim}
+source /opt/intel/bin/compilervars.sh intel64
+\end{verbatim}
+または
+\begin{verbatim}
+source /opt/intel/bin/iccvars.sh intel64
+source /opt/intel/mkl/bin/mklvars.sh
+\end{verbatim}
+等を\verb|~/.bashrc|に記載してください。
+詳しくはお手持ちのコンパイラ、ライブラリのマニュアルをお読みください。
+
+\end{screen}
+
+
+\section{インストール方法}
+\input{chap02_1_jp.tex}
+\label{Sec:HowToInstall}
+\section{ディレクトリ構成}
+HPhi.tar.gzを解凍後に構成されるディレクトリ構成を以下に示します。\\
+\\
+├── COPYING\\
+├── doc\\
+├── samples\\
+│  ├── Expert\\
+│  │  ├── Hubbard\\
+│  │  │  ├─square\\
+│  │  │  │  ├── *.def\\
+│  │  │  │  ├── output\_FullDiag\\
+│  │  │  │  │ └── **.dat\\
+│  │  │  │  ├── output\_Lanczos\\
+│  │  │  │  │ └── **.dat\\
+│  │  │  │  └── output\_TPQ\\
+│  │  │  │    ~~└── **.dat\\
+│  │  │  └─triangular\\
+│  │  │  ~~└── $\cdots$\\
+│  │  ├── Kondo\\
+│  │  │  └─chain\\
+│  │  │  ~~└── $\cdots$\\
+│  │  ├── Spin\\
+│  │    ~~  ├─HeisenbergChain\\
+│  │    ~~  │  ├── $\cdots$\\
+│  │    ~~  ├─HeisenbergSquare\\
+│  │    ~~  │  ├── $\cdots$\\
+│  │    ~~  └─Kitaev\\
+│  │    ~~  ~~└── $\cdots$\\
+│  └── Standard\\
+│  ~~  ├── Hubbard\\
+│  ~~  │  ├─square\\
+│  ~~  │  │  ├── StdFace.def\\
+│  ~~  │  │  ├── output\_FullDiag\\
+│  ~~  │  │  │ └── **.dat\\
+│  ~~  │  │  ├── output\_Lanczos\\
+│  ~~  │  │  │ └── **.dat\\
+│  ~~  │  │  └── output\_TPQ\\
+│  ~~  │  │    ~~└── **.dat\\
+│  ~~  │  └─triangular\\
+│  ~~  │  ~~└── $\cdots$\\
+│  ~~  ├── Kondo\\
+│  ~~  │  └─chain\\
+│  ~~  │  ~~└── $\cdots$\\
+│  ~~  └── Spin\\
+│  ~~  ~~  ├─HeisenbergChain\\
+│  ~~  ~~  │  ├── $\cdots$\\
+│  ~~  ~~  ├─HeisenbergSquare\\
+│  ~~  ~~  │  ├── $\cdots$\\
+│  ~~  ~~  └─Kitaev\\
+│  ~~  ~~  ~~  └── $\cdots$\\
+└── src\\
+  ~~ ├── **.c\\
+  ~~ ├── include\\
+  ~~ │   └── **.h\\
+  ~~ ├── make.sys\\
+  ~~ └── makefile\\
+
+\newpage
+\section{基本的な使い方}
+$\HPhi$ではスタンダードモードとエキスパートモードの2つのモードが存在します。ここでは、スタンダードモードおよびエキスパートモードでの計算に関して、それぞれ基本的な流れを記載します。
+
+\subsection{スタンダードモード}
+スタンダードモードでの動作方法は下記の通りです。
+
+ \begin{enumerate}
+   \item  計算用ディレクトリの作成
+
+計算シナリオ名を記載したディレクトリを作成します。
+
+   \item  スタンダードモード用入力ファイルの作成
+
+スタンダードモードでは、あらかじめ用意されたいくつかの
+モデル(HeisenbergモデルやHubbardモデル)や格子(正方格子など)を指定し、
+それらに対するいくつかのパラメーター(最近接$\cdot$次近接スピン結合やオンサイトクーロン積分など)と
+計算手法(Lanczos法、TPQ法など)を設定します。
+各ファイルはSec. \ref{Ch:HowToStandard}に従い記載してください。
+
+ \item  実行
+
+"\verb|-s|"(``\verb|--standard|'' でも可)をオプションとして指定の上、
+1で作成した入力ファイル名を引数とし、\verb|HPhi|を実行します。
+
+\verb|$ | \underline{パス}\verb|/HPhi -s | \underline{入力ファイル}
+
+\item 途中経過
+
+計算実行の経過についてoutputフォルダにログファイルが出力されます。
+出力されるファイルの詳細に関しては\ref{Sec:outputfile}を参考にしてください。
+
+\item 最終結果
+
+計算が正常終了した場合、
+計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
+出力されるファイルの詳細に関しては\ref{Sec:outputfile}を参考にしてください。
+\end{enumerate}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+{\bf OpenMPスレッド数の指定}
+
+実行時のOpenMPのスレッド数を指定する場合は、
+$\HPhi$を実行する前に以下の様にしてください(16スレッドの場合)。
+\begin{verbatim}
+export OMP_NUM_THREADS=16
+\end{verbatim}
+
+\end{screen}
+
+\newpage
+\subsection{エキスパートモード}
+エキスパートモードでの動作方法は下記の通りです。
+
+ \begin{enumerate}
+   \item  計算用ディレクトリの作成
+
+計算シナリオ名(名前は任意)を記載したディレクトリを作成します。
+
+   \item  詳細入力ファイルの作成
+
+エキスパートモードでは、ハミルトニアンのすべての項を記述する詳細入力ファイルと計算条件のファイル、およびそれらのファイル名のリストファイルを作成します。各ファイルはSec. \ref{Ch:HowToExpert}に従い記載してください。なお、リストファイルの作成はスタンダード用のファイルStdFace.defを用いると容易に作成することができます。
+
+ \item  実行
+
+"\verb|-e|"(``\verb|--expert|'' でも可)をオプションとして指定の上、1で作成した入力リストファイル名を引数とし、ターミナルから$\HPhi$を実行します。
+
+\verb|$ | \underline{パス}\verb|/HPhi -e | \underline{入力リストファイル}
+
+\item 途中経過
+
+計算実行の経過についてoutputフォルダにログファイルが出力されます。出力されるファイルの詳細に関しては\ref{Sec:outputfile}を参考にしてください。
+
+\item 最終結果
+
+計算が正常終了した場合、計算モードに従いoutputフォルダに計算結果ファイルが出力されます。出力されるファイルの詳細に関しては\ref{Sec:outputfile}を参考にしてください。
+\end{enumerate}

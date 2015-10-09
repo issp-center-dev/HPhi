@@ -1,0 +1,51 @@
+
+\begin{enumerate}
+
+\item $\HPhi$ は次の場所からダウンロードできます。\\
+\url{https://github.com/QLMS/HPhi/releases}
+
+\item ダウンロードしたファイルを展開し、
+展開したディレクトリのなかにある\verb|src/|ディレクトリに移動してください。
+\begin{verbatim}
+$ tar xzvf 
+$ cd /src/
+\end{verbatim}
+
+\item インストール環境を設定します。
+  ファイル\verb|make.sys|を編集してコンパイラやオプションの指定をしてください。
+  いくつかの既知のシステムに対応する設定例がコメントとして\verb|make.sys|に記述されていますので
+  それを用いることもできます。例えば、物性研究所システムB(sekirei)にインストールする場合には
+  \verb|#####  ISSP System-B "sekirei" #####|と書いてある行の下にある
+\begin{verbatim}
+# CC = icc
+# LAPACK_FLAGS = -Dlapack -mkl=parallel 
+# FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+# MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
+# INCLUDE_DIR=./include
+\end{verbatim}
+の行頭の\verb|#|を消してコメント解除をしてください。
+
+\item 編集した\verb|make.sys|を保存し、次のように\verb|make|コマンドを実行してください。
+\begin{verbatim}
+$ make all
+\end{verbatim}
+
+これで実行可能ファイル\verb|HPhi|が生成されるので、
+このディレクトリにパスを通すか、
+パスの通っている場所にシンボリックリンクを作ってください。
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+実行ファイルにパスを通す時には、次のようにします。
+\\
+\verb|$ export PATH=${PATH}:|\underline{HPhiのディレクトリ}\verb|/src/|
+\\
+この設定を常に残すには、例えばログインシェルが\verb|bash|の場合には
+\verb|~/.bashrc|ファイルに上記のコマンドを記載します。
+
+\end{screen}
+
+\end{enumerate}

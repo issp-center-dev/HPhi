@@ -1,0 +1,172 @@
+% !TEX root = userguide_en.tex
+%----------------------------------------------------------
+\chapter{How to use $\HPhi$?}
+\label{Ch:HowTo}
+
+\section{Prerequisite}
+
+$\HPhi$ requires the following packages:
+\begin{itemize}
+\item C compiler (intel, Fujitsu, GNU, etc. )
+\item LAPACK library (intel MKL, Fujitsu TCL, ATLAS, etc.)
+\end{itemize}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+{\bf E. g. / Settings of intel compiler}
+
+When you use the intel compiler, you can use easily scripts attached to the compiler.
+In the case of the bash in 64 bit OS, write the following in your \verb|~/.bashrc|:
+\begin{verbatim}
+source /opt/intel/bin/compilervars.sh intel64
+\end{verbatim}
+or
+\begin{verbatim}
+source /opt/intel/bin/iccvars.sh intel64
+source /opt/intel/mkl/bin/mklvars.sh
+\end{verbatim}
+
+Please read manuals of your compiler/library for more information.
+
+\end{screen}
+
+\section{Installation}
+\input{chap02_1_en.tex}
+\label{Sec:HowToInstall}
+
+\section{Directory structure}
+When HPhi.tar.gz is unzipped, the following directory structure is composed.\\
+\\
+├── COPYING\\
+├── doc\\
+├── sample\\
+│  ├── Expert\\
+│  │  ├── Hubbard\\
+│  │  │  ├─square\\
+│  │  │  │  ├── *.def\\
+│  │  │  │  ├── output\_FullDiag\\
+│  │  │  │  │ └── **.dat\\
+│  │  │  │  ├── output\_Lanczos\\
+│  │  │  │  │ └── **.dat\\
+│  │  │  │  └── output\_TPQ\\
+│  │  │  │    ~~└── **.dat\\
+│  │  │  └─triangular\\
+│  │  │  ~~└── $\cdots$\\
+│  │  ├── Kondo\\
+│  │  │  └─chain\\
+│  │  │  ~~└── $\cdots$\\
+│  │  └── Spin\\
+│  │    ~~  ├─HeisenbergChain\\
+│  │    ~~  │  ├── $\cdots$\\
+│  │    ~~  ├─HeisenbergSquare\\
+│  │    ~~  │  ├── $\cdots$\\
+│  │    ~~  └─Kitaev\\
+│  │    ~~  ~~└── $\cdots$\\
+│  └── Standard\\
+│  ~~  ├── Hubbard\\
+│  ~~  │  ├─square\\
+│  ~~  │  │  ├── StdFace.def\\
+│  ~~  │  │  ├── output\_FullDiag\\
+│  ~~  │  │  │ └── **.dat\\
+│  ~~  │  │  ├── output\_Lanczos\\
+│  ~~  │  │  │ └── **.dat\\
+│  ~~  │  │  └── output\_TPQ\\
+│  ~~  │  │    ~~└── **.dat\\
+│  ~~  │  └─triangular\\
+│  ~~  │  ~~└── $\cdots$\\
+│  ~~  ├── Kondo\\
+│  ~~  │  └─chain\\
+│  ~~  │  ~~└── $\cdots$\\
+│  ~~  └── Spin\\
+│  ~~  ~~  ├─HeisenbergChain\\
+│  ~~  ~~  │  ├── $\cdots$\\
+│  ~~  ~~  ├─HeisenbergSquare\\
+│  ~~  ~~  │  ├── $\cdots$\\
+│  ~~  ~~  └─Kitaev\\
+│  ~~  ~~  ~~  └── $\cdots$\\
+└── src\\
+~~  ├── **.c\\
+~~  ├── include\\
+~~  │   └── **.h\\
+~~  ├── make.sys\\
+~~  └── makefile\\
+
+\section{Basic usage}
+$\HPhi$ has two modes; standard mode and expert mode. Here, the basic flows of calculations by standard and expert modes are shown.
+
+\subsection{{\it Standard} mode}
+
+The procedure of calculation through the standard mode is shown as follows:
+
+\begin{enumerate}
+
+\item  Make a directory for a calculation scenario. 
+
+First, you make a working directory for the calculation.
+
+\item  Make input files for standard mode
+
+In the standard mode, you can choose a model (the Heisenberg model, the Hubbard model, etc.) and 
+a lattice (the square lattice, the triangular lattice, etc.) from ones provided;
+you can specify some parameters (such as the first/second nearest neighbor hopping integrals,
+the on-site Coulomb integral, etc.) for them.
+Finally, you have to specify the numerical method (such as the Lanczos method) employed in this calculation.
+The input file format is described in the Sec. \ref{Ch:HowToStandard}.
+
+\item  Run
+
+Run a executable \verb|HPhi| in terminal by setting option ``\verb|-s|" (or ``\verb|--standard|'') and the name of input file written in previous step.
+
+\verb|$ |\textit{Path}\verb|/HPhi -s |\textit{Input\_file\_name}
+
+\item Watch calculation logs
+
+Log files are outputted in the ``output" folder which is automatically made in the directory for a calculation scenario.
+The details of output files are shown in \ref{Sec:outputfile}.
+
+\item Results
+
+If the calculation is finished normally, the result files are outputted in  the ``output" folder. The details of output files are shown in \ref{Sec:outputfile}.
+
+\end{enumerate}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+{\bf The number of threads for OpenMP}
+
+If you specify the number of OpenMP threads for $\HPhi$,
+you should set it as follows (in case of 16 threads) before the running:
+\begin{verbatim}
+export OMP_NUM_THREADS=16
+\end{verbatim}
+
+\end{screen}
+
+\subsection{{\it Expert} mode}
+The procedure of calculation for expert mode is shown as follows.
+ \begin{enumerate}
+   \item  Make a directory for a calculation scenario. \\
+First, you make a directory named as a calculation scenario (you can attach an arbitrary name to a directory).
+   \item  Make input files for expert mode\\
+For expert mode,  you should make input files 
+for constructing Hamiltonian operators, calculation condition and 
+a list file for the filenames of input files (see the file formats shown in  \ref{Ch:HowToExpert}). \\
+{\bf Note:} A List file can be easily made by using standard mode.
+ \item  Run\\
+Run $\HPhi$ in terminal by setting option ``\verb|-e|" (or ``\verb|--expert|'') and a file name of a list file.\\
+\verb|$ |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
+
+
+\item Under running\\
+Log files are outputted in the ``output" folder which is automatically made in the directory for a calculation scenario.
+The details of output files are shown in \ref{Sec:outputfile}.
+
+\item Results\\
+If the calculation is finished normally, the result files are outputted in  the ``output" folder. The details of output files are shown in \ref{Sec:outputfile}.
+\end{enumerate}

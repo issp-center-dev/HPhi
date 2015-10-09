@@ -1,0 +1,244 @@
+% !TEX root = userguide_en.tex
+\subsection{Heisenberg model}
+
+This tutorial should be performed in 
+\begin{verbatim}
+samples/Standard/Spin/HeisenbergChain/
+\end{verbatim}
+
+The input file, reference outputs, and the redirected standard output are
+provided as follows:
+\begin{verbatim}
+samples/Standard/Spin/HeisenbergChain/StdFace.def
+samples/Standard/Spin/HeisenbergChain/output_FullDiag/
+samples/Standard/Spin/HeisenbergChain/output_Lanczos/
+samples/Standard/Spin/HeisenbergChain/output_TPQ/
+samples/Standard/Spin/HeisenbergChain/FullDiag.out
+samples/Standard/Spin/HeisenbergChain/Lanczos.out
+samples/Standard/Spin/HeisenbergChain/TPQ.out
+\end{verbatim}
+%
+In this case, we treat the one dimensional antiferromagnetic Heisenberg chain
+which has a nearest neighbor spin coupling.
+\begin{align}
+  {\hat H} = J \sum_{i=1}^{N_{\rm site}} {\hat {\boldsymbol S}}_i \cdot {\hat {\boldsymbol S}}_{i+1}
+\end{align}
+
+The input file is as follows:
+\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+L = 16
+model = "Spin"
+method = "Lanczos"
+lattice = "chain lattice"
+J = 1.0
+2Sz = 0
+\end{verbatim}
+\end{screen}
+\end{minipage}
+%
+\\
+In this tutorial, J and the number of sites are set to 1 (arbitral unit)
+and 16 respectively.
+
+\subsubsection{Log output}
+{Log messages are outputted to the standard output.
+Log files for calculation procedure are made in "output" directory which is automatically created.
+In this example, the following files are outputted.\\}
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+CHECK_InterAll.dat     Time_CG_EigenVector.dat  zvo_Lanczos_Step.dat  
+CHECK_Memory.dat       WarningOnTransfer.dat    zvo_sz_TimeKeeper.dat
+CHECK_Sdim.dat         zvo_TimeKeeper.dat
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\
+{The details for the outputted files are shown in \ref{Subsec:checkchemi}-\ref{Subsec:timecgeigenv}.}
+\\
+We execute
+
+\hspace{-0.7cm}
+\verb|$ |\textit{Path}\verb|/HPhi -s StdFace.def|
+\\
+and obtain following standard outputs:
+\begin{verbatim}
+######  Standard Intarface Mode STARTS  ######
+
+  Open Standard-Mode Inputfile StdFace.def 
+
+  KEYWORD : l                    | VALUE : 16 
+  KEYWORD : model                | VALUE : spin 
+  KEYWORD : method               | VALUE : lanczos 
+  KEYWORD : lattice              | VALUE : chainlattice 
+  KEYWORD : j                    | VALUE : 1.0 
+  KEYWORD : 2sz                  | VALUE : 0 
+
+#######  Parameter Summary  #######
+
+                L = 16 
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+\end{verbatim}
+(Partly omitted)
+\begin{verbatim}
+              2Sz = 0  
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expart input files  ######
+
+    zlocspin.def is written.
+      zTrans.def is written.
+   zInterAll.def is written.
+    namelist.def is written.
+     calcmod.def is written.
+     modpara.def is written.
+    greenone.def is written.
+    greentwo.def is written.
+
+######  Input files are generated.  ######
+
+Start: Read File 'namelist.def'.
+End: Read File 'namelist.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans.def' for Trans.
+Read File 'zInterAll.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Nsite= 16.
+Read File 'zTrans.def'.
+Read File 'zInterAll.def'.
+Read File 'greenone.def'.
+Read File 'greentwo.def'.
+comb_sum= 12870 
+MAX DIMENSION idim_max=12870 
+REQUIRED MEMORY  max_mem=0.000618 GB 
+sdim=256 =2^16
+Indices and Parameters of Definition files(*.def) are complete.
+LARGE ALLOCATE FINISH !
+EDTrans EDNTransfer=0 
+EDTrans EDNChemi=0 
+Start: Calc Sz. 
+idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
+num_threads==2
+Xicnt=12870 
+End  : Calc Sz. 
+Start: calc diagaonal components of Hamiltonian. 
+End  : calc diagaonal components of Hamiltonian. 
+Start: Calculate Lanczos Eigenvalue.
+initial_mode=0 normal: iv = 6436 i_max=12870 k_exct =1 
+stp=4 -0.2423006825 1.4795269690 2.8204808612 3.5851499951 
+stp=6 -1.5930861352 -0.0869006048 1.2794492426 2.3323141732 
+stp=8 -2.7742729206 -1.2848359197 -0.1095390623 1.0439243217 
+\end{verbatim}
+(partly omitted)
+\begin{verbatim}
+stp=60 -7.1422963606 -6.6965474266 -6.5234070574 -6.2986527242 
+stp=62 -7.1422963606 -6.6965474266 -6.5234070574 -6.2986527253 
+End  : Calculate Lanczos EigenValue.
+Start: Calculate Lanczos Eigenvector.
+End: Calculate Lanczos Eigenvector.
+Start: Calculate Energy.
+End  : Calculate Energy by Lanczos method.
+energy=-7.142296 
+
+Accuracy check !!!
+-7.1422963606167746 -7.1422963606168191: diff_ere=0.000000000 ...
+ Accuracy of Lanczos vector is enough
+
+\end{verbatim}
+
+In the beginning of this run,
+files describing the detail of considered Hamiltonian 
+(\verb|zlocspin.def|、\verb|zTrans.def|、\verb|zInterAll.def|、
+\verb|namelist.def|、\verb|calcmod.def|、\verb|modpara.def|)
+and files specifying elements of correlation functions
+that will be calculated
+(\verb|greenone.def|、\verb|greentwo.def|)
+are generated.
+
+\subsubsection{Outputs for calculation results}
+\begin{description}
+\item {\bf Lanczos method}\\
+When a calculation by Lanczos method is finished normally, eigenenergies, one-body Green's functions and two-body Green's functions are calculated and outputted to the files, respectively. In this sample, following files are outputted.\\
+
+\begin{minipage}{12cm}
+\begin{screen}
+\begin{verbatim}
+zvo_energy.dat zvo_cisajs.dat 
+zvo_cisajscktalt.dat  
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+For standard mode, all pairs of $\langle n_{i\sigma} \rangle$ are calculated as one-body Green's functions and those of $\langle n_{i\sigma} n_{j\sigma'} \rangle$ are calculated as two-body Green's functions on the basis of the definition files, \verb|greenone.def| and \verb|greentwo.def|. \\
+When accuracy of Lanczos vectors is enough, one-body and two-body Green's functions are calculated by eigenvectors obtained by Lanczos method. While accuracy of Lanczos vectors is {\it not} enough, a message ``Accuracy of Lanczos vector is not enough" is outputted to the standard output and one-body and two-body Green's functions are calculated by eigenvectors obtained by CG method.
+The details of output files are shown in \ref{subsec:energy.dat}, \ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}.
+
+\item {\bf TPQ method}\\
+When \verb|method="TPQ"| is selected in an input file, a calculation by TPQ method is started. After finishing of the calculation normally, following files are outputted, where \%\% is a number of run and \&\& is a number of steps for TPQ method.\\
+\begin{minipage}{14cm}
+\begin{screen}
+\begin{verbatim}
+Norm_rand%%.dat SS_rand%%.dat
+zvo_cisajs_set%%step&&.dat  
+zvo_cisajscktalt_set%%step&&.dat  
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+In Norm\_rand\%\%.dat, basic informations such as inverse of temperature and a norm of wave function before normalization are outputted with a TPQ step for each number of runs. In SS\_rand\%\%.dat, physical quantities such as inverse of temperature, energy and expected value of square of Hamiltonian are outputted with a TPQ step for each number of runs.  In zvo\_cisajs\_set\%\%step\&\&.dat and zvo\_cisajscktalt\_set\%\%step\&\&.dat, one-body and two-body Green's functions are outputted for each number of a TPQ steps and runs.
+The details of these files are shown in \ref{Subsec:normrand}, \ref{Subsec:ssrand}, \ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}.
+
+\item {\bf Full diagonalization method}\\
+When \verb|method = "fulldiag"| is selected in an input file, a calculation by Full diagonalization method is started.
+After finishing of the calculation normally, following files are outputted, where xx is a number of an eigenstate counting from 0. \\
+\begin{minipage}{14cm}
+\begin{screen}
+\begin{verbatim}
+Eigenvalue.dat zvo_cisajs_eigen_xx.dat
+zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+In Eigenvalue.dat, an eigennumber and an eigenvalue are outputted for each lines.
+In zvo\_cisajs\_eigen\_xx.dat and zvo\_cisajscktalt\_eigen\_xx.dat, one-body Green's functions and two-body Green's functions are outputted for each eigennumber. 
+In zvo\_phys\_Nup4\_Ndown4.dat, physical quantities such as expected values of energy and doublon are outputted. The details of these files are shown in \ref{Subsec:eigenvalue} - \ref{Subsec:cisajscktalt}.
+
+
+\end{description}
+
+\subsection{Other tutorials}
+
+There are following tutorials in
+\verb|samples/Standard/|.
+
+\begin{itemize}
+\item The Hubbard model on the two dimensional square lattice
+
+  (\verb|samples/Standard/Hubbard/square/|)
+\item The Hubbard model on the two dimensional triangular lattice
+  
+  (\verb|samples/Standard/Hubbard/triangular/|)
+\item The one dimensional Kondo chain
+
+  (\verb|samples/Standard/Kondo/chain/|)
+\item The one dimensional antiferromagnetic Heisenberg chain
+  
+  (\verb|samples/Standard/Spin/HeisenbergChain/HeisenbergChain/|)
+\item The antiferromagnetic Heisenberg model on the two dimensional square lattice
+  
+  (\verb|samples/Standard/Spin/HeisenbergSquare/|)
+\item The Kitaev model with 2$\times$3 unit cells to Honeycomb lattice
+  
+  (\verb|samples/Standard/Spin/Kitaev/|)
+\end{itemize}
+
+We can perform these tutorials in the same way to the previous one.

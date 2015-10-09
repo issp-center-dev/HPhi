@@ -1,0 +1,88 @@
+Start: Read File 'namelist.def'.
+End: Read File 'namelist.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans.def' for Trans.
+Read File 'zInterAll.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Nsite= 8.
+Read File 'zTrans.def'.
+X->NTransfer =48, X->Nsite= 8.
+Read File 'zInterAll.def'.
+Read File 'greenone.def'.
+Read File 'greentwo.def'.
+comb_sum= 4900 
+MAX DIMENSION idim_max=4900 
+APPROXIMATE REQUIRED MEMORY  max_mem=0.000470 GB 
+sdim=256 =2^8
+Indices and Parameters of Definition files(*.def) are complete.
+LARGE ALLOCATE FINISH !
+EDTrans EDNTransfer=48 
+EDTrans EDNChemi=0 
+Start: Calc sgn. 
+End  : Calc sgn. 
+Start: Calc Sz. 
+idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
+num_threads==1
+Xicnt=4900 
+End  : Calc Sz. 
+Start: calc diagaonal components of Hamiltonian. 
+End  : calc diagaonal components of Hamiltonian. 
+Start: Calculate Lanczos Eigenvalue.
+initial_mode=0 normal: iv = 1634 i_max=4900 k_exct =1 
+stp=4 -6.1642062338 -1.0103390650 6.9005213196 16.0331119551 
+stp=6 -7.6964995377 -3.8001259153 1.0310499832 7.1339066112 
+stp=8 -8.5064747320 -5.6100904426 -2.2375195107 2.5334755060 
+stp=10 -9.0796583550 -7.0209585916 -4.2362003656 -1.1832554094 
+stp=12 -9.6154074458 -7.9520088482 -5.5643434194 -2.9553954029 
+stp=14 -9.9362754228 -8.3971328936 -6.5165397543 -4.3950436106 
+stp=16 -10.1344302226 -8.7889031353 -7.4688905290 -5.5433066721 
+stp=18 -10.2216671730 -9.0580837194 -7.9174370737 -6.1905679112 
+stp=20 -10.2480648666 -9.1885838703 -8.1453289699 -6.8136683151 
+stp=22 -10.2523814065 -9.2243246061 -8.2364152752 -7.1297384014 
+stp=24 -10.2528421498 -9.2305085769 -8.2622295929 -7.2522172417 
+stp=26 -10.2529007428 -9.2318123406 -8.2723823459 -7.3473545404 
+stp=28 -10.2529173517 -9.2326692005 -8.3122462686 -8.0458344839 
+stp=30 -10.2529357769 -9.4356369464 -9.2280774089 -8.2661903198 
+stp=32 -10.2529494210 -9.7742067560 -9.2308349782 -8.2704357288 
+stp=34 -10.2529526721 -9.8278481773 -9.2310404083 -8.2719431898 
+stp=36 -10.2529529327 -9.8324218603 -9.2310619275 -8.2722779930 
+stp=38 -10.2529529531 -9.8328436743 -9.2310645292 -8.2723503271 
+stp=40 -10.2529529551 -9.8328924048 -9.2310649280 -8.2723700792 
+stp=42 -10.2529529552 -9.8328978682 -9.2310649894 -8.2723759727 
+stp=44 -10.2529529553 -9.8328985890 -9.2310650006 -8.2723781454 
+stp=46 -10.2529529553 -9.8328986688 -9.2310650022 -8.2723787615 
+stp=48 -10.2529529553 -9.8328986748 -9.2310650024 -8.2723788639 
+stp=50 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788793 
+stp=52 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788842 
+stp=54 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788869 
+stp=56 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788878 
+stp=58 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788881 
+End  : Calculate Lanczos EigenValue.
+Start: Calculate Lanczos Eigenvector.
+End: Calculate Lanczos Eigenvector.
+Start: Calculate Energy.
+End  : Calculate Energy by Lanczos method.
+energy=-10.252953 
+
+Accuracy check !!!
+-1.02529529552636e+01 -1.02529529476343e+01: diff_ere=7.44108604610367e-10 var=1.82989978862640e-09 
+ Accuracy of Lanczos vectors is NOT enough
+Eigenvector is improved by CG method 
+Start: Calculate EigenVector by CG method.
+End: Calculate EigenVector by CG method.
+Start: Calculate Energy.
+End  : Calculate Energy by CG method.
+energy=-10.252953 
+
+CG Accuracy check !!!
+-1.02529529552636e+01 -1.02529529552636e+01: diff_ere=6.93012772866891e-16 var=6.78185943799791e-16 
+ 
+Start: Calculate one body Green functions by CG method.
+End: Calculate one body Green functions by Lanczos method.
+Start: Calculate two bodies Green functions by CG method.
+End  : Calculate two bodies Green functions by CG method.

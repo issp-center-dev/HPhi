@@ -1,0 +1,141 @@
+
+######  Standard Intarface Mode STARTS  ######
+
+  Open Standard-Mode Inputfile StdFace.def 
+
+  KEYWORD : w                    | VALUE : 4 
+  KEYWORD : l                    | VALUE : 2 
+  KEYWORD : model                | VALUE : fermionhubbard 
+  Skipping a line.
+  KEYWORD : method               | VALUE : tpq 
+  Skipping a line.
+  KEYWORD : lattice              | VALUE : triangularlattice 
+  KEYWORD : t                    | VALUE : 1.0 
+  KEYWORD : u                    | VALUE : 4.0 
+  KEYWORD : nelec                | VALUE : 8 
+  KEYWORD : 2sz                  | VALUE : 0 
+
+#######  Parameter Summary  #######
+
+                L = 2  
+                W = 4  
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                U = 4.00000   
+                t = 1.00000   
+                V = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               t' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               V' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       LargeValue = 17          ######  DEFAULT VALUE IS USED  ######
+
+         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
+       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+             exct = 1           ######  DEFAULT VALUE IS USED  ######
+       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
+    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
+           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
+    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+              2Sz = 0  
+            nelec = 8  
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expart input files  ######
+
+    zlocspin.def is written.
+      zTrans.def is written.
+   zInterAll.def is written.
+    namelist.def is written.
+     calcmod.def is written.
+     modpara.def is written.
+    greenone.def is written.
+    greentwo.def is written.
+
+######  Input files are generated.  ######
+
+Start: Read File 'namelist.def'.
+End: Read File 'namelist.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans.def' for Trans.
+Read File 'zInterAll.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Nsite= 8.
+Read File 'zTrans.def'.
+X->NTransfer =80, X->Nsite= 8.
+Read File 'zInterAll.def'.
+Read File 'greenone.def'.
+Read File 'greentwo.def'.
+comb_sum= 4900 
+MAX DIMENSION idim_max=4900 
+APPROXIMATE REQUIRED MEMORY  max_mem=0.000470 GB 
+sdim=256 =2^8
+Indices and Parameters of Definition files(*.def) are complete.
+LARGE ALLOCATE FINISH !
+EDTrans EDNTransfer=80 
+EDTrans EDNChemi=0 
+Start: Calc sgn. 
+End  : Calc sgn. 
+Start: Calc Sz. 
+idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
+num_threads==24
+Xicnt=4900 
+End  : Calc Sz. 
+Start: calc diagaonal components of Hamiltonian. 
+End  : calc diagaonal components of Hamiltonian. 
+rand_i=0 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=1 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=2 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=3 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=4 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+Finish: Elapsed time is 31 [s].
