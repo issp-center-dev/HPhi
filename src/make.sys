@@ -23,11 +23,11 @@
 
 #####  Intel  #####
 
-CC = icc
-LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -openmp-report2 -O3 -DHAVE_SSE2
-MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
-INCLUDE_DIR=./include
+# CC = icc
+# LAPACK_FLAGS = -Dlapack -mkl=parallel 
+# FLAGS = -openmp -openmp-report2 -O3 -DHAVE_SSE2
+# MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
+# INCLUDE_DIR=./include
 
 #####  GCC (Mac)  #####
 
@@ -39,8 +39,8 @@ INCLUDE_DIR=./include
 
 #####  GCC (Linux)  ##### 
 
-# CC = gcc
-# LAPACK_FLAGS = -Dlapack -llapack -lblas
-# FLAGS = -fopenmp  -lm
-# MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
-# INCLUDE_DIR=./include
+CC = gcc
+LAPACK_FLAGS = -Dlapack -llapack -lblas
+FLAGS = -fopenmp  -lm
+MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
+INCLUDE_DIR=./include

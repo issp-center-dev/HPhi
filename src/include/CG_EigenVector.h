@@ -14,7 +14,11 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#pragma once
+#ifndef HPHI_CG_EIGENVECTOR_H
+#define HPHI_CG_EIGENVECTOR_H
+
 #include "Common.h"
 
 int CG_EigenVector(struct BindStruct *X);
+
+#endif /* HPHI_CG_EIGENVECTOR_H */

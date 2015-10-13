@@ -13,7 +13,11 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#pragma once
+
+#ifndef HPHI_MLTPLY_H
+#define HPHI_MLTPLY_H
+
+#include "Common.h"
 #include "ErrorMessage.h"
 
 #define M_MLTPLY 0
@@ -659,3 +663,4 @@ long unsigned int is1_spin,
 long unsigned int sigma1
 );
 
+#endif /* HPHI_MLTPLY_H */

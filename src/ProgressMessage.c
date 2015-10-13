@@ -14,25 +14,16 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef HPHI_COMMON_H
-#define HPHI_COMMON_H
-
-#include <complex.h>
-#include "DefCommon.h"
-#include "global.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
-#include <omp.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include "ProgressMessage.h"
-#include "ErrorMessage.h"
-#include "LogMessage.h"
-#include "struct.h"
-#include "log.h"
-#include "dSFMT.h"
 
-#endif /* HPHI_COMMON_H */
+const char* cProFinishAlloc ="LARGE ALLOCATE FINISH !\n";
+const char* cProEDNTrans ="EDTrans EDNTransfer=%d \n";
+const char* cProEDNChemi ="EDTrans EDNChemi=%d \n";
+const char* cProStartCalcSgn = "Start: Calc sgn. \n";
+const char* cProEndCalcSgn = "End  : Calc sgn. \n";
+const char* cProStartCalcSz = "Start: Calc Sz. \n";
+const char* cProEndCalcSz = "End  : Calc Sz. \n";
+const char* cProStartOutputList = "Start: output list. \n";
+const char* cProEndOutputList = "End  : output list. \n";
+const char* cProStartCalcDiag = "Start: calc diagaonal components of Hamiltonian. \n";
+const char* cProEndCalcDiag = "End  : calc diagaonal components of Hamiltonian. \n";
