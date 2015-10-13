@@ -68,6 +68,9 @@ int CalcByLanczos(
     printf("Accuracy of Lanczos vectors is NOT enough\n");
     printf("Eigenvector is improved by CG method \n");
 
+//
+  PowerLanczos(&(X->Bind));
+
     X->Bind.Def.St=1;
     CG_EigenVector(&(X->Bind));
     expec_energy(&(X->Bind));
