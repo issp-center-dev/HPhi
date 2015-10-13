@@ -13,72 +13,76 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#pragma once
+
+#ifndef HPHI_LOGMESSAGE_H
+#define HPHI_LOGMESSAGE_H
 
 //sz.c
-const char* cStateLocSpin= "j = %d loc %d \n";
-const char* cInitalSz=  "initial sz : %s";
-const char* cOMPSzStart=  "omp parallel sz finishes: %s";
-const char* cOMPSzMid= "mid omp parallel sz : %s";
-const char* cOMPSzFinish=  "omp parallel sz finishes: %s";
-const char* cSingleSzStart="single sz starts: %s";
-const char* cSingleSzFinish= "single sz finishes: %s";
-const char* cReadSzStart ="READ=1: read starts: %s";
-const char* cReadSzEnd  ="READ=1: read finishes: %s";
+const char* cStateLocSpin;
+const char* cInitalSz;
+const char* cOMPSzStart;
+const char* cOMPSzMid;
+const char* cOMPSzFinish;
+const char* cSingleSzStart;
+const char* cSingleSzFinish;
+const char* cReadSzStart;
+const char* cReadSzEnd;
 
 //CG_EigenVector.c
-const char* cLogCG_EigenVecStart="Start: Calculate EigenVector by CG method.\n";
-const char* cLogCG_EigenVecEnd="End: Calculate EigenVector by CG method.\n";
-const char* cCG_EigenVecFinish="CG Eigenvector finishes: %s";
+const char* cLogCG_EigenVecStart;
+const char* cLogCG_EigenVecEnd;
+const char* cCG_EigenVecFinish;
 
 //diagonalcalc.c
-const char* cDiagonalCalcFinish="diagonal calculation finishes: %s";
+const char* cDiagonalCalcFinish;
 
 
 //FirstMultiply.c, Multiply.c
-const char* cTPQStep="step %d:TPQ begins: %s";
-const char* cTPQStepEnd="step %d:TPQ ends: %s";
+const char* cTPQStep;
+const char* cTPQStepEnd;
 
 //Lanczos_EigenValue.c
-const char* cLogLanczos_EigenValueStart="Start: Calculate Lanczos Eigenvalue.\n";
-const char* cLogLanczos_EigenValueNotConverged="Lanczos Eigenvalue is not converged in this process.";
-const char* cLogLanczos_EigenValueEnd="End  : Calculate Lanczos EigenValue.\n";
-const char* cLanczos_EigenValueStart="Lanczos Eigen Value start: %s";
-const char* cLanczos_EigenValueStep="%3d th Lanczos step: %s";
-const char* cLanczos_EigenValueFinish= "Lanczos Eigenvalue finishes: %s";
+const char* cLogLanczos_EigenValueStart;
+const char* cLogLanczos_EigenValueNotConverged;
+const char* cLogLanczos_EigenValueEnd;
+const char* cLanczos_EigenValueStart;
+const char* cLanczos_EigenValueStep;
+const char* cLanczos_EigenValueFinish;
 
 //Lanczos_EigenVector.c
-const char* cLogLanczos_EigenVectorStart="Start: Calculate Lanczos Eigenvector.\n";
-const char* cLogLanczos_EigenVectorEnd="End: Calculate Lanczos Eigenvector.\n";
-const char* cLanczos_EigenVectorFinish="Lanczos Eigenvector finishes: %s";
+const char* cLogLanczos_EigenVectorStart;
+const char* cLogLanczos_EigenVectorEnd;
+const char* cLanczos_EigenVectorFinish;
 
 //expec.c
-const char* cExpecStart="step %d:Expec begins: %s";
-const char* cExpecEnd="step %d:Expec ends: %s";
+const char* cExpecStart;
+const char* cExpecEnd;
 
 //expec_cisajs.c
-const char* cLogLanczosExpecOneBodyGStart="Start: Calculate one body Green functions by Lanczos method.\n";
-const char* cLogCGExpecOneBodyGStart="Start: Calculate one body Green functions by CG method.\n";
-const char* cLogLanczosExpecOneBodyGEnd="End: Calculate one body Green functions by Lanczos method.\n";
-const char* cLogCGExpecOneBodyGEnd="End: Calculate one body Green functions by CG method.\n";
+const char* cLogLanczosExpecOneBodyGStart;
+const char* cLogCGExpecOneBodyGStart;
+const char* cLogLanczosExpecOneBodyGEnd;
+const char* cLogCGExpecOneBodyGEnd;
 
-const char* cLanczosExpecOneBodyGFinish ="Lanczos expec_cisajs finishes: %s";
-const char* cTPQExpecOneBodyGStart = "set %d step %d:expec_cisajs begins: %s";
-const char* cTPQExpecOneBodyGFinish = "set %d step %d:expec_cisajs finishes: %s";
-const char* cExpecOneBodyGFinish= "CG expec_cisajs finishes: %s";
+const char* cLanczosExpecOneBodyGFinish;
+const char* cTPQExpecOneBodyGStart;
+const char* cTPQExpecOneBodyGFinish;
+const char* cExpecOneBodyGFinish;
 
 //expec_cisajucktaltdc.c
-const char*  cLogLanczosExpecTwoBodyGFinish= "End  : Calculate two bodies Green functions by Lanczos method.\n";
-const char*  cLogCGExpecTwoBodyGFinish= "End  : Calculate two bodies Green functions by CG method.\n";
-const char*  cLanczosExpecTwoBodyGFinish= "Lanczos expec_cisajacktalt finishes: %s";
-const char*  cCGExpecTwoBodyGFinish= "CG expec_cisajacktalt begins: %s";
-const char*  cTPQExpecTwoBodyGStart = "set %d step %d:expec_cisajscktaltdc finishes: %s";
-const char*  cTPQExpecTwoBodyGFinish = "set %d step %d:expec_cisajscktaltdc finishes: %s";
+const char*  cLogLanczosExpecTwoBodyGFinish;
+const char*  cLogCGExpecTwoBodyGFinish;
+const char*  cLanczosExpecTwoBodyGFinish;
+const char*  cCGExpecTwoBodyGFinish;
+const char*  cTPQExpecTwoBodyGStart;
+const char*  cTPQExpecTwoBodyGFinish;
 
 //expec_energy.c
-const char* cLogExpecEnergyStart="Start: Calculate Energy.\n";
-const char* cLogLanczosExpecEnergyEnd="End  : Calculate Energy by Lanczos method.\n";
-const char* cLogCGExpecEnergyEnd="End  : Calculate Energy by CG method.\n";
-const char* cLogEnergy="energy=%lf \n";
-const char* cLanczosExpecEnergyEnd= "Lanczos expec energy finishes: %s";
-const char* cCGExpecEnergyEnd= "CG expec energy finishes: %s";
+const char* cLogExpecEnergyStart;
+const char* cLogLanczosExpecEnergyEnd;
+const char* cLogCGExpecEnergyEnd;
+const char* cLogEnergy;
+const char* cLanczosExpecEnergyEnd;
+const char* cCGExpecEnergyEnd;
+
+#endif /* HPHI_LOGMESSAGE_H */

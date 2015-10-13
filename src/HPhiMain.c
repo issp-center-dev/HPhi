@@ -14,7 +14,9 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /*-------------------------------------------------------------*/
-#include "HPhiMain.h"
+
+#include "Common.h"
+#include "readdef.h"
 #include "StdFace_main.h"
 
 /** 
