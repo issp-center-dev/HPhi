@@ -193,6 +193,8 @@ int expec_energy(struct BindStruct *X){
     if(childfopen(sdt, "w", &fp)!=0){
       return -1;
     }  
+    //printf("AZ: %lf %lf \n",creal(v1[0]),creal(v1[20]));
+    //printf("BZ: %lf %lf \n",creal(v0[0]),creal(v0[20]));
     fprintf(fp,"Energy  %.10lf \n",X->Phys.energy);
     fprintf(fp,"Doublon  %.10lf \n",X->Phys.doublon);
     fclose(fp);

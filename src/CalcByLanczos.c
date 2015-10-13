@@ -29,6 +29,7 @@ int CalcByLanczos(
 				 )
 {
   double diff_ene,var;
+  int flag;
   // this part will be modified
   switch(X->Bind.Def.iCalcModel){
   case HubbardGC:
@@ -61,27 +62,39 @@ int CalcByLanczos(
   printf("\n");
   printf("Accuracy check !!!\n");
   printf("%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+
   if(diff_ene < eps_Energy && var< eps_Energy){
     printf("Accuracy of Lanczos vectors is enough\n");
     printf("\n");
   }else{
     printf("Accuracy of Lanczos vectors is NOT enough\n");
-    printf("Eigenvector is improved by CG method \n");
+    printf("Eigenvector is improved by power Lanczos method \n");
+    printf("Power Lanczos starts\n");
+    flag=PowerLanczos(&(X->Bind));
+    printf("Power Lanczos ends\n");
+    if(flag==1){
+      var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
+      diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
 
+      printf("\n");
+      printf("Power Lanczos Accuracy check !!!\n");
+      printf("%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+      printf("\n");
+    }else{printf("Accuracy of Lanczos vectors is NOT enough\n");
+      printf("Eigenvector is improved by CG method \n");
 //
-  PowerLanczos(&(X->Bind));
+      X->Bind.Def.St=1;
+      CG_EigenVector(&(X->Bind));
+      expec_energy(&(X->Bind));
 
-    X->Bind.Def.St=1;
-    CG_EigenVector(&(X->Bind));
-    expec_energy(&(X->Bind));
+      var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
+      diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
 
-    var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
-    diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
-
-    printf("\n");
-    printf("CG Accuracy check !!!\n");
-    printf("%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
-    printf("\n");
+      printf("\n");
+      printf("CG Accuracy check !!!\n");
+      printf("%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+      printf("\n");
+    }
   }  
   
   expec_cisajs(&(X->Bind),v1);
