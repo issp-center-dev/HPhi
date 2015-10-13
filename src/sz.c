@@ -276,12 +276,10 @@ int sz
 	  div_up = i & X->Def.Tpow[j];
 	  div_up = div_up/X->Def.Tpow[j];
 	  num_up +=div_up;
-	}       
-	//ToDo: Change this part to adopt Sz = nonzero.
+	}
 	all_up   = (X->Def.Nsite+1)/2;
 	tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
 	jb   += tmp_1;
-	printf("ib=%ld, num_up_rgh=%ld, jb=%ld\n",ib, X->Def.Ne-num_up, jb);
       }
       //#pragma omp barrier
 
