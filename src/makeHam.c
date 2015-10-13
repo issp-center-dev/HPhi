@@ -40,6 +40,8 @@ int makeHam(struct BindStruct *X){
   long unsigned int tmp_off,tmp_off_2;
   int tmp_sgn;
   off=0;
+  tmp_off=0;
+  tmp_off_2=0;
   
   long unsigned int i_max;
   i_max=X->Check.idim_max;
@@ -354,7 +356,6 @@ int makeHam(struct BindStruct *X){
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling; i++){
       child_exchange_spin_GetInfo(i, X);
-
       for(j=1;j<=X->Large.i_max;j++){
 	dmv =GC_child_exchange_spin_element(j, v0, v1, X,&tmp_off);
 	Ham[tmp_off+1][j] +=dmv;
@@ -398,7 +399,6 @@ int makeHam(struct BindStruct *X){
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling; i++){
       child_exchange_spin_GetInfo(i, X);
-
       for(j=1;j<=X->Large.i_max;j++){
 	dmv          = child_exchange_spin_element(j, v0, v1, X,&tmp_off);
 	Ham[tmp_off][j] += dmv;
