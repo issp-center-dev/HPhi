@@ -661,7 +661,7 @@ static void PrintModPara(
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Model_Parameters   0\n");
   fprintf(fp, "--------------------\n");
-  fprintf(fp, "VMC_Cal_Parameters\n");
+  fprintf(fp, "HPhi_Cal_Parameters\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "CDataFileHead  %s\n", filehead);
   fprintf(fp, "CParaFileHead  zqp\n");
