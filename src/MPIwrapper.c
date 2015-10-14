@@ -22,62 +22,98 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  *
- * Main routine for the standard mode
+ * MPI initialization wrapper
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void InitializeMPI(int argc, char *argv[]){
+  int ierr;
+
 #ifdef MPI
-  MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-  if (myrank == 0){
-    stdoutMPI = stdout;
-  }
-  else{
-    stdoutMPI = fopen("/dev/null", "w");
-  }
+  ierr = MPI_Init(&argc, &argv);
+  ierr = MPI_Comm_size(MPI_COMM_WORLD, &nproc);
+  ierr = MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+  if(ierr != 0) AbortMPI(ierr);
 #else
   nproc = 1;
   myrank = 0;
-  stdoutMPI = stdout;
 #endif
+  if (myrank == 0) stdoutMPI = stdout;
+  else stdoutMPI = fopen("/dev/null", "w");
 }
 
+/**
+ *
+ * MPI Abortation wrapper
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 void AbortMPI(int errorcode /**< [in]*/)
 {
   int ierr;
 #ifdef MPI
-  MPI_Abort(MPI_COMM_WORLD,errorcode,ierr);
-#else
+  ierr = MPI_Abort(MPI_COMM_WORLD,errorcode);
+  ierr = MPI_Finalize();
+  if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
+#endif
   exit(errorcode);
-#endif
 }
 
+/**
+ *
+ * MPI Finitialization wrapper
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 void FinalizeMPI(){
+  int ierr;
 #ifdef MPI
-  MPI_Finalize();
+  ierr = MPI_Finalize();
+  if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
 }
 
-void fopenMPI(char* FileName, FILE* fp, char* mode){
-  if (myrank == 0){
-    if ((fp = fopen(FileName, mode)) == NULL){
-      fprintf(stdout,"\n  ERROR !  Cannot open %s !\n\n", FileName);
-      AbortMPI(-1);
-    }
-  }
-  else{
-    fp = 0;
-  }
+/**
+ *
+ * MPI file I/O (open) wrapper
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+FILE* fopenMPI(
+  char* FileName /**< [in] Input/output file*/, 
+  char* mode /**< [in] "w", "r", etc. */){
+  FILE* fp;
+
+  if (myrank == 0) fp = fopen(FileName, mode);
+  else fp = fopen("/dev/null", "w");
+
+  return fp;
 }
 
-void 
+/**
+ *
+ * MPI file I/O (close) wrapper
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void  fcloseMPI(
+  FILE* fp /**< [in]*/){
+  if (myrank == 0) fclose(fp);
+}
 
-void fgetsMPI(FILE* fp, char* InputString)
+/**
+ *
+ * MPI file I/O (get a line) wrapper
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void fgetsMPI(
+  FILE* fp /**< [in] file pointer*/, 
+  char* InputString /**< [out] read line. The length must be 256*/)
 {
   fgets(InputString, 256, fp);
 #ifdef MPI
   MPI_Bcast(InputString, 256, MPI_CHAR, 0, MPI_COMM_WORLD);
 #endif
 }
+
