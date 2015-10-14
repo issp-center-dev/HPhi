@@ -35,6 +35,9 @@ int main(int argc, char* argv[]){
 
   int mode=0;
   char cFileListName[D_FileNameMax];
+
+  InitializeMPI(argc, argv);
+
   if(JudgeDefType(argc, argv, &mode)!=0){
     return -1;
   }  
@@ -146,5 +149,6 @@ int main(int argc, char* argv[]){
     return -1;
   }  
   
+  FinalizeMPI();
   return 0;
 }

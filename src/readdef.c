@@ -227,7 +227,7 @@ int GetFileName(
   FILE *fplist;
   int itmpKWidx=-1;
   char ctmpFileName[D_FileNameMaxReadDef];
-  char ctmpKW[D_CharTmpReadDef];
+  char ctmpKW[D_CharTmpReadDef], ctmp2[256];
   int i;
   for(i=0; i< D_iKWNumDef; i++){
     strcpy(cFileNameList[i],"");
@@ -236,7 +236,9 @@ int GetFileName(
   fplist = fopenMPI(cFileListNameFile, "r");
   if(fplist==NULL) return ReadDefFileError(cFileListNameFile);
 
-  while( fscanf(fplist,"%s %s\n", ctmpKW, ctmpFileName) !=EOF){
+  while(fgets(ctmp2, 256, fplist) != NULL){ 
+    sscanf(ctmp2,"%s %s\n", ctmpKW, ctmpFileName);
+
     if(strncmp(ctmpKW, "#", 1)==0){
       continue;
     }
@@ -284,7 +286,7 @@ int ReadDefFileNInt(
 {
   FILE *fp;
   char defname[D_FileNameMaxReadDef];
-  char ctmp[D_CharTmpReadDef];
+  char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
 
   InitializeInteractionNum(X);
@@ -338,90 +340,117 @@ int ReadDefFileNInt(
       /* Read modpara.def---------------------------------------*/
       //TODO: add error procedure here when parameters are not enough.
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &itmp); //2
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &itmp); //2
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp); //3
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp); //4
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp); //5
-      fscanf(fp,"%s %s\n", ctmp, X->CDataFileHead); //6
-      fscanf(fp,"%s %s\n", ctmp, X->CParaFileHead); //7
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %s\n", ctmp, X->CDataFileHead); //6
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
-      fscanf(fp,"%s %d\n", ctmp, &(X->Nsite));      //9
-      fscanf(fp,"%s %d\n", ctmp, &(X->Nup));         //10
-      fscanf(fp,"%s %d\n", ctmp, &(X->Ndown));       //11	
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nsite));      //9
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nup));         //10
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Ndown));       //11	
       if(X->iCalcModel == Spin){
 	X->Ne=X->Nup;
 	X->Ndown=X->Nsite-X->Nup;
       }
-      fscanf(fp,"%s %d\n", ctmp, &(X->Lanczos_max)); //12
-      fscanf(fp,"%s %ld\n", ctmp, &(X->initial_iv));//13
-      fscanf(fp,"%s %d\n", ctmp, &(X->nvec));      //14
-      fscanf(fp,"%s %d\n", ctmp, &(X->k_exct));    //15
-      fscanf(fp,"%s %d\n", ctmp, &(X->LanczosEps)); //16
-      fscanf(fp,"%s %d\n", ctmp, &(X->LanczosTarget)); //17
-      fscanf(fp, "%s %lf\n", ctmp, &(LargeValue)); //18
-      fscanf(fp, "%s %d\n", ctmp, &(NumAve)); //19
-      fscanf(fp, "%s %d\n", ctmp, &(ExpecInterval)); //20
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Lanczos_max)); //12
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %ld\n", ctmp, &(X->initial_iv));//13
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->nvec));      //14
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->k_exct));    //15
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->LanczosEps)); //16
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->LanczosTarget)); //17
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2, "%s %lf\n", ctmp, &(LargeValue)); //18
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2, "%s %d\n", ctmp, &(NumAve)); //19
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2, "%s %d\n", ctmp, &(ExpecInterval)); //20
       break;
       
     case KWLocSpin:
       // Read locspn.def
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NLocSpn));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NLocSpn));
       break;
     case KWTrans: 
       // Read transfer.def
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NTransfer));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NTransfer));
       break;
     case KWCoulombIntra:
       /* Read coulombintra.def----------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NCoulombIntra));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCoulombIntra));
       break;
     case KWCoulombInter:
       /* Read coulombinter.def----------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NCoulombInter));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCoulombInter));
       break;
     case KWHund:
       /* Read hund.def------------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NHundCoupling));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NHundCoupling));
       break;
     case KWPairHop:
       /* Read pairhop.def---------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NPairHopping));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairHopping));
       break;
     case KWExchange:
       /* Read exchange.def--------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NExchangeCoupling));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NExchangeCoupling));
       break;
     case KWIsing:
       /* Read ising.def--------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NIsingCoupling));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NIsingCoupling));
       break;
     case KWPairLift:
       /* Read exchange.def--------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NPairLiftCoupling));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairLiftCoupling));
       break;
     case KWInterAll:
       /* Read InterAll.def--------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NInterAll));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NInterAll));
       break;
     case KWOneBodyG:
       /* Read cisajs.def----------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NCisAjt));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCisAjt));
       break;
     case KWTwoBodyG:
       /* Read cisajscktaltdc.def--------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fscanf(fp,"%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
       break;
     default:
       fprintf(stdoutMPI, "%s", cErrIncorrectDef);
@@ -461,7 +490,7 @@ int ReadDefFileIdxPara(
 {
   FILE *fp;
   char defname[D_FileNameMaxReadDef];
-  char ctmp[D_CharTmpReadDef];
+  char ctmp[D_CharTmpReadDef], ctmp2[256];
 
   int i,idx;
   int xitmp[8];
@@ -486,7 +515,9 @@ int ReadDefFileIdxPara(
     switch(iKWidx){
     case KWLocSpin:
       /* Read locspn.def----------------------------------------*/
-      while( fscanf(fp, "%d %d\n", &(xitmp[0]), &(xitmp[1]) )!=EOF){
+      while( fgets(ctmp2, 256, fp) != NULL){
+        sscanf(ctmp2, "%d %d\n", &(xitmp[0]), &(xitmp[1]) );
+
 	X->LocSpn[xitmp[0]] = xitmp[1];
 	if(CheckSite(xitmp[1], X->Nsite) !=0){
 	  fclose(fp);
@@ -504,16 +535,17 @@ int ReadDefFileIdxPara(
       /* transfer.def--------------------------------------*/
       if(X->NTransfer>0){
 	fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
-	while( fscanf(fp, "%d %d %d %d %lf %lf\n", 
-		      &isite1,
-		      &isigma1,
-		      &isite2,
-		      &isigma2,
-		      &dvalue_re,
-		      &dvalue_im
-		      )!=EOF
-	       )
+	while( fgets(ctmp2, 256, fp) != NULL )
 	  {
+      sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
+        &isite1,
+        &isigma1,
+        &isite2,
+        &isigma2,
+        &dvalue_re,
+        &dvalue_im
+        );
+
 	    X->GeneralTransfer[idx][0]=isite1;
 	    X->GeneralTransfer[idx][1]=isigma1;
 	    X->GeneralTransfer[idx][2]=isite2;
@@ -526,7 +558,7 @@ int ReadDefFileIdxPara(
 	    if(isite1==isite2 && isigma1==isigma2){
 	      if(abs(dvalue_im)> eps_CheckImag0){
 		//NonHermite
-		fprintf(stdoutMPIcErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
+		fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
 		fclose(fp);
 		return ReadDefFileError(defname);
 	      }
@@ -559,7 +591,7 @@ int ReadDefFileIdxPara(
       }
 
       if(CheckTransferHermite(X) !=0){
-	fprintf(stdoutMPI"%s", cErrNonHermiteTransForAll);
+	fprintf(stdoutMPI, "%s", cErrNonHermiteTransForAll);
 	fclose(fp);
 	return -1;
       }
@@ -569,11 +601,12 @@ int ReadDefFileIdxPara(
     case KWCoulombIntra:
       /*coulombintra.def----------------------------------*/
       if(X->NCoulombIntra>0){
-	while( fscanf(fp, "%d %lf\n", 
-		      &(X->CoulombIntra[idx][0]),
-		      &(X->ParaCoulombIntra[idx])
-		      )!=EOF
-	       ){
+	while(fgets(ctmp2, 256, fp) != NULL){
+    sscanf(ctmp2, "%d %lf\n",
+      &(X->CoulombIntra[idx][0]),
+      &(X->ParaCoulombIntra[idx])
+      );
+
 	  if(CheckSite(X->CoulombIntra[idx][0], X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
@@ -590,12 +623,13 @@ int ReadDefFileIdxPara(
     case KWCoulombInter:
       /*coulombinter.def----------------------------------*/
       if(X->NCoulombInter>0){
-	while( fscanf(fp, "%d %d %lf\n", 
-		      &(X->CoulombInter[idx][0]),
-		      &(X->CoulombInter[idx][1]),
-		      &(X->ParaCoulombInter[idx])
-		      )!=EOF
-	       ){
+	while(fgets(ctmp2, 256, fp) != NULL){
+    sscanf(ctmp2, "%d %d %lf\n",
+      &(X->CoulombInter[idx][0]),
+      &(X->CoulombInter[idx][1]),
+      &(X->ParaCoulombInter[idx])
+      );
+
 	  if(CheckPairSite(X->CoulombInter[idx][0], X->CoulombInter[idx][1],X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
@@ -613,13 +647,14 @@ int ReadDefFileIdxPara(
     case KWHund:
       /*hund.def------------------------------------------*/
       if(X->NHundCoupling>0){
-	while( fscanf(fp, "%d %d %lf\n", 
-		      &(X->HundCoupling[idx][0]),
-		      &(X->HundCoupling[idx][1]),
-		      &(X->ParaHundCoupling[idx])
-		      )!=EOF
-	       )
+	while(fgets(ctmp2,256,fp) != NULL)
 	  {
+      sscanf(ctmp2, "%d %d %lf\n",
+        &(X->HundCoupling[idx][0]),
+        &(X->HundCoupling[idx][1]),
+        &(X->ParaHundCoupling[idx])
+        );
+
 	  if(CheckPairSite(X->HundCoupling[idx][0], X->HundCoupling[idx][1],X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
@@ -636,12 +671,13 @@ int ReadDefFileIdxPara(
     case KWPairHop:
       /*pairhop.def---------------------------------------*/
       if(X->NPairHopping>0){
-	while( fscanf(fp, "%d %d %lf\n", 
-		      &(X->PairHopping[idx][0]),
-		      &(X->PairHopping[idx][1]),
-		      &(X->ParaPairHopping[idx])
-		      )!=EOF
-	       ){
+	while(fgets(ctmp2, 256, fp) != NULL){
+    sscanf(ctmp2, "%d %d %lf\n",
+      &(X->PairHopping[idx][0]),
+      &(X->PairHopping[idx][1]),
+      &(X->ParaPairHopping[idx])
+      );
+
 	  if(CheckPairSite(X->PairHopping[idx][0], X->PairHopping[idx][1],X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
@@ -658,12 +694,13 @@ int ReadDefFileIdxPara(
     case KWExchange:
       /*exchange.def--------------------------------------*/
       if(X->NExchangeCoupling>0){
-	while( fscanf(fp, "%d %d %lf\n", 
-		      &(X->ExchangeCoupling[idx][0]),
-		      &(X->ExchangeCoupling[idx][1]),
-		      &(X->ParaExchangeCoupling[idx])
-		      )!=EOF
-	       ){
+	while(fgets(ctmp2,256,fp) != NULL){
+    sscanf(ctmp2, "%d %d %lf\n",
+      &(X->ExchangeCoupling[idx][0]),
+      &(X->ExchangeCoupling[idx][1]),
+      &(X->ParaExchangeCoupling[idx])
+      );
+
 	  if(CheckPairSite(X->ExchangeCoupling[idx][0], X->ExchangeCoupling[idx][1],X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
@@ -681,12 +718,13 @@ int ReadDefFileIdxPara(
     case KWIsing:
       /*ising.def--------------------------------------*/
       if(X->NIsingCoupling>0){
-	while( fscanf(fp, "%d %d %lf\n", 
-		      &isite1,
-		      &isite2,
-		      &dvalue_re
-		      )!=EOF
-	       ){
+	while(fgets(ctmp2,256,fp) != NULL){
+    sscanf(ctmp2, "%d %d %lf\n",
+      &isite1,
+      &isite2,
+      &dvalue_re
+      );
+
 	  if(CheckPairSite(isite1,isite2,X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
@@ -716,13 +754,14 @@ int ReadDefFileIdxPara(
 	  fclose(fp);
 	  return -1;
 	}
-	while( fscanf(fp, "%d %d %lf\n", 
-		      &(X->PairLiftCoupling[idx][0]),
-		      &(X->PairLiftCoupling[idx][1]),
-		      &(X->ParaPairLiftCoupling[idx])
-		      )!=EOF
-	       )
+	while(fgets(ctmp2,256,fp) != NULL)
 	  {
+      sscanf(ctmp2, "%d %d %lf\n",
+        &(X->PairLiftCoupling[idx][0]),
+        &(X->PairLiftCoupling[idx][1]),
+        &(X->ParaPairLiftCoupling[idx])
+        );
+
 	    if(CheckPairSite(X->PairLiftCoupling[idx][0], X->PairLiftCoupling[idx][1],X->Nsite) !=0){
 	      fclose(fp);
 	      return ReadDefFileError(defname);
@@ -742,20 +781,20 @@ int ReadDefFileIdxPara(
       X->NInterAll_Diagonal=0;
       X->NInterAll_OffDiagonal=0;
       if(X->NInterAll>0){
-	while( fscanf(fp, "%d %d %d %d %d %d %d %d %lf %lf\n", 
-				  &isite1,
-				  &isigma1,
-				  &isite2,
-				  &isigma2,
-				  &isite3,
-				  &isigma3,
-				  &isite4,
-				  &isigma4,
-		      &dvalue_re,
-		      &dvalue_im
-		      )!=EOF
-	       )
+	while(fgets(ctmp2, 256, fp) != NULL)
 	  {
+      sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
+        &isite1,
+        &isigma1,
+        &isite2,
+        &isigma2,
+        &isite3,
+        &isigma3,
+        &isite4,
+        &isigma4,
+        &dvalue_re,
+        &dvalue_im
+        );
 	   	    
 	    if(X->iCalcModel == Spin){
 	      if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
@@ -817,11 +856,12 @@ int ReadDefFileIdxPara(
     case KWOneBodyG:
       /*cisajs.def----------------------------------------*/
       if(X->NCisAjt>0){
-	while( fscanf(fp, "%d %d %d %d\n", 
-		      &isite1,
-		      &isigma1,
-		      &isite2,
-		      &isigma2) != EOF){
+	while(fgets(ctmp2, 256, fp) != NULL){
+    sscanf(ctmp2, "%d %d %d %d\n",
+      &isite1,
+      &isigma1,
+      &isite2,
+      &isigma2);
 
 	  if(X->iCalcModel == Spin){
 	    if(isite1 != isite2){
@@ -853,18 +893,18 @@ int ReadDefFileIdxPara(
     case KWTwoBodyG:
       /*cisajscktaltdc.def--------------------------------*/
       if(X->NCisAjtCkuAlvDC>0){
-	while( fscanf(fp, "%d %d %d %d %d %d %d %d\n",
-				  &isite1,
-				  &isigma1,
-				  &isite2,
-				  &isigma2,
-				  &isite3,
-				  &isigma3,
-				  &isite4,
-				  &isigma4
-				  )
-		   != EOF
-		   ){
+	while(fgets(ctmp2, 256, fp) != NULL){
+    sscanf(ctmp2, "%d %d %d %d %d %d %d %d\n",
+      &isite1,
+      &isigma1,
+      &isite2,
+      &isigma2,
+      &isite3,
+      &isigma3,
+      &isite4,
+      &isigma4
+      );
+
 		if(X->iCalcModel == Spin){
 		  if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
 			X->NCisAjtCkuAlvDC--;
@@ -1010,8 +1050,8 @@ int CheckTransferHermite
 	if(isigma1 == itmpsigma2 && isigma2 == itmpsigma1){
 	  ddiff_trans = X->ParaGeneralTransfer[i]-conj(X->ParaGeneralTransfer[j]);
 	  if(cabs(ddiff_trans) > eps_CheckImag0 ){
-	    fprintf(stdoutMPIcErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
-	    fprintf(stdoutMPIcErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
+	    fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
+	    fprintf(stdoutMPI, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
 	    return -1;
 	  }
 	}
@@ -1067,8 +1107,8 @@ int CheckInterAllHermite
 	  itmpret=1;
 	  ddiff_intall = X->ParaInterAll_OffDiagonal[i]-conj(X->ParaInterAll_OffDiagonal[j]);
 	  if(cabs(ddiff_intall) > eps_CheckImag0 ){
-	    fprintf(stdoutMPIcErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
-	    fprintf(stdoutMPIcErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
+	    fprintf(stdoutMPI, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
+	    fprintf(stdoutMPI, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
 	    return -1;
 	  }
 	}
@@ -1079,8 +1119,8 @@ int CheckInterAllHermite
 	  itmpret=1;
 	  ddiff_intall = X->ParaInterAll_OffDiagonal[i]-conj(X->ParaInterAll_OffDiagonal[j]);
 	  if(cabs(ddiff_intall) > eps_CheckImag0 ){
-	    fprintf(stdoutMPIcErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
-	    fprintf(stdoutMPIcErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
+	    fprintf(stdoutMPI, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
+	    fprintf(stdoutMPI, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
 	    return -1;
 	  }
 	}
@@ -1088,7 +1128,7 @@ int CheckInterAllHermite
     }
     //if counterpart for satisfying hermite conjugate does not exist.
     if(itmpret !=1){
-      fprintf(stdoutMPIcErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll_OffDiagonal[i]), cimag(X->ParaInterAll_OffDiagonal[i]));
+      fprintf(stdoutMPI, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll_OffDiagonal[i]), cimag(X->ParaInterAll_OffDiagonal[i]));
       icntincorrect++;
     }
   }

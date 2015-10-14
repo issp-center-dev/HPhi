@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include "wrapperMPI.h"
+#include <omp.h>
+#include <math.h>
 
 /**
  *
@@ -29,19 +31,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void InitializeMPI(int argc, char *argv[]){
-  int ierr;
+  int ierr, nthreads, expon;
 
 #ifdef MPI
   ierr = MPI_Init(&argc, &argv);
   ierr = MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   ierr = MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-  if(ierr != 0) AbortMPI(ierr);
+  if(ierr != 0) exitMPI(ierr);
 #else
   nproc = 1;
   myrank = 0;
 #endif
   if (myrank == 0) stdoutMPI = stdout;
   else stdoutMPI = fopen("/dev/null", "w");
+
+#pragma omp parallel default(none) shared(nthreads)
+#pragma omp master
+  nthreads = omp_get_num_threads();
+
+  expon = (int)(log((double)nproc) / log(2.0) + 0.5);
+
+  fprintf(stdoutMPI, "\n\n#####  Parallelization Info.  #####\n\n");
+  fprintf(stdoutMPI, "  OpenMP threads : %d\n", nthreads);
+  fprintf(stdoutMPI, "  MPI PEs : %d = 2^%-5d\n\n", nproc, expon);
+  if (nproc != 1 << expon){
+    fprintf(stdoutMPI, "ERROR ! The number of PEs is not a 2-exponent !");
+    exitMPI(-1);
+  }
 }
 
 /**

@@ -3,21 +3,22 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo ""
     echo "Usage:"
     echo "./HPhiconfig.sh system_name"
-    echo "system_name should be choosen from below:"
-    echo "  sekirei : ISSP system-B"
-    echo "     make : ISSP system-C"
-    echo "    intel : Intel compiler + Linux PC"
-    echo "      gcc : GCC + Linux"
-    echo "  gcc-mac : GCC + Mac"
-    echo "   manual : Manual configuration. See below."
+    echo " system_name should be choosen from below:"
+    echo "     sekirei : ISSP system-B"
+    echo "        make : ISSP system-C"
+    echo "       intel : Intel compiler + Linux PC"
+    echo " mpicc-intel : Intel compiler + Linux PC + mpicc"
+    echo "         gcc : GCC + Linux"
+    echo "     gcc-mac : GCC + Mac"
+    echo "      manual : Manual configuration. See below."
     echo ""
-    echo "In manual HPhiconfigtion, it is used as "
+    echo "In manual HPhi configtion, please type, for example,  "
     echo "./HPhiconfig.sh CC=icc LAPACK_FLAGS=\"-Dlapack -mkl=parallel\" \\"
     echo "   FLAGS=\"-qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel\""
     echo " where"
-    echo "  CC : Compilation command for C"
+    echo "            CC : Compilation command for C"
     echo "  LAPACK_FLAGS : Compile option for LAPACK"
-    echo "  FLAGS : Other Compilation options"
+    echo "         FLAGS : Other Compilation options"
     echo ""
 else
     if [ ${1} = "sekirei" ]; then
@@ -41,6 +42,14 @@ EOF
 CC = icc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
 FLAGS = -openmp -O3 -DHAVE_SSE2
+MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
+INCLUDE_DIR=./include
+EOF
+    elif [ ${1} = "mpicc-intel" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+LAPACK_FLAGS = -Dlapack -mkl=parallel 
+FLAGS = -openmp -O3 -DHAVE_SSE2 -D MPI
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
@@ -74,6 +83,12 @@ FLAGS = ${FLAGS}
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
+    else
+        echo ""
+        echo "Unsupported system. Please type"
+        echo "./HPhiconfig.sh help"
+        echo ""
+        exit
     fi
 
     echo "cat src/make.sys"
