@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
+#include "../include/wrapperMPI.h"
 
 static void TrimSpaceQuote(char *value);
 static void StoreWithCheckDup_s(char *keyword, char *valuestring, char *value);
@@ -65,13 +66,13 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   char *keyword, *value;
   char model[256], lattice[256], method[256], outputmode[256], filehead[256];
 
-  printf("\n######  Standard Intarface Mode STARTS  ######\n");
-  if ((fp = fopen(fname, "r")) == NULL){
-    printf("\n  ERROR !  Cannot open input file %s !\n\n", fname);
-    exit(-1);
+  fprintf(stdoutMPI, "\n######  Standard Intarface Mode STARTS  ######\n");
+  if ((fp = fopenMPI(fname, "r")) == NULL){
+    fprintf(stdoutMPI, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
+    exitMPI(-1);
   }
   else{
-    printf("\n  Open Standard-Mode Inputfile %s \n\n", fname);
+    fprintf(stdoutMPI, "\n  Open Standard-Mode Inputfile %s \n\n", fname);
   }
 
   strcpy(model, "****");
@@ -94,26 +95,26 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   ExpecInterval = 9999;
   StdFace_ResetVals();
 
-  while (fgets(ctmpline, 256, fp) != NULL){
+  while (fgetsMPI(ctmpline, 256, fp) != NULL){
 
     TrimSpaceQuote(ctmpline);
     if (strncmp(ctmpline, "//", 2) == 0){
-      printf("  Skipping a line.\n");
+      fprintf(stdoutMPI, "  Skipping a line.\n");
       continue;
     }
     else if (ctmpline[0] == '\0'){
-      printf("  Skipping a line.\n");
+      fprintf(stdoutMPI, "  Skipping a line.\n");
       continue;
     }
     keyword = strtok(ctmpline, "=");
     value = strtok(NULL, "=");
     if (value == NULL){
-      printf("\n  ERROR !  \"=\" is NOT found !\n\n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n  ERROR !  \"=\" is NOT found !\n\n");
+      exitMPI(-1);
     }
     TrimSpaceQuote(keyword);
     TrimSpaceQuote(value);
-    printf("  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
+    fprintf(stdoutMPI, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
     if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &h);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &exct);
@@ -179,11 +180,11 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
     else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &W);
     else {
-      printf("ERROR ! Unsupported Keyword !\n");
-      exit(-1);
+      fprintf(stdoutMPI, "ERROR ! Unsupported Keyword !\n");
+      exitMPI(-1);
     }
   }
-  fclose(fp);
+  fcloseMPI(fp);
   /*
    Generate Hamiltonian definition files
   */
@@ -227,7 +228,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   }
   else UnsupportedSystem(model,lattice);
   /**/
-  printf("\n");
+  fprintf(stdoutMPI, "\n");
   /**/
   CheckModPara(&nup, &ndown, model,
     &nelec, &Sz2, &Lanczos_max, &initial_iv, &nvec,
@@ -235,9 +236,9 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     &NumAve, &ExpecInterval,filehead);
   ioutputmode = CheckOutputMode(outputmode);
   /**/
-  printf("\n");
-  printf("######  Print Expart input files  ######\n");
-  printf("\n");
+  fprintf(stdoutMPI, "\n");
+  fprintf(stdoutMPI, "######  Print Expart input files  ######\n");
+  fprintf(stdoutMPI, "\n");
   PrintLocSpin();
   PrintTrans();
   PrintInter();
@@ -263,7 +264,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   free(intrindx);
   free(intr);
 
-  printf("\n######  Input files are generated.  ######\n\n");
+  fprintf(stdoutMPI, "\n######  Input files are generated.  ######\n\n");
 
 }
 
@@ -378,8 +379,8 @@ static void StoreWithCheckDup_s(
   char *value /**< [out] */)
 {
   if (strcmp(value, "****") != 0){
-    printf("ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exit(-1);
+    fprintf(stdoutMPI, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    exitMPI(-1);
   }
   else{
     strcpy(value, valuestring);
@@ -399,8 +400,8 @@ static void StoreWithCheckDup_i(
   int *value /**< [out] */)
 {
   if (*value != 9999){
-    printf("ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exit(-1);
+    fprintf(stdoutMPI, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    exitMPI(-1);
   }
   else{
     sscanf(valuestring, "%d", value);
@@ -421,8 +422,8 @@ static void StoreWithCheckDup_d(
 {
 
   if (*value != 9999.9){
-    printf("ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exit(-1);
+    fprintf(stdoutMPI, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    exitMPI(-1);
   }
   else{
     sscanf(valuestring, "%lf", value);
@@ -444,7 +445,7 @@ void PrintLocSpin(){
   for (isite = 0; isite < nsite; isite++)
     if (locspinflag[isite] == 0) nlocspin = nlocspin + 1;
 
-  fp = fopen("zlocspn.def", "w");
+  fp = fopenMPI("zlocspn.def", "w");
   fprintf(fp, "================================ \n");
   fprintf(fp, "NlocalSpin %5d  \n", nlocspin);
   fprintf(fp, "================================ \n");
@@ -454,8 +455,8 @@ void PrintLocSpin(){
   for (isite = 0; isite < nsite; isite++)
     fprintf(fp, "%5d  %5d\n", isite, locspinflag[isite]);
 
-  fclose(fp);
-  printf("    zlocspin.def is written.\n");
+  fcloseMPI(fp);
+  fprintf(stdoutMPI, "    zlocspin.def is written.\n");
 }
 
 /**
@@ -485,7 +486,7 @@ static void PrintTrans(){
     if (fabs(trans[ktrans]) > 0.000001) ntrans0 = ntrans0 + 1;
   }
 
-  fp = fopen("zTrans.def", "w");
+  fp = fopenMPI("zTrans.def", "w");
   fprintf(fp, "======================== \n");
   fprintf(fp, "NTransfer %7d  \n", ntrans0);
   fprintf(fp, "======================== \n");
@@ -500,8 +501,8 @@ static void PrintTrans(){
       trans[ktrans]);
   }
 
-  fclose(fp);
-  printf("      zTrans.def is written.\n");
+  fcloseMPI(fp);
+  fprintf(stdoutMPI, "      zTrans.def is written.\n");
 }
 
 /**
@@ -535,7 +536,7 @@ static void PrintInter(){
     if (fabs(intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
   }
 
-  fp = fopen("zInterAll.def", "w");
+  fp = fopenMPI("zInterAll.def", "w");
   fprintf(fp, "====================== \n");
   fprintf(fp, "NInterAll %7d  \n", nintr0);
   fprintf(fp, "====================== \n");
@@ -551,8 +552,8 @@ static void PrintInter(){
       intr[kintr]);
   }
 
-  fclose(fp);
-  printf("   zInterAll.def is written.\n");
+  fcloseMPI(fp);
+  fprintf(stdoutMPI, "   zInterAll.def is written.\n");
 }
 
 /**
@@ -564,7 +565,7 @@ static void PrintInter(){
 static void PrintNamelist(){
   FILE *fp;
 
-  fp = fopen("namelist.def", "w");
+  fp = fopenMPI("namelist.def", "w");
   fprintf(fp, "CalcMod calcmod.def\n");
   fprintf(fp, "ModPara modpara.def\n");
   fprintf(fp, "LocSpin zlocspn.def\n");
@@ -573,8 +574,8 @@ static void PrintNamelist(){
   fprintf(fp, "OneBodyG greenone.def\n");
   fprintf(fp, "TwoBodyG greentwo.def\n");
 
-  fclose(fp);
-  printf("    namelist.def is written.\n");
+  fcloseMPI(fp);
+  fprintf(stdoutMPI, "    namelist.def is written.\n");
 }
 
 /**
@@ -593,8 +594,8 @@ static void PrintCalcMod(
   int iCalcType, iCalcModel, ioutputmode2;
 
   if (strcmp(method, "****") == 0){
-    printf("ERROR ! Method is NOT specified !\n");
-    exit(-1);
+    fprintf(stdoutMPI, "ERROR ! Method is NOT specified !\n");
+    exitMPI(-1);
   }
   else if (strcmp(method, "lanczos") == 0) iCalcType = 0;
   else if (strcmp(method, "tpq") == 0) iCalcType = 1;
@@ -602,8 +603,8 @@ static void PrintCalcMod(
     strcmp(method, "alldiag") == 0 ||
     strcmp(method, "direct") == 0 ) iCalcType = 2;
   else{
-    printf("\n ERROR ! Unsupported Solver : %s\n", method);
-    exit(-1);
+    fprintf(stdoutMPI, "\n ERROR ! Unsupported Solver : %s\n", method);
+    exitMPI(-1);
   }
 
   if (strcmp(model, "fermionhubbard") == 0) iCalcModel = 0;
@@ -615,14 +616,14 @@ static void PrintCalcMod(
   else if (strcmp(model, "kondolatticegc") == 0
     || strcmp(model, "kondogc") == 0) iCalcModel = 5;
   else{
-    printf("\n ERROR ! Unsupported Model : %s\n", model);
-    exit(-1);
+    fprintf(stdoutMPI, "\n ERROR ! Unsupported Model : %s\n", model);
+    exitMPI(-1);
   }
 
   if (ioutputmode == 2) ioutputmode2 = 0;
   else ioutputmode2 = ioutputmode;
 
-  fp = fopen("calcmod.def", "w");
+  fp = fopenMPI("calcmod.def", "w");
   fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag\n");
   fprintf(fp, "#FlgFiniteTemperature= 0:Zero temperature, 1:Finite temperature. This parameter is active only for CalcType=2.\n");
   fprintf(fp, "#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC \n");
@@ -630,8 +631,8 @@ static void PrintCalcMod(
   fprintf(fp, "FlgFiniteTemperature %3d\n", FlgTemp);
   fprintf(fp, "CalcModel %3d\n", iCalcModel);
   fprintf(fp, "OutputMode %3d\n", ioutputmode2);
-  fclose(fp);
-  printf("     calcmod.def is written.\n");
+  fcloseMPI(fp);
+  fprintf(stdoutMPI, "     calcmod.def is written.\n");
 }
 
 /**
@@ -657,7 +658,7 @@ static void PrintModPara(
 {
   FILE *fp;
 
-  fp = fopen("modpara.def", "w");
+  fp = fopenMPI("modpara.def", "w");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Model_Parameters   0\n");
   fprintf(fp, "--------------------\n");
@@ -681,8 +682,8 @@ static void PrintModPara(
   fprintf(fp, "NumAve         %-5d\n", NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", ExpecInterval);
 
-  fclose(fp);
-  printf("     modpara.def is written.\n");
+  fcloseMPI(fp);
+  fprintf(stdoutMPI, "     modpara.def is written.\n");
 }
 
 /**
@@ -738,7 +739,7 @@ static void Print1Green(int ioutputmode /**< [in]*/){
     }
   }
 
-  fp = fopen("greenone.def", "w");
+  fp = fopenMPI("greenone.def", "w");
   fprintf(fp, "===============================\n");
   fprintf(fp, "NCisAjs %10d\n", ngreen);
   fprintf(fp, "===============================\n");
@@ -748,9 +749,9 @@ static void Print1Green(int ioutputmode /**< [in]*/){
     fprintf(fp,"%5d %5d %5d %5d\n",
       greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3]);
   }
-  fclose(fp);
+  fcloseMPI(fp);
 
-  printf("    greenone.def is written.\n");
+  fprintf(stdoutMPI, "    greenone.def is written.\n");
   //[s] free
   for (igreen = 0; igreen < ngreen; igreen++){
     free(greenindx[igreen]);
@@ -834,7 +835,7 @@ static void Print2Green(int ioutputmode /**< [in]*/){
     }
   }
 
-  fp = fopen("greentwo.def", "w");
+  fp = fopenMPI("greentwo.def", "w");
   fprintf(fp, "=============================================\n");
   fprintf(fp, "NCisAjsCktAltDC %10d\n", ngreen);
   fprintf(fp, "=============================================\n");
@@ -845,9 +846,9 @@ static void Print2Green(int ioutputmode /**< [in]*/){
       greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3],
       greenindx[igreen][4], greenindx[igreen][5], greenindx[igreen][6], greenindx[igreen][7]);
   }
-  fclose(fp);
+  fcloseMPI(fp);
 
-  printf("    greentwo.def is written.\n");
+  fprintf(stdoutMPI, "    greentwo.def is written.\n");
   //[s] free
   for (igreen = 0; igreen < ngreen; igreen++){
     free(greenindx[igreen]);
@@ -866,12 +867,12 @@ static void UnsupportedSystem(
   char *model /**< [in]*/, 
   char *lattice /**< [in]*/)
 {
-  printf("\nSorry, specified combination, \n");
-  printf("    MODEL : %s  \n", model);
-  printf("  LATTICE : %s, \n", lattice);
-  printf("is unsupported in the STANDARD MODE...\n");
-  printf("Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
-  exit(-1);
+  fprintf(stdoutMPI, "\nSorry, specified combination, \n");
+  fprintf(stdoutMPI, "    MODEL : %s  \n", model);
+  fprintf(stdoutMPI, "  LATTICE : %s, \n", lattice);
+  fprintf(stdoutMPI, "is unsupported in the STANDARD MODE...\n");
+  fprintf(stdoutMPI, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
+  exitMPI(-1);
 }
 
 /**
@@ -889,27 +890,27 @@ static int CheckOutputMode(char* outputmode /**< [in]*/){
     || strcmp(outputmode, "none") == 0
     || strcmp(outputmode, "off") == 0) {
     ioutputmode = 0;
-    printf("      ioutputmode = %-10d\n", ioutputmode);
+    fprintf(stdoutMPI, "      ioutputmode = %-10d\n", ioutputmode);
   }
   else if (strcmp(outputmode, "cor") == 0
     || strcmp(outputmode, "corr") == 0
     || strcmp(outputmode, "correlation") == 0) {
     ioutputmode = 1;
-    printf("      ioutputmode = %-10d\n", ioutputmode);
+    fprintf(stdoutMPI, "      ioutputmode = %-10d\n", ioutputmode);
   }
   else if (strcmp(outputmode, "****") == 0) {
     ioutputmode = 1;
-    printf("      ioutputmode = %-10d  ######  DEFAULT VALUE IS USED  ######\n", ioutputmode);
+    fprintf(stdoutMPI, "      ioutputmode = %-10d  ######  DEFAULT VALUE IS USED  ######\n", ioutputmode);
   }
   else if (strcmp(outputmode, "raw") == 0
     || strcmp(outputmode, "all") == 0
     || strcmp(outputmode, "full") == 0) {
     ioutputmode = 2;
-    printf("      ioutputmode = %-10d\n", ioutputmode);
+    fprintf(stdoutMPI, "      ioutputmode = %-10d\n", ioutputmode);
   }
   else{
-    printf("\n ERROR ! Unsupported OutPutMode : %s\n", outputmode);
-    exit(-1);
+    fprintf(stdoutMPI, "\n ERROR ! Unsupported OutPutMode : %s\n", outputmode);
+    exitMPI(-1);
   }
   return(ioutputmode);
 }
@@ -941,9 +942,9 @@ static void CheckModPara(
 {
   if (strcmp(filehead, "****") == 0) {
     strcpy(filehead, "zvo");
-    printf("         filehead = %-12s######  DEFAULT VALUE IS USED  ######\n", filehead);
+    fprintf(stdoutMPI, "         filehead = %-12s######  DEFAULT VALUE IS USED  ######\n", filehead);
   }
-  else printf("         filehead = %-s\n", filehead);
+  else fprintf(stdoutMPI, "         filehead = %-s\n", filehead);
   /**/
   StdFace_PrintVal_i("Lanczos_max", Lanczos_max, 2000);
   StdFace_PrintVal_i("initial_iv", initial_iv, 1);
@@ -960,24 +961,24 @@ static void CheckModPara(
     StdFace_RequiredVal_i("nelec", *nelec);
 
     if (abs(*Sz2) > nsite){
-      printf("\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
+      exitMPI(-1);
     }
     else if (*nelec > 2 * nsite){
-      printf("\n ERROR ! Nelec > 2 * nsite in Hubbard model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! Nelec > 2 * nsite in Hubbard model ! \n");
+      exitMPI(-1);
     }
     else if ((*nelec + *Sz2) % 2 != 0){
-      printf("\n ERROR ! (nelec + 2 * Sz) %% 2 != 0 in Hubbard model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! (nelec + 2 * Sz) %% 2 != 0 in Hubbard model ! \n");
+      exitMPI(-1);
     }
     else if (*nelec <= nsite && abs(*Sz2) > *nelec){
-      printf("\n ERROR ! nelec <= nsite && 2 * |Sz| > nelec in Hubbard model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! nelec <= nsite && 2 * |Sz| > nelec in Hubbard model ! \n");
+      exitMPI(-1);
     }
     else if (*nelec > nsite && abs(*Sz2) > 2 * nsite - *nelec){
-      printf("\n ERROR ! nelec > nsite && 2 * |Sz| > 2 * nsite - nelec in Hubbard model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! nelec > nsite && 2 * |Sz| > 2 * nsite - nelec in Hubbard model ! \n");
+      exitMPI(-1);
     }
     else {
       *nup = (*nelec + *Sz2) / 2;
@@ -990,12 +991,12 @@ static void CheckModPara(
     StdFace_NotUsed_i("nelec", *nelec);
 
     if (abs(*Sz2) > nsite){
-      printf("\n ERROR ! abs(2 * Sz) > nsite in Spin model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! abs(2 * Sz) > nsite in Spin model ! \n");
+      exitMPI(-1);
     }
     else if ((nsite + *Sz2) % 2 != 0){
-      printf("\n ERROR ! (nsite + 2 * Sz) %% 2 != 0 in Spin model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! (nsite + 2 * Sz) %% 2 != 0 in Spin model ! \n");
+      exitMPI(-1);
     }
     else{
       *nup = (nsite + *Sz2) / 2;
@@ -1008,24 +1009,24 @@ static void CheckModPara(
     StdFace_RequiredVal_i("nelec", *nelec);
 
     if (abs(*Sz2) > nsite){
-      printf("\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
+      exitMPI(-1);
     }
     else if (*nelec > nsite){
-      printf("\n ERROR ! Nelec_cond / 2 + Nelec_loc > nsite in Kondo model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! Nelec_cond / 2 + Nelec_loc > nsite in Kondo model ! \n");
+      exitMPI(-1);
     }
     else if ((*nelec + nsite / 2 + *Sz2) % 2 != 0){
-      printf("\n ERROR ! (nelec_cond + nelec_loc + 2 * Sz) %% 2 != 0 in Kondo model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! (nelec_cond + nelec_loc + 2 * Sz) %% 2 != 0 in Kondo model ! \n");
+      exitMPI(-1);
     }
     else if (*nelec <= nsite / 2 && abs(*Sz2) > *nelec + nsite / 2){
-      printf("\n ERROR ! nelec_cond <= nsite / 2 && 2 * |Sz| > nelec_cond + nelec_loc in Kondo model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! nelec_cond <= nsite / 2 && 2 * |Sz| > nelec_cond + nelec_loc in Kondo model ! \n");
+      exitMPI(-1);
     }
     else if (*nelec > nsite / 2 && abs(*Sz2) > nsite / 2 * 3 - *nelec){
-      printf("\n ERROR ! nelec_cond > nsite / 2 && abs(Sz2) > nsite / 2 * 3 - nelec in Kondo model ! \n");
-      exit(-1);
+      fprintf(stdoutMPI, "\n ERROR ! nelec_cond > nsite / 2 && abs(Sz2) > nsite / 2 * 3 - nelec in Kondo model ! \n");
+      exitMPI(-1);
     }
     else {
       *nup = (*nelec + nsite / 2 + *Sz2) / 2;
@@ -1046,8 +1047,8 @@ static void CheckModPara(
     *ndown = nsite - *nup;
   }
   else{
-    printf("\n ERROR ! Unsupported Model !\n");
-    exit(-1);
+    fprintf(stdoutMPI, "\n ERROR ! Unsupported Model !\n");
+    exitMPI(-1);
   }
 
 

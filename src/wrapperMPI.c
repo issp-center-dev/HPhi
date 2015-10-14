@@ -46,23 +46,6 @@ void InitializeMPI(int argc, char *argv[]){
 
 /**
  *
- * MPI Abortation wrapper
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void AbortMPI(int errorcode /**< [in]*/)
-{
-  int ierr;
-#ifdef MPI
-  ierr = MPI_Abort(MPI_COMM_WORLD,errorcode);
-  ierr = MPI_Finalize();
-  if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
-#endif
-  exit(errorcode);
-}
-
-/**
- *
  * MPI Finitialization wrapper
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
@@ -73,6 +56,23 @@ void FinalizeMPI(){
   ierr = MPI_Finalize();
   if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
+}
+
+/**
+*
+* MPI Abortation wrapper
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void exitMPI(int errorcode /**< [in]*/)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
+  ierr = MPI_Finalize();
+  if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
+#endif
+  exit(errorcode);
 }
 
 /**
