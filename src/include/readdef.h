@@ -17,7 +17,7 @@
 #include "xsetmem.h"
 #define D_FileNameMaxReadDef 256 /*!<  Max length of words for file name*/
 #define D_CharTmpReadDef     200 /*!<  Max length of reading words from input files*/
-#define D_iKWNumDef 13 /*!<  Max number of keyword set in def file*/
+#define D_iKWNumDef 14 /*!<  Max number of keyword set in def file*/
 #define D_CharKWDMAX     200 /*!<  Max length of words for keyword*/
 
 /*!< Number of ignore lines in def files */
@@ -62,7 +62,8 @@ static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
   "InterAll",
   "OneBodyG",
   "TwoBodyG",
-  "PairLift"
+  "PairLift",
+  "Ising"
 };
 
 /**

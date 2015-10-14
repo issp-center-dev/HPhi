@@ -398,7 +398,7 @@ int ReadDefFileNInt(
       fscanf(fp,"%s %d\n", ctmp, &(X->NExchangeCoupling));
       break;
     case KWIsing:
-      /* Read exchange.def--------------------------------------*/
+      /* Read ising.def--------------------------------------*/
       fgets(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fscanf(fp,"%s %d\n", ctmp, &(X->NIsingCoupling));
       break;
@@ -693,9 +693,10 @@ int ReadDefFileIdxPara(
 	  }
 
 	  //input into exchange couplings
-	  X->ExchangeCoupling[X->NExchangeCoupling+idx][0]=isite1;
-	  X->ExchangeCoupling[X->NExchangeCoupling+idx][1]=isite2;
-	  X->ParaExchangeCoupling[X->NExchangeCoupling+idx]=dvalue_re/2.0;
+	  X->HundCoupling[X->NExchangeCoupling+idx][0]=isite1;
+	  X->HundCoupling[X->NExchangeCoupling+idx][1]=isite2;
+	  X->ParaHundCoupling[X->NExchangeCoupling+idx]=-dvalue_re/2.0;
+	  //printf("isite1=%d, isite2=%d, exchange=%lf \n", X->ExchangeCoupling[X->NExchangeCoupling+idx][0], X->ExchangeCoupling[X->NExchangeCoupling+idx][1], X->ParaExchangeCoupling[X->NExchangeCoupling+idx]);
 	  //input into inter Coulomb
 	  X->CoulombInter[X->NCoulombInter+idx][0]=isite1;
 	  X->CoulombInter[X->NCoulombInter+idx][1]=isite2;
@@ -902,7 +903,8 @@ int ReadDefFileIdxPara(
   }
 
 
-  ResetInteractionNum(X);  
+  ResetInteractionNum(X);
+  printf("iexchange=%d, iCoulombInter=%d\n",  X->NExchangeCoupling ,X->NCoulombInter);
   /*=======================================================================*/
   return 0;
 }
@@ -1377,7 +1379,7 @@ void ResetInteractionNum
  struct DefineList *X
 )
 {
-  X->NExchangeCoupling += X->NIsingCoupling;
+  X->NHundCoupling += X->NIsingCoupling;
   X->NCoulombInter += X->NIsingCoupling;
 }
 
