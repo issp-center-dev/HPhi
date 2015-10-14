@@ -285,6 +285,8 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef];
   int itmp;
+
+  InitializeInteractionNum(X);
   
   printf("Start: Read File '%s'.\n", xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
@@ -1377,4 +1379,19 @@ void ResetInteractionNum
 {
   X->NExchangeCoupling += X->NIsingCoupling;
   X->NCoulombInter += X->NIsingCoupling;
+}
+
+void InitializeInteractionNum
+(
+ struct DefineList *X
+ )
+{
+  X->NTransfer=0;
+  X->NCoulombIntra=0;
+  X->NCoulombInter=0;
+  X->NIsingCoupling=0;
+  X->NPairLiftCoupling=0;
+  X->NInterAll=0;
+  X->NCisAjt=0;
+  X->NCisAjtCkuAlvDC=0;
 }

@@ -138,8 +138,12 @@ void SetConvergenceFactor
  struct DefineList *X
  );
 
-
 void ResetInteractionNum
+(
+ struct DefineList *X
+ );
+
+void InitializeInteractionNum
 (
  struct DefineList *X
  );
