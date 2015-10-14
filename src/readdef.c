@@ -493,7 +493,6 @@ int ReadDefFileIdxPara(
 	}
 	idx++;
       }
-      printf("Nsite= %d.\n", X->Nsite);
       if(idx!=X->Nsite){
 	fclose(fp);
 	return ReadDefFileError(defname);
@@ -693,10 +692,9 @@ int ReadDefFileIdxPara(
 	  }
 
 	  //input into exchange couplings
-	  X->HundCoupling[X->NExchangeCoupling+idx][0]=isite1;
-	  X->HundCoupling[X->NExchangeCoupling+idx][1]=isite2;
-	  X->ParaHundCoupling[X->NExchangeCoupling+idx]=-dvalue_re/2.0;
-	  //printf("isite1=%d, isite2=%d, exchange=%lf \n", X->ExchangeCoupling[X->NExchangeCoupling+idx][0], X->ExchangeCoupling[X->NExchangeCoupling+idx][1], X->ParaExchangeCoupling[X->NExchangeCoupling+idx]);
+	  X->HundCoupling[X->NHundCoupling+idx][0]=isite1;
+	  X->HundCoupling[X->NHundCoupling+idx][1]=isite2;
+	  X->ParaHundCoupling[X->NHundCoupling+idx]= -dvalue_re/2.0;
 	  //input into inter Coulomb
 	  X->CoulombInter[X->NCoulombInter+idx][0]=isite1;
 	  X->CoulombInter[X->NCoulombInter+idx][1]=isite2;
@@ -902,9 +900,7 @@ int ReadDefFileIdxPara(
     fclose(fp);
   }
 
-
   ResetInteractionNum(X);
-  printf("iexchange=%d, iCoulombInter=%d\n",  X->NExchangeCoupling ,X->NCoulombInter);
   /*=======================================================================*/
   return 0;
 }
