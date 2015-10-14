@@ -13,7 +13,11 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "Common.h"
+#include "mfmemory.h"
 #include "xsetmem.h"
+
 void setmem_HEAD
 (
  struct BindStruct *X

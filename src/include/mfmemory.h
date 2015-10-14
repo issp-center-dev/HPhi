@@ -23,8 +23,8 @@
 
 
 /*=================================================================================================*/
-#ifndef _INCLUDE_MFMEMORY
-#define _INCLUDE_MFMEMORY
+#ifndef HPHI_MFMEMORY_H
+#define HPHI_MFMEMORY_H
 
 /*complex type*/
 #define c_malloc1(X, N1) \
@@ -398,4 +398,4 @@
 	}\
 	free(X);
 
-#endif
+#endif /* HPHI_MFMEMORY_H */

@@ -13,7 +13,11 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#pragma once
+
+#ifndef HPHI_GLOBAL_H
+#define HPHI_GLOBAL_H
+
+#include <complex.h>
 #include <math.h>
 #define D_FileNameMax 256
 
@@ -55,53 +59,52 @@ double complex **L_vec;
 /*[e] For All Diagonalization*/
 
 /*OutputPath Name*/
-const char* cParentOutputFolder = "./output/";
+const char* cParentOutputFolder;
 
 //For TimeKeep
-const char* cFileNameTimeKeep="%s_TimeKeeper.dat";
-const char* cFileNameSzTimeKeep="%s_sz_TimeKeeper.dat";
+const char* cFileNameTimeKeep;
+const char* cFileNameSzTimeKeep;
 
 //For Check
-const char* cFileNameCheckCoulombIntra="CHECK_CoulombIntra.dat";
-const char* cFileNameCheckChemi="CHECK_Chemi.dat";
-const char* cFileNameCheckInterU="CHECK_INTER_U.dat";
-const char* cFileNameCheckHund="CHECK_Hund.dat";
-const char* cFileNameCheckInterAll="CHECK_InterAll.dat";
-const char* cFileNameCheckMemory="CHECK_Memory.dat";
-const char* cFileNameCheckSdim="CHECK_Sdim.dat";
+const char* cFileNameCheckCoulombIntra;
+const char* cFileNameCheckChemi;
+const char* cFileNameCheckInterU;
+const char* cFileNameCheckHund;
+const char* cFileNameCheckInterAll;
+const char* cFileNameCheckMemory;
+const char* cFileNameCheckSdim;
 
 //For EDTrans
-const char* cFileNameWarningOnTransfer="WarningOnTransfer.dat";
+const char* cFileNameWarningOnTransfer;
 
 //For Lanczos
-const char* cFileNameLanczosStep="%s_Lanczos_Step.dat";
-const char* cFileNameEnergy_Lanczos= "%s_energy.dat";
-const char* cFileNameEigenvalue_Lanczos= "Eigenvalue.dat";
-const char* cFileNameEnergy_CG="%s_energy.dat";
-const char* cFileName1BGreen_Lanczos="%s_cisajs.dat";
-const char* cFileName1BGreen_CG="%s_cisajs.dat";
-const char* cFileName2BGreen_Lanczos="%s_cisajscktalt.dat";
-const char* cFileName2BGreen_CG="%s_cisajscktalt.dat";
-const char* cFileNameTimeEV_CG="Time_EigenVector.dat";
-const char* cFileNameListModel="ListForModel_Ns%d_Nup%dNdown%d.dat";
-const char* cFileNameListKondo="ListForKondo_Ns%d_Ncond%d.dat";
+const char* cFileNameLanczosStep;
+const char* cFileNameEnergy_Lanczos;
+const char* cFileNameEigenvalue_Lanczos;
+const char* cFileNameEnergy_CG;
+const char* cFileName1BGreen_Lanczos;
+const char* cFileName1BGreen_CG;
+const char* cFileName2BGreen_Lanczos;
+const char* cFileName2BGreen_CG;
+const char* cFileNameTimeEV_CG;
+const char* cFileNameListModel;
+const char* cFileNameListKondo;
 
 //For TPQ
-const char* cFileNameSSRand="SS_rand%d.dat";
-const char* cFileNameTPQStep="%s_TPQ_Step.dat";
-const char* cFileNameNormRand="Norm_rand%d.dat";
-const char* cFileName1BGreen_TPQ="%s_cisajs_set%dstep%d.dat";
-const char* cFileName2BGreen_TPQ="%s_cisajscktalt_set%dstep%d.dat";
+const char* cFileNameSSRand;
+const char* cFileNameTPQStep;
+const char* cFileNameNormRand;
+const char* cFileName1BGreen_TPQ;
+const char* cFileName2BGreen_TPQ;
 
 //For FullDiag
-const char* cFileNamePhys_FullDiag="%s_phys_Nup%d_Ndown%d.dat";
-const char* cFileNamePhys_FullDiag_GC="%s_phys.dat";
-const char* cFileName1BGreen_FullDiag="%s_cisajs_eigen%d.dat";
-const char* cFileName2BGreen_FullDiag="%s_cisajscktalt_eigen%d.dat";
+const char* cFileNamePhys_FullDiag;
+const char* cFileNamePhys_FullDiag_GC;
+const char* cFileName1BGreen_FullDiag;
+const char* cFileName2BGreen_FullDiag;
 
 //For Error
-const char* cFileNameErrorSz="Err_sz.dat";
-
+const char* cFileNameErrorSz;
 
 /********************************************************************/
 /********************************************************************/
@@ -113,3 +116,5 @@ double eps_Energy;
 double eps_CheckImag0;
 double dShiftBeta;
 double eps_vec12;
+
+#endif /* HPHI_GLOBAL_H */

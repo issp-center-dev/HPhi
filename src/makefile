@@ -3,27 +3,26 @@ include make.sys
 OBJS =	CG_EigenVector.c \
 HPhiTrans.c \
 HPhiMain.c \
+CalcByFullDiag.c \
+CalcByLanczos.c \
 FirstMultiply.c \
 Lanczos_EigenValue.c \
 Lanczos_EigenVector.c \
 FileIO.c \
 sz.c \
 Multiply.c \
+bitcalc.c \
 bisec.c \
 check.c \
-diagonalcalc.c \
 dSFMT.o \
 diagonalcalc.c \
+expec_cisajs.c \
 expec_cisajscktaltdc.c \
 expec_energy.c \
 expec_totalspin.c \
-FirstMultiply.c \
-Lanczos_EigenValue.c \
-Lanczos_EigenVector.c \
 lapack_diag.c \
 makeHam.c \
 matrixlapack.c \
-mfmemory.c \
 mltply.c \
 CalcByTPQ.c \
 output.c \
@@ -32,19 +31,24 @@ phys.c \
 readdef.c \
 sgn.c \
 vec12.c \
-xfreemem_large.c \
 xsetmem.c \
 log.c \
+ErrorMessage.c \
+LogMessage.c \
+ProgressMessage.c \
+global.c
 
 all:
 	make libStdFace
 	make HPhi
 
-HPhi:$(OBJS) make.sys libStdFace.a
-	$(CC) -g HPhiMain.c $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) dSFMT.o libStdFace.a -o $@ 
+SUFFIXES: .o .c
 
-dSFMT.o:dSFMT.c make.sys
-	$(CC) -c $< $(MTFLAGS) -I$(INCLUDE_DIR)
+.c.o:
+	$(CC) $(LAPACK_FLAGS) $(FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) -c $<
+
+HPhi: $(OBJS:.c=.o) make.sys libStdFace.a
+	$(CC) -g $(OBJS:.c=.o) $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) libStdFace.a -o $@ 
 
 libStdFace:
 	cd StdFace; make libStdFace.a
