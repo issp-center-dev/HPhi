@@ -2,7 +2,7 @@
 if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo ""
     echo "Usage:"
-    echo "./configure.sh system_name"
+    echo "./HPhiconfig.sh system_name"
     echo "system_name should be choosen from below:"
     echo "  sekirei : ISSP system-B"
     echo "     make : ISSP system-C"
@@ -11,8 +11,8 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "  gcc-mac : GCC + Mac"
     echo "   manual : Manual configuration. See below."
     echo ""
-    echo "In manual configuretion, it is used as "
-    echo "./configure.sh CC=icc LAPACK_FLAGS=\"-Dlapack -mkl=parallel\" \\"
+    echo "In manual HPhiconfigtion, it is used as "
+    echo "./HPhiconfig.sh CC=icc LAPACK_FLAGS=\"-Dlapack -mkl=parallel\" \\"
     echo "   FLAGS=\"-qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel\""
     echo " where"
     echo "  CC : Compilation command for C"
@@ -40,7 +40,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = icc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -openmp-report2 -O3 -DHAVE_SSE2
+FLAGS = -openmp -O3 -DHAVE_SSE2
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
@@ -60,7 +60,13 @@ FLAGS = -fopenmp  -lm
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
-    else 
+    elif [ ${1} == "manual" ]; then
+echo " C compiler ?"
+read CC
+echo " LAPACK option ?"
+read LAPACK_FLAGS
+echo " Other compilation flags ?"
+read FLAGS
         cat > src/make.sys <<EOF
 CC = ${CC}
 LAPACK_FLAGS = ${LAPACK_FLAGS}
@@ -74,21 +80,25 @@ EOF
     cat src/make.sys
 
     echo
-    echo "configure DONE"
+    echo "HPhiconfig DONE"
     echo
 
     cat > makefile <<EOF
 HPhi:
 	cd src;make -f makefile_src
 
-doc:
-	cd doc/jp/;make -f makefile_doc_jp
-	cd doc/en/;make -f makefile_doc_en
+useguide:
+	cd doc/jp/;make -f makefile_doc_jp;mv userguide_jp.pdf ../
+	cd doc/en/;make -f makefile_doc_en;mv userguide_en.pdf ../
 
 clean:
 	cd src; make -f makefile_src clean
 	cd doc/jp; make -f makefile_doc_jp clean
 	cd doc/en; make -f makefile_doc_en clean
+	rm -f doc/userguide_??.pdf
 
+veryclean:
+	make clean
+	rm -f src/make.sys makefile
 EOF
 fi
