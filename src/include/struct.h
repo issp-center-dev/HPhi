@@ -85,27 +85,29 @@ struct DefineList{
   //[e] Transfer
   
   int   **CoulombIntra;  /**< [NCoulombIntra][1] */
-  int NCoulombIntra;  /**< */
+  int NCoulombIntra=0;  /**< */
   double  *ParaCoulombIntra;  /**< [NCoulombIntra] */
 
   int   **CoulombInter;  /**< [NCoulombInter][2] */
-  int NCoulombInter;    /**< */
+  int NCoulombInter=0;    /**< */
   double  *ParaCoulombInter; /**< [NCoulombInter] */
  
   int  **HundCoupling;  /**< */
-  int  NHundCoupling;  /**< */
+  int  NHundCoupling=0;  /**< */
   double   *ParaHundCoupling;  /**< */
 
   int   **PairHopping;  /**< */
-  int  NPairHopping;    /**< */
+  int  NPairHopping=0;    /**< */
   double   *ParaPairHopping;/**< */
   
   int   **ExchangeCoupling;  /**< */
-  int    NExchangeCoupling;    /**< */
+  int    NExchangeCoupling=0;    /**< */
   double *ParaExchangeCoupling;  /**< */
 
+  int    NIsingCoupling=0;    /**< */
+  
   int   **PairLiftCoupling;  /**< */
-  int    NPairLiftCoupling;    /**< */
+  int    NPairLiftCoupling=0;    /**< */
   double *ParaPairLiftCoupling;  /**< */
 
 
@@ -113,9 +115,9 @@ struct DefineList{
   int **InterAll;  /**< [NinterAll][8] Interacted quartet */
   int **InterAll_OffDiagonal;  /**< [NinterAll_OffDiagonal][8] Interacted quartet */
   int **InterAll_Diagonal;  /**< [NinterAll_Diagonal][4] Interacted quartet */
-  int NInterAll;    /**< */
-  int NInterAll_Diagonal;    /**< */
-  int NInterAll_OffDiagonal;    /**< */
+  int NInterAll=0;    /**< */
+  int NInterAll_Diagonal=0;    /**< */
+  int NInterAll_OffDiagonal=0;    /**< */
   double complex *ParaInterAll;  /**< */
   double *ParaInterAll_Diagonal;
   double complex *ParaInterAll_OffDiagonal;  

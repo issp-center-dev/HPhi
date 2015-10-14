@@ -44,6 +44,7 @@
 #define KWOneBodyG 10
 #define KWTwoBodyG 11
 #define KWPairLift 12
+#define KWIsing 13
 
 /**
  * Keyword List in NameListFile.  
@@ -133,6 +134,12 @@ int CheckFormatForKondoTrans
  );
 
 void SetConvergenceFactor
+(
+ struct DefineList *X
+ );
+
+
+void ResetInteractionNum
 (
  struct DefineList *X
  );

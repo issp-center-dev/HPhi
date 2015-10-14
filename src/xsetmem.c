@@ -49,14 +49,14 @@ void setmem_def
   
   i_malloc2(X->Def.CoulombIntra, X->Def.NCoulombIntra, 1);
   d_malloc1(X->Def.ParaCoulombIntra, X->Def.NCoulombIntra);
-  i_malloc2(X->Def.CoulombInter, X->Def.NCoulombInter, 2);
-  d_malloc1(X->Def.ParaCoulombInter, X->Def.NCoulombInter);
+  i_malloc2(X->Def.CoulombInter, X->Def.NCoulombInter+X->Def.NIsingCoupling, 2);
+  d_malloc1(X->Def.ParaCoulombInter, X->Def.NCoulombInter+X->Def.NIsingCoupling);
   i_malloc2(X->Def.HundCoupling, X->Def.NHundCoupling, 2);
   d_malloc1(X->Def.ParaHundCoupling, X->Def.NHundCoupling);
   i_malloc2(X->Def.PairHopping, X->Def.NPairHopping, 2);
   d_malloc1(X->Def.ParaPairHopping, X->Def.NPairHopping); 
-  i_malloc2(X->Def.ExchangeCoupling, X->Def.NExchangeCoupling, 2);
-  d_malloc1(X->Def.ParaExchangeCoupling, X->Def.NExchangeCoupling);
+  i_malloc2(X->Def.ExchangeCoupling, X->Def.NExchangeCoupling+X->Def.NIsingCoupling, 2);
+  d_malloc1(X->Def.ParaExchangeCoupling, X->Def.NExchangeCoupling+X->Def.NIsingCoupling);
   i_malloc2(X->Def.PairLiftCoupling, X->Def.NPairLiftCoupling, 2);
   d_malloc1(X->Def.ParaPairLiftCoupling, X->Def.NPairLiftCoupling);
 
