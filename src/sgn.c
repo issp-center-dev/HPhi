@@ -32,7 +32,7 @@ void sgn(struct BindStruct *X){
       div=i & X->Def.Tpow[j];
       div=div/X->Def.Tpow[j];
       num+=div;       
-      //printf("ADEBUG: i=%d j=%d div=%d num=%d: Tpow[%d]=%ld\n",i,j,div,num,j,X->Def.Tpow[j]);  
+      //fprintf(stdoutMPI, "ADEBUG: i=%d j=%d div=%d num=%d: Tpow[%d]=%ld\n",i,j,div,num,j,X->Def.Tpow[j]);  
     }
     
     if(num%2==1){
@@ -40,7 +40,7 @@ void sgn(struct BindStruct *X){
     }else{
       list_3[i]=1;
     }  
-    //printf("CDEBUG: i=%ld list_3=%d: sdim=%ld\n",i,list_3[i],X->Check.sdim);  
+    //fprintf(stdoutMPI, "CDEBUG: i=%ld list_3=%d: sdim=%ld\n",i,list_3[i],X->Check.sdim);  
   }
   fprintf(stdoutMPI, "%s", cProEndCalcSgn);
 }    

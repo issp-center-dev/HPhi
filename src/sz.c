@@ -112,7 +112,7 @@ int sz
     fprintf(stdoutMPI, "num_threads==%d\n",num_threads);
     childfopenMPI(sdt,"a", &fp);
     fprintf(fp, "num_threads==%d\n",num_threads);
-    fcloseMPI(fp);
+    fclose(fp);
     
     //*[s] omp parallel
 
@@ -314,7 +314,7 @@ int sz
       return -1;
     }
     fprintf(fp_err,cErrSz_OutFile);
-    fcloseMPI(fp_err);
+    fclose(fp_err);
     return -1;
   }
   
@@ -422,7 +422,7 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
       list_1[ja+jb]=ia+ib*ihfbit;
       list_2_1[ia]=ja;
       list_2_2[ib]=jb;
-      //printf("ja=%ld, jb=%ld, ia=%ld, ib=%ld, ihfbit=%ld\n", ja, jb, ia, ib, ihfbit);
+      //fprintf(stdoutMPI, "ja=%ld, jb=%ld, ia=%ld, ib=%ld, ihfbit=%ld\n", ja, jb, ia, ib, ihfbit);
       //      fprintf(stdoutMPI, "ja=%ld, jb=%ld, ja+jb=%ld, list_1_j=%ld\n", ja, jb, ja+jb, list_1[ja+jb]);
       ja+=1;
     } 
@@ -907,7 +907,7 @@ int Read_sz
     }
     fprintf(fp_err, cErrSz_NoFile);
     fprintf(fp_err, cErrSz_NoFile_Show,sdt);
-    fcloseMPI(fp_err);
+    fclose(fp_err);
   }else{
     while(NULL != fgetsMPI(buf,sizeof(buf),fp)){  
       dam=atol(buf);  
@@ -930,7 +930,7 @@ int Read_sz
       icnt+=1;
                 
     }
-    fcloseMPI(fp);
+    fclose(fp);
     *i_max=icnt-1;
   }
 

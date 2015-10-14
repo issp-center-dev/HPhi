@@ -60,7 +60,7 @@ int diagonalcalc
       fprintf(fp,"i=%ld isite1=%ld tmp_V=%lf \n",i,isite1,tmp_V);    
       SetDiagonalCoulombIntra(isite1, tmp_V, X);
     }
-    fcloseMPI(fp);
+    fclose(fp);
   }
 
   if(X->Def.EDNChemi>0){
@@ -76,7 +76,7 @@ int diagonalcalc
 	return -1;
       }
     }
-    fcloseMPI(fp);	
+    fclose(fp);	
   }
    
   if(X->Def.NCoulombInter>0){
@@ -92,7 +92,7 @@ int diagonalcalc
 	return -1;
       }
     }
-    fcloseMPI(fp);   
+    fclose(fp);   
   }
   if(X->Def.NHundCoupling>0){
     if(childfopenMPI(cFileNameCheckHund,"w", &fp) !=0){
@@ -107,7 +107,7 @@ int diagonalcalc
       }
       fprintf(fp,"i=%ld isite1=%ld isite2=%ld tmp_V=%lf \n",i,isite1,isite2,tmp_V);    
     }
-    fcloseMPI(fp);   
+    fclose(fp);   
   }
 
   if(X->Def.NInterAll_Diagonal>0){    
@@ -123,7 +123,7 @@ int diagonalcalc
       fprintf(fp,"i=%ld isite1=%ld A_spin=%ld isite2=%ld B_spin=%ld tmp_V=%lf \n", i, isite1, A_spin, isite2, B_spin, tmp_V);
       SetDiagonalInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X);
     }      
-     fcloseMPI(fp);   
+     fclose(fp);   
     }
   
   TimeKeeper(X, cFileNameTimeKeep, cDiagonalCalcFinish, "w");
@@ -238,7 +238,7 @@ int SetDiagonalChemi
 
       ibit1 = (j-1)&is1;
       num1  = ibit1/is1;
-      //printf("DEBUG: spin=%ld  is1=%ld: isite1=%ld j=%ld num1=%ld \n",spin,is1,isite1,j,num1);
+      //fprintf(stdoutMPI, "DEBUG: spin=%ld  is1=%ld: isite1=%ld j=%ld num1=%ld \n",spin,is1,isite1,j,num1);
 	      
       list_Diagonal[j]+=num1*dtmp_V;
     }

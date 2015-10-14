@@ -48,7 +48,7 @@ int TimeKeeper
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, asctime(area));
-  fcloseMPI(fp);
+  fclose(fp);
   return 0;
 }
 
@@ -85,7 +85,7 @@ int TimeKeeperWithStep
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, istep, asctime(area));
-  fcloseMPI(fp);
+  fclose(fp);
   return 0;
 }
 
@@ -124,7 +124,7 @@ int TimeKeeperWithRandAndStep
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, irand, istep, asctime(area));
-  fcloseMPI(fp);
+  fclose(fp);
   return 0;
   
 }

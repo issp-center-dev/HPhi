@@ -198,7 +198,7 @@ int expec_energy(struct BindStruct *X){
     }  
     fprintf(fp,"Energy  %.10lf \n",X->Phys.energy);
     fprintf(fp,"Doublon  %.10lf \n",X->Phys.doublon);
-    fcloseMPI(fp);
+    fclose(fp);
 	
     break;    
   case TPQCalc:

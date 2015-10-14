@@ -53,7 +53,7 @@ int output_list(struct BindStruct *X){
   for(i=1;i<=i_max;i++){
     fprintf(fp," %lu \n",list_1[i]);
   }
-  fcloseMPI(fp);
+  fclose(fp);
   
   fprintf(stdoutMPI, "%s", cProEndOutputList);
   return 0;

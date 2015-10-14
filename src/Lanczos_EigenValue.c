@@ -143,7 +143,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     
     Target  = X->Def.LanczosTarget;
 
-    //printf("alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+    //fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
     
     if(stp==2){      
      #ifdef lapack
@@ -210,7 +210,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
 	 childfopenMPI(sdt_2,"a", &fp);
        }
        fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4]);
-       fcloseMPI(fp);
+       fclose(fp);
 
       if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos){
         vec12(alpha,beta,stp,E,X);		

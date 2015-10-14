@@ -408,7 +408,7 @@ int expec_cisajscktaltdc
     return -1;
   }
   
-  fcloseMPI(fp);
+  fclose(fp);
   
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){

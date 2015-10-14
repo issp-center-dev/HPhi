@@ -56,6 +56,7 @@ void FinalizeMPI(){
   ierr = MPI_Finalize();
   if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
+  if (myrank != 0) fclose(stdoutMPI);
 }
 
 /**
@@ -90,19 +91,6 @@ FILE* fopenMPI(
   else fp = fopen("/dev/null", "w");
 
   return fp;
-}
-
-/**
- *
- * MPI file I/O (close) wrapper
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-int fcloseMPI(
-  FILE* fp /**< [in]*/){
-  int ierr;
-  if (myrank == 0) fclose(fp);
-  return ierr;
 }
 
 /**

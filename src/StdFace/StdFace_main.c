@@ -184,7 +184,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
       exitMPI(-1);
     }
   }
-  fcloseMPI(fp);
+  fclose(fp);
   /*
    Generate Hamiltonian definition files
   */
@@ -455,7 +455,7 @@ void PrintLocSpin(){
   for (isite = 0; isite < nsite; isite++)
     fprintf(fp, "%5d  %5d\n", isite, locspinflag[isite]);
 
-  fcloseMPI(fp);
+  fclose(fp);
   fprintf(stdoutMPI, "    zlocspin.def is written.\n");
 }
 
@@ -501,7 +501,7 @@ static void PrintTrans(){
       trans[ktrans]);
   }
 
-  fcloseMPI(fp);
+  fclose(fp);
   fprintf(stdoutMPI, "      zTrans.def is written.\n");
 }
 
@@ -552,7 +552,7 @@ static void PrintInter(){
       intr[kintr]);
   }
 
-  fcloseMPI(fp);
+  fclose(fp);
   fprintf(stdoutMPI, "   zInterAll.def is written.\n");
 }
 
@@ -574,7 +574,7 @@ static void PrintNamelist(){
   fprintf(fp, "OneBodyG greenone.def\n");
   fprintf(fp, "TwoBodyG greentwo.def\n");
 
-  fcloseMPI(fp);
+  fclose(fp);
   fprintf(stdoutMPI, "    namelist.def is written.\n");
 }
 
@@ -631,7 +631,7 @@ static void PrintCalcMod(
   fprintf(fp, "FlgFiniteTemperature %3d\n", FlgTemp);
   fprintf(fp, "CalcModel %3d\n", iCalcModel);
   fprintf(fp, "OutputMode %3d\n", ioutputmode2);
-  fcloseMPI(fp);
+  fclose(fp);
   fprintf(stdoutMPI, "     calcmod.def is written.\n");
 }
 
@@ -682,7 +682,7 @@ static void PrintModPara(
   fprintf(fp, "NumAve         %-5d\n", NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", ExpecInterval);
 
-  fcloseMPI(fp);
+  fclose(fp);
   fprintf(stdoutMPI, "     modpara.def is written.\n");
 }
 
@@ -749,7 +749,7 @@ static void Print1Green(int ioutputmode /**< [in]*/){
     fprintf(fp,"%5d %5d %5d %5d\n",
       greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3]);
   }
-  fcloseMPI(fp);
+  fclose(fp);
 
   fprintf(stdoutMPI, "    greenone.def is written.\n");
   //[s] free
@@ -846,7 +846,7 @@ static void Print2Green(int ioutputmode /**< [in]*/){
       greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3],
       greenindx[igreen][4], greenindx[igreen][5], greenindx[igreen][6], greenindx[igreen][7]);
   }
-  fcloseMPI(fp);
+  fclose(fp);
 
   fprintf(stdoutMPI, "    greentwo.def is written.\n");
   //[s] free

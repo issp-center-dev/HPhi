@@ -39,7 +39,7 @@ int HPhiTrans(struct BindStruct *X){
   if(childfopenMPI(sdt_err, "w", &fp_err)!=0){
     return -1;
   }
-  fcloseMPI(fp_err);
+  fclose(fp_err);
 	 
   //Transefer
   cnt_trans=0;
@@ -74,7 +74,7 @@ int HPhiTrans(struct BindStruct *X){
 	    sprintf(sdt_err,cErrTransfer);
 	    childfopenMPI(sdt_err,"a", &fp_err);
 	    fprintf(fp_err,cErrDoubleCounting, X->Def.GeneralTransfer[i][0] ,X->Def.EDGeneralTransfer[k][2], X->Def.EDGeneralTransfer[k][1], X->Def.EDGeneralTransfer[k][3]);
-	    fcloseMPI(fp_err);
+	    fclose(fp_err);
 	    return -1;
 	  }
 	}
@@ -92,7 +92,7 @@ int HPhiTrans(struct BindStruct *X){
     sprintf(sdt_err,cErrTransfer);
     childfopenMPI(sdt_err,"a", &fp_err);
     fprintf(fp_err,cErrChemicalPotential);
-    fcloseMPI(fp_err);
+    fclose(fp_err);
     return -1;
   }
 //

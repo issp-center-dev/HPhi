@@ -21,5 +21,5 @@
 
 d_free1(X.Bind.Large.v0, X.Bind.Check.idim_max+1);
 d_free1(X.Bind.Large.v1, X.Bind.Check.idim_max+1);
-printf("LARGE Free FINISH !\n");
+fprintf(stdoutMPI, "LARGE Free FINISH !\n");
  

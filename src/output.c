@@ -56,7 +56,7 @@ int output(struct BindStruct *X){
     for(i=0;i<i_max;i++){
       fprintf(fp," %10lf %10lf %10lf %10lf %10lf\n",X->Phys.all_energy[i],tmp_N,tmp_Sz,X->Phys.all_s2[i],X->Phys.all_doublon[i]);
     }
-    fcloseMPI(fp);
+    fclose(fp);
   }
   
   return 0;

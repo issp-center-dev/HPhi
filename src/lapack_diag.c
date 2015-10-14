@@ -47,6 +47,6 @@ int lapack_diag(struct BindStruct *X){
   for(i=0;i<i_max;i++){
     fprintf(fp," %d %.10lf \n",i, creal(v0[i]));
   }
-  fcloseMPI(fp);
+  fclose(fp);
   return 0;
 }

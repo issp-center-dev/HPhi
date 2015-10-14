@@ -22,5 +22,4 @@ void InitializeMPI(int argc, char *argv[]);
 void FinalizeMPI();
 void exitMPI(int errorcode);
 FILE* fopenMPI(const char* FileName, const char* mode);
-int fcloseMPI(FILE* fp); 
 char* fgetsMPI(char* InputString, int maxcount,FILE* fp);

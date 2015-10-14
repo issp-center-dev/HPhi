@@ -218,7 +218,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     return -1;
   }
 
-  fcloseMPI(fp);
+  fclose(fp);
   if(X->Def.St==0){
     if(X->Def.iCalcType==Lanczos){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");

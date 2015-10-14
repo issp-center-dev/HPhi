@@ -118,7 +118,7 @@ int check(struct BindStruct *X){
   }
   fprintf(fp,"MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(fp,"APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
-  fcloseMPI(fp);
+  fclose(fp);
 
   //sdim 
   tmp=1;
@@ -207,7 +207,7 @@ int check(struct BindStruct *X){
     i_free2(comb, Ns+1, Ns+1);
     return -1;
   }  
-  fcloseMPI(fp);	 
+  fclose(fp);	 
  
   i_free2(comb, Ns+1, Ns+1);
   fprintf(stdoutMPI, "Indices and Parameters of Definition files(*.def) are complete.\n");

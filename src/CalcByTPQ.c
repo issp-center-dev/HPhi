@@ -57,14 +57,14 @@ int CalcBySSM(
       return -1;
     }
     fprintf(fp, " # inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i\n");
-    fcloseMPI(fp);
+    fclose(fp);
     
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
     if(!childfopenMPI(sdt_norm, "w", &fp)==0){
       return -1;
     }
     fprintf(fp, " # inv_temp, global_norm, global_1st_norm, step_i \n");
-    fcloseMPI(fp);
+    fclose(fp);
     
     FirstMultiply(&dsfmt, &(X->Bind));
     
@@ -85,17 +85,17 @@ int CalcBySSM(
       return -1;
     }
     fprintf(fp, "%lf  %lf %lf %lf %lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
-    fcloseMPI(fp);
+    fclose(fp);
 
     if(!childfopenMPI(sdt_norm, "a", &fp)==0){
       return -1;
     }
     fprintf(fp, "%lf %lf %lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
-    fcloseMPI(fp);
+    fclose(fp);
     for (step_i = 2; step_i<X->Bind.Def.Lanczos_max; step_i++){
 
       if(step_i %(X->Bind.Def.Lanczos_max/10)==0){
-	printf("step_i/total_step=%d/%d \n", step_i, X->Bind.Def.Lanczos_max);
+	fprintf(stdoutMPI, "step_i/total_step=%d/%d \n", step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;
       TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
@@ -108,13 +108,13 @@ int CalcBySSM(
 	return -1;
       }
       fprintf(fp, "%lf  %lf %lf %lf %lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
-      fcloseMPI(fp);
+      fclose(fp);
 
       if(!childfopenMPI(sdt_norm, "a", &fp)==0){
 	return -1;
       }
       fprintf(fp, "%lf %lf %lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
-      fcloseMPI(fp);
+      fclose(fp);
 
       if (step_i%step_spin == 0){
 	if(X->Bind.Def.iCalcModel!=Spin){

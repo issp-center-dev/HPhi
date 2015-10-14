@@ -63,7 +63,7 @@ int CG_EigenVector(struct BindStruct *X){
   }else{
     fprintf(fp_0,"allocate succeed !!! \n");
   }
-  fcloseMPI(fp_0);
+  fclose(fp_0);
         
 
   start=time(NULL);  
@@ -96,7 +96,7 @@ int CG_EigenVector(struct BindStruct *X){
     }
     childfopenMPI(sdt_1,"a",&fp_0);
     fprintf(fp_0,"b[%d]=%lf bnorm== %lf \n ",iv,creal(b[iv]),bnorm);
-    fcloseMPI(fp_0);           
+    fclose(fp_0);           
 
     //iteration
     if(i_itr==0){
@@ -153,12 +153,12 @@ int CG_EigenVector(struct BindStruct *X){
 	childfopenMPI(sdt_1,"a", &fp_0);
 	fprintf(fp_0,"i_itr=%d itr=%d %.10lf %.10lf \n ",
 		i_itr,itr,sqrt(rnorm2),pow(10,-5)*sqrt(bnorm));
-	fcloseMPI(fp_0);                
+	fclose(fp_0);                
 	if(sqrt(rnorm2)<eps*sqrt(bnorm)){
 	  t_itr+=itr;
 	  childfopenMPI(sdt_1,"a", &fp_0);
 	  fprintf(fp_0,"CG OK:   t_itr=%d \n ",t_itr);
-	  fcloseMPI(fp_0); 
+	  fclose(fp_0); 
 	  break;
 	}
       }
@@ -187,13 +187,13 @@ int CG_EigenVector(struct BindStruct *X){
     childfopenMPI(sdt_1,"a", &fp_0);
     fprintf(fp_0,"i_itr=%d itr=%d time=%lf  fabs(fabs(xb)-1.0)=%.16lf\n"
 	    ,i_itr,itr,difftime(mid,start),fabs(cabs(xb)-1.0));
-    fcloseMPI(fp_0);
+    fclose(fp_0);
         
     if(fabs(fabs(xb)-1.0)<eps){
       childfopenMPI(sdt_1,"a", &fp_0);
       fprintf(fp_0,"number of iterations in inv1:i_itr=%d itr=%d t_itr=%d %lf\n ",
 	      i_itr,itr,t_itr,fabs(cabs(xb)-1.0));
-      fcloseMPI(fp_0);
+      fclose(fp_0);
           
       break;
     }else{
