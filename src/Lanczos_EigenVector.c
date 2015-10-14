@@ -118,7 +118,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
     dnorm += conj(v0[j])*v0[j];
   }
   dnorm=sqrt(dnorm);
-  dnorm_inv=dnorm;
+  dnorm_inv=1.0/dnorm;
 #pragma omp parallel for default(none) private(j) shared(v0) firstprivate(i_max, dnorm_inv)
   for(j=1;j<=i_max;j++){
     v0[j] = v0[j]*dnorm_inv;

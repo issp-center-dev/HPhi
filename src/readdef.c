@@ -286,6 +286,8 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef];
   int itmp;
+
+  InitializeInteractionNum(X);
   
   fprintf(stdoutMPI, "Start: Read File '%s'.\n", xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
@@ -396,6 +398,11 @@ int ReadDefFileNInt(
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fscanf(fp,"%s %d\n", ctmp, &(X->NExchangeCoupling));
       break;
+    case KWIsing:
+      /* Read ising.def--------------------------------------*/
+      fgets(ctmp, sizeof(ctmp)/sizeof(char), fp);
+      fscanf(fp,"%s %d\n", ctmp, &(X->NIsingCoupling));
+      break;
     case KWPairLift:
       /* Read exchange.def--------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
@@ -487,7 +494,6 @@ int ReadDefFileIdxPara(
 	}
 	idx++;
       }
-      fprintf(stdoutMPI, "Nsite= %d.\n", X->Nsite);
       if(idx!=X->Nsite){
 	fcloseMPI(fp);
 	return ReadDefFileError(defname);
@@ -672,6 +678,37 @@ int ReadDefFileIdxPara(
       }
       break;
 
+    case KWIsing:
+      /*ising.def--------------------------------------*/
+      if(X->NIsingCoupling>0){
+	while( fscanf(fp, "%d %d %lf\n", 
+		      &isite1,
+		      &isite2,
+		      &dvalue_re
+		      )!=EOF
+	       ){
+	  if(CheckPairSite(isite1,isite2,X->Nsite) !=0){
+	    fclose(fp);
+	    return ReadDefFileError(defname);
+	  }
+
+	  //input into exchange couplings
+	  X->HundCoupling[X->NHundCoupling+idx][0]=isite1;
+	  X->HundCoupling[X->NHundCoupling+idx][1]=isite2;
+	  X->ParaHundCoupling[X->NHundCoupling+idx]= -dvalue_re/2.0;
+	  //input into inter Coulomb
+	  X->CoulombInter[X->NCoulombInter+idx][0]=isite1;
+	  X->CoulombInter[X->NCoulombInter+idx][1]=isite2;
+	  X->ParaCoulombInter[X->NCoulombInter+idx]=-dvalue_re/4.0;
+	  idx++;
+	}
+	if(idx!=X->NIsingCoupling){
+	  fclose(fp);
+	  return ReadDefFileError(defname);
+	}
+      }
+      break;
+      
     case KWPairLift:
       /*pairlift.def--------------------------------------*/
       if(X->NPairLiftCoupling>0){
@@ -863,6 +900,8 @@ int ReadDefFileIdxPara(
     }
     fcloseMPI(fp);
   }
+
+  ResetInteractionNum(X);
   /*=======================================================================*/
   return 0;
 }
@@ -1330,4 +1369,28 @@ void SetConvergenceFactor
   eps_Energy = pow(10.0, nEnergy);
   dShiftBeta = pow(10.0, nShiftBeta);
   eps_vec12 = pow(10.0, nepsvec12);
+}
+
+void ResetInteractionNum
+(
+ struct DefineList *X
+)
+{
+  X->NHundCoupling += X->NIsingCoupling;
+  X->NCoulombInter += X->NIsingCoupling;
+}
+
+void InitializeInteractionNum
+(
+ struct DefineList *X
+ )
+{
+  X->NTransfer=0;
+  X->NCoulombIntra=0;
+  X->NCoulombInter=0;
+  X->NIsingCoupling=0;
+  X->NPairLiftCoupling=0;
+  X->NInterAll=0;
+  X->NCisAjt=0;
+  X->NCisAjtCkuAlvDC=0;
 }

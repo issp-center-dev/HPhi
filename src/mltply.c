@@ -249,7 +249,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
 	  dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
 	  for(j=1;j<=i_max;j++){
-	    dam_pr+=tmp_trans*X_Spin_CisAis(j,X,is1_spin, sigma1)*conj(tmp_v1[j])*tmp_v0[j]; 
+	    dam_pr+=tmp_trans*X_SpinGC_CisAis(j,X,is1_spin, sigma1)*conj(tmp_v1[j])*tmp_v0[j]; 
 	  } 
         }else{
           // transverse magnetic field
@@ -267,7 +267,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
       }
     }
 
-    
     //InterAll
     for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){    
       isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
@@ -1734,7 +1733,7 @@ double complex GC_child_exchange_spin_element
   list_1_j=j-1;
   
   long unsigned int ibit_tmp;
-  ibit_tmp = (list_1[j] & is_up);
+  ibit_tmp = (list_1_j & is_up);
   if(ibit_tmp==0 || ibit_tmp==is_up){
     return dam_pr;
   }else{

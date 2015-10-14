@@ -18,4 +18,5 @@ make.sys
 *.synctex.gz
 *.toc
 *~
+build
 #*
