@@ -15,7 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef MPI
 #include <mpi.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include "wrapperMPI.h"
@@ -96,9 +98,11 @@ FILE* fopenMPI(
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void  fcloseMPI(
+int fcloseMPI(
   FILE* fp /**< [in]*/){
+  int ierr;
   if (myrank == 0) fclose(fp);
+  return ierr;
 }
 
 /**
@@ -107,13 +111,17 @@ void  fcloseMPI(
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void fgetsMPI(
-  FILE* fp /**< [in] file pointer*/, 
-  char* InputString /**< [out] read line. The length must be 256*/)
+char* fgetsMPI(
+  char* InputString, /**< [out] read line.*/
+  int maxcount /**< [in] Length of string*/,
+  FILE* fp /**< [in] file pointer*/)
 {
-  fgets(InputString, 256, fp);
+  char *ctmp;
+
+  fgets(InputString, maxcount, fp);
 #ifdef MPI
-  MPI_Bcast(InputString, 256, MPI_CHAR, 0, MPI_COMM_WORLD);
+  MPI_Bcast(InputString, maxcount, MPI_CHAR, 0, MPI_COMM_WORLD);
 #endif
+  return ctmp;
 }
 

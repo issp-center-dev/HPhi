@@ -36,7 +36,8 @@ log.c \
 ErrorMessage.c \
 LogMessage.c \
 ProgressMessage.c \
-global.c
+global.c \
+wrapperMPI.c
 
 all:
 	make -f makefile_src libStdFace

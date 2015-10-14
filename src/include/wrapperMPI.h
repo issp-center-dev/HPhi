@@ -17,3 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 int nproc, myrank;
 FILE *stdoutMPI;
+
+void InitializeMPI(int argc, char *argv[]);
+void AbortMPI(int errorcode);
+void FinalizeMPI();
+FILE* fopenMPI(char* FileName, char* mode);
+int fcloseMPI(FILE* fp); 
+char* fgetsMPI(char* InputString, int maxcount,FILE* fp);
