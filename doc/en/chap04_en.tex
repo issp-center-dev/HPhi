@@ -27,6 +27,7 @@ The kinds of interactions are determined by the following keywords.
 ~\\{\bf Hund}: Hund couplings, $n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}$.
 ~\\{\bf PairHop}: Pair hopping couplings, $c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}$.
 ~\\{\bf Exchange}: Exchange couplings, $c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}$.
+~\\{\bf Ising}: Ising interactions, $S_i^z S_j^z$.
 ~\\{\bf PairLift}: PairLift couplings, $c_ {i \uparrow}^{\dag}c_{i\downarrow}c_{j \uparrow}^{\dag}c_{j \downarrow}$.
 \item[(4)~Output:] Targets for output is determined.
 ~\\{\bf OneBodyG }: One-body green functions,  $\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle$.
@@ -90,6 +91,7 @@ TwoBodyG	zcisajscktaltdc.def
            Hund  &   Hund couplings. \\  
            PairHop  &  Pair hopping couplings. \\  
            Exchange  &  Exchange couplings. \\  
+           Ising  &  Ising interactions. \\  
            PairLift  &   Pair lift couplings. \\  
            OneBodyG         &   Output components for Green functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
            TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\   \hline
@@ -961,9 +963,87 @@ NExchange 6
 \begin{itemize}
 \item Headers cannot be omitted. 
 \item A program is terminated, when components of Exchange couplings are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of Hund couplings defined in this file.
+\item A program is terminated, when $[$int01$]$ is different from the total number of Exchange couplings defined in this file.
 \item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
 \end{itemize}
+
+
+\newpage
+\subsection{Ising file}
+This file determines values of Ising interactions $J_{ij}^{z} $.
+For fermion electronic system, Ising terms are given as
+\begin{equation}
+H+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} ).
+\end{equation}
+For Spin system, they are given as
+\begin{equation}
+H+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z.
+\end{equation}
+An example of file format is shown as follows.
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+====================== 
+NIsing 6  
+====================== 
+========Ising ====== 
+====================== 
+   0     1  0.50000
+   1     2  0.50000
+   2     3  0.50000
+   3     4  0.50000
+   4     5  0.50000
+   5     0  0.50000
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item  Line 1:  Header
+   \item  Line 2:   [string01]~[int01]
+   \item  Lines 3-5:  Header
+   \item  Lines 6-: 
+   [int02]~[int03]~[double01] 
+  \end{itemize}
+\subsubsection{Parameters}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf Type :} string-type (blank parameter not allowed)
+
+   {\bf Description :}  A keyword for total number of Ising interactions. You can freely give a name of the keyword.
+
+   \item  $[$int01$]$
+   
+    {\bf Type :} int-type (blank parameter not allowed)
+
+   {\bf Description :} An integer giving total number of Ising interactions.
+
+  \item  $[$int02$]$, $[$int03$]$
+  
+ {\bf Type :} int-type (blank parameter not allowed)
+
+{\bf Description :} An integer giving a site index ($0<= [$int02$], [$int03$]<\verb|Nsite|$).
+ 
+ \item  $[$double01$]$
+   
+   {\bf Type :} double-type (blank parameter not allowed)
+
+  {\bf Description :}   A value for $J_{ij}^{\rm z}$.
+  
+\end{itemize}
+
+\subsubsection{Use rules}
+\begin{itemize}
+\item Headers cannot be omitted. 
+\item A program is terminated, when components of Ising interactions are double counted.
+\item A program is terminated, when $[$int01$]$ is different from the total number of Ising interactions defined in this file.
+\item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
+\end{itemize}
+
 
 \newpage
 \subsection{PairLift file}
