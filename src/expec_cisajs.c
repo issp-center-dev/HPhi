@@ -193,7 +193,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 		  dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
 		  for(j=1;j<=i_max;j++){
-			dam_pr+=X_Spin_CisAis(j,X,isite1,org_sigma1)*conj(vec[j])*vec[j]; 
+			dam_pr+=X_SpinGC_CisAis(j,X,isite1,org_sigma1)*conj(vec[j])*vec[j]; 
 		  } 
 		  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
         }else{
