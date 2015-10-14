@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "sgn.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -24,7 +25,7 @@
  */
 void sgn(struct BindStruct *X){
   long unsigned int i,j,num,div;
-  printf("%s", cProStartCalcSgn);
+  fprintf(stdoutMPI, "%s", cProStartCalcSgn);
   for(i=0;i< X->Check.sdim;i++){
     num=0;
     for(j=0;j<=X->Def.Nsite-1;j+=1){
@@ -41,6 +42,6 @@ void sgn(struct BindStruct *X){
     }  
     //printf("CDEBUG: i=%ld list_3=%d: sdim=%ld\n",i,list_3[i],X->Check.sdim);  
   }
-  printf("%s", cProEndCalcSgn);
+  fprintf(stdoutMPI, "%s", cProEndCalcSgn);
 }    
     

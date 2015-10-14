@@ -218,7 +218,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
       child_exchange_spin_GetInfo(i, X);
       dam_pr =child_exchange_spin(tmp_v0, tmp_v1, X);
       X->Large.prdct+=dam_pr;
-      //    printf("dam_pr_exchange=%lf\n", dam_pr);
+      //    fprintf(stdoutMPI, "dam_pr_exchange=%lf\n", dam_pr);
     }
 
     //PairLift
@@ -226,7 +226,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
       child_pairlift_spin_GetInfo(i, X);
       dam_pr = child_pairlift_spin( tmp_v0, tmp_v1, X);
       X->Large.prdct+=dam_pr;
-      // printf("dam_pr_pairlift=%lf\n", dam_pr);
+      // fprintf(stdoutMPI, "dam_pr_pairlift=%lf\n", dam_pr);
     }
     
     break;

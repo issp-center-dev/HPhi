@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "output_list.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -30,7 +31,7 @@ int output_list(struct BindStruct *X){
   char sdt[D_FileNameMax];
   int i,i_max;
   
-  printf("%s", cProStartOutputList);
+  fprintf(stdoutMPI, "%s", cProStartOutputList);
   i_max=X->Check.idim_max;
   switch(X->Def.iCalcModel){
   case HubbardGC:
@@ -46,14 +47,14 @@ int output_list(struct BindStruct *X){
   default:
     return -1;
   }
-  if(childfopen(sdt,"w",&fp)!=0){
+  if(childfopenMPI(sdt,"w",&fp)!=0){
     return -1;
   }
   for(i=1;i<=i_max;i++){
     fprintf(fp," %lu \n",list_1[i]);
   }
-  fclose(fp);
+  fcloseMPI(fp);
   
-  printf("%s", cProEndOutputList);
+  fprintf(stdoutMPI, "%s", cProEndOutputList);
   return 0;
 }

@@ -82,8 +82,8 @@ void exitMPI(int errorcode /**< [in]*/)
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 FILE* fopenMPI(
-  char* FileName /**< [in] Input/output file*/, 
-  char* mode /**< [in] "w", "r", etc. */){
+  const char* FileName /**< [in] Input/output file*/, 
+  const char* mode /**< [in] "w", "r", etc. */){
   FILE* fp;
 
   if (myrank == 0) fp = fopen(FileName, mode);
@@ -118,7 +118,7 @@ char* fgetsMPI(
 {
   char *ctmp;
 
-  fgets(InputString, maxcount, fp);
+  if(myrank == 0) fgets(InputString, maxcount, fp);
 #ifdef MPI
   MPI_Bcast(InputString, maxcount, MPI_CHAR, 0, MPI_COMM_WORLD);
 #endif

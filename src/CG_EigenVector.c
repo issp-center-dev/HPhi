@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "CG_EigenVector.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -26,7 +27,7 @@
  */
 int CG_EigenVector(struct BindStruct *X){
 
-  printf("%s", cLogCG_EigenVecStart);
+  fprintf(stdoutMPI, "%s", cLogCG_EigenVecStart);
   
   time_t start,mid;
   FILE *fp_0;
@@ -48,7 +49,7 @@ int CG_EigenVector(struct BindStruct *X){
   Eig=X->Phys.Target_energy;
     
   strcpy(sdt_1, cFileNameTimeEV_CG);
-  if(childfopen(sdt_1, "w", &fp_0) !=0){
+  if(childfopenMPI(sdt_1, "w", &fp_0) !=0){
     return -1;
   }
     
@@ -62,7 +63,7 @@ int CG_EigenVector(struct BindStruct *X){
   }else{
     fprintf(fp_0,"allocate succeed !!! \n");
   }
-  fclose(fp_0);
+  fcloseMPI(fp_0);
         
 
   start=time(NULL);  
@@ -92,9 +93,9 @@ int CG_EigenVector(struct BindStruct *X){
       vg[i]=b[i];
       v0[i]=0.0;
     }
-    childfopen(sdt_1,"a",&fp_0);
+    childfopenMPI(sdt_1,"a",&fp_0);
     fprintf(fp_0,"b[%d]=%lf bnorm== %lf \n ",iv,creal(b[iv]),bnorm);
-    fclose(fp_0);           
+    fcloseMPI(fp_0);           
 
     //iteration
     if(i_itr==0){
@@ -148,15 +149,15 @@ int CG_EigenVector(struct BindStruct *X){
 	vg[i]=v1[i]+beta*vg[i];
       }
       if(itr%5==0){
-	childfopen(sdt_1,"a", &fp_0);
+	childfopenMPI(sdt_1,"a", &fp_0);
 	fprintf(fp_0,"i_itr=%d itr=%d %.10lf %.10lf \n ",
 		i_itr,itr,sqrt(rnorm2),pow(10,-5)*sqrt(bnorm));
-	fclose(fp_0);                
+	fcloseMPI(fp_0);                
 	if(sqrt(rnorm2)<eps*sqrt(bnorm)){
 	  t_itr+=itr;
-	  childfopen(sdt_1,"a", &fp_0);
+	  childfopenMPI(sdt_1,"a", &fp_0);
 	  fprintf(fp_0,"CG OK:   t_itr=%d \n ",t_itr);
-	  fclose(fp_0); 
+	  fcloseMPI(fp_0); 
 	  break;
 	}
       }
@@ -182,16 +183,16 @@ int CG_EigenVector(struct BindStruct *X){
        
     mid=time(NULL);
        
-    childfopen(sdt_1,"a", &fp_0);
+    childfopenMPI(sdt_1,"a", &fp_0);
     fprintf(fp_0,"i_itr=%d itr=%d time=%lf  fabs(fabs(xb)-1.0)=%.16lf\n"
 	    ,i_itr,itr,difftime(mid,start),fabs(cabs(xb)-1.0));
-    fclose(fp_0);
+    fcloseMPI(fp_0);
         
     if(fabs(fabs(xb)-1.0)<eps){
-      childfopen(sdt_1,"a", &fp_0);
+      childfopenMPI(sdt_1,"a", &fp_0);
       fprintf(fp_0,"number of iterations in inv1:i_itr=%d itr=%d t_itr=%d %lf\n ",
 	      i_itr,itr,t_itr,fabs(cabs(xb)-1.0));
-      fclose(fp_0);
+      fcloseMPI(fp_0);
           
       break;
     }else{
@@ -207,7 +208,7 @@ int CG_EigenVector(struct BindStruct *X){
   free(y);
 
   TimeKeeper(X, cFileNameTimeKeep, cCG_EigenVecFinish, "a");
-  printf("%s", cLogCG_EigenVecEnd);
+  fprintf(stdoutMPI, "%s", cLogCG_EigenVecEnd);
   
   return 0;
 }

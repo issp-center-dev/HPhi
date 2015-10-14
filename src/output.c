@@ -49,14 +49,14 @@ int output(struct BindStruct *X){
     default:
       break;
     }
-    if(childfopen(sdt,"w",&fp)!=0){
+    if(childfopenMPI(sdt,"w",&fp)!=0){
       return -1;
     }
     fprintf(fp,"  <H>         <N>        <Sz>       <S2>       <D> \n");
     for(i=0;i<i_max;i++){
       fprintf(fp," %10lf %10lf %10lf %10lf %10lf\n",X->Phys.all_energy[i],tmp_N,tmp_Sz,X->Phys.all_s2[i],X->Phys.all_doublon[i]);
     }
-    fclose(fp);
+    fcloseMPI(fp);
   }
   
   return 0;

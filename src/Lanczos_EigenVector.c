@@ -16,6 +16,7 @@
 
 #include "Common.h"
 #include "Lanczos_EigenVector.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -26,7 +27,7 @@
  */
 void Lanczos_EigenVector(struct BindStruct *X){
 
-  printf("%s", cLogLanczos_EigenVectorStart);
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
   
   int i,j,i_max,iv;  	 
   int k_exct;
@@ -124,5 +125,5 @@ void Lanczos_EigenVector(struct BindStruct *X){
   }
   
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorFinish, "a");
-  printf("%s", cLogLanczos_EigenVectorEnd);
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorEnd);
 }

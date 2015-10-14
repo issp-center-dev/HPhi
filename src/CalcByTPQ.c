@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcByTPQ.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -48,22 +49,22 @@ int CalcBySSM(
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
   for (rand_i = 0; rand_i<rand_max; rand_i++){
-    printf("rand_i=%d \n", rand_i);
+    fprintf(stdoutMPI, "rand_i=%d \n", rand_i);
     u_long_i = 123432 + rand_i*X->Bind.Def.initial_iv;
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
-    if(!childfopen(sdt_phys, "w", &fp)==0){
+    if(!childfopenMPI(sdt_phys, "w", &fp)==0){
       return -1;
     }
     fprintf(fp, " # inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i\n");
-    fclose(fp);
+    fcloseMPI(fp);
     
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
-    if(!childfopen(sdt_norm, "w", &fp)==0){
+    if(!childfopenMPI(sdt_norm, "w", &fp)==0){
       return -1;
     }
     fprintf(fp, " # inv_temp, global_norm, global_1st_norm, step_i \n");
-    fclose(fp);
+    fcloseMPI(fp);
     
     FirstMultiply(&dsfmt, &(X->Bind));
     
@@ -80,17 +81,17 @@ int CalcBySSM(
     }
 
     expec_cisajscktaltdc(&(X->Bind), v1);
-    if(!childfopen(sdt_phys, "a", &fp)==0){
+    if(!childfopenMPI(sdt_phys, "a", &fp)==0){
       return -1;
     }
     fprintf(fp, "%lf  %lf %lf %lf %lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
-    fclose(fp);
+    fcloseMPI(fp);
 
-    if(!childfopen(sdt_norm, "a", &fp)==0){
+    if(!childfopenMPI(sdt_norm, "a", &fp)==0){
       return -1;
     }
     fprintf(fp, "%lf %lf %lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
-    fclose(fp);
+    fcloseMPI(fp);
     for (step_i = 2; step_i<X->Bind.Def.Lanczos_max; step_i++){
 
       if(step_i %(X->Bind.Def.Lanczos_max/10)==0){
@@ -103,17 +104,17 @@ int CalcBySSM(
       expec_energy(&(X->Bind));
       //expec(&(X->Bind));
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
-      if(!childfopen(sdt_phys, "a", &fp)==0){
+      if(!childfopenMPI(sdt_phys, "a", &fp)==0){
 	return -1;
       }
       fprintf(fp, "%lf  %lf %lf %lf %lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
-      fclose(fp);
+      fcloseMPI(fp);
 
-      if(!childfopen(sdt_norm, "a", &fp)==0){
+      if(!childfopenMPI(sdt_norm, "a", &fp)==0){
 	return -1;
       }
       fprintf(fp, "%lf %lf %lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
-      fclose(fp);
+      fcloseMPI(fp);
 
       if (step_i%step_spin == 0){
 	if(X->Bind.Def.iCalcModel!=Spin){
@@ -125,6 +126,6 @@ int CalcBySSM(
   }
 
   tstruct.tend=time(NULL);
-  printf("Finish: Elapsed time is %d [s].\n", (int)(tstruct.tend-tstruct.tstart));
+  fprintf(stdoutMPI, "Finish: Elapsed time is %d [s].\n", (int)(tstruct.tend-tstruct.tstart));
   return 0;
 }

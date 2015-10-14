@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Common.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -92,7 +93,7 @@ void vec12(double alpha[],double beta[],int ndim,
     }else if(fabs(E[k]-E[km]) > eps_Energy ){
       km=k;
     }else{
-      printf("DEGENERACY IN vec12.c \n");
+      fprintf(stdoutMPI, "DEGENERACY IN vec12.c \n");
       for(i_deg=km;i_deg<=k-1;i_deg++){
 	tmp_deg = 0.0;
 		

@@ -16,6 +16,7 @@
 
 #include "mltply.h"
 #include "expec_energy.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -46,7 +47,7 @@ int expec_energy(struct BindStruct *X){
 
   switch(X->Def.iCalcType){
   case Lanczos:
-    printf("%s", cLogExpecEnergyStart);
+    fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
     break;
   case TPQCalc:
     TimeKeeperWithStep(X, cFileNameTimeKeep, cExpecStart, "a", step_i);
@@ -192,12 +193,12 @@ int expec_energy(struct BindStruct *X){
     }
 	
     FILE *fp;    
-    if(childfopen(sdt, "w", &fp)!=0){
+    if(childfopenMPI(sdt, "w", &fp)!=0){
       return -1;
     }  
     fprintf(fp,"Energy  %.10lf \n",X->Phys.energy);
     fprintf(fp,"Doublon  %.10lf \n",X->Phys.doublon);
-    fclose(fp);
+    fcloseMPI(fp);
 	
     break;    
   case TPQCalc:
@@ -213,12 +214,12 @@ int expec_energy(struct BindStruct *X){
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecEnergyEnd, "a");
-      printf("%s", cLogLanczosExpecEnergyEnd);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecEnergyEnd);
     }else if(X->Def.St==1){
       TimeKeeper(X, cFileNameTimeKeep, cCGExpecEnergyEnd, "a");
-      printf("%s", cLogCGExpecEnergyEnd);
+      fprintf(stdoutMPI, "%s", cLogCGExpecEnergyEnd);
     }
-    printf(cLogEnergy, X->Phys.energy);
+    fprintf(stdoutMPI, cLogEnergy, X->Phys.energy);
   }
   
   return 0;
