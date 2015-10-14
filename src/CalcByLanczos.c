@@ -70,7 +70,8 @@ int CalcByLanczos(
     printf("Accuracy of Lanczos vectors is NOT enough\n");
     printf("Eigenvector is improved by power Lanczos method \n");
     printf("Power Lanczos starts\n");
-    flag=PowerLanczos(&(X->Bind));
+    //flag=PowerLanczos(&(X->Bind));
+    flag=0;
     printf("Power Lanczos ends\n");
     if(flag==1){
       var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);

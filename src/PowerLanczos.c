@@ -118,13 +118,12 @@ int PowerLanczos(struct BindStruct *X){
   return 0;
 }
 
-// To be written
-//
-// Too complicate ?? 
 void  solve_2ndPolinomial(struct BindStruct *X,double *alpha_p,double *alpha_m,double E1,double E2a,double E2b,double E3,double E4){
   double a,b,c,d;
   double tmp_AA,tmp_BB,tmp_CC;
  
+  //not solving 2nd Polinomial
+  //approximate linear equation is solved
 
 /*
   a = E1;
@@ -140,9 +139,9 @@ void  solve_2ndPolinomial(struct BindStruct *X,double *alpha_p,double *alpha_m,d
   *alpha_p =  (tmp_BB+sqrt((tmp_CC)))/tmp_AA; 
   *alpha_m =  (tmp_BB-sqrt((tmp_CC)))/tmp_AA; 
   //printf("YYY: %.16lf %.16lf  \n",*alpha_p,*alpha_m);
-*/
-  *alpha_p =  0.0;
+  */
   //*alpha_m =  -E2a/E3*(1-E1*E1/E2a)/(1-E1*E2a/E3);
+  *alpha_p =  0.0;
   *alpha_m =  -E3/E4*(1+2*E1*E1*E1/E3-3*E1*E2a/E3)/(1-5*E2a*E2a/E4+4*E1*E1*E2a/E4);
  
 }
