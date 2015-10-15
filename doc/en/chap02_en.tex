@@ -38,61 +38,65 @@ Please read manuals of your compiler/library for more information.
 \label{Sec:HowToInstall}
 
 \section{Directory structure}
-When HPhi.tar.gz is unzipped, the following directory structure is composed.\\
+When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.\\
 \\
-├── COPYING\\
-├── doc\\
-├── sample\\
-│  ├── Expert\\
-│  │  ├── Hubbard\\
-│  │  │  ├─square\\
-│  │  │  │  ├── *.def\\
-│  │  │  │  ├── output\_FullDiag\\
-│  │  │  │  │ └── **.dat\\
-│  │  │  │  ├── output\_Lanczos\\
-│  │  │  │  │ └── **.dat\\
-│  │  │  │  └── output\_TPQ\\
-│  │  │  │    ~~└── **.dat\\
-│  │  │  └─triangular\\
-│  │  │  ~~└── $\cdots$\\
-│  │  ├── Kondo\\
-│  │  │  └─chain\\
-│  │  │  ~~└── $\cdots$\\
-│  │  └── Spin\\
-│  │    ~~  ├─HeisenbergChain\\
-│  │    ~~  │  ├── $\cdots$\\
-│  │    ~~  ├─HeisenbergSquare\\
-│  │    ~~  │  ├── $\cdots$\\
-│  │    ~~  └─Kitaev\\
-│  │    ~~  ~~└── $\cdots$\\
-│  └── Standard\\
-│  ~~  ├── Hubbard\\
-│  ~~  │  ├─square\\
-│  ~~  │  │  ├── StdFace.def\\
-│  ~~  │  │  ├── output\_FullDiag\\
-│  ~~  │  │  │ └── **.dat\\
-│  ~~  │  │  ├── output\_Lanczos\\
-│  ~~  │  │  │ └── **.dat\\
-│  ~~  │  │  └── output\_TPQ\\
-│  ~~  │  │    ~~└── **.dat\\
-│  ~~  │  └─triangular\\
-│  ~~  │  ~~└── $\cdots$\\
-│  ~~  ├── Kondo\\
-│  ~~  │  └─chain\\
-│  ~~  │  ~~└── $\cdots$\\
-│  ~~  └── Spin\\
-│  ~~  ~~  ├─HeisenbergChain\\
-│  ~~  ~~  │  ├── $\cdots$\\
-│  ~~  ~~  ├─HeisenbergSquare\\
-│  ~~  ~~  │  ├── $\cdots$\\
-│  ~~  ~~  └─Kitaev\\
-│  ~~  ~~  ~~  └── $\cdots$\\
-└── src\\
-~~  ├── **.c\\
-~~  ├── include\\
-~~  │   └── **.h\\
-~~  ├── make.sys\\
-~~  └── makefile\\
+├──COPYING\\
+├──doc/\\
+│~~~~~~~├──en/\\
+│~~~~~~~├──jp/\\
+│~~~~~~~├──userguide\_en.pdf\\
+│~~~~~~~└──userguide\_jp.pdf\\
+├──HPhiconfig.sh\\
+├──samples/\\
+│~~~~~~├──Expert/\\
+│~~~~~~│~~~~~~├──Hubbard/\\
+│~~~~~~│~~~~~~│~~~~~~├─square/\\
+│~~~~~~│~~~~~~│~~~~~~│~~~~~~├──*.def\\
+│~~~~~~│~~~~~~│~~~~~~│~~~~~~├──output\_FullDiag/\\
+│~~~~~~│~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~~└──**.dat\\
+│~~~~~~│~~~~~~│~~~~~~│~~~~~~├──output\_Lanczos/\\
+│~~~~~~│~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~~└──**.dat\\
+│~~~~~~│~~~~~~│~~~~~~│~~~~~~└──output\_TPQ/\\
+│~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~~~~~~~~~~└──**.dat\\
+│~~~~~~│~~~~~~│~~~~~~└─triangular/\\
+│~~~~~~│~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
+│~~~~~~│~~~~~~├──Kondo/\\
+│~~~~~~│~~~~~~│~~~~~~└─chain/\\
+│~~~~~~│~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
+│~~~~~~│~~~~~~└──Spin/\\
+│~~~~~~│~~~~~~~~~~~~~~~├─HeisenbergChain/\\
+│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~│~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
+│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~│~~~~~~~~~~~~~~~└─Kitaev/\\
+│~~~~~~│~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
+│~~~~~~└──Standard/\\
+│~~~~~~~~~~~~~~~~~~├──Hubbard/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~├─square/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~├──StdFace.def\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~├──output\_FullDiag/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~└──**.dat\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~├──output\_Lanczos/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~└──**.dat\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~└──output\_TPQ/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~~~~~~~~~~~~└──**.dat\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~└─triangular/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~├──Kondo/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~└─chain/\\
+│~~~~~~~~~~~~~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~└──Spin/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─HeisenbergChain/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└─Kitaev/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
+└──src/\\
+~~~~~~~~~~~~~├──**.c\\
+~~~~~~~~~~~~~├──include/\\
+~~~~~~~~~~~~~│~~~~~~~└──**.h\\
+~~~~~~~~~~~~~└──makefile\_src\\
 
 \section{Basic usage}
 $\HPhi$ has two modes; standard mode and expert mode. Here, the basic flows of calculations by standard and expert modes are shown.
