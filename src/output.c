@@ -49,7 +49,7 @@ int output(struct BindStruct *X){
     default:
       break;
     }
-    if(childfopen(sdt,"w",&fp)!=0){
+    if(childfopenMPI(sdt,"w",&fp)!=0){
       return -1;
     }
     fprintf(fp,"  <H>         <N>        <Sz>       <S2>       <D> \n");

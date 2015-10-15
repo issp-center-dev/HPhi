@@ -18,6 +18,7 @@
 #include "Common.h"
 #include "readdef.h"
 #include "StdFace_main.h"
+#include "wrapperMPI.h"
 
 /** 
  * @brief Main program for HPhi
@@ -34,6 +35,9 @@ int main(int argc, char* argv[]){
 
   int mode=0;
   char cFileListName[D_FileNameMax];
+
+  InitializeMPI(argc, argv);
+
   if(JudgeDefType(argc, argv, &mode)!=0){
     return -1;
   }  
@@ -42,7 +46,7 @@ int main(int argc, char* argv[]){
   struct stat tmpst;
   if(stat(cParentOutputFolder,&tmpst)!=0){
     if(mkdir(cParentOutputFolder, 0777)!=0){
-      printf("%s", cErrOutput);
+      fprintf(stdoutMPI, "%s", cErrOutput);
       return -1;
     }
   }
@@ -53,7 +57,7 @@ int main(int argc, char* argv[]){
     StdFace_main(argv[2]);
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
-      printf("Dry run is Finished. \n\n");
+      fprintf(stdoutMPI, "Dry run is Finished. \n\n");
       return 0;
     }
   }
@@ -61,16 +65,16 @@ int main(int argc, char* argv[]){
   setmem_HEAD(&X.Bind);
   //  if(ReadDefFileNInt(argv[1], &(X.Bind.Def))!=0){
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def))!=0){
-    printf("%s", cErrDefFile);
+    fprintf(stderr, "%s", cErrDefFile);
     return (-1);
   }
-  if(X.Bind.Def.nvec < X.Bind.Def.k_exct){
-    printf("%s", cErrnvec);
-    printf(cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
+  if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
+    fprintf(stdoutMPI, "%s", cErrnvec);
+    fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
     return (-1);
   }	  
-  printf("Definition files are correct.\n");
-  
+  fprintf(stdoutMPI, "Definition files are correct.\n");
+
   
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind);
@@ -78,7 +82,7 @@ int main(int argc, char* argv[]){
 
   /*Read Def files.*/
   if(ReadDefFileIdxPara(&(X.Bind.Def))!=0){
-    printf("%s", cErrIndices);
+    fprintf(stdoutMPI, "%s", cErrIndices);
     return (-1);
   }
   else{
@@ -89,7 +93,7 @@ int main(int argc, char* argv[]){
   
   /*LARGE VECTORS ARE ALLOCATED*/
   if(!setmem_large(&X.Bind)==0){
-    printf(cErrLargeMem, iErrCodeMem);
+    fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
     return (-1);
   }
   /*Set convergence Factor*/
@@ -129,5 +133,6 @@ int main(int argc, char* argv[]){
     return -1;
   }  
   
+  FinalizeMPI();
   return 0;
 }

@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include "StdFace_vals.h"
+#include "../include/wrapperMPI.h"
 
 /**
  *
@@ -160,9 +161,9 @@ void StdFace_PrintVal_d(
 {
   if (*val == 9999.9) {
     *val = val0;
-    printf("  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
+    fprintf(stdoutMPI, "  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
-  else printf("  %15s = %-10.5f\n", valname, *val);
+  else fprintf(stdoutMPI, "  %15s = %-10.5f\n", valname, *val);
 }
 
 /**
@@ -178,9 +179,9 @@ void StdFace_PrintVal_i(
 {
   if (*val == 9999) {
     *val = val0;
-    printf("  %15s = %-10d  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
+    fprintf(stdoutMPI, "  %15s = %-10d  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
-  else printf("  %15s = %-10d\n", valname, *val);
+  else fprintf(stdoutMPI, "  %15s = %-10d\n", valname, *val);
 }
 
 /**
@@ -194,10 +195,10 @@ void StdFace_NotUsed_d(
   double val /**< [in]*/)
 {
   if (val != 9999.9) {
-    printf("\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
-    printf("            Please COMMENT-OUT this line \n");
-    printf("            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exit(-1);
+    fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
+    fprintf(stderr, "            Please COMMENT-OUT this line \n");
+    fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
+    exitMPI(-1);
   }
 }
 
@@ -212,10 +213,10 @@ void StdFace_NotUsed_i(
   int val /**< [in]*/)
 {
   if (val != 9999) {
-    printf("\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
-    printf("            Please COMMENT-OUT this line \n");
-    printf("            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exit(-1);
+    fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
+    fprintf(stderr, "            Please COMMENT-OUT this line \n");
+    fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
+    exitMPI(-1);
   }
 }
 
@@ -231,8 +232,8 @@ void StdFace_RequiredVal_i(
   int val /**< [in]*/)
 {
   if (val == 9999){
-    printf("ERROR ! %s is NOT specified !\n", valname);
-    exit(-1);
+    fprintf(stderr, "ERROR ! %s is NOT specified !\n", valname);
+    exitMPI(-1);
   }
-  else printf("  %15s = %-3d\n", valname, val);
+  else fprintf(stdoutMPI, "  %15s = %-3d\n", valname, val);
 }

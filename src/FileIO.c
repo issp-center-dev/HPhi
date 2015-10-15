@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "FileIO.h"
+#include "wrapperMPI.h"
 
 /** 
  * @brief 
@@ -27,14 +28,14 @@
  * 
  * @return 
  */
-int childfopen(const char* _cPathChild, const char* _cmode, FILE **_fp){
+int childfopenMPI(const char* _cPathChild, const char* _cmode, FILE **_fp){
   char ctmpPath[D_FileNameMax]="";
   strcat(ctmpPath, cParentOutputFolder);
   strcat(ctmpPath, _cPathChild);
-  *_fp = fopen(ctmpPath, _cmode);
+  *_fp = fopenMPI(ctmpPath, _cmode);
   
   if(*_fp == NULL){
-    printf(cErrFIOpen, ctmpPath);
+    fprintf(stdoutMPI, cErrFIOpen, ctmpPath);
     return -1;
   }
     

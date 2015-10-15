@@ -17,6 +17,7 @@
 #include "Common.h"
 #include "mfmemory.h"
 #include "xsetmem.h"
+#include "wrapperMPI.h"
 
 void setmem_HEAD
 (
@@ -149,7 +150,7 @@ int setmem_large
       }
     }
   }
-  printf("%s", cProFinishAlloc);
+  fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
 }
 

@@ -44,7 +44,7 @@ int TimeKeeper
   sprintf(sdt, cFileName, X->Def.CDataFileHead);
   tx   = time(NULL);
   area = localtime(&tx);
-  if(childfopen(sdt, cWriteType, &fp)!=0){
+  if(childfopenMPI(sdt, cWriteType, &fp)!=0){
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, asctime(area));
@@ -81,7 +81,7 @@ int TimeKeeperWithStep
   sprintf(sdt, cFileName, X->Def.CDataFileHead);
   tx   = time(NULL);
   area = localtime(&tx);
-  if(childfopen(sdt, cWriteType, &fp)!=0){
+  if(childfopenMPI(sdt, cWriteType, &fp)!=0){
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, istep, asctime(area));
@@ -120,7 +120,7 @@ int TimeKeeperWithRandAndStep
   sprintf(sdt, cFileName, X->Def.CDataFileHead);
   tx   = time(NULL);
   area = localtime(&tx);
-  if(childfopen(sdt, cWriteType, &fp)!=0){
+  if(childfopenMPI(sdt, cWriteType, &fp)!=0){
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, irand, istep, asctime(area));

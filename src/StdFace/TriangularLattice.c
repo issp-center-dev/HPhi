@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include "../include/wrapperMPI.h"
 
 /**
  *
@@ -36,9 +37,9 @@ void FermionHubbard_TriangularLattice(
   int iL, iW, iLp1, iLp2, iWm2, iWm1, iWp1;
   int ktrans, kintr;
   double LargeValue0;
-  printf("\n");
-  printf("#######  Parameter Summary  #######\n");
-  printf("\n");
+  fprintf(stdoutMPI, "\n");
+  fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
+  fprintf(stdoutMPI, "\n");
   StdFace_RequiredVal_i("L", L);
   StdFace_RequiredVal_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
@@ -181,9 +182,9 @@ void Spin_TriangularLattice(){
   int iL, iW, iLp1, iLp2, iWm2, iWm1, iWp1;
   int ktrans, kintr;
   double LargeValue0;
-  printf("\n");
-  printf("#######  Parameter Summary  #######\n");
-  printf("\n");
+  fprintf(stdoutMPI, "\n");
+  fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
+  fprintf(stdoutMPI, "\n");
   StdFace_RequiredVal_i("L", L);
   StdFace_RequiredVal_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
@@ -313,9 +314,9 @@ void KondoLattice_TriangularLattice(
   int iL, iW, iLp1, iWm1;
   int ktrans, kintr;
   double LargeValue0;
-  printf("\n");
-  printf("#######  Parameter Summary  #######\n");
-  printf("\n");
+  fprintf(stdoutMPI, "\n");
+  fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
+  fprintf(stdoutMPI, "\n");
   StdFace_RequiredVal_i("L", L);
   StdFace_RequiredVal_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);

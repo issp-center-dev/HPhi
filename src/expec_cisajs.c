@@ -16,6 +16,7 @@
 
 #include "mltply.h"
 #include "expec_cisajs.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -63,10 +64,10 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   case Lanczos:
     if(X->Def.St==0){
       sprintf(sdt, cFileName1BGreen_Lanczos, X->Def.CDataFileHead);
-      printf("%s", cLogLanczosExpecOneBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGStart);
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName1BGreen_CG, X->Def.CDataFileHead);
-      printf("%s", cLogCGExpecOneBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGStart);
     }
     //vec=v0;
     break;
@@ -83,7 +84,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     break;
   }
   
-  if(!childfopen(sdt, "w", &fp)==0){
+  if(!childfopenMPI(sdt, "w", &fp)==0){
     return -1;
   } 
   switch(X->Def.iCalcModel){
@@ -221,14 +222,14 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   if(X->Def.St==0){
     if(X->Def.iCalcType==Lanczos){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");
-      printf("%s", cLogLanczosExpecOneBodyGEnd);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
     }
     else if(X->Def.iCalcType==TPQCalc){
       TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGFinish, "a", rand_i, step);     
     }
   }else if(X->Def.St==1){
     TimeKeeper(X, cFileNameTimeKeep, cExpecOneBodyGFinish, "a");
-    printf("%s", cLogLanczosExpecOneBodyGEnd);
+    fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
   }
   return 0;
 }
