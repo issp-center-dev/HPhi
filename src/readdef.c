@@ -488,6 +488,7 @@ int ReadDefFileIdxPara(
       /* Read locspn.def----------------------------------------*/
       while( fscanf(fp, "%d %d\n", &(xitmp[0]), &(xitmp[1]) )!=EOF){
 	X->LocSpn[xitmp[0]] = xitmp[1];
+	X->SiteToBit[xitmp[0]]=(X->LocSpn[xitmp[0]]+1);//2S+1
 	if(CheckSite(xitmp[1], X->Nsite) !=0){
 	  fclose(fp);
 	  return ReadDefFileError(defname);

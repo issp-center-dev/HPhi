@@ -85,19 +85,27 @@ int sz
   case SpinGC:
   case Spin:
     N=X->Def.Nsite;
-    
-    idim = pow(2.0, N);
+    if(X->Def.iFlgGeneralSpin==FALSE){
+      idim = pow(2.0, N);
+    }
+    else{
+      idim=1;
+      for(j=0; j<N; j++){
+	idim *= X->Def.SiteToBit[j];
+      }
+    }
     break;
   }
   li_malloc2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
   
-  i_max=X->Check.idim_max;  
-  if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
-    return -1;
+  i_max=X->Check.idim_max;
+  //ToDo: In future, this if sentence should be replaced
+  if(X->Def.iCalcModel==SpinGC&&X->Def.iFlgGeneralSpin==FALSE){
+    if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
+      return -1;
+    }
+    printf("idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
   }
-
-  printf("idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
-
   icnt=1;
   jb=0;
 
@@ -124,7 +132,12 @@ int sz
       break;
       
     case SpinGC:
-      icnt = X->Def.Tpow[X->Def.Nsite]+0;
+      if(X->Def.iFlgGeneralSpin==FALSE){
+	icnt = X->Def.Tpow[X->Def.Nsite]+0;
+      }
+      else{
+	icnt = X->Def.Tpow[X->Def.Nsite-1];
+      }
       break;
       
     case KondoGC:

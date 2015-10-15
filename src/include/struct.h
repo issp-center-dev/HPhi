@@ -53,6 +53,7 @@ struct DefineList{
   
   int fidx;    /**< */
   long int *Tpow;    /**< [2 * Nsite] 2^n */
+  long int *SiteToBit; /**< [Nsite] */
   
   int *EDChemi;    /**< [Nsite] */
   int  EDNChemi;   /**< */  

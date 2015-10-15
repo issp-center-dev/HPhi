@@ -52,8 +52,15 @@ int check(struct BindStruct *X){
   case SpinGC:
     //comb_sum = 2^(Ns)
     comb_sum = 1;
-    for(i=0;i<X->Def.Nsite;i++){
-      comb_sum= 2*comb_sum;     
+    if(X->Def.iFlgGeneralSpin ==FALSE){
+      for(i=0;i<X->Def.Nsite;i++){
+	comb_sum= 2*comb_sum;     
+      }
+    }
+    else{
+      for(i=0; i<X->Def.Nsite;i++){
+	comb_sum=comb_sum*X->Def.SiteToBit[i];
+      }
     }
     break;
 
@@ -135,9 +142,14 @@ int check(struct BindStruct *X){
     break;
   case Spin:
   case SpinGC:
-    while(tmp <= X->Def.Nsite/2){
-      tmp_sdim=tmp_sdim*2;
-      tmp+=1;
+    if(X->Def.iFlgGeneralSpin==FALSE){ 
+      while(tmp <= X->Def.Nsite/2){
+	tmp_sdim=tmp_sdim*2;
+	tmp+=1;
+      }
+    }
+    else{
+      //INPUT
     }
     break;
   default:
@@ -162,8 +174,10 @@ int check(struct BindStruct *X){
     break;
   case Spin:
   case SpinGC:
-    printf("sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
-    fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
+    if(X->Def.iFlgGeneralSpin==FALSE){
+      printf("sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
+      fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
+    }
   default:
     break;
   }
@@ -188,12 +202,21 @@ int check(struct BindStruct *X){
     }
     break;
  case SpinGC:
-    for(i=1;i<=X->Def.Nsite;i++){
-      u_tmp=u_tmp*2;
-      X->Def.Tpow[i]=u_tmp;
-      fprintf(fp,"%ld %ld \n",i,u_tmp);
-    }
-    break;
+   if(X->Def.iFlgGeneralSpin==FALSE){
+     for(i=1;i<=X->Def.Nsite;i++){
+       u_tmp=u_tmp*2;
+       X->Def.Tpow[i]=u_tmp;
+       fprintf(fp,"%ld %ld \n",i,u_tmp);
+     }
+   }
+   else{
+      for(i=0;i<X->Def.Nsite;i++){
+	u_tmp=u_tmp*X->Def.SiteToBit[i];
+	X->Def.Tpow[i]=u_tmp;
+	fprintf(fp,"%ld %ld \n",i,u_tmp);
+      }
+   }
+   break;
  case Spin:
     for(i=1;i<=X->Def.Nsite-1;i++){
       u_tmp=u_tmp*2;

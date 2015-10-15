@@ -33,6 +33,7 @@ void setmem_def
  )
 {
   li_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
+  li_malloc1(X->Def.SiteToBit, X->Def.Nsite+1);
   i_malloc1(X->Def.LocSpn, X->Def.Nsite);
   d_malloc1(X->Phys.spin_real_cor, X->Def.Nsite*X->Def.Nsite);
   d_malloc1(X->Phys.charge_real_cor, X->Def.Nsite*X->Def.Nsite);
@@ -73,9 +74,10 @@ int setmem_large
  )
 {
   int j=0;
+  //TODO: check a needness of list_1, list_2_1, list_2_2 and list_3
   lui_malloc1(list_1, X->Check.idim_max+1);
   if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
-      lui_malloc1(list_2_1, X->Check.sdim*2+2);
+    lui_malloc1(list_2_1, X->Check.sdim*2+2);
   }
   else{
     lui_malloc1(list_2_1, X->Check.sdim+2);
