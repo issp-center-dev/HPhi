@@ -85,6 +85,7 @@ int sz
   case SpinGC:
   case Spin:
     N=X->Def.Nsite;
+    
     idim = pow(2.0, N);
     break;
   }
@@ -131,7 +132,7 @@ int sz
       jb = 0;
       num_loc=0;
       for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
-	if(X->Def.LocSpn[j] == 0){
+	if(X->Def.LocSpn[j] != ITINERANT){
 	  num_loc += 1;
 	}
       }
@@ -147,11 +148,11 @@ int sz
 	  div_down  = i & X->Def.Tpow[2*j+1];
 	  div_down  = div_down/X->Def.Tpow[2*j+1];
 
-	  if(X->Def.LocSpn[j] == 0){
+	  if(X->Def.LocSpn[j] != ITINERANT){
 	    icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
 	  }
 	}
-	if(icheck_loc ==1){
+	if(icheck_loc == 1){
 	  jb +=X->Def.Tpow[X->Def.Nsite-(X->Def.NLocSpn-num_loc)];
 	}
       }
@@ -213,7 +214,7 @@ int sz
       jb = 0;
       num_loc=0;
       for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
-	if(X->Def.LocSpn[j] == 0){
+	if(X->Def.LocSpn[j] != ITINERANT){
 	  num_loc += 1;
 	}
       }
@@ -231,7 +232,7 @@ int sz
 	  div_down  = i & X->Def.Tpow[2*j+1];
 	  div_down  = div_down/X->Def.Tpow[2*j+1];
 
-	  if(X->Def.LocSpn[j] == 1){
+	  if(X->Def.LocSpn[j] == ITINERANT){
 	    num_up   += div_up;        
 	    num_down += div_down;  
 	  }else{    
@@ -241,7 +242,7 @@ int sz
 	  }
 	}
 
-	if(icheck_loc ==1){
+	if(icheck_loc == 1){
 	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
 	  all_loc =  X->Def.NLocSpn-num_loc;
 	  all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
@@ -464,7 +465,7 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
     div_down  = i & X->Def.Tpow[2*j+1];
     div_down  = div_down/X->Def.Tpow[2*j+1];
 
-    if(X->Def.LocSpn[j] == 1){
+    if(X->Def.LocSpn[j] == ITINERANT){
       num_up   += div_up;        
       num_down += div_down;  
     }else{    
@@ -489,7 +490,7 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
 	div_down  = i & X->Def.Tpow[2*j+1];
 	div_down  = div_down/X->Def.Tpow[2*j+1];
 	
-	if(X->Def.LocSpn[j] == 1){
+	if(X->Def.LocSpn[j] ==  ITINERANT){
 	  num_up   += div_up;        
 	  num_down += div_down;  
 	}else{    
@@ -539,7 +540,7 @@ int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,s
     div_up    = div_up/X->Def.Tpow[2*j];
     div_down  = i & X->Def.Tpow[2*j+1];
     div_down  = div_down/X->Def.Tpow[2*j+1];
-    if(X->Def.LocSpn[j] == 0){
+    if(X->Def.LocSpn[j] !=  ITINERANT){
       icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
     }
   }
@@ -554,7 +555,7 @@ int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,s
 	div_up    = div_up/X->Def.Tpow[2*j];
 	div_down  = i & X->Def.Tpow[2*j+1];
 	div_down  = div_down/X->Def.Tpow[2*j+1];	
-	if(X->Def.LocSpn[j] == 0){    
+	if(X->Def.LocSpn[j] !=  ITINERANT){    
 	  icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
 	}
       }
@@ -698,7 +699,7 @@ int sz_single_thread
 	
 	div_down  = i & X->Def.Tpow[2*j+1];
 	div_down  = div_down/X->Def.Tpow[2*j+1];
-	if(X->Def.LocSpn[j] == 1){
+	if(X->Def.LocSpn[j] ==  ITINERANT){
 	  num_up   += div_up;        
 	  num_down += div_down;  
 	}else{    
@@ -777,7 +778,7 @@ int sz_single_thread
 
 	div_down  = i & X->Def.Tpow[2*j+1];
 	div_down  = div_down/X->Def.Tpow[2*j+1];
-	if(X->Def.LocSpn[j] == 1){
+	if(X->Def.LocSpn[j] ==  ITINERANT){
 	  num_up   += div_up;        
 	  num_down += div_down;  
 	}else{    

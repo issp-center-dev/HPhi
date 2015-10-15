@@ -49,6 +49,7 @@ struct DefineList{
   
   int *LocSpn;    /**< [NLocSpn] */
   int  NLocSpn;    /**< */
+  int iFlgGeneralSpin;
   
   int fidx;    /**< */
   long int *Tpow;    /**< [2 * Nsite] 2^n */

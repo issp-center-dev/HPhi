@@ -136,3 +136,8 @@ void SetConvergenceFactor
 (
  struct DefineList *X
  );
+
+int CheckLocSpin
+(
+  struct DefineList *X
+);

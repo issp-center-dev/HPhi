@@ -362,6 +362,7 @@ int ReadDefFileNInt(
       
     case KWLocSpin:
       // Read locspn.def
+      X->iFlgGeneralSpin=FALSE;
       fgets(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fscanf(fp,"%s %d\n", ctmp, &(X->NLocSpn));
       break;
@@ -427,11 +428,11 @@ int ReadDefFileNInt(
 
   if(X->iCalcModel != Spin){
     X->Ne = X->Nup+X->Ndown;
-  	if(X->NLocSpn>X->Ne){
-	  printf("%s", cErrNLoc);
-	  printf("NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
-	  return -1;
-	}
+    if(X->NLocSpn>X->Ne){
+      printf("%s", cErrNLoc);
+      printf("NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
+      return -1;
+    }
   }
   X->Nsize   = 2*X->Ne;
   X->fidx = 0;
@@ -483,7 +484,7 @@ int ReadDefFileIdxPara(
 	if(CheckSite(xitmp[1], X->Nsite) !=0){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
-	}
+	}       
 	idx++;
       }
       printf("Nsite= %d.\n", X->Nsite);
@@ -491,6 +492,11 @@ int ReadDefFileIdxPara(
 	fclose(fp);
 	return ReadDefFileError(defname);
       }
+      if(CheckLocSpin(X)==FALSE){
+	fclose(fp);
+	return ReadDefFileError(defname);
+      }
+
       break;
       
     case KWTrans:
@@ -532,7 +538,7 @@ int ReadDefFileIdxPara(
 	      }
 	    }	    
 	    else if(X->iCalcModel==Kondo){
-	      if(X->LocSpn[isite1]==0 || X->LocSpn[isite2]==0){
+	      if(X->LocSpn[isite1]!=ITINERANT || X->LocSpn[isite2] !=ITINERANT){
 		if(isite1 != isite2){
 		  iboolLoc=1;
 		  printf(cErrIncorrectFormatForKondoTrans, isite1, isite2);
@@ -1282,14 +1288,14 @@ int CheckFormatForKondoInt
     isite3=X->InterAll[i][4];
     isite4=X->InterAll[i][6];
 
-    if(X->LocSpn[isite1]==0 || X->LocSpn[isite2]==0){
+    if(X->LocSpn[isite1]!=ITINERANT || X->LocSpn[isite2]!=ITINERANT){
       if(isite1 != isite2){
 	iboolLoc=1;
 	printf(cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
 	continue;
       }
     }
-    if(X->LocSpn[isite3]==0 || X->LocSpn[isite4]==0){
+    if(X->LocSpn[isite3]!=ITINERANT || X->LocSpn[isite4]!=ITINERANT){
       if(isite3 != isite4){
 	iboolLoc=1;
 	printf(cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
@@ -1329,4 +1335,53 @@ void SetConvergenceFactor
   eps_Energy = pow(10.0, nEnergy);
   dShiftBeta = pow(10.0, nShiftBeta);
   eps_vec12 = pow(10.0, nepsvec12);
+}
+
+int CheckLocSpin
+(
+  struct DefineList *X
+ )
+{
+
+  int i=0;
+  switch(X->iCalcModel){
+  case Hubbard:
+  case HubbardGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]!=ITINERANT){
+      return FALSE;
+    }
+  }
+  break;
+
+  case Kondo:
+  case KondoGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]>LOCSPIN){
+      X->iFlgGeneralSpin=TRUE;
+    }
+    else if(X->LocSpn[i]<ITINERANT){
+      return FALSE;
+    }
+  }
+  break;
+
+  case Spin:
+  case SpinGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]>LOCSPIN){
+      X->iFlgGeneralSpin=TRUE;
+    }
+    else if(X->LocSpn[i]<LOCSPIN){
+      return FALSE;
+    }
+  }
+  break;
+  
+  default:
+    return FALSE;
+    break;
+  }  
+  return TRUE;
+  
 }
