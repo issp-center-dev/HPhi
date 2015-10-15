@@ -73,29 +73,42 @@ int setmem_large
  )
 {
   int j=0;
-  lui_malloc1(list_1, X->Check.idim_max+1);
-  if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
+  switch(X->Def.iCalcModel){
+  case Spin:
+  case Hubbard:
+  case Kondo:
+  case KondoGC:
+    lui_malloc1(list_1, X->Check.idim_max+1);
+    if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
       lui_malloc1(list_2_1, X->Check.sdim*2+2);
+    }
+    else{
+      lui_malloc1(list_2_1, X->Check.sdim+2);
+    }
+    lui_malloc1(list_2_2, X->Check.sdim+2);
+    lui_malloc1(list_jb, X->Check.sdim+2);
+
+    if(list_1==NULL
+       || list_2_1==NULL
+       || list_2_2==NULL
+       || list_jb==NULL
+       )
+      {
+	return -1;
+      }
+    break;
+  default:
+    break;
   }
-  else{
-    lui_malloc1(list_2_1, X->Check.sdim+2);
-  }
-  
-  lui_malloc1(list_2_2, X->Check.sdim+2);
-  lui_malloc1(list_jb, X->Check.sdim+2);
-  i_malloc1(list_3, X->Check.sdim+1);
+
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);
+  c_malloc1(vg, X->Check.idim_max+1);
   d_malloc1(alpha, X->Def.Lanczos_max+1);
   d_malloc1(beta, X->Def.Lanczos_max+1);
-  c_malloc1(vg, X->Check.idim_max+1);
-  if(list_1==NULL
-     || list_2_1==NULL
-     || list_2_2==NULL
-     || list_jb==NULL
-     || list_3==NULL
-     || list_Diagonal==NULL
+  if(
+     list_Diagonal==NULL
      || v0==NULL
      || v1==NULL
      || alpha==NULL

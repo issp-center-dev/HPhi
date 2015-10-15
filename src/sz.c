@@ -89,14 +89,24 @@ int sz
     break;
   }
   li_malloc2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
+    i_max=X->Check.idim_max;  
+
+
+  switch(X->Def.iCalcModel){
+  case Hubbard:
+  case KondoGC:
+  case Kondo:
+  case Spin:
+    if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
+      return -1;
+    }
+
+    printf("idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+    break;
+  default:
+    break;
+  }    
   
-  i_max=X->Check.idim_max;  
-  if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
-    return -1;
-  }
-
-  printf("idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
-
   icnt=1;
   jb=0;
 

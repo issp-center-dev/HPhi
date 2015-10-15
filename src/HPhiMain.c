@@ -96,23 +96,7 @@ int main(int argc, char* argv[]){
   SetConvergenceFactor(&(X.Bind.Def));
   /*---------------------------*/
   HPhiTrans(&(X.Bind));
-  
-  switch (X.Bind.Def.iCalcModel){
-  case HubbardGC:
-  case Hubbard:
-  case Kondo:
-  case KondoGC:
-    sgn(&(X.Bind));
-    break;
- 
-  case Spin:     // not having sign
-  case SpinGC:     
-    break;
     
-  default :
-    break;
-  }
-  
   if(!sz(&(X.Bind))==0){
     return -1;
   }
