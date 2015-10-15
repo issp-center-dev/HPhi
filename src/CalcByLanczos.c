@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcByLanczos.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -50,7 +51,7 @@ int CalcByLanczos(
   }
  
   if(Lanczos_EigenValue(&(X->Bind))!=0){
-    printf("Lanczos Eigenvalue is not converged in this process.\n");
+    fprintf(stdoutMPI, "Lanczos Eigenvalue is not converged in this process.\n");
     return -1;
   }  
   Lanczos_EigenVector(&(X->Bind));
@@ -58,15 +59,15 @@ int CalcByLanczos(
 //check for the accuracy of the eigenvector
   var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
   diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
-  printf("\n");
-  printf("Accuracy check !!!\n");
-  printf("%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+  fprintf(stdoutMPI, "\n");
+  fprintf(stdoutMPI, "Accuracy check !!!\n");
+  fprintf(stdoutMPI, "%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
   if(diff_ene < eps_Energy && var< eps_Energy){
-    printf("Accuracy of Lanczos vectors is enough\n");
-    printf("\n");
+    fprintf(stdoutMPI, "Accuracy of Lanczos vectors is enough\n");
+    fprintf(stdoutMPI, "\n");
   }else{
-    printf("Accuracy of Lanczos vectors is NOT enough\n");
-    printf("Eigenvector is improved by CG method \n");
+    fprintf(stdoutMPI, "Accuracy of Lanczos vectors is NOT enough\n");
+    fprintf(stdoutMPI, "Eigenvector is improved by CG method \n");
 
     X->Bind.Def.St=1;
     CG_EigenVector(&(X->Bind));
@@ -75,10 +76,10 @@ int CalcByLanczos(
     var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
     diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
 
-    printf("\n");
-    printf("CG Accuracy check !!!\n");
-    printf("%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
-    printf("\n");
+    fprintf(stdoutMPI, "\n");
+    fprintf(stdoutMPI, "CG Accuracy check !!!\n");
+    fprintf(stdoutMPI, "%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+    fprintf(stdoutMPI, "\n");
   }  
   
   expec_cisajs(&(X->Bind),v1);

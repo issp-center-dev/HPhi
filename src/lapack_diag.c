@@ -41,7 +41,7 @@ int lapack_diag(struct BindStruct *X){
   //DSEVvector(xMsize, Ham, v0, L_vec);
   ZHEEVall(xMsize, Ham, v0, L_vec);
   strcpy(sdt,cFileNameEigenvalue_Lanczos);
-  if(childfopen(sdt,"w",&fp)!=0){
+  if(childfopenMPI(sdt,"w",&fp)!=0){
     return -1;
   }
   for(i=0;i<i_max;i++){

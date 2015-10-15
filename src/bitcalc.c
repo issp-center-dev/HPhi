@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "bitcalc.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -34,7 +35,7 @@ int GetSplitBit(
 		long unsigned int *ihfbit
 ){
   if(Nsite<1){
-    printf("%s", cErrSiteNumber);
+    fprintf(stdoutMPI, "%s", cErrSiteNumber);
     return -1;
   }
   *irght=pow(2,((Nsite+1)/2))-1;
@@ -77,7 +78,7 @@ int GetSplitBitByModel(
   case SpinGC:   
     break;
   default:
-    printf(cErrNoModel, iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, iCalcModel);
     return -1;
   }
 

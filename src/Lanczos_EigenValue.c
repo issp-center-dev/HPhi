@@ -17,6 +17,7 @@
 #include "Common.h"
 #include "mfmemory.h"
 #include "Lanczos_EigenValue.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -30,7 +31,7 @@
 int Lanczos_EigenValue(struct BindStruct *X)
 {
 
-  printf("%s", cLogLanczos_EigenValueStart);
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueStart);
   FILE *fp;
   char sdt[D_FileNameMax],sdt_2[D_FileNameMax];
   int stp;
@@ -65,7 +66,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
       X->Large.iv=(X->Check.idim_max/2+X->Def.initial_iv)%X->Check.idim_max;
     }
     iv=X->Large.iv;
-    printf("initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
+    fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
     #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
@@ -74,7 +75,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     v1[iv]=1.0;
   }else if(initial_mode==1){
     iv = X->Def.initial_iv;
-    printf("initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
+    fprintf(stdoutMPI, "initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
     #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
@@ -142,7 +143,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     
     Target  = X->Def.LanczosTarget;
 
-    //printf("alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+    //fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
     
     if(stp==2){      
      #ifdef lapack
@@ -201,12 +202,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
        bisec(alpha,beta,stp,E,4,eps_Bisec);
       #endif
        
-       printf("stp=%d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
+       fprintf(stdoutMPI, "stp=%d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
        if(stp==4){
-	 childfopen(sdt_2,"w", &fp);
+	 childfopenMPI(sdt_2,"w", &fp);
        }
        else{
-	 childfopen(sdt_2,"a", &fp);
+	 childfopenMPI(sdt_2,"a", &fp);
        }
        fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4]);
        fclose(fp);
@@ -235,7 +236,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   }
 
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
-  printf("%s", cLogLanczos_EigenValueEnd);
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
   
   return 0;  
 }

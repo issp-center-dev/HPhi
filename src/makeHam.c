@@ -16,6 +16,7 @@
 
 #include "mltply.h"
 #include "makeHam.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -176,7 +177,7 @@ int makeHam(struct BindStruct *X){
   case KondoGC:
   case Hubbard:
   case Kondo:
-    printf("transfer\n");
+    fprintf(stdoutMPI, "transfer\n");
     //Transfer
     for(i = 0;i< X->Def.EDNTransfer; i++){
       isite1     = X->Def.EDGeneralTransfer[i][0]+1;
@@ -194,7 +195,7 @@ int makeHam(struct BindStruct *X){
       }
     }
 
-    printf("interall:%d\n",X->Def.NInterAll_OffDiagonal);
+    fprintf(stdoutMPI, "interall:%d\n",X->Def.NInterAll_OffDiagonal);
     //InterAll
     for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){    
       isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
@@ -261,7 +262,7 @@ int makeHam(struct BindStruct *X){
       }
     }
 
-    printf("pairhopp\n");
+    fprintf(stdoutMPI, "pairhopp\n");
     //Pair hopping
     for(i = 0;i< X->Def.NPairHopping; i++){
       child_pairhopp_GetInfo(i, X);        
@@ -272,7 +273,7 @@ int makeHam(struct BindStruct *X){
       }
     }
     
-    printf("exchange\n");
+    fprintf(stdoutMPI, "exchange\n");
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling; i++){
       child_exchange_GetInfo(i, X);

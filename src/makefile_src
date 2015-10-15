@@ -36,11 +36,12 @@ log.c \
 ErrorMessage.c \
 LogMessage.c \
 ProgressMessage.c \
-global.c
+global.c \
+wrapperMPI.c
 
 all:
-	make libStdFace
-	make HPhi
+	make -f makefile_src libStdFace
+	make -f makefile_src HPhi
 
 SUFFIXES: .o .c
 
@@ -51,8 +52,8 @@ HPhi: $(OBJS:.c=.o) make.sys libStdFace.a
 	$(CC) -g $(OBJS:.c=.o) $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) libStdFace.a -o $@ 
 
 libStdFace:
-	cd StdFace; make libStdFace.a
+	cd StdFace; make -f makefile_StdFace libStdFace.a
 
 clean:
-	cd StdFace; make clean
+	cd StdFace; make -f makefile_StdFace clean
 	rm -f HPhi *.o *.a

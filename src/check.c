@@ -16,6 +16,7 @@
 
 #include "mfmemory.h"
 #include "check.h"
+#include "wrapperMPI.h"
 
 /** 
  * @brief A program to check size of dimension for hirbert-space.
@@ -101,17 +102,17 @@ int check(struct BindStruct *X){
     comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
     break;
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
     return -1;
   }  
 
-  printf("comb_sum= %ld \n",comb_sum);
+  fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
   X->Check.idim_max = comb_sum;
   X->Check.max_mem=(3+2+1)*X->Check.idim_max*16.0/(pow(10,9));
-  printf("MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
-  printf("APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
-  if(childfopen(cFileNameCheckMemory,"w", &fp)!=0){
+  fprintf(stdoutMPI, "MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
+  fprintf(stdoutMPI, "APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
+  if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
     return -1;
   }
@@ -141,13 +142,13 @@ int check(struct BindStruct *X){
     }
     break;
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
     return -1;
   }  
   X->Check.sdim=tmp_sdim;
   
-  if(childfopen(cFileNameCheckSdim,"w", &fp)!=0){
+  if(childfopenMPI(cFileNameCheckSdim,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
     return -1;
   }
@@ -157,12 +158,12 @@ int check(struct BindStruct *X){
   case KondoGC:
   case Hubbard:
   case Kondo:
-    printf("sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
+    fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     break;
   case Spin:
   case SpinGC:
-    printf("sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
+    fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
   default:
     break;
@@ -202,13 +203,13 @@ int check(struct BindStruct *X){
     }
     break;
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
     return -1;
   }  
   fclose(fp);	 
  
   i_free2(comb, Ns+1, Ns+1);
-  printf("Indices and Parameters of Definition files(*.def) are complete.\n");
+  fprintf(stdoutMPI, "Indices and Parameters of Definition files(*.def) are complete.\n");
   return 0;
 }    
