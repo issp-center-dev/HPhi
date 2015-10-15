@@ -109,7 +109,18 @@ int check(struct BindStruct *X){
 
   fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
   X->Check.idim_max = comb_sum;
-  X->Check.max_mem=(3+2+1)*X->Check.idim_max*16.0/(pow(10,9));
+  switch(X->Def.iCalcType){
+  case Lanczos:
+  case TPQCalc:
+    X->Check.max_mem=(3+2+1)*X->Check.idim_max*16.0/(pow(10,9));
+    break;
+  case FullDiag:
+    X->Check.max_mem=X->Check.idim_max*16.0*X->Check.idim_max*16.0/(pow(10,9));
+    break;
+  default:
+    return -1;
+    break;
+  }
   fprintf(stdoutMPI, "MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(stdoutMPI, "APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
