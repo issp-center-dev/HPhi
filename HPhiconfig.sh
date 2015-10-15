@@ -31,9 +31,9 @@ INCLUDE_DIR=./include
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
-CC = fccpx
+CC = mpifccpx
 LAPACK_FLAGS = -Dlapack -SSL2BLAMP
-FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const
+FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
