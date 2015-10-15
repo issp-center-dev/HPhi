@@ -195,9 +195,9 @@ void StdFace_NotUsed_d(
   double val /**< [in]*/)
 {
   if (val != 9999.9) {
-    fprintf(stdoutMPI, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
-    fprintf(stdoutMPI, "            Please COMMENT-OUT this line \n");
-    fprintf(stdoutMPI, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
+    fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
+    fprintf(stderr, "            Please COMMENT-OUT this line \n");
+    fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
     exitMPI(-1);
   }
 }
@@ -213,9 +213,9 @@ void StdFace_NotUsed_i(
   int val /**< [in]*/)
 {
   if (val != 9999) {
-    fprintf(stdoutMPI, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
-    fprintf(stdoutMPI, "            Please COMMENT-OUT this line \n");
-    fprintf(stdoutMPI, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
+    fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
+    fprintf(stderr, "            Please COMMENT-OUT this line \n");
+    fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
     exitMPI(-1);
   }
 }
@@ -232,7 +232,7 @@ void StdFace_RequiredVal_i(
   int val /**< [in]*/)
 {
   if (val == 9999){
-    fprintf(stdoutMPI, "ERROR ! %s is NOT specified !\n", valname);
+    fprintf(stderr, "ERROR ! %s is NOT specified !\n", valname);
     exitMPI(-1);
   }
   else fprintf(stdoutMPI, "  %15s = %-3d\n", valname, val);

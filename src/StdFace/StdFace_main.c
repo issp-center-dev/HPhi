@@ -68,7 +68,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
 
   fprintf(stdoutMPI, "\n######  Standard Intarface Mode STARTS  ######\n");
   if ((fp = fopenMPI(fname, "r")) == NULL){
-    fprintf(stdoutMPI, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
+    fprintf(stderr, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
     exitMPI(-1);
   }
   else{
@@ -109,7 +109,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     keyword = strtok(ctmpline, "=");
     value = strtok(NULL, "=");
     if (value == NULL){
-      fprintf(stdoutMPI, "\n  ERROR !  \"=\" is NOT found !\n\n");
+      fprintf(stderr, "\n  ERROR !  \"=\" is NOT found !\n\n");
       exitMPI(-1);
     }
     TrimSpaceQuote(keyword);
@@ -180,7 +180,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
     else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &W);
     else {
-      fprintf(stdoutMPI, "ERROR ! Unsupported Keyword !\n");
+      fprintf(stderr, "ERROR ! Unsupported Keyword !\n");
       exitMPI(-1);
     }
   }
@@ -244,7 +244,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintInter();
   PrintNamelist();
   PrintCalcMod(method, FlgTemp, model, ioutputmode);
-  PrintModPara(nup, ndown,  Lanczos_max, initial_iv, nvec,  exct,
+  PrintModPara(nup, ndown, Lanczos_max, initial_iv, nvec, exct,
     LanczosEps, LanczosTarget, WRITE, READ,
     NumAve, ExpecInterval,filehead);  
   Print1Green(ioutputmode);
@@ -263,7 +263,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   }
   free(intrindx);
   free(intr);
-
+ 
   fprintf(stdoutMPI, "\n######  Input files are generated.  ######\n\n");
 
 }
@@ -379,7 +379,7 @@ static void StoreWithCheckDup_s(
   char *value /**< [out] */)
 {
   if (strcmp(value, "****") != 0){
-    fprintf(stdoutMPI, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     exitMPI(-1);
   }
   else{
@@ -400,7 +400,7 @@ static void StoreWithCheckDup_i(
   int *value /**< [out] */)
 {
   if (*value != 9999){
-    fprintf(stdoutMPI, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     exitMPI(-1);
   }
   else{
@@ -422,7 +422,7 @@ static void StoreWithCheckDup_d(
 {
 
   if (*value != 9999.9){
-    fprintf(stdoutMPI, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     exitMPI(-1);
   }
   else{
@@ -594,7 +594,7 @@ static void PrintCalcMod(
   int iCalcType, iCalcModel, ioutputmode2;
 
   if (strcmp(method, "****") == 0){
-    fprintf(stdoutMPI, "ERROR ! Method is NOT specified !\n");
+    fprintf(stderr, "ERROR ! Method is NOT specified !\n");
     exitMPI(-1);
   }
   else if (strcmp(method, "lanczos") == 0) iCalcType = 0;
@@ -603,7 +603,7 @@ static void PrintCalcMod(
     strcmp(method, "alldiag") == 0 ||
     strcmp(method, "direct") == 0 ) iCalcType = 2;
   else{
-    fprintf(stdoutMPI, "\n ERROR ! Unsupported Solver : %s\n", method);
+    fprintf(stderr, "\n ERROR ! Unsupported Solver : %s\n", method);
     exitMPI(-1);
   }
 
@@ -616,7 +616,7 @@ static void PrintCalcMod(
   else if (strcmp(model, "kondolatticegc") == 0
     || strcmp(model, "kondogc") == 0) iCalcModel = 5;
   else{
-    fprintf(stdoutMPI, "\n ERROR ! Unsupported Model : %s\n", model);
+    fprintf(stderr, "\n ERROR ! Unsupported Model : %s\n", model);
     exitMPI(-1);
   }
 
@@ -867,11 +867,11 @@ static void UnsupportedSystem(
   char *model /**< [in]*/, 
   char *lattice /**< [in]*/)
 {
-  fprintf(stdoutMPI, "\nSorry, specified combination, \n");
-  fprintf(stdoutMPI, "    MODEL : %s  \n", model);
-  fprintf(stdoutMPI, "  LATTICE : %s, \n", lattice);
-  fprintf(stdoutMPI, "is unsupported in the STANDARD MODE...\n");
-  fprintf(stdoutMPI, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
+  fprintf(stderr, "\nSorry, specified combination, \n");
+  fprintf(stderr, "    MODEL : %s  \n", model);
+  fprintf(stderr, "  LATTICE : %s, \n", lattice);
+  fprintf(stderr, "is unsupported in the STANDARD MODE...\n");
+  fprintf(stderr, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
   exitMPI(-1);
 }
 
@@ -909,7 +909,7 @@ static int CheckOutputMode(char* outputmode /**< [in]*/){
     fprintf(stdoutMPI, "      ioutputmode = %-10d\n", ioutputmode);
   }
   else{
-    fprintf(stdoutMPI, "\n ERROR ! Unsupported OutPutMode : %s\n", outputmode);
+    fprintf(stderr, "\n ERROR ! Unsupported OutPutMode : %s\n", outputmode);
     exitMPI(-1);
   }
   return(ioutputmode);
@@ -961,23 +961,23 @@ static void CheckModPara(
     StdFace_RequiredVal_i("nelec", *nelec);
 
     if (abs(*Sz2) > nsite){
-      fprintf(stdoutMPI, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
+      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
       exitMPI(-1);
     }
     else if (*nelec > 2 * nsite){
-      fprintf(stdoutMPI, "\n ERROR ! Nelec > 2 * nsite in Hubbard model ! \n");
+      fprintf(stderr, "\n ERROR ! Nelec > 2 * nsite in Hubbard model ! \n");
       exitMPI(-1);
     }
     else if ((*nelec + *Sz2) % 2 != 0){
-      fprintf(stdoutMPI, "\n ERROR ! (nelec + 2 * Sz) %% 2 != 0 in Hubbard model ! \n");
+      fprintf(stderr, "\n ERROR ! (nelec + 2 * Sz) %% 2 != 0 in Hubbard model ! \n");
       exitMPI(-1);
     }
     else if (*nelec <= nsite && abs(*Sz2) > *nelec){
-      fprintf(stdoutMPI, "\n ERROR ! nelec <= nsite && 2 * |Sz| > nelec in Hubbard model ! \n");
+      fprintf(stderr, "\n ERROR ! nelec <= nsite && 2 * |Sz| > nelec in Hubbard model ! \n");
       exitMPI(-1);
     }
     else if (*nelec > nsite && abs(*Sz2) > 2 * nsite - *nelec){
-      fprintf(stdoutMPI, "\n ERROR ! nelec > nsite && 2 * |Sz| > 2 * nsite - nelec in Hubbard model ! \n");
+      fprintf(stderr, "\n ERROR ! nelec > nsite && 2 * |Sz| > 2 * nsite - nelec in Hubbard model ! \n");
       exitMPI(-1);
     }
     else {
@@ -991,11 +991,11 @@ static void CheckModPara(
     StdFace_NotUsed_i("nelec", *nelec);
 
     if (abs(*Sz2) > nsite){
-      fprintf(stdoutMPI, "\n ERROR ! abs(2 * Sz) > nsite in Spin model ! \n");
+      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Spin model ! \n");
       exitMPI(-1);
     }
     else if ((nsite + *Sz2) % 2 != 0){
-      fprintf(stdoutMPI, "\n ERROR ! (nsite + 2 * Sz) %% 2 != 0 in Spin model ! \n");
+      fprintf(stderr, "\n ERROR ! (nsite + 2 * Sz) %% 2 != 0 in Spin model ! \n");
       exitMPI(-1);
     }
     else{
@@ -1009,23 +1009,23 @@ static void CheckModPara(
     StdFace_RequiredVal_i("nelec", *nelec);
 
     if (abs(*Sz2) > nsite){
-      fprintf(stdoutMPI, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
+      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
       exitMPI(-1);
     }
     else if (*nelec > nsite){
-      fprintf(stdoutMPI, "\n ERROR ! Nelec_cond / 2 + Nelec_loc > nsite in Kondo model ! \n");
+      fprintf(stderr, "\n ERROR ! Nelec_cond / 2 + Nelec_loc > nsite in Kondo model ! \n");
       exitMPI(-1);
     }
     else if ((*nelec + nsite / 2 + *Sz2) % 2 != 0){
-      fprintf(stdoutMPI, "\n ERROR ! (nelec_cond + nelec_loc + 2 * Sz) %% 2 != 0 in Kondo model ! \n");
+      fprintf(stderr, "\n ERROR ! (nelec_cond + nelec_loc + 2 * Sz) %% 2 != 0 in Kondo model ! \n");
       exitMPI(-1);
     }
     else if (*nelec <= nsite / 2 && abs(*Sz2) > *nelec + nsite / 2){
-      fprintf(stdoutMPI, "\n ERROR ! nelec_cond <= nsite / 2 && 2 * |Sz| > nelec_cond + nelec_loc in Kondo model ! \n");
+      fprintf(stderr, "\n ERROR ! nelec_cond <= nsite / 2 && 2 * |Sz| > nelec_cond + nelec_loc in Kondo model ! \n");
       exitMPI(-1);
     }
     else if (*nelec > nsite / 2 && abs(*Sz2) > nsite / 2 * 3 - *nelec){
-      fprintf(stdoutMPI, "\n ERROR ! nelec_cond > nsite / 2 && abs(Sz2) > nsite / 2 * 3 - nelec in Kondo model ! \n");
+      fprintf(stderr, "\n ERROR ! nelec_cond > nsite / 2 && abs(Sz2) > nsite / 2 * 3 - nelec in Kondo model ! \n");
       exitMPI(-1);
     }
     else {
@@ -1047,7 +1047,7 @@ static void CheckModPara(
     *ndown = nsite - *nup;
   }
   else{
-    fprintf(stdoutMPI, "\n ERROR ! Unsupported Model !\n");
+    fprintf(stderr, "\n ERROR ! Unsupported Model !\n");
     exitMPI(-1);
   }
 

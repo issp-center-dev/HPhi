@@ -36,20 +36,20 @@ void phys(struct BindStruct *X){
       X->Phys.eigen_num=i;
 
       if(!expec_energy(X)==0){
-	fprintf(stdoutMPI, "Error: calc expec_energy.\n");
+	fprintf(stderr, "Error: calc expec_energy.\n");
 	exitMPI(-1);
       }
       if(!expec_cisajs(X,v1)==0){
-	fprintf(stdoutMPI, "Error: calc OneBodyG.\n");
+	fprintf(stderr, "Error: calc OneBodyG.\n");
 	exitMPI(-1);
       }
       if(!expec_cisajscktaltdc(X, v1)==0){
-	fprintf(stdoutMPI, "Error: calc TwoBodyG.\n");
+	fprintf(stderr, "Error: calc TwoBodyG.\n");
 	exitMPI(-1);
       }
       
       if(!expec_totalspin(X, v1)==0){
-	fprintf(stdoutMPI, "Error: calc TotalSpin.\n");
+	fprintf(stderr, "Error: calc TotalSpin.\n");
 	exitMPI(-1);
       }
       tmp_N  = X->Phys.num_up + X->Phys.num_down;

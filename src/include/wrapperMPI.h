@@ -23,3 +23,4 @@ void FinalizeMPI();
 void exitMPI(int errorcode);
 FILE* fopenMPI(const char* FileName, const char* mode);
 char* fgetsMPI(char* InputString, int maxcount,FILE* fp);
+void BarrierMPI();

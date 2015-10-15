@@ -55,7 +55,7 @@ void InitializeMPI(int argc, char *argv[]){
   fprintf(stdoutMPI, "  OpenMP threads : %d\n", nthreads);
   fprintf(stdoutMPI, "  MPI PEs : %d = 2^%-5d\n\n", nproc, expon);
   if (nproc != 1 << expon){
-    fprintf(stdoutMPI, "ERROR ! The number of PEs is not a 2-exponent !");
+    fprintf(stderr, "ERROR ! The number of PEs is not a 2-exponent !");
     exitMPI(-1);
   }
 }
@@ -70,7 +70,7 @@ void FinalizeMPI(){
   int ierr;
 #ifdef MPI
   ierr = MPI_Finalize();
-  if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
+  if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
   if (myrank != 0) fclose(stdoutMPI);
 }
@@ -87,7 +87,7 @@ void exitMPI(int errorcode /**< [in]*/)
 #ifdef MPI
   ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
   ierr = MPI_Finalize();
-  if (ierr != 0) fprintf(stdoutMPI, "\n  MPI_Finalize() = %d\n\n", ierr);
+  if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
   exit(errorcode);
 }
@@ -120,12 +120,30 @@ char* fgetsMPI(
   int maxcount /**< [in] Length of string*/,
   FILE* fp /**< [in] file pointer*/)
 {
+  int inull;
   char *ctmp;
 
-  if(myrank == 0) fgets(InputString, maxcount, fp);
+  ctmp = InputString;
+  inull = 0;
+  if (myrank == 0) {
+    ctmp = fgets(InputString, maxcount, fp);
+    if (ctmp == NULL){
+      inull = 1;
+    }
+  }
 #ifdef MPI
   MPI_Bcast(InputString, maxcount, MPI_CHAR, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&inull, 1, MPI_INT, 0, MPI_COMM_WORLD);
 #endif
+  if (myrank != 0 && inull == 1) {
+    ctmp = NULL;
+  }
+
   return ctmp;
 }
 
+void BarrierMPI(){
+#ifdef MPI
+  MPI_Barrier(MPI_COMM_WORLD);
+#endif
+}

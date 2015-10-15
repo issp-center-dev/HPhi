@@ -65,16 +65,16 @@ int main(int argc, char* argv[]){
   setmem_HEAD(&X.Bind);
   //  if(ReadDefFileNInt(argv[1], &(X.Bind.Def))!=0){
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def))!=0){
-    fprintf(stdoutMPI, "%s", cErrDefFile);
+    fprintf(stderr, "%s", cErrDefFile);
     return (-1);
   }
-  if(X.Bind.Def.nvec < X.Bind.Def.k_exct){
+  if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
     return (-1);
   }	  
   fprintf(stdoutMPI, "Definition files are correct.\n");
-  
+
   
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind);
