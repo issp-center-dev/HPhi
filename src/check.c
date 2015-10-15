@@ -111,7 +111,7 @@ int check(struct BindStruct *X){
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
   case Lanczos:
-  case TPQ:
+  case TPQCalc:
     X->Check.max_mem=(3+2+1)*X->Check.idim_max*16.0/(pow(10,9));
     break;
   case FullDiag:
