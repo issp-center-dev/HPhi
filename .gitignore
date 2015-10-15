@@ -15,5 +15,6 @@ HPhi
 *.synctex.gz
 *.toc
 *~
+build
 #*
 build/
