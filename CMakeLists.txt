@@ -17,6 +17,13 @@ if(OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 endif(OPENMP_FOUND)
 
+find_package(MPI)
+if(MPI_FOUND)
+  include_directories(${MPI_C_INCLUDE_PATH})
+  add_definitions(-DMPI)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_C_LINK_FLAGS}")
+endif(MPI_FOUND)
+
 find_package(LAPACK)
 
 add_subdirectory(src)
