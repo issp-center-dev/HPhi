@@ -14,14 +14,16 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "bitcalc.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
- * 
- * @param Nsite 
- * @param irght 
- * @param ilft 
- * @param ihfbit 
+ * @brief function of getting right, left and half bits corresponding to a original hilbert space.
+ }
+ * @param Nsite a total number of sites
+ * @param irght a bit to split original hilbert space into right space
+ * @param ilft a bit to split original hilbert space into left space
+ * @param ihfbit a half bit to split original hilbert space
  * 
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
@@ -35,7 +37,7 @@ int GetSplitBit(
 		long unsigned int *ihfbit
 ){
   if(Nsite<1){
-    fprintf(stdoutMPI, "%s", cErrSiteNumber);
+    fprintf(stderr, "%s", cErrSiteNumber);
     return -1;
   }
   *irght=pow(2,((Nsite+1)/2))-1;
@@ -46,13 +48,13 @@ int GetSplitBit(
 }
 
 /** 
+ * @brief function of splitting original bit into right and left hilbert spaces.
  * 
- * 
- * @param Nsite 
- * @param iCalcModel 
- * @param irght 
- * @param ilft 
- * @param ihfbit 
+ * @param Nsite a total number of sites
+ * @param iCalcModel Calc model defined in CalcMode file
+ * @param irght a bit to split original hilbert space into right space
+ * @param ilft a bit to split original hilbert space into left space
+ * @param ihfbit a half bit to split original hilbert space
  * 
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
@@ -79,7 +81,7 @@ int GetSplitBitByModel(
   case SpinGC:   
     break;
   default:
-    fprintf(stdoutMPI, cErrNoModel, iCalcModel);
+    fprintf(stderr, cErrNoModel, iCalcModel);
     return -1;
   }
 
@@ -92,13 +94,14 @@ int GetSplitBitByModel(
 
 /** 
  * 
+ * @brief function of splitting a original bit to right and left spaces
  * 
- * @param ibit 
- * @param irght 
- * @param ilft 
- * @param ihfbit 
- * @param isplited_Bit_right 
- * @param isplited_Bit_left
+ * @param ibit a original bit
+ * @param irght a bit to split original hilbert space into right space
+ * @param ilft a bit to split original hilbert space into left space
+ * @param ihfbit a half bit to split original hilbert space
+ * @param isplited_Bit_right a splitted bit reflected on right space
+ * @param isplited_Bit_left a splitted bit reflected on left space
  * @version 0.1 
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
@@ -119,14 +122,15 @@ void SplitBit(
 
 /** 
  * 
+ * @brief function of getting off-diagonal component
  * 
- * @param _list_2_1 
- * @param _list_2_2 
- * @param _ibit 
- * @param _irght 
- * @param _ilft 
- * @param _ihfbit 
- * @param _ioffComp
+ * @param _list_2_1 list to right space
+ * @param _list_2_2 list to left space
+ * @param _ibit a original bit 
+ * @param irght a bit to split original hilbert space into right space
+ * @param ilft a bit to split original hilbert space into left space
+ * @param ihfbit a half bit to split original hilbert space
+ * @param _ioffComp an off diagonal component
  * @version 0.1 
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
@@ -150,13 +154,14 @@ void GetOffComp(
 
 /** 
  * 
+ * @brief function of getting off-diagonal components for general spin
  * 
- * @param _list_2_1 
- * @param _list_2_2 
- * @param _ibit 
- * @param _irght 
- * @param _ilft 
- * @param _ihfbit 
+ * @param _list_2_1 list to right space
+ * @param _list_2_2 list to left space
+ * @param _ibit a original bit
+ * @param irght a bit to split original hilbert space into right space
+ * @param ilft a bit to split original hilbert space into left space
+ * @param ihfbit a half bit to split original hilbert space
  * @param _ioffComp 
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
@@ -177,14 +182,12 @@ void GetOffCompGeneral(
   *_ioffComp+=_list_2_2[ib];
 }
 
-
-// this function only used for 32bit
-// how to modify for 64 bit calculations ? 
 /** 
  * 
+ * @brief function of getting fermion sign (for 32bit)
  * 
- * @param org_bit 
- * @param sgn 
+ * @param org_bit an original bit
+ * @param _sgn fermion sign 
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
@@ -206,9 +209,10 @@ void SgnBit_old(
 // for 64 bit
 /** 
  * 
+ * @brief function of getting fermion sign
  * 
- * @param org_bit 
- * @param sgn 
+ * @param org_bit an original bit
+ * @param _sgn fermion sign 
  * @version 0.1
  *
  * @author Takahiro Misawa (The University of Tokyo) 
@@ -233,6 +237,7 @@ void SgnBit(
 /** 
  * 
  * @brief bit check function
+ *
  * @param org_bit original bit to check
  * @param target_bit target bit to check
  * @retval 1
@@ -255,11 +260,12 @@ int BitCheck(
 /** 
  * 
  * @brief bit check function for general spin 
+ *
  * @param org_bit original bit to check
  * @param org_isite site index (org_isite >= 1)
  * @param target_ispin target spin to check 
- * @param SiteToBit List for getting bit at a site
- * @param TPow List for getting total bit at a site before
+ * @param _SiteToBit List for getting bit at a site
+ * @param _TPow List for getting total bit at a site before
  * @retval 0 bit does not exists
  * @retval 1 bit exists
  * 
@@ -285,11 +291,12 @@ int BitCheckGeneral(
 /** 
  * 
  * @brief get bit at a site for general spin  
+ *
  * @param isite site index (isite >= 1)
  * @param org_bit original bit to check 
- * @param SiteToBit List for getting bit at a site
- * @param Tpow List for getting total bit at a site before
- * @retutn bit at a site
+ * @param _SiteToBit List for getting bit at a site
+ * @param _Tpow List for getting total bit at a site before
+ * @return bit at a site
  * 
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
