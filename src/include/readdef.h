@@ -17,7 +17,7 @@
 #include "xsetmem.h"
 #define D_FileNameMaxReadDef 256 /*!<  Max length of words for file name*/
 #define D_CharTmpReadDef     200 /*!<  Max length of reading words from input files*/
-#define D_iKWNumDef 13 /*!<  Max number of keyword set in def file*/
+#define D_iKWNumDef 14 /*!<  Max number of keyword set in def file*/
 #define D_CharKWDMAX     200 /*!<  Max length of words for keyword*/
 
 /*!< Number of ignore lines in def files */
@@ -44,6 +44,7 @@
 #define KWOneBodyG 10
 #define KWTwoBodyG 11
 #define KWPairLift 12
+#define KWIsing 13
 
 /**
  * Keyword List in NameListFile.  
@@ -61,7 +62,8 @@ static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
   "InterAll",
   "OneBodyG",
   "TwoBodyG",
-  "PairLift"
+  "PairLift",
+  "Ising"
 };
 
 /**
@@ -133,6 +135,16 @@ int CheckFormatForKondoTrans
  );
 
 void SetConvergenceFactor
+(
+ struct DefineList *X
+ );
+
+void ResetInteractionNum
+(
+ struct DefineList *X
+ );
+
+void InitializeInteractionNum
 (
  struct DefineList *X
  );

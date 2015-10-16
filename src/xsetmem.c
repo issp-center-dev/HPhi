@@ -17,6 +17,7 @@
 #include "Common.h"
 #include "mfmemory.h"
 #include "xsetmem.h"
+#include "wrapperMPI.h"
 
 void setmem_HEAD
 (
@@ -49,10 +50,10 @@ void setmem_def
   
   i_malloc2(X->Def.CoulombIntra, X->Def.NCoulombIntra, 1);
   d_malloc1(X->Def.ParaCoulombIntra, X->Def.NCoulombIntra);
-  i_malloc2(X->Def.CoulombInter, X->Def.NCoulombInter, 2);
-  d_malloc1(X->Def.ParaCoulombInter, X->Def.NCoulombInter);
-  i_malloc2(X->Def.HundCoupling, X->Def.NHundCoupling, 2);
-  d_malloc1(X->Def.ParaHundCoupling, X->Def.NHundCoupling);
+  i_malloc2(X->Def.CoulombInter, X->Def.NCoulombInter+X->Def.NIsingCoupling, 2);
+  d_malloc1(X->Def.ParaCoulombInter, X->Def.NCoulombInter+X->Def.NIsingCoupling);
+  i_malloc2(X->Def.HundCoupling, X->Def.NHundCoupling+X->Def.NIsingCoupling, 2);
+  d_malloc1(X->Def.ParaHundCoupling, X->Def.NHundCoupling+X->Def.NIsingCoupling);
   i_malloc2(X->Def.PairHopping, X->Def.NPairHopping, 2);
   d_malloc1(X->Def.ParaPairHopping, X->Def.NPairHopping); 
   i_malloc2(X->Def.ExchangeCoupling, X->Def.NExchangeCoupling, 2);
@@ -87,9 +88,9 @@ int setmem_large
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);
+  c_malloc1(vg, X->Check.idim_max+1);
   d_malloc1(alpha, X->Def.Lanczos_max+1);
   d_malloc1(beta, X->Def.Lanczos_max+1);
-  c_malloc1(vg, X->Check.idim_max+1);
   if(list_1==NULL
      || list_2_1==NULL
      || list_2_2==NULL
@@ -135,7 +136,7 @@ int setmem_large
       }
     }
   }
-  printf("%s", cProFinishAlloc);
+  fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
 }
 

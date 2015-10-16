@@ -1,4 +1,7 @@
 HPhi
+makefile
+Makefile
+make.sys
 *backup*
 *cisajs*.dat
 *Time*
@@ -15,4 +18,5 @@ HPhi
 *.synctex.gz
 *.toc
 *~
+build
 #*

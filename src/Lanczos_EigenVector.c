@@ -16,6 +16,7 @@
 
 #include "Common.h"
 #include "Lanczos_EigenVector.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -26,7 +27,7 @@
  */
 void Lanczos_EigenVector(struct BindStruct *X){
 
-  printf("%s", cLogLanczos_EigenVectorStart);
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
   
   int i,j,i_max,iv;  	 
   int k_exct;
@@ -117,12 +118,12 @@ void Lanczos_EigenVector(struct BindStruct *X){
     dnorm += conj(v0[j])*v0[j];
   }
   dnorm=sqrt(dnorm);
-  dnorm_inv=dnorm;
+  dnorm_inv=1.0/dnorm;
 #pragma omp parallel for default(none) private(j) shared(v0) firstprivate(i_max, dnorm_inv)
   for(j=1;j<=i_max;j++){
     v0[j] = v0[j]*dnorm_inv;
   }
   
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorFinish, "a");
-  printf("%s", cLogLanczos_EigenVectorEnd);
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorEnd);
 }

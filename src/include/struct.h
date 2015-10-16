@@ -104,6 +104,8 @@ struct DefineList{
   int    NExchangeCoupling;    /**< */
   double *ParaExchangeCoupling;  /**< */
 
+  int    NIsingCoupling;    /**< */
+  
   int   **PairLiftCoupling;  /**< */
   int    NPairLiftCoupling;    /**< */
   double *ParaPairLiftCoupling;  /**< */
