@@ -154,32 +154,38 @@ void GetOffComp(
 
 /** 
  * 
- * @brief function of getting off-diagonal components for general spin
+ * @brief function of getting off-diagonal component for general spin
  * 
- * @param _list_2_1 list to right space
- * @param _list_2_2 list to left space
- * @param _ibit a original bit
- * @param irght a bit to split original hilbert space into right space
- * @param ilft a bit to split original hilbert space into left space
- * @param ihfbit a half bit to split original hilbert space
- * @param _ioffComp 
+ * @param org_ibit a original bit
+ * @param org_isite a target site 
+ * @param org_ispin a target spin to delete.
+ * @param off_ispin a target spin to create.
+ * @param _ioffComp a generated bit 
+ * @param _SiteToBit List for getting bit at a site
+ * @param _Tpow List for getting total bit at a site before
+ * @retval FALSE off-diagonal component does not exist
+ * @retval TRUE off-diagonal component exists
+ * 
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
-void GetOffCompGeneral(
-	        long unsigned int *_list_2_1,
-	        long unsigned int *_list_2_2,
-		const long unsigned int _ibit,
-		const long unsigned int _irght,
-		const long unsigned int _ilft,
-		const long unsigned int _ihfbit,
-		long unsigned int *_ioffComp
+int GetOffCompGeneralSpin(
+		const long unsigned int org_ibit,
+		const unsigned int org_isite,
+		const unsigned int org_ispin,
+		const unsigned int off_ispin,
+		long unsigned int *_ioffComp,
+		const long int *SiteToBit,
+		const long int *Tpow
 )
 {
-  long unsigned int ia, ib;
-  SplitBit(_ibit, _irght, _ilft, _ihfbit, &ia, &ib);
-  *_ioffComp =_list_2_1[ia];
-  *_ioffComp+=_list_2_2[ib];
+  if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) != org_ispin){
+    *_ioffComp=0;
+    return FALSE;
+  }
+  //delete org_ispin and create off_ispin
+  *_ioffComp =org_ibit+(off_ispin-org_ispin)*Tpow[org_isite-1];
+  return TRUE;
 }
 
 /** 

@@ -84,3 +84,13 @@ int GetBitGeneral(
 	     const long int *SiteToBit,
 	     const long int *TPow	     
 		   );
+
+int GetOffCompGeneralSpin(
+		const long unsigned int org_ibit,
+		const unsigned int org_isite,
+		const unsigned int org_ispin,
+		const unsigned int off_ispin,
+		long unsigned int *_ioffComp,
+		const long int *SiteToBit,
+		const long int *TPow
+		);
