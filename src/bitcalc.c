@@ -14,7 +14,6 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "bitcalc.h"
-#include "wrapperMPI.h"
 
 /** 
  * 
@@ -24,6 +23,7 @@
  * @param ilft 
  * @param ihfbit 
  * 
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  * @return 
@@ -54,6 +54,7 @@ int GetSplitBit(
  * @param ilft 
  * @param ihfbit 
  * 
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  * @return 
@@ -97,7 +98,8 @@ int GetSplitBitByModel(
  * @param ilft 
  * @param ihfbit 
  * @param isplited_Bit_right 
- * @param isplited_Bit_left 
+ * @param isplited_Bit_left
+ * @version 0.1 
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
@@ -124,7 +126,8 @@ void SplitBit(
  * @param _irght 
  * @param _ilft 
  * @param _ihfbit 
- * @param _ioffComp 
+ * @param _ioffComp
+ * @version 0.1 
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
@@ -144,6 +147,37 @@ void GetOffComp(
   *_ioffComp+=_list_2_2[ib];
 }
 
+
+/** 
+ * 
+ * 
+ * @param _list_2_1 
+ * @param _list_2_2 
+ * @param _ibit 
+ * @param _irght 
+ * @param _ilft 
+ * @param _ihfbit 
+ * @param _ioffComp 
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ */
+void GetOffCompGeneral(
+	        long unsigned int *_list_2_1,
+	        long unsigned int *_list_2_2,
+		const long unsigned int _ibit,
+		const long unsigned int _irght,
+		const long unsigned int _ilft,
+		const long unsigned int _ihfbit,
+		long unsigned int *_ioffComp
+)
+{
+  long unsigned int ia, ib;
+  SplitBit(_ibit, _irght, _ilft, _ihfbit, &ia, &ib);
+  *_ioffComp =_list_2_1[ia];
+  *_ioffComp+=_list_2_2[ib];
+}
+
+
 // this function only used for 32bit
 // how to modify for 64 bit calculations ? 
 /** 
@@ -151,6 +185,7 @@ void GetOffComp(
  * 
  * @param org_bit 
  * @param sgn 
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
@@ -174,6 +209,7 @@ void SgnBit_old(
  * 
  * @param org_bit 
  * @param sgn 
+ * @version 0.1
  *
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
@@ -194,16 +230,16 @@ void SgnBit(
    *sgn    = 1-2*(bit & 1); // sgn = pm 1
 }
 
-// bit check
 /** 
  * 
- * 
- * @param org_bit 
- * @param target_bit 
- * 
+ * @brief bit check function
+ * @param org_bit original bit to check
+ * @param target_bit target bit to check
+ * @retval 1
+ * @retval 0 
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
- * @return 
  */
 int BitCheck( 
 	     const long unsigned int org_bit,
@@ -212,4 +248,58 @@ int BitCheck(
 {
    return  (org_bit >> target_bit) &1;
    // (org_bit & (2^target_bit))/2^target_bit
+}
+
+
+
+/** 
+ * 
+ * @brief bit check function for general spin 
+ * @param org_bit original bit to check
+ * @param org_isite site index (org_isite >= 1)
+ * @param target_ispin target spin to check 
+ * @param SiteToBit List for getting bit at a site
+ * @param TPow List for getting total bit at a site before
+ * @retval 0 bit does not exists
+ * @retval 1 bit exists
+ * 
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ */
+int BitCheckGeneral(
+	     const long unsigned int org_bit,
+	     const unsigned int org_isite,
+	     const unsigned int target_ispin,
+	     const long int *SiteToBit,
+	     const long int *Tpow
+)
+{
+
+  if(GetBitGeneral(org_isite, org_bit, SiteToBit, Tpow) !=target_ispin){
+    return FALSE;
+  }
+  return TRUE;
+}
+
+
+/** 
+ * 
+ * @brief get bit at a site for general spin  
+ * @param isite site index (isite >= 1)
+ * @param org_bit original bit to check 
+ * @param SiteToBit List for getting bit at a site
+ * @param Tpow List for getting total bit at a site before
+ * @retutn bit at a site
+ * 
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ */
+int GetBitGeneral( 
+	     const unsigned int isite,
+	     const long unsigned int org_bit,
+	     const long int *SiteToBit,
+	     const long int *Tpow
+)
+{
+  return ( (org_bit/Tpow[isite-1])%SiteToBit[isite] );
 }

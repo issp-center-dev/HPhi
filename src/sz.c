@@ -146,7 +146,7 @@ int sz
 	icnt = X->Def.Tpow[X->Def.Nsite]+0;
       }
       else{
-	icnt = X->Def.Tpow[X->Def.Nsite-1];
+	icnt = X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1];
       }
       break;
       

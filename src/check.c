@@ -203,6 +203,7 @@ int check(struct BindStruct *X){
     }
     break;
  case SpinGC:
+   printf("test\n");
    if(X->Def.iFlgGeneralSpin==FALSE){
      for(i=1;i<=X->Def.Nsite;i++){
        u_tmp=u_tmp*2;
@@ -211,8 +212,10 @@ int check(struct BindStruct *X){
      }
    }
    else{
-      for(i=0;i<X->Def.Nsite;i++){
-	u_tmp=u_tmp*X->Def.SiteToBit[i];
+     X->Def.Tpow[0]=u_tmp;
+     fprintf(fp,"%ld %ld \n", 0, u_tmp);
+      for(i=1;i<X->Def.Nsite;i++){
+	u_tmp=u_tmp*X->Def.SiteToBit[i-1];
 	X->Def.Tpow[i]=u_tmp;
 	fprintf(fp,"%ld %ld \n",i,u_tmp);
       }
