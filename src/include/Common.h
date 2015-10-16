@@ -34,6 +34,5 @@
 #include "struct.h"
 #include "log.h"
 #include "dSFMT.h"
-#include "wrapperMPI.h"
 
 #endif /* HPHI_COMMON_H */
