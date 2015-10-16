@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef HPHI_WRAPPER_H
+#define HPHI_WRAPPER_H
+
 int nproc, myrank;
 FILE *stdoutMPI;
 
@@ -24,3 +27,5 @@ void exitMPI(int errorcode);
 FILE* fopenMPI(const char* FileName, const char* mode);
 char* fgetsMPI(char* InputString, int maxcount,FILE* fp);
 void BarrierMPI();
+
+#endif
