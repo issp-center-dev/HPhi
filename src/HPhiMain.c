@@ -54,7 +54,6 @@ http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
 This software is developed under the support of "Project for advancement of software usability in materials science" by The Institute for Solid State Physics, The University of Tokyo.\n
 */
 
-
 /** 
  * @brief Main program for HPhi
  * 
