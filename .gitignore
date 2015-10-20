@@ -21,3 +21,6 @@ make.sys
 build
 #*
 html/
+GPATH
+GRTAGS
+GTAGS
