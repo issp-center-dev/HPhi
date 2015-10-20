@@ -130,11 +130,17 @@ struct DefineList{
   int   **CisAjtCkuAlvDC; /**< */
   int NCisAjtCkuAlvDC; /**< */
 	
-  int iCalcType; /**< */
- 
+  int iCalcType;
+  /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
+
+  int iCalcEigenVec;
+  /**< An integer for selecting method to calculate eigenvectors. 0:Lanczos+CG, 1: Lanczos. default value is set as 0 in readdef.c*/  
+  
   int iFlgFiniteTemperature;    /**< */
-  int iCalcModel;    /**<  */
-  int iOutputMode;     /**<  0: OneBodyG and TwoBodyG. 1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
+  int iCalcModel;
+  /**<  An integer for selecting calculation model. 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC*/
+  int iOutputMode;
+  /**<   An integer for selecting output mode. 0: OneBodyG and TwoBodyG. 1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
 };
 
 struct CheckList{
