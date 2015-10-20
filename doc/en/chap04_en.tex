@@ -112,6 +112,7 @@ This file determines parameters for calculation method, model and output mode. F
 CalcType   0
 CalcModel   2
 OutputMode   1
+CalcEigenVec 0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -175,6 +176,14 @@ Parameters correlated with keywords are shown as follows.
 {\bf Description :} Select the output mode from the following list:\\
 0: Output of Green's function. The components are set by the OneBodyG and TwoBodyG input files.\\
 1: Output of charge correlation function, spin correlation function and Green's function (not supported in ver.0.1). The components of Green's function are set by the OneBodyG and TwoBodyG input files.\\
+
+\item  \verb|CalcEigenVec|
+
+{\bf Type :} int-type (default value: 0)
+
+{\bf Description :} Select the method to calculate eigenvectors:\\
+0:Lanczos+CG methods (When the convergence of eigenvectors are not enough for using Lanczos method,  CG method is applied to calculate eigenvectors).\\
+1:Lanczos method.\\
 \end{itemize}
 
 \newpage
