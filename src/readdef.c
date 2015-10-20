@@ -173,6 +173,7 @@ int ReadcalcmodFile(
   X->iFlgFiniteTemperature=0;
   X->iCalcModel=0;
   X->iOutputMode=0;
+  X->iCalcEigenVec=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -194,13 +195,16 @@ int ReadcalcmodFile(
     else if(strcmp(ctmp, "OutputMode")==0){
       X->iOutputMode=itmp;
     }
+    else if(strcmp(ctmp, "CalcEigenVec")==0){
+      X->iCalcEigenVec=itmp;
+    }
     else{
       fprintf(stderr, cErrDefFileParam, defname, ctmp);
       return -1;
     }
   }
   fclose(fp);
-  
+    
   /* Check values*/
   if(ValidateValue(X->iCalcModel, 0, NUM_CALCMODEL-1)){
     fprintf(stderr, cErrCalcType, defname);
@@ -214,7 +218,11 @@ int ReadcalcmodFile(
     fprintf(stderr, cErrOutputMode, defname);
     return (-1);
   }
-  
+  if(ValidateValue(X->iCalcEigenVec, 0, NUM_CALCEIGENVEC-1)){
+    fprintf(stderr, cErrCalcEigenVec, defname);
+    return (-1);
+  }
+
   /* In the case of Full Diagonalization method(iCalcType=2)*/
   if(X->iCalcType==2 && ValidateValue(X->iFlgFiniteTemperature, 0, 1)){
     fprintf(stderr, cErrFiniteTemp, defname);

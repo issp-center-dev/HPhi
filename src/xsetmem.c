@@ -109,6 +109,7 @@ int setmem_large
   c_malloc1(vg, X->Check.idim_max+1);
   d_malloc1(alpha, X->Def.Lanczos_max+1);
   d_malloc1(beta, X->Def.Lanczos_max+1);
+
   if(
      list_Diagonal==NULL
      || v0==NULL

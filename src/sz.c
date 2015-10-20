@@ -98,10 +98,8 @@ int sz
     break;
   }
   li_malloc2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
-
-  i_max=X->Check.idim_max;  
-
-
+  i_max=X->Check.idim_max;
+  
   switch(X->Def.iCalcModel){
   case Hubbard:
   case KondoGC:
