@@ -154,3 +154,7 @@ void InitializeInteractionNum
  struct DefineList *X
  );
 
+int CheckSpinIndexForInterAll
+(
+  struct DefineList *X
+ );

@@ -536,7 +536,7 @@ int ReadDefFileIdxPara(
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
     for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-    idx=0;
+    idx=0;    
     /*=======================================================================*/
     switch(iKWidx){
     case KWLocSpin:
@@ -867,10 +867,14 @@ int ReadDefFileIdxPara(
 	  return -1;
 	}
       }
+      if(CheckSpinIndexForInterAll(X)==FALSE){
+	fclose(fp);
+	return -1;
+      }
       
       X->NInterAll_Diagonal=icnt_diagonal;
       X->NInterAll_OffDiagonal = X->NInterAll-X->NInterAll_Diagonal;
-      if(!GetDiagonalInterAll(X)==0){
+      if(GetDiagonalInterAll(X)!=0){
 	fclose(fp);
 	return -1;
       }
@@ -971,8 +975,25 @@ int ReadDefFileIdxPara(
       break;
     }
     fclose(fp);
+    
+    switch(iKWidx){
+    case KWCoulombIntra:
+    case KWCoulombInter:
+    case KWHund:
+    case KWPairHop:
+    case KWExchange:
+    case KWIsing:
+    case KWPairLift:
+      if(X->iFlgGeneralSpin==TRUE){
+	fprintf(stderr, cErrIncorrectFormatInter);
+	return -1;
+      }
+      break;
+    default:
+      break;
+    }
   }
-
+  
   ResetInteractionNum(X);
   /*=======================================================================*/
   return 0;
@@ -1558,4 +1579,43 @@ void InitializeInteractionNum
   X->NInterAll=0;
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
+}
+
+/** 
+ * @brief function of checking spin index for all interactions
+ * 
+ * @param[in] X Define list to initialize number of interactions
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckSpinIndexForInterAll
+(
+  struct DefineList *X
+ )
+{
+  int i=0;
+  int isite1, isite2, isite3, isite4;
+  int isigma1, isigma2, isigma3, isigma4;
+  int ilocspn=0;
+  if(X->iFlgGeneralSpin==TRUE){
+    for(i=0; i<X->NInterAll; i++){
+      isite1 =X->InterAll[i][0];
+      isigma1=X->InterAll[i][1];
+      isite2 =X->InterAll[i][2];
+      isigma2=X->InterAll[i][3];
+      isite3 =X->InterAll[i][4];
+      isigma3=X->InterAll[i][5];
+      isite4 =X->InterAll[i][6];
+      isigma4=X->InterAll[i][7];
+      if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]
+	 ||isigma3 > X->LocSpn[isite3] || isigma4 >X->LocSpn[isite4]){
+	fprintf(stderr, "%s", cErrIncorrectSpinIndexFortInter);
+	return FALSE;
+      } 
+    }
+  }
+  return TRUE;
 }

@@ -15,6 +15,14 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /*-------------------------------------------------------------*/
 
+#include <sz.h>
+#include <HPhiTrans.h>
+#include <output_list.h>
+#include <diagonalcalc.h>
+#include <CalcByLanczos.h>
+#include <CalcByFullDiag.h>
+#include <CalcByTPQ.h>
+#include <check.h>
 #include "Common.h"
 #include "readdef.h"
 #include "StdFace_main.h"
@@ -124,7 +132,7 @@ int main(int argc, char* argv[]){
       return (-1);
     }
   }
-  
+
   /*LARGE VECTORS ARE ALLOCATED*/
   if(!setmem_large(&X.Bind)==0){
     fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);

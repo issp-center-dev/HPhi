@@ -60,7 +60,8 @@ char *cErrNonConservedInterAll;
 char *cErrNonHermiteInterAllForAll;
 char *cErrIncorrectFormatForKondoInt;
 char *cErrIncorrectFormatForKondoTrans;
-
+char *cErrIncorrectFormatInter;
+char *cErrIncorrectSpinIndexFortInter;
 
 char *cErrIncorrectFormatForSpinTrans;
 char *cWarningIncorrectFormatForSpin;
