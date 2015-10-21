@@ -158,3 +158,8 @@ int CheckSpinIndexForInterAll
 (
   struct DefineList *X
  );
+
+int CheckSpinIndexForTrans
+(
+  struct DefineList *X
+ );

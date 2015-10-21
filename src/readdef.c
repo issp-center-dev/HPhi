@@ -612,6 +612,12 @@ int ReadDefFileIdxPara(
 	    }
 	    idx++;
 	  }
+	
+	if(CheckSpinIndexForTrans(X)==FALSE){
+	  fclose(fp);
+	  return -1;
+	}
+
 	if(idx!=X->NTransfer){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
@@ -1584,7 +1590,7 @@ void InitializeInteractionNum
 /** 
  * @brief function of checking spin index for all interactions
  * 
- * @param[in] X Define list to initialize number of interactions
+ * @param[in] X Define list to get informations of all interactions
  * @retval TRUE spin index is correct
  * @retval FALSE spin index is incorrect
  * @version 0.2
@@ -1612,9 +1618,42 @@ int CheckSpinIndexForInterAll
       isigma4=X->InterAll[i][7];
       if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]
 	 ||isigma3 > X->LocSpn[isite3] || isigma4 >X->LocSpn[isite4]){
-	fprintf(stderr, "%s", cErrIncorrectSpinIndexFortInter);
+	fprintf(stderr, "%s", cErrIncorrectSpinIndexForInter);
 	return FALSE;
       } 
+    }
+  }
+  return TRUE;
+}
+
+/** 
+ * @brief function of checking spin index for transfers
+ * 
+ * @param[in] X Define list to get informations of transfers
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckSpinIndexForTrans
+(
+  struct DefineList *X
+ )
+{
+  int i=0;
+  int isite1, isite2;
+  int isigma1, isigma2;
+  if(X->iFlgGeneralSpin==TRUE){
+    for(i=0; i<X->NTransfer; i++){
+      isite1 =X->GeneralTransfer[i][0];
+      isigma1=X->GeneralTransfer[i][1];
+      isite2 =X->GeneralTransfer[i][2];
+      isigma2=X->GeneralTransfer[i][3];
+      if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]){
+	fprintf(stderr, "%s", cErrIncorrectSpinIndexForTrans);
+      return FALSE;
+      }
     }
   }
   return TRUE;
