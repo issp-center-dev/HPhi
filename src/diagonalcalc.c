@@ -593,7 +593,6 @@ int SetDiagonalInterAll
       num2=X_SpinGC_CisAis(j, X, is2_up, isigma2);      
       list_Diagonal[j] += num1*num2*dtmp_V;
     } 
-   return -1;
    break;
     
   default:
