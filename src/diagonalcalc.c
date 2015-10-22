@@ -29,6 +29,7 @@
  * 
  */
 
+#include <bitcalc.h>
 #include "diagonalcalc.h"
 #include "mltply.h" 
 #include "wrapperMPI.h" 
@@ -603,15 +604,24 @@ int SetDiagonalInterAll
     break;
 
  case SpinGC:
-    is1_up   = X->Def.Tpow[isite1-1];
-    is2_up   = X->Def.Tpow[isite2-1];
+   if(X->Def.iFlgGeneralSpin==FALSE){
+     is1_up   = X->Def.Tpow[isite1-1];
+     is2_up   = X->Def.Tpow[isite2-1];
 #pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
-    for(j = 1;j <= i_max; j++){
-      num1=X_SpinGC_CisAis(j, X, is1_up, isigma1);
-      num2=X_SpinGC_CisAis(j, X, is2_up, isigma2);      
-      list_Diagonal[j] += num1*num2*dtmp_V;
-    } 
-   return -1;
+     for(j = 1;j <= i_max; j++){
+       num1=X_SpinGC_CisAis(j, X, is1_up, isigma1);
+       num2=X_SpinGC_CisAis(j, X, is2_up, isigma2);      
+       list_Diagonal[j] += num1*num2*dtmp_V;
+     } 
+   }
+   else{
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
+     for(j = 1;j <= i_max; j++){
+       num1=BitCheckGeneral (j, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+       num2=BitCheckGeneral (j, isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+       list_Diagonal[j] += num1*num2*dtmp_V;
+     }
+   }
    break;
     
   default:

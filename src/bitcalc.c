@@ -314,5 +314,5 @@ int GetBitGeneral(
 	     const long int *Tpow
 )
 {
-  return ( (org_bit/Tpow[isite-1])%SiteToBit[isite] );
+  return ( (org_bit/Tpow[isite-1])%SiteToBit[isite-1] );
 }

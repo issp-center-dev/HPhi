@@ -546,7 +546,7 @@ int ReadDefFileIdxPara(
 
 	X->LocSpn[xitmp[0]] = xitmp[1];
 	X->SiteToBit[xitmp[0]]=(X->LocSpn[xitmp[0]]+1);//2S+1
-	if(CheckSite(xitmp[1], X->Nsite) !=0){
+	if(CheckSite(xitmp[0], X->Nsite) !=0){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
 	}       
