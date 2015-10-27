@@ -92,10 +92,6 @@ int sz
   li_malloc2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
     i_max=X->Check.idim_max;  
 
-<<<<<<< HEAD
-  fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
-=======
->>>>>>> origin/check_list
 
   switch(X->Def.iCalcModel){
   case Hubbard:
@@ -106,7 +102,8 @@ int sz
       return -1;
     }
 
-    printf("idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+    fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+
     break;
   default:
     break;
