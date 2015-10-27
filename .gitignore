@@ -21,7 +21,6 @@ make.sys
 build
 #*
 html/
-GPATH/
-GRTAGS/
-GTAGS/
-
+GPATH
+GRTAGS
+GTAGS
