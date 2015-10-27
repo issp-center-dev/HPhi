@@ -1905,17 +1905,20 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     long unsigned int list_1_off;
     long unsigned int list_1_j = j - 1;
     long unsigned int ibit_tmp;
-    ibit_tmp = ((list_1_j & is1_up) / is1_up) ^ ((list_1_j & is2_up) / is2_up);
-    if (ibit_tmp == 0) {
+    //ibit_tmp = ((list_1_j & is1_up) / is1_up) ^ ((list_1_j & is2_up) / is2_up);
+    ibit_tmp = (list_1_j & is_up);
+    if (ibit_tmp == 0|| ibit_tmp==is_up) {
       list_1_off = list_1_j ^ is_up; //Change: ++ -> -- or -- -> ++
       *tmp_off = list_1_off;
-      dmv = tmp_J * tmp_v1[j] * ibit_tmp;
+      dmv = tmp_J * tmp_v1[j] ;//* ibit_tmp;
       if (mode == M_MLTPLY) {
         tmp_v0[list_1_off + 1] += dmv;
       }
       dam_pr += dmv * conj(tmp_v1[list_1_off + 1]);
-    }
-    return dam_pr;
+      return dam_pr;
+    }else{
+      return dam_pr;
+    } 
   }
 
 /**
