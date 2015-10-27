@@ -335,6 +335,7 @@ static void StdFace_ResetVals(){
   K = 9999.9;
   /**/
   LargeValue = 9999;
+  S2 = 9999;
 }
 
 /**
