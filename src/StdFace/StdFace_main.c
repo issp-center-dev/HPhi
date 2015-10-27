@@ -36,7 +36,7 @@ static void PrintInter();
 static void PrintNamelist();
 static void PrintCalcMod(char *method, int FlgTemp, char *model,int ioutputmode);
 static void PrintModPara(int Sz2, int nelec, int Lanczos_max, int initial_iv, int nvec, 
-  int exct,  int LanczosEps, int LanczosTarget, int WRITE, int READ,
+  int exct,  int LanczosEps, int LanczosTarget,
   int NumAve, int ExpecInterval, char* filehead);
 static void Print1Green(int ioutputmode);
 static void Print2Green(int ioutputmode);
@@ -47,7 +47,7 @@ static void UnsupportedSystem(char *model, char *lattice);
 
 static void CheckModPara(char* model,
   int *nelec, int *Sz2, int *Lanczos_max, int *initial_iv, int *nvec,
-  int *exct, int *LanczosEps, int *LanczosTarget, int *WRITE, int *READ,
+  int *exct, int *LanczosEps, int *LanczosTarget,
   int *NumAve, int *ExpecInterval, char* filehead);
 
 /**
@@ -60,7 +60,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   FILE *fp;
   int ktrans, kintr;
   int FlgTemp, Lanczos_max, initial_iv, nvec, exct, 
-    LanczosEps, LanczosTarget, WRITE, READ, 
+    LanczosEps, LanczosTarget, 
     NumAve, ExpecInterval, Sz2, nelec, ioutputmode;
   char ctmpline[256];
   char *keyword, *value;
@@ -89,8 +89,6 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   exct          = 9999;
   LanczosEps    = 9999;
   LanczosTarget = 9999;
-  //WRITE         = 9999;
-  //READ          = 9999;
   NumAve        = 9999;
   ExpecInterval = 9999;
   StdFace_ResetVals();
@@ -239,7 +237,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   /**/
   CheckModPara(model,
     &nelec, &Sz2, &Lanczos_max, &initial_iv, &nvec,
-    &exct, &LanczosEps, &LanczosTarget, &WRITE, &READ,
+    &exct, &LanczosEps, &LanczosTarget,
     &NumAve, &ExpecInterval,filehead);
   ioutputmode = CheckOutputMode(outputmode);
   /**/
@@ -252,8 +250,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintNamelist();
   PrintCalcMod(method, FlgTemp, model, ioutputmode);
   PrintModPara(Sz2, nelec, Lanczos_max, initial_iv, nvec, exct,
-    LanczosEps, LanczosTarget, WRITE, READ,
-    NumAve, ExpecInterval,filehead);  
+    LanczosEps, LanczosTarget,NumAve, ExpecInterval,filehead);  
   Print1Green(ioutputmode);
   Print2Green(ioutputmode);
   /*
@@ -657,8 +654,6 @@ static void PrintModPara(
   int exct /**< [in]*/,
   int LanczosEps /**< [in]*/,
   int LanczosTarget /**< [in]*/,
-  int WRITE /**< [in]*/, 
-  int READ /**< [in]*/,
   int NumAve /**< [in]*/,
   int ExpecInterval /**< [in]*/,
   char* filehead /**< [in]*/)
@@ -938,8 +933,6 @@ static void CheckModPara(
   int *exct /**< [inout]*/,
   int *LanczosEps /**< [inout]*/,
   int *LanczosTarget /**< [inout]*/,
-  int *WRITE /**< [inout]*/,
-  int *READ /**< [inout]*/,
   int *NumAve /**< [inout]*/,
   int *ExpecInterval /**< [inout]*/,
   char* filehead /**< [inout]*/)
