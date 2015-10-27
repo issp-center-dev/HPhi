@@ -99,6 +99,18 @@ EOF
     echo
 
     cat > makefile <<EOF
+help:
+	@echo ""
+	@echo "Usage :"
+	@echo "make <entry>"
+	@echo ""
+	@echo "<entry> is chosen from below"
+	@echo "      HPhi : Build simulator HPhi in src/"
+	@echo " userguide : Generate userguid_jp.pdf & userguide_en.pdf in doc/"
+	@echo "     clean : Remove all generated files excepting makefile"
+	@echo " veryclean : Remove all generated files including makefile"
+	@echo ""
+
 HPhi:
 	cd src;make -f makefile_src
 
