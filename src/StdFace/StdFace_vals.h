@@ -81,3 +81,4 @@ int **intrindx;
 double *intr;
 
 int LargeValue;
+int S2;

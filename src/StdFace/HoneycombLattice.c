@@ -55,6 +55,7 @@ void FermionHubbard_HoneycombLattice(
   StdFace_PrintVal_d("V1", &V1, V);
   StdFace_PrintVal_d("V2", &V2, V);
   /**/
+  StdFace_NotUsed_i("2S", S2);
   StdFace_NotUsed_d("t'", tp);
   StdFace_NotUsed_d("tpp", tpp);
   StdFace_NotUsed_d("V'", Vp);
@@ -64,7 +65,7 @@ void FermionHubbard_HoneycombLattice(
   */
   nsite = L * W * 2;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
-  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 1;
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 0;
   /*
   Transfer
   */
@@ -145,11 +146,15 @@ void FermionHubbard_HoneycombLattice(
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void Spin_HoneycombLattice(){
+void Spin_HoneycombLattice(
+  int Sz2 /**< [in] 2 * Total Sz */,
+  int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
+{
   int isite, jsite;
   int iL, iW;
   int ktrans, kintr;
-  double LargeValue0;
+  double LargeValue0, S;
+
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
   fprintf(stdoutMPI, "\n");
@@ -157,6 +162,7 @@ void Spin_HoneycombLattice(){
   StdFace_RequiredVal_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
   /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("h", &h, 0.0);
   StdFace_PrintVal_d("Gamma", &Gamma, 0.0);
   StdFace_PrintVal_d("D", &D, 0.0);
@@ -196,7 +202,7 @@ void Spin_HoneycombLattice(){
   */
   nsite = L * W * 2;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
-  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 0;
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = S2;
   /*
   Transfer
   */
@@ -207,18 +213,20 @@ void Spin_HoneycombLattice(){
     transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
   }
 
+  S = (double)S2 * 0.5;
+
   ktrans = 0;
   for (isite = 0; isite < nsite; isite++){
     jsite = isite;
-    StdFace_trans(&ktrans, - h * 0.5, isite, 0, jsite, 0);
-    StdFace_trans(&ktrans,   h * 0.5, isite, 1, jsite, 1);
-    StdFace_trans(&ktrans, 0.5 * Gamma, isite, 0, isite, 1);
-    StdFace_trans(&ktrans, 0.5 * Gamma, isite, 1, isite, 0);
+    StdFace_trans(&ktrans, - h * S, isite, 0, jsite, 0);
+    StdFace_trans(&ktrans,   h * S, isite, 1, jsite, 1);
+    StdFace_trans(&ktrans, S * Gamma, isite, 0, isite, 1);
+    StdFace_trans(&ktrans, S * Gamma, isite, 1, isite, 0);
   }
   /*
   Interaction
   */
-  nintr = L * W * (4 * 5 + 2 * 6);
+  nintr = L * W * ((S2 + 1) * (S2 + 1) * 5 + 2 * S2 * S2 * 6);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -229,31 +237,39 @@ void Spin_HoneycombLattice(){
     for (iL = 0; iL < L; iL++){
 
       isite = (iL + iW * L) * 2;
-      StdFace_SzSz(&kintr, D, isite, isite);
+      StdFace_SzSz(&kintr, S2, S2, D, isite, isite);
       isite = (iL + iW * L) * 2 + 1;
-      StdFace_SzSz(&kintr, D, isite, isite);
+      StdFace_SzSz(&kintr, S2, S2, D, isite, isite);
 
       jsite = (iL + iW * L) * 2;
-      StdFace_SzSz(&kintr, Jz0, isite, jsite);
-      StdFace_exchange(&kintr, Jxy0, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jx0 - Jy0), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jz0, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxy0, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx0 - Jy0), isite, jsite);
       jsite = (((iL + 1 + 2 * L) % L) + ((iW + 0 + 2 * W) % W) * L) * 2;
-      StdFace_SzSz(&kintr, Jz1, isite, jsite);
-      StdFace_exchange(&kintr, Jxy1, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jx1 - Jy1), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jz1, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxy1, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx1 - Jy1), isite, jsite);
       jsite = (((iL + 0 + 2 * L) % L) + ((iW + 1 + 2 * W) % W) * L) * 2;
-      StdFace_SzSz(&kintr, Jz2, isite, jsite);
-      StdFace_exchange(&kintr, Jxy2, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jx2 - Jy2), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jz2, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxy2, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx2 - Jy2), isite, jsite);
     }
   }
   /*
   Set mTPQ parameter
   */
-  LargeValue0 = 0.5 * fabs(h) + 0.5 * fabs(D) + 0.25 * fabs(Gamma)
-    + 1.0 / 8.0 * (fabs(Jx0) + fabs(Jy0) + fabs(Jz0))
-    + 1.0 / 8.0 * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
-    + 1.0 / 8.0 * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
+  if (lGC == 0){
+    LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 1.0 / 2.0 * S * S * (fabs(Jx0) + fabs(Jy0) + fabs(Jz0))
+      + 1.0 / 2.0 * S * S * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
+      + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
+  }
+  else{
+    LargeValue0 = S * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 1.0 / 2.0 * S * S * (fabs(Jx0) + fabs(Jy0) + fabs(Jz0))
+      + 1.0 / 2.0 * S * S * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
+      + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
+  }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
 
@@ -271,7 +287,7 @@ void KondoLattice_HoneycombLattice(
   int ispin;
   int iL, iW;
   int ktrans, kintr;
-  double LargeValue0;
+  double LargeValue0, S;
   /**/
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
@@ -280,6 +296,7 @@ void KondoLattice_HoneycombLattice(
   StdFace_RequiredVal_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
   /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("mu", &mu, 0.0);
   StdFace_PrintVal_d("t", &t, 1.0);
   StdFace_PrintVal_d("J", &J, 0.0);
@@ -301,10 +318,10 @@ void KondoLattice_HoneycombLattice(
   nsite = 4 * L * W;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
   for (iL = 0; iL < L * W; iL++){
-    locspinflag[4 * iL] = 1;
-    locspinflag[4 * iL + 1] = 0;
-    locspinflag[4 * iL + 2] = 1;
-    locspinflag[4 * iL + 3] = 0;
+    locspinflag[4 * iL] = 0;
+    locspinflag[4 * iL + 1] = S2;
+    locspinflag[4 * iL + 2] = 0;
+    locspinflag[4 * iL + 3] = S2;
   }
   /*
   Transfer
@@ -343,7 +360,7 @@ void KondoLattice_HoneycombLattice(
   /*
   Interaction
   */
-  nintr = L * W * 2 * (2 + 4);
+  nintr = L * W * 2 * ((S2 + 1) * (S2 + 1) + 2 * S2 * S2);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -354,23 +371,24 @@ void KondoLattice_HoneycombLattice(
     for (iL = 0; iL < L; iL++){
       isite = 4 * (iL + iW * L);
       jsite = 4 * (iL + iW * L) + 1;
-      StdFace_exchange(&kintr, J, isite, jsite);
-      StdFace_SzSz(&kintr, J, isite, jsite);
+      StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
+      StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);
 
       isite = 4 * (iL + iW * L) + 2;
       jsite = 4 * (iL + iW * L) + 3;
-      StdFace_exchange(&kintr, J, isite, jsite);
-      StdFace_SzSz(&kintr, J, isite, jsite);
+      StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
+      StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);
     }
   }
   /*
   Set mTPQ parameter
   */
+  S = (double)S2 * 0.5;
   if (lGC == 0){
-    LargeValue0 = fabs(mu) * (double)nelec / (double)(2 * L * W) + 2.0 * 3.0 * fabs(t) + 0.25 * fabs(J);
+    LargeValue0 = fabs(mu) * (double)nelec / (double)(2 * L * W) + 2.0 * 3.0 * fabs(t) + 0.5 * S * fabs(J);
   }
   else{
-    LargeValue0 = fabs(mu) * 2.0 + 2.0 * 3.0 * fabs(t) + 0.25 * fabs(J);
+    LargeValue0 = fabs(mu) * 2.0 + 2.0 * 3.0 * fabs(t) + 0.5 * S * fabs(J);
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }

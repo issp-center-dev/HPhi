@@ -35,7 +35,7 @@ static void PrintTrans();
 static void PrintInter();
 static void PrintNamelist();
 static void PrintCalcMod(char *method, int FlgTemp, char *model,int ioutputmode);
-static void PrintModPara(int nup, int ndown, int Lanczos_max, int initial_iv, int nvec, 
+static void PrintModPara(int Sz2, int nelec, int Lanczos_max, int initial_iv, int nvec, 
   int exct,  int LanczosEps, int LanczosTarget, int WRITE, int READ,
   int NumAve, int ExpecInterval, char* filehead);
 static void Print1Green(int ioutputmode);
@@ -45,7 +45,7 @@ static int CheckOutputMode(char* outputmode);
 
 static void UnsupportedSystem(char *model, char *lattice);
 
-static void CheckModPara(int *nup, int *ndown, char* model,
+static void CheckModPara(char* model,
   int *nelec, int *Sz2, int *Lanczos_max, int *initial_iv, int *nvec,
   int *exct, int *LanczosEps, int *LanczosTarget, int *WRITE, int *READ,
   int *NumAve, int *ExpecInterval, char* filehead);
@@ -60,7 +60,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   FILE *fp;
   int ktrans, kintr;
   int FlgTemp, Lanczos_max, initial_iv, nvec, exct, 
-    LanczosEps, LanczosTarget, WRITE, READ, nup, ndown, 
+    LanczosEps, LanczosTarget, WRITE, READ, 
     NumAve, ExpecInterval, Sz2, nelec, ioutputmode;
   char ctmpline[256];
   char *keyword, *value;
@@ -165,6 +165,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &NumAve);
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &nvec);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &Sz2);
+    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &S2);
     else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_d(keyword, value, &t);
     else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_d(keyword, value, &t0);
     else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_d(keyword, value, &t1);
@@ -203,12 +204,18 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
-  else if (strcmp(model, "spin") == 0
-    || strcmp(model, "spingc") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice();
-    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice();
-    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice();
-    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice();
+  else if (strcmp(model, "spin") == 0){
+    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(Sz2, 0);
+    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 0);
+    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 0);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 0);
+    else UnsupportedSystem(model, lattice);
+  }
+  else if (strcmp(model, "spingc") == 0){
+    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(Sz2, 1);
+    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 1);
+    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 1);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolattice") == 0){
@@ -230,7 +237,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   /**/
   fprintf(stdoutMPI, "\n");
   /**/
-  CheckModPara(&nup, &ndown, model,
+  CheckModPara(model,
     &nelec, &Sz2, &Lanczos_max, &initial_iv, &nvec,
     &exct, &LanczosEps, &LanczosTarget, &WRITE, &READ,
     &NumAve, &ExpecInterval,filehead);
@@ -244,7 +251,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintInter();
   PrintNamelist();
   PrintCalcMod(method, FlgTemp, model, ioutputmode);
-  PrintModPara(nup, ndown, Lanczos_max, initial_iv, nvec, exct,
+  PrintModPara(Sz2, nelec, Lanczos_max, initial_iv, nvec, exct,
     LanczosEps, LanczosTarget, WRITE, READ,
     NumAve, ExpecInterval,filehead);  
   Print1Green(ioutputmode);
@@ -642,8 +649,8 @@ static void PrintCalcMod(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 static void PrintModPara(
-  int nup /**< [in]*/,
-  int ndown /**< [in]*/,
+  int Sz2 /**< [in]*/,
+  int nelec /**< [in]*/,
   int Lanczos_max /**< [in]*/,
   int initial_iv /**< [in]*/,
   int nvec /**< [in]*/,
@@ -668,16 +675,14 @@ static void PrintModPara(
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", nsite);
-  fprintf(fp, "Nup            %-5d\n", nup);
-  fprintf(fp, "Ndown          %-5d\n", ndown);
+  fprintf(fp, "Sz             %-5d\n", Sz2);
+  fprintf(fp, "Ncond          %-5d\n", nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", initial_iv);
   fprintf(fp, "nvec           %-5d\n", nvec);
   fprintf(fp, "exct           %-5d\n", exct);
   fprintf(fp, "LanczosEps     %-5d\n", LanczosEps);
   fprintf(fp, "LanczosTarget  %-5d\n", LanczosTarget);
-  //fprintf(fp, "WRITE          %-5d\n", WRITE);
-  //fprintf(fp, "READ           %-5d\n", READ);
   fprintf(fp, "LargeValue     %-5d\n", LargeValue);
   fprintf(fp, "NumAve         %-5d\n", NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", ExpecInterval);
@@ -701,10 +706,10 @@ static void Print1Green(int ioutputmode /**< [in]*/){
     ngreen = 0;
   }
   else if(ioutputmode == 1){
-    ngreen = nsite * 2;
+    ngreen = nsite * (S2 + 1);
   }
   else{
-    ngreen = nsite * 2 * nsite * 2;
+    ngreen = nsite * (S2 + 1) * nsite * (S2 + 1);
   }
   greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
   for (igreen = 0; igreen < ngreen; igreen++){
@@ -713,7 +718,7 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   if (ioutputmode == 1){
     igreen = 0;
     for (isite = 0; isite < nsite; isite++){
-      for (ispin = 0; ispin < 2; ispin++){
+      for (ispin = 0; ispin <= S2; ispin++){
         greenindx[igreen][0] = isite;
         greenindx[igreen][1] = ispin;
         greenindx[igreen][2] = isite;
@@ -725,9 +730,9 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   else if (ioutputmode == 2){
     igreen = 0;
     for (isite = 0; isite < nsite; isite++){
-      for (ispin = 0; ispin < 2; ispin++){
+      for (ispin = 0; ispin <= S2; ispin++){
         for (jsite = 0; jsite < nsite; jsite++){
-          for (jspin = 0; jspin < 2; jspin++){
+          for (jspin = 0; jspin <= S2; jspin++){
             greenindx[igreen][0] = isite;
             greenindx[igreen][1] = ispin;
             greenindx[igreen][2] = jsite;
@@ -777,10 +782,11 @@ static void Print2Green(int ioutputmode /**< [in]*/){
     ngreen = 0;
   }
   else if (ioutputmode == 1){
-    ngreen = nsite * 2 * nsite * 2;
+    ngreen = nsite * (S2 + 1) * nsite * (S2 + 1);
   }
   else{
-    ngreen = nsite * 2 * nsite * 2 * nsite * 2 * nsite * 2;
+    ngreen = nsite * (S2 + 1) * nsite * (S2 + 1) 
+      * nsite * (S2 + 1) * nsite * (S2 + 1);
   }
   greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
   for (igreen = 0; igreen < ngreen; igreen++){
@@ -789,9 +795,9 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   if (ioutputmode == 1){
     igreen = 0;
     for (site1 = 0; site1 < nsite; site1++){
-      for (spin1 = 0; spin1 < 2; spin1++){
+      for (spin1 = 0; spin1 <= S2; spin1++){
         for (site2 = 0; site2 < nsite; site2++){
-          for (spin2 = 0; spin2 < 2; spin2++){
+          for (spin2 = 0; spin2 <= S2; spin2++){
             greenindx[igreen][0] = site1;
             greenindx[igreen][1] = spin1;
             greenindx[igreen][2] = site1;
@@ -809,13 +815,13 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   else if (ioutputmode == 2){
     igreen = 0;
     for (site1 = 0; site1 < nsite; site1++){
-      for (spin1 = 0; spin1 < 2; spin1++){
+      for (spin1 = 0; spin1 <= S2; spin1++){
         for (site2 = 0; site2 < nsite; site2++){
-          for (spin2 = 0; spin2 < 2; spin2++){
+          for (spin2 = 0; spin2 <= S2; spin2++){
             for (site3 = 0; site3 < nsite; site3++){
-              for (spin3 = 0; spin3 < 2; spin3++){
+              for (spin3 = 0; spin3 <= S2; spin3++){
                 for (site4 = 0; site4 < nsite; site4++){
-                  for (spin4 = 0; spin4 < 2; spin4++){
+                  for (spin4 = 0; spin4 <= S2; spin4++){
                     greenindx[igreen][0] = site1;
                     greenindx[igreen][1] = spin1;
                     greenindx[igreen][2] = site2;
@@ -923,8 +929,6 @@ static int CheckOutputMode(char* outputmode /**< [in]*/){
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 static void CheckModPara(
-  int *nup /**< [out] The number of electrons of down spin*/, 
-  int *ndown /**< [out] The number of electrons of up spin*/,
   char* model /**< [inout]*/,
   int *nelec /**< [inout]*/,
   int *Sz2 /**< [inout]*/,
@@ -960,78 +964,17 @@ static void CheckModPara(
     StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
 
-    if (abs(*Sz2) > nsite){
-      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > 2 * nsite){
-      fprintf(stderr, "\n ERROR ! Nelec > 2 * nsite in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if ((*nelec + *Sz2) % 2 != 0){
-      fprintf(stderr, "\n ERROR ! (nelec + 2 * Sz) %% 2 != 0 in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec <= nsite && abs(*Sz2) > *nelec){
-      fprintf(stderr, "\n ERROR ! nelec <= nsite && 2 * |Sz| > nelec in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > nsite && abs(*Sz2) > 2 * nsite - *nelec){
-      fprintf(stderr, "\n ERROR ! nelec > nsite && 2 * |Sz| > 2 * nsite - nelec in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else {
-      *nup = (*nelec + *Sz2) / 2;
-      *ndown = (*nelec - *Sz2) / 2;
-    }
   }
   else if (strcmp(model, "spin") == 0) {
 
     StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_NotUsed_i("nelec", *nelec);
 
-    if (abs(*Sz2) > nsite){
-      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Spin model ! \n");
-      exitMPI(-1);
-    }
-    else if ((nsite + *Sz2) % 2 != 0){
-      fprintf(stderr, "\n ERROR ! (nsite + 2 * Sz) %% 2 != 0 in Spin model ! \n");
-      exitMPI(-1);
-    }
-    else{
-      *nup = (nsite + *Sz2) / 2;
-      *ndown = (nsite - *Sz2) / 2;
-    }
   }
   else if (strcmp(model, "kondolattice") == 0) {
 
     StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
-
-    if (abs(*Sz2) > nsite){
-      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > nsite){
-      fprintf(stderr, "\n ERROR ! Nelec_cond / 2 + Nelec_loc > nsite in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else if ((*nelec + nsite / 2 + *Sz2) % 2 != 0){
-      fprintf(stderr, "\n ERROR ! (nelec_cond + nelec_loc + 2 * Sz) %% 2 != 0 in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec <= nsite / 2 && abs(*Sz2) > *nelec + nsite / 2){
-      fprintf(stderr, "\n ERROR ! nelec_cond <= nsite / 2 && 2 * |Sz| > nelec_cond + nelec_loc in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > nsite / 2 && abs(*Sz2) > nsite / 2 * 3 - *nelec){
-      fprintf(stderr, "\n ERROR ! nelec_cond > nsite / 2 && abs(Sz2) > nsite / 2 * 3 - nelec in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else {
-      *nup = (*nelec + nsite / 2 + *Sz2) / 2;
-      *ndown = (*nelec + nsite / 2 - *Sz2) / 2;
-    }
 
   }
   else if (strcmp(model, "fermionhubbardgc") == 0
@@ -1043,8 +986,6 @@ static void CheckModPara(
     StdFace_NotUsed_i("nelec", *nelec);
     StdFace_NotUsed_i("2Sz", *Sz2);
 
-    *nup = nsite / 2;
-    *ndown = nsite - *nup;
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Model !\n");
