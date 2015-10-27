@@ -179,12 +179,14 @@ int GetOffCompGeneralSpin(
 		const long int *Tpow
 )
 {
-  if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) != org_ispin){
+  if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) == FALSE){
     *_ioffComp=0;
     return FALSE;
   }
   //delete org_ispin and create off_ispin
-  *_ioffComp =org_ibit+(off_ispin-org_ispin)*Tpow[org_isite-1];
+    int tmp_off;
+    tmp_off=off_ispin-org_ispin;
+  *_ioffComp =org_ibit+tmp_off*Tpow[org_isite-1];
   return TRUE;
 }
 
@@ -314,5 +316,40 @@ int GetBitGeneral(
 	     const long int *Tpow
 )
 {
-  return ( (org_bit/Tpow[isite-1])%SiteToBit[isite-1] );
+    long unsigned int tmp_bit=(org_bit/Tpow[isite-1])%SiteToBit[isite-1] ;
+    return (tmp_bit);
 }
+
+
+/** 
+ * 
+ * @brief get sz at a site for general spin  
+ *
+ * @param isite site index (isite >= 1)
+ * @param org_bit original bit to check 
+ * @param _SiteToBit List for getting bit at a site
+ * @param _Tpow List for getting total bit at a site before
+ * @return sz at isite
+ * 
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ */
+/*
+int GetLocalSz
+(
+ const unsigned int isite,
+ const long unsigned int org_bit,
+ const long int *SiteToBit,
+ const long int *Tpow
+ )
+{
+  int sz=0;
+  int bitAtSite=0;
+  //get bit
+  bitAtSite=GetBitGeneral(isite, org_bit, SiteToBit, Tpow);
+  //get local bit
+  sz=bitAsSite
+  //get 
+  return sz;
+}
+*/

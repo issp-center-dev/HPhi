@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+#include <bitcalc.h>
 #include "mltply.h"
 #include "makeHam.h"
 #include "wrapperMPI.h"
@@ -34,6 +35,7 @@ int makeHam(struct BindStruct *X){
   long unsigned int is1_spin;
   long unsigned int irght,ilft,ihfbit;
   double complex dmv;
+  double num1, num2;
   long unsigned int off;
   int isite1,isite2,isite3,isite4;
   int sigma1,sigma2,sigma3,sigma4;
@@ -63,13 +65,14 @@ int makeHam(struct BindStruct *X){
       Ham[i][j]=0;  
     }
   }
-  #pragma omp parallel for default(none) firstprivate(i_max) private(j) shared(Ham, list_Diagonal,v0,v1)
+#pragma omp parallel for default(none) firstprivate(i_max) private(j) shared(Ham, list_Diagonal,v0,v1)
   for(j=1;j<=i_max;j++){  
     Ham[j][j]+=list_Diagonal[j];  
     v0[j]     = 1.0;      
     v1[j]     = 1.0;
+    //printf("%ld, %f\n", j, list_Diagonal[j]);
   }
-
+  // exit(1);
   switch(X->Def.iCalcModel){
   case HubbardGC:
     //Transfer
@@ -286,94 +289,140 @@ int makeHam(struct BindStruct *X){
     break;
     
   case SpinGC:
-    
-    //Transfer
-    for(i=0;i< X->Def.EDNTransfer;i++){
-      isite1     = X->Def.EDGeneralTransfer[i][0]+1;
-      isite2     = X->Def.EDGeneralTransfer[i][2]+1;
-      sigma1     = X->Def.EDGeneralTransfer[i][1];
-      sigma2     = X->Def.EDGeneralTransfer[i][3];
-      if(child_general_hopp_GetInfo( X,isite1,isite2,sigma1,sigma2)!=0){
-	return -1;
-      }
-      tmp_trans  = -X->Def.EDParaGeneralTransfer[i];
+    if (X->Def.iFlgGeneralSpin == FALSE) {
       
-      if(isite1 == isite2){ 
-        is1_spin = X->Def.Tpow[isite1-1];
-        if(sigma1==sigma2){  
-          // longitudinal magnetic field
-	  for(j=1;j<=i_max;j++){
-	    Ham[j][j]+=tmp_trans*X_Spin_CisAis(j,X,is1_spin, sigma1); 
-	  } 
-        }else{
-          // transverse magnetic field
-          is1_spin = X->Def.Tpow[isite1-1];
+      //Transfer
+      for(i=0;i< X->Def.EDNTransfer;i++){
+	isite1     = X->Def.EDGeneralTransfer[i][0]+1;
+	isite2     = X->Def.EDGeneralTransfer[i][2]+1;
+	sigma1     = X->Def.EDGeneralTransfer[i][1];
+	sigma2     = X->Def.EDGeneralTransfer[i][3];
+	if(child_general_hopp_GetInfo( X,isite1,isite2,sigma1,sigma2)!=0){
+	  return -1;
+	}
+	tmp_trans  = -X->Def.EDParaGeneralTransfer[i];
+      
+	if(isite1 == isite2){ 
+	  is1_spin = X->Def.Tpow[isite1-1];
+	  if(sigma1==sigma2){  
+	    // longitudinal magnetic field
+	    for(j=1;j<=i_max;j++){
+	      Ham[j][j]+=tmp_trans*X_Spin_CisAis(j,X,is1_spin, sigma1); 
+	    } 
+	  }else{
+	    // transverse magnetic field
+	    is1_spin = X->Def.Tpow[isite1-1];
 
-	  for(j=1;j<=i_max;j++){
-	    Ham[off+1][j] +=  X_SpinGC_CisAit(j,X, is1_spin, sigma2, &off); 
-	  } 
-        }
-      }else{
-        // hopping is not allowed in localized spin system
-	return -1;
+	    for(j=1;j<=i_max;j++){
+	      Ham[off+1][j] += tmp_trans*X_SpinGC_CisAit(j,X, is1_spin, sigma2, &off);
+	    } 
+	  }
+	}else{
+	  // hopping is not allowed in localized spin system
+	  return -1;
+	}
       }
-    }
     
- //InterAll
-    for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){    
-      isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
-      isite2 = X->Def.InterAll_OffDiagonal[i][4]+1;
-      sigma1 = X->Def.InterAll_OffDiagonal[i][1];
-      sigma2 = X->Def.InterAll_OffDiagonal[i][3];
-      sigma3 = X->Def.InterAll_OffDiagonal[i][5];
-      sigma4 = X->Def.InterAll_OffDiagonal[i][7];
-      tmp_V  = X->Def.ParaInterAll_OffDiagonal[i];
-      child_general_int_spin_GetInfo( X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
-      isA_up = X->Def.Tpow[isite1-1];
-      isB_up = X->Def.Tpow[isite2-1];
+      //InterAll
+      for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){    
+	isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
+	isite2 = X->Def.InterAll_OffDiagonal[i][4]+1;
+	sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	tmp_V  = X->Def.ParaInterAll_OffDiagonal[i];
+	child_general_int_spin_GetInfo( X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
+	isA_up = X->Def.Tpow[isite1-1];
+	isB_up = X->Def.Tpow[isite2-1];
 
-      if(sigma1==sigma2 && sigma3==sigma4 ){ //diagonal	
-	for(j=1;j<=i_max;j++){
-	  dmv =GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, sigma2, sigma4, tmp_V, v0, v1, X);
-	  Ham[j][j]      += dmv;
+	if(sigma1==sigma2 && sigma3==sigma4 ){ //diagonal	
+	  for(j=1;j<=i_max;j++){
+	    dmv =GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, sigma2, sigma4, tmp_V, v0, v1, X);
+	    Ham[j][j]      += dmv;
+	  }
+	}
+	else  if(sigma1 == sigma2 && sigma3 != sigma4){ 	
+	  for(j=1;j<=i_max;j++){
+	    dmv = GC_child_CisAisCitAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
+	    Ham[tmp_off+1][j]    += dmv;
+	  }
+	}else if(sigma1 != sigma2 && sigma3 == sigma4){ 
+	  for(j=1;j<=i_max;j++){
+	    dmv = GC_child_CisAitCiuAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
+	    Ham[tmp_off+1][j]    += dmv;
+	  } 
+	}else if(sigma1 != sigma2 && sigma3 != sigma4){ 
+	  for(j=1;j<=i_max;j++){
+	    dmv = GC_child_CisAitCiuAiv_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off_2);
+	    Ham[tmp_off_2+1][j]    += dmv;
+	  }
+	}	
+      }
+
+      //Exchange
+      for(i = 0;i< X->Def.NExchangeCoupling; i++){
+	child_exchange_spin_GetInfo(i, X);
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv =GC_child_exchange_spin_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off+1][j] +=dmv;
 	}
       }
-      else  if(sigma1 == sigma2 && sigma3 != sigma4){ 	
-	for(j=1;j<=i_max;j++){
-	  dmv = GC_child_CisAisCitAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
-	  Ham[tmp_off+1][j]    += dmv;
-	}
-      }else if(sigma1 != sigma2 && sigma3 == sigma4){ 
-	for(j=1;j<=i_max;j++){
-	  dmv = GC_child_CisAitCiuAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
-	  Ham[tmp_off+1][j]    += dmv;
-	} 
-      }else if(sigma1 != sigma2 && sigma3 != sigma4){ 
-	for(j=1;j<=i_max;j++){
-	  dmv = GC_child_CisAitCiuAiv_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off_2);
-	  Ham[tmp_off_2+1][j]    += dmv;
-	}
-      }	
-    }
+      //PairLift
+      for(i = 0;i< X->Def.NPairLiftCoupling; i++){
+	child_pairlift_spin_GetInfo(i, X);
 
-    //Exchange
-    for(i = 0;i< X->Def.NExchangeCoupling; i++){
-      child_exchange_spin_GetInfo(i, X);
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv =GC_child_exchange_spin_element(j, v0, v1, X,&tmp_off);
-	Ham[tmp_off+1][j] +=dmv;
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off+1][j] +=dmv;
+	}
       }
     }
-    //PairLift
-    for(i = 0;i< X->Def.NPairLiftCoupling; i++){
-      child_pairlift_spin_GetInfo(i, X);
+    else{ //For General spin
+        for (i = 0; i < X->Def.EDNTransfer; i++) {
+          isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
+          isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
+          sigma1 = X->Def.EDGeneralTransfer[i][1];
+          sigma2 = X->Def.EDGeneralTransfer[i][3];
+          tmp_trans = -X->Def.EDParaGeneralTransfer[i];
 
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
-     	Ham[tmp_off+1][j] +=dmv;
-      }
+          if (isite1 == isite2) {
+            if (sigma1 == sigma2) {
+              // longitudinal magnetic field
+              for (j = 1; j <= i_max; j++) {
+                num1 = BitCheckGeneral(j-1, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
+                Ham[j][j] += tmp_trans * num1;
+              }
+            } else {//sigma1 != sigma2
+              // transverse magnetic field
+              for (j = 1; j <= i_max; j++) {
+                num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+                Ham[off+1][j] += tmp_trans * num1;
+              }
+            }
+          } else {
+            // hopping is not allowed in localized spin system
+            return -1;
+          }
+        }
+
+        //InterAll        
+	for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){
+	  isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
+	  isite2 = X->Def.InterAll_OffDiagonal[i][4]+1;
+	  sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	  sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	  sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	  sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	  tmp_V  = X->Def.ParaInterAll_OffDiagonal[i];
+	  for (j = 1; j <= i_max; j++) {
+	    num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+	    num1 = GetOffCompGeneralSpin(tmp_off, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow)*num1;
+	    Ham[off+1][j] += tmp_V * num1;
+	  }            
+	}
+
     }
-
     break;
     
   case Spin:
