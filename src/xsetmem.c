@@ -34,6 +34,7 @@ void setmem_def
  )
 {
   li_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
+  li_malloc1(X->Def.SiteToBit, X->Def.Nsite+1);
   i_malloc1(X->Def.LocSpn, X->Def.Nsite);
   d_malloc1(X->Phys.spin_real_cor, X->Def.Nsite*X->Def.Nsite);
   d_malloc1(X->Phys.charge_real_cor, X->Def.Nsite*X->Def.Nsite);

@@ -23,13 +23,23 @@
 
 /*=================================================================================================*/
 
+/**
+ * @file   readdef.c
+ * 
+ * @brief  File to define functions of reading input files
+ * 
+ * 
+ */
+
+
 #include "Common.h"
 #include "readdef.h"
 #include "wrapperMPI.h"
 
 /**
  * @brief Error Function of reading def files.
- * @param[in] *defname name of def file.
+ * @param[in] _defname name of def file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -47,6 +57,7 @@ int ReadDefFileError(
  * @param[in] iHighestValue heighest value which icheckValue can be set.
  * @retval 0 value is correct.
  * @retval -1 value is incorrect.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -64,12 +75,13 @@ int ValidateValue(
 
 /**
  * @brief Function of Checking keyword in NameList file.
- * @param[in] cKW keyword candidate
- * @param[in] Reffercnce of keyword List
- * @param[in] number of keyword
- * @param[out] iKWidx index of keyword
+ * @param[in] _cKW keyword candidate
+ * @param[in] _cKWList Reffercnce of keyword List
+ * @param[in] iSizeOfKWidx number of keyword
+ * @param[out] _iKWidx index of keyword
  * @retval 0 keyword is correct.
  * @retval -1 keyword is incorrect.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -96,12 +108,13 @@ int CheckKW(
 
 /**
  * @brief Function of Getting keyword and it's variable from characters.
- * @param[in] ctmpLine characters including keyword and it's variable 
- * @param[out] keyword
- * @param[out] variable
+ * @param[in] _ctmpLine characters including keyword and it's variable 
+ * @param[out] _ctmp keyword
+ * @param[out] _itmp variable for a keyword
  * @retval 0 keyword and it's variable are obtained.
  * @retval 1 ctmpLine is a comment line.
  * @retval -1 format of ctmpLine is incorrect.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -139,10 +152,11 @@ int GetKWWithIdx(
 
 /**
  * @brief Function of Reading calcmod file.
- * @param[in]  *defname file name to read.
- * @param[out] *X Define List for getting flags of calc-mode.
+ * @param[in]  _defname file name to read.
+ * @param[out] X Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -159,6 +173,7 @@ int ReadcalcmodFile(
   X->iFlgFiniteTemperature=0;
   X->iCalcModel=0;
   X->iOutputMode=0;
+  X->iCalcEigenVec=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -180,13 +195,16 @@ int ReadcalcmodFile(
     else if(strcmp(ctmp, "OutputMode")==0){
       X->iOutputMode=itmp;
     }
+    else if(strcmp(ctmp, "CalcEigenVec")==0){
+      X->iCalcEigenVec=itmp;
+    }
     else{
       fprintf(stderr, cErrDefFileParam, defname, ctmp);
       return -1;
     }
   }
   fclose(fp);
-  
+    
   /* Check values*/
   if(ValidateValue(X->iCalcModel, 0, NUM_CALCMODEL-1)){
     fprintf(stderr, cErrCalcType, defname);
@@ -200,7 +218,11 @@ int ReadcalcmodFile(
     fprintf(stderr, cErrOutputMode, defname);
     return (-1);
   }
-  
+  if(ValidateValue(X->iCalcEigenVec, 0, NUM_CALCEIGENVEC-1)){
+    fprintf(stderr, cErrCalcEigenVec, defname);
+    return (-1);
+  }
+
   /* In the case of Full Diagonalization method(iCalcType=2)*/
   if(X->iCalcType==2 && ValidateValue(X->iFlgFiniteTemperature, 0, 1)){
     fprintf(stderr, cErrFiniteTemp, defname);
@@ -212,10 +234,11 @@ int ReadcalcmodFile(
 
 /**
  * @brief Function of Fitting FileName
- * @param[in]  *cFileListNameFile file for getting names of input files.
- * @param[out] *cFileNameList arrays for getting names of input files.
+ * @param[in]  _cFileListNameFile file for getting names of input files.
+ * @param[out] _cFileNameList arrays for getting names of input files.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -272,8 +295,8 @@ int GetFileName(
 
 /** 
  * @brief  Function of reading informations from def files.
- * @param[in] *xNameListFile List of Input File names.
- * @param[out] *X Define List for getting flags of calc-mode.
+ * @param[in] _xNameListFile List of Input File names.
+ * @param[out] XX Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @author Takahiro Misawa (The University of Tokyo)
@@ -382,6 +405,7 @@ int ReadDefFileNInt(
       
     case KWLocSpin:
       // Read locspn.def
+      X->iFlgGeneralSpin=FALSE;
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->NLocSpn));
@@ -464,11 +488,11 @@ int ReadDefFileNInt(
 
   if(X->iCalcModel != Spin){
     X->Ne = X->Nup+X->Ndown;
-  	if(X->NLocSpn>X->Ne){
-	  fprintf(stderr, "%s", cErrNLoc);
-	  fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
-	  return -1;
-	}
+    if(X->NLocSpn>X->Ne){
+      fprintf(stderr, "%s", cErrNLoc);
+      fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
+      return -1;
+    }
   }
   X->Nsize   = 2*X->Ne;
   X->fidx = 0;
@@ -476,11 +500,13 @@ int ReadDefFileNInt(
 }
 
 /** 
+ * @brief function of reading def files to get keyword index
  * 
+ * @param X define list to get and put informations for calcuation
  * 
- * @param X 
- * 
- * @return 
+ * @retval 0 normally finished reading file.
+ * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -510,7 +536,7 @@ int ReadDefFileIdxPara(
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
     for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-    idx=0;
+    idx=0;    
     /*=======================================================================*/
     switch(iKWidx){
     case KWLocSpin:
@@ -519,16 +545,22 @@ int ReadDefFileIdxPara(
         sscanf(ctmp2, "%d %d\n", &(xitmp[0]), &(xitmp[1]) );
 
 	X->LocSpn[xitmp[0]] = xitmp[1];
-	if(CheckSite(xitmp[1], X->Nsite) !=0){
+	X->SiteToBit[xitmp[0]]=(X->LocSpn[xitmp[0]]+1);//2S+1
+	if(CheckSite(xitmp[0], X->Nsite) !=0){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
-	}
+	}       
 	idx++;
       }
       if(idx!=X->Nsite){
 	fclose(fp);
 	return ReadDefFileError(defname);
       }
+      if(CheckLocSpin(X)==FALSE){
+	fclose(fp);
+	return ReadDefFileError(defname);
+      }
+
       break;
       
     case KWTrans:
@@ -571,7 +603,7 @@ int ReadDefFileIdxPara(
 	      }
 	    }	    
 	    else if(X->iCalcModel==Kondo){
-	      if(X->LocSpn[isite1]==0 || X->LocSpn[isite2]==0){
+	      if(X->LocSpn[isite1]!=ITINERANT || X->LocSpn[isite2] !=ITINERANT){
 		if(isite1 != isite2){
 		  iboolLoc=1;
 		  fprintf(stdoutMPI, cErrIncorrectFormatForKondoTrans, isite1, isite2);
@@ -580,6 +612,12 @@ int ReadDefFileIdxPara(
 	    }
 	    idx++;
 	  }
+	
+	if(CheckSpinIndexForTrans(X)==FALSE){
+	  fclose(fp);
+	  return -1;
+	}
+
 	if(idx!=X->NTransfer){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
@@ -835,10 +873,14 @@ int ReadDefFileIdxPara(
 	  return -1;
 	}
       }
+      if(CheckSpinIndexForInterAll(X)==FALSE){
+	fclose(fp);
+	return -1;
+      }
       
       X->NInterAll_Diagonal=icnt_diagonal;
       X->NInterAll_OffDiagonal = X->NInterAll-X->NInterAll_Diagonal;
-      if(!GetDiagonalInterAll(X)==0){
+      if(GetDiagonalInterAll(X)!=0){
 	fclose(fp);
 	return -1;
       }
@@ -939,8 +981,25 @@ int ReadDefFileIdxPara(
       break;
     }
     fclose(fp);
+    
+    switch(iKWidx){
+    case KWCoulombIntra:
+    case KWCoulombInter:
+    case KWHund:
+    case KWPairHop:
+    case KWExchange:
+    case KWIsing:
+    case KWPairLift:
+      if(X->iFlgGeneralSpin==TRUE){
+	fprintf(stderr, cErrIncorrectFormatInter);
+	return -1;
+      }
+      break;
+    default:
+      break;
+    }
   }
-
+  
   ResetInteractionNum(X);
   /*=======================================================================*/
   return 0;
@@ -952,6 +1011,7 @@ int ReadDefFileIdxPara(
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -971,7 +1031,9 @@ int CheckSite(
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
- * @date 2015/07/28
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
 int CheckPairSite(
 	      const int iSite1,
@@ -997,6 +1059,7 @@ int CheckPairSite(
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -1019,9 +1082,10 @@ int CheckQuadSite(
 
 /**
  * @brief Check Hermite for Transfer integrals.
- * @param[in] *X Define List for getting transfer integrals.
+ * @param[in] X Define List for getting transfer integrals.
  * @retval 0 Hermite.
  * @retval -1 NonHermite.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -1062,11 +1126,13 @@ int CheckTransferHermite
 }
 
 /** 
+ * @brief function of checking hermite conditions about interall interactions
  * 
+ * @param X define list to get interall off diagonal interactions
  * 
- * @param X 
- * 
- * @return 
+ * @retval 0 Hermite condition is satisfied
+ * @retval -1 Hermite condition is not satisfied
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1140,11 +1206,13 @@ int CheckInterAllHermite
 }
 
 /** 
+ * @brief function of getting diagonal components form interall interactions
  * 
+ * @param[in] X define list to get information of interall interactions
  * 
- * @param X 
- * 
- * @return 
+ * @retval 0  succeed to get diagonal interactions
+ * @retval -1 format of interall interactions is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1255,13 +1323,15 @@ int GetDiagonalInterAll
 }
 
 /** 
+ * @brief function of judging a type of define files.
  * 
+ * @param[in] argc argument count
+ * @param[in] argv argument vector 
+ * @param[out] mode a number to show a type of a define file
  * 
- * @param argc 
- * @param argv 
- * @param mode 
- * 
- * @return 
+ * @retval 0 format is correct
+ * @retval -1 format is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1312,14 +1382,16 @@ int JudgeDefType
 }
 
 /** 
+ * @brief function of checking format of spin interactions
  * 
+ * @param[in] site1 a site number on site1.
+ * @param[in] site2 a site number on site2.
+ * @param[in] site3 a site number on site3.
+ * @param[in] site4 a site number on site4.
  * 
- * @param site1 
- * @param site2 
- * @param site3 
- * @param site4 
- * 
- * @return 
+ * @retval 0 format is correct
+ * @retval -1 format is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1341,10 +1413,13 @@ int CheckFormatForSpinInt
 
 /** 
  * 
+ * @brief function of checking format of Kondo interactions
  * 
- * @param X 
+ * @param[in] X define list to get information of interall interactions
  * 
- * @return 
+ * @retval 0 format is correct
+ * @retval -1 format is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1362,14 +1437,14 @@ int CheckFormatForKondoInt
     isite3=X->InterAll[i][4];
     isite4=X->InterAll[i][6];
 
-    if(X->LocSpn[isite1]==0 || X->LocSpn[isite2]==0){
+    if(X->LocSpn[isite1]!=ITINERANT || X->LocSpn[isite2]!=ITINERANT){
       if(isite1 != isite2){
 	iboolLoc=1;
 	fprintf(stdoutMPI, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
 	continue;
       }
     }
-    if(X->LocSpn[isite3]==0 || X->LocSpn[isite4]==0){
+    if(X->LocSpn[isite3]!=ITINERANT || X->LocSpn[isite4]!=ITINERANT){
       if(isite3 != isite4){
 	iboolLoc=1;
 	fprintf(stderr, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
@@ -1384,9 +1459,10 @@ int CheckFormatForKondoInt
 }
 
 /** 
+ * @brief function to set convergence factors
  * 
- * 
- * @param X 
+ * @param[in] X Define list to get Lanczos eps.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1411,6 +1487,74 @@ void SetConvergenceFactor
   eps_vec12 = pow(10.0, nepsvec12);
 }
 
+/** 
+ * @brief function of checking indecies of localized spin
+ * 
+ * @param[in/out] X Define list to get and put information of localized spin
+ * 
+ * @return TURE Indecies of localizes spin is correct
+ * @return FALSE Indecies of localizes spin is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckLocSpin
+(
+  struct DefineList *X
+ )
+{
+
+  int i=0;
+  switch(X->iCalcModel){
+  case Hubbard:
+  case HubbardGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]!=ITINERANT){
+      return FALSE;
+    }
+  }
+  break;
+
+  case Kondo:
+  case KondoGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]>LOCSPIN){
+      X->iFlgGeneralSpin=TRUE;
+    }
+    else if(X->LocSpn[i]<ITINERANT){
+      return FALSE;
+    }
+  }
+  break;
+
+  case Spin:
+  case SpinGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]>LOCSPIN){
+      X->iFlgGeneralSpin=TRUE;
+    }
+    else if(X->LocSpn[i]<LOCSPIN){
+      return FALSE;
+    }
+  }
+  break;
+  
+  default:
+    return FALSE;
+    break;
+  }  
+  return TRUE;
+}  
+
+/** 
+ * 
+ * @brief function of resetting number of interactions
+ * 
+ * @param[out] X Define list to add number of ising coulomnb interactions
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 void ResetInteractionNum
 (
  struct DefineList *X
@@ -1420,6 +1564,14 @@ void ResetInteractionNum
   X->NCoulombInter += X->NIsingCoupling;
 }
 
+/** 
+ * @brief function of initializeing interactions
+ * 
+ * @param[out] X Define list to initialize number of interactions
+ * @version 0.1
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 void InitializeInteractionNum
 (
  struct DefineList *X
@@ -1433,4 +1585,76 @@ void InitializeInteractionNum
   X->NInterAll=0;
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
+}
+
+/** 
+ * @brief function of checking spin index for all interactions
+ * 
+ * @param[in] X Define list to get informations of all interactions
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckSpinIndexForInterAll
+(
+  struct DefineList *X
+ )
+{
+  int i=0;
+  int isite1, isite2, isite3, isite4;
+  int isigma1, isigma2, isigma3, isigma4;
+  int ilocspn=0;
+  if(X->iFlgGeneralSpin==TRUE){
+    for(i=0; i<X->NInterAll; i++){
+      isite1 =X->InterAll[i][0];
+      isigma1=X->InterAll[i][1];
+      isite2 =X->InterAll[i][2];
+      isigma2=X->InterAll[i][3];
+      isite3 =X->InterAll[i][4];
+      isigma3=X->InterAll[i][5];
+      isite4 =X->InterAll[i][6];
+      isigma4=X->InterAll[i][7];
+      if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]
+	 ||isigma3 > X->LocSpn[isite3] || isigma4 >X->LocSpn[isite4]){
+	fprintf(stderr, "%s", cErrIncorrectSpinIndexForInter);
+	return FALSE;
+      } 
+    }
+  }
+  return TRUE;
+}
+
+/** 
+ * @brief function of checking spin index for transfers
+ * 
+ * @param[in] X Define list to get informations of transfers
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckSpinIndexForTrans
+(
+  struct DefineList *X
+ )
+{
+  int i=0;
+  int isite1, isite2;
+  int isigma1, isigma2;
+  if(X->iFlgGeneralSpin==TRUE){
+    for(i=0; i<X->NTransfer; i++){
+      isite1 =X->GeneralTransfer[i][0];
+      isigma1=X->GeneralTransfer[i][1];
+      isite2 =X->GeneralTransfer[i][2];
+      isigma2=X->GeneralTransfer[i][3];
+      if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]){
+	fprintf(stderr, "%s", cErrIncorrectSpinIndexForTrans);
+      return FALSE;
+      }
+    }
+  }
+  return TRUE;
 }

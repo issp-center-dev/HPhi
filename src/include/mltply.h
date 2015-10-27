@@ -18,7 +18,6 @@
 #define HPHI_MLTPLY_H
 
 #include "Common.h"
-#include "ErrorMessage.h"
 
 #define M_MLTPLY 0
 #define M_ENERGY 1

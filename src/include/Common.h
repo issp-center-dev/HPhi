@@ -20,17 +20,14 @@
 #include <complex.h>
 #include "DefCommon.h"
 #include "global.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <time.h>
 #include <omp.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "ProgressMessage.h"
 #include "ErrorMessage.h"
-#include "LogMessage.h"
 #include "struct.h"
 #include "log.h"
 #include "dSFMT.h"

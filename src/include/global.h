@@ -20,6 +20,14 @@
 #include <complex.h>
 #include <math.h>
 #define D_FileNameMax 256
+#define FALSE 0
+#define TRUE 1
+
+/**
+ * Kind of electron. For ver.0.1, ITINERANT=1. From ver.0.2, ITINERANT=0.
+ **/
+#define ITINERANT 0
+#define LOCSPIN 1
 
 double complex *v0; 
 double complex *v1;

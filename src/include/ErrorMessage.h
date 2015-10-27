@@ -44,6 +44,7 @@ char *cErrDefFileParam;
 char *cErrCalcType;
 char *cErrOutputMode;
 char *cErrCalcModel;
+char *cErrCalcEigenVec;
 char *cErrFiniteTemp;
 char *cErrKW;
 char *cErrKW_ShowList;
@@ -59,7 +60,9 @@ char *cErrNonConservedInterAll;
 char *cErrNonHermiteInterAllForAll;
 char *cErrIncorrectFormatForKondoInt;
 char *cErrIncorrectFormatForKondoTrans;
-
+char *cErrIncorrectFormatInter;
+char *cErrIncorrectSpinIndexForInter;
+char *cErrIncorrectSpinIndexForTrans;
 
 char *cErrIncorrectFormatForSpinTrans;
 char *cWarningIncorrectFormatForSpin;

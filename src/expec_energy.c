@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+#include <bitcalc.h>
 #include "mltply.h"
 #include "expec_energy.h"
 #include "wrapperMPI.h"
@@ -132,26 +133,34 @@ int expec_energy(struct BindStruct *X){
     break;
 
   case SpinGC:
+
     tmp_num_up=0.0;
     tmp_num_down=0.0;
-    for(isite1=1;isite1<=X->Def.Nsite;isite1++){
-      is1_up=X->Def.Tpow[isite1-1];
+    X->Phys.doublon  = 0.0;
+    X->Phys.num_up   = 0.0;
+    X->Phys.num_down = 0.0;
+    X->Phys.num      = 0.0;
+
+    if(X->Def.iFlgGeneralSpin==FALSE){
+      for(isite1=1;isite1<=X->Def.Nsite;isite1++){
+	is1_up=X->Def.Tpow[isite1-1];
 #pragma omp parallel for reduction(+: tmp_num_up, tmp_num_down) default(none) private(j,  ibit1,num1_up,num1_down, tmp_v02) shared(list_1, v0) firstprivate(i_max, X, isite1, is1_up) 
-      for(j=1;j<=i_max;j++){
-	ibit1=(j-1)&is1_up;	
-	tmp_v02 = conj(v0[j])*v0[j];
-	if(ibit1==is1_up){
-	  tmp_num_up  += tmp_v02;
-	}
-	else{
-	  tmp_num_down +=tmp_v02;
+	for(j=1;j<=i_max;j++){
+	  ibit1=(j-1)&is1_up;	
+	  tmp_v02 = conj(v0[j])*v0[j];
+	  if(ibit1==is1_up){
+	    tmp_num_up  += tmp_v02;
+	  }
+	  else{
+	    tmp_num_down +=tmp_v02;
+	  }
 	}
       }
+      X->Phys.doublon  = 0.0;
+      X->Phys.num_up   = tmp_num_up;
+      X->Phys.num_down = tmp_num_down;    
+      X->Phys.num      = tmp_num_up+tmp_num_down;
     }
-    X->Phys.doublon  = 0.0;
-    X->Phys.num_up   = tmp_num_up;
-    X->Phys.num_down = tmp_num_down;    
-    X->Phys.num      = tmp_num_up+tmp_num_down;    
     break;
     
   case Spin:

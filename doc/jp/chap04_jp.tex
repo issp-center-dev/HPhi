@@ -123,6 +123,7 @@ TwoBodyG	zcisajscktaltdc.def
 CalcType   0
 CalcModel   2
 OutputMode   1
+CalcEigenVec 0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -187,8 +188,17 @@ OutputMode   1
 {\bf 形式 :} int型 (デフォルト値 0)
 
 {\bf 説明 :} 計算時に出力するモードの指定を行います。\\
-0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力。\\
+0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力\\
 1: 電荷電荷相関、スピンスピン相関とキーワードOneBodyG, TwoBodyGで指定されたGreen関数の出力(ver.0.1では未対応)\\
+で選択することが出来ます。
+
+\item  \verb|CalcEigenVec|
+
+{\bf 形式 :} int型 (デフォルト値 0)
+
+{\bf 説明 :} 固有ベクトルを計算する際の手法の指定を行います。\\
+0: Lanczos法+CG法 (Lanczos法での収束が十分でない場合にCG法での固有ベクトル計算が行われます)\\
+1: Lanczos法\\
 で選択することが出来ます。
 \end{itemize}
 

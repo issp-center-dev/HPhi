@@ -68,3 +68,29 @@ int BitCheck(
 	     const long unsigned int org_bit,
 	     const long unsigned int target_bit
 );
+
+int BitCheckGeneral(
+	     const long unsigned int org_bit,
+	     const unsigned int org_isite,
+	     const unsigned int target_ispin,
+	     const long int *SiteToBit,
+	     const long int *TPow	     
+		    );
+
+
+int GetBitGeneral( 
+	     const unsigned int isite,
+	     const long unsigned int org_bit,
+	     const long int *SiteToBit,
+	     const long int *TPow	     
+		   );
+
+int GetOffCompGeneralSpin(
+		const long unsigned int org_ibit,
+		const unsigned int org_isite,
+		const unsigned int org_ispin,
+		const unsigned int off_ispin,
+		long unsigned int *_ioffComp,
+		const long int *SiteToBit,
+		const long int *TPow
+		);

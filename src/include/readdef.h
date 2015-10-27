@@ -139,6 +139,11 @@ void SetConvergenceFactor
  struct DefineList *X
  );
 
+int CheckLocSpin
+(
+  struct DefineList *X
+);
+
 void ResetInteractionNum
 (
  struct DefineList *X
@@ -147,4 +152,14 @@ void ResetInteractionNum
 void InitializeInteractionNum
 (
  struct DefineList *X
+ );
+
+int CheckSpinIndexForInterAll
+(
+  struct DefineList *X
+ );
+
+int CheckSpinIndexForTrans
+(
+  struct DefineList *X
  );

@@ -14,12 +14,29 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include "Common.h"
+/**
+ * @file   diagonalcalc.c
+ * @version 0.2
+ * @details modify functions to calculate diagonal components for general spin
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ * @brief  File to define functions for calculating diagonal components
+ * 
+ * 
+ */
+
+#include <bitcalc.h>
 #include "diagonalcalc.h"
-#include "wrapperMPI.h"
+#include "mltply.h" 
+#include "wrapperMPI.h" 
+
 
 /** 
- * 
+ * @fn function for calculating diagonal components
  * 
  * @param X 
  * 
@@ -134,13 +151,15 @@ int diagonalcalc
 /** 
  * 
  * 
- * @param isite1 
- * @param dtmp_V 
- * @param X 
- * 
+ * @brief coulombintra interaction are given by \f$ U_i n_ {i \uparrow}n_{i \downarrow} \f$
+ * @param isite1  a site number
+ * @param dtmp_V A value of coulombintra interaction \f$ U_i \f$
+ * @param X Define list to get dimesnion number 
+ * @return 
+ *
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int SetDiagonalCoulombIntra
 (
@@ -585,15 +604,24 @@ int SetDiagonalInterAll
     break;
 
  case SpinGC:
-    is1_up   = X->Def.Tpow[isite1-1];
-    is2_up   = X->Def.Tpow[isite2-1];
+   if(X->Def.iFlgGeneralSpin==FALSE){
+     is1_up   = X->Def.Tpow[isite1-1];
+     is2_up   = X->Def.Tpow[isite2-1];
 #pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
-    for(j = 1;j <= i_max; j++){
-      num1=X_SpinGC_CisAis(j, X, is1_up, isigma1);
-      num2=X_SpinGC_CisAis(j, X, is2_up, isigma2);      
-      list_Diagonal[j] += num1*num2*dtmp_V;
-    } 
-   return -1;
+     for(j = 1;j <= i_max; j++){
+       num1=X_SpinGC_CisAis(j, X, is1_up, isigma1);
+       num2=X_SpinGC_CisAis(j, X, is2_up, isigma2);      
+       list_Diagonal[j] += num1*num2*dtmp_V;
+     } 
+   }
+   else{
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
+     for(j = 1;j <= i_max; j++){
+       num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+       num2=BitCheckGeneral (j-1, isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+       list_Diagonal[j] += num1*num2*dtmp_V;
+     }
+   }
    break;
     
   default:

@@ -13,23 +13,43 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+#include <expec_cisajs.h>
+#include <expec_cisajscktaltdc.h>
 #include "CalcByLanczos.h"
 #include "wrapperMPI.h"
 
-/** 
- * 
- * 
- * @param X 
+/**
+ * @file   CalcByLanczos.c
+ * @version 0.1, 0.2
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
- * @return 
+ * @brief  File for givinvg functions of calculating eigenvalues and eigenvectors by Lanczos method 
+ * 
+ * 
+ */
+
+
+/** 
+ * @brief A main function to calculate eigenvalues and eigenvectors by Lanczos method 
+ * 
+ * @param[in,out] X CalcStruct list for getting and pushing calculation information 
+ * @retval 0 normally finished
+ * @retval -1 unnormally finished
+ *
+ * @version 0.2
+ * @date 2015/10/20 add function of using a flag of iCalcEigenVec
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
  */
 int CalcByLanczos(		 
 		  struct EDMainCalStruct *X
 				 )
 {
   double diff_ene,var;
+  int iconv=0;
   // this part will be modified
   switch(X->Bind.Def.iCalcModel){
   case HubbardGC:
@@ -62,26 +82,26 @@ int CalcByLanczos(
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "Accuracy check !!!\n");
   fprintf(stdoutMPI, "%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+  
   if(diff_ene < eps_Energy && var< eps_Energy){
     fprintf(stdoutMPI, "Accuracy of Lanczos vectors is enough\n");
     fprintf(stdoutMPI, "\n");
+    iconv=1;
   }else{
     fprintf(stdoutMPI, "Accuracy of Lanczos vectors is NOT enough\n");
+  }
+  if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG && iconv==1){
     fprintf(stdoutMPI, "Eigenvector is improved by CG method \n");
-
     X->Bind.Def.St=1;
     CG_EigenVector(&(X->Bind));
     expec_energy(&(X->Bind));
-
     var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
     diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
-
     fprintf(stdoutMPI, "\n");
     fprintf(stdoutMPI, "CG Accuracy check !!!\n");
     fprintf(stdoutMPI, "%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
     fprintf(stdoutMPI, "\n");
   }  
-  
   expec_cisajs(&(X->Bind),v1);
   // v1 is eigen vector
   expec_cisajscktaltdc(&(X->Bind), v1);
