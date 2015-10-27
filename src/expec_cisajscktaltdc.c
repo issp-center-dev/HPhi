@@ -13,7 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "mltply.h"
 #include "expec_cisajscktaltdc.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -70,10 +73,10 @@ int expec_cisajscktaltdc
   case Lanczos:
     if(X->Def.St==0){
       sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
-      printf("Start: Calculate two bodies Green functions by Lanczos method.\n");
+      fprintf(stdoutMPI, "Start: Calculate two bodies Green functions by Lanczos method.\n");
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName2BGreen_CG, X->Def.CDataFileHead);
-      printf("Start: Calculate two bodies Green functions by CG method.\n");
+      fprintf(stdoutMPI, "Start: Calculate two bodies Green functions by CG method.\n");
     }
     break;
 
@@ -89,7 +92,7 @@ int expec_cisajscktaltdc
     break;
   }
 
-  if(!childfopen(sdt, "w", &fp)==0){
+  if(!childfopenMPI(sdt, "w", &fp)==0){
     return -1;
   }
 
@@ -410,10 +413,10 @@ int expec_cisajscktaltdc
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGFinish,"a");
-      printf("%s", cLogLanczosExpecTwoBodyGFinish);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGFinish);
     }else if(X->Def.St==1){
       TimeKeeper(X, cFileNameTimeKeep, cCGExpecTwoBodyGFinish,"a");
-      printf("%s", cLogCGExpecTwoBodyGFinish);
+      fprintf(stdoutMPI, "%s", cLogCGExpecTwoBodyGFinish);
     }
   }
   else if(X->Def.iCalcType==TPQCalc){

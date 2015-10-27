@@ -13,7 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "mfmemory.h"
 #include "sz.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -62,7 +65,7 @@ int sz
 
   int N2=0;
   int N=0;
-  printf("%s", cProStartCalcSz);
+  fprintf(stdoutMPI, "%s", cProStartCalcSz);
   TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
 
   switch(X->Def.iCalcModel){
@@ -77,7 +80,7 @@ int sz
     N  =  X->Def.Nsite;
     idim = pow(2.0,N2);
     for(j=0;j<N;j++){
-      printf(cStateLocSpin,j,X->Def.LocSpn[j]);
+      fprintf(stdoutMPI, cStateLocSpin,j,X->Def.LocSpn[j]);
     }
     break;
   case SpinGC:
@@ -87,14 +90,28 @@ int sz
     break;
   }
   li_malloc2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
+    i_max=X->Check.idim_max;  
+
+<<<<<<< HEAD
+  fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+=======
+>>>>>>> origin/check_list
+
+  switch(X->Def.iCalcModel){
+  case Hubbard:
+  case KondoGC:
+  case Kondo:
+  case Spin:
+    if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
+      return -1;
+    }
+
+    printf("idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+    break;
+  default:
+    break;
+  }    
   
-  i_max=X->Check.idim_max;  
-  if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
-    return -1;
-  }
-
-  printf("idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
-
   icnt=1;
   jb=0;
 
@@ -106,8 +123,8 @@ int sz
   else{ 
     sprintf(sdt, cFileNameSzTimeKeep, X->Def.CDataFileHead);
     num_threads  = omp_get_max_threads();
-    printf("num_threads==%d\n",num_threads);
-    childfopen(sdt,"a", &fp);
+    fprintf(stdoutMPI, "num_threads==%d\n",num_threads);
+    childfopenMPI(sdt,"a", &fp);
     fprintf(fp, "num_threads==%d\n",num_threads);
     fclose(fp);
     
@@ -206,7 +223,7 @@ int sz
 
       N_all_up   = X->Def.Nup;
       N_all_down = X->Def.Ndown;
-      printf("N_all_up=%d N_all_down=%d \n",N_all_up,N_all_down);
+      fprintf(stdoutMPI, "N_all_up=%d N_all_down=%d \n",N_all_up,N_all_down);
 
       jb = 0;
       num_loc=0;
@@ -267,7 +284,7 @@ int sz
     case Spin:
       // this part can not be parallelized
       jb = 0;
-      printf("Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
+      fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
       for(ib=0;ib<X->Check.sdim;ib++){
 	list_jb[ib]=jb;
 	i=ib*ihfbit;
@@ -276,12 +293,10 @@ int sz
 	  div_up = i & X->Def.Tpow[j];
 	  div_up = div_up/X->Def.Tpow[j];
 	  num_up +=div_up;
-	}       
-	//ToDo: Change this part to adopt Sz = nonzero.
+	}
 	all_up   = (X->Def.Nsite+1)/2;
 	tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
 	jb   += tmp_1;
-	printf("ib=%ld, num_up_rgh=%ld, jb=%ld\n",ib, X->Def.Ne-num_up, jb);
       }
       //#pragma omp barrier
 
@@ -299,17 +314,17 @@ int sz
        
     }    
     i_max=icnt;
-    printf("Xicnt=%ld \n",icnt);
+    fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
   }
 
   //Error message
   //i_max=i_max+1;
   if(i_max!=X->Check.idim_max){
-    printf("%s", cErrSz);
-    printf(cErrSz_ShowDim, i_max, X->Check.idim_max);
+    fprintf(stdoutMPI, "%s", cErrSz);
+    fprintf(stdoutMPI, cErrSz_ShowDim, i_max, X->Check.idim_max);
     strcpy(sdt_err,cFileNameErrorSz);
-    if(childfopen(sdt_err,"a",&fp_err)!=0){
+    if(childfopenMPI(sdt_err,"a",&fp_err)!=0){
       return -1;
     }
     fprintf(fp_err,cErrSz_OutFile);
@@ -317,7 +332,7 @@ int sz
     return -1;
   }
   
-  printf("%s", cProEndCalcSz);
+  fprintf(stdoutMPI, "%s", cProEndCalcSz);
   i_free2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
   return 0;    
 }
@@ -421,8 +436,8 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
       list_1[ja+jb]=ia+ib*ihfbit;
       list_2_1[ia]=ja;
       list_2_2[ib]=jb;
-      //printf("ja=%ld, jb=%ld, ia=%ld, ib=%ld, ihfbit=%ld\n", ja, jb, ia, ib, ihfbit);
-      //      printf("ja=%ld, jb=%ld, ja+jb=%ld, list_1_j=%ld\n", ja, jb, ja+jb, list_1[ja+jb]);
+      //fprintf(stdoutMPI, "ja=%ld, jb=%ld, ia=%ld, ib=%ld, ihfbit=%ld\n", ja, jb, ia, ib, ihfbit);
+      //      fprintf(stdoutMPI, "ja=%ld, jb=%ld, ja+jb=%ld, list_1_j=%ld\n", ja, jb, ja+jb, list_1[ja+jb]);
       ja+=1;
     } 
   }
@@ -765,7 +780,7 @@ int sz_single_thread
   case Kondo:
     N_all_up   = X->Def.Nup;
     N_all_down = X->Def.Ndown;
-    printf("N_all_up=%d N_all_down=%d \n",N_all_up,N_all_down);
+    fprintf(stdoutMPI, "N_all_up=%d N_all_down=%d \n",N_all_up,N_all_down);
     for(i=1;i<idim-3;i++){
 	 
       num_up   = 0;
@@ -896,19 +911,19 @@ int Read_sz
     sprintf(sdt,"ListForKondo_Ns%d_Ncond%d.dat",X->Def.Nsite,X->Def.Ne);
     break;
   }
-  if(childfopen(sdt,"r", &fp)!=0){
+  if(childfopenMPI(sdt,"r", &fp)!=0){
     return -1;
   }  
 
   if(fp == NULL){
-    if(childfopen(cFileNameErrorSz,"a",&fp_err)!=0){
+    if(childfopenMPI(cFileNameErrorSz,"a",&fp_err)!=0){
       return -1;
     }
     fprintf(fp_err, cErrSz_NoFile);
     fprintf(fp_err, cErrSz_NoFile_Show,sdt);
     fclose(fp_err);
   }else{
-    while(NULL != fgets(buf,sizeof(buf),fp)){  
+    while(NULL != fgetsMPI(buf,sizeof(buf),fp)){  
       dam=atol(buf);  
       list_1[icnt]=dam;
             

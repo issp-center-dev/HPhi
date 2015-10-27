@@ -66,7 +66,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
   }  
   X->Large.prdct+=dam_pr;
   //debug
-  //printf("dam_pr_diagonal=%lf\n", dam_pr);
+  //fprintf(stdoutMPI, "dam_pr_diagonal=%lf\n", dam_pr);
   
   switch(X->Def.iCalcModel){
 
@@ -211,14 +211,14 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
       dam_pr=child_general_int_spin(tmp_v0,tmp_v1,X);
       X->Large.prdct +=dam_pr;
     }
-    //printf("dam_pr_interall=%lf\n", X->Large.prdct);
+    //fprintf(stdoutMPI, "dam_pr_interall=%lf\n", X->Large.prdct);
     
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling; i++){
       child_exchange_spin_GetInfo(i, X);
       dam_pr =child_exchange_spin(tmp_v0, tmp_v1, X);
       X->Large.prdct+=dam_pr;
-      //    printf("dam_pr_exchange=%lf\n", dam_pr);
+      //    fprintf(stdoutMPI, "dam_pr_exchange=%lf\n", dam_pr);
     }
 
     //PairLift
@@ -226,7 +226,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
       child_pairlift_spin_GetInfo(i, X);
       dam_pr = child_pairlift_spin( tmp_v0, tmp_v1, X);
       X->Large.prdct+=dam_pr;
-      // printf("dam_pr_pairlift=%lf\n", dam_pr);
+      // fprintf(stdoutMPI, "dam_pr_pairlift=%lf\n", dam_pr);
     }
     
     break;
@@ -249,7 +249,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
 	  dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
 	  for(j=1;j<=i_max;j++){
-	    dam_pr+=tmp_trans*X_Spin_CisAis(j,X,is1_spin, sigma1)*conj(tmp_v1[j])*tmp_v0[j]; 
+	    dam_pr+=tmp_trans*X_SpinGC_CisAis(j,X,is1_spin, sigma1)*conj(tmp_v1[j])*tmp_v0[j]; 
 	  } 
         }else{
           // transverse magnetic field
@@ -267,7 +267,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1){
       }
     }
 
-    
     //InterAll
     for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){    
       isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
@@ -1387,7 +1386,7 @@ int X_CisAjt(
     SgnBit(bit,&sgn); // Fermion sign
     *iexchg             = list_1_j ^ sum_spin;
     GetOffComp(list_2_1, list_2_2, *iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
-    //printf("X_DEBUG: j=%ld list_1=%ld sum=%ld iexchg=%ld off=%ld\n",j,list_1[j], sum_spin,iexchg,off );
+    //fprintf(stdoutMPI, "X_DEBUG: j=%ld list_1=%ld sum=%ld iexchg=%ld off=%ld\n",j,list_1[j], sum_spin,iexchg,off );
     *tmp_off = off;
     return          sgn; // pm 1
   }else{
@@ -1734,7 +1733,7 @@ double complex GC_child_exchange_spin_element
   list_1_j=j-1;
   
   long unsigned int ibit_tmp;
-  ibit_tmp = (list_1[j] & is_up);
+  ibit_tmp = (list_1_j & is_up);
   if(ibit_tmp==0 || ibit_tmp==is_up){
     return dam_pr;
   }else{

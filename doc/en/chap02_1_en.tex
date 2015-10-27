@@ -1,45 +1,63 @@
 % !TEX root = userguide_en.tex
 %----------------------------------------------------------
-\begin{enumerate}
-
-\item You can download $\HPhi$ in the following place.\\
+You can download $\HPhi$ in the following place.\\
 \url{https://github.com/QLMS/HPhi/releases}
 
-\item After expanding downloaded files, 
-move into \verb|src| in the expanded directory.
+You can obtain the $\HPhi$ directory by tiping
 \begin{verbatim}
-$ tar xzvf 
-$ cd /src/
+$ tar xzvf HPhi-xxx.tar.gz
 \end{verbatim}
 
-\item Configure the environment for the installation;
-  please edit \verb|make.sys| and specify the compiler and the option.
-  For some known system, 
-  you can find prepared settings as comments in \verb|make.sys| and use them.
-  For example, when you install $\HPhi$ into the ISSP System-B(sekirei),
-  find 
-\begin{verbatim}
-#####  ISSP System-B "sekirei" #####|
+There are two kind of procedures to install $\HPhi$.
 
-# CC = icc
-# LAPACK_FLAGS = -Dlapack -mkl=parallel 
-# FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
-# MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
-# INCLUDE_DIR=./include
-\end{verbatim}
-and uncomment it.
+\subsection{Using \texttt{HPhiconfig.sh}}
 
-\item Save the modified \verb|make.sys| and type \verb|make| as follows:
+Please run \verb|HPhiconfig.sh| script in the $\HPhi$ directory as follow
+(for ISSP system-B ''sekirei''):
 \begin{verbatim}
-$ make all
+$ source HPhiconfig.sh sekirei
 \end{verbatim}
+Then environmental configuration file \verb|make.sys| is generated in 
+\verb|src/| directory.
+The command-line argment of \verb|HPhiconfig.sh| is as folows:
+\begin{itemize}
+\item \verb|sekirei| : ISSP system-B ''sekirei''
+\item \verb|maki| : ISSP system-C ''maki''
+\item \verb|intel| : intel compiler + Linux PC
+\item \verb|gcc| : GCC + Linux PC
+\item \verb|gcc-mac| : GCC + Mac
+\end{itemize}
 
-Then an executable \verb|HPhi| in the current directory;
-you should add this directory to the \verb|$PATH| or
-make a symbolic link in a place belonging \verb|$PATH|.
+\verb|make.sys| is as follows (for ISSP-system-B ''sekirei''):
 \begin{verbatim}
-$ sudo ln -fs `pwd`/HPhi /usr/local/bin/
+ CC = icc
+ LAPACK_FLAGS = -Dlapack -mkl=parallel 
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+ MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
+ INCLUDE_DIR=./include
 \end{verbatim}
+We explatin macros of this file as: 
+\begin{itemize}
+\item \verb|CC| : The Compilation command (\verb|icc|, \verb|gcc|, \verb|fccpx|)
+\item \verb|LAPACK_FLAGS| : Compilation options for LAPACK. \verb|-Dlapack| can not be removed.
+\item \verb|FLAGS| : Other compilation options.
+  OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
+  must be specified.
+\item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : Options for the Mersenne Twister
+  and additional include directory. You do not have to modify them.
+\end{itemize}
+
+
+Then you are ready to compile HPhi.
+Please type
+\begin{verbatim}
+$ make HPhi
+\end{verbatim}
+and obtain an executable \verb|HPhi| in \verb|src/| directory;
+you should add this directory to the \verb|$PATH|.
+
+\subsection{Using \texttt{cmake}}
+
 
 \begin{screen}
 \Large 
@@ -55,4 +73,3 @@ If you keep this PATH, you should write above in \verb|~/.bashrc|
 
 \end{screen}
 
-\end{enumerate}

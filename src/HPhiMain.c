@@ -14,8 +14,45 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /*-------------------------------------------------------------*/
-#include "HPhiMain.h"
+
+#include "Common.h"
+#include "readdef.h"
 #include "StdFace_main.h"
+#include "wrapperMPI.h"
+
+/*!
+@mainpage
+
+<H2>Introduction</H2>
+A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins. The Lanczos algorithm for finding ground states and newly developed Lanczos-based algorithm for finite-temperature properties of these models are implemented for parallel computing. A broad spectrum of users including experimental researchers is cordially welcome.
+<HR>
+<H2>Developers</H2>
+Youhei Yamaji (Quantum-Phase Electronics Center, The University of Tokyo)\n
+Takahiro Misawa (Department of Applied Physics, The University of Tokyo)\n
+Synge Todo (Department of Physics, The University of Tokyo)\n
+Kazuyoshi Yoshimi (Institute for Solid State Physics, The University of Tokyo)\n
+Mitsuaki Kawamura (Institute for Solid State Physics, The University of Tokyo)\n
+Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
+<HR>
+<H2>Methods</H2>
+Lanczos algorithm, thermal pure quantum state, full diagonalization
+<HR>
+<H2>Target models</H2>
+Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heisenberg model, multi-orbital Hubbard model
+<HR>
+<H2>Link</H2>
+https://github.com/QLMS/HPhi
+<HR>
+<H2>Download</H2>
+https://github.com/QLMS/HPhi/releases
+<HR>
+<H2>Forum</H2>
+http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
+<HR>
+<H2>licence</H2>
+<B>GNU GPL version 3</B>\n
+This software is developed under the support of "Project for advancement of software usability in materials science" by The Institute for Solid State Physics, The University of Tokyo.\n
+*/
 
 /** 
  * @brief Main program for HPhi
@@ -32,6 +69,9 @@ int main(int argc, char* argv[]){
 
   int mode=0;
   char cFileListName[D_FileNameMax];
+
+  InitializeMPI(argc, argv);
+
   if(JudgeDefType(argc, argv, &mode)!=0){
     return -1;
   }  
@@ -40,7 +80,7 @@ int main(int argc, char* argv[]){
   struct stat tmpst;
   if(stat(cParentOutputFolder,&tmpst)!=0){
     if(mkdir(cParentOutputFolder, 0777)!=0){
-      printf("%s", cErrOutput);
+      fprintf(stdoutMPI, "%s", cErrOutput);
       return -1;
     }
   }
@@ -51,7 +91,7 @@ int main(int argc, char* argv[]){
     StdFace_main(argv[2]);
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
-      printf("Dry run is Finished. \n\n");
+      fprintf(stdoutMPI, "Dry run is Finished. \n\n");
       return 0;
     }
   }
@@ -59,16 +99,16 @@ int main(int argc, char* argv[]){
   setmem_HEAD(&X.Bind);
   //  if(ReadDefFileNInt(argv[1], &(X.Bind.Def))!=0){
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def))!=0){
-    printf("%s", cErrDefFile);
+    fprintf(stderr, "%s", cErrDefFile);
     return (-1);
   }
-  if(X.Bind.Def.nvec < X.Bind.Def.k_exct){
-    printf("%s", cErrnvec);
-    printf(cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
+  if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
+    fprintf(stdoutMPI, "%s", cErrnvec);
+    fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
     return (-1);
   }	  
-  printf("Definition files are correct.\n");
-  
+  fprintf(stdoutMPI, "Definition files are correct.\n");
+
   
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind);
@@ -76,7 +116,7 @@ int main(int argc, char* argv[]){
 
   /*Read Def files.*/
   if(ReadDefFileIdxPara(&(X.Bind.Def))!=0){
-    printf("%s", cErrIndices);
+    fprintf(stdoutMPI, "%s", cErrIndices);
     return (-1);
   }
   else{
@@ -87,30 +127,14 @@ int main(int argc, char* argv[]){
   
   /*LARGE VECTORS ARE ALLOCATED*/
   if(!setmem_large(&X.Bind)==0){
-    printf(cErrLargeMem, iErrCodeMem);
+    fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
     return (-1);
   }
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
   /*---------------------------*/
   HPhiTrans(&(X.Bind));
-  
-  switch (X.Bind.Def.iCalcModel){
-  case HubbardGC:
-  case Hubbard:
-  case Kondo:
-  case KondoGC:
-    sgn(&(X.Bind));
-    break;
- 
-  case Spin:     // not having sign
-  case SpinGC:     
-    break;
     
-  default :
-    break;
-  }
-  
   if(!sz(&(X.Bind))==0){
     return -1;
   }
@@ -143,5 +167,6 @@ int main(int argc, char* argv[]){
     return -1;
   }  
   
+  FinalizeMPI();
   return 0;
 }

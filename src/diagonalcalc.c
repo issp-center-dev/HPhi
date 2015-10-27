@@ -13,7 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "Common.h"
 #include "diagonalcalc.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -40,7 +43,7 @@ int diagonalcalc
   /*[e] For InterAll*/
   long unsigned int i_max=X->Check.idim_max;
 
-  printf("%s", cProStartCalcDiag);
+  fprintf(stdoutMPI, "%s", cProStartCalcDiag);
   
 #pragma omp parallel for default(none) private(j) shared(list_Diagonal) firstprivate(i_max)
   for(j = 1;j <= i_max; j++){
@@ -48,7 +51,7 @@ int diagonalcalc
   }
   
   if(X->Def.NCoulombIntra>0){
-    if(childfopen(cFileNameCheckCoulombIntra, "w", &fp)!=0){
+    if(childfopenMPI(cFileNameCheckCoulombIntra, "w", &fp)!=0){
       return -1;
     }
     for(i = 0; i < X->Def.NCoulombIntra; i++){
@@ -61,7 +64,7 @@ int diagonalcalc
   }
 
   if(X->Def.EDNChemi>0){
-    if(childfopen(cFileNameCheckChemi,"w", &fp)!=0){
+    if(childfopenMPI(cFileNameCheckChemi,"w", &fp)!=0){
       return -1;
     }
     for(i = 0; i < X->Def.EDNChemi; i++){
@@ -77,7 +80,7 @@ int diagonalcalc
   }
    
   if(X->Def.NCoulombInter>0){
-    if(childfopen(cFileNameCheckInterU,"w", &fp)!=0){
+    if(childfopenMPI(cFileNameCheckInterU,"w", &fp)!=0){
       return -1;
     }
     for(i = 0; i < X->Def.NCoulombInter; i++){
@@ -92,7 +95,7 @@ int diagonalcalc
     fclose(fp);   
   }
   if(X->Def.NHundCoupling>0){
-    if(childfopen(cFileNameCheckHund,"w", &fp) !=0){
+    if(childfopenMPI(cFileNameCheckHund,"w", &fp) !=0){
       return -1;
     }
     for(i = 0; i < X->Def.NHundCoupling; i++){
@@ -108,7 +111,7 @@ int diagonalcalc
   }
 
   if(X->Def.NInterAll_Diagonal>0){    
-    if(childfopen(cFileNameCheckInterAll,"w", &fp) !=0){
+    if(childfopenMPI(cFileNameCheckInterAll,"w", &fp) !=0){
       return -1;
     }
     for(i = 0; i < X->Def.NInterAll_Diagonal; i++){
@@ -124,7 +127,7 @@ int diagonalcalc
     }
   
   TimeKeeper(X, cFileNameTimeKeep, cDiagonalCalcFinish, "w");
-  printf("%s", cProEndCalcDiag);
+  fprintf(stdoutMPI, "%s", cProEndCalcDiag);
   return 0;
 }
 
@@ -187,7 +190,7 @@ int SetDiagonalCoulombIntra
     break;
 
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     return -1;
     break;
   }
@@ -235,7 +238,7 @@ int SetDiagonalChemi
 
       ibit1 = (j-1)&is1;
       num1  = ibit1/is1;
-      //printf("DEBUG: spin=%ld  is1=%ld: isite1=%ld j=%ld num1=%ld \n",spin,is1,isite1,j,num1);
+      //fprintf(stdoutMPI, "DEBUG: spin=%ld  is1=%ld: isite1=%ld j=%ld num1=%ld \n",spin,is1,isite1,j,num1);
 	      
       list_Diagonal[j]+=num1*dtmp_V;
     }
@@ -277,7 +280,7 @@ int SetDiagonalChemi
     }
     break;
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     return -1;
   }
 
@@ -372,7 +375,7 @@ int SetDiagonalCoulombInter
     } 
     break;
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     return -1;
   }
   return 0;
@@ -492,7 +495,7 @@ int SetDiagonalHund
     }
     break;
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     return -1;
   }
   return 0;
@@ -594,7 +597,7 @@ int SetDiagonalInterAll
    break;
     
   default:
-    printf(cErrNoModel, X->Def.iCalcModel);
+    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     return -1;
   }
    

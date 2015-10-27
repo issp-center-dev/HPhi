@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcByFullDiag.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -28,16 +29,16 @@ int CalcByFullDiag(
 		   struct EDMainCalStruct *X
 		   )
 {
-  printf("Start Setting Hamiltonian.\n");
+  fprintf(stdoutMPI, "Start Setting Hamiltonian.\n");
   makeHam(&(X->Bind));
-  printf("Finish Setting Hamiltonian.\n");
+  fprintf(stdoutMPI, "Finish Setting Hamiltonian.\n");
   lapack_diag(&(X->Bind));
-  printf("Diagonalization is done.\n");  
+  fprintf(stdoutMPI, "Diagonalization is done.\n");  
   X->Bind.Def.St=0;
-  printf("Start: Calc Expected value.\n");
+  fprintf(stdoutMPI, "Start: Calc Expected value.\n");
   phys(&(X->Bind));
-  printf("End: Calc Expected value.\n");
+  fprintf(stdoutMPI, "End: Calc Expected value.\n");
   output(&(X->Bind));
-  printf("Finish. \n");
+  fprintf(stdoutMPI, "Finish. \n");
   return 0;
 }

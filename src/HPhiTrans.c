@@ -13,7 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "Common.h"
 #include "HPhiTrans.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -33,7 +36,7 @@ int HPhiTrans(struct BindStruct *X){
   int cnt_trans,cnt_chemi;
 
   strcpy(sdt_err, cFileNameWarningOnTransfer);
-  if(childfopen(sdt_err, "w", &fp_err)!=0){
+  if(childfopenMPI(sdt_err, "w", &fp_err)!=0){
     return -1;
   }
   fclose(fp_err);
@@ -69,7 +72,7 @@ int HPhiTrans(struct BindStruct *X){
 	  if(X->Def.GeneralTransfer[i][0] == X->Def.EDGeneralTransfer[k][0]
 	     && X->Def.GeneralTransfer[i][2] == X->Def.EDGeneralTransfer[k][2]){
 	    sprintf(sdt_err,cErrTransfer);
-	    childfopen(sdt_err,"a", &fp_err);
+	    childfopenMPI(sdt_err,"a", &fp_err);
 	    fprintf(fp_err,cErrDoubleCounting, X->Def.GeneralTransfer[i][0] ,X->Def.EDGeneralTransfer[k][2], X->Def.EDGeneralTransfer[k][1], X->Def.EDGeneralTransfer[k][3]);
 	    fclose(fp_err);
 	    return -1;
@@ -87,15 +90,15 @@ int HPhiTrans(struct BindStruct *X){
 // PossibleError
   if(cnt_chemi>0 && cnt_chemi!=2*X->Def.Nsite){
     sprintf(sdt_err,cErrTransfer);
-    childfopen(sdt_err,"a", &fp_err);
+    childfopenMPI(sdt_err,"a", &fp_err);
     fprintf(fp_err,cErrChemicalPotential);
     fclose(fp_err);
     return -1;
   }
 //
 
-  printf(cProEDNTrans, cnt_trans);
-  printf(cProEDNChemi, cnt_chemi);
+  fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
+  fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
   X->Def.EDNTransfer=cnt_trans;
   X->Def.EDNChemi=cnt_chemi;
 

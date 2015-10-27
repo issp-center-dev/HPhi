@@ -13,6 +13,8 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "Common.h"
 #include "log.h"
 
 /**
@@ -42,7 +44,7 @@ int TimeKeeper
   sprintf(sdt, cFileName, X->Def.CDataFileHead);
   tx   = time(NULL);
   area = localtime(&tx);
-  if(childfopen(sdt, cWriteType, &fp)!=0){
+  if(childfopenMPI(sdt, cWriteType, &fp)!=0){
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, asctime(area));
@@ -79,7 +81,7 @@ int TimeKeeperWithStep
   sprintf(sdt, cFileName, X->Def.CDataFileHead);
   tx   = time(NULL);
   area = localtime(&tx);
-  if(childfopen(sdt, cWriteType, &fp)!=0){
+  if(childfopenMPI(sdt, cWriteType, &fp)!=0){
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, istep, asctime(area));
@@ -118,7 +120,7 @@ int TimeKeeperWithRandAndStep
   sprintf(sdt, cFileName, X->Def.CDataFileHead);
   tx   = time(NULL);
   area = localtime(&tx);
-  if(childfopen(sdt, cWriteType, &fp)!=0){
+  if(childfopenMPI(sdt, cWriteType, &fp)!=0){
     return -1;
   }
   fprintf(fp, cTimeKeeper_Message, irand, istep, asctime(area));

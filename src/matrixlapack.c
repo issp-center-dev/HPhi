@@ -23,7 +23,9 @@
 /*=================================================================================================*/
 
 #define M_DSYEV dsyev_
-#include "mfmemory.c"
+#include <stdlib.h>
+#include <complex.h>
+#include "mfmemory.h"
 
 int dgetrf_(int *m, int *n, double *a, int *lda, int *ipiv, int *info);
 int dgetri_(int *n, double *a, int *lda, int *ipiv, double *work, int *lwork, int *info);

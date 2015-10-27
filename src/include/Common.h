@@ -13,7 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#pragma once
+
+#ifndef HPHI_COMMON_H
+#define HPHI_COMMON_H
+
 #include <complex.h>
 #include "DefCommon.h"
 #include "global.h"
@@ -30,3 +33,6 @@
 #include "LogMessage.h"
 #include "struct.h"
 #include "log.h"
+#include "dSFMT.h"
+
+#endif /* HPHI_COMMON_H */

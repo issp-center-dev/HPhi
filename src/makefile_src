@@ -1,0 +1,59 @@
+include make.sys
+
+OBJS =	CG_EigenVector.c \
+HPhiTrans.c \
+HPhiMain.c \
+CalcByFullDiag.c \
+CalcByLanczos.c \
+FirstMultiply.c \
+Lanczos_EigenValue.c \
+Lanczos_EigenVector.c \
+FileIO.c \
+sz.c \
+Multiply.c \
+bitcalc.c \
+bisec.c \
+check.c \
+dSFMT.o \
+diagonalcalc.c \
+expec_cisajs.c \
+expec_cisajscktaltdc.c \
+expec_energy.c \
+expec_totalspin.c \
+lapack_diag.c \
+makeHam.c \
+matrixlapack.c \
+mltply.c \
+CalcByTPQ.c \
+output.c \
+output_list.c \
+phys.c \
+readdef.c \
+sgn.c \
+vec12.c \
+xsetmem.c \
+log.c \
+ErrorMessage.c \
+LogMessage.c \
+ProgressMessage.c \
+global.c \
+wrapperMPI.c
+
+all:
+	make -f makefile_src libStdFace
+	make -f makefile_src HPhi
+
+SUFFIXES: .o .c
+
+.c.o:
+	$(CC) $(LAPACK_FLAGS) $(FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) -c $<
+
+HPhi: $(OBJS:.c=.o) make.sys libStdFace.a
+	$(CC) -g $(OBJS:.c=.o) $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) libStdFace.a -o $@ 
+
+libStdFace:
+	cd StdFace; make -f makefile_StdFace libStdFace.a
+
+clean:
+	cd StdFace; make -f makefile_StdFace clean
+	rm -f HPhi *.o *.a
