@@ -448,7 +448,7 @@ void PrintLocSpin(){
 
   nlocspin = 0;
   for (isite = 0; isite < nsite; isite++)
-    if (locspinflag[isite] == 0) nlocspin = nlocspin + 1;
+    if (locspinflag[isite] != 0) nlocspin = nlocspin + 1;
 
   fp = fopenMPI("zlocspn.def", "w");
   fprintf(fp, "================================ \n");
@@ -501,7 +501,7 @@ static void PrintTrans(){
   ntrans0 = 0;
   for (ktrans = 0; ktrans < ntrans; ktrans++){
     if (fabs(trans[ktrans]) > 0.000001)
-      fprintf(fp, "%5d %5d %5d %5d %10.6f  0.000000\n",
+      fprintf(fp, "%5d %5d %5d %5d %25.15f  0.000000\n",
       transindx[ktrans][0], transindx[ktrans][1], transindx[ktrans][2], transindx[ktrans][3],
       trans[ktrans]);
   }
@@ -551,7 +551,7 @@ static void PrintInter(){
   nintr0 = 0;
   for (kintr = 0; kintr < nintr; kintr++){
     if (fabs(intr[kintr]) > 0.000001)
-      fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %10.6f  0.000000\n",
+      fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %25.15f  0.000000\n",
       intrindx[kintr][0], intrindx[kintr][1], intrindx[kintr][2], intrindx[kintr][3],
       intrindx[kintr][4], intrindx[kintr][5], intrindx[kintr][6], intrindx[kintr][7],
       intr[kintr]);
@@ -695,17 +695,26 @@ static void PrintModPara(
  */
 static void Print1Green(int ioutputmode /**< [in]*/){
   FILE *fp;
-  int ngreen, igreen, isite, jsite, ispin,jspin;
+  int ngreen, igreen, isite, jsite, ispin,jspin, SiMax, SjMax;
   int **greenindx;
 
   if (ioutputmode == 0){
     ngreen = 0;
   }
   else if(ioutputmode == 1){
-    ngreen = nsite * (S2 + 1);
+    ngreen = 0;
+    for (isite = 0; isite < nsite; isite++){
+      if (locspinflag[isite] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[isite] + 1);
+    }
   }
   else{
-    ngreen = nsite * (S2 + 1) * nsite * (S2 + 1);
+    ngreen = 0;
+    for (isite = 0; isite < nsite; isite++){
+      if (locspinflag[isite] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[isite] + 1);
+    }
+    ngreen = ngreen * ngreen;
   }
   greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
   for (igreen = 0; igreen < ngreen; igreen++){
@@ -714,7 +723,11 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   if (ioutputmode == 1){
     igreen = 0;
     for (isite = 0; isite < nsite; isite++){
-      for (ispin = 0; ispin <= S2; ispin++){
+
+      if (locspinflag[isite] == 0) SiMax = 1;
+      else SiMax = locspinflag[isite];
+      
+      for (ispin = 0; ispin <= SiMax; ispin++){
         greenindx[igreen][0] = isite;
         greenindx[igreen][1] = ispin;
         greenindx[igreen][2] = isite;
@@ -726,9 +739,17 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   else if (ioutputmode == 2){
     igreen = 0;
     for (isite = 0; isite < nsite; isite++){
-      for (ispin = 0; ispin <= S2; ispin++){
+
+      if (locspinflag[isite] == 0) SiMax = 1;
+      else SiMax = locspinflag[isite];
+
+      for (ispin = 0; ispin <= SiMax; ispin++){
         for (jsite = 0; jsite < nsite; jsite++){
-          for (jspin = 0; jspin <= S2; jspin++){
+
+          if (locspinflag[jsite] == 0) SjMax = 1;
+          else SjMax = locspinflag[jsite];
+
+          for (jspin = 0; jspin <= SjMax; jspin++){
             greenindx[igreen][0] = isite;
             greenindx[igreen][1] = ispin;
             greenindx[igreen][2] = jsite;
@@ -772,17 +793,27 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   int ngreen, igreen;
   int site1, site2, site3, site4;
   int spin1, spin2, spin3, spin4;
+  int S1Max, S2Max, S3Max, S4Max;
   int **greenindx;
 
   if (ioutputmode == 0){
     ngreen = 0;
   }
   else if (ioutputmode == 1){
-    ngreen = nsite * (S2 + 1) * nsite * (S2 + 1);
+    ngreen = 0;
+    for (site1 = 0; site1 < nsite; site1++){
+      if (locspinflag[site1] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[site1] + 1);
+    }
+    ngreen = ngreen * ngreen;
   }
   else{
-    ngreen = nsite * (S2 + 1) * nsite * (S2 + 1) 
-      * nsite * (S2 + 1) * nsite * (S2 + 1);
+    ngreen = 0;
+    for (site1 = 0; site1 < nsite; site1++){
+      if (locspinflag[site1] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[site1] + 1);
+    }
+    ngreen = ngreen * ngreen * ngreen * ngreen;
   }
   greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
   for (igreen = 0; igreen < ngreen; igreen++){
@@ -791,9 +822,17 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   if (ioutputmode == 1){
     igreen = 0;
     for (site1 = 0; site1 < nsite; site1++){
-      for (spin1 = 0; spin1 <= S2; spin1++){
+
+      if (locspinflag[site1] == 0) S1Max = 1;
+      else S1Max = locspinflag[site1];
+
+      for (spin1 = 0; spin1 <= S1Max; spin1++){
         for (site2 = 0; site2 < nsite; site2++){
-          for (spin2 = 0; spin2 <= S2; spin2++){
+
+          if (locspinflag[site2] == 0) S2Max = 1;
+          else S2Max = locspinflag[site2];
+
+          for (spin2 = 0; spin2 <= S2Max; spin2++){
             greenindx[igreen][0] = site1;
             greenindx[igreen][1] = spin1;
             greenindx[igreen][2] = site1;
@@ -811,13 +850,29 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   else if (ioutputmode == 2){
     igreen = 0;
     for (site1 = 0; site1 < nsite; site1++){
-      for (spin1 = 0; spin1 <= S2; spin1++){
+
+      if (locspinflag[site1] == 0) S1Max = 1;
+      else S1Max = locspinflag[site1];
+
+      for (spin1 = 0; spin1 <= S1Max; spin1++){
         for (site2 = 0; site2 < nsite; site2++){
-          for (spin2 = 0; spin2 <= S2; spin2++){
+
+          if (locspinflag[site2] == 0) S2Max = 1;
+          else S2Max = locspinflag[site2];
+
+          for (spin2 = 0; spin2 <= S2Max; spin2++){
             for (site3 = 0; site3 < nsite; site3++){
-              for (spin3 = 0; spin3 <= S2; spin3++){
+
+              if (locspinflag[site3] == 0) S3Max = 1;
+              else S3Max = locspinflag[site3];
+
+              for (spin3 = 0; spin3 <= S3Max; spin3++){
                 for (site4 = 0; site4 < nsite; site4++){
-                  for (spin4 = 0; spin4 <= S2; spin4++){
+
+                  if (locspinflag[site4] == 0) S4Max = 1;
+                  else S4Max = locspinflag[site4];
+
+                  for (spin4 = 0; spin4 <= S4Max; spin4++){
                     greenindx[igreen][0] = site1;
                     greenindx[igreen][1] = spin1;
                     greenindx[igreen][2] = site2;
@@ -963,7 +1018,7 @@ static void CheckModPara(
 
     StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_NotUsed_i("nelec", *nelec);
-
+    *nelec = 0;
   }
   else if (strcmp(model, "kondolattice") == 0) {
 
@@ -979,7 +1034,8 @@ static void CheckModPara(
  
     StdFace_NotUsed_i("nelec", *nelec);
     StdFace_NotUsed_i("2Sz", *Sz2);
-
+    *nelec = 0.0;
+    *Sz2 = 0.0;
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Model !\n");

@@ -319,7 +319,7 @@ void KondoLattice_ChainLattice(
   /*
   Interaction
   */
-  nintr = L * ((S2 + 1) * (S2 + 1) + 2 * S2 * S2);
+  nintr = L * ((S2 + 1) * (1 + 1) + 2 * S2 * 1);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
