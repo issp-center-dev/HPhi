@@ -13,7 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "mltply.h"
 #include "expec_cisajs.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -61,10 +64,10 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   case Lanczos:
     if(X->Def.St==0){
       sprintf(sdt, cFileName1BGreen_Lanczos, X->Def.CDataFileHead);
-      printf("%s", cLogLanczosExpecOneBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGStart);
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName1BGreen_CG, X->Def.CDataFileHead);
-      printf("%s", cLogCGExpecOneBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGStart);
     }
     //vec=v0;
     break;
@@ -81,7 +84,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     break;
   }
   
-  if(!childfopen(sdt, "w", &fp)==0){
+  if(!childfopenMPI(sdt, "w", &fp)==0){
     return -1;
   } 
   switch(X->Def.iCalcModel){
@@ -92,7 +95,6 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       org_isite2 = X->Def.CisAjt[i][2]+1;
       org_sigma1 = X->Def.CisAjt[i][1];
       org_sigma2 = X->Def.CisAjt[i][3];
-      //	  printf(" %4ld %4ld %4ld %4ld \n",i,org_isite1-1, org_isite2-1, org_sigma1);
       if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
 		return -1;
       }
@@ -101,12 +103,12 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       Asum   = X->Large.isA_spin;
       Adiff  = X->Large.A_spin;
       if(isite1==isite2 ){
-		dam_pr =0.0;
+	dam_pr =0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1) shared(vec)
-		for(j=1;j<=i_max;j++){
-		  dam_pr += conj(vec[j])*vec[j]*X_CisAis(j-1,X,isite1); 
-		}
-		fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+	for(j=1;j<=i_max;j++){
+	  dam_pr += conj(vec[j])*vec[j]*X_CisAis(j-1,X,isite1); 
+	}
+	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
       }else{
         dam_pr =0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j,tmp_sgn, iexchg) firstprivate(i_max,X,Asum,Adiff,isite1,isite2,tmp_off) shared(vec)
@@ -126,7 +128,6 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       org_isite2 = X->Def.CisAjt[i][2]+1;
       org_sigma1 = X->Def.CisAjt[i][1];
       org_sigma2 = X->Def.CisAjt[i][3];
-      //printf(" %4ld %4ld %4ld %4ld %4ld \n",i,org_isite1-1, org_isite2-1, org_sigma1, org_sigma2);
       if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
 	return -1;
       }
@@ -167,15 +168,15 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	  for(j=1;j<=i_max;j++){
 	    dam_pr+=X_Spin_CisAis(j,X, isite1,org_sigma1)*conj(vec[j])*vec[j]; 
 	  } 
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_isite2-1,org_sigma1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr), cimag(dam_pr));
 	}
 	else{
 	  
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_isite2-1,org_sigma1,org_sigma2,0.0,0.0);
+	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,0.0,0.0);
 	}	
       }else{
 	// for the canonical case 
-	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_isite2-1,org_sigma1,org_sigma2,0.0,0.0);
+	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,0.0,0.0);
       }
     }
     break;
@@ -193,23 +194,23 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 		  dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
 		  for(j=1;j<=i_max;j++){
-			dam_pr+=X_Spin_CisAis(j,X,isite1,org_sigma1)*conj(vec[j])*vec[j]; 
+			dam_pr+=X_SpinGC_CisAis(j,X,isite1,org_sigma1)*conj(vec[j])*vec[j]; 
 		  } 
-		  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_isite2-1,org_sigma1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+		  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
         }else{
           // transverse magnetic field
           isite1 = X->Def.Tpow[org_isite1-1];
-		  dam_pr=0.0;
+	  dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma2, X,tmp_off) shared(vec)
-		  for(j=1;j<=i_max;j++){
-            tmp_sgn  =  X_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);   
-			dam_pr  +=  tmp_sgn*conj(vec[tmp_off+1])*vec[j]; 
-		  } 
-     	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_isite2-1,org_sigma1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+	  for(j=1;j<=i_max;j++){
+	    tmp_sgn  =  X_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);   
+	    dam_pr  +=  tmp_sgn*conj(vec[tmp_off+1])*vec[j]; 
+	  } 
+	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
         }
       }else{
         // hopping is not allowed in localized spin system
-		fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_isite2-1,org_sigma1,org_sigma2,0.0,0.0);
+	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, 0.0, 0.0);
       }
     }
     break;
@@ -221,14 +222,14 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   if(X->Def.St==0){
     if(X->Def.iCalcType==Lanczos){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");
-      printf("%s", cLogLanczosExpecOneBodyGEnd);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
     }
     else if(X->Def.iCalcType==TPQCalc){
       TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGFinish, "a", rand_i, step);     
     }
   }else if(X->Def.St==1){
     TimeKeeper(X, cFileNameTimeKeep, cExpecOneBodyGFinish, "a");
-    printf("%s", cLogLanczosExpecOneBodyGEnd);
+    fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
   }
   return 0;
 }

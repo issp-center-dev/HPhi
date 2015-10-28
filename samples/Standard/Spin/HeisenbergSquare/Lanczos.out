@@ -1,4 +1,11 @@
 
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
+
 ######  Standard Intarface Mode STARTS  ######
 
   Open Standard-Mode Inputfile StdFace.def 
@@ -7,6 +14,8 @@
   KEYWORD : w                    | VALUE : 4 
   KEYWORD : model                | VALUE : spin 
   KEYWORD : method               | VALUE : lanczos 
+  Skipping a line.
+  Skipping a line.
   KEYWORD : lattice              | VALUE : squarelattice 
   KEYWORD : j                    | VALUE : 1.0 
   KEYWORD : 2sz                  | VALUE : 0 
@@ -67,7 +76,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 16.
 Read File 'zTrans.def'.
 Read File 'zInterAll.def'.
 Read File 'greenone.def'.
@@ -83,6 +91,7 @@ EDTrans EDNChemi=0
 Start: Calc Sz. 
 idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
 num_threads==24
+Check.sdim=256, ihfbit=256
 Xicnt=12870 
 End  : Calc Sz. 
 Start: calc diagaonal components of Hamiltonian. 
@@ -120,7 +129,7 @@ End  : Calculate Energy by Lanczos method.
 energy=-11.228483 
 
 Accuracy check !!!
--1.12284832084289e+01 -1.12284832084289e+01: diff_ere=4.74602884403869e-15 var=6.74936036420639e-15 
+-1.12284832084289e+01 -1.12284832084289e+01: diff_ere=1.58200961467956e-15 var=6.71275018654770e-17 
  Accuracy of Lanczos vectors is enough
 
 Start: Calculate one body Green functions by Lanczos method.

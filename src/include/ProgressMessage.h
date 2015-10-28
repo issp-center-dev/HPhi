@@ -13,19 +13,20 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#ifndef __PROGRESS_MESSAGE__
-#define __PROGRESS_MESSAGE__
 
-const char* cProFinishAlloc ="LARGE ALLOCATE FINISH !\n";
-const char* cProEDNTrans ="EDTrans EDNTransfer=%d \n";
-const char* cProEDNChemi ="EDTrans EDNChemi=%d \n";
-const char* cProStartCalcSgn = "Start: Calc sgn. \n";
-const char* cProEndCalcSgn = "End  : Calc sgn. \n";
-const char* cProStartCalcSz = "Start: Calc Sz. \n";
-const char* cProEndCalcSz = "End  : Calc Sz. \n";
-const char* cProStartOutputList = "Start: output list. \n";
-const char* cProEndOutputList = "End  : output list. \n";
-const char* cProStartCalcDiag = "Start: calc diagaonal components of Hamiltonian. \n";
-const char* cProEndCalcDiag = "End  : calc diagaonal components of Hamiltonian. \n";
+#ifndef HPHI_PROGRESS_MESSAGE_H
+#define HPHI_PROGRESS_MESSAGE_H
 
-#endif
+const char* cProFinishAlloc;
+const char* cProEDNTrans;
+const char* cProEDNChemi;
+const char* cProStartCalcSgn;
+const char* cProEndCalcSgn;
+const char* cProStartCalcSz;
+const char* cProEndCalcSz;
+const char* cProStartOutputList;
+const char* cProEndOutputList;
+const char* cProStartCalcDiag;
+const char* cProEndCalcDiag;
+
+#endif /* HPHI_PROGRESS_MESSAGE_H */

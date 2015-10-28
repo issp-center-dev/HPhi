@@ -20,6 +20,9 @@
  * Copyright (C) 2006- Takahiro MISAWA. All rights reserved.
  *-------------------------------------------------------------*/
 
+#ifndef HPHI_STRUCT_H
+#define HPHI_STRUCT_H
+
 /*=================================================================================================*/
 struct DefineList{
   char *CDataFileHead;				/**< Read from Calcmod in readdef. Header of output file such as Green's function */
@@ -101,6 +104,8 @@ struct DefineList{
   int    NExchangeCoupling;    /**< */
   double *ParaExchangeCoupling;  /**< */
 
+  int    NIsingCoupling;    /**< */
+  
   int   **PairLiftCoupling;  /**< */
   int    NPairLiftCoupling;    /**< */
   double *ParaPairLiftCoupling;  /**< */
@@ -222,3 +227,5 @@ struct TimeKeepStruct{
 /*global variables---------------------------------------------*/
 struct EDMainCalStruct X;
 /*-------------------------------------------------------------*/
+
+#endif /* HPHI_STRUCT_H */

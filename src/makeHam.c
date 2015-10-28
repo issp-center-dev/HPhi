@@ -13,7 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "mltply.h"
 #include "makeHam.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -40,6 +43,8 @@ int makeHam(struct BindStruct *X){
   long unsigned int tmp_off,tmp_off_2;
   int tmp_sgn;
   off=0;
+  tmp_off=0;
+  tmp_off_2=0;
   
   long unsigned int i_max;
   i_max=X->Check.idim_max;
@@ -172,7 +177,7 @@ int makeHam(struct BindStruct *X){
   case KondoGC:
   case Hubbard:
   case Kondo:
-    printf("transfer\n");
+    fprintf(stdoutMPI, "transfer\n");
     //Transfer
     for(i = 0;i< X->Def.EDNTransfer; i++){
       isite1     = X->Def.EDGeneralTransfer[i][0]+1;
@@ -190,7 +195,7 @@ int makeHam(struct BindStruct *X){
       }
     }
 
-    printf("interall:%d\n",X->Def.NInterAll_OffDiagonal);
+    fprintf(stdoutMPI, "interall:%d\n",X->Def.NInterAll_OffDiagonal);
     //InterAll
     for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){    
       isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
@@ -257,7 +262,7 @@ int makeHam(struct BindStruct *X){
       }
     }
 
-    printf("pairhopp\n");
+    fprintf(stdoutMPI, "pairhopp\n");
     //Pair hopping
     for(i = 0;i< X->Def.NPairHopping; i++){
       child_pairhopp_GetInfo(i, X);        
@@ -268,7 +273,7 @@ int makeHam(struct BindStruct *X){
       }
     }
     
-    printf("exchange\n");
+    fprintf(stdoutMPI, "exchange\n");
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling; i++){
       child_exchange_GetInfo(i, X);
@@ -354,7 +359,6 @@ int makeHam(struct BindStruct *X){
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling; i++){
       child_exchange_spin_GetInfo(i, X);
-
       for(j=1;j<=X->Large.i_max;j++){
 	dmv =GC_child_exchange_spin_element(j, v0, v1, X,&tmp_off);
 	Ham[tmp_off+1][j] +=dmv;
@@ -398,7 +402,6 @@ int makeHam(struct BindStruct *X){
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling; i++){
       child_exchange_spin_GetInfo(i, X);
-
       for(j=1;j<=X->Large.i_max;j++){
 	dmv          = child_exchange_spin_element(j, v0, v1, X,&tmp_off);
 	Ham[tmp_off][j] += dmv;

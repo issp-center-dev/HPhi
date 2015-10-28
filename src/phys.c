@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "phys.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -35,25 +36,25 @@ void phys(struct BindStruct *X){
       X->Phys.eigen_num=i;
 
       if(!expec_energy(X)==0){
-	printf("Error: calc expec_energy.\n");
-	exit(-1);
+	fprintf(stderr, "Error: calc expec_energy.\n");
+	exitMPI(-1);
       }
       if(!expec_cisajs(X,v1)==0){
-	printf("Error: calc OneBodyG.\n");
-	exit(-1);
+	fprintf(stderr, "Error: calc OneBodyG.\n");
+	exitMPI(-1);
       }
       if(!expec_cisajscktaltdc(X, v1)==0){
-	printf("Error: calc TwoBodyG.\n");
-	exit(-1);
+	fprintf(stderr, "Error: calc TwoBodyG.\n");
+	exitMPI(-1);
       }
       
       if(!expec_totalspin(X, v1)==0){
-	printf("Error: calc TotalSpin.\n");
-	exit(-1);
+	fprintf(stderr, "Error: calc TotalSpin.\n");
+	exitMPI(-1);
       }
       tmp_N  = X->Phys.num_up + X->Phys.num_down;
       tmp_Sz = X->Phys.num_up - X->Phys.num_down;
-      printf("i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n",i,X->Phys.energy,tmp_N,tmp_Sz,X->Phys.s2,X->Phys.doublon);
+      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n",i,X->Phys.energy,tmp_N,tmp_Sz,X->Phys.s2,X->Phys.doublon);
       X->Phys.all_energy[i]   = X->Phys.energy;
       X->Phys.all_doublon[i]  = X->Phys.doublon;
       X->Phys.all_s2[i]       = X->Phys.s2;

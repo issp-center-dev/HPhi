@@ -1,38 +1,57 @@
-
-\begin{enumerate}
-
-\item $\HPhi$ は次の場所からダウンロードできます。\\
+$\HPhi$ は次の場所からダウンロードできます。\\
 \url{https://github.com/QLMS/HPhi/releases}
 
-\item ダウンロードしたファイルを展開し、
-展開したディレクトリのなかにある\verb|src/|ディレクトリに移動してください。
+ダウンロードしたファイルを次のように展開してください。
 \begin{verbatim}
-$ tar xzvf 
-$ cd /src/
+$ tar xzvf HPhi-xxx.tar.gz
 \end{verbatim}
 
-\item インストール環境を設定します。
-  ファイル\verb|make.sys|を編集してコンパイラやオプションの指定をしてください。
-  いくつかの既知のシステムに対応する設定例がコメントとして\verb|make.sys|に記述されていますので
-  それを用いることもできます。例えば、物性研究所システムB(sekirei)にインストールする場合には
-  \verb|#####  ISSP System-B "sekirei" #####|と書いてある行の下にある
-\begin{verbatim}
-# CC = icc
-# LAPACK_FLAGS = -Dlapack -mkl=parallel 
-# FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
-# MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
-# INCLUDE_DIR=./include
-\end{verbatim}
-の行頭の\verb|#|を消してコメント解除をしてください。
+$\HPhi$は次の2通りの方法でインストールできます。
 
-\item 編集した\verb|make.sys|を保存し、次のように\verb|make|コマンドを実行してください。
-\begin{verbatim}
-$ make all
-\end{verbatim}
+\subsection{\texttt{HPhiconfig.sh}を使う方法}
 
-これで実行可能ファイル\verb|HPhi|が生成されるので、
+展開したディレクトリのなかにある\verb|HPhiconfig.sh|スクリプトを次のように実行してください。
+(物性研システムB''sekirei''の場合)
+\begin{verbatim}
+$ bash HPhiconfig.sh sekirei
+\end{verbatim}
+これによりコンパイル環境設定ファイル\verb|make.sys|が\verb|src/|ディレクトリに作られます。
+\verb|HPhiconfig.sh|の引数は次のものに対応しています。
+\begin{itemize}
+\item \verb|sekirei| : 物性研究所システムB ''sekirei''
+\item \verb|maki| : 物性研究所システムC ''maki''
+\item \verb|intel| : intelコンパイラ + Linux PC
+\item \verb|gcc| : GCC + Linux PC
+\item \verb|gcc-mac| : GCC + Mac
+\end{itemize}
+
+\verb|make.sys|の中身は次のようになっています(物性研システムB ''sekirei''の場合)。
+\begin{verbatim}
+ CC = icc
+ LAPACK_FLAGS = -Dlapack -mkl=parallel 
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+ MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
+ INCLUDE_DIR=./include
+\end{verbatim}
+となります。それぞれのマクロ(変数)の説明は次のとおりです。
+\begin{itemize}
+\item \verb|CC| : コンパイルコマンド(\verb|icc|, \verb|gcc|, \verb|fccpx|)
+\item \verb|LAPACK_FLAGS| : LAPACKのためのコンパイルオプション。 \verb|-Dlapack|は必須です。
+\item \verb|FLAGS| : その他のコンパイルオプション。
+  \verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|などのOpenMP有効化のオプションは必須です。
+\item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : メルセンヌツイスター(乱数発生ルーチン)および
+  追加のインクルードディレクトリを指定します。これらを変更する必要はありません。
+\end{itemize}
+
+これでコンパイルのための準備が整います。その後
+\begin{verbatim}
+$ make HPhi
+\end{verbatim}
+とすることで実行可能ファイル\verb|HPhi|が\verb|src/内に|生成されるので、
 このディレクトリにパスを通すか、
 パスの通っている場所にシンボリックリンクを作ってください。
+
+\subsection{cmakeを使う場合}
 
 \begin{screen}
 \Large 
@@ -47,5 +66,3 @@ $ make all
 \verb|~/.bashrc|ファイルに上記のコマンドを記載します。
 
 \end{screen}
-
-\end{enumerate}

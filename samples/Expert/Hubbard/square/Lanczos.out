@@ -1,3 +1,10 @@
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
 Start: Read File 'namelist.def'.
 End: Read File 'namelist.def'.
 Read File 'calcmod.def' for CalcMod.
@@ -9,7 +16,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 8.
 Read File 'zTrans.def'.
 X->NTransfer =48, X->Nsite= 8.
 Read File 'zInterAll.def'.
@@ -23,11 +29,9 @@ Indices and Parameters of Definition files(*.def) are complete.
 LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=48 
 EDTrans EDNChemi=0 
-Start: Calc sgn. 
-End  : Calc sgn. 
 Start: Calc Sz. 
 idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
-num_threads==1
+num_threads==24
 Xicnt=4900 
 End  : Calc Sz. 
 Start: calc diagaonal components of Hamiltonian. 
@@ -62,6 +66,7 @@ stp=52 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788842
 stp=54 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788869 
 stp=56 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788878 
 stp=58 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788881 
+stp=60 -10.2529529553 -9.8328986753 -9.2310650024 -8.2723788881 
 End  : Calculate Lanczos EigenValue.
 Start: Calculate Lanczos Eigenvector.
 End: Calculate Lanczos Eigenvector.
@@ -70,7 +75,7 @@ End  : Calculate Energy by Lanczos method.
 energy=-10.252953 
 
 Accuracy check !!!
--1.02529529552636e+01 -1.02529529476343e+01: diff_ere=7.44108604610367e-10 var=1.82989978862640e-09 
+-1.02529529552636e+01 -1.02529529552556e+01: diff_ere=7.79466116282035e-13 var=1.63414143847169e-12 
  Accuracy of Lanczos vectors is NOT enough
 Eigenvector is improved by CG method 
 Start: Calculate EigenVector by CG method.
@@ -80,7 +85,7 @@ End  : Calculate Energy by CG method.
 energy=-10.252953 
 
 CG Accuracy check !!!
--1.02529529552636e+01 -1.02529529552636e+01: diff_ere=6.93012772866891e-16 var=6.78185943799791e-16 
+-1.02529529552636e+01 -1.02529529552636e+01: diff_ere=5.19759579650168e-16 var=5.35252525131755e-16 
  
 Start: Calculate one body Green functions by CG method.
 End: Calculate one body Green functions by Lanczos method.
