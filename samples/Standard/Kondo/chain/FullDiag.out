@@ -1,4 +1,11 @@
 
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
+
 ######  Standard Intarface Mode STARTS  ######
 
   Open Standard-Mode Inputfile StdFace.def 
@@ -6,6 +13,8 @@
   KEYWORD : l                    | VALUE : 6 
   KEYWORD : model                | VALUE : kondolattice 
   KEYWORD : method               | VALUE : fulldiag 
+  Skipping a line.
+  Skipping a line.
   KEYWORD : lattice              | VALUE : chainlattice 
   KEYWORD : t                    | VALUE : 1.0 
   KEYWORD : j                    | VALUE : 4.0 
@@ -58,7 +67,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 12.
 Read File 'zTrans.def'.
 X->NTransfer =24, X->Nsite= 12.
 Read File 'zInterAll.def'.
@@ -66,14 +74,12 @@ Read File 'greenone.def'.
 Read File 'greentwo.def'.
 comb_sum= 15184 
 MAX DIMENSION idim_max=15184 
-APPROXIMATE REQUIRED MEMORY  max_mem=0.001458 GB 
+APPROXIMATE REQUIRED MEMORY  max_mem=59.021787 GB 
 sdim=4096 =2^12
 Indices and Parameters of Definition files(*.def) are complete.
 LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=24 
 EDTrans EDNChemi=0 
-Start: Calc sgn. 
-End  : Calc sgn. 
 Start: Calc Sz. 
 j = 0 loc 1 
 j = 1 loc 0 
