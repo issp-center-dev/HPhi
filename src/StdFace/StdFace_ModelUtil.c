@@ -131,9 +131,9 @@ void StdFace_Kitaev(
       intr0 = 0.5 * Jflip * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0))
                           * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
 
-      StdFace_intr(kintr, Jflip,
+      StdFace_intr(kintr, intr0,
         isite, ispin + 1, isite, ispin, jsite, jspin + 1, jsite, jspin);
-      StdFace_intr(kintr, Jflip,
+      StdFace_intr(kintr, intr0,
         isite, ispin, isite, ispin + 1, jsite, jspin, jsite, jspin + 1);
     }
   }
