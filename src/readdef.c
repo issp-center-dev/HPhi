@@ -788,7 +788,7 @@ int ReadDefFileIdxPara(
     case KWPairLift:
       /*pairlift.def--------------------------------------*/
       if(X->NPairLiftCoupling>0){
-	if(X->iCalcModel != Spin){
+	if(X->iCalcModel != SpinGC){
 	  fclose(fp);
 	  return -1;
 	}
