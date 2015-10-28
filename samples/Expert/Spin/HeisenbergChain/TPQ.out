@@ -1,3 +1,10 @@
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
 Start: Read File 'namelist.def'.
 End: Read File 'namelist.def'.
 Read File 'calcmod.def' for CalcMod.
@@ -9,7 +16,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 16.
 Read File 'zTrans.def'.
 Read File 'zInterAll.def'.
 Read File 'greenone.def'.
@@ -25,6 +31,7 @@ EDTrans EDNChemi=0
 Start: Calc Sz. 
 idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
 num_threads==24
+Check.sdim=256, ihfbit=256
 Xicnt=12870 
 End  : Calc Sz. 
 Start: calc diagaonal components of Hamiltonian. 
@@ -79,4 +86,4 @@ step_i/total_step=1200/2000
 step_i/total_step=1400/2000 
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
-Finish: Elapsed time is 35 [s].
+Finish: Elapsed time is 37 [s].
