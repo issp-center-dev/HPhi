@@ -383,6 +383,7 @@ int ReadDefFileNInt(
 	X->Ne=X->Nup;
 	X->Ndown=X->Nsite-X->Nup;
       }
+      X->TotalSz=X->Nup-X->Ndown;
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->Lanczos_max)); //12
       fgetsMPI(ctmp2, 256, fp);

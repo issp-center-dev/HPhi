@@ -38,7 +38,10 @@ int check(struct BindStruct *X){
   int u_loc;
   int mfint[7];
   long int **comb;    
-  
+  long unsigned int idimmax=0;
+  long unsigned int idim=0;
+  long unsigned int isite=0;
+  int tmp_sz=0;
   Ns = X->Def.Nsite;
   li_malloc2(comb, Ns+1,Ns+1);
   //idim_max
@@ -106,7 +109,27 @@ int check(struct BindStruct *X){
     }
     break;
   case Spin:
-    comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
+    if(X->Def.iFlgGeneralSpin ==FALSE){
+      comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
+    }
+    else{
+      idimmax = 1;
+      for(isite=0; isite<X->Def.Nsite;isite++){
+	idimmax=idimmax*X->Def.SiteToBit[isite];
+      }
+
+#pragma omp parallel for default(none) reduction(+:comb_sum) private(tmp_sz, isite) firstprivate(idimmax, X) 
+      for(idim=0; idim<idimmax; idim++){
+	tmp_sz=0;
+	for(isite=0; isite<X->Def.Nsite;isite++){
+	  tmp_sz += GetLocal2Sz(isite+1,idim, X->Def.SiteToBit, X->Def.Tpow );	  
+	}
+	if(tmp_sz == X->Def.TotalSz){
+	  comb_sum +=1;
+	}
+      }
+    }
+    
     break;
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);

@@ -329,13 +329,14 @@ int GetBitGeneral(
  * @param org_bit original bit to check 
  * @param _SiteToBit List for getting bit at a site
  * @param _Tpow List for getting total bit at a site before
+ * @param _LocSpn List for getting total S
  * @return sz at isite
  * 
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
-/*
-int GetLocalSz
+
+int GetLocal2Sz
 (
  const unsigned int isite,
  const long unsigned int org_bit,
@@ -343,13 +344,11 @@ int GetLocalSz
  const long int *Tpow
  )
 {
-  int sz=0;
+  int TwiceSz=0;
   int bitAtSite=0;
   //get bit
   bitAtSite=GetBitGeneral(isite, org_bit, SiteToBit, Tpow);
-  //get local bit
-  sz=bitAsSite
-  //get 
-  return sz;
+  TwiceSz=-(SiteToBit[isite-1]-1)+2*bitAtSite; //-2S^{total}_i+2Sz_i
+  return TwiceSz;
 }
-*/
+
