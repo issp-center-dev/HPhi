@@ -128,7 +128,7 @@ int main(int argc, char* argv[]){
     return (-1);
   }
   else{
-    if(!check(&(X.Bind))==0){
+    if(check(&(X.Bind))==FALSE){
       return (-1);
     }
   }

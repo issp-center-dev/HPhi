@@ -16,6 +16,18 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   bitcalc.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo) 
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ * 
+ * @brief  File for giving functions of treating bits on the target of Hilbert space.
+ * 
+ * 
+ */
+
+
 /** 
  * 
  * @brief function of getting right, left and half bits corresponding to a original hilbert space.
@@ -323,14 +335,13 @@ int GetBitGeneral(
 
 /** 
  * 
- * @brief get sz at a site for general spin  
+ * @brief get 2sz at a site for general spin  
  *
  * @param isite site index (isite >= 1)
  * @param org_bit original bit to check 
  * @param _SiteToBit List for getting bit at a site
  * @param _Tpow List for getting total bit at a site before
- * @param _LocSpn List for getting total S
- * @return sz at isite
+ * @return 2sz at isite
  * 
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 

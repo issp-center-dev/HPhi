@@ -59,17 +59,6 @@ int sz(
 
        );
 
-int sz_single_thread
-(
- struct BindStruct *X,
- const unsigned int N,
- const unsigned int N2,
- const long unsigned int idim,
- const long unsigned int irght,
- const long unsigned int ilft,
- const long unsigned int ihfbit
- );
-
 int Read_sz
 (
  struct BindStruct *X,

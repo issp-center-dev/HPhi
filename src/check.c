@@ -18,14 +18,30 @@
 #include "check.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   check.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ * @brief  File for giving a function of calculating size of Hilbelt space.
+ * 
+ */
+
+
 /** 
  * @brief A program to check size of dimension for hirbert-space.
  * 
  * @param[in,out] X  Common data set used in HPhi.
  * 
+ * @retval TRUE normally finished
+ * @retval FALSE unnormally finished
+ * @version 0.2
+ * @details add function of calculating hirbert space for canonical ensemble.
+ *  
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int check(struct BindStruct *X){
     
@@ -132,12 +148,18 @@ int check(struct BindStruct *X){
     
     break;
   default:
-    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+    fprintf(stderr, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }  
 
+  if(comb_sum==0){
+    fprintf(stderr, cErrNoHilbertSpace);
+    return FALSE;
+  }
+  
   fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
+  
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
   case Lanczos:
@@ -148,14 +170,14 @@ int check(struct BindStruct *X){
     X->Check.max_mem=X->Check.idim_max*16.0*X->Check.idim_max*16.0/(pow(10,9));
     break;
   default:
-    return -1;
+    return FALSE;
     break;
   }
   fprintf(stdoutMPI, "MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(stdoutMPI, "APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }
   fprintf(fp,"MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(fp,"APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
@@ -190,13 +212,13 @@ int check(struct BindStruct *X){
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }  
   X->Check.sdim=tmp_sdim;
   
   if(childfopenMPI(cFileNameCheckSdim,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }
 
   switch(X->Def.iCalcModel){
@@ -265,7 +287,7 @@ int check(struct BindStruct *X){
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }  
   fclose(fp);	 
  
