@@ -1,0 +1,4 @@
+ Lx          2
+ Ly          5
+ orb_num     3
+ J           1.0
