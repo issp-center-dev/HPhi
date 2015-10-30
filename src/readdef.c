@@ -376,6 +376,8 @@ int ReadDefFileNInt(
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nsite));      //9
       fgetsMPI(ctmp2, 256, fp);
+      //Sz, Ncond
+      /*
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nup));         //10
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->Ndown));       //11	
@@ -384,6 +386,16 @@ int ReadDefFileNInt(
 	X->Ndown=X->Nsite-X->Nup;
       }
       X->TotalSz=X->Nup-X->Ndown;
+      */
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->TotalSz));         //10
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Ne));       //11
+      X->Nup=(X->Nsite+X->TotalSz)/2;
+      X->Ndown=(X->Nsite-X->TotalSz)/2;      
+      if(X->iCalcModel == Spin){
+	X->Ne=X->Nup;
+      }
+      
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->Lanczos_max)); //12
       fgetsMPI(ctmp2, 256, fp);
