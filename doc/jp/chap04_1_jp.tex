@@ -223,6 +223,13 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \subsection{Kitaev-Heisenberg模型パラメーター}
 \begin{itemize}
+\item \verb|2S|
+
+{\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
+
+{\bf 説明 :} 局在スピンの大きさ$S$の2倍を指定します.
+(例/ $1/2$スピンならば\verb|1|)
+
 \item \verb|h|, \verb|Gamma|, \verb|D|
 
 {\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
@@ -368,24 +375,24 @@ l = 2|\mu|
 
 カノニカル集団
 \begin{align}
-l = \frac{1}{2}|h| + \frac{1}{2}|D| + \frac{1}{4}|\Gamma|
-+\frac{z}{8} (|J_x|+|J_y|+|J_z|) +\frac{z'}{8} (|J'_x|+|J'_y|+|J'_z|) 
+l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + S |\Gamma| + S^2 |D|
++\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) +\frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|)
 \end{align}
 グランドカノニカル集団
 \begin{align}
-l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + \frac{1}{2}|D| + \frac{1}{4}|\Gamma|
-+\frac{z}{8} (|J_x|+|J_y|+|J_z|) +\frac{z'}{8} (|J'_x|+|J'_y|+|J'_z|)
+l = S |h| + S |\Gamma| + S^2 |D|
++\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) + \frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|) 
 \end{align}
 
 \item 近藤格子模型[式(\ref{fml4_1_kondo})]
 
 カノニカル集団
 \begin{align}
-l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{1}{4} |J| 
+l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{S}{2} |J| 
 \end{align}
 グランドカノニカル集団
 \begin{align}
-l = 2|\mu| + 2 z |t| + \frac{1}{4} |J| 
+l = 2|\mu| + 2 z |t| + \frac{S}{2} |J| 
 \end{align}
 
 \end{itemize}
