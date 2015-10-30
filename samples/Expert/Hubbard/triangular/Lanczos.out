@@ -1,58 +1,9 @@
 
-######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile StdFace.def 
+#####  Parallelization Info.  #####
 
-  KEYWORD : w                    | VALUE : 4 
-  KEYWORD : l                    | VALUE : 2 
-  KEYWORD : model                | VALUE : fermionhubbard 
-  KEYWORD : method               | VALUE : lanczos 
-  Skipping a line.
-  Skipping a line.
-  KEYWORD : lattice              | VALUE : triangularlattice 
-  KEYWORD : t                    | VALUE : 1.0 
-  KEYWORD : u                    | VALUE : 4.0 
-  KEYWORD : nelec                | VALUE : 8 
-  KEYWORD : 2sz                  | VALUE : 0 
-
-#######  Parameter Summary  #######
-
-                L = 2  
-                W = 4  
-                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
-                U = 4.00000   
-                t = 1.00000   
-                V = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               t' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               V' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-       LargeValue = 17          ######  DEFAULT VALUE IS USED  ######
-
-         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
-      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
-       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
-             nvec = 1           ######  DEFAULT VALUE IS USED  ######
-             exct = 1           ######  DEFAULT VALUE IS USED  ######
-       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
-    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
-           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
-    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-              2Sz = 0  
-            nelec = 8  
-      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
-
-######  Print Expart input files  ######
-
-    zlocspin.def is written.
-      zTrans.def is written.
-   zInterAll.def is written.
-    namelist.def is written.
-     calcmod.def is written.
-     modpara.def is written.
-    greenone.def is written.
-    greentwo.def is written.
-
-######  Input files are generated.  ######
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
 
 Start: Read File 'namelist.def'.
 End: Read File 'namelist.def'.
@@ -65,7 +16,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 8.
 Read File 'zTrans.def'.
 X->NTransfer =80, X->Nsite= 8.
 Read File 'zInterAll.def'.
@@ -79,8 +29,6 @@ Indices and Parameters of Definition files(*.def) are complete.
 LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=80 
 EDTrans EDNChemi=0 
-Start: Calc sgn. 
-End  : Calc sgn. 
 Start: Calc Sz. 
 idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
 num_threads==24
@@ -119,7 +67,7 @@ End  : Calculate Energy by Lanczos method.
 energy=-9.495784 
 
 Accuracy check !!!
--9.74073580839576e+00 -9.49578406698273e+00: diff_ere=2.51471496847187e-02 var=5.40163746392081e-02 
+-9.74073580839576e+00 -9.49578410008907e+00: diff_ere=2.51471462859673e-02 var=5.40163713411071e-02 
  Accuracy of Lanczos vectors is NOT enough
 Eigenvector is improved by CG method 
 Start: Calculate EigenVector by CG method.
@@ -129,7 +77,7 @@ End  : Calculate Energy by CG method.
 energy=-9.740736 
 
 CG Accuracy check !!!
--9.74073580839576e+00 -9.74073580839575e+00: diff_ere=5.47091166727621e-16 var=5.99810283115420e-17 
+-9.74073580839576e+00 -9.74073580839575e+00: diff_ere=5.47091166727621e-16 var=8.97930551496742e-17 
  
 Start: Calculate one body Green functions by CG method.
 End: Calculate one body Green functions by Lanczos method.

@@ -1,3 +1,10 @@
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
 Start: Read File 'namelist.def'.
 End: Read File 'namelist.def'.
 Read File 'calcmod.def' for CalcMod.
@@ -9,7 +16,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 16.
 Read File 'zTrans.def'.
 Read File 'zInterAll.def'.
 Read File 'greenone.def'.
@@ -25,6 +31,7 @@ EDTrans EDNChemi=0
 Start: Calc Sz. 
 idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
 num_threads==24
+Check.sdim=256, ihfbit=256
 Xicnt=12870 
 End  : Calc Sz. 
 Start: calc diagaonal components of Hamiltonian. 
@@ -69,7 +76,7 @@ End  : Calculate Energy by Lanczos method.
 energy=-7.142296 
 
 Accuracy check !!!
--7.14229636061678e+00 -7.14229636054525e+00: diff_ere=1.00151578394056e-11 var=1.03447273613178e-11 
+-7.14229636061678e+00 -7.14229636059830e+00: diff_ere=2.58732475764769e-12 var=2.91688550586288e-12 
  Accuracy of Lanczos vectors is NOT enough
 Eigenvector is improved by CG method 
 Start: Calculate EigenVector by CG method.
@@ -79,7 +86,7 @@ End  : Calculate Energy by CG method.
 energy=-7.142296 
 
 CG Accuracy check !!!
--7.14229636061678e+00 -7.14229636061678e+00: diff_ere=3.73064225364947e-16 var=9.05130983306969e-17 
+-7.14229636061678e+00 -7.14229636061678e+00: diff_ere=1.24354741788316e-16 var=1.28329376311797e-16 
  
 Start: Calculate one body Green functions by CG method.
 End: Calculate one body Green functions by Lanczos method.
