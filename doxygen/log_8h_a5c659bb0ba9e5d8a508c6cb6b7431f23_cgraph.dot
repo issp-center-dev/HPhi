@@ -1,0 +1,15 @@
+digraph "TimeKeeper"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="TimeKeeper",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="childfopenMPI",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="fopenMPI",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae"];
+  Node2 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="fprintf",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

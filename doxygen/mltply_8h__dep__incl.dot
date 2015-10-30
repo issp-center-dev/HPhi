@@ -1,0 +1,28 @@
+digraph "include/mltply.h"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="include/mltply.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="expec_cisajs.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$expec__cisajs_8c.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="include/HPhiMain.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_h_phi_main_8h.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="expec_cisajscktaltdc.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$expec__cisajscktaltdc_8c.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="expec_energy.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$expec__energy_8c.html"];
+  Node5 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="include/diagonalcalc.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$diagonalcalc_8h.html"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="diagonalcalc.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$diagonalcalc_8c.html"];
+  Node7 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="mltply.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$mltply_8c.html"];
+  Node8 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="makeHam.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$make_ham_8c.html"];
+  Node9 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

@@ -1,0 +1,30 @@
+digraph "expec_totalspin"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="expec_totalspin",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="totalspin_Spin",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="GetSplitBitByModel",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="fprintf",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e"];
+  Node3 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="GetSplitBit",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc"];
+  Node5 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="GetOffComp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$bitcalc_8c.html#ad51df85af8483eabad4118703003fc46"];
+  Node6 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="SplitBit",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50"];
+  Node1 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="totalspin_SpinGC",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e"];
+  Node8 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="totalspin_Hubbard",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249"];
+  Node9 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="totalspin_HubbardGC",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$expec__totalspin_8c.html#a389323595316ed6d873ec6c0c14f4e48"];
+}

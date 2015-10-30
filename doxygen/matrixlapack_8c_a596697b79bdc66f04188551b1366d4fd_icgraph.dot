@@ -1,0 +1,16 @@
+digraph "zheev_"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="zheev_",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="ZHEEVall",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$matrixlapack_8c.html#a6591537834cf2a4f86271053cc54dd37"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="lapack_diag",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="CalcByFullDiag",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_calc_by_full_diag_8h.html#a67653cce7bc65bc9108006c4c8bfa57b"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="main",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97",tooltip="Main program for HPhi. "];
+}

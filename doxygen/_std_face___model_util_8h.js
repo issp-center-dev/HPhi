@@ -1,0 +1,26 @@
+var _std_face___model_util_8h =
+[
+    [ "FermionHubbard_ChainLattice", "_std_face___model_util_8h.html#ab440e91549b80c28596f6db5786a140f", null ],
+    [ "FermionHubbard_HoneycombLattice", "_std_face___model_util_8h.html#abd2b582ffb856ae8828d400699d9afe0", null ],
+    [ "FermionHubbard_SquareLattice", "_std_face___model_util_8h.html#afe99a10256a72a6d8ae87eb2afa9999e", null ],
+    [ "FermionHubbard_TriangularLattice", "_std_face___model_util_8h.html#a34fd63c9ae7c90f9c931e9aafd38fe9a", null ],
+    [ "KondoLattice_ChainLattice", "_std_face___model_util_8h.html#acda4c52a642917cba227ebccb21ff06a", null ],
+    [ "KondoLattice_HoneycombLattice", "_std_face___model_util_8h.html#adbcd0c55473597b4d4f2d814a25b2fcd", null ],
+    [ "KondoLattice_SquareLattice", "_std_face___model_util_8h.html#aa9bab3549ff2e0724784e9e15d760af2", null ],
+    [ "KondoLattice_TriangularLattice", "_std_face___model_util_8h.html#aa9fe3dfcffa4a9cbab4a60382ea1cd08", null ],
+    [ "Spin_ChainLattice", "_std_face___model_util_8h.html#a248bebeb5959dc715f6eec08e776f18f", null ],
+    [ "Spin_HoneycombLattice", "_std_face___model_util_8h.html#a75002fc0f9bd1bdaa57a72fbf61d56e5", null ],
+    [ "Spin_SquareLattice", "_std_face___model_util_8h.html#a81c580e0655f14514cb7fc1f2a7c7ab0", null ],
+    [ "Spin_TriangularLattice", "_std_face___model_util_8h.html#a06964ed1f0ebe2107cf74e0af6cadebf", null ],
+    [ "StdFace_Coulomb", "_std_face___model_util_8h.html#ac2b90258049d1e0066838f746c036b15", null ],
+    [ "StdFace_exchange", "_std_face___model_util_8h.html#a5073499d756dac5c2e4ceb13501ded0a", null ],
+    [ "StdFace_intr", "_std_face___model_util_8h.html#afe20afd6c3e5eb1c5ce127311c9e02a2", null ],
+    [ "StdFace_Kitaev", "_std_face___model_util_8h.html#a4c38964a891126ea670fc98449dad679", null ],
+    [ "StdFace_NotUsed_d", "_std_face___model_util_8h.html#a05386999c1e68124dd96f79ccdd80dbd", null ],
+    [ "StdFace_NotUsed_i", "_std_face___model_util_8h.html#afb9e23628e57aea2f08ef65acc308c2a", null ],
+    [ "StdFace_PrintVal_d", "_std_face___model_util_8h.html#a40c0095bc5329e343502d453f929fecc", null ],
+    [ "StdFace_PrintVal_i", "_std_face___model_util_8h.html#ad0b1739352d13d79ba19e2973abb67f9", null ],
+    [ "StdFace_RequiredVal_i", "_std_face___model_util_8h.html#aa10304b418d3e5f362a13c06749be672", null ],
+    [ "StdFace_SzSz", "_std_face___model_util_8h.html#a73a8dfd279d22cd5babb1952fecdbfc4", null ],
+    [ "StdFace_trans", "_std_face___model_util_8h.html#a4b607adce5209d09c9e4ec65d5934fd2", null ]
+];

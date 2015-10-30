@@ -1,0 +1,8 @@
+digraph "StdFace" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  dir_1e461e20856930d8c8341cb19bb280fe [shape=box, label="StdFace", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_1e461e20856930d8c8341cb19bb280fe.html"];
+  dir_d44c64559bbebec7f509842c48db8b23 [shape=box label="include" URL="dir_d44c64559bbebec7f509842c48db8b23.html"];
+  dir_1e461e20856930d8c8341cb19bb280fe->dir_d44c64559bbebec7f509842c48db8b23 [headlabel="6", labeldistance=1.5 headhref="dir_000001_000000.html"];
+}

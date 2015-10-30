@@ -1,0 +1,38 @@
+digraph "ReadDefFileNInt"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="ReadDefFileNInt",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="InitializeInteractionNum",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="fprintf",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="GetFileName",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$readdef_8c.html#a500b57266b13cf3bc4a89f222179a03d",tooltip="Function of Fitting FileName. "];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="fopenMPI",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae"];
+  Node4 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="ReadDefFileError",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$readdef_8c.html#a21479192d729f0d76654f014b63b6d7a",tooltip="Error Function of reading def files. "];
+  Node6 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="fgetsMPI",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$wrapper_m_p_i_8h.html#aa75a96d74dddc8e6921813225e318551"];
+  Node4 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="CheckKW",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$readdef_8c.html#ad8ab1bf637b562388b376ffe8bbff91b",tooltip="Function of Checking keyword in NameList file. "];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="ReadcalcmodFile",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$readdef_8c.html#ab8b765c6b13b09923368a2c8bec319ca",tooltip="Function of Reading calcmod file. "];
+  Node9 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="GetKWWithIdx",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$readdef_8c.html#a3d8c84b499f7188fc876ad1d53349b79",tooltip="Function of Getting keyword and it&#39;s variable from characters. "];
+  Node10 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="ValidateValue",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$readdef_8c.html#a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a",tooltip="Function of Validating value. "];
+  Node1 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}
