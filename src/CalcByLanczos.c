@@ -84,9 +84,9 @@ int CalcByLanczos(
   if(diff_ene < eps_Energy && var< eps_Energy){
     fprintf(stdoutMPI, "Accuracy of Lanczos vectors is enough\n");
     fprintf(stdoutMPI, "\n");
-    iconv=1;
   }else{
     fprintf(stdoutMPI, "Accuracy of Lanczos vectors is NOT enough\n");
+    iconv=1;
   }
   if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG && iconv==1){
     fprintf(stdoutMPI, "Eigenvector is improved by CG method \n");
