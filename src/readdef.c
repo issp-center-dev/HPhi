@@ -377,23 +377,37 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nsite));      //9
       fgetsMPI(ctmp2, 256, fp);
       //Sz, Ncond
-      /*
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nup));         //10
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Ndown));       //11	
-      if(X->iCalcModel == Spin){
-	X->Ne=X->Nup;
-	X->Ndown=X->Nsite-X->Nup;
+      int itmp;
+      sscanf(ctmp2,"%s %d\n", ctmp, &itmp);         //10
+      if(strcmp(ctmp, "Nup")==0){
+	X->Nup= itmp;
       }
-      X->TotalSz=X->Nup-X->Ndown;
-      */
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->TotalSz));         //10
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Ne));       //11
-      X->Nup=(X->Nsite+X->TotalSz)/2;
-      X->Ndown=(X->Nsite-X->TotalSz)/2;      
-      if(X->iCalcModel == Spin){
-	X->Ne=X->Nup;
+      else if(strcmp(ctmp, "Sz")==0){
+	X->TotalSz=itmp;
+      }
+      else{
+	return -1;
+      }
+
+      fgetsMPI(ctmp, 256, fp);
+      sscanf(ctmp,"%s %d\n", ctmp, &itmp);       //11	
+      if(strcmp(ctmp, "Ndown")==0){
+	X->Ndown=itmp;
+	if(X->iCalcModel == Spin){
+	  X->Ne=X->Nup;
+	  X->Ndown=X->Nsite-X->Nup;
+	}
+	X->TotalSz=X->Nup-X->Ndown;
+      }
+      else if(strcmp(ctmp, "Ncond")==0){	
+	X->Nup=(X->Nsite+X->TotalSz)/2;
+	X->Ndown=(X->Nsite-X->TotalSz)/2;      
+	if(X->iCalcModel == Spin){
+	  X->Ne=X->Nup;
+	}
+      }
+      else{
+	return -1;
       }
       
       fgetsMPI(ctmp2, 256, fp);

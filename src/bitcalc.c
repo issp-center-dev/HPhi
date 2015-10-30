@@ -195,9 +195,10 @@ int GetOffCompGeneralSpin(
     *_ioffComp=0;
     return FALSE;
   }
+
   //delete org_ispin and create off_ispin
-    int tmp_off;
-    tmp_off=off_ispin-org_ispin;
+  int tmp_off;
+  tmp_off=off_ispin-org_ispin;
   *_ioffComp =org_ibit+tmp_off*Tpow[org_isite-1];
   return TRUE;
 }

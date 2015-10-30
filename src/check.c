@@ -259,7 +259,6 @@ int check(struct BindStruct *X){
     }
     break;
  case SpinGC:
-   printf("test\n");
    if(X->Def.iFlgGeneralSpin==FALSE){
      for(i=1;i<=X->Def.Nsite;i++){
        u_tmp=u_tmp*2;
@@ -293,5 +292,5 @@ int check(struct BindStruct *X){
  
   i_free2(comb, Ns+1, Ns+1);
   fprintf(stdoutMPI, "Indices and Parameters of Definition files(*.def) are complete.\n");
-  return 0;
+  return TRUE;
 }    

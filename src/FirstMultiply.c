@@ -42,6 +42,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
     v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
     //v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5)+I*2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
   }
+
   dnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
   for(i=1;i<=i_max;i++){

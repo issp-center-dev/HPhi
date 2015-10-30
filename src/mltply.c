@@ -47,6 +47,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   double num2 = 0;
   /*[s] For InterAll */
   double complex tmp_V;
+  double complex dmv=0;
   /*[e] For InterAll */
 
   long unsigned int i_max;
@@ -338,7 +339,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 		if (num1 ==TRUE && X->Large.mode == M_MLTPLY) { // for multply
 		  tmp_v0[j] += tmp_v1[j]*tmp_trans;
 		}
-                dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v0[j] * num1;
+                dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j] * num1;
               }
             } else {//sigma1 != sigma2
               // transverse magnetic field
@@ -346,10 +347,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
                 num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-		if (X->Large.mode == M_MLTPLY) { // for multply
+		if (num1==TRUE && X->Large.mode == M_MLTPLY) { // for multply
 		  tmp_v0[off+1] += tmp_v1[j]*num1*tmp_trans;
 		}
-		dam_pr += num1 * conj(tmp_v1[off + 1]) * tmp_v0[j]*tmp_trans;
+		dam_pr += num1 * conj(tmp_v1[off + 1]) * tmp_v1[j]*tmp_trans;
               }
             }
           } else {
@@ -358,8 +359,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           }
         }
 
-        //InterAll
-        
+        //InterAll        
 	for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){
 	  isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
 	  isite2 = X->Def.InterAll_OffDiagonal[i][4]+1;
@@ -370,17 +370,22 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  tmp_V  = X->Def.ParaInterAll_OffDiagonal[i];
 
 	  dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1, num2) firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, off,tmp_off,tmp_V) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1, dmv,off,tmp_off) firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) shared(tmp_v0, tmp_v1)
 	  for (j = 1; j <= i_max; j++) {
 	    num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-	    num1 = GetOffCompGeneralSpin(tmp_off, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow)*num1;
-	    if ( X->Large.mode == M_MLTPLY) { // for multply
-	      tmp_v0[off+1] += tmp_v1[j]*tmp_V*num1;
+	    if(num1 ==TRUE){
+	      num1 = GetOffCompGeneralSpin(tmp_off, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow);
+	      if (num1==TRUE){
+		dmv= tmp_v1[j]*tmp_V;
+		if(X->Large.mode == M_MLTPLY) { // for multply
+		tmp_v0[off+1] += dmv;
+		}
+		dam_pr += conj(tmp_v1[off + 1]) * dmv;
+	      }
 	    }
-	    dam_pr += conj(tmp_v1[off + 1]) * tmp_v0[j]*tmp_V *num1;
-	  }            
+	  }
 	}
-      }
+      }//end:generalspin
 
       break;
 

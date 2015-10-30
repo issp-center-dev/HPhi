@@ -83,7 +83,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     u_long_i = 123432 + abs(iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
     for(i = 1; i <= i_max; i++){
-     v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
+      v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
     }
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
