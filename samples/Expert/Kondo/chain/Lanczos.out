@@ -1,3 +1,10 @@
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
 Start: Read File 'namelist.def'.
 End: Read File 'namelist.def'.
 Read File 'calcmod.def' for CalcMod.
@@ -9,7 +16,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 12.
 Read File 'zTrans.def'.
 X->NTransfer =24, X->Nsite= 12.
 Read File 'zInterAll.def'.
@@ -23,8 +29,6 @@ Indices and Parameters of Definition files(*.def) are complete.
 LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=24 
 EDTrans EDNChemi=0 
-Start: Calc sgn. 
-End  : Calc sgn. 
 Start: Calc Sz. 
 j = 0 loc 1 
 j = 1 loc 0 
@@ -81,7 +85,7 @@ End  : Calculate Energy by Lanczos method.
 energy=-19.025128 
 
 Accuracy check !!!
--1.90251276267896e+01 -1.90251276267898e+01: diff_ere=1.08308021587343e-14 var=1.06921968779584e-14 
+-1.90251276267896e+01 -1.90251276267896e+01: diff_ere=3.73475936508080e-16 var=6.13672368971839e-16 
  Accuracy of Lanczos vectors is enough
 
 Start: Calculate one body Green functions by Lanczos method.

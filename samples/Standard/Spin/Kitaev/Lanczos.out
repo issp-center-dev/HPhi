@@ -1,4 +1,11 @@
 
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
+
 ######  Standard Intarface Mode STARTS  ######
 
   Open Standard-Mode Inputfile StdFace.def 
@@ -7,6 +14,8 @@
   KEYWORD : l                    | VALUE : 3 
   KEYWORD : model                | VALUE : spingc 
   KEYWORD : method               | VALUE : lanczos 
+  Skipping a line.
+  Skipping a line.
   KEYWORD : lattice              | VALUE : honeycomblattice 
   KEYWORD : jx0                  | VALUE : -1.0 
   KEYWORD : jy0                  | VALUE : 0.0 
@@ -84,7 +93,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 12.
 Read File 'zTrans.def'.
 Read File 'zInterAll.def'.
 Read File 'greenone.def'.
@@ -98,7 +106,6 @@ LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=0 
 EDTrans EDNChemi=0 
 Start: Calc Sz. 
-idim=4096.000000 irght=63 ilft=4032 ihfbit=64 
 num_threads==24
 Xicnt=4096 
 End  : Calc Sz. 
@@ -135,10 +142,10 @@ Start: Calculate Lanczos Eigenvector.
 End: Calculate Lanczos Eigenvector.
 Start: Calculate Energy.
 End  : Calculate Energy by Lanczos method.
-energy=-2.450074 
+energy=-2.450068 
 
 Accuracy check !!!
--2.45007067505859e+00 -2.45007362585310e+00: diff_ere=1.20437118038974e-06 var=4.83939549903789e-07 
+-2.45007067505859e+00 -2.45006776127425e+00: diff_ere=1.18926542411070e-06 var=1.90969533005592e-06 
  Accuracy of Lanczos vectors is NOT enough
 Eigenvector is improved by CG method 
 Start: Calculate EigenVector by CG method.
@@ -148,7 +155,7 @@ End  : Calculate Energy by CG method.
 energy=-2.450071 
 
 CG Accuracy check !!!
--2.45007067505859e+00 -2.45007067506078e+00: diff_ere=8.93952980735192e-13 var=3.30748521253235e-16 
+-2.45007067505859e+00 -2.45007067506078e+00: diff_ere=8.93409213715280e-13 var=4.60866425053169e-16 
  
 Start: Calculate one body Green functions by CG method.
 End: Calculate one body Green functions by Lanczos method.

@@ -59,7 +59,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
   i_max=X->Check.idim_max;      
   k_exct = X->Def.k_exct;
- 
+
   if(initial_mode == 0){
     X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
@@ -67,12 +67,15 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
     iv=X->Large.iv;
     fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
-    #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
+#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
       v1[i]=0.0;
     }
     v1[iv]=1.0;
+    if(X->Def.iInitialVecType==0){
+      v1[iv]+=1.0*I;
+    }
   }else if(initial_mode==1){
     iv = X->Def.initial_iv;
     fprintf(stdoutMPI, "initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
@@ -81,10 +84,18 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v0[i]=0.0;
     }
     u_long_i = 123432 + abs(iv);
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);    
-    for(i = 1; i <= i_max; i++){
-      v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
+    dsfmt_init_gen_rand(&dsfmt, u_long_i);
+    if(X->Def.iInitialVecType==0){
+      for(i = 1; i <= i_max; i++){
+	v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
+      }
     }
+    else{
+       for(i = 1; i <= i_max; i++){
+	 v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5);
+      }
+    }
+    
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
     for(i=1;i<=i_max;i++){
@@ -173,7 +184,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
             
     if(stp>2 && stp%2==0){
-      #ifdef lapack
+      
+#ifdef lapack
       d_malloc2(tmp_mat,stp,stp);
       d_malloc1(tmp_E,stp+1);
 
@@ -198,10 +210,11 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[4] = tmp_E[3];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);
-      #else
+#else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
-      #endif
-       
+#endif
+      
+
        fprintf(stdoutMPI, "stp=%d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
        if(stp==4){
 	 childfopenMPI(sdt_2,"w", &fp);

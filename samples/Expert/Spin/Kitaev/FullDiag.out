@@ -1,3 +1,10 @@
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
 Start: Read File 'namelist.def'.
 End: Read File 'namelist.def'.
 Read File 'calcmod.def' for CalcMod.
@@ -9,21 +16,19 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 12.
 Read File 'zTrans.def'.
 Read File 'zInterAll.def'.
 Read File 'greenone.def'.
 Read File 'greentwo.def'.
 comb_sum= 4096 
 MAX DIMENSION idim_max=4096 
-APPROXIMATE REQUIRED MEMORY  max_mem=0.000393 GB 
+APPROXIMATE REQUIRED MEMORY  max_mem=4.294967 GB 
 sdim=64 =2^6
 Indices and Parameters of Definition files(*.def) are complete.
 LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=0 
 EDTrans EDNChemi=0 
 Start: Calc Sz. 
-idim=4096.000000 irght=63 ilft=4032 ihfbit=64 
 num_threads==24
 Xicnt=4096 
 End  : Calc Sz. 

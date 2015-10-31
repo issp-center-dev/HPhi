@@ -35,14 +35,21 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
   Ns = 1.0*X->Def.Nsite;
   i_max=X->Check.idim_max;      
 
-  //For getting random numbers without any dependencies of threads,
-  //we do not adopt omp in this part.
-  for(i = 1; i <= i_max; i++){
-    v0[i]=0.0;
-    v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
-    //v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5)+I*2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
+  if(X->Def.iInitialVecType==0){
+    //For getting random numbers without any dependencies of threads,
+    //we do not adopt omp in this part.
+    for(i = 1; i <= i_max; i++){
+      v0[i]=0.0;  
+      v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5)+I*2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
+    }
   }
-
+  else{
+    for(i = 1; i <= i_max; i++){
+      v0[i]=0.0;
+      v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
+    }
+  }
+  
   dnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
   for(i=1;i<=i_max;i++){

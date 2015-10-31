@@ -138,6 +138,9 @@ struct DefineList{
 
   int iCalcEigenVec;
   /**< An integer for selecting method to calculate eigenvectors. 0:Lanczos+CG, 1: Lanczos. default value is set as 0 in readdef.c*/  
+
+  int iInitialVecType;
+  /**< An integer for setting a type of inital vectors. 0:complex type, 1: real type. default value is set as 0 in readdef.c*/  
   
   int iFlgFiniteTemperature;    /**< */
   int iCalcModel;

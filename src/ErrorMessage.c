@@ -45,6 +45,8 @@ char *cErrOutputMode="Error in %s\n OutputMode: \n 0: calc one body green functi
 char *cErrCalcEigenVec="Error in %s\n CalcEigenVec: \n 0: Lanczos+CG method,\n 1: Lanczos method.\n";
 char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC.\n";
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
+char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
+
 char *cErrKW="Error: Wrong keywords '%s' in %s.\n";
 char *cErrKW_ShowList="Choose Keywords as follows: \n";
 char *cErrKW_Same="Error: Same keywords exist in %s.\n";

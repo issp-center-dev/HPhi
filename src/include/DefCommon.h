@@ -40,6 +40,7 @@
 #define CORRMODE 1 /*!< calc one body green function and two body green functions and correlatinos for charge and spin.*/
 
 /*!< CalcEigenVector */
+#define NUM_SETINITAILVEC 2 /*< Number of setting type of initial vectors.*/
 #define NUM_CALCEIGENVEC 2 /*!< Number of calculating eigenvector mode.*/
 #define CALCVEC_LANCZOSCG  0 /*!< Lanczos + CG method*/
 #define CALCVEC_LANCZOS 1 /*!< Lanczos method*/

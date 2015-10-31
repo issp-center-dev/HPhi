@@ -5,7 +5,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "./HPhiconfig.sh system_name"
     echo " system_name should be choosen from below:"
     echo "     sekirei : ISSP system-B"
-    echo "        make : ISSP system-C"
+    echo "        maki : ISSP system-C"
     echo "       intel : Intel compiler + Linux PC"
     echo " mpicc-intel : Intel compiler + Linux PC + mpicc"
     echo "         gcc : GCC + Linux"
@@ -31,9 +31,9 @@ INCLUDE_DIR=./include
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
-CC = mpifccpx
+CC = fccpx
 LAPACK_FLAGS = -Dlapack -SSL2BLAMP
-FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI
+FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
@@ -114,7 +114,7 @@ help:
 HPhi:
 	cd src;make -f makefile_src
 
-useguide:
+userguide:
 	cd doc/jp/;make -f makefile_doc_jp;mv userguide_jp.pdf ../
 	cd doc/en/;make -f makefile_doc_en;mv userguide_en.pdf ../
 

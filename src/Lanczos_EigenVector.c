@@ -54,14 +54,25 @@ void Lanczos_EigenVector(struct BindStruct *X){
     
   if(initial_mode == 0){
     v1[iv]=1.0;
+    if(X->Def.iInitialVecType==0){
+      v1[iv] += 1.0*I;
+    }
     vg[iv]=vec[k_exct][1];
   }else if(initial_mode==1){      
     iv = X->Def.initial_iv;
     u_long_i = 123432 + abs(iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
-    for(i = 1; i <= i_max; i++){
-      v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
+    if(X->Def.iInitialVecType==0){
+      for(i = 1; i <= i_max; i++){
+	v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
+      }
     }
+    else{
+      for(i = 1; i <= i_max; i++){
+	v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5);
+      }
+    }
+    
     dnorm=0;
     #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
     for(i=1;i<=i_max;i++){
@@ -125,6 +136,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
 #pragma omp parallel for default(none) private(j) shared(v0) firstprivate(i_max, dnorm_inv)
   for(j=1;j<=i_max;j++){
     v0[j] = v0[j]*dnorm_inv;
+    //printf("v0[%ld]=(%lf, %lf)\n", j, creal(v0[j]), cimag(v0[j]));
   }
   
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorFinish, "a");
