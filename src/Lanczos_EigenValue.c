@@ -75,6 +75,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     v1[iv]=1.0;
     if(X->Def.iInitialVecType==0){
       v1[iv]+=1.0*I;
+      v1[iv]/=sqrt(2.0);
     }
   }else if(initial_mode==1){
     iv = X->Def.initial_iv;
