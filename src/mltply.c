@@ -272,9 +272,13 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
             if (sigma1 == sigma2) {
               // longitudinal magnetic field
               dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
-                dam_pr += tmp_trans * X_SpinGC_CisAis(j, X, is1_spin, sigma1) * conj(tmp_v1[j]) * tmp_v0[j];
+		tmp_sgn =X_SpinGC_CisAis(j, X, is1_spin, sigma1);
+		if(tmp_sgn !=0){
+		  tmp_v0[j] += tmp_trans* tmp_v1[j];
+		  dam_pr += tmp_trans *conj(tmp_v1[j]) * tmp_v1[j];
+		}
               }
             } else {
               // transverse magnetic field
@@ -283,7 +287,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
                 tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
-                dam_pr += tmp_sgn * conj(tmp_v1[off + 1]) * tmp_v0[j];
+		if(tmp_sgn !=0){
+		  tmp_v0[off+1] += tmp_trans* tmp_v1[j];
+		  dam_pr += tmp_sgn * conj(tmp_v1[off + 1]) * tmp_v1[j];
+		}
               }
             }
           } else {
