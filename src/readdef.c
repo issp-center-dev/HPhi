@@ -311,6 +311,9 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
+  int iNcond=0;
+  int iReadSz=FALSE;
+  int iReadNCond=FALSE;
 
   InitializeInteractionNum(X);
   
@@ -373,61 +376,60 @@ int ReadDefFileNInt(
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nsite));      //9
-      fgetsMPI(ctmp2, 256, fp);
-      //Sz, Ncond
-      int itmp;
-      sscanf(ctmp2,"%s %d\n", ctmp, &itmp);         //10
-      if(strcmp(ctmp, "Nup")==0){
-	X->Nup= itmp;
-      }
-      else if(strcmp(ctmp, "Sz")==0){
-	X->TotalSz=itmp;
-      }
-      else{
-	return -1;
-      }
 
-      fgetsMPI(ctmp, 256, fp);
-      sscanf(ctmp,"%s %d\n", ctmp, &itmp);       //11	
-      if(strcmp(ctmp, "Ndown")==0){
-	X->Ndown=itmp;
-	if(X->iCalcModel == Spin){
-	  X->Ne=X->Nup;
-	  X->Ndown=X->Nsite-X->Nup;
-	}
-	X->TotalSz=X->Nup-X->Ndown;
-      }
-      else if(strcmp(ctmp, "Ncond")==0){	
-	X->Nup=(X->Nsite+X->TotalSz)/2;
-	X->Ndown=(X->Nsite-X->TotalSz)/2;      
-	if(X->iCalcModel == Spin){
-	  X->Ne=X->Nup;
-	}
-      }
-      else{
-	return -1;
-      }
+      double dtmp;
       
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Lanczos_max)); //12
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %ld\n", ctmp, &(X->initial_iv));//13
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->nvec));      //14
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->k_exct));    //15
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->LanczosEps)); //16
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->LanczosTarget)); //17
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2, "%s %lf\n", ctmp, &(LargeValue)); //18
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2, "%s %d\n", ctmp, &(NumAve)); //19
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2, "%s %d\n", ctmp, &(ExpecInterval)); //20
+      while(fgetsMPI(ctmp2, 256, fp)!=NULL){
+	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
+	if(strcmp(ctmp, "Nsite")==0){
+	  X->Nsite= (int)dtmp;
+	}
+	else if(strcmp(ctmp, "Nup")==0){
+	  X->Nup= (int)dtmp;
+	}
+	else if(strcmp(ctmp, "Ndown")==0){
+	  X->Ndown=(int)dtmp;
+	  X->TotalSz=X->Nup-X->Ndown;
+	}
+	else if(strcmp(ctmp, "Sz")==0){
+	  X->TotalSz=(int)dtmp;
+	  iReadSz=TRUE;
+	}
+	else if(strcmp(ctmp, "Ncond")==0){
+	  iNcond=(int)dtmp;
+	  iReadNCond=TRUE;
+	}
+	else if(strcmp(ctmp, "Lanczos_max")==0){
+	  X->Lanczos_max=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "initial_iv")==0){
+	  X->initial_iv=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "nvec")==0){
+	  X->nvec=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "exct")==0){
+	  X->k_exct=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "LanczosEps")==0){
+	  X->LanczosEps=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "LanczosTarget")==0){
+	  X->LanczosTarget=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "LargeValue")==0){
+	  LargeValue=dtmp;
+	}	
+	else if(strcmp(ctmp, "NumAve")==0){
+	  NumAve=(int)dtmp;
+	}	
+	else if(strcmp(ctmp, "ExpecInterval")==0){
+	  ExpecInterval=(int)dtmp;
+	}	
+	else{
+	  return -1;
+	}
+      }
       break;
       
     case KWLocSpin:
@@ -513,14 +515,56 @@ int ReadDefFileNInt(
     fclose(fp);
   }
 
-  if(X->iCalcModel != Spin){
-    X->Ne = X->Nup+X->Ndown;
-    if(X->NLocSpn>X->Ne){
-      fprintf(stderr, "%s", cErrNLoc);
-      fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
-      return -1;
+  //Sz, Ncond
+  switch(X->iCalcModel){
+  case Hubbard:
+  case Spin:
+  case Kondo:
+    if(iReadNCond==TRUE){
+      if(iReadSz==TRUE){
+	X->Nup=(X->NLocSpn+iNcond+X->TotalSz)/2;
+	X->Ndown=(X->NLocSpn+iNcond-X->TotalSz)/2;      
+      }
+      else{
+	if(X->iCalcModel == Hubbard){
+	  X->Ne=iNcond;
+	  X->iCalcModel=HubbardNConserved;
+	}
+	else{
+	  fprintf(stderr, " 2Sz is not defined.");
+	  return -1;
+	}
+      }
     }
+    else if(iReadNCond == FALSE && iReadSz==TRUE){
+      if(X->iCalcModel != Spin){
+	fprintf(stderr, " NCond is not defined.");
+	return -1;
+      }
+    }
+    else{
+      if(X->Nup==0 && X->Ndown==0){
+	fprintf(stderr, " NCond is not defined.");
+	return -1;
+      }
+    }
+
+    if(X->iCalcModel == Spin){
+      X->Ne=X->Nup;
+    }
+    else{
+      X->Ne = X->Nup+X->Ndown;
+      if(X->NLocSpn>X->Ne){
+	fprintf(stderr, "%s", cErrNLoc);
+	fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
+	return -1;
+      }
+    }
+    break;
+  default:
+    break;
   }
+  
   X->Nsize   = 2*X->Ne;
   X->fidx = 0;
   return 0;
