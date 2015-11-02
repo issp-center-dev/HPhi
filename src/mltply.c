@@ -308,12 +308,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           X->Large.prdct += dam_pr;
         }
       }
-      else{
-	return -1;
-      }
-      /*
       else {//For General spin
-
 	for (i = 0; i < X->Def.EDNTransfer; i++) {
           isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
           isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
@@ -414,7 +409,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  X->Large.prdct += dam_pr;	  
 	}
       }//end:generalspin
-      */
+      
       break;
 
   default:
