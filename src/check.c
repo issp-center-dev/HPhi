@@ -89,6 +89,22 @@ int check(struct BindStruct *X){
     comb_down= Binomial(Ns, X->Def.Ndown, comb, Ns);
     comb_sum=comb_up*comb_down;
     break;
+
+  case HubbardNConserved:
+    comb_sum=0;
+    int iMinup=0;
+    int iAllup=X->Def.Ne;
+    if(X->Def.Ne > X->Def.Nsite){
+      iMinup = X->Def.Ne-X->Def.Nsite;
+      iAllup = X->Def.Nsite;
+    }
+    for(i=iMinup; i<= iAllup; i++){
+      comb_up= Binomial(Ns, i, comb, Ns);
+      comb_down= Binomial(Ns, X->Def.Ne-i, comb, Ns);
+      comb_sum +=comb_up*comb_down;
+    }
+    break;
+    
   case Kondo:
     //idim_max
     // calculation of dimension
@@ -190,6 +206,7 @@ int check(struct BindStruct *X){
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     while(tmp <= X->Def.Nsite){
@@ -224,6 +241,7 @@ int check(struct BindStruct *X){
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
@@ -250,6 +268,7 @@ int check(struct BindStruct *X){
       fprintf(fp,"%ld %ld \n",i,u_tmp);
     }
     break;
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     for(i=1;i<=2*X->Def.Nsite-1;i++){

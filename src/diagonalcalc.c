@@ -17,7 +17,7 @@
 /**
  * @file   diagonalcalc.c
  * @version 0.2
- * @details modify functions to calculate diagonal components for general spin
+ * @details modify functions to calculate diagonal components for general spin.
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  *
  * @version 0.1
