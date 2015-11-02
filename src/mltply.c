@@ -224,7 +224,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     case Spin:
 
       //Transfer absorbed in Diagonal term.
-
       //InterAll
       for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
         isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
@@ -238,25 +237,14 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
         dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
         X->Large.prdct += dam_pr;
       }
-          //fprintf(stdoutMPI, "dam_pr_interall=%lf\n", X->Large.prdct);
-
-          //Exchange
-          for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-            child_exchange_spin_GetInfo(i, X);
-            dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
-            //    fprintf(stdoutMPI, "dam_pr_exchange=%lf\n", dam_pr);
-          }
-
-          //PairLift
-          for (i = 0; i < X->Def.NPairLiftCoupling; i++) {
-            child_pairlift_spin_GetInfo(i, X);
-            dam_pr = child_pairlift_spin(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
-            // fprintf(stdoutMPI, "dam_pr_pairlift=%lf\n", dam_pr);
-          }
-
-          break;
+      //Exchange
+      for (i = 0; i < X->Def.NExchangeCoupling; i++) {
+	child_exchange_spin_GetInfo(i, X);
+	dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+	X->Large.prdct += dam_pr;
+      }
+      
+      break;
 
     case SpinGC:
       if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -266,46 +254,32 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           sigma1 = X->Def.EDGeneralTransfer[i][1];
           sigma2 = X->Def.EDGeneralTransfer[i][3];
           tmp_trans = -X->Def.EDParaGeneralTransfer[i];
-
           if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
             return -1;
           }
           if (isite1 == isite2) {
             is1_spin = X->Def.Tpow[isite1 - 1];
-            if (sigma1 == sigma2) {
-              // longitudinal magnetic field
-              dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j,tmp_sgn) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
-              for (j = 1; j <= i_max; j++) {
-		tmp_sgn = X_SpinGC_CisAis(j, X, is1_spin, sigma1);
-		if(tmp_sgn !=0){
-		  if (X->Large.mode == M_MLTPLY) { // for multply
-		    tmp_v0[j] += tmp_v1[j]*tmp_trans;
-		  }
-		  dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
-		}
-              }
-            }else {
-              // transverse magnetic field
-              is1_spin = X->Def.Tpow[isite1 - 1];
-              dam_pr = 0.0;
+	    // longitudinal magnetic field (considerd in diagonalcalc.c)
+	    // transverse magnetic field
+	    is1_spin = X->Def.Tpow[isite1 - 1];
+	    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) shared(tmp_v0, tmp_v1)
-              for (j = 1; j <= i_max; j++) {
-                tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
-		if(tmp_sgn !=0){
-		  if (X->Large.mode == M_MLTPLY) { // for multply
-		    tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		  }
-		  dam_pr += tmp_sgn * conj(tmp_v1[off + 1]) * tmp_v1[j];
+	    for (j = 1; j <= i_max; j++) {
+	      tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
+	      if(tmp_sgn !=0){
+		if (X->Large.mode == M_MLTPLY) { // for multply
+		  tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
 		}
-              }
-            }
-          } else {
+		dam_pr += tmp_sgn * conj(tmp_v1[off + 1]) * tmp_v1[j];
+	      }
+	    }
+	  }
+	  else {
             // hopping is not allowed in localized spin system
             return -1;
           }
         }
-
+	
 	//InterAll	
         for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
           isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
@@ -334,6 +308,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           X->Large.prdct += dam_pr;
         }
       }
+      else{
+	return -1;
+      }
+      /*
       else {//For General spin
 
 	for (i = 0; i < X->Def.EDNTransfer; i++) {
@@ -436,7 +414,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  X->Large.prdct += dam_pr;	  
 	}
       }//end:generalspin
-
+      */
       break;
 
   default:
