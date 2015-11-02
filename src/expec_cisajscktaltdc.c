@@ -339,12 +339,10 @@ int expec_cisajscktaltdc
 	    }
 	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
 	  }
-	}
-	else{// hopping process is not allowed
+	//}else{// hopping process is not allowed
 	  //error message will be added 
-	  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,0.0,0.0);
-	}
-	if(org_isite1==org_isite4 && org_isite2==org_isite3){ // 
+	//  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,0.0,0.0);
+	}else if(org_isite1==org_isite4 && org_isite2==org_isite3){ // 
 	  // 2 <-> 4
 	  isA_up = X->Def.Tpow[org_isite4-1];
 	  isB_up = X->Def.Tpow[org_isite2-1];
