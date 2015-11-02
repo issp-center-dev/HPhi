@@ -75,7 +75,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     dam_pr += (list_Diagonal[j]) * conj(tmp_v1[j]) * tmp_v1[j];
   }
   X->Large.prdct += dam_pr;
-
+    
   switch (X->Def.iCalcModel) {
     case HubbardGC:
       //Transfer
@@ -277,7 +277,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
               dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j,tmp_sgn) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
-		//                dam_pr += tmp_trans * X_SpinGC_CisAis(j, X, is1_spin, sigma1) * conj(tmp_v1[j]) * tmp_v0[j];
 		tmp_sgn = X_SpinGC_CisAis(j, X, is1_spin, sigma1);
 		if(tmp_sgn !=0){
 		  if (X->Large.mode == M_MLTPLY) { // for multply
@@ -307,7 +306,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           }
         }
 
-        //InterAll
+	//InterAll	
         for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
           isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
           isite2 = X->Def.InterAll_OffDiagonal[i][4] + 1;
@@ -320,7 +319,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           dam_pr = GC_child_general_int_spin(tmp_v0, tmp_v1, X);
           X->Large.prdct += dam_pr;
         }
-
+	
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
           child_exchange_spin_GetInfo(i, X);
@@ -364,10 +363,11 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
                 num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
 		if (num1!=0) { // for multply
 		  tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		  dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j]*tmp_trans*num1;
+		  dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j]*tmp_trans;
 		}
               }
             }
+	    X->Large.prdct += dam_pr;
           } else {
             // hopping is not allowed in localized spin system
             return -1;
@@ -385,7 +385,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  tmp_V  = X->Def.ParaInterAll_OffDiagonal[i];
 
 	  dam_pr = 0.0;
-	  /*
 	  if(sigma1==sigma2){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv, off) firstprivate(i_max, isite1, isite2, sigma1, sigma3, sigma4, X, tmp_V) shared(tmp_v0, tmp_v1)
 	    for (j = 1; j <= i_max; j++) {
@@ -433,20 +432,9 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 		}
 	      }
 	    }	    
-	}
-	  */	  
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv, off, tmp_off) firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) shared(tmp_v0, tmp_v1)
-	    for (j = 1; j <= i_max; j++) {
-	      tmp_sgn = GetOffCompGeneralSpin(j-1, isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-	      if(tmp_sgn != 0){
-		tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-		if (tmp_sgn != 0){
-		  dmv= tmp_v1[j]*tmp_V;
-		  tmp_v0[off+1] += dmv;		    
-		  dam_pr += conj(tmp_v1[off + 1]) * dmv;
-		}
-	      }
-	    }
+	  }
+	  X->Large.prdct += dam_pr;
+	  
 	}
       }//end:generalspin
 
