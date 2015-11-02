@@ -73,6 +73,7 @@ int GetSplitBitByModel(
   switch(iCalcModel){    
   case HubbardGC:
   case KondoGC:
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     tmpNsite *= 2;

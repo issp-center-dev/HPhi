@@ -26,14 +26,14 @@
 #define FullDiag 2 /*!< CalcType is Full Diagonalization method.*/
 
 /*!< CalcModel */
-#define NUM_CALCMODEL 7 /*!< Number of model types defined by CalcModel.*/
+#define NUM_CALCMODEL 6 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted.*/
 #define Hubbard 0 /*!< CalcModel is Hubbard model.*/
 #define Spin 1 /*!< CalcModel is Spin system.*/
 #define Kondo 2 /*!< CalcModel is Kondo model.*/
 #define HubbardGC 3 /*!< CalcModel is GrandCanonical Hubbard model.*/
 #define SpinGC 4 /*!< CalcModel is GrandCanonical Spin system.*/
 #define KondoGC 5 /*!< CalcModel is GrandCanonical Kondo model.*/
-#define HubbardNConserved 6 /*!< CalcModel is Hubbard model.*/
+#define HubbardNConserved 6 /*!< CalcModel is Hubbard model under particle number conserved. This symmetry is automatically introduced by not defining 2Sz in a modpara file.*/
 
 /*!< OutputMode */
 #define NUM_OUTPUTMODE 2 /*!< Number of output mode.*/

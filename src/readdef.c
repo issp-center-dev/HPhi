@@ -391,7 +391,7 @@ int ReadDefFileNInt(
 	  X->Ndown=(int)dtmp;
 	  X->TotalSz=X->Nup-X->Ndown;
 	}
-	else if(strcmp(ctmp, "Sz")==0){
+	else if(strcmp(ctmp, "2Sz")==0){
 	  X->TotalSz=(int)dtmp;
 	  iReadSz=TRUE;
 	}
@@ -528,6 +528,10 @@ int ReadDefFileNInt(
       else{
 	if(X->iCalcModel == Hubbard){
 	  X->Ne=iNcond;
+      if(iNcond <1){
+        fprintf(stderr, "Ncond is incorrect.");
+        return -1;
+      }
 	  X->iCalcModel=HubbardNConserved;
 	}
 	else{
@@ -553,7 +557,9 @@ int ReadDefFileNInt(
       X->Ne=X->Nup;
     }
     else{
-      X->Ne = X->Nup+X->Ndown;
+      if(X->Ne==0) {
+        X->Ne = X->Nup + X->Ndown;
+      }
       if(X->NLocSpn>X->Ne){
 	fprintf(stderr, "%s", cErrNLoc);
 	fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
@@ -614,7 +620,6 @@ int ReadDefFileIdxPara(
       /* Read locspn.def----------------------------------------*/
       while( fgetsMPI(ctmp2, 256, fp) != NULL){
         sscanf(ctmp2, "%d %d\n", &(xitmp[0]), &(xitmp[1]) );
-
 	X->LocSpn[xitmp[0]] = xitmp[1];
 	X->SiteToBit[xitmp[0]]=(X->LocSpn[xitmp[0]]+1);//2S+1
 	if(CheckSite(xitmp[0], X->Nsite) !=0){
@@ -1578,6 +1583,7 @@ int CheckLocSpin
   int i=0;
   switch(X->iCalcModel){
   case Hubbard:
+  case HubbardNConserved:
   case HubbardGC:
   for(i=0; i<X->Nsite; i++){
     if(X->LocSpn[i]!=ITINERANT){
