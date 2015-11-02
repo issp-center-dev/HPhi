@@ -183,24 +183,26 @@ void GetOffComp(
  */
 int GetOffCompGeneralSpin(
 		const long unsigned int org_ibit,
-		const unsigned int org_isite,
-		const unsigned int org_ispin,
-		const unsigned int off_ispin,
-		long unsigned int *_ioffComp,
+		const int org_isite,
+		const int org_ispin,
+		const int off_ispin,
+		long int *_ioffComp,
 		const long int *SiteToBit,
 		const long int *Tpow
 )
 {
   if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) == FALSE){
-    *_ioffComp=0;
-    return FALSE;
+    *_ioffComp=-1;
+    return 0;
   }
 
   //delete org_ispin and create off_ispin
-  int tmp_off;
-  tmp_off=off_ispin-org_ispin;
-  *_ioffComp =org_ibit+tmp_off*Tpow[org_isite-1];
-  return TRUE;
+  long int tmp_off=0;
+  tmp_off=(long int)(off_ispin-org_ispin);
+  tmp_off *=Tpow[org_isite-1];
+  tmp_off +=org_ibit;
+  *_ioffComp =tmp_off;
+  return 1;
 }
 
 /** 
@@ -329,8 +331,8 @@ int GetBitGeneral(
 	     const long int *Tpow
 )
 {
-    long unsigned int tmp_bit=(org_bit/Tpow[isite-1])%SiteToBit[isite-1] ;
-    return (tmp_bit);
+  long unsigned int tmp_bit=(org_bit/Tpow[isite-1])%SiteToBit[isite-1] ;
+  return (tmp_bit);
 }
 
 

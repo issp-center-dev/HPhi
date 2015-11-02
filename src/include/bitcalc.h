@@ -87,10 +87,10 @@ int GetBitGeneral(
 
 int GetOffCompGeneralSpin(
 		const long unsigned int org_ibit,
-		const unsigned int org_isite,
-		const unsigned int org_ispin,
-		const unsigned int off_ispin,
-		long unsigned int *_ioffComp,
+		const int org_isite,
+		const int org_ispin,
+		const int off_ispin,
+		long int *_ioffComp,
 		const long int *SiteToBit,
 		const long int *TPow
 		);

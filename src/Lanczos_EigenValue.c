@@ -96,7 +96,6 @@ int Lanczos_EigenValue(struct BindStruct *X)
 	 v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5);
       }
     }
-    
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
     for(i=1;i<=i_max;i++){
@@ -234,8 +233,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
 	break;
       }
 
-      if(abs(beta[stp])<eps_Lanczos){
-	beta[stp]=eps_Lanczos*dShiftBeta;
+      if(abs(beta[stp])<pow(10.0, -14)){
+	beta[stp]=pow(10.0, -14)*dShiftBeta;
       }
 
       ebefor=E[Target];            

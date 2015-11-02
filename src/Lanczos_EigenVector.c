@@ -18,10 +18,24 @@
 #include "Lanczos_EigenVector.h"
 #include "wrapperMPI.h"
 
+/**
+ *
+ * @file   Lanczos_EigenVector.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ * 
+ * @brief  File for calculating eigen vectors by Lanczos method.
+ * 
+ */
+
 /** 
+ * @brief Function for calculating eigenvectors by Lanczos method.
  * 
- * 
- * @param X 
+ * @param _X parameter List for getting information to calculate eigenvectors.
+ * @version 0.2
+ * @details add an option to choose a type of initial vectors from complex or real types. 
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
@@ -45,6 +59,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
  
   //Eigenvectors by Lanczos method
   //initialization: initialization should be identical to that of Lanczos_EigenValue.c
+
 #pragma omp parallel for default(none) private(i) shared(v0, v1, vg) firstprivate(i_max)
   for(i=1;i<=i_max;i++){
     v0[i]=0.0+0.0*I;
@@ -56,6 +71,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
     v1[iv]=1.0;
     if(X->Def.iInitialVecType==0){
       v1[iv] += 1.0*I;
+      v1[iv] /=sqrt(2.0);
     }
     vg[iv]=vec[k_exct][1];
   }else if(initial_mode==1){      
