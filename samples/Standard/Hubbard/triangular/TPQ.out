@@ -1,4 +1,11 @@
 
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
+
 ######  Standard Intarface Mode STARTS  ######
 
   Open Standard-Mode Inputfile StdFace.def 
@@ -6,8 +13,8 @@
   KEYWORD : w                    | VALUE : 4 
   KEYWORD : l                    | VALUE : 2 
   KEYWORD : model                | VALUE : fermionhubbard 
-  Skipping a line.
   KEYWORD : method               | VALUE : tpq 
+  Skipping a line.
   Skipping a line.
   KEYWORD : lattice              | VALUE : triangularlattice 
   KEYWORD : t                    | VALUE : 1.0 
@@ -65,7 +72,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 8.
 Read File 'zTrans.def'.
 X->NTransfer =80, X->Nsite= 8.
 Read File 'zInterAll.def'.
@@ -79,8 +85,6 @@ Indices and Parameters of Definition files(*.def) are complete.
 LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=80 
 EDTrans EDNChemi=0 
-Start: Calc sgn. 
-End  : Calc sgn. 
 Start: Calc Sz. 
 idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
 num_threads==24
@@ -138,4 +142,4 @@ step_i/total_step=1200/2000
 step_i/total_step=1400/2000 
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
-Finish: Elapsed time is 31 [s].
+Finish: Elapsed time is 26 [s].

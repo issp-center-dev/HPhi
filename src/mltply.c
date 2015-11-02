@@ -272,9 +272,13 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
             if (sigma1 == sigma2) {
               // longitudinal magnetic field
               dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
-                dam_pr += tmp_trans * X_SpinGC_CisAis(j, X, is1_spin, sigma1) * conj(tmp_v1[j]) * tmp_v0[j];
+		tmp_sgn =X_SpinGC_CisAis(j, X, is1_spin, sigma1);
+		if(tmp_sgn !=0){
+		  tmp_v0[j] += tmp_trans* tmp_v1[j];
+		  dam_pr += tmp_trans *conj(tmp_v1[j]) * tmp_v1[j];
+		}
               }
             } else {
               // transverse magnetic field
@@ -283,7 +287,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
                 tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
-                dam_pr += tmp_sgn * conj(tmp_v1[off + 1]) * tmp_v0[j];
+		if(tmp_sgn !=0){
+		  tmp_v0[off+1] += tmp_trans* tmp_v1[j];
+		  dam_pr += tmp_sgn * conj(tmp_v1[off + 1]) * tmp_v1[j];
+		}
               }
             }
           } else {
@@ -1905,17 +1912,20 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     long unsigned int list_1_off;
     long unsigned int list_1_j = j - 1;
     long unsigned int ibit_tmp;
-    ibit_tmp = ((list_1_j & is1_up) / is1_up) ^ ((list_1_j & is2_up) / is2_up);
-    if (ibit_tmp == 0) {
+    //ibit_tmp = ((list_1_j & is1_up) / is1_up) ^ ((list_1_j & is2_up) / is2_up);
+    ibit_tmp = (list_1_j & is_up);
+    if (ibit_tmp == 0|| ibit_tmp==is_up) {
       list_1_off = list_1_j ^ is_up; //Change: ++ -> -- or -- -> ++
       *tmp_off = list_1_off;
-      dmv = tmp_J * tmp_v1[j] * ibit_tmp;
+      dmv = tmp_J * tmp_v1[j] ;//* ibit_tmp;
       if (mode == M_MLTPLY) {
         tmp_v0[list_1_off + 1] += dmv;
       }
       dam_pr += dmv * conj(tmp_v1[list_1_off + 1]);
-    }
-    return dam_pr;
+      return dam_pr;
+    }else{
+      return dam_pr;
+    } 
   }
 
 /**

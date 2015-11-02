@@ -1,4 +1,11 @@
 
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
+
 ######  Standard Intarface Mode STARTS  ######
 
   Open Standard-Mode Inputfile StdFace.def 
@@ -7,6 +14,8 @@
   KEYWORD : l                    | VALUE : 3 
   KEYWORD : model                | VALUE : spingc 
   KEYWORD : method               | VALUE : tpq 
+  Skipping a line.
+  Skipping a line.
   KEYWORD : lattice              | VALUE : honeycomblattice 
   KEYWORD : jx0                  | VALUE : -1.0 
   KEYWORD : jy0                  | VALUE : 0.0 
@@ -84,7 +93,6 @@ Read File 'greenone.def' for OneBodyG.
 Read File 'greentwo.def' for TwoBodyG.
 Definition files are correct.
 Read File 'zlocspn.def'.
-Nsite= 12.
 Read File 'zTrans.def'.
 Read File 'zInterAll.def'.
 Read File 'greenone.def'.
@@ -98,7 +106,6 @@ LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=0 
 EDTrans EDNChemi=0 
 Start: Calc Sz. 
-idim=4096.000000 irght=63 ilft=4032 ihfbit=64 
 num_threads==24
 Xicnt=4096 
 End  : Calc Sz. 
@@ -154,4 +161,4 @@ step_i/total_step=1200/2000
 step_i/total_step=1400/2000 
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
-Finish: Elapsed time is 30 [s].
+Finish: Elapsed time is 27 [s].

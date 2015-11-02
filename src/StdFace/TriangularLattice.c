@@ -51,6 +51,7 @@ void FermionHubbard_TriangularLattice(
   StdFace_PrintVal_d("t'", &tp, 0.0);
   StdFace_PrintVal_d("V'", &Vp, 0.0);
   /**/
+  StdFace_NotUsed_i("2S", S2);
   StdFace_NotUsed_d("tpp", tpp);
   StdFace_NotUsed_d("t0", t0);
   StdFace_NotUsed_d("t1", t1);
@@ -64,7 +65,7 @@ void FermionHubbard_TriangularLattice(
   */
   nsite = L * W;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
-  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 1;
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 0;
   /*
   Transfer
   */
@@ -177,11 +178,15 @@ void FermionHubbard_TriangularLattice(
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void Spin_TriangularLattice(){
+void Spin_TriangularLattice(
+  int Sz2 /**< [in] 2 * Total Sz */,
+  int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
+{
   int isite, jsite;
   int iL, iW, iLp1, iLp2, iWm2, iWm1, iWp1;
   int ktrans, kintr;
-  double LargeValue0;
+  double LargeValue0, S;
+
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
   fprintf(stdoutMPI, "\n");
@@ -189,6 +194,7 @@ void Spin_TriangularLattice(){
   StdFace_RequiredVal_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
   /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("h", &h, 0.0);
   StdFace_PrintVal_d("Gamma", &Gamma, 0.0);
   StdFace_PrintVal_d("D", &D, 0.0);
@@ -218,7 +224,7 @@ void Spin_TriangularLattice(){
   */
   nsite = L * W;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
-  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 0;
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = S2;
   /*
   Transfer
   */
@@ -229,18 +235,20 @@ void Spin_TriangularLattice(){
     transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
   }
 
+  S = (double)S2 * 0.5;
+
   ktrans = 0;
   for (isite = 0; isite < nsite; isite++){
     jsite = isite;
-    StdFace_trans(&ktrans, - h * 0.5, isite, 0, jsite, 0);
-    StdFace_trans(&ktrans,   h * 0.5, isite, 1, jsite, 1);
-    StdFace_trans(&ktrans, 0.5 * Gamma, isite, 0, isite, 1);
-    StdFace_trans(&ktrans, 0.5 * Gamma, isite, 1, isite, 0);
+    StdFace_trans(&ktrans, - h * S, isite, 0, jsite, 0);
+    StdFace_trans(&ktrans,   h * S, isite, 1, jsite, 1);
+    StdFace_trans(&ktrans, S * Gamma, isite, 0, isite, 1);
+    StdFace_trans(&ktrans, S * Gamma, isite, 1, isite, 0);
   }
   /*
   Interaction
   */
-  nintr = L * W * (4 * 7 + 2 * 12);
+  nintr = L * W * ((S2 + 1) * (S2 + 1) * 7 + 2 * S2 * S2 * 12);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -251,7 +259,7 @@ void Spin_TriangularLattice(){
     for (iL = 0; iL < L; iL++){
 
       isite = iL + iW * L;
-      StdFace_SzSz(&kintr, D, isite, isite);
+      StdFace_SzSz(&kintr, S2, S2, D, isite, isite);
 
       iLp1 = (iL + 1 + 2 * L) % L;
       iLp2 = (iL + 2 + 2 * L) % L;
@@ -260,42 +268,49 @@ void Spin_TriangularLattice(){
       iWp1 = (iW + 1 + 2 * W) % W;
 
       jsite = iL + iWm1 * L;
-      StdFace_SzSz(&kintr, Jz, isite, jsite);
-      StdFace_exchange(&kintr, Jxy, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jx - Jy), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jz, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxy, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx - Jy), isite, jsite);
 
       jsite = iLp1 + iWm1 * L;
-      StdFace_SzSz(&kintr, Jz, isite, jsite);
-      StdFace_exchange(&kintr, Jxy, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jx - Jy), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jz, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxy, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx - Jy), isite, jsite);
 
       jsite = iLp1 + iW * L;
-      StdFace_SzSz(&kintr, Jz, isite, jsite);
-      StdFace_exchange(&kintr, Jxy, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jx - Jy), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jz, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxy, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx - Jy), isite, jsite);
 
       jsite = iLp1 + iWm2 * L;
-      StdFace_SzSz(&kintr, Jzp, isite, jsite);
-      StdFace_exchange(&kintr, Jxyp, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jxp - Jyp), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jzp, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxyp, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jxp - Jyp), isite, jsite);
 
       jsite = iLp1 + iWp1 * L;
-      StdFace_SzSz(&kintr, Jzp, isite, jsite);
-      StdFace_exchange(&kintr, Jxyp, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jxp - Jyp), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jzp, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxyp, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jxp - Jyp), isite, jsite);
 
       jsite = iLp2 + iWm1 * L;
-      StdFace_SzSz(&kintr, Jzp, isite, jsite);
-      StdFace_exchange(&kintr, Jxyp, isite, jsite);
-      StdFace_Kitaev(&kintr, 0.25 * (Jxp - Jyp), isite, jsite);
+      StdFace_SzSz(&kintr, S2, S2, Jzp, isite, jsite);
+      StdFace_exchange(&kintr, S2, S2, Jxyp, isite, jsite);
+      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jxp - Jyp), isite, jsite);
     }
   }
   /*
   Set mTPQ parameter
   */
-  LargeValue0 = 0.5 * fabs(h) + 0.5 * fabs(D) + 0.25 * fabs(Gamma)
-    + 6.0 / 8.0 * (fabs(Jx) + fabs(Jy) + fabs(Jz))
-    + 6.0 / 8.0 * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
+  if (lGC == 0){
+    LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 6.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
+      + 6.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
+  }
+  else{
+    LargeValue0 = S * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 6.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
+      + 6.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
+  }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
 
@@ -313,7 +328,8 @@ void KondoLattice_TriangularLattice(
   int ispin;
   int iL, iW, iLp1, iWm1;
   int ktrans, kintr;
-  double LargeValue0;
+  double LargeValue0, S;
+
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
   fprintf(stdoutMPI, "\n");
@@ -321,6 +337,7 @@ void KondoLattice_TriangularLattice(
   StdFace_RequiredVal_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
   /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("mu", &mu, 0.0);
   StdFace_PrintVal_d("t", &t, 1.0);
   StdFace_PrintVal_d("J", &J, 0.0);
@@ -342,8 +359,8 @@ void KondoLattice_TriangularLattice(
   nsite = 2 * L * W;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
   for (iL = 0; iL < L * W; iL++){
-    locspinflag[2 * iL] = 1;
-    locspinflag[2 * iL + 1] = 0;
+    locspinflag[2 * iL] = 0;
+    locspinflag[2 * iL + 1] = S2;
   }
   /*
   Transfer
@@ -383,7 +400,7 @@ void KondoLattice_TriangularLattice(
   /*
   Interaction
   */
-  nintr = L * W * 6;
+  nintr = L * W * ((S2 + 1) * (1 + 1) + 2 * S2 * 1);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -396,18 +413,19 @@ void KondoLattice_TriangularLattice(
       isite = 2 * (iL + iW * L);
       jsite = 2 * (iL + iW * L) + 1;
 
-      StdFace_exchange(&kintr, J, isite, jsite);
-      StdFace_SzSz(&kintr, J, isite, jsite);
+      StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
+      StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);
     }
   }
   /*
   Set mTPQ parameter
   */
-    if (lGC == 0){
-      LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W) + 2.0 * 6.0 * fabs(t) + 0.25 * fabs(J);
-    }
-    else{
-      LargeValue0 = fabs(mu) * 2.0 + 2.0 * 6.0 * fabs(t) + 0.25 * fabs(J);
-    }
+  S = (double)S2 * 0.5;
+  if (lGC == 0){
+    LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W) + 2.0 * 6.0 * fabs(t) + 0.5 * S * fabs(J);
+  }
+  else{
+    LargeValue0 = fabs(mu) * 2.0 + 2.0 * 6.0 * fabs(t) + 0.5 * S * fabs(J);
+  }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
