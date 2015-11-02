@@ -220,8 +220,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
 	break;
       }
 
-      if(abs(beta[stp])<eps_Lanczos){
-	beta[stp]=eps_Lanczos*dShiftBeta;
+      if(abs(beta[stp])<pow(10.0, -14)){
+	beta[stp]=pow(10.0, -14)*dShiftBeta;
       }
 
       ebefor=E[Target];            
