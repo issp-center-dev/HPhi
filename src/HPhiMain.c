@@ -117,6 +117,7 @@ int main(int argc, char* argv[]){
   }	  
   fprintf(stdoutMPI, "Definition files are correct.\n");
 
+  //For Debug
   //X.Bind.Def.iFlgGeneralSpin=TRUE;
   
   /*ALLOCATE-------------------------------------------*/

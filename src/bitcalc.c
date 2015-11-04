@@ -192,11 +192,15 @@ int GetOffCompGeneralSpin(
 		const long int *Tpow
 )
 {
+  if(off_ispin>SiteToBit[org_isite-1] || org_ispin <0){
+    *_ioffComp=-1;
+    return 0;
+  }
   if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) == FALSE){
     *_ioffComp=-1;
     return 0;
   }
-
+  
   //delete org_ispin and create off_ispin
   long int tmp_off=0;
   tmp_off=(long int)(off_ispin-org_ispin);

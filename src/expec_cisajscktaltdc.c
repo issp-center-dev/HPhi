@@ -18,15 +18,37 @@
 #include "expec_cisajscktaltdc.h"
 #include "wrapperMPI.h"
 
-/** 
+
+/**
+ * @file   expec_cisajscktaltdc.c
  * 
+ * @brief  File for calculating two-body green's functions
  * 
- * @param X 
- * @param vec 
- * 
+ * @version 0.2
+ * @details add function to treat the case of general spin
+ *
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
+ * 
+ */
+
+/** 
+ * @brief Parent function to calculate two-body green's functions
+ * 
+ * @param X data list for calculation
+ * @param vec eigenvectors
+ * 
+ * @retval 0 normally finished
+ * @retval -1 unnormally finished
+ * @note the origin of function's name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
+ *
+ * @version 0.2
+ * @details add function to treat the case of general spin
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int expec_cisajscktaltdc
 (
@@ -414,7 +436,7 @@ int expec_cisajscktaltdc
 	tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
 	tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
 
-	if(org_isite1==org_isite2 && org_isite3==org_isite4){
+	if(tmp_org_isite1==tmp_org_isite2 && tmp_org_isite3==tmp_org_isite4){
 	  org_isite1   = tmp_org_isite1;
 	  org_sigma1   = tmp_org_sigma1;
 	  org_isite2   = tmp_org_isite2;
@@ -425,7 +447,7 @@ int expec_cisajscktaltdc
 	  org_sigma4   = tmp_org_sigma4;
 	  tmp_V = 1.0;
 	}
-	else if(org_isite1==org_isite4 && org_isite3==org_isite2){
+	else if(tmp_org_isite1==tmp_org_isite4 && tmp_org_isite3==tmp_org_isite2){
 	  org_isite1   = tmp_org_isite1;
 	  org_sigma1   = tmp_org_sigma1;
 	  org_isite2   = tmp_org_isite4;
@@ -449,36 +471,45 @@ int expec_cisajscktaltdc
 	  for(j=1;j<=i_max;j++){
 	    num1=BitCheckGeneral(j-1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
 	    if(num1 != FALSE){
-	      num1=num1*BitCheckGeneral(j-1, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
+	      num1=BitCheckGeneral(j-1, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
+	      if(num1 != FALSE){
+	      dam_pr += tmp_V*conj(vec[j])*vec[j];
+	      }
 	    }
-	    dam_pr += tmp_V*conj(vec[j])*vec[j]*num1;
 	  }
 	}else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){ 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma3,org_sigma4, tmp_off, tmp_V) shared(vec)
 	  for(j=1;j<=i_max;j++){
-	    num1=BitCheckGeneral(j-1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
+	    num1 = GetOffCompGeneralSpin(j-1, org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
 	    if(num1 != FALSE){
-	      num1 = num1*GetOffCompGeneralSpin(j-1, org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+	      num1=BitCheckGeneral(tmp_off, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
+	      if(num1 != FALSE){
+		dam_pr += tmp_V*conj(vec[tmp_off+1])*vec[j];
+	      }
 	    }
-	    dam_pr += tmp_V*conj(vec[tmp_off+1])*vec[j]*num1;
 	  } 
 	}else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){ 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma2, org_sigma3, tmp_off, tmp_V) shared(vec)
 	  for(j=1;j<=i_max;j++){
-	    num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+	    num1 = BitCheckGeneral(j-1, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
 	     if(num1 != FALSE){
-	      num1 = num1*BitCheckGeneral(tmp_off, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
+	       num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+	      if(num1 != FALSE){
+		dam_pr +=  tmp_V*conj(vec[tmp_off+1])*vec[j];
+	      }
 	    }
-	    dam_pr +=  tmp_V*conj(vec[tmp_off+1])*vec[j]*num1;
 	  } 	   
 	}else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){ 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, tmp_V) shared(vec)
 	  for(j=1;j<=i_max;j++){
-	     num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+	    num1 = num1*GetOffCompGeneralSpin(j-1, org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
 	     if(num1 != FALSE){
-	       num1 = num1*GetOffCompGeneralSpin(tmp_off, org_isite3, org_sigma4, org_sigma3, &tmp_off_2, X->Def.SiteToBit, X->Def.Tpow);
+	       num1 = GetOffCompGeneralSpin(tmp_off, org_isite1, org_sigma2, org_sigma1, &tmp_off_2, X->Def.SiteToBit, X->Def.Tpow);
+	       if(num1 != FALSE){
+		 dam_pr +=  tmp_V*conj(vec[tmp_off_2+1])*vec[j];
+	       }
 	     }
-	     dam_pr +=  tmp_V*conj(vec[tmp_off_2+1])*vec[j]*num1;
+
 	  }
 	}
 	fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4, creal(dam_pr),cimag(dam_pr));
