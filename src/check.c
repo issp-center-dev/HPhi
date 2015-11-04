@@ -18,14 +18,30 @@
 #include "check.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   check.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ * @brief  File for giving a function of calculating size of Hilbelt space.
+ * 
+ */
+
+
 /** 
  * @brief A program to check size of dimension for hirbert-space.
  * 
  * @param[in,out] X  Common data set used in HPhi.
  * 
+ * @retval TRUE normally finished
+ * @retval FALSE unnormally finished
+ * @version 0.2
+ * @details add function of calculating hirbert space for canonical ensemble.
+ *  
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int check(struct BindStruct *X){
     
@@ -38,7 +54,10 @@ int check(struct BindStruct *X){
   int u_loc;
   int mfint[7];
   long int **comb;    
-  
+  long unsigned int idimmax=0;
+  long unsigned int idim=0;
+  long unsigned int isite=0;
+  int tmp_sz=0;
   Ns = X->Def.Nsite;
   li_malloc2(comb, Ns+1,Ns+1);
   //idim_max
@@ -70,6 +89,22 @@ int check(struct BindStruct *X){
     comb_down= Binomial(Ns, X->Def.Ndown, comb, Ns);
     comb_sum=comb_up*comb_down;
     break;
+
+  case HubbardNConserved:
+    comb_sum=0;
+    int iMinup=0;
+    int iAllup=X->Def.Ne;
+    if(X->Def.Ne > X->Def.Nsite){
+      iMinup = X->Def.Ne-X->Def.Nsite;
+      iAllup = X->Def.Nsite;
+    }
+    for(i=iMinup; i<= iAllup; i++){
+      comb_up= Binomial(Ns, i, comb, Ns);
+      comb_down= Binomial(Ns, X->Def.Ne-i, comb, Ns);
+      comb_sum +=comb_up*comb_down;
+    }
+    break;
+    
   case Kondo:
     //idim_max
     // calculation of dimension
@@ -106,15 +141,41 @@ int check(struct BindStruct *X){
     }
     break;
   case Spin:
-    comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
+    if(X->Def.iFlgGeneralSpin ==FALSE){
+      comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
+    }
+    else{
+      idimmax = 1;
+      for(isite=0; isite<X->Def.Nsite;isite++){
+	idimmax=idimmax*X->Def.SiteToBit[isite];
+      }
+
+#pragma omp parallel for default(none) reduction(+:comb_sum) private(tmp_sz, isite) firstprivate(idimmax, X) 
+      for(idim=0; idim<idimmax; idim++){
+	tmp_sz=0;
+	for(isite=0; isite<X->Def.Nsite;isite++){
+	  tmp_sz += GetLocal2Sz(isite+1,idim, X->Def.SiteToBit, X->Def.Tpow );	  
+	}
+	if(tmp_sz == X->Def.TotalSz){
+	  comb_sum +=1;
+	}
+      }
+    }
+    
     break;
   default:
-    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+    fprintf(stderr, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }  
 
+  if(comb_sum==0){
+    fprintf(stderr, cErrNoHilbertSpace);
+    return FALSE;
+  }
+  
   fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
+  
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
   case Lanczos:
@@ -125,14 +186,14 @@ int check(struct BindStruct *X){
     X->Check.max_mem=X->Check.idim_max*16.0*X->Check.idim_max*16.0/(pow(10,9));
     break;
   default:
-    return -1;
+    return FALSE;
     break;
   }
   fprintf(stdoutMPI, "MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(stdoutMPI, "APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }
   fprintf(fp,"MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(fp,"APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
@@ -145,6 +206,7 @@ int check(struct BindStruct *X){
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     while(tmp <= X->Def.Nsite){
@@ -167,18 +229,19 @@ int check(struct BindStruct *X){
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }  
   X->Check.sdim=tmp_sdim;
   
   if(childfopenMPI(cFileNameCheckSdim,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
@@ -205,6 +268,7 @@ int check(struct BindStruct *X){
       fprintf(fp,"%ld %ld \n",i,u_tmp);
     }
     break;
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     for(i=1;i<=2*X->Def.Nsite-1;i++){
@@ -214,7 +278,6 @@ int check(struct BindStruct *X){
     }
     break;
  case SpinGC:
-   printf("test\n");
    if(X->Def.iFlgGeneralSpin==FALSE){
      for(i=1;i<=X->Def.Nsite;i++){
        u_tmp=u_tmp*2;
@@ -242,11 +305,11 @@ int check(struct BindStruct *X){
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     i_free2(comb, Ns+1, Ns+1);
-    return -1;
+    return FALSE;
   }  
   fclose(fp);	 
  
   i_free2(comb, Ns+1, Ns+1);
   fprintf(stdoutMPI, "Indices and Parameters of Definition files(*.def) are complete.\n");
-  return 0;
+  return TRUE;
 }    

@@ -17,7 +17,7 @@
 /**
  * @file   diagonalcalc.c
  * @version 0.2
- * @details modify functions to calculate diagonal components for general spin
+ * @details modify functions to calculate diagonal components for general spin.
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  *
  * @version 0.1
@@ -614,12 +614,14 @@ int SetDiagonalInterAll
        list_Diagonal[j] += num1*num2*dtmp_V;
      } 
    }
-   else{
-#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
+   else{//start:generalspin
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, isigma1, isigma2, X) private(j, num1)
      for(j = 1;j <= i_max; j++){
        num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
-       num2=BitCheckGeneral (j-1, isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
-       list_Diagonal[j] += num1*num2*dtmp_V;
+       if(num1 != 0){
+	 num1=BitCheckGeneral (j-1, isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+	 list_Diagonal[j] += dtmp_V*num1;
+       }
      }
    }
    break;

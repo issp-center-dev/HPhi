@@ -1,4 +1,4 @@
-L = 4
+L = 6
 model = "SpinGC"
 lattice = "Chain Lattice"
 method = lanczos

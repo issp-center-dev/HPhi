@@ -19,12 +19,33 @@
 #include "makeHam.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   makeHam.c
+ * 
+ * @brief  File for making Hamiltonian
+ * 
+ * @version 0.2
+ * @details add function to treat the case of generalspin
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+
+ */
+
+
 /** 
+ * @brief Parent function of making Hamiltonian
  * 
+ * @param X data list for calculation
  * 
- * @param X 
+ * @retval 0  normally finished
+ * @retval -1 unnormally finished
  * 
- * @return 
+ * @version 0.2
+ * @details add function to treat the case of generalspin
+ *
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -72,7 +93,6 @@ int makeHam(struct BindStruct *X){
     v1[j]     = 1.0;
     //printf("%ld, %f\n", j, list_Diagonal[j]);
   }
-  // exit(1);
   switch(X->Def.iCalcModel){
   case HubbardGC:
     //Transfer
@@ -289,8 +309,7 @@ int makeHam(struct BindStruct *X){
     break;
     
   case SpinGC:
-    if (X->Def.iFlgGeneralSpin == FALSE) {
-      
+    if (X->Def.iFlgGeneralSpin == FALSE) {      
       //Transfer
       for(i=0;i< X->Def.EDNTransfer;i++){
 	isite1     = X->Def.EDGeneralTransfer[i][0]+1;
@@ -387,20 +406,14 @@ int makeHam(struct BindStruct *X){
           tmp_trans = -X->Def.EDParaGeneralTransfer[i];
 
           if (isite1 == isite2) {
-            if (sigma1 == sigma2) {
-              // longitudinal magnetic field
-              for (j = 1; j <= i_max; j++) {
-                num1 = BitCheckGeneral(j-1, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
-                Ham[j][j] += tmp_trans * num1;
-              }
-            } else {//sigma1 != sigma2
-              // transverse magnetic field
-              for (j = 1; j <= i_max; j++) {
-                num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-                Ham[off+1][j] += tmp_trans * num1;
-              }
-            }
-          } else {
+	    // longitudinal magnetic field is absorbed in diagonal calculation.
+	    // transverse magnetic field
+	    for (j = 1; j <= i_max; j++) {
+	      num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+	      Ham[off+1][j] += tmp_trans * num1;
+	    }
+	  }
+	  else {
             // hopping is not allowed in localized spin system
             return -1;
           }
@@ -417,11 +430,14 @@ int makeHam(struct BindStruct *X){
 	  tmp_V  = X->Def.ParaInterAll_OffDiagonal[i];
 	  for (j = 1; j <= i_max; j++) {
 	    num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-	    num1 = GetOffCompGeneralSpin(tmp_off, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow)*num1;
-	    Ham[off+1][j] += tmp_V * num1;
-	  }            
+	    if(num1 !=0){
+	      num1 = GetOffCompGeneralSpin(tmp_off, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow);
+	      if(num1!=0){
+		Ham[off+1][j] += tmp_V * num1;
+	      }
+	    }
+	  }          
 	}
-
     }
     break;
     

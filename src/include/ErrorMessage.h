@@ -45,6 +45,7 @@ char *cErrCalcType;
 char *cErrOutputMode;
 char *cErrCalcModel;
 char *cErrCalcEigenVec;
+char *cErrSetIniVec;
 char *cErrFiniteTemp;
 char *cErrKW;
 char *cErrKW_ShowList;
@@ -71,7 +72,7 @@ char *cWarningIncorrectFormatForSpin2;
 
 //! Error Message in diagonal calc.c
 char *cErrNoModel;
-
+char *cErrNoHilbertSpace;
 
 //! Error Message in bitcalc.c
 char *cErrSiteNumber;

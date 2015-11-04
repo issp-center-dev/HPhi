@@ -16,6 +16,18 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   bitcalc.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo) 
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ * 
+ * @brief  File for giving functions of treating bits on the target of Hilbert space.
+ * 
+ * 
+ */
+
+
 /** 
  * 
  * @brief function of getting right, left and half bits corresponding to a original hilbert space.
@@ -73,6 +85,7 @@ int GetSplitBitByModel(
   switch(iCalcModel){    
   case HubbardGC:
   case KondoGC:
+  case HubbardNConserved:
   case Hubbard:
   case Kondo:
     tmpNsite *= 2;
@@ -171,23 +184,30 @@ void GetOffComp(
  */
 int GetOffCompGeneralSpin(
 		const long unsigned int org_ibit,
-		const unsigned int org_isite,
-		const unsigned int org_ispin,
-		const unsigned int off_ispin,
-		long unsigned int *_ioffComp,
+		const int org_isite,
+		const int org_ispin,
+		const int off_ispin,
+		long int *_ioffComp,
 		const long int *SiteToBit,
 		const long int *Tpow
 )
 {
-  if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) == FALSE){
-    *_ioffComp=0;
-    return FALSE;
+  if(off_ispin>SiteToBit[org_isite-1] || org_ispin <0){
+    *_ioffComp=-1;
+    return 0;
   }
+  if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) == FALSE){
+    *_ioffComp=-1;
+    return 0;
+  }
+  
   //delete org_ispin and create off_ispin
-    int tmp_off;
-    tmp_off=off_ispin-org_ispin;
-  *_ioffComp =org_ibit+tmp_off*Tpow[org_isite-1];
-  return TRUE;
+  long int tmp_off=0;
+  tmp_off=(long int)(off_ispin-org_ispin);
+  tmp_off *=Tpow[org_isite-1];
+  tmp_off +=org_ibit;
+  *_ioffComp =tmp_off;
+  return 1;
 }
 
 /** 
@@ -316,26 +336,26 @@ int GetBitGeneral(
 	     const long int *Tpow
 )
 {
-    long unsigned int tmp_bit=(org_bit/Tpow[isite-1])%SiteToBit[isite-1] ;
-    return (tmp_bit);
+  long unsigned int tmp_bit=(org_bit/Tpow[isite-1])%SiteToBit[isite-1] ;
+  return (tmp_bit);
 }
 
 
 /** 
  * 
- * @brief get sz at a site for general spin  
+ * @brief get 2sz at a site for general spin  
  *
  * @param isite site index (isite >= 1)
  * @param org_bit original bit to check 
  * @param _SiteToBit List for getting bit at a site
  * @param _Tpow List for getting total bit at a site before
- * @return sz at isite
+ * @return 2sz at isite
  * 
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
-/*
-int GetLocalSz
+
+int GetLocal2Sz
 (
  const unsigned int isite,
  const long unsigned int org_bit,
@@ -343,13 +363,11 @@ int GetLocalSz
  const long int *Tpow
  )
 {
-  int sz=0;
+  int TwiceSz=0;
   int bitAtSite=0;
   //get bit
   bitAtSite=GetBitGeneral(isite, org_bit, SiteToBit, Tpow);
-  //get local bit
-  sz=bitAsSite
-  //get 
-  return sz;
+  TwiceSz=-(SiteToBit[isite-1]-1)+2*bitAtSite; //-2S^{total}_i+2Sz_i
+  return TwiceSz;
 }
-*/
+
