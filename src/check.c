@@ -145,21 +145,22 @@ int check(struct BindStruct *X){
       comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
     }
     else{
+      
       idimmax = 1;
       for(isite=0; isite<X->Def.Nsite;isite++){
 	idimmax=idimmax*X->Def.SiteToBit[isite];
       }
-
 #pragma omp parallel for default(none) reduction(+:comb_sum) private(tmp_sz, isite) firstprivate(idimmax, X) 
       for(idim=0; idim<idimmax; idim++){
 	tmp_sz=0;
 	for(isite=0; isite<X->Def.Nsite;isite++){
 	  tmp_sz += GetLocal2Sz(isite+1,idim, X->Def.SiteToBit, X->Def.Tpow );	  
 	}
-	if(tmp_sz == X->Def.TotalSz){
+	if(tmp_sz == X->Def.Total2Sz){
 	  comb_sum +=1;
 	}
       }
+      
     }
     
     break;
@@ -223,7 +224,7 @@ int check(struct BindStruct *X){
       }
     }
     else{
-      //INPUT
+      GetSplitBitForGeneralSpin(X->Def.Nsite, &tmp_sdim, X->Def.SiteToBit);
     }
     break;
   default:
@@ -253,6 +254,7 @@ int check(struct BindStruct *X){
       fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
       fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
     }
+    break;
   default:
     break;
   }
@@ -296,11 +298,22 @@ int check(struct BindStruct *X){
    }
    break;
  case Spin:
-    for(i=1;i<=X->Def.Nsite-1;i++){
-      u_tmp=u_tmp*2;
-      X->Def.Tpow[i]=u_tmp;
-      fprintf(fp,"%ld %ld \n",i,u_tmp);
-    }
+   if(X->Def.iFlgGeneralSpin==FALSE){
+     for(i=1;i<=X->Def.Nsite-1;i++){
+       u_tmp=u_tmp*2;
+       X->Def.Tpow[i]=u_tmp;
+       fprintf(fp,"%ld %ld \n",i,u_tmp);
+     }
+   }
+   else{
+     X->Def.Tpow[0]=u_tmp;
+     fprintf(fp,"%ld %ld \n", 0, u_tmp);
+     for(i=1;i<X->Def.Nsite;i++){
+       u_tmp=u_tmp*X->Def.SiteToBit[i-1];
+       X->Def.Tpow[i]=u_tmp;
+       fprintf(fp,"%ld %ld \n",i,u_tmp);
+     }
+   }     
     break;
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);

@@ -23,6 +23,7 @@ int child_omp_sz(
 		 struct BindStruct *X
 		 );
 
+
 int child_omp_sz_Kondo(
 		      long unsigned int ib, 
 		      long unsigned int ihfbit,
@@ -47,6 +48,13 @@ int child_omp_sz_spin(
 		      int N, 
 		      struct BindStruct *X
 		      );
+
+int child_omp_sz_GeneralSpin(
+		      long unsigned int ib, 
+		      long unsigned int ihfbit,
+		      int N,
+		      struct BindStruct *X
+			     );
 
 long int Binomial(
 	     int n,

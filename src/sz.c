@@ -18,6 +18,21 @@
 #include "sz.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   sz.c
+ * 
+ * @brief  File List 
+ * 
+ * @version 0.2
+ * @details 
+ *
+ * @version 0.1
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ */
+
 /** 
  * 
  * 
@@ -107,10 +122,16 @@ int sz
   case KondoGC:
   case Kondo:
   case Spin:
-    if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
-      return -1;
-    }
+    if(X->Def.iFlgGeneralSpin==FALSE){
+      if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
+	return -1;
+      }
     fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+    }
+    else{
+      ihfbit=X->Check.sdim;
+      fprintf(stdoutMPI, "idim=%lf ihfbit=%ld \n",idim, ihfbit);
+    }
   break;
  default:
    break;
@@ -340,31 +361,82 @@ int sz
 
     case Spin:
       // this part can not be parallelized
-      jb = 0;
-      fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
-      for(ib=0;ib<X->Check.sdim;ib++){
-	list_jb[ib]=jb;
-	i=ib*ihfbit;
-	num_up=0;
-	for(j=0;j<N; j++){
-	  div_up = i & X->Def.Tpow[j];
-	  div_up = div_up/X->Def.Tpow[j];
-	  num_up +=div_up;
+      if(X->Def.iFlgGeneralSpin==FALSE){
+	jb = 0;
+	fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
+	for(ib=0;ib<X->Check.sdim;ib++){
+	  list_jb[ib]=jb;
+	  i=ib*ihfbit;
+	  num_up=0;
+	  for(j=0;j<N; j++){
+	    div_up = i & X->Def.Tpow[j];
+	    div_up = div_up/X->Def.Tpow[j];
+	    num_up +=div_up;
+	  }
+	  all_up   = (X->Def.Nsite+1)/2;
+	  tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
+	  jb   += tmp_1;
 	}
-	all_up   = (X->Def.Nsite+1)/2;
-	tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
-	jb   += tmp_1;
-      }
-      //#pragma omp barrier
+	//#pragma omp barrier
 
-      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+	TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
  
-      icnt = 0;
+	icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X,tmp_sdim) 
-      for(ib=0;ib<X->Check.sdim;ib++){
-	icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
+	for(ib=0;ib<X->Check.sdim;ib++){
+	  icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
+	}
       }
+      else{
+	int Max2Sz=0;
+	int irghtsite=1;
+	long int itmpSize=1;
+	int i2Sz=0;
+	for(j=0; j<X->Def.Nsite; j++){
+	  Max2Sz += X->Def.LocSpn[j];
+	  itmpSize *= X->Def.SiteToBit[j];
+	  if(itmpSize==X->Check.sdim){
+	    break;
+	  }
+	  irghtsite++;
+	}
+	lui_malloc1(HilbertNumToSz, Max2Sz+1);
 	
+	for(ib =0; ib<X->Check.sdim; ib++){
+	  i2Sz=0;
+	  for(j=1; j<= irghtsite; j++){
+	    i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
+	  }
+	  list_2_1_Sz[ib]=i2Sz;
+	  HilbertNumToSz[i2Sz+Max2Sz]++;
+	}
+
+	jb = 0;
+	long int ilftdim=X->Check.idim_max/X->Check.sdim;
+	for(ib=0;ib<ilftdim;ib++){
+	  list_jb[ib]=jb;
+	  i=ib*ihfbit;
+	  num_up=0;
+	  i2Sz=0;
+	  for(j=irghtsite+1;j<=N; j++){
+	    i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
+	  }
+	  list_2_2_Sz[ib]=i2Sz;
+	  if(X->Def.Total2Sz- i2Sz +Max2Sz>0){
+	    jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
+	  }
+	}
+	
+	TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+
+	icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit, N, X) 
+	for(ib=0;ib<ilftdim; ib++){
+	  icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,N,X);
+	}
+		
+	i_free1(HilbertNumToSz, Max2Sz+1);	
+      }
       break;
     default:
       return -1;
@@ -712,6 +784,44 @@ int child_omp_sz_spin(
     }
 
     if(num_up == X->Def.Ne){
+      list_1[ja+jb]=ia+ib*ihfbit;
+      list_2_1[ia]=ja;
+      list_2_2[ib]=jb;
+      ja+=1;
+    } 
+  }
+  ja=ja-1;
+  return ja; 
+}
+
+/** 
+ * 
+ * 
+ * @param ib 
+ * @param ihfbit 
+ * @param N 
+ * @param X 
+ * 
+ * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int child_omp_sz_GeneralSpin(
+		      long unsigned int ib, 
+		      long unsigned int ihfbit,
+		      int N,
+		      struct BindStruct *X
+		      )
+{
+  long unsigned int ia,ja,jb;  
+  int list_2_2_Sz_ib;
+  int tmp_2Sz=0;
+  jb = list_jb[ib];
+  list_2_2_Sz_ib =list_2_2_Sz[ib];
+  ja=1;
+  for(ia=0;ia<ihfbit;ia++){
+    tmp_2Sz=list_2_1_Sz[ia]+list_2_2_Sz_ib;
+    if(tmp_2Sz == X->Def.Total2Sz){
       list_1[ja+jb]=ia+ib*ihfbit;
       list_2_1[ia]=ja;
       list_2_2[ib]=jb;

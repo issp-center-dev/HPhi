@@ -148,7 +148,9 @@ int main(int argc, char* argv[]){
   if(!sz(&(X.Bind))==0){
     return -1;
   }
-
+  
+  exit(1);
+  
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
     return 0;

@@ -1,11 +1,13 @@
 W = 4
 L = 2
 model = "FermionHubbard"
-method = "Lanczos"
-//method = "TPQ"
+//method = "Lanczos"
+method = "TPQ"
 //method = "FullDiag"
 lattice = "square lattice"
 t = 1.0
 U = 4.0
 nelec = 8
 2Sz = 0
+
+

@@ -38,7 +38,7 @@ struct DefineList{
   int  Nsite;    /**< */
   int  Nup;    /**< Read from modpara in readdef */
   int Ndown;    /**< */
-  int  TotalSz;    /**< */
+  int  Total2Sz;    /**< */
   int  Ne;    /**< */
   int  Nsize;    /**< */
   int Lanczos_max;    /**< */

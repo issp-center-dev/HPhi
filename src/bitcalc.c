@@ -105,6 +105,48 @@ int GetSplitBitByModel(
   return 0;
 }
 
+
+/** 
+ * 
+ * @brief function of getting right, left and half bits corresponding to a original hilbert space.
+ * @param Nsite a total number of sites
+ * @param ihfbit a bit to split original hilbert space
+ * 
+ * @retval 0 normally finished
+ * @retval -1 unnormally finished
+ *
+ * @version 0.2
+ * @author Takahiro Misawa (The University of Tokyo) 
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ */
+int GetSplitBitForGeneralSpin(
+		const int Nsite,
+		long unsigned int *ihfbit,
+		const long int *SiteToBit
+){
+  int isite=0;
+  long int isqrtMaxDim=1;
+  long int tmpbit=1;
+  
+  if(Nsite<1){
+    fprintf(stderr, "%s", cErrSiteNumber);
+    return -1;
+  }
+  
+  for(isite=1; isite<=Nsite ; isite++){
+    isqrtMaxDim *= SiteToBit[isite-1];
+  }
+  isqrtMaxDim =(long int)sqrt(isqrtMaxDim);
+
+  for(isite=1; isite<=Nsite ; isite++){
+    tmpbit *= SiteToBit[isite-1];
+    if(tmpbit >= isqrtMaxDim) break;
+  }
+  *ihfbit=tmpbit;
+  return 0;
+}
+
+
 /** 
  * 
  * @brief function of splitting a original bit to right and left spaces

@@ -321,7 +321,7 @@ int ReadDefFileNInt(
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
   int iNcond=0;
-  int iReadSz=FALSE;
+  int iRead2Sz=FALSE;
   int iReadNCond=FALSE;
 
   InitializeInteractionNum(X);
@@ -398,11 +398,11 @@ int ReadDefFileNInt(
 	}
 	else if(strcmp(ctmp, "Ndown")==0){
 	  X->Ndown=(int)dtmp;
-	  X->TotalSz=X->Nup-X->Ndown;
+	  X->Total2Sz=X->Nup-X->Ndown;
 	}
 	else if(strcmp(ctmp, "2Sz")==0){
-	  X->TotalSz=(int)dtmp;
-	  iReadSz=TRUE;
+	  X->Total2Sz=(int)dtmp;
+	  iRead2Sz=TRUE;
 	}
 	else if(strcmp(ctmp, "Ncond")==0){
 	  iNcond=(int)dtmp;
@@ -530,9 +530,9 @@ int ReadDefFileNInt(
   case Spin:
   case Kondo:
     if(iReadNCond==TRUE){
-      if(iReadSz==TRUE){
-	X->Nup=(X->NLocSpn+iNcond+X->TotalSz)/2;
-	X->Ndown=(X->NLocSpn+iNcond-X->TotalSz)/2;      
+      if(iRead2Sz==TRUE){
+	X->Nup=(X->NLocSpn+iNcond+X->Total2Sz)/2;
+	X->Ndown=(X->NLocSpn+iNcond-X->Total2Sz)/2;      
       }
       else{
 	if(X->iCalcModel == Hubbard){
@@ -549,7 +549,7 @@ int ReadDefFileNInt(
 	}
       }
     }
-    else if(iReadNCond == FALSE && iReadSz==TRUE){
+    else if(iReadNCond == FALSE && iRead2Sz==TRUE){
       if(X->iCalcModel != Spin){
 	fprintf(stderr, " NCond is not defined.");
 	return -1;

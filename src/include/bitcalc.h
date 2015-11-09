@@ -33,6 +33,12 @@ int GetSplitBitByModel(
 		       long unsigned int *ihfbit
 		       );
 
+int GetSplitBitForGeneralSpin(
+		const int Nsite,
+		long unsigned int *ihfbit,
+		const long int *SiteToBit
+			      );
+
 //inline void SplitBit(
 void SplitBit(
 		  const long unsigned int ibit,

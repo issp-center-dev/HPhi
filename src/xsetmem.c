@@ -82,23 +82,31 @@ int setmem_large
   case Kondo:
   case KondoGC:
     lui_malloc1(list_1, X->Check.idim_max+1);
-    if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
-      lui_malloc1(list_2_1, X->Check.sdim*2+2);
-    }
-    else{
-      lui_malloc1(list_2_1, X->Check.sdim+2);
-    }
-    lui_malloc1(list_2_2, X->Check.sdim+2);
-    lui_malloc1(list_jb, X->Check.sdim+2);
-
-    if(list_1==NULL
-       || list_2_1==NULL
-       || list_2_2==NULL
-       || list_jb==NULL
-       )
-      {
-	return -1;
+    if(X->Def.iFlgGeneralSpin==FALSE){    
+      if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
+	lui_malloc1(list_2_1, X->Check.sdim*2+2);
       }
+      else{
+	lui_malloc1(list_2_1, X->Check.sdim+2);
+      }
+      lui_malloc1(list_2_2, X->Check.sdim+2);
+      lui_malloc1(list_jb, X->Check.sdim+2);
+    }
+    else{//for spin-canonical general spin
+      lui_malloc1(list_2_1, X->Check.sdim+2);
+      lui_malloc1(list_2_1_Sz, X->Check.sdim+2);      
+      lui_malloc1(list_2_2, (X->Check.idim_max/X->Check.sdim)+2);
+      lui_malloc1(list_2_2_Sz, (X->Check.idim_max/X->Check.sdim)+2);
+      lui_malloc1(list_jb, (X->Check.idim_max/X->Check.sdim)+2);
+    }
+      if(list_1==NULL
+	 || list_2_1==NULL
+	 || list_2_2==NULL
+	 || list_jb==NULL
+	 )
+	{
+	  return -1;
+	}
     break;
   default:
     break;
@@ -163,9 +171,7 @@ void setmem_IntAll_Diagonal
 {
   i_malloc2(X->InterAll_OffDiagonal, X->NInterAll, 8);
     c_malloc1(X->ParaInterAll_OffDiagonal, X->NInterAll);
-  //  c_malloc1(X->ParaInterAll_OffDiagonal, X->NInterAll_OffDiagonal);
 
   i_malloc2(X->InterAll_Diagonal, X->NInterAll, 4);
-  //  d_malloc1(X->ParaInterAll_Diagonal, X->NInterAll_Diagonal);
-    d_malloc1(X->ParaInterAll_Diagonal, X->NInterAll);
+  d_malloc1(X->ParaInterAll_Diagonal, X->NInterAll);
 }
