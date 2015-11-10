@@ -36,6 +36,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
   i_max=X->Check.idim_max;      
 
   if(X->Def.iInitialVecType==0){
+    printf("CHECK: TPQ complex initial vector \n");
     //For getting random numbers without any dependencies of threads,
     //we do not adopt omp in this part.
     for(i = 1; i <= i_max; i++){
@@ -44,6 +45,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
     }
   }
   else{
+    printf("CHECK: TPQ real initial vector \n");
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
       v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
