@@ -45,6 +45,7 @@ char *cErrCalcType;
 char *cErrOutputMode;
 char *cErrCalcModel;
 char *cErrCalcEigenVec;
+char *cErrSetIniVec;
 char *cErrFiniteTemp;
 char *cErrKW;
 char *cErrKW_ShowList;
