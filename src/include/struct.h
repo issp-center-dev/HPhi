@@ -205,6 +205,7 @@ struct PhysList{
   double num_up;
   double num_down;
   double s2;
+  double sz;
   double *all_energy;
   double *all_doublon;
   double *all_s2;

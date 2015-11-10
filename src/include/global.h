@@ -44,8 +44,8 @@ long unsigned  int *list_2_2;
 long unsigned  int *list_jb;
 int *list_3;
 long unsigned int *HilbertNumToSz;
-long unsigned int *list_2_1_Sz;
-long unsigned int *list_2_2_Sz;
+int *list_2_1_Sz;
+int *list_2_2_Sz;
 
 
 /*[s] For Lanczos */

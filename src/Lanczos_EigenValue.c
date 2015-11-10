@@ -61,9 +61,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   k_exct = X->Def.k_exct;
 
   if(initial_mode == 0){
-    X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max;
+    X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max+1;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
-      X->Large.iv=(X->Check.idim_max/2+X->Def.initial_iv)%X->Check.idim_max;
+      X->Large.iv=(X->Check.idim_max/2+X->Def.initial_iv)%X->Check.idim_max+1;
     }
     iv=X->Large.iv;
     fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       

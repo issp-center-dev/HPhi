@@ -94,10 +94,10 @@ int setmem_large
     }
     else{//for spin-canonical general spin
       lui_malloc1(list_2_1, X->Check.sdim+2);
-      lui_malloc1(list_2_1_Sz, X->Check.sdim+2);      
-      lui_malloc1(list_2_2, (X->Check.idim_max/X->Check.sdim)+2);
-      lui_malloc1(list_2_2_Sz, (X->Check.idim_max/X->Check.sdim)+2);
-      lui_malloc1(list_jb, (X->Check.idim_max/X->Check.sdim)+2);
+      i_malloc1(list_2_1_Sz, X->Check.sdim+2);
+      lui_malloc1(list_2_2, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+      i_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+      lui_malloc1(list_jb, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
     }
       if(list_1==NULL
 	 || list_2_1==NULL

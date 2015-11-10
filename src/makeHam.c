@@ -442,8 +442,8 @@ int makeHam(struct BindStruct *X){
     break;
     
   case Spin:
-    //Transfer is abosrbed in diagonal term.
-    
+    if (X->Def.iFlgGeneralSpin == FALSE) {
+    //Transfer is abosrbed in diagonal term.    
     //InterAll
     for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){    
       isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
@@ -482,6 +482,41 @@ int makeHam(struct BindStruct *X){
      	Ham[tmp_off][j] +=dmv;
       }
     }
+    }
+    else{ //For General spin
+      for (i = 0; i < X->Def.EDNTransfer; i++) {
+	isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
+	isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
+	
+	if (isite1 != isite2) {
+	  // longitudinal magnetic field is absorbed in diagonal calculation.
+	  // hopping is not allowed in localized spin system
+            return -1;
+	}
+      }
+
+      //InterAll        
+      for(i = 0;i< X->Def.NInterAll_OffDiagonal; i++){
+	isite1 = X->Def.InterAll_OffDiagonal[i][0]+1;
+	isite2 = X->Def.InterAll_OffDiagonal[i][4]+1;
+	sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	tmp_V  = X->Def.ParaInterAll_OffDiagonal[i];
+	for (j = 1; j <= i_max; j++) {
+	  num1 = GetOffCompGeneralSpin(list_1[j], isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+	    if(num1 !=0){
+	      num1 = GetOffCompGeneralSpin(tmp_off, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow);
+	      if(num1!=0){
+		ConvertToList1GeneralSpin(off, X->Check.sdim, &tmp_off);
+		Ham[tmp_off][j] += tmp_V;
+	      }
+	    }
+	  }          
+	}
+    }
+
     break;
   }
   return 0;

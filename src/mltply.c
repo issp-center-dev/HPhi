@@ -36,6 +36,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   long unsigned int i;
   long int off = 0;
   long int tmp_off = 0;
+  long int tmp_off2 = 0;
   long unsigned int is1_spin = 0;
   long unsigned int irght=0;
   long unsigned int ilft=0;
@@ -59,6 +60,13 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   if (X->Def.iFlgGeneralSpin == FALSE) {
     if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
       return -1;
+    }
+  }
+  else{
+    if(X->Def.iCalcModel==Spin){
+      if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+	return -1;
+      }
     }
   }
   X->Large.i_max = i_max;
@@ -222,28 +230,62 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           break;
 
     case Spin:
-
-      //Transfer absorbed in Diagonal term.
-      //InterAll
-      for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
-        isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
-        isite2 = X->Def.InterAll_OffDiagonal[i][4] + 1;
-        sigma1 = X->Def.InterAll_OffDiagonal[i][1];
-        sigma2 = X->Def.InterAll_OffDiagonal[i][3];
-        sigma3 = X->Def.InterAll_OffDiagonal[i][5];
-        sigma4 = X->Def.InterAll_OffDiagonal[i][7];
-        tmp_V = X->Def.ParaInterAll_OffDiagonal[i];
-        child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
-        dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
-        X->Large.prdct += dam_pr;
+      if (X->Def.iFlgGeneralSpin == FALSE) {
+	
+	//Transfer absorbed in Diagonal term.
+	//InterAll
+	for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
+	  isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
+	  isite2 = X->Def.InterAll_OffDiagonal[i][4] + 1;
+	  sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	  sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	  sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	  sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	  tmp_V = X->Def.ParaInterAll_OffDiagonal[i];
+	  child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
+	  dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
+	  X->Large.prdct += dam_pr;
+	}
+	//Exchange
+	
+	for (i = 0; i < X->Def.NExchangeCoupling; i++) {
+	  child_exchange_spin_GetInfo(i, X);
+	  dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+	  X->Large.prdct += dam_pr;
+	}
+	
       }
-      //Exchange
-      for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-	child_exchange_spin_GetInfo(i, X);
-	dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
-	X->Large.prdct += dam_pr;
+      else{
+	//Transfer absorbed in Diagonal term.
+	//InterAll
+	ihfbit =X->Check.sdim;
+	for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
+	  isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
+	  isite2 = X->Def.InterAll_OffDiagonal[i][4] + 1;
+	  sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	  sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	  sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	  sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	  tmp_V = X->Def.ParaInterAll_OffDiagonal[i];
+	  dam_pr=0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv, off, tmp_off, tmp_off2) firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V, ihfbit) shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
+	    for (j = 1; j <= i_max; j++) {
+	      tmp_sgn = GetOffCompGeneralSpin(list_1[j], isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+	      if(tmp_sgn ==TRUE){
+		tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &tmp_off2, X->Def.SiteToBit, X->Def.Tpow);
+		if (tmp_sgn==TRUE){
+		  ConvertToList1GeneralSpin(tmp_off2, ihfbit, &off);
+		  dmv= tmp_v1[j]*tmp_V;
+		  if(X->Large.mode == M_MLTPLY) { // for multply
+		    tmp_v0[off] += dmv;
+		  }
+		  dam_pr += conj(tmp_v1[off]) * dmv;
+		}
+	      }
+	    }
+	    X->Large.prdct += dam_pr;	  
+	}
       }
-      
       break;
 
     case SpinGC:

@@ -108,3 +108,9 @@ int GetLocal2Sz
  const long int *SiteToBit,
  const long int *Tpow
  );
+
+void ConvertToList1GeneralSpin(
+		const long unsigned int org_ibit,
+		const long unsigned int ihlfbit,
+		long int *_ilist1Comp
+			       );

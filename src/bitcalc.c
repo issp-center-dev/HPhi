@@ -234,13 +234,16 @@ int GetOffCompGeneralSpin(
 		const long int *Tpow
 )
 {
-  if(off_ispin>SiteToBit[org_isite-1] || org_ispin <0){
+  if(off_ispin>SiteToBit[org_isite-1] ||
+     off_ispin<0                      ||
+     org_ispin>SiteToBit[org_isite-1] ||
+     org_ispin <0){
     *_ioffComp=-1;
-    return 0;
+    return FALSE;
   }
   if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) == FALSE){
     *_ioffComp=-1;
-    return 0;
+    return FALSE;
   }
   
   //delete org_ispin and create off_ispin
@@ -249,7 +252,30 @@ int GetOffCompGeneralSpin(
   tmp_off *=Tpow[org_isite-1];
   tmp_off +=org_ibit;
   *_ioffComp =tmp_off;
-  return 1;
+  return TRUE;
+}
+
+/** 
+ * 
+ * @brief function of converting component to list_1
+ * 
+ * @param org_ibit a original bit
+ * @param ihlfbit a split bit for general spin
+ * @param _ilist1Comp a component converted to list_1
+ * 
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ */
+void ConvertToList1GeneralSpin(
+		const long unsigned int org_ibit,
+		const long unsigned int ihlfbit,
+		long int *_ilist1Comp
+)
+{
+  long unsigned int ia, ib;
+  ia=org_ibit%ihlfbit;
+  ib=org_ibit/ihlfbit;
+  *_ilist1Comp=list_2_1[ia]+list_2_2[ib];
 }
 
 /** 

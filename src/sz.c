@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+#include <bitcalc.h>
 #include "mfmemory.h"
 #include "sz.h"
 #include "wrapperMPI.h"
@@ -393,16 +394,22 @@ int sz
 	long int itmpSize=1;
 	int i2Sz=0;
 	for(j=0; j<X->Def.Nsite; j++){
-	  Max2Sz += X->Def.LocSpn[j];
 	  itmpSize *= X->Def.SiteToBit[j];
-	  if(itmpSize==X->Check.sdim){
+	  if(itmpSize==ihfbit){
 	    break;
 	  }
 	  irghtsite++;
 	}
-	lui_malloc1(HilbertNumToSz, Max2Sz+1);
+        for(j=0; j<X->Def.Nsite; j++){
+          Max2Sz += X->Def.LocSpn[j];
+        }
 	
-	for(ib =0; ib<X->Check.sdim; ib++){
+	lui_malloc1(HilbertNumToSz, 2*Max2Sz+1);
+	for(ib=0; ib<2*Max2Sz+1; ib++){
+	  HilbertNumToSz[ib]=0;
+	}
+	
+	for(ib =0; ib<ihfbit; ib++){
 	  i2Sz=0;
 	  for(j=1; j<= irghtsite; j++){
 	    i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
@@ -410,19 +417,17 @@ int sz
 	  list_2_1_Sz[ib]=i2Sz;
 	  HilbertNumToSz[i2Sz+Max2Sz]++;
 	}
-
-	jb = 0;
-	long int ilftdim=X->Check.idim_max/X->Check.sdim;
+	
+        jb = 0;
+	long int ilftdim=(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1])/ihfbit;
 	for(ib=0;ib<ilftdim;ib++){
 	  list_jb[ib]=jb;
-	  i=ib*ihfbit;
-	  num_up=0;
 	  i2Sz=0;
-	  for(j=irghtsite+1;j<=N; j++){
+	  for(j=1;j<=(N-irghtsite); j++){
 	    i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
 	  }
 	  list_2_2_Sz[ib]=i2Sz;
-	  if(X->Def.Total2Sz- i2Sz +Max2Sz>0){
+	  if(X->Def.Total2Sz- i2Sz +Max2Sz>=0){
 	    jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
 	  }
 	}
@@ -435,8 +440,28 @@ int sz
 	  icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,N,X);
 	}
 		
-	i_free1(HilbertNumToSz, Max2Sz+1);	
+	i_free1(HilbertNumToSz, 2*Max2Sz+1);	
       }
+
+      //debug
+      /*
+      ihfbit=X->Check.sdim;
+      icnt=0;
+      for(j=0; j<X->Def.Tpow[X->Def.Nsite-1]*2; j++){
+	jb=list_2_1[j%ihfbit]+list_2_2[j/ihfbit];
+	if(j==list_1[jb]){
+	  printf("j= %ld, list_1=%ld\n", j, list_1[jb]);
+	  icnt++;
+	}
+      }
+      printf("icnt=%d\n", icnt);
+      exit(1);
+      for(j =1; j<=X->Check.idim_max; j++){
+	printf("j= %ld, list_1=%ld\n", j, list_1[j]);
+      }
+      exit(1);
+      */
+      
       break;
     default:
       return -1;
@@ -814,7 +839,7 @@ int child_omp_sz_GeneralSpin(
 		      )
 {
   long unsigned int ia,ja,jb;  
-  int list_2_2_Sz_ib;
+  int list_2_2_Sz_ib=0;
   int tmp_2Sz=0;
   jb = list_jb[ib];
   list_2_2_Sz_ib =list_2_2_Sz[ib];

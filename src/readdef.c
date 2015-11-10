@@ -531,37 +531,45 @@ int ReadDefFileNInt(
   case Kondo:
     if(iReadNCond==TRUE){
       if(iRead2Sz==TRUE){
-	X->Nup=(X->NLocSpn+iNcond+X->Total2Sz)/2;
-	X->Ndown=(X->NLocSpn+iNcond-X->Total2Sz)/2;      
+	X->Nup=X->NLocSpn+iNcond+X->Total2Sz;
+	X->Ndown=X->NLocSpn+iNcond-X->Total2Sz;
+	if(X->iCalcModel ==Hubbard || X->iCalcModel == Kondo){
+	  if(X->Nup%2 != 0 && X->Ndown%2 !=0){
+	    fprintf(stderr, "2Sz is incorrect.\n");
+	    return -1;
+	  }
+	}	
+	X->Nup/=2;
+	X->Ndown/=2;
       }
       else{
 	if(X->iCalcModel == Hubbard){
 	  X->Ne=iNcond;
-      if(iNcond <1){
-        fprintf(stderr, "Ncond is incorrect.");
-        return -1;
-      }
+	  if(iNcond <1){
+	    fprintf(stderr, "Ncond is incorrect.\n");
+	    return -1;
+	  }
 	  X->iCalcModel=HubbardNConserved;
 	}
 	else{
-	  fprintf(stderr, " 2Sz is not defined.");
+	  fprintf(stderr, " 2Sz is not defined.\n");
 	  return -1;
 	}
       }
     }
     else if(iReadNCond == FALSE && iRead2Sz==TRUE){
       if(X->iCalcModel != Spin){
-	fprintf(stderr, " NCond is not defined.");
+	fprintf(stderr, " NCond is not defined.\n");
 	return -1;
       }
     }
     else{
       if(X->Nup==0 && X->Ndown==0){
-	fprintf(stderr, " NCond is not defined.");
+	fprintf(stderr, " NCond is not defined.\n");
 	return -1;
       }
     }
-
+    
     if(X->iCalcModel == Spin){
       X->Ne=X->Nup;
     }

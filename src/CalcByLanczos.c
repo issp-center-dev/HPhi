@@ -60,11 +60,16 @@ int CalcByLanczos(
   case Hubbard:
   case Kondo:
   case Spin:
-    if(X->Bind.Def.initial_iv>0){
-      initial_mode = 0; // 0 -> only v[iv] = 1
-    }else{
-      initial_mode = 1; // 1 -> random initial vector
-    } 
+    if(X->Bind.Def.iFlgGeneralSpin ==TRUE){
+      initial_mode=1;
+    }
+    else{
+      if(X->Bind.Def.initial_iv>0){
+	initial_mode = 0; // 0 -> only v[iv] = 1
+      }else{
+	initial_mode = 1; // 1 -> random initial vector
+      }
+    }
     break;
   default:
     return -1;
@@ -93,7 +98,7 @@ int CalcByLanczos(
   if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG && iconv==1){
     fprintf(stdoutMPI, "Eigenvector is improved by CG method \n");
     X->Bind.Def.St=1;
-    CG_EigenVector(&(X->Bind));
+    CG_EigenVector(&(X->Bind));    
     expec_energy(&(X->Bind));
     var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
     diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
