@@ -70,6 +70,7 @@ int sz
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
+  case HubbardNConserved:
   case Hubbard:
     N2=2*X->Def.Nsite;
     idim = pow(2.0,N2);
@@ -101,6 +102,7 @@ int sz
   i_max=X->Check.idim_max;
   
   switch(X->Def.iCalcModel){
+  case HubbardNConserved:
   case Hubbard:
   case KondoGC:
   case Kondo:
@@ -225,6 +227,54 @@ int sz
       }
       break;
 
+    case HubbardNConserved:
+      // this part can not be parallelized
+      jb = 0;
+      int iSpnup=0;
+      int iMinup=0;
+      int iAllup=X->Def.Ne;
+      if(X->Def.Ne > X->Def.Nsite){
+	iMinup = X->Def.Ne-X->Def.Nsite;
+	iAllup = X->Def.Nsite;
+      }
+      
+      for(ib=0;ib<X->Check.sdim;ib++){
+	list_jb[ib]=jb;
+
+	i=ib*ihfbit;
+	num_up=0;
+	for(j=0;j<=N2-2;j+=2){
+	  div=i & X->Def.Tpow[j];
+	  div=div/X->Def.Tpow[j];
+	  num_up+=div;
+	}
+	num_down=0;
+	for(j=1;j<=N2-1;j+=2){
+	  div=i & X->Def.Tpow[j];
+	  div=div/X->Def.Tpow[j];
+	  num_down+=div;
+	}
+	
+	tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+	all_up   = (X->Def.Nsite+tmp_res)/2;
+	all_down = (X->Def.Nsite-tmp_res)/2;
+
+	for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
+	  tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
+	  tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
+	  jb   += tmp_1*tmp_2;
+	}
+      }
+      //#pragma omp barrier
+      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
+	
+      icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
+      for(ib=0;ib<X->Check.sdim;ib++){
+	icnt+=child_omp_sz(ib,ihfbit,N2,X);
+      }
+      break;
+            
     case Kondo:
       // this part can not be parallelized
 
@@ -325,6 +375,10 @@ int sz
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
   }
 
+  if(X->Def.iCalcModel==HubbardNConserved){
+    X->Def.iCalcModel=Hubbard;
+  }
+  
   //Error message
   //i_max=i_max+1;
   if(i_max!=X->Check.idim_max){
@@ -385,7 +439,6 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
     }
   }
   return comb[n][k];
-
 }
 
 /** 
@@ -425,31 +478,52 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
   ja=1;
   tmp_num_up   = num_up;
   tmp_num_down = num_down;
-  for(ia=0;ia<X->Check.sdim;ia++){
-    i=ia;
-    num_up =  tmp_num_up;
-    num_down =  tmp_num_down;
-    
-    for(j=0;j<X->Def.Nsite;j++){
-      div_up    = i & X->Def.Tpow[2*j];
-      div_up    = div_up/X->Def.Tpow[2*j];
-      div_down  = i & X->Def.Tpow[2*j+1];
-      div_down  = div_down/X->Def.Tpow[2*j+1];
-      num_up += div_up;
-      num_down += div_down;
-    }
-    
-    if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
-      list_1[ja+jb]=ia+ib*ihfbit;
+
+  if(X->Def.iCalcModel==Hubbard){
+    for(ia=0;ia<X->Check.sdim;ia++){
+      i=ia;
+      num_up =  tmp_num_up;
+      num_down =  tmp_num_down;
+      
+      for(j=0;j<X->Def.Nsite;j++){
+	div_up    = i & X->Def.Tpow[2*j];
+	div_up    = div_up/X->Def.Tpow[2*j];
+	div_down  = i & X->Def.Tpow[2*j+1];
+	div_down  = div_down/X->Def.Tpow[2*j+1];
+	num_up += div_up;
+	num_down += div_down;
+      }
+      if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
+	list_1[ja+jb]=ia+ib*ihfbit;
       list_2_1[ia]=ja;
       list_2_2[ib]=jb;
-      //fprintf(stdoutMPI, "ja=%ld, jb=%ld, ia=%ld, ib=%ld, ihfbit=%ld\n", ja, jb, ia, ib, ihfbit);
-      //      fprintf(stdoutMPI, "ja=%ld, jb=%ld, ja+jb=%ld, list_1_j=%ld\n", ja, jb, ja+jb, list_1[ja+jb]);
       ja+=1;
-    } 
+      } 
+    }
   }
-  ja=ja-1;
-    
+  else if(X->Def.iCalcModel==HubbardNConserved){
+    for(ia=0;ia<X->Check.sdim;ia++){
+      i=ia;
+      num_up =  tmp_num_up;
+      num_down =  tmp_num_down;
+      
+      for(j=0;j<X->Def.Nsite;j++){
+	div_up    = i & X->Def.Tpow[2*j];
+	div_up    = div_up/X->Def.Tpow[2*j];
+	div_down  = i & X->Def.Tpow[2*j+1];
+	div_down  = div_down/X->Def.Tpow[2*j+1];
+	num_up += div_up;
+	num_down += div_down;
+      }
+      if( (num_up+num_down) == X->Def.Ne){
+	list_1[ja+jb]=ia+ib*ihfbit;
+	list_2_1[ia]=ja;
+	list_2_2[ib]=jb;
+	ja+=1;
+      } 
+    }  
+  }
+  ja=ja-1;    
   return ja; 
 }
 
@@ -529,8 +603,7 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
       } 
     }
   }
-  ja=ja-1;
-    
+  ja=ja-1;    
   return ja; 
 }
 
