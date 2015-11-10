@@ -671,7 +671,7 @@ static void PrintModPara(
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", nsite);
-  fprintf(fp, "Sz             %-5d\n", Sz2);
+  fprintf(fp, "2Sz            %-5d\n", Sz2);
   fprintf(fp, "Ncond          %-5d\n", nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", initial_iv);

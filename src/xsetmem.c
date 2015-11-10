@@ -78,6 +78,7 @@ int setmem_large
   switch(X->Def.iCalcModel){
   case Spin:
   case Hubbard:
+  case HubbardNConserved:
   case Kondo:
   case KondoGC:
     lui_malloc1(list_1, X->Check.idim_max+1);
