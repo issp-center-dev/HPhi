@@ -1,6 +1,7 @@
 include make.sys
 
-OBJS =	CG_EigenVector.c \
+OBJS =PowerLanczos.c \
+CG_EigenVector.c \
 HPhiTrans.c \
 HPhiMain.c \
 CalcByFullDiag.c \
