@@ -1,0 +1,11 @@
+W = 4
+L = 4
+model = "FermionHubbard"
+method = "Lanczos"
+//method = "TPQ"
+//method = "FullDiag"
+lattice = "square lattice"
+t = 1.0
+U = 4.0
+nelec = 16
+2Sz = 0
