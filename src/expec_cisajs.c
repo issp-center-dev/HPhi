@@ -18,15 +18,33 @@
 #include "expec_cisajs.h"
 #include "wrapperMPI.h"
 
-/** 
+/**
+ * @file   expec_cisajs.c
  * 
- * 
- * @param X 
- * @param vec 
- * 
+ * @brief  File for calculation of one body green's function
+ *
+ * @version 0.1, 0.2
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
+ * 
+ */
+
+
+/** 
+ * @brief function of calculation for one body green's function
+ * 
+ * @param X  list for getting information to calculate one body green's function.
+ * @param vec eigenvectors.
+ * 
+ * @version 0.2
+ * @details add calculation one body green's functions for general spin
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @retval 0
+ * @retval -1
  */
 int expec_cisajs(struct BindStruct *X,double complex *vec){
 
@@ -170,8 +188,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	  } 
 	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr), cimag(dam_pr));
 	}
-	else{
-	  
+	else{	  
 	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,0.0,0.0);
 	}	
       }else{
@@ -237,7 +254,9 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, org_sigma2, X,tmp_off) shared(vec)
 	    for(j=1;j<=i_max;j++){
 	      num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-	      dam_pr  +=  conj(vec[tmp_off+1])*vec[j]*num1; 
+	      if(num1 !=0){
+		dam_pr  +=  conj(vec[tmp_off+1])*vec[j]*num1;
+	      }
 	    } 
 	    fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
 	  }
@@ -267,38 +286,4 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
   }
   return 0;
-}
-
-/** 
- * 
- * 
- * @param j 
- * @param is1 
- * @param sigma1 
- * @param X 
- * @param vec 
- * 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
- */
-double complex child_Green_0_Spin
-(
- long int j,
- long int is1,
- int sigma1,
- struct BindStruct *X,
- double complex *vec
- )
-{  
-  long int ibit_1;
-  double complex dam_pr;
-    
-  ibit_1=list_1[j]&is1;
-  if(ibit_1 == sigma1){
-	dam_pr = conj(vec[j])*vec[j];
-  }else{
-    dam_pr = 0.0;
-  }
-  return dam_pr;
 }

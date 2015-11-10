@@ -174,7 +174,7 @@ int expec_energy(struct BindStruct *X){
     return -1;
   }
   
-#pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
+  #pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
   for(i = 1; i <= i_max; i++){
     v1[i]=v0[i];
     v0[i]=0.0+0.0*I;
@@ -184,7 +184,7 @@ int expec_energy(struct BindStruct *X){
 
   dam_pr=0.0;
   dam_pr1=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr, dam_pr1) private(j) shared(v0, v1)firstprivate(i_max) 
+  #pragma omp parallel for default(none) reduction(+:dam_pr, dam_pr1) private(j) shared(v0, v1)firstprivate(i_max) 
   for(j=1;j<=i_max;j++){
     dam_pr   += conj(v1[j])*v0[j]; // E   = <v1|H|v1>=<v1|v0>
     dam_pr1  += conj(v0[j])*v0[j]; // E^2 = <v1|H*H|v1>=<v0|v0>
@@ -205,6 +205,8 @@ int expec_energy(struct BindStruct *X){
     if(childfopenMPI(sdt, "w", &fp)!=0){
       return -1;
     }  
+    //printf("AZ: %lf %lf \n",creal(v1[0]),creal(v1[20]));
+    //printf("BZ: %lf %lf \n",creal(v0[0]),creal(v0[20]));
     fprintf(fp,"Energy  %.10lf \n",X->Phys.energy);
     fprintf(fp,"Doublon  %.10lf \n",X->Phys.doublon);
     fclose(fp);

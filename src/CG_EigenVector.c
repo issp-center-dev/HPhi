@@ -77,6 +77,8 @@ int CG_EigenVector(struct BindStruct *X){
     b[i]=v0[i]+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*0.001;
     bnorm+=conj(b[i])*b[i];
   }
+  bnorm=sqrt(bnorm);
+  
 #pragma omp parallel for default(none) private(i) shared(b) firstprivate(i_max,bnorm)
   for(i=1;i<=i_max;i++){
     b[i]=b[i]/bnorm;
@@ -173,7 +175,7 @@ int CG_EigenVector(struct BindStruct *X){
 
 #pragma omp parallel for default(none) shared(v0) firstprivate(i_max, xnorm) 
     for(i=1;i<=i_max;i++){
-      v0[i]=v0[i]/xnorm;     
+      v0[i]=v0[i]/xnorm;
     }
     xb=0.0;
 
@@ -194,7 +196,7 @@ int CG_EigenVector(struct BindStruct *X){
       fprintf(fp_0,"number of iterations in inv1:i_itr=%d itr=%d t_itr=%d %lf\n ",
 	      i_itr,itr,t_itr,fabs(cabs(xb)-1.0));
       fclose(fp_0);
-          
+      
       break;
     }else{
 #pragma omp parallel for default(none) private(i) shared(b, v0) firstprivate(i_max)

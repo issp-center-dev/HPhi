@@ -117,6 +117,8 @@ int main(int argc, char* argv[]){
   }	  
   fprintf(stdoutMPI, "Definition files are correct.\n");
 
+  //For Debug
+  //X.Bind.Def.iFlgGeneralSpin=TRUE;
   
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind);
@@ -128,7 +130,7 @@ int main(int argc, char* argv[]){
     return (-1);
   }
   else{
-    if(!check(&(X.Bind))==0){
+    if(check(&(X.Bind))==FALSE){
       return (-1);
     }
   }

@@ -59,7 +59,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
   i_max=X->Check.idim_max;      
   k_exct = X->Def.k_exct;
- 
+
   if(initial_mode == 0){
     X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
@@ -67,7 +67,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
     iv=X->Large.iv;
     fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
-    #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
+#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
       v1[i]=0.0;
@@ -93,10 +93,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
     else{
        for(i = 1; i <= i_max; i++){
-	v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5);
+	 v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5);
       }
     }
-    
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
     for(i=1;i<=i_max;i++){
@@ -114,7 +113,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, v1);
   stp=1;
-  
+
   TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);          
   alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
   alpha[1]=alpha1;
@@ -128,6 +127,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
   beta1=sqrt(beta1);
   beta[1]=beta1;
   ebefor=0;
+  //  fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", 1, alpha1, 1, beta1);
+  
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -155,7 +156,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     
     Target  = X->Def.LanczosTarget;
 
-    //fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+    //    fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
     
     if(stp==2){      
      #ifdef lapack
@@ -185,7 +186,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
             
     if(stp>2 && stp%2==0){
-      #ifdef lapack
+      
+#ifdef lapack
       d_malloc2(tmp_mat,stp,stp);
       d_malloc1(tmp_E,stp+1);
 
@@ -210,10 +212,11 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[4] = tmp_E[3];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);
-      #else
+#else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
-      #endif
-       
+#endif
+      
+
        fprintf(stdoutMPI, "stp=%d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
        if(stp==4){
 	 childfopenMPI(sdt_2,"w", &fp);

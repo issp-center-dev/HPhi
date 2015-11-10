@@ -38,6 +38,7 @@
 #include "../expec_cisajs.c"
 #include "../expec_cisajscktaltdc.c"
 #include "../expec_totalspin.c"
+#include "../PowerLanczos.c"
 #include "../CalcByLanczos.c"
 
 /* [s] For ExaDiag */
