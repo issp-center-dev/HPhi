@@ -23,14 +23,14 @@ int diagonalcalc
 
 int SetDiagonalCoulombIntra
 (
- const long unsigned int isite1,
+ long unsigned int isite1,
  double dtmp_V,
  struct BindStruct *X
  );
 
 int SetDiagonalChemi
 (
- const long unsigned int isite1,
+ long unsigned int isite1,
  double dtmp_V,
  long unsigned int spin,
  struct BindStruct *X
@@ -38,24 +38,24 @@ int SetDiagonalChemi
 
 int SetDiagonalCoulombInter
 (
- const long unsigned int isite1,
- const long unsigned int isite2,
+ long unsigned int isite1,
+ long unsigned int isite2,
  double dtmp_V,
  struct BindStruct *X
  );
 
 int SetDiagonalHund
 (
- const long unsigned int isite1,
- const long unsigned int isite2,
+ long unsigned int isite1,
+ long unsigned int isite2,
  double dtmp_V,
  struct BindStruct *X
  );
 
 int SetDiagonalInterAll
 (
- const long unsigned int isite1,
- const long unsigned int isite2,
+ long unsigned int isite1,
+ long unsigned int isite2,
  long unsigned int isigma1,
  long unsigned int isigma2,
  double dtmp_V,
