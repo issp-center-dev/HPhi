@@ -100,6 +100,7 @@ int main(int argc, char* argv[]){
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdoutMPI, "Dry run is Finished. \n\n");
+      FinalizeMPI();
       return 0;
     }
   }
