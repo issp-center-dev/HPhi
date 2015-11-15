@@ -7,14 +7,14 @@ CDataFileHead  zvo
 CParaFileHead  zqp
 --------------------
 Nsite          12   
-Nup            6    
-Ndown          6    
+2Sz            0    
+Ncond          0    
 Lanczos_max    2000 
 initial_iv     1    
 nvec           1    
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
-LargeValue     12   
+LargeValue     1    
 NumAve         5    
 ExpecInterval  20   
