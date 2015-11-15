@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include <expec_cisajs.h>
 #include <expec_cisajscktaltdc.h>
+#include <expec_totalspin.h>
 #include "CalcByLanczos.h"
 #include "wrapperMPI.h"
 
@@ -48,6 +49,7 @@ int CalcByLanczos(
 		  struct EDMainCalStruct *X
 				 )
 {
+  char sdt[D_FileNameMax];
   double diff_ene,var;
   int iconv=0;
   int flag=0;
@@ -121,8 +123,41 @@ int CalcByLanczos(
       fprintf(stdoutMPI, "\n");
     }
   }
+  /*
   expec_cisajs(&(X->Bind),v1);
   // v1 is eigen vector
   expec_cisajscktaltdc(&(X->Bind), v1);
+  */
+  if(!expec_cisajs(&(X->Bind), v1)==0){
+    fprintf(stderr, "Error: calc OneBodyG.\n");
+    exitMPI(-1);
+  }
+  if(!expec_cisajscktaltdc(&(X->Bind), v1)==0){
+    fprintf(stderr, "Error: calc TwoBodyG.\n");
+    exitMPI(-1);
+  }
+  if(!expec_totalspin(&(X->Bind), v1)==0){
+    fprintf(stderr, "Error: calc TotalSpin.\n");
+    exitMPI(-1);
+  }
+  
+    if(X->Bind.Def.St==0){
+      sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
+    }else if(X->Bind.Def.St==1){
+      sprintf(sdt, cFileNameEnergy_CG, X->Bind.Def.CDataFileHead);
+    }
+	
+    FILE *fp;    
+    if(childfopenMPI(sdt, "w", &fp)!=0){
+      return -1;
+    }  
+
+    fprintf(fp,"Energy  %.10lf \n",X->Bind.Phys.energy);
+    fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);
+    fprintf(fp,"Sz  %.10lf \n",X->Bind.Phys.sz);
+    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);
+    
+    fclose(fp);
+  
   return 0;
 }
