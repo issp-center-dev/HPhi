@@ -671,7 +671,7 @@ static void PrintModPara(
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", nsite);
-  fprintf(fp, "2Sz            %-5d\n", Sz2);
+  if (Sz2 != 9999) fprintf(fp, "2Sz            %-5d\n", Sz2);
   fprintf(fp, "Ncond          %-5d\n", nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", initial_iv);
@@ -1010,7 +1010,6 @@ static void CheckModPara(
   /**/
   if (strcmp(model, "fermionhubbard") == 0) {
 
-    StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
 
   }
@@ -1018,11 +1017,9 @@ static void CheckModPara(
 
     StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_NotUsed_i("nelec", *nelec);
-    *nelec = 0;
   }
   else if (strcmp(model, "kondolattice") == 0) {
 
-    StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
 
   }
@@ -1034,8 +1031,6 @@ static void CheckModPara(
  
     StdFace_NotUsed_i("nelec", *nelec);
     StdFace_NotUsed_i("2Sz", *Sz2);
-    *nelec = 0.0;
-    *Sz2 = 0.0;
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Model !\n");
