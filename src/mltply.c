@@ -121,7 +121,9 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	    }//j
 	    }
        */
-          for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
+          //InterAll
+      
+      for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
             isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
             isite2 = X->Def.InterAll_OffDiagonal[i][2] + 1;
             isite3 = X->Def.InterAll_OffDiagonal[i][4] + 1;
@@ -183,7 +185,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
         X->Large.prdct += dam_pr;
       }
 
-          //InterAll
           for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
             isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
             isite2 = X->Def.InterAll_OffDiagonal[i][2] + 1;

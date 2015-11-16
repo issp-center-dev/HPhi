@@ -94,7 +94,7 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
   GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit);
   spn   = 0.0;
   spn_z = 0.0;
-  for(isite1=1;isite1<=X->Def.Nsite;isite1++){
+  for(isite1=1;isite1<=X->Def.Nsite;isite1++){    
     for(isite2=1;isite2<=X->Def.Nsite;isite2++){
       is1_up=X->Def.Tpow[2*isite1-2];
       is1_down=X->Def.Tpow[2*isite1-1];
@@ -116,10 +116,10 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
 	num2_down=ibit2_down/is2_down;
             
 	tmp_spn_z = (num1_up-num1_down)*(num2_up-num2_down);
-	spn_z    += conj(vec[j])*vec[j]*tmp_spn_z/4.0;
 	spn      += conj(vec[j])*vec[j]*tmp_spn_z/4.0;
 	if(isite1==isite2){
 	  spn+=conj(vec[j])*vec[j]*(num1_up+num1_down-2*num1_up*num1_down)/2.0;
+	  spn_z    += conj(vec[j])*vec[j]*(num1_up-num1_down)/2.0;
 	}else{
 	  if(ibit1_up!=0 && ibit1_down==0 && ibit2_up==0 &&ibit2_down!=0 ){
 	    iexchg= list_1[j]-(is1_up+is2_down);
@@ -187,10 +187,10 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec){
 	num2_down=ibit2_down/is2_down;
             
 	tmp_spn_z = (num1_up-num1_down)*(num2_up-num2_down);
-	spn_z    += conj(vec[j])*vec[j]*tmp_spn_z/4.0;
 	spn+= conj(vec[j])*vec[j]*tmp_spn_z/4.0;
 	if(isite1==isite2){
 	  spn+=conj(vec[j])*vec[j]*(num1_up+num1_down-2*num1_up*num1_down)/2.0;
+	  spn_z    += conj(vec[j])*vec[j]*(num1_up-num1_down)/2.0;
 	}else{
 	  if(ibit1_up!=0 && ibit1_down==0 && ibit2_up==0 &&ibit2_down!=0 ){
 	    iexchg= list_1_j-(is1_up+is2_down);
