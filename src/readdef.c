@@ -406,7 +406,7 @@ int ReadDefFileNInt(
 	}
 	else if(strcmp(ctmp, "Ncond")==0){
 	  iNcond=(int)dtmp;
-	  iReadNCond=TRUE;
+	  iReadNCond=TRUE;	  
 	}
 	else if(strcmp(ctmp, "Lanczos_max")==0){
 	  X->Lanczos_max=(int)dtmp;
@@ -526,34 +526,39 @@ int ReadDefFileNInt(
 
   //Sz, Ncond
   switch(X->iCalcModel){
-  case Hubbard:
   case Spin:
+  case Hubbard:
   case Kondo:
+    
     if(iReadNCond==TRUE){
-      if(iRead2Sz==TRUE){
-	X->Nup=X->NLocSpn+iNcond+X->Total2Sz;
-	X->Ndown=X->NLocSpn+iNcond-X->Total2Sz;
-	if(X->iCalcModel ==Hubbard || X->iCalcModel == Kondo){
+      if(X->iCalcModel==Spin){
+	fprintf(stderr, "For Spin, Ncond should not be defined.\n");	
+	return -1;
+      }
+      else{
+	if(iRead2Sz==TRUE){
+	  X->Nup=X->NLocSpn+iNcond+X->Total2Sz;
+	  X->Ndown=X->NLocSpn+iNcond-X->Total2Sz;
 	  if(X->Nup%2 != 0 && X->Ndown%2 !=0){
 	    fprintf(stderr, "2Sz is incorrect.\n");
 	    return -1;
-	  }
-	}	
-	X->Nup/=2;
-	X->Ndown/=2;
-      }
-      else{
-	if(X->iCalcModel == Hubbard){
-	  X->Ne=iNcond;
-	  if(iNcond <1){
-	    fprintf(stderr, "Ncond is incorrect.\n");
-	    return -1;
-	  }
-	  X->iCalcModel=HubbardNConserved;
+	  } 
+	  X->Nup/=2;
+	  X->Ndown/=2;
 	}
 	else{
-	  fprintf(stderr, " 2Sz is not defined.\n");
-	  return -1;
+	  if(X->iCalcModel == Hubbard){
+	    X->Ne=iNcond;
+	    if(iNcond <1){
+	      fprintf(stderr, "Ncond is incorrect.\n");
+	      return -1;
+	    }
+	    X->iCalcModel=HubbardNConserved;
+	  }
+	  else{
+	    fprintf(stderr, " 2Sz is not defined.\n");
+	    return -1;
+	  }
 	}
       }
     }
@@ -562,11 +567,25 @@ int ReadDefFileNInt(
 	fprintf(stderr, " NCond is not defined.\n");
 	return -1;
       }
+      X->Nup=X->NLocSpn+X->Total2Sz;
+      X->Ndown=X->NLocSpn-X->Total2Sz;
+      if(X->Nup%2 != 0 && X->Ndown%2 !=0){
+	fprintf(stderr, "2Sz is incorrect.\n");
+	return -1;
+      }
+      X->Nup/=2;
+      X->Ndown/=2;
     }
     else{
       if(X->Nup==0 && X->Ndown==0){
-	fprintf(stderr, " NCond is not defined.\n");
-	return -1;
+	if(X->iCalcModel == Spin){
+	  fprintf(stderr, " 2Sz is not defined.\n");
+	  return -1;
+	}
+	else{
+	  fprintf(stderr, " NCond is not defined.\n");
+	  return -1;
+	}
       }
     }
     
@@ -582,6 +601,14 @@ int ReadDefFileNInt(
 	fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
 	return -1;
       }
+    }
+    break;
+  case SpinGC:
+  case KondoGC:
+  case HubbardGC:
+    if(iReadNCond == TRUE || iRead2Sz ==TRUE){
+	fprintf(stderr, "For GC, both Ncond and 2Sz should not be defined.\n");
+	return -1;
     }
     break;
   default:
