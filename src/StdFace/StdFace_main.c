@@ -672,7 +672,7 @@ static void PrintModPara(
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", nsite);
   if (Sz2 != 9999) fprintf(fp, "2Sz            %-5d\n", Sz2);
-  fprintf(fp, "Ncond          %-5d\n", nelec);
+  if (nelec != 9999) fprintf(fp, "Ncond          %-5d\n", nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", initial_iv);
   fprintf(fp, "nvec           %-5d\n", nvec);
