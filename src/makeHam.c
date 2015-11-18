@@ -186,22 +186,26 @@ int makeHam(struct BindStruct *X){
     }
     }
     //Pair hopping
-    for(i = 0;i< X->Def.NPairHopping; i++){
-      child_pairhopp_GetInfo(i, X);
- 
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv            = GC_child_pairhopp_element(j, v0, v1, X,&tmp_off);
-	Ham[tmp_off+1][j] += dmv;
+    for(i = 0;i< X->Def.NPairHopping/2; i++){
+      for(ihermite=0; ihermite<2; ihermite++){
+	idx=2*i+ihermite;
+	child_pairhopp_GetInfo(idx, X);	
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv            = GC_child_pairhopp_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off+1][j] += dmv;
+	}
       }
     }
     //Exchange
-    for(i = 0;i< X->Def.NExchangeCoupling; i++){
-      child_exchange_GetInfo(i, X);
- 
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv            = GC_child_exchange_element(j, v0, v1, X,&tmp_off);
-	Ham[tmp_off+1][j] += dmv;
-      }    
+    for(i = 0;i< X->Def.NExchangeCoupling/2; i++){
+      for(ihermite=0; ihermite<2; ihermite++){
+	idx=2*i+ihermite;
+	child_exchange_GetInfo(idx, X);
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv            = GC_child_exchange_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off+1][j] += dmv;
+	}    
+      }
     }
     break;
   case KondoGC:
@@ -298,22 +302,26 @@ int makeHam(struct BindStruct *X){
     }
     
     //Pair hopping
-    for(i = 0;i< X->Def.NPairHopping; i++){
-      child_pairhopp_GetInfo(i, X);        
-
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv          = child_pairhopp_element(j, v0, v1, X,&tmp_off);
-	Ham[tmp_off][j] += dmv;
+    for(i = 0;i< X->Def.NPairHopping/2; i++){
+      for(ihermite=0; ihermite<2; ihermite++){
+	idx=2*i+ihermite;
+	child_pairhopp_GetInfo(idx, X);        
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv          = child_pairhopp_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off][j] += dmv;
+	}
       }
     }
-    
     //Exchange
-    for(i = 0;i< X->Def.NExchangeCoupling; i++){
-      child_exchange_GetInfo(i, X);
-
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv          = child_exchange_element(j, v0, v1, X,&tmp_off);
-	Ham[tmp_off][j] += dmv;
+    for(i = 0;i< X->Def.NExchangeCoupling/2; i++){
+      for(ihermite=0; ihermite<2; ihermite++){
+	idx=2*i+ihermite;
+	child_exchange_GetInfo(idx, X);
+	
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv          = child_exchange_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off][j] += dmv;
+	}
       }
     }
     break;
@@ -397,20 +405,26 @@ int makeHam(struct BindStruct *X){
 	}
       }
       //Exchange
-      for(i = 0;i< X->Def.NExchangeCoupling; i++){
-	child_exchange_spin_GetInfo(i, X);
-	for(j=1;j<=X->Large.i_max;j++){
-	  dmv =GC_child_exchange_spin_element(j, v0, v1, X,&tmp_off);
-	  Ham[tmp_off+1][j] +=dmv;
+      for(i = 0;i< X->Def.NExchangeCoupling/2; i++){
+	for(ihermite=0; ihermite<2; ihermite++){
+	  idx=2*i+ihermite;
+	  child_exchange_spin_GetInfo(idx, X);
+	  for(j=1;j<=X->Large.i_max;j++){
+	    dmv =GC_child_exchange_spin_element(j, v0, v1, X,&tmp_off);
+	    Ham[tmp_off+1][j] +=dmv;
+	  }
 	}
       }
       //PairLift
-      for(i = 0;i< X->Def.NPairLiftCoupling; i++){
-	child_pairlift_spin_GetInfo(i, X);
+      for(i = 0;i< X->Def.NPairLiftCoupling/2; i++){
+	for(ihermite=0; ihermite<2; ihermite++){
+	  idx=2*i+ihermite;
+	  child_pairlift_spin_GetInfo(idx, X);
 
-	for(j=1;j<=X->Large.i_max;j++){
-	  dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
-	  Ham[tmp_off+1][j] +=dmv;
+	  for(j=1;j<=X->Large.i_max;j++){
+	    dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
+	    Ham[tmp_off+1][j] +=dmv;
+	  }
 	}
       }
     }
@@ -493,21 +507,26 @@ int makeHam(struct BindStruct *X){
       }
     
     //Exchange
-    for(i = 0;i< X->Def.NExchangeCoupling; i++){
-      child_exchange_spin_GetInfo(i, X);
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv          = child_exchange_spin_element(j, v0, v1, X,&tmp_off);
-	Ham[tmp_off][j] += dmv;
+    for(i = 0;i< X->Def.NExchangeCoupling/2; i++){
+      for(ihermite=0; ihermite<2; ihermite++){
+	idx=2*i+ihermite;
+	child_exchange_spin_GetInfo(idx, X);
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv          = child_exchange_spin_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off][j] += dmv;
+	}
       }
     }
 
     //PairLift
-    for(i = 0;i< X->Def.NPairLiftCoupling; i++){
-      child_pairlift_spin_GetInfo(i, X);
-
-      for(j=1;j<=X->Large.i_max;j++){
-	dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
-     	Ham[tmp_off][j] +=dmv;
+    for(i = 0;i< X->Def.NPairLiftCoupling/2; i++){
+      for(ihermite=0; ihermite<2; ihermite++){
+	idx=2*i+ihermite;
+	child_pairlift_spin_GetInfo(idx, X);
+	for(j=1;j<=X->Large.i_max;j++){
+	  dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
+	  Ham[tmp_off][j] +=dmv;
+	}
       }
     }
     }

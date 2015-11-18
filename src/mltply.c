@@ -136,17 +136,23 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       }
   
       //Pair hopping
-      for (i = 0; i < X->Def.NPairHopping; i++) {
-	child_pairhopp_GetInfo(i, X);
-	dam_pr = GC_child_pairhopp(tmp_v0, tmp_v1, X);
-	X->Large.prdct += dam_pr;
+      for (i = 0; i < X->Def.NPairHopping/2; i++) {
+	for(ihermite=0; ihermite<2; ihermite++){
+	  idx=2*i+ihermite;
+	  child_pairhopp_GetInfo(idx, X);
+	  dam_pr = GC_child_pairhopp(tmp_v0, tmp_v1, X);
+	  X->Large.prdct += dam_pr;
+	}
       }
 
       //Exchange
-      for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-	child_exchange_GetInfo(i, X);
-	dam_pr = GC_child_exchange(tmp_v0, tmp_v1, X);
-	X->Large.prdct += dam_pr;
+      for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
+	for(ihermite=0; ihermite<2; ihermite++){
+	  idx=2*i+ihermite;
+	  child_exchange_GetInfo(idx, X);
+	  dam_pr = GC_child_exchange(tmp_v0, tmp_v1, X);
+	  X->Large.prdct += dam_pr;
+	}
       }
       break;
       
@@ -206,19 +212,24 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  }
   
           //Pair hopping
-          for (i = 0; i < X->Def.NPairHopping; i++) {
-            child_pairhopp_GetInfo(i, X);
-            dam_pr = child_pairhopp(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
-
+          for (i = 0; i < X->Def.NPairHopping/2; i++) {
+	    for(ihermite=0; ihermite<2; ihermite++){
+	      idx=2*i+ihermite; 
+	      child_pairhopp_GetInfo(idx, X);
+	      dam_pr = child_pairhopp(tmp_v0, tmp_v1, X);
+	      X->Large.prdct += dam_pr;
+	    }
           }
 
           //Exchange
-          for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-            child_exchange_GetInfo(i, X);
-            dam_pr = child_exchange(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
-          }
+          for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
+	    for(ihermite=0; ihermite<2; ihermite++){
+	      idx=2*i+ihermite;
+	      child_exchange_GetInfo(idx, X);
+	      dam_pr = child_exchange(tmp_v0, tmp_v1, X);
+	      X->Large.prdct += dam_pr;
+	    }
+	  }
           break;
 
     case Spin:
@@ -243,12 +254,14 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	}
       	
 	//Exchange	
-	for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-	  child_exchange_spin_GetInfo(i, X);
-	  dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
-	  X->Large.prdct += dam_pr;
+	for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
+	  for(ihermite=0; ihermite<2; ihermite++){
+	    idx=2*i+ihermite;
+	    child_exchange_spin_GetInfo(idx, X);
+	    dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+	    X->Large.prdct += dam_pr;
+	  }
 	}
-	
       }
       else{
 	//Transfer absorbed in Diagonal term.
@@ -347,18 +360,24 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	}
 	
         //Exchange
-        for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-          child_exchange_spin_GetInfo(i, X);
-          dam_pr = GC_child_exchange_spin(tmp_v0, tmp_v1, X);
-          X->Large.prdct += dam_pr;
-        }
+        for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
+	  for(ihermite=0; ihermite<2; ihermite++){
+	    idx=2*i+ihermite;
+	    child_exchange_spin_GetInfo(idx, X);
+	    dam_pr = GC_child_exchange_spin(tmp_v0, tmp_v1, X);
+	    X->Large.prdct += dam_pr;
+	  }
+	}
 
         //PairLift
-        for (i = 0; i < X->Def.NPairLiftCoupling; i++) {
-          child_pairlift_spin_GetInfo(i, X);
-          dam_pr = GC_child_pairlift_spin(tmp_v0, tmp_v1, X);
-          X->Large.prdct += dam_pr;
-        }
+        for (i = 0; i < X->Def.NPairLiftCoupling/2; i++) {
+	  for(ihermite=0; ihermite<2; ihermite++){
+	    idx=2*i+ihermite;   
+	    child_pairlift_spin_GetInfo(idx, X);
+	    dam_pr = GC_child_pairlift_spin(tmp_v0, tmp_v1, X);
+	    X->Large.prdct += dam_pr;
+	  }
+	}
       }
       else {//For General spin
 	for (i = 0; i < X->Def.EDNTransfer/2; i++) {

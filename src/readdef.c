@@ -828,20 +828,26 @@ int ReadDefFileIdxPara(
       break;
     case KWPairHop:
       /*pairhop.def---------------------------------------*/
+      if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
+	fprintf(stderr, "PairHop is not active in Spin and SpinGC.\n");
+	return -1;
+      }
+      
       if(X->NPairHopping>0){
 	while(fgetsMPI(ctmp2, 256, fp) != NULL){
-    sscanf(ctmp2, "%d %d %lf\n",
-      &(X->PairHopping[idx][0]),
-      &(X->PairHopping[idx][1]),
-      &(X->ParaPairHopping[idx])
-      );
-
+	  sscanf(ctmp2, "%d %d %lf\n",
+		 &(X->PairHopping[idx][0]),
+		 &(X->PairHopping[idx][1]),
+		 &(X->ParaPairHopping[idx])
+		 );
+	  
 	  if(CheckPairSite(X->PairHopping[idx][0], X->PairHopping[idx][1],X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
 	  }
 	  idx++;
 	}
+	
 	if(idx!=X->NPairHopping){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
@@ -909,7 +915,7 @@ int ReadDefFileIdxPara(
       /*pairlift.def--------------------------------------*/
       if(X->NPairLiftCoupling>0){
 	if(X->iCalcModel != SpinGC){
-	  fclose(fp);
+	  fprintf(stderr, "PairLift is active only in SpinGC.\n");
 	  return -1;
 	}
 	while(fgetsMPI(ctmp2,256,fp) != NULL)
