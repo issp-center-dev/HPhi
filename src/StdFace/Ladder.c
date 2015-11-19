@@ -56,14 +56,12 @@ void FermionHubbard_Ladder(
   StdFace_PrintVal_d("V2", &V2, 0.0);
   /**/
   StdFace_NotUsed_i("2S", S2);
-  StdFace_NotUsed_d("tpp", tpp);
-  StdFace_NotUsed_d("t0", t0);
-  StdFace_NotUsed_d("t1", t1);
-  StdFace_NotUsed_d("t2", t2);
-  StdFace_NotUsed_d("Vpp", Vpp);
-  StdFace_NotUsed_d("V0", V0);
-  StdFace_NotUsed_d("V1", V1);
-  StdFace_NotUsed_d("V2", V2);
+  StdFace_NotUsed_d("t", t);
+  StdFace_NotUsed_d("t'", tp);
+  StdFace_NotUsed_d("t''", tpp);
+  StdFace_NotUsed_d("V", V);
+  StdFace_NotUsed_d("V'", Vp);
+  StdFace_NotUsed_d("V''", Vpp);
   /*
   Local Spin
   */
@@ -128,7 +126,7 @@ void FermionHubbard_Ladder(
 
       isite = iL + iW * L;
 
-      StdFace_Coulomb(&kintr, U, isite, isite);
+      StdFace_intr(&kintr, U, isite, 0, isite, 0, isite, 1, isite, 1);
 
       jsite = ((iL + 1 + 2 * L) % L) + iW * L;
       StdFace_Coulomb(&kintr, V1, isite, jsite);
@@ -194,11 +192,18 @@ void Spin_Ladder(
   StdFace_PrintVal_d("h", &h, 0.0);
   StdFace_PrintVal_d("Gamma", &Gamma, 0.0);
   StdFace_PrintVal_d("D", &D, 0.0);
-  StdFace_PrintVal_d("J1", &J1, 0.0);
-  StdFace_PrintVal_d("J1'", &J1p, 0.0);
-  StdFace_PrintVal_d("J0'", &J0, 0.0);
-  StdFace_PrintVal_d("J2'", &J2, 0.0);
+  StdFace_PrintVal_d("J1", &J1, 1.0);
+  StdFace_PrintVal_d("J1'", &J1p, 1.0);
+  StdFace_PrintVal_d("J0'", &J0, 1.0);
+  StdFace_PrintVal_d("J2'", &J2, 1.0);
   /**/
+  StdFace_NotUsed_d("J", J);
+  StdFace_NotUsed_d("J'", Jp);
+  StdFace_NotUsed_d("J''", Jpp);
+  StdFace_NotUsed_d("Jxy", Jxy);
+  StdFace_NotUsed_d("Jx", Jx);
+  StdFace_NotUsed_d("Jy", Jy);
+  StdFace_NotUsed_d("Jz", Jz);
   StdFace_NotUsed_d("Jz0", Jz0);
   StdFace_NotUsed_d("Jz1", Jz1);
   StdFace_NotUsed_d("Jxy0", Jxy0);
@@ -228,7 +233,7 @@ void Spin_Ladder(
   /*
   Interaction
   */
-  nintr = L * W * (4 * 5 + 2 * 8);
+  nintr = (3*L*W + 3*L*(W - 1)) * (S2 + 1) * (S2 + 1) + (2*L*W + 3*L*(W - 1))*S2*S2*2;
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -305,15 +310,16 @@ void KondoLattice_Ladder(
   /**/
   StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("mu", &mu, 0.0);
-  StdFace_PrintVal_d("t", &t, 1.0);
+  StdFace_PrintVal_d("t0", &t0, 1.0);
+  StdFace_PrintVal_d("t1", &t1, 1.0);
+  StdFace_PrintVal_d("t1'", &t1p, 1.0);
+  StdFace_PrintVal_d("t2", &t2, 1.0);
   StdFace_PrintVal_d("J", &J, 0.0);
   /**/
   StdFace_NotUsed_d("U", U);
+  StdFace_NotUsed_d("t", t);
   StdFace_NotUsed_d("t'", tp);
   StdFace_NotUsed_d("tpp", tpp);
-  StdFace_NotUsed_d("t0", t0);
-  StdFace_NotUsed_d("t1", t1);
-  StdFace_NotUsed_d("t2", t2);
   StdFace_NotUsed_d("V'", Vp);
   StdFace_NotUsed_d("Vpp", Vpp);
   StdFace_NotUsed_d("V0", V0);

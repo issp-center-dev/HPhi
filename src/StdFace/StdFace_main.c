@@ -195,7 +195,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 0);
-    else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_Ladder(nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "fermionhubbardgc") == 0
@@ -204,7 +204,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 1);
-    else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_Ladder(nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "spin") == 0){
@@ -212,7 +212,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 0);
-    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_Ladder(Sz2, 0);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "spingc") == 0){
@@ -220,7 +220,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 1);
-    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_Ladder(Sz2, 1);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolattice") == 0){
@@ -228,7 +228,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 0);
-    else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_Laddere(nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolatticegc") == 0
@@ -237,7 +237,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 1);
-    else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_Ladder(nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
   else UnsupportedSystem(model,lattice);
