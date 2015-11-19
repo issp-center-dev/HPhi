@@ -127,6 +127,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &J1);
     else if (strcmp(keyword, "j1'") == 0) StoreWithCheckDup_d(keyword, value, &J1p);
     else if (strcmp(keyword, "j2") == 0) StoreWithCheckDup_d(keyword, value, &J2);
+    else if (strcmp(keyword, "j2'") == 0) StoreWithCheckDup_d(keyword, value, &J2p);
     else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &Jx);
     else if (strcmp(keyword, "jx0") == 0) StoreWithCheckDup_d(keyword, value, &Jx0);
     else if (strcmp(keyword, "jx1") == 0) StoreWithCheckDup_d(keyword, value, &Jx1);
@@ -320,6 +321,7 @@ static void StdFace_ResetVals(){
   J1 = 9999.9;
   J1p = 9999.9;
   J2 = 9999.9;
+  J2p = 9999.9;
   /**/
   Jx = 9999.9;
   Jy = 9999.9;

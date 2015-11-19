@@ -194,8 +194,9 @@ void Spin_Ladder(
   StdFace_PrintVal_d("D", &D, 0.0);
   StdFace_PrintVal_d("J1", &J1, 1.0);
   StdFace_PrintVal_d("J1'", &J1p, 1.0);
-  StdFace_PrintVal_d("J0'", &J0, 1.0);
-  StdFace_PrintVal_d("J2'", &J2, 1.0);
+  StdFace_PrintVal_d("J0", &J0, 1.0);
+  StdFace_PrintVal_d("J2", &J2, 1.0);
+  StdFace_PrintVal_d("J2'", &J2p, J2);
   /**/
   StdFace_NotUsed_d("J", J);
   StdFace_NotUsed_d("J'", Jp);
@@ -265,8 +266,8 @@ void Spin_Ladder(
         StdFace_exchange(&kintr, S2, S2, J2, isite, jsite);
 
         jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
-        StdFace_SzSz(&kintr, S2, S2, J2, isite, isite);
-        StdFace_exchange(&kintr, S2, S2, J2, isite, jsite);
+        StdFace_SzSz(&kintr, S2, S2, J2p, isite, isite);
+        StdFace_exchange(&kintr, S2, S2, J2p, isite, jsite);
       }
     }
   }
