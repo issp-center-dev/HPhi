@@ -343,7 +343,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	}
 
 	//InterAll	
-        for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
+        for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
 	  for(ihermite=0; ihermite<2; ihermite++){
 	    idx=2*i+ihermite;
 	    isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;

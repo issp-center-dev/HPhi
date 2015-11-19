@@ -534,15 +534,48 @@ static void PrintInter(){
 
   for (jintr = 0; jintr < nintr; jintr++){
     for (kintr = jintr + 1; kintr < nintr; kintr++){
-      if ( intrindx[jintr][0] == intrindx[kintr][0]
+      if ( 
+        (  intrindx[jintr][0] == intrindx[kintr][0]
         && intrindx[jintr][1] == intrindx[kintr][1]
         && intrindx[jintr][2] == intrindx[kintr][2]
         && intrindx[jintr][3] == intrindx[kintr][3]
         && intrindx[jintr][4] == intrindx[kintr][4]
         && intrindx[jintr][5] == intrindx[kintr][5]
         && intrindx[jintr][6] == intrindx[kintr][6]
-        && intrindx[jintr][7] == intrindx[kintr][7]){
+        && intrindx[jintr][7] == intrindx[kintr][7] )
+        ||
+        (  intrindx[jintr][0] == intrindx[kintr][4]
+        && intrindx[jintr][1] == intrindx[kintr][5]
+        && intrindx[jintr][2] == intrindx[kintr][6]
+        && intrindx[jintr][3] == intrindx[kintr][7]
+        && intrindx[jintr][4] == intrindx[kintr][0]
+        && intrindx[jintr][5] == intrindx[kintr][1]
+        && intrindx[jintr][6] == intrindx[kintr][2]
+        && intrindx[jintr][7] == intrindx[kintr][3])
+        ){
         intr[jintr] = intr[jintr] + intr[kintr];
+        intr[kintr] = 0.0;
+      }
+      else if (
+        (  intrindx[jintr][0] == intrindx[kintr][4]
+        && intrindx[jintr][1] == intrindx[kintr][5]
+        && intrindx[jintr][2] == intrindx[kintr][2]
+        && intrindx[jintr][3] == intrindx[kintr][3]
+        && intrindx[jintr][4] == intrindx[kintr][0]
+        && intrindx[jintr][5] == intrindx[kintr][1]
+        && intrindx[jintr][6] == intrindx[kintr][6]
+        && intrindx[jintr][7] == intrindx[kintr][7])
+        ||
+        (  intrindx[jintr][0] == intrindx[kintr][0]
+        && intrindx[jintr][1] == intrindx[kintr][1]
+        && intrindx[jintr][2] == intrindx[kintr][6]
+        && intrindx[jintr][3] == intrindx[kintr][7]
+        && intrindx[jintr][4] == intrindx[kintr][4]
+        && intrindx[jintr][5] == intrindx[kintr][5]
+        && intrindx[jintr][6] == intrindx[kintr][2]
+        && intrindx[jintr][7] == intrindx[kintr][3])
+        ){
+        intr[jintr] = intr[jintr] - intr[kintr];
         intr[kintr] = 0.0;
       }
     }
