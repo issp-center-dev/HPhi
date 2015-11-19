@@ -48,6 +48,7 @@ double J0;
 double J1;
 double J1p;
 double J2;
+double J2p;
 /**/
 double Jx;
 double Jy;
