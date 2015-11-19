@@ -63,6 +63,7 @@ int expec_totalspin
      break;
   default:
     X->Phys.s2=0.0;   
+    X->Phys.sz=0.0;   
   }
   return 0;
 }
@@ -85,14 +86,15 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
   int num1_up,num2_up;
   int num1_down,num2_down; 
   long unsigned int ibit1_up,ibit2_up,ibit1_down,ibit2_down; 
-  double complex spn_z;
+  double complex spn_z,tmp_spn_z;
   double complex spn;
   long unsigned i_max;    
   i_max=X->Check.idim_max;
 
   GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit);
-  spn=0.0;
-  for(isite1=1;isite1<=X->Def.Nsite;isite1++){
+  spn   = 0.0;
+  spn_z = 0.0;
+  for(isite1=1;isite1<=X->Def.Nsite;isite1++){    
     for(isite2=1;isite2<=X->Def.Nsite;isite2++){
       is1_up=X->Def.Tpow[2*isite1-2];
       is1_down=X->Def.Tpow[2*isite1-1];
@@ -100,7 +102,7 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
       is2_down=X->Def.Tpow[2*isite2-1];
 
 
-#pragma omp parallel for reduction(+:spn) default(none) firstprivate(i_max, is1_up, is1_down, is2_up, is2_down, irght, ilft, ihfbit, isite1, isite2) private(ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, spn_z, iexchg, off) shared(vec, list_1, list_2_1, list_2_2)
+#pragma omp parallel for reduction(+:spn,spn_z) default(none) firstprivate(i_max, is1_up, is1_down, is2_up, is2_down, irght, ilft, ihfbit, isite1, isite2) private(ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, tmp_spn_z, iexchg, off) shared(vec, list_1, list_2_1, list_2_2)
       for(j=1;j<=i_max;j++){                    
 
 	ibit1_up= list_1[j]&is1_up;
@@ -113,10 +115,11 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
 	ibit2_down= list_1[j]&is2_down;
 	num2_down=ibit2_down/is2_down;
             
-	spn_z=(num1_up-num1_down)*(num2_up-num2_down);
-	spn+= conj(vec[j])*vec[j]*spn_z/4.0;
+	tmp_spn_z = (num1_up-num1_down)*(num2_up-num2_down);
+	spn      += conj(vec[j])*vec[j]*tmp_spn_z/4.0;
 	if(isite1==isite2){
 	  spn+=conj(vec[j])*vec[j]*(num1_up+num1_down-2*num1_up*num1_down)/2.0;
+	  spn_z    += conj(vec[j])*vec[j]*(num1_up-num1_down)/2.0;
 	}else{
 	  if(ibit1_up!=0 && ibit1_down==0 && ibit2_up==0 &&ibit2_down!=0 ){
 	    iexchg= list_1[j]-(is1_up+is2_down);
@@ -133,7 +136,8 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
       }
     }
   }
-  X->Phys.s2=creal(spn);
+  X->Phys.s2 = creal(spn);
+  X->Phys.sz = creal(spn_z);
 }
 
 
@@ -154,13 +158,14 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec){
   int num1_up,num2_up;
   int num1_down,num2_down; 
   long unsigned int ibit1_up,ibit2_up,ibit1_down,ibit2_down,list_1_j; 
-  double complex spn_z;
+  double complex spn_z,tmp_spn_z;
   double complex spn;
   long unsigned int i_max;
     
   i_max=X->Check.idim_max;
 
-  spn=0.0;
+  spn   = 0.0;
+  spn_z = 0.0;
   for(isite1=1;isite1<=X->Def.Nsite;isite1++){
     for(isite2=1;isite2<=X->Def.Nsite;isite2++){
       is1_up=X->Def.Tpow[2*isite1-2];
@@ -168,7 +173,7 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec){
       is2_up=X->Def.Tpow[2*isite2-2];
       is2_down=X->Def.Tpow[2*isite2-1];
 
-#pragma omp parallel for reduction(+:spn) default(none) firstprivate(i_max, is1_up, is1_down, is2_up, is2_down, isite1, isite2) private(list_1_j, ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, spn_z, iexchg, off) shared(vec)
+#pragma omp parallel for reduction(+:spn,spn_z) default(none) firstprivate(i_max, is1_up, is1_down, is2_up, is2_down, isite1, isite2) private(list_1_j, ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, tmp_spn_z, iexchg, off) shared(vec)
       for(j=1;j<=i_max;j++){                    
         list_1_j    = j-1;
 	ibit1_up= list_1_j&is1_up;
@@ -181,10 +186,11 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec){
 	ibit2_down= list_1_j&is2_down;
 	num2_down=ibit2_down/is2_down;
             
-	spn_z=(num1_up-num1_down)*(num2_up-num2_down);
-	spn+= conj(vec[j])*vec[j]*spn_z/4.0;
+	tmp_spn_z = (num1_up-num1_down)*(num2_up-num2_down);
+	spn+= conj(vec[j])*vec[j]*tmp_spn_z/4.0;
 	if(isite1==isite2){
 	  spn+=conj(vec[j])*vec[j]*(num1_up+num1_down-2*num1_up*num1_down)/2.0;
+	  spn_z    += conj(vec[j])*vec[j]*(num1_up-num1_down)/2.0;
 	}else{
 	  if(ibit1_up!=0 && ibit1_down==0 && ibit2_up==0 &&ibit2_down!=0 ){
 	    iexchg= list_1_j-(is1_up+is2_down);
@@ -201,7 +207,8 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec){
       }
     }
   }
-  X->Phys.s2=creal(spn);
+  X->Phys.s2 = creal(spn);
+  X->Phys.sz = creal(spn_z);
 }
 
 /** 

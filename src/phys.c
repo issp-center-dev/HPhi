@@ -16,10 +16,26 @@
 #include "phys.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   phys.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ * @brief  File for givinvg a parent function to calculate physical quantities  by full diagonalization method 
+ * 
+ * 
+ */
+
+
+
 /** 
  * 
- * 
- * @param X 
+ * @brief A main function to calculate physical quantities by full diagonalization method.
+ * @param[in,out] X CalcStruct list for getting and pushing calculation information 
+ * @version 0.2
+ * @details add output process of calculation results for general spin
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */

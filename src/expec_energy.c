@@ -193,45 +193,7 @@ int expec_energy(struct BindStruct *X){
   X->Phys.energy = dam_pr;
   X->Phys.var    = dam_pr1;
 
-  switch(X->Def.iCalcType){
-  case Lanczos:
-    if(X->Def.St==0){
-      sprintf(sdt, cFileNameEnergy_Lanczos, X->Def.CDataFileHead);
-    }else if(X->Def.St==1){
-      sprintf(sdt, cFileNameEnergy_CG, X->Def.CDataFileHead);
-    }
-	
-    FILE *fp;    
-    if(childfopenMPI(sdt, "w", &fp)!=0){
-      return -1;
-    }  
-    //printf("AZ: %lf %lf \n",creal(v1[0]),creal(v1[20]));
-    //printf("BZ: %lf %lf \n",creal(v0[0]),creal(v0[20]));
-    fprintf(fp,"Energy  %.10lf \n",X->Phys.energy);
-    fprintf(fp,"Doublon  %.10lf \n",X->Phys.doublon);
-    fclose(fp);
-	
-    break;    
-  case TPQCalc:
-    TimeKeeperWithStep(X, cFileNameTimeKeep, cExpecEnd, "a", step_i);
-    break;
-  case FullDiag:
-    break;
-  default:
-    return -1;
-    break;
-  }
-  
-  if(X->Def.iCalcType==Lanczos){
-    if(X->Def.St==0){
-      TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecEnergyEnd, "a");
-      fprintf(stdoutMPI, "%s", cLogLanczosExpecEnergyEnd);
-    }else if(X->Def.St==1){
-      TimeKeeper(X, cFileNameTimeKeep, cCGExpecEnergyEnd, "a");
-      fprintf(stdoutMPI, "%s", cLogCGExpecEnergyEnd);
-    }
-    fprintf(stdoutMPI, cLogEnergy, X->Phys.energy);
-  }
+  TimeKeeperWithStep(X, cFileNameTimeKeep, cExpecEnd, "a", step_i);
   
   return 0;
 }
