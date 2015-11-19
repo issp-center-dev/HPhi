@@ -24,17 +24,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  *
- * Setup a Hamiltonian for the Hubbard model on a triangular lattice
+ * Setup a Hamiltonian for the Hubbard model on a square lattice
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void FermionHubbard_TriangularLattice(
+void FermionHubbard_Ladder(
   int nelec /**< [in] The number of electrons */,
   int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
 {
   int isite, jsite;
   int ispin;
-  int iL, iW, iLp1, iLp2, iWm2, iWm1, iWp1;
+  int iL, iW;
   int ktrans, kintr;
   double LargeValue0;
   fprintf(stdoutMPI, "\n");
@@ -46,20 +46,22 @@ void FermionHubbard_TriangularLattice(
   /**/
   StdFace_PrintVal_d("mu", &mu, 0.0);
   StdFace_PrintVal_d("U", &U, 0.0);
-  StdFace_PrintVal_d("t", &t, 1.0);
-  StdFace_PrintVal_d("V", &V, 0.0);
-  StdFace_PrintVal_d("t'", &tp, 0.0);
-  StdFace_PrintVal_d("V'", &Vp, 0.0);
+  StdFace_PrintVal_d("t1", &t1, 1.0);
+  StdFace_PrintVal_d("t1'", &t1p, 1.0);
+  StdFace_PrintVal_d("t0", &t0, 1.0);
+  StdFace_PrintVal_d("t2", &t2, 1.0);
+  StdFace_PrintVal_d("V0", &V0, 0.0);
+  StdFace_PrintVal_d("V1", &V1, 0.0);
+  StdFace_PrintVal_d("V1'", &V1p, 0.0);
+  StdFace_PrintVal_d("V2", &V2, 0.0);
   /**/
   StdFace_NotUsed_i("2S", S2);
-  StdFace_NotUsed_d("tpp", tpp);
-  StdFace_NotUsed_d("t0", t0);
-  StdFace_NotUsed_d("t1", t1);
-  StdFace_NotUsed_d("t2", t2);
-  StdFace_NotUsed_d("Vpp", Vpp);
-  StdFace_NotUsed_d("V0", V0);
-  StdFace_NotUsed_d("V1", V1);
-  StdFace_NotUsed_d("V2", V2);
+  StdFace_NotUsed_d("t", t);
+  StdFace_NotUsed_d("t'", tp);
+  StdFace_NotUsed_d("t''", tpp);
+  StdFace_NotUsed_d("V", V);
+  StdFace_NotUsed_d("V'", Vp);
+  StdFace_NotUsed_d("V''", Vpp);
   /*
   Local Spin
   */
@@ -69,7 +71,7 @@ void FermionHubbard_TriangularLattice(
   /*
   Transfer
   */
-  ntrans = L * W * 2 * 13;
+  ntrans = 2 * (5 * L*W + 6*L*(W - 1));
   transindx = (int **)malloc(sizeof(int*) * ntrans);
   trans = (double *)malloc(sizeof(double) * ntrans);
   for (ktrans = 0; ktrans < ntrans; ktrans++){
@@ -80,47 +82,39 @@ void FermionHubbard_TriangularLattice(
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
       isite = iL + iW * L;
-
-      iLp1 = (iL + 1 + 2 * L) % L;
-      iLp2 = (iL + 2 + 2 * L) % L;
-      iWm2 = (iW - 2 + 2 * W) % W;
-      iWm1 = (iW - 1 + 2 * W) % W;
-      iWp1 = (iW + 1 + 2 * W) % W;
-
       for (ispin = 0; ispin < 2; ispin++){
 
-        StdFace_trans(&ktrans, mu, isite, ispin,isite, ispin);
+        StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-        jsite = iL + iWm1 * L;
-        StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
+        jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+        StdFace_trans(&ktrans, t1, isite, ispin, jsite, ispin);
+        StdFace_trans(&ktrans, t1, jsite, ispin, isite, ispin);
 
-        jsite = iLp1 + iWm1 * L;
-        StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
+        jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+        StdFace_trans(&ktrans, t1p, isite, ispin, jsite, ispin);
+        StdFace_trans(&ktrans, t1p, jsite, ispin, isite, ispin);
 
-        jsite = iLp1 + iW * L;
-        StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
+        if (iW < W - 1){
+          jsite = iL + (iW + 1) * L;
+          StdFace_trans(&ktrans, t0, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t0, jsite, ispin, isite, ispin);
 
-        jsite = iLp1 + iWm2 * L;
-        StdFace_trans(&ktrans, tp, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, tp, jsite, ispin, isite, ispin);
+          jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+          StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
 
-        jsite = iLp1 + iWp1 * L;
-        StdFace_trans(&ktrans, tp, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, tp, jsite, ispin, isite, ispin);
+          jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+          StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
+        }
 
-        jsite = iLp2 + iWm1 * L;
-        StdFace_trans(&ktrans, tp, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, tp, jsite, ispin, isite, ispin);
       }
     }
   }
   /*
   Interaction
   */
-  nintr = L * W * (1 + 4 * 6);
+  nintr = L*W + 4 * (L*(W - 1) + L*W + L*W + 2 * L*(W - 1));
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -131,59 +125,59 @@ void FermionHubbard_TriangularLattice(
     for (iL = 0; iL < L; iL++){
 
       isite = iL + iW * L;
+
       StdFace_intr(&kintr, U, isite, 0, isite, 0, isite, 1, isite, 1);
 
-      iLp1 = (iL + 1 + 2 * L) % L;
-      iLp2 = (iL + 2 + 2 * L) % L;
-      iWm2 = (iW - 2 + 2 * W) % W;
-      iWm1 = (iW - 1 + 2 * W) % W;
-      iWp1 = (iW + 1 + 2 * W) % W;
+      jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+      StdFace_Coulomb(&kintr, V1, isite, jsite);
 
-      jsite = iL + iWm1 * L;
-      StdFace_Coulomb(&kintr, V, isite, jsite);
+      jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+      StdFace_Coulomb(&kintr, V1p, isite, jsite);
 
-      jsite = iLp1 + iWm1 * L;
-      StdFace_Coulomb(&kintr, V, isite, jsite);
+      if (iW < W - 1){
+        jsite = iL + (iW + 1) * L;
+        StdFace_Coulomb(&kintr, V0, isite, jsite);
 
-      jsite = iLp1 + iW * L;
-      StdFace_Coulomb(&kintr, V, isite, jsite);
+        jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+        StdFace_Coulomb(&kintr, V2, isite, jsite);
 
-      jsite = iLp1 + iWm2 * L;
-      StdFace_Coulomb(&kintr, Vp, isite, jsite);
-
-      jsite = iLp1 + iWp1 * L;
-      StdFace_Coulomb(&kintr, Vp, isite, jsite);
-
-      jsite = iLp2 + iWm1 * L;
-      StdFace_Coulomb(&kintr, Vp, isite, jsite);
+        jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+        StdFace_Coulomb(&kintr, V2, isite, jsite);
+      }
     }
   }
   /*
   Set mTPQ parameter
   */
   if (lGC == 0){
-    LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W) + 2.0 * 6.0 * fabs(t) + 2.0 * 6.0 * fabs(tp)
-      + fabs(U) + 2.0 * 6.0 * fabs(V) + 2.0 * 6.0 * fabs(Vp);
+    LargeValue0 =  fabs(mu) * (double)nelec / (double)(L * W)
+      + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p) 
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + fabs(U)
+      + 4.0 * fabs(V1) + 4.0 * fabs(V1p) + 4.0 * fabs(V0) + 2.0 * 4.0 * fabs(V2);
   }
   else{
-    LargeValue0 = fabs(mu) * 2.0 + 2.0 * 6.0 * fabs(t) + 2.0 * 6.0 * fabs(tp)
-      + fabs(U) + 2.0 * 6.0 * fabs(V) + 2.0 * 6.0 * fabs(Vp);
+    LargeValue0 = fabs(mu) * 2.0 
+      + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p)
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + fabs(U) 
+      + 4.0 * fabs(V1) + 4.0 * fabs(V1p) + 4.0 * fabs(V0) + 2.0 * 4.0 * fabs(V2);
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
 
 /**
  *
- * Setup a Hamiltonian for the generalized Heisenberg model on a Triangular lattice
+ * Setup a Hamiltonian for the generalized Heisenberg model on a square lattice
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void Spin_TriangularLattice(
+void Spin_Ladder(
   int Sz2 /**< [in] 2 * Total Sz */,
   int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
 {
   int isite, jsite;
-  int iL, iW, iLp1, iLp2, iWm2, iWm1, iWp1;
+  int iL, iW, iW2, iL2;
   int ktrans, kintr;
   double LargeValue0, S;
 
@@ -198,22 +192,18 @@ void Spin_TriangularLattice(
   StdFace_PrintVal_d("h", &h, 0.0);
   StdFace_PrintVal_d("Gamma", &Gamma, 0.0);
   StdFace_PrintVal_d("D", &D, 0.0);
-  StdFace_PrintVal_d("J", &J, 0.0);
-  StdFace_PrintVal_d("Jz", &Jz, J);
-  StdFace_PrintVal_d("Jxy", &Jxy, J);
-  StdFace_PrintVal_d("Jx", &Jx, Jxy);
-  StdFace_PrintVal_d("Jy", &Jy, Jxy);
-  StdFace_PrintVal_d("J'", &Jp, 0.0);
-  StdFace_PrintVal_d("Jz'", &Jzp, Jp);
-  StdFace_PrintVal_d("Jxy'", &Jxyp, Jp);
-  StdFace_PrintVal_d("Jx'", &Jxp, Jxyp);
-  StdFace_PrintVal_d("Jy'", &Jyp, Jxyp);
-  Jxy = 0.5 * (Jx + Jy);
-  Jxyp = 0.5 * (Jxp + Jyp);
+  StdFace_PrintVal_d("J1", &J1, 1.0);
+  StdFace_PrintVal_d("J1'", &J1p, 1.0);
+  StdFace_PrintVal_d("J0'", &J0, 1.0);
+  StdFace_PrintVal_d("J2'", &J2, 1.0);
   /**/
-  StdFace_NotUsed_d("J0", J0);
-  StdFace_NotUsed_d("J1", J1);
-  StdFace_NotUsed_d("J2", J2);
+  StdFace_NotUsed_d("J", J);
+  StdFace_NotUsed_d("J'", Jp);
+  StdFace_NotUsed_d("J''", Jpp);
+  StdFace_NotUsed_d("Jxy", Jxy);
+  StdFace_NotUsed_d("Jx", Jx);
+  StdFace_NotUsed_d("Jy", Jy);
+  StdFace_NotUsed_d("Jz", Jz);
   StdFace_NotUsed_d("Jz0", Jz0);
   StdFace_NotUsed_d("Jz1", Jz1);
   StdFace_NotUsed_d("Jxy0", Jxy0);
@@ -243,7 +233,7 @@ void Spin_TriangularLattice(
   /*
   Interaction
   */
-  nintr = L * W * ((S2 + 1) * (S2 + 1) * 7 + 2 * S2 * S2 * 12);
+  nintr = (3*L*W + 3*L*(W - 1)) * (S2 + 1) * (S2 + 1) + (2*L*W + 3*L*(W - 1))*S2*S2*2;
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -254,43 +244,30 @@ void Spin_TriangularLattice(
     for (iL = 0; iL < L; iL++){
 
       isite = iL + iW * L;
+
       StdFace_SzSz(&kintr, S2, S2, D, isite, isite);
 
-      iLp1 = (iL + 1 + 2 * L) % L;
-      iLp2 = (iL + 2 + 2 * L) % L;
-      iWm2 = (iW - 2 + 2 * W) % W;
-      iWm1 = (iW - 1 + 2 * W) % W;
-      iWp1 = (iW + 1 + 2 * W) % W;
+      jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+      StdFace_SzSz(&kintr, S2, S2, J1, isite, isite);
+      StdFace_exchange(&kintr, S2, S2, J1, isite, jsite);
 
-      jsite = iL + iWm1 * L;
-      StdFace_SzSz(&kintr, S2, S2, Jz, isite, jsite);
-      StdFace_exchange(&kintr, S2, S2, Jxy, isite, jsite);
-      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx - Jy), isite, jsite);
+      jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+      StdFace_SzSz(&kintr, S2, S2, J1p, isite, isite);
+      StdFace_exchange(&kintr, S2, S2, J1p, isite, jsite);
 
-      jsite = iLp1 + iWm1 * L;
-      StdFace_SzSz(&kintr, S2, S2, Jz, isite, jsite);
-      StdFace_exchange(&kintr, S2, S2, Jxy, isite, jsite);
-      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx - Jy), isite, jsite);
+      if (iW < W - 1){
+        jsite = iL + (iW + 1) * L;
+        StdFace_SzSz(&kintr, S2, S2, J0, isite, isite);
+        StdFace_exchange(&kintr, S2, S2, J0, isite, jsite);
 
-      jsite = iLp1 + iW * L;
-      StdFace_SzSz(&kintr, S2, S2, Jz, isite, jsite);
-      StdFace_exchange(&kintr, S2, S2, Jxy, isite, jsite);
-      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx - Jy), isite, jsite);
+        jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+        StdFace_SzSz(&kintr, S2, S2, J2, isite, isite);
+        StdFace_exchange(&kintr, S2, S2, J2, isite, jsite);
 
-      jsite = iLp1 + iWm2 * L;
-      StdFace_SzSz(&kintr, S2, S2, Jzp, isite, jsite);
-      StdFace_exchange(&kintr, S2, S2, Jxyp, isite, jsite);
-      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jxp - Jyp), isite, jsite);
-
-      jsite = iLp1 + iWp1 * L;
-      StdFace_SzSz(&kintr, S2, S2, Jzp, isite, jsite);
-      StdFace_exchange(&kintr, S2, S2, Jxyp, isite, jsite);
-      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jxp - Jyp), isite, jsite);
-
-      jsite = iLp2 + iWm1 * L;
-      StdFace_SzSz(&kintr, S2, S2, Jzp, isite, jsite);
-      StdFace_exchange(&kintr, S2, S2, Jxyp, isite, jsite);
-      StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jxp - Jyp), isite, jsite);
+        jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+        StdFace_SzSz(&kintr, S2, S2, J2, isite, isite);
+        StdFace_exchange(&kintr, S2, S2, J2, isite, jsite);
+      }
     }
   }
   /*
@@ -298,34 +275,32 @@ void Spin_TriangularLattice(
   */
   S = (double)S2 * 0.5;
   if (lGC == 0){
-    LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
-      + 6.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
-      + 6.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
+    LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
+    + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + 2.0*S*S*fabs(J2);
   }
   else{
-    LargeValue0 = S * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
-      + 6.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
-      + 6.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
-  }
+    LargeValue0 = S * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
+      + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + 2.0*S*S*fabs(J2);
+   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
 
 /**
  *
- * Setup a Hamiltonian for the Kondo lattice model on a triangular lattice
+ * Setup a Hamiltonian for the Kondo lattice model on a square lattice
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void KondoLattice_TriangularLattice(
+void KondoLattice_Ladder(
   int nelec /**< [in] The number of valence electrons */,
   int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
 {
   int isite, jsite;
   int ispin;
-  int iL, iW, iLp1, iWm1;
+  int iL, iW;
   int ktrans, kintr;
   double LargeValue0, S;
-
+  /**/
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
   fprintf(stdoutMPI, "\n");
@@ -335,15 +310,16 @@ void KondoLattice_TriangularLattice(
   /**/
   StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("mu", &mu, 0.0);
-  StdFace_PrintVal_d("t", &t, 1.0);
+  StdFace_PrintVal_d("t0", &t0, 1.0);
+  StdFace_PrintVal_d("t1", &t1, 1.0);
+  StdFace_PrintVal_d("t1'", &t1p, 1.0);
+  StdFace_PrintVal_d("t2", &t2, 1.0);
   StdFace_PrintVal_d("J", &J, 0.0);
   /**/
   StdFace_NotUsed_d("U", U);
+  StdFace_NotUsed_d("t", t);
   StdFace_NotUsed_d("t'", tp);
   StdFace_NotUsed_d("tpp", tpp);
-  StdFace_NotUsed_d("t0", t0);
-  StdFace_NotUsed_d("t1", t1);
-  StdFace_NotUsed_d("t2", t2);
   StdFace_NotUsed_d("V'", Vp);
   StdFace_NotUsed_d("Vpp", Vpp);
   StdFace_NotUsed_d("V0", V0);
@@ -361,7 +337,7 @@ void KondoLattice_TriangularLattice(
   /*
   Transfer
   */
-  ntrans = L * W * 2 * 7;
+  ntrans = 2 * (5 * L*W + 6 * L*(W - 1));
   transindx = (int **)malloc(sizeof(int*) * ntrans);
   trans = (double *)malloc(sizeof(double) * ntrans);
   for (ktrans = 0; ktrans < ntrans; ktrans++){
@@ -371,25 +347,33 @@ void KondoLattice_TriangularLattice(
   ktrans = 0;
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
-      isite = 2 * (iL + iW * L);
-      
-      iLp1 = (iL + 1 + 2 * L) % L;
-      iWm1 = (iW - 1 + 2 * W) % W;
-
+      isite = iL + iW * L;
       for (ispin = 0; ispin < 2; ispin++){
+
         StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-        jsite = 2 * (iL + iWm1 * L);
-        StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
+        jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+        StdFace_trans(&ktrans, t1, isite, ispin, jsite, ispin);
+        StdFace_trans(&ktrans, t1, jsite, ispin, isite, ispin);
 
-        jsite = 2 * (iLp1 + iWm1 * L);
-        StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
+        jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+        StdFace_trans(&ktrans, t1p, isite, ispin, jsite, ispin);
+        StdFace_trans(&ktrans, t1p, jsite, ispin, isite, ispin);
 
-        jsite = 2 * (iLp1 + iW * L);
-        StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
-        StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
+        if (iW < W - 1){
+          jsite = iL + (iW + 1) * L;
+          StdFace_trans(&ktrans, t0, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t0, jsite, ispin, isite, ispin);
+
+          jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+          StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
+
+          jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+          StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
+        }
+
       }
     }
   }
@@ -418,10 +402,16 @@ void KondoLattice_TriangularLattice(
   */
   S = (double)S2 * 0.5;
   if (lGC == 0){
-    LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W) + 2.0 * 6.0 * fabs(t) + 0.5 * S * fabs(J);
+    LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W)
+      + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p)
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + 0.5 * S * fabs(J);
   }
   else{
-    LargeValue0 = fabs(mu) * 2.0 + 2.0 * 6.0 * fabs(t) + 0.5 * S * fabs(J);
+    LargeValue0 = fabs(mu) * 2.0 
+      + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p)
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + 0.5 * S * fabs(J);
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
