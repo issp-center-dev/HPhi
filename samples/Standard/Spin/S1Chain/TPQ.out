@@ -1,0 +1,159 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Spin/S1Chain HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i7n33 1
+
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 1 = 2^0    
+
+
+######  Standard Intarface Mode STARTS  ######
+
+  Open Standard-Mode Inputfile StdFace.def 
+
+  KEYWORD : l                    | VALUE : 6 
+  KEYWORD : model                | VALUE : spingc 
+  KEYWORD : lattice              | VALUE : chainlattice 
+  KEYWORD : method               | VALUE : tpq 
+  Skipping a line.
+  Skipping a line.
+  KEYWORD : 2s                   | VALUE : 2 
+  KEYWORD : j                    | VALUE : 1.0 
+
+#######  Parameter Summary  #######
+
+                L = 6  
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 2         
+                h = 0.00000     ######  DEFAULT VALUE IS USED  ######
+            Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                D = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                J = 1.00000   
+               Jz = 1.00000     ######  DEFAULT VALUE IS USED  ######
+              Jxy = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Jx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Jy = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               J' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jz' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+             Jxy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jx' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       LargeValue = 4           ######  DEFAULT VALUE IS USED  ######
+
+         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
+       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+             exct = 1           ######  DEFAULT VALUE IS USED  ######
+       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
+    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
+           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
+    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expart input files  ######
+
+    zlocspin.def is written.
+      zTrans.def is written.
+   zInterAll.def is written.
+    namelist.def is written.
+     calcmod.def is written.
+     modpara.def is written.
+    greenone.def is written.
+    greentwo.def is written.
+
+######  Input files are generated.  ######
+
+Start: Read File 'namelist.def'.
+End: Read File 'namelist.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans.def' for Trans.
+Read File 'zInterAll.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Read File 'zTrans.def'.
+Read File 'zInterAll.def'.
+Read File 'greenone.def'.
+Read File 'greentwo.def'.
+comb_sum= 729 
+MAX DIMENSION idim_max=729 
+APPROXIMATE REQUIRED MEMORY  max_mem=0.000070 GB 
+Indices and Parameters of Definition files(*.def) are complete.
+LARGE ALLOCATE FINISH !
+EDTrans EDNTransfer=0 
+EDTrans EDNChemi=0 
+Start: Calc Sz. 
+num_threads==24
+Xicnt=729 
+End  : Calc Sz. 
+Start: calc diagaonal components of Hamiltonian. 
+End  : calc diagaonal components of Hamiltonian. 
+rand_i=0 
+CHECK: TPQ complex initial vector 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=1 
+CHECK: TPQ complex initial vector 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=2 
+CHECK: TPQ complex initial vector 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=3 
+CHECK: TPQ complex initial vector 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+rand_i=4 
+CHECK: TPQ complex initial vector 
+step_i/total_step=200/2000 
+step_i/total_step=400/2000 
+step_i/total_step=600/2000 
+step_i/total_step=800/2000 
+step_i/total_step=1000/2000 
+step_i/total_step=1200/2000 
+step_i/total_step=1400/2000 
+step_i/total_step=1600/2000 
+step_i/total_step=1800/2000 
+Finish: Elapsed time is 23 [s].

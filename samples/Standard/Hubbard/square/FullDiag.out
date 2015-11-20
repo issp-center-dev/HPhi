@@ -1,3 +1,13 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Hubbard/square HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i6n31 1
+
 
 
 #####  Parallelization Info.  #####
@@ -21,6 +31,8 @@
   KEYWORD : u                    | VALUE : 4.0 
   KEYWORD : nelec                | VALUE : 8 
   KEYWORD : 2sz                  | VALUE : 0 
+  Skipping a line.
+  Skipping a line.
 
 #######  Parameter Summary  #######
 
@@ -44,7 +56,6 @@
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-              2Sz = 0  
             nelec = 8  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
@@ -93,10 +104,6 @@ End  : Calc Sz.
 Start: calc diagaonal components of Hamiltonian. 
 End  : calc diagaonal components of Hamiltonian. 
 Start Setting Hamiltonian.
-transfer
-interall:0
-pairhopp
-exchange
 Finish Setting Hamiltonian.
 Diagonalization is done.
 Start: Calc Expected value.
@@ -575,16 +582,16 @@ i=  471 Energy= -0.039439 N=  8.000000 Sz=  0.000000 S2=  6.000000 Doublon=  1.3
 i=  472 Energy= -0.039439 N=  8.000000 Sz=  0.000000 S2=  6.000000 Doublon=  1.335535 
 i=  473 Energy= -0.006208 N=  8.000000 Sz=  0.000000 S2=  2.000000 Doublon=  1.370622 
 i=  474 Energy= -0.006208 N=  8.000000 Sz= -0.000000 S2=  2.000000 Doublon=  1.370622 
-i=  475 Energy=  0.000000 N=  8.000000 Sz= -0.000000 S2=  9.436657 Doublon=  1.242503 
+i=  475 Energy= -0.000000 N=  8.000000 Sz= -0.000000 S2=  9.436657 Doublon=  1.242503 
 i=  476 Energy=  0.000000 N=  8.000000 Sz=  0.000000 S2= 10.855172 Doublon=  1.184722 
 i=  477 Energy= -0.000000 N=  8.000000 Sz= -0.000000 S2= 10.795696 Doublon=  1.113869 
-i=  478 Energy=  0.000000 N=  8.000000 Sz=  0.000000 S2= 11.825120 Doublon=  1.026610 
+i=  478 Energy= -0.000000 N=  8.000000 Sz=  0.000000 S2= 11.825120 Doublon=  1.026610 
 i=  479 Energy=  0.000000 N=  8.000000 Sz=  0.000000 S2= 11.975906 Doublon=  1.075441 
 i=  480 Energy=  0.000000 N=  8.000000 Sz= -0.000000 S2=  7.527867 Doublon=  1.627829 
-i=  481 Energy=  0.000000 N=  8.000000 Sz= -0.000000 S2= 10.604859 Doublon=  1.193269 
+i=  481 Energy= -0.000000 N=  8.000000 Sz= -0.000000 S2= 10.604859 Doublon=  1.193269 
 i=  482 Energy= -0.000000 N=  8.000000 Sz=  0.000000 S2=  3.832064 Doublon=  1.813127 
 i=  483 Energy= -0.000000 N=  8.000000 Sz=  0.000000 S2=  4.859315 Doublon=  1.770829 
-i=  484 Energy=  0.000000 N=  8.000000 Sz=  0.000000 S2= 12.287344 Doublon=  0.951802 
+i=  484 Energy= -0.000000 N=  8.000000 Sz=  0.000000 S2= 12.287344 Doublon=  0.951802 
 i=  485 Energy=  0.000053 N=  8.000000 Sz= -0.000000 S2=  2.000000 Doublon=  1.680708 
 i=  486 Energy=  0.007522 N=  8.000000 Sz=  0.000000 S2=  2.000000 Doublon=  1.615122 
 i=  487 Energy=  0.010652 N=  8.000000 Sz=  0.000000 S2=  2.000000 Doublon=  1.194161 

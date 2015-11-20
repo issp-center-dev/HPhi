@@ -365,7 +365,7 @@ int makeHam(struct BindStruct *X){
       }
       
       //InterAll
-      for (i = 0; i < X->Def.NInterAll_OffDiagonal; i++) {
+      for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
 	for(ihermite=0; ihermite<2; ihermite++){
 	  idx=2*i+ihermite;
 	  isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;

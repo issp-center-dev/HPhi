@@ -1,3 +1,13 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Hubbard/triangular HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i6n31 1
+
 
 
 #####  Parallelization Info.  #####
@@ -44,7 +54,6 @@
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-              2Sz = 0  
             nelec = 8  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
@@ -93,10 +102,6 @@ End  : Calc Sz.
 Start: calc diagaonal components of Hamiltonian. 
 End  : calc diagaonal components of Hamiltonian. 
 Start Setting Hamiltonian.
-transfer
-interall:0
-pairhopp
-exchange
 Finish Setting Hamiltonian.
 Diagonalization is done.
 Start: Calc Expected value.
