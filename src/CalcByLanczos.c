@@ -138,6 +138,11 @@ int CalcByLanczos(
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
     fp = fopenMPI(sdt, "r");
+    if(fp==NULL){
+      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
+      fclose(fp);
+      exitMPI(-1);
+    }
     fgetsMPI(ctmp2, 256, fp);
     sscanf(ctmp2, "%ld \n",&i_max);
     if(i_max != X->Bind.Check.idim_max){
