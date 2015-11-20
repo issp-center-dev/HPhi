@@ -175,6 +175,8 @@ int ReadcalcmodFile(
   X->iOutputMode=0;
   X->iCalcEigenVec=0;
   X->iInitialVecType=0;
+  X->iOutputEigenVec=0;
+  X->iInputEigenVec=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -201,6 +203,12 @@ int ReadcalcmodFile(
     }
     else if(strcmp(ctmp, "InitialVecType")==0){
       X->iInitialVecType=itmp;
+    }
+    else if(strcmp(ctmp, "OutputEigenVec")==0 || strcmp(ctmp, "OEV")==0){
+      X->iOutputEigenVec=itmp;
+    }
+    else if(strcmp(ctmp, "InputEigenVec")==0 || strcmp(ctmp, "IEV")==0){
+      X->iInputEigenVec=itmp;
     }
     else{
       fprintf(stderr, cErrDefFileParam, defname, ctmp);
@@ -1373,7 +1381,6 @@ int CheckInterAllHermite
 	  }
 	}
       }
-    
     }
     //if counterpart for satisfying hermite conjugate does not exist.
     if(itmpret !=1){
