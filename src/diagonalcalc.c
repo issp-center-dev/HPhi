@@ -303,7 +303,7 @@ int SetDiagonalChemi
       ibit1 = (unsigned long int)myrank & is1;
       num1 = ibit1 / is1;
 #pragma omp parallel for default(none) shared(list_Diagonal) \
-                     firstprivate(i_max, dtmp_V) private(j)
+                     firstprivate(i_max, dtmp_V, num1) private(j)
       for (j = 1; j <= i_max; j++) list_Diagonal[j] += num1*dtmp_V;
 
       break;
