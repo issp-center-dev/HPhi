@@ -31,6 +31,7 @@
 
 double complex *v0; 
 double complex *v1;
+double complex *v1buf;
 //test
 double complex *vg;
 

@@ -88,20 +88,45 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   switch (X->Def.iCalcModel) {
     case HubbardGC:
       //Transfer
-      for (i = 0; i < X->Def.EDNTransfer/2; i++) {
-	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
-	  isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-	  isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-	  sigma1 = X->Def.EDGeneralTransfer[idx][1];
-	  sigma2 = X->Def.EDGeneralTransfer[idx][3];
-	  if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
-	    return -1;
-	  }
-	  tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-	  dam_pr = GC_child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
-	  X->Large.prdct += dam_pr;
-	}
+      for (i = 0; i < X->Def.EDNTransfer; i += 2) {
+
+        if (X->Def.EDGeneralTransfer[i][0] > X->Def.EDGeneralTransfer[i][2]) {
+          isite1 = X->Def.EDGeneralTransfer[i][2] + 1;
+          isite2 = X->Def.EDGeneralTransfer[i][0] + 1;
+          sigma1 = X->Def.EDGeneralTransfer[i][3];
+          sigma2 = X->Def.EDGeneralTransfer[i][1];
+          tmp_trans = - conj(X->Def.EDParaGeneralTransfer[i]);
+        }
+        else {
+          isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
+          isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
+          sigma1 = X->Def.EDGeneralTransfer[i][1];
+          sigma2 = X->Def.EDGeneralTransfer[i][3];
+          tmp_trans = - X->Def.EDParaGeneralTransfer[i];
+        }
+
+        if (isite1 > X->Def.Nsite) {
+          ExchangeBuffer();
+
+        }
+        else if (isite2 > X->Def.Nsite){
+
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+            isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+            sigma1 = X->Def.EDGeneralTransfer[idx][1];
+            sigma2 = X->Def.EDGeneralTransfer[idx][3];
+            if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+              return -1;
+            }
+            tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+            dam_pr = GC_child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+            X->Large.prdct += dam_pr;
+          }
+        }
       }
 
       for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
