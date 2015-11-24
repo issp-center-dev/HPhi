@@ -19,6 +19,7 @@
 #include "mfmemory.h"
 #include "check.h"
 #include "wrapperMPI.h"
+#include "CheckMPI.h"
 
 /**
  * @file   check.c
@@ -60,6 +61,9 @@ int check(struct BindStruct *X){
   long unsigned int idim=0;
   long unsigned int isite=0;
   int tmp_sz=0;
+
+  CheckMPI(X);
+
   Ns = X->Def.Nsite;
 
   li_malloc2(comb, Ns+1,Ns+1);

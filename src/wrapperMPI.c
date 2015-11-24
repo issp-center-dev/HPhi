@@ -149,3 +149,13 @@ void BarrierMPI(){
   MPI_Barrier(MPI_COMM_WORLD);
 #endif
 }
+
+unsigned long int RedduceMaxMPI_li(unsigned long int idim)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, idim, 1,
+    MPI_UNSIGNED_LONG, MPI_MAX, MPI_COMM_WORLD);
+#endif
+  return(idim);
+}

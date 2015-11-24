@@ -75,6 +75,7 @@ int setmem_large
  )
 {
   int j=0;
+  int idim_maxMPI;
   switch(X->Def.iCalcModel){
   case Spin:
   case Hubbard:
@@ -112,6 +113,7 @@ int setmem_large
     break;
   }
 
+  idim_maxMPI = RedduceMaxMPI_li(X->Check.idim_max);
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);
