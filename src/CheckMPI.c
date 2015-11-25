@@ -23,6 +23,7 @@ void CheckMPI(struct BindStruct *X)
 
   NsiteMPI = X->Def.Nsite;
 
+  fprintf(stdout, "Debug %d %d \n", X->Def.iCalcModel, Hubbard);
   switch (X->Def.iCalcModel) {
   case HubbardGC: /****************************************************/
   case Hubbard:
@@ -71,6 +72,8 @@ void CheckMPI(struct BindStruct *X)
         }
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
+      break;
+
     case HubbardNConserved:
       /*X->Def.NeMPI = X->Def.Ne;*/
 
@@ -82,6 +85,8 @@ void CheckMPI(struct BindStruct *X)
         if (SpinNum == 1 /*01*/ || SpinNum == 2 /*10*/) X->Def.Ne -= 1;
         else if (SpinNum == 3 /*11*/) X->Def.Ne -= 2;
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+
+      break;
 
     case KondoGC:
     case Kondo:
@@ -109,7 +114,11 @@ void CheckMPI(struct BindStruct *X)
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       } /*if (X->Def.iCalcModel == Kondo)*/
 
+      break;
+
     } /*switch (X->Def.iCalcModel)*/
+
+    break;
 
   case SpinGC:/********************************************************/
   case Spin:
@@ -181,6 +190,8 @@ void CheckMPI(struct BindStruct *X)
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       }/*if (X->Def.iCalcModel == Spin)*/
     }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
+
+    break;
 
   default:
     fprintf(stdout, "Error ! Wrong model !\n");
