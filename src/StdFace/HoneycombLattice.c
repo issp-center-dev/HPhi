@@ -215,8 +215,8 @@ void Spin_HoneycombLattice(
 
   ktrans = 0;
   for (isite = 0; isite < nsite; isite++){
-    StdFace_MagLong(&ktrans, h, isite);
-    StdFace_MagTrans(&ktrans, Gamma, isite);
+    StdFace_MagLong(&ktrans, -h, isite);
+    StdFace_MagTrans(&ktrans, -Gamma, isite);
   }
   /*
   Interaction
