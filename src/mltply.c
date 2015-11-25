@@ -19,6 +19,7 @@
 #include <bitcalc.h>
 #include "mltply.h"
 #include "mltplyMPI.h"
+#include "wrapperMPI.h"
 
 /**
  *
@@ -91,14 +92,14 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       //Transfer
       for (i = 0; i < X->Def.EDNTransfer; i += 2) {
 
-        if (X->Def.EDGeneralTransfer[idx][0] + 1 > X->Def.Nsite &&
-          X->Def.EDGeneralTransfer[idx][2] + 1 > X->Def.Nsite) {
+        if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
+          X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
           GC_child_general_hopp_MPIdouble(i, X, tmp_v0, tmp_v1);
         }
-        else if (X->Def.EDGeneralTransfer[idx][2] + 1 > X->Def.Nsite){
+        else if (X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite){
           GC_child_general_hopp_MPIsingle(i, X, tmp_v0, tmp_v1);
         }
-        else if (X->Def.EDGeneralTransfer[idx][0] + 1 > X->Def.Nsite) {
+        else if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite) {
           GC_child_general_hopp_MPIsingle(i+1, X, tmp_v0, tmp_v1);
         }
         else {
@@ -175,21 +176,34 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   case Kondo:
 
       //Transfer
-      for (i = 0; i < X->Def.EDNTransfer/2; i++) {
-	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
-	  isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-	  isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-	  sigma1 = X->Def.EDGeneralTransfer[idx][1];
-	  sigma2 = X->Def.EDGeneralTransfer[idx][3];
-	  if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
-	    return -1;
-	  }
-	  tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-	  X->Large.tmp_trans = tmp_trans;
-	  dam_pr = child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
-	  X->Large.prdct += dam_pr;
-	}
+      for (i = 0; i < X->Def.EDNTransfer; i+=2) {
+
+        if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
+          X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+          child_general_hopp_MPIdouble(i, X, tmp_v0, tmp_v1);
+        }
+        else if (X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+          child_general_hopp_MPIsingle(i, X, tmp_v0, tmp_v1);
+        }
+        else if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite) {
+          child_general_hopp_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+            isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+            sigma1 = X->Def.EDGeneralTransfer[idx][1];
+            sigma2 = X->Def.EDGeneralTransfer[idx][3];
+            if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+              return -1;
+            }
+            tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+            X->Large.tmp_trans = tmp_trans;
+            dam_pr = child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+            X->Large.prdct += dam_pr;
+          }
+        }
       }
       
           //InterAll
@@ -506,6 +520,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   default:
     return -1;
   }
+
+  X->Large.prdct = SumMPI_dc(X->Large.prdct);
 
   return 0;
 }

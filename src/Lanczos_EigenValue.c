@@ -101,6 +101,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for(i=1;i<=i_max;i++){
      cdnorm += conj(v1[i])*v1[i];
     }
+    cdnorm = SumMPI_dc(cdnorm);
     dnorm=creal(cdnorm);
     dnorm=sqrt(dnorm);
     #pragma omp parallel for default(none) private(i) shared(v1) firstprivate(i_max, dnorm)
@@ -123,6 +124,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   for(i = 1; i <= i_max; i++){
     cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
   }
+  cbeta1 = SumMPI_dc(cbeta1);
   beta1=creal(cbeta1);
   beta1=sqrt(beta1);
   beta[1]=beta1;
@@ -150,6 +152,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for(i=1;i<=i_max;i++){
       cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
     }
+    cbeta1 = SumMPI_dc(cbeta1);
     beta1=creal(cbeta1);
     beta1=sqrt(beta1);
     beta[stp]=beta1;

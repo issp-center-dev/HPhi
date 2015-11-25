@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HPHI_WRAPPER_H
 #define HPHI_WRAPPER_H
+#include <complex.h>
 
 int nproc, myrank;
 FILE *stdoutMPI;
@@ -27,6 +28,8 @@ void exitMPI(int errorcode);
 FILE* fopenMPI(const char* FileName, const char* mode);
 char* fgetsMPI(char* InputString, int maxcount,FILE* fp);
 void BarrierMPI();
-unsigned long int RedduceMaxMPI_li(unsigned long int idim);
+unsigned long int MaxMPI_li(unsigned long int idim);
+double complex SumMPI_dc(double complex norm);
+double SumMPI_d(double norm);
 
 #endif

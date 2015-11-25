@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "FirstMultiply.h"
+#include "wrapperMPI.h"
 
 /** 
  * 
@@ -57,6 +58,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
   for(i=1;i<=i_max;i++){
     dnorm += conj(v1[i])*v1[i];
   }
+  dnorm = SumMPI_dc(dnorm);
   dnorm=sqrt(dnorm);
   global_1st_norm = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v1) firstprivate(i_max, dnorm)
@@ -76,6 +78,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
   for(i=1;i<=i_max;i++){
     dnorm += conj(v0[i])*v0[i];
   }
+  dnorm = SumMPI_dc(dnorm);
   dnorm=sqrt(dnorm);
   global_norm = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)

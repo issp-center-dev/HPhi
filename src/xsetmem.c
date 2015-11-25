@@ -76,6 +76,9 @@ int setmem_large
 {
   int j=0;
   int idim_maxMPI;
+
+  idim_maxMPI = MaxMPI_li(X->Check.idim_max);
+
   switch(X->Def.iCalcModel){
   case Spin:
   case Hubbard:
@@ -83,7 +86,10 @@ int setmem_large
   case Kondo:
   case KondoGC:
     lui_malloc1(list_1, X->Check.idim_max+1);
-    if(X->Def.iFlgGeneralSpin==FALSE){    
+#ifdef MPI
+    lui_malloc1(list_1buf, idim_maxMPI + 1);
+#endif // MPI
+    if(X->Def.iFlgGeneralSpin==FALSE){
       if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
 	lui_malloc1(list_2_1, X->Check.sdim*2+2);
       }
@@ -113,14 +119,12 @@ int setmem_large
     break;
   }
 
-#ifdef MPI
-  idim_maxMPI = RedduceMaxMPI_li(X->Check.idim_max);
-  c_malloc1(v1buf, idim_maxMPI);
-#endif // MPI
-
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);
+#ifdef MPI
+  c_malloc1(v1buf, idim_maxMPI + 1);
+#endif // MPI
   c_malloc1(vg, X->Check.idim_max+1);
   d_malloc1(alpha, X->Def.Lanczos_max+1);
   d_malloc1(beta, X->Def.Lanczos_max+1);

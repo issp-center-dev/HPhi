@@ -27,3 +27,10 @@ void GC_child_general_hopp_MPIdouble(int itrans, struct BindStruct *X,
 
 void GC_child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1);
+
+void child_general_hopp_MPIdouble(int itrans, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1);
+
+void child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1);
+

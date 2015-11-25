@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wrapperMPI.h"
 #include <omp.h>
 #include <math.h>
+#include <complex.h>
 
 /**
  *
@@ -144,7 +145,7 @@ void BarrierMPI(){
 #endif
 }
 
-unsigned long int RedduceMaxMPI_li(unsigned long int idim)
+unsigned long int MaxMPI_li(unsigned long int idim)
 {
   int ierr;
 #ifdef MPI
@@ -153,3 +154,24 @@ unsigned long int RedduceMaxMPI_li(unsigned long int idim)
 #endif
   return(idim);
 }
+
+double complex SumMPI_dc(double complex norm)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
+    MPI_DOUBLE_COMPLEX, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(norm);
+}
+
+double SumMPI_d(double norm)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
+    MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(norm);
+}
+
