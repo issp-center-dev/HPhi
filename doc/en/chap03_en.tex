@@ -97,8 +97,8 @@ CDataFileHead  zvo
 CParaFileHead  zqp
 --------------------
 Nsite          16   
-Nup            8    
-Ndown          8    
+Ncond          0    
+2Sz            0    
 Lanczos_max    1000 
 initial_iv     12   
 nvec           1    
@@ -112,10 +112,10 @@ ExpecInterval  20
 \end{screen}
 \end{minipage}
 ~\\
-In this file, we set parameters for calculation such as a site number, a total number of up spin,  a total number of down spin and a number of Lanczos step etc. The details of ModPara file are shown in \ref{Subsec:modpara}.\\
+In this file, we set parameters for calculation such as a site number, \tr{a total number of conduction electrons,  a total $S_z$} and a number of Lanczos step etc. The details of ModPara file are shown in \ref{Subsec:modpara}.\\
 
 \item {\bf Setting positions of localized spins}\\
-Positions of localized spins are defined by a LocSpin file (in this sample, locspn.def). The contents of files are shown as below.\\
+Positions \tr{and $S$} of localized spins are defined by a LocSpin file (in this sample, locspn.def). The contents of files are shown as below.\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -124,12 +124,12 @@ NlocalSpin    16
 ================================ 
 ========i_0LocSpn_1IteElc ====== 
 ================================ 
-    0      0
-    1      0
-    2      0
-    3      0
-    4      0
-    5      0
+    0      1
+    1      1
+    2      1
+    3      1
+    4      1
+    5      1
 …
 \end{verbatim}
 \end{screen}
@@ -139,7 +139,7 @@ When CalcModel in a CalcMod file is set as spin system, all sites automatically 
 \end{description}
 
 \subsection{Files for constructing Hamiltonian}
-After setting basic parameters, we make input files for constructing Hamiltonian. Since calculations are done by the representation of fermion  operators in $\HPhi$, we must rewrite spin operator using the following relation
+After setting basic parameters, we make input files for constructing Hamiltonian. Since calculations are done by the representation of fermion operators in $\HPhi$, we must rewrite spin operator. \tr{For example,  in the case of $S=1/2$, we rewrite the equation by} using the following relation
 \begin{align}
 S_z^{(i)}&=(c_{i\uparrow}^{\dag}c_{i\uparrow}-c_{i\downarrow}^{\dag}c_{i\downarrow})/2,\\
 S_+^{(i)}&=c_{i\uparrow}^{\dag}c_{i\downarrow},\\
@@ -165,7 +165,7 @@ NTransfer       0
 \end{screen}
 \end{minipage}
 ~\\
-We can use this term when an electric magnetic field is added in spin system. For example, when an magnetic field is added at a site 1 such as $-0.5 S_z^{(1)}$, this term can be rewritten as $-0.5/2(c_{1\uparrow}^{\dag}c_{1\uparrow}-c_{1\downarrow}^{\dag}c_{1\downarrow})$. Thus, the input file becomes as follows.\\
+We can use this term when an electric magnetic field is added in spin system. For example, when an magnetic field is added at a site 1 such as $-0.5 S_z^{(1)}$ \tr{ for $S=1/2$}, this term can be rewritten as $-0.5/2(c_{1\uparrow}^{\dag}c_{1\uparrow}-c_{1\downarrow}^{\dag}c_{1\downarrow})$. Thus, the input file becomes as follows.\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -208,7 +208,7 @@ NInterAll      96
 \end{screen}
 \end{minipage}
 ~\\
-Here, we explain an interaction between a site $i$ and a site $j$, for simplicity. Using fermion operators, interaction terms for spin operators can be rewritten as
+Here, we explain an interaction between a site $i$ and a site $j$ \tr{in the case of $S=1/2$}, for simplicity. Using fermion operators, interaction terms for spin operators can be rewritten as
 \begin{align}
 H_{i,i+1}&=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
 &=J \left( \frac{1}{2}S_+^{(i)}S_-^{(i+1)}+\frac{1}{2}S_-^{(i)}S_+^{(i+1)}+S_z^{(i)}S_z^{(i+1)} \right) \nonumber\\

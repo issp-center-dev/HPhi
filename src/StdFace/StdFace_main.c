@@ -583,6 +583,76 @@ static void PrintInter(){
     }
   }
 
+  for (jintr = 0; jintr < nintr; jintr++) {
+    for (kintr = jintr + 1; kintr < nintr; kintr++) {
+      if ( intrindx[jintr][6] == intrindx[kintr][4]
+        && intrindx[jintr][7] == intrindx[kintr][5]
+        && intrindx[jintr][4] == intrindx[kintr][6]
+        && intrindx[jintr][5] == intrindx[kintr][7]
+        && intrindx[jintr][2] == intrindx[kintr][0]
+        && intrindx[jintr][3] == intrindx[kintr][1]
+        && intrindx[jintr][0] == intrindx[kintr][2]
+        && intrindx[jintr][1] == intrindx[kintr][3]
+        ) {
+        intrindx[kintr][0] = intrindx[jintr][6];
+        intrindx[kintr][1] = intrindx[jintr][7];
+        intrindx[kintr][2] = intrindx[jintr][4];
+        intrindx[kintr][3] = intrindx[jintr][5];
+        intrindx[kintr][4] = intrindx[jintr][2];
+        intrindx[kintr][5] = intrindx[jintr][3];
+        intrindx[kintr][6] = intrindx[jintr][0];
+        intrindx[kintr][7] = intrindx[jintr][1];
+      }
+      else if (
+        (intrindx[jintr][6] == intrindx[kintr][4]
+          && intrindx[jintr][7] == intrindx[kintr][5]
+          && intrindx[jintr][4] == intrindx[kintr][2]
+          && intrindx[jintr][5] == intrindx[kintr][3]
+          && intrindx[jintr][2] == intrindx[kintr][0]
+          && intrindx[jintr][3] == intrindx[kintr][1]
+          && intrindx[jintr][0] == intrindx[kintr][6]
+          && intrindx[jintr][1] == intrindx[kintr][7])
+        ||
+        (intrindx[jintr][6] == intrindx[kintr][0]
+          && intrindx[jintr][7] == intrindx[kintr][1]
+          && intrindx[jintr][4] == intrindx[kintr][6]
+          && intrindx[jintr][5] == intrindx[kintr][7]
+          && intrindx[jintr][2] == intrindx[kintr][4]
+          && intrindx[jintr][3] == intrindx[kintr][5]
+          && intrindx[jintr][0] == intrindx[kintr][2]
+          && intrindx[jintr][1] == intrindx[kintr][3])
+        ) {
+        intrindx[kintr][0] = intrindx[jintr][6];
+        intrindx[kintr][1] = intrindx[jintr][7];
+        intrindx[kintr][2] = intrindx[jintr][4];
+        intrindx[kintr][3] = intrindx[jintr][5];
+        intrindx[kintr][4] = intrindx[jintr][2];
+        intrindx[kintr][5] = intrindx[jintr][3];
+        intrindx[kintr][6] = intrindx[jintr][0];
+        intrindx[kintr][7] = intrindx[jintr][1];
+
+        intr[kintr] = - intr[kintr];
+      }
+    }
+  }
+
+  for (jintr = 0; jintr < nintr; jintr++) {
+
+    if (
+      (intrindx[jintr][0] == intrindx[jintr][4] && intrindx[jintr][1] == intrindx[jintr][5]) ||
+      (intrindx[jintr][2] == intrindx[jintr][6] && intrindx[jintr][3] == intrindx[jintr][7])
+      ) {
+
+      if (!(
+        (intrindx[jintr][0] == intrindx[jintr][2] && intrindx[jintr][1] == intrindx[jintr][3]) ||
+        (intrindx[jintr][0] == intrindx[jintr][6] && intrindx[jintr][1] == intrindx[jintr][7]) ||
+        (intrindx[jintr][4] == intrindx[jintr][2] && intrindx[jintr][5] == intrindx[jintr][3]) ||
+        (intrindx[jintr][4] == intrindx[jintr][6] && intrindx[jintr][5] == intrindx[jintr][7])
+        ))
+        intr[jintr] = 0.0;
+    }
+  }
+ 
   nintr0 = 0;
   for (kintr = 0; kintr < nintr; kintr++){
     if (fabs(intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
