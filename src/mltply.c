@@ -18,6 +18,7 @@
 // complex version
 #include <bitcalc.h>
 #include "mltply.h"
+#include "mltplyMPI.h"
 
 /**
  *
@@ -90,27 +91,15 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       //Transfer
       for (i = 0; i < X->Def.EDNTransfer; i += 2) {
 
-        if (X->Def.EDGeneralTransfer[i][0] > X->Def.EDGeneralTransfer[i][2]) {
-          isite1 = X->Def.EDGeneralTransfer[i][2] + 1;
-          isite2 = X->Def.EDGeneralTransfer[i][0] + 1;
-          sigma1 = X->Def.EDGeneralTransfer[i][3];
-          sigma2 = X->Def.EDGeneralTransfer[i][1];
-          tmp_trans = - conj(X->Def.EDParaGeneralTransfer[i]);
+        if (X->Def.EDGeneralTransfer[idx][0] + 1 > X->Def.Nsite &&
+          X->Def.EDGeneralTransfer[idx][2] + 1 > X->Def.Nsite) {
+          GC_child_general_hopp_MPIdouble(i, X, tmp_v0, tmp_v1);
         }
-        else {
-          isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
-          isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
-          sigma1 = X->Def.EDGeneralTransfer[i][1];
-          sigma2 = X->Def.EDGeneralTransfer[i][3];
-          tmp_trans = - X->Def.EDParaGeneralTransfer[i];
+        else if (X->Def.EDGeneralTransfer[idx][2] + 1 > X->Def.Nsite){
+          GC_child_general_hopp_MPIsingle(i, X, tmp_v0, tmp_v1);
         }
-
-        if (isite1 > X->Def.Nsite) {
-          ExchangeBuffer();
-
-        }
-        else if (isite2 > X->Def.Nsite){
-
+        else if (X->Def.EDGeneralTransfer[idx][0] + 1 > X->Def.Nsite) {
+          GC_child_general_hopp_MPIsingle(i+1, X, tmp_v0, tmp_v1);
         }
         else {
           for (ihermite = 0; ihermite<2; ihermite++) {

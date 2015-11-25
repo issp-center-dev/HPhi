@@ -113,7 +113,11 @@ int setmem_large
     break;
   }
 
+#ifdef MPI
   idim_maxMPI = RedduceMaxMPI_li(X->Check.idim_max);
+  c_malloc1(v1buf, idim_maxMPI);
+#endif // MPI
+
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);

@@ -26,6 +26,7 @@ lapack_diag.c \
 makeHam.c \
 matrixlapack.c \
 mltply.c \
+mltplyMPI.c \
 CalcByTPQ.c \
 output.c \
 output_list.c \
