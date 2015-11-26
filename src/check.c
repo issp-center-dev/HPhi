@@ -336,6 +336,8 @@ int check(struct BindStruct *X){
   }  
   fclose(fp);	 
 
+  CheckMPI_Summary(X);
+  fprintf(stdout, "DEBUG\n"); fflush(stdout); BarrierMPI(); 
   
   return TRUE;
 }    

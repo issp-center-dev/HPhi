@@ -50,10 +50,6 @@ void CheckMPI(struct BindStruct *X)
       exitMPI(-1);
     }
 
-    X->Def.Tpow[2 * X->Def.Nsite] = 1;
-    for (isite = 2 * X->Def.Nsite + 1; isite < 2 * NsiteMPI; isite++) 
-      X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
- 
     switch (X->Def.iCalcModel) {
 
     case Hubbard:
@@ -141,10 +137,6 @@ void CheckMPI(struct BindStruct *X)
         exitMPI(-1);
       }
 
-      X->Def.Tpow[X->Def.Nsite] = 1;
-      for (isite = X->Def.Nsite + 1; isite < NsiteMPI; isite++)
-        X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
-
       if (X->Def.iCalcModel == Spin) {
         /*X->Def.NeMPI = X->Def.Ne;*/
 
@@ -174,10 +166,6 @@ void CheckMPI(struct BindStruct *X)
         exitMPI(-1);
       }/**/
 
-      X->Def.Tpow[X->Def.Nsite] = 1;
-      for (isite = X->Def.Nsite + 1; isite < NsiteMPI; isite++)
-        X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * X->Def.SiteToBit[isite - 1];
- 
       if (X->Def.iCalcModel == Spin) {
         /*X->Def.Total2SzMPI = X->Def.Total2Sz;*/
 
@@ -203,7 +191,7 @@ void CheckMPI(struct BindStruct *X)
 
 void CheckMPI_Summary(struct BindStruct *X) {
 
-  int isite, iproc, state0, SmallDim, SpinNum;
+  int isite, iproc, SmallDim, SpinNum, Nelec;
   unsigned long int idimMPI;
 
   fprintf(stdoutMPI, "\n\n######  MPI site separation summary  ######\n\n");
@@ -301,14 +289,60 @@ void CheckMPI_Summary(struct BindStruct *X) {
     
     }
 
-    if (myrank == iproc) idimMPI == X->Check.idim_max;
+    if (myrank == iproc) idimMPI = X->Check.idim_max;
     else idimMPI = 0;
     fprintf(stdoutMPI, "   %ld", SumMPI_li(idimMPI));
+
+    if (myrank == iproc) Nelec = X->Def.Nup;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "   %d", SumMPI_i(Nelec));
+
+    if (myrank == iproc) Nelec = X->Def.Ndown;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "   %d", SumMPI_i(Nelec));
+
+    if (myrank == iproc) Nelec = X->Def.Ne;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "   %d", SumMPI_i(Nelec));
+
+    if (myrank == iproc) Nelec = X->Def.Total2Sz;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "   %d\n", SumMPI_i(Nelec));
   }
 
-  idimMPI == SumMPI_li(X->Check.idim_max);
-  fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n", SumMPI_li(idimMPI));
+  fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n", SumMPI_li(X->Check.idim_max));
 
+  switch (X->Def.iCalcModel) {
+  case HubbardGC: /****************************************************/
+  case Hubbard:
+  case HubbardNConserved:
+  case Kondo:
+  case KondoGC:
 
+    X->Def.Tpow[2 * X->Def.Nsite] = 1;
+    for (isite = 2 * X->Def.Nsite + 1; isite < 2 * NsiteMPI; isite++) 
+      X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
+ 
+    break;
+
+  case SpinGC:/********************************************************/
+  case Spin:
+
+    if (X->Def.iFlgGeneralSpin == FALSE) {
+
+      X->Def.Tpow[X->Def.Nsite] = 1;
+      for (isite = X->Def.Nsite + 1; isite < NsiteMPI; isite++)
+        X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
+
+    }
+    else{
+
+      X->Def.Tpow[X->Def.Nsite] = 1;
+      for (isite = X->Def.Nsite + 1; isite < NsiteMPI; isite++)
+        X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * X->Def.SiteToBit[isite - 1];
+ 
+    }
+    break;
+  }
 }
 

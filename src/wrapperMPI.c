@@ -185,3 +185,13 @@ unsigned long int SumMPI_li(unsigned long int idim)
   return(idim);
 }
 
+int SumMPI_i(int idim)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
+    MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(idim);
+}
+
