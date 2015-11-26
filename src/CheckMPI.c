@@ -17,13 +17,14 @@
 #include "Common.h"
 #include "wrapperMPI.h"
 
+int NsiteMPI;
+
 void CheckMPI(struct BindStruct *X)
 {
-  int isite, NDimInterPE, SmallDim, SpinNum, NsiteMPI;
+  int isite, NDimInterPE, SmallDim, SpinNum;
 
   NsiteMPI = X->Def.Nsite;
 
-  fprintf(stdout, "Debug %d %d \n", X->Def.iCalcModel, Hubbard);
   switch (X->Def.iCalcModel) {
   case HubbardGC: /****************************************************/
   case Hubbard:
@@ -44,8 +45,8 @@ void CheckMPI(struct BindStruct *X)
     }
     
     if (isite == 0) {
-      fprintf(stdout, "Error ! The number of PROCESS should be 4 exponent !\n");
-      fprintf(stdout, "        The number of PROCESS : %d\n", nproc);
+      fprintf(stderr, "Error ! The number of PROCESS should be 4 exponent !\n");
+      fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
       exitMPI(-1);
     }
 
@@ -135,8 +136,8 @@ void CheckMPI(struct BindStruct *X)
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 
       if (isite == 0) {
-        fprintf(stdout, "Error ! The number of PROCESS should be 2-exponent !\n");
-        fprintf(stdout, "        The number of PROCESS : %d\n", nproc);
+        fprintf(stderr, "Error ! The number of PROCESS should be 2-exponent !\n");
+        fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
         exitMPI(-1);
       }
 
@@ -165,11 +166,11 @@ void CheckMPI(struct BindStruct *X)
           X->Def.Nsite = isite;
           break;
         }
-        NDimInterPE *= X->Def.SiteToBit[isite];
+        NDimInterPE *= X->Def.SiteToBit[isite - 1];
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
       if (isite == 0) {
-        fprintf(stdout, "Error ! The number of PROCESS is wrong !\n");
-        fprintf(stdout, "        The number of PROCESS : %d\n", nproc);
+        fprintf(stderr, "Error ! The number of PROCESS is wrong !\n");
+        fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
         exitMPI(-1);
       }/**/
 
@@ -194,8 +195,120 @@ void CheckMPI(struct BindStruct *X)
     break;
 
   default:
-    fprintf(stdout, "Error ! Wrong model !\n");
+    fprintf(stderr, "Error ! Wrong model !\n");
     exitMPI(-1);
   }
 
 }
+
+void CheckMPI_Summary(struct BindStruct *X) {
+
+  int isite, iproc, state0, SmallDim, SpinNum;
+  unsigned long int idimMPI;
+
+  fprintf(stdoutMPI, "\n\n######  MPI site separation summary  ######\n\n");
+  fprintf(stdoutMPI, "  INTRA process site\n");
+  fprintf(stdoutMPI, "    Site    Bit\n");
+  for (isite = 0; isite < X->Def.Nsite; isite++) {
+    switch (X->Def.iCalcModel) {
+    case HubbardGC: 
+    case Hubbard:
+    case HubbardNConserved:
+    case Kondo:
+    case KondoGC:
+      fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
+      break;
+    case Spin:
+    case SpinGC:
+      if (X->Def.iFlgGeneralSpin == FALSE) {
+        fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
+      }
+      else {
+        fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
+      }
+    }
+  }
+
+  fprintf(stdoutMPI, "\n  INTER process site\n");
+  fprintf(stdoutMPI, "    Site    Bit\n");
+  for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
+    switch (X->Def.iCalcModel) {
+    case HubbardGC:
+    case Hubbard:
+    case HubbardNConserved:
+    case Kondo:
+    case KondoGC:
+      fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
+      break;
+    case Spin:
+    case SpinGC:
+      if (X->Def.iFlgGeneralSpin == FALSE) {
+        fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
+      }
+      else {
+        fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
+      }
+    }
+  }
+
+  fprintf(stdoutMPI, "\n  Process element info\n");
+  fprintf(stdoutMPI, "    Process    State      Dimension\n");
+
+  for (iproc = 0; iproc < nproc; iproc++) {
+
+    fprintf(stdoutMPI, "    %7d    ", iproc);
+
+    switch (X->Def.iCalcModel) {
+    case HubbardGC: /****************************************************/
+    case Hubbard:
+    case HubbardNConserved:
+    case Kondo:
+    case KondoGC:
+
+      SmallDim = iproc;
+      for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
+        SpinNum = SmallDim % 4;
+        SmallDim /= 4;
+        if (SpinNum == 0) fprintf(stdoutMPI, "00");
+        else if (SpinNum == 1) fprintf(stdoutMPI, "01");
+        else if (SpinNum == 2) fprintf(stdoutMPI, "10");
+        else if (SpinNum == 3) fprintf(stdoutMPI, "11");
+      } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+
+      break;
+
+    case Spin:
+    case SpinGC:
+
+      SmallDim = iproc;
+      if (X->Def.iFlgGeneralSpin == FALSE) {
+        for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
+          SpinNum = SmallDim % 2;
+          SmallDim /= 2;
+          fprintf(stdoutMPI, "%1d", SpinNum);
+        }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+      }
+      else {
+        SmallDim = myrank;
+        for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
+          SpinNum = SmallDim % X->Def.SiteToBit[isite];
+          SmallDim /= X->Def.SiteToBit[isite];
+          fprintf(stdoutMPI, "%1d", SpinNum);
+        }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+      }
+
+      break;
+    
+    }
+
+    if (myrank == iproc) idimMPI == X->Check.idim_max;
+    else idimMPI = 0;
+    fprintf(stdoutMPI, "   %ld", SumMPI_li(idimMPI));
+  }
+
+  idimMPI == SumMPI_li(X->Check.idim_max);
+  fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n", SumMPI_li(idimMPI));
+
+
+}
+

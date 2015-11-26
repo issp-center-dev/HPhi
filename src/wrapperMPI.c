@@ -175,3 +175,13 @@ double SumMPI_d(double norm)
   return(norm);
 }
 
+unsigned long int SumMPI_li(unsigned long int idim)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
+    MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(idim);
+}
+
