@@ -235,7 +235,7 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
   long unsigned int ibit1_up,ibit2_up,ibit_tmp,is_up; 
   double complex spn_z=0.0;
   double complex spn_z1, spn_z2;
-  double complex spn;
+  double complex spn=0.0;
   long unsigned int i_max;
     
   i_max=X->Check.idim_max;
