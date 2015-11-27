@@ -264,21 +264,34 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       if (X->Def.iFlgGeneralSpin == FALSE) {
 	//Transfer absorbed in Diagonal term.
 	//InterAll
-	for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
+	for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
 
-	    isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
-	    isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
-	    sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
-	    sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
-	    sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
-	    sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
-	    tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-	    child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
-	    dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
-	    X->Large.prdct += dam_pr;
-	  }
+          if (X->Def.InterAll_OffDiagonal[idx][0] + 1 > X->Def.Nsite &&
+            X->Def.InterAll_OffDiagonal[idx][4] + 1 > X->Def.Nsite) {
+            child_general_int_spin_MPIdouble(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[idx][4] + 1 > X->Def.Nsite) {
+            child_general_int_spin_MPIsingle(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[idx][0] + 1 > X->Def.Nsite) {
+            child_general_int_spin_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+          }
+          else {
+            for (ihermite = 0; ihermite<2; ihermite++) {
+              idx = i + ihermite;
+
+              isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
+              isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
+              sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
+              sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
+              sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
+              sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
+              tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
+              child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
+              dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
+              X->Large.prdct += dam_pr;
+            }
+          }
 	}
       	
 	//Exchange	

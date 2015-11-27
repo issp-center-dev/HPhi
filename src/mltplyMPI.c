@@ -34,9 +34,9 @@ void GC_child_general_hopp_MPIdouble(int itrans, struct BindStruct *X,
   MPI_Status status;
   double complex trans, dmv, dam_pr;
 
-  bit1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] - 2 
+  bit1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] 
                             + X->Def.EDGeneralTransfer[itrans][1]];
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2] - 2
+  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
                             + X->Def.EDGeneralTransfer[itrans][3]];
   bitdiff = abs(bit1 - bit2);
 
@@ -82,7 +82,7 @@ void GC_child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
   /*
    Prepare index in the inter PE
   */
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2] - 2
+  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
     + X->Def.EDGeneralTransfer[itrans][3]];
   bit2diff = bit2 - 1;
 
@@ -99,7 +99,7 @@ void GC_child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
   /*
    Index in the intra PE
   */
-  bit1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] - 2
+  bit1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
     + X->Def.EDGeneralTransfer[itrans][1]];
   
   if (mybit2 == bit2) {
@@ -144,9 +144,9 @@ void child_general_hopp_MPIdouble(int itrans, struct BindStruct *X,
   MPI_Status status;
   double complex trans, dmv, dam_pr;
 
-  bit1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] - 2
+  bit1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
     + X->Def.EDGeneralTransfer[itrans][1]];
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2] - 2
+  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
     + X->Def.EDGeneralTransfer[itrans][3]];
   bitdiff = abs(bit1 - bit2);
 
@@ -198,7 +198,7 @@ void child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
   /*
   Prepare index in the inter PE
   */
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2] - 2
+  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
     + X->Def.EDGeneralTransfer[itrans][3]];
   bit2diff = bit2 - 1;
 
@@ -217,7 +217,7 @@ void child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
   /*
   Index in the intra PE
   */
-  bit1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] - 2
+  bit1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
     + X->Def.EDGeneralTransfer[itrans][1]];
 
   if (mybit2 == bit2) {
@@ -255,3 +255,116 @@ void child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
 
 #endif
 }
+
+void child_general_int_spin_MPIdouble(int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1)
+{
+#ifdef MPI
+  int bit1, bit2, mybit1, mybit2, ierr, dest;
+  unsigned long int idim_max_buf, j, ioff;
+  MPI_Status status;
+  double complex Jint, dmv, dam_pr;
+
+  bit1 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
+  bit2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+
+  mybit1 = myrank & bit1;
+  mybit2 = myrank & bit2;
+
+  dest = myrank ^ (bit1 + bit2);
+
+  mybit1 /= bit1;
+  mybit2 /= bit2;
+
+  if (mybit1 == X->Def.InterAll_OffDiagonal[i_int][3] && 
+    mybit2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
+  }
+  else if (mybit1 == X->Def.InterAll_OffDiagonal[i_int][1] && 
+    mybit2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
+    Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+  }
+  else return;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max, MPI_UNSIGNED_LONG, dest, 0,
+    list_1buf, idim_max_buf, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
+    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+
+  dam_pr = 0.0;
+  for (j = 0; j < idim_max_buf; j++) {
+
+    GetOffComp(list_2_1, list_2_2, list_1buf[j],
+      X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+
+    dmv = Jint * v1buf[j];
+    if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
+    dam_pr += tmp_v1[ioff] * dmv;
+  }
+
+  X->Large.prdct += dam_pr;
+
+#endif
+}
+
+void child_general_int_spin_MPIsingle(int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1)
+{
+#ifdef MPI
+  int bit2, mybit2, ierr, dest;
+  unsigned long int bit1, idim_max_buf, j, ioff, mybit1, jreal, bit1check;
+  MPI_Status status;
+  double complex Jint, dmv, dam_pr;
+  /*
+  Prepare index in the inter PE
+  */
+  bit2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  mybit2 = myrank & bit2;
+  dest = myrank ^ bit2;
+  mybit2 /= bit2;
+
+  if (mybit2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    bit1check == X->Def.InterAll_OffDiagonal[i_int][3];
+    Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
+  }
+  else if (mybit2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
+    bit1check == X->Def.InterAll_OffDiagonal[i_int][1];
+    Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+  }
+  else return;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max, MPI_UNSIGNED_LONG, dest, 0,
+    list_1buf, idim_max_buf, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
+    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+  /*
+  Index in the intra PE
+  */
+  bit1 = X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
+
+  dam_pr = 0.0;
+  for (j = 0; j < idim_max_buf; j++) {
+
+    jreal = list_1buf[j];
+
+    mybit1 = (jreal & bit1) / bit1;
+
+    if (mybit1 == bit1check) {
+      GetOffComp(list_2_1, list_2_2, jreal ^ bit1,
+        X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+
+      dmv = Jint * v1buf[j];
+      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
+      dam_pr += tmp_v1[ioff] * dmv;
+    }
+  }
+
+  X->Large.prdct += dam_pr;
+
+#endif
+}
+

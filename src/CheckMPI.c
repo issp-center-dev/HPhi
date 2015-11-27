@@ -61,11 +61,18 @@ void CheckMPI(struct BindStruct *X)
       for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
         SpinNum = SmallDim % 4;
         SmallDim /= 4;
-        if (SpinNum == 1 /*01*/) X->Def.Nup -= 1;
-        else if (SpinNum == 2 /*10*/) X->Def.Ndown -= 1;
+        if (SpinNum == 1 /*01*/) {
+          X->Def.Nup -= 1;
+          X->Def.Ne -= 1;
+        }
+        else if (SpinNum == 2 /*10*/) {
+          X->Def.Ndown -= 1;
+          X->Def.Ne -= 1;
+        }
         else if (SpinNum == 3 /*11*/){
           X->Def.Nup -= 1;
           X->Def.Ndown -= 1;
+          X->Def.Ne -= 2;
         }
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
@@ -97,11 +104,18 @@ void CheckMPI(struct BindStruct *X)
           SpinNum = SmallDim % 4;
           SmallDim /= 4;
           if (X->Def.LocSpn[isite] == ITINERANT) {
-            if (SpinNum == 1 /*01*/) X->Def.Nup -= 1;
-            else if (SpinNum == 2 /*10*/) X->Def.Ndown -= 1;
+            if (SpinNum == 1 /*01*/) {
+              X->Def.Nup -= 1;
+              X->Def.Ne -= 1;
+            }
+            else if (SpinNum == 2 /*10*/) {
+              X->Def.Ndown -= 1;
+              X->Def.Ne -= 1;
+            }
             else if (SpinNum == 3 /*11*/) {
               X->Def.Nup -= 1;
               X->Def.Ndown -= 1;
+              X->Def.Ne -= 2;
             }
           }
           else {
@@ -145,8 +159,14 @@ void CheckMPI(struct BindStruct *X)
         for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
           SpinNum = SmallDim % 2;
           SmallDim /= 2;
-          if (SpinNum == 0 /*01 up*/) X->Def.Ne -= 1;
-          else /*10 down*/ X->Def.Ne += 1;
+          if (SpinNum == 0 /*01 up*/) {
+            X->Def.Ne -= 1;
+            X->Def.Nup -= 1;
+          }
+          else /*10 down*/ {
+            X->Def.Ne += 1;
+            X->Def.Ndown -= 1;
+          }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       }/*if (X->Def.iCalcModel == Spin)*/
 
