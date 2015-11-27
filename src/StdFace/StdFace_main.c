@@ -115,11 +115,11 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     fprintf(stdoutMPI, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
     if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &h);
+    else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &D);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &exct);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &ExpecInterval);
     else if (strcmp(keyword, "filehead") == 0) StoreWithCheckDup_s(keyword, value, filehead);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &FlgTemp);
-    else if (strcmp(keyword, "g") == 0) StoreWithCheckDup_d(keyword, value, &D);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &Gamma);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &initial_iv);
     else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &J);

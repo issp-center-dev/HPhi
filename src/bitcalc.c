@@ -234,9 +234,9 @@ int GetOffCompGeneralSpin(
 		const long int *Tpow
 )
 {
-  if(off_ispin>SiteToBit[org_isite-1] ||
+  if(off_ispin>SiteToBit[org_isite-1]-1 ||
      off_ispin<0                      ||
-     org_ispin>SiteToBit[org_isite-1] ||
+     org_ispin>SiteToBit[org_isite-1]-1 ||
      org_ispin <0){
     *_ioffComp=-1;
     return FALSE;

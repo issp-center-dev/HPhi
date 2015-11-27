@@ -13,6 +13,7 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+#include <bitcalc.h>
 #include "expec_totalspin.h"
 
 /**
@@ -234,7 +235,7 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
   long unsigned int ibit1_up,ibit2_up,ibit_tmp,is_up; 
   double complex spn_z=0.0;
   double complex spn_z1, spn_z2;
-  double complex spn;
+  double complex spn=0.0;
   long unsigned int i_max;
     
   i_max=X->Check.idim_max;
@@ -302,10 +303,11 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
 	    ibit_tmp = GetOffCompGeneralSpin(list_1[j], isite2, sigma_2, sigma_2+1, &off, X->Def.SiteToBit, X->Def.Tpow);
 	    if(ibit_tmp==TRUE){
 	      ibit_tmp = GetOffCompGeneralSpin(off, isite1, sigma_1, sigma_1-1,&off_2, X->Def.SiteToBit, X->Def.Tpow);
-	      if(ibit_tmp==TRUE){		
-		ConvertToList1GeneralSpin(off_2, X->Check.sdim, &off);
-		spn += conj(vec[j])*vec[off]*sqrt(S2*(S2+1) - spn_z2*(spn_z2+1))*sqrt(S1*(S1+1) - spn_z1*(spn_z1-1))/2.0;
-	      }
+	      if(ibit_tmp==TRUE) {
+			  ConvertToList1GeneralSpin(off_2, X->Check.sdim, &off);
+			  spn += conj(vec[j]) * vec[off] * sqrt(S2 * (S2 + 1) - spn_z2 * (spn_z2 + 1)) *
+					 sqrt(S1 * (S1 + 1) - spn_z1 * (spn_z1 - 1)) / 2.0;
+		  }
 	    }
 	  
 	    ibit_tmp = GetOffCompGeneralSpin(list_1[j], isite2, sigma_2, sigma_2-1, &off, X->Def.SiteToBit, X->Def.Tpow);
@@ -320,8 +322,8 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
 	}
       }
     }
-
   }
+
   X->Phys.s2=creal(spn);
   X->Phys.sz=creal(spn_z);
 }

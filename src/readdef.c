@@ -1248,6 +1248,7 @@ int CheckTransferHermite
 	    fprintf(stderr, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
 	    return -1;
 	  }
+	  /*
 	  if(i<=j){
 	    if(2*icntHermite > X->NTransfer){
 	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
@@ -1261,17 +1262,20 @@ int CheckTransferHermite
 	    X->EDParaGeneralTransfer[2*icntHermite+1]=X->ParaGeneralTransfer[j];
 	    icntHermite++;
 	  } 
-	}     
+	  */
+	}  
       }
     }
   }
 
+  /*
   for(i=0; i<X->NTransfer; i++){
     for(itmpIdx=0; itmpIdx<4; itmpIdx++){
       X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
       }
     X->ParaGeneralTransfer[i]=X->EDParaGeneralTransfer[i];
-  }    
+  } 
+  */   
   return 0;
 }
 
