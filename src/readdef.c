@@ -320,8 +320,8 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
-  int iNcond=0;
-  int iRead2Sz=FALSE;
+  X->NCond=0;
+  X->iFlgSzConserved=FALSE;
   int iReadNCond=FALSE;
 
   InitializeInteractionNum(X);
@@ -402,10 +402,10 @@ int ReadDefFileNInt(
 	}
 	else if(strcmp(ctmp, "2Sz")==0){
 	  X->Total2Sz=(int)dtmp;
-	  iRead2Sz=TRUE;
+	  X->iFlgSzConserved=TRUE;
 	}
 	else if(strcmp(ctmp, "Ncond")==0){
-	  iNcond=(int)dtmp;
+	  X->NCond=(int)dtmp;
 	  iReadNCond=TRUE;	  
 	}
 	else if(strcmp(ctmp, "Lanczos_max")==0){
@@ -536,20 +536,16 @@ int ReadDefFileNInt(
 	return -1;
       }
       else{
-	if(iRead2Sz==TRUE){
-	  X->Nup=X->NLocSpn+iNcond+X->Total2Sz;
-	  X->Ndown=X->NLocSpn+iNcond-X->Total2Sz;
-	  if(X->Nup%2 != 0 && X->Ndown%2 !=0){
-	    fprintf(stderr, "2Sz is incorrect.\n");
-	    return -1;
-	  } 
+	if(X->iFlgSzConserved==TRUE){
+	  X->Nup=X->NLocSpn+X->NCond+X->Total2Sz;
+	  X->Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
 	  X->Nup/=2;
 	  X->Ndown/=2;
 	}
 	else{
 	  if(X->iCalcModel == Hubbard){
-	    X->Ne=iNcond;
-	    if(iNcond <1){
+	    X->Ne=X->NCond;
+	    if(X->Ne <1){
 	      fprintf(stderr, "Ncond is incorrect.\n");
 	      return -1;
 	    }
@@ -562,19 +558,15 @@ int ReadDefFileNInt(
 	}
       }
     }
-    else if(iReadNCond == FALSE && iRead2Sz==TRUE){
+    else if(iReadNCond == FALSE && X->iFlgSzConserved==TRUE){
       if(X->iCalcModel != Spin){
 	fprintf(stderr, " NCond is not defined.\n");
 	return -1;
       }
       X->Nup=X->NLocSpn+X->Total2Sz;
       X->Ndown=X->NLocSpn-X->Total2Sz;
-      if(X->Nup%2 != 0 && X->Ndown%2 !=0){
-	fprintf(stderr, "2Sz is incorrect.\n");
-	return -1;
-      }
-      X->Nup/=2;
-      X->Ndown/=2;
+      X->Nup /= 2;
+      X->Ndown /= 2;
     }
     else{
       if(X->Nup==0 && X->Ndown==0){
@@ -606,7 +598,7 @@ int ReadDefFileNInt(
   case SpinGC:
   case KondoGC:
   case HubbardGC:
-    if(iReadNCond == TRUE || iRead2Sz ==TRUE){
+    if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
 	fprintf(stderr, "For GC, both Ncond and 2Sz should not be defined.\n");
 	return -1;
     }
@@ -1736,7 +1728,11 @@ int CheckLocSpin
   default:
     return FALSE;
     break;
-  }  
+  }
+
+  if(CheckTotal2Sz(X) != TRUE){
+    return FALSE;
+  }
   return TRUE;
 }  
 
@@ -1852,3 +1848,31 @@ int CheckSpinIndexForTrans
   }
   return TRUE;
 }
+
+/** 
+ * @brief function of checking an input data of total2Sz
+ * 
+ * @param[in] X Define list to get informations of transfers
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckTotal2Sz
+(
+  struct DefineList *X
+ )
+{
+  if(X->iFlgSzConserved==TRUE && X->iFlgGeneralSpin==FALSE){
+    int tmp_Nup=X->NLocSpn+X->NCond+X->Total2Sz;
+    int tmp_Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
+    if(tmp_Nup%2 != 0 && tmp_Ndown%2 !=0){
+      printf("Nup=%d, Ndown=%d\n",X->Nup,X->Ndown);
+      fprintf(stderr, "2Sz is incorrect.\n");
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+

@@ -163,3 +163,8 @@ int CheckSpinIndexForTrans
 (
   struct DefineList *X
  );
+
+int CheckTotal2Sz
+(
+  struct DefineList *X
+ );

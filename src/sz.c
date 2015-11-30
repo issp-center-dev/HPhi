@@ -417,7 +417,6 @@ int sz
 	  list_2_1_Sz[ib]=i2Sz;
 	  HilbertNumToSz[i2Sz+Max2Sz]++;
 	}
-	
         jb = 0;
 	long int ilftdim=(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1])/ihfbit;
 	for(ib=0;ib<ilftdim;ib++){
@@ -427,7 +426,7 @@ int sz
 	    i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
 	  }
 	  list_2_2_Sz[ib]=i2Sz;
-	  if(X->Def.Total2Sz- i2Sz +Max2Sz>=0){
+	  if(X->Def.Total2Sz- i2Sz +Max2Sz>=0 && X->Def.Total2Sz- i2Sz <= Max2Sz){
 	    jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
 	  }
 	}
