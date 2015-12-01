@@ -1211,7 +1211,7 @@ int CheckQuadSite(
  **/
 int CheckTransferHermite
 (
- const struct DefineList *X
+ struct DefineList *X
  )
 {
   int i,j;
@@ -1220,8 +1220,9 @@ int CheckTransferHermite
   int itmpsite1, itmpsite2;
   int itmpsigma1, itmpsigma2;
   double  complex ddiff_trans;
-  int itmpIdx, icntHermite;
+  int itmpIdx, icntHermite, icntchemi;
   icntHermite=0;
+  icntchemi=0;
   for(i=0; i<X->NTransfer; i++){
     isite1=X->GeneralTransfer[i][0];
     isigma1=X->GeneralTransfer[i][1];
@@ -1240,34 +1241,42 @@ int CheckTransferHermite
 	    fprintf(stderr, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
 	    return -1;
 	  }
-	  /*
 	  if(i<=j){
 	    if(2*icntHermite > X->NTransfer){
 	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
 	      return -1;
 	    }
-	    for(itmpIdx=0; itmpIdx<4; itmpIdx++){
-	      X->EDGeneralTransfer[2*icntHermite][itmpIdx]=X->GeneralTransfer[i][itmpIdx];
-	      X->EDGeneralTransfer[2*icntHermite+1][itmpIdx]=X->GeneralTransfer[j][itmpIdx];
+	    if(isite1 !=isite2 || isigma1 !=isigma2){
+	      for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+		X->EDGeneralTransfer[2*icntHermite][itmpIdx]=X->GeneralTransfer[i][itmpIdx];
+		X->EDGeneralTransfer[2*icntHermite+1][itmpIdx]=X->GeneralTransfer[j][itmpIdx];
+	      }
+	      X->EDParaGeneralTransfer[2*icntHermite]=X->ParaGeneralTransfer[i];
+	      X->EDParaGeneralTransfer[2*icntHermite+1]=X->ParaGeneralTransfer[j];
+	      icntHermite++;
 	    }
-	    X->EDParaGeneralTransfer[2*icntHermite]=X->ParaGeneralTransfer[i];
-	    X->EDParaGeneralTransfer[2*icntHermite+1]=X->ParaGeneralTransfer[j];
-	    icntHermite++;
+	    else{
+	      X->EDChemi[icntchemi]     = X->GeneralTransfer[i][0];      
+	      X->EDSpinChemi[icntchemi] = X->GeneralTransfer[i][1];      
+	      X->EDParaChemi[icntchemi] = creal(X->ParaGeneralTransfer[i]);
+	      icntchemi+=1;
+	    }
 	  } 
-	  */
 	}  
       }
     }
   }
+  
+  X->EDNTransfer=2*icntHermite;
+  X->EDNChemi=icntchemi;
 
-  /*
   for(i=0; i<X->NTransfer; i++){
     for(itmpIdx=0; itmpIdx<4; itmpIdx++){
       X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
       }
     X->ParaGeneralTransfer[i]=X->EDParaGeneralTransfer[i];
   } 
-  */   
+  
   return 0;
 }
 

@@ -96,7 +96,7 @@ int CheckQuadSite(
 
 int CheckTransferHermite
 (
- const struct DefineList *X
+ struct DefineList *X
 );
 
 int CheckInterAllHermite
