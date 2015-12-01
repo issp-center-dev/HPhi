@@ -190,6 +190,8 @@ int expec_energy(struct BindStruct *X){
     dam_pr1  += conj(v0[j])*v0[j]; // E^2 = <v1|H*H|v1>=<v0|v0>
     //v0[j]=v1[j]; v1-> orginal v0=H*v1
   }  
+  dam_pr = SumMPI_dc(dam_pr);
+  dam_pr1 = SumMPI_dc(dam_pr1);
   X->Phys.energy = dam_pr;
   X->Phys.var    = dam_pr1;
 
