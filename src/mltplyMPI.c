@@ -38,7 +38,8 @@ void GC_child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct
                             + X->Def.EDGeneralTransfer[itrans][1]];
   mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
                             + X->Def.EDGeneralTransfer[itrans][3]];
-  bitdiff = abs(mask1 - mask2);
+  if (mask2 > mask1) bitdiff = mask2 - mask1 * 2;
+  else bitdiff = mask1 - mask2 * 2;
   origin = myrank ^ (mask1 + mask2);
 
   state1 = origin & mask1;
@@ -47,10 +48,10 @@ void GC_child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct
   SgnBit((unsigned long int)(origin & bitdiff), &Fsgn); // Fermion sign
 
   if(state1 == 0 && state2 == mask2){
-    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
   }
   else if(state1 == mask1 && state2 == 0) {
-    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
   }
   else return;
 
@@ -103,16 +104,16 @@ void GC_child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct
     + X->Def.EDGeneralTransfer[itrans][1]];
   
   if (state2 == mask2) {
-    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
     state1check = 0;
   }
   else if (state2 == 0) {
-    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
     state1check = mask1;
   }
   else return;
 
-  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1;
+  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
   dam_pr = 0.0;
   for (j = 0; j < idim_max_buf; j++) {
@@ -148,7 +149,8 @@ void child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct *X
     + X->Def.EDGeneralTransfer[itrans][1]];
   mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
     + X->Def.EDGeneralTransfer[itrans][3]];
-  bitdiff = abs(mask1 - mask2);
+  if(mask2 > mask1) bitdiff = mask2 - mask1 * 2;
+  else bitdiff = mask1 - mask2 * 2;
   origin = myrank ^ (mask1 + mask2);
 
   state1 = origin & mask1;
@@ -157,10 +159,10 @@ void child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct *X
    SgnBit((unsigned long int)(origin & bitdiff), &Fsgn); // Fermion sign
 
   if (state1 == 0 && state2 == mask2) {
-    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
   }
   else if (state1 == mask1 && state2 == 0) {
-    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
   }
   else return;
 
@@ -221,16 +223,16 @@ void child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct *X
     + X->Def.EDGeneralTransfer[itrans][1]];
 
   if (state2 == mask2) {
-    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
     state1check = 0;
   }
   else if (state2 == 0) {
-    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
     state1check = mask1;
   }
   else return;
 
-  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1;
+  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
   dam_pr = 0.0;
   for (j = 1; j <= idim_max_buf; j++) {

@@ -90,7 +90,7 @@ int PowerLanczos(struct BindStruct *X){
     if(Lz_Ene_p < Lz_Ene_m){
       Lz_Ene=Lz_Ene_p;
       Lz_Var=Lz_Var_p;
-      printf("Power Lanczos (P): %.16lf %.16lf \n",Lz_Ene_p,Lz_Var_p);
+      fprintf(stdoutMPI,"Power Lanczos (P): %.16lf %.16lf \n",Lz_Ene_p,Lz_Var_p);
       #pragma omp parallel for default(none)  private(j) shared(v0, v1) firstprivate(i_max,alpha_p) 
       for(j=1;j<=i_max;j++){
         v1[j]   = v1[j]+alpha_p*v0[j];   // (1+alpha*H)v1=v1+alpha*v0
@@ -98,7 +98,7 @@ int PowerLanczos(struct BindStruct *X){
     }else{
       Lz_Ene=Lz_Ene_m;
       Lz_Var=Lz_Var_m;
-      printf("Power Lanczos (M): %.16lf %.16lf \n",Lz_Ene_m,Lz_Var_m);
+      fprintf(stdoutMPI,"Power Lanczos (M): %.16lf %.16lf \n",Lz_Ene_m,Lz_Var_m);
       #pragma omp parallel for default(none)  private(j) shared(v0, v1)firstprivate(i_max,alpha_m) 
       for(j=1;j<=i_max;j++){
         v1[j]   = v1[j]+alpha_m*v0[j]; // (1+alpha*H)v1=v1+alpha*v0
@@ -118,7 +118,7 @@ int PowerLanczos(struct BindStruct *X){
       v1[j] = v1[j]*dnorm_inv;
     }
     if(Lz_Var < eps_Energy){
-      printf("Power Lanczos break \n");
+      fprintf(stdoutMPI,"Power Lanczos break \n");
       return 1;
       break;
     }
