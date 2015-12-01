@@ -266,14 +266,14 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	//InterAll
 	for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
 
-          if (X->Def.InterAll_OffDiagonal[idx][0] + 1 > X->Def.Nsite &&
-            X->Def.InterAll_OffDiagonal[idx][4] + 1 > X->Def.Nsite) {
+          if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
+            X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
             child_general_int_spin_MPIdouble(i, X, tmp_v0, tmp_v1);
           }
-          else if (X->Def.InterAll_OffDiagonal[idx][4] + 1 > X->Def.Nsite) {
+          else if (X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
             child_general_int_spin_MPIsingle(i, X, tmp_v0, tmp_v1);
           }
-          else if (X->Def.InterAll_OffDiagonal[idx][0] + 1 > X->Def.Nsite) {
+          else if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite) {
             child_general_int_spin_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
           }
           else {

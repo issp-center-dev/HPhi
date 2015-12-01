@@ -25,45 +25,45 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 
-void GC_child_general_hopp_MPIdouble(int itrans, struct BindStruct *X, 
+void GC_child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct *X, 
   double complex *tmp_v0, double complex *tmp_v1)
 {
 #ifdef MPI
-  int bit1, bit2, mybit1, mybit2, ierr, dest, bitdiff, sgn;
+  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j;
-  MPI_Status status;
+  MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
 
-  bit1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] 
+  mask1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] 
                             + X->Def.EDGeneralTransfer[itrans][1]];
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
+  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
                             + X->Def.EDGeneralTransfer[itrans][3]];
-  bitdiff = abs(bit1 - bit2);
+  bitdiff = abs(mask1 - mask2);
+  origin = myrank ^ (mask1 + mask2);
 
-  mybit1 = myrank & bit1;
-  mybit2 = myrank & bit2;
+  state1 = origin & mask1;
+  state2 = origin & mask2;
 
-  dest = myrank ^ (bit1 + bit2);
-  SgnBit((unsigned long int)(dest & bitdiff), &sgn); // Fermion sign
+  SgnBit((unsigned long int)(origin & bitdiff), &Fsgn); // Fermion sign
 
-  if(mybit1 == 0 && mybit2 == bit2){
-    trans = (double)sgn * X->Def.EDParaGeneralTransfer[itrans];
+  if(state1 == 0 && state2 == mask2){
+    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
   }
-  else if(mybit1 == bit1 && mybit2 == 0) {
-    trans = (double)sgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+  else if(state1 == mask1 && state2 == 0) {
+    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
   }
   else return;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
-    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
 
   dam_pr = 0.0;
-  for (j = 0; j < idim_max_buf; j++) {
+  for (j = 1; j <= idim_max_buf; j++) {
     dmv = trans * v1buf[j];
     if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
-    dam_pr += tmp_v1[j] * dmv;
+    dam_pr += conj(tmp_v1[j]) * dmv;
   }
 
   X->Large.prdct += dam_pr;
@@ -71,62 +71,62 @@ void GC_child_general_hopp_MPIdouble(int itrans, struct BindStruct *X,
 #endif
 }
 
-void GC_child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
+void GC_child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1)
 {
 #ifdef MPI
-  int bit2, mybit1, mybit2, ierr, dest, bit2diff, sgn;
-  unsigned long int idim_max_buf, j, bit1, bit1check, bit1diff, ioff;
-  MPI_Status status;
+  int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
+  unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
+  MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
   /*
    Prepare index in the inter PE
   */
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
+  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
     + X->Def.EDGeneralTransfer[itrans][3]];
-  bit2diff = bit2 - 1;
+  bit2diff = mask2 - 1;
+  origin = myrank ^ mask2;
 
-  mybit2 = myrank & bit2;
+  state2 = origin & mask2;
 
-  dest = myrank ^ bit2;
-  SgnBit((unsigned long int)(dest & bit2diff), &sgn); // Fermion sign
+  SgnBit((unsigned long int)(origin & bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
-    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
 
   /*
    Index in the intra PE
   */
-  bit1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
+  mask1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
     + X->Def.EDGeneralTransfer[itrans][1]];
   
-  if (mybit2 == bit2) {
-    trans = (double)sgn * X->Def.EDParaGeneralTransfer[itrans];
-    bit1check = 0;
+  if (state2 == mask2) {
+    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    state1check = 0;
   }
-  else if (mybit2 == 0) {
-    trans = (double)sgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
-    bit1check = bit1;
+  else if (state2 == 0) {
+    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    state1check = mask1;
   }
   else return;
 
-  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - bit1;
+  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1;
 
   dam_pr = 0.0;
   for (j = 0; j < idim_max_buf; j++) {
 
-    mybit1 = j & bit1;
+    state1 = j & mask1;
 
-    if (mybit1 == bit1check) {
+    if (state1 == state1check) {
 
-      SgnBit(j & bit1diff, &sgn);
-      ioff = j ^ bit1;
+      SgnBit(j & bit1diff, &Fsgn);
+      ioff = j ^ mask1;
 
-      dmv = (double)sgn * trans * v1buf[j];
+      dmv = (double)Fsgn * trans * v1buf[j + 1];
       if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
-      dam_pr += tmp_v1[j] * dmv;
+      dam_pr += conj(tmp_v1[j]) * dmv;
     }
   }
 
@@ -135,51 +135,51 @@ void GC_child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
 #endif
 }
 
-void child_general_hopp_MPIdouble(int itrans, struct BindStruct *X,
+void child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1)
 {
 #ifdef MPI
-  int bit1, bit2, mybit1, mybit2, ierr, dest, bitdiff, sgn;
+  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
-  MPI_Status status;
+  MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
 
-  bit1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
+  mask1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
     + X->Def.EDGeneralTransfer[itrans][1]];
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
+  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
     + X->Def.EDGeneralTransfer[itrans][3]];
-  bitdiff = abs(bit1 - bit2);
+  bitdiff = abs(mask1 - mask2);
+  origin = myrank ^ (mask1 + mask2);
 
-  mybit1 = myrank & bit1;
-  mybit2 = myrank & bit2;
+  state1 = origin & mask1;
+  state2 = origin & mask2;
 
-  dest = myrank ^ (bit1 + bit2);
-  SgnBit((unsigned long int)(dest & bitdiff), &sgn); // Fermion sign
+   SgnBit((unsigned long int)(origin & bitdiff), &Fsgn); // Fermion sign
 
-  if (mybit1 == 0 && mybit2 == bit2) {
-    trans = (double)sgn * X->Def.EDParaGeneralTransfer[itrans];
+  if (state1 == 0 && state2 == mask2) {
+    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
   }
-  else if (mybit1 == bit1 && mybit2 == 0) {
-    trans = (double)sgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+  else if (state1 == mask1 && state2 == 0) {
+    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
   }
   else return;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max, MPI_UNSIGNED_LONG, dest, 0,
-    list_1buf, idim_max_buf, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
-    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
 
   dam_pr = 0.0;
-  for (j = 0; j < idim_max_buf; j++) {
+  for (j = 1; j <= idim_max_buf; j++) {
 
     GetOffComp(list_2_1, list_2_2, list_1buf[j], 
       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
     dmv = trans * v1buf[j];
     if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
-    dam_pr += tmp_v1[ioff] * dmv;
+    dam_pr += conj(tmp_v1[ioff]) * dmv;
   }
 
   X->Large.prdct += dam_pr;
@@ -187,67 +187,66 @@ void child_general_hopp_MPIdouble(int itrans, struct BindStruct *X,
 #endif
 }
 
-void child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
+void child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1)
 {
 #ifdef MPI
-  int bit2, mybit1, mybit2, ierr, dest, bit2diff, sgn;
-  unsigned long int idim_max_buf, j, bit1, bit1check, bit1diff, ioff, jreal;
-  MPI_Status status;
+  int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
+  unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff, jreal;
+  MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
   /*
   Prepare index in the inter PE
   */
-  bit2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
+  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
     + X->Def.EDGeneralTransfer[itrans][3]];
-  bit2diff = bit2 - 1;
+  bit2diff = mask2 - 1;
+  origin = myrank ^ mask2;
 
-  mybit2 = myrank & bit2;
+  state2 = origin & mask2;
 
-  dest = myrank ^ bit2;
-  SgnBit((unsigned long int)(dest & bit2diff), &sgn); // Fermion sign
+  SgnBit((unsigned long int)(origin & bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max, MPI_UNSIGNED_LONG, dest, 0,
-    list_1buf, idim_max_buf, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
-    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
 
   /*
   Index in the intra PE
   */
-  bit1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
+  mask1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
     + X->Def.EDGeneralTransfer[itrans][1]];
 
-  if (mybit2 == bit2) {
-    trans = (double)sgn * X->Def.EDParaGeneralTransfer[itrans];
-    bit1check = 0;
+  if (state2 == mask2) {
+    trans = (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    state1check = 0;
   }
-  else if (mybit2 == 0) {
-    trans = (double)sgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
-    bit1check = bit1;
+  else if (state2 == 0) {
+    trans = (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    state1check = mask1;
   }
   else return;
 
-  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - bit1;
+  bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1;
 
   dam_pr = 0.0;
-  for (j = 0; j < idim_max_buf; j++) {
+  for (j = 1; j <= idim_max_buf; j++) {
 
     jreal = list_1buf[j];
-    mybit1 = jreal & bit1;
+    state1 = jreal & mask1;
 
-    if (mybit1 == bit1check) {
+    if (state1 == state1check) {
 
-      SgnBit(jreal & bit1diff, &sgn);
-
-      GetOffComp(list_2_1, list_2_2, jreal ^ bit1,
+      SgnBit(jreal & bit1diff, &Fsgn);
+      GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
         X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
-      dmv = (double)sgn * trans * v1buf[j];
+      dmv = (double)Fsgn * trans * v1buf[j];
       if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
-      dam_pr += tmp_v1[ioff] * dmv;
+      dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
   }
 
@@ -256,52 +255,48 @@ void child_general_hopp_MPIsingle(int itrans, struct BindStruct *X,
 #endif
 }
 
-void child_general_int_spin_MPIdouble(int i_int, struct BindStruct *X,
+void child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1)
 {
 #ifdef MPI
-  int bit1, bit2, mybit1, mybit2, ierr, dest;
+  int mask1, mask2, state1, state2, ierr, origin;
   unsigned long int idim_max_buf, j, ioff;
-  MPI_Status status;
+  MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr;
 
-  bit1 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
-  bit2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  mask1 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
+  mask2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  origin = myrank ^ (mask1 + mask2);
 
-  mybit1 = myrank & bit1;
-  mybit2 = myrank & bit2;
+  state1 = (origin & mask1) / mask1;
+  state2 = (origin & mask2) / mask2;
 
-  dest = myrank ^ (bit1 + bit2);
-
-  mybit1 /= bit1;
-  mybit2 /= bit2;
-
-  if (mybit1 == X->Def.InterAll_OffDiagonal[i_int][3] && 
-    mybit2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
+  if (state1 == X->Def.InterAll_OffDiagonal[i_int][3] && 
+    state2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
     Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
   }
-  else if (mybit1 == X->Def.InterAll_OffDiagonal[i_int][1] && 
-    mybit2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
+  else if (state1 == X->Def.InterAll_OffDiagonal[i_int][1] && 
+    state2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
     Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
   }
   else return;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max, MPI_UNSIGNED_LONG, dest, 0,
-    list_1buf, idim_max_buf, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
-    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
 
   dam_pr = 0.0;
-  for (j = 0; j < idim_max_buf; j++) {
+  for (j = 1; j <= idim_max_buf; j++) {
 
     GetOffComp(list_2_1, list_2_2, list_1buf[j],
       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
     dmv = Jint * v1buf[j];
     if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
-    dam_pr += tmp_v1[ioff] * dmv;
+    dam_pr += conj(tmp_v1[ioff]) * dmv;
   }
 
   X->Large.prdct += dam_pr;
@@ -309,57 +304,55 @@ void child_general_int_spin_MPIdouble(int i_int, struct BindStruct *X,
 #endif
 }
 
-void child_general_int_spin_MPIsingle(int i_int, struct BindStruct *X,
+void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1)
 {
 #ifdef MPI
-  int bit2, mybit2, ierr, dest;
-  unsigned long int bit1, idim_max_buf, j, ioff, mybit1, jreal, bit1check;
-  MPI_Status status;
+  int mask2, state2, ierr, origin;
+  unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
+  MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr;
   /*
   Prepare index in the inter PE
   */
-  bit2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
-  mybit2 = myrank & bit2;
-  dest = myrank ^ bit2;
-  mybit2 /= bit2;
+  mask2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  origin = myrank ^ mask2;
+  state2 = (origin & mask2) / mask2;
 
-  if (mybit2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    bit1check == X->Def.InterAll_OffDiagonal[i_int][3];
+  if (state2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    state1check = (unsigned long int)X->Def.InterAll_OffDiagonal[i_int][3];
     Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
   }
-  else if (mybit2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
-    bit1check == X->Def.InterAll_OffDiagonal[i_int][1];
+  else if (state2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
+    state1check = (unsigned long int)X->Def.InterAll_OffDiagonal[i_int][1];
     Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
   }
   else return;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, dest, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max, MPI_UNSIGNED_LONG, dest, 0,
-    list_1buf, idim_max_buf, MPI_UNSIGNED_LONG, dest, 0, MPI_COMM_WORLD, &status);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max, MPI_DOUBLE_COMPLEX, dest, 0,
-    v1buf, idim_max_buf, MPI_DOUBLE_COMPLEX, dest, 0, MPI_COMM_WORLD, &status);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
   /*
   Index in the intra PE
   */
-  bit1 = X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
+  mask1 = X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
 
   dam_pr = 0.0;
-  for (j = 0; j < idim_max_buf; j++) {
+  for (j = 1; j <= idim_max_buf; j++) {
 
     jreal = list_1buf[j];
 
-    mybit1 = (jreal & bit1) / bit1;
-
-    if (mybit1 == bit1check) {
-      GetOffComp(list_2_1, list_2_2, jreal ^ bit1,
+    state1 = (jreal & mask1) / mask1;
+    if (state1 == state1check) {
+      GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
         X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
       dmv = Jint * v1buf[j];
       if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
-      dam_pr += tmp_v1[ioff] * dmv;
+      dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
   }
 

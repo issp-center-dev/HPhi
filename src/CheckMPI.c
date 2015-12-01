@@ -119,8 +119,8 @@ void CheckMPI(struct BindStruct *X)
             }
           }
           else {
-            if (SpinNum == 0) X->Def.Nup -= 1;
-            else X->Def.Ndown -= 1;
+            if (SpinNum == 0) X->Def.Ndown -= 1;
+            else X->Def.Nup -= 1;
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       } /*if (X->Def.iCalcModel == Kondo)*/
@@ -159,13 +159,12 @@ void CheckMPI(struct BindStruct *X)
         for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
           SpinNum = SmallDim % 2;
           SmallDim /= 2;
-          if (SpinNum == 0 /*01 up*/) {
+          if (SpinNum == 0) {
+            X->Def.Ndown -= 1;
+          }
+          else {
             X->Def.Ne -= 1;
             X->Def.Nup -= 1;
-          }
-          else /*10 down*/ {
-            X->Def.Ne += 1;
-            X->Def.Ndown -= 1;
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       }/*if (X->Def.iCalcModel == Spin)*/
@@ -260,11 +259,31 @@ void CheckMPI_Summary(struct BindStruct *X) {
   }
 
   fprintf(stdoutMPI, "\n  Process element info\n");
-  fprintf(stdoutMPI, "    Process    State      Dimension\n");
+  fprintf(stdoutMPI, "    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State\n");
 
   for (iproc = 0; iproc < nproc; iproc++) {
 
-    fprintf(stdoutMPI, "    %7d    ", iproc);
+    fprintf(stdoutMPI, "    %7d", iproc);
+
+    if (myrank == iproc) idimMPI = X->Check.idim_max;
+    else idimMPI = 0;
+    fprintf(stdoutMPI, " %15ld", SumMPI_li(idimMPI));
+
+    if (myrank == iproc) Nelec = X->Def.Nup;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "  %4d", SumMPI_i(Nelec));
+
+    if (myrank == iproc) Nelec = X->Def.Ndown;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "  %5d", SumMPI_i(Nelec));
+
+    if (myrank == iproc) Nelec = X->Def.Ne;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "  %5d", SumMPI_i(Nelec));
+
+    if (myrank == iproc) Nelec = X->Def.Total2Sz;
+    else Nelec = 0;
+    fprintf(stdoutMPI, "  %8d   ", SumMPI_i(Nelec));
 
     switch (X->Def.iCalcModel) {
     case HubbardGC: /****************************************************/
@@ -308,26 +327,7 @@ void CheckMPI_Summary(struct BindStruct *X) {
       break;
     
     }
-
-    if (myrank == iproc) idimMPI = X->Check.idim_max;
-    else idimMPI = 0;
-    fprintf(stdoutMPI, "   %ld", SumMPI_li(idimMPI));
-
-    if (myrank == iproc) Nelec = X->Def.Nup;
-    else Nelec = 0;
-    fprintf(stdoutMPI, "   %d", SumMPI_i(Nelec));
-
-    if (myrank == iproc) Nelec = X->Def.Ndown;
-    else Nelec = 0;
-    fprintf(stdoutMPI, "   %d", SumMPI_i(Nelec));
-
-    if (myrank == iproc) Nelec = X->Def.Ne;
-    else Nelec = 0;
-    fprintf(stdoutMPI, "   %d", SumMPI_i(Nelec));
-
-    if (myrank == iproc) Nelec = X->Def.Total2Sz;
-    else Nelec = 0;
-    fprintf(stdoutMPI, "   %d\n", SumMPI_i(Nelec));
+    fprintf(stdoutMPI, "\n");
   }
 
   fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n", SumMPI_li(X->Check.idim_max));

@@ -1,4 +1,6 @@
 #include "PowerLanczos.h"
+#include "wrapperMPI.h"
+
 int PowerLanczos(struct BindStruct *X){
   
   time_t start,mid;
@@ -50,6 +52,8 @@ int PowerLanczos(struct BindStruct *X){
       dam_pr2a  += conj(v0[j])*v0[j]; // E^2 = <v1|H*H|v1>=<v0|v0>
      //v0[j]=v1[j]; v1-> orginal v0=H*v1
     }  
+    dam_pr1 = SumMPI_dc(dam_pr1);
+    dam_pr2a = SumMPI_dc(dam_pr2a);
     E1    = creal(dam_pr1); // E
     E2a   = creal(dam_pr2a);// E^2
 
@@ -68,6 +72,9 @@ int PowerLanczos(struct BindStruct *X){
       dam_pr3    += conj(vg[j])*v0[j]; // E^3   = <v1|H^3|v1>=<vg|v0>
       dam_pr4    += conj(vg[j])*vg[j]; // E^4   = <v1|H^4|v1>=<vg|vg>
     } 
+    dam_pr2b = SumMPI_dc(dam_pr2b);
+    dam_pr3 = SumMPI_dc(dam_pr3);
+    dam_pr4 = SumMPI_dc(dam_pr4);
     //E1    = X->Phys.energy;// E^1
     //E2a   = X->Phys.var ;// E^2 = <v1|H*H|v1>
     E2b   = creal(dam_pr2b) ;// E^2 = (<v1|H^2)|v1>
@@ -103,6 +110,7 @@ int PowerLanczos(struct BindStruct *X){
     for(j=1;j<=i_max;j++){
       dnorm += conj(v1[j])*v1[j];
     }
+    dnorm = SumMPI_d(dnorm);
     dnorm=sqrt(dnorm);
     dnorm_inv=1.0/dnorm;
 #pragma omp parallel for default(none) private(j) shared(v1) firstprivate(i_max, dnorm_inv)

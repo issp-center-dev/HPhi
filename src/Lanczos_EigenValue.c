@@ -34,8 +34,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueStart);
   FILE *fp;
   char sdt[D_FileNameMax],sdt_2[D_FileNameMax];
-  int stp;
+  int stp, iproc;
   long int i,iv,i_max;      
+  unsigned long int i_max_tmp;
   int k_exct,Target;
   int iconv=-1;
   double beta1,alpha1; //beta,alpha1 should be real
@@ -87,13 +88,29 @@ int Lanczos_EigenValue(struct BindStruct *X)
     u_long_i = 123432 + abs(iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
     if(X->Def.iInitialVecType==0){
-      for(i = 1; i <= i_max; i++){
-	v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
+      for (iproc = 0; iproc < nproc; iproc++) {
+
+        if (myrank == iproc) i_max_tmp = i_max;
+        else i_max_tmp = 0;
+        i_max_tmp = SumMPI_li(i_max_tmp);
+
+        for (i = 1; i <= i_max_tmp; i++) {
+          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
+          if (myrank == iproc) v1[i] = temp1;
+        }
       }
     }
     else{
-       for(i = 1; i <= i_max; i++){
-	 v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5);
+      for (iproc = 0; iproc < nproc; iproc++) {
+
+        if (myrank == iproc) i_max_tmp = i_max;
+        else i_max_tmp = 0;
+        i_max_tmp = SumMPI_li(i_max_tmp);
+
+        for (i = 1; i <= i_max_tmp; i++) {
+          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+          if (myrank == iproc) v1[i] = temp1;
+        }
       }
     }
     cdnorm=0.0;
@@ -156,7 +173,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     beta1=creal(cbeta1);
     beta1=sqrt(beta1);
     beta[stp]=beta1;
-    
+
     Target  = X->Def.LanczosTarget;
 
     //    fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
@@ -230,16 +247,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
        fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4]);
        fclose(fp);
 
-      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos){
+      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos || abs(beta[stp])<pow(10.0, -14)){
         vec12(alpha,beta,stp,E,X);		
         X->Large.itr=stp;       
         X->Phys.Target_energy=E[k_exct];
 	iconv=0;
 	break;
-      }
-
-      if(abs(beta[stp])<pow(10.0, -14)){
-	beta[stp]=pow(10.0, -14)*dShiftBeta;
       }
 
       ebefor=E[Target];            

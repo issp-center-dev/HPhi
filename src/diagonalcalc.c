@@ -1010,6 +1010,9 @@ int SetDiagonalInterAll
     j = isite2;
     isite2 = isite1;
     isite1 = j;
+    j = isigma2;
+    isigma2 = isigma1;
+    isigma1 = j;
   }
   /*
   When isite1 & site2 are inter process
@@ -1155,7 +1158,7 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
       if (X->Def.iFlgGeneralSpin == FALSE) {
         is1_up = X->Def.Tpow[isite1 - 1];
         is2_up = X->Def.Tpow[isite2 - 1];
-        num2 = X_SpinGC_CisAis((unsigned long int)myrank, X, is2_up, isigma2);
+        num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, isigma2);
 
 #pragma omp parallel for default(none) shared(list_Diagonal) \
 firstprivate(i_max, dtmp_V, is1_up, isigma1, X, num2) private(j, num1)
@@ -1227,7 +1230,7 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
    if(X->Def.iFlgGeneralSpin==FALSE){
      is1_up   = X->Def.Tpow[isite1-1];
      is2_up   = X->Def.Tpow[isite2-1];
-#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
+#pragma omp parallel for default(none) shared(list_Diagonal, stderr) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
      for(j = 1;j <= i_max; j++){
        num1=X_Spin_CisAis(j, X, is1_up, isigma1);
        num2=X_Spin_CisAis(j, X, is2_up, isigma2);      
