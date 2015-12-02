@@ -50,6 +50,7 @@ int expec_totalspin
   switch(X->Def.iCalcModel){
   case Spin:
      totalspin_Spin(X,vec);
+     X->Phys.sz=X->Def.Total2Sz/2.;
      break;
   case SpinGC:
      totalspin_SpinGC(X,vec);
@@ -57,6 +58,7 @@ int expec_totalspin
    case Hubbard: 
    case Kondo:
      totalspin_Hubbard(X,vec);
+     X->Phys.sz=X->Def.Total2Sz/2.;
      break;
   case HubbardGC: 
   case KondoGC:
