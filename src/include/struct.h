@@ -149,6 +149,13 @@ struct DefineList{
   /**<  An integer for selecting calculation model. 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC, 6:HubbardNConserved*/
   int iOutputMode;
   /**<   An integer for selecting output mode. 0: OneBodyG and TwoBodyG. 1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
+
+  /**< An integer for selecting output an eigenvector. 0: no output, 1:output.*/
+  int iOutputEigenVec;
+
+    /**< An integer for selecting output an eigenvector. 0: no input, 1:input*/
+  int iInputEigenVec;
+  
 };
 
 struct CheckList{

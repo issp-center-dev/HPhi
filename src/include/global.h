@@ -103,6 +103,8 @@ const char* cFileName2BGreen_CG;
 const char* cFileNameTimeEV_CG;
 const char* cFileNameListModel;
 const char* cFileNameListKondo;
+const char* cFileNameOutputEigen;
+const char* cFileNameInputEigen;
 
 //For TPQ
 const char* cFileNameSSRand;
