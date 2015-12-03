@@ -134,14 +134,13 @@ int Lanczos_EigenValue(struct BindStruct *X)
   if(i_max<Target){
     X->Def.LanczosTarget=i_max;
   }
-  if(abs(alpha1*beta1)<pow(10.0, -15)){
+  if(i_max==1){
     E[1]=alpha[1];
     vec12(alpha,beta,stp,E,X);		
-    X->Large.itr=stp;       
+    X->Large.itr=stp;
     X->Phys.Target_energy=E[k_exct];
     iconv=0;
     fprintf(stdoutMPI,"stp=%d %.10lf \n",stp,E[1]);
-
   }
   else{
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
