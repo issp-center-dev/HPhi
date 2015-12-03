@@ -44,24 +44,16 @@ int HPhiTrans(struct BindStruct *X){
   //Transefer
   cnt_trans=0;
   cnt_chemi=0;
-
+  
   for(i=0;i<X->Def.NTransfer;i++){
     // chemical potential = diagonal
     // check site 
     if(X->Def.GeneralTransfer[i][0]==X->Def.GeneralTransfer[i][2]){
       // check spin
       if(X->Def.GeneralTransfer[i][1]==X->Def.GeneralTransfer[i][3]){
-	X->Def.EDChemi[cnt_chemi]     = X->Def.GeneralTransfer[i][0];      
-	X->Def.EDSpinChemi[cnt_chemi] = X->Def.GeneralTransfer[i][1];      
-	X->Def.EDParaChemi[cnt_chemi] = creal(X->Def.ParaGeneralTransfer[i]);
 	cnt_chemi+=1;
       }
       else{
-	X->Def.EDGeneralTransfer[cnt_trans][0]  = X->Def.GeneralTransfer[i][0];      
-	X->Def.EDGeneralTransfer[cnt_trans][1]  = X->Def.GeneralTransfer[i][1];      
-	X->Def.EDGeneralTransfer[cnt_trans][2]  = X->Def.GeneralTransfer[i][2];
-	X->Def.EDGeneralTransfer[cnt_trans][3]  = X->Def.GeneralTransfer[i][3];      
-	X->Def.EDParaGeneralTransfer[cnt_trans] = X->Def.ParaGeneralTransfer[i];
 	cnt_trans+=1;
       }
     }else{
@@ -79,14 +71,10 @@ int HPhiTrans(struct BindStruct *X){
 	  }
 	}
       }
-      X->Def.EDGeneralTransfer[cnt_trans][0]  = X->Def.GeneralTransfer[i][0];      
-      X->Def.EDGeneralTransfer[cnt_trans][1]  = X->Def.GeneralTransfer[i][1];      
-      X->Def.EDGeneralTransfer[cnt_trans][2]  = X->Def.GeneralTransfer[i][2];
-      X->Def.EDGeneralTransfer[cnt_trans][3]  = X->Def.GeneralTransfer[i][3];      
-      X->Def.EDParaGeneralTransfer[cnt_trans] = X->Def.ParaGeneralTransfer[i];
       cnt_trans+=1;
     }
   }
+  
 // PossibleError
   if(cnt_chemi>0 && cnt_chemi!=2*X->Def.Nsite){
     sprintf(sdt_err,cErrTransfer);
@@ -99,8 +87,6 @@ int HPhiTrans(struct BindStruct *X){
 
   fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
   fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
-  X->Def.EDNTransfer=cnt_trans;
-  X->Def.EDNChemi=cnt_chemi;
 
   return 0;
 }    
