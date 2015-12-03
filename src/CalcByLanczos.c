@@ -100,7 +100,7 @@ int CalcByLanczos(
 
     fprintf(stdoutMPI, "\n");
     fprintf(stdoutMPI, "Accuracy check !!!\n");
-    fprintf(stdoutMPI, "%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+    fprintf(stdoutMPI, "%.14e %.14e: diff_ene=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
     if(diff_ene < eps_Energy && var< eps_Energy){
       fprintf(stdoutMPI, "Accuracy of Lanczos vectors is enough\n");
       fprintf(stdoutMPI, "\n");
@@ -116,7 +116,7 @@ int CalcByLanczos(
 	diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
 	fprintf(stdoutMPI,"\n");
 	fprintf(stdoutMPI,"Power Lanczos Accuracy check !!!\n");
-	fprintf(stdoutMPI,"%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+	fprintf(stdoutMPI,"%.14e %.14e: diff_ene=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
 	fprintf(stdoutMPI,"\n");
       }
       else if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG && iconv==1){
@@ -129,7 +129,7 @@ int CalcByLanczos(
 	diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
 	fprintf(stdoutMPI, "\n");
 	fprintf(stdoutMPI, "CG Accuracy check !!!\n");
-	fprintf(stdoutMPI, "%.14e %.14e: diff_ere=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+	fprintf(stdoutMPI, "%.14e %.14e: diff_ene=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
 	fprintf(stdoutMPI, "\n");
       }
     }
