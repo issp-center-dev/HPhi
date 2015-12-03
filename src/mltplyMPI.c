@@ -126,8 +126,8 @@ void GC_child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct
       ioff = j ^ mask1;
 
       dmv = (double)Fsgn * trans * v1buf[j + 1];
-      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
-      dam_pr += conj(tmp_v1[j]) * dmv;
+      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
+      dam_pr += conj(tmp_v1[j + 1]) * dmv;
     }
   }
 
@@ -362,4 +362,147 @@ void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct
 
 #endif
 }
+
+void GC_child_CisAitCiuAiv_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1)
+{
+#ifdef MPI
+  int mask1, mask2, state1, state2, ierr, origin;
+  unsigned long int idim_max_buf, j;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr;
+
+  mask1 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
+  mask2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  origin = myrank ^ (mask1 + mask2);
+
+  state1 = (origin & mask1) / mask1;
+  state2 = (origin & mask2) / mask2;
+
+  if (state1 == X->Def.InterAll_OffDiagonal[i_int][3] &&
+    state2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
+  }
+  else if (state1 == X->Def.InterAll_OffDiagonal[i_int][1] &&
+    state2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
+    Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+  }
+  else return;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+
+  dam_pr = 0.0;
+  for (j = 1; j <= idim_max_buf; j++) {
+    dmv = Jint * v1buf[j];
+    if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
+    dam_pr += conj(tmp_v1[j]) * dmv;
+  }
+
+  X->Large.prdct += dam_pr;
+
+#endif
+}
+
+void GC_child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1)
+{
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //diagonal
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else {
+    GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
+  }
+}
+
+void GC_child_CisAitCiuAiv_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1)
+{
+#ifdef MPI
+  int mask2, state2, ierr, origin;
+  unsigned long int mask1, idim_max_buf, j, ioff, state1, state1check;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr;
+  /*
+  Prepare index in the inter PE
+  */
+  mask2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  origin = myrank ^ mask2;
+  state2 = (origin & mask2) / mask2;
+
+  if (state2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    state1check = (unsigned long int)X->Def.InterAll_OffDiagonal[i_int][3];
+    Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
+  }
+  else if (state2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
+    state1check = (unsigned long int)X->Def.InterAll_OffDiagonal[i_int][1];
+    Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+  }
+  else return;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  /*
+  Index in the intra PE
+  */
+  mask1 = X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
+
+  dam_pr = 0.0;
+  for (j = 0; j < idim_max_buf; j++) {
+
+    state1 = (j & mask1) / mask1;
+    if (state1 == state1check) {
+
+      ioff = j ^ mask1;
+
+      dmv = Jint * v1buf[j + 1];
+      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
+      dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
+    }
+  }
+
+  X->Large.prdct += dam_pr;
+
+#endif
+}
+
+void GC_child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1)
+{
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //diagonal
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else {
+    GC_child_CisAitCiuAiv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
+  }
+}
+
 

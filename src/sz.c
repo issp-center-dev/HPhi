@@ -160,12 +160,12 @@ int sz
     
     switch(X->Def.iCalcModel){
     case HubbardGC:
-      icnt = X->Def.Tpow[2*X->Def.Nsite]+0;
+      icnt = X->Def.Tpow[2*X->Def.Nsite-1]*2+0;/*Tpow[2*X->Def.Nsit]=1*/
       break;
       
     case SpinGC:
       if(X->Def.iFlgGeneralSpin==FALSE){
-	icnt = X->Def.Tpow[X->Def.Nsite]+0;
+	icnt = X->Def.Tpow[X->Def.Nsite-1]*2+0;/*Tpow[X->Def.Nsit]=1*/
       }
       else{
 	icnt = X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1];

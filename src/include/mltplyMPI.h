@@ -39,3 +39,9 @@ void child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct
 
 void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1);
+
+void GC_child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1);
+  
+void GC_child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1);
