@@ -127,7 +127,7 @@ void GC_child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct
 
       dmv = (double)Fsgn * trans * v1buf[j + 1];
       if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
-      dam_pr += conj(tmp_v1[j + 1]) * dmv;
+      dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
     }
   }
 

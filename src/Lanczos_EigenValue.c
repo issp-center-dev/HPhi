@@ -147,13 +147,17 @@ int Lanczos_EigenValue(struct BindStruct *X)
   beta[1]=beta1;
   ebefor=0;
 
-  if(i_max<X->Def.Lanczos_max){
-    X->Def.Lanczos_max=i_max;
+  /*
+    Set Maximum number of loop to the dimention of the Wavefunction
+  */
+  i_max_tmp = SumMPI_li(i_max);
+  if(i_max_tmp < X->Def.Lanczos_max){
+    X->Def.Lanczos_max = i_max_tmp;
   }
-  if(i_max<Target){
-    X->Def.LanczosTarget=i_max;
+  if(i_max_tmp < Target){
+    X->Def.LanczosTarget = i_max_tmp;
   }
-  if(i_max==1){
+  if(i_max_tmp == 1){
     E[1]=alpha[1];
     vec12(alpha,beta,stp,E,X);		
     X->Large.itr=stp;
