@@ -25,8 +25,18 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 
-void GC_child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct *X, 
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * Hopping term in Hubbard + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void GC_child_general_hopp_MPIdouble(
+  unsigned long int itrans /**< [in] Transfer ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
@@ -70,10 +80,20 @@ void GC_child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct
   X->Large.prdct += dam_pr;
   
 #endif
-}
+}/*void GC_child_general_hopp_MPIdouble*/
 
-void GC_child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+  *
+  * Hopping term in Hubbard + GC
+  * When only site2 is in the inter process region.
+  *
+  * @author Mitsuaki Kawamura (The University of Tokyo)
+  */
+void GC_child_general_hopp_MPIsingle(
+  unsigned long int itrans /**< [in] Transfer ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
@@ -134,10 +154,20 @@ void GC_child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct
   X->Large.prdct += dam_pr;
 
 #endif
-}
+}/*void GC_child_general_hopp_MPIsingle*/
 
-void child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * Hopping term in Hubbard (Kondo) + Canonical ensemble
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void child_general_hopp_MPIdouble(
+  unsigned long int itrans /**< [in] Transfer ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
@@ -187,10 +217,20 @@ void child_general_hopp_MPIdouble(unsigned long int itrans, struct BindStruct *X
   X->Large.prdct += dam_pr;
 
 #endif
-}
+}/*void child_general_hopp_MPIdouble*/
 
-void child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * Hopping term in Hubbard (Kondo) + Canonical ensemble
+ * When only site2 is in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void child_general_hopp_MPIsingle(
+  unsigned long int itrans /**< [in] Transfer ID*/, 
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
@@ -255,10 +295,20 @@ void child_general_hopp_MPIsingle(unsigned long int itrans, struct BindStruct *X
   X->Large.prdct += dam_pr;
 
 #endif
-}
+}/*void child_general_hopp_MPIsingle*/
 
-void child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * Exchange term in Spin model
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void child_general_int_spin_MPIdouble(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin;
@@ -304,10 +354,20 @@ void child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct
   X->Large.prdct += dam_pr;
 
 #endif
-}
+}/*void child_general_int_spin_MPIdouble*/
 
-void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * Exchange term in Spin model
+ * When only site2 is in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void child_general_int_spin_MPIsingle(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask2, state2, ierr, origin;
@@ -361,10 +421,20 @@ void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct
   X->Large.prdct += dam_pr;
 
 #endif
-}
+}/*void child_general_int_spin_MPIsingle*/
 
-void GC_child_CisAitCiuAiv_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * Exchange and Pairlifting term in Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void GC_child_CisAitCiuAiv_spin_MPIdouble(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin;
@@ -404,10 +474,20 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(unsigned long int i_int, struct BindSt
   X->Large.prdct += dam_pr;
 
 #endif
-}
+}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 
-void GC_child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * General interaction term in the Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void GC_child_general_int_spin_MPIdouble(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //diagonal
@@ -427,10 +507,20 @@ void GC_child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStr
   else {
     GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
-}
+}/*void GC_child_general_int_spin_MPIdouble*/
 
-void GC_child_CisAitCiuAiv_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * Exchange and Pairlifting term in Spin model + GC
+ * When only site2 is in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void GC_child_CisAitCiuAiv_spin_MPIsingle(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask2, state2, ierr, origin;
@@ -480,10 +570,20 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(unsigned long int i_int, struct BindSt
   X->Large.prdct += dam_pr;
 
 #endif
-}
+}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 
-void GC_child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
-  double complex *tmp_v0, double complex *tmp_v1)
+/**
+ *
+ * General interaction term in the Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void GC_child_general_int_spin_MPIsingle(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //diagonal
@@ -503,6 +603,6 @@ void GC_child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStr
   else {
     GC_child_CisAitCiuAiv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
   }
-}
+}/*void GC_child_general_int_spin_MPIsingle*/
 
 

@@ -19,7 +19,14 @@
 
 int NsiteMPI;
 
-void CheckMPI(struct BindStruct *X)
+/**
+ *
+ * Define the number of sites in each PE.
+ * Reduce the number of electrons, total Sz by them in the inter process region 
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void CheckMPI(struct BindStruct *X/**< [inout] */)
 {
   int isite, NDimInterPE, SmallDim, SpinNum;
 
@@ -40,17 +47,17 @@ void CheckMPI(struct BindStruct *X)
       if (NDimInterPE == nproc) {
         X->Def.Nsite = isite;
         break;
-      }
+      } /*if (NDimInterPE == nproc)*/
       NDimInterPE *= 4;
-    }
+    } /*for (isite = NsiteMPI; isite > 0; isite--)*/
     
     if (isite == 0) {
       fprintf(stderr, "Error ! The number of PROCESS should be 4 exponent !\n");
       fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
       exitMPI(-1);
-    }
+    } /*if (isite == 0)*/
 
-    switch (X->Def.iCalcModel) {
+    switch (X->Def.iCalcModel) /*2 (inner)*/ {
 
     case Hubbard:
 
@@ -76,7 +83,7 @@ void CheckMPI(struct BindStruct *X)
         }
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
-      break;
+      break;/*case Hubbard:*/
 
     case HubbardNConserved:
       /*X->Def.NeMPI = X->Def.Ne;*/
@@ -90,7 +97,7 @@ void CheckMPI(struct BindStruct *X)
         else if (SpinNum == 3 /*11*/) X->Def.Ne -= 2;
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
-      break;
+      break; /*case HubbardNConserved:*/
 
     case KondoGC:
     case Kondo:
@@ -119,17 +126,17 @@ void CheckMPI(struct BindStruct *X)
             }
           }
           else {
-            if (SpinNum == 0) X->Def.Ndown -= 1;
-            else X->Def.Nup -= 1;
+            fprintf(stderr, "\n Stop because local spin in the inter process region\n");
+            exitMPI(-1);
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       } /*if (X->Def.iCalcModel == Kondo)*/
 
-      break;
+      break; /*case KondoGC, Kondo*/
 
-    } /*switch (X->Def.iCalcModel)*/
+    } /*switch (X->Def.iCalcModel) 2(inner)*/
 
-    break;
+    break; /*case HubbardGC, Hubbard, HubbardNConserved, Kondo, KondoGC:*/
 
   case SpinGC:/********************************************************/
   case Spin:
@@ -141,7 +148,7 @@ void CheckMPI(struct BindStruct *X)
         if (NDimInterPE == nproc) {
           X->Def.Nsite = isite;
           break;
-        }
+        }/*if (NDimInterPE == nproc)*/
         NDimInterPE *= 2;
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 
@@ -149,7 +156,7 @@ void CheckMPI(struct BindStruct *X)
         fprintf(stderr, "Error ! The number of PROCESS should be 2-exponent !\n");
         fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
         exitMPI(-1);
-      }
+      }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
         /*X->Def.NeMPI = X->Def.Ne;*/
@@ -169,21 +176,21 @@ void CheckMPI(struct BindStruct *X)
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       }/*if (X->Def.iCalcModel == Spin)*/
 
-    }
+    } /*if (X->Def.iFlgGeneralSpin == FALSE)*/
     else{/* General Spin */
       NDimInterPE = 1;
       for (isite = NsiteMPI; isite > 0; isite--) {
         if (NDimInterPE == nproc) {
           X->Def.Nsite = isite;
           break;
-        }
+        }/*if (NDimInterPE == nproc)*/
         NDimInterPE *= X->Def.SiteToBit[isite - 1];
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
       if (isite == 0) {
         fprintf(stderr, "Error ! The number of PROCESS is wrong !\n");
         fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
         exitMPI(-1);
-      }/**/
+      }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
         /*X->Def.Total2SzMPI = X->Def.Total2Sz;*/
@@ -199,16 +206,23 @@ void CheckMPI(struct BindStruct *X)
       }/*if (X->Def.iCalcModel == Spin)*/
     }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
 
-    break;
+    break; /*case SpinGC, Spin*/
 
   default:
     fprintf(stderr, "Error ! Wrong model !\n");
     exitMPI(-1);
-  }
+  }/*switch (X->Def.iCalcModel)*/
 
-}
+}/*void CheckMPI*/
 
-void CheckMPI_Summary(struct BindStruct *X) {
+/**
+ *
+ * Print infomation of MPI parallelization
+ * Modify Tpow in the inter process region
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
 
   int isite, iproc, SmallDim, SpinNum, Nelec;
   unsigned long int idimMPI;
@@ -223,18 +237,24 @@ void CheckMPI_Summary(struct BindStruct *X) {
     case HubbardNConserved:
     case Kondo:
     case KondoGC:
+
       fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
       break;
+
     case Spin:
     case SpinGC:
+
       if (X->Def.iFlgGeneralSpin == FALSE) {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
-      }
+      }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
       else {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
-      }
-    }
-  }
+      }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
+
+      break;
+
+    } /*switch (X->Def.iCalcModel)*/
+  } /*for (isite = 0; isite < X->Def.Nsite; isite++)*/
 
   fprintf(stdoutMPI, "\n  INTER process site\n");
   fprintf(stdoutMPI, "    Site    Bit\n");
@@ -245,18 +265,24 @@ void CheckMPI_Summary(struct BindStruct *X) {
     case HubbardNConserved:
     case Kondo:
     case KondoGC:
+
       fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
       break;
+
     case Spin:
     case SpinGC:
+
       if (X->Def.iFlgGeneralSpin == FALSE) {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
-      }
+      }/*if (X->Def.iFlgGeneralSpin == FALSE) */
       else {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
-      }
-    }
-  }
+      }/*if (X->Def.iFlgGeneralSpin == TRUE) */
+
+      break;
+
+    }/*switch (X->Def.iCalcModel)*/
+  }/*for (isite = X->Def.Nsite; isite < NsiteMPI; isite++)*/
 
   fprintf(stdoutMPI, "\n  Process element info\n");
   fprintf(stdoutMPI, "    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State\n");
@@ -284,7 +310,10 @@ void CheckMPI_Summary(struct BindStruct *X) {
     if (myrank == iproc) Nelec = X->Def.Total2Sz;
     else Nelec = 0;
     fprintf(stdoutMPI, "  %8d   ", SumMPI_i(Nelec));
-
+    /*
+     Print the configuration in the inter process region of each PE
+     as a binary (excepting general spin) format.
+    */
     switch (X->Def.iCalcModel) {
     case HubbardGC: /****************************************************/
     case Hubbard:
@@ -314,7 +343,7 @@ void CheckMPI_Summary(struct BindStruct *X) {
           SmallDim /= 2;
           fprintf(stdoutMPI, "%1d", SpinNum);
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
-      }
+      }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
       else {
         SmallDim = myrank;
         for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
@@ -322,16 +351,18 @@ void CheckMPI_Summary(struct BindStruct *X) {
           SmallDim /= X->Def.SiteToBit[isite];
           fprintf(stdoutMPI, "%1d", SpinNum);
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
-      }
+      }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
 
       break;
     
-    }
+    }/*switch (X->Def.iCalcModel)*/
     fprintf(stdoutMPI, "\n");
-  }
+  }/*for (iproc = 0; iproc < nproc; iproc++)*/
 
   fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n", SumMPI_li(X->Check.idim_max));
-
+  /*
+    Reset Tpow[DefNsite], Tpow[DefNsite + 1] ... as inter process space
+  */
   switch (X->Def.iCalcModel) {
   case HubbardGC: /****************************************************/
   case Hubbard:
@@ -354,15 +385,15 @@ void CheckMPI_Summary(struct BindStruct *X) {
       for (isite = X->Def.Nsite + 1; isite < NsiteMPI; isite++)
         X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
 
-    }
+    }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
     else{
 
       X->Def.Tpow[X->Def.Nsite] = 1;
       for (isite = X->Def.Nsite + 1; isite < NsiteMPI; isite++)
         X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * X->Def.SiteToBit[isite - 1];
  
-    }
+    }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
     break;
-  }
-}
+  } /*switch (X->Def.iCalcModel)*/
+}/*void CheckMPI_Summary*/
 

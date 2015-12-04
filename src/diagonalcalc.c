@@ -175,7 +175,7 @@ int SetDiagonalCoulombIntra
   long unsigned int i_max=X->Check.idim_max;
 
   /*
-   When isite1 is inter process
+   When isite1 is in the inter process region
   */
   if (isite1 > X->Def.Nsite){
     
@@ -186,7 +186,7 @@ int SetDiagonalCoulombIntra
     case Hubbard:
     case Kondo:
 
-      is1_up = X->Def.Tpow[2 * isite1 - 2];
+      is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
       is = is1_up + is1_down;
       ibit = (unsigned long int)myrank & is;
@@ -196,17 +196,21 @@ int SetDiagonalCoulombIntra
         for (j = 1; j <= i_max; j++) list_Diagonal[j] += dtmp_V;
       }
 
-      break;
+      break; /*case HubbardGC, KondoGC, Hubbard, Kondo:*/
 
     case Spin:
     case SpinGC:
+      /*
+       They do not have the Coulomb term
+      */
       break;
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
       break;
-    }
+
+    }/*switch (X->Def.iCalcModel)*/
 
     return 0;
 
@@ -283,7 +287,7 @@ int SetDiagonalChemi
   long unsigned int i_max=X->Check.idim_max;
 
   /*
-  When isite1 is inter process
+    When isite1 is in the inter process region
   */
   if (isite1 > X->Def.Nsite){
 
@@ -306,7 +310,7 @@ int SetDiagonalChemi
                      firstprivate(i_max, dtmp_V, num1) private(j)
       for (j = 1; j <= i_max; j++) list_Diagonal[j] += num1*dtmp_V;
 
-      break;
+      break;/*case HubbardGC, case KondoGC, Hubbard, Kondo:*/
 
     case SpinGC:
     case Spin:
@@ -317,23 +321,23 @@ int SetDiagonalChemi
 #pragma omp parallel for default(none) shared(list_Diagonal) \
 firstprivate(i_max, dtmp_V) private(j, ibit1_up)
         for (j = 1; j <= i_max; j++) list_Diagonal[j] += dtmp_V * ibit1_up;
-      }
-      else {
+      } /*if (X->Def.iFlgGeneralSpin == FALSE)*/
+      else /*if (X->Def.iFlgGeneralSpin == TRUE)*/ {
         num1 = BitCheckGeneral((unsigned long int)myrank, 
           isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
         if (num1 != 0) {
 #pragma omp parallel for default(none) shared(list_Diagonal) \
 firstprivate(i_max, dtmp_V) private(j)
           for (j = 1; j <= i_max; j++) list_Diagonal[j] += dtmp_V;
-        }
-      }
-      break;
+        }/*if (num1 != 0)*/
+      }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
+      break;/*case SpinGC, Spin:*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
 
-    }
+    } /*switch (X->Def.iCalcModel)*/
 
     return 0;
 
@@ -460,11 +464,11 @@ int SetDiagonalCoulombInter
     j = isite2;
     isite2 = isite1;
     isite1 = j;
-  }
+  }/*if (isite2 < isite1)*/
   /*
-  When isite1 & site2 are inter process
+    When isite1 & site2 are in the inter process region
   */
-  if (isite1 > X->Def.Nsite) {
+  if (/*isite2 => */ isite1 > X->Def.Nsite) {
 
     switch (X->Def.iCalcModel) {
 
@@ -473,9 +477,9 @@ int SetDiagonalCoulombInter
     case Hubbard:
     case Kondo:
 
-      is1_up = X->Def.Tpow[2 * isite1 - 2];
+      is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
-      is2_up = X->Def.Tpow[2 * isite2 - 2];
+      is2_up   = X->Def.Tpow[2 * isite2 - 2];
       is2_down = X->Def.Tpow[2 * isite2 - 1];
 
       num1 = 0;
@@ -495,7 +499,7 @@ int SetDiagonalCoulombInter
       firstprivate(i_max, dtmp_V, num1, num2) private(j)
       for (j = 1; j <= i_max; j++) list_Diagonal[j] += num1*num2*dtmp_V;
 
-      break;
+      break;/*case HubbardGC, KondoGC, Hubbard, Kondo:*/
 
     case Spin:
     case SpinGC:
@@ -503,21 +507,22 @@ int SetDiagonalCoulombInter
       for (j = 1; j <= i_max; j++) {
         list_Diagonal[j] += dtmp_V;
       }
-      break;
+      break;/*case Spin, SpinGC*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
-    }
+
+    }/*switch (X->Def.iCalcModel)*/
 
     return 0;
 
-  }
-  else if (isite2 > X->Def.Nsite) {
+  }/*if (isite1 > X->Def.Nsite)*/
+  else if (isite2 > X->Def.Nsite /* => isite1 */) {
 
-    is1_up = X->Def.Tpow[2 * isite1 - 2];
+    is1_up   = X->Def.Tpow[2 * isite1 - 2];
     is1_down = X->Def.Tpow[2 * isite1 - 1];
-    is2_up = X->Def.Tpow[2 * isite2 - 2];
+    is2_up   = X->Def.Tpow[2 * isite2 - 2];
     is2_down = X->Def.Tpow[2 * isite2 - 1];
 
     num2 = 0;
@@ -544,7 +549,7 @@ private(num1, ibit1_up, ibit1_down, j)
         list_Diagonal[j] += num1*num2*dtmp_V;
       }
 
-      break;
+      break;/*case HubbardGC*/
 
     case KondoGC:
     case Hubbard:
@@ -562,7 +567,7 @@ private(num1, ibit1_up, ibit1_down, j)
 
         list_Diagonal[j] += num1*num2*dtmp_V;
       }
-      break;
+      break;/*case KondoGC, Hubbard, Kondo:*/
 
     case Spin:
     case SpinGC:
@@ -570,12 +575,13 @@ private(num1, ibit1_up, ibit1_down, j)
       for (j = 1; j <= i_max; j++) {
         list_Diagonal[j] += dtmp_V;
       }
-      break;
+      break;/* case Spin, SpinGC:*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
-    }
+
+    }/*switch (X->Def.iCalcModel)*/
 
     return 0;
 
@@ -685,9 +691,9 @@ int SetDiagonalHund
     isite1 = j;
   }
   /*
-  When isite1 & site2 are inter process
+  When isite1 & site2 are in the inter process region
   */
-  if (isite1 > X->Def.Nsite){
+  if (/*isite2 >= */ isite1 > X->Def.Nsite){
 
     switch (X->Def.iCalcModel) {
 
@@ -696,9 +702,9 @@ int SetDiagonalHund
     case Hubbard:
     case Kondo:
 
-      is1_up = X->Def.Tpow[2 * isite1 - 2];
+      is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
-      is2_up = X->Def.Tpow[2 * isite2 - 2];
+      is2_up   = X->Def.Tpow[2 * isite2 - 2];
       is2_down = X->Def.Tpow[2 * isite2 - 1];
 
       num1_up = 0;
@@ -721,7 +727,7 @@ int SetDiagonalHund
       for (j = 1; j <= i_max; j++)
         list_Diagonal[j] += dtmp_V*(num1_up*num2_up + num1_down*num2_down);
 
-      break;
+      break;/*case HubbardGC, KondoGC, Hubbard, Kondo:*/
 
     case SpinGC:
     case Spin:
@@ -735,7 +741,7 @@ int SetDiagonalHund
 firstprivate(i_max, dtmp_V) private(j) 
         for (j = 1; j <= i_max; j++) list_Diagonal[j] += dtmp_V;
       }
-      break;
+      break;/*case SpinGC, Spin:*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
@@ -745,15 +751,15 @@ firstprivate(i_max, dtmp_V) private(j)
     return 0;
 
   }/*if (isite1 > X->Def.Nsite)*/
-  else if (isite2 > X->Def.Nsite) {
+  else if (isite2 > X->Def.Nsite /* >= isite1 */) {
 
     switch (X->Def.iCalcModel) {
 
     case HubbardGC:
 
-      is1_up = X->Def.Tpow[2 * isite1 - 2];
+      is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
-      is2_up = X->Def.Tpow[2 * isite2 - 2];
+      is2_up   = X->Def.Tpow[2 * isite2 - 2];
       is2_down = X->Def.Tpow[2 * isite2 - 1];
 
       num2_up = 0;
@@ -778,15 +784,15 @@ private(num1_up, num1_down, ibit1_up, ibit1_down, j)
 
         list_Diagonal[j] += dtmp_V*(num1_up*num2_up + num1_down*num2_down);
       }
-      break;
+      break;/*case HubbardGC:*/
 
     case KondoGC:
     case Hubbard:
     case Kondo:
 
-      is1_up = X->Def.Tpow[2 * isite1 - 2];
+      is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
-      is2_up = X->Def.Tpow[2 * isite2 - 2];
+      is2_up   = X->Def.Tpow[2 * isite2 - 2];
       is2_down = X->Def.Tpow[2 * isite2 - 1];
 
       num2_up = 0;
@@ -811,7 +817,7 @@ private(num1_up, num1_down, ibit1_up, ibit1_down, j)
 
         list_Diagonal[j] += dtmp_V*(num1_up*num2_up + num1_down*num2_down);
       }
-      break;
+      break;/*case KondoGC, Hubbard, Kondo:*/
 
     case SpinGC:
       is1_up = X->Def.Tpow[isite1 - 1];
@@ -838,7 +844,7 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
           }
         }
       }
-      break;
+      break;/*case SpinGC:*/
 
     case Spin:
       is1_up = X->Def.Tpow[isite1 - 1];
@@ -865,13 +871,13 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
           }
         }
       }
-      break;
+      break;/*case Spin:*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
 
-    }
+    }/*switch (X->Def.iCalcModel)*/
 
     return 0;
 
@@ -1015,7 +1021,7 @@ int SetDiagonalInterAll
     isigma1 = j;
   }
   /*
-  When isite1 & site2 are inter process
+  When isite1 & site2 are in the inter process regino
   */
   if (isite1 > X->Def.Nsite) {
 
@@ -1041,7 +1047,7 @@ int SetDiagonalInterAll
 firstprivate(i_max, dtmp_V, num2, num1) private(ibit1_spin, j)
       for (j = 1; j <= i_max; j++) list_Diagonal[j] += num1*num2*dtmp_V;
 
-      break;
+      break;/*case HubbardGC, KondoGC, Hubbard, Kondo:*/
 
     case SpinGC:
     case Spin:
@@ -1057,7 +1063,7 @@ firstprivate(i_max, dtmp_V, is1_up, isigma1, X, num1, num2) private(j)
         for (j = 1; j <= i_max; j++) {
           list_Diagonal[j] += num1*num2*dtmp_V;
         }
-      }
+      }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
       else {//start:generalspin
         num1 = BitCheckGeneral((unsigned long int)myrank, isite1, isigma1, 
           X->Def.SiteToBit, X->Def.Tpow);
@@ -1068,14 +1074,15 @@ firstprivate(i_max, dtmp_V, is1_up, isigma1, X, num1, num2) private(j)
 firstprivate(i_max, dtmp_V, num1, X) private(j)
           for (j = 1; j <= i_max; j++) list_Diagonal[j] += dtmp_V*num1;
         }
-      }
+      }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
 
-      break;
+      break;/*case SpinGC, Spin:*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
-    }
+
+    }/*if (isite1 > X->Def.Nsite)*/
 
     return 0;
 
@@ -1101,7 +1108,7 @@ firstprivate(i_max, dtmp_V, is1_spin, num2) private(num1, ibit1_spin, j)
         num1 += ibit1_spin / is1_spin;
         list_Diagonal[j] += num1*num2*dtmp_V;
       }
-      break;
+      break;/*case HubbardGC:*/
 
     case KondoGC:
     case Hubbard:
@@ -1122,7 +1129,7 @@ firstprivate(i_max, dtmp_V, is1_spin, num2) private(num1, ibit1_spin, j)
         num1 += ibit1_spin / is1_spin;
         list_Diagonal[j] += num1*num2*dtmp_V;
       }
-      break;
+      break;/*case KondoGC, Hubbard, Kondo:*/
 
      case SpinGC:
    
@@ -1137,7 +1144,7 @@ firstprivate(i_max, dtmp_V, is1_up, isigma1, X, num2) private(j, num1)
           num1 = X_SpinGC_CisAis(j, X, is1_up, isigma1);
           list_Diagonal[j] += num1*num2*dtmp_V;
         }
-      }
+      }/* if (X->Def.iFlgGeneralSpin == FALSE)*/
       else {//start:generalspin
         num2 = BitCheckGeneral((unsigned long int)myrank, isite2, isigma2, 
           X->Def.SiteToBit, X->Def.Tpow);
@@ -1149,9 +1156,9 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
             list_Diagonal[j] += dtmp_V*num1;
           }
         }
-      }
+      }/* if (X->Def.iFlgGeneralSpin == TRUE)*/
 
-      break;
+      break;/*case SpinGC:*/
 
     case Spin:
    
@@ -1166,8 +1173,8 @@ firstprivate(i_max, dtmp_V, is1_up, isigma1, X, num2) private(j, num1)
           num1 = X_Spin_CisAis(j, X, is1_up, isigma1);
           list_Diagonal[j] += num1*num2*dtmp_V;
         }
-      }
-      else {
+      }/* if (X->Def.iFlgGeneralSpin == FALSE)*/
+      else /* if (X->Def.iFlgGeneralSpin == TRUE)*/{
         num2 = BitCheckGeneral((unsigned long int)myrank, isite2, isigma2, \
           X->Def.SiteToBit, X->Def.Tpow);
         if (num2 != 0) {
@@ -1178,15 +1185,15 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
             list_Diagonal[j] += dtmp_V*num1;
           }
         }
-      }
+      } /* if (X->Def.iFlgGeneralSpin == TRUE)*/
 
-      break;
+      break;/*case Spin:*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
 
-    }
+    }/*switch (X->Def.iCalcModel)*/
 
     return 0;
 

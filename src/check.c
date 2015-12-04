@@ -62,6 +62,9 @@ int check(struct BindStruct *X){
   long unsigned int isite=0;
   int tmp_sz=0;
 
+  /*
+    Set Site number per MPI process 
+  */
   CheckMPI(X);
 
   Ns = X->Def.Nsite;
@@ -335,7 +338,10 @@ int check(struct BindStruct *X){
     return FALSE;
   }  
   fclose(fp);	 
-
+  /*
+    Print MPI-site information and Modify Tpow 
+    in the inter process region.
+  */
   CheckMPI_Summary(X);
   
   return TRUE;
