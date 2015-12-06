@@ -131,7 +131,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   if(i_max<X->Def.Lanczos_max){
     X->Def.Lanczos_max=i_max;
   }
-  if(i_max<Target){
+  if(i_max<X->Def.LanczosTarget){
     X->Def.LanczosTarget=i_max;
   }
   if(i_max==1){
