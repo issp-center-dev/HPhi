@@ -273,10 +273,11 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
 	    spn    += conj(vec[j])*vec[off]/2.0;
 	  }
 	}
-      }
-    }
-  }
-  }
+      }// j
+      
+    }//isite2
+  }//isite1
+  }//generalspin=FALSE
   else{
     double S1=0;
     double S2=0;

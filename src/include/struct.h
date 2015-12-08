@@ -36,6 +36,7 @@ struct DefineList{
   long int global_off;  /**< */
   
   int  Nsite;    /**< */
+  int  NsiteMPI;    /**< */
   int  Nup;    /**< Read from modpara in readdef */
   int Ndown;    /**< */
   int  Total2Sz;    /**< */

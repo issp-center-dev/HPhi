@@ -31,7 +31,7 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
   int isite, NDimInterPE, SmallDim, SpinNum;
 
   NsiteMPI = X->Def.Nsite;
-
+  X->Def.NsiteMPI=NsiteMPI;
   switch (X->Def.iCalcModel) {
   case HubbardGC: /****************************************************/
   case Hubbard:
