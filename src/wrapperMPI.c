@@ -195,3 +195,12 @@ int SumMPI_i(int idim)
   return(idim);
 }
 
+unsigned long int BcastMPI_li(int root, unsigned long int idim) {
+  int ierr;
+  unsigned long int idim0;
+  idim0 = idim;
+#ifdef MPI
+    MPI_Bcast(&idim0, 1, MPI_UNSIGNED_LONG, root, MPI_COMM_WORLD);
+#endif
+  return(idim0);
+}
