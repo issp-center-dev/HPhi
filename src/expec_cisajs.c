@@ -17,6 +17,7 @@
 #include "mltply.h"
 #include "expec_cisajs.h"
 #include "wrapperMPI.h"
+#include "mltplyMPI.h"
 
 /**
  * @file   expec_cisajs.c
@@ -61,9 +62,9 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   double complex dam_pr;
   long int i_max;
   int tmp_sgn, num1;
-  long int ibit1;
-  long unsigned int is1_up;
-  
+  long int ibit1, ibit;
+  long unsigned int is1_up, is1_down, is;
+  double complex tmp_OneGreen=1.0;
   //For TPQ
   int step=0;
   int rand_i=0;
@@ -78,7 +79,6 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   X->Large.ihfbit   = ihfbit;
   X->Large.mode     = M_ENERGY;
  
-
   dam_pr=0.0;
   switch(X->Def.iCalcType){
   case Lanczos:
@@ -109,37 +109,48 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   } 
   switch(X->Def.iCalcModel){
   case HubbardGC:
-
+    
     for(i=0;i<X->Def.NCisAjt;i++){
       org_isite1 = X->Def.CisAjt[i][0]+1;
       org_isite2 = X->Def.CisAjt[i][2]+1;
       org_sigma1 = X->Def.CisAjt[i][1];
       org_sigma2 = X->Def.CisAjt[i][3];
-      if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
-		return -1;
-      }
-      isite1 = X->Large.is1_spin;
-      isite2 = X->Large.is2_spin;
-      Asum   = X->Large.isA_spin;
-      Adiff  = X->Large.A_spin;
-      if(isite1==isite2 ){
-	dam_pr =0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1) shared(vec)
-	for(j=1;j<=i_max;j++){
-	  dam_pr += conj(vec[j])*vec[j]*X_CisAis(j-1,X,isite1); 
+      dam_pr =0.0;
+      
+      if (org_isite1  > X->Def.Nsite &&
+          org_isite2  > X->Def.Nsite) {
+	if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
+	  if(org_sigma1==0){
+	    is   = X->Def.Tpow[2 * org_isite1 - 2];
+	  }
+	  else{
+	    is = X->Def.Tpow[2 * org_isite1 - 1];
+	  }
+	  ibit = (unsigned long int)myrank & is;
+	  if (ibit == is) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec) \
+  firstprivate(i_max) private(j) 
+	    for (j = 1; j <= i_max; j++) dam_pr += vec[j]*conj(vec[j]);
+	  }
 	}
-	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
-      }else{
-        dam_pr =0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j,tmp_sgn, iexchg) firstprivate(i_max,X,Asum,Adiff,isite1,isite2,tmp_off) shared(vec)
-        for(j=1;j<=i_max;j++){
-          tmp_sgn = X_CisAjt((j-1),X,isite1,isite2,Asum,Adiff,&iexchg, &tmp_off);
-          dam_pr += conj(vec[tmp_off+1])*vec[j]*tmp_sgn;
+	else{
+	  dam_pr +=X_GC_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
+	}
+      }
+        else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
+	  dam_pr +=X_GC_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
         }
-        fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
-      }
+	else{     
+	  if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+	    return -1;
+	  }
+	    dam_pr += GC_child_general_hopp(vec,vec,X,tmp_OneGreen);
 	}
-	break;
+      dam_pr= SumMPI_dc(dam_pr);
+      fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+    }
+    break;
+    
   case KondoGC:
   case Hubbard:
   case Kondo:
@@ -148,31 +159,58 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       org_isite2 = X->Def.CisAjt[i][2]+1;
       org_sigma1 = X->Def.CisAjt[i][1];
       org_sigma2 = X->Def.CisAjt[i][3];
-      if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
-	return -1;
-      }
-      isite1 = X->Large.is1_spin;
-      isite2 = X->Large.is2_spin;
-      Asum   = X->Large.isA_spin;
-      Adiff  = X->Large.A_spin;
-      if(isite1==isite2){
-	dam_pr =0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1) shared(vec, list_1)
-	for(j=1;j<=i_max;j++){
-	  dam_pr += conj(vec[j])*vec[j]*X_CisAis(list_1[j],X,isite1); 
+      dam_pr=0.0;
+      if (org_isite1  > X->Def.Nsite &&
+          org_isite2  > X->Def.Nsite) {
+	if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
+	  if(org_sigma1==0){
+	    is   = X->Def.Tpow[2 * org_isite1 - 2];
+	  }
+	  else{
+	    is = X->Def.Tpow[2 * org_isite1 - 1];
+	  }
+	  ibit = (unsigned long int)myrank & is;
+	  if (ibit == is) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec)	\
+  firstprivate(i_max) private(j) 
+	    for (j = 1; j <= i_max; j++) dam_pr += vec[j]*conj(vec[j]);
+	  }
 	}
-	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
-      }else{
-        dam_pr =0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j,tmp_sgn, iexchg) firstprivate(i_max,X,Asum,Adiff,isite1,isite2,tmp_off) shared(vec, list_1)
-        for(j=1;j<=i_max;j++){
-          tmp_sgn = X_CisAjt(list_1[j],X,isite1,isite2,Asum,Adiff, &iexchg, &tmp_off);
-          dam_pr += conj(vec[tmp_off])*vec[j]*tmp_sgn;
-        }
-        fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+	else{
+	  dam_pr +=X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
+	}
       }
+        else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
+	  dam_pr +=X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
+        }
+	else{     
+	  if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+	    return -1;
+	  }
+	  if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
+	    if(org_sigma1==0){
+	      is   = X->Def.Tpow[2 * org_isite1 - 2];
+	    }
+	    else{
+	      is = X->Def.Tpow[2 * org_isite1 - 1];
+	    }	    
+#pragma omp parallel for default(none) shared(list_1, vec) reduction(+:dam_pr) firstprivate(i_max, is) private(num1, ibit)
+	    for(j = 1;j <= i_max;j++){	      
+	      ibit = list_1[j]&is;
+	      num1  = ibit/is;	      
+	      dam_pr += num1*conj(vec[j])*vec[j];
+	    }
+
+	  }
+	  else{
+	    dam_pr += child_general_hopp(vec,vec,X,tmp_OneGreen);
+	  }
+	}
+      dam_pr= SumMPI_dc(dam_pr);
+      fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
     break;
+
   case Spin: // for the Sz-conserved spin system
 
     if(X->Def.iFlgGeneralSpin==FALSE){

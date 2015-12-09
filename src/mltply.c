@@ -740,9 +740,18 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
     Adiff = X->Large.A_spin;
 
     double complex dam_pr = 0;
+    if(isite1==isite2 ){
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1, trans) shared(tmp_v0, tmp_v1)
+      for(j=1;j<=i_max;j++){
+	dam_pr += GC_CisAis(j, tmp_v0, tmp_v1, X, isite1, trans) * trans;
+	 
+      }
+    }
+    else{
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j,tmp_off) shared(tmp_v0, tmp_v1)
-    for (j = 1; j <= i_max; j++) {
-      dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off) * trans;
+      for (j = 1; j <= i_max; j++) {
+	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off) * trans;
+      }
     }
     return dam_pr;
   }

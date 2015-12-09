@@ -24,6 +24,7 @@
 #include "mltply.h"
 #include "bitcalc.h"
 #include "wrapperMPI.h"
+#include "mltplyMPI.h"
 
 /**
  *
@@ -38,16 +39,48 @@ void GC_child_general_hopp_MPIdouble(
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
+
+#ifdef MPI
+  double complex dam_pr=0;
+  dam_pr=X_GC_child_general_hopp_MPIdouble(
+				    X->Def.EDGeneralTransfer[itrans][0],
+				    X->Def.EDGeneralTransfer[itrans][1],
+				    X->Def.EDGeneralTransfer[itrans][2],
+				    X->Def.EDGeneralTransfer[itrans][3],
+				    X->Def.EDParaGeneralTransfer[itrans],
+				    X,
+				    tmp_v0,
+				    tmp_v1
+				    );
+  X->Large.prdct += dam_pr;
+#endif
+}/*void GC_child_general_hopp_MPIdouble*/
+
+/**
+ *
+ * Hopping term in Hubbard + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_GC_child_general_hopp_MPIdouble(
+				       int org_isite1,
+				       int org_ispin1,
+				       int org_isite2,
+				       int org_ispin2,
+				       double complex tmp_trans,
+				       struct BindStruct *X /**< [inout]*/,
+				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+				       double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
-
-  mask1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0] 
-                            + X->Def.EDGeneralTransfer[itrans][1]];
-  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
-                            + X->Def.EDGeneralTransfer[itrans][3]];
+  
+  mask1 = (int)X->Def.Tpow[2 * org_isite1 + org_ispin1];
+  mask2 = (int)X->Def.Tpow[2 * org_isite2 + org_ispin2];
   if (mask2 > mask1) bitdiff = mask2 - mask1 * 2;
   else bitdiff = mask1 - mask2 * 2;
   origin = myrank ^ (mask1 + mask2);
@@ -58,12 +91,12 @@ void GC_child_general_hopp_MPIdouble(
   SgnBit((unsigned long int)(origin & bitdiff), &Fsgn); // Fermion sign
 
   if(state1 == 0 && state2 == mask2){
-    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * tmp_trans;
   }
   else if(state1 == mask1 && state2 == 0) {
-    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(tmp_trans);
   }
-  else return;
+  else return 0;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
@@ -76,11 +109,11 @@ void GC_child_general_hopp_MPIdouble(
     if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
     dam_pr += conj(tmp_v1[j]) * dmv;
   }
-
-  X->Large.prdct += dam_pr;
+  return (dam_pr);
   
 #endif
 }/*void GC_child_general_hopp_MPIdouble*/
+
 
 /**
   *
@@ -96,6 +129,40 @@ void GC_child_general_hopp_MPIsingle(
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
+  double complex dam_pr=0;
+  dam_pr=X_GC_child_general_hopp_MPIsingle(
+				    X->Def.EDGeneralTransfer[itrans][0],
+				    X->Def.EDGeneralTransfer[itrans][1],
+				    X->Def.EDGeneralTransfer[itrans][2],
+				    X->Def.EDGeneralTransfer[itrans][3],
+				    X->Def.EDParaGeneralTransfer[itrans],
+				    X,
+				    tmp_v0,
+				    tmp_v1
+				    );
+  X->Large.prdct += dam_pr;
+#endif
+}/*void GC_child_general_hopp_MPIsingle*/
+
+/**
+  *
+  * Hopping term in Hubbard + GC
+  * When only site2 is in the inter process region.
+  *
+  * @author Mitsuaki Kawamura (The University of Tokyo)
+  * @author Kazuyoshi Yoshimi (The University of Tokyo)
+  */
+double complex X_GC_child_general_hopp_MPIsingle(
+				       int org_isite1,
+				       int org_ispin1,
+				       int org_isite2,
+				       int org_ispin2,
+				       double complex tmp_trans,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
   int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
   MPI_Status statusMPI;
@@ -103,8 +170,7 @@ void GC_child_general_hopp_MPIsingle(
   /*
    Prepare index in the inter PE
   */
-  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
-    + X->Def.EDGeneralTransfer[itrans][3]];
+  mask2 = (int)X->Def.Tpow[2 * org_isite2+org_ispin2];
   bit2diff = mask2 - 1;
   origin = myrank ^ mask2;
 
@@ -120,18 +186,17 @@ void GC_child_general_hopp_MPIsingle(
   /*
    Index in the intra PE
   */
-  mask1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
-    + X->Def.EDGeneralTransfer[itrans][1]];
+  mask1 = X->Def.Tpow[2 * org_isite1+ org_ispin1];
   
   if (state2 == mask2) {
-    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * tmp_trans;
     state1check = 0;
   }
   else if (state2 == 0) {
-    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(tmp_trans);
     state1check = mask1;
   }
-  else return;
+  else return 0;
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
@@ -150,9 +215,7 @@ void GC_child_general_hopp_MPIsingle(
       dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
     }
   }
-
-  X->Large.prdct += dam_pr;
-
+  return (dam_pr);
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
 
@@ -170,15 +233,45 @@ void child_general_hopp_MPIdouble(
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
+  double complex dam_pr;
+  dam_pr =X_child_general_hopp_MPIdouble( X->Def.EDGeneralTransfer[itrans][0],
+				  X->Def.EDGeneralTransfer[itrans][1],
+				  X->Def.EDGeneralTransfer[itrans][2],
+				  X->Def.EDGeneralTransfer[itrans][3],
+				  X->Def.EDParaGeneralTransfer[itrans],
+				  X,
+				  tmp_v0,
+				  tmp_v1);
+  X->Large.prdct += dam_pr;
+
+#endif
+}/*void child_general_hopp_MPIdouble*/
+
+/**
+ *
+ * Hopping term in Hubbard (Kondo) + Canonical ensemble
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_child_general_hopp_MPIdouble(
+				    int org_isite1,
+				    int org_ispin1,
+				    int org_isite2,
+				    int org_ispin2,
+				    double complex tmp_trans,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
 
-  mask1 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
-    + X->Def.EDGeneralTransfer[itrans][1]];
-  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
-    + X->Def.EDGeneralTransfer[itrans][3]];
+  mask1 = (int)X->Def.Tpow[2 * org_isite1+org_ispin1];
+  mask2 = (int)X->Def.Tpow[2 * org_isite2+org_ispin2];
   if(mask2 > mask1) bitdiff = mask2 - mask1 * 2;
   else bitdiff = mask1 - mask2 * 2;
   origin = myrank ^ (mask1 + mask2);
@@ -189,12 +282,12 @@ void child_general_hopp_MPIdouble(
    SgnBit((unsigned long int)(origin & bitdiff), &Fsgn); // Fermion sign
 
   if (state1 == 0 && state2 == mask2) {
-    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * tmp_trans;
   }
   else if (state1 == mask1 && state2 == 0) {
-    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(tmp_trans);
   }
-  else return;
+  else return 0;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
@@ -213,11 +306,11 @@ void child_general_hopp_MPIdouble(
     if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
     dam_pr += conj(tmp_v1[ioff]) * dmv;
   }
-
-  X->Large.prdct += dam_pr;
+  return (dam_pr);
 
 #endif
 }/*void child_general_hopp_MPIdouble*/
+
 
 /**
  *
@@ -233,15 +326,46 @@ void child_general_hopp_MPIsingle(
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
-  int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
-  unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff, jreal;
+  double complex dam_pr;
+  dam_pr =X_child_general_hopp_MPIsingle( X->Def.EDGeneralTransfer[itrans][0],
+				  X->Def.EDGeneralTransfer[itrans][1],
+				  X->Def.EDGeneralTransfer[itrans][2],
+				  X->Def.EDGeneralTransfer[itrans][3],
+				  X->Def.EDParaGeneralTransfer[itrans],
+				  X,
+				  tmp_v0,
+				  tmp_v1);
+  X->Large.prdct += dam_pr;
+
+#endif
+}/*void child_general_hopp_MPIsingle*/
+
+/**
+ *
+ * Hopping term in Hubbard (Kondo) + Canonical ensemble
+ * When only site2 is in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_child_general_hopp_MPIsingle(
+				    int org_isite1,
+				    int org_ispin1,
+				    int org_isite2,
+				    int org_ispin2,
+				    double complex tmp_trans,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
+  int mask1, mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
+  unsigned long int idim_max_buf, j, state1check, bit1diff, ioff, jreal;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
   /*
   Prepare index in the inter PE
   */
-  mask2 = (int)X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][2]
-    + X->Def.EDGeneralTransfer[itrans][3]];
+  mask2 = (int)X->Def.Tpow[2 * org_isite2+org_ispin2];
   bit2diff = mask2 - 1;
   origin = myrank ^ mask2;
 
@@ -259,22 +383,21 @@ void child_general_hopp_MPIsingle(
   /*
   Index in the intra PE
   */
-  mask1 = X->Def.Tpow[2 * X->Def.EDGeneralTransfer[itrans][0]
-    + X->Def.EDGeneralTransfer[itrans][1]];
-
+  mask1 = X->Def.Tpow[2 * org_isite1+ org_ispin1];
   if (state2 == mask2) {
-    trans = - (double)Fsgn * X->Def.EDParaGeneralTransfer[itrans];
+    trans = - (double)Fsgn * tmp_trans;
     state1check = 0;
   }
   else if (state2 == 0) {
-    trans = - (double)Fsgn * conj(X->Def.EDParaGeneralTransfer[itrans]);
+    trans = - (double)Fsgn * conj(tmp_trans);
     state1check = mask1;
   }
-  else return;
+  else return 0;
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
   dam_pr = 0.0;
+  printf("%ld\n", idim_max_buf);
   for (j = 1; j <= idim_max_buf; j++) {
 
     jreal = list_1buf[j];
@@ -291,9 +414,7 @@ void child_general_hopp_MPIsingle(
       dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
   }
-
-  X->Large.prdct += dam_pr;
-
+  return (dam_pr);
 #endif
 }/*void child_general_hopp_MPIsingle*/
 
