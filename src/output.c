@@ -34,7 +34,7 @@ int output(struct BindStruct *X){
   if(X->Def.iCalcType==FullDiag){
     double tmp_N,tmp_Sz;
     tmp_N=X->Phys.num_up+X->Phys.num_down;
-    tmp_Sz=X->Phys.num_up-X->Phys.num_down;
+    tmp_Sz=X->Phys.sz;
     switch(X->Def.iCalcModel){
     case Spin:
     case Hubbard:

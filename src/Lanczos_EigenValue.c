@@ -36,7 +36,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   char sdt[D_FileNameMax],sdt_2[D_FileNameMax];
   int stp, iproc;
   long int i,iv,i_max;      
-  unsigned long int i_max_tmp;
+  unsigned long int i_max_tmp, sum_i_max;
   int k_exct,Target;
   int iconv=-1;
   double beta1,alpha1; //beta,alpha1 should be real
@@ -62,9 +62,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
   k_exct = X->Def.k_exct;
 
   if(initial_mode == 0){
-    X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max+1;
+
+    sum_i_max = SumMPI_li(X->Check.idim_max);
+
+    X->Large.iv = (sum_i_max / 3 + X->Def.initial_iv) % sum_i_max + 1;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
-      X->Large.iv=(X->Check.idim_max/2+X->Def.initial_iv)%X->Check.idim_max+1;
+      X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
     }
     iv=X->Large.iv;
     fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
@@ -73,11 +76,25 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v0[i]=0.0;
       v1[i]=0.0;
     }
-    v1[iv]=1.0;
-    if(X->Def.iInitialVecType==0){
-      v1[iv]+=1.0*I;
-      v1[iv]/=sqrt(2.0);
-    }
+
+    sum_i_max = 0;
+    for (iproc = 0; iproc < nproc; iproc++) {
+
+      i_max_tmp = BcastMPI_li(iproc, i_max);
+
+      if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
+        if (myrank == iproc) {
+          v1[iv - sum_i_max] = 1.0;
+          if (X->Def.iInitialVecType == 0) {
+            v1[iv - sum_i_max] += 1.0*I;
+            v1[iv - sum_i_max] /= sqrt(2.0);
+          }
+        }/*if (myrank == iproc)*/
+      }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
+
+      sum_i_max += i_max_tmp;
+
+    }/*for (iproc = 0; iproc < nproc; iproc++)*/
   }else if(initial_mode==1){
     iv = X->Def.initial_iv;
     fprintf(stdoutMPI, "initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
@@ -90,9 +107,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     if(X->Def.iInitialVecType==0){
       for (iproc = 0; iproc < nproc; iproc++) {
 
-        if (myrank == iproc) i_max_tmp = i_max;
-        else i_max_tmp = 0;
-        i_max_tmp = SumMPI_li(i_max_tmp);
+        i_max_tmp = BcastMPI_li(iproc, i_max);
 
         for (i = 1; i <= i_max_tmp; i++) {
           temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
@@ -103,9 +118,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     else{
       for (iproc = 0; iproc < nproc; iproc++) {
 
-        if (myrank == iproc) i_max_tmp = i_max;
-        else i_max_tmp = 0;
-        i_max_tmp = SumMPI_li(i_max_tmp);
+        i_max_tmp = BcastMPI_li(iproc, i_max);
 
         for (i = 1; i <= i_max_tmp; i++) {
           temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
