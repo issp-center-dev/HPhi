@@ -226,9 +226,11 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	    is1_up = X->Def.Tpow[isite1 - 1];
 	    ibit1 = ((unsigned long int)myrank& is1_up)^(1-org_sigma1);
 	    dam_pr=0;
+	    if(ibit1 !=0){
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
   firstprivate(i_max, ibit1) private(j)
 	    for (j = 1; j <= i_max; j++) dam_pr += ibit1*conj(vec[j])*vec[j];
+	    }
 	  }//isite1 > X->Def.Nsite 
 	  else{
 	    isite1     = X->Def.Tpow[org_isite1-1];
@@ -291,13 +293,15 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	    if(org_sigma1==org_sigma2){  
 	      ibit1 = ((unsigned long int)myrank& isite1)^(1-org_sigma1);
 	      dam_pr=0;
+	      if(ibit1!=0){
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
   firstprivate(i_max, ibit1) private(j)
-	      for (j = 1; j <= i_max; j++) dam_pr += ibit1*conj(vec[j])*vec[j];
+		for (j = 1; j <= i_max; j++) dam_pr += conj(vec[j])*vec[j];
+	      }
 	    }
 	    else{
 	      ibit1 = ((unsigned long int)myrank& isite1);
-	      if(ibit1==0){
+	      if(ibit1 !=0){
 		dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max) shared(vec)
 		for(j=1;j<=i_max;j++){
