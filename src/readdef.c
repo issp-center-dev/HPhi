@@ -1073,12 +1073,12 @@ int ReadDefFileIdxPara(
       &isigma4
       );
 
-		if(X->iCalcModel == Spin){
-		  if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
-			X->NCisAjtCkuAlvDC--;
-			continue;
-		  }
-		}
+    if(X->iCalcModel == Spin){
+      if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
+	X->NCisAjtCkuAlvDC--;
+	continue;
+      }
+    }
 
 
 	  X->CisAjtCkuAlvDC[idx][0] = isite1;
