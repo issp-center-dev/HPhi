@@ -167,12 +167,13 @@ int CalcByLanczos(
     fprintf(stderr, "Error: calc OneBodyG.\n");
     exitMPI(-1);
   }
-  exitMPI(-1);
   
   if(!expec_cisajscktaltdc(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc TwoBodyG.\n");
     exitMPI(-1);
   }
+  return 0;
+  
   if(!expec_totalspin(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc TotalSpin.\n");
     exitMPI(-1);

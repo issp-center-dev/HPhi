@@ -279,7 +279,6 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
           else {
             for (ihermite = 0; ihermite<2; ihermite++) {
               idx = i + ihermite;
-
               isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
               isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
               sigma1 = X->Def.InterAll_OffDiagonal[idx][1];

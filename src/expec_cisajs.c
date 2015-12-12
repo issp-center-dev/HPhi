@@ -235,7 +235,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       if(org_sigma1 == org_sigma2){
 	if(org_isite1==org_isite2){
 	  if(org_isite1 > X->Def.Nsite){
-	    is1_up = X->Def.Tpow[isite1 - 1];
+	    is1_up = X->Def.Tpow[org_isite1 - 1];
 	    ibit1 = ((unsigned long int)myrank& is1_up)^(1-org_sigma1);
 	    dam_pr=0;
 	    if(ibit1 !=0){

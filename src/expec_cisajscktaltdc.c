@@ -68,11 +68,12 @@ int expec_cisajscktaltdc
   long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
   long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
   long unsigned int isA_up, isB_up;
+  long unsigned int is1_up, is2_up;
   long unsigned int Asum,Bsum,Adiff,Bdiff;
   long unsigned int tmp_off=0;
   long unsigned int tmp_off_2=0;
   long unsigned int list1_off=0;
-  int tmp_sgn, num1;
+  int tmp_sgn, num1, num2;
   double complex tmp_V;
   double complex dam_pr;
   long int i_max;
@@ -325,48 +326,71 @@ int expec_cisajscktaltdc
 	  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
 	  continue;
 	}
-	
-	if(org_isite1==org_isite2 && org_isite3==org_isite4){
-	  if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){
-	    if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-	      dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2, tmp_V) shared(vec)
-	      for(j=1;j<=i_max;j++){
-		dam_pr +=child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
-	      }
 
+	dam_pr = 0.0;
+	if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+	    is1_up = X->Def.Tpow[org_isite1 - 1];
+	    is2_up = X->Def.Tpow[org_isite3 - 1];
+	    num1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+	    num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
+#pragma omp parallel for default(none) reduction (+:dam_pr) shared(vec) \
+  firstprivate(i_max, num1, num2, tmp_V) private(j)
+	    for (j = 1; j <= i_max; j++) {
+	      dam_pr += tmp_V*num1*num2*vec[j]*conj(vec[j]);
+	    } 
+	  }
+	  else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){//exchange
+	    dam_pr += X_child_general_int_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  }
+	  else{  // other process is not allowed
+	    // error message will be added
 	    }
-	    else{
-	    }
-	  }
-	  else if(org_isite1 > X->Def.Nsite || org_isite3>X->Def.Nsite){
-
-	  }
-	  else{
-	    isA_up = X->Def.Tpow[org_isite2-1];
-	    isB_up = X->Def.Tpow[org_isite4-1];
-	    if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-	      dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2, tmp_V) shared(vec)
-	      for(j=1;j<=i_max;j++){
-		dam_pr +=child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
-	      }
-	      fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
-	    }else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){ // exchange
-	      dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2,tmp_V) shared(vec)
-	      for(j=1;j<=i_max;j++){
-		tmp_sgn    =  X_child_exchange_spin_element(j,X,isA_up,isB_up,org_sigma2,org_sigma4,&tmp_off);
-		dmv        = vec[j]*tmp_sgn;
-		dam_pr    += conj(vec[tmp_off])*dmv;
-	      }
-	      fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
-	    }else{  // other process is not allowed
-	      // error message will be added
-	      fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
-	    }	
-	  }
 	}
+	else if(org_isite1 > X->Def.Nsite || org_isite3>X->Def.Nsite){
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+	    is1_up = X->Def.Tpow[org_isite1 - 1];
+	    is2_up = X->Def.Tpow[org_isite3 - 1];
+	    num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
+	    dam_pr=0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr)shared(vec)	\
+  firstprivate(i_max, tmp_V, is1_up, org_sigma1, X, num2) private(j, num1)
+	    for (j = 1; j <= i_max; j++) {
+	      num1 = X_Spin_CisAis(j, X, is1_up, org_sigma1);
+	      dam_pr += tmp_V*num1*num2*conj(vec[j])*vec[j];
+	    }
+	  }
+	  else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){//exchange
+	    dam_pr += X_child_general_int_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  }
+	  else{  // other process is not allowed
+	    // error message will be added
+	    }	
+	}
+	else{
+	  isA_up = X->Def.Tpow[org_isite2-1];
+	  isB_up = X->Def.Tpow[org_isite4-1];
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+	    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2, tmp_V) shared(vec)
+	    for(j=1;j<=i_max;j++){
+	      dam_pr +=child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
+	    }
+	  }else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){ // exchange
+	    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2,tmp_V) shared(vec)
+	    for(j=1;j<=i_max;j++){
+	      tmp_sgn    =  X_child_exchange_spin_element(j,X,isA_up,isB_up,org_sigma2,org_sigma4,&tmp_off);
+	      dmv        = vec[j]*tmp_sgn;
+	      dam_pr    += conj(vec[tmp_off])*dmv;
+	    }
+	  }else{  // other process is not allowed
+	    // error message will be added
+	  }	
+	}
+	dam_pr = SumMPI_dc(dam_pr);
+	fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
+
       }
     }//iFlgGeneralSpin = FALSE
     else{
