@@ -319,7 +319,7 @@ int SetDiagonalChemi
         is1_up = X->Def.Tpow[isite1 - 1];
         ibit1_up = (((unsigned long int)myrank& is1_up) / is1_up) ^ (1 - spin);
 #pragma omp parallel for default(none) shared(list_Diagonal) \
-firstprivate(i_max, dtmp_V) private(j, ibit1_up)
+firstprivate(i_max, dtmp_V, ibit1_up) private(j)
         for (j = 1; j <= i_max; j++) list_Diagonal[j] += dtmp_V * ibit1_up;
       } /*if (X->Def.iFlgGeneralSpin == FALSE)*/
       else /*if (X->Def.iFlgGeneralSpin == TRUE)*/ {

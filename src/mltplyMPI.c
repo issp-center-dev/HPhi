@@ -397,7 +397,6 @@ double complex X_child_general_hopp_MPIsingle(
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
   dam_pr = 0.0;
-  printf("%ld\n", idim_max_buf);
   for (j = 1; j <= idim_max_buf; j++) {
 
     jreal = list_1buf[j];
@@ -724,6 +723,317 @@ void GC_child_general_int_spin_MPIsingle(
   else {
     GC_child_CisAitCiuAiv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
   }
+}/*void GC_child_general_int_spin_MPIsingle*/
+
+/**
+ *
+ * General interaction term in the Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void GC_child_general_int_GeneralSpin_MPIdouble(
+    unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+    double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+    double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+  unsigned long int tmp_off, off, j;
+  int origin, ierr;
+  double complex tmp_V, dmv, dam_pr;
+  MPI_Status statusMPI;
+
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //  diagonal
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else {
+
+    if (GetOffCompGeneralSpin((unsigned long int)myrank,
+      X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+      X->Def.InterAll_OffDiagonal[i_int][5],
+      X->Def.InterAll_OffDiagonal[i_int][7], &tmp_off, 
+      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    {
+      if (GetOffCompGeneralSpin(tmp_off,
+        X->Def.InterAll_OffDiagonal[i_int][0] + 1,
+        X->Def.InterAll_OffDiagonal[i_int][1],
+        X->Def.InterAll_OffDiagonal[i_int][3], &off,
+        X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+      {
+        tmp_V = X->Def.ParaInterAll_OffDiagonal[i_int];
+      }
+      else return;
+    }
+    else if (GetOffCompGeneralSpin((unsigned long int)myrank,
+      X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+      X->Def.InterAll_OffDiagonal[i_int][7],
+      X->Def.InterAll_OffDiagonal[i_int][5], &tmp_off,
+      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    {
+      if (GetOffCompGeneralSpin(tmp_off,
+        X->Def.InterAll_OffDiagonal[i_int][0] + 1,
+        X->Def.InterAll_OffDiagonal[i_int][3],
+        X->Def.InterAll_OffDiagonal[i_int][1], &off,
+        X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+      {
+        tmp_V = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+      }
+      else return;
+    }
+    else return;
+
+    origin = (int)off;
+
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+      v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
+      MPI_COMM_WORLD, &statusMPI);
+
+    dam_pr = 0.0;
+    for (j = 1; j <= X->Check.idim_max; j++) {
+      dmv = v1buf[j] * tmp_V;
+      if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
+      dam_pr += conj(tmp_v1[j]) * dmv;
+    }
+  }
+  X->Large.prdct += dam_pr;
+
+}/*void GC_child_general_int_spin_MPIdouble*/
+
+ /**
+ *
+ * General interaction term in the Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void GC_child_general_int_GeneralSpin_MPIsingle(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+  unsigned long int tmp_off, off, j;
+  int origin, ierr, isite, IniSpin, FinSpin;
+  double complex tmp_V, dmv, dam_pr;
+  MPI_Status statusMPI;
+
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //    diagonal
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
+    exitMPI(-1);
+  }
+  else {
+
+    if (GetOffCompGeneralSpin((unsigned long int)myrank,
+      X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+      X->Def.InterAll_OffDiagonal[i_int][5],
+      X->Def.InterAll_OffDiagonal[i_int][7], &off,
+      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    {
+      tmp_V = X->Def.ParaInterAll_OffDiagonal[i_int];
+      isite = X->Def.InterAll_OffDiagonal[i_int][0] + 1;
+      IniSpin = X->Def.InterAll_OffDiagonal[i_int][3];
+      FinSpin = X->Def.InterAll_OffDiagonal[i_int][1];
+    }
+    else if (GetOffCompGeneralSpin((unsigned long int)myrank,
+      X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+      X->Def.InterAll_OffDiagonal[i_int][7],
+      X->Def.InterAll_OffDiagonal[i_int][5], &off,
+      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    {
+      tmp_V = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+      isite = X->Def.InterAll_OffDiagonal[i_int][0] + 1;
+      IniSpin = X->Def.InterAll_OffDiagonal[i_int][1];
+      FinSpin = X->Def.InterAll_OffDiagonal[i_int][3];
+    }
+    else return;
+
+    origin = (int)off;
+
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+      v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+      MPI_COMM_WORLD, &statusMPI);
+
+    dam_pr = 0.0;
+    for (j = 1; j <= X->Check.idim_max; j++) {
+
+      if (GetOffCompGeneralSpin(j - 1, isite, IniSpin, FinSpin, &off,
+        X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+      {
+        dmv = v1buf[j] * tmp_V;
+        if (X->Large.mode == M_MLTPLY) tmp_v0[off + 1] += dmv;
+        dam_pr += conj(tmp_v1[off + 1]) * dmv;
+      }
+    }
+  }
+  X->Large.prdct += dam_pr;
+
+}/*void GC_child_general_int_spin_MPIsingle*/
+
+ /**
+ *
+ * General interaction term in the Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void child_general_int_GeneralSpin_MPIdouble(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+  unsigned long int tmp_off, off, j, idim_max_buf;
+  int origin, ierr;
+  double complex tmp_V, dmv, dam_pr;
+  MPI_Status statusMPI;
+
+  if (GetOffCompGeneralSpin((unsigned long int)myrank,
+    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+    X->Def.InterAll_OffDiagonal[i_int][5],
+    X->Def.InterAll_OffDiagonal[i_int][7], &tmp_off,
+    X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+  {
+    if (GetOffCompGeneralSpin(tmp_off,
+      X->Def.InterAll_OffDiagonal[i_int][0] + 1,
+      X->Def.InterAll_OffDiagonal[i_int][1],
+      X->Def.InterAll_OffDiagonal[i_int][3], &off,
+      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    {
+      tmp_V = X->Def.ParaInterAll_OffDiagonal[i_int];
+    }
+    else return;
+  }
+  else if (GetOffCompGeneralSpin((unsigned long int)myrank,
+    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+    X->Def.InterAll_OffDiagonal[i_int][7],
+    X->Def.InterAll_OffDiagonal[i_int][5], &tmp_off,
+    X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+  {
+    if (GetOffCompGeneralSpin(tmp_off,
+      X->Def.InterAll_OffDiagonal[i_int][0] + 1,
+      X->Def.InterAll_OffDiagonal[i_int][3],
+      X->Def.InterAll_OffDiagonal[i_int][1], &off,
+      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    {
+      tmp_V = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+    }
+    else return;
+  }
+  else return;
+
+  origin = (int)off;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    MPI_COMM_WORLD, &statusMPI);
+
+  dam_pr = 0.0;
+  for (j = 1; j <= idim_max_buf; j++) {
+
+    ConvertToList1GeneralSpin(list_1buf[j], X->Check.sdim, &off);
+
+    dmv = v1buf[j] * tmp_V;
+    if (X->Large.mode == M_MLTPLY) tmp_v0[off] += dmv;
+    dam_pr += conj(tmp_v1[off]) * dmv;
+  }
+  X->Large.prdct += dam_pr;
+
+}/*void GC_child_general_int_spin_MPIdouble*/
+
+/**
+  *
+  * General interaction term in the Spin model + GC
+  * When both site1 and site2 are in the inter process region.
+  *
+  * @author Mitsuaki Kawamura (The University of Tokyo)
+  */
+void child_general_int_GeneralSpin_MPIsingle(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+  unsigned long int tmp_off, off, j, idim_max_buf;
+  int origin, ierr, isite, IniSpin, FinSpin;
+  double complex tmp_V, dmv, dam_pr;
+  MPI_Status statusMPI;
+  
+  if (GetOffCompGeneralSpin((unsigned long int)myrank,
+    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+    X->Def.InterAll_OffDiagonal[i_int][5],
+    X->Def.InterAll_OffDiagonal[i_int][7], &off,
+    X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+  {
+    tmp_V = X->Def.ParaInterAll_OffDiagonal[i_int];
+    isite = X->Def.InterAll_OffDiagonal[i_int][0] + 1;
+    IniSpin = X->Def.InterAll_OffDiagonal[i_int][3];
+    FinSpin = X->Def.InterAll_OffDiagonal[i_int][1];
+  }
+  else if (GetOffCompGeneralSpin((unsigned long int)myrank,
+    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
+    X->Def.InterAll_OffDiagonal[i_int][7],
+    X->Def.InterAll_OffDiagonal[i_int][5], &off,
+    X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+  {
+    tmp_V = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+    isite = X->Def.InterAll_OffDiagonal[i_int][0] + 1;
+    IniSpin = X->Def.InterAll_OffDiagonal[i_int][1];
+    FinSpin = X->Def.InterAll_OffDiagonal[i_int][3];
+  }
+  else return;
+
+  origin = (int)off;
+  
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    MPI_COMM_WORLD, &statusMPI);
+
+  dam_pr = 0.0;
+  for (j = 1; j <= idim_max_buf; j++) {
+
+    if (GetOffCompGeneralSpin(list_1buf[j], isite, IniSpin, FinSpin, &tmp_off,
+      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    {
+      ConvertToList1GeneralSpin(tmp_off, X->Check.sdim, &off);
+
+      dmv = v1buf[j] * tmp_V;
+      if (X->Large.mode == M_MLTPLY) tmp_v0[off] += dmv;
+      dam_pr += conj(tmp_v1[off]) * dmv;
+    }
+  }
+  X->Large.prdct += dam_pr;
+
 }/*void GC_child_general_int_spin_MPIsingle*/
 
 

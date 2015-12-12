@@ -201,7 +201,7 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
           SpinNum = SmallDim % X->Def.SiteToBit[isite];
           SmallDim /= X->Def.SiteToBit[isite];
 
-          X->Def.Total2Sz -= X->Def.SiteToBit[isite] - 1 - 2*SmallDim;
+          X->Def.Total2Sz += X->Def.SiteToBit[isite] - 1 - 2*SpinNum;
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       }/*if (X->Def.iCalcModel == Spin)*/
     }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
@@ -345,9 +345,9 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
       else {
-        SmallDim = myrank;
+        SmallDim = iproc;
         for (isite = X->Def.Nsite; isite < NsiteMPI; isite++) {
-          SpinNum = SmallDim % X->Def.SiteToBit[isite];
+          SpinNum = SmallDim % (int)X->Def.SiteToBit[isite];
           SmallDim /= X->Def.SiteToBit[isite];
           fprintf(stdoutMPI, "%1d", SpinNum);
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
