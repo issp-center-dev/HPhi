@@ -526,6 +526,61 @@ double complex X_child_general_int_spin_MPIdouble(
 #endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
 
+
+/**
+ *
+ * Exchange term in Spin model
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_child_general_int_spin_TotalS_MPIdouble(
+						  int org_isite1,
+						  int org_isite3,
+						  struct BindStruct *X,
+						  double complex *tmp_v0,
+						  double complex *tmp_v1
+						  )
+{
+#ifdef MPI
+  int mask1, mask2, num1_up, num2_up, num1_down, num2_down, ierr, origin;
+  unsigned long int idim_max_buf, j, ioff, ibit_tmp;
+  MPI_Status statusMPI;
+  double complex dmv, dam_pr;
+
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  origin = myrank ^ (mask1 + mask2);
+
+  num1_up = (origin & mask1) / mask1;
+  num1_down = 1- num1_up;
+  num2_up = (origin & mask2) / mask2;
+  num2_down = 1- num2_up;
+
+  ibit_tmp=(num1_up)^(num2_up);
+  if(ibit_tmp ==0) return 0;
+  
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+
+  dam_pr = 0.0;
+  #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
+    firstprivate(idim_max_buf,  X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+  for (j = 1; j <= idim_max_buf; j++) {    
+    GetOffComp(list_2_1, list_2_2, list_1buf[j],
+	       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+    dmv = 0.5 * v1buf[j];
+    dam_pr += conj(tmp_v1[ioff]) * dmv;
+  }
+  return dam_pr;  
+#endif
+}/*double complex X_child_general_int_spin_MPIdouble*/
+
+
 /**
  *
  * Exchange term in Spin model
@@ -568,9 +623,11 @@ double complex X_child_general_int_spin_MPIsingle(
 {
 #ifdef MPI
   int mask2, state2, ierr, origin;
+  int num1_up, num1_down, num2_up,num2_down;
+  unsigned long int is1_up, ibit1_up;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
   MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv, dam_pr, spn_z;
   /*
   Prepare index in the inter PE
   */
@@ -591,6 +648,11 @@ double complex X_child_general_int_spin_MPIsingle(
   }
   else return 0;
 
+  if(X->Large.mode==M_TOTALS){
+    num2_up= X_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask2, 0);
+    num2_down = 1-num2_up;
+  }
+  
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
   ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
@@ -603,8 +665,8 @@ double complex X_child_general_int_spin_MPIsingle(
   mask1 = X->Def.Tpow[org_isite1];
 
   dam_pr = 0.0;
-  #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff, jreal, state1) \
-  firstprivate(idim_max_buf, Jint, X, mask1, state1check) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff, jreal, state1, num1_up, num1_down, is1_up, ibit1_up, spn_z) \
+  firstprivate(idim_max_buf, Jint, X, mask1, state1check, num2_up, num2_down, org_isite1) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
 
     jreal = list_1buf[j];
@@ -616,6 +678,9 @@ double complex X_child_general_int_spin_MPIsingle(
 
       dmv = Jint * v1buf[j];
       if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
+      else if(X->Large.mode==M_TOTALS){
+	dmv=0.5*v1buf[j];
+      }
       dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
   }

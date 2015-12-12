@@ -368,8 +368,8 @@ int expec_cisajscktaltdc
 	    }	
 	}
 	else{
-	  isA_up = X->Def.Tpow[org_isite2-1];
-	  isB_up = X->Def.Tpow[org_isite4-1];
+	  isA_up = X->Def.Tpow[org_isite1-1];
+	  isB_up = X->Def.Tpow[org_isite3-1];
 	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
 	    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2, tmp_V) shared(vec)

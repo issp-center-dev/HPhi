@@ -23,6 +23,7 @@
 #define M_ENERGY 1
 #define M_Ham 2
 #define M_CORR 3
+#define M_TOTALS 4
 
 double complex child_general_hopp_element
 (
