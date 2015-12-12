@@ -50,8 +50,13 @@ double complex X_child_general_hopp_MPIsingle(int org_isite1, int org_ispin1, in
 void child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1);
 
+double complex X_child_general_int_spin_MPIdouble(int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
 void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_child_general_int_spin_MPIsingle(int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
 
 void GC_child_general_int_spin_MPIdouble(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1);

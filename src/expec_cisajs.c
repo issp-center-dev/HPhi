@@ -57,6 +57,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   long unsigned int irght,ilft,ihfbit;
   long unsigned int isite1,isite2;
   long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
+  long unsigned int tmp_org_isite1, tmp_org_isite2;
   long unsigned int Asum,Adiff;
   long unsigned int tmp_off=0;
   double complex dam_pr;
@@ -77,7 +78,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   X->Large.irght    = irght;
   X->Large.ilft     = ilft;
   X->Large.ihfbit   = ihfbit;
-  X->Large.mode     = M_ENERGY;
+  X->Large.mode     = M_CORR;
  
   dam_pr=0.0;
   switch(X->Def.iCalcType){
@@ -108,15 +109,13 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     return -1;
   } 
   switch(X->Def.iCalcModel){
-  case HubbardGC:
-    
+  case HubbardGC:    
     for(i=0;i<X->Def.NCisAjt;i++){
       org_isite1 = X->Def.CisAjt[i][0]+1;
       org_isite2 = X->Def.CisAjt[i][2]+1;
       org_sigma1 = X->Def.CisAjt[i][1];
       org_sigma2 = X->Def.CisAjt[i][3];
-      dam_pr =0.0;
-      
+      dam_pr=0;
       if (org_isite1  > X->Def.Nsite &&
           org_isite2  > X->Def.Nsite) {
 	if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
@@ -134,18 +133,25 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	  }
 	}
 	else{
-	  dam_pr +=X_GC_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
+	  dam_pr =X_GC_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
 	}
       }
-        else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
-	  dam_pr +=X_GC_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
-        }
-	else{     
-	  if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
-	    return -1;
-	  }
-	    dam_pr += GC_child_general_hopp(vec,vec,X,tmp_OneGreen);
+      else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
+	if(org_isite1<org_isite2){
+	  dam_pr =X_GC_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
 	}
+	else{
+	  dam_pr =X_GC_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
+	  dam_pr = conj(dam_pr);
+	}
+      }
+      else{
+	if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+	  return -1;
+	}
+	dam_pr = GC_child_general_hopp(vec,vec,X,tmp_OneGreen);
+      }
+     
       dam_pr= SumMPI_dc(dam_pr);
       fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
@@ -162,7 +168,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       dam_pr=0.0;
       if (org_isite1  > X->Def.Nsite &&
           org_isite2  > X->Def.Nsite) {
-	if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
+	if(org_isite1==org_isite2 && org_sigma1==org_sigma2){//diagonal
 	  if(org_sigma1==0){
 	    is   = X->Def.Tpow[2 * org_isite1 - 2];
 	  }
@@ -177,12 +183,18 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	  }
 	}
 	else{
-	  dam_pr +=X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
+	  dam_pr =X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
 	}
       }
         else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
-	  dam_pr +=X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, tmp_OneGreen, X, vec, vec);
-        }
+	  if(org_isite1 < org_isite2){
+	    dam_pr =X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+	  }
+	  else{
+	    dam_pr = X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
+	    dam_pr = conj(dam_pr);
+	  }
+	}
 	else{     
 	  if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
 	    return -1;
@@ -203,7 +215,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 
 	  }
 	  else{
-	    dam_pr += child_general_hopp(vec,vec,X,tmp_OneGreen);
+	    dam_pr = child_general_hopp(vec,vec,X,tmp_OneGreen);
 	  }
 	}
       dam_pr= SumMPI_dc(dam_pr);
@@ -231,7 +243,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   firstprivate(i_max, ibit1) private(j)
 	    for (j = 1; j <= i_max; j++) dam_pr += ibit1*conj(vec[j])*vec[j];
 	    }
-	  }//isite1 > X->Def.Nsite 
+	  }// org_isite1 > X->Def.Nsite 
 	  else{
 	    isite1     = X->Def.Tpow[org_isite1-1];
 	    dam_pr=0.0;
@@ -287,12 +299,13 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	org_isite2 = X->Def.CisAjt[i][2]+1;
 	org_sigma1 = X->Def.CisAjt[i][1];
 	org_sigma2 = X->Def.CisAjt[i][3];
+	dam_pr=0.0;
 	if(org_isite1 == org_isite2){ 
 	  isite1 = X->Def.Tpow[org_isite1-1];
+	  
 	  if(org_isite1 > X->Def.Nsite){
 	    if(org_sigma1==org_sigma2){  
 	      ibit1 = ((unsigned long int)myrank& isite1)^(1-org_sigma1);
-	      dam_pr=0;
 	      if(ibit1!=0){
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
   firstprivate(i_max, ibit1) private(j)
