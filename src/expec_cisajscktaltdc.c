@@ -579,7 +579,7 @@ int expec_cisajscktaltdc
 	     dam_pr += X_GC_child_CisAisCjuAjv_spin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, 1.0, X, vec, vec);
 	  }
 	  else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
-	    //dam_pr += X_GC_child_CisAitCjuAju_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, 1.0, X, vec, vec);
+	    dam_pr += X_GC_child_CisAitCjuAju_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, 1.0, X, vec, vec);
 	  }
 	  else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
 	    dam_pr +=  X_GC_child_CisAitCiuAiv_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, 1.0, X, vec, vec);

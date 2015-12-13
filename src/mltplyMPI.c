@@ -34,7 +34,7 @@
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void GC_child_general_hopp_MPIdouble(
-  unsigned long int itrans /**< [in] Transfer ID*/,
+				     unsigned long int itrans /**< [in] Transfer ID*/,
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
@@ -921,8 +921,9 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
       Jint = 0;
     }
   }
-  else return 0.0;
-
+  else{
+    return 0.0;
+  }
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
@@ -1256,43 +1257,35 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle( int org_isite1, int org_i
   Prepare index in the inter PE
   */
   mask2 = (int)X->Def.Tpow[org_isite3];
-  state2 = ((origin & mask2) / mask2) ^ (1-org_ispin3);
+  state2 = (origin & mask2) / mask2;
 
   if (state2 == org_ispin3) {
     state1check = org_ispin2;
     Jint = tmp_J;
   }
-  else return 0.0;
-    
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  /*
-  Index in the intra PE
-  */
+  else{
+    return 0.0;
+  }
+
   mask1 = (int)X->Def.Tpow[org_isite1];
 
   dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
-  firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
-  for (j = 0; j < idim_max_buf; j++) {
+  firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared( tmp_v1, tmp_v0)
+  for (j = 0; j < X->Check.idim_max; j++) {
  
     state1 = (j & mask1) / mask1;
+    ioff = j ^ mask1;
     if (state1 == state1check) {
-      ioff = j ^ mask1;
-      dmv = Jint * v1buf[j + 1];
-      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
-      dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
+      dmv = Jint * tmp_v1[j+1];
     }
     else{
-      ioff = j ^ mask1;
-      dmv = conj(Jint) * v1buf[j + 1];
+      dmv = conj(Jint) * tmp_v1[j +1];
       if(X->Large.mode == M_CORR) dmv=0.0;
-      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
-      
-      dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
     }
+
+    if (X->Large.mode == M_MLTPLY) tmp_v0[ioff +1] += dmv;
+    dam_pr += conj(tmp_v1[ioff +1 ]) * dmv;
   }
   return (dam_pr);
 
