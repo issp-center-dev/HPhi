@@ -80,18 +80,19 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble( int org_isite1, int org_i
 
 double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
+double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
 double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
 double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
-double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(int org_isite1, int org_ispin1, int org_ispin3, int org_isite3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
 double complex X_GC_child_CisAit_spin_MPIdouble( int org_isite1,  int org_ispin1, int org_ispin2, double complex tmp_trans, struct BindStruct *X , double complex *tmp_v0,  double complex *tmp_v1);
 
-double complex X_GC_child_CisAis_spin_MPIdouble(
-				       int org_isite1,
-				       int org_ispin1,
-				       double complex tmp_trans,
-				       struct BindStruct *X /**< [inout]*/,
-				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
-				       double complex *tmp_v1 /**< [in] v0 = H v1*/);
+double complex X_GC_child_CisAis_spin_MPIdouble(int org_isite1, int org_ispin1, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
