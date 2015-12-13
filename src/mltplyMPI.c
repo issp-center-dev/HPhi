@@ -704,30 +704,51 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
+  double complex dam_pr;  
+  dam_pr =  X_GC_child_CisAitCiuAiv_spin_MPIdouble( X->Def.InterAll_OffDiagonal[i_int][0],  X->Def.InterAll_OffDiagonal[i_int][1],  X->Def.InterAll_OffDiagonal[i_int][3],  X->Def.InterAll_OffDiagonal[i_int][4],  X->Def.InterAll_OffDiagonal[i_int][5],  X->Def.InterAll_OffDiagonal[i_int][7],X->Def.ParaInterAll_OffDiagonal[i_int],X, tmp_v0, tmp_v1);
+  X->Large.prdct += dam_pr;
+#endif
+}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+
+
+/**
+ *
+ * Exchange and Pairlifting term in Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+  int org_isite1, int org_ispin1, int org_ispin2,
+  int org_isite3, int org_ispin3, int org_ispin4,
+  double complex tmp_J, struct BindStruct *X,
+  double complex *tmp_v0, double complex *tmp_v1
+						      )
+{
+#ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr;
 
-  mask1 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
-  mask2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  mask2 = (int)X->Def.Tpow[org_isite3];
   origin = myrank ^ (mask1 + mask2);
 
   state1 = (origin & mask1) / mask1;
   state2 = (origin & mask2) / mask2;
 
-  if (state1 == X->Def.InterAll_OffDiagonal[i_int][3] &&
-    state2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
+  if (state1 == org_ispin2 && state2 == org_ispin4) {
+    Jint = tmp_J;
   }
-  else if (state1 == X->Def.InterAll_OffDiagonal[i_int][1] &&
-    state2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
-    Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+  else if (state1 == org_ispin1 && state2 == org_ispin3) {
+    Jint = conj(tmp_J);
     if(X->Large.mode == M_CORR){
       Jint = 0;
     }
   }
-  else return;
+  else return 0;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
@@ -742,11 +763,176 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
     if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
     dam_pr += conj(tmp_v1[j]) * dmv;
   }
+  return dam_pr;
 
+#endif
+}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+
+/**
+ *
+ * Wrapper for calculating CisAisCjuAjv term in Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+void GC_child_CisAisCjuAjv_spin_MPIdouble(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
+
+  double complex dam_pr;
+  dam_pr = X_GC_child_CisAisCjuAjv_spin_MPIdouble( X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
+						   X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
+						   X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0,  tmp_v1);
   X->Large.prdct += dam_pr;
 
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+
+
+/**
+ *
+ * CisAisCjuAjv term in Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
+					    int org_isite1,
+					    int org_ispin1,
+					    int org_isite3,
+					    int org_ispin3,
+					    int org_ispin4,
+					    double complex tmp_J,
+					    struct BindStruct *X,
+					    double complex *tmp_v0,
+					    double complex *tmp_v1)
+{
+#ifdef MPI
+  int mask1, mask2, state1, state2, ierr;
+  long int origin;
+  unsigned long int idim_max_buf, j;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr,  tmp_off;
+  int tmp_sgn;
+  
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  origin = myrank ^ mask2;
+  state2 = (origin & mask2) / mask2;
+  if(state2 == org_ispin4){
+    Jint = tmp_J;
+  }
+  else if(state2 == org_ispin3){
+    Jint = conj(tmp_J);
+    if(X->Large.mode == M_CORR){
+      Jint = 0;
+    }
+  }
+  else return 0.0;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+
+  dam_pr = 0.0;
+  #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
+  firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
+  for (j = 1; j <= idim_max_buf; j++) {
+    dmv = Jint * v1buf[j];
+    if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
+    dam_pr += conj(tmp_v1[j]) * dmv;
+  }
+  return(dam_pr);
+#endif
+}/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
+
+/**
+ *
+ * Wrapper for calculating CisAitCjuAju term in Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+void GC_child_CisAitCjuAju_spin_MPIdouble(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
+
+  double complex dam_pr;
+  dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble( X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][2],
+						   X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
+						   X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0,  tmp_v1);
+  X->Large.prdct += dam_pr;
+
+#endif
+}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+
+
+/**
+ *
+ * CisAisCjuAjv term in Spin model + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
+					    int org_isite1,
+					    int org_ispin1,
+					    int org_ispin2,
+					    int org_isite3,
+					    int org_ispin3,
+					    double complex tmp_J,
+					    struct BindStruct *X,
+					    double complex *tmp_v0,
+					    double complex *tmp_v1)
+{
+#ifdef MPI
+  int mask1, mask2, state1, state2, ierr;
+  long int origin;
+  unsigned long int idim_max_buf, j;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr,  tmp_off;
+  
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  origin = myrank ^ mask1;
+  state1 = (origin & mask1)/mask1;
+
+  if(state1 == org_ispin2){
+    Jint = tmp_J;
+  }
+  else if(state1 == org_ispin1){
+    Jint = conj(tmp_J);
+     if(X->Large.mode == M_CORR){
+      Jint = 0;
+    }
+  }
+  else return 0.0;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+
+  dam_pr = 0.0;
+  #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
+  firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
+  for (j = 1; j <= idim_max_buf; j++) {
+    dmv = Jint * v1buf[j];
+    if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
+    dam_pr += conj(tmp_v1[j]) * dmv;
+  }
+  return(dam_pr);
+#endif
+}/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
 
 /**
  *
@@ -762,24 +948,18 @@ void GC_child_general_int_spin_MPIdouble(
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-      X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //diagonal
-    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
-    exitMPI(-1);
-  }
-  else if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-           X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
-    exitMPI(-1);
+      X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    GC_child_CisAisCjuAjv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
-    exitMPI(-1);
+    GC_child_CisAitCjuAju_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
   else {
     GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
 }/*void GC_child_general_int_spin_MPIdouble*/
+
 
 /**
  *
@@ -795,6 +975,26 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
+  double complex dam_pr;  
+  dam_pr =X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  X->Large.prdct += dam_pr;
+
+#endif
+}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+
+/**
+ *
+ * Exchange and Pairlifting term in Spin model + GC
+ * When only site2 is in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+					    int org_isite1, int org_ispin1, int org_ispin2,
+					    int org_isite3, int org_ispin3, int org_ispin4,
+					    double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1)
+{
+#ifdef MPI
   int mask2, state2, ierr, origin;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, state1check;
   MPI_Status statusMPI;
@@ -802,22 +1002,22 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
   /*
   Prepare index in the inter PE
   */
-  mask2 = (int)X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][4]];
+  mask2 = (int)X->Def.Tpow[org_isite3];
   origin = myrank ^ mask2;
   state2 = (origin & mask2) / mask2;
 
-  if (state2 == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    state1check = (unsigned long int)X->Def.InterAll_OffDiagonal[i_int][3];
-    Jint = X->Def.ParaInterAll_OffDiagonal[i_int];
+  if (state2 == org_ispin4) {
+    state1check = (unsigned long int)org_ispin2;
+    Jint = tmp_J;
   }
-  else if (state2 == X->Def.InterAll_OffDiagonal[i_int][5]) {
-    state1check = (unsigned long int)X->Def.InterAll_OffDiagonal[i_int][1];
-    Jint = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+  else if (state2 == org_ispin3) {
+    state1check = (unsigned long int)org_ispin1;
+    Jint = conj(tmp_J);
     if(X->Large.mode == M_CORR){
       Jint = 0;
     }
   }
-  else return;
+  else return 0.0;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
@@ -826,7 +1026,7 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
   /*
   Index in the intra PE
   */
-  mask1 = X->Def.Tpow[X->Def.InterAll_OffDiagonal[i_int][0]];
+  mask1 = X->Def.Tpow[org_isite1];
 
   dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
@@ -843,11 +1043,173 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
       dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
     }
   }
-
-  X->Large.prdct += dam_pr;
+  return (dam_pr);
 
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+
+
+/**
+ *
+ * Wrapper for CisAisCjuAjv term in Spin model + GC
+ * When only site2 is in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+void GC_child_CisAisCjuAjv_spin_MPIsingle(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
+  double complex dam_pr;  
+  dam_pr =X_GC_child_CisAisCjuAjv_spin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  X->Large.prdct += dam_pr;
+
+#endif
+}/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
+
+/**
+ *
+ * CisAisCjuAjv term in Spin model + GC
+ * When only site2 is in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle( int org_isite1, int org_ispin1,  int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1)
+{
+#ifdef MPI
+  int mask2, state2, ierr, origin;
+  unsigned long int mask1, idim_max_buf, j, ioff, state1, state1check;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr;
+  /*
+  Prepare index in the inter PE
+  */
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  origin = myrank ^ mask2;
+  state2 = (origin & mask2) / mask2;
+  if (state2 == org_ispin4) {
+    state1check = (unsigned long int) org_ispin1;
+    Jint = tmp_J;
+  }
+  else if (state2 == org_ispin3) {
+    state1check = (unsigned long int)org_ispin1;
+    Jint = conj(tmp_J);
+    if(X->Large.mode == M_CORR){
+      Jint = 0;
+    }
+  }
+  else return 0.0;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  /*
+  Index in the intra PE
+  */
+  mask1 = X->Def.Tpow[org_isite1];
+
+  dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
+    firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
+  for (j = 0; j < idim_max_buf; j++) {
+    state1 = (j & mask1) / mask1;
+    if (state1 == state1check) {
+      dmv = Jint * v1buf[j + 1];
+      if (X->Large.mode == M_MLTPLY) tmp_v0[j + 1] += dmv;
+      dam_pr += conj(tmp_v1[j + 1]) * dmv;
+    }
+  }
+  return (dam_pr);
+
+#endif
+}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+
+/**
+ *
+ * Wrapper for CisAisCjuAjv term in Spin model + GC
+ * When only site2 is in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+void GC_child_CisAitCjuAju_spin_MPIsingle(
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
+  double complex dam_pr;  
+  dam_pr =X_GC_child_CisAitCjuAju_spin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], X->Def.InterAll_OffDiagonal[i_int][2], X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  X->Large.prdct += dam_pr;
+
+#endif
+}/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
+
+/**
+ *
+ * CisAisCjuAjv term in Spin model + GC
+ * When only site2 is in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_child_CisAitCjuAju_spin_MPIsingle( int org_isite1, int org_ispin1, int org_ispin2,  int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1)
+{
+#ifdef MPI
+  int mask2, state2, ierr, origin;
+  unsigned long int mask1, idim_max_buf, j, ioff, state1, state1check;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr;
+  /*
+  Prepare index in the inter PE
+  */
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  state2 = (origin & mask2) / mask2;
+
+  if (state2 == org_ispin3) {
+    state1check = org_ispin2;
+    Jint = tmp_J;
+  }
+  else return 0.0;
+    
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  /*
+  Index in the intra PE
+  */
+  mask1 = (int)X->Def.Tpow[org_isite1];
+
+  dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
+  firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
+  for (j = 0; j < idim_max_buf; j++) {
+ 
+    state1 = (j & mask1) / mask1;
+    if (state1 == state1check) {
+      ioff = j ^ mask1;
+      dmv = Jint * v1buf[j + 1];
+      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
+      dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
+    }
+    else{
+      ioff = j ^ mask1;
+      dmv = conj(Jint) * v1buf[j + 1];
+      if(X->Large.mode == M_CORR) dmv=0.0;
+      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
+      
+      dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
+    }
+  }
+  return (dam_pr);
+
+#endif
+}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+
 
 /**
  *
@@ -863,19 +1225,13 @@ void GC_child_general_int_spin_MPIsingle(
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-      X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) { //diagonal
-    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
-    exitMPI(-1);
-  }
-  else if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-           X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
-    exitMPI(-1);
+      X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+        GC_child_CisAisCjuAjv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
+
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    fprintf(stderr, "\nThis interaction has not been supported yet.\n");
-    exitMPI(-1);
+     GC_child_CisAitCjuAju_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);  
   }
   else {
     GC_child_CisAitCiuAiv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
