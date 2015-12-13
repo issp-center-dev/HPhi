@@ -360,17 +360,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 		  fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 		}
 		else{
-		  tmp_sgn = ((unsigned long int)myrank& X->Def.Tpow[isite1-1]);
-		  if(tmp_sgn!=0){
-		    dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, off) firstprivate(i_max, tmp_trans, X) shared(tmp_v1, tmp_v0)
-		    for(j=1;j<=i_max;j++){
-		      if (X->Large.mode == M_MLTPLY) { // for multply
-			tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		      }
-		      dam_pr  +=  tmp_trans*conj(tmp_v1[j])*tmp_v1[j]; 
-		    }
-		  }
+		  dam_pr += X_GC_child_CisAit_spin_MPIdouble(isite1-1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
 		}
 	      }
 	      else{

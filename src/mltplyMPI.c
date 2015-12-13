@@ -1239,3 +1239,94 @@ void GC_child_general_int_spin_MPIsingle(
 }/*void GC_child_general_int_spin_MPIsingle*/
 
 
+/**
+ *
+ * Hopping term in Spin + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_child_CisAit_spin_MPIdouble(
+				       int org_isite1,
+				       int org_ispin1,
+				       int org_ispin2,
+				       double complex tmp_trans,
+				       struct BindStruct *X /**< [inout]*/,
+				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+				       double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
+  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+  unsigned long int idim_max_buf, j;
+  MPI_Status statusMPI;
+  double complex trans, dmv, dam_pr;
+  
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  origin = myrank ^ mask1;
+  state1 = (origin & mask1)/mask1;
+  
+  if(state1 ==  org_ispin1){
+    trans = tmp_trans;
+  }
+  else if(state1 == org_ispin2) {
+    trans = conj(tmp_trans);
+    if(X->Large.mode == M_CORR){
+      trans = 0;
+    }
+  }
+  else return 0.0;
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+
+  dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
+  for (j = 1; j <= idim_max_buf; j++) {
+    dmv = trans * v1buf[j];
+    if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
+    dam_pr += conj(tmp_v1[j]) * dmv;
+  }
+  return (dam_pr);
+  
+#endif
+}/*double complex  X_GC_child_CisAit_spin_MPIdouble*/
+
+/**
+ *
+ * Hopping term in Spin + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_child_CisAis_spin_MPIdouble(
+				       int org_isite1,
+				       int org_ispin1,
+				       double complex tmp_trans,
+				       struct BindStruct *X /**< [inout]*/,
+				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+				       double complex *tmp_v1 /**< [in] v0 = H v1*/)
+{
+#ifdef MPI
+  long unsigned int j;
+  int mask1, state1, state2, ierr, origin, bitdiff, Fsgn;
+  int ibit1;
+  double complex trans, dam_pr;
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  ibit1 = ((unsigned long int)myrank& mask1)^(1-org_ispin1);
+
+  dam_pr =0.0;
+  if(ibit1 != 0){
+#pragma omp parallel for reduction(+:dam_pr)default(none) shared(tmp_v1, tmp_v0) \
+  firstprivate(X, tmp_trans) private(j)
+    for (j = 1; j <= X->Check.idim_max; j++){
+      if (X->Large.mode == M_MLTPLY) { // for multply
+	tmp_v0[j] += tmp_v1[j]*tmp_trans;
+      }
+      dam_pr += tmp_trans*conj(tmp_v1[j])*tmp_v1[j];
+    }
+  }
+  return dam_pr;
+#endif
+}
