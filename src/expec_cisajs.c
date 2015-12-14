@@ -235,7 +235,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       if(org_sigma1 == org_sigma2){
 	if(org_isite1==org_isite2){
 	  if(org_isite1 > X->Def.Nsite){
-	    is1_up = X->Def.Tpow[isite1 - 1];
+	    is1_up = X->Def.Tpow[org_isite1 - 1];
 	    ibit1 = ((unsigned long int)myrank& is1_up)^(1-org_sigma1);
 	    dam_pr=0;
 	    if(ibit1 !=0){
@@ -300,27 +300,14 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	org_sigma1 = X->Def.CisAjt[i][1];
 	org_sigma2 = X->Def.CisAjt[i][3];
 	dam_pr=0.0;
-	if(org_isite1 == org_isite2){ 
+	if(org_isite1 == org_isite2){
 	  isite1 = X->Def.Tpow[org_isite1-1];
-	  
 	  if(org_isite1 > X->Def.Nsite){
-	    if(org_sigma1==org_sigma2){  
-	      ibit1 = ((unsigned long int)myrank& isite1)^(1-org_sigma1);
-	      if(ibit1!=0){
-#pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
-  firstprivate(i_max, ibit1) private(j)
-		for (j = 1; j <= i_max; j++) dam_pr += conj(vec[j])*vec[j];
-	      }
+	    if(org_sigma1==org_sigma2){
+	      dam_pr += X_GC_child_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, vec, vec);
 	    }
 	    else{
-	      ibit1 = ((unsigned long int)myrank& isite1);
-	      if(ibit1 !=0){
-		dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max) shared(vec)
-		for(j=1;j<=i_max;j++){
-		  dam_pr  +=  conj(vec[j])*vec[j]; 
-		}
-	      }
+	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, vec, vec);	      
 	    }
 	  }
 	  else{	    

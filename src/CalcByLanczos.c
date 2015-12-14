@@ -163,31 +163,32 @@ int CalcByLanczos(
   }
 
   // v1 is eigen vector
+  
   if(!expec_cisajs(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc OneBodyG.\n");
     exitMPI(-1);
   }
-  exitMPI(-1);
   
   if(!expec_cisajscktaltdc(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc TwoBodyG.\n");
     exitMPI(-1);
   }
+  
   if(!expec_totalspin(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc TotalSpin.\n");
     exitMPI(-1);
   }
+
+  if(X->Bind.Def.St==0){
+    sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
+  }else if(X->Bind.Def.St==1){
+    sprintf(sdt, cFileNameEnergy_CG, X->Bind.Def.CDataFileHead);
+  }
   
-    if(X->Bind.Def.St==0){
-      sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
-    }else if(X->Bind.Def.St==1){
-      sprintf(sdt, cFileNameEnergy_CG, X->Bind.Def.CDataFileHead);
-    }
-	
-    if(childfopenMPI(sdt, "w", &fp)!=0){
-      fclose(fp);
-      return -1;
-    }  
+  if(childfopenMPI(sdt, "w", &fp)!=0){
+    fclose(fp);
+    return -1;
+  }  
 
     fprintf(fp,"Energy  %.10lf \n",X->Bind.Phys.energy);
     fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);

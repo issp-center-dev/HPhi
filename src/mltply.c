@@ -178,7 +178,6 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 
       //Transfer
       for (i = 0; i < X->Def.EDNTransfer; i+=2) {
-
         if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
           X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
           child_general_hopp_MPIdouble(i, X, tmp_v0, tmp_v1);
@@ -280,7 +279,6 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
           else {
             for (ihermite = 0; ihermite<2; ihermite++) {
               idx = i + ihermite;
-
               isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
               isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
               sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
@@ -371,24 +369,15 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	    if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
 	      return -1;
 	    }
-
+	    
+	    dam_pr=0;
 	    if(isite1 ==isite2){
 	      if(isite1 > X->Def.Nsite){
 		if(sigma1==sigma2){
 		  fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 		}
 		else{
-		  tmp_sgn = ((unsigned long int)myrank& X->Def.Tpow[isite1-1]);
-		  if(tmp_sgn!=0){
-		    dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, off) firstprivate(i_max, tmp_trans, X) shared(tmp_v1, tmp_v0)
-		    for(j=1;j<=i_max;j++){
-		      if (X->Large.mode == M_MLTPLY) { // for multply
-			tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		      }
-		      dam_pr  +=  tmp_trans*conj(tmp_v1[j])*tmp_v1[j]; 
-		    }
-		  }
+		  dam_pr += X_GC_child_CisAit_spin_MPIdouble(isite1-1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
 		}
 	      }
 	      else{
@@ -399,14 +388,11 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 		  // longitudinal magnetic field (considerd in diagonalcalc.c)
 		  // transverse magnetic field
 		  is1_spin = X->Def.Tpow[isite1 - 1];
-		  dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) shared(tmp_v0, tmp_v1)
 		  for (j = 1; j <= i_max; j++) {
 		    tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
 		    if(tmp_sgn !=0){
-		      if (X->Large.mode == M_MLTPLY) { // for multply
-			tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		      }
+		      tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
 		      dam_pr += tmp_trans * conj(tmp_v1[off + 1]) * tmp_v1[j];
 		    }
 		  }
@@ -416,7 +402,8 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	    else{
 	      fprintf(stderr, "hopping is not allowed in localized spin system.\n");
 	      return -1;
-	    }    
+	    }
+	    X->Large.prdct += dam_pr;
 	  }
 	}
 

@@ -17,7 +17,7 @@
 #include "mltply.h"
 #include "expec_cisajscktaltdc.h"
 #include "wrapperMPI.h"
-
+#include "mltplyMPI.h"
 
 /**
  * @file   expec_cisajscktaltdc.c
@@ -68,13 +68,15 @@ int expec_cisajscktaltdc
   long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
   long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
   long unsigned int isA_up, isB_up;
+  long unsigned int is1_up, is2_up;
   long unsigned int Asum,Bsum,Adiff,Bdiff;
   long unsigned int tmp_off=0;
   long unsigned int tmp_off_2=0;
   long unsigned int list1_off=0;
-  int tmp_sgn, num1;
+  int tmp_sgn, num1, num2;
   double complex tmp_V;
   double complex dam_pr;
+  double complex TwoBodyG=1.0;
   long int i_max;
   
   //For TPQ
@@ -82,6 +84,7 @@ int expec_cisajscktaltdc
   int rand_i=0;
   //For Kond
   double complex dmv;
+
   
   i_max=X->Check.idim_max;
   X->Large.mode=M_CORR;
@@ -325,48 +328,88 @@ int expec_cisajscktaltdc
 	  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
 	  continue;
 	}
-	
-	if(org_isite1==org_isite2 && org_isite3==org_isite4){
-	  if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){
-	    if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-	      dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2, tmp_V) shared(vec)
-	      for(j=1;j<=i_max;j++){
-		dam_pr +=child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
-	      }
 
+	dam_pr = 0.0;
+	if(org_isite1 >X->Def.Nsite && org_isite3>X->Def.Nsite){
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+	    is1_up = X->Def.Tpow[org_isite1 - 1];
+	    is2_up = X->Def.Tpow[org_isite3 - 1];
+	    num1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+	    num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
+#pragma omp parallel for default(none) reduction (+:dam_pr) shared(vec) \
+  firstprivate(i_max, num1, num2, tmp_V) private(j)
+	    for (j = 1; j <= i_max; j++) {
+	      dam_pr += tmp_V*num1*num2*vec[j]*conj(vec[j]);
+	    } 
+	  }
+	  else if(org_isite1==org_isite3 && org_sigma1==org_sigma4 && org_sigma2==org_sigma3){
+	    is1_up = X->Def.Tpow[org_isite1 - 1];
+	    num1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+#pragma omp parallel for default(none) reduction (+:dam_pr) shared(vec) \
+  firstprivate(i_max, num1, num2, tmp_V) private(j)
+	    for (j = 1; j <= i_max; j++) {
+	      dam_pr += tmp_V*num1*vec[j]*conj(vec[j]);
 	    }
-	    else{
+	  }
+	  else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){//exchange
+	    dam_pr += X_child_general_int_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  }
+	  else{  // other process is not allowed
+	    // error message will be added
 	    }
-	  }
-	  else if(org_isite1 > X->Def.Nsite || org_isite3>X->Def.Nsite){
-
-	  }
-	  else{
-	    isA_up = X->Def.Tpow[org_isite2-1];
-	    isB_up = X->Def.Tpow[org_isite4-1];
-	    if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-	      dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2, tmp_V) shared(vec)
-	      for(j=1;j<=i_max;j++){
-		dam_pr +=child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
-	      }
-	      fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
-	    }else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){ // exchange
-	      dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2,tmp_V) shared(vec)
-	      for(j=1;j<=i_max;j++){
-		tmp_sgn    =  X_child_exchange_spin_element(j,X,isA_up,isB_up,org_sigma2,org_sigma4,&tmp_off);
-		dmv        = vec[j]*tmp_sgn;
-		dam_pr    += conj(vec[tmp_off])*dmv;
-	      }
-	      fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
-	    }else{  // other process is not allowed
-	      // error message will be added
-	      fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
-	    }	
-	  }
 	}
+	else if(org_isite1 > X->Def.Nsite || org_isite3>X->Def.Nsite){
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+	    is1_up = X->Def.Tpow[org_isite1 - 1];
+	    is2_up = X->Def.Tpow[org_isite3 - 1];
+	    num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
+	    dam_pr=0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr)shared(vec)	\
+  firstprivate(i_max, tmp_V, is1_up, org_sigma1, X, num2) private(j, num1)
+	    for (j = 1; j <= i_max; j++) {
+	      num1 = X_Spin_CisAis(j, X, is1_up, org_sigma1);
+	      dam_pr += tmp_V*num1*num2*conj(vec[j])*vec[j];
+	    }
+	  }
+	  else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){//exchange
+	    dam_pr += X_child_general_int_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  }
+	  else{  // other process is not allowed
+	    // error message will be added
+	    }	
+	}
+	else{
+	  isA_up = X->Def.Tpow[org_isite1-1];
+	  isB_up = X->Def.Tpow[org_isite3-1];
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+	    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2, tmp_V) shared(vec)
+	    for(j=1;j<=i_max;j++){
+	      dam_pr +=child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
+	    }
+	  }else if(org_isite1==org_isite3 && org_sigma1==org_sigma4 && org_sigma3==org_sigma2){
+	    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(i_max,X,isite1, tmp_V) shared(vec, list_1)
+	    for(j=1;j<=i_max;j++){
+	      dmv=X_CisAis(list_1[j], X, isite1);
+	      dam_pr += vec[j]*tmp_V*dmv*conj(vec[j]);
+	    }	    
+	  }
+	  else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){ // exchange
+	    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2,tmp_V) shared(vec)
+	    for(j=1;j<=i_max;j++){
+	      tmp_sgn    =  X_child_exchange_spin_element(j,X,isA_up,isB_up,org_sigma2,org_sigma4,&tmp_off);
+	      dmv        = vec[j]*tmp_sgn;
+	      dam_pr    += conj(vec[tmp_off])*dmv;
+	    }
+	  }else{  // other process is not allowed
+	    // error message will be added
+	  }	
+	}
+	dam_pr = SumMPI_dc(dam_pr);
+	fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
+
       }
     }//iFlgGeneralSpin = FALSE
     else{
@@ -468,15 +511,105 @@ int expec_cisajscktaltdc
   case SpinGC:
     if(X->Def.iFlgGeneralSpin==FALSE){
       for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
-	org_isite1   = X->Def.CisAjtCkuAlvDC[i][0]+1;
-	org_sigma1   = X->Def.CisAjtCkuAlvDC[i][1];
-	org_isite2   = X->Def.CisAjtCkuAlvDC[i][2]+1;
-	org_sigma2   = X->Def.CisAjtCkuAlvDC[i][3];
-	org_isite3   = X->Def.CisAjtCkuAlvDC[i][4]+1;
-	org_sigma3   = X->Def.CisAjtCkuAlvDC[i][5];
-	org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
-	org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
-	if(org_isite1==org_isite2 && org_isite3==org_isite4){
+	tmp_org_isite1   = X->Def.CisAjtCkuAlvDC[i][0]+1;
+	tmp_org_sigma1   = X->Def.CisAjtCkuAlvDC[i][1];
+	tmp_org_isite2   = X->Def.CisAjtCkuAlvDC[i][2]+1;
+	tmp_org_sigma2   = X->Def.CisAjtCkuAlvDC[i][3];
+	tmp_org_isite3   = X->Def.CisAjtCkuAlvDC[i][4]+1;
+	tmp_org_sigma3   = X->Def.CisAjtCkuAlvDC[i][5];
+	tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
+	tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
+	
+	if(tmp_org_isite1==tmp_org_isite2 && tmp_org_isite3==tmp_org_isite4){
+	  if(tmp_org_isite1 > tmp_org_isite3){
+	    org_isite1   = tmp_org_isite3;
+	    org_sigma1   = tmp_org_sigma3;
+	    org_isite2   = tmp_org_isite4;
+	    org_sigma2   = tmp_org_sigma4;
+	    org_isite3   = tmp_org_isite1;
+	    org_sigma3   = tmp_org_sigma1;
+	    org_isite4   = tmp_org_isite2;
+	    org_sigma4   = tmp_org_sigma2;
+	  }
+	  else{
+	    org_isite1   = tmp_org_isite1;
+	    org_sigma1   = tmp_org_sigma1;
+	    org_isite2   = tmp_org_isite2;
+	    org_sigma2   = tmp_org_sigma2;
+	    org_isite3   = tmp_org_isite3;
+	    org_sigma3   = tmp_org_sigma3;
+	    org_isite4   = tmp_org_isite4;
+	    org_sigma4   = tmp_org_sigma4;
+	  }
+	  tmp_V = 1.0;
+
+	}
+	else if(tmp_org_isite1==tmp_org_isite4 && tmp_org_isite3==tmp_org_isite2){
+	  if(tmp_org_isite1 > tmp_org_isite3){
+	    org_isite1   = tmp_org_isite3;
+	    org_sigma1   = tmp_org_sigma3;
+	    org_isite2   = tmp_org_isite2;
+	    org_sigma2   = tmp_org_sigma2;
+	    org_isite3   = tmp_org_isite1;
+	    org_sigma3   = tmp_org_sigma1;
+	    org_isite4   = tmp_org_isite4;
+	    org_sigma4   = tmp_org_sigma4;
+	  }
+	  else{
+	    org_isite1   = tmp_org_isite1;
+	    org_sigma1   = tmp_org_sigma1;
+	    org_isite2   = tmp_org_isite4;
+	    org_sigma2   = tmp_org_sigma4;
+	    org_isite3   = tmp_org_isite3;
+	    org_sigma3   = tmp_org_sigma3;
+	    org_isite4   = tmp_org_isite2;
+	    org_sigma4   = tmp_org_sigma2;
+	  }
+	  tmp_V =-1.0;
+	}	  
+	else{
+	  //error message will be added 
+	  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
+	  continue;
+	}
+
+	dam_pr=0.0;
+	if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){ //org_isite3 >= org_isite1 > Nsite
+
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal	    
+	    dam_pr += X_GC_child_CisAisCjuAju_spin_MPIdouble( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec);
+	    
+	  }
+	  else if(org_isite1 ==org_isite3 && org_sigma1 ==org_sigma4 && org_sigma2 ==org_sigma3){ //diagonal (for spin: cuadcdau=cuau)
+	    dam_pr += X_GC_child_CisAis_spin_MPIdouble((org_isite1-1), org_sigma1, tmp_V, X, vec, vec);	    	    
+	  }
+	  else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+	    dam_pr += X_GC_child_CisAisCjuAjv_spin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  }
+	  else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+	    dam_pr += X_GC_child_CisAitCjuAju_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+	  }
+	  else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+	    dam_pr +=  X_GC_child_CisAitCiuAiv_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  } 
+	}
+	else if(org_isite3>X->Def.Nsite || org_isite1>X->Def.Nsite){ //org_isite3 > Nsite >= org_isite1 
+	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+	    dam_pr += X_GC_child_CisAisCjuAju_spin_MPIsingle( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec);	    
+
+	  }
+	   else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+	     dam_pr += X_GC_child_CisAisCjuAjv_spin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  }
+	  else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+	    dam_pr += X_GC_child_CisAitCjuAju_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+	  }
+	  else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+	    dam_pr +=  X_GC_child_CisAitCiuAiv_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+	  }
+	}
+	else{	
+	  if(org_isite1==org_isite2 && org_isite3==org_isite4){
 	  isA_up = X->Def.Tpow[org_isite2-1];
 	  isB_up = X->Def.Tpow[org_isite4-1];
 	  if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
@@ -485,91 +618,29 @@ int expec_cisajscktaltdc
 	    for(j=1;j<=i_max;j++){
 	      dam_pr +=GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
 	    }
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
 	  }else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){ 
 	    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2,tmp_V) shared(vec)
 	    for(j=1;j<=i_max;j++){
 	      dam_pr += GC_child_CisAisCitAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
 	    } 
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
 	  }else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){ 
 	    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2,tmp_V) shared(vec)
 	    for(j=1;j<=i_max;j++){
 	      dam_pr += GC_child_CisAitCiuAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
 	    } 
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
 	  }else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){ 
 	    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2,tmp_V) shared(vec)
 	    for(j=1;j<=i_max;j++){
 	      dam_pr += GC_child_CisAitCiuAiv_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
 	    }
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
 	  }
-	//}else{// hopping process is not allowed
-	  //error message will be added 
-	//  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,0.0,0.0);
-	}else if(org_isite1==org_isite4 && org_isite2==org_isite3){ // 
-	  // 2 <-> 4
-	  isA_up = X->Def.Tpow[org_isite4-1];
-	  isB_up = X->Def.Tpow[org_isite2-1];
-	  if(org_sigma1==org_sigma4 && org_sigma3==org_sigma2 ){ //diagonal
-	    dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2) shared(vec)
-	    for(j=1;j<=i_max;j++){
-	      tmp_sgn      = X_SpinGC_CisAis(j,X,isB_up,org_sigma2);
-	      tmp_sgn     *= X_SpinGC_CisAis(j,X,isA_up,org_sigma4);
-	      dmv          = vec[j]*tmp_sgn;
-	      dam_pr      += conj(vec[j])*dmv;
-	    }
-	    dam_pr = -1.0*dam_pr;
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
-	  }else if(org_sigma1 == org_sigma4 && org_sigma3 != org_sigma2){ 
-	    dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2) shared(vec)
-	    for(j=1;j<=i_max;j++){
-	      tmp_sgn   =  X_SpinGC_CisAit(j,X,isB_up,org_sigma2,&tmp_off);
-	      if(tmp_sgn != 0){
-		tmp_sgn   *= X_SpinGC_CisAis(j,X,isA_up,org_sigma4);
-		dmv        = vec[j]*tmp_sgn;
-		dam_pr    += conj(vec[tmp_off+1])*dmv;
-	      }
-	    } 
-	    dam_pr = -1.0*dam_pr;
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
-	  }else if(org_sigma1 != org_sigma4 && org_sigma3 == org_sigma2){ 
-	    dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2) shared(vec)
-	    for(j=1;j<=i_max;j++){
-	      tmp_sgn      = X_SpinGC_CisAis(j,X,isB_up,org_sigma2);
-	      if(tmp_sgn != 0){
-		tmp_sgn   *= X_SpinGC_CisAit(j,X,isA_up,org_sigma4,&tmp_off); 
-		dmv        = vec[j]*tmp_sgn;
-		dam_pr    += conj(vec[tmp_off+1])*dmv;
-	      }
-	    } 
-	    dam_pr = -1.0*dam_pr;
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
-	  }else if(org_sigma1 != org_sigma4 && org_sigma3 != org_sigma2){ 
-	    dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_off_2) shared(vec)
-	    for(j=1;j<=i_max;j++){
-	      tmp_sgn      =  X_SpinGC_CisAit(j,X,isB_up,org_sigma2,&tmp_off);
-	      if(tmp_sgn != 0){
-		tmp_sgn   *= X_SpinGC_CisAit(tmp_off+1,X,isA_up,org_sigma4,&tmp_off_2); 
-		dmv        = vec[j]*tmp_sgn;
-		dam_pr    += conj(vec[tmp_off_2+1])*dmv;
-	      }
-	    }
-	    dam_pr = -1.0*dam_pr;
-	    fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,creal(dam_pr),cimag(dam_pr));
 	  }
-	}else{// hopping process is not allowed
-	  //error message will be added 
-	  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,org_isite3-1,org_sigma3,org_isite4-1,org_sigma4,0.0,0.0);
 	}
+	dam_pr = SumMPI_dc(dam_pr);
+	fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
       }
     }
     else{
