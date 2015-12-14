@@ -163,6 +163,7 @@ int CalcByLanczos(
   }
 
   // v1 is eigen vector
+  
   if(!expec_cisajs(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc OneBodyG.\n");
     exitMPI(-1);

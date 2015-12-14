@@ -550,8 +550,12 @@ double complex X_child_general_int_spin_TotalS_MPIdouble(
 
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
-  origin = myrank ^ (mask1 + mask2);
-
+  if(mask1 == mask2){
+     origin = myrank ^ mask1;
+  }
+  else{
+    origin = myrank ^ (mask1 + mask2);
+  }
   num1_up = (origin & mask1) / mask1;
   num1_down = 1- num1_up;
   num2_up = (origin & mask2) / mask2;
@@ -734,6 +738,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
   if(mask1==mask2){
+    //should show error message and return 0 ?
     origin =myrank^mask1;
   }
   else{

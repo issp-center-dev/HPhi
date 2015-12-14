@@ -420,7 +420,7 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
 void totalspin_SpinGC(struct BindStruct *X,double complex *vec){ 
 
   long unsigned int j;
-  long unsigned int isite1,isite2;
+  long unsigned int isite1,isite2, tmp_isite1, tmp_isite2;
   long unsigned int is1_up,is2_up;
   long unsigned int iexchg, off, off_2;
   int num1_up,num2_up;
@@ -429,55 +429,123 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
   long unsigned int ibit1_up,ibit2_up,ibit_tmp,is_up; 
   double complex spn_z;
   double complex spn_z1, spn_z2;
-  double complex spn;
+  double complex spn, spn_d;
   long unsigned int list_1_j;
   long unsigned int i_max;
-    
   i_max=X->Check.idim_max;
+  X->Large.mode = M_TOTALS;
   spn=0.0;
+  spn_d=0.0;
   spn_z=0.0;
   if(X->Def.iFlgGeneralSpin==FALSE){
-    for(isite1=1;isite1<=X->Def.Nsite;isite1++){
-      is1_up      = X->Def.Tpow[isite1-1];
-#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(i_max, is1_up) private(list_1_j, ibit1_up, num1_up, num1_down) shared(vec)	
+    for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+      if(isite1 > X->Def.Nsite){
+	is1_up      = X->Def.Tpow[isite1-1];
+	ibit1_up = myrank&is1_up;
+	num1_up = ibit1_up/is1_up;
+	num1_down =1-num1_up;
+#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(i_max, is1_up,  num1_up, num1_down) shared(vec)	
 	for(j=1;j<=i_max;j++){
-	   list_1_j=j-1;
-	   ibit1_up  = list_1_j&is1_up;
-	   num1_up   = ibit1_up/is1_up;            
-	   num1_down = 1-num1_up;
-	   spn_z  +=  conj(vec[j])*vec[j]*(num1_up-num1_down)/4.0;
-	}      
-
-	for(isite2=1;isite2<=X->Def.Nsite;isite2++){
-	  is2_up      = X->Def.Tpow[isite2-1];
-	  is_up       = is1_up+is2_up;
-	
-#pragma omp parallel for reduction(+: spn) default(none) firstprivate(i_max, is_up, is1_up, is2_up, isite1, isite2) private(list_1_j, ibit1_up, num1_up, ibit2_up, num2_up, num1_down, num2_down, spn_z2, iexchg, off, ibit_tmp) shared(vec)	
+	  spn_z  +=  conj(vec[j])*vec[j]*(num1_up-num1_down)/2.0;
+	}
+      }
+      else{
+	is1_up      = X->Def.Tpow[isite1-1];
+#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(i_max, is1_up) private(list_1_j, ibit1_up, num1_up, num1_down) shared(vec)	
 	for(j=1;j<=i_max;j++){
 	  list_1_j=j-1;
 	  ibit1_up  = list_1_j&is1_up;
-	  num1_up   = ibit1_up/is1_up;            
+	  num1_up   = ibit1_up/is1_up;   
 	  num1_down = 1-num1_up;
-	  ibit2_up  = list_1_j&is2_up;
-	  num2_up   = ibit2_up/is2_up;
+	  spn_z  +=  conj(vec[j])*vec[j]*(num1_up-num1_down)/2.0;
+	}
+	
+      }
+      for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
+	
+	if(isite1 > X->Def.Nsite && isite2 > X->Def.Nsite){
+	  is1_up      = X->Def.Tpow[isite1-1];
+	  is2_up      = X->Def.Tpow[isite2-1];
+	  num1_up = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, 1);
+	  num1_down = 1-num1_up;
+	  num2_up = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, 1);
 	  num2_down = 1-num2_up;
-	  
-	  spn_z2  = (num1_up-num1_down)*(num2_up-num2_down);
-	  spn   += conj(vec[j])*vec[j]*spn_z2/4.0;
-	  
-	  if(isite1==isite2){
-	    spn      += conj(vec[j])*vec[j]/2.0;
-	  }else{	    	    
-	    
-	    ibit_tmp  = (num1_up) ^ (num2_up);
-	    if(ibit_tmp!=0){
-            iexchg  = list_1_j ^ (is_up);
-            off    = iexchg+1;
-	    spn    += conj(vec[j])*vec[off]/2.0;	    	    
+	  spn_z2  = (num1_up-num1_down)*(num2_up-num2_down)/4.0;
+#pragma omp parallel for default(none) reduction (+:spn_d) shared(vec)	\
+  firstprivate(i_max, spn_z2) private(j)
+	  for (j = 1; j <= i_max; j++) {
+	    spn_d   += conj(vec[j])*vec[j]*spn_z2;
+	  }
+	  if(isite1 == isite2){
+#pragma omp parallel for default(none) reduction (+:spn_d) shared(vec)	\
+  firstprivate(i_max) private(j)
+	    for (j = 1; j <= i_max; j++) {
+	      spn_d      += conj(vec[j])*vec[j]/2.0;
 	    }
-	    
+	  }//isite1 = isite2
+	  else{//off diagonal
+	     spn += X_GC_child_CisAitCiuAiv_spin_MPIdouble(isite1-1, 0, 1, isite2-1, 1, 0, 1.0, X, vec, vec)/2.0;
+	  } 
+	}
+	else if(isite1 > X->Def.Nsite || isite2 > X->Def.Nsite){
+	  if(isite1 < isite2){
+	    tmp_isite1=isite1;
+	    tmp_isite2=isite2;
+	  }
+	  else{
+	    tmp_isite1 = isite2;
+	    tmp_isite2 = isite1;
+	  }
+	  is1_up = X->Def.Tpow[tmp_isite1 - 1];
+	  is2_up = X->Def.Tpow[tmp_isite2 - 1];
+	  num2_up = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, 1);
+	  num2_down =1-num2_up;
+	  //diagonal
+#pragma omp parallel for reduction(+: spn_d) default(none) firstprivate(i_max, is1_up, num2_up, num2_down) private(ibit1_up, num1_up, num1_down, spn_z2, list_1_j) shared(vec)
+	  for(j=1;j<=i_max;j++){
+	    list_1_j=j-1;
+	    ibit1_up  = list_1_j&is1_up;
+	    num1_up   = ibit1_up/is1_up;            
+	    num1_down = 1-num1_up;
+	    spn_z2  = (num1_up-num1_down)*(num2_up-num2_down);
+	    spn_d   += conj(vec[j])*vec[j]*spn_z2/4.0;
+	  }
+	  if(isite1 < isite2){
+	    spn += X_GC_child_CisAitCiuAiv_spin_MPIsingle(isite1-1, 0, 1, isite2-1, 1, 0, 1.0, X, vec, vec)/2.0;
+	  }
+	  else{
+	    spn += conj(X_GC_child_CisAitCiuAiv_spin_MPIsingle(isite2-1, 1, 0, isite1-1, 0, 1, 1.0, X, vec, vec))/2.0;
 	  }
 	}
+	else{
+	  is2_up      = X->Def.Tpow[isite2-1];
+	  is_up       = is1_up+is2_up;
+#pragma omp parallel for reduction(+: spn, spn_d) default(none) firstprivate(i_max, is_up, is1_up, is2_up, isite1, isite2) private(list_1_j, ibit1_up, num1_up, ibit2_up, num2_up, num1_down, num2_down, spn_z2, iexchg, off, ibit_tmp) shared(vec)	
+	  for(j=1;j<=i_max;j++){
+	    list_1_j=j-1;
+	    ibit1_up  = list_1_j&is1_up;
+	    num1_up   = ibit1_up/is1_up;            
+	    num1_down = 1-num1_up;
+	    ibit2_up  = list_1_j&is2_up;
+	    num2_up   = ibit2_up/is2_up;
+	    num2_down = 1-num2_up;
+	  
+	    spn_z2  = (num1_up-num1_down)*(num2_up-num2_down);
+	    spn_d   += conj(vec[j])*vec[j]*spn_z2/4.0;
+	  
+	    if(isite1==isite2){
+	      spn_d      += conj(vec[j])*vec[j]/2.0;
+	    }else{
+	      ibit_tmp  = (num1_up) ^ (num2_up);
+	      if(ibit_tmp!=0){
+		iexchg  = list_1_j ^ (is_up);
+		off    = iexchg+1;
+		spn    += conj(vec[j])*vec[off]/2.0;	    	    
+	      }
+	    
+	    }
+	  }//j
+	}//else
       }
     }
   }
@@ -528,6 +596,10 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
       }
     }
   }
-  X->Phys.s2=creal(spn);
+  
+  spn = SumMPI_dc(spn);
+  spn_d = SumMPI_dc(spn_d);
+  spn_z = SumMPI_dc(spn_z); 
+  X->Phys.s2=creal(spn+spn_d);
   X->Phys.sz=creal(spn_z);
 }
