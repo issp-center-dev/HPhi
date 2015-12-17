@@ -479,7 +479,6 @@ double complex GC_child_exchange_spin_element
   long unsigned int *tmp_off 
  );
 
-
 int X_child_exchange_spin_element
 (
  const long unsigned int j,
@@ -621,7 +620,6 @@ int child_pairlift_spin_GetInfo
  const int iPairLift,
  struct BindStruct *X 
  );
-
 
 int X_SpinGC_CisAit(
 long unsigned int j,

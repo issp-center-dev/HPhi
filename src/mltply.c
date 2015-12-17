@@ -466,28 +466,31 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	    sigma2 = X->Def.EDGeneralTransfer[idx][3];
 	    tmp_trans = -X->Def.EDParaGeneralTransfer[idx]; 
 	    if (isite1 == isite2) {
-	      if (sigma1 != sigma2){//sigma1 != sigma2
-		// transverse magnetic field
-		dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) shared(tmp_v0, tmp_v1)
-		for (j = 1; j <= i_max; j++) {
-		  num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-		  if (num1!=0) { // for multply
-		    tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		    dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j]*tmp_trans;
-		  }
+	      if(isite1 > X->Def.Nsite){
+		if(sigma1 != sigma2){
+		  dam_pr = X_GC_child_CisAit_GeneralSpin_MPIdouble(isite1-1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
 		}
 	      }
 	      else{
-		fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
-		return -1;
+		if (sigma1 != sigma2){//sigma1 != sigma2
+		  // transverse magnetic field
+		  dam_pr=0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) shared(tmp_v0, tmp_v1)
+		  for (j = 1; j <= i_max; j++) {
+		    num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+		    if (num1!=0) { // for multply
+		      tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
+		      dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j]*tmp_trans;
+		    }
+		  }
+		}
 	      }
-	      X->Large.prdct += dam_pr;
 	    }
-	    else {
+	    else{
 	      // hopping is not allowed in localized spin system
 	      return -1;
 	    }
+	    X->Large.prdct += dam_pr;
 	  }
 	}
       

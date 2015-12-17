@@ -270,28 +270,50 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	org_isite2 = X->Def.CisAjt[i][2]+1;
 	org_sigma1 = X->Def.CisAjt[i][1];
 	org_sigma2 = X->Def.CisAjt[i][3];
+	
 	if(org_isite1 == org_isite2){ 
-	  if(org_sigma1==org_sigma2){  
-	    // longitudinal magnetic field
-	    dam_pr=0.0;
+	  if(org_isite1 >X->Def.Nsite){
+	    if(org_sigma1==org_sigma2){  
+	      // longitudinal magnetic field
+	      num1 = BitCheckGeneral((unsigned long int)myrank, 
+				     org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
+	      dam_pr=0.0;
+	      if (num1 != 0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec)
+		for(j=1;j<=i_max;j++){
+		  dam_pr+=conj(vec[j])*vec[j]; 
+		}
+	      }	      
+	    }else{
+	      dam_pr=0.0;
+	    }	    
+	  }
+	  else {//org_isite1 <= X->Def.Nsite
+	    if(org_sigma1==org_sigma2){  
+	      // longitudinal magnetic field
+	      dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec, list_1)
-	    for(j=1;j<=i_max;j++){
-	      num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-	      dam_pr+=conj(vec[j])*vec[j]*num1; 
-	    } 
-	    fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
-	  }else{
-	    fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,0.0,0.0);
+	      for(j=1;j<=i_max;j++){
+		num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
+		dam_pr+=conj(vec[j])*vec[j]*num1; 
+	      }
+	    }else{
+	      dam_pr=0.0;
+	    }
 	  }
 	}else{
 	  // hopping is not allowed in localized spin system
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, 0.0, 0.0);
-	}
+	  dam_pr=0.0;
+	}//org_isite1 != org_isite2
+	
+	dam_pr = SumMPI_dc(dam_pr);
+	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
       }
-    }
+    }//general spin
 
     break;
-  case SpinGC: //for the Sz-nonconserved spin system
+    
+  case SpinGC:
 
     if(X->Def.iFlgGeneralSpin==FALSE){
       for(i=0;i<X->Def.NCisAjt;i++){
@@ -300,17 +322,17 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	org_sigma1 = X->Def.CisAjt[i][1];
 	org_sigma2 = X->Def.CisAjt[i][3];
 	dam_pr=0.0;
+
 	if(org_isite1 == org_isite2){
-	  isite1 = X->Def.Tpow[org_isite1-1];
 	  if(org_isite1 > X->Def.Nsite){
-	    if(org_sigma1==org_sigma2){
+	    if(org_sigma1==org_sigma2){  // longitudinal magnetic field
 	      dam_pr += X_GC_child_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, vec, vec);
 	    }
-	    else{
+	    else{  // transverse magnetic field
 	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, vec, vec);	      
 	    }
-	  }
-	  else{	    
+	  }else{ 	
+	    isite1 = X->Def.Tpow[org_isite1-1];
 	    if(org_sigma1==org_sigma2){  
 	      // longitudinal magnetic field
 	      dam_pr=0.0;
@@ -328,14 +350,14 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	      }
 	    }
 	  }
-	  dam_pr = SumMPI_dc(dam_pr);
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
-	
 	}else{
 	  // hopping is not allowed in localized spin system
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, 0.0, 0.0);
+	  dam_pr=0.0;
 	}
+	dam_pr = SumMPI_dc(dam_pr);
+	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
       }
+      
     }//FlgGeneralSpin=FALSE
     else{
       for(i=0;i<X->Def.NCisAjt;i++){
@@ -343,32 +365,43 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	org_isite2 = X->Def.CisAjt[i][2]+1;
 	org_sigma1 = X->Def.CisAjt[i][1];
 	org_sigma2 = X->Def.CisAjt[i][3];
-	if(org_isite1 == org_isite2){ 
-	  if(org_sigma1==org_sigma2){  
-	    // longitudinal magnetic field
-	    dam_pr=0.0;
+	if(org_isite1 == org_isite2){
+	  if(org_isite1 > X->Def.Nsite){
+	    if(org_sigma1==org_sigma2){  
+	      // longitudinal magnetic field
+	      dam_pr=X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, vec, vec);
+	    }else{
+	      // transverse magnetic field
+	      dam_pr=X_GC_child_CisAit_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, vec, vec);
+	    }	    
+	  }
+	  else{//org_isite1 <= X->Def.Nsite
+	    if(org_sigma1==org_sigma2){  
+	      // longitudinal magnetic field
+	      dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec)
-	    for(j=1;j<=i_max;j++){
-	      num1 = BitCheckGeneral(j-1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-	      dam_pr+=conj(vec[j])*vec[j]*num1; 
-	    } 
-	    fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
-	  }else{
-	    // transverse magnetic field
-	    dam_pr=0.0;
+	      for(j=1;j<=i_max;j++){
+		num1 = BitCheckGeneral(j-1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
+		dam_pr+=conj(vec[j])*vec[j]*num1; 
+	      } 
+	    }else{
+	      // transverse magnetic field
+	      dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, org_sigma2, X,tmp_off) shared(vec)
-	    for(j=1;j<=i_max;j++){
-	      num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-	      if(num1 !=0){
-		dam_pr  +=  conj(vec[tmp_off+1])*vec[j]*num1;
+	      for(j=1;j<=i_max;j++){
+		num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+		if(num1 !=0){
+		  dam_pr  +=  conj(vec[tmp_off+1])*vec[j]*num1;
+		}
 	      }
-	    } 
-	    fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
+	    }
 	  }
 	}else{
 	  // hopping is not allowed in localized spin system
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, 0.0, 0.0);
+	  dam_pr=0.0;
 	}
+	dam_pr = SumMPI_dc(dam_pr);
+	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr),cimag(dam_pr));
       }
     }
     break;

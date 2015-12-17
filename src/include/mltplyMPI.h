@@ -61,6 +61,28 @@ double complex X_child_general_int_spin_TotalS_MPIdouble(
 						  double complex *tmp_v1
 							 );
 
+double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+//general spin - single 
+double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle( int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle( int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle( int org_isite1, int org_ispin1, int org_ispin2, int org_isite3, int org_ispin3, int org_ispin4, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAit_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_ispin2,double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAis_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+
 void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1);
 

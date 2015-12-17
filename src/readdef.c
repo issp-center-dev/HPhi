@@ -1010,7 +1010,6 @@ int ReadDefFileIdxPara(
 	fclose(fp);
 	return -1;
       }
-
       
       if(CheckInterAllHermite(X)!=0){
 	fprintf(stderr, "%s", cErrNonHermiteInterAllForAll);
@@ -1386,6 +1385,7 @@ int CheckInterAllHermite
 	  }
 	}
       }
+      
     }
     //if counterpart for satisfying hermite conjugate does not exist.
     if(itmpret !=1){
