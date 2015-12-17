@@ -1404,6 +1404,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
 							  double complex *tmp_v1
 							  )
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j, num1;
   int origin, ierr, isite, IniSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1452,6 +1453,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
   }
 
   return dam_pr;
+#endif
 }
 
 double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
@@ -1466,6 +1468,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
 							  double complex *tmp_v1
 							  )
 {
+#ifdef MPI
   unsigned long int num1, j, off;
   int origin, ierr, isite, IniSpin, FinSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1507,6 +1510,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
   }
   
   return dam_pr;
+#endif
 }
 
 double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
@@ -1522,6 +1526,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 							  double complex *tmp_v1
 							  )
 {
+  #ifdef MPI
   unsigned long int tmp_off, off, j;
   int origin, ierr, isite, IniSpin, FinSpin, ihermite;
   double complex tmp_V, dmv, dam_pr;
@@ -1578,6 +1583,8 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
     }
     
     return dam_pr;
+
+#endif
 }
 
 double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
@@ -1591,6 +1598,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
 							  double complex *tmp_v1
 							  )
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j, num1;
   int origin, ierr, isite, IniSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1616,8 +1624,8 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   }
 
   return dam_pr;
+#endif
 }
-
 
 double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
 						       int org_isite1,
@@ -1628,6 +1636,7 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
 						       double complex *tmp_v0,
 						       double complex *tmp_v1)
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j, num1;
   int origin, ierr, isite, IniSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1662,6 +1671,7 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
   }
   
   return dam_pr;
+#endif
 }
 
 double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
@@ -1672,6 +1682,7 @@ double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
 						       double complex *tmp_v0,
 						       double complex *tmp_v1)
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j, num1;
   int origin, ierr, isite, IniSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1693,6 +1704,7 @@ double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
   }
   
   return dam_pr;
+#endif
 }
 
 
@@ -1710,6 +1722,7 @@ void GC_child_general_int_GeneralSpin_MPIsingle(
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j;
   int origin, ierr, isite, IniSpin, FinSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1740,9 +1753,9 @@ void GC_child_general_int_GeneralSpin_MPIsingle(
   }
 
   X->Large.prdct += dam_pr;
-
+#endif
 }/*void GC_child_general_int_spin_MPIsingle*/
-
+ 
 double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
 							  int org_isite1,
 							  int org_ispin1,
@@ -1755,6 +1768,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
 							  double complex *tmp_v1
 							  )
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j, num1;
   int origin, ierr, isite, IniSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1799,6 +1813,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
     }
   
   return dam_pr;
+#endif
 }
 
 double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
@@ -1813,6 +1828,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
 							  double complex *tmp_v1
 							  )
 {
+#ifdef MPI
   unsigned long int num1, j, off;
   int isite, IniSpin, FinSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1841,6 +1857,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
   }
   
   return dam_pr;
+#endif
 }
 
 double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
@@ -1856,6 +1873,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
 							  double complex *tmp_v1
 							  )
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j;
   int origin, ierr, isite, IniSpin, FinSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1901,6 +1919,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
       }
     }
     return dam_pr;
+#endif
 }
 
 
@@ -1915,6 +1934,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
 							  double complex *tmp_v1
 							  )
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j, num1;
   int origin, ierr, isite, IniSpin;
   double complex tmp_V, dmv, dam_pr;
@@ -1937,6 +1957,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   }
 
   return dam_pr;
+#endif
 }
 
 
@@ -1953,45 +1974,62 @@ void child_general_int_GeneralSpin_MPIdouble(
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
+  double complex dam_pr;
+  dam_pr = X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(X->Def.InterAll_OffDiagonal[i_int][0],
+						      X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
+						      X->Def.InterAll_OffDiagonal[i_int][4],
+						      X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
+						      X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  X->Large.prdct += dam_pr;
+
+}/*void GC_child_general_int_spin_MPIdouble*/
+
+
+double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+							  int org_isite1,
+							  int org_ispin1,
+							  int org_ispin2,
+							  int org_isite3,
+							  int org_ispin3,
+							  int org_ispin4,
+							  double complex tmp_J,
+							  struct BindStruct *X,
+							  double complex *tmp_v0,
+							  double complex *tmp_v1
+							  )
+{
+#ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
   int origin, ierr;
   double complex tmp_V, dmv, dam_pr;
   MPI_Status statusMPI;
+  int ihermite=TRUE;
 
-  if (GetOffCompGeneralSpin((unsigned long int)myrank,
-    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
-    X->Def.InterAll_OffDiagonal[i_int][5],
-    X->Def.InterAll_OffDiagonal[i_int][7], &tmp_off,
-    X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+  if (GetOffCompGeneralSpin((unsigned long int)myrank, org_isite3 + 1, org_ispin3, org_ispin4, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
-    if (GetOffCompGeneralSpin(tmp_off,
-      X->Def.InterAll_OffDiagonal[i_int][0] + 1,
-      X->Def.InterAll_OffDiagonal[i_int][1],
-      X->Def.InterAll_OffDiagonal[i_int][3], &off,
-      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin1, org_ispin2, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
     {
-      tmp_V = X->Def.ParaInterAll_OffDiagonal[i_int];
+      tmp_V = tmp_J;
     }
-    else return;
-  }
-  else if (GetOffCompGeneralSpin((unsigned long int)myrank,
-    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
-    X->Def.InterAll_OffDiagonal[i_int][7],
-    X->Def.InterAll_OffDiagonal[i_int][5], &tmp_off,
-    X->Def.SiteToBit, X->Def.Tpow) == TRUE)
-  {
-    if (GetOffCompGeneralSpin(tmp_off,
-      X->Def.InterAll_OffDiagonal[i_int][0] + 1,
-      X->Def.InterAll_OffDiagonal[i_int][3],
-      X->Def.InterAll_OffDiagonal[i_int][1], &off,
-      X->Def.SiteToBit, X->Def.Tpow) == TRUE)
-    {
-      tmp_V = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
+    else{
+      ihermite =FALSE;
     }
-    else return;
   }
-  else return;
-
+  if(ihermite==FALSE){
+    if(GetOffCompGeneralSpin((unsigned long int)myrank, org_isite3 + 1, org_ispin4, org_ispin3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+      {
+	if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin2, org_ispin1, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+	  {
+	    tmp_V = conj(tmp_J);
+	    if(X->Large.mode == M_CORR){
+	      tmp_V=0.0;
+	    }
+	  }
+	else return 0.0;
+      }
+  }
+  else return 0.0;
+  
   origin = (int)off;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
@@ -2012,10 +2050,101 @@ void child_general_int_GeneralSpin_MPIdouble(
     if (X->Large.mode == M_MLTPLY) tmp_v0[off] += dmv;
     dam_pr += conj(tmp_v1[off]) * dmv;
   }
-  X->Large.prdct += dam_pr;
+  
+  return dam_pr;
+#endif
+}
 
-}/*void GC_child_general_int_spin_MPIdouble*/
+ 
+double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
+							  int org_isite1,
+							  int org_ispin1,
+							  int org_isite3,
+							  int org_ispin3,
+							  double complex tmp_J,
+							  struct BindStruct *X,
+							  double complex *tmp_v0,
+							  double complex *tmp_v1
+							  )
+{
+#ifdef MPI
+  unsigned long int j, num1;
+  int isite;
+  double complex tmp_V, dmv, dam_pr;
 
+  if(org_isite1 ==org_isite3 && org_ispin1==org_ispin3){
+    num1 = BitCheckGeneral((unsigned long int)myrank, org_isite1+1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
+    if(num1 != FALSE){
+      tmp_V = tmp_J;
+    }
+    else{
+      return 0.0;
+    }
+  }
+  else{
+    num1 = BitCheckGeneral((unsigned long int)myrank, org_isite1+1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
+    if(num1 != FALSE){
+      num1 =BitCheckGeneral((unsigned long int)myrank, org_isite3+1, org_ispin3, X->Def.SiteToBit, X->Def.Tpow);
+      if(num1 != FALSE){
+	tmp_V = tmp_J;
+      }
+      else{
+	return 0.0;
+      }
+    }
+    else{
+      return 0.0;
+    }
+  }
+  
+  dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1) 
+  for (j = 1; j <= X->Check.idim_max; j++) {
+    dmv = tmp_v1[j] * tmp_V;
+    if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
+    dam_pr += conj(tmp_v1[j]) * dmv;
+  }
+  return dam_pr;
+#endif
+}
+
+ double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
+							  int org_isite1,
+							  int org_ispin1,
+							  int org_isite3,
+							  int org_ispin3,
+							  double complex tmp_J,
+							  struct BindStruct *X,
+							  double complex *tmp_v0,
+							  double complex *tmp_v1
+							  )
+{
+#ifdef MPI
+  unsigned long int tmp_off, off, j, num1;
+  int origin, ierr, isite, IniSpin;
+  double complex tmp_V, dmv, dam_pr;
+  MPI_Status statusMPI;
+
+  num1 = BitCheckGeneral((unsigned long int)myrank, org_isite3+1, org_ispin3, X->Def.SiteToBit, X->Def.Tpow);
+  if(num1 != FALSE){
+      tmp_V = tmp_J;
+  }
+  else return 0.0;
+  
+  dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp_v0, tmp_v1, list_1) 
+  for (j = 1; j <= X->Check.idim_max; j++) {
+    num1 = BitCheckGeneral(list_1[j], org_isite1+1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
+
+    dmv = tmp_v1[j] * tmp_V*num1;
+    if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
+    dam_pr += conj(tmp_v1[j]) * dmv;
+  }
+
+  return dam_pr;
+#endif
+}
+ 
 /**
   *
   * General interaction term in the Spin model + GC
@@ -2029,34 +2158,55 @@ void child_general_int_GeneralSpin_MPIsingle(
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
+  double complex dam_pr;
+
+  dam_pr = X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0],
+						      X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
+						      X->Def.InterAll_OffDiagonal[i_int][4],
+						      X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
+						      X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+
+  X->Large.prdct += dam_pr;
+
+}/*void GC_child_general_int_spin_MPIsingle*/
+
+double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+							  int org_isite1,
+							  int org_ispin1,
+							  int org_ispin2,
+							  int org_isite3,
+							  int org_ispin3,
+							  int org_ispin4,
+							  double complex tmp_J,
+							  struct BindStruct *X,
+							  double complex *tmp_v0,
+							  double complex *tmp_v1
+							  )
+{
+#ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
   int origin, ierr, isite, IniSpin, FinSpin;
   double complex tmp_V, dmv, dam_pr;
   MPI_Status statusMPI;
   
   if (GetOffCompGeneralSpin((unsigned long int)myrank,
-    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
-    X->Def.InterAll_OffDiagonal[i_int][5],
-    X->Def.InterAll_OffDiagonal[i_int][7], &off,
+    org_isite3 + 1, org_ispin3, org_ispin4, &off,
     X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
-    tmp_V = X->Def.ParaInterAll_OffDiagonal[i_int];
-    isite = X->Def.InterAll_OffDiagonal[i_int][0] + 1;
-    IniSpin = X->Def.InterAll_OffDiagonal[i_int][3];
-    FinSpin = X->Def.InterAll_OffDiagonal[i_int][1];
+    tmp_V = tmp_J;
+    isite = org_isite1 + 1;
+    IniSpin = org_ispin2;
+    FinSpin = org_ispin1;
   }
   else if (GetOffCompGeneralSpin((unsigned long int)myrank,
-    X->Def.InterAll_OffDiagonal[i_int][4] + 1,
-    X->Def.InterAll_OffDiagonal[i_int][7],
-    X->Def.InterAll_OffDiagonal[i_int][5], &off,
-    X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    org_isite3 + 1, org_ispin4, org_ispin3, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
-    tmp_V = conj(X->Def.ParaInterAll_OffDiagonal[i_int]);
-    isite = X->Def.InterAll_OffDiagonal[i_int][0] + 1;
-    IniSpin = X->Def.InterAll_OffDiagonal[i_int][1];
-    FinSpin = X->Def.InterAll_OffDiagonal[i_int][3];
+    tmp_V = conj(tmp_J);
+    isite = org_isite1 + 1;
+    IniSpin = org_ispin1;
+    FinSpin = org_ispin2;
   }
-  else return;
+  else return 0.0;
 
   origin = (int)off;
   
@@ -2082,9 +2232,11 @@ void child_general_int_GeneralSpin_MPIsingle(
       dam_pr += conj(tmp_v1[off]) * dmv;
     }
   }
-  X->Large.prdct += dam_pr;
+  
+  return dam_pr;
+#endif
+}
 
-}/*void GC_child_general_int_spin_MPIsingle*/
 
 
 /**

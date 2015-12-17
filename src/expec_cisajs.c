@@ -252,16 +252,16 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	      dam_pr+=X_Spin_CisAis(j,X, isite1,org_sigma1)*conj(vec[j])*vec[j]; 
 	    }
 	  }
-	  dam_pr = SumMPI_dc(dam_pr);
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr), cimag(dam_pr));
 	}
 	else{	  
-	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,0.0,0.0);
+	  dam_pr=0.0;
 	}	
       }else{
-	// for the canonical case 
-	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,0.0,0.0);
+	// for the canonical case
+	dam_pr =0.0;
       }
+      dam_pr = SumMPI_dc(dam_pr);
+      fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr), cimag(dam_pr));
     }
     }//FlgGeneralSpin=FALSE
     else{
