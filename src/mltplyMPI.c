@@ -741,7 +741,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
     origin = myrank ^ (mask1 + mask2);
   }
   else{
-    if(org_ispin1 ==org_ispin4){ //CisAitCitAis=CisAis
+    if(org_ispin1 ==org_ispin4 && org_ispin2==org_ispin3){ //CisAitCitAis=CisAis
       dam_pr =  X_GC_child_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
     return (dam_pr);
     }
@@ -830,27 +830,32 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
 {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr;
-  long int origin;
+  long int origin, num1;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr,  tmp_off;
   int tmp_sgn;
+
+  if(org_isite1== org_isite3 && org_ispin1 == org_ispin4){//CisAisCitAis
+    return 0.0;
+  }
   
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
   origin = myrank ^ mask2;
   state2 = (origin & mask2) / mask2;
-  if(state2 == org_ispin4){
+  num1 =  X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask1, org_ispin1);
+  if(num1 !=0 && state2 == org_ispin4){
     Jint = tmp_J;
   }
-  else if(state2 == org_ispin3){
-    Jint = conj(tmp_J);
-    if(X->Large.mode == M_CORR){
-      Jint = 0;
-    }
+  else if(X_SpinGC_CisAis(origin + 1, X, mask1, org_ispin1)==TRUE && state2==org_ispin3){
+    Jint=conj(tmp_J);
+    if(X->Large.mode == M_CORR) Jint=0;
   }
-  else return 0.0;
-
+  else{
+    return 0.0;
+  }
+  
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
@@ -912,24 +917,34 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
 					    double complex *tmp_v1)
 {
 #ifdef MPI
-  int mask1, mask2, state1, state2, ierr;
+  int mask1, mask2, state1, state2, ierr, num1;
   long int origin;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr,  tmp_off;
+
+  if(org_isite1 ==org_isite3 && org_ispin1==org_ispin3){//cisaitcisais
+    return 0.0;
+  }
   
-  mask1 = (int)X->Def.Tpow[org_isite1];
-  mask2 = (int)X->Def.Tpow[org_isite3];
+  mask1 = (int)X->Def.Tpow[org_isite1];  
   origin = myrank ^ mask1;
   state1 = (origin & mask1)/mask1;
-
-  if(state1 == org_ispin2){
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  num1 =  X_SpinGC_CisAis(origin+1, X, mask2, org_ispin3);
+  if(state1 == org_ispin2 && num1 !=0){
     Jint = tmp_J;
   }
   else if(state1 == org_ispin1){
-    Jint = conj(tmp_J);
-     if(X->Large.mode == M_CORR){
-      Jint = 0;
+    num1 =  X_SpinGC_CisAis((unsigned long int)myrank+1, X, mask2, org_ispin3);
+    if(num1 !=0){
+      Jint = conj(tmp_J);
+      if(X->Large.mode == M_CORR){
+	Jint = 0;
+      }
+    }
+    else{
+      return 0.0;
     }
   }
   else{
@@ -1268,7 +1283,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle( int org_isite1, int org_i
   Prepare index in the inter PE
   */
   mask2 = (int)X->Def.Tpow[org_isite3];
-  state2 = (origin & mask2) / mask2;
+  state2 = (myrank & mask2) / mask2;
 
   if (state2 == org_ispin3) {
     state1check = org_ispin2;
