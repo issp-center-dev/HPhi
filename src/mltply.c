@@ -356,56 +356,51 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
       break;
 
     case SpinGC:
-      if (X->Def.iFlgGeneralSpin == FALSE) {
-       
-        for (i = 0; i < X->Def.EDNTransfer/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
-	    isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-	    isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-	    sigma1 = X->Def.EDGeneralTransfer[idx][1];
-	    sigma2 = X->Def.EDGeneralTransfer[idx][3];
-	    tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-	    if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
-	      return -1;
-	    }
-	    
+      if (X->Def.iFlgGeneralSpin == FALSE) {	
+        for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
+	  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
 	    dam_pr=0;
-	    if(isite1 ==isite2){
-	      if(isite1 > X->Def.Nsite){
-		if(sigma1==sigma2){
-		  fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
-		}
-		else{
-		  dam_pr += X_GC_child_CisAit_spin_MPIdouble(isite1-1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
-		}
-	      }
-	      else{
-		if(sigma1==sigma2){
-		  fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
-		}
-		else{
-		  // longitudinal magnetic field (considerd in diagonalcalc.c)
-		  // transverse magnetic field
-		  is1_spin = X->Def.Tpow[isite1 - 1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) shared(tmp_v0, tmp_v1)
-		  for (j = 1; j <= i_max; j++) {
-		    tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
-		    if(tmp_sgn !=0){
-		      tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		      dam_pr += tmp_trans * conj(tmp_v1[off + 1]) * tmp_v1[j];
-		    }
-		  }
-		}//sigma1 != sigma2
-	      }
+	    if(X->Def.EDGeneralTransfer[idx][1]==X->Def.EDGeneralTransfer[idx][3]){
+	      fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 	    }
 	    else{
-	      fprintf(stderr, "hopping is not allowed in localized spin system.\n");
-	      return -1;
+	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
 	    }
-	    X->Large.prdct += dam_pr;
 	  }
+	  else{
+	    dam_pr=0;
+	    for(ihermite=0; ihermite<2; ihermite++){
+	      idx=i+ihermite;
+	      isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+	      isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+	      sigma1 = X->Def.EDGeneralTransfer[idx][1];
+	      sigma2 = X->Def.EDGeneralTransfer[idx][3];
+	      tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+	      if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+		return -1;
+	      }
+	      
+	      if(sigma1==sigma2){
+		fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
+	      }
+	      else{
+		// longitudinal magnetic field (considerd in diagonalcalc.c)
+		// transverse magnetic field
+		is1_spin = X->Def.Tpow[isite1 - 1];
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) shared(tmp_v0, tmp_v1)
+		for (j = 1; j <= i_max; j++) {
+		  tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
+		  if(tmp_sgn !=0){
+		    tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
+		    dam_pr += tmp_trans * conj(tmp_v1[off + 1]) * tmp_v1[j];
+		  }
+		}
+	      }//sigma1 != sigma2
+	    }
+	  }
+	  X->Large.prdct += dam_pr;
 	}
+      
 
 	//InterAll	
         for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
@@ -1814,6 +1809,7 @@ shared(tmp_v0, tmp_v1)
     long unsigned int list_1_j, ibit_tmp_1;
 
     list_1_j = j - 1;
+    
     ibit_tmp_1 = list_1_j & is1_spin;
     if (ibit_tmp_1 == 0 && sigma2 == 0) {    // down -> up
       *tmp_off = list_1_j + is1_spin;
@@ -1824,7 +1820,7 @@ shared(tmp_v0, tmp_v1)
     } else {
       *tmp_off = 1;
       return 0;
-    }
+      }        
   }
 /******************************************************************************/
 //[e] core routines

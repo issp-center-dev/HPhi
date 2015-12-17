@@ -737,13 +737,19 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
 
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
-  if(mask1==mask2){
-    //should show error message and return 0 ?
-    origin =myrank^mask1;
-  }
-  else{
+  if(org_isite1 != org_isite3){
     origin = myrank ^ (mask1 + mask2);
   }
+  else{
+    if(org_ispin1 ==org_ispin4){ //CisAitCitAis=CisAis
+      dam_pr =  X_GC_child_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
+    return (dam_pr);
+    }
+    else{ //CisAitCisAit=0
+      return 0.0;
+    }
+  }
+  
   
   state1 = (origin & mask1) / mask1;
   state2 = (origin & mask2) / mask2;
@@ -2092,13 +2098,13 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   origin = myrank ^ mask1;
   state1 = (origin & mask1)/mask1;
   
-  if(state1 ==  org_ispin1){
+  if(state1 ==  org_ispin2){
     trans = tmp_trans;
   }
-  else if(state1 == org_ispin2) {
+  else if(state1 == org_ispin1) {
     trans = conj(tmp_trans);
     if(X->Large.mode == M_CORR){
-      trans = 0;
+      trans = 0.0;
     }
   }
   else{
@@ -2106,13 +2112,13 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   }
   
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+		      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-
+		      v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  
   dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
-  for (j = 1; j <= idim_max_buf; j++) {
+  for (j = 1; j <= X->Check.idim_max ; j++) {
     dmv = trans * v1buf[j];
     if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
     dam_pr += conj(tmp_v1[j]) * dmv;
