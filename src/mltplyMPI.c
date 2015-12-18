@@ -2332,3 +2332,21 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
   return dam_pr;
 #endif
 }
+
+int CheckPE(int isite, struct BindStruct *X){
+	if(isite > X->Def.Nsite){
+		return TRUE;
+	}
+	else{
+		return FALSE;
+	}
+}
+
+int CheckBit_Cis(
+		int isite,
+		int isigma,
+		unsigned long int orgbit,
+		unsigned long int *offbit
+){
+
+}
