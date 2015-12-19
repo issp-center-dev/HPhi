@@ -38,7 +38,7 @@ struct DefineList{
   int  Nsite;    /**< */
   int  Nup;    /**< Read from modpara in readdef */
   int Ndown;    /**< */
-  int  TotalSz;    /**< */
+  int  Total2Sz;    /**< */
   int  Ne;    /**< */
   int  Nsize;    /**< */
   int Lanczos_max;    /**< */
@@ -50,7 +50,9 @@ struct DefineList{
   
   int *LocSpn;    /**< [NLocSpn] */
   int  NLocSpn;    /**< */
+  int NCond;
   int iFlgGeneralSpin;
+  int iFlgSzConserved;
   
   int fidx;    /**< */
   long int *Tpow;    /**< [2 * Nsite] 2^n */
@@ -147,6 +149,13 @@ struct DefineList{
   /**<  An integer for selecting calculation model. 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC, 6:HubbardNConserved*/
   int iOutputMode;
   /**<   An integer for selecting output mode. 0: OneBodyG and TwoBodyG. 1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
+
+  /**< An integer for selecting output an eigenvector. 0: no output, 1:output.*/
+  int iOutputEigenVec;
+
+    /**< An integer for selecting output an eigenvector. 0: no input, 1:input*/
+  int iInputEigenVec;
+  
 };
 
 struct CheckList{
@@ -205,6 +214,7 @@ struct PhysList{
   double num_up;
   double num_down;
   double s2;
+  double sz;
   double *all_energy;
   double *all_doublon;
   double *all_s2;

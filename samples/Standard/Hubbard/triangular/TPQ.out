@@ -1,3 +1,13 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Hubbard/triangular HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i6n31 1
+
 
 
 #####  Parallelization Info.  #####
@@ -44,7 +54,6 @@
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-              2Sz = 0  
             nelec = 8  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
@@ -93,6 +102,7 @@ End  : Calc Sz.
 Start: calc diagaonal components of Hamiltonian. 
 End  : calc diagaonal components of Hamiltonian. 
 rand_i=0 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -103,6 +113,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=1 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -113,6 +124,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=2 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -123,6 +135,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=3 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -133,6 +146,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=4 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -142,4 +156,4 @@ step_i/total_step=1200/2000
 step_i/total_step=1400/2000 
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
-Finish: Elapsed time is 26 [s].
+Finish: Elapsed time is 27 [s].

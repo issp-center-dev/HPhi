@@ -175,6 +175,8 @@ int ReadcalcmodFile(
   X->iOutputMode=0;
   X->iCalcEigenVec=0;
   X->iInitialVecType=0;
+  X->iOutputEigenVec=0;
+  X->iInputEigenVec=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -201,6 +203,12 @@ int ReadcalcmodFile(
     }
     else if(strcmp(ctmp, "InitialVecType")==0){
       X->iInitialVecType=itmp;
+    }
+    else if(strcmp(ctmp, "OutputEigenVec")==0 || strcmp(ctmp, "OEV")==0){
+      X->iOutputEigenVec=itmp;
+    }
+    else if(strcmp(ctmp, "InputEigenVec")==0 || strcmp(ctmp, "IEV")==0){
+      X->iInputEigenVec=itmp;
     }
     else{
       fprintf(stderr, cErrDefFileParam, defname, ctmp);
@@ -320,8 +328,8 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
-  int iNcond=0;
-  int iReadSz=FALSE;
+  X->NCond=0;
+  X->iFlgSzConserved=FALSE;
   int iReadNCond=FALSE;
 
   InitializeInteractionNum(X);
@@ -398,15 +406,15 @@ int ReadDefFileNInt(
 	}
 	else if(strcmp(ctmp, "Ndown")==0){
 	  X->Ndown=(int)dtmp;
-	  X->TotalSz=X->Nup-X->Ndown;
+	  X->Total2Sz=X->Nup-X->Ndown;
 	}
 	else if(strcmp(ctmp, "2Sz")==0){
-	  X->TotalSz=(int)dtmp;
-	  iReadSz=TRUE;
+	  X->Total2Sz=(int)dtmp;
+	  X->iFlgSzConserved=TRUE;
 	}
 	else if(strcmp(ctmp, "Ncond")==0){
-	  iNcond=(int)dtmp;
-	  iReadNCond=TRUE;
+	  X->NCond=(int)dtmp;
+	  iReadNCond=TRUE;	  
 	}
 	else if(strcmp(ctmp, "Lanczos_max")==0){
 	  X->Lanczos_max=(int)dtmp;
@@ -526,42 +534,61 @@ int ReadDefFileNInt(
 
   //Sz, Ncond
   switch(X->iCalcModel){
-  case Hubbard:
   case Spin:
+  case Hubbard:
   case Kondo:
+    
     if(iReadNCond==TRUE){
-      if(iReadSz==TRUE){
-	X->Nup=(X->NLocSpn+iNcond+X->TotalSz)/2;
-	X->Ndown=(X->NLocSpn+iNcond-X->TotalSz)/2;      
+      if(X->iCalcModel==Spin){
+	fprintf(stderr, "For Spin, Ncond should not be defined.\n");	
+	return -1;
       }
       else{
-	if(X->iCalcModel == Hubbard){
-	  X->Ne=iNcond;
-      if(iNcond <1){
-        fprintf(stderr, "Ncond is incorrect.");
-        return -1;
-      }
-	  X->iCalcModel=HubbardNConserved;
+	if(X->iFlgSzConserved==TRUE){
+	  X->Nup=X->NLocSpn+X->NCond+X->Total2Sz;
+	  X->Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
+	  X->Nup/=2;
+	  X->Ndown/=2;
 	}
 	else{
-	  fprintf(stderr, " 2Sz is not defined.");
+	  if(X->iCalcModel == Hubbard){
+	    X->Ne=X->NCond;
+	    if(X->Ne <1){
+	      fprintf(stderr, "Ncond is incorrect.\n");
+	      return -1;
+	    }
+	    X->iCalcModel=HubbardNConserved;
+	  }
+	  else{
+	    fprintf(stderr, " 2Sz is not defined.\n");
+	    return -1;
+	  }
+	}
+      }
+    }
+    else if(iReadNCond == FALSE && X->iFlgSzConserved==TRUE){
+      if(X->iCalcModel != Spin){
+	fprintf(stderr, " NCond is not defined.\n");
+	return -1;
+      }
+      X->Nup=X->NLocSpn+X->Total2Sz;
+      X->Ndown=X->NLocSpn-X->Total2Sz;
+      X->Nup /= 2;
+      X->Ndown /= 2;
+    }
+    else{
+      if(X->Nup==0 && X->Ndown==0){
+	if(X->iCalcModel == Spin){
+	  fprintf(stderr, " 2Sz is not defined.\n");
+	  return -1;
+	}
+	else{
+	  fprintf(stderr, " NCond is not defined.\n");
 	  return -1;
 	}
       }
     }
-    else if(iReadNCond == FALSE && iReadSz==TRUE){
-      if(X->iCalcModel != Spin){
-	fprintf(stderr, " NCond is not defined.");
-	return -1;
-      }
-    }
-    else{
-      if(X->Nup==0 && X->Ndown==0){
-	fprintf(stderr, " NCond is not defined.");
-	return -1;
-      }
-    }
-
+    
     if(X->iCalcModel == Spin){
       X->Ne=X->Nup;
     }
@@ -574,6 +601,14 @@ int ReadDefFileNInt(
 	fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
 	return -1;
       }
+    }
+    break;
+  case SpinGC:
+  case KondoGC:
+  case HubbardGC:
+    if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
+	fprintf(stderr, "For GC, both Ncond and 2Sz should not be defined.\n");
+	return -1;
     }
     break;
   default:
@@ -793,20 +828,26 @@ int ReadDefFileIdxPara(
       break;
     case KWPairHop:
       /*pairhop.def---------------------------------------*/
+      if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
+	fprintf(stderr, "PairHop is not active in Spin and SpinGC.\n");
+	return -1;
+      }
+      
       if(X->NPairHopping>0){
 	while(fgetsMPI(ctmp2, 256, fp) != NULL){
-    sscanf(ctmp2, "%d %d %lf\n",
-      &(X->PairHopping[idx][0]),
-      &(X->PairHopping[idx][1]),
-      &(X->ParaPairHopping[idx])
-      );
-
+	  sscanf(ctmp2, "%d %d %lf\n",
+		 &(X->PairHopping[idx][0]),
+		 &(X->PairHopping[idx][1]),
+		 &(X->ParaPairHopping[idx])
+		 );
+	  
 	  if(CheckPairSite(X->PairHopping[idx][0], X->PairHopping[idx][1],X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
 	  }
 	  idx++;
 	}
+	
 	if(idx!=X->NPairHopping){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
@@ -874,7 +915,7 @@ int ReadDefFileIdxPara(
       /*pairlift.def--------------------------------------*/
       if(X->NPairLiftCoupling>0){
 	if(X->iCalcModel != SpinGC){
-	  fclose(fp);
+	  fprintf(stderr, "PairLift is active only in SpinGC.\n");
 	  return -1;
 	}
 	while(fgetsMPI(ctmp2,256,fp) != NULL)
@@ -1170,13 +1211,15 @@ int CheckQuadSite(
  * @param[in] X Define List for getting transfer integrals.
  * @retval 0 Hermite.
  * @retval -1 NonHermite.
+ * @version 0.2
+ * @details rearray a GeneralTransfer array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
 int CheckTransferHermite
 (
- const struct DefineList *X
+ struct DefineList *X
  )
 {
   int i,j;
@@ -1185,12 +1228,15 @@ int CheckTransferHermite
   int itmpsite1, itmpsite2;
   int itmpsigma1, itmpsigma2;
   double  complex ddiff_trans;
+  int itmpIdx, icntHermite, icntchemi;
+  icntHermite=0;
+  icntchemi=0;
   for(i=0; i<X->NTransfer; i++){
     isite1=X->GeneralTransfer[i][0];
     isigma1=X->GeneralTransfer[i][1];
     isite2=X->GeneralTransfer[i][2];
     isigma2=X->GeneralTransfer[i][3];
-    for(j=i+1; j<X->NTransfer; j++){
+    for(j=0; j<X->NTransfer; j++){
       itmpsite1=X->GeneralTransfer[j][0];
       itmpsigma1=X->GeneralTransfer[j][1];
       itmpsite2=X->GeneralTransfer[j][2];
@@ -1203,10 +1249,42 @@ int CheckTransferHermite
 	    fprintf(stderr, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
 	    return -1;
 	  }
-	}
-      }      
+	  if(i<=j){
+	    if(2*icntHermite > X->NTransfer){
+	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
+	      return -1;
+	    }
+	    if(isite1 !=isite2 || isigma1 !=isigma2){
+	      for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+		X->EDGeneralTransfer[2*icntHermite][itmpIdx]=X->GeneralTransfer[i][itmpIdx];
+		X->EDGeneralTransfer[2*icntHermite+1][itmpIdx]=X->GeneralTransfer[j][itmpIdx];
+	      }
+	      X->EDParaGeneralTransfer[2*icntHermite]=X->ParaGeneralTransfer[i];
+	      X->EDParaGeneralTransfer[2*icntHermite+1]=X->ParaGeneralTransfer[j];
+	      icntHermite++;
+	    }
+	    else{
+	      X->EDChemi[icntchemi]     = X->GeneralTransfer[i][0];      
+	      X->EDSpinChemi[icntchemi] = X->GeneralTransfer[i][1];      
+	      X->EDParaChemi[icntchemi] = creal(X->ParaGeneralTransfer[i]);
+	      icntchemi+=1;
+	    }
+	  } 
+	}  
+      }
     }
   }
+  
+  X->EDNTransfer=2*icntHermite;
+  X->EDNChemi=icntchemi;
+
+  for(i=0; i<X->NTransfer; i++){
+    for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+      X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
+      }
+    X->ParaGeneralTransfer[i]=X->EDParaGeneralTransfer[i];
+  } 
+  
   return 0;
 }
 
@@ -1217,6 +1295,9 @@ int CheckTransferHermite
  * 
  * @retval 0 Hermite condition is satisfied
  * @retval -1 Hermite condition is not satisfied
+ * @version 0.2
+ * @details rearray a InterAll_OffDiagonal array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
+ * 
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -1230,8 +1311,10 @@ int CheckInterAllHermite
   int isigma1, isigma2, isigma3, isigma4;
   int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
   int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
+  int itmpIdx, icntHermite;
   double  complex ddiff_intall;
   icntincorrect=0;
+  icntHermite=0;
   for(i=0; i<X->NInterAll_OffDiagonal; i++){
     itmpret=0;
     isite1=X->InterAll_OffDiagonal[i][0];
@@ -1262,7 +1345,21 @@ int CheckInterAllHermite
 	    fprintf(stderr, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
 	    return -1;
 	  }
-	}
+
+	  if(i<=j){
+	    if(2*icntHermite > X->NInterAll_OffDiagonal){
+	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
+	      return -1;
+	    }
+	    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
+	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
+	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][itmpIdx];
+	    }
+	    X->ParaInterAll[2*icntHermite]=X->ParaInterAll_OffDiagonal[i];
+	    X->ParaInterAll[2*icntHermite+1]=X->ParaInterAll_OffDiagonal[j];
+	    icntHermite++;
+	  }
+	}	
       }
       //for spin
       else if(isite1 == itmpsite2 && isite2 ==itmpsite1 && isite3 == itmpsite4 && isite4 == itmpsite3){
@@ -1273,6 +1370,19 @@ int CheckInterAllHermite
 	    fprintf(stderr, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
 	    fprintf(stderr, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
 	    return -1;
+	  }	  
+	  if(i<=j){
+	    if(2*icntHermite > X->NInterAll_OffDiagonal){
+	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
+	      return -1;
+	    }	    
+	    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
+	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
+	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][itmpIdx];
+	    }
+	    X->ParaInterAll[2*icntHermite]=X->ParaInterAll_OffDiagonal[i];
+	    X->ParaInterAll[2*icntHermite+1]=X->ParaInterAll_OffDiagonal[j];
+	    icntHermite++;
 	  }
 	}
       }
@@ -1283,11 +1393,17 @@ int CheckInterAllHermite
       icntincorrect++;
     }
   }
-
-  if( icntincorrect !=0){
-    return -1;
-  }  
-  return 0;
+    if( icntincorrect !=0){
+      return -1;
+    }
+  
+    for(i=0; i<X->NInterAll_OffDiagonal; i++){
+      for(itmpIdx=0; itmpIdx<8; itmpIdx++){
+	X->InterAll_OffDiagonal[i][itmpIdx]=X->InterAll[i][itmpIdx];
+      }
+      X->ParaInterAll_OffDiagonal[i]=X->ParaInterAll[i];
+    }
+    return 0;
 }
 
 /** 
@@ -1628,7 +1744,11 @@ int CheckLocSpin
   default:
     return FALSE;
     break;
-  }  
+  }
+
+  if(CheckTotal2Sz(X) != TRUE){
+    return FALSE;
+  }
   return TRUE;
 }  
 
@@ -1744,3 +1864,31 @@ int CheckSpinIndexForTrans
   }
   return TRUE;
 }
+
+/** 
+ * @brief function of checking an input data of total2Sz
+ * 
+ * @param[in] X Define list to get informations of transfers
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckTotal2Sz
+(
+  struct DefineList *X
+ )
+{
+  if(X->iFlgSzConserved==TRUE && X->iFlgGeneralSpin==FALSE){
+    int tmp_Nup=X->NLocSpn+X->NCond+X->Total2Sz;
+    int tmp_Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
+    if(tmp_Nup%2 != 0 && tmp_Ndown%2 !=0){
+      printf("Nup=%d, Ndown=%d\n",X->Nup,X->Ndown);
+      fprintf(stderr, "2Sz is incorrect.\n");
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+

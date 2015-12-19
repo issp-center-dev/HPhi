@@ -1,3 +1,13 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Kondo/chain HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i6n31 1
+
 
 
 #####  Parallelization Info.  #####
@@ -25,6 +35,7 @@
 
                 L = 6  
                 a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
                mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
                 t = 1.00000   
                 J = 4.00000   
@@ -39,7 +50,6 @@
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-              2Sz = 0  
             nelec = 6  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
@@ -81,18 +91,18 @@ LARGE ALLOCATE FINISH !
 EDTrans EDNTransfer=24 
 EDTrans EDNChemi=0 
 Start: Calc Sz. 
-j = 0 loc 1 
-j = 1 loc 0 
-j = 2 loc 1 
-j = 3 loc 0 
-j = 4 loc 1 
-j = 5 loc 0 
-j = 6 loc 1 
-j = 7 loc 0 
-j = 8 loc 1 
-j = 9 loc 0 
-j = 10 loc 1 
-j = 11 loc 0 
+j = 0 loc 0 
+j = 1 loc 1 
+j = 2 loc 0 
+j = 3 loc 1 
+j = 4 loc 0 
+j = 5 loc 1 
+j = 6 loc 0 
+j = 7 loc 1 
+j = 8 loc 0 
+j = 9 loc 1 
+j = 10 loc 0 
+j = 11 loc 1 
 idim=16777216.000000 irght=4095 ilft=16773120 ihfbit=4096 
 num_threads==24
 N_all_up=6 N_all_down=6 
@@ -101,6 +111,7 @@ End  : Calc Sz.
 Start: calc diagaonal components of Hamiltonian. 
 End  : calc diagaonal components of Hamiltonian. 
 rand_i=0 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -111,6 +122,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=1 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -121,6 +133,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=2 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -131,6 +144,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=3 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -141,6 +155,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=4 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -150,4 +165,4 @@ step_i/total_step=1200/2000
 step_i/total_step=1400/2000 
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
-Finish: Elapsed time is 40 [s].
+Finish: Elapsed time is 31 [s].

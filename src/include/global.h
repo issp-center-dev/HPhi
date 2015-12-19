@@ -43,6 +43,10 @@ long unsigned  int *list_2_1;
 long unsigned  int *list_2_2;
 long unsigned  int *list_jb;
 int *list_3;
+long unsigned int *HilbertNumToSz;
+int *list_2_1_Sz;
+int *list_2_2_Sz;
+
 
 /*[s] For Lanczos */
 //double *eigen_vec;
@@ -97,6 +101,8 @@ const char* cFileName2BGreen_CG;
 const char* cFileNameTimeEV_CG;
 const char* cFileNameListModel;
 const char* cFileNameListKondo;
+const char* cFileNameOutputEigen;
+const char* cFileNameInputEigen;
 
 //For TPQ
 const char* cFileNameSSRand;

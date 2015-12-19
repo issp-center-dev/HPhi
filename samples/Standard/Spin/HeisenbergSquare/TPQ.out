@@ -1,3 +1,13 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Spin/HeisenbergSquare HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i5n29 1
+
 
 
 #####  Parallelization Info.  #####
@@ -25,6 +35,7 @@
                 L = 4  
                 W = 4  
                 a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######
@@ -97,6 +108,7 @@ End  : Calc Sz.
 Start: calc diagaonal components of Hamiltonian. 
 End  : calc diagaonal components of Hamiltonian. 
 rand_i=0 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -107,6 +119,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=1 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -117,6 +130,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=2 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -127,6 +141,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=3 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -137,6 +152,7 @@ step_i/total_step=1400/2000
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
 rand_i=4 
+CHECK: TPQ complex initial vector 
 step_i/total_step=200/2000 
 step_i/total_step=400/2000 
 step_i/total_step=600/2000 
@@ -146,4 +162,4 @@ step_i/total_step=1200/2000
 step_i/total_step=1400/2000 
 step_i/total_step=1600/2000 
 step_i/total_step=1800/2000 
-Finish: Elapsed time is 50 [s].
+Finish: Elapsed time is 43 [s].

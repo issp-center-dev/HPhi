@@ -96,7 +96,7 @@ int CheckQuadSite(
 
 int CheckTransferHermite
 (
- const struct DefineList *X
+ struct DefineList *X
 );
 
 int CheckInterAllHermite
@@ -160,6 +160,11 @@ int CheckSpinIndexForInterAll
  );
 
 int CheckSpinIndexForTrans
+(
+  struct DefineList *X
+ );
+
+int CheckTotal2Sz
 (
   struct DefineList *X
  );

@@ -202,27 +202,22 @@ void Spin_SquareLattice(
   /*
   Transfer
   */
-  ntrans = L * W * 4;
+  ntrans = L * W * (S2 + 1 + 2*S2);
   transindx = (int **)malloc(sizeof(int*) * ntrans);
   trans = (double *)malloc(sizeof(double) * ntrans);
   for (ktrans = 0; ktrans < ntrans; ktrans++){
     transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
   }
 
-  S = (double)S2 * 0.5;
-
   ktrans = 0;
   for (isite = 0; isite < nsite; isite++){
-    jsite = isite;
-    StdFace_trans(&ktrans, - h * S, isite, 0, jsite, 0);
-    StdFace_trans(&ktrans,   h * S, isite, 1, jsite, 1);
-    StdFace_trans(&ktrans, S * Gamma, isite, 0, isite, 1);
-    StdFace_trans(&ktrans, S * Gamma, isite, 1, isite, 0);
+    StdFace_MagLong(&ktrans, -h, isite);
+    StdFace_MagTrans(&ktrans, -Gamma, isite);
   }
   /*
   Interaction
   */
-  nintr = L * W * (4 * 5 + 2 * 8);
+  nintr = L * W * ((S2 + 1) * (S2 + 1) * 5 + 2 * S2 * S2 * 8);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -265,6 +260,7 @@ void Spin_SquareLattice(
   /*
   Set mTPQ parameter
   */
+  S = (double)S2 * 0.5;
   if (lGC == 0){
     LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
       + 4.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))

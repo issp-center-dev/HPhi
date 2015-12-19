@@ -42,6 +42,51 @@ void StdFace_trans(
 }
 
 /**
+*
+* Add Longitudinal magnetic field to the list
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_MagLong(
+  int *ktrans /**< [inout] The counter for the transfer*/,
+  double Mag /**< [in] Longitudinal magnetic field h. */,
+  int isite /**< [in] i for c_{i sigma}^dagger*/)
+{
+  int ispin;
+  double S, Sz;
+ 
+  S = (double)S2 * 0.5;
+
+  for (ispin = 0; ispin <= S2; ispin++){
+    Sz = (double)ispin - S;
+    StdFace_trans(ktrans, Mag * Sz, isite, ispin, isite, ispin);
+  }
+}
+
+/**
+*
+* Add Transvars magnetic field to the list
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_MagTrans(
+  int *ktrans /**< [inout] The counter for the transfer*/,
+  double Mag /**< [in] Transvars magnetic field h. */,
+  int isite /**< [in] i for c_{i sigma}^dagger*/)
+{
+  int ispin;
+  double S, Sz;
+
+  S = (double)S2 * 0.5;
+
+  for (ispin = 0; ispin < S2; ispin++){
+    Sz = (double)ispin - S;
+    StdFace_trans(ktrans, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin + 1, isite, ispin);
+    StdFace_trans(ktrans, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin, isite, ispin + 1);
+  }
+}
+
+/**
  *
  * Add interaction to the list
  *

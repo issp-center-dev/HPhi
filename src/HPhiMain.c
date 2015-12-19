@@ -100,6 +100,7 @@ int main(int argc, char* argv[]){
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdoutMPI, "Dry run is Finished. \n\n");
+      FinalizeMPI();
       return 0;
     }
   }
@@ -148,7 +149,7 @@ int main(int argc, char* argv[]){
   if(!sz(&(X.Bind))==0){
     return -1;
   }
-
+  
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
     return 0;

@@ -115,17 +115,19 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     fprintf(stdoutMPI, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
     if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &h);
+    else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &D);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &exct);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &ExpecInterval);
     else if (strcmp(keyword, "filehead") == 0) StoreWithCheckDup_s(keyword, value, filehead);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &FlgTemp);
-    else if (strcmp(keyword, "g") == 0) StoreWithCheckDup_d(keyword, value, &D);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &Gamma);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &initial_iv);
     else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &J);
     else if (strcmp(keyword, "j0") == 0) StoreWithCheckDup_d(keyword, value, &J0);
     else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &J1);
+    else if (strcmp(keyword, "j1'") == 0) StoreWithCheckDup_d(keyword, value, &J1p);
     else if (strcmp(keyword, "j2") == 0) StoreWithCheckDup_d(keyword, value, &J2);
+    else if (strcmp(keyword, "j2'") == 0) StoreWithCheckDup_d(keyword, value, &J2p);
     else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &Jx);
     else if (strcmp(keyword, "jx0") == 0) StoreWithCheckDup_d(keyword, value, &Jx0);
     else if (strcmp(keyword, "jx1") == 0) StoreWithCheckDup_d(keyword, value, &Jx1);
@@ -167,6 +169,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_d(keyword, value, &t);
     else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_d(keyword, value, &t0);
     else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_d(keyword, value, &t1);
+    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_d(keyword, value, &t1p);
     else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_d(keyword, value, &t2);
     else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_d(keyword, value, &tp);
     else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_d(keyword, value, &tp);
@@ -174,6 +177,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &V);
     else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &V0);
     else if (strcmp(keyword, "v1") == 0) StoreWithCheckDup_d(keyword, value, &V1);
+    else if (strcmp(keyword, "v1'") == 0) StoreWithCheckDup_d(keyword, value, &V1p);
     else if (strcmp(keyword, "v2") == 0) StoreWithCheckDup_d(keyword, value, &V2);
     else if (strcmp(keyword, "v'") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
     else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
@@ -192,6 +196,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "fermionhubbardgc") == 0
@@ -200,6 +205,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "spin") == 0){
@@ -207,6 +213,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 0);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "spingc") == 0){
@@ -214,6 +221,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 1);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolattice") == 0){
@@ -221,6 +229,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolatticegc") == 0
@@ -229,6 +238,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
   else UnsupportedSystem(model,lattice);
@@ -294,6 +304,7 @@ static void StdFace_ResetVals(){
   tpp = 9999.9;
   t0 = 9999.9;
   t1 = 9999.9;
+  t1p = 9999.9;
   t2 = 9999.9;
   U = 9999.9;
   V = 9999.9;
@@ -301,13 +312,16 @@ static void StdFace_ResetVals(){
   Vpp = 9999.9;
   V0 = 9999.9;
   V1 = 9999.9;
+  V1p = 9999.9;
   V2 = 9999.9;
   J = 9999.9;
   Jp = 9999.9;
   Jpp = 9999.9;
   J0 = 9999.9;
   J1 = 9999.9;
+  J1p = 9999.9;
   J2 = 9999.9;
+  J2p = 9999.9;
   /**/
   Jx = 9999.9;
   Jy = 9999.9;
@@ -522,20 +536,123 @@ static void PrintInter(){
 
   for (jintr = 0; jintr < nintr; jintr++){
     for (kintr = jintr + 1; kintr < nintr; kintr++){
-      if ( intrindx[jintr][0] == intrindx[kintr][0]
+      if ( 
+        (  intrindx[jintr][0] == intrindx[kintr][0]
         && intrindx[jintr][1] == intrindx[kintr][1]
         && intrindx[jintr][2] == intrindx[kintr][2]
         && intrindx[jintr][3] == intrindx[kintr][3]
         && intrindx[jintr][4] == intrindx[kintr][4]
         && intrindx[jintr][5] == intrindx[kintr][5]
         && intrindx[jintr][6] == intrindx[kintr][6]
-        && intrindx[jintr][7] == intrindx[kintr][7]){
+        && intrindx[jintr][7] == intrindx[kintr][7] )
+        ||
+        (  intrindx[jintr][0] == intrindx[kintr][4]
+        && intrindx[jintr][1] == intrindx[kintr][5]
+        && intrindx[jintr][2] == intrindx[kintr][6]
+        && intrindx[jintr][3] == intrindx[kintr][7]
+        && intrindx[jintr][4] == intrindx[kintr][0]
+        && intrindx[jintr][5] == intrindx[kintr][1]
+        && intrindx[jintr][6] == intrindx[kintr][2]
+        && intrindx[jintr][7] == intrindx[kintr][3])
+        ){
         intr[jintr] = intr[jintr] + intr[kintr];
+        intr[kintr] = 0.0;
+      }
+      else if (
+        (  intrindx[jintr][0] == intrindx[kintr][4]
+        && intrindx[jintr][1] == intrindx[kintr][5]
+        && intrindx[jintr][2] == intrindx[kintr][2]
+        && intrindx[jintr][3] == intrindx[kintr][3]
+        && intrindx[jintr][4] == intrindx[kintr][0]
+        && intrindx[jintr][5] == intrindx[kintr][1]
+        && intrindx[jintr][6] == intrindx[kintr][6]
+        && intrindx[jintr][7] == intrindx[kintr][7])
+        ||
+        (  intrindx[jintr][0] == intrindx[kintr][0]
+        && intrindx[jintr][1] == intrindx[kintr][1]
+        && intrindx[jintr][2] == intrindx[kintr][6]
+        && intrindx[jintr][3] == intrindx[kintr][7]
+        && intrindx[jintr][4] == intrindx[kintr][4]
+        && intrindx[jintr][5] == intrindx[kintr][5]
+        && intrindx[jintr][6] == intrindx[kintr][2]
+        && intrindx[jintr][7] == intrindx[kintr][3])
+        ){
+        intr[jintr] = intr[jintr] - intr[kintr];
         intr[kintr] = 0.0;
       }
     }
   }
 
+  for (jintr = 0; jintr < nintr; jintr++) {
+    for (kintr = jintr + 1; kintr < nintr; kintr++) {
+      if ( intrindx[jintr][6] == intrindx[kintr][4]
+        && intrindx[jintr][7] == intrindx[kintr][5]
+        && intrindx[jintr][4] == intrindx[kintr][6]
+        && intrindx[jintr][5] == intrindx[kintr][7]
+        && intrindx[jintr][2] == intrindx[kintr][0]
+        && intrindx[jintr][3] == intrindx[kintr][1]
+        && intrindx[jintr][0] == intrindx[kintr][2]
+        && intrindx[jintr][1] == intrindx[kintr][3]
+        ) {
+        intrindx[kintr][0] = intrindx[jintr][6];
+        intrindx[kintr][1] = intrindx[jintr][7];
+        intrindx[kintr][2] = intrindx[jintr][4];
+        intrindx[kintr][3] = intrindx[jintr][5];
+        intrindx[kintr][4] = intrindx[jintr][2];
+        intrindx[kintr][5] = intrindx[jintr][3];
+        intrindx[kintr][6] = intrindx[jintr][0];
+        intrindx[kintr][7] = intrindx[jintr][1];
+      }
+      else if (
+        (intrindx[jintr][6] == intrindx[kintr][4]
+          && intrindx[jintr][7] == intrindx[kintr][5]
+          && intrindx[jintr][4] == intrindx[kintr][2]
+          && intrindx[jintr][5] == intrindx[kintr][3]
+          && intrindx[jintr][2] == intrindx[kintr][0]
+          && intrindx[jintr][3] == intrindx[kintr][1]
+          && intrindx[jintr][0] == intrindx[kintr][6]
+          && intrindx[jintr][1] == intrindx[kintr][7])
+        ||
+        (intrindx[jintr][6] == intrindx[kintr][0]
+          && intrindx[jintr][7] == intrindx[kintr][1]
+          && intrindx[jintr][4] == intrindx[kintr][6]
+          && intrindx[jintr][5] == intrindx[kintr][7]
+          && intrindx[jintr][2] == intrindx[kintr][4]
+          && intrindx[jintr][3] == intrindx[kintr][5]
+          && intrindx[jintr][0] == intrindx[kintr][2]
+          && intrindx[jintr][1] == intrindx[kintr][3])
+        ) {
+        intrindx[kintr][0] = intrindx[jintr][6];
+        intrindx[kintr][1] = intrindx[jintr][7];
+        intrindx[kintr][2] = intrindx[jintr][4];
+        intrindx[kintr][3] = intrindx[jintr][5];
+        intrindx[kintr][4] = intrindx[jintr][2];
+        intrindx[kintr][5] = intrindx[jintr][3];
+        intrindx[kintr][6] = intrindx[jintr][0];
+        intrindx[kintr][7] = intrindx[jintr][1];
+
+        intr[kintr] = - intr[kintr];
+      }
+    }
+  }
+
+  for (jintr = 0; jintr < nintr; jintr++) {
+
+    if (
+      (intrindx[jintr][0] == intrindx[jintr][4] && intrindx[jintr][1] == intrindx[jintr][5]) ||
+      (intrindx[jintr][2] == intrindx[jintr][6] && intrindx[jintr][3] == intrindx[jintr][7])
+      ) {
+
+      if (!(
+        (intrindx[jintr][0] == intrindx[jintr][2] && intrindx[jintr][1] == intrindx[jintr][3]) ||
+        (intrindx[jintr][0] == intrindx[jintr][6] && intrindx[jintr][1] == intrindx[jintr][7]) ||
+        (intrindx[jintr][4] == intrindx[jintr][2] && intrindx[jintr][5] == intrindx[jintr][3]) ||
+        (intrindx[jintr][4] == intrindx[jintr][6] && intrindx[jintr][5] == intrindx[jintr][7])
+        ))
+        intr[jintr] = 0.0;
+    }
+  }
+ 
   nintr0 = 0;
   for (kintr = 0; kintr < nintr; kintr++){
     if (fabs(intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -671,8 +788,8 @@ static void PrintModPara(
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", nsite);
-  fprintf(fp, "2Sz            %-5d\n", Sz2);
-  fprintf(fp, "Ncond          %-5d\n", nelec);
+  if (Sz2 != 9999) fprintf(fp, "2Sz            %-5d\n", Sz2);
+  if (nelec != 9999) fprintf(fp, "Ncond          %-5d\n", nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", initial_iv);
   fprintf(fp, "nvec           %-5d\n", nvec);
@@ -1010,7 +1127,6 @@ static void CheckModPara(
   /**/
   if (strcmp(model, "fermionhubbard") == 0) {
 
-    StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
 
   }
@@ -1018,11 +1134,9 @@ static void CheckModPara(
 
     StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_NotUsed_i("nelec", *nelec);
-    *nelec = 0;
   }
   else if (strcmp(model, "kondolattice") == 0) {
 
-    StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
 
   }
@@ -1034,8 +1148,6 @@ static void CheckModPara(
  
     StdFace_NotUsed_i("nelec", *nelec);
     StdFace_NotUsed_i("2Sz", *Sz2);
-    *nelec = 0.0;
-    *Sz2 = 0.0;
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Model !\n");

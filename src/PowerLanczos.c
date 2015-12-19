@@ -32,7 +32,7 @@ int PowerLanczos(struct BindStruct *X){
 // v1 is eigenvector
 // v0 = H*v1
 // this subroutine 
-  for(i_Lz=0;i_Lz<200;i_Lz++){
+  for(i_Lz=0;i_Lz<50;i_Lz++){
     //v1 -> eigen_vec
     //v0 -> v0=H*v1
 //  if(i_Lz>1){
@@ -74,7 +74,10 @@ int PowerLanczos(struct BindStruct *X){
     E3    = creal(dam_pr3) ;// E^3
     E4    = creal(dam_pr4) ;// E^4
   
-    solve_2ndPolinomial(X,&alpha_p,&alpha_m,E1,E2a,E2b,E3,E4);
+    if(solve_2ndPolinomial(X,&alpha_p,&alpha_m,E1,E2a,E2b,E3,E4)!=TRUE){
+      printf("Power Lanczos break \n");
+      return 0;
+    }
     //printf("E1=%.16lf E2a=%.16lf E2b=%.16lf E3=%.16lf E4=%.16lf \n",E1,E2a,E2b,E3,E4);
     
     Lz(X,alpha_p,&Lz_Ene_p,&Lz_Var_p,E1,E2a,E3,E4);
@@ -118,14 +121,14 @@ int PowerLanczos(struct BindStruct *X){
   return 0;
 }
 
-void  solve_2ndPolinomial(struct BindStruct *X,double *alpha_p,double *alpha_m,double E1,double E2a,double E2b,double E3,double E4){
+int  solve_2ndPolinomial(struct BindStruct *X,double *alpha_p,double *alpha_m,double E1,double E2a,double E2b,double E3,double E4){
   double a,b,c,d;
   double tmp_AA,tmp_BB,tmp_CC;
  
   //not solving 2nd Polinomial
   //approximate linear equation is solved
 
-/*
+
   a = E1;
   b = E2a;
   c = E2a;
@@ -134,16 +137,24 @@ void  solve_2ndPolinomial(struct BindStruct *X,double *alpha_p,double *alpha_m,d
   tmp_AA  = b*(b+c)-2*a*d;
   tmp_BB  = -a*b+d;
   tmp_CC  = b*((b+c)*(b+c))-(a*a)*b*(b+2*c)+4*(a*a*a)*d-2*a*(2*b+c)*d+d*d;
-
+  if(tmp_AA< pow(b, 2)*pow(10.0, -15)){
+    return FALSE;
+  }
+  //printf("XXX: %.16lf %.16lf %.16lf %.16lf \n",a, b, c, d);
   //printf("XXX: %.16lf %.16lf %.16lf \n",tmp_AA,tmp_BB,tmp_CC);
+  if(tmp_CC>=0){
   *alpha_p =  (tmp_BB+sqrt((tmp_CC)))/tmp_AA; 
   *alpha_m =  (tmp_BB-sqrt((tmp_CC)))/tmp_AA; 
   //printf("YYY: %.16lf %.16lf  \n",*alpha_p,*alpha_m);
-  */
+  }
+  else{
   //*alpha_m =  -E2a/E3*(1-E1*E1/E2a)/(1-E1*E2a/E3);
-  *alpha_p =  0.0;
-  *alpha_m =  -E3/E4*(1+2*E1*E1*E1/E3-3*E1*E2a/E3)/(1-5*E2a*E2a/E4+4*E1*E1*E2a/E4);
- 
+    //*alpha_p =  0.0;
+  //*alpha_m =  -E3/E4*(1+2*E1*E1*E1/E3-3*E1*E2a/E3)/(1-5*E2a*E2a/E4+4*E1*E1*E2a/E4);
+    *alpha_p =  cabs((tmp_BB+csqrt((tmp_CC))))/tmp_AA; 
+    *alpha_m =  cabs((tmp_BB-csqrt((tmp_CC))))/tmp_AA; 
+  }
+  return TRUE;
 }
 
 void  Lz(struct BindStruct *X,double alpha,double *Lz_Ene,double *Lz_Var,double E1,double E2,double E3,double E4){

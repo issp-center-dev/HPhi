@@ -14,6 +14,8 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+#include <bitcalc.h>
+#include <sz.h>
 #include "mfmemory.h"
 #include "check.h"
 #include "wrapperMPI.h"
@@ -59,7 +61,9 @@ int check(struct BindStruct *X){
   long unsigned int isite=0;
   int tmp_sz=0;
   Ns = X->Def.Nsite;
+
   li_malloc2(comb, Ns+1,Ns+1);
+
   //idim_max
   switch(X->Def.iCalcModel){
   case HubbardGC:
@@ -141,25 +145,33 @@ int check(struct BindStruct *X){
     }
     break;
   case Spin:
+
     if(X->Def.iFlgGeneralSpin ==FALSE){
+      if(X->Def.Nup+X->Def.Ndown != X->Def.Nsite){
+	fprintf(stderr, " 2Sz is incorrect.\n");
+	return FALSE;
+      }
       comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
     }
     else{
       idimmax = 1;
+      X->Def.Tpow[0]=idimmax;
       for(isite=0; isite<X->Def.Nsite;isite++){
 	idimmax=idimmax*X->Def.SiteToBit[isite];
+	X->Def.Tpow[isite+1]=idimmax;
       }
-
+      comb_sum=0;
 #pragma omp parallel for default(none) reduction(+:comb_sum) private(tmp_sz, isite) firstprivate(idimmax, X) 
       for(idim=0; idim<idimmax; idim++){
 	tmp_sz=0;
 	for(isite=0; isite<X->Def.Nsite;isite++){
 	  tmp_sz += GetLocal2Sz(isite+1,idim, X->Def.SiteToBit, X->Def.Tpow );	  
 	}
-	if(tmp_sz == X->Def.TotalSz){
+	if(tmp_sz == X->Def.Total2Sz){
 	  comb_sum +=1;
 	}
       }
+      
     }
     
     break;
@@ -223,7 +235,7 @@ int check(struct BindStruct *X){
       }
     }
     else{
-      //INPUT
+      GetSplitBitForGeneralSpin(X->Def.Nsite, &tmp_sdim, X->Def.SiteToBit);
     }
     break;
   default:
@@ -253,10 +265,14 @@ int check(struct BindStruct *X){
       fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
       fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
     }
+    break;
   default:
     break;
-  }
-  
+  }  
+ 
+  i_free2(comb, Ns+1, Ns+1);
+  fprintf(stdoutMPI, "Indices and Parameters of Definition files(*.def) are complete.\n");
+
   u_tmp=1;
   X->Def.Tpow[0]=u_tmp;
   switch(X->Def.iCalcModel){
@@ -296,11 +312,18 @@ int check(struct BindStruct *X){
    }
    break;
  case Spin:
-    for(i=1;i<=X->Def.Nsite-1;i++){
-      u_tmp=u_tmp*2;
-      X->Def.Tpow[i]=u_tmp;
-      fprintf(fp,"%ld %ld \n",i,u_tmp);
-    }
+   if(X->Def.iFlgGeneralSpin==FALSE){
+     for(i=1;i<=X->Def.Nsite-1;i++){
+       u_tmp=u_tmp*2;
+       X->Def.Tpow[i]=u_tmp;
+       fprintf(fp,"%ld %ld \n",i,u_tmp);
+     }
+   }
+   else{
+     for(i=0;i<X->Def.Nsite;i++){
+       fprintf(fp,"%ld %ld \n",i,X->Def.Tpow[i]);
+     }
+   }     
     break;
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
@@ -308,8 +331,7 @@ int check(struct BindStruct *X){
     return FALSE;
   }  
   fclose(fp);	 
- 
-  i_free2(comb, Ns+1, Ns+1);
-  fprintf(stdoutMPI, "Indices and Parameters of Definition files(*.def) are complete.\n");
+
+  
   return TRUE;
 }    

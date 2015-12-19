@@ -22,6 +22,9 @@ void StdFace_intr(int *kintr, double intr0,
   int site1, int spin1, int site2, int spin2,
   int site3, int spin3, int site4, int spin4);
 
+void StdFace_MagLong(int *ktrans, double Mag, int isite);
+void StdFace_MagTrans(int *ktrans, double Mag, int isite);
+
 void StdFace_exchange(int *kintr, int Si2, int Sj2, double Jexc, int isite, int jsite);
 void StdFace_Kitaev(int *kintr, int Si2, int Sj2, double Jflip, int isite, int jsite);
 void StdFace_SzSz(int *kintr, int Si2, int Sj2, double Jexc, int isite, int jsite);
@@ -48,3 +51,7 @@ void Spin_TriangularLattice(int Sz2, int lGC);
 void FermionHubbard_HoneycombLattice(int nelec, int lGC);
 void KondoLattice_HoneycombLattice(int nelec, int lGC);
 void Spin_HoneycombLattice(int Sz2, int lGC);
+
+void FermionHubbard_Ladder(int nelec, int lGC);
+void KondoLattice_Ladder(int nelec, int lGC);
+void Spin_Ladder(int Sz2, int lGC);

@@ -61,9 +61,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   k_exct = X->Def.k_exct;
 
   if(initial_mode == 0){
-    X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max;
+    X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max+1;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
-      X->Large.iv=(X->Check.idim_max/2+X->Def.initial_iv)%X->Check.idim_max;
+      X->Large.iv=(X->Check.idim_max/2+X->Def.initial_iv)%X->Check.idim_max+1;
     }
     iv=X->Large.iv;
     fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
@@ -127,8 +127,22 @@ int Lanczos_EigenValue(struct BindStruct *X)
   beta1=sqrt(beta1);
   beta[1]=beta1;
   ebefor=0;
-  //  fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", 1, alpha1, 1, beta1);
-  
+
+  if(i_max<X->Def.Lanczos_max){
+    X->Def.Lanczos_max=i_max;
+  }
+  if(i_max<X->Def.LanczosTarget){
+    X->Def.LanczosTarget=i_max;
+  }
+  if(i_max==1){
+    E[1]=alpha[1];
+    vec12(alpha,beta,stp,E,X);		
+    X->Large.itr=stp;
+    X->Phys.Target_energy=E[k_exct];
+    iconv=0;
+    fprintf(stdoutMPI,"stp=%d %.10lf \n",stp,E[1]);
+  }
+  else{
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -242,7 +256,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
       ebefor=E[Target];            
     }
   }        
-
+  }
 
   sprintf(sdt,cFileNameTimeKeep,X->Def.CDataFileHead);
   if(iconv!=0){

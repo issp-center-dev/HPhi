@@ -16,10 +16,26 @@
 #include "phys.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   phys.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ * @brief  File for givinvg a parent function to calculate physical quantities  by full diagonalization method 
+ * 
+ * 
+ */
+
+
+
 /** 
  * 
- * 
- * @param X 
+ * @brief A main function to calculate physical quantities by full diagonalization method.
+ * @param[in,out] X CalcStruct list for getting and pushing calculation information 
+ * @version 0.2
+ * @details add output process of calculation results for general spin
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -34,7 +50,6 @@ void phys(struct BindStruct *X){
 	v0[j+1] =  L_vec[i][j];
       }
       X->Phys.eigen_num=i;
-
       if(!expec_energy(X)==0){
 	fprintf(stderr, "Error: calc expec_energy.\n");
 	exitMPI(-1);
@@ -47,13 +62,19 @@ void phys(struct BindStruct *X){
 	fprintf(stderr, "Error: calc TwoBodyG.\n");
 	exitMPI(-1);
       }
-      
       if(!expec_totalspin(X, v1)==0){
 	fprintf(stderr, "Error: calc TotalSpin.\n");
 	exitMPI(-1);
       }
-      tmp_N  = X->Phys.num_up + X->Phys.num_down;
-      tmp_Sz = X->Phys.num_up - X->Phys.num_down;
+      if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==SpinGC){
+	tmp_N =X->Def.Nsite;
+      }
+      else{
+	tmp_N  = X->Phys.num_up + X->Phys.num_down;
+      }
+
+      tmp_Sz=X->Phys.sz;
+
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n",i,X->Phys.energy,tmp_N,tmp_Sz,X->Phys.s2,X->Phys.doublon);
       X->Phys.all_energy[i]   = X->Phys.energy;
       X->Phys.all_doublon[i]  = X->Phys.doublon;

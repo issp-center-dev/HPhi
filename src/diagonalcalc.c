@@ -163,7 +163,7 @@ int diagonalcalc
  */
 int SetDiagonalCoulombIntra
 (
- const long unsigned int isite1,
+ long unsigned int isite1,
  double dtmp_V,
  struct BindStruct *X
  ){
@@ -231,7 +231,7 @@ int SetDiagonalCoulombIntra
  */
 int SetDiagonalChemi
 (
- const long unsigned int isite1,
+ long unsigned int isite1,
  double dtmp_V,
  long unsigned int spin,
  struct BindStruct *X
@@ -239,7 +239,7 @@ int SetDiagonalChemi
   long unsigned int is1_up;
   long unsigned int ibit1_up;
   long unsigned int num1;
-
+  long unsigned int isigma1 =spin;
   long unsigned int is1,ibit1;
 
   long unsigned int j;
@@ -281,22 +281,44 @@ int SetDiagonalChemi
     break;
     
   case SpinGC:
-    is1_up   = X->Def.Tpow[isite1-1];
+    if(X->Def.iFlgGeneralSpin==FALSE){
+      is1_up   = X->Def.Tpow[isite1-1];
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1, ibit1_up)
-    for(j = 1;j <= i_max;j++){
-      ibit1_up=(((j-1)& is1_up)/is1_up)^(1-spin);
-      list_Diagonal[j] += dtmp_V * ibit1_up;
+      for(j = 1;j <= i_max;j++){
+	ibit1_up=(((j-1)& is1_up)/is1_up)^(1-spin);
+	list_Diagonal[j] += dtmp_V * ibit1_up;
+      }
+    }
+    else{
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
+     for(j = 1;j <= i_max; j++){
+       num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+       if(num1 != 0){
+	 list_Diagonal[j] += dtmp_V;
+       }
+     }
     }
     break;
 
   case Spin:
-    is1_up   = X->Def.Tpow[isite1-1];
+    if(X->Def.iFlgGeneralSpin==FALSE){
+      is1_up   = X->Def.Tpow[isite1-1];
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1, ibit1_up)
-    for(j = 1;j <= i_max;j++){
+      for(j = 1;j <= i_max;j++){
       ibit1_up=((list_1[j]& is1_up)/is1_up)^(1-spin);
       list_Diagonal[j] += dtmp_V * ibit1_up;
-      
+      }
     }
+    else{
+#pragma omp parallel for default(none) shared(list_Diagonal, list_1) firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1) 
+     for(j = 1;j <= i_max; j++){
+       num1=BitCheckGeneral (list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+       if(num1 != 0){
+	 list_Diagonal[j] += dtmp_V;
+       }
+     }
+    }
+
     break;
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
@@ -320,8 +342,8 @@ int SetDiagonalChemi
  */
 int SetDiagonalCoulombInter
 (
- const long unsigned int isite1,
- const long unsigned int isite2,
+  long unsigned int isite1,
+  long unsigned int isite2,
  double dtmp_V,
  struct BindStruct *X
  )
@@ -414,8 +436,8 @@ int SetDiagonalCoulombInter
  */
 int SetDiagonalHund
 (
- const long unsigned int isite1,
- const long unsigned int isite2,
+ long unsigned int isite1,
+ long unsigned int isite2,
  double dtmp_V,
  struct BindStruct *X
  ){
@@ -536,8 +558,8 @@ int SetDiagonalHund
  */
 int SetDiagonalInterAll
 (
- const long unsigned int isite1,
- const long unsigned int isite2,
+ long unsigned int isite1,
+ long unsigned int isite2,
  long unsigned int isigma1,
  long unsigned int isigma2,
  double dtmp_V,
@@ -593,14 +615,27 @@ int SetDiagonalInterAll
     break;  
     
   case Spin:
-    is1_up   = X->Def.Tpow[isite1-1];
-    is2_up   = X->Def.Tpow[isite2-1];
+   if(X->Def.iFlgGeneralSpin==FALSE){
+     is1_up   = X->Def.Tpow[isite1-1];
+     is2_up   = X->Def.Tpow[isite2-1];
 #pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
-    for(j = 1;j <= i_max; j++){
-      num1=X_Spin_CisAis(j, X, is1_up, isigma1);
-      num2=X_Spin_CisAis(j, X, is2_up, isigma2);      
-      list_Diagonal[j] += num1*num2*dtmp_V;
-    }
+     for(j = 1;j <= i_max; j++){
+       num1=X_Spin_CisAis(j, X, is1_up, isigma1);
+       num2=X_Spin_CisAis(j, X, is2_up, isigma2);      
+       list_Diagonal[j] += num1*num2*dtmp_V;
+     }
+   }
+   else{
+#pragma omp parallel for default(none) shared(list_Diagonal, list_1) firstprivate(i_max, dtmp_V, isite1, isite2, isigma1, isigma2, X) private(j, num1)
+     for(j = 1;j <= i_max; j++){
+       num1=BitCheckGeneral (list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+       if(num1 != 0){
+	 num1=BitCheckGeneral (list_1[j], isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+	 list_Diagonal[j] += dtmp_V*num1;
+       }
+     }
+
+   }
     break;
 
  case SpinGC:
@@ -615,7 +650,7 @@ int SetDiagonalInterAll
      } 
    }
    else{//start:generalspin
-#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, isigma1, isigma2, X) private(j, num1)
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, isite1, isite2, isigma1, isigma2, X) private(j, num1)
      for(j = 1;j <= i_max; j++){
        num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
        if(num1 != 0){
