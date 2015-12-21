@@ -1671,15 +1671,53 @@ shared(tmp_v0, tmp_v1)
     long unsigned int bit, off;
     int sgn = 1;
 
+    sgn = X_GC_CisAjt(list_1_j, X, is1_spin, is2_spin, sum_spin, diff_spin, tmp_off);
+    if(sgn !=0){
+      GetOffComp(list_2_1, list_2_2, *tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
+      *tmp_off =off;
+      return sgn;
+    }
+    else {
+      *tmp_off = 1;
+      return 0;
+    }
+  }
+
+/**
+ *
+ *
+ * @param list_1_j
+ * @param X
+ * @param is1_spin
+ * @param is2_spin
+ * @param sum_spin
+ * @param diff_spin
+ * @param iexchg
+ * @param tmp_off
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  int X_GC_CisAjt(
+          long unsigned int list_1_j,
+          struct BindStruct *X,
+          long unsigned int is1_spin,
+          long unsigned int is2_spin,
+          long unsigned int sum_spin,
+          long unsigned int diff_spin,
+          long unsigned int *tmp_off
+  ) {
+    long unsigned int ibit_tmp_1, ibit_tmp_2;
+    long unsigned int bit, off;
+    int sgn = 1;
+
     ibit_tmp_1 = (list_1_j & is1_spin);
     ibit_tmp_2 = (list_1_j & is2_spin);
-    //list_1[j] doesn't have is1_spin but has is2_spin because of creative operator on is1_spin and annihiration operator on is2_spin.
     if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
       bit = list_1_j & diff_spin;
       SgnBit(bit, &sgn); // Fermion sign
-      *iexchg = list_1_j ^ sum_spin;
-      GetOffComp(list_2_1, list_2_2, *iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
-      //fprintf(stdoutMPI, "X_DEBUG: j=%ld list_1=%ld sum=%ld iexchg=%ld off=%ld\n",j,list_1[j], sum_spin,iexchg,off );
+      off = list_1_j ^ sum_spin;
       *tmp_off = off;
       return sgn; // pm 1
     } else {
@@ -2887,7 +2925,7 @@ shared(tmp_v0, tmp_v1)
     long unsigned int iexchg;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
-    tmp_sgn = X_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &iexchg, tmp_off);
+    tmp_sgn = X_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, tmp_off);
     if (tmp_sgn != 0) {
       tmp_sgn *= X_CisAis(*tmp_off, X, isite1);
       if (tmp_sgn != 0) {
@@ -2940,7 +2978,7 @@ shared(tmp_v0, tmp_v1)
     double complex dam_pr = 0 + 0 * I;
     tmp_sgn = X_CisAis((j - 1), X, isite3);
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, &iexchg, tmp_off);
+      tmp_sgn *= X_GC_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply
@@ -2998,9 +3036,9 @@ shared(tmp_v0, tmp_v1)
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
 
-    tmp_sgn = X_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &iexchg_1, &tmp_off_1);
+    tmp_sgn = X_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt(iexchg_1, X, isite1, isite2, Asum, Adiff, &iexchg_2, tmp_off_2);
+      tmp_sgn *= X_GC_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply

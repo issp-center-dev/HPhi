@@ -53,7 +53,7 @@ void SplitBit(
 void GetOffComp(
 	        long unsigned int *_list_2_1,
 	        long unsigned int *_list_2_2,
-		const long unsigned int _ibit,
+		long unsigned int _ibit,
 		const long unsigned int _irght,
 		const long unsigned int _ilft,
 		const long unsigned int _ihfbit,

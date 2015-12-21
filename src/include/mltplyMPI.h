@@ -152,7 +152,7 @@ int CheckBit_PairPE(int isite1, int isigma1, int isite3, int isigma3,  struct Bi
 
 
 
-int GetSgnInterAll(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, int *Fsgn, struct BindStruct *X, unsigned long int orgbit, unsigned long int *offbit);
+int GetSgnInterAll(int isite1, int isite2, int isite3, int isite4, int *Fsgn, struct BindStruct *X, unsigned long int orgbit, unsigned long int *offbit);
 
 
 double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
