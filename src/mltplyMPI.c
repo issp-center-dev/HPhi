@@ -2005,16 +2005,20 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   MPI_Status statusMPI;
   int ihermite=TRUE;
 
-  if (GetOffCompGeneralSpin((unsigned long int)myrank, org_isite3 + 1, org_ispin3, org_ispin4, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+  if (GetOffCompGeneralSpin((unsigned long int)myrank, org_isite1 + 1, org_ispin1, org_ispin2, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
-    if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin1, org_ispin2, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
-    {
-      tmp_V = tmp_J;
-    }
+    if (GetOffCompGeneralSpin(tmp_off, org_isite3 + 1, org_ispin3, org_ispin4, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+      {
+	tmp_V = tmp_J;
+      }
     else{
       ihermite =FALSE;
     }
   }
+  else{
+    ihermite=FALSE;
+  }
+  
   if(ihermite==FALSE){
     if(GetOffCompGeneralSpin((unsigned long int)myrank, org_isite3 + 1, org_ispin4, org_ispin3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
       {
@@ -2027,8 +2031,9 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 	  }
 	else return 0.0;
       }
+    else return 0.0;
   }
-  else return 0.0;
+  
   
   origin = (int)off;
 
