@@ -2237,8 +2237,6 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
 #endif
 }
 
-
-
 /**
  *
  * Hopping term in Spin + GC
@@ -2333,20 +2331,157 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
 #endif
 }
 
-int CheckPE(int isite, struct BindStruct *X){
-	if(isite > X->Def.Nsite){
-		return TRUE;
-	}
-	else{
-		return FALSE;
-	}
+int CheckPE(
+	    int org_isite,
+	    struct BindStruct *X
+	    )
+{
+  if(org_isite+1 > X->Def.Nsite){
+    return TRUE;
+  }
+  else{
+    return FALSE;
+  }
 }
 
 int CheckBit_Cis(
-		int isite,
-		int isigma,
-		unsigned long int orgbit,
-		unsigned long int *offbit
+		 long unsigned int is1_spin,
+		 long unsigned int orgbit,
+		 long unsigned int *offbit
 ){
+  long unsigned int ibit_tmp;
+  ibit_tmp = orgbit & is1_spin;
+  if(ibit_tmp == 0){
+    *offbit = orgbit+is1_spin;
+    return TRUE;
+  }
+  *offbit=0;
+  return FALSE;
+}
 
+int CheckBit_Ajt(
+		 long unsigned int is1_spin,
+		 long unsigned int orgbit,
+		 long unsigned int *offbit
+){
+  long unsigned int ibit_tmp;
+  ibit_tmp = orgbit & is1_spin;
+  if(ibit_tmp != 0){
+    *offbit = orgbit-is1_spin;
+    return TRUE;
+  }
+  *offbit=0;
+  return FALSE;
+}
+
+int CheckBit_InterAllPE(
+			int org_isite1,
+			int org_isigma1,
+			int org_isite2,
+			int org_isigma2,
+			int org_isite3,
+			int org_isigma3,
+			int org_isite4,
+			int org_isigma4,
+			struct BindStruct *X,
+			long unsigned int orgbit,
+			long unsigned int *offbit
+			)
+{
+  long unsigned int tmp_ispin;
+  long unsigned int tmp_org, tmp_off;
+  int iflgBitExist = TRUE;
+  tmp_org=orgbit;
+  
+  if(CheckPE(org_isite1, X)==TRUE){
+    tmp_ispin = X->Def.Tpow[2*org_isite1+org_isigma1];
+    if(CheckBit_Cis(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+      iflgBitExist=FALSE;
+    }
+    tmp_org = tmp_off;
+  }
+
+  if(CheckPE(org_isite2, X)==TRUE){
+    tmp_ispin = X->Def.Tpow[2*org_isite2+org_isigma2];
+    if(CheckBit_Ajt(tmp_ispin, orgbit, &tmp_off) != TRUE){
+      iflgBitExist=FALSE;
+    }
+    tmp_org = tmp_off;
+  }
+  
+  if(CheckPE(org_isite3, X)==TRUE){
+    tmp_ispin = X->Def.Tpow[2*org_isite3+org_isigma3];
+    if(CheckBit_Cis(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+      iflgBitExist=FALSE;
+    }
+    tmp_org = tmp_off;
+  }
+
+  if(CheckPE(org_isite4, X)==TRUE){
+    tmp_ispin = X->Def.Tpow[2*org_isite4+org_isigma4];
+    if(CheckBit_Ajt(tmp_ispin, orgbit, &tmp_off) != TRUE){
+      iflgBitExist=FALSE;
+    }
+    tmp_org = tmp_off;
+  }
+
+  if(iflgBitExist != TRUE){
+    *offbit=0;
+    return FALSE;
+  }
+  
+  *offbit=tmp_org;
+  return TRUE;
+}
+
+int GetSgnInterAll(
+		   int org_isite1,
+		   int org_isigma1,
+		   int org_isite2,
+		   int org_isigma2,
+		   int org_isite3,
+		   int org_isigma3,
+		   int org_isite4,
+		   int org_isigma4,
+		   int *Fsgn,
+		   struct BindStruct *X,
+		   unsigned long int orgbit,
+		   unsigned long int *offbit
+		   )
+{
+  long unsigned int diffA, diffB;
+  long unsigned int isA, isB, tmp_off;
+  long unsigned int tmp_ispin1, tmp_ispin2;
+  int tmp_sgn=0;
+
+  tmp_ispin1 = X->Def.OrgTpow[2 * org_isite1+ org_isigma1];
+  tmp_ispin2= X->Def.OrgTpow[2 * org_isite2+ org_isigma2];
+  if(tmp_ispin2 > tmp_ispin1) diffA = tmp_ispin2 - tmp_ispin1*2;
+  else diffA = tmp_ispin1-tmp_ispin2*2;  
+
+  if(tmp_ispin1&orgbit == 0 && tmp_ispin2 && orgbit == tmp_ispin2){
+    SgnBit(orgbit&diffA, &tmp_sgn);
+    tmp_off = orgbit^(tmp_ispin1+tmp_ispin2);
+  }
+  else{
+    *offbit =0;
+    return FALSE;
+  }
+
+  tmp_ispin1 = X->Def.OrgTpow[2 * org_isite3+ org_isigma3];
+  tmp_ispin2= X->Def.OrgTpow[2 * org_isite4+ org_isigma4];
+  if(tmp_ispin2 > tmp_ispin1) diffB = tmp_ispin2 - tmp_ispin1*2;
+  else diffB = tmp_ispin1-tmp_ispin2*2;  
+  
+  if(tmp_ispin1&tmp_off == 0 && tmp_ispin2 && tmp_off == tmp_ispin2){
+    SgnBit(tmp_off&diffB, Fsgn);
+    *Fsgn *= tmp_sgn;
+    *offbit = orgbit^(tmp_ispin1+tmp_ispin2);
+  }
+  else{
+    *offbit =0;
+    return FALSE;
+  }
+  return TRUE;
+  //offbitで返したあとに、X->Def.OrgTpow[Nsite]の余剰をとればjに相当。
 }

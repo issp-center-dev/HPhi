@@ -142,12 +142,12 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle( int org_isite1, int o
 
 int CheckPE(int isite, struct BindStruct *X);
 
-int CheckBit_Cis(int isite, int isigma, unsigned long int orgbit, unsigned long int *offbit);
+int CheckBit_Cis(long unsigned int is1_spin, long unsigned int orgbit, long unsigned int *offbit);
 
-int CheckBit_Ais(int isite, int isigma, unsigned long int orgbit, unsigned long int *offbit);
+int CheckBit_Ajt(long unsigned int is1_spin, long unsigned int orgbit, long unsigned int *offbit);
 
-int CheckBit_InterAllPE(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, unsigned long int orgbit, unsigned long int *offbit);
+int CheckBit_InterAllPE(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, struct BindStruct *X, unsigned long int orgbit, unsigned long int *offbit);
 
-int GetSgnInterAll(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, unsigned long int orgbit, unsigned long int *offbit);
+int GetSgnInterAll(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, int *Fsgn, struct BindStruct *X, unsigned long int orgbit, unsigned long int *offbit);
 
 double complex X_child_CisAjtCkuAlv_Hubbard_MPI(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);

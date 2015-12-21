@@ -484,7 +484,7 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
 	    }
 	  }//isite1 = isite2
 	  else{//off diagonal
-	     spn += X_GC_child_CisAitCiuAiv_spin_MPIdouble(isite1-1, 0, 1, isite2-1, 1, 0, 1.0, X, vec, vec)/2.0;
+	    spn += X_GC_child_CisAitCiuAiv_spin_MPIdouble(isite1-1, 0, 1, isite2-1, 1, 0, 1.0, X, vec, vec)/2.0;
 	  } 
 	}
 	else if(isite1 > X->Def.Nsite || isite2 > X->Def.Nsite){
@@ -549,23 +549,56 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
       }
     }
   }
-  else{
+  else{//general spin
     double S1=0;
     double S2=0;
-    spn_z=0;
-    for(isite1=1;isite1<=X->Def.Nsite;isite1++){
-      for(isite2=1;isite2<=X->Def.Nsite;isite2++){
-	S1=0.5*(X->Def.SiteToBit[isite1-1]-1);
-	S2=0.5*(X->Def.SiteToBit[isite2-1]-1);
-	if(isite1==isite2){
-#pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(i_max, isite1, X, S1) private(spn_z1) shared(vec)	
-	  for(j=1;j<=i_max;j++){
-	    spn_z1  = 0.5*GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
-	    spn    += conj(vec[j])*vec[j]*S1*(S1+1.0);
-	    spn_z += conj(vec[j])*vec[j]*spn_z1;
-	  }
+    spn =0.0;
+    spn_z=0.0;
+    for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+      S1=0.5*(X->Def.SiteToBit[isite1-1]-1);
+      if(isite1 > X->Def.Nsite){
+	spn_z1  = 0.5*GetLocal2Sz(isite1, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
+#pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(S1, spn_z1,i_max) shared(vec)	
+	for(j=1;j<=i_max;j++){
+	  spn   += conj(vec[j])*vec[j]*S1*(S1+1.0);
+	  spn_z += conj(vec[j])*vec[j]*spn_z1;
 	}
-	else{	  
+      }
+      else{
+#pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(i_max, isite1, X, S1) private(spn_z1) shared(vec)	
+	for(j=1;j<=i_max;j++){
+	  spn_z1  = 0.5*GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
+	  spn    += conj(vec[j])*vec[j]*S1*(S1+1.0);
+	  spn_z += conj(vec[j])*vec[j]*spn_z1;
+	}
+      }
+      for(isite2=1;isite2<=X->Def.Nsite;isite2++){
+	S2=0.5*(X->Def.SiteToBit[isite2-1]-1);
+	if(isite1 > X->Def.Nsite && isite2 > X->Def.Nsite){
+	  spn_z1  = 0.5*GetLocal2Sz(isite1, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
+	  spn_z2  = 0.5*GetLocal2Sz(isite2, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
+#pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(spn_z1, spn_z2, i_max) shared(vec)	
+	  for(j=1;j<=i_max;j++){
+	    spn   += conj(vec[j])*vec[j]*spn_z1*spn_z2;
+	  }
+	  spn += sqrt(S2*(S2+1) - spn_z2*(spn_z2+1))*sqrt(S1*(S1+1) - spn_z1*(spn_z1-1))/2.0*X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(isite1-1, sigma_1-1, sigma_1, isite2-1, sigma_2+1, sigma_2, 1.0, X,vec, vec);
+	  spn += sqrt(S2*(S2+1) - spn_z2*(spn_z2-1))*sqrt(S1*(S1+1) - spn_z1*(spn_z1+1))/2.0*X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(isite1-1, sigma_1+1, sigma_1, isite2-1, sigma_2-1, sigma_2, 1.0, X,vec, vec);	  
+	}
+	else if(isite1 > X->Def.Nsite || isite2 > X->Def.Nsite){
+	 if(isite1 < isite2){
+	    tmp_isite1=isite1;
+	    tmp_isite2=isite2;
+	  }
+	  else{
+	    tmp_isite1 = isite2;
+	    tmp_isite2 = isite1;
+	  }
+	 spn_z2  = 0.5*GetLocal2Sz(isite2, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);	  
+	 sigma_2=GetBitGeneral(isite2, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
+   
+	 
+	}
+	else{ //inner-process
 #pragma omp parallel for reduction(+: spn) default(none) firstprivate(i_max, isite1, isite2, X, S1, S2) private(spn_z1, spn_z2, off, off_2, ibit_tmp, sigma_1, sigma_2) shared(vec)	
 	  for(j=1;j<=i_max;j++){	  
 	    spn_z1  = 0.5*GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
@@ -588,13 +621,12 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
 	      ibit_tmp = GetOffCompGeneralSpin(off, isite1, sigma_1, sigma_1+1, &off_2, X->Def.SiteToBit, X->Def.Tpow);
 	      if(ibit_tmp!=0){
 		spn += conj(vec[j])*vec[off_2+1]*sqrt(S2*(S2+1) - spn_z2*(spn_z2-1.0))*sqrt(S1*(S1+1)- spn_z1*(spn_z1+1))/2.0;
-	      }
-	  
+	      }	      
 	    }	  
-	  }
-	}
-      }
-    }
+	  }//j
+	}//inner-process
+      }//isite2
+    }//isite1
   }
   
   spn = SumMPI_dc(spn);

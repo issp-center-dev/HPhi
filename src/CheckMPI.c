@@ -373,7 +373,11 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     X->Def.Tpow[2 * X->Def.Nsite] = 1;
     for (isite = 2 * X->Def.Nsite + 1; isite < 2 * NsiteMPI; isite++) 
       X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
- 
+
+    X->Def.OrgTpow[0]=1;
+    for(isite =  1; isite < 2*NsiteMPI; isite++)
+      X->Def.OrgTpow[isite] = X->Def.OrgTpow[isite-1]*2;
+    
     break;
 
   case SpinGC:/********************************************************/
