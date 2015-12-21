@@ -2403,7 +2403,7 @@ int CheckBit_InterAllPE(
 
   if(CheckPE(org_isite2, X)==TRUE){
     tmp_ispin = X->Def.Tpow[2*org_isite2+org_isigma2];
-    if(CheckBit_Ajt(tmp_ispin, orgbit, &tmp_off) != TRUE){
+    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
       iflgBitExist=FALSE;
     }
     tmp_org = tmp_off;
@@ -2419,7 +2419,7 @@ int CheckBit_InterAllPE(
 
   if(CheckPE(org_isite4, X)==TRUE){
     tmp_ispin = X->Def.Tpow[2*org_isite4+org_isigma4];
-    if(CheckBit_Ajt(tmp_ispin, orgbit, &tmp_off) != TRUE){
+    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
       iflgBitExist=FALSE;
     }
     tmp_org = tmp_off;
@@ -2468,8 +2468,6 @@ int CheckBit_PairPE(
 
   return TRUE;
 }
-
-
 
 int GetSgnInterAll(
 		   int isite1,
@@ -2661,7 +2659,8 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
     }
   }
 
-  
+  // printf("myrank =%d, origin=%d\n", myrank, origin);
+  //printf("isite1=%d, isigma1=%d, isite2=%d, isigma2=%d, isite3=%d, isigma3=%d,isite4=%d, isigma4=%d\n\n", org_isite1-1, org_ispin1, org_isite2-1, org_ispin2,org_isite3-1, org_ispin3,org_isite3-1, org_ispin3);
   if(myrank == origin){// only k is in PE
     if(iFlgHermite !=TRUE){
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
@@ -2676,8 +2675,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
       }
     }
   }//myrank =origin
-  else{
-    
+  else{    
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,

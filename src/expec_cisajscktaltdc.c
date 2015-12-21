@@ -137,21 +137,22 @@ int expec_cisajscktaltdc
       org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
       org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
       dam_pr=0.0;
+      
       if(CheckPE(org_isite1-1, X)==TRUE || CheckPE(org_isite2-1, X)==TRUE ||
 	 CheckPE(org_isite3-1, X)==TRUE || CheckPE(org_isite4-1, X)==TRUE){
-	isite1 = X->Def.Tpow[2*org_isite1-2+org_sigma1] ;
-	isite2 = X->Def.Tpow[2*org_isite2-2+org_sigma2] ;
-	isite3 = X->Def.Tpow[2*org_isite3-2+org_sigma3] ;
-	isite4 = X->Def.Tpow[2*org_isite4-2+org_sigma4] ;	
+	isite1 = X->Def.OrgTpow[2*org_isite1-2+org_sigma1] ;
+	isite2 = X->Def.OrgTpow[2*org_isite2-2+org_sigma2] ;
+	isite3 = X->Def.OrgTpow[2*org_isite3-2+org_sigma3] ;
+	isite4 = X->Def.OrgTpow[2*org_isite4-2+org_sigma4] ;	
 	if(isite1 == isite2 && isite3 == isite4){
-	   dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1, 
+	  dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1, 
 						       org_isite3-1, org_sigma3, 
 						       1.0, X, vec, vec);
 	}
 	else if(isite1 == isite2 && isite3 != isite4){
 	  dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1, 
 						       org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
-						       1.0, X, vec, vec);	  
+						       1.0, X, vec, vec);
 	}
 	else if(isite1 != isite2 && isite3 == isite4){
 	  dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
@@ -162,9 +163,8 @@ int expec_cisajscktaltdc
 	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
 						       org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
 						       1.0, X, vec, vec);
-
 	}
-	
+      
       }//InterPE
       else{
 	child_general_int_GetInfo
@@ -216,13 +216,16 @@ int expec_cisajscktaltdc
 	  dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) shared(vec)
 	  for(j=1;j<=i_max;j++){
-	    dam_pr +=GC_child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off_2);   
+	    dam_pr +=GC_child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off_2);  
 	  }
 	}
-      }//Intra PE
+      }
+      
       dam_pr = SumMPI_dc(dam_pr);
       fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1, org_isite2-1,org_sigma2, org_isite3-1, org_sigma3, org_isite4-1,org_sigma4, creal(dam_pr), cimag(dam_pr));
-    }
+      
+    }//Intra PE
+      
     
     break;
  
