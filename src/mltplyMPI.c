@@ -2395,7 +2395,7 @@ int CheckBit_InterAllPE(
   
   if(CheckPE(org_isite1, X)==TRUE){
     tmp_ispin = X->Def.Tpow[2*org_isite1+org_isigma1];
-    if(CheckBit_Cis(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
       iflgBitExist=FALSE;
     }
     tmp_org = tmp_off;
@@ -2403,7 +2403,7 @@ int CheckBit_InterAllPE(
 
   if(CheckPE(org_isite2, X)==TRUE){
     tmp_ispin = X->Def.Tpow[2*org_isite2+org_isigma2];
-    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+    if(CheckBit_Cis(tmp_ispin, tmp_org, &tmp_off) != TRUE){
       iflgBitExist=FALSE;
     }
     tmp_org = tmp_off;
@@ -2411,7 +2411,7 @@ int CheckBit_InterAllPE(
   
   if(CheckPE(org_isite3, X)==TRUE){
     tmp_ispin = X->Def.Tpow[2*org_isite3+org_isigma3];
-    if(CheckBit_Cis(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
       iflgBitExist=FALSE;
     }
     tmp_org = tmp_off;
@@ -2419,7 +2419,7 @@ int CheckBit_InterAllPE(
 
   if(CheckPE(org_isite4, X)==TRUE){
     tmp_ispin = X->Def.Tpow[2*org_isite4+org_isigma4];
-    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+    if(CheckBit_Cis(tmp_ispin, tmp_org, &tmp_off) != TRUE){
       iflgBitExist=FALSE;
     }
     tmp_org = tmp_off;
@@ -2487,8 +2487,9 @@ int GetSgnInterAll(
 
   tmp_ispin1=isite1;
   tmp_ispin2=isite2;
+  
   if(tmp_ispin1 == tmp_ispin2){
-    if(orgbit & tmp_ispin1 != TRUE){
+    if( (orgbit & tmp_ispin1) == 0){
       *offbit =0;
       return FALSE;
     }
@@ -2499,7 +2500,7 @@ int GetSgnInterAll(
     if(tmp_ispin2 > tmp_ispin1) diffA = tmp_ispin2 - tmp_ispin1*2;
     else diffA = tmp_ispin1-tmp_ispin2*2;  
     
-    if(tmp_ispin1&orgbit == 0 && (tmp_ispin2 && orgbit) == tmp_ispin2){
+    if(tmp_ispin1&orgbit == 0 && (tmp_ispin2 &orgbit) == tmp_ispin2){
       SgnBit(orgbit&diffA, &tmp_sgn);
       tmp_off = orgbit^(tmp_ispin1+tmp_ispin2);
     }
@@ -2512,7 +2513,7 @@ int GetSgnInterAll(
   tmp_ispin1 = isite3;
   tmp_ispin2 = isite4;
   if(tmp_ispin1 == tmp_ispin2){
-    if(orgbit & tmp_ispin1 != TRUE){
+    if( (tmp_off & tmp_ispin1) == 0){
       *offbit =0;
       return FALSE;
     }
@@ -2523,7 +2524,7 @@ int GetSgnInterAll(
     if(tmp_ispin2 > tmp_ispin1) diffB = tmp_ispin2 - tmp_ispin1*2;
     else diffB = tmp_ispin1-tmp_ispin2*2;  
     
-    if(tmp_ispin1&tmp_off == 0 && (tmp_ispin2 && tmp_off)== tmp_ispin2){
+    if( (tmp_ispin1&tmp_off) == 0 && (tmp_ispin2 &tmp_off)== tmp_ispin2){
       SgnBit(tmp_off&diffB, Fsgn);
       *Fsgn *= tmp_sgn;
       *offbit = orgbit^(tmp_ispin1+tmp_ispin2);
@@ -2534,6 +2535,8 @@ int GetSgnInterAll(
     }
   }
   *offbit = *offbit%X->Def.OrgTpow[2*X->Def.Nsite];
+  //printf("offbit=%ld\n",*offbit);
+  // exitMPI(-1);
   return TRUE;
 }
 
@@ -2596,6 +2599,17 @@ double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
 #endif
 }
 
+void printForDebug
+(
+ int myrank, int origin,
+ int org_isite1, int org_ispin1, int org_isite2, int org_ispin2,
+ int org_isite3, int org_ispin3, int org_isite4, int org_ispin4
+ )
+{
+  printf("myrank =%d, origin=%d\n", myrank, origin);
+  printf("isite1=%d, isigma1=%d, isite2=%d, isigma2=%d, isite3=%d, isigma3=%d,isite4=%d, isigma4=%d\n\n", org_isite1, org_ispin1, org_isite2, org_ispin2,org_isite3, org_ispin3,org_isite3, org_ispin3);
+}
+
 double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
 (
  int org_isite1,
@@ -2610,7 +2624,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
  double complex *tmp_v1
  )
 {
-  double complex dam_pr=0;
+  double complex dam_pr=0.0;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
   int iCheck, ierr, Fsgn;
@@ -2619,6 +2633,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
   unsigned long int j, Asum, Adiff;
   double complex dmv;
   unsigned long int origin, tmp_off;
+  unsigned long int org_rankbit;
   int iFlgHermite=FALSE;
   MPI_Status statusMPI;
 
@@ -2629,61 +2644,74 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
   isite4 =  X->Def.Tpow[2 * org_isite3+ org_ispin3];
   
   if(iCheck == TRUE){
-    tmp_isite1 = isite1;
-    tmp_isite2 = isite2;
-    tmp_isite3 = isite3;
-    tmp_isite4 = isite3;
+
+    tmp_isite1 = X->Def.OrgTpow[2 * org_isite1+ org_ispin1];
+    tmp_isite2 = X->Def.OrgTpow[2 * org_isite2+ org_ispin2];
+    tmp_isite3 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
+    tmp_isite4 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
     Asum = tmp_isite1+tmp_isite2;
     if(tmp_isite2 > tmp_isite1) Adiff = tmp_isite2 - tmp_isite1*2;
     else Adiff = tmp_isite1-tmp_isite2*2;  
-
   }
   else{
-    iCheck=CheckBit_InterAllPE(org_isite3, org_ispin3, org_isite3, org_ispin3, org_isite2, org_ispin2, org_isite1, org_ispin1, X, (long unsigned int) myrank, &origin);
-    if(iCheck == TRUE){
-      tmp_V = conj(tmp_V);
-      tmp_isite4 = isite1;
-      tmp_isite3 = isite2;
-      tmp_isite2 = isite3;
-      tmp_isite1 = isite3;
-      Asum = tmp_isite3+tmp_isite4;
-      if(tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3*2;
-      else Adiff = tmp_isite3-tmp_isite4*2;  
-      iFlgHermite=TRUE;
-      if(X->Large.mode == M_CORR){
-	tmp_V = 0;
-      }
+  iCheck=CheckBit_InterAllPE(org_isite3, org_ispin3, org_isite3, org_ispin3, org_isite2, org_ispin2, org_isite1, org_ispin1, X, (long unsigned int) myrank, &origin);
+  if(iCheck == TRUE){
+    /*debug
+    if(org_isite1 == 2 && org_ispin1==1 && org_isite2== 3 && org_ispin2 ==1 && org_isite3== 3 && org_ispin3 ==1){
+      printForDebug(myrank, origin, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite3, org_ispin3 );
+      printf("test2\n\n");
     }
-    else{
-      return 0.0;
+    */
+    
+    tmp_V = conj(tmp_V);
+    tmp_isite4 = X->Def.OrgTpow[2 * org_isite1+ org_ispin1];
+    tmp_isite3 = X->Def.OrgTpow[2 * org_isite2+ org_ispin2];
+    tmp_isite2 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
+    tmp_isite1 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
+    Asum = tmp_isite3+tmp_isite4;
+    if(tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3*2;
+    else Adiff = tmp_isite3-tmp_isite4*2;  
+    iFlgHermite=TRUE;
+    if(X->Large.mode == M_CORR){
+      tmp_V = 0;
     }
   }
-
-  // printf("myrank =%d, origin=%d\n", myrank, origin);
-  //printf("isite1=%d, isigma1=%d, isite2=%d, isigma2=%d, isite3=%d, isigma3=%d,isite4=%d, isigma4=%d\n\n", org_isite1-1, org_ispin1, org_isite2-1, org_ispin2,org_isite3-1, org_ispin3,org_isite3-1, org_ispin3);
+  else{
+    return 0.0;
+  }
+  }
+  
   if(myrank == origin){// only k is in PE
-    if(iFlgHermite !=TRUE){
-#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
-      for (j = 1; j <= i_max; j++) {
-	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, tmp_V, &tmp_off);
-      }
-    }
-    else{
+
+    if(iFlgHermite ==FALSE){
+      if(CheckBit_Ajt(isite3, myrank, &tmp_off) == FALSE) return 0.0;
+      
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
       for (j = 1; j <= i_max; j++) {
 	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite2, isite1, Asum, Adiff, tmp_V, &tmp_off);
       }
+      return dam_pr;
+    }
+    else{
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, tmp_V, &tmp_off);
+      }
+      return dam_pr;
     }
   }//myrank =origin
-  else{    
+  else{
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 			v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
 
     if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite){
+      if(isite2 > isite1) Adiff = isite2 - isite1*2;
+      else Adiff = isite1-isite2*2;
       SgnBit( ((long unsigned int) myrank&Adiff), &Fsgn);
       tmp_V *= Fsgn;
+      
       if(org_isite3+1 > X->Def.Nsite){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0)
 	for (j = 1; j <= idim_max_buf; j++) {
@@ -2693,6 +2721,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
 	}
       }
       else{ //org_isite3 <= X->Def.Nsite
+	
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off) firstprivate(idim_max_buf, tmp_V, X, isite3) shared(v1buf, tmp_v1, tmp_v0)
 	for (j = 1; j <= idim_max_buf; j++) {
 	  if(CheckBit_Ajt(isite3, j-1, &tmp_off) == TRUE){
@@ -2704,18 +2733,19 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
       }
     }
     else{
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4) shared(v1buf, tmp_v1, tmp_v0)
+      org_rankbit=X->Def.OrgTpow[2*X->Def.Nsite]*origin;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0)
       for (j = 1; j <= idim_max_buf; j++) {
-	if(GetSgnInterAll(tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite3, &Fsgn, X, (j-1), &tmp_off)==TRUE){
+	if(GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, (j-1)+org_rankbit, &tmp_off)==TRUE){
 	dmv = tmp_V * v1buf[j]*Fsgn;
-	if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
-	dam_pr += conj(tmp_v1[j]) * dmv;
+	if (X->Large.mode == M_MLTPLY) tmp_v0[tmp_off+1] += dmv;
+	dam_pr += conj(tmp_v1[tmp_off+1]) * dmv;
 
 	}
       }      
     }
   }
-    
+      
   return dam_pr;
 }
 
@@ -2728,14 +2758,16 @@ double complex X_GC_child_CisAisCjtAku_Hubbard_MPI
  int org_ispin3,
  int org_isite4,
  int org_ispin4,
- double complex tmp_trans,
+ double complex tmp_V,
  struct BindStruct *X,
  double complex *tmp_v0,
  double complex *tmp_v1
  )
 {
   double complex dam_pr=0;
-  return dam_pr;
+  dam_pr=X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite4, org_ispin4, org_isite3, org_ispin3, org_isite1, org_ispin1, conj(tmp_V), X, tmp_v0, tmp_v1);
+
+  return conj(dam_pr);
  }
 
 
@@ -2749,13 +2781,14 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
  int org_ispin3,
  int org_isite4,
  int org_ispin4,
- double complex tmp_trans,
+ double complex tmp_V,
  struct BindStruct *X,
  double complex *tmp_v0,
  double complex *tmp_v1
  )
 {
   double complex dam_pr=0;
-  
+
+
   return dam_pr;
 }

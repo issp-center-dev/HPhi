@@ -143,26 +143,30 @@ int expec_cisajscktaltdc
 	isite1 = X->Def.OrgTpow[2*org_isite1-2+org_sigma1] ;
 	isite2 = X->Def.OrgTpow[2*org_isite2-2+org_sigma2] ;
 	isite3 = X->Def.OrgTpow[2*org_isite3-2+org_sigma3] ;
-	isite4 = X->Def.OrgTpow[2*org_isite4-2+org_sigma4] ;	
+	isite4 = X->Def.OrgTpow[2*org_isite4-2+org_sigma4] ;
 	if(isite1 == isite2 && isite3 == isite4){
+
 	  dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1, 
 						       org_isite3-1, org_sigma3, 
 						       1.0, X, vec, vec);
 	}
 	else if(isite1 == isite2 && isite3 != isite4){
+
 	  dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1, 
 						       org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
 						       1.0, X, vec, vec);
+	  
 	}
 	else if(isite1 != isite2 && isite3 == isite4){
+	
 	  dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
 						       org_isite3-1, org_sigma3, 
 						       1.0, X, vec, vec);
 	}
 	else if(isite1 != isite2 && isite3 != isite4){
-	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
+	  /*	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
 						       org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
-						       1.0, X, vec, vec);
+						       1.0, X, vec, vec);*/
 	}
       
       }//InterPE
