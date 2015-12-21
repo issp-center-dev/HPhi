@@ -148,6 +148,20 @@ int CheckBit_Ajt(long unsigned int is1_spin, long unsigned int orgbit, long unsi
 
 int CheckBit_InterAllPE(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, struct BindStruct *X, unsigned long int orgbit, unsigned long int *offbit);
 
+int CheckBit_PairPE(int isite1, int isigma1, int isite3, int isigma3,  struct BindStruct *X, unsigned long int orgbit);
+
+
+
 int GetSgnInterAll(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, int *Fsgn, struct BindStruct *X, unsigned long int orgbit, unsigned long int *offbit);
 
-double complex X_child_CisAjtCkuAlv_Hubbard_MPI(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
+(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+
+double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, int isite4, int isigma4, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_GC_child_CisAisCjtAku_Hubbard_MPI(int isite1, int isigma1, int isite3, int isigma3, int isite4, int isigma4, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+

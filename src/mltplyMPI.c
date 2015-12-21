@@ -1526,7 +1526,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 							  double complex *tmp_v1
 							  )
 {
-  #ifdef MPI
+#ifdef MPI
   unsigned long int tmp_off, off, j;
   int origin, ierr, isite, IniSpin, FinSpin, ihermite;
   double complex tmp_V, dmv, dam_pr;
@@ -2005,9 +2005,9 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   MPI_Status statusMPI;
   int ihermite=TRUE;
 
-  if (GetOffCompGeneralSpin((unsigned long int)myrank, org_isite3 + 1, org_ispin3, org_ispin4, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+  if (GetOffCompGeneralSpin((unsigned long int)myrank, org_isite1 + 1, org_ispin1, org_ispin2, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
-    if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin1, org_ispin2, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+    if (GetOffCompGeneralSpin(tmp_off, org_isite3 + 1, org_ispin3, org_ispin4, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
     {
       tmp_V = tmp_J;
     }
@@ -2434,6 +2434,43 @@ int CheckBit_InterAllPE(
   return TRUE;
 }
 
+int CheckBit_PairPE(
+		    int org_isite1,
+		    int org_isigma1,
+		    int org_isite3,
+		    int org_isigma3,
+		    struct BindStruct *X,
+		    long unsigned int orgbit
+		    )
+{
+  long unsigned int tmp_ispin;
+  long unsigned int tmp_org, tmp_off;
+  int iflgBitExist = TRUE;
+  tmp_org=orgbit;
+  
+  if(CheckPE(org_isite1, X)==TRUE){
+    tmp_ispin = X->Def.Tpow[2*org_isite1+org_isigma1];
+    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+      iflgBitExist=FALSE;
+    }
+  }
+  
+  if(CheckPE(org_isite3, X)==TRUE){
+    tmp_ispin = X->Def.Tpow[2*org_isite3+org_isigma3];
+    if(CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE){
+      iflgBitExist=FALSE;
+    }
+  }
+  
+  if(iflgBitExist != TRUE){
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+
+
 int GetSgnInterAll(
 		   int org_isite1,
 		   int org_isigma1,
@@ -2484,4 +2521,123 @@ int GetSgnInterAll(
   }
   return TRUE;
   //offbitで返したあとに、X->Def.OrgTpow[Nsite]の余剰をとればjに相当。
+}
+
+double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
+(
+ int org_isite1,
+ int org_ispin1,
+ int org_isite3,
+ int org_ispin3,
+ double complex tmp_V,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1
+ )
+{
+#ifdef MPI
+  double complex dam_pr=0.0;
+  int iCheck;
+  int tmp_ispin1;
+  unsigned long int i_max = X->Check.idim_max;
+  unsigned long int tmp_off, j;
+  double complex dmv;
+  MPI_Status statusMPI;
+
+  iCheck=CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
+  if(iCheck != TRUE){
+    return 0.0;
+  }
+  if(org_isite1+1 > X->Def.Nsite && org_isite3+1 > X->Def.Nsite){
+#pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
+  firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
+    for (j = 1; j <= i_max; j++){
+      dmv=tmp_v1[j]*tmp_V;
+      if (X->Large.mode == M_MLTPLY) { // for multply
+	tmp_v0[j] += dmv;
+      }	  
+      dam_pr += conj(tmp_v1[j])*dmv;
+    }
+  }
+  else if (org_isite1+1 > X->Def.Nsite || org_isite3+1 > X->Def.Nsite){
+    if(org_isite1 > org_isite3){
+      tmp_ispin1 = X->Def.Tpow[2 * org_isite3+ org_ispin3];
+    }
+    else{
+      tmp_ispin1 = X->Def.Tpow[2 * org_isite1+ org_ispin1];
+    }
+#pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
+  firstprivate(i_max, tmp_V, X, tmp_ispin1) private(dmv, j, tmp_off)
+    for(j = 1;j <=  i_max;j++){
+      if(CheckBit_Ajt(tmp_ispin1, j-1, &tmp_off) == TRUE){
+	dmv= tmp_v1[j]*tmp_V;
+	if (X->Large.mode == M_MLTPLY) { // for multply
+	  tmp_v0[j] += dmv;
+	}
+	dam_pr +=conj(tmp_v1[j])*dmv;
+      }
+    }
+  }
+  return dam_pr;
+#endif
+}
+
+double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
+(
+ int org_isite1,
+ int org_ispin1,
+ int org_isite2,
+ int org_ispin2,
+ int org_isite3,
+ int org_ispin3,
+ double complex tmp_trans,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1
+ )
+{
+  double complex dam_pr=0;
+  
+  return dam_pr;
+}
+
+
+double complex X_GC_child_CisAisCjtAku_Hubbard_MPI
+(
+ int org_isite1,
+ int org_ispin1,
+ int org_isite3,
+ int org_ispin3,
+ int org_isite4,
+ int org_ispin4,
+ double complex tmp_trans,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1
+ )
+{
+  double complex dam_pr=0;
+  
+  return dam_pr;
+}
+
+double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
+(
+ int org_isite1,
+ int org_ispin1,
+ int org_isite2,
+ int org_ispin2,
+ int org_isite3,
+ int org_ispin3,
+ int org_isite4,
+ int org_ispin4,
+ double complex tmp_trans,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1
+ )
+{
+  double complex dam_pr=0;
+  
+  return dam_pr;
 }
