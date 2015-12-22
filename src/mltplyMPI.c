@@ -19,12 +19,12 @@
 
 #ifdef MPI
 #include "mpi.h"
-#endif
 #include "Common.h"
 #include "mltply.h"
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
+#endif
 
 /**
  *
