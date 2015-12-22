@@ -194,7 +194,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	  dam_pr += GC_child_general_int(tmp_v0, tmp_v1, X);
 	}
       }
-	      X->Large.prdct += dam_pr;
+	X->Large.prdct += dam_pr;
       }
 
       //Pair hopping

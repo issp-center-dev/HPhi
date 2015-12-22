@@ -2605,17 +2605,6 @@ double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
 #endif
 }
 
-void printForDebug
-(
- int myrank, int origin,
- int org_isite1, int org_ispin1, int org_isite2, int org_ispin2,
- int org_isite3, int org_ispin3, int org_isite4, int org_ispin4
- )
-{
-  printf("myrank =%d, origin=%d\n", myrank, origin);
-  printf("isite1=%d, isigma1=%d, isite2=%d, isigma2=%d, isite3=%d, isigma3=%d, isite4=%d, isigma4=%d\n\n", org_isite1, org_ispin1, org_isite2, org_ispin2,org_isite3, org_ispin3,org_isite4, org_ispin4);
-}
-
 double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
 (
  int org_isite1,
@@ -2816,13 +2805,6 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
     tmp_isite2 = X->Def.OrgTpow[2 * org_isite2+ org_ispin2];
     tmp_isite3 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
     tmp_isite4 = X->Def.OrgTpow[2 * org_isite4+ org_ispin4];
-    /*
-      if(org_isite1 == 1 && org_ispin1==1 && org_isite2== 0 && org_ispin2 ==1 && org_isite3== 0 && org_ispin3 ==0 && org_isite4== 1 && org_ispin4 ==1){	
-      printForDebug(myrank, origin, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4 );
-      printf("Normal \n\n");
-    } 
-    */
-
   }
   else{
     iCheck=CheckBit_InterAllPE(org_isite4, org_ispin4, org_isite3, org_ispin3,
@@ -2840,12 +2822,6 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
       }
     }
     else{
-      /*
-    if(org_isite1 == 3 && org_ispin1==1 && org_isite2== 3 && org_ispin2 ==0 && org_isite3== 3 && org_ispin3 ==0 && org_isite4== 2 && org_ispin4 ==1){
-      printForDebug(myrank, origin, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4 );
-      printf("EXIT:NONE\n\n");
-    }      
-      */
       return 0.0;
     }
   }
@@ -2923,11 +2899,6 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
     }
     else{
       org_rankbit=X->Def.OrgTpow[2*X->Def.Nsite]*origin;
-      /*      
-      if(org_isite1 == 1 && org_ispin1==1 && org_isite2== 0 && org_ispin2 ==1 && org_isite3== 0 && org_ispin3 ==0 && org_isite4== 1 && org_ispin4 ==1){	
-	printf("org_rankbit=%ld, CalcAll\n\n", org_rankbit);            
-      }
-      */
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0)
       for (j = 1; j <= idim_max_buf; j++) {
 	if(GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, (j-1)+org_rankbit, &tmp_off)==TRUE){
@@ -3024,3 +2995,68 @@ double complex X_GC_child_CisAjt_Hubbard_MPI
   return dam_pr;
   #endif
 }
+
+double complex X_child_CisAisCjtAjt_Hubbard_MPI
+(int org_isite1,
+ int org_ispin1,
+ int org_isite3,
+ int org_ispin3,
+ double complex tmp_V,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1)
+{
+
+}
+
+
+double complex X_child_CisAjtCkuAlv_Hubbard_MPI
+(
+ int isite1,
+ int isigma1,
+ int isite2,
+ int isigma2,
+ int isite3,
+ int isigma3,
+ int isite4,
+ int isigma4,
+ double complex tmp_V,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1
+ ){
+  
+}
+
+double complex X_child_CisAjtCkuAku_Hubbard_MPI
+(
+ int isite1,
+ int isigma1,
+ int isite2,
+ int isigma2,
+ int isite3,
+ int isigma3,
+ double complex tmp_V,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1
+ ){
+  
+}
+  
+
+double complex X_child_CisAisCjtAku_Hubbard_MPI
+(
+ int isite1,
+ int isigma1,
+ int isite3,
+ int isigma3,
+ int isite4,
+ int isigma4,
+ double complex tmp_V,
+ struct BindStruct *X,
+ double complex *tmp_v0,
+ double complex *tmp_v1
+ ){
+}
+
