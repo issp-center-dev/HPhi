@@ -689,14 +689,14 @@ int ReadDefFileIdxPara(
 	fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
 	while( fgetsMPI(ctmp2, 256, fp) != NULL )
 	  {
-      sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
-        &isite1,
-        &isigma1,
-        &isite2,
-        &isigma2,
-        &dvalue_re,
-        &dvalue_im
-        );
+	    sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
+		   &isite1,
+		   &isigma1,
+		   &isite2,
+		   &isigma2,
+		   &dvalue_re,
+		   &dvalue_im
+		   );
 
 	    X->GeneralTransfer[idx][0]=isite1;
 	    X->GeneralTransfer[idx][1]=isigma1;
@@ -1061,23 +1061,23 @@ int ReadDefFileIdxPara(
       /*cisajscktaltdc.def--------------------------------*/
       if(X->NCisAjtCkuAlvDC>0){
 	while(fgetsMPI(ctmp2, 256, fp) != NULL){
-    sscanf(ctmp2, "%d %d %d %d %d %d %d %d\n",
-      &isite1,
-      &isigma1,
-      &isite2,
-      &isigma2,
-      &isite3,
-      &isigma3,
-      &isite4,
-      &isigma4
-      );
+	  sscanf(ctmp2, "%d %d %d %d %d %d %d %d\n",
+		 &isite1,
+		 &isigma1,
+		 &isite2,
+		 &isigma2,
+		 &isite3,
+		 &isigma3,
+		 &isite4,
+		 &isigma4
+		 );
 
-    if(X->iCalcModel == Spin){
-      if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
-	X->NCisAjtCkuAlvDC--;
-	continue;
-      }
-    }
+	  if(X->iCalcModel == Spin){
+	    if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
+	      X->NCisAjtCkuAlvDC--;
+	      continue;
+	    }
+	  }
 
 
 	  X->CisAjtCkuAlvDC[idx][0] = isite1;
@@ -1106,7 +1106,9 @@ int ReadDefFileIdxPara(
       break;
     }
     fclose(fp);
-    
+
+    fprintf(stdoutMPI, "Definition files are correct.\n");
+
     switch(iKWidx){
     case KWCoulombIntra:
     case KWCoulombInter:

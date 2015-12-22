@@ -249,7 +249,6 @@ int expec_cisajscktaltdc
       tmp_V    = 1.0;
 
       dam_pr=0.0;
-      
       if(CheckPE(org_isite1-1, X)==TRUE || CheckPE(org_isite2-1, X)==TRUE ||
 	 CheckPE(org_isite3-1, X)==TRUE || CheckPE(org_isite4-1, X)==TRUE){
 	isite1 = X->Def.OrgTpow[2*org_isite1-2+org_sigma1] ;
@@ -263,18 +262,18 @@ int expec_cisajscktaltdc
 						       1.0, X, vec, vec);
 	}
 	else if(isite1 == isite2 && isite3 != isite4){
-	  
+	  /*	  
 	  dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1, 
 						       org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
 						       1.0, X, vec, vec);
-	  
+	  */ 
 	}
 	else if(isite1 != isite2 && isite3 == isite4){
-	
+	  /*
 	   dam_pr = X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
 						       org_isite3-1, org_sigma3, 
 						       1.0, X, vec, vec);
-	  
+	  */
 	}
 	else if(isite1 != isite2 && isite3 != isite4){
 	  dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
