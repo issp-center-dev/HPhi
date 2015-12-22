@@ -119,7 +119,53 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
         }
       }
 
-      for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
+      for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
+	  isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
+	  isite2 = X->Def.InterAll_OffDiagonal[i][2] + 1;
+	  isite3 = X->Def.InterAll_OffDiagonal[i][4] + 1;
+	  isite4 = X->Def.InterAll_OffDiagonal[i][6] + 1;
+	  sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	  sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	  sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	  sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	  tmp_V = X->Def.ParaInterAll_OffDiagonal[i];
+
+	if(CheckPE(isite1-1, X)==TRUE || CheckPE(isite2-1, X)==TRUE ||
+	   CheckPE(isite3-1, X)==TRUE || CheckPE(isite4-1, X)==TRUE){
+	  isite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
+	  isite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
+	  isite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
+	  isite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
+	  if(isite1 == isite2 && isite3 == isite4){
+	    
+	  dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
+						       isite3-1, sigma3, 
+						       tmp_V, X, tmp_v0, tmp_v1);
+	}
+	else if(isite1 == isite2 && isite3 != isite4){
+	  
+	  dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
+						       isite3-1, sigma3, isite4-1, sigma4,
+						       tmp_V, X, tmp_v0, tmp_v1);
+	  
+	}
+	else if(isite1 != isite2 && isite3 == isite4){
+	
+	   dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+						       isite3-1, sigma3, 
+						       tmp_V, X, tmp_v0, tmp_v1);
+	  
+	}
+	else if(isite1 != isite2 && isite3 != isite4){
+	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+						       isite3-1, sigma3, isite4-1, sigma4,
+						       tmp_V, X, tmp_v0, tmp_v1);
+	}
+      
+      }//InterPE
+      else{
+
+	dam_pr=0.0;
 	for(ihermite=0; ihermite<2; ihermite++){
 	  idx=2*i+ihermite;
 	  isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
@@ -145,11 +191,12 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 				    sigma4,
 				    tmp_V
 				    );
-	  dam_pr = GC_child_general_int(tmp_v0, tmp_v1, X);
-	  X->Large.prdct += dam_pr;
+	  dam_pr += GC_child_general_int(tmp_v0, tmp_v1, X);
 	}
       }
-  
+	      X->Large.prdct += dam_pr;
+      }
+
       //Pair hopping
       for (i = 0; i < X->Def.NPairHopping/2; i++) {
 	for(ihermite=0; ihermite<2; ihermite++){
