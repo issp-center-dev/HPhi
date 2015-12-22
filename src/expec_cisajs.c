@@ -166,9 +166,19 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       org_sigma1 = X->Def.CisAjt[i][1];
       org_sigma2 = X->Def.CisAjt[i][3];
       dam_pr=0.0;
+
+      if(X->Def.iFlgSzConserved ==TRUE){
+	if(org_sigma1 != org_sigma2){
+	  dam_pr =0.0;
+	}
+	dam_pr= SumMPI_dc(dam_pr);
+	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+	continue;
+      }
       if (org_isite1  > X->Def.Nsite &&
           org_isite2  > X->Def.Nsite) {
 	if(org_isite1==org_isite2 && org_sigma1==org_sigma2){//diagonal
+	  
 	  is   = X->Def.Tpow[2 * org_isite1 - 2+org_sigma1];
 	  ibit = (unsigned long int)myrank & is;
 	  if (ibit == is) {	    
@@ -176,6 +186,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   firstprivate(i_max) private(j) 
 	    for (j = 1; j <= i_max; j++) dam_pr += vec[j]*conj(vec[j]);
 	  }
+	
 	}
 	else{
 	  dam_pr =X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
@@ -183,10 +194,10 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       }
         else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
 	  if(org_isite1 < org_isite2){
-	    //  dam_pr =X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+	     dam_pr =X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
 	  }
 	  else{
-	    // dam_pr = X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
+	    dam_pr = X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
 	     dam_pr = conj(dam_pr);
 	  }
 	}

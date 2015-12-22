@@ -78,7 +78,7 @@ double complex X_GC_child_general_hopp_MPIdouble(
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
-  
+    
   mask1 = (int)X->Def.Tpow[2 * org_isite1 + org_ispin1];
   mask2 = (int)X->Def.Tpow[2 * org_isite2 + org_ispin2];
   if (mask2 > mask1) bitdiff = mask2 - mask1 * 2;
@@ -108,6 +108,7 @@ double complex X_GC_child_general_hopp_MPIdouble(
 
   
   dam_pr = 0.0;
+  printf("rank =%d, origin =%d, idim_max_buf=%d\n", myrank, origin, idim_max_buf);
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
     dmv = trans * v1buf[j];
@@ -282,17 +283,18 @@ double complex X_child_general_hopp_MPIdouble(
 
   mask1 = (int)X->Def.Tpow[2 * org_isite1+org_ispin1];
   mask2 = (int)X->Def.Tpow[2 * org_isite2+org_ispin2];
+  
   if(mask2 > mask1) bitdiff = mask2 - mask1 * 2;
   else bitdiff = mask1 - mask2 * 2;
   origin = myrank ^ (mask1 + mask2);
-
+  
   state1 = origin & mask1;
   state2 = origin & mask2;
-
+  
   SgnBit((unsigned long int)(origin & bitdiff), &Fsgn); // Fermion sign
 
   if (state1 == 0 && state2 == mask2) {
-    trans = - (double)Fsgn * tmp_trans;
+    trans = - (double) Fsgn * tmp_trans;
   }
   else if (state1 == mask1 && state2 == 0) {
     trans = - (double)Fsgn * conj(tmp_trans);
