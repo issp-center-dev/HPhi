@@ -3006,7 +3006,51 @@ double complex X_child_CisAisCjtAjt_Hubbard_MPI
  double complex *tmp_v0,
  double complex *tmp_v1)
 {
+#ifdef MPI
+  double complex dam_pr=0.0;
+  int iCheck;
+  unsigned long int tmp_ispin1;
+  unsigned long int i_max = X->Check.idim_max;
+  unsigned long int tmp_off, j;
+  double complex dmv;
+  MPI_Status statusMPI;
 
+  iCheck=CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
+  if(iCheck != TRUE){
+    return 0.0;
+  }
+  if(org_isite1+1 > X->Def.Nsite && org_isite3+1 > X->Def.Nsite){
+#pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
+  firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
+    for (j = 1; j <= i_max; j++){
+      dmv=tmp_v1[j]*tmp_V;
+      if (X->Large.mode == M_MLTPLY) { // for multply
+	tmp_v0[j] += dmv;
+      }	  
+      dam_pr += conj(tmp_v1[j])*dmv;
+    }
+  }
+  else if (org_isite1+1 > X->Def.Nsite || org_isite3+1 > X->Def.Nsite){
+    if(org_isite1 > org_isite3){
+      tmp_ispin1 = X->Def.Tpow[2 * org_isite3+ org_ispin3];
+    }
+    else{
+      tmp_ispin1 = X->Def.Tpow[2 * org_isite1+ org_ispin1];
+    }
+#pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1, list_1) \
+  firstprivate(i_max, tmp_V, X, tmp_ispin1) private(dmv, j, tmp_off)
+    for(j = 1;j <=  i_max;j++){
+      if(CheckBit_Ajt(tmp_ispin1, list_1[j], &tmp_off) == TRUE){
+	dmv= tmp_v1[j]*tmp_V;
+	if (X->Large.mode == M_MLTPLY) { // for multply
+	  tmp_v0[j] += dmv;
+	}
+	dam_pr +=conj(tmp_v1[j])*dmv;
+      }
+    }
+  }
+  return dam_pr;
+#endif
 }
 
 
