@@ -2017,6 +2017,10 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
       ihermite =FALSE;
     }
   }
+  else{
+    ihermite=FALSE;
+  }
+  
   if(ihermite==FALSE){
     if(GetOffCompGeneralSpin((unsigned long int)myrank, org_isite3 + 1, org_ispin4, org_ispin3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
       {
@@ -2029,8 +2033,9 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 	  }
 	else return 0.0;
       }
+    else return 0.0;
   }
-  else return 0.0;
+  
   
   origin = (int)off;
 
@@ -3061,6 +3066,7 @@ double complex X_child_CisAisCjtAjt_Hubbard_MPI
 }
 
 
+<<<<<<< HEAD
 double complex X_child_CisAjtCkuAlv_Hubbard_MPI
 (
  int org_isite1,
@@ -3461,3 +3467,6 @@ double complex X_child_CisAis_Hubbard_MPI
   #endif
 }
   
+=======
+}
+>>>>>>> yoshimi_GeneralSpin
