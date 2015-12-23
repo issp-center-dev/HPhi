@@ -186,3 +186,9 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI(int isite1, int isigma1, int isi
 double complex X_child_CisAjtCkuAku_Hubbard_MPI(int isite1, int isigma1, int isite2, int isigma2, int isite3, int isigma3, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
 double complex X_child_CisAisCjtAku_Hubbard_MPI(int isite1, int isigma1, int isite3, int isigma3, int isite4, int isigma4, double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_child_CisAis_Hubbard_MPI
+(
+int org_isite1, int org_ispin1,
+double complex tmp_V, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1
+);

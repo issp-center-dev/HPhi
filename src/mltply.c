@@ -1710,7 +1710,6 @@ shared(tmp_v0, tmp_v1)
           long unsigned int is2_spin,
           long unsigned int sum_spin,
           long unsigned int diff_spin,
-          long unsigned int *iexchg,
           long unsigned int *tmp_off
   ) {
     long unsigned int ibit_tmp_1, ibit_tmp_2;
@@ -2476,7 +2475,7 @@ shared(tmp_v0, tmp_v1)
     long unsigned int iexchg;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
-    tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &iexchg, tmp_off);
+    tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, tmp_off);
     if (tmp_sgn != 0) {
       tmp_sgn *= X_CisAis(list_1[*tmp_off], X, isite1);
       if (tmp_sgn != 0) {
@@ -2530,7 +2529,7 @@ shared(tmp_v0, tmp_v1)
     dam_pr = 0;
     tmp_sgn = X_CisAis(list_1[j], X, isite3);
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, &iexchg, tmp_off);
+      tmp_sgn *= X_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply
@@ -2583,15 +2582,13 @@ shared(tmp_v0, tmp_v1)
           ) {
     int tmp_sgn;
     long unsigned int tmp_off_1;
-    long unsigned int iexchg_1;
-    long unsigned int iexchg_2;
 
     double complex dmv;
     double complex dam_pr = 0;
-    tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &iexchg_1, &tmp_off_1);
+    tmp_sgn = X_GC_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff,  &tmp_off_1);
 
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt(iexchg_1, X, isite1, isite2, Asum, Adiff, &iexchg_2, tmp_off_2);
+      tmp_sgn *= X_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);       
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply

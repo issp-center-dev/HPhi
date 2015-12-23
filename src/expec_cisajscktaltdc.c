@@ -249,6 +249,14 @@ int expec_cisajscktaltdc
       tmp_V    = 1.0;
 
       dam_pr=0.0;
+      if(X->Def.iFlgSzConserved ==TRUE){
+	if(org_sigma1+org_sigma3 != org_sigma2+org_sigma4){
+	  dam_pr=SumMPI_dc(dam_pr);
+	  fprintf(fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, org_isite3-1, org_sigma3, org_isite4-1, org_sigma4, creal(dam_pr), cimag(dam_pr));
+	  continue;
+	}
+      }
+
       if(CheckPE(org_isite1-1, X)==TRUE || CheckPE(org_isite2-1, X)==TRUE ||
 	 CheckPE(org_isite3-1, X)==TRUE || CheckPE(org_isite4-1, X)==TRUE){
 	isite1 = X->Def.OrgTpow[2*org_isite1-2+org_sigma1] ;
@@ -262,23 +270,24 @@ int expec_cisajscktaltdc
 						       1.0, X, vec, vec);
 	}
 	else if(isite1 == isite2 && isite3 != isite4){
-	  /*	  
+	  	  
 	  dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1, 
 						       org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
 						       1.0, X, vec, vec);
-	  */ 
+	   
 	}
 	else if(isite1 != isite2 && isite3 == isite4){
-	  /*
+	  
 	   dam_pr = X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
 						       org_isite3-1, org_sigma3, 
 						       1.0, X, vec, vec);
-	  */
+	 
 	}
-	else if(isite1 != isite2 && isite3 != isite4){
+	else if(isite1 != isite2 && isite3 != isite4){	  
 	  dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
 						       org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
 						       1.0, X, vec, vec);
+	  
 	}
       
       }//InterPE
@@ -404,6 +413,7 @@ int expec_cisajscktaltdc
 	  }
 	  else{  // other process is not allowed
 	    // error message will be added
+	    dam_pr=0.0;
 	    }	
 	}
 	else{
@@ -433,6 +443,7 @@ int expec_cisajscktaltdc
 	    }
 	  }else{  // other process is not allowed
 	    // error message will be added
+	    dam_pr=0.0;
 	  }	
 	}
 	dam_pr = SumMPI_dc(dam_pr);

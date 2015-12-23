@@ -170,10 +170,10 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       if(X->Def.iFlgSzConserved ==TRUE){
 	if(org_sigma1 != org_sigma2){
 	  dam_pr =0.0;
+	  dam_pr= SumMPI_dc(dam_pr);
+	  fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+	  continue;
 	}
-	dam_pr= SumMPI_dc(dam_pr);
-	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
-	continue;
       }
       if (org_isite1  > X->Def.Nsite &&
           org_isite2  > X->Def.Nsite) {
@@ -206,24 +206,20 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	    return -1;
 	  }
 	  if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
-	    if(org_sigma1==0){
-	      is   = X->Def.Tpow[2 * org_isite1 - 2];
-	    }
-	    else{
-	      is = X->Def.Tpow[2 * org_isite1 - 1];
-	    }	    
+	   
+	    is   = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
+	    
 #pragma omp parallel for default(none) shared(list_1, vec) reduction(+:dam_pr) firstprivate(i_max, is) private(num1, ibit)
 	    for(j = 1;j <= i_max;j++){	      
 	      ibit = list_1[j]&is;
 	      num1  = ibit/is;	      
 	      dam_pr += num1*conj(vec[j])*vec[j];
 	    }
-
 	  }
 	  else{
 	    dam_pr = child_general_hopp(vec,vec,X,tmp_OneGreen);
 	  }
-      }
+	}
       dam_pr= SumMPI_dc(dam_pr);
       fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }

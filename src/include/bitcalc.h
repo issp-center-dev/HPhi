@@ -50,7 +50,7 @@ void SplitBit(
 	      );
 
 //inline void GetOffComp(
-void GetOffComp(
+int GetOffComp(
 	        long unsigned int *_list_2_1,
 	        long unsigned int *_list_2_2,
 		long unsigned int _ibit,

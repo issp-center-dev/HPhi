@@ -528,7 +528,6 @@ int X_CisAjt
  long unsigned int is2_spin,
  long unsigned int sum_spin,
  long unsigned int diff_spin,
- long unsigned int *iexchg,
  long unsigned int *tmp_off
  );
 

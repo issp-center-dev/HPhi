@@ -93,12 +93,18 @@ int setmem_large
     if(X->Def.iFlgGeneralSpin==FALSE){
       if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
 	lui_malloc1(list_2_1, X->Check.sdim*2+2);
+	for(j=0; j<X->Check.sdim*2+2;j++) list_2_1[j]=0;
       }
       else{
 	lui_malloc1(list_2_1, X->Check.sdim+2);
+	for(j=0; j<X->Check.sdim+2;j++) list_2_1[j]=0;
       }
       lui_malloc1(list_2_2, X->Check.sdim+2);
       lui_malloc1(list_jb, X->Check.sdim+2);
+      for(j=0; j<X->Check.sdim+2;j++){
+	list_2_2[j]=0;
+	list_jb[j]=0;
+      }
     }
     else{//for spin-canonical general spin
       lui_malloc1(list_2_1, X->Check.sdim+2);
@@ -106,6 +112,17 @@ int setmem_large
       lui_malloc1(list_2_2, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
       i_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
       lui_malloc1(list_jb, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+
+      for(j=0; j<X->Check.sdim+2;j++){
+	list_2_1[j]=0;
+	list_2_1_Sz[j]=0;
+      }
+      for(j=0; j< (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2; j++){
+	list_2_2[j]=0;
+	list_2_2_Sz[j]=0;
+	list_jb[j]=0;
+      }
+      
     }
       if(list_1==NULL
 	 || list_2_1==NULL
