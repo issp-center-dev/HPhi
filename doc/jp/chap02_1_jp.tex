@@ -21,15 +21,16 @@ $ bash HPhiconfig.sh sekirei
 \item \verb|sekirei| : 物性研究所システムB ''sekirei''
 \item \verb|maki| : 物性研究所システムC ''maki''
 \item \verb|intel| : intelコンパイラ + Linux PC
+\item \verb|mpicc-intel| : intelコンパイラ + MPIライブラリ(intelMPI以外) + Linux PC
 \item \verb|gcc| : GCC + Linux PC
 \item \verb|gcc-mac| : GCC + Mac
 \end{itemize}
 
 \verb|make.sys|の中身は次のようになっています(物性研システムB ''sekirei''の場合)。
 \begin{verbatim}
- CC = icc
+ CC = mpiicc
  LAPACK_FLAGS = -Dlapack -mkl=parallel 
- FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
  MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
  INCLUDE_DIR=./include
 \end{verbatim}
@@ -39,6 +40,7 @@ $ bash HPhiconfig.sh sekirei
 \item \verb|LAPACK_FLAGS| : LAPACKのためのコンパイルオプション。 \verb|-Dlapack|は必須です。
 \item \verb|FLAGS| : その他のコンパイルオプション。
   \verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|などのOpenMP有効化のオプションは必須です。
+  MPI並列を行う場合は\verb|-D MPI|をつけます. 
 \item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : メルセンヌツイスター(乱数発生ルーチン)および
   追加のインクルードディレクトリを指定します。これらを変更する必要はありません。
 \end{itemize}

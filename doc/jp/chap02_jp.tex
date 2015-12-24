@@ -9,6 +9,7 @@ $\HPhi$のコンパイル$\cdot$使用には次のものが必要です。
 \begin{itemize}
 \item Cコンパイラ (インテル、富士通、GNUなど)
 \item LAPACKライブラリ (インテルMKL, 富士通TCL, ATLASなど)
+\item MPIライブラリ (MPI並列を行わない場合は必要ありません)
 \end{itemize}
 
 \begin{screen}
@@ -125,7 +126,20 @@ $\HPhi$ではスタンダードモードとエキスパートモードの2つの
 "\verb|-s|"(``\verb|--standard|'' でも可)をオプションとして指定の上、
 1で作成した入力ファイル名を引数とし、\verb|HPhi|を実行します。
 
-\verb|$ | \underline{パス}\verb|/HPhi -s | \underline{入力ファイル}
+\begin{itemize}
+\item シリアル/OpenMX並列 の場合
+
+  \verb|$ | \underline{パス}\verb|/HPhi -s | \underline{入力ファイル} 
+
+\item MPI並列/ハイブリッド並列 の場合
+
+  \verb|$ mpiexec -np |\underline{プロセス数}\verb| |\underline{パス}\verb|/HPhi -s | \underline{入力ファイル} 
+
+  ワークステーションやスパコン等でキューイングシステムを利用している場合は
+  プロセス数をジョブ投入コマンドの引数として与える場合があります。
+  詳しくはお使いのシステムのマニュアルをご参照ください。
+
+\end{itemize}
 
 \item 途中経過
 
@@ -171,7 +185,17 @@ export OMP_NUM_THREADS=16
 
 "\verb|-e|"(``\verb|--expert|'' でも可)をオプションとして指定の上、1で作成した入力リストファイル名を引数とし、ターミナルから$\HPhi$を実行します。
 
-\verb|$ | \underline{パス}\verb|/HPhi -e | \underline{入力リストファイル}
+\begin{itemize}
+
+\item シリアル/OpenMP並列
+
+\verb|$ | \underline{パス}\verb|/HPhi -e | \underline{入力リストファイル} 
+
+\item MPI並列/ハイブリッド並列
+
+\verb|$ mpiexec -np |\underline{プロセス数}\verb| |\underline{パス}\verb|/HPhi -e | \underline{入力リストファイル}
+
+\end{itemize}
 
 \item 途中経過
 
