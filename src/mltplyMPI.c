@@ -3066,7 +3066,7 @@ double complex X_child_CisAisCjtAjt_Hubbard_MPI
 }
 
 
-<<<<<<< HEAD
+
 double complex X_child_CisAjtCkuAlv_Hubbard_MPI
 (
  int org_isite1,
@@ -3466,7 +3466,3 @@ double complex X_child_CisAis_Hubbard_MPI
   return dam_pr;
   #endif
 }
-  
-=======
-}
->>>>>>> yoshimi_GeneralSpin
