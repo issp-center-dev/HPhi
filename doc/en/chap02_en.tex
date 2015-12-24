@@ -41,8 +41,13 @@ Please read manuals of your compiler/library for more information.
 \section{Directory structure}
 When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.\\
 \\
+├──CMakeLists.txt\\
 ├──COPYING\\
-├──doc/\\
+├──config/\\
+│~~~~~~~├──fujitsu.cmake\\
+│~~~~~~~├──gcc.cmake\\
+│~~~~~~~├──intel.cmake\\
+│~~~~~~~└──sekirei.cmake\\├──doc/\\
 │~~~~~~~├──en/\\
 │~~~~~~~├──jp/\\
 │~~~~~~~├──userguide\_en.pdf\\
@@ -69,7 +74,9 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
 │~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
 │~~~~~~│~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
 │~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~~~~~~~~~~└─Kitaev/\\
+│~~~~~~│~~~~~~~~~~~~~~~├─Kitaev/\\
+│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~│~~~~~~~~~~~~~~~└─S1Chain/\\
 │~~~~~~│~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
 │~~~~~~└──Standard/\\
 │~~~~~~~~~~~~~~~~~~├──Hubbard/\\
@@ -91,10 +98,15 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└─Kitaev/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─Kagome/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─Kitaev/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└─S1Chain/\\
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
 └──src/\\
 ~~~~~~~~~~~~~├──**.c\\
+~~~~~~~~~~~~~├──CMakeLists.txt\\
 ~~~~~~~~~~~~~├──include/\\
 ~~~~~~~~~~~~~│~~~~~~~└──**.h\\
 ~~~~~~~~~~~~~└──makefile\_src\\
