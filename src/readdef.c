@@ -1093,7 +1093,6 @@ int ReadDefFileIdxPara(
 	    fclose(fp);
 	    return ReadDefFileError(defname);
 	  }
-
 	  idx++;
 	}
 	if(idx!=X->NCisAjtCkuAlvDC){
@@ -1106,8 +1105,6 @@ int ReadDefFileIdxPara(
       break;
     }
     fclose(fp);
-
-    fprintf(stdoutMPI, "Definition files are correct.\n");
 
     switch(iKWidx){
     case KWCoulombIntra:

@@ -44,6 +44,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   long unsigned int ihfbit=0;
   long unsigned int isite1, isite2, sigma1, sigma2;
   long unsigned int isite3, isite4, sigma3, sigma4;
+  long unsigned int ibitsite1, ibitsite2, ibitsite3, ibitsite4;
+
   double complex dam_pr;
   double complex tmp_trans;
   long int tmp_sgn;
@@ -132,31 +134,31 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 
 	if(CheckPE(isite1-1, X)==TRUE || CheckPE(isite2-1, X)==TRUE ||
 	   CheckPE(isite3-1, X)==TRUE || CheckPE(isite4-1, X)==TRUE){
-	  isite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
-	  isite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
-	  isite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
-	  isite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
-	  if(isite1 == isite2 && isite3 == isite4){
+	  ibitsite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
+	  ibitsite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
+	  ibitsite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
+	  ibitsite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
+	  if(ibitsite1 == ibitsite2 && ibitsite3 == ibitsite4){
 	    
 	  dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
 						       isite3-1, sigma3, 
 						       tmp_V, X, tmp_v0, tmp_v1);
 	}
-	else if(isite1 == isite2 && isite3 != isite4){
+	else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
 	  
 	  dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
 						       isite3-1, sigma3, isite4-1, sigma4,
 						       tmp_V, X, tmp_v0, tmp_v1);
 	  
 	}
-	else if(isite1 != isite2 && isite3 == isite4){
+	else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){
 	
 	   dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
 						       isite3-1, sigma3, 
 						       tmp_V, X, tmp_v0, tmp_v1);
 	  
 	}
-	else if(isite1 != isite2 && isite3 != isite4){
+	else if(ibitsite1 != ibitsite2 && ibitsite3 != ibitsite4){
 	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
 						       isite3-1, sigma3, isite4-1, sigma4,
 						       tmp_V, X, tmp_v0, tmp_v1);
@@ -257,30 +259,30 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 
 	if(CheckPE(isite1-1, X)==TRUE || CheckPE(isite2-1, X)==TRUE ||
 	   CheckPE(isite3-1, X)==TRUE || CheckPE(isite4-1, X)==TRUE){
-	  isite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
-	  isite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
-	  isite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
-	  isite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
-	  if(isite1 == isite2 && isite3 == isite4){	    
+	  ibitsite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
+	  ibitsite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
+	  ibitsite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
+	  ibitsite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
+	  if(ibitsite1 == ibitsite2 && ibitsite3 == ibitsite4){	    
 	    dam_pr = X_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
 						      isite3-1, sigma3, 
 						      tmp_V, X, tmp_v0, tmp_v1);
 	  }
-	  else if(isite1 == isite2 && isite3 != isite4){
+	  else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
 	    
 	    dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
 						      isite3-1, sigma3, isite4-1, sigma4,
 						      tmp_V, X, tmp_v0, tmp_v1);
 	  
 	  }
-	  else if(isite1 != isite2 && isite3 == isite4){
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){
 	
 	    dam_pr = X_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
 						      isite3-1, sigma3, 
 						      tmp_V, X, tmp_v0, tmp_v1);
 	  
 	  }
-	  else if(isite1 != isite2 && isite3 != isite4){
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 != ibitsite4){
 	    dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
 						      isite3-1, sigma3, isite4-1, sigma4,
 						      tmp_V, X, tmp_v0, tmp_v1);
