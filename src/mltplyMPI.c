@@ -2650,7 +2650,6 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
   isite4 =  X->Def.Tpow[2 * org_isite3+ org_ispin3];
   
   if(iCheck == TRUE){
-
     tmp_isite1 = X->Def.OrgTpow[2 * org_isite1+ org_ispin1];
     tmp_isite2 = X->Def.OrgTpow[2 * org_isite2+ org_ispin2];
     tmp_isite3 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
@@ -2660,44 +2659,42 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
     else Adiff = tmp_isite1-tmp_isite2*2;  
   }
   else{
-  iCheck=CheckBit_InterAllPE(org_isite3, org_ispin3, org_isite3, org_ispin3, org_isite2, org_ispin2, org_isite1, org_ispin1, X, (long unsigned int) myrank, &origin);
-  if(iCheck == TRUE){    
-    tmp_V = conj(tmp_V);
-    tmp_isite4 = X->Def.OrgTpow[2 * org_isite1+ org_ispin1];
-    tmp_isite3 = X->Def.OrgTpow[2 * org_isite2+ org_ispin2];
-    tmp_isite2 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
-    tmp_isite1 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
-    Asum = tmp_isite3+tmp_isite4;
-    if(tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3*2;
-    else Adiff = tmp_isite3-tmp_isite4*2;  
-    iFlgHermite=TRUE;
-    if(X->Large.mode == M_CORR){
-      tmp_V = 0;
+    iCheck=CheckBit_InterAllPE(org_isite3, org_ispin3, org_isite3, org_ispin3, org_isite2, org_ispin2, org_isite1, org_ispin1, X, (long unsigned int) myrank, &origin);
+    if(iCheck == TRUE){    
+      tmp_V = conj(tmp_V);
+      tmp_isite4 = X->Def.OrgTpow[2 * org_isite1+ org_ispin1];
+      tmp_isite3 = X->Def.OrgTpow[2 * org_isite2+ org_ispin2];
+      tmp_isite2 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
+      tmp_isite1 = X->Def.OrgTpow[2 * org_isite3+ org_ispin3];
+      Asum = tmp_isite3+tmp_isite4;
+      if(tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3*2;
+      else Adiff = tmp_isite3-tmp_isite4*2;  
+      iFlgHermite=TRUE;
+      if(X->Large.mode == M_CORR){
+	tmp_V = 0;
+      }
     }
-  }
-  else{
-    return 0.0;
-  }
+    else{
+      return 0.0;
+    }
   }
   
   if(myrank == origin){// only k is in PE
 
-    if(iFlgHermite ==FALSE){
       if(CheckBit_Ajt(isite3, myrank, &tmp_off) == FALSE) return 0.0;
       
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
       for (j = 1; j <= i_max; j++) {
 	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite2, isite1, Asum, Adiff, tmp_V, &tmp_off);
       }
-      return dam_pr;
-    }
-    else{
+      
+      if(X->Large.mode != M_CORR){
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
-      for (j = 1; j <= i_max; j++) {
-	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, tmp_V, &tmp_off);
+	for (j = 1; j <= i_max; j++) {
+	  dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, tmp_V, &tmp_off);
+	}
       }
       return dam_pr;
-    }
   }//myrank =origin
   else{
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
@@ -2852,30 +2849,28 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
       if(isite4 > isite1) Adiff = isite4 - isite1*2;
       else Adiff = isite1-isite4*2;
 
-      if(iFlgHermite == FALSE){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_off) firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
-	for(j = 1; j <= i_max; j++) {
-	  dam_pr += GC_CisAjt(j-1, tmp_v0, tmp_v1, X, isite1, isite4, (isite1+isite4), Adiff, tmp_V, &tmp_off);
-	}
-	//calc -CisAku njv
-	dam_pr -= X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4, org_isite2, org_ispin2, tmp_V, X, tmp_v0, tmp_v1);
+      for(j = 1; j <= i_max; j++) {
+	dam_pr += GC_CisAjt(j-1, tmp_v0, tmp_v1, X, isite1, isite4, (isite1+isite4), Adiff, tmp_V, &tmp_off);
       }
-      else{
+      //calc -CisAku njv
+      dam_pr -= X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4, org_isite2, org_ispin2, tmp_V, X, tmp_v0, tmp_v1);
+      if(X->Large.mode != M_CORR){ //for hermite
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_off) firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
 	for(j = 1; j <= i_max; j++) {
 	  dam_pr += GC_CisAjt(j-1, tmp_v0, tmp_v1, X, isite4, isite1, (isite1+isite4), Adiff, tmp_V, &tmp_off);
 	}
 	//calc -njvCkuAis 
 	dam_pr -= X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite2, org_ispin2, org_isite4, org_ispin4, org_isite1, org_ispin1, tmp_V, X, tmp_v0, tmp_v1);
-
+	
       }
     }
     else{// CisAjtCkuAis = -CisAisCkuAjt: i is in PE
-      if(iFlgHermite==FALSE){
+
 	dam_pr = -X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, org_isite2, org_ispin2, tmp_V, X, tmp_v0, tmp_v1);
-      }
-      else{//CisAkuCjtAis=-CisAisCjtAku
-	dam_pr = -X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, tmp_V, X, tmp_v0, tmp_v1);
+      if(X->Large.mode != M_CORR){ //for hermite
+
+	dam_pr += -X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, tmp_V, X, tmp_v0, tmp_v1);
       }
     }
     return dam_pr;
@@ -3144,16 +3139,15 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
       if(isite4 > isite1) Adiff = isite4 - isite1*2;
       else Adiff = isite1-isite4*2;
 
-      if(iFlgHermite == FALSE){
-	//calc CisAku
+      //calc CisAku
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_off) firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0, list_1)
-	for(j = 1; j <= i_max; j++) {
-	  dam_pr += CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite4, (isite1+isite4), Adiff, tmp_V);
-	}
-	//calc -CisAku njv
-	dam_pr -= X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4, org_isite2, org_ispin2, tmp_V, X, tmp_v0, tmp_v1);
+      for(j = 1; j <= i_max; j++) {
+	dam_pr += CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite4, (isite1+isite4), Adiff, tmp_V);
       }
-      else{
+      //calc -CisAku njv
+      dam_pr -= X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4, org_isite2, org_ispin2, tmp_V, X, tmp_v0, tmp_v1);
+      
+      if(X->Large.mode != M_CORR){  //for hermite
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_off) firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
 	for(j = 1; j <= i_max; j++) {
 	  dam_pr += CisAjt(j, tmp_v0, tmp_v1, X, isite4, isite1, (isite1+isite4), Adiff, tmp_V);
@@ -3161,17 +3155,15 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
 	//calc -njvCkuAis 
 	dam_pr -= X_child_CisAisCjtAku_Hubbard_MPI(org_isite2, org_ispin2, org_isite4, org_ispin4, org_isite1, org_ispin1, tmp_V, X, tmp_v0, tmp_v1);
       }
-    }
-    
+    }  
     else{// CisAjtCkuAis = -CisAisCkuAjt: i is in PE
-      if(iFlgHermite==FALSE){
-	dam_pr = -X_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, org_isite2, org_ispin2, tmp_V, X, tmp_v0, tmp_v1);
-      }
-      else{//CisAkuCjtAis=-CisAisCjtAku
+      dam_pr = -X_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, org_isite2, org_ispin2, tmp_V, X, tmp_v0, tmp_v1);
+      
+      if(X->Large.mode != M_CORR){  //for hermite: CisAkuCjtAis=-CisAisCjtAku
 	dam_pr = -X_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, tmp_V, X, tmp_v0, tmp_v1);
       }
     }
-    
+  
     return dam_pr;
   }//myrank =origin
   else{
@@ -3315,26 +3307,21 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI
   }
   
   if(myrank == origin){// only k is in PE
-
-    if(iFlgHermite ==FALSE){
-      if(CheckBit_Ajt(isite3, myrank, &tmp_off) == FALSE) return 0.0;
-      
-#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1, list_1)
-      for (j = 1; j <= i_max; j++) {
-	dam_pr += CisAjt(j, tmp_v0, tmp_v1, X, isite2, isite1, Asum, Adiff, tmp_V);
-      }
-      return dam_pr;
-    }
-    else{
-#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1,list_1)
+    //for hermite
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp_v0, tmp_v1)
       for (j = 1; j <= i_max; j++) {
 	dam_pr += CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, tmp_V);
       }
+      
+      if(X->Large.mode !=M_CORR){
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j) shared(tmp_v0, tmp_v1)
+	for (j = 1; j <= i_max; j++) {
+	  dam_pr += CisAjt(j, tmp_v0, tmp_v1, X, isite2, isite1, Asum, Adiff, tmp_V);
+	}
+      }
       return dam_pr;
-    }
   }//myrank =origin
   else{
-    
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
@@ -3406,9 +3393,9 @@ double complex X_child_CisAisCjtAku_Hubbard_MPI
  double complex *tmp_v0,
  double complex *tmp_v1
  ){
-  #ifdef MPI
-  
+#ifdef MPI
   double complex dam_pr=0;
+  
   dam_pr=X_child_CisAjtCkuAku_Hubbard_MPI
     (
      org_isite4, org_ispin4, org_isite3, org_ispin3,

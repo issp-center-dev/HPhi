@@ -140,33 +140,31 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	  ibitsite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
 	  if(ibitsite1 == ibitsite2 && ibitsite3 == ibitsite4){
 	    
-	  dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
-						       isite3-1, sigma3, 
-						       tmp_V, X, tmp_v0, tmp_v1);
-	}
-	else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
-	  
-	  dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
-						       isite3-1, sigma3, isite4-1, sigma4,
-						       tmp_V, X, tmp_v0, tmp_v1);
-	  
-	}
-	else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){
-	
-	   dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
-						       isite3-1, sigma3, 
-						       tmp_V, X, tmp_v0, tmp_v1);
-	  
-	}
-	else if(ibitsite1 != ibitsite2 && ibitsite3 != ibitsite4){
-	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
-						       isite3-1, sigma3, isite4-1, sigma4,
-						       tmp_V, X, tmp_v0, tmp_v1);
-	}
-      
+	    dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
+							 isite3-1, sigma3, 
+							 tmp_V, X, tmp_v0, tmp_v1);
+	  }
+	  else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
+	    
+	    dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
+							 isite3-1, sigma3, isite4-1, sigma4,
+							 tmp_V, X, tmp_v0, tmp_v1);
+	    
+	  }
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){
+	    
+	    dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+							 isite3-1, sigma3, 
+							 tmp_V, X, tmp_v0, tmp_v1);
+	    
+	  }
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 != ibitsite4){
+	    dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+							 isite3-1, sigma3, isite4-1, sigma4,
+							 tmp_V, X, tmp_v0, tmp_v1);
+	  }
       }//InterPE
       else{
-
 	dam_pr=0.0;
 	for(ihermite=0; ihermite<2; ihermite++){
 	  idx=2*i+ihermite;
@@ -198,7 +196,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
       }
 	X->Large.prdct += dam_pr;
       }
-
+      
       //Pair hopping
       for (i = 0; i < X->Def.NPairHopping/2; i++) {
 	for(ihermite=0; ihermite<2; ihermite++){
@@ -208,7 +206,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	  X->Large.prdct += dam_pr;
 	}
       }
-
+      
       //Exchange
       for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
 	for(ihermite=0; ihermite<2; ihermite++){
@@ -267,7 +265,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	sigma4 = X->Def.InterAll_OffDiagonal[i][7];
 	tmp_V = X->Def.ParaInterAll_OffDiagonal[i];
 
-	
+	dam_pr =0.0;
 	if(CheckPE(isite1-1, X)==TRUE || CheckPE(isite2-1, X)==TRUE ||
 	   CheckPE(isite3-1, X)==TRUE || CheckPE(isite4-1, X)==TRUE){
 	  ibitsite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
@@ -275,29 +273,27 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	  ibitsite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
 	  ibitsite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
 	  if(ibitsite1 == ibitsite2 && ibitsite3 == ibitsite4){	    
-	    dam_pr = X_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
+	    dam_pr += X_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
 						      isite3-1, sigma3, 
 						      tmp_V, X, tmp_v0, tmp_v1);
 	  }
 	  else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
 	    
-	    dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
+	    dam_pr += X_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
 						      isite3-1, sigma3, isite4-1, sigma4,
 						      tmp_V, X, tmp_v0, tmp_v1);
-	  
 	  }
 	  else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){
 	
-	    dam_pr = X_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+	    dam_pr += X_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
 						      isite3-1, sigma3, 
 						      tmp_V, X, tmp_v0, tmp_v1);
-	  
 	  }
 	  else if(ibitsite1 != ibitsite2 && ibitsite3 != ibitsite4){
-	    dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+	    dam_pr += X_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
 						      isite3-1, sigma3, isite4-1, sigma4,
 						      tmp_V, X, tmp_v0, tmp_v1);
-	  }
+	  }	 
 	}
 	else{
 	  for(ihermite=0; ihermite<2; ihermite++){
@@ -326,11 +322,12 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 				      tmp_V
 				      );
 
-	    dam_pr = child_general_int(tmp_v0, tmp_v1, X);
-	    X->Large.prdct += dam_pr;
+	    dam_pr += child_general_int(tmp_v0, tmp_v1, X);
+	    
 	  }
 	}
-      
+	X->Large.prdct += dam_pr;
+
 	//Pair hopping
 	for (i = 0; i < X->Def.NPairHopping/2; i++) {
 	  for(ihermite=0; ihermite<2; ihermite++){
