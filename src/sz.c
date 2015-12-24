@@ -340,7 +340,6 @@ int sz
 	  all_loc =  X->Def.NLocSpn-num_loc;
 	  all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
 	  all_down = (X->Def.Nsite-tmp_res)/2-all_loc;
-	    
 	  for(num_loc_up=0; num_loc_up <= all_loc; num_loc_up++){
 	    tmp_1 = Binomial(all_loc, num_loc_up, comb, all_loc);
 	    tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
@@ -510,10 +509,13 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
   // nCk, Nsite=max(n)
   int tmp_i,tmp_j;
 
-  if(n<=0 || k<0 || n<k){
+  if(n<0 || k<0 || n<k){
     return 0;
   }
-
+  if(n==0 && k==0){
+    return 1;
+  }
+  
   for(tmp_i=0;tmp_i<=Nsite;tmp_i++){
     for(tmp_j=0;tmp_j<=Nsite;tmp_j++){
       comb[tmp_i][tmp_j] = 0;
@@ -690,13 +692,13 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
 	  icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
 	}
       }
-    
+
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown && icheck_loc==1){
 	list_1[ja+jb]=ia+ib*ihfbit;
 	list_2_1[ia]=ja;
 	list_2_2[ib]=jb;
 	ja+=1;
-      } 
+      }
     }
   }
   ja=ja-1;    

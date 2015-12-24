@@ -326,8 +326,8 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	    
 	  }
 	}
-	X->Large.prdct += dam_pr;
-
+	X->	Large.prdct += dam_pr;
+	  }
 	//Pair hopping
 	for (i = 0; i < X->Def.NPairHopping/2; i++) {
 	  for(ihermite=0; ihermite<2; ihermite++){
@@ -347,7 +347,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	    X->Large.prdct += dam_pr;
 	  }
 	}
-      }
+
   
       break;
       
