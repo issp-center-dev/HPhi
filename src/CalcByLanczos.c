@@ -173,9 +173,16 @@ int CalcByLanczos(
     fprintf(stderr, "Error: calc TwoBodyG.\n");
     exitMPI(-1);
   }
-  
+
+  /* For ver.1.0
   if(!expec_totalspin(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc TotalSpin.\n");
+    exitMPI(-1);
+  }
+  */
+
+  if(!expec_totalSz(&(X->Bind), v1)==0){
+    fprintf(stderr, "Error: calc TotalSz.\n");
     exitMPI(-1);
   }
 
@@ -193,7 +200,7 @@ int CalcByLanczos(
     fprintf(fp,"Energy  %.10lf \n",X->Bind.Phys.energy);
     fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);
     fprintf(fp,"Sz  %.10lf \n",X->Bind.Phys.sz);
-    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);
+    //    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);
     
     fclose(fp);
 
