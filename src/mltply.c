@@ -270,7 +270,6 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	
 	if(CheckPE(isite1-1, X)==TRUE || CheckPE(isite2-1, X)==TRUE ||
 	   CheckPE(isite3-1, X)==TRUE || CheckPE(isite4-1, X)==TRUE){
-	  printf("X->Def.Nsite =%d \n", X->Def.Nsite);
 	  ibitsite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
 	  ibitsite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
 	  ibitsite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
