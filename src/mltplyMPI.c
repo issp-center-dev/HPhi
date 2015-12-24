@@ -19,12 +19,13 @@
 
 #ifdef MPI
 #include "mpi.h"
+#endif
 #include "Common.h"
 #include "mltply.h"
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
-#endif
+
 
 /**
  *
@@ -33,11 +34,12 @@
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void GC_child_general_hopp_MPIdouble(
-				     unsigned long int itrans /**< [in] Transfer ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+void GC_child_general_hopp_MPIdouble
+(
+ unsigned long int itrans /**< [in] Transfer ID*/,
+ struct BindStruct *X /**< [inout]*/,
+ double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+ double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
 
 #ifdef MPI
@@ -1361,6 +1363,7 @@ void GC_child_general_int_GeneralSpin_MPIdouble(
     double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
     double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
+#ifdef MPI
   unsigned long int tmp_off, off, j;
   int origin, ierr;
   double complex tmp_V, dmv, dam_pr;
@@ -1390,7 +1393,7 @@ void GC_child_general_int_GeneralSpin_MPIdouble(
 							X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   }
   X->Large.prdct += dam_pr;
-
+#endif
 }/*void GC_child_general_int_spin_MPIdouble*/
 
 
