@@ -1,3 +1,5 @@
+% !TEX root = userguide_jp.tex
+%----------------------------------------------------------
 $\HPhi$ は次の場所からダウンロードできます。\\
 \url{https://github.com/QLMS/HPhi/releases}
 
@@ -53,8 +55,6 @@ $ make HPhi
 このディレクトリにパスを通すか、
 パスの通っている場所にシンボリックリンクを作ってください。
 
-\subsection{cmakeを使う場合}
-
 \begin{screen}
 \Large 
 {\bf Tips}
@@ -66,5 +66,81 @@ $ make HPhi
 \\
 この設定を常に残すには、例えばログインシェルが\verb|bash|の場合には
 \verb|~/.bashrc|ファイルに上記のコマンドを記載します。
+\end{screen}
 
+\subsection{cmakeを使う場合}
+HPhiを展開したディレクトリのパスを\$PathTohphi 、ビルドディレクトリを\$HOME/build/hphi (任意の場所を指定可能)とした場合に、\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+cd $HOME/build/hphi
+cmake -DCONFIG=gcc $PathTohphi
+make
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\
+でコンパイルすることができます。コンパイル後、\$HOME/build/hphi 直下にsrcフォルダが作成され、実行ファイルであるHPhiがそのフォルダ内に作成されます。MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。
+
+なお、上の例ではgccコンパイラを前提としたコンパイルになっていますが、
+\begin{itemize}
+\item \verb|sekirei| : 物性研究所システムB ''sekirei''
+\item \verb|fujitsu| : 富士通コンパイラ(物性研究所システムC ''maki'')
+\item \verb|intel| : intelコンパイラ + Linux PC
+\item \verb|gcc| : GCC + Linux PC
+\end{itemize}
+のオプションが用意されています。以下、HPhiを展開したディレクトリでビルドする例を示します(intelコンパイラの場合)。\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+mkdir ./build
+cd ./build
+cmake -DCONFIG=intel ../
+make
+\end{verbatim}
+\end{screen}
+\end{minipage}
+実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、新規に上記作業を行うことをお薦めします。
+
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+\\
+{\bf Macでの設定}
+\\
+Macでのインストールを行う場合にはデフォルトコンパイラではOpenMP対応していないため、gccを事前にインストール必要があります(intel コンパイラがある場合は利用可能)。gccは、例えばmacportsを利用する場合には以下の通りに簡易にインストールすることができます(macportsのインストールや詳細に関しては、インターネット上に多くの情報がありますのでそちらを参考にしてください)。\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+sudo port install gcc
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\インストール後に\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+port select gcc
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\で表示されるリストからインストールしたgccを選択(sudo port gcc select xxxx、xxxxに選択したgccの名称を記入)することで利用できるようになります(none以外)。なお、ハイブリッド並列を行うために必要なOpenMPIに関しても\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+sudo port install openmpi
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\でインストール後に、\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+port select mpi
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\で表示されるmpiを選択することで利用できるようになります。mpiのバージョンに関しては、gccなどのコンパイラとバージョンを統一することをお薦めします。
 \end{screen}
