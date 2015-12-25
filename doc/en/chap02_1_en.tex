@@ -24,15 +24,16 @@ The command-line argment of \verb|HPhiconfig.sh| is as folows:
 \item \verb|sekirei| : ISSP system-B ''sekirei''
 \item \verb|maki| : ISSP system-C ''maki''
 \item \verb|intel| : intel compiler + Linux PC
+\item \verb|mpicc-intel| : intel compiler + MPI (excepting intelMPI) + Linux PC
 \item \verb|gcc| : GCC + Linux PC
 \item \verb|gcc-mac| : GCC + Mac
 \end{itemize}
 
 \verb|make.sys| is as follows (for ISSP-system-B ''sekirei''):
 \begin{verbatim}
- CC = icc
+ CC = mpiicc
  LAPACK_FLAGS = -Dlapack -mkl=parallel 
- FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
  MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
  INCLUDE_DIR=./include
 \end{verbatim}
@@ -43,6 +44,7 @@ We explatin macros of this file as:
 \item \verb|FLAGS| : Other compilation options.
   OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
   must be specified.
+  When you use MPI, please set \verb|-D MPI|.
 \item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : Options for the Mersenne Twister
   and additional include directory. You do not have to modify them.
 \end{itemize}
