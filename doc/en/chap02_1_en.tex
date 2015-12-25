@@ -24,15 +24,16 @@ The command-line argment of \verb|HPhiconfig.sh| is as folows:
 \item \verb|sekirei| : ISSP system-B ''sekirei''
 \item \verb|maki| : ISSP system-C ''maki''
 \item \verb|intel| : intel compiler + Linux PC
+\item \verb|mpicc-intel| : intel compiler + MPI (excepting intelMPI) + Linux PC
 \item \verb|gcc| : GCC + Linux PC
 \item \verb|gcc-mac| : GCC + Mac
 \end{itemize}
 
 \verb|make.sys| is as follows (for ISSP-system-B ''sekirei''):
 \begin{verbatim}
- CC = icc
+ CC = mpiicc
  LAPACK_FLAGS = -Dlapack -mkl=parallel 
- FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
  MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
  INCLUDE_DIR=./include
 \end{verbatim}
@@ -43,6 +44,7 @@ We explatin macros of this file as:
 \item \verb|FLAGS| : Other compilation options.
   OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
   must be specified.
+  When you use MPI, please set \verb|-D MPI|.
 \item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : Options for the Mersenne Twister
   and additional include directory. You do not have to modify them.
 \end{itemize}
@@ -56,7 +58,6 @@ $ make HPhi
 and obtain an executable \verb|HPhi| in \verb|src/| directory;
 you should add this directory to the \verb|$PATH|.
 
-\subsection{Using \texttt{cmake}}
 
 
 \begin{screen}
@@ -73,3 +74,75 @@ If you keep this PATH, you should write above in \verb|~/.bashrc|
 
 \end{screen}
 
+
+\subsection{Using \texttt{cmake}}
+We can compile Hphi as
+\begin{verbatim}
+cd $HOME/build/hphi
+cmake -DCONFIG=gcc $PathTohphi
+make
+\end{verbatim}
+Here, we set a path to $\HPhi$ as \verb| $PathTohphi| and to a build directory as \verb| $HOME/build/hphi|. After compiling, a src folder is constructed below a \verb| $HOME/build/hphi |folder and obtain an executable \verb|HPhi| in \verb|src/| directory. When there is not a MPI library in your system, an executable \verb|HPhi| is automatically compiled without a MPI library.
+
+In the above example, we compile $\HPhi$ by using a gcc compiler. We can select a compiler by using following options
+\begin{itemize}
+\item \verb|sekirei| : ISSP system-B ''sekirei''
+\item \verb|fujitsu| : Fujitsu compiler (ISSP system-C ''maki'')
+\item \verb|intel| : intel compiler + Linux PC
+\item \verb|gcc| : GCC compiler + Linux PC.
+\end{itemize}
+以下、HPhiを展開したディレクトリでビルドする例を示します(intelコンパイラの場合)。\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+mkdir ./build
+cd ./build
+cmake -DCONFIG=intel ../
+make
+\end{verbatim}
+\end{screen}
+\end{minipage}
+実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、新規に上記作業を行うことをお薦めします。
+
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+\\
+{\bf Macでの設定}
+\\
+Macでのインストールを行う場合にはデフォルトコンパイラではOpenMP対応していないため、gccを事前にインストール必要があります(intel コンパイラがある場合は利用可能)。gccは、例えばmacportsを利用する場合には以下の通りに簡易にインストールすることができます(macportsのインストールや詳細に関しては、インターネット上に多くの情報がありますのでそちらを参考にしてください)。\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+sudo port install gcc
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\インストール後に\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+port select gcc
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\で表示されるリストからインストールしたgccを選択(sudo port gcc select xxxx、xxxxに選択したgccの名称を記入)することで利用できるようになります(none以外)。なお、ハイブリッド並列を行うために必要なOpenMPIに関しても\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+sudo port install openmpi
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\でインストール後に、\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+port select mpi
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\で表示されるmpiを選択することで利用できるようになります。mpiのバージョンに関しては、gccなどのコンパイラとバージョンを統一することをお薦めします。
+\end{screen}

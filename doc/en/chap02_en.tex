@@ -9,6 +9,7 @@ $\HPhi$ requires the following packages:
 \begin{itemize}
 \item C compiler (intel, Fujitsu, GNU, etc. )
 \item LAPACK library (intel MKL, Fujitsu TCL, ATLAS, etc.)
+\item MPI library (If you do not use MPI, it is not necessary.)
 \end{itemize}
 
 \begin{screen}
@@ -40,8 +41,13 @@ Please read manuals of your compiler/library for more information.
 \section{Directory structure}
 When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.\\
 \\
+├──CMakeLists.txt\\
 ├──COPYING\\
-├──doc/\\
+├──config/\\
+│~~~~~~~├──fujitsu.cmake\\
+│~~~~~~~├──gcc.cmake\\
+│~~~~~~~├──intel.cmake\\
+│~~~~~~~└──sekirei.cmake\\├──doc/\\
 │~~~~~~~├──en/\\
 │~~~~~~~├──jp/\\
 │~~~~~~~├──userguide\_en.pdf\\
@@ -68,7 +74,9 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
 │~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
 │~~~~~~│~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
 │~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~~~~~~~~~~└─Kitaev/\\
+│~~~~~~│~~~~~~~~~~~~~~~├─Kitaev/\\
+│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~│~~~~~~~~~~~~~~~└─S1Chain/\\
 │~~~~~~│~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
 │~~~~~~└──Standard/\\
 │~~~~~~~~~~~~~~~~~~├──Hubbard/\\
@@ -90,10 +98,15 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└─Kitaev/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─Kagome/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─Kitaev/\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
+│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└─S1Chain/\\
 │~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
 └──src/\\
 ~~~~~~~~~~~~~├──**.c\\
+~~~~~~~~~~~~~├──CMakeLists.txt\\
 ~~~~~~~~~~~~~├──include/\\
 ~~~~~~~~~~~~~│~~~~~~~└──**.h\\
 ~~~~~~~~~~~~~└──makefile\_src\\
@@ -124,7 +137,21 @@ The input file format is described in the Sec. \ref{Ch:HowToStandard}.
 
 Run a executable \verb|HPhi| in terminal by setting option ``\verb|-s|" (or ``\verb|--standard|'') and the name of input file written in previous step.
 
-\verb|$ |\textit{Path}\verb|/HPhi -s |\textit{Input\_file\_name}
+\begin{itemize}
+
+\item Serial/OpenMP parallel
+
+  \verb|$ |\textit{Path}\verb|/HPhi -s |\textit{Input\_file\_name}
+
+\item MPI parallel/ Hybrid parallel
+
+  \verb|$ mpiexec -np |\textit{number\_of\_processes}\verb| |\textit{Path}\verb|/HPhi -s |\textit{Input\_file\_name}
+
+  When you use a queuing system in workstations or super computers, 
+  sometimes the number of processes is specified as an argument for the job-submitting command.
+  If you need more information, please refer manuals for your system.
+
+\end{itemize}
 
 \item Watch calculation logs
 
@@ -164,8 +191,18 @@ a list file for the filenames of input files (see the file formats shown in  \re
 {\bf Note:} A List file can be easily made by using standard mode.
  \item  Run\\
 Run $\HPhi$ in terminal by setting option ``\verb|-e|" (or ``\verb|--expert|'') and a file name of a list file.\\
-\verb|$ |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
 
+\begin{itemize}
+
+\item Serial/OpenMPI
+
+  \verb|$ |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
+  
+\item MPI/Hybrid
+
+  \verb|$ mpiexec -np |\textit{number\_of\_processes}\verb| |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
+
+\end{itemize}
 
 \item Under running\\
 Log files are outputted in the ``output" folder which is automatically made in the directory for a calculation scenario.
