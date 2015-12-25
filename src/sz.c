@@ -477,8 +477,8 @@ int sz
   //Error message
   //i_max=i_max+1;
   if(i_max!=X->Check.idim_max){
-    fprintf(stdoutMPI, "%s", cErrSz);
-    fprintf(stdoutMPI, cErrSz_ShowDim, i_max, X->Check.idim_max);
+    fprintf(stderr, "%s", cErrSz);
+    fprintf(stderr, cErrSz_ShowDim, i_max, X->Check.idim_max);
     strcpy(sdt_err,cFileNameErrorSz);
     if(childfopenMPI(sdt_err,"a",&fp_err)!=0){
       return -1;
@@ -913,7 +913,9 @@ int Read_sz
       return -1;
     }
     fprintf(fp_err, cErrSz_NoFile);
+    fprintf(stderr, cErrSz_NoFile);
     fprintf(fp_err, cErrSz_NoFile_Show,sdt);
+    fprintf(stderr, cErrSz_NoFile_Show, sdt);
     fclose(fp_err);
   }else{
     while(NULL != fgetsMPI(buf,sizeof(buf),fp)){  
