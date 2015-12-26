@@ -88,7 +88,7 @@ int CalcByLanczos(
     }
  
     if(Lanczos_EigenValue(&(X->Bind))!=0){
-      fprintf(stderr, "Lanczos Eigenvalue is not converged in this process.\n");
+      fprintf(stdoutMPI, "Lanczos Eigenvalue is not converged in this process.\n");
       exitMPI(-1);
     }  
     Lanczos_EigenVector(&(X->Bind));
