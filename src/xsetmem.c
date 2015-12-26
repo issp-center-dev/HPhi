@@ -75,9 +75,10 @@ int setmem_large
  struct BindStruct *X
  )
 {
+
   int j=0;
   int idim_maxMPI;
-
+  
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
   switch(X->Def.iCalcModel){
@@ -188,9 +189,10 @@ int setmem_large
       }
     }
   }
+  
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
-}
+  }
 
 void setmem_IntAll_Diagonal
 (

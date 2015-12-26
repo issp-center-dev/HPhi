@@ -190,11 +190,12 @@ int check(struct BindStruct *X){
 
   if(comb_sum==0){
     fprintf(stderr, cErrNoHilbertSpace);
-    return FALSE;
+    //    return FALSE;
   }
   
   fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
-  
+
+
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
   case Lanczos:
@@ -208,6 +209,7 @@ int check(struct BindStruct *X){
     return FALSE;
     break;
   }
+  
   fprintf(stdoutMPI, "MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(stdoutMPI, "APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){

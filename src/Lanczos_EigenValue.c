@@ -126,6 +126,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
         }
       }
     }
+
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
     for(i=1;i<=i_max;i++){
@@ -140,7 +141,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
   }
   //Eigenvalues by Lanczos method
-
+  
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, v1);
   stp=1;
@@ -149,7 +150,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
   alpha[1]=alpha1;
   cbeta1=0.0;
-        
+
+  //fprintf(stdoutMPI, "debug:alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+  
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
   for(i = 1; i <= i_max; i++){
     cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
