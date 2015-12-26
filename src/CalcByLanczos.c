@@ -195,6 +195,7 @@ int CalcByLanczos(
     exitMPI(-1);
   }  
 
+
   fprintf(fp,"Energy  %.10lf \n",X->Bind.Phys.energy);
   fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);
   fprintf(fp,"Sz  %.10lf \n",X->Bind.Phys.sz);
