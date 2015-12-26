@@ -509,11 +509,11 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
   // nCk, Nsite=max(n)
   int tmp_i,tmp_j;
 
-  if(n<0 || k<0 || n<k){
-    return 0;
-  }
   if(n==0 && k==0){
     return 1;
+  } 
+  else if(n<0 || k<0 || n<k){
+    return 0;
   }
   
   for(tmp_i=0;tmp_i<=Nsite;tmp_i++){
