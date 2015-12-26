@@ -167,7 +167,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
       else{
 	dam_pr=0.0;
 	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
+	  idx=i+ihermite;
 	  isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
 	  isite2 = X->Def.InterAll_OffDiagonal[idx][2] + 1;
 	  isite3 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
@@ -308,13 +308,11 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 						      tmp_V, X, tmp_v0, tmp_v1);
 	  }
 	  else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
-	    
 	    dam_pr += X_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
 						      isite3-1, sigma3, isite4-1, sigma4,
 						      tmp_V, X, tmp_v0, tmp_v1);
 	  }
-	  else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){
-	
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){	
 	    dam_pr += X_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
 						      isite3-1, sigma3, 
 						      tmp_V, X, tmp_v0, tmp_v1);
@@ -327,7 +325,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	}
 	else{
 	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;	      
+	    idx=i+ihermite;
 	    isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
 	    isite2 = X->Def.InterAll_OffDiagonal[idx][2] + 1;
 	    isite3 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
@@ -356,7 +354,7 @@ firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
 	    
 	  }
 	}
-	X->	Large.prdct += dam_pr;
+	X->Large.prdct += dam_pr;
       }
 	//Pair hopping
       for (i = 0; i < X->Def.NPairHopping; i += 2) {
@@ -802,7 +800,7 @@ shared(tmp_v0, tmp_v1)
   }
 
   X->Large.prdct = SumMPI_dc(X->Large.prdct);
-
+  //  fprintf(stdoutMPI, "debug: prdct=%lf, %lf\n",creal( X->Large.prdct), cimag( X->Large.prdct ) );
   return 0;
 }
 
