@@ -60,7 +60,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   int ihermite=0;
   int idx=0;
   i_max = X->Check.idim_max;
-  
+  X->Large.prdct = 0.0;
+  dam_pr = 0.0;
+
+  if(i_max!=0){
   if (X->Def.iFlgGeneralSpin == FALSE) {
     if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
       return -1;
@@ -79,16 +82,13 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.ihfbit = ihfbit;
   X->Large.mode = M_MLTPLY;
 
-  X->Large.prdct = 0.0;
-  dam_pr = 0.0;
-  #pragma omp parallel for default(none) reduction(+:dam_pr) \
-firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
     tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
     dam_pr += (list_Diagonal[j]) * conj(tmp_v1[j]) * tmp_v1[j];
   }
   X->Large.prdct += dam_pr;
-    
+  
   switch (X->Def.iCalcModel) {
     case HubbardGC:
       //Transfer
@@ -798,9 +798,13 @@ shared(tmp_v0, tmp_v1)
   default:
     return -1;
   }
-
+  }
+  
   X->Large.prdct = SumMPI_dc(X->Large.prdct);
   //  fprintf(stdoutMPI, "debug: prdct=%lf, %lf\n",creal( X->Large.prdct), cimag( X->Large.prdct ) );
+  //FinalizeMPI();
+  //exit(0);
+  
   return 0;
 }
 

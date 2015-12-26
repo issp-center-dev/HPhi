@@ -128,7 +128,7 @@ int main(int argc, char* argv[]){
   }
   else{
     if(check(&(X.Bind))==FALSE){
-      exitMPI(-1);
+      //      exitMPI(-1);
     }
   }
   

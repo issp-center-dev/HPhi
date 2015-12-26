@@ -90,8 +90,10 @@ int CalcByLanczos(
     if(Lanczos_EigenValue(&(X->Bind))!=0){
       fprintf(stdoutMPI, "Lanczos Eigenvalue is not converged in this process.\n");      
       return(-1);
-    }  
+    }
+    
     Lanczos_EigenVector(&(X->Bind));
+    
     expec_energy(&(X->Bind));
     //check for the accuracy of the eigenvector
     var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);

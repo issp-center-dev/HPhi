@@ -46,7 +46,6 @@ int expec_energy(struct BindStruct *X){
   double tmp_v02;  
   
   long unsigned int i_max;
-
   switch(X->Def.iCalcType){
   case Lanczos:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
@@ -79,7 +78,7 @@ int expec_energy(struct BindStruct *X){
   tmp_num_up=0.0;
   tmp_num_down=0.0;
 
-  for(isite1=1;isite1<=X->Def.Nsite;isite1++){
+ for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
     if(isite1 > X->Def.Nsite){
       switch(X->Def.iCalcModel){
       case HubbardGC:
@@ -91,8 +90,8 @@ int expec_energy(struct BindStruct *X){
 	is1_down = X->Def.Tpow[2 * isite1 - 1];
 	is1 = is1_up+is1_down;
 	ibit1 = (unsigned long int)myrank & is1;
-	num1_up = ibit1 / is1_up;
-	num1_down = ibit1 / is1_down;
+	num1_up = (ibit1&is1_up) / is1_up;
+	num1_down = (ibit1&is1_down) / is1_down;
 #pragma omp parallel for reduction(+:tmp_doublon, tmp_num_up, tmp_num_down) default(none) shared(v0) \
   firstprivate(i_max, num1_up, num1_down) private(j, tmp_v02)
 	for (j = 1; j <= i_max; j++){

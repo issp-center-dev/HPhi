@@ -64,7 +64,6 @@ int Lanczos_EigenValue(struct BindStruct *X)
   if(initial_mode == 0){
 
     sum_i_max = SumMPI_li(X->Check.idim_max);
-
     X->Large.iv = (sum_i_max / 3 + X->Def.initial_iv) % sum_i_max + 1;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
       X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
@@ -81,13 +80,13 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for (iproc = 0; iproc < nproc; iproc++) {
 
       i_max_tmp = BcastMPI_li(iproc, i_max);
-
       if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
+
         if (myrank == iproc) {
-          v1[iv - sum_i_max] = 1.0;
+          v1[iv - sum_i_max+1] = 1.0;
           if (X->Def.iInitialVecType == 0) {
-            v1[iv - sum_i_max] += 1.0*I;
-            v1[iv - sum_i_max] /= sqrt(2.0);
+            v1[iv - sum_i_max+1] += 1.0*I;
+            v1[iv - sum_i_max+1] /= sqrt(2.0);
           }
         }/*if (myrank == iproc)*/
       }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
