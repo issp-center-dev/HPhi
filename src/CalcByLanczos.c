@@ -84,13 +84,12 @@ int CalcByLanczos(
       break;
     default:
       fclose(fp);
-      return -1;
+      exitMPI(-1);
     }
  
     if(Lanczos_EigenValue(&(X->Bind))!=0){
-      fprintf(stdoutMPI, "Lanczos Eigenvalue is not converged in this process.\n");
-      fclose(fp);
-      return -1;
+      fprintf(stderr, "Lanczos Eigenvalue is not converged in this process.\n");
+      exitMPI(-1);
     }  
     Lanczos_EigenVector(&(X->Bind));
     expec_energy(&(X->Bind));
@@ -147,19 +146,19 @@ int CalcByLanczos(
     sscanf(ctmp2, "%ld \n",&i_max);
     if(i_max != X->Bind.Check.idim_max){
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-      fclose(fp);
       exitMPI(-1);
     }
     
     i=1;
     while(fgetsMPI(ctmp2, 256, fp) != NULL){
-	  sscanf(ctmp2, "%ld %lf %lf \n",
-		 &_list_1,
-		 &dRealVec,
-		 &dImagVec);	  
-	  v1[i]=dRealVec+I*dImagVec;
-	  i++;
-	}
+      sscanf(ctmp2, "%ld %lf %lf \n",
+	     &_list_1,
+	     &dRealVec,
+	     &dImagVec);	  
+      v1[i]=dRealVec+I*dImagVec;
+      i++;
+    }
+    fclose(fp);
   }
 
   // v1 is eigen vector
@@ -193,29 +192,27 @@ int CalcByLanczos(
   }
   
   if(childfopenMPI(sdt, "w", &fp)!=0){
-    fclose(fp);
-    return -1;
+    exitMPI(-1);
   }  
 
-    fprintf(fp,"Energy  %.10lf \n",X->Bind.Phys.energy);
-    fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);
-    fprintf(fp,"Sz  %.10lf \n",X->Bind.Phys.sz);
-    //    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);
-    
-    fclose(fp);
-
-    if(X->Bind.Def.iOutputEigenVec==TRUE){
-      sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
-      if(childfopenMPI(sdt, "w", &fp)!=0){
-	fclose(fp);
-	return -1;
-      }
-      fprintf(fp, "%ld \n", X->Bind.Check.idim_max);
-      for(i=1; i<=X->Bind.Check.idim_max; i++){
-	fprintf(fp, "%ld %.10lf %.10lf\n", list_1[i], creal(v1[i]), cimag(v1[i]));
-      }    
+  fprintf(fp,"Energy  %.10lf \n",X->Bind.Phys.energy);
+  fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);
+  fprintf(fp,"Sz  %.10lf \n",X->Bind.Phys.sz);
+  //    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);    
+  
+  if(X->Bind.Def.iOutputEigenVec==TRUE){
+    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
+    if(childfopenMPI(sdt, "w", &fp)!=0){
       fclose(fp);
-    }
-    
+      exitMPI(-1);
+      }
+    fprintf(fp, "%ld \n", X->Bind.Check.idim_max);
+    for(i=1; i<=X->Bind.Check.idim_max; i++){
+      fprintf(fp, "%ld %.10lf %.10lf\n", list_1[i], creal(v1[i]), cimag(v1[i]));
+    }    
+    fclose(fp);
+  }
+  
+  fclose(fp);
   return 0;
 }
