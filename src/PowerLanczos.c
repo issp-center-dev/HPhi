@@ -82,7 +82,7 @@ int PowerLanczos(struct BindStruct *X){
     E4    = creal(dam_pr4) ;// E^4
   
     if(solve_2ndPolinomial(X,&alpha_p,&alpha_m,E1,E2a,E2b,E3,E4)!=TRUE){
-      printf("Power Lanczos break \n");
+      fprintf(stdoutMPI,"Power Lanczos break \n");
       return 0;
     }
     //printf("E1=%.16lf E2a=%.16lf E2b=%.16lf E3=%.16lf E4=%.16lf \n",E1,E2a,E2b,E3,E4);
