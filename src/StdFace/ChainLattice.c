@@ -287,8 +287,8 @@ void KondoLattice_ChainLattice(
   nsite = L * 2;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
   for (iL = 0; iL < L; iL++){
-    locspinflag[2 * iL] = 0;
-    locspinflag[2 * iL + 1] = S2;
+    locspinflag[iL] = S2;
+    locspinflag[iL + L] = 0;
   }
   /*
   Transfer
@@ -302,12 +302,12 @@ void KondoLattice_ChainLattice(
 
   ktrans = 0;
   for (iL = 0; iL < L; iL++){
-    isite = 2 * iL;
+    isite = L + iL;
     for (ispin = 0; ispin < 2; ispin++){
 
       StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-      jsite = 2 * ((iL + 1) % L);
+      jsite = L + (iL + 1) % L;
       StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
       StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
     }
@@ -324,8 +324,8 @@ void KondoLattice_ChainLattice(
   kintr = 0;
   for (iL = 0; iL < L; iL++){
 
-    isite = 2 * iL;
-    jsite = 2 * iL + 1;
+    isite = iL + L;
+    jsite = iL;
 
     StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
     StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);
