@@ -102,8 +102,8 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
   GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit);
   spn   = 0.0;
   spn_z = 0.0;
-  for(isite1=1;isite1<=X->Def.Nsite;isite1++){    
-    for(isite2=1;isite2<=X->Def.Nsite;isite2++){
+  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){    
+    for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
       is1_up=X->Def.Tpow[2*isite1-2];
       is1_down=X->Def.Tpow[2*isite1-1];
       is2_up=X->Def.Tpow[2*isite2-2];
@@ -174,8 +174,8 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec){
 
   spn   = 0.0;
   spn_z = 0.0;
-  for(isite1=1;isite1<=X->Def.Nsite;isite1++){
-    for(isite2=1;isite2<=X->Def.Nsite;isite2++){
+  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+    for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
       is1_up=X->Def.Tpow[2*isite1-2];
       is1_down=X->Def.Tpow[2*isite1-1];
       is2_up=X->Def.Tpow[2*isite2-2];
@@ -354,8 +354,8 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
   else{
     double S1=0;
     double S2=0;
-    for(isite1=1;isite1<=X->Def.Nsite;isite1++){
-      for(isite2=1;isite2<=X->Def.Nsite;isite2++){
+    for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+      for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
 	S1=0.5*(X->Def.SiteToBit[isite1-1]-1);
 	S2=0.5*(X->Def.SiteToBit[isite2-1]-1);
 	if(isite1==isite2){
@@ -577,7 +577,7 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
 	  spn_z += conj(vec[j])*vec[j]*spn_z1;
 	}
       }
-      for(isite2=1;isite2<=X->Def.Nsite;isite2++){
+      for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
 	S2=0.5*(X->Def.SiteToBit[isite2-1]-1);
 	
 	if(isite1 > X->Def.Nsite && isite2 > X->Def.Nsite){

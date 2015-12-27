@@ -64,7 +64,6 @@ int Lanczos_EigenValue(struct BindStruct *X)
   if(initial_mode == 0){
 
     sum_i_max = SumMPI_li(X->Check.idim_max);
-
     X->Large.iv = (sum_i_max / 3 + X->Def.initial_iv) % sum_i_max + 1;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
       X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
@@ -81,13 +80,13 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for (iproc = 0; iproc < nproc; iproc++) {
 
       i_max_tmp = BcastMPI_li(iproc, i_max);
-
       if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
+
         if (myrank == iproc) {
-          v1[iv - sum_i_max] = 1.0;
+          v1[iv - sum_i_max+1] = 1.0;
           if (X->Def.iInitialVecType == 0) {
-            v1[iv - sum_i_max] += 1.0*I;
-            v1[iv - sum_i_max] /= sqrt(2.0);
+            v1[iv - sum_i_max+1] += 1.0*I;
+            v1[iv - sum_i_max+1] /= sqrt(2.0);
           }
         }/*if (myrank == iproc)*/
       }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
@@ -126,6 +125,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
         }
       }
     }
+
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
     for(i=1;i<=i_max;i++){
@@ -140,7 +140,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
   }
   //Eigenvalues by Lanczos method
-
+  
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, v1);
   stp=1;
@@ -149,7 +149,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
   alpha[1]=alpha1;
   cbeta1=0.0;
-        
+
+  //fprintf(stdoutMPI, "debug:alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+  
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
   for(i = 1; i <= i_max; i++){
     cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
@@ -179,6 +181,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
     fprintf(stdoutMPI,"stp=%d %.10lf \n",stp,E[1]);
   }
   else{
+
+
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -207,7 +211,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
     Target  = X->Def.LanczosTarget;
 
-    //    fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+    //    fprintf(stdoutMPI, "debug:alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
     
     if(stp==2){      
      #ifdef lapack

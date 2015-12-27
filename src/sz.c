@@ -73,6 +73,7 @@ int sz
   long unsigned int num_loc, div_down;
   int num_loc_up;
   int icheck_loc;
+  int ihfSpinDown=0;
   // [e] for Kondo
     
   long unsigned int i_max;
@@ -84,6 +85,8 @@ int sz
   fprintf(stdoutMPI, "%s", cProStartCalcSz);
   TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
 
+  if(X->Check.idim_max!=0){
+ 
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case HubbardNConserved:
@@ -125,7 +128,7 @@ int sz
   case Spin:
     if(X->Def.iFlgGeneralSpin==FALSE){
       if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
-	return -1;
+	exitMPI(-1);
       }
     fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
@@ -143,7 +146,7 @@ int sz
 
   if(X->Def.READ==1){
     if(!Read_sz(X, irght, ilft, ihfbit, &i_max)==0){
-      return -1;
+      exitMPI(-1);
     }
   }
   else{ 
@@ -176,7 +179,7 @@ int sz
    // this part can not be parallelized
       jb = 0;
       num_loc=0;
-      for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
+      for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
 	if(X->Def.LocSpn[j] != ITINERANT){
 	  num_loc += 1;
 	}
@@ -194,11 +197,20 @@ int sz
 	  div_down  = div_down/X->Def.Tpow[2*j+1];
 
 	  if(X->Def.LocSpn[j] != ITINERANT){
-	    icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	     if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+	      icheck_loc= icheck_loc;
+	    }
+	     else{
+	       icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	     }
 	  }
 	}
 	if(icheck_loc == 1){
-	  jb +=X->Def.Tpow[X->Def.Nsite-(X->Def.NLocSpn-num_loc)];
+	  if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
+	    jb +=X->Def.Tpow[X->Def.Nsite-1-(X->Def.NLocSpn-num_loc)];
+	  }else{
+	    jb +=X->Def.Tpow[X->Def.Nsite-(X->Def.NLocSpn-num_loc)];
+	  }
 	}
       }
 
@@ -299,14 +311,13 @@ int sz
             
     case Kondo:
       // this part can not be parallelized
-
       N_all_up   = X->Def.Nup;
       N_all_down = X->Def.Ndown;
       fprintf(stdoutMPI, "N_all_up=%d N_all_down=%d \n",N_all_up,N_all_down);
 
       jb = 0;
       num_loc=0;
-      for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
+      for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
 	if(X->Def.LocSpn[j] != ITINERANT){
 	  num_loc += 1;
 	}
@@ -319,7 +330,7 @@ int sz
 	num_down=0;	
 	icheck_loc=1;
 
-	for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
+	for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
 	  div_up    = i & X->Def.Tpow[2*j];
 	  div_up    = div_up/X->Def.Tpow[2*j];
 	  div_down  = i & X->Def.Tpow[2*j+1];
@@ -331,7 +342,13 @@ int sz
 	  }else{    
 	    num_up   += div_up;     
 	    num_down += div_down;
-	    icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	    if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+	      icheck_loc= icheck_loc;
+	      ihfSpinDown=div_down;
+	    }
+	    else{
+	      icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	    }
 	  }
 	}
 
@@ -340,10 +357,31 @@ int sz
 	  all_loc =  X->Def.NLocSpn-num_loc;
 	  all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
 	  all_down = (X->Def.Nsite-tmp_res)/2-all_loc;
+	  if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
+	    all_up   = (X->Def.Nsite)/2-all_loc;
+	    all_down = (X->Def.Nsite)/2-all_loc;
+	  }
+	  
 	  for(num_loc_up=0; num_loc_up <= all_loc; num_loc_up++){
 	    tmp_1 = Binomial(all_loc, num_loc_up, comb, all_loc);
-	    tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
-	    tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
+	    if( X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
+	      if(ihfSpinDown !=0){
+		tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
+		tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
+		
+	      }
+	      else{
+		num_up += 1;
+		tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
+		tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
+		
+	      }
+	    }
+	    else{
+	      tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
+	      tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
+	    }
+	      
 	    jb   += tmp_1*tmp_2*tmp_3;
 	  }
 	}	 
@@ -440,29 +478,10 @@ int sz
 		
 	i_free1(HilbertNumToSz, 2*Max2Sz+1);	
       }
-
-      //debug
-      /*
-      ihfbit=X->Check.sdim;
-      icnt=0;
-      for(j=0; j<X->Def.Tpow[X->Def.Nsite-1]*2; j++){
-	jb=list_2_1[j%ihfbit]+list_2_2[j/ihfbit];
-	if(j==list_1[jb]){
-	  printf("j= %ld, list_1=%ld\n", j, list_1[jb]);
-	  icnt++;
-	}
-      }
-      printf("icnt=%d\n", icnt);
-      exit(1);
-      for(j =1; j<=X->Check.idim_max; j++){
-	printf("j= %ld, list_1=%ld\n", j, list_1[j]);
-      }
-      exit(1);
-      */
       
       break;
     default:
-      return -1;
+      exitMPI(-1);
        
     }    
     i_max=icnt;
@@ -481,15 +500,16 @@ int sz
     fprintf(stderr, cErrSz_ShowDim, i_max, X->Check.idim_max);
     strcpy(sdt_err,cFileNameErrorSz);
     if(childfopenMPI(sdt_err,"a",&fp_err)!=0){
-      return -1;
+      exitMPI(-1);
     }
     fprintf(fp_err,cErrSz_OutFile);
     fclose(fp_err);
-    return -1;
+    exitMPI(-1);
   }
   
-  fprintf(stdoutMPI, "%s", cProEndCalcSz);
   i_free2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
+  }
+  fprintf(stdoutMPI, "%s", cProEndCalcSz);
   return 0;    
 }
 
@@ -509,11 +529,11 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
   // nCk, Nsite=max(n)
   int tmp_i,tmp_j;
 
-  if(n<0 || k<0 || n<k){
-    return 0;
-  }
   if(n==0 && k==0){
     return 1;
+  } 
+  else if(n<0 || k<0 || n<k){
+    return 0;
   }
   
   for(tmp_i=0;tmp_i<=Nsite;tmp_i++){
@@ -652,7 +672,7 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
   num_up   = 0;
   num_down = 0;
   icheck_loc=1;
-  for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
+  for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
     div_up    = i & X->Def.Tpow[2*j];
     div_up    = div_up/X->Def.Tpow[2*j];
     div_down  = i & X->Def.Tpow[2*j+1];
@@ -663,8 +683,13 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
       num_down += div_down;  
     }else{    
       num_up   += div_up;        
-      num_down += div_down;  
-      icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+      num_down += div_down;
+      if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+	icheck_loc= icheck_loc;
+      }
+      else{
+	icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+      }
     }
   }
   
@@ -689,10 +714,23 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
 	}else{    
 	  num_up   += div_up;        
 	  num_down += div_down;  
-	  icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	  if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+	    icheck_loc= icheck_loc;
+	  }
+	  else{
+	    icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	  }
 	}
       }
-
+      
+      if(icheck_loc == 1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT && X->Def.Nsite%2==1){
+	div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
+	div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
+	div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
+	div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
+	icheck_loc= icheck_loc*(div_up^div_down);
+      }
+      
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown && icheck_loc==1){
 	list_1[ja+jb]=ia+ib*ihfbit;
 	list_2_1[ia]=ja;
@@ -727,13 +765,18 @@ int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,s
   jb = list_jb[ib];
   i  = ib*ihfbit;
   icheck_loc=1;
-  for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
+  for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
     div_up    = i & X->Def.Tpow[2*j];
     div_up    = div_up/X->Def.Tpow[2*j];
     div_down  = i & X->Def.Tpow[2*j+1];
     div_down  = div_down/X->Def.Tpow[2*j+1];
     if(X->Def.LocSpn[j] !=  ITINERANT){
-      icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+      if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+	icheck_loc= icheck_loc;
+      }
+      else{
+	icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+      }
     }
   }
 
@@ -747,10 +790,24 @@ int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,s
 	div_up    = div_up/X->Def.Tpow[2*j];
 	div_down  = i & X->Def.Tpow[2*j+1];
 	div_down  = div_down/X->Def.Tpow[2*j+1];	
-	if(X->Def.LocSpn[j] !=  ITINERANT){    
-	  icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	if(X->Def.LocSpn[j] !=  ITINERANT){
+	  if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+	    icheck_loc= icheck_loc;
+	  }
+	  else{
+	    icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+	  }
 	}
       }
+
+      if(icheck_loc == 1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT && X->Def.Nsite%2==1){
+	div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
+	div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
+	div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
+	div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
+	icheck_loc= icheck_loc*(div_up^div_down);
+      }
+      
       if(icheck_loc==1){
 	list_1[ja+jb]=ia+ib*ihfbit;
 	list_2_1[ia]=ja;
@@ -905,12 +962,12 @@ int Read_sz
     break;
   }
   if(childfopenMPI(sdt,"r", &fp)!=0){
-    return -1;
+    exitMPI(-1);
   }  
 
   if(fp == NULL){
     if(childfopenMPI(cFileNameErrorSz,"a",&fp_err)!=0){
-      return -1;
+      exitMPI(-1);
     }
     fprintf(fp_err, cErrSz_NoFile);
     fprintf(stderr, cErrSz_NoFile);

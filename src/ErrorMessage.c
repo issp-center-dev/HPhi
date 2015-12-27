@@ -73,7 +73,7 @@ char *cErrIncorrectSpinIndexForTrans="Error: Spin index is incorrect for transfe
 
 //! Error Message in diagonal calc.c
 char *cErrNoModel ="Error: CalcModel %d is incorrect.\n";
-char *cErrNoHilbertSpace = "Error: There is no target of Hilbert space.";
+char *cErrNoHilbertSpace = "Error: There is no target of Hilbert space.\n";
 
 //! Error Message in bitcalc.c
 char *cErrSiteNumber = "Error: Total Site Number is incorrect.\n";

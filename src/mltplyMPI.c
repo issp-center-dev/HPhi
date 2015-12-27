@@ -2497,13 +2497,11 @@ int GetSgnInterAll(
 
   tmp_ispin1=isite1;
   tmp_ispin2=isite2;
-  //printf("orgbit=%ld, isite1=%ld, isite2=%ld\n\n", orgbit, isite1, isite2);
  
   if(tmp_ispin1 == tmp_ispin2){
     if( (orgbit & tmp_ispin1) == 0){
       *offbit =0;
       *Fsgn = tmp_sgn;
-      //printf("P1-1: isite1=%ld, isite2=%ld\n\n", isite1, isite2);
       return FALSE;
     }
     tmp_sgn=1;
@@ -2519,7 +2517,6 @@ int GetSgnInterAll(
     if(tmp_sgn ==0){
       *offbit =0;
       *Fsgn = 0;
-      //printf("P1-2: isite1=%ld, isite2=%ld\n\n", isite1, isite2);
       return FALSE;
     }
   }
@@ -2530,7 +2527,6 @@ int GetSgnInterAll(
     if( (tmp_off & tmp_ispin1) == 0){
       *offbit =0;
       *Fsgn = 0;
-      //printf("P2-1: isite1=%ld, isite2=%ld\n\n", tmp_ispin1, tmp_ispin2);
       return FALSE;
     }
     *offbit=tmp_off;
@@ -2544,14 +2540,13 @@ int GetSgnInterAll(
     if(tmp_sgn ==0){
       *offbit =0;
       *Fsgn = 0;
-      //printf("P2-2: isite1=%ld, isite2=%ld\n\n", tmp_ispin1, tmp_ispin2);
       return FALSE;
     }
   }
   
   *Fsgn =tmp_sgn;
   *offbit = *offbit%X->Def.OrgTpow[2*X->Def.Nsite];
-  //printf("offbit=%ld\n",*offbit);
+  
   // exitMPI(-1);
   return TRUE;
 }
@@ -3102,6 +3097,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
   isite3 = X->Def.Tpow[2 * org_isite3+ org_ispin3];
   isite4 = X->Def.Tpow[2 * org_isite4+ org_ispin4];
   
+  //printf("debug: myrank=%d, isite1=%d, ispin1=%d, isite2=%d, ispin2=%d, isite3=%d, ispin3=%d, isite4=%d, ispin4=%d\n", myrank, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4);
   if(iCheck == TRUE){
     tmp_isite1 = X->Def.OrgTpow[2 * org_isite1+ org_ispin1];
     tmp_isite2 = X->Def.OrgTpow[2 * org_isite2+ org_ispin2];
@@ -3167,7 +3163,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
     return dam_pr;
   }//myrank =origin
   else{
-    
+    //printf("debug: myrank=%d, origin=%d\n", myrank, origin);
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
@@ -3206,25 +3202,13 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
       
       org_rankbit=X->Def.OrgTpow[2*X->Def.Nsite]*origin;
 
-   
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn, ioff) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4) shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
       for (j = 1; j <= idim_max_buf; j++) {
 	if(GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, list_1buf[j]+org_rankbit, &tmp_off)==TRUE){
 
-	  ioff = GetOffComp(list_2_1, list_2_2, tmp_off,
-			    X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-	  if(org_isite1==3 && org_ispin1 ==1 && org_isite2==3&& org_ispin2 ==0 &&org_isite3==2 && org_ispin3 ==1 && org_isite4==2 && org_ispin4 ==0 ){
-	    printf("tmp_V=%f, test1, tmp_off=%ld, ioff = %d\n", creal(tmp_V), tmp_off, ioff);
-	  }
-
-	  
 	  if(GetOffComp(list_2_1, list_2_2, tmp_off,
 			X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff)==TRUE){
-	    
-  if(org_isite1==3 && org_ispin1 ==1 && org_isite2==3&& org_ispin2 ==0 &&org_isite3==2 && org_ispin3 ==1 && org_isite4==2 && org_ispin4 ==0 ){
-    printf("tmp_V=%f, test2\n", creal(tmp_V));
-      }
-
+	    //	    printf("debug: org_rankbit=%d, offbit=%d \n", list_1buf[j]+org_rankbit,tmp_off);	    
 	    dmv = tmp_V * v1buf[j]*Fsgn;
 	    if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
 	    dam_pr += conj(tmp_v1[ioff]) * dmv;

@@ -130,24 +130,26 @@ int main(int argc, char* argv[]){
   }
   else{
     if(check(&(X.Bind))==FALSE){
-      exitMPI(-1);
+      //      exitMPI(-1);
     }
   }
+  
+    /*LARGE VECTORS ARE ALLOCATED*/
+    if(!setmem_large(&X.Bind)==0){
+      fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
+      exitMPI(-1);
+    }
 
-  /*LARGE VECTORS ARE ALLOCATED*/
-  if(!setmem_large(&X.Bind)==0){
-    fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
-    exitMPI(-1);
-  }
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
+
   /*---------------------------*/
   HPhiTrans(&(X.Bind));
-    
+  
   if(!sz(&(X.Bind))==0){
     exitMPI(-1);
   }
-  
+
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
     FinalizeMPI();
@@ -158,25 +160,29 @@ int main(int argc, char* argv[]){
   
   //Start Calculation
   switch (X.Bind.Def.iCalcType){
-  case Lanczos:
+  case Lanczos:    
     if(!CalcByLanczos(&X)==0){
-      exitMPI(-1);
-    }
+      FinalizeMPI();
+      return 0;
+    }    
     break;
   case FullDiag:
     if(!CalcByFullDiag(&X)==0){
-      exitMPI(-1);
+      FinalizeMPI();
+      return 0;
     }
     break;
   case TPQCalc:
     if(!CalcBySSM(NumAve, ExpecInterval, &X)==0){
-      exitMPI(-1);
+      FinalizeMPI();
+      return 0;
     }
     break;
   default:
-    exitMPI(-1);
+    FinalizeMPI();
+    return 0;
   }  
-  
+
   FinalizeMPI();
   return 0;
 }
