@@ -29,28 +29,48 @@
  */
 int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
   
-  long int i,i_max;      
+  long int i,i_max,iproc;      
   double dnorm;
   double Ns;
+  unsigned long int i_max_tmp;
+  double complex temp1;
       
   Ns = 1.0*X->Def.Nsite;
   i_max=X->Check.idim_max;      
 
   if(X->Def.iInitialVecType==0){
-    printf("CHECK: TPQ complex initial vector \n");
+    fprintf(stdoutMPI,"CHECK: TPQ complex initial vector \n");
     //For getting random numbers without any dependencies of threads,
     //we do not adopt omp in this part.
-    for(i = 1; i <= i_max; i++){
-      v0[i]=0.0;  
-      v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5)+I*2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
-    }
-  }
-  else{
-    printf("CHECK: TPQ real initial vector \n");
-    for(i = 1; i <= i_max; i++){
-      v0[i]=0.0;
-      v1[i]=2.0*(dsfmt_genrand_close_open(dsfmt)-0.5);
-    }
+
+    for (iproc = 0; iproc < nproc; iproc++) {
+
+      i_max_tmp = BcastMPI_li(iproc, i_max);
+
+      for (i = 1; i <= i_max_tmp; i++) {
+        temp1 = 2.0*(dsfmt_genrand_close_open(dsfmt) - 0.5)
+            + I*2.0*(dsfmt_genrand_close_open(dsfmt) - 0.5);
+        if (myrank == iproc) {
+          v0[i] = 0.0;
+          v1[i] = temp1;
+        }
+      }/*for (i = 1; i <= i_max_tmp; i++)*/
+    }/*for (iproc = 0; iproc < nproc; iproc++)*/
+  }/*if(X->Def.iInitialVecType==0)*/
+  else {
+    fprintf(stdoutMPI,"CHECK: TPQ real initial vector \n");
+    for (iproc = 0; iproc < nproc; iproc++) {
+
+      i_max_tmp = BcastMPI_li(iproc, i_max);
+
+      for (i = 1; i <= i_max_tmp; i++) {
+        temp1 = 2.0*(dsfmt_genrand_close_open(dsfmt) - 0.5);
+        if (myrank == iproc) {
+          v0[i] = 0.0;
+          v1[i] = temp1;
+        }/*if (myrank == iproc)*/
+      }/*for (i = 1; i <= i_max_tmp; i++)*/
+    }/*for (iproc = 0; iproc < nproc; iproc++)*/
   }
   
   dnorm=0.0;

@@ -1,3 +1,18 @@
+/* HPhi  -  Quantum Lattice Model Simulator */
+/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+
+/* This program is free software: you can redistribute it and/or modify */
+/* it under the terms of the GNU General Public License as published by */
+/* the Free Software Foundation, either version 3 of the License, or */
+/* (at your option) any later version. */
+
+/* This program is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the */
+/* GNU General Public License for more details. */
+
+/* You should have received a copy of the GNU General Public License */
+/* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "PowerLanczos.h"
 #include "wrapperMPI.h"
 
@@ -82,7 +97,7 @@ int PowerLanczos(struct BindStruct *X){
     E4    = creal(dam_pr4) ;// E^4
   
     if(solve_2ndPolinomial(X,&alpha_p,&alpha_m,E1,E2a,E2b,E3,E4)!=TRUE){
-      printf("Power Lanczos break \n");
+      fprintf(stdoutMPI,"Power Lanczos break \n");
       return 0;
     }
     //printf("E1=%.16lf E2a=%.16lf E2b=%.16lf E3=%.16lf E4=%.16lf \n",E1,E2a,E2b,E3,E4);

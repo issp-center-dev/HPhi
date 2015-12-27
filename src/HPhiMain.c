@@ -86,12 +86,14 @@ int main(int argc, char* argv[]){
 
   //MakeDirectory for output
   struct stat tmpst;
-  if(stat(cParentOutputFolder,&tmpst)!=0){
-    if(mkdir(cParentOutputFolder, 0777)!=0){
-      fprintf(stdoutMPI, "%s", cErrOutput);
-      exitMPI(-1);
+  if (myrank == 0) {
+    if (stat(cParentOutputFolder, &tmpst) != 0) {
+      if (mkdir(cParentOutputFolder, 0777) != 0) {
+        fprintf(stdoutMPI, "%s", cErrOutput);
+        exitMPI(-1);
+      }
     }
-  }
+  }/*if (myrank == 0)*/
 
   strcpy(cFileListName, argv[2]);
   
