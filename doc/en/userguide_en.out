@@ -14,71 +14,70 @@
 \BOOKMARK [2][-]{subsection.2.4.1}{Standard mode}{section.2.4}% 14
 \BOOKMARK [2][-]{subsection.2.4.2}{Expert mode}{section.2.4}% 15
 \BOOKMARK [0][-]{chapter.3}{Tutorial}{}% 16
-\BOOKMARK [1][-]{section.3.1}{Common works}{chapter.3}% 17
-\BOOKMARK [1][-]{section.3.2}{Standard mode}{chapter.3}% 18
-\BOOKMARK [2][-]{subsection.3.2.1}{Heisenberg model}{section.3.2}% 19
-\BOOKMARK [2][-]{subsection.3.2.2}{Other tutorials}{section.3.2}% 20
-\BOOKMARK [1][-]{section.3.3}{Expert mode}{chapter.3}% 21
-\BOOKMARK [2][-]{subsection.3.3.1}{A file list for input files}{section.3.3}% 22
-\BOOKMARK [2][-]{subsection.3.3.2}{Files for basic parameters}{section.3.3}% 23
-\BOOKMARK [2][-]{subsection.3.3.3}{Files for constructing Hamiltonian}{section.3.3}% 24
-\BOOKMARK [2][-]{subsection.3.3.4}{Setting output components}{section.3.3}% 25
-\BOOKMARK [2][-]{subsection.3.3.5}{Running}{section.3.3}% 26
-\BOOKMARK [2][-]{subsection.3.3.6}{Other tutorials}{section.3.3}% 27
-\BOOKMARK [1][-]{section.3.4}{Making input files for Expert mode}{chapter.3}% 28
-\BOOKMARK [0][-]{chapter.4}{File specification}{}% 29
-\BOOKMARK [1][-]{section.4.1}{Input files for Standard mode}{chapter.4}% 30
-\BOOKMARK [2][-]{subsection.4.1.1}{Parameters about the kind of a calculation}{section.4.1}% 31
-\BOOKMARK [2][-]{subsection.4.1.2}{Parameters for the lattice}{section.4.1}% 32
-\BOOKMARK [2][-]{subsection.4.1.3}{Parameters for conserved quantities}{section.4.1}% 33
-\BOOKMARK [2][-]{subsection.4.1.4}{Parameters for the Hubbard model}{section.4.1}% 34
-\BOOKMARK [2][-]{subsection.4.1.5}{Parameters for the Kitaev-Heisenberg model}{section.4.1}% 35
-\BOOKMARK [2][-]{subsection.4.1.6}{Parameters for the Kondo model}{section.4.1}% 36
-\BOOKMARK [2][-]{subsection.4.1.7}{Parameters for the numerical condition}{section.4.1}% 37
-\BOOKMARK [1][-]{section.4.2}{Input files for Expert mode}{chapter.4}% 38
-\BOOKMARK [2][-]{subsection.4.2.1}{List file for Input files}{section.4.2}% 39
-\BOOKMARK [2][-]{subsection.4.2.2}{CalcMod file}{section.4.2}% 40
-\BOOKMARK [2][-]{subsection.4.2.3}{ModPara file}{section.4.2}% 41
-\BOOKMARK [2][-]{subsection.4.2.4}{LocSpin file}{section.4.2}% 42
-\BOOKMARK [2][-]{subsection.4.2.5}{Trans file}{section.4.2}% 43
-\BOOKMARK [2][-]{subsection.4.2.6}{InterAll file}{section.4.2}% 44
-\BOOKMARK [2][-]{subsection.4.2.7}{CoulombIntra file}{section.4.2}% 45
-\BOOKMARK [2][-]{subsection.4.2.8}{CoulombInter file}{section.4.2}% 46
-\BOOKMARK [2][-]{subsection.4.2.9}{Hund file}{section.4.2}% 47
-\BOOKMARK [2][-]{subsection.4.2.10}{PairHop file}{section.4.2}% 48
-\BOOKMARK [2][-]{subsection.4.2.11}{Exchange file}{section.4.2}% 49
-\BOOKMARK [2][-]{subsection.4.2.12}{Ising file}{section.4.2}% 50
-\BOOKMARK [2][-]{subsection.4.2.13}{PairLift file}{section.4.2}% 51
-\BOOKMARK [2][-]{subsection.4.2.14}{OneBodyG file}{section.4.2}% 52
-\BOOKMARK [2][-]{subsection.4.2.15}{TwoBodyG file}{section.4.2}% 53
-\BOOKMARK [1][-]{section.4.3}{Output files}{chapter.4}% 54
-\BOOKMARK [2][-]{subsection.4.3.1}{CHECK\137Chemi.dat}{section.4.3}% 55
-\BOOKMARK [2][-]{subsection.4.3.2}{CHECK\137InterAll.dat}{section.4.3}% 56
-\BOOKMARK [2][-]{subsection.4.3.3}{CHECK\137CoulombIntra.dat}{section.4.3}% 57
-\BOOKMARK [2][-]{subsection.4.3.4}{CHECK\137Hund.dat}{section.4.3}% 58
-\BOOKMARK [2][-]{subsection.4.3.5}{CHECK\137INTER\137U.dat}{section.4.3}% 59
-\BOOKMARK [2][-]{subsection.4.3.6}{CHECK\137Memory.dat}{section.4.3}% 60
-\BOOKMARK [2][-]{subsection.4.3.7}{WarningOnTransfer.dat}{section.4.3}% 61
-\BOOKMARK [2][-]{subsection.4.3.8}{TimeKeeper.dat}{section.4.3}% 62
-\BOOKMARK [2][-]{subsection.4.3.9}{sz\137TimeKeeper.dat}{section.4.3}% 63
-\BOOKMARK [2][-]{subsection.4.3.10}{Time\137CG\137EigenVector.dat}{section.4.3}% 64
-\BOOKMARK [2][-]{subsection.4.3.11}{energy.dat}{section.4.3}% 65
-\BOOKMARK [2][-]{subsection.4.3.12}{Lanczos\137Step.dat}{section.4.3}% 66
-\BOOKMARK [2][-]{subsection.4.3.13}{Norm\137rand.dat}{section.4.3}% 67
-\BOOKMARK [2][-]{subsection.4.3.14}{SS\137rand.dat}{section.4.3}% 68
-\BOOKMARK [2][-]{subsection.4.3.15}{Eigenvalue.dat}{section.4.3}% 69
-\BOOKMARK [2][-]{subsection.4.3.16}{phys.dat}{section.4.3}% 70
-\BOOKMARK [2][-]{subsection.4.3.17}{cisajs.dat}{section.4.3}% 71
-\BOOKMARK [2][-]{subsection.4.3.18}{cisajscktalt.dat}{section.4.3}% 72
-\BOOKMARK [2][-]{subsection.4.3.19}{eigenvec.dat}{section.4.3}% 73
-\BOOKMARK [1][-]{section.4.4}{Error messages}{chapter.4}% 74
-\BOOKMARK [0][-]{chapter.5}{ Algorithm}{}% 75
-\BOOKMARK [1][-]{section.5.1}{Lanczos method}{chapter.5}% 76
-\BOOKMARK [2][-]{subsection.5.1.1}{Details of Lanczos method}{section.5.1}% 77
-\BOOKMARK [2][-]{subsection.5.1.2}{Inverse iteration method}{section.5.1}% 78
-\BOOKMARK [2][-]{subsection.5.1.3}{Details of implementation}{section.5.1}% 79
-\BOOKMARK [1][-]{section.5.2}{Full Diagonalization method}{chapter.5}% 80
-\BOOKMARK [2][-]{subsection.5.2.1}{Over view}{section.5.2}% 81
-\BOOKMARK [2][-]{subsection.5.2.2}{Finite-temperature calculations}{section.5.2}% 82
-\BOOKMARK [1][-]{section.5.3}{Finite-temperature calculations by TPQ method}{chapter.5}% 83
-\BOOKMARK [0][-]{chapter.6}{Acknowledgement}{}% 84
+\BOOKMARK [1][-]{section.3.1}{Standard mode}{chapter.3}% 17
+\BOOKMARK [2][-]{subsection.3.1.1}{Heisenberg model}{section.3.1}% 18
+\BOOKMARK [2][-]{subsection.3.1.2}{Other tutorials}{section.3.1}% 19
+\BOOKMARK [1][-]{section.3.2}{Expert mode}{chapter.3}% 20
+\BOOKMARK [2][-]{subsection.3.2.1}{A file list for input files}{section.3.2}% 21
+\BOOKMARK [2][-]{subsection.3.2.2}{Files for basic parameters}{section.3.2}% 22
+\BOOKMARK [2][-]{subsection.3.2.3}{Files for constructing Hamiltonian}{section.3.2}% 23
+\BOOKMARK [2][-]{subsection.3.2.4}{Setting output components}{section.3.2}% 24
+\BOOKMARK [2][-]{subsection.3.2.5}{Running}{section.3.2}% 25
+\BOOKMARK [2][-]{subsection.3.2.6}{Other tutorials}{section.3.2}% 26
+\BOOKMARK [1][-]{section.3.3}{Making input files for Expert mode}{chapter.3}% 27
+\BOOKMARK [0][-]{chapter.4}{File specification}{}% 28
+\BOOKMARK [1][-]{section.4.1}{Input files for Standard mode}{chapter.4}% 29
+\BOOKMARK [2][-]{subsection.4.1.1}{Parameters about the kind of a calculation}{section.4.1}% 30
+\BOOKMARK [2][-]{subsection.4.1.2}{Parameters for the lattice}{section.4.1}% 31
+\BOOKMARK [2][-]{subsection.4.1.3}{Parameters for conserved quantities}{section.4.1}% 32
+\BOOKMARK [2][-]{subsection.4.1.4}{Parameters for the Hubbard model}{section.4.1}% 33
+\BOOKMARK [2][-]{subsection.4.1.5}{Parameters for the Kitaev-Heisenberg model}{section.4.1}% 34
+\BOOKMARK [2][-]{subsection.4.1.6}{Parameters for the Kondo model}{section.4.1}% 35
+\BOOKMARK [2][-]{subsection.4.1.7}{Parameters for the numerical condition}{section.4.1}% 36
+\BOOKMARK [1][-]{section.4.2}{Input files for Expert mode}{chapter.4}% 37
+\BOOKMARK [2][-]{subsection.4.2.1}{List file for Input files}{section.4.2}% 38
+\BOOKMARK [2][-]{subsection.4.2.2}{CalcMod file}{section.4.2}% 39
+\BOOKMARK [2][-]{subsection.4.2.3}{ModPara file}{section.4.2}% 40
+\BOOKMARK [2][-]{subsection.4.2.4}{LocSpin file}{section.4.2}% 41
+\BOOKMARK [2][-]{subsection.4.2.5}{Trans file}{section.4.2}% 42
+\BOOKMARK [2][-]{subsection.4.2.6}{InterAll file}{section.4.2}% 43
+\BOOKMARK [2][-]{subsection.4.2.7}{CoulombIntra file}{section.4.2}% 44
+\BOOKMARK [2][-]{subsection.4.2.8}{CoulombInter file}{section.4.2}% 45
+\BOOKMARK [2][-]{subsection.4.2.9}{Hund file}{section.4.2}% 46
+\BOOKMARK [2][-]{subsection.4.2.10}{PairHop file}{section.4.2}% 47
+\BOOKMARK [2][-]{subsection.4.2.11}{Exchange file}{section.4.2}% 48
+\BOOKMARK [2][-]{subsection.4.2.12}{Ising file}{section.4.2}% 49
+\BOOKMARK [2][-]{subsection.4.2.13}{PairLift file}{section.4.2}% 50
+\BOOKMARK [2][-]{subsection.4.2.14}{OneBodyG file}{section.4.2}% 51
+\BOOKMARK [2][-]{subsection.4.2.15}{TwoBodyG file}{section.4.2}% 52
+\BOOKMARK [1][-]{section.4.3}{Output files}{chapter.4}% 53
+\BOOKMARK [2][-]{subsection.4.3.1}{CHECK\137Chemi.dat}{section.4.3}% 54
+\BOOKMARK [2][-]{subsection.4.3.2}{CHECK\137InterAll.dat}{section.4.3}% 55
+\BOOKMARK [2][-]{subsection.4.3.3}{CHECK\137CoulombIntra.dat}{section.4.3}% 56
+\BOOKMARK [2][-]{subsection.4.3.4}{CHECK\137Hund.dat}{section.4.3}% 57
+\BOOKMARK [2][-]{subsection.4.3.5}{CHECK\137INTER\137U.dat}{section.4.3}% 58
+\BOOKMARK [2][-]{subsection.4.3.6}{CHECK\137Memory.dat}{section.4.3}% 59
+\BOOKMARK [2][-]{subsection.4.3.7}{WarningOnTransfer.dat}{section.4.3}% 60
+\BOOKMARK [2][-]{subsection.4.3.8}{TimeKeeper.dat}{section.4.3}% 61
+\BOOKMARK [2][-]{subsection.4.3.9}{sz\137TimeKeeper.dat}{section.4.3}% 62
+\BOOKMARK [2][-]{subsection.4.3.10}{Time\137CG\137EigenVector.dat}{section.4.3}% 63
+\BOOKMARK [2][-]{subsection.4.3.11}{energy.dat}{section.4.3}% 64
+\BOOKMARK [2][-]{subsection.4.3.12}{Lanczos\137Step.dat}{section.4.3}% 65
+\BOOKMARK [2][-]{subsection.4.3.13}{Norm\137rand.dat}{section.4.3}% 66
+\BOOKMARK [2][-]{subsection.4.3.14}{SS\137rand.dat}{section.4.3}% 67
+\BOOKMARK [2][-]{subsection.4.3.15}{Eigenvalue.dat}{section.4.3}% 68
+\BOOKMARK [2][-]{subsection.4.3.16}{phys.dat}{section.4.3}% 69
+\BOOKMARK [2][-]{subsection.4.3.17}{cisajs.dat}{section.4.3}% 70
+\BOOKMARK [2][-]{subsection.4.3.18}{cisajscktalt.dat}{section.4.3}% 71
+\BOOKMARK [2][-]{subsection.4.3.19}{eigenvec.dat}{section.4.3}% 72
+\BOOKMARK [1][-]{section.4.4}{Error messages}{chapter.4}% 73
+\BOOKMARK [0][-]{chapter.5}{ Algorithm}{}% 74
+\BOOKMARK [1][-]{section.5.1}{Lanczos method}{chapter.5}% 75
+\BOOKMARK [2][-]{subsection.5.1.1}{Details of Lanczos method}{section.5.1}% 76
+\BOOKMARK [2][-]{subsection.5.1.2}{Inverse iteration method}{section.5.1}% 77
+\BOOKMARK [2][-]{subsection.5.1.3}{Details of implementation}{section.5.1}% 78
+\BOOKMARK [1][-]{section.5.2}{Full Diagonalization method}{chapter.5}% 79
+\BOOKMARK [2][-]{subsection.5.2.1}{Over view}{section.5.2}% 80
+\BOOKMARK [2][-]{subsection.5.2.2}{Finite-temperature calculations}{section.5.2}% 81
+\BOOKMARK [1][-]{section.5.3}{Finite-temperature calculations by TPQ method}{chapter.5}% 82
+\BOOKMARK [0][-]{chapter.6}{Acknowledgement}{}% 83
