@@ -319,8 +319,8 @@ void KondoLattice_SquareLattice(
   nsite = 2 * L * W;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
   for (iL = 0; iL < L * W; iL++){
-    locspinflag[2 * iL] = 0;
-    locspinflag[2 * iL + 1] = S2;
+    locspinflag[iL] = S2;
+    locspinflag[iL + L * W] = 0;
   }
   /*
   Transfer
@@ -335,16 +335,16 @@ void KondoLattice_SquareLattice(
   ktrans = 0;
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
-      isite = 2 * (iL + iW * L);
+      isite = L * W + iL + iW * L;
       for (ispin = 0; ispin < 2; ispin++){
 
         StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-        jsite = 2 * (((iL + 1) % L) + (iW * L));
+        jsite = L * W + ((iL + 1) % L) + (iW * L);
         StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
 
-        jsite = 2 * (iL + (((iW + 1) % W) * L));
+        jsite = L * W + iL + (((iW + 1) % W) * L);
         StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
       }
@@ -363,8 +363,8 @@ void KondoLattice_SquareLattice(
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
 
-      isite = 2 * (iL + iW * L);
-      jsite = 2 * (iL + iW * L) + 1;
+      isite = iL + iW * L + L * W;
+      jsite = iL + iW * L;
 
       StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
       StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);

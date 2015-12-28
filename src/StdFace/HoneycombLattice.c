@@ -313,12 +313,10 @@ void KondoLattice_HoneycombLattice(
   */
   nsite = 4 * L * W;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
-  for (iL = 0; iL < L * W; iL++){
-    locspinflag[4 * iL] = 0;
-    locspinflag[4 * iL + 1] = S2;
-    locspinflag[4 * iL + 2] = 0;
-    locspinflag[4 * iL + 3] = S2;
-  }
+  for (iL = 0; iL < 2 * L * W; iL++){
+    locspinflag[iL] = S2;
+    locspinflag[2 * L * W + iL] = 0;
+   }
   /*
   Transfer
   */
@@ -333,22 +331,22 @@ void KondoLattice_HoneycombLattice(
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
       for (ispin = 0; ispin < 2; ispin++){
-        isite = (iL + iW * L) * 4;
+        isite = 2 * L * W + (iL + iW * L) * 2;
         StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
-        jsite = (iL + iW * L) * 4 + 2;
+        jsite = 2 * L * W + (iL + iW * L) * 2 + 1;
         StdFace_trans(&ktrans, t0, isite, ispin, jsite, ispin);
-        jsite = (((iL - 1 + 2 * L) % L) + ((iW + 0 + 2 * W) % W) * L) * 4 + 2;
+        jsite = 2 * L * W + (((iL - 1 + 2 * L) % L) + ((iW + 0 + 2 * W) % W) * L) * 2 + 1;
         StdFace_trans(&ktrans, t1, isite, ispin, jsite, ispin);
-        jsite = (((iL + 0 + 2 * L) % L) + ((iW - 1 + 2 * W) % W) * L) * 4 + 2;
+        jsite = 2 * L * W + (((iL + 0 + 2 * L) % L) + ((iW - 1 + 2 * W) % W) * L) * 2 + 1;
         StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
 
-        isite = (iL + iW * L) * 4 + 2;
+        isite = 2 * L * W + (iL + iW * L) * 2 + 1;
         StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
-        jsite = (iL + iW * L) * 4;
+        jsite = 2 * L * W + (iL + iW * L) * 2;
         StdFace_trans(&ktrans, t0, isite, ispin, jsite, ispin);
-        jsite = (((iL + 1 + 2 * L) % L) + ((iW + 0 + 2 * W) % W) * L) * 4;
+        jsite = 2 * L * W + (((iL + 1 + 2 * L) % L) + ((iW + 0 + 2 * W) % W) * L) * 2;
         StdFace_trans(&ktrans, t1, isite, ispin, jsite, ispin);
-        jsite = (((iL + 0 + 2 * L) % L) + ((iW + 1 + 2 * W) % W) * L) * 4;
+        jsite = 2 * L * W + (((iL + 0 + 2 * L) % L) + ((iW + 1 + 2 * W) % W) * L) * 2;
         StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
       }
     }
@@ -365,13 +363,13 @@ void KondoLattice_HoneycombLattice(
   kintr = 0;
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
-      isite = 4 * (iL + iW * L);
-      jsite = 4 * (iL + iW * L) + 1;
+      isite = 2 * (iL + iW * L) + 2 * L * W;
+      jsite = 2 * (iL + iW * L);
       StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
       StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);
 
-      isite = 4 * (iL + iW * L) + 2;
-      jsite = 4 * (iL + iW * L) + 3;
+      isite = 2 * (iL + iW * L) + 1 + 2 * L * W;
+      jsite = 2 * (iL + iW * L) + 1;
       StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
       StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);
     }
