@@ -23,6 +23,7 @@
 #define M_ENERGY 1
 #define M_Ham 2
 #define M_CORR 3
+#define M_TOTALS 4
 
 double complex child_general_hopp_element
 (
@@ -478,7 +479,6 @@ double complex GC_child_exchange_spin_element
   long unsigned int *tmp_off 
  );
 
-
 int X_child_exchange_spin_element
 (
  const long unsigned int j,
@@ -528,9 +528,21 @@ int X_CisAjt
  long unsigned int is2_spin,
  long unsigned int sum_spin,
  long unsigned int diff_spin,
- long unsigned int *iexchg,
  long unsigned int *tmp_off
  );
+
+
+int X_GC_CisAjt
+(
+ long unsigned int list_1_j,
+ struct BindStruct *X,
+ long unsigned int is1_spin,
+ long unsigned int is2_spin,
+ long unsigned int sum_spin,
+ long unsigned int diff_spin,
+ long unsigned int *tmp_off
+ );
+
 
 double complex CisAjt
 (
@@ -620,7 +632,6 @@ int child_pairlift_spin_GetInfo
  const int iPairLift,
  struct BindStruct *X 
  );
-
 
 int X_SpinGC_CisAit(
 long unsigned int j,

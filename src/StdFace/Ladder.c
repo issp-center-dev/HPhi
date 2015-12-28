@@ -332,8 +332,8 @@ void KondoLattice_Ladder(
   nsite = 2 * L * W;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
   for (iL = 0; iL < L * W; iL++){
-    locspinflag[2 * iL] = 0;
-    locspinflag[2 * iL + 1] = S2;
+    locspinflag[iL] = S2;
+    locspinflag[iL + L * W] = 0;
   }
   /*
   Transfer
@@ -348,29 +348,29 @@ void KondoLattice_Ladder(
   ktrans = 0;
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
-      isite = iL + iW * L;
+      isite = 2 * L * W + iL + iW * L;
       for (ispin = 0; ispin < 2; ispin++){
 
         StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-        jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+        jsite = L * W + ((iL + 1 + 2 * L) % L) + iW * L;
         StdFace_trans(&ktrans, t1, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t1, jsite, ispin, isite, ispin);
 
-        jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+        jsite = L * W + ((iL + 2 + 2 * L) % L) + iW * L;
         StdFace_trans(&ktrans, t1p, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t1p, jsite, ispin, isite, ispin);
 
         if (iW < W - 1){
-          jsite = iL + (iW + 1) * L;
+          jsite = L * W + iL + (iW + 1) * L;
           StdFace_trans(&ktrans, t0, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t0, jsite, ispin, isite, ispin);
 
-          jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+          jsite = L * W + ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
           StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
 
-          jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+          jsite = L * W + ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
           StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
         }
@@ -391,8 +391,8 @@ void KondoLattice_Ladder(
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
 
-      isite = 2 * (iL + iW * L);
-      jsite = 2 * (iL + iW * L) + 1;
+      isite = iL + iW * L + L * W;
+      jsite = iL + iW * L;
 
       StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
       StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);

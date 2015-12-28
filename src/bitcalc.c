@@ -190,10 +190,10 @@ void SplitBit(
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
-void GetOffComp(
+int GetOffComp(
 	        long unsigned int *_list_2_1,
 	        long unsigned int *_list_2_2,
-		const long unsigned int _ibit,
+		long unsigned int _ibit,
 		const long unsigned int _irght,
 		const long unsigned int _ilft,
 		const long unsigned int _ihfbit,
@@ -204,6 +204,8 @@ void GetOffComp(
   SplitBit(_ibit, _irght, _ilft, _ihfbit, &ia, &ib);
   *_ioffComp =_list_2_1[ia];
   *_ioffComp+=_list_2_2[ib];
+  if(*_ioffComp !=0) return TRUE;
+  else return FALSE;
 }
 
 

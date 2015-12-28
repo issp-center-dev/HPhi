@@ -1,6 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
 /* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
-
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
 /* the Free Software Foundation, either version 3 of the License, or */
@@ -18,6 +17,8 @@
 // complex version
 #include <bitcalc.h>
 #include "mltply.h"
+#include "mltplyMPI.h"
+#include "wrapperMPI.h"
 
 /**
  *
@@ -43,6 +44,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   long unsigned int ihfbit=0;
   long unsigned int isite1, isite2, sigma1, sigma2;
   long unsigned int isite3, isite4, sigma3, sigma4;
+  long unsigned int ibitsite1, ibitsite2, ibitsite3, ibitsite4;
+
   double complex dam_pr;
   double complex tmp_trans;
   long int tmp_sgn;
@@ -57,7 +60,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   int ihermite=0;
   int idx=0;
   i_max = X->Check.idim_max;
-  
+  X->Large.prdct = 0.0;
+  dam_pr = 0.0;
+
+  if(i_max!=0){
   if (X->Def.iFlgGeneralSpin == FALSE) {
     if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
       return -1;
@@ -76,37 +82,92 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.ihfbit = ihfbit;
   X->Large.mode = M_MLTPLY;
 
-  X->Large.prdct = 0.0;
-  dam_pr = 0.0;
-  #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
     tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
     dam_pr += (list_Diagonal[j]) * conj(tmp_v1[j]) * tmp_v1[j];
   }
   X->Large.prdct += dam_pr;
-    
+  
   switch (X->Def.iCalcModel) {
     case HubbardGC:
       //Transfer
-      for (i = 0; i < X->Def.EDNTransfer/2; i++) {
-	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
-	  isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-	  isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-	  sigma1 = X->Def.EDGeneralTransfer[idx][1];
-	  sigma2 = X->Def.EDGeneralTransfer[idx][3];
-	  if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
-	    return -1;
-	  }
-	  tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-	  dam_pr = GC_child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
-	  X->Large.prdct += dam_pr;
-	}
+      for (i = 0; i < X->Def.EDNTransfer; i += 2) {
+
+        if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
+          X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+          GC_child_general_hopp_MPIdouble(i, X, tmp_v0, tmp_v1);
+        }
+        else if (X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite){
+          GC_child_general_hopp_MPIsingle(i, X, tmp_v0, tmp_v1);
+        }
+        else if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite) {
+          GC_child_general_hopp_MPIsingle(i+1, X, tmp_v0, tmp_v1);
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+            isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+            sigma1 = X->Def.EDGeneralTransfer[idx][1];
+            sigma2 = X->Def.EDGeneralTransfer[idx][3];
+            if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+              return -1;
+            }
+            tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+            dam_pr = GC_child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+            X->Large.prdct += dam_pr;
+          }
+        }
       }
 
-      for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
+      for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
+	  isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
+	  isite2 = X->Def.InterAll_OffDiagonal[i][2] + 1;
+	  isite3 = X->Def.InterAll_OffDiagonal[i][4] + 1;
+	  isite4 = X->Def.InterAll_OffDiagonal[i][6] + 1;
+	  sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	  sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	  sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	  sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	  tmp_V = X->Def.ParaInterAll_OffDiagonal[i];
+
+	if(CheckPE(isite1-1, X)==TRUE || CheckPE(isite2-1, X)==TRUE ||
+	   CheckPE(isite3-1, X)==TRUE || CheckPE(isite4-1, X)==TRUE){
+	  ibitsite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
+	  ibitsite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
+	  ibitsite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
+	  ibitsite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
+	  if(ibitsite1 == ibitsite2 && ibitsite3 == ibitsite4){
+	    
+	    dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
+							 isite3-1, sigma3, 
+							 tmp_V, X, tmp_v0, tmp_v1);
+	  }
+	  else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
+	    
+	    dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
+							 isite3-1, sigma3, isite4-1, sigma4,
+							 tmp_V, X, tmp_v0, tmp_v1);
+	    
+	  }
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){
+	    
+	    dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+							 isite3-1, sigma3, 
+							 tmp_V, X, tmp_v0, tmp_v1);
+	    
+	  }
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 != ibitsite4){
+	    dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+							 isite3-1, sigma3, isite4-1, sigma4,
+							 tmp_V, X, tmp_v0, tmp_v1);
+	  }
+      }//InterPE
+      else{
+	dam_pr=0.0;
 	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
+	  idx=i+ihermite;
 	  isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
 	  isite2 = X->Def.InterAll_OffDiagonal[idx][2] + 1;
 	  isite3 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
@@ -130,30 +191,61 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 				    sigma4,
 				    tmp_V
 				    );
-	  dam_pr = GC_child_general_int(tmp_v0, tmp_v1, X);
-	  X->Large.prdct += dam_pr;
+	  dam_pr += GC_child_general_int(tmp_v0, tmp_v1, X);
 	}
       }
-  
+	X->Large.prdct += dam_pr;
+      }
+      
       //Pair hopping
-      for (i = 0; i < X->Def.NPairHopping/2; i++) {
-	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
-	  child_pairhopp_GetInfo(idx, X);
-	  dam_pr = GC_child_pairhopp(tmp_v0, tmp_v1, X);
-	  X->Large.prdct += dam_pr;
-	}
-      }
-
+      for (i = 0; i < X->Def.NPairHopping; i += 2) {
+        if (X->Def.PairHopping[i][0] + 1 > X->Def.Nsite &&
+          X->Def.PairHopping[i][1] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if (X->Def.PairHopping[i][1] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if (X->Def.PairHopping[i][0] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            child_pairhopp_GetInfo(idx, X);
+            dam_pr = GC_child_pairhopp(tmp_v0, tmp_v1, X);
+            X->Large.prdct += dam_pr;
+          }
+        }
+      }/*for (i = 0; i < X->Def.NPairHopping; i += 2)*/
+      
       //Exchange
-      for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
-	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
-	  child_exchange_GetInfo(idx, X);
-	  dam_pr = GC_child_exchange(tmp_v0, tmp_v1, X);
-	  X->Large.prdct += dam_pr;
-	}
-      }
+      for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+        if(X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
+          X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
+          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if(X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
+          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            child_exchange_GetInfo(idx, X);
+            dam_pr = GC_child_exchange(tmp_v0, tmp_v1, X);
+            X->Large.prdct += dam_pr;
+          }
+        }
+      }/*for (i = 0; i < X->Def.NExchangeCoupling; i+=2)*/
       break;
       
   case KondoGC:
@@ -161,338 +253,558 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   case Kondo:
 
       //Transfer
-      for (i = 0; i < X->Def.EDNTransfer/2; i++) {
-	for(ihermite=0; ihermite<2; ihermite++){
-	  idx=2*i+ihermite;
-	  isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-	  isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-	  sigma1 = X->Def.EDGeneralTransfer[idx][1];
-	  sigma2 = X->Def.EDGeneralTransfer[idx][3];
-	  if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
-	    return -1;
-	  }
-	  tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-	  X->Large.tmp_trans = tmp_trans;
-	  dam_pr = child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
-	  X->Large.prdct += dam_pr;
-	}
+      for (i = 0; i < X->Def.EDNTransfer; i+=2) {
+        if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
+          X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+          child_general_hopp_MPIdouble(i, X, tmp_v0, tmp_v1);
+        }
+        else if (X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+          child_general_hopp_MPIsingle(i, X, tmp_v0, tmp_v1);
+        }
+        else if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite) {
+          child_general_hopp_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+            isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+            sigma1 = X->Def.EDGeneralTransfer[idx][1];
+            sigma2 = X->Def.EDGeneralTransfer[idx][3];
+            if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+              return -1;
+            }
+            tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+            X->Large.tmp_trans = tmp_trans;
+            dam_pr = child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+            X->Large.prdct += dam_pr;
+          }
+        }
       }
       
           //InterAll
-          for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
-	    for(ihermite=0; ihermite<2; ihermite++){
-	      idx=2*i+ihermite;	      
-	      isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
-	      isite2 = X->Def.InterAll_OffDiagonal[idx][2] + 1;
-	      isite3 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
-	      isite4 = X->Def.InterAll_OffDiagonal[idx][6] + 1;
-	      sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
-	      sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
-	      sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
-	      sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
-	      tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
+      for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
+	
+	isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
+	isite2 = X->Def.InterAll_OffDiagonal[i][2] + 1;
+	isite3 = X->Def.InterAll_OffDiagonal[i][4] + 1;
+	isite4 = X->Def.InterAll_OffDiagonal[i][6] + 1;
+	sigma1 = X->Def.InterAll_OffDiagonal[i][1];
+	sigma2 = X->Def.InterAll_OffDiagonal[i][3];
+	sigma3 = X->Def.InterAll_OffDiagonal[i][5];
+	sigma4 = X->Def.InterAll_OffDiagonal[i][7];
+	tmp_V = X->Def.ParaInterAll_OffDiagonal[i];
 
-	      child_general_int_GetInfo(
-					i,
-					X,
-					isite1,
-					isite2,
-					isite3,
-					isite4,
-					sigma1,
-					sigma2,
-					sigma3,
-					sigma4,
-					tmp_V
-					);
-
-	      dam_pr = child_general_int(tmp_v0, tmp_v1, X);
-	      X->Large.prdct += dam_pr;
-	    }
+	dam_pr =0.0;
+	if(CheckPE(isite1-1, X)==TRUE || CheckPE(isite2-1, X)==TRUE ||
+	   CheckPE(isite3-1, X)==TRUE || CheckPE(isite4-1, X)==TRUE){
+	  ibitsite1 = X->Def.OrgTpow[2*isite1-2+sigma1] ;
+	  ibitsite2 = X->Def.OrgTpow[2*isite2-2+sigma2] ;
+	  ibitsite3 = X->Def.OrgTpow[2*isite3-2+sigma3] ;
+	  ibitsite4 = X->Def.OrgTpow[2*isite4-2+sigma4] ;
+	  if(ibitsite1 == ibitsite2 && ibitsite3 == ibitsite4){	    
+	    dam_pr += X_child_CisAisCjtAjt_Hubbard_MPI(isite1-1, sigma1, 
+						      isite3-1, sigma3, 
+						      tmp_V, X, tmp_v0, tmp_v1);
 	  }
-	  
-          //Pair hopping
-          for (i = 0; i < X->Def.NPairHopping/2; i++) {
-	    for(ihermite=0; ihermite<2; ihermite++){
-	      idx=2*i+ihermite; 
-	      child_pairhopp_GetInfo(idx, X);
-	      dam_pr = child_pairhopp(tmp_v0, tmp_v1, X);
-	      X->Large.prdct += dam_pr;
-	    }
-          }
-
-          //Exchange
-          for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
-	    for(ihermite=0; ihermite<2; ihermite++){
-	      idx=2*i+ihermite;
-	      child_exchange_GetInfo(idx, X);
-	      dam_pr = child_exchange(tmp_v0, tmp_v1, X);
-	      X->Large.prdct += dam_pr;
-	    }
+	  else if(ibitsite1 == ibitsite2 && ibitsite3 != ibitsite4){
+	    dam_pr += X_child_CisAisCjtAku_Hubbard_MPI(isite1-1, sigma1, 
+						      isite3-1, sigma3, isite4-1, sigma4,
+						      tmp_V, X, tmp_v0, tmp_v1);
 	  }
-          break;
-
-    case Spin:
-      if (X->Def.iFlgGeneralSpin == FALSE) {
-	//Transfer absorbed in Diagonal term.
-	//InterAll
-	for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 == ibitsite4){	
+	    dam_pr += X_child_CisAjtCkuAku_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+						      isite3-1, sigma3, 
+						      tmp_V, X, tmp_v0, tmp_v1);
+	  }
+	  else if(ibitsite1 != ibitsite2 && ibitsite3 != ibitsite4){
+	    dam_pr += X_child_CisAjtCkuAlv_Hubbard_MPI(isite1-1, sigma1, isite2-1, sigma2,
+						      isite3-1, sigma3, isite4-1, sigma4,
+						      tmp_V, X, tmp_v0, tmp_v1);
+	  }	 
+	}
+	else{
 	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
-
+	    idx=i+ihermite;
 	    isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
-	    isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
+	    isite2 = X->Def.InterAll_OffDiagonal[idx][2] + 1;
+	    isite3 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
+	    isite4 = X->Def.InterAll_OffDiagonal[idx][6] + 1;
 	    sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
 	    sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
 	    sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
 	    sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
 	    tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-	    child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
-	    dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
-	    X->Large.prdct += dam_pr;
+
+	    child_general_int_GetInfo(
+				      i,
+				      X,
+				      isite1,
+				      isite2,
+				      isite3,
+				      isite4,
+				      sigma1,
+				      sigma2,
+				      sigma3,
+				      sigma4,
+				      tmp_V
+				      );
+
+	    dam_pr += child_general_int(tmp_v0, tmp_v1, X);
+	    
 	  }
+	}
+	X->Large.prdct += dam_pr;
+      }
+	//Pair hopping
+      for (i = 0; i < X->Def.NPairHopping; i += 2) {
+        if (X->Def.PairHopping[i][0] + 1 > X->Def.Nsite &&
+          X->Def.PairHopping[i][1] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if(X->Def.PairHopping[i][1] + 1 > X->Def.Nsite){
+          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if(X->Def.PairHopping[i][0] + 1 > X->Def.Nsite){
+          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            child_pairhopp_GetInfo(idx, X);
+            dam_pr = child_pairhopp(tmp_v0, tmp_v1, X);
+            X->Large.prdct += dam_pr;
+          }/*for (ihermite = 0; ihermite<2; ihermite++)*/
+        }
+      }/*for (i = 0; i < X->Def.NPairHopping; i += 2)*/
+
+	//Exchange
+      for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+        if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
+          X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
+          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+          exitMPI(-1);
+        }
+        else {
+          for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+            child_exchange_GetInfo(idx, X);
+            dam_pr = child_exchange(tmp_v0, tmp_v1, X);
+            X->Large.prdct += dam_pr;
+          }/*for (ihermite = 0; ihermite<2; ihermite++)*/
+        }
+      }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
+
+  
+      break;
+      
+    case Spin:
+      if (X->Def.iFlgGeneralSpin == FALSE) {
+	//Transfer absorbed in Diagonal term.
+	//InterAll
+	for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
+
+          if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
+            X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            child_general_int_spin_MPIdouble(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            child_general_int_spin_MPIsingle(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite) {
+            child_general_int_spin_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+          }
+          else {
+            for (ihermite = 0; ihermite<2; ihermite++) {
+              idx = i + ihermite;
+              isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
+              isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
+              sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
+              sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
+              sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
+              sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
+              tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
+              child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
+              dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
+              X->Large.prdct += dam_pr;
+            }
+          }
 	}
       	
 	//Exchange	
-	for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
-	    child_exchange_spin_GetInfo(idx, X);
-	    dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
-	    X->Large.prdct += dam_pr;
-	  }
-	}
+        for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+          if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
+            X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
+            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else {
+            for (ihermite = 0; ihermite<2; ihermite++) {
+              idx = i + ihermite;
+              child_exchange_spin_GetInfo(idx, X);
+              dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+              X->Large.prdct += dam_pr;
+            }
+          }
+	}/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
       }
       else{
 	//Transfer absorbed in Diagonal term.
 	//InterAll
 	ihfbit =X->Check.sdim;
-	for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
-	    isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
-	    isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
-	    sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
-	    sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
-	    sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
-	    sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
-	    tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-	    dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv, off, tmp_off, tmp_off2) firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V, ihfbit) shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
-	    for (j = 1; j <= i_max; j++) {
-	      tmp_sgn = GetOffCompGeneralSpin(list_1[j], isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-	      if(tmp_sgn ==TRUE){
-		tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &tmp_off2, X->Def.SiteToBit, X->Def.Tpow);
-		if (tmp_sgn==TRUE){
-		  ConvertToList1GeneralSpin(tmp_off2, ihfbit, &off);
-		  dmv= tmp_v1[j]*tmp_V;
-		  if(X->Large.mode == M_MLTPLY) { // for multply
-		    tmp_v0[off] += dmv;
-		  }
-		  dam_pr += conj(tmp_v1[off]) * dmv;
-		}
-	      }
-	    }
-	    X->Large.prdct += dam_pr;	  
-	  }
-	}
+        for (i = 0; i < X->Def.NInterAll_OffDiagonal; i += 2) {
+
+          if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
+            X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            child_general_int_GeneralSpin_MPIdouble(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            child_general_int_GeneralSpin_MPIsingle(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite) {
+            child_general_int_GeneralSpin_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+          }
+          else {
+            for (ihermite = 0; ihermite < 2; ihermite++) {
+              idx = i + ihermite;
+              isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
+              isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
+              sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
+              sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
+              sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
+              sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
+              tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
+              dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+private(j, tmp_sgn, dmv, off, tmp_off, tmp_off2) \
+firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V, ihfbit) \
+shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
+              for (j = 1; j <= i_max; j++) {
+                tmp_sgn = GetOffCompGeneralSpin(list_1[j], isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+                if (tmp_sgn == TRUE) {
+                  tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &tmp_off2, X->Def.SiteToBit, X->Def.Tpow);
+                  if (tmp_sgn == TRUE) {
+                    ConvertToList1GeneralSpin(tmp_off2, ihfbit, &off);
+                    dmv = tmp_v1[j] * tmp_V;
+                    if (X->Large.mode == M_MLTPLY) { // for multply
+                      tmp_v0[off] += dmv;
+                    }
+                    dam_pr += conj(tmp_v1[off]) * dmv;
+                  }
+                }
+              }
+              X->Large.prdct += dam_pr;
+            }
+          }
+        }
       }	
       break;
 
     case SpinGC:
-      if (X->Def.iFlgGeneralSpin == FALSE) {
-       
-        for (i = 0; i < X->Def.EDNTransfer/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
-	    isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-	    isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-	    sigma1 = X->Def.EDGeneralTransfer[idx][1];
-	    sigma2 = X->Def.EDGeneralTransfer[idx][3];
-	    tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-	    if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
-	      return -1;
+      if (X->Def.iFlgGeneralSpin == FALSE) {	
+        for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
+	  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
+	    dam_pr=0;
+	    if(X->Def.EDGeneralTransfer[idx][1]==X->Def.EDGeneralTransfer[idx][3]){
+	      fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 	    }
-	    if (isite1 == isite2) {
+	    else{
+	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
+	    }
+	  }
+	  else{
+	    dam_pr=0;
+	    for(ihermite=0; ihermite<2; ihermite++){
+	      idx=i+ihermite;
+	      isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+	      isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+	      sigma1 = X->Def.EDGeneralTransfer[idx][1];
+	      sigma2 = X->Def.EDGeneralTransfer[idx][3];
+	      tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+	      if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+		return -1;
+	      }
+	      
 	      if(sigma1==sigma2){
 		fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 	      }
 	      else{
-	      is1_spin = X->Def.Tpow[isite1 - 1];
-	      // longitudinal magnetic field (considerd in diagonalcalc.c)
-	      // transverse magnetic field
-	      is1_spin = X->Def.Tpow[isite1 - 1];
-	      dam_pr = 0.0;
+		// longitudinal magnetic field (considerd in diagonalcalc.c)
+		// transverse magnetic field
+		is1_spin = X->Def.Tpow[isite1 - 1];
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) shared(tmp_v0, tmp_v1)
-	      for (j = 1; j <= i_max; j++) {
-		tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
-		if(tmp_sgn !=0){
-		  if (X->Large.mode == M_MLTPLY) { // for multply
+		for (j = 1; j <= i_max; j++) {
+		  tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
+		  if(tmp_sgn !=0){
 		    tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
+		    dam_pr += tmp_trans * conj(tmp_v1[off + 1]) * tmp_v1[j];
 		  }
-		  dam_pr += tmp_sgn * conj(tmp_v1[off + 1]) * tmp_v1[j];
 		}
-	      }
-	      }
-	    }
-	    else {
-	      fprintf(stderr, "hopping is not allowed in localized spin system.\n");
-	      return -1;
+	      }//sigma1 != sigma2
 	    }
 	  }
+	  X->Large.prdct += dam_pr;
 	}
+      
 
 	//InterAll	
-        for (i = 0; i < X->Def.NInterAll_OffDiagonal/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
-	    isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
-	    isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
-	    sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
-	    sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
-	    sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
-	    sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
-	    tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-	    child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
-	    dam_pr = GC_child_general_int_spin(tmp_v0, tmp_v1, X);
-	    X->Large.prdct += dam_pr;
-	  }
+        for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
+          if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
+            X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            GC_child_general_int_spin_MPIdouble(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            GC_child_general_int_spin_MPIsingle(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite) {
+            GC_child_general_int_spin_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+          }
+          else {
+            for (ihermite = 0; ihermite < 2; ihermite++) {
+              idx = i + ihermite;
+              isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
+              isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
+              sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
+              sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
+              sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
+              sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
+              tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
+              child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
+              dam_pr = GC_child_general_int_spin(tmp_v0, tmp_v1, X);
+              X->Large.prdct += dam_pr;
+            }
+          }
 	}
 	
         //Exchange
-        for (i = 0; i < X->Def.NExchangeCoupling/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;
-	    child_exchange_spin_GetInfo(idx, X);
-	    dam_pr = GC_child_exchange_spin(tmp_v0, tmp_v1, X);
-	    X->Large.prdct += dam_pr;
-	  }
-	}
+        for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+          if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
+            X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
+            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else {
+            for (ihermite = 0; ihermite<2; ihermite++) {
+              idx = i + ihermite;
+              child_exchange_spin_GetInfo(idx, X);
+              dam_pr = GC_child_exchange_spin(tmp_v0, tmp_v1, X);
+              X->Large.prdct += dam_pr;
+            }/*for (ihermite = 0; ihermite<2; ihermite++)*/
+          }
+	}/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
 
         //PairLift
-        for (i = 0; i < X->Def.NPairLiftCoupling/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;   
-	    child_pairlift_spin_GetInfo(idx, X);
-	    dam_pr = GC_child_pairlift_spin(tmp_v0, tmp_v1, X);
-	    X->Large.prdct += dam_pr;
-	  }
-	}
+        for (i = 0; i < X->Def.NPairLiftCoupling; i += 2) {
+          if (X->Def.PairLiftCoupling[i][0] + 1 >> X->Def.Nsite &&
+            X->Def.PairLiftCoupling[i][1] + 1 >> X->Def.Nsite) {
+            fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if (X->Def.PairLiftCoupling[i][1] + 1 >> X->Def.Nsite) {
+            fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if (X->Def.PairLiftCoupling[i][0] + 1 >> X->Def.Nsite) {
+            fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else {
+            for (ihermite = 0; ihermite<2; ihermite++) {
+              idx = i + ihermite;
+              child_pairlift_spin_GetInfo(idx, X);
+              dam_pr = GC_child_pairlift_spin(tmp_v0, tmp_v1, X);
+              X->Large.prdct += dam_pr;
+            }/*for (ihermite = 0; ihermite<2; ihermite++)*/
+          }
+	}/*for (i = 0; i < X->Def.NPairLiftCoupling; i += 2)*/
       }
       else {//For General spin
-	for (i = 0; i < X->Def.EDNTransfer/2; i++) {
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;	    
-	    isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-	    isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-	    sigma1 = X->Def.EDGeneralTransfer[idx][1];
-	    sigma2 = X->Def.EDGeneralTransfer[idx][3];
-	    tmp_trans = -X->Def.EDParaGeneralTransfer[idx]; 
-	    if (isite1 == isite2) {
-	      if (sigma1 != sigma2){//sigma1 != sigma2
-		// transverse magnetic field
-		dam_pr = 0.0;
+        for (i = 0; i < X->Def.EDNTransfer; i += 2) {
+          if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
+            X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+            fprintf(stderr, "In mltply GSpin+TransMag\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if(X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite){
+            fprintf(stderr, "In mltply GSpin+TransMag\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else if(X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite){
+            fprintf(stderr, "In mltply GSpin+TransMag\n Sorry This Interaction has not be supported in MPI yet.\n");
+            exitMPI(-1);
+          }
+          else {
+            for (ihermite = 0; ihermite<2; ihermite++) {
+              idx = i + ihermite;
+              isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+              isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+              sigma1 = X->Def.EDGeneralTransfer[idx][1];
+              sigma2 = X->Def.EDGeneralTransfer[idx][3];
+              tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+              if (isite1 == isite2) {
+                if (isite1 > X->Def.Nsite) {
+                  if (sigma1 != sigma2) {
+                    dam_pr = X_GC_child_CisAit_GeneralSpin_MPIdouble(isite1 - 1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
+                  }
+                }
+                else {
+                  if (sigma1 != sigma2) {//sigma1 != sigma2
+                                         // transverse magnetic field
+                    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) shared(tmp_v0, tmp_v1)
-		for (j = 1; j <= i_max; j++) {
-		  num1 = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-		  if (num1!=0) { // for multply
-		    tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-		    dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j]*tmp_trans;
-		  }
-		}
-	      }
-	      else{
-		fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
-		return -1;
-	      }
-	      X->Large.prdct += dam_pr;
-	    }
-	    else {
-	      // hopping is not allowed in localized spin system
-	      return -1;
-	    }
-	  }
+                    for (j = 1; j <= i_max; j++) {
+                      num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+                      if (num1 != 0) { // for multply
+                        tmp_v0[off + 1] += tmp_v1[j] * tmp_trans;
+                        dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j] * tmp_trans;
+                      }
+                    }
+                  }
+                }
+              }
+              else {
+                // hopping is not allowed in localized spin system
+                return -1;
+              }
+              X->Large.prdct += dam_pr;
+            }/*for (ihermite = 0; ihermite<2; ihermite++)*/
+          }
 	}
       
         //InterAll        
-	for(i = 0;i< X->Def.NInterAll_OffDiagonal/2; i++){
-	  for(ihermite=0; ihermite<2; ihermite++){
-	    idx=2*i+ihermite;   
-	    isite1 = X->Def.InterAll_OffDiagonal[idx][0]+1;
-	    isite2 = X->Def.InterAll_OffDiagonal[idx][4]+1;
-	    sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
-	    sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
-	    sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
-	    sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
-	    tmp_V  = X->Def.ParaInterAll_OffDiagonal[idx];
-	    
-	    dam_pr = 0.0;
-	    if(sigma1==sigma2){
-	      if(sigma3==sigma4){
-		fprintf(stderr, "InterAll_OffDiagonal component is illegal.\n");
-		return -1;		
-	      }
-	      else{
-	      //sigma3=sigma4 term is considerd as a diagonal term.
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv, off) firstprivate(i_max, isite1, isite2, sigma1, sigma3, sigma4, X, tmp_V) shared(tmp_v0, tmp_v1)
-	      for (j = 1; j <= i_max; j++) {
-		tmp_sgn = GetOffCompGeneralSpin(j-1, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow);
-		if(tmp_sgn ==TRUE){
-		  tmp_sgn = BitCheckGeneral(off, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
-		  if (tmp_sgn==TRUE){
-		    dmv = tmp_v1[j]*tmp_V;
-		    if(X->Large.mode == M_MLTPLY) { // for multply
-		      tmp_v0[off+1] += dmv;
-		    }
-		    dam_pr += conj(tmp_v1[off + 1]) * dmv;
-		  }
-		}
-	      }
-	      }
-	    }
-	    else if(sigma3==sigma4){
-	      //sigma1=sigma2 term is considerd as a diagonal term.
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv, off, tmp_off) firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) shared(tmp_v0, tmp_v1)
-	      for (j = 1; j <= i_max; j++) {
-		tmp_sgn = BitCheckGeneral(j-1, isite2, sigma3, X->Def.SiteToBit, X->Def.Tpow);
-		if(tmp_sgn ==TRUE){
-		  tmp_sgn = GetOffCompGeneralSpin(j-1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-		  if (tmp_sgn==TRUE){
-		    dmv= tmp_v1[j]*tmp_V;
-		    if(X->Large.mode == M_MLTPLY) { // for multply
-		      tmp_v0[off+1] += dmv;
-		    }
-		    dam_pr += conj(tmp_v1[off + 1]) * dmv;
-		  }
-		}
-	      }	    
-	    }
-	    else{
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv, off, tmp_off) firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) shared(tmp_v0, tmp_v1)
-	      for (j = 1; j <= i_max; j++) {
-		tmp_sgn = GetOffCompGeneralSpin(j-1, isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-		if(tmp_sgn ==TRUE){
-		  tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-		  if (tmp_sgn==TRUE){
-		    dmv= tmp_v1[j]*tmp_V;
-		    if(X->Large.mode == M_MLTPLY) { // for multply
-		      tmp_v0[off+1] += dmv;
-		    }
-		    dam_pr += conj(tmp_v1[off + 1]) * dmv;
-		  }
-		}
-	      }	    
-	    }
-	    X->Large.prdct += dam_pr;	  
-	  }
-	}
+        for (i = 0; i< X->Def.NInterAll_OffDiagonal; i += 2) {
+
+          if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
+            X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            GC_child_general_int_GeneralSpin_MPIdouble(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            GC_child_general_int_GeneralSpin_MPIsingle(i, X, tmp_v0, tmp_v1);
+          }
+          else if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite) {
+            GC_child_general_int_GeneralSpin_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+          }
+          else {
+            for (ihermite = 0; ihermite < 2; ihermite++) {
+              idx = i + ihermite;
+              isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
+              isite2 = X->Def.InterAll_OffDiagonal[idx][4] + 1;
+              sigma1 = X->Def.InterAll_OffDiagonal[idx][1];
+              sigma2 = X->Def.InterAll_OffDiagonal[idx][3];
+              sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
+              sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
+              tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
+
+              dam_pr = 0.0;
+              if (sigma1 == sigma2) {
+                if (sigma3 == sigma4) {
+                  fprintf(stderr, "InterAll_OffDiagonal component is illegal.\n");
+                  return -1;
+                }
+                else {
+                  //sigma3=sigma4 term is considerd as a diagonal term.
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+private(j, tmp_sgn, dmv, off) \
+firstprivate(i_max, isite1, isite2, sigma1, sigma3, sigma4, X, tmp_V) \
+shared(tmp_v0, tmp_v1)
+                  for (j = 1; j <= i_max; j++) {
+                    tmp_sgn = GetOffCompGeneralSpin(j - 1, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow);
+                    if (tmp_sgn == TRUE) {
+                      tmp_sgn = BitCheckGeneral(off, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
+                      if (tmp_sgn == TRUE) {
+                        dmv = tmp_v1[j] * tmp_V;
+                        if (X->Large.mode == M_MLTPLY) { // for multply
+                          tmp_v0[off + 1] += dmv;
+                        }
+                        dam_pr += conj(tmp_v1[off + 1]) * dmv;
+                      }
+                    }
+                  }
+                }
+              }
+              else if (sigma3 == sigma4) {
+                //sigma1=sigma2 term is considerd as a diagonal term.
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+private(j, tmp_sgn, dmv, off, tmp_off) \
+firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) \
+shared(tmp_v0, tmp_v1)
+                for (j = 1; j <= i_max; j++) {
+                  tmp_sgn = BitCheckGeneral(j - 1, isite2, sigma3, X->Def.SiteToBit, X->Def.Tpow);
+                  if (tmp_sgn == TRUE) {
+                    tmp_sgn = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+                    if (tmp_sgn == TRUE) {
+                      dmv = tmp_v1[j] * tmp_V;
+                      if (X->Large.mode == M_MLTPLY) { // for multply
+                        tmp_v0[off + 1] += dmv;
+                      }
+                      dam_pr += conj(tmp_v1[off + 1]) * dmv;
+                    }
+                  }
+                }
+              }
+              else {
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+private(j, tmp_sgn, dmv, off, tmp_off) \
+firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) \
+shared(tmp_v0, tmp_v1)
+                for (j = 1; j <= i_max; j++) {
+                  tmp_sgn = GetOffCompGeneralSpin(j - 1, isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+                  if (tmp_sgn == TRUE) {
+                    tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+                    if (tmp_sgn == TRUE) {
+                      dmv = tmp_v1[j] * tmp_V;
+                      if (X->Large.mode == M_MLTPLY) { // for multply
+                        tmp_v0[off + 1] += dmv;
+                      }
+                      dam_pr += conj(tmp_v1[off + 1]) * dmv;
+                    }
+                  }
+                }
+              }
+              X->Large.prdct += dam_pr;
+            }
+          }
+        }
       }  //end:generalspin
   break;
       
   default:
     return -1;
   }
-
+  }
+  
+  X->Large.prdct = SumMPI_dc(X->Large.prdct);
+  //  fprintf(stdoutMPI, "debug: prdct=%lf, %lf\n",creal( X->Large.prdct), cimag( X->Large.prdct ) );
+  //FinalizeMPI();
+  //exit(0);
+  
   return 0;
 }
 
@@ -684,9 +996,18 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     Adiff = X->Large.A_spin;
 
     double complex dam_pr = 0;
+    if(isite1==isite2 ){
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1, trans) shared(tmp_v0, tmp_v1)
+      for(j=1;j<=i_max;j++){
+	dam_pr += GC_CisAis(j, tmp_v0, tmp_v1, X, isite1, trans) * trans;
+	 
+      }
+    }
+    else{
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j,tmp_off) shared(tmp_v0, tmp_v1)
-    for (j = 1; j <= i_max; j++) {
-      dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off) * trans;
+      for (j = 1; j <= i_max; j++) {
+	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off) * trans;
+      }
     }
     return dam_pr;
   }
@@ -1556,7 +1877,47 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           long unsigned int is2_spin,
           long unsigned int sum_spin,
           long unsigned int diff_spin,
-          long unsigned int *iexchg,
+          long unsigned int *tmp_off
+  ) {
+    long unsigned int ibit_tmp_1, ibit_tmp_2;
+    long unsigned int bit, off;
+    int sgn = 1;
+
+    sgn = X_GC_CisAjt(list_1_j, X, is1_spin, is2_spin, sum_spin, diff_spin, tmp_off);
+    if(sgn !=0){
+      GetOffComp(list_2_1, list_2_2, *tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
+      *tmp_off =off;
+      return sgn;
+    }
+    else {
+      *tmp_off = 1;
+      return 0;
+    }
+  }
+
+/**
+ *
+ *
+ * @param list_1_j
+ * @param X
+ * @param is1_spin
+ * @param is2_spin
+ * @param sum_spin
+ * @param diff_spin
+ * @param iexchg
+ * @param tmp_off
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  int X_GC_CisAjt(
+          long unsigned int list_1_j,
+          struct BindStruct *X,
+          long unsigned int is1_spin,
+          long unsigned int is2_spin,
+          long unsigned int sum_spin,
+          long unsigned int diff_spin,
           long unsigned int *tmp_off
   ) {
     long unsigned int ibit_tmp_1, ibit_tmp_2;
@@ -1565,13 +1926,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 
     ibit_tmp_1 = (list_1_j & is1_spin);
     ibit_tmp_2 = (list_1_j & is2_spin);
-    //list_1[j] doesn't have is1_spin but has is2_spin because of creative operator on is1_spin and annihiration operator on is2_spin.
     if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
       bit = list_1_j & diff_spin;
       SgnBit(bit, &sgn); // Fermion sign
-      *iexchg = list_1_j ^ sum_spin;
-      GetOffComp(list_2_1, list_2_2, *iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
-      //fprintf(stdoutMPI, "X_DEBUG: j=%ld list_1=%ld sum=%ld iexchg=%ld off=%ld\n",j,list_1[j], sum_spin,iexchg,off );
+      off = list_1_j ^ sum_spin;
       *tmp_off = off;
       return sgn; // pm 1
     } else {
@@ -1701,6 +2059,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     long unsigned int list_1_j, ibit_tmp_1;
 
     list_1_j = j - 1;
+    
     ibit_tmp_1 = list_1_j & is1_spin;
     if (ibit_tmp_1 == 0 && sigma2 == 0) {    // down -> up
       *tmp_off = list_1_j + is1_spin;
@@ -1711,7 +2070,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     } else {
       *tmp_off = 1;
       return 0;
-    }
+      }        
   }
 /******************************************************************************/
 //[e] core routines
@@ -2283,7 +2642,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     long unsigned int iexchg;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
-    tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &iexchg, tmp_off);
+    tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, tmp_off);
     if (tmp_sgn != 0) {
       tmp_sgn *= X_CisAis(list_1[*tmp_off], X, isite1);
       if (tmp_sgn != 0) {
@@ -2337,7 +2696,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     dam_pr = 0;
     tmp_sgn = X_CisAis(list_1[j], X, isite3);
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, &iexchg, tmp_off);
+      tmp_sgn *= X_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply
@@ -2390,15 +2749,13 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           ) {
     int tmp_sgn;
     long unsigned int tmp_off_1;
-    long unsigned int iexchg_1;
-    long unsigned int iexchg_2;
 
     double complex dmv;
     double complex dam_pr = 0;
-    tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &iexchg_1, &tmp_off_1);
+    tmp_sgn = X_GC_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff,  &tmp_off_1);
 
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt(iexchg_1, X, isite1, isite2, Asum, Adiff, &iexchg_2, tmp_off_2);
+      tmp_sgn *= X_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);       
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply
@@ -2778,7 +3135,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     long unsigned int iexchg;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
-    tmp_sgn = X_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &iexchg, tmp_off);
+    tmp_sgn = X_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, tmp_off);
     if (tmp_sgn != 0) {
       tmp_sgn *= X_CisAis(*tmp_off, X, isite1);
       if (tmp_sgn != 0) {
@@ -2831,7 +3188,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     double complex dam_pr = 0 + 0 * I;
     tmp_sgn = X_CisAis((j - 1), X, isite3);
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, &iexchg, tmp_off);
+      tmp_sgn *= X_GC_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply
@@ -2889,9 +3246,9 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
 
-    tmp_sgn = X_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &iexchg_1, &tmp_off_1);
+    tmp_sgn = X_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
     if (tmp_sgn != 0) {
-      tmp_sgn *= X_CisAjt(iexchg_1, X, isite1, isite2, Asum, Adiff, &iexchg_2, tmp_off_2);
+      tmp_sgn *= X_GC_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
         if (X->Large.mode == M_MLTPLY) { // for multply
