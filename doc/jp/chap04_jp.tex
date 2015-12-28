@@ -1876,6 +1876,7 @@ Sz  0.0000000000
  \begin{itemize}
    \item Energy $[$double01$]$
    \item Doublon $[$double02$]$
+   \item Sz $[$double03$]$
   \end{itemize}
 \subsubsection{パラメータ}
  \begin{itemize}
@@ -1892,6 +1893,13 @@ Sz  0.0000000000
 
 {\bf 説明 :} Lanczos法・CG法で求めた固有ベクトルを用い計算したダブロン
 $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$はサイト数)。
+
+ \item  $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 固有ベクトルを用い計算した$\langle S_z\rangle$。
+
  \end{itemize}
 
 \newpage
@@ -2300,6 +2308,64 @@ $[$int02$]$が$\sigma_1$、$[$int04$]$が$\sigma_2$、$[$int06$]$が$\sigma_3$�
  {\bf 形式 :} double型 
 
 {\bf 説明 :} $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+\end{itemize}
+
+\newpage
+\subsection{eigenvec.dat}
+\label{Subsec:eigenvec}
+CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算された固有ベクトルを出力します。IntputEigenVec=1の場合には、出力されたファイルの読み込みを行います。以下にファイル例を記載します。
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+4900 
+255 0.0000896233 0.0000896690
+447 -0.0000000000 -0.0000000000
+495 -0.0002941096 -0.0002942596
+507 -0.0000562403 -0.0000562689
+510 -0.0000000000 -0.0000000000
+639 -0.0000000000 0.0000000000
+735 0.0002941096 0.0002942596
+759 0.0000562403 0.0000562689
+765 -0.0000000000 0.0000000000
+831 -0.0017552852 -0.0017561802
+ …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_eigenvec\_{\&\&}.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\&\&は固有値の番号を表します。
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目-: $[$int02$]$~~$[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+ 
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} 計算対象のヒルベルト空間の数。
+
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 固有ベクトルの値を表します。\\
 $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 

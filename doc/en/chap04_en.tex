@@ -1789,6 +1789,7 @@ Sz  0.0000000000
  \begin{itemize}
    \item Line 1: Energy $[$double01$]$
    \item Line 2: Doublon $[$double02$]$
+   \item Line 3: Sz $[$double02$]$
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
@@ -1805,6 +1806,13 @@ Sz  0.0000000000
 
 {\bf Description :}  The value of doublon calculated by the eigenvetor obtained by Lanczos or CG method,
 $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$ is a total number of sites).
+
+  \item  $[$double03$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :}  The value of $S_z$ calculated by the eigenvetor obtained by Lanczos or CG method.
+
  \end{itemize}
 
 
@@ -2183,20 +2191,64 @@ An example of file format is shown as follows.
 \end{screen}
 \end{minipage}
 
+\newpage
+\subsection{eigenvec.dat}
+\label{Subsec:eigenvec}
+When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are given by this outputted file. An example of file format is shown as follows.
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+4900 
+255 0.0000896233 0.0000896690
+447 -0.0000000000 -0.0000000000
+495 -0.0002941096 -0.0002942596
+507 -0.0000562403 -0.0000562689
+510 -0.0000000000 -0.0000000000
+639 -0.0000000000 0.0000000000
+735 0.0002941096 0.0002942596
+759 0.0000562403 0.0000562689
+765 -0.0000000000 0.0000000000
+831 -0.0017552852 -0.0017561802
+ …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
 \subsubsection{File name}
- \begin{itemize}
-   \item{Lanczos method:}  \#\#\_cisajscktalt.dat
-   \item{TPQ method:} \#\#\_cisajscktalt\_set??step\%\%.dat
-   \item{Full diagonalization method:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
-  \end{itemize}
-  \#\#, ??, \%\% and \&\& indicate [string02] in ModPara file, a number of runs under calculation in TPQ method, a number of steps in TPQ method and an index of eigenvalues, respectively.
+\begin{itemize}
+   \item{\#\#\_eigenvec\_{\&\&}.dat}
+\end{itemize}
+  \#\# indicates [string02] in ModPara file、\&\& is a number of eigenvalues, respectively.
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  $[$int01$]$~~$[$int02$]$~~$[$int03$]$~~$[$int04$]$~~$[$int05$]$~~$[$int06$]$~~$[$int07$]$~~$[$int08$]$~~$[$double01$]$~~$[$double02$]$
+   \item  Line 1：$[$int01$]$
+   \item  Lines 2 -: $[$int02$]$~~$[$double01$]$~~$[$double02$]$
   \end{itemize}
+  
 \subsubsection{Parameters}
  \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf Type :} int-type
+
+{\bf Description :}  A total number of targets of Hilbert spaces.
+ 
+  \item  $[$int02$]$
+
+ {\bf Type :} int-type
+
+{\bf Description :} An integer for a target of Hilbert space.
+
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf Type :} double型 
+
+{\bf Description :} A value of eigenvectors.\\
+$[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
+
 
   \item  $[$int01$]$, $[$int03$]$,$[$int05$]$, $[$int07$]$
 
@@ -2222,6 +2274,7 @@ $[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c
 
 \end{itemize}
 
+\newpage
 
 \section{Error messages}
 
