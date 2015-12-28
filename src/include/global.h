@@ -31,6 +31,7 @@
 
 double complex *v0; 
 double complex *v1;
+double complex *v1buf;
 //test
 double complex *vg;
 
@@ -39,6 +40,7 @@ double complex **vec;
 double *list_Diagonal; 
 double *list_D_num;
 long unsigned int *list_1;
+long unsigned int *list_1buf;
 long unsigned  int *list_2_1;
 long unsigned  int *list_2_2;
 long unsigned  int *list_jb;

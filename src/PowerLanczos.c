@@ -1,4 +1,21 @@
+/* HPhi  -  Quantum Lattice Model Simulator */
+/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+
+/* This program is free software: you can redistribute it and/or modify */
+/* it under the terms of the GNU General Public License as published by */
+/* the Free Software Foundation, either version 3 of the License, or */
+/* (at your option) any later version. */
+
+/* This program is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the */
+/* GNU General Public License for more details. */
+
+/* You should have received a copy of the GNU General Public License */
+/* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "PowerLanczos.h"
+#include "wrapperMPI.h"
+
 int PowerLanczos(struct BindStruct *X){
   
   time_t start,mid;
@@ -50,6 +67,8 @@ int PowerLanczos(struct BindStruct *X){
       dam_pr2a  += conj(v0[j])*v0[j]; // E^2 = <v1|H*H|v1>=<v0|v0>
      //v0[j]=v1[j]; v1-> orginal v0=H*v1
     }  
+    dam_pr1 = SumMPI_dc(dam_pr1);
+    dam_pr2a = SumMPI_dc(dam_pr2a);
     E1    = creal(dam_pr1); // E
     E2a   = creal(dam_pr2a);// E^2
 
@@ -68,6 +87,9 @@ int PowerLanczos(struct BindStruct *X){
       dam_pr3    += conj(vg[j])*v0[j]; // E^3   = <v1|H^3|v1>=<vg|v0>
       dam_pr4    += conj(vg[j])*vg[j]; // E^4   = <v1|H^4|v1>=<vg|vg>
     } 
+    dam_pr2b = SumMPI_dc(dam_pr2b);
+    dam_pr3 = SumMPI_dc(dam_pr3);
+    dam_pr4 = SumMPI_dc(dam_pr4);
     //E1    = X->Phys.energy;// E^1
     //E2a   = X->Phys.var ;// E^2 = <v1|H*H|v1>
     E2b   = creal(dam_pr2b) ;// E^2 = (<v1|H^2)|v1>
@@ -75,7 +97,7 @@ int PowerLanczos(struct BindStruct *X){
     E4    = creal(dam_pr4) ;// E^4
   
     if(solve_2ndPolinomial(X,&alpha_p,&alpha_m,E1,E2a,E2b,E3,E4)!=TRUE){
-      printf("Power Lanczos break \n");
+      fprintf(stdoutMPI,"Power Lanczos break \n");
       return 0;
     }
     //printf("E1=%.16lf E2a=%.16lf E2b=%.16lf E3=%.16lf E4=%.16lf \n",E1,E2a,E2b,E3,E4);
@@ -86,7 +108,7 @@ int PowerLanczos(struct BindStruct *X){
     if(Lz_Ene_p < Lz_Ene_m){
       Lz_Ene=Lz_Ene_p;
       Lz_Var=Lz_Var_p;
-      printf("Power Lanczos (P): %.16lf %.16lf \n",Lz_Ene_p,Lz_Var_p);
+      fprintf(stdoutMPI,"Power Lanczos (P): %.16lf %.16lf \n",Lz_Ene_p,Lz_Var_p);
       #pragma omp parallel for default(none)  private(j) shared(v0, v1) firstprivate(i_max,alpha_p) 
       for(j=1;j<=i_max;j++){
         v1[j]   = v1[j]+alpha_p*v0[j];   // (1+alpha*H)v1=v1+alpha*v0
@@ -94,7 +116,7 @@ int PowerLanczos(struct BindStruct *X){
     }else{
       Lz_Ene=Lz_Ene_m;
       Lz_Var=Lz_Var_m;
-      printf("Power Lanczos (M): %.16lf %.16lf \n",Lz_Ene_m,Lz_Var_m);
+      fprintf(stdoutMPI,"Power Lanczos (M): %.16lf %.16lf \n",Lz_Ene_m,Lz_Var_m);
       #pragma omp parallel for default(none)  private(j) shared(v0, v1)firstprivate(i_max,alpha_m) 
       for(j=1;j<=i_max;j++){
         v1[j]   = v1[j]+alpha_m*v0[j]; // (1+alpha*H)v1=v1+alpha*v0
@@ -106,6 +128,7 @@ int PowerLanczos(struct BindStruct *X){
     for(j=1;j<=i_max;j++){
       dnorm += conj(v1[j])*v1[j];
     }
+    dnorm = SumMPI_d(dnorm);
     dnorm=sqrt(dnorm);
     dnorm_inv=1.0/dnorm;
 #pragma omp parallel for default(none) private(j) shared(v1) firstprivate(i_max, dnorm_inv)
@@ -113,7 +136,7 @@ int PowerLanczos(struct BindStruct *X){
       v1[j] = v1[j]*dnorm_inv;
     }
     if(Lz_Var < eps_Energy){
-      printf("Power Lanczos break \n");
+      fprintf(stdoutMPI,"Power Lanczos break \n");
       return 1;
       break;
     }

@@ -36,6 +36,7 @@ struct DefineList{
   long int global_off;  /**< */
   
   int  Nsite;    /**< */
+  int  NsiteMPI;    /**< */
   int  Nup;    /**< Read from modpara in readdef */
   int Ndown;    /**< */
   int  Total2Sz;    /**< */
@@ -56,6 +57,7 @@ struct DefineList{
   
   int fidx;    /**< */
   long int *Tpow;    /**< [2 * Nsite] 2^n */
+  long int *OrgTpow;    /**< [2 * Nsite] 2^n */
   long int *SiteToBit; /**< [Nsite] */
   
   int *EDChemi;    /**< [Nsite] */

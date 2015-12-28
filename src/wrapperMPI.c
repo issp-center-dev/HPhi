@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wrapperMPI.h"
 #include <omp.h>
 #include <math.h>
+#include <complex.h>
 
 /**
  *
@@ -31,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void InitializeMPI(int argc, char *argv[]){
-  int ierr, nthreads, expon;
+  int ierr, nthreads;
 
 #ifdef MPI
   ierr = MPI_Init(&argc, &argv);
@@ -49,15 +50,9 @@ void InitializeMPI(int argc, char *argv[]){
 #pragma omp master
   nthreads = omp_get_num_threads();
 
-  expon = (int)(log((double)nproc) / log(2.0) + 0.5);
-
   fprintf(stdoutMPI, "\n\n#####  Parallelization Info.  #####\n\n");
   fprintf(stdoutMPI, "  OpenMP threads : %d\n", nthreads);
-  fprintf(stdoutMPI, "  MPI PEs : %d = 2^%-5d\n\n", nproc, expon);
-  if (nproc != 1 << expon){
-    fprintf(stderr, "ERROR ! The number of PEs is not a 2-exponent !");
-    exitMPI(-1);
-  }
+  fprintf(stdoutMPI, "  MPI PEs : %d \n\n", nproc);
 }
 
 /**
@@ -148,4 +143,64 @@ void BarrierMPI(){
 #ifdef MPI
   MPI_Barrier(MPI_COMM_WORLD);
 #endif
+}
+
+unsigned long int MaxMPI_li(unsigned long int idim)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
+    MPI_UNSIGNED_LONG, MPI_MAX, MPI_COMM_WORLD);
+#endif
+  return(idim);
+}
+
+double complex SumMPI_dc(double complex norm)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
+    MPI_DOUBLE_COMPLEX, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(norm);
+}
+
+double SumMPI_d(double norm)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
+    MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(norm);
+}
+
+unsigned long int SumMPI_li(unsigned long int idim)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
+    MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(idim);
+}
+
+int SumMPI_i(int idim)
+{
+  int ierr;
+#ifdef MPI
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
+    MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  return(idim);
+}
+
+unsigned long int BcastMPI_li(int root, unsigned long int idim) {
+  int ierr;
+  unsigned long int idim0;
+  idim0 = idim;
+#ifdef MPI
+    MPI_Bcast(&idim0, 1, MPI_UNSIGNED_LONG, root, MPI_COMM_WORLD);
+#endif
+  return(idim0);
 }

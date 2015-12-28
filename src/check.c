@@ -19,6 +19,7 @@
 #include "mfmemory.h"
 #include "check.h"
 #include "wrapperMPI.h"
+#include "CheckMPI.h"
 
 /**
  * @file   check.c
@@ -60,6 +61,12 @@ int check(struct BindStruct *X){
   long unsigned int idim=0;
   long unsigned int isite=0;
   int tmp_sz=0;
+
+  /*
+    Set Site number per MPI process 
+  */
+  CheckMPI(X);
+
   Ns = X->Def.Nsite;
 
   li_malloc2(comb, Ns+1,Ns+1);
@@ -183,11 +190,12 @@ int check(struct BindStruct *X){
 
   if(comb_sum==0){
     fprintf(stderr, cErrNoHilbertSpace);
-    return FALSE;
+    //    return FALSE;
   }
   
   fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
-  
+
+
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
   case Lanczos:
@@ -201,6 +209,7 @@ int check(struct BindStruct *X){
     return FALSE;
     break;
   }
+  
   fprintf(stdoutMPI, "MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(stdoutMPI, "APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
@@ -331,7 +340,11 @@ int check(struct BindStruct *X){
     return FALSE;
   }  
   fclose(fp);	 
-
+  /*
+    Print MPI-site information and Modify Tpow 
+    in the inter process region.
+  */
+  CheckMPI_Summary(X);
   
   return TRUE;
 }    

@@ -34,7 +34,7 @@ int HPhiTrans(struct BindStruct *X){
 
   int i,k;
   int cnt_trans,cnt_chemi;
-
+ 
   strcpy(sdt_err, cFileNameWarningOnTransfer);
   if(childfopenMPI(sdt_err, "w", &fp_err)!=0){
     return -1;
@@ -84,7 +84,6 @@ int HPhiTrans(struct BindStruct *X){
     return -1;
   }
 //
-
   fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
   fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
 

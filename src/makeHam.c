@@ -226,7 +226,7 @@ int makeHam(struct BindStruct *X){
 	tmp_trans      = -X->Def.EDParaGeneralTransfer[idx];
 	
 	for(j=1;j<=X->Large.i_max;j++){
-	  dmv               = tmp_trans*X_CisAjt(list_1[j], X,X->Large.is1_spin,X->Large.is2_spin,X->Large.isA_spin,X->Large.A_spin,&iexchg, &tmp_off);
+	  dmv               = tmp_trans*X_CisAjt(list_1[j], X,X->Large.is1_spin,X->Large.is2_spin,X->Large.isA_spin,X->Large.A_spin,&tmp_off);
 	  Ham[tmp_off][j]  += dmv;
 	}
       }

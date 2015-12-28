@@ -15,6 +15,7 @@ Multiply.c \
 bitcalc.c \
 bisec.c \
 check.c \
+CheckMPI.c \
 dSFMT.o \
 diagonalcalc.c \
 expec_cisajs.c \
@@ -25,6 +26,7 @@ lapack_diag.c \
 makeHam.c \
 matrixlapack.c \
 mltply.c \
+mltplyMPI.c \
 CalcByTPQ.c \
 output.c \
 output_list.c \

@@ -13,20 +13,9 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
 #pragma once
-#include "Common.h"
+#include "struct.h"
+void CheckMPI(struct BindStruct *X);
+void CheckMPI_Summary(struct BindStruct *X);
 
-int expec_totalspin
-(
- struct BindStruct *X,
- double complex *vec
- );
-
-void totalspin_Hubbard(struct BindStruct *X,double complex *vec);
-void totalspin_HubbardGC(struct BindStruct *X,double complex *vec);
-void totalspin_Spin(struct BindStruct *X,double complex *vec);
-void totalspin_SpinGC(struct BindStruct *X,double complex *vec);
-
-
-void totalSz_HubbardGC(struct BindStruct *X,double complex *vec);
-void totalSz_SpinGC(struct BindStruct *X,double complex *vec);
