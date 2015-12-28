@@ -93,29 +93,3 @@ make
 \end{verbatim}
 実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、新規に上記作業を行うことをお薦めします。
 
-
-\begin{screen}
-\Large 
-{\bf Tips}
-\normalsize
-\\
-{\bf Macでの設定}
-\\
-Macでのインストールを行う場合にはデフォルトコンパイラではOpenMP対応していないため、gccを事前にインストール必要があります(intel コンパイラがある場合は利用可能)。gccは、例えばmacportsを利用する場合には以下の通りに簡易にインストールすることができます(macportsのインストールや詳細に関しては、インターネット上に多くの情報がありますのでそちらを参考にしてください)。
-\begin{verbatim}
-sudo port install gcc
-\end{verbatim}
-インストール後に
-\begin{verbatim}
-port select gcc
-\end{verbatim}
-で表示されるリストからインストールしたgccを選択(sudo port gcc select xxxx、xxxxに選択したgccの名称を記入)することで利用できるようになります(none以外)。なお、ハイブリッド並列を行うために必要なOpenMPIに関しても
-\begin{verbatim}
-sudo port install openmpi
-\end{verbatim}
-でインストール後に、
-\begin{verbatim}
-port select mpi
-\end{verbatim}
-で表示されるmpiを選択することで利用できるようになります。なお、mpiのバージョンに関してはgccなどのコンパイラとバージョンを統一することをお薦めします。
-\end{screen}

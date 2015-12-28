@@ -91,58 +91,11 @@ In the above example, we compile $\HPhi$ by using a gcc compiler. We can select 
 \item \verb|intel| : intel compiler + Linux PC
 \item \verb|gcc| : GCC compiler + Linux PC.
 \end{itemize}
-以下、HPhiを展開したディレクトリでビルドする例を示します(intelコンパイラの場合)。\\
-\begin{minipage}{16cm}
-\begin{screen}
+An example for compiling $\HPhi$ by an intel compiler is shown as follows, 
 \begin{verbatim}
 mkdir ./build
 cd ./build
 cmake -DCONFIG=intel ../
 make
 \end{verbatim}
-\end{screen}
-\end{minipage}
-実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、新規に上記作業を行うことをお薦めします。
-
-
-\begin{screen}
-\Large 
-{\bf Tips}
-\normalsize
-\\
-{\bf Macでの設定}
-\\
-Macでのインストールを行う場合にはデフォルトコンパイラではOpenMP対応していないため、gccを事前にインストール必要があります(intel コンパイラがある場合は利用可能)。gccは、例えばmacportsを利用する場合には以下の通りに簡易にインストールすることができます(macportsのインストールや詳細に関しては、インターネット上に多くの情報がありますのでそちらを参考にしてください)。\\
-\begin{minipage}{10cm}
-\begin{screen}
-\begin{verbatim}
-sudo port install gcc
-\end{verbatim}
-\end{screen}
-\end{minipage}
-\\インストール後に\\
-\begin{minipage}{10cm}
-\begin{screen}
-\begin{verbatim}
-port select gcc
-\end{verbatim}
-\end{screen}
-\end{minipage}
-\\で表示されるリストからインストールしたgccを選択(sudo port gcc select xxxx、xxxxに選択したgccの名称を記入)することで利用できるようになります(none以外)。なお、ハイブリッド並列を行うために必要なOpenMPIに関しても\\
-\begin{minipage}{10cm}
-\begin{screen}
-\begin{verbatim}
-sudo port install openmpi
-\end{verbatim}
-\end{screen}
-\end{minipage}
-\\でインストール後に、\\
-\begin{minipage}{10cm}
-\begin{screen}
-\begin{verbatim}
-port select mpi
-\end{verbatim}
-\end{screen}
-\end{minipage}
-\\で表示されるmpiを選択することで利用できるようになります。mpiのバージョンに関しては、gccなどのコンパイラとバージョンを統一することをお薦めします。
-\end{screen}
+After compiling,  a \verb|src| folder is made below the \verb|build| folder and an execute $\HPhi$ is made in the  \verb|src| folder. It is noted that  we must delete the  \verb|build| folder and do the above works again when we change the compilers.
