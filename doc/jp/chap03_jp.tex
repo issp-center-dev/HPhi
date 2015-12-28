@@ -64,7 +64,7 @@ CalcModel   1
 \end{screen}
 \end{minipage}
 ~\\
-CalcTypeで計算手法の選択、CalcModelで対象モデルの選択を行います。ここでは、計算手法としてLanczos法、対象モデルとしてスピン系(カノニカル)を選択しています。\tr{CalcModファイルでは固有ベクトルの入出力機能も指定することができます。}CalcModファイルの詳細は\ref{Subsec:calcmod}をご覧ください。\\
+CalcTypeで計算手法の選択、CalcModelで対象モデルの選択を行います。ここでは、計算手法としてLanczos法、対象モデルとしてスピン系(カノニカル)を選択しています。{CalcModファイルでは固有ベクトルの入出力機能も指定することができます。}CalcModファイルの詳細は\ref{Subsec:calcmod}をご覧ください。\\
 
 \item {\bf 計算用パラメータの指定}\\
 ModParaでひも付けられるファイル(ここではmodpara.def)で計算用パラメータを指定します。ファイルの中身は下記の通りです。\\
@@ -95,7 +95,7 @@ ExpecInterval  20
 \end{screen}
 \end{minipage}
 ~\\
-このファイルでは、サイト数、\tr{伝導電子の数、トータル$S_z$}やLanczosステップの最大数などを指定します。ModParaファイルの詳細は\ref{Subsec:modpara}をご覧ください。\\
+このファイルでは、サイト数、{伝導電子の数、トータル$S_z$}やLanczosステップの最大数などを指定します。ModParaファイルの詳細は\ref{Subsec:modpara}をご覧ください。\\
 
 \item {\bf 局在スピンの位置の指定}\\
 LocSpinでひも付けられるファイル(ここではzlocspn.def)で局在スピンの位置と$S$の値を指定します。ファイルの中身は下記の通りです。\\
@@ -149,7 +149,7 @@ NTransfer       0
 \end{minipage}
 ~\\
 スピン系では外場を掛ける場合などに使用することができます。
-例えば、サイト1に$-0.5 S_z^{(1)}$\tr{($S=1/2$)}の外場を掛けたい場合には、
+例えば、サイト1に$-0.5 S_z^{(1)}${($S=1/2$)}の外場を掛けたい場合には、
 電子系の表現$-0.5/2(c_{1\uparrow}^{\dag}c_{1\uparrow}-c_{1\downarrow}^{\dag}c_{1\downarrow})$
 に書き換えた以下のファイルを作成することで計算することが出来ます。\\
 \begin{minipage}{15cm}
@@ -194,7 +194,7 @@ NInterAll      96
 \end{screen}
 \end{minipage}
 ~\\
-ここでは、簡単のためサイトiとサイトi+1間の相互作用に着目して説明します。\tr{$S=1/2$の場合、}相互作用の項をフェルミオン演算子で書き換えると、
+ここでは、簡単のためサイトiとサイトi+1間の相互作用に着目して説明します。{$S=1/2$の場合、}相互作用の項をフェルミオン演算子で書き換えると、
 \begin{align}
 H_{i,i+1}&=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
 &=J \left( \frac{1}{2}S_+^{(i)}S_-^{(i+1)}+\frac{1}{2}S_-^{(i)}S_+^{(i+1)}+S_z^{(i)}S_z^{(i+1)} \right) \nonumber\\
