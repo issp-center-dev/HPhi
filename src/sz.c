@@ -335,7 +335,6 @@ int sz
 	  div_up    = div_up/X->Def.Tpow[2*j];
 	  div_down  = i & X->Def.Tpow[2*j+1];
 	  div_down  = div_down/X->Def.Tpow[2*j+1];
-
 	  if(X->Def.LocSpn[j] == ITINERANT){
 	    num_up   += div_up;        
 	    num_down += div_down;  
@@ -345,6 +344,9 @@ int sz
 	    if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
 	      icheck_loc= icheck_loc;
 	      ihfSpinDown=div_down;
+	      if(div_down ==0){
+		num_up += 1;
+	      }
 	    }
 	    else{
 	      icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
@@ -357,6 +359,7 @@ int sz
 	  all_loc =  X->Def.NLocSpn-num_loc;
 	  all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
 	  all_down = (X->Def.Nsite-tmp_res)/2-all_loc;
+	  
 	  if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
 	    all_up   = (X->Def.Nsite)/2-all_loc;
 	    all_down = (X->Def.Nsite)/2-all_loc;
@@ -364,6 +367,7 @@ int sz
 	  
 	  for(num_loc_up=0; num_loc_up <= all_loc; num_loc_up++){
 	    tmp_1 = Binomial(all_loc, num_loc_up, comb, all_loc);
+	    
 	    if( X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
 	      if(ihfSpinDown !=0){
 		tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
@@ -371,23 +375,21 @@ int sz
 		
 	      }
 	      else{
-		num_up += 1;
 		tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
 		tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
-		
 	      }
 	    }
 	    else{
 	      tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
 	      tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
 	    }
-	      
-	    jb   += tmp_1*tmp_2*tmp_3;
+	    jb   += tmp_1*tmp_2*tmp_3;  
 	  }
-	}	 
+	}
+
       }
       //#pragma omp barrier
-
+      
       TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
  
       icnt = 0;
