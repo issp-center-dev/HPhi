@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "StdFace_vals.h"
 #include "../include/wrapperMPI.h"
 
@@ -38,6 +39,51 @@ void StdFace_trans(
   transindx[*ktrans][0] = isite; transindx[*ktrans][1] = ispin;
   transindx[*ktrans][2] = jsite; transindx[*ktrans][3] = jspin;
   *ktrans = *ktrans + 1;
+}
+
+/**
+*
+* Add Longitudinal magnetic field to the list
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_MagLong(
+  int *ktrans /**< [inout] The counter for the transfer*/,
+  double Mag /**< [in] Longitudinal magnetic field h. */,
+  int isite /**< [in] i for c_{i sigma}^dagger*/)
+{
+  int ispin;
+  double S, Sz;
+ 
+  S = (double)S2 * 0.5;
+
+  for (ispin = 0; ispin <= S2; ispin++){
+    Sz = (double)ispin - S;
+    StdFace_trans(ktrans, Mag * Sz, isite, ispin, isite, ispin);
+  }
+}
+
+/**
+*
+* Add Transvars magnetic field to the list
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_MagTrans(
+  int *ktrans /**< [inout] The counter for the transfer*/,
+  double Mag /**< [in] Transvars magnetic field h. */,
+  int isite /**< [in] i for c_{i sigma}^dagger*/)
+{
+  int ispin;
+  double S, Sz;
+
+  S = (double)S2 * 0.5;
+
+  for (ispin = 0; ispin < S2; ispin++){
+    Sz = (double)ispin - S;
+    StdFace_trans(ktrans, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin + 1, isite, ispin);
+    StdFace_trans(ktrans, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin, isite, ispin + 1);
+  }
 }
 
 /**
@@ -74,14 +120,31 @@ void StdFace_intr(
  */
 void StdFace_exchange(
   int *kintr /**< [inout] The counter for the interaction*/,
+  int Si2 /**< [in] Spin moment in i site*/,
+  int Sj2 /**< [in] Spin moment in j site*/,
   double Jexc /**< [in] Interaction J_{x y}, etc.*/,
   int isite /**< [in] i of S_i */, 
   int jsite /**< [in] j of S_j */)
 {
-  int ispin;
-  for (ispin = 0; ispin < 2; ispin++){
-    StdFace_intr(kintr, Jexc * 0.5,
-      isite, ispin, isite, 1 - ispin, jsite, 1 - ispin, jsite, ispin);
+  int ispin, jspin;
+  double intr0, Si, Sj, Siz, Sjz;
+
+  Si = 0.5 * (double)Si2;
+  Sj = 0.5 * (double)Sj2;
+
+  for (ispin = 0; ispin < Si2; ispin++){
+    Siz = (double)ispin - Si;
+    for (jspin = 0; jspin < Sj2; jspin++){
+      Sjz = (double)jspin - Sj;
+
+      intr0 = 0.5 * Jexc * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0)) 
+                         * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
+
+      StdFace_intr(kintr, intr0,
+        isite, ispin + 1, isite, ispin, jsite, jspin, jsite, jspin + 1);
+      StdFace_intr(kintr, intr0,
+        isite, ispin, isite, ispin + 1, jsite, jspin + 1, jsite, jspin);
+    }
   }
 }
 
@@ -93,14 +156,31 @@ void StdFace_exchange(
  */
 void StdFace_Kitaev(
   int *kintr /**< [inout] The counter for the interaction*/,
+  int Si2 /**< [in] Spin moment in i site*/,
+  int Sj2 /**< [in] Spin moment in j site*/,
   double Jflip /**< [in] Interaction J_x - J_y, etc.*/,
   int isite /**< [in] i of S_i */,
   int jsite /**< [in] j of S_j */)
 {
-  int ispin;
-  for (ispin = 0; ispin < 2; ispin++){
-    StdFace_intr(kintr, Jflip,
-      isite, ispin, isite, 1 - ispin, jsite, ispin, jsite, 1 - ispin);
+  int ispin, jspin;
+  double intr0, Si, Sj, Siz, Sjz;
+
+  Si = 0.5 * (double)Si2;
+  Sj = 0.5 * (double)Sj2;
+
+  for (ispin = 0; ispin < Si2; ispin++){
+    Siz = (double)ispin - Si;
+    for (jspin = 0; jspin < Sj2; jspin++){
+      Sjz = (double)jspin - Sj;
+
+      intr0 = 0.5 * Jflip * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0))
+                          * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
+
+      StdFace_intr(kintr, intr0,
+        isite, ispin + 1, isite, ispin, jsite, jspin + 1, jsite, jspin);
+      StdFace_intr(kintr, intr0,
+        isite, ispin, isite, ispin + 1, jsite, jspin, jsite, jspin + 1);
+    }
   }
 }
 
@@ -112,16 +192,19 @@ void StdFace_Kitaev(
  */
 void StdFace_SzSz(
   int *kintr /**< [inout] The counter for the interaction*/,
+  int Si2 /**< [in] Spin moment in i site*/,
+  int Sj2 /**< [in] Spin moment in j site*/,
   double Jexc /**< [in] Interaction J_z, etc.*/,
   int isite /**< [in] i of S_i */,
   int jsite /**< [in] j of S_j */)
 {
   int ispin, jspin;
   double intr0;
-  for (ispin = 0; ispin < 2; ispin++){
-    for (jspin = 0; jspin < 2; jspin++){
-      if (ispin == jspin) intr0 = Jexc * 0.25;
-      else intr0 = - Jexc * 0.25;
+
+  for (ispin = 0; ispin <= Si2; ispin++){
+    for (jspin = 0; jspin <= Sj2; jspin++){
+      intr0 = Jexc * ((double)ispin - (double)Si2 * 0.5)
+                   * ((double)jspin - (double)Sj2 * 0.5);
       StdFace_intr(kintr, intr0,
         isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
     }

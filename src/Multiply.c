@@ -16,6 +16,8 @@
 
 #include "Common.h"
 #include "Multiply.h"
+#include "wrapperMPI.h"
+
 
 /** 
  * 
@@ -33,27 +35,19 @@ int Multiply
 {
   
   long int i,i_max;
-  double dnorm;
+  double complex dnorm;
   double Ns;
 
   i_max=X->Check.idim_max;      
-  Ns = 1.0*X->Def.Nsite;
-/* 
-#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
-  for(i = 1; i <= i_max; i++){
-    v1[i]=v0[i];
-    v0[i]=0.0;
-  }
-  mltply(X, v0, v1); // v0+=H*v1
-*/  
- // in expec_energy.c v0=H*v1
-
+  Ns = 1.0*X->Def.NsiteMPI;
+ // mltply is in expec_energy.c v0=H*v1
   dnorm=0.0;
 #pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1) firstprivate(i_max, Ns, LargeValue)
   for(i = 1; i <= i_max; i++){
     v0[i]=LargeValue*v1[i]-v0[i]/Ns;  //v0=(l-H/Ns)*v1
     dnorm += conj(v0[i])*v0[i];
   }
+  dnorm=SumMPI_dc(dnorm);
   dnorm=sqrt(dnorm);
   global_norm = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)

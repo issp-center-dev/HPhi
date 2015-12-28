@@ -51,6 +51,7 @@ void FermionHubbard_ChainLattice(
   StdFace_PrintVal_d("t'", &tp, 0.0);
   StdFace_PrintVal_d("V'", &Vp, 0.0);
   /**/
+  StdFace_NotUsed_i("2S",S2);
   StdFace_NotUsed_d("tpp", tpp);
   StdFace_NotUsed_d("t0", t0);
   StdFace_NotUsed_d("t1", t1);
@@ -64,7 +65,7 @@ void FermionHubbard_ChainLattice(
   */
   nsite = L;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
-  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 1;
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 0;
   /*
   Transfer
   */
@@ -135,11 +136,15 @@ void FermionHubbard_ChainLattice(
   *
   * @author Mitsuaki Kawamura (The University of Tokyo)
   */
-void Spin_ChainLattice(){
+void Spin_ChainLattice(
+  int Sz2 /**< [in] 2 * Total Sz */, 
+  int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
+{
   int isite, jsite;
   int iL, iL2;
   int ktrans, kintr;
-  double LargeValue0;
+  double LargeValue0, S;
+
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
   fprintf(stdoutMPI, "\n");
@@ -147,6 +152,7 @@ void Spin_ChainLattice(){
   StdFace_NotUsed_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
   /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("h", &h, 0.0);
   StdFace_PrintVal_d("Gamma", &Gamma, 0.0);
   StdFace_PrintVal_d("D", &D, 0.0);
@@ -176,11 +182,11 @@ void Spin_ChainLattice(){
   */
   nsite = L;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
-  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = 0;
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = S2;
   /*
   Transfer
   */
-  ntrans = L * 4;
+  ntrans = L * (S2 + 1 + 2 * S2);
   transindx = (int **)malloc(sizeof(int*) * ntrans);
   trans = (double *)malloc(sizeof(double) * ntrans);
   for (ktrans = 0; ktrans < ntrans; ktrans++){
@@ -189,16 +195,13 @@ void Spin_ChainLattice(){
 
   ktrans = 0;
   for (isite = 0; isite < nsite; isite++){
-    jsite = isite;
-    StdFace_trans(&ktrans, -h * 0.5, isite, 0, jsite, 0);
-    StdFace_trans(&ktrans, h * 0.5, isite, 1, jsite, 1);
-    StdFace_trans(&ktrans, 0.5 * Gamma, isite, 0, isite, 1);
-    StdFace_trans(&ktrans, 0.5 * Gamma, isite, 1, isite, 0);
+    StdFace_MagLong(&ktrans, -h, isite);
+    StdFace_MagTrans(&ktrans, -Gamma, isite);
   }
   /*
   Interaction
   */
-  nintr = L * (4 * 3 + 2 * 4);
+  nintr = L * ((S2 + 1) * (S2 + 1) * 3 + 2 * S2 * S2 * 4);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -208,26 +211,34 @@ void Spin_ChainLattice(){
   for (iL = 0; iL < L; iL++){
 
     isite = iL;
-    StdFace_SzSz(&kintr, D, isite, isite);
+    StdFace_SzSz(&kintr, S2, S2, D, isite, isite);
 
     iL2 = (iL + 1) % L;
     jsite = iL2;
-    StdFace_SzSz(&kintr, Jz, isite, jsite);
-    StdFace_exchange(&kintr, Jxy, isite, jsite);
-    StdFace_Kitaev(&kintr, 0.25 * (Jx - Jy), isite, jsite);
+    StdFace_SzSz(&kintr, S2, S2, Jz, isite, jsite);
+    StdFace_exchange(&kintr, S2, S2, Jxy, isite, jsite);
+    StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jx - Jy), isite, jsite);
 
     iL2 = (iL + 2) % L;
     jsite = iL2;
-    StdFace_SzSz(&kintr, Jzp, isite, jsite);
-    StdFace_exchange(&kintr, Jxyp, isite, jsite);
-    StdFace_Kitaev(&kintr, 0.25 * (Jxp - Jyp), isite, jsite);
+    StdFace_SzSz(&kintr, S2, S2, Jzp, isite, jsite);
+    StdFace_exchange(&kintr, S2, S2, Jxyp, isite, jsite);
+    StdFace_Kitaev(&kintr, S2, S2, 0.5 * (Jxp - Jyp), isite, jsite);
   }
   /*
   Set mTPQ parameter
   */
-  LargeValue0 = 0.5 * fabs(h) + 0.5 * fabs(D) + 0.25 * fabs(Gamma)
-    + 2.0 / 8.0 * (fabs(Jx) + fabs(Jy) + fabs(Jz))
-    + 2.0 / 8.0 * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
+  S = (double)S2 * 0.5;
+  if (lGC == 0){
+    LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 2.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
+      + 2.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
+  }
+  else{
+    LargeValue0 = S * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 2.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
+      + 2.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
+  }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
 
@@ -245,7 +256,8 @@ void KondoLattice_ChainLattice(
   int ispin;
   int iL;
   int ktrans, kintr;
-  double LargeValue0;
+  double LargeValue0, S;
+
   fprintf(stdoutMPI, "\n");
   fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
   fprintf(stdoutMPI, "\n");
@@ -253,6 +265,7 @@ void KondoLattice_ChainLattice(
   StdFace_NotUsed_i("W", W);
   StdFace_PrintVal_d("a", &a, 1.0);
   /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
   StdFace_PrintVal_d("mu", &mu, 0.0);
   StdFace_PrintVal_d("t", &t, 1.0);
   StdFace_PrintVal_d("J", &J, 0.0);
@@ -274,8 +287,8 @@ void KondoLattice_ChainLattice(
   nsite = L * 2;
   locspinflag = (int *)malloc(sizeof(int) * nsite);
   for (iL = 0; iL < L; iL++){
-    locspinflag[2 * iL] = 1;
-    locspinflag[2 * iL + 1] = 0;
+    locspinflag[iL] = S2;
+    locspinflag[iL + L] = 0;
   }
   /*
   Transfer
@@ -289,12 +302,12 @@ void KondoLattice_ChainLattice(
 
   ktrans = 0;
   for (iL = 0; iL < L; iL++){
-    isite = 2 * iL;
+    isite = L + iL;
     for (ispin = 0; ispin < 2; ispin++){
 
       StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-      jsite = 2 * ((iL + 1) % L);
+      jsite = L + (iL + 1) % L;
       StdFace_trans(&ktrans, t, isite, ispin, jsite, ispin);
       StdFace_trans(&ktrans, t, jsite, ispin, isite, ispin);
     }
@@ -302,7 +315,7 @@ void KondoLattice_ChainLattice(
   /*
   Interaction
   */
-  nintr = L * 6;
+  nintr = L * ((S2 + 1) * (1 + 1) + 2 * S2 * 1);
   intrindx = (int **)malloc(sizeof(int*) * nintr);
   intr = (double *)malloc(sizeof(double) * nintr);
   for (kintr = 0; kintr < nintr; kintr++){
@@ -311,20 +324,21 @@ void KondoLattice_ChainLattice(
   kintr = 0;
   for (iL = 0; iL < L; iL++){
 
-    isite = 2 * iL;
-    jsite = 2 * iL + 1;
+    isite = iL + L;
+    jsite = iL;
 
-    StdFace_exchange(&kintr, J, isite, jsite);
-    StdFace_SzSz(&kintr, J, isite, jsite);
+    StdFace_exchange(&kintr, 1, S2, J, isite, jsite);
+    StdFace_SzSz(&kintr, 1, S2, J, isite, jsite);
   }
   /*
   Set mTPQ parameter
   */
+  S = (double)S2 * 0.5;
   if (lGC == 0){
-    LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W) + 2.0 * 2.0 * fabs(t) + 0.25 * fabs(J);
+    LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W) + 2.0 * 2.0 * fabs(t) + 0.5 * S * fabs(J);
   }
   else{
-    LargeValue0 = fabs(mu) * 2.0 + 2.0 * 2.0 * fabs(t) + 0.25 * fabs(J);
+    LargeValue0 = fabs(mu) * 2.0 + 2.0 * 2.0 * fabs(t) + 0.5 * S * fabs(J);
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }

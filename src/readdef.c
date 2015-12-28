@@ -23,13 +23,23 @@
 
 /*=================================================================================================*/
 
+/**
+ * @file   readdef.c
+ * 
+ * @brief  File to define functions of reading input files
+ * 
+ * 
+ */
+
+
 #include "Common.h"
 #include "readdef.h"
 #include "wrapperMPI.h"
 
 /**
  * @brief Error Function of reading def files.
- * @param[in] *defname name of def file.
+ * @param[in] _defname name of def file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -37,7 +47,7 @@ int ReadDefFileError(
 		     const	char *defname
 		     ){
   fprintf(stderr, cErrReadDefFile, defname);
-  return -1;
+  exitMPI(-1);
 }
 
 /**
@@ -47,6 +57,7 @@ int ReadDefFileError(
  * @param[in] iHighestValue heighest value which icheckValue can be set.
  * @retval 0 value is correct.
  * @retval -1 value is incorrect.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -57,19 +68,20 @@ int ValidateValue(
 		  ){
 
   if(icheckValue < ilowestValue || icheckValue > iHighestValue){
-    return -1;
+    exitMPI(-1);
   }
   return 0;
 }
 
 /**
  * @brief Function of Checking keyword in NameList file.
- * @param[in] cKW keyword candidate
- * @param[in] Reffercnce of keyword List
- * @param[in] number of keyword
- * @param[out] iKWidx index of keyword
+ * @param[in] _cKW keyword candidate
+ * @param[in] _cKWList Reffercnce of keyword List
+ * @param[in] iSizeOfKWidx number of keyword
+ * @param[out] _iKWidx index of keyword
  * @retval 0 keyword is correct.
  * @retval -1 keyword is incorrect.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -96,12 +108,13 @@ int CheckKW(
 
 /**
  * @brief Function of Getting keyword and it's variable from characters.
- * @param[in] ctmpLine characters including keyword and it's variable 
- * @param[out] keyword
- * @param[out] variable
+ * @param[in] _ctmpLine characters including keyword and it's variable 
+ * @param[out] _ctmp keyword
+ * @param[out] _itmp variable for a keyword
  * @retval 0 keyword and it's variable are obtained.
  * @retval 1 ctmpLine is a comment line.
  * @retval -1 format of ctmpLine is incorrect.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -125,13 +138,13 @@ int GetKWWithIdx(
     //if ctmpRead is not integer type
     if(*cerror != '\0'){
       fprintf(stderr, cErrDefFileFormat, cerror);
-      return -1;
+      exitMPI(-1);
     }
 
     ctmpRead = strtok( NULL, csplit );
     if(ctmpRead != NULL){
       fprintf(stderr, cErrDefFileFormat, ctmpRead);
-      return -1;
+      exitMPI(-1);
     }
     
     return 0;
@@ -139,10 +152,11 @@ int GetKWWithIdx(
 
 /**
  * @brief Function of Reading calcmod file.
- * @param[in]  *defname file name to read.
- * @param[out] *X Define List for getting flags of calc-mode.
+ * @param[in]  _defname file name to read.
+ * @param[out] X Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -159,6 +173,10 @@ int ReadcalcmodFile(
   X->iFlgFiniteTemperature=0;
   X->iCalcModel=0;
   X->iOutputMode=0;
+  X->iCalcEigenVec=0;
+  X->iInitialVecType=0;
+  X->iOutputEigenVec=0;
+  X->iInputEigenVec=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -166,7 +184,7 @@ int ReadcalcmodFile(
   while( fgetsMPI(ctmpLine, D_CharTmpReadDef+D_CharKWDMAX, fp)!=NULL ){
     if( (iret=GetKWWithIdx(ctmpLine, ctmp, &itmp)) !=0){
       if(iret==1) continue;
-      return -1;
+      exitMPI(-1);
     }   
     if(strcmp(ctmp, "CalcType")==0){
       X->iCalcType=itmp;
@@ -180,13 +198,25 @@ int ReadcalcmodFile(
     else if(strcmp(ctmp, "OutputMode")==0){
       X->iOutputMode=itmp;
     }
+    else if(strcmp(ctmp, "CalcEigenVec")==0){
+      X->iCalcEigenVec=itmp;
+    }
+    else if(strcmp(ctmp, "InitialVecType")==0){
+      X->iInitialVecType=itmp;
+    }
+    else if(strcmp(ctmp, "OutputEigenVec")==0 || strcmp(ctmp, "OEV")==0){
+      X->iOutputEigenVec=itmp;
+    }
+    else if(strcmp(ctmp, "InputEigenVec")==0 || strcmp(ctmp, "IEV")==0){
+      X->iInputEigenVec=itmp;
+    }
     else{
       fprintf(stderr, cErrDefFileParam, defname, ctmp);
-      return -1;
+      exitMPI(-1);
     }
   }
   fclose(fp);
-  
+    
   /* Check values*/
   if(ValidateValue(X->iCalcModel, 0, NUM_CALCMODEL-1)){
     fprintf(stderr, cErrCalcType, defname);
@@ -200,6 +230,15 @@ int ReadcalcmodFile(
     fprintf(stderr, cErrOutputMode, defname);
     return (-1);
   }
+  if(ValidateValue(X->iCalcEigenVec, 0, NUM_CALCEIGENVEC-1)){
+    fprintf(stderr, cErrCalcEigenVec, defname);
+    return (-1);
+  }
+  if(ValidateValue(X->iInitialVecType, 0, NUM_SETINITAILVEC-1)){
+    fprintf(stderr, cErrSetIniVec, defname);
+    return (-1);
+  }
+
   
   /* In the case of Full Diagonalization method(iCalcType=2)*/
   if(X->iCalcType==2 && ValidateValue(X->iFlgFiniteTemperature, 0, 1)){
@@ -212,10 +251,11 @@ int ReadcalcmodFile(
 
 /**
  * @brief Function of Fitting FileName
- * @param[in]  *cFileListNameFile file for getting names of input files.
- * @param[out] *cFileNameList arrays for getting names of input files.
+ * @param[in]  _cFileListNameFile file for getting names of input files.
+ * @param[out] _cFileNameList arrays for getting names of input files.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -245,7 +285,7 @@ int GetFileName(
     else if(strcmp(ctmpKW, "")*strcmp(ctmpFileName, "")==0){
       fprintf(stderr, cErrKW_InCorPair, cFileListNameFile);
       fclose(fplist);
-      return -1;
+      exitMPI(-1);
     }
     /*!< Check KW */
     if( CheckKW(ctmpKW, cKWListOfFileNameList, D_iKWNumDef, &itmpKWidx)!=0 ){
@@ -255,13 +295,13 @@ int GetFileName(
 	fprintf(stderr, "%s \n", cKWListOfFileNameList[i]);
       }
       fclose(fplist);
-      return -1;
+      exitMPI(-1);
     }
     /*!< Check cFileNameList to prevent from double registering the file name */    
     if(strcmp(cFileNameList[itmpKWidx], "") !=0){
       fprintf(stderr, cErrKW_Same, cFileListNameFile);
       fclose(fplist);
-      return -1;
+      exitMPI(-1);
     }
     /*!< Copy FileName */
     strcpy(cFileNameList[itmpKWidx], ctmpFileName);
@@ -272,8 +312,8 @@ int GetFileName(
 
 /** 
  * @brief  Function of reading informations from def files.
- * @param[in] *xNameListFile List of Input File names.
- * @param[out] *X Define List for getting flags of calc-mode.
+ * @param[in] _xNameListFile List of Input File names.
+ * @param[out] XX Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @author Takahiro Misawa (The University of Tokyo)
@@ -288,12 +328,15 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
+  X->NCond=0;
+  X->iFlgSzConserved=FALSE;
+  int iReadNCond=FALSE;
 
   InitializeInteractionNum(X);
   
   fprintf(stdoutMPI, "Start: Read File '%s'.\n", xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
-    return -1;
+    exitMPI(-1);
   }
   fprintf(stdoutMPI, "End: Read File '%s'.\n", xNameListFile);
 
@@ -311,7 +354,7 @@ int ReadDefFileNInt(
       case KWModPara:
       case KWLocSpin:
 	fprintf(stderr, cErrMakeDef, cKWListOfFileNameList[iKWidx]);
-	return -1;
+	exitMPI(-1);
 	break;
       default:
 	break;
@@ -350,38 +393,65 @@ int ReadDefFileNInt(
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nsite));      //9
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Nup));         //10
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Ndown));       //11	
-      if(X->iCalcModel == Spin){
-	X->Ne=X->Nup;
-	X->Ndown=X->Nsite-X->Nup;
+
+      double dtmp;
+      
+      while(fgetsMPI(ctmp2, 256, fp)!=NULL){
+	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
+	if(strcmp(ctmp, "Nsite")==0){
+	  X->Nsite= (int)dtmp;
+	}
+	else if(strcmp(ctmp, "Nup")==0){
+	  X->Nup= (int)dtmp;
+	}
+	else if(strcmp(ctmp, "Ndown")==0){
+	  X->Ndown=(int)dtmp;
+	  X->Total2Sz=X->Nup-X->Ndown;
+	}
+	else if(strcmp(ctmp, "2Sz")==0){
+	  X->Total2Sz=(int)dtmp;
+	  X->iFlgSzConserved=TRUE;
+	}
+	else if(strcmp(ctmp, "Ncond")==0){
+	  X->NCond=(int)dtmp;
+	  iReadNCond=TRUE;	  
+	}
+	else if(strcmp(ctmp, "Lanczos_max")==0){
+	  X->Lanczos_max=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "initial_iv")==0){
+	  X->initial_iv=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "nvec")==0){
+	  X->nvec=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "exct")==0){
+	  X->k_exct=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "LanczosEps")==0){
+	  X->LanczosEps=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "LanczosTarget")==0){
+	  X->LanczosTarget=(int)dtmp;
+	}
+	else if(strcmp(ctmp, "LargeValue")==0){
+	  LargeValue=dtmp;
+	}	
+	else if(strcmp(ctmp, "NumAve")==0){
+	  NumAve=(int)dtmp;
+	}	
+	else if(strcmp(ctmp, "ExpecInterval")==0){
+	  ExpecInterval=(int)dtmp;
+	}	
+	else{
+	  exitMPI(-1);
+	}
       }
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->Lanczos_max)); //12
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %ld\n", ctmp, &(X->initial_iv));//13
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->nvec));      //14
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->k_exct));    //15
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->LanczosEps)); //16
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->LanczosTarget)); //17
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2, "%s %lf\n", ctmp, &(LargeValue)); //18
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2, "%s %d\n", ctmp, &(NumAve)); //19
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2, "%s %d\n", ctmp, &(ExpecInterval)); //20
       break;
       
     case KWLocSpin:
       // Read locspn.def
+      X->iFlgGeneralSpin=FALSE;
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->NLocSpn));
@@ -455,32 +525,109 @@ int ReadDefFileNInt(
     default:
       fprintf(stderr, "%s", cErrIncorrectDef);
       fclose(fp);
-      return -1;
+      exitMPI(-1);
       break;
     }
     /*=======================================================================*/
     fclose(fp);
   }
 
-  if(X->iCalcModel != Spin){
-    X->Ne = X->Nup+X->Ndown;
-  	if(X->NLocSpn>X->Ne){
-	  fprintf(stderr, "%s", cErrNLoc);
-	  fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
-	  return -1;
+  //Sz, Ncond
+  switch(X->iCalcModel){
+  case Spin:
+  case Hubbard:
+  case Kondo:
+    
+    if(iReadNCond==TRUE){
+      if(X->iCalcModel==Spin){
+	fprintf(stderr, "For Spin, Ncond should not be defined.\n");	
+	exitMPI(-1);
+      }
+      else{
+	if(X->iFlgSzConserved==TRUE){
+	  X->Nup=X->NLocSpn+X->NCond+X->Total2Sz;
+	  X->Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
+	  X->Nup/=2;
+	  X->Ndown/=2;
 	}
+	else{
+	  if(X->iCalcModel == Hubbard){
+	    X->Ne=X->NCond;
+	    if(X->Ne <1){
+	      fprintf(stderr, "Ncond is incorrect.\n");
+	      exitMPI(-1);
+	    }
+	    X->iCalcModel=HubbardNConserved;
+	  }
+	  else{
+	    fprintf(stderr, " 2Sz is not defined.\n");
+	    exitMPI(-1);
+	  }
+	}
+      }
+    }
+    else if(iReadNCond == FALSE && X->iFlgSzConserved==TRUE){
+      if(X->iCalcModel != Spin){
+	fprintf(stderr, " NCond is not defined.\n");
+	exitMPI(-1);
+      }
+      X->Nup=X->NLocSpn+X->Total2Sz;
+      X->Ndown=X->NLocSpn-X->Total2Sz;
+      X->Nup /= 2;
+      X->Ndown /= 2;
+    }
+    else{
+      if(X->Nup==0 && X->Ndown==0){
+	if(X->iCalcModel == Spin){
+	  fprintf(stderr, " 2Sz is not defined.\n");
+	  exitMPI(-1);
+	}
+	else{
+	  fprintf(stderr, " NCond is not defined.\n");
+	  exitMPI(-1);
+	}
+      }
+    }
+    
+    if(X->iCalcModel == Spin){
+      X->Ne=X->Nup;
+    }
+    else{
+      if(X->Ne==0) {
+        X->Ne = X->Nup + X->Ndown;
+      }
+      if(X->NLocSpn>X->Ne){
+	fprintf(stderr, "%s", cErrNLoc);
+	fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
+	exitMPI(-1);
+      }
+    }
+    break;
+  case SpinGC:
+  case KondoGC:
+  case HubbardGC:
+    if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
+	fprintf(stderr, "For GC, both Ncond and 2Sz should not be defined.\n");
+	exitMPI(-1);
+    }
+    break;
+  default:
+    break;
   }
+  
   X->Nsize   = 2*X->Ne;
   X->fidx = 0;
   return 0;
 }
 
 /** 
+ * @brief function of reading def files to get keyword index
  * 
+ * @param X define list to get and put informations for calcuation
  * 
- * @param X 
- * 
- * @return 
+ * @retval 0 normally finished reading file.
+ * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -510,25 +657,30 @@ int ReadDefFileIdxPara(
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
     for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-    idx=0;
+    idx=0;    
     /*=======================================================================*/
     switch(iKWidx){
     case KWLocSpin:
       /* Read locspn.def----------------------------------------*/
       while( fgetsMPI(ctmp2, 256, fp) != NULL){
         sscanf(ctmp2, "%d %d\n", &(xitmp[0]), &(xitmp[1]) );
-
 	X->LocSpn[xitmp[0]] = xitmp[1];
-	if(CheckSite(xitmp[1], X->Nsite) !=0){
+	X->SiteToBit[xitmp[0]]=(X->LocSpn[xitmp[0]]+1);//2S+1
+	if(CheckSite(xitmp[0], X->Nsite) !=0){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
-	}
+	}       
 	idx++;
       }
       if(idx!=X->Nsite){
 	fclose(fp);
 	return ReadDefFileError(defname);
       }
+      if(CheckLocSpin(X)==FALSE){
+	fclose(fp);
+	return ReadDefFileError(defname);
+      }
+
       break;
       
     case KWTrans:
@@ -537,14 +689,14 @@ int ReadDefFileIdxPara(
 	fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
 	while( fgetsMPI(ctmp2, 256, fp) != NULL )
 	  {
-      sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
-        &isite1,
-        &isigma1,
-        &isite2,
-        &isigma2,
-        &dvalue_re,
-        &dvalue_im
-        );
+	    sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
+		   &isite1,
+		   &isigma1,
+		   &isite2,
+		   &isigma2,
+		   &dvalue_re,
+		   &dvalue_im
+		   );
 
 	    X->GeneralTransfer[idx][0]=isite1;
 	    X->GeneralTransfer[idx][1]=isigma1;
@@ -571,7 +723,7 @@ int ReadDefFileIdxPara(
 	      }
 	    }	    
 	    else if(X->iCalcModel==Kondo){
-	      if(X->LocSpn[isite1]==0 || X->LocSpn[isite2]==0){
+	      if(X->LocSpn[isite1]!=ITINERANT || X->LocSpn[isite2] !=ITINERANT){
 		if(isite1 != isite2){
 		  iboolLoc=1;
 		  fprintf(stdoutMPI, cErrIncorrectFormatForKondoTrans, isite1, isite2);
@@ -580,20 +732,26 @@ int ReadDefFileIdxPara(
 	    }
 	    idx++;
 	  }
+	
+	if(CheckSpinIndexForTrans(X)==FALSE){
+	  fclose(fp);
+	  exitMPI(-1);
+	}
+
 	if(idx!=X->NTransfer){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
 	}
 	if(iboolLoc ==1){
 	  fclose(fp);
-	  return -1;
+	  exitMPI(-1);
 	}
       }
 
       if(CheckTransferHermite(X) !=0){
 	fprintf(stderr, "%s", cErrNonHermiteTransForAll);
 	fclose(fp);
-	return -1;
+	exitMPI(-1);
       }
       
       break;
@@ -670,20 +828,26 @@ int ReadDefFileIdxPara(
       break;
     case KWPairHop:
       /*pairhop.def---------------------------------------*/
+      if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
+	fprintf(stderr, "PairHop is not active in Spin and SpinGC.\n");
+	exitMPI(-1);
+      }
+      
       if(X->NPairHopping>0){
 	while(fgetsMPI(ctmp2, 256, fp) != NULL){
-    sscanf(ctmp2, "%d %d %lf\n",
-      &(X->PairHopping[idx][0]),
-      &(X->PairHopping[idx][1]),
-      &(X->ParaPairHopping[idx])
-      );
-
+	  sscanf(ctmp2, "%d %d %lf\n",
+		 &(X->PairHopping[idx][0]),
+		 &(X->PairHopping[idx][1]),
+		 &(X->ParaPairHopping[idx])
+		 );
+	  
 	  if(CheckPairSite(X->PairHopping[idx][0], X->PairHopping[idx][1],X->Nsite) !=0){
 	    fclose(fp);
 	    return ReadDefFileError(defname);
 	  }
 	  idx++;
 	}
+	
 	if(idx!=X->NPairHopping){
 	  fclose(fp);
 	  return ReadDefFileError(defname);
@@ -751,8 +915,8 @@ int ReadDefFileIdxPara(
       /*pairlift.def--------------------------------------*/
       if(X->NPairLiftCoupling>0){
 	if(X->iCalcModel != SpinGC){
-	  fclose(fp);
-	  return -1;
+	  fprintf(stderr, "PairLift is active only in SpinGC.\n");
+	  exitMPI(-1);
 	}
 	while(fgetsMPI(ctmp2,256,fp) != NULL)
 	  {
@@ -799,7 +963,7 @@ int ReadDefFileIdxPara(
 	    if(X->iCalcModel == Spin){
 	      if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
 		fclose(fp);
-		return -1;
+		exitMPI(-1);
 	      }
 	    }
 	    X->InterAll[idx][0]=isite1;
@@ -832,22 +996,25 @@ int ReadDefFileIdxPara(
       if(X->iCalcModel==Kondo){
 	if(CheckFormatForKondoInt(X) !=0){
 	  fclose(fp);
-	  return -1;
+	  exitMPI(-1);
 	}
+      }
+      if(CheckSpinIndexForInterAll(X)==FALSE){
+	fclose(fp);
+	exitMPI(-1);
       }
       
       X->NInterAll_Diagonal=icnt_diagonal;
       X->NInterAll_OffDiagonal = X->NInterAll-X->NInterAll_Diagonal;
-      if(!GetDiagonalInterAll(X)==0){
+      if(GetDiagonalInterAll(X)!=0){
 	fclose(fp);
-	return -1;
+	exitMPI(-1);
       }
-
       
       if(CheckInterAllHermite(X)!=0){
 	fprintf(stderr, "%s", cErrNonHermiteInterAllForAll);
 	fclose(fp);
-	return -1;
+	exitMPI(-1);
       }
       
       
@@ -894,23 +1061,23 @@ int ReadDefFileIdxPara(
       /*cisajscktaltdc.def--------------------------------*/
       if(X->NCisAjtCkuAlvDC>0){
 	while(fgetsMPI(ctmp2, 256, fp) != NULL){
-    sscanf(ctmp2, "%d %d %d %d %d %d %d %d\n",
-      &isite1,
-      &isigma1,
-      &isite2,
-      &isigma2,
-      &isite3,
-      &isigma3,
-      &isite4,
-      &isigma4
-      );
+	  sscanf(ctmp2, "%d %d %d %d %d %d %d %d\n",
+		 &isite1,
+		 &isigma1,
+		 &isite2,
+		 &isigma2,
+		 &isite3,
+		 &isigma3,
+		 &isite4,
+		 &isigma4
+		 );
 
-		if(X->iCalcModel == Spin){
-		  if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
-			X->NCisAjtCkuAlvDC--;
-			continue;
-		  }
-		}
+	  if(X->iCalcModel == Spin){
+	    if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
+	      X->NCisAjtCkuAlvDC--;
+	      continue;
+	    }
+	  }
 
 
 	  X->CisAjtCkuAlvDC[idx][0] = isite1;
@@ -926,7 +1093,6 @@ int ReadDefFileIdxPara(
 	    fclose(fp);
 	    return ReadDefFileError(defname);
 	  }
-
 	  idx++;
 	}
 	if(idx!=X->NCisAjtCkuAlvDC){
@@ -939,8 +1105,25 @@ int ReadDefFileIdxPara(
       break;
     }
     fclose(fp);
-  }
 
+    switch(iKWidx){
+    case KWCoulombIntra:
+    case KWCoulombInter:
+    case KWHund:
+    case KWPairHop:
+    case KWExchange:
+    case KWIsing:
+    case KWPairLift:
+      if(X->iFlgGeneralSpin==TRUE){
+	fprintf(stderr, cErrIncorrectFormatInter);
+	exitMPI(-1);
+      }
+      break;
+    default:
+      break;
+    }
+  }
+  
   ResetInteractionNum(X);
   /*=======================================================================*/
   return 0;
@@ -952,6 +1135,7 @@ int ReadDefFileIdxPara(
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -960,7 +1144,7 @@ int CheckSite(
 	      const int iMaxNum
 	      )
 {
-  if(iSite>=iMaxNum) return -1;
+  if(iSite>=iMaxNum) exitMPI(-1);
   return 0;
 }
 
@@ -971,7 +1155,9 @@ int CheckSite(
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
- * @date 2015/07/28
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
 int CheckPairSite(
 	      const int iSite1,
@@ -980,10 +1166,10 @@ int CheckPairSite(
 		  )
 {
   if(CheckSite(iSite1, iMaxNum)!=0){
-    return -1;
+    exitMPI(-1);
   }
   if(CheckSite(iSite2, iMaxNum)!=0){
-    return -1;
+    exitMPI(-1);
   }
   return 0;
 }
@@ -997,6 +1183,7 @@ int CheckPairSite(
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
@@ -1009,25 +1196,28 @@ int CheckQuadSite(
 		  )
 {
   if(CheckPairSite(iSite1, iSite2, iMaxNum)!=0){
-    return -1;
+    exitMPI(-1);
   }
   if(CheckPairSite(iSite3, iSite4, iMaxNum)!=0){
-    return -1;
+    exitMPI(-1);
   }
   return 0;
 }
 
 /**
  * @brief Check Hermite for Transfer integrals.
- * @param[in] *X Define List for getting transfer integrals.
+ * @param[in] X Define List for getting transfer integrals.
  * @retval 0 Hermite.
  * @retval -1 NonHermite.
+ * @version 0.2
+ * @details rearray a GeneralTransfer array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
 int CheckTransferHermite
 (
- const struct DefineList *X
+ struct DefineList *X
  )
 {
   int i,j;
@@ -1036,12 +1226,15 @@ int CheckTransferHermite
   int itmpsite1, itmpsite2;
   int itmpsigma1, itmpsigma2;
   double  complex ddiff_trans;
+  int itmpIdx, icntHermite, icntchemi;
+  icntHermite=0;
+  icntchemi=0;
   for(i=0; i<X->NTransfer; i++){
     isite1=X->GeneralTransfer[i][0];
     isigma1=X->GeneralTransfer[i][1];
     isite2=X->GeneralTransfer[i][2];
     isigma2=X->GeneralTransfer[i][3];
-    for(j=i+1; j<X->NTransfer; j++){
+    for(j=0; j<X->NTransfer; j++){
       itmpsite1=X->GeneralTransfer[j][0];
       itmpsigma1=X->GeneralTransfer[j][1];
       itmpsite2=X->GeneralTransfer[j][2];
@@ -1052,21 +1245,58 @@ int CheckTransferHermite
 	  if(cabs(ddiff_trans) > eps_CheckImag0 ){
 	    fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
 	    fprintf(stderr, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
-	    return -1;
+	    exitMPI(-1);
 	  }
-	}
-      }      
+	  if(i<=j){
+	    if(2*icntHermite > X->NTransfer){
+	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
+	      exitMPI(-1);
+	    }
+	    if(isite1 !=isite2 || isigma1 !=isigma2){
+	      for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+		X->EDGeneralTransfer[2*icntHermite][itmpIdx]=X->GeneralTransfer[i][itmpIdx];
+		X->EDGeneralTransfer[2*icntHermite+1][itmpIdx]=X->GeneralTransfer[j][itmpIdx];
+	      }
+	      X->EDParaGeneralTransfer[2*icntHermite]=X->ParaGeneralTransfer[i];
+	      X->EDParaGeneralTransfer[2*icntHermite+1]=X->ParaGeneralTransfer[j];
+	      icntHermite++;
+	    }
+	    else{
+	      X->EDChemi[icntchemi]     = X->GeneralTransfer[i][0];      
+	      X->EDSpinChemi[icntchemi] = X->GeneralTransfer[i][1];      
+	      X->EDParaChemi[icntchemi] = creal(X->ParaGeneralTransfer[i]);
+	      icntchemi+=1;
+	    }
+	  } 
+	}  
+      }
     }
   }
+  
+  X->EDNTransfer=2*icntHermite;
+  X->EDNChemi=icntchemi;
+
+  for(i=0; i<X->NTransfer; i++){
+    for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+      X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
+      }
+    X->ParaGeneralTransfer[i]=X->EDParaGeneralTransfer[i];
+  } 
+  
   return 0;
 }
 
 /** 
+ * @brief function of checking hermite conditions about interall interactions
  * 
+ * @param X define list to get interall off diagonal interactions
  * 
- * @param X 
+ * @retval 0 Hermite condition is satisfied
+ * @retval -1 Hermite condition is not satisfied
+ * @version 0.2
+ * @details rearray a InterAll_OffDiagonal array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
  * 
- * @return 
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1079,8 +1309,10 @@ int CheckInterAllHermite
   int isigma1, isigma2, isigma3, isigma4;
   int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
   int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
+  int itmpIdx, icntHermite;
   double  complex ddiff_intall;
   icntincorrect=0;
+  icntHermite=0;
   for(i=0; i<X->NInterAll_OffDiagonal; i++){
     itmpret=0;
     isite1=X->InterAll_OffDiagonal[i][0];
@@ -1109,9 +1341,23 @@ int CheckInterAllHermite
 	  if(cabs(ddiff_intall) > eps_CheckImag0 ){
 	    fprintf(stderr, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
 	    fprintf(stderr, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
-	    return -1;
+	    exitMPI(-1);
 	  }
-	}
+
+	  if(i<=j){
+	    if(2*icntHermite > X->NInterAll_OffDiagonal){
+	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
+	      exitMPI(-1);
+	    }
+	    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
+	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
+	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][itmpIdx];
+	    }
+	    X->ParaInterAll[2*icntHermite]=X->ParaInterAll_OffDiagonal[i];
+	    X->ParaInterAll[2*icntHermite+1]=X->ParaInterAll_OffDiagonal[j];
+	    icntHermite++;
+	  }
+	}	
       }
       //for spin
       else if(isite1 == itmpsite2 && isite2 ==itmpsite1 && isite3 == itmpsite4 && isite4 == itmpsite3){
@@ -1121,10 +1367,24 @@ int CheckInterAllHermite
 	  if(cabs(ddiff_intall) > eps_CheckImag0 ){
 	    fprintf(stderr, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
 	    fprintf(stderr, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
-	    return -1;
+	    exitMPI(-1);
+	  }	  
+	  if(i<=j){
+	    if(2*icntHermite > X->NInterAll_OffDiagonal){
+	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
+	      exitMPI(-1);
+	    }	    
+	    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
+	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
+	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][itmpIdx];
+	    }
+	    X->ParaInterAll[2*icntHermite]=X->ParaInterAll_OffDiagonal[i];
+	    X->ParaInterAll[2*icntHermite+1]=X->ParaInterAll_OffDiagonal[j];
+	    icntHermite++;
 	  }
 	}
       }
+      
     }
     //if counterpart for satisfying hermite conjugate does not exist.
     if(itmpret !=1){
@@ -1132,19 +1392,27 @@ int CheckInterAllHermite
       icntincorrect++;
     }
   }
-
-  if( icntincorrect !=0){
-    return -1;
-  }  
-  return 0;
+    if( icntincorrect !=0){
+      exitMPI(-1);
+    }
+  
+    for(i=0; i<X->NInterAll_OffDiagonal; i++){
+      for(itmpIdx=0; itmpIdx<8; itmpIdx++){
+	X->InterAll_OffDiagonal[i][itmpIdx]=X->InterAll[i][itmpIdx];
+      }
+      X->ParaInterAll_OffDiagonal[i]=X->ParaInterAll[i];
+    }
+    return 0;
 }
 
 /** 
+ * @brief function of getting diagonal components form interall interactions
  * 
+ * @param[in] X define list to get information of interall interactions
  * 
- * @param X 
- * 
- * @return 
+ * @retval 0  succeed to get diagonal interactions
+ * @retval -1 format of interall interactions is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1238,7 +1506,7 @@ int GetDiagonalInterAll
 	X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
       break;
     default:
-      return -1;
+      exitMPI(-1);
       break;
     }
 
@@ -1248,20 +1516,22 @@ int GetDiagonalInterAll
   }
 
   if(iret !=0){
-    return -1;
+    exitMPI(-1);
   }
   
   return 0;
 }
 
 /** 
+ * @brief function of judging a type of define files.
  * 
+ * @param[in] argc argument count
+ * @param[in] argv argument vector 
+ * @param[out] mode a number to show a type of a define file
  * 
- * @param argc 
- * @param argv 
- * @param mode 
- * 
- * @return 
+ * @retval 0 format is correct
+ * @retval -1 format is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1312,14 +1582,16 @@ int JudgeDefType
 }
 
 /** 
+ * @brief function of checking format of spin interactions
  * 
+ * @param[in] site1 a site number on site1.
+ * @param[in] site2 a site number on site2.
+ * @param[in] site3 a site number on site3.
+ * @param[in] site4 a site number on site4.
  * 
- * @param site1 
- * @param site2 
- * @param site3 
- * @param site4 
- * 
- * @return 
+ * @retval 0 format is correct
+ * @retval -1 format is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1335,16 +1607,19 @@ int CheckFormatForSpinInt
   }
   else{
     fprintf(stderr, cWarningIncorrectFormatForSpin, site1, site2, site3, site4);
-    return -1;
+    exitMPI(-1);
   }
 }
 
 /** 
  * 
+ * @brief function of checking format of Kondo interactions
  * 
- * @param X 
+ * @param[in] X define list to get information of interall interactions
  * 
- * @return 
+ * @retval 0 format is correct
+ * @retval -1 format is incorrect
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1362,14 +1637,14 @@ int CheckFormatForKondoInt
     isite3=X->InterAll[i][4];
     isite4=X->InterAll[i][6];
 
-    if(X->LocSpn[isite1]==0 || X->LocSpn[isite2]==0){
+    if(X->LocSpn[isite1]!=ITINERANT || X->LocSpn[isite2]!=ITINERANT){
       if(isite1 != isite2){
 	iboolLoc=1;
 	fprintf(stdoutMPI, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
 	continue;
       }
     }
-    if(X->LocSpn[isite3]==0 || X->LocSpn[isite4]==0){
+    if(X->LocSpn[isite3]!=ITINERANT || X->LocSpn[isite4]!=ITINERANT){
       if(isite3 != isite4){
 	iboolLoc=1;
 	fprintf(stderr, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
@@ -1378,15 +1653,16 @@ int CheckFormatForKondoInt
     }
   }
   if(iboolLoc==1){
-    return -1;
+    exitMPI(-1);
   }  
   return 0;
 }
 
 /** 
+ * @brief function to set convergence factors
  * 
- * 
- * @param X 
+ * @param[in] X Define list to get Lanczos eps.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -1411,6 +1687,79 @@ void SetConvergenceFactor
   eps_vec12 = pow(10.0, nepsvec12);
 }
 
+/** 
+ * @brief function of checking indecies of localized spin
+ * 
+ * @param[in/out] X Define list to get and put information of localized spin
+ * 
+ * @return TURE Indecies of localizes spin is correct
+ * @return FALSE Indecies of localizes spin is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckLocSpin
+(
+  struct DefineList *X
+ )
+{
+
+  int i=0;
+  switch(X->iCalcModel){
+  case Hubbard:
+  case HubbardNConserved:
+  case HubbardGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]!=ITINERANT){
+      return FALSE;
+    }
+  }
+  break;
+
+  case Kondo:
+  case KondoGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]>LOCSPIN){
+      X->iFlgGeneralSpin=TRUE;
+    }
+    else if(X->LocSpn[i]<ITINERANT){
+      return FALSE;
+    }
+  }
+  break;
+
+  case Spin:
+  case SpinGC:
+  for(i=0; i<X->Nsite; i++){
+    if(X->LocSpn[i]>LOCSPIN){
+      X->iFlgGeneralSpin=TRUE;
+    }
+    else if(X->LocSpn[i]<LOCSPIN){
+      return FALSE;
+    }
+  }
+  break;
+  
+  default:
+    return FALSE;
+    break;
+  }
+
+  if(CheckTotal2Sz(X) != TRUE){
+    return FALSE;
+  }
+  return TRUE;
+}  
+
+/** 
+ * 
+ * @brief function of resetting number of interactions
+ * 
+ * @param[out] X Define list to add number of ising coulomnb interactions
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 void ResetInteractionNum
 (
  struct DefineList *X
@@ -1420,6 +1769,14 @@ void ResetInteractionNum
   X->NCoulombInter += X->NIsingCoupling;
 }
 
+/** 
+ * @brief function of initializeing interactions
+ * 
+ * @param[out] X Define list to initialize number of interactions
+ * @version 0.1
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 void InitializeInteractionNum
 (
  struct DefineList *X
@@ -1434,3 +1791,103 @@ void InitializeInteractionNum
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
 }
+
+/** 
+ * @brief function of checking spin index for all interactions
+ * 
+ * @param[in] X Define list to get informations of all interactions
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckSpinIndexForInterAll
+(
+  struct DefineList *X
+ )
+{
+  int i=0;
+  int isite1, isite2, isite3, isite4;
+  int isigma1, isigma2, isigma3, isigma4;
+  int ilocspn=0;
+  if(X->iFlgGeneralSpin==TRUE){
+    for(i=0; i<X->NInterAll; i++){
+      isite1 =X->InterAll[i][0];
+      isigma1=X->InterAll[i][1];
+      isite2 =X->InterAll[i][2];
+      isigma2=X->InterAll[i][3];
+      isite3 =X->InterAll[i][4];
+      isigma3=X->InterAll[i][5];
+      isite4 =X->InterAll[i][6];
+      isigma4=X->InterAll[i][7];
+      if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]
+	 ||isigma3 > X->LocSpn[isite3] || isigma4 >X->LocSpn[isite4]){
+	fprintf(stderr, "%s", cErrIncorrectSpinIndexForInter);
+	return FALSE;
+      } 
+    }
+  }
+  return TRUE;
+}
+
+/** 
+ * @brief function of checking spin index for transfers
+ * 
+ * @param[in] X Define list to get informations of transfers
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckSpinIndexForTrans
+(
+  struct DefineList *X
+ )
+{
+  int i=0;
+  int isite1, isite2;
+  int isigma1, isigma2;
+  if(X->iFlgGeneralSpin==TRUE){
+    for(i=0; i<X->NTransfer; i++){
+      isite1 =X->GeneralTransfer[i][0];
+      isigma1=X->GeneralTransfer[i][1];
+      isite2 =X->GeneralTransfer[i][2];
+      isigma2=X->GeneralTransfer[i][3];
+      if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]){
+	fprintf(stderr, "%s", cErrIncorrectSpinIndexForTrans);
+      return FALSE;
+      }
+    }
+  }
+  return TRUE;
+}
+
+/** 
+ * @brief function of checking an input data of total2Sz
+ * 
+ * @param[in] X Define list to get informations of transfers
+ * @retval TRUE spin index is correct
+ * @retval FALSE spin index is incorrect
+ * @version 0.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int CheckTotal2Sz
+(
+  struct DefineList *X
+ )
+{
+  if(X->iFlgSzConserved==TRUE && X->iFlgGeneralSpin==FALSE){
+    int tmp_Nup=X->NLocSpn+X->NCond+X->Total2Sz;
+    int tmp_Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
+    if(tmp_Nup%2 != 0 && tmp_Ndown%2 !=0){
+      printf("Nup=%d, Ndown=%d\n",X->Nup,X->Ndown);
+      fprintf(stderr, "2Sz is incorrect.\n");
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+

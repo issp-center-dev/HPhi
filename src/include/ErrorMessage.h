@@ -44,6 +44,8 @@ char *cErrDefFileParam;
 char *cErrCalcType;
 char *cErrOutputMode;
 char *cErrCalcModel;
+char *cErrCalcEigenVec;
+char *cErrSetIniVec;
 char *cErrFiniteTemp;
 char *cErrKW;
 char *cErrKW_ShowList;
@@ -59,7 +61,9 @@ char *cErrNonConservedInterAll;
 char *cErrNonHermiteInterAllForAll;
 char *cErrIncorrectFormatForKondoInt;
 char *cErrIncorrectFormatForKondoTrans;
-
+char *cErrIncorrectFormatInter;
+char *cErrIncorrectSpinIndexForInter;
+char *cErrIncorrectSpinIndexForTrans;
 
 char *cErrIncorrectFormatForSpinTrans;
 char *cWarningIncorrectFormatForSpin;
@@ -68,7 +72,7 @@ char *cWarningIncorrectFormatForSpin2;
 
 //! Error Message in diagonal calc.c
 char *cErrNoModel;
-
+char *cErrNoHilbertSpace;
 
 //! Error Message in bitcalc.c
 char *cErrSiteNumber;

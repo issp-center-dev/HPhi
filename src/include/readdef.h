@@ -96,7 +96,7 @@ int CheckQuadSite(
 
 int CheckTransferHermite
 (
- const struct DefineList *X
+ struct DefineList *X
 );
 
 int CheckInterAllHermite
@@ -139,6 +139,11 @@ void SetConvergenceFactor
  struct DefineList *X
  );
 
+int CheckLocSpin
+(
+  struct DefineList *X
+);
+
 void ResetInteractionNum
 (
  struct DefineList *X
@@ -147,4 +152,19 @@ void ResetInteractionNum
 void InitializeInteractionNum
 (
  struct DefineList *X
+ );
+
+int CheckSpinIndexForInterAll
+(
+  struct DefineList *X
+ );
+
+int CheckSpinIndexForTrans
+(
+  struct DefineList *X
+ );
+
+int CheckTotal2Sz
+(
+  struct DefineList *X
  );

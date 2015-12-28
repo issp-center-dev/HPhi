@@ -47,6 +47,8 @@ const char* cFileName2BGreen_CG="%s_cisajscktalt.dat";
 const char* cFileNameTimeEV_CG="Time_EigenVector.dat";
 const char* cFileNameListModel="ListForModel_Ns%d_Nup%dNdown%d.dat";
 const char* cFileNameListKondo="ListForKondo_Ns%d_Ncond%d.dat";
+const char* cFileNameOutputEigen="%s_eigenvec_%d.dat";
+const char* cFileNameInputEigen="./output/%s_eigenvec_%d.dat";
 
 //For TPQ
 const char* cFileNameSSRand="SS_rand%d.dat";

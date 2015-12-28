@@ -1,3 +1,13 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Spin/HeisenbergSquare HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i5n29 1
+
 
 
 #####  Parallelization Info.  #####
@@ -25,6 +35,7 @@
                 L = 4  
                 W = 4  
                 a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######

@@ -24,15 +24,16 @@ The command-line argment of \verb|HPhiconfig.sh| is as folows:
 \item \verb|sekirei| : ISSP system-B ''sekirei''
 \item \verb|maki| : ISSP system-C ''maki''
 \item \verb|intel| : intel compiler + Linux PC
+\item \verb|mpicc-intel| : intel compiler + MPI (excepting intelMPI) + Linux PC
 \item \verb|gcc| : GCC + Linux PC
 \item \verb|gcc-mac| : GCC + Mac
 \end{itemize}
 
 \verb|make.sys| is as follows (for ISSP-system-B ''sekirei''):
 \begin{verbatim}
- CC = icc
+ CC = mpiicc
  LAPACK_FLAGS = -Dlapack -mkl=parallel 
- FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
  MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
  INCLUDE_DIR=./include
 \end{verbatim}
@@ -43,6 +44,7 @@ We explatin macros of this file as:
 \item \verb|FLAGS| : Other compilation options.
   OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
   must be specified.
+  When you use MPI, please set \verb|-D MPI|.
 \item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : Options for the Mersenne Twister
   and additional include directory. You do not have to modify them.
 \end{itemize}
@@ -56,7 +58,6 @@ $ make HPhi
 and obtain an executable \verb|HPhi| in \verb|src/| directory;
 you should add this directory to the \verb|$PATH|.
 
-\subsection{Using \texttt{cmake}}
 
 
 \begin{screen}
@@ -72,4 +73,45 @@ If you keep this PATH, you should write above in \verb|~/.bashrc|
 (for \verb|bash| as a login shell)
 
 \end{screen}
+
+
+\subsection{Using \texttt{cmake}}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize\\
+Before using cmake for sekirei, you must type 
+\begin{verbatim}
+source /home/issp/materiapps/tool/env.sh
+\end{verbatim}
+while for maki, you must type
+\begin{verbatim}
+source /global/app/materiapps/tool/env.sh
+\end{verbatim}
+\end{screen}
+
+We can compile Hphi as
+\begin{verbatim}
+cd $HOME/build/hphi
+cmake -DCONFIG=gcc $PathTohphi
+make
+\end{verbatim}
+Here, we set a path to $\HPhi$ as \verb| $PathTohphi| and to a build directory as \verb| $HOME/build/hphi|. After compiling, a src folder is constructed below a \verb| $HOME/build/hphi |folder and obtain an executable \verb|HPhi| in \verb|src/| directory. When there is not a MPI library in your system, an executable \verb|HPhi| is automatically compiled without a MPI library.
+
+In the above example, we compile $\HPhi$ by using a gcc compiler. We can select a compiler by using following options
+\begin{itemize}
+\item \verb|sekirei| : ISSP system-B ''sekirei''
+\item \verb|fujitsu| : Fujitsu compiler (ISSP system-C ''maki'')
+\item \verb|intel| : intel compiler + Linux PC
+\item \verb|gcc| : GCC compiler + Linux PC.
+\end{itemize}
+An example for compiling $\HPhi$ by an intel compiler is shown as follows, 
+\begin{verbatim}
+mkdir ./build
+cd ./build
+cmake -DCONFIG=intel ../
+make
+\end{verbatim}
+After compiling,  a \verb|src| folder is made below the \verb|build| folder and an execute $\HPhi$ is made in the  \verb|src| folder. It is noted that  we must delete the  \verb|build| folder and do the above works again when we change the compilers.
 

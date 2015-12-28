@@ -34,8 +34,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueStart);
   FILE *fp;
   char sdt[D_FileNameMax],sdt_2[D_FileNameMax];
-  int stp;
+  int stp, iproc;
   long int i,iv,i_max;      
+  unsigned long int i_max_tmp, sum_i_max;
   int k_exct,Target;
   int iconv=-1;
   double beta1,alpha1; //beta,alpha1 should be real
@@ -59,20 +60,40 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
   i_max=X->Check.idim_max;      
   k_exct = X->Def.k_exct;
- 
+
   if(initial_mode == 0){
-    X->Large.iv=(X->Check.idim_max/3+X->Def.initial_iv)%X->Check.idim_max;
+
+    sum_i_max = SumMPI_li(X->Check.idim_max);
+    X->Large.iv = (sum_i_max / 3 + X->Def.initial_iv) % sum_i_max + 1;
     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
-      X->Large.iv=(X->Check.idim_max/2+X->Def.initial_iv)%X->Check.idim_max;
+      X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
     }
     iv=X->Large.iv;
     fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
-    #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
+#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
       v1[i]=0.0;
     }
-    v1[iv]=1.0;
+
+    sum_i_max = 0;
+    for (iproc = 0; iproc < nproc; iproc++) {
+
+      i_max_tmp = BcastMPI_li(iproc, i_max);
+      if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
+
+        if (myrank == iproc) {
+          v1[iv - sum_i_max+1] = 1.0;
+          if (X->Def.iInitialVecType == 0) {
+            v1[iv - sum_i_max+1] += 1.0*I;
+            v1[iv - sum_i_max+1] /= sqrt(2.0);
+          }
+        }/*if (myrank == iproc)*/
+      }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
+
+      sum_i_max += i_max_tmp;
+
+    }/*for (iproc = 0; iproc < nproc; iproc++)*/
   }else if(initial_mode==1){
     iv = X->Def.initial_iv;
     fprintf(stdoutMPI, "initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
@@ -81,15 +102,36 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v0[i]=0.0;
     }
     u_long_i = 123432 + abs(iv);
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);    
-    for(i = 1; i <= i_max; i++){
-     v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
+    dsfmt_init_gen_rand(&dsfmt, u_long_i);
+    if(X->Def.iInitialVecType==0){
+      for (iproc = 0; iproc < nproc; iproc++) {
+
+        i_max_tmp = BcastMPI_li(iproc, i_max);
+
+        for (i = 1; i <= i_max_tmp; i++) {
+          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
+          if (myrank == iproc) v1[i] = temp1;
+        }
+      }
     }
+    else{
+      for (iproc = 0; iproc < nproc; iproc++) {
+
+        i_max_tmp = BcastMPI_li(iproc, i_max);
+
+        for (i = 1; i <= i_max_tmp; i++) {
+          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+          if (myrank == iproc) v1[i] = temp1;
+        }
+      }
+    }
+
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
     for(i=1;i<=i_max;i++){
      cdnorm += conj(v1[i])*v1[i];
     }
+    cdnorm = SumMPI_dc(cdnorm);
     dnorm=creal(cdnorm);
     dnorm=sqrt(dnorm);
     #pragma omp parallel for default(none) private(i) shared(v1) firstprivate(i_max, dnorm)
@@ -98,24 +140,49 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
   }
   //Eigenvalues by Lanczos method
-
+  
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, v1);
   stp=1;
-  
+
   TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);          
   alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
   alpha[1]=alpha1;
   cbeta1=0.0;
-        
+
+  //fprintf(stdoutMPI, "debug:alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+  
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
   for(i = 1; i <= i_max; i++){
     cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
   }
+  cbeta1 = SumMPI_dc(cbeta1);
   beta1=creal(cbeta1);
   beta1=sqrt(beta1);
   beta[1]=beta1;
   ebefor=0;
+
+  /*
+    Set Maximum number of loop to the dimention of the Wavefunction
+  */
+  i_max_tmp = SumMPI_li(i_max);
+  if(i_max_tmp < X->Def.Lanczos_max){
+    X->Def.Lanczos_max = i_max_tmp;
+  }
+  if(i_max_tmp < X->Def.LanczosTarget){
+    X->Def.LanczosTarget = i_max_tmp;
+  }
+  if(i_max_tmp == 1){
+    E[1]=alpha[1];
+    vec12(alpha,beta,stp,E,X);		
+    X->Large.itr=stp;
+    X->Phys.Target_energy=E[k_exct];
+    iconv=0;
+    fprintf(stdoutMPI,"stp=%d %.10lf \n",stp,E[1]);
+  }
+  else{
+
+
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -137,13 +204,14 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for(i=1;i<=i_max;i++){
       cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
     }
+    cbeta1 = SumMPI_dc(cbeta1);
     beta1=creal(cbeta1);
     beta1=sqrt(beta1);
     beta[stp]=beta1;
-    
+
     Target  = X->Def.LanczosTarget;
 
-    //fprintf(stdoutMPI, "alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
+    //    fprintf(stdoutMPI, "debug:alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
     
     if(stp==2){      
      #ifdef lapack
@@ -173,7 +241,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
     }
             
     if(stp>2 && stp%2==0){
-      #ifdef lapack
+      
+#ifdef lapack
       d_malloc2(tmp_mat,stp,stp);
       d_malloc1(tmp_E,stp+1);
 
@@ -198,10 +267,11 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[4] = tmp_E[3];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);
-      #else
+#else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
-      #endif
-       
+#endif
+      
+
        fprintf(stdoutMPI, "stp=%d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
        if(stp==4){
 	 childfopenMPI(sdt_2,"w", &fp);
@@ -212,7 +282,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
        fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4]);
        fclose(fp);
 
-      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos){
+      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos || abs(beta[stp])<pow(10.0, -14)){
         vec12(alpha,beta,stp,E,X);		
         X->Large.itr=stp;       
         X->Phys.Target_energy=E[k_exct];
@@ -220,14 +290,10 @@ int Lanczos_EigenValue(struct BindStruct *X)
 	break;
       }
 
-      if(abs(beta[stp])<eps_Lanczos){
-	beta[stp]=eps_Lanczos*dShiftBeta;
-      }
-
       ebefor=E[Target];            
     }
   }        
-
+  }
 
   sprintf(sdt,cFileNameTimeKeep,X->Def.CDataFileHead);
   if(iconv!=0){

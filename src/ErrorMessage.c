@@ -42,8 +42,11 @@ char *cErrNLoc ="Error: Ne=Nup+Ndown must be (Ne >= NLocalSpin).\n";
 char *cErrDefFileParam="Error: In %s, wrong parameter name:%s \n";
 char *cErrCalcType="Error in %s\n CalcType: 0: Lanczos Method, 1: Thermal Pure Quantum State Method, 2: Full Diagonalization Method.\n";
 char *cErrOutputMode="Error in %s\n OutputMode: \n 0: calc one body green function and two body green functions,\n 1: calc one body green function and two body green functions and correlatinos for charge and spin.\n";
-char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC.\n";
+char *cErrCalcEigenVec="Error in %s\n CalcEigenVec: \n 0: Lanczos+CG method,\n 1: Lanczos method.\n";
+char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC, 5:KondoGC.\n";
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
+char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
+
 char *cErrKW="Error: Wrong keywords '%s' in %s.\n";
 char *cErrKW_ShowList="Choose Keywords as follows: \n";
 char *cErrKW_Same="Error: Same keywords exist in %s.\n";
@@ -63,11 +66,14 @@ char *cErrIncorrectFormatForKondoTrans= "Error: Site component of (i, j) =(%d, %
 char *cErrIncorrectFormatForSpinTrans= "Error: Site component of (i, j) =(%d, %d) is incorrect.\n";
 char *cWarningIncorrectFormatForSpin= "Warning: Site component of (i, j, k, l) =(%d, %d, %d, %d) is ignored.\n";
 char *cWarningIncorrectFormatForSpin2= "Warning: Site component of (i, j) =(%d, %d) is ignored.\n";
+char *cErrIncorrectFormatInter= "Error: Use only InterAll for setteing interactions for general spin.\n";
+char *cErrIncorrectSpinIndexForInter="Error: Spin index is incorrect for interactions defined in InterAll file.\n";
+char *cErrIncorrectSpinIndexForTrans="Error: Spin index is incorrect for transfers defined in Trans file.\n";
 
 
 //! Error Message in diagonal calc.c
 char *cErrNoModel ="Error: CalcModel %d is incorrect.\n";
-
+char *cErrNoHilbertSpace = "Error: There is no target of Hilbert space.\n";
 
 //! Error Message in bitcalc.c
 char *cErrSiteNumber = "Error: Total Site Number is incorrect.\n";

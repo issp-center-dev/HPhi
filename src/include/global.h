@@ -20,9 +20,18 @@
 #include <complex.h>
 #include <math.h>
 #define D_FileNameMax 256
+#define FALSE 0
+#define TRUE 1
+
+/**
+ * Kind of electron. For ver.0.1, ITINERANT=1. From ver.0.2, ITINERANT=0.
+ **/
+#define ITINERANT 0
+#define LOCSPIN 1
 
 double complex *v0; 
 double complex *v1;
+double complex *v1buf;
 //test
 double complex *vg;
 
@@ -31,10 +40,15 @@ double complex **vec;
 double *list_Diagonal; 
 double *list_D_num;
 long unsigned int *list_1;
+long unsigned int *list_1buf;
 long unsigned  int *list_2_1;
 long unsigned  int *list_2_2;
 long unsigned  int *list_jb;
 int *list_3;
+long unsigned int *HilbertNumToSz;
+int *list_2_1_Sz;
+int *list_2_2_Sz;
+
 
 /*[s] For Lanczos */
 //double *eigen_vec;
@@ -89,6 +103,8 @@ const char* cFileName2BGreen_CG;
 const char* cFileNameTimeEV_CG;
 const char* cFileNameListModel;
 const char* cFileNameListKondo;
+const char* cFileNameOutputEigen;
+const char* cFileNameInputEigen;
 
 //For TPQ
 const char* cFileNameSSRand;

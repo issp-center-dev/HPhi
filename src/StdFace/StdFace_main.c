@@ -35,8 +35,8 @@ static void PrintTrans();
 static void PrintInter();
 static void PrintNamelist();
 static void PrintCalcMod(char *method, int FlgTemp, char *model,int ioutputmode);
-static void PrintModPara(int nup, int ndown, int Lanczos_max, int initial_iv, int nvec, 
-  int exct,  int LanczosEps, int LanczosTarget, int WRITE, int READ,
+static void PrintModPara(int Sz2, int nelec, int Lanczos_max, int initial_iv, int nvec, 
+  int exct,  int LanczosEps, int LanczosTarget,
   int NumAve, int ExpecInterval, char* filehead);
 static void Print1Green(int ioutputmode);
 static void Print2Green(int ioutputmode);
@@ -45,9 +45,9 @@ static int CheckOutputMode(char* outputmode);
 
 static void UnsupportedSystem(char *model, char *lattice);
 
-static void CheckModPara(int *nup, int *ndown, char* model,
+static void CheckModPara(char* model,
   int *nelec, int *Sz2, int *Lanczos_max, int *initial_iv, int *nvec,
-  int *exct, int *LanczosEps, int *LanczosTarget, int *WRITE, int *READ,
+  int *exct, int *LanczosEps, int *LanczosTarget,
   int *NumAve, int *ExpecInterval, char* filehead);
 
 /**
@@ -60,7 +60,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   FILE *fp;
   int ktrans, kintr;
   int FlgTemp, Lanczos_max, initial_iv, nvec, exct, 
-    LanczosEps, LanczosTarget, WRITE, READ, nup, ndown, 
+    LanczosEps, LanczosTarget, 
     NumAve, ExpecInterval, Sz2, nelec, ioutputmode;
   char ctmpline[256];
   char *keyword, *value;
@@ -89,8 +89,6 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   exct          = 9999;
   LanczosEps    = 9999;
   LanczosTarget = 9999;
-  //WRITE         = 9999;
-  //READ          = 9999;
   NumAve        = 9999;
   ExpecInterval = 9999;
   StdFace_ResetVals();
@@ -117,17 +115,19 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     fprintf(stdoutMPI, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
     if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &h);
+    else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &D);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &exct);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &ExpecInterval);
     else if (strcmp(keyword, "filehead") == 0) StoreWithCheckDup_s(keyword, value, filehead);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &FlgTemp);
-    else if (strcmp(keyword, "g") == 0) StoreWithCheckDup_d(keyword, value, &D);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &Gamma);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &initial_iv);
     else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &J);
     else if (strcmp(keyword, "j0") == 0) StoreWithCheckDup_d(keyword, value, &J0);
     else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &J1);
+    else if (strcmp(keyword, "j1'") == 0) StoreWithCheckDup_d(keyword, value, &J1p);
     else if (strcmp(keyword, "j2") == 0) StoreWithCheckDup_d(keyword, value, &J2);
+    else if (strcmp(keyword, "j2'") == 0) StoreWithCheckDup_d(keyword, value, &J2p);
     else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &Jx);
     else if (strcmp(keyword, "jx0") == 0) StoreWithCheckDup_d(keyword, value, &Jx0);
     else if (strcmp(keyword, "jx1") == 0) StoreWithCheckDup_d(keyword, value, &Jx1);
@@ -165,9 +165,11 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &NumAve);
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &nvec);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &Sz2);
+    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &S2);
     else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_d(keyword, value, &t);
     else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_d(keyword, value, &t0);
     else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_d(keyword, value, &t1);
+    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_d(keyword, value, &t1p);
     else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_d(keyword, value, &t2);
     else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_d(keyword, value, &tp);
     else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_d(keyword, value, &tp);
@@ -175,6 +177,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &V);
     else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &V0);
     else if (strcmp(keyword, "v1") == 0) StoreWithCheckDup_d(keyword, value, &V1);
+    else if (strcmp(keyword, "v1'") == 0) StoreWithCheckDup_d(keyword, value, &V1p);
     else if (strcmp(keyword, "v2") == 0) StoreWithCheckDup_d(keyword, value, &V2);
     else if (strcmp(keyword, "v'") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
     else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
@@ -193,6 +196,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "fermionhubbardgc") == 0
@@ -201,14 +205,23 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
-  else if (strcmp(model, "spin") == 0
-    || strcmp(model, "spingc") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice();
-    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice();
-    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice();
-    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice();
+  else if (strcmp(model, "spin") == 0){
+    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(Sz2, 0);
+    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 0);
+    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 0);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 0);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 0);
+    else UnsupportedSystem(model, lattice);
+  }
+  else if (strcmp(model, "spingc") == 0){
+    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(Sz2, 1);
+    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 1);
+    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 1);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 1);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolattice") == 0){
@@ -216,6 +229,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 0);
     else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 0);
     else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolatticegc") == 0
@@ -224,15 +238,16 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 1);
     else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 1);
     else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
   else UnsupportedSystem(model,lattice);
   /**/
   fprintf(stdoutMPI, "\n");
   /**/
-  CheckModPara(&nup, &ndown, model,
+  CheckModPara(model,
     &nelec, &Sz2, &Lanczos_max, &initial_iv, &nvec,
-    &exct, &LanczosEps, &LanczosTarget, &WRITE, &READ,
+    &exct, &LanczosEps, &LanczosTarget,
     &NumAve, &ExpecInterval,filehead);
   ioutputmode = CheckOutputMode(outputmode);
   /**/
@@ -244,9 +259,8 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintInter();
   PrintNamelist();
   PrintCalcMod(method, FlgTemp, model, ioutputmode);
-  PrintModPara(nup, ndown, Lanczos_max, initial_iv, nvec, exct,
-    LanczosEps, LanczosTarget, WRITE, READ,
-    NumAve, ExpecInterval,filehead);  
+  PrintModPara(Sz2, nelec, Lanczos_max, initial_iv, nvec, exct,
+    LanczosEps, LanczosTarget,NumAve, ExpecInterval,filehead);  
   Print1Green(ioutputmode);
   Print2Green(ioutputmode);
   /*
@@ -290,6 +304,7 @@ static void StdFace_ResetVals(){
   tpp = 9999.9;
   t0 = 9999.9;
   t1 = 9999.9;
+  t1p = 9999.9;
   t2 = 9999.9;
   U = 9999.9;
   V = 9999.9;
@@ -297,13 +312,16 @@ static void StdFace_ResetVals(){
   Vpp = 9999.9;
   V0 = 9999.9;
   V1 = 9999.9;
+  V1p = 9999.9;
   V2 = 9999.9;
   J = 9999.9;
   Jp = 9999.9;
   Jpp = 9999.9;
   J0 = 9999.9;
   J1 = 9999.9;
+  J1p = 9999.9;
   J2 = 9999.9;
+  J2p = 9999.9;
   /**/
   Jx = 9999.9;
   Jy = 9999.9;
@@ -331,6 +349,7 @@ static void StdFace_ResetVals(){
   K = 9999.9;
   /**/
   LargeValue = 9999;
+  S2 = 9999;
 }
 
 /**
@@ -443,7 +462,7 @@ void PrintLocSpin(){
 
   nlocspin = 0;
   for (isite = 0; isite < nsite; isite++)
-    if (locspinflag[isite] == 0) nlocspin = nlocspin + 1;
+    if (locspinflag[isite] != 0) nlocspin = nlocspin + 1;
 
   fp = fopenMPI("zlocspn.def", "w");
   fprintf(fp, "================================ \n");
@@ -496,7 +515,7 @@ static void PrintTrans(){
   ntrans0 = 0;
   for (ktrans = 0; ktrans < ntrans; ktrans++){
     if (fabs(trans[ktrans]) > 0.000001)
-      fprintf(fp, "%5d %5d %5d %5d %10.6f  0.000000\n",
+      fprintf(fp, "%5d %5d %5d %5d %25.15f  0.000000\n",
       transindx[ktrans][0], transindx[ktrans][1], transindx[ktrans][2], transindx[ktrans][3],
       trans[ktrans]);
   }
@@ -517,20 +536,123 @@ static void PrintInter(){
 
   for (jintr = 0; jintr < nintr; jintr++){
     for (kintr = jintr + 1; kintr < nintr; kintr++){
-      if ( intrindx[jintr][0] == intrindx[kintr][0]
+      if ( 
+        (  intrindx[jintr][0] == intrindx[kintr][0]
         && intrindx[jintr][1] == intrindx[kintr][1]
         && intrindx[jintr][2] == intrindx[kintr][2]
         && intrindx[jintr][3] == intrindx[kintr][3]
         && intrindx[jintr][4] == intrindx[kintr][4]
         && intrindx[jintr][5] == intrindx[kintr][5]
         && intrindx[jintr][6] == intrindx[kintr][6]
-        && intrindx[jintr][7] == intrindx[kintr][7]){
+        && intrindx[jintr][7] == intrindx[kintr][7] )
+        ||
+        (  intrindx[jintr][0] == intrindx[kintr][4]
+        && intrindx[jintr][1] == intrindx[kintr][5]
+        && intrindx[jintr][2] == intrindx[kintr][6]
+        && intrindx[jintr][3] == intrindx[kintr][7]
+        && intrindx[jintr][4] == intrindx[kintr][0]
+        && intrindx[jintr][5] == intrindx[kintr][1]
+        && intrindx[jintr][6] == intrindx[kintr][2]
+        && intrindx[jintr][7] == intrindx[kintr][3])
+        ){
         intr[jintr] = intr[jintr] + intr[kintr];
+        intr[kintr] = 0.0;
+      }
+      else if (
+        (  intrindx[jintr][0] == intrindx[kintr][4]
+        && intrindx[jintr][1] == intrindx[kintr][5]
+        && intrindx[jintr][2] == intrindx[kintr][2]
+        && intrindx[jintr][3] == intrindx[kintr][3]
+        && intrindx[jintr][4] == intrindx[kintr][0]
+        && intrindx[jintr][5] == intrindx[kintr][1]
+        && intrindx[jintr][6] == intrindx[kintr][6]
+        && intrindx[jintr][7] == intrindx[kintr][7])
+        ||
+        (  intrindx[jintr][0] == intrindx[kintr][0]
+        && intrindx[jintr][1] == intrindx[kintr][1]
+        && intrindx[jintr][2] == intrindx[kintr][6]
+        && intrindx[jintr][3] == intrindx[kintr][7]
+        && intrindx[jintr][4] == intrindx[kintr][4]
+        && intrindx[jintr][5] == intrindx[kintr][5]
+        && intrindx[jintr][6] == intrindx[kintr][2]
+        && intrindx[jintr][7] == intrindx[kintr][3])
+        ){
+        intr[jintr] = intr[jintr] - intr[kintr];
         intr[kintr] = 0.0;
       }
     }
   }
 
+  for (jintr = 0; jintr < nintr; jintr++) {
+    for (kintr = jintr + 1; kintr < nintr; kintr++) {
+      if ( intrindx[jintr][6] == intrindx[kintr][4]
+        && intrindx[jintr][7] == intrindx[kintr][5]
+        && intrindx[jintr][4] == intrindx[kintr][6]
+        && intrindx[jintr][5] == intrindx[kintr][7]
+        && intrindx[jintr][2] == intrindx[kintr][0]
+        && intrindx[jintr][3] == intrindx[kintr][1]
+        && intrindx[jintr][0] == intrindx[kintr][2]
+        && intrindx[jintr][1] == intrindx[kintr][3]
+        ) {
+        intrindx[kintr][0] = intrindx[jintr][6];
+        intrindx[kintr][1] = intrindx[jintr][7];
+        intrindx[kintr][2] = intrindx[jintr][4];
+        intrindx[kintr][3] = intrindx[jintr][5];
+        intrindx[kintr][4] = intrindx[jintr][2];
+        intrindx[kintr][5] = intrindx[jintr][3];
+        intrindx[kintr][6] = intrindx[jintr][0];
+        intrindx[kintr][7] = intrindx[jintr][1];
+      }
+      else if (
+        (intrindx[jintr][6] == intrindx[kintr][4]
+          && intrindx[jintr][7] == intrindx[kintr][5]
+          && intrindx[jintr][4] == intrindx[kintr][2]
+          && intrindx[jintr][5] == intrindx[kintr][3]
+          && intrindx[jintr][2] == intrindx[kintr][0]
+          && intrindx[jintr][3] == intrindx[kintr][1]
+          && intrindx[jintr][0] == intrindx[kintr][6]
+          && intrindx[jintr][1] == intrindx[kintr][7])
+        ||
+        (intrindx[jintr][6] == intrindx[kintr][0]
+          && intrindx[jintr][7] == intrindx[kintr][1]
+          && intrindx[jintr][4] == intrindx[kintr][6]
+          && intrindx[jintr][5] == intrindx[kintr][7]
+          && intrindx[jintr][2] == intrindx[kintr][4]
+          && intrindx[jintr][3] == intrindx[kintr][5]
+          && intrindx[jintr][0] == intrindx[kintr][2]
+          && intrindx[jintr][1] == intrindx[kintr][3])
+        ) {
+        intrindx[kintr][0] = intrindx[jintr][6];
+        intrindx[kintr][1] = intrindx[jintr][7];
+        intrindx[kintr][2] = intrindx[jintr][4];
+        intrindx[kintr][3] = intrindx[jintr][5];
+        intrindx[kintr][4] = intrindx[jintr][2];
+        intrindx[kintr][5] = intrindx[jintr][3];
+        intrindx[kintr][6] = intrindx[jintr][0];
+        intrindx[kintr][7] = intrindx[jintr][1];
+
+        intr[kintr] = - intr[kintr];
+      }
+    }
+  }
+
+  for (jintr = 0; jintr < nintr; jintr++) {
+
+    if (
+      (intrindx[jintr][0] == intrindx[jintr][4] && intrindx[jintr][1] == intrindx[jintr][5]) ||
+      (intrindx[jintr][2] == intrindx[jintr][6] && intrindx[jintr][3] == intrindx[jintr][7])
+      ) {
+
+      if (!(
+        (intrindx[jintr][0] == intrindx[jintr][2] && intrindx[jintr][1] == intrindx[jintr][3]) ||
+        (intrindx[jintr][0] == intrindx[jintr][6] && intrindx[jintr][1] == intrindx[jintr][7]) ||
+        (intrindx[jintr][4] == intrindx[jintr][2] && intrindx[jintr][5] == intrindx[jintr][3]) ||
+        (intrindx[jintr][4] == intrindx[jintr][6] && intrindx[jintr][5] == intrindx[jintr][7])
+        ))
+        intr[jintr] = 0.0;
+    }
+  }
+ 
   nintr0 = 0;
   for (kintr = 0; kintr < nintr; kintr++){
     if (fabs(intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -546,7 +668,7 @@ static void PrintInter(){
   nintr0 = 0;
   for (kintr = 0; kintr < nintr; kintr++){
     if (fabs(intr[kintr]) > 0.000001)
-      fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %10.6f  0.000000\n",
+      fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %25.15f  0.000000\n",
       intrindx[kintr][0], intrindx[kintr][1], intrindx[kintr][2], intrindx[kintr][3],
       intrindx[kintr][4], intrindx[kintr][5], intrindx[kintr][6], intrindx[kintr][7],
       intr[kintr]);
@@ -642,16 +764,14 @@ static void PrintCalcMod(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 static void PrintModPara(
-  int nup /**< [in]*/,
-  int ndown /**< [in]*/,
+  int Sz2 /**< [in]*/,
+  int nelec /**< [in]*/,
   int Lanczos_max /**< [in]*/,
   int initial_iv /**< [in]*/,
   int nvec /**< [in]*/,
   int exct /**< [in]*/,
   int LanczosEps /**< [in]*/,
   int LanczosTarget /**< [in]*/,
-  int WRITE /**< [in]*/, 
-  int READ /**< [in]*/,
   int NumAve /**< [in]*/,
   int ExpecInterval /**< [in]*/,
   char* filehead /**< [in]*/)
@@ -668,16 +788,14 @@ static void PrintModPara(
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", nsite);
-  fprintf(fp, "Nup            %-5d\n", nup);
-  fprintf(fp, "Ndown          %-5d\n", ndown);
+  if (Sz2 != 9999) fprintf(fp, "2Sz            %-5d\n", Sz2);
+  if (nelec != 9999) fprintf(fp, "Ncond          %-5d\n", nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", initial_iv);
   fprintf(fp, "nvec           %-5d\n", nvec);
   fprintf(fp, "exct           %-5d\n", exct);
   fprintf(fp, "LanczosEps     %-5d\n", LanczosEps);
   fprintf(fp, "LanczosTarget  %-5d\n", LanczosTarget);
-  //fprintf(fp, "WRITE          %-5d\n", WRITE);
-  //fprintf(fp, "READ           %-5d\n", READ);
   fprintf(fp, "LargeValue     %-5d\n", LargeValue);
   fprintf(fp, "NumAve         %-5d\n", NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", ExpecInterval);
@@ -694,17 +812,26 @@ static void PrintModPara(
  */
 static void Print1Green(int ioutputmode /**< [in]*/){
   FILE *fp;
-  int ngreen, igreen, isite, jsite, ispin,jspin;
+  int ngreen, igreen, isite, jsite, ispin,jspin, SiMax, SjMax;
   int **greenindx;
 
   if (ioutputmode == 0){
     ngreen = 0;
   }
   else if(ioutputmode == 1){
-    ngreen = nsite * 2;
+    ngreen = 0;
+    for (isite = 0; isite < nsite; isite++){
+      if (locspinflag[isite] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[isite] + 1);
+    }
   }
   else{
-    ngreen = nsite * 2 * nsite * 2;
+    ngreen = 0;
+    for (isite = 0; isite < nsite; isite++){
+      if (locspinflag[isite] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[isite] + 1);
+    }
+    ngreen = ngreen * ngreen;
   }
   greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
   for (igreen = 0; igreen < ngreen; igreen++){
@@ -713,7 +840,11 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   if (ioutputmode == 1){
     igreen = 0;
     for (isite = 0; isite < nsite; isite++){
-      for (ispin = 0; ispin < 2; ispin++){
+
+      if (locspinflag[isite] == 0) SiMax = 1;
+      else SiMax = locspinflag[isite];
+      
+      for (ispin = 0; ispin <= SiMax; ispin++){
         greenindx[igreen][0] = isite;
         greenindx[igreen][1] = ispin;
         greenindx[igreen][2] = isite;
@@ -725,9 +856,17 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   else if (ioutputmode == 2){
     igreen = 0;
     for (isite = 0; isite < nsite; isite++){
-      for (ispin = 0; ispin < 2; ispin++){
+
+      if (locspinflag[isite] == 0) SiMax = 1;
+      else SiMax = locspinflag[isite];
+
+      for (ispin = 0; ispin <= SiMax; ispin++){
         for (jsite = 0; jsite < nsite; jsite++){
-          for (jspin = 0; jspin < 2; jspin++){
+
+          if (locspinflag[jsite] == 0) SjMax = 1;
+          else SjMax = locspinflag[jsite];
+
+          for (jspin = 0; jspin <= SjMax; jspin++){
             greenindx[igreen][0] = isite;
             greenindx[igreen][1] = ispin;
             greenindx[igreen][2] = jsite;
@@ -771,16 +910,27 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   int ngreen, igreen;
   int site1, site2, site3, site4;
   int spin1, spin2, spin3, spin4;
+  int S1Max, S2Max, S3Max, S4Max;
   int **greenindx;
 
   if (ioutputmode == 0){
     ngreen = 0;
   }
   else if (ioutputmode == 1){
-    ngreen = nsite * 2 * nsite * 2;
+    ngreen = 0;
+    for (site1 = 0; site1 < nsite; site1++){
+      if (locspinflag[site1] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[site1] + 1);
+    }
+    ngreen = ngreen * ngreen;
   }
   else{
-    ngreen = nsite * 2 * nsite * 2 * nsite * 2 * nsite * 2;
+    ngreen = 0;
+    for (site1 = 0; site1 < nsite; site1++){
+      if (locspinflag[site1] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (locspinflag[site1] + 1);
+    }
+    ngreen = ngreen * ngreen * ngreen * ngreen;
   }
   greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
   for (igreen = 0; igreen < ngreen; igreen++){
@@ -789,9 +939,17 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   if (ioutputmode == 1){
     igreen = 0;
     for (site1 = 0; site1 < nsite; site1++){
-      for (spin1 = 0; spin1 < 2; spin1++){
+
+      if (locspinflag[site1] == 0) S1Max = 1;
+      else S1Max = locspinflag[site1];
+
+      for (spin1 = 0; spin1 <= S1Max; spin1++){
         for (site2 = 0; site2 < nsite; site2++){
-          for (spin2 = 0; spin2 < 2; spin2++){
+
+          if (locspinflag[site2] == 0) S2Max = 1;
+          else S2Max = locspinflag[site2];
+
+          for (spin2 = 0; spin2 <= S2Max; spin2++){
             greenindx[igreen][0] = site1;
             greenindx[igreen][1] = spin1;
             greenindx[igreen][2] = site1;
@@ -809,13 +967,29 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   else if (ioutputmode == 2){
     igreen = 0;
     for (site1 = 0; site1 < nsite; site1++){
-      for (spin1 = 0; spin1 < 2; spin1++){
+
+      if (locspinflag[site1] == 0) S1Max = 1;
+      else S1Max = locspinflag[site1];
+
+      for (spin1 = 0; spin1 <= S1Max; spin1++){
         for (site2 = 0; site2 < nsite; site2++){
-          for (spin2 = 0; spin2 < 2; spin2++){
+
+          if (locspinflag[site2] == 0) S2Max = 1;
+          else S2Max = locspinflag[site2];
+
+          for (spin2 = 0; spin2 <= S2Max; spin2++){
             for (site3 = 0; site3 < nsite; site3++){
-              for (spin3 = 0; spin3 < 2; spin3++){
+
+              if (locspinflag[site3] == 0) S3Max = 1;
+              else S3Max = locspinflag[site3];
+
+              for (spin3 = 0; spin3 <= S3Max; spin3++){
                 for (site4 = 0; site4 < nsite; site4++){
-                  for (spin4 = 0; spin4 < 2; spin4++){
+
+                  if (locspinflag[site4] == 0) S4Max = 1;
+                  else S4Max = locspinflag[site4];
+
+                  for (spin4 = 0; spin4 <= S4Max; spin4++){
                     greenindx[igreen][0] = site1;
                     greenindx[igreen][1] = spin1;
                     greenindx[igreen][2] = site2;
@@ -923,8 +1097,6 @@ static int CheckOutputMode(char* outputmode /**< [in]*/){
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 static void CheckModPara(
-  int *nup /**< [out] The number of electrons of down spin*/, 
-  int *ndown /**< [out] The number of electrons of up spin*/,
   char* model /**< [inout]*/,
   int *nelec /**< [inout]*/,
   int *Sz2 /**< [inout]*/,
@@ -934,8 +1106,6 @@ static void CheckModPara(
   int *exct /**< [inout]*/,
   int *LanczosEps /**< [inout]*/,
   int *LanczosTarget /**< [inout]*/,
-  int *WRITE /**< [inout]*/,
-  int *READ /**< [inout]*/,
   int *NumAve /**< [inout]*/,
   int *ExpecInterval /**< [inout]*/,
   char* filehead /**< [inout]*/)
@@ -957,81 +1127,17 @@ static void CheckModPara(
   /**/
   if (strcmp(model, "fermionhubbard") == 0) {
 
-    StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
 
-    if (abs(*Sz2) > nsite){
-      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > 2 * nsite){
-      fprintf(stderr, "\n ERROR ! Nelec > 2 * nsite in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if ((*nelec + *Sz2) % 2 != 0){
-      fprintf(stderr, "\n ERROR ! (nelec + 2 * Sz) %% 2 != 0 in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec <= nsite && abs(*Sz2) > *nelec){
-      fprintf(stderr, "\n ERROR ! nelec <= nsite && 2 * |Sz| > nelec in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > nsite && abs(*Sz2) > 2 * nsite - *nelec){
-      fprintf(stderr, "\n ERROR ! nelec > nsite && 2 * |Sz| > 2 * nsite - nelec in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else {
-      *nup = (*nelec + *Sz2) / 2;
-      *ndown = (*nelec - *Sz2) / 2;
-    }
   }
   else if (strcmp(model, "spin") == 0) {
 
     StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_NotUsed_i("nelec", *nelec);
-
-    if (abs(*Sz2) > nsite){
-      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Spin model ! \n");
-      exitMPI(-1);
-    }
-    else if ((nsite + *Sz2) % 2 != 0){
-      fprintf(stderr, "\n ERROR ! (nsite + 2 * Sz) %% 2 != 0 in Spin model ! \n");
-      exitMPI(-1);
-    }
-    else{
-      *nup = (nsite + *Sz2) / 2;
-      *ndown = (nsite - *Sz2) / 2;
-    }
   }
   else if (strcmp(model, "kondolattice") == 0) {
 
-    StdFace_RequiredVal_i("2Sz", *Sz2);
     StdFace_RequiredVal_i("nelec", *nelec);
-
-    if (abs(*Sz2) > nsite){
-      fprintf(stderr, "\n ERROR ! abs(2 * Sz) > nsite in Hubbard model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > nsite){
-      fprintf(stderr, "\n ERROR ! Nelec_cond / 2 + Nelec_loc > nsite in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else if ((*nelec + nsite / 2 + *Sz2) % 2 != 0){
-      fprintf(stderr, "\n ERROR ! (nelec_cond + nelec_loc + 2 * Sz) %% 2 != 0 in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec <= nsite / 2 && abs(*Sz2) > *nelec + nsite / 2){
-      fprintf(stderr, "\n ERROR ! nelec_cond <= nsite / 2 && 2 * |Sz| > nelec_cond + nelec_loc in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else if (*nelec > nsite / 2 && abs(*Sz2) > nsite / 2 * 3 - *nelec){
-      fprintf(stderr, "\n ERROR ! nelec_cond > nsite / 2 && abs(Sz2) > nsite / 2 * 3 - nelec in Kondo model ! \n");
-      exitMPI(-1);
-    }
-    else {
-      *nup = (*nelec + nsite / 2 + *Sz2) / 2;
-      *ndown = (*nelec + nsite / 2 - *Sz2) / 2;
-    }
 
   }
   else if (strcmp(model, "fermionhubbardgc") == 0
@@ -1042,9 +1148,6 @@ static void CheckModPara(
  
     StdFace_NotUsed_i("nelec", *nelec);
     StdFace_NotUsed_i("2Sz", *Sz2);
-
-    *nup = nsite / 2;
-    *ndown = nsite - *nup;
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Model !\n");

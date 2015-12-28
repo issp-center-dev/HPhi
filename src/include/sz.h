@@ -23,6 +23,7 @@ int child_omp_sz(
 		 struct BindStruct *X
 		 );
 
+
 int child_omp_sz_Kondo(
 		      long unsigned int ib, 
 		      long unsigned int ihfbit,
@@ -48,6 +49,13 @@ int child_omp_sz_spin(
 		      struct BindStruct *X
 		      );
 
+int child_omp_sz_GeneralSpin(
+		      long unsigned int ib, 
+		      long unsigned int ihfbit,
+		      int N,
+		      struct BindStruct *X
+			     );
+
 long int Binomial(
 	     int n,
 	     int k,
@@ -58,17 +66,6 @@ long int Binomial(
 int sz(
 
        );
-
-int sz_single_thread
-(
- struct BindStruct *X,
- const unsigned int N,
- const unsigned int N2,
- const long unsigned int idim,
- const long unsigned int irght,
- const long unsigned int ilft,
- const long unsigned int ihfbit
- );
 
 int Read_sz
 (

@@ -36,8 +36,10 @@ struct DefineList{
   long int global_off;  /**< */
   
   int  Nsite;    /**< */
+  int  NsiteMPI;    /**< */
   int  Nup;    /**< Read from modpara in readdef */
   int Ndown;    /**< */
+  int  Total2Sz;    /**< */
   int  Ne;    /**< */
   int  Nsize;    /**< */
   int Lanczos_max;    /**< */
@@ -49,9 +51,14 @@ struct DefineList{
   
   int *LocSpn;    /**< [NLocSpn] */
   int  NLocSpn;    /**< */
+  int NCond;
+  int iFlgGeneralSpin;
+  int iFlgSzConserved;
   
   int fidx;    /**< */
   long int *Tpow;    /**< [2 * Nsite] 2^n */
+  long int *OrgTpow;    /**< [2 * Nsite] 2^n */
+  long int *SiteToBit; /**< [Nsite] */
   
   int *EDChemi;    /**< [Nsite] */
   int  EDNChemi;   /**< */  
@@ -130,11 +137,27 @@ struct DefineList{
   int   **CisAjtCkuAlvDC; /**< */
   int NCisAjtCkuAlvDC; /**< */
 	
-  int iCalcType; /**< */
- 
+  int iCalcType;
+  /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
+
+  int iCalcEigenVec;
+  /**< An integer for selecting method to calculate eigenvectors. 0:Lanczos+CG, 1: Lanczos. default value is set as 0 in readdef.c*/  
+
+  int iInitialVecType;
+  /**< An integer for setting a type of inital vectors. 0:complex type, 1: real type. default value is set as 0 in readdef.c*/  
+  
   int iFlgFiniteTemperature;    /**< */
-  int iCalcModel;    /**<  */
-  int iOutputMode;     /**<  0: OneBodyG and TwoBodyG. 1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
+  int iCalcModel;
+  /**<  An integer for selecting calculation model. 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC, 6:HubbardNConserved*/
+  int iOutputMode;
+  /**<   An integer for selecting output mode. 0: OneBodyG and TwoBodyG. 1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
+
+  /**< An integer for selecting output an eigenvector. 0: no output, 1:output.*/
+  int iOutputEigenVec;
+
+    /**< An integer for selecting output an eigenvector. 0: no input, 1:input*/
+  int iInputEigenVec;
+  
 };
 
 struct CheckList{
@@ -193,6 +216,7 @@ struct PhysList{
   double num_up;
   double num_down;
   double s2;
+  double sz;
   double *all_energy;
   double *all_doublon;
   double *all_s2;

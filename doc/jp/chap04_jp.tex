@@ -123,6 +123,7 @@ TwoBodyG	zcisajscktaltdc.def
 CalcType   0
 CalcModel   2
 OutputMode   1
+CalcEigenVec 0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -187,9 +188,46 @@ OutputMode   1
 {\bf 形式 :} int型 (デフォルト値 0)
 
 {\bf 説明 :} 計算時に出力するモードの指定を行います。\\
-0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力。\\
+0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力\\
 1: 電荷電荷相関、スピンスピン相関とキーワードOneBodyG, TwoBodyGで指定されたGreen関数の出力(ver.0.1では未対応)\\
 で選択することが出来ます。
+
+\item  \verb|CalcEigenVec|
+
+{\bf 形式 :} int型 (デフォルト値 0)
+
+{\bf 説明 :} 固有ベクトルを計算する際の手法の指定を行います。\\
+0: Lanczos法+CG法 (Lanczos法での収束が十分でない場合にCG法での固有ベクトル計算が行われます)\\
+1: Lanczos法\\
+で選択することが出来ます。
+
+\item  \verb|InitialVecType|
+
+{\bf 形式 :} int型 (デフォルト値 0)
+
+{\bf 説明 :} 固有ベクトルの初期値の型の指定を行います。\\
+0: 複素数\\
+1: 実数\\
+から選択することが出来ます。
+
+\item  \verb|OutputEigenVec|
+
+{\bf 形式 :} {int型 (デフォルト値 0)}
+
+{\bf 説明 :} {固有ベクトルの出力の指定を行います(MPIには非対応)。\\
+0: 出力なし\\
+1: 出力あり\\
+から選択することが出来ます。}
+
+\item  \verb|InputEigenVec|
+
+{\bf 形式 :} {int型 (デフォルト値 0)}
+
+{\bf 説明 :} {固有ベクトルの入力の指定を行います(MPIには非対応)。\\
+0: 入力なし\\
+1: 入力あり\\
+から選択することが出来ます。}
+
 \end{itemize}
 
 \newpage
@@ -208,8 +246,8 @@ CDataFileHead  zvo
 CParaFileHead  zqp
 --------------------
 Nsite          16   
-Nup            8    
-Ndown          8    
+Ncond          16    
+2Sz            0    
 Lanczos_max    1000 
 initial_iv     12   
 nvec           1    
@@ -273,6 +311,18 @@ ExpecInterval  20
 {\bf 形式 :} int型 (自然数)
 
 {\bf 説明 :} サイト数を指定する整数。  
+
+\item  \verb|Ncond|
+
+{\bf Type :} {int型 (自然数)}
+
+{\bf Description :} {伝導電子数を指定する整数。グランドカノニカルの場合には使用されません。}
+
+ \item  \verb|2Sz|
+
+{\bf Type :} {int型 (自然数)}
+
+{\bf Description :} {$2S_z$を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で$S_z$保存を行う場合には}\verb|Ncond|を指定する必要があります。
 
  \item  \verb|Nup|
 
@@ -411,7 +461,7 @@ NlocalSpin     6
 
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
 
  
   \item  $[$int03$]$
@@ -419,8 +469,10 @@ NlocalSpin     6
  {\bf 形式 :} int型 (空白不可)
 
 {\bf 説明 :} 局在スピンか遍歴電子かを指定する整数。\\
-0: 局在スピン\\
-1: 遍歴電子\\
+{
+0: 遍歴電子\\
+$n>0$: $2S=n$の局在スピン\\
+}
 を選択することが出来ます。
  \end{itemize}
 
@@ -496,7 +548,7 @@ NTransfer      24
 
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
   \item  $[$int03$]$, $[$int05$]$
 
@@ -600,7 +652,7 @@ NInterAll      36
 
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
   \item  $[$int03$]$, $[$int05$]$, $[$int07$]$, $[$int09$]$
 
@@ -640,7 +692,7 @@ NInterAll      36
 \newpage
 \subsection{CoulombIntra指定ファイル}
 \label{Subsec:coulombintra}
-オンサイトクーロン相互作用をハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+オンサイトクーロン相互作用をハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能、ver. 0.2ではMPI非対応)}。付け加える項は以下で与えられます。
 \begin{equation}
 H+=\sum_{i}U_i n_ {i \uparrow}n_{i \downarrow}
 \end{equation}
@@ -692,7 +744,7 @@ NCoulombIntra 6
   
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
  \item  $[$double01$]$
    
@@ -714,7 +766,7 @@ NCoulombIntra 6
 
 \newpage
 \subsection{CoulombInter指定ファイル}
-オフサイトクーロン相互作用をハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+オフサイトクーロン相互作用をハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能、ver. 0.2ではMPI非対応)}。付け加える項は以下で与えられます。
 \begin{equation}
 H+=\sum_{i,j}V_{ij} n_ {i}n_{j}
 \end{equation}
@@ -766,7 +818,7 @@ NCoulombInter 6
   
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
  \item  $[$double01$]$
    
@@ -787,7 +839,7 @@ NCoulombInter 6
 
 \newpage
 \subsection{Hund指定ファイル}
-Hundカップリングをハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+Hundカップリングをハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能、ver. 0.2ではMPI非対応)}。付け加える項は以下で与えられます。
 \begin{equation}
 H+=-\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow})
 \end{equation}
@@ -839,7 +891,7 @@ NHund 6
   
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
  \item  $[$double01$]$
    
@@ -860,7 +912,7 @@ NHund 6
 
 \newpage
 \subsection{PairHop指定ファイル}
-PairHopカップリングをハミルトニアンに付け加えます。付け加える項は以下で与えられます。
+PairHopカップリングをハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能、ver. 0.2ではMPI非対応)}。付け加える項は以下で与えられます。
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm Pair} c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}
 \end{equation}
@@ -912,7 +964,7 @@ NPairhop 6
   
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
  \item  $[$double01$]$
    
@@ -933,7 +985,7 @@ NPairhop 6
 
 \newpage
 \subsection{Exchange指定ファイル}
-Exchangeカップリングをハミルトニアンに付け加えます。
+Exchangeカップリングをハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能、ver. 0.2ではMPI非対応)}。
 電子系の場合には
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}+c_ {i \downarrow}^{\dag}c_{j\downarrow}c_{j \uparrow}^{\dag}c_{i  \uparrow})
@@ -995,7 +1047,7 @@ NExchange 6
   
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
  \item  $[$double01$]$
    
@@ -1016,7 +1068,7 @@ NExchange 6
 
 \newpage
 \subsection{Ising指定ファイル}
-Ising相互作用をハミルトニアンに付け加えます。
+Ising相互作用をハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能、ver. 0.2ではMPI非対応)}。
 電子系の場合には
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} )
@@ -1074,7 +1126,7 @@ NIsing 6
   
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
  \item  $[$double01$]$
    
@@ -1096,7 +1148,7 @@ NIsing 6
 \newpage
 \subsection{PairLift指定ファイル}
 \label{Subsec:pairlift}
-PairLiftカップリングをハミルトニアンに付け加えます。
+PairLiftカップリングをハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能、ver. 0.2ではMPI非対応)}。
 付け加える項は以下で与えられます。
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dag}c_{i\downarrow}c_{j \uparrow}^{\dag}c_{j \downarrow}+c_ {i \downarrow}^{\dag}c_{i\uparrow}c_{j \downarrow}^{\dag}c_{j \uparrow})
@@ -1149,7 +1201,7 @@ NPairLift 6
   
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
  \item  $[$double01$]$
    
@@ -1237,7 +1289,7 @@ NCisAjs         24
 
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
   \item  $[$int03$]$, $[$int05$]$
 
@@ -1329,7 +1381,7 @@ NCisAjsCktAltDC        576
 
  {\bf 形式 :} int型 (空白不可)
 
-{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|以下で指定します。
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
  
   \item  $[$int03$]$, $[$int05$]$,$[$int07$]$, $[$int09$]$
 
@@ -1800,7 +1852,7 @@ t_itr=275 0.000000
 \newpage
 \subsection{energy.dat}
 \label{subsec:energy.dat}
-(Lanczos法のみ) Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギーとダブロンを出力します。
+(Lanczos法のみ) Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギー、ダブロン{と$\langle S_z \rangle$}を出力します。
 以下にファイル例を記載します。\\
 
 \begin{minipage}{12.5cm}
@@ -1808,6 +1860,7 @@ t_itr=275 0.000000
 \begin{verbatim}
 Energy  -7.1043675920 
 Doublon  0.4164356536 
+Sz  0.0000000000 
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -1823,6 +1876,7 @@ Doublon  0.4164356536
  \begin{itemize}
    \item Energy $[$double01$]$
    \item Doublon $[$double02$]$
+   \item Sz $[$double03$]$
   \end{itemize}
 \subsubsection{パラメータ}
  \begin{itemize}
@@ -1839,6 +1893,13 @@ Doublon  0.4164356536
 
 {\bf 説明 :} Lanczos法・CG法で求めた固有ベクトルを用い計算したダブロン
 $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$はサイト数)。
+
+ \item  $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 固有ベクトルを用い計算した$\langle S_z\rangle$。
+
  \end{itemize}
 
 \newpage
@@ -2247,6 +2308,64 @@ $[$int02$]$が$\sigma_1$、$[$int04$]$が$\sigma_2$、$[$int06$]$が$\sigma_3$�
  {\bf 形式 :} double型 
 
 {\bf 説明 :} $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+\end{itemize}
+
+\newpage
+\subsection{eigenvec.dat}
+\label{Subsec:eigenvec}
+CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算された固有ベクトルを出力します。IntputEigenVec=1の場合には、出力されたファイルの読み込みを行います。以下にファイル例を記載します。
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+4900 
+255 0.0000896233 0.0000896690
+447 -0.0000000000 -0.0000000000
+495 -0.0002941096 -0.0002942596
+507 -0.0000562403 -0.0000562689
+510 -0.0000000000 -0.0000000000
+639 -0.0000000000 0.0000000000
+735 0.0002941096 0.0002942596
+759 0.0000562403 0.0000562689
+765 -0.0000000000 0.0000000000
+831 -0.0017552852 -0.0017561802
+ …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_eigenvec\_{\&\&}.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\&\&は固有値の番号を表します。
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目-: $[$int02$]$~~$[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+ 
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} 計算対象のヒルベルト空間の数。
+
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 固有ベクトルの値を表します。\\
 $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 

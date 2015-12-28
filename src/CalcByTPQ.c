@@ -13,6 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+#include <FirstMultiply.h>
+#include <expec_energy.h>
+#include <expec_cisajs.h>
+#include <expec_cisajscktaltdc.h>
 #include "CalcByTPQ.h"
 #include "wrapperMPI.h"
 
@@ -68,9 +72,8 @@ int CalcBySSM(
     
     FirstMultiply(&dsfmt, &(X->Bind));
     
-    //    expec(&(X->Bind));
     expec_energy(&(X->Bind));
-    Ns = 1.0*X->Bind.Def.Nsite;
+    Ns = 1.0*X->Bind.Def.NsiteMPI;
     inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
     step_i = 1;
     X->Bind.Def.istep=step_i;

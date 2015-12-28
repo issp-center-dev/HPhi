@@ -191,7 +191,7 @@ it should not be specified.
 {\bf Description :} The $z$ component of the twofold total spin is 
 specified with this parameter.
 When \verb|lmodel = "Fermion HubbardGC"| or \verb|SpinGC|,
-it should not be specified.
+it should not be specified. 
 \end{itemize}
 
 \subsection{Parameters for the Hubbard model}
@@ -252,6 +252,13 @@ on the anisotropic honeycomb lattice
 
 \subsection{Parameters for the Kitaev-Heisenberg model}
 \begin{itemize}
+\item \verb|2S|
+
+{\bf Type :} Positive integer (\verb|1| as a default)
+
+{\bf Description :} The twofold moment of a localized spin is specified 
+with this parameter (e. g. \verb|2S=1| for $1/2$ spin system). 
+
 \item \verb|h|, \verb|Gamma|, \verb|D|
 
 {\bf Type :} Real (\verb|0.0| as a default)
@@ -420,24 +427,24 @@ l = 2|\mu|
 
 The canonical ensemble
 \begin{align}
-l = \frac{1}{2}|h| + \frac{1}{2}|D| + \frac{1}{4}|\Gamma|
-+\frac{z}{8} (|J_x|+|J_y|+|J_z|) +\frac{z'}{8} (|J'_x|+|J'_y|+|J'_z|) 
+l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + S |\Gamma| + S^2 |D|
++\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) +\frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|)
 \end{align}
 The grand canonical ensemble
 \begin{align}
-l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + \frac{1}{2}|D| + \frac{1}{4}|\Gamma|
-+\frac{z}{8} (|J_x|+|J_y|+|J_z|) +\frac{z'}{8} (|J'_x|+|J'_y|+|J'_z|)
+l = S |h| + S |\Gamma| + S^2 |D|
++\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) + \frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|) 
 \end{align}
 
 \item Kondo lattice model [Eqn. (\ref{fml4_1_kondo})]
 
 The canonical ensemble
 \begin{align}
-l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{1}{4} |J| 
+l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{S}{2} |J| 
 \end{align}
 The grand canonical ensemble
 \begin{align}
-l = 2|\mu| + 2 z |t| + \frac{1}{4} |J| 
+l = 2|\mu| + 2 z |t| + \frac{S}{2} |J| 
 \end{align}
 
 \end{itemize}

@@ -15,6 +15,14 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /*-------------------------------------------------------------*/
 
+#include <sz.h>
+#include <HPhiTrans.h>
+#include <output_list.h>
+#include <diagonalcalc.h>
+#include <CalcByLanczos.h>
+#include <CalcByFullDiag.h>
+#include <CalcByTPQ.h>
+#include <check.h>
 #include "Common.h"
 #include "readdef.h"
 #include "StdFace_main.h"
@@ -73,17 +81,19 @@ int main(int argc, char* argv[]){
   InitializeMPI(argc, argv);
 
   if(JudgeDefType(argc, argv, &mode)!=0){
-    return -1;
+    exitMPI(-1);
   }  
 
   //MakeDirectory for output
   struct stat tmpst;
-  if(stat(cParentOutputFolder,&tmpst)!=0){
-    if(mkdir(cParentOutputFolder, 0777)!=0){
-      fprintf(stdoutMPI, "%s", cErrOutput);
-      return -1;
+  if (myrank == 0) {
+    if (stat(cParentOutputFolder, &tmpst) != 0) {
+      if (mkdir(cParentOutputFolder, 0777) != 0) {
+        fprintf(stdoutMPI, "%s", cErrOutput);
+        exitMPI(-1);
+      }
     }
-  }
+  }/*if (myrank == 0)*/
 
   strcpy(cFileListName, argv[2]);
   
@@ -92,23 +102,22 @@ int main(int argc, char* argv[]){
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdoutMPI, "Dry run is Finished. \n\n");
+      FinalizeMPI();
       return 0;
     }
   }
 
   setmem_HEAD(&X.Bind);
-  //  if(ReadDefFileNInt(argv[1], &(X.Bind.Def))!=0){
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def))!=0){
     fprintf(stderr, "%s", cErrDefFile);
-    return (-1);
+    exitMPI(-1);
   }
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
-    return (-1);
+    exitMPI(-1);
   }	  
   fprintf(stdoutMPI, "Definition files are correct.\n");
-
   
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind);
@@ -117,30 +126,33 @@ int main(int argc, char* argv[]){
   /*Read Def files.*/
   if(ReadDefFileIdxPara(&(X.Bind.Def))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
-    return (-1);
+    exitMPI(-1);
   }
   else{
-    if(!check(&(X.Bind))==0){
-      return (-1);
+    if(check(&(X.Bind))==FALSE){
+      //      exitMPI(-1);
     }
   }
   
-  /*LARGE VECTORS ARE ALLOCATED*/
-  if(!setmem_large(&X.Bind)==0){
-    fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
-    return (-1);
-  }
+    /*LARGE VECTORS ARE ALLOCATED*/
+    if(!setmem_large(&X.Bind)==0){
+      fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
+      exitMPI(-1);
+    }
+
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
+
   /*---------------------------*/
   HPhiTrans(&(X.Bind));
-    
+  
   if(!sz(&(X.Bind))==0){
-    return -1;
+    exitMPI(-1);
   }
 
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
+    FinalizeMPI();
     return 0;
   }
 
@@ -148,25 +160,29 @@ int main(int argc, char* argv[]){
   
   //Start Calculation
   switch (X.Bind.Def.iCalcType){
-  case Lanczos:
+  case Lanczos:    
     if(!CalcByLanczos(&X)==0){
-      return -1;
-    }
+      FinalizeMPI();
+      return 0;
+    }    
     break;
   case FullDiag:
     if(!CalcByFullDiag(&X)==0){
-      return -1;
+      FinalizeMPI();
+      return 0;
     }
     break;
   case TPQCalc:
     if(!CalcBySSM(NumAve, ExpecInterval, &X)==0){
-      return -1;
+      FinalizeMPI();
+      return 0;
     }
     break;
   default:
-    return -1;
+    FinalizeMPI();
+    return 0;
   }  
-  
+
   FinalizeMPI();
   return 0;
 }

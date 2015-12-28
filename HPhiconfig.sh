@@ -23,17 +23,17 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
 else
     if [ ${1} = "sekirei" ]; then
         cat > src/make.sys <<EOF
-CC = icc
+CC = mpiicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel
+FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
-CC = fccpx
+CC = mpifccpx
 LAPACK_FLAGS = -Dlapack -SSL2BLAMP
-FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const
+FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI -g
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
@@ -41,7 +41,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = icc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -O3 -DHAVE_SSE2
+FLAGS = -openmp -O3 -DHAVE_SSE2 -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
@@ -49,7 +49,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -O3 -DHAVE_SSE2 -D MPI
+FLAGS = -openmp -O3 -DHAVE_SSE2 -D MPI -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
@@ -99,6 +99,18 @@ EOF
     echo
 
     cat > makefile <<EOF
+help:
+	@echo ""
+	@echo "Usage :"
+	@echo "make <entry>"
+	@echo ""
+	@echo "<entry> is chosen from below"
+	@echo "      HPhi : Build simulator HPhi in src/"
+	@echo " userguide : Generate userguid_jp.pdf & userguide_en.pdf in doc/"
+	@echo "     clean : Remove all generated files excepting makefile"
+	@echo " veryclean : Remove all generated files including makefile"
+	@echo ""
+
 HPhi:
 	cd src;make -f makefile_src
 

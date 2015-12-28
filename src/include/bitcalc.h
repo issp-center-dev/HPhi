@@ -33,6 +33,12 @@ int GetSplitBitByModel(
 		       long unsigned int *ihfbit
 		       );
 
+int GetSplitBitForGeneralSpin(
+		const int Nsite,
+		long unsigned int *ihfbit,
+		const long int *SiteToBit
+			      );
+
 //inline void SplitBit(
 void SplitBit(
 		  const long unsigned int ibit,
@@ -44,10 +50,10 @@ void SplitBit(
 	      );
 
 //inline void GetOffComp(
-void GetOffComp(
+int GetOffComp(
 	        long unsigned int *_list_2_1,
 	        long unsigned int *_list_2_2,
-		const long unsigned int _ibit,
+		long unsigned int _ibit,
 		const long unsigned int _irght,
 		const long unsigned int _ilft,
 		const long unsigned int _ihfbit,
@@ -68,3 +74,43 @@ int BitCheck(
 	     const long unsigned int org_bit,
 	     const long unsigned int target_bit
 );
+
+int BitCheckGeneral(
+	     const long unsigned int org_bit,
+	     const unsigned int org_isite,
+	     const unsigned int target_ispin,
+	     const long int *SiteToBit,
+	     const long int *TPow	     
+		    );
+
+
+int GetBitGeneral( 
+	     const unsigned int isite,
+	     const long unsigned int org_bit,
+	     const long int *SiteToBit,
+	     const long int *TPow	     
+		   );
+
+int GetOffCompGeneralSpin(
+		const long unsigned int org_ibit,
+		const int org_isite,
+		const int org_ispin,
+		const int off_ispin,
+		long int *_ioffComp,
+		const long int *SiteToBit,
+		const long int *TPow
+		);
+
+int GetLocal2Sz
+(
+ const unsigned int isite,
+ const long unsigned int org_bit,
+ const long int *SiteToBit,
+ const long int *Tpow
+ );
+
+void ConvertToList1GeneralSpin(
+		const long unsigned int org_ibit,
+		const long unsigned int ihlfbit,
+		long int *_ilist1Comp
+			       );
