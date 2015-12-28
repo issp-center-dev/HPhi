@@ -202,7 +202,9 @@ int CalcByLanczos(
   fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);
   fprintf(fp,"Sz  %.10lf \n",X->Bind.Phys.sz);
   //    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);    
-  
+  fclose(fp);
+
+  fprintf(stdoutMPI, "debug: start output\n");
   if(X->Bind.Def.iOutputEigenVec==TRUE){
     sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
     if(childfopenMPI(sdt, "w", &fp)!=0){
@@ -210,12 +212,25 @@ int CalcByLanczos(
       exitMPI(-1);
       }
     fprintf(fp, "%ld \n", X->Bind.Check.idim_max);
-    for(i=1; i<=X->Bind.Check.idim_max; i++){
-      fprintf(fp, "%ld %.10lf %.10lf\n", list_1[i], creal(v1[i]), cimag(v1[i]));
-    }    
+    switch(X->Bind.Def.iCalcModel){
+    case HubbardGC:
+    case SpinGC:
+    case KondoGC:
+      for(i=1; i<=X->Bind.Check.idim_max; i++){
+	fprintf(fp, "%ld %.10lf %.10lf\n", i, creal(v1[i]), cimag(v1[i]));
+      }
+      break;
+
+    case Hubbard:
+    case Kondo:
+    case Spin:
+      for(i=1; i<=X->Bind.Check.idim_max; i++){
+	fprintf(fp, "%ld %.10lf %.10lf\n", list_1[i], creal(v1[i]), cimag(v1[i]));
+      }
+      break;
+    }
     fclose(fp);
   }
-  
-  fclose(fp);
+
   return 0;
 }
