@@ -69,6 +69,22 @@ $ make HPhi
 \end{screen}
 
 \subsection{cmakeを使う場合}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize\\
+sekirei で cmake を利用するには
+\begin{verbatim}
+source /home/issp/materiapps/tool/env.sh
+\end{verbatim}
+maki では
+\begin{verbatim}
+source /global/app/materiapps/tool/env.sh
+\end{verbatim}
+をあらかじめ実行する必要があります。
+\end{screen}
+
 HPhiを展開したディレクトリのパスを\$PathTohphi 、ビルドディレクトリを\$HOME/build/hphi (任意の場所を指定可能)とした場合に、
 \begin{verbatim}
 cd $HOME/build/hphi
@@ -92,19 +108,4 @@ cmake -DCONFIG=intel ../
 make
 \end{verbatim}
 実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、新規に上記作業を行うことをお薦めします。
-
-\begin{screen}
-\Large 
-{\bf Tips}
-\normalsize\\
-sekirei で cmake を利用するには
-\begin{verbatim}
-source /home/issp/materiapps/tool/env.sh
-\end{verbatim}
-maki では
-\begin{verbatim}
-source /global/app/materiapps/tool/env.sh
-\end{verbatim}
-をあらかじめ実行する必要があります。
-\end{screen}
 
