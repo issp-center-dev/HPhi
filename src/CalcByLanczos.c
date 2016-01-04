@@ -204,7 +204,6 @@ int CalcByLanczos(
   //    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);    
   fclose(fp);
 
-  fprintf(stdoutMPI, "debug: start output\n");
   if(X->Bind.Def.iOutputEigenVec==TRUE){
     sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
     if(childfopenMPI(sdt, "w", &fp)!=0){
