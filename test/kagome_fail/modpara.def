@@ -1,0 +1,20 @@
+--------------------
+Model_Parameters   0
+--------------------
+VMC_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite          30
+Nup            15
+Ndown          15  
+Lanczos_max    1000 
+initial_iv     12   
+nvec           1    
+exct           1    
+LanczosEps     14   
+LanczosTarget  2    
+LargeValue     1   
+NumAve         5    
+ExpecInterval  20   
