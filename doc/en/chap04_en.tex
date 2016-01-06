@@ -311,7 +311,25 @@ ExpecInterval  20
 
 {\bf Type :} int-type
 
-{\bf Description :} An integer for setting non-zero components of an initial vector. For grand canonical ensemble, the random number seed is given for getting initial vector including a lot states. 
+{\bf Description :} 
+\tr{An initial vector is specified with this parameter.}
+\begin{itemize}
+\item{Lanczos method}
+\begin{itemize}
+\item{For canonical ensemble and \verb|initial_iv| $\geq 0$}
+
+The non-zero components of an initial vector is specified with this parameter. 
+
+\item{For grand canonical ensemble or \verb|initial_iv| $< 0$}
+
+A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+\end{itemize}
+
+\item{TPQ method}
+
+A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+\end{itemize}
+See \ref{Ch:algorithm} for details of setting an initial vector.
 
  \item  \verb|nvec|
 
