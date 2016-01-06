@@ -64,10 +64,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   if(initial_mode == 0){
 
     sum_i_max = SumMPI_li(X->Check.idim_max);
-    X->Large.iv = (sum_i_max / 3 + X->Def.initial_iv) % sum_i_max + 1;
-    if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
-      X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
-    }
+    X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
     iv=X->Large.iv;
     fprintf(stdoutMPI, "initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
 #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
