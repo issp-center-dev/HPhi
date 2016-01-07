@@ -2325,7 +2325,7 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
   int ibit1;
   double complex trans, dam_pr;
   mask1 = (int)X->Def.Tpow[org_isite1];
-  ibit1 = ((unsigned long int)myrank& mask1)^(1-org_ispin1);
+  ibit1 = (((unsigned long int)myrank& mask1)/mask1)^(1-org_ispin1);
 
   dam_pr =0.0;
   if(ibit1 != 0){
