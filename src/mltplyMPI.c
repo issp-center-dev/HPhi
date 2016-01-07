@@ -1153,7 +1153,14 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
     firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
   for (j = 0; j < idim_max_buf; j++) {
-
+    state1 = X_SpinGC_CisAit(j+1, X, mask1, state1check, &ioff);
+    if(state1 != 0){
+      dmv = Jint * v1buf[j + 1];
+      if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
+      dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
+    }
+    
+    /*
     state1 = (j & mask1) / mask1;
     if (state1 == state1check) {
 
@@ -1163,6 +1170,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
       if (X->Large.mode == M_MLTPLY) tmp_v0[ioff + 1] += dmv;
       dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
     }
+    */
   }
   return (dam_pr);
 
