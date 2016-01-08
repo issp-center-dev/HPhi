@@ -54,7 +54,7 @@ int CalcBySSM(
   X->Bind.Def.St=0;
   for (rand_i = 0; rand_i<rand_max; rand_i++){
     fprintf(stdoutMPI, "rand_i=%d \n", rand_i);
-    u_long_i = 123432 + rand_i*X->Bind.Def.initial_iv;
+    u_long_i = 123432 + (rand_i+1)*abs(X->Bind.Def.initial_iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){

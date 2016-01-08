@@ -2,3 +2,4 @@
  Ly          5
  orb_num     3
  J           1.0
+ H           1.0

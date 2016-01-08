@@ -524,7 +524,7 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
         for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
 	  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
 	    dam_pr=0;
-	    if(X->Def.EDGeneralTransfer[idx][1]==X->Def.EDGeneralTransfer[idx][3]){
+	    if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
 	      fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 	    }
 	    else{

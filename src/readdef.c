@@ -960,7 +960,7 @@ int ReadDefFileIdxPara(
         &dvalue_im
         );
 	   	    
-	    if(X->iCalcModel == Spin){
+	    if(X->iCalcModel == Spin || X->iCalcModel ==SpinGC){
 	      if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
 		fclose(fp);
 		exitMPI(-1);
@@ -1072,7 +1072,7 @@ int ReadDefFileIdxPara(
 		 &isigma4
 		 );
 
-	  if(X->iCalcModel == Spin){
+	  if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
 	    if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
 	      X->NCisAjtCkuAlvDC--;
 	      continue;
@@ -1479,7 +1479,7 @@ int GetDiagonalInterAll
 	  fprintf(stdoutMPI, cErrNonConservedInterAll,
 		 isite1,
 		 isigma1,
-		 isite2,
+		  isite2,
 		 isigma2,
 		 isite3,
 		 isigma3,
@@ -1500,10 +1500,12 @@ int GetDiagonalInterAll
       break;
     case Spin:
     case SpinGC:
+      if(isite1 == isite2 && isite3 == isite4){
 	for(tmp_i=0; tmp_i<8; tmp_i++){
 	  X->InterAll_OffDiagonal[icnt_offdiagonal][tmp_i]=X->InterAll[i][tmp_i];
 	}
 	X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
+      }      
       break;
     default:
       exitMPI(-1);

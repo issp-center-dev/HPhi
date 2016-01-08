@@ -322,7 +322,24 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 {\bf 形式 :} 整数(デフォルト値は\verb|1|)
 
-{\bf 説明 :} 初期条件のベクトルでノンゼロの成分を指定します。
+{\bf 説明 :}  \tr{初期条件のベクトルを与えます。}
+\begin{itemize}
+\item{ランチョス法}
+\begin{itemize}
+\item{カノニカル集団かつ \verb|initial_iv| $\geq 0$の場合}
+
+ノンゼロの成分が指定されます。
+
+\item{ \verb|initial_iv| $< 0$の場合}
+
+乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。なお、グランドカノニカルの場合は初期状態として多くの状態を持つよう、こちらの様式が適用されます。
+\end{itemize}
+
+\item{TPQ法}
+
+乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。
+\end{itemize}
+初期ベクトル設定の詳細については、\ref{Ch:algorithm}を参照ください。
 
 \item \verb|nvec|
 

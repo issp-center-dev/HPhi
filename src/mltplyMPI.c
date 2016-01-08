@@ -455,10 +455,11 @@ void child_general_int_spin_MPIdouble(
 #ifdef MPI
   
   double complex dam_pr = 0;
-  dam_pr=X_child_general_int_spin_MPIdouble(
-  (int) X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1], (int)X->Def.InterAll_OffDiagonal[i_int][3],
-  (int) X->Def.InterAll_OffDiagonal[i_int][4], (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
-  X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  dam_pr=X_child_general_int_spin_MPIdouble
+    (
+     (int) X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1], (int)X->Def.InterAll_OffDiagonal[i_int][3],
+     (int) X->Def.InterAll_OffDiagonal[i_int][4], (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
+     X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   
   X->Large.prdct += dam_pr;
 
@@ -2324,7 +2325,7 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
   int ibit1;
   double complex trans, dam_pr;
   mask1 = (int)X->Def.Tpow[org_isite1];
-  ibit1 = ((unsigned long int)myrank& mask1)^(1-org_ispin1);
+  ibit1 = (((unsigned long int)myrank& mask1)/mask1)^(1-org_ispin1);
 
   dam_pr =0.0;
   if(ibit1 != 0){

@@ -70,13 +70,13 @@ char *cWarningIncorrectFormatForSpin;
 char *cWarningIncorrectFormatForSpin2;
 
 
+
 //! Error Message in diagonal calc.c
 char *cErrNoModel;
 char *cErrNoHilbertSpace;
 
 //! Error Message in bitcalc.c
 char *cErrSiteNumber;
-
 
 //! Error Message in mltiply.c
 char *cErrMltiply;
