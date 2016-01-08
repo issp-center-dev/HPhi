@@ -561,6 +561,7 @@ This file determines values of generalized two body interactions integrals $I_{i
 H+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
 I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.
 \end{equation}
+\tr{For Spin, the condition $i=j$ and $k=l$ must be satisfied.}
 An example of file format is shown as follows.
 
 \begin{minipage}{12.5cm}
@@ -648,6 +649,7 @@ NInterAll      36
 \begin{itemize}
 \item Headers cannot be omitted. 
 \item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$. The relation  $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{jilk\sigma_2\sigma_1\sigma_3\sigma_4}^{\dag}$ is also allowed. A program is terminated when the above relations are broken.
+\item \tr{A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
 \item A program is terminated, when components of on-site interactions are double counted.
 \item A program is terminated, when $[$int01$]$ is different from the total number of generalized two body interactions defined in this file.
 \item A program is terminated, when $[$int02$]$-$[$int09$]$ are out of range from the defined values.
@@ -1261,7 +1263,8 @@ An integer giving a spin index,\\
 \newpage
 \subsection{TwoBodyG file}
 \label{Subsec:twobodyg}
-This file determines the target components of two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. An example of file format is shown as follows.
+This file determines the target components of two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. \tr{For Spin, the condition $i=j$ and $k=l$ must be satisfied.}
+An example of file format is shown as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1345,6 +1348,7 @@ An integer giving a spin index,\\
 \begin{itemize}
 \item Headers cannot be omitted. 
 \item A program is terminated, when components of two-body Green's functions are double counted.
+\item \tr{A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
 \item A program is terminated, when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
 \item A program is terminated, when $[$int02$]$-$[$int09$]$ are out of range from the defined values.
 \end{itemize}
