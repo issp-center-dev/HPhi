@@ -198,9 +198,9 @@ int CalcByLanczos(
   }  
 
 
-  fprintf(fp,"Energy  %.10lf \n",X->Bind.Phys.energy);
-  fprintf(fp,"Doublon  %.10lf \n",X->Bind.Phys.doublon);
-  fprintf(fp,"Sz  %.10lf \n",X->Bind.Phys.sz);
+  fprintf(fp,"Energy  %.16lf \n",X->Bind.Phys.energy);
+  fprintf(fp,"Doublon  %.16lf \n",X->Bind.Phys.doublon);
+  fprintf(fp,"Sz  %.16lf \n",X->Bind.Phys.sz);
   //    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);    
   fclose(fp);
 

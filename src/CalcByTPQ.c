@@ -87,13 +87,13 @@ int CalcBySSM(
     if(!childfopenMPI(sdt_phys, "a", &fp)==0){
       return -1;
     }
-    fprintf(fp, "%lf  %lf %lf %lf %lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
+    fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
     fclose(fp);
 
     if(!childfopenMPI(sdt_norm, "a", &fp)==0){
       return -1;
     }
-    fprintf(fp, "%lf %lf %lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
+    fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
     fclose(fp);
     for (step_i = 2; step_i<X->Bind.Def.Lanczos_max; step_i++){
 
@@ -110,13 +110,13 @@ int CalcBySSM(
       if(!childfopenMPI(sdt_phys, "a", &fp)==0){
 	return -1;
       }
-      fprintf(fp, "%lf  %lf %lf %lf %lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
+      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
       fclose(fp);
 
       if(!childfopenMPI(sdt_norm, "a", &fp)==0){
 	return -1;
       }
-      fprintf(fp, "%lf %lf %lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
+      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
 
       if (step_i%step_spin == 0){
