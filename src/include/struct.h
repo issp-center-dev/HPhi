@@ -40,6 +40,7 @@ struct DefineList{
   int  Nup;    /**< Read from modpara in readdef */
   int Ndown;    /**< */
   int  Total2Sz;    /**< */
+  int  Total2SzMPI;    /**< */
   int  Ne;    /**< */
   int  Nsize;    /**< */
   int Lanczos_max;    /**< */
