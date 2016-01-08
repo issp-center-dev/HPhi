@@ -151,6 +151,7 @@ $\HPhi$ではスタンダードモードとエキスパートモードの2つの
   ワークステーションやスパコン等でキューイングシステムを利用している場合は
   プロセス数をジョブ投入コマンドの引数として与える場合があります。
   詳しくはお使いのシステムのマニュアルをご参照ください。
+  \tr{プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。詳細は\ref{SetProcess}を参照ください。}
 
 \end{itemize}
 
@@ -208,6 +209,8 @@ export OMP_NUM_THREADS=16
 
 \verb|$ mpiexec -np |\underline{プロセス数}\verb| |\underline{パス}\verb|/HPhi -e | \underline{入力リストファイル}
 
+\tr{プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。詳細は\ref{SetProcess}を参照ください。}
+
 \end{itemize}
 
 \item 途中経過
@@ -218,3 +221,14 @@ export OMP_NUM_THREADS=16
 
 計算が正常終了した場合、計算モードに従いoutputフォルダに計算結果ファイルが出力されます。出力されるファイルの詳細に関しては\ref{Sec:outputfile}を参考にしてください。
 \end{enumerate}
+
+\newpage
+\subsection{プロセス数の設定}
+\label{SetProcess}
+\tr{MPI並列/ハイブリッド並列を用いる場合、プロセス数は以下のように設定してください。}
+\begin{enumerate}
+\item{サイト毎に割り当てられる状態数の確認}
+
+\item{設定可能なプロセス数の確認}
+\end{enumerate}
+
