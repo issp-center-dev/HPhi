@@ -1376,8 +1376,12 @@ int CheckInterAllHermite
 	    }	    
 	    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
 	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
-	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][itmpIdx];
 	    }
+	    for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+	      X->InterAll[2*icntHermite+1][2*itmpIdx]=X->InterAll_OffDiagonal[i][6-2*itmpIdx];
+	      X->InterAll[2*icntHermite+1][2*itmpIdx+1]=X->InterAll_OffDiagonal[i][7-2*itmpIdx];
+	    }
+	    	    
 	    X->ParaInterAll[2*icntHermite]=X->ParaInterAll_OffDiagonal[i];
 	    X->ParaInterAll[2*icntHermite+1]=X->ParaInterAll_OffDiagonal[j];
 	    icntHermite++;
@@ -1399,8 +1403,23 @@ int CheckInterAllHermite
     for(i=0; i<X->NInterAll_OffDiagonal; i++){
       for(itmpIdx=0; itmpIdx<8; itmpIdx++){
 	X->InterAll_OffDiagonal[i][itmpIdx]=X->InterAll[i][itmpIdx];
+
       }
       X->ParaInterAll_OffDiagonal[i]=X->ParaInterAll[i];
+      /*
+	fprintf(stdoutMPI, "debug: isite1=%d, isigma1=%d, isite2=%d, isigma2=%d, isite3=%d, isigma3=%d, isite4=%d, isigma4=%d, para_re=%lf, para_im=%lf\n",
+	      X->InterAll_OffDiagonal[i][0],
+	      X->InterAll_OffDiagonal[i][1],
+	      X->InterAll_OffDiagonal[i][2],
+	      X->InterAll_OffDiagonal[i][3],
+	      X->InterAll_OffDiagonal[i][4],
+	      X->InterAll_OffDiagonal[i][5],
+	      X->InterAll_OffDiagonal[i][6],
+	      X->InterAll_OffDiagonal[i][7],
+	      creal(X->ParaInterAll[i]),
+	      cimag(X->ParaInterAll[i])
+	      );
+      */
     }
     return 0;
 }
@@ -1892,4 +1911,3 @@ int CheckTotal2Sz
   }
   return TRUE;
 }
-
