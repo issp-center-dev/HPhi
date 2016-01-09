@@ -64,17 +64,23 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   dam_pr = 0.0;
 
   if(i_max!=0){
-  if (X->Def.iFlgGeneralSpin == FALSE) {
-    if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
-      return -1;
-    }
-  }
-  else{
-    if(X->Def.iCalcModel==Spin){
-      if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+    if (X->Def.iFlgGeneralSpin == FALSE) {
+      if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
 	return -1;
       }
     }
+    else{
+      if(X->Def.iCalcModel==Spin){
+	if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+	  return -1;
+	}
+      }
+    }
+  }
+  else{
+    irght=0;
+    ilft=0;
+    ihfbit=0;
   }
   X->Large.i_max = i_max;
   X->Large.irght = irght;
@@ -405,7 +411,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           }/*for (ihermite = 0; ihermite<2; ihermite++)*/
         }
       }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
-
   
       break;
       
@@ -797,7 +802,6 @@ shared(tmp_v0, tmp_v1)
       
   default:
     return -1;
-  }
   }
   
   X->Large.prdct = SumMPI_dc(X->Large.prdct);
