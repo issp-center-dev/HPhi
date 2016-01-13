@@ -157,8 +157,7 @@ struct DefineList{
   int iOutputEigenVec;
 
     /**< An integer for selecting output an eigenvector. 0: no input, 1:input*/
-  int iInputEigenVec;
-  
+  int iInputEigenVec;  
 };
 
 struct CheckList{

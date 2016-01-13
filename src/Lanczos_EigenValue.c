@@ -176,7 +176,6 @@ int Lanczos_EigenValue(struct BindStruct *X)
   }
   else{
 
-
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -295,6 +294,6 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
-  
+
   return 0;  
 }
