@@ -193,7 +193,7 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
       }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
-        /*X->Def.Total2SzMPI = X->Def.Total2Sz;*/
+        X->Def.Total2SzMPI = X->Def.Total2Sz;
 
         /* Ne should be different in each PE */
         SmallDim = myrank;

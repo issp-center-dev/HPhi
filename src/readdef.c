@@ -177,6 +177,7 @@ int ReadcalcmodFile(
   X->iInitialVecType=0;
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
+
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -230,7 +231,7 @@ int ReadcalcmodFile(
     fprintf(stderr, cErrOutputMode, defname);
     return (-1);
   }
-  if(ValidateValue(X->iCalcEigenVec, 0, NUM_CALCEIGENVEC-1)){
+  if(ValidateValue(X->iCalcEigenVec, -1, NUM_CALCEIGENVEC-1)){
     fprintf(stderr, cErrCalcEigenVec, defname);
     return (-1);
   }
@@ -331,7 +332,6 @@ int ReadDefFileNInt(
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
   int iReadNCond=FALSE;
-
   InitializeInteractionNum(X);
   
   fprintf(stdoutMPI, "Start: Read File '%s'.\n", xNameListFile); 

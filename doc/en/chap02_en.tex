@@ -149,8 +149,8 @@ Run a executable \verb|HPhi| in terminal by setting option ``\verb|-s|" (or ``\v
 
   When you use a queuing system in workstations or super computers, 
   sometimes the number of processes is specified as an argument for the job-submitting command.
-  If you need more information, please refer manuals for your system.
-
+  If you need more information, please refer manuals for your system. 
+ \tr{A number of processes depend on a target of system for models. The details of setting a number of processes are shown in  \ref{subsec:process}.}
 \end{itemize}
 
 \item Watch calculation logs
@@ -194,14 +194,14 @@ Run $\HPhi$ in terminal by setting option ``\verb|-e|" (or ``\verb|--expert|'') 
 
 \begin{itemize}
 
-\item Serial/OpenMPI
+\item Serial/OpenMP
 
   \verb|$ |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
   
 \item MPI/Hybrid
 
   \verb|$ mpiexec -np |\textit{number\_of\_processes}\verb| |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
-
+ \tr{A number of processes depend on a target of system for models. The details of setting a number of processes are shown in  \ref{subsec:process}.}
 \end{itemize}
 
 \item Under running\\
@@ -211,3 +211,55 @@ The details of output files are shown in \ref{Sec:outputfile}.
 \item Results\\
 If the calculation is finished normally, the result files are outputted in  the ``output" folder. The details of output files are shown in \ref{Sec:outputfile}.
 \end{enumerate}
+
+
+
+\newpage
+\subsection{プロセス数の設定}
+\label{subsec:process}
+\tr{MPI並列/ハイブリッド並列を用いる場合、プロセス数は以下のように設定してください。}
+\begin{enumerate}
+\item{Standardモード}
+
+\begin{itemize}
+\item{電子系及び近藤格子系 }
+
+スタンダードモード用入力ファイルで\verb|model|=\verb|"Fermion Hubbard"|, \\
+\verb|"Kondo Lattice"|, \verb|"Fermion HubbardGC"|の場合は、プロセス数が$4^n$となるように設定してください。
+
+\item{スピン系}
+
+スタンダードモード用入力ファイルで\verb|model|=\verb|"Spin"|, \verb|"SpinGC"|の場合は、入力ファイルの\verb|2S|の値に対してプロセス数が(\verb|2S|+1)${}^n$となるように設定してください(デフォルトは\verb|2S|=1)。
+\end{itemize}
+\item{Expertモード}
+
+\begin{itemize}
+\item{電子系及び近藤格子系 }
+\ref{Subsec:calcmod}の{\bf CalcMod}ファイルで、\verb|CalcModel|としてfermion Hubbard模型、近藤模型を選択した場合は、プロセス数が$4^n$となるように設定してください。
+
+\item{スピン系 }
+
+\ref{Subsec:calcmod}の{\bf CalcMod}ファイルで、\verb|CalcModel|としてスピン模型を選択した場合は、\ref{Subsec:locspn}の{\bf LocSpin}ファイルを参考にプロセス数を指定する必要があります。許容されるプロセス数は、サイト数の大きいものから順に局在スピンの状態数(\verb|2S|+1)を掛けたもので指定されます。\\
+例えば、{\bf LocSpin}ファイルが
+
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+================================ 
+NlocalSpin     3
+================================ 
+========i_0IteElc_2S ====== 
+================================ 
+    0      3
+    1      2
+    2      1
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+で与えられる場合、許容されるプロセス数は$2=1+1,~6=2\times(2+1),~24=6\times(3+1)$となります。
+
+\end{itemize}
+
+\end{enumerate}
+

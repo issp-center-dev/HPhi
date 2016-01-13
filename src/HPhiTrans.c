@@ -76,7 +76,9 @@ int HPhiTrans(struct BindStruct *X){
   }
   
 // PossibleError
+  printf(" %d %d\n",cnt_chemi,X->Def.NTransfer);
   if(cnt_chemi>0 && cnt_chemi!=2*X->Def.Nsite){
+    printf("X %d %d\n",cnt_chemi,X->Def.NTransfer);
     sprintf(sdt_err,cErrTransfer);
     childfopenMPI(sdt_err,"a", &fp_err);
     fprintf(fp_err,cErrChemicalPotential);

@@ -40,6 +40,7 @@ struct DefineList{
   int  Nup;    /**< Read from modpara in readdef */
   int Ndown;    /**< */
   int  Total2Sz;    /**< */
+  int  Total2SzMPI;    /**< */
   int  Ne;    /**< */
   int  Nsize;    /**< */
   int Lanczos_max;    /**< */
@@ -156,8 +157,7 @@ struct DefineList{
   int iOutputEigenVec;
 
     /**< An integer for selecting output an eigenvector. 0: no input, 1:input*/
-  int iInputEigenVec;
-  
+  int iInputEigenVec;  
 };
 
 struct CheckList{
