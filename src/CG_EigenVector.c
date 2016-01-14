@@ -77,6 +77,7 @@ int CG_EigenVector(struct BindStruct *X){
     b[i]=v0[i]+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*0.001;
     bnorm+=conj(b[i])*b[i];
   }
+  bnorm = SumMPI_d(bnorm);
   bnorm=sqrt(bnorm);
   
 #pragma omp parallel for default(none) private(i) shared(b) firstprivate(i_max,bnorm)

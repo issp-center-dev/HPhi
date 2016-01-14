@@ -97,7 +97,8 @@ int CalcByLanczos(
       return(0);
     }
 
-    if(X->Bind.Check.idim_max >1){
+    
+    if(X->Bind.Check.idim_maxMPI != 1){
       Lanczos_EigenVector(&(X->Bind));
       expec_energy(&(X->Bind));
       //check for the accuracy of the eigenvector

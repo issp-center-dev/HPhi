@@ -162,6 +162,7 @@ struct DefineList{
 
 struct CheckList{
   unsigned long int  idim_max; /**< */
+  unsigned long int  idim_maxMPI; /**< */
   unsigned long int     sdim;    /**< */
   double   max_mem;  /**< */
 
