@@ -144,7 +144,9 @@ int main(int argc, char* argv[]){
   SetConvergenceFactor(&(X.Bind.Def));
 
   /*---------------------------*/
-  HPhiTrans(&(X.Bind));
+  if(!HPhiTrans(&(X.Bind))==0){
+    exitMPI(-1);
+  }
   
   if(!sz(&(X.Bind))==0){
     exitMPI(-1);
