@@ -147,7 +147,7 @@ int main(int argc, char* argv[]){
   if(!HPhiTrans(&(X.Bind))==0){
     exitMPI(-1);
   }
-  
+
   if(!sz(&(X.Bind))==0){
     exitMPI(-1);
   }
