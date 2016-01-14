@@ -1383,8 +1383,8 @@ int CheckInterAllHermite
 	    for(itmpIdx=0; itmpIdx<8; itmpIdx +=2){
 	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
 	      X->InterAll[2*icntHermite][itmpIdx+1]=X->InterAll_OffDiagonal[i][itmpIdx+1];
-	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][6-itmpIdx];
-	      X->InterAll[2*icntHermite+1][itmpIdx+1]=X->InterAll_OffDiagonal[j][7-itmpIdx];
+	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[i][6-itmpIdx];
+	      X->InterAll[2*icntHermite+1][itmpIdx+1]=X->InterAll_OffDiagonal[i][7-itmpIdx];
 	    }
 	    
 	    X->ParaInterAll[2*icntHermite]=X->ParaInterAll_OffDiagonal[i];
