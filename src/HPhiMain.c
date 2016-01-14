@@ -134,11 +134,11 @@ int main(int argc, char* argv[]){
     }
   }
   
-    /*LARGE VECTORS ARE ALLOCATED*/
-    if(!setmem_large(&X.Bind)==0){
-      fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
-      exitMPI(-1);
-    }
+  /*LARGE VECTORS ARE ALLOCATED*/
+  if(!setmem_large(&X.Bind)==0){
+    fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
+    exitMPI(-1);
+  }
 
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
