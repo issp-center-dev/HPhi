@@ -1374,12 +1374,7 @@ int CheckInterAllHermite
 	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
 	      exitMPI(-1);
 	    }
-	    /*
-	    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
-	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
-	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][itmpIdx];
-	    }
-	    */
+
 	    for(itmpIdx=0; itmpIdx<8; itmpIdx +=2){
 	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
 	      X->InterAll[2*icntHermite][itmpIdx+1]=X->InterAll_OffDiagonal[i][itmpIdx+1];
