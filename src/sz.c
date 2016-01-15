@@ -312,7 +312,7 @@ int sz
       // this part can not be parallelized
       N_all_up   = X->Def.Nup;
       N_all_down = X->Def.Ndown;
-      fprintf(stdoutMPI, "N_all_up=%d N_all_down=%d \n",N_all_up,N_all_down);
+      fprintf(stdoutMPI, cStateNupNdown, N_all_up,N_all_down);
 
       jb = 0;
       num_loc=0;

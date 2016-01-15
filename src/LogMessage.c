@@ -21,7 +21,8 @@ const char* cReadFileNamelist = "  Read File '%s'.\n";
 const char* cReadFile = "  Read File '%s' for %s.\n";
 
 //sz.c
-const char* cStateLocSpin= "j = %d loc %d \n";
+const char* cStateLocSpin= "  j = %d loc %d \n";
+const char* cStateNupNdown= "  N_all_up=%d N_all_down=%d \n";
 const char* cInitalSz=  "initial sz : %s";
 const char* cOMPSzStart=  "omp parallel sz finishes: %s";
 const char* cOMPSzMid= "mid omp parallel sz : %s";

@@ -23,6 +23,7 @@ const char* cReadFile;
 
 //sz.c
 const char* cStateLocSpin;
+const char* cStateNupNdown;
 const char* cInitalSz;
 const char* cOMPSzStart;
 const char* cOMPSzMid;
