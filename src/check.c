@@ -195,7 +195,6 @@ int check(struct BindStruct *X){
   
   fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
 
-
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
   case Lanczos:

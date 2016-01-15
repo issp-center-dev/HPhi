@@ -1,0 +1,81 @@
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 4
+  MPI PEs : 16 
+
+Start: Read File './namelist.def'.
+End: Read File './namelist.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans.def' for Trans.
+Read File 'zInterAll.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Read File 'zTrans.def'.
+X->NTransfer =60, X->Nsite= 30.
+Read File 'zInterAll.def'.
+debug: isite1=24, isigma1=0, isite2=24, isigma2=1, isite3=26, isigma3=1, isite4=26, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=24, isigma1=1, isite2=24, isigma2=0, isite3=26, isigma3=0, isite4=26, isigma4=1, para_re=0.500000, para_im=0.000000
+debug: isite1=24, isigma1=0, isite2=24, isigma2=1, isite3=27, isigma3=1, isite4=27, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=24, isigma1=1, isite2=24, isigma2=0, isite3=27, isigma3=0, isite4=27, isigma4=1, para_re=0.500000, para_im=0.000000
+debug: isite1=25, isigma1=0, isite2=25, isigma2=1, isite3=26, isigma3=1, isite4=26, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=25, isigma1=1, isite2=25, isigma2=0, isite3=26, isigma3=0, isite4=26, isigma4=1, para_re=0.500000, para_im=0.000000
+debug: isite1=25, isigma1=0, isite2=25, isigma2=1, isite3=28, isigma3=1, isite4=28, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=25, isigma1=1, isite2=25, isigma2=0, isite3=28, isigma3=0, isite4=28, isigma4=1, para_re=0.500000, para_im=0.000000
+debug: isite1=27, isigma1=0, isite2=27, isigma2=1, isite3=0, isigma3=1, isite4=0, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=27, isigma1=1, isite2=27, isigma2=0, isite3=0, isigma3=0, isite4=0, isigma4=1, para_re=0.500000, para_im=0.000000
+debug: isite1=28, isigma1=0, isite2=28, isigma2=1, isite3=1, isigma3=1, isite4=1, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=28, isigma1=1, isite2=28, isigma2=0, isite3=1, isigma3=0, isite4=1, isigma4=1, para_re=0.500000, para_im=0.000000
+debug: isite1=29, isigma1=0, isite2=29, isigma2=1, isite3=1, isigma3=1, isite4=1, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=29, isigma1=1, isite2=29, isigma2=0, isite3=1, isigma3=0, isite4=1, isigma4=1, para_re=0.500000, para_im=0.000000
+debug: isite1=29, isigma1=0, isite2=29, isigma2=1, isite3=0, isigma3=1, isite4=0, isigma4=0, para_re=0.500000, para_im=0.000000
+debug: isite1=29, isigma1=1, isite2=29, isigma2=0, isite3=0, isigma3=0, isite4=0, isigma4=1, para_re=0.500000, p
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 4 in communicator MPI_COMM_WORLD 
+with errorcode -1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
+ara_im=0.000000
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
+
+
+ #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######
+
