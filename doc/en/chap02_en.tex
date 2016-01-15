@@ -215,33 +215,34 @@ If the calculation is finished normally, the result files are outputted in  the 
 
 
 \newpage
-\subsection{プロセス数の設定}
+\subsection{Setting a process number for MPI/Hybrid parallelization}
 \label{subsec:process}
-\tr{MPI並列/ハイブリッド並列を用いる場合、プロセス数は以下のように設定してください。}
+\tr{For using MPI/Hybrid parallelization、a process number must be set as follows.}
 \begin{enumerate}
-\item{Standardモード}
+\item{Standard mode}
 
 \begin{itemize}
-\item{電子系及び近藤格子系 }
+\item{Hubbard / Kondo model}\\
+When \verb|model| in an input file for Standard mode is set as \verb|"Fermion Hubbard"|, \verb|"Kondo Lattice"| or \verb|"Fermion HubbardGC"|,  a process number must be equal to $4^n$.
 
-スタンダードモード用入力ファイルで\verb|model|=\verb|"Fermion Hubbard"|, \\
-\verb|"Kondo Lattice"|, \verb|"Fermion HubbardGC"|の場合は、プロセス数が$4^n$となるように設定してください。
+\item{Spin model}\\
+When \verb|model| in an input file for Standard mode is set as \verb|"Spin"| or \verb|"SpinGC"|,  a process number must be equal to (\verb|2S|+1)${}^n$ where \verb|2S| is set in the input file (a default value is $1$).
 
-\item{スピン系}
-
-スタンダードモード用入力ファイルで\verb|model|=\verb|"Spin"|, \verb|"SpinGC"|の場合は、入力ファイルの\verb|2S|の値に対してプロセス数が(\verb|2S|+1)${}^n$となるように設定してください(デフォルトは\verb|2S|=1)。
 \end{itemize}
-\item{Expertモード}
+\item{Expert mode}
 
 \begin{itemize}
-\item{電子系及び近藤格子系 }
-\ref{Subsec:calcmod}の{\bf CalcMod}ファイルで、\verb|CalcModel|としてfermion Hubbard模型、近藤模型を選択した場合は、プロセス数が$4^n$となるように設定してください。
+\item{Hubbard / Kondo model}
 
-\item{スピン系 }
+When a model is selected as fermion Hubbard model or Kondo model by setting \verb|CalcModel| in a {\bf CalcMod} file, a process number must be equal to $4^n$.
+See \ref{Subsec:calcmod} for details of a \verb|CalcModel| file.
 
-\ref{Subsec:calcmod}の{\bf CalcMod}ファイルで、\verb|CalcModel|としてスピン模型を選択した場合は、\ref{Subsec:locspn}の{\bf LocSpin}ファイルを参考にプロセス数を指定する必要があります。許容されるプロセス数は、サイト数の大きいものから順に局在スピンの状態数(\verb|2S|+1)を掛けたもので指定されます。\\
-例えば、{\bf LocSpin}ファイルが
+\item{Spin model}
 
+When a model is selected as Spin model by setting \verb|CalcModel| in a {\bf CalcMod} file, a process number is fixed by a {\bf LocSpin} file. A process number must be equal to a number calculated by multiplying a state number of localized spin (\verb|2S|+1) in descending order about site numbers.
+See \ref{Subsec:locspn} for details of a {\bf LocSpin} file.
+
+For example, when a {\bf LocSpin} file is given as follws, a process number must be equal to $2=1+1,~6=2\times(2+1),~24=6\times(3+1)$.
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
@@ -256,8 +257,6 @@ NlocalSpin     3
 \end{verbatim}
 \end{screen}
 \end{minipage}
-
-で与えられる場合、許容されるプロセス数は$2=1+1,~6=2\times(2+1),~24=6\times(3+1)$となります。
 
 \end{itemize}
 
