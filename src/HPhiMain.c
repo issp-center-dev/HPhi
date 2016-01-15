@@ -117,7 +117,7 @@ int main(int argc, char* argv[]){
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
     exitMPI(-1);
   }	  
-  fprintf(stdoutMPI, "Definition files are correct.\n");
+  fprintf(stdoutMPI,  cProFinishDefFiles);
   
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind);
@@ -128,11 +128,12 @@ int main(int argc, char* argv[]){
     fprintf(stdoutMPI, "%s", cErrIndices);
     exitMPI(-1);
   }
-  else{
-    if(check(&(X.Bind))==FALSE){
-      //      exitMPI(-1);
-    }
+  
+  fprintf(stdoutMPI, cProFinishDefCheck);
+  if(check(&(X.Bind))==FALSE){
+    //      exitMPI(-1);
   }
+  
   
   /*LARGE VECTORS ARE ALLOCATED*/
   if(!setmem_large(&X.Bind)==0){

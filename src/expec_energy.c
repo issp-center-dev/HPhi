@@ -239,6 +239,14 @@ int expec_energy(struct BindStruct *X){
   X->Phys.energy = dam_pr;
   X->Phys.var    = dam_pr1;
 
+  switch(X->Def.iCalcType){
+  case Lanczos:
+    fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
+    break;
+  default:
+    break;
+  }
+  
   TimeKeeperWithStep(X, cFileNameTimeKeep, cExpecEnd, "a", step_i);
   
   return 0;

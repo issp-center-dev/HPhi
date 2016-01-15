@@ -17,6 +17,10 @@
 #ifndef HPHI_LOGMESSAGE_H
 #define HPHI_LOGMESSAGE_H
 
+//readdef.c
+const char* cReadFileNamelist;
+const char* cReadFile;
+
 //sz.c
 const char* cStateLocSpin;
 const char* cInitalSz;
@@ -42,9 +46,7 @@ const char* cTPQStep;
 const char* cTPQStepEnd;
 
 //Lanczos_EigenValue.c
-const char* cLogLanczos_EigenValueStart;
 const char* cLogLanczos_EigenValueNotConverged;
-const char* cLogLanczos_EigenValueEnd;
 const char* cLanczos_EigenValueStart;
 const char* cLanczos_EigenValueStep;
 const char* cLanczos_EigenValueFinish;
@@ -70,6 +72,7 @@ const char* cTPQExpecOneBodyGFinish;
 const char* cExpecOneBodyGFinish;
 
 //expec_cisajucktaltdc.c
+const char*  cLogLanczosExpecTwoBodyGStart;
 const char*  cLogLanczosExpecTwoBodyGFinish;
 const char*  cLogCGExpecTwoBodyGFinish;
 const char*  cLanczosExpecTwoBodyGFinish;
@@ -79,6 +82,7 @@ const char*  cTPQExpecTwoBodyGFinish;
 
 //expec_energy.c
 const char* cLogExpecEnergyStart;
+const char* cLogExpecEnergyEnd;
 const char* cLogLanczosExpecEnergyEnd;
 const char* cLogCGExpecEnergyEnd;
 const char* cLogEnergy;

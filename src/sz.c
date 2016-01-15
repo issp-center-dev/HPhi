@@ -130,11 +130,11 @@ int sz
       if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
 	exitMPI(-1);
       }
-    fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+      //fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
     else{
       ihfbit=X->Check.sdim;
-      fprintf(stdoutMPI, "idim=%lf ihfbit=%ld \n",idim, ihfbit);
+      //fprintf(stdoutMPI, "idim=%lf ihfbit=%ld \n",idim, ihfbit);
     }
   break;
  default:
@@ -152,7 +152,6 @@ int sz
   else{ 
     sprintf(sdt, cFileNameSzTimeKeep, X->Def.CDataFileHead);
     num_threads  = omp_get_max_threads();
-    fprintf(stdoutMPI, "num_threads==%d\n",num_threads);
     childfopenMPI(sdt,"a", &fp);
     fprintf(fp, "num_threads==%d\n",num_threads);
     fclose(fp);
@@ -403,7 +402,7 @@ int sz
       // this part can not be parallelized
       if(X->Def.iFlgGeneralSpin==FALSE){
 	jb = 0;
-	fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
+	//fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
 	for(ib=0;ib<X->Check.sdim;ib++){
 	  list_jb[ib]=jb;
 	  i=ib*ihfbit;
@@ -487,7 +486,7 @@ int sz
        
     }    
     i_max=icnt;
-    fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
+    //fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
   }
 

@@ -101,10 +101,10 @@ int expec_cisajscktaltdc
   case Lanczos:
     if(X->Def.St==0){
       sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
-      fprintf(stdoutMPI, "Start: Calculate two bodies Green functions by Lanczos method.\n");
+      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName2BGreen_CG, X->Def.CDataFileHead);
-      fprintf(stdoutMPI, "Start: Calculate two bodies Green functions by CG method.\n");
+      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
     }
     break;
 
