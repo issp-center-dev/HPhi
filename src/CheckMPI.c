@@ -193,7 +193,7 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
       }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
-        /*X->Def.Total2SzMPI = X->Def.Total2Sz;*/
+        X->Def.Total2SzMPI = X->Def.Total2Sz;
 
         /* Ne should be different in each PE */
         SmallDim = myrank;
@@ -358,8 +358,10 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     }/*switch (X->Def.iCalcModel)*/
     fprintf(stdoutMPI, "\n");
   }/*for (iproc = 0; iproc < nproc; iproc++)*/
-
-  fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n", SumMPI_li(X->Check.idim_max));
+  
+  X->Check.idim_maxMPI = SumMPI_li(X->Check.idim_max);
+  fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n",  X->Check.idim_maxMPI);
+  
   /*
     Reset Tpow[DefNsite], Tpow[DefNsite + 1] ... as inter process space
   */

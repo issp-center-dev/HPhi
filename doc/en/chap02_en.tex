@@ -149,8 +149,8 @@ Run a executable \verb|HPhi| in terminal by setting option ``\verb|-s|" (or ``\v
 
   When you use a queuing system in workstations or super computers, 
   sometimes the number of processes is specified as an argument for the job-submitting command.
-  If you need more information, please refer manuals for your system.
-
+  If you need more information, please refer manuals for your system. 
+ \tr{A number of processes depend on a target of system for models. The details of setting a number of processes are shown in  \ref{subsec:process}.}
 \end{itemize}
 
 \item Watch calculation logs
@@ -194,14 +194,14 @@ Run $\HPhi$ in terminal by setting option ``\verb|-e|" (or ``\verb|--expert|'') 
 
 \begin{itemize}
 
-\item Serial/OpenMPI
+\item Serial/OpenMP
 
   \verb|$ |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
   
 \item MPI/Hybrid
 
   \verb|$ mpiexec -np |\textit{number\_of\_processes}\verb| |\textit{Path}\verb|/HPhi -e |\textit{Input\_List\_file\_name}
-
+ \tr{A number of processes depend on a target of system for models. The details of setting a number of processes are shown in  \ref{subsec:process}.}
 \end{itemize}
 
 \item Under running\\
@@ -211,3 +211,54 @@ The details of output files are shown in \ref{Sec:outputfile}.
 \item Results\\
 If the calculation is finished normally, the result files are outputted in  the ``output" folder. The details of output files are shown in \ref{Sec:outputfile}.
 \end{enumerate}
+
+
+
+\newpage
+\subsection{Setting a process number for MPI/Hybrid parallelization}
+\label{subsec:process}
+\tr{For using MPI/Hybrid parallelization、a process number must be set as follows.}
+\begin{enumerate}
+\item{Standard mode}
+
+\begin{itemize}
+\item{Hubbard / Kondo model}\\
+When \verb|model| in an input file for Standard mode is set as \verb|"Fermion Hubbard"|, \verb|"Kondo Lattice"| or \verb|"Fermion HubbardGC"|,  a process number must be equal to $4^n$.
+
+\item{Spin model}\\
+When \verb|model| in an input file for Standard mode is set as \verb|"Spin"| or \verb|"SpinGC"|,  a process number must be equal to (\verb|2S|+1)${}^n$ where \verb|2S| is set in the input file (a default value is $1$).
+
+\end{itemize}
+\item{Expert mode}
+
+\begin{itemize}
+\item{Hubbard / Kondo model}
+
+When a model is selected as fermion Hubbard model or Kondo model by setting \verb|CalcModel| in a {\bf CalcMod} file, a process number must be equal to $4^n$.
+See \ref{Subsec:calcmod} for details of a \verb|CalcModel| file.
+
+\item{Spin model}
+
+When a model is selected as Spin model by setting \verb|CalcModel| in a {\bf CalcMod} file, a process number is fixed by a {\bf LocSpin} file. A process number must be equal to a number calculated by multiplying a state number of localized spin (\verb|2S|+1) in descending order about site numbers.
+See \ref{Subsec:locspn} for details of a {\bf LocSpin} file.
+
+For example, when a {\bf LocSpin} file is given as follws, a process number must be equal to $2=1+1,~6=2\times(2+1),~24=6\times(3+1)$.
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+================================ 
+NlocalSpin     3
+================================ 
+========i_0IteElc_2S ====== 
+================================ 
+    0      3
+    1      2
+    2      1
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\end{itemize}
+
+\end{enumerate}
+

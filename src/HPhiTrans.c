@@ -75,15 +75,6 @@ int HPhiTrans(struct BindStruct *X){
     }
   }
   
-// PossibleError
-  if(cnt_chemi>0 && cnt_chemi!=2*X->Def.Nsite){
-    sprintf(sdt_err,cErrTransfer);
-    childfopenMPI(sdt_err,"a", &fp_err);
-    fprintf(fp_err,cErrChemicalPotential);
-    fclose(fp_err);
-    return -1;
-  }
-//
   fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
   fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
 

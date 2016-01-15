@@ -23,7 +23,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
 else
     if [ ${1} = "sekirei" ]; then
         cat > src/make.sys <<EOF
-CC = mpiicc
+CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
 FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)

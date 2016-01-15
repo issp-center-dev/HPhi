@@ -177,6 +177,7 @@ int ReadcalcmodFile(
   X->iInitialVecType=0;
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
+
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -230,7 +231,7 @@ int ReadcalcmodFile(
     fprintf(stderr, cErrOutputMode, defname);
     return (-1);
   }
-  if(ValidateValue(X->iCalcEigenVec, 0, NUM_CALCEIGENVEC-1)){
+  if(ValidateValue(X->iCalcEigenVec, -1, NUM_CALCEIGENVEC-1)){
     fprintf(stderr, cErrCalcEigenVec, defname);
     return (-1);
   }
@@ -331,7 +332,6 @@ int ReadDefFileNInt(
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
   int iReadNCond=FALSE;
-
   InitializeInteractionNum(X);
   
   fprintf(stdoutMPI, "Start: Read File '%s'.\n", xNameListFile); 
@@ -1373,35 +1373,41 @@ int CheckInterAllHermite
 	    if(2*icntHermite > X->NInterAll_OffDiagonal){
 	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
 	      exitMPI(-1);
-	    }	    
+	    }
+
 	    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
 	      X->InterAll[2*icntHermite][itmpIdx]=X->InterAll_OffDiagonal[i][itmpIdx];
-	      X->InterAll[2*icntHermite+1][itmpIdx]=X->InterAll_OffDiagonal[j][itmpIdx];
 	    }
+	    for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+	      X->InterAll[2*icntHermite+1][2*itmpIdx]=X->InterAll_OffDiagonal[i][6-2*itmpIdx];
+	      X->InterAll[2*icntHermite+1][2*itmpIdx+1]=X->InterAll_OffDiagonal[i][7-2*itmpIdx];
+	    }	    	    
 	    X->ParaInterAll[2*icntHermite]=X->ParaInterAll_OffDiagonal[i];
 	    X->ParaInterAll[2*icntHermite+1]=X->ParaInterAll_OffDiagonal[j];
 	    icntHermite++;
 	  }
 	}
-      }
-      
+      }  
     }
+    
     //if counterpart for satisfying hermite conjugate does not exist.
     if(itmpret !=1){
       fprintf(stdoutMPI, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll_OffDiagonal[i]), cimag(X->ParaInterAll_OffDiagonal[i]));
       icntincorrect++;
     }
   }
-    if( icntincorrect !=0){
+    if(icntincorrect !=0){
       exitMPI(-1);
     }
   
     for(i=0; i<X->NInterAll_OffDiagonal; i++){
       for(itmpIdx=0; itmpIdx<8; itmpIdx++){
 	X->InterAll_OffDiagonal[i][itmpIdx]=X->InterAll[i][itmpIdx];
+	
       }
       X->ParaInterAll_OffDiagonal[i]=X->ParaInterAll[i];
     }
+    
     return 0;
 }
 
@@ -1892,4 +1898,3 @@ int CheckTotal2Sz
   }
   return TRUE;
 }
-

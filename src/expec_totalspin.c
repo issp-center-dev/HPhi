@@ -55,7 +55,7 @@ int expec_totalspin
   switch(X->Def.iCalcModel){
   case Spin:
      totalspin_Spin(X,vec);
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case SpinGC:
      totalspin_SpinGC(X,vec);
@@ -63,7 +63,7 @@ int expec_totalspin
    case Hubbard: 
    case Kondo:
      totalspin_Hubbard(X,vec);
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case HubbardGC: 
   case KondoGC:
@@ -654,14 +654,14 @@ int expec_totalSz(
   X->Large.mode = M_TOTALS;
   switch(X->Def.iCalcModel){
   case Spin:
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case SpinGC:
      totalSz_SpinGC(X,vec);
      break;
    case Hubbard: 
    case Kondo:
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case HubbardGC: 
   case KondoGC:

@@ -141,13 +141,10 @@ int Lanczos_EigenValue(struct BindStruct *X)
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, v1);
   stp=1;
-
   TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);          
   alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
   alpha[1]=alpha1;
   cbeta1=0.0;
-
-  //fprintf(stdoutMPI, "debug:alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
   
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
   for(i = 1; i <= i_max; i++){
@@ -179,7 +176,6 @@ int Lanczos_EigenValue(struct BindStruct *X)
   }
   else{
 
-
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -207,9 +203,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     beta[stp]=beta1;
 
     Target  = X->Def.LanczosTarget;
-
-    //    fprintf(stdoutMPI, "debug:alpha[%d]=%lf, beta[%d]=%lf\n", stp, alpha1, stp, beta1);
-    
+        
     if(stp==2){      
      #ifdef lapack
       d_malloc2(tmp_mat,stp,stp);
@@ -300,6 +294,6 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
-  
+
   return 0;  
 }

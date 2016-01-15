@@ -45,6 +45,7 @@
 #define NUM_CALCEIGENVEC 2 /*!< Number of calculating eigenvector mode.*/
 #define CALCVEC_LANCZOSCG  0 /*!< Lanczos + CG method*/
 #define CALCVEC_LANCZOS 1 /*!< Lanczos method*/
+#define CALCVEC_NOT -1 /*!< eigenvector is not calculated*/
 
 
 #endif /* HPHI_DEFCOMMON_H */
