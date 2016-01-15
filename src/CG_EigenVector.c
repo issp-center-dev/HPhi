@@ -108,7 +108,7 @@ int CG_EigenVector(struct BindStruct *X){
     }else{
       itr_max=500;
     }
-    
+  
     for(itr=1;itr<=itr_max;itr++){
 #pragma omp parallel for default(none) private(j) shared(y, vg) firstprivate(i_max, Eig,eps_CG)
       for(j=1;j<=i_max;j++){  
