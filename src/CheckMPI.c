@@ -52,8 +52,8 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     } /*for (isite = NsiteMPI; isite > 0; isite--)*/
     
     if (isite == 0) {
-      fprintf(stdoutMPI, "Error ! The number of PROCESS should be 4 exponent !\n");
-      fprintf(stdoutMPI, "        The number of PROCESS : %d\n", nproc);
+      fprintf(stdoutMPI, cErrNProcNumberHubbard);
+      fprintf(stdoutMPI, cErrNProcNumber, nproc);
       return FALSE;
     } /*if (isite == 0)*/
 
@@ -153,8 +153,8 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 
       if (isite == 0) {
-        fprintf(stdoutMPI, "Error ! The number of PROCESS should be 2-exponent !\n");
-        fprintf(stdoutMPI, "        The number of PROCESS : %d\n", nproc);
+        fprintf(stdoutMPI, cErrNProcNumberSpin);
+        fprintf(stdoutMPI, cErrNProcNumber, nproc);
         return FALSE;
       }/*if (isite == 0)*/
 
@@ -186,9 +186,10 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
         }/*if (NDimInterPE == nproc)*/
         NDimInterPE *= X->Def.SiteToBit[isite - 1];
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+
       if (isite == 0) {
-        fprintf(stdoutMPI, "Error ! The number of PROCESS is wrong !\n");
-        fprintf(stdoutMPI, "        The number of PROCESS : %d\n", nproc);
+        fprintf(stdoutMPI, cErrNProcNumberGneralSpin);
+        fprintf(stdoutMPI, cErrNProcNumber, nproc);
 	NDimInterPE = 1;
 	int ismallNproc=1;
 	int ilargeNproc=1;
@@ -198,11 +199,10 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
 	    if(isite >1)
 	      ismallNproc = NDimInterPE/X->Def.SiteToBit[isite - 2];
 	    break;
-	  }/*if (NDimInterPE == nproc)*/
+	  }/*if (NDimInterPE > nproc)*/
 	  NDimInterPE *= X->Def.SiteToBit[isite - 1];
 	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
-	fprintf(stdoutMPI, "        Set the number of PROCESS as %d or %d.\n",ismallNproc, ilargeNproc );
-	
+	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
         return FALSE;
       }/*if (isite == 0)*/
 
