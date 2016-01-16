@@ -81,7 +81,8 @@ int main(int argc, char* argv[]){
   InitializeMPI(argc, argv);
 
   if(JudgeDefType(argc, argv, &mode)!=0){
-    exitMPI(-1);
+    FinalizeMPI();
+    return 0;
   }  
 
   //MakeDirectory for output
@@ -110,12 +111,14 @@ int main(int argc, char* argv[]){
   setmem_HEAD(&X.Bind);
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def))!=0){
     fprintf(stderr, "%s", cErrDefFile);
-    exitMPI(-1);
+    FinalizeMPI();
+    return 0;
   }
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
-    exitMPI(-1);
+    FinalizeMPI();
+    return 0;
   }	  
   fprintf(stdoutMPI,  cProFinishDefFiles);
   
@@ -126,12 +129,14 @@ int main(int argc, char* argv[]){
   /*Read Def files.*/
   if(ReadDefFileIdxPara(&(X.Bind.Def))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
-    exitMPI(-1);
+    FinalizeMPI();
+    return 0;
   }
   
   fprintf(stdoutMPI, cProFinishDefCheck);
-  if(check(&(X.Bind))==FALSE){
-    //      exitMPI(-1);
+  if(check(&(X.Bind))==MPIFALSE){
+    FinalizeMPI();
+    return 0;
   }
   
   

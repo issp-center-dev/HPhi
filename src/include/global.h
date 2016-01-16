@@ -20,6 +20,7 @@
 #include <complex.h>
 #include <math.h>
 #define D_FileNameMax 256
+#define MPIFALSE -1
 #define FALSE 0
 #define TRUE 1
 

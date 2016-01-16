@@ -39,6 +39,7 @@
  * 
  * @retval TRUE normally finished
  * @retval FALSE unnormally finished
+ * @retval MPIFALSE CheckMPI unormally finished
  * @version 0.2
  * @details add function of calculating hirbert space for canonical ensemble.
  *  
@@ -65,7 +66,9 @@ int check(struct BindStruct *X){
   /*
     Set Site number per MPI process 
   */
-  CheckMPI(X);
+  if(CheckMPI(X)!=TRUE){
+    return MPIFALSE;
+  }
 
   Ns = X->Def.Nsite;
 
