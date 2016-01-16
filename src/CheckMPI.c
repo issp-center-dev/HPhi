@@ -189,6 +189,20 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       if (isite == 0) {
         fprintf(stdoutMPI, "Error ! The number of PROCESS is wrong !\n");
         fprintf(stdoutMPI, "        The number of PROCESS : %d\n", nproc);
+	NDimInterPE = 1;
+	int ismallNproc=1;
+	int ilargeNproc=1;
+	for (isite = NsiteMPI; isite > 0; isite--) {
+	  if (NDimInterPE > nproc) {
+	    ilargeNproc = NDimInterPE;
+	    if(isite >1)
+	      ismallNproc = NDimInterPE/X->Def.SiteToBit[isite - 2];
+	    break;
+	  }/*if (NDimInterPE == nproc)*/
+	  NDimInterPE *= X->Def.SiteToBit[isite - 1];
+	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+	fprintf(stdoutMPI, "        Set the number of PROCESS as %d or %d.\n",ismallNproc, ilargeNproc );
+	
         return FALSE;
       }/*if (isite == 0)*/
 
