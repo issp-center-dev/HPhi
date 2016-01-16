@@ -7,8 +7,8 @@ CDataFileHead  zvo
 CParaFileHead  zqp
 --------------------
 Nsite          8    
-Nup            4    
-Ndown          4    
+2Sz            0    
+Ncond          8    
 Lanczos_max    2000 
 initial_iv     1    
 nvec           1    

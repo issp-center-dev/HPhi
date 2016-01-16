@@ -2,8 +2,6 @@ CalcMod calcmod.def
 ModPara modpara.def
 LocSpin zlocspn.def
 Trans zTrans.def
-CoulombInter zcoulombinter.def
-Hund         zhund.def
-Exchange     zexchange.def
+InterAll zInterAll.def
 OneBodyG greenone.def
 TwoBodyG greentwo.def

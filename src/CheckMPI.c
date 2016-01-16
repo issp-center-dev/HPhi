@@ -26,7 +26,7 @@ int NsiteMPI;
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void CheckMPI(struct BindStruct *X/**< [inout] */)
+int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
   int isite, NDimInterPE, SmallDim, SpinNum;
 
@@ -52,9 +52,9 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
     } /*for (isite = NsiteMPI; isite > 0; isite--)*/
     
     if (isite == 0) {
-      fprintf(stderr, "Error ! The number of PROCESS should be 4 exponent !\n");
-      fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
-      exitMPI(-1);
+      fprintf(stdoutMPI, "Error ! The number of PROCESS should be 4 exponent !\n");
+      fprintf(stdoutMPI, "        The number of PROCESS : %d\n", nproc);
+      return FALSE;
     } /*if (isite == 0)*/
 
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
@@ -126,8 +126,8 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
             }
           }
           else {
-            fprintf(stderr, "\n Stop because local spin in the inter process region\n");
-            exitMPI(-1);
+            fprintf(stdoutMPI, "\n Stop because local spin in the inter process region\n");
+            return FALSE;
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       } /*if (X->Def.iCalcModel == Kondo)*/
@@ -153,9 +153,9 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 
       if (isite == 0) {
-        fprintf(stderr, "Error ! The number of PROCESS should be 2-exponent !\n");
-        fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
-        exitMPI(-1);
+        fprintf(stdoutMPI, "Error ! The number of PROCESS should be 2-exponent !\n");
+        fprintf(stdoutMPI, "        The number of PROCESS : %d\n", nproc);
+        return FALSE;
       }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
@@ -187,9 +187,9 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
         NDimInterPE *= X->Def.SiteToBit[isite - 1];
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
       if (isite == 0) {
-        fprintf(stderr, "Error ! The number of PROCESS is wrong !\n");
-        fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
-        exitMPI(-1);
+        fprintf(stdoutMPI, "Error ! The number of PROCESS is wrong !\n");
+        fprintf(stdoutMPI, "        The number of PROCESS : %d\n", nproc);
+        return FALSE;
       }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
@@ -209,10 +209,11 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
     break; /*case SpinGC, Spin*/
 
   default:
-    fprintf(stderr, "Error ! Wrong model !\n");
-    exitMPI(-1);
+    fprintf(stdoutMPI, "Error ! Wrong model !\n");
+    return FALSE;
   }/*switch (X->Def.iCalcModel)*/
 
+  return TRUE;
 }/*void CheckMPI*/
 
 /**

@@ -34,6 +34,7 @@
 
 #include "Common.h"
 #include "readdef.h"
+#include "LogMessage.h"
 #include "wrapperMPI.h"
 
 /**
@@ -334,11 +335,10 @@ int ReadDefFileNInt(
   int iReadNCond=FALSE;
   InitializeInteractionNum(X);
   
-  fprintf(stdoutMPI, "Start: Read File '%s'.\n", xNameListFile); 
+  fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
     exitMPI(-1);
   }
-  fprintf(stdoutMPI, "End: Read File '%s'.\n", xNameListFile);
 
   /*=======================================================================*/
   int iKWidx=0;
@@ -368,7 +368,7 @@ int ReadDefFileNInt(
 
   if(strcmp(defname,"")==0) continue;
   
-    fprintf(stdoutMPI, "Read File '%s' for %s.\n", defname, cKWListOfFileNameList[iKWidx]);
+    fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
     switch(iKWidx){
@@ -653,7 +653,7 @@ int ReadDefFileIdxPara(
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
     strcpy(defname, cFileNameListFile[iKWidx]);
     if(strcmp(defname,"")==0) continue;   
-    fprintf(stdoutMPI, "Read File '%s'.\n", defname);
+    fprintf(stdoutMPI, cReadFileNamelist, defname);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
     for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
@@ -686,7 +686,7 @@ int ReadDefFileIdxPara(
     case KWTrans:
       /* transfer.def--------------------------------------*/
       if(X->NTransfer>0){
-	fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
+	//fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
 	while( fgetsMPI(ctmp2, 256, fp) != NULL )
 	  {
 	    sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
@@ -1576,13 +1576,13 @@ int JudgeDefType
   else{
     /*fprintf(stdoutMPI, cErrArgv, argv[1]);*/
     fprintf(stderr, "\n[Usage] \n");
-    fprintf(stderr, "* Expart mode \n");
+    fprintf(stderr, "* Expert mode \n");
     fprintf(stderr, "   $ HPhi -e {namelist_file} \n");
     fprintf(stderr, "* Standard mode \n");
     fprintf(stderr, "   $ HPhi -s {input_file} \n");
     fprintf(stderr, "* Standard DRY mode \n");
     fprintf(stderr, "   $ HPhi -sdry {input_file} \n");
-    fprintf(stderr, "* In this mode, Hphi stops after it generats expart input files. \n\n");
+    fprintf(stderr, "* In this mode, Hphi stops after it generats expert input files. \n\n");
     return (-1);
   }
 

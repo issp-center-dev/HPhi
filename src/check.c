@@ -39,6 +39,7 @@
  * 
  * @retval TRUE normally finished
  * @retval FALSE unnormally finished
+ * @retval MPIFALSE CheckMPI unormally finished
  * @version 0.2
  * @details add function of calculating hirbert space for canonical ensemble.
  *  
@@ -65,7 +66,9 @@ int check(struct BindStruct *X){
   /*
     Set Site number per MPI process 
   */
-  CheckMPI(X);
+  if(CheckMPI(X)!=TRUE){
+    return MPIFALSE;
+  }
 
   Ns = X->Def.Nsite;
 
@@ -193,7 +196,7 @@ int check(struct BindStruct *X){
     //    return FALSE;
   }
   
-  fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
+  //fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
 
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
@@ -209,14 +212,14 @@ int check(struct BindStruct *X){
     break;
   }
   
-  fprintf(stdoutMPI, "MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
-  fprintf(stdoutMPI, "APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
+  fprintf(stdoutMPI, "  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
+  fprintf(stdoutMPI, "  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
     return FALSE;
   }
-  fprintf(fp,"MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
-  fprintf(fp,"APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
+  fprintf(fp,"  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
+  fprintf(fp,"  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
   fclose(fp);
 
   //sdim 
@@ -264,13 +267,13 @@ int check(struct BindStruct *X){
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
-    fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
+    //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     break;
   case Spin:
   case SpinGC:
     if(X->Def.iFlgGeneralSpin==FALSE){
-      fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
+      //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
       fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
     }
     break;
@@ -279,7 +282,6 @@ int check(struct BindStruct *X){
   }  
  
   i_free2(comb, Ns+1, Ns+1);
-  fprintf(stdoutMPI, "Indices and Parameters of Definition files(*.def) are complete.\n");
 
   u_tmp=1;
   X->Def.Tpow[0]=u_tmp;

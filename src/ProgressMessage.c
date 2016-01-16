@@ -15,15 +15,22 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "ProgressMessage.h"
-
-const char* cProFinishAlloc ="LARGE ALLOCATE FINISH !\n";
+const char* cProFinishDefFiles ="\n######  Definition files are correct.  ######\n\n";
+const char* cProFinishDefCheck ="\n######  Indices and Parameters of Definition files(*.def) are complete.  ######\n\n";
+const char* cProFinishAlloc ="\n######  LARGE ALLOCATE FINISH !  ######\n\n";
 const char* cProEDNTrans ="EDTrans EDNTransfer=%d \n";
 const char* cProEDNChemi ="EDTrans EDNChemi=%d \n";
-const char* cProStartCalcSgn = "Start: Calc sgn. \n";
-const char* cProEndCalcSgn = "End  : Calc sgn. \n";
-const char* cProStartCalcSz = "Start: Calc Sz. \n";
-const char* cProEndCalcSz = "End  : Calc Sz. \n";
-const char* cProStartOutputList = "Start: output list. \n";
-const char* cProEndOutputList = "End  : output list. \n";
-const char* cProStartCalcDiag = "Start: calc diagaonal components of Hamiltonian. \n";
-const char* cProEndCalcDiag = "End  : calc diagaonal components of Hamiltonian. \n";
+const char* cProStartCalcSgn = "  Start: Calculate sgn. \n";
+const char* cProEndCalcSgn = "  End  : Calculate sgn. \n";
+const char* cProStartCalcSz = "  Start: Calculate HilbertNum for fixed Sz. \n";
+const char* cProEndCalcSz = "  End  : Calculate HilbertNum for fixed Sz. \n\n";
+const char* cProStartOutputList = "  Start: output list. \n";
+const char* cProEndOutputList = "  End  : output list. \n";
+const char* cProStartCalcDiag = "  Start: Calculate diagaonal components of Hamiltonian. \n";
+const char* cProEndCalcDiag = "  End  : Calculate diagaonal components of Hamiltonian. \n\n";
+
+const char* cLogLanczos_EigenValueStart="######  Start: Calculate Lanczos Eigenvalue.  ######\n\n";
+const char* cLogLanczos_EigenValueEnd="\n######  End  : Calculate Lanczos EigenValue.  ######\n\n";
+
+const char* cLogLanczos_EigenVecStart="######  Start: Calculate Eigenvector.  ######\n\n";
+const char* cLogLanczos_EigenVecEnd="######  End  : Calculate Eigenvector.  ######\n\n";

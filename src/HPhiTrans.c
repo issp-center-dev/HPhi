@@ -75,8 +75,8 @@ int HPhiTrans(struct BindStruct *X){
     }
   }
   
-  fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
-  fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
+  //fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
+  //fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
 
   return 0;
 }    

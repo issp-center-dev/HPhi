@@ -57,22 +57,30 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
 \end{screen}
 \end{minipage}
 \\
-{The details for the outputted files are shown in \ref{Subsec:checkchemi}-\ref{Subsec:timecgeigenv}.}
+The details for the outputted files are shown in \ref{Subsec:checkchemi}-\ref{Subsec:timecgeigenv}.
 \\
 We execute
 
 \hspace{-0.7cm}
 \verb|$ |\textit{Path}\verb|/HPhi -s StdFace.def|
 \\
-and obtain following standard outputs:
+and obtain following standard outputs \tr{(a compilation mode is MPI parallel/ Hybrid parallel)}:
 \begin{verbatim}
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 4
+  MPI PEs : 1 
+
+
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile StdFace.def 
+  Open Standard-Mode Inputfile ./StdFace.def 
 
   KEYWORD : l                    | VALUE : 16 
   KEYWORD : model                | VALUE : spin 
   KEYWORD : method               | VALUE : lanczos 
+  Skipping a line.
+  Skipping a line.
   KEYWORD : lattice              | VALUE : chainlattice 
   KEYWORD : j                    | VALUE : 1.0 
   KEYWORD : 2sz                  | VALUE : 0 
@@ -81,13 +89,35 @@ and obtain following standard outputs:
 
                 L = 16 
                 a = 1.00000     ######  DEFAULT VALUE IS USED  ######
-\end{verbatim}
-(Partly omitted)
-\begin{verbatim}
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
+                h = 0.00000     ######  DEFAULT VALUE IS USED  ######
+            Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                D = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                J = 1.00000   
+               Jz = 1.00000     ######  DEFAULT VALUE IS USED  ######
+              Jxy = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Jx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Jy = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               J' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jz' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+             Jxy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jx' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       LargeValue = 1           ######  DEFAULT VALUE IS USED  ######
+
+         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
+       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+             exct = 1           ######  DEFAULT VALUE IS USED  ######
+       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
+    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
+           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
+    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
               2Sz = 0  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
-######  Print Expart input files  ######
+######  Print Expert input files  ######
 
     zlocspin.def is written.
       zTrans.def is written.
@@ -100,59 +130,107 @@ and obtain following standard outputs:
 
 ######  Input files are generated.  ######
 
-Start: Read File 'namelist.def'.
-End: Read File 'namelist.def'.
-Read File 'calcmod.def' for CalcMod.
-Read File 'modpara.def' for ModPara.
-Read File 'zlocspn.def' for LocSpin.
-Read File 'zTrans.def' for Trans.
-Read File 'zInterAll.def' for InterAll.
-Read File 'greenone.def' for OneBodyG.
-Read File 'greentwo.def' for TwoBodyG.
-Definition files are correct.
-Read File 'zlocspn.def'.
-Nsite= 16.
-Read File 'zTrans.def'.
-Read File 'zInterAll.def'.
-Read File 'greenone.def'.
-Read File 'greentwo.def'.
-comb_sum= 12870 
-MAX DIMENSION idim_max=12870 
-REQUIRED MEMORY  max_mem=0.000618 GB 
-sdim=256 =2^16
-Indices and Parameters of Definition files(*.def) are complete.
-LARGE ALLOCATE FINISH !
-EDTrans EDNTransfer=0 
-EDTrans EDNChemi=0 
-Start: Calc Sz. 
-idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
-num_threads==2
-Xicnt=12870 
-End  : Calc Sz. 
-Start: calc diagaonal components of Hamiltonian. 
-End  : calc diagaonal components of Hamiltonian. 
-Start: Calculate Lanczos Eigenvalue.
-initial_mode=0 normal: iv = 6436 i_max=12870 k_exct =1 
-stp=4 -0.2423006825 1.4795269690 2.8204808612 3.5851499951 
-stp=6 -1.5930861352 -0.0869006048 1.2794492426 2.3323141732 
-stp=8 -2.7742729206 -1.2848359197 -0.1095390623 1.0439243217 
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'zlocspn.def' for LocSpin.
+  Read File 'zTrans.def' for Trans.
+  Read File 'zInterAll.def' for InterAll.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+
+######  Definition files are correct.  ######
+
+  Read File 'zlocspn.def'.
+  Read File 'zTrans.def'.
+  Read File 'zInterAll.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+  MAX DIMENSION idim_max=12870 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.001236 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+      12       2
+      13       2
+      14       2
+      15       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0           12870     8      8      8         0   
+
+   Total dimension : 12870
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+######  Start: Calculate Lanczos Eigenvalue.  ######
+
+  initial_mode=0 normal: iv = 6437 i_max=12870 k_exct =1 
+
+  LanczosStep  E[1] E[2] E[3] E[4] 
+  stp = 2 0.7192235936 2.7807764064 xxxxxxxxxx xxxxxxxxx 
+  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 
+  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 
+  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 
 \end{verbatim}
-(partly omitted)
+(中略)
 \begin{verbatim}
-stp=60 -7.1422963606 -6.6965474266 -6.5234070574 -6.2986527242 
-stp=62 -7.1422963606 -6.6965474266 -6.5234070574 -6.2986527253 
-End  : Calculate Lanczos EigenValue.
-Start: Calculate Lanczos Eigenvector.
-End: Calculate Lanczos Eigenvector.
-Start: Calculate Energy.
-End  : Calculate Energy by Lanczos method.
-energy=-7.142296 
+  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 
+  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 
+  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 
 
-Accuracy check !!!
--7.1422963606167746 -7.1422963606168191: diff_ere=0.000000000 ...
- Accuracy of Lanczos vector is enough
+######  End  : Calculate Lanczos EigenValue.  ######
 
-\end{verbatim}
+######  Start: Calculate Eigenvector.  ######
+
+  Start: Calculate Lanczos Eigenvector.
+  End  : Calculate Lanczos Eigenvector.
+  Start: Calculate Energy.
+  End  : Calculate Energy.
+
+  Accuracy check !!!
+  LanczosEnergy = -7.14229636061676e+00 
+  EnergyByVec   = -7.14229636061616e+00 
+  diff_ene      = 8.50586433832080e-14 
+  var           = 9.97303843188625e-14 
+  Accuracy of Lanczos vectors is enough.
+
+######  End  : Calculate Eigenvector.  ######
+
+  Start: Calculate one body Green functions.
+  End  : Calculate one body Green functions.
+
+  Start: Calculate two bodies Green functions.
+  End  : Calculate two bodies Green functions.\end{verbatim}
 
 In the beginning of this run,
 files describing the detail of considered Hamiltonian 

@@ -41,8 +41,7 @@
  */
 void Lanczos_EigenVector(struct BindStruct *X){
 
-  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
-  
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);  
   int i,j,i_max,iv;  	 
   int k_exct, iproc;
   double beta1,alpha1,dnorm, dnorm_inv;
@@ -91,7 +90,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
     
   }else if(initial_mode==1){
     iv = X->Def.initial_iv;
-    fprintf(stdoutMPI, "initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
+    fprintf(stdoutMPI, "  initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
     #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
