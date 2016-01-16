@@ -155,6 +155,19 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       if (isite == 0) {
         fprintf(stdoutMPI, cErrNProcNumberSpin);
         fprintf(stdoutMPI, cErrNProcNumber, nproc);
+	NDimInterPE = 1;
+	int ismallNproc=1;
+	int ilargeNproc=1;
+	for (isite = NsiteMPI; isite > 0; isite--) {
+	  if (NDimInterPE > nproc) {
+	    ilargeNproc = NDimInterPE;
+	    if(isite >1)
+	      ismallNproc = NDimInterPE/2;
+	    break;
+	  }/*if (NDimInterPE > nproc)*/
+	  NDimInterPE *= 2;
+	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
         return FALSE;
       }/*if (isite == 0)*/
 
