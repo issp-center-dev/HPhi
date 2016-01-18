@@ -33,7 +33,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
 
   int iproc;
   long int i,i_max;
-  unsigned long int i_max_tmp, sum_i_max;
+  unsigned long int i_max_tmp;
   double  complex temp1;  
   double complex dnorm;
   double Ns;

@@ -19,34 +19,19 @@
 
 int PowerLanczos(struct BindStruct *X){
   
-  time_t start,mid;
-  FILE *fp_0;
-  char sdt_1[D_FileNameMax];
-
   long int i,j;
-  double Eig;
-    
-  int i_itr,itr,iv,itr_max;
-  int t_itr;
-  double eps,eps_CG;
-  double bnorm,xnorm,rnorm,rnorm2;
+
   double dnorm, dnorm_inv;
-  double complex beta,xb,rp,yp,gosa1,tmp_r,gosa2;
-  double complex *r,*p,*y,*b;
-  double complex dam_pr,dam_pr1,dam_pr2a,dam_pr2b,dam_pr3,dam_pr4;
+  double complex dam_pr1,dam_pr2a,dam_pr2b,dam_pr3,dam_pr4;
   double E1,E2a,E2b,E3,E4;
   double alpha_p,alpha_m;
-  double Lz_Ene,Lz_Var;
+  double Lz_Var;
   double Lz_Ene_p,Lz_Ene_m;
   double Lz_Var_p,Lz_Var_m;
-  long int L_size;
-  long int i_max,i_Lz; 
+  long int i_max,i_Lz;
     
   i_max=X->Check.idim_max;    
-  Eig=X->Phys.Target_energy;
-    
-  start=time(NULL);
- 
+
 // v1 is eigenvector
 // v0 = H*v1
 // this subroutine 
@@ -107,7 +92,6 @@ int PowerLanczos(struct BindStruct *X){
     Lz(X,alpha_m,&Lz_Ene_m,&Lz_Var_m,E1,E2a,E3,E4);
   
     if(Lz_Ene_p < Lz_Ene_m){
-      Lz_Ene=Lz_Ene_p;
       Lz_Var=Lz_Var_p;
       fprintf(stdoutMPI,"Power Lanczos (P): %.16lf %.16lf \n",Lz_Ene_p,Lz_Var_p);
       #pragma omp parallel for default(none)  private(j) shared(v0, v1) firstprivate(i_max,alpha_p) 
@@ -115,7 +99,6 @@ int PowerLanczos(struct BindStruct *X){
         v1[j]   = v1[j]+alpha_p*v0[j];   // (1+alpha*H)v1=v1+alpha*v0
       }
     }else{
-      Lz_Ene=Lz_Ene_m;
       Lz_Var=Lz_Var_m;
       fprintf(stdoutMPI,"Power Lanczos (M): %.16lf %.16lf \n",Lz_Ene_m,Lz_Var_m);
       #pragma omp parallel for default(none)  private(j) shared(v0, v1)firstprivate(i_max,alpha_m) 

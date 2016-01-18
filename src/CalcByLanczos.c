@@ -52,8 +52,6 @@ int CalcByLanczos(
 {
   char sdt[D_FileNameMax];
   double diff_ene,var;
-  int iconv=0;
-  int flag=0;
   long int i=0;
   long int i_max=0;
   long int _list_1;

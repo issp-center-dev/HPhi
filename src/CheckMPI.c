@@ -249,7 +249,7 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
       }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
       else {
-        fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
+        fprintf(stdoutMPI, "    %4d    %4ld\n", isite, X->Def.SiteToBit[isite]);
       }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
 
       break;
@@ -277,7 +277,7 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
       }/*if (X->Def.iFlgGeneralSpin == FALSE) */
       else {
-        fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
+        fprintf(stdoutMPI, "    %4d    %4ld\n", isite, X->Def.SiteToBit[isite]);
       }/*if (X->Def.iFlgGeneralSpin == TRUE) */
 
       break;

@@ -147,8 +147,8 @@ void BarrierMPI(){
 
 unsigned long int MaxMPI_li(unsigned long int idim)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
     MPI_UNSIGNED_LONG, MPI_MAX, MPI_COMM_WORLD);
 #endif
@@ -157,8 +157,8 @@ unsigned long int MaxMPI_li(unsigned long int idim)
 
 double complex SumMPI_dc(double complex norm)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
     MPI_DOUBLE_COMPLEX, MPI_SUM, MPI_COMM_WORLD);
 #endif
@@ -167,8 +167,8 @@ double complex SumMPI_dc(double complex norm)
 
 double SumMPI_d(double norm)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
     MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
 #endif
@@ -177,8 +177,8 @@ double SumMPI_d(double norm)
 
 unsigned long int SumMPI_li(unsigned long int idim)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
     MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
 #endif
@@ -187,8 +187,8 @@ unsigned long int SumMPI_li(unsigned long int idim)
 
 int SumMPI_i(int idim)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
     MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 #endif
@@ -196,7 +196,6 @@ int SumMPI_i(int idim)
 }
 
 unsigned long int BcastMPI_li(int root, unsigned long int idim) {
-  int ierr;
   unsigned long int idim0;
   idim0 = idim;
 #ifdef MPI

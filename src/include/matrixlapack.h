@@ -27,6 +27,7 @@
 
 #define M_DSYEV dsyev_
 #include <complex.h>
+int DSEVvalue(int xNsize, double **A, double *r);
 int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **vec);
 
 #endif

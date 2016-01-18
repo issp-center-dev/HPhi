@@ -30,8 +30,6 @@
  */
 int expec_energy(struct BindStruct *X){
 
-  char sdt[D_FileNameMax];
-
   long unsigned int i,j;
   long unsigned int irght,ilft,ihfbit;
   long unsigned int isite1;
@@ -39,7 +37,6 @@ int expec_energy(struct BindStruct *X){
   long unsigned int is1;
   double complex dam_pr,dam_pr1;
 
-  long unsigned int num1;
   long unsigned int num1_up, num1_down;
   long unsigned int ibit1;
   double tmp_num_up, tmp_num_down, tmp_doublon, tmp_num;

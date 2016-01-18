@@ -46,33 +46,6 @@
 #define KWPairLift 12
 #define KWIsing 13
 
-/**
- * Keyword List in NameListFile.  
- **/
-static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
-  "CalcMod",
-  "ModPara",
-  "LocSpin",
-  "Trans",
-  "CoulombIntra",
-  "CoulombInter",
-  "Hund",
-  "PairHop",
-  "Exchange",
-  "InterAll",
-  "OneBodyG",
-  "TwoBodyG",
-  "PairLift",
-  "Ising"
-};
-
-/**
- * File Name List in NameListFile.  
- **/
-static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
-
-
-
 int CheckSite(
 	      const int iListToSite,
 	      const int iMaxNum

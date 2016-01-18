@@ -20,6 +20,7 @@
 #include "vec12.h"
 #include "bisec.h"
 #include "FileIO.h"
+#include "matrixlapack.h"
 #include "Lanczos_EigenValue.h"
 #include "wrapperMPI.h"
 

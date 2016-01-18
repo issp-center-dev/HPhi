@@ -43,7 +43,7 @@
 void Lanczos_EigenVector(struct BindStruct *X){
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);  
-  int i,j,i_max,iv;  	 
+  long int i,j,i_max,iv;
   int k_exct, iproc;
   double beta1,alpha1,dnorm, dnorm_inv;
   double complex temp1,temp2,cdnorm;
