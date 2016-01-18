@@ -97,6 +97,7 @@ int CalcBySSM(
     fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
     fclose(fp);
     for (step_i = 2; step_i<X->Bind.Def.Lanczos_max; step_i++){
+      X->Bind.Def.istep=step_i;
 
       if(step_i %(X->Bind.Def.Lanczos_max/10)==0){
 	fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
