@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Common.h"
+#include "mltply.h"
 #include "Lanczos_EigenVector.h"
 #include "wrapperMPI.h"
 

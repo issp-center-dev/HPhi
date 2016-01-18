@@ -16,6 +16,7 @@
 
 #include <bitcalc.h>
 #include "mfmemory.h"
+#include "FileIO.h"
 #include "sz.h"
 #include "wrapperMPI.h"
 

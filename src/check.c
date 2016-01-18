@@ -14,8 +14,9 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include <bitcalc.h>
-#include <sz.h>
+#include "bitcalc.h"
+#include "sz.h"
+#include "FileIO.h"
 #include "mfmemory.h"
 #include "check.h"
 #include "wrapperMPI.h"

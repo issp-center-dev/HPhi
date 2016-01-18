@@ -14,7 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include <bitcalc.h>
+#include "bitcalc.h"
 #include "mltply.h"
 #include "expec_energy.h"
 #include "wrapperMPI.h"

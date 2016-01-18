@@ -16,6 +16,7 @@
 
 #include "Common.h"
 #include "HPhiTrans.h"
+#include "FileIO.h"
 #include "wrapperMPI.h"
 
 /** 

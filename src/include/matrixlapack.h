@@ -13,42 +13,20 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#include "lapack_diag.h"
-#include "matrixlapack.h"
-#include "FileIO.h"
+/*-------------------------------------------------------------
+ *[ver.2009.05.25]
+ *-------------------------------------------------------------
+ * Copyright (C) 2007-2009 Daisuke Tahara. All rights reserved.
+ * Copyright (C) 2009-     Takahiro Misawa. All rights reserved.
+ * Some functions are added by TM.
+ *-------------------------------------------------------------*/
+/*=================================================================================================*/
 
-/** 
- * 
- * 
- * @param X 
- * 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
- */
-int lapack_diag(struct BindStruct *X){
-  
-  FILE *fp;
-  char sdt[D_FileNameMax]="";
-  int i,j,i_max,xMsize;
- 
-  i_max=X->Check.idim_max;   
+#ifndef MATRIX_LAPACK_
+#define MATRIX_LAPACK_
 
-  for(i=0;i<i_max;i++){
-    for(j=0;j<i_max;j++){
-     Ham[i][j] =Ham[i+1][j+1];
-    }
-  }
-  xMsize = i_max;
-  //DSEVvector(xMsize, Ham, v0, L_vec);
-  ZHEEVall(xMsize, Ham, v0, L_vec);
-  strcpy(sdt,cFileNameEigenvalue_Lanczos);
-  if(childfopenMPI(sdt,"w",&fp)!=0){
-    return -1;
-  }
-  for(i=0;i<i_max;i++){
-    fprintf(fp," %d %.10lf \n",i, creal(v0[i]));
-  }
-  fclose(fp);
-  return 0;
-}
+#define M_DSYEV dsyev_
+#include <complex.h>
+int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **vec);
+
+#endif

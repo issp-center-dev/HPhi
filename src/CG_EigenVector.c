@@ -15,6 +15,8 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "CG_EigenVector.h"
+#include "FileIO.h"
+#include "mltply.h"
 #include "wrapperMPI.h"
 
 /** 

@@ -168,3 +168,12 @@ int CheckTotal2Sz
 (
   struct DefineList *X
  );
+
+int ReadDefFileNInt(
+		    char *xNameListFile, 
+		    struct DefineList *X
+		    );
+
+int ReadDefFileIdxPara(
+		       struct DefineList *X
+		       );

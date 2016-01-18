@@ -15,6 +15,8 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "mltply.h"
+#include "FileIO.h"
+#include "bitcalc.h"
 #include "expec_cisajs.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
