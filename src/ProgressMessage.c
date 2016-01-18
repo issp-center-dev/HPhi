@@ -31,6 +31,21 @@ const char* cProEndCalcDiag = "  End  : Calculate diagaonal components of Hamilt
 
 const char* cLogLanczos_EigenValueStart="######  Start: Calculate Lanczos Eigenvalue.  ######\n\n";
 const char* cLogLanczos_EigenValueEnd="\n######  End  : Calculate Lanczos EigenValue.  ######\n\n";
+const char* cLogLanczos_EigenVecStart="######  Start: Calculate Lanczos Eigenvec.  ######\n\n";
+const char* cLogLanczos_EigenVecEnd="\n######  End  : Calculate Lanczos EigenVec.  ######\n\n";
 
-const char* cLogLanczos_EigenVecStart="######  Start: Calculate Eigenvector.  ######\n\n";
-const char* cLogLanczos_EigenVecEnd="######  End  : Calculate Eigenvector.  ######\n\n";
+
+const char* cLogTPQ_Start="######  Start: TPQCalculation.  ######\n\n";
+const char* cLogTPQ_End="######  End  : TPQCalculation.  ######\n\n";
+
+
+const char* cLogFullDiag_SetHam_Start="######  Start: Setting Hamiltonian.  ######\n\n";
+const char* cLogFullDiag_SetHam_End="######  End  : Setting Hamiltonian.  ######\n\n";
+
+
+const char* cLogFullDiag_Start="######  Start: Diagonalization.  ######\n\n";
+const char* cLogFullDiag_End="######  End  : Diagonalization.  ######\n\n";
+
+const char* cLogFullDiag_ExpecValue_Start="######  Start: Calc Expected value.  ######\n\n";
+const char* cLogFullDiag_ExpecValue_End="######  End  : Calc Expected value.  ######\n\n";
+const char* cLogFinish ="######  Finish Calculation.  ######\n";

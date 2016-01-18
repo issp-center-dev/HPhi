@@ -47,7 +47,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
     }
   
   if(X->Def.iInitialVecType==0){
-    fprintf(stdoutMPI, "CHECK: TPQ complex initial vector \n");
+    fprintf(stdoutMPI, cLogCheckInitComplex);
     //For getting random numbers without any dependencies of threads,
     //we do not adopt omp in this part.
     for (iproc = 0; iproc < nproc; iproc++) {
@@ -61,7 +61,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
     }
   }
   else{
-    fprintf(stdoutMPI, "CHECK: TPQ real initial vector \n");
+    fprintf(stdoutMPI, cLogCheckInitReal);
     for (iproc = 0; iproc < nproc; iproc++) {
 
       i_max_tmp = BcastMPI_li(iproc, i_max);
