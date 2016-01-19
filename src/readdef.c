@@ -1302,7 +1302,7 @@ int CheckTransferHermite
   X->EDNTransfer=2*icntHermite;
   X->EDNChemi=icntchemi;
 
-  for(i=0; i<X->NTransfer; i++){
+  for(i=0; i<X->EDNTransfer; i++){
     for(itmpIdx=0; itmpIdx<4; itmpIdx++){
       X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
       }

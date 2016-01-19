@@ -45,35 +45,24 @@ int HPhiTrans(struct BindStruct *X){
   //Transefer
   cnt_trans=0;
   cnt_chemi=0;
+
   
-  for(i=0;i<X->Def.NTransfer;i++){
-    // chemical potential = diagonal
-    // check site 
-    if(X->Def.GeneralTransfer[i][0]==X->Def.GeneralTransfer[i][2]){
-      // check spin
-      if(X->Def.GeneralTransfer[i][1]==X->Def.GeneralTransfer[i][3]){
-	cnt_chemi+=1;
-      }
-      else{
-	cnt_trans+=1;
-      }
-    }else{
-      // eliminate double counting
-      for(k=0;k<cnt_trans;k++){
-	if( X->Def.GeneralTransfer[i][1] == X->Def.EDGeneralTransfer[k][1]
-	    && X->Def.GeneralTransfer[i][3] == X->Def.EDGeneralTransfer[k][3]){
-	  if(X->Def.GeneralTransfer[i][0] == X->Def.EDGeneralTransfer[k][0]
-	     && X->Def.GeneralTransfer[i][2] == X->Def.EDGeneralTransfer[k][2]){
-	    sprintf(sdt_err,cErrTransfer);
-	    childfopenMPI(sdt_err,"a", &fp_err);
-	    fprintf(fp_err,cErrDoubleCounting, X->Def.GeneralTransfer[i][0] ,X->Def.EDGeneralTransfer[k][2], X->Def.EDGeneralTransfer[k][1], X->Def.EDGeneralTransfer[k][3]);
-	    fclose(fp_err);
-	    return -1;
-	  }
+  for(i=0;i<X->Def.EDNTransfer;i++){
+    // eliminate double counting
+    for(k=0;k<cnt_trans;k++){
+      if( X->Def.GeneralTransfer[i][1] == X->Def.GeneralTransfer[k][1]
+	  && X->Def.GeneralTransfer[i][3] == X->Def.GeneralTransfer[k][3]){
+	if(X->Def.GeneralTransfer[i][0] == X->Def.GeneralTransfer[k][0]
+	   && X->Def.GeneralTransfer[i][2] == X->Def.GeneralTransfer[k][2]){
+	  sprintf(sdt_err,cErrTransfer);
+	  childfopenMPI(sdt_err,"a", &fp_err);
+	  fprintf(fp_err,cErrDoubleCounting, X->Def.GeneralTransfer[k][0] ,X->Def.GeneralTransfer[k][2], X->Def.GeneralTransfer[k][1], X->Def.GeneralTransfer[k][3]);
+	  fclose(fp_err);
+	  return -1;
 	}
       }
-      cnt_trans+=1;
     }
+    cnt_trans+=1;
   }
   
   //fprintf(stdoutMPI, cProEDNTrans, cnt_trans);

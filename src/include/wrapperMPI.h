@@ -29,6 +29,7 @@ FILE* fopenMPI(const char* FileName, const char* mode);
 char* fgetsMPI(char* InputString, int maxcount,FILE* fp);
 void BarrierMPI();
 unsigned long int MaxMPI_li(unsigned long int idim);
+double MaxMPI_d(double dvalue);
 double complex SumMPI_dc(double complex norm);
 double SumMPI_d(double norm);
 unsigned long int SumMPI_li(unsigned long int idim);

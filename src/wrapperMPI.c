@@ -156,6 +156,17 @@ unsigned long int MaxMPI_li(unsigned long int idim)
   return(idim);
 }
 
+double MaxMPI_d(double dvalue)
+{
+#ifdef MPI
+  int ierr;
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &dvalue, 1,
+    MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+  if(ierr != 0) exitMPI(-1);
+#endif
+  return(dvalue);
+}
+
 double complex SumMPI_dc(double complex norm)
 {
 #ifdef MPI
