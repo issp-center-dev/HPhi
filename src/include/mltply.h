@@ -25,6 +25,8 @@
 #define M_CORR 3
 #define M_TOTALS 4
 
+int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
 double complex child_general_hopp_element
 (
  const long unsigned int j,

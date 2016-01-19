@@ -16,6 +16,7 @@
 
 #include <bitcalc.h>
 #include "mfmemory.h"
+#include "FileIO.h"
 #include "sz.h"
 #include "wrapperMPI.h"
 
@@ -58,8 +59,7 @@ int sz
   long unsigned int div;
   long unsigned int num_up,num_down;
   long unsigned int irght,ilft,ihfbit;
-  long unsigned int tmp_sdim;
-  
+
   //*[s] for omp parall
   int  all_up,all_down,tmp_res,num_threads;
   long unsigned int tmp_1,tmp_2,tmp_3;
@@ -421,7 +421,7 @@ int sz
 	TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
  
 	icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X,tmp_sdim) 
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
 	for(ib=0;ib<X->Check.sdim;ib++){
 	  icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
 	}
@@ -844,7 +844,6 @@ int child_omp_sz_spin(
   long unsigned int i,j,div; 
   long unsigned int ia,ja,jb;
   long unsigned int num_up;
-  long unsigned int tmp_sdim;
   int tmp_num_up;
   
   jb = list_jb[ib];

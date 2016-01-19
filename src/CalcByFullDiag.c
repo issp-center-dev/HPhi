@@ -29,16 +29,19 @@ int CalcByFullDiag(
 		   struct EDMainCalStruct *X
 		   )
 {
-  fprintf(stdoutMPI, "Start Setting Hamiltonian.\n");
+  fprintf(stdoutMPI, cLogFullDiag_SetHam_Start);
   makeHam(&(X->Bind));
-  fprintf(stdoutMPI, "Finish Setting Hamiltonian.\n");
+  fprintf(stdoutMPI, cLogFullDiag_SetHam_End);
+
+  fprintf(stdoutMPI,cLogFullDiag_Start);
   lapack_diag(&(X->Bind));
-  fprintf(stdoutMPI, "Diagonalization is done.\n");  
+  fprintf(stdoutMPI,cLogFullDiag_End);
+
   X->Bind.Def.St=0;
-  fprintf(stdoutMPI, "Start: Calc Expected value.\n");
+  fprintf(stdoutMPI, cLogFullDiag_ExpecValue_Start);
   phys(&(X->Bind));
-  fprintf(stdoutMPI, "End: Calc Expected value.\n");
+  fprintf(stdoutMPI, cLogFullDiag_ExpecValue_End);
   output(&(X->Bind));
-  fprintf(stdoutMPI, "Finish. \n");
+  fprintf(stdoutMPI, cLogFinish);
   return 0;
 }

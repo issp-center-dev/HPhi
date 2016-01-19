@@ -96,7 +96,7 @@ int GetOffCompGeneralSpin(
 		const int org_isite,
 		const int org_ispin,
 		const int off_ispin,
-		long int *_ioffComp,
+		long  unsigned int *_ioffComp,
 		const long int *SiteToBit,
 		const long int *TPow
 		);
@@ -112,5 +112,5 @@ int GetLocal2Sz
 void ConvertToList1GeneralSpin(
 		const long unsigned int org_ibit,
 		const long unsigned int ihlfbit,
-		long int *_ilist1Comp
+		long unsigned int *_ilist1Comp
 			       );

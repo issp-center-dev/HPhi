@@ -13,10 +13,11 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#include <expec_cisajs.h>
-#include <expec_cisajscktaltdc.h>
-#include <expec_totalspin.h>
+#include "expec_cisajs.h"
+#include "expec_cisajscktaltdc.h"
+#include "expec_totalspin.h"
 #include "CalcByLanczos.h"
+#include "FileIO.h"
 #include "wrapperMPI.h"
 
 /**
@@ -51,8 +52,6 @@ int CalcByLanczos(
 {
   char sdt[D_FileNameMax];
   double diff_ene,var;
-  int iconv=0;
-  int flag=0;
   long int i=0;
   long int i_max=0;
   long int _list_1;

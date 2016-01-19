@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "dSFMT-params.h"
+#include "wrapperMPI.h"
 
 /** dsfmt internal state vector */
 dsfmt_t dsfmt_global_data;

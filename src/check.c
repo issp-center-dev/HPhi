@@ -14,8 +14,9 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include <bitcalc.h>
-#include <sz.h>
+#include "bitcalc.h"
+#include "sz.h"
+#include "FileIO.h"
 #include "mfmemory.h"
 #include "check.h"
 #include "wrapperMPI.h"
@@ -211,15 +212,25 @@ int check(struct BindStruct *X){
     return FALSE;
     break;
   }
-  
-  fprintf(stdoutMPI, "  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
-  fprintf(stdoutMPI, "  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
+
+  //fprintf(stdoutMPI, "  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
+  //fprintf(stdoutMPI, "  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
+  unsigned long int li_dim_max=MaxMPI_li(X->Check.idim_max);
+  fprintf(stdoutMPI, "  MAX DIMENSION idim_max=%ld \n",li_dim_max);
+  double dmax_mem=MaxMPI_d(X->Check.max_mem);
+  fprintf(stdoutMPI, "  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",dmax_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
     i_free2(comb, Ns+1, Ns+1);
     return FALSE;
   }
+  fprintf(fp,"  MAX DIMENSION idim_max=%ld \n", li_dim_max);
+  fprintf(fp,"  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n", dmax_mem);
+
+  
+  /*
   fprintf(fp,"  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
   fprintf(fp,"  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",X->Check.max_mem);
+  */
   fclose(fp);
 
   //sdim 
@@ -313,7 +324,7 @@ int check(struct BindStruct *X){
    }
    else{
      X->Def.Tpow[0]=u_tmp;
-     fprintf(fp,"%ld %ld \n", 0, u_tmp);
+     fprintf(fp,"%d %ld \n", 0, u_tmp);
       for(i=1;i<X->Def.Nsite;i++){
 	u_tmp=u_tmp*X->Def.SiteToBit[i-1];
 	X->Def.Tpow[i]=u_tmp;

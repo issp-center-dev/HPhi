@@ -22,6 +22,12 @@ int expec_totalspin
  double complex *vec
  );
 
+int expec_totalSz
+(
+ struct BindStruct *X,
+ double complex *vec
+ );
+
 void totalspin_Hubbard(struct BindStruct *X,double complex *vec);
 void totalspin_HubbardGC(struct BindStruct *X,double complex *vec);
 void totalspin_Spin(struct BindStruct *X,double complex *vec);

@@ -89,3 +89,14 @@ const char* cLogCGExpecEnergyEnd="  End  : Calculate Energy by CG method.\n";
 const char* cLogEnergy="energy=%lf \n";
 const char* cLanczosExpecEnergyEnd= "Lanczos expec energy finishes: %s";
 const char* cCGExpecEnergyEnd= "CG expec energy finishes: %s";
+
+//CalcByTPQ.c
+const char* cLogTPQRand =  "  rand_i / rand_max = %d / %d\n";
+const char* cLogSSRand =  " # inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i\n";
+const char* cLogNormRand = " # inv_temp, global_norm, global_1st_norm, step_i \n";
+const char* cLogTPQStep = "    step_i/total_step=%d/%d \n";
+const char* cLogTPQEnd = "Finish: Elapsed time is %d [s].\n";
+
+//FirstMultiply.c
+const char* cLogCheckInitComplex = "    CHECK: TPQ complex initial vector \n";
+const char* cLogCheckInitReal = "    CHECK: TPQ real initial vector \n";

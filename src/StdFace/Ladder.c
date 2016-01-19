@@ -177,7 +177,7 @@ void Spin_Ladder(
   int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
 {
   int isite, jsite;
-  int iL, iW, iW2, iL2;
+  int iL, iW;
   int ktrans, kintr;
   double LargeValue0, S;
 

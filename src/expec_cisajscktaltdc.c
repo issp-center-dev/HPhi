@@ -15,6 +15,8 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "mltply.h"
+#include "FileIO.h"
+#include "bitcalc.h"
 #include "expec_cisajscktaltdc.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
@@ -76,7 +78,6 @@ int expec_cisajscktaltdc
   int tmp_sgn, num1, num2;
   double complex tmp_V;
   double complex dam_pr;
-  double complex TwoBodyG=1.0;
   long int i_max;
   
   //For TPQ
@@ -427,9 +428,9 @@ int expec_cisajscktaltdc
 	    }
 	  }else if(org_isite1==org_isite3 && org_sigma1==org_sigma4 && org_sigma3==org_sigma2){
 	    dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(i_max,X,isite1, tmp_V) shared(vec, list_1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(i_max,X,isA_up, tmp_V) shared(vec, list_1)
 	    for(j=1;j<=i_max;j++){
-	      dmv=X_CisAis(list_1[j], X, isite1);
+	      dmv=X_CisAis(list_1[j], X, isA_up);
 	      dam_pr += vec[j]*tmp_V*dmv*conj(vec[j]);
 	    }	    
 	  }

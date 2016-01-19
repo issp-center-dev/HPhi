@@ -52,11 +52,10 @@
 int makeHam(struct BindStruct *X){
 
   long unsigned int i,j;
-  long unsigned int iexchg;
   long unsigned int is1_spin;
   long unsigned int irght,ilft,ihfbit;
   double complex dmv;
-  double num1, num2;
+  double num1;
   long unsigned int off;
   int isite1,isite2,isite3,isite4;
   int sigma1,sigma2,sigma3,sigma4;

@@ -38,6 +38,32 @@
 #include "wrapperMPI.h"
 
 /**
+ * Keyword List in NameListFile.
+ **/
+static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
+        "CalcMod",
+        "ModPara",
+        "LocSpin",
+        "Trans",
+        "CoulombIntra",
+        "CoulombInter",
+        "Hund",
+        "PairHop",
+        "Exchange",
+        "InterAll",
+        "OneBodyG",
+        "TwoBodyG",
+        "PairLift",
+        "Ising"
+};
+
+/**
+ * File Name List in NameListFile.
+ **/
+static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
+
+
+/**
  * @brief Error Function of reading def files.
  * @param[in] _defname name of def file.
  * @version 0.1
@@ -48,7 +74,7 @@ int ReadDefFileError(
 		     const	char *defname
 		     ){
   fprintf(stderr, cErrReadDefFile, defname);
-  exitMPI(-1);
+  return (-1);
 }
 
 /**
@@ -1276,7 +1302,7 @@ int CheckTransferHermite
   X->EDNTransfer=2*icntHermite;
   X->EDNChemi=icntchemi;
 
-  for(i=0; i<X->NTransfer; i++){
+  for(i=0; i<X->EDNTransfer; i++){
     for(itmpIdx=0; itmpIdx<4; itmpIdx++){
       X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
       }
@@ -1613,10 +1639,10 @@ int CheckFormatForSpinInt
   if(site1==site2 && site3==site4){
     return 0;
   }
-  else{
+
     fprintf(stderr, cWarningIncorrectFormatForSpin, site1, site2, site3, site4);
-    exitMPI(-1);
-  }
+    return(-1);
+
 }
 
 /** 
@@ -1818,7 +1844,6 @@ int CheckSpinIndexForInterAll
   int i=0;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
-  int ilocspn=0;
   if(X->iFlgGeneralSpin==TRUE){
     for(i=0; i<X->NInterAll; i++){
       isite1 =X->InterAll[i][0];

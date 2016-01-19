@@ -13,11 +13,13 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#include <FirstMultiply.h>
-#include <expec_energy.h>
-#include <expec_cisajs.h>
-#include <expec_cisajscktaltdc.h>
+#include "FirstMultiply.h"
+#include "Multiply.h"
+#include "expec_energy.h"
+#include "expec_cisajs.h"
+#include "expec_cisajscktaltdc.h"
 #include "CalcByTPQ.h"
+#include "FileIO.h"
 #include "wrapperMPI.h"
 
 /** 
@@ -52,22 +54,23 @@ int CalcBySSM(
   rand_max = NumAve;
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
+  fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
-    fprintf(stdoutMPI, "rand_i=%d \n", rand_i);
+    fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     u_long_i = 123432 + (rand_i+1)*abs(X->Bind.Def.initial_iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){
       return -1;
     }
-    fprintf(fp, " # inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i\n");
+    fprintf(fp, cLogSSRand);
     fclose(fp);
     
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
     if(!childfopenMPI(sdt_norm, "w", &fp)==0){
       return -1;
     }
-    fprintf(fp, " # inv_temp, global_norm, global_1st_norm, step_i \n");
+    fprintf(fp, cLogNormRand);
     fclose(fp);
     
     FirstMultiply(&dsfmt, &(X->Bind));
@@ -96,9 +99,10 @@ int CalcBySSM(
     fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
     fclose(fp);
     for (step_i = 2; step_i<X->Bind.Def.Lanczos_max; step_i++){
+      X->Bind.Def.istep=step_i;
 
       if(step_i %(X->Bind.Def.Lanczos_max/10)==0){
-	fprintf(stdoutMPI, "step_i/total_step=%d/%d \n", step_i, X->Bind.Def.Lanczos_max);
+	fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;
       TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
@@ -127,8 +131,8 @@ int CalcBySSM(
       }
     }
   }
-
+  fprintf(stdoutMPI, cLogTPQ_End);
   tstruct.tend=time(NULL);
-  fprintf(stdoutMPI, "Finish: Elapsed time is %d [s].\n", (int)(tstruct.tend-tstruct.tstart));
+  fprintf(stdoutMPI, cLogTPQEnd, (int)(tstruct.tend-tstruct.tstart));
   return 0;
 }

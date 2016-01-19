@@ -90,4 +90,14 @@ const char* cLogEnergy;
 const char* cLanczosExpecEnergyEnd;
 const char* cCGExpecEnergyEnd;
 
+//CalcByTPQ.c
+const char* cLogTPQRand;
+const char* cLogSSRand;
+const char* cLogNormRand;
+const char* cLogTPQStep;
+const char* cLogTPQEnd;
+
+//FirstMultiply.c
+const char* cLogCheckInitComplex;
+const char* cLogCheckInitReal;
 #endif /* HPHI_LOGMESSAGE_H */
