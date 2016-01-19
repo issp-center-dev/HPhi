@@ -105,10 +105,14 @@ double complex X_GC_child_general_hopp_MPIdouble(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0){
+        exitMPI(-1);
+    }
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-
-  
+    if(ierr != 0){
+        exitMPI(-1);
+    }
   dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
@@ -186,8 +190,11 @@ double complex X_GC_child_general_hopp_MPIsingle(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
   /*
    Index in the intra PE
@@ -307,10 +314,13 @@ double complex X_child_general_hopp_MPIdouble(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
   dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
@@ -391,10 +401,13 @@ double complex X_child_general_hopp_MPIsingle(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
   /*
   Index in the intra PE
@@ -511,12 +524,15 @@ double complex X_child_general_int_spin_MPIdouble(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
+    dam_pr = 0.0;
   #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
   firstprivate(idim_max_buf, Jint, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
@@ -568,12 +584,15 @@ double complex X_child_general_int_spin_TotalS_MPIdouble(
   
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
+    dam_pr = 0.0;
   #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
     firstprivate(idim_max_buf,  X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {    
@@ -654,13 +673,16 @@ double complex X_child_general_int_spin_MPIsingle(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  /*
-  Index in the intra PE
-  */
+    if(ierr != 0) exitMPI(-1);
+    /*
+    Index in the intra PE
+    */
   mask1 = X->Def.Tpow[org_isite1];
 
   dam_pr = 0.0;
@@ -764,10 +786,12 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
  
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
+    dam_pr = 0.0;
   #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
@@ -852,10 +876,12 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
   
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
+    dam_pr = 0.0;
   #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
@@ -946,10 +972,12 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
   }
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
+    dam_pr = 0.0;
   #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
@@ -1130,11 +1158,13 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  /*
-  Index in the intra PE
-  */
+    if(ierr != 0) exitMPI(-1);
+    /*
+    Index in the intra PE
+    */
   mask1 = X->Def.Tpow[org_isite1];
 
   dam_pr = 0.0;
@@ -1222,11 +1252,13 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle( int org_isite1, int org_i
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  /*
-  Index in the intra PE
-  */
+    if(ierr != 0) exitMPI(-1);
+    /*
+    Index in the intra PE
+    */
   mask1 = X->Def.Tpow[org_isite1];
 
   dam_pr = 0.0;
@@ -1443,8 +1475,9 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 		      v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
 		      MPI_COMM_WORLD, &statusMPI);
-  
-  dam_pr = 0.0;
+    if(ierr != 0) exitMPI(-1);
+
+    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf) 
   for (j = 1; j <= X->Check.idim_max; j++) {
     dmv = v1buf[j] * tmp_V;
@@ -1499,8 +1532,9 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 		      v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
 		      MPI_COMM_WORLD, &statusMPI);
-  
-  dam_pr = 0.0;
+    if(ierr != 0) exitMPI(-1);
+
+    dam_pr = 0.0;
 #pragma omp parallel  for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf) 
   for (j = 1; j <= X->Check.idim_max; j++) {
     dmv = v1buf[j] * tmp_V;
@@ -1572,6 +1606,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
     ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
       v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
       MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf) 
@@ -1659,8 +1694,9 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 		      v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
 		      MPI_COMM_WORLD, &statusMPI);
-  
-  dam_pr = 0.0;
+    if(ierr != 0) exitMPI(-1);
+
+    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf) 
   for (j = 1; j <= X->Check.idim_max; j++) {
     dmv = v1buf[j] * tmp_V;
@@ -1794,8 +1830,9 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 		      v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 		      MPI_COMM_WORLD, &statusMPI);
-  
-  dam_pr = 0.0;
+    if(ierr != 0) exitMPI(-1);
+
+    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, isite, IniSpin) private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf) 
   for (j = 1; j <= X->Check.idim_max; j++) {
     num1 = BitCheckGeneral(j-1, isite, IniSpin, X->Def.SiteToBit, X->Def.Tpow);
@@ -1900,6 +1937,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
       v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
       MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp_v0, tmp_v1, v1buf) 
@@ -2033,13 +2071,16 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
+    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, idim_max_buf) private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf) 
   for (j = 1; j <= idim_max_buf; j++) {
 
@@ -2209,11 +2250,14 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
     MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
 
   dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, idim_max_buf, IniSpin, FinSpin, isite) private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf) 
@@ -2275,10 +2319,12 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 		      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    if(ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 		      v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  
-  dam_pr = 0.0;
+    if(ierr != 0) exitMPI(-1);
+
+    dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= X->Check.idim_max ; j++) {
     dmv = trans * v1buf[j];
@@ -2678,10 +2724,12 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
   else{
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+      if(ierr != 0) exitMPI(-1);
+      ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 			v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+      if(ierr != 0) exitMPI(-1);
 
-    if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite){
+      if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite){
       if(isite2 > isite1) Adiff = isite2 - isite1*2;
       else Adiff = isite1-isite2*2;
       SgnBit( ((long unsigned int) myrank&Adiff), &Fsgn);
@@ -2857,10 +2905,12 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
   else{
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+      if(ierr != 0) exitMPI(-1);
+      ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 			v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+      if(ierr != 0) exitMPI(-1);
 
-    if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite
+      if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite
       && org_isite3+1 > X->Def.Nsite && org_isite4+1 > X->Def.Nsite){
 
       if(isite2 > isite1) Adiff = isite2 - isite1*2;
@@ -3144,12 +3194,14 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
     //printf("debug: myrank=%d, origin=%d\n", myrank, origin);
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+      if(ierr != 0) exitMPI(-1);
+      ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
 			list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-
+      if(ierr != 0) exitMPI(-1);
     
     ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 			v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+      if(ierr != 0) exitMPI(-1);
 
     if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite
       && org_isite3+1 > X->Def.Nsite && org_isite4+1 > X->Def.Nsite){
@@ -3283,13 +3335,16 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI
   else{
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+      if(ierr != 0) exitMPI(-1);
+      ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
     list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+      if(ierr != 0) exitMPI(-1);
 
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+      ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
 			v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+      if(ierr != 0) exitMPI(-1);
 
-    if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite){
+      if(org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite){
       if(isite2 > isite1) Adiff = isite2 - isite1*2;
       else Adiff = isite1-isite2*2;
       SgnBit( ((long unsigned int) myrank&Adiff), &Fsgn);
