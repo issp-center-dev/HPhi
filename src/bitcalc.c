@@ -231,7 +231,7 @@ int GetOffCompGeneralSpin(
 		const int org_isite,
 		const int org_ispin,
 		const int off_ispin,
-		long int *_ioffComp,
+		long  unsigned int *_ioffComp,
 		const long int *SiteToBit,
 		const long int *Tpow
 )
@@ -240,11 +240,11 @@ int GetOffCompGeneralSpin(
      off_ispin<0                      ||
      org_ispin>SiteToBit[org_isite-1]-1 ||
      org_ispin <0){
-    *_ioffComp=-1;
+    *_ioffComp=0;
     return FALSE;
   }
   if(BitCheckGeneral(org_ibit, org_isite, org_ispin, SiteToBit, Tpow) == FALSE){
-    *_ioffComp=-1;
+    *_ioffComp=0;
     return FALSE;
   }
   
@@ -271,7 +271,7 @@ int GetOffCompGeneralSpin(
 void ConvertToList1GeneralSpin(
 		const long unsigned int org_ibit,
 		const long unsigned int ihlfbit,
-		long int *_ilist1Comp
+		long unsigned int *_ilist1Comp
 )
 {
   long unsigned int ia, ib;

@@ -10,6 +10,12 @@
 %
 \documentclass[a4paper,12pt,openany]{../package/mybook}
 %
+\usepackage{atbegshi}
+\ifnum 42146=\euc"A4A2
+  \AtBeginShipoutFirst{\special{pdf:tounicode EUC-UCS2}}
+\else
+  \AtBeginShipoutFirst{\special{pdf:tounicode 90ms-RKSJ-UCS2}}
+\fi
 \usepackage{amsmath, amsfonts, amsthm, amssymb}
 \usepackage{graphicx}
 \usepackage{color}

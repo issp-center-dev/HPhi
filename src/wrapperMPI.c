@@ -147,56 +147,72 @@ void BarrierMPI(){
 
 unsigned long int MaxMPI_li(unsigned long int idim)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
     MPI_UNSIGNED_LONG, MPI_MAX, MPI_COMM_WORLD);
+  if(ierr != 0) exitMPI(-1);
 #endif
   return(idim);
 }
 
+double MaxMPI_d(double dvalue)
+{
+#ifdef MPI
+  int ierr;
+  ierr = MPI_Allreduce(MPI_IN_PLACE, &dvalue, 1,
+    MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+  if(ierr != 0) exitMPI(-1);
+#endif
+  return(dvalue);
+}
+
 double complex SumMPI_dc(double complex norm)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
     MPI_DOUBLE_COMPLEX, MPI_SUM, MPI_COMM_WORLD);
+  if(ierr != 0) exitMPI(-1);
 #endif
   return(norm);
 }
 
 double SumMPI_d(double norm)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
     MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+  if(ierr != 0) exitMPI(-1);
 #endif
   return(norm);
 }
 
 unsigned long int SumMPI_li(unsigned long int idim)
 {
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
     MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+  if(ierr != 0) exitMPI(-1);
 #endif
   return(idim);
 }
 
-int SumMPI_i(int idim)
-{
-  int ierr;
+int SumMPI_i(int idim);
+
+int SumMPI_i(int idim) {
 #ifdef MPI
+  int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
-    MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+                       MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+  if(ierr != 0) exitMPI(-1);
 #endif
   return(idim);
 }
 
 unsigned long int BcastMPI_li(int root, unsigned long int idim) {
-  int ierr;
   unsigned long int idim0;
   idim0 = idim;
 #ifdef MPI

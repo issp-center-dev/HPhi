@@ -15,6 +15,8 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "mltply.h"
+#include "FileIO.h"
+#include "bitcalc.h"
 #include "expec_cisajs.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
@@ -53,18 +55,15 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   char sdt[D_FileNameMax];
 
   long unsigned int i,j;
-  long unsigned int iexchg;
   long unsigned int irght,ilft,ihfbit;
-  long unsigned int isite1,isite2;
+  long unsigned int isite1;
   long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
-  long unsigned int tmp_org_isite1, tmp_org_isite2;
-  long unsigned int Asum,Adiff;
   long unsigned int tmp_off=0;
   double complex dam_pr;
   long int i_max;
   int tmp_sgn, num1;
   long int ibit1, ibit;
-  long unsigned int is1_up, is1_down, is;
+  long unsigned int is1_up, is;
   double complex tmp_OneGreen=1.0;
   //For TPQ
   int step=0;
@@ -238,7 +237,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	if(org_isite1==org_isite2){
 	  if(org_isite1 > X->Def.Nsite){
 	    is1_up = X->Def.Tpow[org_isite1 - 1];
-	    ibit1 = ((unsigned long int)myrank& is1_up)^(1-org_sigma1);
+	    ibit1 = (((unsigned long int)myrank& is1_up)/is1_up)^(1-org_sigma1);
 	    dam_pr=0;
 	    if(ibit1 !=0){
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\

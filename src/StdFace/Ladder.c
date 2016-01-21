@@ -177,7 +177,7 @@ void Spin_Ladder(
   int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
 {
   int isite, jsite;
-  int iL, iW, iW2, iL2;
+  int iL, iW;
   int ktrans, kintr;
   double LargeValue0, S;
 
@@ -241,32 +241,34 @@ void Spin_Ladder(
     intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
   }
   kintr = 0;
+
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
 
       isite = iL + iW * L;
 
       StdFace_SzSz(&kintr, S2, S2, D, isite, isite);
-
+      
       jsite = ((iL + 1 + 2 * L) % L) + iW * L;
-      StdFace_SzSz(&kintr, S2, S2, J1, isite, isite);
+      StdFace_SzSz(&kintr, S2, S2, J1, isite, jsite);
       StdFace_exchange(&kintr, S2, S2, J1, isite, jsite);
-
+      
       jsite = ((iL + 2 + 2 * L) % L) + iW * L;
-      StdFace_SzSz(&kintr, S2, S2, J1p, isite, isite);
+      StdFace_SzSz(&kintr, S2, S2, J1p, isite, jsite);
       StdFace_exchange(&kintr, S2, S2, J1p, isite, jsite);
-
+      
+      
       if (iW < W - 1){
         jsite = iL + (iW + 1) * L;
-        StdFace_SzSz(&kintr, S2, S2, J0, isite, isite);
+        StdFace_SzSz(&kintr, S2, S2, J0, isite, jsite);
         StdFace_exchange(&kintr, S2, S2, J0, isite, jsite);
 
         jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
-        StdFace_SzSz(&kintr, S2, S2, J2, isite, isite);
+        StdFace_SzSz(&kintr, S2, S2, J2, isite, jsite);
         StdFace_exchange(&kintr, S2, S2, J2, isite, jsite);
 
         jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
-        StdFace_SzSz(&kintr, S2, S2, J2p, isite, isite);
+        StdFace_SzSz(&kintr, S2, S2, J2p, isite, jsite);
         StdFace_exchange(&kintr, S2, S2, J2p, isite, jsite);
       }
     }

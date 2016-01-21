@@ -122,7 +122,6 @@ TwoBodyG	zcisajscktaltdc.def
 \begin{verbatim}
 CalcType   0
 CalcModel   2
-OutputMode   1
 CalcEigenVec 0
 \end{verbatim}
 \end{screen}
@@ -183,14 +182,14 @@ CalcEigenVec 0
 5: 近藤模型(グランドカノニカル：粒子数・$S_z$非保存)\\
 で選択することが出来ます。
 
-\item  \verb|Outputmode|
-
-{\bf 形式 :} int型 (デフォルト値 0)
-
-{\bf 説明 :} 計算時に出力するモードの指定を行います。\\
-0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力\\
-1: 電荷電荷相関、スピンスピン相関とキーワードOneBodyG, TwoBodyGで指定されたGreen関数の出力(ver.0.1では未対応)\\
-で選択することが出来ます。
+%\item  \verb|Outputmode|
+%
+%{\bf 形式 :} int型 (デフォルト値 0)
+%
+%{\bf 説明 :} 計算時に出力するモードの指定を行います。\\
+%0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力\\
+%1: 電荷電荷相関、スピンスピン相関とキーワードOneBodyG, TwoBodyGで指定されたGreen関数の出力(ver.0.1では未対応)\\
+%で選択することが出来ます。
 
 \item  \verb|CalcEigenVec|
 
@@ -350,9 +349,26 @@ ExpecInterval  20
 
 {\bf 形式 :} int型 (整数)
 
-{\bf 説明 :} 初期条件のベクトルでノンゼロの成分を指定する整数。
-グランドカノニカルの場合は初期状態として多くの状態を持つよう、乱数の種を与えます。
+{\bf 説明 :} 
+ {初期条件のベクトルを与えます。}
+\begin{itemize}
+\item{ランチョス法}
+\begin{itemize}
+\item{カノニカル集団かつ \verb|initial_iv| $\geq 0$の場合}
 
+ノンゼロの成分が指定されます。
+
+\item{ \verb|initial_iv| $< 0$の場合}
+
+乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。なお、グランドカノニカルの場合は初期状態として多くの状態を持つよう、こちらの様式が適用されます。
+\end{itemize}
+
+\item{TPQ法}
+
+乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。
+\end{itemize}
+初期ベクトル設定の詳細については、\ref{Ch:algorithm}を参照ください。
+ 
  \item  \verb|nvec|
 
 {\bf 形式 :} int型 (自然数)
@@ -591,6 +607,7 @@ NTransfer      24
 H+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
 I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}
 \end{equation}
+{なお、スピンに関して計算する場合には、$i=j, k=l$となるよう設定してください。}
 以下にファイル例を記載します。
 
 \begin{minipage}{12.5cm}
@@ -683,6 +700,7 @@ NInterAll      36
 \begin{itemize}
 \item 行数固定で読み込みを行う為、ヘッダの省略はできません。
 \item Hamiltonianがエルミートという制限から$I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$の関係を満たす必要があります。上記の関係が成立しない場合にはエラー終了します。
+\item {スピンに関して計算する場合、$i=j, k=l$を満たさないペアが存在するとエラー終了します。}
 \item 成分が重複して指定された場合にはエラー終了します。
 \item $[$int01$]$と定義されているInterAllの総数が異なる場合はエラー終了します。
 \item $[$int02$]$-$[$int09$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
@@ -1314,7 +1332,9 @@ NCisAjs         24
 \newpage
 \subsection{TwoBodyG指定ファイル}
 \label{Subsec:twobodyg}
-二体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$を計算します。以下にファイル例を記載します。
+二体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$を計算します。
+{なお、スピンに関して計算する場合には、$i=j, k=l$となるよう設定してください。}
+以下にファイル例を記載します。
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1399,6 +1419,7 @@ NCisAjsCktAltDC        576
 \begin{itemize}
 \item 行数固定で読み込みを行う為、ヘッダの省略はできません。
 \item 成分が重複して指定された場合にはエラー終了します。
+\item {スピンに関して計算する場合、$i=j, k=l$を満たさない場合ペアが存在するとエラー終了します。}
 \item $[$int01$]$と定義されているニ体グリーン関数成分の総数が異なる場合はエラー終了します。
 \item $[$int02$]$-$[$int09$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
 \end{itemize}
@@ -1469,7 +1490,7 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
 \end{itemize}
 
 \subsection{CHECK\_InterAll.dat}
-Hamiltonianの一般ニ体相互作用のうち対角成分
+Hamiltonianの一般二体相互作用のうち対角成分
 \begin{equation}
 H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}
 \end{equation}

@@ -111,7 +111,6 @@ This file determines parameters for calculation method, model and output mode. F
 \begin{verbatim}
 CalcType   0
 CalcModel   2
-OutputMode   1
 CalcEigenVec 0
 \end{verbatim}
 \end{screen}
@@ -169,13 +168,13 @@ Parameters correlated with keywords are shown as follows.
 4: Spin model (Grand canonical ensemble)\\
 5: Kondo lattice model (Grand canonical ensemble)
 
-\item  \verb|Outputmode|
-
-{\bf Type :} int-type (default value: 0)
-
-{\bf Description :} Select the output mode from the following list:\\
-0: Output of Green's function. The components are set by the OneBodyG and TwoBodyG input files.\\
-1: Output of charge correlation function, spin correlation function and Green's function (not supported in ver.0.1). The components of Green's function are set by the OneBodyG and TwoBodyG input files.\\
+%\item  \verb|Outputmode|
+%
+%{\bf Type :} int-type (default value: 0)
+%
+%{\bf Description :} Select the output mode from the following list:\\
+%0: Output of Green's function. The components are set by the OneBodyG and TwoBodyG input files.\\
+%1: Output of charge correlation function, spin correlation function and Green's function (not supported in ver.0.1). The components of Green's function are set by the OneBodyG and TwoBodyG input files.\\
 
 \item  \verb|CalcEigenVec|
 
@@ -311,7 +310,25 @@ ExpecInterval  20
 
 {\bf Type :} int-type
 
-{\bf Description :} An integer for setting non-zero components of an initial vector. For grand canonical ensemble, the random number seed is given for getting initial vector including a lot states. 
+{\bf Description :} 
+{An initial vector is specified with this parameter.}
+\begin{itemize}
+\item{Lanczos method}
+\begin{itemize}
+\item{For canonical ensemble and \verb|initial_iv| $\geq 0$}
+
+The non-zero components of an initial vector is specified with this parameter. 
+
+\item{For grand canonical ensemble or \verb|initial_iv| $< 0$}
+
+A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+\end{itemize}
+
+\item{TPQ method}
+
+A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+\end{itemize}
+See \ref{Ch:algorithm} for details of setting an initial vector.
 
  \item  \verb|nvec|
 
@@ -543,6 +560,7 @@ This file determines values of generalized two body interactions integrals $I_{i
 H+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
 I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.
 \end{equation}
+{For Spin, the condition $i=j$ and $k=l$ must be satisfied.}
 An example of file format is shown as follows.
 
 \begin{minipage}{12.5cm}
@@ -630,6 +648,7 @@ NInterAll      36
 \begin{itemize}
 \item Headers cannot be omitted. 
 \item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$. The relation  $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{jilk\sigma_2\sigma_1\sigma_3\sigma_4}^{\dag}$ is also allowed. A program is terminated when the above relations are broken.
+\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
 \item A program is terminated, when components of on-site interactions are double counted.
 \item A program is terminated, when $[$int01$]$ is different from the total number of generalized two body interactions defined in this file.
 \item A program is terminated, when $[$int02$]$-$[$int09$]$ are out of range from the defined values.
@@ -1243,7 +1262,8 @@ An integer giving a spin index,\\
 \newpage
 \subsection{TwoBodyG file}
 \label{Subsec:twobodyg}
-This file determines the target components of two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. An example of file format is shown as follows.
+This file determines the target components of two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. {For Spin, the condition $i=j$ and $k=l$ must be satisfied.}
+An example of file format is shown as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1327,6 +1347,7 @@ An integer giving a spin index,\\
 \begin{itemize}
 \item Headers cannot be omitted. 
 \item A program is terminated, when components of two-body Green's functions are double counted.
+\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
 \item A program is terminated, when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
 \item A program is terminated, when $[$int02$]$-$[$int09$]$ are out of range from the defined values.
 \end{itemize}

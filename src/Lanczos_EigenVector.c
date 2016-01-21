@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Common.h"
+#include "mltply.h"
 #include "Lanczos_EigenVector.h"
 #include "wrapperMPI.h"
 
@@ -41,9 +42,8 @@
  */
 void Lanczos_EigenVector(struct BindStruct *X){
 
-  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
-  
-  int i,j,i_max,iv;  	 
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);  
+  long int i,j,i_max,iv;
   int k_exct, iproc;
   double beta1,alpha1,dnorm, dnorm_inv;
   double complex temp1,temp2,cdnorm;
@@ -57,60 +57,10 @@ void Lanczos_EigenVector(struct BindStruct *X){
   iv=X->Large.iv;
   i_max=X->Check.idim_max;
  
-  //Eigenvectors by Lanczos method
-  //initialization: initialization should be identical to that of Lanczos_EigenValue.c
-
-  /*
-  if(initial_mode == 0){
-    iv=(iv%i_max)+1;
-    v1[iv]=1.0;
-    if(X->Def.iInitialVecType==0){
-      v1[iv] += 1.0*I;
-      v1[iv] /=sqrt(2.0);
-    }
-    vg[iv]=vec[k_exct][1];
-  }else if(initial_mode==1){      
-    iv = X->Def.initial_iv;
-    u_long_i = 123432 + abs(iv);
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);    
-    if(X->Def.iInitialVecType==0){
-      for(i = 1; i <= i_max; i++){
-	v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*I;
-      }
-    }
-    else{
-      for(i = 1; i <= i_max; i++){
-	v1[i]=2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5);
-      }
-    }
-  
-    dnorm=0;
-    #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
-    for(i=1;i<=i_max;i++){
-      dnorm += conj(v1[i])*v1[i];
-    }
-    dnorm = SumMPI_d(dnorm);
-    dnorm=sqrt(dnorm);
-    dnorm_inv=1.0/dnorm;
-    FinalizeMPI();
-    exit(0);
-    
-#pragma omp parallel for default(none) private(i) shared(v1,vg,vec,k_exct) firstprivate(i_max, dnorm_inv)
-    for(i=1;i<=i_max;i++){
-      v1[i]        = v1[i]*dnorm_inv;
-      // vg[i]        = v1[i]*vec[k_exct][1];
-      vg[i]        = conj(v1[i])*vec[k_exct][1];
-    }
-  }
-  */
-
   if(initial_mode == 0){
 
     sum_i_max = SumMPI_li(X->Check.idim_max);
-    X->Large.iv = (sum_i_max / 3 + X->Def.initial_iv) % sum_i_max + 1;
-    if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==Kondo){
-      X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
-    }
+    X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
     iv=X->Large.iv;
 #pragma omp parallel for default(none) private(i) shared(v0, v1,vg) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
@@ -141,7 +91,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
     
   }else if(initial_mode==1){
     iv = X->Def.initial_iv;
-    fprintf(stdoutMPI, "initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
+    //fprintf(stdoutMPI, "  initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
     #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;

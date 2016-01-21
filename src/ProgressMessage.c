@@ -15,15 +15,37 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "ProgressMessage.h"
-
-const char* cProFinishAlloc ="LARGE ALLOCATE FINISH !\n";
+const char* cProFinishDefFiles ="\n######  Definition files are correct.  ######\n\n";
+const char* cProFinishDefCheck ="\n######  Indices and Parameters of Definition files(*.def) are complete.  ######\n\n";
+const char* cProFinishAlloc ="\n######  LARGE ALLOCATE FINISH !  ######\n\n";
 const char* cProEDNTrans ="EDTrans EDNTransfer=%d \n";
 const char* cProEDNChemi ="EDTrans EDNChemi=%d \n";
-const char* cProStartCalcSgn = "Start: Calc sgn. \n";
-const char* cProEndCalcSgn = "End  : Calc sgn. \n";
-const char* cProStartCalcSz = "Start: Calc Sz. \n";
-const char* cProEndCalcSz = "End  : Calc Sz. \n";
-const char* cProStartOutputList = "Start: output list. \n";
-const char* cProEndOutputList = "End  : output list. \n";
-const char* cProStartCalcDiag = "Start: calc diagaonal components of Hamiltonian. \n";
-const char* cProEndCalcDiag = "End  : calc diagaonal components of Hamiltonian. \n";
+const char* cProStartCalcSgn = "  Start: Calculate sgn. \n";
+const char* cProEndCalcSgn = "  End  : Calculate sgn. \n";
+const char* cProStartCalcSz = "  Start: Calculate HilbertNum for fixed Sz. \n";
+const char* cProEndCalcSz = "  End  : Calculate HilbertNum for fixed Sz. \n\n";
+const char* cProStartOutputList = "  Start: output list. \n";
+const char* cProEndOutputList = "  End  : output list. \n";
+const char* cProStartCalcDiag = "  Start: Calculate diagaonal components of Hamiltonian. \n";
+const char* cProEndCalcDiag = "  End  : Calculate diagaonal components of Hamiltonian. \n\n";
+
+const char* cLogLanczos_EigenValueStart="######  Start: Calculate Lanczos Eigenvalue.  ######\n\n";
+const char* cLogLanczos_EigenValueEnd="\n######  End  : Calculate Lanczos EigenValue.  ######\n\n";
+const char* cLogLanczos_EigenVecStart="######  Start: Calculate Lanczos Eigenvec.  ######\n\n";
+const char* cLogLanczos_EigenVecEnd="\n######  End  : Calculate Lanczos EigenVec.  ######\n\n";
+
+
+const char* cLogTPQ_Start="######  Start: TPQCalculation.  ######\n\n";
+const char* cLogTPQ_End="######  End  : TPQCalculation.  ######\n\n";
+
+
+const char* cLogFullDiag_SetHam_Start="######  Start: Setting Hamiltonian.  ######\n\n";
+const char* cLogFullDiag_SetHam_End="######  End  : Setting Hamiltonian.  ######\n\n";
+
+
+const char* cLogFullDiag_Start="######  Start: Diagonalization.  ######\n\n";
+const char* cLogFullDiag_End="######  End  : Diagonalization.  ######\n\n";
+
+const char* cLogFullDiag_ExpecValue_Start="######  Start: Calc Expected value.  ######\n\n";
+const char* cLogFullDiag_ExpecValue_End="######  End  : Calc Expected value.  ######\n\n";
+const char* cLogFinish ="######  Finish Calculation.  ######\n";

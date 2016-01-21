@@ -252,7 +252,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   ioutputmode = CheckOutputMode(outputmode);
   /**/
   fprintf(stdoutMPI, "\n");
-  fprintf(stdoutMPI, "######  Print Expart input files  ######\n");
+  fprintf(stdoutMPI, "######  Print Expert input files  ######\n");
   fprintf(stdoutMPI, "\n");
   PrintLocSpin();
   PrintTrans();
@@ -974,6 +974,8 @@ static void Print2Green(int ioutputmode /**< [in]*/){
       for (spin1 = 0; spin1 <= S1Max; spin1++){
         for (site2 = 0; site2 < nsite; site2++){
 
+          if (locspinflag[site1] != 0 && locspinflag[site2] != 0 && site1 != site2) continue;
+
           if (locspinflag[site2] == 0) S2Max = 1;
           else S2Max = locspinflag[site2];
 
@@ -985,6 +987,8 @@ static void Print2Green(int ioutputmode /**< [in]*/){
 
               for (spin3 = 0; spin3 <= S3Max; spin3++){
                 for (site4 = 0; site4 < nsite; site4++){
+
+                  if (locspinflag[site3] != 0 && locspinflag[site4] != 0 && site3 != site4) continue;
 
                   if (locspinflag[site4] == 0) S4Max = 1;
                   else S4Max = locspinflag[site4];
@@ -1008,6 +1012,7 @@ static void Print2Green(int ioutputmode /**< [in]*/){
       }
     }
   }
+  ngreen = igreen;
 
   fp = fopenMPI("greentwo.def", "w");
   fprintf(fp, "=============================================\n");

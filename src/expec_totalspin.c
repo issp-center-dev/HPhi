@@ -55,7 +55,7 @@ int expec_totalspin
   switch(X->Def.iCalcModel){
   case Spin:
      totalspin_Spin(X,vec);
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case SpinGC:
      totalspin_SpinGC(X,vec);
@@ -63,7 +63,7 @@ int expec_totalspin
    case Hubbard: 
    case Kondo:
      totalspin_Hubbard(X,vec);
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case HubbardGC: 
   case KondoGC:
@@ -359,7 +359,7 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec){
 	S1=0.5*(X->Def.SiteToBit[isite1-1]-1);
 	S2=0.5*(X->Def.SiteToBit[isite2-1]-1);
 	if(isite1==isite2){
-#pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(i_max, isite1, X, S1, spn_z1) shared(vec, list_1)	
+#pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(i_max, isite1, X, S1) private (spn_z1)shared(vec, list_1)
 	  for(j=1;j<=i_max;j++){
 	    spn_z1  = 0.5*GetLocal2Sz(isite1, list_1[j], X->Def.SiteToBit, X->Def.Tpow);
 	    spn    += conj(vec[j])*vec[j]*S1*(S1+1.0);
@@ -556,7 +556,6 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
   else{//general spin
     double S1=0;
     double S2=0;
-    double complex tmp_V=0.0;
     spn =0.0;
     spn_z=0.0;
     for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
@@ -654,14 +653,14 @@ int expec_totalSz(
   X->Large.mode = M_TOTALS;
   switch(X->Def.iCalcModel){
   case Spin:
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case SpinGC:
      totalSz_SpinGC(X,vec);
      break;
    case Hubbard: 
    case Kondo:
-     X->Phys.sz=X->Def.Total2Sz/2.;
+     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case HubbardGC: 
   case KondoGC:
@@ -738,7 +737,7 @@ void totalSz_SpinGC
   long unsigned int is1_up;
   int num1_up;
   int num1_down;
-  long unsigned int ibit1_up, is_up; 
+  long unsigned int ibit1_up;
   double complex spn_z, spn_z1;
   long unsigned int i_max;
   i_max=X->Check.idim_max;
@@ -772,20 +771,17 @@ void totalSz_SpinGC
     }
   }
   else{//general spin
-    double S1=0;
-    double complex tmp_V=0.0;
     spn_z=0.0;
     for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
-      S1=0.5*(X->Def.SiteToBit[isite1-1]-1);
       if(isite1 > X->Def.Nsite){
 	spn_z1  = 0.5*GetLocal2Sz(isite1, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
-#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(S1, spn_z1,i_max) shared(vec)	
+#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(spn_z1,i_max) shared(vec)
 	for(j=1;j<=i_max;j++){
 	  spn_z += conj(vec[j])*vec[j]*spn_z1;
 	}
       }
       else{
-#pragma omp parallel for reduction(+:  spn_z) default(none) firstprivate(i_max, isite1, X, S1) private(spn_z1) shared(vec)	
+#pragma omp parallel for reduction(+:  spn_z) default(none) firstprivate(i_max, isite1, X) private(spn_z1) shared(vec)
 	for(j=1;j<=i_max;j++){
 	  spn_z1  = 0.5*GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
 	  spn_z += conj(vec[j])*vec[j]*spn_z1;

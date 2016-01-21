@@ -16,6 +16,6 @@
 
 #pragma once
 #include "struct.h"
-void CheckMPI(struct BindStruct *X);
+int CheckMPI(struct BindStruct *X);
 void CheckMPI_Summary(struct BindStruct *X);
 

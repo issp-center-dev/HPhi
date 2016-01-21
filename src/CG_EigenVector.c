@@ -15,6 +15,8 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "CG_EigenVector.h"
+#include "FileIO.h"
+#include "mltply.h"
 #include "wrapperMPI.h"
 
 /** 
@@ -77,6 +79,7 @@ int CG_EigenVector(struct BindStruct *X){
     b[i]=v0[i]+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*0.001;
     bnorm+=conj(b[i])*b[i];
   }
+  bnorm = SumMPI_d(bnorm);
   bnorm=sqrt(bnorm);
   
 #pragma omp parallel for default(none) private(i) shared(b) firstprivate(i_max,bnorm)
@@ -107,7 +110,7 @@ int CG_EigenVector(struct BindStruct *X){
     }else{
       itr_max=500;
     }
-    
+  
     for(itr=1;itr<=itr_max;itr++){
 #pragma omp parallel for default(none) private(j) shared(y, vg) firstprivate(i_max, Eig,eps_CG)
       for(j=1;j<=i_max;j++){  

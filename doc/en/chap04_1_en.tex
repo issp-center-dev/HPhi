@@ -362,10 +362,27 @@ is specified with this parameter.
 
 \item \verb|initial_iv|
 
-{\bf Type :} Positive integer (\verb|1| as a default)
+{\bf Type :} Integer (\verb|1| as a default)
 
-{\bf Description :} The non-zero components of an initial vector is specified with this parameter. 
-For grand canonical ensemble, the random vector is used as initial vector. 
+{\bf Description :} 
+{An initial vector is specified with this parameter.}
+\begin{itemize}
+\item{Lanczos method}
+\begin{itemize}
+\item{For canonical ensemble and \verb|initial_iv| $\geq 0$}
+
+The non-zero components of an initial vector is specified with this parameter. 
+
+\item{For grand canonical ensemble or \verb|initial_iv| $< 0$}
+
+A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+\end{itemize}
+
+\item{TPQ method}
+
+A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+\end{itemize}
+See \ref{Ch:algorithm} for details of setting an initial vector.
 
 \item \verb|nvec|
 

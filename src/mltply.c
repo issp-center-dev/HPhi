@@ -35,9 +35,9 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 
   long unsigned int j;
   long unsigned int i;
-  long int off = 0;
-  long int tmp_off = 0;
-  long int tmp_off2 = 0;
+  long unsigned int off = 0;
+  long unsigned int tmp_off = 0;
+  long unsigned int tmp_off2 = 0;
   long unsigned int is1_spin = 0;
   long unsigned int irght=0;
   long unsigned int ilft=0;
@@ -50,7 +50,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   double complex tmp_trans;
   long int tmp_sgn;
   double num1 = 0;
-  double num2 = 0;
   /*[s] For InterAll */
   double complex tmp_V;
   double complex dmv=0;
@@ -64,17 +63,23 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   dam_pr = 0.0;
 
   if(i_max!=0){
-  if (X->Def.iFlgGeneralSpin == FALSE) {
-    if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
-      return -1;
-    }
-  }
-  else{
-    if(X->Def.iCalcModel==Spin){
-      if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+    if (X->Def.iFlgGeneralSpin == FALSE) {
+      if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
 	return -1;
       }
     }
+    else{
+      if(X->Def.iCalcModel==Spin){
+	if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+	  return -1;
+	}
+      }
+    }
+  }
+  else{
+    irght=0;
+    ilft=0;
+    ihfbit=0;
   }
   X->Large.i_max = i_max;
   X->Large.irght = irght;
@@ -405,7 +410,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           }/*for (ihermite = 0; ihermite<2; ihermite++)*/
         }
       }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
-
   
       break;
       
@@ -524,7 +528,7 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
         for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
 	  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
 	    dam_pr=0;
-	    if(X->Def.EDGeneralTransfer[idx][1]==X->Def.EDGeneralTransfer[idx][3]){
+	    if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
 	      fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 	    }
 	    else{
@@ -622,16 +626,16 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 
         //PairLift
         for (i = 0; i < X->Def.NPairLiftCoupling; i += 2) {
-          if (X->Def.PairLiftCoupling[i][0] + 1 >> X->Def.Nsite &&
-            X->Def.PairLiftCoupling[i][1] + 1 >> X->Def.Nsite) {
+          if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite &&
+            X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
             fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
             exitMPI(-1);
           }
-          else if (X->Def.PairLiftCoupling[i][1] + 1 >> X->Def.Nsite) {
+          else if (X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
             fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
             exitMPI(-1);
           }
-          else if (X->Def.PairLiftCoupling[i][0] + 1 >> X->Def.Nsite) {
+          else if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite) {
             fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
             exitMPI(-1);
           }
@@ -797,7 +801,6 @@ shared(tmp_v0, tmp_v1)
       
   default:
     return -1;
-  }
   }
   
   X->Large.prdct = SumMPI_dc(X->Large.prdct);
@@ -1879,8 +1882,7 @@ shared(tmp_v0, tmp_v1)
           long unsigned int diff_spin,
           long unsigned int *tmp_off
   ) {
-    long unsigned int ibit_tmp_1, ibit_tmp_2;
-    long unsigned int bit, off;
+    long unsigned int off;
     int sgn = 1;
 
     sgn = X_GC_CisAjt(list_1_j, X, is1_spin, is2_spin, sum_spin, diff_spin, tmp_off);
@@ -2360,8 +2362,6 @@ shared(tmp_v0, tmp_v1)
                   long unsigned int *tmp_off
           ) {
     double complex dmv;
-    long unsigned int is1_up = X->Large.is1_up;
-    long unsigned int is2_up = X->Large.is2_up;
     long unsigned int is_up = X->Large.isA_spin;
     double complex tmp_J = X->Large.tmp_J;
     int mode = X->Large.mode;
@@ -2639,7 +2639,6 @@ shared(tmp_v0, tmp_v1)
                   long unsigned int *tmp_off
           ) {
     int tmp_sgn;
-    long unsigned int iexchg;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
     tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, tmp_off);
@@ -2692,7 +2691,6 @@ shared(tmp_v0, tmp_v1)
     int tmp_sgn;
     double complex dmv;
     double complex dam_pr;
-    long unsigned int iexchg;
     dam_pr = 0;
     tmp_sgn = X_CisAis(list_1[j], X, isite3);
     if (tmp_sgn != 0) {
@@ -3132,7 +3130,6 @@ shared(tmp_v0, tmp_v1)
                   long unsigned int *tmp_off
           ) {
     int tmp_sgn;
-    long unsigned int iexchg;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
     tmp_sgn = X_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, tmp_off);
@@ -3183,7 +3180,6 @@ shared(tmp_v0, tmp_v1)
                   long unsigned int *tmp_off
           ) {
     int tmp_sgn;
-    long unsigned int iexchg;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
     tmp_sgn = X_CisAis((j - 1), X, isite3);
@@ -3241,8 +3237,6 @@ shared(tmp_v0, tmp_v1)
           ) {
     int tmp_sgn;
     long unsigned int tmp_off_1;
-    long unsigned int iexchg_1;
-    long unsigned int iexchg_2;
     double complex dmv;
     double complex dam_pr = 0 + 0 * I;
 

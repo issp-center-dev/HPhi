@@ -1,24 +1,14 @@
-mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Kondo/chain HPhi -s StdFace.def
-
-Intel MPI Placement option
---------------------------
-I_MPI_PIN_DOMAIN=omp
-
-Node   MPI
-------------
-r1i6n31 1
-
 
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 24
-  MPI PEs : 1 = 2^0    
+  OpenMP threads : 12
+  MPI PEs : 1 
 
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile StdFace.def 
+  Open Standard-Mode Inputfile ./StdFace_TPQ.def 
 
   KEYWORD : l                    | VALUE : 6 
   KEYWORD : model                | VALUE : kondolattice 
@@ -53,7 +43,7 @@ r1i6n31 1
             nelec = 6  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
-######  Print Expart input files  ######
+######  Print Expert input files  ######
 
     zlocspin.def is written.
       zTrans.def is written.
@@ -66,103 +56,134 @@ r1i6n31 1
 
 ######  Input files are generated.  ######
 
-Start: Read File 'namelist.def'.
-End: Read File 'namelist.def'.
-Read File 'calcmod.def' for CalcMod.
-Read File 'modpara.def' for ModPara.
-Read File 'zlocspn.def' for LocSpin.
-Read File 'zTrans.def' for Trans.
-Read File 'zInterAll.def' for InterAll.
-Read File 'greenone.def' for OneBodyG.
-Read File 'greentwo.def' for TwoBodyG.
-Definition files are correct.
-Read File 'zlocspn.def'.
-Read File 'zTrans.def'.
-X->NTransfer =24, X->Nsite= 12.
-Read File 'zInterAll.def'.
-Read File 'greenone.def'.
-Read File 'greentwo.def'.
-comb_sum= 15184 
-MAX DIMENSION idim_max=15184 
-APPROXIMATE REQUIRED MEMORY  max_mem=0.001458 GB 
-sdim=4096 =2^12
-Indices and Parameters of Definition files(*.def) are complete.
-LARGE ALLOCATE FINISH !
-EDTrans EDNTransfer=24 
-EDTrans EDNChemi=0 
-Start: Calc Sz. 
-j = 0 loc 0 
-j = 1 loc 1 
-j = 2 loc 0 
-j = 3 loc 1 
-j = 4 loc 0 
-j = 5 loc 1 
-j = 6 loc 0 
-j = 7 loc 1 
-j = 8 loc 0 
-j = 9 loc 1 
-j = 10 loc 0 
-j = 11 loc 1 
-idim=16777216.000000 irght=4095 ilft=16773120 ihfbit=4096 
-num_threads==24
-N_all_up=6 N_all_down=6 
-Xicnt=15184 
-End  : Calc Sz. 
-Start: calc diagaonal components of Hamiltonian. 
-End  : calc diagaonal components of Hamiltonian. 
-rand_i=0 
-CHECK: TPQ complex initial vector 
-step_i/total_step=200/2000 
-step_i/total_step=400/2000 
-step_i/total_step=600/2000 
-step_i/total_step=800/2000 
-step_i/total_step=1000/2000 
-step_i/total_step=1200/2000 
-step_i/total_step=1400/2000 
-step_i/total_step=1600/2000 
-step_i/total_step=1800/2000 
-rand_i=1 
-CHECK: TPQ complex initial vector 
-step_i/total_step=200/2000 
-step_i/total_step=400/2000 
-step_i/total_step=600/2000 
-step_i/total_step=800/2000 
-step_i/total_step=1000/2000 
-step_i/total_step=1200/2000 
-step_i/total_step=1400/2000 
-step_i/total_step=1600/2000 
-step_i/total_step=1800/2000 
-rand_i=2 
-CHECK: TPQ complex initial vector 
-step_i/total_step=200/2000 
-step_i/total_step=400/2000 
-step_i/total_step=600/2000 
-step_i/total_step=800/2000 
-step_i/total_step=1000/2000 
-step_i/total_step=1200/2000 
-step_i/total_step=1400/2000 
-step_i/total_step=1600/2000 
-step_i/total_step=1800/2000 
-rand_i=3 
-CHECK: TPQ complex initial vector 
-step_i/total_step=200/2000 
-step_i/total_step=400/2000 
-step_i/total_step=600/2000 
-step_i/total_step=800/2000 
-step_i/total_step=1000/2000 
-step_i/total_step=1200/2000 
-step_i/total_step=1400/2000 
-step_i/total_step=1600/2000 
-step_i/total_step=1800/2000 
-rand_i=4 
-CHECK: TPQ complex initial vector 
-step_i/total_step=200/2000 
-step_i/total_step=400/2000 
-step_i/total_step=600/2000 
-step_i/total_step=800/2000 
-step_i/total_step=1000/2000 
-step_i/total_step=1200/2000 
-step_i/total_step=1400/2000 
-step_i/total_step=1600/2000 
-step_i/total_step=1800/2000 
-Finish: Elapsed time is 31 [s].
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'zlocspn.def' for LocSpin.
+  Read File 'zTrans.def' for Trans.
+  Read File 'zInterAll.def' for InterAll.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+
+######  Definition files are correct.  ######
+
+  Read File 'zlocspn.def'.
+  Read File 'zTrans.def'.
+  Read File 'zInterAll.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+  MAX DIMENSION idim_max=15184 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.001458 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       4
+       1       4
+       2       4
+       3       4
+       4       4
+       5       4
+       6       4
+       7       4
+       8       4
+       9       4
+      10       4
+      11       4
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0           15184     6      6     12         0   
+
+   Total dimension : 15184
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  j = 0 loc 1 
+  j = 1 loc 1 
+  j = 2 loc 1 
+  j = 3 loc 1 
+  j = 4 loc 1 
+  j = 5 loc 1 
+  j = 6 loc 0 
+  j = 7 loc 0 
+  j = 8 loc 0 
+  j = 9 loc 0 
+  j = 10 loc 0 
+  j = 11 loc 0 
+  N_all_up=6 N_all_down=6 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+######  Start: TPQCalculation.  ######
+
+  rand_i / rand_max = 1 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 2 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 3 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 4 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 5 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+######  End  : TPQCalculation.  ######
+
+Finish: Elapsed time is 98 [s].

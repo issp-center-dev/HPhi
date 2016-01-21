@@ -64,11 +64,18 @@ char *cErrIncorrectFormatForKondoTrans= "Error: Site component of (i, j) =(%d, %
 
 
 char *cErrIncorrectFormatForSpinTrans= "Error: Site component of (i, j) =(%d, %d) is incorrect.\n";
-char *cWarningIncorrectFormatForSpin= "Warning: Site component of (i, j, k, l) =(%d, %d, %d, %d) is ignored.\n";
+char *cWarningIncorrectFormatForSpin= "Warning: Site component of (i, j, k, l) =(%d, %d, %d, %d) is not correct; i=j and k=l must be satisfied. \n";
 char *cWarningIncorrectFormatForSpin2= "Warning: Site component of (i, j) =(%d, %d) is ignored.\n";
 char *cErrIncorrectFormatInter= "Error: Use only InterAll for setteing interactions for general spin.\n";
 char *cErrIncorrectSpinIndexForInter="Error: Spin index is incorrect for interactions defined in InterAll file.\n";
 char *cErrIncorrectSpinIndexForTrans="Error: Spin index is incorrect for transfers defined in Trans file.\n";
+
+//! Error Message in CheckMPI.c
+char *cErrNProcNumberHubbard = "Error ! The number of PROCESS should be 4-exponent !\n";
+char *cErrNProcNumberSpin = "Error ! The number of PROCESS should be 2-exponent !\n";
+char *cErrNProcNumberGneralSpin = "Error ! The number of PROCESS is wrong !\n";
+char *cErrNProcNumber = "        The number of PROCESS : %d\n";
+char *cErrNProcNumberSet = "        Set the number of PROCESS as %d or %d.\n";
 
 
 //! Error Message in diagonal calc.c

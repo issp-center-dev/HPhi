@@ -134,10 +134,34 @@ $(\Ham-E_{n})^{-1}$を作用させる方程式を書き換えると
 
 
 \subsection{実際の実装について}
-$\Ham\Phi$では、
-$T_{n}$の対角化にはlapackのルーチン
-$\rm dsyev$を使用しています。
-また、$T_{n}$の基底状態の次の固有値（第一励起状態のエネルギー）
+\subsubsection*{初期ベクトルの設定について}
+Lanczos法では、スタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定する\verb|initial_iv|($\equiv r_s$)により初期ベクトルの設定方法を指定します。また、初期ベクトルはModParaで指定される入力ファイルの\verb|InitialVecType|を用い、実数もしくは複素数の指定をすることができます。
+\begin{itemize}
+\item{カノニカル集団かつ \verb|initial_iv| $\geq 0$の場合}
+
+ヒルベルト空間のうち、
+\begin{align}
+(N_{\rm dim}/2 + r_s ) \% N_{\rm dim}
+\end{align}
+の成分が与えられます。ここで、$N_{\rm dim}$は対象となるヒルベルト空間の総数で、$N_{\rm dim}/2 $はデフォルト値\verb|initial_iv| $=1$で特殊なヒルベルト空間の選択をさけるために加えられています。なお、選択された成分の係数は実数の場合は$1$、複素数の場合には$(1+i)/\sqrt{2}$が与えられます。
+
+\item{グランドカノニカル集団 もしくは \verb|initial_iv| $< 0$の場合}
+
+初期ベクトルはランダムベクトルとして与えられます。乱数のシードは
+\begin{align}
+123432+|r_s|
+\end{align}
+で指定します。ここで、$n_{\rm run}$はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、もしくはModParaで指定される入力ファイルの\verb|NumAve|で指定します。\verb|initial_iv|は入力ファイルで指定します。乱数はSIMD-oriented Fast Mersenne Twister (dSFMT)を用い発生させています\cite{Mutsuo2008}。
+\end{itemize}
+
+
+
+
+
+\subsubsection*{収束判定について}
+$\HPhi$では、$T_{n}$の対角化にlapackのルーチン
+$\rm dsyev$を使用しており、
+$T_{n}$の基底状態の次の固有値（第一励起状態のエネルギー）
 を収束判定条件に用いています。
 デフォルトの設定では、
 最初の5回のLanczosステップの後に、
@@ -219,10 +243,13 @@ u_{k} = \langle \psi_{k}|\hat{H}|\psi_{k}\rangle/N_{s}.
 有限系では最初の乱数ベクトルによる誤差がありますので、
 いくつか独立な計算を行って、$|\psi_{0}\rangle$
 に関する平均値および標準偏差を見積もっています。
-%\begin{align}
-%\langle \hat{A}\rangle_{\beta_{k}}^{\rm rand} =  
-%\overline{\langle \psi_{k}|\hat{A}|\psi_{k}\rangle}/N_{s}
-%\end{align}
 
+\subsection{実際の実装について}
+\subsubsection*{初期ベクトルの設定について}
+熱的純粋量子状態による有限温度計算では、初期ベクトルは全ての成分に対してランダムな係数を与えます。初期ベクトルの係数の型はModParaで指定される入力ファイルの\verb|InitialVecType|を用い、実数もしくは複素数の指定をすることができます。乱数のシードは\verb|initial_iv| ($\equiv r_s$)により
+\begin{align}
+123432+(n_{\rm run}+1)\times  |r_s|
+\end{align}
+で与えられます。ここで、$n_{\rm run}$はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、もしくはModParaで指定される入力ファイルの\verb|NumAve|で指定します。\verb|initial_iv|はスタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定される入力ファイルで指定します。乱数はSIMD-oriented Fast Mersenne Twister (dSFMT)を用い発生させています\cite{Mutsuo2008}。
 
 %----------------------------------------------------------

@@ -1,0 +1,134 @@
+#!/usr/local/bin/perl
+  print "#start !! \n";
+  #input!!
+  &input;
+  #input!!
+  $PI=3.14159265358979;
+  $orb_num=$tmp_orb;
+  $L_x=$tmp_Lx;
+  $L_y=$tmp_Ly;
+  $L=$L_x*$L_y;
+  $Ns=$L;
+  $All_N=$Ns*$orb_num;
+  printf("#CHECK Energy $All_N L_x=$L_x L_y=$L_y  orb=$orb_num \n");
+
+
+  for($rand =0;$rand<1;$rand++){
+    $fname=sprintf("X_Chi_$rand.dat");
+    open(FILE,">$fname");
+#===============def input====================
+    $cnt = 0;
+    $file=sprintf("SS_rand$rand.dat");
+    print "#$file \n";
+    open(INPUTFILE,$file);
+    while($name=<INPUTFILE>){
+      chomp $name;
+      #DELETE EMPTY
+      $_=$name; 
+      s/^\s+//;
+      $name=$_; 
+      #DELETE EMPTY FINISH
+      @foo = split /\s+/, $name;
+      #printf " $foo[0] $foo[1] $foo[2] $foo[3] $foo[4] \n";
+      if($cnt>0){
+        $tmp_step = $foo[5];
+        $temperature[$tmp_step]=$foo[0];
+      }
+      $cnt += 1;
+    }
+    close(INPUTFILE);
+#
+
+  for($step=20;$step<200;$step+=20){
+   #$sam_i=1;
+#===============def input====================
+    $cnt=0;
+    $file=sprintf("zvo_cisajs_set$rand\step$step.dat");
+    #print "$file \n";
+    open(INPUTFILE,$file);
+    while($name=<INPUTFILE>){
+      chomp $name;
+      #DELETE EMPTY
+      $_=$name; 
+      s/^\s+//;
+      $name=$_; 
+      #DELETE EMPTY FINISH
+      @foo = split /\s+/, $name;
+      $site_1 = $foo[0];
+      $spn_1  = $foo[1];
+      $site_2 = $foo[2];
+      $spn_2  = $foo[3];
+      $Cor[$site_1][$spn_1][$site_2][$spn_2]   = $foo[4];
+      #printf "$cnt $foo[0] $foo[1] $foo[2] $foo[3] $foo[4] $foo[5] \n";
+      #for($i=0;$i<7;$i++){
+      #  $phys[$cnt][$i]=$foo[$i];
+      #}
+      $cnt+=1;
+    }
+    close(INPUTFILE);
+#
+
+    $M=0.0;
+    for($site=0;$site<$Ns;$site+=1){
+#========================
+       $M+= 1.0*$Cor[$site][0][$site][0]; 
+       $M+=-1.0*$Cor[$site][1][$site][1]; 
+    } 
+    $total_M = $M/$Ns;
+#================Sq=================
+    #printf      "  $temperature[$step]  $total_M\n";
+    printf FILE "  $temperature[$step]  $total_M\n";
+ }
+  close(FILE);
+ }
+ sub input{
+  #input START 
+  $Lx_cnt=0;
+  $Ly_cnt=0;
+  $orb_cnt=0;
+  $file=sprintf("input.txt");
+  open(INPUTFILE,$file);
+  while($name=<INPUTFILE>){
+    chomp $name;
+    #DELETE EMPTY
+    $_=$name; 
+    s/^\s+//;
+    $name=$_; 
+    @tmp = split /\s+/, $name;
+    #printf "$tmp[0] $tmp[1] \n";
+    if($tmp[0] eq 'Lx'){
+      #printf "AA $tmp[0] $tmp[1] \n";
+      $tmp_Lx = $tmp[1];
+      $Lx_cnt=1;
+    } 
+    if($tmp[0] eq 'Ly'){
+      #printf "AA $tmp[0] $tmp[1] \n";
+      $tmp_Ly = $tmp[1];
+      $Ly_cnt=1;
+    } 
+    if($tmp[0] eq 'orb_num'){
+      #printf "AA $tmp[0] $tmp[1] \n";
+      $tmp_orb = $tmp[1];
+      $orb_cnt=1;
+    } 
+  }
+  close(INPUTFILE);
+ }
+
+ sub add_nn_S{
+    $nn_S  += $Cor[$site][$site][0][$nsite][$nsite][0]/4.0;
+    $nn_S  += -$Cor[$site][$site][0][$nsite][$nsite][1]/4.0;
+    $nn_S  += -$Cor[$site][$site][1][$nsite][$nsite][0]/4.0;
+    $nn_S  += $Cor[$site][$site][1][$nsite][$nsite][1]/4.0;
+    $nn_S  += -$Cor[$site][$nsite][0][$nsite][$site][1]/2.0;
+    $nn_S  += -$Cor[$site][$nsite][1][$nsite][$site][0]/2.0;
+ }
+
+ sub add_nnn_S{
+    $nnn_S  += $Cor[$site][$site][0][$nsite][$nsite][0]/4.0;
+    $nnn_S  += -$Cor[$site][$site][0][$nsite][$nsite][1]/4.0;
+    $nnn_S  += -$Cor[$site][$site][1][$nsite][$nsite][0]/4.0;
+    $nnn_S  += $Cor[$site][$site][1][$nsite][$nsite][1]/4.0;
+    $nnn_S  += -$Cor[$site][$nsite][0][$nsite][$site][1]/2.0;
+    $nnn_S  += -$Cor[$site][$nsite][1][$nsite][$site][0]/2.0;
+ }

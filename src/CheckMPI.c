@@ -26,7 +26,7 @@ int NsiteMPI;
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void CheckMPI(struct BindStruct *X/**< [inout] */)
+int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
   int isite, NDimInterPE, SmallDim, SpinNum;
 
@@ -52,9 +52,23 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
     } /*for (isite = NsiteMPI; isite > 0; isite--)*/
     
     if (isite == 0) {
-      fprintf(stderr, "Error ! The number of PROCESS should be 4 exponent !\n");
-      fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
-      exitMPI(-1);
+      fprintf(stdoutMPI, cErrNProcNumberHubbard);
+      fprintf(stdoutMPI, cErrNProcNumber, nproc);
+      	NDimInterPE = 1;
+	int ismallNproc=1;
+	int ilargeNproc=1;
+	for (isite = NsiteMPI; isite > 0; isite--) {
+	  if (NDimInterPE > nproc) {
+	    ilargeNproc = NDimInterPE;
+	    if(isite >1)
+	      ismallNproc = NDimInterPE/4;
+	    break;
+	  }/*if (NDimInterPE > nproc)*/
+	  NDimInterPE *= 4;
+	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+        return FALSE;
+      return FALSE;
     } /*if (isite == 0)*/
 
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
@@ -126,8 +140,8 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
             }
           }
           else {
-            fprintf(stderr, "\n Stop because local spin in the inter process region\n");
-            exitMPI(-1);
+            fprintf(stdoutMPI, "\n Stop because local spin in the inter process region\n");
+            return FALSE;
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       } /*if (X->Def.iCalcModel == Kondo)*/
@@ -153,9 +167,22 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 
       if (isite == 0) {
-        fprintf(stderr, "Error ! The number of PROCESS should be 2-exponent !\n");
-        fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
-        exitMPI(-1);
+        fprintf(stdoutMPI, cErrNProcNumberSpin);
+        fprintf(stdoutMPI, cErrNProcNumber, nproc);
+	NDimInterPE = 1;
+	int ismallNproc=1;
+	int ilargeNproc=1;
+	for (isite = NsiteMPI; isite > 0; isite--) {
+	  if (NDimInterPE > nproc) {
+	    ilargeNproc = NDimInterPE;
+	    if(isite >1)
+	      ismallNproc = NDimInterPE/2;
+	    break;
+	  }/*if (NDimInterPE > nproc)*/
+	  NDimInterPE *= 2;
+	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+        return FALSE;
       }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
@@ -186,14 +213,28 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
         }/*if (NDimInterPE == nproc)*/
         NDimInterPE *= X->Def.SiteToBit[isite - 1];
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+
       if (isite == 0) {
-        fprintf(stderr, "Error ! The number of PROCESS is wrong !\n");
-        fprintf(stderr, "        The number of PROCESS : %d\n", nproc);
-        exitMPI(-1);
+        fprintf(stdoutMPI, cErrNProcNumberGneralSpin);
+        fprintf(stdoutMPI, cErrNProcNumber, nproc);
+	NDimInterPE = 1;
+	int ismallNproc=1;
+	int ilargeNproc=1;
+	for (isite = NsiteMPI; isite > 0; isite--) {
+	  if (NDimInterPE > nproc) {
+	    ilargeNproc = NDimInterPE;
+	    if(isite >1)
+	      ismallNproc = NDimInterPE/X->Def.SiteToBit[isite - 2];
+	    break;
+	  }/*if (NDimInterPE > nproc)*/
+	  NDimInterPE *= X->Def.SiteToBit[isite - 1];
+	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+        return FALSE;
       }/*if (isite == 0)*/
 
       if (X->Def.iCalcModel == Spin) {
-        /*X->Def.Total2SzMPI = X->Def.Total2Sz;*/
+        X->Def.Total2SzMPI = X->Def.Total2Sz;
 
         /* Ne should be different in each PE */
         SmallDim = myrank;
@@ -209,10 +250,11 @@ void CheckMPI(struct BindStruct *X/**< [inout] */)
     break; /*case SpinGC, Spin*/
 
   default:
-    fprintf(stderr, "Error ! Wrong model !\n");
-    exitMPI(-1);
+    fprintf(stdoutMPI, "Error ! Wrong model !\n");
+    return FALSE;
   }/*switch (X->Def.iCalcModel)*/
 
+  return TRUE;
 }/*void CheckMPI*/
 
 /**
@@ -248,7 +290,7 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
       }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
       else {
-        fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
+        fprintf(stdoutMPI, "    %4d    %4ld\n", isite, X->Def.SiteToBit[isite]);
       }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
 
       break;
@@ -276,7 +318,7 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         fprintf(stdoutMPI, "    %4d    %4d\n", isite, 2);
       }/*if (X->Def.iFlgGeneralSpin == FALSE) */
       else {
-        fprintf(stdoutMPI, "    %4d    %4d\n", isite, X->Def.SiteToBit[isite]);
+        fprintf(stdoutMPI, "    %4d    %4ld\n", isite, X->Def.SiteToBit[isite]);
       }/*if (X->Def.iFlgGeneralSpin == TRUE) */
 
       break;
@@ -358,8 +400,10 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     }/*switch (X->Def.iCalcModel)*/
     fprintf(stdoutMPI, "\n");
   }/*for (iproc = 0; iproc < nproc; iproc++)*/
-
-  fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n", SumMPI_li(X->Check.idim_max));
+  
+  X->Check.idim_maxMPI = SumMPI_li(X->Check.idim_max);
+  fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n",  X->Check.idim_maxMPI);
+  
   /*
     Reset Tpow[DefNsite], Tpow[DefNsite + 1] ... as inter process space
   */

@@ -16,6 +16,7 @@
 
 #include "Common.h"
 #include "log.h"
+#include "FileIO.h"
 
 /**
  * @brief Functions for writing a time log.
