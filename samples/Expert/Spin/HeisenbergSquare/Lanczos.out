@@ -2,77 +2,128 @@
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 24
-  MPI PEs : 1 = 2^0    
+  OpenMP threads : 12
+  MPI PEs : 1 
 
-Start: Read File 'namelist.def'.
-End: Read File 'namelist.def'.
-Read File 'calcmod.def' for CalcMod.
-Read File 'modpara.def' for ModPara.
-Read File 'zlocspn.def' for LocSpin.
-Read File 'zTrans.def' for Trans.
-Read File 'zInterAll.def' for InterAll.
-Read File 'greenone.def' for OneBodyG.
-Read File 'greentwo.def' for TwoBodyG.
-Definition files are correct.
-Read File 'zlocspn.def'.
-Read File 'zTrans.def'.
-Read File 'zInterAll.def'.
-Read File 'greenone.def'.
-Read File 'greentwo.def'.
-comb_sum= 12870 
-MAX DIMENSION idim_max=12870 
-APPROXIMATE REQUIRED MEMORY  max_mem=0.001236 GB 
-sdim=256 =2^8
-Indices and Parameters of Definition files(*.def) are complete.
-LARGE ALLOCATE FINISH !
-EDTrans EDNTransfer=0 
-EDTrans EDNChemi=0 
-Start: Calc Sz. 
-idim=65536.000000 irght=255 ilft=65280 ihfbit=256 
-num_threads==24
-Check.sdim=256, ihfbit=256
-Xicnt=12870 
-End  : Calc Sz. 
-Start: calc diagaonal components of Hamiltonian. 
-End  : calc diagaonal components of Hamiltonian. 
-Start: Calculate Lanczos Eigenvalue.
-initial_mode=0 normal: iv = 6436 i_max=12870 k_exct =1 
-stp=4 -5.0013019547 -0.5963446489 2.4418699642 4.8304002316 
-stp=6 -8.2738881022 -4.2627889314 -0.8054215137 1.8664711155 
-stp=8 -10.3674966193 -6.9264840330 -3.8984688737 -0.9944920562 
-stp=10 -11.1537909747 -8.3504126521 -5.6160845269 -3.2442271077 
-stp=12 -11.2215274647 -8.7135291893 -6.8946505542 -5.0165917606 
-stp=14 -11.2277123240 -8.9851762026 -8.0090039151 -6.0604197870 
-stp=16 -11.2284117106 -9.2952961165 -8.5181141398 -7.1306737443 
-stp=18 -11.2284792685 -9.4701758419 -8.7021074037 -7.7490702434 
-stp=20 -11.2284830449 -9.5100853544 -8.7649480089 -8.0235810491 
-stp=22 -11.2284832021 -9.5165270157 -8.7883269763 -8.1900841697 
-stp=24 -11.2284832082 -9.5174842813 -8.7976271154 -8.3057740993 
-stp=26 -11.2284832084 -9.5176411230 -8.8021280583 -8.4028395715 
-stp=28 -11.2284832084 -9.5176762864 -8.8061814185 -8.5365168051 
-stp=30 -11.2284832084 -9.5176855867 -8.8138591476 -8.6878684189 
-stp=32 -11.2284832084 -9.5176874497 -8.8290443909 -8.7567183711 
-stp=34 -11.2284832084 -9.5176878892 -8.8575336750 -8.7845235079 
-stp=36 -11.2284832084 -9.5176879760 -8.8810846950 -8.7929282779 
-stp=38 -11.2284832084 -9.5176879835 -8.8858472614 -8.7942096886 
-stp=40 -11.2284832084 -9.5176879839 -8.8863752719 -8.7943578667 
-stp=42 -11.2284832084 -9.5176879839 -8.8864320605 -8.7943753142 
-stp=44 -11.2284832084 -9.5176879839 -8.8864411895 -8.7943784392 
-stp=46 -11.2284832084 -9.5176879839 -8.8864423013 -8.7943788631 
-stp=48 -11.2284832084 -9.5176879839 -8.8864423978 -8.7943789035 
-End  : Calculate Lanczos EigenValue.
-Start: Calculate Lanczos Eigenvector.
-End: Calculate Lanczos Eigenvector.
-Start: Calculate Energy.
-End  : Calculate Energy by Lanczos method.
-energy=-11.228483 
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'zlocspn.def' for LocSpin.
+  Read File 'zTrans.def' for Trans.
+  Read File 'zInterAll.def' for InterAll.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
 
-Accuracy check !!!
--1.12284832084289e+01 -1.12284832084289e+01: diff_ere=1.58200961467956e-15 var=6.71275018654770e-17 
- Accuracy of Lanczos vectors is enough
+######  Definition files are correct.  ######
 
-Start: Calculate one body Green functions by Lanczos method.
-End: Calculate one body Green functions by Lanczos method.
-Start: Calculate two bodies Green functions by Lanczos method.
-End  : Calculate two bodies Green functions by Lanczos method.
+  Read File 'zlocspn.def'.
+  Read File 'zTrans.def'.
+  Read File 'zInterAll.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+  MAX DIMENSION idim_max=12870 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.001236 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+      12       2
+      13       2
+      14       2
+      15       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0           12870     8      8      8         0   
+
+   Total dimension : 12870
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+######  Start: TPQCalculation.  ######
+
+  rand_i / rand_max = 1 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 2 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 3 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 4 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 5 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+######  End  : TPQCalculation.  ######
+
+Finish: Elapsed time is 527 [s].
