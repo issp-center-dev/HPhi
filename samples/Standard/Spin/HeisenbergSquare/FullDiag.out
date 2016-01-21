@@ -1,18 +1,3 @@
-mpijob CMD    : mpirun -f /tmp/mpiexec.params.i001100.1898
-mpijob PARAMS : -d
-        /home/i0011/i001100/program/qlmpack_samples/samples/Standard/Spin/HeisenbergSquare
-        uv18 1 omplace -nt 40
-        "/home/i0011/i001100/program/qlmpack/build/src/HPhi" "-s"
-        "StdFace.def"
-
-SGI MPT Placement option
---------------------------
-omplace -nt 40
-
-Node   MPI
-------------
-uv18 1
-
 
 
 #####  Parallelization Info.  #####
