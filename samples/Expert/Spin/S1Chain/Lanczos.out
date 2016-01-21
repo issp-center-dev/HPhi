@@ -2,10 +2,10 @@
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 12
+  OpenMP threads : 4
   MPI PEs : 1 
 
-  Read File 'namelist.def'.
+  Read File './namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
   Read File 'zlocspn.def' for LocSpin.
@@ -24,8 +24,8 @@
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=141 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.000014 GB 
+  MAX DIMENSION idim_max=729 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000070 GB 
 
 
 ######  MPI site separation summary  ######
@@ -44,9 +44,9 @@
 
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0             141     3      3      3         0   
+          0             729     0      0      0         0   
 
-   Total dimension : 141
+   Total dimension : 729
 
 
 ######  LARGE ALLOCATE FINISH !  ######
@@ -59,24 +59,24 @@
 
 ######  Start: Calculate Lanczos Eigenvalue.  ######
 
-  initial_mode=1 (random): iv = 1 i_max=141 k_exct =1 
+  initial_mode=1 (random): iv = 1 i_max=729 k_exct =1 
 
   LanczosStep  E[1] E[2] E[3] E[4] 
-  stp = 2 -4.2060081093 1.7850204921 xxxxxxxxxx xxxxxxxxx 
-  stp = 4 -7.3086705827 -3.1303081475 0.9250373167 4.5089173316 
-  stp = 6 -8.2175259302 -5.5602447847 -2.4994436638 0.3291960049 
-  stp = 8 -8.4331944028 -6.9294655900 -4.9193741341 -2.3644618011 
-  stp = 10 -8.5979289336 -7.8303407410 -5.9417771343 -4.1656029104 
-  stp = 12 -8.6170542209 -7.8948243394 -6.1098300618 -4.7108365223 
-  stp = 14 -8.6174047910 -7.8966085073 -6.1371240443 -5.1870745120 
-  stp = 16 -8.6174226477 -7.8967853629 -6.2949889583 -6.0626567019 
-  stp = 18 -8.6174231699 -7.8967954106 -6.4319378080 -6.1002713100 
-  stp = 20 -8.6174231816 -7.8967958080 -6.4565546380 -6.1058464126 
-  stp = 22 -8.6174231818 -7.8967958186 -6.4599039867 -6.1072107393 
-  stp = 24 -8.6174231818 -7.8967958192 -6.4611324020 -6.1087536628 
-  stp = 26 -8.6174231818 -7.8967958192 -6.4616607226 -6.1157823803 
-  stp = 28 -8.6174231818 -7.8967958192 -6.4617157531 -6.1212814960 
-  stp = 30 -8.6174231818 -7.8967958192 -6.4617180391 -6.1217501490 
+  stp = 2 -3.1384161338 2.5766225099 xxxxxxxxxx xxxxxxxxx 
+  stp = 4 -6.2990047612 -2.4584188756 1.5471037538 4.9783337112 
+  stp = 6 -7.8031402665 -5.1334474964 -2.2680907604 0.7045030964 
+  stp = 8 -8.3230177214 -6.4030366356 -4.2385914214 -1.9921061699 
+  stp = 10 -8.5106230560 -7.4712718353 -5.9656952456 -3.9948067594 
+  stp = 12 -8.6121680094 -7.8747428920 -6.2981065963 -4.6706310750 
+  stp = 14 -8.6171520699 -7.8947462204 -6.3671646538 -5.5105851298 
+  stp = 16 -8.6174196408 -7.8967491410 -6.4482047659 -6.0617987199 
+  stp = 18 -8.6174231305 -7.8967946738 -6.4601404393 -6.0982571289 
+  stp = 20 -8.6174231809 -7.8967957828 -6.4614263254 -6.1039664860 
+  stp = 22 -8.6174231818 -7.8967958176 -6.4616271844 -6.1056597187 
+  stp = 24 -8.6174231818 -7.8967958191 -6.4616892834 -6.1072169986 
+  stp = 26 -8.6174231818 -7.8967958192 -6.4617132935 -6.1120536080 
+  stp = 28 -8.6174231818 -7.8967958192 -6.4617178598 -6.1202717604 
+  stp = 30 -8.6174231818 -7.8967958192 -6.4617181387 -6.1217122877 
 
 ######  End  : Calculate Lanczos EigenValue.  ######
 
@@ -88,10 +88,10 @@
   End  : Calculate Energy.
 
   Accuracy check !!!
-  LanczosEnergy = -8.61742318181418e+00 
-  EnergyByVec   = -8.51985802816017e+00 
-  diff_ene      = 1.13218477955114e-02 
-  var           = 1.15400048528472e-02 
+  LanczosEnergy = -8.61742318181419e+00 
+  EnergyByVec   = -8.60356670436602e+00 
+  diff_ene      = 1.60796065782233e-03 
+  var           = 1.76076672186906e-03 
   Accuracy of Lanczos vectors is NOT enough
 
   Start: Calculate EigenVector by CG method.
@@ -100,7 +100,7 @@
   End  : Calculate Energy.
 
   CG Accuracy check !!!
-  LanczosEnergy = -8.61742318181418e+00
+  LanczosEnergy = -8.61742318181419e+00
   EnergyByVec   = -8.61742318181421e+00
   diff_ene      = 3.09203250540543e-15
   var           = 1.91366255096191e-16 
