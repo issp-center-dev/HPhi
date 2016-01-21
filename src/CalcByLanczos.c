@@ -13,10 +13,11 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#include <expec_cisajs.h>
-#include <expec_cisajscktaltdc.h>
-#include <expec_totalspin.h>
+#include "expec_cisajs.h"
+#include "expec_cisajscktaltdc.h"
+#include "expec_totalspin.h"
 #include "CalcByLanczos.h"
+#include "FileIO.h"
 #include "wrapperMPI.h"
 
 /**
@@ -51,8 +52,6 @@ int CalcByLanczos(
 {
   char sdt[D_FileNameMax];
   double diff_ene,var;
-  int iconv=0;
-  int flag=0;
   long int i=0;
   long int i_max=0;
   long int _list_1;
@@ -88,15 +87,16 @@ int CalcByLanczos(
     }
  
     if(Lanczos_EigenValue(&(X->Bind))!=0){
-      fprintf(stderr, "Lanczos Eigenvalue is not converged in this process.\n");      
+      fprintf(stderr, "  Lanczos Eigenvalue is not converged in this process.\n");      
       return(-1);
     }
 
     if(X->Bind.Def.iCalcEigenVec==CALCVEC_NOT){
-       fprintf(stdoutMPI, "Lanczos EigenValue = %.10lf \n ",X->Bind.Phys.Target_energy);
+       fprintf(stdoutMPI, "  Lanczos EigenValue = %.10lf \n ",X->Bind.Phys.Target_energy);
       return(0);
     }
 
+    fprintf(stdoutMPI, cLogLanczos_EigenVecStart);
     
     if(X->Bind.Check.idim_maxMPI != 1){
       Lanczos_EigenVector(&(X->Bind));
@@ -106,13 +106,14 @@ int CalcByLanczos(
       diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
       
       fprintf(stdoutMPI, "\n");
-      fprintf(stdoutMPI, "Accuracy check !!!\n");
-      fprintf(stdoutMPI, "%.14e %.14e: diff_ene=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+      fprintf(stdoutMPI, "  Accuracy check !!!\n");
+      fprintf(stdoutMPI, "  LanczosEnergy = %.14e \n  EnergyByVec   = %.14e \n  diff_ene      = %.14e \n  var           = %.14e \n",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
       if(diff_ene < eps_Energy && var< eps_Energy){
-	fprintf(stdoutMPI, "Accuracy of Lanczos vectors is enough\n");
+	fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is enough.\n");
 	fprintf(stdoutMPI, "\n");
       }else{
-	fprintf(stdoutMPI, "Accuracy of Lanczos vectors is NOT enough\n");
+	/* Comment out: Power Lanczos method
+	fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is NOT enough\n");
 	iconv=1;
 	fprintf(stdoutMPI, "Eigenvector is improved by power Lanczos method \n");
 	fprintf(stdoutMPI, "Power Lanczos starts\n");
@@ -125,20 +126,21 @@ int CalcByLanczos(
 	  fprintf(stdoutMPI,"Power Lanczos Accuracy check !!!\n");
 	  fprintf(stdoutMPI,"%.14e %.14e: diff_ene=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
 	  fprintf(stdoutMPI,"\n");
+	
 	}
 	else if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG && iconv==1){
-	  fprintf(stdoutMPI, "Accuracy of Lanczos vectors is NOT enough\n");
-	  fprintf(stdoutMPI, "Eigenvector is improved by CG method \n");
+	*/
+	  fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is NOT enough\n\n");
 	  X->Bind.Def.St=1;
 	  CG_EigenVector(&(X->Bind));
 	  expec_energy(&(X->Bind));
 	  var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
 	  diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
 	  fprintf(stdoutMPI, "\n");
-	  fprintf(stdoutMPI, "CG Accuracy check !!!\n");
-	  fprintf(stdoutMPI, "%.14e %.14e: diff_ene=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+	  fprintf(stdoutMPI, "  CG Accuracy check !!!\n");
+	  fprintf(stdoutMPI, "  LanczosEnergy = %.14e\n  EnergyByVec   = %.14e\n  diff_ene      = %.14e\n  var           = %.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
 	  fprintf(stdoutMPI, "\n");
-	}
+	  //}
       }
     }
     else{//idim_max=1
@@ -173,7 +175,8 @@ int CalcByLanczos(
     }
     fclose(fp);
   }
-  
+
+  fprintf(stdoutMPI, cLogLanczos_EigenVecEnd);
   // v1 is eigen vector
     
   if(!expec_cisajs(&(X->Bind), v1)==0){

@@ -34,7 +34,34 @@
 
 #include "Common.h"
 #include "readdef.h"
+#include "LogMessage.h"
 #include "wrapperMPI.h"
+
+/**
+ * Keyword List in NameListFile.
+ **/
+static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
+        "CalcMod",
+        "ModPara",
+        "LocSpin",
+        "Trans",
+        "CoulombIntra",
+        "CoulombInter",
+        "Hund",
+        "PairHop",
+        "Exchange",
+        "InterAll",
+        "OneBodyG",
+        "TwoBodyG",
+        "PairLift",
+        "Ising"
+};
+
+/**
+ * File Name List in NameListFile.
+ **/
+static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
+
 
 /**
  * @brief Error Function of reading def files.
@@ -47,7 +74,7 @@ int ReadDefFileError(
 		     const	char *defname
 		     ){
   fprintf(stderr, cErrReadDefFile, defname);
-  exitMPI(-1);
+  return (-1);
 }
 
 /**
@@ -334,11 +361,10 @@ int ReadDefFileNInt(
   int iReadNCond=FALSE;
   InitializeInteractionNum(X);
   
-  fprintf(stdoutMPI, "Start: Read File '%s'.\n", xNameListFile); 
+  fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
     exitMPI(-1);
   }
-  fprintf(stdoutMPI, "End: Read File '%s'.\n", xNameListFile);
 
   /*=======================================================================*/
   int iKWidx=0;
@@ -368,7 +394,7 @@ int ReadDefFileNInt(
 
   if(strcmp(defname,"")==0) continue;
   
-    fprintf(stdoutMPI, "Read File '%s' for %s.\n", defname, cKWListOfFileNameList[iKWidx]);
+    fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
     switch(iKWidx){
@@ -653,7 +679,7 @@ int ReadDefFileIdxPara(
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
     strcpy(defname, cFileNameListFile[iKWidx]);
     if(strcmp(defname,"")==0) continue;   
-    fprintf(stdoutMPI, "Read File '%s'.\n", defname);
+    fprintf(stdoutMPI, cReadFileNamelist, defname);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
     for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
@@ -686,7 +712,7 @@ int ReadDefFileIdxPara(
     case KWTrans:
       /* transfer.def--------------------------------------*/
       if(X->NTransfer>0){
-	fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
+	//fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
 	while( fgetsMPI(ctmp2, 256, fp) != NULL )
 	  {
 	    sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
@@ -1276,7 +1302,7 @@ int CheckTransferHermite
   X->EDNTransfer=2*icntHermite;
   X->EDNChemi=icntchemi;
 
-  for(i=0; i<X->NTransfer; i++){
+  for(i=0; i<X->EDNTransfer; i++){
     for(itmpIdx=0; itmpIdx<4; itmpIdx++){
       X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
       }
@@ -1576,13 +1602,13 @@ int JudgeDefType
   else{
     /*fprintf(stdoutMPI, cErrArgv, argv[1]);*/
     fprintf(stderr, "\n[Usage] \n");
-    fprintf(stderr, "* Expart mode \n");
+    fprintf(stderr, "* Expert mode \n");
     fprintf(stderr, "   $ HPhi -e {namelist_file} \n");
     fprintf(stderr, "* Standard mode \n");
     fprintf(stderr, "   $ HPhi -s {input_file} \n");
     fprintf(stderr, "* Standard DRY mode \n");
     fprintf(stderr, "   $ HPhi -sdry {input_file} \n");
-    fprintf(stderr, "* In this mode, Hphi stops after it generats expart input files. \n\n");
+    fprintf(stderr, "* In this mode, Hphi stops after it generats expert input files. \n\n");
     return (-1);
   }
 
@@ -1613,10 +1639,10 @@ int CheckFormatForSpinInt
   if(site1==site2 && site3==site4){
     return 0;
   }
-  else{
+
     fprintf(stderr, cWarningIncorrectFormatForSpin, site1, site2, site3, site4);
-    exitMPI(-1);
-  }
+    return(-1);
+
 }
 
 /** 
@@ -1818,7 +1844,6 @@ int CheckSpinIndexForInterAll
   int i=0;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
-  int ilocspn=0;
   if(X->iFlgGeneralSpin==TRUE){
     for(i=0; i<X->NInterAll; i++){
       isite1 =X->InterAll[i][0];

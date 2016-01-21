@@ -15,4 +15,4 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
 #include "Common.h"
-int childfopen(const char* _cPathChild, const char* _cmode, FILE **_fp);
+int childfopenMPI(const char* _cPathChild, const char* _cmode, FILE **_fp);

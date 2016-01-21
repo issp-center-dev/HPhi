@@ -70,6 +70,12 @@ char *cWarningIncorrectFormatForSpin;
 char *cWarningIncorrectFormatForSpin2;
 
 
+//! Error Message in CheckMPI.c
+char *cErrNProcNumberHubbard;
+char *cErrNProcNumberSpin;
+char *cErrNProcNumberGneralSpin;
+char *cErrNProcNumber;
+char *cErrNProcNumberSet;
 
 //! Error Message in diagonal calc.c
 char *cErrNoModel;

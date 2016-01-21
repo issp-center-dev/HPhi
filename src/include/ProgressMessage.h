@@ -18,6 +18,8 @@
 #define HPHI_PROGRESS_MESSAGE_H
 
 const char* cProFinishAlloc;
+const char* cProFinishDefFiles;
+const char* cProFinishDefCheck;
 const char* cProEDNTrans;
 const char* cProEDNChemi;
 const char* cProStartCalcSgn;
@@ -28,5 +30,17 @@ const char* cProStartOutputList;
 const char* cProEndOutputList;
 const char* cProStartCalcDiag;
 const char* cProEndCalcDiag;
-
+const char* cLogLanczos_EigenValueStart;
+const char* cLogLanczos_EigenValueEnd;
+const char* cLogLanczos_EigenVecStart;
+const char* cLogLanczos_EigenVecEnd;
+const char* cLogTPQ_Start;
+const char* cLogTPQ_End;
+const char* cLogFullDiag_SetHam_Start;
+const char* cLogFullDiag_SetHam_End;
+const char* cLogFullDiag_Start;
+const char* cLogFullDiag_End;
+const char* cLogFullDiag_ExpecValue_Start;
+const char* cLogFullDiag_ExpecValue_End;
+const char* cLogFinish;
 #endif /* HPHI_PROGRESS_MESSAGE_H */

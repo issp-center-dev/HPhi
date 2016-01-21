@@ -16,6 +16,7 @@
 
 #include <bitcalc.h>
 #include "mfmemory.h"
+#include "FileIO.h"
 #include "sz.h"
 #include "wrapperMPI.h"
 
@@ -58,8 +59,7 @@ int sz
   long unsigned int div;
   long unsigned int num_up,num_down;
   long unsigned int irght,ilft,ihfbit;
-  long unsigned int tmp_sdim;
-  
+
   //*[s] for omp parall
   int  all_up,all_down,tmp_res,num_threads;
   long unsigned int tmp_1,tmp_2,tmp_3;
@@ -130,11 +130,11 @@ int sz
       if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
 	exitMPI(-1);
       }
-    fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
+      //fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
     else{
       ihfbit=X->Check.sdim;
-      fprintf(stdoutMPI, "idim=%lf ihfbit=%ld \n",idim, ihfbit);
+      //fprintf(stdoutMPI, "idim=%lf ihfbit=%ld \n",idim, ihfbit);
     }
   break;
  default:
@@ -152,7 +152,6 @@ int sz
   else{ 
     sprintf(sdt, cFileNameSzTimeKeep, X->Def.CDataFileHead);
     num_threads  = omp_get_max_threads();
-    fprintf(stdoutMPI, "num_threads==%d\n",num_threads);
     childfopenMPI(sdt,"a", &fp);
     fprintf(fp, "num_threads==%d\n",num_threads);
     fclose(fp);
@@ -313,7 +312,7 @@ int sz
       // this part can not be parallelized
       N_all_up   = X->Def.Nup;
       N_all_down = X->Def.Ndown;
-      fprintf(stdoutMPI, "N_all_up=%d N_all_down=%d \n",N_all_up,N_all_down);
+      fprintf(stdoutMPI, cStateNupNdown, N_all_up,N_all_down);
 
       jb = 0;
       num_loc=0;
@@ -403,7 +402,7 @@ int sz
       // this part can not be parallelized
       if(X->Def.iFlgGeneralSpin==FALSE){
 	jb = 0;
-	fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
+	//fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
 	for(ib=0;ib<X->Check.sdim;ib++){
 	  list_jb[ib]=jb;
 	  i=ib*ihfbit;
@@ -422,7 +421,7 @@ int sz
 	TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
  
 	icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X,tmp_sdim) 
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
 	for(ib=0;ib<X->Check.sdim;ib++){
 	  icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
 	}
@@ -487,7 +486,7 @@ int sz
        
     }    
     i_max=icnt;
-    fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
+    //fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
   }
 
@@ -845,7 +844,6 @@ int child_omp_sz_spin(
   long unsigned int i,j,div; 
   long unsigned int ia,ja,jb;
   long unsigned int num_up;
-  long unsigned int tmp_sdim;
   int tmp_num_up;
   
   jb = list_jb[ib];

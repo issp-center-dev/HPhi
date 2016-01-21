@@ -252,7 +252,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   ioutputmode = CheckOutputMode(outputmode);
   /**/
   fprintf(stdoutMPI, "\n");
-  fprintf(stdoutMPI, "######  Print Expart input files  ######\n");
+  fprintf(stdoutMPI, "######  Print Expert input files  ######\n");
   fprintf(stdoutMPI, "\n");
   PrintLocSpin();
   PrintTrans();
