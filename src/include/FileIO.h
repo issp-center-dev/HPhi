@@ -16,3 +16,4 @@
 #pragma once
 #include "Common.h"
 int childfopenMPI(const char* _cPathChild, const char* _cmode, FILE **_fp);
+int childfopenALL(const char* _cPathChild, const char* _cmode, FILE **_fp);

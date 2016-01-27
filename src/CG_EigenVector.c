@@ -42,10 +42,12 @@ int CG_EigenVector(struct BindStruct *X){
   int i_itr,itr,iv,itr_max;
   int t_itr;
   double bnorm,xnorm,rnorm,rnorm2;
-  double complex alpha,beta,xb,rp,yp,gosa1,tmp_r,gosa2;
+  double complex alpha,beta,xb,rp,yp,gosa1,tmp_r,gosa2, temp1;
   double complex *y,*b;
   long int L_size;
-  long int i_max; 
+  long int i_max, i_max_tmp;
+  int iproc;
+  
   iv=0;
   i_max=X->Check.idim_max;    
   Eig=X->Phys.Target_energy;
@@ -67,7 +69,6 @@ int CG_EigenVector(struct BindStruct *X){
   }
   fclose(fp_0);
         
-
   start=time(NULL);  
 // add random components
   iv = X->Def.initial_iv;
@@ -76,9 +77,20 @@ int CG_EigenVector(struct BindStruct *X){
   dsfmt_init_gen_rand(&dsfmt, u_long_i);    
   for(i=1;i<=i_max;i++){
     v0[i]=v1[i];
-    b[i]=v0[i]+2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*0.001;
-    bnorm+=conj(b[i])*b[i];
+    b[i]=v0[i];
   }
+
+  for (iproc = 0; iproc < nproc; iproc++) {
+    i_max_tmp = BcastMPI_li(iproc, i_max);
+    for (i = 1; i <= i_max_tmp; i++) {
+      temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*0.001;
+      if (myrank == iproc){
+	b[i] += temp1;
+	bnorm+=conj(b[i])*b[i];
+      }
+    }
+  }
+  
   bnorm = SumMPI_d(bnorm);
   bnorm=sqrt(bnorm);
   
@@ -100,10 +112,10 @@ int CG_EigenVector(struct BindStruct *X){
       v0[i]=0.0;
     }
     bnorm = SumMPI_d(bnorm);
-    childfopenMPI(sdt_1,"a",&fp_0);
+    childfopenMPI(sdt_1,"a",&fp_0);    
     fprintf(fp_0,"b[%d]=%lf bnorm== %lf \n ",iv,creal(b[iv]),bnorm);
     fclose(fp_0);           
-
+       
     //iteration
     if(i_itr==0){
       itr_max=500;
@@ -161,7 +173,7 @@ int CG_EigenVector(struct BindStruct *X){
       for(i=1;i<=i_max;i++){
 	vg[i]=v1[i]+beta*vg[i];
       }
-      if(itr%5==0){
+      // if(itr%5==0){
 	childfopenMPI(sdt_1,"a", &fp_0);
 	fprintf(fp_0,"i_itr=%d itr=%d %.10lf %.10lf \n ",
 		i_itr,itr,sqrt(rnorm2),pow(10,-5)*sqrt(bnorm));
@@ -173,7 +185,7 @@ int CG_EigenVector(struct BindStruct *X){
 	  fclose(fp_0); 
 	  break;
 	}
-      }
+	//}
     }
     //CG finish!!
     xnorm=0.0;

@@ -2343,13 +2343,15 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
  *
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-double complex X_GC_child_CisAis_spin_MPIdouble(
-				       int org_isite1,
-				       int org_ispin1,
-				       double complex tmp_trans,
-				       struct BindStruct *X /**< [inout]*/,
-				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
-				       double complex *tmp_v1 /**< [in] v0 = H v1*/)
+double complex X_GC_child_CisAis_spin_MPIdouble
+(
+ int org_isite1,
+ int org_ispin1,
+ double complex tmp_trans,
+ struct BindStruct *X /**< [inout]*/,
+ double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+ double complex *tmp_v1 /**< [in] v0 = H v1*/
+ )
 {
 #ifdef MPI
   long unsigned int j;

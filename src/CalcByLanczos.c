@@ -150,14 +150,14 @@ int CalcByLanczos(
   }
   else{//input v1
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
-    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
-    fp = fopenMPI(sdt, "r");
+    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
+    fp = fopen(sdt, "r");
     if(fp==NULL){
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       fclose(fp);
       exitMPI(-1);
     }
-    fgetsMPI(ctmp2, 256, fp);
+    fgets(ctmp2, 256, fp);
     sscanf(ctmp2, "%ld \n",&i_max);
     if(i_max != X->Bind.Check.idim_max){
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
@@ -165,8 +165,8 @@ int CalcByLanczos(
     }
       
     i=1;
-    while(fgetsMPI(ctmp2, 256, fp) != NULL){
-      sscanf(ctmp2, "%ld %lf %lf \n",
+    while(fgets(ctmp2, 256, fp) != NULL){
+      sscanf(ctmp2, "%ld %le %le \n",
 	     &_list_1,
 	     &dRealVec,
 	     &dImagVec);	  
@@ -219,8 +219,8 @@ int CalcByLanczos(
   fclose(fp);
 
   if(X->Bind.Def.iOutputEigenVec==TRUE){
-    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
-    if(childfopenMPI(sdt, "w", &fp)!=0){
+    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
+    if(childfopenALL(sdt, "w", &fp)!=0){
       fclose(fp);
       exitMPI(-1);
       }
@@ -230,7 +230,7 @@ int CalcByLanczos(
     case SpinGC:
     case KondoGC:
       for(i=1; i<=X->Bind.Check.idim_max; i++){
-	fprintf(fp, "%ld %.10lf %.10lf\n", i, creal(v1[i]), cimag(v1[i]));
+	fprintf(fp, "%ld %.15le %.15le\n", i, creal(v1[i]), cimag(v1[i]));
       }
       break;
 
@@ -238,7 +238,7 @@ int CalcByLanczos(
     case Kondo:
     case Spin:
       for(i=1; i<=X->Bind.Check.idim_max; i++){
-	fprintf(fp, "%ld %.10lf %.10lf\n", list_1[i], creal(v1[i]), cimag(v1[i]));
+	fprintf(fp, "%ld %.15le %.15le \n", list_1[i], creal(v1[i]), cimag(v1[i]));
       }
       break;
     }

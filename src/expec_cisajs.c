@@ -237,12 +237,12 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	if(org_isite1==org_isite2){
 	  if(org_isite1 > X->Def.Nsite){
 	    is1_up = X->Def.Tpow[org_isite1 - 1];
-	    ibit1 = (((unsigned long int)myrank& is1_up)/is1_up)^(1-org_sigma1);
+	    ibit1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
 	    dam_pr=0;
 	    if(ibit1 !=0){
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
-  firstprivate(i_max, ibit1) private(j)
-	    for (j = 1; j <= i_max; j++) dam_pr += ibit1*conj(vec[j])*vec[j];
+  firstprivate(i_max) private(j)
+	    for (j = 1; j <= i_max; j++) dam_pr += conj(vec[j])*vec[j];
 	    }
 	  }// org_isite1 > X->Def.Nsite 
 	  else{
