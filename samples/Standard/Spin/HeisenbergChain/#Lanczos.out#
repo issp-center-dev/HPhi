@@ -2,7 +2,7 @@
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 12
+  OpenMP threads : 4
   MPI PEs : 1 
 
 
@@ -166,7 +166,7 @@
 
 ######  End  : Calculate Lanczos EigenValue.  ######
 
-######  Start: Calculate Lanczos Eigenvec.  ######
+######  Start: Calculate Eigenvector.  ######
 
   Start: Calculate Lanczos Eigenvector.
   End  : Calculate Lanczos Eigenvector.
@@ -174,14 +174,13 @@
   End  : Calculate Energy.
 
   Accuracy check !!!
-  LanczosEnergy = -7.14229636061677e+00 
-  EnergyByVec   = -7.14229636061423e+00 
-  diff_ene      = 3.55405852031006e-13 
-  var           = 4.04493067125760e-13 
+  LanczosEnergy = -7.14229636061676e+00 
+  EnergyByVec   = -7.14229636061616e+00 
+  diff_ene      = 8.50586433832080e-14 
+  var           = 9.97303843188625e-14 
   Accuracy of Lanczos vectors is enough.
 
-
-######  End  : Calculate Lanczos EigenVec.  ######
+######  End  : Calculate Eigenvector.  ######
 
   Start: Calculate one body Green functions.
   End  : Calculate one body Green functions.

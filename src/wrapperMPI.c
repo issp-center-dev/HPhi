@@ -200,12 +200,13 @@ unsigned long int SumMPI_li(unsigned long int idim)
   return(idim);
 }
 
-int SumMPI_i(int idim)
-{
+int SumMPI_i(int idim);
+
+int SumMPI_i(int idim) {
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
-    MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+                       MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   if(ierr != 0) exitMPI(-1);
 #endif
   return(idim);
