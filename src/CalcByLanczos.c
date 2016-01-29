@@ -53,6 +53,7 @@ int CalcByLanczos(
   char sdt[D_FileNameMax];
   double diff_ene,var;
   long int i=0;
+  long int libuf=0;
   long int i_max=0;
   long int _list_1;
   double dRealVec, dImagVec;
@@ -150,29 +151,21 @@ int CalcByLanczos(
   }
   else{//input v1
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
-    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
-    fp = fopenMPI(sdt, "r");
+    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
+    fp = fopen(sdt, "rb");
     if(fp==NULL){
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       fclose(fp);
       exitMPI(-1);
     }
-    fgetsMPI(ctmp2, 256, fp);
-    sscanf(ctmp2, "%ld \n",&i_max);
+    fread(&i_max, sizeof(long int), 1, fp);
     if(i_max != X->Bind.Check.idim_max){
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+      fclose(fp);
       exitMPI(-1);
     }
-      
-    i=1;
-    while(fgetsMPI(ctmp2, 256, fp) != NULL){
-      sscanf(ctmp2, "%ld %lf %lf \n",
-	     &_list_1,
-	     &dRealVec,
-	     &dImagVec);	  
-      v1[i]=dRealVec+I*dImagVec;
-      i++;
-    }
+    fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+    
     fclose(fp);
   }
 
@@ -219,29 +212,13 @@ int CalcByLanczos(
   fclose(fp);
 
   if(X->Bind.Def.iOutputEigenVec==TRUE){
-    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1);
-    if(childfopenMPI(sdt, "w", &fp)!=0){
+    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
+    if(childfopenALL(sdt, "wb", &fp)!=0){
       fclose(fp);
       exitMPI(-1);
       }
-    fprintf(fp, "%ld \n", X->Bind.Check.idim_max);
-    switch(X->Bind.Def.iCalcModel){
-    case HubbardGC:
-    case SpinGC:
-    case KondoGC:
-      for(i=1; i<=X->Bind.Check.idim_max; i++){
-	fprintf(fp, "%ld %.10lf %.10lf\n", i, creal(v1[i]), cimag(v1[i]));
-      }
-      break;
-
-    case Hubbard:
-    case Kondo:
-    case Spin:
-      for(i=1; i<=X->Bind.Check.idim_max; i++){
-	fprintf(fp, "%ld %.10lf %.10lf\n", list_1[i], creal(v1[i]), cimag(v1[i]));
-      }
-      break;
-    }
+    fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
+    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
   }
 
