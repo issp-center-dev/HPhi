@@ -43,16 +43,19 @@ int CalcBySSM(
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
   char sdt_phys[D_FileNameMax];
-  char  sdt_norm[D_FileNameMax];
+  char sdt_norm[D_FileNameMax];
+  char sdt_boost[D_FileNameMax];
   int rand_i, rand_max;
   FILE *fp;
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
   tstruct.tstart=time(NULL);
-  
+    
+  fprintf(stdoutMPI, "\n\n######  Boost  ######\n\n");
   
   rand_max = NumAve;
   step_spin = ExpecInterval;
+/*  */
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
@@ -76,7 +79,6 @@ int CalcBySSM(
     FirstMultiply(&dsfmt, &(X->Bind));
     
     expec_energy(&(X->Bind)); //v0 = H*v1
-
     Ns = 1.0*X->Bind.Def.NsiteMPI;
     inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
     step_i = 1;

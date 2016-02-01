@@ -53,6 +53,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
     //we do not adopt omp in this part.
     for (iproc = 0; iproc < nproc; iproc++) {
       
+      //
       i_max_tmp = BcastMPI_li(iproc, i_max);
       
       for (i = 1; i <= i_max_tmp; i++) {

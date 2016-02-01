@@ -16,6 +16,8 @@
 //Define Mode for mltply
 // complex version
 #include <bitcalc.h>
+#include "mfmemory.h"
+#include "xsetmem.h"
 #include "mltply.h"
 #include "mltplyMPI.h"
 #include "wrapperMPI.h"
@@ -55,12 +57,22 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   double complex dmv=0;
   /*[e] For InterAll */
 
+  /* SpinGCBoost */
+  int flagBoost=0;
+  char *filename = "inputBoost";
+  FILE *fp;
+  double complex *tmp_v2, *tmp_v3;
+
   long unsigned int i_max;
   int ihermite=0;
   int idx=0;
   i_max = X->Check.idim_max;
   X->Large.prdct = 0.0;
   dam_pr = 0.0;
+
+  /* SpinGCBoost */
+  c_malloc1(tmp_v2, i_max+1);
+  c_malloc1(tmp_v3, i_max+1);
 
   if(i_max!=0){
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -523,7 +535,17 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
       }	
       break;
 
+/* SpinGCBoost */
     case SpinGC:
+
+    if((fp = fopen(filename, "r")) == NULL){
+      fprintf(stderr, "\n\n ###Boost### failed to open a file %s\n\n", filename);
+      exit(EXIT_FAILURE);
+    }
+    fscanf(fp, "%d", &flagBoost);
+
+    if(flagBoost == 0){
+     
       if (X->Def.iFlgGeneralSpin == FALSE) {	
         for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
 	  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
@@ -797,7 +819,16 @@ shared(tmp_v0, tmp_v1)
           }
         }
       }  //end:generalspin
+  }
+  else{  
+    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode start \n\n");}
+     
+    child_general_int_spin_MPIBoost(X, tmp_v0, tmp_v1, tmp_v2, tmp_v3);
+    
+    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode step \n\n");}
+  }
   break;
+/* SpinGCBoost */
       
   default:
     return -1;
@@ -807,7 +838,11 @@ shared(tmp_v0, tmp_v1)
   //  fprintf(stdoutMPI, "debug: prdct=%lf, %lf\n",creal( X->Large.prdct), cimag( X->Large.prdct ) );
   //FinalizeMPI();
   //exit(0);
-  
+
+  /* SpinGCBoost */
+  c_free1(tmp_v2, i_max+1);  
+  c_free1(tmp_v3, i_max+1);  
+
   return 0;
 }
 
