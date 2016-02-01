@@ -413,6 +413,7 @@ void child_general_int_spin_MPIBoost(
           TRANSB = 'N';
           M = 64;
           N = (int)pow(2,ishift4+ishift5-1);
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp2 ell6 N%ld\n\n",ell6,N);}
           K = 64;
           ALPHA = 1.0;
           LDA = 64;
@@ -421,7 +422,7 @@ void child_general_int_spin_MPIBoost(
           LDC = 64;
           if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine b zgemm ell6 %ld \n\n",ell6);}
           ierr = zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
-          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine f zgemm ell6 %ld\n\n",ell6);}
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine f zgemm ell6 %ld \n\n",ell6);}
 
           for(ell5 = 0; ell5 < (int)pow(2,ishift5); ell5++){
           for(ell4 = 0; ell4 < (int)pow(2,ishift4); ell4++){
