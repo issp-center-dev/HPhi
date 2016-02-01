@@ -27,7 +27,10 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
+#include "matrixlapack.h"
+#include <stdlib.h>
 
+int zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *ALPHA, double complex *matJL, int *LDA, double complex *arrayz, int *LDB, double complex *BETA, double complex *arrayx, int *LDC, int *INFO);
 
 /**
  *
@@ -97,9 +100,9 @@ void child_general_int_spin_MPIBoost(
   c_malloc2(vecJ, 3, 3); 
   c_malloc2(matJ, 4, 4); 
   c_malloc2(matJ2, 4, 4); 
-  c_malloc1(matJL, (int)(64*64)); 
-  i_malloc2(list_6spin_star, (int)(R0*num_pivot), 7); 
-  i_malloc3(list_6spin_pair, (int)(R0*num_pivot), 7, 21); 
+  c_malloc1(matJL, (64*64)); 
+  i_malloc2(list_6spin_star, (R0*num_pivot), 7); 
+  i_malloc3(list_6spin_pair, (R0*num_pivot), 7, 21); 
 
   if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine list allocated \n\n");}
 
@@ -123,14 +126,14 @@ void child_general_int_spin_MPIBoost(
   }
   if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine J multiplied 1/4 \n\n");}
 
-  for(j=0; j < (int)(R0*num_pivot); j++){
+  for(j=0; j < (R0*num_pivot); j++){
     for(ell=0; ell < 7; ell++){
       for(k=0; k < 21; k++){
         list_6spin_pair[j][ell][k]=0;
       }
     } 
   }
-  for(j=0; j < (int)(R0*num_pivot); j++){
+  for(j=0; j < (R0*num_pivot); j++){
     for(ell=0; ell < 7; ell++){
       list_6spin_star[j][ell]=0;
     }
@@ -142,87 +145,87 @@ void child_general_int_spin_MPIBoost(
   for(j=0; j < R0; j++){
 
     
-    list_6spin_star[(int)2*j][0]=5; // num of J
-    list_6spin_star[(int)2*j][1]=1;
-    list_6spin_star[(int)2*j][2]=1;
-    list_6spin_star[(int)2*j][3]=1;
-    list_6spin_star[(int)2*j][4]=2;
-    list_6spin_star[(int)2*j][5]=1;
-    list_6spin_star[(int)2*j][6]=1; // flag
+    list_6spin_star[2*j][0]=5; // num of J
+    list_6spin_star[2*j][1]=1;
+    list_6spin_star[2*j][2]=1;
+    list_6spin_star[2*j][3]=1;
+    list_6spin_star[2*j][4]=2;
+    list_6spin_star[2*j][5]=1;
+    list_6spin_star[2*j][6]=1; // flag
 
-    list_6spin_pair[(int)2*j][0][0]=0; //(1,1,1+2*j)=0 
-    list_6spin_pair[(int)2*j][1][0]=1; //(2,1,1+2*j)=1
-    list_6spin_pair[(int)2*j][2][0]=2; //(3,1,1+2*j)=2
-    list_6spin_pair[(int)2*j][3][0]=3; //(4,1,1+2*j)=3
-    list_6spin_pair[(int)2*j][4][0]=4; //(5,1,1+2*j)=4
-    list_6spin_pair[(int)2*j][5][0]=5; //(6,1,1+2*j)=5
-    list_6spin_pair[(int)2*j][6][0]=3; //(7,1,1+2*j)=3 ! type of J
-    list_6spin_pair[(int)2*j][0][1]=1; //(1,2,1+2*j)=1 
-    list_6spin_pair[(int)2*j][1][1]=2; //(2,2,1+2*j)=2
-    list_6spin_pair[(int)2*j][2][1]=0; //(3,2,1+2*j)=0
-    list_6spin_pair[(int)2*j][3][1]=3; //(4,2,1+2*j)=3
-    list_6spin_pair[(int)2*j][4][1]=4; //(5,2,1+2*j)=4
-    list_6spin_pair[(int)2*j][5][1]=5; //(6,2,1+2*j)=5
-    list_6spin_pair[(int)2*j][6][1]=1; //(7,2,1+2*j)=1 ! type of J
-    list_6spin_pair[(int)2*j][0][2]=2; //(1,3,1+2*j)=2 
-    list_6spin_pair[(int)2*j][1][2]=3; //(2,3,1+2*j)=3
-    list_6spin_pair[(int)2*j][2][2]=0; //(3,3,1+2*j)=0
-    list_6spin_pair[(int)2*j][3][2]=1; //(4,3,1+2*j)=1
-    list_6spin_pair[(int)2*j][4][2]=4; //(5,3,1+2*j)=4
-    list_6spin_pair[(int)2*j][5][2]=5; //(6,3,1+2*j)=5
-    list_6spin_pair[(int)2*j][6][2]=3; //(7,3,1+2*j)=3 ! type of J
-    list_6spin_pair[(int)2*j][0][3]=0; //(1,4,1+2*j)=0 
-    list_6spin_pair[(int)2*j][1][3]=4; //(2,4,1+2*j)=4
-    list_6spin_pair[(int)2*j][2][3]=1; //(3,4,1+2*j)=1
-    list_6spin_pair[(int)2*j][3][3]=2; //(4,4,1+2*j)=2
-    list_6spin_pair[(int)2*j][4][3]=3; //(5,4,1+2*j)=3
-    list_6spin_pair[(int)2*j][5][3]=5; //(6,4,1+2*j)=5
-    list_6spin_pair[(int)2*j][6][3]=1; //(7,4,1+2*j)=1 ! type of J
-    list_6spin_pair[(int)2*j][0][4]=1; //(1,5,1+2*j)=1 
-    list_6spin_pair[(int)2*j][1][4]=5; //(2,5,1+2*j)=5
-    list_6spin_pair[(int)2*j][2][4]=0; //(3,5,1+2*j)=0
-    list_6spin_pair[(int)2*j][3][4]=2; //(4,5,1+2*j)=2
-    list_6spin_pair[(int)2*j][4][4]=3; //(5,5,1+2*j)=3
-    list_6spin_pair[(int)2*j][5][4]=4; //(6,5,1+2*j)=4
-    list_6spin_pair[(int)2*j][6][4]=2; //(7,5,1+2*j)=2 ! type of J
+    list_6spin_pair[2*j][0][0]=0; //(1,1,1+2*j)=0 
+    list_6spin_pair[2*j][1][0]=1; //(2,1,1+2*j)=1
+    list_6spin_pair[2*j][2][0]=2; //(3,1,1+2*j)=2
+    list_6spin_pair[2*j][3][0]=3; //(4,1,1+2*j)=3
+    list_6spin_pair[2*j][4][0]=4; //(5,1,1+2*j)=4
+    list_6spin_pair[2*j][5][0]=5; //(6,1,1+2*j)=5
+    list_6spin_pair[2*j][6][0]=3; //(7,1,1+2*j)=3 ! type of J
+    list_6spin_pair[2*j][0][1]=1; //(1,2,1+2*j)=1 
+    list_6spin_pair[2*j][1][1]=2; //(2,2,1+2*j)=2
+    list_6spin_pair[2*j][2][1]=0; //(3,2,1+2*j)=0
+    list_6spin_pair[2*j][3][1]=3; //(4,2,1+2*j)=3
+    list_6spin_pair[2*j][4][1]=4; //(5,2,1+2*j)=4
+    list_6spin_pair[2*j][5][1]=5; //(6,2,1+2*j)=5
+    list_6spin_pair[2*j][6][1]=1; //(7,2,1+2*j)=1 ! type of J
+    list_6spin_pair[2*j][0][2]=2; //(1,3,1+2*j)=2 
+    list_6spin_pair[2*j][1][2]=3; //(2,3,1+2*j)=3
+    list_6spin_pair[2*j][2][2]=0; //(3,3,1+2*j)=0
+    list_6spin_pair[2*j][3][2]=1; //(4,3,1+2*j)=1
+    list_6spin_pair[2*j][4][2]=4; //(5,3,1+2*j)=4
+    list_6spin_pair[2*j][5][2]=5; //(6,3,1+2*j)=5
+    list_6spin_pair[2*j][6][2]=3; //(7,3,1+2*j)=3 ! type of J
+    list_6spin_pair[2*j][0][3]=0; //(1,4,1+2*j)=0 
+    list_6spin_pair[2*j][1][3]=4; //(2,4,1+2*j)=4
+    list_6spin_pair[2*j][2][3]=1; //(3,4,1+2*j)=1
+    list_6spin_pair[2*j][3][3]=2; //(4,4,1+2*j)=2
+    list_6spin_pair[2*j][4][3]=3; //(5,4,1+2*j)=3
+    list_6spin_pair[2*j][5][3]=5; //(6,4,1+2*j)=5
+    list_6spin_pair[2*j][6][3]=1; //(7,4,1+2*j)=1 ! type of J
+    list_6spin_pair[2*j][0][4]=1; //(1,5,1+2*j)=1 
+    list_6spin_pair[2*j][1][4]=5; //(2,5,1+2*j)=5
+    list_6spin_pair[2*j][2][4]=0; //(3,5,1+2*j)=0
+    list_6spin_pair[2*j][3][4]=2; //(4,5,1+2*j)=2
+    list_6spin_pair[2*j][4][4]=3; //(5,5,1+2*j)=3
+    list_6spin_pair[2*j][5][4]=4; //(6,5,1+2*j)=4
+    list_6spin_pair[2*j][6][4]=2; //(7,5,1+2*j)=2 ! type of J
 
 
-    list_6spin_star[(int)(2*j+1)][0]=4; //(0,2+2*j)=4 ! num of J
-    list_6spin_star[(int)(2*j+1)][1]=1; //(1,2+2*j)=1
-    list_6spin_star[(int)(2*j+1)][2]=1; //(2,2+2*j)=1
-    list_6spin_star[(int)(2*j+1)][3]=1; //(3,2+2*j)=1
-    list_6spin_star[(int)(2*j+1)][4]=2; //(4,2+2*j)=2
-    list_6spin_star[(int)(2*j+1)][5]=2; //(5,2+2*j)=2
-    list_6spin_star[(int)(2*j+1)][6]=1; //(6,2+2*j)=1 ! flag
+    list_6spin_star[(2*j+1)][0]=4; //(0,2+2*j)=4 ! num of J
+    list_6spin_star[(2*j+1)][1]=1; //(1,2+2*j)=1
+    list_6spin_star[(2*j+1)][2]=1; //(2,2+2*j)=1
+    list_6spin_star[(2*j+1)][3]=1; //(3,2+2*j)=1
+    list_6spin_star[(2*j+1)][4]=2; //(4,2+2*j)=2
+    list_6spin_star[(2*j+1)][5]=2; //(5,2+2*j)=2
+    list_6spin_star[(2*j+1)][6]=1; //(6,2+2*j)=1 ! flag
 
-    list_6spin_pair[(int)(2*j+1)][0][0]=0; //(1,1,2+2*j)=0 
-    list_6spin_pair[(int)(2*j+1)][1][0]=1; //(2,1,2+2*j)=1
-    list_6spin_pair[(int)(2*j+1)][2][0]=2; //(3,1,2+2*j)=2
-    list_6spin_pair[(int)(2*j+1)][3][0]=3; //(4,1,2+2*j)=3
-    list_6spin_pair[(int)(2*j+1)][4][0]=4; //(5,1,2+2*j)=4
-    list_6spin_pair[(int)(2*j+1)][5][0]=5; //(6,1,2+2*j)=5
-    list_6spin_pair[(int)(2*j+1)][6][0]=1; //(7,1,2+2*j)=1 ! type of J
-    list_6spin_pair[(int)(2*j+1)][0][1]=1; //(1,2,2+2*j)=1 
-    list_6spin_pair[(int)(2*j+1)][1][1]=2; //(2,2,2+2*j)=2
-    list_6spin_pair[(int)(2*j+1)][2][1]=0; //(3,2,2+2*j)=0
-    list_6spin_pair[(int)(2*j+1)][3][1]=3; //(4,2,2+2*j)=3
-    list_6spin_pair[(int)(2*j+1)][4][1]=4; //(5,2,2+2*j)=4
-    list_6spin_pair[(int)(2*j+1)][5][1]=5; //(6,2,2+2*j)=5
-    list_6spin_pair[(int)(2*j+1)][6][1]=3; //(7,2,2+2*j)=3 ! type of J
-    list_6spin_pair[(int)(2*j+1)][0][2]=0; //(1,3,2+2*j)=0 
-    list_6spin_pair[(int)(2*j+1)][1][2]=4; //(2,3,2+2*j)=4
-    list_6spin_pair[(int)(2*j+1)][2][2]=1; //(3,3,2+2*j)=1
-    list_6spin_pair[(int)(2*j+1)][3][2]=2; //(4,3,2+2*j)=2
-    list_6spin_pair[(int)(2*j+1)][4][2]=3; //(5,3,2+2*j)=3
-    list_6spin_pair[(int)(2*j+1)][5][2]=5; //(6,3,2+2*j)=5
-    list_6spin_pair[(int)(2*j+1)][6][2]=2; //(7,3,2+2*j)=2 ! type of J
-    list_6spin_pair[(int)(2*j+1)][0][3]=2; //(1,4,2+2*j)=2 
-    list_6spin_pair[(int)(2*j+1)][1][3]=5; //(2,4,2+2*j)=5
-    list_6spin_pair[(int)(2*j+1)][2][3]=0; //(3,4,2+2*j)=0
-    list_6spin_pair[(int)(2*j+1)][3][3]=1; //(4,4,2+2*j)=1
-    list_6spin_pair[(int)(2*j+1)][4][3]=3; //(5,4,2+2*j)=3
-    list_6spin_pair[(int)(2*j+1)][5][3]=4; //(6,4,2+2*j)=4
-    list_6spin_pair[(int)(2*j+1)][6][3]=2; //(7,4,2+2*j)=2 ! type of J
+    list_6spin_pair[(2*j+1)][0][0]=0; //(1,1,2+2*j)=0 
+    list_6spin_pair[(2*j+1)][1][0]=1; //(2,1,2+2*j)=1
+    list_6spin_pair[(2*j+1)][2][0]=2; //(3,1,2+2*j)=2
+    list_6spin_pair[(2*j+1)][3][0]=3; //(4,1,2+2*j)=3
+    list_6spin_pair[(2*j+1)][4][0]=4; //(5,1,2+2*j)=4
+    list_6spin_pair[(2*j+1)][5][0]=5; //(6,1,2+2*j)=5
+    list_6spin_pair[(2*j+1)][6][0]=1; //(7,1,2+2*j)=1 ! type of J
+    list_6spin_pair[(2*j+1)][0][1]=1; //(1,2,2+2*j)=1 
+    list_6spin_pair[(2*j+1)][1][1]=2; //(2,2,2+2*j)=2
+    list_6spin_pair[(2*j+1)][2][1]=0; //(3,2,2+2*j)=0
+    list_6spin_pair[(2*j+1)][3][1]=3; //(4,2,2+2*j)=3
+    list_6spin_pair[(2*j+1)][4][1]=4; //(5,2,2+2*j)=4
+    list_6spin_pair[(2*j+1)][5][1]=5; //(6,2,2+2*j)=5
+    list_6spin_pair[(2*j+1)][6][1]=3; //(7,2,2+2*j)=3 ! type of J
+    list_6spin_pair[(2*j+1)][0][2]=0; //(1,3,2+2*j)=0 
+    list_6spin_pair[(2*j+1)][1][2]=4; //(2,3,2+2*j)=4
+    list_6spin_pair[(2*j+1)][2][2]=1; //(3,3,2+2*j)=1
+    list_6spin_pair[(2*j+1)][3][2]=2; //(4,3,2+2*j)=2
+    list_6spin_pair[(2*j+1)][4][2]=3; //(5,3,2+2*j)=3
+    list_6spin_pair[(2*j+1)][5][2]=5; //(6,3,2+2*j)=5
+    list_6spin_pair[(2*j+1)][6][2]=2; //(7,3,2+2*j)=2 ! type of J
+    list_6spin_pair[(2*j+1)][0][3]=2; //(1,4,2+2*j)=2 
+    list_6spin_pair[(2*j+1)][1][3]=5; //(2,4,2+2*j)=5
+    list_6spin_pair[(2*j+1)][2][3]=0; //(3,4,2+2*j)=0
+    list_6spin_pair[(2*j+1)][3][3]=1; //(4,4,2+2*j)=1
+    list_6spin_pair[(2*j+1)][4][3]=3; //(5,4,2+2*j)=3
+    list_6spin_pair[(2*j+1)][5][3]=4; //(6,4,2+2*j)=4
+    list_6spin_pair[(2*j+1)][6][3]=2; //(7,4,2+2*j)=2 ! type of J
   }/* define list_6spin */ 
 
 
@@ -241,16 +244,16 @@ void child_general_int_spin_MPIBoost(
       ishift4    = list_6spin_star[j][4]; //(4,j)
       ishift5    = list_6spin_star[j][5]; //(5,j)
       pivot_flag = list_6spin_star[j][6]; //(6,j)
-      pow1 = pow(2,ishift1);
-      pow2 = pow(2,ishift1+ishift2);
-      pow3 = pow(2,ishift1+ishift2+ishift3);
-      pow4 = pow(2,ishift1+ishift2+ishift3+ishift4);
-      pow5 = pow(2,ishift1+ishift2+ishift3+ishift4+ishift5);
-      pow11= pow(2,ishift1+1);
-      pow21= pow(2,ishift1+ishift2+1);
-      pow31= pow(2,ishift1+ishift2+ishift3+1);
-      pow41= pow(2,ishift1+ishift2+ishift3+ishift4+1);
-      pow51= pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+1);
+      pow1 = (int)pow(2,ishift1);
+      pow2 = (int)pow(2,ishift1+ishift2);
+      pow3 = (int)pow(2,ishift1+ishift2+ishift3);
+      pow4 = (int)pow(2,ishift1+ishift2+ishift3+ishift4);
+      pow5 = (int)pow(2,ishift1+ishift2+ishift3+ishift4+ishift5);
+      pow11= (int)pow(2,ishift1+1);
+      pow21= (int)pow(2,ishift1+ishift2+1);
+      pow31= (int)pow(2,ishift1+ishift2+ishift3+1);
+      pow41= (int)pow(2,ishift1+ishift2+ishift3+ishift4+1);
+      pow51= (int)pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+1);
 
       for(k=0; k < 64*64; k++){
         matJL[k] = 0.0 + 0.0*I;
@@ -329,8 +332,8 @@ void child_general_int_spin_MPIBoost(
           for(elli2=0; ellrk<2; ellrk++){
           for(ellj2=0; ellrl<2; ellrl++){
             
-            iSSL1 = elli1*pow(2,mi) + ellj1*pow(2,mj) + ellri*pow(2,mri) + ellrj*pow(2,mrj) + ellrk*pow(2,mrk) + ellrl*pow(2,mrl);
-            iSSL2 = elli2*pow(2,mi) + ellj2*pow(2,mj) + ellri*pow(2,mri) + ellrj*pow(2,mrj) + ellrk*pow(2,mrk) + ellrl*pow(2,mrl);
+            iSSL1 = elli1*(int)pow(2,mi) + ellj1*(int)pow(2,mj) + ellri*(int)pow(2,mri) + ellrj*(int)pow(2,mrj) + ellrk*(int)pow(2,mrk) + ellrl*(int)pow(2,mrl);
+            iSSL2 = elli2*(int)pow(2,mi) + ellj2*(int)pow(2,mj) + ellri*(int)pow(2,mri) + ellrj*(int)pow(2,mrj) + ellrk*(int)pow(2,mrk) + ellrl*(int)pow(2,mrl);
             iSS1  = elli1 + 2*ellj1;
             iSS2  = elli2 + 2*ellj2;
             matJL[iSSL1+64*iSSL2] += matJ2[iSS1][iSS2];
@@ -347,54 +350,57 @@ void child_general_int_spin_MPIBoost(
 
       if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine iomp\n\n");}
 
-      iomp=i_max/pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+2); 
+      iomp=i_max/(int)pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+2); 
       if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine iomp %d\n\n",iomp);}
       #pragma omp parallel default(none) private(arrayz,arrayx,ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA,INFO) \
-      firstprivate(matJL,iomp) shared(ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
+      firstprivate(matJL,iomp) shared(myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
       {
-        c_malloc1(arrayz, (int)(64*pow(2,ishift4+ishift5-1)));  
-        c_malloc1(arrayx, (int)(64*pow(2,ishift4+ishift5-1)));
+        c_malloc1(arrayz, (64*(int)pow(2,ishift4+ishift5-1)));  
+        c_malloc1(arrayx, (64*(int)pow(2,ishift4+ishift5-1)));
         #pragma omp for
-        //for(ell6 = 0; ell6 < i_max/pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+2); ell6++){
+        //for(ell6 = 0; ell6 < i_max/(int)pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+2); ell6++){
         for(ell6 = 0; ell6 < iomp; ell6++){
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp0 ell6 %d\n\n",ell6);}
           Ipart1=pow51*2*ell6;
           for(ell5 = 0; ell5 < (int)pow(2,ishift5); ell5++){
           for(ell4 = 0; ell4 < (int)pow(2,ishift4); ell4++){
             for(m0 = 0; m0 < 16; m0++){
-              arrayz[0 + (int)(m0 +64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v1[1 + (int)(m0+16*ell4          +pow41*ell5+Ipart1)];
-              arrayz[16+ (int)(m0 +64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v1[1 + (int)(m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-              arrayz[32+ (int)(m0 +64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v1[1 + (int)(m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-              arrayz[48+ (int)(m0 +64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v1[1 + (int)(m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-              tmp_v3[1 + (int)(m0+16*ell4          +pow41*ell5+Ipart1)]=tmp_v1[1 + (int)(m0+16*ell4          +pow41*ell5+Ipart1)];
-              tmp_v3[1 + (int)(m0+16*ell4+pow4     +pow41*ell5+Ipart1)]=tmp_v1[1 + (int)(m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-              tmp_v3[1 + (int)(m0+16*ell4+pow5     +pow41*ell5+Ipart1)]=tmp_v1[1 + (int)(m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-              tmp_v3[1 + (int)(m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)]=tmp_v1[1 + (int)(m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-              arrayx[0 + (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v0[1 + (int)(m0+16*ell4          +pow41*ell5+Ipart1)];
-              arrayx[16+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v0[1 + (int)(m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-              arrayx[32+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v0[1 + (int)(m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-              arrayx[48+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))] = tmp_v0[1 + (int)(m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+              arrayz[(0 + m0 +64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+              arrayz[(16+ m0 +64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+              arrayz[(32+ m0 +64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+              arrayz[(48+ m0 +64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4          +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+              arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+              arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+              arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+              arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
             } 
           }
           }
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp1 ell6 %d\n\n",ell6);}
           for(ell5 = 0; ell5 < (int)pow(2,ishift5); ell5++){
           for(ell4 = 0; ell4 < (int)pow(2,ishift4); ell4++){
             for(m0 = 0; m0 < 16; m0++){
-              arrayz[0 + (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v1[1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1];
-              arrayz[16+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v1[1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1];
-              arrayz[32+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v1[1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1];
-              arrayz[48+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v1[1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1];
-              tmp_v3[1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1] = tmp_v1[1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1];
-              tmp_v3[1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1] = tmp_v1[1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1];
-              tmp_v3[1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1] = tmp_v1[1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1];
-              tmp_v3[1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1] = tmp_v1[1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1];
-              arrayx[0 + (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v0[1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1];
-              arrayx[16+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v0[1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1];
-              arrayx[32+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v0[1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1];
-              arrayx[48+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))] = tmp_v0[1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1];
+              arrayz[(0 + m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+              arrayz[(16+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+              arrayz[(32+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+              arrayz[(48+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+              tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+              arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+              arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+              arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+              arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
 
             }
           }
           } 
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp2 ell6 %d\n\n",ell6);}
           TRANSA = 'N';
           TRANSB = 'N';
           M = 64;
@@ -405,49 +411,52 @@ void child_general_int_spin_MPIBoost(
           LDB = 64;
           BETA = 1.0;
           LDC = 64;
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine b zgemm ell6 %d\n\n",ell6);}
           zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC,&INFO);
-          for(ell5 = 0; ell5 < pow(2,ishift5); ell5++){
-          for(ell4 = 0; ell4 < pow(2,ishift4); ell4++){
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine f zgemm ell6 %d\n\n",ell6);}
+
+          for(ell5 = 0; ell5 < (int)pow(2,ishift5); ell5++){
+          for(ell4 = 0; ell4 < (int)pow(2,ishift4); ell4++){
             for(m0 = 0; m0 < 16; m0++){
-              tmp_v1[1 + m0+16*ell4          +pow41*ell5+Ipart1]       = arrayx[0 + (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))];
-              tmp_v1[1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1]       = arrayx[16+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))];
-              tmp_v1[1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1]       = arrayx[32+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))];
-              tmp_v1[1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1]       = arrayx[48+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)))];
+              tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)]       = arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))];
+              tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)]       = arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))];
+              tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)]       = arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))];
+              tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)]       = arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)))];
             }
           }
           }
           for(ell5 = 0; ell5 < (int)pow(2,ishift5); ell5++){
           for(ell4 = 0; ell4 < (int)pow(2,ishift4); ell4++){
             for(m0 = 0; m0 < 16; m0++){
-              tmp_v1[1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1] = arrayx[0 + (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))];
-              tmp_v1[1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1] = arrayx[16+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))];
-              tmp_v1[1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1] = arrayx[32+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))];
-              tmp_v1[1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1] = arrayx[48+ (int)(m0+64*(ell4+ell5*pow(2,ishift4-1)+pow(2,ishift4+ishift5-2)))];
+              tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)] = arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))];
+              tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)] = arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))];
+              tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)] = arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))];
+              tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)] = arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2,ishift4-1)+(int)pow(2,ishift4+ishift5-2)))];
             }
           }
           }
          
         }/* omp parallel for */ 
-        c_free1(arrayz, (int)(64*pow(2,ishift4+ishift5-1)));  
-        c_free1(arrayx, (int)(64*pow(2,ishift4+ishift5-1)));  
+        c_free1(arrayz, (64*(int)pow(2,ishift4+ishift5-1)));  
+        c_free1(arrayx, (64*(int)pow(2,ishift4+ishift5-1)));  
       }/* omp parallel */
       if(pivot_flag==1){
-        iomp=i_max/pow(2,ishift_nspin);
+        iomp=i_max/(int)pow(2,ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
         firstprivate(i_max,iomp) shared(ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,ishift_nspin,tmp_v0,tmp_v1)
-        //for(ell5 = 0; ell5 < i_max/pow(2,ishift_nspin); ell5++ ){
+        //for(ell5 = 0; ell5 < i_max/(int)pow(2,ishift_nspin); ell5++ ){
         for(ell5 = 0; ell5 < iomp; ell5++ ){
           for(ell4 = 0; ell4 < (int)pow(2,ishift_nspin); ell4++){
-            tmp_v0[1 + (int)(ell5+(i_max/pow(2,ishift_nspin))*ell4)] = tmp_v1[1 + (int)(ell4+pow(2,ishift_nspin)*ell5)];
+            tmp_v0[(1 + ell5+(i_max/(int)pow(2,ishift_nspin))*ell4)] = tmp_v1[(1 + ell4+(int)pow(2,ishift_nspin)*ell5)];
           } 
         }
-        iomp=i_max/pow(2,ishift_nspin);
+        iomp=i_max/(int)pow(2,ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5) \
         firstprivate(i_max,iomp) shared(ishift_nspin,tmp_v1,tmp_v3)
-        //for(ell5 = 0; ell5 < i_max/pow(2,ishift_nspin); ell5++ ){
+        //for(ell5 = 0; ell5 < i_max/(int)pow(2,ishift_nspin); ell5++ ){
         for(ell5 = 0; ell5 < iomp; ell5++ ){
           for(ell4 = 0; ell4 < (int)pow(2,ishift_nspin); ell4++){
-            tmp_v1[1 + (int)(ell5+(i_max/pow(2,ishift_nspin))*ell4)] = tmp_v3[1 + (int)(ell4+pow(2,ishift_nspin)*ell5)];
+            tmp_v1[(1 + ell5+(i_max/(int)pow(2,ishift_nspin))*ell4)] = tmp_v3[(1 + ell4+(int)pow(2,ishift_nspin)*ell5)];
           } 
         }
       }
@@ -461,20 +470,19 @@ void child_general_int_spin_MPIBoost(
       }/* if pivot_flag */
 
     }/* loop for j */
-/* ucyy */
 
     ierr = MPI_Alltoall(&tmp_v1[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v3[1],(int)(i_max/nproc),MPI_COMM_WORLD, &statusMPI);
     ierr = MPI_Alltoall(&tmp_v0[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v2[1],(int)(i_max/nproc),MPI_COMM_WORLD, &statusMPI);
 
-    iomp=pow(2,W0)/nproc;
+    iomp=(int)pow(2,W0)/nproc;
     #pragma omp parallel for default(none) private(ell4,ell5,ell6) \
     firstprivate(i_max,W0,iomp,nproc) shared(tmp_v0,tmp_v1,tmp_v2,tmp_v3)
-    //for(ell4 = 0; ell4 < pow(2,W0)/nproc; ell4++ ){
+    //for(ell4 = 0; ell4 < (int)pow(2,W0)/nproc; ell4++ ){
     for(ell4 = 0; ell4 < iomp; ell4++ ){
       for(ell5 = 0; ell5 < nproc; ell5++ ){
-        for(ell6 = 0; ell6 < (int)(i_max/pow(2,W0)); ell6++ ){
-          tmp_v1[1 + (int)(ell6+ell5*i_max/pow(2,W0)+ell4*i_max/(pow(2,W0)/nproc))] = tmp_v3[1 + (int)(ell6+ell4*i_max/pow(2,W0)+ell5*i_max/nproc)];
-          tmp_v0[1 + (int)(ell6+ell5*i_max/pow(2,W0)+ell4*i_max/(pow(2,W0)/nproc))] = tmp_v2[1 + (int)(ell6+ell4*i_max/pow(2,W0)+ell5*i_max/nproc)];
+        for(ell6 = 0; ell6 < (int)(i_max/(int)pow(2,W0)); ell6++ ){
+          tmp_v1[(1 + ell6+ell5*i_max/(int)pow(2,W0)+ell4*i_max/((int)pow(2,W0)/nproc))] = tmp_v3[(1 + ell6+ell4*i_max/(int)pow(2,W0)+ell5*i_max/nproc)];
+          tmp_v0[(1 + ell6+ell5*i_max/(int)pow(2,W0)+ell4*i_max/((int)pow(2,W0)/nproc))] = tmp_v2[(1 + ell6+ell4*i_max/(int)pow(2,W0)+ell5*i_max/nproc)];
         }
       }   
     }
