@@ -15,6 +15,9 @@
 
 //Define Mode for mltply
 // complex version
+#ifdef MPI
+#include "mpi.h"
+#endif
 #include <bitcalc.h>
 #include "mfmemory.h"
 #include "xsetmem.h"
@@ -58,7 +61,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   /*[e] For InterAll */
 
   /* SpinGCBoost */
-  int flagBoost=0;
+  int flagBoost;
   char *filename = "inputBoost";
   FILE *fp;
   double complex *tmp_v2, *tmp_v3;
@@ -71,6 +74,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   dam_pr = 0.0;
 
   /* SpinGCBoost */
+  flagBoost=0;
   c_malloc1(tmp_v2, i_max+1);
   c_malloc1(tmp_v3, i_max+1);
 
@@ -542,7 +546,14 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
       fprintf(stderr, "\n\n ###Boost### failed to open a file %s\n\n", filename);
       exit(EXIT_FAILURE);
     }
-    fscanf(fp, "%d", &flagBoost);
+    if(myrank==0){
+      fscanf(fp, "%d", &flagBoost);
+#ifdef MPI
+      MPI_Bcast(&flagBoost, 1, MPI_INT, 0, MPI_COMM_WORLD);
+#endif
+      fclose(fp);
+    }
+    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode flagBoost %d \n\n", flagBoost);}
 
     if(flagBoost == 0){
      
