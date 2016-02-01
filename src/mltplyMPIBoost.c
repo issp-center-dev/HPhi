@@ -30,7 +30,7 @@
 #include "matrixlapack.h"
 #include <stdlib.h>
 
-int zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *ALPHA, double complex *matJL, int *LDA, double complex *arrayz, int *LDB, double complex *BETA, double complex *arrayx, int *LDC, int *INFO);
+int zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *ALPHA, double complex *matJL, int *LDA, double complex *arrayz, int *LDB, double complex *BETA, double complex *arrayx, int *LDC);
 
 /**
  *
@@ -353,10 +353,11 @@ void child_general_int_spin_MPIBoost(
       iomp=i_max/(int)pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+2); 
       if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine iomp %d\n\n",iomp);}
       #pragma omp parallel default(none) private(arrayz,arrayx,ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA,INFO) \
-      firstprivate(matJL,iomp) shared(myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
+      shared(iomp,i_max,matJL,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
       {
         c_malloc1(arrayz, (64*(int)pow(2,ishift4+ishift5-1)));  
         c_malloc1(arrayx, (64*(int)pow(2,ishift4+ishift5-1)));
+        if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp arrayx %d %d\n\n",(64*(int)pow(2,ishift4+ishift5-1)),(ishift4+ishift5));}
         #pragma omp for
         //for(ell6 = 0; ell6 < i_max/(int)pow(2,ishift1+ishift2+ishift3+ishift4+ishift5+2); ell6++){
         for(ell6 = 0; ell6 < iomp; ell6++){
@@ -411,8 +412,8 @@ void child_general_int_spin_MPIBoost(
           LDB = 64;
           BETA = 1.0;
           LDC = 64;
-          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine b zgemm ell6 %d\n\n",ell6);}
-          zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC,&INFO);
+          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine b zgemm ell6 %d \n\n",ell6);}
+          zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
           if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine f zgemm ell6 %d\n\n",ell6);}
 
           for(ell5 = 0; ell5 < (int)pow(2,ishift5); ell5++){
@@ -443,7 +444,7 @@ void child_general_int_spin_MPIBoost(
       if(pivot_flag==1){
         iomp=i_max/(int)pow(2,ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
-        firstprivate(i_max,iomp) shared(ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,ishift_nspin,tmp_v0,tmp_v1)
+        firstprivate(iomp) shared(i_max,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,ishift_nspin,tmp_v0,tmp_v1)
         //for(ell5 = 0; ell5 < i_max/(int)pow(2,ishift_nspin); ell5++ ){
         for(ell5 = 0; ell5 < iomp; ell5++ ){
           for(ell4 = 0; ell4 < (int)pow(2,ishift_nspin); ell4++){
@@ -452,7 +453,7 @@ void child_general_int_spin_MPIBoost(
         }
         iomp=i_max/(int)pow(2,ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5) \
-        firstprivate(i_max,iomp) shared(ishift_nspin,tmp_v1,tmp_v3)
+        firstprivate(iomp) shared(i_max,ishift_nspin,tmp_v1,tmp_v3)
         //for(ell5 = 0; ell5 < i_max/(int)pow(2,ishift_nspin); ell5++ ){
         for(ell5 = 0; ell5 < iomp; ell5++ ){
           for(ell4 = 0; ell4 < (int)pow(2,ishift_nspin); ell4++){
@@ -462,7 +463,7 @@ void child_general_int_spin_MPIBoost(
       }
       else{ 
         #pragma omp parallel for default(none) private(ell4) \
-        firstprivate(i_max) shared(tmp_v0,tmp_v1,tmp_v3)
+        shared(i_max,tmp_v0,tmp_v1,tmp_v3)
         for(ell4 = 0; ell4 < i_max; ell4++ ){
           tmp_v0[1 + ell4] = tmp_v1[1 + ell4];
           tmp_v1[1 + ell4] =  tmp_v3[1 + ell4];
@@ -471,12 +472,12 @@ void child_general_int_spin_MPIBoost(
 
     }/* loop for j */
 
-    ierr = MPI_Alltoall(&tmp_v1[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v3[1],(int)(i_max/nproc),MPI_COMM_WORLD, &statusMPI);
-    ierr = MPI_Alltoall(&tmp_v0[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v2[1],(int)(i_max/nproc),MPI_COMM_WORLD, &statusMPI);
+    ierr = MPI_Alltoall(&tmp_v1[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v3[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
+    ierr = MPI_Alltoall(&tmp_v0[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v2[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
 
     iomp=(int)pow(2,W0)/nproc;
     #pragma omp parallel for default(none) private(ell4,ell5,ell6) \
-    firstprivate(i_max,W0,iomp,nproc) shared(tmp_v0,tmp_v1,tmp_v2,tmp_v3)
+    firstprivate(iomp) shared(i_max,W0,nproc,tmp_v0,tmp_v1,tmp_v2,tmp_v3)
     //for(ell4 = 0; ell4 < (int)pow(2,W0)/nproc; ell4++ ){
     for(ell4 = 0; ell4 < iomp; ell4++ ){
       for(ell5 = 0; ell5 < nproc; ell5++ ){
