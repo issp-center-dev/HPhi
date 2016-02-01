@@ -64,20 +64,19 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   int flagBoost;
   char *filename = "inputBoost";
   FILE *fp;
-  double complex *tmp_v2, *tmp_v3;
-
+  double complex* tmp_v2;
+  double complex* tmp_v3;
+  double *tmp_d;
+  /* SpinGCBoost */
+  flagBoost=0;
+  
   long unsigned int i_max;
   int ihermite=0;
   int idx=0;
   i_max = X->Check.idim_max;
   X->Large.prdct = 0.0;
   dam_pr = 0.0;
-
-  /* SpinGCBoost */
-  flagBoost=0;
-  c_malloc1(tmp_v2, i_max+1);
-  c_malloc1(tmp_v3, i_max+1);
-
+  
   if(i_max!=0){
     if (X->Def.iFlgGeneralSpin == FALSE) {
       if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
@@ -833,12 +832,18 @@ shared(tmp_v0, tmp_v1)
   }
   else{  
     if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode start \n\n");}
+    c_malloc1(tmp_v2, i_max+1);
+    c_malloc1(tmp_v3, i_max+1);
      
     child_general_int_spin_MPIBoost(X, tmp_v0, tmp_v1, tmp_v2, tmp_v3);
-    
+
+    /* SpinGCBoost */
+    c_free1(tmp_v2, i_max+1);  
+    c_free1(tmp_v3, i_max+1);  
+
     if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode step \n\n");}
   }
-  break;
+    break;
 /* SpinGCBoost */
       
   default:
@@ -850,10 +855,7 @@ shared(tmp_v0, tmp_v1)
   //FinalizeMPI();
   //exit(0);
 
-  /* SpinGCBoost */
-  c_free1(tmp_v2, i_max+1);  
-  c_free1(tmp_v3, i_max+1);  
-
+  
   return 0;
 }
 

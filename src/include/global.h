@@ -36,6 +36,8 @@ double complex *v1buf;
 //test
 double complex *vg;
 
+//double complex *tmp_v2;
+
 double *alpha,*beta;
 double complex **vec;
 double *list_Diagonal; 
