@@ -29,7 +29,6 @@
 #include "mltplyMPI.h"
 #include "matrixlapack.h"
 #include <stdlib.h>
-#include <malloc/malloc.h>
 
 int zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *ALPHA, double complex *matJL, int *LDA, double complex *arrayz, int *LDB, double complex *BETA, double complex *arrayx, int *LDC);
 
