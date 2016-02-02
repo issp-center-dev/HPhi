@@ -29,7 +29,6 @@
 #include "mltplyMPI.h"
 #include "matrixlapack.h"
 #include <stdlib.h>
-#include <malloc/malloc.h>
 
 int zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *ALPHA, double complex *matJL, int *LDA, double complex *arrayz, int *LDB, double complex *BETA, double complex *arrayx, int *LDC);
 
@@ -111,6 +110,9 @@ void child_general_int_spin_MPIBoost(
   i_malloc2(list_6spin_star, (int)(R0*num_pivot), 7); 
   i_malloc3(list_6spin_pair, (int)(R0*num_pivot), 7, 21); 
 
+  c_malloc1(arrayx, (64*((int)pow(2.0, 16))));
+  c_malloc1(arrayz, (64*((int)pow(2.0, 16))));
+  
   if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine list allocated \n\n");}
 
   for(j=0; j < 3; j++){
@@ -151,7 +153,6 @@ void child_general_int_spin_MPIBoost(
   /* define list_6spin */ 
   for(j=0; j < R0; j++){
 
-    
     list_6spin_star[2*j][0]=5; // num of J
     list_6spin_star[2*j][1]=1;
     list_6spin_star[2*j][2]=1;
@@ -360,63 +361,67 @@ void child_general_int_spin_MPIBoost(
       iomp=i_max/(int)pow(2.0,ishift1+ishift2+ishift3+ishift4+ishift5+2);
       if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine iomp %ld\n\n",iomp);}
 
-#pragma omp parallel default(none) private(arrayz,arrayx,ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA,INFO,ierr) \
-      shared(iomp,i_max,matJL,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
+      #pragma omp parallel default(none) private(ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA,INFO,ierr) \
+	firstprivate(arrayz,arrayx) shared(iomp,i_max,matJL,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
       {
 
-        c_malloc1(arrayx, (64*((int)pow(2.0,ishift4+ishift5-1))));
-        c_malloc1(arrayz, (64*((int)pow(2.0,ishift4+ishift5-1))));
+	//        c_malloc1(arrayx, (64*((int)pow(2.0,ishift4+ishift5-1))));
+	//        c_malloc1(arrayz, (64*((int)pow(2.0,ishift4+ishift5-1))));
 
-//        if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp arrayx %d %ld\n\n",(64*(int)pow(2,ishift4+ishift5-1)),(ishift4+ishift5));}
 #pragma omp for
         for(ell6 = 0; ell6 < iomp; ell6++){
+	  
 //          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp0 ell6 %ld\n\n",ell6);}
           Ipart1=pow51*2*ell6;
-          for(ell5 = 0; ell5 < (unsigned long int)pow(2.0, ishift5); ell5++){
-          for(ell4 = 0; ell4 < (unsigned long int)pow(2.0,ishift4); ell4++){
-//            if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine ell4 ell5 %ld %ld\n\n", ell4, ell5);}
-
-            for(m0 = 0; m0 < 16; m0++){
-              arrayz[(0 + m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
-              arrayz[(16+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-              arrayz[(32+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-              arrayz[(48+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4          +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-              arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
-              arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-              arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-              arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-            } 
-          }
-          }
- //         if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp1 ell6 %ld\n\n",ell6);}
           for(ell5 = 0; ell5 < (int)pow(2.0, ishift5); ell5++){
-          for(ell4 = 0; ell4 < (int)pow(2.0, ishift4); ell4++){
-            for(m0 = 0; m0 < 16; m0++){
-              arrayz[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
-              arrayz[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
-              arrayz[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
-              arrayz[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
-              tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
-              arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
-              arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
-              arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
-              arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
-
-            }
+	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4); ell4++){
+	      //if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine ell4 ell5 %ld %ld\n\n", ell4, ell5);}
+	    
+	      for(m0 = 0; m0 < 16; m0++){	
+		arrayz[(0 + m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+		arrayz[(16+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+		arrayz[(32+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+		arrayz[(48+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4          +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+		arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+		arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+		arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+		arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+	      } 
+	    }
           }
-          } 
+	  
+ //         if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp1 ell6 %ld\n\n",ell6);}
+	  
+          for(ell5 = 0; ell5 < (int)pow(2.0, ishift5); ell5++){
+	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4); ell4++){
+	      for(m0 = 0; m0 < 16; m0++){
+		arrayz[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+		arrayz[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+		arrayz[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+		arrayz[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+		tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+		arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+		arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+		arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+		arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+	      }
+	    
+	    }
+	  } 
+	  
+	  
 //          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp2 ell6 %ld\n\n",ell6);}
           TRANSA = 'N';
           TRANSB = 'N';
           M = 64;
-          N = (int)pow(2.0,ishift4+ishift5-1);
+          N = (int)pow(2.0, ishift4+ishift5-1);
 //          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp2 ell6 N%ld\n\n",ell6,N);}
           K = 64;
           ALPHA = 1.0;
@@ -425,7 +430,9 @@ void child_general_int_spin_MPIBoost(
           BETA = 1.0;
           LDC = 64;
           if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine b zgemm ell6 %ld \n\n",ell6);}
-          ierr = zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
+	  
+	  ierr = zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
+	  	  
           if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine f zgemm ell6 %ld \n\n",ell6);}
 
           for(ell5 = 0; ell5 < (int)pow(2.0,ishift5); ell5++){
@@ -448,13 +455,14 @@ void child_general_int_spin_MPIBoost(
             }
           }
           }
-	
+
         }/* omp parallel for */
-        c_free1(arrayz, (64*(int)pow(2.0,ishift4+ishift5-1)));
-        c_free1(arrayx, (64*(int)pow(2.0,ishift4+ishift5-1)));
-        assert( malloc_zone_check(NULL) );
+
       }/* omp parallel */
 
+      //c_free1(arrayz, (64*N));
+      // c_free1(arrayx, (64*N));
+      
       if(pivot_flag==1){
         iomp=i_max/(int)pow(2.0,ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
@@ -511,7 +519,8 @@ void child_general_int_spin_MPIBoost(
   
   X->Large.prdct += dam_pr;
 */
-#endif
+  c_free1(arrayz, (int)pow(2.0, 16));
+  c_free1(arrayx, (int)pow(2.0, 16));
 
   c_free3(arrayJ, 3, 3, 3);
   c_free2(vecJ, 3, 3);
@@ -520,6 +529,8 @@ void child_general_int_spin_MPIBoost(
   c_free1(matJL, (64*64));
   i_free2(list_6spin_star, (int)(R0*num_pivot), 7);
   i_free3(list_6spin_pair, (int)(R0*num_pivot), 7, 21);
+
+#endif
   
 }/*void child_general_int_spin_MPIBoost*/
 
