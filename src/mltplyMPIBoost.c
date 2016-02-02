@@ -431,7 +431,7 @@ void child_general_int_spin_MPIBoost(
           LDC = 64;
           if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine b zgemm ell6 %ld \n\n",ell6);}
 	  
-	  //cut:	  ierr = zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
+	  ierr = zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
 	  	  
           if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine f zgemm ell6 %ld \n\n",ell6);}
 
