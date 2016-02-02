@@ -511,7 +511,6 @@ void child_general_int_spin_MPIBoost(
   
   X->Large.prdct += dam_pr;
 */
-#endif
 
   c_free3(arrayJ, 3, 3, 3);
   c_free2(vecJ, 3, 3);
@@ -520,6 +519,8 @@ void child_general_int_spin_MPIBoost(
   c_free1(matJL, (64*64));
   i_free2(list_6spin_star, (int)(R0*num_pivot), 7);
   i_free3(list_6spin_pair, (int)(R0*num_pivot), 7, 21);
+
+#endif
   
 }/*void child_general_int_spin_MPIBoost*/
 
