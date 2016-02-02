@@ -451,7 +451,6 @@ void child_general_int_spin_MPIBoost(
         }/* omp parallel for */
         c_free1(arrayz, (64*(int)pow(2.0,ishift4+ishift5-1)));
         c_free1(arrayx, (64*(int)pow(2.0,ishift4+ishift5-1)));
-        assert( malloc_zone_check(NULL) );
       }/* omp parallel */
 
       if(pivot_flag==1){
