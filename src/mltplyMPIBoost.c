@@ -83,10 +83,9 @@ void child_general_int_spin_MPIBoost(
   long unsigned int pow1, pow2, pow3, pow4, pow5, pow11, pow21, pow31, pow41, pow51; 
 
   i_max = X->Check.idim_max;
-
   if((fp1 = fopen(filename1, "r")) == NULL){
     fprintf(stderr, "\n ###Boost### failed to open a file %s\n", filename1);
-    exit(EXIT_FAILURE);
+    exitMPI(EXIT_FAILURE);
   }
   
   if(myrank==0){
