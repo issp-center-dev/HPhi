@@ -90,14 +90,15 @@ void child_general_int_spin_MPIBoost(
   
   if(myrank==0){
     fscanf(fp1, "%ld %ld %ld %ld\n", &W0, &R0, &num_pivot, &ishift_nspin);
+  }
+  fclose(fp1);
 #ifdef MPI
     MPI_Bcast(&W0, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&R0, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&num_pivot, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&ishift_nspin, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 #endif
-  }
-  fclose(fp1);
+
   
   if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine %ld %ld %ld %ld \n\n", W0, R0, num_pivot, ishift_nspin);}
 
