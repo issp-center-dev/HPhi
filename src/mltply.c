@@ -547,29 +547,30 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
     }
     if(myrank==0){
       fscanf(fp, "%d", &flagBoost);
+      fclose(fp);
+    }
 #ifdef MPI
       MPI_Bcast(&flagBoost, 1, MPI_INT, 0, MPI_COMM_WORLD);
 #endif
-      fclose(fp);
-    }
+
     if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode flagBoost %d \n\n", flagBoost);}
 
     if(flagBoost == 0){
      
       if (X->Def.iFlgGeneralSpin == FALSE) {	
         for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
-	  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
-	    dam_pr=0;
-	    if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
-	      fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
-	    }
-	    else{
-	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
-	    }
-	  }
-	  else{
-	    dam_pr=0;
-	    for(ihermite=0; ihermite<2; ihermite++){
+		  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
+			dam_pr=0;
+			if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
+			  fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
+			}
+			else{
+			  dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
+			}
+		  }
+		  else{
+			dam_pr=0;
+			for(ihermite=0; ihermite<2; ihermite++){
 	      idx=i+ihermite;
 	      isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
 	      isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
@@ -829,8 +830,9 @@ shared(tmp_v0, tmp_v1)
           }
         }
       }  //end:generalspin
-  }
+	}
   else{  
+	 
     if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode start \n\n");}
     c_malloc1(tmp_v2, i_max+1);
     c_malloc1(tmp_v3, i_max+1);
