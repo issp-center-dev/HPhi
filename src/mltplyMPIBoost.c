@@ -110,8 +110,8 @@ void child_general_int_spin_MPIBoost(
   i_malloc2(list_6spin_star, (int)(R0*num_pivot), 7); 
   i_malloc3(list_6spin_pair, (int)(R0*num_pivot), 7, 21); 
 
-  c_malloc1(arrayx, (64*((int)pow(2.0, 16))));
-  c_malloc1(arrayz, (64*((int)pow(2.0, 16))));
+//  c_malloc1(arrayx, (64*((int)pow(2.0, 16))));
+//  c_malloc1(arrayz, (64*((int)pow(2.0, 16))));
   
   if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine list allocated \n\n");}
 
@@ -365,16 +365,16 @@ void child_general_int_spin_MPIBoost(
 	firstprivate(arrayz,arrayx) shared(iomp,i_max,matJL,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
       {
 
-	//        c_malloc1(arrayx, (64*((int)pow(2.0,ishift4+ishift5-1))));
-	//        c_malloc1(arrayz, (64*((int)pow(2.0,ishift4+ishift5-1))));
+	        c_malloc1(arrayx, (64*((int)pow(2.0,ishift4+ishift5-1))));
+	        c_malloc1(arrayz, (64*((int)pow(2.0,ishift4+ishift5-1))));
 
 #pragma omp for
         for(ell6 = 0; ell6 < iomp; ell6++){
 	  
 //          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp0 ell6 %ld\n\n",ell6);}
           Ipart1=pow51*2*ell6;
-          for(ell5 = 0; ell5 < (int)pow(2.0, ishift5); ell5++){
-	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4); ell4++){
+          for(ell5 = 0; ell5 < (int)pow(2.0, ishift5-1); ell5++){
+	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4-1); ell4++){
 	      //if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine ell4 ell5 %ld %ld\n\n", ell4, ell5);}
 	    
 	      for(m0 = 0; m0 < 16; m0++){	
@@ -396,8 +396,8 @@ void child_general_int_spin_MPIBoost(
 	  
  //         if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp1 ell6 %ld\n\n",ell6);}
 	  
-          for(ell5 = 0; ell5 < (int)pow(2.0, ishift5); ell5++){
-	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4); ell4++){
+          for(ell5 = 0; ell5 < (int)pow(2.0, ishift5-1); ell5++){
+	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4-1); ell4++){
 	      for(m0 = 0; m0 < 16; m0++){
 		arrayz[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
 		arrayz[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
@@ -415,7 +415,6 @@ void child_general_int_spin_MPIBoost(
 	    
 	    }
 	  } 
-	  
 	  
 //          if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine omp2 ell6 %ld\n\n",ell6);}
           TRANSA = 'N';
@@ -435,8 +434,8 @@ void child_general_int_spin_MPIBoost(
 	  	  
           if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode subroutine f zgemm ell6 %ld \n\n",ell6);}
 
-          for(ell5 = 0; ell5 < (int)pow(2.0,ishift5); ell5++){
-          for(ell4 = 0; ell4 < (int)pow(2.0,ishift4); ell4++){
+          for(ell5 = 0; ell5 < (int)pow(2.0,ishift5-1); ell5++){
+          for(ell4 = 0; ell4 < (int)pow(2.0,ishift4-1); ell4++){
             for(m0 = 0; m0 < 16; m0++){
               tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)]       = arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))];
               tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)]       = arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)))];
@@ -445,8 +444,8 @@ void child_general_int_spin_MPIBoost(
             }
           }
           }
-          for(ell5 = 0; ell5 < (int)pow(2.0,ishift5); ell5++){
-          for(ell4 = 0; ell4 < (int)pow(2.0,ishift4); ell4++){
+          for(ell5 = 0; ell5 < (int)pow(2.0,ishift5-1); ell5++){
+          for(ell4 = 0; ell4 < (int)pow(2.0,ishift4-1); ell4++){
             for(m0 = 0; m0 < 16; m0++){
               tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)] = arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))];
               tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)] = arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))];
@@ -457,12 +456,11 @@ void child_general_int_spin_MPIBoost(
           }
 
         }/* omp parallel for */
+      c_free1(arrayz, (64*((int)pow(2.0,ishift4+ishift5-1))) );
+      c_free1(arrayx, (64*((int)pow(2.0,ishift4+ishift5-1))) );
 
       }/* omp parallel */
 
-      //c_free1(arrayz, (64*N));
-      // c_free1(arrayx, (64*N));
-      
       if(pivot_flag==1){
         iomp=i_max/(int)pow(2.0,ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
@@ -493,10 +491,11 @@ void child_general_int_spin_MPIBoost(
       }/* if pivot_flag */
 
     }/* loop for j */
-
+/*
     ierr = MPI_Alltoall(&tmp_v1[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v3[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
     ierr = MPI_Alltoall(&tmp_v0[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v2[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
-
+*/
+/*
     iomp=(int)pow(2.0,W0)/nproc;
     #pragma omp parallel for default(none) private(ell4,ell5,ell6) \
     firstprivate(iomp) shared(i_max,W0,nproc,tmp_v0,tmp_v1,tmp_v2,tmp_v3)
@@ -509,6 +508,7 @@ void child_general_int_spin_MPIBoost(
         }
       }   
     }
+*/
 
   }/* loop for iloop */
 
@@ -519,8 +519,8 @@ void child_general_int_spin_MPIBoost(
   
   X->Large.prdct += dam_pr;
 */
-  c_free1(arrayz, (int)pow(2.0, 16));
-  c_free1(arrayx, (int)pow(2.0, 16));
+//  c_free1(arrayz, (int)pow(2.0, 16));
+//  c_free1(arrayx, (int)pow(2.0, 16));
 
   c_free3(arrayJ, 3, 3, 3);
   c_free2(vecJ, 3, 3);
