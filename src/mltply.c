@@ -102,6 +102,20 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.ihfbit = ihfbit;
   X->Large.mode = M_MLTPLY;
 
+//flag for Boost mode
+    if((fp = fopen(filename, "r")) == NULL){
+      fprintf(stderr, "\n\n ###Boost### failed to open a file %s\n\n", filename);
+      exit(EXIT_FAILURE);
+    }
+    if(myrank==0){
+      fscanf(fp, "%d", &flagBoost);
+      fclose(fp);
+    }
+#ifdef MPI
+      MPI_Bcast(&flagBoost, 1, MPI_INT, 0, MPI_COMM_WORLD);
+#endif
+
+if(flagBoost!=0){for(j=1;j<=i_max;j++){list_Diagonal[j]=0.0;}}
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
     tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
@@ -541,17 +555,6 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 /* SpinGCBoost */
     case SpinGC:
 
-    if((fp = fopen(filename, "r")) == NULL){
-      fprintf(stderr, "\n\n ###Boost### failed to open a file %s\n\n", filename);
-      exit(EXIT_FAILURE);
-    }
-    if(myrank==0){
-      fscanf(fp, "%d", &flagBoost);
-      fclose(fp);
-    }
-#ifdef MPI
-      MPI_Bcast(&flagBoost, 1, MPI_INT, 0, MPI_COMM_WORLD);
-#endif
 
     if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode flagBoost %d \n\n", flagBoost);}
 
@@ -838,6 +841,16 @@ shared(tmp_v0, tmp_v1)
     c_malloc1(tmp_v3, i_max+1);
      
     child_general_int_spin_MPIBoost(X, tmp_v0, tmp_v1, tmp_v2, tmp_v3);
+    dam_pr = 0.0;
+    #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) shared(tmp_v1) firstprivate(i_max) 
+    for(j=1;j<=i_max;j++){
+      dam_pr   += conj(tmp_v1[j])*tmp_v1[j]; // norm=<v1|v1>
+    }
+    X->Large.prdct += dam_pr;  
+    dam_pr = SumMPI_dc(dam_pr);
+
+    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode f norm %lf\n\n",creal(dam_pr));}
+    
 
     /* SpinGCBoost */
     c_free1(tmp_v2, i_max+1);  

@@ -103,12 +103,14 @@ void child_general_int_spin_MPIBoost(
     MPI_Bcast(&ishift_nspin, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 #endif
 
+/*
+//zero clear
   #pragma omp parallel for default(none) private(j) \
   shared(i_max,tmp_v0)
   for(j=0;j<i_max;j++){
     tmp_v0[j+1]=0.0;
   }
-  
+*/
 
   c_malloc3(arrayJ, 3, 3, 3); 
   c_malloc2(vecJ, 3, 3); 
