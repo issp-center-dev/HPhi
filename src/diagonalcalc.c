@@ -459,7 +459,7 @@ int SetDiagonalCoulombInter
   long unsigned int i_max=X->Check.idim_max;
 
   /*
-   Forse isite1 <= isite2
+   Force isite1 <= isite2
   */
   if (isite2 < isite1) {
     j = isite2;
@@ -495,7 +495,7 @@ int SetDiagonalCoulombInter
       num2 += ibit2_up / is2_up;
       ibit2_down = (unsigned long int)myrank&is2_down;
       num2 += ibit2_down / is2_down;
-
+      
 #pragma omp parallel for default(none) shared(list_Diagonal) \
       firstprivate(i_max, dtmp_V, num1, num2) private(j)
       for (j = 1; j <= i_max; j++) list_Diagonal[j] += num1*num2*dtmp_V;
@@ -520,23 +520,36 @@ int SetDiagonalCoulombInter
 
   }/*if (isite1 > X->Def.Nsite)*/
   else if (isite2 > X->Def.Nsite /* => isite1 */) {
+    
+    switch(X->Def.iCalcModel){
+    case HubbardGC:
+    case KondoGC:
+    case Hubbard:
+    case Kondo:
+      is1_up   = X->Def.Tpow[2 * isite1 - 2];
+      is1_down = X->Def.Tpow[2 * isite1 - 1];
+      is2_up   = X->Def.Tpow[2 * isite2 - 2];
+      is2_down = X->Def.Tpow[2 * isite2 - 1];      
+      num2 = 0;
+      ibit2_up = (unsigned long int)myrank&is2_up;
+      num2 += ibit2_up / is2_up;
+      ibit2_down = (unsigned long int)myrank&is2_down;
+      num2 += ibit2_down / is2_down;
+      break;
+      
+    case Spin:
+    case SpinGC:
+      break;
 
-    is1_up   = X->Def.Tpow[2 * isite1 - 2];
-    is1_down = X->Def.Tpow[2 * isite1 - 1];
-    is2_up   = X->Def.Tpow[2 * isite2 - 2];
-    is2_down = X->Def.Tpow[2 * isite2 - 1];
-
-    num2 = 0;
-
-    ibit2_up = (unsigned long int)myrank&is2_up;
-    num2 += ibit2_up / is2_up;
-    ibit2_down = (unsigned long int)myrank&is2_down;
-    num2 += ibit2_down / is2_down;
-
+    default:
+      fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+      return -1;
+    }
+    
     switch (X->Def.iCalcModel) {
 
     case HubbardGC:
-
+      
 #pragma omp parallel for default(none) shared(list_Diagonal) \
 firstprivate(i_max, dtmp_V, num2, is1_up, is1_down) \
 private(num1, ibit1_up, ibit1_down, j)
@@ -555,7 +568,7 @@ private(num1, ibit1_up, ibit1_down, j)
     case KondoGC:
     case Hubbard:
     case Kondo:
-
+      
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) \
 firstprivate(i_max, dtmp_V, is1_up, is1_down, num2) \
 private(num1, ibit1_up, ibit1_down, j)
@@ -587,68 +600,69 @@ private(num1, ibit1_up, ibit1_down, j)
     return 0;
 
   }/*else if (isite2 > X->Def.Nsite)*/
-
-  switch (X->Def.iCalcModel){
-
-  case HubbardGC: //list_1[j] -> j-1
-    is1_up   = X->Def.Tpow[2*isite1-2];
-    is1_down = X->Def.Tpow[2*isite1-1];
-    is2_up   = X->Def.Tpow[2*isite2-2];
-    is2_down = X->Def.Tpow[2*isite2-1];
+  else{
+    switch (X->Def.iCalcModel){
+    case HubbardGC: //list_1[j] -> j-1
+      is1_up   = X->Def.Tpow[2*isite1-2];
+      is1_down = X->Def.Tpow[2*isite1-1];
+      is2_up   = X->Def.Tpow[2*isite2-2];
+      is2_down = X->Def.Tpow[2*isite2-1];
 #pragma omp parallel for default(none) shared( list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is1_down, is2_up, is2_down) private(num1, ibit1_up, ibit1_down, num2, ibit2_up, ibit2_down)
-    for(j = 1;j <= i_max;j++){
-      num1=0;
-      num2=0;              
-      ibit1_up=(j-1)&is1_up;
-      num1+=ibit1_up/is1_up;
-      ibit1_down=(j-1)&is1_down;
-      num1+=ibit1_down/is1_down;
-
-      ibit2_up=(j-1)&is2_up;
-      num2+=ibit2_up/is2_up;
-      ibit2_down=(j-1)&is2_down;
-      num2+=ibit2_down/is2_down;
-             
-      list_Diagonal[j]+=num1*num2*dtmp_V;
-    } 
-    break;
-  case KondoGC:
-  case Hubbard:
-  case Kondo:
-    is1_up   = X->Def.Tpow[2*isite1-2];
-    is1_down = X->Def.Tpow[2*isite1-1];
-    is2_up   = X->Def.Tpow[2*isite2-2];
-    is2_down = X->Def.Tpow[2*isite2-1];
-
+      for(j = 1;j <= i_max;j++){
+	num1=0;
+	num2=0;              
+	ibit1_up=(j-1)&is1_up;
+	num1+=ibit1_up/is1_up;
+	ibit1_down=(j-1)&is1_down;
+	num1+=ibit1_down/is1_down;
+	
+	ibit2_up=(j-1)&is2_up;
+	num2+=ibit2_up/is2_up;
+	ibit2_down=(j-1)&is2_down;
+	num2+=ibit2_down/is2_down;
+	
+	list_Diagonal[j]+=num1*num2*dtmp_V;
+      } 
+      break;
+    case KondoGC:
+    case Hubbard:
+    case Kondo:
+      is1_up   = X->Def.Tpow[2*isite1-2];
+      is1_down = X->Def.Tpow[2*isite1-1];
+      is2_up   = X->Def.Tpow[2*isite2-2];
+      is2_down = X->Def.Tpow[2*isite2-1];
+      
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is1_down, is2_up, is2_down) private(num1, ibit1_up, ibit1_down, num2, ibit2_up, ibit2_down)
-    for(j = 1;j <= i_max;j++){
-      num1=0;
-      num2=0;              
-      ibit1_up=list_1[j]&is1_up;
-      num1+=ibit1_up/is1_up;
-      ibit1_down=list_1[j]&is1_down;
-      num1+=ibit1_down/is1_down;
-
-      ibit2_up=list_1[j]&is2_up;
-      num2+=ibit2_up/is2_up;
-      ibit2_down=list_1[j]&is2_down;
-      num2+=ibit2_down/is2_down;
-             
-      list_Diagonal[j]+=num1*num2*dtmp_V;
-    } 
-    break;
-    
-  case Spin:
-  case SpinGC:
+      for(j = 1;j <= i_max;j++){
+	num1=0;
+	num2=0;              
+	ibit1_up=list_1[j]&is1_up;
+	num1+=ibit1_up/is1_up;
+	ibit1_down=list_1[j]&is1_down;
+	num1+=ibit1_down/is1_down;
+	
+	ibit2_up=list_1[j]&is2_up;
+	num2+=ibit2_up/is2_up;
+	ibit2_down=list_1[j]&is2_down;
+	num2+=ibit2_down/is2_down;
+	
+	list_Diagonal[j]+=num1*num2*dtmp_V;
+      } 
+      break;
+      
+    case Spin:
+    case SpinGC:
 #pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V)
-    for(j = 1;j <= i_max; j++){
-      list_Diagonal[j] += dtmp_V;
-    } 
-    break;
-  default:
-    fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
-    return -1;
+      for(j = 1;j <= i_max; j++){
+	list_Diagonal[j] += dtmp_V;
+      } 
+      break;
+    default:
+      fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+      return -1;
+    }
   }
+  
   return 0;
 }
 

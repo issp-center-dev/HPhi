@@ -601,7 +601,7 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	}
 	
         //Exchange
-        for (i = 0; i < X->Def.NExchangeCoupling; i ++) {
+        for (i = 0; i < X->Def.NExchangeCoupling; i++) {
 	  sigma1=0; sigma2=1;
           if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
 	      X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
@@ -611,7 +611,7 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	    dam_pr=X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);    
           }
           else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-	    dam_pr=X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.ExchangeCoupling[i][1], sigma1, sigma2, X->Def.ExchangeCoupling[i][0], sigma2, sigma1, conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);    
+	    dam_pr=X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ExchangeCoupling[i][0], sigma1, sigma2, conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);    
           }
           else {
 	    child_exchange_spin_GetInfo(i, X);
