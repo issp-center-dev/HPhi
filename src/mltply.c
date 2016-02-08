@@ -447,28 +447,23 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	}
       	
 	//Exchange	
-        for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+        for (i = 0; i < X->Def.NExchangeCoupling; i++) {
+	  sigma1=0; sigma2=1;
           if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
-            X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	      X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+	    dam_pr = X_child_general_int_spin_MPIdouble(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
           }
           else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr = X_child_general_int_spin_MPIsingle(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
           }
           else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr = X_child_general_int_spin_MPIsingle(X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ExchangeCoupling[i][0], sigma1, sigma2, conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
           }
           else {
-            for (ihermite = 0; ihermite<2; ihermite++) {
-              idx = i + ihermite;
-              child_exchange_spin_GetInfo(idx, X);
-              dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
-              X->Large.prdct += dam_pr;
-            }
-          }
+	    child_exchange_spin_GetInfo(i, X);
+	    dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+	  }
+	  X->Large.prdct += dam_pr;
 	}/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
       }
       else{
