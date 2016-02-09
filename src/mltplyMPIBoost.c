@@ -68,7 +68,7 @@ void child_general_int_spin_MPIBoost(
   long unsigned int i1, i2;
   long unsigned int iomp;
   long unsigned int ell4, ell5, ell6, m0, Ipart1;
-  long unsigned int W0, R0, num_pivot, ishift_nspin;
+  long unsigned int W0, R0, num_pivot, ishift_nspin, model_num;
   long unsigned int mi, mj, mri, mrj, mrk, mrl;
   int indj;
   long unsigned int ellrl, ellrk, ellrj, ellri, elli1, elli2, ellj1, ellj2;
@@ -93,7 +93,7 @@ void child_general_int_spin_MPIBoost(
   }
   
   if(myrank==0){
-    fscanf(fp1, "%ld %ld %ld %ld\n", &W0, &R0, &num_pivot, &ishift_nspin);
+    fscanf(fp1, "%ld %ld %ld %ld %ld\n", &W0, &R0, &num_pivot, &ishift_nspin, &model_num);
   }
   fclose(fp1);
 #ifdef MPI
@@ -101,6 +101,7 @@ void child_general_int_spin_MPIBoost(
     MPI_Bcast(&R0, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&num_pivot, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&ishift_nspin, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&model_num, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 #endif
 
 /*
@@ -124,125 +125,11 @@ void child_general_int_spin_MPIBoost(
 //  c_malloc1(arrayx, (64*((int)pow(2.0, 16))));
 //  c_malloc1(arrayz, (64*((int)pow(2.0, 16))));
 //  c_malloc1(arrayw, (64*((int)pow(2.0, 16))));
-  
 
-  for(j=0; j < 3; j++){
-    for(k=0; k < 3; k++){
-      for(ell=0; ell < 3; ell++){
-        arrayJ[j][k][ell] = 0.0;
-      }
-    }
-  }
-  arrayJ[0][0][0] = -1.0; //type=1 Jxx
-  arrayJ[1][1][1] = -1.0; //type=2 Jyy
-  arrayJ[2][2][2] = -1.0; //type=3 Jzz
-  for(j=0; j < 3; j++){
-    for(k=0; k < 3; k++){
-      for(ell=0; ell < 3; ell++){
-        arrayJ[j][k][ell] = arrayJ[j][k][ell]*0.25;
-      }
-    }
-  }
-
-  for(j=0; j < (R0*num_pivot); j++){
-    for(ell=0; ell < 7; ell++){
-      for(k=0; k < 21; k++){
-        list_6spin_pair[j][ell][k]=0;
-      }
-    } 
-  }
-  for(j=0; j < (R0*num_pivot); j++){
-    for(ell=0; ell < 7; ell++){
-      list_6spin_star[j][ell]=0;
-    }
-  }
-
-
-  /* define list_6spin */ 
-  for(j=0; j < R0; j++){
-
-    list_6spin_star[2*j][0]=5; // num of J
-    list_6spin_star[2*j][1]=1;
-    list_6spin_star[2*j][2]=1;
-    list_6spin_star[2*j][3]=1;
-    list_6spin_star[2*j][4]=2;
-    list_6spin_star[2*j][5]=1;
-    list_6spin_star[2*j][6]=1; // flag
-
-    list_6spin_pair[2*j][0][0]=0; //(1,1,1+2*j)=0 
-    list_6spin_pair[2*j][1][0]=1; //(2,1,1+2*j)=1
-    list_6spin_pair[2*j][2][0]=2; //(3,1,1+2*j)=2
-    list_6spin_pair[2*j][3][0]=3; //(4,1,1+2*j)=3
-    list_6spin_pair[2*j][4][0]=4; //(5,1,1+2*j)=4
-    list_6spin_pair[2*j][5][0]=5; //(6,1,1+2*j)=5
-    list_6spin_pair[2*j][6][0]=3; //(7,1,1+2*j)=3 ! type of J
-    list_6spin_pair[2*j][0][1]=1; //(1,2,1+2*j)=1 
-    list_6spin_pair[2*j][1][1]=2; //(2,2,1+2*j)=2
-    list_6spin_pair[2*j][2][1]=0; //(3,2,1+2*j)=0
-    list_6spin_pair[2*j][3][1]=3; //(4,2,1+2*j)=3
-    list_6spin_pair[2*j][4][1]=4; //(5,2,1+2*j)=4
-    list_6spin_pair[2*j][5][1]=5; //(6,2,1+2*j)=5
-    list_6spin_pair[2*j][6][1]=1; //(7,2,1+2*j)=1 ! type of J
-    list_6spin_pair[2*j][0][2]=2; //(1,3,1+2*j)=2 
-    list_6spin_pair[2*j][1][2]=3; //(2,3,1+2*j)=3
-    list_6spin_pair[2*j][2][2]=0; //(3,3,1+2*j)=0
-    list_6spin_pair[2*j][3][2]=1; //(4,3,1+2*j)=1
-    list_6spin_pair[2*j][4][2]=4; //(5,3,1+2*j)=4
-    list_6spin_pair[2*j][5][2]=5; //(6,3,1+2*j)=5
-    list_6spin_pair[2*j][6][2]=3; //(7,3,1+2*j)=3 ! type of J
-    list_6spin_pair[2*j][0][3]=0; //(1,4,1+2*j)=0 
-    list_6spin_pair[2*j][1][3]=4; //(2,4,1+2*j)=4
-    list_6spin_pair[2*j][2][3]=1; //(3,4,1+2*j)=1
-    list_6spin_pair[2*j][3][3]=2; //(4,4,1+2*j)=2
-    list_6spin_pair[2*j][4][3]=3; //(5,4,1+2*j)=3
-    list_6spin_pair[2*j][5][3]=5; //(6,4,1+2*j)=5
-    list_6spin_pair[2*j][6][3]=1; //(7,4,1+2*j)=1 ! type of J
-    list_6spin_pair[2*j][0][4]=1; //(1,5,1+2*j)=1 
-    list_6spin_pair[2*j][1][4]=5; //(2,5,1+2*j)=5
-    list_6spin_pair[2*j][2][4]=0; //(3,5,1+2*j)=0
-    list_6spin_pair[2*j][3][4]=2; //(4,5,1+2*j)=2
-    list_6spin_pair[2*j][4][4]=3; //(5,5,1+2*j)=3
-    list_6spin_pair[2*j][5][4]=4; //(6,5,1+2*j)=4
-    list_6spin_pair[2*j][6][4]=2; //(7,5,1+2*j)=2 ! type of J
-
-
-    list_6spin_star[(2*j+1)][0]=4; //(0,2+2*j)=4 ! num of J
-    list_6spin_star[(2*j+1)][1]=1; //(1,2+2*j)=1
-    list_6spin_star[(2*j+1)][2]=1; //(2,2+2*j)=1
-    list_6spin_star[(2*j+1)][3]=1; //(3,2+2*j)=1
-    list_6spin_star[(2*j+1)][4]=2; //(4,2+2*j)=2
-    list_6spin_star[(2*j+1)][5]=2; //(5,2+2*j)=2
-    list_6spin_star[(2*j+1)][6]=1; //(6,2+2*j)=1 ! flag
-
-    list_6spin_pair[(2*j+1)][0][0]=0; //(1,1,2+2*j)=0 
-    list_6spin_pair[(2*j+1)][1][0]=1; //(2,1,2+2*j)=1
-    list_6spin_pair[(2*j+1)][2][0]=2; //(3,1,2+2*j)=2
-    list_6spin_pair[(2*j+1)][3][0]=3; //(4,1,2+2*j)=3
-    list_6spin_pair[(2*j+1)][4][0]=4; //(5,1,2+2*j)=4
-    list_6spin_pair[(2*j+1)][5][0]=5; //(6,1,2+2*j)=5
-    list_6spin_pair[(2*j+1)][6][0]=1; //(7,1,2+2*j)=1 ! type of J
-    list_6spin_pair[(2*j+1)][0][1]=1; //(1,2,2+2*j)=1 
-    list_6spin_pair[(2*j+1)][1][1]=2; //(2,2,2+2*j)=2
-    list_6spin_pair[(2*j+1)][2][1]=0; //(3,2,2+2*j)=0
-    list_6spin_pair[(2*j+1)][3][1]=3; //(4,2,2+2*j)=3
-    list_6spin_pair[(2*j+1)][4][1]=4; //(5,2,2+2*j)=4
-    list_6spin_pair[(2*j+1)][5][1]=5; //(6,2,2+2*j)=5
-    list_6spin_pair[(2*j+1)][6][1]=3; //(7,2,2+2*j)=3 ! type of J
-    list_6spin_pair[(2*j+1)][0][2]=0; //(1,3,2+2*j)=0 
-    list_6spin_pair[(2*j+1)][1][2]=4; //(2,3,2+2*j)=4
-    list_6spin_pair[(2*j+1)][2][2]=1; //(3,3,2+2*j)=1
-    list_6spin_pair[(2*j+1)][3][2]=2; //(4,3,2+2*j)=2
-    list_6spin_pair[(2*j+1)][4][2]=3; //(5,3,2+2*j)=3
-    list_6spin_pair[(2*j+1)][5][2]=5; //(6,3,2+2*j)=5
-    list_6spin_pair[(2*j+1)][6][2]=2; //(7,3,2+2*j)=2 ! type of J
-    list_6spin_pair[(2*j+1)][0][3]=2; //(1,4,2+2*j)=2 
-    list_6spin_pair[(2*j+1)][1][3]=5; //(2,4,2+2*j)=5
-    list_6spin_pair[(2*j+1)][2][3]=0; //(3,4,2+2*j)=0
-    list_6spin_pair[(2*j+1)][3][3]=1; //(4,4,2+2*j)=1
-    list_6spin_pair[(2*j+1)][4][3]=3; //(5,4,2+2*j)=3
-    list_6spin_pair[(2*j+1)][5][3]=4; //(6,4,2+2*j)=4
-    list_6spin_pair[(2*j+1)][6][3]=2; //(7,4,2+2*j)=2 ! type of J
-  }/* define list_6spin */ 
+/* definition of model */
+  defmodelBoost(W0,R0,num_pivot,ishift_nspin,list_6spin_star,list_6spin_pair,model_num,arrayJ);
+/* definition of model */
+//  printf(" ###Boost### Bcast arrayJ2 %lf\n",creal(arrayJ[0][0][0]));
 
 
   for(iloop=0; iloop < R0; iloop++){
