@@ -210,6 +210,7 @@ void defmodelBoost(
   int  **list_6spin_star,
   int ***list_6spin_pair,
   long unsigned int model_num,
-  double complex ***arrayJ
+  double complex ***arrayJ,
+  double complex *vecB
 );
 

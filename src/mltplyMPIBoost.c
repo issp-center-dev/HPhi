@@ -78,6 +78,8 @@ void child_general_int_spin_MPIBoost(
   double complex **matJ, **matJ2;
   double complex *matJL;
   double complex *matI;
+  double complex *vecB;
+  double complex **matB;
   double complex *arrayz;
   double complex *arrayx;
   double complex *arrayw;
@@ -114,9 +116,11 @@ void child_general_int_spin_MPIBoost(
 */
 
   c_malloc3(arrayJ, 3, 3, 3); 
+  c_malloc1(vecB, 3); 
   c_malloc2(vecJ, 3, 3); 
   c_malloc2(matJ, 4, 4); 
   c_malloc2(matJ2, 4, 4); 
+  c_malloc2(matB, 2, 2); 
   c_malloc1(matJL, (64*64)); 
   c_malloc1(matI, (64*64)); 
   i_malloc2(list_6spin_star, (int)(R0*num_pivot), 7); 
@@ -127,7 +131,7 @@ void child_general_int_spin_MPIBoost(
 //  c_malloc1(arrayw, (64*((int)pow(2.0, 16))));
 
 /* definition of model */
-  defmodelBoost(W0,R0,num_pivot,ishift_nspin,list_6spin_star,list_6spin_pair,model_num,arrayJ);
+  defmodelBoost(W0,R0,num_pivot,ishift_nspin,list_6spin_star,list_6spin_pair,model_num,arrayJ,vecB);
 /* definition of model */
 //  printf(" ###Boost### Bcast arrayJ2 %lf\n",creal(arrayJ[0][0][0]));
 
@@ -249,10 +253,36 @@ void child_general_int_spin_MPIBoost(
         }
         }
         }
+
         
       }/* loop for ell */
-    
 
+      /* external magnetic field B */
+        matB[0][0] = + vecB[2]; // -BM
+        matB[1][1] = - vecB[2]; // -BM
+        matB[0][1] = - vecB[0] + I*vecB[1]; // -BM
+        matB[1][0] = - vecB[0] - I*vecB[1]; // -BM
+        for(ellri=0; ellri<2; ellri++){
+        for(ellrj=0; ellrj<2; ellrj++){
+        for(ellrk=0; ellrk<2; ellrk++){
+        for(ellrl=0; ellrl<2; ellrl++){
+        for(ellj1=0; ellj1<2; ellj1++){
+          for(elli1=0; elli1<2; elli1++){
+          for(elli2=0; elli2<2; elli2++){
+            for(ellj2=0; ellj2<ishift_nspin; ellj2++){
+              iSSL1 = elli1*(int)pow(2,ellj2) + ellj1*(int)pow(2,((ellj2+1)%6)) + ellri*(int)pow(2,((ellj2+2)%6)) + ellrj*(int)pow(2,((ellj2+3)%6)) + ellrk*(int)pow(2,((ellj2+4)%6)) + ellrl*(int)pow(2,((ellj2+5)%6));
+              iSSL2 = elli2*(int)pow(2,ellj2) + ellj1*(int)pow(2,((ellj2+1)%6)) + ellri*(int)pow(2,((ellj2+2)%6)) + ellrj*(int)pow(2,((ellj2+3)%6)) + ellrk*(int)pow(2,((ellj2+4)%6)) + ellrl*(int)pow(2,((ellj2+5)%6));
+              matJL[iSSL1+64*iSSL2] += matB[elli1][elli2];
+            }
+          } 
+          } 
+        }
+        }
+        }
+        }
+        }
+      /* external magnetic field B */
+    
       iomp=i_max/(int)pow(2.0,ishift1+ishift2+ishift3+ishift4+ishift5+2);
 
       #pragma omp parallel default(none) private(arrayx,arrayz,arrayw,ell4,ell5,ell6,m0,Ipart1,ierr,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA,INFO) \
@@ -426,9 +456,11 @@ void child_general_int_spin_MPIBoost(
 //  c_free1(arrayw, (int)pow(2.0, 16));
 
   c_free3(arrayJ, 3, 3, 3);
+  c_free1(vecB, 3);
   c_free2(vecJ, 3, 3);
   c_free2(matJ, 4, 4);
   c_free2(matJ2, 4, 4);
+  c_free2(matB, 2, 2);
   c_free1(matJL, (64*64));
   c_free1(matI, (64*64));
   i_free2(list_6spin_star, (int)(R0*num_pivot), 7);

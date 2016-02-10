@@ -41,20 +41,28 @@ void defmodelBoost(
          2: Kagome on standard lattice ?  
          3: Kagome on a cluster equivalent to cluster (E) in JPSJ 79, 053707 (2010)   
       */
-  double complex ***arrayJ
+  double complex ***arrayJ,
+  double complex *vecB
 )
 {
   char *filename = "arrayJ";
   FILE *fp;
+  char *filenameb = "vecB";
+  FILE *fpb;
   long unsigned int i,j, k, ell, NJ; 
   long unsigned int i0,i1,i2; 
   double ReJex, ImJex;
+  double ReBx, ImBx, ReBy, ImBy, ReBz, ImBz;
   double complex *tmpJ;
 
   c_malloc1(tmpJ, 27);
 
   if((fp = fopen(filename, "r")) == NULL){
     fprintf(stderr, "\n ###Boost### failed to open a file %s\n", filename);
+    exitMPI(EXIT_FAILURE);
+  }
+  if((fpb = fopen(filenameb, "r")) == NULL){
+    fprintf(stderr, "\n ###Boost### failed to open a file %s\n", filenameb);
     exitMPI(EXIT_FAILURE);
   }
 
@@ -80,11 +88,17 @@ void defmodelBoost(
         }
       }
     }
+    fscanf(fpb, "%lf %lf %lf %lf %lf %lf\n", &ReBx, &ImBx, &ReBy, &ImBy, &ReBz, &ImBz);
+    vecB[0] = ReBx + I*ImBx;
+    vecB[1] = ReBy + I*ImBy;
+    vecB[2] = ReBz + I*ImBz;
   }
   fclose(fp);
+  fclose(fpb);
   
 #ifdef MPI
   MPI_Bcast(tmpJ, 27, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD);
+  MPI_Bcast(vecB, 3, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD);
 #endif
   for(j=0; j < 3; j++){
     for(k=0; k < 3; k++){
@@ -121,6 +135,7 @@ void defmodelBoost(
         arrayJ[j][k][ell] = arrayJ[j][k][ell]*0.25;
       }
     }
+    vecB[j] = vecB[j]*0.5;
   }
 
   for(j=0; j < (R0*num_pivot); j++){
