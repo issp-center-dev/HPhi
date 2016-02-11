@@ -339,7 +339,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	      // longitudinal magnetic field
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
 	      for(j=1;j<=i_max;j++){
-		dam_pr = X_SpinGC_CisAis(j, X, isite1, org_sigma1)*conj(vec[j])*vec[j];
+		dam_pr += X_SpinGC_CisAis(j, X, isite1, org_sigma1)*conj(vec[j])*vec[j];
 	      }
 	    }else{
 	      // transverse magnetic field

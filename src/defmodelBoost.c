@@ -265,6 +265,7 @@ void defmodelBoost(
         arrayJ[j][k][ell] = arrayJ[j][k][ell]*0.25;
       }
     }
+    vecB[j] = vecB[j]*0.5;
   }
   for(j=0; j < (R0*num_pivot); j++){
     for(ell=0; ell < 7; ell++){
@@ -466,6 +467,7 @@ void defmodelBoost(
         arrayJ[j][k][ell] = arrayJ[j][k][ell]*0.25;
       }
     }
+    vecB[j] = vecB[j]*0.5;
   }
   for(j=0; j < (R0*num_pivot); j++){
     for(ell=0; ell < 7; ell++){

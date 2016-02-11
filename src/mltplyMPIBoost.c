@@ -258,6 +258,7 @@ void child_general_int_spin_MPIBoost(
       }/* loop for ell */
 
       /* external magnetic field B */
+      if(pivot_flag==1){
         matB[0][0] = + vecB[2]; // -BM
         matB[1][1] = - vecB[2]; // -BM
         matB[0][1] = - vecB[0] + I*vecB[1]; // -BM
@@ -281,6 +282,7 @@ void child_general_int_spin_MPIBoost(
         }
         }
         }
+      }
       /* external magnetic field B */
     
       iomp=i_max/(int)pow(2.0,ishift1+ishift2+ishift3+ishift4+ishift5+2);
