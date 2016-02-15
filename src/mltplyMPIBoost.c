@@ -28,6 +28,7 @@
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
 #include "matrixlapack.h"
+#include "defmodelBoost.h"
 #include <stdlib.h>
 
 void zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *ALPHA, double complex *matJL, int *LDA, double complex *arrayz, int *LDB, double complex *BETA, double complex *arrayx, int *LDC);

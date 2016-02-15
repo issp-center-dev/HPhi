@@ -202,15 +202,4 @@ void child_general_int_spin_MPIBoost
   double complex *tmp_v3
 );
 
-void defmodelBoost(
-  long unsigned int W0,
-  long unsigned int R0,
-  long unsigned int num_pivot,
-  long unsigned int ishift_nspin,
-  int  **list_6spin_star,
-  int ***list_6spin_pair,
-  long unsigned int model_num,
-  double complex ***arrayJ,
-  double complex *vecB
-);
 

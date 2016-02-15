@@ -22,7 +22,7 @@
 #include "mfmemory.h"
 #include "xsetmem.h"
 #include "wrapperMPI.h"
-
+#include "defmodelBoost.h"
 /**
  *
  * Creating list and exchange couplings for Boost mode  
