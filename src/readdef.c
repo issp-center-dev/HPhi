@@ -1036,13 +1036,12 @@ int ReadDefFileIdxPara(
 	fclose(fp);
 	exitMPI(-1);
       }
-      
+            
       if(CheckInterAllHermite(X)!=0){
 	fprintf(stderr, "%s", cErrNonHermiteInterAllForAll);
 	fclose(fp);
 	exitMPI(-1);
-      }
-      
+      }      
       
       break;
       
@@ -1244,6 +1243,7 @@ int CheckQuadSite(
 int CheckTransferHermite
 (
  struct DefineList *X
+
  )
 {
   int i,j;
