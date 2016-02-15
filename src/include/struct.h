@@ -174,7 +174,7 @@ struct LargeList{
   long int iv;
   long int  i_max;
   double complex tmp_trans;
-  double       tmp_J;
+  double  complex  tmp_J;
   
   long unsigned int is1_up;
   long unsigned int is1_down;
