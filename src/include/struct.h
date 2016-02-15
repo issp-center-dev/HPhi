@@ -200,7 +200,7 @@ struct LargeList{
   long unsigned int     ihfbit;
   long unsigned int isA_spin;
   long unsigned int  isB_spin;
-  double       tmp_V;
+  double complex      tmp_V;
 };
 
 struct PhysList{
