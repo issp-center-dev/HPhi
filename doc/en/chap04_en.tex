@@ -2215,37 +2215,18 @@ An example of file format is shown as follows.
 \newpage
 \subsection{eigenvec.dat}
 \label{Subsec:eigenvec}
-When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are given by this outputted file. An example of file format is shown as follows.
-
-\begin{minipage}{15cm}
-\begin{screen}
-\begin{verbatim}
-4900 
-255 0.0000896233 0.0000896690
-447 -0.0000000000 -0.0000000000
-495 -0.0002941096 -0.0002942596
-507 -0.0000562403 -0.0000562689
-510 -0.0000000000 -0.0000000000
-639 -0.0000000000 0.0000000000
-735 0.0002941096 0.0002942596
-759 0.0000562403 0.0000562689
-765 -0.0000000000 0.0000000000
-831 -0.0017552852 -0.0017561802
- …
-\end{verbatim}
-\end{screen}
-\end{minipage}
+When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are given by this outputted file. A file format is a binary type. 
 
 \subsubsection{File name}
 \begin{itemize}
-   \item{\#\#\_eigenvec\_{\&\&}.dat}
+   \item{\#\#\_eigenvec\_{\&\&}\_rank\_{\$\$}.dat}
 \end{itemize}
-  \#\# indicates [string02] in ModPara file、\&\& is a number of eigenvalues, respectively.
+  \#\# indicates [string02] in ModPara file, \&\& is a number of eigenvalues, \$\$ is a number of rank respectively.
 
 \subsubsection{File format}
  \begin{itemize}
    \item  Line 1：$[$int01$]$
-   \item  Lines 2 -: $[$int02$]$~~$[$double01$]$~~$[$double02$]$
+   \item  Lines 2 -: $[$double01$]$~~$[$double02$]$
   \end{itemize}
   
 \subsubsection{Parameters}
@@ -2256,12 +2237,6 @@ When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos me
  {\bf Type :} int-type
 
 {\bf Description :}  A total number of targets of Hilbert spaces.
- 
-  \item  $[$int02$]$
-
- {\bf Type :} int-type
-
-{\bf Description :} An integer for a target of Hilbert space.
 
  \item  $[$double01$]$, $[$double02$]$
 
