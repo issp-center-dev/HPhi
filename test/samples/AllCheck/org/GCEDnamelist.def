@@ -1,0 +1,11 @@
+CalcMod calcmod.def
+ModPara EDmodpara.def
+LocSpin zlocspn.def
+Trans GCztransfer.def
+CoulombIntra zcoulombintra.def
+CoulombInter zcoulombinter.def
+Hund zhund.def
+PairHop zpairhop.def
+Exchange zexchange.def
+OneBodyG zcisajs.def
+TwoBodyG zcisajscktaltdc.def
