@@ -1,10 +1,7 @@
-CalcMod      calcmod.def
-ModPara      modpara.def
-LocSpin      zlocspn.def
-CoulombInter zcoulombinter.def 
-Trans        zTrans.def
-Hund         zhund.def
-Exchange     zexchange.def
-PairLift     zpairlift.def
-OneBodyG     greenone.def
-TwoBodyG     greentwo.def
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin zlocspn.def
+Trans zTrans.def
+InterAll zInterAll.def
+OneBodyG greenone.def
+TwoBodyG greentwo.def
