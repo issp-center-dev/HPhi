@@ -75,18 +75,16 @@ int CalcBySSM(
     
     FirstMultiply(&dsfmt, &(X->Bind));
     
-    expec_energy(&(X->Bind));
+    expec_energy(&(X->Bind)); //v0 = H*v1
     Ns = 1.0*X->Bind.Def.NsiteMPI;
     inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
     step_i = 1;
     X->Bind.Def.istep=step_i;
     X->Bind.Def.irand=rand_i;
-    
-    if(X->Bind.Def.iCalcModel!=Spin){
-      expec_cisajs(&(X->Bind),v1);
-    }
 
+    expec_cisajs(&(X->Bind),v1);
     expec_cisajscktaltdc(&(X->Bind), v1);
+    
     if(!childfopenMPI(sdt_phys, "a", &fp)==0){
       return -1;
     }
@@ -98,6 +96,7 @@ int CalcBySSM(
     }
     fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
     fclose(fp);
+
     for (step_i = 2; step_i<X->Bind.Def.Lanczos_max; step_i++){
       X->Bind.Def.istep=step_i;
 
@@ -124,9 +123,7 @@ int CalcBySSM(
       fclose(fp);
 
       if (step_i%step_spin == 0){
-	if(X->Bind.Def.iCalcModel!=Spin){
-	  expec_cisajs(&(X->Bind),v1);
-	}
+	expec_cisajs(&(X->Bind),v1);
 	expec_cisajscktaltdc(&(X->Bind), v1);
       }
     }
