@@ -699,7 +699,7 @@ int SetDiagonalHund
   long unsigned int j;
   long unsigned int i_max=X->Check.idim_max;
   /*
-  Forse isite1 <= isite2
+  Force isite1 <= isite2
   */
   if (isite2 < isite1) {
     j = isite2;
@@ -781,9 +781,9 @@ firstprivate(i_max, dtmp_V) private(j)
       num2_up = 0;
       num2_down = 0;
 
-      ibit2_up = (j - 1)&is2_up;
+      ibit2_up =  (unsigned long int)myrank &is2_up;
       num2_up = ibit2_up / is2_up;
-      ibit2_down = (j - 1)&is2_down;
+      ibit2_down =  (unsigned long int)myrank &is2_down;
       num2_down = ibit2_down / is2_down;
 
 #pragma omp parallel for default(none) shared( list_Diagonal) \
@@ -814,9 +814,9 @@ private(num1_up, num1_down, ibit1_up, ibit1_down, j)
       num2_up = 0;
       num2_down = 0;
 
-      ibit2_up = (j - 1)&is2_up;
+      ibit2_up = (unsigned long int)myrank&is2_up;
       num2_up = ibit2_up / is2_up;
-      ibit2_down = (j - 1)&is2_down;
+      ibit2_down = (unsigned long int)myrank&is2_down;
       num2_down = ibit2_down / is2_down;
 
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) \

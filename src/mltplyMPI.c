@@ -2893,6 +2893,7 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
     return dam_pr;
   }//myrank =origin
   else{
+    
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 			&idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
       if(ierr != 0) exitMPI(-1);
@@ -2909,13 +2910,13 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
       else Bdiff = isite3-isite4*2;
       
       if(iFlgHermite==FALSE){
-	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite2, isite1, (isite1+isite2), Adiff, &tmp_off2);
-	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite4, isite3, (isite3+isite4), Bdiff, &tmp_off);
+	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite4, isite3, (isite3+isite4), Bdiff, &tmp_off2);
+	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite2, isite1, (isite1+isite2), Adiff, &tmp_off);
 	tmp_V *=Fsgn;	  
       }
       else{
-	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite4, isite3, (isite3+isite4), Bdiff, &tmp_off2);
-	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite2, isite1, (isite1+isite2), Adiff, &tmp_off);
+	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite1, isite2, (isite1+isite2), Adiff, &tmp_off2);
+	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite3, isite4, (isite3+isite4), Bdiff, &tmp_off);
 	tmp_V *=Fsgn;
       }
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0)
