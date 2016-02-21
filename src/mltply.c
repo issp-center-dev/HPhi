@@ -373,9 +373,9 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	    dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI
 	    (
 	     X->Def.PairHopping[i][0], sigma1,
-	     X->Def.PairHopping[i][1], sigma2,
-	     X->Def.PairHopping[i][0], sigma2,
 	     X->Def.PairHopping[i][1], sigma1,
+	     X->Def.PairHopping[i][0], sigma2,
+	     X->Def.PairHopping[i][1], sigma2,
 	     tmp_V, X, tmp_v0, tmp_v1
 	     );
 	  }

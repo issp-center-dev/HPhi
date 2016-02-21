@@ -3203,22 +3203,25 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
       else Bdiff = isite3-isite4*2;
       
       if(iFlgHermite==FALSE){
-	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite2, isite1, (isite1+isite2), Adiff, &tmp_off2);
-	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite4, isite3, (isite3+isite4), Bdiff, &tmp_off);
+	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite4, isite3, (isite3+isite4), Bdiff, &tmp_off2);
+	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite2, isite1, (isite1+isite2), Adiff, &tmp_off);
 	tmp_V *=Fsgn;	  
       }
       else{
-	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite4, isite3, (isite3+isite4), Bdiff, &tmp_off2);
-	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite2, isite1, (isite1+isite2), Adiff, &tmp_off);
+	Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite1, isite2, (isite1+isite2), Adiff, &tmp_off2);
+	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite3, isite4, (isite3+isite4), Bdiff, &tmp_off);
 	tmp_V *=Fsgn;
       }
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0, list_2_1, list_2_2, list_1buf)
       for (j = 1; j <= idim_max_buf; j++) {
+	GetOffComp(list_2_1, list_2_2, list_1buf[j], 
+		   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 	dmv = tmp_V * v1buf[j];
-	if (X->Large.mode == M_MLTPLY) tmp_v0[j] += dmv;
-	dam_pr += conj(tmp_v1[j]) * dmv;
+	if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
+	dam_pr += conj(tmp_v1[ioff]) * dmv;
       }
-    }
+    }//org_isite1+1 > X->Def.Nsite && org_isite2+1 > X->Def.Nsite
+     // && org_isite3+1 > X->Def.Nsite && org_isite4+1 > X->Def.Nsite
     else{
       
       org_rankbit=X->Def.OrgTpow[2*X->Def.Nsite]*origin;
@@ -3229,7 +3232,8 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
 
 	  if(GetOffComp(list_2_1, list_2_2, tmp_off,
 			X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff)==TRUE){
-	    //	    printf("debug: org_rankbit=%d, offbit=%d \n", list_1buf[j]+org_rankbit,tmp_off);	    
+	    //	    printf("debug: org_rankbit=%d, offbit=%d ioff=%d \n", list_1buf[j]+org_rankbit,tmp_off, ioff);
+	    // exitMPI(-1);
 	    dmv = tmp_V * v1buf[j]*Fsgn;
 	    if (X->Large.mode == M_MLTPLY) tmp_v0[ioff] += dmv;
 	    dam_pr += conj(tmp_v1[ioff]) * dmv;
