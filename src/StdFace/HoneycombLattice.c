@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <math.h>
 #include "../include/wrapperMPI.h"
+#include "../include/mfmemory.h"
 
 /**
  *
@@ -267,6 +268,224 @@ void Spin_HoneycombLattice(
       + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+}
+
+/**
+*
+* Setup a Hamiltonian for the generalized Heisenberg model on a Heisenberg lattice
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void Spin_HoneycombLattice_Boost(
+  int Sz2 /**< [in] 2 * Total Sz */,
+  int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
+{
+  int isite, jsite;
+  int iL, iW, j;
+  int ktrans, kintr;
+  double LargeValue0, S;
+  FILE *fp;
+
+  fprintf(stdoutMPI, "\n");
+  fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
+  fprintf(stdoutMPI, "\n");
+  StdFace_RequiredVal_i("L", L);
+  StdFace_RequiredVal_i("W", W);
+  StdFace_PrintVal_d("a", &a, 1.0);
+  /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
+  StdFace_PrintVal_d("h", &h, 0.0);
+  StdFace_PrintVal_d("Gamma", &Gamma, 0.0);
+  StdFace_PrintVal_d("D", &D, 0.0);
+  StdFace_PrintVal_d("J", &J, 0.0);
+  StdFace_PrintVal_d("J0", &J0, J);
+  StdFace_PrintVal_d("J1", &J1, J);
+  StdFace_PrintVal_d("J2", &J2, J);
+  StdFace_PrintVal_d("Jz", &Jz, J);
+  StdFace_PrintVal_d("Jz0", &Jz0, Jz);
+  StdFace_PrintVal_d("Jz1", &Jz1, Jz);
+  StdFace_PrintVal_d("Jz2", &Jz2, Jz);
+  StdFace_PrintVal_d("Jxy", &Jxy, J);
+  StdFace_PrintVal_d("Jxy0", &Jxy0, Jxy);
+  StdFace_PrintVal_d("Jxy1", &Jxy1, Jxy);
+  StdFace_PrintVal_d("Jxy2", &Jxy2, Jxy);
+  StdFace_PrintVal_d("Jx", &Jx, Jxy);
+  StdFace_PrintVal_d("Jx0", &Jx0, Jx);
+  StdFace_PrintVal_d("Jx1", &Jx1, Jx);
+  StdFace_PrintVal_d("Jx2", &Jx2, Jx);
+  StdFace_PrintVal_d("Jy", &Jy, Jxy);
+  StdFace_PrintVal_d("Jy0", &Jy0, Jy);
+  StdFace_PrintVal_d("Jy1", &Jy1, Jy);
+  StdFace_PrintVal_d("Jy2", &Jy2, Jy);
+  Jxy = 0.5 * (Jx + Jy);
+  Jxy0 = 0.5 * (Jx0 + Jy0);
+  Jxy1 = 0.5 * (Jx1 + Jy1);
+  Jxy2 = 0.5 * (Jx2 + Jy2);
+  /**/
+  StdFace_NotUsed_d("J'", Jp);
+  StdFace_NotUsed_d("Jz'", Jzp);
+  StdFace_NotUsed_d("Jxy'", Jxyp);
+  StdFace_NotUsed_d("Jx'", Jxp);
+  StdFace_NotUsed_d("Jy'", Jyp);
+  StdFace_NotUsed_d("K", K);
+  /*
+  Local Spin
+  */
+  nsite = L * W;
+  S2 = 1;
+  locspinflag = (int *)malloc(sizeof(int) * nsite);
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = S2;
+  /*
+  Transfer
+  */
+  ntrans = 1;
+  transindx = (int **)malloc(sizeof(int*) * ntrans);
+  trans = (double *)malloc(sizeof(double) * ntrans);
+  for (ktrans = 0; ktrans < ntrans; ktrans++) {
+    transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
+  }
+  ntrans = 0;
+  /*
+  Interaction
+  */
+  nintr = 1;
+  intrindx = (int **)malloc(sizeof(int*) * nintr);
+  intr = (double *)malloc(sizeof(double) * nintr);
+  for (kintr = 0; kintr < nintr; kintr++) {
+    intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
+  }
+  nintr = 0;
+ /*
+  Set mTPQ parameter
+  */
+  S = (double)S2 * 0.5;
+  if (lGC == 0) {
+    LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 1.0 / 2.0 * S * S * (fabs(Jx0) + fabs(Jy0) + fabs(Jz0))
+      + 1.0 / 2.0 * S * S * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
+      + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
+  }
+  else {
+    LargeValue0 = S * fabs(h) + S * fabs(D) + S * S * fabs(Gamma)
+      + 1.0 / 2.0 * S * S * (fabs(Jx0) + fabs(Jy0) + fabs(Jz0))
+      + 1.0 / 2.0 * S * S * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
+      + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
+  }
+  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  /*
+   Imteraction
+  */
+  fp = fopenMPI("arrayJ", "w");
+  fprintf(fp, "%d\n", 9);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 0, 0, Jx0, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 1, 1, Jy0, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 2, 2, Jz0, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 1, 0, 0, Jx1, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 1, 1, 2, Jy1, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 1, 1, 2, Jz1, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 0, 0, Jx2, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 1, 2, Jy2, 0.0);
+  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 1, 2, Jz2, 0.0);
+  fclose(fp);
+  /*
+    Magnetic field
+  */
+  fp = fopenMPI("vecB", "w");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n", 
+    -Gamma, 0.0, 0.0, 0.0, -h, 0.0);
+  fclose(fp);
+  /*
+   Topology
+  */
+  i_malloc2(list_6spin_star, (int)(L*num_pivot), 7);
+  i_malloc3(list_6spin_pair, (int)(L*num_pivot), 7, 21);
+
+  for (j = 0; j < L; j++) {
+
+    list_6spin_star[2 * j][0] = 5; // num of J
+    list_6spin_star[2 * j][1] = 1;
+    list_6spin_star[2 * j][2] = 1;
+    list_6spin_star[2 * j][3] = 1;
+    list_6spin_star[2 * j][4] = 2;
+    list_6spin_star[2 * j][5] = 1;
+    list_6spin_star[2 * j][6] = 1; // flag
+
+    list_6spin_pair[2 * j][0][0] = 0; //(1,1,1+2*j)=0 
+    list_6spin_pair[2 * j][1][0] = 1; //(2,1,1+2*j)=1
+    list_6spin_pair[2 * j][2][0] = 2; //(3,1,1+2*j)=2
+    list_6spin_pair[2 * j][3][0] = 3; //(4,1,1+2*j)=3
+    list_6spin_pair[2 * j][4][0] = 4; //(5,1,1+2*j)=4
+    list_6spin_pair[2 * j][5][0] = 5; //(6,1,1+2*j)=5
+    list_6spin_pair[2 * j][6][0] = 3; //(7,1,1+2*j)=3 ! type of J
+    list_6spin_pair[2 * j][0][1] = 1; //(1,2,1+2*j)=1 
+    list_6spin_pair[2 * j][1][1] = 2; //(2,2,1+2*j)=2
+    list_6spin_pair[2 * j][2][1] = 0; //(3,2,1+2*j)=0
+    list_6spin_pair[2 * j][3][1] = 3; //(4,2,1+2*j)=3
+    list_6spin_pair[2 * j][4][1] = 4; //(5,2,1+2*j)=4
+    list_6spin_pair[2 * j][5][1] = 5; //(6,2,1+2*j)=5
+    list_6spin_pair[2 * j][6][1] = 1; //(7,2,1+2*j)=1 ! type of J
+    list_6spin_pair[2 * j][0][2] = 2; //(1,3,1+2*j)=2 
+    list_6spin_pair[2 * j][1][2] = 3; //(2,3,1+2*j)=3
+    list_6spin_pair[2 * j][2][2] = 0; //(3,3,1+2*j)=0
+    list_6spin_pair[2 * j][3][2] = 1; //(4,3,1+2*j)=1
+    list_6spin_pair[2 * j][4][2] = 4; //(5,3,1+2*j)=4
+    list_6spin_pair[2 * j][5][2] = 5; //(6,3,1+2*j)=5
+    list_6spin_pair[2 * j][6][2] = 3; //(7,3,1+2*j)=3 ! type of J
+    list_6spin_pair[2 * j][0][3] = 0; //(1,4,1+2*j)=0 
+    list_6spin_pair[2 * j][1][3] = 4; //(2,4,1+2*j)=4
+    list_6spin_pair[2 * j][2][3] = 1; //(3,4,1+2*j)=1
+    list_6spin_pair[2 * j][3][3] = 2; //(4,4,1+2*j)=2
+    list_6spin_pair[2 * j][4][3] = 3; //(5,4,1+2*j)=3
+    list_6spin_pair[2 * j][5][3] = 5; //(6,4,1+2*j)=5
+    list_6spin_pair[2 * j][6][3] = 1; //(7,4,1+2*j)=1 ! type of J
+    list_6spin_pair[2 * j][0][4] = 1; //(1,5,1+2*j)=1 
+    list_6spin_pair[2 * j][1][4] = 5; //(2,5,1+2*j)=5
+    list_6spin_pair[2 * j][2][4] = 0; //(3,5,1+2*j)=0
+    list_6spin_pair[2 * j][3][4] = 2; //(4,5,1+2*j)=2
+    list_6spin_pair[2 * j][4][4] = 3; //(5,5,1+2*j)=3
+    list_6spin_pair[2 * j][5][4] = 4; //(6,5,1+2*j)=4
+    list_6spin_pair[2 * j][6][4] = 2; //(7,5,1+2*j)=2 ! type of J
+
+
+    list_6spin_star[(2 * j + 1)][0] = 4; //(0,2+2*j)=4 ! num of J
+    list_6spin_star[(2 * j + 1)][1] = 1; //(1,2+2*j)=1
+    list_6spin_star[(2 * j + 1)][2] = 1; //(2,2+2*j)=1
+    list_6spin_star[(2 * j + 1)][3] = 1; //(3,2+2*j)=1
+    list_6spin_star[(2 * j + 1)][4] = 2; //(4,2+2*j)=2
+    list_6spin_star[(2 * j + 1)][5] = 2; //(5,2+2*j)=2
+    list_6spin_star[(2 * j + 1)][6] = 1; //(6,2+2*j)=1 ! flag
+
+    list_6spin_pair[(2 * j + 1)][0][0] = 0; //(1,1,2+2*j)=0 
+    list_6spin_pair[(2 * j + 1)][1][0] = 1; //(2,1,2+2*j)=1
+    list_6spin_pair[(2 * j + 1)][2][0] = 2; //(3,1,2+2*j)=2
+    list_6spin_pair[(2 * j + 1)][3][0] = 3; //(4,1,2+2*j)=3
+    list_6spin_pair[(2 * j + 1)][4][0] = 4; //(5,1,2+2*j)=4
+    list_6spin_pair[(2 * j + 1)][5][0] = 5; //(6,1,2+2*j)=5
+    list_6spin_pair[(2 * j + 1)][6][0] = 1; //(7,1,2+2*j)=1 ! type of J
+    list_6spin_pair[(2 * j + 1)][0][1] = 1; //(1,2,2+2*j)=1 
+    list_6spin_pair[(2 * j + 1)][1][1] = 2; //(2,2,2+2*j)=2
+    list_6spin_pair[(2 * j + 1)][2][1] = 0; //(3,2,2+2*j)=0
+    list_6spin_pair[(2 * j + 1)][3][1] = 3; //(4,2,2+2*j)=3
+    list_6spin_pair[(2 * j + 1)][4][1] = 4; //(5,2,2+2*j)=4
+    list_6spin_pair[(2 * j + 1)][5][1] = 5; //(6,2,2+2*j)=5
+    list_6spin_pair[(2 * j + 1)][6][1] = 3; //(7,2,2+2*j)=3 ! type of J
+    list_6spin_pair[(2 * j + 1)][0][2] = 0; //(1,3,2+2*j)=0 
+    list_6spin_pair[(2 * j + 1)][1][2] = 4; //(2,3,2+2*j)=4
+    list_6spin_pair[(2 * j + 1)][2][2] = 1; //(3,3,2+2*j)=1
+    list_6spin_pair[(2 * j + 1)][3][2] = 2; //(4,3,2+2*j)=2
+    list_6spin_pair[(2 * j + 1)][4][2] = 3; //(5,3,2+2*j)=3
+    list_6spin_pair[(2 * j + 1)][5][2] = 5; //(6,3,2+2*j)=5
+    list_6spin_pair[(2 * j + 1)][6][2] = 2; //(7,3,2+2*j)=2 ! type of J
+    list_6spin_pair[(2 * j + 1)][0][3] = 2; //(1,4,2+2*j)=2 
+    list_6spin_pair[(2 * j + 1)][1][3] = 5; //(2,4,2+2*j)=5
+    list_6spin_pair[(2 * j + 1)][2][3] = 0; //(3,4,2+2*j)=0
+    list_6spin_pair[(2 * j + 1)][3][3] = 1; //(4,4,2+2*j)=1
+    list_6spin_pair[(2 * j + 1)][4][3] = 3; //(5,4,2+2*j)=3
+    list_6spin_pair[(2 * j + 1)][5][3] = 4; //(6,4,2+2*j)=4
+    list_6spin_pair[(2 * j + 1)][6][3] = 2; //(7,4,2+2*j)=2 ! type of J
+  }/* define list_6spin */
+
+
 }
 
 /**

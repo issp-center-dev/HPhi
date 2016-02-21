@@ -805,4 +805,10 @@ void defmodelBoost(
   } 
 
   c_free1(tmpJ, 27);
+  /*
+    Print Input file for the expartmode + Boost
+  */
+  fp = fopenMPI("Boost.def", "w");
+  fprintf(fp, "%d\n", 1);/**/
+
 }

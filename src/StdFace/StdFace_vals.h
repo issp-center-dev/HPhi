@@ -19,70 +19,74 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*
 Parameters for LATTICE
 */
-double a; /**< The lattice constant */
-int L;
-int W;
+static double a; /**< The lattice constant */
+static int L;
+static int W;
 /*
 Parameters for MODEL
 */
-double mu;
-double t;
-double tp;
-double tpp;
-double t0;
-double t1;
-double t1p;
-double t2;
-double U;
-double V;
-double Vp;
-double Vpp;
-double V0;
-double V1;
-double V1p;
-double V2;
-double J;
-double Jp;
-double Jpp;
-double J0;
-double J1;
-double J1p;
-double J2;
-double J2p;
+static double mu;
+static double t;
+static double tp;
+static double tpp;
+static double t0;
+static double t1;
+static double t1p;
+static double t2;
+static double U;
+static double V;
+static double Vp;
+static double Vpp;
+static double V0;
+static double V1;
+static double V1p;
+static double V2;
+static double J;
+static double Jp;
+static double Jpp;
+static double J0;
+static double J1;
+static double J1p;
+static double J2;
+static double J2p;
 /**/
-double Jx;
-double Jy;
-double Jz;
-double Jx0;
-double Jy0;
-double Jz0;
-double Jx1;
-double Jy1;
-double Jz1;
-double Jx2;
-double Jy2;
-double Jz2;
-double Jxp;
-double Jyp;
-double Jzp;
-double Jxy;
-double Jxy0;
-double Jxy1;
-double Jxy2;
-double Jxyp;
-double h;
-double Gamma;
-double D;
-double K;
+static double Jx;
+static double Jy;
+static double Jz;
+static double Jx0;
+static double Jy0;
+static double Jz0;
+static double Jx1;
+static double Jy1;
+static double Jz1;
+static double Jx2;
+static double Jy2;
+static double Jz2;
+static double Jxp;
+static double Jyp;
+static double Jzp;
+static double Jxy;
+static double Jxy0;
+static double Jxy1;
+static double Jxy2;
+static double Jxyp;
+static double h;
+static double Gamma;
+static double D;
+static double K;
 
-int nsite;
-int *locspinflag;
-int ntrans;
-int **transindx;
-double *trans;
-int nintr;
-int **intrindx;
-double *intr;
+static int nsite;
+static int *locspinflag;
+static int ntrans;
+static int **transindx;
+static double *trans;
+static int nintr;
+static int **intrindx;
+static double *intr;
 
-int LargeValue;
-int S2;
+static int LargeValue;
+static int S2;
+
+static int ***list_6spin_pair;
+static int **list_6spin_star;
+static int num_pivot;
