@@ -3217,7 +3217,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
 	Fsgn *= X_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1+isite2), Adiff, &tmp_off);
 	tmp_V *=Fsgn;
       }
-
+      dam_pr=0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0, list_2_1, list_2_2, list_1buf)
       for (j = 1; j <= idim_max_buf; j++) {
 	if(GetOffComp(list_2_1, list_2_2, list_1buf[j], 
@@ -3232,7 +3232,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
     else{
       
       org_rankbit=X->Def.OrgTpow[2*X->Def.Nsite]*origin;
-
+      dam_pr=0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn, ioff) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4) shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
       for (j = 1; j <= idim_max_buf; j++) {
 	if(GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, list_1buf[j]+org_rankbit, &tmp_off)==TRUE){
