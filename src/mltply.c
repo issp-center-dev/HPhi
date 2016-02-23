@@ -212,9 +212,9 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI
 	    (
 	     X->Def.PairHopping[i][0], sigma1,
-	     X->Def.PairHopping[i][1], sigma2,
-	     X->Def.PairHopping[i][0], sigma2,
 	     X->Def.PairHopping[i][1], sigma1,
+	     X->Def.PairHopping[i][0], sigma2,
+	     X->Def.PairHopping[i][1], sigma2,
 	     X->Def.ParaPairHopping[i], X, tmp_v0, tmp_v1
 	     );
         }
@@ -248,7 +248,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  dam_pr = GC_child_exchange(tmp_v0, tmp_v1, X);
         }
 	X->Large.prdct += dam_pr;
-      }/*for (i = 0; i < X->Def.NExchangeCoupling; i+=2)*/
+      }/*for (i = 0; i < X->Def.NExchangeCoupling; i++)*/
       break;
       
   case KondoGC:
@@ -365,6 +365,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	sigma1=0;
 	sigma2=1;
 	dam_pr = 0.0;
+
         if (
 	    X->Def.PairHopping[i][0] + 1 > X->Def.Nsite ||
 	    X->Def.PairHopping[i][1] + 1 > X->Def.Nsite
@@ -373,10 +374,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	    dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI
 	    (
 	     X->Def.PairHopping[i][0], sigma1,
-	     X->Def.PairHopping[i][1], sigma2,
-	     X->Def.PairHopping[i][0], sigma2,
 	     X->Def.PairHopping[i][1], sigma1,
-	     tmp_V, X, tmp_v0, tmp_v1
+	     X->Def.PairHopping[i][0], sigma2,
+	     X->Def.PairHopping[i][1], sigma2,
+	     X->Def.ParaPairHopping[i], X, tmp_v0, tmp_v1
 	     );
 	  }
         else {
@@ -390,7 +391,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       }/*for (i = 0; i < X->Def.NPairHopping; i += 2)*/
 
 	//Exchange
-      for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+      for (i = 0; i < X->Def.NExchangeCoupling; i ++) {
 	sigma1=0; sigma2=1;
 	dam_pr=0.0;
         if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite ||
@@ -409,7 +410,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	  dam_pr = child_exchange(tmp_v0, tmp_v1, X);
         }
 	X->Large.prdct += dam_pr;
-      }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
+      }/*for (i = 0; i < X->Def.NExchangeCoupling; i ++)*/
   
       break;
       
