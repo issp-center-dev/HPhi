@@ -41,7 +41,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = icc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -O3 -DHAVE_SSE2 -g -traceback
+FLAGS = -openmp -O3 -DHAVE_SSE2 -g -traceback -xHOST
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
@@ -49,14 +49,14 @@ EOF
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -O3 -DHAVE_SSE2 -D MPI -g -traceback
+FLAGS = -openmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 EOF
     elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF
 CC = gcc
-LAPACK_FLAGS = -framework Accelerate 
+LAPACK_FLAGS = -Dlapack -framework Accelerate 
 FLAGS = -fopenmp 
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
