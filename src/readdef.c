@@ -54,7 +54,8 @@ static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
         "OneBodyG",
         "TwoBodyG",
         "PairLift",
-        "Ising"
+        "Ising",
+	"Boost"
 };
 
 /**
@@ -349,16 +350,19 @@ int GetFileName(
  */
 int ReadDefFileNInt(
 		    char *xNameListFile, 
-		    struct DefineList *X
+		    struct DefineList *X,
+		    struct BoostList *xBoost
 		    )
 {
   FILE *fp;
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
+  int iline=0;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
   int iReadNCond=FALSE;
+  xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
   
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
@@ -548,6 +552,28 @@ int ReadDefFileNInt(
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
       break;
+    case KWBoost:
+      /* Read boost.def--------------------------------*/
+      xBoost->NumarrayJ=0;
+      xBoost->W0=0;
+      xBoost->R0=0;
+      xBoost->num_pivot=0;
+      xBoost->ishift_nspin=0;
+      xBoost->flgBoost=TRUE;
+      //first line is skipped
+      fgetsMPI(ctmp2, 256, fp);
+      //read numarrayJ
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%d\n", &(xBoost->NumarrayJ));
+      //skipp arrayJ
+      for(iline=0; iline<xBoost->NumarrayJ*3; iline++){
+	fgetsMPI(ctmp2, 256, fp);
+      }
+      //read W0 R0 num_pivot ishift_nspin
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%d %d %d %d\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
+
+      break;
     default:
       fprintf(stderr, "%s", cErrIncorrectDef);
       fclose(fp);
@@ -658,7 +684,8 @@ int ReadDefFileNInt(
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int ReadDefFileIdxPara(
-		       struct DefineList *X
+		       struct DefineList *X,
+		       struct BoostList *xBoost
 		       )
 {
   FILE *fp;
@@ -672,9 +699,13 @@ int ReadDefFileIdxPara(
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   double dvalue_re, dvalue_im;
+  double dArrayValue_re[3],dArrayValue_im[3]; 
   int icnt_diagonal=0;
   int ieps_CheckImag0=-12;
   eps_CheckImag0=pow(10.0, ieps_CheckImag0);
+  int iline=0;
+  int ilineIn=0;
+  int ilineIn2=0;
   
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
     strcpy(defname, cFileNameListFile[iKWidx]);
@@ -682,7 +713,10 @@ int ReadDefFileIdxPara(
     fprintf(stdoutMPI, cReadFileNamelist, defname);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
-    for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+    if(iKWidx != KWBoost){
+      for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+    }
+    
     idx=0;    
     /*=======================================================================*/
     switch(iKWidx){
@@ -1126,6 +1160,78 @@ int ReadDefFileIdxPara(
 	}
       }
       break;
+    case KWBoost:
+      /* boost.def--------------------------------*/
+      //input magnetic field
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2, "%lf %lf %lf %lf %lf %lf \n",
+	     &dArrayValue_re[0], &dArrayValue_im[0],
+	     &dArrayValue_re[1], &dArrayValue_im[1],
+	     &dArrayValue_re[2], &dArrayValue_im[2]);
+      for(iline=0; iline<3; iline++){
+	xBoost->vecB[iline]= dArrayValue_re[i]+I*dArrayValue_im[i];
+      }
+      
+      //this line is skipped;
+      fgetsMPI(ctmp2, 256, fp);
+
+      //input arrayJ
+      if(xBoost->NumarrayJ>0){
+	for(iline=0; iline<xBoost->NumarrayJ; iline++){
+	  for(ilineIn=0; ilineIn<3; ilineIn++){
+	    fgetsMPI(ctmp2, 256, fp);
+	    sscanf(ctmp2, "%lf %lf %lf %lf %lf %lf \n",
+		   &dArrayValue_re[0], &dArrayValue_im[0],
+		   &dArrayValue_re[1], &dArrayValue_im[1],
+		   &dArrayValue_re[2], &dArrayValue_im[2]);
+	    for(ilineIn2=0; ilineIn2<3; ilineIn2++){
+	      xBoost->arrayJ[iline][ilineIn][ilineIn2]= dArrayValue_re[i]+I*dArrayValue_im[i];
+	    }	    
+	  }
+	}
+      }
+
+      //this line is skipped;
+      fgetsMPI(ctmp2, 256, fp);
+
+      //read list_6spin_star
+      if(xBoost->num_pivot>0){
+	for(iline=0; iline<xBoost->num_pivot; iline++){
+	  //input
+	  fgetsMPI(ctmp2, 256, fp);
+	  sscanf(ctmp2, "%d %d %d %d %d %d %d\n",
+		 &xBoost->list_6spin_star[iline][0],
+		 &xBoost->list_6spin_star[iline][1],
+		 &xBoost->list_6spin_star[iline][2],
+		 &xBoost->list_6spin_star[iline][3],
+		 &xBoost->list_6spin_star[iline][4],
+		 &xBoost->list_6spin_star[iline][5],
+		 &xBoost->list_6spin_star[iline][6]
+		 ); 
+	}
+      }
+
+      //read list_6spin_pair
+      if(xBoost->num_pivot>0){
+	for(iline=0; iline<xBoost->num_pivot; iline++){
+	  //input
+	  for(ilineIn2=0; ilineIn2<xBoost->list_6spin_star[iline][0]; ilineIn2++){
+
+	    fgetsMPI(ctmp2, 256, fp);
+	    sscanf(ctmp2, "%d %d %d %d %d %d %d\n",
+		   &xBoost->list_6spin_pair[iline][0][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][1][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][2][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][3][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][4][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][5][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][6][ilineIn2]
+		   ); 
+	  }
+	}
+      }
+      break;
+
     default:
       break;
     }

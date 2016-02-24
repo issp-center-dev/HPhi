@@ -77,7 +77,7 @@ int main(int argc, char* argv[]){
 
   int mode=0;
   char cFileListName[D_FileNameMax];
-
+  struct BoostList xBoost;
   InitializeMPI(argc, argv);
 
   if(JudgeDefType(argc, argv, &mode)!=0){
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]){
   }
 
   setmem_HEAD(&X.Bind);
-  if(ReadDefFileNInt(cFileListName, &(X.Bind.Def))!=0){
+  if(ReadDefFileNInt(cFileListName, &(X.Bind.Def), &(xBoost))!=0){
     fprintf(stderr, "%s", cErrDefFile);
     FinalizeMPI();
     return 0;
@@ -123,11 +123,11 @@ int main(int argc, char* argv[]){
   fprintf(stdoutMPI,  cProFinishDefFiles);
   
   /*ALLOCATE-------------------------------------------*/
-  setmem_def(&X.Bind);
+  setmem_def(&X.Bind, &xBoost);
   /*-----------------------------------------------------*/
 
   /*Read Def files.*/
-  if(ReadDefFileIdxPara(&(X.Bind.Def))!=0){
+  if(ReadDefFileIdxPara(&(X.Bind.Def), &(xBoost))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
     FinalizeMPI();
     return 0;
