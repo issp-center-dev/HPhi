@@ -137,7 +137,7 @@ void FermionHubbard_HoneycombLattice(
     LargeValue0 = fabs(mu) * 2.0 + 2.0 * 3.0 * fabs(t)
       + fabs(U) + 2.0 * 3.0 * fabs(V);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
 
 /**
@@ -266,7 +266,7 @@ void Spin_HoneycombLattice(
       + 1.0 / 2.0 * S * S * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
       + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
 
 /**
@@ -384,5 +384,5 @@ void KondoLattice_HoneycombLattice(
   else{
     LargeValue0 = fabs(mu) * 2.0 + 2.0 * 3.0 * fabs(t) + 0.5 * S * fabs(J);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
