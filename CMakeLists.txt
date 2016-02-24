@@ -25,5 +25,8 @@ if(MPI_FOUND)
 endif(MPI_FOUND)
 
 find_package(LAPACK)
+if(LAPACK_FOUND)
+  add_definitions(-Dlapack)
+endif(LAPACK_FOUND)
 
 add_subdirectory(src)
