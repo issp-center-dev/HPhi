@@ -373,9 +373,15 @@ void Spin_HoneycombLattice_Boost(
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
   /*
-   Imteraction
+  Magnetic field
   */
-  fp = fopenMPI("arrayJ", "w");
+  fp = fopenMPI("boost.def", "w");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    -Gamma, 0.0, 0.0, 0.0, -h, 0.0);
+  fclose(fp);
+  /*
+   Interaction
+  */
   fprintf(fp, "%d\n", 9);
   fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 0, 0, Jx0, 0.0);
   fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 1, 1, Jy0, 0.0);
@@ -386,27 +392,10 @@ void Spin_HoneycombLattice_Boost(
   fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 0, 0, Jx2, 0.0);
   fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 1, 2, Jy2, 0.0);
   fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 1, 2, Jz2, 0.0);
-  fclose(fp);
-  /*
-    Magnetic field
-  */
-  fp = fopenMPI("vecB", "w");
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n", 
-    -Gamma, 0.0, 0.0, 0.0, -h, 0.0);
-  fclose(fp);
   /*
    Topology
   */
   ishift_nspin = 3;
-  list_6spin_star = (int **)malloc(sizeof(int*) * L*num_pivot);
-  list_6spin_pair = (int ***)malloc(sizeof(int**) * L*num_pivot);
-  for (j = 0; j < L*num_pivot; j++) {
-    list_6spin_star[j] = (int *)malloc(sizeof(int) * 7);
-    list_6spin_pair[j] = (int **)malloc(sizeof(int*) * 7);
-    for (iW = 0; iW < 7; iW++) {
-      list_6spin_pair[j][iW] = (int *)malloc(sizeof(int) * 21);
-    }
-  }
   if (W / ishift_nspin != 0) {
     fprintf(stderr, "\n ERROR! W / %d != 0 \n\n", ishift_nspin);
     exitMPI(-1);
@@ -416,92 +405,132 @@ void Spin_HoneycombLattice_Boost(
     fprintf(stderr, "DEBUG: W != 6\n");
     exitMPI(-1);
   }
+  fprintf(fp, "%d %d\n", ishift_nspin, num_pivot);
 
-  for (j = 0; j < L; j++) {
+  list_6spin_star = (int **)malloc(sizeof(int*) * num_pivot);
+  for (j = 0; j < num_pivot; j++) {
+    list_6spin_star[j] = (int *)malloc(sizeof(int) * 7);
+  }
 
-    list_6spin_star[2 * j][0] = 5; // num of J
-    list_6spin_star[2 * j][1] = 1;
-    list_6spin_star[2 * j][2] = 1;
-    list_6spin_star[2 * j][3] = 1;
-    list_6spin_star[2 * j][4] = 2;
-    list_6spin_star[2 * j][5] = 1;
-    list_6spin_star[2 * j][6] = 1; // flag
+  list_6spin_star[0][0] = 5; // num of J
+  list_6spin_star[0][1] = 1;
+  list_6spin_star[0][2] = 1;
+  list_6spin_star[0][3] = 1;
+  list_6spin_star[0][4] = 2;
+  list_6spin_star[0][5] = 1;
+  list_6spin_star[0][6] = 1; // flag
 
-    list_6spin_pair[2 * j][0][0] = 0; //(1,1,1+2*j)=0 
-    list_6spin_pair[2 * j][1][0] = 1; //(2,1,1+2*j)=1
-    list_6spin_pair[2 * j][2][0] = 2; //(3,1,1+2*j)=2
-    list_6spin_pair[2 * j][3][0] = 3; //(4,1,1+2*j)=3
-    list_6spin_pair[2 * j][4][0] = 4; //(5,1,1+2*j)=4
-    list_6spin_pair[2 * j][5][0] = 5; //(6,1,1+2*j)=5
-    list_6spin_pair[2 * j][6][0] = 3; //(7,1,1+2*j)=3 ! type of J
-    list_6spin_pair[2 * j][0][1] = 1; //(1,2,1+2*j)=1 
-    list_6spin_pair[2 * j][1][1] = 2; //(2,2,1+2*j)=2
-    list_6spin_pair[2 * j][2][1] = 0; //(3,2,1+2*j)=0
-    list_6spin_pair[2 * j][3][1] = 3; //(4,2,1+2*j)=3
-    list_6spin_pair[2 * j][4][1] = 4; //(5,2,1+2*j)=4
-    list_6spin_pair[2 * j][5][1] = 5; //(6,2,1+2*j)=5
-    list_6spin_pair[2 * j][6][1] = 1; //(7,2,1+2*j)=1 ! type of J
-    list_6spin_pair[2 * j][0][2] = 2; //(1,3,1+2*j)=2 
-    list_6spin_pair[2 * j][1][2] = 3; //(2,3,1+2*j)=3
-    list_6spin_pair[2 * j][2][2] = 0; //(3,3,1+2*j)=0
-    list_6spin_pair[2 * j][3][2] = 1; //(4,3,1+2*j)=1
-    list_6spin_pair[2 * j][4][2] = 4; //(5,3,1+2*j)=4
-    list_6spin_pair[2 * j][5][2] = 5; //(6,3,1+2*j)=5
-    list_6spin_pair[2 * j][6][2] = 3; //(7,3,1+2*j)=3 ! type of J
-    list_6spin_pair[2 * j][0][3] = 0; //(1,4,1+2*j)=0 
-    list_6spin_pair[2 * j][1][3] = 4; //(2,4,1+2*j)=4
-    list_6spin_pair[2 * j][2][3] = 1; //(3,4,1+2*j)=1
-    list_6spin_pair[2 * j][3][3] = 2; //(4,4,1+2*j)=2
-    list_6spin_pair[2 * j][4][3] = 3; //(5,4,1+2*j)=3
-    list_6spin_pair[2 * j][5][3] = 5; //(6,4,1+2*j)=5
-    list_6spin_pair[2 * j][6][3] = 1; //(7,4,1+2*j)=1 ! type of J
-    list_6spin_pair[2 * j][0][4] = 1; //(1,5,1+2*j)=1 
-    list_6spin_pair[2 * j][1][4] = 5; //(2,5,1+2*j)=5
-    list_6spin_pair[2 * j][2][4] = 0; //(3,5,1+2*j)=0
-    list_6spin_pair[2 * j][3][4] = 2; //(4,5,1+2*j)=2
-    list_6spin_pair[2 * j][4][4] = 3; //(5,5,1+2*j)=3
-    list_6spin_pair[2 * j][5][4] = 4; //(6,5,1+2*j)=4
-    list_6spin_pair[2 * j][6][4] = 2; //(7,5,1+2*j)=2 ! type of J
+  list_6spin_star[1][0] = 4; //(0,2+2*j)=4 ! num of J
+  list_6spin_star[1][1] = 1; //(1,2+2*j)=1
+  list_6spin_star[1][2] = 1; //(2,2+2*j)=1
+  list_6spin_star[1][3] = 1; //(3,2+2*j)=1
+  list_6spin_star[1][4] = 2; //(4,2+2*j)=2
+  list_6spin_star[1][5] = 2; //(5,2+2*j)=2
+  list_6spin_star[1][6] = 1; //(6,2+2*j)=1 ! flag
 
+  for (j = 0; j < num_pivot; j++) {
+    for (iW = 0; iW < 7; iW++) {
+      fprintf(fp, "%d ", list_6spin_star[j][iW]);
+    }
+    fprintf(fp, "\n");
+  }
 
-    list_6spin_star[(2 * j + 1)][0] = 4; //(0,2+2*j)=4 ! num of J
-    list_6spin_star[(2 * j + 1)][1] = 1; //(1,2+2*j)=1
-    list_6spin_star[(2 * j + 1)][2] = 1; //(2,2+2*j)=1
-    list_6spin_star[(2 * j + 1)][3] = 1; //(3,2+2*j)=1
-    list_6spin_star[(2 * j + 1)][4] = 2; //(4,2+2*j)=2
-    list_6spin_star[(2 * j + 1)][5] = 2; //(5,2+2*j)=2
-    list_6spin_star[(2 * j + 1)][6] = 1; //(6,2+2*j)=1 ! flag
+  list_6spin_pair = (int ***)malloc(sizeof(int**) * num_pivot);
+  for (j = 0; j < num_pivot; j++) {
+    list_6spin_pair[j] = (int **)malloc(sizeof(int*) * 7);
+    for (iW = 0; iW < 7; iW++) {
+      list_6spin_pair[j][iW] = (int *)malloc(sizeof(int) * list_6spin_star[j][0]);
+    }
+  }
 
-    list_6spin_pair[(2 * j + 1)][0][0] = 0; //(1,1,2+2*j)=0 
-    list_6spin_pair[(2 * j + 1)][1][0] = 1; //(2,1,2+2*j)=1
-    list_6spin_pair[(2 * j + 1)][2][0] = 2; //(3,1,2+2*j)=2
-    list_6spin_pair[(2 * j + 1)][3][0] = 3; //(4,1,2+2*j)=3
-    list_6spin_pair[(2 * j + 1)][4][0] = 4; //(5,1,2+2*j)=4
-    list_6spin_pair[(2 * j + 1)][5][0] = 5; //(6,1,2+2*j)=5
-    list_6spin_pair[(2 * j + 1)][6][0] = 1; //(7,1,2+2*j)=1 ! type of J
-    list_6spin_pair[(2 * j + 1)][0][1] = 1; //(1,2,2+2*j)=1 
-    list_6spin_pair[(2 * j + 1)][1][1] = 2; //(2,2,2+2*j)=2
-    list_6spin_pair[(2 * j + 1)][2][1] = 0; //(3,2,2+2*j)=0
-    list_6spin_pair[(2 * j + 1)][3][1] = 3; //(4,2,2+2*j)=3
-    list_6spin_pair[(2 * j + 1)][4][1] = 4; //(5,2,2+2*j)=4
-    list_6spin_pair[(2 * j + 1)][5][1] = 5; //(6,2,2+2*j)=5
-    list_6spin_pair[(2 * j + 1)][6][1] = 3; //(7,2,2+2*j)=3 ! type of J
-    list_6spin_pair[(2 * j + 1)][0][2] = 0; //(1,3,2+2*j)=0 
-    list_6spin_pair[(2 * j + 1)][1][2] = 4; //(2,3,2+2*j)=4
-    list_6spin_pair[(2 * j + 1)][2][2] = 1; //(3,3,2+2*j)=1
-    list_6spin_pair[(2 * j + 1)][3][2] = 2; //(4,3,2+2*j)=2
-    list_6spin_pair[(2 * j + 1)][4][2] = 3; //(5,3,2+2*j)=3
-    list_6spin_pair[(2 * j + 1)][5][2] = 5; //(6,3,2+2*j)=5
-    list_6spin_pair[(2 * j + 1)][6][2] = 2; //(7,3,2+2*j)=2 ! type of J
-    list_6spin_pair[(2 * j + 1)][0][3] = 2; //(1,4,2+2*j)=2 
-    list_6spin_pair[(2 * j + 1)][1][3] = 5; //(2,4,2+2*j)=5
-    list_6spin_pair[(2 * j + 1)][2][3] = 0; //(3,4,2+2*j)=0
-    list_6spin_pair[(2 * j + 1)][3][3] = 1; //(4,4,2+2*j)=1
-    list_6spin_pair[(2 * j + 1)][4][3] = 3; //(5,4,2+2*j)=3
-    list_6spin_pair[(2 * j + 1)][5][3] = 4; //(6,4,2+2*j)=4
-    list_6spin_pair[(2 * j + 1)][6][3] = 2; //(7,4,2+2*j)=2 ! type of J
-  }/* define list_6spin */
+  list_6spin_pair[0][0][0] = 0; //(1,1,1+2*j)=0 
+  list_6spin_pair[0][1][0] = 1; //(2,1,1+2*j)=1
+  list_6spin_pair[0][2][0] = 2; //(3,1,1+2*j)=2
+  list_6spin_pair[0][3][0] = 3; //(4,1,1+2*j)=3
+  list_6spin_pair[0][4][0] = 4; //(5,1,1+2*j)=4
+  list_6spin_pair[0][5][0] = 5; //(6,1,1+2*j)=5
+  list_6spin_pair[0][6][0] = 3; //(7,1,1+2*j)=3 ! type of J
+  list_6spin_pair[0][0][1] = 1; //(1,2,1+2*j)=1 
+  list_6spin_pair[0][1][1] = 2; //(2,2,1+2*j)=2
+  list_6spin_pair[0][2][1] = 0; //(3,2,1+2*j)=0
+  list_6spin_pair[0][3][1] = 3; //(4,2,1+2*j)=3
+  list_6spin_pair[0][4][1] = 4; //(5,2,1+2*j)=4
+  list_6spin_pair[0][5][1] = 5; //(6,2,1+2*j)=5
+  list_6spin_pair[0][6][1] = 1; //(7,2,1+2*j)=1 ! type of J
+  list_6spin_pair[0][0][2] = 2; //(1,3,1+2*j)=2 
+  list_6spin_pair[0][1][2] = 3; //(2,3,1+2*j)=3
+  list_6spin_pair[0][2][2] = 0; //(3,3,1+2*j)=0
+  list_6spin_pair[0][3][2] = 1; //(4,3,1+2*j)=1
+  list_6spin_pair[0][4][2] = 4; //(5,3,1+2*j)=4
+  list_6spin_pair[0][5][2] = 5; //(6,3,1+2*j)=5
+  list_6spin_pair[0][6][2] = 3; //(7,3,1+2*j)=3 ! type of J
+  list_6spin_pair[0][0][3] = 0; //(1,4,1+2*j)=0 
+  list_6spin_pair[0][1][3] = 4; //(2,4,1+2*j)=4
+  list_6spin_pair[0][2][3] = 1; //(3,4,1+2*j)=1
+  list_6spin_pair[0][3][3] = 2; //(4,4,1+2*j)=2
+  list_6spin_pair[0][4][3] = 3; //(5,4,1+2*j)=3
+  list_6spin_pair[0][5][3] = 5; //(6,4,1+2*j)=5
+  list_6spin_pair[0][6][3] = 1; //(7,4,1+2*j)=1 ! type of J
+  list_6spin_pair[0][0][4] = 1; //(1,5,1+2*j)=1 
+  list_6spin_pair[0][1][4] = 5; //(2,5,1+2*j)=5
+  list_6spin_pair[0][2][4] = 0; //(3,5,1+2*j)=0
+  list_6spin_pair[0][3][4] = 2; //(4,5,1+2*j)=2
+  list_6spin_pair[0][4][4] = 3; //(5,5,1+2*j)=3
+  list_6spin_pair[0][5][4] = 4; //(6,5,1+2*j)=4
+  list_6spin_pair[0][6][4] = 2; //(7,5,1+2*j)=2 ! type of J
 
+  list_6spin_pair[1][0][0] = 0; //(1,1,2+2*j)=0 
+  list_6spin_pair[1][1][0] = 1; //(2,1,2+2*j)=1
+  list_6spin_pair[1][2][0] = 2; //(3,1,2+2*j)=2
+  list_6spin_pair[1][3][0] = 3; //(4,1,2+2*j)=3
+  list_6spin_pair[1][4][0] = 4; //(5,1,2+2*j)=4
+  list_6spin_pair[1][5][0] = 5; //(6,1,2+2*j)=5
+  list_6spin_pair[1][6][0] = 1; //(7,1,2+2*j)=1 ! type of J
+  list_6spin_pair[1][0][1] = 1; //(1,2,2+2*j)=1 
+  list_6spin_pair[1][1][1] = 2; //(2,2,2+2*j)=2
+  list_6spin_pair[1][2][1] = 0; //(3,2,2+2*j)=0
+  list_6spin_pair[1][3][1] = 3; //(4,2,2+2*j)=3
+  list_6spin_pair[1][4][1] = 4; //(5,2,2+2*j)=4
+  list_6spin_pair[1][5][1] = 5; //(6,2,2+2*j)=5
+  list_6spin_pair[1][6][1] = 3; //(7,2,2+2*j)=3 ! type of J
+  list_6spin_pair[1][0][2] = 0; //(1,3,2+2*j)=0 
+  list_6spin_pair[1][1][2] = 4; //(2,3,2+2*j)=4
+  list_6spin_pair[1][2][2] = 1; //(3,3,2+2*j)=1
+  list_6spin_pair[1][3][2] = 2; //(4,3,2+2*j)=2
+  list_6spin_pair[1][4][2] = 3; //(5,3,2+2*j)=3
+  list_6spin_pair[1][5][2] = 5; //(6,3,2+2*j)=5
+  list_6spin_pair[1][6][2] = 2; //(7,3,2+2*j)=2 ! type of J
+  list_6spin_pair[1][0][3] = 2; //(1,4,2+2*j)=2 
+  list_6spin_pair[1][1][3] = 5; //(2,4,2+2*j)=5
+  list_6spin_pair[1][2][3] = 0; //(3,4,2+2*j)=0
+  list_6spin_pair[1][3][3] = 1; //(4,4,2+2*j)=1
+  list_6spin_pair[1][4][3] = 3; //(5,4,2+2*j)=3
+  list_6spin_pair[1][5][3] = 4; //(6,4,2+2*j)=4
+  list_6spin_pair[1][6][3] = 2; //(7,4,2+2*j)=2 ! type of J
+
+  list_6spin_pair = (int ***)malloc(sizeof(int**) * num_pivot);
+  for (j = 0; j < num_pivot; j++) {
+    for (iL = 0; iL < list_6spin_star[j][0]; iL++) {
+      for (iW = 0; iW < 7; iW++) {
+        fprintf(fp, "%d ", list_6spin_pair[j][iW][iL]);
+      }
+      fprintf(fp, "\n");
+    }
+  }
+  fclose(fp);
+
+  for (j = 0; j < num_pivot; j++) {
+    free(list_6spin_star[j]);
+  }
+  free(list_6spin_star);
+
+  for (j = 0; j < num_pivot; j++) {
+    for (iW = 0; iW < 7; iW++) {
+      free(list_6spin_pair[j][iW]);
+    }
+    free(list_6spin_pair[j]);
+  }
+  free(list_6spin_pair);
 
 }
 
