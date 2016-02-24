@@ -397,8 +397,25 @@ void Spin_HoneycombLattice_Boost(
   /*
    Topology
   */
-  i_malloc2(list_6spin_star, (int)(L*num_pivot), 7);
-  i_malloc3(list_6spin_pair, (int)(L*num_pivot), 7, 21);
+  ishift_nspin = 3;
+  list_6spin_star = (int **)malloc(sizeof(int*) * L*num_pivot);
+  list_6spin_pair = (int ***)malloc(sizeof(int**) * L*num_pivot);
+  for (j = 0; j < L*num_pivot; j++) {
+    list_6spin_star[j] = (int *)malloc(sizeof(int) * 7);
+    list_6spin_pair[j] = (int **)malloc(sizeof(int*) * 7);
+    for (iW = 0; iW < 7; iW++) {
+      list_6spin_pair[j][iW] = (int *)malloc(sizeof(int) * 21);
+    }
+  }
+  if (W / ishift_nspin != 0) {
+    fprintf(stderr, "\n ERROR! W / %d != 0 \n\n", ishift_nspin);
+    exitMPI(-1);
+  }
+  num_pivot = W / ishift_nspin;
+  if (num_pivot != 2) {
+    fprintf(stderr, "DEBUG: W != 6\n");
+    exitMPI(-1);
+  }
 
   for (j = 0; j < L; j++) {
 

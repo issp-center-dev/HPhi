@@ -90,3 +90,4 @@ static int S2;
 static int ***list_6spin_pair;
 static int **list_6spin_star;
 static int num_pivot;
+static int ishift_nspin;
