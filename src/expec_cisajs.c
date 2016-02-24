@@ -59,7 +59,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   long unsigned int isite1;
   long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
   long unsigned int tmp_off=0;
-  double complex dam_pr;
+  double complex dam_pr=0;
   long int i_max;
   int tmp_sgn, num1;
   long int ibit1, ibit;
@@ -237,12 +237,12 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	if(org_isite1==org_isite2){
 	  if(org_isite1 > X->Def.Nsite){
 	    is1_up = X->Def.Tpow[org_isite1 - 1];
-	    ibit1 = (((unsigned long int)myrank& is1_up)/is1_up)^(1-org_sigma1);
+	    ibit1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
 	    dam_pr=0;
 	    if(ibit1 !=0){
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
-  firstprivate(i_max, ibit1) private(j)
-	    for (j = 1; j <= i_max; j++) dam_pr += ibit1*conj(vec[j])*vec[j];
+  firstprivate(i_max) private(j)
+	    for (j = 1; j <= i_max; j++) dam_pr += conj(vec[j])*vec[j];
 	    }
 	  }// org_isite1 > X->Def.Nsite 
 	  else{
@@ -330,24 +330,25 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	      dam_pr += X_GC_child_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, vec, vec);
 	    }
 	    else{  // transverse magnetic field
-	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, vec, vec);	      
+	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, vec, vec);
 	    }
 	  }else{ 	
 	    isite1 = X->Def.Tpow[org_isite1-1];
+	    
 	    if(org_sigma1==org_sigma2){  
 	      // longitudinal magnetic field
-	      dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
 	      for(j=1;j<=i_max;j++){
-		dam_pr+=X_SpinGC_CisAis(j,X,isite1,org_sigma1)*conj(vec[j])*vec[j]; 
-	      } 
+		dam_pr += X_SpinGC_CisAis(j, X, isite1, org_sigma1)*conj(vec[j])*vec[j];
+	      }
 	    }else{
 	      // transverse magnetic field
-	      dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma2, X,tmp_off) shared(vec)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, tmp_off) firstprivate(i_max, isite1, org_sigma2, X) shared(vec)
 	      for(j=1;j<=i_max;j++){
-		tmp_sgn  =  X_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);   
-		dam_pr  +=  tmp_sgn*conj(vec[tmp_off+1])*vec[j]; 
+		tmp_sgn  =  X_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);
+		if(tmp_sgn !=0){
+		  dam_pr  +=  tmp_sgn*conj(vec[tmp_off+1])*vec[j];
+		}
 	      }
 	    }
 	  }
@@ -355,6 +356,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 	  // hopping is not allowed in localized spin system
 	  dam_pr=0.0;
 	}
+	
 	dam_pr = SumMPI_dc(dam_pr);
 	fprintf(fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
       }

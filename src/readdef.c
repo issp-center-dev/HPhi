@@ -673,8 +673,8 @@ int ReadDefFileIdxPara(
   int isigma1, isigma2, isigma3, isigma4;
   double dvalue_re, dvalue_im;
   int icnt_diagonal=0;
-  int eps_CheckImag0=-12;
-  eps_CheckImag0=pow(10.0, eps_CheckImag0);
+  int ieps_CheckImag0=-12;
+  eps_CheckImag0=pow(10.0, ieps_CheckImag0);
   
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
     strcpy(defname, cFileNameListFile[iKWidx]);
@@ -1036,13 +1036,12 @@ int ReadDefFileIdxPara(
 	fclose(fp);
 	exitMPI(-1);
       }
-      
+            
       if(CheckInterAllHermite(X)!=0){
 	fprintf(stderr, "%s", cErrNonHermiteInterAllForAll);
 	fclose(fp);
 	exitMPI(-1);
-      }
-      
+      }      
       
       break;
       
@@ -1244,6 +1243,7 @@ int CheckQuadSite(
 int CheckTransferHermite
 (
  struct DefineList *X
+
  )
 {
   int i,j;

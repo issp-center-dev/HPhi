@@ -242,7 +242,7 @@ void StdFace_PrintVal_d(
   double *val /**< [inout] Valiable to be set*/, 
   double val0 /**< [in] The default value*/)
 {
-  if (*val == 9999.9) {
+  if (*val > 9999.0) {
     *val = val0;
     fprintf(stdoutMPI, "  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
@@ -277,7 +277,7 @@ void StdFace_NotUsed_d(
   char* valname /**< [in] Name of the valiable*/,
   double val /**< [in]*/)
 {
-  if (val != 9999.9) {
+  if (val < 9999.0) {
     fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stderr, "            Please COMMENT-OUT this line \n");
     fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");

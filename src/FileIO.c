@@ -41,3 +41,29 @@ int childfopenMPI(const char* _cPathChild, const char* _cmode, FILE **_fp){
     
   return 0;
 }
+
+/** 
+ * @brief 
+ * 
+ * @param[in] _cPathChild 
+ * @param[in] _cmode 
+ * @param[in] _fp 
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ * @return 
+ */
+int childfopenALL(const char* _cPathChild, const char* _cmode, FILE **_fp){
+  char ctmpPath[D_FileNameMax]="";
+  strcat(ctmpPath, cParentOutputFolder);
+  strcat(ctmpPath, _cPathChild);
+  *_fp = fopen(ctmpPath, _cmode);
+  
+  if(*_fp == NULL){
+    fprintf(stdout, cErrFIOpen, ctmpPath);
+    return -1;
+  }
+    
+  return 0;
+}

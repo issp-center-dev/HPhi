@@ -15,7 +15,7 @@ In this section, details of input files for expert mode are explained. Input fil
 The kinds of input files are determined by keywords. 
 ~\\{\bf CalcMod}: Set the parameters for calculation modes.
 ~\\{\bf ModPara}: Set the parameters for basic parameters such as site number, electron number, Lanczos step {\it etc}.
-~\\{\bf LocSpin}: Set the location of local spin (only used in Kondo model)。
+~\\{\bf LocSpin}: Set the location of local spin (only used in Kondo model). 
 \item[(3)~Hamiltonian:] 
 Hamiltonian for $\HPhi$ is denoted by the format of interactions for electron system. 
 The kinds of interactions are determined by the following keywords. 
@@ -73,7 +73,7 @@ TwoBodyG	zcisajscktaltdc.def
 \item Keywords for input files are shown in Table\ref{Table:Defs}.
 \item Essential keywords are ``CalcMod", ``ModPara" and ``LocSpin".
 \item Keywords can be set in random order.
-\item If keywords or filenames are incorrect, the program is terminated。
+\item If keywords or filenames are incorrect, the program is terminated. 
 \item When the head of line is ``$\#$", the line is skipped.
 \end{itemize}
 
@@ -140,8 +140,8 @@ CalcEigenVec 0
 \begin{itemize}
 \item After setting keywords at [string 01], a half-width blank is needed for setting a parameter.
 \item Keywords can be set in random order.
-\item If keywords or filenames are incorrect, the program is terminated。
-\item The following keywords, ``CalcType" and ``CalcModel" are essential。
+\item If keywords or filenames are incorrect, the program is terminated. 
+\item The following keywords, ``CalcType" and ``CalcModel" are essential. 
 \item When the head of line is ``$\#$", the line is skipped.
 \end{itemize}
 ~\subsubsection{Keywords and parameters}
@@ -265,7 +265,7 @@ ExpecInterval  20
 
  {\bf Type :} string-type (blank parameter not allowed)
 
-{\bf Description :} A header for output files. For example, the output filename for one body Green's function becomes ``{\bf xxx\_Lanczos\_cisajs.dat}" (xxx are characters set by \verb|CDataFileHead|)。
+{\bf Description :} A header for output files. For example, the output filename for one body Green's function becomes ``{\bf xxx\_Lanczos\_cisajs.dat}" (xxx are characters set by \verb|CDataFileHead|). 
    
  \item  \verb|Nsite|
 
@@ -358,7 +358,7 @@ See \ref{Ch:algorithm} for details of setting an initial vector.
      
 \item \verb|LargeValue|
 
-{\bf Type :} int-type
+{\bf Type :} double-type
 
 {\bf Description :} (Only use for TPQ method) An integer giving $l$ of $l-\hat{H}/N_{s}$ used in TPQ method.
  
@@ -489,7 +489,7 @@ NTransfer      24
     6     1     4     1   1.000000  0.000000
     6     0     8     0   1.000000  0.000000
     8     0     6     0   1.000000  0.000000
-…
+...
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -589,7 +589,7 @@ NInterAll      36
 4    0    4    0    5    1    5    1  -0.25  0.0
 4    1    4    1    5    0    5    0  -0.25  0.0
 4    1    4    1    5    1    5    1   0.25  0.0
-…
+...
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -657,7 +657,7 @@ NInterAll      36
 
 \newpage
 \subsection{CoulombIntra file}
-This file determines values of on-site interactions $U_i$ {(for $S=1/2$ system. MPI is unsupported in ver. 0.2)},
+This file determines values of on-site interactions $U_i$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i}U_i n_ {i \uparrow}n_{i \downarrow}.
 \end{equation}
@@ -728,7 +728,7 @@ NCoulombIntra 6
 
 \newpage
 \subsection{CoulombInter file}
-This file determines values of off-site interactions $V_{ij}$ {(for $S=1/2$ system. MPI is unsupported in ver. 0.2 )},
+This file determines values of off-site interactions $V_{ij}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i,j}V_{ij} n_ {i}n_{j}.
 \end{equation}
@@ -799,7 +799,7 @@ NCoulombInter 6
 
 \newpage
 \subsection{Hund file}
-This file determines values of Hund couplings $J_{ij}^{\rm Hund}$ {(for $S=1/2$ system. MPI is unsupported in ver. 0.2)},
+This file determines values of Hund couplings $J_{ij}^{\rm Hund}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=-\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}).
 \end{equation}
@@ -870,7 +870,7 @@ NHund 6
 
 \newpage
 \subsection{PairHop file}
-This file determines values of PairHop couplings $J_{ij}^{\rm Pair}$ {(for $S=1/2$ system. MPI is unsupported in ver. 0.2)},
+This file determines values of PairHop couplings $J_{ij}^{\rm Pair}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm Pair} c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}.
 \end{equation}
@@ -880,16 +880,22 @@ An example of file format is shown as follows.
 \begin{screen}
 \begin{verbatim}
 ====================== 
-NPairhop 6  
+NPairhop 12  
 ====================== 
 ========Pairhop ====== 
 ====================== 
    0     1  0.50000
+   1     0  0.50000  
    1     2  0.50000
+   2     1  0.50000
    2     3  0.50000
+   3     2  0.50000
    3     4  0.50000
+   4     3  0.50000
    4     5  0.50000
+   5     4  0.50000
    5     0  0.50000
+   0     5  0.50000
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -941,7 +947,7 @@ NPairhop 6
 
 \newpage
 \subsection{Exchange file}
-This file determines values of Exchange couplings $J_{ij}^{\rm Ex}$ {(for $S=1/2$ system. MPI is unsupported in ver. 0.2)}.
+This file determines values of Exchange couplings $J_{ij}^{\rm Ex}$ {(for $S=1/2$ system)}.
 For fermion electronic system, exchange terms are given as
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}+c_ {i \downarrow}^{\dag}c_{j\downarrow}c_{j \uparrow}^{\dag}c_{i  \uparrow}).
@@ -1023,7 +1029,7 @@ NExchange 6
 
 \newpage
 \subsection{Ising file}
-This file determines values of Ising interactions $J_{ij}^{z}$ {(for $S=1/2$ system. MPI is unsupported in ver. 0.2)}.
+This file determines values of Ising interactions $J_{ij}^{z}$ {(for $S=1/2$ system)}.
 For fermion electronic system, Ising terms are given as
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} ).
@@ -1101,7 +1107,7 @@ NIsing 6
 \newpage
 \subsection{PairLift file}
 \label{Subsec:pairlift}
-This file determines values of PairLift couplings $J_{ij}^{\rm PairLift}$ {(for $S=1/2$ system. MPI is unsupported in ver. 0.2)},
+This file determines values of PairLift couplings $J_{ij}^{\rm PairLift}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dag}c_{i\downarrow}c_{j \uparrow}^{\dag}c_{j \downarrow}+c_ {i \downarrow}^{\dag}c_{i\uparrow}c_{j \downarrow}^{\dag}c_{j \uparrow}).
 \end{equation}
@@ -1298,7 +1304,7 @@ NCisAjsCktAltDC        576
     0     0     0     0    11     0    11     0
     0     0     0     0    11     1    11     1
     0     1     0     1     0     0     0     0
-    …
+    ...
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -1373,7 +1379,7 @@ i=2 spin=0 isite1=3 tmp_V=0.000000
 i=3 spin=0 isite1=4 tmp_V=0.000000 
 i=4 spin=0 isite1=5 tmp_V=0.000000 
 i=5 spin=0 isite1=6 tmp_V=0.000000 
-…
+...
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -1430,7 +1436,7 @@ i=2 isite1=1 A_spin=1 isite2=2 B_spin=0 tmp_V=-0.500000
 i=3 isite1=1 A_spin=1 isite2=2 B_spin=1 tmp_V=0.500000 
 i=4 isite1=2 A_spin=0 isite2=3 B_spin=0 tmp_V=0.500000 
 i=5 isite1=2 A_spin=0 isite2=3 B_spin=1 tmp_V=-0.500000 
-…
+...
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -1554,7 +1560,7 @@ i=5 isite1=6 isite2=1 tmp_V=0.250000
    
     {\bf Type :} int-type
 
-   {\bf Description :} A counted number of inputting terms。
+   {\bf Description :} A counted number of inputting terms. 
       
    \item  $[$int02$]$, $[$int03$]$
    
@@ -1708,7 +1714,7 @@ An example of file format for Lanczos method is shown as follows.
 diagonal calculation finishes: Wed Sep 16 22:58:49 2015
 Lanczos Eigen Value start: Wed Sep 16 22:58:49 2015
 1 th Lanczos step: Wed Sep 16 22:58:49 2015
-  …
+  ...
 122 th Lanczos step: Wed Sep 16 22:58:49 2015
 Lanczos Eigenvalue finishes: Wed Sep 16 22:58:49 2015
 Lanczos Eigenvector finishes: Wed Sep 16 22:58:49 2015
@@ -1761,14 +1767,14 @@ An example of file format is shown as follows.
 allocate succeed !!! 
 b[4341]=1.000000 bnorm== 1.000000 
 i_itr=0 itr=5 0.0411202543 0.0000100000 
-…
+...
 i_itr=0 itr=155 0.0000000058 0.0000100000 
 CG OK:   t_itr=155 
 i_itr=0 itr=155 time=0.000000  
 fabs(fabs(xb)-1.0)=0.9955114473313577
 b[4341]=0.004489 bnorm== 1.000000 
 i_itr=1 itr=5 13.0033983157 0.0000100000 
-…
+...
 CG OK:   t_itr=275 
 i_itr=1 itr=120 time=0.000000  
 fabs(fabs(xb)-1.0)=0.0000000000001295
@@ -1848,7 +1854,7 @@ An example of file format for Lanczos method is shown as follows.\\
 stp=4 -4.7732163164 -1.7790936582 1.2246691944 4.4823068739
 stp=6 -5.8159638812 -3.6807425834 -1.3738652472 0.9326262962
 stp=8 -6.2772935672 -4.8650501184 -3.1096996066 -1.1940653342
-…
+...
 stp=120 -7.1043675920 -7.0817672578 -7.0646589929 -7.0008766356
 stp=122 -7.1043675920 -7.0817672578 -7.0646589929 -7.0008766356
 \end{verbatim}
@@ -1894,7 +1900,7 @@ An example of file format is shown as follows.\\
  # inv_temp, global_norm, global_1st_norm, step_i 
 0.017471 19.046586 11.288975 1
 0.034863 19.089752 11.288975 2
-…
+...
 31.999572 20.802362 11.288975 1997
 32.015596 20.802362 11.288975 1998
 32.031620 20.802362 11.288975 1999
@@ -1957,7 +1963,7 @@ An example of file format is shown as follows.\\
 # inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i
 0.017471  5.526334 45.390269 1.464589 6.000000 1
 0.034863  5.266718 42.655559 1.434679 6.000000 2
-…
+...
 31.999572  -4.814170 23.176231 0.590568 6.000000 1997
 32.015596  -4.814170 23.176231 0.590568 6.000000 1998
 32.031620  -4.814170 23.176231 0.590568 6.000000 1999
@@ -1995,7 +2001,7 @@ An example of file format is shown as follows.\\
 
  {\bf Type :} double-type 
 
-{\bf Description :} The expected value of square of Hamiltonian $\langle H^2 \rangle$。
+{\bf Description :} The expected value of square of Hamiltonian $\langle H^2 \rangle$. 
 
   \item $[$double03$]$
 
@@ -2030,7 +2036,7 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
  0 -4.8141698096 
  1 -3.7968502453 
  2 -3.2462822372 
- …
+ ...
  397 13.9898305290 
  398 14.4896221034 
  399 14.8525199079 
@@ -2071,7 +2077,7 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
  <H>         <N>        <Sz>       <S2>       <D> 
   -4.814170   0.000000   0.000000  -0.000000   0.590568
   -3.796850   0.000000   0.000000   1.333333   0.423804
- …
+ ...
  14.489622   0.000000   0.000000   0.000000   2.550240
  14.852520   0.000000   0.000000   0.000000   2.329157
 \end{verbatim}
@@ -2097,7 +2103,7 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
   
  {\bf Type :} double-type
 
-{\bf Description :} The energy $\langle H\rangle$。
+{\bf Description :} The energy $\langle H\rangle$. 
  
   \item $[$double02$]$
 
@@ -2109,13 +2115,13 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
 
  {\bf Type :} double-type 
 
-{\bf Description :}  The expected value of $S_z$, $\langle S_z\rangle$。
+{\bf Description :}  The expected value of $S_z$, $\langle S_z\rangle$. 
 
   \item $[$double04$]$
 
  {\bf Type :} double-type 
 
-{\bf Description :}  The expected value of ${\bm S^2}$, $\langle {\bm S^2}\rangle$。
+{\bf Description :}  The expected value of ${\bm S^2}$, $\langle {\bm S^2}\rangle$. 
 
   \item $[$double05$]$
 
@@ -2145,7 +2151,7 @@ An example of file format is shown as follows.
     2    1    2    1 0.4452776740 0.0000000000
     3    0    3    0 0.5000000000 0.0000000000
     3    1    3    1 0.5000000000 0.0000000000
-    …
+    ...
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -2207,7 +2213,7 @@ An example of file format is shown as follows.
     0    0    0    0    2    1    2    1 0.2009271524 0.0000000000
     0    0    0    0    3    0    3    0 0.2512810778 0.0000000000
     0    0    0    0    3    1    3    1 0.1939965962 0.0000000000
-    …
+    ...
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -2215,37 +2221,18 @@ An example of file format is shown as follows.
 \newpage
 \subsection{eigenvec.dat}
 \label{Subsec:eigenvec}
-When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are given by this outputted file. An example of file format is shown as follows.
-
-\begin{minipage}{15cm}
-\begin{screen}
-\begin{verbatim}
-4900 
-255 0.0000896233 0.0000896690
-447 -0.0000000000 -0.0000000000
-495 -0.0002941096 -0.0002942596
-507 -0.0000562403 -0.0000562689
-510 -0.0000000000 -0.0000000000
-639 -0.0000000000 0.0000000000
-735 0.0002941096 0.0002942596
-759 0.0000562403 0.0000562689
-765 -0.0000000000 0.0000000000
-831 -0.0017552852 -0.0017561802
- …
-\end{verbatim}
-\end{screen}
-\end{minipage}
+When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are given by this outputted file. A file format is a binary type. 
 
 \subsubsection{File name}
 \begin{itemize}
-   \item{\#\#\_eigenvec\_{\&\&}.dat}
+   \item{\#\#\_eigenvec\_{\&\&}\_rank\_{\$\$}.dat}
 \end{itemize}
-  \#\# indicates [string02] in ModPara file、\&\& is a number of eigenvalues, respectively.
+  \#\# indicates [string02] in ModPara file, \&\& is a number of eigenvalues, \$\$ is a number of rank respectively.
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  Line 1：$[$int01$]$
-   \item  Lines 2 -: $[$int02$]$~~$[$double01$]$~~$[$double02$]$
+   \item  Line 1: $[$int01$]$
+   \item  Lines 2 -: $[$double01$]$~~$[$double02$]$
   \end{itemize}
   
 \subsubsection{Parameters}
@@ -2256,16 +2243,10 @@ When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos me
  {\bf Type :} int-type
 
 {\bf Description :}  A total number of targets of Hilbert spaces.
- 
-  \item  $[$int02$]$
-
- {\bf Type :} int-type
-
-{\bf Description :} An integer for a target of Hilbert space.
 
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} double型 
+ {\bf Type :} double 
 
 {\bf Description :} A value of eigenvectors.\\
 $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\

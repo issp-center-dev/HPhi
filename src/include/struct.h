@@ -174,7 +174,7 @@ struct LargeList{
   long int iv;
   long int  i_max;
   double complex tmp_trans;
-  double       tmp_J;
+  double  complex  tmp_J;
   
   long unsigned int is1_up;
   long unsigned int is1_down;
@@ -200,7 +200,7 @@ struct LargeList{
   long unsigned int     ihfbit;
   long unsigned int isA_spin;
   long unsigned int  isB_spin;
-  double       tmp_V;
+  double complex      tmp_V;
 };
 
 struct PhysList{
