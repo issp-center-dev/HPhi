@@ -65,6 +65,8 @@ We execute
 \verb|$ |\textit{Path}\verb|/HPhi -s StdFace.def|
 \\
 and obtain following standard outputs {(a compilation mode is MPI parallel/ Hybrid parallel)}:
+
+\small
 \begin{verbatim}
 #####  Parallelization Info.  #####
 
@@ -196,17 +198,19 @@ and obtain following standard outputs {(a compilation mode is MPI parallel/ Hybr
 
   initial_mode=0 normal: iv = 6437 i_max=12870 k_exct =1 
 
-  LanczosStep  E[1] E[2] E[3] E[4] 
+  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite
   stp = 2 0.7192235936 2.7807764064 xxxxxxxxxx xxxxxxxxx 
-  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 
-  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 
-  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 
+  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 0.2140174366 
+  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 0.2277205490 
+  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 0.2325450330 
 \end{verbatim}
-(中略)
+\normalsize
+( snip )
+\small
 \begin{verbatim}
-  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 
-  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 
-  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 
+  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 0.2499999989 
+  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 0.2499999996 
+  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 0.2499999999 
 
 ######  End  : Calculate Lanczos EigenValue.  ######
 
@@ -230,16 +234,32 @@ and obtain following standard outputs {(a compilation mode is MPI parallel/ Hybr
   End  : Calculate one body Green functions.
 
   Start: Calculate two bodies Green functions.
-  End  : Calculate two bodies Green functions.\end{verbatim}
+  End  : Calculate two bodies Green functions.
+\end{verbatim}
+\normalsize
 
 In the beginning of this run,
 files describing the detail of considered Hamiltonian 
-(\verb|zlocspin.def|、\verb|zTrans.def|、\verb|zInterAll.def|、
-\verb|namelist.def|、\verb|calcmod.def|、\verb|modpara.def|)
+(\verb|zlocspin.def|, \verb|zTrans.def|, \verb|zInterAll.def|, 
+\verb|namelist.def|, \verb|calcmod.def|, \verb|modpara.def|)
 and files specifying elements of correlation functions
 that will be calculated
-(\verb|greenone.def|、\verb|greentwo.def|)
+(\verb|greenone.def|, \verb|greentwo.def|)
 are generated.
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+In the standard outputs at each even step, 
+the quantity of \verb|E_Max / Nsite| column indicates 
+the maximum energy per sites
+(In this example, it converges to \verb|0.2499999999=0.25|).
+In the TPQ calculation, you can set \verb|Largevalue| to an integer 
+larger than \verb|E_Max / Nsite|.
+
+\end{screen}
 
 \subsubsection{Outputs for calculation results}
 \begin{description}
