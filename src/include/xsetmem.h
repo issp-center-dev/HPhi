@@ -24,7 +24,8 @@ void setmem_HEAD
 
 void setmem_def
 (
- struct BindStruct *X
+ struct BindStruct *X,
+ struct BoostList *xBoost
 );
 
 int setmem_large

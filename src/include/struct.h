@@ -248,6 +248,16 @@ struct TimeKeepStruct{
   time_t tend;
 };
 
+//For Boost
+struct BoostList{
+  int flgBoost;
+  long unsigned int R0, W0, num_pivot, ishift_nspin;
+  int NumarrayJ;
+  double complex ***arrayJ;
+  double complex vecB[3];
+  int  **list_6spin_star;
+  int ***list_6spin_pair;
+};
 
 /*global variables---------------------------------------------*/
 struct EDMainCalStruct X;
