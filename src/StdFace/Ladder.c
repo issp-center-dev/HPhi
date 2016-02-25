@@ -50,6 +50,7 @@ void FermionHubbard_Ladder(
   StdFace_PrintVal_d("t1'", &t1p, 1.0);
   StdFace_PrintVal_d("t0", &t0, 1.0);
   StdFace_PrintVal_d("t2", &t2, 1.0);
+  StdFace_PrintVal_d("t2", &t2p, 1.0);
   StdFace_PrintVal_d("V0", &V0, 0.0);
   StdFace_PrintVal_d("V1", &V1, 0.0);
   StdFace_PrintVal_d("V1'", &V1p, 0.0);
@@ -104,8 +105,8 @@ void FermionHubbard_Ladder(
           StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
 
           jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
-          StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
-          StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
+          StdFace_trans(&ktrans, t2p, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t2p, jsite, ispin, isite, ispin);
         }
 
       }
@@ -142,7 +143,7 @@ void FermionHubbard_Ladder(
         StdFace_Coulomb(&kintr, V2, isite, jsite);
 
         jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
-        StdFace_Coulomb(&kintr, V2, isite, jsite);
+        StdFace_Coulomb(&kintr, V2p, isite, jsite);
       }
     }
   }
@@ -152,16 +153,18 @@ void FermionHubbard_Ladder(
   if (lGC == 0){
     LargeValue0 =  fabs(mu) * (double)nelec / (double)(L * W)
       + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p) 
-      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 2.0 * fabs(t2) + 2.0 * 2.0 * fabs(t2p)
       + fabs(U)
-      + 4.0 * fabs(V1) + 4.0 * fabs(V1p) + 4.0 * fabs(V0) + 2.0 * 4.0 * fabs(V2);
+      + 4.0 * fabs(V1) + 4.0 * fabs(V1p) + 4.0 * fabs(V0)
+      + 2.0 * 2.0 * fabs(V2) + 2.0 * 2.0 * fabs(V2p);
   }
   else{
     LargeValue0 = fabs(mu) * 2.0 
       + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p)
-      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 2.0 * fabs(t2) + 2.0 * 2.0 * fabs(t2p)
       + fabs(U) 
-      + 4.0 * fabs(V1) + 4.0 * fabs(V1p) + 4.0 * fabs(V0) + 2.0 * 4.0 * fabs(V2);
+      + 4.0 * fabs(V1) + 4.0 * fabs(V1p) + 4.0 * fabs(V0)
+      + 2.0 * 2.0 * fabs(V2) + 2.0 * 2.0 * fabs(V2p);
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
@@ -196,7 +199,7 @@ void Spin_Ladder(
   StdFace_PrintVal_d("J1'", &J1p, 1.0);
   StdFace_PrintVal_d("J0", &J0, 1.0);
   StdFace_PrintVal_d("J2", &J2, 1.0);
-  StdFace_PrintVal_d("J2'", &J2p, J2);
+  StdFace_PrintVal_d("J2'", &J2p, 1.0);
   /**/
   StdFace_NotUsed_d("J", J);
   StdFace_NotUsed_d("J'", Jp);
@@ -279,11 +282,11 @@ void Spin_Ladder(
   S = (double)S2 * 0.5;
   if (lGC == 0){
     LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
-    + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + 2.0*S*S*fabs(J2);
+    + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + S*S*fabs(J2) + S*S*fabs(J2p);
   }
   else{
     LargeValue0 = S * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
-      + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + 2.0*S*S*fabs(J2);
+      + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + S*S*fabs(J2) + S*S*fabs(J2p);
    }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
 }
@@ -317,6 +320,7 @@ void KondoLattice_Ladder(
   StdFace_PrintVal_d("t1", &t1, 1.0);
   StdFace_PrintVal_d("t1'", &t1p, 1.0);
   StdFace_PrintVal_d("t2", &t2, 1.0);
+  StdFace_PrintVal_d("t2'", &t2p, 1.0);
   StdFace_PrintVal_d("J", &J, 0.0);
   /**/
   StdFace_NotUsed_d("U", U);
@@ -373,8 +377,8 @@ void KondoLattice_Ladder(
           StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
 
           jsite = L * W + ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
-          StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
-          StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
+          StdFace_trans(&ktrans, t2p, isite, ispin, jsite, ispin);
+          StdFace_trans(&ktrans, t2p, jsite, ispin, isite, ispin);
         }
 
       }
@@ -407,13 +411,13 @@ void KondoLattice_Ladder(
   if (lGC == 0){
     LargeValue0 = fabs(mu) * (double)nelec / (double)(L * W)
       + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p)
-      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 2.0 * fabs(t2) + 2.0 * 2.0 * fabs(t2p)
       + 0.5 * S * fabs(J);
   }
   else{
     LargeValue0 = fabs(mu) * 2.0 
       + 2.0 * 2.0 * fabs(t1) + 2.0 * 2.0 * fabs(t1p)
-      + 2.0 * 2.0 * fabs(t0) + 2.0 * 4.0 * fabs(t2)
+      + 2.0 * 2.0 * fabs(t0) + 2.0 * 2.0 * fabs(t2) + 2.0 * 2.0 * fabs(t2p)
       + 0.5 * S * fabs(J);
   }
   StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);

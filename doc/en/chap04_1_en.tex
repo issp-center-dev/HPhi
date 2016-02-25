@@ -102,15 +102,16 @@ respectively.
 \item \verb|lattice|
 
 {\bf Type :} String (Choose from \verb|"Chain Lattice"|, \verb|"Square Lattice"|, 
-\verb|"Triangular Lattice"|, \verb|Honeycomb Lattice|)
+\verb|"Triangular Lattice"|, \verb|Honeycomb Lattice|, \verb|Ladder|)
 
 {\bf Description :} The lattice shape is specified with this parameter;
 above words denote
 the one dimensional chain lattice (Fig. \ref{fig_chap04_1_lattice}(a)), 
 the two dimensional square lattice (Fig. \ref{fig_chap04_1_lattice}(b)),
 the two dimensional triangular lattice (Fig. \ref{fig_chap04_1_lattice}(c)),
-and
 the two dimensional anisotropic honeycomb lattice (Fig. \ref{fig_chap04_1_honeycomb}),
+and
+the ladder lattice (Fig. \ref{fig_ladder}),
 respectively.
 
 \begin{figure}[!htbp]
@@ -139,6 +140,15 @@ respectively.
       Those between second nearest neighbor sites are not supported.
     }
     \label{fig_chap04_1_honeycomb}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \begin{center}
+    \includegraphics[width=10cm]{../figs/ladder.eps}
+    \caption{Schematic illustration of the ladder lattice.
+    }
+    \label{fig_ladder}
   \end{center}
 \end{figure}
 
@@ -226,6 +236,15 @@ in the anisotropic honeycomb lattice
 (See Fig. \ref{fig_chap04_1_honeycomb})
 is specified with this parameter.
 
+\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
+
+{\bf Type :} Real (\verb|1.0| as defaults)
+
+{\bf Description :} Hopping integrals
+in the ladder lattice 
+(See Fig. \ref{fig_ladder})
+is specified with this parameter.
+
 \item \verb|U|
 
 {\bf Type :} Real (\verb|0.0| as a default)
@@ -246,6 +265,14 @@ and the second nearest neighbor offsite Coulomb integrals $V'$
 
 {\bf Description :} Nearest neighbor offsite Coulomb integrals 
 on the anisotropic honeycomb lattice
+(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
+
+\item \verb|V0|, \verb|V1|, \verb|V1'|, \verb|V2|, \verb|V2'|
+
+{\bf Type :} Real (\verb|0.0| as defaults)
+
+{\bf Description :} Offsite Coulomb integrals 
+on the ladder lattice
 (Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
 
 \end{itemize}
@@ -316,6 +343,13 @@ They are set as
 in the anisotropic honeycomb lattice
 (See Fig. \ref{fig_chap04_1_honeycomb}) are specified with these parameter.
 
+\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|
+
+{\bf Type :} Real (\verb|1.0| as defaluts.)
+
+{\bf Description :} Spin-coupling constants in the ladder lattice
+(See Fig. \ref{fig_ladder}) are specified with these parameter.
+
 \end{itemize}
 
 \subsection{Parameters for the Kondo model}
@@ -341,6 +375,15 @@ is specified with this parameter.
 {\bf Description :} The nearest neighbor hopping 
 in the anisotropic honeycomb lattice 
 (See Fig. \ref{fig_chap04_1_honeycomb})
+is specified with this parameter.
+
+\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
+
+{\bf Type :} Real (\verb|1.0| as defaults)
+
+{\bf Description :} Hopping integrals
+in the ladder lattice 
+(See Fig. \ref{fig_ladder})
 is specified with this parameter.
 
 \item \verb|J|

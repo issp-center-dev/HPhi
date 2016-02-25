@@ -235,54 +235,52 @@ if(flagBoost!=0){for(j=1;j<=i_max;j++){list_Diagonal[j]=0.0;}}
       }
       
       //Pair hopping
-      for (i = 0; i < X->Def.NPairHopping; i += 2) {
-        if (X->Def.PairHopping[i][0] + 1 > X->Def.Nsite &&
-          X->Def.PairHopping[i][1] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if (X->Def.PairHopping[i][1] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if (X->Def.PairHopping[i][0] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
+      for (i = 0; i < X->Def.NPairHopping; i +=2) {
+	sigma1=0;
+	sigma2=1;
+	dam_pr=0.0;
+        if (X->Def.PairHopping[i][0] + 1 > X->Def.Nsite ||
+	    X->Def.PairHopping[i][1] + 1 > X->Def.Nsite) {
+	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI
+	    (
+	     X->Def.PairHopping[i][0], sigma1,
+	     X->Def.PairHopping[i][1], sigma1,
+	     X->Def.PairHopping[i][0], sigma2,
+	     X->Def.PairHopping[i][1], sigma2,
+	     X->Def.ParaPairHopping[i], X, tmp_v0, tmp_v1
+	     );
         }
         else {
           for (ihermite = 0; ihermite<2; ihermite++) {
             idx = i + ihermite;
-            child_pairhopp_GetInfo(idx, X);
-            dam_pr = GC_child_pairhopp(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
-          }
-        }
+	    child_pairhopp_GetInfo(idx, X);
+	    dam_pr += GC_child_pairhopp(tmp_v0, tmp_v1, X);
+	  }
+	}
+	X->Large.prdct += dam_pr;
       }/*for (i = 0; i < X->Def.NPairHopping; i += 2)*/
       
       //Exchange
-      for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
-        if(X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
+      for (i = 0; i < X->Def.NExchangeCoupling; i++) {
+	sigma1=0; sigma2=1;
+	dam_pr=0.0;
+        if(X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite ||
           X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
-          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if(X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
-          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
+	  dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI
+	    (
+	     X->Def.ExchangeCoupling[i][0], sigma1,
+	     X->Def.ExchangeCoupling[i][1], sigma1,
+	     X->Def.ExchangeCoupling[i][1], sigma2,
+	     X->Def.ExchangeCoupling[i][0], sigma2,
+	     X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1
+	     );        
+        }        
         else {
-          for (ihermite = 0; ihermite<2; ihermite++) {
-            idx = i + ihermite;
-            child_exchange_GetInfo(idx, X);
-            dam_pr = GC_child_exchange(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
-          }
+	  child_exchange_GetInfo(i, X);
+	  dam_pr = GC_child_exchange(tmp_v0, tmp_v1, X);
         }
-      }/*for (i = 0; i < X->Def.NExchangeCoupling; i+=2)*/
+	X->Large.prdct += dam_pr;
+      }/*for (i = 0; i < X->Def.NExchangeCoupling; i++)*/
       break;
       
   case KondoGC:
@@ -393,55 +391,58 @@ if(flagBoost!=0){for(j=1;j<=i_max;j++){list_Diagonal[j]=0.0;}}
 	}
 	X->Large.prdct += dam_pr;
       }
-	//Pair hopping
-      for (i = 0; i < X->Def.NPairHopping; i += 2) {
-        if (X->Def.PairHopping[i][0] + 1 > X->Def.Nsite &&
-          X->Def.PairHopping[i][1] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if(X->Def.PairHopping[i][1] + 1 > X->Def.Nsite){
-          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if(X->Def.PairHopping[i][0] + 1 > X->Def.Nsite){
-          fprintf(stderr, "In mltply Pairhop\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
+      
+      //Pair hopping
+      for (i = 0; i < X->Def.NPairHopping; i +=2) {
+	sigma1=0;
+	sigma2=1;
+	dam_pr = 0.0;
+
+        if (
+	    X->Def.PairHopping[i][0] + 1 > X->Def.Nsite ||
+	    X->Def.PairHopping[i][1] + 1 > X->Def.Nsite
+	    )
+	  {
+	    dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI
+	    (
+	     X->Def.PairHopping[i][0], sigma1,
+	     X->Def.PairHopping[i][1], sigma1,
+	     X->Def.PairHopping[i][0], sigma2,
+	     X->Def.PairHopping[i][1], sigma2,
+	     X->Def.ParaPairHopping[i], X, tmp_v0, tmp_v1
+	     );
+	  }
         else {
           for (ihermite = 0; ihermite<2; ihermite++) {
             idx = i + ihermite;
             child_pairhopp_GetInfo(idx, X);
-            dam_pr = child_pairhopp(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
+            dam_pr += child_pairhopp(tmp_v0, tmp_v1, X);            
           }/*for (ihermite = 0; ihermite<2; ihermite++)*/
         }
+	X->Large.prdct += dam_pr;
       }/*for (i = 0; i < X->Def.NPairHopping; i += 2)*/
 
 	//Exchange
-      for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
-        if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
+      for (i = 0; i < X->Def.NExchangeCoupling; i ++) {
+	sigma1=0; sigma2=1;
+	dam_pr=0.0;
+        if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite ||
           X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
-        }
-        else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-          fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-          exitMPI(-1);
+	  dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI
+	    (
+	     X->Def.ExchangeCoupling[i][0], sigma1,
+	     X->Def.ExchangeCoupling[i][1], sigma1,
+	     X->Def.ExchangeCoupling[i][1], sigma2,
+	     X->Def.ExchangeCoupling[i][0], sigma2,
+	     X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1
+	     );        
         }
         else {
-          for (ihermite = 0; ihermite<2; ihermite++) {
-            idx = i + ihermite;
-            child_exchange_GetInfo(idx, X);
-            dam_pr = child_exchange(tmp_v0, tmp_v1, X);
-            X->Large.prdct += dam_pr;
-          }/*for (ihermite = 0; ihermite<2; ihermite++)*/
+	  child_exchange_GetInfo(i, X);
+	  dam_pr = child_exchange(tmp_v0, tmp_v1, X);
         }
-      }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
+	X->Large.prdct += dam_pr;
+      }/*for (i = 0; i < X->Def.NExchangeCoupling; i ++)*/
   
       break;
       
@@ -479,28 +480,23 @@ if(flagBoost!=0){for(j=1;j<=i_max;j++){list_Diagonal[j]=0.0;}}
 	}
       	
 	//Exchange	
-        for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+        for (i = 0; i < X->Def.NExchangeCoupling; i++) {
+	  sigma1=0; sigma2=1;
           if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
-            X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	      X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+	    dam_pr = X_child_general_int_spin_MPIdouble(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
           }
           else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr = X_child_general_int_spin_MPIsingle(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
           }
           else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr = X_child_general_int_spin_MPIsingle(X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ExchangeCoupling[i][0], sigma1, sigma2, conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
           }
           else {
-            for (ihermite = 0; ihermite<2; ihermite++) {
-              idx = i + ihermite;
-              child_exchange_spin_GetInfo(idx, X);
-              dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
-              X->Large.prdct += dam_pr;
-            }
-          }
+	    child_exchange_spin_GetInfo(i, X);
+	    dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+	  }
+	  X->Large.prdct += dam_pr;
 	}/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
       }
       else{
@@ -558,7 +554,6 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 /* SpinGCBoost */
     case SpinGC:
 
-
     if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode flagBoost %d \n\n", flagBoost);}
 
     if(flagBoost == 0){
@@ -607,8 +602,7 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	  }
 	  X->Large.prdct += dam_pr;
 	}
-      
-
+	
 	//InterAll	
         for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
           if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
@@ -639,106 +633,92 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	}
 	
         //Exchange
-        for (i = 0; i < X->Def.NExchangeCoupling; i += 2) {
+        for (i = 0; i < X->Def.NExchangeCoupling; i++) {
+	  sigma1=0; sigma2=1;
           if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
-            X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	      X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
+	    dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIdouble(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
           }
           else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr=X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);    
           }
           else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply ExchangeCoupl\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr=X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ExchangeCoupling[i][0], sigma1, sigma2, conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);    
           }
           else {
-            for (ihermite = 0; ihermite<2; ihermite++) {
-              idx = i + ihermite;
-              child_exchange_spin_GetInfo(idx, X);
-              dam_pr = GC_child_exchange_spin(tmp_v0, tmp_v1, X);
-              X->Large.prdct += dam_pr;
-            }/*for (ihermite = 0; ihermite<2; ihermite++)*/
+	    child_exchange_spin_GetInfo(i, X);
+	    dam_pr = GC_child_exchange_spin(tmp_v0, tmp_v1, X);
           }
-	}/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
+	  X->Large.prdct += dam_pr;
+	}/* for (i = 0; i < X->Def.NExchangeCoupling; i ++) */
 
         //PairLift
-        for (i = 0; i < X->Def.NPairLiftCoupling; i += 2) {
+        for (i = 0; i < X->Def.NPairLiftCoupling; i++) {
+	  sigma1 =0; sigma2=1;
           if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite &&
             X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIdouble(X->Def.PairLiftCoupling[i][0], sigma1, sigma2, X->Def.PairLiftCoupling[i][1], sigma1, sigma2, X->Def.ParaPairLiftCoupling[i], X, tmp_v0, tmp_v1);
           }
           else if (X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.PairLiftCoupling[i][0], sigma1, sigma2, X->Def.PairLiftCoupling[i][1], sigma1, sigma2, X->Def.ParaPairLiftCoupling[i], X, tmp_v0, tmp_v1);
           }
           else if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply PairLift\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
+	    dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIsingle(X->Def.PairLiftCoupling[i][1], sigma1, sigma2, X->Def.PairLiftCoupling[i][0], sigma1, sigma2, conj(X->Def.ParaPairLiftCoupling[i]), X, tmp_v0, tmp_v1);
           }
           else {
-            for (ihermite = 0; ihermite<2; ihermite++) {
-              idx = i + ihermite;
-              child_pairlift_spin_GetInfo(idx, X);
+              child_pairlift_spin_GetInfo(i, X);
               dam_pr = GC_child_pairlift_spin(tmp_v0, tmp_v1, X);
-              X->Large.prdct += dam_pr;
-            }/*for (ihermite = 0; ihermite<2; ihermite++)*/
           }
+	  X->Large.prdct += dam_pr;
 	}/*for (i = 0; i < X->Def.NPairLiftCoupling; i += 2)*/
-      }
-      else {//For General spin
+      }//end: s = 1/2
+      else {// For General spin
+	
         for (i = 0; i < X->Def.EDNTransfer; i += 2) {
-          if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
-            X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
-            fprintf(stderr, "In mltply GSpin+TransMag\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
-          }
-          else if(X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite){
-            fprintf(stderr, "In mltply GSpin+TransMag\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
-          }
-          else if(X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite){
-            fprintf(stderr, "In mltply GSpin+TransMag\n Sorry This Interaction has not be supported in MPI yet.\n");
-            exitMPI(-1);
-          }
-          else {
-            for (ihermite = 0; ihermite<2; ihermite++) {
-              idx = i + ihermite;
-              isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-              isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-              sigma1 = X->Def.EDGeneralTransfer[idx][1];
-              sigma2 = X->Def.EDGeneralTransfer[idx][3];
-              tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-              if (isite1 == isite2) {
-                if (isite1 > X->Def.Nsite) {
-                  if (sigma1 != sigma2) {
-                    dam_pr = X_GC_child_CisAit_GeneralSpin_MPIdouble(isite1 - 1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
-                  }
-                }
-                else {
-                  if (sigma1 != sigma2) {//sigma1 != sigma2
-                                         // transverse magnetic field
-                    dam_pr = 0.0;
+	  isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
+	  isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
+	  sigma1 = X->Def.EDGeneralTransfer[i][1];
+	  sigma2 = X->Def.EDGeneralTransfer[i][3];
+	  tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+	  dam_pr = 0.0;
+	  if (isite1 == isite2) {
+	    if (sigma1 != sigma2) {
+	      if (isite1 > X->Def.Nsite) {
+		
+		dam_pr = X_GC_child_CisAit_GeneralSpin_MPIdouble(isite1 - 1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
+		X->Large.prdct += dam_pr;
+	      }	    
+	      else {
+		for (ihermite = 0; ihermite<2; ihermite++) {
+		  idx = i + ihermite;
+		  isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+		  isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+		  sigma1 = X->Def.EDGeneralTransfer[idx][1];
+		  sigma2 = X->Def.EDGeneralTransfer[idx][3];
+		  tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+		  
+		  // transverse magnetic field
+		  dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) shared(tmp_v0, tmp_v1)
-                    for (j = 1; j <= i_max; j++) {
-                      num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-                      if (num1 != 0) { // for multply
-                        tmp_v0[off + 1] += tmp_v1[j] * tmp_trans;
-                        dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j] * tmp_trans;
-                      }
-                    }
-                  }
-                }
-              }
-              else {
-                // hopping is not allowed in localized spin system
-                return -1;
-              }
-              X->Large.prdct += dam_pr;
-            }/*for (ihermite = 0; ihermite<2; ihermite++)*/
-          }
+		  for (j = 1; j <= i_max; j++) {
+		    num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+		    if (num1 != 0) { // for multply
+		      tmp_v0[off + 1] += tmp_v1[j] * tmp_trans;
+		      dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j] * tmp_trans;
+		    }
+		  }
+		  X->Large.prdct += dam_pr;
+		}/*for (ihermite = 0; ihermite<2; ihermite++)*/
+	      }
+	    }// sigma1 != sigma2	    	    
+	    else{ // sigma1 = sigma2
+	      fprintf(stderr, "Error: Transverse_Diagonal component must be absorbed !");
+	    }
+	  }//isite1 = isite2
+	  else { // isite1 != isite2
+	    // hopping is not allowed in localized spin system
+	    return -1;
+	  }
 	}
       
         //InterAll        

@@ -1,4 +1,0 @@
- Lx          2
- Ly          3
- orb_num     2
- J           -1.0

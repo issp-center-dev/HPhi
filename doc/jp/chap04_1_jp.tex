@@ -94,13 +94,14 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \item \verb|lattice|
 
 {\bf 形式 :} 文字列(\verb|"Chain Lattice"|, \verb|"Square Lattice"|, 
-\verb|"Triangular Lattice"|, \verb|"Honeycomb Lattice"|のいずれか)
+\verb|"Triangular Lattice"|, \verb|"Honeycomb Lattice"|, \verb|"Ladder"|のいずれか)
 
 {\bf 説明 :} 格子の形状を指定します。
 上記文字列はそれぞれ1次元鎖(Fig. \ref{fig_chap04_1_lattice}(a))、
 2次元正方格子(Fig. \ref{fig_chap04_1_lattice}(b))、
-2次元三角格子(Fig. \ref{fig_chap04_1_lattice}(c))に対応します。
-2次元異方的蜂の巣格子(Fig. \ref{fig_chap04_1_honeycomb})に対応します。
+2次元三角格子(Fig. \ref{fig_chap04_1_lattice}(c))、
+2次元異方的蜂の巣格子(Fig. \ref{fig_chap04_1_honeycomb})、
+梯子格子(Fig. \ref{fig_ladder})に対応します。
 
 \begin{figure}[!htbp]
   \begin{center}
@@ -123,6 +124,15 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
       には対応していません。
     }
     \label{fig_chap04_1_honeycomb}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \begin{center}
+    \includegraphics[width=10cm]{../figs/ladder.eps}
+    \caption{梯子格子の模式図. 
+    }
+    \label{fig_ladder}
   \end{center}
 \end{figure}
 
@@ -199,6 +209,13 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 {\bf 説明 :} 異方的蜂の巣格子での最近接サイト間のホッピング
 (Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
 
+\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
+
+{\bf 形式 :} 実数(デフォルト値は\verb|1.0|)
+
+{\bf 説明 :} 梯子格子でのホッピング
+(Fig. \ref{fig_ladder}参照)を指定します。
+
 \item \verb|U|
 
 {\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
@@ -218,6 +235,13 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 {\bf 説明 :} 異方的蜂の巣格子での最近接サイト間のオフサイトクーロン積分
 (Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
+
+\item \verb|V0|, \verb|V1|, , \verb|V1'|, \verb|V2|, , \verb|V2'|
+
+{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
+
+{\bf 説明 :} 梯子格子でのオフサイトクーロン積分
+(Fig. \ref{fig_ladder}参照)を指定します。
 
 \end{itemize}
 
@@ -280,6 +304,12 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \verb|Jz0|, \verb|Jz1|, \verb|Jz2| のデフォルト値は\verb|Jz|)
 
 {\bf 説明 :} 異方的蜂の巣格子の最近接サイト間のスピン結合(Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
+
+\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|
+
+{\bf 形式 :} 実数 (デフォルト値は\verb|1.0|)
+
+{\bf 説明 :} 梯子格子でのスピン結合(Fig. \ref{fig_ladder}参照)を指定します。
 
 \end{itemize}
 

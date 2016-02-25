@@ -61,6 +61,7 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
 
 \vspace{1cm}\hspace{-0.7cm}
 \verb|$ |\underline{パス}\verb|/HPhi -s StdFace.def|
+\small
 \begin{verbatim}
 #####  Parallelization Info.  #####
 
@@ -192,17 +193,19 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
 
   initial_mode=0 normal: iv = 6437 i_max=12870 k_exct =1 
 
-  LanczosStep  E[1] E[2] E[3] E[4] 
+  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite
   stp = 2 0.7192235936 2.7807764064 xxxxxxxxxx xxxxxxxxx 
-  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 
-  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 
-  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 
+  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 0.2140174366 
+  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 0.2277205490 
+  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 0.2325450330 
 \end{verbatim}
+\normalsize
 (中略)
+\small
 \begin{verbatim}
-  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 
-  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 
-  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 
+  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 0.2499999989 
+  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 0.2499999996 
+  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 0.2499999999 
 
 ######  End  : Calculate Lanczos EigenValue.  ######
 
@@ -229,6 +232,7 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
   End  : Calculate two bodies Green functions.
 
 \end{verbatim}
+\normalsize
 
 この実行では、はじめにハミルトニアンの詳細を記述するファイル
 \verb|zlocspin.def|、\verb|zTrans.def|、\verb|zInterAll.def|、
@@ -236,6 +240,18 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
 と、結果として出力する相関関数の要素を指定するファイル
 \verb|greenone.def|、\verb|greentwo.def|が生成されます。
 これらのファイルはエキスパートモードと共通です。
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+Lanczos法による計算の偶数ステップで標準出力される情報のうち、
+\verb|E_Max / Nsite|の列の値は最大固有値をサイト数で割ったものとなっています
+(上の例では\verb|0.2499999999=0.25|に収束しています)。
+この値よりも大きい整数をTPQ法での\verb|Largevalue|として使うことが出来ます。
+
+\end{screen}
 
 \subsubsection{計算結果出力}
 \begin{description}
