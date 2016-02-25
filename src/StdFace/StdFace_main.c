@@ -33,7 +33,7 @@ static void StdFace_ResetVals();
 static void PrintLocSpin();
 static void PrintTrans();
 static void PrintInter();
-static void PrintNamelist();
+static void PrintNamelist(char *model);
 static void PrintCalcMod(char *method, int FlgTemp, char *model,int ioutputmode);
 static void PrintModPara(int Sz2, int nelec, int Lanczos_max, int initial_iv, int nvec, 
   int exct,  int LanczosEps, int LanczosTarget,
@@ -224,6 +224,14 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 1);
     else UnsupportedSystem(model, lattice);
   }
+  else if (strcmp(model, "spingcboost") == 0) {
+    if (strcmp(lattice, "squarelattice") == 0) UnsupportedSystem(model, lattice);
+    else if (strcmp(lattice, "chainlattice") == 0) UnsupportedSystem(model, lattice);
+    else if (strcmp(lattice, "triangularlattice") == 0) UnsupportedSystem(model, lattice);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice_Boost(Sz2, 1);
+    else if (strcmp(lattice, "ladder") == 0) UnsupportedSystem(model, lattice);
+    else UnsupportedSystem(model, lattice);
+  }
   else if (strcmp(model, "kondolattice") == 0){
     if (strcmp(lattice, "squarelattice") == 0) KondoLattice_SquareLattice(nelec, 0);
     else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 0);
@@ -257,7 +265,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintLocSpin();
   PrintTrans();
   PrintInter();
-  PrintNamelist();
+  PrintNamelist(model);
   PrintCalcMod(method, FlgTemp, model, ioutputmode);
   PrintModPara(Sz2, nelec, Lanczos_max, initial_iv, nvec, exct,
     LanczosEps, LanczosTarget,NumAve, ExpecInterval,filehead);  
@@ -684,7 +692,7 @@ static void PrintInter(){
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static void PrintNamelist(){
+static void PrintNamelist(char *model){
   FILE *fp;
 
   fp = fopenMPI("namelist.def", "w");
@@ -695,6 +703,9 @@ static void PrintNamelist(){
   fprintf(fp, "InterAll zInterAll.def\n");
   fprintf(fp, "OneBodyG greenone.def\n");
   fprintf(fp, "TwoBodyG greentwo.def\n");
+
+  if (strcmp(model, "spingcboost") == 0) 
+    fprintf(fp, "Boost boost.def\n");
 
   fclose(fp);
   fprintf(stdoutMPI, "    namelist.def is written.\n");
@@ -734,7 +745,8 @@ static void PrintCalcMod(
   else if (strcmp(model, "kondolattice") == 0) iCalcModel = 2;
   else if (strcmp(model, "fermionhubbardgc") == 0
     || strcmp(model, "hubbardgc") == 0) iCalcModel = 3;
-  else if (strcmp(model, "spingc") == 0) iCalcModel = 4;
+  else if (strcmp(model, "spingc") == 0
+    || strcmp(model, "spingcboost") == 0) iCalcModel = 4;
   else if (strcmp(model, "kondolatticegc") == 0
     || strcmp(model, "kondogc") == 0) iCalcModel = 5;
   else{
@@ -1148,6 +1160,7 @@ static void CheckModPara(
   else if (strcmp(model, "fermionhubbardgc") == 0
     || strcmp(model, "hubbardgc") == 0
     || strcmp(model, "spingc") == 0
+    || strcmp(model, "spingcboost") == 0
     || strcmp(model, "kondolatticegc") == 0
     || strcmp(model, "kondogc") == 0){
  

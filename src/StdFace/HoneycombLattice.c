@@ -371,33 +371,53 @@ void Spin_HoneycombLattice_Boost(
       + 1.0 / 2.0 * S * S * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
       + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_i("LargeValue", &LargeValue, LargeValue0);
   /*
   Magnetic field
   */
   fp = fopenMPI("boost.def", "w");
+  fprintf(fp, "# Magnetic field\n");
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     -Gamma, 0.0, 0.0, 0.0, -h, 0.0);
-  fclose(fp);
   /*
    Interaction
   */
-  fprintf(fp, "%d\n", 9);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 0, 0, Jx0, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 1, 1, Jy0, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 0, 2, 2, Jz0, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 1, 0, 0, Jx1, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 1, 1, 2, Jy1, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 1, 1, 2, Jz1, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 0, 0, Jx2, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 1, 2, Jy2, 0.0);
-  fprintf(fp, "%d %d %d %25.15e %25.15e\n", 2, 1, 2, Jz2, 0.0);
+  fprintf(fp, "%d  # Number of type of J\n", 3);
+  fprintf(fp, "# J 1\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    Jx0, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, Jy0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, Jz0, 0.0);
+  fprintf(fp, "# J 2\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    Jx1, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, Jy1, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, Jz1, 0.0);
+  fprintf(fp, "# J 3\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    Jx2, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, Jy2, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, Jz2, 0.0);
   /*
    Topology
   */
+  if (S2 != 1) {
+    fprintf(stderr, "\n ERROR! S2 must be 1 in Boost. \n\n");
+    exitMPI(-1);
+  }
   ishift_nspin = 3;
-  if (W / ishift_nspin != 0) {
-    fprintf(stderr, "\n ERROR! W / %d != 0 \n\n", ishift_nspin);
+  if (L % 2 != 0) {
+    fprintf(stderr, "\n ERROR! L %% 2 != 0 \n\n");
+    exitMPI(-1);
+  }
+  if (W % ishift_nspin != 0) {
+    fprintf(stderr, "\n ERROR! W %% %d != 0 \n\n", ishift_nspin);
     exitMPI(-1);
   }
   num_pivot = W / ishift_nspin;
@@ -405,7 +425,8 @@ void Spin_HoneycombLattice_Boost(
     fprintf(stderr, "DEBUG: W != 6\n");
     exitMPI(-1);
   }
-  fprintf(fp, "%d %d\n", ishift_nspin, num_pivot);
+  fprintf(fp, "# W0  R0  num_pivot  ishift_nspin\n");
+  fprintf(fp, "%d %d %d %d\n", W, L, num_pivot, ishift_nspin);
 
   list_6spin_star = (int **)malloc(sizeof(int*) * num_pivot);
   for (j = 0; j < num_pivot; j++) {
@@ -428,12 +449,15 @@ void Spin_HoneycombLattice_Boost(
   list_6spin_star[1][5] = 2; //(5,2+2*j)=2
   list_6spin_star[1][6] = 1; //(6,2+2*j)=1 ! flag
 
+  fprintf(fp, "# list_6spin_star\n");
   for (j = 0; j < num_pivot; j++) {
+    fprintf(fp, "# pivot %d\n", j);
     for (iW = 0; iW < 7; iW++) {
       fprintf(fp, "%d ", list_6spin_star[j][iW]);
     }
     fprintf(fp, "\n");
   }
+  fflush(fp);/*debug*/
 
   list_6spin_pair = (int ***)malloc(sizeof(int**) * num_pivot);
   for (j = 0; j < num_pivot; j++) {
@@ -508,8 +532,9 @@ void Spin_HoneycombLattice_Boost(
   list_6spin_pair[1][5][3] = 4; //(6,4,2+2*j)=4
   list_6spin_pair[1][6][3] = 2; //(7,4,2+2*j)=2 ! type of J
 
-  list_6spin_pair = (int ***)malloc(sizeof(int**) * num_pivot);
+  fprintf(fp, "# list_6spin_pair\n");
   for (j = 0; j < num_pivot; j++) {
+    fprintf(fp, "# pivot %d\n", j);
     for (iL = 0; iL < list_6spin_star[j][0]; iL++) {
       for (iW = 0; iW < 7; iW++) {
         fprintf(fp, "%d ", list_6spin_pair[j][iW][iL]);
