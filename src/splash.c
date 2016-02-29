@@ -21,32 +21,32 @@
 void splash(){
 
   fprintf(stdoutMPI, "                                                                                                              \n");
-  fprintf(stdoutMPI, "                  @@@@@@@@@@@@@@@@@@@                                                                         \n");
-  fprintf(stdoutMPI, "            @@@@@@@@@          @@@@@@@@@@@@                                                                   \n");
-  fprintf(stdoutMPI, "          @@@                             @@@                                                                 \n");
-  fprintf(stdoutMPI, "        @@@                                  @@            Welcome to the                                     \n");
-  fprintf(stdoutMPI, "      @@@       @@@               @@@         @@                                                              \n");
-  fprintf(stdoutMPI, "     @@        @@@@@             @@@@@         @@                                                             \n");
-  fprintf(stdoutMPI, "    @@        @@@@@@@@@@@@@@@@@@@@@@@@          @@                                                            \n");
-  fprintf(stdoutMPI, "   @@        @@@@@@@@@@@@@@@@@@@@@@@@@           @@        @@@              @@@                @@@            \n");
-  fprintf(stdoutMPI, "  @@      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@           @@       @@@              @@@                @@@            \n");
-  fprintf(stdoutMPI, " @@      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           @@      @@@              @@@           @@@@@@@@@@@@@       \n");
-  fprintf(stdoutMPI, " @@     @@@@@@@@  @@@@  @@@@@@@@  @@@@@@@@          @@     @@@              @@@         @@@    @@@    @@@     \n");
-  fprintf(stdoutMPI, " @@    @@@@@@@@@  @@@@  @@@@@        @@@@@@         @@     @@@              @@@        @@@     @@@     @@@    \n");
-  fprintf(stdoutMPI, "@@    @@@@@@@@@@        @@@@  @@  @@  @@@@@@        @@     @@@@@@@@@@@@@@@@@@@@       @@@      @@@      @@@   \n");
-  fprintf(stdoutMPI, "@@    @@@@@@@@@@  @@@@  @@@@@        @@@@@@@       @@      @@@@@@@@@@@@@@@@@@@@      @@@       @@@       @@@  \n");
-  fprintf(stdoutMPI, "@@     @@@@@@@@@  @@@@  @@@@@@@@  @@@@@@@@@       @@       @@@              @@@       @@@      @@@      @@@   \n");
-  fprintf(stdoutMPI, " @@      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@      @@        @@@              @@@        @@@     @@@    @@@     \n");
-  fprintf(stdoutMPI, "  @@      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@         @@         @@@              @@@          @@@@@@@@@@@@@@       \n");
-  fprintf(stdoutMPI, "   @@       @@@@@@@@@@@@@@@@@@@@@@@            @@          @@@              @@@                @@@            \n");
-  fprintf(stdoutMPI, "    @@         @@@@@@@@@@@@@@@@@             @@@           @@@              @@@                @@@            \n");
-  fprintf(stdoutMPI, "     @@      @@@@@@@@@@@@@@@@@@@@@          @@@                                                               \n");
-  fprintf(stdoutMPI, "      @@    @@@@@@@@@@@@@@@@@@@@@@@      @@@@              Version 0.3                                        \n");
-  fprintf(stdoutMPI, "       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@   @@@                                                                    \n");
-  fprintf(stdoutMPI, "         @@@@@@@@@@@@@@@@@@@@@@@@@@@@                                                                         \n");
-  fprintf(stdoutMPI, "             @@@@@@           @@@@@@                                                                          \n");
-  fprintf(stdoutMPI, "              @@@@             @@@@                                                                           \n");
+  fprintf(stdoutMPI, "                  ,,m@@@@@@@@@@@@@@@mm..                                                                      \n");
+  fprintf(stdoutMPI, "              ,m@@@@PPP~~~~~~~~~~~~PP@@@@@m,,               Welcome to the                                    \n");
+  fprintf(stdoutMPI, "          ,m@@@@ ,,,  ,mm@@@@@@@@mm,,   ~~@@@@m                                                               \n");
+  fprintf(stdoutMPI, "        ,@@@P  /@@@@@@@@@@@@@@@@@@@@@@@@mmmm, @@@m                                                            \n");
+  fprintf(stdoutMPI, "      ,@@@    |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   @@@@                                                          \n");
+  fprintf(stdoutMPI, "     @@@    ,@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.    @@@       @@@              @@@                @@@           \n");
+  fprintf(stdoutMPI, "    @@P    m@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@,     @@@              @@@                @@@           \n");
+  fprintf(stdoutMPI, "   @@     f@@@@@@@@@@@@@@@@@@@@@@@@@@P9@@@@@@@@@     @@,    @@@              @@@          @@@@@@@@@@@@@@@     \n");
+  fprintf(stdoutMPI, "  @@     @@@@@@@@~~@@@@@P9@@@@@@@@P~~  ~~@@@@@@@@     @@.   @@@              @@@        @@@     @@@     @@@   \n");
+  fprintf(stdoutMPI, " @@P     @@@@@@@m  @@@@@  @@@@@@P  ,m  m, ~@@@@@@      @@   @@@              @@@       @@@      @@@      @@@  \n");
+  fprintf(stdoutMPI, " @@      @@@@@@@@         @@@@@@|  @@  @@ ,@@@@@@      @@   @@@@@@@@@@@@@@@@@@@@      @@@       @@@       @@@ \n");
+  fprintf(stdoutMPI, " @@      @@@@@@@~ ,@@@@@  @@@@@@@,       ,@@@@@@P      @@   @@@@@@@@@@@@@@@@@@@@      @@@       @@@       @@@ \n");
+  fprintf(stdoutMPI, " @@       @@@@@@@m@@@@@@mm@@@@@@@@@@b  m@@@@@@@P       @@   @@@              @@@       @@@      @@@      @@@  \n");
+  fprintf(stdoutMPI, " @@L       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P        @@   @@@              @@@        @@@     @@@     @@@   \n");
+  fprintf(stdoutMPI, "  @@         @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~         @@P   @@@              @@@          @@@@@@@@@@@@@@@     \n");
+  fprintf(stdoutMPI, "  ~@@           @@@@@@@@@@@@@@@@@@@@@@@@P~           @@P    @@@              @@@                @@@           \n");
+  fprintf(stdoutMPI, "   ~@@               @@@@@@@@@@@@@P~~               @@@     @@@              @@@                @@@           \n");
+  fprintf(stdoutMPI, "    ~@@,                @@@@@@@@@@L               ,@@P                                                        \n");
+  fprintf(stdoutMPI, "     ~@@@,             @@@@@@@@@@@@@            ,@@@~       Version 0.3                                       \n");
+  fprintf(stdoutMPI, "       ~@@@m,         @@@@@@@@@@@@@@L         ,@@@~                                                           \n");
+  fprintf(stdoutMPI, "         ~9@@@m,     @@@@@@@@@@@@@@@@     .@@@@@~                                                             \n");
+  fprintf(stdoutMPI, "            ~P@@@@mm,@@@@@@@@@@@@@@@@| @@@@@@~                                                                \n");
+  fprintf(stdoutMPI, "                ~@@@@@@@@@@@@@@@@@@@@@ ~P~                                                                    \n");
+  fprintf(stdoutMPI, "                     |@@@@@@@@@@@@@@@                                                                         \n");
+  fprintf(stdoutMPI, "                      @@@@@P^^^^9@@@P                                                                         \n");
+  fprintf(stdoutMPI, "                       ~~~       ~~~                                                                          \n");
   fprintf(stdoutMPI, "                                                                                                              \n");
-
 
 }
