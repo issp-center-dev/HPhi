@@ -40,7 +40,6 @@
 #include "../expec_totalspin.c"
 #include "../PowerLanczos.c"
 #include "../CalcByLanczos.c"
-#include "../splash.c"
 
 /* [s] For ExaDiag */
 #include "../bisec.c"
