@@ -79,6 +79,7 @@ int main(int argc, char* argv[]){
   char cFileListName[D_FileNameMax];
 
   InitializeMPI(argc, argv);
+  splash();
 
   if(JudgeDefType(argc, argv, &mode)!=0){
     FinalizeMPI();
