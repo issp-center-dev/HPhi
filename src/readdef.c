@@ -706,6 +706,8 @@ int ReadDefFileIdxPara(
   int iline=0;
   int ilineIn=0;
   int ilineIn2=0;
+  int itmp=0;
+  int iloop=0;
   
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
     strcpy(defname, cFileNameListFile[iKWidx]);
@@ -1208,7 +1210,13 @@ int ReadDefFileIdxPara(
 		 &xBoost->list_6spin_star[iline][5],
 		 &xBoost->list_6spin_star[iline][6]
 		 ); 
-	}
+	  //copy
+	  for(iloop=0; iloop<xBoost->R0; iloop++){
+	    for(itmp=0; itmp<7; itmp++){
+	      xBoost->list_6spin_star[iloop*xBoost->num_pivot+iline][itmp]=xBoost->list_6spin_star[iline][itmp];
+	    }
+	  }   
+	}	
       }
 
       //read list_6spin_pair
@@ -1216,7 +1224,6 @@ int ReadDefFileIdxPara(
 	for(iline=0; iline<xBoost->num_pivot; iline++){
 	  //input
 	  for(ilineIn2=0; ilineIn2<xBoost->list_6spin_star[iline][0]; ilineIn2++){
-
 	    fgetsMPI(ctmp2, 256, fp);
 	    sscanf(ctmp2, "%d %d %d %d %d %d %d\n",
 		   &xBoost->list_6spin_pair[iline][0][ilineIn2],
@@ -1227,8 +1234,16 @@ int ReadDefFileIdxPara(
 		   &xBoost->list_6spin_pair[iline][5][ilineIn2],
 		   &xBoost->list_6spin_pair[iline][6][ilineIn2]
 		   ); 
+
+	    //copy
+	    for(iloop=0; iloop<xBoost->R0; iloop++){
+	      for(itmp=0; itmp<7; itmp++){
+		xBoost->list_6spin_pair[iloop*xBoost->num_pivot+iline][itmp][ilineIn2]=xBoost->list_6spin_pair[iline][itmp][ilineIn2];
+	      }
+	    }
 	  }
 	}
+	
       }
       break;
 

@@ -72,15 +72,15 @@ void setmem_def
 
   int ipivot,iarrayJ,i,ispin;
   xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
-  for (ipivot = 0; ipivot < xBoost->num_pivot; ipivot++) {
+  for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
     xBoost->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
   }
   
   xBoost->list_6spin_pair = (int ***)malloc(sizeof(int**) * xBoost->R0 * xBoost->num_pivot);
-  for (ipivot = 0; ipivot < xBoost->num_pivot; ipivot++) {
+  for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
     xBoost->list_6spin_pair[ipivot] = (int **)malloc(sizeof(int*) * 7);
     for (ispin = 0; ispin < 7; ispin++) {
-      xBoost->list_6spin_pair[ipivot][ispin] = (int *)malloc(sizeof(int) * xBoost->list_6spin_star[ipivot][0]);
+      xBoost->list_6spin_pair[ipivot][ispin] = (int *)malloc(sizeof(int) * 15);
     }
   }
 
