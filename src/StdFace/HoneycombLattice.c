@@ -371,7 +371,7 @@ void Spin_HoneycombLattice_Boost(
       + 1.0 / 2.0 * S * S * (fabs(Jx1) + fabs(Jy1) + fabs(Jz1))
       + 1.0 / 2.0 * S * S * (fabs(Jx2) + fabs(Jy2) + fabs(Jz2));
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, LargeValue0);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
   /*
   Magnetic field
   */
@@ -412,16 +412,16 @@ void Spin_HoneycombLattice_Boost(
     exitMPI(-1);
   }
   ishift_nspin = 3;
-  if (L % 2 != 0) {
-    fprintf(stderr, "\n ERROR! L %% 2 != 0 \n\n");
+  if (L < 2) {
+    fprintf(stderr, "\n ERROR! L < 2 \n\n");
     exitMPI(-1);
   }
   if (W % ishift_nspin != 0) {
     fprintf(stderr, "\n ERROR! W %% %d != 0 \n\n", ishift_nspin);
     exitMPI(-1);
   }
-  num_pivot = W / ishift_nspin;
-  if (num_pivot != 2) {
+  num_pivot = 2;
+  if (W != 6) {
     fprintf(stderr, "DEBUG: W != 6\n");
     exitMPI(-1);
   }

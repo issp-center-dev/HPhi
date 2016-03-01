@@ -56,3 +56,5 @@ void Spin_HoneycombLattice_Boost(int Sz2, int lGC);
 void FermionHubbard_Ladder(int nelec, int lGC);
 void KondoLattice_Ladder(int nelec, int lGC);
 void Spin_Ladder(int Sz2, int lGC);
+
+void Spin_Kagome_Boost(int Sz2, int lGC);
