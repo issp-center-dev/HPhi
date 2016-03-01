@@ -817,7 +817,7 @@ shared(tmp_v0, tmp_v1)
     dam_pr  = SumMPI_dc(dam_pr);
     dam_prm = SumMPI_dc(dam_prm);
 
-    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode f norm %lf and mag %lf\n\n",creal(dam_pr),creal(dam_prm));}
+    /*fprintf(stdoutMPI, "###Boost### SpinGC Boost mode f norm %lf and mag %lf\n",creal(dam_pr),creal(dam_prm));*/
 
     dam_pr = 0.0;
     #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) shared(tmp_v1,tmp_v0) firstprivate(i_max) 

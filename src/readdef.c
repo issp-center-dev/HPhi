@@ -1171,7 +1171,7 @@ int ReadDefFileIdxPara(
 	     &dArrayValue_re[1], &dArrayValue_im[1],
 	     &dArrayValue_re[2], &dArrayValue_im[2]);
       for(iline=0; iline<3; iline++){
-	xBoost->vecB[iline]= dArrayValue_re[i]+I*dArrayValue_im[i];
+	xBoost->vecB[iline]= dArrayValue_re[iline]+I*dArrayValue_im[iline];
       }
       
       //this line is skipped;
@@ -1187,7 +1187,7 @@ int ReadDefFileIdxPara(
 		   &dArrayValue_re[1], &dArrayValue_im[1],
 		   &dArrayValue_re[2], &dArrayValue_im[2]);
 	    for(ilineIn2=0; ilineIn2<3; ilineIn2++){
-	      xBoost->arrayJ[iline][ilineIn][ilineIn2]= dArrayValue_re[i]+I*dArrayValue_im[i];
+	      xBoost->arrayJ[iline][ilineIn][ilineIn2]= dArrayValue_re[ilineIn2]+I*dArrayValue_im[ilineIn2];
 	    }	    
 	  }
 	}

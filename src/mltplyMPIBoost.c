@@ -99,8 +99,9 @@ void child_general_int_spin_MPIBoost(
 //  c_malloc1(arrayx, (64*((int)pow(2.0, 16))));
 //  c_malloc1(arrayz, (64*((int)pow(2.0, 16))));
 //  c_malloc1(arrayw, (64*((int)pow(2.0, 16))));
-
-  printf("DEBUG1: %d %d %d %d\n", X->Boost.W0, X->Boost.R0, X->Boost.ishift_nspin, X->Boost.num_pivot);
+ 
+  //defmodelBoost(X->Boost.W0, X->Boost.R0, X->Boost.num_pivot, X->Boost.ishift_nspin, X->Boost.list_6spin_star, X->Boost.list_6spin_pair, 1, X->Boost.arrayJ, X->Boost.vecB);
+  
   for(iloop=0; iloop < X->Boost.R0; iloop++){
 
 
