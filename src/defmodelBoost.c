@@ -140,7 +140,7 @@ void defmodelBoost(
 
   for(j=0; j < (R0*num_pivot); j++){
     for(ell=0; ell < 7; ell++){
-      for(k=0; k < 21; k++){
+      for(k=0; k < 15; k++){
         list_6spin_pair[j][ell][k]=0;
       }
     } 
@@ -269,7 +269,7 @@ void defmodelBoost(
   }
   for(j=0; j < (R0*num_pivot); j++){
     for(ell=0; ell < 7; ell++){
-      for(k=0; k < 21; k++){
+      for(k=0; k < 15; k++){
         list_6spin_pair[j][ell][k]=0;
       }
     } 
@@ -471,7 +471,7 @@ void defmodelBoost(
   }
   for(j=0; j < (R0*num_pivot); j++){
     for(ell=0; ell < 7; ell++){
-      for(k=0; k < 21; k++){
+      for(k=0; k < 15; k++){
         list_6spin_pair[j][ell][k]=0;
       }
     } 

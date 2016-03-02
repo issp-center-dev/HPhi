@@ -15,9 +15,6 @@
 
 //Define Mode for mltply
 // complex version
-#ifdef MPI
-#include "mpi.h"
-#endif
 #include <bitcalc.h>
 #include "mfmemory.h"
 #include "xsetmem.h"
@@ -64,14 +61,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   /*[e] For InterAll */
 
   /* SpinGCBoost */
-  int flagBoost;
-  char *filename = "inputBoost";
-  FILE *fp;
   double complex* tmp_v2;
   double complex* tmp_v3;
   double *tmp_d;
   /* SpinGCBoost */
-  flagBoost=0;
   
   long unsigned int i_max;
   int ihermite=0;
@@ -79,7 +72,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   i_max = X->Check.idim_max;
   X->Large.prdct = 0.0;
   dam_pr = 0.0;
-  
+
   if(i_max!=0){
     if (X->Def.iFlgGeneralSpin == FALSE) {
       if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
@@ -105,20 +98,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.ihfbit = ihfbit;
   X->Large.mode = M_MLTPLY;
 
-//flag for Boost mode
-    if((fp = fopen(filename, "r")) == NULL){
-      fprintf(stderr, "\n\n ###Boost### failed to open a file %s\n\n", filename);
-      exit(EXIT_FAILURE);
-    }
-    if(myrank==0){
-      fscanf(fp, "%d", &flagBoost);
-      fclose(fp);
-    }
-#ifdef MPI
-      MPI_Bcast(&flagBoost, 1, MPI_INT, 0, MPI_COMM_WORLD);
-#endif
-
-if(flagBoost!=0){for(j=1;j<=i_max;j++){list_Diagonal[j]=0.0;}}
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
     tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
@@ -551,27 +530,22 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
       }	
       break;
 
-/* SpinGCBoost */
     case SpinGC:
 
-    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode flagBoost %d \n\n", flagBoost);}
-
-    if(flagBoost == 0){
-     
-      if (X->Def.iFlgGeneralSpin == FALSE) {	
+      if (X->Def.iFlgGeneralSpin == FALSE) {
         for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
-		  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
-			dam_pr=0;
-			if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
-			  fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
-			}
-			else{
-			  dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
-			}
-		  }
-		  else{
-			dam_pr=0;
-			for(ihermite=0; ihermite<2; ihermite++){
+         if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
+           dam_pr=0;
+           if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
+             fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
+           }
+           else{
+             dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
+           }
+         }
+         else{
+           dam_pr=0;
+           for(ihermite=0; ihermite<2; ihermite++){
 	      idx=i+ihermite;
 	      isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
 	      isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
@@ -816,10 +790,9 @@ shared(tmp_v0, tmp_v1)
           }
         }
       }  //end:generalspin
-	}
-  else{  
+	
+  if(X->Boost.flgBoost == 1){
 	 
-    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode start \n\n");}
     c_malloc1(tmp_v2, i_max+1);
     c_malloc1(tmp_v3, i_max+1);
      
@@ -844,7 +817,7 @@ shared(tmp_v0, tmp_v1)
     dam_pr  = SumMPI_dc(dam_pr);
     dam_prm = SumMPI_dc(dam_prm);
 
-    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode f norm %lf and mag %lf\n\n",creal(dam_pr),creal(dam_prm));}
+    /*fprintf(stdoutMPI, "###Boost### SpinGC Boost mode f norm %lf and mag %lf\n",creal(dam_pr),creal(dam_prm));*/
 
     dam_pr = 0.0;
     #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) shared(tmp_v1,tmp_v0) firstprivate(i_max) 
@@ -858,10 +831,9 @@ shared(tmp_v0, tmp_v1)
     c_free1(tmp_v2, i_max+1);  
     c_free1(tmp_v3, i_max+1);  
 
-    if(myrank==0){printf("\n\n###Boost### SpinGC Boost mode step \n\n");}
-  }
-    break;
-/* SpinGCBoost */
+  }/* SpinGCBoost */
+
+  break;
       
   default:
     return -1;
@@ -871,7 +843,6 @@ shared(tmp_v0, tmp_v1)
   //  fprintf(stdoutMPI, "debug: prdct=%lf, %lf\n",creal( X->Large.prdct), cimag( X->Large.prdct ) );
   //FinalizeMPI();
   //exit(0);
-
   
   return 0;
 }

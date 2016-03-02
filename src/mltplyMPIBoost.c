@@ -53,12 +53,6 @@ void child_general_int_spin_MPIBoost(
   double complex dam_pr = 0;
   MPI_Status statusMPI;
 
-/* read def for star and pair  */
-  char *filename1 = "starBoost";
-  char *filename2 = "pairBoost";
-  FILE *fp1;
-  FILE *fp2;
-
   int ierr;
   int INFO;
   char TRANSA, TRANSB;
@@ -69,43 +63,22 @@ void child_general_int_spin_MPIBoost(
   long unsigned int i1, i2;
   long unsigned int iomp;
   long unsigned int ell4, ell5, ell6, m0, Ipart1;
-  long unsigned int W0, R0, num_pivot, ishift_nspin, model_num;
   long unsigned int mi, mj, mri, mrj, mrk, mrl;
   int indj;
   long unsigned int ellrl, ellrk, ellrj, ellri, elli1, elli2, ellj1, ellj2;
   long unsigned int iSS1, iSS2, iSSL1, iSSL2;
-  double complex ***arrayJ;
   double complex **vecJ;
   double complex **matJ, **matJ2;
   double complex *matJL;
   double complex *matI;
-  double complex *vecB;
   double complex **matB;
   double complex *arrayz;
   double complex *arrayx;
   double complex *arrayw;
-  int  **list_6spin_star;
-  int ***list_6spin_pair;
   long unsigned int ishift1, ishift2, ishift3, ishift4, ishift5, pivot_flag, num_J_star; 
   long unsigned int pow1, pow2, pow3, pow4, pow5, pow11, pow21, pow31, pow41, pow51; 
 
   i_max = X->Check.idim_max;
-  if((fp1 = fopen(filename1, "r")) == NULL){
-    fprintf(stderr, "\n ###Boost### failed to open a file %s\n", filename1);
-    exitMPI(EXIT_FAILURE);
-  }
-  
-  if(myrank==0){
-    fscanf(fp1, "%ld %ld %ld %ld %ld\n", &W0, &R0, &num_pivot, &ishift_nspin, &model_num);
-  }
-  fclose(fp1);
-#ifdef MPI
-    MPI_Bcast(&W0, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&R0, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&num_pivot, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&ishift_nspin, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&model_num, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-#endif
 
 /*
 //zero clear
@@ -116,40 +89,31 @@ void child_general_int_spin_MPIBoost(
   }
 */
 
-  c_malloc3(arrayJ, 3, 3, 3); 
-  c_malloc1(vecB, 3); 
   c_malloc2(vecJ, 3, 3); 
   c_malloc2(matJ, 4, 4); 
   c_malloc2(matJ2, 4, 4); 
   c_malloc2(matB, 2, 2); 
   c_malloc1(matJL, (64*64)); 
   c_malloc1(matI, (64*64)); 
-  i_malloc2(list_6spin_star, (int)(R0*num_pivot), 7); 
-  i_malloc3(list_6spin_pair, (int)(R0*num_pivot), 7, 21); 
-
+ 
 //  c_malloc1(arrayx, (64*((int)pow(2.0, 16))));
 //  c_malloc1(arrayz, (64*((int)pow(2.0, 16))));
 //  c_malloc1(arrayw, (64*((int)pow(2.0, 16))));
-
-/* definition of model */
-  defmodelBoost(W0,R0,num_pivot,ishift_nspin,list_6spin_star,list_6spin_pair,model_num,arrayJ,vecB);
-/* definition of model */
-//  printf(" ###Boost### Bcast arrayJ2 %lf\n",creal(arrayJ[0][0][0]));
-
-
-  for(iloop=0; iloop < R0; iloop++){
+ 
+  //defmodelBoost(X->Boost.W0, X->Boost.R0, X->Boost.num_pivot, X->Boost.ishift_nspin, X->Boost.list_6spin_star, X->Boost.list_6spin_pair, 1, X->Boost.arrayJ, X->Boost.vecB);
+  
+  for(iloop=0; iloop < X->Boost.R0; iloop++){
 
 
-    for(j=iloop*num_pivot; j < (iloop+1)*num_pivot; j++){
+    for(j=iloop*X->Boost.num_pivot; j < (iloop+1)*X->Boost.num_pivot; j++){
       
-       
-      num_J_star = (long unsigned int)list_6spin_star[j][0]; //(0,j) 
-      ishift1    = (long unsigned int)list_6spin_star[j][1]; //(1,j) 
-      ishift2    = (long unsigned int)list_6spin_star[j][2]; //(2,j) 
-      ishift3    = (long unsigned int)list_6spin_star[j][3]; //(3,j)
-      ishift4    = (long unsigned int)list_6spin_star[j][4]; //(4,j)
-      ishift5    = (long unsigned int)list_6spin_star[j][5]; //(5,j)
-      pivot_flag = (long unsigned int)list_6spin_star[j][6]; //(6,j)
+      num_J_star = (long unsigned int)X->Boost.list_6spin_star[j][0]; //(0,j) 
+      ishift1    = (long unsigned int)X->Boost.list_6spin_star[j][1]; //(1,j) 
+      ishift2    = (long unsigned int)X->Boost.list_6spin_star[j][2]; //(2,j) 
+      ishift3    = (long unsigned int)X->Boost.list_6spin_star[j][3]; //(3,j)
+      ishift4    = (long unsigned int)X->Boost.list_6spin_star[j][4]; //(4,j)
+      ishift5    = (long unsigned int)X->Boost.list_6spin_star[j][5]; //(5,j)
+      pivot_flag = (long unsigned int)X->Boost.list_6spin_star[j][6]; //(6,j)
       pow1 = (int)pow(2.0,ishift1);
       pow2 = (int)pow(2.0,ishift1+ishift2);
       pow3 = (int)pow(2.0,ishift1+ishift2+ishift3);
@@ -170,16 +134,16 @@ void child_general_int_spin_MPIBoost(
       }
 
       for(ell=0; ell < num_J_star; ell++){
-        mi   = (long unsigned int)list_6spin_pair[j][0][ell]; //(1,ell,j)
-        mj   = (long unsigned int)list_6spin_pair[j][1][ell]; //(2,ell,j)
-        mri  = (long unsigned int)list_6spin_pair[j][2][ell]; //(3,ell,j)
-        mrj  = (long unsigned int)list_6spin_pair[j][3][ell]; //(4,ell,j)
-        mrk  = (long unsigned int)list_6spin_pair[j][4][ell]; //(5,ell,j)
-        mrl  = (long unsigned int)list_6spin_pair[j][5][ell]; //(6,ell,j)
-        indj = list_6spin_pair[j][6][ell]; //(7,ell,j)
+        mi   = (long unsigned int)X->Boost.list_6spin_pair[j][0][ell]; //(1,ell,j)
+        mj   = (long unsigned int)X->Boost.list_6spin_pair[j][1][ell]; //(2,ell,j)
+        mri  = (long unsigned int)X->Boost.list_6spin_pair[j][2][ell]; //(3,ell,j)
+        mrj  = (long unsigned int)X->Boost.list_6spin_pair[j][3][ell]; //(4,ell,j)
+        mrk  = (long unsigned int)X->Boost.list_6spin_pair[j][4][ell]; //(5,ell,j)
+        mrl  = (long unsigned int)X->Boost.list_6spin_pair[j][5][ell]; //(6,ell,j)
+        indj = X->Boost.list_6spin_pair[j][6][ell]; //(7,ell,j)
         for(i1 = 0; i1 < 3; i1++){
           for(i2 = 0; i2 < 3; i2++){
-            vecJ[i1][i2] = arrayJ[(indj-1)][i1][i2];
+            vecJ[i1][i2] = X->Boost.arrayJ[(indj-1)][i1][i2];
           }
         } 
         //matJSS(1,1) = vecJ(3,3)
@@ -260,10 +224,10 @@ void child_general_int_spin_MPIBoost(
 
       /* external magnetic field B */
       if(pivot_flag==1){
-        matB[0][0] = + vecB[2]; // -BM
-        matB[1][1] = - vecB[2]; // -BM
-        matB[0][1] = - vecB[0] + I*vecB[1]; // -BM
-        matB[1][0] = - vecB[0] - I*vecB[1]; // -BM
+        matB[0][0] = + X->Boost.vecB[2]; // -BM
+        matB[1][1] = - X->Boost.vecB[2]; // -BM
+        matB[0][1] = - X->Boost.vecB[0] + I*X->Boost.vecB[1]; // -BM
+        matB[1][0] = - X->Boost.vecB[0] - I*X->Boost.vecB[1]; // -BM
         for(ellri=0; ellri<2; ellri++){
         for(ellrj=0; ellrj<2; ellrj++){
         for(ellrk=0; ellrk<2; ellrk++){
@@ -271,7 +235,7 @@ void child_general_int_spin_MPIBoost(
         for(ellj1=0; ellj1<2; ellj1++){
           for(elli1=0; elli1<2; elli1++){
           for(elli2=0; elli2<2; elli2++){
-            for(ellj2=0; ellj2<ishift_nspin; ellj2++){
+            for(ellj2=0; ellj2<X->Boost.ishift_nspin; ellj2++){
               iSSL1 = elli1*(int)pow(2,ellj2) + ellj1*(int)pow(2,((ellj2+1)%6)) + ellri*(int)pow(2,((ellj2+2)%6)) + ellrj*(int)pow(2,((ellj2+3)%6)) + ellrk*(int)pow(2,((ellj2+4)%6)) + ellrl*(int)pow(2,((ellj2+5)%6));
               iSSL2 = elli2*(int)pow(2,ellj2) + ellj1*(int)pow(2,((ellj2+1)%6)) + ellri*(int)pow(2,((ellj2+2)%6)) + ellrj*(int)pow(2,((ellj2+3)%6)) + ellrk*(int)pow(2,((ellj2+4)%6)) + ellrl*(int)pow(2,((ellj2+5)%6));
               matJL[iSSL1+64*iSSL2] += matB[elli1][elli2];
@@ -399,20 +363,20 @@ void child_general_int_spin_MPIBoost(
       }/* omp parallel */
 
       if(pivot_flag==1){
-        iomp=i_max/(int)pow(2.0,ishift_nspin);
+        iomp=i_max/(int)pow(2.0,X->Boost.ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
-        firstprivate(iomp) shared(i_max,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,ishift_nspin,tmp_v0,tmp_v1)
+        firstprivate(iomp) shared(i_max,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,X,tmp_v0,tmp_v1)
         for(ell5 = 0; ell5 < iomp; ell5++ ){
-          for(ell4 = 0; ell4 < (int)pow(2.0,ishift_nspin); ell4++){
-            tmp_v0[(1 + ell5+(i_max/(int)pow(2.0,ishift_nspin))*ell4)] = tmp_v1[(1 + ell4+((int)pow(2.0,ishift_nspin))*ell5)];
+          for(ell4 = 0; ell4 < (int)pow(2.0,X->Boost.ishift_nspin); ell4++){
+            tmp_v0[(1 + ell5+(i_max/(int)pow(2.0,X->Boost.ishift_nspin))*ell4)] = tmp_v1[(1 + ell4+((int)pow(2.0,X->Boost.ishift_nspin))*ell5)];
           } 
         }
-        iomp=i_max/(int)pow(2.0,ishift_nspin);
+        iomp=i_max/(int)pow(2.0,X->Boost.ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5) \
-        firstprivate(iomp) shared(i_max,ishift_nspin,tmp_v1,tmp_v3)
+        firstprivate(iomp) shared(i_max,X,tmp_v1,tmp_v3)
         for(ell5 = 0; ell5 < iomp; ell5++ ){
-          for(ell4 = 0; ell4 < (int)pow(2.0,ishift_nspin); ell4++){
-            tmp_v1[(1 + ell5+(i_max/(int)pow(2.0,ishift_nspin))*ell4)] = tmp_v3[(1 + ell4+((int)pow(2.0,ishift_nspin))*ell5)];
+          for(ell4 = 0; ell4 < (int)pow(2.0,X->Boost.ishift_nspin); ell4++){
+            tmp_v1[(1 + ell5+(i_max/(int)pow(2.0,X->Boost.ishift_nspin))*ell4)] = tmp_v3[(1 + ell4+((int)pow(2.0,X->Boost.ishift_nspin))*ell5)];
           } 
         }
       }
@@ -431,15 +395,15 @@ void child_general_int_spin_MPIBoost(
     ierr = MPI_Alltoall(&tmp_v0[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v2[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
 
 
-    iomp=(int)pow(2.0,W0)/nproc;
+    iomp=(int)pow(2.0,X->Boost.W0)/nproc;
     #pragma omp parallel for default(none) private(ell4,ell5,ell6) \
-    firstprivate(iomp) shared(i_max,W0,nproc,tmp_v0,tmp_v1,tmp_v2,tmp_v3)
-    //for(ell4 = 0; ell4 < (int)pow(2.0,W0)/nproc; ell4++ ){
+    firstprivate(iomp) shared(i_max,X,nproc,tmp_v0,tmp_v1,tmp_v2,tmp_v3)
+    //for(ell4 = 0; ell4 < (int)pow(2.0,X->Boost.W0)/nproc; ell4++ ){
     for(ell4 = 0; ell4 < iomp; ell4++ ){
       for(ell5 = 0; ell5 < nproc; ell5++ ){
-        for(ell6 = 0; ell6 < (int)(i_max/(int)pow(2.0,W0)); ell6++ ){
-          tmp_v1[(1 + ell6+ell5*i_max/(int)pow(2.0,W0)+ell4*i_max/((int)pow(2.0,W0)/nproc))] = tmp_v3[(1 + ell6+ell4*i_max/(int)pow(2.0,W0)+ell5*i_max/nproc)];
-          tmp_v0[(1 + ell6+ell5*i_max/(int)pow(2.0,W0)+ell4*i_max/((int)pow(2.0,W0)/nproc))] = tmp_v2[(1 + ell6+ell4*i_max/(int)pow(2.0,W0)+ell5*i_max/nproc)];
+        for(ell6 = 0; ell6 < (int)(i_max/(int)pow(2.0,X->Boost.W0)); ell6++ ){
+          tmp_v1[(1 + ell6+ell5*i_max/(int)pow(2.0,X->Boost.W0)+ell4*i_max/((int)pow(2.0,X->Boost.W0)/nproc))] = tmp_v3[(1 + ell6+ell4*i_max/(int)pow(2.0,X->Boost.W0)+ell5*i_max/nproc)];
+          tmp_v0[(1 + ell6+ell5*i_max/(int)pow(2.0,X->Boost.W0)+ell4*i_max/((int)pow(2.0,X->Boost.W0)/nproc))] = tmp_v2[(1 + ell6+ell4*i_max/(int)pow(2.0,X->Boost.W0)+ell5*i_max/nproc)];
         }
       }   
     }
@@ -458,17 +422,13 @@ void child_general_int_spin_MPIBoost(
 //  c_free1(arrayx, (int)pow(2.0, 16));
 //  c_free1(arrayw, (int)pow(2.0, 16));
 
-  c_free3(arrayJ, 3, 3, 3);
-  c_free1(vecB, 3);
   c_free2(vecJ, 3, 3);
   c_free2(matJ, 4, 4);
   c_free2(matJ2, 4, 4);
   c_free2(matB, 2, 2);
   c_free1(matJL, (64*64));
   c_free1(matI, (64*64));
-  i_free2(list_6spin_star, (int)(R0*num_pivot), 7);
-  i_free3(list_6spin_pair, (int)(R0*num_pivot), 7, 21);
-
+ 
 #endif
   
 }/*void child_general_int_spin_MPIBoost*/
