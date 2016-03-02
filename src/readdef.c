@@ -155,8 +155,9 @@ int GetKWWithIdx(
     char *ctmpRead;
     char *cerror;
     char csplit[] = " ,.\t\n";
-    ctmpRead = strtok( ctmpLine, csplit);
-    if(strncmp(ctmpRead, "=", 1)==0 || strncmp(ctmpRead, "#", 1)==0){
+    if(*ctmpLine=='\n') return 1;
+    ctmpRead = strtok(ctmpLine, csplit);
+    if(strncmp(ctmpRead, "=", 1)==0 || strncmp(ctmpRead, "#", 1)==0 || ctmpRead==NULL){
       return 1;
     }
     strcpy(ctmp, ctmpRead);
@@ -308,7 +309,7 @@ int GetFileName(
   while(fgetsMPI(ctmp2, 256, fplist) != NULL){ 
     sscanf(ctmp2,"%s %s\n", ctmpKW, ctmpFileName);
 
-    if(strncmp(ctmpKW, "#", 1)==0){
+    if(strncmp(ctmpKW, "#", 1)==0 || *ctmp2=='\n'){
       continue;
     }
     else if(strcmp(ctmpKW, "")*strcmp(ctmpFileName, "")==0){
@@ -427,6 +428,7 @@ int ReadDefFileNInt(
       double dtmp;
       
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
+	if(*ctmp2 == '\n') continue;
 	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
 	if(strcmp(ctmp, "Nsite")==0){
 	  X->Nsite= (int)dtmp;
@@ -659,8 +661,8 @@ int ReadDefFileNInt(
   case KondoGC:
   case HubbardGC:
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
-	fprintf(stderr, "For GC, both Ncond and 2Sz should not be defined.\n");
-	exitMPI(-1);
+	fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
+	//exitMPI(-1);
     }
     break;
   default:
