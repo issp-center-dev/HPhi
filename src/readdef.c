@@ -661,8 +661,8 @@ int ReadDefFileNInt(
   case KondoGC:
   case HubbardGC:
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
-	fprintf(stderr, "For GC, both Ncond and 2Sz should not be defined.\n");
-	exitMPI(-1);
+	fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
+	//exitMPI(-1);
     }
     break;
   default:

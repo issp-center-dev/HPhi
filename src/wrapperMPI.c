@@ -129,7 +129,6 @@ char* fgetsMPI(
     }
     
     while(*InputString == '\n' || strncmp(InputString, "#", 1)==0){
-      printf("Debug\n");
       ctmp = fgets(InputString, maxcount, fp);
       if (ctmp == NULL){
 	inull=1;
