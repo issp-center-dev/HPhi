@@ -560,7 +560,6 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
     spn_z=0.0;
     for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
       S1=0.5*(X->Def.SiteToBit[isite1-1]-1);
-      printf("Debug: S1=%lf\n", S1);
       if(isite1 > X->Def.Nsite){
 	spn_z1  = 0.5*GetLocal2Sz(isite1, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
 #pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(S1, spn_z1,i_max) shared(vec)	
@@ -578,6 +577,7 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
 	}
       }
       for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
+	if(isite1==isite2) continue;
 	S2=0.5*(X->Def.SiteToBit[isite2-1]-1);
 	
 	if(isite1 > X->Def.Nsite && isite2 > X->Def.Nsite){
@@ -631,7 +631,7 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
 	      ibit_tmp = GetOffCompGeneralSpin(off, isite1, sigma_1, sigma_1+1, &off_2, X->Def.SiteToBit, X->Def.Tpow);
 	      if(ibit_tmp!=0){
 		spn += conj(vec[j])*vec[off_2+1]*sqrt(S2*(S2+1) - spn_z2*(spn_z2-1.0))*sqrt(S1*(S1+1)- spn_z1*(spn_z1+1))/2.0;
-	      }	      
+	      }
 	    }	  
 	  }//j
 	}//inner-process
