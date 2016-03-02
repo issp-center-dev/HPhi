@@ -155,8 +155,9 @@ int GetKWWithIdx(
     char *ctmpRead;
     char *cerror;
     char csplit[] = " ,.\t\n";
-    ctmpRead = strtok( ctmpLine, csplit);
-    if(strncmp(ctmpRead, "=", 1)==0 || strncmp(ctmpRead, "#", 1)==0){
+    if(*ctmpLine=='\n') return 1;
+    ctmpRead = strtok(ctmpLine, csplit);
+    if(strncmp(ctmpRead, "=", 1)==0 || strncmp(ctmpRead, "#", 1)==0 || ctmpRead==NULL){
       return 1;
     }
     strcpy(ctmp, ctmpRead);
