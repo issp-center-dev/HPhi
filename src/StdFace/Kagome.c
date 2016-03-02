@@ -121,14 +121,14 @@ void Spin_Kagome_Boost(
   Magnetic field
   */
   fp = fopenMPI("boost.def", "w");
-  /*fprintf(fp, "# Magnetic field\n"); debug*/
+  fprintf(fp, "# Magnetic field\n");
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     -0.5 * Gamma, 0.0, 0.0, 0.0, -0.5 * h, 0.0);
   /*
   Interaction
   */
   fprintf(fp, "%d  # Number of type of J\n", 1);
-  /*fprintf(fp, "# J 1\n"); debug*/
+  fprintf(fp, "# J 1\n");
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * Jx, 0.0, 0.0, 0.0, 0.0, 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
@@ -156,7 +156,7 @@ void Spin_Kagome_Boost(
     fprintf(stderr, "DEBUG: W != 9\n");
     exitMPI(-1);
   }
-  /*fprintf(fp, "# W0  R0  num_pivot  ishift_nspin\n"); debug*/
+  fprintf(fp, "# W0  R0  num_pivot  ishift_nspin\n");
   fprintf(fp, "%d %d %d %d\n", W, L, num_pivot, ishift_nspin);
 
   list_6spin_star = (int **)malloc(sizeof(int*) * num_pivot);
@@ -196,15 +196,14 @@ void Spin_Kagome_Boost(
   list_6spin_star[3][5] = 2;
   list_6spin_star[3][6] = 1; // flag
 
-                             /*fprintf(fp, "# list_6spin_star\n"); debug*/
+  fprintf(fp, "# list_6spin_star\n");
   for (j = 0; j < num_pivot; j++) {
-    /*fprintf(fp, "# pivot %d\n", j); debug*/
+    fprintf(fp, "# pivot %d\n", j);
     for (iW = 0; iW < 7; iW++) {
       fprintf(fp, "%d ", list_6spin_star[j][iW]);
     }
     fprintf(fp, "\n");
   }
-  fflush(fp);/*debug*/
 
   list_6spin_pair = (int ***)malloc(sizeof(int**) * num_pivot);
   for (j = 0; j < num_pivot; j++) {
@@ -344,9 +343,9 @@ void Spin_Kagome_Boost(
   list_6spin_pair[3][5][4] = 5;
   list_6spin_pair[3][6][4] = 1; // type of J
 
-                                /*fprintf(fp, "# list_6spin_pair\n"); debug*/
+  fprintf(fp, "# list_6spin_pair\n");
   for (j = 0; j < num_pivot; j++) {
-    /*fprintf(fp, "# pivot %d\n", j); debug*/
+    fprintf(fp, "# pivot %d\n", j);
     for (iL = 0; iL < list_6spin_star[j][0]; iL++) {
       for (iW = 0; iW < 7; iW++) {
         fprintf(fp, "%d ", list_6spin_pair[j][iW][iL]);

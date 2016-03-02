@@ -376,28 +376,28 @@ void Spin_HoneycombLattice_Boost(
   Magnetic field
   */
   fp = fopenMPI("boost.def", "w");
-  /*fprintf(fp, "# Magnetic field\n"); debug*/
+  fprintf(fp, "# Magnetic field\n"); 
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     - 0.5 * Gamma, 0.0, 0.0, 0.0, - 0.5 * h, 0.0);
   /*
    Interaction
   */
   fprintf(fp, "%d  # Number of type of J\n", 3);
-  /*fprintf(fp, "# J 1\n"); debug*/
+  fprintf(fp, "# J 1\n"); 
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * Jx0, 0.0, 0.0, 0.0, 0.0, 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.0, 0.0, 0.25 * Jy0, 0.0, 0.0, 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.0, 0.0, 0.0, 0.0, 0.25 * Jz0, 0.0);
-  /*fprintf(fp, "# J 2\n"); debug*/
+  fprintf(fp, "# J 2\n"); 
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * Jx1, 0.0, 0.0, 0.0, 0.0, 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.0, 0.0, 0.25 * Jy1, 0.0, 0.0, 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.0, 0.0, 0.0, 0.0, 0.25 * Jz1, 0.0);
-  /*fprintf(fp, "# J 3\n"); debug*/
+  fprintf(fp, "# J 3\n");
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * Jx2, 0.0, 0.0, 0.0, 0.0, 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
@@ -425,7 +425,7 @@ void Spin_HoneycombLattice_Boost(
     fprintf(stderr, "DEBUG: W != 6\n");
     exitMPI(-1);
   }
-  /*fprintf(fp, "# W0  R0  num_pivot  ishift_nspin\n"); debug*/
+  fprintf(fp, "# W0  R0  num_pivot  ishift_nspin\n");
   fprintf(fp, "%d %d %d %d\n", W, L, num_pivot, ishift_nspin);
 
   list_6spin_star = (int **)malloc(sizeof(int*) * num_pivot);
@@ -449,15 +449,14 @@ void Spin_HoneycombLattice_Boost(
   list_6spin_star[1][5] = 2; //(5,2+2*j)=2
   list_6spin_star[1][6] = 1; //(6,2+2*j)=1 ! flag
 
-  /*fprintf(fp, "# list_6spin_star\n"); debug*/
+  fprintf(fp, "# list_6spin_star\n");
   for (j = 0; j < num_pivot; j++) {
-    /*fprintf(fp, "# pivot %d\n", j); debug*/
+    fprintf(fp, "# pivot %d\n", j);
     for (iW = 0; iW < 7; iW++) {
       fprintf(fp, "%d ", list_6spin_star[j][iW]);
     }
     fprintf(fp, "\n");
   }
-  fflush(fp);/*debug*/
 
   list_6spin_pair = (int ***)malloc(sizeof(int**) * num_pivot);
   for (j = 0; j < num_pivot; j++) {
@@ -532,9 +531,9 @@ void Spin_HoneycombLattice_Boost(
   list_6spin_pair[1][5][3] = 4; //(6,4,2+2*j)=4
   list_6spin_pair[1][6][3] = 2; //(7,4,2+2*j)=2 ! type of J
 
-  /*fprintf(fp, "# list_6spin_pair\n"); debug*/
+  fprintf(fp, "# list_6spin_pair\n");
   for (j = 0; j < num_pivot; j++) {
-    /*fprintf(fp, "# pivot %d\n", j); debug*/
+    fprintf(fp, "# pivot %d\n", j);
     for (iL = 0; iL < list_6spin_star[j][0]; iL++) {
       for (iW = 0; iW < 7; iW++) {
         fprintf(fp, "%d ", list_6spin_pair[j][iW][iL]);
