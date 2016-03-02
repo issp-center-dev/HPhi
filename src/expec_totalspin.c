@@ -560,6 +560,7 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
     spn_z=0.0;
     for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
       S1=0.5*(X->Def.SiteToBit[isite1-1]-1);
+      printf("Debug: S1=%lf\n", S1);
       if(isite1 > X->Def.Nsite){
 	spn_z1  = 0.5*GetLocal2Sz(isite1, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
 #pragma omp parallel for reduction(+: spn, spn_z) default(none) firstprivate(S1, spn_z1,i_max) shared(vec)	
