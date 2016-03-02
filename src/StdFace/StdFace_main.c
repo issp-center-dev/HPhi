@@ -155,7 +155,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &LanczosEps);
     else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &LanczosTarget);
     else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &Lanczos_max);
-    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_i(keyword, value, &LargeValue);
+    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &LargeValue);
     else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_s(keyword, value, lattice);
     else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_s(keyword, value, method);
     else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_s(keyword, value, model);

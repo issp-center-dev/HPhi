@@ -166,7 +166,7 @@ void FermionHubbard_Ladder(
       + 4.0 * fabs(V1) + 4.0 * fabs(V1p) + 4.0 * fabs(V0)
       + 2.0 * 2.0 * fabs(V2) + 2.0 * 2.0 * fabs(V2p);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0 + 1);
 }
 
 /**
@@ -288,7 +288,7 @@ void Spin_Ladder(
     LargeValue0 = S * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
       + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + S*S*fabs(J2) + S*S*fabs(J2p);
    }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0 + 1);
 }
 
 /**
@@ -420,5 +420,5 @@ void KondoLattice_Ladder(
       + 2.0 * 2.0 * fabs(t0) + 2.0 * 2.0 * fabs(t2) + 2.0 * 2.0 * fabs(t2p)
       + 0.5 * S * fabs(J);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0 + 1);
 }
