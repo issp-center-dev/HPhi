@@ -181,7 +181,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
     fprintf(stdoutMPI,"  stp=%d %.10lf \n",stp,E[1]);
   }
   else{
+#ifdef lapack
     fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite\n");
+#else
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4]\n");
+#endif
+
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -268,12 +273,13 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[0] = tmp_E[stp - 1];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf \n", stp, E[1], E[2], E[3], E[4],
+         E[0] / (double)X->Def.NsiteMPI);
 #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n", stp, E[1], E[2], E[3], E[4]);
 #endif
       
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4],
-         E[0]/(double)X->Def.NsiteMPI);
        if(stp==4){
 	 childfopenMPI(sdt_2,"w", &fp);
        }

@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <omp.h>
 #include <math.h>
 #include <complex.h>
+#include "splash.h"
 
 /**
  *
@@ -45,6 +46,7 @@ void InitializeMPI(int argc, char *argv[]){
 #endif
   if (myrank == 0) stdoutMPI = stdout;
   else stdoutMPI = fopen("/dev/null", "w");
+  splash();
 
 #pragma omp parallel default(none) shared(nthreads)
 #pragma omp master

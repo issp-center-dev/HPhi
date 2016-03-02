@@ -86,7 +86,7 @@ int nintr;
 int **intrindx;
 double *intr;
 
-int LargeValue;
+double LargeValue;
 int S2;
 
 int ***list_6spin_pair;

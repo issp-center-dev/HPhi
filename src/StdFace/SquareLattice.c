@@ -143,7 +143,7 @@ void FermionHubbard_SquareLattice(
     LargeValue0 = fabs(mu) * 2.0 + 2.0 * 4.0 * fabs(t) + 2.0 * 4.0 * fabs(tp)
       + fabs(U) + 2.0 * 4.0 * fabs(V) + 2.0 * 4.0 * fabs(Vp);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
 
 /**
@@ -271,7 +271,7 @@ void Spin_SquareLattice(
       + 4.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
       + 4.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
 
 /**
@@ -380,5 +380,5 @@ void KondoLattice_SquareLattice(
   else{
     LargeValue0 = fabs(mu) * 2.0 + 2.0 * 4.0 * fabs(t) + 0.5 * S * fabs(J);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }

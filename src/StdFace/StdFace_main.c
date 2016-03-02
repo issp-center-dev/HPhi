@@ -155,7 +155,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &LanczosEps);
     else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &LanczosTarget);
     else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &Lanczos_max);
-    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_i(keyword, value, &LargeValue);
+    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &LargeValue);
     else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_s(keyword, value, lattice);
     else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_s(keyword, value, method);
     else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_s(keyword, value, model);
@@ -357,7 +357,7 @@ static void StdFace_ResetVals(){
   D = 9999.9;
   K = 9999.9;
   /**/
-  LargeValue = 9999;
+  LargeValue = 9999.9;
   S2 = 9999;
 }
 
@@ -809,7 +809,7 @@ static void PrintModPara(
   fprintf(fp, "exct           %-5d\n", exct);
   fprintf(fp, "LanczosEps     %-5d\n", LanczosEps);
   fprintf(fp, "LanczosTarget  %-5d\n", LanczosTarget);
-  fprintf(fp, "LargeValue     %-5d\n", LargeValue);
+  fprintf(fp, "LargeValue     %-25.15e\n", LargeValue);
   fprintf(fp, "NumAve         %-5d\n", NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", ExpecInterval);
 

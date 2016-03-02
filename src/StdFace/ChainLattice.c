@@ -127,7 +127,7 @@ void FermionHubbard_ChainLattice(
     LargeValue0 = fabs(mu) * 2.0 + 2.0 * 2.0 * fabs(t) + 2.0 * 2.0 * fabs(tp)
         +fabs(U) + 2.0 * 2.0 * fabs(V) + 2.0 * 2.0 * fabs(Vp);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
 
 /**
@@ -239,7 +239,7 @@ void Spin_ChainLattice(
       + 2.0 / 2.0 * S * S * (fabs(Jx) + fabs(Jy) + fabs(Jz))
       + 2.0 / 2.0 * S * S * (fabs(Jxp) + fabs(Jyp) + fabs(Jzp));
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
 
 /**
@@ -340,5 +340,5 @@ void KondoLattice_ChainLattice(
   else{
     LargeValue0 = fabs(mu) * 2.0 + 2.0 * 2.0 * fabs(t) + 0.5 * S * fabs(J);
   }
-  StdFace_PrintVal_i("LargeValue", &LargeValue, (int)LargeValue0 + 1);
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
 }
