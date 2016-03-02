@@ -309,7 +309,7 @@ int GetFileName(
   while(fgetsMPI(ctmp2, 256, fplist) != NULL){ 
     sscanf(ctmp2,"%s %s\n", ctmpKW, ctmpFileName);
 
-    if(strncmp(ctmpKW, "#", 1)==0){
+    if(strncmp(ctmpKW, "#", 1)==0 || *ctmp2=='\n'){
       continue;
     }
     else if(strcmp(ctmpKW, "")*strcmp(ctmpFileName, "")==0){
@@ -428,6 +428,7 @@ int ReadDefFileNInt(
       double dtmp;
       
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
+	if(*ctmp2 == '\n') continue;
 	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
 	if(strcmp(ctmp, "Nsite")==0){
 	  X->Nsite= (int)dtmp;
