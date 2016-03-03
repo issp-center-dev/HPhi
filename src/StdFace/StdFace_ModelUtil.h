@@ -43,6 +43,7 @@ void Spin_SquareLattice(int Sz2, int lGC);
 void FermionHubbard_ChainLattice(int nelec, int lGC);
 void KondoLattice_ChainLattice(int nelec, int lGC);
 void Spin_ChainLattice(int Sz2, int lGC);
+void Spin_ChainLattice_Boost(int Sz2, int lGC);
 
 void FermionHubbard_TriangularLattice(int nelec, int lGC);
 void KondoLattice_TriangularLattice(int nelec, int lGC);
