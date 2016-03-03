@@ -230,7 +230,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(lattice, "triangularlattice") == 0) UnsupportedSystem(model, lattice);
     else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice_Boost(Sz2, 1);
     else if (strcmp(lattice, "kagome") == 0) Spin_Kagome_Boost(Sz2, 1);
-    else if (strcmp(lattice, "ladder") == 0) UnsupportedSystem(model, lattice);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder_Boost(Sz2, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolattice") == 0){

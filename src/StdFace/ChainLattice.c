@@ -490,7 +490,6 @@ void Spin_ChainLattice_Boost(
   }
   free(list_6spin_pair);
 
-
 }
 
 /**

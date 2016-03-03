@@ -80,31 +80,31 @@ void FermionHubbard_Ladder(
   }
 
   ktrans = 0;
-  for (iW = 0; iW < W; iW++){
-    for (iL = 0; iL < L; iL++){
-      isite = iL + iW * L;
+  for (iL = 0; iL < L; iL++) {
+    for (iW = 0; iW < W; iW++){
+      isite = iW + iL * W;
       for (ispin = 0; ispin < 2; ispin++){
 
         StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-        jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+        jsite = iW + ((iL + 1 + 2 * L) % L) * W;
         StdFace_trans(&ktrans, t1, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t1, jsite, ispin, isite, ispin);
 
-        jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+        jsite = iW + ((iL + 2 + 2 * L) % L) * W;
         StdFace_trans(&ktrans, t1p, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t1p, jsite, ispin, isite, ispin);
 
         if (iW < W - 1){
-          jsite = iL + (iW + 1) * L;
+          jsite = (iW + 1) + iL * W;
           StdFace_trans(&ktrans, t0, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t0, jsite, ispin, isite, ispin);
 
-          jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+          jsite = (iW + 1) + ((iL + 1 + 2 * L) % L) * W;
           StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
 
-          jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+          jsite = (iW + 1) + ((iL - 1 + 2 * L) % L) * W;
           StdFace_trans(&ktrans, t2p, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t2p, jsite, ispin, isite, ispin);
         }
@@ -125,24 +125,24 @@ void FermionHubbard_Ladder(
   for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
 
-      isite = iL + iW * L;
+      isite = iW + iL * W;
 
       StdFace_intr(&kintr, U, isite, 0, isite, 0, isite, 1, isite, 1);
 
-      jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+      jsite = iW + ((iL + 1 + 2 * L) % L) * W;
       StdFace_Coulomb(&kintr, V1, isite, jsite);
 
-      jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+      jsite = iW + ((iL + 2 + 2 * L) % L) * W;
       StdFace_Coulomb(&kintr, V1p, isite, jsite);
 
       if (iW < W - 1){
-        jsite = iL + (iW + 1) * L;
+        jsite = (iW + 1) + iL * W;
         StdFace_Coulomb(&kintr, V0, isite, jsite);
 
-        jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+        jsite = (iW + 1) + ((iL + 1 + 2 * L) % L) * W;
         StdFace_Coulomb(&kintr, V2, isite, jsite);
 
-        jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+        jsite = (iW + 1) + ((iL - 1 + 2 * L) % L) * W;
         StdFace_Coulomb(&kintr, V2p, isite, jsite);
       }
     }
@@ -245,32 +245,32 @@ void Spin_Ladder(
   }
   kintr = 0;
 
-  for (iW = 0; iW < W; iW++){
-    for (iL = 0; iL < L; iL++){
+  for (iL = 0; iL < L; iL++) {
+    for (iW = 0; iW < W; iW++){
 
-      isite = iL + iW * L;
+      isite = iW + iL * W;
 
       StdFace_SzSz(&kintr, S2, S2, D, isite, isite);
       
-      jsite = ((iL + 1 + 2 * L) % L) + iW * L;
+      jsite = iW + ((iL + 1 + 2 * L) % L) * W;
       StdFace_SzSz(&kintr, S2, S2, J1, isite, jsite);
       StdFace_exchange(&kintr, S2, S2, J1, isite, jsite);
       
-      jsite = ((iL + 2 + 2 * L) % L) + iW * L;
+      jsite = iW + ((iL + 2 + 2 * L) % L) * W;
       StdFace_SzSz(&kintr, S2, S2, J1p, isite, jsite);
       StdFace_exchange(&kintr, S2, S2, J1p, isite, jsite);
       
       
       if (iW < W - 1){
-        jsite = iL + (iW + 1) * L;
+        jsite = (iW + 1) + iL * W;
         StdFace_SzSz(&kintr, S2, S2, J0, isite, jsite);
         StdFace_exchange(&kintr, S2, S2, J0, isite, jsite);
 
-        jsite = ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+        jsite = (iW + 1) + ((iL + 1 + 2 * L) % L) * W;
         StdFace_SzSz(&kintr, S2, S2, J2, isite, jsite);
         StdFace_exchange(&kintr, S2, S2, J2, isite, jsite);
 
-        jsite = ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+        jsite = (iW + 1) + ((iL - 1 + 2 * L) % L) * W;
         StdFace_SzSz(&kintr, S2, S2, J2p, isite, jsite);
         StdFace_exchange(&kintr, S2, S2, J2p, isite, jsite);
       }
@@ -289,6 +289,265 @@ void Spin_Ladder(
       + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + S*S*fabs(J2) + S*S*fabs(J2p);
    }
   StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
+}
+
+/**
+*
+* Setup a Hamiltonian for the generalized Heisenberg model on a square lattice
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void Spin_Ladder_Boost(
+  int Sz2 /**< [in] 2 * Total Sz */,
+  int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
+{
+  int isite, jsite;
+  int iL, iW;
+  int ktrans, kintr;
+  double LargeValue0, S;
+  FILE *fp;
+  int j;
+
+  fprintf(stdoutMPI, "\n");
+  fprintf(stdoutMPI, "#######  Parameter Summary  #######\n");
+  fprintf(stdoutMPI, "\n");
+  StdFace_RequiredVal_i("L", L);
+  StdFace_RequiredVal_i("W", W);
+  StdFace_PrintVal_d("a", &a, 1.0);
+  /**/
+  StdFace_PrintVal_i("2S", &S2, 1);
+  StdFace_PrintVal_d("h", &h, 0.0);
+  StdFace_PrintVal_d("Gamma", &Gamma, 0.0);
+  StdFace_PrintVal_d("D", &D, 0.0);
+  StdFace_PrintVal_d("J1", &J1, 1.0);
+  StdFace_PrintVal_d("J1'", &J1p, 1.0);
+  StdFace_PrintVal_d("J0", &J0, 1.0);
+  StdFace_PrintVal_d("J2", &J2, 1.0);
+  StdFace_PrintVal_d("J2'", &J2p, 1.0);
+  /**/
+  StdFace_NotUsed_d("J", J);
+  StdFace_NotUsed_d("J'", Jp);
+  StdFace_NotUsed_d("J''", Jpp);
+  StdFace_NotUsed_d("Jxy", Jxy);
+  StdFace_NotUsed_d("Jx", Jx);
+  StdFace_NotUsed_d("Jy", Jy);
+  StdFace_NotUsed_d("Jz", Jz);
+  StdFace_NotUsed_d("Jz0", Jz0);
+  StdFace_NotUsed_d("Jz1", Jz1);
+  StdFace_NotUsed_d("Jxy0", Jxy0);
+  StdFace_NotUsed_d("Jxy1", Jxy1);
+  StdFace_NotUsed_d("K", K);
+  /*
+  Local Spin
+  */
+  nsite = L * W;
+  locspinflag = (int *)malloc(sizeof(int) * nsite);
+  for (isite = 0; isite < nsite; isite++)locspinflag[isite] = S2;
+  /*
+  Transfer
+  */
+  ntrans = 1;
+  transindx = (int **)malloc(sizeof(int*) * ntrans);
+  trans = (double *)malloc(sizeof(double) * ntrans);
+  for (ktrans = 0; ktrans < ntrans; ktrans++) {
+    transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
+  }
+  ntrans = 0;
+  /*
+  Interaction
+  */
+  nintr = 1;
+  intrindx = (int **)malloc(sizeof(int*) * nintr);
+  intr = (double *)malloc(sizeof(double) * nintr);
+  for (kintr = 0; kintr < nintr; kintr++) {
+    intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
+  }
+  nintr = 0;
+  /*
+  Set mTPQ parameter
+  */
+  S = (double)S2 * 0.5;
+  if (lGC == 0) {
+    LargeValue0 = (double)Sz2 / (double)(2 * nsite) * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
+      + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + S*S*fabs(J2) + S*S*fabs(J2p);
+  }
+  else {
+    LargeValue0 = S * fabs(h) + S * fabs(D) + 0.5 * S * fabs(Gamma)
+      + S*S*fabs(J1) + S*S*fabs(J1p) + S*S*fabs(J0) + S*S*fabs(J2) + S*S*fabs(J2p);
+  }
+  StdFace_PrintVal_d("LargeValue", &LargeValue, LargeValue0);
+  /*
+  Magnetic field
+  */
+  fp = fopenMPI("boost.def", "w");
+  fprintf(fp, "# Magnetic field\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    -0.5 * Gamma, 0.0, 0.0, 0.0, -0.5 * h, 0.0);
+  /*
+  Interaction
+  */
+  fprintf(fp, "%d  # Number of type of J\n", 5);
+  fprintf(fp, "# J 1 (inter chain, vertical)\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * J0, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.25 * J0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, 0.25 * J0, 0.0);
+  fprintf(fp, "# J 2 (Nearest neighbor, along chain)\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * J1, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.25 * J1, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, 0.25 * J1, 0.0);
+  fprintf(fp, "# J 3 (Second nearest neighbor, along chain)\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * J1p, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.25 * J1p, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, 0.25 * J1p, 0.0);
+  fprintf(fp, "# J 4 (inter chain, diagonal1)\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * J2, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.25 * J2, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, 0.25 * J2, 0.0);
+  fprintf(fp, "# J 5 (inter chain, diagonal2)\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * J2p, 0.0, 0.0, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.25 * J2p, 0.0, 0.0, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.0, 0.0, 0.0, 0.0, 0.25 * J2p, 0.0);
+  /*
+  Topology
+  */
+  if (S2 != 1) {
+    fprintf(stderr, "\n ERROR! S2 must be 1 in Boost. \n\n");
+    exitMPI(-1);
+  }
+  ishift_nspin = 2;
+  if (W != 2) {
+    fprintf(stderr, "\n ERROR! W != 2 \n\n");
+    exitMPI(-1);
+  }
+  if (L < 3) {
+    fprintf(stderr, "\n ERROR! L < 3 \n\n");
+    exitMPI(-1);
+  }
+  num_pivot = 1;
+  /**/
+  fprintf(fp, "# W0  R0  num_pivot  ishift_nspin\n");
+  fprintf(fp, "%d %d %d %d\n", W, L, num_pivot, ishift_nspin);
+
+  list_6spin_star = (int **)malloc(sizeof(int*) * num_pivot);
+  for (j = 0; j < num_pivot; j++) {
+    list_6spin_star[j] = (int *)malloc(sizeof(int) * 7);
+  }
+
+  list_6spin_star[0][0] = 7; // num of J
+  list_6spin_star[0][1] = 1;
+  list_6spin_star[0][2] = 1;
+  list_6spin_star[0][3] = 1;
+  list_6spin_star[0][4] = 1;
+  list_6spin_star[0][5] = 1;
+  list_6spin_star[0][6] = 1; // flag
+
+  fprintf(fp, "# list_6spin_star\n");
+  for (j = 0; j < num_pivot; j++) {
+    fprintf(fp, "# pivot %d\n", j);
+    for (iW = 0; iW < 7; iW++) {
+      fprintf(fp, "%d ", list_6spin_star[j][iW]);
+    }
+    fprintf(fp, "\n");
+  }
+
+  list_6spin_pair = (int ***)malloc(sizeof(int**) * num_pivot);
+  for (j = 0; j < num_pivot; j++) {
+    list_6spin_pair[j] = (int **)malloc(sizeof(int*) * 7);
+    for (iW = 0; iW < 7; iW++) {
+      list_6spin_pair[j][iW] = (int *)malloc(sizeof(int) * list_6spin_star[j][0]);
+    }
+  }
+
+  list_6spin_pair[0][0][0] = 0;
+  list_6spin_pair[0][1][0] = 1;
+  list_6spin_pair[0][2][0] = 2;
+  list_6spin_pair[0][3][0] = 3;
+  list_6spin_pair[0][4][0] = 4;
+  list_6spin_pair[0][5][0] = 5;
+  list_6spin_pair[0][6][0] = 1; // type of J
+  list_6spin_pair[0][0][1] = 0;
+  list_6spin_pair[0][1][1] = 2;
+  list_6spin_pair[0][2][1] = 1;
+  list_6spin_pair[0][3][1] = 3;
+  list_6spin_pair[0][4][1] = 4;
+  list_6spin_pair[0][5][1] = 5;
+  list_6spin_pair[0][6][1] = 2; // type of J
+  list_6spin_pair[0][0][2] = 1;
+  list_6spin_pair[0][1][2] = 3;
+  list_6spin_pair[0][2][2] = 0;
+  list_6spin_pair[0][3][2] = 2;
+  list_6spin_pair[0][4][2] = 4;
+  list_6spin_pair[0][5][2] = 5;
+  list_6spin_pair[0][6][2] = 2; // type of J
+  list_6spin_pair[0][0][3] = 0;
+  list_6spin_pair[0][1][3] = 4;
+  list_6spin_pair[0][2][3] = 1;
+  list_6spin_pair[0][3][3] = 2;
+  list_6spin_pair[0][4][3] = 3;
+  list_6spin_pair[0][5][3] = 5;
+  list_6spin_pair[0][6][3] = 3; // type of J
+  list_6spin_pair[0][0][4] = 1;
+  list_6spin_pair[0][1][4] = 5;
+  list_6spin_pair[0][2][4] = 0;
+  list_6spin_pair[0][3][4] = 2;
+  list_6spin_pair[0][4][4] = 3;
+  list_6spin_pair[0][5][4] = 4;
+  list_6spin_pair[0][6][4] = 3; // type of J
+  list_6spin_pair[0][0][5] = 0;
+  list_6spin_pair[0][1][5] = 3;
+  list_6spin_pair[0][2][5] = 1;
+  list_6spin_pair[0][3][5] = 2;
+  list_6spin_pair[0][4][5] = 4;
+  list_6spin_pair[0][5][5] = 5;
+  list_6spin_pair[0][6][5] = 4; // type of J
+  list_6spin_pair[0][0][6] = 1;
+  list_6spin_pair[0][1][6] = 2;
+  list_6spin_pair[0][2][6] = 0;
+  list_6spin_pair[0][3][6] = 3;
+  list_6spin_pair[0][4][6] = 4;
+  list_6spin_pair[0][5][6] = 5;
+  list_6spin_pair[0][6][6] = 5; // type of J
+
+  fprintf(fp, "# list_6spin_pair\n");
+  for (j = 0; j < num_pivot; j++) {
+    fprintf(fp, "# pivot %d\n", j);
+    for (iL = 0; iL < list_6spin_star[j][0]; iL++) {
+      for (iW = 0; iW < 7; iW++) {
+        fprintf(fp, "%d ", list_6spin_pair[j][iW][iL]);
+      }
+      fprintf(fp, "\n");
+    }
+  }
+  fclose(fp);
+
+  for (j = 0; j < num_pivot; j++) {
+    free(list_6spin_star[j]);
+  }
+  free(list_6spin_star);
+
+  for (j = 0; j < num_pivot; j++) {
+    for (iW = 0; iW < 7; iW++) {
+      free(list_6spin_pair[j][iW]);
+    }
+    free(list_6spin_pair[j]);
+  }
+  free(list_6spin_pair);
+
 }
 
 /**
@@ -352,31 +611,31 @@ void KondoLattice_Ladder(
   }
 
   ktrans = 0;
-  for (iW = 0; iW < W; iW++){
-    for (iL = 0; iL < L; iL++){
-      isite = 2 * L * W + iL + iW * L;
+  for (iL = 0; iL < L; iL++) {
+    for (iW = 0; iW < W; iW++){
+      isite = 2 * L * W + iW + iL * W;
       for (ispin = 0; ispin < 2; ispin++){
 
         StdFace_trans(&ktrans, mu, isite, ispin, isite, ispin);
 
-        jsite = L * W + ((iL + 1 + 2 * L) % L) + iW * L;
+        jsite = L * W + iW + ((iL + 1 + 2 * L) % L) * W;
         StdFace_trans(&ktrans, t1, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t1, jsite, ispin, isite, ispin);
 
-        jsite = L * W + ((iL + 2 + 2 * L) % L) + iW * L;
+        jsite = L * W + iW + ((iL + 2 + 2 * L) % L) * W;
         StdFace_trans(&ktrans, t1p, isite, ispin, jsite, ispin);
         StdFace_trans(&ktrans, t1p, jsite, ispin, isite, ispin);
 
         if (iW < W - 1){
-          jsite = L * W + iL + (iW + 1) * L;
+          jsite = L * W + (iW + 1) + iL * W;
           StdFace_trans(&ktrans, t0, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t0, jsite, ispin, isite, ispin);
 
-          jsite = L * W + ((iL + 1 + 2 * L) % L) + (iW + 1) * L;
+          jsite = L * W + (iW + 1) + ((iL + 1 + 2 * L) % L) * W;
           StdFace_trans(&ktrans, t2, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t2, jsite, ispin, isite, ispin);
 
-          jsite = L * W + ((iL - 1 + 2 * L) % L) + (iW + 1) * L;
+          jsite = L * W + (iW + 1) + ((iL - 1 + 2 * L) % L) * W;
           StdFace_trans(&ktrans, t2p, isite, ispin, jsite, ispin);
           StdFace_trans(&ktrans, t2p, jsite, ispin, isite, ispin);
         }
@@ -394,8 +653,8 @@ void KondoLattice_Ladder(
     intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
   }
   kintr = 0;
-  for (iW = 0; iW < W; iW++){
     for (iL = 0; iL < L; iL++){
+      for (iW = 0; iW < W; iW++) {
 
       isite = iL + iW * L + L * W;
       jsite = iL + iW * L;
