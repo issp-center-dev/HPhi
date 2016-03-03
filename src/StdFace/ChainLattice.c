@@ -408,33 +408,33 @@ void Spin_ChainLattice_Boost(
     }
   }
 
-  list_6spin_pair[0][0][0] = 1; 
-  list_6spin_pair[0][1][0] = 2;
-  list_6spin_pair[0][2][0] = 0;
+  list_6spin_pair[0][0][0] = 0; 
+  list_6spin_pair[0][1][0] = 1;
+  list_6spin_pair[0][2][0] = 2;
   list_6spin_pair[0][3][0] = 3;
   list_6spin_pair[0][4][0] = 4;
   list_6spin_pair[0][5][0] = 5; 
   list_6spin_pair[0][6][0] = 1; // type of J
-  list_6spin_pair[0][0][1] = 2;
-  list_6spin_pair[0][1][1] = 3;
+  list_6spin_pair[0][0][1] = 1;
+  list_6spin_pair[0][1][1] = 2;
   list_6spin_pair[0][2][1] = 0;
-  list_6spin_pair[0][3][1] = 1;
+  list_6spin_pair[0][3][1] = 3;
   list_6spin_pair[0][4][1] = 4;
   list_6spin_pair[0][5][1] = 5;
   list_6spin_pair[0][6][1] = 1; // type of J
-  list_6spin_pair[0][0][2] = 3;
-  list_6spin_pair[0][1][2] = 4;
+  list_6spin_pair[0][0][2] = 2;
+  list_6spin_pair[0][1][2] = 3;
   list_6spin_pair[0][2][2] = 0;
   list_6spin_pair[0][3][2] = 1;
-  list_6spin_pair[0][4][2] = 2;
+  list_6spin_pair[0][4][2] = 4;
   list_6spin_pair[0][5][2] = 5;
   list_6spin_pair[0][6][2] = 1; // type of J
-  list_6spin_pair[0][0][3] = 4;
-  list_6spin_pair[0][1][3] = 5;
+  list_6spin_pair[0][0][3] = 3;
+  list_6spin_pair[0][1][3] = 4;
   list_6spin_pair[0][2][3] = 0;
   list_6spin_pair[0][3][3] = 1;
   list_6spin_pair[0][4][3] = 2;
-  list_6spin_pair[0][5][3] = 3;
+  list_6spin_pair[0][5][3] = 5;
   list_6spin_pair[0][6][3] = 1; // type of J
   list_6spin_pair[0][0][4] = 0;
   list_6spin_pair[0][1][4] = 2;
