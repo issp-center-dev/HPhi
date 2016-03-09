@@ -1722,6 +1722,19 @@ int JudgeDefType
     ){
     *mode = STANDARD_DRY_MODE;
   }
+  else if (argc >= 2 &&
+    (strcmp(argv[1], "-v") == 0
+    || strcmp(argv[1], "-V") == 0
+    || strcmp(argv[1], "--version") == 0 
+    || strcmp(argv[1], "--Version") == 0
+    || strcmp(argv[1], "--VERSION") == 0
+    || strcmp(argv[1], "-version") == 0
+    || strcmp(argv[1], "-Version") == 0
+    || strcmp(argv[1], "-VERSION") == 0) 
+    ) {
+    fprintf(stderr, "\nHPhi version 0.3 \n\n");
+    exit(-1);
+  }
   else{
     /*fprintf(stdoutMPI, cErrArgv, argv[1]);*/
     fprintf(stderr, "\n[Usage] \n");
@@ -1731,8 +1744,10 @@ int JudgeDefType
     fprintf(stderr, "   $ HPhi -s {input_file} \n");
     fprintf(stderr, "* Standard DRY mode \n");
     fprintf(stderr, "   $ HPhi -sdry {input_file} \n");
-    fprintf(stderr, "* In this mode, Hphi stops after it generats expert input files. \n\n");
-    return (-1);
+    fprintf(stderr, "   In this mode, Hphi stops after it generats expert input files. \n");
+    fprintf(stderr, "* Print the version \n");
+    fprintf(stderr, "   $ HPhi -v \n\n");
+    exit(-1);
   }
 
   return 0;

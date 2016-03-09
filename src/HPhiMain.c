@@ -77,12 +77,18 @@ int main(int argc, char* argv[]){
 
   int mode=0;
   char cFileListName[D_FileNameMax];
-  InitializeMPI(argc, argv);
 
   if(JudgeDefType(argc, argv, &mode)!=0){
     FinalizeMPI();
     return 0;
   }  
+
+  if (mode == STANDARD_DRY_MODE) {
+    myrank = 0;
+    nproc = 1;
+    stdoutMPI = stdout;
+  }
+  else InitializeMPI(argc, argv);
 
   //MakeDirectory for output
   struct stat tmpst;
@@ -98,11 +104,10 @@ int main(int argc, char* argv[]){
   strcpy(cFileListName, argv[2]);
   
   if(mode==STANDARD_MODE || mode == STANDARD_DRY_MODE){
-    StdFace_main(argv[2]);
+    if (myrank == 0) StdFace_main(argv[2]);
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
-      fprintf(stdoutMPI, "Dry run is Finished. \n\n");
-      FinalizeMPI();
+      fprintf(stdout, "Dry run is Finished. \n\n");
       return 0;
     }
   }
