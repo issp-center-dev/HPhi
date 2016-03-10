@@ -34,8 +34,6 @@ int output(struct BindStruct *X){
     
   if(X->Def.iCalcType==FullDiag){
     double tmp_N,tmp_Sz;
-    tmp_N=X->Phys.num_up+X->Phys.num_down;
-    tmp_Sz=X->Phys.sz;
     switch(X->Def.iCalcModel){
     case Spin:
     case Hubbard:
@@ -53,9 +51,17 @@ int output(struct BindStruct *X){
     if(childfopenMPI(sdt,"w",&fp)!=0){
       return -1;
     }
+
+     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==SpinGC){
+	tmp_N =X->Def.Nsite;
+      }
+      else{
+	tmp_N  = X->Phys.num_up + X->Phys.num_down;
+      }
+    
     fprintf(fp,"  <H>         <N>        <Sz>       <S2>       <D> \n");
     for(i=0;i<i_max;i++){
-      fprintf(fp," %10lf %10lf %10lf %10lf %10lf\n",X->Phys.all_energy[i],tmp_N,tmp_Sz,X->Phys.all_s2[i],X->Phys.all_doublon[i]);
+      fprintf(fp," %10lf %10lf %10lf %10lf %10lf\n",X->Phys.all_energy[i],tmp_N, X->Phys.all_sz[i],X->Phys.all_s2[i],X->Phys.all_doublon[i]);
     }
     fclose(fp);
   }
