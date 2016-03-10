@@ -181,12 +181,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     fprintf(stdoutMPI,"  stp=%d %.10lf \n",stp,E[1]);
   }
   else{
-#ifdef lapack
-    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite\n");
-#else
-    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4]\n");
-#endif
-
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] \n");
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -270,16 +265,13 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[2] = tmp_E[1];
        E[3] = tmp_E[2];
        E[4] = tmp_E[3];
-       E[0] = tmp_E[stp - 1];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf \n", stp, E[1], E[2], E[3], E[4],
-         E[0] / (double)X->Def.NsiteMPI);
 #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n", stp, E[1], E[2], E[3], E[4]);
 #endif
       
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
        if(stp==4){
 	 childfopenMPI(sdt_2,"w", &fp);
        }
@@ -289,7 +281,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
        fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4]);
        fclose(fp);
 
-      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos || abs(beta[stp])<pow(10.0, -14)){
+      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos || fabs(beta[stp])<pow(10.0, -14)){
         vec12(alpha,beta,stp,E,X);		
         X->Large.itr=stp;       
         X->Phys.Target_energy=E[k_exct];
@@ -307,7 +299,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     sprintf(sdt,  cLogLanczos_EigenValueNotConverged);
     return -1;
   }
-  
+
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
