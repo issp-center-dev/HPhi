@@ -58,8 +58,8 @@ const char* cLogLanczos_EigenVectorEnd="  End  : Calculate Lanczos Eigenvector.\
 const char* cLanczos_EigenVectorFinish="Lanczos Eigenvector finishes: %s";
 
 //expec.c
-const char* cExpecStart="step %d:Expec begins: %s";
-const char* cExpecEnd="step %d:Expec ends: %s";
+const char* cExpecStart="step %d:TPQ multiply begins: %s";
+const char* cExpecEnd  ="step %d:TPQ multiply ends:   %s";
 
 //expec_cisajs.c
 const char* cLogLanczosExpecOneBodyGStart="  Start: Calculate one body Green functions.\n";
