@@ -274,8 +274,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[0] = tmp_E[stp-2];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);       
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf: %10.lf  \n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI,E[0]);
-       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI,E[0]);
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf: %10.lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI, E[0]);
+       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %10.lf: %10.lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI, E[0]);
 #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
        fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
