@@ -181,7 +181,11 @@ int Lanczos_EigenValue(struct BindStruct *X)
     fprintf(stdoutMPI,"  stp=%d %.10lf \n",stp,E[1]);
   }
   else{
+#ifdef lapack
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite\n");
+#else
     fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] \n");
+#endif
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -235,19 +239,25 @@ int Lanczos_EigenValue(struct BindStruct *X)
        bisec(alpha,beta,stp,E,4,eps_Bisec);
      #endif
        ebefor=E[Target];
+       
+       childfopenMPI(sdt_2,"w", &fp);
+#ifdef lapack
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
 
+       fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite\n");
+       fprintf(fp, "stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
+#else
        fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
-
+       fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] \n");
+       fprintf(fp,"stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
+#endif
+       fclose(fp);
     }
             
     if(stp>2 && stp%2==0){
       
-      if(stp==4){
-	childfopenMPI(sdt_2,"w", &fp);
-      }
-      else{
-	childfopenMPI(sdt_2,"a", &fp);
-      }
+      childfopenMPI(sdt_2,"a", &fp);
+      
 #ifdef lapack
       d_malloc2(tmp_mat,stp,stp);
       d_malloc1(tmp_E,stp+1);
@@ -271,11 +281,11 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[2] = tmp_E[1];
        E[3] = tmp_E[2];
        E[4] = tmp_E[3];
-       E[0] = tmp_E[stp-2];
+       E[0] = tmp_E[stp-1];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);       
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf: %10.lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI, E[0]);
-       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %10.lf: %10.lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI, E[0]);
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
+       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
 #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
        fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
