@@ -195,6 +195,7 @@ int setmem_large
     d_malloc1(X->Phys.all_num_up, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_energy, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_doublon, X->Check.idim_max+1);
+    d_malloc1(X->Phys.all_sz, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_s2, X->Check.idim_max+1);
     c_malloc2(Ham, X->Check.idim_max+1,X->Check.idim_max+1);
     c_malloc2(L_vec, X->Check.idim_max+1,X->Check.idim_max+1);
