@@ -6,7 +6,7 @@ method = "Lanczos"
 //method = "FullDiag"
 lattice = "square lattice"
 t = 1.0
-U = 40.0
+U = 4.0
 nelec = 8
 2Sz = 0
 
