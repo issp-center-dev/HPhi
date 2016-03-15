@@ -3,7 +3,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo ""
     echo "Usage:"
     echo "./HPhiconfig.sh system_name"
-    echo " system_name should be choosen from below:"
+    echo " system_name should be chosen from below:"
     echo "     sekirei : ISSP system-B"
     echo "        maki : ISSP system-C"
     echo "       intel : Intel compiler + Linux PC"
@@ -12,7 +12,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "     gcc-mac : GCC + Mac"
     echo "      manual : Manual configuration. See below."
     echo ""
-    echo "In manual HPhi configtion, please type, for example,  "
+    echo "To configure manually HPhi, please type, for example,  "
     echo "./HPhiconfig.sh CC=icc LAPACK_FLAGS=\"-Dlapack -mkl=parallel\" \\"
     echo "   FLAGS=\"-qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel\""
     echo " where"
@@ -56,7 +56,7 @@ EOF
     elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF
 CC = gcc
-LAPACK_FLAGS = -framework Accelerate 
+LAPACK_FLAGS = -Dlapack -framework Accelerate 
 FLAGS = -fopenmp 
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
