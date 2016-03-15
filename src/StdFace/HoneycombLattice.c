@@ -423,10 +423,11 @@ struct StdIntList *StdI,
     exit(-1);
   }
   StdI->num_pivot = 2;
-  if (StdI->W != 6) {
-    fprintf(stderr, "DEBUG: W != 6\n");
+  if (StdI->W != 3) {
+    fprintf(stderr, "DEBUG: W != 3\n");
     exit(-1);
   }
+  StdI->W = 6;
   fprintf(fp, "# W0  R0  StdI->num_pivot  StdI->ishift_nspin\n");
   fprintf(fp, "%d %d %d %d\n", StdI->W, StdI->L, StdI->num_pivot, StdI->ishift_nspin);
 

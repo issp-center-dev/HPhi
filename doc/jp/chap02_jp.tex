@@ -37,7 +37,120 @@ source /opt/intel/mkl/bin/mklvars.sh
 
 
 \section{インストール方法}
-\input{chap02_1_jp.tex}
+
+% !TEX root = userguide_jp.tex
+%----------------------------------------------------------
+$\HPhi$ は次の場所からダウンロードできます。\\
+\url{https://github.com/QLMS/HPhi/releases}
+
+ダウンロードしたファイルを次のように展開してください。
+\begin{verbatim}
+$ tar xzvf HPhi-xxx.tar.gz
+\end{verbatim}
+
+$\HPhi$は次の2通りの方法でインストールできます。
+
+\subsection{\texttt{HPhiconfig.sh}を使う方法}
+
+展開したディレクトリのなかにある\verb|HPhiconfig.sh|スクリプトを次のように実行してください。
+(物性研システムB''sekirei''の場合)
+\begin{verbatim}
+$ bash HPhiconfig.sh sekirei
+\end{verbatim}
+これによりコンパイル環境設定ファイル\verb|make.sys|が\verb|src/|ディレクトリに作られます。
+\verb|HPhiconfig.sh|の引数は次のものに対応しています。
+\begin{itemize}
+\item \verb|sekirei| : 物性研究所システムB ''sekirei''
+\item \verb|maki| : 物性研究所システムC ''maki''
+\item \verb|intel| : intelコンパイラ + Linux PC
+\item \verb|mpicc-intel| : intelコンパイラ + MPIライブラリ(intelMPI以外) + Linux PC
+\item \verb|gcc| : GCC + Linux PC
+\item \verb|gcc-mac| : GCC + Mac
+\end{itemize}
+
+\verb|make.sys|の中身は次のようになっています(物性研システムB ''sekirei''の場合)。
+\begin{verbatim}
+ CC = mpiicc
+ LAPACK_FLAGS = -Dlapack -mkl=parallel 
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
+ MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
+ INCLUDE_DIR=./include
+\end{verbatim}
+となります。それぞれのマクロ(変数)の説明は次のとおりです。
+\begin{itemize}
+\item \verb|CC| : コンパイルコマンド(\verb|icc|, \verb|gcc|, \verb|fccpx|)
+\item \verb|LAPACK_FLAGS| : LAPACKのためのコンパイルオプション。 \verb|-Dlapack|は必須です。
+\item \verb|FLAGS| : その他のコンパイルオプション。
+  \verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|などのOpenMP有効化のオプションは必須です。
+  MPI並列を行う場合は\verb|-D MPI|をつけます. 
+\item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : メルセンヌツイスター(乱数発生ルーチン)および
+  追加のインクルードディレクトリを指定します。これらを変更する必要はありません。
+\end{itemize}
+
+これでコンパイルのための準備が整います。その後
+\begin{verbatim}
+$ make HPhi
+\end{verbatim}
+とすることで実行可能ファイル\verb|HPhi|が\verb|src/内に|生成されるので、
+このディレクトリにパスを通すか、
+パスの通っている場所にシンボリックリンクを作ってください。
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+実行ファイルにパスを通す時には、次のようにします。
+\\
+\verb|$ export PATH=${PATH}:|\underline{HPhiのディレクトリ}\verb|/src/|
+\\
+この設定を常に残すには、例えばログインシェルが\verb|bash|の場合には
+\verb|~/.bashrc|ファイルに上記のコマンドを記載します。
+\end{screen}
+
+\subsection{cmakeを使う場合}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize\\
+sekirei で cmake を利用するには
+\begin{verbatim}
+source /home/issp/materiapps/tool/env.sh
+\end{verbatim}
+maki では
+\begin{verbatim}
+source /global/app/materiapps/tool/env.sh
+\end{verbatim}
+をあらかじめ実行する必要があります。
+\end{screen}
+
+HPhiを展開したディレクトリのパスを\$PathTohphi 、ビルドディレクトリを\$HOME/build/hphi (任意の場所を指定可能)とした場合に、
+\begin{verbatim}
+cd $HOME/build/hphi
+cmake -DCONFIG=gcc $PathTohphi
+make
+\end{verbatim}
+でコンパイルすることができます。コンパイル後、\$HOME/build/hphi 直下にsrcフォルダが作成され、実行ファイルであるHPhiがそのフォルダ内に作成されます。MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。
+
+なお、上の例ではgccコンパイラを前提としたコンパイルになっていますが、
+\begin{itemize}
+\item \verb|sekirei| : 物性研究所システムB ''sekirei''
+\item \verb|fujitsu| : 富士通コンパイラ(物性研究所システムC ''maki'')
+\item \verb|intel| : intelコンパイラ + Linux PC
+\item \verb|gcc| : GCC + Linux PC
+\end{itemize}
+のオプションが用意されています。以下、HPhiを展開したディレクトリでビルドする例を示します(intelコンパイラの場合)。
+\begin{verbatim}
+mkdir ./build
+cd ./build
+cmake -DCONFIG=intel ../
+make
+\end{verbatim}
+実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。
+なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、新規に上記作業を行うことをお薦めします。
+
+
 \label{Sec:HowToInstall}
 \section{ディレクトリ構成}
 HPhi-xxx.gzを解凍後に構成されるディレクトリ構成を以下に示します。\\
