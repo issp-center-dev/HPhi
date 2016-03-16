@@ -79,7 +79,7 @@ struct StdIntList *StdI,
   /*
   Local Spin
   */
-  StdI->nsite = StdI->L * StdI->W;
+  StdI->nsite = StdI->L * StdI->W * 3;
   StdI->S2 = 1;
   StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
   for (isite = 0; isite < StdI->nsite; isite++)StdI->locspinflag[isite] = StdI->S2;

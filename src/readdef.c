@@ -1248,30 +1248,6 @@ int ReadDefFileIdxPara(
 	
       }
 
-      /*
-       Check the number of processes
-      */
-      isite3 = 0;
-      isite1 = 0;
-      for (iloop = 0; iloop < xBoost->num_pivot; iloop++) {
-        isite2 = isite1
-          + xBoost->list_6spin_star[iline][1]
-          + xBoost->list_6spin_star[iline][2]
-          + xBoost->list_6spin_star[iline][3]
-          + xBoost->list_6spin_star[iline][4]
-          + xBoost->list_6spin_star[iline][5];
-        if (isite2 > isite3) isite3 = isite2;
-        if (xBoost->list_6spin_star[iline][6] == 1) isite1 += xBoost->ishift_nspin;
-      }
-      isite3 = ((isite3 / xBoost->W0) + 1) * xBoost->W0 + 1;
-
-      if (isite3 > X->Nsite) {
-        isite1 = nproc;
-        for (iloop = 0; iloop < isite3 - X->Nsite; iloop++) isite1 /= 2;
-        fprintf(stderr, "\n Error ! in ReadDefFileIdxPara.\n");
-        fprintf(stderr, "Too much MPI processes ! It should be <= %d. \n\n", isite1);
-        exitMPI(-1);
-      }
       break;
 
     default:

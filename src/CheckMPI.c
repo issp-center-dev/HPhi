@@ -28,7 +28,7 @@ int NsiteMPI;
  */
 int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
-  int isite, NDimInterPE, SmallDim, SpinNum;
+  int isite, NDimInterPE, SmallDim, SpinNum, ipivot, ishift, isiteMax, isiteMax0;
 
   NsiteMPI = X->Def.Nsite;
   X->Def.NsiteMPI=NsiteMPI;
@@ -253,6 +253,35 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     fprintf(stdoutMPI, "Error ! Wrong model !\n");
     return FALSE;
   }/*switch (X->Def.iCalcModel)*/
+
+   /*
+   Check the number of processes for Boost
+   */
+  if (X->Boost.flgBoost == 1) {
+    isiteMax = 0;
+    ishift = 0;
+    for (ipivot = 0; ipivot < X->Boost.num_pivot; ipivot++) {
+      isiteMax0 = ishift
+        + X->Boost.list_6spin_star[ipivot][1]
+        + X->Boost.list_6spin_star[ipivot][2]
+        + X->Boost.list_6spin_star[ipivot][3]
+        + X->Boost.list_6spin_star[ipivot][4]
+        + X->Boost.list_6spin_star[ipivot][5];
+      if (isiteMax0 > isiteMax) isiteMax = isiteMax0;
+      if (X->Boost.list_6spin_star[ipivot][6] == 1) ishift += X->Boost.ishift_nspin;
+    }
+    fprintf(stderr, "DEBUG %d %d\n", isiteMax + 1, X->Def.Nsite);
+
+    isiteMax = ((isiteMax / X->Boost.W0) + 1) * X->Boost.W0;
+    if (isiteMax > X->Def.Nsite) {
+      isiteMax0 = nproc;
+      for (isite = 0; isite < isiteMax - X->Def.Nsite; isite++) isiteMax0 /= 2;
+      fprintf(stderr, "\n Error ! in ReadDefFileIdxPara.\n");
+      fprintf(stderr, "Too many MPI processes ! It should be <= %d. \n\n", isiteMax0);
+      exitMPI(-1);
+    }
+
+  }
 
   return TRUE;
 }/*void CheckMPI*/
