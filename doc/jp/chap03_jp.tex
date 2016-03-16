@@ -656,6 +656,8 @@ NCisAjsCktAltDC       1024
 \item{\ref{Sec:StandardMode}に従い、スタンダードモデルで入力ファイルを作成します。}
 \item{オプションとして"-sdry"を指定し、入力ファイル(ここではStdFace.def)を記入した上でHPhiを実行します。}\\
 \verb|$ |\underline{パス}\verb|/HPhi -sdry StdFace.def|
+
+このときMPIによる並列実行(\verb|mpirun|, \verb|mpiexec|など)は行わないでください。
 ~\\
 \item{実行したディレクトリ内に、エキスパート用として下記のdefファイルが自動生成されます。}\\
 \begin{minipage}{12cm}
