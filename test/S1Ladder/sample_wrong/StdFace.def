@@ -1,0 +1,13 @@
+W = 2
+L = 4
+model = "Spin"
+lattice = "ladder"
+method = "Lanczos"
+//method = "TPQ"
+//method = "FullDiag"
+2S=2
+J0=1.0
+J1=1.7
+J1'=0.68
+J2=0
+2Sz=0
