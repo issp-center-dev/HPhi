@@ -32,8 +32,7 @@ struct StdIntList *StdI,
   int Sz2 /**< [in] 2 * Total Sz */,
   int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
 {
-  int isite, jsite;
-  int iL, iW, j;
+  int isite, ipivot;
   int ktrans, kintr;
   double LargeValue0, S;
   FILE *fp;
@@ -162,8 +161,8 @@ struct StdIntList *StdI,
   fprintf(fp, "%d %d %d %d\n", StdI->W, StdI->L, StdI->num_pivot, StdI->ishift_nspin);
 
   StdI->list_6spin_star = (int **)malloc(sizeof(int*) * StdI->num_pivot);
-  for (j = 0; j < StdI->num_pivot; j++) {
-    StdI->list_6spin_star[j] = (int *)malloc(sizeof(int) * 7);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    StdI->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
   }
 
   StdI->list_6spin_star[0][0] = 1; // num of J
@@ -199,19 +198,19 @@ struct StdIntList *StdI,
   StdI->list_6spin_star[3][6] = 1; // flag
 
   fprintf(fp, "# StdI->list_6spin_star\n");
-  for (j = 0; j < StdI->num_pivot; j++) {
-    fprintf(fp, "# pivot %d\n", j);
-    for (iW = 0; iW < 7; iW++) {
-      fprintf(fp, "%d ", StdI->list_6spin_star[j][iW]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    fprintf(fp, "# pivot %d\n", ipivot);
+    for (isite = 0; isite < 7; isite++) {
+      fprintf(fp, "%d ", StdI->list_6spin_star[ipivot][isite]);
     }
     fprintf(fp, "\n");
   }
 
   StdI->list_6spin_pair = (int ***)malloc(sizeof(int**) * StdI->num_pivot);
-  for (j = 0; j < StdI->num_pivot; j++) {
-    StdI->list_6spin_pair[j] = (int **)malloc(sizeof(int*) * 7);
-    for (iW = 0; iW < 7; iW++) {
-      StdI->list_6spin_pair[j][iW] = (int *)malloc(sizeof(int) * StdI->list_6spin_star[j][0]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    StdI->list_6spin_pair[ipivot] = (int **)malloc(sizeof(int*) * 7);
+    for (isite = 0; isite < 7; isite++) {
+      StdI->list_6spin_pair[ipivot][isite] = (int *)malloc(sizeof(int) * StdI->list_6spin_star[ipivot][0]);
     }
   }
 
@@ -346,27 +345,27 @@ struct StdIntList *StdI,
   StdI->list_6spin_pair[3][6][4] = 1; // type of J
 
   fprintf(fp, "# StdI->list_6spin_pair\n");
-  for (j = 0; j < StdI->num_pivot; j++) {
-    fprintf(fp, "# pivot %d\n", j);
-    for (iL = 0; iL < StdI->list_6spin_star[j][0]; iL++) {
-      for (iW = 0; iW < 7; iW++) {
-        fprintf(fp, "%d ", StdI->list_6spin_pair[j][iW][iL]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    fprintf(fp, "# pivot %d\n", ipivot);
+    for (kintr = 0; kintr < StdI->list_6spin_star[ipivot][0]; kintr++) {
+      for (isite = 0; isite < 7; isite++) {
+        fprintf(fp, "%d ", StdI->list_6spin_pair[ipivot][isite][kintr]);
       }
       fprintf(fp, "\n");
     }
   }
   fclose(fp);
 
-  for (j = 0; j < StdI->num_pivot; j++) {
-    free(StdI->list_6spin_star[j]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    free(StdI->list_6spin_star[ipivot]);
   }
   free(StdI->list_6spin_star);
 
-  for (j = 0; j < StdI->num_pivot; j++) {
-    for (iW = 0; iW < 7; iW++) {
-      free(StdI->list_6spin_pair[j][iW]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    for (isite = 0; isite < 7; isite++) {
+      free(StdI->list_6spin_pair[ipivot][isite]);
     }
-    free(StdI->list_6spin_pair[j]);
+    free(StdI->list_6spin_pair[ipivot]);
   }
   free(StdI->list_6spin_pair);
 
