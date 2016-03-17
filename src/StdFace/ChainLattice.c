@@ -255,10 +255,8 @@ struct StdIntList *StdI,
   int Sz2 /**< [in] 2 * Total Sz */,
   int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
 {
-  int isite, jsite;
-  int iL, iL2;
+  int isite, ipivot;
   int ktrans, kintr;
-  int j, iW;
   double LargeValue0, S;
   FILE *fp;
 
@@ -366,130 +364,130 @@ struct StdIntList *StdI,
     exit(-1);
   }
   StdI->ishift_nspin = 4;
-  StdI->W = 4;
-  if(StdI->L % 4 != 0){
-    fprintf(stderr, "\n ERROR! L % 4 != 0 \n\n");
+  if(StdI->L % 8 != 0){
+    fprintf(stderr, "\n ERROR! L % 8 != 0 \n\n");
     exit(-1);
   }
-  StdI->L = StdI->L / 4;
-  if (StdI->L < 2) {
-    fprintf(stderr, "\n ERROR! L < 8 \n\n");
-    exit(-1);
-  }
-  StdI->num_pivot = 1;
+  StdI->W = StdI->L / 2;
+  StdI->L = 2;
+  StdI->num_pivot = StdI->W / 4;
 /**/
   fprintf(fp, "# W0  R0  StdI->num_pivot  StdI->ishift_nspin\n");
   fprintf(fp, "%d %d %d %d\n", StdI->W, StdI->L, StdI->num_pivot, StdI->ishift_nspin);
 
   StdI->list_6spin_star = (int **)malloc(sizeof(int*) * StdI->num_pivot);
-  for (j = 0; j < StdI->num_pivot; j++) {
-    StdI->list_6spin_star[j] = (int *)malloc(sizeof(int) * 7);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    StdI->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
   }
 
-  StdI->list_6spin_star[0][0] = 8; // num of J
-  StdI->list_6spin_star[0][1] = 1;
-  StdI->list_6spin_star[0][2] = 1;
-  StdI->list_6spin_star[0][3] = 1;
-  StdI->list_6spin_star[0][4] = 1;
-  StdI->list_6spin_star[0][5] = 1;
-  StdI->list_6spin_star[0][6] = 1; // flag
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    StdI->list_6spin_star[ipivot][0] = 8; // num of J
+    StdI->list_6spin_star[ipivot][1] = 1;
+    StdI->list_6spin_star[ipivot][2] = 1;
+    StdI->list_6spin_star[ipivot][3] = 1;
+    StdI->list_6spin_star[ipivot][4] = 1;
+    StdI->list_6spin_star[ipivot][5] = 1;
+    StdI->list_6spin_star[ipivot][6] = 1; // flag
+  }
 
   fprintf(fp, "# StdI->list_6spin_star\n");
-  for (j = 0; j < StdI->num_pivot; j++) {
-    fprintf(fp, "# pivot %d\n", j);
-    for (iW = 0; iW < 7; iW++) {
-      fprintf(fp, "%d ", StdI->list_6spin_star[j][iW]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    fprintf(fp, "# pivot %d\n", ipivot);
+    for (isite = 0; isite < 7; isite++) {
+      fprintf(fp, "%d ", StdI->list_6spin_star[ipivot][isite]);
     }
     fprintf(fp, "\n");
   }
 
   StdI->list_6spin_pair = (int ***)malloc(sizeof(int**) * StdI->num_pivot);
-  for (j = 0; j < StdI->num_pivot; j++) {
-    StdI->list_6spin_pair[j] = (int **)malloc(sizeof(int*) * 7);
-    for (iW = 0; iW < 7; iW++) {
-      StdI->list_6spin_pair[j][iW] = (int *)malloc(sizeof(int) * StdI->list_6spin_star[j][0]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    StdI->list_6spin_pair[ipivot] = (int **)malloc(sizeof(int*) * 7);
+    for (isite = 0; isite < 7; isite++) {
+      StdI->list_6spin_pair[ipivot][isite] = (int *)malloc(sizeof(int) * StdI->list_6spin_star[ipivot][0]);
     }
   }
 
-  StdI->list_6spin_pair[0][0][0] = 0; 
-  StdI->list_6spin_pair[0][1][0] = 1;
-  StdI->list_6spin_pair[0][2][0] = 2;
-  StdI->list_6spin_pair[0][3][0] = 3;
-  StdI->list_6spin_pair[0][4][0] = 4;
-  StdI->list_6spin_pair[0][5][0] = 5; 
-  StdI->list_6spin_pair[0][6][0] = 1; // type of J
-  StdI->list_6spin_pair[0][0][1] = 1;
-  StdI->list_6spin_pair[0][1][1] = 2;
-  StdI->list_6spin_pair[0][2][1] = 0;
-  StdI->list_6spin_pair[0][3][1] = 3;
-  StdI->list_6spin_pair[0][4][1] = 4;
-  StdI->list_6spin_pair[0][5][1] = 5;
-  StdI->list_6spin_pair[0][6][1] = 1; // type of J
-  StdI->list_6spin_pair[0][0][2] = 2;
-  StdI->list_6spin_pair[0][1][2] = 3;
-  StdI->list_6spin_pair[0][2][2] = 0;
-  StdI->list_6spin_pair[0][3][2] = 1;
-  StdI->list_6spin_pair[0][4][2] = 4;
-  StdI->list_6spin_pair[0][5][2] = 5;
-  StdI->list_6spin_pair[0][6][2] = 1; // type of J
-  StdI->list_6spin_pair[0][0][3] = 3;
-  StdI->list_6spin_pair[0][1][3] = 4;
-  StdI->list_6spin_pair[0][2][3] = 0;
-  StdI->list_6spin_pair[0][3][3] = 1;
-  StdI->list_6spin_pair[0][4][3] = 2;
-  StdI->list_6spin_pair[0][5][3] = 5;
-  StdI->list_6spin_pair[0][6][3] = 1; // type of J
-  StdI->list_6spin_pair[0][0][4] = 0;
-  StdI->list_6spin_pair[0][1][4] = 2;
-  StdI->list_6spin_pair[0][2][4] = 1;
-  StdI->list_6spin_pair[0][3][4] = 3;
-  StdI->list_6spin_pair[0][4][4] = 4;
-  StdI->list_6spin_pair[0][5][4] = 5;
-  StdI->list_6spin_pair[0][6][4] = 2; // type of J
-  StdI->list_6spin_pair[0][0][5] = 1;
-  StdI->list_6spin_pair[0][1][5] = 3;
-  StdI->list_6spin_pair[0][2][5] = 0;
-  StdI->list_6spin_pair[0][3][5] = 2;
-  StdI->list_6spin_pair[0][4][5] = 4;
-  StdI->list_6spin_pair[0][5][5] = 5;
-  StdI->list_6spin_pair[0][6][5] = 2; // type of J
-  StdI->list_6spin_pair[0][0][6] = 2;
-  StdI->list_6spin_pair[0][1][6] = 4;
-  StdI->list_6spin_pair[0][2][6] = 0;
-  StdI->list_6spin_pair[0][3][6] = 1;
-  StdI->list_6spin_pair[0][4][6] = 3;
-  StdI->list_6spin_pair[0][5][6] = 5;
-  StdI->list_6spin_pair[0][6][6] = 2; // type of J
-  StdI->list_6spin_pair[0][0][7] = 3;
-  StdI->list_6spin_pair[0][1][7] = 5;
-  StdI->list_6spin_pair[0][2][7] = 0;
-  StdI->list_6spin_pair[0][3][7] = 1;
-  StdI->list_6spin_pair[0][4][7] = 2;
-  StdI->list_6spin_pair[0][5][7] = 4;
-  StdI->list_6spin_pair[0][6][7] = 2; // type of J
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    StdI->list_6spin_pair[ipivot][0][0] = 0;
+    StdI->list_6spin_pair[ipivot][1][0] = 1;
+    StdI->list_6spin_pair[ipivot][2][0] = 2;
+    StdI->list_6spin_pair[ipivot][3][0] = 3;
+    StdI->list_6spin_pair[ipivot][4][0] = 4;
+    StdI->list_6spin_pair[ipivot][5][0] = 5;
+    StdI->list_6spin_pair[ipivot][6][0] = 1; // type of J
+    StdI->list_6spin_pair[ipivot][0][1] = 1;
+    StdI->list_6spin_pair[ipivot][1][1] = 2;
+    StdI->list_6spin_pair[ipivot][2][1] = 0;
+    StdI->list_6spin_pair[ipivot][3][1] = 3;
+    StdI->list_6spin_pair[ipivot][4][1] = 4;
+    StdI->list_6spin_pair[ipivot][5][1] = 5;
+    StdI->list_6spin_pair[ipivot][6][1] = 1; // type of J
+    StdI->list_6spin_pair[ipivot][0][2] = 2;
+    StdI->list_6spin_pair[ipivot][1][2] = 3;
+    StdI->list_6spin_pair[ipivot][2][2] = 0;
+    StdI->list_6spin_pair[ipivot][3][2] = 1;
+    StdI->list_6spin_pair[ipivot][4][2] = 4;
+    StdI->list_6spin_pair[ipivot][5][2] = 5;
+    StdI->list_6spin_pair[ipivot][6][2] = 1; // type of J
+    StdI->list_6spin_pair[ipivot][0][3] = 3;
+    StdI->list_6spin_pair[ipivot][1][3] = 4;
+    StdI->list_6spin_pair[ipivot][2][3] = 0;
+    StdI->list_6spin_pair[ipivot][3][3] = 1;
+    StdI->list_6spin_pair[ipivot][4][3] = 2;
+    StdI->list_6spin_pair[ipivot][5][3] = 5;
+    StdI->list_6spin_pair[ipivot][6][3] = 1; // type of J
+    StdI->list_6spin_pair[ipivot][0][4] = 0;
+    StdI->list_6spin_pair[ipivot][1][4] = 2;
+    StdI->list_6spin_pair[ipivot][2][4] = 1;
+    StdI->list_6spin_pair[ipivot][3][4] = 3;
+    StdI->list_6spin_pair[ipivot][4][4] = 4;
+    StdI->list_6spin_pair[ipivot][5][4] = 5;
+    StdI->list_6spin_pair[ipivot][6][4] = 2; // type of J
+    StdI->list_6spin_pair[ipivot][0][5] = 1;
+    StdI->list_6spin_pair[ipivot][1][5] = 3;
+    StdI->list_6spin_pair[ipivot][2][5] = 0;
+    StdI->list_6spin_pair[ipivot][3][5] = 2;
+    StdI->list_6spin_pair[ipivot][4][5] = 4;
+    StdI->list_6spin_pair[ipivot][5][5] = 5;
+    StdI->list_6spin_pair[ipivot][6][5] = 2; // type of J
+    StdI->list_6spin_pair[ipivot][0][6] = 2;
+    StdI->list_6spin_pair[ipivot][1][6] = 4;
+    StdI->list_6spin_pair[ipivot][2][6] = 0;
+    StdI->list_6spin_pair[ipivot][3][6] = 1;
+    StdI->list_6spin_pair[ipivot][4][6] = 3;
+    StdI->list_6spin_pair[ipivot][5][6] = 5;
+    StdI->list_6spin_pair[ipivot][6][6] = 2; // type of J
+    StdI->list_6spin_pair[ipivot][0][7] = 3;
+    StdI->list_6spin_pair[ipivot][1][7] = 5;
+    StdI->list_6spin_pair[ipivot][2][7] = 0;
+    StdI->list_6spin_pair[ipivot][3][7] = 1;
+    StdI->list_6spin_pair[ipivot][4][7] = 2;
+    StdI->list_6spin_pair[ipivot][5][7] = 4;
+    StdI->list_6spin_pair[ipivot][6][7] = 2; // type of J
+  }
 
   fprintf(fp, "# StdI->list_6spin_pair\n");
-  for (j = 0; j < StdI->num_pivot; j++) {
-    fprintf(fp, "# pivot %d\n", j);
-    for (iL = 0; iL < StdI->list_6spin_star[j][0]; iL++) {
-      for (iW = 0; iW < 7; iW++) {
-        fprintf(fp, "%d ", StdI->list_6spin_pair[j][iW][iL]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    fprintf(fp, "# pivot %d\n", ipivot);
+    for (kintr = 0; kintr < StdI->list_6spin_star[ipivot][0]; kintr++) {
+      for (isite = 0; isite < 7; isite++) {
+        fprintf(fp, "%d ", StdI->list_6spin_pair[ipivot][isite][kintr]);
       }
       fprintf(fp, "\n");
     }
   }
   fclose(fp);
 
-  for (j = 0; j < StdI->num_pivot; j++) {
-    free(StdI->list_6spin_star[j]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    free(StdI->list_6spin_star[ipivot]);
   }
   free(StdI->list_6spin_star);
 
-  for (j = 0; j < StdI->num_pivot; j++) {
-    for (iW = 0; iW < 7; iW++) {
-      free(StdI->list_6spin_pair[j][iW]);
+  for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {
+    for (isite = 0; isite < 7; isite++) {
+      free(StdI->list_6spin_pair[ipivot][isite]);
     }
-    free(StdI->list_6spin_pair[j]);
+    free(StdI->list_6spin_pair[ipivot]);
   }
   free(StdI->list_6spin_pair);
 
