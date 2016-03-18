@@ -573,7 +573,7 @@ int ReadDefFileNInt(
       }
       //read W0 R0 num_pivot ishift_nspin
       fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%d %d %d %d\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
+      sscanf(ctmp2,"%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
 
       break;
     default:
