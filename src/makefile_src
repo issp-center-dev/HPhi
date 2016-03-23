@@ -27,6 +27,8 @@ makeHam.c \
 matrixlapack.c \
 mltply.c \
 mltplyMPI.c \
+mltplyMPIBoost.c \
+defmodelBoost.c \
 CalcByTPQ.c \
 output.c \
 output_list.c \

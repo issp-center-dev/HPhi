@@ -16,6 +16,8 @@
 //Define Mode for mltply
 // complex version
 #include <bitcalc.h>
+#include "mfmemory.h"
+#include "xsetmem.h"
 #include "mltply.h"
 #include "mltplyMPI.h"
 #include "wrapperMPI.h"
@@ -45,8 +47,11 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   long unsigned int isite1, isite2, sigma1, sigma2;
   long unsigned int isite3, isite4, sigma3, sigma4;
   long unsigned int ibitsite1, ibitsite2, ibitsite3, ibitsite4;
+  long unsigned int countm;
+  long unsigned int sitenum;
 
   double complex dam_pr;
+  double complex dam_prm;
   double complex tmp_trans;
   long int tmp_sgn;
   double num1 = 0;
@@ -55,6 +60,12 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   double complex dmv=0;
   /*[e] For InterAll */
 
+  /* SpinGCBoost */
+  double complex* tmp_v2;
+  double complex* tmp_v3;
+  double *tmp_d;
+  /* SpinGCBoost */
+  
   long unsigned int i_max;
   int ihermite=0;
   int idx=0;
@@ -521,20 +532,20 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 
     case SpinGC:
 
-      if (X->Def.iFlgGeneralSpin == FALSE) {	
+      if (X->Def.iFlgGeneralSpin == FALSE) {
         for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
-	  if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
-	    dam_pr=0;
-	    if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
-	      fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
-	    }
-	    else{
-	      dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
-	    }
-	  }
-	  else{
-	    dam_pr=0;
-	    for(ihermite=0; ihermite<2; ihermite++){
+         if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
+           dam_pr=0;
+           if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
+             fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
+           }
+           else{
+             dam_pr += X_GC_child_CisAit_spin_MPIdouble(X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], X, tmp_v0, tmp_v1);
+           }
+         }
+         else{
+           dam_pr=0;
+           for(ihermite=0; ihermite<2; ihermite++){
 	      idx=i+ihermite;
 	      isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
 	      isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
@@ -779,6 +790,49 @@ shared(tmp_v0, tmp_v1)
           }
         }
       }  //end:generalspin
+	
+  if(X->Boost.flgBoost == 1){
+	 
+    c_malloc1(tmp_v2, i_max+1);
+    c_malloc1(tmp_v3, i_max+1);
+     
+    child_general_int_spin_MPIBoost(X, tmp_v0, tmp_v1, tmp_v2, tmp_v3);
+    dam_pr  = 0.0;
+    dam_prm = 0.0;
+    sitenum = X->Def.Nsite;
+    #pragma omp parallel for default(none) reduction(+:dam_pr,dam_prm) private(i,j,countm) shared(tmp_v1,myrank,nproc) firstprivate(i_max,sitenum) 
+    for(j=1;j<=i_max;j++){
+      // count mag  X->Def.Nsite
+      countm = 0;
+      for(i=0;i<(int)log2(nproc);i++){
+        countm += (myrank>>i)&1;
+      }
+      for(i=0;i<sitenum;i++){
+        countm += ((j-1)>>i)&1;
+      }  
+      dam_pr   += conj(tmp_v1[j])*tmp_v1[j]; // norm=<v1|v1>
+      dam_prm  += countm*conj(tmp_v1[j])*tmp_v1[j]; // mag=<v1|(Mz+1/2)|v1>
+    }
+    //X->Large.prdct += dam_pr;  
+    dam_pr  = SumMPI_dc(dam_pr);
+    dam_prm = SumMPI_dc(dam_prm);
+
+    /*fprintf(stdoutMPI, "###Boost### SpinGC Boost mode f norm %lf and mag %lf\n",creal(dam_pr),creal(dam_prm));*/
+
+    dam_pr = 0.0;
+    #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) shared(tmp_v1,tmp_v0) firstprivate(i_max) 
+    for(j=1;j<=i_max;j++){
+      dam_pr   += conj(tmp_v1[j])*tmp_v0[j]; // <H>=<v1|H|v1>
+    }
+    X->Large.prdct += dam_pr;  
+    
+
+    /* SpinGCBoost */
+    c_free1(tmp_v2, i_max+1);  
+    c_free1(tmp_v3, i_max+1);  
+
+  }/* SpinGCBoost */
+
   break;
       
   default:

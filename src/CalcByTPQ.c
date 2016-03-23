@@ -76,6 +76,7 @@ int CalcBySSM(
     FirstMultiply(&dsfmt, &(X->Bind));
     
     expec_energy(&(X->Bind)); //v0 = H*v1
+
     Ns = 1.0*X->Bind.Def.NsiteMPI;
     inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
     step_i = 1;

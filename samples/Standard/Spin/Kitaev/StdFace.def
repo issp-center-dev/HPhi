@@ -1,9 +1,9 @@
 W = 2
 L = 3
 model = "SpinGC"
-//method = "Lanczos"
+method = "Lanczos"
 //method = "TPQ"
-method = "FullDiag"
+//method = "FullDiag"
 lattice = "Honeycomb lattice"
 Jx0 = -1.0
 Jy0 =  0.0

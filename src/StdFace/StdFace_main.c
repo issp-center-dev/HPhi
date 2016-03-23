@@ -22,24 +22,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
-#include "../include/wrapperMPI.h"
 
 static void TrimSpaceQuote(char *value);
 static void StoreWithCheckDup_s(char *keyword, char *valuestring, char *value);
 static void StoreWithCheckDup_i(char *keyword, char *valuestring, int *value);
 static void StoreWithCheckDup_d(char *keyword, char *valuestring, double *value);
-static void StdFace_ResetVals();
+static void StdFace_ResetVals(struct StdIntList *StdI);
 
-static void PrintLocSpin();
-static void PrintTrans();
-static void PrintInter();
-static void PrintNamelist();
+static void PrintLocSpin(struct StdIntList *StdI);
+static void PrintTrans(struct StdIntList *StdI);
+static void PrintInter(struct StdIntList *StdI);
+static void PrintNamelist(char *model);
 static void PrintCalcMod(char *method, int FlgTemp, char *model,int ioutputmode);
-static void PrintModPara(int Sz2, int nelec, int Lanczos_max, int initial_iv, int nvec, 
+static void PrintModPara(struct StdIntList *StdI, int Sz2, int nelec, 
+  int Lanczos_max, int initial_iv, int nvec,
   int exct,  int LanczosEps, int LanczosTarget,
   int NumAve, int ExpecInterval, char* filehead);
-static void Print1Green(int ioutputmode);
-static void Print2Green(int ioutputmode);
+static void Print1Green(struct StdIntList *StdI, int ioutputmode);
+static void Print2Green(struct StdIntList *StdI,int ioutputmode);
 
 static int CheckOutputMode(char* outputmode);
 
@@ -57,6 +57,9 @@ static void CheckModPara(char* model,
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void StdFace_main(char *fname  /**< [in] Input file name for the standard mode */){
+
+  struct StdIntList StdI;
+
   FILE *fp;
   int ktrans, kintr;
   int FlgTemp, Lanczos_max, initial_iv, nvec, exct, 
@@ -66,13 +69,13 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   char *keyword, *value;
   char model[256], lattice[256], method[256], outputmode[256], filehead[256];
 
-  fprintf(stdoutMPI, "\n######  Standard Intarface Mode STARTS  ######\n");
-  if ((fp = fopenMPI(fname, "r")) == NULL){
+  fprintf(stdout, "\n######  Standard Intarface Mode STARTS  ######\n");
+  if ((fp = fopen(fname, "r")) == NULL){
     fprintf(stderr, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
-    exitMPI(-1);
+    exit(-1);
   }
   else{
-    fprintf(stdoutMPI, "\n  Open Standard-Mode Inputfile %s \n\n", fname);
+    fprintf(stdout, "\n  Open Standard-Mode Inputfile %s \n\n", fname);
   }
 
   strcpy(model, "****");
@@ -91,100 +94,100 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   LanczosTarget = 9999;
   NumAve        = 9999;
   ExpecInterval = 9999;
-  StdFace_ResetVals();
+  StdFace_ResetVals(&StdI);
 
-  while (fgetsMPI(ctmpline, 256, fp) != NULL){
+  while (fgets(ctmpline, 256, fp) != NULL){
 
     TrimSpaceQuote(ctmpline);
     if (strncmp(ctmpline, "//", 2) == 0){
-      fprintf(stdoutMPI, "  Skipping a line.\n");
+      fprintf(stdout, "  Skipping a line.\n");
       continue;
     }
     else if (ctmpline[0] == '\0'){
-      fprintf(stdoutMPI, "  Skipping a line.\n");
+      fprintf(stdout, "  Skipping a line.\n");
       continue;
     }
     keyword = strtok(ctmpline, "=");
     value = strtok(NULL, "=");
     if (value == NULL){
       fprintf(stderr, "\n  ERROR !  \"=\" is NOT found !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     TrimSpaceQuote(keyword);
     TrimSpaceQuote(value);
-    fprintf(stdoutMPI, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
+    fprintf(stdout, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
-    if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &h);
-    else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &D);
+    if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI.h);
+    else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI.D);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &exct);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &ExpecInterval);
     else if (strcmp(keyword, "filehead") == 0) StoreWithCheckDup_s(keyword, value, filehead);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &FlgTemp);
-    else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &Gamma);
+    else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Gamma);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &initial_iv);
-    else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &J);
-    else if (strcmp(keyword, "j0") == 0) StoreWithCheckDup_d(keyword, value, &J0);
-    else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &J1);
-    else if (strcmp(keyword, "j1'") == 0) StoreWithCheckDup_d(keyword, value, &J1p);
-    else if (strcmp(keyword, "j2") == 0) StoreWithCheckDup_d(keyword, value, &J2);
-    else if (strcmp(keyword, "j2'") == 0) StoreWithCheckDup_d(keyword, value, &J2p);
-    else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &Jx);
-    else if (strcmp(keyword, "jx0") == 0) StoreWithCheckDup_d(keyword, value, &Jx0);
-    else if (strcmp(keyword, "jx1") == 0) StoreWithCheckDup_d(keyword, value, &Jx1);
-    else if (strcmp(keyword, "jx2") == 0) StoreWithCheckDup_d(keyword, value, &Jx2);
-    else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_d(keyword, value, &Jxy);
-    else if (strcmp(keyword, "jxy0") == 0) StoreWithCheckDup_d(keyword, value, &Jxy0);
-    else if (strcmp(keyword, "jxy1") == 0) StoreWithCheckDup_d(keyword, value, &Jxy1);
-    else if (strcmp(keyword, "jxy2") == 0) StoreWithCheckDup_d(keyword, value, &Jxy2);
-    else if (strcmp(keyword, "jxy'") == 0) StoreWithCheckDup_d(keyword, value, &Jxyp);
-    else if (strcmp(keyword, "jx'") == 0) StoreWithCheckDup_d(keyword, value, &Jxp);
-    else if (strcmp(keyword, "jy") == 0) StoreWithCheckDup_d(keyword, value, &Jy);
-    else if (strcmp(keyword, "jy0") == 0) StoreWithCheckDup_d(keyword, value, &Jy0);
-    else if (strcmp(keyword, "jy1") == 0) StoreWithCheckDup_d(keyword, value, &Jy1);
-    else if (strcmp(keyword, "jy2") == 0) StoreWithCheckDup_d(keyword, value, &Jy2);
-    else if (strcmp(keyword, "jy'") == 0) StoreWithCheckDup_d(keyword, value, &Jyp);
-    else if (strcmp(keyword, "jz") == 0) StoreWithCheckDup_d(keyword, value, &Jz);
-    else if (strcmp(keyword, "jz0") == 0) StoreWithCheckDup_d(keyword, value, &Jz0);
-    else if (strcmp(keyword, "jz1") == 0) StoreWithCheckDup_d(keyword, value, &Jz1);
-    else if (strcmp(keyword, "jz2") == 0) StoreWithCheckDup_d(keyword, value, &Jz2);
-    else if (strcmp(keyword, "jz'") == 0) StoreWithCheckDup_d(keyword, value, &Jzp);
-    else if (strcmp(keyword, "j'") == 0) StoreWithCheckDup_d(keyword, value, &Jp);
-    else if (strcmp(keyword, "j''") == 0) StoreWithCheckDup_d(keyword, value, &Jp);
-    else if (strcmp(keyword, "k") == 0) StoreWithCheckDup_d(keyword, value, &K);
-    else if (strcmp(keyword, "l") == 0) StoreWithCheckDup_i(keyword, value, &L);
+    else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J);
+    else if (strcmp(keyword, "j0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0);
+    else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1);
+    else if (strcmp(keyword, "j1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p);
+    else if (strcmp(keyword, "j2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2);
+    else if (strcmp(keyword, "j2'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p);
+    else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jx);
+    else if (strcmp(keyword, "jx0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jx0);
+    else if (strcmp(keyword, "jx1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jx1);
+    else if (strcmp(keyword, "jx2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jx2);
+    else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy);
+    else if (strcmp(keyword, "jxy0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy0);
+    else if (strcmp(keyword, "jxy1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy1);
+    else if (strcmp(keyword, "jxy2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy2);
+    else if (strcmp(keyword, "jxy'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxyp);
+    else if (strcmp(keyword, "jx'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxp);
+    else if (strcmp(keyword, "jy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jy);
+    else if (strcmp(keyword, "jy0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jy0);
+    else if (strcmp(keyword, "jy1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jy1);
+    else if (strcmp(keyword, "jy2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jy2);
+    else if (strcmp(keyword, "jy'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jyp);
+    else if (strcmp(keyword, "jz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jz);
+    else if (strcmp(keyword, "jz0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jz0);
+    else if (strcmp(keyword, "jz1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jz1);
+    else if (strcmp(keyword, "jz2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jz2);
+    else if (strcmp(keyword, "jz'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jzp);
+    else if (strcmp(keyword, "j'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp);
+    else if (strcmp(keyword, "j''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp);
+    else if (strcmp(keyword, "k") == 0) StoreWithCheckDup_d(keyword, value, &StdI.K);
+    else if (strcmp(keyword, "l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.L);
     else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &LanczosEps);
     else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &LanczosTarget);
     else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &Lanczos_max);
-    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &LargeValue);
+    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI.LargeValue);
     else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_s(keyword, value, lattice);
     else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_s(keyword, value, method);
     else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_s(keyword, value, model);
     else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, outputmode);
-    else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &mu);
+    else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI.mu);
     else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &nelec);
     else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &NumAve);
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &nvec);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &Sz2);
-    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &S2);
-    else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_d(keyword, value, &t);
-    else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_d(keyword, value, &t0);
-    else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_d(keyword, value, &t1);
-    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_d(keyword, value, &t1p);
-    else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_d(keyword, value, &t2);
-    else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_d(keyword, value, &tp);
-    else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_d(keyword, value, &tp);
-    else if (strcmp(keyword, "u") == 0) StoreWithCheckDup_d(keyword, value, &U);
-    else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &V);
-    else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &V0);
-    else if (strcmp(keyword, "v1") == 0) StoreWithCheckDup_d(keyword, value, &V1);
-    else if (strcmp(keyword, "v1'") == 0) StoreWithCheckDup_d(keyword, value, &V1p);
-    else if (strcmp(keyword, "v2") == 0) StoreWithCheckDup_d(keyword, value, &V2);
-    else if (strcmp(keyword, "v'") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
-    else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &Vp);
-    else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &W);
+    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
+    else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t);
+    else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t0);
+    else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t1);
+    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t1p);
+    else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t2);
+    else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.tp);
+    else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.tp);
+    else if (strcmp(keyword, "u") == 0) StoreWithCheckDup_d(keyword, value, &StdI.U);
+    else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V);
+    else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V0);
+    else if (strcmp(keyword, "v1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V1);
+    else if (strcmp(keyword, "v1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V1p);
+    else if (strcmp(keyword, "v2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V2);
+    else if (strcmp(keyword, "v'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Vp);
+    else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Vp);
+    else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.W);
     else {
       fprintf(stderr, "ERROR ! Unsupported Keyword !\n");
-      exitMPI(-1);
+      exit(-1);
     }
   }
   fclose(fp);
@@ -192,58 +195,67 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
    Generate Hamiltonian definition files
   */
   if (strcmp(model, "fermionhubbard") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) FermionHubbard_SquareLattice(nelec, 0);
-    else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 0);
-    else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 0);
-    else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 0);
-    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 0);
+    if (strcmp(lattice, "squarelattice") == 0) FermionHubbard_SquareLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(&StdI, nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "fermionhubbardgc") == 0
     || strcmp(model, "hubbardgc") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) FermionHubbard_SquareLattice(nelec, 1);
-    else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(nelec, 1);
-    else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(nelec, 1);
-    else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(nelec, 1);
-    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(nelec, 1);
+    if (strcmp(lattice, "squarelattice") == 0) FermionHubbard_SquareLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "chainlattice") == 0) FermionHubbard_ChainLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "triangularlattice") == 0) FermionHubbard_TriangularLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "honeycomblattice") == 0) FermionHubbard_HoneycombLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) FermionHubbard_Ladder(&StdI, nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "spin") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(Sz2, 0);
-    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 0);
-    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 0);
-    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 0);
-    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 0);
+    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(&StdI, Sz2, 0);
+    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(&StdI, Sz2, 0);
+    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(&StdI, Sz2, 0);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(&StdI, Sz2, 0);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(&StdI, Sz2, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "spingc") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(Sz2, 1);
-    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(Sz2, 1);
-    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(Sz2, 1);
-    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(Sz2, 1);
-    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(Sz2, 1);
+    if (strcmp(lattice, "squarelattice") == 0) Spin_SquareLattice(&StdI, Sz2, 1);
+    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice(&StdI, Sz2, 1);
+    else if (strcmp(lattice, "triangularlattice") == 0) Spin_TriangularLattice(&StdI, Sz2, 1);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice(&StdI, Sz2, 1);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder(&StdI, Sz2, 1);
+    else UnsupportedSystem(model, lattice);
+  }
+  else if (strcmp(model, "spingcboost") == 0) {
+    if (strcmp(lattice, "squarelattice") == 0) UnsupportedSystem(model, lattice);
+    else if (strcmp(lattice, "chainlattice") == 0) Spin_ChainLattice_Boost(&StdI, Sz2, 1);
+    else if (strcmp(lattice, "triangularlattice") == 0) UnsupportedSystem(model, lattice);
+    else if (strcmp(lattice, "honeycomblattice") == 0) Spin_HoneycombLattice_Boost(&StdI, Sz2, 1);
+    else if (strcmp(lattice, "kagome") == 0) Spin_Kagome_Boost(&StdI, Sz2, 1);
+    else if (strcmp(lattice, "ladder") == 0) Spin_Ladder_Boost(&StdI, Sz2, 1);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolattice") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) KondoLattice_SquareLattice(nelec, 0);
-    else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 0);
-    else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 0);
-    else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 0);
-    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 0);
+    if (strcmp(lattice, "squarelattice") == 0) KondoLattice_SquareLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(&StdI, nelec, 0);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(&StdI, nelec, 0);
     else UnsupportedSystem(model, lattice);
   }
   else if (strcmp(model, "kondolatticegc") == 0
     || strcmp(model, "kondogc") == 0){
-    if (strcmp(lattice, "squarelattice") == 0) KondoLattice_SquareLattice(nelec, 1);
-    else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(nelec, 1);
-    else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(nelec, 1);
-    else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(nelec, 1);
-    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(nelec, 1);
+    if (strcmp(lattice, "squarelattice") == 0) KondoLattice_SquareLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "chainlattice") == 0) KondoLattice_ChainLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "triangularlattice") == 0) KondoLattice_TriangularLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "honeycomblattice") == 0) KondoLattice_HoneycombLattice(&StdI, nelec, 1);
+    else if (strcmp(lattice, "ladder") == 0) KondoLattice_Ladder(&StdI, nelec, 1);
     else UnsupportedSystem(model, lattice);
   }
   else UnsupportedSystem(model,lattice);
   /**/
-  fprintf(stdoutMPI, "\n");
+  fprintf(stdout, "\n");
   /**/
   CheckModPara(model,
     &nelec, &Sz2, &Lanczos_max, &initial_iv, &nvec,
@@ -251,34 +263,34 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     &NumAve, &ExpecInterval,filehead);
   ioutputmode = CheckOutputMode(outputmode);
   /**/
-  fprintf(stdoutMPI, "\n");
-  fprintf(stdoutMPI, "######  Print Expert input files  ######\n");
-  fprintf(stdoutMPI, "\n");
-  PrintLocSpin();
-  PrintTrans();
-  PrintInter();
-  PrintNamelist();
+  fprintf(stdout, "\n");
+  fprintf(stdout, "######  Print Expert input files  ######\n");
+  fprintf(stdout, "\n");
+  PrintLocSpin(&StdI);
+  PrintTrans(&StdI);
+  PrintInter(&StdI);
+  PrintNamelist(model);
   PrintCalcMod(method, FlgTemp, model, ioutputmode);
-  PrintModPara(Sz2, nelec, Lanczos_max, initial_iv, nvec, exct,
+  PrintModPara(&StdI,Sz2, nelec, Lanczos_max, initial_iv, nvec, exct,
     LanczosEps, LanczosTarget,NumAve, ExpecInterval,filehead);  
-  Print1Green(ioutputmode);
-  Print2Green(ioutputmode);
+  Print1Green(&StdI, ioutputmode);
+  Print2Green(&StdI, ioutputmode);
   /*
    Finalize All
   */
-  free(locspinflag);
-  for (ktrans = 0; ktrans < ntrans; ktrans++){
-    free(transindx[ktrans]);
+  free(StdI.locspinflag);
+  for (ktrans = 0; ktrans < StdI.ntrans; ktrans++){
+    free(StdI.transindx[ktrans]);
   }
-  free(transindx);
-  free(trans);
-  for (kintr = 0; kintr < nintr; kintr++){
-    free(intrindx[kintr]);
+  free(StdI.transindx);
+  free(StdI.trans);
+  for (kintr = 0; kintr < StdI.nintr; kintr++){
+    free(StdI.intrindx[kintr]);
   }
-  free(intrindx);
-  free(intr);
+  free(StdI.intrindx);
+  free(StdI.intr);
  
-  fprintf(stdoutMPI, "\n######  Input files are generated.  ######\n\n");
+  fprintf(stdout, "\n######  Input files are generated.  ######\n\n");
 
 }
 
@@ -288,68 +300,68 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static void StdFace_ResetVals(){
+static void StdFace_ResetVals(struct StdIntList *StdI){
   /*
   Parameters for LATTICE
   */
-  a = 9999.9;
-  L = 9999;
-  W = 9999;
+  StdI->a = 9999.9;
+  StdI->L = 9999;
+  StdI->W = 9999;
   /*
   Parameters for MODEL
   */
-  mu = 9999.9;
-  t = 9999.9;
-  tp = 9999.9;
-  tpp = 9999.9;
-  t0 = 9999.9;
-  t1 = 9999.9;
-  t1p = 9999.9;
-  t2 = 9999.9;
-  U = 9999.9;
-  V = 9999.9;
-  Vp = 9999.9;
-  Vpp = 9999.9;
-  V0 = 9999.9;
-  V1 = 9999.9;
-  V1p = 9999.9;
-  V2 = 9999.9;
-  J = 9999.9;
-  Jp = 9999.9;
-  Jpp = 9999.9;
-  J0 = 9999.9;
-  J1 = 9999.9;
-  J1p = 9999.9;
-  J2 = 9999.9;
-  J2p = 9999.9;
+  StdI->mu = 9999.9;
+  StdI->t = 9999.9;
+  StdI->tp = 9999.9;
+  StdI->tpp = 9999.9;
+  StdI->t0 = 9999.9;
+  StdI->t1 = 9999.9;
+  StdI->t1p = 9999.9;
+  StdI->t2 = 9999.9;
+  StdI->U = 9999.9;
+  StdI->V = 9999.9;
+  StdI->Vp = 9999.9;
+  StdI->Vpp = 9999.9;
+  StdI->V0 = 9999.9;
+  StdI->V1 = 9999.9;
+  StdI->V1p = 9999.9;
+  StdI->V2 = 9999.9;
+  StdI->J = 9999.9;
+  StdI->Jp = 9999.9;
+  StdI->Jpp = 9999.9;
+  StdI->J0 = 9999.9;
+  StdI->J1 = 9999.9;
+  StdI->J1p = 9999.9;
+  StdI->J2 = 9999.9;
+  StdI->J2p = 9999.9;
   /**/
-  Jx = 9999.9;
-  Jy = 9999.9;
-  Jz = 9999.9;
-  Jxy = 9999.9;
-  Jx0 = 9999.9;
-  Jy0 = 9999.9;
-  Jz0 = 9999.9;
-  Jxy0 = 9999.9;
-  Jx1 = 9999.9;
-  Jy1 = 9999.9;
-  Jz1 = 9999.9;
-  Jxy1 = 9999.9;
-  Jx2 = 9999.9;
-  Jy2 = 9999.9;
-  Jz2 = 9999.9;
-  Jxy2 = 9999.9;
-  Jxp = 9999.9;
-  Jyp = 9999.9;
-  Jzp = 9999.9;
-  Jxyp = 9999.9;
-  h = 9999.9;
-  Gamma = 9999.9;
-  D = 9999.9;
-  K = 9999.9;
+  StdI->Jx = 9999.9;
+  StdI->Jy = 9999.9;
+  StdI->Jz = 9999.9;
+  StdI->Jxy = 9999.9;
+  StdI->Jx0 = 9999.9;
+  StdI->Jy0 = 9999.9;
+  StdI->Jz0 = 9999.9;
+  StdI->Jxy0 = 9999.9;
+  StdI->Jx1 = 9999.9;
+  StdI->Jy1 = 9999.9;
+  StdI->Jz1 = 9999.9;
+  StdI->Jxy1 = 9999.9;
+  StdI->Jx2 = 9999.9;
+  StdI->Jy2 = 9999.9;
+  StdI->Jz2 = 9999.9;
+  StdI->Jxy2 = 9999.9;
+  StdI->Jxp = 9999.9;
+  StdI->Jyp = 9999.9;
+  StdI->Jzp = 9999.9;
+  StdI->Jxyp = 9999.9;
+  StdI->h = 9999.9;
+  StdI->Gamma = 9999.9;
+  StdI->D = 9999.9;
+  StdI->K = 9999.9;
   /**/
-  LargeValue = 9999.9;
-  S2 = 9999;
+  StdI->LargeValue = 9999.9;
+  StdI->S2 = 9999;
 }
 
 /**
@@ -399,7 +411,7 @@ static void StoreWithCheckDup_s(
 {
   if (strcmp(value, "****") != 0){
     fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exitMPI(-1);
+    exit(-1);
   }
   else{
     strcpy(value, valuestring);
@@ -420,7 +432,7 @@ static void StoreWithCheckDup_i(
 {
   if (*value != 9999){
     fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exitMPI(-1);
+    exit(-1);
   }
   else{
     sscanf(valuestring, "%d", value);
@@ -442,7 +454,7 @@ static void StoreWithCheckDup_d(
 
   if (*value != 9999.9){
     fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exitMPI(-1);
+    exit(-1);
   }
   else{
     sscanf(valuestring, "%lf", value);
@@ -456,26 +468,26 @@ static void StoreWithCheckDup_d(
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void PrintLocSpin(){
+void PrintLocSpin(struct StdIntList *StdI) {
   FILE *fp;
   int isite, nlocspin;
 
   nlocspin = 0;
-  for (isite = 0; isite < nsite; isite++)
-    if (locspinflag[isite] != 0) nlocspin = nlocspin + 1;
+  for (isite = 0; isite < StdI->nsite; isite++)
+    if (StdI->locspinflag[isite] != 0) nlocspin = nlocspin + 1;
 
-  fp = fopenMPI("zlocspn.def", "w");
+  fp = fopen("zlocspn.def", "w");
   fprintf(fp, "================================ \n");
   fprintf(fp, "NlocalSpin %5d  \n", nlocspin);
   fprintf(fp, "================================ \n");
   fprintf(fp, "========i_0LocSpn_1IteElc ====== \n");
   fprintf(fp, "================================ \n");
 
-  for (isite = 0; isite < nsite; isite++)
-    fprintf(fp, "%5d  %5d\n", isite, locspinflag[isite]);
+  for (isite = 0; isite < StdI->nsite; isite++)
+    fprintf(fp, "%5d  %5d\n", isite, StdI->locspinflag[isite]);
 
   fclose(fp);
-  fprintf(stdoutMPI, "    zlocspin.def is written.\n");
+  fprintf(stdout, "    zlocspin.def is written.\n");
 }
 
 /**
@@ -484,28 +496,28 @@ void PrintLocSpin(){
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void PrintTrans(){
+static void PrintTrans(struct StdIntList *StdI){
   FILE *fp;
   int jtrans, ktrans, ntrans0;
 
-  for (jtrans = 0; jtrans < ntrans; jtrans++){
-    for (ktrans = jtrans + 1; ktrans < ntrans; ktrans++){
-      if ( transindx[jtrans][0] == transindx[ktrans][0]
-        && transindx[jtrans][1] == transindx[ktrans][1]
-        && transindx[jtrans][2] == transindx[ktrans][2]
-        && transindx[jtrans][3] == transindx[ktrans][3]){
-        trans[jtrans] = trans[jtrans] + trans[ktrans];
-        trans[ktrans] = 0.0;
+  for (jtrans = 0; jtrans < StdI->ntrans; jtrans++){
+    for (ktrans = jtrans + 1; ktrans < StdI->ntrans; ktrans++){
+      if (StdI->transindx[jtrans][0] == StdI->transindx[ktrans][0]
+        && StdI->transindx[jtrans][1] == StdI->transindx[ktrans][1]
+        && StdI->transindx[jtrans][2] == StdI->transindx[ktrans][2]
+        && StdI->transindx[jtrans][3] == StdI->transindx[ktrans][3]){
+        StdI->trans[jtrans] = StdI->trans[jtrans] + StdI->trans[ktrans];
+        StdI->trans[ktrans] = 0.0;
       }
     }
   }
 
   ntrans0 = 0;
-  for (ktrans = 0; ktrans < ntrans; ktrans++){
-    if (fabs(trans[ktrans]) > 0.000001) ntrans0 = ntrans0 + 1;
+  for (ktrans = 0; ktrans < StdI->ntrans; ktrans++){
+    if (fabs(StdI->trans[ktrans]) > 0.000001) ntrans0 = ntrans0 + 1;
   }
 
-  fp = fopenMPI("zTrans.def", "w");
+  fp = fopen("zTrans.def", "w");
   fprintf(fp, "======================== \n");
   fprintf(fp, "NTransfer %7d  \n", ntrans0);
   fprintf(fp, "======================== \n");
@@ -513,15 +525,16 @@ static void PrintTrans(){
   fprintf(fp, "======================== \n");
 
   ntrans0 = 0;
-  for (ktrans = 0; ktrans < ntrans; ktrans++){
-    if (fabs(trans[ktrans]) > 0.000001)
+  for (ktrans = 0; ktrans < StdI->ntrans; ktrans++){
+    if (fabs(StdI->trans[ktrans]) > 0.000001)
       fprintf(fp, "%5d %5d %5d %5d %25.15f  0.000000\n",
-      transindx[ktrans][0], transindx[ktrans][1], transindx[ktrans][2], transindx[ktrans][3],
-      trans[ktrans]);
+        StdI->transindx[ktrans][0], StdI->transindx[ktrans][1], 
+        StdI->transindx[ktrans][2], StdI->transindx[ktrans][3],
+        StdI->trans[ktrans]);
   }
 
   fclose(fp);
-  fprintf(stdoutMPI, "      zTrans.def is written.\n");
+  fprintf(stdout, "      zTrans.def is written.\n");
 }
 
 /**
@@ -530,135 +543,144 @@ static void PrintTrans(){
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void PrintInter(){
+static void PrintInter(struct StdIntList *StdI){
   FILE *fp;
   int jintr, kintr, nintr0;
 
-  for (jintr = 0; jintr < nintr; jintr++){
-    for (kintr = jintr + 1; kintr < nintr; kintr++){
+  for (jintr = 0; jintr < StdI->nintr; jintr++){
+    for (kintr = jintr + 1; kintr < StdI->nintr; kintr++){
       if ( 
-        (  intrindx[jintr][0] == intrindx[kintr][0]
-        && intrindx[jintr][1] == intrindx[kintr][1]
-        && intrindx[jintr][2] == intrindx[kintr][2]
-        && intrindx[jintr][3] == intrindx[kintr][3]
-        && intrindx[jintr][4] == intrindx[kintr][4]
-        && intrindx[jintr][5] == intrindx[kintr][5]
-        && intrindx[jintr][6] == intrindx[kintr][6]
-        && intrindx[jintr][7] == intrindx[kintr][7] )
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][0]
+        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][1]
+        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][2]
+        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][3]
+        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][4]
+        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][5]
+        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][6]
+        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][7] )
         ||
-        (  intrindx[jintr][0] == intrindx[kintr][4]
-        && intrindx[jintr][1] == intrindx[kintr][5]
-        && intrindx[jintr][2] == intrindx[kintr][6]
-        && intrindx[jintr][3] == intrindx[kintr][7]
-        && intrindx[jintr][4] == intrindx[kintr][0]
-        && intrindx[jintr][5] == intrindx[kintr][1]
-        && intrindx[jintr][6] == intrindx[kintr][2]
-        && intrindx[jintr][7] == intrindx[kintr][3])
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][4]
+        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][5]
+        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][6]
+        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][7]
+        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][0]
+        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][1]
+        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][2]
+        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][3])
         ){
-        intr[jintr] = intr[jintr] + intr[kintr];
-        intr[kintr] = 0.0;
+        StdI->intr[jintr] = StdI->intr[jintr] + StdI->intr[kintr];
+        StdI->intr[kintr] = 0.0;
       }
       else if (
-        (  intrindx[jintr][0] == intrindx[kintr][4]
-        && intrindx[jintr][1] == intrindx[kintr][5]
-        && intrindx[jintr][2] == intrindx[kintr][2]
-        && intrindx[jintr][3] == intrindx[kintr][3]
-        && intrindx[jintr][4] == intrindx[kintr][0]
-        && intrindx[jintr][5] == intrindx[kintr][1]
-        && intrindx[jintr][6] == intrindx[kintr][6]
-        && intrindx[jintr][7] == intrindx[kintr][7])
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][4]
+        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][5]
+        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][2]
+        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][3]
+        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][0]
+        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][1]
+        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][6]
+        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][7])
         ||
-        (  intrindx[jintr][0] == intrindx[kintr][0]
-        && intrindx[jintr][1] == intrindx[kintr][1]
-        && intrindx[jintr][2] == intrindx[kintr][6]
-        && intrindx[jintr][3] == intrindx[kintr][7]
-        && intrindx[jintr][4] == intrindx[kintr][4]
-        && intrindx[jintr][5] == intrindx[kintr][5]
-        && intrindx[jintr][6] == intrindx[kintr][2]
-        && intrindx[jintr][7] == intrindx[kintr][3])
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][0]
+        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][1]
+        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][6]
+        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][7]
+        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][4]
+        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][5]
+        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][2]
+        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][3])
         ){
-        intr[jintr] = intr[jintr] - intr[kintr];
-        intr[kintr] = 0.0;
+        StdI->intr[jintr] = StdI->intr[jintr] - StdI->intr[kintr];
+        StdI->intr[kintr] = 0.0;
       }
     }
   }
 
-  for (jintr = 0; jintr < nintr; jintr++) {
-    for (kintr = jintr + 1; kintr < nintr; kintr++) {
-      if ( intrindx[jintr][6] == intrindx[kintr][4]
-        && intrindx[jintr][7] == intrindx[kintr][5]
-        && intrindx[jintr][4] == intrindx[kintr][6]
-        && intrindx[jintr][5] == intrindx[kintr][7]
-        && intrindx[jintr][2] == intrindx[kintr][0]
-        && intrindx[jintr][3] == intrindx[kintr][1]
-        && intrindx[jintr][0] == intrindx[kintr][2]
-        && intrindx[jintr][1] == intrindx[kintr][3]
+  for (jintr = 0; jintr < StdI->nintr; jintr++) {
+    for (kintr = jintr + 1; kintr < StdI->nintr; kintr++) {
+      if (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][4]
+        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][5]
+        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][6]
+        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][7]
+        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][0]
+        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][1]
+        && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][2]
+        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][3]
         ) {
-        intrindx[kintr][0] = intrindx[jintr][6];
-        intrindx[kintr][1] = intrindx[jintr][7];
-        intrindx[kintr][2] = intrindx[jintr][4];
-        intrindx[kintr][3] = intrindx[jintr][5];
-        intrindx[kintr][4] = intrindx[jintr][2];
-        intrindx[kintr][5] = intrindx[jintr][3];
-        intrindx[kintr][6] = intrindx[jintr][0];
-        intrindx[kintr][7] = intrindx[jintr][1];
+        StdI->intrindx[kintr][0] = StdI->intrindx[jintr][6];
+        StdI->intrindx[kintr][1] = StdI->intrindx[jintr][7];
+        StdI->intrindx[kintr][2] = StdI->intrindx[jintr][4];
+        StdI->intrindx[kintr][3] = StdI->intrindx[jintr][5];
+        StdI->intrindx[kintr][4] = StdI->intrindx[jintr][2];
+        StdI->intrindx[kintr][5] = StdI->intrindx[jintr][3];
+        StdI->intrindx[kintr][6] = StdI->intrindx[jintr][0];
+        StdI->intrindx[kintr][7] = StdI->intrindx[jintr][1];
       }
       else if (
-        (intrindx[jintr][6] == intrindx[kintr][4]
-          && intrindx[jintr][7] == intrindx[kintr][5]
-          && intrindx[jintr][4] == intrindx[kintr][2]
-          && intrindx[jintr][5] == intrindx[kintr][3]
-          && intrindx[jintr][2] == intrindx[kintr][0]
-          && intrindx[jintr][3] == intrindx[kintr][1]
-          && intrindx[jintr][0] == intrindx[kintr][6]
-          && intrindx[jintr][1] == intrindx[kintr][7])
+        (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][3]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][7])
         ||
-        (intrindx[jintr][6] == intrindx[kintr][0]
-          && intrindx[jintr][7] == intrindx[kintr][1]
-          && intrindx[jintr][4] == intrindx[kintr][6]
-          && intrindx[jintr][5] == intrindx[kintr][7]
-          && intrindx[jintr][2] == intrindx[kintr][4]
-          && intrindx[jintr][3] == intrindx[kintr][5]
-          && intrindx[jintr][0] == intrindx[kintr][2]
-          && intrindx[jintr][1] == intrindx[kintr][3])
+        (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][7]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][3])
         ) {
-        intrindx[kintr][0] = intrindx[jintr][6];
-        intrindx[kintr][1] = intrindx[jintr][7];
-        intrindx[kintr][2] = intrindx[jintr][4];
-        intrindx[kintr][3] = intrindx[jintr][5];
-        intrindx[kintr][4] = intrindx[jintr][2];
-        intrindx[kintr][5] = intrindx[jintr][3];
-        intrindx[kintr][6] = intrindx[jintr][0];
-        intrindx[kintr][7] = intrindx[jintr][1];
+        StdI->intrindx[kintr][0] = StdI->intrindx[jintr][6];
+        StdI->intrindx[kintr][1] = StdI->intrindx[jintr][7];
+        StdI->intrindx[kintr][2] = StdI->intrindx[jintr][4];
+        StdI->intrindx[kintr][3] = StdI->intrindx[jintr][5];
+        StdI->intrindx[kintr][4] = StdI->intrindx[jintr][2];
+        StdI->intrindx[kintr][5] = StdI->intrindx[jintr][3];
+        StdI->intrindx[kintr][6] = StdI->intrindx[jintr][0];
+        StdI->intrindx[kintr][7] = StdI->intrindx[jintr][1];
 
-        intr[kintr] = - intr[kintr];
+        StdI->intr[kintr] = -StdI->intr[kintr];
       }
     }
   }
 
-  for (jintr = 0; jintr < nintr; jintr++) {
+  for (jintr = 0; jintr < StdI->nintr; jintr++) {
 
     if (
-      (intrindx[jintr][0] == intrindx[jintr][4] && intrindx[jintr][1] == intrindx[jintr][5]) ||
-      (intrindx[jintr][2] == intrindx[jintr][6] && intrindx[jintr][3] == intrindx[jintr][7])
+      (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][4] 
+        && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][5]) ||
+      (StdI->intrindx[jintr][2] == StdI->intrindx[jintr][6] 
+        && StdI->intrindx[jintr][3] == StdI->intrindx[jintr][7])
       ) {
 
       if (!(
-        (intrindx[jintr][0] == intrindx[jintr][2] && intrindx[jintr][1] == intrindx[jintr][3]) ||
-        (intrindx[jintr][0] == intrindx[jintr][6] && intrindx[jintr][1] == intrindx[jintr][7]) ||
-        (intrindx[jintr][4] == intrindx[jintr][2] && intrindx[jintr][5] == intrindx[jintr][3]) ||
-        (intrindx[jintr][4] == intrindx[jintr][6] && intrindx[jintr][5] == intrindx[jintr][7])
+        (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][2] 
+          && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][3])
+        ||
+        (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][6]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][7]) 
+        ||
+        (StdI->intrindx[jintr][4] == StdI->intrindx[jintr][2] 
+          && StdI->intrindx[jintr][5] == StdI->intrindx[jintr][3])
+        ||
+        (StdI->intrindx[jintr][4] == StdI->intrindx[jintr][6] 
+          && StdI->intrindx[jintr][5] == StdI->intrindx[jintr][7])
         ))
-        intr[jintr] = 0.0;
+        StdI->intr[jintr] = 0.0;
     }
   }
  
   nintr0 = 0;
-  for (kintr = 0; kintr < nintr; kintr++){
-    if (fabs(intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  for (kintr = 0; kintr < StdI->nintr; kintr++){
+    if (fabs(StdI->intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
   }
 
-  fp = fopenMPI("zInterAll.def", "w");
+  fp = fopen("zInterAll.def", "w");
   fprintf(fp, "====================== \n");
   fprintf(fp, "NInterAll %7d  \n", nintr0);
   fprintf(fp, "====================== \n");
@@ -666,16 +688,18 @@ static void PrintInter(){
   fprintf(fp, "====================== \n");
 
   nintr0 = 0;
-  for (kintr = 0; kintr < nintr; kintr++){
-    if (fabs(intr[kintr]) > 0.000001)
+  for (kintr = 0; kintr < StdI->nintr; kintr++){
+    if (fabs(StdI->intr[kintr]) > 0.000001)
       fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %25.15f  0.000000\n",
-      intrindx[kintr][0], intrindx[kintr][1], intrindx[kintr][2], intrindx[kintr][3],
-      intrindx[kintr][4], intrindx[kintr][5], intrindx[kintr][6], intrindx[kintr][7],
-      intr[kintr]);
+        StdI->intrindx[kintr][0], StdI->intrindx[kintr][1], 
+        StdI->intrindx[kintr][2], StdI->intrindx[kintr][3],
+        StdI->intrindx[kintr][4], StdI->intrindx[kintr][5], 
+        StdI->intrindx[kintr][6], StdI->intrindx[kintr][7],
+        StdI->intr[kintr]);
   }
 
   fclose(fp);
-  fprintf(stdoutMPI, "   zInterAll.def is written.\n");
+  fprintf(stdout, "   zInterAll.def is written.\n");
 }
 
 /**
@@ -684,10 +708,10 @@ static void PrintInter(){
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static void PrintNamelist(){
+static void PrintNamelist(char *model){
   FILE *fp;
 
-  fp = fopenMPI("namelist.def", "w");
+  fp = fopen("namelist.def", "w");
   fprintf(fp, "CalcMod calcmod.def\n");
   fprintf(fp, "ModPara modpara.def\n");
   fprintf(fp, "LocSpin zlocspn.def\n");
@@ -696,8 +720,11 @@ static void PrintNamelist(){
   fprintf(fp, "OneBodyG greenone.def\n");
   fprintf(fp, "TwoBodyG greentwo.def\n");
 
+  if (strcmp(model, "spingcboost") == 0) 
+    fprintf(fp, "Boost boost.def\n");
+
   fclose(fp);
-  fprintf(stdoutMPI, "    namelist.def is written.\n");
+  fprintf(stdout, "    namelist.def is written.\n");
 }
 
 /**
@@ -717,7 +744,7 @@ static void PrintCalcMod(
 
   if (strcmp(method, "****") == 0){
     fprintf(stderr, "ERROR ! Method is NOT specified !\n");
-    exitMPI(-1);
+    exit(-1);
   }
   else if (strcmp(method, "lanczos") == 0) iCalcType = 0;
   else if (strcmp(method, "tpq") == 0) iCalcType = 1;
@@ -726,7 +753,7 @@ static void PrintCalcMod(
     strcmp(method, "direct") == 0 ) iCalcType = 2;
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Solver : %s\n", method);
-    exitMPI(-1);
+    exit(-1);
   }
 
   if (strcmp(model, "fermionhubbard") == 0) iCalcModel = 0;
@@ -734,18 +761,19 @@ static void PrintCalcMod(
   else if (strcmp(model, "kondolattice") == 0) iCalcModel = 2;
   else if (strcmp(model, "fermionhubbardgc") == 0
     || strcmp(model, "hubbardgc") == 0) iCalcModel = 3;
-  else if (strcmp(model, "spingc") == 0) iCalcModel = 4;
+  else if (strcmp(model, "spingc") == 0
+    || strcmp(model, "spingcboost") == 0) iCalcModel = 4;
   else if (strcmp(model, "kondolatticegc") == 0
     || strcmp(model, "kondogc") == 0) iCalcModel = 5;
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Model : %s\n", model);
-    exitMPI(-1);
+    exit(-1);
   }
 
   if (ioutputmode == 2) ioutputmode2 = 0;
   else ioutputmode2 = ioutputmode;
 
-  fp = fopenMPI("calcmod.def", "w");
+  fp = fopen("calcmod.def", "w");
   fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag\n");
   fprintf(fp, "#FlgFiniteTemperature= 0:Zero temperature, 1:Finite temperature. This parameter is active only for CalcType=2.\n");
   fprintf(fp, "#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC \n");
@@ -754,7 +782,7 @@ static void PrintCalcMod(
   fprintf(fp, "CalcModel %3d\n", iCalcModel);
   fprintf(fp, "OutputMode %3d\n", ioutputmode2);
   fclose(fp);
-  fprintf(stdoutMPI, "     calcmod.def is written.\n");
+  fprintf(stdout, "     calcmod.def is written.\n");
 }
 
 /**
@@ -764,6 +792,7 @@ static void PrintCalcMod(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 static void PrintModPara(
+  struct StdIntList *StdI,
   int Sz2 /**< [in]*/,
   int nelec /**< [in]*/,
   int Lanczos_max /**< [in]*/,
@@ -778,7 +807,7 @@ static void PrintModPara(
 {
   FILE *fp;
 
-  fp = fopenMPI("modpara.def", "w");
+  fp = fopen("modpara.def", "w");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Model_Parameters   0\n");
   fprintf(fp, "--------------------\n");
@@ -787,7 +816,7 @@ static void PrintModPara(
   fprintf(fp, "CDataFileHead  %s\n", filehead);
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
-  fprintf(fp, "Nsite          %-5d\n", nsite);
+  fprintf(fp, "Nsite          %-5d\n", StdI->nsite);
   if (Sz2 != 9999) fprintf(fp, "2Sz            %-5d\n", Sz2);
   if (nelec != 9999) fprintf(fp, "Ncond          %-5d\n", nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", Lanczos_max);
@@ -796,12 +825,12 @@ static void PrintModPara(
   fprintf(fp, "exct           %-5d\n", exct);
   fprintf(fp, "LanczosEps     %-5d\n", LanczosEps);
   fprintf(fp, "LanczosTarget  %-5d\n", LanczosTarget);
-  fprintf(fp, "LargeValue     %-25.15e\n", LargeValue);
+  fprintf(fp, "LargeValue     %-25.15e\n", StdI->LargeValue);
   fprintf(fp, "NumAve         %-5d\n", NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", ExpecInterval);
 
   fclose(fp);
-  fprintf(stdoutMPI, "     modpara.def is written.\n");
+  fprintf(stdout, "     modpara.def is written.\n");
 }
 
 /**
@@ -810,7 +839,8 @@ static void PrintModPara(
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static void Print1Green(int ioutputmode /**< [in]*/){
+static void Print1Green(struct StdIntList *StdI,
+  int ioutputmode /**< [in]*/){
   FILE *fp;
   int ngreen, igreen, isite, jsite, ispin,jspin, SiMax, SjMax;
   int **greenindx;
@@ -820,16 +850,16 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   }
   else if(ioutputmode == 1){
     ngreen = 0;
-    for (isite = 0; isite < nsite; isite++){
-      if (locspinflag[isite] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (locspinflag[isite] + 1);
+    for (isite = 0; isite < StdI->nsite; isite++){
+      if (StdI->locspinflag[isite] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (StdI->locspinflag[isite] + 1);
     }
   }
   else{
     ngreen = 0;
-    for (isite = 0; isite < nsite; isite++){
-      if (locspinflag[isite] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (locspinflag[isite] + 1);
+    for (isite = 0; isite < StdI->nsite; isite++){
+      if (StdI->locspinflag[isite] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (StdI->locspinflag[isite] + 1);
     }
     ngreen = ngreen * ngreen;
   }
@@ -839,10 +869,10 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   }
   if (ioutputmode == 1){
     igreen = 0;
-    for (isite = 0; isite < nsite; isite++){
+    for (isite = 0; isite < StdI->nsite; isite++){
 
-      if (locspinflag[isite] == 0) SiMax = 1;
-      else SiMax = locspinflag[isite];
+      if (StdI->locspinflag[isite] == 0) SiMax = 1;
+      else SiMax = StdI->locspinflag[isite];
       
       for (ispin = 0; ispin <= SiMax; ispin++){
         greenindx[igreen][0] = isite;
@@ -855,16 +885,16 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   }
   else if (ioutputmode == 2){
     igreen = 0;
-    for (isite = 0; isite < nsite; isite++){
+    for (isite = 0; isite < StdI->nsite; isite++){
 
-      if (locspinflag[isite] == 0) SiMax = 1;
-      else SiMax = locspinflag[isite];
+      if (StdI->locspinflag[isite] == 0) SiMax = 1;
+      else SiMax = StdI->locspinflag[isite];
 
       for (ispin = 0; ispin <= SiMax; ispin++){
-        for (jsite = 0; jsite < nsite; jsite++){
+        for (jsite = 0; jsite < StdI->nsite; jsite++){
 
-          if (locspinflag[jsite] == 0) SjMax = 1;
-          else SjMax = locspinflag[jsite];
+          if (StdI->locspinflag[jsite] == 0) SjMax = 1;
+          else SjMax = StdI->locspinflag[jsite];
 
           for (jspin = 0; jspin <= SjMax; jspin++){
             greenindx[igreen][0] = isite;
@@ -878,7 +908,7 @@ static void Print1Green(int ioutputmode /**< [in]*/){
     }
   }
 
-  fp = fopenMPI("greenone.def", "w");
+  fp = fopen("greenone.def", "w");
   fprintf(fp, "===============================\n");
   fprintf(fp, "NCisAjs %10d\n", ngreen);
   fprintf(fp, "===============================\n");
@@ -890,7 +920,7 @@ static void Print1Green(int ioutputmode /**< [in]*/){
   }
   fclose(fp);
 
-  fprintf(stdoutMPI, "    greenone.def is written.\n");
+  fprintf(stdout, "    greenone.def is written.\n");
   //[s] free
   for (igreen = 0; igreen < ngreen; igreen++){
     free(greenindx[igreen]);
@@ -905,7 +935,8 @@ static void Print1Green(int ioutputmode /**< [in]*/){
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static void Print2Green(int ioutputmode /**< [in]*/){
+static void Print2Green(struct StdIntList *StdI,
+  int ioutputmode /**< [in]*/){
   FILE *fp;
   int ngreen, igreen;
   int site1, site2, site3, site4;
@@ -918,17 +949,17 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   }
   else if (ioutputmode == 1){
     ngreen = 0;
-    for (site1 = 0; site1 < nsite; site1++){
-      if (locspinflag[site1] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (locspinflag[site1] + 1);
+    for (site1 = 0; site1 < StdI->nsite; site1++){
+      if (StdI->locspinflag[site1] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (StdI->locspinflag[site1] + 1);
     }
     ngreen = ngreen * ngreen;
   }
   else{
     ngreen = 0;
-    for (site1 = 0; site1 < nsite; site1++){
-      if (locspinflag[site1] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (locspinflag[site1] + 1);
+    for (site1 = 0; site1 < StdI->nsite; site1++){
+      if (StdI->locspinflag[site1] == 0) ngreen = ngreen + 2;
+      else ngreen = ngreen + (StdI->locspinflag[site1] + 1);
     }
     ngreen = ngreen * ngreen * ngreen * ngreen;
   }
@@ -938,16 +969,16 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   }
   if (ioutputmode == 1){
     igreen = 0;
-    for (site1 = 0; site1 < nsite; site1++){
+    for (site1 = 0; site1 < StdI->nsite; site1++){
 
-      if (locspinflag[site1] == 0) S1Max = 1;
-      else S1Max = locspinflag[site1];
+      if (StdI->locspinflag[site1] == 0) S1Max = 1;
+      else S1Max = StdI->locspinflag[site1];
 
       for (spin1 = 0; spin1 <= S1Max; spin1++){
-        for (site2 = 0; site2 < nsite; site2++){
+        for (site2 = 0; site2 < StdI->nsite; site2++){
 
-          if (locspinflag[site2] == 0) S2Max = 1;
-          else S2Max = locspinflag[site2];
+          if (StdI->locspinflag[site2] == 0) S2Max = 1;
+          else S2Max = StdI->locspinflag[site2];
 
           for (spin2 = 0; spin2 <= S2Max; spin2++){
             greenindx[igreen][0] = site1;
@@ -966,32 +997,34 @@ static void Print2Green(int ioutputmode /**< [in]*/){
    }
   else if (ioutputmode == 2){
     igreen = 0;
-    for (site1 = 0; site1 < nsite; site1++){
+    for (site1 = 0; site1 < StdI->nsite; site1++){
 
-      if (locspinflag[site1] == 0) S1Max = 1;
-      else S1Max = locspinflag[site1];
+      if (StdI->locspinflag[site1] == 0) S1Max = 1;
+      else S1Max = StdI->locspinflag[site1];
 
       for (spin1 = 0; spin1 <= S1Max; spin1++){
-        for (site2 = 0; site2 < nsite; site2++){
+        for (site2 = 0; site2 < StdI->nsite; site2++){
 
-          if (locspinflag[site1] != 0 && locspinflag[site2] != 0 && site1 != site2) continue;
+          if (StdI->locspinflag[site1] != 0 && StdI->locspinflag[site2] != 0 
+            && site1 != site2) continue;
 
-          if (locspinflag[site2] == 0) S2Max = 1;
-          else S2Max = locspinflag[site2];
+          if (StdI->locspinflag[site2] == 0) S2Max = 1;
+          else S2Max = StdI->locspinflag[site2];
 
           for (spin2 = 0; spin2 <= S2Max; spin2++){
-            for (site3 = 0; site3 < nsite; site3++){
+            for (site3 = 0; site3 < StdI->nsite; site3++){
 
-              if (locspinflag[site3] == 0) S3Max = 1;
-              else S3Max = locspinflag[site3];
+              if (StdI->locspinflag[site3] == 0) S3Max = 1;
+              else S3Max = StdI->locspinflag[site3];
 
               for (spin3 = 0; spin3 <= S3Max; spin3++){
-                for (site4 = 0; site4 < nsite; site4++){
+                for (site4 = 0; site4 < StdI->nsite; site4++){
 
-                  if (locspinflag[site3] != 0 && locspinflag[site4] != 0 && site3 != site4) continue;
+                  if (StdI->locspinflag[site3] != 0 && StdI->locspinflag[site4] != 0
+                    && site3 != site4) continue;
 
-                  if (locspinflag[site4] == 0) S4Max = 1;
-                  else S4Max = locspinflag[site4];
+                  if (StdI->locspinflag[site4] == 0) S4Max = 1;
+                  else S4Max = StdI->locspinflag[site4];
 
                   for (spin4 = 0; spin4 <= S4Max; spin4++){
                     greenindx[igreen][0] = site1;
@@ -1014,7 +1047,7 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   }
   ngreen = igreen;
 
-  fp = fopenMPI("greentwo.def", "w");
+  fp = fopen("greentwo.def", "w");
   fprintf(fp, "=============================================\n");
   fprintf(fp, "NCisAjsCktAltDC %10d\n", ngreen);
   fprintf(fp, "=============================================\n");
@@ -1027,7 +1060,7 @@ static void Print2Green(int ioutputmode /**< [in]*/){
   }
   fclose(fp);
 
-  fprintf(stdoutMPI, "    greentwo.def is written.\n");
+  fprintf(stdout, "    greentwo.def is written.\n");
   //[s] free
   for (igreen = 0; igreen < ngreen; igreen++){
     free(greenindx[igreen]);
@@ -1051,7 +1084,7 @@ static void UnsupportedSystem(
   fprintf(stderr, "  LATTICE : %s, \n", lattice);
   fprintf(stderr, "is unsupported in the STANDARD MODE...\n");
   fprintf(stderr, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
-  exitMPI(-1);
+  exit(-1);
 }
 
 /**
@@ -1069,27 +1102,27 @@ static int CheckOutputMode(char* outputmode /**< [in]*/){
     || strcmp(outputmode, "none") == 0
     || strcmp(outputmode, "off") == 0) {
     ioutputmode = 0;
-    fprintf(stdoutMPI, "      ioutputmode = %-10d\n", ioutputmode);
+    fprintf(stdout, "      ioutputmode = %-10d\n", ioutputmode);
   }
   else if (strcmp(outputmode, "cor") == 0
     || strcmp(outputmode, "corr") == 0
     || strcmp(outputmode, "correlation") == 0) {
     ioutputmode = 1;
-    fprintf(stdoutMPI, "      ioutputmode = %-10d\n", ioutputmode);
+    fprintf(stdout, "      ioutputmode = %-10d\n", ioutputmode);
   }
   else if (strcmp(outputmode, "****") == 0) {
     ioutputmode = 1;
-    fprintf(stdoutMPI, "      ioutputmode = %-10d  ######  DEFAULT VALUE IS USED  ######\n", ioutputmode);
+    fprintf(stdout, "      ioutputmode = %-10d  ######  DEFAULT VALUE IS USED  ######\n", ioutputmode);
   }
   else if (strcmp(outputmode, "raw") == 0
     || strcmp(outputmode, "all") == 0
     || strcmp(outputmode, "full") == 0) {
     ioutputmode = 2;
-    fprintf(stdoutMPI, "      ioutputmode = %-10d\n", ioutputmode);
+    fprintf(stdout, "      ioutputmode = %-10d\n", ioutputmode);
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported OutPutMode : %s\n", outputmode);
-    exitMPI(-1);
+    exit(-1);
   }
   return(ioutputmode);
 }
@@ -1117,9 +1150,9 @@ static void CheckModPara(
 {
   if (strcmp(filehead, "****") == 0) {
     strcpy(filehead, "zvo");
-    fprintf(stdoutMPI, "         filehead = %-12s######  DEFAULT VALUE IS USED  ######\n", filehead);
+    fprintf(stdout, "         filehead = %-12s######  DEFAULT VALUE IS USED  ######\n", filehead);
   }
-  else fprintf(stdoutMPI, "         filehead = %-s\n", filehead);
+  else fprintf(stdout, "         filehead = %-s\n", filehead);
   /**/
   StdFace_PrintVal_i("Lanczos_max", Lanczos_max, 2000);
   StdFace_PrintVal_i("initial_iv", initial_iv, 1);
@@ -1148,6 +1181,7 @@ static void CheckModPara(
   else if (strcmp(model, "fermionhubbardgc") == 0
     || strcmp(model, "hubbardgc") == 0
     || strcmp(model, "spingc") == 0
+    || strcmp(model, "spingcboost") == 0
     || strcmp(model, "kondolatticegc") == 0
     || strcmp(model, "kondogc") == 0){
  
@@ -1156,7 +1190,7 @@ static void CheckModPara(
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Model !\n");
-    exitMPI(-1);
+    exit(-1);
   }
 
 

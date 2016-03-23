@@ -54,7 +54,8 @@ static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
         "OneBodyG",
         "TwoBodyG",
         "PairLift",
-        "Ising"
+        "Ising",
+	"Boost"
 };
 
 /**
@@ -154,8 +155,9 @@ int GetKWWithIdx(
     char *ctmpRead;
     char *cerror;
     char csplit[] = " ,.\t\n";
-    ctmpRead = strtok( ctmpLine, csplit);
-    if(strncmp(ctmpRead, "=", 1)==0 || strncmp(ctmpRead, "#", 1)==0){
+    if(*ctmpLine=='\n') return 1;
+    ctmpRead = strtok(ctmpLine, csplit);
+    if(strncmp(ctmpRead, "=", 1)==0 || strncmp(ctmpRead, "#", 1)==0 || ctmpRead==NULL){
       return 1;
     }
     strcpy(ctmp, ctmpRead);
@@ -307,7 +309,7 @@ int GetFileName(
   while(fgetsMPI(ctmp2, 256, fplist) != NULL){ 
     sscanf(ctmp2,"%s %s\n", ctmpKW, ctmpFileName);
 
-    if(strncmp(ctmpKW, "#", 1)==0){
+    if(strncmp(ctmpKW, "#", 1)==0 || *ctmp2=='\n'){
       continue;
     }
     else if(strcmp(ctmpKW, "")*strcmp(ctmpFileName, "")==0){
@@ -349,16 +351,19 @@ int GetFileName(
  */
 int ReadDefFileNInt(
 		    char *xNameListFile, 
-		    struct DefineList *X
+		    struct DefineList *X,
+		    struct BoostList *xBoost
 		    )
 {
   FILE *fp;
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
+  int iline=0;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
   int iReadNCond=FALSE;
+  xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
   
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
@@ -423,6 +428,7 @@ int ReadDefFileNInt(
       double dtmp;
       
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
+	if(*ctmp2 == '\n') continue;
 	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
 	if(strcmp(ctmp, "Nsite")==0){
 	  X->Nsite= (int)dtmp;
@@ -548,6 +554,28 @@ int ReadDefFileNInt(
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
       break;
+    case KWBoost:
+      /* Read boost.def--------------------------------*/
+      xBoost->NumarrayJ=0;
+      xBoost->W0=0;
+      xBoost->R0=0;
+      xBoost->num_pivot=0;
+      xBoost->ishift_nspin=0;
+      xBoost->flgBoost=TRUE;
+      //first line is skipped
+      fgetsMPI(ctmp2, 256, fp);
+      //read numarrayJ
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%d\n", &(xBoost->NumarrayJ));
+      //skipp arrayJ
+      for(iline=0; iline<xBoost->NumarrayJ*3; iline++){
+	fgetsMPI(ctmp2, 256, fp);
+      }
+      //read W0 R0 num_pivot ishift_nspin
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
+
+      break;
     default:
       fprintf(stderr, "%s", cErrIncorrectDef);
       fclose(fp);
@@ -633,8 +661,8 @@ int ReadDefFileNInt(
   case KondoGC:
   case HubbardGC:
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
-	fprintf(stderr, "For GC, both Ncond and 2Sz should not be defined.\n");
-	exitMPI(-1);
+	fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
+	//exitMPI(-1);
     }
     break;
   default:
@@ -658,7 +686,8 @@ int ReadDefFileNInt(
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int ReadDefFileIdxPara(
-		       struct DefineList *X
+		       struct DefineList *X,
+		       struct BoostList *xBoost
 		       )
 {
   FILE *fp;
@@ -672,9 +701,15 @@ int ReadDefFileIdxPara(
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   double dvalue_re, dvalue_im;
+  double dArrayValue_re[3],dArrayValue_im[3]; 
   int icnt_diagonal=0;
   int ieps_CheckImag0=-12;
   eps_CheckImag0=pow(10.0, ieps_CheckImag0);
+  int iline=0;
+  int ilineIn=0;
+  int ilineIn2=0;
+  int itmp=0;
+  int iloop=0;
   
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
     strcpy(defname, cFileNameListFile[iKWidx]);
@@ -682,7 +717,10 @@ int ReadDefFileIdxPara(
     fprintf(stdoutMPI, cReadFileNamelist, defname);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
-    for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+    if(iKWidx != KWBoost){
+      for(i=0;i<IgnoreLinesInDef;i++) fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+    }
+    
     idx=0;    
     /*=======================================================================*/
     switch(iKWidx){
@@ -1126,6 +1164,92 @@ int ReadDefFileIdxPara(
 	}
       }
       break;
+    case KWBoost:
+      /* boost.def--------------------------------*/
+      //input magnetic field
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2, "%lf %lf %lf %lf %lf %lf \n",
+	     &dArrayValue_re[0], &dArrayValue_im[0],
+	     &dArrayValue_re[1], &dArrayValue_im[1],
+	     &dArrayValue_re[2], &dArrayValue_im[2]);
+      for(iline=0; iline<3; iline++){
+	xBoost->vecB[iline]= dArrayValue_re[iline]+I*dArrayValue_im[iline];
+      }
+      
+      //this line is skipped;
+      fgetsMPI(ctmp2, 256, fp);
+
+      //input arrayJ
+      if(xBoost->NumarrayJ>0){
+	for(iline=0; iline<xBoost->NumarrayJ; iline++){
+	  for(ilineIn=0; ilineIn<3; ilineIn++){
+	    fgetsMPI(ctmp2, 256, fp);
+	    sscanf(ctmp2, "%lf %lf %lf %lf %lf %lf \n",
+		   &dArrayValue_re[0], &dArrayValue_im[0],
+		   &dArrayValue_re[1], &dArrayValue_im[1],
+		   &dArrayValue_re[2], &dArrayValue_im[2]);
+	    for(ilineIn2=0; ilineIn2<3; ilineIn2++){
+	      xBoost->arrayJ[iline][ilineIn][ilineIn2]= dArrayValue_re[ilineIn2]+I*dArrayValue_im[ilineIn2];
+	    }	    
+	  }
+	}
+      }
+
+      //this line is skipped;
+      fgetsMPI(ctmp2, 256, fp);
+
+      //read list_6spin_star
+      if(xBoost->num_pivot>0){
+	for(iline=0; iline<xBoost->num_pivot; iline++){
+	  //input
+	  fgetsMPI(ctmp2, 256, fp);
+	  sscanf(ctmp2, "%d %d %d %d %d %d %d\n",
+		 &xBoost->list_6spin_star[iline][0],
+		 &xBoost->list_6spin_star[iline][1],
+		 &xBoost->list_6spin_star[iline][2],
+		 &xBoost->list_6spin_star[iline][3],
+		 &xBoost->list_6spin_star[iline][4],
+		 &xBoost->list_6spin_star[iline][5],
+		 &xBoost->list_6spin_star[iline][6]
+		 ); 
+	  //copy
+	  for(iloop=0; iloop<xBoost->R0; iloop++){
+	    for(itmp=0; itmp<7; itmp++){
+	      xBoost->list_6spin_star[iloop*xBoost->num_pivot+iline][itmp]=xBoost->list_6spin_star[iline][itmp];
+	    }
+	  }   
+	}	
+      }
+
+      //read list_6spin_pair
+      if(xBoost->num_pivot>0){
+	for(iline=0; iline<xBoost->num_pivot; iline++){
+	  //input
+	  for(ilineIn2=0; ilineIn2<xBoost->list_6spin_star[iline][0]; ilineIn2++){
+	    fgetsMPI(ctmp2, 256, fp);
+	    sscanf(ctmp2, "%d %d %d %d %d %d %d\n",
+		   &xBoost->list_6spin_pair[iline][0][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][1][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][2][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][3][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][4][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][5][ilineIn2],
+		   &xBoost->list_6spin_pair[iline][6][ilineIn2]
+		   ); 
+
+	    //copy
+	    for(iloop=0; iloop<xBoost->R0; iloop++){
+	      for(itmp=0; itmp<7; itmp++){
+		xBoost->list_6spin_pair[iloop*xBoost->num_pivot+iline][itmp][ilineIn2]=xBoost->list_6spin_pair[iline][itmp][ilineIn2];
+	      }
+	    }
+	  }
+	}
+	
+      }
+
+      break;
+
     default:
       break;
     }
@@ -1599,6 +1723,19 @@ int JudgeDefType
     ){
     *mode = STANDARD_DRY_MODE;
   }
+  else if (argc >= 2 &&
+    (strcmp(argv[1], "-v") == 0
+    || strcmp(argv[1], "-V") == 0
+    || strcmp(argv[1], "--version") == 0 
+    || strcmp(argv[1], "--Version") == 0
+    || strcmp(argv[1], "--VERSION") == 0
+    || strcmp(argv[1], "-version") == 0
+    || strcmp(argv[1], "-Version") == 0
+    || strcmp(argv[1], "-VERSION") == 0) 
+    ) {
+    fprintf(stderr, "\nHPhi version 0.3 \n\n");
+    exit(-1);
+  }
   else{
     /*fprintf(stdoutMPI, cErrArgv, argv[1]);*/
     fprintf(stderr, "\n[Usage] \n");
@@ -1608,8 +1745,10 @@ int JudgeDefType
     fprintf(stderr, "   $ HPhi -s {input_file} \n");
     fprintf(stderr, "* Standard DRY mode \n");
     fprintf(stderr, "   $ HPhi -sdry {input_file} \n");
-    fprintf(stderr, "* In this mode, Hphi stops after it generats expert input files. \n\n");
-    return (-1);
+    fprintf(stderr, "   In this mode, Hphi stops after it generats expert input files. \n");
+    fprintf(stderr, "* Print the version \n");
+    fprintf(stderr, "   $ HPhi -v \n\n");
+    exit(-1);
   }
 
   return 0;

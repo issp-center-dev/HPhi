@@ -6,11 +6,8 @@ DVIPDF_COMMAND = dvipdfmx
 TEX_FILES = \
 chap01_jp.tex  \
 chap02_jp.tex  \
-chap02_1_jp.tex  \
 chap03_jp.tex  \
-chap03_2_jp.tex  \
 chap04_jp.tex  \
-chap04_1_jp.tex  \
 chap05_jp.tex \
 chap06_jp.tex \
 userguide_jp.tex

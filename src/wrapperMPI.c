@@ -129,6 +129,14 @@ char* fgetsMPI(
     if (ctmp == NULL){
       inull = 1;
     }
+    
+    while(*InputString == '\n' || strncmp(InputString, "#", 1)==0){
+      ctmp = fgets(InputString, maxcount, fp);
+      if (ctmp == NULL){
+	inull=1;
+	break;
+      }
+    }
   }
 #ifdef MPI
   MPI_Bcast(InputString, maxcount, MPI_CHAR, 0, MPI_COMM_WORLD);

@@ -16,75 +16,82 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-Parameters for LATTICE
-*/
-double a; /**< The lattice constant */
-int L;
-int W;
-/*
-Parameters for MODEL
-*/
-double mu;
-double t;
-double tp;
-double tpp;
-double t0;
-double t1;
-double t1p;
-double t2;
-double t2p;
-double U;
-double V;
-double Vp;
-double Vpp;
-double V0;
-double V1;
-double V1p;
-double V2;
-double V2p;
-double J;
-double Jp;
-double Jpp;
-double J0;
-double J1;
-double J1p;
-double J2;
-double J2p;
-/**/
-double Jx;
-double Jy;
-double Jz;
-double Jx0;
-double Jy0;
-double Jz0;
-double Jx1;
-double Jy1;
-double Jz1;
-double Jx2;
-double Jy2;
-double Jz2;
-double Jxp;
-double Jyp;
-double Jzp;
-double Jxy;
-double Jxy0;
-double Jxy1;
-double Jxy2;
-double Jxyp;
-double h;
-double Gamma;
-double D;
-double K;
+struct StdIntList {
+  /*
+  Parameters for LATTICE
+  */
+  double a; /**< The lattice constant */
+  int L;
+  int W;
+  /*
+  Parameters for MODEL
+  */
+  double mu;
+  double t;
+  double tp;
+  double tpp;
+  double t0;
+  double t1;
+  double t1p;
+  double t2;
+  double t2p;
+  double U;
+  double V;
+  double Vp;
+  double Vpp;
+  double V0;
+  double V1;
+  double V1p;
+  double V2;
+  double V2p;
+  double J;
+  double Jp;
+  double Jpp;
+  double J0;
+  double J1;
+  double J1p;
+  double J2;
+  double J2p;
+  /**/
+  double Jx;
+  double Jy;
+  double Jz;
+  double Jx0;
+  double Jy0;
+  double Jz0;
+  double Jx1;
+  double Jy1;
+  double Jz1;
+  double Jx2;
+  double Jy2;
+  double Jz2;
+  double Jxp;
+  double Jyp;
+  double Jzp;
+  double Jxy;
+  double Jxy0;
+  double Jxy1;
+  double Jxy2;
+  double Jxyp;
+  double h;
+  double Gamma;
+  double D;
+  double K;
 
-int nsite;
-int *locspinflag;
-int ntrans;
-int **transindx;
-double *trans;
-int nintr;
-int **intrindx;
-double *intr;
+  int nsite;
+  int *locspinflag;
+  int ntrans;
+  int **transindx;
+  double *trans;
+  int nintr;
+  int **intrindx;
+  double *intr;
 
-double LargeValue;
-int S2;
+  double LargeValue;
+  int S2;
+
+  int ***list_6spin_pair;
+  int **list_6spin_star;
+  int num_pivot;
+  int ishift_nspin;
+};

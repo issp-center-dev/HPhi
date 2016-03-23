@@ -78,12 +78,17 @@ int main(int argc, char* argv[]){
   int mode=0;
   char cFileListName[D_FileNameMax];
 
-  InitializeMPI(argc, argv);
-
   if(JudgeDefType(argc, argv, &mode)!=0){
     FinalizeMPI();
     return 0;
   }  
+
+  if (mode == STANDARD_DRY_MODE) {
+    myrank = 0;
+    nproc = 1;
+    stdoutMPI = stdout;
+  }
+  else InitializeMPI(argc, argv);
 
   //MakeDirectory for output
   struct stat tmpst;
@@ -99,17 +104,16 @@ int main(int argc, char* argv[]){
   strcpy(cFileListName, argv[2]);
   
   if(mode==STANDARD_MODE || mode == STANDARD_DRY_MODE){
-    StdFace_main(argv[2]);
+    if (myrank == 0) StdFace_main(argv[2]);
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
-      fprintf(stdoutMPI, "Dry run is Finished. \n\n");
-      FinalizeMPI();
+      fprintf(stdout, "Dry run is Finished. \n\n");
       return 0;
     }
   }
 
   setmem_HEAD(&X.Bind);
-  if(ReadDefFileNInt(cFileListName, &(X.Bind.Def))!=0){
+  if(ReadDefFileNInt(cFileListName, &(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stderr, "%s", cErrDefFile);
     FinalizeMPI();
     return 0;
@@ -123,11 +127,11 @@ int main(int argc, char* argv[]){
   fprintf(stdoutMPI,  cProFinishDefFiles);
   
   /*ALLOCATE-------------------------------------------*/
-  setmem_def(&X.Bind);
+  setmem_def(&X.Bind, &X.Bind.Boost);
   /*-----------------------------------------------------*/
 
   /*Read Def files.*/
-  if(ReadDefFileIdxPara(&(X.Bind.Def))!=0){
+  if(ReadDefFileIdxPara(&(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
     FinalizeMPI();
     return 0;

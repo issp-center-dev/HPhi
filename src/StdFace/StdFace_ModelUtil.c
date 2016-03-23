@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <math.h>
 #include "StdFace_vals.h"
-#include "../include/wrapperMPI.h"
 
 /**
  *
@@ -28,17 +27,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void StdFace_trans(
-  int *ktrans /**< [inout] The counter for the transfer*/, 
+struct StdIntList *StdI,
   double trans0 /**< [in] Hopping integral t, mu, etc. */,
   int isite /**< [in] i for c_{i sigma}^dagger*/, 
   int ispin /**< [in] sigma for c_{i sigma}^dagger*/,
   int jsite /**< [in] j for c_{j sigma'}*/,
   int jspin /**< [in] sigma' for c_{j sigma'}*/)
 {
-  trans[*ktrans] = trans0;
-  transindx[*ktrans][0] = isite; transindx[*ktrans][1] = ispin;
-  transindx[*ktrans][2] = jsite; transindx[*ktrans][3] = jspin;
-  *ktrans = *ktrans + 1;
+  StdI->trans[StdI->ntrans] = trans0;
+  StdI->transindx[StdI->ntrans][0] = isite;
+  StdI->transindx[StdI->ntrans][1] = ispin;
+  StdI->transindx[StdI->ntrans][2] = jsite; 
+  StdI->transindx[StdI->ntrans][3] = jspin;
+  StdI->ntrans = StdI->ntrans + 1;
 }
 
 /**
@@ -48,7 +49,8 @@ void StdFace_trans(
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_MagLong(
-  int *ktrans /**< [inout] The counter for the transfer*/,
+struct StdIntList *StdI,
+  int S2 /**< [in] Spin moment in i site*/,
   double Mag /**< [in] Longitudinal magnetic field h. */,
   int isite /**< [in] i for c_{i sigma}^dagger*/)
 {
@@ -59,7 +61,7 @@ void StdFace_MagLong(
 
   for (ispin = 0; ispin <= S2; ispin++){
     Sz = (double)ispin - S;
-    StdFace_trans(ktrans, Mag * Sz, isite, ispin, isite, ispin);
+    StdFace_trans(StdI, Mag * Sz, isite, ispin, isite, ispin);
   }
 }
 
@@ -70,7 +72,8 @@ void StdFace_MagLong(
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_MagTrans(
-  int *ktrans /**< [inout] The counter for the transfer*/,
+struct StdIntList *StdI,
+  int S2 /**< [in] Spin moment in i site*/,
   double Mag /**< [in] Transvars magnetic field h. */,
   int isite /**< [in] i for c_{i sigma}^dagger*/)
 {
@@ -81,8 +84,8 @@ void StdFace_MagTrans(
 
   for (ispin = 0; ispin < S2; ispin++){
     Sz = (double)ispin - S;
-    StdFace_trans(ktrans, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin + 1, isite, ispin);
-    StdFace_trans(ktrans, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin, isite, ispin + 1);
+    StdFace_trans(StdI, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin + 1, isite, ispin);
+    StdFace_trans(StdI, 0.5 * Mag * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), isite, ispin, isite, ispin + 1);
   }
 }
 
@@ -93,7 +96,7 @@ void StdFace_MagTrans(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void StdFace_intr(
-  int *kintr /**< [inout] The counter for the interaction*/,
+struct StdIntList *StdI,
   double intr0 /**< [in] Interaction U, V, J, etc.*/,
   int site1 /**< [in] i1 for c_{i1 sigma1}^dagger*/,
   int spin1 /**< [in] sigma11 for c_{i1 sigma1}^dagger*/,
@@ -104,12 +107,12 @@ void StdFace_intr(
   int site4 /**< [in] i2 for c_{i2 sigma2}*/,
   int spin4 /**< [in] sigma12 for c_{i2 sigma2}*/)
 {
-  intr[*kintr] = intr0;
-  intrindx[*kintr][0] = site1; intrindx[*kintr][1] = spin1;
-  intrindx[*kintr][2] = site2; intrindx[*kintr][3] = spin2;
-  intrindx[*kintr][4] = site3; intrindx[*kintr][5] = spin3;
-  intrindx[*kintr][6] = site4; intrindx[*kintr][7] = spin4;
-  *kintr = *kintr + 1;
+  StdI->intr[StdI->nintr] = intr0;
+  StdI->intrindx[StdI->nintr][0] = site1; StdI->intrindx[StdI->nintr][1] = spin1;
+  StdI->intrindx[StdI->nintr][2] = site2; StdI->intrindx[StdI->nintr][3] = spin2;
+  StdI->intrindx[StdI->nintr][4] = site3; StdI->intrindx[StdI->nintr][5] = spin3;
+  StdI->intrindx[StdI->nintr][6] = site4; StdI->intrindx[StdI->nintr][7] = spin4;
+  StdI->nintr = StdI->nintr + 1;
 }
 
 /**
@@ -119,7 +122,7 @@ void StdFace_intr(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void StdFace_exchange(
-  int *kintr /**< [inout] The counter for the interaction*/,
+struct StdIntList *StdI,
   int Si2 /**< [in] Spin moment in i site*/,
   int Sj2 /**< [in] Spin moment in j site*/,
   double Jexc /**< [in] Interaction J_{x y}, etc.*/,
@@ -140,9 +143,9 @@ void StdFace_exchange(
       intr0 = 0.5 * Jexc * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0)) 
                          * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
 
-      StdFace_intr(kintr, intr0,
+      StdFace_intr(StdI, intr0,
         isite, ispin + 1, isite, ispin, jsite, jspin, jsite, jspin + 1);
-      StdFace_intr(kintr, intr0,
+      StdFace_intr(StdI, intr0,
         isite, ispin, isite, ispin + 1, jsite, jspin + 1, jsite, jspin);
     }
   }
@@ -155,7 +158,7 @@ void StdFace_exchange(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void StdFace_Kitaev(
-  int *kintr /**< [inout] The counter for the interaction*/,
+struct StdIntList *StdI,
   int Si2 /**< [in] Spin moment in i site*/,
   int Sj2 /**< [in] Spin moment in j site*/,
   double Jflip /**< [in] Interaction J_x - J_y, etc.*/,
@@ -176,9 +179,9 @@ void StdFace_Kitaev(
       intr0 = 0.5 * Jflip * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0))
                           * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
 
-      StdFace_intr(kintr, intr0,
+      StdFace_intr(StdI, intr0,
         isite, ispin + 1, isite, ispin, jsite, jspin + 1, jsite, jspin);
-      StdFace_intr(kintr, intr0,
+      StdFace_intr(StdI, intr0,
         isite, ispin, isite, ispin + 1, jsite, jspin, jsite, jspin + 1);
     }
   }
@@ -191,7 +194,7 @@ void StdFace_Kitaev(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void StdFace_SzSz(
-  int *kintr /**< [inout] The counter for the interaction*/,
+struct StdIntList *StdI,
   int Si2 /**< [in] Spin moment in i site*/,
   int Sj2 /**< [in] Spin moment in j site*/,
   double Jexc /**< [in] Interaction J_z, etc.*/,
@@ -205,7 +208,7 @@ void StdFace_SzSz(
     for (jspin = 0; jspin <= Sj2; jspin++){
       intr0 = Jexc * ((double)ispin - (double)Si2 * 0.5)
                    * ((double)jspin - (double)Sj2 * 0.5);
-      StdFace_intr(kintr, intr0,
+      StdFace_intr(StdI, intr0,
         isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
     }
   }
@@ -218,7 +221,7 @@ void StdFace_SzSz(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void StdFace_Coulomb(
-  int *kintr /**< [inout] The counter for the interaction*/,
+struct StdIntList *StdI,
   double V /**< [in] Coulomb integral U, V, etc.*/,
   int isite /**< [in] i of n_i */,
   int jsite /**< [in] j of n_j */)
@@ -226,7 +229,7 @@ void StdFace_Coulomb(
   int ispin, jspin;
   for (ispin = 0; ispin < 2; ispin++){
     for (jspin = 0; jspin < 2; jspin++){
-      StdFace_intr(kintr, V, isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
+      StdFace_intr(StdI, V, isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
     }
   }
 }
@@ -244,9 +247,9 @@ void StdFace_PrintVal_d(
 {
   if (*val > 9999.0) {
     *val = val0;
-    fprintf(stdoutMPI, "  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
+    fprintf(stdout, "  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
-  else fprintf(stdoutMPI, "  %15s = %-10.5f\n", valname, *val);
+  else fprintf(stdout, "  %15s = %-10.5f\n", valname, *val);
 }
 
 /**
@@ -262,9 +265,9 @@ void StdFace_PrintVal_i(
 {
   if (*val == 9999) {
     *val = val0;
-    fprintf(stdoutMPI, "  %15s = %-10d  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
+    fprintf(stdout, "  %15s = %-10d  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
-  else fprintf(stdoutMPI, "  %15s = %-10d\n", valname, *val);
+  else fprintf(stdout, "  %15s = %-10d\n", valname, *val);
 }
 
 /**
@@ -281,7 +284,7 @@ void StdFace_NotUsed_d(
     fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stderr, "            Please COMMENT-OUT this line \n");
     fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
 }
 
@@ -299,7 +302,7 @@ void StdFace_NotUsed_i(
     fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stderr, "            Please COMMENT-OUT this line \n");
     fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
 }
 
@@ -316,7 +319,7 @@ void StdFace_RequiredVal_i(
 {
   if (val == 9999){
     fprintf(stderr, "ERROR ! %s is NOT specified !\n", valname);
-    exitMPI(-1);
+    exit(-1);
   }
-  else fprintf(stdoutMPI, "  %15s = %-3d\n", valname, val);
+  else fprintf(stdout, "  %15s = %-3d\n", valname, val);
 }

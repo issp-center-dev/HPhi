@@ -231,12 +231,25 @@ struct PhysList{
   double *loc_spin_z;
   double Target_energy;
 };	
+
+//For Boost
+struct BoostList {
+  int flgBoost;
+  long unsigned int R0, W0, num_pivot, ishift_nspin;
+  int NumarrayJ;
+  double complex ***arrayJ;
+  double complex vecB[3];
+  int  **list_6spin_star;
+  int ***list_6spin_pair;
+};
+
 /*=================================================================================================*/
 struct BindStruct{
   struct DefineList  Def;
   struct CheckList   Check;
   struct LargeList   Large;
   struct PhysList    Phys;
+  struct BoostList   Boost;
 };
 /*=================================================================================================*/
 struct EDMainCalStruct{
@@ -248,7 +261,6 @@ struct TimeKeepStruct{
   time_t tnow;
   time_t tend;
 };
-
 
 /*global variables---------------------------------------------*/
 struct EDMainCalStruct X;
