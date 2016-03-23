@@ -19,14 +19,14 @@ LAPACK library (intel MKL, Fujitsu, ATLAS, etc.)
 MPI library (If you do not use MPI, it is not necessary.)
 
 
-## Install and Manual
+## Install
 
-You can install HΦ and getting the manual from a [release note](https://github.com/QLMS/HPhi/releases).
+You can install HΦ and also get a manual for HΦ from a [release note](https://github.com/QLMS/HPhi/releases).
 
 
 ## Licence
 
-The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 (GPL v3). 
+The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 ([GPL v3](http://www.gnu.org/licenses/gpl-3.0.en.html)). 
 
 ## Author
 Youhei Yamaji, Takahiro Misawa, Synge Todo, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Naoki Kawashima.
