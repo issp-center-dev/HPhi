@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
+#include <complex.h>
 
 static void TrimSpaceQuote(char *value);
 static void StoreWithCheckDup_s(char *keyword, char *valuestring, char *value);
@@ -135,11 +136,11 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "jx0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jx0);
     else if (strcmp(keyword, "jx1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jx1);
     else if (strcmp(keyword, "jx2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jx2);
-    else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy);
-    else if (strcmp(keyword, "jxy0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy0);
-    else if (strcmp(keyword, "jxy1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy1);
-    else if (strcmp(keyword, "jxy2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxy2);
-    else if (strcmp(keyword, "jxy'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxyp);
+    else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_c(keyword, value, &StdI.J[0][1]);
+    else if (strcmp(keyword, "jxy0") == 0) StoreWithCheckDup_c(keyword, value, &StdI.J[0][1]0);
+    else if (strcmp(keyword, "jxy1") == 0) StoreWithCheckDup_c(keyword, value, &StdI.J[0][1]1);
+    else if (strcmp(keyword, "jxy2") == 0) StoreWithCheckDup_c(keyword, value, &StdI.J[0][1]2);
+    else if (strcmp(keyword, "jxy'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.J[0][1]p);
     else if (strcmp(keyword, "jx'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jxp);
     else if (strcmp(keyword, "jy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jy);
     else if (strcmp(keyword, "jy0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jy0);
@@ -169,13 +170,13 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &nvec);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &Sz2);
     else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
-    else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t);
-    else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t0);
-    else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t1);
-    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t1p);
-    else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.t2);
-    else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.tp);
-    else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.tp);
+    else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t);
+    else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0);
+    else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t1);
+    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t1p);
+    else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t2);
+    else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.tp);
+    else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_c(keyword, value, &StdI.tp);
     else if (strcmp(keyword, "u") == 0) StoreWithCheckDup_d(keyword, value, &StdI.U);
     else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V);
     else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V0);
@@ -301,6 +302,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 static void StdFace_ResetVals(struct StdIntList *StdI){
+  int i, j;
   /*
   Parameters for LATTICE
   */
@@ -313,7 +315,6 @@ static void StdFace_ResetVals(struct StdIntList *StdI){
   StdI->mu = 9999.9;
   StdI->t = 9999.9;
   StdI->tp = 9999.9;
-  StdI->tpp = 9999.9;
   StdI->t0 = 9999.9;
   StdI->t1 = 9999.9;
   StdI->t1p = 9999.9;
@@ -321,44 +322,34 @@ static void StdFace_ResetVals(struct StdIntList *StdI){
   StdI->U = 9999.9;
   StdI->V = 9999.9;
   StdI->Vp = 9999.9;
-  StdI->Vpp = 9999.9;
   StdI->V0 = 9999.9;
   StdI->V1 = 9999.9;
   StdI->V1p = 9999.9;
   StdI->V2 = 9999.9;
-  StdI->J = 9999.9;
-  StdI->Jp = 9999.9;
-  StdI->Jpp = 9999.9;
-  StdI->J0 = 9999.9;
-  StdI->J1 = 9999.9;
-  StdI->J1p = 9999.9;
-  StdI->J2 = 9999.9;
-  StdI->J2p = 9999.9;
+  StdI->JAll = 9999.9;
+  StdI->JpAll = 9999.9;
+  StdI->J0All = 9999.9;
+  StdI->J1All = 9999.9;
+  StdI->J1pAll = 9999.9;
+  StdI->J2All = 9999.9;
+  StdI->J2pAll = 9999.9;
   /**/
-  StdI->Jx = 9999.9;
-  StdI->Jy = 9999.9;
-  StdI->Jz = 9999.9;
-  StdI->Jxy = 9999.9;
-  StdI->Jx0 = 9999.9;
-  StdI->Jy0 = 9999.9;
-  StdI->Jz0 = 9999.9;
-  StdI->Jxy0 = 9999.9;
-  StdI->Jx1 = 9999.9;
-  StdI->Jy1 = 9999.9;
-  StdI->Jz1 = 9999.9;
-  StdI->Jxy1 = 9999.9;
-  StdI->Jx2 = 9999.9;
-  StdI->Jy2 = 9999.9;
-  StdI->Jz2 = 9999.9;
-  StdI->Jxy2 = 9999.9;
-  StdI->Jxp = 9999.9;
-  StdI->Jyp = 9999.9;
-  StdI->Jzp = 9999.9;
-  StdI->Jxyp = 9999.9;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      StdI->J[i][j] = 9999.9;
+      StdI->Jp[i][j] = 9999.9;
+      StdI->J0[i][j] = 9999.9;
+      StdI->J1[i][j] = 9999.9;
+      StdI->J1p[i][j] = 9999.9;
+      StdI->J2[i][j] = 9999.9;
+      StdI->J2p[i][j] = 9999.9;
+      StdI->D[i][j] = 0.0;
+    }
+  }
   StdI->h = 9999.9;
   StdI->Gamma = 9999.9;
-  StdI->D = 9999.9;
   StdI->K = 9999.9;
+  StdI->D[2][2] = 9999.9;
   /**/
   StdI->LargeValue = 9999.9;
   StdI->S2 = 9999;
@@ -441,7 +432,7 @@ static void StoreWithCheckDup_i(
 
 /**
  *
- * Store an input value into the valiable (real)
+ * Store an input value into the valiable (double)
  * If duplicated, HPhi will stop.
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
@@ -458,6 +449,41 @@ static void StoreWithCheckDup_d(
   }
   else{
     sscanf(valuestring, "%lf", value);
+  }
+
+}
+
+/**
+*
+* Store an input value into the valiable (Double complex)
+* If duplicated, HPhi will stop.
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void StoreWithCheckDup_c(
+  char *keyword /**< [in] keyword read from the input file*/,
+  char *valuestring /**< [in] value read from the input file*/,
+  _Dcomplex *value /**< [out] */)
+{
+  int num;
+  double value_r, value_i;
+
+  if (creal(*value) != 9999.9) {
+    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    exit(-1);
+  }
+  else {
+    num = sscanf(valuestring, "%lf %lf", &value_r, &value_i);
+    if (num == 1) {
+
+    }
+    else if (num == 2) {
+      *value = _Cbuild(value_r, value_i);
+    }
+    else {
+      fprintf(stderr, "\nERROR! in reading complex number.\n\n");
+      exit(-1);
+    }
   }
 
 }
