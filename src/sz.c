@@ -410,19 +410,18 @@ int sz
       if(X->Def.iFlgGeneralSpin==FALSE){
 
        hacker = 1;
-       icnt   = 1;
 // using hacker's delight
        if(hacker        ==  1){
+          icnt    = 1;
           tmp_pow = 1;
           tmp_i   = 0;
           while(tmp_pow < X->Def.Tpow[X->Def.Ne]){
-
-	    fprintf(stdoutMPI, "tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
+	   // fprintf(stdoutMPI, "tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
             tmp_i   += tmp_pow;
             tmp_pow  = tmp_pow*2;
           }
-	  fprintf(stdoutMPI, "final: tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
-	  while(tmp_j<X->Check.sdim*X->Check.sdim){
+	  //fprintf(stdoutMPI, "final: tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
+	  while(tmp_i<X->Check.sdim*X->Check.sdim){
             list_1[icnt]=tmp_i;
            
             ia= tmp_i & irght;
@@ -439,11 +438,12 @@ int sz
             list_2_1[ia] = ja;
             list_2_2[ib] = jb;
             tmp_j = snoob(tmp_i);
-	    fprintf(stdoutMPI, " icnt=%ld, tmp_i=%ld tmp_j=%ld\n", icnt,tmp_i,tmp_j);
+	    //fprintf(stdoutMPI, " icnt=%ld, tmp_i=%ld tmp_j=%ld\n", icnt,tmp_i,tmp_j);
             tmp_i =        tmp_j;
             icnt        +=  1;
           }
           icnt = icnt-1;
+	  //fprintf(stdoutMPI, " icnt=%ld\n", icnt);
 // old version
        }else if(hacker  ==  0){
 	  jb = 0;
