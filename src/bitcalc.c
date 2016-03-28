@@ -441,3 +441,11 @@ int GetLocal2Sz
   return TwiceSz;
 }
 
+unsigned long int snoob(unsigned long int x){
+  unsigned long int smallest, ripple, ones;
+  smallest = x &(-x);
+  ripple   = x+ smallest;
+  ones     = x ^ ripple;
+  ones     = (ones>>2)/smallest;
+  return   ripple|ones;
+}
