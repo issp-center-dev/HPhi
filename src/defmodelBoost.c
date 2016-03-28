@@ -49,7 +49,7 @@ void defmodelBoost(
   FILE *fp;
   char *filenameb = "vecB";
   FILE *fpb;
-  long unsigned int i,j, k, ell, NJ; 
+  long unsigned int j, k, ell, NJ; 
   long unsigned int i0,i1,i2; 
   double ReJex, ImJex;
   double ReBx, ImBx, ReBy, ImBy, ReBz, ImBz;
