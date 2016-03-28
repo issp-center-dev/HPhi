@@ -43,16 +43,14 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   double xiW, double xiL, double xjW, double xjL,
   int isite, int *jsite, int connect, int NsiteUC, int isiteUC, char *model);
 
-void StdFace_SquareLattice(struct StdIntList *StdI, char *model);
-void StdFace_ChainLattice(struct StdIntList *StdI, char *model);
-void StdFace_ChainLattice_Boost(struct StdIntList *StdI, int Sz2, int lGC);
+void StdFace_Tetragonal(struct StdIntList *StdI, char *model);
+void StdFace_Chain(struct StdIntList *StdI, char *model);
 void StdFace_Ladder(struct StdIntList *StdI, char *model);
-void StdFace_Ladder_Boost(struct StdIntList *StdI, int Sz2, int lGC);
-void StdFace_TriangularLattice(struct StdIntList *StdI, char *model);
+void StdFace_Triangular(struct StdIntList *StdI, char *model);
+void StdFace_Honeycomb(struct StdIntList *StdI, char *model);
+void StdFace_Kagome(struct StdIntList *StdI, char *model);
 
-void FermionHubbard_HoneycombLattice(struct StdIntList *StdI, int nelec, int lGC);
-void KondoLattice_HoneycombLattice(struct StdIntList *StdI, int nelec, int lGC);
-void Spin_HoneycombLattice(struct StdIntList *StdI, int Sz2, int lGC);
-void Spin_HoneycombLattice_Boost(struct StdIntList *StdI, int Sz2, int lGC);
-
-void Spin_Kagome_Boost(struct StdIntList *StdI, int Sz2, int lGC);
+void StdFace_Chain_Boost(struct StdIntList *StdI);
+void StdFace_Ladder_Boost(struct StdIntList *StdI);
+void StdFace_Honeycomb_Boost(struct StdIntList *StdI);
+void StdFace_Kagome_Boost(struct StdIntList *StdI);

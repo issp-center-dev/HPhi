@@ -103,11 +103,11 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
-    StdFace_PrintVal_c("t1", &StdI->t1, _Cbuild(1.0, 0.0));
-    StdFace_PrintVal_c("t1'", &StdI->t1p, _Cbuild(1.0, 0.0));
-    StdFace_PrintVal_c("t0", &StdI->t0, _Cbuild(1.0, 0.0));
-    StdFace_PrintVal_c("t2", &StdI->t2, _Cbuild(1.0, 0.0));
-    StdFace_PrintVal_c("t2", &StdI->t2p, _Cbuild(1.0, 0.0));
+    StdFace_PrintVal_c("t1", &StdI->t1, 0.0);
+    StdFace_PrintVal_c("t1'", &StdI->t1p, 0.0);
+    StdFace_PrintVal_c("t0", &StdI->t0, 1.0);
+    StdFace_PrintVal_c("t2", &StdI->t2, 0.0);
+    StdFace_PrintVal_c("t2", &StdI->t2p, 0.0);
     StdFace_PrintVal_d("V0", &StdI->V0, 0.0);
     StdFace_PrintVal_d("V1", &StdI->V1, 0.0);
     StdFace_PrintVal_d("V1'", &StdI->V1p, 0.0);
@@ -202,8 +202,8 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
         StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, jsite);
       }/*if (model == "spin")*/
       else {
-        StdFace_Hopping(StdI, _Cbuild(StdI->mu, 0.0), isite, isite, "local");
-        StdFace_intr(StdI, _Cbuild(StdI->U, 0.0), isite, 0, isite, 0, isite, 1, isite, 1);
+        StdFace_Hopping(StdI, StdI->mu, isite, isite, "local");
+        StdFace_intr(StdI, StdI->U, isite, 0, isite, 0, isite, 1, isite, 1);
         /**/
         if (model == "kondo") {
           jsite = iW + iL * StdI->W;
@@ -296,10 +296,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_Ladder_Boost(
-struct StdIntList *StdI,
-  int Sz2 /**< [in] 2 * Total Sz */,
-  int lGC /**< [in] 0 for Canonical ensemble, 1 for Grand Canonical */)
+void StdFace_Ladder_Boost(struct StdIntList *StdI)
 {
   int isite, ipivot;
   int ktrans, kintr;
@@ -371,32 +368,6 @@ struct StdIntList *StdI,
   StdFace_NotUsed_d("J", StdI->JAll);
   StdFace_NotUsed_d("J'", StdI->JpAll);
   StdFace_NotUsed_d("K", StdI->K);
-  /*
-  Local Spin
-  */
-  StdI->nsite = StdI->L * StdI->W;
-  StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
-  for (isite = 0; isite < StdI->nsite; isite++)StdI->locspinflag[isite] = StdI->S2;
-  /*
-  Transfer
-  */
-  StdI->ntrans = 1;
-  StdI->transindx = (int **)malloc(sizeof(int*) * StdI->ntrans);
-  StdI->trans = (double *)malloc(sizeof(double) * StdI->ntrans);
-  for (ktrans = 0; ktrans < StdI->ntrans; ktrans++) {
-    StdI->transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
-  }
-  StdI->ntrans = 0;
-  /*
-  Interaction
-  */
-  StdI->nintr = 1;
-  StdI->intrindx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->intr = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
-  }
-  StdI->nintr = 0;
   /*
   Magnetic field
   */

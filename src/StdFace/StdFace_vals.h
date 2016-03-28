@@ -33,12 +33,6 @@ struct StdIntList {
   int a0W;
   int a1L;
   int a1W;
-  double bW0;
-  double bW1;
-  double bL0;
-  double bL1;
-  int NCell;
-  int **Cell;
   /*
   Parameters for MODEL
   */
@@ -77,7 +71,43 @@ struct StdIntList {
   double h;
   double Gamma;
   double K;
-
+  /*
+   Calculation conditions
+  */
+  int FlgTemp;
+  int Lanczos_max;
+  int initial_iv; 
+  int nvec;
+  int exct;
+  int LanczosEps;
+  int LanczosTarget;
+  int NumAve;
+  int ExpecInterval;
+  int Sz2;
+  int nelec;
+  int ioutputmode;
+  double LargeValue;
+  int S2;
+  /*
+   Input strings
+  */
+  char model[256];
+  char lattice[256];
+  char method[256];
+  char outputmode[256];
+  char filehead[256];
+  /*
+   Parameter for lattice
+  */
+  double bW0;
+  double bW1;
+  double bL0;
+  double bL1;
+  int NCell;
+  int **Cell;
+  /*
+   Transfer, Interaction, Locspin
+  */
   int nsite;
   int *locspinflag;
   int ntrans;
@@ -86,12 +116,14 @@ struct StdIntList {
   int nintr;
   int **intrindx;
   _Dcomplex *intr;
-
-  double LargeValue;
-  int S2;
-
+  /*
+   Boost
+  */
+  int lBoost;
   int ***list_6spin_pair;
   int **list_6spin_star;
   int num_pivot;
   int ishift_nspin;
+  /**/
+  int lGC;
 };

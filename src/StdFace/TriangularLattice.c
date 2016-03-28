@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-void StdFace_TriangularLattice(struct StdIntList *StdI, char *model)
+void StdFace_Triangular(struct StdIntList *StdI, char *model)
 {
   int isite, jsite, kCell, ispin;
   int iL, iW, iLp1;
@@ -157,7 +157,7 @@ void StdFace_TriangularLattice(struct StdIntList *StdI, char *model)
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
-    StdFace_PrintVal_c("t", &StdI->t, _Cbuild(1.0, 0.0));
+    StdFace_PrintVal_c("t", &StdI->t, 1.0);
     StdFace_PrintVal_c("t0", &StdI->t0, StdI->t);
     StdFace_PrintVal_c("t1", &StdI->t1, StdI->t);
     StdFace_PrintVal_c("t2", &StdI->t2, StdI->t);
@@ -165,7 +165,7 @@ void StdFace_TriangularLattice(struct StdIntList *StdI, char *model)
     StdFace_PrintVal_d("V0", &StdI->V0, StdI->V);
     StdFace_PrintVal_d("V1", &StdI->V1, StdI->V);
     StdFace_PrintVal_d("V2", &StdI->V2, StdI->V);
-    StdFace_PrintVal_c("t'", &StdI->tp, _Cbuild(0.0, 0.0));
+    StdFace_PrintVal_c("t'", &StdI->tp, 0.0);
     StdFace_PrintVal_d("V'", &StdI->Vp, 0.0);
     /**/
 
@@ -251,8 +251,8 @@ void StdFace_TriangularLattice(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, isite);
     }/*if (model == "spin")*/
     else {
-      StdFace_Hopping(StdI, _Cbuild(StdI->mu, 0.0), isite, isite, "local");
-      StdFace_intr(StdI, _Cbuild(StdI->U, 0.0), isite, 0, isite, 0, isite, 1, isite, 1);
+      StdFace_Hopping(StdI, StdI->mu, isite, isite, "local");
+      StdFace_intr(StdI, StdI->U, isite, 0, isite, 0, isite, 1, isite, 1);
       /**/
       if (model == "kondo") {
         jsite = kCell;

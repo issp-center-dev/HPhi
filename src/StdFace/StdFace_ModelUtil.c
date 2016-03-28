@@ -87,12 +87,12 @@ struct StdIntList *StdI,
 
   for (ispin = 0; ispin <= S2; ispin++){
     Sz = (double)ispin - S;
-    StdFace_trans(StdI, _Cbuild(-h * Sz, 0.0), isite, ispin, isite, ispin);
+    StdFace_trans(StdI, -h * Sz, isite, ispin, isite, ispin);
 
     if (ispin < S2) {
-      StdFace_trans(StdI, _Cbuild(-0.5 * Gamma * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), 0.0),
+      StdFace_trans(StdI, -0.5 * Gamma * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)),
         isite, ispin + 1, isite, ispin);
-      StdFace_trans(StdI, _Cbuild(-0.5 * Gamma * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)), 0.0),
+      StdFace_trans(StdI, -0.5 * Gamma * sqrt(S*(S + 1.0) - Sz*(Sz + 1.0)),
         isite, ispin, isite, ispin + 1);
     }
   }
@@ -219,8 +219,7 @@ struct StdIntList *StdI,
   int ispin, jspin;
   for (ispin = 0; ispin < 2; ispin++){
     for (jspin = 0; jspin < 2; jspin++){
-      StdFace_intr(StdI, _Cbuild(V, 0.0), 
-        isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
+      StdFace_intr(StdI, V, isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
     }
   }
 }
@@ -389,7 +388,17 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   int Wmin, Wmax, Lmin, Lmax;
   int iW, iL, ipos;
   int iCell, iCell0, iCell1, iWfold, iLfold;
-  double pos[4][2], xmin, xmax;
+  double pos[4][2], xmin, xmax, det;
+
+  if (StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W == 0) {
+    exit(-1);
+  }
+
+  det = (double)(StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W);
+  StdI->bW0 = (double)StdI->a1L / det;
+  StdI->bL0 = - (double)StdI->a1W / det;
+  StdI->bW1 = - (double)StdI->a0L / det;
+  StdI->bL1 = (double)StdI->a0W / det;
 
   Wmax = 0;
   if (StdI->a0W > Wmax) Wmax = StdI->a0W;
