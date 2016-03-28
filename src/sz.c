@@ -415,8 +415,10 @@ int sz
           icnt    = 1;
           tmp_pow = 1;
           tmp_i   = 0;
+	  jb      = 0;
+	  ja      = 0;
           while(tmp_pow < X->Def.Tpow[X->Def.Ne]){
-	   // fprintf(stdoutMPI, "tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
+	    //fprintf(stdoutMPI, "tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
             tmp_i   += tmp_pow;
             tmp_pow  = tmp_pow*2;
           }
@@ -449,7 +451,7 @@ int sz
 	  jb = 0;
 	  fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
 	  for(ib=0;ib<X->Check.sdim;ib++){
-	    fprintf(stdoutMPI, "ib=%d jb=%d\n",ib,jb);
+	    //fprintf(stdoutMPI, "ib=%d jb=%d\n",ib,jb);
 	    list_jb[ib]=jb;
 	    i=ib*ihfbit;
 	    num_up=0;
