@@ -33,7 +33,7 @@ int output(struct BindStruct *X){
   i_max=X->Check.idim_max;
     
   if(X->Def.iCalcType==FullDiag){
-    double tmp_N,tmp_Sz;
+    double tmp_N;
     switch(X->Def.iCalcModel){
     case Spin:
     case Hubbard:
