@@ -173,19 +173,19 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=10cm]{../figs/ladder.eps}
-    \caption{梯子格子の模式図. 
+    \includegraphics[width=10cm]{../figs/kagome.eps}
+    \caption{カゴメ格子の模式図. 
     }
-    \label{fig_ladder}
+    \label{fig_kagome}
   \end{center}
 \end{figure}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=10cm]{../figs/kagome.eps}
-    \caption{カゴメ格子の模式図. 
+    \includegraphics[width=10cm]{../figs/ladder.eps}
+    \caption{梯子格子の模式図. 
     }
-    \label{fig_kagome}
+    \label{fig_ladder}
   \end{center}
 \end{figure}
 
@@ -268,71 +268,82 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 のときには指定しないでください。
 \end{itemize}
 
-\subsection{Hubbard模型パラメーター}
+\subsection{模型用パラメーター}
+デフォルト値は特に記載されていないものについては0に設定してあります。相互作用はパラメータで指定された相互作用が加算された形で定義され、模型毎にTable~\ref{table_interactions}で記載されるパラメータの指定が可能です。型が複素数のパラメータは「実部, 虚部」の形式で指定し、実数の場合には「実部」で指定が可能です。
+\begin{table}[hbp]
+  \begin{tabular}{|l||c|c|c|c|c|c|c|c|} \hline
+    相互作用 & 1次元鎖 & 正方格子 & 三角格子 & 蜂の巣格子 & カゴメ格子 & 梯子格子\\ \hline \hline
+     \verb|J|, \verb|t|, \verb|V| & $\circ$	 & - 	& - 	& - 	& - 	& -\\ \hline
+    \verb|J'|, \verb|t'|, \verb|V'| & $\circ$	 & $\circ$	& $\circ$ 	& $\circ$ 	& $\circ$ & - \\ \hline
+    \verb|J0|, \verb|t0|, \verb|V0| & -	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
+    \verb|J1|, \verb|t1|, \verb|V1| & -         	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
+    \verb|J2|, \verb|t2|, \verb|V2|  & -         	 & -    	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
+    \verb|J1'|, \verb|t1'|, \verb|V1'| & -		 &-	 	& -		& -		& -		& $\circ$ 	\\ \hline
+    \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
+    \verb|J3'|, \verb|t3'|, \verb|V3'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
+  \end{tabular}
+   \caption{各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。}
+    \label{table_interactions}
+\end{table}
+
+\subsubsection{Hubbard模型パラメーター}
+
 \begin{itemize}
 \item \verb|mu|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
+{\bf 形式 :} 実数
 
 {\bf 説明 :} 化学ポテンシャルを指定します。
 
-\item \verb|t|
+\item \verb|t|, \verb|t'|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|1.0|)
+{\bf 形式 :} 複素数
 
-{\bf 説明 :} 最近接サイト間のホッピング(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
-
-\item \verb|t'|
-
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
-
-{\bf 説明 :} 次近接サイト間のホッピング(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
+{\bf 説明 :} サイト間のホッピング(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
 
 \item \verb|t0|, \verb|t1|, \verb|t2|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|t|)
+{\bf 形式 :} 複素数
 
-{\bf 説明 :} 異方的蜂の巣格子での最近接サイト間のホッピング
-(Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
+{\bf 説明 :} 最近接サイト間のホッピング
+(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}参照)を指定します。
 
-\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
+\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|1.0|)
+{\bf 形式 :} 複素数
 
-{\bf 説明 :} 梯子格子でのホッピング
-(Fig. \ref{fig_ladder}参照)を指定します。
+{\bf 説明 :} 梯子格子でのホッピング(Fig. \ref{fig_ladder}参照)を指定します。
 
 \item \verb|U|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
+{\bf 形式 :} 実数
 
 {\bf 説明 :} オンサイトクーロン積分を指定します。
 
 \item \verb|V|, \verb|V'|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
+{\bf 形式 :} 実数
 
 {\bf 説明 :} それぞれ最近接および次近接サイト間オフサイトクーロン積分
-(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
+(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
 
 \item \verb|V0|, \verb|V1|, \verb|V2|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|V|)
+{\bf 形式 :} 実数
 
-{\bf 説明 :} 異方的蜂の巣格子での最近接サイト間のオフサイトクーロン積分
-(Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
+{\bf 説明 :} 最近接サイト間のオフサイトクーロン積分
+(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}参照)を指定します。
 
-\item \verb|V0|, \verb|V1|, , \verb|V1'|, \verb|V2|, , \verb|V2'|
+\item \verb|V1'|,  \verb|V2'|, \verb|V3'|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
+{\bf 形式 :} 実数
 
 {\bf 説明 :} 梯子格子でのオフサイトクーロン積分
 (Fig. \ref{fig_ladder}参照)を指定します。
 
 \end{itemize}
 
-\subsection{スピン模型パラメーター}
-\tr{デフォルト値は特に記載されていないものについては0に設定してあります。相互作用はパラメータで指定された相互作用が加算された形で定義されます。}
+\subsubsection{スピン模型パラメーター}
 \begin{itemize}
 \item \verb|2S|
 
@@ -352,7 +363,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 {\bf 形式 :} 実数
 
-{\bf 説明 :} 最近接サイト間のスピン結合(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
+{\bf 説明 :} 最近接サイト間のスピン結合(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
 
 \item \verb|J0|, \verb|J1|, \verb|J2|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J2|$\sigma_1$,
  \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$ \\
@@ -360,10 +371,9 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 {\bf 形式 :} 実数
 
-{\bf 説明 :} 異方的蜂の巣格子の最近接サイト間のスピン結合(Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
+{\bf 説明 :} 異方的蜂の巣格子の最近接サイト間のスピン結合(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder})を指定します。
 
-\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J1'|$\sigma_1$, \verb|J2|$\sigma_1$, \verb|J2'|$\sigma_1$,\\
- \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J1'|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$\\
+\item \verb|J1'|, \verb|J2'|, \verb|J3'|, \verb|J1'|$\sigma_1$, \verb|J2'|$\sigma_1$, \verb|J3'|$\sigma_1$, \verb|J1'|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$, \verb|J3'|${\sigma_1\sigma_2}$\\
  (ただし、\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\}かつ${\sigma_1\neq \sigma_2}$)
 
 
@@ -373,26 +383,32 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \end{itemize}
 
-
-\subsection{近藤格子模型パラメーター}
+\subsubsection{近藤格子模型パラメーター}
 \begin{itemize}
 \item \verb|mu|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
+{\bf 形式 :} 実数
 
 {\bf 説明 :} 化学ポテンシャルを指定します。
 
-\item \verb|t|
+\item \verb|t|, \verb|t'|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|1.0|)
+{\bf 形式 :} 複素数
 
-{\bf 説明 :} 最近接サイト間のホッピング(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
+{\bf 説明 :} サイト間のホッピング(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
 
 \item \verb|t0|, \verb|t1|, \verb|t2|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|t|)
+{\bf 形式 :} 複素数
 
-{\bf 説明 :} 異方的蜂の巣格子での最近接サイト間のホッピング(Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
+{\bf 説明 :} 最近接サイト間のホッピング
+(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}参照)を指定します。
+
+\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
+
+{\bf 形式 :} 複素数
+
+{\bf 説明 :} 梯子格子でのホッピング(Fig. \ref{fig_ladder}参照)を指定します。
 
 \item \verb|J|
 

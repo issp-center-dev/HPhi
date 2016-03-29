@@ -186,6 +186,15 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \begin{figure}[!htbp]
   \begin{center}
+    \includegraphics[width=10cm]{../figs/kagome.eps}
+    \caption{Schematic illustration of the Kagome lattice.
+    }
+    \label{fig_kagome}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \begin{center}
     \includegraphics[width=10cm]{../figs/ladder.eps}
     \caption{Schematic illustration of the ladder lattice.
     }
@@ -193,14 +202,6 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \end{center}
 \end{figure}
 
-\begin{figure}[!htbp]
-  \begin{center}
-    \includegraphics[width=10cm]{../figs/kagome.eps}
-    \caption{Schematic illustration of the Kagome lattice.
-    }
-    \label{fig_kagome}
-  \end{center}
-\end{figure}
 
 \end{itemize}
 
@@ -294,41 +295,54 @@ When \verb|lmodel = "Fermion HubbardGC"| or \verb|SpinGC|,
 it should not be specified. 
 \end{itemize}
 
+
+\subsection{Parameters for each models}
+A default value is set as $0$ unless a specific value is not defined in a description. Interactions are constructed by adding each interactions given by these parameters. Table~\ref{table_interactions} shows the parameters for each models. In the case of a complex type, a file format is ``{\it a real part, an imaginary part} " while in the case of a real type, only ``{\it a real part} ".
+
+\begin{table}[hbp]
+  \begin{tabular}{|l||c|c|c|c|c|c|c|c|} \hline
+    Interactions & 1D chain & 2D square & 2D triangular & Honeycomb & Kagome & Ladder\\ \hline \hline
+   \verb|J|, \verb|t|, \verb|V| & $\circ$	 & - 	& - 	& - 	& - 	& -\\ \hline
+    \verb|J'|, \verb|t'|, \verb|V'| & $\circ$	 & $\circ$	& $\circ$ 	& $\circ$ 	& $\circ$ & - \\ \hline
+   \verb|J0|, \verb|t0|, \verb|V0| & -	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
+    \verb|J1|, \verb|t1|, \verb|V1| & -         	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
+    \verb|J2|, \verb|t2|, \verb|V2|  & -         	 & -    	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
+    \verb|J1'|, \verb|t1'|, \verb|V1'| & -		 &-	 	& -		& -		& -		& $\circ$ 	\\ \hline
+    \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
+    \verb|J3'|, \verb|t3'|, \verb|V3'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
+  \end{tabular}
+   \caption{Interactions for each models defined in an input file. We can define spin couplings as matrix format.}
+    \label{table_interactions}
+\end{table}
+
 \subsection{Parameters for the Hubbard model}
 \begin{itemize}
 \item \verb|mu|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Real
 
 {\bf Description :} The chemical potential $\mu$ (including the site potential)
 is specified with this parameter.
 
-\item \verb|t|
+\item \verb|t|, \verb|t'|
 
-{\bf Type :} Real (\verb|1.0| as a default)
+{\bf Type :} Complex
 
-{\bf Description :} The nearest neighbor hopping $t$ (See Fig. \ref{fig_chap04_1_lattice})
-is specified with this parameter.
-
-\item \verb|t'|
-
-{\bf Type :} Real (\verb|0.0| as a default)
-
-{\bf Description :} The second nearest neighbor hopping $t'$ (See Fig. \ref{fig_chap04_1_lattice})
+{\bf Description :} The hopping (See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
 is specified with this parameter.
 
 \item \verb|t0|, \verb|t1|, \verb|t2|
 
-{\bf Type :} Real (\verb|t| as defaults)
+{\bf Type :} Complex
 
 {\bf Description :} The nearest neighbor hopping 
 in the anisotropic honeycomb lattice 
-(See Fig. \ref{fig_chap04_1_honeycomb})
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder})
 is specified with this parameter.
 
-\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
+\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
 
-{\bf Type :} Real (\verb|1.0| as defaults)
+{\bf Type :} Complex
 
 {\bf Description :} Hopping integrals
 in the ladder lattice 
@@ -337,13 +351,13 @@ is specified with this parameter.
 
 \item \verb|U|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Real
 
 {\bf Description :} The onsite Coulomb integral $U$ is specified with this parameter.
 
 \item \verb|V|, \verb|V'|
 
-{\bf Type :} Real (\verb|0.0| as defaults)
+{\bf Type :} Real
 
 {\bf Description :} The nearest neighbor offsite Coulomb integrals $V$
 and the second nearest neighbor offsite Coulomb integrals $V'$
@@ -351,15 +365,15 @@ and the second nearest neighbor offsite Coulomb integrals $V'$
 
 \item \verb|V0|, \verb|V1|, \verb|V2|
 
-{\bf Type :} Real (\verb|V| as defaults)
+{\bf Type :} Real
 
 {\bf Description :} Nearest neighbor offsite Coulomb integrals 
 on the anisotropic honeycomb lattice
 (Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
 
-\item \verb|V0|, \verb|V1|, \verb|V1'|, \verb|V2|, \verb|V2'|
+\item \verb|V1'|, \verb|V2'|, \verb|V3'|
 
-{\bf Type :} Real (\verb|0.0| as defaults)
+{\bf Type :} Real
 
 {\bf Description :} Offsite Coulomb integrals 
 on the ladder lattice
@@ -368,7 +382,6 @@ on the ladder lattice
 \end{itemize}
 
 \subsection{Parameters for the Spin model}
-A default value is set as $0$ unless a specific value is not defined in a description. Interactions are constructed by adding each interactions given by these parameters.
 \begin{itemize}
 \item \verb|2S|
 
@@ -390,7 +403,7 @@ and the single-site anisotropy parameter are specified with these parameters.
 {\bf Type :} Real
 
 {\bf Description :} The spin-coupling constant between nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) is specified with this parameter.
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}) is specified with this parameter.
 
 \item \verb|J0|, \verb|J1|, \verb|J2|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J2|$\sigma_1$,
  \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$ \\
@@ -400,10 +413,10 @@ and the single-site anisotropy parameter are specified with these parameters.
 
 {\bf Description :} Spin-coupling constants between nearest neighbor sites
 in the anisotropic honeycomb lattice
-(See Fig. \ref{fig_chap04_1_honeycomb}) are specified with these parameter.
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}) are specified with these parameter.
 
-\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J1'|$\sigma_1$, \verb|J2|$\sigma_1$, \verb|J2'|$\sigma_1$,\\
- \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J1'|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$\\
+\item \verb|J1'|,\verb|J2'|,\verb|J3'|,  \verb|J1'|$\sigma_1$, \verb|J2'|$\sigma_1$, \verb|J3'|$\sigma_1$,
+\verb|J1'|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$, \verb|J3'|${\sigma_1\sigma_2}$\\
  (\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\} and ${\sigma_1\neq \sigma_2}$)
 
 {\bf Type :} Real
@@ -417,30 +430,30 @@ in the anisotropic honeycomb lattice
 \begin{itemize}
 \item \verb|mu|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Real
 
 {\bf Description :} The chemical potential $\mu$ (including the site potential)
 is specified with this parameter.
 
-\item \verb|t|
+\item \verb|t|, \verb|t'|
 
-{\bf Type :} Real (\verb|1.0| as a default)
+{\bf Type :} Complex
 
-{\bf Description :} The nearest neighbor hopping $t$ (See Fig. \ref{fig_chap04_1_lattice})
+{\bf Description :} The hopping (See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
 is specified with this parameter.
 
 \item \verb|t0|, \verb|t1|, \verb|t2|
 
-{\bf Type :} Real (\verb|t| as defaults)
+{\bf Type :} Complex
 
 {\bf Description :} The nearest neighbor hopping 
 in the anisotropic honeycomb lattice 
-(See Fig. \ref{fig_chap04_1_honeycomb})
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder})
 is specified with this parameter.
 
-\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
+\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
 
-{\bf Type :} Real (\verb|1.0| as defaults)
+{\bf Type :} Complex
 
 {\bf Description :} Hopping integrals
 in the ladder lattice 
