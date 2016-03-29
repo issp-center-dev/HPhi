@@ -192,8 +192,41 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \end{itemize}
 
 \subsection{格子に関するパラメーター}
+\begin{figure}[!htbp]
+  \begin{center}
+    \includegraphics[width=8cm]{../figs/chap04_1_unitlattice.eps}
+    \caption{格子形状に関する概念図。ピンクのベクトルが第1次元方向を定義するベクトル、グリーンのベクトルが第2次元方向を定義するベクトルをそれぞれ表す。
+    }
+    \label{fig_chap04_1_unitlattice}
+  \end{center}
+\end{figure}
 
 \begin{itemize}
+
+\item \verb|a0L|
+
+{\bf 形式 :} 自然数 (デフォルト値は0)
+
+{\bf 説明 :} 第1次元方向を定義するベクトルのx成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
+
+\item \verb|a0W|
+
+{\bf 形式 :} 自然数 (デフォルト値は1)
+
+{\bf 説明 :} 第1次元方向を定義するベクトルのy成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
+
+\item \verb|a1L|
+
+{\bf 形式 :} 自然数  (デフォルト値は1)
+
+{\bf 説明 :} 第2次元方向を定義するベクトルのx成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
+
+\item \verb|a1W|
+
+{\bf 形式 :} 自然数  (デフォルト値は0)
+
+{\bf 説明 :} 第2次元方向を定義するベクトルのy成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
+
 \item \verb|L|
 
 {\bf 形式 :} 自然数
@@ -207,30 +240,6 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 {\bf 説明 :} 第2次元方向の格子点数を指定します。
 \verb|lattice = "Chain Lattice"|の時には使われないため、
 指定をしないでください。
-
-\item \verb|a0W|
-
-{\bf 形式 :} 自然数 (デフォルト値は1)
-
-{\bf 説明 :} 第1次元方向を定義するベクトルのx成分を指定します。
-
-\item \verb|a0L|
-
-{\bf 形式 :} 自然数 (デフォルト値は0)
-
-{\bf 説明 :} 第1次元方向を定義するベクトルのy成分を指定します。
-
-\item \verb|a1W|
-
-{\bf 形式 :} 自然数  (デフォルト値は0)
-
-{\bf 説明 :} 第2次元方向を定義するベクトルのx成分を指定します。
-
-\item \verb|a1L|
-
-{\bf 形式 :} 自然数  (デフォルト値は1)
-
-{\bf 説明 :} 第2次元方向を定義するベクトルのy成分を指定します。
 
 \item \verb|a|
 

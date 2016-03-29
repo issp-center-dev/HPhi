@@ -206,7 +206,47 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \subsection{Parameters for the lattice}
 
+
+\begin{figure}[!htbp]
+  \begin{center}
+    \includegraphics[width=8cm]{../figs/chap04_1_unitlattice.eps}
+    \caption{Schematic illustration of a form of lattice where a pink and green vectors indicate first and second dimensional direction, respectively. 
+    }
+    \label{fig_chap04_1_unitlattice}
+  \end{center}
+\end{figure}
+
 \begin{itemize}
+
+\item \verb|a0L|
+
+{\bf Type :} Positive integer ( 1.0 as a default)
+
+{\bf Description :} The number of x-components of a vector defined as the first dimensional direction
+is specified with this parameter  (Fig. \ref{fig_chap04_1_unitlattice}).
+
+\item \verb|a0W|
+
+{\bf Type :} Positive integer ( 0.0 as a default)
+
+{\bf Description :} The number of y-components of a vector defined as the first dimensional direction
+is specified with this parameter (Fig. \ref{fig_chap04_1_unitlattice}).
+
+\item \verb|a1L|
+
+{\bf Type :} Positive integer ( 0.0 as a default)
+
+{\bf Description :} The number of x-components of a vector defined as the second dimensional direction
+is specified with this parameter (Fig. \ref{fig_chap04_1_unitlattice}).
+
+\item \verb|a1W|
+
+{\bf Type :} Positive integer ( 1.0 as a default)
+
+{\bf Description :} The number of y-components of a vector defined as the second dimensional direction
+is specified with this parameter (Fig. \ref{fig_chap04_1_unitlattice}).
+
+
 \item \verb|L|
 
 {\bf Type :} Positive integer
@@ -225,35 +265,6 @@ is specified with this parameter.
 When \verb|lattice = "Chain Lattice"|, 
 it should not be specified because it will not be used
 (if specified, $\HPhi$ will stop).
-
-
-\item \verb|a0W|
-
-{\bf Type :} Positive integer ( 1.0 as a default)
-
-{\bf Description :} The number of x-components of a vector defined as the first dimensional direction
-is specified with this parameter.
-
-\item \verb|a0L|
-
-{\bf Type :} Positive integer ( 0.0 as a default)
-
-{\bf Description :} The number of y-components of a vector defined as the first dimensional direction
-is specified with this parameter.
-
-\item \verb|a1W|
-
-{\bf Type :} Positive integer ( 0.0 as a default)
-
-{\bf Description :} The number of x-components of a vector defined as the second dimensional direction
-is specified with this parameter.
-
-\item \verb|a1L|
-
-{\bf Type :} Positive integer ( 1.0 as a default)
-
-{\bf Description :} The number of y-components of a vector defined as the second dimensional direction
-is specified with this parameter.
 
 \item \verb|a|
 
