@@ -71,12 +71,11 @@ H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 + \sum_{i \neq j} V_{i j} n_{i} n_{j},
 \label{fml4_1_hubbard}
 \end{align}
-canonical ensemble in the Kitaev-Heisenberg model
+canonical ensemble in the Spin model($\{\sigma_1, \sigma_2\}={x, y, z}$)
 \begin{align}
 H &= -h \sum_{i} S_{i z} + \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
 \nonumber \\
-&+ \sum_{i j} \left( J_{i j x} S_{i x} S_{j x} + J_{i j y} S_{i y} S_{j y} + J_{i j z} S_{i z} S_{j z} 
-\right),
+&+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,
 \label{fml4_1_spin}
 \end{align}
 canonical ensemble in the Kondo lattice model
@@ -91,7 +90,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \label{fml4_1_kondo}
 \end{align}
 grand canonical ensemble of the Fermion in the Hubbard model [Eqn. (\ref{fml4_1_hubbard})],
-grand canonical ensemble in the Kitaev-Heisenberg model [Eqn. (\ref{fml4_1_spin})],
+grand canonical ensemble in the Spin model [Eqn. (\ref{fml4_1_spin})],
 and
 grand canonical ensemble in Kondo lattice model [Eqn. (\ref{fml4_1_kondo})]
 respectively.
@@ -227,6 +226,35 @@ When \verb|lattice = "Chain Lattice"|,
 it should not be specified because it will not be used
 (if specified, $\HPhi$ will stop).
 
+
+\item \verb|a0W|
+
+{\bf Type :} Positive integer ( 1.0 as a default)
+
+{\bf Description :} The number of x-components of a vector defined as the first dimensional direction
+is specified with this parameter.
+
+\item \verb|a0L|
+
+{\bf Type :} Positive integer ( 0.0 as a default)
+
+{\bf Description :} The number of y-components of a vector defined as the first dimensional direction
+is specified with this parameter.
+
+\item \verb|a1W|
+
+{\bf Type :} Positive integer ( 0.0 as a default)
+
+{\bf Description :} The number of x-components of a vector defined as the second dimensional direction
+is specified with this parameter.
+
+\item \verb|a1L|
+
+{\bf Type :} Positive integer ( 1.0 as a default)
+
+{\bf Description :} The number of y-components of a vector defined as the second dimensional direction
+is specified with this parameter.
+
 \item \verb|a|
 
 {\bf Type :} Real (\verb|1.0| as a default)
@@ -328,7 +356,8 @@ on the ladder lattice
 
 \end{itemize}
 
-\subsection{Parameters for the Kitaev-Heisenberg model}
+\subsection{Parameters for the Spin model}
+A default value is set as $0$ unless a specific value is not defined in a description. Interactions are constructed by adding each interactions given by these parameters.
 \begin{itemize}
 \item \verb|2S|
 
@@ -339,65 +368,34 @@ with this parameter (e. g. \verb|2S=1| for $1/2$ spin system).
 
 \item \verb|h|, \verb|Gamma|, \verb|D|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Real
 
 {\bf Description :} The longitudinal magnetic field, transverse magnetic field, 
 and the single-site anisotropy parameter are specified with these parameters.
 
-\item \verb|J|
+\item \verb|J|, \verb|J'|, \verb|J|$\sigma_1$, \verb|J|$\sigma_1\sigma_2$,  \verb|J'|$\sigma_1$, \verb|J'|$\sigma_1\sigma_2$\\
+  (\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\} and ${\sigma_1\neq \sigma_2}$)
 
-{\bf Type :} Real (\verb|1.0| as a default)
+{\bf Type :} Real
 
-{\bf Description :} The isotropic spin-coupling constant between nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) is specified with this parameter.
-\verb|Jx|, \verb|Jy|, \verb|Jz|, and \verb|Jxy| and set to \verb|J|
-if \verb|J| is specified AND none of \verb|Jx|, \verb|Jy|, \verb|Jz| and \verb|Jxy| is specified.
-
-\item \verb|Jz|, \verb|Jxy|
-
-{\bf Type :} Real (\verb|J| as a default)
-
-{\bf Description :} The uniaxially anisotropic spin-coupling constant between nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) is specified with this parameter.
-\verb|Jx| and \verb|Jy| are set to \verb|Jxy|
-if \verb|Jxy| is specified AND none of \verb|Jx| and \verb|Jy| is specified.
-
-\item \verb|Jx|, \verb|Jy|
-
-{\bf Type :} Real (\verb|Jxy| as a default)
-
-{\bf Description :} The fully anisotropic spin-coupling constant between nearest neighbor sites
+{\bf Description :} The spin-coupling constant between nearest neighbor sites
 (See Fig. \ref{fig_chap04_1_lattice}) is specified with this parameter.
 
-\item \verb|J'|, \verb|Jx'|, \verb|Jy'|, \verb|Jz'|, \verb|Jxy'|
+\item \verb|J0|, \verb|J1|, \verb|J2|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J2|$\sigma_1$,
+ \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$ \\
+  (\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\} and ${\sigma_1\neq \sigma_2}$)
 
-{\bf Type :} Real (\verb|J'|, \verb|Jxy'|, \verb|Jz'|, \verb|Jx'|, and \verb|Jy'|
-are set to  \verb|0.0|,  \verb|J'|, \verb|J'|, \verb|Jxy'|, and \verb|Jxy'| as defaults.)
-
-{\bf Description :} Spin-coupling constants between second nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) are specified with these parameter.
-They are set as 
-\verb|J|, \verb|Jx|, \verb|Jy|, \verb|Jz|, and \verb|Jxy| are set.
-
-\item \verb|J0|, \verb|J1|, \verb|J2|, \verb|Jx0|, \verb|Jy0|, \verb|Jz0|, 
-  \verb|Jx1|, \verb|Jy1|, \verb|Jz1|, 
-  \verb|Jx2|, \verb|Jy2|, \verb|Jz2|, \verb|Jxy0|, \verb|Jxy1|, \verb|Jxy2|
-
-{\bf Type :} Real (
-\verb|J| as defaluts for \verb|J0|, \verb|J1|, \verb|J2|. 
-\verb|Jxy| as defaults for \verb|Jxy0|, \verb|Jxy1|,  \verb|Jxy2|;
-\verb|Jx| as defaults for \verb|Jx0|, \verb|Jx1|, \verb|Jx2|;
-\verb|Jy| as defaults for \verb|Jy0|, \verb|Jy1|, \verb|Jy2|;
-\verb|Jz| as defaults for \verb|Jz0|, \verb|Jz1|, \verb|Jz2|.)
+{\bf Type :} Real
 
 {\bf Description :} Spin-coupling constants between nearest neighbor sites
 in the anisotropic honeycomb lattice
 (See Fig. \ref{fig_chap04_1_honeycomb}) are specified with these parameter.
 
-\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|
+\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J1'|$\sigma_1$, \verb|J2|$\sigma_1$, \verb|J2'|$\sigma_1$,\\
+ \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J1'|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$\\
+ (\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\} and ${\sigma_1\neq \sigma_2}$)
 
-{\bf Type :} Real (\verb|1.0| as a defalut for \verb|J0|, 
-\verb|0.0| for others)
+{\bf Type :} Real
 
 {\bf Description :} Spin-coupling constants in the ladder lattice
 (See Fig. \ref{fig_ladder}) are specified with these parameter.
@@ -535,7 +533,7 @@ l = 2|\mu|
 + 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'|
 \end{align}
 
-\item Kitaev-Heisenberg model [Eqn. (\ref{fml4_1_spin})]
+\item Spin model [Eqn. (\ref{fml4_1_spin})]
 
 The canonical ensemble
 \begin{align}

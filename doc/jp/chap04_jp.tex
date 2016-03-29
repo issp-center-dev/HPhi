@@ -68,12 +68,11 @@ H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 + \sum_{i \neq j} V_{i j} n_{i} n_{j},
 \label{fml4_1_hubbard}
 \end{align}
-同じくカノニカル集団のKitaev-Heisenberg模型
+同じくカノニカル集団のスピン模型 ($\{\sigma_1, \sigma_2\}={x, y, z}$)
 \begin{align}
 H &= -h \sum_{i} S_{i z} + \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
 \nonumber \\
-&+ \sum_{i j} \left( J_{i j x} S_{i x} S_{j x} + J_{i j y} S_{i y} S_{j y} + J_{i j z} S_{i z} S_{j z} 
-\right),
+&+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,
 \label{fml4_1_spin}
 \end{align}
 カノニカル集団の近藤格子模型
@@ -88,7 +87,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \label{fml4_1_kondo}
 \end{align}
 グランドカノニカル集団のフェルミ粒子Hubbard模型[式(\ref{fml4_1_hubbard})]、
-グランドカノニカル集団のKitaev-Heisenberg模型[式(\ref{fml4_1_spin})]、
+グランドカノニカル集団のスピン模型[式(\ref{fml4_1_spin})]、
 グランドカノニカル集団の近藤格子模型[式(\ref{fml4_1_kondo})]に対応します。
 
 \verb|"SpinGCBoost"|では\verb|"SpinGC"|と同じ計算を
@@ -209,6 +208,30 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \verb|lattice = "Chain Lattice"|の時には使われないため、
 指定をしないでください。
 
+\item \verb|a0W|
+
+{\bf 形式 :} 自然数 (デフォルト値は1)
+
+{\bf 説明 :} 第1次元方向を定義するベクトルのx成分を指定します。
+
+\item \verb|a0L|
+
+{\bf 形式 :} 自然数 (デフォルト値は0)
+
+{\bf 説明 :} 第1次元方向を定義するベクトルのy成分を指定します。
+
+\item \verb|a1W|
+
+{\bf 形式 :} 自然数  (デフォルト値は0)
+
+{\bf 説明 :} 第2次元方向を定義するベクトルのx成分を指定します。
+
+\item \verb|a1L|
+
+{\bf 形式 :} 自然数  (デフォルト値は1)
+
+{\bf 説明 :} 第2次元方向を定義するベクトルのy成分を指定します。
+
 \item \verb|a|
 
 {\bf 形式 :} 実数 (デフォルト値は\verb|1.0|)
@@ -224,7 +247,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 {\bf 形式 :} 整数
 
 {\bf 説明 :} 伝導電子数を指定します。
-\verb|lmodel = "Fermion HubbardGC"|, \verb|"Spin"|, \verb|"SpinGC"|
+\verb|model = "Fermion HubbardGC"|, \verb|"Spin"|, \verb|"SpinGC"|
 のときには指定しないでください。
 
 \item \verb|2Sz|
@@ -232,7 +255,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 {\bf 形式 :} 整数
 
 {\bf 説明 :} 全スピンのz 成分の2倍を指定します。
-\verb|lmodel = "Fermion HubbardGC"|, \verb|SpinGC|
+\verb|model = "Fermion HubbardGC"|, \verb|SpinGC|
 のときには指定しないでください。
 \end{itemize}
 
@@ -299,73 +322,48 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \end{itemize}
 
-\subsection{Kitaev-Heisenberg模型パラメーター}
+\subsection{スピン模型パラメーター}
+\tr{デフォルト値は特に記載されていないものについては0に設定してあります。相互作用はパラメータで指定された相互作用が加算された形で定義されます。}
 \begin{itemize}
 \item \verb|2S|
 
 {\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
 
-{\bf 説明 :} 局在スピンの大きさ$S$の2倍を指定します.
+{\bf 説明 :} 局在スピンの大きさ$S$の2倍を指定します。
 (例/ $1/2$スピンならば\verb|1|)
 
 \item \verb|h|, \verb|Gamma|, \verb|D|
 
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
+{\bf 形式 :} 実数
 
 {\bf 説明 :} それぞれ縦磁場、横磁場、異方性パラメータを指定します。
 
-\item \verb|J|
+\item \verb|J|, \verb|J'|, \verb|J|$\sigma_1$, \verb|J|$\sigma_1\sigma_2$,  \verb|J'|$\sigma_1$, \verb|J'|$\sigma_1\sigma_2$\\
+  (ただし、\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\}かつ${\sigma_1\neq \sigma_2}$)
 
-{\bf 形式 :} 実数(デフォルト値は\verb|1.0|)
+{\bf 形式 :} 実数
 
-{\bf 説明 :} 最近接サイト間の等方的スピン結合(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
-これが指定されていて、
-\verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|のいずれも指定されていない場合には
-\verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|にはすべて\verb|J|が代入されます。
+{\bf 説明 :} 最近接サイト間のスピン結合(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
 
-\item \verb|Jz|, \verb|Jxy|
+\item \verb|J0|, \verb|J1|, \verb|J2|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J2|$\sigma_1$,
+ \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$ \\
+  (ただし、\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\}かつ${\sigma_1\neq \sigma_2}$)
 
-{\bf 形式 :} 実数(デフォルト値は\verb|J|)
-
-{\bf 説明 :} 最近接サイト間の一軸性異方的スピン結合(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
-\verb|Jxy|が指定されていて、
-\verb|Jx|, \verb|Jy|が指定されていない場合には
-\verb|Jx|, \verb|Jy|には\verb|Jxy|が代入されます。
-
-\item \verb|Jx|, \verb|Jy|
-
-{\bf 形式 :} 実数(デフォルト値は\verb|Jxy|)
-
-{\bf 説明 :} 最近接サイト間の三軸性異方的スピン結合(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
-
-\item \verb|J'|, \verb|Jx'|, \verb|Jy'|, \verb|Jz'|, \verb|Jxy'|
-
-{\bf 形式 :} 実数(\verb|J'|のデフォルト値は\verb|0.0|, 
-\verb|Jxy'|と\verb|Jz'|のデフォルト値は\verb|J'|,
-\verb|Jx'|と\verb|Jy'|のデフォルト値は\verb|Jxy'|)
-
-{\bf 説明 :} 次近接サイト間のスピン結合(Fig. \ref{fig_chap04_1_lattice}参照)を指定します。
-最近接のもの(\verb|J|, \verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|)
-と同様のルールで設定されます。
-
-\item \verb|J0|, \verb|J1|, \verb|J2|, \verb|Jx0|, \verb|Jy0|, \verb|Jz0|, \verb|Jx1|, \verb|Jy1|, \verb|Jz1|, 
-  \verb|Jx2|, \verb|Jy2|, \verb|Jz2|, \verb|Jxy0|, \verb|Jxy1|, \verb|Jxy2|
-
-{\bf 形式 :} 実数 (\verb|J0|, \verb|J1|, \verb|J2|のデフォルト値は\verb|J|, 
-\verb|Jxy0|, \verb|Jxy1|,  \verb|Jxy2|のデフォルト値は\verb|Jxy|
-\verb|Jx0|, \verb|Jx1|, \verb|Jx2| のデフォルト値は\verb|Jx|,
-\verb|Jy0|, \verb|Jy1|, \verb|Jy2| のデフォルト値は\verb|Jy|,
-\verb|Jz0|, \verb|Jz1|, \verb|Jz2| のデフォルト値は\verb|Jz|)
+{\bf 形式 :} 実数
 
 {\bf 説明 :} 異方的蜂の巣格子の最近接サイト間のスピン結合(Fig. \ref{fig_chap04_1_honeycomb}参照)を指定します。
 
-\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|
+\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J1'|$\sigma_1$, \verb|J2|$\sigma_1$, \verb|J2'|$\sigma_1$,\\
+ \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J1'|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$\\
+ (ただし、\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\}かつ${\sigma_1\neq \sigma_2}$)
 
-{\bf 形式 :} 実数 (デフォルト値は\verb|J0|は\verb|1.0|、他は\verb|0.0|)
+
+{\bf 形式 :} 実数
 
 {\bf 説明 :} 梯子格子でのスピン結合(Fig. \ref{fig_ladder}参照)を指定します。
 
 \end{itemize}
+
 
 \subsection{近藤格子模型パラメーター}
 \begin{itemize}
@@ -472,7 +470,7 @@ l = 2|\mu|
 + 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'|
 \end{align}
 
-\item Kitaev-Heisenberg模型[式(\ref{fml4_1_spin})]
+\item スピン模型[式(\ref{fml4_1_spin})]
 
 カノニカル集団
 \begin{align}
