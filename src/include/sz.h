@@ -49,6 +49,15 @@ int child_omp_sz_spin(
 		      struct BindStruct *X
 		      );
 
+int child_omp_sz_spin_hacker(
+		      long unsigned int ib, 
+		      long unsigned int ihfbit,
+		      int N, 
+		      struct BindStruct *X
+		      );
+
+
+
 int child_omp_sz_GeneralSpin(
 		      long unsigned int ib, 
 		      long unsigned int ihfbit,

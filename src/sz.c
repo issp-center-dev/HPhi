@@ -408,21 +408,18 @@ int sz
     case Spin:
       // this part can not be parallelized
       if(X->Def.iFlgGeneralSpin==FALSE){
-
-       hacker = 1;
+        hacker = 2;
 // using hacker's delight
-       if(hacker        ==  1){
+        if(hacker        ==  1){
           icnt    = 1;
           tmp_pow = 1;
           tmp_i   = 0;
 	  jb      = 0;
 	  ja      = 0;
           while(tmp_pow < X->Def.Tpow[X->Def.Ne]){
-	    //fprintf(stdoutMPI, "tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
             tmp_i   += tmp_pow;
             tmp_pow  = tmp_pow*2;
           }
-	  //fprintf(stdoutMPI, "final: tmp_i=%ld, tmp_pow=%ld %d\n", tmp_i, tmp_pow,X->Def.Ne);
 	  while(tmp_i<X->Check.sdim*X->Check.sdim){
             list_1[icnt]=tmp_i;
            
@@ -440,18 +437,15 @@ int sz
             list_2_1[ia] = ja;
             list_2_2[ib] = jb;
             tmp_j = snoob(tmp_i);
-	    //fprintf(stdoutMPI, " icnt=%ld, tmp_i=%ld tmp_j=%ld\n", icnt,tmp_i,tmp_j);
             tmp_i =        tmp_j;
             icnt        +=  1;
           }
           icnt = icnt-1;
 	  //fprintf(stdoutMPI, " icnt=%ld\n", icnt);
-// old version
-       }else if(hacker  ==  0){
+// old version + hacker's delight
+        }else if(hacker  ==  2){
 	  jb = 0;
-	  fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
 	  for(ib=0;ib<X->Check.sdim;ib++){
-	    //fprintf(stdoutMPI, "ib=%d jb=%d\n",ib,jb);
 	    list_jb[ib]=jb;
 	    i=ib*ihfbit;
 	    num_up=0;
@@ -465,7 +459,30 @@ int sz
 	    jb   += tmp_1;
 	  }
 	  //#pragma omp barrier
-
+	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+ 
+	  icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
+          for(ib=0;ib<X->Check.sdim;ib++){
+	    icnt+=child_omp_sz_spin_hacker(ib,ihfbit,N,X);
+	  }
+// old version
+        }else if(hacker  ==  0){
+	  jb = 0;
+	  for(ib=0;ib<X->Check.sdim;ib++){
+	    list_jb[ib]=jb;
+	    i=ib*ihfbit;
+	    num_up=0;
+	    for(j=0;j<N; j++){
+	      div_up = i & X->Def.Tpow[j];
+	      div_up = div_up/X->Def.Tpow[j];
+	      num_up +=div_up;
+	    }
+	    all_up   = (X->Def.Nsite+1)/2;
+	    tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
+	    jb   += tmp_1;
+	  }
+	  //#pragma omp barrier
 	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
  
 	  icnt = 0;
@@ -474,8 +491,7 @@ int sz
 	    icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
 	  }
         }
-      }
-      else{
+      }else{
 	int Max2Sz=0;
 	int irghtsite=1;
 	long int itmpSize=1;
@@ -925,6 +941,54 @@ int child_omp_sz_spin(
   ja=ja-1;
   return ja; 
 }
+
+int child_omp_sz_spin_hacker(
+		      long unsigned int ib, 
+		      long unsigned int ihfbit,
+		      int N,
+		      struct BindStruct *X
+		      )
+{
+  long unsigned int i,j,div; 
+  long unsigned int ia,ja,jb;
+  long unsigned int num_up;
+  int tmp_num_up;
+  
+  jb = list_jb[ib];
+  i  = ib*ihfbit;
+  num_up=0;
+  for(j=0;j<N;j++){
+    div=i & X->Def.Tpow[j];
+    div=div/X->Def.Tpow[j];
+    num_up+=div;
+  }
+  ja=1;
+  tmp_num_up   = num_up;
+  
+// using hacker's delight
+  ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
+  fprintf(stdoutMPI, " ia=%ld :%d %d: ihfbit=%d \n", ia,X->Def.Ne,tmp_num_up,ihfbit);
+
+  list_1[ja+jb] = ia+ib*ihfbit;
+  list_2_1[ia]  = ja;
+  list_2_2[ib]  = jb;
+  ja           += 1;
+
+  if(ia!=0){
+    ia = snoob(ia);
+    while(ia < ihfbit){
+      fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
+      list_1[ja+jb]    = ia+ib*ihfbit;
+      list_2_1[ia]     = ja;
+      list_2_2[ib]     = jb;
+      ja+=1;
+      ia = snoob(ia);
+    }
+  }
+  ja=ja-1;
+  return ja; 
+}
+
 
 /** 
  * 
