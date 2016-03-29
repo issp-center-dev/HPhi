@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <complex.h>
 #include "StdFace_vals.h"
+#include "../include/wrapperMPI.h"
+#include <string.h>
 
 /**
  *
@@ -29,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 void StdFace_trans(
 struct StdIntList *StdI,
-  _Dcomplex trans0 /**< [in] Hopping integral t, mu, etc. */,
+  double complex trans0 /**< [in] Hopping integral t, mu, etc. */,
   int isite /**< [in] i for c_{i sigma}^dagger*/, 
   int ispin /**< [in] sigma for c_{i sigma}^dagger*/,
   int jsite /**< [in] j for c_{j sigma'}*/,
@@ -51,17 +53,16 @@ struct StdIntList *StdI,
 */
 void StdFace_Hopping(
 struct StdIntList *StdI,
-  _Dcomplex trans0 /**< [in] Hopping integral t, mu, etc. */,
+  double complex trans0 /**< [in] Hopping integral t, mu, etc. */,
   int isite /**< [in] i for c_{i sigma}^dagger*/,
-  int jsite /**< [in] j for c_{j sigma'}*/,
-  char *mode
+  int jsite /**< [in] j for c_{j sigma'}*/
   )
 {
   int ispin;
 
   for (ispin = 0; ispin < 2; ispin++) {
-    StdFace_trans(StdI, trans0, isite, ispin, jsite, ispin);
-    if(mode = "hopp") 
+    StdFace_trans(StdI, trans0, jsite, ispin, isite, ispin);
+    if(isite != jsite)
       StdFace_trans(StdI, conj(trans0), isite, ispin, jsite, ispin);
   }/*for (ispin = 0; ispin < 2; ispin++)*/
 
@@ -106,7 +107,7 @@ struct StdIntList *StdI,
  */
 void StdFace_intr(
 struct StdIntList *StdI,
-  _Dcomplex intr0 /**< [in] Interaction U, V, J, etc.*/,
+  double complex intr0 /**< [in] Interaction U, V, J, etc.*/,
   int site1 /**< [in] i1 for c_{i1 sigma1}^dagger*/,
   int spin1 /**< [in] sigma11 for c_{i1 sigma1}^dagger*/,
   int site2 /**< [in] i2 for c_{i2 sigma2}*/,
@@ -132,7 +133,7 @@ struct StdIntList *StdI,
 */
 void StdFace_GeneralJ(
 struct StdIntList *StdI,
-  double *J,
+  double J[3][3],
   int Si2 /**< [in] Spin moment in i site*/,
   int Sj2 /**< [in] Spin moment in j site*/,
   int isite /**< [in] i of S_i */,
@@ -140,7 +141,7 @@ struct StdIntList *StdI,
 {
   int ispin, jspin;
   double Si, Sj, Siz, Sjz;
-  _Dcomplex intr0;
+  double complex intr0;
 
   Si = 0.5 * (double)Si2;
   Sj = 0.5 * (double)Sj2;
@@ -244,14 +245,34 @@ void StdFace_PrintVal_d(
 
 /**
 *
+* Print a valiable (real) read from the input file
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_PrintVal_dd(
+  char* valname /**< [in] Name of the valiable*/,
+  double *val /**< [inout] Valiable to be set*/,
+  double val0 /**< [in] The default value*/,
+  double val1 /**< [in] The default value*/)
+{
+  if (*val > 9999.0) {
+    if (val0 > 9999.0) *val = val1;
+    else *val = val0;
+    fprintf(stdout, "  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
+  }
+  else fprintf(stdout, "  %15s = %-10.5f\n", valname, *val);
+}
+
+/**
+*
 * Print a valiable (complex) read from the input file
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_PrintVal_c(
   char* valname /**< [in] Name of the valiable*/,
-  _Dcomplex *val /**< [inout] Valiable to be set*/,
-  _Dcomplex val0 /**< [in] The default value*/)
+  double complex *val /**< [inout] Valiable to be set*/,
+  double complex val0 /**< [in] The default value*/)
 {
   if (creal(*val) > 9999.0) {
     *val = val0;
@@ -292,7 +313,7 @@ void StdFace_NotUsed_d(
     fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stderr, "            Please COMMENT-OUT this line \n");
     fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exit(-1);
+    exitMPI(-1);
   }
 }
 
@@ -304,13 +325,13 @@ void StdFace_NotUsed_d(
 */
 void StdFace_NotUsed_c(
   char* valname /**< [in] Name of the valiable*/,
-  _Dcomplex val /**< [in]*/)
+  double complex val /**< [in]*/)
 {
   if (creal(val) < 9999.0) {
     fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stderr, "            Please COMMENT-OUT this line \n");
     fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exit(-1);
+    exitMPI(-1);
   }
 }
 
@@ -328,7 +349,7 @@ void StdFace_NotUsed_i(
     fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stderr, "            Please COMMENT-OUT this line \n");
     fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exit(-1);
+    exitMPI(-1);
   }
 }
 
@@ -345,7 +366,7 @@ void StdFace_RequiredVal_i(
 {
   if (val == 9999){
     fprintf(stderr, "ERROR ! %s is NOT specified !\n", valname);
-    exit(-1);
+    exitMPI(-1);
   }
   else fprintf(stdout, "  %15s = %-3d\n", valname, val);
 }
@@ -359,7 +380,7 @@ void StdFace_RequiredVal_i(
 void StdFace_FoldSite2D(struct StdIntList *StdI, 
   int iW, int iL, int *iCell0, int *iCell1, int *iWfold, int *iLfold)
 {
-  double x0, x1;
+  double x0, x1, xW, xL;
 
   /*
    Transform to fractional coordinate
@@ -367,14 +388,20 @@ void StdFace_FoldSite2D(struct StdIntList *StdI,
   x0 = StdI->bW0 * (double)iW + StdI->bL0 * (double)iL;
   x1 = StdI->bW1 * (double)iW + StdI->bL1 * (double)iL;
   /**/
-  *iCell0 = (int)floor(x0 + 1.0e-8);
-  *iCell1 = (int)floor(x1 + 1.0e-8);
+  if (x0 + 1.0e-8 >= 0.0) *iCell0 = (int)(x0 + 1.0e-8);
+  else *iCell0 = (int)(x0 + 1.0e-8) - 1;
+  if (x1 + 1.0e-8 >= 0.0) *iCell1 = (int)(x1 + 1.0e-8);
+  else *iCell1 = (int)(x1 + 1.0e-8) - 1;
   /**/
   x0 -= (double)*iCell0;
   x1 -= (double)*iCell1;
   /**/
-  *iWfold = (int)((double)StdI->a0W * x0 + (double)StdI->a1W * x1 + 1.0e-8);
-  *iLfold = (int)((double)StdI->a0L * x0 + (double)StdI->a1L * x1 + 1.0e-8);
+  xW = (double)StdI->a0W * x0 + (double)StdI->a1W * x1;
+  xL = (double)StdI->a0L * x0 + (double)StdI->a1L * x1;
+  if (xW >= 0) *iWfold = (int)(xW + 1.0e-8);
+  else *iWfold = (int)(xW - 1.0e-8);
+  if (xL >= 0) *iLfold = (int)(xL + 1.0e-8);
+  else *iLfold = (int)(xL - 1.0e-8);
 }
 
 /**
@@ -388,10 +415,10 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   int Wmin, Wmax, Lmin, Lmax;
   int iW, iL, ipos;
   int iCell, iCell0, iCell1, iWfold, iLfold;
-  double pos[4][2], xmin, xmax, det;
+  double pos[4][2], xmin, xmax, det, offset[2], scale;
 
   if (StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W == 0) {
-    exit(-1);
+    exitMPI(-1);
   }
 
   det = (double)(StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W);
@@ -441,12 +468,25 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   */
   pos[0][0] = 0.0;
   pos[0][1] = 0.0;
-  pos[1][0] = StdI->Lx;
-  pos[1][1] = StdI->Ly;
-  pos[2][0] = StdI->Wx;
-  pos[2][1] = StdI->Wy;
-  pos[3][0] = StdI->Wx + StdI->Lx;
-  pos[3][1] = StdI->Wy + StdI->Ly;
+  pos[1][0] = StdI->Wx * (double)StdI->a0W + StdI->Lx * (double)StdI->a0L;
+  pos[1][1] = StdI->Wy * (double)StdI->a0W + StdI->Ly * (double)StdI->a0L;
+  pos[2][0] = StdI->Wx * (double)StdI->a1W + StdI->Lx * (double)StdI->a1L;
+  pos[2][1] = StdI->Wy * (double)StdI->a1W + StdI->Ly * (double)StdI->a1L;
+  pos[3][0] = pos[1][0] + pos[2][0];
+  pos[3][1] = pos[1][1] + pos[2][1];
+  /**/
+  /*
+  scale = sqrt((double)((StdI->a0W + StdI->a1W)*(StdI->a0W + StdI->a1W)
+                      + (StdI->a0L + StdI->a1L)*(StdI->a0L + StdI->a1L)));
+  scale = 0.5 / scale;
+  offset[0] = pos[3][0] * scale;
+  offset[1] = pos[3][1] * scale;
+  
+  for (ipos = 0; ipos < 4; ipos++) {
+    pos[ipos][0] -= offset[0];
+    pos[ipos][1] -= offset[1];
+  }
+  */
   /**/
   xmin = 0.0;
   xmax = 0.0;
@@ -456,32 +496,36 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
     if (pos[ipos][1] < xmin) xmin = pos[ipos][1];
     if (pos[ipos][1] > xmax) xmax = pos[ipos][1];
   }
-  xmin -= 5.0;
-  xmax += 5.0;
+  xmin -= 2.0;
+  xmax += 2.0;
 
   fprintf(fp, "set xrange [%f: %f]\n", xmin, xmax);
   fprintf(fp, "set yrange [%f: %f]\n", xmin, xmax);
-  fprintf(fp, "set size square\n", xmin, xmax);
+  fprintf(fp, "set size square\n");
+  fprintf(fp, "unset key\n");
+  fprintf(fp, "unset tics\n");
+  fprintf(fp, "unset border\n");
 
   fprintf(fp, "set style line 1 lc 1 lt 1\n");
-  fprintf(fp, "set style line 2 lc 3 lt 0\n");
+  fprintf(fp, "set style line 2 lc 5 lt 1\n");
+  fprintf(fp, "set style line 3 lc 0 lt 1\n");
 
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead\n", pos[0][0], pos[0][1], pos[1][0], pos[1][1]);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead\n", pos[1][0], pos[1][1], pos[2][0], pos[2][1]);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead\n", pos[2][0], pos[2][1], pos[3][0], pos[3][1]);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead\n", pos[3][0], pos[3][1], pos[0][0], pos[0][1]);
+  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[0][0], pos[0][1], pos[1][0], pos[1][1]);
+  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[1][0], pos[1][1], pos[3][0], pos[3][1]);
+  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[3][0], pos[3][1], pos[2][0], pos[2][1]);
+  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[2][0], pos[2][1], pos[0][0], pos[0][1]);
 
 }
 
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp, 
   int iW, int iL, int jW, int jL, 
   double xiW, double xiL, double xjW, double xjL, 
-  int isite, int *jsite, int connect, int NsiteUC, int isiteUC, char *model)
+  int isite, int *jsite, int connect, int isiteUC, char *model)
 {
   int iCell, jCell, jCell0, jCell1, jWfold, jLfold;
   double xi, yi, xj, yj;
 
-  StdFace_FoldSite2D(StdI, iW, iL, &jCell0, &jCell1, &jWfold, &jLfold);
+  StdFace_FoldSite2D(StdI, jW, jL, &jCell0, &jCell1, &jWfold, &jLfold);
   /**/
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
     if (jWfold == StdI->Cell[iCell][0] && jLfold == StdI->Cell[iCell][1]) {
@@ -489,17 +533,18 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
       break;
     }
   }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
-  jsite = jCell * NsiteUC + isiteUC;
-  if (model == "kondo") jsite += StdI->NCell * NsiteUC;
+  *jsite = jCell * StdI->NsiteUC + isiteUC;
+  if (strcmp(StdI->model, "kondo") == 0 ) *jsite += StdI->NCell * StdI->NsiteUC;
 
-  xi = StdI->Lx * xiL + StdI->Wx * xiW;
-  yi = StdI->Ly * xiL + StdI->Wy * xiW;
+  xi = StdI->Lx * ((double)iL + xiL) + StdI->Wx * ((double)iW + xiW);
+  yi = StdI->Ly * ((double)iL + xiL) + StdI->Wy * ((double)iW + xiW);
 
-  xj = StdI->Lx * xjL + StdI->Wx * xjW;
-  yj = StdI->Ly * xjL + StdI->Wy * xjW;
+  xj = StdI->Lx * ((double)jL + xjL) + StdI->Wx * ((double)jW + xjW);
+  yj = StdI->Ly * ((double)jL + xjL) + StdI->Wy * ((double)jW + xjW);
 
-  fprintf(fp, "set label \"%2d\" at %f, %f center front\n", isite, xi, yi);
-  fprintf(fp, "set label \"%2d\" at %f, %f center front\n", jsite, xj, yj);
+  if(isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", isite, xi, yi);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", isite, xi, yi);
+  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
-
 }

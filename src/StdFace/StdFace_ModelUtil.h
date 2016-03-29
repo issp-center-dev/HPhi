@@ -16,32 +16,34 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <complex.h>
+#include <stdio.h>
 
-void StdFace_intr(struct StdIntList *StdI, _Dcomplex intr0,
+void StdFace_intr(struct StdIntList *StdI, double complex intr0,
   int site1, int spin1, int site2, int spin2,
   int site3, int spin3, int site4, int spin4);
 
-void StdFace_Hopping(struct StdIntList *StdI, _Dcomplex trans0,
-  int isite, int jsite, char *mode);
+void StdFace_Hopping(struct StdIntList *StdI, double complex trans0,
+  int isite, int jsite);
 void StdFace_MagField(struct StdIntList *StdI, int S2, double h, double Gamma, int isite);
 
 void StdFace_Coulomb(struct StdIntList *StdI, double V, int isite, int jsite);
-void StdFace_GeneralJ(struct StdIntList *StdI, double *J,
+void StdFace_GeneralJ(struct StdIntList *StdI, double J[3][3],
   int Si2, int Sj2, int isite, int jsite);
 
 void StdFace_PrintVal_d(char* valname, double *val, double val0);
-void StdFace_PrintVal_c(char* valname, _Dcomplex *val, _Dcomplex val0);
+void StdFace_PrintVal_dd(char* valname, double *val, double val0, double val1);
+void StdFace_PrintVal_c(char* valname, double complex *val, double complex val0);
 void StdFace_PrintVal_i(char* valname, int *val, int val0);
 void StdFace_NotUsed_d(char* valname, double val);
 void StdFace_NotUsed_i(char* valname, int val);
-void StdFace_NotUsed_c(char* valname, _Dcomplex val);
+void StdFace_NotUsed_c(char* valname, double complex val);
 void StdFace_RequiredVal_i(char* valname, int val);
 
 void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp);
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int jW, int jL,
   double xiW, double xiL, double xjW, double xjL,
-  int isite, int *jsite, int connect, int NsiteUC, int isiteUC, char *model);
+  int isite, int *jsite, int connect, int isiteUC, char *model);
 
 void StdFace_Tetragonal(struct StdIntList *StdI, char *model);
 void StdFace_Chain(struct StdIntList *StdI, char *model);

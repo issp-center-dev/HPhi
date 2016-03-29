@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
 #include <complex.h>
+#include "../include/wrapperMPI.h"
 
 void StdFace_LargeValue(struct StdIntList *StdI) {
   int ktrans, kintr;
@@ -167,7 +168,7 @@ static void StoreWithCheckDup_s(
 {
   if (strcmp(value, "****") != 0){
     fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exit(-1);
+    exitMPI(-1);
   }
   else{
     strcpy(value, valuestring);
@@ -188,7 +189,7 @@ static void StoreWithCheckDup_i(
 {
   if (*value != 9999){
     fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exit(-1);
+    exitMPI(-1);
   }
   else{
     sscanf(valuestring, "%d", value);
@@ -210,7 +211,7 @@ static void StoreWithCheckDup_d(
 
   if (*value != 9999.9){
     fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exit(-1);
+    exitMPI(-1);
   }
   else{
     sscanf(valuestring, "%lf", value);
@@ -228,7 +229,7 @@ static void StoreWithCheckDup_d(
 static void StoreWithCheckDup_c(
   char *keyword /**< [in] keyword read from the input file*/,
   char *valuestring /**< [in] value read from the input file*/,
-  _Dcomplex *value /**< [out] */)
+  double complex *value /**< [out] */)
 {
   int num;
   char *valuestring_r, *valuestring_i;
@@ -236,19 +237,36 @@ static void StoreWithCheckDup_c(
 
   if (creal(*value) != 9999.9) {
     fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exit(-1);
+    exitMPI(-1);
   }
   else {
-    valuestring_r = strtok(valuestring, ",");
-    valuestring_i = strtok(NULL, ",");
 
-    num = sscanf(valuestring_r, "%lf", &value_r);
-    if (num == 1) *value = value_r;
-    else *value = 0.0;
+    if (valuestring[0] == ',') {
+      valuestring_r = NULL;
+      valuestring_i = strtok(valuestring, ",");
+    }
+    else {
+      valuestring_r = strtok(valuestring, ",");
+      valuestring_i = strtok(NULL, ",");
+    }
+    
+    if (valuestring_r == NULL) {
+      *value = 0.0;
+    }
+    else {
+      num = sscanf(valuestring_r, "%lf", &value_r);
+      if (num == 1) *value = value_r;
+      else *value = 0.0;
+    }
 
-    num = sscanf(valuestring_i, "%lf", &value_i);
-    if (num == 1) *value += I * value_i;
-    else *value += I * 0.0;
+    if (valuestring_i == NULL) {
+      *value += I * 0.0;
+    }
+    else {
+        num = sscanf(valuestring_i, "%lf", &value_i);
+      if (num == 1) *value += I * value_i;
+      else *value += I * 0.0;
+    }
   }
 }
 
@@ -536,7 +554,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
 
   if (strcmp(StdI->method, "****") == 0){
     fprintf(stderr, "ERROR ! Method is NOT specified !\n");
-    exit(-1);
+    exitMPI(-1);
   }
   else if (strcmp(StdI->method, "lanczos") == 0) iCalcType = 0;
   else if (strcmp(StdI->method, "tpq") == 0) iCalcType = 1;
@@ -545,7 +563,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
     strcmp(StdI->method, "direct") == 0 ) iCalcType = 2;
   else{
     fprintf(stderr, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
-    exit(-1);
+    exitMPI(-1);
   }
 
   if (strcmp(StdI->model, "hubbard") == 0) {
@@ -862,7 +880,7 @@ static void UnsupportedSystem(
   fprintf(stderr, "  LATTICE : %s, \n", lattice);
   fprintf(stderr, "is unsupported in the STANDARD MODE...\n");
   fprintf(stderr, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
-  exit(-1);
+  exitMPI(-1);
 }
 
 /**
@@ -900,7 +918,7 @@ static int CheckOutputMode(struct StdIntList *StdI)
   }
   else{
     fprintf(stderr, "\n ERROR ! Unsupported OutPutMode : %s\n", StdI->outputmode);
-    exit(-1);
+    exitMPI(-1);
   }
 }
 
@@ -919,14 +937,14 @@ static void CheckModPara(struct StdIntList *StdI)
   }
   else fprintf(stdout, "         filehead = %-s\n", StdI->filehead);
   /**/
-  StdFace_PrintVal_i("Lanczos_max", StdI->Lanczos_max, 2000);
-  StdFace_PrintVal_i("initial_iv", StdI->initial_iv, 1);
-  StdFace_PrintVal_i("nvec", StdI->nvec, 1);
-  StdFace_PrintVal_i("exct", StdI->exct, 1);
-  StdFace_PrintVal_i("LanczosEps", StdI->LanczosEps, 14);
-  StdFace_PrintVal_i("LanczosTarget", StdI->LanczosTarget, 2);
-  StdFace_PrintVal_i("NumAve", StdI->NumAve, 5);
-  StdFace_PrintVal_i("ExpecInterval", StdI->ExpecInterval, 20);
+  StdFace_PrintVal_i("Lanczos_max", &StdI->Lanczos_max, 2000);
+  StdFace_PrintVal_i("initial_iv", &StdI->initial_iv, 1);
+  StdFace_PrintVal_i("nvec", &StdI->nvec, 1);
+  StdFace_PrintVal_i("exct", &StdI->exct, 1);
+  StdFace_PrintVal_i("LanczosEps", &StdI->LanczosEps, 14);
+  StdFace_PrintVal_i("LanczosTarget", &StdI->LanczosTarget, 2);
+  StdFace_PrintVal_i("NumAve", &StdI->NumAve, 5);
+  StdFace_PrintVal_i("ExpecInterval", &StdI->ExpecInterval, 20);
   /**/
   if (strcmp(StdI->model, "hubbard") == 0){
     if (StdI->lGC == 0) StdFace_RequiredVal_i("nelec", StdI->nelec);
@@ -967,7 +985,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   fprintf(stdout, "\n######  Standard Intarface Mode STARTS  ######\n");
   if ((fp = fopen(fname, "r")) == NULL) {
     fprintf(stderr, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
-    exit(-1);
+    exitMPI(-1);
   }
   else {
     fprintf(stdout, "\n  Open Standard-Mode Inputfile %s \n\n", fname);
@@ -990,7 +1008,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     value = strtok(NULL, "=");
     if (value == NULL) {
       fprintf(stderr, "\n  ERROR !  \"=\" is NOT found !\n\n");
-      exit(-1);
+      exitMPI(-1);
     }
     TrimSpaceQuote(keyword);
     TrimSpaceQuote(value);
@@ -1119,7 +1137,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Wy);
     else {
       fprintf(stderr, "ERROR ! Unsupported Keyword !\n");
-      exit(-1);
+      exitMPI(-1);
     }
   }
   fclose(fp);
@@ -1128,27 +1146,30 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   */
   StdI.lGC = 0;
   StdI.lBoost = 0;
-  if (strcmp(StdI.model, "fermionhubbard") == 0
-    || strcmp(StdI.model, "fermionhubbardgc") == 0) {
+  if (strcmp(StdI.model, "fermionhubbard") == 0) 
     strcpy(StdI.model, "hubbard\0");
-    if (strcmp(StdI.model, "fermionhubbardgc") == 0) StdI.lGC = 1;
+  else if(strcmp(StdI.model, "fermionhubbardgc") == 0) {
+    strcpy(StdI.model, "hubbard\0");
+    StdI.lGC = 1;
   }
-  else if (strcmp(StdI.model, "spin") == 0
-    || strcmp(StdI.model, "spingc") == 0
-    || strcmp(StdI.model, "spingcboost") == 0) {
+  else if (strcmp(StdI.model, "spin") == 0)
     strcpy(StdI.model, "spin\0");
-    if (strcmp(StdI.model, "spingc") == 0
-      || strcmp(StdI.model, "spingcboost") == 0) {
-      StdI.lGC = 1;
-      if (strcmp(StdI.model, "spingcboost") == 0) StdI.lBoost = 1;
-    }
+  else if (strcmp(StdI.model, "spingc") == 0) {
+    strcpy(StdI.model, "spin\0");
+    StdI.lGC = 1;
   }
-  else if (strcmp(StdI.model, "kondolattice") == 0
-    || strcmp(StdI.model, "kondolatticegc") == 0
+  else if(strcmp(StdI.model, "spingcboost") == 0) {
+    strcpy(StdI.model, "spin\0");
+    StdI.lGC = 1;
+    StdI.lBoost = 1;
+  }
+  else if (strcmp(StdI.model, "kondolattice") == 0) {
+    strcpy(StdI.model, "kondo\0");
+  }
+  else if(strcmp(StdI.model, "kondolatticegc") == 0
     || strcmp(StdI.model, "kondogc") == 0) {
     strcpy(StdI.model, "kondo\0");
-    if (strcmp(StdI.model, "kondolatticegc") == 0
-      || strcmp(StdI.model, "kondogc") == 0) StdI.lGC = 1;
+    StdI.lGC = 1;
   }
   else UnsupportedSystem(StdI.model, StdI.lattice);
   /*

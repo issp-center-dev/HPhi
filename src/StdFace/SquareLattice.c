@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <complex.h>
+#include <string.h>
 
 /**
  *
@@ -42,9 +44,10 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   */
   fp = fopen("lattice.gp", "w");
   /**/
+  StdI->NsiteUC = 1;
   StdFace_RequiredVal_i("L", StdI->L);
   StdFace_RequiredVal_i("W", StdI->W);
-  StdFace_PrintVal_d("a", &StdI->a, 1.0);
+  StdFace_PrintVal_d("a", &StdI->a, 2.0);
   StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
   StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
   StdFace_PrintVal_d("Wx", &StdI->Wx, StdI->a0);
@@ -58,11 +61,12 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   /**/
   StdFace_InitSite2D(StdI, fp);
   /**/
-  if (model == "spin") {
+  if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
     StdFace_PrintVal_d("h", &StdI->h, 0.0);
     StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
+    /**/
     StdFace_PrintVal_d("J", &StdI->JAll, 1.0);
     StdFace_PrintVal_d("Jx", &StdI->J[0][0], StdI->JAll);
     StdFace_PrintVal_d("Jy", &StdI->J[1][1], StdI->JAll);
@@ -73,54 +77,27 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
     StdFace_PrintVal_d("Jyx", &StdI->J[1][0], StdI->J[0][1]);
     StdFace_PrintVal_d("Jzx", &StdI->J[2][0], StdI->J[0][2]);
     StdFace_PrintVal_d("Jzy", &StdI->J[2][1], StdI->J[1][2]);
-    if (StdI->J0All > 9999.0) {
-      StdFace_PrintVal_d("J0", &StdI->J0All, StdI->JAll);
-      StdFace_PrintVal_d("J0x", &StdI->J0[0][0], StdI->J[0][0]);
-      StdFace_PrintVal_d("J0y", &StdI->J0[1][1], StdI->J[1][1]);
-      StdFace_PrintVal_d("J0z", &StdI->J0[2][2], StdI->J[2][2]);
-      StdFace_PrintVal_d("J0xy", &StdI->J0[0][1], StdI->J[0][1]);
-      StdFace_PrintVal_d("J0xz", &StdI->J0[0][2], StdI->J[0][2]);
-      StdFace_PrintVal_d("J0yz", &StdI->J0[1][2], StdI->J[1][2]);
-      StdFace_PrintVal_d("J0yx", &StdI->J0[1][0], StdI->J[1][0]);
-      StdFace_PrintVal_d("J0zx", &StdI->J0[2][0], StdI->J[2][0]);
-      StdFace_PrintVal_d("J0zy", &StdI->J0[2][1], StdI->J[2][1]);
-    }
-    else {
-      StdFace_PrintVal_d("J0", &StdI->J0All, StdI->JAll);
-      StdFace_PrintVal_d("J0x", &StdI->J0[0][0], StdI->J0All);
-      StdFace_PrintVal_d("J0y", &StdI->J0[1][1], StdI->J0All);
-      StdFace_PrintVal_d("J0z", &StdI->J0[2][2], StdI->J0All);
-      StdFace_PrintVal_d("J0xy", &StdI->J0[0][1], 0.0);
-      StdFace_PrintVal_d("J0xz", &StdI->J0[0][2], 0.0);
-      StdFace_PrintVal_d("J0yz", &StdI->J0[1][2], 0.0);
-      StdFace_PrintVal_d("J0yx", &StdI->J0[1][0], StdI->J0[0][1]);
-      StdFace_PrintVal_d("J0zx", &StdI->J0[2][0], StdI->J0[0][2]);
-      StdFace_PrintVal_d("J0zy", &StdI->J0[2][1], StdI->J0[1][2]);
-    }
-    if (StdI->J1All > 9999.0) {
-      StdFace_PrintVal_d("J1", &StdI->J1All, StdI->JAll);
-      StdFace_PrintVal_d("J1x", &StdI->J1[0][0], StdI->J[0][0]);
-      StdFace_PrintVal_d("J1y", &StdI->J1[1][1], StdI->J[1][1]);
-      StdFace_PrintVal_d("J1z", &StdI->J1[2][2], StdI->J[2][2]);
-      StdFace_PrintVal_d("J1xy", &StdI->J1[0][1], StdI->J[0][1]);
-      StdFace_PrintVal_d("J1xz", &StdI->J1[0][2], StdI->J[0][2]);
-      StdFace_PrintVal_d("J1yz", &StdI->J1[1][2], StdI->J[1][2]);
-      StdFace_PrintVal_d("J1yx", &StdI->J1[1][0], StdI->J[1][0]);
-      StdFace_PrintVal_d("J1zx", &StdI->J1[2][0], StdI->J[2][0]);
-      StdFace_PrintVal_d("J1zy", &StdI->J1[2][1], StdI->J[2][1]);
-    }
-    else {
-      StdFace_PrintVal_d("J1", &StdI->J1All, StdI->JAll);
-      StdFace_PrintVal_d("J1x", &StdI->J1[0][0], StdI->J1All);
-      StdFace_PrintVal_d("J1y", &StdI->J1[1][1], StdI->J1All);
-      StdFace_PrintVal_d("J1z", &StdI->J1[2][2], StdI->J1All);
-      StdFace_PrintVal_d("J1xy", &StdI->J1[0][1], 0.0);
-      StdFace_PrintVal_d("J1xz", &StdI->J1[0][2], 0.0);
-      StdFace_PrintVal_d("J1yz", &StdI->J1[1][2], 0.0);
-      StdFace_PrintVal_d("J1yx", &StdI->J1[1][0], StdI->J1[0][1]);
-      StdFace_PrintVal_d("J1zx", &StdI->J1[2][0], StdI->J1[0][2]);
-      StdFace_PrintVal_d("J1zy", &StdI->J1[2][1], StdI->J1[1][2]);
-    }
+    /**/
+    StdFace_PrintVal_dd("J0yx", &StdI->J0[1][0], StdI->J0[0][1], StdI->J[1][0]);
+    StdFace_PrintVal_dd("J0zx", &StdI->J0[2][0], StdI->J0[0][2], StdI->J[2][0]);
+    StdFace_PrintVal_dd("J0zy", &StdI->J0[2][1], StdI->J0[1][2], StdI->J[2][1]);
+    StdFace_PrintVal_dd("J0x", &StdI->J0[0][0], StdI->J0All, StdI->J[0][0]);
+    StdFace_PrintVal_dd("J0y", &StdI->J0[1][1], StdI->J0All, StdI->J[1][1]);
+    StdFace_PrintVal_dd("J0z", &StdI->J0[2][2], StdI->J0All, StdI->J[2][2]);
+    StdFace_PrintVal_d("J0xy", &StdI->J0[0][1], StdI->J[0][1]);
+    StdFace_PrintVal_d("J0xz", &StdI->J0[0][2], StdI->J[0][2]);
+    StdFace_PrintVal_d("J0yz", &StdI->J0[1][2], StdI->J[1][2]);
+    /**/
+    StdFace_PrintVal_dd("J1yx", &StdI->J1[1][0], StdI->J1[0][1], StdI->J[1][0]);
+    StdFace_PrintVal_dd("J1zx", &StdI->J1[2][0], StdI->J1[0][2], StdI->J[2][0]);
+    StdFace_PrintVal_dd("J1zy", &StdI->J1[2][1], StdI->J1[1][2], StdI->J[2][1]);
+    StdFace_PrintVal_dd("J1x", &StdI->J1[0][0], StdI->J1All, StdI->J[0][0]);
+    StdFace_PrintVal_dd("J1y", &StdI->J1[1][1], StdI->J1All, StdI->J[1][1]);
+    StdFace_PrintVal_dd("J1z", &StdI->J1[2][2], StdI->J1All, StdI->J[2][2]);
+    StdFace_PrintVal_d("J1xy", &StdI->J1[0][1], StdI->J[0][1]);
+    StdFace_PrintVal_d("J1xz", &StdI->J1[0][2], StdI->J[0][2]);
+    StdFace_PrintVal_d("J1yz", &StdI->J1[1][2], StdI->J[1][2]);
+    /**/
     StdFace_PrintVal_d("J'", &StdI->JpAll, 0.0);
     StdFace_PrintVal_d("J'x", &StdI->Jp[0][0], StdI->JpAll);
     StdFace_PrintVal_d("J'y", &StdI->Jp[1][1], StdI->JpAll);
@@ -134,7 +111,7 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
     /**/
     StdFace_NotUsed_d("J2", StdI->J2All);
     StdFace_NotUsed_d("K", StdI->K);
-  }/*if (model == "spin")*/
+  }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
@@ -150,10 +127,10 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
     StdFace_NotUsed_c("t2", StdI->t2);
     StdFace_NotUsed_d("V2", StdI->V2);
 
-    if (model == "hubbard") {
+    if (strcmp(StdI->model, "hubbard") == 0 ) {
       StdFace_NotUsed_i("2S", StdI->S2);
       StdFace_NotUsed_d("J", StdI->JAll);
-    }/*if (model == "hubbard")*/
+    }/*if (strcmp(StdI->model, "hubbard") == 0 )*/
     else {
       StdFace_PrintVal_i("2S", &StdI->S2, 1);
       StdFace_PrintVal_d("J", &StdI->JAll, 1.0);
@@ -172,43 +149,43 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   /*
   Local Spin
   */
-  StdI->nsite = StdI->L * StdI->W;
-  if (model == "kondo") StdI->nsite *= 2;
+  StdI->nsite = StdI->NCell;
+  if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
   StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
   /**/
-  if(model == "spin")
+  if(strcmp(StdI->model, "spin") == 0 )
     for (isite = 0; isite < StdI->nsite; isite++) StdI->locspinflag[isite] = StdI->S2;
-  else if(model == "hubbard")
+  else if(strcmp(StdI->model, "hubbard") == 0 )
     for (isite = 0; isite < StdI->nsite; isite++) StdI->locspinflag[isite] = 0;
   else 
     for (iL = 0; iL < StdI->nsite / 2; iL++) {
       StdI->locspinflag[iL] = StdI->S2;
-      StdI->locspinflag[iL + StdI->L * StdI->W] = 0;
+      StdI->locspinflag[iL + StdI->nsite / 2] = 0;
     }
   /*
    The number of Transfer & Interaction
   */
-  if (model == "spin") {
-    StdI->ntrans = StdI->L * StdI->W * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->L * StdI->W * (1/*D*/ + 2/*J*/ + 2/*J'*/)
+  if (strcmp(StdI->model, "spin") == 0 ) {
+    StdI->ntrans = StdI->NCell * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    StdI->nintr = StdI->NCell * (1/*D*/ + 2/*J*/ + 2/*J'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->L * StdI->W * 2/*spin*/ * (1/*mu*/ + 4/*t*/ + 4/*t'*/);
-    StdI->nintr = StdI->L * StdI->W * (1/*U*/ + 4 * (2/*V*/ + 2/*V'*/));
+    StdI->ntrans = StdI->NCell * 2/*spin*/ * (1/*mu*/ + 4/*t*/ + 4/*t'*/);
+    StdI->nintr = StdI->NCell * (1/*U*/ + 4 * (2/*V*/ + 2/*V'*/));
 
-    if (model == "kondo")  StdI->nintr += 
+    if (strcmp(StdI->model, "kondo") == 0 )  StdI->nintr += 
       StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   /**/
   StdI->transindx = (int **)malloc(sizeof(int*) * StdI->ntrans);
-  StdI->trans = (double *)malloc(sizeof(double) * StdI->ntrans);
+  StdI->trans = (double complex *)malloc(sizeof(double complex) * StdI->ntrans);
   for (ktrans = 0; ktrans < StdI->ntrans; ktrans++){
     StdI->transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
   }
   /**/
   StdI->intrindx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->intr = (double *)malloc(sizeof(double) * StdI->nintr);
+  StdI->intr = (double complex *)malloc(sizeof(double complex) * StdI->nintr);
   for (kintr = 0; kintr < StdI->nintr; kintr++) {
     StdI->intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
   }
@@ -225,67 +202,67 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
      Local term
     */
     isite = kCell;
-    if (model == "kondo") isite += StdI->NCell;
+    if (strcmp(StdI->model, "kondo") == 0 ) isite += StdI->NCell;
     /**/
-    if (model == "spin") {
+    if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, isite);
       StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, isite);
-    }/*if (model == "spin")*/
+    }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->mu, isite, isite, "local");
+      StdFace_Hopping(StdI, StdI->mu, isite, isite);
       StdFace_intr(StdI, StdI->U, isite, 0, isite, 0, isite, 1, isite, 1);
       /**/
-      if (model == "kondo") {
+      if (strcmp(StdI->model, "kondo") == 0 ) {
         jsite = kCell;
         StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite, jsite);
-      }/*if (model == "kondo")*/
+      }/*if (strcmp(StdI->model, "kondo") == 0 )*/
     }
     /*
      Nearest neighbor along W
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 1, 1, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 1, 0, model);
     /**/
-    if (model == "spin") {
+    if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
-    }/*if (model == "spin")*/
+    }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->t0, isite, jsite, "hopp");
+      StdFace_Hopping(StdI, StdI->t0, isite, jsite);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
      Nearest neighbor along L
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW, iL + 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 1, 1, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, iW, iL + 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 1, 0, model);
     /**/
-    if (model == "spin") {
+    if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, StdI->t1, isite, jsite, "hopp");
+      StdFace_Hopping(StdI, StdI->t1, isite, jsite);
       StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
     }
     /*
      Second nearest neighbor 1
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL + 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 1, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL + 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 0, model);
     /**/
-    if (model == "spin") {
+    if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
-    }/*if (model == "spin")*/
+    }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite, "hopp");
+      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
      Second nearest neighbor 2
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL - 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 1, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL - 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 0, model);
     /**/
-    if (model == "spin") {
+    if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
-    }/*if (model == "spin")*/
+    }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite, "hopp");
+      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }/*if (model != "spin")*/
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/

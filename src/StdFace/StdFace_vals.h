@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <complex.h>
 
 struct StdIntList {
   /*
@@ -37,13 +38,13 @@ struct StdIntList {
   Parameters for MODEL
   */
   double mu;
-  _Dcomplex t;
-  _Dcomplex tp;
-  _Dcomplex t0;
-  _Dcomplex t1;
-  _Dcomplex t1p;
-  _Dcomplex t2;
-  _Dcomplex t2p;
+  double complex t;
+  double complex tp;
+  double complex t0;
+  double complex t1;
+  double complex t1p;
+  double complex t2;
+  double complex t2p;
   double U;
   double V;
   double Vp;
@@ -105,6 +106,7 @@ struct StdIntList {
   double bL1;
   int NCell;
   int **Cell;
+  int NsiteUC;
   /*
    Transfer, Interaction, Locspin
   */
@@ -112,10 +114,10 @@ struct StdIntList {
   int *locspinflag;
   int ntrans;
   int **transindx;
-  _Dcomplex *trans;
+  double complex *trans;
   int nintr;
   int **intrindx;
-  _Dcomplex *intr;
+  double complex *intr;
   /*
    Boost
   */
