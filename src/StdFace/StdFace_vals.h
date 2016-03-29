@@ -107,6 +107,7 @@ struct StdIntList {
   int NCell;
   int **Cell;
   int NsiteUC;
+  double **tau;
   /*
    Transfer, Interaction, Locspin
   */

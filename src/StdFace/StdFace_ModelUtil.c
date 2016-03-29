@@ -414,8 +414,13 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
 {
   int Wmin, Wmax, Lmin, Lmax;
   int iW, iL, ipos;
-  int iCell, iCell0, iCell1, iWfold, iLfold;
+  int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC;
   double pos[4][2], xmin, xmax, det, offset[2], scale;
+
+  StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
+  for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
+    StdI->tau[isiteUC] = (double *)malloc(sizeof(double) * 2);
+  }
 
   if (StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W == 0) {
     exitMPI(-1);
@@ -518,23 +523,72 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
 }
 
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp, 
-  int iW, int iL, int jW, int jL, 
-  double xiW, double xiL, double xjW, double xjL, 
-  int isite, int *jsite, int connect, int isiteUC, char *model)
+  int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC, 
+  int *isite, int *jsite, int connect)
 {
-  int iCell, jCell, jCell0, jCell1, jWfold, jLfold;
+  int iCell, jCell, kCell;
+  int jCell0, jCell1;
+  int jWfold, jLfold, jW, jL;
   double xi, yi, xj, yj;
-
+  double xiW, xiL, xjW, xjL;
+  /**/
+  xiW = StdI->tau[isiteUC][0];
+  xiL = StdI->tau[isiteUC][1];
+  xjW = StdI->tau[jsiteUC][0];
+  xjL = StdI->tau[jsiteUC][1];
+  /*
+   Reversed
+  */
+  jW = iW - diW;
+  jL = iL - diL;
   StdFace_FoldSite2D(StdI, jW, jL, &jCell0, &jCell1, &jWfold, &jLfold);
   /**/
-  for (iCell = 0; iCell < StdI->NCell; iCell++) {
-    if (jWfold == StdI->Cell[iCell][0] && jLfold == StdI->Cell[iCell][1]) {
-      jCell = iCell;
-      break;
+  for (kCell = 0; kCell < StdI->NCell; kCell++) {
+    if (jWfold == StdI->Cell[kCell][0] && jLfold == StdI->Cell[kCell][1]) {
+      jCell = kCell;
+    }
+    if (iW == StdI->Cell[kCell][0] && iL == StdI->Cell[kCell][1]) {
+      iCell = kCell;
     }
   }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
+  *isite = iCell * StdI->NsiteUC + jsiteUC;
   *jsite = jCell * StdI->NsiteUC + isiteUC;
-  if (strcmp(StdI->model, "kondo") == 0 ) *jsite += StdI->NCell * StdI->NsiteUC;
+  if (strcmp(StdI->model, "kondo") == 0) {
+    *isite += StdI->NCell * StdI->NsiteUC;
+    *jsite += StdI->NCell * StdI->NsiteUC;
+  }
+
+  xi = StdI->Lx * ((double)iL + xjL) + StdI->Wx * ((double)iW + xjW);
+  yi = StdI->Ly * ((double)iL + xjL) + StdI->Wy * ((double)iW + xjW);
+
+  xj = StdI->Lx * ((double)jL + xiL) + StdI->Wx * ((double)jW + xiW);
+  yj = StdI->Ly * ((double)jL + xiL) + StdI->Wy * ((double)jW + xiW);
+
+  if (*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
+  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
+  fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
+  /*
+  */
+  jW = iW + diW;
+  jL = iL + diL;
+  StdFace_FoldSite2D(StdI, jW, jL, &jCell0, &jCell1, &jWfold, &jLfold);
+  /**/
+  for (kCell = 0; kCell < StdI->NCell; kCell++) {
+    if (jWfold == StdI->Cell[kCell][0] && jLfold == StdI->Cell[kCell][1]) {
+      jCell = kCell;
+    }
+    if (iW == StdI->Cell[kCell][0] && iL == StdI->Cell[kCell][1]) {
+      iCell = kCell;
+    }
+  }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
+  *isite = iCell * StdI->NsiteUC + isiteUC;
+  *jsite = jCell * StdI->NsiteUC + jsiteUC;
+  if (strcmp(StdI->model, "kondo") == 0) {
+    *isite += StdI->NCell * StdI->NsiteUC;
+    *jsite += StdI->NCell * StdI->NsiteUC;
+  }
 
   xi = StdI->Lx * ((double)iL + xiL) + StdI->Wx * ((double)iW + xiW);
   yi = StdI->Ly * ((double)iL + xiL) + StdI->Wy * ((double)iW + xiW);
@@ -542,8 +596,8 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   xj = StdI->Lx * ((double)jL + xjL) + StdI->Wx * ((double)jW + xjW);
   yj = StdI->Ly * ((double)jL + xjL) + StdI->Wy * ((double)jW + xjW);
 
-  if(isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", isite, xi, yi);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", isite, xi, yi);
+  if(*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
   if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
   else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);

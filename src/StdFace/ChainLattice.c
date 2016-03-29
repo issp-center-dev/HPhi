@@ -243,9 +243,9 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * StdI->Jp[0][0], 0.0, 0.25 * StdI->Jp[0][1], 0.0, 0.25 * StdI->Jp[0][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->Jp[1][0], 0.0, 0.25 * StdI->J[1][1], 0.0, 0.25 * StdI->Jp[1][2], 0.0);
+    0.25 * StdI->Jp[1][0], 0.0, 0.25 * StdI->Jp[1][1], 0.0, 0.25 * StdI->Jp[1][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->Jp[2][0], 0.0, 0.25 * StdI->Jp[2][1], 0.0, 0.25 * StdI->J[2][2], 0.0);
+    0.25 * StdI->Jp[2][0], 0.0, 0.25 * StdI->Jp[2][1], 0.0, 0.25 * StdI->Jp[2][2], 0.0);
   /*
   Topology
   */

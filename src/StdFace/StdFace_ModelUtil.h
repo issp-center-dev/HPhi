@@ -41,9 +41,8 @@ void StdFace_RequiredVal_i(char* valname, int val);
 
 void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp);
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
-  int iW, int iL, int jW, int jL,
-  double xiW, double xiL, double xjW, double xjL,
-  int isite, int *jsite, int connect, int isiteUC, char *model);
+  int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC,
+  int *isite, int *jsite, int connect);
 
 void StdFace_Tetragonal(struct StdIntList *StdI, char *model);
 void StdFace_Chain(struct StdIntList *StdI, char *model);

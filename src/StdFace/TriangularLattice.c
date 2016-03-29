@@ -56,6 +56,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
   StdFace_PrintVal_i("a1L", &StdI->a1L, StdI->L);
   /**/
   StdFace_InitSite2D(StdI, fp);
+  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
   /**/
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
@@ -154,7 +155,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
    /*
    Local Spin
    */
-  StdI->nsite = StdI->NCell;
+  StdI->nsite = StdI->NsiteUC * StdI->NCell;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
   StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
   /**/
@@ -225,7 +226,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
     /*
     Nearest neighbor along W
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 1, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 0, 0, &isite, &jsite, 1);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
@@ -237,7 +238,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
     /*
     Nearest neighbor along L
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW, iL + 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 1, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 0, 0, &isite, &jsite, 1);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -249,7 +250,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
     /*
     Nearest neighbor along W - L
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL - 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 1, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, - 1, 0, 0, &isite, &jsite, 1);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
@@ -261,7 +262,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
     /*
     Second nearest neighbor 1
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW + 2, iL - 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, 2, - 1, 0, 0, &isite, &jsite, 2);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
@@ -273,7 +274,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
     /*
     Second nearest neighbor 2
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL + 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, 1, 0, 0, &isite, &jsite, 2);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
@@ -285,7 +286,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
      /*
      Second nearest neighbor 3
      */
-    StdFace_SetLabel(StdI, fp, iW, iL, iW - 1, iL + 2, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 0, model);
+    StdFace_SetLabel(StdI, fp, iW, iL, - 1, 2, 0, 0, &isite, &jsite, 2);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);

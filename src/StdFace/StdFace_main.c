@@ -36,6 +36,7 @@ void StdFace_LargeValue(struct StdIntList *StdI) {
   for (kintr = 0; kintr < StdI->nintr; kintr++) {
     LargeValue0 += cabs(StdI->intr[kintr]);
   }
+  LargeValue0 /= (double)StdI->nsite;
   StdFace_PrintVal_d("LargeValue", &StdI->LargeValue, LargeValue0);
 }
 
@@ -938,7 +939,7 @@ static void CheckModPara(struct StdIntList *StdI)
   else fprintf(stdout, "         filehead = %-s\n", StdI->filehead);
   /**/
   StdFace_PrintVal_i("Lanczos_max", &StdI->Lanczos_max, 2000);
-  StdFace_PrintVal_i("initial_iv", &StdI->initial_iv, 1);
+  StdFace_PrintVal_i("initial_iv", &StdI->initial_iv, -1);
   StdFace_PrintVal_i("nvec", &StdI->nvec, 1);
   StdFace_PrintVal_i("exct", &StdI->exct, 1);
   StdFace_PrintVal_i("LanczosEps", &StdI->LanczosEps, 14);
@@ -1146,9 +1147,11 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   */
   StdI.lGC = 0;
   StdI.lBoost = 0;
-  if (strcmp(StdI.model, "fermionhubbard") == 0) 
+  if (strcmp(StdI.model, "fermionhubbard") == 0
+    || strcmp(StdI.model, "hubbard") == 0)
     strcpy(StdI.model, "hubbard\0");
-  else if(strcmp(StdI.model, "fermionhubbardgc") == 0) {
+  else if(strcmp(StdI.model, "fermionhubbardgc") == 0
+    || strcmp(StdI.model, "hubbardgc") == 0) {
     strcpy(StdI.model, "hubbard\0");
     StdI.lGC = 1;
   }
@@ -1163,7 +1166,8 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     StdI.lGC = 1;
     StdI.lBoost = 1;
   }
-  else if (strcmp(StdI.model, "kondolattice") == 0) {
+  else if (strcmp(StdI.model, "kondolattice") == 0
+    || strcmp(StdI.model, "kondo") == 0) {
     strcpy(StdI.model, "kondo\0");
   }
   else if(strcmp(StdI.model, "kondolatticegc") == 0
@@ -1175,12 +1179,20 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   /*
   Generate Hamiltonian definition files
   */
-  if (strcmp(StdI.lattice, "chain") == 0) StdFace_Chain(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "honeycomb") == 0) StdFace_Honeycomb(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "kagome") == 0) StdFace_Kagome(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "ladder") == 0) StdFace_Ladder(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "tetragonal") == 0) StdFace_Tetragonal(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "triangular") == 0) StdFace_Triangular(&StdI, StdI.model);
+  if (strcmp(StdI.lattice, "chain") == 0
+    || strcmp(StdI.lattice, "chainlattice") == 0) StdFace_Chain(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "honeycomb") == 0
+    || strcmp(StdI.lattice, "honeycomblattice") == 0) StdFace_Honeycomb(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "kagome") == 0
+    || strcmp(StdI.lattice, "kagomelattice") == 0) StdFace_Kagome(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "ladder") == 0
+    || strcmp(StdI.lattice, "ladderlattice") == 0) StdFace_Ladder(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "tetragonal") == 0
+    || strcmp(StdI.lattice, "tetragonallattice") == 0
+    || strcmp(StdI.lattice, "square") == 0
+    || strcmp(StdI.lattice, "squarelattice") == 0) StdFace_Tetragonal(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "triangular") == 0
+    || strcmp(StdI.lattice, "triangularlattice") == 0) StdFace_Triangular(&StdI, StdI.model);
   else UnsupportedSystem(StdI.model, StdI.lattice);
   /**/
   StdFace_LargeValue(&StdI);
@@ -1188,10 +1200,14 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   Generate Hamiltonian for Boost
   */
   if (StdI.lBoost == 1) {
-    if (strcmp(StdI.lattice, "chain") == 0) StdFace_Chain_Boost(&StdI);
-    else if (strcmp(StdI.lattice, "honeycomb") == 0) StdFace_Honeycomb_Boost(&StdI);
-    else if (strcmp(StdI.lattice, "kagome") == 0) StdFace_Kagome_Boost(&StdI);
-    else if (strcmp(StdI.lattice, "ladder") == 0) StdFace_Ladder_Boost(&StdI);
+    if (strcmp(StdI.lattice, "chain") == 0
+      || strcmp(StdI.lattice, "chainlattice") == 0) StdFace_Chain_Boost(&StdI);
+    else if (strcmp(StdI.lattice, "honeycomb") == 0
+      || strcmp(StdI.lattice, "honeycomblattice") == 0) StdFace_Honeycomb_Boost(&StdI);
+    else if (strcmp(StdI.lattice, "kagome") == 0
+      || strcmp(StdI.lattice, "kagomelattice") == 0) StdFace_Kagome_Boost(&StdI);
+    else if (strcmp(StdI.lattice, "ladder") == 0
+      || strcmp(StdI.lattice, "ladderlattice") == 0) StdFace_Ladder_Boost(&StdI);
     else UnsupportedSystem(StdI.model, StdI.lattice);
   }
   /**/
