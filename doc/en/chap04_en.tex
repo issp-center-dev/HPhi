@@ -782,9 +782,27 @@ Parameters correlated with keywords are shown as follows.
 
 {\bf Type :} int-type (default value: 0)
 
-{\bf Description :} Select the type of initial vectors:\\
+{\bf Description :} Select the type of an initial vector:\\
 0:Complex type.\\
 1:Real type.\\
+
+\item  \verb|OutputEigenVec|
+
+{\bf Type :} int-type (default value: 0)
+
+{\bf Description :} {Select the mode of outputting an eigenvector:\\
+0: not output an eigen vector.\\
+1: output an eigen vector.\\
+}
+
+\item  \verb|InputEigenVec|
+
+{\bf Type :} int-type (default value: 0)
+
+{\bf Description :} {Select the mode of inputting an eigenvector:\\
+0: not input an eigen vector.\\
+1: input an eigen vector.\\
+}
 
 \end{itemize}
 
@@ -880,19 +898,6 @@ ExpecInterval  20
 
 {\bf Description :} {The total value of $2S_z$ (not used in grand canonical ensemble). For conservation of $S_z$ in the case of } \verb|CalcModel| \\
  { =0 (fermion Hubbard model) or 2 (Kondo lattice model), we must set} \verb|Ncond|.
-
- \item  \verb|Nup|
-
-{\bf Type :} int-type (Positive integer)
-
-{\bf Description :} The number of up spin (not used in grand canonical ensemble). 
-
- \item  \verb|Ndown|
-
-{\bf Type :} int-type (Positive integer)
-
-{\bf Description :} The number of down spin (not used in grand canonical ensemble). 
-
 
  \item  \verb|Lanczos_max|
 
