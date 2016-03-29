@@ -280,11 +280,11 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
         jsite = iW + ((iL + 1) % StdI->L) * StdI->W;
         if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
         if (strcmp(StdI->model, "spin") == 0 ) {
-          StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
+          StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, ksite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, StdI->t2p, isite, jsite);
-          StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
+          StdFace_Hopping(StdI, StdI->t2p, ksite, jsite);
+          StdFace_Coulomb(StdI, StdI->V2p, ksite, jsite);
         }/*if (model != "spin")*/
 
       }/*if (iW < StdI->W - 1)*/
@@ -308,71 +308,6 @@ void StdFace_Ladder_Boost(struct StdIntList *StdI)
   FILE *fp;
 
   StdI->NsiteUC = 1;
-  fprintf(stdout, "\n");
-  fprintf(stdout, "#######  Parameter Summary  #######\n");
-  fprintf(stdout, "\n");
-  StdFace_RequiredVal_i("L", StdI->L);
-  StdFace_RequiredVal_i("W", StdI->W);
-  StdFace_PrintVal_d("a", &StdI->a, 1.0);
-  /**/
-  StdFace_PrintVal_i("2S", &StdI->S2, 1);
-  StdFace_PrintVal_d("h", &StdI->h, 0.0);
-  StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
-  StdFace_PrintVal_d("J0", &StdI->J0All, 1.0);
-  StdFace_PrintVal_d("J0x", &StdI->J0[0][0], StdI->J0All);
-  StdFace_PrintVal_d("J0y", &StdI->J0[1][1], StdI->J0All);
-  StdFace_PrintVal_d("J0z", &StdI->J0[2][2], StdI->J0All);
-  StdFace_PrintVal_d("J0xy", &StdI->J0[0][1], 0.0);
-  StdFace_PrintVal_d("J0xz", &StdI->J0[0][2], 0.0);
-  StdFace_PrintVal_d("J0yz", &StdI->J0[1][2], 0.0);
-  StdFace_PrintVal_d("J0yx", &StdI->J0[1][0], StdI->J0[0][1]);
-  StdFace_PrintVal_d("J0zx", &StdI->J0[2][0], StdI->J0[0][2]);
-  StdFace_PrintVal_d("J0zy", &StdI->J0[2][1], StdI->J0[1][2]);
-  StdFace_PrintVal_d("J1", &StdI->J1All, 0.0);
-  StdFace_PrintVal_d("J1x", &StdI->J1[0][0], StdI->J1All);
-  StdFace_PrintVal_d("J1y", &StdI->J1[1][1], StdI->J1All);
-  StdFace_PrintVal_d("J1z", &StdI->J1[2][2], StdI->J1All);
-  StdFace_PrintVal_d("J1xy", &StdI->J1[0][1], 0.0);
-  StdFace_PrintVal_d("J1xz", &StdI->J1[0][2], 0.0);
-  StdFace_PrintVal_d("J1yz", &StdI->J1[1][2], 0.0);
-  StdFace_PrintVal_d("J1yx", &StdI->J1[1][0], StdI->J1[0][1]);
-  StdFace_PrintVal_d("J1zx", &StdI->J1[2][0], StdI->J1[0][2]);
-  StdFace_PrintVal_d("J1zy", &StdI->J1[2][1], StdI->J1[1][2]);
-  StdFace_PrintVal_d("J1'", &StdI->J1pAll, 0.0);
-  StdFace_PrintVal_d("J1'x", &StdI->J1p[0][0], StdI->J1pAll);
-  StdFace_PrintVal_d("J1'y", &StdI->J1p[1][1], StdI->J1pAll);
-  StdFace_PrintVal_d("J1'z", &StdI->J1p[2][2], StdI->J1pAll);
-  StdFace_PrintVal_d("J1'xy", &StdI->J1p[0][1], 0.0);
-  StdFace_PrintVal_d("J1'xz", &StdI->J1p[0][2], 0.0);
-  StdFace_PrintVal_d("J1'yz", &StdI->J1p[1][2], 0.0);
-  StdFace_PrintVal_d("J1'yx", &StdI->J1p[1][0], StdI->J1p[0][1]);
-  StdFace_PrintVal_d("J1'zx", &StdI->J1p[2][0], StdI->J1p[0][2]);
-  StdFace_PrintVal_d("J1'zy", &StdI->J1p[2][1], StdI->J1p[1][2]);
-  StdFace_PrintVal_d("J2", &StdI->J2All, 0.0);
-  StdFace_PrintVal_d("J2x", &StdI->J2[0][0], StdI->J2All);
-  StdFace_PrintVal_d("J2y", &StdI->J2[1][1], StdI->J2All);
-  StdFace_PrintVal_d("J2z", &StdI->J2[2][2], StdI->J2All);
-  StdFace_PrintVal_d("J2xy", &StdI->J2[0][1], 0.0);
-  StdFace_PrintVal_d("J2xz", &StdI->J2[0][2], 0.0);
-  StdFace_PrintVal_d("J2yz", &StdI->J2[1][2], 0.0);
-  StdFace_PrintVal_d("J2yx", &StdI->J2[1][0], StdI->J2[0][1]);
-  StdFace_PrintVal_d("J2zx", &StdI->J2[2][0], StdI->J2[0][2]);
-  StdFace_PrintVal_d("J2zy", &StdI->J2[2][1], StdI->J2[1][2]);
-  StdFace_PrintVal_d("J2'", &StdI->J2pAll, 0.0);
-  StdFace_PrintVal_d("J2'x", &StdI->J2p[0][0], StdI->J2pAll);
-  StdFace_PrintVal_d("J2'y", &StdI->J2p[1][1], StdI->J2pAll);
-  StdFace_PrintVal_d("J2'z", &StdI->J2p[2][2], StdI->J2pAll);
-  StdFace_PrintVal_d("J2'xy", &StdI->J2p[0][1], 0.0);
-  StdFace_PrintVal_d("J2'xz", &StdI->J2p[0][2], 0.0);
-  StdFace_PrintVal_d("J2'yz", &StdI->J2p[1][2], 0.0);
-  StdFace_PrintVal_d("J2'yx", &StdI->J2p[1][0], StdI->J2p[0][1]);
-  StdFace_PrintVal_d("J2'zx", &StdI->J2p[2][0], StdI->J2p[0][2]);
-  StdFace_PrintVal_d("J2'zy", &StdI->J2p[2][1], StdI->J2p[1][2]);
-  /**/
-  StdFace_NotUsed_d("D", StdI->D[2][2]);
-  StdFace_NotUsed_d("J", StdI->JAll);
-  StdFace_NotUsed_d("J'", StdI->JpAll);
-  StdFace_NotUsed_d("K", StdI->K);
   /*
   Magnetic field
   */

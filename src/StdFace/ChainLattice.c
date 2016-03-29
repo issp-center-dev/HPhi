@@ -221,42 +221,6 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   FILE *fp;
 
   StdI->NsiteUC = 1;
-  fprintf(stdout, "\n");
-  fprintf(stdout, "#######  Parameter Summary  #######\n");
-  fprintf(stdout, "\n");
-  StdFace_RequiredVal_i("L", StdI->L);
-  StdFace_NotUsed_i("W", StdI->W);
-  StdFace_PrintVal_d("a", &StdI->a, 1.0);
-  /**/
-  StdFace_PrintVal_i("2S", &StdI->S2, 1);
-  StdFace_PrintVal_d("h", &StdI->h, 0.0);
-  StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
-  StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
-  StdFace_PrintVal_d("J", &StdI->JAll, 1.0);
-  StdFace_PrintVal_d("Jx", &StdI->J[0][0], StdI->JAll);
-  StdFace_PrintVal_d("Jy", &StdI->J[1][1], StdI->JAll);
-  StdFace_PrintVal_d("Jz", &StdI->J[2][2], StdI->JAll);
-  StdFace_PrintVal_d("Jxy", &StdI->J[0][1], 0.0);
-  StdFace_PrintVal_d("Jxz", &StdI->J[0][2], 0.0);
-  StdFace_PrintVal_d("Jyz", &StdI->J[1][2], 0.0);
-  StdFace_PrintVal_d("Jyx", &StdI->J[1][0], StdI->J[0][1]);
-  StdFace_PrintVal_d("Jzx", &StdI->J[2][0], StdI->J[0][2]);
-  StdFace_PrintVal_d("Jzy", &StdI->J[2][1], StdI->J[1][2]);
-  StdFace_PrintVal_d("J'", &StdI->JpAll, 0.0);
-  StdFace_PrintVal_d("J'x", &StdI->Jp[0][0], StdI->JpAll);
-  StdFace_PrintVal_d("J'y", &StdI->Jp[1][1], StdI->JpAll);
-  StdFace_PrintVal_d("J'z", &StdI->Jp[2][2], StdI->JpAll);
-  StdFace_PrintVal_d("J'xy", &StdI->Jp[0][1], 0.0);
-  StdFace_PrintVal_d("J'xz", &StdI->Jp[0][2], 0.0);
-  StdFace_PrintVal_d("J'yz", &StdI->Jp[1][2], 0.0);
-  StdFace_PrintVal_d("J'yx", &StdI->Jp[1][0], StdI->Jp[0][1]);
-  StdFace_PrintVal_d("J'zx", &StdI->Jp[2][0], StdI->Jp[0][2]);
-  StdFace_PrintVal_d("J'zy", &StdI->Jp[2][1], StdI->Jp[1][2]);
-  /**/
-  StdFace_NotUsed_d("J0", StdI->J0All);
-  StdFace_NotUsed_d("J1", StdI->J1All);
-  StdFace_NotUsed_d("J2", StdI->J2All);
-  StdFace_NotUsed_d("K", StdI->K);
   /*
   Magnetic field
   */
