@@ -319,7 +319,7 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
     StdFace_SetLabel(StdI, fp, iW, iL, iW + 1, iL - 1, 0.0, 0.0, 0.0, 0.0, isite, &jsite, 2, 0, model);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
-      StdFace_GeneralJ(StdI, StdI->J, StdI->S2, StdI->S2, isite, jsite);
+      StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
       StdFace_Hopping(StdI, StdI->tp, isite, jsite);
