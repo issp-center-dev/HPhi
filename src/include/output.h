@@ -17,3 +17,5 @@
 #include "Common.h"
 
 int output(struct BindStruct *X);
+
+int outputHam(struct BindStruct *X);

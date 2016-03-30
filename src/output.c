@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "output.h"
 #include "FileIO.h"
-
+#include "wrapperMPI.h"
 /** 
  * 
  * 
@@ -66,5 +66,34 @@ int output(struct BindStruct *X){
     fclose(fp);
   }
   
+  return 0;
+}
+
+int outputHam(struct BindStruct *X){
+  //Output Ham
+  long int i=0;
+  long int j=0;
+  long int imax = X->Check.idim_max;
+  long int ihermite=0;
+
+  FILE *fp;
+  char sdt[D_FileNameMax];
+  sprintf(sdt,cFileNamePhys_FullDiag_Ham, X->Def.CDataFileHead);
+  if(childfopenMPI(sdt,"w",&fp)!=0){
+    return -1;
+  }
+
+  fprintf(fp, "#Ham#MatrixMarket matrix coordinate complex hermitian\n");
+  fprintf(fp, "#Ham# put cout %d %d \n",imax,imax);
+  ihermite=0;
+  for (i=1; i<=imax; i++){
+    for (j=1; j<=i; j++){
+      if(cabs(Ham[i][j])>1.0e-13)
+        fprintf(fp, "#Ham# %d %d %lf %lf\n",i,j,creal(Ham[i][j]),cimag(Ham[i][j]));
+        ihermite += 1;
+    }
+  }
+  fprintf(fp, "#Ham# count %d\n",ihermite);
+  fclose(fp);
   return 0;
 }

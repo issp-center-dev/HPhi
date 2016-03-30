@@ -42,6 +42,9 @@ const char* cLogTPQ_End="######  End  : TPQCalculation.  ######\n\n";
 const char* cLogFullDiag_SetHam_Start="######  Start: Setting Hamiltonian.  ######\n\n";
 const char* cLogFullDiag_SetHam_End="######  End  : Setting Hamiltonian.  ######\n\n";
 
+const char* cLogFullDiag_OutputHam_Start="######  Start: Output Hamiltonian.  ######\n\n";
+const char* cLogFullDiag_OutputHam_End="######  End  : Output Hamiltonian.  ######\n\n";
+
 
 const char* cLogFullDiag_Start="######  Start: Diagonalization.  ######\n\n";
 const char* cLogFullDiag_End="######  End  : Diagonalization.  ######\n\n";

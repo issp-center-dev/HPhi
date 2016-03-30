@@ -119,6 +119,8 @@ const char* cFileNamePhys_FullDiag;
 const char* cFileNamePhys_FullDiag_GC;
 const char* cFileName1BGreen_FullDiag;
 const char* cFileName2BGreen_FullDiag;
+const char* cFileNamePhys_FullDiag_Ham;
+
 
 //For Error
 const char* cFileNameErrorSz;

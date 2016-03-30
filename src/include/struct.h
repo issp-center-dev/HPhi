@@ -157,7 +157,11 @@ struct DefineList{
   int iOutputEigenVec;
 
     /**< An integer for selecting output an eigenvector. 0: no input, 1:input*/
-  int iInputEigenVec;  
+  int iInputEigenVec;
+
+    /**< An integer for selecting output a Hamiltonian. 0: no output, 1:output*/
+    int iOutputHam;
+
 };
 
 struct CheckList{
