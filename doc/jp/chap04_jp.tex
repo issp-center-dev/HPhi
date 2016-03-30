@@ -97,7 +97,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \item \verb|method|
   
-{\bf 形式 :} 文字列(\verb|"Lanczos|, \verb|"TPQ"|, \verb|"Full Diag"|のいずれか)
+{\bf 形式 :} 文字列(\verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|のいずれか)
 
 {\bf 説明 :} 実行する計算の種類を指定します。
 上記の文字列はそれぞれランチョス法による少数固有状態の計算, 
@@ -841,15 +841,15 @@ ExpecInterval  20
 
 \item  \verb|Ncond|
 
-{\bf Type :} {int型 (自然数)}
+{\bf 形式 :} {int型 (自然数)}
 
-{\bf Description :} {伝導電子数を指定する整数。グランドカノニカルの場合には使用されません。}
+{\bf 説明 :} {伝導電子数を指定する整数。グランドカノニカルの場合には使用されません。}
 
  \item  \verb|2Sz|
 
-{\bf Type :} {int型 (自然数)}
+{\bf 形式 :} {int型 (自然数)}
 
-{\bf Description :} {$2S_z$を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で$S_z$保存を行う場合には}\verb|Ncond|を指定する必要があります。
+{\bf 説明 :} {$2S_z$を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で$S_z$保存を行う場合には}\verb|Ncond|を指定する必要があります。
 
  \item  \verb|Lanczos_max|
 
@@ -1011,7 +1011,7 @@ $n>0$: $2S=n$の局在スピン\\
 \begin{itemize}
 \item 行数固定で読み込みを行う為、ヘッダの省略はできません。
 \item $[$int01$]$と$[$int03$]$で指定される局在電子数の総数が異なる場合はエラー終了します。
-\item $[$int02$]$の総数が全サイト数と異なる場合はエラー終了します。\footnote{将来的には局在電子のみ指定するように変更する予定です。}
+\item $[$int02$]$の総数が全サイト数と異なる場合はエラー終了します。
 \item $[$int02$]$が全サイト数以上もしくは負の値をとる場合はエラー終了します。
 \end{itemize}
 
@@ -1214,7 +1214,7 @@ NInterAll      36
 \begin{itemize}
 \item 行数固定で読み込みを行う為、ヘッダの省略はできません。
 \item Hamiltonianがエルミートという制限から$I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$の関係を満たす必要があります。上記の関係が成立しない場合にはエラー終了します。
-また、エルミート共役の形式は$I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$に対して、$I_{ijkl\sigma_4\sigma_3\sigma_2\sigma_1}$
+また、エルミート共役の形式は$I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$に対して、$I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}$
 $c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}$を満たすように入力してください。
 \item スピンに関して計算する場合、$i=j, k=l$を満たさないペアが存在するとエラー終了します。
 \item 成分が重複して指定された場合にはエラー終了します。
