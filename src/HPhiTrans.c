@@ -56,7 +56,7 @@ int HPhiTrans(struct BindStruct *X){
 	  childfopenMPI(sdt_err,"a", &fp_err);
 	  fprintf(fp_err,cErrDoubleCounting, X->Def.GeneralTransfer[k][0] ,X->Def.GeneralTransfer[k][2], X->Def.GeneralTransfer[k][1], X->Def.GeneralTransfer[k][3]);
 	  fclose(fp_err);
-	  return -1;
+//	  return -1;
 	}
       }
     }

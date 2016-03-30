@@ -1375,6 +1375,11 @@ int CheckTransferHermite
   int isigma1, isigma2;
   int itmpsite1, itmpsite2;
   int itmpsigma1, itmpsigma2;
+  int itmperrsite1, itmperrsite2;
+  int itmperrsigma1, itmperrsigma2;
+  double complex dcerrTrans;
+  int icheckHermiteCount=FALSE;
+
   double  complex ddiff_trans;
   int itmpIdx, icntHermite, icntchemi;
   icntHermite=0;
@@ -1384,6 +1389,8 @@ int CheckTransferHermite
     isigma1=X->GeneralTransfer[i][1];
     isite2=X->GeneralTransfer[i][2];
     isigma2=X->GeneralTransfer[i][3];
+    icheckHermiteCount=FALSE;
+    
     for(j=0; j<X->NTransfer; j++){
       itmpsite1=X->GeneralTransfer[j][0];
       itmpsigma1=X->GeneralTransfer[j][1];
@@ -1391,37 +1398,58 @@ int CheckTransferHermite
       itmpsigma2=X->GeneralTransfer[j][3];
       if(isite1 == itmpsite2 && isite2 == itmpsite1){
 	if(isigma1 == itmpsigma2 && isigma2 == itmpsigma1){
+	  
 	  ddiff_trans = X->ParaGeneralTransfer[i]-conj(X->ParaGeneralTransfer[j]);
 	  if(cabs(ddiff_trans) > eps_CheckImag0 ){
+	    itmperrsite1=itmpsite1;
+	    itmperrsigma1=itmpsigma1;
+	    itmperrsite2=itmpsite2;
+	    itmperrsigma2=itmpsigma2;
+	    dcerrTrans=X->ParaGeneralTransfer[j];
+	    /*
 	    fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
 	    fprintf(stderr, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
 	    exitMPI(-1);
+	    */
 	  }
-	  if(i<=j){
-	    if(2*icntHermite > X->NTransfer){
-	      fprintf(stderr, "Elements of InterAll are incorrect.\n");
-	      exitMPI(-1);
-	    }
-	    if(isite1 !=isite2 || isigma1 !=isigma2){
-	      for(itmpIdx=0; itmpIdx<4; itmpIdx++){
-		X->EDGeneralTransfer[2*icntHermite][itmpIdx]=X->GeneralTransfer[i][itmpIdx];
-		X->EDGeneralTransfer[2*icntHermite+1][itmpIdx]=X->GeneralTransfer[j][itmpIdx];
+	  else{
+	    if (icheckHermiteCount == FALSE) {	      
+	      if(i<=j){
+		if(2*icntHermite >= X->NTransfer){
+		  fprintf(stderr, "Elements of InterAll are incorrect.\n");
+		  exitMPI(-1);
+		}
+		if(isite1 !=isite2 || isigma1 !=isigma2){
+		  for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+		    X->EDGeneralTransfer[2*icntHermite][itmpIdx]=X->GeneralTransfer[i][itmpIdx];
+		    X->EDGeneralTransfer[2*icntHermite+1][itmpIdx]=X->GeneralTransfer[j][itmpIdx];
+		  }
+		  X->EDParaGeneralTransfer[2*icntHermite]=X->ParaGeneralTransfer[i];
+		  X->EDParaGeneralTransfer[2*icntHermite+1]=X->ParaGeneralTransfer[j];
+		  icntHermite++;
+		}
+		else{
+		  X->EDChemi[icntchemi]     = X->GeneralTransfer[i][0];      
+		  X->EDSpinChemi[icntchemi] = X->GeneralTransfer[i][1];      
+		  X->EDParaChemi[icntchemi] = creal(X->ParaGeneralTransfer[i]);
+		  icntchemi+=1;
+		}
 	      }
-	      X->EDParaGeneralTransfer[2*icntHermite]=X->ParaGeneralTransfer[i];
-	      X->EDParaGeneralTransfer[2*icntHermite+1]=X->ParaGeneralTransfer[j];
-	      icntHermite++;
+	      icheckHermiteCount = TRUE;
 	    }
-	    else{
-	      X->EDChemi[icntchemi]     = X->GeneralTransfer[i][0];      
-	      X->EDSpinChemi[icntchemi] = X->GeneralTransfer[i][1];      
-	      X->EDParaChemi[icntchemi] = creal(X->ParaGeneralTransfer[i]);
-	      icntchemi+=1;
-	    }
-	  } 
+	  }
 	}  
       }
     }
+
+    //if counterpart for satisfying hermite conjugate does not exist.
+    if(icheckHermiteCount == FALSE){
+      fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
+      fprintf(stderr, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
+	    exitMPI(-1);
+      }
   }
+
   
   X->EDNTransfer=2*icntHermite;
   X->EDNChemi=icntchemi;
@@ -1459,11 +1487,11 @@ int CheckInterAllHermite
   int isigma1, isigma2, isigma3, isigma4;
   int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
   int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
-    int itmperrsite1, itmperrsite2, itmperrsite3, itmperrsite4;
-    int itmperrsigma1, itmperrsigma2, itmperrsigma3, itmperrsigma4;
-    double complex dcerrIntAll;
+  int itmperrsite1, itmperrsite2, itmperrsite3, itmperrsite4;
+  int itmperrsigma1, itmperrsigma2, itmperrsigma3, itmperrsigma4;
+  double complex dcerrIntAll;
   int itmpIdx, icntHermite;
-    int icheckHermiteCount=FALSE;
+  int icheckHermiteCount=FALSE;
   double  complex ddiff_intall;
   icntincorrect=0;
   icntHermite=0;
