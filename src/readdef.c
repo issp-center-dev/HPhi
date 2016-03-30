@@ -1810,7 +1810,7 @@ int JudgeDefType
     || strcmp(argv[1], "-Version") == 0
     || strcmp(argv[1], "-VERSION") == 0) 
     ) {
-    fprintf(stderr, "\nHPhi version 0.3 \n\n");
+    fprintf(stderr, "\nHPhi version 1.0 \n\n");
     exit(-1);
   }
   else{
