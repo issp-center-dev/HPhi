@@ -22,17 +22,17 @@ void splash(){
 
   fprintf(stdoutMPI, "                                                                \n");
   fprintf(stdoutMPI, "      ,ammmmmmmmmmmmmmb,,        Welcome to the                 \n");
-  fprintf(stdoutMPI, "    ,@@`,m,mmmmmmmmm,,~~===m                                    \n");
-  fprintf(stdoutMPI, "  ,@@`,d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       \n");
-  fprintf(stdoutMPI, " d@  d@@@~@@@~@@@@@@~@@@@b ~@a   @@          @@     @@@@@@@@    \n");
+  fprintf(stdoutMPI, "    ,@@` mmmmmmmmmmmmmm ===m                                    \n");
+  fprintf(stdoutMPI, "  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       \n");
+  fprintf(stdoutMPI, " d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    \n");
   fprintf(stdoutMPI, "d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  \n");
-  fprintf(stdoutMPI, "@    @@@@_@@@_@@@@mm_mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ \n");
+  fprintf(stdoutMPI, "@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ \n");
   fprintf(stdoutMPI, "P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ \n");
   fprintf(stdoutMPI, " @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  \n");
   fprintf(stdoutMPI, "  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    \n");
   fprintf(stdoutMPI, "    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       \n");
   fprintf(stdoutMPI, "        ~~9@@@@@@@@@  ~                                         \n");
-  fprintf(stdoutMPI, "           9@P~~~9@P             Version 0.3                    \n");
+  fprintf(stdoutMPI, "           9@P~~~9@P             Version 1.0                    \n");
   fprintf(stdoutMPI, "                                                                \n");
 
 }
