@@ -46,7 +46,7 @@
 void phys(struct BindStruct *X){
 
     long unsigned int i,j,i_max;
-    double tmp_N,tmp_Sz;
+    double tmp_N;
 
     i_max=X->Check.idim_max;
     for(i=0;i<i_max;i++){

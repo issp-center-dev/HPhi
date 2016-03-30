@@ -52,13 +52,8 @@ int CalcByLanczos(
 {
   char sdt[D_FileNameMax];
   double diff_ene,var;
-  long int i=0;
-  long int libuf=0;
   long int i_max=0;
-  long int _list_1;
-  double dRealVec, dImagVec;
   FILE *fp;
-  char ctmp2[256];
   
   if(X->Bind.Def.iInputEigenVec==FALSE){
     // this part will be modified

@@ -34,7 +34,7 @@ int HPhiTrans(struct BindStruct *X){
   char sdt_err[D_FileNameMax];
 
   int i,k;
-  int cnt_trans,cnt_chemi;
+  int cnt_trans;
  
   strcpy(sdt_err, cFileNameWarningOnTransfer);
   if(childfopenMPI(sdt_err, "w", &fp_err)!=0){
@@ -44,8 +44,6 @@ int HPhiTrans(struct BindStruct *X){
 	 
   //Transefer
   cnt_trans=0;
-  cnt_chemi=0;
-
   
   for(i=0;i<X->Def.EDNTransfer;i++){
     // eliminate double counting

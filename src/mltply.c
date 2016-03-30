@@ -63,7 +63,6 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   /* SpinGCBoost */
   double complex* tmp_v2;
   double complex* tmp_v3;
-  double *tmp_d;
   /* SpinGCBoost */
   
   long unsigned int i_max;
