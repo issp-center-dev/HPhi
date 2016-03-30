@@ -371,21 +371,21 @@ void StdFace_Honeycomb_Boost(struct StdIntList *StdI)
    Interaction
   */
   fprintf(fp, "%d  # Number of type of J\n", 3);
-  fprintf(fp, "# J 1\n"); 
+  fprintf(fp, "# J 0\n"); 
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
       0.25 * StdI->J0[0][0], 0.0, 0.25 * StdI->J0[0][1], 0.0, 0.25 * StdI->J0[0][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * StdI->J0[0][1], 0.0, 0.25 * StdI->J0[1][1], 0.0, 0.25 * StdI->J0[1][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * StdI->J0[0][2], 0.0, 0.25 * StdI->J0[1][2], 0.0, 0.25 * StdI->J0[2][2], 0.0);
-  fprintf(fp, "# J 2\n");
+  fprintf(fp, "# J 1\n");
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * StdI->J1[0][0], 0.0, 0.25 * StdI->J1[0][1], 0.0, 0.25 * StdI->J1[0][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * StdI->J1[0][1], 0.0, 0.25 * StdI->J1[1][1], 0.0, 0.25 * StdI->J1[1][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * StdI->J1[0][2], 0.0, 0.25 * StdI->J1[1][2], 0.0, 0.25 * StdI->J1[2][2], 0.0);
-  fprintf(fp, "# J 3\n");
+  fprintf(fp, "# J 2\n");
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
     0.25 * StdI->J2[0][0], 0.0, 0.25 * StdI->J2[0][1], 0.0, 0.25 * StdI->J2[0][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
@@ -461,35 +461,35 @@ void StdFace_Honeycomb_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[0][3][0] = 3; //(4,1,1+2*j)=3
   StdI->list_6spin_pair[0][4][0] = 4; //(5,1,1+2*j)=4
   StdI->list_6spin_pair[0][5][0] = 5; //(6,1,1+2*j)=5
-  StdI->list_6spin_pair[0][6][0] = 3; //(7,1,1+2*j)=3 ! type of J
+  StdI->list_6spin_pair[0][6][0] = 1; //(7,1,1+2*j)=3 ! type of J
   StdI->list_6spin_pair[0][0][1] = 1; //(1,2,1+2*j)=1 
   StdI->list_6spin_pair[0][1][1] = 2; //(2,2,1+2*j)=2
   StdI->list_6spin_pair[0][2][1] = 0; //(3,2,1+2*j)=0
   StdI->list_6spin_pair[0][3][1] = 3; //(4,2,1+2*j)=3
   StdI->list_6spin_pair[0][4][1] = 4; //(5,2,1+2*j)=4
   StdI->list_6spin_pair[0][5][1] = 5; //(6,2,1+2*j)=5
-  StdI->list_6spin_pair[0][6][1] = 1; //(7,2,1+2*j)=1 ! type of J
+  StdI->list_6spin_pair[0][6][1] = 2; //(7,2,1+2*j)=1 ! type of J
   StdI->list_6spin_pair[0][0][2] = 2; //(1,3,1+2*j)=2 
   StdI->list_6spin_pair[0][1][2] = 3; //(2,3,1+2*j)=3
   StdI->list_6spin_pair[0][2][2] = 0; //(3,3,1+2*j)=0
   StdI->list_6spin_pair[0][3][2] = 1; //(4,3,1+2*j)=1
   StdI->list_6spin_pair[0][4][2] = 4; //(5,3,1+2*j)=4
   StdI->list_6spin_pair[0][5][2] = 5; //(6,3,1+2*j)=5
-  StdI->list_6spin_pair[0][6][2] = 3; //(7,3,1+2*j)=3 ! type of J
+  StdI->list_6spin_pair[0][6][2] = 1; //(7,3,1+2*j)=3 ! type of J
   StdI->list_6spin_pair[0][0][3] = 0; //(1,4,1+2*j)=0 
   StdI->list_6spin_pair[0][1][3] = 4; //(2,4,1+2*j)=4
   StdI->list_6spin_pair[0][2][3] = 1; //(3,4,1+2*j)=1
   StdI->list_6spin_pair[0][3][3] = 2; //(4,4,1+2*j)=2
   StdI->list_6spin_pair[0][4][3] = 3; //(5,4,1+2*j)=3
   StdI->list_6spin_pair[0][5][3] = 5; //(6,4,1+2*j)=5
-  StdI->list_6spin_pair[0][6][3] = 1; //(7,4,1+2*j)=1 ! type of J
+  StdI->list_6spin_pair[0][6][3] = 2; //(7,4,1+2*j)=1 ! type of J
   StdI->list_6spin_pair[0][0][4] = 1; //(1,5,1+2*j)=1 
   StdI->list_6spin_pair[0][1][4] = 5; //(2,5,1+2*j)=5
   StdI->list_6spin_pair[0][2][4] = 0; //(3,5,1+2*j)=0
   StdI->list_6spin_pair[0][3][4] = 2; //(4,5,1+2*j)=2
   StdI->list_6spin_pair[0][4][4] = 3; //(5,5,1+2*j)=3
   StdI->list_6spin_pair[0][5][4] = 4; //(6,5,1+2*j)=4
-  StdI->list_6spin_pair[0][6][4] = 2; //(7,5,1+2*j)=2 ! type of J
+  StdI->list_6spin_pair[0][6][4] = 3; //(7,5,1+2*j)=2 ! type of J
 
   StdI->list_6spin_pair[1][0][0] = 0; //(1,1,2+2*j)=0 
   StdI->list_6spin_pair[1][1][0] = 1; //(2,1,2+2*j)=1
@@ -497,28 +497,28 @@ void StdFace_Honeycomb_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[1][3][0] = 3; //(4,1,2+2*j)=3
   StdI->list_6spin_pair[1][4][0] = 4; //(5,1,2+2*j)=4
   StdI->list_6spin_pair[1][5][0] = 5; //(6,1,2+2*j)=5
-  StdI->list_6spin_pair[1][6][0] = 1; //(7,1,2+2*j)=1 ! type of J
+  StdI->list_6spin_pair[1][6][0] = 2; //(7,1,2+2*j)=1 ! type of J
   StdI->list_6spin_pair[1][0][1] = 1; //(1,2,2+2*j)=1 
   StdI->list_6spin_pair[1][1][1] = 2; //(2,2,2+2*j)=2
   StdI->list_6spin_pair[1][2][1] = 0; //(3,2,2+2*j)=0
   StdI->list_6spin_pair[1][3][1] = 3; //(4,2,2+2*j)=3
   StdI->list_6spin_pair[1][4][1] = 4; //(5,2,2+2*j)=4
   StdI->list_6spin_pair[1][5][1] = 5; //(6,2,2+2*j)=5
-  StdI->list_6spin_pair[1][6][1] = 3; //(7,2,2+2*j)=3 ! type of J
+  StdI->list_6spin_pair[1][6][1] = 1; //(7,2,2+2*j)=3 ! type of J
   StdI->list_6spin_pair[1][0][2] = 0; //(1,3,2+2*j)=0 
   StdI->list_6spin_pair[1][1][2] = 4; //(2,3,2+2*j)=4
   StdI->list_6spin_pair[1][2][2] = 1; //(3,3,2+2*j)=1
   StdI->list_6spin_pair[1][3][2] = 2; //(4,3,2+2*j)=2
   StdI->list_6spin_pair[1][4][2] = 3; //(5,3,2+2*j)=3
   StdI->list_6spin_pair[1][5][2] = 5; //(6,3,2+2*j)=5
-  StdI->list_6spin_pair[1][6][2] = 2; //(7,3,2+2*j)=2 ! type of J
+  StdI->list_6spin_pair[1][6][2] = 3; //(7,3,2+2*j)=2 ! type of J
   StdI->list_6spin_pair[1][0][3] = 2; //(1,4,2+2*j)=2 
   StdI->list_6spin_pair[1][1][3] = 5; //(2,4,2+2*j)=5
   StdI->list_6spin_pair[1][2][3] = 0; //(3,4,2+2*j)=0
   StdI->list_6spin_pair[1][3][3] = 1; //(4,4,2+2*j)=1
   StdI->list_6spin_pair[1][4][3] = 3; //(5,4,2+2*j)=3
   StdI->list_6spin_pair[1][5][3] = 4; //(6,4,2+2*j)=4
-  StdI->list_6spin_pair[1][6][3] = 2; //(7,4,2+2*j)=2 ! type of J
+  StdI->list_6spin_pair[1][6][3] = 3; //(7,4,2+2*j)=2 ! type of J
 
   fprintf(fp, "# StdI->list_6spin_pair\n");
   for (ipivot = 0; ipivot < StdI->num_pivot; ipivot++) {

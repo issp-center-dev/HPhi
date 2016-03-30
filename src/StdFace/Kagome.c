@@ -413,15 +413,28 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   /*
   Interaction
   */
-  fprintf(fp, "%d  # Number of type of J\n", 1);
+  fprintf(fp, "%d  # Number of type of J\n", 3);
+  fprintf(fp, "# J 0\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J0[0][0], 0.0, 0.25 * StdI->J0[0][1], 0.0, 0.25 * StdI->J0[0][2], 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J0[0][1], 0.0, 0.25 * StdI->J0[1][1], 0.0, 0.25 * StdI->J0[1][2], 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J0[0][2], 0.0, 0.25 * StdI->J0[1][2], 0.0, 0.25 * StdI->J0[2][2], 0.0);
   fprintf(fp, "# J 1\n");
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J[0][0], 0.0, 0.25 * StdI->J[0][1], 0.0, 0.25 * StdI->J[0][2], 0.0);
+    0.25 * StdI->J1[0][0], 0.0, 0.25 * StdI->J1[0][1], 0.0, 0.25 * StdI->J1[0][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J[1][0], 0.0, 0.25 * StdI->J[1][1], 0.0, 0.25 * StdI->J[1][2], 0.0);
+    0.25 * StdI->J1[0][1], 0.0, 0.25 * StdI->J1[1][1], 0.0, 0.25 * StdI->J1[1][2], 0.0);
   fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J[2][0], 0.0, 0.25 * StdI->J[2][1], 0.0, 0.25 * StdI->J[2][2], 0.0);
-  /*
+    0.25 * StdI->J1[0][2], 0.0, 0.25 * StdI->J1[1][2], 0.0, 0.25 * StdI->J1[2][2], 0.0);
+  fprintf(fp, "# J 2\n");
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J2[0][0], 0.0, 0.25 * StdI->J2[0][1], 0.0, 0.25 * StdI->J2[0][2], 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J2[0][1], 0.0, 0.25 * StdI->J2[1][1], 0.0, 0.25 * StdI->J2[1][2], 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J2[0][2], 0.0, 0.25 * StdI->J2[1][2], 0.0, 0.25 * StdI->J2[2][2], 0.0);  /*
   Topology
   */
   if (StdI->S2 != 1) {
@@ -506,7 +519,7 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[0][3][0] = 2; //(4,1,1+2*j)=3
   StdI->list_6spin_pair[0][4][0] = 3; //(5,1,1+2*j)=4
   StdI->list_6spin_pair[0][5][0] = 5; //(6,1,1+2*j)=5
-  StdI->list_6spin_pair[0][6][0] = 1; //(7,1,1+2*j)=3 ! type of J
+  StdI->list_6spin_pair[0][6][0] = 3; //(7,1,1+2*j)=3 ! type of J
 
   StdI->list_6spin_pair[1][0][0] = 0;
   StdI->list_6spin_pair[1][1][0] = 1;
@@ -514,7 +527,7 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[1][3][0] = 3;
   StdI->list_6spin_pair[1][4][0] = 4;
   StdI->list_6spin_pair[1][5][0] = 5;
-  StdI->list_6spin_pair[1][6][0] = 1; // type of J
+  StdI->list_6spin_pair[1][6][0] = 3; // type of J
   StdI->list_6spin_pair[1][0][1] = 1;
   StdI->list_6spin_pair[1][1][1] = 2;
   StdI->list_6spin_pair[1][2][1] = 0;
@@ -528,21 +541,21 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[1][3][2] = 3;
   StdI->list_6spin_pair[1][4][2] = 4;
   StdI->list_6spin_pair[1][5][2] = 5;
-  StdI->list_6spin_pair[1][6][2] = 1; // type of J
+  StdI->list_6spin_pair[1][6][2] = 2; // type of J
   StdI->list_6spin_pair[1][0][3] = 1;
   StdI->list_6spin_pair[1][1][3] = 3;
   StdI->list_6spin_pair[1][2][3] = 0;
   StdI->list_6spin_pair[1][3][3] = 2;
   StdI->list_6spin_pair[1][4][3] = 4;
   StdI->list_6spin_pair[1][5][3] = 5;
-  StdI->list_6spin_pair[1][6][3] = 1; // type of J
+  StdI->list_6spin_pair[1][6][3] = 3; // type of J
   StdI->list_6spin_pair[1][0][4] = 2;
   StdI->list_6spin_pair[1][1][4] = 4;
   StdI->list_6spin_pair[1][2][4] = 0;
   StdI->list_6spin_pair[1][3][4] = 1;
   StdI->list_6spin_pair[1][4][4] = 3;
   StdI->list_6spin_pair[1][5][4] = 5;
-  StdI->list_6spin_pair[1][6][4] = 1; // type of J
+  StdI->list_6spin_pair[1][6][4] = 2; // type of J
   StdI->list_6spin_pair[1][0][5] = 2;
   StdI->list_6spin_pair[1][1][5] = 5;
   StdI->list_6spin_pair[1][2][5] = 0;
@@ -557,7 +570,7 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[2][3][0] = 3;
   StdI->list_6spin_pair[2][4][0] = 4;
   StdI->list_6spin_pair[2][5][0] = 5;
-  StdI->list_6spin_pair[2][6][0] = 1; // type of J
+  StdI->list_6spin_pair[2][6][0] = 3; // type of J
   StdI->list_6spin_pair[2][0][1] = 1;
   StdI->list_6spin_pair[2][1][1] = 2;
   StdI->list_6spin_pair[2][2][1] = 0;
@@ -571,21 +584,21 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[2][3][2] = 3;
   StdI->list_6spin_pair[2][4][2] = 4;
   StdI->list_6spin_pair[2][5][2] = 5;
-  StdI->list_6spin_pair[2][6][2] = 1; // type of J
+  StdI->list_6spin_pair[2][6][2] = 2; // type of J
   StdI->list_6spin_pair[2][0][3] = 1;
   StdI->list_6spin_pair[2][1][3] = 3;
   StdI->list_6spin_pair[2][2][3] = 0;
   StdI->list_6spin_pair[2][3][3] = 2;
   StdI->list_6spin_pair[2][4][3] = 4;
   StdI->list_6spin_pair[2][5][3] = 5;
-  StdI->list_6spin_pair[2][6][3] = 1; // type of J
+  StdI->list_6spin_pair[2][6][3] = 3; // type of J
   StdI->list_6spin_pair[2][0][4] = 2;
   StdI->list_6spin_pair[2][1][4] = 5;
   StdI->list_6spin_pair[2][2][4] = 0;
   StdI->list_6spin_pair[2][3][4] = 1;
   StdI->list_6spin_pair[2][4][4] = 3;
   StdI->list_6spin_pair[2][5][4] = 4;
-  StdI->list_6spin_pair[2][6][4] = 1; // type of J
+  StdI->list_6spin_pair[2][6][4] = 2; // type of J
   StdI->list_6spin_pair[2][0][5] = 2;
   StdI->list_6spin_pair[2][1][5] = 4;
   StdI->list_6spin_pair[2][2][5] = 0;
@@ -600,7 +613,7 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[3][3][0] = 3;
   StdI->list_6spin_pair[3][4][0] = 4;
   StdI->list_6spin_pair[3][5][0] = 5;
-  StdI->list_6spin_pair[3][6][0] = 1; // type of J
+  StdI->list_6spin_pair[3][6][0] = 3; // type of J
   StdI->list_6spin_pair[3][0][1] = 1;
   StdI->list_6spin_pair[3][1][1] = 2;
   StdI->list_6spin_pair[3][2][1] = 0;
@@ -614,14 +627,14 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   StdI->list_6spin_pair[3][3][2] = 3;
   StdI->list_6spin_pair[3][4][2] = 4;
   StdI->list_6spin_pair[3][5][2] = 5;
-  StdI->list_6spin_pair[3][6][2] = 1; // type of J
+  StdI->list_6spin_pair[3][6][2] = 2; // type of J
   StdI->list_6spin_pair[3][0][3] = 2;
   StdI->list_6spin_pair[3][1][3] = 5;
   StdI->list_6spin_pair[3][2][3] = 0;
   StdI->list_6spin_pair[3][3][3] = 1;
   StdI->list_6spin_pair[3][4][3] = 3;
   StdI->list_6spin_pair[3][5][3] = 4;
-  StdI->list_6spin_pair[3][6][3] = 1; // type of J
+  StdI->list_6spin_pair[3][6][3] = 2; // type of J
   StdI->list_6spin_pair[3][0][4] = 2;
   StdI->list_6spin_pair[3][1][4] = 4;
   StdI->list_6spin_pair[3][2][4] = 0;

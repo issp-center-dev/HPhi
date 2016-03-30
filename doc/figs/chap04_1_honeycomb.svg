@@ -24,13 +24,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="2880"
-     inkscape:window-height="1551"
+     inkscape:window-width="2160"
+     inkscape:window-height="1191"
      id="namedview4"
      showgrid="false"
      inkscape:zoom="2.1023899"
      inkscape:cx="425.55726"
-     inkscape:cy="295.19611"
+     inkscape:cy="162.01434"
      inkscape:window-x="0"
      inkscape:window-y="50"
      inkscape:window-maximized="1"
@@ -597,12 +597,12 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" /><path
        style="fill:none;stroke:#0cc419;stroke-width:1.60000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.8, 4.8;stroke-dashoffset:0"
-       d="m 508.07136,224.30846 62.0248,0"
+       d="m 509.97396,189.6812 62.0248,0"
        id="path3332-56-3-9-05-3-32-1-88-7"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" /><path
        style="fill:none;stroke:#0011f4;stroke-width:1.60000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:6.4, 3.2, 1.6, 3.2;stroke-dashoffset:0"
-       d="m 508.07136,196.56686 62.0248,0"
+       d="m 512.6376,223.20321 62.0248,0"
        id="path3332-56-3-9-6-4"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" /><text
@@ -619,7 +619,7 @@
          y="-125.16067"
          x="79.730385"
          id="tspan9632"
-         sodipodi:role="line">1</tspan></text>
+         sodipodi:role="line">0</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142132"
@@ -634,7 +634,7 @@
          y="-124.63699"
          x="140.06456"
          id="tspan9632-9"
-         sodipodi:role="line">2</tspan></text>
+         sodipodi:role="line">1</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142132"
@@ -649,7 +649,7 @@
          y="-83.662933"
          x="158.36124"
          id="tspan9632-4"
-         sodipodi:role="line">3</tspan></text>
+         sodipodi:role="line">2</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142132"
@@ -664,7 +664,7 @@
          y="-83.2005"
          x="218.36334"
          id="tspan9632-8"
-         sodipodi:role="line">4</tspan></text>
+         sodipodi:role="line">3</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142132"
@@ -679,7 +679,7 @@
          y="-164.38324"
          x="159.4375"
          id="tspan9632-47"
-         sodipodi:role="line">5</tspan></text>
+         sodipodi:role="line">4</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142132"
@@ -694,7 +694,7 @@
          y="-165.99763"
          x="218.36331"
          id="tspan9632-2"
-         sodipodi:role="line">6</tspan></text>
+         sodipodi:role="line">5</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142131"
@@ -709,7 +709,7 @@
          y="-122.59183"
          x="236.55952"
          id="tspan9632-0"
-         sodipodi:role="line">7</tspan></text>
+         sodipodi:role="line">6</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142132"
@@ -724,37 +724,37 @@
          y="-123.75401"
          x="300.16003"
          id="tspan9632-46"
-         sodipodi:role="line">8</tspan></text>
+         sodipodi:role="line">7</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142132"
        inkscape:transform-center-x="-6.0609154"
        sodipodi:linespacing="125%"
        id="text9630-69"
-       y="-207.16505"
-       x="238.81255"
+       y="-207.24297"
+       x="238.57881"
        style="font-size:38.40000153px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
        xml:space="preserve"><tspan
          style="font-size:17.60000038px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:cmr10;-inkscape-font-specification:cmr10"
-         y="-207.16505"
-         x="238.81255"
+         y="-207.24297"
+         x="238.57881"
          id="tspan9632-5"
-         sodipodi:role="line">9</tspan></text>
+         sodipodi:role="line">8</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142144"
        inkscape:transform-center-x="-6.060915"
        sodipodi:linespacing="125%"
        id="text9630-94"
-       y="-207.92644"
-       x="296.47577"
+       y="-207.16539"
+       x="299.51996"
        style="font-size:38.40000153px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
        xml:space="preserve"><tspan
-         style="font-size:14.39999962px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:cmr10;-inkscape-font-specification:cmr10"
-         y="-207.92644"
-         x="296.47577"
+         style="font-size:17.60000038px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:cmr10;-inkscape-font-specification:cmr10"
+         y="-207.16539"
+         x="299.51996"
          id="tspan9632-02"
-         sodipodi:role="line">10</tspan></text>
+         sodipodi:role="line">9</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142144"
@@ -769,7 +769,7 @@
          y="-166.60092"
          x="313.70825"
          id="tspan9632-6"
-         sodipodi:role="line">11</tspan></text>
+         sodipodi:role="line">10</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="14.142144"
@@ -784,7 +784,7 @@
          y="-166.3318"
          x="376.46625"
          id="tspan9632-3"
-         sodipodi:role="line">12</tspan></text>
+         sodipodi:role="line">11</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="-11.31371"
@@ -799,7 +799,7 @@
          y="-41.494999"
          x="239.54237"
          id="tspan9632-7"
-         sodipodi:role="line">1</tspan></text>
+         sodipodi:role="line">4</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="-11.31371"
@@ -814,22 +814,22 @@
          y="-42.033134"
          x="300.42908"
          id="tspan9632-9-0"
-         sodipodi:role="line">2</tspan></text>
+         sodipodi:role="line">5</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="-11.31371"
        inkscape:transform-center-x="-4.8487324"
        sodipodi:linespacing="125%"
        id="text9630-2-3"
-       y="-79.626907"
-       x="319.26379"
+       y="-80.007423"
+       x="318.12222"
        style="font-size:38.40000153px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
        xml:space="preserve"><tspan
          style="font-size:17.60000038px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:cmr10;-inkscape-font-specification:cmr10"
-         y="-79.626907"
-         x="319.26379"
+         y="-80.007423"
+         x="318.12222"
          id="tspan9632-47-2"
-         sodipodi:role="line">5</tspan></text>
+         sodipodi:role="line">4</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="-11.31371"
@@ -844,63 +844,63 @@
          y="-82.317589"
          x="378.45868"
          id="tspan9632-2-3"
-         sodipodi:role="line">6</tspan></text>
+         sodipodi:role="line">5</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="-11.31371"
        inkscape:transform-center-x="-4.8487324"
        sodipodi:linespacing="125%"
        id="text9630-69-7"
-       y="-122.94682"
-       x="398.63882"
-       style="font-size:38.40000153px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
+       y="-123.70786"
+       x="398.483"
+       style="font-size:14.39999962px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
        xml:space="preserve"><tspan
          style="font-size:17.60000038px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:cmr10;-inkscape-font-specification:cmr10"
-         y="-122.94682"
-         x="398.63882"
+         y="-123.70786"
+         x="398.483"
          id="tspan9632-5-6"
-         sodipodi:role="line">9</tspan></text>
+         sodipodi:role="line">8</tspan></text>
 <text
        transform="scale(1,-1)"
        inkscape:transform-center-y="-11.313707"
        inkscape:transform-center-x="-4.8487318"
        sodipodi:linespacing="125%"
        id="text9630-94-8"
-       y="-123.97728"
-       x="457.37827"
+       y="-123.21625"
+       x="460.04193"
        style="font-size:38.40000153px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
        xml:space="preserve"><tspan
-         style="font-size:14.39999962px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:cmr10;-inkscape-font-specification:cmr10"
-         y="-123.97728"
-         x="457.37827"
+         style="font-size:17.60000038px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#fffafd;fill-opacity:1;stroke:#fdfef1;stroke-width:0.80000001;stroke-opacity:0.99369082;font-family:cmr10;-inkscape-font-specification:cmr10"
+         y="-123.21625"
+         x="460.04193"
          id="tspan9632-02-3"
-         sodipodi:role="line">10</tspan></text>
+         sodipodi:role="line">9</tspan></text>
 <text
        inkscape:transform-center-y="-9.5634764"
        inkscape:transform-center-x="-25.209405"
        transform="scale(1,-1)"
        sodipodi:linespacing="125%"
        id="text3299"
-       y="-45.241405"
-       x="57.923759"
+       y="-226.36861"
+       x="100.54192"
        style="font-size:38.40000153px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
        xml:space="preserve"><tspan
          style="font-size:22.39999962px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:cmmi10;-inkscape-font-specification:cmmi10"
-         y="-45.241405"
-         x="57.923759"
+         y="-226.36861"
+         x="100.54192"
          id="tspan3301"
          sodipodi:role="line">L</tspan></text>
 <text
        transform="scale(1,-1)"
        sodipodi:linespacing="125%"
        id="text3303"
-       y="-229.95563"
-       x="97.982582"
+       y="-42.740116"
+       x="61.072208"
        style="font-size:38.40000153px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:'Takao Pゴシック';-inkscape-font-specification:'Takao Pゴシック'"
        xml:space="preserve"><tspan
          style="font-size:19.20000076px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:cmmi10;-inkscape-font-specification:cmmi10"
-         y="-229.95563"
-         x="97.982582"
+         y="-42.740116"
+         x="61.072208"
          id="tspan3305"
          sodipodi:role="line">W</tspan></text>
 <path
