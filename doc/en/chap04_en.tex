@@ -103,7 +103,7 @@ See \verb|"Latice"| section.
 
 \item \verb|method|
   
-{\bf Type :} String (Choose from \verb|"Lanczos|", \verb|"TPQ"|, \verb|"Full Diag"|)
+{\bf Type :} String (Choose from \verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|)
 
 {\bf Description :} The calculation type is specified with this parameter;
 above words denote 
@@ -282,7 +282,7 @@ it should not be specified because it will not be used
 {\bf Type :} Positive integer
 
 {\bf Description :} The number of valence electrons is specified with this parameter.
-When \verb|lmodel = "Fermion HubbardGC"|, \verb|"Spin"|, or  \verb|"SpinGC"|, 
+When \verb|model = "Fermion HubbardGC"|, \verb|"Spin"|, or  \verb|"SpinGC"|, 
 it should not be specified.
 
 \item \verb|2Sz|
@@ -291,7 +291,7 @@ it should not be specified.
 
 {\bf Description :} The $z$ component of the twofold total spin is 
 specified with this parameter.
-When \verb|lmodel = "Fermion HubbardGC"| or \verb|SpinGC|,
+When \verb|model = "Fermion HubbardGC"| or \verb|SpinGC|,
 it should not be specified. 
 \end{itemize}
 
@@ -479,7 +479,7 @@ is specified with this parameter.
 
 \item \verb|initial_iv|
 
-{\bf Type :} Integer (\verb|1| as a default)
+{\bf Type :} Integer (\verb|-1| as a default)
 
 {\bf Description :} 
 {An initial vector is specified with this parameter.}
@@ -1246,8 +1246,8 @@ NInterAll      36
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$. The relation  $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{jilk\sigma_2\sigma_1\sigma_3\sigma_4}^{\dag}$ is also allowed. A program is terminated when the above relations are broken.
-It is noted that a term of Hermitian conjugate for $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$ should be inputted as $I_{ijkl\sigma_4\sigma_3\sigma_2\sigma_1}$ $c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}$.
+\item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$. A program is terminated when the above relations are broken.
+It is noted that a term of Hermitian conjugate for $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$ should be inputted as $I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}$ $c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}$.
 \item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
 \item A program is terminated, when components of on-site interactions are double counted.
 \item A program is terminated, when $[$int01$]$ is different from the total number of generalized two body interactions defined in this file.
