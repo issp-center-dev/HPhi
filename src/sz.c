@@ -151,7 +151,11 @@ int sz
   }
   else{ 
     sprintf(sdt, cFileNameSzTimeKeep, X->Def.CDataFileHead);
+    #ifdef _OPENMP
     num_threads  = omp_get_max_threads();
+    #else
+    num_threads=1;
+    #endif
     childfopenMPI(sdt,"a", &fp);
     fprintf(fp, "num_threads==%d\n",num_threads);
     fclose(fp);
