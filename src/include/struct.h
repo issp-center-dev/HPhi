@@ -31,6 +31,7 @@ struct DefineList{
   int k_exct;				  	/**< Read from Calcmod in readdef */
   int LanczosEps; 				/**< log(10 base) of the convergence threshold. Read from Calcmod in readdef */
   int  LanczosTarget;				/**< Which eigenstate is used to check convergence. Read from Calcmod in readdef. */
+  int read_hacker; 				
   int  READ;    /**< */
   int  WRITE;    /**< */
   long int global_off;  /**< */

@@ -427,6 +427,8 @@ int ReadDefFileNInt(
 
       double dtmp;
       
+
+      X->read_hacker=0;
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
 	if(*ctmp2 == '\n') continue;
 	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
@@ -474,6 +476,9 @@ int ReadDefFileNInt(
 	}	
 	else if(strcmp(ctmp, "ExpecInterval")==0){
 	  ExpecInterval=(int)dtmp;
+	}	
+	else if(strcmp(ctmp, "hacker")==0){
+	  X->read_hacker=(int)dtmp;
 	}	
 	else{
 	  exitMPI(-1);

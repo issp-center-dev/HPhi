@@ -408,7 +408,8 @@ int sz
     case Spin:
       // this part can not be parallelized
       if(X->Def.iFlgGeneralSpin==FALSE){
-        hacker = 2;
+        hacker = X->Def.read_hacker;
+	fprintf(stdoutMPI, " DEBUG:hacker=%d\n", hacker);
 // using hacker's delight
         if(hacker        ==  1){
           icnt    = 1;
@@ -967,7 +968,7 @@ int child_omp_sz_spin_hacker(
   
 // using hacker's delight
   ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
-  fprintf(stdoutMPI, " ia=%ld :%d %d: ihfbit=%d \n", ia,X->Def.Ne,tmp_num_up,ihfbit);
+  //fprintf(stdoutMPI, " ia=%ld :%d %d: ihfbit=%d \n", ia,X->Def.Ne,tmp_num_up,ihfbit);
 
   list_1[ja+jb] = ia+ib*ihfbit;
   list_2_1[ia]  = ja;
@@ -977,7 +978,7 @@ int child_omp_sz_spin_hacker(
   if(ia!=0){
     ia = snoob(ia);
     while(ia < ihfbit){
-      fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
+      //fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
       list_1[ja+jb]    = ia+ib*ihfbit;
       list_2_1[ia]     = ja;
       list_2_2[ib]     = jb;
