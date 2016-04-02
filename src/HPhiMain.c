@@ -118,6 +118,7 @@ int main(int argc, char* argv[]){
     FinalizeMPI();
     return 0;
   }
+
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
@@ -126,6 +127,7 @@ int main(int argc, char* argv[]){
   }	  
   fprintf(stdoutMPI,  cProFinishDefFiles);
   
+
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind, &X.Bind.Boost);
   /*-----------------------------------------------------*/
@@ -157,6 +159,7 @@ int main(int argc, char* argv[]){
   if(!HPhiTrans(&(X.Bind))==0){
     exitMPI(-1);
   }
+
 
   if(!sz(&(X.Bind))==0){
     exitMPI(-1);
