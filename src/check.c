@@ -278,13 +278,13 @@ int check(struct BindStruct *X){
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
-    fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
+    //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     break;
   case Spin:
   case SpinGC:
     if(X->Def.iFlgGeneralSpin==FALSE){
-      fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
+      //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
       fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
     }
     break;

@@ -409,12 +409,9 @@ int sz
       // this part can not be parallelized
       if(X->Def.iFlgGeneralSpin==FALSE){
         hacker = X->Def.read_hacker;
-	//fprintf(stdoutMPI, " DEBUG:myrank=%d, hacker=%d, \n",myrank,hacker);
-        //fprintf(stdoutMPI, " Ne=%ld ihfbit=%ld sdim=%ld\n", X->Def.Ne,ihfbit,X->Check.sdim);
-	//printf(" DEBUG:myrank=%d, hacker=%d, \n",myrank,hacker);
-        printf(" rank=%d:Ne=%ld ihfbit=%ld sdim=%ld\n", myrank,X->Def.Ne,ihfbit,X->Check.sdim);
-// using hacker's delight
-        if(hacker        ==  1){
+        //printf(" rank=%d:Ne=%ld ihfbit=%ld sdim=%ld\n", myrank,X->Def.Ne,ihfbit,X->Check.sdim);
+// using hacker's delight only + no open mp 
+        if(hacker        ==  -1){
           icnt    = 1;
           tmp_pow = 1;
           tmp_i   = 0;
@@ -446,7 +443,7 @@ int sz
           }
           icnt = icnt-1;
 // old version + hacker's delight
-        }else if(hacker  ==  2){
+        }else if(hacker  ==  1){
 	  jb = 0;
 	  for(ib=0;ib<X->Check.sdim;ib++){
 	    list_jb[ib]=jb;
@@ -469,7 +466,7 @@ int sz
           for(ib=0;ib<X->Check.sdim;ib++){
 	    icnt+=child_omp_sz_spin_hacker(ib,ihfbit,N,X);
 	  }
-          printf(" rank=%d:Ne=%d icnt=%ld :idim_max=%ld N=%d\n", myrank,X->Def.Ne,icnt,X->Check.idim_max,N);
+          //printf(" rank=%d ib=%ld:Ne=%d icnt=%ld :idim_max=%ld N=%d\n", myrank,ib,X->Def.Ne,icnt,X->Check.idim_max,N);
 // old version
         }else if(hacker  ==  0){
 	  jb = 0;
@@ -970,23 +967,25 @@ int child_omp_sz_spin_hacker(
   tmp_num_up   = num_up;
   
 // using hacker's delight
-  ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
-  //fprintf(stdoutMPI, " ia=%ld :%d %d: ihfbit=%d \n", ia,X->Def.Ne,tmp_num_up,ihfbit);
+  if(tmp_num_up<=X->Def.Ne){ // do not exceed Ne
+    ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
+    if(ia<ihfbit ){          // do not exceed Ne
+      list_1[ja+jb] = ia+ib*ihfbit;
+      list_2_1[ia]  = ja;
+      list_2_2[ib]  = jb;
+      ja           += 1;
 
-  list_1[ja+jb] = ia+ib*ihfbit;
-  list_2_1[ia]  = ja;
-  list_2_2[ib]  = jb;
-  ja           += 1;
-
-  if(ia!=0){
-    ia = snoob(ia);
-    while(ia < ihfbit){
-      //fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
-      list_1[ja+jb]    = ia+ib*ihfbit;
-      list_2_1[ia]     = ja;
-      list_2_2[ib]     = jb;
-      ja+=1;
-      ia = snoob(ia);
+      if(ia!=0){
+        ia = snoob(ia);
+        while(ia < ihfbit){
+          //fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
+          list_1[ja+jb]    = ia+ib*ihfbit;
+          list_2_1[ia]     = ja;
+          list_2_2[ib]     = jb;
+          ja+=1;
+          ia = snoob(ia);
+        }
+      }
     }
   }
   ja=ja-1;
