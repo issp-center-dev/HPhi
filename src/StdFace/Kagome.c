@@ -369,18 +369,23 @@ void StdFace_Kagome(struct StdIntList *StdI, char *model)
 */
 void StdFace_Kagome_Boost(struct StdIntList *StdI)
 {
-  int isite, ipivot;
+  int isite, ipivot, i1, i2;
   int ktrans, kintr;
   double LargeValue0, S;
   FILE *fp;
 
-  StdFace_RequiredVal_i("L", StdI->L);
-  StdFace_RequiredVal_i("W", StdI->W);
-  StdFace_NotUsed_i("a0W", StdI->a0W);
-  StdFace_NotUsed_i("a0L", StdI->a0L);
-  StdFace_NotUsed_i("a1W", StdI->a1W);
-  StdFace_NotUsed_i("a1L", StdI->a1L);
-  StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
+  if (StdI->a0L != 0 || StdI->a1W != 0) {
+    fprintf(stdout, "\nERROR ! (a0W, a0L, a1W, a1L) can not be used with SpinGCBoost.\n\n");
+    exitMPI(-1);
+  }
+  for (i1 = 0; i1 < 3; i1++) {
+    for (i2 = 0; i2 < 3; i2++) {
+      if (abs(StdI->Jp[i1][i2]) > 1.0e-8) {
+        fprintf(stdout, "\nERROR ! J' can not be used with SpinGCBoost.\n\n");
+        exitMPI(-1);
+      }
+    }
+  }
   /*
   Magnetic field
   */

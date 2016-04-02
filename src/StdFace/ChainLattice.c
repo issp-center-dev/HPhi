@@ -231,11 +231,11 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   fprintf(fp, "%d  # Number of type of J\n", 2);
   fprintf(fp, "# J 1\n");
   fprintf(fp, "%25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J[0][0], 0.25 * StdI->J[0][1], 0.25 * StdI->J[0][2]);
+    0.25 * StdI->J0[0][0], 0.25 * StdI->J0[0][1], 0.25 * StdI->J0[0][2]);
   fprintf(fp, "%25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J[1][0], 0.25 * StdI->J[1][1], 0.25 * StdI->J[1][2]);
+    0.25 * StdI->J0[1][0], 0.25 * StdI->J0[1][1], 0.25 * StdI->J0[1][2]);
   fprintf(fp, "%25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J[2][0], 0.25 * StdI->J[2][1], 0.25 * StdI->J[2][2]);
+    0.25 * StdI->J0[2][0], 0.25 * StdI->J0[2][1], 0.25 * StdI->J0[2][2]);
   fprintf(fp, "# J 2\n");
   fprintf(fp, "%25.15e %25.15e %25.15e\n",
     0.25 * StdI->Jp[0][0], 0.25 * StdI->Jp[0][1], 0.25 * StdI->Jp[0][2]);
