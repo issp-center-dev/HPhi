@@ -46,110 +46,83 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   /**/
   StdI->NsiteUC = 1;
   /**/
-  StdFace_RequiredVal_i("L", StdI->L);
-  StdFace_RequiredVal_i("W", StdI->W);
-  StdFace_PrintVal_d("a", &StdI->a, 2.0);
+  fprintf(stdout, "  @ Lattice Size & Shape\n\n");
+  /*
+  StdFace_PrintVal_d("a", &StdI->a, 1.0);
   StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
   StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
   StdFace_PrintVal_d("Wx", &StdI->Wx, StdI->a0);
   StdFace_PrintVal_d("Wy", &StdI->Wy, 0.0);
   StdFace_PrintVal_d("Lx", &StdI->Lx, 0.0);
   StdFace_PrintVal_d("Ly", &StdI->Ly, StdI->a1);
-  StdFace_PrintVal_i("a0W", &StdI->a0W, StdI->W);
-  StdFace_PrintVal_i("a0L", &StdI->a0L, 0);
-  StdFace_PrintVal_i("a1W", &StdI->a1W, 0);
-  StdFace_PrintVal_i("a1L", &StdI->a1L, StdI->L);
-  /**/
-  StdFace_InitSite2D(StdI, fp);
+  */
+  StdI->a0 = 1.0; StdI->a1 = 1.0;
+  StdFace_InitSite2D(StdI, fp,
+    StdI->a0, 0.0, 0.0, StdI->a1);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
+  /**/
+  fprintf(stdout, "\n  @ Hamiltonian \n\n");
+  StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);
+  StdFace_NotUsed_J("J1'", StdI->J1pAll, StdI->J1p);
+  StdFace_NotUsed_J("J2'", StdI->J2pAll, StdI->J2p);
+  StdFace_NotUsed_c("t2", StdI->t2);
+  StdFace_NotUsed_d("t1'", StdI->t1p);
+  StdFace_NotUsed_d("t2'", StdI->t2p);
+  StdFace_NotUsed_d("V2", StdI->V2);
+  StdFace_NotUsed_d("V1'", StdI->V1p);
+  StdFace_NotUsed_d("V2'", StdI->V2p);
+  StdFace_NotUsed_d("K", StdI->K);
   /**/
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
     StdFace_PrintVal_d("h", &StdI->h, 0.0);
     StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
+    StdFace_InputSpinNN(StdI, StdI->J0, StdI->J0All, "J0");
+    StdFace_InputSpinNN(StdI, StdI->J1, StdI->J1All, "J1");
+    StdFace_InputSpin(StdI, StdI->Jp, StdI->JpAll, "J'");
     /**/
-    StdFace_PrintVal_d("J", &StdI->JAll, 1.0);
-    StdFace_PrintVal_d("Jx", &StdI->J[0][0], StdI->JAll);
-    StdFace_PrintVal_d("Jy", &StdI->J[1][1], StdI->JAll);
-    StdFace_PrintVal_d("Jz", &StdI->J[2][2], StdI->JAll);
-    StdFace_PrintVal_d("Jxy", &StdI->J[0][1], 0.0);
-    StdFace_PrintVal_d("Jxz", &StdI->J[0][2], 0.0);
-    StdFace_PrintVal_d("Jyz", &StdI->J[1][2], 0.0);
-    StdFace_PrintVal_d("Jyx", &StdI->J[1][0], StdI->J[0][1]);
-    StdFace_PrintVal_d("Jzx", &StdI->J[2][0], StdI->J[0][2]);
-    StdFace_PrintVal_d("Jzy", &StdI->J[2][1], StdI->J[1][2]);
-    /**/
-    StdFace_PrintVal_dd("J0yx", &StdI->J0[1][0], StdI->J0[0][1], StdI->J[1][0]);
-    StdFace_PrintVal_dd("J0zx", &StdI->J0[2][0], StdI->J0[0][2], StdI->J[2][0]);
-    StdFace_PrintVal_dd("J0zy", &StdI->J0[2][1], StdI->J0[1][2], StdI->J[2][1]);
-    StdFace_PrintVal_dd("J0x", &StdI->J0[0][0], StdI->J0All, StdI->J[0][0]);
-    StdFace_PrintVal_dd("J0y", &StdI->J0[1][1], StdI->J0All, StdI->J[1][1]);
-    StdFace_PrintVal_dd("J0z", &StdI->J0[2][2], StdI->J0All, StdI->J[2][2]);
-    StdFace_PrintVal_d("J0xy", &StdI->J0[0][1], StdI->J[0][1]);
-    StdFace_PrintVal_d("J0xz", &StdI->J0[0][2], StdI->J[0][2]);
-    StdFace_PrintVal_d("J0yz", &StdI->J0[1][2], StdI->J[1][2]);
-    /**/
-    StdFace_PrintVal_dd("J1yx", &StdI->J1[1][0], StdI->J1[0][1], StdI->J[1][0]);
-    StdFace_PrintVal_dd("J1zx", &StdI->J1[2][0], StdI->J1[0][2], StdI->J[2][0]);
-    StdFace_PrintVal_dd("J1zy", &StdI->J1[2][1], StdI->J1[1][2], StdI->J[2][1]);
-    StdFace_PrintVal_dd("J1x", &StdI->J1[0][0], StdI->J1All, StdI->J[0][0]);
-    StdFace_PrintVal_dd("J1y", &StdI->J1[1][1], StdI->J1All, StdI->J[1][1]);
-    StdFace_PrintVal_dd("J1z", &StdI->J1[2][2], StdI->J1All, StdI->J[2][2]);
-    StdFace_PrintVal_d("J1xy", &StdI->J1[0][1], StdI->J[0][1]);
-    StdFace_PrintVal_d("J1xz", &StdI->J1[0][2], StdI->J[0][2]);
-    StdFace_PrintVal_d("J1yz", &StdI->J1[1][2], StdI->J[1][2]);
-    /**/
-    StdFace_PrintVal_d("J'", &StdI->JpAll, 0.0);
-    StdFace_PrintVal_d("J'x", &StdI->Jp[0][0], StdI->JpAll);
-    StdFace_PrintVal_d("J'y", &StdI->Jp[1][1], StdI->JpAll);
-    StdFace_PrintVal_d("J'z", &StdI->Jp[2][2], StdI->JpAll);
-    StdFace_PrintVal_d("J'xy", &StdI->Jp[0][1], 0.0);
-    StdFace_PrintVal_d("J'xz", &StdI->Jp[0][2], 0.0);
-    StdFace_PrintVal_d("J'yz", &StdI->Jp[1][2], 0.0);
-    StdFace_PrintVal_d("J'yx", &StdI->Jp[1][0], StdI->Jp[0][1]);
-    StdFace_PrintVal_d("J'zx", &StdI->Jp[2][0], StdI->Jp[0][2]);
-    StdFace_PrintVal_d("J'zy", &StdI->Jp[2][1], StdI->Jp[1][2]);
-    /**/
-    StdFace_NotUsed_d("J2", StdI->J2All);
-    StdFace_NotUsed_d("K", StdI->K);
+    StdFace_NotUsed_d("mu", StdI->mu);
+    StdFace_NotUsed_d("U", StdI->U);
+    StdFace_NotUsed_c("t", StdI->t);
+    StdFace_NotUsed_c("t0", StdI->t0);
+    StdFace_NotUsed_c("t1", StdI->t1);
+    StdFace_NotUsed_c("t'", StdI->tp);
+    StdFace_NotUsed_d("V", StdI->V);
+    StdFace_NotUsed_d("V0", StdI->V0);
+    StdFace_NotUsed_d("V1", StdI->V1);
+    StdFace_NotUsed_d("V'", StdI->Vp);
   }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
-    StdFace_PrintVal_c("t", &StdI->t, 1.0);
-    StdFace_PrintVal_c("t0", &StdI->t0, StdI->t);
-    StdFace_PrintVal_c("t1", &StdI->t1, StdI->t);
-    StdFace_PrintVal_d("V", &StdI->V, 0.0);
-    StdFace_PrintVal_d("V0", &StdI->V0, StdI->V);
-    StdFace_PrintVal_d("V1", &StdI->V1, StdI->V);
+    StdFace_InputHopp(StdI, &StdI->t0, "t0");
+    StdFace_InputHopp(StdI, &StdI->t1, "t1");
     StdFace_PrintVal_c("t'", &StdI->tp, 0.0);
+    StdFace_InputCoulombV(StdI, &StdI->V0, "V0");
+    StdFace_InputCoulombV(StdI, &StdI->V1, "V1");
     StdFace_PrintVal_d("V'", &StdI->Vp, 0.0);
     /**/
-    StdFace_NotUsed_c("t2", StdI->t2);
-    StdFace_NotUsed_d("V2", StdI->V2);
+    StdFace_NotUsed_J("J0", StdI->J0All, StdI->J0);
+    StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
+    StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
+    StdFace_NotUsed_d("h", StdI->h);
+    StdFace_NotUsed_d("Gamma", StdI->Gamma);
+    StdFace_NotUsed_d("D", StdI->D[2][2]);
 
     if (strcmp(StdI->model, "hubbard") == 0 ) {
       StdFace_NotUsed_i("2S", StdI->S2);
-      StdFace_NotUsed_d("J", StdI->JAll);
+      StdFace_NotUsed_J("J", StdI->JAll, StdI->J);
     }/*if (strcmp(StdI->model, "hubbard") == 0 )*/
     else {
       StdFace_PrintVal_i("2S", &StdI->S2, 1);
-      StdFace_PrintVal_d("J", &StdI->JAll, 1.0);
-      StdFace_PrintVal_d("Jx", &StdI->J[0][0], StdI->JAll);
-      StdFace_PrintVal_d("Jy", &StdI->J[1][1], StdI->JAll);
-      StdFace_PrintVal_d("Jz", &StdI->J[2][2], StdI->JAll);
-      StdFace_PrintVal_d("Jxy", &StdI->J[0][1], 0.0);
-      StdFace_PrintVal_d("Jxz", &StdI->J[0][2], 0.0);
-      StdFace_PrintVal_d("Jyz", &StdI->J[1][2], 0.0);
-      StdFace_PrintVal_d("Jyx", &StdI->J[1][0], StdI->J[0][1]);
-      StdFace_PrintVal_d("Jzx", &StdI->J[2][0], StdI->J[0][2]);
-      StdFace_PrintVal_d("Jzy", &StdI->J[2][1], StdI->J[1][2]);
+      StdFace_InputSpin(StdI, StdI->J, StdI->JAll, "J");
     }/*if (model != "hubbard")*/
  
   }/*if (model != "spin")*/
+  fprintf(stdout, "\n  @ Numerical conditions\n\n");
   /*
-  Local Spin
+   Local Spin
   */
   StdI->nsite = StdI->NsiteUC * StdI->NCell;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
@@ -168,13 +141,13 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
    The number of Transfer & Interaction
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->NCell * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->NCell * (1/*D*/ + 2/*J*/ + 2/*J'*/)
+    StdI->ntrans = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*D*/ + 2/*J*/ + 2/*J'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (1/*mu*/ + 4/*t*/ + 4/*t'*/);
-    StdI->nintr = StdI->NCell * (1/*U*/ + 4 * (2/*V*/ + 2/*V'*/));
+    StdI->ntrans = StdI->NCell * 2/*spin*/ * (StdI->NsiteUC/*mu*/ + 4/*t*/ + 4/*t'*/);
+    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (2/*V*/ + 2/*V'*/));
 
     if (strcmp(StdI->model, "kondo") == 0 )  StdI->nintr += 
       StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);

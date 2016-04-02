@@ -70,20 +70,23 @@ H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 \end{align}
 同じくカノニカル集団のスピン模型 ($\{\sigma_1, \sigma_2\}={x, y, z}$)
 \begin{align}
-H &= -h \sum_{i} S_{i z} + \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
+H &= -h \sum_{i} S_{i z} - \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
 \nonumber \\
 &+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,
 \label{fml4_1_spin}
 \end{align}
-カノニカル集団の近藤格子模型
+カノニカル集団の近藤格子模型(Hubbard模型と同様に$U$と$J$を入れることも可能)
 \begin{align}
-H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma} 
+H &= - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma} 
 - t \sum_{\langle i j \rangle \sigma} c^\dagger_{i \sigma} c_{j \sigma} 
 + \frac{J}{2} \sum_{i} \left\{
 S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 + S_{i}^{-} c_{i \uparrow}^\dagger c_{i \downarrow}
-+ S_{i z} (n_{i \uparrow} - n_{i \downarrow})
-\right\},
++ S_{i z} (n_{i \uparrow} - n_{i \downarrow})\right\}
+\nonumber \\
+& +  \sum_{i} U n_{i \uparrow} n_{i \downarrow}
++ \sum_{i \neq j} V_{i j} n_{i} n_{j}
+,
 \label{fml4_1_kondo}
 \end{align}
 グランドカノニカル集団のフェルミ粒子Hubbard模型[式(\ref{fml4_1_hubbard})]、
@@ -116,7 +119,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 2次元三角格子(Fig. \ref{fig_chap04_1_lattice}(c))、
 2次元異方的蜂の巣格子(Fig. \ref{fig_chap04_1_honeycomb})、
 梯子格子(Fig. \ref{fig_ladder})、
-カゴメ格子(\verb|method="SpinGCBoost"|の時のみ。Fig. \ref{fig_kagome})に対応します。
+カゴメ格子(Fig. \ref{fig_kagome})に対応します。
 
 \verb|method="SpinGCBoost"|では、
 このうち\verb|"Chain Lattice"|, \verb|"Honeycomb Lattice"|, 
@@ -173,7 +176,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=10cm]{../figs/kagome.eps}
+    \includegraphics[width=15cm]{../figs/kagome.eps}
     \caption{カゴメ格子の模式図. 
     }
     \label{fig_kagome}
@@ -189,64 +192,92 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
   \end{center}
 \end{figure}
 
+{\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
+
+{\bf 説明 :} スピン模型での局在スピンの大きさ$S$の2倍を指定します。
+(例/ $1/2$スピンならば\verb|1|)
+
 \end{itemize}
 
 \subsection{格子に関するパラメーター}
-\begin{figure}[!htbp]
-  \begin{center}
-    \includegraphics[width=8cm]{../figs/chap04_1_unitlattice.eps}
-    \caption{格子形状に関する概念図。ピンクのベクトルが第1次元方向を定義するベクトル、グリーンのベクトルが第2次元方向を定義するベクトルをそれぞれ表す。
-    }
-    \label{fig_chap04_1_unitlattice}
-  \end{center}
-\end{figure}
+
+\subsubsection{1次元鎖[Fig. \ref{fig_chap04_1_lattice}(a)]}
 
 \begin{itemize}
-
-\item \verb|a0L|
-
-{\bf 形式 :} 自然数 (デフォルト値は0)
-
-{\bf 説明 :} 第1次元方向を定義するベクトルのx成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
-
-\item \verb|a0W|
-
-{\bf 形式 :} 自然数 (デフォルト値は1)
-
-{\bf 説明 :} 第1次元方向を定義するベクトルのy成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
-
-\item \verb|a1L|
-
-{\bf 形式 :} 自然数  (デフォルト値は1)
-
-{\bf 説明 :} 第2次元方向を定義するベクトルのx成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
-
-\item \verb|a1W|
-
-{\bf 形式 :} 自然数  (デフォルト値は0)
-
-{\bf 説明 :} 第2次元方向を定義するベクトルのy成分を指定します(Fig. \ref{fig_chap04_1_unitlattice})。
 
 \item \verb|L|
 
 {\bf 形式 :} 自然数
 
-{\bf 説明 :} 第1次元方向の格子点数を指定します。
+{\bf 説明 :} 鎖の長さを指定します. 
+
+\end{itemize}
+
+\subsubsection{梯子格子(Fig. \ref{fig_ladder})}
+
+\begin{itemize}
+
+\item \verb|L|
+
+{\bf 形式 :} 自然数
+
+{\bf 説明 :} 梯子の長さを指定します. 
 
 \item \verb|W|
 
 {\bf 形式 :} 自然数
 
-{\bf 説明 :} 第2次元方向の格子点数を指定します。
-\verb|lattice = "Chain Lattice"|の時には使われないため、
-指定をしないでください。
+{\bf 説明 :} 梯子の本数を指定します. 
 
-\item \verb|a|
-
-{\bf 形式 :} 実数 (デフォルト値は\verb|1.0|)
-
-{\bf 説明 :} 格子定数を指定します。
 \end{itemize}
+
+\begin{figure}[!htbp]
+  \begin{center}
+    \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.eps}
+    \caption{三角格子において、${\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)$とした場合のセル形状。
+      ${\vec a}_0$(マゼンタ)および${\vec a}_1$(グリーン)
+      で囲まれた部分(サイト数は20)が計算するセルとなる。
+    }
+    \label{fig_chap04_1_unitlattice}
+  \end{center}
+\end{figure}
+
+\subsubsection{矩形格子[Fig. \ref{fig_chap04_1_lattice}(b)]、 
+三角格子[Fig. \ref{fig_chap04_1_lattice}(c)]、
+蜂の巣格子(Fig. \ref{fig_chap04_1_honeycomb})、
+カゴメ格子(Fig. \ref{fig_kagome})}
+
+これらの格子では、標準の単位胞(図中の黒の破線を参照)を用いて格子形状を指定する方法と、
+それらとは別の方向に格子ベクトルを取る方法が選択できます。
+ただし、\verb|model=SpinGCBoost|の時には前者のみが使えます。
+また、両方を指定した場合には$\HPhi$を終了します。
+
+\begin{itemize}
+
+\item \verb|W|, \verb|L|
+
+{\bf 形式 :} 自然数
+
+{\bf 説明 :} 標準の単位胞の並び方を指定します。
+
+\item \verb|a0W|, \verb|a0L|, \verb|a1W|, \verb|a1L|
+
+{\bf 形式 :} 自然数
+
+{\bf 説明 :} 格子を指定する2本のベクトル(${\vec a}_0, {\vec a}_1$)
+を指定します (Fig. \ref{fig_chap04_1_unitlattice})。
+これらのベクトルは標準の並進ベクトルを基底とした座標(Fractional coordinate)
+で指定されます。
+
+\end{itemize}
+
+スタンダードモードで出力される\verb|lattice.gp|というファイルを使うと、
+自分の意図した通りの格子のとり方になっているかどうかを確かめる事が出来ます。
+このファイルは、次のようにして\verb|gnuplot|に読み込ませることが出来ます。
+\begin{verbatim}
+$ gnuplot lattice.gp
+\end{verbatim}
+
 
 \subsection{保存量に関するパラメーター}
 
@@ -268,156 +299,215 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 のときには指定しないでください。
 \end{itemize}
 
-\subsection{模型用パラメーター}
-デフォルト値は特に記載されていないものについては0に設定してあります。相互作用はパラメータで指定された相互作用が加算された形で定義され、模型毎にTable~\ref{table_interactions}で記載されるパラメータの指定が可能です。型が複素数のパラメータは「実部, 虚部」の形式で指定し、実数の場合には「実部」で指定が可能です。
-\begin{table}[hbp]
-  \begin{tabular}{|l||c|c|c|c|c|c|c|c|} \hline
-    相互作用 & 1次元鎖 & 正方格子 & 三角格子 & 蜂の巣格子 & カゴメ格子 & 梯子格子\\ \hline \hline
-     \verb|J|, \verb|t|, \verb|V| & $\circ$	 & - 	& - 	& - 	& - 	& -\\ \hline
-    \verb|J'|, \verb|t'|, \verb|V'| & $\circ$	 & $\circ$	& $\circ$ 	& $\circ$ 	& $\circ$ & - \\ \hline
-    \verb|J0|, \verb|t0|, \verb|V0| & -	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
-    \verb|J1|, \verb|t1|, \verb|V1| & -         	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
-    \verb|J2|, \verb|t2|, \verb|V2|  & -         	 & -    	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
-    \verb|J1'|, \verb|t1'|, \verb|V1'| & -		 &-	 	& -		& -		& -		& $\circ$ 	\\ \hline
-    \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
-    \verb|J3'|, \verb|t3'|, \verb|V3'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
-  \end{tabular}
-   \caption{各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。}
-    \label{table_interactions}
-\end{table}
+\subsection{ハミルトニアンの各項の係数}
 
-\subsubsection{Hubbard模型パラメーター}
+デフォルト値は特に記載されていないものについては0に設定してあります。
+型が複素数のパラメータは「実部, 虚部」(間に``,'')の形式で指定し、
+実数の場合には「実部」で指定が可能です。
+
+\subsubsection{局所項}
 
 \begin{itemize}
+
 \item \verb|mu|
 
 {\bf 形式 :} 実数
 
-{\bf 説明 :} 化学ポテンシャルを指定します。
-
-\item \verb|t|, \verb|t'|
-
-{\bf 形式 :} 複素数
-
-{\bf 説明 :} サイト間のホッピング(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
-
-\item \verb|t0|, \verb|t1|, \verb|t2|
-
-{\bf 形式 :} 複素数
-
-{\bf 説明 :} 最近接サイト間のホッピング
-(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}参照)を指定します。
-
-\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
-
-{\bf 形式 :} 複素数
-
-{\bf 説明 :} 梯子格子でのホッピング(Fig. \ref{fig_ladder}参照)を指定します。
+{\bf 説明 :} Hubbardおよび近藤格子模型での化学ポテンシャルを指定します。
 
 \item \verb|U|
 
 {\bf 形式 :} 実数
 
-{\bf 説明 :} オンサイトクーロン積分を指定します。
+{\bf 説明 :} Hubbardおよび近藤格子模型でのオンサイトクーロン積分を指定します。
 
-\item \verb|V|, \verb|V'|
-
-{\bf 形式 :} 実数
-
-{\bf 説明 :} それぞれ最近接および次近接サイト間オフサイトクーロン積分
-(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
-
-\item \verb|V0|, \verb|V1|, \verb|V2|
+\item \verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|, 
+  \verb|Jyx|, \verb|Jxz|, \verb|Jzx|, \verb|Jyz|, \verb|Jzy|
 
 {\bf 形式 :} 実数
 
-{\bf 説明 :} 最近接サイト間のオフサイトクーロン積分
-(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}参照)を指定します。
+{\bf 説明 :} 近藤格子模型での、局在電子と遍歴電子のスピン結合を指定します。
+また対角項について, \verb|Jx, Jy, Jz|を指定する代わりに、パラメータ\verb|J|を指定すると
+\verb|Jx = Jy = Jz = J|が代入されます。
+\verb|J|を指定した上で\verb|Jx|, \verb|Jy|, \verb|Jz|を指定した場合は$\HPhi$を終了します。
 
-\item \verb|V1'|,  \verb|V2'|, \verb|V3'|
+\item \verb|h|, \verb|Gamma|, \verb|D|
+
+{\bf 形式 :} 実数
+
+{\bf 説明 :} スピン模型での縦磁場、横磁場、異方性パラメータを指定します。
+ただし異方性パラメータについては、\verb|model=SpinGCBoost|で
+
+\end{itemize}
+
+下記の非局所項は、梯子格子の場合とそれ以外(１次元鎖、矩形格子、三角格子、蜂の巣格子、カゴメ格子)
+の場合で指定の仕方が異なります。
+また、各格子で指定可能なパラメーターをTable \ref{table_interactions}に表します。
+
+\begin{table}[hbp]
+  \begin{tabular}{|l||c|c|c|c|c|c|c|c|} \hline
+    相互作用 & 1次元鎖 & 矩形格子 & 三角格子 & 蜂の巣格子 & カゴメ格子 & 梯子格子\\ 
+    \hline \hline
+     \verb|J|, \verb|t|, \verb|V|(省略形) & $\circ$	 & $\circ$ & $\circ$ & $\circ$ & $\circ$ & -\\ 
+     \hline
+    \verb|J'|, \verb|t'|, \verb|V'| & $\circ$	 & $\circ$	& $\circ$ 	& $\circ$ 	& $\circ$ & - \\ 
+    \hline
+    \verb|J0|, \verb|t0|, \verb|V0| & $\circ$  & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ 
+    \hline
+    \verb|J1|, \verb|t1|, \verb|V1| & -         	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ 
+    \hline
+    \verb|J2|, \verb|t2|, \verb|V2|  & -         	 & -    	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\
+    \hline
+    \verb|J1'|, \verb|t1'|, \verb|V1'| & -		 &-	 	& -		& -		& -		& $\circ$\\
+    \hline
+    \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ 
+    \hline
+\end{tabular}
+   \caption{各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。}
+    \label{table_interactions}
+\end{table}
+
+\subsubsection{非局所項[梯子格子 (Fig. \ref{fig_ladder})]}
+
+\begin{itemize}
+\item \verb|t0|,  \verb|t1|,  \verb|t1'|,  \verb|t2|,  \verb|t2'|
+
+{\bf 形式 :} 複素数
+
+{\bf 説明 :} 梯子格子でのホッピング(Fig. \ref{fig_ladder}参照)を指定します。
+
+\item \verb|V0|,  \verb|V1|,  \verb|V1'|,  \verb|V2|,  \verb|V2'|
 
 {\bf 形式 :} 実数
 
 {\bf 説明 :} 梯子格子でのオフサイトクーロン積分
 (Fig. \ref{fig_ladder}参照)を指定します。
 
-\end{itemize}
-
-\subsubsection{スピン模型パラメーター}
-\begin{itemize}
-\item \verb|2S|
-
-{\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
-
-{\bf 説明 :} 局在スピンの大きさ$S$の2倍を指定します。
-(例/ $1/2$スピンならば\verb|1|)
-
-\item \verb|h|, \verb|Gamma|, \verb|D|
+\item \verb|J0x|, \verb|J0y|, \verb|J0z|, \verb|J0xy|, 
+  \verb|J0yx|, \verb|J0xz|, \verb|J0zx|, \verb|J0yz|, \verb|J0zy|
+\item \verb|J1x|, \verb|J1y|, \verb|J1z|, \verb|J1xy|, 
+  \verb|J1yx|, \verb|J1xz|, \verb|J1zx|, \verb|J1yz|, \verb|J1zy|
+\item \verb|J1'x|, \verb|J1'y|, \verb|J1'z|, \verb|J1'xy|, 
+  \verb|J1'yx|, \verb|J1'xz|, \verb|J1'zx|, \verb|J1'yz|, \verb|J1'zy|
+\item \verb|J2x|, \verb|J2y|, \verb|J2z|, \verb|J2xy|, 
+  \verb|J2yx|, \verb|J2xz|, \verb|J2zx|, \verb|J2yz|, \verb|J2zy|
+\item \verb|J2'x|, \verb|J2'y|, \verb|J2'z|, \verb|J2'xy|, 
+  \verb|J2'yx|, \verb|J2'xz|, \verb|J2'zx|, \verb|J2'yz|, \verb|J2'zy|
 
 {\bf 形式 :} 実数
 
-{\bf 説明 :} それぞれ縦磁場、横磁場、異方性パラメータを指定します。
-
-\item \verb|J|, \verb|J'|, \verb|J|$\sigma_1$, \verb|J|$\sigma_1\sigma_2$,  \verb|J'|$\sigma_1$, \verb|J'|$\sigma_1\sigma_2$\\
-  (ただし、\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\}かつ${\sigma_1\neq \sigma_2}$)
-
-{\bf 形式 :} 実数
-
-{\bf 説明 :} 最近接サイト間のスピン結合(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
-
-\item \verb|J0|, \verb|J1|, \verb|J2|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J2|$\sigma_1$,
- \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$ \\
-  (ただし、\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\}かつ${\sigma_1\neq \sigma_2}$)
-
-{\bf 形式 :} 実数
-
-{\bf 説明 :} 異方的蜂の巣格子の最近接サイト間のスピン結合(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder})を指定します。
-
-\item \verb|J1'|, \verb|J2'|, \verb|J3'|, \verb|J1'|$\sigma_1$, \verb|J2'|$\sigma_1$, \verb|J3'|$\sigma_1$, \verb|J1'|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$, \verb|J3'|${\sigma_1\sigma_2}$\\
- (ただし、\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\}かつ${\sigma_1\neq \sigma_2}$)
-
-
-{\bf 形式 :} 実数
-
-{\bf 説明 :} 梯子格子でのスピン結合(Fig. \ref{fig_ladder}参照)を指定します。
+{\bf 説明 :} 梯子格子でのスピン相互作用
+(Fig. \ref{fig_ladder}参照)を指定します。
+また対角項について、例えば\verb|J0x, J0y, J0z|を指定する代わりに
+パラメータ\verb|J0|を指定すると
+\verb|J0x = J0y = J0z = J0|が代入されます。
+\verb|J0|を指定した上で\verb|J0x, J0y, J0z|等も指定した場合は$\HPhi$を終了します。
+\verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|についても同様です。
 
 \end{itemize}
 
-\subsubsection{近藤格子模型パラメーター}
+\subsubsection{非局所項 [梯子格子以外(Figs. \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
+\ref{fig_kagome})]}
+
 \begin{itemize}
-\item \verb|mu|
+\item \verb|t0|,  \verb|t1|, \verb|t2|
+
+{\bf 形式 :} 複素数
+
+{\bf 説明 :} Hubbardおよび近藤格子模型での、最近接サイト間の各方向のホッピングを指定します。
+また、ホッピングのボンド方向依存性がない場合は\verb|t0|,  \verb|t1|, \verb|t2|を
+別々に指定する代わりにパラメータ\verb|t|を指定すると、\verb|t0 = t1 = t2 = t|が代入されます。
+\verb|t|と\verb|t0|等の両方が指定された場合には$\HPhi$を終了します。
+
+\item \verb|V0|,  \verb|V1|, \verb|V2|
 
 {\bf 形式 :} 実数
 
-{\bf 説明 :} 化学ポテンシャルを指定します。
+{\bf 説明 :} Hubbardおよび近藤格子模型での、最近接サイト間のCoulomb積分を指定します。
+また、サイト間Coulomb積分のボンド方向依存性がない場合は\verb|V0|,  \verb|V1|, \verb|V2|を
+別々に指定する代わりにパラメータ\verb|V|を指定すると、\verb|V0 = V1 = V2 = V|が代入されます。
+\verb|V|と\verb|V0|等の両方が指定された場合には$\HPhi$を終了します。
 
-\item \verb|t|, \verb|t'|
+\item \verb|J0x|, \verb|J0y|, \verb|J0z|, \verb|J0xy|, 
+  \verb|J0yx|, \verb|J0xz|, \verb|J0zx|, \verb|J0yz|, \verb|J0zy|
+\item \verb|J1x|, \verb|J1y|, \verb|J1z|, \verb|J1xy|, 
+  \verb|J1yx|, \verb|J1xz|, \verb|J1zx|, \verb|J1yz|, \verb|J1zy|
+\item \verb|J2x|, \verb|J2y|, \verb|J2z|, \verb|J2xy|, 
+  \verb|J2yx|, \verb|J2xz|, \verb|J2zx|, \verb|J2yz|, \verb|J2zy|
+
+{\bf 形式 :} 実数
+
+{\bf 説明 :} スピン模型での、最近接サイト間のスピン相互作用を指定します。
+また対角項について、例えば\verb|J0x, J0y, J0z|を指定する代わりに
+パラメータ\verb|J0|を指定すると
+\verb|J0x = J0y = J0z = J0|が代入されます。
+\verb|J0|を指定した上で\verb|J0x, J0y, J0z|等も指定した場合は$\HPhi$を終了します。
+\verb|J1|, \verb|J2|についても同様です。
+
+スピン間相互作用のボンド方向依存性がない場合には、
+\verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|, 
+\verb|Jyx|, \verb|Jxz|, \verb|Jzx|, \verb|Jyz|, \verb|Jzy|
+を指定すると、\verb|J0x = J1x = J2x = Jx|のようにすべてのボンド方向のスピン間相互作用に
+同じ値を代入することが出来ます。
+\verb|Jx|$\sim$\verb|Jzy|系列のどれかと\verb|J0x|$\sim$\verb|J2zy|系列のどれかを両方指定した
+場合には$\HPhi$を終了します。
+以下に最近接間スピン相互作用の指定方法の例を挙げます。
+
+\begin{itemize}
+
+\item ボンド方向依存性、スピン方向依存性、相互作用の非対角成分($J_{x y}$等)がない場合
+
+\verb|J|を指定
+
+\item ボンド方向依存性、相互作用の非対角成分がなく、スピン方向依存性がある場合
+
+\verb|Jx, Jy, Jz|のうち\verb|0|でないものを指定
+
+\item ボンド方向依存性がなく、スピン方向依存性、相互作用の非対角成分がある場合
+
+\verb|Jx, Jy, Jz, Jxy, Jyz, Jxz, Jyx, Jzy, Jzx|のうち\verb|0|でないものを指定
+
+\item スピン方向依存性、相互作用の非対角成分がなく、ボンド方向依存性がある場合
+
+\verb|J0, J1, J2|のうち\verb|0|でないものを指定
+
+\item スピン方向依存性がなく、ボンド方向依存性、相互作用の非対角成分がある場合
+
+\verb|J0x, J0y, J0z, J1x, J1y, J1z, J2x, J2y, J2z|のうち\verb|0|でないものを指定
+
+\item ボンド方向依存性、スピン方向依存性、相互作用の非対角成分がある場合
+
+\verb|J0x|$\sim$\verb|J2zy|のすべてのうち\verb|0|でないものを指定
+
+\end{itemize}
+\item \verb|t'|
 
 {\bf 形式 :} 複素数
 
-{\bf 説明 :} サイト間のホッピング(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}参照)を指定します。
+{\bf 説明 :} Hubbardおよび近藤格子模型での、次近接サイト間の各方向のホッピングを指定します。
 
-\item \verb|t0|, \verb|t1|, \verb|t2|
+\item \verb|V'|
 
-{\bf 形式 :} 複素数
+{\bf 形式 :} 実数
 
-{\bf 説明 :} 最近接サイト間のホッピング
-(Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}参照)を指定します。
+{\bf 説明 :} Hubbardおよび近藤格子模型での、次近接サイト間のCoulomb積分を指定します。
 
-\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
+\item \verb|J'x|, \verb|J'y|, \verb|J'z|, \verb|J'xy|, 
+  \verb|J'yx|, \verb|J'xz|, \verb|J'zx|, \verb|J'yz|, \verb|J'zy|
 
-{\bf 形式 :} 複素数
+{\bf 形式 :} 実数
 
-{\bf 説明 :} 梯子格子でのホッピング(Fig. \ref{fig_ladder}参照)を指定します。
-
-\item \verb|J|
-
-{\bf 形式 :} 実数(デフォルト値は\verb|0.0|)
-
-{\bf 説明 :} 局在電子と遍歴電子のスピン結合を指定します。
+{\bf 説明 :} スピン模型での、次近接サイト間のスピン相互作用を指定します。
+ただし、蜂の巣格子またはカゴメ格子で\verb|model=SpinGCBoost|の場合には
+まだ対応していません。
+また対角項について、\verb|J'x, J'y, J'z|を指定する代わりに
+パラメータ\verb|J'|を指定すると
+\verb|J'x = J'y = J'z = J'|が代入されます。
+\verb|J'|を指定した上で\verb|J'x, J'y, J'z|も指定した場合は$\HPhi$を終了します。
 \end{itemize}
 
 \subsection{計算条件のパラメーター}
+
 \begin{itemize}
 \item \verb|Lanczos_max|
 
@@ -478,48 +568,49 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 {\bf 形式 :} 実数(デフォルト値は下記参照)
 
-{\bf 説明 :} (TPQ法のみで使用)$l-\hat{H}/N_{s}$の$l$。各模型、格子ごとにデフォルト値が次のように変わります。
+{\bf 説明 :} (TPQ法のみで使用)$l-\hat{H}/N_{s}$の$l$。
+ハミルトニアンの各項の係数の絶対値の総和をサイト数で割ったものがデフォルト値になります。
 
-\begin{itemize}
+%\begin{itemize}
 
-\item Hubbard模型[式(\ref{fml4_1_hubbard})]
+%\item Hubbard模型[式(\ref{fml4_1_hubbard})]
 
-カノニカル集団
-\begin{align}
-l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}}
-+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'| 
-\end{align}
-グランドカノニカル集団
-\begin{align}
-l = 2|\mu|
-+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'|
-\end{align}
+%カノニカル集団
+%\begin{align}
+%l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}}
+%+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'| 
+%\end{align}
+%グランドカノニカル集団
+%\begin{align}
+%l = 2|\mu|
+%+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'|
+%\end{align}
 
-\item スピン模型[式(\ref{fml4_1_spin})]
+%\item スピン模型[式(\ref{fml4_1_spin})]
 
-カノニカル集団
-\begin{align}
-l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + S |\Gamma| + S^2 |D|
-+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) +\frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|)
-\end{align}
-グランドカノニカル集団
-\begin{align}
-l = S |h| + S |\Gamma| + S^2 |D|
-+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) + \frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|) 
-\end{align}
-
-\item 近藤格子模型[式(\ref{fml4_1_kondo})]
-
-カノニカル集団
-\begin{align}
-l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{S}{2} |J| 
-\end{align}
-グランドカノニカル集団
-\begin{align}
-l = 2|\mu| + 2 z |t| + \frac{S}{2} |J| 
-\end{align}
-
-\end{itemize}
+%カノニカル集団
+%\begin{align}
+%l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + S |\Gamma| + S^2 |D|
+%+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) +\frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|)
+%\end{align}
+%グランドカノニカル集団
+%\begin{align}
+%l = S |h| + S |\Gamma| + S^2 |D|
+%+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) + \frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|) 
+%\end{align}
+%
+%\item 近藤格子模型[式(\ref{fml4_1_kondo})]
+%
+%カノニカル集団
+%\begin{align}
+%l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{S}{2} |J| 
+%\end{align}
+%グランドカノニカル集団
+%\begin{align}
+%l = 2|\mu| + 2 z |t| + \frac{S}{2} |J| 
+%\end{align}
+%
+%\end{itemize}
 
 \item \verb|NumAve|
 

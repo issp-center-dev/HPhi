@@ -168,7 +168,7 @@ static void StoreWithCheckDup_s(
   char *value /**< [out] */)
 {
   if (strcmp(value, "****") != 0){
-    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     exitMPI(-1);
   }
   else{
@@ -189,7 +189,7 @@ static void StoreWithCheckDup_i(
   int *value /**< [out] */)
 {
   if (*value != 9999){
-    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     exitMPI(-1);
   }
   else{
@@ -211,7 +211,7 @@ static void StoreWithCheckDup_d(
 {
 
   if (*value != 9999.9){
-    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     exitMPI(-1);
   }
   else{
@@ -237,7 +237,7 @@ static void StoreWithCheckDup_c(
   double value_r, value_i;
 
   if (creal(*value) != 9999.9) {
-    fprintf(stderr, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     exitMPI(-1);
   }
   else {
@@ -554,7 +554,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
   int iCalcType, iCalcModel, ioutputmode2;
 
   if (strcmp(StdI->method, "****") == 0){
-    fprintf(stderr, "ERROR ! Method is NOT specified !\n");
+    fprintf(stdout, "ERROR ! Method is NOT specified !\n");
     exitMPI(-1);
   }
   else if (strcmp(StdI->method, "lanczos") == 0) iCalcType = 0;
@@ -563,7 +563,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
     strcmp(StdI->method, "alldiag") == 0 ||
     strcmp(StdI->method, "direct") == 0 ) iCalcType = 2;
   else{
-    fprintf(stderr, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
+    fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
     exitMPI(-1);
   }
 
@@ -876,11 +876,11 @@ static void UnsupportedSystem(
   char *model /**< [in]*/, 
   char *lattice /**< [in]*/)
 {
-  fprintf(stderr, "\nSorry, specified combination, \n");
-  fprintf(stderr, "    MODEL : %s  \n", model);
-  fprintf(stderr, "  LATTICE : %s, \n", lattice);
-  fprintf(stderr, "is unsupported in the STANDARD MODE...\n");
-  fprintf(stderr, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
+  fprintf(stdout, "\nSorry, specified combination, \n");
+  fprintf(stdout, "    MODEL : %s  \n", model);
+  fprintf(stdout, "  LATTICE : %s, \n", lattice);
+  fprintf(stdout, "is unsupported in the STANDARD MODE...\n");
+  fprintf(stdout, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
   exitMPI(-1);
 }
 
@@ -918,7 +918,7 @@ static int CheckOutputMode(struct StdIntList *StdI)
     fprintf(stdout, "      ioutputmode = %-10d\n", StdI->ioutputmode);
   }
   else{
-    fprintf(stderr, "\n ERROR ! Unsupported OutPutMode : %s\n", StdI->outputmode);
+    fprintf(stdout, "\n ERROR ! Unsupported OutPutMode : %s\n", StdI->outputmode);
     exitMPI(-1);
   }
 }
@@ -985,7 +985,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
 
   fprintf(stdout, "\n######  Standard Intarface Mode STARTS  ######\n");
   if ((fp = fopen(fname, "r")) == NULL) {
-    fprintf(stderr, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
+    fprintf(stdout, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
     exitMPI(-1);
   }
   else {
@@ -1008,7 +1008,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     keyword = strtok(ctmpline, "=");
     value = strtok(NULL, "=");
     if (value == NULL) {
-      fprintf(stderr, "\n  ERROR !  \"=\" is NOT found !\n\n");
+      fprintf(stdout, "\n  ERROR !  \"=\" is NOT found !\n\n");
       exitMPI(-1);
     }
     TrimSpaceQuote(keyword);
@@ -1137,7 +1137,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Wx);
     else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Wy);
     else {
-      fprintf(stderr, "ERROR ! Unsupported Keyword !\n");
+      fprintf(stdout, "ERROR ! Unsupported Keyword !\n");
       exitMPI(-1);
     }
   }
@@ -1210,8 +1210,6 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
       || strcmp(StdI.lattice, "ladderlattice") == 0) StdFace_Ladder_Boost(&StdI);
     else UnsupportedSystem(StdI.model, StdI.lattice);
   }
-  /**/
-  fprintf(stdout, "\n");
   /**/
   CheckModPara(&StdI);
   CheckOutputMode(&StdI);

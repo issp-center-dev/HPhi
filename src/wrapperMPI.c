@@ -81,8 +81,9 @@ void FinalizeMPI(){
 void exitMPI(int errorcode /**< [in]*/)
 {
   int ierr;
+  fflush(stdout);
 #ifdef MPI
-  fprintf(stderr,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
+  /*fprintf(stderr,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");*/
   fprintf(stdout,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
   ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
   ierr = MPI_Finalize();

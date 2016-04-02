@@ -37,14 +37,18 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
   int iL, iW, iLp1;
   int ktrans, kintr;
   FILE *fp;
+  fprintf(stdout, "\n");
+  fprintf(stdout, "#######  Parameter Summary  #######\n");
+  fprintf(stdout, "\n");
   /*
   Initialize Cell
   */
   fp = fopen("lattice.gp", "w");
   /**/
   StdI->NsiteUC = 2;
-  StdFace_RequiredVal_i("L", StdI->L);
-  StdFace_RequiredVal_i("W", StdI->W);
+  /**/
+  fprintf(stdout, "  @ Lattice Size & Shape\n\n");
+  /*
   StdFace_PrintVal_d("a", &StdI->a, 1.0);
   StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
   StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
@@ -52,112 +56,80 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
   StdFace_PrintVal_d("Wy", &StdI->Wy, 0.0);
   StdFace_PrintVal_d("Lx", &StdI->Lx, StdI->a1 * 0.5);
   StdFace_PrintVal_d("Ly", &StdI->Ly, StdI->a1 * 0.5 * sqrt(3.0));
-  StdFace_PrintVal_i("a0W", &StdI->a0W, StdI->W);
-  StdFace_PrintVal_i("a0L", &StdI->a0L, 0);
-  StdFace_PrintVal_i("a1W", &StdI->a1W, 0);
-  StdFace_PrintVal_i("a1L", &StdI->a1L, StdI->L);
-  /**/
-  StdFace_InitSite2D(StdI, fp);
+  */
+  StdI->a0 = 1.0; StdI->a1 = 1.0;
+  StdFace_InitSite2D(StdI, fp,
+    StdI->a0, 0.0, StdI->a1 * 0.5, StdI->a1 * 0.5 * sqrt(3.0));
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
   StdI->tau[1][0] = 1.0 / 3.0; StdI->tau[1][1] = 1.0 / 3.0;
+  /**/
+  fprintf(stdout, "\n  @ Hamiltonian \n\n");
+  StdFace_NotUsed_J("J1'", StdI->J1pAll, StdI->J1p);
+  StdFace_NotUsed_J("J2'", StdI->J2pAll, StdI->J2p);
+  StdFace_NotUsed_d("t1'", StdI->t1p);
+  StdFace_NotUsed_d("t2'", StdI->t2p);
+  StdFace_NotUsed_d("V1'", StdI->V1p);
+  StdFace_NotUsed_d("V2'", StdI->V2p);
+  StdFace_NotUsed_d("K", StdI->K);
   /**/
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
     StdFace_PrintVal_d("h", &StdI->h, 0.0);
     StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
-    /**/
-    StdFace_PrintVal_d("J", &StdI->JAll, 1.0);
-    StdFace_PrintVal_d("Jx", &StdI->J[0][0], StdI->JAll);
-    StdFace_PrintVal_d("Jy", &StdI->J[1][1], StdI->JAll);
-    StdFace_PrintVal_d("Jz", &StdI->J[2][2], StdI->JAll);
-    StdFace_PrintVal_d("Jxy", &StdI->J[0][1], 0.0);
-    StdFace_PrintVal_d("Jxz", &StdI->J[0][2], 0.0);
-    StdFace_PrintVal_d("Jyz", &StdI->J[1][2], 0.0);
-    StdFace_PrintVal_d("Jyx", &StdI->J[1][0], StdI->J[0][1]);
-    StdFace_PrintVal_d("Jzx", &StdI->J[2][0], StdI->J[0][2]);
-    StdFace_PrintVal_d("Jzy", &StdI->J[2][1], StdI->J[1][2]);
-    /**/
-    StdFace_PrintVal_dd("J0yx", &StdI->J0[1][0], StdI->J0[0][1], StdI->J[1][0]);
-    StdFace_PrintVal_dd("J0zx", &StdI->J0[2][0], StdI->J0[0][2], StdI->J[2][0]);
-    StdFace_PrintVal_dd("J0zy", &StdI->J0[2][1], StdI->J0[1][2], StdI->J[2][1]);
-    StdFace_PrintVal_dd("J0x", &StdI->J0[0][0], StdI->J0All, StdI->J[0][0]);
-    StdFace_PrintVal_dd("J0y", &StdI->J0[1][1], StdI->J0All, StdI->J[1][1]);
-    StdFace_PrintVal_dd("J0z", &StdI->J0[2][2], StdI->J0All, StdI->J[2][2]);
-    StdFace_PrintVal_d("J0xy", &StdI->J0[0][1], StdI->J[0][1]);
-    StdFace_PrintVal_d("J0xz", &StdI->J0[0][2], StdI->J[0][2]);
-    StdFace_PrintVal_d("J0yz", &StdI->J0[1][2], StdI->J[1][2]);
-    /**/
-    StdFace_PrintVal_dd("J1yx", &StdI->J1[1][0], StdI->J1[0][1], StdI->J[1][0]);
-    StdFace_PrintVal_dd("J1zx", &StdI->J1[2][0], StdI->J1[0][2], StdI->J[2][0]);
-    StdFace_PrintVal_dd("J1zy", &StdI->J1[2][1], StdI->J1[1][2], StdI->J[2][1]);
-    StdFace_PrintVal_dd("J1x", &StdI->J1[0][0], StdI->J1All, StdI->J[0][0]);
-    StdFace_PrintVal_dd("J1y", &StdI->J1[1][1], StdI->J1All, StdI->J[1][1]);
-    StdFace_PrintVal_dd("J1z", &StdI->J1[2][2], StdI->J1All, StdI->J[2][2]);
-    StdFace_PrintVal_d("J1xy", &StdI->J1[0][1], StdI->J[0][1]);
-    StdFace_PrintVal_d("J1xz", &StdI->J1[0][2], StdI->J[0][2]);
-    StdFace_PrintVal_d("J1yz", &StdI->J1[1][2], StdI->J[1][2]);
-    /**/
-    StdFace_PrintVal_dd("J2yx", &StdI->J2[1][0], StdI->J2[0][1], StdI->J[1][0]);
-    StdFace_PrintVal_dd("J2zx", &StdI->J2[2][0], StdI->J2[0][2], StdI->J[2][0]);
-    StdFace_PrintVal_dd("J2zy", &StdI->J2[2][1], StdI->J2[1][2], StdI->J[2][1]);
-    StdFace_PrintVal_dd("J2x", &StdI->J2[0][0], StdI->J2All, StdI->J[0][0]);
-    StdFace_PrintVal_dd("J2y", &StdI->J2[1][1], StdI->J2All, StdI->J[1][1]);
-    StdFace_PrintVal_dd("J2z", &StdI->J2[2][2], StdI->J2All, StdI->J[2][2]);
-    StdFace_PrintVal_d("J2xy", &StdI->J2[0][1], StdI->J[0][1]);
-    StdFace_PrintVal_d("J2xz", &StdI->J2[0][2], StdI->J[0][2]);
-    StdFace_PrintVal_d("J2yz", &StdI->J2[1][2], StdI->J[1][2]);
-    /**/
-    StdFace_PrintVal_d("J'", &StdI->JpAll, 0.0);
-    StdFace_PrintVal_d("J'x", &StdI->Jp[0][0], StdI->JpAll);
-    StdFace_PrintVal_d("J'y", &StdI->Jp[1][1], StdI->JpAll);
-    StdFace_PrintVal_d("J'z", &StdI->Jp[2][2], StdI->JpAll);
-    StdFace_PrintVal_d("J'xy", &StdI->Jp[0][1], 0.0);
-    StdFace_PrintVal_d("J'xz", &StdI->Jp[0][2], 0.0);
-    StdFace_PrintVal_d("J'yz", &StdI->Jp[1][2], 0.0);
-    StdFace_PrintVal_d("J'yx", &StdI->Jp[1][0], StdI->Jp[0][1]);
-    StdFace_PrintVal_d("J'zx", &StdI->Jp[2][0], StdI->Jp[0][2]);
-    StdFace_PrintVal_d("J'zy", &StdI->Jp[2][1], StdI->Jp[1][2]);
-    /**/
+    StdFace_InputSpinNN(StdI, StdI->J0, StdI->J0All, "J0");
+    StdFace_InputSpinNN(StdI, StdI->J1, StdI->J1All, "J1");
+    StdFace_InputSpinNN(StdI, StdI->J2, StdI->J2All, "J2");
+    StdFace_InputSpin(StdI, StdI->Jp, StdI->JpAll, "J'");
     StdFace_NotUsed_d("K", StdI->K);
+    /**/
+    StdFace_NotUsed_d("mu", StdI->mu);
+    StdFace_NotUsed_d("U", StdI->U);
+    StdFace_NotUsed_c("t", StdI->t);
+    StdFace_NotUsed_c("t0", StdI->t0);
+    StdFace_NotUsed_c("t1", StdI->t1);
+    StdFace_NotUsed_c("t2", StdI->t2);
+    StdFace_NotUsed_c("t'", StdI->tp);
+    StdFace_NotUsed_d("V", StdI->V);
+    StdFace_NotUsed_d("V0", StdI->V0);
+    StdFace_NotUsed_d("V1", StdI->V1);
+    StdFace_NotUsed_d("V2", StdI->V2);
+    StdFace_NotUsed_d("V'", StdI->Vp);
   }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
-    StdFace_PrintVal_c("t", &StdI->t, 1.0);
-    StdFace_PrintVal_c("t0", &StdI->t0, StdI->t);
-    StdFace_PrintVal_c("t1", &StdI->t1, StdI->t);
-    StdFace_PrintVal_c("t2", &StdI->t2, StdI->t);
-    StdFace_PrintVal_d("V", &StdI->V, 0.0);
-    StdFace_PrintVal_d("V0", &StdI->V0, StdI->V);
-    StdFace_PrintVal_d("V1", &StdI->V1, StdI->V);
-    StdFace_PrintVal_d("V2", &StdI->V2, StdI->V);
+    StdFace_InputHopp(StdI, &StdI->t0, "t0");
+    StdFace_InputHopp(StdI, &StdI->t1, "t1");
+    StdFace_InputHopp(StdI, &StdI->t2, "t2");
     StdFace_PrintVal_c("t'", &StdI->tp, 0.0);
+    StdFace_InputCoulombV(StdI, &StdI->V0, "V0");
+    StdFace_InputCoulombV(StdI, &StdI->V1, "V1");
+    StdFace_InputCoulombV(StdI, &StdI->V2, "V2");
     StdFace_PrintVal_d("V'", &StdI->Vp, 0.0);
     /**/
+    StdFace_NotUsed_J("J0", StdI->J0All, StdI->J0);
+    StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
+    StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);
+    StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
+    StdFace_NotUsed_d("h", StdI->h);
+    StdFace_NotUsed_d("Gamma", StdI->Gamma);
+    StdFace_NotUsed_d("D", StdI->D[2][2]);
 
     if (strcmp(StdI->model, "hubbard") == 0 ) {
       StdFace_NotUsed_i("2S", StdI->S2);
-      StdFace_NotUsed_d("J", StdI->JAll);
+      StdFace_NotUsed_J("J", StdI->JAll, StdI->J);
     }/*if (strcmp(StdI->model, "hubbard") == 0 )*/
     else {
       StdFace_PrintVal_i("2S", &StdI->S2, 1);
-      StdFace_PrintVal_d("J", &StdI->JAll, 1.0);
-      StdFace_PrintVal_d("Jx", &StdI->J[0][0], StdI->JAll);
-      StdFace_PrintVal_d("Jy", &StdI->J[1][1], StdI->JAll);
-      StdFace_PrintVal_d("Jz", &StdI->J[2][2], StdI->JAll);
-      StdFace_PrintVal_d("Jxy", &StdI->J[0][1], 0.0);
-      StdFace_PrintVal_d("Jxz", &StdI->J[0][2], 0.0);
-      StdFace_PrintVal_d("Jyz", &StdI->J[1][2], 0.0);
-      StdFace_PrintVal_d("Jyx", &StdI->J[1][0], StdI->J[0][1]);
-      StdFace_PrintVal_d("Jzx", &StdI->J[2][0], StdI->J[0][2]);
-      StdFace_PrintVal_d("Jzy", &StdI->J[2][1], StdI->J[1][2]);
+      StdFace_InputSpin(StdI, StdI->J, StdI->JAll, "J");
     }/*if (model != "hubbard")*/
 
   }/*if (model != "spin")*/
-   /*
+  fprintf(stdout, "\n  @ Numerical conditions\n\n");
+  /*
    Local Spin
-   */
+  */
   StdI->nsite = StdI->NsiteUC * StdI->NCell;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
   StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
@@ -175,13 +147,13 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
   The number of Transfer & Interaction
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = 2 * StdI->NCell * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->NCell * (2/*D*/ + 3/*J*/ + 6/*J'*/)
+    StdI->ntrans = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*D*/ + 3/*J*/ + 6/*J'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (2/*mu*/ + 6/*t*/ + 12/*t'*/);
-    StdI->nintr = StdI->NCell * (2/*U*/ + 4 * (3/*V*/ + 6/*V'*/));
+    StdI->ntrans = StdI->NCell * 2/*spin*/ * (StdI->NsiteUC/*mu*/ + 6/*t*/ + 12/*t'*/);
+    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (3/*V*/ + 6/*V'*/));
 
     if (strcmp(StdI->model, "kondo") == 0 )  StdI->nintr +=
       StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
@@ -359,58 +331,64 @@ void StdFace_Honeycomb_Boost(struct StdIntList *StdI)
   double LargeValue0, S;
   FILE *fp;
 
-  StdI->NsiteUC = 2;
+  StdFace_RequiredVal_i("L", StdI->L);
+  StdFace_RequiredVal_i("W", StdI->W);
+  StdFace_NotUsed_i("a0W", StdI->a0W);
+  StdFace_NotUsed_i("a0L", StdI->a0L);
+  StdFace_NotUsed_i("a1W", StdI->a1W);
+  StdFace_NotUsed_i("a1L", StdI->a1L);
+  StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
   /*
   Magnetic field
   */
   fp = fopen("boost.def", "w");
   fprintf(fp, "# Magnetic field\n"); 
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    -0.5 * StdI->Gamma, 0.0, 0.0, 0.0, -0.5 *StdI->h, 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    -0.5 * StdI->Gamma, 0.0, -0.5 *StdI->h);
   /*
    Interaction
   */
   fprintf(fp, "%d  # Number of type of J\n", 3);
   fprintf(fp, "# J 0\n"); 
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-      0.25 * StdI->J0[0][0], 0.0, 0.25 * StdI->J0[0][1], 0.0, 0.25 * StdI->J0[0][2], 0.0);
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J0[0][1], 0.0, 0.25 * StdI->J0[1][1], 0.0, 0.25 * StdI->J0[1][2], 0.0);
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J0[0][2], 0.0, 0.25 * StdI->J0[1][2], 0.0, 0.25 * StdI->J0[2][2], 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+      0.25 * StdI->J0[0][0], 0.25 * StdI->J0[0][1], 0.25 * StdI->J0[0][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J0[0][1], 0.25 * StdI->J0[1][1], 0.25 * StdI->J0[1][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J0[0][2], 0.25 * StdI->J0[1][2], 0.25 * StdI->J0[2][2]);
   fprintf(fp, "# J 1\n");
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J1[0][0], 0.0, 0.25 * StdI->J1[0][1], 0.0, 0.25 * StdI->J1[0][2], 0.0);
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J1[0][1], 0.0, 0.25 * StdI->J1[1][1], 0.0, 0.25 * StdI->J1[1][2], 0.0);
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J1[0][2], 0.0, 0.25 * StdI->J1[1][2], 0.0, 0.25 * StdI->J1[2][2], 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J1[0][0], 0.25 * StdI->J1[0][1], 0.25 * StdI->J1[0][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J1[0][1], 0.25 * StdI->J1[1][1], 0.25 * StdI->J1[1][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J1[0][2], 0.25 * StdI->J1[1][2], 0.25 * StdI->J1[2][2]);
   fprintf(fp, "# J 2\n");
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J2[0][0], 0.0, 0.25 * StdI->J2[0][1], 0.0, 0.25 * StdI->J2[0][2], 0.0);
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J2[0][1], 0.0, 0.25 * StdI->J2[1][1], 0.0, 0.25 * StdI->J2[1][2], 0.0);
-  fprintf(fp, "%25.15e %25.15e %25.15e %25.15e %25.15e %25.15e\n",
-    0.25 * StdI->J2[0][2], 0.0, 0.25 * StdI->J2[1][2], 0.0, 0.25 * StdI->J2[2][2], 0.0);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J2[0][0], 0.25 * StdI->J2[0][1], 0.25 * StdI->J2[0][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J2[0][1], 0.25 * StdI->J2[1][1], 0.25 * StdI->J2[1][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n",
+    0.25 * StdI->J2[0][2], 0.25 * StdI->J2[1][2], 0.25 * StdI->J2[2][2]);
   /*
    Topology
   */
   if (StdI->S2 != 1) {
-    fprintf(stderr, "\n ERROR! S2 must be 1 in Boost. \n\n");
+    fprintf(stdout, "\n ERROR! S2 must be 1 in Boost. \n\n");
     exitMPI(-1);
   }
   StdI->ishift_nspin = 3;
   if (StdI->L < 2) {
-    fprintf(stderr, "\n ERROR! L < 2 \n\n");
+    fprintf(stdout, "\n ERROR! L < 2 \n\n");
     exitMPI(-1);
   }
   if (StdI->W % StdI->ishift_nspin != 0) {
-    fprintf(stderr, "\n ERROR! W %% %d != 0 \n\n", StdI->ishift_nspin);
+    fprintf(stdout, "\n ERROR! W %% %d != 0 \n\n", StdI->ishift_nspin);
     exitMPI(-1);
   }
   StdI->num_pivot = 2;
   if (StdI->W != 3) {
-    fprintf(stderr, "DEBUG: W != 3\n");
+    fprintf(stdout, "DEBUG: W != 3\n");
     exitMPI(-1);
   }
   StdI->W = 6;

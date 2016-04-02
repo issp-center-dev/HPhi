@@ -27,6 +27,7 @@
 #include "readdef.h"
 #include "StdFace_main.h"
 #include "wrapperMPI.h"
+#include "splash.h"
 
 /*!
 @mainpage
@@ -87,6 +88,7 @@ int main(int argc, char* argv[]){
     myrank = 0;
     nproc = 1;
     stdoutMPI = stdout;
+    splash();
   }
   else InitializeMPI(argc, argv);
 

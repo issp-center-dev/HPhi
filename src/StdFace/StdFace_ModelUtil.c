@@ -310,9 +310,9 @@ void StdFace_NotUsed_d(
   double val /**< [in]*/)
 {
   if (val < 9999.0) {
-    fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
-    fprintf(stderr, "            Please COMMENT-OUT this line \n");
-    fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
+    fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
+    fprintf(stdout, "            Please COMMENT-OUT this line \n");
+    fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
     exitMPI(-1);
   }
 }
@@ -328,12 +328,46 @@ void StdFace_NotUsed_c(
   double complex val /**< [in]*/)
 {
   if (creal(val) < 9999.0) {
-    fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
-    fprintf(stderr, "            Please COMMENT-OUT this line \n");
-    fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
+    fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
+    fprintf(stdout, "            Please COMMENT-OUT this line \n");
+    fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
     exitMPI(-1);
   }
 }
+
+/**
+*
+* Stop HPhi if variables (real) not used is specified
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_NotUsed_J(
+  char* valname /**< [in] Name of the valiable*/,
+  double JAll /**< [in]*/,
+  double J[3][3] /**< [in]*/)
+{
+  int i1, i2;
+  char Jname[3][3][10];
+
+  sprintf(Jname[0][0], "%sx\0", valname);
+  sprintf(Jname[0][1], "%sxy\0", valname);
+  sprintf(Jname[0][2], "%sxz\0", valname);
+  sprintf(Jname[1][0], "%syx\0", valname);
+  sprintf(Jname[1][1], "%sy\0", valname);
+  sprintf(Jname[1][2], "%syz\0", valname);
+  sprintf(Jname[2][0], "%szx\0", valname);
+  sprintf(Jname[2][1], "%szy\0", valname);
+  sprintf(Jname[2][2], "%sz\0", valname);
+
+  StdFace_NotUsed_d(valname, JAll);
+
+  for (i1 = 0; i1 < 3; i1++) {
+    for (i2 = 0; i2 < 3; i2++) {
+      StdFace_NotUsed_d(Jname[i1][i2], J[i1][i2]);
+    }/*for (j = 0; j < 3; j++)*/
+  }/*for (i = 0; i < 3; i++)*/
+
+ }
 
 /**
  *
@@ -346,9 +380,9 @@ void StdFace_NotUsed_i(
   int val /**< [in]*/)
 {
   if (val != 9999) {
-    fprintf(stderr, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
-    fprintf(stderr, "            Please COMMENT-OUT this line \n");
-    fprintf(stderr, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
+    fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
+    fprintf(stdout, "            Please COMMENT-OUT this line \n");
+    fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
     exitMPI(-1);
   }
 }
@@ -365,7 +399,7 @@ void StdFace_RequiredVal_i(
   int val /**< [in]*/)
 {
   if (val == 9999){
-    fprintf(stderr, "ERROR ! %s is NOT specified !\n", valname);
+    fprintf(stdout, "ERROR ! %s is NOT specified !\n", valname);
     exitMPI(-1);
   }
   else fprintf(stdout, "  %15s = %-3d\n", valname, val);
@@ -410,18 +444,73 @@ void StdFace_FoldSite2D(struct StdIntList *StdI,
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
+void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp,
+  double Wx0, double Wy0, double Lx0, double Ly0)
 {
   int Wmin, Wmax, Lmin, Lmax;
   int iW, iL, ipos;
   int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC;
   double pos[4][2], xmin, xmax, det, offset[2], scale;
-
+  /*
+   check Input parameters
+  */
+  if ((StdI->L != 9999 || StdI->W != 9999)
+    && (StdI->a0L != 9999 || StdI->a0W != 9999 || StdI->a1L != 9999 || StdI->a1W != 9999)) {
+    fprintf(stdout, "\nERROR ! (L, W) and (a0W, a0L, a1W, a1L) conflict !\n\n");
+    exitMPI(-1);
+  }
+  else if (StdI->L != 9999 || StdI->W != 9999) {
+    if (StdI->L == 9999) {
+      fprintf(stdout, "\nERROR ! W is specified, but L is NOT specified !\n\n");
+      exitMPI(-1);
+    }
+    else if (StdI->W == 9999) {
+      fprintf(stdout, "\nERROR ! L is specified, but W is NOT specified !\n\n");
+      exitMPI(-1);
+    }
+    StdFace_PrintVal_i("L", &StdI->L, 1);
+    StdFace_PrintVal_i("W", &StdI->W, 1);
+    StdI->a0W = StdI->W;
+    StdI->a0L = 0;
+    StdI->a1W = 0;
+    StdI->a1L = StdI->L;
+  }
+  else if (StdI->a0L != 9999 || StdI->a0W != 9999 || StdI->a1L != 9999 || StdI->a1W != 9999) {
+    if (StdI->a0W == 9999) {
+      fprintf(stdout, "\nERROR ! a0W is NOT specified !\n\n");
+      exitMPI(-1);
+    }
+    else if (StdI->a0L == 9999) {
+      fprintf(stdout, "\nERROR ! a0L is NOT specified !\n\n");
+      exitMPI(-1);
+    }
+    else if (StdI->a1W == 9999) {
+      fprintf(stdout, "\nERROR ! a1W is NOT specified !\n\n");
+      exitMPI(-1);
+    }
+    else if (StdI->a1L == 9999) {
+      fprintf(stdout, "\nERROR ! a1L is NOT specified !\n\n");
+      exitMPI(-1);
+    }
+    StdFace_PrintVal_i("a0W", &StdI->a0W, 1);
+    StdFace_PrintVal_i("a0L", &StdI->a0L, 1);
+    StdFace_PrintVal_i("a1W", &StdI->a1W, 1);
+    StdFace_PrintVal_i("a1L", &StdI->a1L, 1);
+  }
+  StdI->Wx = Wx0;
+  StdI->Wy = Wy0;
+  StdI->Lx = Lx0;
+  StdI->Ly = Ly0;
+  /*
+   Structure in a cell
+  */
   StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
   for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
     StdI->tau[isiteUC] = (double *)malloc(sizeof(double) * 2);
   }
-
+  /*
+   Calculate reciplocal lattice vectors
+  */
   if (StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W == 0) {
     exitMPI(-1);
   }
@@ -431,7 +520,9 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   StdI->bL0 = - (double)StdI->a1W / det;
   StdI->bW1 = - (double)StdI->a0L / det;
   StdI->bL1 = (double)StdI->a0W / det;
-
+  /*
+   Initialize gnuplot
+  */
   Wmax = 0;
   if (StdI->a0W > Wmax) Wmax = StdI->a0W;
   if (StdI->a1W > Wmax) Wmax = StdI->a1W;
@@ -451,7 +542,9 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   if (StdI->a0L < Lmin) Lmin = StdI->a0L;
   if (StdI->a1L < Lmin) Lmin = StdI->a1L;
   if (StdI->a0L + StdI->a1L < Lmin) Lmin = StdI->a0L + StdI->a1L;
-
+  /*
+   Calculate the number of Unit Cell
+  */
   StdI->Cell = (int **)malloc(sizeof(int*) * (Wmax - Wmin + 1) * (Lmax - Lmin + 1));
   for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++) {
     StdI->Cell[iCell] = (int *)malloc(sizeof(int) * 2);
@@ -601,4 +694,166 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
   else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
+}
+
+void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3], 
+  double J0All, char *J0name) 
+{
+  int i1, i2, i3, i4;
+  char Jname[3][3][10]; 
+  
+  strcpy(Jname[0][0], "x\0");
+  strcpy(Jname[0][1], "xy\0");
+  strcpy(Jname[0][2], "xz\0");
+  strcpy(Jname[1][0], "yx\0");
+  strcpy(Jname[1][1], "y\0");
+  strcpy(Jname[1][2], "yz\0");
+  strcpy(Jname[2][0], "zx\0");
+  strcpy(Jname[2][1], "zy\0");
+  strcpy(Jname[2][2], "z\0");
+
+  if (StdI->JAll < 9999.0 && J0All < 9999.0) {
+    fprintf(stdout, "\n ERROR! J and %s conflict !\n\n", J0name);
+    exitMPI(-1);
+  }
+  for (i1 = 0; i1 < 3; i1++) {
+    for (i2 = 0; i2 < 3; i2++) {
+      if (StdI->JAll < 9999.0 && StdI->J[i1][i2] < 9999.0) {
+        fprintf(stdout, "\n ERROR! J and J%s conflict !\n\n", Jname[i1][i2]);
+        exitMPI(-1);
+      }
+      else if (J0All < 9999.0 && StdI->J[i1][i2] < 9999.0) {
+        fprintf(stdout, "\n ERROR! %s and J%s conflict !\n\n",
+          J0name, Jname[i3][i4]);
+        exitMPI(-1);
+      }
+      else if (J0All < 9999.0 && J0[i1][i2] < 9999.0) {
+        fprintf(stdout, "\n ERROR! %s and %s%s conflict !\n\n", J0name,
+          J0name, Jname[i1][i2]);
+        exitMPI(-1);
+      }
+      else if (J0[i1][i2] < 9999.0 && StdI->JAll < 9999.0) {
+        fprintf(stdout, "\n ERROR! %s%s and J conflict !\n\n",
+          J0name, Jname[i1][i2]);
+        exitMPI(-1);
+      }
+    }/*for (j = 0; j < 3; j++)*/
+  }/*for (i = 0; i < 3; i++)*/
+ 
+  for (i1 = 0; i1 < 3; i1++) {
+    for (i2 = 0; i2 < 3; i2++) {
+      for (i3 = 0; i3 < 3; i3++) {
+        for (i4 = 0; i4 < 3; i4++) {
+          if (J0[i1][i2] < 9999.0 && StdI->J[i3][i4] < 9999.0) {
+            fprintf(stdout, "\n ERROR! %s%s and J%s conflict !\n\n", 
+              J0name, Jname[i1][i2], Jname[i3][i4]);
+            exitMPI(-1);
+          }
+        }/*for (i4 = 0; i4 < 3; i4++)*/
+      }/*for (i3 = 0; i3 < 3; i3++)*/
+    }/*for (j = 0; j < 3; j++)*/
+  }/*for (i = 0; i < 3; i++)*/
+
+  for (i1 = 0; i1 < 3; i1++) {
+    for (i2 = 0; i2 < 3; i2++) {
+      if (J0[i1][i2] < 9999.0)
+        fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
+      else if (StdI->J[i1][i2] < 9999.0) {
+        J0[i1][i2] = StdI->J[i1][i2];
+        fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
+      }
+      else if (i1 == i2 && J0All < 9999.0) {
+        J0[i1][i2] = J0All;
+        fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
+      }
+      else if (i1 == i2 && StdI->JAll < 9999.0) {
+        J0[i1][i2] = StdI->JAll;
+        fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
+      }
+      else {
+        J0[i1][i2] = 0.0;
+      }
+    }/*for (i2 = 0; i2 < 3; i2++)*/
+  }/*for (i = 0; i < 3; i++)*/
+
+}
+
+void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
+  double JpAll, char *Jpname)
+{
+  int i1, i2, i3, i4;
+  char Jname[3][3][10];
+
+  strcpy(Jname[0][0], "x\0");
+  strcpy(Jname[0][1], "xy\0");
+  strcpy(Jname[0][2], "xz\0");
+  strcpy(Jname[1][0], "yx\0");
+  strcpy(Jname[1][1], "y\0");
+  strcpy(Jname[1][2], "yz\0");
+  strcpy(Jname[2][0], "zx\0");
+  strcpy(Jname[2][1], "zy\0");
+  strcpy(Jname[2][2], "z\0");
+
+  for (i1 = 0; i1 < 3; i1++) {
+    for (i2 = 0; i2 < 3; i2++) {
+      if (JpAll < 9999.0 && Jp[i1][i2] < 9999.0) {
+        fprintf(stdout, "\n ERROR! %s and %s%s conflict !\n\n", Jpname,
+          Jpname, Jname[i1][i2]);
+        exitMPI(-1);
+      }
+    }/*for (j = 0; j < 3; j++)*/
+  }/*for (i = 0; i < 3; i++)*/
+
+  for (i1 = 0; i1 < 3; i1++) {
+    for (i2 = 0; i2 < 3; i2++) {
+      if (Jp[i1][i2] < 9999.0)
+        fprintf(stdout, "  %14s%s = %-10.5f\n", Jpname, Jname[i1][i2], Jp[i1][i2]);
+      else if (i1 == i2 && JpAll < 9999.0) {
+        Jp[i1][i2] = JpAll;
+        fprintf(stdout, "  %14s%s = %-10.5f\n", Jpname, Jname[i1][i2], Jp[i1][i2]);
+      }
+      else {
+        Jp[i1][i2] = 0.0;
+      }
+    }/*for (i2 = 0; i2 < 3; i2++)*/
+  }/*for (i = 0; i < 3; i++)*/
+
+}
+
+void StdFace_InputCoulombV(struct StdIntList *StdI, double *V0, char *V0name)
+{
+  
+  if (StdI->V < 9999.0 && *V0 < 9999.0) {
+    fprintf(stdout, "\n ERROR! V and %s conflict !\n\n", V0name);
+    exitMPI(-1);
+  }
+  else if (*V0 < 9999.0)
+    fprintf(stdout, "  %15s = %-10.5f\n", V0name, *V0);
+  else if (StdI->V < 9999.0) {
+    *V0 = StdI->V;
+    fprintf(stdout, "  %15s = %-10.5f\n", V0name, *V0);
+  }
+  else {
+    *V0 = 0.0;
+  }
+
+}
+
+void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name)
+{
+
+  if (creal(StdI->t) < 9999.0 && creal(*t0) < 9999.0) {
+    fprintf(stdout, "\n ERROR! t and %s conflict !\n\n", t0name);
+    exitMPI(-1);
+  }
+  else if (creal(*t0) < 9999.0)
+    fprintf(stdout, "  %15s = %-10.5f\n", t0name, creal(*t0));
+  else if (creal(StdI->t) < 9999.0) {
+    *t0 = StdI->t;
+    fprintf(stdout, "  %15s = %-10.5f\n", t0name, creal(*t0));
+  }
+  else {
+    *t0 = 0.0;
+  }
+
 }
