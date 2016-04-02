@@ -103,7 +103,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
     }
-    u_long_i = 123432 + abs(iv);
+    u_long_i = 123432 + labs(iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
     if(X->Def.iInitialVecType==0){
       for (iproc = 0; iproc < nproc; iproc++) {

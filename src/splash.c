@@ -22,7 +22,7 @@ void splash(){
 
   fprintf(stdoutMPI, "                                                                \n");
   fprintf(stdoutMPI, "      ,ammmmmmmmmmmmmmb,,        Welcome to the                 \n");
-  fprintf(stdoutMPI, "    ,@@` mmmmmmmmmmmmmm ===m                                    \n");
+  fprintf(stdoutMPI, "    ,@@` dm          mb  ===m                                    \n");
   fprintf(stdoutMPI, "  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       \n");
   fprintf(stdoutMPI, " d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    \n");
   fprintf(stdoutMPI, "d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  \n");

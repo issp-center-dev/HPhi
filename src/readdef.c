@@ -772,7 +772,7 @@ int ReadDefFileIdxPara(
 	      return ReadDefFileError(defname);
 	    }
 	    if(isite1==isite2 && isigma1==isigma2){
-	      if(abs(dvalue_im)> eps_CheckImag0){
+	      if(fabs(dvalue_im)> eps_CheckImag0){
 		//NonHermite
 		fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
 		fclose(fp);

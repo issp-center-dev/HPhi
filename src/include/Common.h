@@ -23,7 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "ProgressMessage.h"

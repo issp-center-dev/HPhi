@@ -215,7 +215,7 @@ int CG_EigenVector(struct BindStruct *X){
 	    ,i_itr,itr,difftime(mid,start),fabs(cabs(xb)-1.0));
     fclose(fp_0);
         
-    if(fabs(fabs(xb)-1.0)<eps){
+    if(fabs(cabs(xb)-1.0)<eps){
       childfopenMPI(sdt_1,"a", &fp_0);
       fprintf(fp_0,"number of iterations in inv1:i_itr=%d itr=%d t_itr=%d %lf\n ",
 	      i_itr,itr,t_itr,fabs(cabs(xb)-1.0));
