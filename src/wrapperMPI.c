@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include "wrapperMPI.h"
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <math.h>
 #include <complex.h>
 #include "splash.h"
@@ -50,8 +52,11 @@ void InitializeMPI(int argc, char *argv[]){
 
 #pragma omp parallel default(none) shared(nthreads)
 #pragma omp master
+#ifdef _OPENMP
   nthreads = omp_get_num_threads();
-
+#else
+  nthreads=1;
+#endif
   fprintf(stdoutMPI, "\n\n#####  Parallelization Info.  #####\n\n");
   fprintf(stdoutMPI, "  OpenMP threads : %d\n", nthreads);
   fprintf(stdoutMPI, "  MPI PEs : %d \n\n", nproc);
