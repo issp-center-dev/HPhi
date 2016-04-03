@@ -54,7 +54,7 @@ int expec_energy(struct BindStruct *X){
     break;
   default:
     return -1;
-    break;
+    //break;
   }
 
   i_max=X->Check.idim_max;      

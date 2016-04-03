@@ -78,7 +78,7 @@ int CalcByLanczos(
       }
       break;
     default:
-      fclose(fp);
+      //fclose(fp);
       exitMPI(-1);
     }
  

@@ -209,7 +209,7 @@ int SetDiagonalCoulombIntra
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
-      break;
+      //break;
 
     }/*switch (X->Def.iCalcModel)*/
 
@@ -253,7 +253,7 @@ int SetDiagonalCoulombIntra
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
-      break;
+      //break;
     }
   }
   return 0;

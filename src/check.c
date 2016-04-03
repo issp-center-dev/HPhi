@@ -210,7 +210,7 @@ int check(struct BindStruct *X){
     break;
   default:
     return FALSE;
-    break;
+    //break;
   }
 
   //fprintf(stdoutMPI, "  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);
