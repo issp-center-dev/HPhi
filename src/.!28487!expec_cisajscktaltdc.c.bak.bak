@@ -1,0 +1,137 @@
+/* HPhi  -  Quantum Lattice Model Simulator */
+/* Copyright (C) 2015 The University of Tokyo */
+
+/* This program is free software: you can redistribute it and/or modify */
+/* it under the terms of the GNU General Public License as published by */
+/* the Free Software Foundation, either version 3 of the License, or */
+/* (at your option) any later version. */
+
+/* This program is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the */
+/* GNU General Public License for more details. */
+
+/* You should have received a copy of the GNU General Public License */
+/* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+#include "mltply.h"
+#include "FileIO.h"
+#include "bitcalc.h"
+#include "expec_cisajscktaltdc.h"
+#include "wrapperMPI.h"
+#include "mltplyMPI.h"
+
+/**
+ * @file   expec_cisajscktaltdc.c
+ * 
+ * @brief  File for calculating two-body green's functions
+ * 
+ * @version 0.2
+ * @details add function to treat the case of general spin
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * 
+ */
+
+/** 
+ * @brief Parent function to calculate two-body green's functions
+ * 
+ * @param X data list for calculation
+ * @param vec eigenvectors
+ * 
+ * @retval 0 normally finished
+ * @retval -1 unnormally finished
+ * @note the origin of function's name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
+ *
+ * @version 0.2
+ * @details add function to treat the case of general spin
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int expec_cisajscktaltdc
+(
+ struct BindStruct *X,
+ double complex *vec
+ )
+{
+
+  FILE *fp;
+  char sdt[D_FileNameMax];
+
+  long unsigned int i,j;
+  long unsigned int irght,ilft,ihfbit;
+  long unsigned int isite1,isite2,isite3,isite4;
+  long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
+  long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4;
+  long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
+  long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
+  long unsigned int isA_up, isB_up;
+  long unsigned int is1_up, is2_up;
+  long unsigned int Asum,Bsum,Adiff,Bdiff;
+  long unsigned int tmp_off=0;
+  long unsigned int tmp_off_2=0;
+  long unsigned int list1_off=0;
+  int tmp_sgn, num1, num2;
+  double complex tmp_V;
+  double complex dam_pr;
+  long int i_max;
+  
+  //For TPQ
+  int step=0;
+  int rand_i=0;
+  //For Kond
+  double complex dmv;
+
+  
+  i_max=X->Check.idim_max;
+  X->Large.mode=M_CORR;
+  tmp_V    = 1.0+0.0*I;
+  
+  if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
+    return -1;
+  }
+ 
+  dam_pr=0.0;
+
+  //Make File Name for output
+  switch (X->Def.iCalcType){
+  case Lanczos:
+    if(X->Def.St==0){
+      sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
+      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
+    }else if(X->Def.St==1){
+      sprintf(sdt, cFileName2BGreen_CG, X->Def.CDataFileHead);
+      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
+    }
+    break;
+
+  case TPQCalc:
+    step=X->Def.istep;
+    rand_i=X->Def.irand;
+    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGStart, "a", rand_i, step);
+    sprintf(sdt, cFileName2BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
+    break;
+
+  case FullDiag:
+    sprintf(sdt, cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
+    break;
+  }
+
+  if(!childfopenMPI(sdt, "w", &fp)==0){
+    return -1;
+  }
+
+
+  switch(X->Def.iCalcModel){
+  case HubbardGC:
+    for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
+      org_isite1   = X->Def.CisAjtCkuAlvDC[i][0]+1;
+      org_sigma1   = X->Def.CisAjtCkuAlvDC[i][1];
+      org_isite2   = X->Def.CisAjtCkuAlvDC[i][2]+1;
+      org_sigma2   = X->Def.CisAjtCkuAlvDC[i][3];
+      org_isite3   = X->Def.CisAjtCkuAlvDC[i][4]+1;
+      org_sigma3   = X->Def.CisAjtCkuAlvDC
