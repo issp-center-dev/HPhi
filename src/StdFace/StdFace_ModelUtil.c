@@ -172,7 +172,7 @@ struct StdIntList *StdI,
        S_i^+ S_j^+ + S_j^- S_i^-
       */
       if (ispin < Si2 && jspin < Sj2) {
-        intr0 = 0.5 * 0.5 * (J[0][0] - J[1][1] + I*(J[0][1] + J[0][1]))
+        intr0 = 0.5 * 0.5 * (J[0][0] - J[1][1] - I*(J[0][1] + J[0][1]))
           * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0))
           * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
         StdFace_intr(StdI, intr0,
@@ -184,7 +184,7 @@ struct StdIntList *StdI,
        S_i^+ S_{j z} + S_{j z} S_i^-
       */
       if (ispin < Si2) {
-        intr0 = (J[0][2] - I * J[1][2]) * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0)) * Sjz;
+        intr0 = 0.5 * (J[0][2] - I * J[1][2]) * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0)) * Sjz;
         StdFace_intr(StdI, intr0,
           isite, ispin + 1, isite, ispin, jsite, jspin, jsite, jspin);
         StdFace_intr(StdI, conj(intr0),
@@ -194,7 +194,7 @@ struct StdIntList *StdI,
        S_{i z} S_j^+ + S_j^- S_{i z}
       */
       if (jspin < Sj2) {
-        intr0 = (J[0][2] - I * J[1][2]) * Siz * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
+        intr0 = 0.5 * (J[2][0] - I * J[2][1]) * Siz * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
         StdFace_intr(StdI, intr0,
           isite, ispin, isite, ispin, jsite, jspin + 1, jsite, jspin);
         StdFace_intr(StdI, conj(intr0),
