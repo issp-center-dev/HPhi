@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
 {
   int isite, jsite;
-  int iL, iW, jL, jW, kCell;
+  int iL, iW, kCell;
   int ktrans, kintr;
   FILE *fp;
 

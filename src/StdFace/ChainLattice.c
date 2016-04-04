@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void StdFace_Chain(struct StdIntList *StdI, char *model)
 {
   int isite, jsite;
-  int ispin, iL;
+  int iL;
   int ktrans, kintr;
   /**/
   fprintf(stdout, "\n");
@@ -213,8 +213,7 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
 void StdFace_Chain_Boost(struct StdIntList *StdI)
 {
   int isite, ipivot;
-  int ktrans, kintr;
-  double LargeValue0, S;
+  int kintr;
   FILE *fp;
 
   StdI->NsiteUC = 1;

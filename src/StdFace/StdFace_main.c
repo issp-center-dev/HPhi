@@ -890,7 +890,7 @@ static void UnsupportedSystem(
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static int CheckOutputMode(struct StdIntList *StdI)
+static void CheckOutputMode(struct StdIntList *StdI)
 {
   /*
   Form for Correlation function

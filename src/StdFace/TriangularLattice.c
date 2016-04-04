@@ -31,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 void StdFace_Triangular(struct StdIntList *StdI, char *model)
 {
-  int isite, jsite, kCell, ispin;
-  int iL, iW, iLp1;
+  int isite, jsite, kCell;
+  int iL, iW;
   int ktrans, kintr;
   FILE *fp;
   fprintf(stdout, "\n");

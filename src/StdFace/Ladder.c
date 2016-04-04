@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void StdFace_Ladder(struct StdIntList *StdI, char *model)
 {
   int isite, jsite, ksite;
-  int iL, iW, ispin;
+  int iL, iW;
   int ktrans, kintr;
 
   StdI->NsiteUC = 1;
@@ -280,8 +280,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
 void StdFace_Ladder_Boost(struct StdIntList *StdI)
 {
   int isite, ipivot;
-  int ktrans, kintr;
-  double LargeValue0, S;
+  int kintr;
   FILE *fp;
 
   StdI->NsiteUC = 1;

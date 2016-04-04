@@ -32,8 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 void StdFace_Kagome(struct StdIntList *StdI, char *model)
 {
-  int isite, jsite, kCell, ispin;
-  int iL, iW, iLp1;
+  int isite, jsite, kCell;
+  int iL, iW;
   int ktrans, kintr;
   FILE *fp;
   fprintf(stdout, "\n");
@@ -370,8 +370,7 @@ void StdFace_Kagome(struct StdIntList *StdI, char *model)
 void StdFace_Kagome_Boost(struct StdIntList *StdI)
 {
   int isite, ipivot, i1, i2;
-  int ktrans, kintr;
-  double LargeValue0, S;
+  int kintr;
   FILE *fp;
 
   if (StdI->a0L != 0 || StdI->a1W != 0) {

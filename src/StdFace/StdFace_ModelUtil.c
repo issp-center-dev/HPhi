@@ -450,7 +450,7 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp,
   int Wmin, Wmax, Lmin, Lmax;
   int iW, iL, ipos;
   int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC;
-  double pos[4][2], xmin, xmax, det, offset[2], scale;
+  double pos[4][2], xmin, xmax, det/*, offset[2], scale*/;
   /*
    check Input parameters
   */
@@ -781,7 +781,7 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
 void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
   double JpAll, char *Jpname)
 {
-  int i1, i2, i3, i4;
+  int i1, i2;
   char Jname[3][3][10];
 
   strcpy(Jname[0][0], "x\0");
@@ -857,3 +857,4 @@ void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name
   }
 
 }
+
