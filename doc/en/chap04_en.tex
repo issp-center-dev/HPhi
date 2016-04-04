@@ -73,7 +73,7 @@ H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 \end{align}
 canonical ensemble in the Spin model($\{\sigma_1, \sigma_2\}={x, y, z}$)
 \begin{align}
-H &= -h \sum_{i} S_{i z} + \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
+H &= -h \sum_{i} S_{i z} - \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
 \nonumber \\
 &+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,
 \label{fml4_1_spin}
@@ -115,7 +115,7 @@ respectively.
 \item \verb|lattice|
 
 {\bf Type :} String (Choose from \verb|"Chain Lattice"|, \verb|"Square Lattice"|, 
-\verb|"Triangular Lattice"|, \verb|Honeycomb Lattice|, \verb|Ladder|)
+\verb|"Triangular Lattice"|, \verb|"Honeycomb Lattice"|, \verb|"Ladder"|, \verb|"Kagome"|)
 
 {\bf Description :} The lattice shape is specified with this parameter;
 above words denote
@@ -125,7 +125,7 @@ the two dimensional triangular lattice (Fig. \ref{fig_chap04_1_lattice}(c)),
 the two dimensional anisotropic honeycomb lattice (Fig. \ref{fig_chap04_1_honeycomb}),
 the ladder lattice (Fig. \ref{fig_ladder}),
 and
-the Kagome Lattice(Only at \verb|method="SpinGCBoost"|. Fig. \ref{fig_kagome})
+the Kagome Lattice(Fig. \ref{fig_kagome})
 respectively.
 
 In \verb|method="SpinGCBoost"|,
@@ -155,7 +155,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \end{itemize}
 
-\begin{figure}[!htbp]
+\begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=8cm]{../figs/chap04_1_lattice.eps}
     \caption{Schematic illustration of
@@ -171,7 +171,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \end{center}
 \end{figure}
 
-\begin{figure}[!htbp]
+\begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=15cm]{../figs/chap04_1_honeycomb.eps}
     \caption{Schematic illustration of the anisotropic honeycomb lattice.
@@ -184,7 +184,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \end{center}
 \end{figure}
 
-\begin{figure}[!htbp]
+\begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=10cm]{../figs/kagome.eps}
     \caption{Schematic illustration of the Kagome lattice.
@@ -193,7 +193,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \end{center}
 \end{figure}
 
-\begin{figure}[!htbp]
+\begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=10cm]{../figs/ladder.eps}
     \caption{Schematic illustration of the ladder lattice.
@@ -207,72 +207,85 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \subsection{Parameters for the lattice}
 
+\subsubsection{Chain [Fig. \ref{fig_chap04_1_lattice}(a)]}
 
-\begin{figure}[!htbp]
+\begin{itemize}
+
+\item \verb|L|
+
+{\bf Type :} Integer
+
+{\bf Description :} The length of the chain is specified 
+with this parameter.
+
+\end{itemize}
+
+\subsubsection{Ladder (Fig. \ref{fig_ladder})}
+
+\begin{itemize}
+
+\item \verb|L|
+
+{\bf Type :} Integer
+
+{\bf Description :} The length of the ladder is specified 
+with this parameter.
+
+\item \verb|W|
+
+{\bf Type :} Integer
+
+{\bf Description :} The number of the ladder is specified 
+with this parameter.
+
+\end{itemize}
+
+\begin{figure}[!tbhp]
   \begin{center}
-    \includegraphics[width=8cm]{../figs/chap04_1_unitlattice.eps}
-    \caption{Schematic illustration of a form of lattice where a pink and green vectors indicate first and second dimensional direction, respectively. 
+    \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.eps}
+    \caption{三角格子において、${\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)$とした場合のセル形状。
+      ${\vec a}_0$(マゼンタ)および${\vec a}_1$(グリーン)
+      で囲まれた部分(サイト数は20)が計算するセルとなる。
     }
     \label{fig_chap04_1_unitlattice}
   \end{center}
 \end{figure}
 
+\subsubsection{Tetragonal lattice [Fig. \ref{fig_chap04_1_lattice}(b)]、 
+Triangular lattice[Fig. \ref{fig_chap04_1_lattice}(c)]、
+Honeycomb lattice(Fig. \ref{fig_chap04_1_honeycomb})、
+Kagome lattice(Fig. \ref{fig_kagome})}
+
+これらの格子では、標準の単位胞(図中の黒の破線を参照)を用いて格子形状を指定する方法と、
+それらとは別の方向に格子ベクトルを取る方法が選択できます。
+ただし、\verb|model=SpinGCBoost|の時には前者のみが使えます。
+また、両方を指定した場合には$\HPhi$を終了します。
+
 \begin{itemize}
 
-\item \verb|a0L|
+\item \verb|W|, \verb|L|
 
-{\bf Type :} Positive integer ( 1.0 as a default)
+{\bf Type :} Integer
 
-{\bf Description :} The number of x-components of a vector defined as the first dimensional direction
-is specified with this parameter  (Fig. \ref{fig_chap04_1_unitlattice}).
+{\bf Description :} 標準の単位胞の並び方を指定します。
 
-\item \verb|a0W|
+\item \verb|a0W|, \verb|a0L|, \verb|a1W|, \verb|a1L|
 
-{\bf Type :} Positive integer ( 0.0 as a default)
+{\bf Type :} Integer
 
-{\bf Description :} The number of y-components of a vector defined as the first dimensional direction
-is specified with this parameter (Fig. \ref{fig_chap04_1_unitlattice}).
+{\bf Description :} 格子を指定する2本のベクトル(${\vec a}_0, {\vec a}_1$)
+を指定します (Fig. \ref{fig_chap04_1_unitlattice})。
+これらのベクトルは標準の並進ベクトルを基底とした座標(Fractional coordinate)
+で指定されます。
 
-\item \verb|a1L|
-
-{\bf Type :} Positive integer ( 0.0 as a default)
-
-{\bf Description :} The number of x-components of a vector defined as the second dimensional direction
-is specified with this parameter (Fig. \ref{fig_chap04_1_unitlattice}).
-
-\item \verb|a1W|
-
-{\bf Type :} Positive integer ( 1.0 as a default)
-
-{\bf Description :} The number of y-components of a vector defined as the second dimensional direction
-is specified with this parameter (Fig. \ref{fig_chap04_1_unitlattice}).
-
-
-\item \verb|L|
-
-{\bf Type :} Positive integer
-
-{\bf Description :} The number of
-sites along the first dimensional direction
-is specified with this parameter.
-
-\item \verb|W|
-
-{\bf Type :} Positive integer
-
-{\bf Description :} The number of
-sites along the second dimensional direction
-is specified with this parameter.
-When \verb|lattice = "Chain Lattice"|, 
-it should not be specified because it will not be used
-(if specified, $\HPhi$ will stop).
-
-\item \verb|a|
-
-{\bf Type :} Real (\verb|1.0| as a default)
-
-{\bf Description :} The lattice constant is specified with this parameter.
 \end{itemize}
+
+スタンダードモードで出力される\verb|lattice.gp|というファイルを使うと、
+自分の意図した通りの格子のとり方になっているかどうかを確かめる事が出来ます。
+このファイルは、次のようにして\verb|gnuplot|に読み込ませることが出来ます。
+\begin{verbatim}
+$ gnuplot lattice.gp
+\end{verbatim}
 
 \subsection{Parameters for conserved quantities}
 
@@ -296,177 +309,240 @@ it should not be specified.
 \end{itemize}
 
 
-\subsection{Parameters for each models}
-A default value is set as $0$ unless a specific value is not defined in a description. Interactions are constructed by adding each interactions given by these parameters. Table~\ref{table_interactions} shows the parameters for each models. In the case of a complex type, a file format is ``{\it a real part, an imaginary part} " while in the case of a real type, only ``{\it a real part} ".
+\subsection{Parameters for the Hamiltonian}
+A default value is set as $0$ unless a specific value is not defined in a description. 
+Table~\ref{table_interactions} shows the parameters for each models. 
+In the case of a complex type, a file format is ``{\it a real part, an imaginary part} "
+ while in the case of a real type, only ``{\it a real part} ".
 
-\begin{table}[hbp]
-  \begin{tabular}{|l||c|c|c|c|c|c|c|c|} \hline
-    Interactions & 1D chain & 2D square & 2D triangular & Honeycomb & Kagome & Ladder\\ \hline \hline
-   \verb|J|, \verb|t|, \verb|V| & $\circ$	 & - 	& - 	& - 	& - 	& -\\ \hline
-    \verb|J'|, \verb|t'|, \verb|V'| & $\circ$	 & $\circ$	& $\circ$ 	& $\circ$ 	& $\circ$ & - \\ \hline
-   \verb|J0|, \verb|t0|, \verb|V0| & -	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
-    \verb|J1|, \verb|t1|, \verb|V1| & -         	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
-    \verb|J2|, \verb|t2|, \verb|V2|  & -         	 & -    	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ \hline
-    \verb|J1'|, \verb|t1'|, \verb|V1'| & -		 &-	 	& -		& -		& -		& $\circ$ 	\\ \hline
-    \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
-    \verb|J3'|, \verb|t3'|, \verb|V3'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ \hline
-  \end{tabular}
-   \caption{Interactions for each models defined in an input file. We can define spin couplings as matrix format.}
-    \label{table_interactions}
-\end{table}
 
-\subsection{Parameters for the Hubbard model}
+\subsubsection{局所項}
+
 \begin{itemize}
+
 \item \verb|mu|
 
 {\bf Type :} Real
 
-{\bf Description :} The chemical potential $\mu$ (including the site potential)
-is specified with this parameter.
-
-\item \verb|t|, \verb|t'|
-
-{\bf Type :} Complex
-
-{\bf Description :} The hopping (See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
-is specified with this parameter.
-
-\item \verb|t0|, \verb|t1|, \verb|t2|
-
-{\bf Type :} Complex
-
-{\bf Description :} The nearest neighbor hopping 
-in the anisotropic honeycomb lattice 
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder})
-is specified with this parameter.
-
-\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
-
-{\bf Type :} Complex
-
-{\bf Description :} Hopping integrals
-in the ladder lattice 
-(See Fig. \ref{fig_ladder})
+{\bf Description :} (Hubbard and Kondo lattice model) 
+The chemical potential $\mu$ (including the site potential)
 is specified with this parameter.
 
 \item \verb|U|
 
 {\bf Type :} Real
 
-{\bf Description :} The onsite Coulomb integral $U$ is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model) 
+The onsite Coulomb integral $U$ is specified with this parameter.
 
-\item \verb|V|, \verb|V'|
-
-{\bf Type :} Real
-
-{\bf Description :} The nearest neighbor offsite Coulomb integrals $V$
-and the second nearest neighbor offsite Coulomb integrals $V'$
-(Fig. \ref{fig_chap04_1_lattice} are specified with these parameters.
-
-\item \verb|V0|, \verb|V1|, \verb|V2|
+\item \verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|, 
+  \verb|Jyx|, \verb|Jxz|, \verb|Jzx|, \verb|Jyz|, \verb|Jzy|
 
 {\bf Type :} Real
 
-{\bf Description :} Nearest neighbor offsite Coulomb integrals 
-on the anisotropic honeycomb lattice
-(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
-
-\item \verb|V1'|, \verb|V2'|, \verb|V3'|
-
-{\bf Type :} Real
-
-{\bf Description :} Offsite Coulomb integrals 
-on the ladder lattice
-(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
-
-\end{itemize}
-
-\subsection{Parameters for the Spin model}
-\begin{itemize}
-\item \verb|2S|
-
-{\bf Type :} Positive integer (\verb|1| as a default)
-
-{\bf Description :} The twofold moment of a localized spin is specified 
-with this parameter (e. g. \verb|2S=1| for $1/2$ spin system). 
+{\bf Description :} (Kondo lattice nodel) 
+The spin-coupling constant between the valence and the local electrons
+is specified with this parameter.
+また対角項について, \verb|Jx, Jy, Jz|を指定する代わりに、パラメータ\verb|J|を指定すると
+\verb|Jx = Jy = Jz = J|が代入されます。
+\verb|J|を指定した上で\verb|Jx|, \verb|Jy|, \verb|Jz|を指定した場合は$\HPhi$を終了します。
 
 \item \verb|h|, \verb|Gamma|, \verb|D|
 
 {\bf Type :} Real
 
-{\bf Description :} The longitudinal magnetic field, transverse magnetic field, 
+{\bf Description :} (Spin model)
+The longitudinal magnetic field, transverse magnetic field, 
 and the single-site anisotropy parameter are specified with these parameters.
-
-\item \verb|J|, \verb|J'|, \verb|J|$\sigma_1$, \verb|J|$\sigma_1\sigma_2$,  \verb|J'|$\sigma_1$, \verb|J'|$\sigma_1\sigma_2$\\
-  (\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\} and ${\sigma_1\neq \sigma_2}$)
-
-{\bf Type :} Real
-
-{\bf Description :} The spin-coupling constant between nearest neighbor sites
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome}) is specified with this parameter.
-
-\item \verb|J0|, \verb|J1|, \verb|J2|, \verb|J0|$\sigma_1$, \verb|J1|$\sigma_1$, \verb|J2|$\sigma_1$,
- \verb|J0|${\sigma_1\sigma_2}$, \verb|J1|${\sigma_1\sigma_2}$, \verb|J2|${\sigma_1\sigma_2}$ \\
-  (\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\} and ${\sigma_1\neq \sigma_2}$)
-
-{\bf Type :} Real
-
-{\bf Description :} Spin-coupling constants between nearest neighbor sites
-in the anisotropic honeycomb lattice
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder}) are specified with these parameter.
-
-\item \verb|J1'|,\verb|J2'|,\verb|J3'|,  \verb|J1'|$\sigma_1$, \verb|J2'|$\sigma_1$, \verb|J3'|$\sigma_1$,
-\verb|J1'|${\sigma_1\sigma_2}$, \verb|J2'|${\sigma_1\sigma_2}$, \verb|J3'|${\sigma_1\sigma_2}$\\
- (\{${\sigma_1, \sigma_2}$\}=\{\verb|x|, \verb|y|, \verb|z|\} and ${\sigma_1\neq \sigma_2}$)
-
-{\bf Type :} Real
-
-{\bf Description :} Spin-coupling constants in the ladder lattice
-(See Fig. \ref{fig_ladder}) are specified with these parameter.
+ただし異方性パラメータについては、\verb|model=SpinGCBoost|では使用できません。
 
 \end{itemize}
 
-\subsection{Parameters for the Kondo model}
+下記の非局所項は、梯子格子の場合とそれ以外(１次元鎖、矩形格子、三角格子、蜂の巣格子、カゴメ格子)
+の場合で指定の仕方が異なります。
+また、各格子で指定可能なパラメーターをTable \ref{table_interactions}に表します。
+
+\begin{table}[tbhp]
+  \begin{tabular}{|l||c|c|c|c|c|c|c|c|} \hline
+    Interactions & 1D chain & 2D square & 2D triangular & Honeycomb & Kagome & Ladder\\ 
+    \hline 
+    \hline
+     \verb|J|, \verb|t|, \verb|V|(省略形) & $\circ$	 & $\circ$ & $\circ$ & $\circ$ & $\circ$ & -\\ 
+     \hline
+    \verb|J'|, \verb|t'|, \verb|V'| & $\circ$	 & $\circ$	& $\circ$ 	& $\circ$ 	& $\circ$ & - \\ 
+    \hline
+    \verb|J0|, \verb|t0|, \verb|V0| & $\circ$  & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ 
+    \hline
+    \verb|J1|, \verb|t1|, \verb|V1| & -         	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ 
+    \hline
+    \verb|J2|, \verb|t2|, \verb|V2|  & -         	 & -    	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\
+    \hline
+    \verb|J1'|, \verb|t1'|, \verb|V1'| & -		 &-	 	& -		& -		& -		& $\circ$\\
+    \hline
+    \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ 
+    \hline
+\end{tabular}
+   \caption{Interactions for each models defined in an input file. We can define spin couplings as matrix format.}
+    \label{table_interactions}
+\end{table}
+
+\subsubsection{非局所項[梯子格子 (Fig. \ref{fig_ladder})]}
+
 \begin{itemize}
-\item \verb|mu|
+\item \verb|t0|,  \verb|t1|,  \verb|t1'|,  \verb|t2|,  \verb|t2'|
+
+{\bf Type :} Complex
+
+{\bf Description :} (Hubbard and Kondo lattice model)
+Hopping integrals in the ladder lattice 
+(See Fig. \ref{fig_ladder}) is specified with this parameter.
+
+\item \verb|V0|,  \verb|V1|,  \verb|V1'|,  \verb|V2|,  \verb|V2'|
 
 {\bf Type :} Real
 
-{\bf Description :} The chemical potential $\mu$ (including the site potential)
-is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model)
+Offsite Coulomb integrals on the ladder lattice
+(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
 
-\item \verb|t|, \verb|t'|
+\item \verb|J0x|, \verb|J0y|, \verb|J0z|, \verb|J0xy|, 
+  \verb|J0yx|, \verb|J0xz|, \verb|J0zx|, \verb|J0yz|, \verb|J0zy|
+\item \verb|J1x|, \verb|J1y|, \verb|J1z|, \verb|J1xy|, 
+  \verb|J1yx|, \verb|J1xz|, \verb|J1zx|, \verb|J1yz|, \verb|J1zy|
+\item \verb|J1'x|, \verb|J1'y|, \verb|J1'z|, \verb|J1'xy|, 
+  \verb|J1'yx|, \verb|J1'xz|, \verb|J1'zx|, \verb|J1'yz|, \verb|J1'zy|
+\item \verb|J2x|, \verb|J2y|, \verb|J2z|, \verb|J2xy|, 
+  \verb|J2yx|, \verb|J2xz|, \verb|J2zx|, \verb|J2yz|, \verb|J2zy|
+\item \verb|J2'x|, \verb|J2'y|, \verb|J2'z|, \verb|J2'xy|, 
+  \verb|J2'yx|, \verb|J2'xz|, \verb|J2'zx|, \verb|J2'yz|, \verb|J2'zy|
+
+{\bf Type :} Real
+
+{\bf Description :} (Spin model)
+Spin-coupling constants in the ladder lattice
+(See Fig. \ref{fig_ladder}) are specified with these parameter.
+また対角項について、例えば\verb|J0x, J0y, J0z|を指定する代わりに
+パラメータ\verb|J0|を指定すると
+\verb|J0x = J0y = J0z = J0|が代入されます。
+\verb|J0|を指定した上で\verb|J0x, J0y, J0z|等も指定した場合は$\HPhi$を終了します。
+\verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|についても同様です。
+
+\end{itemize}
+
+\subsubsection{非局所項 [梯子格子以外(Figs. \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
+\ref{fig_kagome})]}
+
+\begin{itemize}
+\item \verb|t0|,  \verb|t1|, \verb|t2|
 
 {\bf Type :} Complex
 
-{\bf Description :} The hopping (See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
-is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest neighbor hoppings for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameter.
+また、ホッピングのボンド方向依存性がない場合は\verb|t0|,  \verb|t1|, \verb|t2|を
+別々に指定する代わりにパラメータ\verb|t|を指定すると、\verb|t0 = t1 = t2 = t|が代入されます。
+\verb|t|と\verb|t0|等の両方が指定された場合には$\HPhi$を終了します。
 
-\item \verb|t0|, \verb|t1|, \verb|t2|
+\item \verb|V0|,  \verb|V1|, \verb|V2|
+
+{\bf Type :} Real
+
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest neighbor-offsite Coulomb integrals $V$
+ for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameters.
+また、サイト間Coulomb積分のボンド方向依存性がない場合は\verb|V0|,  \verb|V1|, \verb|V2|を
+別々に指定する代わりにパラメータ\verb|V|を指定すると、\verb|V0 = V1 = V2 = V|が代入されます。
+\verb|V|と\verb|V0|等の両方が指定された場合には$\HPhi$を終了します。
+
+\item \verb|J0x|, \verb|J0y|, \verb|J0z|, \verb|J0xy|, 
+  \verb|J0yx|, \verb|J0xz|, \verb|J0zx|, \verb|J0yz|, \verb|J0zy|
+\item \verb|J1x|, \verb|J1y|, \verb|J1z|, \verb|J1xy|, 
+  \verb|J1yx|, \verb|J1xz|, \verb|J1zx|, \verb|J1yz|, \verb|J1zy|
+\item \verb|J2x|, \verb|J2y|, \verb|J2z|, \verb|J2xy|, 
+  \verb|J2yx|, \verb|J2xz|, \verb|J2zx|, \verb|J2yz|, \verb|J2zy|
+
+{\bf Type :} Real
+
+{\bf Description :} (Spin model)
+最近接サイト間のスピン相互作用を指定します。
+また対角項について、例えば\verb|J0x, J0y, J0z|を指定する代わりに
+パラメータ\verb|J0|を指定すると
+\verb|J0x = J0y = J0z = J0|が代入されます。
+\verb|J0|を指定した上で\verb|J0x, J0y, J0z|等も指定した場合は$\HPhi$を終了します。
+\verb|J1|, \verb|J2|についても同様です。
+
+スピン間相互作用のボンド方向依存性がない場合には、
+\verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|, 
+\verb|Jyx|, \verb|Jxz|, \verb|Jzx|, \verb|Jyz|, \verb|Jzy|
+を指定すると、\verb|J0x = J1x = J2x = Jx|のようにすべてのボンド方向のスピン間相互作用に
+同じ値を代入することが出来ます。
+\verb|Jx|$\sim$\verb|Jzy|系列のどれかと\verb|J0x|$\sim$\verb|J2zy|系列のどれかを両方指定した
+場合には$\HPhi$を終了します。
+以下に最近接間スピン相互作用の指定方法の例を挙げます。
+
+\begin{itemize}
+
+\item ボンド方向依存性、スピン方向依存性、相互作用の非対角成分($J_{x y}$等)がない場合
+
+\verb|J|を指定
+
+\item ボンド方向依存性、相互作用の非対角成分がなく、スピン方向依存性がある場合
+
+\verb|Jx, Jy, Jz|のうち\verb|0|でないものを指定
+
+\item ボンド方向依存性がなく、スピン方向依存性、相互作用の非対角成分がある場合
+
+\verb|Jx, Jy, Jz, Jxy, Jyz, Jxz, Jyx, Jzy, Jzx|のうち\verb|0|でないものを指定
+
+\item スピン方向依存性、相互作用の非対角成分がなく、ボンド方向依存性がある場合
+
+\verb|J0, J1, J2|のうち\verb|0|でないものを指定
+
+\item スピン方向依存性がなく、ボンド方向依存性、相互作用の非対角成分がある場合
+
+\verb|J0x, J0y, J0z, J1x, J1y, J1z, J2x, J2y, J2z|のうち\verb|0|でないものを指定
+
+\item ボンド方向依存性、スピン方向依存性、相互作用の非対角成分がある場合
+
+\verb|J0x|$\sim$\verb|J2zy|のすべてのうち\verb|0|でないものを指定
+
+\end{itemize}
+\item \verb|t'|
 
 {\bf Type :} Complex
 
-{\bf Description :} The nearest neighbor hopping 
-in the anisotropic honeycomb lattice 
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_ladder})
-is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest neighbor hoppings for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameter.
 
-\item \verb|t1'|,  \verb|t2'|, \verb|t3'|
+\item \verb|V'|
 
-{\bf Type :} Complex
+{\bf Type :} Real
 
-{\bf Description :} Hopping integrals
-in the ladder lattice 
-(See Fig. \ref{fig_ladder})
-is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest neighbor-offsite Coulomb integrals $V$
+ for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameters.
 
-\item \verb|J|
+\item \verb|J'x|, \verb|J'y|, \verb|J'z|, \verb|J'xy|, 
+  \verb|J'yx|, \verb|J'xz|, \verb|J'zx|, \verb|J'yz|, \verb|J'zy|
 
-{\bf Type :} Real(\verb|0.0| as a default)
+{\bf Type :} Real
 
-{\bf Description :} The spin-coupling constant between the valence and the local electrons
-is specified with this parameter.
-
+{\bf Description :} (Spin model)
+次近接サイト間のスピン相互作用を指定します。
+ただし、蜂の巣格子またはカゴメ格子で\verb|model=SpinGCBoost|の場合には
+まだ対応していません。
+また対角項について、\verb|J'x, J'y, J'z|を指定する代わりに
+パラメータ\verb|J'|を指定すると
+\verb|J'x = J'y = J'z = J'|が代入されます。
+\verb|J'|を指定した上で\verb|J'x, J'y, J'z|も指定した場合は$\HPhi$を終了します。
 \end{itemize}
 
 \subsection{Parameters for the numerical condition}
