@@ -23,6 +23,15 @@ int child_omp_sz(
 		 struct BindStruct *X
 		 );
 
+int child_omp_sz_hacker(
+		 long unsigned int ib, 
+		 long unsigned int ihfbit,
+		 int N2,
+		 struct BindStruct *X
+		 );
+
+
+
 
 int child_omp_sz_Kondo(
 		      long unsigned int ib, 

@@ -228,45 +228,88 @@ int sz
     break;
       
  case Hubbard:
-      // this part can not be parallelized
-      jb = 0;
 
-      for(ib=0;ib<X->Check.sdim;ib++){
-	list_jb[ib]=jb;
+      hacker = X->Def.read_hacker;
+      if(hacker==0){
+        // this part can not be parallelized
+        jb = 0;
 
-	i=ib*ihfbit;
-	num_up=0;
-	for(j=0;j<=N2-2;j+=2){
-	  div=i & X->Def.Tpow[j];
-	  div=div/X->Def.Tpow[j];
-	  num_up+=div;
-	}
-	num_down=0;
-	for(j=1;j<=N2-1;j+=2){
-	  div=i & X->Def.Tpow[j];
-	  div=div/X->Def.Tpow[j];
-	  num_down+=div;
-	}
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  list_jb[ib]=jb;
+
+	  i=ib*ihfbit;
+	  num_up=0;
+	  for(j=0;j<=N2-2;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_up+=div;
+	  }
+	  num_down=0;
+	  for(j=1;j<=N2-1;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_down+=div;
+	  }
 	
-	tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-	all_up   = (X->Def.Nsite+tmp_res)/2;
-	all_down = (X->Def.Nsite-tmp_res)/2;
+	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+	  all_up   = (X->Def.Nsite+tmp_res)/2;
+	  all_down = (X->Def.Nsite-tmp_res)/2;
 
-	tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-	tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-	jb   += tmp_1*tmp_2;
-      }
+	  tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+	  tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+	  jb   += tmp_1*tmp_2;
+        }
 
-      //#pragma omp barrier
-      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
+        //#pragma omp barrier
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
  
-      icnt = 0;
-      #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
-      for(ib=0;ib<X->Check.sdim;ib++){
-	icnt+=child_omp_sz(ib,ihfbit,N2,X);
-      }
-      break;
+        icnt = 0;
+        //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  icnt+=child_omp_sz(ib,ihfbit,N2,X);
+        }
+        break;
+      }else if(hacker==1){
+        // this part can not be parallelized
+        jb = 0;
 
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  list_jb[ib]=jb;
+
+	  i=ib*ihfbit;
+	  num_up=0;
+	  for(j=0;j<=N2-2;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_up+=div;
+	  }
+	  num_down=0;
+	  for(j=1;j<=N2-1;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_down+=div;
+	  }
+	
+	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+	  all_up   = (X->Def.Nsite+tmp_res)/2;
+	  all_down = (X->Def.Nsite-tmp_res)/2;
+
+	  tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+	  tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+	  jb   += tmp_1*tmp_2;
+        }
+
+        //#pragma omp barrier
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
+ 
+        icnt = 0;
+        //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  icnt+=child_omp_sz_hacker(ib,ihfbit,N2,X);
+          //printf("ib=%ld icnt=%ld \n",ib,icnt);
+        }
+        break;
+      }
     case HubbardNConserved:
       // this part can not be parallelized
       jb = 0;
@@ -711,6 +754,103 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
   ja=ja-1;    
   return ja; 
 }
+
+int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,struct BindStruct *X){
+
+  long unsigned int i,j; 
+  long unsigned int ia,ja,jb;
+  long unsigned int div_down, div_up;
+  long unsigned int num_up,num_down;
+  long unsigned int tmp_num_up,tmp_num_down;
+    
+  jb = list_jb[ib];
+  i  = ib*ihfbit;
+    
+  num_up   = 0;
+  num_down = 0;
+  for(j=0;j< X->Def.Nsite ;j++){
+    div_up    = i & X->Def.Tpow[2*j];
+    div_up    = div_up/X->Def.Tpow[2*j];
+    div_down  = i & X->Def.Tpow[2*j+1];
+    div_down  = div_down/X->Def.Tpow[2*j+1];
+    num_up += div_up;
+    num_down += div_down;
+  }
+  
+  ja=1;
+  tmp_num_up   = num_up;
+  tmp_num_down = num_down;
+
+  if(X->Def.iCalcModel==Hubbard){
+    if(tmp_num_up <= X->Def.Nup && tmp_num_down <= X->Def.Ndown){ //do not exceed Nup and Ndown
+      ia = X->Def.Tpow[X->Def.Nup+X->Def.Ndown-tmp_num_up-tmp_num_down]-1;
+      if(ia < X->Check.sdim){
+        num_up   =  tmp_num_up;
+        num_down =  tmp_num_down;
+        for(j=0;j<X->Def.Nsite;j++){
+          div_up    = ia & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = ia & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+          num_up   += div_up;
+          num_down += div_down;
+        }
+        if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
+          list_1[ja+jb]=ia+ib*ihfbit;
+          list_2_1[ia]=ja;
+          list_2_2[ib]=jb;
+          ja+=1;
+        }
+        if(ia!=0){
+          ia = snoob(ia);
+          while(ia < X->Check.sdim){
+            num_up   =  tmp_num_up;
+            num_down =  tmp_num_down;
+            for(j=0;j<X->Def.Nsite;j++){
+	      div_up    = ia & X->Def.Tpow[2*j];
+	      div_up    = div_up/X->Def.Tpow[2*j];
+	      div_down  = ia & X->Def.Tpow[2*j+1];
+	      div_down  = div_down/X->Def.Tpow[2*j+1];
+	      num_up   += div_up;
+	      num_down += div_down;
+            }
+            if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
+	      list_1[ja+jb]=ia+ib*ihfbit;
+              list_2_1[ia]=ja;
+              list_2_2[ib]=jb;
+              ja+=1;
+            }
+            ia = snoob(ia);
+          }
+        } 
+      } 
+    }
+  }
+  else if(X->Def.iCalcModel==HubbardNConserved){
+    if(tmp_num_up+tmp_num_down <= X->Def.Ne){ //do not exceed Ne
+      ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
+      if(ia < X->Check.sdim){
+	list_1[ja+jb]=ia+ib*ihfbit;
+        list_2_1[ia]=ja;
+        list_2_2[ib]=jb;
+        ja+=1;
+        if(ia!=0){
+          ia = snoob(ia);
+          while(ia < X->Check.sdim){
+	    list_1[ja+jb]=ia+ib*ihfbit;
+            list_2_1[ia]=ja;
+            list_2_2[ib]=jb;
+            ja+=1;
+            ia = snoob(ia);
+          }
+        } 
+      }  
+    }
+  }
+  ja=ja-1;    
+  return ja; 
+}
+
 
 /** 
  * 
