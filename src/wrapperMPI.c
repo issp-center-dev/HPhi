@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "wrapperMPI.h"
 #ifdef _OPENMP
 #include <omp.h>

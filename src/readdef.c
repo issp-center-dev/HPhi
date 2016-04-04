@@ -1992,7 +1992,7 @@ int CheckLocSpin
   
   default:
     return FALSE;
-    break;
+    //break;
   }
 
   if(CheckTotal2Sz(X) != TRUE){

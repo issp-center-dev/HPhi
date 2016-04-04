@@ -80,6 +80,8 @@ int sz
   double idim=0.0;
   long unsigned int div_up;
 
+  int iSpnup, iMinup,iAllup;
+
   int N2=0;
   int N=0;
   fprintf(stdoutMPI, "%s", cProStartCalcSz);
@@ -267,9 +269,9 @@ int sz
     case HubbardNConserved:
       // this part can not be parallelized
       jb = 0;
-      int iSpnup=0;
-      int iMinup=0;
-      int iAllup=X->Def.Ne;
+      iSpnup=0;
+      iMinup=0;
+      iAllup=X->Def.Ne;
       if(X->Def.Ne > X->Def.Nsite){
 	iMinup = X->Def.Ne-X->Def.Nsite;
 	iAllup = X->Def.Nsite;

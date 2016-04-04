@@ -122,7 +122,7 @@ int PowerLanczos(struct BindStruct *X){
     if(Lz_Var < eps_Energy){
       fprintf(stdoutMPI,"Power Lanczos break \n");
       return 1;
-      break;
+      //break;
     }
   }
   return 0;

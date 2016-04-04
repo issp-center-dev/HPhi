@@ -68,7 +68,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
 	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
         return FALSE;
-      return FALSE;
+      //return FALSE;
     } /*if (isite == 0)*/
 
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
