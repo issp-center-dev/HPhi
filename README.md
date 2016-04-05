@@ -18,9 +18,7 @@ specific heat, susceptibility, ground state energy, free energy, structure facto
 The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 ([GPL v3](http://www.gnu.org/licenses/gpl-3.0.en.html)). 
 
 ### Development history
-
-A version of HPhi is 1.0 now.   
-Development history and modified points before a present version are described in a [release note](https://github.com/QLMS/HPhi/releases). 
+Development history and modified points are described in a [release note](https://github.com/QLMS/HPhi/releases). 
 
 ### Author
 - Youhei Yamaji
