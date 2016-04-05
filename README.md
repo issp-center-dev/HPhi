@@ -19,7 +19,8 @@ The distribution of the program package and the source codes for HPhi follow GNU
 
 ### Development history
 
-Development history is described in a [release note](https://github.com/QLMS/HPhi/releases). 
+A version of HPhi is 1.0 now. 
+Development history and modified points before a present version are described in a [release note](https://github.com/QLMS/HPhi/releases). 
 
 ### Author
 - Youhei Yamaji
