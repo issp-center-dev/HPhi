@@ -1,0 +1,183 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Spin/HeisenbergChain /home/i0012/i001200/bin/HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i0n0 1
+r1i0n1 1
+r1i0n2 1
+r1i0n3 1
+r1i0n4 1
+r1i0n5 1
+r1i0n6 1
+r1i0n7 1
+r1i0n8 1
+r1i0n9 1
+r1i0n10 1
+r1i0n11 1
+r1i0n12 1
+r1i0n13 1
+r1i0n14 1
+r1i0n15 1
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 1.0                    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 24
+  MPI PEs : 16 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'zlocspn.def' for LocSpin.
+  Read File 'zTrans.def' for Trans.
+  Read File 'zInterAll.def' for InterAll.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+
+######  Definition files are correct.  ######
+
+  Read File 'zlocspn.def'.
+  Read File 'zTrans.def'.
+  Read File 'zInterAll.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000089 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+      12       2
+      13       2
+      14       2
+      15       2
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             495     8      4      8         0   0000
+          1             792     7      5      7         0   1000
+          2             792     7      5      7         0   0100
+          3             924     6      6      6         0   1100
+          4             792     7      5      7         0   0010
+          5             924     6      6      6         0   1010
+          6             924     6      6      6         0   0110
+          7             792     5      7      5         0   1110
+          8             792     7      5      7         0   0001
+          9             924     6      6      6         0   1001
+         10             924     6      6      6         0   0101
+         11             792     5      7      5         0   1101
+         12             924     6      6      6         0   0011
+         13             792     5      7      5         0   1011
+         14             792     5      7      5         0   0111
+         15             495     4      8      4         0   1111
+
+   Total dimension : 12870
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+######  Start: TPQCalculation.  ######
+
+  rand_i / rand_max = 1 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 2 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 3 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 4 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+  rand_i / rand_max = 5 / 5
+    CHECK: TPQ complex initial vector 
+    step_i/total_step=200/2000 
+    step_i/total_step=400/2000 
+    step_i/total_step=600/2000 
+    step_i/total_step=800/2000 
+    step_i/total_step=1000/2000 
+    step_i/total_step=1200/2000 
+    step_i/total_step=1400/2000 
+    step_i/total_step=1600/2000 
+    step_i/total_step=1800/2000 
+######  End  : TPQCalculation.  ######
+
+Finish: Elapsed time is 25 [s].

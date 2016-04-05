@@ -9,11 +9,11 @@ CParaFileHead  zqp
 Nsite          16   
 2Sz            0    
 Lanczos_max    2000 
-initial_iv     1    
+initial_iv     -1   
 nvec           1    
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
-LargeValue     1    
+LargeValue     2.000000000000000e+00    
 NumAve         5    
 ExpecInterval  20   
