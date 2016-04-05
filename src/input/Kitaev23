@@ -1,8 +1,0 @@
-W = 2
-L = 3
-model = "SpinGCBoost"
-method = "TPQ"
-lattice = "Honeycomb Lattice"
-Jz0 = -1.0
-Jx2 = -1.0
-Jy1 = -1.0

@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -55,10 +55,10 @@ void vec12(double alpha[],double beta[],int ndim,
 
     //LU decomposition
     for(j=1;j<=ndim-1;j++){         
-      if(fabs(di[j]>fabs(bl[j]))){
+      if(fabs(di[j]) > fabs(bl[j])){
 	//non pivoting    
 	lex[j]=0;
-	if(fabs(di[j]<eps_vec12)){
+	if(fabs(di[j])<eps_vec12){
 	  di[j]=eps_vec12;
 	}   
 	cm[j+1]=bl[j]/di[j];

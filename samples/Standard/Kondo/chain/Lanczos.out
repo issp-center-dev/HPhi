@@ -1,8 +1,22 @@
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 1.0                    
+                                                                
 
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 12
+  OpenMP threads : 16
   MPI PEs : 1 
 
 
@@ -10,37 +24,49 @@
 
   Open Standard-Mode Inputfile ./StdFace.def 
 
-  KEYWORD : l                    | VALUE : 6 
+  KEYWORD : l                    | VALUE : 4 
   KEYWORD : model                | VALUE : kondolattice 
   KEYWORD : method               | VALUE : lanczos 
   Skipping a line.
   Skipping a line.
-  KEYWORD : lattice              | VALUE : chainlattice 
+  KEYWORD : lattice              | VALUE : chain 
   KEYWORD : t                    | VALUE : 1.0 
   KEYWORD : j                    | VALUE : 4.0 
-  KEYWORD : nelec                | VALUE : 6 
+  KEYWORD : nelec                | VALUE : 4 
   KEYWORD : 2sz                  | VALUE : 0 
 
 #######  Parameter Summary  #######
 
-                L = 6  
-                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               2S = 1           ######  DEFAULT VALUE IS USED  ######
-               mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
-                t = 1.00000   
-                J = 4.00000   
-       LargeValue = 6           ######  DEFAULT VALUE IS USED  ######
+  @ Lattice Size & Shape
 
+                L = 4  
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+
+  @ Hamiltonian 
+
+               mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                U = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               t0 = 1.00000   
+               t' = 0.00000    0.00000     ######  DEFAULT VALUE IS USED  ######
+               V' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
+               Jx = 4.00000   
+               Jy = 4.00000   
+               Jz = 4.00000   
+
+  @ Numerical conditions
+
+       LargeValue = 6.00000     ######  DEFAULT VALUE IS USED  ######
          filehead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
-       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              nvec = 1           ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-            nelec = 6  
+            nelec = 4  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
 ######  Print Expert input files  ######
@@ -75,8 +101,8 @@
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=15184 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.001458 GB 
+  MAX DIMENSION idim_max=346 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000033 GB 
 
 
 ######  MPI site separation summary  ######
@@ -91,19 +117,15 @@
        5       4
        6       4
        7       4
-       8       4
-       9       4
-      10       4
-      11       4
 
   INTER process site
     Site    Bit
 
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0           15184     6      6     12         0   
+          0             346     4      4      8         0   
 
-   Total dimension : 15184
+   Total dimension : 346
 
 
 ######  LARGE ALLOCATE FINISH !  ######
@@ -113,15 +135,11 @@
   j = 1 loc 1 
   j = 2 loc 1 
   j = 3 loc 1 
-  j = 4 loc 1 
-  j = 5 loc 1 
+  j = 4 loc 0 
+  j = 5 loc 0 
   j = 6 loc 0 
   j = 7 loc 0 
-  j = 8 loc 0 
-  j = 9 loc 0 
-  j = 10 loc 0 
-  j = 11 loc 0 
-  N_all_up=6 N_all_down=6 
+  N_all_up=4 N_all_down=4 
   End  : Calculate HilbertNum for fixed Sz. 
 
   Start: Calculate diagaonal components of Hamiltonian. 
@@ -129,38 +147,28 @@
 
 ######  Start: Calculate Lanczos Eigenvalue.  ######
 
-  initial_mode=0 normal: iv = 7594 i_max=15184 k_exct =1 
+  initial_mode=1 (random): iv = -1 i_max=346 k_exct =1 
 
-  LanczosStep  E[1] E[2] E[3] E[4] 
-  stp = 2 -5.3014420078 1.6347753411 xxxxxxxxxx xxxxxxxxx 
-  stp = 4 -7.6225404697 -3.5965911467 0.8397652912 4.9295492379 
-  stp = 6 -9.9563039855 -7.0696659588 -3.2872828105 0.2203229032 
-  stp = 8 -13.0933170462 -8.6426829040 -6.5644395966 -3.1401908962 
-  stp = 10 -14.8643596729 -11.4920887847 -8.2832885654 -6.3966403471 
-  stp = 12 -17.9524328236 -13.8987875032 -10.4825281198 -8.0242665757 
-  stp = 14 -18.8803940512 -14.7592757986 -12.6586312229 -9.7329775351 
-  stp = 16 -19.0115833939 -15.5839427946 -13.7400888557 -11.1635783633 
-  stp = 18 -19.0242306797 -15.9530094959 -14.1851761909 -12.5163597582 
-  stp = 20 -19.0250614122 -16.0615553350 -14.4968943990 -13.3244646048 
-  stp = 22 -19.0251229312 -16.1059182176 -14.8844801070 -13.9086798598 
-  stp = 24 -19.0251272788 -16.1268007680 -15.2259991248 -14.2087735673 
-  stp = 26 -19.0251275993 -16.1379566848 -15.4612562250 -14.4522610805 
-  stp = 28 -19.0251276245 -16.1450053661 -15.6323954101 -14.7348497689 
-  stp = 30 -19.0251276266 -16.1513257738 -15.7898942264 -15.0542771120 
-  stp = 32 -19.0251276268 -16.1552517252 -15.8719177942 -15.2058068996 
-  stp = 34 -19.0251276268 -16.1559908996 -15.8862714448 -15.2363418837 
-  stp = 36 -19.0251276268 -16.1560875463 -15.8883701848 -15.2428588787 
-  stp = 38 -19.0251276268 -16.1561018317 -15.8887352639 -15.2446799487 
-  stp = 40 -19.0251276268 -16.1561044501 -15.8888161999 -15.2453963195 
-  stp = 42 -19.0251276268 -16.1561047873 -15.8888287312 -15.2455917737 
-  stp = 44 -19.0251276268 -16.1561048308 -15.8888306470 -15.2456416214 
-  stp = 46 -19.0251276268 -16.1561048376 -15.8888310045 -15.2456573968 
-  stp = 48 -19.0251276268 -16.1561048385 -15.8888310633 -15.2456618383 
-  stp = 50 -19.0251276268 -16.1561048387 -15.8888310741 -15.2456632682 
-  stp = 52 -19.0251276268 -16.1561048387 -15.8888310764 -15.2456638034 
-  stp = 54 -19.0251276268 -16.1561048387 -15.8888310768 -15.2456640157 
-  stp = 56 -19.0251276268 -16.1561048387 -15.8888310769 -15.2456640596 
-  stp = 58 -19.0251276268 -16.1561048387 -15.8888310769 -15.2456640666 
+  LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite
+  stp = 2 -4.0793788916 2.5661415446 xxxxxxxxxx xxxxxxxxx xxxxxxxxx 
+  stp = 4 -10.8000680915 -4.0913437126 0.9157852701 5.0195130525 0.6274391316
+  stp = 6 -12.5901506552 -7.2295944552 -3.4894484799 0.1633069264 0.7657555410
+  stp = 8 -12.6720616104 -8.6796152149 -6.2058309252 -3.2608929515 0.7998716420
+  stp = 10 -12.6773997378 -9.5569027553 -7.4667101104 -5.2285910115 0.8109593306
+  stp = 12 -12.6776144664 -9.7656805764 -8.0474049853 -6.5731320683 0.8151672378
+  stp = 14 -12.6776211125 -9.8118499827 -8.5127510580 -7.4096535606 0.8178118702
+  stp = 16 -12.6776213698 -9.8288574034 -8.9409791441 -7.8890505479 0.8199944315
+  stp = 18 -12.6776213780 -9.8339936768 -9.1322719250 -8.1438320753 0.8226321998
+  stp = 20 -12.6776213782 -9.8347243023 -9.1742660662 -8.2604809387 0.8242321140
+  stp = 22 -12.6776213782 -9.8347903940 -9.1810647877 -8.3147067012 0.8251473703
+  stp = 24 -12.6776213782 -9.8347984130 -9.1827313591 -8.3728485787 0.8255442249
+  stp = 26 -12.6776213782 -9.8347989309 -9.1829299713 -8.3957040596 0.8256991696
+  stp = 28 -12.6776213782 -9.8347989623 -9.1829505177 -8.4016879868 0.8257819578
+  stp = 30 -12.6776213782 -9.8347989641 -9.1829525339 -8.4031505998 0.8258355347
+  stp = 32 -12.6776213782 -9.8347989642 -9.1829527145 -8.4034569071 0.8259046254
+  stp = 34 -12.6776213782 -9.8347989642 -9.1829527336 -8.4035348999 0.8260003550
+  stp = 36 -12.6776213782 -9.8347989642 -9.1829527356 -8.4035558865 0.8260840245
+  stp = 38 -12.6776213782 -9.8347989642 -9.1829527358 -8.4035598634 0.8261184879
 
 ######  End  : Calculate Lanczos EigenValue.  ######
 
@@ -172,10 +180,10 @@
   End  : Calculate Energy.
 
   Accuracy check !!!
-  LanczosEnergy = -1.90251276267895e+01 
-  EnergyByVec   = -1.90251276146261e+01 
-  diff_ene      = 6.39336649291042e-10 
-  var           = 5.95817113807835e-10 
+  LanczosEnergy = -1.26776213781764e+01 
+  EnergyByVec   = -1.26004964224759e+01 
+  diff_ene      = 6.08355095959060e-03 
+  var           = 6.50451435081977e-03 
   Accuracy of Lanczos vectors is NOT enough
 
   Start: Calculate EigenVector by CG method.
@@ -184,10 +192,10 @@
   End  : Calculate Energy.
 
   CG Accuracy check !!!
-  LanczosEnergy = -1.90251276267895e+01
-  EnergyByVec   = -1.90251276267896e+01
-  diff_ene      = 4.66844920635102e-15
-  var           = 3.14090664796114e-16 
+  LanczosEnergy = -1.26776213781764e+01
+  EnergyByVec   = -1.26776213781764e+01
+  diff_ene      = 1.40117517822240e-16
+  var           = 1.76837611589747e-16 
  
 
 ######  End  : Calculate Lanczos EigenVec.  ######

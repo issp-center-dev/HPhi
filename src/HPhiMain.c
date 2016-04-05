@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -27,6 +27,7 @@
 #include "readdef.h"
 #include "StdFace_main.h"
 #include "wrapperMPI.h"
+#include "splash.h"
 
 /*!
 @mainpage
@@ -87,6 +88,7 @@ int main(int argc, char* argv[]){
     myrank = 0;
     nproc = 1;
     stdoutMPI = stdout;
+    splash();
   }
   else InitializeMPI(argc, argv);
 
