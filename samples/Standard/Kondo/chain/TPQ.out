@@ -1,46 +1,72 @@
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 1.0                    
+                                                                
 
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 12
+  OpenMP threads : 16
   MPI PEs : 1 
 
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile ./StdFace_TPQ.def 
+  Open Standard-Mode Inputfile ./StdFace_.def 
 
-  KEYWORD : l                    | VALUE : 6 
+  KEYWORD : l                    | VALUE : 4 
   KEYWORD : model                | VALUE : kondolattice 
   KEYWORD : method               | VALUE : tpq 
   Skipping a line.
   Skipping a line.
-  KEYWORD : lattice              | VALUE : chainlattice 
+  KEYWORD : lattice              | VALUE : chain 
   KEYWORD : t                    | VALUE : 1.0 
   KEYWORD : j                    | VALUE : 4.0 
-  KEYWORD : nelec                | VALUE : 6 
+  KEYWORD : nelec                | VALUE : 4 
   KEYWORD : 2sz                  | VALUE : 0 
 
 #######  Parameter Summary  #######
 
-                L = 6  
-                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               2S = 1           ######  DEFAULT VALUE IS USED  ######
-               mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
-                t = 1.00000   
-                J = 4.00000   
-       LargeValue = 6           ######  DEFAULT VALUE IS USED  ######
+  @ Lattice Size & Shape
 
+                L = 4  
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+
+  @ Hamiltonian 
+
+               mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                U = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               t0 = 1.00000   
+               t' = 0.00000    0.00000     ######  DEFAULT VALUE IS USED  ######
+               V' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
+               Jx = 4.00000   
+               Jy = 4.00000   
+               Jz = 4.00000   
+
+  @ Numerical conditions
+
+       LargeValue = 6.00000     ######  DEFAULT VALUE IS USED  ######
          filehead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
-       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              nvec = 1           ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-            nelec = 6  
+            nelec = 4  
       ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
 
 ######  Print Expert input files  ######
@@ -75,8 +101,8 @@
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=15184 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.001458 GB 
+  MAX DIMENSION idim_max=346 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000033 GB 
 
 
 ######  MPI site separation summary  ######
@@ -91,19 +117,15 @@
        5       4
        6       4
        7       4
-       8       4
-       9       4
-      10       4
-      11       4
 
   INTER process site
     Site    Bit
 
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0           15184     6      6     12         0   
+          0             346     4      4      8         0   
 
-   Total dimension : 15184
+   Total dimension : 346
 
 
 ######  LARGE ALLOCATE FINISH !  ######
@@ -113,15 +135,11 @@
   j = 1 loc 1 
   j = 2 loc 1 
   j = 3 loc 1 
-  j = 4 loc 1 
-  j = 5 loc 1 
+  j = 4 loc 0 
+  j = 5 loc 0 
   j = 6 loc 0 
   j = 7 loc 0 
-  j = 8 loc 0 
-  j = 9 loc 0 
-  j = 10 loc 0 
-  j = 11 loc 0 
-  N_all_up=6 N_all_down=6 
+  N_all_up=4 N_all_down=4 
   End  : Calculate HilbertNum for fixed Sz. 
 
   Start: Calculate diagaonal components of Hamiltonian. 
@@ -186,4 +204,4 @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 98 [s].
+Finish: Elapsed time is 4 [s].
