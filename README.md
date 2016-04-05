@@ -13,13 +13,13 @@ Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heise
 ### Available physical quantities
 specific heat, susceptibility, ground state energy, free energy, structure factors
 
-### Development history
-
-Development history is described in a [release note](https://github.com/QLMS/HPhi/releases). 
-
 ### Licence
 
 The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 ([GPL v3](http://www.gnu.org/licenses/gpl-3.0.en.html)). 
+
+### Development history
+
+Development history is described in a [release note](https://github.com/QLMS/HPhi/releases). 
 
 ### Author
 - Youhei Yamaji
