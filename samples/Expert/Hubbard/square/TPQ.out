@@ -1,11 +1,25 @@
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 1.0                    
+                                                                
 
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 12
+  OpenMP threads : 24
   MPI PEs : 1 
 
-  Read File 'namelist.def'.
+  Read File './namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
   Read File 'zlocspn.def' for LocSpin.
@@ -118,4 +132,4 @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 113 [s].
+Finish: Elapsed time is 33 [s].
