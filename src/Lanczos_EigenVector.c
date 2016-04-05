@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -97,7 +97,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
     }
-    u_long_i = 123432 + abs(iv);
+    u_long_i = 123432 + labs(iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
     if(X->Def.iInitialVecType==0){
       for (iproc = 0; iproc < nproc; iproc++) {

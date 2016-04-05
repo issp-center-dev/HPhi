@@ -1,14 +1,28 @@
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 1.0                    
+                                                                
 
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 4
+  OpenMP threads : 16
   MPI PEs : 1 
 
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile ./StdFace_TPQ.def 
+  Open Standard-Mode Inputfile ./StdFace_.def 
 
   KEYWORD : w                    | VALUE : 4 
   KEYWORD : l                    | VALUE : 2 
@@ -16,7 +30,7 @@
   KEYWORD : method               | VALUE : tpq 
   Skipping a line.
   Skipping a line.
-  KEYWORD : lattice              | VALUE : triangularlattice 
+  KEYWORD : lattice              | VALUE : triangular 
   KEYWORD : t                    | VALUE : 1.0 
   KEYWORD : u                    | VALUE : 4.0 
   KEYWORD : nelec                | VALUE : 8 
@@ -24,20 +38,27 @@
 
 #######  Parameter Summary  #######
 
-                L = 2  
-                W = 4  
-                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+  @ Lattice Size & Shape
+
+                L = 2         
+                W = 4         
+
+  @ Hamiltonian 
+
                mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
                 U = 4.00000   
-                t = 1.00000   
-                V = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               t' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               t0 = 1.00000   
+               t1 = 1.00000   
+               t2 = 1.00000   
+               t' = 0.00000    0.00000     ######  DEFAULT VALUE IS USED  ######
                V' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-       LargeValue = 17          ######  DEFAULT VALUE IS USED  ######
 
+  @ Numerical conditions
+
+       LargeValue = 16.00000    ######  DEFAULT VALUE IS USED  ######
          filehead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
-       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              nvec = 1           ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
@@ -173,4 +194,4 @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 63 [s].
+Finish: Elapsed time is 13 [s].

@@ -27,6 +27,7 @@ makeHam.c \
 matrixlapack.c \
 mltply.c \
 mltplyMPI.c \
+mltplyMPIBoost.c \
 CalcByTPQ.c \
 output.c \
 output_list.c \
@@ -40,7 +41,8 @@ ErrorMessage.c \
 LogMessage.c \
 ProgressMessage.c \
 global.c \
-wrapperMPI.c
+wrapperMPI.c \
+splash.c
 
 all:
 	make -f makefile_src libStdFace

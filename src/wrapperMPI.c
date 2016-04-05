@@ -1,6 +1,6 @@
 /*
 HPhi  -  Quantum Lattice Model Simulator
-Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima
+Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,10 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "wrapperMPI.h"
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <math.h>
 #include <complex.h>
+#include "splash.h"
 
 /**
  *
@@ -45,11 +49,15 @@ void InitializeMPI(int argc, char *argv[]){
 #endif
   if (myrank == 0) stdoutMPI = stdout;
   else stdoutMPI = fopen("/dev/null", "w");
+  splash();
 
 #pragma omp parallel default(none) shared(nthreads)
 #pragma omp master
+#ifdef _OPENMP
   nthreads = omp_get_num_threads();
-
+#else
+  nthreads=1;
+#endif
   fprintf(stdoutMPI, "\n\n#####  Parallelization Info.  #####\n\n");
   fprintf(stdoutMPI, "  OpenMP threads : %d\n", nthreads);
   fprintf(stdoutMPI, "  MPI PEs : %d \n\n", nproc);
@@ -79,8 +87,9 @@ void FinalizeMPI(){
 void exitMPI(int errorcode /**< [in]*/)
 {
   int ierr;
+  fflush(stdout);
 #ifdef MPI
-  fprintf(stderr,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
+  /*fprintf(stderr,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");*/
   fprintf(stdout,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
   ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
   ierr = MPI_Finalize();
@@ -126,6 +135,14 @@ char* fgetsMPI(
     ctmp = fgets(InputString, maxcount, fp);
     if (ctmp == NULL){
       inull = 1;
+    }
+    
+    while(*InputString == '\n' || strncmp(InputString, "#", 1)==0){
+      ctmp = fgets(InputString, maxcount, fp);
+      if (ctmp == NULL){
+	inull=1;
+	break;
+      }
     }
   }
 #ifdef MPI

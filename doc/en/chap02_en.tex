@@ -8,7 +8,7 @@
 $\HPhi$ requires the following packages:
 \begin{itemize}
 \item C compiler (intel, Fujitsu, GNU, etc. )
-\item LAPACK library (intel MKL, Fujitsu TCL, ATLAS, etc.)
+\item LAPACK library (intel MKL, Fujitsu, ATLAS, etc.)
 \item MPI library (If you do not use MPI, it is not necessary.)
 \end{itemize}
 
@@ -35,81 +35,179 @@ Please read manuals of your compiler/library for more information.
 \end{screen}
 
 \section{Installation}
-\input{chap02_1_en.tex}
+
+% !TEX root = userguide_en.tex
+%----------------------------------------------------------
+You can download $\HPhi$ in the following place.\\
+\url{https://github.com/QLMS/HPhi/releases}
+
+You can obtain the $\HPhi$ directory by tiping
+\begin{verbatim}
+$ tar xzvf HPhi-xxx.tar.gz
+\end{verbatim}
+
+There are two kind of procedures to install $\HPhi$.
+
+\subsection{Using \texttt{HPhiconfig.sh}}
+
+Please run \verb|HPhiconfig.sh| script in the $\HPhi$ directory as follow
+(for ISSP system-B ''sekirei''):
+\begin{verbatim}
+$ bash HPhiconfig.sh sekirei
+\end{verbatim}
+Then environmental configuration file \verb|make.sys| is generated in 
+\verb|src/| directory.
+The command-line argment of \verb|HPhiconfig.sh| is as folows:
+\begin{itemize}
+\item \verb|sekirei| : ISSP system-B ''sekirei''
+\item \verb|maki| : ISSP system-C ''maki''
+\item \verb|intel| : intel compiler + Linux PC
+\item \verb|mpicc-intel| : intel compiler + MPI (excepting intelMPI) + Linux PC
+\item \verb|gcc| : GCC + Linux PC
+\item \verb|gcc-mac| : GCC + Mac
+\end{itemize}
+
+\verb|make.sys| is as follows (for ISSP-system-B ''sekirei''):
+\begin{verbatim}
+ CC = mpiicc
+ LAPACK_FLAGS = -Dlapack -mkl=parallel 
+ FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
+ MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
+ INCLUDE_DIR=./include
+\end{verbatim}
+We explatin macros of this file as: 
+\begin{itemize}
+\item \verb|CC| : The Compilation command (\verb|icc|, \verb|gcc|, \verb|fccpx|)
+\item \verb|LAPACK_FLAGS| : Compilation options for LAPACK. \verb|-Dlapack| can not be removed.
+\item \verb|FLAGS| : Other compilation options.
+  OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
+  must be specified.
+  When you use MPI, please set \verb|-D MPI|.
+\item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : Options for the Mersenne Twister
+  and additional include directory. You do not have to modify them.
+\end{itemize}
+
+
+Then you are ready to compile HPhi.
+Please type
+\begin{verbatim}
+$ make HPhi
+\end{verbatim}
+and obtain an executable \verb|HPhi| in \verb|src/| directory;
+you should add this directory to the \verb|$PATH|.
+
+
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+You can make a PATH to $\HPhi$ as follows:
+\\
+\verb|$ export PATH=${PATH}:|\textit{HPhi\_top\_directory}\verb|/src/|
+\\
+If you keep this PATH, you should write above in \verb|~/.bashrc|
+(for \verb|bash| as a login shell)
+
+\end{screen}
+
+
+\subsection{Using \texttt{cmake}}
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize\\
+Before using cmake for sekirei, you must type 
+\begin{verbatim}
+source /home/issp/materiapps/tool/env.sh
+\end{verbatim}
+while for maki, you must type
+\begin{verbatim}
+source /global/app/materiapps/tool/env.sh
+\end{verbatim}
+\end{screen}
+
+We can compile Hphi as
+\begin{verbatim}
+cd $HOME/build/hphi
+cmake -DCONFIG=gcc $PathTohphi
+make
+\end{verbatim}
+Here, we set a path to $\HPhi$ as \verb| $PathTohphi| and to a build directory as \verb| $HOME/build/hphi|. After compiling, a src folder is constructed below a \verb| $HOME/build/hphi |folder and obtain an executable \verb|HPhi| in \verb|src/| directory. When there is not a MPI library in your system, an executable \verb|HPhi| is automatically compiled without a MPI library.
+
+In the above example, we compile $\HPhi$ by using a gcc compiler. We can select a compiler by using following options
+\begin{itemize}
+\item \verb|sekirei| : ISSP system-B ''sekirei''
+\item \verb|fujitsu| : Fujitsu compiler (ISSP system-C ''maki'')
+\item \verb|intel| : intel compiler + Linux PC
+\item \verb|gcc| : GCC compiler + Linux PC.
+\end{itemize}
+An example for compiling $\HPhi$ by an intel compiler is shown as follows, 
+\begin{verbatim}
+mkdir ./build
+cd ./build
+cmake -DCONFIG=intel ../
+make
+\end{verbatim}
+After compiling,  a \verb|src| folder is made below the \verb|build| folder and an execute $\HPhi$ is made in the  \verb|src| folder. It is noted that  we must delete the  \verb|build| folder and do the above works again when we change the compilers.
+
 \label{Sec:HowToInstall}
 
 \section{Directory structure}
-When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.\\
-\\
-├──CMakeLists.txt\\
-├──COPYING\\
-├──config/\\
-│~~~~~~~├──fujitsu.cmake\\
-│~~~~~~~├──gcc.cmake\\
-│~~~~~~~├──intel.cmake\\
-│~~~~~~~└──sekirei.cmake\\├──doc/\\
-│~~~~~~~├──en/\\
-│~~~~~~~├──jp/\\
-│~~~~~~~├──userguide\_en.pdf\\
-│~~~~~~~└──userguide\_jp.pdf\\
-├──HPhiconfig.sh\\
-├──samples/\\
-│~~~~~~├──Expert/\\
-│~~~~~~│~~~~~~├──Hubbard/\\
-│~~~~~~│~~~~~~│~~~~~~├─square/\\
-│~~~~~~│~~~~~~│~~~~~~│~~~~~~├──*.def\\
-│~~~~~~│~~~~~~│~~~~~~│~~~~~~├──output\_FullDiag/\\
-│~~~~~~│~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~~└──**.dat\\
-│~~~~~~│~~~~~~│~~~~~~│~~~~~~├──output\_Lanczos/\\
-│~~~~~~│~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~~└──**.dat\\
-│~~~~~~│~~~~~~│~~~~~~│~~~~~~└──output\_TPQ/\\
-│~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~~~~~~~~~~└──**.dat\\
-│~~~~~~│~~~~~~│~~~~~~└─triangular/\\
-│~~~~~~│~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~├──Kondo/\\
-│~~~~~~│~~~~~~│~~~~~~└─chain/\\
-│~~~~~~│~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~└──Spin/\\
-│~~~~~~│~~~~~~~~~~~~~~~├─HeisenbergChain/\\
-│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
-│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~~~~~~~~~~├─Kagome/\\
-│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~~~~~~~~~~├─Kitaev/\\
-│~~~~~~│~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~│~~~~~~~~~~~~~~~└─S1Chain/\\
-│~~~~~~│~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
-│~~~~~~└──Standard/\\
-│~~~~~~~~~~~~~~~~~~├──Hubbard/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~├─square/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~├──StdFace.def\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~├──output\_FullDiag/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~└──**.dat\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~├──output\_Lanczos/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~│~~~~~~~~~└──**.dat\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~└──output\_TPQ/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~│~~~~~~~~~~~~~~~~~└──**.dat\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~└─triangular/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
-│~~~~~~~~~~~~~~~~~~├──Kondo/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~└─chain/\\
-│~~~~~~~~~~~~~~~~~~│~~~~~~~~~~~~└──$\cdots$\\
-│~~~~~~~~~~~~~~~~~~└──Spin/\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─HeisenbergChain/\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─HeisenbergSquare/\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~├─Kitaev/\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~│~~~~~~└──$\cdots$\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└─S1Chain/\\
-│~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~└──$\cdots$\\
-└──src/\\
-~~~~~~~~~~~~~├──**.c\\
-~~~~~~~~~~~~~├──CMakeLists.txt\\
-~~~~~~~~~~~~~├──include/\\
-~~~~~~~~~~~~~│~~~~~~~└──**.h\\
-~~~~~~~~~~~~~└──makefile\_src\\
+When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
+ 
+\begin{verbatim}
+|--CMakeLists.txt
+|--COPYING
+|--config/
+|    |--fujitsu.cmake
+|    |--gcc.cmake
+|    |--intel.cmake
+|    ---sekirei.cmake
+|--doc/
+|    |--en/
+|    |--jp/
+|    |--userguide_en.pdf
+|    ---userguide_jp.pdf
+|--HPhiconfig.sh
+|--samples/
+|    |--Expert/
+|    |    |--Hubbard/
+|    |    |    |-square/
+|    |    |    |      |--*.def
+|    |    |    |      |--output_FullDiag/*.dat
+|    |    |    |      |--output_Lanczos/*.dat
+|    |    |    |      ---output_TPQ/*.dat
+|    |    |    --triangular/...
+|    |    |--Kondo/chain/...
+|    |    ---Spin/
+|    |         |-HeisenbergChain/...
+|    |         |-HeisenbergSquare/...
+|    |         |-Kagome/...
+|    |         |-Kitaev/...
+|    |         --S1Chain/...
+|    ---Standard/
+|         |--Hubbard/
+|         |    |-square/
+|         |    |   |--StdFace.def
+|         |    |   |--output_FullDiag/*.dat
+|         |    |   |--output_Lanczos/*.dat
+|         |    |   ---output_TPQ/*.dat
+|         |    --triangular/...
+|         |--Kondo/chain/...
+|         ---Spin/
+|              |-HeisenbergChain/...
+|              |-HeisenbergSquare/...
+|              |-Kitaev/...
+|              --S1Chain/...
+---src/
+     |--*.c
+     |--CMakeLists.txt
+     |--include/*.h
+     ---makefile_src
+\end{verbatim}
 
 \section{Basic usage}
 $\HPhi$ has two modes; standard mode and expert mode. Here, the basic flows of calculations by standard and expert modes are shown.
@@ -217,7 +315,7 @@ If the calculation is finished normally, the result files are outputted in  the 
 \newpage
 \subsection{Setting a process number for MPI/Hybrid parallelization}
 \label{subsec:process}
-{For using MPI/Hybrid parallelization、a process number must be set as follows.}
+{For using MPI/Hybrid parallelization, a process number must be set as follows.}
 \begin{enumerate}
 \item{Standard mode}
 
@@ -259,6 +357,15 @@ NlocalSpin     3
 \end{minipage}
 
 \end{itemize}
+
+\subsection{Printing version ID}
+
+By using \verb|-v| option as follows, 
+you can check which version of $\HPhi$ you are using.
+
+\begin{verbatim}
+$ PATH/HPhi -v
+\end{verbatim}
 
 \end{enumerate}
 

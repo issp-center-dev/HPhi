@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -30,7 +30,8 @@ void setmem_HEAD
 
 void setmem_def
 (
- struct BindStruct *X
+ struct BindStruct *X,
+ struct BoostList *xBoost
  )
 {
   li_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
@@ -68,6 +69,30 @@ void setmem_def
     
   i_malloc2(X->Def.CisAjt, X->Def.NCisAjt, 4);
   i_malloc2(X->Def.CisAjtCkuAlvDC, X->Def.NCisAjtCkuAlvDC, 8);
+
+  int ipivot,iarrayJ,i,ispin;
+  xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
+  for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
+    xBoost->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
+  }
+  
+  xBoost->list_6spin_pair = (int ***)malloc(sizeof(int**) * xBoost->R0 * xBoost->num_pivot);
+  for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
+    xBoost->list_6spin_pair[ipivot] = (int **)malloc(sizeof(int*) * 7);
+    for (ispin = 0; ispin < 7; ispin++) {
+      xBoost->list_6spin_pair[ipivot][ispin] = (int *)malloc(sizeof(int) * 15);
+    }
+  }
+
+  xBoost->arrayJ = (double complex ***)malloc(sizeof(double complex**) * xBoost->NumarrayJ);
+for (iarrayJ = 0; iarrayJ < xBoost->NumarrayJ; iarrayJ++) {
+  xBoost->arrayJ[iarrayJ] = (double complex **)malloc(sizeof(double complex*) * 3);
+  for (i = 0; i < 3; i++) {
+    xBoost->arrayJ[iarrayJ][i] = (double complex *)malloc(sizeof(double complex) * 3);
+  }
+}
+
+  
 }
 
 int setmem_large
@@ -170,6 +195,7 @@ int setmem_large
     d_malloc1(X->Phys.all_num_up, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_energy, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_doublon, X->Check.idim_max+1);
+    d_malloc1(X->Phys.all_sz, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_s2, X->Check.idim_max+1);
     c_malloc2(Ham, X->Check.idim_max+1,X->Check.idim_max+1);
     c_malloc2(L_vec, X->Check.idim_max+1,X->Check.idim_max+1);

@@ -6,15 +6,15 @@ HPhi_Cal_Parameters
 CDataFileHead  zvo
 CParaFileHead  zqp
 --------------------
-Nsite          12   
+Nsite          8    
 2Sz            0    
-Ncond          6    
+Ncond          4    
 Lanczos_max    2000 
-initial_iv     1    
+initial_iv     -1   
 nvec           1    
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
-LargeValue     6    
+LargeValue     6.000000000000000e+00    
 NumAve         5    
 ExpecInterval  20   

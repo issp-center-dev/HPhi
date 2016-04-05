@@ -4,7 +4,337 @@
 \label{Ch:model}
 \section{スタンダードモード}
 \label{Sec:StandardMode}
-\input{chap03_2_jp.tex}
+
+% !TEX root = userguide_jp.tex
+\subsection{Heisenberg模型}
+
+以下のチュートリアルはディレクトリ
+\begin{verbatim}
+samples/Standard/Spin/HeisenbergChain/
+\end{verbatim}
+内で行います。
+Heisenberg模型におけるサンプル入力ファイル、参照用出力ディレクトリ、標準出力リダイレクトはそれぞれ
+\begin{verbatim}
+samples/Standard/Spin/HeisenbergChain/StdFace.def
+samples/Standard/Spin/HeisenbergChain/output_FullDiag/
+samples/Standard/Spin/HeisenbergChain/output_Lanczos/
+samples/Standard/Spin/HeisenbergChain/output_TPQ/
+samples/Standard/Spin/HeisenbergChain/FullDiag.out
+samples/Standard/Spin/HeisenbergChain/Lanczos.out
+samples/Standard/Spin/HeisenbergChain/TPQ.out
+\end{verbatim}
+にあります。
+この例では1次元のHeisenberg鎖(最近接サイト間の反強磁性的スピン結合のみを持つ)
+を考察します。
+\begin{align}
+  {\hat H} = J \sum_{i=1}^{N_{\rm site}} {\hat {\boldsymbol S}}_i \cdot {\hat {\boldsymbol S}}_{i+1}
+\end{align}
+インプットファイルの中身は次のとおりです。
+\\
+\begin{minipage}{10cm}
+\begin{screen}
+\begin{verbatim}
+L = 16
+model = "Spin"
+method = "Lanczos"
+lattice = "chain lattice"
+J = 1.0
+2Sz = 0
+\end{verbatim}
+\end{screen}
+\end{minipage}
+%
+\\
+この例ではスピン結合$J=1$(任意単位)とし、サイト数は16としました。
+
+\subsubsection{ログ出力}
+標準出力でログが出力されます。
+また、outputディレクトリが自動生成され、
+そこにも計算経過を示すログが出力されます。
+例えば、サンプル実行時には以下のファイルが出力されます。\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+CHECK_InterAll.dat     Time_CG_EigenVector.dat  zvo_Lanczos_Step.dat  
+CHECK_Memory.dat       WarningOnTransfer.dat    zvo_sz_TimeKeeper.dat
+CHECK_Sdim.dat         zvo_TimeKeeper.dat
+\end{verbatim}
+\end{screen}
+\end{minipage}
+\\
+ログ出力されるファイルの詳細は\ref{Subsec:checkchemi}-\ref{Subsec:timecgeigenv}をご覧ください。
+%
+実行コマンドと標準出力{(MPI並列/ハイブリッド並列でコンパイルした場合の結果)}は次のとおりです。
+
+\vspace{1cm}\hspace{-0.7cm}
+\verb|$ |\underline{パス}\verb|/HPhi -s StdFace.def|
+\small
+\begin{verbatim}
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 4
+  MPI PEs : 1 
+
+
+######  Standard Intarface Mode STARTS  ######
+
+  Open Standard-Mode Inputfile ./StdFace.def 
+
+  KEYWORD : l                    | VALUE : 16 
+  KEYWORD : model                | VALUE : spin 
+  KEYWORD : method               | VALUE : lanczos 
+  Skipping a line.
+  Skipping a line.
+  KEYWORD : lattice              | VALUE : chainlattice 
+  KEYWORD : j                    | VALUE : 1.0 
+  KEYWORD : 2sz                  | VALUE : 0 
+
+#######  Parameter Summary  #######
+
+                L = 16 
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
+                h = 0.00000     ######  DEFAULT VALUE IS USED  ######
+            Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                D = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                J = 1.00000   
+               Jz = 1.00000     ######  DEFAULT VALUE IS USED  ######
+              Jxy = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Jx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Jy = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               J' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jz' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+             Jxy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jx' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              Jy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       LargeValue = 1           ######  DEFAULT VALUE IS USED  ######
+
+         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
+       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+             exct = 1           ######  DEFAULT VALUE IS USED  ######
+       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
+    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
+           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
+    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+              2Sz = 0  
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    zlocspin.def is written.
+      zTrans.def is written.
+   zInterAll.def is written.
+    namelist.def is written.
+     calcmod.def is written.
+     modpara.def is written.
+    greenone.def is written.
+    greentwo.def is written.
+
+######  Input files are generated.  ######
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'zlocspn.def' for LocSpin.
+  Read File 'zTrans.def' for Trans.
+  Read File 'zInterAll.def' for InterAll.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+
+######  Definition files are correct.  ######
+
+  Read File 'zlocspn.def'.
+  Read File 'zTrans.def'.
+  Read File 'zInterAll.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+  MAX DIMENSION idim_max=12870 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.001236 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+      12       2
+      13       2
+      14       2
+      15       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0           12870     8      8      8         0   
+
+   Total dimension : 12870
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+######  Start: Calculate Lanczos Eigenvalue.  ######
+
+  initial_mode=0 normal: iv = 6437 i_max=12870 k_exct =1 
+
+  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite
+  stp = 2 0.7192235936 2.7807764064 xxxxxxxxxx xxxxxxxxx 
+  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 0.2140174366 
+  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 0.2277205490 
+  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 0.2325450330 
+\end{verbatim}
+\normalsize
+(中略)
+\small
+\begin{verbatim}
+  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 0.2499999989 
+  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 0.2499999996 
+  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 0.2499999999 
+
+######  End  : Calculate Lanczos EigenValue.  ######
+
+######  Start: Calculate Eigenvector.  ######
+
+  Start: Calculate Lanczos Eigenvector.
+  End  : Calculate Lanczos Eigenvector.
+  Start: Calculate Energy.
+  End  : Calculate Energy.
+
+  Accuracy check !!!
+  LanczosEnergy = -7.14229636061676e+00 
+  EnergyByVec   = -7.14229636061616e+00 
+  diff_ene      = 8.50586433832080e-14 
+  var           = 9.97303843188625e-14 
+  Accuracy of Lanczos vectors is enough.
+
+######  End  : Calculate Eigenvector.  ######
+
+  Start: Calculate one body Green functions.
+  End  : Calculate one body Green functions.
+
+  Start: Calculate two bodies Green functions.
+  End  : Calculate two bodies Green functions.
+
+\end{verbatim}
+\normalsize
+
+この実行では、はじめにハミルトニアンの詳細を記述するファイル
+\verb|zlocspin.def|、\verb|zTrans.def|、\verb|zInterAll.def|、
+\verb|namelist.def|、\verb|calcmod.def|、\verb|modpara.def|
+と、結果として出力する相関関数の要素を指定するファイル
+\verb|greenone.def|、\verb|greentwo.def|が生成されます。
+これらのファイルはエキスパートモードと共通です。
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+Lanczos法による計算の偶数ステップで標準出力される情報のうち、
+\verb|E_Max / Nsite|の列の値は最大固有値をサイト数で割ったものとなっています
+(上の例では\verb|0.2499999999=0.25|に収束しています)。
+この値よりも大きい値をTPQ法での\verb|Largevalue|として使うことが出来ます。
+
+\end{screen}
+
+\subsubsection{計算結果出力}
+\begin{description}
+\item {\bf Lanczos法}\\
+Lanczos法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。
+以下に、このサンプルでの出力ファイル例を記載します。\\
+\begin{minipage}{12cm}
+\begin{screen}
+\begin{verbatim}
+zvo_energy.dat zvo_cisajs.dat 
+zvo_cisajscktalt.dat  
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+スタンダードモードの場合は、\verb|greenone.def|、\verb|greentwo.def|に基づき、一体グリーン関数には$\langle n_{i\sigma} \rangle$、二体グリーン関数には$\langle n_{i\sigma} n_{j\sigma'} \rangle$が自動出力されます。なお、Lanczos法で求めた固有ベクトルが十分な精度を持つ場合にはその固有ベクトルで計算されます。一方、Lanczos法で求めた固有ベクトルが十分な精度を持たない場合には、ログ出力に「Accuracy of Lanczos vetor is not enough」が表示され、CG法で固有ベクトルが求められます。各ファイルの詳細は\ref{subsec:energy.dat}, \ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
+
+\item {\bf TPQ法}\\
+入力ファイルで\verb|method = "TPQ"|を選択すると、TPQ法での計算が行われます。TPQ法での計算が正常終了すると、以下のファイルが出力されます(\%\%にはrunの回数、\&\&にはTPQのステップ数が入ります)。\\
+\begin{minipage}{14cm}
+\begin{screen}
+\begin{verbatim}
+Norm_rand%%.dat SS_rand%%.dat
+zvo_cisajs_set%%step&&.dat  
+zvo_cisajscktalt_set%%step&&.dat  
+\end{verbatim}
+\end{screen}
+\end{minipage}
+Norm\_rand\%\%.datには、逆温度や波動関数の規格前の大きさなどの基礎情報が、各run回数に応じステップ数とともに出力されます。また、SS\_rand\%\%.datには、逆温度、エネルギー、ハミルトニアンの二乗の期待値などの物理量が各run回数に応じステップ数とともに出力されます。zvo\_cisajs\_set\%\%step\&\&.dat, zvo\_cisajscktalt\_set\%\%step\&\&.datには各run回数でのステップ数に応じた一体グリーン関数および二体グリーン関数が出力されます。各ファイルの詳細はそれぞれ、\ref{Subsec:normrand}, \ref{Subsec:ssrand}, \ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
+
+
+
+\item {\bf 全対角化法}\\
+入力ファイルで\verb|method = "fulldiag"|を選択すると、全対角化法での計算が行われます。
+全対角化法での計算が正常終了すると、下記のファイルが出力されます(xxには0から始まる固有値番号が入ります)。\\
+\begin{minipage}{14cm}
+\begin{screen}
+\begin{verbatim}
+Eigenvalue.dat zvo_cisajs_eigen_xx.dat
+zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+Eigenvalue.datには固有値番号およびエネルギー固有値が出力されます。また、zvo\_cisajs\_eigen\_xx.dat、zvo\_cisajscktalt\_eigen\_xx.datには固有値番号に対応した一体グリーン関数および二体グリーン関数の値が出力されます。また、zvo\_phys\_Nup4\_Ndown4.datには、エネルギーやダブロンの期待値などの物理量が出力されます。各ファイルの詳細は、それぞれ\ref{Subsec:eigenvalue} - \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
+
+
+\end{description}
+
+\subsection{その他の系でのチュートリアル}
+
+\verb|samples/Standard/|以下には次のチュートリアルが含まれています。
+
+\begin{itemize}
+\item 2次元正方格子Hubbardモデル
+
+  (\verb|samples/Standard/Hubbard/square/|)
+\item 2次元三角格子Hubbardモデル
+
+  (\verb|samples/Standard/Hubbard/triangular/|)
+\item 1次元近藤格子モデル
+
+  (\verb|samples/Standard/Kondo/chain/|)
+\item 1次元反強磁性的Heisenbergモデル
+
+  (\verb|samples/Standard/Spin/HeisenbergChain/HeisenbergChain/|)
+\item 2次元正方格子反強磁性的Heisenbergモデル
+
+  (\verb|samples/Standard/Spin/HeisenbergSquare/|)
+\item Kitaevモデル(Honeycomb格子、2$\times$3サイト)
+
+  (\verb|samples/Standard/Spin/Kitaev/|)
+
+\end{itemize}
+
+これらのチュートリアルの実行方法は前節と同じです。
 
 %----------------------------------------------------------
 \newpage
@@ -118,7 +448,7 @@ NlocalSpin    16
 \end{screen}
 \end{minipage}
 ~\\
-LosSpnファイルの詳細は\ref{Subsec:locspn}をご覧ください。
+LocSpinファイルの詳細は\ref{Subsec:locspn}をご覧ください。
 \end{description}
 
 \subsection{Hamiltonianの指定}
@@ -326,6 +656,8 @@ NCisAjsCktAltDC       1024
 \item{\ref{Sec:StandardMode}に従い、スタンダードモデルで入力ファイルを作成します。}
 \item{オプションとして"-sdry"を指定し、入力ファイル(ここではStdFace.def)を記入した上でHPhiを実行します。}\\
 \verb|$ |\underline{パス}\verb|/HPhi -sdry StdFace.def|
+
+このときMPIによる並列実行(\verb|mpirun|, \verb|mpiexec|など)は行わないでください。
 ~\\
 \item{実行したディレクトリ内に、エキスパート用として下記のdefファイルが自動生成されます。}\\
 \begin{minipage}{12cm}

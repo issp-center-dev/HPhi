@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -103,7 +103,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0;
     }
-    u_long_i = 123432 + abs(iv);
+    u_long_i = 123432 + labs(iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
     if(X->Def.iInitialVecType==0){
       for (iproc = 0; iproc < nproc; iproc++) {
@@ -182,11 +182,10 @@ int Lanczos_EigenValue(struct BindStruct *X)
   }
   else{
 #ifdef lapack
-    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite\n");
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite\n");
 #else
-    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4]\n");
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] \n");
 #endif
-
   for(stp = 2; stp <= X->Def.Lanczos_max; stp++){
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for(i=1;i<=i_max;i++){
@@ -240,12 +239,24 @@ int Lanczos_EigenValue(struct BindStruct *X)
        bisec(alpha,beta,stp,E,4,eps_Bisec);
      #endif
        ebefor=E[Target];
+       
+       childfopenMPI(sdt_2,"w", &fp);
+#ifdef lapack
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
 
+       fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite\n");
+       fprintf(fp, "stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
+#else
        fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
-
+       fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] \n");
+       fprintf(fp,"stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
+#endif
+       fclose(fp);
     }
             
     if(stp>2 && stp%2==0){
+      
+      childfopenMPI(sdt_2,"a", &fp);
       
 #ifdef lapack
       d_malloc2(tmp_mat,stp,stp);
@@ -270,26 +281,19 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[2] = tmp_E[1];
        E[3] = tmp_E[2];
        E[4] = tmp_E[3];
-       E[0] = tmp_E[stp - 1];
+       E[0] = tmp_E[stp-1];
        d_free1(tmp_E,stp+1);
-       d_free2(tmp_mat,stp,stp);
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf \n", stp, E[1], E[2], E[3], E[4],
-         E[0] / (double)X->Def.NsiteMPI);
+       d_free2(tmp_mat,stp,stp);       
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
+       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
 #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n", stp, E[1], E[2], E[3], E[4]);
-#endif
-      
-       if(stp==4){
-	 childfopenMPI(sdt_2,"w", &fp);
-       }
-       else{
-	 childfopenMPI(sdt_2,"a", &fp);
-       }
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
        fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4]);
+#endif 
        fclose(fp);
 
-      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos || abs(beta[stp])<pow(10.0, -14)){
+      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos || fabs(beta[stp])<pow(10.0, -14)){
         vec12(alpha,beta,stp,E,X);		
         X->Large.itr=stp;       
         X->Phys.Target_energy=E[k_exct];
@@ -307,7 +311,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     sprintf(sdt,  cLogLanczos_EigenValueNotConverged);
     return -1;
   }
-  
+
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 

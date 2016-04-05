@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -43,7 +43,7 @@ const char* cDiagonalCalcFinish="diagonal calculation finishes: %s";
 
 //FirstMultiply.c, Multiply.c
 const char* cTPQStep="step %d:TPQ begins: %s";
-const char* cTPQStepEnd="step %d:TPQ ends: %s";
+const char* cTPQStepEnd="step %d:TPQ finishes: %s";
 
 //Lanczos_EigenValue.c
 const char* cLogLanczos_EigenValueNotConverged="Lanczos Eigenvalue is not converged in this process.";
@@ -58,8 +58,8 @@ const char* cLogLanczos_EigenVectorEnd="  End  : Calculate Lanczos Eigenvector.\
 const char* cLanczos_EigenVectorFinish="Lanczos Eigenvector finishes: %s";
 
 //expec.c
-const char* cExpecStart="step %d:Expec begins: %s";
-const char* cExpecEnd="step %d:Expec ends: %s";
+const char* cExpecStart="step %d:TPQ multiply begins:     %s";
+const char* cExpecEnd  ="step %d:TPQ multiply finishes:   %s";
 
 //expec_cisajs.c
 const char* cLogLanczosExpecOneBodyGStart="  Start: Calculate one body Green functions.\n";

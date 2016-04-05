@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -28,7 +28,7 @@ int NsiteMPI;
  */
 int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
-  int isite, NDimInterPE, SmallDim, SpinNum;
+  int isite, NDimInterPE, SmallDim, SpinNum, ipivot, ishift, isiteMax, isiteMax0;
 
   NsiteMPI = X->Def.Nsite;
   X->Def.NsiteMPI=NsiteMPI;
@@ -68,7 +68,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
 	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
         return FALSE;
-      return FALSE;
+      //return FALSE;
     } /*if (isite == 0)*/
 
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
@@ -253,6 +253,35 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     fprintf(stdoutMPI, "Error ! Wrong model !\n");
     return FALSE;
   }/*switch (X->Def.iCalcModel)*/
+
+   /*
+   Check the number of processes for Boost
+   */
+  if (X->Boost.flgBoost == 1) {
+    isiteMax = X->Boost.W0;
+    ishift = 0;
+    for (ipivot = 0; ipivot < X->Boost.num_pivot; ipivot++) {
+      isiteMax0 = X->Boost.list_6spin_star[ipivot][1]
+        + X->Boost.list_6spin_star[ipivot][2]
+        + X->Boost.list_6spin_star[ipivot][3]
+        + X->Boost.list_6spin_star[ipivot][4]
+        + X->Boost.list_6spin_star[ipivot][5];
+      if (ishift > 1) isiteMax0 = NsiteMPI - isiteMax0 - 1 - ishift;
+      else isiteMax0 = NsiteMPI - isiteMax0 - 2;
+      if (isiteMax0 < isiteMax) isiteMax = isiteMax0;
+      if (X->Boost.list_6spin_star[ipivot][6] == 1) ishift += X->Boost.ishift_nspin;
+    }
+
+    NDimInterPE = 1;
+    for (isite = 0; isite < isiteMax; isite++) NDimInterPE *= 2;
+
+    if (NDimInterPE < nproc) {
+      fprintf(stderr, "\n Error ! in ReadDefFileIdxPara.\n");
+      fprintf(stderr, "Too many MPI processes ! It should be <= %d. \n\n", NDimInterPE);
+      exitMPI(-1);
+    }
+
+  }
 
   return TRUE;
 }/*void CheckMPI*/

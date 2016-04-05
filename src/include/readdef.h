@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -17,7 +17,7 @@
 #include "xsetmem.h"
 #define D_FileNameMaxReadDef 256 /*!<  Max length of words for file name*/
 #define D_CharTmpReadDef     200 /*!<  Max length of reading words from input files*/
-#define D_iKWNumDef 14 /*!<  Max number of keyword set in def file*/
+#define D_iKWNumDef 15 /*!<  Max number of keyword set in def file*/
 #define D_CharKWDMAX     200 /*!<  Max length of words for keyword*/
 
 /*!< Number of ignore lines in def files */
@@ -45,6 +45,7 @@
 #define KWTwoBodyG 11
 #define KWPairLift 12
 #define KWIsing 13
+#define KWBoost 14
 
 int CheckSite(
 	      const int iListToSite,
@@ -144,9 +145,11 @@ int CheckTotal2Sz
 
 int ReadDefFileNInt(
 		    char *xNameListFile, 
-		    struct DefineList *X
+		    struct DefineList *X,
+		    struct BoostList *xBoost
 		    );
 
 int ReadDefFileIdxPara(
-		       struct DefineList *X
+		       struct DefineList *X,
+		       struct BoostList *xBoost
 		       );

@@ -1,11 +1,25 @@
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 1.0                    
+                                                                
 
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 12
+  OpenMP threads : 16
   MPI PEs : 1 
 
-  Read File 'namelist.def'.
+  Read File './namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
   Read File 'zlocspn.def' for LocSpin.
@@ -24,8 +38,8 @@
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=15184 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.001458 GB 
+  MAX DIMENSION idim_max=346 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000033 GB 
 
 
 ######  MPI site separation summary  ######
@@ -40,19 +54,15 @@
        5       4
        6       4
        7       4
-       8       4
-       9       4
-      10       4
-      11       4
 
   INTER process site
     Site    Bit
 
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0           15184     6      6     12         0   
+          0             346     4      4      8         0   
 
-   Total dimension : 15184
+   Total dimension : 346
 
 
 ######  LARGE ALLOCATE FINISH !  ######
@@ -62,15 +72,11 @@
   j = 1 loc 1 
   j = 2 loc 1 
   j = 3 loc 1 
-  j = 4 loc 1 
-  j = 5 loc 1 
+  j = 4 loc 0 
+  j = 5 loc 0 
   j = 6 loc 0 
   j = 7 loc 0 
-  j = 8 loc 0 
-  j = 9 loc 0 
-  j = 10 loc 0 
-  j = 11 loc 0 
-  N_all_up=6 N_all_down=6 
+  N_all_up=4 N_all_down=4 
   End  : Calculate HilbertNum for fixed Sz. 
 
   Start: Calculate diagaonal components of Hamiltonian. 
@@ -135,4 +141,4 @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 125 [s].
+Finish: Elapsed time is 4 [s].

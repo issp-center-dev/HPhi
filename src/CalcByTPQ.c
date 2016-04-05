@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -57,7 +57,7 @@ int CalcBySSM(
   fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
-    u_long_i = 123432 + (rand_i+1)*abs(X->Bind.Def.initial_iv);
+    u_long_i = 123432 + (rand_i+1)*labs(X->Bind.Def.initial_iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){
@@ -76,6 +76,7 @@ int CalcBySSM(
     FirstMultiply(&dsfmt, &(X->Bind));
     
     expec_energy(&(X->Bind)); //v0 = H*v1
+
     Ns = 1.0*X->Bind.Def.NsiteMPI;
     inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
     step_i = 1;
@@ -106,7 +107,7 @@ int CalcBySSM(
       X->Bind.Def.istep=step_i;
       TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
       Multiply(&(X->Bind));
-      TimeKeeperWithStep(&(X->Bind), cFileNameTimeKeep, cTPQStepEnd, "a", step_i);
+      //TimeKeeperWithStep(&(X->Bind), cFileNameTimeKeep, cTPQStepEnd, "a", step_i);
       expec_energy(&(X->Bind));
       //expec(&(X->Bind));
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);

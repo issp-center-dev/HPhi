@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -54,7 +54,7 @@ int expec_energy(struct BindStruct *X){
     break;
   default:
     return -1;
-    break;
+    //break;
   }
 
   i_max=X->Check.idim_max;      
@@ -98,6 +98,7 @@ int expec_energy(struct BindStruct *X){
 	  tmp_num_up += tmp_v02*num1_down;
 	}
 	break;
+
       case SpinGC:
 	if (X->Def.iFlgGeneralSpin == FALSE) {
 	  is1_up = X->Def.Tpow[isite1 - 1];
@@ -115,6 +116,7 @@ int expec_energy(struct BindStruct *X){
 	  }	  
       } /*if (X->Def.iFlgGeneralSpin == FALSE)*/   	
 	break;/*case SpinGC*/
+  /* SpinGCBoost */
 
       case Spin:
 	break;
@@ -175,6 +177,8 @@ int expec_energy(struct BindStruct *X){
 	  }
 	}
 	break;
+/* SpinGCBoost */
+
       case Spin:
 	break;
       default:
@@ -222,6 +226,7 @@ int expec_energy(struct BindStruct *X){
   }
 
   mltply(X, v0, v1); // v0+=H*v1
+/* switch -> SpinGCBoost */
 
   dam_pr=0.0;
   dam_pr1=0.0;

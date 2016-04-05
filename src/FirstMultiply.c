@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -53,6 +53,7 @@ int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
     //we do not adopt omp in this part.
     for (iproc = 0; iproc < nproc; iproc++) {
       
+      //
       i_max_tmp = BcastMPI_li(iproc, i_max);
       
       for (i = 1; i <= i_max_tmp; i++) {
