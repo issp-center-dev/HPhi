@@ -1,8 +1,8 @@
 L = 6
 model = "Kondolattice"
-method = "Lanczos"
+//method = "Lanczos"
 //method = "TPQ"
-//method = "FullDiag"
+method = "FullDiag"
 lattice = "chain"
 t = 1.0
 J = 4.0
