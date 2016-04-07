@@ -22,6 +22,7 @@
 #include <CalcByLanczos.h>
 #include <CalcByFullDiag.h>
 #include <CalcByTPQ.h>
+#include <CalcSpectrum.h>
 #include <check.h>
 #include "Common.h"
 #include "readdef.h"
@@ -175,24 +176,33 @@ int main(int argc, char* argv[]){
   case Lanczos:    
     if(!CalcByLanczos(&X)==0){
       FinalizeMPI();
-      return 0;
+      return -1;
     }    
     break;
   case FullDiag:
     if(!CalcByFullDiag(&X)==0){
       FinalizeMPI();
-      return 0;
+      return -1;
     }
     break;
+    
   case TPQCalc:
-    if(!CalcBySSM(NumAve, ExpecInterval, &X)==0){
+    if(!CalcByTPQ(NumAve, ExpecInterval, &X)==0){
+      FinalizeMPI();
+      return -1;
+    }
+    break;
+
+    case Spectrum:
+      if(!CalcSpectrum(&X)==0){
+        FinalizeMPI();
+        return -1;
+      }
+      break;
+
+    default:
       FinalizeMPI();
       return 0;
-    }
-    break;
-  default:
-    FinalizeMPI();
-    return 0;
   }  
 
   FinalizeMPI();

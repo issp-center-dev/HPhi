@@ -16,6 +16,16 @@
 #pragma once
 #include "Common.h"
 
-int CalcByLanczos(
-		  struct EDMainCalStruct *X
+int CalcSpectrumByLanczos(
+			  struct EDMainCalStruct *X,
+			  double complex *tmp_v1,
+			  double norm
 );
+
+int GetSpectrumByTridiagonalMatrixComponents(
+		double *tmp_alpha,
+		double *tmp_beta,
+		double dnorm,
+		double complex _zomega,
+		double complex *_zSpetcrum
+		);

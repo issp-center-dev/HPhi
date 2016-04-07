@@ -16,7 +16,7 @@
 #pragma once
 #include "Common.h"
 
-int CalcBySSM(
+int CalcByTPQ(
 	    const int NumAve,
 	    const int ExpecInterval,
 	    struct EDMainCalStruct *X

@@ -35,5 +35,6 @@ double SumMPI_d(double norm);
 unsigned long int SumMPI_li(unsigned long int idim);
 int SumMPI_i(int idim);
 unsigned long int BcastMPI_li(int root, unsigned long int idim);
+double NormMPI_dc(unsigned long int idim, double complex *_v1);
 
 #endif

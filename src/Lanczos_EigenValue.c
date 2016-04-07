@@ -141,8 +141,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v1[i] = v1[i]/dnorm;
     }
   }
+
   //Eigenvalues by Lanczos method
-  
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, v1);
   stp=1;
@@ -316,4 +316,15 @@ int Lanczos_EigenValue(struct BindStruct *X)
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
   return 0;  
+}
+
+int Lanczos_GetTridiagonalMatrixComponents(double *_alpha, double *_beta, double complex *_v1, long int Lanczos_step){
+
+
+    unsigned long int stp=0;
+    for(stp = 1; stp <= Lanczos_step; stp++) {
+        _alpha[stp] = alpha[stp];
+        _beta[stp]=beta[stp];
+    }
+  return 0;
 }

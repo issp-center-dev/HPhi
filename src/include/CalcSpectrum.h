@@ -16,6 +16,6 @@
 #pragma once
 #include "Common.h"
 
-int CalcByLanczos(
-		  struct EDMainCalStruct *X
+int CalcSpectrum(
+		 struct EDMainCalStruct *X
 );
