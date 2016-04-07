@@ -52,6 +52,7 @@ int CalcSpectrumByLanczos(
   unsigned long int i_max=0;
   FILE *fp;
   int iret=TRUE;
+    unsigned long int liLanczosStp=X->Bind.Def.Lanczos_max;
 
   //ToDo: Nomega should be given as a parameter
   int Nomega=1000;
@@ -63,12 +64,13 @@ int CalcSpectrumByLanczos(
   double complex *dcomega;
   c_malloc1(dcomega, Nomega);
   
-  // ToDo: calculate ai, bi (not yet made)
+  // calculate ai, bi
   // Functions in Lanczos_EigenValue
-  iret= Lanczos_GetTridiagonalMatrixComponents( &(X->Bind), alpha, beta, v1,  X->Bind.Def.Lanczos_max);
+  iret= Lanczos_GetTridiagonalMatrixComponents( &(X->Bind), alpha, beta, v1,  &(liLanczosStp));
   if(iret != TRUE){
     //Error Message will be added.
-    return -1;
+
+    return FALSE;
   }
 
   // ToDo: Give dcomega
@@ -78,10 +80,10 @@ int CalcSpectrumByLanczos(
   
   for( i = 0 ; i < Nomega; i++){
     //ToDo: calculate spectrum for a fixed omega
-    iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i]);
+    iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i], liLanczosStp);
     if(iret != TRUE){
       //Error Message will be added.
-      return -1;
+      return FALSE;
     }
   }
   
@@ -95,18 +97,18 @@ int CalcSpectrumByLanczos(
   }
   fclose(fp);
   
-  return 0;
+  return TRUE;
 }
 
 
 int GetSpectrumByTridiagonalMatrixComponents(
-		double *tmp_alpha,
-		double *tmp_beta,
+		double *tmp_alpha, // alpha: 1,..., ilLanczosStp
+		double *tmp_beta, // beta: 1, ..., ilLanczosStp
 		double dnorm,
 		double complex dcomega,
-		double complex *dcSpetcrum
+		double complex *dcSpectrum,
+        unsigned long int ilLanczosStp
 		)
 {
-  
-  return 0;
+  return TRUE;
 }

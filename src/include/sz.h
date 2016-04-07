@@ -64,7 +64,7 @@ long int Binomial(
 	     );
 
 int sz(
-
+       struct BindStruct *X
        );
 
 int Read_sz

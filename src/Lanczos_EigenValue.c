@@ -315,7 +315,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
-  return 0;  
+  return 0;
 }
 
 /** 
@@ -334,7 +334,7 @@ int Lanczos_GetTridiagonalMatrixComponents
  double *_alpha,
  double *_beta,
  double complex *tmp_v1,
- unsigned long int liLanczos_step
+ unsigned long int *liLanczos_step
  )
 {
 
@@ -358,11 +358,11 @@ int Lanczos_GetTridiagonalMatrixComponents
     Set Maximum number of loop to the dimention of the Wavefunction
   */
  i_max_tmp = SumMPI_li(i_max);
- if(i_max_tmp < liLanczos_step){
-    liLanczos_step = i_max_tmp;
+ if(i_max_tmp < *liLanczos_step){
+    *liLanczos_step = i_max_tmp;
   }
   if(i_max_tmp < X->Def.LanczosTarget){
-    liLanczos_step = i_max_tmp;
+    *liLanczos_step = i_max_tmp;
   }
 
 #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
@@ -386,7 +386,12 @@ int Lanczos_GetTridiagonalMatrixComponents
   beta1=sqrt(beta1);
   beta[1]=beta1;
   
-  for(stp = 2; stp <= liLanczos_step; stp++){
+  for(stp = 2; stp <= *liLanczos_step; stp++){
+      if(fabs(beta[stp-1])<pow(10.0, -14)){
+          *liLanczos_step=stp-1;
+          break;
+      }
+
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
       for(i=1;i<=i_max;i++){
 	temp1 = v1[i];
@@ -403,7 +408,7 @@ int Lanczos_GetTridiagonalMatrixComponents
       
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
       for(i=1;i<=i_max;i++){
-	cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
+	    cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
       }
       cbeta1 = SumMPI_dc(cbeta1);
       beta1=creal(cbeta1);
@@ -411,10 +416,10 @@ int Lanczos_GetTridiagonalMatrixComponents
       beta[stp]=beta1;                    
   }
   
-  for(stp = 1; stp <= liLanczos_step; stp++) {
+  for(stp = 1; stp <= *liLanczos_step; stp++) {
     _alpha[stp] = alpha[stp];
     _beta[stp]=beta[stp];
   }
   
-  return 0;
+  return TRUE;
 }

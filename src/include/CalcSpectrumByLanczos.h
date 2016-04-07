@@ -27,5 +27,6 @@ int GetSpectrumByTridiagonalMatrixComponents(
 		double *tmp_beta,
 		double dnorm,
 		double complex _zomega,
-		double complex *_zSpetcrum
+		double complex *_zSpetcrum,
+		unsigned long int liLanczosStp
 		);
