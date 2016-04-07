@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcSpectrumByLanczos.h"
+#include "Lanczos_EigenValue.h"
 #include "FileIO.h"
 #include "mfmemory.h"
 #include "wrapperMPI.h"
@@ -64,7 +65,7 @@ int CalcSpectrumByLanczos(
   
   // ToDo: calculate ai, bi (not yet made)
   // Functions in Lanczos_EigenValue
-  iret= Lanczos_GetTridiagonalMatrixComponents(alpha, beta, v1,  X->Bind.Def.Lanczos_max);
+  iret= Lanczos_GetTridiagonalMatrixComponents( &(X->Bind), alpha, beta, v1,  X->Bind.Def.Lanczos_max);
   if(iret != TRUE){
     //Error Message will be added.
     return -1;
@@ -102,7 +103,7 @@ int GetSpectrumByTridiagonalMatrixComponents(
 		double *tmp_alpha,
 		double *tmp_beta,
 		double dnorm,
-		double complex *dcomega,
+		double complex dcomega,
 		double complex *dcSpetcrum
 		)
 {

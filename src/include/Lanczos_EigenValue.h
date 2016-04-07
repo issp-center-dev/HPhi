@@ -15,5 +15,5 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
 int Lanczos_EigenValue(struct BindStruct *X);
-int Lanczos_GetTridiagonalMatrixComponents(double *alpha, double *beta, double complex *_v1, long int Lanczos_step);
+int Lanczos_GetTridiagonalMatrixComponents(struct BindStruct *X, double *alpha, double *beta, double complex *_v1, unsigned long int Lanczos_step);
 

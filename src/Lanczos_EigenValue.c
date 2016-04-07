@@ -318,13 +318,103 @@ int Lanczos_EigenValue(struct BindStruct *X)
   return 0;  
 }
 
-int Lanczos_GetTridiagonalMatrixComponents(double *_alpha, double *_beta, double complex *_v1, long int Lanczos_step){
+/** 
+ * @brief Calculate tridiagonal matrix components by Lanczos method
+ * 
+ * @param _alpha 
+ * @param _beta 
+ * @param _v1 
+ * @param Lanczos_step 
+ * 
+ * @return 0
+ */
+int Lanczos_GetTridiagonalMatrixComponents
+(
+ struct BindStruct *X,
+ double *_alpha,
+ double *_beta,
+ double complex *tmp_v1,
+ unsigned long int liLanczos_step
+ )
+{
 
+ FILE *fp;
+ char sdt[D_FileNameMax];
+ int stp, iproc;
+ long int i,iv,i_max;
+ i_max=X->Check.idim_max;
+ 
+ unsigned long int i_max_tmp, sum_i_max;
+ int k_exct,Target;
+ double beta1,alpha1; //beta,alpha1 should be real
+ double  complex temp1,temp2;
+ double complex cbeta1;
+ double complex *tmp_v0;
+ c_malloc1(tmp_v0, i_max);
+ 
+ sprintf(sdt, cFileNameLanczosStep, X->Def.CDataFileHead);  
+  
+  /*
+    Set Maximum number of loop to the dimention of the Wavefunction
+  */
+ i_max_tmp = SumMPI_li(i_max);
+ if(i_max_tmp < liLanczos_step){
+    liLanczos_step = i_max_tmp;
+  }
+  if(i_max_tmp < X->Def.LanczosTarget){
+    liLanczos_step = i_max_tmp;
+  }
 
-    unsigned long int stp=0;
-    for(stp = 1; stp <= Lanczos_step; stp++) {
-        _alpha[stp] = alpha[stp];
-        _beta[stp]=beta[stp];
-    }
+#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
+  for(i = 1; i <= i_max; i++){
+    v0[i]=0.0;
+  }  
+
+  TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
+  mltply(X, v0, tmp_v1);
+  stp=1;
+  alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
+  alpha[1]=alpha1;
+  cbeta1=0.0;
+  
+#pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
+  for(i = 1; i <= i_max; i++){
+    cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
+  }
+  cbeta1 = SumMPI_dc(cbeta1);
+  beta1=creal(cbeta1);
+  beta1=sqrt(beta1);
+  beta[1]=beta1;
+  
+  for(stp = 2; stp <= liLanczos_step; stp++){
+#pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
+      for(i=1;i<=i_max;i++){
+	temp1 = v1[i];
+	temp2 = (v0[i]-alpha1*v1[i])/beta1;
+	v0[i] = -beta1*temp1;
+	v1[i] =  temp2;
+      }
+
+      mltply(X, v0, v1);
+      
+      alpha1=creal(X->Large.prdct);
+      alpha[stp]=alpha1;
+      cbeta1=0.0;
+      
+#pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
+      for(i=1;i<=i_max;i++){
+	cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
+      }
+      cbeta1 = SumMPI_dc(cbeta1);
+      beta1=creal(cbeta1);
+      beta1=sqrt(beta1);
+      beta[stp]=beta1;                    
+  }
+  
+  for(stp = 1; stp <= liLanczos_step; stp++) {
+    _alpha[stp] = alpha[stp];
+    _beta[stp]=beta[stp];
+  }
+  
   return 0;
 }
