@@ -43,5 +43,5 @@ int CalcByFullDiag(
   fprintf(stdoutMPI, cLogFullDiag_ExpecValue_End);
   output(&(X->Bind));
   fprintf(stdoutMPI, cLogFinish);
-  return 0;
+  return TRUE;
 }

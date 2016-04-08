@@ -19,3 +19,19 @@
 int CalcSpectrum(
 		 struct EDMainCalStruct *X
 );
+
+int GetExcitedState(
+		    struct BindStruct *X,
+		    double complex *tmp_v0
+		    );
+
+int GetSingleExcitedState
+		(
+				struct BindStruct *X,
+				double complex *tmp_v0
+		);
+int GetPairExcitedState
+		(
+				struct BindStruct *X,
+				double complex *tmp_v0
+		);
