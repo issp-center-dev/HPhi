@@ -55,7 +55,9 @@ static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
         "TwoBodyG",
         "PairLift",
         "Ising",
-	"Boost"
+    	"Boost",
+        "SingleExcitation",
+        "PairExcitation"
 };
 
 /**
@@ -576,7 +578,22 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
 
       break;
-    default:
+
+        case KWSingleExcitation:
+            /* Read singleexcitation.def----------------------------------------*/
+            fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2,"%s %d\n", ctmp, &(X->NSingleExcitationOperator));
+            break;
+
+        case KWPairExcitation:
+            /* Read pairexcitation.def----------------------------------------*/
+            fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairExcitationOperator));
+            break;
+
+        default:
       fprintf(stderr, "%s", cErrIncorrectDef);
       fclose(fp);
       exitMPI(-1);
@@ -695,6 +712,7 @@ int ReadDefFileIdxPara(
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
   int i,idx;
+    int itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -1249,6 +1267,78 @@ int ReadDefFileIdxPara(
       }
 
       break;
+
+        case KWSingleExcitation:
+
+
+            /*singleexcitation.def----------------------------------------*/
+            if(X->NSingleExcitationOperator>0) {
+                if(X->iCalcModel == Spin || X->iCalcModel == SpinGC) {
+                    fprintf(stderr, "SingleExcitation is not allowed for spin system.\n");
+                    fclose(fp);
+                    return ReadDefFileError(defname);
+                }
+                while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+                    sscanf(ctmp2, "%d %d %d %lf %lf\n",
+                           &isite1,
+                           &isigma1,
+                           &itype,
+                           &dvalue_re,
+                           &dvalue_im
+                    );
+
+                    if (CheckSite(isite1, X->Nsite) != 0) {
+                        fclose(fp);
+                        return ReadDefFileError(defname);
+                    }
+
+                    X->SingleExcitationOperator[idx][0] = isite1;
+                    X->SingleExcitationOperator[idx][1] = isigma1;
+                    X->SingleExcitationOperator[idx][2] = itype;
+                    X->ParaSingleExcitationOperator[idx] = dvalue_re + I * dvalue_im;
+                    idx++;
+                }
+                if (idx != X->NSingleExcitationOperator) {
+                    fclose(fp);
+                    return ReadDefFileError(defname);
+                }
+            }
+
+            break;
+
+        case KWPairExcitation:
+            /*pairexcitation.def----------------------------------------*/
+            if(X->NPairExcitationOperator>0) {
+                while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+                    sscanf(ctmp2, "%d %d %d %d %d %lf %lf\n",
+                           &isite1,
+                           &isigma1,
+                           &isite2,
+                           &isigma2,
+                           &itype,
+                           &dvalue_re,
+                           &dvalue_im
+                    );
+
+                    if (CheckPairSite(isite1, isite2, X->Nsite) != 0) {
+                        fclose(fp);
+                        return ReadDefFileError(defname);
+                    }
+
+                    X->PairExcitationOperator[idx][0] = isite1;
+                    X->PairExcitationOperator[idx][1] = isigma1;
+                    X->PairExcitationOperator[idx][2] = isite2;
+                    X->PairExcitationOperator[idx][3] = isigma2;
+                    X->PairExcitationOperator[idx][4] = itype;
+                    X->ParaPairExcitationOperator[idx] = dvalue_re + I * dvalue_im;
+                    idx++;
+                }
+                if (idx != X->NPairExcitationOperator) {
+                    fclose(fp);
+                    return ReadDefFileError(defname);
+                }
+            }
+            break;
 
     default:
       break;
@@ -2040,6 +2130,8 @@ void InitializeInteractionNum
   X->NInterAll=0;
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
+    X->NSingleExcitationOperator=0;
+    X->NPairExcitationOperator=0;
 }
 
 /** 
