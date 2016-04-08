@@ -6,6 +6,8 @@ HPhiTrans.c \
 HPhiMain.c \
 CalcByFullDiag.c \
 CalcByLanczos.c \
+CalcSpectrum.c \
+CalcSpectrumByLanczos.c \
 FirstMultiply.c \
 Lanczos_EigenValue.c \
 Lanczos_EigenVector.c \

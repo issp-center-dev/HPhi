@@ -56,8 +56,8 @@ int CalcSpectrumByLanczos(
 
   //ToDo: Nomega should be given as a parameter
   int Nomega=1000;
-  double complex OmegaMax=20+0.01*I;
-  double complex OmegaMin=-20+0.01*I;
+  double complex OmegaMax=50+0.001*I;
+  double complex OmegaMin=-50+0.001*I;
 
   double complex *dcSpectrum;
   c_malloc1(dcSpectrum, Nomega);
@@ -75,14 +75,13 @@ int CalcSpectrumByLanczos(
 
   // ToDo: Give dcomega
   for(i=0; i< Nomega; i++){
-    dcomega[i]=(OmegaMax-OmegaMin)/Nomega+OmegaMin;
+    dcomega[i]=(OmegaMax-OmegaMin)/Nomega*i+OmegaMin;
   }
   
   for( i = 0 ; i < Nomega; i++){
-    //ToDo: calculate spectrum for a fixed omega
     iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i], liLanczosStp);
     if(iret != TRUE){
-      //Error Message will be added.
+      //ToDo: Error Message will be added.
       return FALSE;
     }
   }
@@ -91,9 +90,14 @@ int CalcSpectrumByLanczos(
   sprintf(sdt, cFileNameLanczosStep, X->Bind.Def.CDataFileHead);   
   childfopenMPI(sdt,"w", &fp);
   for( i = 0 ; i < Nomega; i++){
-    fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
+    fprintf(stdoutMPI,"%.10lf %.10lf %.10lf %.10lf \n",
+            creal(dcomega[i]), cimag(dcomega[i]),
+            creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
+/*
+      fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
 	    creal(dcomega[i]), cimag(dcomega[i]),
 	    creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
+	    */
   }
   fclose(fp);
   
@@ -102,13 +106,53 @@ int CalcSpectrumByLanczos(
 
 
 int GetSpectrumByTridiagonalMatrixComponents(
-		double *tmp_alpha, // alpha: 1,..., ilLanczosStp
-		double *tmp_beta, // beta: 1, ..., ilLanczosStp
+		double *tmp_alpha,
+		double *tmp_beta,
 		double dnorm,
 		double complex dcomega,
 		double complex *dcSpectrum,
         unsigned long int ilLanczosStp
 		)
 {
+    unsigned long int istp=2;
+    double complex dcDn;
+    double complex dcb0;
+    double complex dcbn, dcan;
+    double complex dcDeltahn;
+    double complex dch;
+
+    if(ilLanczosStp < 1){
+        //TODO: Add error message
+        return FALSE;
+    }
+
+    dcb0 = dcomega-tmp_alpha[1];
+    if(ilLanczosStp ==1) {
+        if(cabs(dcb0)<eps_Energy){
+            dcb0=eps_Energy;
+        }
+        *dcSpectrum = -(dnorm*dnorm)/(M_PI*dcb0);
+        return TRUE;
+    }
+
+    dcbn = dcomega-tmp_alpha[2];
+    dcan = -pow(tmp_beta[1],2);
+    dcDn=1.0/dcbn;
+    dcDeltahn = dcan*dcDn;
+    dch=dcb0+dcDeltahn;
+
+    for(istp=2; istp<=ilLanczosStp; istp++){
+        dcbn = dcomega-tmp_alpha[istp+1];
+        dcan =-pow(tmp_beta[istp],2);
+        dcDn = (dcbn+dcan*dcDn);
+        if(cabs(dcDn)<eps_Energy){
+            dcDn=eps_Energy;
+        }
+        dcDn /=dcDn;
+        dcDeltahn = (dcbn*dcDn-1.0)*dcDeltahn;
+        dch += dcDeltahn;
+        if(cabs(dcDeltahn/dch)<cabs(dcb0)*eps) break;
+    }
+    *dcSpectrum = -(dnorm*dnorm)/(M_PI*dch);
   return TRUE;
 }
