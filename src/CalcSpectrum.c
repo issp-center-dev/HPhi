@@ -108,15 +108,17 @@ int GetExcitedState
  double complex *tmp_v0
 )
 {
+    double complex *tmp_v1 = v1;
 
 	if(!GetSingleExcitedState(X,tmp_v0)==TRUE){
 		return FALSE;
 	}
 
-	if(!GetPairExcitedState(X,tmp_v0)==TRUE){
+	if(!GetPairExcitedState(X,tmp_v1, tmp_v0)==TRUE){
 		return FALSE;
 	}
 
+    tmp_v0=tmp_v1;
   return TRUE;
 }
 
@@ -132,7 +134,8 @@ int GetSingleExcitedState
 int GetPairExcitedState
 		(
 				struct BindStruct *X,
-				double complex *vec
+                double complex *tmp_v0, /**< [out] Result v0 = H v1*/
+                double complex *tmp_v1 /**< [in] v0 = H v1*/
 		)
 {
 
@@ -144,12 +147,13 @@ int GetPairExcitedState
 	long unsigned int isite1;
 	long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
 	long unsigned int tmp_off=0;
-	double complex dam_pr=0;
+	double complex tmp_trans=0;
 	long int i_max;
 	int tmp_sgn, num1;
-	long int ibit1, ibit;
+    int idx=0;
+    int ihermite=0;
+    long int ibit1, ibit;
 	long unsigned int is1_up, is;
-	double complex tmp_OneGreen=1.0;
 	//For TPQ
 	int step=0;
 	int rand_i=0;
@@ -162,18 +166,17 @@ int GetPairExcitedState
 	X->Large.irght    = irght;
 	X->Large.ilft     = ilft;
 	X->Large.ihfbit   = ihfbit;
-	X->Large.mode     = M_CORR;
-
-	dam_pr=0.0;
+	X->Large.mode     = M_MLTPLY;
 
 	switch(X->Def.iCalcModel){
 		case HubbardGC:
+
 			for(i=0;i<X->Def.NPairExcitationOperator;i++){
 				org_isite1 = X->Def.PairExcitationOperator[i][0]+1;
 				org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
 				org_sigma1 = X->Def.PairExcitationOperator[i][1];
 				org_sigma2 = X->Def.PairExcitationOperator[i][3];
-				dam_pr=0;
+                tmp_trans = X->Def.ParaPairExcitationOperator[i];
 				if (org_isite1  > X->Def.Nsite &&
 					org_isite2  > X->Def.Nsite) {
 					if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
@@ -185,31 +188,29 @@ int GetPairExcitedState
 						}
 						ibit = (unsigned long int)myrank & is;
 						if (ibit == is) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec) \
-  firstprivate(i_max) private(j)
-							for (j = 1; j <= i_max; j++) dam_pr += vec[j]*conj(vec[j]);
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) \
+  firstprivate(i_max, tmp_trans) private(j)
+							for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans*tmp_v1[j];
 						}
 					}
 					else{
-						dam_pr =X_GC_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+						X_GC_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
 					}
 				}
 				else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
 					if(org_isite1<org_isite2){
-						dam_pr =X_GC_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+						X_GC_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
 					}
 					else{
-						dam_pr =X_GC_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
-						dam_pr = conj(dam_pr);
+						X_GC_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, tmp_v0, tmp_v1);
 					}
 				}
 				else{
 					if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
 						return -1;
 					}
-					dam_pr = GC_child_general_hopp(vec,vec,X,tmp_OneGreen);
+					GC_child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
 				}
-				dam_pr= X->Def.ParaPairExcitationOperator[i]*SumMPI_dc(dam_pr);
 			}
 			break;
 
@@ -221,12 +222,10 @@ int GetPairExcitedState
 				org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
 				org_sigma1 = X->Def.PairExcitationOperator[i][1];
 				org_sigma2 = X->Def.PairExcitationOperator[i][3];
-				dam_pr=0.0;
+                tmp_trans = X->Def.ParaPairExcitationOperator[i];
 
 				if(X->Def.iFlgSzConserved ==TRUE){
 					if(org_sigma1 != org_sigma2){
-						dam_pr =0.0;
-						dam_pr= SumMPI_dc(dam_pr);
 						continue;
 					}
 				}
@@ -237,23 +236,22 @@ int GetPairExcitedState
 						is   = X->Def.Tpow[2 * org_isite1 - 2+org_sigma1];
 						ibit = (unsigned long int)myrank & is;
 						if (ibit == is) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec)	\
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max) private(j)
-							for (j = 1; j <= i_max; j++) dam_pr += vec[j]*conj(vec[j]);
+							for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans*tmp_v1[j];
 						}
 
 					}
 					else{
-						dam_pr =X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+						X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
 					}
 				}
 				else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
 					if(org_isite1 < org_isite2){
-						dam_pr =X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+						X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
 					}
 					else{
-						dam_pr = X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
-						dam_pr = conj(dam_pr);
+						X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, tmp_v0, tmp_v1);
 					}
 				}
 				else{
@@ -264,18 +262,17 @@ int GetPairExcitedState
 
 						is   = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 
-#pragma omp parallel for default(none) shared(list_1, vec) reduction(+:dam_pr) firstprivate(i_max, is) private(num1, ibit)
+#pragma omp parallel for default(none) shared(list_1, tmp_v0, tmp_v1) reduction(+:dam_pr) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
 						for(j = 1;j <= i_max;j++){
 							ibit = list_1[j]&is;
 							num1  = ibit/is;
-							dam_pr += num1*conj(vec[j])*vec[j];
+							tmp_v0[j] += tmp_trans*num1*tmp_v1[j];
 						}
 					}
 					else{
-						dam_pr = child_general_hopp(vec,vec,X,tmp_OneGreen);
+						child_general_hopp(tmp_v0, tmp_v1,X,tmp_trans);
 					}
 				}
-				dam_pr= X->Def.ParaPairExcitationOperator[i]*SumMPI_dc(dam_pr);
 			}
 			break;
 
@@ -287,36 +284,28 @@ int GetPairExcitedState
 					org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
 					org_sigma1 = X->Def.PairExcitationOperator[i][1];
 					org_sigma2 = X->Def.PairExcitationOperator[i][3];
-
+                    tmp_trans = X->Def.ParaPairExcitationOperator[i];
 					if(org_sigma1 == org_sigma2){
 						if(org_isite1==org_isite2){
 							if(org_isite1 > X->Def.Nsite){
 								is1_up = X->Def.Tpow[org_isite1 - 1];
 								ibit1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
-								dam_pr=0;
 								if(ibit1 !=0){
-#pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
-  firstprivate(i_max) private(j)
-									for (j = 1; j <= i_max; j++) dam_pr += conj(vec[j])*vec[j];
+#pragma omp parallel for reduction(+:dam_pr)default(none) shared(tmp_v0, tmp_v1)	\
+  firstprivate(i_max, tmp_trans) private(j)
+									for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans*tmp_v1[j];
 								}
 							}// org_isite1 > X->Def.Nsite
 							else{
 								isite1     = X->Def.Tpow[org_isite1-1];
-								dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
 								for(j=1;j<=i_max;j++){
-									dam_pr+=X_Spin_CisAis(j,X, isite1,org_sigma1)*conj(vec[j])*vec[j];
-								}
+									tmp_v0[j] += X_Spin_CisAis(j,X, isite1,org_sigma1)*tmp_v1[j]*tmp_trans;
 							}
-						}
-						else{
-							dam_pr=0.0;
 						}
 					}else{
 						// for the canonical case
-						dam_pr =0.0;
 					}
-					dam_pr= X->Def.ParaPairExcitationOperator[i]*SumMPI_dc(dam_pr);
 				}
 			}//FlgGeneralSpin=FALSE
 			else{
@@ -325,43 +314,34 @@ int GetPairExcitedState
 					org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
 					org_sigma1 = X->Def.PairExcitationOperator[i][1];
 					org_sigma2 = X->Def.PairExcitationOperator[i][3];
-
+                    tmp_trans = X->Def.ParaPairExcitationOperator[i];
 					if(org_isite1 == org_isite2){
 						if(org_isite1 >X->Def.Nsite){
 							if(org_sigma1==org_sigma2){
 								// longitudinal magnetic field
 								num1 = BitCheckGeneral((unsigned long int)myrank,
 													   org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-								dam_pr=0.0;
 								if (num1 != 0) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0,tmp_v1)
 									for(j=1;j<=i_max;j++){
-										dam_pr+=conj(vec[j])*vec[j];
+										tmp_v0[j]+= tmp_trans*tmp_v1[j];
 									}
 								}
-							}else{
-								dam_pr=0.0;
 							}
 						}
 						else {//org_isite1 <= X->Def.Nsite
 							if(org_sigma1==org_sigma2){
 								// longitudinal magnetic field
-								dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec, list_1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0,tmp_v1, list_1)
 								for(j=1;j<=i_max;j++){
 									num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-									dam_pr+=conj(vec[j])*vec[j]*num1;
+									tmp_v0[j]+= tmp_trans*tmp_v1[j]*num1;
 								}
-							}else{
-								dam_pr=0.0;
 							}
 						}
 					}else{
 						// hopping is not allowed in localized spin system
-						dam_pr=0.0;
 					}//org_isite1 != org_isite2
-
-					dam_pr= X->Def.ParaPairExcitationOperator[i]*SumMPI_dc(dam_pr);
 				}
 			}//general spin
 
@@ -375,7 +355,6 @@ int GetPairExcitedState
 					org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
 					org_sigma1 = X->Def.PairExcitationOperator[i][1];
 					org_sigma2 = X->Def.PairExcitationOperator[i][3];
-					dam_pr=0.0;
 
 					if(org_isite1 == org_isite2){
 						if(org_isite1 > X->Def.Nsite){

@@ -6,3 +6,4 @@ method = "Lanczos"
 lattice = "chain lattice"
 J = 1.0
 2Sz = 0
+outputmode = "none"

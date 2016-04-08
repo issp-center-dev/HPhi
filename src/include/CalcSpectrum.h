@@ -33,5 +33,6 @@ int GetSingleExcitedState
 int GetPairExcitedState
 		(
 				struct BindStruct *X,
-				double complex *tmp_v0
+				double complex *tmp_v0,
+				double complex *tmp_v1
 		);
