@@ -70,6 +70,11 @@ void setmem_def
   i_malloc2(X->Def.CisAjt, X->Def.NCisAjt, 4);
   i_malloc2(X->Def.CisAjtCkuAlvDC, X->Def.NCisAjtCkuAlvDC, 8);
 
+  i_malloc2(X->Def.SingleExcitationOperator, X->Def.NSingleExcitationOperator, 3);
+  c_malloc1(X->Def.ParaSingleExcitationOperator, X->Def.NSingleExcitationOperator);
+  i_malloc2(X->Def.PairExcitationOperator, X->Def.NPairExcitationOperator, 5);
+  c_malloc1(X->Def.ParaPairExcitationOperator, X->Def.NPairExcitationOperator);
+
   int ipivot,iarrayJ,i,ispin;
   xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
   for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {

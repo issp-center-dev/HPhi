@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
 
   if(JudgeDefType(argc, argv, &mode)!=0){
     FinalizeMPI();
-    return 0;
+    return TRUE;
   }  
 
   if (mode == STANDARD_DRY_MODE) {
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]){
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdout, "Dry run is Finished. \n\n");
-      return 0;
+      return FALSE;
     }
   }
 
@@ -119,13 +119,13 @@ int main(int argc, char* argv[]){
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stderr, "%s", cErrDefFile);
     FinalizeMPI();
-    return 0;
+    return FALSE;
   }
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
     FinalizeMPI();
-    return 0;
+    return FALSE;
   }	  
   fprintf(stdoutMPI,  cProFinishDefFiles);
   
@@ -137,13 +137,13 @@ int main(int argc, char* argv[]){
   if(ReadDefFileIdxPara(&(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
     FinalizeMPI();
-    return 0;
+    return FALSE;
   }
   
   fprintf(stdoutMPI, cProFinishDefCheck);
   if(check(&(X.Bind))==MPIFALSE){
     FinalizeMPI();
-    return 0;
+    return FALSE;
   }
   
   
@@ -168,7 +168,7 @@ int main(int argc, char* argv[]){
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
     FinalizeMPI();
-    return 0;
+    return FALSE;
   }
 
   diagonalcalc(&(X.Bind));
@@ -176,37 +176,37 @@ int main(int argc, char* argv[]){
   //Start Calculation
   switch (X.Bind.Def.iCalcType){
   case Lanczos:    
-    if(!CalcByLanczos(&X)==0){
+    if(!CalcByLanczos(&X)==TRUE){
       FinalizeMPI();
-      return -1;
+      return FALSE;
     }    
     break;
   case FullDiag:
-    if(!CalcByFullDiag(&X)==0){
+    if(!CalcByFullDiag(&X)==TRUE){
       FinalizeMPI();
-      return -1;
+      return FALSE;
     }
     break;
     
   case TPQCalc:
-    if(!CalcByTPQ(NumAve, ExpecInterval, &X)==0){
+    if(!CalcByTPQ(NumAve, ExpecInterval, &X)==TRUE){
       FinalizeMPI();
-      return -1;
+      return FALSE;
     }
     break;
 
     case Spectrum:
-      if(!CalcSpectrum(&X)==0){
+      if(!CalcSpectrum(&X) == TRUE){
         FinalizeMPI();
-        return -1;
+        return FALSE;
       }
       break;
 
     default:
       FinalizeMPI();
-      return 0;
+      return FALSE;
   }  
 
   FinalizeMPI();
-  return 0;
+  return TRUE;
 }

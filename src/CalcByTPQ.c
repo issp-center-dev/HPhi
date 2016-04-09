@@ -61,14 +61,14 @@ int CalcByTPQ(
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){
-      return -1;
+      return FALSE;
     }
     fprintf(fp, cLogSSRand);
     fclose(fp);
     
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
     if(!childfopenMPI(sdt_norm, "w", &fp)==0){
-      return -1;
+      return FALSE;
     }
     fprintf(fp, cLogNormRand);
     fclose(fp);
@@ -87,13 +87,13 @@ int CalcByTPQ(
     expec_cisajscktaltdc(&(X->Bind), v1);
     
     if(!childfopenMPI(sdt_phys, "a", &fp)==0){
-      return -1;
+      return FALSE;
     }
     fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
     fclose(fp);
 
     if(!childfopenMPI(sdt_norm, "a", &fp)==0){
-      return -1;
+      return FALSE;
     }
     fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
     fclose(fp);
@@ -112,13 +112,13 @@ int CalcByTPQ(
       //expec(&(X->Bind));
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
       if(!childfopenMPI(sdt_phys, "a", &fp)==0){
-	return -1;
+	return FALSE;
       }
       fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
       fclose(fp);
 
       if(!childfopenMPI(sdt_norm, "a", &fp)==0){
-	return -1;
+	return FALSE;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
@@ -132,5 +132,5 @@ int CalcByTPQ(
   fprintf(stdoutMPI, cLogTPQ_End);
   tstruct.tend=time(NULL);
   fprintf(stdoutMPI, cLogTPQEnd, (int)(tstruct.tend-tstruct.tstart));
-  return 0;
+  return TRUE;
 }

@@ -134,11 +134,21 @@ struct DefineList{
   int **CisAjt;  /**< */
   int NCisAjt;    /**< */
 
-
   int   **CisAjtCkuAlvDC; /**< */
   int NCisAjtCkuAlvDC; /**< */
-	
-  int iCalcType;
+
+    int **SingleExcitationOperator;
+    int NSingleExcitationOperator;
+    double complex *ParaSingleExcitationOperator;  /**< */
+
+
+    int **PairExcitationOperator;
+    int NPairExcitationOperator;
+    double complex *ParaPairExcitationOperator;  /**< */
+
+
+
+    int iCalcType;
   /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
 
   int iCalcEigenVec;
