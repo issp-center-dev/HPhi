@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -63,6 +63,8 @@ int check(struct BindStruct *X){
   long unsigned int idim=0;
   long unsigned int isite=0;
   int tmp_sz=0;
+  int iMinup=0;
+  int iAllup=X->Def.Ne;
 
   /*
     Set Site number per MPI process 
@@ -107,12 +109,11 @@ int check(struct BindStruct *X){
 
   case HubbardNConserved:
     comb_sum=0;
-    int iMinup=0;
-    int iAllup=X->Def.Ne;
     if(X->Def.Ne > X->Def.Nsite){
       iMinup = X->Def.Ne-X->Def.Nsite;
       iAllup = X->Def.Nsite;
     }
+
     for(i=iMinup; i<= iAllup; i++){
       comb_up= Binomial(Ns, i, comb, Ns);
       comb_down= Binomial(Ns, X->Def.Ne-i, comb, Ns);
@@ -213,7 +214,7 @@ int check(struct BindStruct *X){
           break;
   default:
     return FALSE;
-    break;
+    //break;
   }
 
   //fprintf(stdoutMPI, "  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);

@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -701,7 +701,7 @@ int ReadDefFileIdxPara(
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   double dvalue_re, dvalue_im;
-  double dArrayValue_re[3],dArrayValue_im[3]; 
+  double dArrayValue_re[3]; 
   int icnt_diagonal=0;
   int ieps_CheckImag0=-12;
   eps_CheckImag0=pow(10.0, ieps_CheckImag0);
@@ -772,7 +772,7 @@ int ReadDefFileIdxPara(
 	      return ReadDefFileError(defname);
 	    }
 	    if(isite1==isite2 && isigma1==isigma2){
-	      if(abs(dvalue_im)> eps_CheckImag0){
+	      if(fabs(dvalue_im)> eps_CheckImag0){
 		//NonHermite
 		fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
 		fclose(fp);
@@ -1168,12 +1168,12 @@ int ReadDefFileIdxPara(
       /* boost.def--------------------------------*/
       //input magnetic field
       fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2, "%lf %lf %lf %lf %lf %lf \n",
-	     &dArrayValue_re[0], &dArrayValue_im[0],
-	     &dArrayValue_re[1], &dArrayValue_im[1],
-	     &dArrayValue_re[2], &dArrayValue_im[2]);
+      sscanf(ctmp2, "%lf %lf %lf\n",
+	     &dArrayValue_re[0],
+	     &dArrayValue_re[1],
+	     &dArrayValue_re[2]);
       for(iline=0; iline<3; iline++){
-	xBoost->vecB[iline]= dArrayValue_re[iline]+I*dArrayValue_im[iline];
+	xBoost->vecB[iline]= dArrayValue_re[iline];
       }
       
       //this line is skipped;
@@ -1184,12 +1184,12 @@ int ReadDefFileIdxPara(
 	for(iline=0; iline<xBoost->NumarrayJ; iline++){
 	  for(ilineIn=0; ilineIn<3; ilineIn++){
 	    fgetsMPI(ctmp2, 256, fp);
-	    sscanf(ctmp2, "%lf %lf %lf %lf %lf %lf \n",
-		   &dArrayValue_re[0], &dArrayValue_im[0],
-		   &dArrayValue_re[1], &dArrayValue_im[1],
-		   &dArrayValue_re[2], &dArrayValue_im[2]);
+	    sscanf(ctmp2, "%lf %lf %lf\n",
+		   &dArrayValue_re[0],
+		   &dArrayValue_re[1],
+		   &dArrayValue_re[2]);
 	    for(ilineIn2=0; ilineIn2<3; ilineIn2++){
-	      xBoost->arrayJ[iline][ilineIn][ilineIn2]= dArrayValue_re[ilineIn2]+I*dArrayValue_im[ilineIn2];
+	      xBoost->arrayJ[iline][ilineIn][ilineIn2]= dArrayValue_re[ilineIn2];
 	    }	    
 	  }
 	}
@@ -1992,7 +1992,7 @@ int CheckLocSpin
   
   default:
     return FALSE;
-    break;
+    //break;
   }
 
   if(CheckTotal2Sz(X) != TRUE){
