@@ -75,25 +75,33 @@ int outputHam(struct BindStruct *X){
   long int j=0;
   long int imax = X->Check.idim_max;
   long int ihermite=0;
-
+  char cHeader[256];
   FILE *fp;
   char sdt[D_FileNameMax];
+
+#pragma omp parallel for default(none) reduction(+:ihermite) firstprivate(imax) private(i, j) shared(Ham)
+  for (i=1; i<=imax; i++){
+    for (j=1; j<=i; j++){
+      if(cabs(Ham[i][j])>1.0e-13){
+        ihermite += 1;
+      }
+    }
+  }
+
+  strcpy(cHeader, "%%%%MatrixMarket matrix coordinate complex hermitian\n");
   sprintf(sdt,cFileNamePhys_FullDiag_Ham, X->Def.CDataFileHead);
   if(childfopenMPI(sdt,"w",&fp)!=0){
     return -1;
   }
-
-  fprintf(fp, "#Ham#MatrixMarket matrix coordinate complex hermitian\n");
-  fprintf(fp, "#Ham# put cout %d %d \n",imax,imax);
-  ihermite=0;
+  fprintf(fp, cHeader);
+  fprintf(fp, "%ld %ld %ld \n", imax, imax, ihermite);
   for (i=1; i<=imax; i++){
     for (j=1; j<=i; j++){
-      if(cabs(Ham[i][j])>1.0e-13)
-        fprintf(fp, "#Ham# %d %d %lf %lf\n",i,j,creal(Ham[i][j]),cimag(Ham[i][j]));
-        ihermite += 1;
+      if(cabs(Ham[i][j])>1.0e-13){
+        fprintf(fp, "%ld %ld %lf %lf\n",i,j,creal(Ham[i][j]),cimag(Ham[i][j]));
+      }
     }
   }
-  fprintf(fp, "#Ham# count %d\n",ihermite);
   fclose(fp);
   return 0;
 }
