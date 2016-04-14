@@ -138,7 +138,7 @@ int GetPairExcitedState
                 double complex *tmp_v1 /**< [in] v0 = H v1*/
 		)
 {
-
+/*
 	FILE *fp;
 	char sdt[D_FileNameMax];
 
@@ -441,6 +441,6 @@ int GetPairExcitedState
 		default:
 			return FALSE;
 	}
-
+*/
 	return TRUE;
 }

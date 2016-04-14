@@ -328,13 +328,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
  * 
  * @return 0
  */
-int Lanczos_GetTridiagonalMatrixComponents
-(
- struct BindStruct *X,
- double *_alpha,
- double *_beta,
- double complex *tmp_v1,
- unsigned long int *liLanczos_step
+int Lanczos_GetTridiagonalMatrixComponents(
+        struct BindStruct *X,
+        double *_alpha,
+        double *_beta,
+        double complex *tmp_v1,
+        unsigned long int *liLanczos_step
  )
 {
 
