@@ -1040,11 +1040,13 @@ int ReadDefFileIdxPara(
 	    X->InterAll[idx][7]=isigma4;
 	    X->ParaInterAll[idx]=dvalue_re+I*dvalue_im;
 
+	    //normal diagonal part
 	    if(X->InterAll[idx][0] == X->InterAll[idx][2] &&X->InterAll[idx][4] == X->InterAll[idx][6]){
 	      if( X->InterAll[idx][1] == X->InterAll[idx][3] &&X->InterAll[idx][5] == X->InterAll[idx][7]){
 		icnt_diagonal++;
 	      }
 	    }
+	    
 	    if(CheckQuadSite(X->InterAll[idx][0], X->InterAll[idx][2], X->InterAll[idx][4], X->InterAll[idx][6], X->Nsite) !=0){
 	      fclose(fp);
 	      return ReadDefFileError(defname);

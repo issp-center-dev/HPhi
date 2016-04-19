@@ -63,7 +63,6 @@ int expec_totalspin
    case Hubbard: 
    case Kondo:
      totalspin_Hubbard(X,vec);
-     X->Phys.sz=X->Def.Total2SzMPI/2.;
      break;
   case HubbardGC: 
   case KondoGC:
@@ -102,27 +101,27 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec){
   GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit);
   spn   = 0.0;
   spn_z = 0.0;
-  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){    
+  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+    is1_up=X->Def.Tpow[2*isite1-2];
+    is1_down=X->Def.Tpow[2*isite1-1];
+
     for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
-      is1_up=X->Def.Tpow[2*isite1-2];
-      is1_down=X->Def.Tpow[2*isite1-1];
       is2_up=X->Def.Tpow[2*isite2-2];
       is2_down=X->Def.Tpow[2*isite2-1];
 
-
 #pragma omp parallel for reduction(+:spn,spn_z) default(none) firstprivate(i_max, is1_up, is1_down, is2_up, is2_down, irght, ilft, ihfbit, isite1, isite2) private(ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, tmp_spn_z, iexchg, off) shared(vec, list_1, list_2_1, list_2_2)
-      for(j=1;j<=i_max;j++){                    
-
+      for(j=1;j<=i_max;j++){
+	
 	ibit1_up= list_1[j]&is1_up;
-	num1_up=ibit1_up/is1_up;            
+	num1_up=ibit1_up/is1_up;
 	ibit2_up= list_1[j]&is2_up;
 	num2_up=ibit2_up/is2_up;
             
-	ibit1_down= list_1[j]&is1_down;
-	num1_down=ibit1_down/is1_down;
 	ibit2_down= list_1[j]&is2_down;
 	num2_down=ibit2_down/is2_down;
-            
+	ibit1_down= list_1[j]&is1_down;
+	num1_down=ibit1_down/is1_down;
+
 	tmp_spn_z = (num1_up-num1_down)*(num2_up-num2_down);
 	spn      += conj(vec[j])*vec[j]*tmp_spn_z/4.0;
 	if(isite1==isite2){
@@ -662,6 +661,7 @@ int expec_totalSz(
    case Hubbard: 
    case Kondo:
      X->Phys.sz=X->Def.Total2SzMPI/2.;
+     
      break;
   case HubbardGC: 
   case KondoGC:
