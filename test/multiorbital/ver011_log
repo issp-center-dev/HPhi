@@ -1,0 +1,98 @@
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 8
+  MPI PEs : 1 = 2^0    
+
+Start: Read File 'namelist-notdiag.def'.
+End: Read File 'namelist-notdiag.def'.
+Read File 'calcmod.def' for CalcMod.
+Read File 'modpara.def' for ModPara.
+Read File 'zlocspn.def' for LocSpin.
+Read File 'zTrans-notdiag.def' for Trans.
+Read File 'zInterAll-notdiag.def' for InterAll.
+Read File 'greenone.def' for OneBodyG.
+Read File 'greentwo.def' for TwoBodyG.
+Definition files are correct.
+Read File 'zlocspn.def'.
+Read File 'zTrans-notdiag.def'.
+X->NTransfer =50, X->Nsite= 5.
+Read File 'zInterAll-notdiag.def'.
+Read File 'greenone.def'.
+Read File 'greentwo.def'.
+comb_sum= 50 
+MAX DIMENSION idim_max=50 
+APPROXIMATE REQUIRED MEMORY  max_mem=0.000640 GB 
+sdim=32 =2^5
+Indices and Parameters of Definition files(*.def) are complete.
+LARGE ALLOCATE FINISH !
+EDTrans EDNTransfer=40 
+EDTrans EDNChemi=10 
+Start: Calc Sz. 
+idim=1024.000000 irght=31 ilft=992 ihfbit=32 
+num_threads==8
+Xicnt=50 
+End  : Calc Sz. 
+Start: calc diagaonal components of Hamiltonian. 
+End  : calc diagaonal components of Hamiltonian. 
+Start Setting Hamiltonian.
+transfer
+interall:2280
+pairhopp
+exchange
+Finish Setting Hamiltonian.
+Diagonalization is done.
+Start: Calc Expected value.
+i=    0 Energy= 46.154936 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=    1 Energy= 47.053353 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.447251 
+i=    2 Energy= 47.062299 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.451456 
+i=    3 Energy= 47.511925 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=    4 Energy= 47.516516 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=    5 Energy= 47.848324 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.032948 
+i=    6 Energy= 48.044074 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.490196 
+i=    7 Energy= 48.060439 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.140562 
+i=    8 Energy= 48.273577 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=    9 Energy= 48.546970 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.454575 
+i=   10 Energy= 48.758001 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.528341 
+i=   11 Energy= 48.762267 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.453933 
+i=   12 Energy= 48.877874 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=   13 Energy= 48.878610 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=   14 Energy= 49.340532 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.638902 
+i=   15 Energy= 49.342916 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.615957 
+i=   16 Energy= 49.414483 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.322071 
+i=   17 Energy= 49.475314 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.361916 
+i=   18 Energy= 49.648546 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.782974 
+i=   19 Energy= 49.655373 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.670817 
+i=   20 Energy= 49.813580 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.517034 
+i=   21 Energy= 49.882237 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=   22 Energy= 50.206861 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.432150 
+i=   23 Energy= 50.212826 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.909408 
+i=   24 Energy= 50.261051 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.205018 
+i=   25 Energy= 50.415191 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=   26 Energy= 50.467733 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.562297 
+i=   27 Energy= 50.468637 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.573414 
+i=   28 Energy= 50.679096 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=   29 Energy= 50.688688 N=  3.000000 Sz=  1.000000 S2=  3.750000 Doublon=  0.000000 
+i=   30 Energy= 50.773224 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.603623 
+i=   31 Energy= 50.775802 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.627840 
+i=   32 Energy= 51.093664 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.515714 
+i=   33 Energy= 51.215689 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.556273 
+i=   34 Energy= 51.219328 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.476447 
+i=   35 Energy= 51.375271 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.048068 
+i=   36 Energy= 51.799982 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.301117 
+i=   37 Energy= 51.807218 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.313851 
+i=   38 Energy= 51.871722 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.440741 
+i=   39 Energy= 52.094002 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.660124 
+i=   40 Energy= 52.096329 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.616175 
+i=   41 Energy= 52.249920 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.106447 
+i=   42 Energy= 52.427736 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.737690 
+i=   43 Energy= 52.433131 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.464575 
+i=   44 Energy= 52.723925 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.284307 
+i=   45 Energy= 54.184019 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.843443 
+i=   46 Energy= 54.186844 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.878608 
+i=   47 Energy= 54.403618 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.641365 
+i=   48 Energy= 54.416989 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.582030 
+i=   49 Energy= 54.554670 N=  3.000000 Sz=  1.000000 S2=  0.750000 Doublon=  0.710340 
+End: Calc Expected value.
+Finish. 
