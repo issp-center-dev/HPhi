@@ -1544,7 +1544,7 @@ int CheckInterAllHermite
 	  else {
 	    itmpret=1;
 	    if (icheckHermiteCount == FALSE) {
-	      icheckHermiteCount = TRUE;
+	      icheckHermiteCount = TRUE; //for not double counting
 	      if (i <= j) {
 		if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
 		  fprintf(stderr, "Elements of InterAll are incorrect.\n");
@@ -1583,7 +1583,7 @@ int CheckInterAllHermite
 	    else {
 	      itmpret = 1;
 	      if (icheckHermiteCount == FALSE) {
-		icheckHermiteCount = TRUE;		    
+		icheckHermiteCount = TRUE; // for not double-counting		    
 		if (i <= j) {
 		  if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
 		    fprintf(stderr, "Elements of InterAll are incorrect.\n");
@@ -1615,13 +1615,7 @@ int CheckInterAllHermite
     if(itmpret !=1){
       fprintf(stdoutMPI, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll_OffDiagonal[i]), cimag(X->ParaInterAll_OffDiagonal[i]));
       icntincorrect++;
-    }
-    if(icheckHermiteCount == FALSE){
-      fprintf(stderr, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4,
-              isigma4, creal(X->ParaInterAll_OffDiagonal[i]), cimag(X->ParaInterAll_OffDiagonal[i]));
-      exitMPI(-1);
-    }
-      
+    }    
   }
   
   if(icntincorrect !=0 ){
