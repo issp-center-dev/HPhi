@@ -1695,7 +1695,7 @@ int GetDiagonalInterAll
 	X->ParaInterAll_Diagonal[icnt_diagonal] = -creal(X->ParaInterAll[i]);
 	X->EDChemi[X->EDNChemi]     = isite1;      
 	X->EDSpinChemi[X->EDNChemi] = isigma1;      
-	X->EDParaChemi[X->EDNChemi] = creal(X->ParaInterAll[i]); 
+	X->EDParaChemi[X->EDNChemi] = -creal(X->ParaInterAll[i]); 
 	icnt_diagonal++;
 	X->EDNChemi +=1;
 	continue;
