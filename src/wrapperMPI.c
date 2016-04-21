@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void InitializeMPI(int argc, char *argv[]){
-  int ierr, nthreads;
+  int ierr;
 
 #ifdef MPI
   ierr = MPI_Init(&argc, &argv);
