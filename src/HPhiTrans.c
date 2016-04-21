@@ -48,13 +48,13 @@ int HPhiTrans(struct BindStruct *X){
   for(i=0;i<X->Def.EDNTransfer;i++){
     // eliminate double counting
     for(k=0;k<cnt_trans;k++){
-      if( X->Def.GeneralTransfer[i][1] == X->Def.GeneralTransfer[k][1]
-	  && X->Def.GeneralTransfer[i][3] == X->Def.GeneralTransfer[k][3]){
-	if(X->Def.GeneralTransfer[i][0] == X->Def.GeneralTransfer[k][0]
-	   && X->Def.GeneralTransfer[i][2] == X->Def.GeneralTransfer[k][2]){
+      if( X->Def.EDGeneralTransfer[i][1] == X->Def.EDGeneralTransfer[k][1]
+	  && X->Def.EDGeneralTransfer[i][3] == X->Def.EDGeneralTransfer[k][3]){
+	if(X->Def.EDGeneralTransfer[i][0] == X->Def.EDGeneralTransfer[k][0]
+	   && X->Def.EDGeneralTransfer[i][2] == X->Def.EDGeneralTransfer[k][2]){
 	  sprintf(sdt_err,cErrTransfer);
 	  childfopenMPI(sdt_err,"a", &fp_err);
-	  fprintf(fp_err,cErrDoubleCounting, X->Def.GeneralTransfer[k][0] ,X->Def.GeneralTransfer[k][2], X->Def.GeneralTransfer[k][1], X->Def.GeneralTransfer[k][3]);
+	  fprintf(fp_err,cErrDoubleCounting, X->Def.EDGeneralTransfer[k][0] ,X->Def.EDGeneralTransfer[k][2], X->Def.EDGeneralTransfer[k][1], X->Def.EDGeneralTransfer[k][3]);
 	  fclose(fp_err);
 //	  return -1;
 	}
