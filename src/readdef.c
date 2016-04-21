@@ -1053,11 +1053,19 @@ int ReadDefFileIdxPara(
 	    X->InterAll[idx][7]=isigma4;
 	    X->ParaInterAll[idx]=dvalue_re+I*dvalue_im;
 
+	    //normal diagonal part
 	    if(X->InterAll[idx][0] == X->InterAll[idx][2] &&X->InterAll[idx][4] == X->InterAll[idx][6]){
 	      if( X->InterAll[idx][1] == X->InterAll[idx][3] &&X->InterAll[idx][5] == X->InterAll[idx][7]){
 		icnt_diagonal++;
 	      }
 	    }
+	    //hund term
+	    if(X->InterAll[idx][0] == X->InterAll[idx][6] &&X->InterAll[idx][2] == X->InterAll[idx][4]){
+	      if( X->InterAll[idx][1] == X->InterAll[idx][7] &&X->InterAll[idx][3] == X->InterAll[idx][5]){
+		icnt_diagonal++;
+	      }
+	    }
+	    
 	    if(CheckQuadSite(X->InterAll[idx][0], X->InterAll[idx][2], X->InterAll[idx][4], X->InterAll[idx][6], X->Nsite) !=0){
 	      fclose(fp);
 	      return ReadDefFileError(defname);
@@ -1083,11 +1091,12 @@ int ReadDefFileIdxPara(
       
       X->NInterAll_Diagonal=icnt_diagonal;
       X->NInterAll_OffDiagonal = X->NInterAll-X->NInterAll_Diagonal;
+      
       if(GetDiagonalInterAll(X)!=0){
 	fclose(fp);
 	exitMPI(-1);
       }
-            
+      
       if(CheckInterAllHermite(X)!=0){
 	fprintf(stderr, "%s", cErrNonHermiteInterAllForAll);
 	fclose(fp);
@@ -1462,18 +1471,19 @@ int CheckTransferHermite
 	    exitMPI(-1);
       }
   }
-
   
   X->EDNTransfer=2*icntHermite;
   X->EDNChemi=icntchemi;
 
+    /*
   for(i=0; i<X->EDNTransfer; i++){
     for(itmpIdx=0; itmpIdx<4; itmpIdx++){
       X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
       }
     X->ParaGeneralTransfer[i]=X->EDParaGeneralTransfer[i];
   } 
-  
+  */
+
   return 0;
 }
 
@@ -1521,134 +1531,126 @@ int CheckInterAllHermite
     icheckHermiteCount=FALSE;
 
     for(j=0; j<X->NInterAll_OffDiagonal; j++) {
-        itmpsite1 = X->InterAll_OffDiagonal[j][0];
-        itmpsigma1 = X->InterAll_OffDiagonal[j][1];
-        itmpsite2 = X->InterAll_OffDiagonal[j][2];
-        itmpsigma2 = X->InterAll_OffDiagonal[j][3];
-        itmpsite3 = X->InterAll_OffDiagonal[j][4];
-        itmpsigma3 = X->InterAll_OffDiagonal[j][5];
-        itmpsite4 = X->InterAll_OffDiagonal[j][6];
-        itmpsigma4 = X->InterAll_OffDiagonal[j][7];
+      itmpsite1 = X->InterAll_OffDiagonal[j][0];
+      itmpsigma1 = X->InterAll_OffDiagonal[j][1];
+      itmpsite2 = X->InterAll_OffDiagonal[j][2];
+      itmpsigma2 = X->InterAll_OffDiagonal[j][3];
+      itmpsite3 = X->InterAll_OffDiagonal[j][4];
+      itmpsigma3 = X->InterAll_OffDiagonal[j][5];
+      itmpsite4 = X->InterAll_OffDiagonal[j][6];
+      itmpsigma4 = X->InterAll_OffDiagonal[j][7];
+      
+      if (isite1 == itmpsite4 && isite2 == itmpsite3 && isite3 == itmpsite2 && isite4 == itmpsite1) {
+	if (isigma1 == itmpsigma4 && isigma2 == itmpsigma3 && isigma3 == itmpsigma2 && isigma4 == itmpsigma1) {
+	  ddiff_intall = cabs(X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]));
+	  
+	  //error procedure
+	  if (cabs(ddiff_intall) > eps_CheckImag0) {
+	    itmperrsite1=itmpsite1;
+	    itmperrsigma1=itmpsigma1;
+	    itmperrsite2=itmpsite2;
+	    itmperrsigma2=itmpsigma2;
+	    itmperrsite3=itmpsite3;
+	    itmperrsigma3=itmpsigma3;
+	    itmperrsite4=itmpsite4;
+	    itmperrsigma4=itmpsigma4;
+	    dcerrIntAll=X->ParaInterAll_OffDiagonal[j];
+	  }
+	  else {
+	    itmpret=1;
+	    if (icheckHermiteCount == FALSE) {
+	      icheckHermiteCount = TRUE; //for not double counting
+	      if (i <= j) {
+		if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
+		  fprintf(stderr, "Elements of InterAll are incorrect.\n");
+		  exitMPI(-1);
+		}
+		
+		for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
+		  X->InterAll[2 * icntHermite][itmpIdx] = X->InterAll_OffDiagonal[i][itmpIdx];
+		  X->InterAll[2 * icntHermite + 1][itmpIdx] = X->InterAll_OffDiagonal[j][itmpIdx];
+		}
+		
+		X->ParaInterAll[2 * icntHermite] = X->ParaInterAll_OffDiagonal[i];
+		X->ParaInterAll[2 * icntHermite + 1] = X->ParaInterAll_OffDiagonal[j];
+		icntHermite++;
+	      }
+	      break;
+	    }
+	  }
+	}
+      }
+      else if(X->iCalcModel==Spin || X->iCalcModel==SpinGC){
+        if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 && isite4 == itmpsite3) {      //for spin
+          if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
+	    ddiff_intall = X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]);
+	    if (cabs(ddiff_intall) > eps_CheckImag0) {
+	      itmperrsite1 = itmpsite1;
+	      itmperrsigma1 = itmpsigma1;
+	      itmperrsite2 = itmpsite2;
+	      itmperrsigma2 = itmpsigma2;
+	      itmperrsite3 = itmpsite3;
+	      itmperrsigma3 = itmpsigma3;
+	      itmperrsite4 = itmpsite4;
+	      itmperrsigma4 = itmpsigma4;
+	      dcerrIntAll = X->ParaInterAll_OffDiagonal[j];
+	    }
+	    else {
+	      itmpret = 1;
+	      if (icheckHermiteCount == FALSE) {
+		icheckHermiteCount = TRUE; // for not double-counting		    
+		if (i <= j) {
+		  if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
+		    fprintf(stderr, "Elements of InterAll are incorrect.\n");
+		    exitMPI(-1);
+		  }
+		  for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
+		    X->InterAll[2 * icntHermite][itmpIdx] = X->InterAll_OffDiagonal[i][itmpIdx];
+		  }
+		  for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
+		    X->InterAll[2 * icntHermite + 1][2 * itmpIdx] = X->InterAll_OffDiagonal[i][6 -
+											       2 * itmpIdx];
+		    X->InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = X->InterAll_OffDiagonal[i][7 - 2 *
+												   itmpIdx];
 
-        if (isite1 == itmpsite4 && isite2 == itmpsite3 && isite3 == itmpsite2 && isite4 == itmpsite1) {
-            if (isigma1 == itmpsigma4 && isigma2 == itmpsigma3 && isigma3 == itmpsigma2 && isigma4 == itmpsigma1) {
-                itmpret = 1;
-                ddiff_intall = X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]);
-                if (cabs(ddiff_intall) > eps_CheckImag0) {
-                    itmperrsite1=itmpsite1;
-                    itmperrsigma1=itmpsigma1;
-                    itmperrsite2=itmpsite2;
-                    itmperrsigma2=itmpsigma2;
-                    itmperrsite3=itmpsite3;
-                    itmperrsigma3=itmpsigma3;
-                    itmperrsite4=itmpsite4;
-                    itmperrsigma4=itmpsigma4;
-                    dcerrIntAll=X->ParaInterAll_OffDiagonal[j];
-                    /*
-                    fprintf(stderr, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4,
-                            isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
-                    fprintf(stderr, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3,
-                            itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
-                    exitMPI(-1);
-                     */
-                }
-                else {
-                    if (icheckHermiteCount == FALSE) {
-                        if (i <= j) {
-                            if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
-                                fprintf(stderr, "Elements of InterAll are incorrect.\n");
-                                exitMPI(-1);
-                            }
-                            for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
-                                X->InterAll[2 * icntHermite][itmpIdx] = X->InterAll_OffDiagonal[i][itmpIdx];
-                                X->InterAll[2 * icntHermite + 1][itmpIdx] = X->InterAll_OffDiagonal[j][itmpIdx];
-                            }
-                            X->ParaInterAll[2 * icntHermite] = X->ParaInterAll_OffDiagonal[i];
-                            X->ParaInterAll[2 * icntHermite + 1] = X->ParaInterAll_OffDiagonal[j];
-                            icntHermite++;
-                        }
-                        icheckHermiteCount = TRUE;
-                    }
-                }
-            }
-        }
-            //for spin
-        else if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 && isite4 == itmpsite3) {
-            if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
-                itmpret = 1;
-                ddiff_intall = X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]);
-                if (cabs(ddiff_intall) > eps_CheckImag0) {
-                    itmperrsite1=itmpsite1;
-                    itmperrsigma1=itmpsigma1;
-                    itmperrsite2=itmpsite2;
-                    itmperrsigma2=itmpsigma2;
-                    itmperrsite3=itmpsite3;
-                    itmperrsigma3=itmpsigma3;
-                    itmperrsite4=itmpsite4;
-                    itmperrsigma4=itmpsigma4;
-                    dcerrIntAll=X->ParaInterAll_OffDiagonal[j];
-
-                    /*
-                    fprintf(stderr, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll[i]), cimag(X->ParaInterAll[i]));
-                    fprintf(stderr, cErrNonHermiteInterAll, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, itmpsite3, itmpsigma3, itmpsite4, itmpsigma4, creal(X->ParaInterAll[j]), cimag(X->ParaInterAll[j]));
-                    exitMPI(-1);
-                     */
-                }
-                else {
-                    if (icheckHermiteCount == FALSE) {
-
-                        if (i <= j) {
-                            if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
-                                fprintf(stderr, "Elements of InterAll are incorrect.\n");
-                                exitMPI(-1);
-                            }
-
-                            for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
-                                X->InterAll[2 * icntHermite][itmpIdx] = X->InterAll_OffDiagonal[i][itmpIdx];
-                            }
-                            for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
-                                X->InterAll[2 * icntHermite + 1][2 * itmpIdx] = X->InterAll_OffDiagonal[i][6 -
-                                                                                                           2 * itmpIdx];
-                                X->InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = X->InterAll_OffDiagonal[i][7 - 2 *
-                                                                                                                   itmpIdx];
-                            }
-                            X->ParaInterAll[2 * icntHermite] = X->ParaInterAll_OffDiagonal[i];
-                            X->ParaInterAll[2 * icntHermite + 1] = X->ParaInterAll_OffDiagonal[j];
-                            icntHermite++;
-
-                        }
-                        icheckHermiteCount = TRUE;
-                    }
-                }
-            }
-        }
+		  }
+		  X->ParaInterAll[2 * icntHermite] = X->ParaInterAll_OffDiagonal[i];
+		  X->ParaInterAll[2 * icntHermite + 1] = X->ParaInterAll_OffDiagonal[j];
+		  icntHermite++;
+		}
+		break;
+	      }
+	    }
+          }
+	}
+      }
     }
     
     //if counterpart for satisfying hermite conjugate does not exist.
     if(itmpret !=1){
       fprintf(stdoutMPI, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, creal(X->ParaInterAll_OffDiagonal[i]), cimag(X->ParaInterAll_OffDiagonal[i]));
       icntincorrect++;
-    }
-      if(icheckHermiteCount == FALSE){
-      fprintf(stderr, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4,
-              isigma4, creal(X->ParaInterAll_OffDiagonal[i]), cimag(X->ParaInterAll_OffDiagonal[i]));
-      fprintf(stderr, cErrNonHermiteInterAll, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, itmperrsite3, itmperrsigma3, itmperrsite4, itmperrsigma4, creal(dcerrIntAll), cimag(dcerrIntAll));
-          exitMPI(-1);
-      }
+    }    
   }
-    if(icntincorrect !=0 ){
-      exitMPI(-1);
-    }
   
-    for(i=0; i<X->NInterAll_OffDiagonal; i++){
-      for(itmpIdx=0; itmpIdx<8; itmpIdx++){
-	X->InterAll_OffDiagonal[i][itmpIdx]=X->InterAll[i][itmpIdx];
-	
-      }
-      X->ParaInterAll_OffDiagonal[i]=X->ParaInterAll[i];
-    }
+  if(icntincorrect !=0 ){
+    exitMPI(-1);
+  }
+
+  /* for debug
+  if((2*icntHermite) != X->NInterAll_OffDiagonal){  
+    exitMPI(-1);
+  }
+  */
     
-    return 0;
+  for(i=0; i<X->NInterAll_OffDiagonal; i++){
+    for(itmpIdx=0; itmpIdx<8; itmpIdx++){
+      X->InterAll_OffDiagonal[i][itmpIdx]=X->InterAll[i][itmpIdx];
+    }
+    X->ParaInterAll_OffDiagonal[i]=X->ParaInterAll[i];
+  }
+    
+  return 0;
 }
 
 /** 
@@ -1673,7 +1675,7 @@ int GetDiagonalInterAll
   int iret=0;
   icnt_diagonal=0;
   icnt_offdiagonal=0;
-
+  
   setmem_IntAll_Diagonal(X);
   for(i=0; i<X->NInterAll; i++){
     isite1=X->InterAll[i][0];
@@ -1684,7 +1686,8 @@ int GetDiagonalInterAll
     isigma3=X->InterAll[i][5];
     isite4=X->InterAll[i][6];
     isigma4=X->InterAll[i][7];
-    
+
+    //Get Diagonal term
     if(isite1 == isite2 && isite3 == isite4){
       if(isigma1 == isigma2  && isigma3 == isigma4){
 	X->InterAll_Diagonal[icnt_diagonal][0]=isite1;
@@ -1696,7 +1699,24 @@ int GetDiagonalInterAll
 	continue;
       }
     }
-
+    else if(isite1 == isite4 && isite2 ==isite3){
+      if(isigma1 == isigma4 && isigma2 ==isigma3){
+	X->InterAll_Diagonal[icnt_diagonal][0]=isite1;
+	X->InterAll_Diagonal[icnt_diagonal][1]=isigma1;
+	X->InterAll_Diagonal[icnt_diagonal][2]=isite2;
+	X->InterAll_Diagonal[icnt_diagonal][3]=isigma2;
+	X->ParaInterAll_Diagonal[icnt_diagonal] = -creal(X->ParaInterAll[i]);
+	X->EDChemi[X->EDNChemi]     = isite1;      
+	X->EDSpinChemi[X->EDNChemi] = isigma1;
+	//transfer integral has minus sign for default setting
+	X->EDParaChemi[X->EDNChemi] = -creal(X->ParaInterAll[i]); 
+	icnt_diagonal++;
+	X->EDNChemi +=1;
+	continue;
+      }
+    }
+    
+    //Get Off-Diagonal term
     switch(X->iCalcModel){
     case Hubbard:
     case Kondo:
@@ -1766,6 +1786,7 @@ int GetDiagonalInterAll
   if(iret !=0){
     exitMPI(-1);
   }
+
   
   return 0;
 }
@@ -2151,4 +2172,38 @@ int CheckTotal2Sz
     }
   }
   return TRUE;
+}
+
+int CheckHermitePair(
+		     int iindex,
+		     struct DefineList *X
+		     )
+{
+  int j;
+  int isite1, isite2, isite3, isite4;
+  int isigma1, isigma2, isigma3, isigma4;
+  int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
+  int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
+
+  isite1=X->InterAll_OffDiagonal[iindex][0];
+  isigma1=X->InterAll_OffDiagonal[iindex][1];
+  isite2=X->InterAll_OffDiagonal[iindex][2];
+  isigma2=X->InterAll_OffDiagonal[iindex][3];
+  isite3=X->InterAll_OffDiagonal[iindex][4];
+  isigma3=X->InterAll_OffDiagonal[iindex][5];
+  isite4=X->InterAll_OffDiagonal[iindex][6];
+  isigma4=X->InterAll_OffDiagonal[iindex][7];
+
+  for(j=0; j<X->NInterAll_OffDiagonal; j++) {
+    itmpsite1 = X->InterAll_OffDiagonal[j][0];
+    itmpsigma1 = X->InterAll_OffDiagonal[j][1];
+    itmpsite2 = X->InterAll_OffDiagonal[j][2];
+    itmpsigma2 = X->InterAll_OffDiagonal[j][3];
+    itmpsite3 = X->InterAll_OffDiagonal[j][4];
+    itmpsigma3 = X->InterAll_OffDiagonal[j][5];
+    itmpsite4 = X->InterAll_OffDiagonal[j][6];
+    itmpsigma4 = X->InterAll_OffDiagonal[j][7];
+  }
+
+  
 }
