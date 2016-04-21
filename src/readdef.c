@@ -1694,7 +1694,8 @@ int GetDiagonalInterAll
 	X->InterAll_Diagonal[icnt_diagonal][3]=isigma2;
 	X->ParaInterAll_Diagonal[icnt_diagonal] = -creal(X->ParaInterAll[i]);
 	X->EDChemi[X->EDNChemi]     = isite1;      
-	X->EDSpinChemi[X->EDNChemi] = isigma1;      
+	X->EDSpinChemi[X->EDNChemi] = isigma1;
+	//transfer integral has minus sign for default setting
 	X->EDParaChemi[X->EDNChemi] = -creal(X->ParaInterAll[i]); 
 	icnt_diagonal++;
 	X->EDNChemi +=1;
