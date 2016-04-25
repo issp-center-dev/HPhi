@@ -6,6 +6,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo " system_name should be chosen from below:"
     echo "     sekirei : ISSP system-B"
     echo "        maki : ISSP system-C"
+    echo "          sr : SR16000"
     echo "       intel : Intel compiler + Linux PC"
     echo " mpicc-intel : Intel compiler + Linux PC + mpicc"
     echo "         gcc : GCC + Linux"
@@ -28,6 +29,8 @@ LAPACK_FLAGS = -Dlapack -mkl=parallel
 FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
@@ -36,6 +39,18 @@ LAPACK_FLAGS = -Dlapack -SSL2BLAMP
 FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI -g
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
+EOF
+    elif [ ${1} = "sr" ]; then
+        cat > src/make.sys <<EOF
+CC = mpcc_r
+LAPACK_FLAGS = -L /usr/lib -lessl
+FLAGS = -D MPI -D SR -q64 -O3 -lm -qsmp=omp 
+MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
+INCLUDE_DIR=./include
+CP = cp -f
+AR = ar -X64 rv 
 EOF
     elif [ ${1} = "intel" ]; then
         cat > src/make.sys <<EOF
@@ -44,6 +59,8 @@ LAPACK_FLAGS = -Dlapack -mkl=parallel
 FLAGS = -openmp -O3 -DHAVE_SSE2 -g -traceback -xHOST
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
 EOF
     elif [ ${1} = "mpicc-intel" ]; then
         cat > src/make.sys <<EOF
@@ -52,6 +69,8 @@ LAPACK_FLAGS = -Dlapack -mkl=parallel
 FLAGS = -openmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
 EOF
     elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF
@@ -60,6 +79,8 @@ LAPACK_FLAGS = -Dlapack -framework Accelerate
 FLAGS = -fopenmp 
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
 EOF
     elif [ ${1} = "gcc" ]; then
         cat > src/make.sys <<EOF
@@ -68,6 +89,8 @@ LAPACK_FLAGS = -Dlapack -llapack -lblas
 FLAGS = -fopenmp  -lm
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
 EOF
     elif [ ${1} == "manual" ]; then
 echo " C compiler ?"
@@ -82,6 +105,8 @@ LAPACK_FLAGS = ${LAPACK_FLAGS}
 FLAGS = ${FLAGS}
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
 EOF
     else
         echo ""

@@ -1254,7 +1254,7 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
    if(X->Def.iFlgGeneralSpin==FALSE){
      is1_up   = X->Def.Tpow[isite1-1];
      is2_up   = X->Def.Tpow[isite2-1];
-#pragma omp parallel for default(none) shared(list_Diagonal, stderr) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
      for(j = 1;j <= i_max; j++){
        num1=X_Spin_CisAis(j, X, is1_up, isigma1);
        num2=X_Spin_CisAis(j, X, is2_up, isigma2);      

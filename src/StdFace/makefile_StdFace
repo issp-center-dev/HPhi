@@ -5,9 +5,9 @@ Lattice_OBJS = SquareLattice.o ChainLattice.o TriangularLattice.o \
 	HoneycombLattice.o Ladder.o Kagome.o
 
 libStdFace.a:$(StdFace_OBJS) $(Lattice_OBJS)
-	ar rv $@ $^
+	$(AR) $@ $(StdFace_OBJS) $(Lattice_OBJS)
 	ranlib $@
-	cp -f -v $@ ../
+	$(CP) $@ ../
 
 SUFFIXES: .o .c
 
