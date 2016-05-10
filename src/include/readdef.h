@@ -154,12 +154,6 @@ int ReadDefFileIdxPara(
 		       struct BoostList *xBoost
 		       );
 
-
-int CheckHermitePair(
-		     int iindex,
-		     struct DefineList *X
-		     );
-
 int CheckWords(
 	       const char* ctmp,
 	       const char* cKeyWord

@@ -2168,39 +2168,6 @@ int CheckTotal2Sz
   return TRUE;
 }
 
-
-int CheckHermitePair(
-		     int iindex,
-		     struct DefineList *X
-		     )
-{
-  int j;
-  int isite1, isite2, isite3, isite4;
-  int isigma1, isigma2, isigma3, isigma4;
-  int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
-  int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
-
-  isite1=X->InterAll_OffDiagonal[iindex][0];
-  isigma1=X->InterAll_OffDiagonal[iindex][1];
-  isite2=X->InterAll_OffDiagonal[iindex][2];
-  isigma2=X->InterAll_OffDiagonal[iindex][3];
-  isite3=X->InterAll_OffDiagonal[iindex][4];
-  isigma3=X->InterAll_OffDiagonal[iindex][5];
-  isite4=X->InterAll_OffDiagonal[iindex][6];
-  isigma4=X->InterAll_OffDiagonal[iindex][7];
-
-  for(j=0; j<X->NInterAll_OffDiagonal; j++) {
-    itmpsite1 = X->InterAll_OffDiagonal[j][0];
-    itmpsigma1 = X->InterAll_OffDiagonal[j][1];
-    itmpsite2 = X->InterAll_OffDiagonal[j][2];
-    itmpsigma2 = X->InterAll_OffDiagonal[j][3];
-    itmpsite3 = X->InterAll_OffDiagonal[j][4];
-    itmpsigma3 = X->InterAll_OffDiagonal[j][5];
-    itmpsite4 = X->InterAll_OffDiagonal[j][6];
-    itmpsigma4 = X->InterAll_OffDiagonal[j][7];
-  }
-
-
 /** 
  * 
  * @brief function of checking whether ctmp is same as cKeyWord or not
