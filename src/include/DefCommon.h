@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -39,6 +39,7 @@
 #define NUM_OUTPUTMODE 2 /*!< Number of output mode.*/
 #define RAWMODE  0 /*!< calc one body green function and two body green functions.*/
 #define CORRMODE 1 /*!< calc one body green function and two body green functions and correlatinos for charge and spin.*/
+#define NUM_OUTPUTHAM 2 /*!< Number of output Hamiltonian mode */
 
 /*!< CalcEigenVector */
 #define NUM_SETINITAILVEC 2 /*< Number of setting type of initial vectors.*/
@@ -46,6 +47,5 @@
 #define CALCVEC_LANCZOSCG  0 /*!< Lanczos + CG method*/
 #define CALCVEC_LANCZOS 1 /*!< Lanczos method*/
 #define CALCVEC_NOT -1 /*!< eigenvector is not calculated*/
-
 
 #endif /* HPHI_DEFCOMMON_H */

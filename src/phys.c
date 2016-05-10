@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -46,7 +46,7 @@
 void phys(struct BindStruct *X){
 
     long unsigned int i,j,i_max;
-    double tmp_N,tmp_Sz;
+    double tmp_N;
 
     i_max=X->Check.idim_max;
     for(i=0;i<i_max;i++){

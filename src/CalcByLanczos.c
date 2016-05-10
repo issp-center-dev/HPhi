@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -52,13 +52,8 @@ int CalcByLanczos(
 {
   char sdt[D_FileNameMax];
   double diff_ene,var;
-  long int i=0;
-  long int libuf=0;
   long int i_max=0;
-  long int _list_1;
-  double dRealVec, dImagVec;
   FILE *fp;
-  char ctmp2[256];
   
   if(X->Bind.Def.iInputEigenVec==FALSE){
     // this part will be modified
@@ -83,7 +78,7 @@ int CalcByLanczos(
       }
       break;
     default:
-      fclose(fp);
+      //fclose(fp);
       exitMPI(-1);
     }
  

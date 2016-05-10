@@ -1,6 +1,6 @@
 L = 6
 model = "SpinGC"
-lattice = "Chain Lattice"
+lattice = "Chain"
 method = "Lanczos"
 //method = "TPQ"
 //method = "FullDiag"

@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -41,6 +41,9 @@ const char* cLogTPQ_End="######  End  : TPQCalculation.  ######\n\n";
 
 const char* cLogFullDiag_SetHam_Start="######  Start: Setting Hamiltonian.  ######\n\n";
 const char* cLogFullDiag_SetHam_End="######  End  : Setting Hamiltonian.  ######\n\n";
+
+const char* cLogFullDiag_OutputHam_Start="######  Start: Output Hamiltonian.  ######\n\n";
+const char* cLogFullDiag_OutputHam_End="######  End  : Output Hamiltonian.  ######\n\n";
 
 
 const char* cLogFullDiag_Start="######  Start: Diagonalization.  ######\n\n";

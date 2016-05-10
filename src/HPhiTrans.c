@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -34,7 +34,7 @@ int HPhiTrans(struct BindStruct *X){
   char sdt_err[D_FileNameMax];
 
   int i,k;
-  int cnt_trans,cnt_chemi;
+  int cnt_trans;
  
   strcpy(sdt_err, cFileNameWarningOnTransfer);
   if(childfopenMPI(sdt_err, "w", &fp_err)!=0){
@@ -44,8 +44,6 @@ int HPhiTrans(struct BindStruct *X){
 	 
   //Transefer
   cnt_trans=0;
-  cnt_chemi=0;
-
   
   for(i=0;i<X->Def.EDNTransfer;i++){
     // eliminate double counting
@@ -58,7 +56,7 @@ int HPhiTrans(struct BindStruct *X){
 	  childfopenMPI(sdt_err,"a", &fp_err);
 	  fprintf(fp_err,cErrDoubleCounting, X->Def.GeneralTransfer[k][0] ,X->Def.GeneralTransfer[k][2], X->Def.GeneralTransfer[k][1], X->Def.GeneralTransfer[k][3]);
 	  fclose(fp_err);
-	  return -1;
+//	  return -1;
 	}
       }
     }

@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -57,7 +57,7 @@ int CalcBySSM(
   fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
-    u_long_i = 123432 + (rand_i+1)*abs(X->Bind.Def.initial_iv);
+    u_long_i = 123432 + (rand_i+1)*labs(X->Bind.Def.initial_iv);
     dsfmt_init_gen_rand(&dsfmt, u_long_i);    
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){

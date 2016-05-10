@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -87,6 +87,8 @@ int sz
   long unsigned int ibpatn=0;
 //hacker
 
+  int iSpnup, iMinup,iAllup;
+
   int N2=0;
   int N=0;
   fprintf(stdoutMPI, "%s", cProStartCalcSz);
@@ -158,7 +160,11 @@ int sz
   }
   else{ 
     sprintf(sdt, cFileNameSzTimeKeep, X->Def.CDataFileHead);
+    #ifdef _OPENMP
     num_threads  = omp_get_max_threads();
+    #else
+    num_threads=1;
+    #endif
     childfopenMPI(sdt,"a", &fp);
     fprintf(fp, "num_threads==%d\n",num_threads);
     fclose(fp);
@@ -313,9 +319,9 @@ int sz
     case HubbardNConserved:
       // this part can not be parallelized
       jb = 0;
-      int iSpnup=0;
-      int iMinup=0;
-      int iAllup=X->Def.Ne;
+      iSpnup=0;
+      iMinup=0;
+      iAllup=X->Def.Ne;
       if(X->Def.Ne > X->Def.Nsite){
 	iMinup = X->Def.Ne-X->Def.Nsite;
 	iAllup = X->Def.Nsite;

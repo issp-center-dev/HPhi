@@ -1,67 +1,100 @@
+mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Spin/Kitaev /home/i0012/i001200/bin/HPhi -s StdFace.def
+
+Intel MPI Placement option
+--------------------------
+I_MPI_PIN_DOMAIN=omp
+
+Node   MPI
+------------
+r1i0n0 1
+r1i0n1 1
+r1i0n2 1
+r1i0n3 1
+r1i0n4 1
+r1i0n5 1
+r1i0n6 1
+r1i0n7 1
+r1i0n8 1
+r1i0n9 1
+r1i0n10 1
+r1i0n11 1
+r1i0n12 1
+r1i0n13 1
+r1i0n14 1
+r1i0n15 1
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 1.0                    
+                                                                
 
 
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 12
-  MPI PEs : 1 
+  OpenMP threads : 24
+  MPI PEs : 16 
 
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile ./StdFace_TPQ.def 
+  Open Standard-Mode Inputfile StdFace.def 
 
   KEYWORD : w                    | VALUE : 2 
   KEYWORD : l                    | VALUE : 3 
   KEYWORD : model                | VALUE : spingc 
   KEYWORD : method               | VALUE : tpq 
+  KEYWORD : lattice              | VALUE : honeycomb 
+  KEYWORD : j0x                  | VALUE : -1.0 
+  KEYWORD : j0y                  | VALUE : 0.0 
+  KEYWORD : j0z                  | VALUE : 0.0 
+  KEYWORD : j1x                  | VALUE : 0.0 
+  KEYWORD : j1y                  | VALUE : -1.0 
+  KEYWORD : j1z                  | VALUE : 0.0 
+  KEYWORD : j2x                  | VALUE : 0.0 
+  KEYWORD : j2y                  | VALUE : 0.0 
+  KEYWORD : j2z                  | VALUE : -1.0 
   Skipping a line.
-  Skipping a line.
-  KEYWORD : lattice              | VALUE : honeycomblattice 
-  KEYWORD : jx0                  | VALUE : -1.0 
-  KEYWORD : jy0                  | VALUE : 0.0 
-  KEYWORD : jz0                  | VALUE : 0.0 
-  KEYWORD : jx1                  | VALUE : 0.0 
-  KEYWORD : jy1                  | VALUE : -1.0 
-  KEYWORD : jz1                  | VALUE : 0.0 
-  KEYWORD : jx2                  | VALUE : 0.0 
-  KEYWORD : jy2                  | VALUE : 0.0 
-  KEYWORD : jz2                  | VALUE : -1.0 
-  KEYWORD : largevalue           | VALUE : 12 
+  KEYWORD : 2s                   | VALUE : 1 
 
 #######  Parameter Summary  #######
 
-                L = 3  
-                W = 2  
-                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               2S = 1           ######  DEFAULT VALUE IS USED  ######
+  @ Lattice Size & Shape
+
+                L = 3         
+                W = 2         
+
+  @ Hamiltonian 
+
+               2S = 1         
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######
-                J = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               J0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               J1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               J2 = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               Jz = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jz0 = 0.00000   
-              Jz1 = 0.00000   
-              Jz2 = -1.00000  
-              Jxy = 0.00000     ######  DEFAULT VALUE IS USED  ######
-             Jxy0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
-             Jxy1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
-             Jxy2 = 0.00000     ######  DEFAULT VALUE IS USED  ######
-               Jx = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jx0 = -1.00000  
-              Jx1 = 0.00000   
-              Jx2 = 0.00000   
-               Jy = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jy0 = 0.00000   
-              Jy1 = -1.00000  
-              Jy2 = 0.00000   
-       LargeValue = 12        
+              J0x = -1.00000  
+              J0y = 0.00000   
+              J0z = 0.00000   
+              J1x = 0.00000   
+              J1y = -1.00000  
+              J1z = 0.00000   
+              J2x = 0.00000   
+              J2y = 0.00000   
+              J2z = -1.00000  
 
+  @ Numerical conditions
+
+       LargeValue = 1.50000     ######  DEFAULT VALUE IS USED  ######
          filehead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
-       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              nvec = 1           ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
@@ -102,8 +135,8 @@
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=4096 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.000393 GB 
+  MAX DIMENSION idim_max=256 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000025 GB 
 
 
 ######  MPI site separation summary  ######
@@ -118,17 +151,32 @@
        5       2
        6       2
        7       2
+
+  INTER process site
+    Site    Bit
        8       2
        9       2
       10       2
       11       2
 
-  INTER process site
-    Site    Bit
-
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0            4096     0      0      0         0   
+          0             256     0      0      0         0   0000
+          1             256     0      0      0         0   1000
+          2             256     0      0      0         0   0100
+          3             256     0      0      0         0   1100
+          4             256     0      0      0         0   0010
+          5             256     0      0      0         0   1010
+          6             256     0      0      0         0   0110
+          7             256     0      0      0         0   1110
+          8             256     0      0      0         0   0001
+          9             256     0      0      0         0   1001
+         10             256     0      0      0         0   0101
+         11             256     0      0      0         0   1101
+         12             256     0      0      0         0   0011
+         13             256     0      0      0         0   1011
+         14             256     0      0      0         0   0111
+         15             256     0      0      0         0   1111
 
    Total dimension : 4096
 
@@ -200,4 +248,4 @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 73 [s].
+Finish: Elapsed time is 21 [s].

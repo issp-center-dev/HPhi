@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -50,11 +50,11 @@ void child_general_int_spin_MPIBoost(
 {
 #ifdef MPI
   
-  double complex dam_pr = 0;
-  MPI_Status statusMPI;
+  //double complex dam_pr = 0;
+  // MPI_Status statusMPI;
 
-  int ierr;
-  int INFO;
+  //  int ierr;
+  //  int INFO;
   char TRANSA, TRANSB;
   int M, N, K, LDA, LDB, LDC;
   double complex ALPHA, BETA;  
@@ -75,8 +75,9 @@ void child_general_int_spin_MPIBoost(
   double complex *arrayz;
   double complex *arrayx;
   double complex *arrayw;
-  long unsigned int ishift1, ishift2, ishift3, ishift4, ishift5, pivot_flag, num_J_star; 
-  long unsigned int pow1, pow2, pow3, pow4, pow5, pow11, pow21, pow31, pow41, pow51; 
+  long unsigned int ishift1, ishift2, ishift3, ishift4, ishift5, pivot_flag, num_J_star;
+  long unsigned int pow4, pow5, pow41, pow51;  
+  //long unsigned int pow1, pow2, pow3, pow4, pow5, pow11, pow21, pow31, pow41, pow51; 
 
   i_max = X->Check.idim_max;
 
@@ -114,14 +115,14 @@ void child_general_int_spin_MPIBoost(
       ishift4    = (long unsigned int)X->Boost.list_6spin_star[j][4]; //(4,j)
       ishift5    = (long unsigned int)X->Boost.list_6spin_star[j][5]; //(5,j)
       pivot_flag = (long unsigned int)X->Boost.list_6spin_star[j][6]; //(6,j)
-      pow1 = (int)pow(2.0,ishift1);
-      pow2 = (int)pow(2.0,ishift1+ishift2);
-      pow3 = (int)pow(2.0,ishift1+ishift2+ishift3);
+      //pow1 = (int)pow(2.0,ishift1);
+      //pow2 = (int)pow(2.0,ishift1+ishift2);
+      //pow3 = (int)pow(2.0,ishift1+ishift2+ishift3);
       pow4 = (int)pow(2.0,ishift1+ishift2+ishift3+ishift4);
       pow5 = (int)pow(2.0,ishift1+ishift2+ishift3+ishift4+ishift5);
-      pow11= (int)pow(2.0,ishift1+1);
-      pow21= (int)pow(2.0,ishift1+ishift2+1);
-      pow31= (int)pow(2.0,ishift1+ishift2+ishift3+1);
+      //pow11= (int)pow(2.0,ishift1+1);
+      //pow21= (int)pow(2.0,ishift1+ishift2+1);
+      //pow31= (int)pow(2.0,ishift1+ishift2+ishift3+1);
       pow41= (int)pow(2.0,ishift1+ishift2+ishift3+ishift4+1);
       pow51= (int)pow(2.0,ishift1+ishift2+ishift3+ishift4+ishift5+1);
 
@@ -252,7 +253,7 @@ void child_general_int_spin_MPIBoost(
     
       iomp=i_max/(int)pow(2.0,ishift1+ishift2+ishift3+ishift4+ishift5+2);
 
-      #pragma omp parallel default(none) private(arrayx,arrayz,arrayw,ell4,ell5,ell6,m0,Ipart1,ierr,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA,INFO) \
+      #pragma omp parallel default(none) private(arrayx,arrayz,arrayw,ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
       shared(matJL,matI,iomp,i_max,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
       {
 
@@ -391,8 +392,12 @@ void child_general_int_spin_MPIBoost(
 
     }/* loop for j */
 
+    /*
     ierr = MPI_Alltoall(&tmp_v1[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v3[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
     ierr = MPI_Alltoall(&tmp_v0[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v2[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
+     */
+    MPI_Alltoall(&tmp_v1[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v3[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
+    MPI_Alltoall(&tmp_v0[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,&tmp_v2[1],(int)(i_max/nproc),MPI_DOUBLE_COMPLEX,MPI_COMM_WORLD);
 
 
     iomp=(int)pow(2.0,X->Boost.W0)/nproc;

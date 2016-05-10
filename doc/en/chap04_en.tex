@@ -71,12 +71,11 @@ H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 + \sum_{i \neq j} V_{i j} n_{i} n_{j},
 \label{fml4_1_hubbard}
 \end{align}
-canonical ensemble in the Kitaev-Heisenberg model
+canonical ensemble in the Spin model($\{\sigma_1, \sigma_2\}={x, y, z}$)
 \begin{align}
-H &= -h \sum_{i} S_{i z} + \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
+H &= -h \sum_{i} S_{i z} - \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
 \nonumber \\
-&+ \sum_{i j} \left( J_{i j x} S_{i x} S_{j x} + J_{i j y} S_{i y} S_{j y} + J_{i j z} S_{i z} S_{j z} 
-\right),
+&+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,
 \label{fml4_1_spin}
 \end{align}
 canonical ensemble in the Kondo lattice model
@@ -91,7 +90,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \label{fml4_1_kondo}
 \end{align}
 grand canonical ensemble of the Fermion in the Hubbard model [Eqn. (\ref{fml4_1_hubbard})],
-grand canonical ensemble in the Kitaev-Heisenberg model [Eqn. (\ref{fml4_1_spin})],
+grand canonical ensemble in the Spin model [Eqn. (\ref{fml4_1_spin})],
 and
 grand canonical ensemble in Kondo lattice model [Eqn. (\ref{fml4_1_kondo})]
 respectively.
@@ -100,11 +99,11 @@ When \verb|model="SpinGCBoost"|,
 by using more efficient algorithm\footnote{Y. Yamaji \textit{et. al.}, manuscript in preparation.}, 
 $\HPhi$ calculates a system the same as \verb|"SpinGC"|.
 However, supported models and MPI processes are highly limited.
-See \verb|"Latice"| section.
+See \verb|"Lattice"| section.
 
 \item \verb|method|
   
-{\bf Type :} String (Choose from \verb|"Lanczos|", \verb|"TPQ"|, \verb|"Full Diag"|)
+{\bf Type :} String (Choose from \verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|)
 
 {\bf Description :} The calculation type is specified with this parameter;
 above words denote 
@@ -116,7 +115,7 @@ respectively.
 \item \verb|lattice|
 
 {\bf Type :} String (Choose from \verb|"Chain Lattice"|, \verb|"Square Lattice"|, 
-\verb|"Triangular Lattice"|, \verb|Honeycomb Lattice|, \verb|Ladder|)
+\verb|"Triangular Lattice"|, \verb|"Honeycomb Lattice"|, \verb|"Ladder"|, \verb|"Kagome"|)
 
 {\bf Description :} The lattice shape is specified with this parameter;
 above words denote
@@ -126,7 +125,7 @@ the two dimensional triangular lattice (Fig. \ref{fig_chap04_1_lattice}(c)),
 the two dimensional anisotropic honeycomb lattice (Fig. \ref{fig_chap04_1_honeycomb}),
 the ladder lattice (Fig. \ref{fig_ladder}),
 and
-the Kagome Lattice(Only at \verb|method="SpinGCBoost"|. Fig. \ref{fig_kagome})
+the Kagome Lattice(Fig. \ref{fig_kagome})
 respectively.
 
 In \verb|method="SpinGCBoost"|,
@@ -156,7 +155,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \end{itemize}
 
-\begin{figure}[!htbp]
+\begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=8cm]{../figs/chap04_1_lattice.eps}
     \caption{Schematic illustration of
@@ -172,7 +171,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \end{center}
 \end{figure}
 
-\begin{figure}[!htbp]
+\begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=15cm]{../figs/chap04_1_honeycomb.eps}
     \caption{Schematic illustration of the anisotropic honeycomb lattice.
@@ -185,16 +184,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \end{center}
 \end{figure}
 
-\begin{figure}[!htbp]
-  \begin{center}
-    \includegraphics[width=10cm]{../figs/ladder.eps}
-    \caption{Schematic illustration of the ladder lattice.
-    }
-    \label{fig_ladder}
-  \end{center}
-\end{figure}
-
-\begin{figure}[!htbp]
+\begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=10cm]{../figs/kagome.eps}
     \caption{Schematic illustration of the Kagome lattice.
@@ -203,36 +193,106 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \end{center}
 \end{figure}
 
+\begin{figure}[!tbhp]
+  \begin{center}
+    \includegraphics[width=10cm]{../figs/ladder.eps}
+    \caption{Schematic illustration of the ladder lattice.
+    }
+    \label{fig_ladder}
+  \end{center}
+\end{figure}
+
+
 \end{itemize}
 
 \subsection{Parameters for the lattice}
 
+\subsubsection{Chain [Fig. \ref{fig_chap04_1_lattice}(a)]}
+
 \begin{itemize}
+
 \item \verb|L|
 
-{\bf Type :} Positive integer
+{\bf Type :} Integer
 
-{\bf Description :} The number of
-sites along the first dimensional direction
-is specified with this parameter.
+{\bf Description :} The length of the chain is specified 
+with this parameter.
+
+\end{itemize}
+
+\subsubsection{Ladder (Fig. \ref{fig_ladder})}
+
+\begin{itemize}
+
+\item \verb|L|
+
+{\bf Type :} Integer
+
+{\bf Description :} The length of the ladder is specified 
+with this parameter.
 
 \item \verb|W|
 
-{\bf Type :} Positive integer
+{\bf Type :} Integer
 
-{\bf Description :} The number of
-sites along the second dimensional direction
-is specified with this parameter.
-When \verb|lattice = "Chain Lattice"|, 
-it should not be specified because it will not be used
-(if specified, $\HPhi$ will stop).
+{\bf Description :} The number of the ladder is specified 
+with this parameter.
 
-\item \verb|a|
-
-{\bf Type :} Real (\verb|1.0| as a default)
-
-{\bf Description :} The lattice constant is specified with this parameter.
 \end{itemize}
+
+\begin{figure}[!tbhp]
+  \begin{center}
+    \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.eps}
+    \caption{The shape of the numerical cell 
+      when ${\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)$
+      in the triangular lattice.
+      The region surrounded by 
+      ${\vec a}_0$(Magenta dashed arrow) and ${\vec a}_1$(Green dashed arrow)
+      becomes the cell to be calculated (20 sites).
+    }
+    \label{fig_chap04_1_unitlattice}
+  \end{center}
+\end{figure}
+
+\subsubsection{Tetragonal lattice [Fig. \ref{fig_chap04_1_lattice}(b)], 
+Triangular lattice[Fig. \ref{fig_chap04_1_lattice}(c)],
+Honeycomb lattice(Fig. \ref{fig_chap04_1_honeycomb}),
+Kagome lattice(Fig. \ref{fig_kagome})}
+
+In these lattices,
+we can specify the shape of the numerical cell by using the following two methods.
+
+\begin{itemize}
+
+\item \verb|W|, \verb|L|
+
+{\bf Type :} Integer
+
+{\bf Description :} The alignment of original unit cells 
+(dashed black lines in Figs. \ref{fig_chap04_1_lattice} - \ref{fig_kagome})
+is specified with these parameter.
+
+\item \verb|a0W|, \verb|a0L|, \verb|a1W|, \verb|a1L|
+
+{\bf Type :} Integer
+
+{\bf Description :} 
+We can specify two vectors (${\vec a}_0, {\vec a}_1$)
+that surrounds the numerical cell (Fig. \ref{fig_chap04_1_unitlattice}).
+These vectors should be specified in the Fractional coordinate.
+
+\end{itemize}
+
+If we use both of these method, $\HPhi$ stops.
+When \verb|model=SpinGCBoost|, we can use only the former.
+
+We can check the shape of the numerical cell
+by using a file \verb|lattice.gp|
+which is written in the Standard mode.
+This file can be read by \verb|gnuplot| as follows:
+\begin{verbatim}
+$ gnuplot lattice.gp
+\end{verbatim}
 
 \subsection{Parameters for conserved quantities}
 
@@ -242,7 +302,7 @@ it should not be specified because it will not be used
 {\bf Type :} Positive integer
 
 {\bf Description :} The number of valence electrons is specified with this parameter.
-When \verb|lmodel = "Fermion HubbardGC"|, \verb|"Spin"|, or  \verb|"SpinGC"|, 
+When \verb|model = "Fermion HubbardGC"|, \verb|"Spin"|, or  \verb|"SpinGC"|, 
 it should not be specified.
 
 \item \verb|2Sz|
@@ -251,200 +311,264 @@ it should not be specified.
 
 {\bf Description :} The $z$ component of the twofold total spin is 
 specified with this parameter.
-When \verb|lmodel = "Fermion HubbardGC"| or \verb|SpinGC|,
+When \verb|model = "Fermion HubbardGC"| or \verb|SpinGC|,
 it should not be specified. 
 \end{itemize}
 
-\subsection{Parameters for the Hubbard model}
+
+\subsection{Parameters for the Hamiltonian}
+A default value is set as $0$ unless a specific value is not defined in a description. 
+Table~\ref{table_interactions} shows the parameters for each models. 
+In the case of a complex type, a file format is ``{\it a real part, an imaginary part} "
+ while in the case of a real type, only ``{\it a real part} ".
+
+
+\subsubsection{Local terms}
+
 \begin{itemize}
+
 \item \verb|mu|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Real
 
-{\bf Description :} The chemical potential $\mu$ (including the site potential)
-is specified with this parameter.
-
-\item \verb|t|
-
-{\bf Type :} Real (\verb|1.0| as a default)
-
-{\bf Description :} The nearest neighbor hopping $t$ (See Fig. \ref{fig_chap04_1_lattice})
-is specified with this parameter.
-
-\item \verb|t'|
-
-{\bf Type :} Real (\verb|0.0| as a default)
-
-{\bf Description :} The second nearest neighbor hopping $t'$ (See Fig. \ref{fig_chap04_1_lattice})
-is specified with this parameter.
-
-\item \verb|t0|, \verb|t1|, \verb|t2|
-
-{\bf Type :} Real (\verb|t| as defaults)
-
-{\bf Description :} The nearest neighbor hopping 
-in the anisotropic honeycomb lattice 
-(See Fig. \ref{fig_chap04_1_honeycomb})
-is specified with this parameter.
-
-\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
-
-{\bf Type :} Real (\verb|1.0| as defaults)
-
-{\bf Description :} Hopping integrals
-in the ladder lattice 
-(See Fig. \ref{fig_ladder})
+{\bf Description :} (Hubbard and Kondo lattice model) 
+The chemical potential $\mu$ (including the site potential)
 is specified with this parameter.
 
 \item \verb|U|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Real
 
-{\bf Description :} The onsite Coulomb integral $U$ is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model) 
+The onsite Coulomb integral $U$ is specified with this parameter.
 
-\item \verb|V|, \verb|V'|
+\item \verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|, 
+  \verb|Jyx|, \verb|Jxz|, \verb|Jzx|, \verb|Jyz|, \verb|Jzy|
 
-{\bf Type :} Real (\verb|0.0| as defaults)
+{\bf Type :} Real
 
-{\bf Description :} The nearest neighbor offsite Coulomb integrals $V$
-and the second nearest neighbor offsite Coulomb integrals $V'$
-(Fig. \ref{fig_chap04_1_lattice} are specified with these parameters.
-
-\item \verb|V0|, \verb|V1|, \verb|V2|
-
-{\bf Type :} Real (\verb|V| as defaults)
-
-{\bf Description :} Nearest neighbor offsite Coulomb integrals 
-on the anisotropic honeycomb lattice
-(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
-
-\item \verb|V0|, \verb|V1|, \verb|V1'|, \verb|V2|, \verb|V2'|
-
-{\bf Type :} Real (\verb|0.0| as defaults)
-
-{\bf Description :} Offsite Coulomb integrals 
-on the ladder lattice
-(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
-
-\end{itemize}
-
-\subsection{Parameters for the Kitaev-Heisenberg model}
-\begin{itemize}
-\item \verb|2S|
-
-{\bf Type :} Positive integer (\verb|1| as a default)
-
-{\bf Description :} The twofold moment of a localized spin is specified 
-with this parameter (e. g. \verb|2S=1| for $1/2$ spin system). 
+{\bf Description :} (Kondo lattice nodel) 
+The spin-coupling constant between the valence and the local electrons
+is specified with this parameter.
+If the exchange coupling \verb|J| is specified in the input file,
+instead of \verb|Jx, Jy, Jz|,
+the diagonal exchange couplings, \verb|Jx, Jy, Jz|, are set as \verb|Jx = Jy = Jz = J|.
+When both
+the set of exchange couplings (\verb|Jx|, \verb|Jy|, \verb|Jz|)
+and the exchange coupling \verb|J| are specified in the input file,
+$\HPhi$ will stop.
 
 \item \verb|h|, \verb|Gamma|, \verb|D|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Real
 
-{\bf Description :} The longitudinal magnetic field, transverse magnetic field, 
+{\bf Description :} (Spin model)
+The longitudinal magnetic field, transverse magnetic field, 
 and the single-site anisotropy parameter are specified with these parameters.
-
-\item \verb|J|
-
-{\bf Type :} Real (\verb|1.0| as a default)
-
-{\bf Description :} The isotropic spin-coupling constant between nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) is specified with this parameter.
-\verb|Jx|, \verb|Jy|, \verb|Jz|, and \verb|Jxy| and set to \verb|J|
-if \verb|J| is specified AND none of \verb|Jx|, \verb|Jy|, \verb|Jz| and \verb|Jxy| is specified.
-
-\item \verb|Jz|, \verb|Jxy|
-
-{\bf Type :} Real (\verb|J| as a default)
-
-{\bf Description :} The uniaxially anisotropic spin-coupling constant between nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) is specified with this parameter.
-\verb|Jx| and \verb|Jy| are set to \verb|Jxy|
-if \verb|Jxy| is specified AND none of \verb|Jx| and \verb|Jy| is specified.
-
-\item \verb|Jx|, \verb|Jy|
-
-{\bf Type :} Real (\verb|Jxy| as a default)
-
-{\bf Description :} The fully anisotropic spin-coupling constant between nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) is specified with this parameter.
-
-\item \verb|J'|, \verb|Jx'|, \verb|Jy'|, \verb|Jz'|, \verb|Jxy'|
-
-{\bf Type :} Real (\verb|J'|, \verb|Jxy'|, \verb|Jz'|, \verb|Jx'|, and \verb|Jy'|
-are set to  \verb|0.0|,  \verb|J'|, \verb|J'|, \verb|Jxy'|, and \verb|Jxy'| as defaults.)
-
-{\bf Description :} Spin-coupling constants between second nearest neighbor sites
-(See Fig. \ref{fig_chap04_1_lattice}) are specified with these parameter.
-They are set as 
-\verb|J|, \verb|Jx|, \verb|Jy|, \verb|Jz|, and \verb|Jxy| are set.
-
-\item \verb|J0|, \verb|J1|, \verb|J2|, \verb|Jx0|, \verb|Jy0|, \verb|Jz0|, 
-  \verb|Jx1|, \verb|Jy1|, \verb|Jz1|, 
-  \verb|Jx2|, \verb|Jy2|, \verb|Jz2|, \verb|Jxy0|, \verb|Jxy1|, \verb|Jxy2|
-
-{\bf Type :} Real (
-\verb|J| as defaluts for \verb|J0|, \verb|J1|, \verb|J2|. 
-\verb|Jxy| as defaults for \verb|Jxy0|, \verb|Jxy1|,  \verb|Jxy2|;
-\verb|Jx| as defaults for \verb|Jx0|, \verb|Jx1|, \verb|Jx2|;
-\verb|Jy| as defaults for \verb|Jy0|, \verb|Jy1|, \verb|Jy2|;
-\verb|Jz| as defaults for \verb|Jz0|, \verb|Jz1|, \verb|Jz2|.)
-
-{\bf Description :} Spin-coupling constants between nearest neighbor sites
-in the anisotropic honeycomb lattice
-(See Fig. \ref{fig_chap04_1_honeycomb}) are specified with these parameter.
-
-\item \verb|J0|, \verb|J1|, \verb|J1'|, \verb|J2|, \verb|J2'|
-
-{\bf Type :} Real (\verb|1.0| as a defalut for \verb|J0|, 
-\verb|0.0| for others)
-
-{\bf Description :} Spin-coupling constants in the ladder lattice
-(See Fig. \ref{fig_ladder}) are specified with these parameter.
+The single-site anisotropy parameter is not available for \verb|model=SpinGCBoost|.
 
 \end{itemize}
 
-\subsection{Parameters for the Kondo model}
+The non-local terms described below should be specified
+in different ways depending on the lattice structure:
+For \verb|lattice=Ladder|, the non-local terms are specified in the different way
+from \verb|lattice=Chain Lattice|, \verb|Square Lattice|, \verb|Triangular Lattice|, \verb|Honeycomb Lattice|, \verb|Kagome|. 
+Below, the available parameters for each lattice are shown in
+Table \ref{table_interactions}.
+
+\begin{table}[tbhp]
+  \begin{tabular}{|l||c|c|c|c|c|c|c|c|} \hline
+    Interactions & 1D chain & 2D square & 2D triangular & Honeycomb & Kagome & Ladder\\ 
+    \hline 
+    \hline
+     \verb|J|, \verb|t|, \verb|V| (simplified) & $\circ$	 & $\circ$ & $\circ$ & $\circ$ & $\circ$ & -\\ 
+     \hline
+    \verb|J'|, \verb|t'|, \verb|V'| & $\circ$	 & $\circ$	& $\circ$ 	& $\circ$ 	& $\circ$ & - \\ 
+    \hline
+    \verb|J0|, \verb|t0|, \verb|V0| & $\circ$  & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ 
+    \hline
+    \verb|J1|, \verb|t1|, \verb|V1| & -         	 & $\circ$ 	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\ 
+    \hline
+    \verb|J2|, \verb|t2|, \verb|V2|  & -         	 & -    	& $\circ$ 	& $\circ$ 	& $\circ$ & $\circ$\\
+    \hline
+    \verb|J1'|, \verb|t1'|, \verb|V1'| & -		 &-	 	& -		& -		& -		& $\circ$\\
+    \hline
+    \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ 
+    \hline
+\end{tabular}
+   \caption{Interactions for each models defined in an input file. We can define spin couplings as matrix format.}
+    \label{table_interactions}
+\end{table}
+
+\subsubsection{Non-local terms[ for Ladder (Fig. \ref{fig_ladder})]}
+
 \begin{itemize}
-\item \verb|mu|
+\item \verb|t0|,  \verb|t1|,  \verb|t1'|,  \verb|t2|,  \verb|t2'|
 
-{\bf Type :} Real (\verb|0.0| as a default)
+{\bf Type :} Complex
 
-{\bf Description :} The chemical potential $\mu$ (including the site potential)
-is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model)
+Hopping integrals in the ladder lattice 
+(See Fig. \ref{fig_ladder}) is specified with this parameter.
 
-\item \verb|t|
+\item \verb|V0|,  \verb|V1|,  \verb|V1'|,  \verb|V2|,  \verb|V2'|
 
-{\bf Type :} Real (\verb|1.0| as a default)
+{\bf Type :} Real
 
-{\bf Description :} The nearest neighbor hopping $t$ (See Fig. \ref{fig_chap04_1_lattice})
-is specified with this parameter.
+{\bf Description :} (Hubbard and Kondo lattice model)
+Offsite Coulomb integrals on the ladder lattice
+(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
 
-\item \verb|t0|, \verb|t1|, \verb|t2|
+\item \verb|J0x|, \verb|J0y|, \verb|J0z|, \verb|J0xy|, 
+  \verb|J0yx|, \verb|J0xz|, \verb|J0zx|, \verb|J0yz|, \verb|J0zy|
+\item \verb|J1x|, \verb|J1y|, \verb|J1z|, \verb|J1xy|, 
+  \verb|J1yx|, \verb|J1xz|, \verb|J1zx|, \verb|J1yz|, \verb|J1zy|
+\item \verb|J1'x|, \verb|J1'y|, \verb|J1'z|, \verb|J1'xy|, 
+  \verb|J1'yx|, \verb|J1'xz|, \verb|J1'zx|, \verb|J1'yz|, \verb|J1'zy|
+\item \verb|J2x|, \verb|J2y|, \verb|J2z|, \verb|J2xy|, 
+  \verb|J2yx|, \verb|J2xz|, \verb|J2zx|, \verb|J2yz|, \verb|J2zy|
+\item \verb|J2'x|, \verb|J2'y|, \verb|J2'z|, \verb|J2'xy|, 
+  \verb|J2'yx|, \verb|J2'xz|, \verb|J2'zx|, \verb|J2'yz|, \verb|J2'zy|
 
-{\bf Type :} Real (\verb|t| as defaults)
+{\bf Type :} Real
 
-{\bf Description :} The nearest neighbor hopping 
-in the anisotropic honeycomb lattice 
-(See Fig. \ref{fig_chap04_1_honeycomb})
-is specified with this parameter.
+{\bf Description :} (Spin model)
+Spin-coupling constants in the ladder lattice
+(See Fig. \ref{fig_ladder}) are specified with these parameter.
+If the simplified parameter \verb|J0| is specified in the input file instead of
+the diagonal couplings, \verb|J0x, J0y, J0z|,
+these diagonal couplings are set as \verb|J0x = J0y = J0z = J0|.
+If both \verb|J0| and the set of the couplings (\verb|J0x, J0y, J0z|)
+are specified, $\HPhi$ will stop.
+The above rules are also valid for the simplified parameters, \verb|J1|, \verb|J1'|, \verb|J2|, and \verb|J2'|.
 
-\item \verb|t0|, \verb|t1|, \verb|t1'|, \verb|t2|, \verb|t2'|
+\end{itemize}
 
-{\bf Type :} Real (\verb|1.0| as defaults)
+\subsubsection{Non-local terms [other than Ladder (Figs. \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
+\ref{fig_kagome})]}
 
-{\bf Description :} Hopping integrals
-in the ladder lattice 
-(See Fig. \ref{fig_ladder})
-is specified with this parameter.
+\begin{itemize}
+\item \verb|t0|,  \verb|t1|, \verb|t2|
 
-\item \verb|J|
+{\bf Type :} Complex
 
-{\bf Type :} Real(\verb|0.0| as a default)
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest neighbor hoppings for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameter.
+If there is no bond dependence of the hoppings,
+the simplified parameter \verb|t| is available to specify \verb|t0|,  \verb|t1|, and \verb|t2| as
+\verb|t0 = t1 = t2 = t|.
+If both \verb|t| and the set of the hoppings (\verb|t0|,  \verb|t1|, \verb|t2|) are specified,
+$\HPhi$ will stop.
 
-{\bf Description :} The spin-coupling constant between the valence and the local electrons
-is specified with this parameter.
+\item \verb|V0|,  \verb|V1|, \verb|V2|
 
+{\bf Type :} Real
+
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest-neighbor offsite Coulomb integrals $V$
+ for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameters.
+If there is no bond dependence of the offsite Coulomb integrals,
+the simplified parameter \verb|V| is available to specify \verb|V0|,  \verb|V1|, and \verb|V2| as
+\verb|V0 = V1 = V2 = V|.
+If both \verb|V| and the set of the Coulomb integrals (\verb|V0|,  \verb|V1|, \verb|V2|) are specified,
+$\HPhi$ will stop.
+
+\item \verb|J0x|, \verb|J0y|, \verb|J0z|, \verb|J0xy|, 
+  \verb|J0yx|, \verb|J0xz|, \verb|J0zx|, \verb|J0yz|, \verb|J0zy|
+\item \verb|J1x|, \verb|J1y|, \verb|J1z|, \verb|J1xy|, 
+  \verb|J1yx|, \verb|J1xz|, \verb|J1zx|, \verb|J1yz|, \verb|J1zy|
+\item \verb|J2x|, \verb|J2y|, \verb|J2z|, \verb|J2xy|, 
+  \verb|J2yx|, \verb|J2xz|, \verb|J2zx|, \verb|J2yz|, \verb|J2zy|
+
+{\bf Type :} Real
+
+{\bf Description :} (Spin model)
+Nearest-neighbor exchange couplings for each direction
+are specified with thees parameters.
+If the simplified parameter \verb|J0| is specified, instead of \verb|J0x, J0y, J0z|,
+the exchange couplings, \verb|J0x, J0y, J0z|, are set as \verb|J0x = J0y = J0z = J0|.
+If both \verb|J0| and the set of the exchange couplings (\verb|J0x, J0y, J0z|)
+are specified, $\HPhi$ will stop.
+The above rules are valid for \verb|J1| and \verb|J2|.
+
+If there is no bond dependence of the exchange couplings,
+the simplified parameters,
+\verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|, 
+\verb|Jyx|, \verb|Jxz|, \verb|Jzx|, \verb|Jyz|, \verb|Jzy|,
+are available to specify the exchange couplings for every bond as
+\verb|J0x = J1x = J2x = Jx|.
+If any simplified parameter (\verb|Jx|$\sim$\verb|Jzy|)
+is specified in addition to its counter parts (\verb|J0x|$\sim$\verb|J2zy|),
+$\HPhi$ will stop.
+Below, examples of parameter sets for nearest-neighbor exchange couplings are shown.
+
+\begin{itemize}
+
+\item If there are no bond-dependent, no anisotropic and offdiagonal exchange couplings (such as $J_{x y}$),
+please specify \verb|J| in the input file.
+
+\item If there are no bond-dependent and offdiagonal exchange couplings
+but are anisotropic couplings,
+please specify the non-zero couplings in the diagonal parameters, \verb|Jx, Jy, Jz|.
+
+\item If there are no bond-dependent exchange couplings
+but are anisotropic and offdiagonal exchange couplings,
+please specify the non-zero couplings in the nine parameters,
+\verb|Jx, Jy, Jz, Jxy, Jyz, Jxz, Jyx, Jzy, Jzx|.
+
+\item If there are no anisotropic and offdiagonal exchange couplings,
+but are bond-dependent couplings,
+please specify the non-zero couplings in the three parameters,
+\verb|J0, J1, J2|.
+
+\item If there are no anisotropic exchange couplings, but are bond-dependent and offdiagonal couplings,
+please specify the non-zero couplings in the nine parameters,
+\verb|J0x, J0y, J0z, J1x, J1y, J1z, J2x, J2y, J2z|.
+
+\item If there are bond-dependent, anisotropic and offdiagonal exchange couplings,
+please specify the non-zero couplings in the twenty-seven parameters from
+\verb|J0x| to \verb|J2zy|.
+
+\end{itemize}
+\item \verb|t'|
+
+{\bf Type :} Complex
+
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest neighbor hoppings for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameter.
+
+\item \verb|V'|
+
+{\bf Type :} Real
+
+{\bf Description :} (Hubbard and Kondo lattice model)
+Nearest neighbor-offsite Coulomb integrals $V$
+ for each direction
+(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameters.
+
+\item \verb|J'x|, \verb|J'y|, \verb|J'z|, \verb|J'xy|, 
+  \verb|J'yx|, \verb|J'xz|, \verb|J'zx|, \verb|J'yz|, \verb|J'zy|
+
+{\bf Type :} Real
+
+{\bf Description :} (Spin model)
+Second nearest-neighbor exchange couplings are specified.
+However, for \verb|lattice = Honeycomb Lattice| and  \verb|lattice = Kagome|
+with \verb|model=SpinGCBoost|,
+the second nearest-neighbor exchange couplings are not available in the $Standard$ mode.
+If the simplified parameter \verb|J'| is specified, instead of
+\verb|J'x, J'y, J'z|,
+the exchange couplings are set as
+\verb|J'x = J'y = J'z = J'|.
+If both \verb|J'| and the set of the couplings (\verb|J'x, J'y, J'z|),
+$\HPhi$ will stop.
 \end{itemize}
 
 \subsection{Parameters for the numerical condition}
@@ -457,7 +581,7 @@ is specified with this parameter.
 
 \item \verb|initial_iv|
 
-{\bf Type :} Integer (\verb|1| as a default)
+{\bf Type :} Integer (\verb|-1| as a default)
 
 {\bf Description :} 
 {An initial vector is specified with this parameter.}
@@ -470,12 +594,12 @@ The non-zero components of an initial vector is specified with this parameter.
 
 \item{For grand canonical ensemble or \verb|initial_iv| $< 0$}
 
-A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+A seed of random generator is given by this parameter and the random vector is used as an initial vector.
 \end{itemize}
 
 \item{TPQ method}
 
-A seed of random generator is given by this parametar and the random vector is used as an initial vector.
+A seed of random generator is given by this parameter and the random vector is used as an initial vector.
 \end{itemize}
 See \ref{Ch:algorithm} for details of setting an initial vector.
 
@@ -518,48 +642,51 @@ If this set to \verb|1|, target eigenenergy becomes the ground state.
 {\bf Description :} (Only for TPQ) 
 We use $l$ as $l-\hat{H}/N_{s}$ in the TPQ calculation.
 Usually, the largest eigenvalue of Hamiltonian is used as $l$. 
-Thus, we take the default value of $l$ for each models is as follows:
+Thus, we take the default value of $l$
+as a summation of the absolute values of each coefficients in the Hamiltonian
+divided by the number of sites.
 
-\begin{itemize}
 
-\item Hubbard model [Eqn. (\ref{fml4_1_hubbard})]
-
-The canonical ensemble
-\begin{align}
-l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}}
-+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'| 
-\end{align}
-The grand canonical ensemble
-\begin{align}
-l = 2|\mu|
-+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'|
-\end{align}
-
-\item Kitaev-Heisenberg model [Eqn. (\ref{fml4_1_spin})]
-
-The canonical ensemble
-\begin{align}
-l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + S |\Gamma| + S^2 |D|
-+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) +\frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|)
-\end{align}
-The grand canonical ensemble
-\begin{align}
-l = S |h| + S |\Gamma| + S^2 |D|
-+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) + \frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|) 
-\end{align}
-
-\item Kondo lattice model [Eqn. (\ref{fml4_1_kondo})]
-
-The canonical ensemble
-\begin{align}
-l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{S}{2} |J| 
-\end{align}
-The grand canonical ensemble
-\begin{align}
-l = 2|\mu| + 2 z |t| + \frac{S}{2} |J| 
-\end{align}
-
-\end{itemize}
+%\begin{itemize}
+%
+%\item Hubbard model [Eqn. (\ref{fml4_1_hubbard})]
+%
+%The canonical ensemble
+%\begin{align}
+%l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}}
+%+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'| 
+%\end{align}
+%The grand canonical ensemble
+%\begin{align}
+%l = 2|\mu|
+%+ 2 z |t| + 2 z' |t'| + |U| + 2 z |V| + 2 z' |V'|
+%\end{align}
+%
+%\item Spin model [Eqn. (\ref{fml4_1_spin})]
+%
+%The canonical ensemble
+%\begin{align}
+%l = \frac{|S_z^{\rm tot}|}{N_{\rm site}}|h| + S |\Gamma| + S^2 |D|
+%+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) +\frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|)
+%\end{align}
+%The grand canonical ensemble
+%\begin{align}
+%l = S |h| + S |\Gamma| + S^2 |D|
+%+\frac{z}{2} S^2 (|J_x|+|J_y|+|J_z|) + \frac{z'}{2} S^2 (|J'_x|+|J'_y|+|J'_z|) 
+%\end{align}
+%
+%\item Kondo lattice model [Eqn. (\ref{fml4_1_kondo})]
+%
+%The canonical ensemble
+%\begin{align}
+%l = |\mu| \frac{N_{\rm elec}}{N_{\rm site}} + 2 z |t| + \frac{S}{2} |J| 
+%\end{align}
+%The grand canonical ensemble
+%\begin{align}
+%l = 2|\mu| + 2 z |t| + \frac{S}{2} |J| 
+%\end{align}
+%
+%\end{itemize}
 
 \item \verb|NumAve|
 
@@ -760,9 +887,27 @@ Parameters correlated with keywords are shown as follows.
 
 {\bf Type :} int-type (default value: 0)
 
-{\bf Description :} Select the type of initial vectors:\\
+{\bf Description :} Select the type of an initial vector:\\
 0:Complex type.\\
 1:Real type.\\
+
+\item  \verb|OutputEigenVec|
+
+{\bf Type :} int-type (default value: 0)
+
+{\bf Description :} {Select the mode of outputting an eigenvector:\\
+0: not output an eigen vector.\\
+1: output an eigen vector.\\
+}
+
+\item  \verb|InputEigenVec|
+
+{\bf Type :} int-type (default value: 0)
+
+{\bf Description :} {Select the mode of inputting an eigenvector:\\
+0: not input an eigen vector.\\
+1: input an eigen vector.\\
+}
 
 \end{itemize}
 
@@ -858,19 +1003,6 @@ ExpecInterval  20
 
 {\bf Description :} {The total value of $2S_z$ (not used in grand canonical ensemble). For conservation of $S_z$ in the case of } \verb|CalcModel| \\
  { =0 (fermion Hubbard model) or 2 (Kondo lattice model), we must set} \verb|Ncond|.
-
- \item  \verb|Nup|
-
-{\bf Type :} int-type (Positive integer)
-
-{\bf Description :} The number of up spin (not used in grand canonical ensemble). 
-
- \item  \verb|Ndown|
-
-{\bf Type :} int-type (Positive integer)
-
-{\bf Description :} The number of down spin (not used in grand canonical ensemble). 
-
 
  \item  \verb|Lanczos_max|
 
@@ -1219,7 +1351,8 @@ NInterAll      36
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$. The relation  $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{jilk\sigma_2\sigma_1\sigma_3\sigma_4}^{\dag}$ is also allowed. A program is terminated when the above relations are broken.
+\item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$. A program is terminated when the above relations are broken.
+It is noted that a term of Hermitian conjugate for $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$ should be inputted as $I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}$ $c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}$.
 \item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
 \item A program is terminated, when components of on-site interactions are double counted.
 \item A program is terminated, when $[$int01$]$ is different from the total number of generalized two body interactions defined in this file.
