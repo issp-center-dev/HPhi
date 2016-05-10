@@ -2148,6 +2148,18 @@ int CheckTotal2Sz
   return TRUE;
 }
 
+
+/** 
+ * 
+ * @brief function of checking whether ctmp is same as cKeyWord or not
+ * 
+ * @param[in] ctmp 
+ * @param[in] cKeyWord 
+ * @return 0 ctmp is same as cKeyWord
+ * 
+ * @version 1.1.0
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 int CheckWords(
 	       const char* ctmp,
 	       const char* cKeyWord

@@ -239,7 +239,6 @@ int sz
       if(hacker==0){
         // this part can not be parallelized
         jb = 0;
-
         for(ib=0;ib<X->Check.sdim;ib++){
 	  list_jb[ib]=jb;
 
@@ -274,7 +273,7 @@ int sz
         for(ib=0;ib<X->Check.sdim;ib++){
 	  icnt+=child_omp_sz(ib,ihfbit,N2,X);
         }
-        break;
+	break;
       }else if(hacker==1){
         // this part can not be parallelized
         jb = 0;
@@ -314,8 +313,13 @@ int sz
 	  icnt+=child_omp_sz_hacker(ib,ihfbit,N2,X);
           //printf("ib=%ld icnt=%ld \n",ib,icnt);
         }
-        break;
+	break;
       }
+      else{
+	fprintf(stderr, "Error: CalcHS in ModPara file must be 0 or 1 for Hubbard model.");
+	return -1;
+      }
+
     case HubbardNConserved:
       // this part can not be parallelized
       jb = 0;
@@ -541,6 +545,10 @@ int sz
 	    icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
 	  }
         }
+	else{
+	  fprintf(stderr, "Error: CalcHS in ModPara file must be -1 or 0 or 1 for Spin model.");
+	  return -1;
+	}	
       }else{
 	int Max2Sz=0;
 	int irghtsite=1;
