@@ -68,12 +68,10 @@ int CalcSpectrum(
     fclose(fp);
     exitMPI(-1);
   }
-  fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+  fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
   fclose(fp);
-  
-  //mltply Operator by using mltply.c (not yet modified) 
-  mltply(&(X->Bind), v0, v1);
-  
+  //mltply Operator
+  GetExcitedState(X, v0, v1);  
   //calculate norm
   dnorm = NormMPI_dc(i_max, v0);
   
@@ -105,27 +103,26 @@ int CalcSpectrum(
 int GetExcitedState
 (
  struct BindStruct *X,
- double complex *tmp_v0
+ double complex *tmp_v0,/**< [out] Result v0 = H v1*/
+ double complex *tmp_v1 /**< [in] v0 = H v1*/
  )
 {
-  double complex *tmp_v1 = v1;
-
-  if(!GetSingleExcitedState(X,tmp_v0)==TRUE){
+  if(!GetSingleExcitedState(X,tmp_v0, tmp_v1)==TRUE){
     return FALSE;
   }
 
-  if(!GetPairExcitedState(X,tmp_v1, tmp_v0)==TRUE){
+  if(!GetPairExcitedState(X,tmp_v0, tmp_v1)==TRUE){
     return FALSE;
   }
-
-  tmp_v0=tmp_v1;
+  
   return TRUE;
 }
 
 int GetSingleExcitedState
 (
  struct BindStruct *X,
- double complex *vec
+ double complex *tmp_v0, /**< [out] Result v0 = H v1*/
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
  ){
   return TRUE;
 }
