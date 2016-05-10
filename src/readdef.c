@@ -34,6 +34,7 @@
 
 #include "Common.h"
 #include "readdef.h"
+#include <ctype.h>
 #include "LogMessage.h"
 #include "wrapperMPI.h"
 
@@ -126,7 +127,8 @@ int CheckKW(
     if(strcmp(cKW,"")==0){
       break;
     }
-    else if(strcmp(cKW, cKWList[itmpKWidx])==0){
+//    else if(strcmp(cKW, cKWList[itmpKWidx])==0){
+      else if(CheckWords(cKW, cKWList[itmpKWidx])==0){
       iret=0;
       *iKWidx=itmpKWidx;
     }
@@ -217,28 +219,28 @@ int ReadcalcmodFile(
       if(iret==1) continue;
       exitMPI(-1);
     }   
-    if(strcmp(ctmp, "CalcType")==0){
+    if(CheckWords(ctmp, "CalcType")==0){
       X->iCalcType=itmp;
     }
-    else if(strcmp(ctmp, "FlgFiniteTemperature")==0){
+    else if(CheckWords(ctmp, "FlgFiniteTemperature")==0){
       X->iFlgFiniteTemperature = itmp;
     }
-    else if(strcmp(ctmp, "CalcModel")==0){
+    else if(CheckWords(ctmp, "CalcModel")==0){
       X->iCalcModel=itmp;
     }
-    else if(strcmp(ctmp, "OutputMode")==0){
+    else if(CheckWords(ctmp, "OutputMode")==0){
       X->iOutputMode=itmp;
     }
-    else if(strcmp(ctmp, "CalcEigenVec")==0){
+    else if(CheckWords(ctmp, "CalcEigenVec")==0){
       X->iCalcEigenVec=itmp;
     }
-    else if(strcmp(ctmp, "InitialVecType")==0){
+    else if(CheckWords(ctmp, "InitialVecType")==0){
       X->iInitialVecType=itmp;
     }
-    else if(strcmp(ctmp, "OutputEigenVec")==0 || strcmp(ctmp, "OEV")==0){
+    else if(CheckWords(ctmp, "OutputEigenVec")==0 || CheckWords(ctmp, "OEV")==0){
       X->iOutputEigenVec=itmp;
     }
-    else if(strcmp(ctmp, "InputEigenVec")==0 || strcmp(ctmp, "IEV")==0){
+    else if(CheckWords(ctmp, "InputEigenVec")==0 || CheckWords(ctmp, "IEV")==0){
       X->iInputEigenVec=itmp;
     }
     else if(strcmp(ctmp, "OutputHam")==0){
@@ -438,55 +440,59 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
 
-      double dtmp;
-      
+      double dtmp;      
+
+      X->read_hacker=0;
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
 	if(*ctmp2 == '\n') continue;
 	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
-	if(strcmp(ctmp, "Nsite")==0){
+	if(CheckWords(ctmp, "Nsite")==0){
 	  X->Nsite= (int)dtmp;
 	}
-	else if(strcmp(ctmp, "Nup")==0){
+	else if(CheckWords(ctmp, "Nup")==0){
 	  X->Nup= (int)dtmp;
 	}
-	else if(strcmp(ctmp, "Ndown")==0){
+	else if(CheckWords(ctmp, "Ndown")==0){
 	  X->Ndown=(int)dtmp;
 	  X->Total2Sz=X->Nup-X->Ndown;
 	}
-	else if(strcmp(ctmp, "2Sz")==0){
+	else if(CheckWords(ctmp, "2Sz")==0){
 	  X->Total2Sz=(int)dtmp;
 	  X->iFlgSzConserved=TRUE;
 	}
-	else if(strcmp(ctmp, "Ncond")==0){
+	else if(CheckWords(ctmp, "Ncond")==0){
 	  X->NCond=(int)dtmp;
 	  iReadNCond=TRUE;	  
 	}
-	else if(strcmp(ctmp, "Lanczos_max")==0){
+	else if(CheckWords(ctmp, "Lanczos_max")==0){
 	  X->Lanczos_max=(int)dtmp;
 	}
-	else if(strcmp(ctmp, "initial_iv")==0){
+	else if(CheckWords(ctmp, "initial_iv")==0){
 	  X->initial_iv=(int)dtmp;
 	}
-	else if(strcmp(ctmp, "nvec")==0){
+	else if(CheckWords(ctmp, "nvec")==0){
 	  X->nvec=(int)dtmp;
 	}
-	else if(strcmp(ctmp, "exct")==0){
+	else if(CheckWords(ctmp, "exct")==0){
 	  X->k_exct=(int)dtmp;
 	}
-	else if(strcmp(ctmp, "LanczosEps")==0){
+	else if(CheckWords(ctmp, "LanczosEps")==0){
 	  X->LanczosEps=(int)dtmp;
 	}
-	else if(strcmp(ctmp, "LanczosTarget")==0){
+	else if(CheckWords(ctmp, "LanczosTarget")==0){
 	  X->LanczosTarget=(int)dtmp;
 	}
-	else if(strcmp(ctmp, "LargeValue")==0){
+	else if(CheckWords(ctmp, "LargeValue")==0){
 	  LargeValue=dtmp;
 	}	
-	else if(strcmp(ctmp, "NumAve")==0){
+	else if(CheckWords(ctmp, "NumAve")==0){
 	  NumAve=(int)dtmp;
 	}	
-	else if(strcmp(ctmp, "ExpecInterval")==0){
+	else if(CheckWords(ctmp, "ExpecInterval")==0){
 	  ExpecInterval=(int)dtmp;
+	}	
+	else if(CheckWords(ctmp, "CalcHS")==0){
+	  X->read_hacker=(int)dtmp;
 	}	
 	else{
 	  exitMPI(-1);
@@ -1813,36 +1819,24 @@ int JudgeDefType
 {
   
   if(argc == 3 && 
-    (strcmp(argv[1], "-e") == 0 || 
-    strcmp(argv[1], "-E") == 0  || 
-    strcmp(argv[1], "--expert") == 0||
-    strcmp(argv[1], "--Expert") == 0)){
+    (CheckWords(argv[1], "-e") == 0 ||
+    CheckWords(argv[1], "--Expert") == 0)){
     *mode=EXPERT_MODE;
   }
   else if (argc == 3 && 
-    (strcmp(argv[1], "-s") ==0 || 
-    strcmp(argv[1], "-S") == 0 ||
-    strcmp(argv[1], "--standard") == 0 || 
-    strcmp(argv[1], "--Standard") == 0 )){
+    (CheckWords(argv[1], "-s") ==0 ||
+     CheckWords(argv[1], "--Standard") == 0 )){
     *mode=STANDARD_MODE;
   }
   else if (argc == 3 && 
-    (strcmp(argv[1], "-sdry") == 0 || strcmp(argv[1], "-sDry") == 0 || 
-    strcmp(argv[1], "-Sdry") == 0 || strcmp(argv[1], "-SDRY") == 0 || 
-    strcmp(argv[1], "-s-dry") == 0 || strcmp(argv[1], "-S-DRY") == 0 ||
-    strcmp(argv[1], "-s-Dry") == 0 || strcmp(argv[1], "-S-dry") == 0)
+    (CheckWords(argv[1], "-sdry") == 0 ||
+     CheckWords(argv[1], "-s-dry") == 0)
     ){
     *mode = STANDARD_DRY_MODE;
   }
   else if (argc >= 2 &&
-    (strcmp(argv[1], "-v") == 0
-    || strcmp(argv[1], "-V") == 0
-    || strcmp(argv[1], "--version") == 0 
-    || strcmp(argv[1], "--Version") == 0
-    || strcmp(argv[1], "--VERSION") == 0
-    || strcmp(argv[1], "-version") == 0
-    || strcmp(argv[1], "-Version") == 0
-    || strcmp(argv[1], "-VERSION") == 0) 
+    (CheckWords(argv[1], "-v") == 0
+    || CheckWords(argv[1], "--version") == 0)
     ) {
     fprintf(stderr, "\nHPhi version 1.0.1 \n\n");
     exit(-1);
@@ -2174,6 +2168,7 @@ int CheckTotal2Sz
   return TRUE;
 }
 
+
 int CheckHermitePair(
 		     int iindex,
 		     struct DefineList *X
@@ -2205,5 +2200,41 @@ int CheckHermitePair(
     itmpsigma4 = X->InterAll_OffDiagonal[j][7];
   }
 
-  
+
+/** 
+ * 
+ * @brief function of checking whether ctmp is same as cKeyWord or not
+ * 
+ * @param[in] ctmp 
+ * @param[in] cKeyWord 
+ * @return 0 ctmp is same as cKeyWord
+ * 
+ * @version 1.1.0
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int CheckWords(
+	       const char* ctmp,
+	       const char* cKeyWord
+	       )
+{
+  int i=0;
+
+    char ctmp_small[256];
+    char cKW_small[256];
+    int n;
+    n=strlen(cKeyWord);
+    memset(cKW_small, 0, sizeof(cKeyWord));
+    strncpy(cKW_small, cKeyWord, sizeof(cKeyWord));
+
+  for(i=0; i<n; i++){
+    cKW_small[i]=tolower(cKW_small[i]);
+  }
+
+    n=strlen(ctmp);
+    memset(ctmp_small, 0, sizeof(ctmp));
+    strncpy(ctmp_small, ctmp, sizeof(ctmp));
+  for(i=0; i<n; i++){
+    ctmp_small[i]=tolower(ctmp_small[i]);
+  }
+  return(strncmp(ctmp_small, cKW_small, sizeof(ctmp)));
 }
