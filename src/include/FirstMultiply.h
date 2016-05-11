@@ -16,6 +16,6 @@
 #pragma once
 #include "Common.h"
 int FirstMultiply(
-		  dsfmt_t *dsfmt,
+		  int rand_i,
 		  struct BindStruct *X
 		  );

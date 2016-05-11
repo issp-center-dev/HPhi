@@ -155,3 +155,8 @@ int ReadDefFileIdxPara(
 		       struct DefineList *X,
 		       struct BoostList *xBoost
 		       );
+
+int CheckHermitePair(
+		     int iindex,
+		     struct DefineList *X
+		     );

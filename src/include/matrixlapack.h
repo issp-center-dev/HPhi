@@ -25,7 +25,12 @@
 #ifndef MATRIX_LAPACK_
 #define MATRIX_LAPACK_
 
+#ifdef SR
+#define M_DSYEV dsyevd_
+#else
 #define M_DSYEV dsyev_
+#endif
+
 #include <complex.h>
 int DSEVvalue(int xNsize, double **A, double *r);
 int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **vec);
