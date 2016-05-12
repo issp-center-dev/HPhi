@@ -82,7 +82,7 @@ int sz
 
 // hacker
   int hacker;
-  long unsigned int tmp_i,tmp_j,tmp_pow;
+  long unsigned int tmp_i,tmp_j,tmp_pow,max_tmp_i;
   long unsigned int ia,ja;
   long unsigned int ibpatn=0;
 //hacker
@@ -474,7 +474,14 @@ int sz
             tmp_i   += tmp_pow;
             tmp_pow  = tmp_pow*2;
           }
-	  while(tmp_i<X->Check.sdim*X->Check.sdim){
+	  //printf("DEBUG: %ld %ld %ld %ld\n",tmp_i,X->Check.sdim,X->Def.Tpow[X->Def.Ne],X->Def.Nsite);
+	  if(X->Def.Nsite%2==0){
+	    max_tmp_i = X->Check.sdim*X->Check.sdim;
+          }else{
+	    max_tmp_i = X->Check.sdim*X->Check.sdim*2-1;
+          }  
+	  while(tmp_i<max_tmp_i){
+	  //while(tmp_i<pow(2,X->Def.Nsite+1)-1){
             list_1[icnt]=tmp_i;
            
             ia= tmp_i & irght;
