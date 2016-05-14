@@ -66,7 +66,7 @@ int CalcSpectrumByLanczos(
   
   // calculate ai, bi
   // Functions in Lanczos_EigenValue
-  iret= Lanczos_GetTridiagonalMatrixComponents( &(X->Bind), alpha, beta, v1, &(liLanczosStp));
+  iret= Lanczos_GetTridiagonalMatrixComponents( &(X->Bind), alpha, beta, tmp_v1, &(liLanczosStp));
 
   if(iret != TRUE){
     //Error Message will be added.
