@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define HPHI_WRAPPER_H
 #include <complex.h>
 
-int nproc, myrank;
+int nproc, myrank, nthreads;
 FILE *stdoutMPI;
 
 void InitializeMPI(int argc, char *argv[]);

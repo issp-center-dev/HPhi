@@ -22,13 +22,15 @@ int CalcSpectrum(
 
 int GetExcitedState(
 		    struct BindStruct *X,
-		    double complex *tmp_v0
+		    double complex *tmp_v0,
+		    double complex *tmp_v1
 		    );
 
 int GetSingleExcitedState
 		(
 				struct BindStruct *X,
-				double complex *tmp_v0
+				double complex *tmp_v0,
+				double complex *tmp_v1				
 		);
 int GetPairExcitedState
 		(

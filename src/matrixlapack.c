@@ -29,15 +29,22 @@
 
 int dgetrf_(int *m, int *n, double *a, int *lda, int *ipiv, int *info);
 int dgetri_(int *n, double *a, int *lda, int *ipiv, double *work, int *lwork, int *info);
-int dsyev_(char *jobz, char *uplo, int *n, double *a, int *lda, double *w, double *work, int *lwork, int *info);
 
+#ifdef SR
+int dsyevd_(char *jobz, char *uplo, int *n, double *a, int *lda, double *w, double *work, int *lwork, int *iwork, int *liwork, int *info);
+int M_DSYEV(char *jobz, char *uplo, int *n, double *a, int *lda, double *w, double *work, int *lwork, int *iwork, int *liwork, int *info);
+int zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int *iwork, int *liwork, int *info);
+#else
+int dsyev_(char *jobz, char *uplo, int *n, double *a, int *lda, double *w, double *work, int *lwork, int *info);
+int M_DSYEV(char *jobz, char *uplo, int *n, double *a, int *lda, double *w, double *work, int *lwork, int *info);
 double dlamch_(char *cmach);
+int zheev_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int *info);
+#endif
+
 int dsyevx_(char *jobz, char *range, char *uplo, int *n, double *a, int *lda, double *vl, double *vu, 
 	int *il, int *iu, double *abstol, int *m, double *w, double *z__, int *ldz, 
 	double *work, int *lwork, int *iwork, int *ifail, int *info);
 
-int M_DSYEV(char *jobz, char *uplo, int *n, double *a, int *lda, double *w, double *work, int *lwork, int *info);
-int zheev_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int *info);
 
 /** 
  * 
@@ -77,6 +84,11 @@ int DSEVvalue(int xNsize, double **A, double *r){
   char jobz, uplo;
   int n, lda, lwork, info;
   double *a, *w, *work;
+#ifdef SR
+  int *iwork, liwork;
+  liwork = 5 * xNsize + 3;
+  iwork = (int*)malloc(liwork * sizeof(double));
+#endif
 
   n = lda = xNsize;
   lwork = 4*xNsize; /* 3*xNsize OK?*/
@@ -90,7 +102,12 @@ int DSEVvalue(int xNsize, double **A, double *r){
   jobz = 'N';
   uplo = 'U';
 
+#ifdef SR
+  M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &iwork, &liwork, &info);
+  free(iwork);
+#else
   M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &info);
+#endif
 
   if(info != 0){
     free(a);
@@ -182,9 +199,16 @@ int DSEVvector(int xNsize, double **A, double *r, double **vec ){
 	char jobz, uplo;
 	int n, lda, lwork, info;
 	double *a, *w, *work;
+#ifdef SR
+        int *iwork, liwork;
+        liwork = 5 * xNsize + 3;
+        iwork = (int*)malloc(liwork * sizeof(double));
+        lwork = 2 * xNsize + xNsize * xNsize; /* 3*xNsize OK?*/
+#else
+        lwork = 4 * xNsize; /* 3*xNsize OK?*/
+#endif
 
 	n = lda = xNsize;
-	lwork = 4*xNsize; /* 3*xNsize OK?*/
 
 	a = (double*)malloc(xNsize*xNsize*sizeof(double));
 	w = (double*)malloc(xNsize*sizeof(double));
@@ -201,7 +225,12 @@ int DSEVvector(int xNsize, double **A, double *r, double **vec ){
 	jobz = 'V';
 	uplo = 'U';
 
-	dsyev_(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &info);
+#ifdef SR
+        M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &iwork, &liwork, &info);
+        free(iwork);
+#else
+        dsyev_(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &info);
+#endif
 
 	k=0;
 	for(i=0;i<xNsize;i++){
@@ -261,8 +290,12 @@ int DSEVXU(int xNsize, double **A, double *r, double **X, int xNev){
 	iwork = (int*)malloc(5*xNsize*sizeof(int));
 	ifail = (int*)malloc(xNsize*sizeof(int));
 
-	abstol = 2.0*dlamch_("S");
-	vl = vu = 0.0;
+#ifdef SR
+        abstol = 0.0;
+#else
+        abstol = 2.0*dlamch_("S");
+#endif
+        vl = vu = 0.0;
 
 	k=0;
 	for(j=0;j<xNsize;j++){
@@ -328,18 +361,29 @@ int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **
 
 	int i,j,k;
 	char jobz, uplo;
-	int n, lda, lwork, info;
+	int n, lda, lwork, info, lrwork;
         double *rwork;
 	double *w;
 	double complex *a, *work;
+#ifdef SR
+        int *iwork, liwork;
+        liwork = 5 * xNsize + 3;
+        iwork = (int*)malloc(liwork * sizeof(double));
+#endif
 
 	n = lda = xNsize;
-	lwork = 4*xNsize; /* 3*xNsize OK?*/
+#ifdef SR
+        lwork = xNsize*xNsize + 2 * xNsize; /* 3*xNsize OK?*/
+        lrwork = 2 * xNsize*xNsize + 5*xNsize + 1;
+#else
+        lwork = 4*xNsize; /* 3*xNsize OK?*/
+        lrwork = lwork;
+#endif
 
 	a = (double complex*)malloc(xNsize*xNsize*sizeof(double complex));
 	w = (double*)malloc(xNsize*sizeof(double));
 	work = (double complex*)malloc(lwork*sizeof(double complex));
-	rwork = (double*)malloc(lwork*sizeof(double));
+	rwork = (double*)malloc(lrwork*sizeof(double));
 
 	k=0;
 	for(j=0;j<xNsize;j++){
@@ -352,7 +396,12 @@ int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **
 	jobz = 'V';
 	uplo = 'U';
 
+#ifdef SR
+        int zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int *iwork, int *liwork, int *info); 
+        free(iwork);
+#else
 	zheev_(&jobz, &uplo, &n, a, &lda, w, work, &lwork, rwork, &info);
+#endif
 
 	if(info != 0){
 		free(a);

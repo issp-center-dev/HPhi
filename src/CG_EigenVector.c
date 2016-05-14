@@ -36,6 +36,7 @@ int CG_EigenVector(struct BindStruct *X){
   char sdt_1[D_FileNameMax];
   dsfmt_t dsfmt;
   long unsigned int u_long_i;
+  int mythread;
 
   long int i,j;
   double Eig;
@@ -70,27 +71,40 @@ int CG_EigenVector(struct BindStruct *X){
   fclose(fp_0);
         
   start=time(NULL);  
-// add random components
+  /*
+    add random components
+  */
   iv = X->Def.initial_iv;
   bnorm = 0.0;
-  u_long_i = 123432 + abs(iv);
-  dsfmt_init_gen_rand(&dsfmt, u_long_i);    
-  for(i=1;i<=i_max;i++){
-    v0[i]=v1[i];
-    b[i]=v0[i];
-  }
+#pragma omp parallel default(none) private(i, u_long_i, mythread, dsfmt) \
+            shared(v0, v1, iv, X, nthreads, myrank, b, bnorm) firstprivate(i_max)
+  {
+    /*
+    Initialise MT
+    */
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+    u_long_i = 123432 + abs(iv) + mythread + nthreads * myrank;
+    dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
-  for (iproc = 0; iproc < nproc; iproc++) {
-    i_max_tmp = BcastMPI_li(iproc, i_max);
-    for (i = 1; i <= i_max_tmp; i++) {
-      temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt)-0.5)*0.001;
-      if (myrank == iproc){
-	b[i] += temp1;
-	bnorm+=conj(b[i])*b[i];
-      }
+#pragma omp for
+    for (i = 1; i <= i_max; i++) {
+      v0[i] = v1[i];
+      b[i] = v0[i];
     }
-  }
-  
+
+#pragma omp for reduction(+:bnorm)
+    for (i = 1; i <= i_max; i++) {
+      b[i] += 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*0.001;
+      bnorm += conj(b[i])*b[i];
+    }
+  }/*#pragma omp*/
+  /*
+   Normalize b
+  */
   bnorm = SumMPI_d(bnorm);
   bnorm=sqrt(bnorm);
   

@@ -29,52 +29,63 @@
  *
  * @return 
  */
-int FirstMultiply(dsfmt_t *dsfmt,struct BindStruct *X){
+int FirstMultiply(int rand_i, struct BindStruct *X) {
 
   int iproc;
-  long int i,i_max;
+  long int i, i_max;
   unsigned long int i_max_tmp;
-  double  complex temp1;  
+  double  complex temp1;
   double complex dnorm;
   double Ns;
-      
+  long unsigned int u_long_i;
+  dsfmt_t dsfmt;
+  int mythread;
+
   Ns = 1.0*X->Def.NsiteMPI;
-  i_max=X->Check.idim_max;      
+  i_max = X->Check.idim_max;
 
-#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
-    for(i = 1; i <= i_max; i++){
-      v0[i]=0.0;
-      v1[i]=0.0;
+#pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt) \
+        shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \
+        firstprivate(i_max)
+  {
+#pragma omp for
+    for (i = 1; i <= i_max; i++) {
+      v0[i] = 0.0;
+      v1[i] = 0.0;
     }
+
+    /*
+    Initialise MT
+    */
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+    u_long_i = 123432 + (rand_i + 1)*labs(X->Def.initial_iv) + mythread + nthreads * myrank;
+    dsfmt_init_gen_rand(&dsfmt, u_long_i);
+
+    if (X->Def.iInitialVecType == 0) {
+#pragma omp master
+      fprintf(stdoutMPI, cLogCheckInitComplex);
   
-  if(X->Def.iInitialVecType==0){
-    fprintf(stdoutMPI, cLogCheckInitComplex);
-    //For getting random numbers without any dependencies of threads,
-    //we do not adopt omp in this part.
-    for (iproc = 0; iproc < nproc; iproc++) {
-      
-      //
-      i_max_tmp = BcastMPI_li(iproc, i_max);
-      
-      for (i = 1; i <= i_max_tmp; i++) {
-	temp1 = 2.0*(dsfmt_genrand_close_open(dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(dsfmt) - 0.5)*I;
-	if (myrank == iproc) v1[i] = temp1;
-      }
-    }
-  }
-  else{
-    fprintf(stdoutMPI, cLogCheckInitReal);
-    for (iproc = 0; iproc < nproc; iproc++) {
+#pragma omp for
+      for (i = 1; i <= i_max; i++)
+        v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
+    }/*if (X->Def.iInitialVecType == 0)*/
+    else {
+#pragma omp master
+      fprintf(stdoutMPI, cLogCheckInitReal);
 
-      i_max_tmp = BcastMPI_li(iproc, i_max);
-
-      for (i = 1; i <= i_max_tmp; i++) {
-	temp1 = 2.0*(dsfmt_genrand_close_open(dsfmt) - 0.5);
-	if (myrank == iproc) v1[i] = temp1;
-      }
+#pragma omp for
+      for (i = 1; i <= i_max; i++)
+          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
     }
-  }
-  
+
+  }/*#pragma omp parallel*/
+  /*
+    Normalize v
+  */
   dnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
   for(i=1;i<=i_max;i++){
