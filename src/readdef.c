@@ -210,7 +210,7 @@ int ReadcalcmodFile(
   X->iInitialVecType=0;
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
-    X->iOutputHam=0;
+  X->iOutputHam=0;
 
     /*=======================================================================*/
   fp = fopenMPI(defname, "r");
@@ -377,11 +377,16 @@ int ReadDefFileNInt(
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
   int iline=0;
+  X->iFlgSpecOmegaMax=FALSE;
+  X->iFlgSpecOmegaMin=FALSE;
+  X->iFlgSpecOmegaIm=FALSE;
+  X->iNOmega=1000;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
   int iReadNCond=FALSE;
   xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
+
   
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
@@ -442,8 +447,8 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
 
-      double dtmp;      
-
+      double dtmp;
+      
       X->read_hacker=0;
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
 	if(*ctmp2 == '\n') continue;
@@ -495,11 +500,27 @@ int ReadDefFileNInt(
 	}	
 	else if(CheckWords(ctmp, "CalcHS")==0){
 	  X->read_hacker=(int)dtmp;
-	}	
+	}
+	else if(CheckWords(ctmp, "OmegaMax")==0){
+	  X->dOmegaMax=(double)dtmp;
+	  X->iFlgSpecOmegaMax=TRUE;
+	}
+	else if(CheckWords(ctmp, "OmegaMin")==0){
+	  X->dOmegaMin=(double)dtmp;
+	  X->iFlgSpecOmegaMin=TRUE;
+	}
+	else if(CheckWords(ctmp, "OmegaIm")==0){
+	  X->dOmegaIm=(double)dtmp;
+	  X->iFlgSpecOmegaIm=TRUE;
+	}
+	else if(CheckWords(ctmp, "NOmega")==0){
+	  X->iNOmega=(int)dtmp;
+	}
 	else{
 	  exitMPI(-1);
 	}
       }
+      
       break;
       
     case KWLocSpin:

@@ -38,3 +38,9 @@ int GetPairExcitedState
 				double complex *tmp_v0,
 				double complex *tmp_v1
 		);
+
+int SetOmega
+(
+ struct DefineList *X
+ );
+
