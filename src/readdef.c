@@ -1555,7 +1555,7 @@ int CheckTransferHermite
 	    if (icheckHermiteCount == FALSE) {	      
 	      if(i<=j){
 		if(2*icntHermite >= X->NTransfer){
-		  fprintf(stderr, "Elements of InterAll are incorrect.\n");
+		  fprintf(stderr, "Elements of Transfers are incorrect.\n");
 		  exitMPI(-1);
 		}
 		if(isite1 !=isite2 || isigma1 !=isigma2){

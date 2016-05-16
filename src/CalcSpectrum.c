@@ -13,7 +13,6 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#include "Common.h"
 #include "mltply.h"
 #include "bitcalc.h"
 #include "CalcSpectrum.h"
@@ -21,6 +20,7 @@
 #include "SingleEx.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
+#include "FileIO.h"
 
 /**
  * @file   CalcSpectrum.c
@@ -92,7 +92,7 @@ int CalcSpectrum(
   GetExcitedState( &(X->Bind), v0, v1);  
 
   //calculate norm
-  fprintf(stdoutMPI, "Calculationg norm in CalcSpectrum.\n");
+  fprintf(stdoutMPI, "Calculating norm in CalcSpectrum.\n");
   dnorm = NormMPI_dc(i_max, v0);
   
   //normalize vector
@@ -540,7 +540,7 @@ int SetOmega
   char sdt[D_FileNameMax],ctmp[256];
   double domegaMax;
   double domegaMin;
-  int istp;
+  int istp=4;
   double E1, E2, E3, E4, Emax;
 
   if(X->iFlgSpecOmegaMax == TRUE && X->iFlgSpecOmegaMin == TRUE){
@@ -548,13 +548,15 @@ int SetOmega
   }
   else{
     sprintf(sdt, cFileNameLanczosStep, X->CDataFileHead);
-    fp=fopenMPI(sdt, "r");
+      childfopenMPI(sdt,"r", &fp);
     if(fp == NULL){
       fprintf(stdoutMPI, "Error: xx_Lanczos_Step.dat does not exist.\n");
       return FALSE;
-    }      
-    while(fgetsMPI(ctmp, 256, fp) != NULL){
-      sscanf(ctmp, "%d %lf %lf %lf %lf %lf\n",
+    }
+      fgetsMPI(ctmp, 256, fp); //1st line is skipped
+      fgetsMPI(ctmp, 256, fp); //2nd line is skipped
+      while(fgetsMPI(ctmp, 256, fp) != NULL){
+      sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf\n",
 	     &istp,
 	     &E1,
 	     &E2,
