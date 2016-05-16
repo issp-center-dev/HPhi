@@ -56,7 +56,6 @@ int CalcSpectrum(
   FILE *fp;
   double dnorm;
   
-  fp = fopen(sdt, "rb");
   //set omega
   if(SetOmega(&(X->Bind.Def)) != TRUE){
     fprintf(stderr, "Error: Fail to set Omega.\n");
@@ -73,7 +72,7 @@ int CalcSpectrum(
   //input eigen vector
   fprintf(stdoutMPI, "An Eigenvector is inputted in CalcSpectrum.\n");
   sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
-
+  childfopenMPI(sdt, "rb", &fp);
   if(fp==NULL){
     fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
     fclose(fp);
@@ -85,7 +84,7 @@ int CalcSpectrum(
     fclose(fp);
     exitMPI(-1);
   }
-  fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
+    fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
   fclose(fp);
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
@@ -157,7 +156,6 @@ int GetSingleExcitedState
   long unsigned int *tmp_off;
 
   idim_max = X->Check.idim_max;
-
   //tmp_v0
 
   switch(X->Def.iCalcModel){
@@ -183,7 +181,7 @@ int GetSingleExcitedState
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
           for(j=1;j<=idim_max;j++){
             is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off); 
+            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off);
           }
         }
       }
@@ -196,7 +194,7 @@ int GetSingleExcitedState
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
           for(j=1;j<=idim_max;j++){
             is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off); 
+            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off);
           }
         }
       }
@@ -542,6 +540,9 @@ int SetOmega
   double domegaMin;
   int istp=4;
   double E1, E2, E3, E4, Emax;
+    long unsigned int iline_countMax=2;
+    long unsigned int iline_count=2;
+
 
   if(X->iFlgSpecOmegaMax == TRUE && X->iFlgSpecOmegaMin == TRUE){
     return TRUE;
@@ -556,15 +557,28 @@ int SetOmega
       fgetsMPI(ctmp, 256, fp); //1st line is skipped
       fgetsMPI(ctmp, 256, fp); //2nd line is skipped
       while(fgetsMPI(ctmp, 256, fp) != NULL){
-      sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf\n",
-	     &istp,
-	     &E1,
-	     &E2,
-	     &E3,
-	     &E4,
-	     &Emax);
-    }
-    if(istp < 4){
+          iline_count++;
+      }
+    iline_countMax=iline_count;
+    iline_count=2;
+    rewind(fp);
+      fgetsMPI(ctmp, 256, fp); //1st line is skipped
+      fgetsMPI(ctmp, 256, fp); //2nd line is skipped
+
+      while(fgetsMPI(ctmp, 256, fp) != NULL) {
+          sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf\n",
+                 &istp,
+                 &E1,
+                 &E2,
+                 &E3,
+                 &E4,
+                 &Emax);
+          iline_count++;
+          if(iline_count ==iline_countMax) break;
+      }
+
+
+      if(istp < 4){
       fprintf(stdoutMPI, "Error: Lanczos step must be greater than 4 for using spectrum calculation.\n");
       return FALSE;
     }  
@@ -572,8 +586,8 @@ int SetOmega
     if(X->iFlgSpecOmegaMax == FALSE){
       X->dOmegaMax= Emax*(double)X->NsiteMPI;
     }
-    if(X->iFlgSpecOmegaMax == FALSE){
-      X->dOmegaMax= E1;
+    if(X->iFlgSpecOmegaMin == FALSE){
+      X->dOmegaMin= E1;
     }
   }
   

@@ -85,14 +85,14 @@ int CalcSpectrumByLanczos(
   }
   
   //output spectrum
-  sprintf(sdt, cFileNameLanczosStep, X->Bind.Def.CDataFileHead);   
-  childfopenMPI(sdt,"w", &fp);
+  //sprintf(sdt, cFileNameLanczosStep, X->Bind.Def.CDataFileHead);
+  //childfopenMPI(sdt,"w", &fp);
   for( i = 0 ; i < Nomega; i++){
     fprintf(stdoutMPI,"%.10lf %.10lf %.10lf %.10lf \n",
             creal(dcomega[i]), cimag(dcomega[i]),
             creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
    }
-  fclose(fp);
+  //fclose(fp);
   
   return TRUE;
 }
