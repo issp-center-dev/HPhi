@@ -106,6 +106,9 @@ const char* cFileNameListModel;
 const char* cFileNameListKondo;
 const char* cFileNameOutputEigen;
 const char* cFileNameInputEigen;
+const char* cFileNameCalcDynamicalGreen;
+const char* cFileNameTridiagonalMatrixComponents;
+
 
 //For TPQ
 const char* cFileNameSSRand;
