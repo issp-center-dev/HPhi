@@ -42,9 +42,9 @@ void setmem_def
   d_malloc1(X->Phys.charge_real_cor, X->Def.Nsite*X->Def.Nsite);
   d_malloc1(X->Phys.loc_spin_z, X->Def.Nsite*X->Def.Nsite);
   
-  i_malloc1(X->Def.EDChemi, X->Def.EDNChemi+X->Def.NInterAll);
-  i_malloc1(X->Def.EDSpinChemi, X->Def.EDNChemi+X->Def.NInterAll);
-  d_malloc1(X->Def.EDParaChemi, X->Def.EDNChemi+X->Def.NInterAll);
+  i_malloc1(X->Def.EDChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
+  i_malloc1(X->Def.EDSpinChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
+  d_malloc1(X->Def.EDParaChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
 
   i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer, 4);
   i_malloc2(X->Def.GeneralTransfer, X->Def.NTransfer, 4);
