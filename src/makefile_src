@@ -8,6 +8,7 @@ CalcByFullDiag.c \
 CalcByLanczos.c \
 CalcSpectrum.c \
 CalcSpectrumByLanczos.c \
+SingleEx.c \
 FirstMultiply.c \
 Lanczos_EigenValue.c \
 Lanczos_EigenVector.c \
