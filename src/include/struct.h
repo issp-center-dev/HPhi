@@ -173,6 +173,16 @@ struct DefineList{
     /**< An integer for selecting output a Hamiltonian. 0: no output, 1:output*/
     int iOutputHam;
 
+  //[s] For Spectrum
+  double dOmegaMax;
+  double dOmegaMin;
+  double dOmegaIm;
+  int iNOmega;
+  int iFlgSpecOmegaMax;
+  int iFlgSpecOmegaMin;
+  int iFlgSpecOmegaIm;
+  //[e] For Spectrum
+  
 };
 
 struct CheckList{

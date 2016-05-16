@@ -52,12 +52,12 @@ int CalcSpectrumByLanczos(
   unsigned long int i_max=0;
   FILE *fp;
   int iret=TRUE;
-    unsigned long int liLanczosStp=X->Bind.Def.Lanczos_max;
+  unsigned long int liLanczosStp=X->Bind.Def.Lanczos_max;
 
   //ToDo: Nomega should be given as a parameter
-  int Nomega=1000;
-  double complex OmegaMax=50+0.001*I;
-  double complex OmegaMin=-50+0.001*I;
+  int Nomega=X->Bind.Def.iNOmega;
+  double complex OmegaMax=X->Bind.Def.dOmegaMax+X->Bind.Def.dOmegaIm*I;
+  double complex OmegaMin=X->Bind.Def.dOmegaMin+X->Bind.Def.dOmegaIm*I;
 
   double complex *dcSpectrum;
   c_malloc1(dcSpectrum, Nomega);
@@ -70,15 +70,12 @@ int CalcSpectrumByLanczos(
 
   if(iret != TRUE){
     //Error Message will be added.
-
     return FALSE;
   }
 
-  // ToDo: Give dcomega
   for(i=0; i< Nomega; i++){
     dcomega[i]=(OmegaMax-OmegaMin)/Nomega*i+OmegaMin;
-  }
-  
+  }  
   for( i = 0 ; i < Nomega; i++){
     iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i], liLanczosStp);
     if(iret != TRUE){
@@ -94,12 +91,7 @@ int CalcSpectrumByLanczos(
     fprintf(stdoutMPI,"%.10lf %.10lf %.10lf %.10lf \n",
             creal(dcomega[i]), cimag(dcomega[i]),
             creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
-/*
-      fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
-	    creal(dcomega[i]), cimag(dcomega[i]),
-	    creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
-	    */
-  }
+   }
   fclose(fp);
   
   return TRUE;

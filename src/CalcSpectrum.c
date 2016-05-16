@@ -13,6 +13,7 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+#include "Common.h"
 #include "mltply.h"
 #include "bitcalc.h"
 #include "CalcSpectrum.h"
@@ -54,12 +55,25 @@ int CalcSpectrum(
   unsigned long int i_max=0;
   FILE *fp;
   double dnorm;
+  
+  fp = fopen(sdt, "rb");
+  //set omega
+  if(SetOmega(&(X->Bind.Def)) != TRUE){
+    fprintf(stderr, "Error: Fail to set Omega.\n");
+    fclose(fp);
+    exitMPI(-1);
+  }
+  else{
+    if(X->Bind.Def.iFlgSpecOmegaIm == FALSE){
+      X->Bind.Def.dOmegaIm = (X->Bind.Def.dOmegaMax - X->Bind.Def.dOmegaMin)/(double) X->Bind.Def.iNOmega;
+    }
+  }
 
+  
   //input eigen vector
   fprintf(stdoutMPI, "An Eigenvector is inputted in CalcSpectrum.\n");
   sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
 
-  fp = fopen(sdt, "rb");
   if(fp==NULL){
     fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
     fclose(fp);
@@ -75,7 +89,7 @@ int CalcSpectrum(
   fclose(fp);
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
-  GetExcitedState(X, v0, v1);  
+  GetExcitedState( &(X->Bind), v0, v1);  
 
   //calculate norm
   fprintf(stdoutMPI, "Calculationg norm in CalcSpectrum.\n");
@@ -515,5 +529,51 @@ int GetPairExcitedState
     return FALSE;
   }
 
+  return TRUE;
+}
+
+int SetOmega
+(
+ struct DefineList *X
+){
+  FILE *fp;
+  char sdt[D_FileNameMax],ctmp[256];
+  double domegaMax;
+  double domegaMin;
+  int istp;
+  double E1, E2, E3, E4, Emax;
+
+  if(X->iFlgSpecOmegaMax == TRUE && X->iFlgSpecOmegaMin == TRUE){
+    return TRUE;
+  }
+  else{
+    sprintf(sdt, cFileNameLanczosStep, X->CDataFileHead);
+    fp=fopenMPI(sdt, "r");
+    if(fp == NULL){
+      fprintf(stdoutMPI, "Error: xx_Lanczos_Step.dat does not exist.\n");
+      return FALSE;
+    }      
+    while(fgetsMPI(ctmp, 256, fp) != NULL){
+      sscanf(ctmp, "%d %lf %lf %lf %lf %lf\n",
+	     &istp,
+	     &E1,
+	     &E2,
+	     &E3,
+	     &E4,
+	     &Emax);
+    }
+    if(istp < 4){
+      fprintf(stdoutMPI, "Error: Lanczos step must be greater than 4 for using spectrum calculation.\n");
+      return FALSE;
+    }  
+    //Read Lanczos_Step
+    if(X->iFlgSpecOmegaMax == FALSE){
+      X->dOmegaMax= Emax*(double)X->NsiteMPI;
+    }
+    if(X->iFlgSpecOmegaMax == FALSE){
+      X->dOmegaMax= E1;
+    }
+  }
+  
   return TRUE;
 }
