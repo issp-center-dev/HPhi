@@ -124,7 +124,7 @@ int GetSpectrumByTridiagonalMatrixComponents(
         if(cabs(dcb0)<eps_Energy){
             dcb0=eps_Energy;
         }
-        *dcSpectrum = -(dnorm*dnorm)/(M_PI*dcb0);
+        *dcSpectrum = 1.0/(dcb0);
         return TRUE;
     }
 
@@ -146,6 +146,6 @@ int GetSpectrumByTridiagonalMatrixComponents(
         dch += dcDeltahn;
         if(cabs(dcDeltahn/dch)<cabs(dcb0)*eps) break;
     }
-    *dcSpectrum = -(dnorm*dnorm)/(M_PI*dch);
+    *dcSpectrum = 1.0/(dch);
   return TRUE;
 }
