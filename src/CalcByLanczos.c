@@ -152,7 +152,6 @@ int CalcByLanczos(
   else{// X->Bind.Def.iInputEigenVec=false :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
-    //fp = chilfopen(sdt, "rb");
     childfopenALL(sdt, "rb", &fp);
     if(fp==NULL){
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
