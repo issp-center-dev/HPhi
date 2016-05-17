@@ -154,13 +154,11 @@ int CalcByLanczos(
     fp = fopen(sdt, "rb");
     if(fp==NULL){
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-      fclose(fp);
       exitMPI(-1);
     }
     fread(&i_max, sizeof(long int), 1, fp);
     if(i_max != X->Bind.Check.idim_max){
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-      fclose(fp);
       exitMPI(-1);
     }
     fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
@@ -213,7 +211,6 @@ int CalcByLanczos(
   if(X->Bind.Def.iOutputEigenVec==TRUE){
     sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
     if(childfopenALL(sdt, "wb", &fp)!=0){
-      fclose(fp);
       exitMPI(-1);
       }
     fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);

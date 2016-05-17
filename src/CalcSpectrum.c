@@ -59,7 +59,6 @@ int CalcSpectrum(
   //set omega
   if(SetOmega(&(X->Bind.Def)) != TRUE){
     fprintf(stderr, "Error: Fail to set Omega.\n");
-    fclose(fp);
     exitMPI(-1);
   }
   else{
@@ -75,16 +74,14 @@ int CalcSpectrum(
   childfopenMPI(sdt, "rb", &fp);
   if(fp==NULL){
     fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-    fclose(fp);
     exitMPI(-1);
   }
   fread(&i_max, sizeof(long int), 1, fp);
   if(i_max != X->Bind.Check.idim_max){
     fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-    fclose(fp);
     exitMPI(-1);
   }
-    fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
+  fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
   fclose(fp);
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
@@ -101,6 +98,7 @@ int CalcSpectrum(
     v1[i] = v0[i]/dnorm;
   }
   fprintf(stdoutMPI, "The wave function normalized in CalcSpectrum.\n");
+  
 
   int CalcSpecByLanczos=0;
   int iCalcSpecType=CalcSpecByLanczos;
