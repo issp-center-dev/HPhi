@@ -85,15 +85,24 @@ int CalcSpectrumByLanczos(
   }
   
   //output spectrum
-  //sprintf(sdt, cFileNameLanczosStep, X->Bind.Def.CDataFileHead);
-  //childfopenMPI(sdt,"w", &fp);
+  sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
+  childfopenMPI(sdt,"w", &fp);
   for( i = 0 ; i < Nomega; i++){
-    fprintf(stdoutMPI,"%.10lf %.10lf %.10lf %.10lf \n",
+    dcSpectrum[i]=dnorm*dcSpectrum[i];
+    fprintf(fp,"%.10lf %.10lf %.10lf %.10lf \n",
             creal(dcomega[i]), cimag(dcomega[i]),
             creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
    }
-  //fclose(fp);
-  
+  fclose(fp);
+
+    sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
+    childfopenMPI(sdt,"w", &fp);
+    fprintf(fp, "%ld \n",liLanczosStp);
+    for( i = 1 ; i <= liLanczosStp; i++){
+        fprintf(fp,"%.10lf %.10lf \n", creal(alpha[i]), beta[i]);
+    }
+    fclose(fp);
+
   return TRUE;
 }
 
@@ -101,7 +110,7 @@ int CalcSpectrumByLanczos(
 int GetSpectrumByTridiagonalMatrixComponents(
 		double *tmp_alpha,
 		double *tmp_beta,
-		double dnorm,
+        double dnorm,
 		double complex dcomega,
 		double complex *dcSpectrum,
         unsigned long int ilLanczosStp
@@ -146,6 +155,6 @@ int GetSpectrumByTridiagonalMatrixComponents(
         dch += dcDeltahn;
         if(cabs(dcDeltahn/dch)<cabs(dcb0)*eps) break;
     }
-    *dcSpectrum = 1.0/(dch);
+    *dcSpectrum = dnorm/(dch);
   return TRUE;
 }

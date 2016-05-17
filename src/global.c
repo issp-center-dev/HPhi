@@ -49,6 +49,8 @@ const char* cFileNameListModel="ListForModel_Ns%d_Nup%dNdown%d.dat";
 const char* cFileNameListKondo="ListForKondo_Ns%d_Ncond%d.dat";
 const char* cFileNameOutputEigen="%s_eigenvec_%d_rank_%d.dat";
 const char* cFileNameInputEigen="%s_eigenvec_%d_rank_%d.dat";
+const char* cFileNameCalcDynamicalGreen="%s_DynamicalGreen.dat";
+const char* cFileNameTridiagonalMatrixComponents="%s_TMComponents.dat";
 
 //For TPQ
 const char* cFileNameSSRand="SS_rand%d.dat";

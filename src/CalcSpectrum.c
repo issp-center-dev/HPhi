@@ -59,7 +59,6 @@ int CalcSpectrum(
   //set omega
   if(SetOmega(&(X->Bind.Def)) != TRUE){
     fprintf(stderr, "Error: Fail to set Omega.\n");
-    fclose(fp);
     exitMPI(-1);
   }
   else{
@@ -68,23 +67,24 @@ int CalcSpectrum(
     }
   }
 
-  
+  if(X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0){
+      fprintf(stderr, "Error: Any excitation operators are not defined.\n");
+      exitMPI(-1);
+  }
   //input eigen vector
   fprintf(stdoutMPI, "An Eigenvector is inputted in CalcSpectrum.\n");
   sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
   childfopenMPI(sdt, "rb", &fp);
   if(fp==NULL){
     fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-    fclose(fp);
     exitMPI(-1);
   }
   fread(&i_max, sizeof(long int), 1, fp);
   if(i_max != X->Bind.Check.idim_max){
     fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-    fclose(fp);
     exitMPI(-1);
   }
-    fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
+  fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
   fclose(fp);
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
@@ -101,6 +101,7 @@ int CalcSpectrum(
     v1[i] = v0[i]/dnorm;
   }
   fprintf(stdoutMPI, "The wave function normalized in CalcSpectrum.\n");
+  
 
   int CalcSpecByLanczos=0;
   int iCalcSpecType=CalcSpecByLanczos;
@@ -153,7 +154,7 @@ int GetSingleExcitedState
   long unsigned int is1_spin;
   double complex tmpphi;
   double complex tmp_dam_pr;
-  long unsigned int *tmp_off;
+  long unsigned int tmp_off=0;
 
   idim_max = X->Check.idim_max;
   //tmp_v0
@@ -181,7 +182,8 @@ int GetSingleExcitedState
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
           for(j=1;j<=idim_max;j++){
             is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off);
+            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off
+                                );
           }
         }
       }
@@ -194,7 +196,7 @@ int GetSingleExcitedState
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
           for(j=1;j<=idim_max;j++){
             is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off);
+            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off);
           }
         }
       }

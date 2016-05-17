@@ -1,0 +1,7 @@
+L = 8
+model = "HubbardGC"
+method = "Lanczos"
+lattice = "chain lattice"
+mu = -1.0
+t0 = 1.0
+U = 0.0
