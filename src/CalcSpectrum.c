@@ -67,7 +67,10 @@ int CalcSpectrum(
     }
   }
 
-  
+  if(X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0){
+      fprintf(stderr, "Error: Any excitation operators are not defined.\n");
+      exitMPI(-1);
+  }
   //input eigen vector
   fprintf(stdoutMPI, "An Eigenvector is inputted in CalcSpectrum.\n");
   sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
