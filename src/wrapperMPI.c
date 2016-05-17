@@ -240,14 +240,15 @@ double NormMPI_dc(unsigned long int idim, double complex *_v1){
   double complex cdnorm=0;
   double dnorm =0;
   unsigned long int i;
-  #ifdef MPI
-#pragma omp parallel for default(none) private(i) shared(_v1, idim) reduction(+: cdnorm) 
+#pragma omp parallel for default(none) private(i) shared(_v1, idim) reduction(+: cdnorm)
   for(i=1;i<=idim;i++){
     cdnorm += conj(_v1[i])*_v1[i];
   }
+#ifdef MPI
   cdnorm = SumMPI_dc(cdnorm);
+#endif
   dnorm=creal(cdnorm);
   dnorm=sqrt(dnorm);
-  #endif
+
   return dnorm;
 }

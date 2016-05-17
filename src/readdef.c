@@ -42,23 +42,23 @@
  * Keyword List in NameListFile.
  **/
 static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
-        "CalcMod",
-        "ModPara",
-        "LocSpin",
-        "Trans",
-        "CoulombIntra",
-        "CoulombInter",
-        "Hund",
-        "PairHop",
-        "Exchange",
-        "InterAll",
-        "OneBodyG",
-        "TwoBodyG",
-        "PairLift",
-        "Ising",
-    	"Boost",
-        "SingleExcitation",
-        "PairExcitation"
+  "CalcMod",
+  "ModPara",
+  "LocSpin",
+  "Trans",
+  "CoulombIntra",
+  "CoulombInter",
+  "Hund",
+  "PairHop",
+  "Exchange",
+  "InterAll",
+  "OneBodyG",
+  "TwoBodyG",
+  "PairLift",
+  "Ising",
+  "Boost",
+  "SingleExcitation",
+  "PairExcitation"
 };
 
 /**
@@ -211,7 +211,6 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
-
     /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);

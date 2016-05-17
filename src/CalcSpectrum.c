@@ -83,7 +83,7 @@ int CalcSpectrum(
   //  fscanf(fp, "%ld\n", &i_max);
   fread(&i_max, sizeof(i_max), 1 ,fp);
   if(i_max != X->Bind.Check.idim_max){
-    printf("myrank=%d, i_max=%ld\n", myrank, i_max);
+    fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
     fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
     //exitMPI(-1);
     return -1;
@@ -91,8 +91,6 @@ int CalcSpectrum(
   fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
   fclose(fp);
 
-
-  
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
   GetExcitedState( &(X->Bind), v0, v1);  
