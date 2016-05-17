@@ -25,7 +25,7 @@ int CalcSpectrumByLanczos(
 int GetSpectrumByTridiagonalMatrixComponents(
 		double *tmp_alpha,
 		double *tmp_beta,
-		double dnorm,
+        double dnorm,
 		double complex _zomega,
 		double complex *_zSpetcrum,
 		unsigned long int liLanczosStp
