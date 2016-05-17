@@ -151,7 +151,7 @@ int GetSingleExcitedState
   long unsigned int is1_spin;
   double complex tmpphi;
   double complex tmp_dam_pr;
-  long unsigned int *tmp_off;
+  long unsigned int tmp_off=0;
 
   idim_max = X->Check.idim_max;
   //tmp_v0
@@ -179,7 +179,8 @@ int GetSingleExcitedState
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
           for(j=1;j<=idim_max;j++){
             is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off);
+            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off
+                                );
           }
         }
       }
@@ -192,7 +193,7 @@ int GetSingleExcitedState
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
           for(j=1;j<=idim_max;j++){
             is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,tmp_off);
+            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off);
           }
         }
       }

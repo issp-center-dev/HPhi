@@ -41,7 +41,7 @@
     // is1_spin >= 1
     // is1_spin = Tpow[2*isite + ispin]
 
-//    *tmp_off = 0;
+    *tmp_off = 0;
 
     if (ibit_tmp_1 == 0) {
     // able to create an electron at the is1_spin state
@@ -52,7 +52,7 @@
       SgnBit(myrank, &ipsgn); // Fermion sign 
 #endif
       list_1_off = list_1_j | is1_spin; // OR
-//      *tmp_off = list_1_off;
+      *tmp_off = list_1_off;
       dmv = ipsgn * sgn * tmp_v1[j];
       //if (X->Large.mode == M_MLTPLY) { // for multply
       tmp_v0[list_1_off + 1] += dmv * tmp_V;
@@ -99,7 +99,7 @@
     ibit_tmp_1 = (list_1_j & is1_spin);
     // is1_spin >= 1
 
-   // *tmp_off = 0;
+    *tmp_off = 0;
 
     if (ibit_tmp_1 == is1_spin) {
     // able to create an electron at the is1_spin state
@@ -110,7 +110,7 @@
       SgnBit(myrank, &ipsgn); // Fermion sign 
 #endif
       list_1_off = list_1_j ^ is1_spin;
-  //    *tmp_off = list_1_off;
+      *tmp_off = list_1_off;
       dmv = ipsgn * sgn * tmp_v1[j];
       //if (X->Large.mode == M_MLTPLY) { // for multply
       tmp_v0[list_1_off + 1] += dmv * tmp_V;
