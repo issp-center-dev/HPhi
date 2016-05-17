@@ -452,7 +452,7 @@ int ReadDefFileNInt(
       X->read_hacker=0;
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
 	if(*ctmp2 == '\n') continue;
-	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
+	sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);
 	if(CheckWords(ctmp, "Nsite")==0){
 	  X->Nsite= (int)dtmp;
 	}

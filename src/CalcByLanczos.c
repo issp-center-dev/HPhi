@@ -56,6 +56,7 @@ int CalcByLanczos(
 {
   char sdt[D_FileNameMax];
   double diff_ene,var;
+  long int i;
   long int i_max=0;
   FILE *fp;
   
@@ -151,7 +152,8 @@ int CalcByLanczos(
   else{// X->Bind.Def.iInputEigenVec=false :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
-    fp = fopen(sdt, "rb");
+    //fp = chilfopen(sdt, "rb");
+    childfopenALL(sdt, "rb", &fp);
     if(fp==NULL){
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       exitMPI(-1);
@@ -212,9 +214,9 @@ int CalcByLanczos(
     sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
     if(childfopenALL(sdt, "wb", &fp)!=0){
       exitMPI(-1);
-      }
-    fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
-    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+    }
+    fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
+    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);    
     fclose(fp);
   }
 

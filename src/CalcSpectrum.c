@@ -71,21 +71,28 @@ int CalcSpectrum(
       fprintf(stderr, "Error: Any excitation operators are not defined.\n");
       exitMPI(-1);
   }
+  
   //input eigen vector
   fprintf(stdoutMPI, "An Eigenvector is inputted in CalcSpectrum.\n");
   sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
-  childfopenMPI(sdt, "rb", &fp);
+  childfopenALL(sdt, "rb", &fp);
   if(fp==NULL){
     fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
     exitMPI(-1);
   }
-  fread(&i_max, sizeof(long int), 1, fp);
+  //  fscanf(fp, "%ld\n", &i_max);
+  fread(&i_max, sizeof(i_max), 1 ,fp);
   if(i_max != X->Bind.Check.idim_max){
+    printf("myrank=%d, i_max=%ld\n", myrank, i_max);
     fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-    exitMPI(-1);
+    //exitMPI(-1);
+    return -1;
   }
   fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
   fclose(fp);
+
+
+  
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
   GetExcitedState( &(X->Bind), v0, v1);  
