@@ -23,6 +23,8 @@ MPI library (If you do not use MPI, it is not necessary.)
 
 You can install HΦ and also get a manual for HΦ from a [release note](https://github.com/QLMS/HPhi/releases).
 
+## Pre-Installed system
+- System B of The Institute Solid State Physics jpint-use supercomputer (cleck [here](http://www.issp.u-tokyo.ac.jp/supercom/visitor/x92nxz/hphi) for details).
 
 ## Licence
 
