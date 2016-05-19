@@ -127,7 +127,6 @@ int CheckKW(
     if(strcmp(cKW,"")==0){
       break;
     }
-//    else if(strcmp(cKW, cKWList[itmpKWidx])==0){
       else if(CheckWords(cKW, cKWList[itmpKWidx])==0){
       iret=0;
       *iKWidx=itmpKWidx;
@@ -337,17 +336,18 @@ int GetFileName(
       fprintf(stdoutMPI, cErrKW, ctmpKW, cFileListNameFile);
       fprintf(stdoutMPI, "%s", cErrKW_ShowList);
       for(i=0; i<D_iKWNumDef;i++){
-	fprintf(stderr, "%s \n", cKWListOfFileNameList[i]);
+	    fprintf(stderr, "%s \n", cKWListOfFileNameList[i]);
       }
       fclose(fplist);
       exitMPI(-1);
     }
-    /*!< Check cFileNameList to prevent from double registering the file name */    
-    if(strcmp(cFileNameList[itmpKWidx], "") !=0){
-      fprintf(stderr, cErrKW_Same, cFileListNameFile);
-      fclose(fplist);
-      exitMPI(-1);
-    }
+      /*!< Check cFileNameList to prevent from double registering the file name */
+      if(strcmp(cFileNameList[itmpKWidx], "") !=0){
+          fprintf(stderr, cErrKW_Same, cFileListNameFile);
+          fclose(fplist);
+          exitMPI(-1);
+      }
+
     /*!< Copy FileName */
     strcpy(cFileNameList[itmpKWidx], ctmpFileName);
   }
@@ -2186,22 +2186,21 @@ int CheckWords(
 {
   int i=0;
 
-    char ctmp_small[256];
-    char cKW_small[256];
+    char ctmp_small[256]={0};
+    char cKW_small[256]={0};
     int n;
     n=strlen(cKeyWord);
-    memset(cKW_small, 0, sizeof(cKeyWord));
-    strncpy(cKW_small, cKeyWord, sizeof(cKeyWord));
+    strncpy(cKW_small, cKeyWord, n);
 
   for(i=0; i<n; i++){
     cKW_small[i]=tolower(cKW_small[i]);
   }
 
     n=strlen(ctmp);
-    memset(ctmp_small, 0, sizeof(ctmp));
-    strncpy(ctmp_small, ctmp, sizeof(ctmp));
+    strncpy(ctmp_small, ctmp, n);
   for(i=0; i<n; i++){
     ctmp_small[i]=tolower(ctmp_small[i]);
   }
-  return(strncmp(ctmp_small, cKW_small, sizeof(ctmp)));
+    if(n<strlen(cKW_small)) n=strlen(cKW_small);
+  return(strncmp(ctmp_small, cKW_small, n));
 }
