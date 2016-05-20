@@ -111,7 +111,7 @@ int main(int argc, char* argv[]){
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdout, "Dry run is Finished. \n\n");
-      return FALSE;
+      return -1;
     }
   }
 
@@ -119,14 +119,14 @@ int main(int argc, char* argv[]){
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stderr, "%s", cErrDefFile);
     FinalizeMPI();
-    return FALSE;
+    return -1;
   }
 
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
     FinalizeMPI();
-    return FALSE;
+    return -1;
   }	  
   fprintf(stdoutMPI,  cProFinishDefFiles);
   
@@ -139,13 +139,13 @@ int main(int argc, char* argv[]){
   if(ReadDefFileIdxPara(&(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
     FinalizeMPI();
-    return FALSE;
+    return -1;
   }
   
   fprintf(stdoutMPI, cProFinishDefCheck);
   if(check(&(X.Bind))==MPIFALSE){
     FinalizeMPI();
-    return FALSE;
+    return -1;
   }
   
   
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]){
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
     FinalizeMPI();
-    return FALSE;
+    return -1;
   }
 
   diagonalcalc(&(X.Bind));
@@ -181,35 +181,35 @@ int main(int argc, char* argv[]){
   case Lanczos:    
     if(!CalcByLanczos(&X)==TRUE){
       FinalizeMPI();
-      return FALSE;
+      return -1;
     }    
     break;
   case FullDiag:
     if(!CalcByFullDiag(&X)==TRUE){
       FinalizeMPI();
-      return FALSE;
+      return -1;
     }
     break;
     
   case TPQCalc:
     if(!CalcByTPQ(NumAve, ExpecInterval, &X)==TRUE){
       FinalizeMPI();
-      return FALSE;
+      return -1;
     }
     break;
 
     case Spectrum:
       if(!CalcSpectrum(&X) == TRUE){
         FinalizeMPI();
-        return FALSE;
+        return -1;
       }
       break;
 
     default:
       FinalizeMPI();
-      return FALSE;
+      return -1;
   }  
 
   FinalizeMPI();
-  return TRUE;
+  return 0;
 }
