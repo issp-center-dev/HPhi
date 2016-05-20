@@ -257,3 +257,82 @@ double complex X_GC_Ajt_MPI(
     return (dam_pr);
 #endif
 }/*double complex X_GC_Ajt_MPI*/
+
+
+int GetSingleExcitedState
+(
+ struct BindStruct *X,
+ double complex *tmp_v0, /**< [out] Result v0 = H v1*/
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+ ){
+
+  long int idim_max;
+  long unsigned int i,j;
+  long unsigned int org_isite,ispin,itype;
+  long unsigned int is1_spin;
+  double complex tmpphi;
+  double complex tmp_dam_pr;
+  long unsigned int tmp_off=0;
+
+  idim_max = X->Check.idim_max;
+  //tmp_v0
+
+  switch(X->Def.iCalcModel){
+  case HubbardGC:
+    // SingleEx  
+    fprintf(stdoutMPI, "SingleOperation in GetSingleExcitedState Re= %lf ; Im= %lf.\n",
+    creal(X->Def.ParaSingleExcitationOperator[0]),cimag(X->Def.ParaSingleExcitationOperator[0]));
+    // X->Def.NSingleExcitationOperator 
+    // X->Def.SingleExcitationOperator[0][0]
+    // X->Def.ParaSingleExcitationOperator[0]
+    // clear all elements of tmp_v0 to zero  
+    for(i=0;i<X->Def.NSingleExcitationOperator;i++){
+      org_isite = X->Def.SingleExcitationOperator[i][0];
+      ispin     = X->Def.SingleExcitationOperator[i][1];
+      itype     = X->Def.SingleExcitationOperator[i][2];
+      tmpphi    = X->Def.ParaSingleExcitationOperator[i];
+      if(itype == 1){
+        if( org_isite >= X->Def.Nsite){
+          tmp_dam_pr = X_GC_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
+        }
+        else{
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X)	\
+  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
+          for(j=1;j<=idim_max;j++){
+            is1_spin = X->Def.Tpow[2*org_isite+ispin];
+            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off
+                                );
+          }
+        }
+      }
+      else if(itype == 0){
+        if( org_isite >= X->Def.Nsite){
+          tmp_dam_pr = X_GC_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
+        }
+        else{
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X)	\
+  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
+          for(j=1;j<=idim_max;j++){
+            is1_spin = X->Def.Tpow[2*org_isite+ispin];
+            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off);
+          }
+        }
+      }
+    }
+
+    break;
+  
+  case KondoGC:
+  case Hubbard:
+  case Kondo:
+  case Spin:
+  case SpinGC:
+    return FALSE;
+    break;
+
+  default:
+    return FALSE;
+  }
+
+  return TRUE;
+}
