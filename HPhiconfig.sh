@@ -56,7 +56,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = icc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -O3 -DHAVE_SSE2 -g -traceback -xHOST
+FLAGS = -fopenmp -O3 -DHAVE_SSE2 -g -traceback -xHOST
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
@@ -66,7 +66,17 @@ EOF
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -openmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST
+FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST
+MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
+INCLUDE_DIR=./include
+CP = cp -f -v
+AR = ar rv
+EOF
+    elif [ ${1} = "mpicc-gcc" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+LAPACK_FLAGS = -Dlapack -llapack -lblas 
+FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -lm
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
