@@ -46,7 +46,6 @@ int GetPairExcitedState
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
-
     for(i=0;i<X->Def.NPairExcitationOperator;i++){
       org_isite1 = X->Def.PairExcitationOperator[i][0]+1;
       org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
@@ -182,7 +181,6 @@ int GetPairExcitedState
           } else {
             // for the canonical case
           }
-
         }
       }
     }//FlgGeneralSpin=FALSE
@@ -245,7 +243,6 @@ int GetPairExcitedState
             }
           }else{
             isite1 = X->Def.Tpow[org_isite1-1];
-
             if(org_sigma1==org_sigma2){
               // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X,tmp_trans) shared(tmp_v0, tmp_v1)

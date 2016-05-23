@@ -132,10 +132,16 @@ int CalcSpectrum(
   }
   fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
   fclose(fp);
+  for (i = 1; i <= i_max; i++) {
+    v0[i]=0;
+  }
 
-  //mltply Operator
+    //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
   GetExcitedState( &(X->Bind), v0, v1);  
+  for (i = 1; i <= i_max; i++) {
+    printf("DEBUG v1, v0: %d %f %f %f %f\n", i, creal(v1[i]), cimag(v1[i]), creal(v0[i]), cimag(v0[i]));
+  }
 
   //calculate norm
   fprintf(stdoutMPI, "Calculating norm in CalcSpectrum.\n");
@@ -190,6 +196,7 @@ int GetExcitedState
  double complex *tmp_v1 /**< [in] v0 = H v1*/
  )
 {
+
   if(!GetSingleExcitedState(X,tmp_v0, tmp_v1)==TRUE){
     return FALSE;
   }
