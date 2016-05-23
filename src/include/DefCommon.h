@@ -20,7 +20,7 @@
 #define PI 3.14159265358979 
 
 /*!< CalcType */
-#define NUM_CALCTYPE 4
+#define NUM_CALCTYPE 5
 #define Lanczos 0 /*!< CalcType is Exact Diagonalization method.*/
 #define TPQCalc 1 /*!< CalcType is TPQ calculation.*/
 #define FullDiag 2 /*!< CalcType is Full Diagonalization method.*/

@@ -14,17 +14,56 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include <struct.h>
 #include <complex.h>
+#include "global.h"
+#include "time.h"
+#include "struct.h"
+#include "lapack_diag.h"
+#include "makeHam.h"
 
-void zcopy_(int n, double complex x, int incx, double complex y, int incy);
+void zcopy_(int *n, double complex *x, int *incx, double complex *y, int *incy);
+void zdotc_(double complex *xy, int *n, double complex *x, int *incx, double complex *y, int *incy);
 /**
 *
-* Compute the Green function with full diagonalization
+* Compute the Green function with the Lehmann representation and FD
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-int CalcSpectrumByFullDiag(struct EDMainCalStruct *X) {
-  unsigned long int i;
+int CalcSpectrumByFullDiag(
+  struct EDMainCalStruct *X,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega)
+{
+  int idim, iomega;
+  int ierr, idim_max_int;
+  int incr=1;
+  double complex one = 1.0, zero = 0.0;
+  
+  idim_max_int = (int)X->Bind.Check.idim_max;
+  zcopy_(&idim_max_int, &v0[1], &incr, &vg[0], &incr);
+  /*
+   In generating Hamiltonian, v0 & v1 are overwritten.
+  */
+  makeHam(&(X->Bind));
+  lapack_diag(&(X->Bind));
+  /*
+   v0 is eigenvalues 
+  */
+  printf("DEBUG4 %d %d\n", X->Bind.Check.idim_max, idim_max_int);
+  for (idim = 0; idim < idim_max_int; idim++) {
+    zdotc_(&v1[idim], &idim_max_int, &vg[0], &incr, &L_vec[idim][0], &incr);
+    v1[idim] = conj(v1[idim]) * v1[idim];
+  }/*for (idim = 0; idim < idim_max_int; idim++)*/
+  printf("DEBUG5 %d %d\n", X->Bind.Check.idim_max, idim_max_int);
 
+  for (iomega = 0; iomega < Nomega; iomega++) {
+    dcSpectrum[iomega] = 0.0;
+    for (idim = 0; idim < idim_max_int; idim++) {
+      dcSpectrum[iomega] += v1[idim] / (dcomega[iomega] - v0[idim]);
+    }/*for (idim = 0; idim < idim_max_int; idim++)*/
+  }/*for (iomega = 0; iomega < Nomega; iomega++)*/
+
+  return TRUE;
 }
+

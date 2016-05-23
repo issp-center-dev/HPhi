@@ -195,7 +195,7 @@ int setmem_large
     }
   }
   
-  if(X->Def.iCalcType == FullDiag){
+  if(X->Def.iCalcType == FullDiag || X->Def.iCalcType == SpectrumFD){
     d_malloc1(X->Phys.all_num_down, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_num_up, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_energy, X->Check.idim_max+1);
