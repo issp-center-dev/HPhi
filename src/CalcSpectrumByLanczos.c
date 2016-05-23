@@ -114,7 +114,7 @@ int GetSpectrumByTridiagonalMatrixComponents(
         if(cabs(dcb0)<eps_Energy){
             dcb0=eps_Energy;
         }
-        *dcSpectrum = 1.0/(dcb0);
+        *dcSpectrum = dnorm / (dcb0);
         return TRUE;
     }
 

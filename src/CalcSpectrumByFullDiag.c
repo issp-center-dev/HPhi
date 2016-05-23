@@ -36,9 +36,8 @@ int CalcSpectrumByFullDiag(
   double complex *dcomega)
 {
   int idim, iomega;
-  int ierr, idim_max_int;
+  int idim_max_int;
   int incr=1;
-  double complex one = 1.0, zero = 0.0;
   
   idim_max_int = (int)X->Bind.Check.idim_max;
   zcopy_(&idim_max_int, &v0[1], &incr, &vg[0], &incr);
@@ -46,9 +45,13 @@ int CalcSpectrumByFullDiag(
    In generating Hamiltonian, v0 & v1 are overwritten.
   */
   makeHam(&(X->Bind));
+  /*
+   v0 : becomes eigenvalues in lapack_diag()
+   L_vec : Eigenvectors
+  */
   lapack_diag(&(X->Bind));
   /*
-   v0 is eigenvalues 
+   v1 = |<n|c|0>|^2 
   */
   printf("DEBUG4 %d %d\n", X->Bind.Check.idim_max, idim_max_int);
   for (idim = 0; idim < idim_max_int; idim++) {
@@ -56,7 +59,9 @@ int CalcSpectrumByFullDiag(
     v1[idim] = conj(v1[idim]) * v1[idim];
   }/*for (idim = 0; idim < idim_max_int; idim++)*/
   printf("DEBUG5 %d %d\n", X->Bind.Check.idim_max, idim_max_int);
-
+  /*
+   Sum_n |<n|c|0>|^2 / (z - E_n)
+  */
   for (iomega = 0; iomega < Nomega; iomega++) {
     dcSpectrum[iomega] = 0.0;
     for (idim = 0; idim < idim_max_int; idim++) {
@@ -65,5 +70,5 @@ int CalcSpectrumByFullDiag(
   }/*for (iomega = 0; iomega < Nomega; iomega++)*/
 
   return TRUE;
-}
+}/*CalcSpectrumByFullDiag*/
 

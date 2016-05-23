@@ -50,6 +50,66 @@ global.o \
 wrapperMPI.o \
 splash.o
 
+HEADERS= \
+include/CG_EigenVector.h \
+include/CalcByFullDiag.h \
+include/CalcByLanczos.h \
+include/CalcByTPQ.h \
+include/CalcSpectrum.h \
+include/CalcSpectrumByFullDiag.h \
+include/CalcSpectrumByLanczos.h \
+include/CheckMPI.h \
+include/Common.h \
+include/DefCommon.h \
+include/ErrorMessage.h \
+include/FileIO.h \
+include/FirstMultiply.h \
+include/HPhiMain.h \
+include/HPhiTrans.h \
+include/Lanczos_EigenValue.h \
+include/Lanczos_EigenVector.h \
+include/LogMessage.h \
+include/Multiply.h \
+include/PairEx.h \
+include/PowerLanczos.h \
+include/ProgressMessage.h \
+include/SingleEx.h \
+include/StdFace_main.h \
+include/bisec.h \
+include/bitcalc.h \
+include/check.h \
+include/dSFMT-params.h \
+include/dSFMT-params19937.h \
+include/dSFMT.h \
+include/defmodelBoost.h \
+include/diagonalcalc.h \
+include/expec_cisajs.h \
+include/expec_cisajscktaltdc.h \
+include/expec_energy.h \
+include/expec_totalspin.h \
+include/global.h \
+include/lapack_diag.h \
+include/log.h \
+include/makeHam.h \
+include/matrixlapack.h \
+include/mfmemory.h \
+include/mltply.h \
+include/mltplyMPI.h \
+include/output.h \
+include/output_list.h \
+include/phys.h \
+include/readdef.h \
+include/sgn.h \
+include/splash.h \
+include/struct.h \
+include/sz.h \
+include/vec12.h \
+include/wrapperMPI.h \
+include/xfreemem_large.h \
+include/xsetmem.h \
+include/xsetmem_def.h \
+include/xsetmem_large.h
+
 all:
 	make -f makefile_src libStdFace
 	make -f makefile_src HPhi
@@ -69,193 +129,51 @@ clean:
 	cd StdFace; make -f makefile_StdFace clean
 	rm -f HPhi *.o *.a
 
-CG_EigenVector.c:include/CG_EigenVector.h
-CG_EigenVector.c:include/FileIO.h
-CG_EigenVector.c:include/mltply.h
-CG_EigenVector.c:include/wrapperMPI.h
-CalcByFullDiag.c:include/CalcByFullDiag.h
-CalcByFullDiag.c:include/wrapperMPI.h
-CalcByLanczos.c:include/expec_cisajs.h
-CalcByLanczos.c:include/expec_cisajscktaltdc.h
-CalcByLanczos.c:include/expec_totalspin.h
-CalcByLanczos.c:include/CG_EigenVector.h
-CalcByLanczos.c:include/expec_energy.h
-CalcByLanczos.c:include/Lanczos_EigenValue.h
-CalcByLanczos.c:include/Lanczos_EigenVector.h
-CalcByLanczos.c:include/CalcByLanczos.h
-CalcByLanczos.c:include/FileIO.h
-CalcByLanczos.c:include/wrapperMPI.h
-CalcByTPQ.c:include/FirstMultiply.h
-CalcByTPQ.c:include/Multiply.h
-CalcByTPQ.c:include/expec_energy.h
-CalcByTPQ.c:include/expec_cisajs.h
-CalcByTPQ.c:include/expec_cisajscktaltdc.h
-CalcByTPQ.c:include/CalcByTPQ.h
-CalcByTPQ.c:include/FileIO.h
-CalcByTPQ.c:include/wrapperMPI.h
-CalcSpectrum.c:include/mltply.h
-CalcSpectrum.c:include/bitcalc.h
-CalcSpectrum.c:include/CalcSpectrum.h
-CalcSpectrum.c:include/CalcSpectrumByLanczos.h
-CalcSpectrum.c:include/CalcSpectrumByFullDiag.h
-CalcSpectrum.c:include/SingleEx.h
-CalcSpectrum.c:include/PairEx.h
-CalcSpectrum.c:include/wrapperMPI.h
-CalcSpectrum.c:include/FileIO.h
-CalcSpectrum.c:include/mfmemory.h
-CalcSpectrumByFullDiag.c:include/global.h
-CalcSpectrumByFullDiag.c:include/struct.h
-CalcSpectrumByFullDiag.c:include/lapack_diag.h
-CalcSpectrumByFullDiag.c:include/makeHam.h
-CalcSpectrumByLanczos.c:include/CalcSpectrumByLanczos.h
-CalcSpectrumByLanczos.c:include/Lanczos_EigenValue.h
-CalcSpectrumByLanczos.c:include/FileIO.h
-CalcSpectrumByLanczos.c:include/wrapperMPI.h
-CheckMPI.c:include/Common.h
-CheckMPI.c:include/wrapperMPI.h
-ErrorMessage.c:include/ErrorMessage.h
-FileIO.c:include/FileIO.h
-FileIO.c:include/wrapperMPI.h
-FirstMultiply.c:include/FirstMultiply.h
-FirstMultiply.c:include/mltply.h
-FirstMultiply.c:include/mfmemory.h
-FirstMultiply.c:include/wrapperMPI.h
-HPhiMain.c:include/Common.h
-HPhiMain.c:include/readdef.h
-HPhiMain.c:include/StdFace_main.h
-HPhiMain.c:include/wrapperMPI.h
-HPhiMain.c:include/splash.h
-HPhiTrans.c:include/Common.h
-HPhiTrans.c:include/HPhiTrans.h
-HPhiTrans.c:include/FileIO.h
-HPhiTrans.c:include/wrapperMPI.h
-Lanczos_EigenValue.c:include/Common.h
-Lanczos_EigenValue.c:include/mfmemory.h
-Lanczos_EigenValue.c:include/mltply.h
-Lanczos_EigenValue.c:include/vec12.h
-Lanczos_EigenValue.c:include/bisec.h
-Lanczos_EigenValue.c:include/FileIO.h
-Lanczos_EigenValue.c:include/matrixlapack.h
-Lanczos_EigenValue.c:include/Lanczos_EigenValue.h
-Lanczos_EigenValue.c:include/wrapperMPI.h
-Lanczos_EigenVector.c:include/Common.h
-Lanczos_EigenVector.c:include/mltply.h
-Lanczos_EigenVector.c:include/Lanczos_EigenVector.h
-Lanczos_EigenVector.c:include/wrapperMPI.h
-LogMessage.c:include/LogMessage.h
-Multiply.c:include/Common.h
-Multiply.c:include/Multiply.h
-Multiply.c:include/wrapperMPI.h
-PairEx.c:include/bitcalc.h
-PairEx.c:include/wrapperMPI.h
-PairEx.c:include/mltplyMPI.h
-PairEx.c:include/mltply.h
-PairEx.c:include/PairEx.h
-PowerLanczos.c:include/PowerLanczos.h
-PowerLanczos.c:include/mltply.h
-PowerLanczos.c:include/wrapperMPI.h
-ProgressMessage.c:include/ProgressMessage.h
-SingleEx.c:include/bitcalc.h
-SingleEx.c:include/SingleEx.h
-SingleEx.c:include/wrapperMPI.h
-SingleEx.c:include/mltplyMPI.h
-bisec.c:include/bisec.h
-bitcalc.c:include/bitcalc.h
-bitcalc.c:include/wrapperMPI.h
-check.c:include/bitcalc.h
-check.c:include/sz.h
-check.c:include/FileIO.h
-check.c:include/mfmemory.h
-check.c:include/check.h
-check.c:include/wrapperMPI.h
-check.c:include/CheckMPI.h
-dSFMT.c:include/dSFMT-params.h
-dSFMT.c:include/wrapperMPI.h
-diagonalcalc.c:include/diagonalcalc.h
-diagonalcalc.c:include/FileIO.h
-diagonalcalc.c:include/mltply.h 
-diagonalcalc.c:include/wrapperMPI.h 
-expec_cisajs.c:include/mltply.h
-expec_cisajs.c:include/FileIO.h
-expec_cisajs.c:include/bitcalc.h
-expec_cisajs.c:include/expec_cisajs.h
-expec_cisajs.c:include/wrapperMPI.h
-expec_cisajs.c:include/mltplyMPI.h
-expec_cisajscktaltdc.c:include/mltply.h
-expec_cisajscktaltdc.c:include/FileIO.h
-expec_cisajscktaltdc.c:include/bitcalc.h
-expec_cisajscktaltdc.c:include/expec_cisajscktaltdc.h
-expec_cisajscktaltdc.c:include/wrapperMPI.h
-expec_cisajscktaltdc.c:include/mltplyMPI.h
-expec_energy.c:include/bitcalc.h
-expec_energy.c:include/mltply.h
-expec_energy.c:include/expec_energy.h
-expec_energy.c:include/wrapperMPI.h
-expec_totalspin.c:include/mltply.h
-expec_totalspin.c:include/wrapperMPI.h
-expec_totalspin.c:include/mltplyMPI.h
-expec_totalspin.c:include/expec_totalspin.h
-global.c:include/global.h
-lapack_diag.c:include/lapack_diag.h
-lapack_diag.c:include/matrixlapack.h
-lapack_diag.c:include/FileIO.h
-log.c:include/Common.h
-log.c:include/log.h
-log.c:include/FileIO.h
-makeHam.c:include/mltply.h
-makeHam.c:include/makeHam.h
-makeHam.c:include/wrapperMPI.h
-matrixlapack.c:include/matrixlapack.h
-matrixlapack.c:include/mfmemory.h
-mltply.c:include/mfmemory.h
-mltply.c:include/xsetmem.h
-mltply.c:include/mltply.h
-mltply.c:include/mltplyMPI.h
-mltply.c:include/wrapperMPI.h
-mltplyMPI.c:include/Common.h
-mltplyMPI.c:include/mltply.h
-mltplyMPI.c:include/bitcalc.h
-mltplyMPI.c:include/wrapperMPI.h
-mltplyMPI.c:include/mltplyMPI.h
-mltplyMPIBoost.c:include/Common.h
-mltplyMPIBoost.c:include/mfmemory.h
-mltplyMPIBoost.c:include/xsetmem.h
-mltplyMPIBoost.c:include/mltply.h
-mltplyMPIBoost.c:include/bitcalc.h
-mltplyMPIBoost.c:include/wrapperMPI.h
-mltplyMPIBoost.c:include/mltplyMPI.h
-mltplyMPIBoost.c:include/matrixlapack.h
-mltplyMPIBoost.c:include/defmodelBoost.h
-output.c:include/output.h
-output.c:include/FileIO.h
-output.c:include/wrapperMPI.h
-output_list.c:include/output_list.h
-output_list.c:include/FileIO.h
-output_list.c:include/wrapperMPI.h
-phys.c:include/phys.h
-phys.c:include/expec_energy.h
-phys.c:include/expec_totalspin.h
-phys.c:include/expec_cisajs.h
-phys.c:include/expec_cisajscktaltdc.h
-phys.c:include/wrapperMPI.h
-readdef.c:include/Common.h
-readdef.c:include/readdef.h
-readdef.c:include/LogMessage.h
-readdef.c:include/wrapperMPI.h
-sgn.c:include/sgn.h
-sgn.c:include/wrapperMPI.h
-splash.c:include/wrapperMPI.h
-sz.c:include/mfmemory.h
-sz.c:include/FileIO.h
-sz.c:include/sz.h
-sz.c:include/wrapperMPI.h
-vec12.c:include/Common.h
-vec12.c:include/wrapperMPI.h
-wrapperMPI.c:include/wrapperMPI.h
-wrapperMPI.c:include/splash.h
-xfreemem_large.c:include/xfreemem_large.h
-xsetmem.c:include/Common.h
-xsetmem.c:include/mfmemory.h
-xsetmem.c:include/xsetmem.h
-xsetmem.c:include/wrapperMPI.h
-
+PowerLanczos.o:$(HEADERS)
+CG_EigenVector.o:$(HEADERS)
+HPhiTrans.o:$(HEADERS)
+HPhiMain.o:$(HEADERS)
+CalcByFullDiag.o:$(HEADERS)
+CalcByLanczos.o:$(HEADERS)
+CalcSpectrum.o:$(HEADERS)
+CalcSpectrumByFullDiag.o:$(HEADERS)
+CalcSpectrumByLanczos.o:$(HEADERS)
+SingleEx.o:$(HEADERS)
+FirstMultiply.o:$(HEADERS)
+Lanczos_EigenValue.o:$(HEADERS)
+Lanczos_EigenVector.o:$(HEADERS)
+FileIO.o:$(HEADERS)
+sz.o:$(HEADERS)
+Multiply.o:$(HEADERS)
+bitcalc.o:$(HEADERS)
+bisec.o:$(HEADERS)
+check.o:$(HEADERS)
+CheckMPI.o:$(HEADERS)
+dSFMT.o:$(HEADERS)
+diagonalcalc.o:$(HEADERS)
+expec_cisajs.o:$(HEADERS)
+expec_cisajscktaltdc.o:$(HEADERS)
+expec_energy.o:$(HEADERS)
+expec_totalspin.o:$(HEADERS)
+lapack_diag.o:$(HEADERS)
+makeHam.o:$(HEADERS)
+matrixlapack.o:$(HEADERS)
+mltply.o:$(HEADERS)
+mltplyMPI.o:$(HEADERS)
+mltplyMPIBoost.o:$(HEADERS)
+CalcByTPQ.o:$(HEADERS)
+output.o:$(HEADERS)
+output_list.o:$(HEADERS)
+phys.o:$(HEADERS)
+readdef.o:$(HEADERS)
+sgn.o:$(HEADERS)
+vec12.o:$(HEADERS)
+xsetmem.o:$(HEADERS)
+log.o:$(HEADERS)
+ErrorMessage.o:$(HEADERS)
+LogMessage.o:$(HEADERS)
+PairEx.o:$(HEADERS)
+ProgressMessage.o:$(HEADERS)
+global.o:$(HEADERS)
+wrapperMPI.o:$(HEADERS)
+splash.o:$(HEADERS)
