@@ -94,6 +94,9 @@ int CalcSpectrum(
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
   GetExcitedState( &(X->Bind), v0, v1);  
+  for (i = 1; i <= i_max; i++) {
+    printf("DEBUG v1, v0: %d %f %f %f %f\n", i, creal(v1[i]), cimag(v1[i]), creal(v0[i]), cimag(v0[i]));
+  }
 
   //calculate norm
   fprintf(stdoutMPI, "Calculating norm in CalcSpectrum.\n");
