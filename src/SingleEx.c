@@ -277,6 +277,10 @@ int GetSingleExcitedState
   idim_max = X->Check.idim_max;
   //tmp_v0
 
+    if(X->Def.NSingleExcitationOperator == 0){
+        return TRUE;
+    }
+
   switch(X->Def.iCalcModel){
   case HubbardGC:
     // SingleEx  

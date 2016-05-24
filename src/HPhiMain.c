@@ -31,37 +31,37 @@
 #include "splash.h"
 
 /*!
-@mainpage
+  @mainpage
 
-<H2>Introduction</H2>
-A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins. The Lanczos algorithm for finding ground states and newly developed Lanczos-based algorithm for finite-temperature properties of these models are implemented for parallel computing. A broad spectrum of users including experimental researchers is cordially welcome.
-<HR>
-<H2>Developers</H2>
-Youhei Yamaji (Quantum-Phase Electronics Center, The University of Tokyo)\n
-Takahiro Misawa (Department of Applied Physics, The University of Tokyo)\n
-Synge Todo (Department of Physics, The University of Tokyo)\n
-Kazuyoshi Yoshimi (Institute for Solid State Physics, The University of Tokyo)\n
-Mitsuaki Kawamura (Institute for Solid State Physics, The University of Tokyo)\n
-Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
-<HR>
-<H2>Methods</H2>
-Lanczos algorithm, thermal pure quantum state, full diagonalization
-<HR>
-<H2>Target models</H2>
-Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heisenberg model, multi-orbital Hubbard model
-<HR>
-<H2>Link</H2>
-https://github.com/QLMS/HPhi
-<HR>
-<H2>Download</H2>
-https://github.com/QLMS/HPhi/releases
-<HR>
-<H2>Forum</H2>
-http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
-<HR>
-<H2>licence</H2>
-<B>GNU GPL version 3</B>\n
-This software is developed under the support of "Project for advancement of software usability in materials science" by The Institute for Solid State Physics, The University of Tokyo.\n
+  <H2>Introduction</H2>
+  A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins. The Lanczos algorithm for finding ground states and newly developed Lanczos-based algorithm for finite-temperature properties of these models are implemented for parallel computing. A broad spectrum of users including experimental researchers is cordially welcome.
+  <HR>
+  <H2>Developers</H2>
+  Youhei Yamaji (Quantum-Phase Electronics Center, The University of Tokyo)\n
+  Takahiro Misawa (Department of Applied Physics, The University of Tokyo)\n
+  Synge Todo (Department of Physics, The University of Tokyo)\n
+  Kazuyoshi Yoshimi (Institute for Solid State Physics, The University of Tokyo)\n
+  Mitsuaki Kawamura (Institute for Solid State Physics, The University of Tokyo)\n
+  Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
+  <HR>
+  <H2>Methods</H2>
+  Lanczos algorithm, thermal pure quantum state, full diagonalization
+  <HR>
+  <H2>Target models</H2>
+  Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heisenberg model, multi-orbital Hubbard model
+  <HR>
+  <H2>Link</H2>
+  https://github.com/QLMS/HPhi
+  <HR>
+  <H2>Download</H2>
+  https://github.com/QLMS/HPhi/releases
+  <HR>
+  <H2>Forum</H2>
+  http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
+  <HR>
+  <H2>licence</H2>
+  <B>GNU GPL version 3</B>\n
+  This software is developed under the support of "Project for advancement of software usability in materials science" by The Institute for Solid State Physics, The University of Tokyo.\n
 */
 
 /** 
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
 
   if(JudgeDefType(argc, argv, &mode)!=0){
     FinalizeMPI();
-    return TRUE;
+    return 0;
   }  
 
   if (mode == STANDARD_DRY_MODE) {
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]){
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdout, "Dry run is Finished. \n\n");
-      return -1;
+      return 0;
     }
   }
 
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]){
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
     FinalizeMPI();
-    return -1;
+    return 0;
   }
 
   diagonalcalc(&(X.Bind));
@@ -184,6 +184,7 @@ int main(int argc, char* argv[]){
       return -1;
     }    
     break;
+    
   case FullDiag:
     if(nproc !=1){
       fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
@@ -201,19 +202,19 @@ int main(int argc, char* argv[]){
       FinalizeMPI();
       return -1;
     }
-    break;
-
-    case Spectrum:
-      if(!CalcSpectrum(&X) == TRUE){
-        FinalizeMPI();
-        return -1;
-      }
-      break;
-
-    default:
+    break;    
+  case Spectrum:
+    if(!CalcSpectrum(&X) == TRUE){
       FinalizeMPI();
       return -1;
+    }
+    break;
+
+  default:
+    FinalizeMPI();
+    return 0;
   }
+
   FinalizeMPI();
   return 0;
 }
