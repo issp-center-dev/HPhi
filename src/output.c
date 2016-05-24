@@ -31,8 +31,6 @@ int output(struct BindStruct *X){
   char sdt[D_FileNameMax];
   long int i,i_max;
   i_max=X->Check.idim_max;
-
-  printf("debug: rank=%d, test", myrank);
     
   if(X->Def.iCalcType==FullDiag){
     double tmp_N;
@@ -67,7 +65,6 @@ int output(struct BindStruct *X){
     }
     fclose(fp);
   }
-  printf("debug: rank=%d, test", myrank);
     
   return 0;
 }
