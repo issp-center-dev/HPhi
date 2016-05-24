@@ -28,10 +28,10 @@
  * @file   CalcSpectrum.c
  * @version 1.1
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @brief  File for givinvg functions of calculating spectrum 
- * 
- * 
+ *
+ * @brief  File for givinvg functions of calculating spectrum
+ *
+ *
  */
 
 int OutputSpectrum(
@@ -57,19 +57,19 @@ int OutputSpectrum(
   fclose(fp);
 }/*int OutputSpectrum*/
 
-/** 
- * @brief A main function to calculate spectrum 
- * 
- * @param[in,out] X CalcStruct list for getting and pushing calculation information 
+/**
+ * @brief A main function to calculate spectrum
+ *
+ * @param[in,out] X CalcStruct list for getting and pushing calculation information
  * @retval 0 normally finished
  * @retval -1 unnormally finished
  *
  * @version 1.1
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * @author Youhei Yamaji (The University of Tokyo)
- * 
+ *
  */
-int CalcSpectrum(		 
+int CalcSpectrum(
 		 struct EDMainCalStruct *X
 				 )
 {
@@ -113,7 +113,7 @@ int CalcSpectrum(
       fprintf(stderr, "Error: Any excitation operators are not defined.\n");
       exitMPI(-1);
   }
-  
+
   //input eigen vector
   fprintf(stdoutMPI, "An Eigenvector is inputted in CalcSpectrum.\n");
   sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
@@ -136,9 +136,9 @@ int CalcSpectrum(
     v0[i]=0;
   }
 
-    //mltply Operator
+  //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
-  GetExcitedState( &(X->Bind), v0, v1);  
+  GetExcitedState( &(X->Bind), v0, v1);
   for (i = 1; i <= i_max; i++) {
     printf("DEBUG v1, v0: %d %f %f %f %f\n", i, creal(v1[i]), cimag(v1[i]), creal(v0[i]), cimag(v0[i]));
   }
@@ -146,8 +146,7 @@ int CalcSpectrum(
   //calculate norm
   fprintf(stdoutMPI, "Calculating norm in CalcSpectrum.\n");
   dnorm = NormMPI_dc(i_max, v0);
-  printf("DEBUG1 %f\n", dnorm);
-  
+
   //normalize vector
   fprintf(stdoutMPI, "Normalizing the wave function in CalcSpectrum.\n");
 #pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm)
@@ -155,7 +154,7 @@ int CalcSpectrum(
     v1[i] = v0[i]/dnorm;
   }
   fprintf(stdoutMPI, "The wave function normalized in CalcSpectrum.\n");
-  printf("DEBUG2 %f\n", NormMPI_dc(i_max, v1));
+
 
   int iret=TRUE;
 
@@ -196,15 +195,22 @@ int GetExcitedState
  double complex *tmp_v1 /**< [in] v0 = H v1*/
  )
 {
+   if(X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0){
+    fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
+    return FALSE;
+    }
 
+    if(X->Def.NSingleExcitationOperator > 0){
   if(!GetSingleExcitedState(X,tmp_v0, tmp_v1)==TRUE){
     return FALSE;
   }
-
+    }
+else if(X->Def.NPairExcitationOperator >0){
   if(!GetPairExcitedState(X,tmp_v0, tmp_v1)==TRUE){
     return FALSE;
   }
-  
+    }
+
   return TRUE;
 }
 
@@ -259,7 +265,7 @@ int SetOmega
       if(istp < 4){
       fprintf(stdoutMPI, "Error: Lanczos step must be greater than 4 for using spectrum calculation.\n");
       return FALSE;
-    }  
+    }
     //Read Lanczos_Step
     if(X->iFlgSpecOmegaMax == FALSE){
       X->dOmegaMax= Emax*(double)X->NsiteMPI;
@@ -268,6 +274,6 @@ int SetOmega
       X->dOmegaMin= E1;
     }
   }
-  
+
   return TRUE;
 }
