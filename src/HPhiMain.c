@@ -186,9 +186,14 @@ int main(int argc, char* argv[]){
     break;
     
   case FullDiag:
+    if(nproc !=1){
+      fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
+        FinalizeMPI();
+        return 0;
+    }
     if(!CalcByFullDiag(&X)==TRUE){
-      FinalizeMPI();
-      return -1;
+        FinalizeMPI();
+        return -1;
     }
     break;
     
@@ -197,8 +202,7 @@ int main(int argc, char* argv[]){
       FinalizeMPI();
       return -1;
     }
-    break;
-    
+    break;    
   case Spectrum:
   case SpectrumFD:
     if(!CalcSpectrum(&X) == TRUE){
