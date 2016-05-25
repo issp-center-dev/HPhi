@@ -79,6 +79,7 @@ int CalcSpectrumByLanczos(
     sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
     childfopenMPI(sdt,"w", &fp);
     fprintf(fp, "%ld \n",liLanczosStp);
+    fprintf(fp, "%.10lf \n",dnorm);
     for( i = 1 ; i <= liLanczosStp; i++){
         fprintf(fp,"%.10lf %.10lf \n", creal(alpha[i]), beta[i]);
     }
