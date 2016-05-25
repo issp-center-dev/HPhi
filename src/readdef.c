@@ -41,6 +41,7 @@
 /**
  * Keyword List in NameListFile.
  **/
+/*
 static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
   "CalcMod",
   "ModPara",
@@ -58,12 +59,33 @@ static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
   "Ising",
   "Boost"
 };
+ */
+
+static char cKWListOfFileNameList[][D_CharTmpReadDef]={
+        "CalcMod",
+        "ModPara",
+        "LocSpin",
+        "Trans",
+        "CoulombIntra",
+        "CoulombInter",
+        "Hund",
+        "PairHop",
+        "Exchange",
+        "InterAll",
+        "OneBodyG",
+        "TwoBodyG",
+        "PairLift",
+        "Ising",
+        "Boost"
+};
+
+int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
 
 /**
  * File Name List in NameListFile.
  **/
-static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
-
+//static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
+static char (*cFileNameListFile)[D_CharTmpReadDef];
 
 /**
  * @brief Error Function of reading def files.
@@ -380,7 +402,8 @@ int ReadDefFileNInt(
   int iReadNCond=FALSE;
   xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
-  
+  cFileNameListFile = malloc(sizeof(char)*D_CharTmpReadDef*D_iKWNumDef);
+
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
     exitMPI(-1);

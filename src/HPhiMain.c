@@ -203,8 +203,7 @@ int main(int argc, char* argv[]){
   default:
     FinalizeMPI();
     return 0;
-  }  
-  printf("debug: rank=%d, test", myrank);
+  }
   FinalizeMPI();
   return 0;
 }
