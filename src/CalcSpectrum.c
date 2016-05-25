@@ -220,7 +220,7 @@ int SetOmega
   double domegaMax;
   double domegaMin;
   int istp=4;
-  double E1, E2, E3, E4, Emax1, Emax;
+  double E1, E2, E3, E4, Emax;
     long unsigned int iline_countMax=2;
     long unsigned int iline_count=2;
 
@@ -247,13 +247,12 @@ int SetOmega
       fgetsMPI(ctmp, 256, fp); //2nd line is skipped
 
       while(fgetsMPI(ctmp, 256, fp) != NULL) {
-          sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf %lf\n",
+          sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf\n",
                  &istp,
                  &E1,
                  &E2,
                  &E3,
                  &E4,
-                 &Emax1,
                  &Emax);
           iline_count++;
           if(iline_count ==iline_countMax) break;
@@ -266,8 +265,7 @@ int SetOmega
     }
     //Read Lanczos_Step
     if(X->iFlgSpecOmegaMax == FALSE){
-      /*X->dOmegaMax= Emax*(double)X->NsiteMPI;*/
-      X->dOmegaMax = Emax1;
+      X->dOmegaMax= Emax*(double)X->NsiteMPI;
     }
     if(X->iFlgSpecOmegaMin == FALSE){
       X->dOmegaMin= E1;
