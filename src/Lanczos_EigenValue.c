@@ -47,7 +47,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   double beta1,alpha1; //beta,alpha1 should be real
   double  complex temp1,temp2;
   double complex cbeta1;
-  double E[5],ebefor;
+  double E[6],ebefor;
   int mythread;
 
 // for GC
@@ -187,7 +187,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   }
   else{
 #ifdef lapack
-    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite\n");
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] E[Max-1], E[Max]/Nsite\n");
 #else
     fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] \n");
 #endif
@@ -286,11 +286,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[2] = tmp_E[1];
        E[3] = tmp_E[2];
        E[4] = tmp_E[3];
+       E[5] = tmp_E[stp-2];
        E[0] = tmp_E[stp-1];
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);       
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
-       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[5],E[0]/(double)X->Def.NsiteMPI);
+       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[5],E[0]/(double)X->Def.NsiteMPI);
 #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
        fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);

@@ -53,12 +53,10 @@ int CalcSpectrumByFullDiag(
   /*
    v1 = |<n|c|0>|^2 
   */
-  printf("DEBUG4 %d %d\n", X->Bind.Check.idim_max, idim_max_int);
   for (idim = 0; idim < idim_max_int; idim++) {
     zdotc_(&v1[idim], &idim_max_int, &vg[0], &incr, &L_vec[idim][0], &incr);
     v1[idim] = conj(v1[idim]) * v1[idim];
   }/*for (idim = 0; idim < idim_max_int; idim++)*/
-  printf("DEBUG5 %d %d\n", X->Bind.Check.idim_max, idim_max_int);
   /*
    Sum_n |<n|c|0>|^2 / (z - E_n)
   */

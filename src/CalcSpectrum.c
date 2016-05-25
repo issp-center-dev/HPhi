@@ -139,9 +139,6 @@ int CalcSpectrum(
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
   GetExcitedState( &(X->Bind), v0, v1);
-  for (i = 1; i <= i_max; i++) {
-    printf("DEBUG v1, v0: %d %f %f %f %f\n", i, creal(v1[i]), cimag(v1[i]), creal(v0[i]), cimag(v0[i]));
-  }
 
   //calculate norm
   fprintf(stdoutMPI, "Calculating norm in CalcSpectrum.\n");
@@ -223,7 +220,7 @@ int SetOmega
   double domegaMax;
   double domegaMin;
   int istp=4;
-  double E1, E2, E3, E4, Emax;
+  double E1, E2, E3, E4, Emax1, Emax;
     long unsigned int iline_countMax=2;
     long unsigned int iline_count=2;
 
@@ -250,12 +247,13 @@ int SetOmega
       fgetsMPI(ctmp, 256, fp); //2nd line is skipped
 
       while(fgetsMPI(ctmp, 256, fp) != NULL) {
-          sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf\n",
+          sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf %lf\n",
                  &istp,
                  &E1,
                  &E2,
                  &E3,
                  &E4,
+                 &Emax1,
                  &Emax);
           iline_count++;
           if(iline_count ==iline_countMax) break;
@@ -268,7 +266,8 @@ int SetOmega
     }
     //Read Lanczos_Step
     if(X->iFlgSpecOmegaMax == FALSE){
-      X->dOmegaMax= Emax*(double)X->NsiteMPI;
+      /*X->dOmegaMax= Emax*(double)X->NsiteMPI;*/
+      X->dOmegaMax = Emax1;
     }
     if(X->iFlgSpecOmegaMin == FALSE){
       X->dOmegaMin= E1;
