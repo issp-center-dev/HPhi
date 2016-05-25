@@ -32,7 +32,7 @@ void splash(){
   fprintf(stdoutMPI, "  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    \n");
   fprintf(stdoutMPI, "    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       \n");
   fprintf(stdoutMPI, "        ~~9@@@@@@@@@  ~                                         \n");
-  fprintf(stdoutMPI, "           9@P~~~9@P             Version 1.0.1                    \n");
+  fprintf(stdoutMPI, "           9@P~~~9@P             Version 1.1                    \n");
   fprintf(stdoutMPI, "                                                                \n");
 
 }

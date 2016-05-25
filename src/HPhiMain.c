@@ -203,7 +203,8 @@ int main(int argc, char* argv[]){
   default:
     FinalizeMPI();
     return 0;
-  }
+  }  
+
   FinalizeMPI();
   return 0;
 }

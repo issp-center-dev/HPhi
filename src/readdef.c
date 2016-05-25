@@ -41,26 +41,6 @@
 /**
  * Keyword List in NameListFile.
  **/
-/*
-static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
-  "CalcMod",
-  "ModPara",
-  "LocSpin",
-  "Trans",
-  "CoulombIntra",
-  "CoulombInter",
-  "Hund",
-  "PairHop",
-  "Exchange",
-  "InterAll",
-  "OneBodyG",
-  "TwoBodyG",
-  "PairLift",
-  "Ising",
-  "Boost"
-};
- */
-
 static char cKWListOfFileNameList[][D_CharTmpReadDef]={
         "CalcMod",
         "ModPara",
@@ -84,7 +64,6 @@ int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0])
 /**
  * File Name List in NameListFile.
  **/
-//static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
 static char (*cFileNameListFile)[D_CharTmpReadDef];
 
 /**
@@ -1859,7 +1838,7 @@ int JudgeDefType
            (CheckWords(argv[1], "-v") == 0
             || CheckWords(argv[1], "--version") == 0)
            ) {
-    fprintf(stderr, "\nHPhi version 1.0.1 \n\n");
+    fprintf(stderr, "\nHPhi version 1.1 \n\n");
     exit(-1);
   }
   else{
