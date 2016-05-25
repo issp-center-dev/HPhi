@@ -1836,7 +1836,7 @@ int JudgeDefType
            (CheckWords(argv[1], "-v") == 0
             || CheckWords(argv[1], "--version") == 0)
            ) {
-    fprintf(stderr, "\nHPhi version 1.0.1 \n\n");
+    fprintf(stderr, "\nHPhi version 1.1 \n\n");
     exit(-1);
   }
   else{

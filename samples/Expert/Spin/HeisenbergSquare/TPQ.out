@@ -1,27 +1,3 @@
-mpijob CMD : mpirun -wdir /home/i0012/i001200/program/HPhi/samples/Standard/Spin/HeisenbergSquare /home/i0012/i001200/bin/HPhi -s StdFace.def
-
-Intel MPI Placement option
---------------------------
-I_MPI_PIN_DOMAIN=omp
-
-Node   MPI
-------------
-r1i0n0 1
-r1i0n1 1
-r1i0n2 1
-r1i0n3 1
-r1i0n4 1
-r1i0n5 1
-r1i0n6 1
-r1i0n7 1
-r1i0n8 1
-r1i0n9 1
-r1i0n10 1
-r1i0n11 1
-r1i0n12 1
-r1i0n13 1
-r1i0n14 1
-r1i0n15 1
 
                                                                 
       ,ammmmmmmmmmmmmmb,,        Welcome to the                 
@@ -35,7 +11,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.0                    
+           9@P~~~9@P             Version 1.1                    
                                                                 
 
 
@@ -43,6 +19,69 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   OpenMP threads : 24
   MPI PEs : 16 
+
+
+######  Standard Intarface Mode STARTS  ######
+
+  Open Standard-Mode Inputfile StdFace.def 
+
+  KEYWORD : l                    | VALUE : 4 
+  KEYWORD : w                    | VALUE : 4 
+  KEYWORD : model                | VALUE : spin 
+  KEYWORD : method               | VALUE : tpq 
+  Skipping a line.
+  Skipping a line.
+  KEYWORD : lattice              | VALUE : tetragonal 
+  KEYWORD : j                    | VALUE : 1.0 
+  KEYWORD : 2sz                  | VALUE : 0 
+
+#######  Parameter Summary  #######
+
+  @ Lattice Size & Shape
+
+                L = 4         
+                W = 4         
+
+  @ Hamiltonian 
+
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
+                h = 0.00000     ######  DEFAULT VALUE IS USED  ######
+            Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                D = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              J0x = 1.00000   
+              J0y = 1.00000   
+              J0z = 1.00000   
+              J1x = 1.00000   
+              J1y = 1.00000   
+              J1z = 1.00000   
+
+  @ Numerical conditions
+
+       LargeValue = 4.00000     ######  DEFAULT VALUE IS USED  ######
+         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
+             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+             exct = 1           ######  DEFAULT VALUE IS USED  ######
+       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
+    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
+           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
+    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+              2Sz = 0  
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    zlocspin.def is written.
+      zTrans.def is written.
+   zInterAll.def is written.
+    namelist.def is written.
+     calcmod.def is written.
+     modpara.def is written.
+    greenone.def is written.
+    greentwo.def is written.
+
+######  Input files are generated.  ######
 
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
@@ -180,4 +219,4 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 49 [s].
+Finish: Elapsed time is 24 [s].

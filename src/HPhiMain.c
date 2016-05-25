@@ -204,7 +204,7 @@ int main(int argc, char* argv[]){
     FinalizeMPI();
     return 0;
   }  
-  printf("debug: rank=%d, test", myrank);
+
   FinalizeMPI();
   return 0;
 }
