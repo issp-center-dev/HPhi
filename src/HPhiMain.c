@@ -120,6 +120,7 @@ int main(int argc, char* argv[]){
     FinalizeMPI();
     return 0;
   }
+
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
@@ -128,6 +129,7 @@ int main(int argc, char* argv[]){
   }	  
   fprintf(stdoutMPI,  cProFinishDefFiles);
   
+
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind, &X.Bind.Boost);
   /*-----------------------------------------------------*/
@@ -160,6 +162,7 @@ int main(int argc, char* argv[]){
     exitMPI(-1);
   }
 
+
   if(!sz(&(X.Bind))==0){
     exitMPI(-1);
   }
@@ -181,6 +184,11 @@ int main(int argc, char* argv[]){
     }    
     break;
   case FullDiag:
+    if(nproc !=1){
+      fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
+      FinalizeMPI();
+      return 0;
+    }
     if(!CalcByFullDiag(&X)==0){
       FinalizeMPI();
       return 0;

@@ -153,3 +153,8 @@ int ReadDefFileIdxPara(
 		       struct DefineList *X,
 		       struct BoostList *xBoost
 		       );
+
+int CheckWords(
+	       const char* ctmp,
+	       const char* cKeyWord
+	       );

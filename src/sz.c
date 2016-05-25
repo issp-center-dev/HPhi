@@ -80,6 +80,13 @@ int sz
   double idim=0.0;
   long unsigned int div_up;
 
+// hacker
+  int hacker;
+  long unsigned int tmp_i,tmp_j,tmp_pow,max_tmp_i;
+  long unsigned int ia,ja;
+  long unsigned int ibpatn=0;
+//hacker
+
   int iSpnup, iMinup,iAllup;
 
   int N2=0;
@@ -227,44 +234,91 @@ int sz
     break;
       
  case Hubbard:
-      // this part can not be parallelized
-      jb = 0;
 
-      for(ib=0;ib<X->Check.sdim;ib++){
-	list_jb[ib]=jb;
+      hacker = X->Def.read_hacker;
+      if(hacker==0){
+        // this part can not be parallelized
+        jb = 0;
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  list_jb[ib]=jb;
 
-	i=ib*ihfbit;
-	num_up=0;
-	for(j=0;j<=N2-2;j+=2){
-	  div=i & X->Def.Tpow[j];
-	  div=div/X->Def.Tpow[j];
-	  num_up+=div;
-	}
-	num_down=0;
-	for(j=1;j<=N2-1;j+=2){
-	  div=i & X->Def.Tpow[j];
-	  div=div/X->Def.Tpow[j];
-	  num_down+=div;
-	}
+	  i=ib*ihfbit;
+	  num_up=0;
+	  for(j=0;j<=N2-2;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_up+=div;
+	  }
+	  num_down=0;
+	  for(j=1;j<=N2-1;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_down+=div;
+	  }
 	
-	tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-	all_up   = (X->Def.Nsite+tmp_res)/2;
-	all_down = (X->Def.Nsite-tmp_res)/2;
+	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+	  all_up   = (X->Def.Nsite+tmp_res)/2;
+	  all_down = (X->Def.Nsite-tmp_res)/2;
 
-	tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-	tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-	jb   += tmp_1*tmp_2;
-      }
+	  tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+	  tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+	  jb   += tmp_1*tmp_2;
+        }
 
-      //#pragma omp barrier
-      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
+        //#pragma omp barrier
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
  
-      icnt = 0;
-      #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
-      for(ib=0;ib<X->Check.sdim;ib++){
-	icnt+=child_omp_sz(ib,ihfbit,N2,X);
+        icnt = 0;
+        //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  icnt+=child_omp_sz(ib,ihfbit,N2,X);
+        }
+	break;
+      }else if(hacker==1){
+        // this part can not be parallelized
+        jb = 0;
+
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  list_jb[ib]=jb;
+
+	  i=ib*ihfbit;
+	  num_up=0;
+	  for(j=0;j<=N2-2;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_up+=div;
+	  }
+	  num_down=0;
+	  for(j=1;j<=N2-1;j+=2){
+	    div=i & X->Def.Tpow[j];
+	    div=div/X->Def.Tpow[j];
+	    num_down+=div;
+	  }
+	
+	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+	  all_up   = (X->Def.Nsite+tmp_res)/2;
+	  all_down = (X->Def.Nsite-tmp_res)/2;
+
+	  tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+	  tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+	  jb   += tmp_1*tmp_2;
+        }
+
+        //#pragma omp barrier
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
+ 
+        icnt = 0;
+        //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
+        for(ib=0;ib<X->Check.sdim;ib++){
+	  icnt+=child_omp_sz_hacker(ib,ihfbit,N2,X);
+          //printf("ib=%ld icnt=%ld \n",ib,icnt);
+        }
+	break;
       }
-      break;
+      else{
+	fprintf(stderr, "Error: CalcHS in ModPara file must be 0 or 1 for Hubbard model.");
+	return -1;
+      }
 
     case HubbardNConserved:
       // this part can not be parallelized
@@ -407,32 +461,102 @@ int sz
     case Spin:
       // this part can not be parallelized
       if(X->Def.iFlgGeneralSpin==FALSE){
-	jb = 0;
-	//fprintf(stdoutMPI, "Check.sdim=%ld, ihfbit=%ld\n", X->Check.sdim, ihfbit);
-	for(ib=0;ib<X->Check.sdim;ib++){
-	  list_jb[ib]=jb;
-	  i=ib*ihfbit;
-	  num_up=0;
-	  for(j=0;j<N; j++){
-	    div_up = i & X->Def.Tpow[j];
-	    div_up = div_up/X->Def.Tpow[j];
-	    num_up +=div_up;
+        hacker = X->Def.read_hacker;
+        //printf(" rank=%d:Ne=%ld ihfbit=%ld sdim=%ld\n", myrank,X->Def.Ne,ihfbit,X->Check.sdim);
+// using hacker's delight only + no open mp 
+        if(hacker        ==  -1){
+          icnt    = 1;
+          tmp_pow = 1;
+          tmp_i   = 0;
+	  jb      = 0;
+	  ja      = 0;
+          while(tmp_pow < X->Def.Tpow[X->Def.Ne]){
+            tmp_i   += tmp_pow;
+            tmp_pow  = tmp_pow*2;
+          }
+	  //printf("DEBUG: %ld %ld %ld %ld\n",tmp_i,X->Check.sdim,X->Def.Tpow[X->Def.Ne],X->Def.Nsite);
+	  if(X->Def.Nsite%2==0){
+	    max_tmp_i = X->Check.sdim*X->Check.sdim;
+          }else{
+	    max_tmp_i = X->Check.sdim*X->Check.sdim*2-1;
+          }  
+	  while(tmp_i<max_tmp_i){
+	  //while(tmp_i<pow(2,X->Def.Nsite+1)-1){
+            list_1[icnt]=tmp_i;
+           
+            ia= tmp_i & irght;
+            ib= tmp_i & ilft;
+            ib= ib/ihfbit; 
+            if(ib==ibpatn){
+	      ja=ja+1;
+            }else{
+	      ibpatn = ib;
+	      ja     = 1;
+	      jb     = icnt-1;
+            }
+            
+            list_2_1[ia] = ja;
+            list_2_2[ib] = jb;
+            tmp_j = snoob(tmp_i);
+            tmp_i =        tmp_j;
+            icnt        +=  1;
+          }
+          icnt = icnt-1;
+// old version + hacker's delight
+        }else if(hacker  ==  1){
+	  jb = 0;
+	  for(ib=0;ib<X->Check.sdim;ib++){
+	    list_jb[ib]=jb;
+	    i=ib*ihfbit;
+	    num_up=0;
+	    for(j=0;j<N; j++){
+	      div_up = i & X->Def.Tpow[j];
+	      div_up = div_up/X->Def.Tpow[j];
+	      num_up +=div_up;
+	    }
+	    all_up   = (X->Def.Nsite+1)/2;
+	    tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
+	    jb   += tmp_1;
 	  }
-	  all_up   = (X->Def.Nsite+1)/2;
-	  tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
-	  jb   += tmp_1;
-	}
-	//#pragma omp barrier
-
-	TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+	  //#pragma omp barrier
+	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
  
-	icnt = 0;
+	  icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
-	for(ib=0;ib<X->Check.sdim;ib++){
-	  icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
-	}
-      }
-      else{
+          for(ib=0;ib<X->Check.sdim;ib++){
+	    icnt+=child_omp_sz_spin_hacker(ib,ihfbit,N,X);
+	  }
+          //printf(" rank=%d ib=%ld:Ne=%d icnt=%ld :idim_max=%ld N=%d\n", myrank,ib,X->Def.Ne,icnt,X->Check.idim_max,N);
+// old version
+        }else if(hacker  ==  0){
+	  jb = 0;
+	  for(ib=0;ib<X->Check.sdim;ib++){
+	    list_jb[ib]=jb;
+	    i=ib*ihfbit;
+	    num_up=0;
+	    for(j=0;j<N; j++){
+	      div_up = i & X->Def.Tpow[j];
+	      div_up = div_up/X->Def.Tpow[j];
+	      num_up +=div_up;
+	    }
+	    all_up   = (X->Def.Nsite+1)/2;
+	    tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
+	    jb   += tmp_1;
+	  }
+	  //#pragma omp barrier
+	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+ 
+	  icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
+          for(ib=0;ib<X->Check.sdim;ib++){
+	    icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
+	  }
+        }
+	else{
+	  fprintf(stderr, "Error: CalcHS in ModPara file must be -1 or 0 or 1 for Spin model.");
+	  return -1;
+	}	
+      }else{
 	int Max2Sz=0;
 	int irghtsite=1;
 	long int itmpSize=1;
@@ -651,6 +775,103 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
   ja=ja-1;    
   return ja; 
 }
+
+int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,struct BindStruct *X){
+
+  long unsigned int i,j; 
+  long unsigned int ia,ja,jb;
+  long unsigned int div_down, div_up;
+  long unsigned int num_up,num_down;
+  long unsigned int tmp_num_up,tmp_num_down;
+    
+  jb = list_jb[ib];
+  i  = ib*ihfbit;
+    
+  num_up   = 0;
+  num_down = 0;
+  for(j=0;j< X->Def.Nsite ;j++){
+    div_up    = i & X->Def.Tpow[2*j];
+    div_up    = div_up/X->Def.Tpow[2*j];
+    div_down  = i & X->Def.Tpow[2*j+1];
+    div_down  = div_down/X->Def.Tpow[2*j+1];
+    num_up += div_up;
+    num_down += div_down;
+  }
+  
+  ja=1;
+  tmp_num_up   = num_up;
+  tmp_num_down = num_down;
+
+  if(X->Def.iCalcModel==Hubbard){
+    if(tmp_num_up <= X->Def.Nup && tmp_num_down <= X->Def.Ndown){ //do not exceed Nup and Ndown
+      ia = X->Def.Tpow[X->Def.Nup+X->Def.Ndown-tmp_num_up-tmp_num_down]-1;
+      if(ia < X->Check.sdim){
+        num_up   =  tmp_num_up;
+        num_down =  tmp_num_down;
+        for(j=0;j<X->Def.Nsite;j++){
+          div_up    = ia & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = ia & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+          num_up   += div_up;
+          num_down += div_down;
+        }
+        if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
+          list_1[ja+jb]=ia+ib*ihfbit;
+          list_2_1[ia]=ja;
+          list_2_2[ib]=jb;
+          ja+=1;
+        }
+        if(ia!=0){
+          ia = snoob(ia);
+          while(ia < X->Check.sdim){
+            num_up   =  tmp_num_up;
+            num_down =  tmp_num_down;
+            for(j=0;j<X->Def.Nsite;j++){
+	      div_up    = ia & X->Def.Tpow[2*j];
+	      div_up    = div_up/X->Def.Tpow[2*j];
+	      div_down  = ia & X->Def.Tpow[2*j+1];
+	      div_down  = div_down/X->Def.Tpow[2*j+1];
+	      num_up   += div_up;
+	      num_down += div_down;
+            }
+            if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
+	      list_1[ja+jb]=ia+ib*ihfbit;
+              list_2_1[ia]=ja;
+              list_2_2[ib]=jb;
+              ja+=1;
+            }
+            ia = snoob(ia);
+          }
+        } 
+      } 
+    }
+  }
+  else if(X->Def.iCalcModel==HubbardNConserved){
+    if(tmp_num_up+tmp_num_down <= X->Def.Ne){ //do not exceed Ne
+      ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
+      if(ia < X->Check.sdim){
+	list_1[ja+jb]=ia+ib*ihfbit;
+        list_2_1[ia]=ja;
+        list_2_2[ib]=jb;
+        ja+=1;
+        if(ia!=0){
+          ia = snoob(ia);
+          while(ia < X->Check.sdim){
+	    list_1[ja+jb]=ia+ib*ihfbit;
+            list_2_1[ia]=ja;
+            list_2_2[ib]=jb;
+            ja+=1;
+            ia = snoob(ia);
+          }
+        } 
+      }  
+    }
+  }
+  ja=ja-1;    
+  return ja; 
+}
+
 
 /** 
  * 
@@ -882,6 +1103,56 @@ int child_omp_sz_spin(
   ja=ja-1;
   return ja; 
 }
+
+int child_omp_sz_spin_hacker(
+		      long unsigned int ib, 
+		      long unsigned int ihfbit,
+		      int N,
+		      struct BindStruct *X
+		      )
+{
+  long unsigned int i,j,div; 
+  long unsigned int ia,ja,jb;
+  long unsigned int num_up;
+  int tmp_num_up;
+  
+  jb = list_jb[ib];
+  i  = ib*ihfbit;
+  num_up=0;
+  for(j=0;j<N;j++){
+    div=i & X->Def.Tpow[j];
+    div=div/X->Def.Tpow[j];
+    num_up+=div;
+  }
+  ja=1;
+  tmp_num_up   = num_up;
+  
+// using hacker's delight
+  if(tmp_num_up<=X->Def.Ne){ // do not exceed Ne
+    ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
+    if(ia<ihfbit ){          // do not exceed Ne
+      list_1[ja+jb] = ia+ib*ihfbit;
+      list_2_1[ia]  = ja;
+      list_2_2[ib]  = jb;
+      ja           += 1;
+
+      if(ia!=0){
+        ia = snoob(ia);
+        while(ia < ihfbit){
+          //fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
+          list_1[ja+jb]    = ia+ib*ihfbit;
+          list_2_1[ia]     = ja;
+          list_2_2[ib]     = jb;
+          ja+=1;
+          ia = snoob(ia);
+        }
+      }
+    }
+  }
+  ja=ja-1;
+  return ja; 
+}
+
 
 /** 
  * 

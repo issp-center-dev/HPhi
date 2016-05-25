@@ -48,6 +48,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   double  complex temp1,temp2;
   double complex cbeta1;
   double E[5],ebefor;
+  int mythread;
 
 // for GC
   double dnorm;
@@ -96,37 +97,41 @@ int Lanczos_EigenValue(struct BindStruct *X)
       sum_i_max += i_max_tmp;
 
     }/*for (iproc = 0; iproc < nproc; iproc++)*/
-  }else if(initial_mode==1){
+  }/*if(initial_mode == 0)*/
+  else if(initial_mode==1){
     iv = X->Def.initial_iv;
     fprintf(stdoutMPI, "  initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n\n",initial_mode,iv,i_max,k_exct);       
-    #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
-    for(i = 1; i <= i_max; i++){
-      v0[i]=0.0;
-    }
-    u_long_i = 123432 + labs(iv);
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);
-    if(X->Def.iInitialVecType==0){
-      for (iproc = 0; iproc < nproc; iproc++) {
+    #pragma omp parallel default(none) private(i, u_long_i, mythread, dsfmt) \
+            shared(v0, v1, iv, X, nthreads, myrank) firstprivate(i_max)
+    {
 
-        i_max_tmp = BcastMPI_li(iproc, i_max);
-
-        for (i = 1; i <= i_max_tmp; i++) {
-          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
-          if (myrank == iproc) v1[i] = temp1;
-        }
+#pragma omp for
+      for (i = 1; i <= i_max; i++) {
+        v0[i] = 0.0;
       }
-    }
-    else{
-      for (iproc = 0; iproc < nproc; iproc++) {
+      /*
+       Initialise MT
+      */
+#ifdef _OPENMP
+      mythread = omp_get_thread_num();
+#else
+      mythread = 0;
+#endif
+      u_long_i = 123432 + labs(iv) + mythread + nthreads * myrank;
+      dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
-        i_max_tmp = BcastMPI_li(iproc, i_max);
-
-        for (i = 1; i <= i_max_tmp; i++) {
-          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
-          if (myrank == iproc) v1[i] = temp1;
-        }
+      if (X->Def.iInitialVecType == 0) {
+#pragma omp for
+        for (i = 1; i <= i_max; i++)
+          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
       }
-    }
+      else {
+#pragma omp for
+        for (i = 1; i <= i_max; i++)
+          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+      }
+
+    }/*#pragma omp parallel*/
 
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
@@ -140,7 +145,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
     for(i=1;i<=i_max;i++){
       v1[i] = v1[i]/dnorm;
     }
-  }
+  }/*else if(initial_mode==1)*/
   //Eigenvalues by Lanczos method
   
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");

@@ -214,6 +214,7 @@ int makeHam(struct BindStruct *X){
     for (i = 0; i < X->Def.EDNTransfer/2; i++) {
       for(ihermite=0; ihermite<2; ihermite++){
 	idx=2*i+ihermite;
+
 	isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
 	isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
 	sigma1 = X->Def.EDGeneralTransfer[idx][1];

@@ -246,10 +246,17 @@ u_{k} = \langle \psi_{k}|\hat{H}|\psi_{k}\rangle/N_{s}.
 
 \subsection{実際の実装について}
 \subsubsection*{初期ベクトルの設定について}
-熱的純粋量子状態による有限温度計算では、初期ベクトルは全ての成分に対してランダムな係数を与えます。初期ベクトルの係数の型はModParaで指定される入力ファイルの\verb|InitialVecType|を用い、実数もしくは複素数の指定をすることができます。乱数のシードは\verb|initial_iv| ($\equiv r_s$)により
+熱的純粋量子状態による有限温度計算では、初期ベクトルは全ての成分に対してランダムな係数を与えます。
+初期ベクトルの係数の型はModParaで指定される入力ファイルの\verb|InitialVecType|を用い、
+実数もしくは複素数の指定をすることができます。乱数のシードは\verb|initial_iv| ($\equiv r_s$)により
 \begin{align}
-123432+(n_{\rm run}+1)\times  |r_s|
+123432+(n_{\rm run}+1)\times  |r_s|+k_{\rm Thread}+N_{\rm Thread} \times k_{\rm Process}
 \end{align}
-で与えられます。ここで、$n_{\rm run}$はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、もしくはModParaで指定される入力ファイルの\verb|NumAve|で指定します。\verb|initial_iv|はスタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定される入力ファイルで指定します。乱数はSIMD-oriented Fast Mersenne Twister (dSFMT)を用い発生させています\cite{Mutsuo2008}。
+で与えられます。ここで、$n_{\rm run}$はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、
+もしくはModParaで指定される入力ファイルの\verb|NumAve|で指定します。
+\verb|initial_iv|はスタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定される入力ファイルで指定します。乱数はSIMD-oriented Fast Mersenne Twister (dSFMT)を用い発生させています\cite{Mutsuo2008}。
+また、$k_{\rm Thread}, N_{\rm Thread}, k_{\rm Process}$はそれぞれ
+スレッド番号、スレッド数、プロセス番号を表します。
+したがって同じ\verb|initial_iv|を用いても、並列数が異なる場合には別の初期波動関数が生成されます。
 
 %----------------------------------------------------------

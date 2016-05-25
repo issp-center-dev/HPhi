@@ -114,3 +114,6 @@ void ConvertToList1GeneralSpin(
 		const long unsigned int ihlfbit,
 		long unsigned int *_ilist1Comp
 			       );
+
+
+unsigned long int snoob(unsigned long int x);

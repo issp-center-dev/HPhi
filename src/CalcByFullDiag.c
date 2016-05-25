@@ -33,6 +33,12 @@ int CalcByFullDiag(
   makeHam(&(X->Bind));
   fprintf(stdoutMPI, cLogFullDiag_SetHam_End);
 
+  if(X->Bind.Def.iOutputHam == TRUE){
+    fprintf(stdoutMPI, cLogFullDiag_OutputHam_Start);
+    outputHam(&(X->Bind));
+    fprintf(stdoutMPI, cLogFullDiag_OutputHam_End);
+    return 0;
+  }
   fprintf(stdoutMPI,cLogFullDiag_Start);
   lapack_diag(&(X->Bind));
   fprintf(stdoutMPI,cLogFullDiag_End);

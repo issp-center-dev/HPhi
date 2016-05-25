@@ -47,6 +47,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
   int k_exct, iproc;
   double beta1,alpha1,dnorm, dnorm_inv;
   double complex temp1,temp2,cdnorm;
+  int mythread;
 
 // for GC
   long unsigned int u_long_i, sum_i_max, i_max_tmp;
@@ -90,38 +91,43 @@ void Lanczos_EigenVector(struct BindStruct *X){
       
     }/*for (iproc = 0; iproc < nproc; iproc++)*/
     
-  }else if(initial_mode==1){
+  }/*if(initial_mode == 0)*/
+  else if(initial_mode==1){
     iv = X->Def.initial_iv;
     //fprintf(stdoutMPI, "  initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n",initial_mode,iv,i_max,k_exct);       
-    #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
-    for(i = 1; i <= i_max; i++){
-      v0[i]=0.0;
-    }
-    u_long_i = 123432 + labs(iv);
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);
-    if(X->Def.iInitialVecType==0){
-      for (iproc = 0; iproc < nproc; iproc++) {
+    #pragma omp parallel default(none) private(i, u_long_i, mythread, dsfmt) \
+            shared(v0, v1, iv, X, nthreads, myrank) firstprivate(i_max)
+    {
 
-        i_max_tmp = BcastMPI_li(iproc, i_max);
-
-        for (i = 1; i <= i_max_tmp; i++) {
-          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
-          if (myrank == iproc) v1[i] = temp1;
-        }
+#pragma omp for
+      for (i = 1; i <= i_max; i++) {
+        v0[i] = 0.0;
       }
-    }
-    else{
-      for (iproc = 0; iproc < nproc; iproc++) {
+      /*
+       Initialize MT
+      */
+#ifdef _OPENMP
+      mythread = omp_get_thread_num();
+#else
+      mythread = 0;
+#endif
+      u_long_i = 123432 + labs(iv) + mythread + nthreads * myrank;
+      dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
-        i_max_tmp = BcastMPI_li(iproc, i_max);
-
-        for (i = 1; i <= i_max_tmp; i++) {
-          temp1 = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
-          if (myrank == iproc) v1[i] = temp1;
-        }
+      if (X->Def.iInitialVecType == 0) {
+#pragma omp for
+        for (i = 1; i <= i_max; i++)
+          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
       }
-    }
-
+      else {
+#pragma omp for
+        for (i = 1; i <= i_max; i++)
+          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+      }
+    }/*#pragma omp parallel*/
+    /*
+     Normalize
+    */
     cdnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: cdnorm) 
     for(i=1;i<=i_max;i++){
@@ -135,7 +141,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
       v1[i] = v1[i]/dnorm;
       vg[i] = conj(v1[i])*vec[k_exct][1];
     }
-  }
+  }/*else if(initial_mode==1)*/
   
   mltply(X, v0, v1);
   

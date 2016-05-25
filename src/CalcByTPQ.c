@@ -40,8 +40,6 @@ int CalcBySSM(
 	    struct EDMainCalStruct *X
 )
 {
-  long unsigned int u_long_i;
-  dsfmt_t dsfmt;
   char sdt_phys[D_FileNameMax];
   char  sdt_norm[D_FileNameMax];
   int rand_i, rand_max;
@@ -57,8 +55,7 @@ int CalcBySSM(
   fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
-    u_long_i = 123432 + (rand_i+1)*labs(X->Bind.Def.initial_iv);
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);    
+ 
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){
       return -1;
@@ -73,7 +70,7 @@ int CalcBySSM(
     fprintf(fp, cLogNormRand);
     fclose(fp);
     
-    FirstMultiply(&dsfmt, &(X->Bind));
+    FirstMultiply(rand_i, &(X->Bind));
     
     expec_energy(&(X->Bind)); //v0 = H*v1
 
