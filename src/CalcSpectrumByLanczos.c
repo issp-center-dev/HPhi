@@ -16,7 +16,6 @@
 #include "CalcSpectrumByLanczos.h"
 #include "Lanczos_EigenValue.h"
 #include "FileIO.h"
-#include "mfmemory.h"
 #include "wrapperMPI.h"
 
 /**
@@ -43,7 +42,10 @@
 int CalcSpectrumByLanczos(		 
 			  struct EDMainCalStruct *X,
 			  double complex *tmp_v1,
-			  double dnorm
+			  double dnorm,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega
 				 )
 {
   char sdt[D_FileNameMax];
@@ -53,16 +55,6 @@ int CalcSpectrumByLanczos(
   FILE *fp;
   int iret=TRUE;
   unsigned long int liLanczosStp=X->Bind.Def.Lanczos_max;
-
-  //ToDo: Nomega should be given as a parameter
-  int Nomega=X->Bind.Def.iNOmega;
-  double complex OmegaMax=X->Bind.Def.dOmegaMax+X->Bind.Def.dOmegaIm*I;
-  double complex OmegaMin=X->Bind.Def.dOmegaMin+X->Bind.Def.dOmegaIm*I;
-
-  double complex *dcSpectrum;
-  c_malloc1(dcSpectrum, Nomega);
-  double complex *dcomega;
-  c_malloc1(dcomega, Nomega);
   
   // calculate ai, bi
   // Functions in Lanczos_EigenValue
@@ -73,28 +65,17 @@ int CalcSpectrumByLanczos(
     return FALSE;
   }
 
-  for(i=0; i< Nomega; i++){
-    dcomega[i]=(OmegaMax-OmegaMin)/Nomega*i+OmegaMin;
-  }  
   for( i = 0 ; i < Nomega; i++){
     iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i], liLanczosStp);
     if(iret != TRUE){
       //ToDo: Error Message will be added.
       return FALSE;
     }
+    dcSpectrum[i] = dnorm*dcSpectrum[i];
   }
-  
-  //output spectrum
-  sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
-  childfopenMPI(sdt,"w", &fp);
-  for( i = 0 ; i < Nomega; i++){
-    dcSpectrum[i]=dnorm*dcSpectrum[i];
-    fprintf(fp,"%.10lf %.10lf %.10lf %.10lf \n",
-            creal(dcomega[i]), cimag(dcomega[i]),
-            creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
-   }
-  fclose(fp);
-
+  /*
+   Print alpha & beta to a file
+  */
     sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
     childfopenMPI(sdt,"w", &fp);
     fprintf(fp, "%ld \n",liLanczosStp);
@@ -134,7 +115,7 @@ int GetSpectrumByTridiagonalMatrixComponents(
         if(cabs(dcb0)<eps_Energy){
             dcb0=eps_Energy;
         }
-        *dcSpectrum = 1.0/(dcb0);
+        *dcSpectrum = dnorm / (dcb0);
         return TRUE;
     }
 

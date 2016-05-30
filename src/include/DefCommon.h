@@ -20,11 +20,12 @@
 #define PI 3.14159265358979 
 
 /*!< CalcType */
-#define NUM_CALCTYPE 4
+#define NUM_CALCTYPE 5
 #define Lanczos 0 /*!< CalcType is Exact Diagonalization method.*/
 #define TPQCalc 1 /*!< CalcType is TPQ calculation.*/
 #define FullDiag 2 /*!< CalcType is Full Diagonalization method.*/
 #define Spectrum 3 /*!< CalcType is Calculation spectrum */
+#define SpectrumFD 4 /*!< CalcType is Calculation spectrum with full diagonalization*/
 
 /*!< CalcModel */
 #define NUM_CALCMODEL 6 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted.*/

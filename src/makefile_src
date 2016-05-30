@@ -1,51 +1,114 @@
 include make.sys
 
-OBJS =PowerLanczos.c \
-CG_EigenVector.c \
-HPhiTrans.c \
-HPhiMain.c \
-CalcByFullDiag.c \
-CalcByLanczos.c \
-CalcSpectrum.c \
-CalcSpectrumByLanczos.c \
-SingleEx.c \
-FirstMultiply.c \
-Lanczos_EigenValue.c \
-Lanczos_EigenVector.c \
-FileIO.c \
-sz.c \
-Multiply.c \
-bitcalc.c \
-bisec.c \
-check.c \
-CheckMPI.c \
+OBJS = \
+PowerLanczos.o \
+CG_EigenVector.o \
+HPhiTrans.o \
+HPhiMain.o \
+CalcByFullDiag.o \
+CalcByLanczos.o \
+CalcSpectrum.o \
+CalcSpectrumByFullDiag.o \
+CalcSpectrumByLanczos.o \
+SingleEx.o \
+FirstMultiply.o \
+Lanczos_EigenValue.o \
+Lanczos_EigenVector.o \
+FileIO.o \
+sz.o \
+Multiply.o \
+bitcalc.o \
+bisec.o \
+check.o \
+CheckMPI.o \
 dSFMT.o \
-diagonalcalc.c \
-expec_cisajs.c \
-expec_cisajscktaltdc.c \
-expec_energy.c \
-expec_totalspin.c \
-lapack_diag.c \
-makeHam.c \
-matrixlapack.c \
-mltply.c \
-mltplyMPI.c \
-mltplyMPIBoost.c \
-CalcByTPQ.c \
-output.c \
-output_list.c \
-phys.c \
-readdef.c \
-sgn.c \
-vec12.c \
-xsetmem.c \
-log.c \
-ErrorMessage.c \
-LogMessage.c \
-ProgressMessage.c \
-global.c \
-wrapperMPI.c \
-splash.c
+diagonalcalc.o \
+expec_cisajs.o \
+expec_cisajscktaltdc.o \
+expec_energy.o \
+expec_totalspin.o \
+lapack_diag.o \
+makeHam.o \
+matrixlapack.o \
+mltply.o \
+mltplyMPI.o \
+mltplyMPIBoost.o \
+CalcByTPQ.o \
+output.o \
+output_list.o \
+phys.o \
+readdef.o \
+sgn.o \
+vec12.o \
+xsetmem.o \
+log.o \
+ErrorMessage.o \
+LogMessage.o \
+PairEx.o \
+ProgressMessage.o \
+global.o \
+wrapperMPI.o \
+splash.o
+
+HEADERS= \
+include/CG_EigenVector.h \
+include/CalcByFullDiag.h \
+include/CalcByLanczos.h \
+include/CalcByTPQ.h \
+include/CalcSpectrum.h \
+include/CalcSpectrumByFullDiag.h \
+include/CalcSpectrumByLanczos.h \
+include/CheckMPI.h \
+include/Common.h \
+include/DefCommon.h \
+include/ErrorMessage.h \
+include/FileIO.h \
+include/FirstMultiply.h \
+include/HPhiMain.h \
+include/HPhiTrans.h \
+include/Lanczos_EigenValue.h \
+include/Lanczos_EigenVector.h \
+include/LogMessage.h \
+include/Multiply.h \
+include/PairEx.h \
+include/PowerLanczos.h \
+include/ProgressMessage.h \
+include/SingleEx.h \
+include/StdFace_main.h \
+include/bisec.h \
+include/bitcalc.h \
+include/check.h \
+include/dSFMT-params.h \
+include/dSFMT-params19937.h \
+include/dSFMT.h \
+include/defmodelBoost.h \
+include/diagonalcalc.h \
+include/expec_cisajs.h \
+include/expec_cisajscktaltdc.h \
+include/expec_energy.h \
+include/expec_totalspin.h \
+include/global.h \
+include/lapack_diag.h \
+include/log.h \
+include/makeHam.h \
+include/matrixlapack.h \
+include/mfmemory.h \
+include/mltply.h \
+include/mltplyMPI.h \
+include/output.h \
+include/output_list.h \
+include/phys.h \
+include/readdef.h \
+include/sgn.h \
+include/splash.h \
+include/struct.h \
+include/sz.h \
+include/vec12.h \
+include/wrapperMPI.h \
+include/xfreemem_large.h \
+include/xsetmem.h \
+include/xsetmem_def.h \
+include/xsetmem_large.h
 
 all:
 	make -f makefile_src libStdFace
@@ -56,8 +119,8 @@ SUFFIXES: .o .c
 .c.o:
 	$(CC) $(LAPACK_FLAGS) $(FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) -c $<
 
-HPhi: $(OBJS:.c=.o) make.sys libStdFace.a
-	$(CC) -g $(OBJS:.c=.o) $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) libStdFace.a -o $@ 
+HPhi: $(OBJS) make.sys libStdFace.a
+	$(CC) -g $(OBJS) $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) libStdFace.a -o $@ 
 
 libStdFace:
 	cd StdFace; make -f makefile_StdFace libStdFace.a
@@ -65,3 +128,52 @@ libStdFace:
 clean:
 	cd StdFace; make -f makefile_StdFace clean
 	rm -f HPhi *.o *.a
+
+PowerLanczos.o:$(HEADERS)
+CG_EigenVector.o:$(HEADERS)
+HPhiTrans.o:$(HEADERS)
+HPhiMain.o:$(HEADERS)
+CalcByFullDiag.o:$(HEADERS)
+CalcByLanczos.o:$(HEADERS)
+CalcSpectrum.o:$(HEADERS)
+CalcSpectrumByFullDiag.o:$(HEADERS)
+CalcSpectrumByLanczos.o:$(HEADERS)
+SingleEx.o:$(HEADERS)
+FirstMultiply.o:$(HEADERS)
+Lanczos_EigenValue.o:$(HEADERS)
+Lanczos_EigenVector.o:$(HEADERS)
+FileIO.o:$(HEADERS)
+sz.o:$(HEADERS)
+Multiply.o:$(HEADERS)
+bitcalc.o:$(HEADERS)
+bisec.o:$(HEADERS)
+check.o:$(HEADERS)
+CheckMPI.o:$(HEADERS)
+dSFMT.o:$(HEADERS)
+diagonalcalc.o:$(HEADERS)
+expec_cisajs.o:$(HEADERS)
+expec_cisajscktaltdc.o:$(HEADERS)
+expec_energy.o:$(HEADERS)
+expec_totalspin.o:$(HEADERS)
+lapack_diag.o:$(HEADERS)
+makeHam.o:$(HEADERS)
+matrixlapack.o:$(HEADERS)
+mltply.o:$(HEADERS)
+mltplyMPI.o:$(HEADERS)
+mltplyMPIBoost.o:$(HEADERS)
+CalcByTPQ.o:$(HEADERS)
+output.o:$(HEADERS)
+output_list.o:$(HEADERS)
+phys.o:$(HEADERS)
+readdef.o:$(HEADERS)
+sgn.o:$(HEADERS)
+vec12.o:$(HEADERS)
+xsetmem.o:$(HEADERS)
+log.o:$(HEADERS)
+ErrorMessage.o:$(HEADERS)
+LogMessage.o:$(HEADERS)
+PairEx.o:$(HEADERS)
+ProgressMessage.o:$(HEADERS)
+global.o:$(HEADERS)
+wrapperMPI.o:$(HEADERS)
+splash.o:$(HEADERS)

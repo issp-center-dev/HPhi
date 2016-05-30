@@ -204,6 +204,7 @@ int main(int argc, char* argv[]){
     }
     break;    
   case Spectrum:
+  case SpectrumFD:
     if(!CalcSpectrum(&X) == TRUE){
       FinalizeMPI();
       return -1;

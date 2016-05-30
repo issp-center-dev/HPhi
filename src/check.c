@@ -207,6 +207,7 @@ int check(struct BindStruct *X){
     X->Check.max_mem=(3+2+1)*X->Check.idim_max*16.0/(pow(10,9));
     break;
   case FullDiag:
+  case SpectrumFD:
     X->Check.max_mem=X->Check.idim_max*16.0*X->Check.idim_max*16.0/(pow(10,9));
     break;
   case Spectrum:

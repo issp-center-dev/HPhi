@@ -17,10 +17,12 @@
 #include "bitcalc.h"
 #include "CalcSpectrum.h"
 #include "CalcSpectrumByLanczos.h"
+#include "CalcSpectrumByFullDiag.h"
 #include "SingleEx.h"
 #include "PairEx.h"
 #include "wrapperMPI.h"
 #include "FileIO.h"
+#include "mfmemory.h"
 
 /**
  * @file   CalcSpectrum.c
@@ -31,6 +33,29 @@
  *
  *
  */
+
+int OutputSpectrum(
+  struct EDMainCalStruct *X,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega) 
+{
+  FILE *fp;
+  char sdt[D_FileNameMax];
+  int i;
+
+  //output spectrum
+  sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
+  childfopenMPI(sdt, "w", &fp);
+
+  for (i = 0; i < Nomega; i++) {
+    fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
+      creal(dcomega[i]), cimag(dcomega[i]),
+      creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
+  }/*for (i = 0; i < Nomega; i++)*/
+
+  fclose(fp);
+}/*int OutputSpectrum*/
 
 /**
  * @brief A main function to calculate spectrum
@@ -56,6 +81,12 @@ int CalcSpectrum(
   FILE *fp;
   double dnorm;
 
+  //ToDo: Nomega should be given as a parameter
+  int Nomega;
+  double complex OmegaMax, OmegaMin;
+  double complex *dcSpectrum;
+  double complex *dcomega;
+
   //set omega
   if(SetOmega(&(X->Bind.Def)) != TRUE){
     fprintf(stderr, "Error: Fail to set Omega.\n");
@@ -65,6 +96,17 @@ int CalcSpectrum(
     if(X->Bind.Def.iFlgSpecOmegaIm == FALSE){
       X->Bind.Def.dOmegaIm = (X->Bind.Def.dOmegaMax - X->Bind.Def.dOmegaMin)/(double) X->Bind.Def.iNOmega;
     }
+  }
+  /*
+   Set & malloc omega grid
+  */
+  Nomega = X->Bind.Def.iNOmega;
+  c_malloc1(dcSpectrum, Nomega);
+  c_malloc1(dcomega, Nomega);
+  OmegaMax = X->Bind.Def.dOmegaMax + X->Bind.Def.dOmegaIm*I;
+  OmegaMin = X->Bind.Def.dOmegaMin + X->Bind.Def.dOmegaIm*I;
+  for (i = 0; i< Nomega; i++) {
+    dcomega[i] = (OmegaMax - OmegaMin) / Nomega*i + OmegaMin;
   }
 
   if(X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0){
@@ -97,9 +139,6 @@ int CalcSpectrum(
   //mltply Operator
   fprintf(stdoutMPI, "Starting mltply operators in CalcSpectrum.\n");
   GetExcitedState( &(X->Bind), v0, v1);
-  for (i = 1; i <= i_max; i++) {
-    printf("DEBUG v1, v0: %d %f %f %f %f\n", i, creal(v1[i]), cimag(v1[i]), creal(v0[i]), cimag(v0[i]));
-  }
 
   //calculate norm
   fprintf(stdoutMPI, "Calculating norm in CalcSpectrum.\n");
@@ -114,25 +153,37 @@ int CalcSpectrum(
   fprintf(stdoutMPI, "The wave function normalized in CalcSpectrum.\n");
 
 
-  int CalcSpecByLanczos=0;
-  int iCalcSpecType=CalcSpecByLanczos;
   int iret=TRUE;
-  switch (iCalcSpecType){
-  case 0:
-    iret = CalcSpectrumByLanczos(X, v1, dnorm);
-    if(iret != TRUE){
+
+  switch (X->Bind.Def.iCalcType) {
+
+  case Spectrum:
+    iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+    if (iret != TRUE) {
       //Error Message will be added.
       return FALSE;
     }
     break;
+
+  case SpectrumFD:
+    iret = CalcSpectrumByFullDiag(X, Nomega,dcSpectrum,dcomega);
+    break;
+
     // case CalcSpecByShiftedKlyrov will be added
   default:
     break;
   }
-  fprintf(stdoutMPI, "End of CalcSpectrumBy* in CalcSpectrum.\n");
+  if (iret != TRUE) {
+    //Error Message will be added.
+    return FALSE;
+  }
+  else {
+    fprintf(stdoutMPI, "End of CalcSpectrumBy* in CalcSpectrum.\n");
+    iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
+    return TRUE;
+  }
 
-  return TRUE;
-}
+}/*int CalcSpectrum*/
 
 int GetExcitedState
 (
