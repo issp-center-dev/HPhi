@@ -1725,6 +1725,7 @@ int GetDiagonalInterAll
     //Get Off-Diagonal term
     switch(X->iCalcModel){
     case Hubbard:
+    case HubbardNConserved:
     case Kondo:
     case KondoGC:
     case HubbardGC:
