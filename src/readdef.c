@@ -748,6 +748,11 @@ int ReadDefFileIdxPara(
     case KWLocSpin:
       /* Read locspn.def----------------------------------------*/
       while( fgetsMPI(ctmp2, 256, fp) != NULL){
+        if(idx==X->Nsite){
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+
         sscanf(ctmp2, "%d %d\n", &(xitmp[0]), &(xitmp[1]) );
         X->LocSpn[xitmp[0]] = xitmp[1];
         X->SiteToBit[xitmp[0]]=(X->LocSpn[xitmp[0]]+1);//2S+1
@@ -756,10 +761,6 @@ int ReadDefFileIdxPara(
           return ReadDefFileError(defname);
         }       
         idx++;
-      }
-      if(idx!=X->Nsite){
-        fclose(fp);
-        return ReadDefFileError(defname);
       }
       if(CheckLocSpin(X)==FALSE){
         fclose(fp);
@@ -774,6 +775,11 @@ int ReadDefFileIdxPara(
         //fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
         while( fgetsMPI(ctmp2, 256, fp) != NULL )
           {
+            if(idx==X->NTransfer){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+
             sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
                    &isite1,
                    &isigma1,
@@ -823,10 +829,6 @@ int ReadDefFileIdxPara(
           exitMPI(-1);
         }
 
-        if(idx!=X->NTransfer){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
         if(iboolLoc ==1){
           fclose(fp);
           exitMPI(-1);
@@ -845,6 +847,10 @@ int ReadDefFileIdxPara(
       /*coulombintra.def----------------------------------*/
       if(X->NCoulombIntra>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCoulombIntra){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
           sscanf(ctmp2, "%d %lf\n",
                  &(X->CoulombIntra[idx][0]),
                  &(X->ParaCoulombIntra[idx])
@@ -856,10 +862,6 @@ int ReadDefFileIdxPara(
           }
           idx++;
         }
-        if(idx!=X->NCoulombIntra){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -867,6 +869,11 @@ int ReadDefFileIdxPara(
       /*coulombinter.def----------------------------------*/
       if(X->NCoulombInter>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCoulombInter){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %lf\n",
                  &(X->CoulombInter[idx][0]),
                  &(X->CoulombInter[idx][1]),
@@ -880,10 +887,6 @@ int ReadDefFileIdxPara(
 
           idx++;
         }
-        if(idx!=X->NCoulombInter){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -892,6 +895,11 @@ int ReadDefFileIdxPara(
       if(X->NHundCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL)
           {
+            if(idx==X->NHundCoupling){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+
             sscanf(ctmp2, "%d %d %lf\n",
                    &(X->HundCoupling[idx][0]),
                    &(X->HundCoupling[idx][1]),
@@ -905,10 +913,6 @@ int ReadDefFileIdxPara(
 
             idx++;
           }
-        if(idx!=X->NHundCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
     case KWPairHop:
@@ -920,6 +924,10 @@ int ReadDefFileIdxPara(
       
       if(X->NPairHopping>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NPairHopping){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
           sscanf(ctmp2, "%d %d %lf\n",
                  &(X->PairHopping[idx][0]),
                  &(X->PairHopping[idx][1]),
@@ -932,11 +940,6 @@ int ReadDefFileIdxPara(
           }
           idx++;
         }
-	
-        if(idx!=X->NPairHopping){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -944,6 +947,11 @@ int ReadDefFileIdxPara(
       /*exchange.def--------------------------------------*/
       if(X->NExchangeCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL){
+          if(idx==X->NExchangeCoupling){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %lf\n",
                  &(X->ExchangeCoupling[idx][0]),
                  &(X->ExchangeCoupling[idx][1]),
@@ -957,10 +965,6 @@ int ReadDefFileIdxPara(
 
           idx++;
         }
-        if(idx!=X->NExchangeCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -968,6 +972,11 @@ int ReadDefFileIdxPara(
       /*ising.def--------------------------------------*/
       if(X->NIsingCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL){
+          if(idx==X->NIsingCoupling){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %lf\n",
                  &isite1,
                  &isite2,
@@ -989,10 +998,6 @@ int ReadDefFileIdxPara(
           X->ParaCoulombInter[X->NCoulombInter+idx]=-dvalue_re/4.0;
           idx++;
         }
-        if(idx!=X->NIsingCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
       
@@ -1005,6 +1010,11 @@ int ReadDefFileIdxPara(
         }
         while(fgetsMPI(ctmp2,256,fp) != NULL)
           {
+            if(idx==X->NPairLiftCoupling){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+
             sscanf(ctmp2, "%d %d %lf\n",
                    &(X->PairLiftCoupling[idx][0]),
                    &(X->PairLiftCoupling[idx][1]),
@@ -1018,10 +1028,6 @@ int ReadDefFileIdxPara(
 
             idx++;
           }
-        if(idx!=X->NPairLiftCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
       
@@ -1032,6 +1038,10 @@ int ReadDefFileIdxPara(
       if(X->NInterAll>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL)
           {
+            if(idx==X->NInterAll){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
             sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
                    &isite1,
                    &isigma1,
@@ -1080,10 +1090,6 @@ int ReadDefFileIdxPara(
             }
             idx++;
           }
-        if(idx!=X->NInterAll){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
 
       if(X->iCalcModel==Kondo){
@@ -1117,6 +1123,10 @@ int ReadDefFileIdxPara(
       /*cisajs.def----------------------------------------*/
       if(X->NCisAjt>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCisAjt){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
           sscanf(ctmp2, "%d %d %d %d\n",
                  &isite1,
                  &isigma1,
@@ -1143,10 +1153,6 @@ int ReadDefFileIdxPara(
 
           idx++;
         }
-        if(idx!=X->NCisAjt){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
       
@@ -1154,6 +1160,11 @@ int ReadDefFileIdxPara(
       /*cisajscktaltdc.def--------------------------------*/
       if(X->NCisAjtCkuAlvDC>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCisAjtCkuAlvDC){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %d %d %d %d %d %d\n",
                  &isite1,
                  &isigma1,
@@ -1187,10 +1198,6 @@ int ReadDefFileIdxPara(
             return ReadDefFileError(defname);
           }
           idx++;
-        }
-        if(idx!=X->NCisAjtCkuAlvDC){
-          fclose(fp);
-          return ReadDefFileError(defname);
         }
       }
       break;
