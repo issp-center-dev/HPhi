@@ -41,22 +41,25 @@
 /**
  * Keyword List in NameListFile.
  **/
+
 static char cKWListOfFileNameList[][D_CharTmpReadDef]={
-        "CalcMod",
-        "ModPara",
-        "LocSpin",
-        "Trans",
-        "CoulombIntra",
-        "CoulombInter",
-        "Hund",
-        "PairHop",
-        "Exchange",
-        "InterAll",
-        "OneBodyG",
-        "TwoBodyG",
-        "PairLift",
-        "Ising",
-        "Boost"
+  "CalcMod",
+  "ModPara",
+  "LocSpin",
+  "Trans",
+  "CoulombIntra",
+  "CoulombInter",
+  "Hund",
+  "PairHop",
+  "Exchange",
+  "InterAll",
+  "OneBodyG",
+  "TwoBodyG",
+  "PairLift",
+  "Ising",
+  "Boost",
+  "SingleExcitation",
+  "PairExcitation"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -209,7 +212,6 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
-
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -243,7 +245,7 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "InputEigenVec")==0 || CheckWords(ctmp, "IEV")==0){
       X->iInputEigenVec=itmp;
     }
-    else if(strcmp(ctmp, "OutputHam")==0){
+    else if(CheckWords(ctmp, "OutputHam")==0){
       X->iOutputHam=itmp;
     }
     else{
@@ -442,12 +444,12 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
 
-      double dtmp;      
-
+      double dtmp;
+      
       X->read_hacker=0;
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
         if(*ctmp2 == '\n') continue;
-        sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
+        sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);
         if(CheckWords(ctmp, "Nsite")==0){
           X->Nsite= (int)dtmp;
         }
@@ -495,7 +497,7 @@ int ReadDefFileNInt(
         }	
         else if(CheckWords(ctmp, "CalcHS")==0){
           X->read_hacker=(int)dtmp;
-        }	
+        }
         else{
           return(-1);
         }
@@ -597,6 +599,7 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
 
       break;
+
     default:
       fprintf(stdoutMPI, "%s", cErrIncorrectDef);
       fclose(fp);
@@ -611,8 +614,9 @@ int ReadDefFileNInt(
   switch(X->iCalcModel){
   case Spin:
   case Hubbard:
-  case Kondo:
-    
+  case Kondo: 
+  case SpinlessFermion:
+   
     if(iReadNCond==TRUE){
       if(X->iCalcModel==Spin){
         fprintf(stdoutMPI, "For Spin, Ncond should not be defined.\n");
@@ -620,6 +624,13 @@ int ReadDefFileNInt(
       }
       else{
         if(X->iFlgSzConserved==TRUE){
+          if(X->iCalcModel==SpinlessFermion){
+            fprintf(stdoutMPI, "  Warning: For Spinless fermion, 2Sz should not be defined.\n");
+            X->Ne=X->NCond;  
+            X->Nup=X->NCond;
+            X->Ndown=0;
+            break;
+          }
           X->Nup=X->NLocSpn+X->NCond+X->Total2Sz;
           X->Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
           X->Nup/=2;
@@ -633,6 +644,11 @@ int ReadDefFileNInt(
               return(-1);
             }
             X->iCalcModel=HubbardNConserved;
+          }
+          else if(X->iCalcModel ==SpinlessFermion){
+            X->Ne=X->NCond;  
+            X->Nup=X->NCond;
+            X->Ndown=0;
           }
           else{
             fprintf(stdoutMPI, " 2Sz is not defined.\n");
@@ -681,6 +697,7 @@ int ReadDefFileNInt(
   case SpinGC:
   case KondoGC:
   case HubbardGC:
+  case SpinlessFermionGC:  
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
       fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
       //return(-1);
@@ -716,6 +733,7 @@ int ReadDefFileIdxPara(
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
   int i,idx;
+  int itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -819,6 +837,14 @@ int ReadDefFileIdxPara(
                   iboolLoc=1;
                   fprintf(stdoutMPI, cErrIncorrectFormatForKondoTrans, isite1, isite2);
                 }
+              }
+            }
+            else if(X->iCalcModel==SpinlessFermion || X->iCalcModel==SpinlessFermionGC){
+              if(isigma1 != 0 || isigma2 !=0){
+                //Not allowed
+                fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
+                fclose(fp);
+                return ReadDefFileError(defname);
               }
             }
             idx++;
@@ -1061,6 +1087,14 @@ int ReadDefFileIdxPara(
                 return(-1);
               }
             }
+            else if(X->iCalcModel == SpinlessFermion || X->iCalcModel==SpinlessFermionGC){
+              if(isigma1 !=0 || isigma2 != 0 || isigma3 != 0 || isigma4 !=0){
+                fprintf(stderr, "%s", "Error: Spin index of InterAll is incorrect.\n");
+                fclose(fp);
+                return -1;
+              }
+            }
+
             X->InterAll[idx][0]=isite1;
             X->InterAll[idx][1]=isigma1;
             X->InterAll[idx][2]=isite2;
@@ -1453,7 +1487,7 @@ int CheckTransferHermite
             if (icheckHermiteCount == FALSE) {	      
               if(i<=j){
                 if(2*icntHermite >= X->NTransfer){
-                  fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+                  fprintf(stderr, "Elements of Transfers are incorrect.\n");
                   return(-1);
                 }
                 if(isite1 !=isite2 || isigma1 !=isigma2){
@@ -1995,6 +2029,8 @@ int CheckLocSpin
   case Hubbard:
   case HubbardNConserved:
   case HubbardGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     for(i=0; i<X->Nsite; i++){
       if(X->LocSpn[i]!=ITINERANT){
         return FALSE;
@@ -2203,7 +2239,6 @@ int CheckWords(
   for(i=0; i<n; i++){
     cKW_small[i]=tolower(cKW_small[i]);
   }
-
   n=strlen(ctmp);
   strncpy(ctmp_small, ctmp, n);
   for(i=0; i<n; i++){
