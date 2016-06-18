@@ -36,6 +36,7 @@ const char* cReadSzEnd;
 //CG_EigenVector.c
 const char* cLogCG_EigenVecStart;
 const char* cLogCG_EigenVecEnd;
+const char* cCG_EigenVecStart;
 const char* cCG_EigenVecFinish;
 
 //diagonalcalc.c
