@@ -43,7 +43,7 @@
 void Lanczos_EigenVector(struct BindStruct *X){
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
-    TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorStart, "a");
+  TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorStart, "a");
 
     long int i,j,i_max,iv;
   int k_exct, iproc;
