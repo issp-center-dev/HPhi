@@ -42,8 +42,10 @@
  */
 void Lanczos_EigenVector(struct BindStruct *X){
 
-  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);  
-  long int i,j,i_max,iv;
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
+    TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorStart, "a");
+
+    long int i,j,i_max,iv;
   int k_exct, iproc;
   double beta1,alpha1,dnorm, dnorm_inv;
   double complex temp1,temp2,cdnorm;
@@ -196,7 +198,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
 #pragma omp parallel for default(none) private(j) shared(v0) firstprivate(i_max, dnorm_inv)
   for(j=1;j<=i_max;j++){
     v0[j] = v0[j]*dnorm_inv;
-    //printf("v0[%ld]=(%lf, %lf)\n", j, creal(v0[j]), cimag(v0[j]));
+    //printf("debug: v0[%ld]=(%lf, %lf)\n", j, creal(v0[j]), cimag(v0[j]));
   }
   
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorFinish, "a");

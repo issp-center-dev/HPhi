@@ -45,6 +45,8 @@
 #define KWPairLift 12
 #define KWIsing 13
 #define KWBoost 14
+#define KWSingleExcitation 15
+#define KWPairExcitation 16
 
 int CheckSite(
 	      const int iListToSite,
