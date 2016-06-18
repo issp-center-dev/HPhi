@@ -62,6 +62,8 @@ const char* cLanczos_EigenVectorFinish;
 //expec.c
 const char* cExpecStart;
 const char* cExpecEnd;
+const char* cTPQExpecStart;
+const char* cTPQExpecEnd;
 
 //expec_cisajs.c
 const char* cLogLanczosExpecOneBodyGStart;

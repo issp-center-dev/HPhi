@@ -62,6 +62,9 @@ const char* cLanczos_EigenVectorFinish="Lanczos Eigenvector finishes: %s";
 //expec.c
 const char* cExpecStart="Calculate energy begins:      %s";
 const char* cExpecEnd  ="Calculate energy finishes:    %s";
+const char* cTPQExpecStart="step %d: Calculate energy begins:      %s";
+const char* cTPQExpecEnd  ="step %d: Calculate energy finishes:    %s";
+
 
 //expec_cisajs.c
 const char* cLogLanczosExpecOneBodyGStart="  Start: Calculate one body Green functions.\n";
