@@ -14,7 +14,7 @@ make.sys
 *.log
 *.o
 *.optrpt
-*.pdf
+userguide_*.pdf
 *.synctex.gz
 *.toc
 *~
