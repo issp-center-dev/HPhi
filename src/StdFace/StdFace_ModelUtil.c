@@ -657,10 +657,10 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   xj = StdI->Lx * ((double)jL + xiL) + StdI->Wx * ((double)jW + xiW);
   yj = StdI->Ly * ((double)jL + xiL) + StdI->Wy * ((double)jW + xiW);
 
-  if (*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
-  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
+  if (*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
+  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
   /*
   */
@@ -689,10 +689,10 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   xj = StdI->Lx * ((double)jL + xjL) + StdI->Wx * ((double)jW + xjW);
   yj = StdI->Ly * ((double)jL + xjL) + StdI->Wy * ((double)jW + xjW);
 
-  if(*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *isite, xi, yi);
-  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center font \"GothicBBB-Medium-EUC-H,5\" front\n", *jsite, xj, yj);
+  if(*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
+  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
+  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
 }
 
