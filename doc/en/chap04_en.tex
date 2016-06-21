@@ -157,7 +157,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \begin{figure}[!tbhp]
   \begin{center}
-    \includegraphics[width=8cm]{../figs/chap04_1_lattice.eps}
+    \includegraphics[width=8cm]{../figs/chap04_1_lattice.pdf}
     \caption{Schematic illustration of
       (a) one dimensional chain lattice, 
       (b) two dimensional square lattice, and 
@@ -173,7 +173,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \begin{figure}[!tbhp]
   \begin{center}
-    \includegraphics[width=15cm]{../figs/chap04_1_honeycomb.eps}
+    \includegraphics[width=15cm]{../figs/chap04_1_honeycomb.pdf}
     \caption{Schematic illustration of the anisotropic honeycomb lattice.
       The nearest neighbor 
       hopping integral, spin coupling, offsite Coulomb integral
@@ -186,7 +186,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \begin{figure}[!tbhp]
   \begin{center}
-    \includegraphics[width=10cm]{../figs/kagome.eps}
+    \includegraphics[width=10cm]{../figs/kagome.pdf}
     \caption{Schematic illustration of the Kagome lattice.
     }
     \label{fig_kagome}
@@ -195,7 +195,7 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
 
 \begin{figure}[!tbhp]
   \begin{center}
-    \includegraphics[width=10cm]{../figs/ladder.eps}
+    \includegraphics[width=10cm]{../figs/ladder.pdf}
     \caption{Schematic illustration of the ladder lattice.
     }
     \label{fig_ladder}
@@ -242,7 +242,7 @@ with this parameter.
 
 \begin{figure}[!tbhp]
   \begin{center}
-    \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.eps}
+    \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.pdf}
     \caption{The shape of the numerical cell 
       when ${\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)$
       in the triangular lattice.
@@ -702,6 +702,29 @@ with this parameter.
 {\bf Description :} (Only for the TPQ) 
 We specify the interval steps of calculating correlation functions in TPQ method.\\ 
 {\bf Note:} The small interval increases the time cost of calculations.
+
+\item \verb|OutputMode|
+
+{\bf Type :} Choose from \verb|"none"|, \verb|"correlation"|, and \verb|"full"|
+(\verb|correlation| as a default)
+
+{\bf Description :} Indices of correlation functions
+are specified with this keyword.
+\verb|"none"| indicates correlation functions will not calculated.
+When \verb|outputmode="correlation"|,
+$\langle c_{i \sigma}^{\dagger}c_{i \sigma} \rangle$ is computed at all $i, \sigma$,
+and
+$\langle c_{i \sigma}^{\dagger}c_{i \sigma} c_{j \sigma'}^{\dagger}c_{j \sigma'} \rangle$
+is computed at all $i, j, \sigma, \sigma'$.
+If \verb|"full"| is selected,
+$\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle$ is computed at all $i, j, \sigma, \sigma'$,
+and
+$\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_{i_4 \sigma_4} \rangle$
+is computed at all $i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4$.
+
+In spin system, 
+indices are specified as those on the Bogoliubov representation
+(See \ref{sec_bogoliubov_rep}).
 
 \end{itemize}
 

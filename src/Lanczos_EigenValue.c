@@ -151,8 +151,10 @@ int Lanczos_EigenValue(struct BindStruct *X)
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, v1);
   stp=1;
-  TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);          
-  alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
+  TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
+
+    alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
+
   alpha[1]=alpha1;
   cbeta1=0.0;
   
@@ -166,9 +168,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   beta[1]=beta1;
   ebefor=0;
 
-  /*
-    Set Maximum number of loop to the dimention of the Wavefunction
-  */
+/*
+      Set Maximum number of loop to the dimention of the Wavefunction
+    */
   i_max_tmp = SumMPI_li(i_max);
   if(i_max_tmp < X->Def.Lanczos_max){
     X->Def.Lanczos_max = i_max_tmp;
@@ -200,10 +202,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v1[i] =  temp2;
     }
 
-    mltply(X, v0, v1);
-
-    TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
-   
+      mltply(X, v0, v1);
+      TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
     alpha1=creal(X->Large.prdct);
     alpha[stp]=alpha1;
     cbeta1=0.0;

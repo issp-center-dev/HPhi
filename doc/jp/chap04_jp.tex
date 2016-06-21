@@ -152,7 +152,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=10cm]{../figs/chap04_1_lattice.eps}
+    \includegraphics[width=10cm]{../figs/chap04_1_lattice.pdf}
     \caption{(a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図. 
       ホッピング積分、オフサイトクーロン積分、スピン結合は、
       再近接サイト間(マゼンタの実線)ではそれぞれ$t,V,J$となり、
@@ -163,7 +163,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=15cm]{../figs/chap04_1_honeycomb.eps}
+    \includegraphics[width=15cm]{../figs/chap04_1_honeycomb.pdf}
     \caption{2次元異方的蜂の巣格子の模式図. 
       ホッピング積分、オフサイトクーロン積分、スピン結合は、
       ボンドの方向によって異なります。
@@ -176,7 +176,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=15cm]{../figs/kagome.eps}
+    \includegraphics[width=15cm]{../figs/kagome.pdf}
     \caption{カゴメ格子の模式図. 
     }
     \label{fig_kagome}
@@ -185,7 +185,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=10cm]{../figs/ladder.eps}
+    \includegraphics[width=10cm]{../figs/ladder.pdf}
     \caption{梯子格子の模式図. 
     }
     \label{fig_ladder}
@@ -233,7 +233,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \begin{figure}[!htbp]
   \begin{center}
-    \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.eps}
+    \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.pdf}
     \caption{三角格子において、${\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)$とした場合のセル形状。
       ${\vec a}_0$(マゼンタ)および${\vec a}_1$(グリーン)
       で囲まれた部分(サイト数は20)が計算するセルとなる。
@@ -624,6 +624,27 @@ $ gnuplot lattice.gp
 
 {\bf 説明 :} (TPQ法のみで使用)相関関数の計算を何回のTPQステップおきに行うかの指定。
 頻度を上げると計算コストが増大するので注意してください。
+
+\item \verb|OutputMode|
+
+{\bf 形式 :} \verb|"none"|, \verb|"correlation"|, \verb|"full"|のいずれか(デフォルトは\verb|correlation|)
+
+{\bf 説明 :} 計算を行う相関関数を指定します。
+\verb|"none"|の場合は相関関数を計算しません。
+\verb|"correlation"|を指定した場合には、1体部分はすべての$i, \sigma$について
+$\langle c_{i \sigma}^{\dagger}c_{i \sigma} \rangle$を、
+2体部分はすべての$i, j, \sigma, \sigma'$について
+$\langle c_{i \sigma}^{\dagger}c_{i \sigma} c_{j \sigma'}^{\dagger}c_{j \sigma'} \rangle$
+を計算します。
+\verb|"full"|を指定した場合には、
+1体部分はすべての$i, j, \sigma, \sigma'$について
+$\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle$を、
+2体部分はすべての$i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4$について
+$\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_{i_4 \sigma_4} \rangle$
+を計算します。
+スピン系の演算子はBogoliubov表現により生成消滅演算子で表されています。
+詳しくは\ref{sec_bogoliubov_rep}をご覧ください。
+
 \end{itemize}
 
 \newpage
