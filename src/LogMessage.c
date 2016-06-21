@@ -40,6 +40,19 @@ const char* cCG_EigenVecFinish="CG Eigenvector finishes: %s";
 //diagonalcalc.c
 const char* cDiagonalCalcFinish="diagonal calculation finishes: %s";
 
+//calcspectrum.c
+const char* c_InputEigenVectorStart= "Reading an input Eigenvector starts: %s";
+const char* c_InputEigenVectorEnd= "Reading an input Eigenvector finishes: %s";
+const char* c_CalcExcitedStateStart= "Caclulating an excited Eigenvector starts: %s";
+const char* c_CalcExcitedStateEnd= "Caclulating an excited Eigenvector finishes: %s";
+const char* c_CalcSpectrumStart= "Caclulating a spectrum starts: %s";
+const char* c_CalcSpectrumEnd= "Caclulating a spectrum finishes: %s";
+const char* c_GetTridiagonalStart= "Caclulating tridiagonal matrix components starts: %s";
+const char* c_GetTridiagonalEnd= "Caclulating tridiagonal matrix components finishes: %s";
+const char* c_CalcSpectrumFromTridiagonalStart="Caclulating spectrum from tridiagonal matrix components starts: %s";
+const char* c_CalcSpectrumFromTridiagonalEnd="Caclulating spectrum from tridiagonal matrix components finishes: %s";
+//calcspectrum in Lanczos_Eigenvalue.c
+const char* c_Lanczos_SpectrumStep="%3d th Lanczos step for calculating spectrum: %s";
 
 //FirstMultiply.c, Multiply.c
 const char* cTPQStep="step %d:TPQ begins: %s";
