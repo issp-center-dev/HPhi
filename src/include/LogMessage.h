@@ -53,6 +53,9 @@ const char* c_GetTridiagonalStart;
 const char* c_GetTridiagonalEnd;
 const char* c_CalcSpectrumFromTridiagonalStart;
 const char* c_CalcSpectrumFromTridiagonalEnd;
+const char* c_OutputSpectrumRecalcvecStart;
+const char* c_OutputSpectrumRecalcvecEnd;
+
 //calcspectrum in Lanczos_Eigenvalue.c
 const char* c_Lanczos_SpectrumStep;
 
