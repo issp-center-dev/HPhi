@@ -59,7 +59,7 @@ int CalcSpectrumByLanczos(
   // calculate ai, bi
   // Functions in Lanczos_EigenValue
   fprintf(stdoutMPI, "    Start: Calculate tridiagonal matrix components.\n");
-  TimeKeeper(X, cFileNameTimeKeep, c_GetTridiagonalStart, "a");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalStart, "a");
 
   iret= Lanczos_GetTridiagonalMatrixComponents( &(X->Bind), alpha, beta, tmp_v1, &(liLanczosStp));
     if(iret != TRUE){
@@ -68,10 +68,10 @@ int CalcSpectrumByLanczos(
     }
 
   fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
-  TimeKeeper(X, cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
 
     fprintf(stdoutMPI, "    Start: Caclulate spectrum from tridiagonal matrix components.\n");
-    TimeKeeper(X, cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalStart, "a");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalStart, "a");
 
     for( i = 0 ; i < Nomega; i++){
     iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i], liLanczosStp);
@@ -82,7 +82,7 @@ int CalcSpectrumByLanczos(
     dcSpectrum[i] = dnorm*dcSpectrum[i];
   }
     fprintf(stdoutMPI, "    End:   Caclulate spectrum from tridiagonal matrix components.\n\n");
-    TimeKeeper(X, cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalEnd, "a");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalEnd, "a");
 
 
   /*
