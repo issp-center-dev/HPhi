@@ -52,4 +52,9 @@
 #define CALCVEC_LANCZOS 1 /*!< Lanczos method*/
 #define CALCVEC_NOT -1 /*!< eigenvector is not calculated*/
 
+/*!< ReCalcSpectrum */
+#define RECALC_NOT 0
+#define RECALC_FROM_TMComponents 1
+#define RECALC_FROM_TMComponents_VEC 2
+
 #endif /* HPHI_DEFCOMMON_H */

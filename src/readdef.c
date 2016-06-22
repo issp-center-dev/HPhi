@@ -212,6 +212,7 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
+  X->iFlgRecalcSpec=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -247,6 +248,9 @@ int ReadcalcmodFile(
     }
     else if(CheckWords(ctmp, "OutputHam")==0){
       X->iOutputHam=itmp;
+    }
+    else if(CheckWords(ctmp, "ReCalcSpec")==0 || CheckWords(ctmp, "ReCalcSpectrum")==0){
+      X->iFlgRecalcSpec=itmp;
     }
     else{
       fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);

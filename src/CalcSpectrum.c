@@ -114,54 +114,60 @@ int CalcSpectrum(
       exitMPI(-1);
   }
 
-  //input eigen vector
-  fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
-  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-  sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
-  childfopenALL(sdt, "rb", &fp);
-  if(fp==NULL){
-    fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-    exitMPI(-1);
-  }
-  //  fscanf(fp, "%ld\n", &i_max);
-  fread(&i_max, sizeof(i_max), 1 ,fp);
-  if(i_max != X->Bind.Check.idim_max){
-    fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
-    fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-    //exitMPI(-1);
-    return -1;
-  }
-  fread(v1, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
-  fclose(fp);
-  for (i = 1; i <= i_max; i++) {
-    v0[i]=0;
-  }
-  fprintf(stdoutMPI, "  End:   An Eigenvector is inputted in CalcSpectrum.\n\n");
-  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
+  if (X->Bind.Def.iFlgRecalcSpec != RECALC_FROM_TMComponents) {
+    //input eigen vector
+    fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
+    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
+    childfopenALL(sdt, "rb", &fp);
+    if (fp == NULL) {
+      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
+      exitMPI(-1);
+    }
+    fread(&i_max, sizeof(i_max), 1, fp);
+    if (i_max != X->Bind.Check.idim_max) {
+      fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
+      fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+      //exitMPI(-1);
+      return -1;
+    }
+    fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    fclose(fp);
 
-  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
-  fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
-  //mltply Operator
-  GetExcitedState( &(X->Bind), v0, v1);
+    if (X->Bind.Def.iFlgRecalcSpec == RECALC_NOT) {
+      for (i = 1; i <= i_max; i++) {
+        v0[i] = 0;
+      }
+      fprintf(stdoutMPI, "  End:   An Inputcector is inputted in CalcSpectrum.\n\n");
+      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
 
-  //calculate norm
-  dnorm = NormMPI_dc(i_max, v0);
-  if(fabs(dnorm)<pow(10.0, -15)){
-    fprintf(stderr, "Error: Excitation vector is illegal; norm becomes 0.\n");
-    return -1;
-  }
+      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
+      fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
+      //mltply Operator
+      GetExcitedState(&(X->Bind), v0, v1);
 
-  //normalize vector
+      //calculate norm
+      dnorm = NormMPI_dc(i_max, v0);
+      if (fabs(dnorm) < pow(10.0, -15)) {
+        fprintf(stderr, "Error: Excitation vector is illegal; norm becomes 0.\n");
+        return -1;
+      }
+
+      //normalize vector
 #pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm)
-  for(i=1;i<=i_max;i++){
-    v1[i] = v0[i]/dnorm;
-  }
-  fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
+      for (i = 1; i <= i_max; i++) {
+        v1[i] = v0[i] / dnorm;
+      }
+      fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
+      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+    }
+    else {//X->Bind.Def.iFlgRecalcSpec ==   RECALC_FROM_TMComponents_VEC
 
-  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+      //TODO: Input restart procedure
+    }
+  }
 
   int iret=TRUE;
-
   fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   switch (X->Bind.Def.iCalcType) {
