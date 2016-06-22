@@ -116,7 +116,7 @@ int CalcSpectrum(
 
   //input eigen vector
   fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
-  TimeKeeper(X, cFileNameTimeKeep, c_InputEigenVectorStart, "a");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
   sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
   childfopenALL(sdt, "rb", &fp);
   if(fp==NULL){
@@ -137,9 +137,9 @@ int CalcSpectrum(
     v0[i]=0;
   }
   fprintf(stdoutMPI, "  End:   An Eigenvector is inputted in CalcSpectrum.\n\n");
-  TimeKeeper(X, cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
 
-  TimeKeeper(X, cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
   fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
   //mltply Operator
   GetExcitedState( &(X->Bind), v0, v1);
@@ -158,12 +158,12 @@ int CalcSpectrum(
   }
   fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
 
-  TimeKeeper(X, cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
 
   int iret=TRUE;
 
   fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
-  TimeKeeper(X, cFileNameTimeKeep, c_CalcSpectrumStart, "a");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   switch (X->Bind.Def.iCalcType) {
 
   case Spectrum:
@@ -189,7 +189,7 @@ int CalcSpectrum(
   }
   else {
     fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
-    TimeKeeper(X, cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
     iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
     return TRUE;
   }
