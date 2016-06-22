@@ -36,6 +36,7 @@ const char* cReadSzEnd;
 //CG_EigenVector.c
 const char* cLogCG_EigenVecStart;
 const char* cLogCG_EigenVecEnd;
+const char* cCG_EigenVecStart;
 const char* cCG_EigenVecFinish;
 
 //diagonalcalc.c
@@ -69,11 +70,14 @@ const char* cLanczos_EigenValueFinish;
 //Lanczos_EigenVector.c
 const char* cLogLanczos_EigenVectorStart;
 const char* cLogLanczos_EigenVectorEnd;
+const char* cLanczos_EigenVectorStart;
 const char* cLanczos_EigenVectorFinish;
 
 //expec.c
 const char* cExpecStart;
 const char* cExpecEnd;
+const char* cTPQExpecStart;
+const char* cTPQExpecEnd;
 
 //expec_cisajs.c
 const char* cLogLanczosExpecOneBodyGStart;
@@ -82,15 +86,19 @@ const char* cLogLanczosExpecOneBodyGEnd;
 const char* cLogCGExpecOneBodyGEnd;
 
 const char* cLanczosExpecOneBodyGFinish;
+const char* cLanczosExpecOneBodyGStart;
 const char* cTPQExpecOneBodyGStart;
 const char* cTPQExpecOneBodyGFinish;
-const char* cExpecOneBodyGFinish;
+const char* cCGExpecOneBodyGStart;
+const char* cCGExpecOneBodyGFinish;
 
 //expec_cisajucktaltdc.c
 const char*  cLogLanczosExpecTwoBodyGStart;
 const char*  cLogLanczosExpecTwoBodyGFinish;
+const char*  cLanczosExpecTwoBodyGStart;
 const char*  cLogCGExpecTwoBodyGFinish;
 const char*  cLanczosExpecTwoBodyGFinish;
+const char*  cCGExpecTwoBodyGStart;
 const char*  cCGExpecTwoBodyGFinish;
 const char*  cTPQExpecTwoBodyGStart;
 const char*  cTPQExpecTwoBodyGFinish;

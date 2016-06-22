@@ -313,8 +313,7 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
     }
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/
 
-  fprintf(fp, "plot x w l lw 0\n");
-  fprintf(fp, "pause -1\n");
+  fprintf(fp, "plot \'-\' w d lc 7\n0.0 0.0\nend\npause -1\n");
   fclose(fp);
 }
 

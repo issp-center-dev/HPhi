@@ -10,16 +10,16 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.0                    
+           9@P~~~9@P             Version 1.1                    
                                                                 
 
 
 #####  Parallelization Info.  #####
 
   OpenMP threads : 24
-  MPI PEs : 1 
+  MPI PEs : 16 
 
-  Read File './namelist.def'.
+  Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
   Read File 'zlocspn.def' for LocSpin.
@@ -38,8 +38,8 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=4900 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.000470 GB 
+  MAX DIMENSION idim_max=400 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000038 GB 
 
 
 ######  MPI site separation summary  ######
@@ -52,15 +52,30 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
        3       4
        4       4
        5       4
-       6       4
-       7       4
 
   INTER process site
     Site    Bit
+       6       4
+       7       4
 
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0            4900     4      4      8         0   
+          0             225     4      4      8         0   0000
+          1             300     3      4      7         0   0100
+          2             300     4      3      7         0   1000
+          3             400     3      3      6         0   1100
+          4             300     3      4      7         0   0001
+          5             225     2      4      6         0   0101
+          6             400     3      3      6         0   1001
+          7             300     2      3      5         0   1101
+          8             300     4      3      7         0   0010
+          9             400     3      3      6         0   0110
+         10             225     4      2      6         0   1010
+         11             300     3      2      5         0   1110
+         12             400     3      3      6         0   0011
+         13             300     2      3      5         0   0111
+         14             300     3      2      5         0   1011
+         15             225     2      2      4         0   1111
 
    Total dimension : 4900
 
@@ -132,4 +147,4 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 33 [s].
+Finish: Elapsed time is 17 [s].

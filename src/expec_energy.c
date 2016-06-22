@@ -46,9 +46,14 @@ int expec_energy(struct BindStruct *X){
   switch(X->Def.iCalcType){
   case Lanczos:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
+    TimeKeeper(X, cFileNameTimeKeep, cExpecStart, "a");
+
     break;
   case TPQCalc:
-    TimeKeeperWithStep(X, cFileNameTimeKeep, cExpecStart, "a", step_i);
+#ifdef _DEBUG
+    fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
+    TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecStart, "a", step_i);
+#endif
     break;
   case FullDiag:
     break;
@@ -244,12 +249,18 @@ int expec_energy(struct BindStruct *X){
   switch(X->Def.iCalcType){
   case Lanczos:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
+    TimeKeeper(X, cFileNameTimeKeep, cExpecEnd, "a");
     break;
-  default:
+  case TPQCalc:
+#ifdef _DEBUG
+      fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
+      TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecEnd, "a", step_i);
+#endif
+    break;
+      default:
     break;
   }
   
-  TimeKeeperWithStep(X, cFileNameTimeKeep, cExpecEnd, "a", step_i);
-  
+
   return 0;
 }

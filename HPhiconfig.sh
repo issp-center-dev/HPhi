@@ -10,6 +10,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "       intel : Intel compiler + Linux PC"
     echo " mpicc-intel : Intel compiler + Linux PC + mpicc"
     echo "         gcc : GCC + Linux"
+    echo "   mpicc-gcc : GCC + Linux + mpicc"
     echo "     gcc-mac : GCC + Mac"
     echo "      manual : Manual configuration. See below."
     echo ""
@@ -26,7 +27,7 @@ else
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI -g -traceback
+FLAGS = -qopenmp -O3 -xHOST -mcmodel=large -shared-intel -D MPI -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v

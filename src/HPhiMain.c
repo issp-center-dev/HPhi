@@ -117,7 +117,7 @@ int main(int argc, char* argv[]){
 
   setmem_HEAD(&X.Bind);
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def), &(X.Bind.Boost))!=0){
-    fprintf(stderr, "%s", cErrDefFile);
+    fprintf(stdoutMPI, "%s", cErrDefFile);
     FinalizeMPI();
     return -1;
   }
@@ -214,7 +214,7 @@ int main(int argc, char* argv[]){
   default:
     FinalizeMPI();
     return 0;
-  }
+  }  
 
   FinalizeMPI();
   return 0;

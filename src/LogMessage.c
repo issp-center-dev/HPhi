@@ -35,7 +35,8 @@ const char* cReadSzEnd  ="READ=1: read finishes: %s";
 //CG_EigenVector.c
 const char* cLogCG_EigenVecStart="  Start: Calculate EigenVector by CG method.\n";
 const char* cLogCG_EigenVecEnd="  End  : Calculate EigenVector by CG method.\n";
-const char* cCG_EigenVecFinish="CG Eigenvector finishes: %s";
+const char* cCG_EigenVecStart= "CG Eigenvector starts:        %s";
+const char* cCG_EigenVecFinish="CG Eigenvector finishes:      %s";
 
 //diagonalcalc.c
 const char* cDiagonalCalcFinish="diagonal calculation finishes: %s";
@@ -61,18 +62,22 @@ const char* cTPQStepEnd="step %d:TPQ finishes: %s";
 //Lanczos_EigenValue.c
 const char* cLogLanczos_EigenValueNotConverged="Lanczos Eigenvalue is not converged in this process.";
 
-const char* cLanczos_EigenValueStart="Lanczos Eigen Value start: %s";
+const char* cLanczos_EigenValueStart=  "Lanczos Eigen Value start:    %s";
 const char* cLanczos_EigenValueStep="%3d th Lanczos step: %s";
-const char* cLanczos_EigenValueFinish= "Lanczos Eigenvalue finishes: %s";
+const char* cLanczos_EigenValueFinish= "Lanczos Eigenvalue finishes:  %s";
 
 //Lanczos_EigenVector.c
 const char* cLogLanczos_EigenVectorStart="  Start: Calculate Lanczos Eigenvector.\n";
 const char* cLogLanczos_EigenVectorEnd="  End  : Calculate Lanczos Eigenvector.\n";
+const char* cLanczos_EigenVectorStart= "Lanczos Eigenvector starts:   %s";
 const char* cLanczos_EigenVectorFinish="Lanczos Eigenvector finishes: %s";
 
 //expec.c
-const char* cExpecStart="step %d:TPQ multiply begins:     %s";
-const char* cExpecEnd  ="step %d:TPQ multiply finishes:   %s";
+const char* cExpecStart="Calculate energy begins:      %s";
+const char* cExpecEnd  ="Calculate energy finishes:    %s";
+const char* cTPQExpecStart="step %d: Calculate energy begins:      %s";
+const char* cTPQExpecEnd  ="step %d: Calculate energy finishes:    %s";
+
 
 //expec_cisajs.c
 const char* cLogLanczosExpecOneBodyGStart="  Start: Calculate one body Green functions.\n";
@@ -81,16 +86,20 @@ const char* cLogLanczosExpecOneBodyGEnd="  End  : Calculate one body Green funct
 const char* cLogCGExpecOneBodyGEnd="  End  : Calculate one body Green functions.\n\n";
 
 const char* cLanczosExpecOneBodyGFinish ="Lanczos expec_cisajs finishes: %s";
+const char* cLanczosExpecOneBodyGStart="Lanczos expec_cisajs Starts: %s";
 const char* cTPQExpecOneBodyGStart = "set %d step %d:expec_cisajs begins: %s";
 const char* cTPQExpecOneBodyGFinish = "set %d step %d:expec_cisajs finishes: %s";
-const char* cExpecOneBodyGFinish= "CG expec_cisajs finishes: %s";
+const char* cCGExpecOneBodyGStart= "CG expec_cisajs starts:       %s";
+const char* cCGExpecOneBodyGFinish="CG expec_cisajs finishes:     %s";
 
 //expec_cisajucktaltdc.c
 const char*  cLogLanczosExpecTwoBodyGStart="  Start: Calculate two bodies Green functions.\n";
 const char*  cLogLanczosExpecTwoBodyGFinish= "  End  : Calculate two bodies Green functions.\n";
 const char*  cLogCGExpecTwoBodyGFinish= "  End  : Calculate two bodies Green functions.\n\n";
+const char*  cLanczosExpecTwoBodyGStart= "Lanczos expec_cisajacktalt finishes: %s";
 const char*  cLanczosExpecTwoBodyGFinish= "Lanczos expec_cisajacktalt finishes: %s";
-const char*  cCGExpecTwoBodyGFinish= "CG expec_cisajacktalt begins: %s";
+const char*  cCGExpecTwoBodyGStart= "CG expec_cisajacktalt begins: %s";
+const char*  cCGExpecTwoBodyGFinish= "CG expec_cisajacktalt finishes: %s";
 const char*  cTPQExpecTwoBodyGStart = "set %d step %d:expec_cisajscktaltdc finishes: %s";
 const char*  cTPQExpecTwoBodyGFinish = "set %d step %d:expec_cisajscktaltdc finishes: %s";
 
