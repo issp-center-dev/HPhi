@@ -74,7 +74,7 @@ int CalcSpectrumByLanczos(
     if(X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents || X->Bind.Def.iFlgRecalcSpec ==RECALC_FROM_TMComponents_VEC){
         iret=ReadTMComponents(X, alpha, beta, &dnorm, &i_max);
         if(!iret ==TRUE){
-            fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n")
+            fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
         }
 
@@ -83,11 +83,12 @@ int CalcSpectrumByLanczos(
         }
     }
 
-    if (X->Bind.Def.iFlgRecalcSpec == RECALC_NOT || X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents_VEC) {
-        // calculate ai, bi
-        // Functions in Lanczos_EigenValue
+    // calculate ai, bi
+    if (X->Bind.Def.iFlgRecalcSpec == RECALC_NOT ||
+            X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents_VEC) {
         fprintf(stdoutMPI, "    Start: Calculate tridiagonal matrix components.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalStart, "a");
+        // Functions in Lanczos_EigenValue
         iret = Lanczos_GetTridiagonalMatrixComponents(&(X->Bind), alpha, beta, tmp_v1, &(liLanczosStp));
         if (iret != TRUE) {
             //Error Message will be added.

@@ -360,7 +360,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
  sprintf(sdt, cFileNameLanczosStep, X->Def.CDataFileHead);  
   
   /*
-    Set Maximum number of loop to the dimention of the Wavefunction
+    Set Maximum number of loop to the dimension of the Wavefunction
   */
  i_max_tmp = SumMPI_li(i_max);
  if(i_max_tmp < *liLanczos_step){

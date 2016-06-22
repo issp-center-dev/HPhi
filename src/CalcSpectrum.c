@@ -178,6 +178,19 @@ int CalcSpectrum(
       //Error Message will be added.
       return FALSE;
     }
+
+     if(X->Bind.Def.iFlgRecalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
+             X->Bind.Def.iFlgRecalcSpec==RECALC_INOUT_TMComponents_VEC){
+            sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, myrank);
+            if(childfopenALL(sdt, "wb", &fp)!=0){
+              exitMPI(-1);
+            }
+            fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
+            fwrite(v0, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+            fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+            fclose(fp);
+     }
+
     break;
 
   case SpectrumFD:
