@@ -355,7 +355,8 @@ int Lanczos_GetTridiagonalMatrixComponents(
  double complex cbeta1;
  double complex *tmp_v0;
  c_malloc1(tmp_v0, i_max);
- 
+ stp=1;
+
  sprintf(sdt, cFileNameLanczosStep, X->Def.CDataFileHead);  
   
   /*
@@ -374,9 +375,10 @@ int Lanczos_GetTridiagonalMatrixComponents(
     v0[i]=0.0;
   }  
 
-  TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
   mltply(X, v0, tmp_v1);
-  stp=1;
+  TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
+
+    stp=1;
   alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
   alpha[1]=alpha1;
   cbeta1=0.0;
@@ -405,7 +407,8 @@ int Lanczos_GetTridiagonalMatrixComponents(
       }
 
       mltply(X, v0, v1);
-      
+      TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
+
       alpha1=creal(X->Large.prdct);
       alpha[stp]=alpha1;
       cbeta1=0.0;

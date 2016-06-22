@@ -284,8 +284,8 @@ int GetSingleExcitedState
   switch(X->Def.iCalcModel){
   case HubbardGC:
     // SingleEx  
-    fprintf(stdoutMPI, "SingleOperation in GetSingleExcitedState Re= %lf ; Im= %lf.\n",
-    creal(X->Def.ParaSingleExcitationOperator[0]),cimag(X->Def.ParaSingleExcitationOperator[0]));
+    //fprintf(stdoutMPI, "SingleOperation in GetSingleExcitedState Re= %lf ; Im= %lf.\n",
+    //creal(X->Def.ParaSingleExcitationOperator[0]),cimag(X->Def.ParaSingleExcitationOperator[0]));
     // X->Def.NSingleExcitationOperator 
     // X->Def.SingleExcitationOperator[0][0]
     // X->Def.ParaSingleExcitationOperator[0]

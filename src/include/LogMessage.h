@@ -42,6 +42,20 @@ const char* cCG_EigenVecFinish;
 //diagonalcalc.c
 const char* cDiagonalCalcFinish;
 
+//calcspectrum.c
+const char* c_InputEigenVectorStart;
+const char* c_InputEigenVectorEnd;
+const char* c_CalcExcitedStateStart;
+const char* c_CalcExcitedStateEnd;
+const char* c_CalcSpectrumStart;
+const char* c_CalcSpectrumEnd;
+const char* c_GetTridiagonalStart;
+const char* c_GetTridiagonalEnd;
+const char* c_CalcSpectrumFromTridiagonalStart;
+const char* c_CalcSpectrumFromTridiagonalEnd;
+//calcspectrum in Lanczos_Eigenvalue.c
+const char* c_Lanczos_SpectrumStep;
+
 
 //FirstMultiply.c, Multiply.c
 const char* cTPQStep;
