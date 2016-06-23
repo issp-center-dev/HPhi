@@ -45,6 +45,7 @@ struct DefineList{
   int  Ne;    /**< */
   int  Nsize;    /**< */
   int Lanczos_max;    /**< */
+    int Lanczos_restart;
   long int initial_iv;    /**< */
   
   int istep;    /**< */
@@ -181,6 +182,9 @@ struct DefineList{
   int iFlgSpecOmegaMax;
   int iFlgSpecOmegaMin;
   int iFlgSpecOmegaIm;
+  int iFlgRecalcSpec;
+  /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
+
   //[e] For Spectrum
   
 };

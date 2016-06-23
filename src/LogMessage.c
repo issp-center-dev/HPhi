@@ -52,6 +52,11 @@ const char* c_GetTridiagonalStart= "Caclulating tridiagonal matrix components st
 const char* c_GetTridiagonalEnd= "Caclulating tridiagonal matrix components finishes: %s";
 const char* c_CalcSpectrumFromTridiagonalStart="Caclulating spectrum from tridiagonal matrix components starts: %s";
 const char* c_CalcSpectrumFromTridiagonalEnd="Caclulating spectrum from tridiagonal matrix components finishes: %s";
+const char* c_OutputSpectrumRecalcvecStart="Output vectors for recalculation starts: %s";
+const char* c_OutputSpectrumRecalcvecEnd="Output vectors for recalculation finishes: %s";
+const char* c_InputSpectrumRecalcvecStart="Input vectors for recalculation starts: %s";
+const char* c_InputSpectrumRecalcvecEnd="Input vectors for recalculation finishes: %s";
+
 //calcspectrum in Lanczos_Eigenvalue.c
 const char* c_Lanczos_SpectrumStep="%3d th Lanczos step for calculating spectrum: %s";
 

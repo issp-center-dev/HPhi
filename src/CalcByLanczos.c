@@ -156,7 +156,7 @@ int CalcByLanczos(
       expec_energy(&(X->Bind));
     }
   }
-  else{// X->Bind.Def.iInputEigenVec=false :input v1:
+  else{// X->Bind.Def.iInputEigenVec=true :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
     childfopenALL(sdt, "rb", &fp);

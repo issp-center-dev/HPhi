@@ -66,5 +66,9 @@ const char* cFileName1BGreen_FullDiag="%s_cisajs_eigen%d.dat";
 const char* cFileName2BGreen_FullDiag="%s_cisajscktalt_eigen%d.dat";
 const char* cFileNamePhys_FullDiag_Ham="%s_Ham.dat";
 
+//For Spectrum
+const char* cFileNameOutputRestartVec="%s_recalcvec_rank_%d.dat";
+
+
 //For Error
 const char* cFileNameErrorSz="Err_sz.dat";
