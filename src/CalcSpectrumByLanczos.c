@@ -66,7 +66,7 @@ int CalcSpectrumByLanczos(
     char sdt[D_FileNameMax];
     unsigned long int i, i_max;
     FILE *fp;
-    int iret = TRUE;
+    int iret;
     unsigned long int liLanczosStp = X->Bind.Def.Lanczos_max;
 
     if(X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents_VEC ||
@@ -240,18 +240,17 @@ int ReadTMComponents(
     sscanf(ctmp,"%ld \n", &i_max);
     if(X->Bind.Def.iFlgRecalcSpec == RECALC_INOUT_TMComponents_VEC||
        X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents_VEC) {
-        d_malloc1(alpha, (i_max + X->Bind.Def.Lanczos_max + 1));
-        d_malloc1(beta, (i_max + X->Bind.Def.Lanczos_max + 1));
+        alpha=(double*)realloc(alpha, sizeof(double)*(i_max + X->Bind.Def.Lanczos_max + 1));
+        beta=(double*)realloc(beta, sizeof(double)*(i_max + X->Bind.Def.Lanczos_max + 1));
     }
     else if(X->Bind.Def.iFlgRecalcSpec==RECALC_FROM_TMComponents){
-        d_malloc1(alpha, (i_max + 1));
-        d_malloc1(beta, (i_max +1));
+        alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
+        beta=(double*)realloc(beta, sizeof(double)*(i_max + 1));
     }
     fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
     sscanf(ctmp,"%lf \n", &dnorm);
     while(fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp) != NULL){
         sscanf(ctmp,"%lf %lf \n", &alpha[idx], &beta[idx]);
-        fprintf(stdoutMPI, "%ld %lf %lf \n", idx, alpha[idx], beta[idx]);
         idx++;
     }
     fclose(fp);
