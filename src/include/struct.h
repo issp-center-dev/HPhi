@@ -45,6 +45,7 @@ struct DefineList{
   int  Ne;    /**< */
   int  Nsize;    /**< */
   int Lanczos_max;    /**< */
+    int Lanczos_restart;
   long int initial_iv;    /**< */
   
   int istep;    /**< */

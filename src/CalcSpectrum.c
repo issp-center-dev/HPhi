@@ -124,13 +124,12 @@ int CalcSpectrum(
     childfopenALL(sdt, "rb", &fp);
     if (fp == NULL) {
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-      exitMPI(-1);
+      return -1;
     }
     fread(&i_max, sizeof(i_max), 1, fp);
     if (i_max != X->Bind.Check.idim_max) {
       fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-      //exitMPI(-1);
       return -1;
     }
     fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
@@ -161,11 +160,6 @@ int CalcSpectrum(
     fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
   }
-  else {//X->Bind.Def.iFlgRecalcSpec ==   RECALC_FROM_TMComponents_VEC
-    //read recalculation vectors
-    //TODO: Input restart procedure
-  }
-
 
   int iret=TRUE;
   fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
@@ -173,33 +167,14 @@ int CalcSpectrum(
   switch (X->Bind.Def.iCalcType) {
 
   case Spectrum:
+
     iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
     if (iret != TRUE) {
       //Error Message will be added.
       return FALSE;
     }
 
-     //output vectors for recalculation
-     if(X->Bind.Def.iFlgRecalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
-             X->Bind.Def.iFlgRecalcSpec==RECALC_INOUT_TMComponents_VEC){
-       fprintf(stdoutMPI, "  Start: Output vectors for recalculation.\n");
-       TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecStart, "a");
-
-       sprintf(sdt, cFileNameOutputRestartVec, X->Bind.Def.CDataFileHead, myrank);
-            if(childfopenALL(sdt, "wb", &fp)!=0){
-              exitMPI(-1);
-            }
-            fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
-            fwrite(v0, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
-            fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
-            fclose(fp);
-
-       fprintf(stdoutMPI, "  End:   Output vectors for recalculation.\n");
-       TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
-     }
-
-
-    break;
+    break;//Lanczos Spectrum
 
   case SpectrumFD:
     iret = CalcSpectrumByFullDiag(X, Nomega,dcSpectrum,dcomega);

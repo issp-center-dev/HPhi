@@ -370,27 +370,34 @@ int Lanczos_GetTridiagonalMatrixComponents(
     *liLanczos_step = i_max_tmp;
   }
 
+    if(X->Def.Lanczos_restart==0) {
 #pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
-  for(i = 1; i <= i_max; i++){
-    v0[i]=0.0;
-  }  
-  stp=1;
-  mltply(X, v0, tmp_v1);
-  TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
-  alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
-  alpha[1]=alpha1;
-  cbeta1=0.0;
-  
+        for (i = 1; i <= i_max; i++) {
+            v0[i] = 0.0;
+        }
+        stp = 1;
+        mltply(X, v0, tmp_v1);
+        TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
+        alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
+        alpha[1] = alpha1;
+        cbeta1 = 0.0;
+
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
-  for(i = 1; i <= i_max; i++){
-    cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
-  }
-  cbeta1 = SumMPI_dc(cbeta1);
-  beta1=creal(cbeta1);
-  beta1=sqrt(beta1);
-  beta[1]=beta1;
-  
-  for(stp = 2; stp <= *liLanczos_step; stp++){
+        for (i = 1; i <= i_max; i++) {
+            cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+        }
+        cbeta1 = SumMPI_dc(cbeta1);
+        beta1 = creal(cbeta1);
+        beta1 = sqrt(beta1);
+        beta[1] = beta1;
+        X->Def.Lanczos_restart =1;
+    }
+else{
+        alpha1=alpha[X->Def.Lanczos_restart];
+        beta1=beta[X->Def.Lanczos_restart];
+    }
+//  for(stp = 2; stp <= *liLanczos_step; stp++){
+    for(stp = X->Def.Lanczos_restart+1; stp <= *liLanczos_step; stp++){
       if(fabs(beta[stp-1])<pow(10.0, -14)){
           *liLanczos_step=stp-1;
           break;
@@ -417,13 +424,13 @@ int Lanczos_GetTridiagonalMatrixComponents(
       cbeta1 = SumMPI_dc(cbeta1);
       beta1=creal(cbeta1);
       beta1=sqrt(beta1);
-      beta[stp]=beta1;                    
+      beta[stp]=beta1;
   }
-  
+  /*
   for(stp = 1; stp <= *liLanczos_step; stp++) {
     _alpha[stp] = alpha[stp];
     _beta[stp]=beta[stp];
-  }
+  }*/
   
   return TRUE;
 }
