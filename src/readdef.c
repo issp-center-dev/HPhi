@@ -624,7 +624,7 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
 
       break;
-      
+
     case KWSingleExcitation:
       /* Read singleexcitation.def----------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
