@@ -120,6 +120,7 @@ int CalcSpectrumByLanczos(
 
     // calculate ai, bi
     if (X->Bind.Def.iFlgRecalcSpec == RECALC_NOT ||
+        X->Bind.Def.iFlgRecalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
         X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents_VEC ||
         X->Bind.Def.iFlgRecalcSpec == RECALC_INOUT_TMComponents_VEC
         )
@@ -263,7 +264,9 @@ int ReadTMComponents(
     fclose(fp);
     *_dnorm=dnorm;
     *_i_max=i_max;
+    return TRUE;
 }
+
 
 int OutputTMComponents(
         struct EDMainCalStruct *X,
