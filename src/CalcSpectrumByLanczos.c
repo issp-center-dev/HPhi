@@ -68,6 +68,7 @@ int CalcSpectrumByLanczos(
     FILE *fp;
     int iret;
     unsigned long int liLanczosStp = X->Bind.Def.Lanczos_max;
+    unsigned long int liLanczosStp_vec=0;
 
     if(X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents_VEC ||
        X->Bind.Def.iFlgRecalcSpec == RECALC_INOUT_TMComponents_VEC) {
@@ -78,6 +79,7 @@ int CalcSpectrumByLanczos(
         if (childfopenALL(sdt, "rb", &fp) != 0) {
             exitMPI(-1);
         }
+        fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
         fread(&i_max, sizeof(long int), 1, fp);
         if(i_max != X->Bind.Check.idim_max){
             fprintf(stderr, "Error: A size of Inputvector is incorrect.\n");
@@ -95,20 +97,24 @@ int CalcSpectrumByLanczos(
        X->Bind.Def.iFlgRecalcSpec ==RECALC_FROM_TMComponents_VEC||
        X->Bind.Def.iFlgRecalcSpec == RECALC_INOUT_TMComponents_VEC)
     {
-        iret=ReadTMComponents(X, &dnorm, &i_max);
+        iret=ReadTMComponents(X, &dnorm, &liLanczosStp);
         if(!iret ==TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
         }
 
         if(X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents){
-            liLanczosStp=i_max;
             X->Bind.Def.Lanczos_restart=0;
         }
         else if(X->Bind.Def.iFlgRecalcSpec == RECALC_INOUT_TMComponents_VEC||
                 X->Bind.Def.iFlgRecalcSpec == RECALC_FROM_TMComponents_VEC){
-            liLanczosStp=i_max+X->Bind.Def.Lanczos_max;
-            X->Bind.Def.Lanczos_restart=i_max;
+            if(liLanczosStp_vec !=liLanczosStp){
+                fprintf(stdoutMPI, "  Error: Input files for vector and TMcomponents are incoorect.\n");
+                fprintf(stdoutMPI, "  Error: Input vector %ld th stps, TMcomponents  %ld th stps.\n", liLanczosStp_vec, liLanczosStp);
+                return FALSE;
+            }
+            X->Bind.Def.Lanczos_restart=liLanczosStp;
+            liLanczosStp = liLanczosStp+X->Bind.Def.Lanczos_max;
         }
     }
 
@@ -156,6 +162,7 @@ int CalcSpectrumByLanczos(
         if(childfopenALL(sdt, "wb", &fp)!=0){
             exitMPI(-1);
         }
+        fwrite(&liLanczosStp, sizeof(liLanczosStp),1,fp);
         fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
         fwrite(v0, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
         fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
