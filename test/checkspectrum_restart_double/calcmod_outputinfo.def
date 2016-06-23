@@ -9,3 +9,4 @@ CalcModel   3
 OutputMode   1
 OutputEigenVec 0
 InputEigenVec 1
+RecalcSpec 2

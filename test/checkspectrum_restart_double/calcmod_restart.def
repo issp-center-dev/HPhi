@@ -6,5 +6,4 @@ FlgFiniteTemperature   0
 CalcModel   3
 OutputMode   1
 OutputEigenVec 0
-InputEigenVec 1
-Recalcspec 1
+RecalcSpec 4
