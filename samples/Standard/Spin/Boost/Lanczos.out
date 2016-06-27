@@ -1,4 +1,3 @@
-                                                                
       ,ammmmmmmmmmmmmmb,,        Welcome to the                 
     ,@@` dm          mb  ===m                                    
   ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
@@ -10,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.1                    
+           9@P~~~9@P             Version 1.1.1                  
                                                                 
 
 
@@ -22,13 +21,12 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile StdFace.def 
+  Open Standard-Mode Inputfile StdFace2.def 
 
+  KEYWORD : method               | VALUE : lanczos 
   KEYWORD : w                    | VALUE : 3 
   KEYWORD : l                    | VALUE : 3 
   KEYWORD : model                | VALUE : spingcboost 
-  KEYWORD : method               | VALUE : lanczos 
-  Skipping a line.
   KEYWORD : lattice              | VALUE : honeycomblattice 
   KEYWORD : j0x                  | VALUE : -1.0 
   KEYWORD : j0y                  | VALUE : 0.0 
@@ -255,10 +253,10 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   End  : Calculate Energy.
 
   Accuracy check !!!
-  LanczosEnergy = -3.57287565553229e+00 
-  EnergyByVec   = -3.57283390403144e+00 
-  diff_ene      = 1.16856853885182e-05 
-  var           = 1.32266206357719e-05 
+  LanczosEnergy = -3.57287565553230e+00 
+  EnergyByVec   = -3.57283390403113e+00 
+  diff_ene      = 1.16856854797504e-05 
+  var           = 1.32266207827993e-05 
   Accuracy of Lanczos vectors is NOT enough
 
   Start: Calculate EigenVector by CG method.
@@ -267,10 +265,10 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   End  : Calculate Energy.
 
   CG Accuracy check !!!
-  LanczosEnergy = -3.57287565553229e+00
+  LanczosEnergy = -3.57287565553230e+00
   EnergyByVec   = -3.57287565553229e+00
-  diff_ene      = 1.74012463273778e-15
-  var           = 5.06620059455480e-16 
+  diff_ene      = 1.36724078286539e-15
+  var           = 2.28312883706630e-16 
  
 
 ######  End  : Calculate Lanczos EigenVec.  ######
