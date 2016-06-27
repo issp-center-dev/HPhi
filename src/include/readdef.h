@@ -17,7 +17,6 @@
 #include "xsetmem.h"
 #define D_FileNameMaxReadDef 256 /*!<  Max length of words for file name*/
 #define D_CharTmpReadDef     200 /*!<  Max length of reading words from input files*/
-#define D_iKWNumDef 15 /*!<  Max number of keyword set in def file*/
 #define D_CharKWDMAX     200 /*!<  Max length of words for keyword*/
 
 /*!< Number of ignore lines in def files */
@@ -46,6 +45,8 @@
 #define KWPairLift 12
 #define KWIsing 13
 #define KWBoost 14
+#define KWSingleExcitation 15
+#define KWPairExcitation 16
 
 int CheckSite(
 	      const int iListToSite,

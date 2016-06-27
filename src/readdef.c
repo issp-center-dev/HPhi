@@ -41,7 +41,8 @@
 /**
  * Keyword List in NameListFile.
  **/
-static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
+
+static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "CalcMod",
   "ModPara",
   "LocSpin",
@@ -56,14 +57,17 @@ static char cKWListOfFileNameList[D_iKWNumDef][D_CharTmpReadDef]={
   "TwoBodyG",
   "PairLift",
   "Ising",
-  "Boost"
+  "Boost",
+  "SingleExcitation",
+  "PairExcitation"
 };
+
+int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
 
 /**
  * File Name List in NameListFile.
  **/
-static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
-
+static char (*cFileNameListFile)[D_CharTmpReadDef];
 
 /**
  * @brief Error Function of reading def files.
@@ -75,7 +79,7 @@ static char cFileNameListFile[D_iKWNumDef][D_CharTmpReadDef];
 int ReadDefFileError(
                      const	char *defname
                      ){
-  fprintf(stderr, cErrReadDefFile, defname);
+  fprintf(stdoutMPI, cErrReadDefFile, defname);
   return (-1);
 }
 
@@ -91,13 +95,13 @@ int ReadDefFileError(
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  **/
 int ValidateValue(
-                  const int icheckValue, 
+                  const int icheckValue,
                   const int ilowestValue, 
                   const int iHighestValue
                   ){
 
   if(icheckValue < ilowestValue || icheckValue > iHighestValue){
-    exitMPI(-1);
+    return(-1);
   }
   return 0;
 }
@@ -167,14 +171,14 @@ int GetKWWithIdx(
   *itmp = strtol(ctmpRead, &cerror, 0);
   //if ctmpRead is not integer type
   if(*cerror != '\0'){
-    fprintf(stderr, cErrDefFileFormat, cerror);
-    exitMPI(-1);
+    fprintf(stdoutMPI, cErrDefFileFormat, cerror);
+    return(-1);
   }
 
   ctmpRead = strtok( NULL, csplit );
   if(ctmpRead != NULL){
-    fprintf(stderr, cErrDefFileFormat, ctmpRead);
-    exitMPI(-1);
+    fprintf(stdoutMPI, cErrDefFileFormat, ctmpRead);
+    return(-1);
   }
     
   return 0;
@@ -208,7 +212,6 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
-
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -216,7 +219,7 @@ int ReadcalcmodFile(
   while( fgetsMPI(ctmpLine, D_CharTmpReadDef+D_CharKWDMAX, fp)!=NULL ){
     if( (iret=GetKWWithIdx(ctmpLine, ctmp, &itmp)) !=0){
       if(iret==1) continue;
-      exitMPI(-1);
+      return(-1);
     }   
     if(CheckWords(ctmp, "CalcType")==0){
       X->iCalcType=itmp;
@@ -242,51 +245,51 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "InputEigenVec")==0 || CheckWords(ctmp, "IEV")==0){
       X->iInputEigenVec=itmp;
     }
-    else if(strcmp(ctmp, "OutputHam")==0){
+    else if(CheckWords(ctmp, "OutputHam")==0){
       X->iOutputHam=itmp;
     }
     else{
-      fprintf(stderr, cErrDefFileParam, defname, ctmp);
-      exitMPI(-1);
+      fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);
+      return(-1);
     }
   }
   fclose(fp);
     
   /* Check values*/
   if(ValidateValue(X->iCalcModel, 0, NUM_CALCMODEL-1)){
-    fprintf(stderr, cErrCalcType, defname);
+    fprintf(stdoutMPI, cErrCalcType, defname);
     return (-1);
   }
   if(ValidateValue(X->iCalcType, 0, NUM_CALCTYPE-1)){
-    fprintf(stderr, cErrCalcType, defname);
+    fprintf(stdoutMPI, cErrCalcType, defname);
     return (-1);
   }
   if(ValidateValue(X->iOutputMode, 0, NUM_OUTPUTMODE-1)){
-    fprintf(stderr, cErrOutputMode, defname);
+    fprintf(stdoutMPI, cErrOutputMode, defname);
     return (-1);
   }
   if(ValidateValue(X->iCalcEigenVec, -1, NUM_CALCEIGENVEC-1)){
-    fprintf(stderr, cErrCalcEigenVec, defname);
+    fprintf(stdoutMPI, cErrCalcEigenVec, defname);
     return (-1);
   }
   if(ValidateValue(X->iInitialVecType, 0, NUM_SETINITAILVEC-1)){
-    fprintf(stderr, cErrSetIniVec, defname);
+    fprintf(stdoutMPI, cErrSetIniVec, defname);
     return (-1);
   }
 
   if(ValidateValue(X->iOutputHam, 0, NUM_OUTPUTHAM-1)){
-    fprintf(stderr, cErrOutputHam, defname);
+    fprintf(stdoutMPI, cErrOutputHam, defname);
     return (-1);
   }
 
   /* In the case of Full Diagonalization method(iCalcType=2)*/
   if(X->iCalcType==2 && ValidateValue(X->iFlgFiniteTemperature, 0, 1)){
-    fprintf(stderr, cErrFiniteTemp, defname);
+    fprintf(stdoutMPI, cErrFiniteTemp, defname);
     return (-1);
   }
 
   if(X->iCalcType !=2 && X->iOutputHam ==TRUE) {
-    fprintf(stderr, cErrOutputHamForFullDiag, defname);
+    fprintf(stdoutMPI, cErrOutputHamForFullDiag, defname);
     return (-1);
   }
 
@@ -327,25 +330,25 @@ int GetFileName(
       continue;
     }
     else if(strcmp(ctmpKW, "")*strcmp(ctmpFileName, "")==0){
-      fprintf(stderr, cErrKW_InCorPair, cFileListNameFile);
+      fprintf(stdoutMPI, cErrKW_InCorPair, cFileListNameFile);
       fclose(fplist);
-      exitMPI(-1);
+      return(-1);
     }
     /*!< Check KW */
     if( CheckKW(ctmpKW, cKWListOfFileNameList, D_iKWNumDef, &itmpKWidx)!=0 ){
       fprintf(stdoutMPI, cErrKW, ctmpKW, cFileListNameFile);
       fprintf(stdoutMPI, "%s", cErrKW_ShowList);
       for(i=0; i<D_iKWNumDef;i++){
-	    fprintf(stderr, "%s \n", cKWListOfFileNameList[i]);
+	    fprintf(stdoutMPI, "%s \n", cKWListOfFileNameList[i]);
       }
       fclose(fplist);
-      exitMPI(-1);
+      return(-1);
     }
     /*!< Check cFileNameList to prevent from double registering the file name */
     if(strcmp(cFileNameList[itmpKWidx], "") !=0){
-      fprintf(stderr, cErrKW_Same, cFileListNameFile);
+      fprintf(stdoutMPI, cErrKW_Same, cFileListNameFile);
       fclose(fplist);
-      exitMPI(-1);
+      return(-1);
     }
 
     /*!< Copy FileName */
@@ -380,10 +383,11 @@ int ReadDefFileNInt(
   int iReadNCond=FALSE;
   xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
-  
+  cFileNameListFile = malloc(sizeof(char)*D_CharTmpReadDef*D_iKWNumDef);
+
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
-    exitMPI(-1);
+    return(-1);
   }
 
   /*=======================================================================*/
@@ -399,8 +403,8 @@ int ReadDefFileNInt(
       case KWCalcMod:
       case KWModPara:
       case KWLocSpin:
-        fprintf(stderr, cErrMakeDef, cKWListOfFileNameList[iKWidx]);
-        exitMPI(-1);
+        fprintf(stdoutMPI, cErrMakeDef, cKWListOfFileNameList[iKWidx]);
+        return(-1);
         break;
       default:
         break;
@@ -440,12 +444,12 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
 
-      double dtmp;      
-
+      double dtmp;
+      
       X->read_hacker=0;
       while(fgetsMPI(ctmp2, 256, fp)!=NULL){
         if(*ctmp2 == '\n') continue;
-        sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);      //9
+        sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);
         if(CheckWords(ctmp, "Nsite")==0){
           X->Nsite= (int)dtmp;
         }
@@ -493,9 +497,9 @@ int ReadDefFileNInt(
         }	
         else if(CheckWords(ctmp, "CalcHS")==0){
           X->read_hacker=(int)dtmp;
-        }	
+        }
         else{
-          exitMPI(-1);
+          return(-1);
         }
       }
       break;
@@ -595,10 +599,11 @@ int ReadDefFileNInt(
       sscanf(ctmp2,"%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
 
       break;
+
     default:
-      fprintf(stderr, "%s", cErrIncorrectDef);
+      fprintf(stdoutMPI, "%s", cErrIncorrectDef);
       fclose(fp);
-      exitMPI(-1);
+            return(-1);
       break;
     }
     /*=======================================================================*/
@@ -609,15 +614,23 @@ int ReadDefFileNInt(
   switch(X->iCalcModel){
   case Spin:
   case Hubbard:
-  case Kondo:
-    
+  case Kondo: 
+  case SpinlessFermion:
+   
     if(iReadNCond==TRUE){
       if(X->iCalcModel==Spin){
-        fprintf(stderr, "For Spin, Ncond should not be defined.\n");	
-        exitMPI(-1);
+        fprintf(stdoutMPI, "For Spin, Ncond should not be defined.\n");
+        return(-1);
       }
       else{
         if(X->iFlgSzConserved==TRUE){
+          if(X->iCalcModel==SpinlessFermion){
+            fprintf(stdoutMPI, "  Warning: For Spinless fermion, 2Sz should not be defined.\n");
+            X->Ne=X->NCond;  
+            X->Nup=X->NCond;
+            X->Ndown=0;
+            break;
+          }
           X->Nup=X->NLocSpn+X->NCond+X->Total2Sz;
           X->Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
           X->Nup/=2;
@@ -627,22 +640,27 @@ int ReadDefFileNInt(
           if(X->iCalcModel == Hubbard){
             X->Ne=X->NCond;
             if(X->Ne <1){
-              fprintf(stderr, "Ncond is incorrect.\n");
-              exitMPI(-1);
+              fprintf(stdoutMPI, "Ncond is incorrect.\n");
+              return(-1);
             }
             X->iCalcModel=HubbardNConserved;
           }
+          else if(X->iCalcModel ==SpinlessFermion){
+            X->Ne=X->NCond;  
+            X->Nup=X->NCond;
+            X->Ndown=0;
+          }
           else{
-            fprintf(stderr, " 2Sz is not defined.\n");
-            exitMPI(-1);
+            fprintf(stdoutMPI, " 2Sz is not defined.\n");
+            return(-1);
           }
         }
       }
     }
     else if(iReadNCond == FALSE && X->iFlgSzConserved==TRUE){
       if(X->iCalcModel != Spin){
-        fprintf(stderr, " NCond is not defined.\n");
-        exitMPI(-1);
+        fprintf(stdoutMPI, " NCond is not defined.\n");
+        return(-1);
       }
       X->Nup=X->NLocSpn+X->Total2Sz;
       X->Ndown=X->NLocSpn-X->Total2Sz;
@@ -652,12 +670,12 @@ int ReadDefFileNInt(
     else{
       if(X->Nup==0 && X->Ndown==0){
         if(X->iCalcModel == Spin){
-          fprintf(stderr, " 2Sz is not defined.\n");
-          exitMPI(-1);
+          fprintf(stdoutMPI, " 2Sz is not defined.\n");
+          return(-1);
         }
         else{
-          fprintf(stderr, " NCond is not defined.\n");
-          exitMPI(-1);
+          fprintf(stdoutMPI, " NCond is not defined.\n");
+          return(-1);
         }
       }
     }
@@ -670,18 +688,19 @@ int ReadDefFileNInt(
         X->Ne = X->Nup + X->Ndown;
       }
       if(X->NLocSpn>X->Ne){
-        fprintf(stderr, "%s", cErrNLoc);
-        fprintf(stderr, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
-        exitMPI(-1);
+        fprintf(stdoutMPI, "%s", cErrNLoc);
+        fprintf(stdoutMPI, "NLocalSpin=%d, Ne=%d\n", X->NLocSpn, X->Ne);
+        return(-1);
       }
     }
     break;
   case SpinGC:
   case KondoGC:
   case HubbardGC:
+  case SpinlessFermionGC:  
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
       fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
-      //exitMPI(-1);
+      //return(-1);
     }
     break;
   default:
@@ -714,6 +733,7 @@ int ReadDefFileIdxPara(
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
   int i,idx;
+  int itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -746,6 +766,11 @@ int ReadDefFileIdxPara(
     case KWLocSpin:
       /* Read locspn.def----------------------------------------*/
       while( fgetsMPI(ctmp2, 256, fp) != NULL){
+        if(idx==X->Nsite){
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+
         sscanf(ctmp2, "%d %d\n", &(xitmp[0]), &(xitmp[1]) );
         X->LocSpn[xitmp[0]] = xitmp[1];
         X->SiteToBit[xitmp[0]]=(X->LocSpn[xitmp[0]]+1);//2S+1
@@ -754,10 +779,6 @@ int ReadDefFileIdxPara(
           return ReadDefFileError(defname);
         }       
         idx++;
-      }
-      if(idx!=X->Nsite){
-        fclose(fp);
-        return ReadDefFileError(defname);
       }
       if(CheckLocSpin(X)==FALSE){
         fclose(fp);
@@ -772,6 +793,11 @@ int ReadDefFileIdxPara(
         //fprintf(stdoutMPI, "X->NTransfer =%d, X->Nsite= %d.\n", X->NTransfer, X->Nsite);
         while( fgetsMPI(ctmp2, 256, fp) != NULL )
           {
+            if(idx==X->NTransfer){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+
             sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
                    &isite1,
                    &isigma1,
@@ -793,7 +819,7 @@ int ReadDefFileIdxPara(
             if(isite1==isite2 && isigma1==isigma2){
               if(fabs(dvalue_im)> eps_CheckImag0){
                 //NonHermite
-                fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
+                fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
                 fclose(fp);
                 return ReadDefFileError(defname);
               }
@@ -813,28 +839,32 @@ int ReadDefFileIdxPara(
                 }
               }
             }
+            else if(X->iCalcModel==SpinlessFermion || X->iCalcModel==SpinlessFermionGC){
+              if(isigma1 != 0 || isigma2 !=0){
+                //Not allowed
+                fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, dvalue_re, dvalue_im);
+                fclose(fp);
+                return ReadDefFileError(defname);
+              }
+            }
             idx++;
           }
 	
         if(CheckSpinIndexForTrans(X)==FALSE){
           fclose(fp);
-          exitMPI(-1);
+          return(-1);
         }
 
-        if(idx!=X->NTransfer){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
         if(iboolLoc ==1){
           fclose(fp);
-          exitMPI(-1);
+          return(-1);
         }
       }
 
       if(CheckTransferHermite(X) !=0){
-        fprintf(stderr, "%s", cErrNonHermiteTransForAll);
+        fprintf(stdoutMPI, "%s", cErrNonHermiteTransForAll);
         fclose(fp);
-        exitMPI(-1);
+        return(-1);
       }
       
       break;
@@ -843,6 +873,10 @@ int ReadDefFileIdxPara(
       /*coulombintra.def----------------------------------*/
       if(X->NCoulombIntra>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCoulombIntra){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
           sscanf(ctmp2, "%d %lf\n",
                  &(X->CoulombIntra[idx][0]),
                  &(X->ParaCoulombIntra[idx])
@@ -854,10 +888,6 @@ int ReadDefFileIdxPara(
           }
           idx++;
         }
-        if(idx!=X->NCoulombIntra){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -865,6 +895,11 @@ int ReadDefFileIdxPara(
       /*coulombinter.def----------------------------------*/
       if(X->NCoulombInter>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCoulombInter){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %lf\n",
                  &(X->CoulombInter[idx][0]),
                  &(X->CoulombInter[idx][1]),
@@ -878,10 +913,6 @@ int ReadDefFileIdxPara(
 
           idx++;
         }
-        if(idx!=X->NCoulombInter){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -890,6 +921,11 @@ int ReadDefFileIdxPara(
       if(X->NHundCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL)
           {
+            if(idx==X->NHundCoupling){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+
             sscanf(ctmp2, "%d %d %lf\n",
                    &(X->HundCoupling[idx][0]),
                    &(X->HundCoupling[idx][1]),
@@ -903,21 +939,21 @@ int ReadDefFileIdxPara(
 
             idx++;
           }
-        if(idx!=X->NHundCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
     case KWPairHop:
       /*pairhop.def---------------------------------------*/
       if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
-        fprintf(stderr, "PairHop is not active in Spin and SpinGC.\n");
-        exitMPI(-1);
+        fprintf(stdoutMPI, "PairHop is not active in Spin and SpinGC.\n");
+        return(-1);
       }
       
       if(X->NPairHopping>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NPairHopping){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
           sscanf(ctmp2, "%d %d %lf\n",
                  &(X->PairHopping[idx][0]),
                  &(X->PairHopping[idx][1]),
@@ -930,11 +966,6 @@ int ReadDefFileIdxPara(
           }
           idx++;
         }
-	
-        if(idx!=X->NPairHopping){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -942,6 +973,11 @@ int ReadDefFileIdxPara(
       /*exchange.def--------------------------------------*/
       if(X->NExchangeCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL){
+          if(idx==X->NExchangeCoupling){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %lf\n",
                  &(X->ExchangeCoupling[idx][0]),
                  &(X->ExchangeCoupling[idx][1]),
@@ -955,10 +991,6 @@ int ReadDefFileIdxPara(
 
           idx++;
         }
-        if(idx!=X->NExchangeCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
 
@@ -966,6 +998,11 @@ int ReadDefFileIdxPara(
       /*ising.def--------------------------------------*/
       if(X->NIsingCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL){
+          if(idx==X->NIsingCoupling){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %lf\n",
                  &isite1,
                  &isite2,
@@ -987,10 +1024,6 @@ int ReadDefFileIdxPara(
           X->ParaCoulombInter[X->NCoulombInter+idx]=-dvalue_re/4.0;
           idx++;
         }
-        if(idx!=X->NIsingCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
       
@@ -998,11 +1031,16 @@ int ReadDefFileIdxPara(
       /*pairlift.def--------------------------------------*/
       if(X->NPairLiftCoupling>0){
         if(X->iCalcModel != SpinGC){
-          fprintf(stderr, "PairLift is active only in SpinGC.\n");
-          exitMPI(-1);
+          fprintf(stdoutMPI, "PairLift is active only in SpinGC.\n");
+          return(-1);
         }
         while(fgetsMPI(ctmp2,256,fp) != NULL)
           {
+            if(idx==X->NPairLiftCoupling){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+
             sscanf(ctmp2, "%d %d %lf\n",
                    &(X->PairLiftCoupling[idx][0]),
                    &(X->PairLiftCoupling[idx][1]),
@@ -1016,10 +1054,6 @@ int ReadDefFileIdxPara(
 
             idx++;
           }
-        if(idx!=X->NPairLiftCoupling){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
       
@@ -1030,6 +1064,10 @@ int ReadDefFileIdxPara(
       if(X->NInterAll>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL)
           {
+            if(idx==X->NInterAll){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
             sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
                    &isite1,
                    &isigma1,
@@ -1046,9 +1084,17 @@ int ReadDefFileIdxPara(
             if(X->iCalcModel == Spin || X->iCalcModel ==SpinGC){
               if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
                 fclose(fp);
-                exitMPI(-1);
+                return(-1);
               }
             }
+            else if(X->iCalcModel == SpinlessFermion || X->iCalcModel==SpinlessFermionGC){
+              if(isigma1 !=0 || isigma2 != 0 || isigma3 != 0 || isigma4 !=0){
+                fprintf(stderr, "%s", "Error: Spin index of InterAll is incorrect.\n");
+                fclose(fp);
+                return -1;
+              }
+            }
+
             X->InterAll[idx][0]=isite1;
             X->InterAll[idx][1]=isigma1;
             X->InterAll[idx][2]=isite2;
@@ -1065,8 +1111,7 @@ int ReadDefFileIdxPara(
                 icnt_diagonal++;
               }
             }
-            //hund term
-            if(X->InterAll[idx][0] == X->InterAll[idx][6] &&X->InterAll[idx][2] == X->InterAll[idx][4]){
+            else if(X->InterAll[idx][0] == X->InterAll[idx][6] &&X->InterAll[idx][2] == X->InterAll[idx][4]){ //hund term
               if( X->InterAll[idx][1] == X->InterAll[idx][7] &&X->InterAll[idx][3] == X->InterAll[idx][5]){
                 icnt_diagonal++;
               }
@@ -1078,21 +1123,17 @@ int ReadDefFileIdxPara(
             }
             idx++;
           }
-        if(idx!=X->NInterAll){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
 
       if(X->iCalcModel==Kondo){
         if(CheckFormatForKondoInt(X) !=0){
           fclose(fp);
-          exitMPI(-1);
+          return(-1);
         }
       }
       if(CheckSpinIndexForInterAll(X)==FALSE){
         fclose(fp);
-        exitMPI(-1);
+        return(-1);
       }
       
       X->NInterAll_Diagonal=icnt_diagonal;
@@ -1100,13 +1141,13 @@ int ReadDefFileIdxPara(
       
       if(GetDiagonalInterAll(X)!=0){
         fclose(fp);
-        exitMPI(-1);
+        return(-1);
       }
       
       if(CheckInterAllHermite(X)!=0){
-        fprintf(stderr, "%s", cErrNonHermiteInterAllForAll);
+        fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
         fclose(fp);
-        exitMPI(-1);
+        return(-1);
       }      
       
       break;
@@ -1115,6 +1156,10 @@ int ReadDefFileIdxPara(
       /*cisajs.def----------------------------------------*/
       if(X->NCisAjt>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCisAjt){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
           sscanf(ctmp2, "%d %d %d %d\n",
                  &isite1,
                  &isigma1,
@@ -1141,10 +1186,6 @@ int ReadDefFileIdxPara(
 
           idx++;
         }
-        if(idx!=X->NCisAjt){
-          fclose(fp);
-          return ReadDefFileError(defname);
-        }
       }
       break;
       
@@ -1152,6 +1193,11 @@ int ReadDefFileIdxPara(
       /*cisajscktaltdc.def--------------------------------*/
       if(X->NCisAjtCkuAlvDC>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NCisAjtCkuAlvDC){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           sscanf(ctmp2, "%d %d %d %d %d %d %d %d\n",
                  &isite1,
                  &isigma1,
@@ -1185,10 +1231,6 @@ int ReadDefFileIdxPara(
             return ReadDefFileError(defname);
           }
           idx++;
-        }
-        if(idx!=X->NCisAjtCkuAlvDC){
-          fclose(fp);
-          return ReadDefFileError(defname);
         }
       }
       break;
@@ -1292,8 +1334,8 @@ int ReadDefFileIdxPara(
     case KWIsing:
     case KWPairLift:
       if(X->iFlgGeneralSpin==TRUE){
-        fprintf(stderr, cErrIncorrectFormatInter);
-        exitMPI(-1);
+        fprintf(stdoutMPI, cErrIncorrectFormatInter);
+        return(-1);
       }
       break;
     default:
@@ -1321,7 +1363,7 @@ int CheckSite(
               const int iMaxNum
               )
 {
-  if(iSite>=iMaxNum) exitMPI(-1);
+  if(iSite>=iMaxNum) return(-1);
   return 0;
 }
 
@@ -1343,10 +1385,10 @@ int CheckPairSite(
                   )
 {
   if(CheckSite(iSite1, iMaxNum)!=0){
-    exitMPI(-1);
+    return(-1);
   }
   if(CheckSite(iSite2, iMaxNum)!=0){
-    exitMPI(-1);
+    return(-1);
   }
   return 0;
 }
@@ -1373,10 +1415,10 @@ int CheckQuadSite(
                   )
 {
   if(CheckPairSite(iSite1, iSite2, iMaxNum)!=0){
-    exitMPI(-1);
+    return(-1);
   }
   if(CheckPairSite(iSite3, iSite4, iMaxNum)!=0){
-    exitMPI(-1);
+    return(-1);
   }
   return 0;
 }
@@ -1435,8 +1477,8 @@ int CheckTransferHermite
             itmperrsigma2=itmpsigma2;
             dcerrTrans=X->ParaGeneralTransfer[j];
             /*
-              fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
-              fprintf(stderr, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
+              fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
+              fprintf(stdoutMPI, cErrNonHermiteTrans, itmpsite1, itmpsigma1, itmpsite2, itmpsigma2, creal(X->ParaGeneralTransfer[j]), cimag(X->ParaGeneralTransfer[j]));
               exitMPI(-1);
             */
           }
@@ -1444,8 +1486,8 @@ int CheckTransferHermite
             if (icheckHermiteCount == FALSE) {	      
               if(i<=j){
                 if(2*icntHermite >= X->NTransfer){
-                  fprintf(stderr, "Elements of InterAll are incorrect.\n");
-                  exitMPI(-1);
+                  fprintf(stderr, "Elements of Transfers are incorrect.\n");
+                  return(-1);
                 }
                 if(isite1 !=isite2 || isigma1 !=isigma2){
                   for(itmpIdx=0; itmpIdx<4; itmpIdx++){
@@ -1472,9 +1514,9 @@ int CheckTransferHermite
 
     //if counterpart for satisfying hermite conjugate does not exist.
     if(icheckHermiteCount == FALSE){
-      fprintf(stderr, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
-      fprintf(stderr, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
-      exitMPI(-1);
+      fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
+      fprintf(stdoutMPI, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
+      return(-1);
     }
   }
   
@@ -1568,8 +1610,8 @@ int CheckInterAllHermite
               icheckHermiteCount = TRUE; //for not double counting
               if (i <= j) {
                 if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
-                  fprintf(stderr, "Elements of InterAll are incorrect.\n");
-                  exitMPI(-1);
+                  fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+                  return(-1);
                 }
 		
                 for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
@@ -1606,8 +1648,8 @@ int CheckInterAllHermite
               icheckHermiteCount = TRUE; // for not double-counting		    
               if (i <= j) {
                 if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
-                  fprintf(stderr, "Elements of InterAll are incorrect.\n");
-                  exitMPI(-1);
+                  fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+                  return(-1);
                 }
                 for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
                   X->InterAll[2 * icntHermite][itmpIdx] = X->InterAll_OffDiagonal[i][itmpIdx];
@@ -1638,12 +1680,12 @@ int CheckInterAllHermite
   }
   
   if(icntincorrect !=0 ){
-    exitMPI(-1);
+    return(-1);
   }
 
   /* for debug
      if((2*icntHermite) != X->NInterAll_OffDiagonal){  
-     exitMPI(-1);
+     return(-1);
      }
   */
     
@@ -1723,6 +1765,7 @@ int GetDiagonalInterAll
     //Get Off-Diagonal term
     switch(X->iCalcModel){
     case Hubbard:
+    case HubbardNConserved:
     case Kondo:
     case KondoGC:
     case HubbardGC:
@@ -1778,7 +1821,7 @@ int GetDiagonalInterAll
       }      
       break;
     default:
-      exitMPI(-1);
+      return(-1);
       break;
     }
 
@@ -1788,7 +1831,7 @@ int GetDiagonalInterAll
   }
 
   if(iret !=0){
-    exitMPI(-1);
+    return(-1);
   }
 
   
@@ -1836,21 +1879,21 @@ int JudgeDefType
            (CheckWords(argv[1], "-v") == 0
             || CheckWords(argv[1], "--version") == 0)
            ) {
-    fprintf(stderr, "\nHPhi version 1.1 \n\n");
+    fprintf(stdoutMPI, "\nHPhi version 1.1.1 \n\n");
     exit(-1);
   }
   else{
     /*fprintf(stdoutMPI, cErrArgv, argv[1]);*/
-    fprintf(stderr, "\n[Usage] \n");
-    fprintf(stderr, "* Expert mode \n");
-    fprintf(stderr, "   $ HPhi -e {namelist_file} \n");
-    fprintf(stderr, "* Standard mode \n");
-    fprintf(stderr, "   $ HPhi -s {input_file} \n");
-    fprintf(stderr, "* Standard DRY mode \n");
-    fprintf(stderr, "   $ HPhi -sdry {input_file} \n");
-    fprintf(stderr, "   In this mode, Hphi stops after it generats expert input files. \n");
-    fprintf(stderr, "* Print the version \n");
-    fprintf(stderr, "   $ HPhi -v \n\n");
+    fprintf(stdoutMPI, "\n[Usage] \n");
+    fprintf(stdoutMPI, "* Expert mode \n");
+    fprintf(stdoutMPI, "   $ HPhi -e {namelist_file} \n");
+    fprintf(stdoutMPI, "* Standard mode \n");
+    fprintf(stdoutMPI, "   $ HPhi -s {input_file} \n");
+    fprintf(stdoutMPI, "* Standard DRY mode \n");
+    fprintf(stdoutMPI, "   $ HPhi -sdry {input_file} \n");
+    fprintf(stdoutMPI, "   In this mode, Hphi stops after it generats expert input files. \n");
+    fprintf(stdoutMPI, "* Print the version \n");
+    fprintf(stdoutMPI, "   $ HPhi -v \n\n");
     exit(-1);
   }
 
@@ -1882,7 +1925,7 @@ int CheckFormatForSpinInt
     return 0;
   }
 
-  fprintf(stderr, cWarningIncorrectFormatForSpin, site1, site2, site3, site4);
+  fprintf(stdoutMPI, cWarningIncorrectFormatForSpin, site1, site2, site3, site4);
   return(-1);
 
 }
@@ -1923,13 +1966,13 @@ int CheckFormatForKondoInt
     if(X->LocSpn[isite3]!=ITINERANT || X->LocSpn[isite4]!=ITINERANT){
       if(isite3 != isite4){
         iboolLoc=1;
-        fprintf(stderr, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
+        fprintf(stdoutMPI, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
         continue;
       }
     }
   }
   if(iboolLoc==1){
-    exitMPI(-1);
+    return(-1);
   }  
   return 0;
 }
@@ -1985,6 +2028,8 @@ int CheckLocSpin
   case Hubbard:
   case HubbardNConserved:
   case HubbardGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     for(i=0; i<X->Nsite; i++){
       if(X->LocSpn[i]!=ITINERANT){
         return FALSE;
@@ -2098,7 +2143,7 @@ int CheckSpinIndexForInterAll
       isigma4=X->InterAll[i][7];
       if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]
          ||isigma3 > X->LocSpn[isite3] || isigma4 >X->LocSpn[isite4]){
-        fprintf(stderr, "%s", cErrIncorrectSpinIndexForInter);
+        fprintf(stdoutMPI, "%s", cErrIncorrectSpinIndexForInter);
         return FALSE;
       } 
     }
@@ -2131,7 +2176,7 @@ int CheckSpinIndexForTrans
       isite2 =X->GeneralTransfer[i][2];
       isigma2=X->GeneralTransfer[i][3];
       if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]){
-        fprintf(stderr, "%s", cErrIncorrectSpinIndexForTrans);
+        fprintf(stdoutMPI, "%s", cErrIncorrectSpinIndexForTrans);
         return FALSE;
       }
     }
@@ -2159,7 +2204,7 @@ int CheckTotal2Sz
     int tmp_Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
     if(tmp_Nup%2 != 0 && tmp_Ndown%2 !=0){
       printf("Nup=%d, Ndown=%d\n",X->Nup,X->Ndown);
-      fprintf(stderr, "2Sz is incorrect.\n");
+      fprintf(stdoutMPI, "2Sz is incorrect.\n");
       return FALSE;
     }
   }
@@ -2193,7 +2238,6 @@ int CheckWords(
   for(i=0; i<n; i++){
     cKW_small[i]=tolower(cKW_small[i]);
   }
-
   n=strlen(ctmp);
   strncpy(ctmp_small, ctmp, n);
   for(i=0; i<n; i++){

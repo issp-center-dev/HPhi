@@ -30,8 +30,9 @@
 int CG_EigenVector(struct BindStruct *X){
 
   fprintf(stdoutMPI, "%s", cLogCG_EigenVecStart);
-  
-  time_t start,mid;
+  TimeKeeper(X, cFileNameTimeKeep, cCG_EigenVecStart, "a");
+
+    time_t start,mid;
   FILE *fp_0;
   char sdt_1[D_FileNameMax];
   dsfmt_t dsfmt;

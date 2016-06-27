@@ -260,3 +260,20 @@ u_{k} = \langle \psi_{k}|\hat{H}|\psi_{k}\rangle/N_{s}.
 したがって同じ\verb|initial_iv|を用いても、並列数が異なる場合には別の初期波動関数が生成されます。
 
 %----------------------------------------------------------
+
+\section{Bogoliubov表現}\label{sec_bogoliubov_rep}
+
+スピン系の計算において一体項(\verb|transfer|)、\verb|InterAll|形式での相互作用、
+相関関数のインデックスの指定にはBogoliubov表現が使われています。
+スピンの演算子は次のように生成$\cdot$消滅演算子で書き換えられます。
+\begin{align}
+  S_{i z} &= \sum_{\sigma = -S}^{S} \sigma c_{i \sigma}^\dagger c_{i \sigma}
+  \\
+  S_{i}^+ &= \sum_{\sigma = -S}^{S-1} 
+  \sqrt{S(S+1) - \sigma(\sigma+1)} 
+  c_{i \sigma+1}^\dagger c_{i \sigma}
+  \\
+  S_{i}^- &= \sum_{\sigma = -S}^{S-1} 
+  \sqrt{S(S+1) - \sigma(\sigma+1)} 
+  c_{i \sigma}^\dagger c_{i \sigma+1}
+\end{align}
