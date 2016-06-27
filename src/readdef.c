@@ -1111,8 +1111,7 @@ int ReadDefFileIdxPara(
                 icnt_diagonal++;
               }
             }
-            //hund term
-            if(X->InterAll[idx][0] == X->InterAll[idx][6] &&X->InterAll[idx][2] == X->InterAll[idx][4]){
+            else if(X->InterAll[idx][0] == X->InterAll[idx][6] &&X->InterAll[idx][2] == X->InterAll[idx][4]){ //hund term
               if( X->InterAll[idx][1] == X->InterAll[idx][7] &&X->InterAll[idx][3] == X->InterAll[idx][5]){
                 icnt_diagonal++;
               }
