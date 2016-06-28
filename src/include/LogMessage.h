@@ -20,6 +20,8 @@
 //readdef.c
 const char* cReadFileNamelist;
 const char* cReadFile;
+const char* cReadDefStart;
+const char* cReadDefFinish;
 
 //sz.c
 const char* cStateLocSpin;
@@ -28,10 +30,15 @@ const char* cInitalSz;
 const char* cOMPSzStart;
 const char* cOMPSzMid;
 const char* cOMPSzFinish;
-const char* cSingleSzStart;
-const char* cSingleSzFinish;
 const char* cReadSzStart;
 const char* cReadSzEnd;
+
+//CalcByLanczos.c
+const char* cReadEigenVecStart;
+const char* cReadEigenVecFinish;
+const char* cOutputEigenVecStart;
+const char* cOutputEigenVecFinish;
+
 
 //CG_EigenVector.c
 const char* cLogCG_EigenVecStart;
@@ -40,6 +47,7 @@ const char* cCG_EigenVecStart;
 const char* cCG_EigenVecFinish;
 
 //diagonalcalc.c
+const char* cDiagonalCalcStart;
 const char* cDiagonalCalcFinish;
 
 

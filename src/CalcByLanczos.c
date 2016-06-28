@@ -158,6 +158,7 @@ int CalcByLanczos(
   }
   else{// X->Bind.Def.iInputEigenVec=false :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
+    TimeKeeper(X, cFileNameTimeKeep, cReadEigenVecStart, "a");
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
     childfopenALL(sdt, "rb", &fp);
     if(fp==NULL){
@@ -170,8 +171,8 @@ int CalcByLanczos(
       exitMPI(-1);
     }
     fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
-    
     fclose(fp);
+    TimeKeeper(X, cFileNameTimeKeep, cReadEigenVecFinish, "a");
   }
 
   fprintf(stdoutMPI, cLogLanczos_EigenVecEnd);
@@ -217,6 +218,7 @@ int CalcByLanczos(
   fclose(fp);
 
   if(X->Bind.Def.iOutputEigenVec==TRUE){
+    TimeKeeper(X, cFileNameTimeKeep, cOutputEigenVecStart, "a");
     sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
     if(childfopenALL(sdt, "wb", &fp)!=0){
       exitMPI(-1);
@@ -224,6 +226,7 @@ int CalcByLanczos(
     fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
     fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);    
     fclose(fp);
+    TimeKeeper(X, cFileNameTimeKeep, cOutputEigenVecStart, "a");
   }
 
   return TRUE;

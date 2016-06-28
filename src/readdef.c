@@ -749,8 +749,9 @@ int ReadDefFileIdxPara(
   int ilineIn2=0;
   int itmp=0;
   int iloop=0;
-  
-  for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
+
+  TimeKeeper(X, cFileNameTimeKeep, cReadDefStart, "w");
+  for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){
     strcpy(defname, cFileNameListFile[iKWidx]);
     if(strcmp(defname,"")==0) continue;   
     fprintf(stdoutMPI, cReadFileNamelist, defname);
@@ -1342,8 +1343,9 @@ int ReadDefFileIdxPara(
       break;
     }
   }
-  
+
   ResetInteractionNum(X);
+  TimeKeeper(X, cFileNameTimeKeep, cReadDefFinish, "a");
   /*=======================================================================*/
   return 0;
 }
