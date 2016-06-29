@@ -93,6 +93,7 @@ int sz
   int N=0;
   fprintf(stdoutMPI, "%s", cProStartCalcSz);
   TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
+	TimeKeeper(X, cFileNameTimeKeep, cInitalSz, "a");
 
   if(X->Check.idim_max!=0){
  
@@ -172,7 +173,7 @@ int sz
     //*[s] omp parallel
 
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzStart, "a");
-    
+	  TimeKeeper(X, cFileNameTimeKeep, cOMPSzStart, "a");
     switch(X->Def.iCalcModel){
     case HubbardGC:
       icnt = X->Def.Tpow[2*X->Def.Nsite-1]*2+0;/*Tpow[2*X->Def.Nsit]=1*/
@@ -266,8 +267,9 @@ int sz
         }
 
         //#pragma omp barrier
-        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
- 
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+		  TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
         icnt = 0;
         //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
         for(ib=0;ib<X->Check.sdim;ib++){
@@ -305,8 +307,9 @@ int sz
         }
 
         //#pragma omp barrier
-        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
- 
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+		  TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
         icnt = 0;
         //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
         for(ib=0;ib<X->Check.sdim;ib++){
@@ -359,8 +362,9 @@ int sz
 	}
       }
       //#pragma omp barrier
-      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
-	
+      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
       icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
       for(ib=0;ib<X->Check.sdim;ib++){
@@ -450,7 +454,8 @@ int sz
       //#pragma omp barrier
       
       TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
- 
+			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
       icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
       for(ib=0;ib<X->Check.sdim;ib++){
@@ -520,7 +525,8 @@ int sz
 	  }
 	  //#pragma omp barrier
 	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
- 
+			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
 	  icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
           for(ib=0;ib<X->Check.sdim;ib++){
@@ -545,7 +551,8 @@ int sz
 	  }
 	  //#pragma omp barrier
 	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
- 
+			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
 	  icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
           for(ib=0;ib<X->Check.sdim;ib++){
@@ -600,6 +607,7 @@ int sz
 	}
 	
 	TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+		  TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
 	icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit, N, X) 
@@ -618,6 +626,8 @@ int sz
     i_max=icnt;
     //fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
+	  TimeKeeper(X, cFileNameTimeKeep, cOMPSzFinish, "a");
+
   }
 
   if(X->Def.iCalcModel==HubbardNConserved){
@@ -1226,6 +1236,7 @@ int Read_sz
   long unsigned int dam; 
 
   TimeKeeper(X,cFileNameSzTimeKeep,cReadSzStart, "a");
+	TimeKeeper(X,cFileNameTimeKeep,cReadSzStart, "a");
 
   switch(X->Def.iCalcModel){
   case Hubbard:
@@ -1278,6 +1289,7 @@ int Read_sz
   }
 
   TimeKeeper(X, cFileNameSzTimeKeep, cReadSzEnd, "a");
+	TimeKeeper(X, cFileNameTimeKeep, cReadSzEnd, "a");
 
   return 0;
 }

@@ -19,18 +19,25 @@
 //readdef.c
 const char* cReadFileNamelist = "  Read File '%s'.\n";
 const char* cReadFile = "  Read File '%s' for %s.\n";
+const char* cReadDefStart= "Read File starts:   %s";
+const char* cReadDefFinish="Read File finishes: %s";
 
 //sz.c
 const char* cStateLocSpin= "  j = %d loc %d \n";
 const char* cStateNupNdown= "  N_all_up=%d N_all_down=%d \n";
 const char* cInitalSz=  "initial sz : %s";
-const char* cOMPSzStart=  "omp parallel sz finishes: %s";
+const char* cOMPSzStart=  "omp parallel sz starts: %s";
 const char* cOMPSzMid= "mid omp parallel sz : %s";
 const char* cOMPSzFinish=  "omp parallel sz finishes: %s";
-const char* cSingleSzStart="single sz starts: %s";
-const char* cSingleSzFinish= "single sz finishes: %s";
 const char* cReadSzStart ="READ=1: read starts: %s";
 const char* cReadSzEnd  ="READ=1: read finishes: %s";
+
+//CalcByLanczos.c
+const char* cReadEigenVecStart= "Read Eigenvector starts:          %s";
+const char* cReadEigenVecFinish="Read Eigenvector finishes:        %s";;
+const char* cOutputEigenVecStart= "Output Eigenvector starts:          %s";
+const char* cOutputEigenVecFinish="Output Eigenvector finishes:        %s";;
+
 
 //CG_EigenVector.c
 const char* cLogCG_EigenVecStart="  Start: Calculate EigenVector by CG method.\n";
@@ -39,6 +46,7 @@ const char* cCG_EigenVecStart= "CG Eigenvector starts:        %s";
 const char* cCG_EigenVecFinish="CG Eigenvector finishes:      %s";
 
 //diagonalcalc.c
+const char* cDiagonalCalcStart ="diagonal calculation starts:   %s";
 const char* cDiagonalCalcFinish="diagonal calculation finishes: %s";
 
 //calcspectrum.c

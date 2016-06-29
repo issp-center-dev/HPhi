@@ -421,16 +421,16 @@ double complex X_child_general_hopp_MPIsingle(
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1 /**< [in] v0 = H v1*/) {
 #ifdef MPI
-    int mask1, mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
-    unsigned long int idim_max_buf, j, state1check, bit1diff, ioff, jreal;
-    MPI_Status statusMPI;
-    double complex trans, dmv, dam_pr;
-    /*
-    Prepare index in the inter PE
-    */
-    mask2 = (int) X->Def.Tpow[2 * org_isite2 + org_ispin2];
-    bit2diff = mask2 - 1;
-    origin = myrank ^ mask2;
+  int mask2, state2, ierr, origin, bit2diff, Fsgn;
+  unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
+  MPI_Status statusMPI;
+  double complex trans, dmv, dam_pr;
+  /*
+  Prepare index in the inter PE
+  */
+  mask2 = (int)X->Def.Tpow[2 * org_isite2+org_ispin2];
+  bit2diff = mask2 - 1;
+  origin = myrank ^ mask2;
 
     state2 = origin & mask2;
 

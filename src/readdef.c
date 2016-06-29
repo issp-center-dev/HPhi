@@ -788,8 +788,9 @@ int ReadDefFileIdxPara(
   int ilineIn2=0;
   int itmp=0;
   int iloop=0;
-  
-  for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){     
+
+  TimeKeeper(X, cFileNameTimeKeep, cReadDefStart, "w");
+  for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){
     strcpy(defname, cFileNameListFile[iKWidx]);
     if(strcmp(defname,"")==0) continue;   
     fprintf(stdoutMPI, cReadFileNamelist, defname);
@@ -1150,8 +1151,7 @@ int ReadDefFileIdxPara(
                 icnt_diagonal++;
               }
             }
-            //hund term
-            if(X->InterAll[idx][0] == X->InterAll[idx][6] &&X->InterAll[idx][2] == X->InterAll[idx][4]){
+            else if(X->InterAll[idx][0] == X->InterAll[idx][6] &&X->InterAll[idx][2] == X->InterAll[idx][4]){ //hund term
               if( X->InterAll[idx][1] == X->InterAll[idx][7] &&X->InterAll[idx][3] == X->InterAll[idx][5]){
                 icnt_diagonal++;
               }
@@ -1454,8 +1454,9 @@ int ReadDefFileIdxPara(
       break;
     }
   }
-  
+
   ResetInteractionNum(X);
+  TimeKeeper(X, cFileNameTimeKeep, cReadDefFinish, "a");
   /*=======================================================================*/
   return 0;
 }
@@ -1992,7 +1993,7 @@ int JudgeDefType
            (CheckWords(argv[1], "-v") == 0
             || CheckWords(argv[1], "--version") == 0)
            ) {
-    fprintf(stdoutMPI, "\nHPhi version 1.1 \n\n");
+    fprintf(stdoutMPI, "\nHPhi version 1.1.1 \n\n");
     exit(-1);
   }
   else{
