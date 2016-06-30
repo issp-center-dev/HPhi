@@ -62,7 +62,8 @@ int diagonalcalc
   long unsigned int i_max=X->Check.idim_max;
 
   fprintf(stdoutMPI, "%s", cProStartCalcDiag);
-  
+  TimeKeeper(X, cFileNameTimeKeep, cDiagonalCalcStart, "a");
+
 #pragma omp parallel for default(none) private(j) shared(list_Diagonal) firstprivate(i_max)
   for(j = 1;j <= i_max; j++){
     list_Diagonal[j]=0.0;
@@ -144,7 +145,7 @@ int diagonalcalc
      fclose(fp);   
     }
   
-  TimeKeeper(X, cFileNameTimeKeep, cDiagonalCalcFinish, "w");
+  TimeKeeper(X, cFileNameTimeKeep, cDiagonalCalcFinish, "a");
   fprintf(stdoutMPI, "%s", cProEndCalcDiag);
   return 0;
 }
