@@ -99,7 +99,7 @@ void vec12(double alpha[],double beta[],int ndim,
 		
 #pragma omp parallel for default(none) reduction(+:tmp_deg) firstprivate(ndim, k, i_deg) private(j_deg) shared(vec)
 	for(j_deg=1;j_deg<=ndim;j_deg++){
-	  tmp_deg += vec[i_deg][j_deg]*vec[k][i_deg]; 
+	  tmp_deg += vec[i_deg][j_deg]*vec[k][j_deg]; 
 	}
 #pragma omp parallel for default(none) firstprivate(ndim, k, i_deg, tmp_deg) private(j_deg) shared(vec)
 	for(j_deg=1;j_deg<=ndim;j_deg++){
