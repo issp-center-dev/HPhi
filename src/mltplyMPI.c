@@ -1976,7 +1976,44 @@ double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
 #endif
 }
 
+double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
+        int org_isite1,
+        int org_ispin1,
+        double complex tmp_trans,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1) {
+#ifdef MPI
+    unsigned long int j, num1;
+    double complex tmp_V, dmv, dam_pr;
+    //MPI_Status statusMPI;
 
+    num1 = BitCheckGeneral((unsigned long int) myrank,
+                           org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
+    if (num1 == 0) {
+        tmp_V = tmp_trans;
+    }
+    else return 0.0;
+
+    dam_pr = 0.0;
+    if (X->Large.mode == M_MLTPLY) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1)
+        for (j = 1; j <= X->Check.idim_max; j++) {
+            dmv = tmp_v1[j] * tmp_V;
+            tmp_v0[j] += dmv;
+            dam_pr += conj(tmp_v1[j]) * dmv;
+        }
+    }
+    else {
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1)
+        for (j = 1; j <= X->Check.idim_max; j++) {
+            dmv = tmp_v1[j] * tmp_V;
+            dam_pr += conj(tmp_v1[j]) * dmv;
+        }
+    }
+    return dam_pr;
+#endif
+}
 
  /**
  *
@@ -2711,6 +2748,55 @@ double complex X_GC_child_CisAis_spin_MPIdouble
   return dam_pr;
 #endif
 }
+
+/**
+ *
+ * Hopping term in Spin + GC
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_child_AisCis_spin_MPIdouble
+        (
+                int org_isite1,
+                int org_ispin1,
+                double complex tmp_trans,
+                struct BindStruct *X /**< [inout]*/,
+                double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+                double complex *tmp_v1 /**< [in] v0 = H v1*/
+        )
+{
+#ifdef MPI
+    long unsigned int j;
+    int mask1;
+    int ibit1;
+    double complex dam_pr;
+    mask1 = (int)X->Def.Tpow[org_isite1];
+    ibit1 = (((unsigned long int)myrank& mask1)/mask1)^(1-org_ispin1);
+
+    dam_pr =0.0;
+    if(ibit1 == 0) {
+        if (X->Large.mode == M_MLTPLY) { // for multply
+#pragma omp parallel for reduction(+:dam_pr)default(none) shared(tmp_v1, tmp_v0) \
+  firstprivate(X, tmp_trans) private(j)
+            for (j = 1; j <= X->Check.idim_max; j++) {
+                tmp_v0[j] += tmp_v1[j] * tmp_trans;
+                dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
+            }
+        }
+        else {
+#pragma omp parallel for reduction(+:dam_pr)default(none) shared(tmp_v1, tmp_v0) \
+  firstprivate(X, tmp_trans) private(j)
+            for (j = 1; j <= X->Check.idim_max; j++) {
+                dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
+            }
+        }
+    }
+
+    return dam_pr;
+#endif
+}
+
 
 int CheckPE(
 	    int org_isite,

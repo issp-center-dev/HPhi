@@ -1416,13 +1416,22 @@ int ReadDefFileIdxPara(
             fclose(fp);
             return ReadDefFileError(defname);
           }
-
-          X->PairExcitationOperator[idx][0] = isite1;
-          X->PairExcitationOperator[idx][1] = isigma1;
-          X->PairExcitationOperator[idx][2] = isite2;
-          X->PairExcitationOperator[idx][3] = isigma2;
-          X->PairExcitationOperator[idx][4] = itype;
-          X->ParaPairExcitationOperator[idx] = dvalue_re + I * dvalue_im;
+          if(itype==0){
+            X->PairExcitationOperator[idx][0] = isite1;
+            X->PairExcitationOperator[idx][1] = isigma1;
+            X->PairExcitationOperator[idx][2] = isite2;
+            X->PairExcitationOperator[idx][3] = isigma2;
+            X->PairExcitationOperator[idx][4] = itype;
+            X->ParaPairExcitationOperator[idx] = dvalue_re + I * dvalue_im;
+          }
+          else{
+            X->PairExcitationOperator[idx][0] = isite2;
+            X->PairExcitationOperator[idx][1] = isigma2;
+            X->PairExcitationOperator[idx][2] = isite1;
+            X->PairExcitationOperator[idx][3] = isigma1;
+            X->PairExcitationOperator[idx][4] = itype;
+            X->ParaPairExcitationOperator[idx] = -(dvalue_re + I * dvalue_im);
+          }
           idx++;
         }
         if (idx != X->NPairExcitationOperator) {
