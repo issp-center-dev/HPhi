@@ -361,20 +361,16 @@ int Lanczos_GetTridiagonalMatrixComponents(
  )
 {
 
- FILE *fp;
  char sdt[D_FileNameMax];
- int stp, iproc;
- long int i,iv,i_max;
+ int stp;
+ long int i,i_max;
  i_max=X->Check.idim_max;
  
- unsigned long int i_max_tmp, sum_i_max;
- int k_exct,Target;
+ unsigned long int i_max_tmp;
  double beta1,alpha1; //beta,alpha1 should be real
  double  complex temp1,temp2;
  double complex cbeta1;
- double complex *tmp_v0;
- c_malloc1(tmp_v0, i_max);
- 
+
  sprintf(sdt, cFileNameLanczosStep, X->Def.CDataFileHead);  
   
   /*

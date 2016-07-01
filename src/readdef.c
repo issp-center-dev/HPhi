@@ -733,7 +733,6 @@ int ReadDefFileIdxPara(
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
   int i,idx;
-  int itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -750,7 +749,6 @@ int ReadDefFileIdxPara(
   int itmp=0;
   int iloop=0;
 
-  TimeKeeper(X, cFileNameTimeKeep, cReadDefStart, "w");
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){
     strcpy(defname, cFileNameListFile[iKWidx]);
     if(strcmp(defname,"")==0) continue;   
@@ -1345,7 +1343,6 @@ int ReadDefFileIdxPara(
   }
 
   ResetInteractionNum(X);
-  TimeKeeper(X, cFileNameTimeKeep, cReadDefFinish, "a");
   /*=======================================================================*/
   return 0;
 }
@@ -1560,9 +1557,6 @@ int CheckInterAllHermite
   int isigma1, isigma2, isigma3, isigma4;
   int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
   int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
-  int itmperrsite1, itmperrsite2, itmperrsite3, itmperrsite4;
-  int itmperrsigma1, itmperrsigma2, itmperrsigma3, itmperrsigma4;
-  double complex dcerrIntAll;
   int itmpIdx, icntHermite;
   int icheckHermiteCount=FALSE;
   double  complex ddiff_intall;
@@ -1594,19 +1588,7 @@ int CheckInterAllHermite
         if (isigma1 == itmpsigma4 && isigma2 == itmpsigma3 && isigma3 == itmpsigma2 && isigma4 == itmpsigma1) {
           ddiff_intall = cabs(X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]));
 	  
-          //error procedure
-          if (cabs(ddiff_intall) > eps_CheckImag0) {
-            itmperrsite1=itmpsite1;
-            itmperrsigma1=itmpsigma1;
-            itmperrsite2=itmpsite2;
-            itmperrsigma2=itmpsigma2;
-            itmperrsite3=itmpsite3;
-            itmperrsigma3=itmpsigma3;
-            itmperrsite4=itmpsite4;
-            itmperrsigma4=itmpsigma4;
-            dcerrIntAll=X->ParaInterAll_OffDiagonal[j];
-          }
-          else {
+          if (cabs(ddiff_intall) < eps_CheckImag0) {
             itmpret=1;
             if (icheckHermiteCount == FALSE) {
               icheckHermiteCount = TRUE; //for not double counting
@@ -1633,18 +1615,7 @@ int CheckInterAllHermite
       else if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 && isite4 == itmpsite3) {      //for spin and Kondo
         if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
           ddiff_intall = X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]);
-          if (cabs(ddiff_intall) > eps_CheckImag0) {
-            itmperrsite1 = itmpsite1;
-            itmperrsigma1 = itmpsigma1;
-            itmperrsite2 = itmpsite2;
-            itmperrsigma2 = itmpsigma2;
-            itmperrsite3 = itmpsite3;
-            itmperrsigma3 = itmpsigma3;
-            itmperrsite4 = itmpsite4;
-            itmperrsigma4 = itmpsigma4;
-            dcerrIntAll = X->ParaInterAll_OffDiagonal[j];
-          }
-          else {
+          if (cabs(ddiff_intall) < eps_CheckImag0) {
             itmpret = 1;
             if (icheckHermiteCount == FALSE) {
               icheckHermiteCount = TRUE; // for not double-counting		    

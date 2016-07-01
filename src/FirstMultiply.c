@@ -31,10 +31,7 @@
  */
 int FirstMultiply(int rand_i, struct BindStruct *X) {
 
-  int iproc;
   long int i, i_max;
-  unsigned long int i_max_tmp;
-  double  complex temp1;
   double complex dnorm;
   double Ns;
   long unsigned int u_long_i;

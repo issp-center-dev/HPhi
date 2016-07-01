@@ -56,7 +56,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 
   long unsigned int i,j;
   long unsigned int irght,ilft,ihfbit;
-  long unsigned int isite1, isite2;
+  long unsigned int isite1;
   long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
   long unsigned int tmp_off=0;
   double complex dam_pr=0;
@@ -64,7 +64,6 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   int tmp_sgn, num1;
   long int ibit1, ibit;
   long unsigned int is1_up, is;
-  long int Asum, Adiff;
   double complex tmp_OneGreen=1.0;
   //For TPQ
   int step=0;

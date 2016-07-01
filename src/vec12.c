@@ -34,7 +34,7 @@
 void vec12(double alpha[],double beta[],int ndim,
 	   double E[],struct BindStruct *X){
   
-  int j,k,l,km,nvec;
+  int j,k,nvec;
 
   double **tmpA, **tmpvec;
   double *tmpr;
