@@ -383,6 +383,8 @@ int ReadDefFileNInt(
   int iReadNCond=FALSE;
   xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
+  NumAve=1;
+  ExpecInterval=1;
   cFileNameListFile = malloc(sizeof(char)*D_CharTmpReadDef*D_iKWNumDef);
 
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
@@ -413,198 +415,200 @@ int ReadDefFileNInt(
   } 
 
   
-  for(iKWidx=0; iKWidx< D_iKWNumDef; iKWidx++){ 
+  for(iKWidx=0; iKWidx< D_iKWNumDef; iKWidx++) {
     strcpy(defname, cFileNameListFile[iKWidx]);
 
-    if(strcmp(defname,"")==0) continue;
-  
+    if (strcmp(defname, "") == 0) continue;
+
     fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
     fp = fopenMPI(defname, "r");
-    if(fp==NULL) return ReadDefFileError(defname);
-    switch(iKWidx){
-    case KWCalcMod:
-      /* Read calcmod.def---------------------------------------*/
-      if(ReadcalcmodFile(defname, X)!=0){
-        fclose(fp);
-        return ReadDefFileError(defname);
-      }
-      break;
-    case KWModPara:
-      /* Read modpara.def---------------------------------------*/
-      //TODO: add error procedure here when parameters are not enough.
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &itmp); //2
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp); //3
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp); //4
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp); //5
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %s\n", ctmp, X->CDataFileHead); //6
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %s\n", ctmp, X->CParaFileHead); //7
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);   //8
+    if (fp == NULL) return ReadDefFileError(defname);
+    switch (iKWidx) {
+      case KWCalcMod:
+        /* Read calcmod.def---------------------------------------*/
+        if (ReadcalcmodFile(defname, X) != 0) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+            break;
 
-      double dtmp;
-      
-      X->read_hacker=0;
-      while(fgetsMPI(ctmp2, 256, fp)!=NULL){
-        if(*ctmp2 == '\n') continue;
-        sscanf(ctmp2,"%s %lf\n", ctmp, &dtmp);
-        if(CheckWords(ctmp, "Nsite")==0){
-          X->Nsite= (int)dtmp;
-        }
-        else if(CheckWords(ctmp, "Nup")==0){
-          X->Nup= (int)dtmp;
-        }
-        else if(CheckWords(ctmp, "Ndown")==0){
-          X->Ndown=(int)dtmp;
-          X->Total2Sz=X->Nup-X->Ndown;
-        }
-        else if(CheckWords(ctmp, "2Sz")==0){
-          X->Total2Sz=(int)dtmp;
-          X->iFlgSzConserved=TRUE;
-        }
-        else if(CheckWords(ctmp, "Ncond")==0){
-          X->NCond=(int)dtmp;
-          iReadNCond=TRUE;	  
-        }
-        else if(CheckWords(ctmp, "Lanczos_max")==0){
-          X->Lanczos_max=(int)dtmp;
-        }
-        else if(CheckWords(ctmp, "initial_iv")==0){
-          X->initial_iv=(int)dtmp;
-        }
-        else if(CheckWords(ctmp, "nvec")==0){
-          X->nvec=(int)dtmp;
-        }
-        else if(CheckWords(ctmp, "exct")==0){
-          X->k_exct=(int)dtmp;
-        }
-        else if(CheckWords(ctmp, "LanczosEps")==0){
-          X->LanczosEps=(int)dtmp;
-        }
-        else if(CheckWords(ctmp, "LanczosTarget")==0){
-          X->LanczosTarget=(int)dtmp;
-        }
-        else if(CheckWords(ctmp, "LargeValue")==0){
-          LargeValue=dtmp;
-        }	
-        else if(CheckWords(ctmp, "NumAve")==0){
-          NumAve=(int)dtmp;
-        }	
-        else if(CheckWords(ctmp, "ExpecInterval")==0){
-          ExpecInterval=(int)dtmp;
-        }	
-        else if(CheckWords(ctmp, "CalcHS")==0){
-          X->read_hacker=(int)dtmp;
-        }
-        else{
-          return(-1);
-        }
-      }
-      break;
-      
-    case KWLocSpin:
-      // Read locspn.def
-      X->iFlgGeneralSpin=FALSE;
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NLocSpn));
-      break;
-    case KWTrans: 
-      // Read transfer.def
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NTransfer));
-      break;
-    case KWCoulombIntra:
-      /* Read coulombintra.def----------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCoulombIntra));
-      break;
-    case KWCoulombInter:
-      /* Read coulombinter.def----------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCoulombInter));
-      break;
-    case KWHund:
-      /* Read hund.def------------------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NHundCoupling));
-      break;
-    case KWPairHop:
-      /* Read pairhop.def---------------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairHopping));
-      break;
-    case KWExchange:
-      /* Read exchange.def--------------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NExchangeCoupling));
-      break;
-    case KWIsing:
-      /* Read ising.def--------------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NIsingCoupling));
-      break;
-    case KWPairLift:
-      /* Read exchange.def--------------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairLiftCoupling));
-      break;
-    case KWInterAll:
-      /* Read InterAll.def--------------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NInterAll));
-      break;
-    case KWOneBodyG:
-      /* Read cisajs.def----------------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCisAjt));
-      break;
-    case KWTwoBodyG:
-      /* Read cisajscktaltdc.def--------------------------------*/
-      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
-      break;
-    case KWBoost:
-      /* Read boost.def--------------------------------*/
-      xBoost->NumarrayJ=0;
-      xBoost->W0=0;
-      xBoost->R0=0;
-      xBoost->num_pivot=0;
-      xBoost->ishift_nspin=0;
-      xBoost->flgBoost=TRUE;
-      //first line is skipped
-      fgetsMPI(ctmp2, 256, fp);
-      //read numarrayJ
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%d\n", &(xBoost->NumarrayJ));
-      //skipp arrayJ
-      for(iline=0; iline<xBoost->NumarrayJ*3; iline++){
-        fgetsMPI(ctmp2, 256, fp);
-      }
-      //read W0 R0 num_pivot ishift_nspin
-      fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot), &(xBoost->ishift_nspin));
+      case KWModPara:
+        /* Read modpara.def---------------------------------------*/
+        //TODO: add error procedure here when parameters are not enough.
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &itmp); //2
+            fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //3
+            fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //4
+            fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //5
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %s\n", ctmp, X->CDataFileHead); //6
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %s\n", ctmp, X->CParaFileHead); //7
+            fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
 
-      break;
+            double dtmp;
 
-    default:
-      fprintf(stdoutMPI, "%s", cErrIncorrectDef);
-      fclose(fp);
-            return(-1);
-      break;
+            X->read_hacker = 0;
+            while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+              if (*ctmp2 == '\n') continue;
+              sscanf(ctmp2, "%s %lf\n", ctmp, &dtmp);
+              if (CheckWords(ctmp, "Nsite") == 0) {
+                X->Nsite = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "Nup") == 0) {
+                X->Nup = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "Ndown") == 0) {
+                X->Ndown = (int) dtmp;
+                X->Total2Sz = X->Nup - X->Ndown;
+              }
+              else if (CheckWords(ctmp, "2Sz") == 0) {
+                X->Total2Sz = (int) dtmp;
+                X->iFlgSzConserved = TRUE;
+              }
+              else if (CheckWords(ctmp, "Ncond") == 0) {
+                X->NCond = (int) dtmp;
+                iReadNCond = TRUE;
+              }
+              else if (CheckWords(ctmp, "Lanczos_max") == 0) {
+                X->Lanczos_max = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "initial_iv") == 0) {
+                X->initial_iv = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "nvec") == 0) {
+                X->nvec = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "exct") == 0) {
+                X->k_exct = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "LanczosEps") == 0) {
+                X->LanczosEps = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "LanczosTarget") == 0) {
+                X->LanczosTarget = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "LargeValue") == 0) {
+                LargeValue = dtmp;
+              }
+              else if (CheckWords(ctmp, "NumAve") == 0) {
+                NumAve = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "ExpecInterval") == 0) {
+                ExpecInterval = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "CalcHS") == 0) {
+                X->read_hacker = (int) dtmp;
+              }
+              else {
+                return (-1);
+              }
+            }
+            break;
+
+      case KWLocSpin:
+        // Read locspn.def
+        X->iFlgGeneralSpin = FALSE;
+            fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NLocSpn));
+            break;
+      case KWTrans:
+        // Read transfer.def
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NTransfer));
+            break;
+      case KWCoulombIntra:
+        /* Read coulombintra.def----------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NCoulombIntra));
+            break;
+      case KWCoulombInter:
+        /* Read coulombinter.def----------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NCoulombInter));
+            break;
+      case KWHund:
+        /* Read hund.def------------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NHundCoupling));
+            break;
+      case KWPairHop:
+        /* Read pairhop.def---------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NPairHopping));
+            break;
+      case KWExchange:
+        /* Read exchange.def--------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NExchangeCoupling));
+            break;
+      case KWIsing:
+        /* Read ising.def--------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NIsingCoupling));
+            break;
+      case KWPairLift:
+        /* Read exchange.def--------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NPairLiftCoupling));
+            break;
+      case KWInterAll:
+        /* Read InterAll.def--------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NInterAll));
+            break;
+      case KWOneBodyG:
+        /* Read cisajs.def----------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NCisAjt));
+            break;
+      case KWTwoBodyG:
+        /* Read cisajscktaltdc.def--------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
+            break;
+      case KWBoost:
+        /* Read boost.def--------------------------------*/
+        xBoost->NumarrayJ = 0;
+            xBoost->W0 = 0;
+            xBoost->R0 = 0;
+            xBoost->num_pivot = 0;
+            xBoost->ishift_nspin = 0;
+            xBoost->flgBoost = TRUE;
+            //first line is skipped
+            fgetsMPI(ctmp2, 256, fp);
+            //read numarrayJ
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%d\n", &(xBoost->NumarrayJ));
+            //skipp arrayJ
+            for (iline = 0; iline < xBoost->NumarrayJ * 3; iline++) {
+              fgetsMPI(ctmp2, 256, fp);
+            }
+            //read W0 R0 num_pivot ishift_nspin
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%ld %ld %ld %ld\n", &(xBoost->W0), &(xBoost->R0), &(xBoost->num_pivot),
+                   &(xBoost->ishift_nspin));
+
+            break;
+
+      default:
+        fprintf(stdoutMPI, "%s", cErrIncorrectDef);
+            fclose(fp);
+            return (-1);
+            break;
     }
     /*=======================================================================*/
     fclose(fp);
@@ -706,7 +710,41 @@ int ReadDefFileNInt(
   default:
     break;
   }
-  
+
+    /* Check values*/
+    if(X->Nsite<=0) {
+      fprintf(stdoutMPI, cErrNsite, defname);
+      return (-1);
+    }
+    if(X->NCond<0) {
+      fprintf(stdoutMPI, cErrNcond, defname);
+      return (-1);
+    }
+    if(X->Lanczos_max<=0) {
+      fprintf(stdoutMPI, cErrLanczos_max, defname);
+      return (-1);
+    }
+    if(X->LanczosEps<=0) {
+      fprintf(stdoutMPI, cErrLanczos_max, defname);
+      return (-1);
+    }
+    if(NumAve<=0) {
+      fprintf(stdoutMPI, cErrNumAve, defname);
+      return (-1);
+    }
+    if(ExpecInterval<=0){
+      fprintf(stdoutMPI, cErrExpecInterval, defname);
+      return (-1);
+    }
+    if(ValidateValue(X->k_exct, 1, X->nvec)) {
+      fprintf(stdoutMPI, cErrLanczosExct, defname, X->k_exct);
+      return (-1);
+    }
+    if(ValidateValue(X->LanczosTarget, X->nvec, X->Lanczos_max)){
+      fprintf(stdoutMPI, cErrLanczosTarget, defname, X->LanczosTarget, X->nvec, X->Lanczos_max);
+      return (-1);
+    }
+
   X->Nsize   = 2*X->Ne;
   X->fidx = 0;
   return 0;

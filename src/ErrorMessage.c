@@ -49,6 +49,14 @@ char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
 
+char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
+char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";
+char *cErrNumAve= "Error in %s\n NumAve must be positive value.\n ";
+char *cErrExpecInterval= "Error in %s\n ExpecInterval must be positive value.\n ";
+char *cErrLanczos_max="Error in %s\n Lanczos_max must be positive value.\n ";
+char *cErrLanczosExct="Error in %s\n exct=%d must be greater than 1 and smaller than nvec=%d.\n ";
+char *cErrLanczosTarget="Error in %s\n LanczosTarget=%d must be greater than nvec=%d and smaller than Lanczos_Max=%d.\n ";
+
 char *cErrKW="Error: Wrong keywords '%s' in %s.\n";
 char *cErrKW_ShowList="Choose Keywords as follows: \n";
 char *cErrKW_Same="Error: Same keywords exist in %s.\n";
