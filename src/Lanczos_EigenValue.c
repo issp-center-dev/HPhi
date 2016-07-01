@@ -47,7 +47,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   double beta1,alpha1; //beta,alpha1 should be real
   double  complex temp1,temp2;
   double complex cbeta1;
-  double E[5],ebefor;
+  double E[5],ebefor, E_target;
   int mythread;
 
 // for GC
@@ -189,7 +189,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
   }
   else{
 #ifdef lapack
-    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite\n");
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] Target:E[%d] E_Max/Nsite\n", X->Def.LanczosTarget);
 #else
     fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] \n");
 #endif
@@ -238,19 +238,28 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[2] = tmp_E[1];
        E[3] = tmp_E[2];
        E[4] = tmp_E[3];
+       if(Target <3){
+        E_target = tmp_E[Target];
+        ebefor=E_target;
+       }
        d_free1(tmp_E,stp+1);
        d_free2(tmp_mat,stp,stp);
      #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
      #endif
-       ebefor=E[Target];
-       
+
        childfopenMPI(sdt_2,"w", &fp);
 #ifdef lapack
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
 
-       fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] E_Max/Nsite\n");
-       fprintf(fp, "stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
+       fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] Target:E[%d] E_Max/Nsite\n", Target);
+        if(Target <3) {
+            fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
+            fprintf(fp, "stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx xxxxxxxxx xxxxxxxxx \n", stp, E[1], E[2]);
+        }
+        else{
+            fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx  %.10lf xxxxxxxxx \n",stp,E[1],E[2], E_target);
+            fprintf(fp, "stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx %.10lf xxxxxxxxx \n", stp, E[1], E[2], E_target);
+        }
 #else
        fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx \n",stp,E[1],E[2]);
        fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] \n");
@@ -287,26 +296,36 @@ int Lanczos_EigenValue(struct BindStruct *X)
        E[3] = tmp_E[2];
        E[4] = tmp_E[3];
        E[0] = tmp_E[stp-1];
+        if(stp > Target ){
+            E_target = tmp_E[Target];
+        }
        d_free1(tmp_E,stp+1);
-       d_free2(tmp_mat,stp,stp);       
-       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
-       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
+       d_free2(tmp_mat,stp,stp);
+       if(stp > Target ){
+       fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E_target, E[0]/(double)X->Def.NsiteMPI);
+       fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4],E_target,E[0]/(double)X->Def.NsiteMPI);
+        }
+        else{
+           fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf xxxxxxxxx %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
+           fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf xxxxxxxxx %.10lf\n",stp,E[1],E[2],E[3],E[4],E[0]/(double)X->Def.NsiteMPI);
+       }
 #else
        bisec(alpha,beta,stp,E,4,eps_Bisec);
        fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf \n",stp,E[1],E[2],E[3],E[4]);
        fprintf(fp,"stp=%d %.10lf %.10lf %.10lf %.10lf\n",stp,E[1],E[2],E[3],E[4]);
 #endif 
        fclose(fp);
+    if(stp > Target) {
+        if (fabs((E_target - ebefor) / E_target) < eps_Lanczos || fabs(beta[stp]) < pow(10.0, -14)) {
+            vec12(alpha, beta, stp, E, X);
+            X->Large.itr = stp;
+            X->Phys.Target_energy = E[k_exct];
+            iconv = 0;
+            break;
+        }
+        ebefor=E_target;
+    }
 
-      if(fabs((E[Target]-ebefor)/E[Target])<eps_Lanczos || fabs(beta[stp])<pow(10.0, -14)){
-        vec12(alpha,beta,stp,E,X);		
-        X->Large.itr=stp;       
-        X->Phys.Target_energy=E[k_exct];
-	iconv=0;
-	break;
-      }
-
-      ebefor=E[Target];            
     }
   }        
   }
