@@ -33,6 +33,8 @@
 
 #include <complex.h>
 int DSEVvalue(int xNsize, double **A, double *r);
+int DSEVvector(int xNsize, double **A, double *r, double **vec);
+
 int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **vec);
 
 #endif

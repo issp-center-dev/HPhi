@@ -44,14 +44,12 @@ int CG_EigenVector(struct BindStruct *X){
   int i_itr,itr,iv,itr_max;
   int t_itr;
   double bnorm,xnorm,rnorm,rnorm2;
-  double complex alpha,beta,xb,rp,yp,gosa1,tmp_r,gosa2, temp1;
+  double complex alpha,beta,xb,rp,yp,gosa1,tmp_r,gosa2;
   double complex *y,*b;
   long int L_size;
-  long int i_max, i_max_tmp;
-  int iproc;
-  
-  iv=0;
-  i_max=X->Check.idim_max;    
+  long int i_max;
+
+  i_max=X->Check.idim_max;
   Eig=X->Phys.Target_energy;
     
   strcpy(sdt_1, cFileNameTimeEV_CG);

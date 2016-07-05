@@ -136,12 +136,15 @@ int main(int argc, char* argv[]){
   /*-----------------------------------------------------*/
 
   /*Read Def files.*/
+  TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefStart, "w");
   if(ReadDefFileIdxPara(&(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
     FinalizeMPI();
     return -1;
   }
-  
+  TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefFinish, "a");
+
+
   fprintf(stdoutMPI, cProFinishDefCheck);
   if(check(&(X.Bind))==MPIFALSE){
     FinalizeMPI();

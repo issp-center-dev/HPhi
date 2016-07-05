@@ -1,5 +1,3 @@
-
-                                                                
       ,ammmmmmmmmmmmmmb,,        Welcome to the                 
     ,@@` dm          mb  ===m                                    
   ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
@@ -11,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.1                    
+           9@P~~~9@P             Version 1.1.1                  
                                                                 
 
 
@@ -23,14 +21,12 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile StdFace.def 
+  Open Standard-Mode Inputfile StdFace2.def 
 
+  KEYWORD : method               | VALUE : fulldiag 
   KEYWORD : w                    | VALUE : 4 
   KEYWORD : l                    | VALUE : 2 
   KEYWORD : model                | VALUE : fermionhubbard 
-  KEYWORD : method               | VALUE : fulldiag 
-  Skipping a line.
-  Skipping a line.
   KEYWORD : lattice              | VALUE : triangular 
   KEYWORD : t                    | VALUE : 1.0 
   KEYWORD : u                    | VALUE : 4.0 
