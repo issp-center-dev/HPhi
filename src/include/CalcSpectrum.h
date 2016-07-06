@@ -26,8 +26,13 @@ int GetExcitedState(
 		    double complex *tmp_v1
 		    );
 
+/*
+int MakeExcitedList(
+		    struct BindStruct *X,
+            int New2Sz
+		    );
+*/
 int SetOmega
 (
  struct DefineList *X
  );
-

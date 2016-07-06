@@ -167,7 +167,7 @@ int main(int argc, char* argv[]){
   }
 
 
-  if(!sz(&(X.Bind))==0){
+  if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
     exitMPI(-1);
   }
 

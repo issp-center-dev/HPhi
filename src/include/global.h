@@ -42,14 +42,22 @@ double *list_Diagonal;
 double *list_D_num;
 long unsigned int *list_1;
 long unsigned int *list_1buf;
-long unsigned  int *list_2_1;
-long unsigned  int *list_2_2;
-long unsigned  int *list_jb;
-int *list_3;
-long unsigned int *HilbertNumToSz;
-int *list_2_1_Sz;
-int *list_2_2_Sz;
+long unsigned int *list_2_1;
+long unsigned int *list_2_2;
+long unsigned int *list_jb;
 
+long unsigned int *list_3;
+long unsigned int *HilbertNumToSz;
+long unsigned int *list_2_1_Sz;
+long unsigned int *list_2_2_Sz;
+
+/*[s] For Spectrum */
+long unsigned int *list_1_ex;
+long unsigned int *list_1buf_ex;
+long unsigned int *list_2_1_ex;
+long unsigned int *list_2_2_ex;
+long unsigned int *list_jb_ex;
+/*[e] For Spectrum */
 
 /*[s] For Lanczos */
 //double *eigen_vec;
