@@ -5,4 +5,4 @@ Trans zTrans.def
 InterAll zInterAll.def
 OneBodyG greenone.def
 TwoBodyG greentwo.def
-Boost boost.def
+Boost Boost.def
