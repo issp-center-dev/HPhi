@@ -47,15 +47,14 @@ int CalcBySSM(
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
   tstruct.tstart=time(NULL);
-  step_i = 1;      
   
   rand_max = NumAve;
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
+    step_i = 1;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
- 
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){
       return -1;
