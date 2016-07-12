@@ -51,8 +51,8 @@ const char* cDiagonalCalcFinish="diagonal calculation finishes: %s";
 
 
 //FirstMultiply.c, Multiply.c
-const char* cTPQStep="step %d:TPQ begins: %s";
-const char* cTPQStepEnd="step %d:TPQ finishes: %s";
+const char* cTPQStep="set %d step %d:TPQ begins: %s";
+const char* cTPQStepEnd="set %d step %d:TPQ finishes: %s";
 
 //Lanczos_EigenValue.c
 const char* cLogLanczos_EigenValueNotConverged="Lanczos Eigenvalue is not converged in this process.";
