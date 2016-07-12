@@ -2618,6 +2618,57 @@ $[$double01$]$ is a ground energy, $[$double02$]$, $[$double03$]$ and $[$double0
  \end{itemize}
 
 \newpage
+\subsection{Time\_TPQ\_Step.dat}
+(For TPQ method) This file is outputted to show the time for starting calculation of TPQ method at each seeds and steps. An example is shown as follows.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+set 0 step 1:TPQ begins: Wed Jul 13 07:59:20 2016
+set 0 step 2:TPQ begins: Wed Jul 13 07:59:20 2016
+set 0 step 3:TPQ begins: Wed Jul 13 07:59:20 2016
+…
+set 4 step 1997:TPQ begins: Wed Jul 13 07:59:32 2016
+set 4 step 1998:TPQ begins: Wed Jul 13 07:59:32 2016
+set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+ \begin{itemize}
+   \item  \#\#\_TPQ\_Step.dat
+  \end{itemize}
+  \#\# indicates a header defined by [string02] in a ModPara file.
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item set $[$int01$]$ stp $[$int02$]$: TPQ begins: $[$string01$]$
+  \end{itemize}
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+  
+ {\bf 形式 :} int-type
+
+{\bf 説明 :} A seed number under calculation of TPQ method.
+ 
+  \item  $[$int02$]$
+  
+ {\bf 形式 :} int-type
+
+{\bf 説明 :} A step number under calculation of TPQ method.
+
+  \item  $[$string01$]$
+  
+ {\bf 形式 :} string-type
+
+{\bf 説明 :} A time for starting calculation of TPQ method at each seeds and steps.
+
+ \end{itemize}
+
+
+\newpage
 \subsection{Norm\_rand.dat}
 \label{Subsec:normrand}
 (For TPQ method) This file is outputted to show the calculation process information for TPQ method.

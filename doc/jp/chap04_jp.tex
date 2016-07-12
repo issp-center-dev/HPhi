@@ -2603,6 +2603,57 @@ $[$double01$]$が基底エネルギー、$[$double02$]$、$[$double03$]$、$[$do
  \end{itemize}
 
 \newpage
+\subsection{Time\_TPQ\_Step.dat}
+(TPQ法でのみ出力) TPQ法でのステップ毎の開始時間を出力します。以下にファイル例を示します。\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+set 0 step 1:TPQ begins: Wed Jul 13 07:59:20 2016
+set 0 step 2:TPQ begins: Wed Jul 13 07:59:20 2016
+set 0 step 3:TPQ begins: Wed Jul 13 07:59:20 2016
+…
+set 4 step 1997:TPQ begins: Wed Jul 13 07:59:32 2016
+set 4 step 1998:TPQ begins: Wed Jul 13 07:59:32 2016
+set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item  \#\#\_TPQ\_Step.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item set $[$int01$]$ stp $[$int02$]$: TPQ begins: $[$string01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+  
+ {\bf 形式 :} int型
+
+{\bf 説明 :} TPQ法でのシード数。
+ 
+  \item  $[$int02$]$
+  
+ {\bf 形式 :} int型
+
+{\bf 説明 :} TPQ法でのステップ数。
+
+  \item  $[$string01$]$
+  
+ {\bf 形式 :} string型
+
+{\bf 説明 :} 計算開始時間。
+
+ \end{itemize}
+
+\newpage
 \subsection{Norm\_rand.dat}
 \label{Subsec:normrand}
 (TPQ法でのみ出力) TPQ法での有限温度計算時のログを出力します。以下にファイル例を示します。\\

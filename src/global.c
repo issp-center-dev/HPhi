@@ -52,7 +52,7 @@ const char* cFileNameInputEigen="./output/%s_eigenvec_%d_rank_%d.dat";
 
 //For TPQ
 const char* cFileNameSSRand="SS_rand%d.dat";
-const char* cFileNameTPQStep="%s_TPQ_Step.dat";
+const char* cFileNameTPQStep="%s_Time_TPQ_Step.dat";
 const char* cFileNameNormRand="Norm_rand%d.dat";
 const char* cFileName1BGreen_TPQ="%s_cisajs_set%dstep%d.dat";
 const char* cFileName2BGreen_TPQ="%s_cisajscktalt_set%dstep%d.dat";
