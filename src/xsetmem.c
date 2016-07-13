@@ -169,7 +169,8 @@ int setmem_large
 #ifdef MPI
   c_malloc1(v1buf, idim_maxMPI + 1);
 #endif // MPI
-  c_malloc1(vg, X->Check.idim_max+1);
+  if (X->Def.iCalcType == TPQCalc) {c_malloc1(vg, 1);}
+  else {c_malloc1(vg, X->Check.idim_max+1);}
   d_malloc1(alpha, X->Def.Lanczos_max+1);
   d_malloc1(beta, X->Def.Lanczos_max+1);
 
