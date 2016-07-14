@@ -212,6 +212,8 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
+  X->iReStart=0;
+
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -248,6 +250,9 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "OutputHam")==0){
       X->iOutputHam=itmp;
     }
+    else if(CheckWords(ctmp, "ReStart")==0){
+      X->iReStart=itmp;
+    }
     else{
       fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);
       return(-1);
@@ -278,6 +283,11 @@ int ReadcalcmodFile(
   }
 
   if(ValidateValue(X->iOutputHam, 0, NUM_OUTPUTHAM-1)){
+    fprintf(stdoutMPI, cErrOutputHam, defname);
+    return (-1);
+  }
+
+  if(ValidateValue(X->iReStart, 0, 2)){
     fprintf(stdoutMPI, cErrOutputHam, defname);
     return (-1);
   }
