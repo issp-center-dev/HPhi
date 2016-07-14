@@ -883,13 +883,13 @@ Parameters correlated with keywords are shown as follows.
 {\bf Type :} int-type 
 
 {\bf Description :} Select the model from the following list:\\
-0: fermion Hubbard model (Canonical ensemble: conservation of particles, the component of $S_z$)\\
+0: fermion Hubbard model (Canonical ensemble: \tr{conservation of particles or} conservation of particles and the component of $S_z$)\\
 1: Spin model (Canonical ensemble: conservation of the component of $S_z$)\\
 2: Kondo lattice model (Canonical ensemble: conservation of particles, the component of $S_z$)\\
 3: fermion Hubbard model (Grand canonical ensemble)\\
 4: Spin model (Grand canonical ensemble)\\
 5: Kondo lattice model (Grand canonical ensemble)
-
+\tr{For fermion Hubbard model, you can select the model under the conservation of particles by setting} \verb|NCond| \tr{in the ModPara file. When you want to select the model under the conservation of particles and the component of $S_z$, you set both} \verb|NCond| and \verb|2Sz| \tr{in the ModPara file}.
 %\item  \verb|Outputmode|
 %
 %{\bf Type :} int-type (default value: 0)
@@ -1024,7 +1024,7 @@ ExpecInterval  20
 
 {\bf Type :} {int-type (Positive integer)}
 
-{\bf Description :} {The total value of $2S_z$ (not used in grand canonical ensemble). For conservation of $S_z$ in the case of } \verb|CalcModel| \\
+{\bf Description :} {The total value of $2S_z$ (not used in grand canonical ensemble). For conservation of $S_z$ in the case of } \verb|CalcModel| 
  { =0 (fermion Hubbard model) or 2 (Kondo lattice model), we must set} \verb|Ncond|.
 
  \item  \verb|Lanczos_max|
