@@ -43,18 +43,19 @@ int CalcBySSM(
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
   char  sdt_norm[D_FileNameMax];
-  int rand_i, rand_max;
+  int rand_i, rand_max, iret;
   long int i_max;
   FILE *fp;
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
   tstruct.tstart=time(NULL);
-  
+
   rand_max = NumAve;
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
+    iret=0;
     X->Bind.Def.irand=rand_i;
 
     if(rand_i==0){
@@ -65,52 +66,15 @@ int CalcBySSM(
     }
 
   //Make or Read initial vector
-    if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT){
-      fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
-      sprintf(sdt_phys, cFileNameSSRand, rand_i);
-      if(!childfopenMPI(sdt_phys, "w", &fp)==0){
-        return -1;
-      }
-      fprintf(fp, cLogSSRand);
-      fclose(fp);
-
-      sprintf(sdt_norm, cFileNameNormRand, rand_i);
-      if(!childfopenMPI(sdt_norm, "w", &fp)==0){
-        return -1;
-      }
-      fprintf(fp, cLogNormRand);
-      fclose(fp);
-
-      step_i = 1;
-      FirstMultiply(rand_i, &(X->Bind));
-      expec_energy(&(X->Bind)); //v0 = H*v1
-      Ns = 1.0*X->Bind.Def.NsiteMPI;
-      inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
-
-      X->Bind.Def.istep=step_i;
-      expec_cisajs(&(X->Bind),v1);
-      expec_cisajscktaltdc(&(X->Bind), v1);
-
-      if(!childfopenMPI(sdt_phys, "a", &fp)==0){
-        return -1;
-      }
-      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
-      fclose(fp);
-
-      if(!childfopenMPI(sdt_norm, "a", &fp)==0){
-        return -1;
-      }
-      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
-      fclose(fp);
-    }
-    else if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
+    if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
       fprintf(stdoutMPI, cLogOutputVecStart);
       sprintf(sdt, cFileNameInputVector, X->Bind.Def.CDataFileHead, rand_i, step_i, myrank);
       childfopenALL(sdt, "rb", &fp);
       if(fp==NULL){
-        fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-        exitMPI(-1);
+        fprintf(stdout, "A file of Inputvector does not exist.\n");
+        fprintf(stdout, "Start to calculate in normal procedure.\n");
+        iret=1;
       }
       fread(&rand_i, sizeof(rand_i), 1, fp);
       fread(&step_i, sizeof(step_i), 1, fp);
@@ -126,8 +90,45 @@ int CalcBySSM(
       X->Bind.Def.istep=step_i;
       expec_energy(&(X->Bind));
     }
-    else{
-      exitMPI(-1);
+
+    if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
+      fprintf(stdoutMPI, cLogTPQRand, rand_i + 1, rand_max);
+      sprintf(sdt_phys, cFileNameSSRand, rand_i);
+      if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
+        return -1;
+      }
+      fprintf(fp, cLogSSRand);
+      fclose(fp);
+
+      sprintf(sdt_norm, cFileNameNormRand, rand_i);
+      if (!childfopenMPI(sdt_norm, "w", &fp) == 0) {
+        return -1;
+      }
+      fprintf(fp, cLogNormRand);
+      fclose(fp);
+
+      step_i = 1;
+      FirstMultiply(rand_i, &(X->Bind));
+      expec_energy(&(X->Bind)); //v0 = H*v1
+      Ns = 1.0 * X->Bind.Def.NsiteMPI;
+      inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
+
+      X->Bind.Def.istep = step_i;
+      expec_cisajs(&(X->Bind), v1);
+      expec_cisajscktaltdc(&(X->Bind), v1);
+
+      if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
+        return -1;
+      }
+      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
+              X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
+      fclose(fp);
+
+      if (!childfopenMPI(sdt_norm, "a", &fp) == 0) {
+        return -1;
+      }
+      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
+      fclose(fp);
     }
 
     for (step_i = X->Bind.Def.istep+1; step_i<X->Bind.Def.Lanczos_max; step_i++){
