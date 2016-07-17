@@ -51,4 +51,11 @@
 #define CALCVEC_LANCZOS 1 /*!< Lanczos method*/
 #define CALCVEC_NOT -1 /*!< eigenvector is not calculated*/
 
+/*!< ReStartVector */
+#define RESTART_NOT 0
+#define RESTART_OUT 1
+#define RESTART_INOUT 2
+#define RESTART_IN 3
+
+
 #endif /* HPHI_DEFCOMMON_H */

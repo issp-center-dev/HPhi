@@ -349,15 +349,15 @@ void StdFace_NotUsed_J(
   int i1, i2;
   char Jname[3][3][10];
 
-  sprintf(Jname[0][0], "%sx\0", valname);
-  sprintf(Jname[0][1], "%sxy\0", valname);
-  sprintf(Jname[0][2], "%sxz\0", valname);
-  sprintf(Jname[1][0], "%syx\0", valname);
-  sprintf(Jname[1][1], "%sy\0", valname);
-  sprintf(Jname[1][2], "%syz\0", valname);
-  sprintf(Jname[2][0], "%szx\0", valname);
-  sprintf(Jname[2][1], "%szy\0", valname);
-  sprintf(Jname[2][2], "%sz\0", valname);
+  sprintf(Jname[0][0], "%sx%c", valname,'\0');
+  sprintf(Jname[0][1], "%sxy%c", valname,'\0');
+  sprintf(Jname[0][2], "%sxz%c", valname,'\0');
+  sprintf(Jname[1][0], "%syx%c", valname,'\0');
+  sprintf(Jname[1][1], "%sy%c", valname,'\0');
+  sprintf(Jname[1][2], "%syz%c", valname,'\0');
+  sprintf(Jname[2][0], "%szx%c", valname,'\0');
+  sprintf(Jname[2][1], "%szy%c", valname,'\0');
+  sprintf(Jname[2][2], "%sz%c", valname,'\0');
 
   StdFace_NotUsed_d(valname, JAll);
 
@@ -724,7 +724,7 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
       }
       else if (J0All < 9999.0 && StdI->J[i1][i2] < 9999.0) {
         fprintf(stdout, "\n ERROR! %s and J%s conflict !\n\n",
-          J0name, Jname[i3][i4]);
+          J0name, Jname[i1][i2]);
         exitMPI(-1);
       }
       else if (J0All < 9999.0 && J0[i1][i2] < 9999.0) {
