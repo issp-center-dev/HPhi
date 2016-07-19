@@ -174,6 +174,7 @@ struct DefineList{
     /**< An integer for selecting output a Hamiltonian. 0: no output, 1:output*/
     int iOutputHam;
 
+
   //[s] For Spectrum
   double dOmegaMax;
   double dOmegaMin;
@@ -187,6 +188,12 @@ struct DefineList{
 
   //[e] For Spectrum
   
+
+  /**< An integer for restarting output a Hamiltonian.
+   * 0: not restart, 1:restart (output restart vector),
+   * 2: restart (input and output restart vector) */
+  int iReStart;
+
 };
 
 struct CheckList{

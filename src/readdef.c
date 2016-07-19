@@ -59,7 +59,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "Ising",
   "Boost",
   "SingleExcitation",
-  "PairExcitation"
+  "PairExcitation",
+  "SpectrumVec"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -213,6 +214,7 @@ int ReadcalcmodFile(
   X->iInputEigenVec=0;
   X->iOutputHam=0;
   X->iFlgRecalcSpec=0;
+  X->iReStart=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -249,8 +251,12 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "OutputHam")==0){
       X->iOutputHam=itmp;
     }
+
     else if(CheckWords(ctmp, "ReCalcSpec")==0 || CheckWords(ctmp, "ReCalcSpectrum")==0){
       X->iFlgRecalcSpec=itmp;
+    }
+    else if(CheckWords(ctmp, "ReStart")==0){
+      X->iReStart=itmp;
     }
     else{
       fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);
@@ -282,6 +288,11 @@ int ReadcalcmodFile(
   }
 
   if(ValidateValue(X->iOutputHam, 0, NUM_OUTPUTHAM-1)){
+    fprintf(stdoutMPI, cErrOutputHam, defname);
+    return (-1);
+  }
+
+  if(ValidateValue(X->iReStart, 0, 2)){
     fprintf(stdoutMPI, cErrOutputHam, defname);
     return (-1);
   }
@@ -427,10 +438,11 @@ int ReadDefFileNInt(
     strcpy(defname, cFileNameListFile[iKWidx]);
 
     if (strcmp(defname, "") == 0) continue;
-
+    if(iKWidx==KWSpectrumVec){
+      continue;
+    }
     fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
     fp = fopenMPI(defname, "r");
-
     if (fp == NULL) return ReadDefFileError(defname);
     switch (iKWidx) {
       case KWCalcMod:
@@ -811,7 +823,7 @@ int ReadDefFileIdxPara(
 
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){
     strcpy(defname, cFileNameListFile[iKWidx]);
-    if(strcmp(defname,"")==0) continue;   
+    if(strcmp(defname,"")==0 || iKWidx==KWSpectrumVec) continue;
     fprintf(stdoutMPI, cReadFileNamelist, defname);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
@@ -2362,4 +2374,15 @@ int CheckWords(
   }
   if(n<strlen(cKW_small)) n=strlen(cKW_small);
   return(strncmp(ctmp_small, cKW_small, n));
+}
+
+int GetFileNameByKW(
+        int iKWidx,
+        char **FileName
+){
+  if(cFileNameListFile == NULL){
+    return -1;
+  }
+  *FileName=cFileNameListFile[iKWidx];
+  return 0;
 }

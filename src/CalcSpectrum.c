@@ -14,7 +14,6 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "mltply.h"
-#include "bitcalc.h"
 #include "CalcSpectrum.h"
 #include "CalcSpectrumByLanczos.h"
 #include "CalcSpectrumByFullDiag.h"
@@ -23,6 +22,7 @@
 #include "wrapperMPI.h"
 #include "FileIO.h"
 #include "mfmemory.h"
+#include "readdef.h"
 
 /**
  * @file   CalcSpectrum.c
@@ -74,10 +74,12 @@ int CalcSpectrum(
 				 )
 {
   char sdt[D_FileNameMax];
+  char *defname;
   double diff_ene,var;
   double complex cdnorm;
   unsigned long int i;
   unsigned long int i_max=0;
+  int i_stp;
   FILE *fp;
   double dnorm;
 
@@ -120,7 +122,10 @@ int CalcSpectrum(
     //input eigen vector
     fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
+    GetFileNameByKW(KWSpectrumVec, &defname);
+    strcat(defname, "_rank_%d.dat");
+//    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
+    sprintf(sdt, defname, myrank);
     childfopenALL(sdt, "rb", &fp);
     if (fp == NULL) {
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
@@ -132,6 +137,7 @@ int CalcSpectrum(
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       return -1;
     }
+    fread(&i_stp, sizeof(i_stp), 1, fp);
     fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
 

@@ -343,7 +343,7 @@ void StdFace_Ladder_Boost(struct StdIntList *StdI)
     exitMPI(-1);
   }
   if (StdI->L % 2 != 0) {
-    fprintf(stdout, "\n ERROR! L % 2 != 0 \n\n");
+    fprintf(stdout, "\n ERROR! L %% 2 != 0 \n\n");
     exitMPI(-1);
   }
   if (StdI->L < 4) {

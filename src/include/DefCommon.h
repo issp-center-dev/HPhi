@@ -59,5 +59,10 @@
 #define RECALC_FROM_TMComponents_VEC 3
 #define RECALC_INOUT_TMComponents_VEC 4
 
+/*!< ReStartVector */
+#define RESTART_NOT 0
+#define RESTART_OUT 1
+#define RESTART_INOUT 2
+#define RESTART_IN 3
 
 #endif /* HPHI_DEFCOMMON_H */

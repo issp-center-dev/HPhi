@@ -814,13 +814,15 @@ CalcEigenVec 0
 {\bf 形式 :} int型 
 
 {\bf 説明 :} 計算モデルの指定を行います。\\
-0: fermion Hubbard模型(カノニカル：粒子数・$S_z$保存)\\
+0: fermion Hubbard模型(カノニカル：粒子数・$S_z$保存、\tr{粒子数・$S_z$非保存})\\
 1: スピン模型(カノニカル：$S_z$保存)\\
 2: 近藤模型(カノニカル：粒子数・$S_z$保存)\\
 3: fermion Hubbard模型(グランドカノニカル：粒子数・$S_z$非保存)\\
 4: スピン模型(グランドカノニカル：$S_z$非保存)\\
 5: 近藤模型(グランドカノニカル：粒子数・$S_z$非保存)\\
 で選択することが出来ます。
+\tr{ferimon Hubbard模型で粒子数保存・$S_z$非保存を選択する場合は、粒子数のみを指定することで計算が可能となります。}
+
 
 %\item  \verb|Outputmode|
 %
@@ -961,7 +963,7 @@ ExpecInterval  20
 
 {\bf 形式 :} {int型 (自然数)}
 
-{\bf 説明 :} {$2S_z$を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で$S_z$保存を行う場合には}\verb|Ncond|を指定する必要があります。
+{\bf 説明 :} {$2S_z$を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で$S_z$保存の計算を行う場合には}\verb|Ncond|を指定する必要があります。
 
  \item  \verb|Lanczos_max|
 
@@ -2599,6 +2601,57 @@ stp=122 -7.1043675920 -7.0817672578 -7.0646589929 -7.0008766356
 
 {\bf 説明 :} Lanczos法で計算時に求められた固有値。\\
 $[$double01$]$が基底エネルギー、$[$double02$]$、$[$double03$]$、$[$double04$]$が1, 2, 3番目の励起エネルギーをそれぞれ表します。
+
+ \end{itemize}
+
+\newpage
+\subsection{Time\_TPQ\_Step.dat}
+(TPQ法でのみ出力) TPQ法でのステップ毎の開始時間を出力します。以下にファイル例を示します。\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+set 0 step 1:TPQ begins: Wed Jul 13 07:59:20 2016
+set 0 step 2:TPQ begins: Wed Jul 13 07:59:20 2016
+set 0 step 3:TPQ begins: Wed Jul 13 07:59:20 2016
+…
+set 4 step 1997:TPQ begins: Wed Jul 13 07:59:32 2016
+set 4 step 1998:TPQ begins: Wed Jul 13 07:59:32 2016
+set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item  \#\#\_TPQ\_Step.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item set $[$int01$]$ stp $[$int02$]$: TPQ begins: $[$string01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+  
+ {\bf 形式 :} int型
+
+{\bf 説明 :} TPQ法でのシード数。
+ 
+  \item  $[$int02$]$
+  
+ {\bf 形式 :} int型
+
+{\bf 説明 :} TPQ法でのステップ数。
+
+  \item  $[$string01$]$
+  
+ {\bf 形式 :} string型
+
+{\bf 説明 :} 計算開始時間。
 
  \end{itemize}
 

@@ -132,6 +132,12 @@ const char* cLogNormRand = " # inv_temp, global_norm, global_1st_norm, step_i \n
 const char* cLogTPQStep = "    step_i/total_step=%d/%d \n";
 const char* cLogTPQEnd = "Finish: Elapsed time is %d [s].\n";
 
+const char* cLogOutputVecStart="  Start:  Output vector.\n";
+const char* cLogOutputVecFinish="  End  :  Output vector.\n";
+const char* cOutputVecStart="  set %d step %d:output vector starts: %s\n";
+const char* cOutputVecFinish="  set %d step %d:output vector finishes: %s\n";
+
+
 //FirstMultiply.c
 const char* cLogCheckInitComplex = "    CHECK: TPQ complex initial vector \n";
 const char* cLogCheckInitReal = "    CHECK: TPQ real initial vector \n";

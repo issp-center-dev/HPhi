@@ -47,6 +47,7 @@
 #define KWBoost 14
 #define KWSingleExcitation 15
 #define KWPairExcitation 16
+#define KWSpectrumVec 17
 
 int CheckSite(
 	      const int iListToSite,
@@ -159,3 +160,8 @@ int CheckWords(
 	       const char* ctmp,
 	       const char* cKeyWord
 	       );
+
+int GetFileNameByKW(
+		int KWidx,
+		char **FileName
+);

@@ -54,10 +54,13 @@ const char* cFileNameTridiagonalMatrixComponents="%s_TMComponents.dat";
 
 //For TPQ
 const char* cFileNameSSRand="SS_rand%d.dat";
-const char* cFileNameTPQStep="%s_TPQ_Step.dat";
+const char* cFileNameTPQStep="%s_Time_TPQ_Step.dat";
 const char* cFileNameNormRand="Norm_rand%d.dat";
 const char* cFileName1BGreen_TPQ="%s_cisajs_set%dstep%d.dat";
 const char* cFileName2BGreen_TPQ="%s_cisajscktalt_set%dstep%d.dat";
+const char* cFileNameOutputVector="tmpvec_set%d_rank_%d.dat";
+const char* cFileNameInputVector="tmpvec_set%d_rank_%d.dat";
+
 
 //For FullDiag
 const char* cFileNamePhys_FullDiag="%s_phys_Nup%d_Ndown%d.dat";
@@ -68,7 +71,6 @@ const char* cFileNamePhys_FullDiag_Ham="%s_Ham.dat";
 
 //For Spectrum
 const char* cFileNameOutputRestartVec="%s_recalcvec_rank_%d.dat";
-
 
 //For Error
 const char* cFileNameErrorSz="Err_sz.dat";

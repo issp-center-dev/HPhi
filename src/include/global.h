@@ -124,6 +124,9 @@ const char* cFileNameTPQStep;
 const char* cFileNameNormRand;
 const char* cFileName1BGreen_TPQ;
 const char* cFileName2BGreen_TPQ;
+const char* cFileNameOutputVector;
+const char* cFileNameInputVector;
+
 
 //For FullDiag
 const char* cFileNamePhys_FullDiag;
