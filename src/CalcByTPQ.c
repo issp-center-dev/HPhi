@@ -76,9 +76,8 @@ int CalcBySSM(
         fprintf(stdout, "Start to calculate in normal procedure.\n");
         iret=1;
       }
-      fread(&rand_i, sizeof(rand_i), 1, fp);
-      fread(&step_i, sizeof(step_i), 1, fp);
       fread(&i_max, sizeof(long int), 1, fp);
+      fread(&step_i, sizeof(step_i), 1, fp);
       if(i_max != X->Bind.Check.idim_max){
         fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
         exitMPI(-1);
@@ -167,9 +166,8 @@ int CalcBySSM(
       if(childfopenALL(sdt, "wb", &fp)!=0){
         exitMPI(-1);
       }
-      fwrite(&rand_i, sizeof(rand_i), 1, fp);
-      fwrite(&step_i, sizeof(step_i), 1, fp);
       fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
+      fwrite(&step_i, sizeof(step_i), 1, fp);
       fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
       fclose(fp);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);

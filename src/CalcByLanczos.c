@@ -169,6 +169,7 @@ int CalcByLanczos(
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       exitMPI(-1);
     }
+    fread(&step_i, sizeof(long int), 1, fp);
     fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
@@ -223,7 +224,8 @@ int CalcByLanczos(
       exitMPI(-1);
     }
     fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
-    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);    
+    fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr),1,fp);
+    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
   }
