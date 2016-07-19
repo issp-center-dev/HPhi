@@ -745,7 +745,11 @@ TwoBodyG	zcisajscktaltdc.def
            Ising  &  Ising interactions. \\  
            PairLift  &   Pair lift couplings. \\  
            OneBodyG         &   Output components for Green functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
-           TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\   \hline
+           TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\   
+           \tr{SingleExcitation} &   Operators for generating single excited state\\ 
+           \tr{PairExcitation} &   Operators for generating pair excited state\\   
+           \tr{SpectrumVec} &   An input vector to calculate a restart vector\\   
+           \hline
   \end{tabular}
 \end{center}
 \caption{List of the definition files.}
@@ -807,7 +811,10 @@ CalcEigenVec 0
 0: Lanczos法\\
 1: TPQを利用した有限温度解析\\
 2: 全対角化\\
-で選択することができます。
+\tr{
+3: 動的グリーン関数の計算
+}\\
+を選択することができます。
 
 \item  \verb|CalcModel|
 
@@ -820,18 +827,8 @@ CalcEigenVec 0
 3: fermion Hubbard模型(グランドカノニカル：粒子数・$S_z$非保存)\\
 4: スピン模型(グランドカノニカル：$S_z$非保存)\\
 5: 近藤模型(グランドカノニカル：粒子数・$S_z$非保存)\\
-で選択することが出来ます。
+を選択することが出来ます。
 \tr{ferimon Hubbard模型で粒子数保存・$S_z$非保存を選択する場合は、粒子数のみを指定することで計算が可能となります。}
-
-
-%\item  \verb|Outputmode|
-%
-%{\bf 形式 :} int型 (デフォルト値 0)
-%
-%{\bf 説明 :} 計算時に出力するモードの指定を行います。\\
-%0: キーワードOneBodyG, TwoBodyGで指定されるGreen関数の出力\\
-%1: 電荷電荷相関、スピンスピン相関とキーワードOneBodyG, TwoBodyGで指定されたGreen関数の出力(ver.0.1では未対応)\\
-%で選択することが出来ます。
 
 \item  \verb|CalcEigenVec|
 
@@ -868,6 +865,39 @@ CalcEigenVec 0
 0: 入力なし\\
 1: 入力あり\\
 から選択することが出来ます。}
+
+\item  \verb|ReStart|
+
+{\bf 形式 :} {int型 (デフォルト値 0)}
+
+{\bf 説明 :} {
+\tr{
+再計算用のモードを指定します。\\
+0: 再計算なし\\
+1: リスタートベクトル入力なし、出力あり\\
+2: リスタートベクトル入力あり、出力あり\\
+3: リスタートベクトル入力あり、出力なし\\
+から選択することが出来ます。
+リスタートベクトルに関するファイルフォーマットは
+}
+}
+
+
+\item  \verb|ReCalcSpec|
+
+{\bf 形式 :} {int型 (デフォルト値 0)}
+
+{\bf 説明 :} {
+\tr{
+動的グリーン関数の計算モードを指定します。\\
+0: 再計算なし\\
+1: 三重対角行列の成分を読み込み再計算\\
+2: 三重対角行列の成分と再計算用ベクトルを出力\\
+3: 三重対角行列の成分と再計算用ベクトルを読み込み再計算\\
+4: 三重対角行列の成分と再計算用ベクトルを読み込み再計算・再出力\\
+から選択することが出来ます。}
+}
+
 
 \end{itemize}
 
@@ -2061,6 +2091,97 @@ NCisAjsCktAltDC        576
 \end{itemize}
 
 \newpage
+\subsection{PairExcitation指定ファイル}
+\label{Subsec:pairexcitation}
+二体励起状態を作成するための演算子$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$を定義します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+===============================
+NCisAjs         24
+===============================
+======== Green functions ======
+===============================
+    0     0     0     0
+    0     1     0     1
+    1     0     1     0
+    1     1     1     1
+    2     0     2     0
+    2     1     2     1
+    3     0     3     0
+    3     1     3     1
+    4     0     4     0
+    4     1     4     1
+    5     0     5     0
+    5     1     5     1
+    6     0     6     0
+    6     1     6     1
+    7     0     7     0
+    7     1     7     1
+    8     0     8     0
+    8     1     8     1
+    9     0     9     0
+    9     1     9     1
+   10     0    10     0
+   10     1    10     1
+   11     0    11     0
+   11     1    11     1
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+   \item  6行以降: [int02]~~[int03]~~[int04]~~[int05]
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} 一体グリーン関数成分総数のキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} 一体グリーン関数成分の総数を指定します。
+
+  \item  $[$int02$]$, $[$int04$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
+ 
+  \item  $[$int03$]$, $[$int05$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} スピンを指定する整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を選択することが出来ます。
+
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item 成分が重複して指定された場合にはエラー終了します。
+\item $[$int01$]$と定義されている一体グリーン関数成分の総数が異なる場合はエラー終了します。
+\item $[$int02$]$-$[$int05$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \section{出力ファイル}
 \label{Sec:outputfile}
 出力ファイルに関するファイル形式を記載します。
@@ -3033,6 +3154,7 @@ CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算され�
 \subsubsection{ファイル形式}
  \begin{itemize}
    \item  1行目：$[$int01$]$
+   \item  2行目：$[$int02$]$
    \item  2行目-: $[$double01$]$~~$[$double02$]$
   \end{itemize}
 \subsubsection{パラメータ}
@@ -3043,6 +3165,55 @@ CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算され�
  {\bf 形式 :} int型
 
 {\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} \tr{ 計算に要したLanczosステップ数を表します。}
+ 
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 固有ベクトルの値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+\end{itemize}
+
+\newpage
+\subsection{tmpvec.dat}
+\label{Subsec:restart}
+CalcModファイルのReStart=1, 2の場合に、計算途中のベクトルを出力します。
+ファイルはバイナリ形式で出力されます。
+ファイル名およびファイル形式は以下の通りです(ファイル形式はeigenvec.datと同様です)。
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{Lanczos法：\#\#\_tmpvec\_rank\_\$\$.dat}
+   \item{TPQ法：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。また、\&\&はTPQ時のサンプリングの番号を表します。
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目：$[$int02$]$
+   \item  2行目-: $[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} \tr{ 計算に要したステップ数を表します。Lanczos法ではLanczosステップ数、TPQ法ではハミルトニアンを乗算した回数が出力されます。}
  
  \item  $[$double01$]$, $[$double02$]$
 

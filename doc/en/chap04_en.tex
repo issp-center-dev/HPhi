@@ -816,7 +816,11 @@ TwoBodyG	zcisajscktaltdc.def
            Ising  &  Ising interactions. \\  
            PairLift  &   Pair lift couplings. \\  
            OneBodyG         &   Output components for Green functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
-           TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\   \hline
+           TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\ 
+           \tr{SingleExcitation} &   Operators for generating single excited state\\ 
+           \tr{PairExcitation} &   Operators for generating pair excited state\\   
+           \tr{SpectrumVec} &   An input vector to calculate a restart vector\\   
+  \hline
   \end{tabular}
 \end{center}
 \caption{List of the definition files.}
@@ -877,6 +881,9 @@ Parameters correlated with keywords are shown as follows.
 0: Lanczos method,\\
 1: Analysis of the physical properties by using TPQ,\\
 2: Full diagonalization method.\\
+\tr{
+3. Calculate dynamical Green's functions.
+}
 
 \item  \verb|CalcModel|
 
@@ -930,6 +937,36 @@ Parameters correlated with keywords are shown as follows.
 {\bf Description :} {Select the mode of inputting an eigenvector:\\
 0: not input an eigen vector.\\
 1: input an eigen vector.\\
+}
+
+\item  \verb|ReStart|
+
+{\bf Type :} {int-type (default value: 0)}
+
+{\bf Description :} {
+\tr{
+Select the mode of inputting a restart vector:\\
+0:  not restart calculation,\\
+1:  output a restart vector,\\
+2:  input a restart vector and output a new restart vector,\\
+3: input a restart vector.\\
+}
+}
+
+
+\item  \verb|ReCalcSpec|
+
+{\bf 形式 :} {int型 (デフォルト値 0)}
+
+{\bf 説明 :} {
+\tr{
+Select the mode of calculating dynamical Green's functions.\\
+0: not restart,\\
+1: input components of triangular diagonal matrix, \\
+2: output both components of triangular diagonal matrix and a restart vector,\\
+3: input both components of triangular diagonal matrix and a restart vector,\\
+4: input and output  both components of triangular diagonal matrix and a restart vector.\\
+}
 }
 
 \end{itemize}
@@ -3011,7 +3048,8 @@ When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos me
 \subsubsection{File format}
  \begin{itemize}
    \item  Line 1: $[$int01$]$
-   \item  Lines 2 -: $[$double01$]$~~$[$double02$]$
+   \item  Line 2: $[$int02$]$
+   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$
   \end{itemize}
   
 \subsubsection{Parameters}
@@ -3022,6 +3060,12 @@ When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos me
  {\bf Type :} int-type
 
 {\bf Description :}  A total number of targets of Hilbert spaces.
+
+  \item  $[$int02$]$
+
+ {\bf Type :} int-type
+
+{\bf Description :}  \tr{ A number of Lanczos steps.}
 
  \item  $[$double01$]$, $[$double02$]$
 
