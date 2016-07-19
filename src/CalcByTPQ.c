@@ -47,7 +47,7 @@ int CalcByTPQ(
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
   tstruct.tstart=time(NULL);
-  
+  step_i = 1;      
   
   rand_max = NumAve;
   step_spin = ExpecInterval;
@@ -62,21 +62,25 @@ int CalcByTPQ(
     }
     fprintf(fp, cLogSSRand);
     fclose(fp);
-    
+
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
     if(!childfopenMPI(sdt_norm, "w", &fp)==0){
       return FALSE;
     }
     fprintf(fp, cLogNormRand);
     fclose(fp);
-    
+    if(rand_i==0){
+      TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
+    }
+    else{
+      TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
+    }
     FirstMultiply(rand_i, &(X->Bind));
     
     expec_energy(&(X->Bind)); //v0 = H*v1
 
     Ns = 1.0*X->Bind.Def.NsiteMPI;
     inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
-    step_i = 1;
     X->Bind.Def.istep=step_i;
     X->Bind.Def.irand=rand_i;
 
@@ -102,9 +106,8 @@ int CalcByTPQ(
 	fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;
-      TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
+      TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
       Multiply(&(X->Bind));
-      //TimeKeeperWithStep(&(X->Bind), cFileNameTimeKeep, cTPQStepEnd, "a", step_i);
       expec_energy(&(X->Bind));
       //expec(&(X->Bind));
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
@@ -121,8 +124,8 @@ int CalcByTPQ(
       fclose(fp);
 
       if (step_i%step_spin == 0){
-	expec_cisajs(&(X->Bind),v1);
-	expec_cisajscktaltdc(&(X->Bind), v1);
+        expec_cisajs(&(X->Bind),v1);
+        expec_cisajscktaltdc(&(X->Bind), v1);
       }
     }
   }
