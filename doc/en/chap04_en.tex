@@ -954,18 +954,19 @@ Select the mode of inputting a restart vector:\\
 }
 
 
-\item  \verb|ReCalcSpec|
+\item  \verb|CalcSpec|
 
-{\bf 形式 :} {int型 (デフォルト値 0)}
+{\bf Type :} {int型 (デフォルト値 0)}
 
-{\bf 説明 :} {
+{\bf Description :} {
 \tr{
 Select the mode of calculating dynamical Green's functions.\\
-0: not restart,\\
-1: input components of triangular diagonal matrix, \\
-2: output both components of triangular diagonal matrix and a restart vector,\\
-3: input both components of triangular diagonal matrix and a restart vector,\\
-4: input and output  both components of triangular diagonal matrix and a restart vector.\\
+0: not calculate  dynamical Green's functions,\\
+1: (not restart) input an initial vector and files for generating single excited or pair excited states,\\
+2: input components of triangular diagonal matrix, \\
+3: output both components of triangular diagonal matrix and a restart vector,\\
+4: input both components of triangular diagonal matrix and a restart vector,\\
+5: input and output  both components of triangular diagonal matrix and a restart vector.\\
 }
 }
 
@@ -1138,6 +1139,30 @@ See \ref{Ch:algorithm} for details of setting an initial vector.
 
 {\bf Description :} (Only use for TPQ method) An integer giving the interval steps of calculating correlation functions in TPQ method.\\ 
 {\bf Note:} The small interval increases the time cost of calculations.
+ 
+ \item \verb|OmegaMax|
+
+{\bf Type :} double-type
+
+{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The maximum value of the real part of the frequency $\omega_{\rm max}$ to calculate dynamical green's functions.}
+
+\item \verb|OmegaMin|
+
+{\bf Type :} double-type
+
+{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The minimum value of the real part of the frequency $\omega_{\rm min}$ to calculate dynamical green's functions.}
+
+\item \verb|OmegaIm|
+
+{\bf Type :} double-type
+
+{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The imaginary part of the frequency $\eta$to calculate dynamical green's functions.}
+ 
+\item \verb|NOmega|
+
+{\bf Type :} int-type
+
+{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The integer to define the step size of the frequency $\Delta \omega = (\omega_{\rm max}-\omega_{\rm min} )/N_{\omega}$. The frequency is given by $z_n=\omega_{\rm min} + \Delta \omega \times n+ i\eta$.} 
  
  \end{itemize}
 
@@ -2124,6 +2149,345 @@ An integer giving a spin index,\\
 \end{itemize}
 
 \newpage
+\subsection{\tr{SingleExcitation file}}
+\label{Subsec:singleexcitation}
+Operators to generate single excited state $S_{i\sigma_1}c_{i\sigma_1}(S_{i\sigma_1}c_{i\sigma_1}^{\dagger})$ are defined.
+An example of file format is shown as follows.
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+===============================
+NSingle         24
+===============================
+======== Single Excitation ======
+===============================
+    0     0     0    1.0    0.0
+    0     1     0    1.0    0.0
+    1     0     0    1.0    0.0
+   (continue...)
+   11     0    0    1.0    0.0
+   11     1    0    1.0    0.0
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item  Line 1:  Header
+   \item  Line 2:   [string01]~[int01]
+   \item  Lines 3-5:  Header
+   \item  Lines 6-: 
+   [int02]~~[int03]~~[int04]~~[double01]~~[double02]
+  \end{itemize}
+\subsubsection{Parameters}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf Type :} string-type (blank parameter not allowed)
+
+   {\bf Description :} A keyword for total number of single excitation operators. You can freely give a name of the keyword.
+
+   \item  $[$int01$]$
+   
+    {\bf Type :} int-type (blank parameter not allowed)
+
+   {\bf Description :} An integer giving total number of total number of single excitation operators.
+
+  \item  $[$int02$]$
+
+ {\bf Type :} int-type (blank parameter not allowed)
+
+ {\bf Description :} An integer giving a site index ($0<= [$int02$]<\verb|Nsite|$).
+ 
+  \item  $[$int03$]$
+  
+ {\bf Type :} int-type (blank parameter not allowed)
+
+{\bf Description :} 
+An integer giving a spin index,\\
+0: up-spin,\\
+1: down-spin.
+
+\item  $[$int04$]$
+
+ {\bf Type :} int-type (blank parameter not allowed)
+
+{\bf Description :} 
+An integer giving a type of single excitation operators,\\
+0: $ c_{i\sigma_1}$,\\
+1: $ c_{i\sigma_1}^{\dagger}$.\\
+
+\item  $[$double01$]$, $[$double02$]$
+
+ {\bf Type :} double-type (blank parameter not allowed)
+
+{\bf Description :}$[$double01$]$ gives the real part of $S_{i\sigma_1}$, while $[$double02$]$ gives the imaginary part of $S_{i\sigma_1}$.
+
+\end{itemize}
+
+\subsubsection{Use rules}
+\begin{itemize}
+\item Headers cannot be omitted. 
+\item A program is terminated, when components of single excitation operators are double counted.
+\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
+\item A program is terminated, when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
+\item A program is terminated, when $[$int02$]$-$[$int04$]$ are out of range from the defined values.
+\end{itemize}
+
+\newpage
+\subsection{\tr{PairExcitation file}}
+\label{Subsec:pairexcitation}
+Operators to generate pair excited state $S_{i\sigma_1j\sigma_2}c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(S_{i\sigma_1j\sigma_2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$ are defined. The type of pair excitation operators ($c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$ or $c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$) must be same in the input file. In $S_z$ conserved system, $\sigma_1$ must be equal to $\sigma_2$. An example of file format is shown as follows.
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+===============================
+NPair         24
+===============================
+======== Pair Excitation ======
+===============================
+    0     0     0     0    0    1.0    0.0
+    0     1     0     1    0    1.0    0.0
+    1     0     1     0    0    1.0    0.0
+   (continue...)
+   11     0    11     0    0    1.0    0.0
+   11     1    11     1    0    1.0    0.0
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item  Line 1:  Header
+   \item  Line 2:   [string01]~[int01]
+   \item  Lines 3-5:  Header
+   \item  Lines 6-: 
+  [int02]~~[int03]~~[int04]~~[int05]~~[int06]~~[double01]~~[double02]
+  \end{itemize}
+\subsubsection{Parameters}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf Type :} string-type (blank parameter not allowed)
+
+   {\bf Description :} A keyword for total number of single excitation operators. You can freely give a name of the keyword.
+
+   \item  $[$int01$]$
+   
+    {\bf Type :} int-type (blank parameter not allowed)
+
+   {\bf Description :} An integer giving total number of total number of single excitation operators.
+
+  \item  $[$int02$]$, $[$int04$]$
+
+ {\bf Type :} int-type (blank parameter not allowed)
+
+{\bf Description :} An integer giving a site index ($0<= [$int02$], [$int04$]<\verb|Nsite|$).
+ 
+ 
+  \item  $[$int03$]$, $[$int05$]$
+
+ {\bf Type :} int-type (blank parameter not allowed)
+
+{\bf Description :} 
+An integer giving a spin index,\\
+0: up-spin,\\
+1: down-spin.
+
+\item  $[$int06$]$
+
+ {\bf Type :} int-type (blank parameter not allowed)
+
+{\bf Description :} 
+An integer giving a type of pair excitation operators,\\
+0: $ c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$,\\
+1: $ c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$.
+
+\item  $[$double01$]$, $[$double02$]$
+
+ {\bf Type :} double-type (blank parameter not allowed)
+
+{\bf Description :}$[$double01$]$ gives the real part of $S_{i\sigma_1j\sigma_2}$, while $[$double02$]$ gives the imaginary part of $S_{i\sigma_1j\sigma_2}$.
+
+\end{itemize}
+
+\subsubsection{Use rules}
+\begin{itemize}
+\item Headers cannot be omitted. 
+\item A program is terminated, when components of single excitation operators are double counted.
+\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
+\item A program is terminated, when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
+\item A program is terminated, when $[$int02$]$-$[$int06$]$ are out of range from the defined values.
+\end{itemize}
+
+\newpage
+\subsection{\tr{SpectrumVec File}}
+\label{Subsec:spectrumvec}
+The header of input file for the initial vector to calculate dynamical Green's functions is defined.
+The file name and the file format (binary type) are shown as follows.
+
+\subsubsection{File name}
+\begin{itemize}
+   \item{\#\#\_rank\_\$\$.dat}   
+\end{itemize}
+  \#\# is a name of head indicated by the key word \verb|SpectrumVec| in the  \verb|CalcMod| file, \$\$  is a number of rank respectively.
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item  Line 1: $[$int01$]$
+   \item  Line 2: $[$int02$]$
+   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$
+  \end{itemize}
+  
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf Type :} int-type
+
+{\bf Description :}  A total number of targets of Hilbert spaces.
+
+  \item  $[$int02$]$
+
+ {\bf Type :} int-type
+
+{\bf Description :}  \tr{ A number of Lanczos or TPQ steps.}
+
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf Type :} double 
+
+{\bf Description :} The coefficient value of an input vector.\\
+$[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
+
+\end{itemize}
+
+\newpage
+\subsection{\tr{DynamicalGreen.dat}}
+\label{Subsec:dynamicalG}
+動的グリーン関数の計算結果を出力します。ファイル名およびファイル形式は以下の通りです。
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_DynamicalGreen.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+  
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目-: $[$double01$]$~~$[$double02$]$~~$[$double03$]$~~$[$double04$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+ {\bf 説明 :} 振動数の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+
+ \item  $[$double03$]$, $[$double04$]$
+
+ {\bf 形式 :} double型 
+
+ {\bf 説明 :} 動的グリーン関数の値を表します。\\
+$[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
+
+\end{itemize}
+
+
+\newpage
+\subsection{\tr{recalcvec.dat}}
+\label{Subsec:restart}
+Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベクトルが出力されます。
+ファイルはバイナリ形式で出力されます。
+ファイル名およびファイル形式は以下の通りです。
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_recalcvec\_rank\_\$\$.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目：$[$int02$]$
+   \item  3行目-: $[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+ {\bf 説明 :} 動的グリーン関数の計算に要したステップ数を表します。
+
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+
+ 
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+\end{itemize}
+
+\newpage
+\subsection{\tr{TMcomponents.dat}}
+\label{Subsec:restart}
+Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
+ファイル名およびファイル形式は以下の通りです。
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_TMcomponents.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目：$[$double01$]$
+   \item  3行目-: $[$double02$]$~~$[$double03$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+ {\bf 説明 :} 動的グリーン関数の計算に要したステップ数$N_d$を表します。
+
+  \item  $[$double01$]$
+
+ {\bf 形式 :} double型
+
+{\bf 説明 :} 励起状態のノルムを表します。
+
+ 
+ \item  $[$double02$]$, $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
+$[$double02$]$が$\alpha_i$、$[$double03$]$が$\beta_i$に対応します。\\
+\end{itemize}
+
+\newpage
 \section{Output files}
 \label{Sec:outputfile}
 In this section, details of output files for expert mode are explained.
@@ -2686,21 +3050,21 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
 
   \item  $[$int01$]$
   
- {\bf 形式 :} int-type
+ {\bf Type :} int-type
 
-{\bf 説明 :} A seed number under calculation of TPQ method.
+{\bf Description :} A seed number under calculation of TPQ method.
  
   \item  $[$int02$]$
   
- {\bf 形式 :} int-type
+ {\bf Type :} int-type
 
-{\bf 説明 :} A step number under calculation of TPQ method.
+{\bf Description :} A step number under calculation of TPQ method.
 
   \item  $[$string01$]$
   
- {\bf 形式 :} string-type
+ {\bf Type :} string-type
 
-{\bf 説明 :} A time for starting calculation of TPQ method at each seeds and steps.
+{\bf Description :} A time for starting calculation of TPQ method at each seeds and steps.
 
  \end{itemize}
 
@@ -3034,10 +3398,53 @@ An example of file format is shown as follows.
 \end{screen}
 \end{minipage}
 
+\subsubsection{File name}
+ \begin{itemize}
+   \item{Lanczos method:}  \#\#\_cisajscktalt.dat
+   \item{TPQ method:} \#\#\_cisajscktalt\_set??step\%\%.dat
+   \item{Full diagonalization method:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
+  \end{itemize}
+  \#\#, ??, \%\% and \&\& indicate [string02] in ModPara file, a number of runs under calculation in TPQ method, a number of steps in TPQ method and an index of eigenvalues, respectively.
+
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item  $[$int01$]$~~$[$int02$]$~~$[$int03$]$~~$[$int04$]$~~$[$int05$]$~~$[$int06$]$~~$[$int07$]$~~$[$int08$]$~~$[$double01$]$~~$[$double02$]$
+  \end{itemize}
+
+
+\subsubsection{Parameters}
+ \begin{itemize}
+
+ \item  $[$int01$]$, $[$int03$]$,$[$int05$]$, $[$int07$]$
+
+ {\bf Type :} int-type
+
+{\bf Description :} 
+An integer of the site number. $[$int01$]$, $[$int03$]$, $[$int05$]$ and $[$int07$]$  show the $i$, $j$, $k$ and $l$site numbers, respectively.
+ 
+  \item  $[$int02$]$, $[$int04$]$,$[$int06$]$, $[$int08$]$
+
+ {\bf Type :} int-type 
+
+{\bf Description :} An integer of the spin index,\\
+   0: up-spin,\\
+   1: down-spin.\\ 
+$[$int02$]$, $[$int04$]$, $[$int06$]$ and $[$int08$]$ show $\sigma_1$, $\sigma_2$, $\sigma_3$ and $\sigma_4$,  respectively. 
+
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :} The value of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$.\\
+$[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$, respectively.
+
+\end{itemize}
+
 \newpage
 \subsection{eigenvec.dat}
 \label{Subsec:eigenvec}
-When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are given by this outputted file. A file format is a binary type. 
+When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are inputted by this outputted file. A file format is a binary type. 
 
 \subsubsection{File name}
 \begin{itemize}
@@ -3074,33 +3481,173 @@ When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos me
 {\bf Description :} A value of eigenvectors.\\
 $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
 
+ \end{itemize}
 
-  \item  $[$int01$]$, $[$int03$]$,$[$int05$]$, $[$int07$]$
+\newpage
+\subsection{\tr{tmpvec.dat}}
+\label{Subsec:restart}
+CalcModファイルのReStart=1, 2の場合に、計算途中のベクトルを出力します。
+ファイルはバイナリ形式で出力されます。
+ファイル名およびファイル形式は以下の通りです(ファイル形式はeigenvec.datと同様です)。
 
- {\bf Type :} int-type
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{Lanczos法：\#\#\_tmpvec\_rank\_\$\$.dat}
+   \item{TPQ法：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。また、\&\&はTPQ時のサンプリングの番号を表します。
 
-{\bf Description :} 
-An integer of the site number. $[$int01$]$, $[$int03$]$, $[$int05$]$ and $[$int07$]$  show the $i$, $j$, $k$ and $l$site numbers, respectively.
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目：$[$int02$]$
+   \item  3行目-: $[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} \tr{ 計算に要したステップ数を表します。Lanczos法ではLanczosステップ数、TPQ法ではハミルトニアンを乗算した回数が出力されます。}
  
-  \item  $[$int02$]$, $[$int04$]$,$[$int06$]$, $[$int08$]$
+ \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} int-type 
+ {\bf 形式 :} double型 
 
-{\bf Description :} An integer of the spin index,\\
-   0: up-spin,\\
-   1: down-spin.\\ 
-$[$int02$]$, $[$int04$]$, $[$int06$]$ and $[$int08$]$ show $\sigma_1$, $\sigma_2$, $\sigma_3$ and $\sigma_4$,  respectively. 
-  \item  $[$double01$]$, $[$double02$]$
-
- {\bf Type :} double-type 
-
-{\bf Description :} The value of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$.\\
-$[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$, respectively.
-
+{\bf 説明 :} 固有ベクトルの値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
 \newpage
+\subsection{\tr{DynamicalGreen.dat}}
+\label{Subsec:dynamicalG}
+動的グリーン関数の計算結果を出力します。ファイル名およびファイル形式は以下の通りです。
 
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_DynamicalGreen.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+  
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目-: $[$double01$]$~~$[$double02$]$~~$[$double03$]$~~$[$double04$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+ {\bf 説明 :} 振動数の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+
+ \item  $[$double03$]$, $[$double04$]$
+
+ {\bf 形式 :} double型 
+
+ {\bf 説明 :} 動的グリーン関数の値を表します。\\
+$[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
+
+\end{itemize}
+
+
+\newpage
+\subsection{\tr{recalcvec.dat}}
+\label{Subsec:restart}
+Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベクトルが出力されます。
+ファイルはバイナリ形式で出力されます。
+ファイル名およびファイル形式は以下の通りです。
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_recalcvec\_rank\_\$\$.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目：$[$int02$]$
+   \item  3行目-: $[$double01$]$~~$[$double02$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+ {\bf 説明 :} 動的グリーン関数の計算に要したステップ数を表します。
+
+  \item  $[$int02$]$
+
+ {\bf 形式 :} int型
+
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+
+ 
+ \item  $[$double01$]$, $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+\end{itemize}
+
+\newpage
+\subsection{\tr{TMcomponents.dat}}
+\label{Subsec:restart}
+Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
+ファイル名およびファイル形式は以下の通りです。
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item{\#\#\_TMcomponents.dat}
+\end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item  1行目：$[$int01$]$
+   \item  2行目：$[$double01$]$
+   \item  3行目-: $[$double02$]$~~$[$double03$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf 形式 :} int型
+
+ {\bf 説明 :} 動的グリーン関数の計算に要したステップ数$N_d$を表します。
+
+  \item  $[$double01$]$
+
+ {\bf 形式 :} double型
+
+{\bf 説明 :} 励起状態のノルムを表します。
+
+ 
+ \item  $[$double02$]$, $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
+$[$double02$]$が$\alpha_i$、$[$double03$]$が$\beta_i$に対応します。\\
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \section{Error messages}
 
 \begin{itemize}
