@@ -521,6 +521,21 @@ int ReadDefFileNInt(
               else if (CheckWords(ctmp, "CalcHS") == 0) {
                 X->read_hacker = (int) dtmp;
               }
+              else if(CheckWords(ctmp, "OmegaMax")==0){
+                X->dOmegaMax=(double)dtmp;
+                X->iFlgSpecOmegaMax=TRUE;
+              }
+              else if(CheckWords(ctmp, "OmegaMin")==0){
+                X->dOmegaMin=(double)dtmp;
+                X->iFlgSpecOmegaMin=TRUE;
+              }
+              else if(CheckWords(ctmp, "OmegaIm")==0){
+                X->dOmegaIm=(double)dtmp;
+                X->iFlgSpecOmegaIm=TRUE;
+              }
+              else if(CheckWords(ctmp, "NOmega")==0){
+                X->iNOmega=(int)dtmp;
+              }
               else {
                 return (-1);
               }

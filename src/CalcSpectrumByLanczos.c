@@ -152,7 +152,6 @@ int CalcSpectrumByLanczos(
     fprintf(stdoutMPI, "    End:   Caclulate spectrum from tridiagonal matrix components.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalEnd, "a");
 
-
     //output vectors for recalculation
     if(X->Bind.Def.iFlgRecalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
        X->Bind.Def.iFlgRecalcSpec==RECALC_INOUT_TMComponents_VEC){
