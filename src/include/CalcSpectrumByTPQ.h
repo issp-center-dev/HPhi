@@ -16,7 +16,7 @@
 #pragma once
 #include "Common.h"
 
-int CalcSpectrumByLanczos(
+int CalcSpectrumByTPQ(
 			  struct EDMainCalStruct *X,
 			  double complex *tmp_v1,
 			  double norm,
@@ -25,27 +25,9 @@ int CalcSpectrumByLanczos(
   double complex *dcomega
 );
 
-int GetSpectrumByTridiagonalMatrixComponents(
-		double *tmp_alpha,
-		double *tmp_beta,
-        double dnorm,
-		double complex _zomega,
-		double complex *_zSpetcrum,
-		unsigned long int liLanczosStp
-		);
-
-
-int ReadTMComponents(
-        struct EDMainCalStruct *X,
-        double *_dnorm,
-        unsigned long int *i_max
-);
-
-
-int OutputTMComponents(
-        struct EDMainCalStruct *X,
-        double *_alpha,
-        double *_beta,
-        double _dnorm,
-        int liLanczosStp
+int ReadTPQData(
+		struct EDMainCalStruct *X,
+		double* ene,
+		double* temp,
+		double* specificHeat
 );

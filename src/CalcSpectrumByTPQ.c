@@ -13,6 +13,7 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+#include "CalcSpectrumByTPQ.h"
 #include "CalcSpectrumByLanczos.h"
 #include "Lanczos_EigenValue.h"
 #include "FileIO.h"
@@ -20,8 +21,8 @@
 #include "mfmemory.h"
 
 /**
- * @file   CalcSpectrumByLanczos.c
- * @version 1.1
+ * @file   CalcSpectrumByTPQ.c
+ * @version 1.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
  * @brief  File for givinvg functions of calculating spectrum by Lanczos
@@ -29,18 +30,65 @@
  * 
  */
 
-/** 
- * @brief A main function to calculate spectrum by Lanczos
- * 
- * @param[in,out] X CalcStruct list for getting and pushing calculation information 
- * @retval 0 normally finished
- * @retval -1 unnormally finished
- *
- * @version 1.1
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- */
-int CalcSpectrumByLanczos(		 
+/// \breif Read TPQ data at "X->Bind.Large.itr" step in SS_rand file.
+/// \param [in] X CalcStruct list for getting and pushing calculation information
+/// \param [out] ene energy
+/// \param [out] temp temperature
+/// \param [out] specificHeat specific heat
+/// \retval TRUE succeed to read data
+/// \retval FALSE fail to read data
+int ReadTPQData(
+        struct EDMainCalStruct *X,
+        double* ene,
+        double* temp,
+        double* specificHeat
+){
+    FILE *fp;
+    char sdt[D_FileNameMax];
+    char ctmp2[256];
+    double dinv_temp;
+    double dene, dHvar, dn, ddoublon;
+    int istp;
+    sprintf(sdt, cFileNameSSRand, X->Bind.Def.irand);
+    childfopenMPI(sdt, "r", &fp);
+    if(fp==NULL){
+        fprintf(stderr, "  Error:  SS_rand%d.dat does not exist.\n", X->Bind.Def.irand);
+        fclose(fp);
+        return FALSE;
+    }
+    fgetsMPI(ctmp2, 256, fp);
+    while(fgetsMPI(ctmp2, 256, fp) != NULL) {
+        sscanf(ctmp2, "%lf %lf %lf %lf %lf %d\n",
+               &dinv_temp,
+               &dene,
+               &dHvar,
+               &dn,
+               &ddoublon,
+               &istp
+        );
+        if(istp==X->Bind.Large.itr) break;
+    }
+    fclose(fp);
+
+    *ene = dene;
+    *temp = 1.0/dinv_temp;
+    *specificHeat = (dHvar-dene*dene)*(dinv_temp*dinv_temp);
+
+    return TRUE;
+}
+
+/// \brief A main function to calculate spectrum by TPQ
+/// \param [in,out] X CalcStruct list for getting and pushing calculation information
+/// \param tmp_v1
+/// \param dnorm
+/// \param Nomega
+/// \param dcSpectrum
+/// \param dcomega
+/// \retval 0 normally finished
+/// \retval -1 unnormally finished
+/// \version 1.2
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
+int CalcSpectrumByTPQ(
 			  struct EDMainCalStruct *X,
 			  double complex *tmp_v1,
 			  double dnorm,
@@ -55,6 +103,12 @@ int CalcSpectrumByLanczos(
     int iret;
     unsigned long int liLanczosStp = X->Bind.Def.Lanczos_max;
     unsigned long int liLanczosStp_vec=0;
+    double dene, dtemp, dspecificHeat;
+
+    //Read Ene, temp, C
+    if(!ReadTPQData(X, &dene, &dtemp, &dspecificHeat)==TRUE){
+        return FALSE;
+    }
 
     if(X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC) {
@@ -124,6 +178,7 @@ int CalcSpectrumByLanczos(
         OutputTMComponents(X, alpha,beta, dnorm, liLanczosStp);
     }//X->Bind.Def.iFlgCalcSpec == RECALC_NOT || RECALC_FROM_TMComponents_VEC
 
+    /* For Lanczos
     fprintf(stdoutMPI, "    Start: Caclulate spectrum from tridiagonal matrix components.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalStart, "a");
     for( i = 0 ; i < Nomega; i++) {
@@ -137,6 +192,7 @@ int CalcSpectrumByLanczos(
     }
     fprintf(stdoutMPI, "    End:   Caclulate spectrum from tridiagonal matrix components.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalEnd, "a");
+    */
 
     //output vectors for recalculation
     if(X->Bind.Def.iFlgCalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
@@ -158,120 +214,5 @@ int CalcSpectrumByLanczos(
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
     }
 
-    return TRUE;
-}
-
-
-int GetSpectrumByTridiagonalMatrixComponents(
-		double *tmp_alpha,
-		double *tmp_beta,
-        double dnorm,
-		double complex dcomega,
-		double complex *dcSpectrum,
-        unsigned long int ilLanczosStp
-		)
-{
-    unsigned long int istp=2;
-    double complex dcDn;
-    double complex dcb0;
-    double complex dcbn, dcan;
-    double complex dcDeltahn;
-    double complex dch;
-
-    if(ilLanczosStp < 1){
-        //TODO: Add error message
-        return FALSE;
-    }
-    dcb0 = dcomega-tmp_alpha[1];
-    if(ilLanczosStp ==1) {
-        if(cabs(dcb0)<eps_Energy){
-            dcb0=eps_Energy;
-        }
-        *dcSpectrum = dnorm / (dcb0);
-        return TRUE;
-    }
-
-    dcbn = dcomega-tmp_alpha[2];
-    dcan = -pow(tmp_beta[1],2);
-    dcDn=1.0/dcbn;
-    dcDeltahn = dcan*dcDn;
-    dch=dcb0+dcDeltahn;
-
-    for(istp=2; istp<=ilLanczosStp; istp++){
-        dcbn = dcomega-tmp_alpha[istp+1];
-        dcan =-pow(tmp_beta[istp],2);
-        dcDn = (dcbn+dcan*dcDn);
-        if(cabs(dcDn)<eps_Energy){
-            dcDn=eps_Energy;
-        }
-        dcDn =1.0/dcDn;
-        dcDeltahn = (dcbn*dcDn-1.0)*dcDeltahn;
-        dch += dcDeltahn;
-        if(cabs(dcDeltahn/dch)<cabs(dcb0)*eps) break;
-    }
-    *dcSpectrum = dnorm/(dch);
-  return TRUE;
-}
-
-int ReadTMComponents(
-        struct EDMainCalStruct *X,
-        double *_dnorm,
-        unsigned long int *_i_max
-){
-    char sdt[D_FileNameMax];
-    char ctmp[256];
-
-    unsigned long int idx;
-    unsigned long int i_max;
-    double dnorm;
-    FILE *fp;
-    idx=1;
-    sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
-    childfopenMPI(sdt,"r", &fp);
-
-    fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-    sscanf(ctmp,"%ld \n", &i_max);
-    if(X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC||
-       X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC) {
-        alpha=(double*)realloc(alpha, sizeof(double)*(i_max + X->Bind.Def.Lanczos_max + 1));
-        beta=(double*)realloc(beta, sizeof(double)*(i_max + X->Bind.Def.Lanczos_max + 1));
-    }
-    else if(X->Bind.Def.iFlgCalcSpec==RECALC_FROM_TMComponents){
-        alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
-        beta=(double*)realloc(beta, sizeof(double)*(i_max + 1));
-    }
-    fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-    sscanf(ctmp,"%lf \n", &dnorm);
-    while(fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp) != NULL){
-        sscanf(ctmp,"%lf %lf \n", &alpha[idx], &beta[idx]);
-        idx++;
-    }
-    fclose(fp);
-    *_dnorm=dnorm;
-    *_i_max=i_max;
-    return TRUE;
-}
-
-
-int OutputTMComponents(
-        struct EDMainCalStruct *X,
-        double *_alpha,
-        double *_beta,
-        double _dnorm,
-        int liLanczosStp
-)
-{
-    char sdt[D_FileNameMax];
-    unsigned long int i;
-    FILE *fp;
-
-    sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
-    childfopenMPI(sdt,"w", &fp);
-    fprintf(fp, "%d \n",liLanczosStp);
-    fprintf(fp, "%.10lf \n",_dnorm);
-    for( i = 1 ; i <= liLanczosStp; i++){
-        fprintf(fp,"%.10lf %.10lf \n", alpha[i], beta[i]);
-    }
-    fclose(fp);
     return TRUE;
 }

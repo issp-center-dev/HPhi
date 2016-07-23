@@ -213,7 +213,7 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
-  X->iFlgRecalcSpec=0;
+  X->iFlgCalcSpec=0;
   X->iReStart=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
@@ -252,8 +252,8 @@ int ReadcalcmodFile(
       X->iOutputHam=itmp;
     }
 
-    else if(CheckWords(ctmp, "ReCalcSpec")==0 || CheckWords(ctmp, "ReCalcSpectrum")==0){
-      X->iFlgRecalcSpec=itmp;
+    else if(CheckWords(ctmp, "CalcSpec")==0 || CheckWords(ctmp, "CalcSpectrum")==0){
+      X->iFlgCalcSpec=itmp;
     }
     else if(CheckWords(ctmp, "ReStart")==0){
       X->iReStart=itmp;

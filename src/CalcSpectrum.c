@@ -16,6 +16,7 @@
 #include "mltply.h"
 #include "CalcSpectrum.h"
 #include "CalcSpectrumByLanczos.h"
+#include "CalcSpectrumByTPQ.h"
 #include "CalcSpectrumByFullDiag.h"
 #include "SingleEx.h"
 #include "PairEx.h"
@@ -55,6 +56,7 @@ int OutputSpectrum(
   }/*for (i = 0; i < Nomega; i++)*/
 
   fclose(fp);
+  return TRUE;
 }/*int OutputSpectrum*/
 
 /**
@@ -75,8 +77,6 @@ int CalcSpectrum(
 {
   char sdt[D_FileNameMax];
   char *defname;
-  double diff_ene,var;
-  double complex cdnorm;
   unsigned long int i;
   unsigned long int i_max=0;
   int i_stp;
@@ -117,8 +117,8 @@ int CalcSpectrum(
   }
 
   //Make excited state
-  if (X->Bind.Def.iFlgRecalcSpec == RECALC_NOT ||
-      X->Bind.Def.iFlgRecalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
+  if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
+      X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
     //input eigen vector
     fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
@@ -138,6 +138,7 @@ int CalcSpectrum(
       return -1;
     }
     fread(&i_stp, sizeof(i_stp), 1, fp);
+    X->Bind.Large.itr=i_stp; //For TPQ
     fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
 
@@ -170,24 +171,31 @@ int CalcSpectrum(
   fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   switch (X->Bind.Def.iCalcType) {
+    case Lanczos:
 
-  case Spectrum:
+      iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+          if (iret != TRUE) {
+            //Error Message will be added.
+            return FALSE;
+          }
 
-    iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
-    if (iret != TRUE) {
-      //Error Message will be added.
-      return FALSE;
-    }
+          break;//Lanczos Spectrum
 
-    break;//Lanczos Spectrum
+    case TPQCalc:
+      iret = CalcSpectrumByTPQ(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+          if (iret != TRUE) {
+            //Error Message will be added.
+            return FALSE;
+          }
+          break;
 
-  case SpectrumFD:
-    iret = CalcSpectrumByFullDiag(X, Nomega,dcSpectrum,dcomega);
-    break;
+    case FullDiag:
+      iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega);
+          break;
 
-    // case CalcSpecByShiftedKlyrov will be added
-  default:
-    break;
+          // case CalcSpecByShiftedKlyrov will be added
+    default:
+      break;
   }
 
   if (iret != TRUE) {
@@ -235,8 +243,6 @@ int SetOmega
 ){
   FILE *fp;
   char sdt[D_FileNameMax],ctmp[256];
-  double domegaMax;
-  double domegaMin;
   int istp=4;
   double E1, E2, E3, E4, Emax;
     long unsigned int iline_countMax=2;

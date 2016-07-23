@@ -18,12 +18,12 @@
 #include "log.h"
 #include "FileIO.h"
 
-/**
+/*!
  * @brief Functions for writing a time log.
- * @param[in] *X Define List for parameters.
- * @param[in] *cFileName character for a file name of writing.
- * @param[in] *cTimeKeeper_Message character for a sentence writing in a file.
- * @param[in] *cWriteType character for determining writing option for fopen.
+ * @param [in] X Define List for parameters.
+ * @param [in] cFileName character for a file name of writing.
+ * @param [in] cTimeKeeper_Message character for a sentence writing in a file.
+ * @param [in] cWriteType character for determining writing option for fopen.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @author Takahiro Misawa (The University of Tokyo)
@@ -53,13 +53,13 @@ int TimeKeeper
   return 0;
 }
 
-/**
+/*!
  * @brief Functions for writing a time log.
- * @param[in] *X Define List for parameters.
- * @param[in] *cFileName character for a file name of writing.
- * @param[in] *cTimeKeeper_Message character for a sentence writing in a file.
- * @param[in] *cWriteType character for determining writing option for fopen.
- * @param[in] istep int for writing steps of progress for a function under calculating.
+ * @param [in] X Define List for parameters.
+ * @param [in] cFileName character for a file name of writing.
+ * @param [in] cTimeKeeper_Message character for a sentence writing in a file.
+ * @param [in] cWriteType character for determining writing option for fopen.
+ * @param [in] istep int for writing steps of progress for a function under calculating.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @author Takahiro Misawa (The University of Tokyo)
@@ -93,10 +93,10 @@ int TimeKeeperWithStep
 
 /**
  * @brief Functions for writing a time log.
- * @param[in] *X Define List for parameters.
- * @param[in] *cFileName character for a file name of writing.
- * @param[in] *cTimeKeeper_Message character for a sentence writing in a file.
- * @param[in] *cWriteType character for determining writing option for fopen.
+ * @param[in] X Define List for parameters.
+ * @param[in] cFileName character for a file name of writing.
+ * @param[in] cTimeKeeper_Message character for a sentence writing in a file.
+ * @param[in] cWriteType character for determining writing option for fopen.
  * @param[in] irand int for writing a number of seed of rand.
  * @param[in] istep int for writing steps of progress for a function under calculating.
  * @retval 0 normally finished reading file.

@@ -10,6 +10,7 @@ CalcByLanczos.o \
 CalcSpectrum.o \
 CalcSpectrumByFullDiag.o \
 CalcSpectrumByLanczos.o \
+CalcSpectrumByTPQ.o \
 SingleEx.o \
 FirstMultiply.o \
 Lanczos_EigenValue.o \
@@ -58,6 +59,7 @@ include/CalcByTPQ.h \
 include/CalcSpectrum.h \
 include/CalcSpectrumByFullDiag.h \
 include/CalcSpectrumByLanczos.h \
+include/CalcSpectrumByTPQ.h \
 include/CheckMPI.h \
 include/Common.h \
 include/DefCommon.h \
@@ -138,6 +140,7 @@ CalcByLanczos.o:$(HEADERS)
 CalcSpectrum.o:$(HEADERS)
 CalcSpectrumByFullDiag.o:$(HEADERS)
 CalcSpectrumByLanczos.o:$(HEADERS)
+CalcSpectrumByTPQ.o:$(HEADERS)
 SingleEx.o:$(HEADERS)
 FirstMultiply.o:$(HEADERS)
 Lanczos_EigenValue.o:$(HEADERS)

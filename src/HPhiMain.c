@@ -180,45 +180,45 @@ int main(int argc, char* argv[]){
   diagonalcalc(&(X.Bind));
   
   //Start Calculation
-  switch (X.Bind.Def.iCalcType){
-  case Lanczos:    
-    if(!CalcByLanczos(&X)==TRUE){
-      FinalizeMPI();
-      return -1;
-    }    
-    break;
-    
-  case FullDiag:
-    if(nproc !=1){
-      fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
-        FinalizeMPI();
-        return 0;
-    }
-    if(!CalcByFullDiag(&X)==TRUE){
-        FinalizeMPI();
-        return -1;
-    }
-    break;
-    
-  case TPQCalc:
-    if(!CalcByTPQ(NumAve, ExpecInterval, &X)==TRUE){
-      FinalizeMPI();
-      return -1;
-    }
-    break;    
-  case Spectrum:
-  case SpectrumFD:
-    if(!CalcSpectrum(&X) == TRUE){
-      FinalizeMPI();
-      return -1;
-    }
-    break;
+  if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
+    switch (X.Bind.Def.iCalcType) {
+      case Lanczos:
+        if (!CalcByLanczos(&X) == TRUE) {
+          FinalizeMPI();
+          return -1;
+        }
+            break;
 
-  default:
-    FinalizeMPI();
-    return 0;
-  }  
+      case FullDiag:
+        if (nproc != 1) {
+          fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
+          FinalizeMPI();
+          return 0;
+        }
+            if (!CalcByFullDiag(&X) == TRUE) {
+              FinalizeMPI();
+              return -1;
+            }
+            break;
 
+      case TPQCalc:
+        if (!CalcByTPQ(NumAve, ExpecInterval, &X) == TRUE) {
+          FinalizeMPI();
+          return -1;
+        }
+            break;
+
+      default:
+        FinalizeMPI();
+            return 0;
+    }
+  }
+  else{
+    if (!CalcSpectrum(&X) == TRUE) {
+      FinalizeMPI();
+      return -1;
+    }
+  }
   FinalizeMPI();
   return 0;
 }
