@@ -536,6 +536,9 @@ int ReadDefFileNInt(
               else if(CheckWords(ctmp, "NOmega")==0){
                 X->iNOmega=(int)dtmp;
               }
+              else if(CheckWords(ctmp, "TargetTPQRand")==0) {
+                X->irand=(int)dtmp;
+              }
               else {
                 return (-1);
               }
