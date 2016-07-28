@@ -1,0 +1,16 @@
+W = 3
+L = 3
+model = "SpinGCboost"
+method = "Lanczos"
+//method = "TPQ"
+lattice = "Honeycomb lattice"
+J0x = -1.0
+J0y =  0.0
+J0z =  0.0
+J1x =  0.0
+J1y = -1.0
+J1z =  0.0
+J2x =  0.0
+J2y =  0.0
+J2z = -1.0
+2S=1
