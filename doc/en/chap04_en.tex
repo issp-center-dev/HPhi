@@ -2370,7 +2370,7 @@ $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
 \newpage
 \subsection{\tr{DynamicalGreen.dat}}
 \label{Subsec:dynamicalG}
-動的グリーン関数の計算結果を出力します。ファイル名およびファイル形式は以下の通りです。
+動的グリーン関数の計算結果を出力します。ファイル名およびファイルTypeは以下の通りです。
 
 \subsubsection{ファイル名}
 \begin{itemize}
@@ -2378,7 +2378,7 @@ $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
 \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
   
-\subsubsection{ファイル形式}
+\subsubsection{ファイルType}
  \begin{itemize}
    \item  1行目-: $[$double01$]$~~$[$double02$]$~~$[$double03$]$~~$[$double04$]$
   \end{itemize}
@@ -2387,16 +2387,16 @@ $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
 
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double型 
 
- {\bf 説明 :} 振動数の値を表します。\\
+ {\bf Description :} 振動数の値を表します。\\
 $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 
  \item  $[$double03$]$, $[$double04$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double型 
 
- {\bf 説明 :} 動的グリーン関数の値を表します。\\
+ {\bf Description :} 動的グリーン関数の値を表します。\\
 $[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
 
 \end{itemize}
@@ -2406,8 +2406,8 @@ $[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
 \subsection{\tr{recalcvec.dat}}
 \label{Subsec:restart}
 Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベクトルが出力されます。
-ファイルはバイナリ形式で出力されます。
-ファイル名およびファイル形式は以下の通りです。
+ファイルはバイナリTypeで出力されます。
+ファイル名およびファイルTypeは以下の通りです。
 
 \subsubsection{ファイル名}
 \begin{itemize}
@@ -2415,7 +2415,7 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベ
 \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。
 
-\subsubsection{ファイル形式}
+\subsubsection{ファイルType}
  \begin{itemize}
    \item  1行目：$[$int01$]$
    \item  2行目：$[$int02$]$
@@ -2426,22 +2426,22 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベ
 
   \item  $[$int01$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int型
 
- {\bf 説明 :} 動的グリーン関数の計算に要したステップ数を表します。
+ {\bf Description :} 動的グリーン関数の計算に要したステップ数を表します。
 
   \item  $[$int02$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int型
 
-{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+{\bf Description :} 計算対象のヒルベルト空間数を指定する整数。
 
  
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double型 
 
-{\bf 説明 :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
+{\bf Description :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
 $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
@@ -2449,7 +2449,7 @@ $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \subsection{\tr{TMcomponents.dat}}
 \label{Subsec:restart}
 Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
-ファイル名およびファイル形式は以下の通りです。
+ファイル名およびファイルTypeは以下の通りです。
 
 \subsubsection{ファイル名}
 \begin{itemize}
@@ -2457,7 +2457,7 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な三重対�
 \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
 
-\subsubsection{ファイル形式}
+\subsubsection{ファイルType}
  \begin{itemize}
    \item  1行目：$[$int01$]$
    \item  2行目：$[$double01$]$
@@ -2468,22 +2468,22 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な三重対�
 
   \item  $[$int01$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int型
 
- {\bf 説明 :} 動的グリーン関数の計算に要したステップ数$N_d$を表します。
+ {\bf Description :} 動的グリーン関数の計算に要したステップ数$N_d$を表します。
 
   \item  $[$double01$]$
 
- {\bf 形式 :} double型
+ {\bf Type :} double型
 
-{\bf 説明 :} 励起状態のノルムを表します。
+{\bf Description :} 励起状態のノルムを表します。
 
  
  \item  $[$double02$]$, $[$double03$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double型 
 
-{\bf 説明 :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
+{\bf Description :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
 $[$double02$]$が$\alpha_i$、$[$double03$]$が$\beta_i$に対応します。\\
 \end{itemize}
 
@@ -3486,77 +3486,85 @@ $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
 \newpage
 \subsection{\tr{tmpvec.dat}}
 \label{Subsec:restart}
-CalcModファイルのReStart=1, 2の場合に、計算途中のベクトルを出力します。
-ファイルはバイナリ形式で出力されます。
-ファイル名およびファイル形式は以下の通りです(ファイル形式はeigenvec.datと同様です)。
+When ReStart=1, 2 in a CalcMod file, vectors after stopping calculation at an indicated step are outputted. A file format is a binary type. 
+An example of file format is shown as follows.
 
-\subsubsection{ファイル名}
+\subsubsection{File name}
 \begin{itemize}
-   \item{Lanczos法：\#\#\_tmpvec\_rank\_\$\$.dat}
-   \item{TPQ法：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
+   \item{Lanczos method：\#\#\_tmpvec\_rank\_\$\$.dat}
+   \item{TPQ method：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
 \end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。また、\&\&はTPQ時のサンプリングの番号を表します。
+  \#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. \&\& is a sampling number for TPQ calculation. 
 
-\subsubsection{ファイル形式}
+\subsubsection{File format}
  \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$int02$]$
-   \item  3行目-: $[$double01$]$~~$[$double02$]$
+   \item  Line 1: $[$int01$]$
+   \item  Line 2: $[$int02$]$
+   \item  Lines 3 - 3+$[$int01$]$: $[$double01$]$~~$[$double02$]$
+   \item  Lines 4+$[$int01$]$ - 3+2$\times[$int01$]$: $[$double03$]$~~$[$double04$]$
   \end{itemize}
-\subsubsection{パラメータ}
+
+\subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$int01$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int-type
 
-{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+{\bf Description :}  A total number of targets of Hilbert spaces.
 
   \item  $[$int02$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int-type
 
-{\bf 説明 :} \tr{ 計算に要したステップ数を表します。Lanczos法ではLanczosステップ数、TPQ法ではハミルトニアンを乗算した回数が出力されます。}
- 
- \item  $[$double01$]$, $[$double02$]$
+{\bf Description :}  \tr{ A number of Lanczos (TPQ) steps for Lanczos (TPQ) method.}
 
- {\bf 形式 :} double型 
+ \item  $[$double01$]$, $[$double02$]$ 
 
-{\bf 説明 :} 固有ベクトルの値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
-\end{itemize}
+ {\bf Type :} double 
+
+{\bf Description :} A value of two vectors ($\vec{v}_{k+1}$ in Eq.~(\ref{eq: LanczosVector}) for Lanczos method and $\vec{y}_{k+1}$ in Eq~.(\ref{eq: TPQVector}) for TPQ method). $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.
+
+ \item  $[$double03$]$, $[$double04$]$ 
+
+ {\bf Type :} double 
+
+{\bf Description :} A value of two vectors ($\vec{v}_{k}$ in Eq.~(\ref{eq: LanczosVector}) for Lanczos method and $\vec{y}_{k}$ in Eq~.(\ref{eq: TPQVector}) for TPQ method). $[$double03$]$ is a real part, $[$double04$]$ is an imaginary part.\\
+
+ \end{itemize}
 
 \newpage
 \subsection{\tr{DynamicalGreen.dat}}
 \label{Subsec:dynamicalG}
-動的グリーン関数の計算結果を出力します。ファイル名およびファイル形式は以下の通りです。
+This file is output files for calculating dynamical Green's function. An example of file format is shown as follows.
 
-\subsubsection{ファイル名}
+\subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_DynamicalGreen.dat}
 \end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+\#\# indicates [string02] in ModPara file.
   
-\subsubsection{ファイル形式}
+\subsubsection{File format}
  \begin{itemize}
-   \item  1行目-: $[$double01$]$~~$[$double02$]$~~$[$double03$]$~~$[$double04$]$
+   \item  Lines 1-: $[$double01$]$~~$[$double02$]$~~$[$double03$]$~~$[$double04$]$
   \end{itemize}
-\subsubsection{パラメータ}
+  
+\subsubsection{Parameters}
  \begin{itemize}
 
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double-type
 
- {\bf 説明 :} 振動数の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+ {\bf Description :} The value of the frequency $z$.\\
+$[$double01$]$ and $[$double02$]$ are a real and an imaginary part of $z$, respectively.\\
 
  \item  $[$double03$]$, $[$double04$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double-type 
 
- {\bf 説明 :} 動的グリーン関数の値を表します。\\
-$[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
+ {\bf Description:} The value of dynamical Green's functions $G(z)$.\\
+$[$double03$]$ and $[$double04$]$ are a real and an imaginary part of $G(z)$, respectively.\\
 
 \end{itemize}
 
@@ -3564,86 +3572,95 @@ $[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
 \newpage
 \subsection{\tr{recalcvec.dat}}
 \label{Subsec:restart}
-Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベクトルが出力されます。
-ファイルはバイナリ形式で出力されます。
-ファイル名およびファイル形式は以下の通りです。
+This file is output files for two vectors to recalculate dynamical Green's function by Lanczos method. 
+A file format is a binary type. 
+An example of file format is shown as follows.
 
-\subsubsection{ファイル名}
+\subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_recalcvec\_rank\_\$\$.dat}
 \end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。
+\#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. 
 
-\subsubsection{ファイル形式}
+\subsubsection{File format}
  \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$int02$]$
-   \item  3行目-: $[$double01$]$~~$[$double02$]$
+   \item  Line 1：$[$int01$]$
+   \item  Line 2：$[$int02$]$
+   \item  Lines 3 - 3+$[$int02$]$: $[$double01$]$~~$[$double02$]$
+   \item  Lines 4+$[$int02$]$ - 3+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$
+
   \end{itemize}
-\subsubsection{パラメータ}
+\subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$int01$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int-type
 
- {\bf 説明 :} 動的グリーン関数の計算に要したステップ数を表します。
+ {\bf Description :} The step for calculating dynamical Green's functions by Lanczos method $N_d$.
 
   \item  $[$int02$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int-type
 
-{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+{\bf Description :}  A total number of targets of Hilbert spaces.
 
  
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double-type 
 
-{\bf 説明 :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+{\bf Description :} The value of the vector $\vec{v}_{k+1}$ for recalculating dynamical Green's functions by Lanczos method.\\
+$[$double01$]$ and $[$double02$]$ are a real part and an imaginary part of $\vec{v}_{k+1}$, respectively.
+
+\item  $[$double03$]$, $[$double04$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :} The value of the vector $\vec{v}_{k}$ for recalculating dynamical Green's functions by Lanczos method.\\
+$[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec{v}_{k}$, respectively.
 \end{itemize}
 
 \newpage
 \subsection{\tr{TMcomponents.dat}}
 \label{Subsec:restart}
-Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
-ファイル名およびファイル形式は以下の通りです。
+This file is output files for the components of tridiagonal matrix and the norm of the excited state to recalculate dynamical Green's function by Lanczos method. 
+A file format is a binary type. 
+An example of file format is shown as follows.
 
-\subsubsection{ファイル名}
+\subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_TMcomponents.dat}
 \end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+\#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. 
 
-\subsubsection{ファイル形式}
+\subsubsection{File format}
  \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$double01$]$
-   \item  3行目-: $[$double02$]$~~$[$double03$]$
+   \item  Line 1：$[$int01$]$
+   \item  Line 2：$[$double01$]$
+   \item  Lines 3 -: $[$double02$]$~~$[$double03$]$
   \end{itemize}
-\subsubsection{パラメータ}
+\subsubsection{Parametes}
  \begin{itemize}
 
   \item  $[$int01$]$
 
- {\bf 形式 :} int型
+ {\bf Type :} int-type
 
- {\bf 説明 :} 動的グリーン関数の計算に要したステップ数$N_d$を表します。
+ {\bf Description :} The step for calculating dynamical Green's functions by Lanczos method $N_d$.
 
   \item  $[$double01$]$
 
- {\bf 形式 :} double型
+ {\bf Type :} double-type
 
-{\bf 説明 :} 励起状態のノルムを表します。
-
+{\bf Description :} The value of the norm of the excited state.
  
  \item  $[$double02$]$, $[$double03$]$
 
- {\bf 形式 :} double型 
+ {\bf Type :} double-type
 
-{\bf 説明 :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
-$[$double02$]$が$\alpha_i$、$[$double03$]$が$\beta_i$に対応します。\\
+{\bf Description :} The value of the components of the tridiagonal matrix to recalculate dynamical Green'S functions by Lanczos method $\alpha_i,~\beta_i~(i =1,\cdots N_d)$.
+$[$double02$]$ is $\alpha_i$ and $[$double03$]$ is $\beta_i$, respectively\\
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
