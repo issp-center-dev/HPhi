@@ -909,7 +909,7 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
 #ifdef MPI
 
   double complex dam_pr;
-  dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble( X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][2],
+  dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble( X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
 						   X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
 						   X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0,  tmp_v1);
   X->Large.prdct += dam_pr;
@@ -941,17 +941,17 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
   long int origin;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
-
+    double complex Jint, dmv, dam_pr;
   if(org_isite1 ==org_isite3 && org_ispin1==org_ispin3){//cisaitcisais
     return 0.0;
   }
-  
-  mask1 = (int)X->Def.Tpow[org_isite1];  
+
+  mask1 = (int)X->Def.Tpow[org_isite1];
   origin = myrank ^ mask1;
   state1 = (origin & mask1)/mask1;
   mask2 = (int)X->Def.Tpow[org_isite3];
   num1 =  X_SpinGC_CisAis(origin+1, X, mask2, org_ispin3);
+
   if(state1 == org_ispin2 && num1 !=0){
     Jint = tmp_J;
   }
@@ -960,7 +960,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
     if(num1 !=0){
       Jint = conj(tmp_J);
       if(X->Large.mode == M_CORR){
-	Jint = 0;
+        Jint = 0;
       }
     }
     else{
@@ -970,6 +970,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
   else{
     return 0.0;
   }
+
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
     &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if(ierr != 0) exitMPI(-1);
@@ -1093,7 +1094,7 @@ void GC_child_general_int_spin_MPIdouble(
     GC_child_CisAitCjuAju_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
   else {
-    GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
+      GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
 }/*void GC_child_general_int_spin_MPIdouble*/
 
@@ -1320,7 +1321,6 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle( int org_isite1, int org_i
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
   firstprivate(Jint, X, state1check, mask1) shared( tmp_v1, tmp_v0)
   for (j = 0; j < X->Check.idim_max; j++) {
- 
     state1 = (j & mask1) / mask1;
     ioff = j ^ mask1;
     if (state1 == state1check) {

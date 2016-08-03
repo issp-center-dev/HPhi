@@ -556,7 +556,7 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	      }
 	      
 	      if(sigma1==sigma2){
-		fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
+            fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
 	      }
 	      else{
 		// longitudinal magnetic field (considerd in diagonalcalc.c)
