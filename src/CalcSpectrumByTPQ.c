@@ -18,6 +18,7 @@
 #include "Lanczos_EigenValue.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
+#include "vec12.h"
 #include "mfmemory.h"
 
 /**
@@ -77,6 +78,27 @@ int ReadTPQData(
     return TRUE;
 }
 
+int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecificheat,
+                       double ene, double *tmp_E, int Nsite, int idim_max, double complex * dc_tmpSpec)
+{
+    int l;
+    double pre_factor=2.0*dtemp*dtemp*dspecificheat
+    double factor=M_PI*pre_factor;
+    factor=1.0/sqrt(factor);
+    if(cimag(dcomega)>0) {
+        for (l = 1; l <= idim_max; l++) {
+            //TODO: Check omega is real ?
+            *dc_tmpSpec += vec[l][0] * conj(vec[l][0]) * exp(-pow((creal(dcomega) - tmp_E[l] + ene * Nsite),2)/(pre_factor));
+        }
+    }
+    else{
+        fprintf(stderr, " an imarginary part of omega must be positive.\n");
+        return FALSE;
+    }
+    *dc_tmpSpec *= factor;
+    return TRUE;
+}
+
 /// \brief A main function to calculate spectrum by TPQ
 /// \param [in,out] X CalcStruct list for getting and pushing calculation information
 /// \param tmp_v1
@@ -104,6 +126,9 @@ int CalcSpectrumByTPQ(
     unsigned long int liLanczosStp = X->Bind.Def.Lanczos_max;
     unsigned long int liLanczosStp_vec=0;
     double dene, dtemp, dspecificHeat;
+    double *tmp_E;
+    double complex dctmp_Spectrum;
+    int stp;
 
     //Read Ene, temp, C
     if(!ReadTPQData(X, &dene, &dtemp, &dspecificHeat)==TRUE){
@@ -178,22 +203,24 @@ int CalcSpectrumByTPQ(
         OutputTMComponents(X, alpha,beta, dnorm, liLanczosStp);
     }//X->Bind.Def.iFlgCalcSpec == RECALC_NOT || RECALC_FROM_TMComponents_VEC
 
-    /* For Lanczos
+    stp=liLanczosStp;
+    d_malloc1(tmp_E,stp+1);
+    X->Bind.Def.nvec= stp;
+    vec12(alpha,beta,stp,tmp_E, &(X->Bind));
     fprintf(stdoutMPI, "    Start: Caclulate spectrum from tridiagonal matrix components.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalStart, "a");
     for( i = 0 ; i < Nomega; i++) {
-        iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i], liLanczosStp);
+        iret = GetCalcSpectrumTPQ(dcomega[i], dtemp, dspecificHeat, dene, tmp_E, X->Bind.Def.Nsite, stp, &dctmp_Spectrum);
         if (iret != TRUE) {
-            //ToDo: Error Message will be added.
             //ReAlloc alpha, beta and Set alpha_start and beta_start in Lanczos_EigenValue
             return FALSE;
         }
-        dcSpectrum[i] = dnorm * dcSpectrum[i];
+        dcSpectrum[i] = dnorm * dctmp_Spectrum;
     }
     fprintf(stdoutMPI, "    End:   Caclulate spectrum from tridiagonal matrix components.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalEnd, "a");
-    */
 
+    d_free1(tmp_E,stp+1);
     //output vectors for recalculation
     if(X->Bind.Def.iFlgCalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec==RECALC_INOUT_TMComponents_VEC){

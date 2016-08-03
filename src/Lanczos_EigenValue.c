@@ -317,10 +317,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
        fclose(fp);
     if(stp > Target) {
         if (fabs((E_target - ebefor) / E_target) < eps_Lanczos || fabs(beta[stp]) < pow(10.0, -14)) {
-            vec12(alpha, beta, stp, E, X);
+            d_malloc1(tmp_E,stp+1);
+            vec12(alpha, beta, stp, tmp_E, X);
             X->Large.itr = stp;
-            X->Phys.Target_energy = E[k_exct];
+            X->Phys.Target_energy = E_target;
             iconv = 0;
+            d_free1(tmp_E,stp+1);
             break;
         }
         ebefor=E_target;

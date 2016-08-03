@@ -187,7 +187,8 @@ int setmem_large
      ){
     return -1;
   }
-  c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
+//  c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
+  c_malloc2(vec,X->Def.Lanczos_max+1, X->Def.Lanczos_max+1);
   for(j=0; j<X->Def.nvec+1; j++){
     if(vec[j]==NULL){
       return -1;

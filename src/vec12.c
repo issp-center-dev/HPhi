@@ -32,7 +32,7 @@
  * @author Youhei Yamaji (The University of Tokyo)
  */
 void vec12(double alpha[],double beta[],int ndim,
-	   double E[],struct BindStruct *X){
+	   double tmp_E[],struct BindStruct *X){
   
   int j,k,nvec;
 
@@ -73,6 +73,7 @@ void vec12(double alpha[],double beta[],int ndim,
   if(nvec<=ndim){ 
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec)
     for(k=1;k<=nvec;k++){
+      tmp_E[k]=tmpr[k-1];
       for(j=1;j<=ndim;j++){
         vec[k][j]=tmpvec[k-1][j-1];
       } 
@@ -81,6 +82,7 @@ void vec12(double alpha[],double beta[],int ndim,
   else{
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec)
     for(k=1;k<=ndim;k++){
+      tmp_E[k]=tmpr[k-1];
       for(j=1;j<=ndim;j++){
         vec[k][j]=tmpvec[k-1][j-1];
       } 
