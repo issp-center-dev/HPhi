@@ -82,13 +82,13 @@ int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecifichea
                        double ene, double *tmp_E, int Nsite, int idim_max, double complex * dc_tmpSpec)
 {
     int l;
-    double pre_factor=2.0*dtemp*dtemp*dspecificheat
+    double pre_factor=2.0*dtemp*dtemp*dspecificheat;
     double factor=M_PI*pre_factor;
     factor=1.0/sqrt(factor);
     if(cimag(dcomega)>0) {
         for (l = 1; l <= idim_max; l++) {
             //TODO: Check omega is real ?
-            *dc_tmpSpec += vec[l][0] * conj(vec[l][0]) * exp(-pow((creal(dcomega) - tmp_E[l] + ene * Nsite),2)/(pre_factor));
+            *dc_tmpSpec += vec[l][1] * conj(vec[l][1]) * exp(-pow((creal(dcomega) - tmp_E[l] + ene * Nsite),2)/(pre_factor));
         }
     }
     else{

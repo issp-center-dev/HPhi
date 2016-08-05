@@ -187,13 +187,14 @@ int setmem_large
      ){
     return -1;
   }
-//  c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
-  c_malloc2(vec,X->Def.Lanczos_max+1, X->Def.Lanczos_max+1);
-  for(j=0; j<X->Def.nvec+1; j++){
-    if(vec[j]==NULL){
-      return -1;
+
+
+    if(X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+        c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
     }
-  }
+    else if(X->Def.iCalcType==Lanczos){
+        c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
+    }
   
   if(X->Def.iCalcType == FullDiag){
     d_malloc1(X->Phys.all_num_down, X->Check.idim_max+1);

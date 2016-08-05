@@ -71,7 +71,7 @@ void vec12(double alpha[],double beta[],int ndim,
   
  
   if(nvec<=ndim){ 
-#pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec)
+#pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
     for(k=1;k<=nvec;k++){
       tmp_E[k]=tmpr[k-1];
       for(j=1;j<=ndim;j++){
@@ -80,7 +80,7 @@ void vec12(double alpha[],double beta[],int ndim,
     }
   }
   else{
-#pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec)
+#pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
     for(k=1;k<=ndim;k++){
       tmp_E[k]=tmpr[k-1];
       for(j=1;j<=ndim;j++){
@@ -93,4 +93,4 @@ void vec12(double alpha[],double beta[],int ndim,
   free(tmpr);
   free(tmpvec);
 
-}   
+}

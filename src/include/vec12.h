@@ -18,3 +18,4 @@
 
 void vec12(double alpha[],double beta[],int ndim,
 	   double E[],struct BindStruct *X);
+
