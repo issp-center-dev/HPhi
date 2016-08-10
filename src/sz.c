@@ -643,7 +643,7 @@ int sz
     if(childfopenMPI(sdt_err,"a",&fp_err)!=0){
       exitMPI(-1);
     }
-    fprintf(fp_err,cErrSz_OutFile);
+    fprintf(fp_err, "%s",cErrSz_OutFile);
     fclose(fp_err);
     exitMPI(-1);
   }
@@ -1257,8 +1257,8 @@ int Read_sz
     if(childfopenMPI(cFileNameErrorSz,"a",&fp_err)!=0){
       exitMPI(-1);
     }
-    fprintf(fp_err, cErrSz_NoFile);
-    fprintf(stderr, cErrSz_NoFile);
+    fprintf(fp_err, "%s", cErrSz_NoFile);
+    fprintf(stderr, "%s", cErrSz_NoFile);
     fprintf(fp_err, cErrSz_NoFile_Show,sdt);
     fprintf(stderr, cErrSz_NoFile_Show, sdt);
     fclose(fp_err);

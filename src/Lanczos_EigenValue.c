@@ -332,7 +332,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
   sprintf(sdt,cFileNameTimeKeep,X->Def.CDataFileHead);
   if(iconv!=0){
-    sprintf(sdt,  cLogLanczos_EigenValueNotConverged);
+    sprintf(sdt, "%s",  cLogLanczos_EigenValueNotConverged);
     return -1;
   }
 

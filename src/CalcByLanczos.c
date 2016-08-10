@@ -99,7 +99,7 @@ int CalcByLanczos(
       return(TRUE);
     }
 
-    fprintf(stdoutMPI, cLogLanczos_EigenVecStart);
+    fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecStart);
 //    printf("debug: X->Bind.Check.idim_maxMPI=%d\n", X->Bind.Check.idim_maxMPI);
 
     if(X->Bind.Check.idim_maxMPI != 1){
@@ -174,7 +174,7 @@ int CalcByLanczos(
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
   }
 
-  fprintf(stdoutMPI, cLogLanczos_EigenVecEnd);
+  fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
   // v1 is eigen vector
     
   if(!expec_cisajs(&(X->Bind), v1)==0){

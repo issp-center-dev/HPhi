@@ -52,7 +52,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     } /*for (isite = NsiteMPI; isite > 0; isite--)*/
     
     if (isite == 0) {
-      fprintf(stdoutMPI, cErrNProcNumberHubbard);
+      fprintf(stdoutMPI, "%s", cErrNProcNumberHubbard);
       fprintf(stdoutMPI, cErrNProcNumber, nproc);
       	NDimInterPE = 1;
 	int ismallNproc=1;
@@ -167,7 +167,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 
       if (isite == 0) {
-        fprintf(stdoutMPI, cErrNProcNumberSpin);
+        fprintf(stdoutMPI, "%s", cErrNProcNumberSpin);
         fprintf(stdoutMPI, cErrNProcNumber, nproc);
 	NDimInterPE = 1;
 	int ismallNproc=1;
@@ -215,7 +215,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
 
       if (isite == 0) {
-        fprintf(stdoutMPI, cErrNProcNumberGneralSpin);
+        fprintf(stdoutMPI, "%s", cErrNProcNumberGneralSpin);
         fprintf(stdoutMPI, cErrNProcNumber, nproc);
 	NDimInterPE = 1;
 	int ismallNproc=1;

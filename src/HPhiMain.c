@@ -127,7 +127,7 @@ int main(int argc, char* argv[]){
     FinalizeMPI();
     return 0;
   }	  
-  fprintf(stdoutMPI,  cProFinishDefFiles);
+  fprintf(stdoutMPI, "%s", cProFinishDefFiles);
   
 
   /*ALLOCATE-------------------------------------------*/
@@ -144,7 +144,7 @@ int main(int argc, char* argv[]){
   TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefFinish, "a");
 
 
-  fprintf(stdoutMPI, cProFinishDefCheck);
+  fprintf(stdoutMPI, "%s", cProFinishDefCheck);
   if(check(&(X.Bind))==MPIFALSE){
     FinalizeMPI();
     return 0;

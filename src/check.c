@@ -194,7 +194,7 @@ int check(struct BindStruct *X){
   }  
 
   if(comb_sum==0){
-    fprintf(stderr, cErrNoHilbertSpace);
+    fprintf(stderr, "%s", cErrNoHilbertSpace);
     //    return FALSE;
   }
   

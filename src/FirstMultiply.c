@@ -64,7 +64,7 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
 
     if (X->Def.iInitialVecType == 0) {
 #pragma omp master
-      fprintf(stdoutMPI, cLogCheckInitComplex);
+      fprintf(stdoutMPI, "%s", cLogCheckInitComplex);
   
 #pragma omp for
       for (i = 1; i <= i_max; i++)
@@ -72,7 +72,7 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
     }/*if (X->Def.iInitialVecType == 0)*/
     else {
 #pragma omp master
-      fprintf(stdoutMPI, cLogCheckInitReal);
+      fprintf(stdoutMPI, "%s", cLogCheckInitReal);
 
 #pragma omp for
       for (i = 1; i <= i_max; i++)

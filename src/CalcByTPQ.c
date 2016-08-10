@@ -51,7 +51,7 @@ int CalcBySSM(
   rand_max = NumAve;
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
-  fprintf(stdoutMPI, cLogTPQ_Start);
+  fprintf(stdoutMPI, "%s", cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
     step_i = 1;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
@@ -59,14 +59,14 @@ int CalcBySSM(
     if(!childfopenMPI(sdt_phys, "w", &fp)==0){
       return -1;
     }
-    fprintf(fp, cLogSSRand);
+    fprintf(fp, "%s", cLogSSRand);
     fclose(fp);
 
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
     if(!childfopenMPI(sdt_norm, "w", &fp)==0){
       return -1;
     }
-    fprintf(fp, cLogNormRand);
+    fprintf(fp, "%s", cLogNormRand);
     fclose(fp);
     if(rand_i==0){
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
@@ -128,7 +128,7 @@ int CalcBySSM(
       }
     }
   }
-  fprintf(stdoutMPI, cLogTPQ_End);
+  fprintf(stdoutMPI, "%s", cLogTPQ_End);
   tstruct.tend=time(NULL);
   fprintf(stdoutMPI, cLogTPQEnd, (int)(tstruct.tend-tstruct.tstart));
   return 0;

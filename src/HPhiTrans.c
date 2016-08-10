@@ -52,7 +52,7 @@ int HPhiTrans(struct BindStruct *X){
 	  && X->Def.EDGeneralTransfer[i][3] == X->Def.EDGeneralTransfer[k][3]){
 	if(X->Def.EDGeneralTransfer[i][0] == X->Def.EDGeneralTransfer[k][0]
 	   && X->Def.EDGeneralTransfer[i][2] == X->Def.EDGeneralTransfer[k][2]){
-	  sprintf(sdt_err,cErrTransfer);
+	  sprintf(sdt_err,"%s",cErrTransfer);
 	  childfopenMPI(sdt_err,"a", &fp_err);
 	  fprintf(fp_err,cErrDoubleCounting, X->Def.EDGeneralTransfer[k][0] ,X->Def.EDGeneralTransfer[k][2], X->Def.EDGeneralTransfer[k][1], X->Def.EDGeneralTransfer[k][3]);
 	  fclose(fp_err);
