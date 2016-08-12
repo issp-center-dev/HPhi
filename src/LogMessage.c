@@ -132,6 +132,8 @@ const char* cLogNormRand = " # inv_temp, global_norm, global_1st_norm, step_i \n
 const char* cLogTPQStep = "    step_i/total_step=%d/%d \n";
 const char* cLogTPQEnd = "Finish: Elapsed time is %d [s].\n";
 
+const char* cLogInputVecStart="  Start:  Input vector.\n";
+const char* cLogInputVecFinish="  End  :  Input vector.\n";
 const char* cLogOutputVecStart="  Start:  Output vector.\n";
 const char* cLogOutputVecFinish="  End  :  Output vector.\n";
 const char* cOutputVecStart="  set %d step %d:output vector starts: %s\n";

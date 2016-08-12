@@ -132,6 +132,8 @@ const char* cLogNormRand;
 const char* cLogTPQStep;
 const char* cLogTPQEnd;
 
+const char* cLogInputVecStart;
+const char* cLogInputVecFinish;
 const char* cLogOutputVecStart;
 const char* cLogOutputVecFinish;
 const char* cOutputVecStart;

@@ -56,6 +56,9 @@ int CalcByTPQ(
   fprintf(stdoutMPI, cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
 
+    sprintf(sdt_phys, cFileNameSSRand, rand_i);
+    sprintf(sdt_norm, cFileNameNormRand, rand_i);      
+    Ns = 1.0 * X->Bind.Def.NsiteMPI;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     iret=0;
     X->Bind.Def.irand=rand_i;
@@ -70,8 +73,8 @@ int CalcByTPQ(
   //Make or Read initial vector
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
-      fprintf(stdoutMPI, cLogOutputVecStart);
-      sprintf(sdt, cFileNameInputVector, rand_i, step_i, myrank);
+      fprintf(stdoutMPI, cLogInputVecStart);
+      sprintf(sdt, cFileNameInputVector, rand_i, myrank);
       childfopenALL(sdt, "rb", &fp);
       if(fp==NULL){
         fprintf(stdout, "A file of Inputvector does not exist.\n");
@@ -80,27 +83,26 @@ int CalcByTPQ(
       }
       fread(&i_max, sizeof(long int), 1, fp);
       fread(&step_i, sizeof(step_i), 1, fp);
+      //fprintf(stdoutMPI, "Debug: i_max=%ld, step_i=%d\n", i_max, step_i);
       if(i_max != X->Bind.Check.idim_max){
         fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
         exitMPI(-1);
       }
-      fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+      fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-      fprintf(stdoutMPI, cLogOutputVecFinish);
+      fprintf(stdoutMPI, cLogInputVecFinish);
       fclose(fp);
       X->Bind.Def.istep=step_i;
       expec_energy(&(X->Bind));
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
-      sprintf(sdt_phys, cFileNameSSRand, rand_i);
+      
       if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
         return -1;
       }
       fprintf(fp, cLogSSRand);
       fclose(fp);
-
-      sprintf(sdt_norm, cFileNameNormRand, rand_i);
       if (!childfopenMPI(sdt_norm, "w", &fp) == 0) {
         return -1;
       }
@@ -110,7 +112,6 @@ int CalcByTPQ(
       step_i = 1;
       FirstMultiply(rand_i, &(X->Bind));
       expec_energy(&(X->Bind)); //v0 = H*v1
-      Ns = 1.0 * X->Bind.Def.NsiteMPI;
       inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
 
       X->Bind.Def.istep = step_i;
@@ -131,10 +132,12 @@ int CalcByTPQ(
       fclose(fp);
     }
 
-    for (step_i = X->Bind.Def.istep+1; step_i<X->Bind.Def.Lanczos_max; step_i++){
+    fprintf(stdoutMPI, "step_i=%d\n", X->Bind.Def.istep);
+
+    for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
       X->Bind.Def.istep=step_i;
       if(step_i %(X->Bind.Def.Lanczos_max/10)==0){
-	fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
+        fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
@@ -143,13 +146,13 @@ int CalcByTPQ(
       //expec(&(X->Bind));
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
       if(!childfopenMPI(sdt_phys, "a", &fp)==0){
-	return FALSE;
+        return FALSE;
       }
       fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
       fclose(fp);
 
       if(!childfopenMPI(sdt_norm, "a", &fp)==0){
-	return FALSE;
+        return FALSE;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
