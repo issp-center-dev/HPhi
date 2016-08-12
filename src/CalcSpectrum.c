@@ -131,14 +131,15 @@ int CalcSpectrum(
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       return -1;
     }
+    fread(&i_stp, sizeof(i_stp), 1, fp);
+    X->Bind.Large.itr=i_stp; //For TPQ
     fread(&i_max, sizeof(i_max), 1, fp);
     if (i_max != X->Bind.Check.idim_max) {
       fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       return -1;
     }
-    fread(&i_stp, sizeof(i_stp), 1, fp);
-    X->Bind.Large.itr=i_stp; //For TPQ
+    
     fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
 

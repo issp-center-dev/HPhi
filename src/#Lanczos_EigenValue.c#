@@ -409,8 +409,8 @@ int Lanczos_GetTridiagonalMatrixComponents(
         X->Def.Lanczos_restart =1;
     }
 else{
-        alpha1=alpha[X->Def.Lanczos_restart];
-        beta1=beta[X->Def.Lanczos_restart];
+  alpha1=alpha[X->Def.Lanczos_restart];
+  beta1=beta[X->Def.Lanczos_restart];
     }
 //  for(stp = 2; stp <= *liLanczos_step; stp++){
     for(stp = X->Def.Lanczos_restart+1; stp <= *liLanczos_step; stp++){
