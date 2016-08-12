@@ -45,11 +45,12 @@ int CalcByTPQ(
   char  sdt_norm[D_FileNameMax];
   int rand_i, rand_max, iret;
   long int i_max;
+  int step_iO=0;
   FILE *fp;
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
   tstruct.tstart=time(NULL);
-
+  
   rand_max = NumAve;
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
@@ -134,9 +135,10 @@ int CalcByTPQ(
 
     fprintf(stdoutMPI, "step_i=%d\n", X->Bind.Def.istep);
 
+    step_iO=step_i-1;
     for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
       X->Bind.Def.istep=step_i;
-      if(step_i %(X->Bind.Def.Lanczos_max/10)==0){
+      if(step_i %((X->Bind.Def.Lanczos_max-step_iO)/10)==0){
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;
