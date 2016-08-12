@@ -71,7 +71,7 @@ int CalcByTPQ(
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
       fprintf(stdoutMPI, cLogOutputVecStart);
-      sprintf(sdt, cFileNameInputVector, X->Bind.Def.CDataFileHead, rand_i, step_i, myrank);
+      sprintf(sdt, cFileNameInputVector, rand_i, step_i, myrank);
       childfopenALL(sdt, "rb", &fp);
       if(fp==NULL){
         fprintf(stdout, "A file of Inputvector does not exist.\n");
@@ -163,7 +163,7 @@ int CalcByTPQ(
     if(X->Bind.Def.iReStart== RESTART_OUT || X->Bind.Def.iReStart==RESTART_INOUT){
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
       fprintf(stdoutMPI, cLogOutputVecStart);
-      sprintf(sdt, cFileNameOutputVector, X->Bind.Def.CDataFileHead, rand_i, myrank);
+      sprintf(sdt, cFileNameOutputVector, rand_i, myrank);
       if(childfopenALL(sdt, "wb", &fp)!=0){
         exitMPI(-1);
       }
