@@ -292,8 +292,8 @@ int ReadcalcmodFile(
     return (-1);
   }
 
-  if(ValidateValue(X->iReStart, 0, 2)){
-    fprintf(stdoutMPI, cErrOutputHam, defname);
+  if(ValidateValue(X->iReStart, 0, NUM_RESTART-1)){
+    fprintf(stdoutMPI, cErrRestart, defname);
     return (-1);
   }
 

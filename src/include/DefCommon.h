@@ -61,6 +61,7 @@
 #define RECALC_INOUT_TMComponents_VEC 5
 
 /*!< ReStartVector */
+#define NUM_RESTART 4
 #define RESTART_NOT 0
 #define RESTART_OUT 1
 #define RESTART_INOUT 2

@@ -48,6 +48,7 @@ char *cErrCalcEigenVec;
 char *cErrSetIniVec;
 char *cErrOutputHam;
 char *cErrOutputHamForFullDiag;
+char *cErrRestart;
 char *cErrFiniteTemp;
 char *cErrKW;
 char *cErrKW_ShowList;
