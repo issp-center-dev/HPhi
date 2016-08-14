@@ -392,7 +392,7 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
-  int iline=0;
+  unsigned int iline=0;
   X->iFlgSpecOmegaMax=FALSE;
   X->iFlgSpecOmegaMin=FALSE;
   X->iFlgSpecOmegaIm=FALSE;
@@ -488,6 +488,10 @@ int ReadDefFileNInt(
                 X->iFlgSzConserved = TRUE;
               }
               else if (CheckWords(ctmp, "Ncond") == 0) {
+                if((int) dtmp <0) {
+                  fprintf(stdoutMPI, cErrNcond, defname);
+                  return (-1);
+                }
                 X->NCond = (int) dtmp;
                 iReadNCond = TRUE;
               }
@@ -768,10 +772,6 @@ int ReadDefFileNInt(
       fprintf(stdoutMPI, cErrNsite, defname);
       return (-1);
     }
-    if(X->NCond<0) {
-      fprintf(stdoutMPI, cErrNcond, defname);
-      return (-1);
-    }
     if(X->Lanczos_max<=0) {
       fprintf(stdoutMPI, cErrLanczos_max, defname);
       return (-1);
@@ -822,7 +822,7 @@ int ReadDefFileIdxPara(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
-  int i,idx, itype;
+  unsigned int i,idx, itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -833,11 +833,11 @@ int ReadDefFileIdxPara(
   int icnt_diagonal=0;
   int ieps_CheckImag0=-12;
   eps_CheckImag0=pow(10.0, ieps_CheckImag0);
-  int iline=0;
+  unsigned int iline=0;
   int ilineIn=0;
   int ilineIn2=0;
   int itmp=0;
-  int iloop=0;
+  unsigned int iloop=0;
 
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){
     strcpy(defname, cFileNameListFile[iKWidx]);
@@ -1610,7 +1610,7 @@ int CheckTransferHermite
 
  )
 {
-  int i,j;
+  unsigned int i,j;
   int isite1, isite2;
   int isigma1, isigma2;
   int itmpsite1, itmpsite2;
@@ -1621,7 +1621,7 @@ int CheckTransferHermite
   int icheckHermiteCount=FALSE;
 
   double  complex ddiff_trans;
-  int itmpIdx, icntHermite, icntchemi;
+  unsigned int itmpIdx, icntHermite, icntchemi;
   icntHermite=0;
   icntchemi=0;
   for(i=0; i<X->NTransfer; i++){
@@ -1724,12 +1724,12 @@ int CheckInterAllHermite
 (
  const struct DefineList *X
  ){
-  int i,j, icntincorrect, itmpret;
+  unsigned int i,j, icntincorrect, itmpret;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
   int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
-  int itmpIdx, icntHermite;
+  unsigned int itmpIdx, icntHermite;
   int icheckHermiteCount=FALSE;
   double  complex ddiff_intall;
   icntincorrect=0;
@@ -1860,7 +1860,7 @@ int GetDiagonalInterAll
  struct DefineList *X
  )
 {
-  int i,icnt_diagonal, icnt_offdiagonal, tmp_i;
+  unsigned int i,icnt_diagonal, icnt_offdiagonal, tmp_i;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   int iret=0;
@@ -2091,7 +2091,7 @@ int CheckFormatForKondoInt
 (
  struct DefineList *X
  ){
-  int i,iboolLoc;
+  unsigned int i,iboolLoc;
   int isite1, isite2, isite3, isite4;
 
   iboolLoc=0;
@@ -2168,7 +2168,7 @@ int CheckLocSpin
  )
 {
 
-  int i=0;
+  unsigned int i=0;
   switch(X->iCalcModel){
   case Hubbard:
   case HubbardNConserved:
@@ -2275,7 +2275,7 @@ int CheckSpinIndexForInterAll
  struct DefineList *X
  )
 {
-  int i=0;
+  unsigned int i=0;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   if(X->iFlgGeneralSpin==TRUE){
@@ -2313,7 +2313,7 @@ int CheckSpinIndexForTrans
  struct DefineList *X
  )
 {
-  int i=0;
+  unsigned int i=0;
   int isite1, isite2;
   int isigma1, isigma2;
   if(X->iFlgGeneralSpin==TRUE){
@@ -2374,11 +2374,11 @@ int CheckWords(
                const char* cKeyWord
                )
 {
-  int i=0;
+  unsigned int i=0;
 
   char ctmp_small[256]={0};
   char cKW_small[256]={0};
-  int n;
+  unsigned int n;
   n=strlen(cKeyWord);
   strncpy(cKW_small, cKeyWord, n);
 

@@ -50,7 +50,6 @@ char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1:
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
 char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
 
-
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
 char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";
 char *cErrNumAve= "Error in %s\n NumAve must be positive value.\n ";

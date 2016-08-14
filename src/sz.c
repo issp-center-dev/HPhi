@@ -551,7 +551,7 @@ int sz
           return -1;
         }	
       }else{
-        int Max2Sz=0;
+        unsigned int Max2Sz=0;
         unsigned int irghtsite=1;
         long unsigned int itmpSize=1;
         int i2Sz=0;
@@ -588,7 +588,7 @@ int sz
             i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
           }
           list_2_2_Sz[ib]=i2Sz;
-          if(X->Def.Total2Sz- i2Sz +Max2Sz>=0 && X->Def.Total2Sz- i2Sz <= Max2Sz){
+          if((X->Def.Total2Sz- i2Sz +(int)Max2Sz)>=0 && (X->Def.Total2Sz- i2Sz) <= (int)Max2Sz){
             jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
           }
         }

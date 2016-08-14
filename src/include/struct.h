@@ -53,8 +53,8 @@ struct DefineList{
   int St;    /**< */
   
   int *LocSpn;    /**< [NLocSpn] */
-  int  NLocSpn;    /**< */
-  int NCond;
+  unsigned int NLocSpn;    /**< */
+  unsigned int NCond;
   int iFlgGeneralSpin;
   int iFlgSzConserved;
   
@@ -114,7 +114,7 @@ struct DefineList{
   unsigned int    NExchangeCoupling;    /**< */
   double *ParaExchangeCoupling;  /**< */
 
-  int    NIsingCoupling;    /**< */
+  unsigned int    NIsingCoupling;    /**< */
   
   int   **PairLiftCoupling;  /**< */
   unsigned int    NPairLiftCoupling;    /**< */
