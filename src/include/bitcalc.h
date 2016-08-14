@@ -51,13 +51,13 @@ void SplitBit(
 
 //inline void GetOffComp(
 int GetOffComp(
-	        long unsigned int *_list_2_1,
-	        long unsigned int *_list_2_2,
-		long unsigned int _ibit,
-		const long unsigned int _irght,
-		const long unsigned int _ilft,
-		const long unsigned int _ihfbit,
-		long unsigned int *_ioffComp
+               long unsigned int *_list_2_1,
+               long unsigned int *_list_2_2,
+               long unsigned int _ibit,
+               const long unsigned int _irght,
+               const long unsigned int _ilft,
+               const long unsigned int _ihfbit,
+               long unsigned int *_ioffComp
 		);
 
 void SgnBit_old(
