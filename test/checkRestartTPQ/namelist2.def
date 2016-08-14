@@ -1,5 +1,5 @@
-CalcMod calcmod_out.def
-ModPara modpara_out.def
+CalcMod calcmod2.def
+ModPara modpara2.def
 LocSpin zlocspn.def
 Trans zTrans.def
 InterAll zInterAll.def
