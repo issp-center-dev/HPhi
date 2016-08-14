@@ -69,7 +69,6 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
         v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
     }/*if (X->Def.iInitialVecType == 0)*/
     else {
-
 #pragma omp for
       for (i = 1; i <= i_max; i++)
           v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
@@ -112,8 +111,6 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   for(i=1;i<=i_max;i++){
     v0[i] = v0[i]/dnorm;
   }
-
-    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStepEnd, "a", rand_i, step_i);
-
+  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStepEnd, "a", rand_i, step_i);
   return 0;
 }

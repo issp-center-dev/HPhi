@@ -1504,7 +1504,7 @@ int ReadDefFileIdxPara(
     case KWIsing:
     case KWPairLift:
       if(X->iFlgGeneralSpin==TRUE){
-        fprintf(stdoutMPI, cErrIncorrectFormatInter);
+        fprintf(stdoutMPI, "%s", cErrIncorrectFormatInter);
         return(-1);
       }
       break;

@@ -54,11 +54,10 @@ int CalcByTPQ(
   rand_max = NumAve;
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
-  fprintf(stdoutMPI, cLogTPQ_Start);
+  fprintf(stdoutMPI, "%s", cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
 
-    sprintf(sdt_phys, cFileNameSSRand, rand_i);
-    sprintf(sdt_norm, cFileNameNormRand, rand_i);      
+    sprintf(sdt_phys, cFileNameSSRand, rand_i);      
     Ns = 1.0 * X->Bind.Def.NsiteMPI;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     iret=0;
@@ -180,8 +179,8 @@ int CalcByTPQ(
       fprintf(stdoutMPI, cLogOutputVecFinish);
     }
   }
+  fprintf(stdoutMPI, "%s", cLogTPQ_End);
 
-  fprintf(stdoutMPI, cLogTPQ_End);
   tstruct.tend=time(NULL);
   fprintf(stdoutMPI, cLogTPQEnd, (int)(tstruct.tend-tstruct.tstart));
   return TRUE;

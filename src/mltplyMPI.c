@@ -1029,7 +1029,7 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
 #ifdef MPI
 
   double complex dam_pr;
-  dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble( X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][2],
+  dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble( X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
 						   X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
 						   X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0,  tmp_v1);
   X->Large.prdct += dam_pr;
@@ -1086,12 +1086,10 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
             return 0.0;
         }
     }
-    else {
-        return 0.0;
-    }
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
+
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if(ierr != 0) exitMPI(-1);
     ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                         v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
@@ -1241,7 +1239,7 @@ void GC_child_general_int_spin_MPIdouble(
     GC_child_CisAitCjuAju_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
   else {
-    GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
+      GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
   }
 }/*void GC_child_general_int_spin_MPIdouble*/
 
@@ -1453,7 +1451,7 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
 {
 #ifdef MPI
   double complex dam_pr;  
-  dam_pr =X_GC_child_CisAitCjuAju_spin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], X->Def.InterAll_OffDiagonal[i_int][2], X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  dam_pr =X_GC_child_CisAitCjuAju_spin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 
 #endif
