@@ -1,4 +1,4 @@
-# Install script for directory: /Users/Kazuyoshi/program/qlmpack/src
+# Install script for directory: /Users/yoshimi/program/qlmpack_box/qlmpack/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -44,7 +44,7 @@ int CalcByTPQ(
   char sdt_phys[D_FileNameMax];
   char  sdt_norm[D_FileNameMax];
   int rand_i, rand_max, iret;
-  long int i_max;
+  unsigned long int i_max;
   int step_iO=0;
   FILE *fp;
   double inv_temp, Ns;
@@ -73,7 +73,7 @@ int CalcByTPQ(
   //Make or Read initial vector
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
-      fprintf(stdoutMPI, cLogInputVecStart);
+      fprintf(stdoutMPI, "%s", cLogInputVecStart);
       sprintf(sdt, cFileNameInputVector, rand_i, myrank);
       childfopenALL(sdt, "rb", &fp);
       if(fp==NULL){
@@ -90,7 +90,7 @@ int CalcByTPQ(
       }
       fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-      fprintf(stdoutMPI, cLogInputVecFinish);
+      fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
       X->Bind.Def.istep=step_i;
       expec_energy(&(X->Bind));
@@ -101,12 +101,12 @@ int CalcByTPQ(
       if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
         return -1;
       }
-      fprintf(fp, cLogSSRand);
+      fprintf(fp, "%s", cLogSSRand);
       fclose(fp);
       if (!childfopenMPI(sdt_norm, "w", &fp) == 0) {
         return -1;
       }
-      fprintf(fp, cLogNormRand);
+      fprintf(fp, "%s", cLogNormRand);
       fclose(fp);
 
       step_i = 1;
@@ -166,7 +166,7 @@ int CalcByTPQ(
 
     if(X->Bind.Def.iReStart== RESTART_OUT || X->Bind.Def.iReStart==RESTART_INOUT){
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
-      fprintf(stdoutMPI, cLogOutputVecStart);
+      fprintf(stdoutMPI, "%s", cLogOutputVecStart);
       sprintf(sdt, cFileNameOutputVector, rand_i, myrank);
       if(childfopenALL(sdt, "wb", &fp)!=0){
         exitMPI(-1);
@@ -176,7 +176,7 @@ int CalcByTPQ(
       fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
       fclose(fp);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-      fprintf(stdoutMPI, cLogOutputVecFinish);
+      fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
     }
   }
   fprintf(stdoutMPI, "%s", cLogTPQ_End);

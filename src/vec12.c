@@ -31,10 +31,10 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Youhei Yamaji (The University of Tokyo)
  */
-void vec12(double alpha[],double beta[],int ndim,
+void vec12(double alpha[],double beta[],unsigned int ndim,
 	   double tmp_E[],struct BindStruct *X){
   
-  int j,k,nvec;
+  unsigned int j,k,nvec;
 
   double **tmpA, **tmpvec;
   double *tmpr;

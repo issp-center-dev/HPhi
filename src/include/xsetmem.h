@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
 
-static int mfint[7];/*for malloc*/
+static unsigned long int mfint[7];/*for malloc*/
 
 void setmem_HEAD
 (

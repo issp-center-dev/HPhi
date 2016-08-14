@@ -19,6 +19,7 @@
 #include "FileIO.h"
 #include "sz.h"
 #include "wrapperMPI.h"
+#include "xsetmem.h"
 
 /**
  * @file   sz.c
@@ -64,17 +65,16 @@ int sz
   long unsigned int irght,ilft,ihfbit;
 
   //*[s] for omp parall
-  int  all_up,all_down,tmp_res,num_threads;
+  unsigned int  all_up,all_down,tmp_res,num_threads;
   long unsigned int tmp_1,tmp_2,tmp_3;
-  int mfint[7];
   long int **comb;
   //*[e] for omp parall
 
   // [s] for Kondo
-  int N_all_up, N_all_down;
-  int all_loc;
+  unsigned int N_all_up, N_all_down;
+  unsigned int all_loc;
   long unsigned int num_loc, div_down;
-  int num_loc_up;
+  unsigned int num_loc_up;
   int icheck_loc;
   int ihfSpinDown=0;
   // [e] for Kondo
@@ -91,8 +91,8 @@ int sz
 //hacker
 
   int iSpnup, iMinup,iAllup;
-  int N2=0;
-  int N=0;
+  unsigned int N2=0;
+  unsigned int N=0;
   fprintf(stdoutMPI, "%s", cProStartCalcSz);
   TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
   TimeKeeper(X, cFileNameTimeKeep, cInitalSz, "a");
@@ -229,7 +229,7 @@ int sz
       icnt = 0; 
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
       for(ib=0;ib<X->Check.sdim;ib++){
-        icnt+=child_omp_sz_KondoGC(ib, ihfbit, N2, X, list_1_, list_2_1_, list_2_2_, list_jb);
+        icnt+=child_omp_sz_KondoGC(ib, ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
       }      
     break;
 
@@ -269,7 +269,7 @@ int sz
 
         icnt = 0;
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz(ib,ihfbit,N2,X, list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=child_omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
       }else if(hacker==1){
@@ -308,7 +308,7 @@ int sz
 
         icnt = 0;
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_hacker(ib,ihfbit,N2,X,list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=child_omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
           //printf("ib=%ld icnt=%ld \n",ib,icnt);
         }
         break;
@@ -360,7 +360,7 @@ int sz
       icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
       for(ib=0;ib<X->Check.sdim;ib++){
-        icnt+=child_omp_sz(ib,ihfbit,N2,X,list_1_, list_2_1_, list_2_2_, list_jb);
+        icnt+=child_omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
       }
       break;
 
@@ -447,7 +447,7 @@ int sz
       icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
       for(ib=0;ib<X->Check.sdim;ib++){
-        icnt+=child_omp_sz_Kondo(ib,ihfbit,N2,X, list_1_, list_2_1_, list_2_2_, list_jb);
+        icnt+=child_omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
       }
       break;
 
@@ -552,8 +552,8 @@ int sz
         }	
       }else{
         int Max2Sz=0;
-        int irghtsite=1;
-        long int itmpSize=1;
+        unsigned int irghtsite=1;
+        long unsigned int itmpSize=1;
         int i2Sz=0;
         for(j=0; j<X->Def.Nsite; j++){
           itmpSize *= X->Def.SiteToBit[j];
@@ -580,7 +580,7 @@ int sz
           HilbertNumToSz[i2Sz+Max2Sz]++;
         }
         jb = 0;
-        long int ilftdim=(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1])/ihfbit;
+        long unsigned int ilftdim=(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1])/ihfbit;
         for(ib=0;ib<ilftdim;ib++){
           list_jb[ib]=jb;
           i2Sz=0;
@@ -597,9 +597,9 @@ int sz
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
         icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit, N, X)  shared(list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb)
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit,  X)  shared(list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb)
         for(ib=0;ib<ilftdim; ib++){
-          icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,N,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
+          icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
         }
 		
         i_free1(HilbertNumToSz, 2*Max2Sz+1);	
@@ -702,7 +702,6 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
 int child_omp_sz(
                  long unsigned int ib,
                  long unsigned int ihfbit,
-                 int N2,
                  struct BindStruct *X,
                  long unsigned int *list_1_,
                  long unsigned int *list_2_1_,
@@ -784,7 +783,6 @@ int child_omp_sz(
 
 int child_omp_sz_hacker(long unsigned int ib,
                         long unsigned int ihfbit,
-                        int N2,
                         struct BindStruct *X,
                         long unsigned int *list_1_,
                         long unsigned int *list_2_1_,
@@ -901,7 +899,6 @@ int child_omp_sz_hacker(long unsigned int ib,
 int child_omp_sz_Kondo(
                        long unsigned int ib,
                        long unsigned int ihfbit,
-                       int N2,
                        struct BindStruct *X,
                        long unsigned int *list_1_,
                        long unsigned int *list_2_1_,
@@ -1008,7 +1005,6 @@ int child_omp_sz_Kondo(
 int child_omp_sz_KondoGC(
                          long unsigned int ib,
                          long unsigned int ihfbit,
-                         int N2,
                          struct BindStruct *X,
                          long unsigned int *list_1_,
                          long unsigned int *list_2_1_,
@@ -1095,7 +1091,7 @@ int child_omp_sz_KondoGC(
 int child_omp_sz_spin(
                       long unsigned int ib, 
                       long unsigned int ihfbit,
-                      int N,
+                      unsigned int N,
                       struct BindStruct *X,
                       long unsigned int *list_1_,
                       long unsigned int *list_2_1_,
@@ -1106,7 +1102,7 @@ int child_omp_sz_spin(
   long unsigned int i,j,div; 
   long unsigned int ia,ja,jb;
   long unsigned int num_up;
-  int tmp_num_up;
+  unsigned int tmp_num_up;
   
   jb = list_jb_[ib];
   i  = ib*ihfbit;
@@ -1142,7 +1138,7 @@ int child_omp_sz_spin(
 int child_omp_sz_spin_hacker(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
-                             int N,
+                             unsigned int N,
                              struct BindStruct *X,
                              long unsigned int *list_1_,
                              long unsigned int *list_2_1_,
@@ -1153,7 +1149,7 @@ int child_omp_sz_spin_hacker(
   long unsigned int i,j,div; 
   long unsigned int ia,ja,jb;
   long unsigned int num_up;
-  int tmp_num_up;
+  unsigned int tmp_num_up;
   
   jb = list_jb_[ib];
   i  = ib*ihfbit;
@@ -1208,7 +1204,6 @@ int child_omp_sz_spin_hacker(
 int child_omp_sz_GeneralSpin(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
-                             int N,
                              struct BindStruct *X,
                              long unsigned int *list_1_,
                              long unsigned int *list_2_1_,

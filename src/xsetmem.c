@@ -75,7 +75,7 @@ void setmem_def
   i_malloc2(X->Def.PairExcitationOperator, X->Def.NPairExcitationOperator, 5);
   c_malloc1(X->Def.ParaPairExcitationOperator, X->Def.NPairExcitationOperator);
 
-  int ipivot,iarrayJ,i,ispin;
+  unsigned int ipivot,iarrayJ,i,ispin;
   xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
   for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
     xBoost->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
@@ -106,8 +106,8 @@ int setmem_large
  )
 {
 
-  int j=0;
-  int idim_maxMPI;
+  unsigned long int j=0;
+  unsigned int idim_maxMPI;
   
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 

@@ -43,7 +43,7 @@ struct DefineList{
   int  Total2Sz;    /**< */
   int  Total2SzMPI;    /**< */
   unsigned int  Ne;    /**< */
-  unsigned int  Nsize;    /**< */
+  int  Nsize;    /**< */
   unsigned int Lanczos_max;    /**< */
   int Lanczos_restart;
   long int initial_iv;    /**< */
@@ -59,8 +59,8 @@ struct DefineList{
   int iFlgSzConserved;
   
   int fidx;    /**< */
-  long unsigned int *Tpow;    /**< [2 * Nsite] 2^n */
-  long unsigned int *OrgTpow;    /**< [2 * Nsite] 2^n */
+  long int *Tpow;    /**< [2 * Nsite] 2^n */
+  long int *OrgTpow;    /**< [2 * Nsite] 2^n */
   long int *SiteToBit; /**< [Nsite] */
   
   int *EDChemi;    /**< [Nsite] */
