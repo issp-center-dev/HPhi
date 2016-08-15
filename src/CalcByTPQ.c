@@ -113,8 +113,6 @@ int CalcByTPQ(
       FirstMultiply(rand_i, &(X->Bind));
       expec_energy(&(X->Bind)); //v0 = H*v1
       inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
-
-      X->Bind.Def.istep = step_i;
       expec_cisajs(&(X->Bind), v1);
       expec_cisajscktaltdc(&(X->Bind), v1);
 
@@ -130,6 +128,8 @@ int CalcByTPQ(
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
+      step_i +=1;
+      X->Bind.Def.istep = step_i;
     }
 
     fprintf(stdoutMPI, "step_i=%d\n", X->Bind.Def.istep);

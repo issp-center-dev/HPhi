@@ -387,15 +387,16 @@ int Lanczos_GetTridiagonalMatrixComponents(
   }
 
   if(X->Def.Lanczos_restart==0) {
-#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
+#pragma omp parallel for default(none) private(i) shared(v0, v1, tmp_v1) firstprivate(i_max)
         for (i = 1; i <= i_max; i++) {
             v0[i] = 0.0;
+            v1[i] = tmp_v1[i];
         }
-        stp = 1;
+        stp = 0;
         mltply(X, v0, tmp_v1);
         TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
         alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
-        alpha[1] = alpha1;
+        _alpha[1] = alpha1;
         cbeta1 = 0.0;
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
@@ -405,7 +406,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
         cbeta1 = SumMPI_dc(cbeta1);
         beta1 = creal(cbeta1);
         beta1 = sqrt(beta1);
-        beta[1] = beta1;
+        _beta[1] = beta1;
         X->Def.Lanczos_restart =1;
     }
 else{
@@ -430,7 +431,7 @@ else{
       mltply(X, v0, v1);
       TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
       alpha1=creal(X->Large.prdct);
-      alpha[stp]=alpha1;
+      _alpha[stp]=alpha1;
       cbeta1=0.0;
       
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
@@ -440,7 +441,7 @@ else{
       cbeta1 = SumMPI_dc(cbeta1);
       beta1=creal(cbeta1);
       beta1=sqrt(beta1);
-      beta[stp]=beta1;
+      _beta[stp]=beta1;
   }
 
   return TRUE;

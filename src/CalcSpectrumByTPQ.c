@@ -82,20 +82,26 @@ int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecifichea
                        double ene, double *tmp_E, int Nsite, int idim_max, double complex * dc_tmpSpec)
 {
     int l;
-    double pre_factor=2.0*dtemp*dtemp*dspecificheat;
-    double factor=M_PI*pre_factor;
+    double tmp_dcSpec;
+    double factor, pre_factor;
+    pre_factor=2.0*dtemp*dtemp*dspecificheat;
+    factor=M_PI*pre_factor;
     factor=1.0/sqrt(factor);
+    tmp_dcSpec=0;
+
     if(cimag(dcomega)>0) {
         for (l = 1; l <= idim_max; l++) {
             //TODO: Check omega is real ?
-            *dc_tmpSpec += vec[l][1] * conj(vec[l][1]) * exp(-pow((creal(dcomega) - tmp_E[l] + ene * Nsite),2)/(pre_factor));
+            //fprintf(stdoutMPI, "Debug: %lf, %lf\n", creal(dcomega) - tmp_E[l] + ene, pre_factor);
+            tmp_dcSpec += (double)(vec[l][1] * conj(vec[l][1])) * exp(-pow((creal(dcomega) - tmp_E[l] + ene),2)/(pre_factor));
         }
     }
     else{
         fprintf(stderr, " an imarginary part of omega must be positive.\n");
         return FALSE;
     }
-    *dc_tmpSpec *= factor;
+    tmp_dcSpec  *=factor;
+    *dc_tmpSpec = tmp_dcSpec;
     return TRUE;
 }
 
@@ -210,6 +216,7 @@ int CalcSpectrumByTPQ(
     fprintf(stdoutMPI, "    Start: Caclulate spectrum from tridiagonal matrix components.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalStart, "a");
     for( i = 0 ; i < Nomega; i++) {
+        dctmp_Spectrum=0;
         iret = GetCalcSpectrumTPQ(dcomega[i], dtemp, dspecificHeat, dene, tmp_E, X->Bind.Def.Nsite, stp, &dctmp_Spectrum);
         if (iret != TRUE) {
             //ReAlloc alpha, beta and Set alpha_start and beta_start in Lanczos_EigenValue

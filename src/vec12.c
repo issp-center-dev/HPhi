@@ -67,8 +67,9 @@ void vec12(double alpha[],double beta[],unsigned int ndim,
   tmpA[ndim-1][ndim-1]=alpha[ndim];
 
   DSEVvector( ndim, tmpA, tmpr, tmpvec );
-  fprintf(stdoutMPI, "  Lanczos EigenValue in vec12 = %.10lf \n ",tmpr[0]);
-  
+  if(X->Def.iCalcType==Lanczos && X->Def.iFlgCalcSpec == 0){
+    fprintf(stdoutMPI, "  Lanczos EigenValue in vec12 = %.10lf \n ",tmpr[0]);
+  }
  
   if(nvec<=ndim){ 
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
