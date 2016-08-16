@@ -155,7 +155,7 @@ int CalcByLanczos(
       expec_energy(&(X->Bind));
     }
   }
-  else{// X->Bind.Def.iInputEigenVec=false :input v1:
+  else{// X->Bind.Def.iInputEigenVec=true :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
@@ -164,6 +164,7 @@ int CalcByLanczos(
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       exitMPI(-1);
     }
+    fread(&step_i, sizeof(long int), 1, fp);
     fread(&i_max, sizeof(long int), 1, fp);
     if(i_max != X->Bind.Check.idim_max){
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
@@ -222,8 +223,9 @@ int CalcByLanczos(
     if(childfopenALL(sdt, "wb", &fp)!=0){
       exitMPI(-1);
     }
+    fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr),1,fp);
     fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
-    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);    
+    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
   }

@@ -230,6 +230,7 @@ int expec_energy(struct BindStruct *X){
     v0[i]=0.0+0.0*I;
   }
 
+
   mltply(X, v0, v1); // v0+=H*v1
 /* switch -> SpinGCBoost */
 
@@ -243,6 +244,8 @@ int expec_energy(struct BindStruct *X){
   }  
   dam_pr = SumMPI_dc(dam_pr);
   dam_pr1 = SumMPI_dc(dam_pr1);
+  //  fprintf(stdoutMPI, "Debug: ene=%lf, var=%lf\n", creal(dam_pr), creal(dam_pr1));
+  
   X->Phys.energy = dam_pr;
   X->Phys.var    = dam_pr1;
 

@@ -1037,8 +1037,7 @@ shared(tmp_v0, tmp_v1)
     if(isite1==isite2 ){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1, trans) shared(tmp_v0, tmp_v1)
       for(j=1;j<=i_max;j++){
-	dam_pr += GC_CisAis(j, tmp_v0, tmp_v1, X, isite1, trans) * trans;
-	 
+        dam_pr += GC_CisAis(j, tmp_v0, tmp_v1, X, isite1, trans) * trans;
       }
     }
     else{
@@ -1731,6 +1730,44 @@ shared(tmp_v0, tmp_v1)
  * @param tmp_trans
  *
  * @return
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex GC_AisCis(
+        long unsigned int j,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        struct BindStruct *X,
+        long unsigned int is1_spin,
+        double complex tmp_trans
+) {
+
+    long unsigned int A_ibit_tmp;
+    long unsigned int list_1_j;
+    double complex dmv;
+    double complex dam_pr;
+
+    // off = j-1;
+
+    list_1_j = j - 1;
+    A_ibit_tmp = (list_1_j & is1_spin) / is1_spin;
+    dmv = tmp_v1[j] * (1-A_ibit_tmp);
+    if (X->Large.mode == M_MLTPLY) { // for multply
+        tmp_v0[j] += dmv * tmp_trans;
+    }
+    dam_pr = dmv * conj(tmp_v1[j]);
+    return dam_pr;
+}
+/**
+ *
+ *
+ * @param j
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ * @param is1_spin
+ * @param tmp_trans
+ *
+ * @return
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -2000,6 +2037,7 @@ shared(tmp_v0, tmp_v1)
     return A_ibit_tmp;
   }
 //
+
 
 /**
  *

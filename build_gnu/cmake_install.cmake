@@ -1,4 +1,4 @@
-# Install script for directory: /Users/Kazuyoshi/program/qlmpack
+# Install script for directory: /Users/yoshimi/program/qlmpack_box/qlmpack
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -29,7 +29,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/Kazuyoshi/program/qlmpack/build_gnu/src/cmake_install.cmake")
+  include("/Users/yoshimi/program/qlmpack_box/qlmpack/build_gnu/src/cmake_install.cmake")
 
 endif()
 
@@ -41,5 +41,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/Kazuyoshi/program/qlmpack/build_gnu/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/yoshimi/program/qlmpack_box/qlmpack/build_gnu/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

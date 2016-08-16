@@ -34,8 +34,8 @@ void setmem_def
  struct BoostList *xBoost
  )
 {
-  li_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
-  li_malloc1(X->Def.OrgTpow, 2*X->Def.Nsite+2);
+  lui_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
+  lui_malloc1(X->Def.OrgTpow, 2*X->Def.Nsite+2);
   li_malloc1(X->Def.SiteToBit, X->Def.Nsite+1);
   i_malloc1(X->Def.LocSpn, X->Def.Nsite);
   d_malloc1(X->Phys.spin_real_cor, X->Def.Nsite*X->Def.Nsite);
@@ -70,7 +70,12 @@ void setmem_def
   i_malloc2(X->Def.CisAjt, X->Def.NCisAjt, 4);
   i_malloc2(X->Def.CisAjtCkuAlvDC, X->Def.NCisAjtCkuAlvDC, 8);
 
-  int ipivot,iarrayJ,i,ispin;
+  i_malloc2(X->Def.SingleExcitationOperator, X->Def.NSingleExcitationOperator, 3);
+  c_malloc1(X->Def.ParaSingleExcitationOperator, X->Def.NSingleExcitationOperator);
+  i_malloc2(X->Def.PairExcitationOperator, X->Def.NPairExcitationOperator, 5);
+  c_malloc1(X->Def.ParaPairExcitationOperator, X->Def.NPairExcitationOperator);
+
+  unsigned int ipivot,iarrayJ,i,ispin;
   xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
   for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
     xBoost->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
@@ -101,8 +106,8 @@ int setmem_large
  )
 {
 
-  int j=0;
-  int idim_maxMPI;
+  unsigned long int j=0;
+  unsigned int idim_maxMPI;
   
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
@@ -134,9 +139,9 @@ int setmem_large
     }
     else{//for spin-canonical general spin
       lui_malloc1(list_2_1, X->Check.sdim+2);
-      i_malloc1(list_2_1_Sz, X->Check.sdim+2);
+      lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
       lui_malloc1(list_2_2, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
-      i_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+      lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
       lui_malloc1(list_jb, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
 
       for(j=0; j<X->Check.sdim+2;j++){
@@ -178,18 +183,18 @@ int setmem_large
      list_Diagonal==NULL
      || v0==NULL
      || v1==NULL
-     || alpha==NULL
-     || beta==NULL
      || vg==NULL
      ){
     return -1;
   }
-  c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
-  for(j=0; j<X->Def.nvec+1; j++){
-    if(vec[j]==NULL){
-      return -1;
+
+
+    if(X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+        c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
     }
-  }
+    else if(X->Def.iCalcType==Lanczos){
+        c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
+    }
   
   if(X->Def.iCalcType == FullDiag){
     d_malloc1(X->Phys.all_num_down, X->Check.idim_max+1);
