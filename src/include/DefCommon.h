@@ -52,12 +52,19 @@
 #define CALCVEC_LANCZOS 1 /*!< Lanczos method*/
 #define CALCVEC_NOT -1 /*!< eigenvector is not calculated*/
 
-/*!< ReCalcSpectrum */
-#define RECALC_NOT 0
-#define RECALC_FROM_TMComponents 1
-#define RECALC_OUTPUT_TMComponents_VEC 2
-#define RECALC_FROM_TMComponents_VEC 3
-#define RECALC_INOUT_TMComponents_VEC 4
+/*!< CalcSpectrum */
+#define CALCSPEC_NOT 0
+#define RECALC_NOT 1
+#define RECALC_FROM_TMComponents 2
+#define RECALC_OUTPUT_TMComponents_VEC 3
+#define RECALC_FROM_TMComponents_VEC 4
+#define RECALC_INOUT_TMComponents_VEC 5
 
+/*!< ReStartVector */
+#define NUM_RESTART 4
+#define RESTART_NOT 0
+#define RESTART_OUT 1
+#define RESTART_INOUT 2
+#define RESTART_IN 3
 
 #endif /* HPHI_DEFCOMMON_H */

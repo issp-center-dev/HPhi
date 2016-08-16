@@ -69,8 +69,8 @@ const char* c_InputSpectrumRecalcvecEnd="Input vectors for recalculation finishe
 const char* c_Lanczos_SpectrumStep="%3d th Lanczos step for calculating spectrum: %s";
 
 //FirstMultiply.c, Multiply.c
-const char* cTPQStep="step %d:TPQ begins: %s";
-const char* cTPQStepEnd="step %d:TPQ finishes: %s";
+const char* cTPQStep="set %d step %d:TPQ begins: %s";
+const char* cTPQStepEnd="set %d step %d:TPQ finishes: %s";
 
 //Lanczos_EigenValue.c
 const char* cLogLanczos_EigenValueNotConverged="Lanczos Eigenvalue is not converged in this process.";
@@ -131,6 +131,14 @@ const char* cLogSSRand =  " # inv_tmp, energy, phys_var, phys_doublon, phys_num,
 const char* cLogNormRand = " # inv_temp, global_norm, global_1st_norm, step_i \n";
 const char* cLogTPQStep = "    step_i/total_step=%d/%d \n";
 const char* cLogTPQEnd = "Finish: Elapsed time is %d [s].\n";
+
+const char* cLogInputVecStart="  Start:  Input vector.\n";
+const char* cLogInputVecFinish="  End  :  Input vector.\n";
+const char* cLogOutputVecStart="  Start:  Output vector.\n";
+const char* cLogOutputVecFinish="  End  :  Output vector.\n";
+const char* cOutputVecStart="  set %d step %d:output vector starts: %s\n";
+const char* cOutputVecFinish="  set %d step %d:output vector finishes: %s\n";
+
 
 //FirstMultiply.c
 const char* cLogCheckInitComplex = "    CHECK: TPQ complex initial vector \n";

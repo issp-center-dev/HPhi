@@ -48,6 +48,7 @@ char *cErrOutputHamForFullDiag="Error in %s\n OutputHam is only defined for Full
 char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC, 5:KondoGC.\n";
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
+char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
 char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";

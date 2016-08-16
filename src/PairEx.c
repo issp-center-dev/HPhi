@@ -15,9 +15,6 @@ int GetPairExcitedState
  )
 {
 
-  FILE *fp;
-  char sdt[D_FileNameMax];
-
   long unsigned int i,j;
   long unsigned int irght,ilft,ihfbit;
   long unsigned int isite1;
@@ -26,13 +23,8 @@ int GetPairExcitedState
   double complex tmp_trans=0;
   long int i_max;
   int tmp_sgn, num1;
-  int idx=0;
-  int ihermite=0;
   long int ibit1, ibit;
   long unsigned int is1_up, is;
-  //For TPQ
-  int step=0;
-  int rand_i=0;
 
   i_max = X->Check.idim_max;
   if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
@@ -103,6 +95,7 @@ int GetPairExcitedState
         else {
 
             if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 && X->Def.PairExcitationOperator[i][4] == 1) {
+                isite1=X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 #pragma omp parallel for default(none) private(j) firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0, tmp_v1)
                 for(j=1;j<=i_max;j++){
                   GC_AisCis(j, tmp_v0, tmp_v1, X, isite1, -tmp_trans);

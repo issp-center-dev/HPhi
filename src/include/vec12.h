@@ -16,5 +16,6 @@
 #pragma once
 #include "Common.h"
 
-void vec12(double alpha[],double beta[],int ndim,
+void vec12(double alpha[],double beta[],unsigned int ndim,
 	   double E[],struct BindStruct *X);
+

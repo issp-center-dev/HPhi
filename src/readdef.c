@@ -59,7 +59,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "Ising",
   "Boost",
   "SingleExcitation",
-  "PairExcitation"
+  "PairExcitation",
+  "SpectrumVec"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -212,7 +213,8 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
-  X->iFlgRecalcSpec=0;
+  X->iFlgCalcSpec=0;
+  X->iReStart=0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -249,8 +251,12 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "OutputHam")==0){
       X->iOutputHam=itmp;
     }
-    else if(CheckWords(ctmp, "ReCalcSpec")==0 || CheckWords(ctmp, "ReCalcSpectrum")==0){
-      X->iFlgRecalcSpec=itmp;
+
+    else if(CheckWords(ctmp, "CalcSpec")==0 || CheckWords(ctmp, "CalcSpectrum")==0){
+      X->iFlgCalcSpec=itmp;
+    }
+    else if(CheckWords(ctmp, "ReStart")==0){
+      X->iReStart=itmp;
     }
     else{
       fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);
@@ -283,6 +289,11 @@ int ReadcalcmodFile(
 
   if(ValidateValue(X->iOutputHam, 0, NUM_OUTPUTHAM-1)){
     fprintf(stdoutMPI, cErrOutputHam, defname);
+    return (-1);
+  }
+
+  if(ValidateValue(X->iReStart, 0, NUM_RESTART-1)){
+    fprintf(stdoutMPI, cErrRestart, defname);
     return (-1);
   }
 
@@ -381,7 +392,7 @@ int ReadDefFileNInt(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
-  int iline=0;
+  unsigned int iline=0;
   X->iFlgSpecOmegaMax=FALSE;
   X->iFlgSpecOmegaMin=FALSE;
   X->iFlgSpecOmegaIm=FALSE;
@@ -427,10 +438,11 @@ int ReadDefFileNInt(
     strcpy(defname, cFileNameListFile[iKWidx]);
 
     if (strcmp(defname, "") == 0) continue;
-
+    if(iKWidx==KWSpectrumVec){
+      continue;
+    }
     fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
     fp = fopenMPI(defname, "r");
-
     if (fp == NULL) return ReadDefFileError(defname);
     switch (iKWidx) {
       case KWCalcMod:
@@ -476,6 +488,10 @@ int ReadDefFileNInt(
                 X->iFlgSzConserved = TRUE;
               }
               else if (CheckWords(ctmp, "Ncond") == 0) {
+                if((int) dtmp <0) {
+                  fprintf(stdoutMPI, cErrNcond, defname);
+                  return (-1);
+                }
                 X->NCond = (int) dtmp;
                 iReadNCond = TRUE;
               }
@@ -508,6 +524,24 @@ int ReadDefFileNInt(
               }
               else if (CheckWords(ctmp, "CalcHS") == 0) {
                 X->read_hacker = (int) dtmp;
+              }
+              else if(CheckWords(ctmp, "OmegaMax")==0){
+                X->dOmegaMax=(double)dtmp;
+                X->iFlgSpecOmegaMax=TRUE;
+              }
+              else if(CheckWords(ctmp, "OmegaMin")==0){
+                X->dOmegaMin=(double)dtmp;
+                X->iFlgSpecOmegaMin=TRUE;
+              }
+              else if(CheckWords(ctmp, "OmegaIm")==0){
+                X->dOmegaIm=(double)dtmp;
+                X->iFlgSpecOmegaIm=TRUE;
+              }
+              else if(CheckWords(ctmp, "NOmega")==0){
+                X->iNOmega=(int)dtmp;
+              }
+              else if(CheckWords(ctmp, "TargetTPQRand")==0) {
+                X->irand=(int)dtmp;
               }
               else {
                 return (-1);
@@ -738,10 +772,6 @@ int ReadDefFileNInt(
       fprintf(stdoutMPI, cErrNsite, defname);
       return (-1);
     }
-    if(X->NCond<0) {
-      fprintf(stdoutMPI, cErrNcond, defname);
-      return (-1);
-    }
     if(X->Lanczos_max<=0) {
       fprintf(stdoutMPI, cErrLanczos_max, defname);
       return (-1);
@@ -792,7 +822,7 @@ int ReadDefFileIdxPara(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
-  int i,idx, itype;
+  unsigned int i,idx, itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -803,15 +833,15 @@ int ReadDefFileIdxPara(
   int icnt_diagonal=0;
   int ieps_CheckImag0=-12;
   eps_CheckImag0=pow(10.0, ieps_CheckImag0);
-  int iline=0;
+  unsigned int iline=0;
   int ilineIn=0;
   int ilineIn2=0;
   int itmp=0;
-  int iloop=0;
+  unsigned int iloop=0;
 
   for(iKWidx=KWLocSpin; iKWidx< D_iKWNumDef; iKWidx++){
     strcpy(defname, cFileNameListFile[iKWidx]);
-    if(strcmp(defname,"")==0) continue;   
+    if(strcmp(defname,"")==0 || iKWidx==KWSpectrumVec) continue;
     fprintf(stdoutMPI, cReadFileNamelist, defname);
     fp = fopenMPI(defname, "r");
     if(fp==NULL) return ReadDefFileError(defname);
@@ -1474,7 +1504,7 @@ int ReadDefFileIdxPara(
     case KWIsing:
     case KWPairLift:
       if(X->iFlgGeneralSpin==TRUE){
-        fprintf(stdoutMPI, cErrIncorrectFormatInter);
+        fprintf(stdoutMPI, "%s", cErrIncorrectFormatInter);
         return(-1);
       }
       break;
@@ -1580,7 +1610,7 @@ int CheckTransferHermite
 
  )
 {
-  int i,j;
+  unsigned int i,j;
   int isite1, isite2;
   int isigma1, isigma2;
   int itmpsite1, itmpsite2;
@@ -1591,7 +1621,7 @@ int CheckTransferHermite
   int icheckHermiteCount=FALSE;
 
   double  complex ddiff_trans;
-  int itmpIdx, icntHermite, icntchemi;
+  unsigned int itmpIdx, icntHermite, icntchemi;
   icntHermite=0;
   icntchemi=0;
   for(i=0; i<X->NTransfer; i++){
@@ -1694,12 +1724,12 @@ int CheckInterAllHermite
 (
  const struct DefineList *X
  ){
-  int i,j, icntincorrect, itmpret;
+  unsigned int i,j, icntincorrect, itmpret;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
   int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
-  int itmpIdx, icntHermite;
+  unsigned int itmpIdx, icntHermite;
   int icheckHermiteCount=FALSE;
   double  complex ddiff_intall;
   icntincorrect=0;
@@ -1830,7 +1860,7 @@ int GetDiagonalInterAll
  struct DefineList *X
  )
 {
-  int i,icnt_diagonal, icnt_offdiagonal, tmp_i;
+  unsigned int i,icnt_diagonal, icnt_offdiagonal, tmp_i;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   int iret=0;
@@ -2061,7 +2091,7 @@ int CheckFormatForKondoInt
 (
  struct DefineList *X
  ){
-  int i,iboolLoc;
+  unsigned int i,iboolLoc;
   int isite1, isite2, isite3, isite4;
 
   iboolLoc=0;
@@ -2138,7 +2168,7 @@ int CheckLocSpin
  )
 {
 
-  int i=0;
+  unsigned int i=0;
   switch(X->iCalcModel){
   case Hubbard:
   case HubbardNConserved:
@@ -2245,7 +2275,7 @@ int CheckSpinIndexForInterAll
  struct DefineList *X
  )
 {
-  int i=0;
+  unsigned int i=0;
   int isite1, isite2, isite3, isite4;
   int isigma1, isigma2, isigma3, isigma4;
   if(X->iFlgGeneralSpin==TRUE){
@@ -2283,7 +2313,7 @@ int CheckSpinIndexForTrans
  struct DefineList *X
  )
 {
-  int i=0;
+  unsigned int i=0;
   int isite1, isite2;
   int isigma1, isigma2;
   if(X->iFlgGeneralSpin==TRUE){
@@ -2344,11 +2374,11 @@ int CheckWords(
                const char* cKeyWord
                )
 {
-  int i=0;
+  unsigned int i=0;
 
   char ctmp_small[256]={0};
   char cKW_small[256]={0};
-  int n;
+  unsigned int n;
   n=strlen(cKeyWord);
   strncpy(cKW_small, cKeyWord, n);
 
@@ -2362,4 +2392,15 @@ int CheckWords(
   }
   if(n<strlen(cKW_small)) n=strlen(cKW_small);
   return(strncmp(ctmp_small, cKW_small, n));
+}
+
+int GetFileNameByKW(
+        int iKWidx,
+        char **FileName
+){
+  if(cFileNameListFile == NULL){
+    return -1;
+  }
+  *FileName=cFileNameListFile[iKWidx];
+  return 0;
 }

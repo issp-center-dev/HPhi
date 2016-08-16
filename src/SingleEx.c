@@ -143,8 +143,8 @@ double complex X_GC_Cis_MPI(
   long int *Tpow 
   ) {
 #ifdef MPI
-    int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
-    unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
+    int mask2, state2, ierr, origin, bit2diff, Fsgn;
+    unsigned long int idim_max_buf, j;
     MPI_Status statusMPI;
     double complex trans, dmv, dam_pr;
 
@@ -211,8 +211,8 @@ double complex X_GC_Ajt_MPI(
   long int *Tpow 
   ) {
 #ifdef MPI
-    int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
-    unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
+    int mask2, state2, ierr, origin, bit2diff, Fsgn;
+    unsigned long int idim_max_buf, j;
     MPI_Status statusMPI;
     double complex trans, dmv, dam_pr;
 
@@ -271,7 +271,6 @@ int GetSingleExcitedState
   long unsigned int org_isite,ispin,itype;
   long unsigned int is1_spin;
   double complex tmpphi;
-  double complex tmp_dam_pr;
   long unsigned int tmp_off=0;
 
   idim_max = X->Check.idim_max;
@@ -297,28 +296,27 @@ int GetSingleExcitedState
       tmpphi    = X->Def.ParaSingleExcitationOperator[i];
       if(itype == 1){
         if( org_isite >= X->Def.Nsite){
-          tmp_dam_pr = X_GC_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
+          X_GC_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
         }
         else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X)	\
-  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
+  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
           for(j=1;j<=idim_max;j++){
             is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off
-                                );
+            GC_Cis(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off);
           }
         }
       }
       else if(itype == 0){
         if( org_isite >= X->Def.Nsite){
-          tmp_dam_pr = X_GC_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
+          X_GC_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
         }
         else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X)	\
-  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_dam_pr, tmp_off)
+  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
           for(j=1;j<=idim_max;j++){
-            is1_spin = X->Def.Tpow[2*org_isite+ispin];
-            tmp_dam_pr = GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off);
+              is1_spin = X->Def.Tpow[2*org_isite+ispin];
+              GC_Ajt(j,tmp_v0,tmp_v1,is1_spin,tmpphi,&tmp_off);
           }
         }
       }

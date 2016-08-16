@@ -15,47 +15,47 @@
 6  1  1  1  7  2  1  
 5  1  1  1  2  5 -1  
 1  1  1  1  2  7  1
-  # list_6spin_pair 1
+# list_6spin_pair 1
 0  1  2  3  4  5  1
 1  2  0  3  4  5  1  
 0  2  1  3  4  5  1  
 1  3  0  2  4  5  1  
 2  4  0  1  3  5  1  
 0  5  1  2  3  4  1
-  # list_6spin_pair 2
+# list_6spin_pair 2
 0  1  2  3  4  5  1
 1  2  0  3  4  5  1  
 0  2  1  3  4  5  1  
 1  3  0  2  4  5  1  
 2  4  0  1  3  5  1  
 2  5  0  1  3  4  1
-  # list_6spin_pair 3
+# list_6spin_pair 3
 0  1  2  3  4  5  1
 1  2  0  3  4  5  1  
 0  2  1  3  4  5  1  
 2  4  0  1  3  5  1  
 2  5  0  1  3  4  1
-  # list_6spin_pair 4
+# list_6spin_pair 4
 1  5  0  2  3  4  1
-  # list_6spin_pair 5
+# list_6spin_pair 5
 0  1  2  3  4  5  1
 1  2  0  3  4  5  1  
 0  2  1  3  4  5  1  
 1  3  0  2  4  5  1  
 2  4  0  1  3  5  1  
 2  5  0  1  3  4  1
-  # list_6spin_pair 6
+# list_6spin_pair 6
 0  1  2  3  4  5  1
 1  2  0  3  4  5  1  
 0  2  1  3  4  5  1  
 1  3  0  2  4  5  1  
 2  4  0  1  3  5  1  
 2  5  0  1  3  4  1
-  # list_6spin_pair 7
+# list_6spin_pair 7
 0  1  2  3  4  5  1
 1  2  0  3  4  5  1  
 0  2  1  3  4  5  1  
 1  4  0  2  3  5  1  
 2  5  0  1  3  4  1
-  # list_6spin_pair 8
+# list_6spin_pair 8
 1  5  0  2  3  4  1

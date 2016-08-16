@@ -103,11 +103,11 @@ int expec_cisajscktaltdc
     if(X->Def.St==0){
       sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGStart,"a");
-      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName2BGreen_CG, X->Def.CDataFileHead);
         TimeKeeper(X, cFileNameTimeKeep, cCGExpecTwoBodyGStart,"a");
-      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }
     break;
 

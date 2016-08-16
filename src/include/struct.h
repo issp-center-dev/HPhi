@@ -27,8 +27,8 @@
 struct DefineList{
   char *CDataFileHead;				/**< Read from Calcmod in readdef. Header of output file such as Green's function */
   char  *CParaFileHead;				/**< Read from Calcmod in readdef. It is not used. Just for the compatibility to mVMC */
-  int nvec;				 	/**< Read from Calcmod in readdef */
-  int k_exct;				  	/**< Read from Calcmod in readdef */
+  unsigned int nvec;				 	/**< Read from Calcmod in readdef */
+  unsigned int k_exct;				  	/**< Read from Calcmod in readdef */
   int LanczosEps; 				/**< log(10 base) of the convergence threshold. Read from Calcmod in readdef */
   int  LanczosTarget;				/**< Which eigenstate is used to check convergence. Read from Calcmod in readdef. */
   int read_hacker; 				
@@ -36,16 +36,16 @@ struct DefineList{
   int  WRITE;    /**< */
   long int global_off;  /**< */
   
-  int  Nsite;    /**< */
-  int  NsiteMPI;    /**< */
-  int  Nup;    /**< Read from modpara in readdef */
-  int Ndown;    /**< */
+  unsigned int  Nsite;    /**< */
+  unsigned int  NsiteMPI;    /**< */
+  unsigned int  Nup;    /**< Read from modpara in readdef */
+  unsigned int  Ndown;    /**< */
   int  Total2Sz;    /**< */
   int  Total2SzMPI;    /**< */
-  int  Ne;    /**< */
-  int  Nsize;    /**< */
-  int Lanczos_max;    /**< */
-    int Lanczos_restart;
+  unsigned int  Ne;    /**< */
+  unsigned int  Nsize;    /**< */
+  unsigned int Lanczos_max;    /**< */
+  int Lanczos_restart;
   long int initial_iv;    /**< */
   
   int istep;    /**< */
@@ -53,25 +53,25 @@ struct DefineList{
   int St;    /**< */
   
   int *LocSpn;    /**< [NLocSpn] */
-  int  NLocSpn;    /**< */
-  int NCond;
+  unsigned int NLocSpn;    /**< */
+  unsigned int NCond;
   int iFlgGeneralSpin;
   int iFlgSzConserved;
   
   int fidx;    /**< */
-  long int *Tpow;    /**< [2 * Nsite] 2^n */
-  long int *OrgTpow;    /**< [2 * Nsite] 2^n */
+  long unsigned int *Tpow;    /**< [2 * Nsite] 2^n */
+  long unsigned int *OrgTpow;    /**< [2 * Nsite] 2^n */
   long int *SiteToBit; /**< [Nsite] */
   
   int *EDChemi;    /**< [Nsite] */
-  int  EDNChemi;   /**< */  
+  unsigned int  EDNChemi;   /**< */  
   int  *EDSpinChemi;  /**< [Nsite] */
 
   double   *EDParaChemi;  /**< [Nsite] */
 
   //[s] Transfer
-  int  NTransfer;				/**< Number of transfer integrals obtained by a def file.*/
-  int  EDNTransfer;				/**< Number of transfer integrals for calculation. */
+  unsigned int  NTransfer;				/**< Number of transfer integrals obtained by a def file.*/
+  unsigned int  EDNTransfer;				/**< Number of transfer integrals for calculation. */
   int  **Transfer;				/**< Index of transfer integrals \f$t_{ij\sigma_i\sigma_j}\f$ obtained by a def file. \n
 						   Data Format [Ntransfer][3]\n
 						   Ntransfer-> a parameter defined by struct.h.\n
@@ -95,29 +95,29 @@ struct DefineList{
   //[e] Transfer
   
   int   **CoulombIntra;  /**< [NCoulombIntra][1] */
-  int NCoulombIntra;  /**< */
+  unsigned int NCoulombIntra;  /**< */
   double  *ParaCoulombIntra;  /**< [NCoulombIntra] */
 
   int   **CoulombInter;  /**< [NCoulombInter][2] */
-  int NCoulombInter;    /**< */
+  unsigned int NCoulombInter;    /**< */
   double  *ParaCoulombInter; /**< [NCoulombInter] */
  
   int  **HundCoupling;  /**< */
-  int  NHundCoupling;  /**< */
+  unsigned int  NHundCoupling;  /**< */
   double   *ParaHundCoupling;  /**< */
 
   int   **PairHopping;  /**< */
-  int  NPairHopping;    /**< */
+  unsigned int  NPairHopping;    /**< */
   double   *ParaPairHopping;/**< */
   
   int   **ExchangeCoupling;  /**< */
-  int    NExchangeCoupling;    /**< */
+  unsigned int    NExchangeCoupling;    /**< */
   double *ParaExchangeCoupling;  /**< */
 
-  int    NIsingCoupling;    /**< */
+  unsigned int    NIsingCoupling;    /**< */
   
   int   **PairLiftCoupling;  /**< */
-  int    NPairLiftCoupling;    /**< */
+  unsigned int    NPairLiftCoupling;    /**< */
   double *ParaPairLiftCoupling;  /**< */
 
 
@@ -125,37 +125,37 @@ struct DefineList{
   int **InterAll;  /**< [NinterAll][8] Interacted quartet */
   int **InterAll_OffDiagonal;  /**< [NinterAll_OffDiagonal][8] Interacted quartet */
   int **InterAll_Diagonal;  /**< [NinterAll_Diagonal][4] Interacted quartet */
-  int NInterAll;    /**< */
-  int NInterAll_Diagonal;    /**< */
-  int NInterAll_OffDiagonal;    /**< */
+  unsigned int NInterAll;    /**< */
+  unsigned int NInterAll_Diagonal;    /**< */
+  unsigned int NInterAll_OffDiagonal;    /**< */
   double complex *ParaInterAll;  /**< */
   double *ParaInterAll_Diagonal;
   double complex *ParaInterAll_OffDiagonal;  
   //[e] For InterAll
 
   int **CisAjt;  /**< */
-  int NCisAjt;    /**< */
+  unsigned int NCisAjt;    /**< */
 
   int   **CisAjtCkuAlvDC; /**< */
-  int NCisAjtCkuAlvDC; /**< */
+  unsigned int NCisAjtCkuAlvDC; /**< */
 
-    int **SingleExcitationOperator;
-    int NSingleExcitationOperator;
-    double complex *ParaSingleExcitationOperator;  /**< */
-
-
-    int **PairExcitationOperator;
-    int NPairExcitationOperator;
-    double complex *ParaPairExcitationOperator;  /**< */
+  int **SingleExcitationOperator;
+  unsigned int NSingleExcitationOperator;
+  double complex *ParaSingleExcitationOperator;  /**< */
 
 
+  int **PairExcitationOperator;
+  unsigned int NPairExcitationOperator;
+  double complex *ParaPairExcitationOperator;  /**< */
 
-    int iCalcType;
+
+
+  int iCalcType;
   /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
 
   int iCalcEigenVec;
   /**< An integer for selecting method to calculate eigenvectors. 0:Lanczos+CG, 1: Lanczos. default value is set as 0 in readdef.c*/  
-
+  
   int iInitialVecType;
   /**< An integer for setting a type of inital vectors. 0:complex type, 1: real type. default value is set as 0 in readdef.c*/  
   
@@ -174,6 +174,7 @@ struct DefineList{
     /**< An integer for selecting output a Hamiltonian. 0: no output, 1:output*/
     int iOutputHam;
 
+
   //[s] For Spectrum
   double dOmegaMax;
   double dOmegaMin;
@@ -182,11 +183,17 @@ struct DefineList{
   int iFlgSpecOmegaMax;
   int iFlgSpecOmegaMin;
   int iFlgSpecOmegaIm;
-  int iFlgRecalcSpec;
+  int iFlgCalcSpec;
   /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
 
   //[e] For Spectrum
   
+
+  /**< An integer for restarting output a Hamiltonian.
+   * 0: not restart, 1:restart (output restart vector),
+   * 2: restart (input and output restart vector) */
+  int iReStart;
+
 };
 
 struct CheckList{
@@ -265,7 +272,7 @@ struct PhysList{
 struct BoostList {
   int flgBoost;
   long unsigned int R0, W0, num_pivot, ishift_nspin;
-  int NumarrayJ;
+  unsigned int NumarrayJ;
   double complex ***arrayJ;
   double complex vecB[3];
   int  **list_6spin_star;

@@ -1,0 +1,9 @@
+#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag
+#FlgFiniteTemperature= 0:Zero temperature, 1:Finite temperature. This parameter is active only for CalcType=2.
+#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC 
+CalcType   1
+FlgFiniteTemperature   1
+CalcModel   4
+OutputMode   1
+CalcEigenVec 1
+Restart 1
