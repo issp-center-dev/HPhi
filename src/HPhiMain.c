@@ -80,6 +80,7 @@ int main(int argc, char* argv[]){
   int mode=0;
   char cFileListName[D_FileNameMax];
 
+  stdoutMPI = stdout;
   if(JudgeDefType(argc, argv, &mode)!=0){
     FinalizeMPI();
     return 0;
