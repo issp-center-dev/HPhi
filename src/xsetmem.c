@@ -105,7 +105,9 @@ int setmem_large
   int idim_maxMPI;
   
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
-
+  fprintf(stdoutMPI, "idim_maxMPI=%ld\n", idim_maxMPI);
+  exit(1);
+  
   switch(X->Def.iCalcModel){
   case Spin:
   case Hubbard:
