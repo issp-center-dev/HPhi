@@ -129,6 +129,7 @@ const char* cCGExpecEnergyEnd;
 const char* cLogTPQRand;
 const char* cLogSSRand;
 const char* cLogNormRand;
+const char* cLogFlctRand;
 const char* cLogTPQStep;
 const char* cLogTPQEnd;
 

@@ -43,6 +43,7 @@ int CalcByTPQ(
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
   char sdt_norm[D_FileNameMax];
+  char sdt_flct[D_FileNameMax];
   int rand_i, rand_max, iret;
   unsigned long int i_max;
   int step_iO=0;
@@ -59,6 +60,7 @@ int CalcByTPQ(
 
     sprintf(sdt_phys, cFileNameSSRand, rand_i);      
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
+    sprintf(sdt_flct, cFileNameFlctRand, rand_i);
     Ns = 1.0 * X->Bind.Def.NsiteMPI;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     iret=0;
@@ -99,16 +101,25 @@ int CalcByTPQ(
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
       
+// for physical properties
       if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
         return -1;
       }
       fprintf(fp, "%s", cLogSSRand);
       fclose(fp);
+// for norm
       if (!childfopenMPI(sdt_norm, "w", &fp) == 0) {
         return -1;
       }
       fprintf(fp, "%s", cLogNormRand);
       fclose(fp);
+// for fluctuations
+      if (!childfopenMPI(sdt_flct, "w", &fp) == 0) {
+        return -1;
+      }
+      fprintf(fp, "%s", cLogFlctRand);
+      fclose(fp);
+
 
       step_i = 1;
       FirstMultiply(rand_i, &(X->Bind));
@@ -117,18 +128,26 @@ int CalcByTPQ(
       expec_cisajs(&(X->Bind), v1);
       expec_cisajscktaltdc(&(X->Bind), v1);
 
+// for physical properties
       if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
         return -1;
       }
       fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
               X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
       fclose(fp);
-
+// for norm
       if (!childfopenMPI(sdt_norm, "a", &fp) == 0) {
         return -1;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
+// for fluctuations
+      if (!childfopenMPI(sdt_flct, "a", &fp) == 0) {
+        return -1;
+      }
+      fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
+      fclose(fp);
+//
       step_i +=1;
       X->Bind.Def.istep = step_i;
     }
@@ -146,17 +165,28 @@ int CalcByTPQ(
       Multiply(&(X->Bind));
       expec_energy(&(X->Bind));
       //expec(&(X->Bind));
+//
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
       if(!childfopenMPI(sdt_phys, "a", &fp)==0){
         return FALSE;
       }
       fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
+// for
       fclose(fp);
 
       if(!childfopenMPI(sdt_norm, "a", &fp)==0){
         return FALSE;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
+      fclose(fp);
+// for fluctuations
+      if (!childfopenMPI(sdt_flct, "a", &fp) == 0) {
+        return -1;
+      }
+      fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
+      fclose(fp);
+//
+
       if (step_i%step_spin == 0){
         expec_cisajs(&(X->Bind),v1);
         expec_cisajscktaltdc(&(X->Bind), v1);
