@@ -16,6 +16,7 @@
 #include "FirstMultiply.h"
 #include "Multiply.h"
 #include "expec_energy.h"
+#include "expec_energy_test.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
 #include "CalcByTPQ.h"
@@ -96,7 +97,7 @@ int CalcByTPQ(
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
       X->Bind.Def.istep=step_i;
-      expec_energy(&(X->Bind));
+      expec_energy_test(&(X->Bind));
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
@@ -123,7 +124,7 @@ int CalcByTPQ(
 
       step_i = 1;
       FirstMultiply(rand_i, &(X->Bind));
-      expec_energy(&(X->Bind)); //v0 = H*v1
+      expec_energy_test(&(X->Bind)); //v0 = H*v1
       inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
       expec_cisajs(&(X->Bind), v1);
       expec_cisajscktaltdc(&(X->Bind), v1);
@@ -163,7 +164,7 @@ int CalcByTPQ(
       X->Bind.Def.istep=step_i;
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
       Multiply(&(X->Bind));
-      expec_energy(&(X->Bind));
+      expec_energy_test(&(X->Bind));
       //expec(&(X->Bind));
 //
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
