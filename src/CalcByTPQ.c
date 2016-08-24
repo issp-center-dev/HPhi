@@ -57,7 +57,8 @@ int CalcByTPQ(
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
 
-    sprintf(sdt_phys, cFileNameSSRand, rand_i);      
+    sprintf(sdt_phys, cFileNameSSRand, rand_i);
+    sprintf(sdt_norm, cFileNameNormRand, rand_i);      
     Ns = 1.0 * X->Bind.Def.NsiteMPI;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     iret=0;
@@ -94,10 +95,11 @@ int CalcByTPQ(
       fclose(fp);
       X->Bind.Def.istep=step_i;
       expec_energy(&(X->Bind));
+      step_iO=step_i-1;
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
-      
+
       if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
         return -1;
       }
@@ -130,11 +132,9 @@ int CalcByTPQ(
       fclose(fp);
       step_i +=1;
       X->Bind.Def.istep = step_i;
+      step_iO=0;
     }
 
-    fprintf(stdoutMPI, "step_i=%d\n", X->Bind.Def.istep);
-
-    step_iO=step_i-1;
     for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
       X->Bind.Def.istep=step_i;
       if(step_i %((X->Bind.Def.Lanczos_max-step_iO)/10)==0){
