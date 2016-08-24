@@ -42,7 +42,7 @@ int CalcByTPQ(
 {
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
-  char  sdt_norm[D_FileNameMax];
+  char sdt_norm[D_FileNameMax];
   int rand_i, rand_max, iret;
   unsigned long int i_max;
   int step_iO=0;
@@ -58,6 +58,7 @@ int CalcByTPQ(
   for (rand_i = 0; rand_i<rand_max; rand_i++){
 
     sprintf(sdt_phys, cFileNameSSRand, rand_i);      
+    sprintf(sdt_norm, cFileNameNormRand, rand_i);
     Ns = 1.0 * X->Bind.Def.NsiteMPI;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     iret=0;
@@ -156,8 +157,6 @@ int CalcByTPQ(
         return FALSE;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
-      fclose(fp);
-
       if (step_i%step_spin == 0){
         expec_cisajs(&(X->Bind),v1);
         expec_cisajscktaltdc(&(X->Bind), v1);
