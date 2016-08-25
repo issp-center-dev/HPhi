@@ -133,14 +133,15 @@ int expec_energy_test(struct BindStruct *X){
   case KondoGC:
   case Hubbard:
   case Kondo:
-#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2, tmp_num_up, tmp_num_down) default(none) shared(v0) \
-  firstprivate(i_max, num1_up, num1_down,X,myrank) private(j, tmp_v02,D,N,Sz,isite1,is1_up,is1_down,is1,ibit1,list_1)
+#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
+  firstprivate(i_max, num1_up, num1_down,X,myrank) private(j, tmp_v02,D,N,Sz,isite1,is1_up,is1_down,is1,ibit1)
   for(j = 1; j <= i_max; j++){
     tmp_v02 = conj(v0[j])*v0[j];
     D       = 0.0;
     N       = 0.0;
     Sz      = 0.0;
     for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+      //printf("DEBUG: j=%d %d %d\n",j,isite1,myrank);
       if(isite1 > X->Def.Nsite){
         is1_up    = X->Def.Tpow[2 * isite1 - 2];
         is1_down  = X->Def.Tpow[2 * isite1 - 1];
