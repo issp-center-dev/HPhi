@@ -109,15 +109,12 @@ int expec_energy(struct BindStruct *X){
 //D
           D       = num1_up*num1_down;
 	  tmp_D  += tmp_v02*D;
-//	  tmp_D2 += tmp_v02*D*D;
 //N
           N       = num1_up+num1_down;
 	  tmp_N  += tmp_v02*N;
-//	  tmp_N2 += tmp_v02*N*N;
 //Sz
           Sz      = num1_up-num1_down;
 	  tmp_Sz  += tmp_v02*Sz;
-//	  tmp_Sz2 += tmp_v02*Sz*Sz;
 //
 	  tmp_num_up   += tmp_v02*num1_up;
 	  tmp_num_down += tmp_v02*num1_down;
@@ -137,11 +134,9 @@ int expec_energy(struct BindStruct *X){
           if(ibit1==is1_up){
 	     tmp_num_up   += tmp_v02;
              tmp_Sz       += tmp_v02;
-             tmp_Sz2      += tmp_v02;
 	   }else{
 	     tmp_num_down += tmp_v02;
              tmp_Sz       += -1.0*tmp_v02;
-             tmp_Sz2      += 1.0*tmp_v02;
 	   }
       } /*if (X->Def.iFlgGeneralSpin == FALSE)*/   	
 	break;/*case SpinGC*/
@@ -169,15 +164,12 @@ int expec_energy(struct BindStruct *X){
 //D
           D       = num1_up*num1_down;
 	  tmp_D  += tmp_v02*D;
-//	  tmp_D2 += tmp_v02*D*D;
 //N
           N       = num1_up+num1_down;
 	  tmp_N  += tmp_v02*N;
-//	  tmp_N2 += tmp_v02*N*N;
 //Sz
           Sz      = num1_up-num1_down;
 	  tmp_Sz  += tmp_v02*Sz;
-//	  tmp_Sz2 += tmp_v02*Sz*Sz;
 //
 	  tmp_num_up   += tmp_v02*num1_up;
 	  tmp_num_down += tmp_v02*num1_down;
@@ -199,15 +191,12 @@ int expec_energy(struct BindStruct *X){
 //D
           D        = num1_up*num1_down;
 	  tmp_D   += tmp_v02*D;
-//	  tmp_D2  += tmp_v02*D*D;
 //N
           N        = num1_up+num1_down;
 	  tmp_N   += tmp_v02*N;
-//	  tmp_N2  += tmp_v02*N*N;
 //Sz
           Sz       =  num1_up-num1_down;
 	  tmp_Sz  += tmp_v02*Sz;
-//	  tmp_Sz2 += tmp_v02*Sz*Sz;
 //
 	  tmp_num_up   += tmp_v02*num1_up;
 	  tmp_num_down += tmp_v02*num1_down;
@@ -224,12 +213,10 @@ int expec_energy(struct BindStruct *X){
 	    if(ibit1==is1_up){
 	      tmp_num_up  += tmp_v02;
 	      tmp_Sz      += tmp_v02;
-//	      tmp_Sz2     += tmp_v02;
 	    }
 	    else{
 	      tmp_num_down += tmp_v02;
 	      tmp_Sz       += -1.0*tmp_v02;
-//	      tmp_Sz2      +=  1.0*tmp_v02;
 	    }
 	  }
 	}
@@ -245,11 +232,8 @@ int expec_energy(struct BindStruct *X){
   }
 
   tmp_D        = SumMPI_d(tmp_D);
-//  tmp_D2       = SumMPI_d(tmp_D2);
   tmp_N        = SumMPI_d(tmp_N);
-//  tmp_N2       = SumMPI_d(tmp_N2);
   tmp_Sz       = SumMPI_d(tmp_Sz);
-// tmp_Sz2      = SumMPI_d(tmp_Sz2);
   tmp_num_up   = SumMPI_d(tmp_num_up);
   tmp_num_down = SumMPI_d(tmp_num_down);
   

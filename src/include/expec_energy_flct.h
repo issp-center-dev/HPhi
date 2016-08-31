@@ -16,4 +16,4 @@
 #pragma once
 #include "Common.h"
 
-int expec_energy_test(struct BindStruct *X);
+int expec_energy_flct(struct BindStruct *X);

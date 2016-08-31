@@ -16,7 +16,7 @@
 
 #include "bitcalc.h"
 #include "mltply.h"
-#include "expec_energy_test.h"
+#include "expec_energy_flct.h"
 #include "wrapperMPI.h"
 
 /** 
@@ -28,7 +28,7 @@
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * @return 
  */
-int expec_energy_test(struct BindStruct *X){
+int expec_energy_flct(struct BindStruct *X){
 
   long unsigned int i,j;
   long unsigned int irght,ilft,ihfbit;
@@ -45,7 +45,7 @@ int expec_energy_test(struct BindStruct *X){
   double Sz,tmp_Sz,tmp_Sz2;
   double tmp_v02;  
   
-  long unsigned int i_max;
+  long unsigned int i_max,tmp_list_1;
   switch(X->Def.iCalcType){
   case Lanczos:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
@@ -134,12 +134,13 @@ int expec_energy_test(struct BindStruct *X){
   case Hubbard:
   case Kondo:
 #pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
-  firstprivate(i_max, num1_up, num1_down,X,myrank) private(j, tmp_v02,D,N,Sz,isite1,is1_up,is1_down,is1,ibit1)
+  firstprivate(i_max, num1_up, num1_down,X,myrank) private(j, tmp_v02,D,N,Sz,isite1,is1_up,is1_down,is1,ibit1,tmp_list_1)
   for(j = 1; j <= i_max; j++){
     tmp_v02 = conj(v0[j])*v0[j];
     D       = 0.0;
     N       = 0.0;
     Sz      = 0.0;
+    tmp_list_1 = list_1[j];
     for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
       //printf("DEBUG: j=%d %d %d\n",j,isite1,myrank);
       if(isite1 > X->Def.Nsite){
@@ -157,9 +158,9 @@ int expec_energy_test(struct BindStruct *X){
         is1_up    = X->Def.Tpow[2*isite1-2];
         is1_down  = X->Def.Tpow[2*isite1-1];
         is1       = is1_up+is1_down;
-        ibit1     = list_1[j]&is1;
-        num1_up   = (list_1[j]&is1_up)/is1_up;
-        num1_down = (list_1[j]&is1_down)/is1_down;
+        //ibit1     = tmp_list_1&is1;
+        num1_up   = (tmp_list_1&is1_up)/is1_up;
+        num1_down = (tmp_list_1&is1_down)/is1_down;
         D        += num1_up*num1_down;
         N        += num1_up+num1_down;
         Sz       += num1_up-num1_down;

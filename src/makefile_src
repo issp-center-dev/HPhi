@@ -27,7 +27,7 @@ diagonalcalc.o \
 expec_cisajs.o \
 expec_cisajscktaltdc.o \
 expec_energy.o \
-expec_energy_test.o \
+expec_energy_flct.o \
 expec_totalspin.o \
 lapack_diag.o \
 makeHam.o \
