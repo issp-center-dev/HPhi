@@ -171,10 +171,11 @@ int main(int argc, char* argv[]){
     exitMPI(-1);
   }
 
-
+  StartTimer(1);
   if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
     exitMPI(-1);
   }
+  StopTimer(1);
 
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
@@ -182,7 +183,9 @@ int main(int argc, char* argv[]){
     return 0;
   }
 
+  StartTimer(2);
   diagonalcalc(&(X.Bind));
+  StopTimer(2);
   
   //Start Calculation
   if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
@@ -207,10 +210,12 @@ int main(int argc, char* argv[]){
             break;
 
       case TPQCalc:
+        StartTimer(100);
         if (!CalcByTPQ(NumAve, ExpecInterval, &X) == TRUE) {
           FinalizeMPI();
           return -1;
         }
+        StopTimer(100);
             break;
 
       default:

@@ -64,15 +64,18 @@ int CalcByTPQ(
     iret=0;
     X->Bind.Def.irand=rand_i;
 
+    StartTimer(109);
     if(rand_i==0){
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
     }
     else{
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
     }
+    StopTimer(109);
 
   //Make or Read initial vector
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
+      StartTimer(109);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
       fprintf(stdoutMPI, "%s", cLogInputVecStart);
       sprintf(sdt, cFileNameInputVector, rand_i, myrank);
@@ -93,13 +96,17 @@ int CalcByTPQ(
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
+      StopTimer(109);
       X->Bind.Def.istep=step_i;
+      StartTimer(102);
       expec_energy(&(X->Bind));
+      StopTimer(102);
       step_iO=step_i-1;
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
 
+      StartTimer(109);
       if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
         return -1;
       }
@@ -110,14 +117,26 @@ int CalcByTPQ(
       }
       fprintf(fp, "%s", cLogNormRand);
       fclose(fp);
+      StopTimer(109);
 
       step_i = 1;
+      StartTimer(101);
       FirstMultiply(rand_i, &(X->Bind));
-      expec_energy(&(X->Bind)); //v0 = H*v1
-      inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
-      expec_cisajs(&(X->Bind), v1);
-      expec_cisajscktaltdc(&(X->Bind), v1);
+      StopTimer(101);
 
+      StartTimer(102);
+      expec_energy(&(X->Bind)); //v0 = H*v1
+      StopTimer(102);
+
+      inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
+      StartTimer(103);
+      expec_cisajs(&(X->Bind), v1);
+      StopTimer(103);
+      StartTimer(104);
+      expec_cisajscktaltdc(&(X->Bind), v1);
+      StopTimer(104);
+
+      StartTimer(109);
       if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
         return -1;
       }
@@ -130,6 +149,7 @@ int CalcByTPQ(
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
+      StopTimer(109);
       step_i +=1;
       X->Bind.Def.istep = step_i;
       step_iO=0;
@@ -141,11 +161,19 @@ int CalcByTPQ(
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;
+      StartTimer(109);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
+      StopTimer(109);
+      StartTimer(105);
       Multiply(&(X->Bind));
+      StopTimer(105);
+      StartTimer(102);
       expec_energy(&(X->Bind));
+      StopTimer(102);
       //expec(&(X->Bind));
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
+
+      StartTimer(109);
       if(!childfopenMPI(sdt_phys, "a", &fp)==0){
         return FALSE;
       }
@@ -157,10 +185,16 @@ int CalcByTPQ(
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
+      StopTimer(109);
 
       if (step_i%step_spin == 0){
+        StartTimer(103);
         expec_cisajs(&(X->Bind),v1);
+        StopTimer(103);
+
+        StartTimer(104);
         expec_cisajscktaltdc(&(X->Bind), v1);
+        StopTimer(104);
       }
     }
 

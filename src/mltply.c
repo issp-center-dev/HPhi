@@ -68,6 +68,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   long unsigned int i_max;
   int ihermite=0;
   int idx=0;
+
+  StartTimer(200);
   i_max = X->Check.idim_max;
   X->Large.prdct = 0.0;
   dam_pr = 0.0;
@@ -97,16 +99,19 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.ihfbit = ihfbit;
   X->Large.mode = M_MLTPLY;
 
+  StartTimer(201);
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
     tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
     dam_pr += (list_Diagonal[j]) * conj(tmp_v1[j]) * tmp_v1[j];
   }
   X->Large.prdct += dam_pr;
+  StopTimer(201);
   
   switch (X->Def.iCalcModel) {
     case HubbardGC:
       //Transfer
+      StartTimer(202);
       for (i = 0; i < X->Def.EDNTransfer; i += 2) {
 
         if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
@@ -135,7 +140,9 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           }
         }
       }
+      StopTimer(202);
 
+      StartTimer(203);
       for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
 	  isite1 = X->Def.InterAll_OffDiagonal[i][0] + 1;
 	  isite2 = X->Def.InterAll_OffDiagonal[i][2] + 1;
@@ -212,6 +219,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	X->Large.prdct += dam_pr;
       }
       
+      StopTimer(203);
+      StartTimer(204);
       //Pair hopping
       for (i = 0; i < X->Def.NPairHopping; i +=2) {
 	sigma1=0;
@@ -238,6 +247,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	X->Large.prdct += dam_pr;
       }/*for (i = 0; i < X->Def.NPairHopping; i += 2)*/
       
+      StopTimer(204);
+      StartTimer(205);
       //Exchange
       for (i = 0; i < X->Def.NExchangeCoupling; i++) {
 	sigma1=0; sigma2=1;
@@ -259,12 +270,14 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
         }
 	X->Large.prdct += dam_pr;
       }/*for (i = 0; i < X->Def.NExchangeCoupling; i++)*/
+      StopTimer(205);
       break;
       
   case KondoGC:
   case Hubbard:
   case Kondo:
 
+      StartTimer(206);
       //Transfer
       for (i = 0; i < X->Def.EDNTransfer; i+=2) {
         if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
@@ -294,6 +307,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
           }
         }
       }
+      StopTimer(206);
+      StartTimer(207);
       
           //InterAll
       for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
@@ -369,6 +384,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 	}
 	X->Large.prdct += dam_pr;
       }
+      StopTimer(207);
+      StartTimer(208);
       
       //Pair hopping
       for (i = 0; i < X->Def.NPairHopping; i +=2) {
@@ -399,6 +416,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
         }
 	X->Large.prdct += dam_pr;
       }/*for (i = 0; i < X->Def.NPairHopping; i += 2)*/
+      StopTimer(208);
+      StartTimer(209);
 
 	//Exchange
       for (i = 0; i < X->Def.NExchangeCoupling; i ++) {
@@ -421,6 +440,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
         }
 	X->Large.prdct += dam_pr;
       }/*for (i = 0; i < X->Def.NExchangeCoupling; i ++)*/
+      StopTimer(209);
+
   
       break;
       
@@ -428,19 +449,27 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       if (X->Def.iFlgGeneralSpin == FALSE) {
 	//Transfer absorbed in Diagonal term.
 	//InterAll
+        StartTimer(210);
 	for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
 
           if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
             X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            StartTimer(220);
             child_general_int_spin_MPIdouble(i, X, tmp_v0, tmp_v1);
+            StopTimer(220);
           }
           else if (X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
+            StartTimer(221);
             child_general_int_spin_MPIsingle(i, X, tmp_v0, tmp_v1);
+            StopTimer(221);
           }
           else if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite) {
+            StartTimer(222);
             child_general_int_spin_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+            StopTimer(222);
           }
           else {
+            StartTimer(223);
             for (ihermite = 0; ihermite<2; ihermite++) {
               idx = i + ihermite;
               isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;
@@ -454,32 +483,46 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
               dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
               X->Large.prdct += dam_pr;
             }
+            StopTimer(223);
           }
 	}
+        StopTimer(210);
+        StartTimer(211);
+
       	
 	//Exchange	
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
 	  sigma1=0; sigma2=1;
           if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
 	      X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+            StartTimer(224);
 	    dam_pr = X_child_general_int_spin_MPIdouble(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
+            StopTimer(224);
           }
           else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+            StartTimer(225);
 	    dam_pr = X_child_general_int_spin_MPIsingle(X->Def.ExchangeCoupling[i][0], sigma1, sigma2, X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
+            StopTimer(225);
           }
           else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
+            StartTimer(226);
 	    dam_pr = X_child_general_int_spin_MPIsingle(X->Def.ExchangeCoupling[i][1], sigma2, sigma1, X->Def.ExchangeCoupling[i][0], sigma1, sigma2, conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
+            StopTimer(226);
           }
           else {
+            StartTimer(227);
 	    child_exchange_spin_GetInfo(i, X);
 	    dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+            StopTimer(227);
 	  }
 	  X->Large.prdct += dam_pr;
 	}/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
+        StopTimer(211);
       }
       else{
 	//Transfer absorbed in Diagonal term.
 	//InterAll
+        StartTimer(210);
 	ihfbit =X->Check.sdim;
         for (i = 0; i < X->Def.NInterAll_OffDiagonal; i += 2) {
 
@@ -528,10 +571,11 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
         }
       }	
       break;
-
+      StopTimer(210);
     case SpinGC:
 
       if (X->Def.iFlgGeneralSpin == FALSE) {
+        StartTimer(212);
         for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
          if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
            dam_pr=0;
@@ -575,6 +619,8 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	  }
 	  X->Large.prdct += dam_pr;
 	}
+        StopTimer(212);
+        StartTimer(213);
 	
 	//InterAll	
         for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2) {
@@ -604,6 +650,8 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
             }
           }
 	}
+        StopTimer(213);
+        StartTimer(214);
 	
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
@@ -624,6 +672,8 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
           }
 	  X->Large.prdct += dam_pr;
 	}/* for (i = 0; i < X->Def.NExchangeCoupling; i ++) */
+        StopTimer(214);
+        StartTimer(215);
 
         //PairLift
         for (i = 0; i < X->Def.NPairLiftCoupling; i++) {
@@ -644,9 +694,11 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
           }
 	  X->Large.prdct += dam_pr;
 	}/*for (i = 0; i < X->Def.NPairLiftCoupling; i += 2)*/
+        StopTimer(215);
       }//end: s = 1/2
       else {// For General spin
 	
+        StartTimer(212);
         for (i = 0; i < X->Def.EDNTransfer; i += 2) {
 	  isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
 	  isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
@@ -694,6 +746,8 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
 	  }
 	}
       
+        StopTimer(212);
+        StartTimer(213);
         //InterAll        
         for (i = 0; i< X->Def.NInterAll_OffDiagonal; i += 2) {
 
@@ -788,6 +842,7 @@ shared(tmp_v0, tmp_v1)
             }
           }
         }
+        StopTimer(213);
       }  //end:generalspin
 	
   if(X->Boost.flgBoost == 1){
@@ -843,6 +898,7 @@ shared(tmp_v0, tmp_v1)
   //FinalizeMPI();
   //exit(0);
   
+  StopTimer(200);
   return 0;
 }
 
