@@ -94,6 +94,10 @@ int main(int argc, char* argv[]){
   }
   else InitializeMPI(argc, argv);
 
+  //Timer
+  InitTimer();
+  StartTimer(0);
+ 
   //MakeDirectory for output
   struct stat tmpst;
   if (myrank == 0) {
@@ -220,6 +224,9 @@ int main(int argc, char* argv[]){
       return -1;
     }
   }
+
+  StopTimer(0);
+  OutputTimer();
   FinalizeMPI();
   return 0;
 }
