@@ -110,8 +110,7 @@ int setmem_large
   unsigned int idim_maxMPI;
   
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
-  fprintf(stdoutMPI, "idim_maxMPI=%ld\n", idim_maxMPI);
-  exit(1);
+  //fprintf(stdoutMPI, "Debug: idim_maxMPI=%ld\n", idim_maxMPI);
   
   switch(X->Def.iCalcModel){
   case Spin:

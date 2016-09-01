@@ -56,6 +56,7 @@ const char* cFileNameTridiagonalMatrixComponents="%s_TMComponents.dat";
 const char* cFileNameSSRand="SS_rand%d.dat";
 const char* cFileNameTPQStep="%s_Time_TPQ_Step.dat";
 const char* cFileNameNormRand="Norm_rand%d.dat";
+const char* cFileNameFlctRand="Flct_rand%d.dat";
 const char* cFileName1BGreen_TPQ="%s_cisajs_set%dstep%d.dat";
 const char* cFileName2BGreen_TPQ="%s_cisajscktalt_set%dstep%d.dat";
 const char* cFileNameOutputVector="tmpvec_set%d_rank_%d.dat";

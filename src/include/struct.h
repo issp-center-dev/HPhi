@@ -242,8 +242,9 @@ struct LargeList{
 struct PhysList{
   //double energy,doublon;
   double energy;
-  double doublon;
-  double num;
+  double doublon,doublon2;
+  double num,num2;
+  double Sz,Sz2;
   /*[s] For TPQ*/
   double var;
   /*[e] For TPQ*/
