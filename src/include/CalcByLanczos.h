@@ -15,10 +15,6 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
 #include "Common.h"
-#include "CG_EigenVector.h"
-#include "expec_energy.h"
-#include "Lanczos_EigenValue.h"
-#include "Lanczos_EigenVector.h"
 
 int CalcByLanczos(
 		  struct EDMainCalStruct *X

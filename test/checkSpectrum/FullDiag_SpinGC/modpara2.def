@@ -1,0 +1,20 @@
+--------------------
+Model_Parameters   0
+--------------------
+HPhi_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite          8
+Lanczos_max    200 
+initial_iv     1    
+nvec           1    
+exct           1    
+LanczosEps     14   
+LanczosTarget  2    
+LargeValue     1    
+NumAve         3    
+ExpecInterval  20   
+OmegaMax 10
+OmegaMin -10

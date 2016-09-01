@@ -515,6 +515,15 @@ double complex GC_CisAis
  double complex tmp_trans
 );
 
+double complex GC_AisCis(
+        long unsigned int j,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        struct BindStruct *X,
+        long unsigned int is1_spin,
+        double complex tmp_trans
+);
+
 int X_CisAis
 (
  long unsigned int list_1_j,

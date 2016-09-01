@@ -49,6 +49,24 @@ const char* cCG_EigenVecFinish="CG Eigenvector finishes:      %s";
 const char* cDiagonalCalcStart ="diagonal calculation starts:   %s";
 const char* cDiagonalCalcFinish="diagonal calculation finishes: %s";
 
+//calcspectrum.c
+const char* c_InputEigenVectorStart= "Reading an input Eigenvector starts: %s";
+const char* c_InputEigenVectorEnd= "Reading an input Eigenvector finishes: %s";
+const char* c_CalcExcitedStateStart= "Caclulating an excited Eigenvector starts: %s";
+const char* c_CalcExcitedStateEnd= "Caclulating an excited Eigenvector finishes: %s";
+const char* c_CalcSpectrumStart= "Caclulating a spectrum starts: %s";
+const char* c_CalcSpectrumEnd= "Caclulating a spectrum finishes: %s";
+const char* c_GetTridiagonalStart= "Caclulating tridiagonal matrix components starts: %s";
+const char* c_GetTridiagonalEnd= "Caclulating tridiagonal matrix components finishes: %s";
+const char* c_CalcSpectrumFromTridiagonalStart="Caclulating spectrum from tridiagonal matrix components starts: %s";
+const char* c_CalcSpectrumFromTridiagonalEnd="Caclulating spectrum from tridiagonal matrix components finishes: %s";
+const char* c_OutputSpectrumRecalcvecStart="Output vectors for recalculation starts: %s";
+const char* c_OutputSpectrumRecalcvecEnd="Output vectors for recalculation finishes: %s";
+const char* c_InputSpectrumRecalcvecStart="Input vectors for recalculation starts: %s";
+const char* c_InputSpectrumRecalcvecEnd="Input vectors for recalculation finishes: %s";
+
+//calcspectrum in Lanczos_Eigenvalue.c
+const char* c_Lanczos_SpectrumStep="%3d th Lanczos step for calculating spectrum: %s";
 
 //FirstMultiply.c, Multiply.c
 const char* cTPQStep="set %d step %d:TPQ begins: %s";
@@ -113,6 +131,14 @@ const char* cLogSSRand =  " # inv_tmp, energy, phys_var, phys_doublon, phys_num,
 const char* cLogNormRand = " # inv_temp, global_norm, global_1st_norm, step_i \n";
 const char* cLogTPQStep = "    step_i/total_step=%d/%d \n";
 const char* cLogTPQEnd = "Finish: Elapsed time is %d [s].\n";
+
+const char* cLogInputVecStart="  Start:  Input vector.\n";
+const char* cLogInputVecFinish="  End  :  Input vector.\n";
+const char* cLogOutputVecStart="  Start:  Output vector.\n";
+const char* cLogOutputVecFinish="  End  :  Output vector.\n";
+const char* cOutputVecStart="  set %d step %d:output vector starts: %s\n";
+const char* cOutputVecFinish="  set %d step %d:output vector finishes: %s\n";
+
 
 //FirstMultiply.c
 const char* cLogCheckInitComplex = "    CHECK: TPQ complex initial vector \n";

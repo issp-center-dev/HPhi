@@ -217,8 +217,6 @@ unsigned long int SumMPI_li(unsigned long int idim)
   return(idim);
 }
 
-int SumMPI_i(int idim);
-
 int SumMPI_i(int idim) {
 #ifdef MPI
   int ierr;
@@ -236,4 +234,21 @@ unsigned long int BcastMPI_li(int root, unsigned long int idim) {
     MPI_Bcast(&idim0, 1, MPI_UNSIGNED_LONG, root, MPI_COMM_WORLD);
 #endif
   return(idim0);
+}
+
+double NormMPI_dc(unsigned long int idim, double complex *_v1){
+  double complex cdnorm=0;
+  double dnorm =0;
+  unsigned long int i;
+#pragma omp parallel for default(none) private(i) shared(_v1, idim) reduction(+: cdnorm)
+  for(i=1;i<=idim;i++){
+    cdnorm += conj(_v1[i])*_v1[i];
+  }
+#ifdef MPI
+  cdnorm = SumMPI_dc(cdnorm);
+#endif
+  dnorm=creal(cdnorm);
+  dnorm=sqrt(dnorm);
+
+  return dnorm;
 }

@@ -317,10 +317,12 @@ int Lanczos_EigenValue(struct BindStruct *X)
        fclose(fp);
     if(stp > Target) {
         if (fabs((E_target - ebefor) / E_target) < eps_Lanczos || fabs(beta[stp]) < pow(10.0, -14)) {
-            vec12(alpha, beta, stp, E, X);
+            d_malloc1(tmp_E,stp+1);
+            vec12(alpha, beta, stp, tmp_E, X);
             X->Large.itr = stp;
-            X->Phys.Target_energy = E[k_exct];
+            X->Phys.Target_energy = E_target;
             iconv = 0;
+            d_free1(tmp_E,stp+1);
             break;
         }
         ebefor=E_target;
@@ -332,7 +334,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
 
   sprintf(sdt,cFileNameTimeKeep,X->Def.CDataFileHead);
   if(iconv!=0){
-    sprintf(sdt,  cLogLanczos_EigenValueNotConverged);
+    sprintf(sdt, "%s",  cLogLanczos_EigenValueNotConverged);
     return -1;
   }
 
@@ -374,7 +376,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
  sprintf(sdt, cFileNameLanczosStep, X->Def.CDataFileHead);  
   
   /*
-    Set Maximum number of loop to the dimention of the Wavefunction
+    Set Maximum number of loop to the dimension of the Wavefunction
   */
  i_max_tmp = SumMPI_li(i_max);
  if(i_max_tmp < *liLanczos_step){
@@ -384,28 +386,35 @@ int Lanczos_GetTridiagonalMatrixComponents(
     *liLanczos_step = i_max_tmp;
   }
 
-#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
-  for(i = 1; i <= i_max; i++){
-    v0[i]=0.0;
-  }  
+  if(X->Def.Lanczos_restart==0) {
+#pragma omp parallel for default(none) private(i) shared(v0, v1, tmp_v1) firstprivate(i_max)
+        for (i = 1; i <= i_max; i++) {
+            v0[i] = 0.0;
+            v1[i] = tmp_v1[i];
+        }
+        stp = 0;
+        mltply(X, v0, tmp_v1);
+        TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
+        alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
+        _alpha[1] = alpha1;
+        cbeta1 = 0.0;
 
-  TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
-  mltply(X, v0, tmp_v1);
-  stp=1;
-  alpha1=creal(X->Large.prdct) ;// alpha = v^{\dag}*H*v
-  alpha[1]=alpha1;
-  cbeta1=0.0;
-  
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
-  for(i = 1; i <= i_max; i++){
-    cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
-  }
-  cbeta1 = SumMPI_dc(cbeta1);
-  beta1=creal(cbeta1);
-  beta1=sqrt(beta1);
-  beta[1]=beta1;
-  
-  for(stp = 2; stp <= *liLanczos_step; stp++){
+        for (i = 1; i <= i_max; i++) {
+            cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+        }
+        cbeta1 = SumMPI_dc(cbeta1);
+        beta1 = creal(cbeta1);
+        beta1 = sqrt(beta1);
+        _beta[1] = beta1;
+        X->Def.Lanczos_restart =1;
+    }
+else{
+        alpha1=alpha[X->Def.Lanczos_restart];
+        beta1=beta[X->Def.Lanczos_restart];
+    }
+//  for(stp = 2; stp <= *liLanczos_step; stp++){
+    for(stp = X->Def.Lanczos_restart+1; stp <= *liLanczos_step; stp++){
       if(fabs(beta[stp-1])<pow(10.0, -14)){
           *liLanczos_step=stp-1;
           break;
@@ -420,9 +429,9 @@ int Lanczos_GetTridiagonalMatrixComponents(
       }
 
       mltply(X, v0, v1);
-      
+      TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
       alpha1=creal(X->Large.prdct);
-      alpha[stp]=alpha1;
+      _alpha[stp]=alpha1;
       cbeta1=0.0;
       
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
@@ -432,13 +441,8 @@ int Lanczos_GetTridiagonalMatrixComponents(
       cbeta1 = SumMPI_dc(cbeta1);
       beta1=creal(cbeta1);
       beta1=sqrt(beta1);
-      beta[stp]=beta1;                    
+      _beta[stp]=beta1;
   }
-  
-  for(stp = 1; stp <= *liLanczos_step; stp++) {
-    _alpha[stp] = alpha[stp];
-    _beta[stp]=beta[stp];
-  }
-  
+
   return TRUE;
 }

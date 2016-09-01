@@ -64,7 +64,7 @@ we can obtain the normalized orthogonal basis  as follows:
 \alpha_{k} &= (\Ham\vec{v}_{k},\vec{v}_{k}), \\
 \vec{w}   &= \Ham\vec{v}_{k}-\beta_{k}\vec{v}_{k-1}-\alpha_{k}\vec{v}_{k}, \\
 \beta_{k+1} &= |\vec{w}|, \\
-\vec{v}_{k+1} &= \frac{\vec{v}_{k}}{|\vec{v}_{k}|}.
+\vec{v}_{k+1} &= \frac{\vec{v}_{k}}{|\vec{v}_{k}|}. \label{eq: LanczosVector}
 \end{align}
 From these definitions, it it obvious that $\alpha_{k}$, $\beta_{k}$ are real number.
 
@@ -124,7 +124,7 @@ we can obtain the accurate eigenvector for $E_{n}$.
 From $(\Ham-E_{n})^{-1}\vec{y}_{0}$,
 we obtain the linear simultaneous equations such as  
 \begin{align}
-\vec{y}_{k}&=(\Ham-E_{n})\vec{y}_{k+1}.
+\vec{y}_{k}&=(\Ham-E_{n})\vec{y}_{k+1}. \label{eq: TPQVector}
 \end{align}
 By solving this equation by using the
 conjugate gradient method (CG method),

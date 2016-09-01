@@ -40,7 +40,7 @@ char *cErrReadDefFile="Error: %s (Broken file or Not exist)\n";
 char *cErrDefFileFormat="Error: incorrect format= %s. \n";
 char *cErrNLoc ="Error: Ne=Nup+Ndown must be (Ne >= NLocalSpin).\n";
 char *cErrDefFileParam="Error: In %s, wrong parameter name:%s \n";
-char *cErrCalcType="Error in %s\n CalcType: 0: Lanczos Method, 1: Thermal Pure Quantum State Method, 2: Full Diagonalization Method.\n";
+char *cErrCalcType="Error in %s\n CalcType: 0: Lanczos Method, 1: Thermal Pure Quantum State Method, 2: Full Diagonalization Method, 3: Calculation Spectrum mode.\n";
 char *cErrOutputMode="Error in %s\n OutputMode: \n 0: calc one body green function and two body green functions,\n 1: calc one body green function and two body green functions and correlatinos for charge and spin.\n";
 char *cErrCalcEigenVec="Error in %s\n CalcEigenVec: \n 0: Lanczos+CG method,\n 1: Lanczos method.\n";
 char *cErrOutputHam="Error in %s\n OutputHam: \n 0: not output Hamiltonian,\n 1: output Hamiltonian.\n";
@@ -48,6 +48,7 @@ char *cErrOutputHamForFullDiag="Error in %s\n OutputHam is only defined for Full
 char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC, 5:KondoGC.\n";
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
+char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
 char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";

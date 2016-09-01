@@ -19,6 +19,7 @@
 #include "FileIO.h"
 #include "sz.h"
 #include "wrapperMPI.h"
+#include "xsetmem.h"
 
 /**
  * @file   sz.c
@@ -46,7 +47,10 @@
  */
 int sz
 (
- struct BindStruct *X
+ struct BindStruct *X,
+ long unsigned int *list_1_,
+ long unsigned int *list_2_1_,
+ long unsigned int *list_2_2_
  )
 {
   FILE *fp,*fp_err;
@@ -61,17 +65,16 @@ int sz
   long unsigned int irght,ilft,ihfbit;
 
   //*[s] for omp parall
-  int  all_up,all_down,tmp_res,num_threads;
+  unsigned int  all_up,all_down,tmp_res,num_threads;
   long unsigned int tmp_1,tmp_2,tmp_3;
-  int mfint[7];
   long int **comb;
   //*[e] for omp parall
 
   // [s] for Kondo
-  int N_all_up, N_all_down;
-  int all_loc;
+  unsigned int N_all_up, N_all_down;
+  unsigned int all_loc;
   long unsigned int num_loc, div_down;
-  int num_loc_up;
+  unsigned int num_loc_up;
   int icheck_loc;
   int ihfSpinDown=0;
   // [e] for Kondo
@@ -80,7 +83,7 @@ int sz
   double idim=0.0;
   long unsigned int div_up;
 
-// hacker
+//hacker
   int hacker;
   long unsigned int tmp_i,tmp_j,tmp_pow,max_tmp_i;
   long unsigned int ia,ja;
@@ -88,15 +91,13 @@ int sz
 //hacker
 
   int iSpnup, iMinup,iAllup;
-
-  int N2=0;
-  int N=0;
+  unsigned int N2=0;
+  unsigned int N=0;
   fprintf(stdoutMPI, "%s", cProStartCalcSz);
   TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
-	TimeKeeper(X, cFileNameTimeKeep, cInitalSz, "a");
+  TimeKeeper(X, cFileNameTimeKeep, cInitalSz, "a");
 
   if(X->Check.idim_max!=0){
- 
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case HubbardNConserved:
@@ -138,18 +139,18 @@ int sz
   case Spin:
     if(X->Def.iFlgGeneralSpin==FALSE){
       if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
-	exitMPI(-1);
+        exitMPI(-1);
       }
       //fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
-    else{
+     else{
       ihfbit=X->Check.sdim;
       //fprintf(stdoutMPI, "idim=%lf ihfbit=%ld \n",idim, ihfbit);
     }
-  break;
- default:
-   break;
-}   
+    break;
+  default:
+    break;
+  }
   
   icnt=1;
   jb=0;
@@ -161,11 +162,11 @@ int sz
   }
   else{ 
     sprintf(sdt, cFileNameSzTimeKeep, X->Def.CDataFileHead);
-    #ifdef _OPENMP
+#ifdef _OPENMP
     num_threads  = omp_get_max_threads();
-    #else
+#else
     num_threads=1;
-    #endif
+#endif
     childfopenMPI(sdt,"a", &fp);
     fprintf(fp, "num_threads==%d\n",num_threads);
     fclose(fp);
@@ -173,7 +174,7 @@ int sz
     //*[s] omp parallel
 
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzStart, "a");
-	  TimeKeeper(X, cFileNameTimeKeep, cOMPSzStart, "a");
+    TimeKeeper(X, cFileNameTimeKeep, cOMPSzStart, "a");
     switch(X->Def.iCalcModel){
     case HubbardGC:
       icnt = X->Def.Tpow[2*X->Def.Nsite-1]*2+0;/*Tpow[2*X->Def.Nsit]=1*/
@@ -181,146 +182,140 @@ int sz
       
     case SpinGC:
       if(X->Def.iFlgGeneralSpin==FALSE){
-	icnt = X->Def.Tpow[X->Def.Nsite-1]*2+0;/*Tpow[X->Def.Nsit]=1*/
+        icnt = X->Def.Tpow[X->Def.Nsite-1]*2+0;/*Tpow[X->Def.Nsit]=1*/
       }
       else{
-	icnt = X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1];
+        icnt = X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1];
       }
       break;
       
     case KondoGC:
-   // this part can not be parallelized
+      // this part can not be parallelized
       jb = 0;
       num_loc=0;
       for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
-	if(X->Def.LocSpn[j] != ITINERANT){
-	  num_loc += 1;
-	}
+        if(X->Def.LocSpn[j] != ITINERANT){
+          num_loc += 1;
+        }
       }
 
       for(ib=0;ib<X->Check.sdim;ib++){
-	list_jb[ib]=jb;
-	i=ib*ihfbit;
-	icheck_loc=1;
-	
-	for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
-	  div_up    = i & X->Def.Tpow[2*j];
-	  div_up    = div_up/X->Def.Tpow[2*j];
-	  div_down  = i & X->Def.Tpow[2*j+1];
-	  div_down  = div_down/X->Def.Tpow[2*j+1];
-
-	  if(X->Def.LocSpn[j] != ITINERANT){
-	     if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
-	      icheck_loc= icheck_loc;
-	    }
-	     else{
-	       icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
-	     }
-	  }
-	}
-	if(icheck_loc == 1){
-	  if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
-	    jb +=X->Def.Tpow[X->Def.Nsite-1-(X->Def.NLocSpn-num_loc)];
-	  }else{
-	    jb +=X->Def.Tpow[X->Def.Nsite-(X->Def.NLocSpn-num_loc)];
-	  }
-	}
+        list_jb[ib]=jb;
+        i=ib*ihfbit;
+        icheck_loc=1;
+        for(j=(X->Def.Nsite+1)/2; j< X->Def.Nsite ;j++){
+          div_up    = i & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = i & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+          if(X->Def.LocSpn[j] != ITINERANT){
+            if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+              icheck_loc= icheck_loc;
+            }
+            else{
+              icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+            }
+          }
+        }
+        if(icheck_loc == 1){
+          if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
+            jb +=X->Def.Tpow[X->Def.Nsite-1-(X->Def.NLocSpn-num_loc)];
+          }else{
+            jb +=X->Def.Tpow[X->Def.Nsite-(X->Def.NLocSpn-num_loc)];
+          }
+        }
       }
 
       icnt = 0; 
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1)
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
       for(ib=0;ib<X->Check.sdim;ib++){
-	icnt+=child_omp_sz_KondoGC(ib,ihfbit,N2,X);
+        icnt+=child_omp_sz_KondoGC(ib, ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
       }      
     break;
-      
- case Hubbard:
+
+    case Hubbard:
 
       hacker = X->Def.read_hacker;
       if(hacker==0){
         // this part can not be parallelized
         jb = 0;
         for(ib=0;ib<X->Check.sdim;ib++){
-	  list_jb[ib]=jb;
+          list_jb[ib]=jb;
+          i=ib*ihfbit;
+          num_up=0;
+          for(j=0;j<=N2-2;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_up+=div;
+          }
+          num_down=0;
+          for(j=1;j<=N2-1;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_down+=div;
+          }
+          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+          all_up   = (X->Def.Nsite+tmp_res)/2;
+          all_down = (X->Def.Nsite-tmp_res)/2;
 
-	  i=ib*ihfbit;
-	  num_up=0;
-	  for(j=0;j<=N2-2;j+=2){
-	    div=i & X->Def.Tpow[j];
-	    div=div/X->Def.Tpow[j];
-	    num_up+=div;
-	  }
-	  num_down=0;
-	  for(j=1;j<=N2-1;j+=2){
-	    div=i & X->Def.Tpow[j];
-	    div=div/X->Def.Tpow[j];
-	    num_down+=div;
-	  }
-	
-	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-	  all_up   = (X->Def.Nsite+tmp_res)/2;
-	  all_down = (X->Def.Nsite-tmp_res)/2;
-
-	  tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-	  tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-	  jb   += tmp_1*tmp_2;
+          tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+          tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+          jb   += tmp_1*tmp_2;
         }
 
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-		  TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+        TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
         icnt = 0;
-        //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
         for(ib=0;ib<X->Check.sdim;ib++){
-	  icnt+=child_omp_sz(ib,ihfbit,N2,X);
+          icnt+=child_omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         }
-	break;
+        break;
       }else if(hacker==1){
         // this part can not be parallelized
         jb = 0;
 
         for(ib=0;ib<X->Check.sdim;ib++){
-	  list_jb[ib]=jb;
+          list_jb[ib]=jb;
 
-	  i=ib*ihfbit;
-	  num_up=0;
-	  for(j=0;j<=N2-2;j+=2){
-	    div=i & X->Def.Tpow[j];
-	    div=div/X->Def.Tpow[j];
-	    num_up+=div;
-	  }
-	  num_down=0;
-	  for(j=1;j<=N2-1;j+=2){
-	    div=i & X->Def.Tpow[j];
-	    div=div/X->Def.Tpow[j];
-	    num_down+=div;
-	  }
+          i=ib*ihfbit;
+          num_up=0;
+          for(j=0;j<=N2-2;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_up+=div;
+          }
+          num_down=0;
+          for(j=1;j<=N2-1;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_down+=div;
+          }
 	
-	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-	  all_up   = (X->Def.Nsite+tmp_res)/2;
-	  all_down = (X->Def.Nsite-tmp_res)/2;
+          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+          all_up   = (X->Def.Nsite+tmp_res)/2;
+          all_down = (X->Def.Nsite-tmp_res)/2;
 
-	  tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-	  tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-	  jb   += tmp_1*tmp_2;
+          tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+          tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+          jb   += tmp_1*tmp_2;
         }
 
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-		  TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+        TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
         icnt = 0;
-        //#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
         for(ib=0;ib<X->Check.sdim;ib++){
-	  icnt+=child_omp_sz_hacker(ib,ihfbit,N2,X);
+          icnt+=child_omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
           //printf("ib=%ld icnt=%ld \n",ib,icnt);
         }
-	break;
+        break;
       }
       else{
-	fprintf(stderr, "Error: CalcHS in ModPara file must be 0 or 1 for Hubbard model.");
-	return -1;
+        fprintf(stderr, "Error: CalcHS in ModPara file must be 0 or 1 for Hubbard model.");
+        return -1;
       }
 
     case HubbardNConserved:
@@ -330,48 +325,45 @@ int sz
       iMinup=0;
       iAllup=X->Def.Ne;
       if(X->Def.Ne > X->Def.Nsite){
-	iMinup = X->Def.Ne-X->Def.Nsite;
-	iAllup = X->Def.Nsite;
+        iMinup = X->Def.Ne-X->Def.Nsite;
+        iAllup = X->Def.Nsite;
       }
-      
       for(ib=0;ib<X->Check.sdim;ib++){
-	list_jb[ib]=jb;
+        list_jb[ib]=jb;
+        i=ib*ihfbit;
+        num_up=0;
+        for(j=0;j<=N2-2;j+=2){
+          div=i & X->Def.Tpow[j];
+          div=div/X->Def.Tpow[j];
+          num_up+=div;
+        }
+        num_down=0;
+        for(j=1;j<=N2-1;j+=2){
+          div=i & X->Def.Tpow[j];
+          div=div/X->Def.Tpow[j];
+          num_down+=div;
+        }
+        tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+        all_up   = (X->Def.Nsite+tmp_res)/2;
+        all_down = (X->Def.Nsite-tmp_res)/2;
 
-	i=ib*ihfbit;
-	num_up=0;
-	for(j=0;j<=N2-2;j+=2){
-	  div=i & X->Def.Tpow[j];
-	  div=div/X->Def.Tpow[j];
-	  num_up+=div;
-	}
-	num_down=0;
-	for(j=1;j<=N2-1;j+=2){
-	  div=i & X->Def.Tpow[j];
-	  div=div/X->Def.Tpow[j];
-	  num_down+=div;
-	}
-	
-	tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-	all_up   = (X->Def.Nsite+tmp_res)/2;
-	all_down = (X->Def.Nsite-tmp_res)/2;
-
-	for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
-	  tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
-	  tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
-	  jb   += tmp_1*tmp_2;
-	}
+        for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
+          tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
+          tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
+          jb   += tmp_1*tmp_2;
+        }
       }
       //#pragma omp barrier
       TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+      TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
       icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
       for(ib=0;ib<X->Check.sdim;ib++){
-	icnt+=child_omp_sz(ib,ihfbit,N2,X);
+        icnt+=child_omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
       }
       break;
-            
+
     case Kondo:
       // this part can not be parallelized
       N_all_up   = X->Def.Nup;
@@ -381,85 +373,81 @@ int sz
       jb = 0;
       num_loc=0;
       for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
-	if(X->Def.LocSpn[j] != ITINERANT){
-	  num_loc += 1;
-	}
+        if(X->Def.LocSpn[j] != ITINERANT){
+          num_loc += 1;
+        }
       }
 
       for(ib=0;ib<X->Check.sdim;ib++){
-	list_jb[ib]=jb;
-	i=ib*ihfbit;
-	num_up=0;
-	num_down=0;	
-	icheck_loc=1;
+        list_jb[ib]=jb;
+        i=ib*ihfbit;
+        num_up=0;
+        num_down=0;	
+        icheck_loc=1;
 
-	for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
-	  div_up    = i & X->Def.Tpow[2*j];
-	  div_up    = div_up/X->Def.Tpow[2*j];
-	  div_down  = i & X->Def.Tpow[2*j+1];
-	  div_down  = div_down/X->Def.Tpow[2*j+1];
-	  if(X->Def.LocSpn[j] == ITINERANT){
-	    num_up   += div_up;        
-	    num_down += div_down;  
-	  }else{    
-	    num_up   += div_up;     
-	    num_down += div_down;
-	    if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
-	      icheck_loc= icheck_loc;
-	      ihfSpinDown=div_down;
-	      if(div_down ==0){
-		num_up += 1;
-	      }
-	    }
-	    else{
-	      icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
-	    }
-	  }
-	}
+        for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
+          div_up    = i & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = i & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+          if(X->Def.LocSpn[j] == ITINERANT){
+            num_up   += div_up;        
+            num_down += div_down;  
+          }else{    
+            num_up   += div_up;     
+            num_down += div_down;
+            if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+              icheck_loc= icheck_loc;
+              ihfSpinDown=div_down;
+              if(div_down ==0){
+                num_up += 1;
+              }
+            }
+            else{
+              icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+            }
+          }
+        }
 
-	if(icheck_loc == 1){
-	  tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-	  all_loc =  X->Def.NLocSpn-num_loc;
-	  all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
-	  all_down = (X->Def.Nsite-tmp_res)/2-all_loc;
-	  
-	  if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
-	    all_up   = (X->Def.Nsite)/2-all_loc;
-	    all_down = (X->Def.Nsite)/2-all_loc;
-	  }
-	  
-	  for(num_loc_up=0; num_loc_up <= all_loc; num_loc_up++){
-	    tmp_1 = Binomial(all_loc, num_loc_up, comb, all_loc);
-	    
-	    if( X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
-	      if(ihfSpinDown !=0){
-		tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
-		tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
-		
-	      }
-	      else{
-		tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
-		tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
-	      }
-	    }
-	    else{
-	      tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
-	      tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
-	    }
-	    jb   += tmp_1*tmp_2*tmp_3;  
-	  }
-	}
+        if(icheck_loc == 1){
+          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+          all_loc =  X->Def.NLocSpn-num_loc;
+          all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
+          all_down = (X->Def.Nsite-tmp_res)/2-all_loc;
+          if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
+            all_up   = (X->Def.Nsite)/2-all_loc;
+            all_down = (X->Def.Nsite)/2-all_loc;
+          }
+
+          for(num_loc_up=0; num_loc_up <= all_loc; num_loc_up++){
+            tmp_1 = Binomial(all_loc, num_loc_up, comb, all_loc);
+            if( X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
+              if(ihfSpinDown !=0){
+                tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
+                tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
+              }
+              else{
+                tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
+                tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
+              }
+            }
+            else{
+              tmp_2 = Binomial(all_up, X->Def.Nup-num_up-num_loc_up, comb, all_up);
+              tmp_3 = Binomial(all_down, X->Def.Ndown-num_down-(all_loc-num_loc_up), comb, all_down);
+            }
+            jb   += tmp_1*tmp_2*tmp_3;
+          }
+        }
 
       }
       //#pragma omp barrier
-      
       TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+      TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
       icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) 
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
       for(ib=0;ib<X->Check.sdim;ib++){
-	icnt+=child_omp_sz_Kondo(ib,ihfbit,N2,X);
+        icnt+=child_omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
       }
       break;
 
@@ -468,154 +456,153 @@ int sz
       if(X->Def.iFlgGeneralSpin==FALSE){
         hacker = X->Def.read_hacker;
         //printf(" rank=%d:Ne=%ld ihfbit=%ld sdim=%ld\n", myrank,X->Def.Ne,ihfbit,X->Check.sdim);
-// using hacker's delight only + no open mp 
+        // using hacker's delight only + no open mp 
         if(hacker        ==  -1){
           icnt    = 1;
           tmp_pow = 1;
           tmp_i   = 0;
-	  jb      = 0;
-	  ja      = 0;
+          jb      = 0;
+          ja      = 0;
           while(tmp_pow < X->Def.Tpow[X->Def.Ne]){
             tmp_i   += tmp_pow;
             tmp_pow  = tmp_pow*2;
           }
-	  //printf("DEBUG: %ld %ld %ld %ld\n",tmp_i,X->Check.sdim,X->Def.Tpow[X->Def.Ne],X->Def.Nsite);
-	  if(X->Def.Nsite%2==0){
-	    max_tmp_i = X->Check.sdim*X->Check.sdim;
+          //printf("DEBUG: %ld %ld %ld %ld\n",tmp_i,X->Check.sdim,X->Def.Tpow[X->Def.Ne],X->Def.Nsite);
+          if(X->Def.Nsite%2==0){
+            max_tmp_i = X->Check.sdim*X->Check.sdim;
           }else{
-	    max_tmp_i = X->Check.sdim*X->Check.sdim*2-1;
+            max_tmp_i = X->Check.sdim*X->Check.sdim*2-1;
           }  
-	  while(tmp_i<max_tmp_i){
-	  //while(tmp_i<pow(2,X->Def.Nsite+1)-1){
-            list_1[icnt]=tmp_i;
+          while(tmp_i<max_tmp_i){
+            list_1_[icnt]=tmp_i;
            
             ia= tmp_i & irght;
             ib= tmp_i & ilft;
             ib= ib/ihfbit; 
             if(ib==ibpatn){
-	      ja=ja+1;
+              ja=ja+1;
             }else{
-	      ibpatn = ib;
-	      ja     = 1;
-	      jb     = icnt-1;
+              ibpatn = ib;
+              ja     = 1;
+              jb     = icnt-1;
             }
             
-            list_2_1[ia] = ja;
-            list_2_2[ib] = jb;
+            list_2_1_[ia] = ja;
+            list_2_2_[ib] = jb;
             tmp_j = snoob(tmp_i);
             tmp_i =        tmp_j;
             icnt        +=  1;
           }
           icnt = icnt-1;
-// old version + hacker's delight
+          // old version + hacker's delight
         }else if(hacker  ==  1){
-	  jb = 0;
-	  for(ib=0;ib<X->Check.sdim;ib++){
-	    list_jb[ib]=jb;
-	    i=ib*ihfbit;
-	    num_up=0;
-	    for(j=0;j<N; j++){
-	      div_up = i & X->Def.Tpow[j];
-	      div_up = div_up/X->Def.Tpow[j];
-	      num_up +=div_up;
-	    }
-	    all_up   = (X->Def.Nsite+1)/2;
-	    tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
-	    jb   += tmp_1;
-	  }
-	  //#pragma omp barrier
-	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
-
-	  icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
+          jb = 0;
           for(ib=0;ib<X->Check.sdim;ib++){
-	    icnt+=child_omp_sz_spin_hacker(ib,ihfbit,N,X);
-	  }
+            list_jb[ib]=jb;
+            i=ib*ihfbit;
+            num_up=0;
+            for(j=0;j<N; j++){
+              div_up = i & X->Def.Tpow[j];
+              div_up = div_up/X->Def.Tpow[j];
+              num_up +=div_up;
+            }
+            all_up   = (X->Def.Nsite+1)/2;
+            tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
+            jb   += tmp_1;
+          }
+          //#pragma omp barrier
+          TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+          TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
+          icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X, list_1_, list_2_1_, list_2_2_, list_jb)
+          for(ib=0;ib<X->Check.sdim;ib++){
+            icnt+=child_omp_sz_spin_hacker(ib,ihfbit,N,X, list_1_, list_2_1_, list_2_2_, list_jb);
+          }
           //printf(" rank=%d ib=%ld:Ne=%d icnt=%ld :idim_max=%ld N=%d\n", myrank,ib,X->Def.Ne,icnt,X->Check.idim_max,N);
-// old version
+          // old version
         }else if(hacker  ==  0){
-	  jb = 0;
-	  for(ib=0;ib<X->Check.sdim;ib++){
-	    list_jb[ib]=jb;
-	    i=ib*ihfbit;
-	    num_up=0;
-	    for(j=0;j<N; j++){
-	      div_up = i & X->Def.Tpow[j];
-	      div_up = div_up/X->Def.Tpow[j];
-	      num_up +=div_up;
-	    }
-	    all_up   = (X->Def.Nsite+1)/2;
-	    tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
-	    jb   += tmp_1;
-	  }
-	  //#pragma omp barrier
-	  TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-			TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
-
-	  icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X)
+          jb = 0;
           for(ib=0;ib<X->Check.sdim;ib++){
-	    icnt+=child_omp_sz_spin(ib,ihfbit,N,X);
-	  }
+            list_jb[ib]=jb;
+            i=ib*ihfbit;
+            num_up=0;
+            for(j=0;j<N; j++){
+              div_up = i & X->Def.Tpow[j];
+              div_up = div_up/X->Def.Tpow[j];
+              num_up +=div_up;
+            }
+            all_up   = (X->Def.Nsite+1)/2;
+            tmp_1 = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
+            jb   += tmp_1;
+          }
+          //#pragma omp barrier
+          TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+          TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
+          icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
+          for(ib=0;ib<X->Check.sdim;ib++){
+            icnt+=child_omp_sz_spin(ib,ihfbit,N,X,list_1_, list_2_1_, list_2_2_, list_jb);
+          }
         }
-	else{
-	  fprintf(stderr, "Error: CalcHS in ModPara file must be -1 or 0 or 1 for Spin model.");
-	  return -1;
-	}	
+        else{
+          fprintf(stderr, "Error: CalcHS in ModPara file must be -1 or 0 or 1 for Spin model.");
+          return -1;
+        }	
       }else{
-	int Max2Sz=0;
-	int irghtsite=1;
-	long int itmpSize=1;
-	int i2Sz=0;
-	for(j=0; j<X->Def.Nsite; j++){
-	  itmpSize *= X->Def.SiteToBit[j];
-	  if(itmpSize==ihfbit){
-	    break;
-	  }
-	  irghtsite++;
-	}
+        unsigned int Max2Sz=0;
+        unsigned int irghtsite=1;
+        long unsigned int itmpSize=1;
+        int i2Sz=0;
+        for(j=0; j<X->Def.Nsite; j++){
+          itmpSize *= X->Def.SiteToBit[j];
+          if(itmpSize==ihfbit){
+            break;
+          }
+          irghtsite++;
+        }
         for(j=0; j<X->Def.Nsite; j++){
           Max2Sz += X->Def.LocSpn[j];
         }
 	
-	lui_malloc1(HilbertNumToSz, 2*Max2Sz+1);
-	for(ib=0; ib<2*Max2Sz+1; ib++){
-	  HilbertNumToSz[ib]=0;
-	}
+        lui_malloc1(HilbertNumToSz, 2*Max2Sz+1);
+        for(ib=0; ib<2*Max2Sz+1; ib++){
+          HilbertNumToSz[ib]=0;
+        }
 	
-	for(ib =0; ib<ihfbit; ib++){
-	  i2Sz=0;
-	  for(j=1; j<= irghtsite; j++){
-	    i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
-	  }
-	  list_2_1_Sz[ib]=i2Sz;
-	  HilbertNumToSz[i2Sz+Max2Sz]++;
-	}
+        for(ib =0; ib<ihfbit; ib++){
+          i2Sz=0;
+          for(j=1; j<= irghtsite; j++){
+            i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
+          }
+          list_2_1_Sz[ib]=i2Sz;
+          HilbertNumToSz[i2Sz+Max2Sz]++;
+        }
         jb = 0;
-	long int ilftdim=(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1])/ihfbit;
-	for(ib=0;ib<ilftdim;ib++){
-	  list_jb[ib]=jb;
-	  i2Sz=0;
-	  for(j=1;j<=(N-irghtsite); j++){
-	    i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
-	  }
-	  list_2_2_Sz[ib]=i2Sz;
-	  if(X->Def.Total2Sz- i2Sz +Max2Sz>=0 && X->Def.Total2Sz- i2Sz <= Max2Sz){
-	    jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
-	  }
-	}
+        long unsigned int ilftdim=(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1])/ihfbit;
+        for(ib=0;ib<ilftdim;ib++){
+          list_jb[ib]=jb;
+          i2Sz=0;
+          for(j=1;j<=(N-irghtsite); j++){
+            i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
+          }
+          list_2_2_Sz[ib]=i2Sz;
+          if((X->Def.Total2Sz- i2Sz +(int)Max2Sz)>=0 && (X->Def.Total2Sz- i2Sz) <= (int)Max2Sz){
+            jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
+          }
+        }
 	
-	TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-		  TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+        TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
-	icnt = 0;
-#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit, N, X) 
-	for(ib=0;ib<ilftdim; ib++){
-	  icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,N,X);
-	}
+        icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit,  X)  shared(list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb)
+        for(ib=0;ib<ilftdim; ib++){
+          icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
+        }
 		
-	i_free1(HilbertNumToSz, 2*Max2Sz+1);	
+        i_free1(HilbertNumToSz, 2*Max2Sz+1);	
       }
       
       break;
@@ -626,7 +613,7 @@ int sz
     i_max=icnt;
     //fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
-	  TimeKeeper(X, cFileNameTimeKeep, cOMPSzFinish, "a");
+    TimeKeeper(X, cFileNameTimeKeep, cOMPSzFinish, "a");
 
   }
 
@@ -643,7 +630,7 @@ int sz
     if(childfopenMPI(sdt_err,"a",&fp_err)!=0){
       exitMPI(-1);
     }
-    fprintf(fp_err,cErrSz_OutFile);
+    fprintf(fp_err, "%s",cErrSz_OutFile);
     fclose(fp_err);
     exitMPI(-1);
   }
@@ -712,15 +699,23 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct BindStruct *X){
-
+int child_omp_sz(
+                 long unsigned int ib,
+                 long unsigned int ihfbit,
+                 struct BindStruct *X,
+                 long unsigned int *list_1_,
+                 long unsigned int *list_2_1_,
+                 long unsigned int *list_2_2_,
+                 long unsigned int *list_jb_
+                 )
+{
   long unsigned int i,j; 
   long unsigned int ia,ja,jb;
   long unsigned int div_down, div_up;
   long unsigned int num_up,num_down;
   long unsigned int tmp_num_up,tmp_num_down;
     
-  jb = list_jb[ib];
+  jb = list_jb_[ib];
   i  = ib*ihfbit;
     
   num_up   = 0;
@@ -745,18 +740,18 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
       num_down =  tmp_num_down;
       
       for(j=0;j<X->Def.Nsite;j++){
-	div_up    = i & X->Def.Tpow[2*j];
-	div_up    = div_up/X->Def.Tpow[2*j];
-	div_down  = i & X->Def.Tpow[2*j+1];
-	div_down  = div_down/X->Def.Tpow[2*j+1];
-	num_up += div_up;
-	num_down += div_down;
+        div_up    = i & X->Def.Tpow[2*j];
+        div_up    = div_up/X->Def.Tpow[2*j];
+        div_down  = i & X->Def.Tpow[2*j+1];
+        div_down  = div_down/X->Def.Tpow[2*j+1];
+        num_up += div_up;
+        num_down += div_down;
       }
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
-	list_1[ja+jb]=ia+ib*ihfbit;
-      list_2_1[ia]=ja;
-      list_2_2[ib]=jb;
-      ja+=1;
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja;
+        list_2_2_[ib]=jb;
+        ja+=1;
       } 
     }
   }
@@ -767,18 +762,18 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
       num_down =  tmp_num_down;
       
       for(j=0;j<X->Def.Nsite;j++){
-	div_up    = i & X->Def.Tpow[2*j];
-	div_up    = div_up/X->Def.Tpow[2*j];
-	div_down  = i & X->Def.Tpow[2*j+1];
-	div_down  = div_down/X->Def.Tpow[2*j+1];
-	num_up += div_up;
-	num_down += div_down;
+        div_up    = i & X->Def.Tpow[2*j];
+        div_up    = div_up/X->Def.Tpow[2*j];
+        div_down  = i & X->Def.Tpow[2*j+1];
+        div_down  = div_down/X->Def.Tpow[2*j+1];
+        num_up += div_up;
+        num_down += div_down;
       }
       if( (num_up+num_down) == X->Def.Ne){
-	list_1[ja+jb]=ia+ib*ihfbit;
-	list_2_1[ia]=ja;
-	list_2_2[ib]=jb;
-	ja+=1;
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja;
+        list_2_2_[ib]=jb;
+        ja+=1;
       } 
     }  
   }
@@ -786,15 +781,22 @@ int child_omp_sz(long unsigned int ib, long unsigned int ihfbit,int N2,struct Bi
   return ja; 
 }
 
-int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,struct BindStruct *X){
-
+int child_omp_sz_hacker(long unsigned int ib,
+                        long unsigned int ihfbit,
+                        struct BindStruct *X,
+                        long unsigned int *list_1_,
+                        long unsigned int *list_2_1_,
+                        long unsigned int *list_2_2_,
+                        long unsigned int *list_jb_
+                        )
+{
   long unsigned int i,j; 
   long unsigned int ia,ja,jb;
   long unsigned int div_down, div_up;
   long unsigned int num_up,num_down;
   long unsigned int tmp_num_up,tmp_num_down;
     
-  jb = list_jb[ib];
+  jb = list_jb_[ib];
   i  = ib*ihfbit;
     
   num_up   = 0;
@@ -827,9 +829,9 @@ int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,st
           num_down += div_down;
         }
         if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
-          list_1[ja+jb]=ia+ib*ihfbit;
-          list_2_1[ia]=ja;
-          list_2_2[ib]=jb;
+          list_1_[ja+jb]=ia+ib*ihfbit;
+          list_2_1_[ia]=ja;
+          list_2_2_[ib]=jb;
           ja+=1;
         }
         if(ia!=0){
@@ -838,17 +840,17 @@ int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,st
             num_up   =  tmp_num_up;
             num_down =  tmp_num_down;
             for(j=0;j<X->Def.Nsite;j++){
-	      div_up    = ia & X->Def.Tpow[2*j];
-	      div_up    = div_up/X->Def.Tpow[2*j];
-	      div_down  = ia & X->Def.Tpow[2*j+1];
-	      div_down  = div_down/X->Def.Tpow[2*j+1];
-	      num_up   += div_up;
-	      num_down += div_down;
+              div_up    = ia & X->Def.Tpow[2*j];
+              div_up    = div_up/X->Def.Tpow[2*j];
+              div_down  = ia & X->Def.Tpow[2*j+1];
+              div_down  = div_down/X->Def.Tpow[2*j+1];
+              num_up   += div_up;
+              num_down += div_down;
             }
             if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
-	      list_1[ja+jb]=ia+ib*ihfbit;
-              list_2_1[ia]=ja;
-              list_2_2[ib]=jb;
+              list_1_[ja+jb]=ia+ib*ihfbit;
+              list_2_1_[ia]=ja;
+              list_2_2_[ib]=jb;
               ja+=1;
             }
             ia = snoob(ia);
@@ -861,16 +863,16 @@ int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,st
     if(tmp_num_up+tmp_num_down <= X->Def.Ne){ //do not exceed Ne
       ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
       if(ia < X->Check.sdim){
-	list_1[ja+jb]=ia+ib*ihfbit;
-        list_2_1[ia]=ja;
-        list_2_2[ib]=jb;
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja;
+        list_2_2_[ib]=jb;
         ja+=1;
         if(ia!=0){
           ia = snoob(ia);
           while(ia < X->Check.sdim){
-	    list_1[ja+jb]=ia+ib*ihfbit;
-            list_2_1[ia]=ja;
-            list_2_2[ib]=jb;
+            list_1_[ja+jb]=ia+ib*ihfbit;
+            list_2_1_[ia]=ja;
+            list_2_2_[ib]=jb;
             ja+=1;
             ia = snoob(ia);
           }
@@ -881,7 +883,6 @@ int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,st
   ja=ja-1;    
   return ja; 
 }
-
 
 /** 
  * 
@@ -895,8 +896,16 @@ int child_omp_sz_hacker(long unsigned int ib, long unsigned int ihfbit,int N2,st
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,struct BindStruct *X){
-
+int child_omp_sz_Kondo(
+                       long unsigned int ib,
+                       long unsigned int ihfbit,
+                       struct BindStruct *X,
+                       long unsigned int *list_1_,
+                       long unsigned int *list_2_1_,
+                       long unsigned int *list_2_2_,
+                       long unsigned int *list_jb_
+                       )
+{
   long unsigned int i,j; 
   long unsigned int ia,ja,jb;
   long unsigned int div_down, div_up;
@@ -904,7 +913,7 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
   long unsigned int tmp_num_up,tmp_num_down;
   int icheck_loc;
     
-  jb = list_jb[ib];
+  jb = list_jb_[ib];
   i  = ib*ihfbit;
     
   num_up   = 0;
@@ -923,10 +932,10 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
       num_up   += div_up;        
       num_down += div_down;
       if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
-	icheck_loc= icheck_loc;
+        icheck_loc= icheck_loc;
       }
       else{
-	icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+        icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
       }
     }
   }
@@ -941,39 +950,39 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
       num_down =  tmp_num_down;
       icheck_loc=1;
       for(j=0;j<(X->Def.Nsite+1)/2;j++){
-	div_up    = i & X->Def.Tpow[2*j];
-	div_up    = div_up/X->Def.Tpow[2*j];
-	div_down  = i & X->Def.Tpow[2*j+1];
-	div_down  = div_down/X->Def.Tpow[2*j+1];
+        div_up    = i & X->Def.Tpow[2*j];
+        div_up    = div_up/X->Def.Tpow[2*j];
+        div_down  = i & X->Def.Tpow[2*j+1];
+        div_down  = div_down/X->Def.Tpow[2*j+1];
 	
-	if(X->Def.LocSpn[j] ==  ITINERANT){
-	  num_up   += div_up;        
-	  num_down += div_down;  
-	}else{    
-	  num_up   += div_up;        
-	  num_down += div_down;  
-	  if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
-	    icheck_loc= icheck_loc;
-	  }
-	  else{
-	    icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
-	  }
-	}
+        if(X->Def.LocSpn[j] ==  ITINERANT){
+          num_up   += div_up;        
+          num_down += div_down;  
+        }else{    
+          num_up   += div_up;        
+          num_down += div_down;  
+          if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+            icheck_loc= icheck_loc;
+          }
+          else{
+            icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+          }
+        }
       }
       
       if(icheck_loc == 1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT && X->Def.Nsite%2==1){
-	div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
-	div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
-	div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
-	div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
-	icheck_loc= icheck_loc*(div_up^div_down);
+        div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
+        div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
+        div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
+        div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
+        icheck_loc= icheck_loc*(div_up^div_down);
       }
       
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown && icheck_loc==1){
-	list_1[ja+jb]=ia+ib*ihfbit;
-	list_2_1[ia]=ja;
-	list_2_2[ib]=jb;
-	ja+=1;
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja;
+        list_2_2_[ib]=jb;
+        ja+=1;
       }
     }
   }
@@ -993,14 +1002,22 @@ int child_omp_sz_Kondo(long unsigned int ib, long unsigned int ihfbit,int N2,str
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,struct BindStruct *X){
-
+int child_omp_sz_KondoGC(
+                         long unsigned int ib,
+                         long unsigned int ihfbit,
+                         struct BindStruct *X,
+                         long unsigned int *list_1_,
+                         long unsigned int *list_2_1_,
+                         long unsigned int *list_2_2_,
+                         long unsigned int *list_jb_
+                         )
+{
   long unsigned int i,j; 
   long unsigned int ia,ja,jb;
   long unsigned int div_down, div_up;
   int icheck_loc;
     
-  jb = list_jb[ib];
+  jb = list_jb_[ib];
   i  = ib*ihfbit;
   icheck_loc=1;
   for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
@@ -1010,10 +1027,10 @@ int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,s
     div_down  = div_down/X->Def.Tpow[2*j+1];
     if(X->Def.LocSpn[j] !=  ITINERANT){
       if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
-	icheck_loc= icheck_loc;
+        icheck_loc= icheck_loc;
       }
       else{
-	icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+        icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
       }
     }
   }
@@ -1024,33 +1041,33 @@ int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,s
       i=ia;
       icheck_loc =1;
       for(j=0;j<(X->Def.Nsite+1)/2;j++){
-	div_up    = i & X->Def.Tpow[2*j];
-	div_up    = div_up/X->Def.Tpow[2*j];
-	div_down  = i & X->Def.Tpow[2*j+1];
-	div_down  = div_down/X->Def.Tpow[2*j+1];	
-	if(X->Def.LocSpn[j] !=  ITINERANT){
-	  if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
-	    icheck_loc= icheck_loc;
-	  }
-	  else{
-	    icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
-	  }
-	}
+        div_up    = i & X->Def.Tpow[2*j];
+        div_up    = div_up/X->Def.Tpow[2*j];
+        div_down  = i & X->Def.Tpow[2*j+1];
+        div_down  = div_down/X->Def.Tpow[2*j+1];	
+        if(X->Def.LocSpn[j] !=  ITINERANT){
+          if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+            icheck_loc= icheck_loc;
+          }
+          else{
+            icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+          }
+        }
       }
 
       if(icheck_loc == 1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT && X->Def.Nsite%2==1){
-	div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
-	div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
-	div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
-	div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
-	icheck_loc= icheck_loc*(div_up^div_down);
+        div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
+        div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
+        div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
+        div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
+        icheck_loc= icheck_loc*(div_up^div_down);
       }
       
       if(icheck_loc==1){
-	list_1[ja+jb]=ia+ib*ihfbit;
-	list_2_1[ia]=ja;
-	list_2_2[ib]=jb;
-	ja+=1;
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja;
+        list_2_2_[ib]=jb;
+        ja+=1;
       }
     }
   }
@@ -1072,18 +1089,22 @@ int child_omp_sz_KondoGC(long unsigned int ib, long unsigned int ihfbit,int N2,s
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_spin(
-		      long unsigned int ib, 
-		      long unsigned int ihfbit,
-		      int N,
-		      struct BindStruct *X
-		      )
+                      long unsigned int ib, 
+                      long unsigned int ihfbit,
+                      unsigned int N,
+                      struct BindStruct *X,
+                      long unsigned int *list_1_,
+                      long unsigned int *list_2_1_,
+                      long unsigned int *list_2_2_,
+                      long unsigned int *list_jb_
+                      )
 {
   long unsigned int i,j,div; 
   long unsigned int ia,ja,jb;
   long unsigned int num_up;
-  int tmp_num_up;
+  unsigned int tmp_num_up;
   
-  jb = list_jb[ib];
+  jb = list_jb_[ib];
   i  = ib*ihfbit;
   num_up=0;
   for(j=0;j<N;j++){
@@ -1104,9 +1125,9 @@ int child_omp_sz_spin(
     }
 
     if(num_up == X->Def.Ne){
-      list_1[ja+jb]=ia+ib*ihfbit;
-      list_2_1[ia]=ja;
-      list_2_2[ib]=jb;
+      list_1_[ja+jb]=ia+ib*ihfbit;
+      list_2_1_[ia]=ja;
+      list_2_2_[ib]=jb;
       ja+=1;
     } 
   }
@@ -1115,18 +1136,22 @@ int child_omp_sz_spin(
 }
 
 int child_omp_sz_spin_hacker(
-		      long unsigned int ib, 
-		      long unsigned int ihfbit,
-		      int N,
-		      struct BindStruct *X
-		      )
+                             long unsigned int ib, 
+                             long unsigned int ihfbit,
+                             unsigned int N,
+                             struct BindStruct *X,
+                             long unsigned int *list_1_,
+                             long unsigned int *list_2_1_,
+                             long unsigned int *list_2_2_,
+                             long unsigned int *list_jb_
+                             )
 {
   long unsigned int i,j,div; 
   long unsigned int ia,ja,jb;
   long unsigned int num_up;
-  int tmp_num_up;
+  unsigned int tmp_num_up;
   
-  jb = list_jb[ib];
+  jb = list_jb_[ib];
   i  = ib*ihfbit;
   num_up=0;
   for(j=0;j<N;j++){
@@ -1137,22 +1162,22 @@ int child_omp_sz_spin_hacker(
   ja=1;
   tmp_num_up   = num_up;
   
-// using hacker's delight
+  // using hacker's delight
   if(tmp_num_up<=X->Def.Ne){ // do not exceed Ne
     ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
     if(ia<ihfbit ){          // do not exceed Ne
-      list_1[ja+jb] = ia+ib*ihfbit;
-      list_2_1[ia]  = ja;
-      list_2_2[ib]  = jb;
+      list_1_[ja+jb] = ia+ib*ihfbit;
+      list_2_1_[ia]  = ja;
+      list_2_2_[ib]  = jb;
       ja           += 1;
 
       if(ia!=0){
         ia = snoob(ia);
         while(ia < ihfbit){
           //fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
-          list_1[ja+jb]    = ia+ib*ihfbit;
-          list_2_1[ia]     = ja;
-          list_2_2[ib]     = jb;
+          list_1_[ja+jb]    = ia+ib*ihfbit;
+          list_2_1_[ia]     = ja;
+          list_2_2_[ib]     = jb;
           ja+=1;
           ia = snoob(ia);
         }
@@ -1177,24 +1202,29 @@ int child_omp_sz_spin_hacker(
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_GeneralSpin(
-		      long unsigned int ib, 
-		      long unsigned int ihfbit,
-		      int N,
-		      struct BindStruct *X
-		      )
+                             long unsigned int ib, 
+                             long unsigned int ihfbit,
+                             struct BindStruct *X,
+                             long unsigned int *list_1_,
+                             long unsigned int *list_2_1_,
+                             long unsigned int *list_2_2_,
+                             long unsigned int *list_2_1_Sz_,
+                             long unsigned int *list_2_2_Sz_,
+                             long unsigned int *list_jb_
+                             )
 {
   long unsigned int ia,ja,jb;  
   int list_2_2_Sz_ib=0;
   int tmp_2Sz=0;
-  jb = list_jb[ib];
-  list_2_2_Sz_ib =list_2_2_Sz[ib];
+  jb = list_jb_[ib];
+  list_2_2_Sz_ib =list_2_2_Sz_[ib];
   ja=1;
   for(ia=0;ia<ihfbit;ia++){
-    tmp_2Sz=list_2_1_Sz[ia]+list_2_2_Sz_ib;
+    tmp_2Sz=list_2_1_Sz_[ia]+list_2_2_Sz_ib;
     if(tmp_2Sz == X->Def.Total2Sz){
-      list_1[ja+jb]=ia+ib*ihfbit;
-      list_2_1[ia]=ja;
-      list_2_2[ib]=jb;
+      list_1_[ja+jb]=ia+ib*ihfbit;
+      list_2_1_[ia]=ja;
+      list_2_2_[ib]=jb;
       ja+=1;
     } 
   }
@@ -1236,7 +1266,7 @@ int Read_sz
   long unsigned int dam; 
 
   TimeKeeper(X,cFileNameSzTimeKeep,cReadSzStart, "a");
-	TimeKeeper(X,cFileNameTimeKeep,cReadSzStart, "a");
+  TimeKeeper(X,cFileNameTimeKeep,cReadSzStart, "a");
 
   switch(X->Def.iCalcModel){
   case Hubbard:
@@ -1257,8 +1287,8 @@ int Read_sz
     if(childfopenMPI(cFileNameErrorSz,"a",&fp_err)!=0){
       exitMPI(-1);
     }
-    fprintf(fp_err, cErrSz_NoFile);
-    fprintf(stderr, cErrSz_NoFile);
+    fprintf(fp_err, "%s", cErrSz_NoFile);
+    fprintf(stderr, "%s", cErrSz_NoFile);
     fprintf(fp_err, cErrSz_NoFile_Show,sdt);
     fprintf(stderr, cErrSz_NoFile_Show, sdt);
     fclose(fp_err);
@@ -1272,11 +1302,11 @@ int Read_sz
       ib=ib/ihfbit; 
             
       if(ib==ibpatn){
-	ja=ja+1;
+        ja=ja+1;
       }else{
-	ibpatn=ib;
-	ja=1;
-	jb=icnt-1;
+        ibpatn=ib;
+        ja=1;
+        jb=icnt-1;
       }
             
       list_2_1[ia]=ja;
@@ -1289,7 +1319,7 @@ int Read_sz
   }
 
   TimeKeeper(X, cFileNameSzTimeKeep, cReadSzEnd, "a");
-	TimeKeeper(X, cFileNameTimeKeep, cReadSzEnd, "a");
+  TimeKeeper(X, cFileNameTimeKeep, cReadSzEnd, "a");
 
   return 0;
 }
