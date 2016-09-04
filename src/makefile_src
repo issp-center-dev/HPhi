@@ -1,6 +1,7 @@
 include make.sys
 
 OBJS = \
+time.o \
 PowerLanczos.o \
 CG_EigenVector.o \
 HPhiTrans.o \
