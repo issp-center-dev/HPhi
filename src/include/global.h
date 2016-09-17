@@ -122,6 +122,7 @@ const char* cFileNameTridiagonalMatrixComponents;
 const char* cFileNameSSRand;
 const char* cFileNameTPQStep;
 const char* cFileNameNormRand;
+const char* cFileNameFlctRand;
 const char* cFileName1BGreen_TPQ;
 const char* cFileName2BGreen_TPQ;
 const char* cFileNameOutputVector;

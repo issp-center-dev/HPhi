@@ -129,6 +129,7 @@ const char* cCGExpecEnergyEnd= "CG expec energy finishes: %s";
 const char* cLogTPQRand =  "  rand_i / rand_max = %d / %d\n";
 const char* cLogSSRand =  " # inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i\n";
 const char* cLogNormRand = " # inv_temp, global_norm, global_1st_norm, step_i \n";
+const char* cLogFlctRand = " # inv_temp, N, N^2, D, D^2, Sz, Sz^2, step_i \n";
 const char* cLogTPQStep = "    step_i/total_step=%d/%d \n";
 const char* cLogTPQEnd = "Finish: Elapsed time is %d [s].\n";
 

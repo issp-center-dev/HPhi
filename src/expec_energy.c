@@ -37,9 +37,12 @@ int expec_energy(struct BindStruct *X){
   long unsigned int is1;
   double complex dam_pr,dam_pr1;
 
-  long unsigned int num1_up, num1_down;
+  long int num1_up, num1_down;
   long unsigned int ibit1;
-  double tmp_num_up, tmp_num_down, tmp_doublon, tmp_num;
+  double tmp_num_up, tmp_num_down;
+  double D,tmp_D,tmp_D2;
+  double N,tmp_N,tmp_N2;
+  double Sz,tmp_Sz,tmp_Sz2;
   double tmp_v02;  
   
   long unsigned int i_max;
@@ -76,9 +79,14 @@ int expec_energy(struct BindStruct *X){
   dam_pr=0.0;
 	
   // tentative doublon
-  tmp_doublon=0.0;
-  tmp_num_up=0.0;
-  tmp_num_down=0.0;
+  tmp_D        = 0.0;
+  tmp_D2       = 0.0;
+  tmp_N        = 0.0;
+  tmp_N2       = 0.0;
+  tmp_Sz       = 0.0;
+  tmp_Sz2      = 0.0;
+  tmp_num_up   = 0.0;
+  tmp_num_down = 0.0;
 
  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
     if(isite1 > X->Def.Nsite){
@@ -94,31 +102,42 @@ int expec_energy(struct BindStruct *X){
 	ibit1 = (unsigned long int)myrank & is1;
 	num1_up = (ibit1&is1_up) / is1_up;
 	num1_down = (ibit1&is1_down) / is1_down;
-#pragma omp parallel for reduction(+:tmp_doublon, tmp_num_up, tmp_num_down) default(none) shared(v0) \
-  firstprivate(i_max, num1_up, num1_down) private(j, tmp_v02)
+#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2, tmp_num_up, tmp_num_down) default(none) shared(v0) \
+  firstprivate(i_max, num1_up, num1_down) private(j, tmp_v02,D,N,Sz)
 	for (j = 1; j <= i_max; j++){
 	  tmp_v02 = conj(v0[j])*v0[j];
-	  tmp_doublon += tmp_v02*num1_up*num1_down;
-	  tmp_num_up += tmp_v02*num1_up;
-	  tmp_num_up += tmp_v02*num1_down;
+//D
+          D       = num1_up*num1_down;
+	  tmp_D  += tmp_v02*D;
+//N
+          N       = num1_up+num1_down;
+	  tmp_N  += tmp_v02*N;
+//Sz
+          Sz      = num1_up-num1_down;
+	  tmp_Sz  += tmp_v02*Sz;
+//
+	  tmp_num_up   += tmp_v02*num1_up;
+	  tmp_num_down += tmp_v02*num1_down;
 	}
 	break;
 
       case SpinGC:
 	if (X->Def.iFlgGeneralSpin == FALSE) {
 	  is1_up = X->Def.Tpow[isite1 - 1];
-	  ibit1 = (unsigned long int)myrank& is1_up;
-	  tmp_num=0;
-#pragma omp parallel for reduction(+:tmp_num)default(none) shared(v0)	\
+	  ibit1  = (unsigned long int)myrank& is1_up;
+          tmp_v02 =0.0;
+#pragma omp parallel for reduction(+:tmp_v02)default(none) shared(v0)	\
   firstprivate(i_max) private(j)
-	  for (j = 1; j <= i_max; j++) tmp_num += conj(v0[j])*v0[j];
-
-	  if(ibit1==is1_up){
-	    tmp_num_up += tmp_num;
-	  }
-	  else{
-	    tmp_num_down += tmp_num;
-	  }	  
+	  for (j = 1; j <= i_max; j++){ 
+            tmp_v02 += conj(v0[j])*v0[j];
+          }
+          if(ibit1==is1_up){
+	     tmp_num_up   += tmp_v02;
+             tmp_Sz       += tmp_v02;
+	   }else{
+	     tmp_num_down += tmp_v02;
+             tmp_Sz       += -1.0*tmp_v02;
+	   }
       } /*if (X->Def.iFlgGeneralSpin == FALSE)*/   	
 	break;/*case SpinGC*/
   /* SpinGCBoost */
@@ -133,7 +152,7 @@ int expec_energy(struct BindStruct *X){
     else{
       switch(X->Def.iCalcModel){
       case HubbardGC:	
-#pragma omp parallel for reduction(+:tmp_doublon, tmp_num_up, tmp_num_down) default(none) private(j, is1_up, is1_down, is1, ibit1,num1_up,num1_down, tmp_v02) shared(v0) firstprivate(i_max, X, isite1) 
+#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2, tmp_num_up, tmp_num_down) default(none) private(j, is1_up, is1_down, is1, ibit1,num1_up,num1_down, tmp_v02,D,N,Sz) shared(v0) firstprivate(i_max, X, isite1) 
 	for(j=1;j<=i_max;j++){  
 	  is1_up=X->Def.Tpow[2*isite1-2];
 	  is1_down=X->Def.Tpow[2*isite1-1];
@@ -142,7 +161,16 @@ int expec_energy(struct BindStruct *X){
 	  num1_up   = ((j-1)&is1_up)/is1_up;
 	  num1_down = ((j-1)&is1_down)/is1_down;
 	  tmp_v02 = conj(v0[j])*v0[j];
-	  tmp_doublon  += tmp_v02*num1_up*num1_down;		
+//D
+          D       = num1_up*num1_down;
+	  tmp_D  += tmp_v02*D;
+//N
+          N       = num1_up+num1_down;
+	  tmp_N  += tmp_v02*N;
+//Sz
+          Sz      = num1_up-num1_down;
+	  tmp_Sz  += tmp_v02*Sz;
+//
 	  tmp_num_up   += tmp_v02*num1_up;
 	  tmp_num_down += tmp_v02*num1_down;
 	}
@@ -151,7 +179,7 @@ int expec_energy(struct BindStruct *X){
       case Hubbard:
       case Kondo:
       case KondoGC:
-#pragma omp parallel for reduction(+:tmp_doublon, tmp_num_up, tmp_num_down) default(none) private(j, is1_up, is1_down, is1, ibit1,num1_up,num1_down, tmp_v02) shared(v0, list_1) firstprivate(i_max, X, isite1) 
+#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2, tmp_num_up, tmp_num_down) default(none) private(j, is1_up, is1_down, is1, ibit1,num1_up,num1_down, tmp_v02,D,N,Sz) shared(v0, list_1) firstprivate(i_max, X, isite1) 
 	for(j=1;j<=i_max;j++){  
 	  is1_up=X->Def.Tpow[2*isite1-2];
 	  is1_down=X->Def.Tpow[2*isite1-1];
@@ -160,7 +188,16 @@ int expec_energy(struct BindStruct *X){
 	  num1_up   = (list_1[j]&is1_up)/is1_up;
 	  num1_down = (list_1[j]&is1_down)/is1_down;
 	  tmp_v02 = conj(v0[j])*v0[j];
-	  tmp_doublon  += tmp_v02*num1_up*num1_down;		
+//D
+          D        = num1_up*num1_down;
+	  tmp_D   += tmp_v02*D;
+//N
+          N        = num1_up+num1_down;
+	  tmp_N   += tmp_v02*N;
+//Sz
+          Sz       =  num1_up-num1_down;
+	  tmp_Sz  += tmp_v02*Sz;
+//
 	  tmp_num_up   += tmp_v02*num1_up;
 	  tmp_num_down += tmp_v02*num1_down;
 	}
@@ -169,15 +206,17 @@ int expec_energy(struct BindStruct *X){
       case SpinGC:
 	if(X->Def.iFlgGeneralSpin==FALSE){
 	  is1_up=X->Def.Tpow[isite1-1];
-#pragma omp parallel for reduction(+: tmp_num_up, tmp_num_down) default(none) private(j,  ibit1,num1_up,num1_down, tmp_v02) shared(list_1, v0) firstprivate(i_max, X, isite1, is1_up) 
+#pragma omp parallel for reduction(+: tmp_Sz,tmp_Sz2,tmp_num_up, tmp_num_down) default(none) private(j,  ibit1,num1_up,num1_down, tmp_v02) shared(list_1, v0) firstprivate(i_max, X, isite1, is1_up) 
 	  for(j=1;j<=i_max;j++){
 	    ibit1=(j-1)&is1_up;	
 	    tmp_v02 = conj(v0[j])*v0[j];
 	    if(ibit1==is1_up){
 	      tmp_num_up  += tmp_v02;
+	      tmp_Sz      += tmp_v02;
 	    }
 	    else{
-	      tmp_num_down +=tmp_v02;
+	      tmp_num_down += tmp_v02;
+	      tmp_Sz       += -1.0*tmp_v02;
 	    }
 	  }
 	}
@@ -192,33 +231,48 @@ int expec_energy(struct BindStruct *X){
     }
   }
 
-  tmp_doublon=SumMPI_d(tmp_doublon);
-  tmp_num_up=SumMPI_d(tmp_num_up);
-  tmp_num_down=SumMPI_d(tmp_num_down);
-  tmp_num=SumMPI_d(tmp_num);
+  tmp_D        = SumMPI_d(tmp_D);
+  tmp_N        = SumMPI_d(tmp_N);
+  tmp_Sz       = SumMPI_d(tmp_Sz);
+  tmp_num_up   = SumMPI_d(tmp_num_up);
+  tmp_num_down = SumMPI_d(tmp_num_down);
   
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
   case Hubbard:
   case Kondo:
-    X->Phys.doublon  = tmp_doublon;
-    X->Phys.num_up   = tmp_num_up;
-    X->Phys.num_down = tmp_num_down;    
-    X->Phys.num      = tmp_num_up+tmp_num_down;
+    X->Phys.doublon   = tmp_D;
+    X->Phys.doublon2  = 0.0;
+    X->Phys.num       = tmp_N;
+    X->Phys.num2      = 0.0;
+    X->Phys.Sz        = tmp_Sz*0.5;
+    X->Phys.Sz2       = 0.0;
+    X->Phys.num_up    = tmp_num_up;
+    X->Phys.num_down  = tmp_num_down;    
     break;      
       
   case SpinGC:
-    X->Phys.doublon  = 0.0;
-    X->Phys.num_up   = tmp_num_up;
-    X->Phys.num_down = tmp_num_down;    
-    X->Phys.num      = tmp_num_up+tmp_num_down;
+    X->Phys.doublon   = 0.0;
+    X->Phys.doublon2  = 0.0;
+    X->Phys.num       = tmp_num_up+tmp_num_down;
+    X->Phys.num2      = (tmp_num_up+tmp_num_down)*(tmp_num_up+tmp_num_down);
+    X->Phys.Sz        = tmp_Sz*0.5;
+    X->Phys.Sz2       = 0.0;
+    X->Phys.num_up    = tmp_num_up;
+    X->Phys.num_down  = tmp_num_down;    
+    X->Phys.num       = tmp_num_up+tmp_num_down;
     break;
   case Spin:
-    X->Phys.num_up   = X->Def.Nup;
-    X->Phys.num_down = X->Def.Ndown;    
-    X->Phys.num      = X->Def.Nup+X->Def.Ndown;//canonical
-    X->Phys.doublon  = 0.0;// spin
+    X->Phys.doublon   = 0.0;
+    X->Phys.doublon2  = 0.0;
+    X->Phys.num_up    = X->Def.Nup;
+    X->Phys.num_down  = X->Def.Ndown;    
+    X->Phys.num       = (X->Def.Nup+X->Def.Ndown);
+    X->Phys.num2      = (X->Def.Nup+X->Def.Ndown)*(X->Def.Nup+X->Def.Ndown);
+    X->Phys.Sz        = 0.5*(X->Def.Nup-X->Def.Ndown);
+    X->Phys.Sz2       = 0.25*(X->Def.Nup-X->Def.Ndown)* (X->Def.Nup-X->Def.Ndown);
+
     break;
   default:
     return -1;

@@ -209,11 +209,11 @@ int check(struct BindStruct *X){
     case Kondo:
     case KondoGC:
     case Spin:
-      X->Check.max_mem=5.5*X->Check.idim_max*16.0/(pow(10,9));
+      X->Check.max_mem=5.5*X->Check.idim_max*8.0/(pow(10,9));
       break;
     case HubbardGC:
     case SpinGC:
-      X->Check.max_mem=4.5*X->Check.idim_max*16.0/(pow(10,9));
+      X->Check.max_mem=4.5*X->Check.idim_max*8.0/(pow(10,9));
       break;
     }
     break;
@@ -243,7 +243,7 @@ int check(struct BindStruct *X){
     }
     break;
   case FullDiag:
-    X->Check.max_mem=X->Check.idim_max*16.0*X->Check.idim_max*16.0/(pow(10,9));
+    X->Check.max_mem=X->Check.idim_max*8.0*X->Check.idim_max*8.0/(pow(10,9));
     break;
   default:
     return FALSE;
