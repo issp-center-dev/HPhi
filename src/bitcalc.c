@@ -191,8 +191,8 @@ void SplitBit(
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
 int GetOffComp(
-	        long unsigned int *_list_2_1,
-	        long unsigned int *_list_2_2,
+	    long unsigned int *_list_2_1,
+	    long unsigned int *_list_2_2,
 		long unsigned int _ibit,
 		const long unsigned int _irght,
 		const long unsigned int _ilft,

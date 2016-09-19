@@ -153,6 +153,8 @@ int CalcSpectrum(
     //mltply Operator
     GetExcitedState(&(X->Bind), v0, v1);
 
+    //Reset list_1, list_2_1, list_2_2
+
     //calculate norm
     dnorm = NormMPI_dc(i_max, v0);
     if (fabs(dnorm) < pow(10.0, -15)) {
@@ -282,7 +284,6 @@ int SetOmega
           iline_count++;
           if(iline_count ==iline_countMax) break;
       }
-
 
       if(istp < 4){
       fprintf(stdoutMPI, "Error: Lanczos step must be greater than 4 for using spectrum calculation.\n");

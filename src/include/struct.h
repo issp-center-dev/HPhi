@@ -232,11 +232,12 @@ struct LargeList{
   long unsigned int A_spin;
   long unsigned int B_spin;
   long unsigned int irght;
-  long unsigned int     ilft;
-  long unsigned int     ihfbit;
+  long unsigned int ilft;
+  long unsigned int ihfbit;
   long unsigned int isA_spin;
   long unsigned int  isB_spin;
   double complex      tmp_V;
+
 };
 
 struct PhysList{

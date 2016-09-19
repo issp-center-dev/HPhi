@@ -42,7 +42,7 @@
   double complex *tmp_v1,
   unsigned long int idim_max,
   double complex *tmp_v1buf,
-  long int *Tpow 
+  long unsigned int *Tpow
   );
 
   double complex X_GC_Ajt_MPI(
@@ -53,8 +53,75 @@
   double complex *tmp_v1,
   unsigned long int idim_max,
   double complex *tmp_v1buf,
-  long int *Tpow 
-  ); 
+  long unsigned int *Tpow
+  );
+
+double complex GC_Ajt(
+        long unsigned int j,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        long unsigned int is1_spin,
+        double complex tmp_V,
+        long unsigned int *tmp_off
+);
+
+int X_Cis(
+        long unsigned int j,
+        long unsigned int is1_spin,
+        long unsigned int *tmp_off,
+        long unsigned int *list_1_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
+);
+
+double complex X_Cis_MPI(
+        int org_isite,
+        unsigned int org_ispin,
+        double complex tmp_trans,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        unsigned long int idim_max,
+        double complex *tmp_v1buf,
+        long unsigned int *Tpow,
+        long unsigned int *list_1_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
+);
+
+double complex X_Ajt_MPI(
+        int org_isite,
+        unsigned int org_ispin,
+        double complex tmp_trans,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        unsigned long int idim_max,
+        double complex *tmp_v1buf,
+        long unsigned int *Tpow,
+        long unsigned int *list_1_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
+);
+
+double complex X_Ajt(
+        long unsigned int j,
+        long unsigned int is1_spin,
+        long unsigned int *tmp_off,
+        long unsigned int *list_1_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
+);
 
 
 int GetSingleExcitedState
