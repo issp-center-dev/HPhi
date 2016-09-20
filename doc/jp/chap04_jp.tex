@@ -538,11 +538,11 @@ $ gnuplot lattice.gp
 \end{itemize}
 初期ベクトル設定の詳細については、\ref{Ch:algorithm}を参照ください。
 
-\item \verb|nvec|
+%\item \verb|nvec|
 
-{\bf 形式 :} 整数(デフォルト値は\verb|1|)
+%{\bf 形式 :} 整数(デフォルト値は\verb|1|)
 
-{\bf 説明 :} ランチョス法の段階で下からいくつの固有値を求めるかを指定します。
+%{\bf 説明 :} ランチョス法の段階で下からいくつの固有値を求めるかを指定します。
 
 \item \verb|exct|
 
@@ -917,7 +917,6 @@ Ncond          16
 2Sz            0    
 Lanczos_max    1000 
 initial_iv     12   
-nvec           1    
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
@@ -1029,7 +1028,7 @@ ExpecInterval  20
 
 {\bf 説明 :} Lanczos法で求める固有ベクトルの番号を指定する整数。
 例えば、1なら基底状態のベクトル、2なら第一励起状態のベクトルを求めます。
-   \verb|nvec| $>=$ \verb|exct| とする必要があります。
+%   \verb|nvec| $>=$ \verb|exct| とする必要があります。
 
 \item   \verb|LanczosEps|
    

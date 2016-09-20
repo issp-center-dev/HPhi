@@ -45,7 +45,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorStart, "a");
 
-    long int i,j,i_max,iv;
+  long int i,j,i_max,iv;
   int k_exct, iproc;
   double beta1,alpha1,dnorm, dnorm_inv;
   double complex temp1,temp2,cdnorm;
@@ -55,7 +55,8 @@ void Lanczos_EigenVector(struct BindStruct *X){
   long unsigned int u_long_i, sum_i_max, i_max_tmp;
   dsfmt_t dsfmt;
 
-  k_exct = X->Def.k_exct;
+  //  k_exct = X->Def.k_exct;
+    k_exct = X->Def.LanczosTarget;
 	
   iv=X->Large.iv;
   i_max=X->Check.idim_max;
@@ -84,7 +85,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
             v1[iv - sum_i_max+1] += 1.0*I;
             v1[iv - sum_i_max+1] /= sqrt(2.0);
           }
-	  vg[iv - sum_i_max+1]=vec[k_exct][1]*conj(v1[iv - sum_i_max+1]);
+          vg[iv - sum_i_max+1]=vec[k_exct][1]*conj(v1[iv - sum_i_max+1]);
 
         }/*if (myrank == iproc)*/
       }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/

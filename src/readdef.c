@@ -278,10 +278,12 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI, cErrOutputMode, defname);
     return (-1);
   }
+  
   if(ValidateValue(X->iCalcEigenVec, -1, NUM_CALCEIGENVEC-1)){
     fprintf(stdoutMPI, cErrCalcEigenVec, defname);
     return (-1);
   }
+  
   if(ValidateValue(X->iInitialVecType, 0, NUM_SETINITAILVEC-1)){
     fprintf(stdoutMPI, cErrSetIniVec, defname);
     return (-1);
@@ -395,6 +397,7 @@ int ReadDefFileNInt(
   char ctmp[D_CharTmpReadDef], ctmp2[256];
   int itmp;
   unsigned int iline=0;
+  X->nvec=0;
   X->iFlgSpecOmegaMax=FALSE;
   X->iFlgSpecOmegaMin=FALSE;
   X->iFlgSpecOmegaIm=FALSE;
@@ -790,11 +793,15 @@ int ReadDefFileNInt(
       fprintf(stdoutMPI, cErrExpecInterval, defname);
       return (-1);
     }
+    
+    if(X->nvec==0){
+      X->nvec=X->Lanczos_max;
+    }
     if(ValidateValue(X->k_exct, 1, X->nvec)) {
       fprintf(stdoutMPI, cErrLanczosExct, defname, X->k_exct);
       return (-1);
     }
-    if(ValidateValue(X->LanczosTarget, X->nvec, X->Lanczos_max)){
+    if(ValidateValue(X->LanczosTarget, 1, X->Lanczos_max)){
       fprintf(stdoutMPI, cErrLanczosTarget, defname, X->LanczosTarget, X->nvec, X->Lanczos_max);
       return (-1);
     }
