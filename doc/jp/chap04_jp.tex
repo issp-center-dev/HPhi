@@ -745,9 +745,9 @@ TwoBodyG	zcisajscktaltdc.def
            Ising  &  イジング相互作用に関する設定をします。 \\  
            PairLift  &   ペアリフト相互作用に関する設定をします。 \\  
            OneBodyG         &   出力する一体グリーン関数$\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$ に関する設定をします。\\   
-           TwoBodyG &   出力するニ体グリーン関数 $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$に関する設定をします。 \\   
+           TwoBodyG &   出力する二体グリーン関数 $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$に関する設定をします。 \\   
            \tr{SingleExcitation} &   一体励起状態の生成演算子に関する指定をします。\\ 
-           \tr{PairExcitation} &   ニ体励起状態の生成演算子に関する指定をします。\\   
+           \tr{PairExcitation} &  二体励起状態の生成演算子に関する指定をします。\\   
            \tr{SpectrumVec} &   スペクトル関数を計算するためのリスタート用の入力ベクトルを指定します。\\   
            \hline
   \end{tabular}
@@ -2193,7 +2193,7 @@ NSingle         24
 \newpage
 \subsection{\tr{PairExcitation指定ファイル}}
 \label{Subsec:pairexcitation}
-二体励起状態を作成するための演算子$S_{i\sigma_1j\sigma_2}c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(S_{i\sigma_1j\sigma_2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$を定義します。なお、$c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$と$c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$を混同することは出来ません。また、$S_z$保存の系に対しては$\sigma_1=\sigma_2$とする必要があります。
+二体励起状態を作成するための演算子$c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$を定義します。なお、$c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$と$c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$を混同することは出来ません。また、$S_z$保存の系に対しては$\sigma_1=\sigma_2$とする必要があります。
 以下にファイル例を記載します。
 
 \begin{minipage}{12.5cm}
