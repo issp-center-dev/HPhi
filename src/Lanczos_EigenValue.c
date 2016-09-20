@@ -202,8 +202,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v1[i] =  temp2;
     }
 
-      mltply(X, v0, v1);
-      TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
+    mltply(X, v0, v1);
+    TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
     alpha1=creal(X->Large.prdct);
     alpha[stp]=alpha1;
     cbeta1=0.0;
