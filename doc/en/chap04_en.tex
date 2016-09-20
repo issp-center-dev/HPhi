@@ -603,13 +603,13 @@ A seed of random generator is given by this parameter and the random vector is u
 \end{itemize}
 See \ref{Ch:algorithm} for details of setting an initial vector.
 
-\item \verb|nvec|
+%\item \verb|nvec|
 
-{\bf Type :} Positive integer (\verb|1| as a default)
+%{\bf Type :} Positive integer (\verb|1| as a default)
 
-{\bf Description :} We specify the number of getting 
-eigenvalues from the ground energy by Lanczos method.\\
-When nvec=2, we obtain the ground-state energy and energy of the first-excited state.
+%{\bf Description :} We specify the number of getting 
+%eigenvalues from the ground energy by Lanczos method.\\
+%When nvec=2, we obtain the ground-state energy and energy of the first-excited state.
 
 \item \verb|exct|
 
@@ -992,7 +992,6 @@ Ncond          16
 2Sz            0 
 Lanczos_max    1000 
 initial_iv     12   
-nvec           1    
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
@@ -1101,7 +1100,7 @@ See \ref{Ch:algorithm} for details of setting an initial vector.
 
 {\bf Description :} 
  An integer for setting the number of getting eigenvectors from the ground energy by Lanczos method.\\
-{\bf Note}:  the following condition must be satisfied \verb|nvec| $>=$ \verb|exct|.
+%{\bf Note}:  the following condition must be satisfied \verb|nvec| $>=$ \verb|exct|.
 
 \item   \verb|LanczosEps|
    
