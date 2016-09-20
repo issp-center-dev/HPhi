@@ -24,7 +24,9 @@
 #include "FileIO.h"
 #include "mfmemory.h"
 #include "readdef.h"
-
+#include "sz.h"
+#include "check.h"
+#include "diagonalcalc.h"
 /**
  * @file   CalcSpectrum.c
  * @version 1.1
@@ -73,104 +75,114 @@ int OutputSpectrum(
  */
 int CalcSpectrum(
 		 struct EDMainCalStruct *X
-				 )
-{
-  char sdt[D_FileNameMax];
-  char *defname;
-  unsigned long int i;
-  unsigned long int i_max=0;
-  int i_stp;
-  FILE *fp;
-  double dnorm;
+				 ) {
+    char sdt[D_FileNameMax];
+    char *defname;
+    unsigned long int i;
+    unsigned long int i_max = 0;
+    int i_stp;
+    int iFlagListModified = FALSE;
+    FILE *fp;
+    double dnorm;
 
-  //ToDo: Nomega should be given as a parameter
-  int Nomega;
-  double complex OmegaMax, OmegaMin;
-  double complex *dcSpectrum;
-  double complex *dcomega;
+    //ToDo: Nomega should be given as a parameter
+    int Nomega;
+    double complex OmegaMax, OmegaMin;
+    double complex *dcSpectrum;
+    double complex *dcomega;
 
-  //set omega
-  if(SetOmega(&(X->Bind.Def)) != TRUE){
-    fprintf(stderr, "Error: Fail to set Omega.\n");
-    exitMPI(-1);
-  }
-  else{
-    if(X->Bind.Def.iFlgSpecOmegaIm == FALSE){
-      X->Bind.Def.dOmegaIm = (X->Bind.Def.dOmegaMax - X->Bind.Def.dOmegaMin)/(double) X->Bind.Def.iNOmega;
+    //set omega
+    if (SetOmega(&(X->Bind.Def)) != TRUE) {
+        fprintf(stderr, "Error: Fail to set Omega.\n");
+        exitMPI(-1);
+    } else {
+        if (X->Bind.Def.iFlgSpecOmegaIm == FALSE) {
+            X->Bind.Def.dOmegaIm = (X->Bind.Def.dOmegaMax - X->Bind.Def.dOmegaMin) / (double) X->Bind.Def.iNOmega;
+        }
     }
-  }
-  /*
-   Set & malloc omega grid
-  */
-  Nomega = X->Bind.Def.iNOmega;
-  c_malloc1(dcSpectrum, Nomega);
-  c_malloc1(dcomega, Nomega);
-  OmegaMax = X->Bind.Def.dOmegaMax + X->Bind.Def.dOmegaIm*I;
-  OmegaMin = X->Bind.Def.dOmegaMin + X->Bind.Def.dOmegaIm*I;
-  for (i = 0; i< Nomega; i++) {
-    dcomega[i] = (OmegaMax - OmegaMin) / Nomega*i + OmegaMin;
-  }
+    /*
+     Set & malloc omega grid
+    */
+    Nomega = X->Bind.Def.iNOmega;
+    c_malloc1(dcSpectrum, Nomega);
+    c_malloc1(dcomega, Nomega);
+    OmegaMax = X->Bind.Def.dOmegaMax + X->Bind.Def.dOmegaIm * I;
+    OmegaMin = X->Bind.Def.dOmegaMin + X->Bind.Def.dOmegaIm * I;
+    for (i = 0; i < Nomega; i++) {
+        dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
+    }
 
-  if(X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0){
-      fprintf(stderr, "Error: Any excitation operators are not defined.\n");
-      exitMPI(-1);
-  }
+    if (X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0) {
+        fprintf(stderr, "Error: Any excitation operators are not defined.\n");
+        exitMPI(-1);
+    }
+    //Make New Lists
+    if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
+        return FALSE;
+    }
 
-  //Make excited state
-  if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
-      X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
-    //input eigen vector
-    fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-    GetFileNameByKW(KWSpectrumVec, &defname);
-    strcat(defname, "_rank_%d.dat");
+    //Make excited state
+    if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
+        X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
+        //input eigen vector
+        fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
+        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
+        GetFileNameByKW(KWSpectrumVec, &defname);
+        strcat(defname, "_rank_%d.dat");
 //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
-    sprintf(sdt, defname, myrank);
-    childfopenALL(sdt, "rb", &fp);
-    if (fp == NULL) {
-      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-      return -1;
-    }
-    fread(&i_stp, sizeof(i_stp), 1, fp);
-    X->Bind.Large.itr=i_stp; //For TPQ
-    fread(&i_max, sizeof(i_max), 1, fp);
-    if (i_max != X->Bind.Check.idim_max) {
-      fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
-      fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-      return -1;
-    }
-    
-    fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fclose(fp);
+        sprintf(sdt, defname, myrank);
+        childfopenALL(sdt, "rb", &fp);
+        if (fp == NULL) {
+            fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
+            return -1;
+        }
+        fread(&i_stp, sizeof(i_stp), 1, fp);
+        X->Bind.Large.itr = i_stp; //For TPQ
+        fread(&i_max, sizeof(i_max), 1, fp);
+        if (i_max != X->Bind.Check.idim_maxOrg) {
+            fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
+            fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+            return -1;
+        }
 
-    for (i = 1; i <= i_max; i++) {
-      v0[i] = 0;
+        fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+        fclose(fp);
+
+        for (i = 1; i <= i_max; i++) {
+            v0[i] = 0;
+        }
+        fprintf(stdoutMPI, "  End:   An Inputcector is inputted in CalcSpectrum.\n\n");
+        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
+        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
+        fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
+
+        //mltply Operator
+        GetExcitedState(&(X->Bind), v0, v1);
+
+        //calculate norm
+        dnorm = NormMPI_dc(i_max, v0);
+        if (fabs(dnorm) < pow(10.0, -15)) {
+            fprintf(stderr, "Error: Excitation vector is illegal; norm becomes 0.\n");
+            return -1;
+        }
+        //normalize vector
+#pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm)
+        for (i = 1; i <= i_max; i++) {
+            v1[i] = v0[i] / dnorm;
+        }
+        fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
+        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
     }
-    fprintf(stdoutMPI, "  End:   An Inputcector is inputted in CalcSpectrum.\n\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
-    fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
-    //mltply Operator
-    GetExcitedState(&(X->Bind), v0, v1);
 
     //Reset list_1, list_2_1, list_2_2
-
-    //calculate norm
-    dnorm = NormMPI_dc(i_max, v0);
-    if (fabs(dnorm) < pow(10.0, -15)) {
-      fprintf(stderr, "Error: Excitation vector is illegal; norm becomes 0.\n");
-      return -1;
+    if (iFlagListModified == TRUE) {
+        //ReSetList(&(X->Bind));
     }
-    //normalize vector
-#pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm)
-    for (i = 1; i <= i_max; i++) {
-      v1[i] = v0[i] / dnorm;
-    }
-    fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
-  }
 
-  int iret=TRUE;
+    //calculate Diagonal term
+    diagonalcalc(&(X->Bind));
+
+    int iret=TRUE;
   fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   switch (X->Bind.Def.iCalcType) {
@@ -300,3 +312,99 @@ int SetOmega
 
   return TRUE;
 }
+
+int MakeExcitedList(
+        struct BindStruct *X,
+        int *iFlgListModifed
+) {
+    *iFlgListModifed = FALSE;
+    //To Get Original space
+    if (check(X) == MPIFALSE) {
+        FinalizeMPI();
+        return -1;
+    }
+    X->Check.idim_maxOrg = X->Check.idim_max;
+
+    if (X->Def.NSingleExcitationOperator > 0) {
+        switch (X->Def.iCalcModel) {
+            case HubbardGC:
+                break;
+            case KondoGC:
+            case Hubbard:
+            case Kondo:
+                *iFlgListModifed = TRUE;
+                if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
+                    X->Def.Ne = X->Def.NeMPI + 1;
+                    if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
+                        X->Def.Nup = X->Def.NupMPI + 1;
+                    } else {//down
+                        X->Def.Ndown = X->Def.NdownMPI + 1;
+                    }
+                } else {//ajt
+                    X->Def.Ne = X->Def.NeMPI - 1;
+                    if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
+                        X->Def.Nup = X->Def.NupMPI - 1;
+                    } else {//down
+                        X->Def.Ndown = X->Def.NdownMPI - 1;
+                    }
+                }
+                break;
+            case Spin:
+            case SpinGC:
+                return FALSE;
+        }
+    } else if (X->Def.NPairExcitationOperator > 0) {
+        switch (X->Def.iCalcModel) {
+            case HubbardGC:
+            case SpinGC:
+                break;
+            case KondoGC:
+            case Hubbard:
+            case Kondo:
+            case Spin:
+                if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
+                    *iFlgListModifed = TRUE;
+                    if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
+                        if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
+                            X->Def.Nup = X->Def.NupMPI + 1;
+                            X->Def.Ndown = X->Def.NdownMPI - 1;
+                        } else {//down
+                            X->Def.Nup = X->Def.NupMPI - 1;
+                            X->Def.Ndown = X->Def.NdownMPI + 1;
+                        }
+                    } else {//aiscjt
+                        if (X->Def.PairExcitationOperator[0][1] == 0) {//up
+                            X->Def.Nup = X->Def.NupMPI - 1;
+                            X->Def.Ndown = X->Def.NdownMPI + 1;
+                        } else {//down
+                            X->Def.Nup = X->Def.NupMPI + 1;
+                            X->Def.Ndown = X->Def.NdownMPI - 1;
+                        }
+                    }
+                }
+                break;
+
+        }
+    } else {
+        return FALSE;
+    }
+    if (*iFlgListModifed == TRUE) {
+        if (check(X) == MPIFALSE) {
+            FinalizeMPI();
+            return FALSE;
+        }
+    }
+
+    //set memory
+    if (!setmem_large(X) == 0) {
+        fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
+        exitMPI(-1);
+    }
+
+    if (sz(X, list_1, list_2_1, list_2_2) != 0) {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+

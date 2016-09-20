@@ -101,7 +101,6 @@ double complex X_Ajt_MPI(
         double complex *tmp_v0,
         double complex *tmp_v1,
         unsigned long int idim_max,
-        double complex *tmp_v1buf,
         long unsigned int *Tpow,
         long unsigned int *list_1_org,
         long unsigned int *list_2_1_target,

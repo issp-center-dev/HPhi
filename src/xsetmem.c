@@ -100,6 +100,7 @@ for (iarrayJ = 0; iarrayJ < xBoost->NumarrayJ; iarrayJ++) {
   
 }
 
+
 int setmem_large
 (
  struct BindStruct *X
@@ -140,18 +141,19 @@ int setmem_large
     }
     else{//for spin-canonical general spin
       lui_malloc1(list_2_1, X->Check.sdim+2);
-      lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
       lui_malloc1(list_2_2, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
-      lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
       lui_malloc1(list_jb, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
-
+      /*
+        lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
+        lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+       */
       for(j=0; j<X->Check.sdim+2;j++){
 	list_2_1[j]=0;
-	list_2_1_Sz[j]=0;
+    //	list_2_1_Sz[j]=0;
       }
       for(j=0; j< (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2; j++){
 	list_2_2[j]=0;
-	list_2_2_Sz[j]=0;
+    //	list_2_2_Sz[j]=0;
 	list_jb[j]=0;
       }
       
@@ -238,3 +240,133 @@ void setmem_IntAll_Diagonal
   i_malloc2(X->InterAll_Diagonal, X->NInterAll, 4);
   d_malloc1(X->ParaInterAll_Diagonal, X->NInterAll);
 }
+
+
+/*
+int setmem_Dir_large
+(
+ struct BindStruct *X
+ )
+{
+
+  unsigned long int j=0;
+  unsigned int idim_maxMPI;
+  
+  idim_maxMPI = MaxMPI_li(X->Check.idim_max);
+  //fprintf(stdoutMPI, "Debug: idim_maxMPI=%ld\n", idim_maxMPI);
+  
+  switch(X->Def.iCalcModel){
+  case Spin:
+  case Hubbard:
+  case HubbardNConserved:
+  case Kondo:
+  case KondoGC:
+    lui_malloc1(list_1_, X->Check.idim_max+1);
+#ifdef MPI
+    lui_malloc1(list_1buf_, idim_maxMPI + 1);
+#endif // MPI
+    if(X->Def.iFlgGeneralSpin==FALSE){
+      if(X->Def.iCalcModel==Spin &&X->Def.Nsite%2==1){
+	lui_malloc1(list_2_1_, X->Check.sdim*2+2);
+	for(j=0; j<X->Check.sdim*2+2;j++) list_2_1_[j]=0;
+      }
+      else{
+        lui_malloc1(list_2_1_, X->Check.sdim+2);
+        for(j=0; j<X->Check.sdim+2;j++) list_2_1_[j]=0;
+      }
+      lui_malloc1(list_2_2_, X->Check.sdim+2);
+      lui_malloc1(list_jb_, X->Check.sdim+2);
+      for(j=0; j<X->Check.sdim+2;j++){
+        list_2_2_[j]=0;
+        list_jb_[j]=0;
+      }
+    }
+    else{//for spin-canonical general spin
+      lui_malloc1(list_2_1_, X->Check.sdim+2);
+      lui_malloc1(list_2_1_Sz_, X->Check.sdim+2);
+      lui_malloc1(list_2_2_, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+      lui_malloc1(list_2_2_Sz_,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+      lui_malloc1(list_jb_, (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+
+      for(j=0; j<X->Check.sdim+2;j++){
+        list_2_1_[j]=0;
+        list_2_1_Sz_[j]=0;
+      }
+      for(j=0; j< (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2; j++){
+        list_2_2_[j]=0;
+        list_2_2_Sz_[j]=0;
+        list_jb_[j]=0;
+      }
+      
+    }
+    if(list_1_==NULL
+       || list_2_1_==NULL
+       || list_2_2_==NULL
+       || list_jb_==NULL
+       )
+      {
+        return -1;
+      }
+    break;
+  default:
+    break;
+  }
+
+  d_malloc1(list_Diagonal_, X->Check.idim_max+1);
+  c_malloc1(v0_, X->Check.idim_max+1);
+  c_malloc1(v1_, X->Check.idim_max+1);
+#ifdef MPI
+  c_malloc1(v1buf_, idim_maxMPI + 1);
+#endif // MPI
+  if (X->Def.iCalcType == TPQCalc) {c_malloc1(vg_, 1);}
+  else {c_malloc1(vg_, X->Check.idim_max+1);}
+  d_malloc1(alpha_, X->Def.Lanczos_max+1);
+  d_malloc1(beta_, X->Def.Lanczos_max+1);
+
+  if(
+     list_Diagonal_==NULL
+     || v0_==NULL
+     || v1_==NULL
+     || vg_==NULL
+     ){
+    return -1;
+  }
+
+
+    if(X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+        c_malloc2(vec_, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
+    }
+    else if(X->Def.iCalcType==Lanczos){
+        c_malloc2(vec_,X->Def.nvec+1, X->Def.Lanczos_max+1);
+    }
+
+  if(X->Def.iCalcType == FullDiag){
+    d_malloc1(X->Phys.all_num_down, X->Check.idim_max+1);
+    d_malloc1(X->Phys.all_num_up, X->Check.idim_max+1);
+    d_malloc1(X->Phys.all_energy, X->Check.idim_max+1);
+    d_malloc1(X->Phys.all_doublon, X->Check.idim_max+1);
+    d_malloc1(X->Phys.all_sz, X->Check.idim_max+1);
+    d_malloc1(X->Phys.all_s2, X->Check.idim_max+1);
+    c_malloc2(Ham, X->Check.idim_max+1,X->Check.idim_max+1);
+    c_malloc2(L_vec, X->Check.idim_max+1,X->Check.idim_max+1);
+
+    if(X->Phys.all_num_down == NULL
+       ||X->Phys.all_num_up == NULL
+       ||X->Phys.all_energy == NULL
+       ||X->Phys.all_doublon == NULL
+       ||X->Phys.all_s2 ==NULL
+       )
+      {
+	return -1;
+      }
+    for(j=0; j<X->Check.idim_max+1; j++){
+      if(Ham[j]==NULL || L_vec[j]==NULL){
+	return -1;
+      }
+    }
+  }
+  
+  fprintf(stdoutMPI, "%s", cProFinishAlloc);
+  return 0;
+  }
+*/

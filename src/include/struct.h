@@ -40,9 +40,12 @@ struct DefineList{
   unsigned int  NsiteMPI;    /**< */
   unsigned int  Nup;    /**< Read from modpara in readdef */
   unsigned int  Ndown;    /**< */
+  unsigned int  NupMPI;    /**< Read from modpara in readdef */
+  unsigned int  NdownMPI;    /**< */
   int  Total2Sz;    /**< */
   int  Total2SzMPI;    /**< */
   unsigned int  Ne;    /**< */
+  unsigned int  NeMPI;    /**< */
   unsigned int  Nsize;    /**< */
   unsigned int Lanczos_max;    /**< */
   int Lanczos_restart;
@@ -199,6 +202,7 @@ struct DefineList{
 struct CheckList{
   unsigned long int  idim_max; /**< */
   unsigned long int  idim_maxMPI; /**< */
+  unsigned long int idim_maxOrg; //For calcspectrum
   unsigned long int     sdim;    /**< */
   double   max_mem;  /**< */
 

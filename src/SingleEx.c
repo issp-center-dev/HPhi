@@ -362,7 +362,7 @@ double complex X_Cis_MPI(
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(v1buf, tmp_v1, tmp_v0, list_1buf)
-    for (j = 1; j <= idim_max_buf; j++) {
+    for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
         GetOffComp(list_2_1_target, list_2_2_target, list_1buf[j],
                    _irght, _ilft, _ihfbit, &ioff);
         dmv = trans * v1buf[j];
@@ -381,7 +381,6 @@ double complex X_Ajt_MPI(
         double complex *tmp_v0,
         double complex *tmp_v1,
         unsigned long int idim_max,
-        double complex *tmp_v1buf,
         long unsigned int *Tpow,
         long unsigned int *list_1_org,
         long unsigned int *list_2_1_target,
@@ -557,6 +556,7 @@ int GetSingleExcitedState
   case KondoGC:
   case Hubbard:
   case Kondo:
+      idim_max = X->Check.idim_maxOrg;
       for(i=0;i<X->Def.NSingleExcitationOperator;i++){
           org_isite = X->Def.SingleExcitationOperator[i][0];
           ispin     = X->Def.SingleExcitationOperator[i][1];
@@ -564,28 +564,28 @@ int GetSingleExcitedState
           tmpphi    = X->Def.ParaSingleExcitationOperator[i];
           if(itype == 1){
               if( org_isite >= X->Def.Nsite){
-                  X_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+//                  X_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
               }
               else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1)	\
-  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1_ex, list_2_2_ex) private(j, is1_spin, isgn,tmp_off)
-                  for(j=1;j<=idim_max;j++){
+  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2) private(j, is1_spin, isgn,tmp_off)
+                  for(j=1;j<=idim_max;j++){//idim_max -> original dimension
                       is1_spin = X->Def.Tpow[2*org_isite+ispin];
-                      isgn=X_Cis(j, is1_spin, &tmp_off, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+//                      isgn=X_Cis(j, is1_spin, &tmp_off, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
                       tmp_v0[tmp_off] += tmp_v1[j]*isgn*tmpphi;
                   }
               }
           }
           else if(itype == 0){
               if( org_isite >= X->Def.Nsite){
-                  X_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+//                  X_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,X->Def.Tpow, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
               }
               else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1)	\
-  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1_ex, list_2_2_ex) private(j, is1_spin, isgn, tmp_off)
+  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2) private(j, is1_spin, isgn, tmp_off)
                   for(j=1;j<=idim_max;j++){
                       is1_spin = X->Def.Tpow[2*org_isite+ispin];
-                      isgn=X_Ajt(j, is1_spin, &tmp_off, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+//                      isgn=X_Ajt(j, is1_spin, &tmp_off, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
                       tmp_v0[tmp_off] += tmp_v1[j]*isgn*tmpphi;
                   }
               }

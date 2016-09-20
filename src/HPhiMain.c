@@ -144,44 +144,42 @@ int main(int argc, char* argv[]){
     return -1;
   }
   TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefFinish, "a");
-
-
   fprintf(stdoutMPI, "%s", cProFinishDefCheck);
-  if(check(&(X.Bind))==MPIFALSE){
-    FinalizeMPI();
-    return -1;
-  }
-  
-  
-  /*LARGE VECTORS ARE ALLOCATED*/
-  if(!setmem_large(&X.Bind)==0){
-    fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
-    exitMPI(-1);
-  }
 
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
 
   /*---------------------------*/
-  if(!HPhiTrans(&(X.Bind))==0){
-    exitMPI(-1);
+  if(!HPhiTrans(&(X.Bind))==0) {
+      exitMPI(-1);
   }
 
-
-  if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
-    exitMPI(-1);
-  }
-
-  if(X.Bind.Def.WRITE==1){
-    output_list(&(X.Bind));
-    FinalizeMPI();
-    return 0;
-  }
-
-  diagonalcalc(&(X.Bind));
-  
-  //Start Calculation
+    //Start Calculation
   if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
+
+      if(check(&(X.Bind))==MPIFALSE){
+          FinalizeMPI();
+          return -1;
+      }
+
+      /*LARGE VECTORS ARE ALLOCATED*/
+      if (!setmem_large(&X.Bind) == 0) {
+          fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
+          exitMPI(-1);
+      }
+
+      if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
+          exitMPI(-1);
+      }
+
+      if(X.Bind.Def.WRITE==1){
+          output_list(&(X.Bind));
+          FinalizeMPI();
+          return 0;
+      }
+
+      diagonalcalc(&(X.Bind));
+
     switch (X.Bind.Def.iCalcType) {
       case Lanczos:
         if (!CalcByLanczos(&X) == TRUE) {

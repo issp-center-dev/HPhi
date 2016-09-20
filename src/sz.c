@@ -79,10 +79,25 @@ int sz
   int ihfSpinDown=0;
   // [e] for Kondo
     
-  long unsigned int i_max;
+  long unsigned int i_max=0;
   double idim=0.0;
   long unsigned int div_up;
 
+  // [s] for general spin
+  long unsigned int *list_2_1_Sz;
+  long unsigned int *list_2_2_Sz;  
+  if(X->Def.iFlgGeneralSpin==TRUE){
+    lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
+    lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+    for(j=0; j<X->Check.sdim+2;j++){
+      list_2_1_Sz[j]=0;
+      }
+    for(j=0; j< (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2; j++){
+      list_2_2_Sz[j]=0;
+    }
+  }
+  // [e] for general spin
+  
 //hacker
   int hacker;
   long unsigned int tmp_i,tmp_j,tmp_pow,max_tmp_i;
@@ -611,7 +626,7 @@ int sz
        
     }    
     i_max=icnt;
-    //fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
+    //fprintf(stdoutMPI, "Debug: Xicnt=%ld \n",icnt);
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
     TimeKeeper(X, cFileNameTimeKeep, cOMPSzFinish, "a");
 

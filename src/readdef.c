@@ -801,6 +801,9 @@ int ReadDefFileNInt(
 
   X->Nsize   = 2*X->Ne;
   X->fidx = 0;
+  X->NeMPI=X->Ne;
+  X->NupMPI=X->Nup;
+  X->NdownMPI=X->Ndown;
   return 0;
 }
 

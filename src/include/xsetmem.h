@@ -33,6 +33,28 @@ int setmem_large
  struct BindStruct *X
 );
 
+/*
+int setmem_Dir_large
+(
+ struct BindStruct *X,
+ unsigned long int *list_1_,
+ unsigned long int *list_1_buf_,
+ unsigned long int *list_2_1_,
+ unsigned long int *list_2_2_,
+ unsigned long int *list_jb_,
+ unsigned long int *list_2_1_Sz_,
+ unsigned long int *list_2_2_Sz_,
+ unsigned long int *list_Diagonal_,
+ double complex *v0_,
+ double complex *v1_,
+ double complex *v1buf_,
+ double complex *vg_,
+ double *alpha_,// -> common used
+ double *beta_,//  -> common used
+ double complex *vec_
+);
+*/
+
 void setmem_IntAll_Diagonal
 (
  struct DefineList *X

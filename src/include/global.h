@@ -48,15 +48,15 @@ long unsigned int *list_jb;
 
 long unsigned int *list_3;
 long unsigned int *HilbertNumToSz;
-long unsigned int *list_2_1_Sz;
-long unsigned int *list_2_2_Sz;
 
 /*[s] For Spectrum */
-long unsigned int *list_1_ex;
-long unsigned int *list_1buf_ex;
-long unsigned int *list_2_1_ex;
-long unsigned int *list_2_2_ex;
-long unsigned int *list_jb_ex;
+long unsigned int *list_1_org;
+long unsigned int *list_1buf_org;
+long unsigned int *list_2_1_org;
+long unsigned int *list_2_2_org;
+long unsigned int *list_jb_org;
+long unsigned int *list_2_1_Sz_org;
+long unsigned int *list_2_2_Sz_org;
 /*[e] For Spectrum */
 
 /*[s] For Lanczos */
