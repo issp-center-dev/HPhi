@@ -78,7 +78,7 @@ int CalcSpectrum(
 				 ) {
     char sdt[D_FileNameMax];
     char *defname;
-    unsigned long int i;
+    unsigned long int i, j;
     unsigned long int i_max = 0;
     int i_stp;
     int iFlagListModified = FALSE;
@@ -123,9 +123,6 @@ int CalcSpectrum(
 
     //Set Memory
     c_malloc1(v1Org, X->Bind.Check.idim_maxOrg+1);
-    lui_malloc1(list_1_org, X->Bind.Check.idim_maxOrg+1);
-    lui_malloc1(list_2_1_org, X->Bind.Check.idim_maxOrg+1);
-    lui_malloc1(list_2_2_org, X->Bind.Check.idim_maxOrg+1);
 
     //Make excited state
     if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
@@ -327,6 +324,7 @@ int MakeExcitedList(
         struct BindStruct *X,
         int *iFlgListModifed
 ) {
+    long int j;
     *iFlgListModifed = FALSE;
     //To Get Original space
     if (check(X) == MPIFALSE) {
@@ -344,21 +342,6 @@ int MakeExcitedList(
             case Hubbard:
             case Kondo:
                 *iFlgListModifed = TRUE;
-                if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
-                    X->Def.Ne = X->Def.NeMPI + 1;
-                    if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
-                        X->Def.Nup = X->Def.NupMPI + 1;
-                    } else {//down
-                        X->Def.Ndown = X->Def.NdownMPI + 1;
-                    }
-                } else {//ajt
-                    X->Def.Ne = X->Def.NeMPI - 1;
-                    if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
-                        X->Def.Nup = X->Def.NupMPI - 1;
-                    } else {//down
-                        X->Def.Ndown = X->Def.NdownMPI - 1;
-                    }
-                }
                 break;
             case Spin:
             case SpinGC:
@@ -375,35 +358,103 @@ int MakeExcitedList(
             case Spin:
                 if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
                     *iFlgListModifed = TRUE;
-                    if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
-                        if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
-                            X->Def.Nup = X->Def.NupMPI + 1;
-                            X->Def.Ndown = X->Def.NdownMPI - 1;
-                        } else {//down
-                            X->Def.Nup = X->Def.NupMPI - 1;
-                            X->Def.Ndown = X->Def.NdownMPI + 1;
-                        }
-                    } else {//aiscjt
-                        if (X->Def.PairExcitationOperator[0][1] == 0) {//up
-                            X->Def.Nup = X->Def.NupMPI - 1;
-                            X->Def.Ndown = X->Def.NdownMPI + 1;
-                        } else {//down
-                            X->Def.Nup = X->Def.NupMPI + 1;
-                            X->Def.Ndown = X->Def.NdownMPI - 1;
-                        }
-                    }
                 }
                 break;
-
         }
     } else {
         return FALSE;
     }
+
     if (*iFlgListModifed == TRUE) {
+        if(GetlistSize(X)==TRUE) {
+            lui_malloc1(list_1_org, X->Check.idim_max + 1);
+#ifdef MPI
+            lui_malloc1(list_1buf_org, X->Check.idim_maxMPI + 1);
+#endif // MPI
+            lui_malloc1(list_2_1_org, X->Large.SizeOflist_2_1);
+            lui_malloc1(list_2_2_org, X->Large.SizeOflist_2_2);
+            if(list_1_org==NULL
+               || list_2_1_org==NULL
+               || list_2_2_org==NULL
+                    )
+            {
+                return -1;
+            }
+            for(j =0; j<X->Large.SizeOflist_2_1; j++){
+                list_2_1_org[j]=0;
+            }
+            for(j =0; j<X->Large.SizeOflist_2_2; j++){
+                list_2_2_org[j]=0;
+            }
+
+        }
+
         if (sz(X, list_1_org, list_2_1_org, list_2_2_org) != 0) {
             return FALSE;
         }
 
+        if (X->Def.NSingleExcitationOperator > 0) {
+            switch (X->Def.iCalcModel) {
+                case HubbardGC:
+                    break;
+                case KondoGC:
+                case Hubbard:
+                case Kondo:
+                    if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
+                        X->Def.Ne = X->Def.NeMPI + 1;
+                        if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
+                            X->Def.Nup = X->Def.NupMPI + 1;
+                        } else {//down
+                            X->Def.Ndown = X->Def.NdownMPI + 1;
+                        }
+                    } else {//ajt
+                        X->Def.Ne = X->Def.NeMPI - 1;
+                        if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
+                            X->Def.Nup = X->Def.NupMPI - 1;
+                        } else {//down
+                            X->Def.Ndown = X->Def.NdownMPI - 1;
+                        }
+                    }
+                    break;
+                case Spin:
+                case SpinGC:
+                    return FALSE;
+            }
+        } else if (X->Def.NPairExcitationOperator > 0) {
+            switch (X->Def.iCalcModel) {
+                case HubbardGC:
+                case SpinGC:
+                    break;
+                case KondoGC:
+                case Hubbard:
+                case Kondo:
+                case Spin:
+                    if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
+                        if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
+                            if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
+                                X->Def.Nup = X->Def.NupMPI + 1;
+                                X->Def.Ndown = X->Def.NdownMPI - 1;
+                            } else {//down
+                                X->Def.Nup = X->Def.NupMPI - 1;
+                                X->Def.Ndown = X->Def.NdownMPI + 1;
+                            }
+                        } else {//aiscjt
+                            if (X->Def.PairExcitationOperator[0][1] == 0) {//up
+                                X->Def.Nup = X->Def.NupMPI - 1;
+                                X->Def.Ndown = X->Def.NdownMPI + 1;
+                            } else {//down
+                                X->Def.Nup = X->Def.NupMPI + 1;
+                                X->Def.Ndown = X->Def.NdownMPI - 1;
+                            }
+                        }
+                    }
+                    break;
+
+            }
+        } else {
+            return FALSE;
+        }
+        //Update Infomation
         if (check(X) == MPIFALSE) {
             FinalizeMPI();
             return FALSE;

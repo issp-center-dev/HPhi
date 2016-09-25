@@ -159,6 +159,9 @@ int sz
       if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
         exitMPI(-1);
       }
+      X->Large.irght=irght;
+      X->Large.ilft=ilft;
+        X->Large.ihfbit=ihfbit;
       //fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
      else{
