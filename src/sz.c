@@ -85,7 +85,7 @@ int sz
 
   // [s] for general spin
   long unsigned int *list_2_1_Sz;
-  long unsigned int *list_2_2_Sz;  
+  long unsigned int *list_2_2_Sz;
   if(X->Def.iFlgGeneralSpin==TRUE){
     lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
     lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
@@ -97,7 +97,10 @@ int sz
     }
   }
   // [e] for general spin
-  
+
+  long unsigned int *list_jb;
+    lui_malloc1(list_jb,X->Large.SizeOflistjb);
+
 //hacker
   int hacker;
   long unsigned int tmp_i,tmp_j,tmp_pow,max_tmp_i;
@@ -653,6 +656,12 @@ int sz
   i_free2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
   }
   fprintf(stdoutMPI, "%s", cProEndCalcSz);
+
+    free(list_jb);
+    if(X->Def.iFlgGeneralSpin==TRUE){
+        free(list_2_1_Sz);
+        free(list_2_2_Sz);
+    }
   return 0;    
 }
 

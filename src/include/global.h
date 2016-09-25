@@ -33,6 +33,11 @@
 double complex *v0; 
 double complex *v1;
 double complex *v1buf;
+
+//For calcSpectrum
+//[TODO]: This array can be omitted
+double complex *v1Org;
+
 //test
 double complex *vg;
 
@@ -44,7 +49,7 @@ long unsigned int *list_1;
 long unsigned int *list_1buf;
 long unsigned int *list_2_1;
 long unsigned int *list_2_2;
-long unsigned int *list_jb;
+//long unsigned int *list_jb;
 
 long unsigned int *list_3;
 long unsigned int *HilbertNumToSz;

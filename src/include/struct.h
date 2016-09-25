@@ -203,6 +203,7 @@ struct CheckList{
   unsigned long int  idim_max; /**< */
   unsigned long int  idim_maxMPI; /**< */
   unsigned long int idim_maxOrg; //For calcspectrum
+  unsigned long int  idim_maxMPIOrg; /**< */
   unsigned long int     sdim;    /**< */
   double   max_mem;  /**< */
 
@@ -213,6 +214,10 @@ struct LargeList{
   int itr;  /**< */
   long int iv;
   long int  i_max;
+  long int SizeOflist_2_1;
+  long int SizeOflist_2_2;
+  long int SizeOflistjb;
+
   double complex tmp_trans;
   double  complex  tmp_J;
   

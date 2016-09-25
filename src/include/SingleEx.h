@@ -83,10 +83,11 @@ double complex X_Cis_MPI(
         double complex tmp_trans,
         double complex *tmp_v0,
         double complex *tmp_v1,
-        unsigned long int idim_max,
         double complex *tmp_v1buf,
+        unsigned long int idim_max,
         long unsigned int *Tpow,
         long unsigned int *list_1_org,
+        long unsigned int *list_1buf_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
         const long unsigned int _irght,
@@ -100,9 +101,11 @@ double complex X_Ajt_MPI(
         double complex tmp_trans,
         double complex *tmp_v0,
         double complex *tmp_v1,
+        double complex *tmp_v1buf,
         unsigned long int idim_max,
         long unsigned int *Tpow,
         long unsigned int *list_1_org,
+        long unsigned int *list_1buf_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
         const long unsigned int _irght,
@@ -128,4 +131,4 @@ int GetSingleExcitedState
  struct BindStruct *X,
  double complex *tmp_v0, /**< [out] Result v0 = H v1*/
   double complex *tmp_v1 /**< [in] v0 = H v1*/
- );
+);

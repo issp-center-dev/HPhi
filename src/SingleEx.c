@@ -1,6 +1,7 @@
 #include "bitcalc.h"
 #include "SingleEx.h"
 #include "wrapperMPI.h"
+#include "mfmemory.h"
 #include "mltplyMPI.h"
 #ifdef MPI
 #include "mpi.h"
@@ -139,7 +140,7 @@ double complex X_GC_Cis_MPI(
   double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
   double complex *tmp_v1 /**< [in] v0 += H v1*/,
   unsigned long int idim_max,
-  double complex *v1buf,
+  double complex *tmp_v1buf,
   long unsigned int *Tpow
   ) {
 #ifdef MPI
@@ -167,7 +168,7 @@ double complex X_GC_Cis_MPI(
     if (ierr != 0) exitMPI(-1);
 
     ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
     if (state2 == mask2) {
@@ -180,9 +181,9 @@ double complex X_GC_Cis_MPI(
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
-  firstprivate(idim_max_buf, trans) shared(v1buf, tmp_v1, tmp_v0)
+  firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
         for (j = 0; j < idim_max_buf; j++) {
-                dmv = trans * v1buf[j + 1];
+                dmv = trans * tmp_v1buf[j + 1];
                 tmp_v0[j + 1] += dmv;
                 dam_pr += conj(tmp_v1[j + 1]) * dmv;
         }
@@ -207,7 +208,7 @@ double complex X_GC_Ajt_MPI(
   double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
   double complex *tmp_v1 /**< [in] v0 += H v1*/,
   unsigned long int idim_max,
-  double complex *v1buf,
+  double complex *tmp_v1buf,
   long unsigned int *Tpow
   ) {
 #ifdef MPI
@@ -235,7 +236,7 @@ double complex X_GC_Ajt_MPI(
     if (ierr != 0) exitMPI(-1);
 
     ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
     if (state2 == 0) {
@@ -248,9 +249,9 @@ double complex X_GC_Ajt_MPI(
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
-  firstprivate(idim_max_buf, trans) shared(v1buf, tmp_v1, tmp_v0)
+  firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
         for (j = 0; j < idim_max_buf; j++) {
-                dmv = trans * v1buf[j + 1];
+                dmv = trans * tmp_v1buf[j + 1];
                 tmp_v0[j + 1] += dmv;
                 dam_pr += conj(tmp_v1[j + 1]) * dmv;
         }
@@ -310,10 +311,11 @@ double complex X_Cis_MPI(
         double complex tmp_trans,
         double complex *tmp_v0,
         double complex *tmp_v1,
-        unsigned long int idim_max,
         double complex *tmp_v1buf,
+        unsigned long int idim_max,
         long unsigned int *Tpow,
         long unsigned int *list_1_org,
+        long unsigned int *list_1buf_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
         const long unsigned int _irght,
@@ -344,11 +346,11 @@ double complex X_Cis_MPI(
     if (ierr != 0) exitMPI(-1);
 
     ierr = MPI_Sendrecv(list_1_org, idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                        list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
     ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
     if (state2 == mask2) {
@@ -361,11 +363,11 @@ double complex X_Cis_MPI(
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
-  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(v1buf, tmp_v1, tmp_v0, list_1buf)
+  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf)
     for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
         GetOffComp(list_2_1_target, list_2_2_target, list_1buf[j],
                    _irght, _ilft, _ihfbit, &ioff);
-        dmv = trans * v1buf[j];
+        dmv = trans * tmp_v1buf[j];
         tmp_v0[ioff] += dmv;
         dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
@@ -380,9 +382,11 @@ double complex X_Ajt_MPI(
         double complex tmp_trans,
         double complex *tmp_v0,
         double complex *tmp_v1,
+        double complex *tmp_v1buf,
         unsigned long int idim_max,
         long unsigned int *Tpow,
         long unsigned int *list_1_org,
+        long unsigned int *list_1buf_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
         const long unsigned int _irght,
@@ -413,11 +417,11 @@ double complex X_Ajt_MPI(
     if (ierr != 0) exitMPI(-1);
 
     ierr = MPI_Sendrecv(list_1_org, idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                        list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
     ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
     if (state2 == 0) {
@@ -430,11 +434,11 @@ double complex X_Ajt_MPI(
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
-  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(v1buf, tmp_v1, tmp_v0, list_1buf)
+  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf)
     for (j = 1; j <= idim_max_buf; j++) {
         GetOffComp(list_2_1_target, list_2_2_target, list_1buf[j],
                    _irght, _ilft, _ihfbit, &ioff);
-        dmv = trans * v1buf[j];
+        dmv = trans * tmp_v1buf[j];
         tmp_v0[ioff] += dmv;
         dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
@@ -492,22 +496,25 @@ int GetSingleExcitedState
  struct BindStruct *X,
  double complex *tmp_v0, /**< [out] Result v0 = H v1*/
   double complex *tmp_v1 /**< [in] v0 = H v1*/
- ){
+){
 
   long int idim_max;
   long unsigned int i,j;
   long unsigned int org_isite,ispin,itype;
   long unsigned int is1_spin;
-    int isgn=1;
+  int isgn=1;
   double complex tmpphi;
   long unsigned int tmp_off=0;
-
   idim_max = X->Check.idim_max;
   //tmp_v0
-  
   if(X->Def.NSingleExcitationOperator == 0){
     return TRUE;
   }
+  double complex *tmp_v1bufOrg;
+  //set size
+#ifdef MPI
+    c_malloc1(v1buf, X->Check.idim_maxMPI + 1);
+#endif // MPI
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
@@ -525,7 +532,7 @@ int GetSingleExcitedState
       tmpphi    = X->Def.ParaSingleExcitationOperator[i];
       if(itype == 1){
         if( org_isite >= X->Def.Nsite){
-          X_GC_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
+          X_GC_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,tmp_v1bufOrg,X->Def.Tpow);
         }
         else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X)	\
@@ -538,7 +545,7 @@ int GetSingleExcitedState
       }
       else if(itype == 0){
         if( org_isite >= X->Def.Nsite){
-          X_GC_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow);
+          X_GC_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,tmp_v1bufOrg,X->Def.Tpow);
         }
         else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X)	\
@@ -564,28 +571,28 @@ int GetSingleExcitedState
           tmpphi    = X->Def.ParaSingleExcitationOperator[i];
           if(itype == 1){
               if( org_isite >= X->Def.Nsite){
-//                  X_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,v1buf,X->Def.Tpow, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+                 X_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1, tmp_v1bufOrg ,idim_max,X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
               }
               else{
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org)	\
   firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2) private(j, is1_spin, isgn,tmp_off)
                   for(j=1;j<=idim_max;j++){//idim_max -> original dimension
                       is1_spin = X->Def.Tpow[2*org_isite+ispin];
-//                      isgn=X_Cis(j, is1_spin, &tmp_off, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+                      isgn=X_Cis(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
                       tmp_v0[tmp_off] += tmp_v1[j]*isgn*tmpphi;
                   }
               }
           }
           else if(itype == 0){
               if( org_isite >= X->Def.Nsite){
-//                  X_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1,idim_max,X->Def.Tpow, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+                  X_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1, tmp_v1bufOrg, idim_max,X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
               }
               else{
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org)	\
   firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2) private(j, is1_spin, isgn, tmp_off)
                   for(j=1;j<=idim_max;j++){
                       is1_spin = X->Def.Tpow[2*org_isite+ispin];
-//                      isgn=X_Ajt(j, is1_spin, &tmp_off, list_1, list_2_1_ex, list_2_2_ex, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+                      isgn=X_Ajt(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
                       tmp_v0[tmp_off] += tmp_v1[j]*isgn*tmpphi;
                   }
               }

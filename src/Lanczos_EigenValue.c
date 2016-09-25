@@ -320,7 +320,8 @@ int Lanczos_EigenValue(struct BindStruct *X)
             d_malloc1(tmp_E,stp+1);
             vec12(alpha, beta, stp, tmp_E, X);
             X->Large.itr = stp;
-            X->Phys.Target_energy = E_target;
+//            X->Phys.Target_energy = E_target;
+            X->Phys.Target_energy = tmp_E[X->Def.k_exct];
             iconv = 0;
             d_free1(tmp_E,stp+1);
             break;

@@ -121,6 +121,12 @@ int CalcSpectrum(
         return FALSE;
     }
 
+    //Set Memory
+    c_malloc1(v1Org, X->Bind.Check.idim_maxOrg+1);
+    lui_malloc1(list_1_org, X->Bind.Check.idim_maxOrg+1);
+    lui_malloc1(list_2_1_org, X->Bind.Check.idim_maxOrg+1);
+    lui_malloc1(list_2_2_org, X->Bind.Check.idim_maxOrg+1);
+
     //Make excited state
     if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
         X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
@@ -145,10 +151,10 @@ int CalcSpectrum(
             return -1;
         }
 
-        fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+        fread(v1Org, sizeof(complex double), i_max + 1, fp);
         fclose(fp);
 
-        for (i = 1; i <= i_max; i++) {
+        for (i = 1; i <= X->Bind.Check.idim_max; i++) {
             v0[i] = 0;
         }
         fprintf(stdoutMPI, "  End:   An Inputcector is inputted in CalcSpectrum.\n\n");
@@ -157,7 +163,7 @@ int CalcSpectrum(
         fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
 
         //mltply Operator
-        GetExcitedState(&(X->Bind), v0, v1);
+        GetExcitedState(&(X->Bind), v0, v1Org);
 
         //calculate norm
         dnorm = NormMPI_dc(i_max, v0);
@@ -176,7 +182,10 @@ int CalcSpectrum(
 
     //Reset list_1, list_2_1, list_2_2
     if (iFlagListModified == TRUE) {
-        //ReSetList(&(X->Bind));
+        free(v1Org);
+        free(list_1_org);
+        free(list_2_1_org);
+        free(list_2_2_org);
     }
 
     //calculate Diagonal term
@@ -231,12 +240,13 @@ int GetExcitedState
  struct BindStruct *X,
  double complex *tmp_v0,/**< [out] Result v0 = H v1*/
  double complex *tmp_v1 /**< [in] v0 = H v1*/
- )
+)
 {
    if(X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0){
     fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
     return FALSE;
     }
+
 
     if(X->Def.NSingleExcitationOperator > 0){
       if(!GetSingleExcitedState(X,tmp_v0, tmp_v1)==TRUE){
@@ -324,6 +334,7 @@ int MakeExcitedList(
         return -1;
     }
     X->Check.idim_maxOrg = X->Check.idim_max;
+    X->Check.idim_maxMPIOrg = X->Check.idim_maxMPI;
 
     if (X->Def.NSingleExcitationOperator > 0) {
         switch (X->Def.iCalcModel) {
@@ -389,6 +400,10 @@ int MakeExcitedList(
         return FALSE;
     }
     if (*iFlgListModifed == TRUE) {
+        if (sz(X, list_1_org, list_2_1_org, list_2_2_org) != 0) {
+            return FALSE;
+        }
+
         if (check(X) == MPIFALSE) {
             FinalizeMPI();
             return FALSE;

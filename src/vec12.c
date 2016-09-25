@@ -71,7 +71,10 @@ void vec12(double alpha[],double beta[],unsigned int ndim,
     fprintf(stdoutMPI, "  Lanczos EigenValue in vec12 = %.10lf \n ",tmpr[0]);
   }
  
-  if(nvec<=ndim){ 
+  if(nvec<=ndim){
+    if(nvec < X->Def.LanczosTarget){
+      nvec=X->Def.LanczosTarget;
+    }
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
     for(k=1;k<=nvec;k++){
       tmp_E[k]=tmpr[k-1];
