@@ -24,6 +24,7 @@
 #define M_Ham 2
 #define M_CORR 3
 #define M_TOTALS 4
+#define M_CALCSPEC 4
 
 int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 

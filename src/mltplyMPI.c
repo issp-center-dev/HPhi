@@ -96,7 +96,7 @@ double complex X_GC_child_general_hopp_MPIdouble(
     }
     else if (state1 == mask1 && state2 == 0) {
         trans = -(double) Fsgn * conj(tmp_trans);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
             trans = 0;
         }
     }
@@ -113,7 +113,7 @@ double complex X_GC_child_general_hopp_MPIdouble(
         exitMPI(-1);
     }
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
             dmv = trans * v1buf[j];
@@ -215,7 +215,7 @@ double complex X_GC_child_general_hopp_MPIsingle(
     else if (state2 == 0) {
         state1check = mask1;
         trans = -(double) Fsgn * conj(tmp_trans);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
             trans = 0;
         }
 
@@ -225,7 +225,7 @@ double complex X_GC_child_general_hopp_MPIsingle(
     bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 0; j < idim_max_buf; j++) {
@@ -332,7 +332,7 @@ double complex X_child_general_hopp_MPIdouble(
     }
     else if (state1 == mask1 && state2 == 0) {
         trans = -(double) Fsgn * conj(tmp_trans);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
             trans = 0;
         }
     }
@@ -349,7 +349,7 @@ double complex X_child_general_hopp_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
@@ -457,7 +457,7 @@ double complex X_child_general_hopp_MPIsingle(
     else if (state2 == 0) {
         state1check = mask1;
         trans = -(double) Fsgn * conj(tmp_trans);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
             trans = 0;
         }
     }
@@ -466,7 +466,7 @@ double complex X_child_general_hopp_MPIsingle(
     bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff, jreal, state1) \
   firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
@@ -573,7 +573,7 @@ double complex X_child_general_int_spin_MPIdouble(
     }
     else if (state1 == org_ispin1 && state2 == org_ispin3) {
         Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
             Jint = 0;
         }
     }
@@ -590,7 +590,7 @@ double complex X_child_general_int_spin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
   firstprivate(idim_max_buf, Jint, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
@@ -734,7 +734,7 @@ double complex X_child_general_int_spin_MPIsingle(
     else if (state2 == org_ispin3) {
         state1check = (unsigned long int) org_ispin1;
         Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
             Jint = 0;
         }
     }
@@ -755,7 +755,7 @@ double complex X_child_general_int_spin_MPIsingle(
     mask1 = X->Def.Tpow[org_isite1];
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff, jreal, state1) \
   firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
@@ -877,7 +877,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
     }
     else if (state1 == org_ispin1 && state2 == org_ispin3) {
         Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
             Jint = 0;
         }
     }
@@ -893,7 +893,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
@@ -978,7 +978,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
     }
     else if (X_SpinGC_CisAis(origin + 1, X, mask1, org_ispin1) == TRUE && state2 == org_ispin3) {
         Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR) Jint = 0;
+        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) Jint = 0;
     }
     else {
         return 0.0;
@@ -992,7 +992,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
@@ -1078,7 +1078,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
         num1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
         if (num1 != 0) {
             Jint = conj(tmp_J);
-            if (X->Large.mode == M_CORR) {
+            if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
                 Jint = 0;
             }
         }
@@ -1095,7 +1095,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
@@ -1144,7 +1144,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
   num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask2, org_ispin3);
   
   dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY){
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
     firstprivate(tmp_J, X, num1, num2) shared(tmp_v1, tmp_v0)
         for (j = 1; j <= X->Check.idim_max; j++) {
@@ -1192,7 +1192,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
     num2 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, num1) \
   firstprivate(Jint, X, num2, mask1, org_ispin1) shared(tmp_v1, tmp_v0)
         for (j = 1; j <= X->Check.idim_max; j++) {
@@ -1295,7 +1295,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
     else if (state2 == org_ispin3) {
         state1check = (unsigned long int) org_ispin1;
         Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
             Jint = 0;
         }
     }
@@ -1313,7 +1313,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
     mask1 = X->Def.Tpow[org_isite1];
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
     firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 0; j < idim_max_buf; j++) {
@@ -1390,7 +1390,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle( int org_isite1, int org_i
     else if (state2 == org_ispin3) {
         state1check = (unsigned long int) org_ispin1;
         Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR) {
+        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
             Jint = 0;
         }
     }
@@ -1408,7 +1408,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle( int org_isite1, int org_i
     mask1 = X->Def.Tpow[org_isite1];
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1) \
     firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 0; j < idim_max_buf; j++) {
@@ -1487,7 +1487,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle( int org_isite1, int org_i
     mask1 = (int) X->Def.Tpow[org_isite1];
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
   firstprivate(Jint, X, state1check, mask1) shared( tmp_v1, tmp_v0)
         for (j = 0; j < X->Check.idim_max; j++) {
@@ -1504,7 +1504,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle( int org_isite1, int org_i
             dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
         }
     }
-    else if (X->Large.mode == M_CORR) {
+    else if (X->Large.mode == M_CORR ) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
   firstprivate(Jint, X, state1check, mask1) shared( tmp_v1, tmp_v0)
         for (j = 0; j < X->Check.idim_max; j++) {
@@ -1655,7 +1655,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
             GetOffCompGeneralSpin((unsigned long int) myrank, org_isite3 + 1, org_ispin3, org_ispin4, &off,
                                   X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
             tmp_V = conj(tmp_J);
-            if (X->Large.mode == M_CORR) tmp_V = 0.0;
+            if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
         }
         else {
             return 0.0;
@@ -1669,7 +1669,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = v1buf[j] * tmp_V;
@@ -1718,7 +1718,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
                                    X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
         if (BitCheckGeneral(off, org_isite3 + 1, org_ispin3, X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
             tmp_V = conj(tmp_J);
-            if (X->Large.mode == M_CORR) tmp_V = 0.0;
+            if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
         }
         else return 0.0;
     }
@@ -1732,7 +1732,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel  for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = v1buf[j] * tmp_V;
@@ -1799,7 +1799,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
             if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin2, org_ispin1, &off, X->Def.SiteToBit,
                                       X->Def.Tpow) == TRUE) {
                 tmp_V = conj(tmp_J);
-                if (X->Large.mode == M_CORR) tmp_V = 0.0;
+                if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
             }
             else return 0.0;
         }
@@ -1814,7 +1814,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = v1buf[j] * tmp_V;
@@ -1861,7 +1861,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
     else return 0.0;
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = tmp_v1[j] * tmp_V;
@@ -1903,7 +1903,7 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
                                    org_isite1 + 1, org_ispin2, org_ispin1, &off,
                                    X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
         tmp_V = conj(tmp_trans);
-        if (X->Large.mode == M_CORR) tmp_V = 0.0;
+        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
     }
     else return 0.0;
 
@@ -1915,7 +1915,7 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
     if (ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = v1buf[j] * tmp_V;
@@ -1955,7 +1955,7 @@ double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
     else return 0.0;
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = tmp_v1[j] * tmp_V;
@@ -1994,7 +1994,7 @@ double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
     else return 0.0;
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = tmp_v1[j] * tmp_V;
@@ -2090,7 +2090,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
 				 X->Def.SiteToBit, X->Def.Tpow) == TRUE)
     {
       tmp_V = conj(tmp_J);
-      if(X->Large.mode == M_CORR) tmp_V=0.0;
+      if(X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) tmp_V=0.0;
       isite = org_isite1 + 1;
       IniSpin = org_ispin1;
     }
@@ -2104,7 +2104,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
     if(ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY){
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC){
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, isite, IniSpin) private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
         for (j = 1; j <= X->Check.idim_max; j++) {
             num1 = BitCheckGeneral(j-1, isite, IniSpin, X->Def.SiteToBit, X->Def.Tpow);
@@ -2159,7 +2159,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
   else return 0.0;
 
   dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY){
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC){
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, num1, off) shared (tmp_v0, tmp_v1, v1buf)
         for (j = 1; j <= X->Check.idim_max; j++) {
             if (GetOffCompGeneralSpin(j - 1, isite, IniSpin, FinSpin, &off,
@@ -2219,7 +2219,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
 				   X->Def.SiteToBit, X->Def.Tpow) == TRUE)
     {
       tmp_V = conj(tmp_J);
-      if(X->Large.mode == M_CORR) tmp_V=0.0;
+      if(X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) tmp_V=0.0;
       isite = org_isite1 + 1;
       IniSpin = org_ispin1;
       FinSpin = org_ispin2;
@@ -2234,7 +2234,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     if(ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY){
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC){
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp_v0, tmp_v1, v1buf)
         for (j = 1; j <= X->Check.idim_max; j++) {
 
@@ -2286,7 +2286,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   else return 0.0;
   
   dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp_v0, tmp_v1)
         for (j = 1; j <= X->Check.idim_max; j++) {
             num1 = BitCheckGeneral(j - 1, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
@@ -2373,7 +2373,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 	if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin2, org_ispin1, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
 	  {
 	    tmp_V = conj(tmp_J);
-	    if(X->Large.mode == M_CORR){
+	    if(X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC){
 	      tmp_V=0.0;
 	    }
 	  }
@@ -2397,7 +2397,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
     if(ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, idim_max_buf) private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
         for (j = 1; j <= idim_max_buf; j++) {
             ConvertToList1GeneralSpin(list_1buf[j], X->Check.sdim, &off);
@@ -2460,7 +2460,7 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
     }
 
     dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) shared (tmp_v0, tmp_v1)
         for (j = 1; j <= X->Check.idim_max; j++) {
             dmv = tmp_v1[j] * tmp_V;
@@ -2502,7 +2502,7 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
      else return 0.0;
 
      dam_pr = 0.0;
-     if (X->Large.mode == M_MLTPLY) {
+     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp_v0, tmp_v1, list_1)
          for (j = 1; j <= X->Check.idim_max; j++) {
              num1 = BitCheckGeneral(list_1[j], org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
@@ -2603,7 +2603,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     if(ierr != 0) exitMPI(-1);
 
   dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, idim_max_buf, IniSpin, FinSpin, isite) private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
         for (j = 1; j <= idim_max_buf; j++) {
 
@@ -2657,20 +2657,24 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   mask1 = (int)X->Def.Tpow[org_isite1];
   origin = myrank ^ mask1;
   state1 = (origin & mask1)/mask1;
-  
+
+  //fprintf(stdout, "Debug: myrank=%d, origin=%d, state1=%d\n", myrank, origin, state1);
+
   if(state1 ==  org_ispin2){
     trans = tmp_trans;
   }
   else if(state1 == org_ispin1) {
     trans = conj(tmp_trans);
-    if(X->Large.mode == M_CORR){
+    if(X->Large.mode == M_CORR|| X->Large.mode ==M_CALCSPEC){
       trans = 0.0;
     }
   }
   else{
     return 0.0;
   }
-  
+
+  fprintf(stdout, "Debug: myrank=%d, origin=%d, trans=%lf\n", myrank, origin, trans);
+
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
 		      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if(ierr != 0) exitMPI(-1);
@@ -2679,7 +2683,7 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
     if(ierr != 0) exitMPI(-1);
 
     dam_pr = 0.0;
-    if(X->Large.mode == M_MLTPLY){
+    if(X->Large.mode == M_MLTPLY|| X->Large.mode ==M_CALCSPEC){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= X->Check.idim_max ; j++) {
             dmv = trans * v1buf[j];
@@ -2726,7 +2730,7 @@ double complex X_GC_child_CisAis_spin_MPIdouble
 
   dam_pr =0.0;
   if(ibit1 != 0) {
-      if (X->Large.mode == M_MLTPLY) { // for multply
+      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(tmp_v1, tmp_v0) \
   firstprivate(X, tmp_trans) private(j)
           for (j = 1; j <= X->Check.idim_max; j++) {
@@ -2774,7 +2778,7 @@ double complex X_GC_child_AisCis_spin_MPIdouble
 
     dam_pr =0.0;
     if(ibit1 == 0) {
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(tmp_v1, tmp_v0) \
   firstprivate(X, tmp_trans) private(j)
             for (j = 1; j <= X->Check.idim_max; j++) {
@@ -3032,7 +3036,7 @@ double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
     return 0.0;
   }
   if(org_isite1+1 > X->Def.Nsite && org_isite3+1 > X->Def.Nsite) {
-      if (X->Large.mode == M_MLTPLY) {
+      if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
   firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
           for (j = 1; j <= i_max; j++) {
@@ -3057,7 +3061,7 @@ double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
       else {
           tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
       }
-      if (X->Large.mode == M_MLTPLY) { // for multply
+      if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) { // for multply
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
   firstprivate(i_max, tmp_V, X, tmp_ispin1) private(dmv, j, tmp_off)
           for (j = 1; j <= i_max; j++) {
@@ -3137,7 +3141,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
             Asum = tmp_isite3 + tmp_isite4;
             if (tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3 * 2;
             else Adiff = tmp_isite3 - tmp_isite4 * 2;
-            if (X->Large.mode == M_CORR) {
+            if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
                 tmp_V = 0;
             }
         }
@@ -3178,7 +3182,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
             tmp_V *= Fsgn;
 
             if (org_isite3 + 1 > X->Def.Nsite) {
-                if (X->Large.mode == M_MLTPLY) {
+                if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0)
                     for (j = 1; j <= idim_max_buf; j++) {
                         dmv = tmp_V * v1buf[j];
@@ -3197,7 +3201,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
                 }
             }
             else { //org_isite3 <= X->Def.Nsite
-                if (X->Large.mode == M_MLTPLY) {
+                if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off) firstprivate(idim_max_buf, tmp_V, X, isite3) shared(v1buf, tmp_v1, tmp_v0)
                     for (j = 1; j <= idim_max_buf; j++) {
                         if (CheckBit_Ajt(isite3, j - 1, &tmp_off) == TRUE) {
@@ -3220,7 +3224,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
         }
         else {
             org_rankbit = X->Def.OrgTpow[2 * X->Def.Nsite] * origin;
-            if (X->Large.mode == M_MLTPLY) {
+            if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0)
                 for (j = 1; j <= idim_max_buf; j++) {
@@ -3338,7 +3342,7 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
             tmp_isite2 = X->Def.OrgTpow[2 * org_isite3 + org_ispin3];
             tmp_isite1 = X->Def.OrgTpow[2 * org_isite4 + org_ispin4];
             iFlgHermite = TRUE;
-            if (X->Large.mode == M_CORR) {
+            if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
                 tmp_V = 0;
             }
         }
@@ -3419,7 +3423,7 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
                 Fsgn *= X_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
                 tmp_V *= Fsgn;
             }
-            if (X->Large.mode == M_MLTPLY) {
+            if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0)
                 for (j = 1; j <= idim_max_buf; j++) {
@@ -3438,7 +3442,7 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
         }
         else {
             org_rankbit = X->Def.OrgTpow[2 * X->Def.Nsite] * origin;
-            if (X->Large.mode == M_MLTPLY) {
+            if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0)
                 for (j = 1; j <= idim_max_buf; j++) {
 
@@ -3488,7 +3492,7 @@ double complex X_GC_child_CisAis_Hubbard_MPI
     if (org_isite1 + 1 > X->Def.Nsite) {
         if (CheckBit_Ajt(isite1, (unsigned long int) myrank, &tmp_off) == FALSE) return 0.0;
 
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) { // for multply
 
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
   firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
@@ -3508,7 +3512,7 @@ double complex X_GC_child_CisAis_Hubbard_MPI
         }
     }
     else {
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) { // for multply
 
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
   firstprivate(i_max, tmp_V, X, isite1) private(dmv, j, tmp_off)
@@ -3589,7 +3593,7 @@ double complex X_child_CisAisCjtAjt_Hubbard_MPI
         return 0.0;
     }
     if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite) {
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) { // for multply
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
   firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
             for (j = 1; j <= i_max; j++) {
@@ -3616,7 +3620,7 @@ double complex X_child_CisAisCjtAjt_Hubbard_MPI
             tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
         }
 
-        if (X->Large.mode == M_MLTPLY) {
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1, list_1) \
   firstprivate(i_max, tmp_V, X, tmp_ispin1) private(dmv, j, tmp_off)
             for (j = 1; j <= i_max; j++) {
@@ -3698,7 +3702,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
             tmp_isite2 = X->Def.OrgTpow[2 * org_isite3 + org_ispin3];
             tmp_isite1 = X->Def.OrgTpow[2 * org_isite4 + org_ispin4];
             iFlgHermite = TRUE;
-            if (X->Large.mode == M_CORR) {
+            if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
                 tmp_V = 0;
             }
         }
@@ -3783,7 +3787,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
                 tmp_V *= Fsgn;
             }
             dam_pr = 0;
-            if (X->Large.mode == M_MLTPLY) {
+            if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0, list_2_1, list_2_2, list_1buf)
                 for (j = 1; j <= idim_max_buf; j++) {
                     if (GetOffComp(list_2_1, list_2_2, list_1buf[j],
@@ -3810,7 +3814,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
 
             org_rankbit = X->Def.OrgTpow[2 * X->Def.Nsite] * origin;
             dam_pr = 0;
-            if (X->Large.mode == M_MLTPLY) {
+            if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn, ioff) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4) shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
                 for (j = 1; j <= idim_max_buf; j++) {
@@ -3904,7 +3908,7 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI
             Asum = tmp_isite3 + tmp_isite4;
             if (tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3 * 2;
             else Adiff = tmp_isite3 - tmp_isite4 * 2;
-            if (X->Large.mode == M_CORR) {
+            if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
                 tmp_V = 0;
             }
         }
@@ -3947,7 +3951,7 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI
             tmp_V *= Fsgn;
 
             if (org_isite3 + 1 > X->Def.Nsite) {
-                if (X->Large.mode == M_MLTPLY) {
+                if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, ioff, dmv) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
                     for (j = 1; j <= idim_max_buf; j++) {
                         dmv = tmp_V * v1buf[j];
@@ -3968,7 +3972,7 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI
                 }
             }
             else { //org_isite3 <= X->Def.Nsite
-                if (X->Large.mode == M_MLTPLY) {
+                if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, ioff, dmv, tmp_off) firstprivate(idim_max_buf, tmp_V, X, isite3) shared(v1buf, tmp_v1, tmp_v0,list_1buf, list_2_1, list_2_2)
                     for (j = 1; j <= idim_max_buf; j++) {
                         if (CheckBit_Ajt(isite3, list_1buf[j], &tmp_off) == TRUE) {
@@ -3996,7 +4000,7 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI
         }
         else {
             org_rankbit = X->Def.OrgTpow[2 * X->Def.Nsite] * origin;
-            if (X->Large.mode == M_MLTPLY) {
+            if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
                 for (j = 1; j <= idim_max_buf; j++) {
                     /*
@@ -4084,7 +4088,7 @@ double complex X_child_CisAis_Hubbard_MPI
         if (CheckBit_Ajt(isite1, (unsigned long int) myrank, &tmp_off) == FALSE) {
             return 0.0;
         }
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) { // for multply
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1) \
   firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
             for (j = 1; j <= i_max; j++) {
@@ -4103,7 +4107,7 @@ double complex X_child_CisAis_Hubbard_MPI
         }
     }
     else {
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) { // for multply
 #pragma omp parallel for reduction(+:dam_pr) default(none) shared(tmp_v0, tmp_v1, list_1) \
   firstprivate(i_max, tmp_V, X, isite1) private(dmv, j, tmp_off)
             for (j = 1; j <= i_max; j++) {

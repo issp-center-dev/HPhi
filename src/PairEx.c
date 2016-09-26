@@ -34,7 +34,8 @@ int GetPairExcitedState
   X->Large.irght    = irght;
   X->Large.ilft     = ilft;
   X->Large.ihfbit   = ihfbit;
-  X->Large.mode     = M_MLTPLY;
+  X->Large.mode=M_CALCSPEC;
+//    X->Large.mode     = M_MLTPLY;
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
@@ -316,6 +317,7 @@ int GetPairExcitedState
                 }
             }
             else{  // transverse magnetic field
+              fprintf(stdoutMPI, "Debug: test, org_isite1=%d, org_sigma1=%d, orgsima_2=%d\n", org_isite1, org_sigma1, org_sigma2);
               X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1);
             }
           }else{
@@ -337,11 +339,12 @@ int GetPairExcitedState
                   }
               }else{
               // transverse magnetic field
+                  fprintf(stdoutMPI, "Debug: isite1=%d, org_sigma2=%d\n", isite1, org_sigma2);
 #pragma omp parallel for default(none) private(j, tmp_sgn, tmp_off) firstprivate(i_max, isite1, org_sigma2, X, tmp_trans) shared(tmp_v0, tmp_v1)
               for(j=1;j<=i_max;j++){
                 tmp_sgn  =  X_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);
                 if(tmp_sgn !=0){
-                  tmp_v0[j]+= tmp_sgn*tmp_v1[j]*tmp_trans;
+                  tmp_v0[tmp_off+1]+= tmp_sgn*tmp_v1[j]*tmp_trans;
                 }
               }
             }
@@ -398,7 +401,7 @@ int GetPairExcitedState
               for(j=1;j<=i_max;j++){
                 num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
                 if(num1 !=0){
-                  tmp_v0[j]  +=  tmp_trans*tmp_v1[j]*num1;
+                  tmp_v0[tmp_off+1]  +=  tmp_trans*tmp_v1[j]*num1;
                 }
               }
             }

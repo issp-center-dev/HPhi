@@ -150,6 +150,11 @@ int CalcSpectrum(
 
         fread(v1Org, sizeof(complex double), i_max + 1, fp);
         fclose(fp);
+/*
+        for (i = 1; i <= i_max; i++) {
+            fprintf(stdout, "DebugVecOrg: %ld, %lf, %lf\n", i+myrank*X->Bind.Def.Tpow[X->Bind.Def.Nsite-1]*2,creal(v1Org[i]), cimag(v1Org[i]));
+        }
+*/
 
         for (i = 1; i <= X->Bind.Check.idim_max; i++) {
             v0[i] = 0;
@@ -173,6 +178,12 @@ int CalcSpectrum(
         for (i = 1; i <= i_max; i++) {
             v1[i] = v0[i] / dnorm;
         }
+
+
+        for (i = 1; i <= i_max; i++) {
+            //fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", i+myrank*X->Bind.Def.Tpow[X->Bind.Def.Nsite-1]*2,creal(v0[i]), cimag(v0[i]));
+        }
+
         fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
     }
@@ -186,9 +197,9 @@ int CalcSpectrum(
     }
 
     //calculate Diagonal term
-    diagonalcalc(&(X->Bind));
+  diagonalcalc(&(X->Bind));
 
-    int iret=TRUE;
+  int iret=TRUE;
   fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   switch (X->Bind.Def.iCalcType) {
@@ -331,6 +342,7 @@ int MakeExcitedList(
         FinalizeMPI();
         return -1;
     }
+
     X->Check.idim_maxOrg = X->Check.idim_max;
     X->Check.idim_maxMPIOrg = X->Check.idim_maxMPI;
 

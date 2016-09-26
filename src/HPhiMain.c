@@ -131,7 +131,6 @@ int main(int argc, char* argv[]){
   }	  
   fprintf(stdoutMPI, "%s", cProFinishDefFiles);
   
-
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind, &X.Bind.Boost);
   /*-----------------------------------------------------*/
