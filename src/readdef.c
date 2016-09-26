@@ -817,6 +817,8 @@ int ReadDefFileNInt(
   X->NeMPI=X->Ne;
   X->NupMPI=X->Nup;
   X->NdownMPI=X->Ndown;
+  X->NupOrg=X->Nup;
+  X->NdownOrg=X->Ndown;
   return 0;
 }
 

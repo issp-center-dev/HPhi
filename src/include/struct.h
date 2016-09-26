@@ -42,7 +42,10 @@ struct DefineList{
   unsigned int  Ndown;    /**< */
   unsigned int  NupMPI;    /**< Read from modpara in readdef */
   unsigned int  NdownMPI;    /**< */
-  int  Total2Sz;    /**< */
+  unsigned int  NupOrg;    /**< Read from modpara in readdef */
+  unsigned int  NdownOrg;    /**< */
+
+    int  Total2Sz;    /**< */
   int  Total2SzMPI;    /**< */
   unsigned int  Ne;    /**< */
   unsigned int  NeMPI;    /**< */
