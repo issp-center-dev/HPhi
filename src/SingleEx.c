@@ -469,15 +469,14 @@ double complex X_Ajt(
 // is1_spin = Tpow[2*isite + ispin]
 
     *tmp_off = 0;
-
-    if (ibit_tmp_1 == is1_spin) {
-        // able to create an electron at the is1_spin state
+    if (ibit_tmp_1 != 0) {
+        // able to delete an electron at the is1_spin state
         bit = list_1_j - ( list_1_j & (2*is1_spin-1) );
         SgnBit(bit, &sgn); // Fermion sign
         ipsgn = 1;
 #ifdef MPI
         SgnBit(myrank, &ipsgn); // Fermion sign
-#endif
+#endif        
         list_1_off = list_1_j ^ is1_spin;
         GetOffComp(list_2_1_target, list_2_2_target, list_1_off, _irght, _ilft, _ihfbit, tmp_off);
         sgn *= ipsgn;
@@ -569,15 +568,15 @@ int GetSingleExcitedState
           ispin     = X->Def.SingleExcitationOperator[i][1];
           itype     = X->Def.SingleExcitationOperator[i][2];
           tmpphi    = X->Def.ParaSingleExcitationOperator[i];
+          is1_spin = X->Def.Tpow[2*org_isite+ispin];
           if(itype == 1){
               if( org_isite >= X->Def.Nsite){
                  X_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1, tmp_v1bufOrg ,idim_max,X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
               }
               else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org)	\
-  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2) private(j, is1_spin, isgn,tmp_off)
+  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin) private(j,  isgn,tmp_off)
                   for(j=1;j<=idim_max;j++){//idim_max -> original dimension
-                      is1_spin = X->Def.Tpow[2*org_isite+ispin];
                       isgn=X_Cis(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
                       tmp_v0[tmp_off] += tmp_v1[j]*isgn*tmpphi;
                   }
@@ -588,10 +587,9 @@ int GetSingleExcitedState
                   X_Ajt_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1, tmp_v1bufOrg, idim_max,X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
               }
               else{
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org)	\
-  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2) private(j, is1_spin, isgn, tmp_off)
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org, list_1) \
+  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin, myrank) private(j, isgn, tmp_off)
                   for(j=1;j<=idim_max;j++){
-                      is1_spin = X->Def.Tpow[2*org_isite+ispin];
                       isgn=X_Ajt(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
                       tmp_v0[tmp_off] += tmp_v1[j]*isgn*tmpphi;
                   }

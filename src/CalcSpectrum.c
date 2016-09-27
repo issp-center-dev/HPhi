@@ -168,22 +168,24 @@ int CalcSpectrum(
         GetExcitedState(&(X->Bind), v0, v1Org);
 
         //calculate norm
-        dnorm = NormMPI_dc(i_max, v0);
+        dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
         if (fabs(dnorm) < pow(10.0, -15)) {
             fprintf(stderr, "Error: Excitation vector is illegal; norm becomes 0.\n");
             return -1;
         }
         //normalize vector
-#pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm)
-        for (i = 1; i <= i_max; i++) {
+#pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
+        for (i = 1; i <= X->Bind.Check.idim_max; i++) {
             v1[i] = v0[i] / dnorm;
         }
 
-
-        for (i = 1; i <= i_max; i++) {
-            //fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", i+myrank*X->Bind.Def.Tpow[X->Bind.Def.Nsite-1]*2,creal(v0[i]), cimag(v0[i]));
+        /*
+        for (i = 1; i <= X->Bind.Check.idim_max; i++) {
+          //fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", i+myrank*X->Bind.Def.Tpow[X->Bind.Def.Nsite-1]*2,creal(v0[i]), cimag(v0[i]));
+          // fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", list_1[i],creal(v0[i]), cimag(v0[i]));
+          fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", list_1[i]+myrank*X->Bind.Def.Tpow[2*X->Bind.Def.Nsite-1]*2,creal(v0[i]), cimag(v0[i]));
         }
-
+        */
         fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
     }
@@ -414,14 +416,16 @@ int MakeExcitedList(
                 case Kondo:
                     if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
                         X->Def.Ne = X->Def.NeMPI + 1;
-                        if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
+                        if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
                             X->Def.Nup = X->Def.NupOrg + 1;
+                            X->Def.Ndown=X->Def.NdownOrg;
                         } else {//down
+                            X->Def.Nup=X->Def.NupOrg;
                             X->Def.Ndown = X->Def.NdownOrg + 1;
                         }
                     } else {//ajt
                         X->Def.Ne = X->Def.NeMPI - 1;
-                        if (X->Def.SingleExcitationOperator[0][0] == 0) {//up
+                        if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
                             X->Def.Nup = X->Def.NupOrg - 1;
                             X->Def.Ndown=X->Def.NdownOrg;
 
@@ -492,11 +496,12 @@ int MakeExcitedList(
     for(j=1; j<=X->Check.idim_maxOrg; j++){
         fprintf(stdout, "Debug1: myrank=%d, list_1_org[ %ld] = %ld\n", myrank, j, list_1_org[j]+myrank*X->Def.OrgTpow[2*X->Def.NsiteMPI-1]);
     }
-
+    */
+    /*
     for(j=1; j<=X->Check.idim_max; j++){
-        fprintf(stdout, "Debug2: myrank=%d, list_1[ %ld] = %ld\n", myrank, j, list_1[j]+myrank* X->Def.OrgTpow[2*X->Def.NsiteMPI-1]);
+        fprintf(stdout, "Debug2: myrank=%d, list_1[ %ld] = %ld\n", myrank, j, list_1[j]+myrank* 64);
     }
-     */
+    */
     return TRUE;
 }
 

@@ -126,6 +126,9 @@ int setmem_large
        {
            return -1;
        }
+       for(j=0; j<X->Check.idim_max; j++){
+         list_1[j]=0;
+       }
        for(j =0; j<X->Large.SizeOflist_2_1; j++){
            list_2_1[j]=0;
        }

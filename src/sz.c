@@ -161,7 +161,7 @@ int sz
       }
       X->Large.irght=irght;
       X->Large.ilft=ilft;
-        X->Large.ihfbit=ihfbit;
+      X->Large.ihfbit=ihfbit;
       //fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
      else{
