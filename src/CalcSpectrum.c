@@ -351,6 +351,7 @@ int MakeExcitedList(
         switch (X->Def.iCalcModel) {
             case HubbardGC:
                 break;
+            case HubbardNConserved:
             case KondoGC:
             case Hubbard:
             case Kondo:
@@ -364,6 +365,7 @@ int MakeExcitedList(
         switch (X->Def.iCalcModel) {
             case HubbardGC:
             case SpinGC:
+            case HubbardNConserved:
                 break;
             case KondoGC:
             case Hubbard:
@@ -410,6 +412,14 @@ int MakeExcitedList(
             switch (X->Def.iCalcModel) {
                 case HubbardGC:
                     break;
+                case HubbardNConserved:
+                    if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
+                        X->Def.Ne = X->Def.NeMPI + 1;
+                    }
+                    else{
+                        X->Def.Ne = X->Def.NeMPI - 1;
+                    }
+                    break;
                 case KondoGC:
                 case Hubbard:
                 case Kondo:
@@ -442,6 +452,7 @@ int MakeExcitedList(
             switch (X->Def.iCalcModel) {
                 case HubbardGC:
                 case SpinGC:
+                case HubbardNConserved:
                     break;
                 case KondoGC:
                 case Hubbard:
@@ -494,16 +505,16 @@ int MakeExcitedList(
     if(X->Def.iCalcModel==HubbardNConserved){
         X->Def.iCalcModel=Hubbard;
     }
-/*
+
+    /*
     for(j=1; j<=X->Check.idim_maxOrg; j++){
         fprintf(stdout, "Debug1: myrank=%d, list_1_org[ %ld] = %ld\n", myrank, j, list_1_org[j]+myrank*X->Def.OrgTpow[2*X->Def.NsiteMPI-1]);
     }
-*/
-/*
+
     for(j=1; j<=X->Check.idim_max; j++){
         fprintf(stdout, "Debug2: myrank=%d, list_1[ %ld] = %ld\n", myrank, j, list_1[j]+myrank* 64);
     }
-    */
+*/
     return TRUE;
 }
 

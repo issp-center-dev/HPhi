@@ -638,7 +638,7 @@ int sz
 
   }
 
-  if(X->Def.iCalcType != Spectrum || X->Def.iCalcType != SpectrumFD){
+  if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
     if(X->Def.iCalcModel==HubbardNConserved){
       X->Def.iCalcModel=Hubbard;
     }
