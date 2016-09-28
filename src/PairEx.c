@@ -5,6 +5,7 @@
 #include "PairEx.h"
 #ifdef MPI
 #include "mpi.h"
+#include "mfmemory.h"
 #endif
 
 int GetPairExcitedState
@@ -15,7 +16,7 @@ int GetPairExcitedState
  )
 {
 
-  long unsigned int i,j;
+  long unsigned int i,j, idim_maxMPI;
   long unsigned int irght,ilft,ihfbit;
   long unsigned int isite1;
   long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
@@ -38,7 +39,15 @@ int GetPairExcitedState
   X->Large.mode=M_CALCSPEC;
 //    X->Large.mode     = M_MLTPLY;
 
-  switch(X->Def.iCalcModel){
+  double complex *tmp_v1bufOrg;
+    //set size
+#ifdef MPI
+    idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
+    c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+#endif // MPI
+
+
+    switch(X->Def.iCalcModel){
   case HubbardGC:
     for(i=0;i<X->Def.NPairExcitationOperator;i++) {
         org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
@@ -192,53 +201,65 @@ int GetPairExcitedState
 
   case Spin: // for the Sz-conserved spin system
 
-    if(X->Def.iFlgGeneralSpin==FALSE){
-      for(i=0;i<X->Def.NPairExcitationOperator;i++) {
-        org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
-        org_isite2 = X->Def.PairExcitationOperator[i][2] + 1;
-        org_sigma1 = X->Def.PairExcitationOperator[i][1];
-        org_sigma2 = X->Def.PairExcitationOperator[i][3];
-        tmp_trans = X->Def.ParaPairExcitationOperator[i];
-        if (org_sigma1 == org_sigma2) {
-          if (org_isite1 == org_isite2) {
-            if (org_isite1 > X->Def.Nsite) {
-              is1_up = X->Def.Tpow[org_isite1 - 1];
-              ibit1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
-                if( X->Def.PairExcitationOperator[i][4]==0) {
-                    if (ibit1 != 0) {
+    if(X->Def.iFlgGeneralSpin==FALSE) {
+        for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
+            org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
+            org_isite2 = X->Def.PairExcitationOperator[i][2] + 1;
+            org_sigma1 = X->Def.PairExcitationOperator[i][1];
+            org_sigma2 = X->Def.PairExcitationOperator[i][3];
+            tmp_trans = X->Def.ParaPairExcitationOperator[i];
+            if (org_sigma1 == org_sigma2) {
+                if (org_isite1 == org_isite2) {
+                    if (org_isite1 > X->Def.Nsite) {
+                        is1_up = X->Def.Tpow[org_isite1 - 1];
+                        ibit1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
+                        if (X->Def.PairExcitationOperator[i][4] == 0) {
+                            if (ibit1 != 0) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-                        for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
-                    }
-                }
-                else {
-                    if (ibit1 == 0) {
+                                for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+                            }
+                        } else {
+                            if (ibit1 == 0) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-                        for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
-                    }
-                }
-            }// org_isite1 > X->Def.Nsite
-            else {
-                isite1 = X->Def.Tpow[org_isite1 - 1];
-                if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 && X->Def.PairExcitationOperator[i][4] == 1) {
+                                for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+                            }
+                        }
+                    }// org_isite1 > X->Def.Nsite
+                    else {
+                        isite1 = X->Def.Tpow[org_isite1 - 1];
+                        if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 &&
+                            X->Def.PairExcitationOperator[i][4] == 1) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
-                    for (j = 1; j <= i_max; j++) {
-                        tmp_v0[j] += (1.0-X_Spin_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
-                    }
-                }
-                else {
+                            for (j = 1; j <= i_max; j++) {
+                                tmp_v0[j] += (1.0 - X_Spin_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
+                            }
+                        } else {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
+                            for (j = 1; j <= i_max; j++) {
+                                tmp_v0[j] += X_Spin_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
+                            }
+                        }
+                    }
+                } else {
+                    fprintf(stdoutMPI, "Error: isite1 must be equal to isite2 for Spin system. \n");
+                    return FALSE;
+                }
+            } else { //org_sigma1 != org_sigma2             // for the canonical case
+                if (org_isite1 > X->Def.Nsite) {//For MPI
+                    //TODO For MPI
+                } else {
+                    isite1 = X->Def.Tpow[org_isite1 - 1];
+#pragma omp parallel for default(none) private(j, tmp_off, num1)\
+                     firstprivate(i_max, isite1, org_sigma1, X, tmp_trans, list_1_org, list_1, list_2_1, list_2_2) shared(tmp_v0, tmp_v1)
                     for (j = 1; j <= i_max; j++) {
-                        tmp_v0[j] += X_Spin_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
+                        num1=X_Spin_CisAit(j, X, isite1, org_sigma1, list_1_org, list_2_1, list_2_2, &tmp_off);
+                        tmp_v0[tmp_off] +=  tmp_v1[j] * tmp_trans*num1;
                     }
                 }
             }
-          } else {
-            // for the canonical case
-          }
         }
-      }
     }//FlgGeneralSpin=FALSE
     else{
       for(i=0;i<X->Def.NPairExcitationOperator;i++){

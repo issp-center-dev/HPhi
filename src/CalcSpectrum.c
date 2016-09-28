@@ -505,14 +505,18 @@ int MakeExcitedList(
     if(X->Def.iCalcModel==HubbardNConserved){
         X->Def.iCalcModel=Hubbard;
     }
-/*
+
+    /*
+  if (*iFlgListModifed == TRUE) {
     for(j=1; j<=X->Check.idim_maxOrg; j++){
         fprintf(stdout, "Debug1: myrank=%d, list_1_org[ %ld] = %ld\n", myrank, j, list_1_org[j]+myrank*X->Def.OrgTpow[2*X->Def.NsiteMPI-1]);
     }
-*/
+
     for(j=1; j<=X->Check.idim_max; j++){
         fprintf(stdout, "Debug2: myrank=%d, list_1[ %ld] = %ld\n", myrank, j, list_1[j]+myrank* 64);
     }
+    }
+*/
 
     return TRUE;
 }

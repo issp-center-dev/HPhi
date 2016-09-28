@@ -2025,17 +2025,62 @@ double complex GC_AisCis(
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-  int X_Spin_CisAis(
+  int X_Spin_CisAit(
           long unsigned int j,
           struct BindStruct *X,
           long unsigned int is1_spin,
-          long unsigned int sigma1
+          long unsigned int sigma1,
+          long unsigned int *list_1_Org_,
+          long unsigned int *list_2_1_,
+          long unsigned int *list_2_2_,
+          long unsigned int *tmp_off
   ) {
+
+    long unsigned int list_1_j, ibit_tmp_1;
+    long unsigned int bit;
+    list_1_j = list_1_Org_[j];
+    ibit_tmp_1 = (list_1_j & is1_spin);
+    if ( (ibit_tmp_1/is1_spin) != sigma1) {
+        if(sigma1==0){
+            bit = list_1_j - is1_spin;
+        }
+        else{
+            bit = list_1_j + is1_spin;
+        }
+        GetOffComp(list_2_1_, list_2_2_, bit, X->Large.irght, X->Large.ilft, X->Large.ihfbit, tmp_off);
+   //     *tmp_off =off;
+        return 1;
+    } else {
+        *tmp_off = 1;
+        return 0;
+    }
+  }
+//
+
+// for Spin
+/**
+ *
+ *
+ * @param j
+ * @param X
+ * @param is1_spin
+ * @param sigma1
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int X_Spin_CisAis(
+        long unsigned int j,
+        struct BindStruct *X,
+        long unsigned int is1_spin,
+        long unsigned int sigma1
+) {
     int A_ibit_tmp;
     // off = j
     A_ibit_tmp = ((list_1[j] & is1_spin) / is1_spin) ^ (1 - sigma1);
     return A_ibit_tmp;
-  }
+}
 //
 
 

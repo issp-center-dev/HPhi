@@ -654,11 +654,14 @@ long unsigned int *tmp_off
 );
 
 int X_Spin_CisAit(
-long unsigned int j,
-struct BindStruct *X,
-long unsigned int is1_spin,
-long unsigned int sigma2,
-long unsigned int *tmp_off
+        long unsigned int j,
+        struct BindStruct *X,
+        long unsigned int is1_spin,
+        long unsigned int sigma1,
+        long unsigned int *list_1_Org_,
+        long unsigned int *list_2_1_,
+        long unsigned int *list_2_2_,
+        long unsigned int *tmp_off
 );
 
 int X_Spin_CisAis(
