@@ -200,7 +200,6 @@ int GetPairExcitedState
     break;
 
   case Spin: // for the Sz-conserved spin system
-
     if(X->Def.iFlgGeneralSpin==FALSE) {
         for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
             org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
@@ -248,14 +247,15 @@ int GetPairExcitedState
                 }
             } else { //org_sigma1 != org_sigma2             // for the canonical case
                 if (org_isite1 > X->Def.Nsite) {//For MPI
-                    //TODO For MPI
+                  X_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, i_max, X->Def.Tpow,list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+                  
                 } else {
                     isite1 = X->Def.Tpow[org_isite1 - 1];
-#pragma omp parallel for default(none) private(j, tmp_off, num1)\
-                     firstprivate(i_max, isite1, org_sigma1, X, tmp_trans, list_1_org, list_1, list_2_1, list_2_2) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) private(j, tmp_off, num1)        \
+                     firstprivate(i_max, isite1, org_sigma2, X, tmp_trans, list_1_org, list_1, list_2_1, list_2_2) shared(tmp_v0, tmp_v1)
                     for (j = 1; j <= i_max; j++) {
-                        num1=X_Spin_CisAit(j, X, isite1, org_sigma1, list_1_org, list_2_1, list_2_2, &tmp_off);
-                        tmp_v0[tmp_off] +=  tmp_v1[j] * tmp_trans*num1;
+                        num1=X_Spin_CisAit(j, X, isite1, org_sigma2, list_1_org, list_2_1, list_2_2, &tmp_off);
+                        tmp_v0[tmp_off] +=  tmp_v1[j] * tmp_trans*(double)num1;
                     }
                 }
             }

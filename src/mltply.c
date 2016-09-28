@@ -2029,7 +2029,7 @@ double complex GC_AisCis(
           long unsigned int j,
           struct BindStruct *X,
           long unsigned int is1_spin,
-          long unsigned int sigma1,
+          long unsigned int sigma2,
           long unsigned int *list_1_Org_,
           long unsigned int *list_2_1_,
           long unsigned int *list_2_2_,
@@ -2037,18 +2037,10 @@ double complex GC_AisCis(
   ) {
 
     long unsigned int list_1_j, ibit_tmp_1;
-    long unsigned int bit;
+    long unsigned int off;
     list_1_j = list_1_Org_[j];
-    ibit_tmp_1 = (list_1_j & is1_spin);
-    if ( (ibit_tmp_1/is1_spin) != sigma1) {
-        if(sigma1==0){
-            bit = list_1_j - is1_spin;
-        }
-        else{
-            bit = list_1_j + is1_spin;
-        }
-        GetOffComp(list_2_1_, list_2_2_, bit, X->Large.irght, X->Large.ilft, X->Large.ihfbit, tmp_off);
-   //     *tmp_off =off;
+    if(X_SpinGC_CisAit(list_1_j+1, X, is1_spin, sigma2, &off)!=0){
+        GetOffComp(list_2_1_, list_2_2_, off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, tmp_off);
         return 1;
     } else {
         *tmp_off = 1;
