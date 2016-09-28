@@ -515,7 +515,7 @@ shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
                   if (tmp_sgn == TRUE) {
                     ConvertToList1GeneralSpin(tmp_off2, ihfbit, &off);
                     dmv = tmp_v1[j] * tmp_V;
-                    if (X->Large.mode == M_MLTPLY) { // for multply
+                    if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
                       tmp_v0[off] += dmv;
                     }
                     dam_pr += conj(tmp_v1[off]) * dmv;
@@ -736,7 +736,7 @@ shared(tmp_v0, tmp_v1)
                       tmp_sgn = BitCheckGeneral(off, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
                       if (tmp_sgn == TRUE) {
                         dmv = tmp_v1[j] * tmp_V;
-                        if (X->Large.mode == M_MLTPLY) { // for multply
+                        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
                           tmp_v0[off + 1] += dmv;
                         }
                         dam_pr += conj(tmp_v1[off + 1]) * dmv;
@@ -757,7 +757,7 @@ shared(tmp_v0, tmp_v1)
                     tmp_sgn = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
                     if (tmp_sgn == TRUE) {
                       dmv = tmp_v1[j] * tmp_V;
-                      if (X->Large.mode == M_MLTPLY) { // for multply
+                      if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
                         tmp_v0[off + 1] += dmv;
                       }
                       dam_pr += conj(tmp_v1[off + 1]) * dmv;
@@ -776,7 +776,7 @@ shared(tmp_v0, tmp_v1)
                     tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
                     if (tmp_sgn == TRUE) {
                       dmv = tmp_v1[j] * tmp_V;
-                      if (X->Large.mode == M_MLTPLY) { // for multply
+                      if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
                         tmp_v0[off + 1] += dmv;
                       }
                       dam_pr += conj(tmp_v1[off + 1]) * dmv;
@@ -1712,7 +1712,7 @@ shared(tmp_v0, tmp_v1)
     list_1_j = j - 1;
     A_ibit_tmp = (list_1_j & is1_spin) / is1_spin;
     dmv = tmp_v1[j] * A_ibit_tmp;
-    if (X->Large.mode == M_MLTPLY) { // for multply
+    if (X->Large.mode == M_MLTPLY || X->Large.mode==M_CALCSPEC) { // for multply
       tmp_v0[j] += dmv * tmp_trans;
     }
     dam_pr = dmv * conj(tmp_v1[j]);
@@ -1751,7 +1751,7 @@ double complex GC_AisCis(
     list_1_j = j - 1;
     A_ibit_tmp = (list_1_j & is1_spin) / is1_spin;
     dmv = tmp_v1[j] * (1-A_ibit_tmp);
-    if (X->Large.mode == M_MLTPLY) { // for multply
+    if (X->Large.mode == M_MLTPLY || X->Large.mode==M_CALCSPEC) { // for multply
         tmp_v0[j] += dmv * tmp_trans;
     }
     dam_pr = dmv * conj(tmp_v1[j]);
@@ -1787,7 +1787,7 @@ double complex GC_AisCis(
     // off = j
     A_ibit_tmp = (list_1[j] & is1_spin) / is1_spin;
     dmv = tmp_v1[j] * A_ibit_tmp;
-    if (X->Large.mode == M_MLTPLY) { // for multply
+    if (X->Large.mode == M_MLTPLY || X->Large.mode==M_CALCSPEC) { // for multply
       tmp_v0[j] += dmv * tmp_trans;
     }
     dam_pr = dmv * conj(tmp_v1[j]);
@@ -1862,7 +1862,7 @@ double complex GC_AisCis(
       GetOffComp(list_2_1, list_2_2, iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
 
       dmv = sgn * tmp_v1[j];
-      if (X->Large.mode == M_MLTPLY) { // for multply
+      if (X->Large.mode == M_MLTPLY || X->Large.mode==M_CALCSPEC) { // for multply
         tmp_v0[off] += tmp_V * dmv;
       }
       dam_pr = dmv * conj(tmp_v1[off]);
@@ -1919,7 +1919,7 @@ double complex GC_AisCis(
       list_1_off = list_1_j ^ sum_spin;
       *tmp_off = list_1_off;
       dmv = sgn * tmp_v1[j];
-      if (X->Large.mode == M_MLTPLY) { // for multply
+      if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
         tmp_v0[list_1_off + 1] += dmv * tmp_V;
       }
       dam_pr = dmv * conj(tmp_v1[list_1_off + 1]);
@@ -2505,7 +2505,7 @@ double complex GC_AisCis(
       GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off);
       *tmp_off = off;
       dmv = tmp_J * tmp_v1[j];
-      if (mode == M_MLTPLY) {
+      if (mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) {
         tmp_v0[off] += dmv;
       }
       dam_pr += dmv * conj(tmp_v1[off]);
@@ -2629,7 +2629,7 @@ double complex GC_AisCis(
       list_1_off = iexchg;
       *tmp_off = list_1_off;
       dmv = tmp_J * tmp_v1[j];
-      if (mode == M_MLTPLY) {
+      if (mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) {
         tmp_v0[list_1_off + 1] += dmv;
       }
       dam_pr += dmv * conj(tmp_v1[list_1_off + 1]);
@@ -2671,7 +2671,7 @@ double complex GC_AisCis(
     tmp_sgn = X_CisAis(list_1[j], X, isite3);
     tmp_sgn *= X_CisAis(list_1[j], X, isite1);
     dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-    if (X->Large.mode == M_MLTPLY) { // for multply
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
       tmp_v0[j] += dmv;
     }
     dam_pr = conj(tmp_v1[j]) * dmv;
@@ -2719,7 +2719,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_CisAis(list_1[*tmp_off], X, isite1);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off]) * dmv;
@@ -2770,7 +2770,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off]) * dmv;
@@ -2829,7 +2829,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);       
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off_2] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off_2]) * dmv;
@@ -2875,7 +2875,7 @@ double complex GC_AisCis(
     tmp_sgn = X_Spin_CisAis(j, X, isB_up, org_sigma4);
     tmp_sgn *= X_Spin_CisAis(j, X, isA_up, org_sigma2);
     dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-    if (X->Large.mode == M_MLTPLY) { // for multply
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
       tmp_v0[j] += dmv;
     }
     dam_pr = conj(tmp_v1[j]) * dmv;
@@ -2923,7 +2923,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_Spin_CisAjs(tmp_off_1, X, isA_up, isB_up, org_sigma2, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_v1[j] * tmp_V;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off]) * dmv;
@@ -2971,7 +2971,7 @@ double complex GC_AisCis(
     tmp_sgn *= X_SpinGC_CisAis(j, X, isA_up, org_sigma2);
     if (tmp_sgn != 0) {
       dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-      if (X->Large.mode == M_MLTPLY) { // for multply
+      if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
         tmp_v0[j] += dmv;
       }
       dam_pr = conj(tmp_v1[j]) * dmv;
@@ -3019,7 +3019,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_SpinGC_CisAis((*tmp_off + 1), X, isA_up, org_sigma2);
       if (tmp_sgn != 0) {
         dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off + 1] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
@@ -3067,7 +3067,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_SpinGC_CisAit(j, X, isA_up, org_sigma2, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off + 1] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
@@ -3116,7 +3116,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_SpinGC_CisAit((tmp_off_1 + 1), X, isA_up, org_sigma2, tmp_off_2);
       if (tmp_sgn != 0) {
         dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off_2 + 1] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
@@ -3161,7 +3161,7 @@ double complex GC_AisCis(
     tmp_sgn *= X_CisAis(j - 1, X, isite1);
     if (tmp_sgn != 0) {
       dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY) { // for multply
+      if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
         tmp_v0[j] += dmv;
       }
       dam_pr = conj(tmp_v1[j]) * dmv;
@@ -3210,7 +3210,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_CisAis(*tmp_off, X, isite1);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off + 1] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
@@ -3260,7 +3260,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_GC_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, tmp_off);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off + 1] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
@@ -3318,7 +3318,7 @@ double complex GC_AisCis(
       tmp_sgn *= X_GC_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
       if (tmp_sgn != 0) {
         dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-        if (X->Large.mode == M_MLTPLY) { // for multply
+        if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
           tmp_v0[*tmp_off_2 + 1] += dmv;
         }
         dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
@@ -3377,7 +3377,7 @@ double complex GC_AisCis(
       iexchg = list_1[j] ^ is;
       GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off);
       dmv = (sgn) * tmp_v1[off] * trans;
-      if (X->Large.mode == M_MLTPLY) { // for multply
+      if (X->Large.mode == M_MLTPLY|| X->Large.mode==M_CALCSPEC) { // for multply
         tmp_v0[j] += dmv;
       }
       dam_pr += dmv * conj(tmp_v1[j]);

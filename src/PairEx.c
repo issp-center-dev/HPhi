@@ -26,7 +26,8 @@ int GetPairExcitedState
   long int ibit1, ibit;
   long unsigned int is1_up, is;
 
-  i_max = X->Check.idim_max;
+  //  i_max = X->Check.idim_max;
+  i_max = X->Check.idim_maxOrg;
   if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
     return -1;
   }
