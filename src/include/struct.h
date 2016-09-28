@@ -190,6 +190,7 @@ struct DefineList{
   int iFlgSpecOmegaMin;
   int iFlgSpecOmegaIm;
   int iFlgCalcSpec;
+  int iFlagListModified;
   /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
 
   //[e] For Spectrum

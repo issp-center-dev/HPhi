@@ -25,7 +25,8 @@ int GetPairExcitedState
   long int i_max;
   int tmp_sgn, num1;
   long int ibit1, ibit;
-  long unsigned int is1_up, is;
+  long unsigned int is1_up, is, Asum, Adiff;
+  long unsigned int ibitsite1, ibitsite2;
 
   //  i_max = X->Check.idim_max;
   i_max = X->Check.idim_maxOrg;
@@ -55,6 +56,7 @@ int GetPairExcitedState
         org_sigma1 = X->Def.PairExcitationOperator[i][1];
         org_sigma2 = X->Def.PairExcitationOperator[i][3];
         tmp_trans = X->Def.ParaPairExcitationOperator[i];
+        
         if (org_isite1 > X->Def.Nsite &&
             org_isite2 > X->Def.Nsite) {
             if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
@@ -131,72 +133,96 @@ int GetPairExcitedState
       org_sigma1 = X->Def.PairExcitationOperator[i][1];
       org_sigma2 = X->Def.PairExcitationOperator[i][3];
       tmp_trans = X->Def.ParaPairExcitationOperator[i];
+      ibitsite1 = X->Def.OrgTpow[2*org_isite1-2+org_sigma1] ;
+      ibitsite2 = X->Def.OrgTpow[2*org_isite2-2+org_sigma2] ;
+      child_general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
+      Asum = X->Large.isA_spin;
+      Adiff = X->Large.A_spin;
 
-      if(X->Def.iFlgSzConserved ==TRUE){
-        if(org_sigma1 != org_sigma2){
-          continue;
-        }
+      if(X->Def.iFlagListModified == TRUE // Not to adopt HubbrdNConserved
+         && org_sigma1 != org_sigma2){
+
+          if (org_isite1  > X->Def.Nsite &&
+              org_isite2  > X->Def.Nsite) {
+//TODO
+          }
+          else if (org_isite2  > X->Def.Nsite
+                   || org_isite1  > X->Def.Nsite){
+//TODO
+          }
+          else{
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
+  firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org, list_2_1, list_2_2) \
+  private(j, tmp_sgn, tmp_off)
+            for (j = 1; j <= i_max; j++){
+              tmp_sgn=X_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
+              tmp_v0[tmp_off] += tmp_trans * tmp_sgn*tmp_v1[j];
+            }
+          }
       }
-      if (org_isite1  > X->Def.Nsite &&
-          org_isite2  > X->Def.Nsite) {
-        if(org_isite1==org_isite2 && org_sigma1==org_sigma2){//diagonal
+      else{      
+        if (org_isite1  > X->Def.Nsite &&
+            org_isite2  > X->Def.Nsite) {
+          if(org_isite1==org_isite2 && org_sigma1==org_sigma2){//diagonal
             is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
             ibit = (unsigned long int) myrank & is;
             if( X->Def.PairExcitationOperator[i][4]==0) {
-                if (ibit == is) {
+              if (ibit == is) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-                    for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
-                }
+                for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+              }
             }
             else{
-                if (ibit != is) {
+              if (ibit != is) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-                    for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
-                }
+                for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
+              }
             }
+          }
+          else{
+            X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
+          }
+        }
+        else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
+          if(org_isite1 < org_isite2){
+            X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
+          }
+          else{
+            X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, tmp_v0, tmp_v1);
+          }
         }
         else{
-          X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
-        }
-      }
-      else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
-        if(org_isite1 < org_isite2){
-          X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
-        }
-        else{
-          X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, tmp_v0, tmp_v1);
-        }
-      }
-      else{
-        if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
-          return -1;
-        }
-        if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
+          if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+            return -1;
+          }
+          if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
             is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
             if( X->Def.PairExcitationOperator[i][4]==0) {
 #pragma omp parallel for default(none) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
-                for (j = 1; j <= i_max; j++) {
-                    ibit = list_1[j] & is;
-                    num1 = ibit / is;
-                    tmp_v0[j] += tmp_trans * num1 * tmp_v1[j];
-                }
+              for (j = 1; j <= i_max; j++) {
+                ibit = list_1[j] & is;
+                num1 = ibit / is;
+                tmp_v0[j] += tmp_trans * num1 * tmp_v1[j];
+              }
             }
             else{
 #pragma omp parallel for default(none) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
-                for (j = 1; j <= i_max; j++) {
-                    ibit = list_1[j] & is;
-                    num1 = (1-ibit / is);
-                    tmp_v0[j] += -tmp_trans * num1 * tmp_v1[j];
-                }
+              for (j = 1; j <= i_max; j++) {
+                ibit = list_1[j] & is;
+                num1 = (1-ibit / is);
+                tmp_v0[j] += -tmp_trans * num1 * tmp_v1[j];
+              }
             }
-        }
-        else{
-          child_general_hopp(tmp_v0, tmp_v1,X,tmp_trans);
+          }
+          else{
+            child_general_hopp(tmp_v0, tmp_v1,X,tmp_trans);
+          }
         }
       }
-    }
+    }        
+    
     break;
 
   case Spin: // for the Sz-conserved spin system

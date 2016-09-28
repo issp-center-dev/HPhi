@@ -120,6 +120,7 @@ int CalcSpectrum(
     if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
         return FALSE;
     }
+    X->Bind.Def.iFlagListModified=iFlagListModified;
 
     //Set Memory
     c_malloc1(v1Org, X->Bind.Check.idim_maxOrg+1);
@@ -135,10 +136,12 @@ int CalcSpectrum(
 //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
         sprintf(sdt, defname, myrank);
         childfopenALL(sdt, "rb", &fp);
+
         if (fp == NULL) {
             fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
             return -1;
         }
+
         fread(&i_stp, sizeof(i_stp), 1, fp);
         X->Bind.Large.itr = i_stp; //For TPQ
         fread(&i_max, sizeof(i_max), 1, fp);
@@ -449,6 +452,7 @@ int MakeExcitedList(
                     return FALSE;
             }
         } else if (X->Def.NPairExcitationOperator > 0) {
+            X->Def.Ne=X->Def.NeMPI;
             switch (X->Def.iCalcModel) {
                 case HubbardGC:
                 case SpinGC:
@@ -460,7 +464,7 @@ int MakeExcitedList(
                 case Spin:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
                         if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
-                            if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
+                            if (X->Def.PairExcitationOperator[0][1] == 0) {//up
                                 X->Def.Nup = X->Def.NupOrg + 1;
                                 X->Def.Ndown = X->Def.NdownOrg - 1;
                             } else {//down
