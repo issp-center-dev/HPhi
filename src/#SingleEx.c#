@@ -363,13 +363,13 @@ double complex X_Cis_MPI(
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
-  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
+  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf)
     for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
-        GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+        GetOffComp(list_2_1_target, list_2_2_target, list_1buf[j],
                    _irght, _ilft, _ihfbit, &ioff);
         dmv = trans * tmp_v1buf[j];
         tmp_v0[ioff] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
+        dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
     return (dam_pr);
 #endif
@@ -417,9 +417,13 @@ double complex X_Ajt_MPI(
                         &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
+    printf("Debug1: rank=%d idim_max=%d, idim_max_buf=%d \n", myrank, idim_max, idim_max_buf);
+
     ierr = MPI_Sendrecv(list_1_org, idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
                         list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
+
+    printf("Debug2: rank=%d test\n", myrank);
 
     ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                         tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
@@ -433,11 +437,12 @@ double complex X_Ajt_MPI(
     }
     else return 0;
 
+    printf("Debug3: rank=%d test\n", myrank);
     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
-  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
+  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf)
     for (j = 1; j <= idim_max_buf; j++) {
-        GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+        GetOffComp(list_2_1_target, list_2_2_target, list_1buf[j],
                    _irght, _ilft, _ihfbit, &ioff);
         dmv = trans * tmp_v1buf[j];
         tmp_v0[ioff] += dmv;
@@ -514,8 +519,9 @@ int GetSingleExcitedState
   double complex *tmp_v1bufOrg;
   //set size
 #ifdef MPI
-    idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-    c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+  //  c_malloc1(v1buf, X->Check.idim_maxMPI + 1);
+  printf("Debug5: i_max=%d\n", X->Check.idim_maxOrg);
+    c_malloc1(tmp_V1bufOrg, X->Check.idim_maxMPIOrg + 1);
 #endif // MPI
 
   switch(X->Def.iCalcModel){
@@ -574,9 +580,7 @@ int GetSingleExcitedState
           is1_spin = X->Def.Tpow[2*org_isite+ispin];
           if(itype == 1){
               if( org_isite >= X->Def.Nsite){
-                 X_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1, tmp_v1bufOrg ,idim_max,\
-                 X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, \
-                 X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+                 X_Cis_MPI(org_isite,ispin,tmpphi,tmp_v0,tmp_v1, tmp_v1bufOrg ,idim_max,X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
               }
               else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org)	\

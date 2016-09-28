@@ -147,7 +147,6 @@ int CalcSpectrum(
             fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
             return -1;
         }
-
         fread(v1Org, sizeof(complex double), i_max + 1, fp);
         fclose(fp);
 /*
@@ -492,12 +491,12 @@ int MakeExcitedList(
         return FALSE;
     }
 
-    /*
+/*
     for(j=1; j<=X->Check.idim_maxOrg; j++){
         fprintf(stdout, "Debug1: myrank=%d, list_1_org[ %ld] = %ld\n", myrank, j, list_1_org[j]+myrank*X->Def.OrgTpow[2*X->Def.NsiteMPI-1]);
     }
-    */
-    /*
+*/
+/*
     for(j=1; j<=X->Check.idim_max; j++){
         fprintf(stdout, "Debug2: myrank=%d, list_1[ %ld] = %ld\n", myrank, j, list_1[j]+myrank* 64);
     }
