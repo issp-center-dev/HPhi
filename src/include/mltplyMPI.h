@@ -224,3 +224,18 @@ void child_general_int_spin_MPIBoost
   double complex *tmp_v2,
   double complex *tmp_v3
 );
+
+double complex X_child_CisAjt_MPIdouble(
+				       int org_isite1,
+				       int org_ispin1,
+				       int org_isite2,
+				       int org_ispin2,
+				       double complex tmp_trans,
+				       struct BindStruct *X,
+				       double complex *tmp_v0, 
+				       double complex *tmp_v1,
+					   long unsigned int *list_1_org,
+					   long unsigned int *list_1buf_org,
+					   long unsigned int *list_2_1_target,
+					   long unsigned int *list_2_2_target
+);

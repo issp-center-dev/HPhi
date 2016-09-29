@@ -133,6 +133,88 @@ double complex X_GC_child_general_hopp_MPIdouble(
 #endif
 }/*void GC_child_general_hopp_MPIdouble*/
 
+/**
+ *
+ * Hopping term in Hubbard + Canonical
+ * When both site1 and site2 are in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_child_CisAjt_MPIdouble(
+				       int org_isite1,
+				       int org_ispin1,
+				       int org_isite2,
+				       int org_ispin2,
+				       double complex tmp_trans,
+				       struct BindStruct *X /**< [inout]*/,
+				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+				       double complex *tmp_v1 /**< [in] v0 = H v1*/,
+                       long unsigned int *list_1_org,
+                       long unsigned int *list_1buf_org,
+                       long unsigned int *list_2_1_target,
+                       long unsigned int *list_2_2_target
+) {
+#ifdef MPI
+    int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+    unsigned long int idim_max_buf, j, ioff;
+    MPI_Status statusMPI;
+    double complex trans, dmv, dam_pr;
+
+    mask1 = (int) X->Def.Tpow[2 * org_isite1 + org_ispin1];
+    mask2 = (int) X->Def.Tpow[2 * org_isite2 + org_ispin2];
+    if (mask2 > mask1) bitdiff = mask2 - mask1 * 2;
+    else bitdiff = mask1 - mask2 * 2;
+    origin = myrank ^ (mask1 + mask2);
+
+    state1 = origin & mask1;
+    state2 = origin & mask2;
+
+    SgnBit((unsigned long int) (origin & bitdiff), &Fsgn); // Fermion sign
+
+    if (state1 == 0 && state2 == mask2) {
+        trans = -(double) Fsgn * tmp_trans;
+    }
+    else if (state1 == mask1 && state2 == 0) {
+        trans = -(double) Fsgn * conj(tmp_trans);
+        if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
+            trans = 0;
+        }
+    }
+    else return 0;
+
+    ierr = MPI_Sendrecv(&X->Check.idim_maxOrg, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) {
+        exitMPI(-1);
+    }
+
+    ierr = MPI_Sendrecv(list_1_org, X->Check.idim_maxOrg + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_maxOrg + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) {
+        exitMPI(-1);
+    }
+    dam_pr = 0.0;
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
+#pragma omp parallel for default(none) private(j, dmv, ioff)                 \
+  firstprivate(idim_max_buf, trans, X, list_2_1_target, list_2_2_target, list_1buf_org) shared(v1buf, tmp_v0)
+        for (j = 1; j <= idim_max_buf; j++){
+            dmv = trans * v1buf[j];
+            GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+                       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+            tmp_v0[ioff] += dmv;
+        }
+    }
+    else {
+      return 0.0;
+    }
+    return 1.0;
+#endif
+}/*void child_CisAjt_MPIdouble*/
+
 
 /**
   *
