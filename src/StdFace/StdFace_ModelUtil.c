@@ -172,7 +172,7 @@ struct StdIntList *StdI,
        S_i^+ S_j^+ + S_j^- S_i^-
       */
       if (ispin < Si2 && jspin < Sj2) {
-        intr0 = 0.5 * 0.5 * (J[0][0] - J[1][1] - I*(J[0][1] + J[0][1]))
+        intr0 = 0.5 * 0.5 * (J[0][0] - J[1][1] - I*(J[0][1] + J[1][0]))
           * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0))
           * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
         StdFace_intr(StdI, intr0,
