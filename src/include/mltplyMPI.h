@@ -234,8 +234,25 @@ double complex X_child_CisAjt_MPIdouble(
 				       struct BindStruct *X,
 				       double complex *tmp_v0, 
 				       double complex *tmp_v1,
+                       double complex *v1buf,
 					   long unsigned int *list_1_org,
 					   long unsigned int *list_1buf_org,
 					   long unsigned int *list_2_1_target,
 					   long unsigned int *list_2_2_target
 );
+
+double complex X_child_CisAjt_MPIsingle(
+                                        int org_isite1,
+                                        int org_ispin1,
+                                        int org_isite2,
+                                        int org_ispin2,
+                                        double complex tmp_trans,
+                                        struct BindStruct *X,
+                                        double complex *tmp_v0,
+                                        double complex *tmp_v1,
+                                        double complex *v1buf,
+                                        long unsigned int *list_1_org,
+                                        long unsigned int *list_1buf_org,
+                                        long unsigned int *list_2_1_target,
+                                        long unsigned int *list_2_2_target
+                                        );

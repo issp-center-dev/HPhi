@@ -144,13 +144,17 @@ int GetPairExcitedState
           if (org_isite1  > X->Def.Nsite &&
               org_isite2  > X->Def.Nsite)
           {
-            X_child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1, list_1_org, list_1buf_org, list_2_1, list_2_2);
+            X_child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
           }
           else if (org_isite2  > X->Def.Nsite
                    || org_isite1  > X->Def.Nsite)
           {
-//TODO
-
+              if(org_isite1 < org_isite2) {
+                  X_child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, tmp_v0,
+                                           tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
+              } else{
+                  X_child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, -conj(tmp_trans), X, tmp_v0,
+                                           tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2); }
           }
           else{
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\

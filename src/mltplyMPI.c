@@ -149,6 +149,7 @@ double complex X_child_CisAjt_MPIdouble(
 				       struct BindStruct *X /**< [inout]*/,
 				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
 				       double complex *tmp_v1 /**< [in] v0 = H v1*/,
+                       double complex *v1buf,
                        long unsigned int *list_1_org,
                        long unsigned int *list_1buf_org,
                        long unsigned int *list_2_1_target,
@@ -590,6 +591,97 @@ double complex X_child_general_hopp_MPIsingle(
     return (dam_pr);
 #endif
 }/*double complex child_general_hopp_MPIsingle*/
+
+/**
+ *
+ * Hopping term in Hubbard (Kondo) + Canonical ensemble
+ * When only site2 is in the inter process region.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+double complex X_child_CisAjt_MPIsingle(
+                                        int org_isite1,
+                                        int org_ispin1,
+                                        int org_isite2,
+                                        int org_ispin2,
+                                        double complex tmp_trans,
+                                        struct BindStruct *X /**< [inout]*/,
+                                        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+                                        double complex *tmp_v1 /**< [in] v0 = H v1*/,
+                                        double complex *v1buf,
+                                        long unsigned int *list_1_org,
+                                        long unsigned int *list_1buf_org,
+                                        long unsigned int *list_2_1_target,
+                                        long unsigned int *list_2_2_target
+                                        )
+{
+#ifdef MPI
+  int mask2, state2, ierr, origin, bit2diff, Fsgn;
+  unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
+  MPI_Status statusMPI;
+  double complex trans, dmv;
+  /*
+    Prepare index in the inter PE
+  */
+  mask2 = (int)X->Def.Tpow[2 * org_isite2+org_ispin2];
+  bit2diff = mask2 - 1;
+  origin = myrank ^ mask2;
+
+    state2 = origin & mask2;
+
+    SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
+
+    ierr = MPI_Sendrecv(&X->Check.idim_maxOrg, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1_org, X->Check.idim_maxOrg + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_maxOrg + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    /*
+    Index in the intra PE
+    */
+    mask1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
+    if (state2 == mask2) {
+        trans = -(double) Fsgn * tmp_trans;
+        state1check = 0;
+    }
+    else if (state2 == 0) {
+        state1check = mask1;
+        trans = -(double) Fsgn * conj(tmp_trans);
+    }
+    else return 0;
+
+    bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
+
+    if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
+#pragma omp parallel for default(none) private(j, dmv, Fsgn, ioff, jreal, state1) \
+  firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff,list_2_1_target, list_2_2_target, list_1buf_org, list_1) shared(v1buf, tmp_v0)
+        for (j = 1; j <= idim_max_buf; j++) {
+            jreal = list_1buf_org[j];
+            state1 = jreal & mask1;
+            if (state1 == state1check) {
+                SgnBit(jreal & bit1diff, &Fsgn);
+                GetOffComp(list_2_1_target, list_2_2_target, jreal ^ mask1,
+                           X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+                if(ioff !=0){
+                    dmv = (double) Fsgn * trans * v1buf[j];
+                    tmp_v0[ioff] += dmv;
+                }
+            }
+        }
+    }
+    else {
+      return 0;
+    }
+
+ return 1;
+#endif
+}/*double complex child_general_hopp_MPIsingle*/
+
 
 /**
  *
