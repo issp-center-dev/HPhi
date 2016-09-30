@@ -27,7 +27,7 @@ else
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -qopenmp -O3 -xHOST -mcmodel=large -shared-intel -D MPI -g -traceback
+FLAGS = -qopenmp -O3 -ipo -xHOST -mcmodel=large -shared-intel -D MPI -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
@@ -87,7 +87,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = gcc
 LAPACK_FLAGS = -Dlapack -framework Accelerate 
-FLAGS = -fopenmp 
+FLAGS = -fopenmp -O3
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
@@ -97,7 +97,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = gcc
 LAPACK_FLAGS = -Dlapack -llapack -lblas
-FLAGS = -fopenmp  -lm
+FLAGS = -fopenmp  -lm -O3
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
