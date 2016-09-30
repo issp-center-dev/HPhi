@@ -619,7 +619,7 @@ static void PrintModPara(struct StdIntList *StdI)
   if (StdI->nelec != 9999) fprintf(fp, "Ncond          %-5d\n", StdI->nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", StdI->Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", StdI->initial_iv);
-  fprintf(fp, "nvec           %-5d\n", StdI->nvec);
+  if(StdI->nvec != 9999) fprintf(fp, "nvec           %-5d\n", StdI->nvec);
   fprintf(fp, "exct           %-5d\n", StdI->exct);
   fprintf(fp, "LanczosEps     %-5d\n", StdI->LanczosEps);
   fprintf(fp, "LanczosTarget  %-5d\n", StdI->LanczosTarget);
@@ -940,7 +940,7 @@ static void CheckModPara(struct StdIntList *StdI)
   /**/
   StdFace_PrintVal_i("Lanczos_max", &StdI->Lanczos_max, 2000);
   StdFace_PrintVal_i("initial_iv", &StdI->initial_iv, -1);
-  StdFace_PrintVal_i("nvec", &StdI->nvec, 1);
+  /*StdFace_PrintVal_i("nvec", &StdI->nvec, 1);*/
   StdFace_PrintVal_i("exct", &StdI->exct, 1);
   StdFace_PrintVal_i("LanczosEps", &StdI->LanczosEps, 14);
   StdFace_PrintVal_i("LanczosTarget", &StdI->LanczosTarget, 2);
