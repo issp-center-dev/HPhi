@@ -32,17 +32,17 @@ int expec_energy_flct(struct BindStruct *X){
 
   long unsigned int i,j;
   long unsigned int irght,ilft,ihfbit;
-  long unsigned int isite1;
-  long unsigned int is1_up,is1_down;
-  long unsigned int is1;
+  long unsigned int isite1, isite2;
+  long unsigned int is1_up,is1_down, is2_up, is2_down;
+  long unsigned int is1, is2;
   double complex dam_pr,dam_pr1;
 
   long int num1_up, num1_down;
-  long unsigned int ibit1;
+  long unsigned int ibit1, ibit2;
   double tmp_num_up, tmp_num_down;
   double D,tmp_D,tmp_D2;
   double N,tmp_N,tmp_N2;
-  double Sz,tmp_Sz,tmp_Sz2;
+  double Sz,Sz2,tmp_Sz,tmp_Sz2;
   double tmp_v02;  
   
   long unsigned int i_max,tmp_list_1;
@@ -174,37 +174,58 @@ int expec_energy_flct(struct BindStruct *X){
     tmp_Sz2 += tmp_v02*Sz*Sz;
   }
   break;
+  
   case SpinGC:
   if(X->Def.iFlgGeneralSpin == FALSE) {
 #pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0)   \
-  firstprivate(i_max,X,myrank) private(j,Sz,is1_up,ibit1,isite1,tmp_v02)
+  firstprivate(i_max,X,myrank) private(j,Sz, Sz2, is1_up,ibit1,isite1, is2_up,ibit2,isite2,tmp_v02)
     for(j = 1; j <= i_max; j++){ 
       tmp_v02  = conj(v0[j])*v0[j];
-      Sz       = 0.0;  
+      Sz       = 0.0;
+      Sz2=0.0;
       for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
         if(isite1 > X->Def.Nsite){
           is1_up = X->Def.Tpow[isite1 - 1];
           ibit1  = (unsigned long int)myrank& is1_up;
-
           if(ibit1==is1_up){
-            Sz += 1.0; 
+            Sz = 1.0; 
           }else{
-            Sz += -1.0; 
+            Sz = -1.0; 
           }
         }else{
           is1_up=X->Def.Tpow[isite1-1];
           ibit1=(j-1)&is1_up;
           if(ibit1==is1_up){
-            Sz += 1.0; 
+            Sz = 1.0; 
           }else{
-            Sz += -1.0; 
+            Sz = -1.0; 
           }
         }
-      } 
-      tmp_Sz   += Sz*tmp_v02;
-      tmp_Sz2  += Sz*Sz*tmp_v02;
+        tmp_Sz   += Sz*tmp_v02;
+        
+        for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
+          if(isite2 > X->Def.Nsite){
+            is2_up = X->Def.Tpow[isite2 - 1];
+            ibit2  = (unsigned long int)myrank& is2_up;
+            if(ibit2==is2_up){
+              Sz2 = 1.0; 
+            }else{
+              Sz2 = -1.0; 
+            }
+          }else{
+            is2_up=X->Def.Tpow[isite2-1];
+            ibit2=(j-1)&is2_up;
+            if(ibit2==is2_up){
+              Sz2 = 1.0; 
+            }else{
+              Sz2 = -1.0; 
+            }
+          }
+          tmp_Sz2  += Sz*Sz2*tmp_v02;
+        }
+      }
     }
-  } 
+  }
   break;/*case SpinGC*/
   /* SpinGCBoost */
   case Spin:
