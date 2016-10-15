@@ -66,14 +66,15 @@ int CalcByTPQ(
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     iret=0;
     X->Bind.Def.irand=rand_i;
-
+    /*
     if(rand_i==0){
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
+      exit(-1);
     }
     else{
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
     }
-
+    */
   //Make or Read initial vector
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
@@ -123,6 +124,12 @@ int CalcByTPQ(
 
 
       step_i = 1;
+      if(rand_i==0){
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
+      }
+      else{
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
+      }
       FirstMultiply(rand_i, &(X->Bind));
       expec_energy_flct(&(X->Bind)); //v0 = H*v1
       inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);

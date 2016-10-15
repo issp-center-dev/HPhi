@@ -201,29 +201,9 @@ int expec_energy_flct(struct BindStruct *X){
             Sz = -1.0; 
           }
         }
-        tmp_Sz   += Sz*tmp_v02;
-        
-        for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
-          if(isite2 > X->Def.Nsite){
-            is2_up = X->Def.Tpow[isite2 - 1];
-            ibit2  = (unsigned long int)myrank& is2_up;
-            if(ibit2==is2_up){
-              Sz2 = 1.0; 
-            }else{
-              Sz2 = -1.0; 
-            }
-          }else{
-            is2_up=X->Def.Tpow[isite2-1];
-            ibit2=(j-1)&is2_up;
-            if(ibit2==is2_up){
-              Sz2 = 1.0; 
-            }else{
-              Sz2 = -1.0; 
-            }
-          }
-          tmp_Sz2  += Sz*Sz2*tmp_v02;
-        }
       }
+      tmp_Sz   += Sz*tmp_v02;  
+      tmp_Sz2  += Sz*Sz*tmp_v02;
     }
   }
   break;/*case SpinGC*/
