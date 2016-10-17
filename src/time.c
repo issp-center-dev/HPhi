@@ -7,6 +7,8 @@
  *-------------------------------------------------------------*/
 
 #include "Common.h"
+#include "time.h"
+#include "FileIO.h"
 //#include <stdio.h>
 //#include <stdlib.h>
 //#include <math.h>
@@ -21,11 +23,12 @@
   #include <mpi.h>
 #endif
 
-
+/*
 void InitTimer();
 inline void StartTimer(int n);
 inline void StopTimer(int n);
 void OutputTimer();
+*/
 
 void InitTimer() {
   int i;
