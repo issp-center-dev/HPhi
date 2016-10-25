@@ -209,11 +209,14 @@ int CalcSpectrum(
   switch (X->Bind.Def.iCalcType) {
     case Lanczos:
 
-      iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
-          if (iret != TRUE) {
-            //Error Message will be added.
-            return FALSE;
-          }
+      if (lBiCG == 1) 
+        iret = CalcSpectrumByBiCG(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+      else iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+
+      if (iret != TRUE) {
+        //Error Message will be added.
+        return FALSE;
+      }
 
           break;//Lanczos Spectrum
 

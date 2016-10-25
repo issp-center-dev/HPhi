@@ -270,7 +270,7 @@ int OutputTMComponents(
     fprintf(fp, "%d \n",liLanczosStp);
     fprintf(fp, "%.10lf \n",_dnorm);
     for( i = 1 ; i <= liLanczosStp; i++){
-        fprintf(fp,"%.10lf %.10lf \n", alpha[i], beta[i]);
+        fprintf(fp,"%.10lf %.10lf \n", _alpha[i], _beta[i]);
     }
     fclose(fp);
     return TRUE;
