@@ -16,7 +16,7 @@
 
 #include <complex.h>
 #include "global.h"
-#include "time.h"
+#include <time.h>
 #include "struct.h"
 #include "lapack_diag.h"
 #include "makeHam.h"

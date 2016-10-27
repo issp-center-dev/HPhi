@@ -7,8 +7,9 @@
  *-------------------------------------------------------------*/
 
 #include "Common.h"
-#include "time.h"
 #include "FileIO.h"
+#include "CalcTime.h"
+
 //#include <stdio.h>
 //#include <stdlib.h>
 //#include <math.h>
