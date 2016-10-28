@@ -16,6 +16,7 @@
 #include "mltply.h"
 #include "CalcSpectrum.h"
 #include "CalcSpectrumByLanczos.h"
+#include "CalcSpectrumByBiCG.h"
 #include "CalcSpectrumByTPQ.h"
 #include "CalcSpectrumByFullDiag.h"
 #include "SingleEx.h"
@@ -176,10 +177,11 @@ int CalcSpectrum(
             return -1;
         }
         //normalize vector
+        if(X->Bind.Def.iCalcType != CG)
 #pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
-        for (i = 1; i <= X->Bind.Check.idim_max; i++) {
+          for (i = 1; i <= X->Bind.Check.idim_max; i++) {
             v1[i] = v0[i] / dnorm;
-        }
+          }
 
         /*
         for (i = 1; i <= X->Bind.Check.idim_max; i++) {
@@ -208,10 +210,14 @@ int CalcSpectrum(
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   switch (X->Bind.Def.iCalcType) {
     case Lanczos:
+    case CG:
 
-      if (lBiCG == 1) 
-        iret = CalcSpectrumByBiCG(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
-      else iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+      if (X->Bind.Def.iCalcType == Lanczos) {
+        iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+      }
+      else if (X->Bind.Def.iCalcType == CG) {
+        iret = CalcSpectrumByBiCG(X,vg,v1,v0,Nomega,dcSpectrum,dcomega);
+      }
 
       if (iret != TRUE) {
         //Error Message will be added.
