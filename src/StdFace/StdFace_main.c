@@ -562,6 +562,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
   else if (strcmp(StdI->method, "fulldiag") == 0 ||
     strcmp(StdI->method, "alldiag") == 0 ||
     strcmp(StdI->method, "direct") == 0 ) iCalcType = 2;
+  else if (strcmp(StdI->method, "cg") == 0) iCalcType = 3;
   else{
     fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
     exitMPI(-1);

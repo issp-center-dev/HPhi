@@ -302,6 +302,7 @@ int LOBPCG_Main(
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
+  for (i = 1; i <= i_max; i++) v0[i] = x[1][i];
   c_free2(x, 3, X->Check.idim_max + 1);
   c_free2(hx, 3, X->Check.idim_max + 1);
 

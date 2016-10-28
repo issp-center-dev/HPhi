@@ -161,7 +161,7 @@ int setmem_large
     if(X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
         c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
     }
-    else if(X->Def.iCalcType==Lanczos){
+    else if(X->Def.iCalcType==Lanczos || X->Def.iCalcType == CG){
         if(X->Def.LanczosTarget>X->Def.nvec){
             c_malloc2(vec,X->Def.LanczosTarget+1, X->Def.Lanczos_max+1);
         }

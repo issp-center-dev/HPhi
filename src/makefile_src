@@ -7,7 +7,9 @@ HPhiTrans.o \
 HPhiMain.o \
 CalcByFullDiag.o \
 CalcByLanczos.o \
+CalcByLOBPCG.o \
 CalcSpectrum.o \
+CalcSpectrumByBiCG.o \
 CalcSpectrumByFullDiag.o \
 CalcSpectrumByLanczos.o \
 CalcSpectrumByTPQ.o \
@@ -127,6 +129,9 @@ HPhi: $(OBJS) make.sys libStdFace.a
 
 libStdFace:
 	cd StdFace; make -f makefile_StdFace libStdFace.a
+
+libkomega:
+	cd komega; make -f makefile_komega libStdFace.a
 
 clean:
 	cd StdFace; make -f makefile_StdFace clean

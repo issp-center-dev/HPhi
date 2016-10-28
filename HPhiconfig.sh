@@ -21,6 +21,8 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "            CC : Compilation command for C"
     echo "  LAPACK_FLAGS : Compile option for LAPACK"
     echo "         FLAGS : Other Compilation options"
+    echo "           F90 : Complilation command for fortran"
+    echo "        FFLAGS : Compilation options for fortran"
     echo ""
 else
     if [ ${1} = "sekirei" ]; then
@@ -32,6 +34,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = mpif90
+FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
@@ -42,6 +46,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = mpifrtpx
+FFLAGS = 
 EOF
     elif [ ${1} = "sr" ]; then
         cat > src/make.sys <<EOF
@@ -62,6 +68,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = ifort
+FFLAGS = -mkl -xHost -fopenmp -O3 -g -traceback
 EOF
     elif [ ${1} = "mpicc-intel" ]; then
         cat > src/make.sys <<EOF
@@ -72,6 +80,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = mpif90
+FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback
 EOF
     elif [ ${1} = "mpicc-gcc" ]; then
         cat > src/make.sys <<EOF
@@ -82,6 +92,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = mpif90
+FFLAGS = -fopenmp -cpp -g -lblas -llapack
 EOF
     elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF
@@ -92,6 +104,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = gfortran
+FFLAGS = -fopenmp -cpp -g -lblas -llapack
 EOF
     elif [ ${1} = "gcc" ]; then
         cat > src/make.sys <<EOF
@@ -102,6 +116,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = gfortran
+FFLAGS = -fopenmp -cpp -g -lblas -llapack
 EOF
     elif [ ${1} == "manual" ]; then
 echo " C compiler ?"
@@ -118,6 +134,8 @@ MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
+F90 = ${F90}
+FFLAGS = ${FFLAGS}
 EOF
     else
         echo ""

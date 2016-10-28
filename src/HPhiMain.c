@@ -20,6 +20,7 @@
 #include <output_list.h>
 #include <diagonalcalc.h>
 #include <CalcByLanczos.h>
+#include <CalcByLOBPCG.h>
 #include <CalcByFullDiag.h>
 #include <CalcByTPQ.h>
 #include <CalcSpectrum.h>
@@ -186,6 +187,13 @@ int main(int argc, char* argv[]){
           return -1;
         }
             break;
+
+      case CG:
+        if (!CalcByLOBPCG(&X) == TRUE) {
+          FinalizeMPI();
+          return -1;
+        }
+        break;
 
       case FullDiag:
         if (nproc != 1) {
