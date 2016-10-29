@@ -29,13 +29,13 @@ else
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -qopenmp -O3 -xHOST -mcmodel=large -shared-intel -D MPI -g -traceback
+FLAGS = -qopenmp -O3 -xHOST -mcmodel=large -shared-intel -D MPI -D INTEL -g -traceback
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
 F90 = mpif90
-FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback
+FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback -D MPI
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
@@ -47,7 +47,7 @@ INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
 F90 = mpifrtpx
-FFLAGS = 
+FFLAGS = -g -D MPI -Kfast,openmp,SPARC64IXfx,parallel
 EOF
     elif [ ${1} = "sr" ]; then
         cat > src/make.sys <<EOF
@@ -63,25 +63,25 @@ EOF
         cat > src/make.sys <<EOF
 CC = icc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -g -traceback -xHOST
+FLAGS = -fopenmp -O3 -DHAVE_SSE2 -g -traceback -xHOST -D INTEL
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
 F90 = ifort
-FFLAGS = -mkl -xHost -fopenmp -O3 -g -traceback
+FFLAGS = -fpp -mkl -xHost -fopenmp -O3 -g -traceback
 EOF
     elif [ ${1} = "mpicc-intel" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST
+FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST -D INTEL
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
 F90 = mpif90
-FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback
+FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback -D MPI
 EOF
     elif [ ${1} = "mpicc-gcc" ]; then
         cat > src/make.sys <<EOF
@@ -93,7 +93,7 @@ INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
 F90 = mpif90
-FFLAGS = -fopenmp -cpp -g -lblas -llapack
+FFLAGS = -fopenmp -cpp -g -lblas -llapack -D MPI
 EOF
     elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF

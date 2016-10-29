@@ -116,7 +116,6 @@ include/xsetmem_def.h \
 include/xsetmem_large.h
 
 all:
-	make -f makefile_src libStdFace
 	make -f makefile_src HPhi
 
 SUFFIXES: .o .c
@@ -124,17 +123,14 @@ SUFFIXES: .o .c
 .c.o:
 	$(CC) $(LAPACK_FLAGS) $(FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) -c $<
 
-HPhi: $(OBJS) make.sys libStdFace.a
-	$(CC) -g $(OBJS) $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) libStdFace.a -o $@ 
-
-libStdFace:
+HPhi: $(OBJS) make.sys
 	cd StdFace; make -f makefile_StdFace libStdFace.a
-
-libkomega:
-	cd komega; make -f makefile_komega libStdFace.a
+	cd komega; make -f makefile_komega
+	$(CC) -o $@ -g $(OBJS) StdFace/libStdFace.a komega/libkomega.a $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) 
 
 clean:
 	cd StdFace; make -f makefile_StdFace clean
+	cd komega; make -f makefile_komega clean
 	rm -f HPhi *.o *.a
 
 PowerLanczos.o:$(HEADERS)

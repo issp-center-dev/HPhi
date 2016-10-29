@@ -16,7 +16,7 @@
 #pragma once
 #include "Common.h"
 
-int CalcSpectrumByLanczos(
+int CalcSpectrumByBiCG(
   struct EDMainCalStruct *X,
   double complex *vrhs,
   double complex *v2,

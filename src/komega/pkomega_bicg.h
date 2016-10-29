@@ -22,10 +22,25 @@ For more details, See ÅeCOPYING.LESSERÅf in the root directory of this library.
 #include <complex.h>
 #pragma once
 
-void pkomega_BiCG_init(int *ndim, int *nl, int *nz, double complex *x, double complex *z, int *itermax, double *threshold, MPI_Comm *comm);
-void pkomega_BiCG_restart(int *ndim, int *nl, int *nz, double complex *x, double complex *z, int *itermax, double *threshold, MPI_Comm *comm, int *status,
-  int *iter_old, double complex *v2, double complex *v12, double complex *v4, double complex *v14, double complex *alpha_save, double complex *beta_save, double complex *z_seed, double complex *r_l_save);
-void pkomega_BiCG_update(double complex *v12, double complex *v2, double complex *v14, double complex *v4, double complex *x, double complex *r_l, int *status);
-void pkomega_BiCG_getcoef(double complex *alpha_save, double complex *beta_save, double complex *z_seed, double complex *r_l_save);
-void pkomega_BiCG_getvec(double complex *r_old, double complex *r_tilde_old);
-void pkomega_BiCG_finalize();
+#ifdef INTEL
+#define pkomega_bicg_init pkomega_bicg_mp_pkomega_bicg_init_
+#define pkomega_bicg_restart pkomega_bicg_mp_pkomega_bicg_restart_
+#define pkomega_bicg_update pkomega_bicg_mp_pkomega_bicg_update_
+#define pkomega_bicg_getcoef pkomega_bicg_mp_pkomega_bicg_getcoef_
+#define pkomega_bicg_getvec pkomega_bicg_mp_pkomega_bicg_getvec_
+#define pkomega_bicg_finalize pkomega_bicg_mp_pkomega_bicg_finalize_
+#else
+#define pkomega_bicg_init __pkomega_bicg_MOD_pkomega_bicg_init
+#define pkomega_bicg_restart __pkomega_bicg_MOD_pkomega_bicg_restart
+#define pkomega_bicg_update __pkomega_bicg_MOD_pkomega_bicg_update
+#define pkomega_bicg_getcoef __pkomega_bicg_MOD_pkomega_bicg_getcoef
+#define pkomega_bicg_getvec __pkomega_bicg_MOD_pkomega_bicg_getvec
+#define pkomega_bicg_finalize __pkomega_bicg__pkomega_bicg_finalize
+#endif
+
+void pkomega_bicg_init(int *ndim, int *nl, int *nz, double complex *x, double complex *z, int *itermax, double *threshold, MPI_Comm *comm);
+void pkomega_bicg_restart(int *ndim, int *nl, int *nz, double complex *x, double complex *z, int *itermax, double *threshold, MPI_Comm *comm, int *status, int *iter_old, double complex *v2, double complex *v12, double complex *v4, double complex *v14, double complex *alpha_save, double complex *beta_save, double complex *z_seed, double complex *r_l_save);
+void pkomega_bicg_update(double complex *v12, double complex *v2, double complex *v14, double complex *v4, double complex *x, double complex *r_l, int *status);
+void pkomega_bicg_getcoef(double complex *alpha_save, double complex *beta_save, double complex *z_seed, double complex *r_l_save);
+void pkomega_bicg_getvec(double complex *r_old, double complex *r_tilde_old);
+void pkomega_bicg_finalize();
