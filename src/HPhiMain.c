@@ -29,6 +29,7 @@
 #include "StdFace_main.h"
 #include "wrapperMPI.h"
 #include "splash.h"
+#include "CalcTime.h"
 
 /*!
   @mainpage
@@ -188,6 +189,7 @@ int main(int argc, char* argv[]){
   StopTimer(2);
   
   //Start Calculation
+  StartTimer(3);
   if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
     switch (X.Bind.Def.iCalcType) {
       case Lanczos:
@@ -210,13 +212,11 @@ int main(int argc, char* argv[]){
             break;
 
       case TPQCalc:
-        StartTimer(100);
         if (!CalcByTPQ(NumAve, ExpecInterval, &X) == TRUE) {
           FinalizeMPI();
           return -1;
         }
-        StopTimer(100);
-            break;
+        break;
 
       default:
         FinalizeMPI();
@@ -229,9 +229,10 @@ int main(int argc, char* argv[]){
       return -1;
     }
   }
-
+  StopTimer(3);
+  
   StopTimer(0);
-  OutputTimer();
+  OutputTimer(&(X.Bind));
   FinalizeMPI();
   return 0;
 }

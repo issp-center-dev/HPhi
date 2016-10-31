@@ -63,58 +63,76 @@ void StopTimer(int n) {
   return;
 }
 
-void OutputTimer() {
+void OutputTimer(struct BindStruct *X) {
   char fileName[D_FileNameMax];
   FILE *fp;
   sprintf(fileName, "zvo_CalcTimer.dat"); //TBC
   childfopenMPI(fileName,"w", &fp);
   //fp = fopen(fileName, "w");
   //fp = childfopenMPI(fileName, "w");
-
-  fprintf(fp,"All                           [0]   %12.5lf\n",Timer[0]);
-  fprintf(fp,"  sz                          [1]   %12.5lf\n",Timer[1]);
-  fprintf(fp,"  diagonalcalc                [2]   %12.5lf\n",Timer[2]);
-  fprintf(fp,"  CalcByTPQ                   [100] %12.5lf\n",Timer[100]);
-  fprintf(fp,"    FirstMultiply             [101] %12.5lf\n",Timer[101]);
-  fprintf(fp,"      rand   in FirstMultiply [106] %12.5lf\n",Timer[106]);
-  fprintf(fp,"      mltply in FirstMultiply [107] %12.5lf\n",Timer[107]);
-  fprintf(fp,"    expec_energy              [102] %12.5lf\n",Timer[102]);
-  fprintf(fp,"      mltply in expec_energy  [108] %12.5lf\n",Timer[108]);
-  fprintf(fp,"    expec_onebody             [103] %12.5lf\n",Timer[103]);
-  fprintf(fp,"    expec_twobody             [104] %12.5lf\n",Timer[104]);
-  fprintf(fp,"    Multiply                  [105] %12.5lf\n",Timer[105]);
-  fprintf(fp,"    FileIO                    [109] %12.5lf\n",Timer[109]);
+  StampTime(fp, "All", 0);
+  StampTime(fp, "  sz", 1);
+  StampTime(fp, "  diagonalcalc", 2);
+  if(X->Def.iCalcType==TPQCalc) {
+    StampTime(fp, "  CalcByTPQ", 3);
+    StampTime(fp, "    FirstMultiply", 101);
+    StampTime(fp, "      rand   in FirstMultiply", 106);
+    StampTime(fp, "      mltply in FirstMultiply", 107);
+    StampTime(fp, "    expec_energy             ", 102);
+    StampTime(fp, "      mltply in expec_energy ", 108);
+    StampTime(fp, "    expec_onebody            ", 103);
+    StampTime(fp, "    expec_twobody            ", 104);
+    StampTime(fp, "    Multiply                 ", 105);
+    StampTime(fp, "    FileIO                   ", 109);
+  }
+  else if(X->Def.iCalcType==Lanczos){
+    StampTime(fp, "  CalcByLanczos", 3);
+  }
+  else if(X->Def.iCalcType==FullDiag){
+    StampTime(fp, "  CalcByFullDiag", 3);
+  }
+  else if(X->Def.iFlgCalcSpec != CALCSPEC_NOT){
+    StampTime(fp, "  CalcSpectrum", 3);
+  }
+  
   fprintf(fp,"================================================\n");
-  fprintf(fp,"All mltply                    [200] %12.5lf\n",Timer[200]);
-  fprintf(fp,"  diagonal                    [201] %12.5lf\n",Timer[201]);
-  fprintf(fp,"  trans    in HubbardGC       [202] %12.5lf\n",Timer[202]);
-  fprintf(fp,"  interall in HubbardGC       [203] %12.5lf\n",Timer[203]);
-  fprintf(fp,"  pairhopp in HubbardGC       [204] %12.5lf\n",Timer[204]);
-  fprintf(fp,"  exchange in HubbardGC       [205] %12.5lf\n",Timer[205]);
+  
+  StampTime(fp,"All mltply",200);
+  StampTime(fp,"  diagonal", 201);
+  StampTime(fp,"  trans    in HubbardGC", 202);
+  StampTime(fp,"  interall in HubbardGC", 203);
+  StampTime(fp,"  pairhopp in HubbardGC", 204);
+  StampTime(fp,"  exchange in HubbardGC", 205);
   fprintf(fp,"\n");
-  fprintf(fp,"  trans    in Hubbard         [206] %12.5lf\n",Timer[206]);
-  fprintf(fp,"  interall in Hubbard         [207] %12.5lf\n",Timer[207]);
-  fprintf(fp,"  pairhopp in Hubbard         [208] %12.5lf\n",Timer[208]);
-  fprintf(fp,"  exchange in Hubbard         [209] %12.5lf\n",Timer[209]);
+  StampTime(fp,"  trans    in Hubbard", 206);
+  StampTime(fp,"  interall in Hubbard", 207);
+  StampTime(fp,"  pairhopp in Hubbard", 208);
+  StampTime(fp,"  exchange in Hubbard", 209);
   fprintf(fp,"\n");
-  fprintf(fp,"  interall in Spin            [210] %12.5lf\n",Timer[210]);
-  fprintf(fp,"    double                    [220] %12.5lf\n",Timer[220]);
-  fprintf(fp,"    single1                   [221] %12.5lf\n",Timer[221]);
-  fprintf(fp,"    single2                   [222] %12.5lf\n",Timer[222]);
-  fprintf(fp,"    else                      [223] %12.5lf\n",Timer[223]);
-  fprintf(fp,"  exchange in Spin            [211] %12.5lf\n",Timer[211]);
-  fprintf(fp,"    double                    [224] %12.5lf\n",Timer[224]);
-  fprintf(fp,"    single1                   [225] %12.5lf\n",Timer[225]);
-  fprintf(fp,"    single2                   [226] %12.5lf\n",Timer[226]);
-  fprintf(fp,"    else                      [227] %12.5lf\n",Timer[226]);
+  StampTime(fp,"  interall in Spin", 210);
+  StampTime(fp,"    double", 220);
+  StampTime(fp,"    single1", 221);
+  StampTime(fp,"    single2", 222);
+  StampTime(fp,"    else", 223);
+  StampTime(fp,"  exchange in Spin", 211);
+  StampTime(fp,"    double", 224);
+  StampTime(fp,"    single1", 225);
+  StampTime(fp,"    single2", 226);
+  StampTime(fp,"    else", 227);
   fprintf(fp,"\n");
-  fprintf(fp,"  trans    in SpinGC          [212] %12.5lf\n",Timer[212]);
-  fprintf(fp,"  interall in SpinGC          [213] %12.5lf\n",Timer[213]);
-  fprintf(fp,"  exchange in SpinGC          [214] %12.5lf\n",Timer[214]);
-  fprintf(fp,"  pairlift in SpinGC          [215] %12.5lf\n",Timer[215]);
+  StampTime(fp,"  trans    in SpinGC", 212);
+  StampTime(fp,"  interall in SpinGC", 213);
+  StampTime(fp,"  exchange in SpinGC", 214);
+  StampTime(fp,"  pairlift in SpinGC", 215);
   fprintf(fp,"================================================\n");
 
   fclose(fp);
   free(Timer);
   free(TimerStart);
+}
+
+void StampTime(FILE *fp, char *str, int num){
+  char str1[256];
+  sprintf(str1, "%-40s [%03d] %12.5lf\n", str, num, Timer[num]);
+  fprintf(fp, str1);
 }
