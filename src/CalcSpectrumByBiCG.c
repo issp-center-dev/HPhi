@@ -122,6 +122,7 @@ int OutputTMComponents_BiCG(
   FILE *fp;
   double complex *alphaCG, *betaCG, *res_save, z_seed;
 
+  printf("debug %d\n", liLanczosStp);
   alphaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
   betaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
   res_save = (double complex*)malloc(liLanczosStp * sizeof(double complex));
@@ -180,6 +181,8 @@ int CalcSpectrumByBiCG(
   MPI_Comm comm = MPI_COMM_WORLD;
 #endif
 
+  fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
+  
   v12 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   v14 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
 
@@ -210,6 +213,7 @@ int CalcSpectrumByBiCG(
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
   }
   else {
+    i_max = X->Bind.Check.idim_max;
     for (i = 1; i <= i_max; i++) {
       v2[i] = vrhs[i];
       v4[i] = vrhs[i];
@@ -244,13 +248,16 @@ int CalcSpectrumByBiCG(
 
   for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++) {
 
+    for (i = 1; i <= i_max; i++) v12[i] = 0.0;
     iret = mltply(&X->Bind, v12, v2);
+    for (i = 1; i <= i_max; i++) v14[i] = 0.0;
     iret = mltply(&X->Bind, v14, v4);
 
     res_proj = 0.0;
-    for (i = 1; i <= i_max; i++) res_proj = conj(vrhs[i]) * v2[i];
+    for (i = 1; i <= i_max; i++) res_proj += conj(vrhs[i]) * v2[i];
     res_proj = SumMPI_dc(res_proj);
 
+    printf("debug %15.5e %15.5e\n", creal(res_proj), cimag(res_proj));
 #ifdef MPI
     pkomega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
 #else
@@ -267,7 +274,7 @@ int CalcSpectrumByBiCG(
    Save alpha, beta, projected residual
   */
   if (X->Bind.Def.iFlgCalcSpec != RECALC_FROM_TMComponents)
-    OutputTMComponents_BiCG(X, status[0]);
+    OutputTMComponents_BiCG(X, abs(status[0]));
   /*
     output vectors for recalculation
   */

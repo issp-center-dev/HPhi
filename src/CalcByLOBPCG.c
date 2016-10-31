@@ -61,9 +61,10 @@ int LOBPCG_Main(
   int iconv = -1;
   int mythread;
 
-  int ii, jj, jtarget, k_exct;
-  double complex **wxp, **hwxp, hsub[9], ovrp[9];
-  double eig, dnorm;
+  int ii, jj, jtarget;
+  double complex **wxp/*[0] w, [1] x, [2] p */, 
+    **hwxp/*[0] h*w, [1] h*x, [2] h*p */, hsub[9], ovrp[9];
+  double eig, dnorm, eps_BiCG;
   /*
   Variables for zhegv
   */
@@ -84,13 +85,15 @@ int LOBPCG_Main(
 
   c_malloc2(wxp, 3, X->Check.idim_max + 1);
   c_malloc2(hwxp, 3, X->Check.idim_max + 1);
-
+  /*
+   Set initial guess of wavefunction
+  */
   if (initial_mode == 0) {
 
     sum_i_max = SumMPI_li(X->Check.idim_max);
     X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
     iv = X->Large.iv;
-    fprintf(stdoutMPI, "  initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max, k_exct);
+    fprintf(stdoutMPI, "  initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max, X->Def.k_exct);
 #pragma omp parallel for default(none) private(i) shared(wxp,i_max)
     for (i = 1; i <= i_max; i++) {
       wxp[1][i] = 0.0;
@@ -117,7 +120,7 @@ int LOBPCG_Main(
   }/*if(initial_mode == 0)*/
   else if (initial_mode == 1) {
     iv = X->Def.initial_iv;
-    fprintf(stdoutMPI, "  initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max, k_exct);
+    fprintf(stdoutMPI, "  initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max, X->Def.k_exct);
 #pragma omp parallel default(none) private(i, u_long_i, mythread, dsfmt) \
             shared(wxp, iv, X, nthreads, myrank) firstprivate(i_max)
     {
@@ -164,16 +167,25 @@ int LOBPCG_Main(
 
   eig = creal(vec_prod(i_max, wxp[1], hwxp[1]));
 
+  fprintf(stdoutMPI, "Iteration   Residual-2-norm      Energy        Threshold   zhegv-info\n");
+
+  info = 0;
   for (stp = 1; stp <= X->Def.Lanczos_max; stp++) {
 
     for (i = 1; i <= i_max; i++) wxp[0][i] = hwxp[1][i] - eig * wxp[1][i];
-    dnorm = creal(vec_prod(i_max, wxp[0], wxp[0]));
+    dnorm = sqrt(creal(vec_prod(i_max, wxp[0], wxp[0])));
 
     /*
     Convergence check
     */
-    fprintf(stdoutMPI, "%8d %15.5e %15.5e\n", stp, dnorm, eig);
-    if (dnorm < eps_Lanczos) break;
+    eps_BiCG = pow(10, -0.5 *X->Def.LanczosEps);
+    if (fabs(eig) > 1.0) eps_BiCG *= fabs(eig);
+
+    fprintf(stdoutMPI, "%9d %15.5e %15.5e %15.5e  %d\n", stp, dnorm, eig, eps_BiCG, info);
+    if (dnorm < eps_BiCG) {
+      iconv = 0;
+      break;
+    }
 
     if (stp /= 1)
       for (i = 1; i <= i_max; i++) wxp[0][i] = wxp[0][i] / dnorm;
@@ -251,7 +263,39 @@ int CalcByLOBPCG(
   long int i_max = 0;
   FILE *fp;
 
+  fprintf(stdoutMPI, "######  Eigenvalue with LOBPCG  #######\n\n");
+
   if (X->Bind.Def.iInputEigenVec == FALSE) {
+
+    // this part will be modified
+    switch (X->Bind.Def.iCalcModel) {
+    case HubbardGC:
+    case SpinGC:
+    case KondoGC:
+    case SpinlessFermionGC:
+      initial_mode = 1; // 1 -> random initial vector
+      break;
+    case Hubbard:
+    case Kondo:
+    case Spin:
+    case SpinlessFermion:
+
+      if (X->Bind.Def.iFlgGeneralSpin == TRUE) {
+        initial_mode = 1;
+      }
+      else {
+        if (X->Bind.Def.initial_iv>0) {
+          initial_mode = 0; // 0 -> only v[iv] = 1
+        }
+        else {
+          initial_mode = 1; // 1 -> random initial vector
+        }
+      }
+      break;
+    default:
+      //fclose(fp);
+      exitMPI(-1);
+    }
 
     if (LOBPCG_Main(&(X->Bind)) != 0) {
       fprintf(stderr, "  LOBPCG is not converged in this process.\n");
@@ -260,10 +304,9 @@ int CalcByLOBPCG(
 
     expec_energy(&(X->Bind));
     var = fabs(X->Bind.Phys.var - X->Bind.Phys.energy*X->Bind.Phys.energy) / fabs(X->Bind.Phys.var);
-    diff_ene = fabs(X->Bind.Phys.Target_energy - X->Bind.Phys.energy) / fabs(X->Bind.Phys.Target_energy);
     fprintf(stdoutMPI, "\n");
-    fprintf(stdoutMPI, "  CG Accuracy check !!!\n");
-    fprintf(stdoutMPI, "  LanczosEnergy = %.14e\n  EnergyByVec   = %.14e\n  diff_ene      = %.14e\n  var           = %.14e \n ", X->Bind.Phys.Target_energy, X->Bind.Phys.energy, diff_ene, var);
+    fprintf(stdoutMPI, "  LOBPCG Accuracy check !!!\n");
+    fprintf(stdoutMPI, "    variance = %.14e \n ", var);
     fprintf(stdoutMPI, "\n");
 
   }

@@ -112,6 +112,10 @@ int CalcSpectrum(
     for (i = 0; i < Nomega; i++) {
         dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
     }
+    fprintf(stdoutMPI, "\nFrequency range:\n");
+    fprintf(stdoutMPI, "  Omega Max. : %15.5e %15.5e\n", creal(OmegaMax), cimag(OmegaMax));
+    fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
+    fprintf(stdoutMPI, "  Num. of Omega : %d\n", Nomega);
 
     if (X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0) {
         fprintf(stderr, "Error: Any excitation operators are not defined.\n");
@@ -136,6 +140,7 @@ int CalcSpectrum(
         strcat(defname, "_rank_%d.dat");
 //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
         sprintf(sdt, defname, myrank);
+        printf("debug %s\n", sdt);
         childfopenALL(sdt, "rb", &fp);
 
         if (fp == NULL) {
@@ -177,11 +182,10 @@ int CalcSpectrum(
             return -1;
         }
         //normalize vector
-        if(X->Bind.Def.iCalcType != CG)
 #pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
-          for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-            v1[i] = v0[i] / dnorm;
-          }
+        for (i = 1; i <= X->Bind.Check.idim_max; i++) {
+          v1[i] = v0[i] / dnorm;
+        }
 
         /*
         for (i = 1; i <= X->Bind.Check.idim_max; i++) {
@@ -206,7 +210,7 @@ int CalcSpectrum(
   diagonalcalc(&(X->Bind));
 
   int iret=TRUE;
-  fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
+  fprintf(stdoutMPI, "  Start: Calculating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   switch (X->Bind.Def.iCalcType) {
     case Lanczos:
@@ -216,7 +220,7 @@ int CalcSpectrum(
         iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
       }
       else if (X->Bind.Def.iCalcType == CG) {
-        iret = CalcSpectrumByBiCG(X,vg,v1,v0,Nomega,dcSpectrum,dcomega);
+        iret = CalcSpectrumByBiCG(X,v0,v1,vg,Nomega,dcSpectrum,dcomega);
       }
 
       if (iret != TRUE) {
@@ -299,47 +303,63 @@ int SetOmega
     return TRUE;
   }
   else{
-    sprintf(sdt, cFileNameLanczosStep, X->CDataFileHead);
-      childfopenMPI(sdt,"r", &fp);
-    if(fp == NULL){
-      fprintf(stdoutMPI, "Error: xx_Lanczos_Step.dat does not exist.\n");
-      return FALSE;
-    }
+    if (X->iCalcType == Lanczos || X->iCalcType == FullDiag) {
+      sprintf(sdt, cFileNameLanczosStep, X->CDataFileHead);
+      childfopenMPI(sdt, "r", &fp);
+      if (fp == NULL) {
+        fprintf(stdoutMPI, "Error: xx_Lanczos_Step.dat does not exist.\n");
+        return FALSE;
+      }
       fgetsMPI(ctmp, 256, fp); //1st line is skipped
       fgetsMPI(ctmp, 256, fp); //2nd line is skipped
-      while(fgetsMPI(ctmp, 256, fp) != NULL){
-          iline_count++;
+      while (fgetsMPI(ctmp, 256, fp) != NULL) {
+        iline_count++;
       }
-    iline_countMax=iline_count;
-    iline_count=2;
-    rewind(fp);
+      iline_countMax = iline_count;
+      iline_count = 2;
+      rewind(fp);
       fgetsMPI(ctmp, 256, fp); //1st line is skipped
       fgetsMPI(ctmp, 256, fp); //2nd line is skipped
 
-      while(fgetsMPI(ctmp, 256, fp) != NULL) {
-          sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf\n",
-                 &istp,
-                 &E1,
-                 &E2,
-                 &E3,
-                 &E4,
-                 &Emax);
-          iline_count++;
-          if(iline_count ==iline_countMax) break;
+      while (fgetsMPI(ctmp, 256, fp) != NULL) {
+        sscanf(ctmp, "stp=%d %lf %lf %lf %lf %lf\n",
+          &istp,
+          &E1,
+          &E2,
+          &E3,
+          &E4,
+          &Emax);
+        iline_count++;
+        if (iline_count == iline_countMax) break;
       }
+      fclose(fp);
+      if (istp < 4) {
+        fprintf(stdoutMPI, "Error: Lanczos step must be greater than 4 for using spectrum calculation.\n");
+        return FALSE;
+      }
+    }/*if (X->iCalcType == Lanczos || X->iCalcType == FullDiag)*/
+    else
+    {
+      sprintf(sdt, cFileNameEnergy_Lanczos, X->CDataFileHead);
+      childfopenMPI(sdt, "r", &fp);
+      if (fp == NULL) {
+        fprintf(stdoutMPI, "Error: xx_energy.dat does not exist.\n");
+        return FALSE;
+      }/*if (fp == NULL)*/
+      fgetsMPI(ctmp, 256, fp); //1st line is skipped
+      sscanf(ctmp, "Energy  %lf \n", &E1);
+      Emax = LargeValue;
+      printf("debug %15.5e %d\n", LargeValue, X->Nsite);
+    }/**/
 
-      if(istp < 4){
-      fprintf(stdoutMPI, "Error: Lanczos step must be greater than 4 for using spectrum calculation.\n");
-      return FALSE;
-    }
     //Read Lanczos_Step
     if(X->iFlgSpecOmegaMax == FALSE){
-      X->dOmegaMax= Emax*(double)X->NsiteMPI;
+      X->dOmegaMax= Emax*(double)X->Nsite;
     }
     if(X->iFlgSpecOmegaMin == FALSE){
       X->dOmegaMin= E1;
     }
-  }
+  }/*Omegamax and omegamin is not specified in modpara*/
 
   return TRUE;
 }

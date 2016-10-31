@@ -63,7 +63,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = icc
 LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -g -traceback -xHOST -D INTEL
+FLAGS = -fopenmp -O3 -DHAVE_SSE2 -g -traceback -xHOST -D INTEL -lifcore
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
@@ -111,7 +111,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = gcc
 LAPACK_FLAGS = -Dlapack -llapack -lblas
-FLAGS = -fopenmp  -lm
+FLAGS = -fopenmp -lm -lgfortran
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
