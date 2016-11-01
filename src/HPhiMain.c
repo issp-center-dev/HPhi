@@ -172,11 +172,11 @@ int main(int argc, char* argv[]){
     exitMPI(-1);
   }
 
-  StartTimer(1);
+  StartTimer(1000);
   if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
     exitMPI(-1);
   }
-  StopTimer(1);
+  StopTimer(1000);
 
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
@@ -184,12 +184,12 @@ int main(int argc, char* argv[]){
     return 0;
   }
 
-  StartTimer(2);
+  StartTimer(2000);
   diagonalcalc(&(X.Bind));
-  StopTimer(2);
+  StopTimer(2000);
   
   //Start Calculation
-  StartTimer(3);
+  StartTimer(3000);
   if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
     switch (X.Bind.Def.iCalcType) {
       case Lanczos:
@@ -229,7 +229,7 @@ int main(int argc, char* argv[]){
       return -1;
     }
   }
-  StopTimer(3);
+  StopTimer(3000);
   
   StopTimer(0);
   OutputTimer(&(X.Bind));

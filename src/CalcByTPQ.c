@@ -68,18 +68,18 @@ int CalcByTPQ(
     iret=0;
     X->Bind.Def.irand=rand_i;
 
-    StartTimer(109);
+    StartTimer(3600);
     if(rand_i==0){
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
     }
     else{
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
     }
-    StopTimer(109);
+    StopTimer(3600);
 
   //Make or Read initial vector
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
-      StartTimer(109);
+      StartTimer(3600);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
       fprintf(stdoutMPI, "%s", cLogInputVecStart);
       sprintf(sdt, cFileNameInputVector, rand_i, myrank);
@@ -100,18 +100,18 @@ int CalcByTPQ(
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
-      StopTimer(109);
+      StopTimer(3600);
       X->Bind.Def.istep=step_i;
-      StartTimer(102);
+      StartTimer(3200);
       expec_energy_flct(&(X->Bind));
       //expec_energy(&(X->Bind));
-      StopTimer(102);
+      StopTimer(3200);
 
       step_iO=step_i-1;
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
-      StartTimer(109);
+      StartTimer(3600);
       if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
         return -1;
       }
@@ -130,27 +130,27 @@ int CalcByTPQ(
       fprintf(fp, "%s", cLogFlctRand);
       fclose(fp);
 
-      StopTimer(109);
+      StopTimer(3600);
 
       step_i = 1;
-      StartTimer(101);
+      StartTimer(3100);
       FirstMultiply(rand_i, &(X->Bind));
-      StopTimer(101);
-      StartTimer(102);
+      StopTimer(3100);
+      StartTimer(3200);
       expec_energy_flct(&(X->Bind)); //v0 = H*v1
       expec_energy(&(X->Bind)); //v0 = H*v1
-      StopTimer(102);
+      StopTimer(3200);
 
       inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
-      StartTimer(103);
+      StartTimer(3300);
       expec_cisajs(&(X->Bind), v1);
-      StopTimer(103);
-      StartTimer(104);
+      StopTimer(3300);
+      StartTimer(3400);
       expec_cisajscktaltdc(&(X->Bind), v1);
-      StopTimer(104);
+      StopTimer(3400);
 
 
-      StartTimer(109);
+      StartTimer(3600);
       if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
         return -1;
       }
@@ -170,7 +170,7 @@ int CalcByTPQ(
       fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
       fclose(fp);
 //
-      StopTimer(109);
+      StopTimer(3600);
       step_i +=1;
       X->Bind.Def.istep = step_i;
       step_iO=0;
@@ -182,20 +182,20 @@ int CalcByTPQ(
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;
-      StartTimer(109);
+      StartTimer(3600);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
-      StopTimer(109);
-      StartTimer(105);
+      StopTimer(3600);
+      StartTimer(3500);
       Multiply(&(X->Bind));
-      StopTimer(105);
+      StopTimer(3500);
 
-      StartTimer(102);
+      StartTimer(3200);
       expec_energy_flct(&(X->Bind));
-      StopTimer(102);
+      StopTimer(3200);
 //
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
 
-      StartTimer(109);
+      StartTimer(3600);
       if(!childfopenMPI(sdt_phys, "a", &fp)==0){
         return FALSE;
       }
@@ -216,17 +216,17 @@ int CalcByTPQ(
       fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
       fclose(fp);
 //
-      StopTimer(109);
+      StopTimer(3600);
 
 
       if (step_i%step_spin == 0){
-        StartTimer(103);
+        StartTimer(3300);
         expec_cisajs(&(X->Bind),v1);
-        StopTimer(103);
+        StopTimer(3300);
 
-        StartTimer(104);
+        StartTimer(3400);
         expec_cisajscktaltdc(&(X->Bind), v1);
-        StopTimer(104);
+        StopTimer(3400);
       }
     }
 

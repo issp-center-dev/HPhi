@@ -285,9 +285,9 @@ int expec_energy(struct BindStruct *X){
   }
 
 
-  StartTimer(108);
+  StartTimer(3201);
   mltply(X, v0, v1); // v0+=H*v1
-  StopTimer(108);
+  StopTimer(3201);
 /* switch -> SpinGCBoost */
 
   dam_pr=0.0;
