@@ -20,6 +20,7 @@
 #include "struct.h"
 #include "lapack_diag.h"
 #include "makeHam.h"
+#include "CalcTime.h"
 
 void zcopy_(int *n, double complex *x, int *incx, double complex *y, int *incy);
 void zdotc_(double complex *xy, int *n, double complex *x, int *incx, double complex *y, int *incy);
@@ -44,29 +45,36 @@ int CalcSpectrumByFullDiag(
   /*
    In generating Hamiltonian, v0 & v1 are overwritten.
   */
+  StartTimer(6301);
   makeHam(&(X->Bind));
+  StopTimer(6301);
   /*
    v0 : becomes eigenvalues in lapack_diag()
    L_vec : Eigenvectors
   */
+  StartTimer(6302);
   lapack_diag(&(X->Bind));
+  StopTimer(6302);
   /*
    v1 = |<n|c|0>|^2 
   */
+  StartTimer(6303);
   for (idim = 0; idim < idim_max_int; idim++) {
     zdotc_(&v1[idim], &idim_max_int, &vg[0], &incr, &L_vec[idim][0], &incr);
     v1[idim] = conj(v1[idim]) * v1[idim];
   }/*for (idim = 0; idim < idim_max_int; idim++)*/
+  StopTimer(6303);
   /*
    Sum_n |<n|c|0>|^2 / (z - E_n)
   */
+  StartTimer(6304);
   for (iomega = 0; iomega < Nomega; iomega++) {
     dcSpectrum[iomega] = 0.0;
     for (idim = 0; idim < idim_max_int; idim++) {
       dcSpectrum[iomega] += v1[idim] / (dcomega[iomega] - v0[idim]);
     }/*for (idim = 0; idim < idim_max_int; idim++)*/
   }/*for (iomega = 0; iomega < Nomega; iomega++)*/
-
+  StopTimer(6304);
   return TRUE;
 }/*CalcSpectrumByFullDiag*/
 

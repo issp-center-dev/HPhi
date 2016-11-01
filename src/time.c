@@ -62,26 +62,66 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "All", 0);
   StampTime(fp, "  sz", 1000);
   StampTime(fp, "  diagonalcalc", 2000);
-  if(X->Def.iCalcType==TPQCalc) {
-    StampTime(fp, "  CalcByTPQ", 3000);
-    StampTime(fp, "    FirstMultiply", 3100);
-    StampTime(fp, "      rand   in FirstMultiply", 3101);
-    StampTime(fp, "      mltply in FirstMultiply", 3102);
-    StampTime(fp, "    expec_energy             ", 3200);
-    StampTime(fp, "      mltply in expec_energy ", 3201);
-    StampTime(fp, "    expec_onebody            ", 3300);
-    StampTime(fp, "    expec_twobody            ", 3400);
-    StampTime(fp, "    Multiply                 ", 3500);
-    StampTime(fp, "    FileIO                   ", 3600);
+  if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
+    if(X->Def.iCalcType==TPQCalc) {
+      StampTime(fp, "  CalcByTPQ", 3000);
+      StampTime(fp, "    FirstMultiply", 3100);
+      StampTime(fp, "      rand   in FirstMultiply", 3101);
+      StampTime(fp, "      mltply in FirstMultiply", 3102);
+      StampTime(fp, "    expec_energy             ", 3200);
+      StampTime(fp, "      mltply in expec_energy ", 3201);
+      StampTime(fp, "    expec_onebody            ", 3300);
+      StampTime(fp, "    expec_twobody            ", 3400);
+      StampTime(fp, "    Multiply                 ", 3500);
+      StampTime(fp, "    FileIO                   ", 3600);
+    }
+    else if(X->Def.iCalcType==Lanczos){
+      StampTime(fp, "  CalcByLanczos", 4000);
+      StampTime(fp, "    LanczosEigenValue", 4100);
+      StampTime(fp, "      mltply      in LanczosEigenValue", 4101);
+      StampTime(fp, "      vec12       in LanczosEigenValue", 4102);
+      StampTime(fp, "      DSEVvalue   in LanczosEigenValue", 4103);
+      StampTime(fp, "    LanczosEigenVector", 4200);
+      StampTime(fp, "      mltply      in LanczosEigenVector", 4201);
+      StampTime(fp, "    expec_energy", 4300);
+      StampTime(fp, "      mltply in expec_energy ", 4301);
+      StampTime(fp, "    CGEigenVector", 4400);
+      StampTime(fp, "      mltply in CGEigenVector ", 4401);
+      StampTime(fp, "    expec_onebody            ", 4500);
+      StampTime(fp, "    expec_twobody            ", 4600);
+      StampTime(fp, "    expec_TotalSz            ", 4700);
+      StampTime(fp, "    FileIO                   ", 4800);
+      StampTime(fp, "      Read Input Eigenvec ", 4801);    
+    }
+    else if(X->Def.iCalcType==FullDiag){
+      StampTime(fp, "  CalcByFullDiag", 5000);
+      StampTime(fp, "    MakeHam", 5100);
+      StampTime(fp, "    LapackDiag", 5200);
+      StampTime(fp, "    CalcPhys", 5300);
+      StampTime(fp, "    Output", 5400);
+      StampTime(fp, "    OutputHam", 5500);
+    }
   }
-  else if(X->Def.iCalcType==Lanczos){
-    StampTime(fp, "  CalcByLanczos", 3000);
-  }
-  else if(X->Def.iCalcType==FullDiag){
-    StampTime(fp, "  CalcByFullDiag", 3000);
-  }
-  else if(X->Def.iFlgCalcSpec != CALCSPEC_NOT){
-    StampTime(fp, "  CalcSpectrum", 3000);
+  else{ 
+    StampTime(fp, "  CalcSpectrum by Lanczos method", 6000);
+    StampTime(fp, "    Make excited state", 6100);
+    StampTime(fp, "      Read origin state", 6101);
+    StampTime(fp, "      Multiply excited operator", 6102);
+    StampTime(fp, "    Calculate spectrum", 6200);
+    if(X->Def.iCalcType==Lanczos){
+      StampTime(fp, "      Read vector for recalculation", 6201);
+      StampTime(fp, "      Read tridiagonal components for recalculation", 6202);
+      StampTime(fp, "      Calculate tridiagonal components", 6203);
+      StampTime(fp, "      Output tridiagonal components", 6204);
+      StampTime(fp, "      Calculate spectrum by Lanczos method", 6205);
+      StampTime(fp, "      Output vectors for recalculation", 6206);
+    }
+    else if(X->Def.iCalcType==FullDiag){
+      StampTime(fp, "      MakeHam", 6301);
+      StampTime(fp, "      lapackdiag", 6302);
+      StampTime(fp, "      Calculate v1", 6303);
+      StampTime(fp, "      Calculate spectrum", 6304);
+    }
   }
   
   fprintf(fp,"================================================\n");

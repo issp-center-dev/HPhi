@@ -18,7 +18,7 @@
 #include "FileIO.h"
 #include "mltply.h"
 #include "wrapperMPI.h"
-
+#include "CalcTime.h"
 /** 
  * 
  * 
@@ -141,9 +141,9 @@ int CG_EigenVector(struct BindStruct *X){
       for(j=1;j<=i_max;j++){  
 	y[j]=(-Eig+eps_CG)*vg[j];   //y = -E*p
       }
-
+      StartTimer(4401);
       mltply(X,y,vg);      // y += H*p
-
+      StopTimer(4401);
       // (H-E)p=y finish!
       rp=0.0;
       yp=0.0;

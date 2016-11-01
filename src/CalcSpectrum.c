@@ -117,9 +117,11 @@ int CalcSpectrum(
   }
 
   //Make excited state
+  StartTimer(6100);
   if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
       X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
     //input eigen vector
+    StartTimer(6101);
     fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
     GetFileNameByKW(KWSpectrumVec, &defname);
@@ -142,7 +144,8 @@ int CalcSpectrum(
     
     fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
-
+    StopTimer(6101);
+    
     for (i = 1; i <= i_max; i++) {
       v0[i] = 0;
     }
@@ -151,8 +154,9 @@ int CalcSpectrum(
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
     fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
     //mltply Operator
+    StartTimer(6102);
     GetExcitedState(&(X->Bind), v0, v1);
-
+    StopTimer(6102);
     //calculate norm
     dnorm = NormMPI_dc(i_max, v0);
     if (fabs(dnorm) < pow(10.0, -15)) {
@@ -167,13 +171,15 @@ int CalcSpectrum(
     fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
   }
+  StopTimer(6100);
 
+  
   int iret=TRUE;
   fprintf(stdoutMPI, "  Start: Caclulating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
+  StartTimer(6200);
   switch (X->Bind.Def.iCalcType) {
     case Lanczos:
-
       iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
           if (iret != TRUE) {
             //Error Message will be added.
@@ -183,6 +189,8 @@ int CalcSpectrum(
           break;//Lanczos Spectrum
 
     case TPQCalc:
+      fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum.\n");
+      return FALSE;//TPQ is not supprted.
       iret = CalcSpectrumByTPQ(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
           if (iret != TRUE) {
             //Error Message will be added.
@@ -198,7 +206,8 @@ int CalcSpectrum(
     default:
       break;
   }
-
+  StopTimer(6200);
+  
   if (iret != TRUE) {
     //Error Message will be added.
     return FALSE;
