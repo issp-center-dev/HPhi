@@ -69,6 +69,8 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   int step=0;
   int rand_i=0;
 
+  if(X->Def.NCisAjt <1) return 0;
+
   i_max = X->Check.idim_max;      
   if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
     return -1;

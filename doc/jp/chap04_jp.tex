@@ -538,11 +538,11 @@ $ gnuplot lattice.gp
 \end{itemize}
 初期ベクトル設定の詳細については、\ref{Ch:algorithm}を参照ください。
 
-\item \verb|nvec|
+%\item \verb|nvec|
 
-{\bf 形式 :} 整数(デフォルト値は\verb|1|)
+%{\bf 形式 :} 整数(デフォルト値は\verb|1|)
 
-{\bf 説明 :} ランチョス法の段階で下からいくつの固有値を求めるかを指定します。
+%{\bf 説明 :} ランチョス法の段階で下からいくつの固有値を求めるかを指定します。
 
 \item \verb|exct|
 
@@ -731,24 +731,24 @@ TwoBodyG	zcisajscktaltdc.def
  \begin{table*}[h!]
 \begin{center}
   \begin{tabular}{ll|} \hline
-           Keywords     & Details for corresponding files       \\   \hline\hline
-           CalcMod      &   Parameters for modes of calculation.  \\  \hline  
-           ModPara       &  Parameters for calculation.        \\ \hline   
-           LocSpin         &  Configurations of the local spins for Hamiltonian.         \\ 
-           Trans       &   Transfer and chemical potential for Hamiltonian.  \\
-           InterAll  &   Two-body interactions for Hamiltonian. \\  
-           CoulombIntra  &   CoulombIntra interactions. \\  
-           CoulombInter  &   CoulombInter  interactions. \\  
-           Hund  &   Hund couplings. \\  
-           PairHop  &  Pair hopping couplings. \\  
-           Exchange  &  Exchange couplings. \\  
-           Ising  &  Ising interactions. \\  
-           PairLift  &   Pair lift couplings. \\  
-           OneBodyG         &   Output components for Green functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
-           TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\   
-           \tr{SingleExcitation} &   Operators for generating single excited state\\ 
-           \tr{PairExcitation} &   Operators for generating pair excited state\\   
-           \tr{SpectrumVec} &   An input vector to calculate a restart vector\\   
+           Keywords     & 指定ファイルの概要       \\   \hline\hline
+           CalcMod      &   計算モードに関する指定をします。  \\  \hline  
+           ModPara       &  計算で用いるパラメータの指定をします。  \\ \hline   
+           LocSpin         &  各サイトに対して遍歴電子もしくは局在スピンの指定をします。        \\ 
+           Trans       &   一般的一体相互作用に関する設定をします。  \\
+           InterAll  &   一般的二体相互作用に関する設定をします。 \\  
+           CoulombIntra  &   内部クーロン相互作用に関する設定をします。 \\  
+           CoulombInter  &   サイト間クーロン相互作用に関する設定をします。\\  
+           Hund  &   フント結合に関する設定をします。 \\  
+           PairHop  &  ペアホッピングに関する設定をします。 \\  
+           Exchange  &  交換相互作用に関する設定をします。 \\  
+           Ising  &  イジング相互作用に関する設定をします。 \\  
+           PairLift  &   ペアリフト相互作用に関する設定をします。 \\  
+           OneBodyG         &   出力する一体グリーン関数$\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$ に関する設定をします。\\   
+           TwoBodyG &   出力するニ体グリーン関数 $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$に関する設定をします。 \\   
+           \tr{SingleExcitation} &   一体励起状態の生成演算子に関する指定をします。\\ 
+           \tr{PairExcitation} &   ニ体励起状態の生成演算子に関する指定をします。\\   
+           \tr{SpectrumVec} &   スペクトル関数を計算するためのリスタート用の入力ベクトルを指定します。\\   
            \hline
   \end{tabular}
 \end{center}
@@ -875,10 +875,8 @@ CalcEigenVec 0
 2: リスタートベクトル入力あり、出力あり\\
 3: リスタートベクトル入力あり、出力なし\\
 から選択することが出来ます。
-リスタートベクトルに関するファイルフォーマットは
 }
 }
-
 
 \item  \verb|CalcSpec|
 
@@ -919,7 +917,6 @@ Ncond          16
 2Sz            0    
 Lanczos_max    1000 
 initial_iv     12   
-nvec           1    
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
@@ -1031,7 +1028,7 @@ ExpecInterval  20
 
 {\bf 説明 :} Lanczos法で求める固有ベクトルの番号を指定する整数。
 例えば、1なら基底状態のベクトル、2なら第一励起状態のベクトルを求めます。
-   \verb|nvec| $>=$ \verb|exct| とする必要があります。
+%   \verb|nvec| $>=$ \verb|exct| とする必要があります。
 
 \item   \verb|LanczosEps|
    

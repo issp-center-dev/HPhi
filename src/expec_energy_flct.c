@@ -43,7 +43,7 @@ int expec_energy_flct(struct BindStruct *X){
   double tmp_num_up, tmp_num_down;
   double D,tmp_D,tmp_D2;
   double N,tmp_N,tmp_N2;
-  double Sz,tmp_Sz,tmp_Sz2;
+  double Sz,tmp_Sz, tmp_Sz2;
   double tmp_v02;  
   
   long unsigned int i_max,tmp_list_1;
@@ -166,7 +166,7 @@ int expec_energy_flct(struct BindStruct *X){
         N        += num1_up+num1_down;
         Sz       += num1_up-num1_down;
       } 
-    } 
+    }
     tmp_D   += tmp_v02*D;
     tmp_D2  += tmp_v02*D*D;
     tmp_N   += tmp_v02*N;
@@ -175,18 +175,18 @@ int expec_energy_flct(struct BindStruct *X){
     tmp_Sz2 += tmp_v02*Sz*Sz;
   }
   break;
+  
   case SpinGC:
   if(X->Def.iFlgGeneralSpin == FALSE) {
 #pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0)   \
-  firstprivate(i_max,X,myrank) private(j,Sz,is1_up,ibit1,isite1,tmp_v02)
+  firstprivate(i_max,X,myrank) private(j,Sz, is1_up,ibit1,isite1,tmp_v02)
     for(j = 1; j <= i_max; j++){ 
       tmp_v02  = conj(v0[j])*v0[j];
-      Sz       = 0.0;  
+      Sz       = 0.0;
       for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
         if(isite1 > X->Def.Nsite){
           is1_up = X->Def.Tpow[isite1 - 1];
           ibit1  = (unsigned long int)myrank& is1_up;
-
           if(ibit1==is1_up){
             Sz += 1.0; 
           }else{
@@ -201,11 +201,11 @@ int expec_energy_flct(struct BindStruct *X){
             Sz += -1.0; 
           }
         }
-      } 
+      }
       tmp_Sz   += Sz*tmp_v02;
       tmp_Sz2  += Sz*Sz*tmp_v02;
     }
-  } 
+  }
   break;/*case SpinGC*/
   /* SpinGCBoost */
   case Spin:

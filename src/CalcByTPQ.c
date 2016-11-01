@@ -68,15 +68,6 @@ int CalcByTPQ(
     iret=0;
     X->Bind.Def.irand=rand_i;
 
-    StartTimer(3600);
-    if(rand_i==0){
-      TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
-    }
-    else{
-      TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
-    }
-    StopTimer(3600);
-
   //Make or Read initial vector
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
       StartTimer(3600);
@@ -133,7 +124,14 @@ int CalcByTPQ(
       StopTimer(3600);
 
       step_i = 1;
+
       StartTimer(3100);
+      if(rand_i==0){
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "w", rand_i, step_i);
+      }
+      else{
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
+      }
       FirstMultiply(rand_i, &(X->Bind));
       StopTimer(3100);
       StartTimer(3200);

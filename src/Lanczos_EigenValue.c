@@ -205,6 +205,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v0[i] = -beta1*temp1;
       v1[i] =  temp2;
     }
+
     StartTimer(4101);
     mltply(X, v0, v1);
     StopTimer(4101);
