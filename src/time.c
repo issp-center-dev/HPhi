@@ -14,6 +14,22 @@
 #include <mpi.h>
 #endif
 
+void current_utc_time(struct timespec *ts) {
+#ifdef _OSX // OS X does not have clock_gettime, use clock_get_time
+  clock_serv_t cclock;
+  mach_timespec_t mts;
+  host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+  clock_get_time(cclock, &mts);
+  mach_port_deallocate(mach_task_self(), cclock);
+  ts->tv_sec = mts.tv_sec;
+  ts->tv_nsec = mts.tv_nsec;
+#else
+  clock_gettime(CLOCK_REALTIME, ts);
+#endif
+
+}
+
+
 void StampTime(FILE *fp, char *str, int num){
   char str1[256];
   sprintf(str1, "%-40s [%04d] %12.5lf\n", str, num, Timer[num]);
@@ -35,7 +51,8 @@ void StartTimer(int n) {
   TimerStart[n]=MPI_Wtime();
 #else
   struct timespec ts;
-  clock_gettime(CLOCK_REALTIME,&ts);
+  current_utc_time(&ts);
+  //clock_gettime(CLOCK_REALTIME,&ts);
   TimerStart[n]=ts.tv_sec + ts.tv_nsec*1.0e-9;
 #endif
   return;
@@ -46,7 +63,8 @@ void StopTimer(int n) {
   Timer[n] += MPI_Wtime() - TimerStart[n];
 #else
   struct timespec ts;
-  clock_gettime(CLOCK_REALTIME,&ts);
+  current_utc_time(&ts);
+  //clock_gettime(CLOCK_REALTIME,&ts);
   Timer[n] += ts.tv_sec + ts.tv_nsec*1.0e-9 - TimerStart[n];
 #endif
   return;

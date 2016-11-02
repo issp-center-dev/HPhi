@@ -62,6 +62,7 @@ include/CalcSpectrum.h \
 include/CalcSpectrumByFullDiag.h \
 include/CalcSpectrumByLanczos.h \
 include/CalcSpectrumByTPQ.h \
+include/CalcTime.h\
 include/CheckMPI.h \
 include/Common.h \
 include/DefCommon.h \

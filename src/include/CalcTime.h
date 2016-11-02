@@ -1,5 +1,9 @@
 #pragma once
-#include "Common.h"
+#ifdef _OSX
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
 void InitTimer();
 inline void StartTimer(int n);
 inline void StopTimer(int n);
