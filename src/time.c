@@ -14,8 +14,8 @@
 #include <mpi.h>
 #endif
 
-void current_utc_time(struct timespec *ts) {
-#ifdef _OSX // OS X does not have clock_gettime, use clock_get_time
+void clock_gettime_general(struct timespec *ts) {
+#ifdef _OSX 
   clock_serv_t clock_mac;
   mach_timespec_t mts_mac;
   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &clock_mac);
@@ -51,7 +51,7 @@ void StartTimer(int n) {
   TimerStart[n]=MPI_Wtime();
 #else
   struct timespec ts;
-  current_utc_time(&ts);
+  clock_gettime_general(&ts);
   //clock_gettime(CLOCK_REALTIME,&ts);
   TimerStart[n]=ts.tv_sec + ts.tv_nsec*1.0e-9;
 #endif
@@ -63,7 +63,7 @@ void StopTimer(int n) {
   Timer[n] += MPI_Wtime() - TimerStart[n];
 #else
   struct timespec ts;
-  current_utc_time(&ts);
+  clock_gettime_general(&ts);
   //clock_gettime(CLOCK_REALTIME,&ts);
   Timer[n] += ts.tv_sec + ts.tv_nsec*1.0e-9 - TimerStart[n];
 #endif
