@@ -219,7 +219,6 @@ int LOBPCG_Main(
       dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
       for (ie = 0; ie < X->Def.k_exct; ie++) {
-        printf("debug %d\n", ie);
         if (X->Def.iInitialVecType == 0) {
 #pragma omp for
           for (idim = 1; idim <= i_max; idim++)
@@ -280,7 +279,7 @@ int LOBPCG_Main(
     */
     eigabs_max = 0.0;
     for (ie = 0; ie < X->Def.k_exct; ie++)
-      if (fabs(eig[ie] > eigabs_max)) eigabs_max = fabs(eig[ie]);
+      if (fabs(eig[ie]) > eigabs_max) eigabs_max = fabs(eig[ie]);
     eps_BiCG = pow(10, -0.5 *X->Def.LanczosEps);
     if (eigabs_max > 1.0) eps_BiCG *= eigabs_max;
 
