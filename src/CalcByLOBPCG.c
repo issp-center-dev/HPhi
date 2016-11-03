@@ -314,7 +314,7 @@ int LOBPCG_Main(
     }
     for (ie = 0; ie < X->Def.k_exct; ie++)
       eig[ie] =
-      creal(eigsub[ie + 1 * X->Def.k_exct + ie * nsub + 1 * nsub*X->Def.k_exct]);
+      creal(hsub[ie + 1 * X->Def.k_exct + ie * nsub + 1 * nsub*X->Def.k_exct]);
 
     if (stp == 1) {
       nsub2 = 2 * X->Def.k_exct;
