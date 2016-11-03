@@ -24,8 +24,11 @@
 #include "expec_cisajscktaltdc.h"
 #include "expec_totalspin.h"
 #include "expec_energy.h"
+#include <math.h>
 
 void zhegv_(int *itype, char *jobz, char *uplo, int *n, double complex *a, int *lda, double complex *b, int *ldb, double *w, double complex *work, int *lwork, double *rwork, int *info);
+void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
+void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *alpha, double complex *a, int *lda, double complex *b, int *ldb, double complex *beta, double complex *c, int *ldc);
 
 /*
 Conjgate vector product
@@ -46,6 +49,67 @@ double complex vec_prod(
   return(prod);
 }/*double complex vec_prod*/
 
+void diag_ovrp(
+  int nsub,
+  double complex *hsub,
+  double complex *ovrp,
+  double *eig
+)
+{
+  int *iwork, info, isub, jsub, nsub2;
+  char jobz = 'V', uplo = 'U', transa = 'N', transb = 'N';
+  double *rwork;
+  double complex *work, *mat;
+  int liwork, lwork, lrwork;
+  double complex one = 1.0, zero = 0.0;
+
+  liwork = 5 * nsub + 3;
+  lwork = nsub*nsub + 2 * nsub;
+  lrwork = 3 * nsub*nsub + (4 + (int)log2(nsub) + 1) * nsub + 1;
+
+  iwork = (int*)malloc(liwork * sizeof(int));
+  rwork = (double*)malloc(lrwork * sizeof(double));
+  work = (double complex*)malloc(lwork * sizeof(double complex));
+  mat = (double complex*)malloc(nsub*nsub * sizeof(double complex));
+  for (isub = 0; isub < nsub*nsub; isub++)mat[isub] = 0.0;
+
+  zheevd_(&jobz, &uplo, &nsub, ovrp, &nsub, eig, work, &lwork, rwork, &lrwork, iwork, &liwork, &info);
+  /*
+   Compute O^{-1/2}
+  */
+  nsub2 = 0;
+  for (isub = 0; isub < nsub; isub++) {
+    if (eig[isub] > sqrt(eps_Lanczos)) {
+      for (jsub = 0; jsub < nsub; jsub++)
+        ovrp[jsub + nsub*nsub2] = ovrp[jsub + nsub*isub] / sqrt(eig[isub]);
+      nsub2 += 1;
+    }
+  }
+  for (isub = nsub2; isub < nsub; isub++) 
+    for (jsub = 0; jsub < nsub; jsub++)
+      ovrp[jsub + nsub*isub] = 0.0;
+  /*
+  Compute orthogonalized hsub
+  */
+  transa = 'N';
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, hsub, &nsub, ovrp, &nsub, &zero, mat, &nsub);
+  transa = 'C';
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovrp, &nsub, mat, &nsub, &zero, hsub, &nsub);
+  /*
+   Diagonalize orthogonalized one
+  */
+  zheevd_(&jobz, &uplo, &nsub2, hsub, &nsub, eig, work, &lwork, rwork, &lrwork, iwork, &liwork, &info);
+  transa = 'N';
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovrp, &nsub, hsub, &nsub, &zero, mat, &nsub);
+ // printf("%d %d %15.5f %15.5f %15.5f\n", info, nsub2, eig[0], eig[1], eig[2]);
+  for (isub = 0; isub < nsub*nsub; isub++)hsub[isub] = mat[isub];
+
+  free(mat);
+  free(work);
+  free(rwork);
+  free(iwork);
+}/*void diag_ovrp*/
+
 /*
 Core routine for the LOBPCG method
 */
@@ -56,22 +120,23 @@ int LOBPCG_Main(
   FILE *fp;
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
   int stp, iproc;
-  long int i, iv, i_max;
+  long int idim, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
   int iconv = -1;
   int mythread;
 
-  int ii, jj, jtarget;
-  double complex **wxp/*[0] w, [1] x, [2] p */, 
-    **hwxp/*[0] h*w, [1] h*x, [2] h*p */, hsub[9], ovrp[9];
-  double eig, dnorm, eps_BiCG;
+  int ii, jj, ie, je, nsub;
+  double complex ***wxp/*[0] w, [1] x, [2] p */, 
+    ***hwxp/*[0] h*w, [1] h*x, [2] h*p */,
+    *hsub, *ovrp;
+  double *eig, dnorm, eps_BiCG, dnormmax, eigabs_max;
   /*
   Variables for zhegv
   */
-  int lwork = 5, info, lda = 3, ldb = 3;
-  int itype = 1, nsub;
-  double rwork[7], eigsub[3];
-  double complex work[5];
+  int lwork, info, lda, ldb;
+  int itype = 1, nsub2;
+  double *rwork, *eigsub;
+  double complex *work;
   char jobz = 'V', uplo = 'U';
   /*
   For DSFMT
@@ -80,49 +145,66 @@ int LOBPCG_Main(
   dsfmt_t dsfmt;
 
   sprintf(sdt_2, cFileNameLanczosStep, X->Def.CDataFileHead);
+  nsub = 3 * X->Def.k_exct;
+  lda = nsub;
+  ldb = nsub;
+  lwork = 2 * nsub - 1;
+  c_malloc1(work, lwork);
+  d_malloc1(rwork, 3 * nsub - 2);
+  d_malloc1(eigsub, nsub);
+
+  d_malloc1(eig, X->Def.k_exct);
+  c_malloc1(hsub, nsub*nsub);
+  c_malloc1(ovrp, nsub*nsub);
 
   i_max = X->Check.idim_max;
 
-  c_malloc2(wxp, 3, X->Check.idim_max + 1);
-  c_malloc2(hwxp, 3, X->Check.idim_max + 1);
+  free(v0);
+  free(v1);
+  free(vg);
+  c_malloc3(wxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
+  c_malloc3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
   /*
    Set initial guess of wavefunction
   */
   if (initial_mode == 0) {
 
-    sum_i_max = SumMPI_li(X->Check.idim_max);
-    X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv) % sum_i_max + 1;
-    iv = X->Large.iv;
-    fprintf(stdoutMPI, "  initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max, X->Def.k_exct);
-#pragma omp parallel for default(none) private(i) shared(wxp,i_max)
-    for (i = 1; i <= i_max; i++) {
-      wxp[1][i] = 0.0;
-    }
+    for (ie = 0; ie < X->Def.k_exct; ie++) {
 
-    sum_i_max = 0;
-    for (iproc = 0; iproc < nproc; iproc++) {
+      sum_i_max = SumMPI_li(X->Check.idim_max);
+      X->Large.iv = (sum_i_max / 2 + X->Def.initial_iv + ie) % sum_i_max + 1;
+      iv = X->Large.iv;
+      fprintf(stdoutMPI, "  initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max, X->Def.k_exct);
+#pragma omp parallel for default(none) private(idim) shared(wxp,i_max,ie)
+      for (idim = 1; idim <= i_max; idim++) {
+        wxp[1][ie][idim] = 0.0;
+      }
 
-      i_max_tmp = BcastMPI_li(iproc, i_max);
-      if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
+      sum_i_max = 0;
+      for (iproc = 0; iproc < nproc; iproc++) {
 
-        if (myrank == iproc) {
-          wxp[1][iv - sum_i_max + 1] = 1.0;
-          if (X->Def.iInitialVecType == 0) {
-            wxp[1][iv - sum_i_max + 1] += 1.0*I;
-            wxp[1][iv - sum_i_max + 1] /= sqrt(2.0);
-          }
-        }/*if (myrank == iproc)*/
-      }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
+        i_max_tmp = BcastMPI_li(iproc, i_max);
+        if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
 
-      sum_i_max += i_max_tmp;
+          if (myrank == iproc) {
+            wxp[1][ie][iv - sum_i_max + 1] = 1.0;
+            if (X->Def.iInitialVecType == 0) {
+              wxp[1][ie][iv - sum_i_max + 1] += 1.0*I;
+              wxp[1][ie][iv - sum_i_max + 1] /= sqrt(2.0);
+            }
+          }/*if (myrank == iproc)*/
+        }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
 
-    }/*for (iproc = 0; iproc < nproc; iproc++)*/
+        sum_i_max += i_max_tmp;
+
+      }/*for (iproc = 0; iproc < nproc; iproc++)*/
+    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
   }/*if(initial_mode == 0)*/
   else if (initial_mode == 1) {
     iv = X->Def.initial_iv;
     fprintf(stdoutMPI, "  initial_mode=%d (random): iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max, X->Def.k_exct);
-#pragma omp parallel default(none) private(i, u_long_i, mythread, dsfmt) \
-            shared(wxp, iv, X, nthreads, myrank) firstprivate(i_max)
+#pragma omp parallel default(none) private(idim, u_long_i, mythread, dsfmt, ie) \
+            shared(wxp, iv, X, nthreads, myrank, i_max)
     {
 
       /*
@@ -136,104 +218,166 @@ int LOBPCG_Main(
       u_long_i = 123432 + labs(iv) + mythread + nthreads * myrank;
       dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
-      if (X->Def.iInitialVecType == 0) {
+      for (ie = 0; ie < X->Def.k_exct; ie++) {
+        printf("debug %d\n", ie);
+        if (X->Def.iInitialVecType == 0) {
 #pragma omp for
-        for (i = 1; i <= i_max; i++)
-          wxp[1][i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
-      }
-      else {
+          for (idim = 1; idim <= i_max; idim++)
+            wxp[1][ie][idim] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
+        }
+        else {
 #pragma omp for
-        for (i = 1; i <= i_max; i++)
-          wxp[1][i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
-      }
+          for (idim = 1; idim <= i_max; idim++)
+            wxp[1][ie][idim] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+        }
+      }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
 
     }/*#pragma omp parallel*/
 
-    dnorm = sqrt(creal(vec_prod(i_max, wxp[1], wxp[1])));
-#pragma omp parallel for default(none) private(i) shared(wxp,i_max, dnorm)
-    for (i = 1; i <= i_max; i++)  wxp[1][i] = wxp[1][i] / dnorm;
+    for (ie = 0; ie < X->Def.k_exct; ie++) {
+      dnorm = sqrt(creal(vec_prod(i_max, wxp[1][ie], wxp[1][ie])));
+#pragma omp parallel for default(none) private(idim) shared(wxp,i_max, dnorm, ie)
+      for (idim = 1; idim <= i_max; idim++)  wxp[1][ie][idim] = wxp[1][ie][idim] / dnorm;
+    }
   }/*else if(initial_mode==1)*/
 
    //Eigenvalues by Lanczos method
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
 
-  for (i = 1; i <= i_max; i++)  hwxp[1][i] = 0.0;
-  mltply(X, hwxp[1], wxp[1]);
+  for (ie = 0; ie < X->Def.k_exct; ie++)
+    for (idim = 1; idim <= i_max; idim++)  hwxp[1][ie][idim] = 0.0;
+
+  for (ie = 0; ie < X->Def.k_exct; ie++) 
+    mltply(X, hwxp[1][ie], wxp[1][ie]);
   stp = 1;
   TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
 
-  for (i = 1; i <= i_max; i++) wxp[2][i] = 0.0;
-  for (i = 1; i <= i_max; i++) hwxp[2][i] = 0.0;
+  for (ie = 0; ie < X->Def.k_exct; ie++){
+    for (idim = 1; idim <= i_max; idim++) wxp[2][ie][idim] = 0.0;
+    for (idim = 1; idim <= i_max; idim++) hwxp[2][ie][idim] = 0.0;
 
-  eig = creal(vec_prod(i_max, wxp[1], hwxp[1]));
+    eig[ie] = creal(vec_prod(i_max, wxp[1][ie], hwxp[1][ie]));
+  }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
 
-  fprintf(stdoutMPI, "Iteration   Residual-2-norm      Energy        Threshold   zhegv-info\n");
+  fprintf(stdoutMPI, "    Step   Residual-2-norm     Threshold   zhegv-info      Energy\n");
 
   info = 0;
   for (stp = 1; stp <= X->Def.Lanczos_max; stp++) {
 
-    for (i = 1; i <= i_max; i++) wxp[0][i] = hwxp[1][i] - eig * wxp[1][i];
-    dnorm = sqrt(creal(vec_prod(i_max, wxp[0], wxp[0])));
+    dnormmax = 0.0;
+    for (ie = 0; ie < X->Def.k_exct; ie++) {
+      for (idim = 1; idim <= i_max; idim++)
+        wxp[0][ie][idim] = hwxp[1][ie][idim] - eig[ie] * wxp[1][ie][idim];
+      dnorm = sqrt(creal(vec_prod(i_max, wxp[0][ie], wxp[0][ie])));
+      if (dnorm > dnormmax) dnormmax = dnorm;
 
+      if (stp /= 1)
+        for (idim = 1; idim <= i_max; idim++) wxp[0][ie][idim] = wxp[0][ie][idim] / dnorm;
+
+    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
     /*
     Convergence check
     */
+    eigabs_max = 0.0;
+    for (ie = 0; ie < X->Def.k_exct; ie++)
+      if (fabs(eig[ie] > eigabs_max)) eigabs_max = fabs(eig[ie]);
     eps_BiCG = pow(10, -0.5 *X->Def.LanczosEps);
-    if (fabs(eig) > 1.0) eps_BiCG *= fabs(eig);
+    if (eigabs_max > 1.0) eps_BiCG *= eigabs_max;
 
-    fprintf(stdoutMPI, "%9d %15.5e %15.5e %15.5e  %d\n", stp, dnorm, eig, eps_BiCG, info);
-    if (dnorm < eps_BiCG) {
+    fprintf(stdoutMPI, "%9d %15.5e %15.5e      %d   ",
+      stp, dnormmax, eps_BiCG, info);
+    for (ie = 0; ie < X->Def.k_exct; ie++)
+      fprintf(stdoutMPI, " %15.5e", eig[ie]);
+    fprintf(stdoutMPI, "\n");
+
+    if (dnormmax < eps_BiCG) {
       iconv = 0;
       break;
     }
 
-    if (stp /= 1)
-      for (i = 1; i <= i_max; i++) wxp[0][i] = wxp[0][i] / dnorm;
-
-    for (i = 1; i <= i_max; i++)  hwxp[0][i] = 0.0;
-    mltply(X, hwxp[0], wxp[0]);
+    for (ie = 0; ie < X->Def.k_exct; ie++)
+      for (idim = 1; idim <= i_max; idim++)  hwxp[0][ie][idim] = 0.0;
+    for (ie = 0; ie < X->Def.k_exct; ie++)
+      mltply(X, hwxp[0][ie], wxp[0][ie]);
 
     for (ii = 0; ii < 3; ii++) {
-      for (jj = 0; jj < 3; jj++) {
-        hsub[jj + ii * 3] = vec_prod(i_max, wxp[jj], hwxp[ii]);
-        ovrp[jj + ii * 3] = vec_prod(i_max, wxp[jj], wxp[ii]);
+      for (ie = 0; ie < X->Def.k_exct; ie++){
+        for (jj = 0; jj < 3; jj++) {
+          for (je = 0; je < X->Def.k_exct; je++){
+            hsub[je + jj*X->Def.k_exct + ie * nsub + ii * nsub*X->Def.k_exct]
+              = vec_prod(i_max, wxp[jj][je], hwxp[ii][ie]);
+            ovrp[je + jj*X->Def.k_exct + ie * nsub + ii * nsub*X->Def.k_exct]
+              = vec_prod(i_max, wxp[jj][je], wxp[ii][ie]);
+          }
+        }
       }
     }
-    eig = creal(hsub[2 + 2 * 3]);
+    for (ie = 0; ie < X->Def.k_exct; ie++)
+      eig[ie] =
+      creal(eigsub[ie + 2 * X->Def.k_exct + ie * nsub + 2 * nsub*X->Def.k_exct]);
 
     if (stp == 1) {
-      nsub = 2;
-      zhegv_(&itype, &jobz, &uplo, &nsub, hsub, &lda, ovrp, &ldb, eigsub, work, &lwork, rwork, &info);
-      jtarget = 0;
+      nsub2 = 2 * X->Def.k_exct;
+      zhegv_(&itype, &jobz, &uplo, &nsub2, hsub, &lda, ovrp, &ldb, eigsub, work, &lwork, rwork, &info);
     }
     else {
-      nsub = 3;
-      zhegv_(&itype, &jobz, &uplo, &nsub, hsub, &lda, ovrp, &ldb, eigsub, work, &lwork, rwork, &info);
-      jtarget = 0;
+      nsub2 = nsub;
+      zhegv_(&itype, &jobz, &uplo, &nsub2, hsub, &lda, ovrp, &ldb, eigsub, work, &lwork, rwork, &info);
     }
 
-    eig = 0.5 * (eig + eigsub[jtarget]);
+    /*
+     nsub = 3;
+    diag_ovrp(nsub, hsub, ovrp, eigsub);
+    jtarget = 0;
+   */
+    for (ie = 0; ie < X->Def.k_exct; ie++)
+      eig[ie] = 0.5 * (eig[ie] + eigsub[ie]);
 
-    for (i = 1; i <= i_max; i++) {
-      wxp[1][i] = hsub[0 + jtarget * 3] * wxp[0][i]
-                + hsub[1 + jtarget * 3] * wxp[1][i]
-                + hsub[2 + jtarget * 3] * wxp[2][i];
-      hwxp[1][i] = hsub[0 + jtarget * 3] * hwxp[0][i]
-                 + hsub[1 + jtarget * 3] * hwxp[1][i]
-                 + hsub[2 + jtarget * 3] * hwxp[2][i];
+    for (idim = 1; idim <= i_max; idim++) {
 
-      wxp[2][i] = hsub[0 + jtarget * 3] * wxp[0][i]
-                + hsub[2 + jtarget * 3] * wxp[2][i];
-      hwxp[2][i] = hsub[0 + jtarget * 3] * hwxp[0][i]
-                 + hsub[2 + jtarget * 3] * hwxp[2][i];
-    }
+      for (ie = 0; ie < X->Def.k_exct; ie++) {
+        work[ie] = 0.0;
+        for (jj = 0; jj < 3; jj++)
+          for (je = 0; je < X->Def.k_exct; je++)
+            work[ie] += wxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
+      }
+      for (ie = 0; ie < X->Def.k_exct; ie++) wxp[1][ie][idim] = work[ie];
+
+      for (ie = 0; ie < X->Def.k_exct; ie++) {
+        work[ie] = 0.0;
+        for (jj = 0; jj < 3; jj++)
+          for (je = 0; je < X->Def.k_exct; je++)
+            work[ie] += hwxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
+      }
+      for (ie = 0; ie < X->Def.k_exct; ie++) hwxp[1][ie][idim] = work[ie];
+
+      for (ie = 0; ie < X->Def.k_exct; ie++) {
+        work[ie] = 0.0;
+        for (jj = 0; jj < 3; jj += 2) {
+          for (je = 0; je < X->Def.k_exct; je++)
+            work[ie] += wxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
+        }
+      }
+      for (ie = 0; ie < X->Def.k_exct; ie++) wxp[2][ie][idim] = work[ie];
+
+      for (ie = 0; ie < X->Def.k_exct; ie++) {
+        work[ie] = 0.0;
+        for (jj = 0; jj < 3; jj += 2)
+          for (je = 0; je < X->Def.k_exct; je++)
+            work[ie] += hwxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
+      }
+      for (ie = 0; ie < X->Def.k_exct; ie++) hwxp[2][ie][idim] = work[ie];
+
+    }/*for (idim = 1; idim <= i_max; idim++)*/
 
     for (ii = 1; ii < 3; ii++) {
-      dnorm = sqrt(creal(vec_prod(i_max, wxp[ii], wxp[ii])));
-      for (i = 1; i <= i_max; i++) {
-        wxp[ii][i] = wxp[ii][i] / dnorm;
-        hwxp[ii][i] = hwxp[ii][i] / dnorm;
-      }/*for (i = 1; i <= i_max; i++)*/
+      for (ie = 0; ie < X->Def.k_exct; ie++) {
+        dnorm = sqrt(creal(vec_prod(i_max, wxp[ii][ie], wxp[ii][ie])));
+        for (idim = 1; idim <= i_max; idim++) {
+          wxp[ii][ie][idim] = wxp[ii][ie][idim] / dnorm;
+          hwxp[ii][ie][idim] = hwxp[ii][ie][idim] / dnorm;
+        }/*for (idim = 1; idim <= i_max; idim++)*/
+      }/* for (ie = 0; ie < X->Def.k_exct; ie++)*/
     }/*for (ii = 1; ii < 3; ii++)*/
 
   }/*for (stp = 1; stp <= X->Def.Lanczos_max; stp++)*/
@@ -247,9 +391,20 @@ int LOBPCG_Main(
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
-  for (i = 1; i <= i_max; i++) v0[i] = wxp[1][i];
-  c_free2(wxp, 3, X->Check.idim_max + 1);
-  c_free2(hwxp, 3, X->Check.idim_max + 1);
+  c_free1(work, lwork);
+  d_free1(rwork, 3 * nsub - 2);
+  d_free1(eigsub, nsub);
+
+  d_free1(eig, X->Def.CDataFileHead);
+  c_free1(hsub, nsub*nsub);
+  c_free1(ovrp, nsub*nsub);
+
+  c_free3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
+  c_malloc1(v0, X->Check.idim_max + 1);
+  for (idim = 1; idim <= i_max; idim++) v0[idim] = wxp[1][X->Def.k_exct-1][idim];
+  c_free3(wxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
+  c_malloc1(v1, X->Check.idim_max + 1);
+  c_malloc1(vg, X->Check.idim_max + 1);
 
   return 0;
 }/*int LOBPCG_Main*/
@@ -259,7 +414,7 @@ int CalcByLOBPCG(
 )
 {
   char sdt[D_FileNameMax];
-  double diff_ene, var;
+  double var;
   long int i_max = 0;
   FILE *fp;
 
