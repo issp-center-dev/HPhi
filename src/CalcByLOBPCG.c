@@ -315,6 +315,7 @@ int LOBPCG_Main(
       eig[ie] =
       creal(hsub[ie + 1 * X->Def.k_exct + ie * nsub + 1 * nsub*X->Def.k_exct]);
 
+    /*
     if (stp == 1) {
       nsub2 = 2 * X->Def.k_exct;
       zhegv_(&itype, &jobz, &uplo, &nsub2, hsub, &lda, ovrp, &ldb, eigsub, work, &lwork, rwork, &info);
@@ -323,12 +324,10 @@ int LOBPCG_Main(
       nsub2 = nsub;
       zhegv_(&itype, &jobz, &uplo, &nsub2, hsub, &lda, ovrp, &ldb, eigsub, work, &lwork, rwork, &info);
     }
-
-    /*
-     nsub = 3;
+    */
+    
     diag_ovrp(nsub, hsub, ovrp, eigsub);
-    jtarget = 0;
-   */
+   
     for (ie = 0; ie < X->Def.k_exct; ie++)
       eig[ie] = 0.5 * (eig[ie] + eigsub[ie]);
 
