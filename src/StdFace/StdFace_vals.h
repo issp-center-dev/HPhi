@@ -97,6 +97,9 @@ struct StdIntList {
   char method[256];
   char outputmode[256];
   char filehead[256];
+  char Restart[256];
+  char InitialVecType[256];
+  char EigenVecIO[256];
   /*
    Parameter for lattice
   */
@@ -129,4 +132,11 @@ struct StdIntList {
   int ishift_nspin;
   /**/
   int lGC;
+  /*
+   Spectrum
+  */
+  int Nomega;
+  double OmegaMax;
+  double OmegaMin;
+  double OmegaIm;
 };

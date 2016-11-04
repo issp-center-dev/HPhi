@@ -103,12 +103,19 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->W = 9999;
   StdI->Wx = 9999.9;
   StdI->Wy = 9999.9;
+  StdI->OmegaMax = 9999.9;
+  StdI->OmegaMin = 9999.9;
+  StdI->OmegaIm = 9999.9;
+  StdI->Nomega = 9999;
 
   strcpy(StdI->model, "****\0");
   strcpy(StdI->lattice, "****\0");
   strcpy(StdI->method, "****\0");
   strcpy(StdI->outputmode, "****\0");
   strcpy(StdI->filehead, "****\0");
+  strcpy(StdI->Restart, "****\0");
+  strcpy(StdI->EigenVecIO, "****\0");
+  strcpy(StdI->InitialVecType, "****\0");
   StdI->FlgTemp = 1;
   StdI->nelec = 9999;
   StdI->Sz2 = 9999;
@@ -534,6 +541,9 @@ static void PrintNamelist(struct StdIntList *StdI){
   fprintf(fp, "InterAll zInterAll.def\n");
   fprintf(fp, "OneBodyG greenone.def\n");
   fprintf(fp, "TwoBodyG greentwo.def\n");
+  fprintf(fp, "#SingleExcitation single.def\n");
+  fprintf(fp, "#PairExcitation pair.def\n");
+  fprintf(fp, "SpectrumVec %s_eigenvec_0\n", StdI->filehead);
 
   if (StdI->lBoost == 1) 
     fprintf(fp, "Boost boost.def\n");
@@ -551,13 +561,21 @@ static void PrintNamelist(struct StdIntList *StdI){
 static void PrintCalcMod(struct StdIntList *StdI)
 {
   FILE *fp;
-  int iCalcType, iCalcModel, ioutputmode2;
-
+  int iCalcType, iCalcModel, iRestart, 
+    iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec;
+  /*
+   Method
+  */
+  iCalcEigenvec = 0;
   if (strcmp(StdI->method, "****") == 0){
     fprintf(stdout, "ERROR ! Method is NOT specified !\n");
     exitMPI(-1);
   }
   else if (strcmp(StdI->method, "lanczos") == 0) iCalcType = 0;
+  else if (strcmp(StdI->method, "lanczosenergy") == 0) { 
+    iCalcType = 0; 
+    iCalcEigenvec = 1;
+  }
   else if (strcmp(StdI->method, "tpq") == 0) iCalcType = 1;
   else if (strcmp(StdI->method, "fulldiag") == 0 ||
     strcmp(StdI->method, "alldiag") == 0 ||
@@ -567,7 +585,9 @@ static void PrintCalcMod(struct StdIntList *StdI)
     fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
     exitMPI(-1);
   }
-
+  /*
+   Model
+  */
   if (strcmp(StdI->model, "hubbard") == 0) {
     if (StdI->lGC == 0)iCalcModel = 0;
     else iCalcModel = 3;
@@ -580,18 +600,78 @@ static void PrintCalcMod(struct StdIntList *StdI)
     if (StdI->lGC == 0)iCalcModel = 2;
     else iCalcModel = 5;
   }
-
-  if (StdI->ioutputmode == 2) ioutputmode2 = 0;
-  else ioutputmode2 = StdI->ioutputmode;
+  /*
+    Restart
+  */
+  if (strcmp(StdI->Restart, "****") == 0) {
+    strcpy(StdI->Restart, "none\0");
+    fprintf(stdout, "        Restart = none  ######  DEFAULT VALUE IS USED  ######\n");
+    iRestart = 0;
+  }
+  else {
+    fprintf(stdout, "        Restart = %s\n", StdI->Restart);
+    if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
+    else if (strcmp(StdI->Restart, "save") == 0) iRestart = 1;
+    else if (strcmp(StdI->Restart, "restartsave") == 0) iRestart = 2;
+    else if (strcmp(StdI->Restart, "restart") == 0) iRestart = 3;
+    else {
+      fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
+      exitMPI(-1);
+    }
+  }
+  /*
+  InitialVecType
+  */
+  if (strcmp(StdI->InitialVecType, "****") == 0) {
+    strcpy(StdI->InitialVecType, "c\0");
+    fprintf(stdout, "   InitialVecType = c  ######  DEFAULT VALUE IS USED  ######\n");
+    iInitialVecTpye = 0;
+  }
+  else {
+    fprintf(stdout, "   InitialVecType = %s\n", StdI->InitialVecType);
+    if (strcmp(StdI->InitialVecType, "c") == 0) iInitialVecTpye = 0;
+    else if (strcmp(StdI->InitialVecType, "r") == 0) iInitialVecTpye = 1;
+    else {
+      fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
+      exitMPI(-1);
+    }
+  }
+  /*
+  EigenVecIO
+  */
+  InputEigenVec = 0;
+  OutputEigenVec = 0;
+  if (strcmp(StdI->EigenVecIO, "****") == 0) {
+    strcpy(StdI->EigenVecIO, "none\0");
+    fprintf(stdout, "        EigenVecIO = none  ######  DEFAULT VALUE IS USED  ######\n");
+  }
+  else {
+    fprintf(stdout, "        EigenVecIO = %s\n", StdI->EigenVecIO);
+    if (strcmp(StdI->EigenVecIO, "in") == 0) InputEigenVec = 1;
+    else if (strcmp(StdI->EigenVecIO, "out") == 0) OutputEigenVec = 1;
+    else if (strcmp(StdI->EigenVecIO, "inout") == 0) {
+      InputEigenVec = 1;
+      OutputEigenVec = 1;
+    }
+    else {
+      fprintf(stdout, "\n ERROR ! EigenVecIO Mode : %s\n", StdI->Restart);
+      exitMPI(-1);
+    }
+  }
 
   fp = fopen("calcmod.def", "w");
-  fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag\n");
-  fprintf(fp, "#FlgFiniteTemperature= 0:Zero temperature, 1:Finite temperature. This parameter is active only for CalcType=2.\n");
-  fprintf(fp, "#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC \n");
+  fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 4:CG\n");
+  fprintf(fp, "#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC\n");
+  fprintf(fp, "#Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart\n");
+  fprintf(fp, "#CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, 4:Restart, 5:Restart&Save\n");
   fprintf(fp, "CalcType %3d\n", iCalcType);
-  fprintf(fp, "FlgFiniteTemperature %3d\n", StdI->FlgTemp);
   fprintf(fp, "CalcModel %3d\n", iCalcModel);
-  fprintf(fp, "OutputMode %3d\n", ioutputmode2);
+  fprintf(fp, "ReStart %3d\n", iRestart);
+  fprintf(fp, "CalcSpec %3d\n", 0);
+  fprintf(fp, "CalcEigenVec %3d\n", iCalcEigenvec);
+  fprintf(fp, "InitialVecType %3d\n", iInitialVecTpye);
+  fprintf(fp, "InputEigenVec %3d\n", InputEigenVec);
+  fprintf(fp, "OutputEigenVec %3d\n", OutputEigenVec);
   fclose(fp);
   fprintf(stdout, "     calcmod.def is written.\n");
 }
@@ -627,6 +707,10 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "LargeValue     %-25.15e\n", StdI->LargeValue);
   fprintf(fp, "NumAve         %-5d\n", StdI->NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", StdI->ExpecInterval);
+  fprintf(fp, "NOmega         %-5d\n", StdI->Nomega);
+  fprintf(fp, "OmegaMax       %-25.15e\n", StdI->OmegaMax);
+  fprintf(fp, "OmegaMin       %-25.15e\n", StdI->OmegaMin);
+  fprintf(fp, "OmegaIm        %-25.15e\n", StdI->OmegaIm);
 
   fclose(fp);
   fprintf(stdout, "     modpara.def is written.\n");
@@ -726,7 +810,7 @@ static void Print1Green(struct StdIntList *StdI)
   }
   free(greenindx);
   //[e] free
-}
+}/*static void Print1Green(struct StdIntList *StdI)*/
 
 /**
  *
@@ -865,7 +949,30 @@ static void Print2Green(struct StdIntList *StdI){
   }
   free(greenindx);
   //[e] free
-}
+}/*void Print2Green(struct StdIntList *StdI)*/
+
+static void PrintExcitation() {
+  FILE *fp;
+
+  fp = fopen("single.def", "w");
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "NSingle 1\n");
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "============== Single Excitation ============\n");
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "   0   0   0   1.0   0.0\n");
+  fclose(fp);
+
+  fp = fopen("pair.def", "w");
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "NPair 1\n");
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "=============== Pair Excitation =============\n");
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "   0   0   0   0   0   1.0   0.0\n");
+  fclose(fp);
+
+}/*static void PrintExcitation()*/
 
 /**
  *
@@ -947,6 +1054,10 @@ static void CheckModPara(struct StdIntList *StdI)
   StdFace_PrintVal_i("LanczosTarget", &StdI->LanczosTarget, 2);
   StdFace_PrintVal_i("NumAve", &StdI->NumAve, 5);
   StdFace_PrintVal_i("ExpecInterval", &StdI->ExpecInterval, 20);
+  StdFace_PrintVal_i("NOmega", &StdI->Nomega, 200);
+  StdFace_PrintVal_d("OmegaMax", &StdI->OmegaMax, StdI->LargeValue);
+  StdFace_PrintVal_d("OmegaMin", &StdI->OmegaMin, -StdI->LargeValue);
+  StdFace_PrintVal_d("OmegaIm", &StdI->OmegaIm, 0.01* (int)StdI->LargeValue);
   /**/
   if (strcmp(StdI->model, "hubbard") == 0){
     if (StdI->lGC == 0) StdFace_RequiredVal_i("nelec", StdI->nelec);
@@ -1025,11 +1136,13 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "a1w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a1W);
     else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI.D[2][2]);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI.exct);
+    else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_s(keyword, value, StdI.EigenVecIO);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ExpecInterval);
     else if (strcmp(keyword, "filehead") == 0) StoreWithCheckDup_s(keyword, value, StdI.filehead);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.FlgTemp);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Gamma);
     else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI.h);
+    else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_s(keyword, value, StdI.InitialVecType);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI.initial_iv);
     else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &StdI.JAll);
     else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][0]);
@@ -1112,11 +1225,16 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "ly") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Ly);
     else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_s(keyword, value, StdI.method);
     else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_s(keyword, value, StdI.model);
-    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, StdI.outputmode);
     else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI.mu);
     else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nelec);
+    else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Nomega);
     else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NumAve);
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nvec);
+    else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMax);
+    else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMin);
+    else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaIm);
+    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, StdI.outputmode);
+    else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_s(keyword, value, StdI.Restart);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Sz2);
     else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
     else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t);
@@ -1226,6 +1344,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintModPara(&StdI);
   Print1Green(&StdI);
   Print2Green(&StdI);
+  PrintExcitation();
   /*
   Finalize All
   */

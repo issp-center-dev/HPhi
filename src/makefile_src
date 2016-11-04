@@ -52,7 +52,9 @@ PairEx.o \
 ProgressMessage.o \
 global.o \
 wrapperMPI.o \
-splash.o
+splash.o \
+StdFace/libStdFace.a \
+komega/libkomega.a
 
 HEADERS= \
 include/CG_EigenVector.h \
@@ -116,6 +118,8 @@ include/xsetmem_def.h \
 include/xsetmem_large.h
 
 all:
+	cd StdFace; make -f makefile_StdFace libStdFace.a
+	cd komega; make -f makefile_komega
 	make -f makefile_src HPhi
 
 SUFFIXES: .o .c
@@ -124,8 +128,6 @@ SUFFIXES: .o .c
 	$(CC) $(LAPACK_FLAGS) $(FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) -c $<
 
 HPhi: $(OBJS) make.sys
-	cd StdFace; make -f makefile_StdFace libStdFace.a
-	cd komega; make -f makefile_komega
 	$(CC) -o $@ -g $(OBJS) StdFace/libStdFace.a komega/libkomega.a $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) 
 
 clean:
