@@ -110,6 +110,30 @@ void diag_ovrp(
   free(iwork);
 }/*void diag_ovrp*/
 
+double calc_preshift(
+  double eig,
+  double res,
+  double eps_LOBPCG
+)
+{
+  double k, i;
+  double preshift;
+
+  if (fabs(eig) > 10.0) k = trunc(log10(fabs(eig)));
+  else k = 1.0;
+
+  if (res < 1.0) {
+    if (eps_LOBPCG > res) i = ceil(log10(eps_LOBPCG));
+    else i = ceil(log10(res));
+
+    preshift = trunc(eig / pow(10.0, k + i))*pow(10.0, k + i);
+  }
+  else preshift = 0.0;
+
+  return(preshift);
+
+}/*void calc_preshift*/
+
 /*
 Core routine for the LOBPCG method
 */
@@ -129,7 +153,7 @@ int LOBPCG_Main(
   double complex ***wxp/*[0] w, [1] x, [2] p */, 
     ***hwxp/*[0] h*w, [1] h*x, [2] h*p */,
     *hsub, *ovrp;
-  double *eig, dnorm, eps_BiCG, dnormmax, eigabs_max;
+  double *eig, dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax;
   /*
   Variables for zhegv
   */
@@ -262,7 +286,17 @@ int LOBPCG_Main(
 
   info = 0;
   for (stp = 1; stp <= X->Def.Lanczos_max; stp++) {
-
+    /*
+     Convergence threshold
+    */
+    eigabs_max = 0.0;
+    for (ie = 0; ie < X->Def.k_exct; ie++)
+      if (fabs(eig[ie]) > eigabs_max) eigabs_max = fabs(eig[ie]);
+    eps_LOBPCG = pow(10, -0.5 *X->Def.LanczosEps);
+    if (eigabs_max > 1.0) eps_LOBPCG *= eigabs_max;
+    /*
+     Compute residual vectors
+    */
     dnormmax = 0.0;
     for (ie = 0; ie < X->Def.k_exct; ie++) {
       for (idim = 1; idim <= i_max; idim++)
@@ -270,26 +304,34 @@ int LOBPCG_Main(
       dnorm = sqrt(creal(vec_prod(i_max, wxp[0][ie], wxp[0][ie])));
       if (dnorm > dnormmax) dnormmax = dnorm;
 
-      if (stp /= 1)
+      if (stp /= 1) {
+        /*
+         Preconditioning (Point Jacobi)
+        */
+        preshift = calc_preshift(eig[ie], dnorm, eps_LOBPCG);
+        for (idim = 1; idim <= i_max; idim++) {
+          precon = list_Diagonal[idim] - preshift;
+          if (fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
+        }
+        /*
+         Normalize residual vector
+        */
+        dnorm = sqrt(creal(vec_prod(i_max, wxp[0][ie], wxp[0][ie])));
         for (idim = 1; idim <= i_max; idim++) wxp[0][ie][idim] = wxp[0][ie][idim] / dnorm;
+      }/*if (stp /= 1)*/
 
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
     /*
     Convergence check
     */
-    eigabs_max = 0.0;
-    for (ie = 0; ie < X->Def.k_exct; ie++)
-      if (fabs(eig[ie]) > eigabs_max) eigabs_max = fabs(eig[ie]);
-    eps_BiCG = pow(10, -0.5 *X->Def.LanczosEps);
-    if (eigabs_max > 1.0) eps_BiCG *= eigabs_max;
 
     fprintf(stdoutMPI, "%9d %15.5e %15.5e      %d   ",
-      stp, dnormmax, eps_BiCG, info);
+      stp, dnormmax, eps_LOBPCG, info);
     for (ie = 0; ie < X->Def.k_exct; ie++)
       fprintf(stdoutMPI, " %15.5e", eig[ie]);
     fprintf(stdoutMPI, "\n");
 
-    if (dnormmax < eps_BiCG) {
+    if (dnormmax < eps_LOBPCG) {
       iconv = 0;
       break;
     }
