@@ -206,6 +206,21 @@ int expec_energy_flct(struct BindStruct *X){
       tmp_Sz2  += Sz*Sz*tmp_v02;
     }
   }
+  else{//for generalspin
+    for(j = 1; j <= i_max; j++){ 
+      tmp_v02  = conj(v0[j])*v0[j];
+      Sz       = 0.0;
+      for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+        if(isite1 > X->Def.Nsite){
+          Sz += 0.5*GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+        }else{
+          Sz += 0.5*GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
+        }
+      }
+      tmp_Sz   += Sz*tmp_v02;
+      tmp_Sz2  += Sz*Sz*tmp_v02;
+    }
+  }
   break;/*case SpinGC*/
   /* SpinGCBoost */
   case Spin:

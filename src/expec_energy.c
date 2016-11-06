@@ -221,7 +221,7 @@ int expec_energy(struct BindStruct *X){
 	  }
 	}
 	break;
-/* SpinGCBoost */
+    /* SpinGCBoost */
 
       case Spin:
 	break;
