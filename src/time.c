@@ -15,7 +15,10 @@
 #endif
 
 void clock_gettime_general(struct timespec *ts) {
-#ifdef _OSX 
+#ifdef MPI
+  return;
+#else
+#ifdef _OSX
   clock_serv_t clock_mac;
   mach_timespec_t mts_mac;
   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &clock_mac);
@@ -25,6 +28,7 @@ void clock_gettime_general(struct timespec *ts) {
   ts->tv_nsec = mts_mac.tv_nsec;
 #else
   clock_gettime(CLOCK_REALTIME, ts);
+#endif
 #endif
 
 }
