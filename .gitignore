@@ -112,7 +112,8 @@ Makefile
 make.sys
 *backup*
 *cisajs*.dat
-*Time*
+*Time_*
+*_Time*
 *.a
 *.aux
 *.bbl
@@ -126,7 +127,7 @@ userguide_*.pdf
 *.synctex.gz
 *.toc
 *~
-build
+build*
 #*
 html/
 GPATH

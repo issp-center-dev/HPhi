@@ -86,6 +86,8 @@ int expec_cisajscktaltdc
   //For Kond
   double complex dmv;
 
+  if(X->Def.NCisAjtCkuAlvDC <1) return 0;
+
   
   i_max=X->Check.idim_max;
   X->Large.mode=M_CORR;

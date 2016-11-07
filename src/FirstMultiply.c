@@ -17,6 +17,7 @@
 #include "mltply.h"
 #include "mfmemory.h"
 #include "wrapperMPI.h"
+#include "CalcTime.h"
 
 /** 
  * 
@@ -64,6 +65,7 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
 
     if (X->Def.iInitialVecType == 0) {
   
+    StartTimer(3101);
 #pragma omp for
       for (i = 1; i <= i_max; i++)
         v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
@@ -73,6 +75,7 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
       for (i = 1; i <= i_max; i++)
           v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
     }
+    StopTimer(3101);
 
   }/*#pragma omp parallel*/
   /*
@@ -93,7 +96,9 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
+  StartTimer(3102);
   mltply(X, v0, v1);
+  StopTimer(3102);
 #pragma omp parallel for default(none) private(i) shared(v0, v1, list_1) firstprivate(i_max, Ns, LargeValue, myrank)
   for(i = 1; i <= i_max; i++){
     v0[i]=LargeValue*v1[i]-v0[i]/Ns;

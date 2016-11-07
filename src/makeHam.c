@@ -315,9 +315,8 @@ int makeHam(struct BindStruct *X){
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling/2; i++){
       for(ihermite=0; ihermite<2; ihermite++){
-	idx=2*i+ihermite;
-	child_exchange_GetInfo(idx, X);
-	
+        idx=2*i+ihermite;
+        child_exchange_GetInfo(idx, X);
 	for(j=1;j<=X->Large.i_max;j++){
 	  dmv          = child_exchange_element(j, v0, v1, X,&tmp_off);
 	  Ham[tmp_off][j] += dmv;
