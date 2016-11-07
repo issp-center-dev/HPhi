@@ -14,7 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "phys.h"
-#include "expec_energy.h"
+#include "expec_energy_flct.h"
 #include "expec_totalspin.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
@@ -54,7 +54,7 @@ void phys(struct BindStruct *X){
 	v0[j+1] =  L_vec[i][j];
       }
       X->Phys.eigen_num=i;
-      if(expec_energy(X)!=0){
+      if(expec_energy_flct(X)!=0){
 	fprintf(stderr, "Error: calc expec_energy.\n");
 	exitMPI(-1);
       }

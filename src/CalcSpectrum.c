@@ -18,6 +18,7 @@
 #include "CalcSpectrumByLanczos.h"
 #include "CalcSpectrumByTPQ.h"
 #include "CalcSpectrumByFullDiag.h"
+#include "CalcTime.h"
 #include "SingleEx.h"
 #include "PairEx.h"
 #include "wrapperMPI.h"

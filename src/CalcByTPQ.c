@@ -15,7 +15,6 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "FirstMultiply.h"
 #include "Multiply.h"
-#include "expec_energy.h"
 #include "expec_energy_flct.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
@@ -136,7 +135,6 @@ int CalcByTPQ(
       StopTimer(3100);
       StartTimer(3200);
       expec_energy_flct(&(X->Bind)); //v0 = H*v1
-      expec_energy(&(X->Bind)); //v0 = H*v1
       StopTimer(3200);
 
       inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);

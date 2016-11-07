@@ -27,7 +27,6 @@ dSFMT.o \
 diagonalcalc.o \
 expec_cisajs.o \
 expec_cisajscktaltdc.o \
-expec_energy.o \
 expec_energy_flct.o \
 expec_totalspin.o \
 lapack_diag.o \
@@ -90,8 +89,8 @@ include/defmodelBoost.h \
 include/diagonalcalc.h \
 include/expec_cisajs.h \
 include/expec_cisajscktaltdc.h \
-include/expec_energy.h \
 include/expec_totalspin.h \
+include/expec_energy_flct.h \
 include/global.h \
 include/lapack_diag.h \
 include/log.h \

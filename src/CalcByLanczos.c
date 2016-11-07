@@ -17,7 +17,7 @@
 #include "expec_cisajscktaltdc.h"
 #include "expec_totalspin.h"
 #include "CG_EigenVector.h"
-#include "expec_energy.h"
+#include "expec_energy_flct.h"
 #include "Lanczos_EigenValue.h"
 #include "Lanczos_EigenVector.h"
 #include "CalcByLanczos.h"
@@ -111,7 +111,7 @@ int CalcByLanczos(
       StopTimer(4200);
 
       StartTimer(4300);
-      expec_energy(&(X->Bind));
+      expec_energy_flct(&(X->Bind));
       StopTimer(4300);
       //check for the accuracy of the eigenvector
       var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
@@ -152,7 +152,7 @@ int CalcByLanczos(
         CG_EigenVector(&(X->Bind));
         StopTimer(4400);
         StartTimer(4300);
-        expec_energy(&(X->Bind));
+        expec_energy_flct(&(X->Bind));
         StopTimer(4300);
         var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
         diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
@@ -166,7 +166,7 @@ int CalcByLanczos(
     else{//idim_max=1
       v0[1]=1;
       StartTimer(4300);
-      expec_energy(&(X->Bind));
+      expec_energy_flct(&(X->Bind));
       StopTimer(4300);
     }
   }

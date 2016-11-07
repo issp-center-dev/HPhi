@@ -5,6 +5,6 @@
 #endif
 
 void InitTimer();
-inline void StartTimer(int n);
-inline void StopTimer(int n);
+void StartTimer(int n);
+void StopTimer(int n);
 void OutputTimer(struct BindStruct *X);

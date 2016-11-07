@@ -211,10 +211,11 @@ int expec_energy_flct(struct BindStruct *X){
       tmp_v02  = conj(v0[j])*v0[j];
       Sz       = 0.0;
       for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+        //prefactor 0.5 is added later.
         if(isite1 > X->Def.Nsite){
-          Sz += 0.5*GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+          Sz += GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
         }else{
-          Sz += 0.5*GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
+          Sz += GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
         }
       }
       tmp_Sz   += Sz*tmp_v02;

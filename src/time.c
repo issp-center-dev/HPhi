@@ -14,6 +14,7 @@
 #include <mpi.h>
 #endif
 
+#ifndef MPI
 void clock_gettime_general(struct timespec *ts) {
 #ifdef _OSX 
   clock_serv_t clock_mac;
@@ -26,9 +27,8 @@ void clock_gettime_general(struct timespec *ts) {
 #else
   clock_gettime(CLOCK_REALTIME, ts);
 #endif
-
 }
-
+#endif
 
 void StampTime(FILE *fp, char *str, int num){
   char str1[256];
