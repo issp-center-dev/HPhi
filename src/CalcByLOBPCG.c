@@ -23,7 +23,7 @@
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
 #include "expec_totalspin.h"
-#include "expec_energy.h"
+#include "expec_energy_flct.h"
 #include <math.h>
 
 void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
@@ -482,7 +482,7 @@ int CalcByLOBPCG(
       return(FALSE);
     }
 
-    expec_energy(&(X->Bind));
+    expec_energy_flct(&(X->Bind));
     var = fabs(X->Bind.Phys.var - X->Bind.Phys.energy*X->Bind.Phys.energy) / fabs(X->Bind.Phys.var);
     fprintf(stdoutMPI, "\n");
     fprintf(stdoutMPI, "  LOBPCG Accuracy check !!!\n");
