@@ -18,6 +18,7 @@
 #include "mltply.h"
 #include "expec_energy_flct.h"
 #include "wrapperMPI.h"
+#include "CalcTime.h"
 
 /** 
  * 
@@ -165,7 +166,7 @@ int expec_energy_flct(struct BindStruct *X){
         N        += num1_up+num1_down;
         Sz       += num1_up-num1_down;
       } 
-    } 
+    }
     tmp_D   += tmp_v02*D;
     tmp_D2  += tmp_v02*D*D;
     tmp_N   += tmp_v02*N;
@@ -178,11 +179,10 @@ int expec_energy_flct(struct BindStruct *X){
   case SpinGC:
   if(X->Def.iFlgGeneralSpin == FALSE) {
 #pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0)   \
-  firstprivate(i_max,X,myrank) private(j,Sz, Sz2, is1_up,ibit1,isite1, is2_up,ibit2,isite2,tmp_v02)
+  firstprivate(i_max,X,myrank) private(j,Sz, is1_up,ibit1,isite1,tmp_v02)
     for(j = 1; j <= i_max; j++){ 
       tmp_v02  = conj(v0[j])*v0[j];
       Sz       = 0.0;
-      Sz2=0.0;
       for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
         if(isite1 > X->Def.Nsite){
           is1_up = X->Def.Tpow[isite1 - 1];
@@ -201,29 +201,25 @@ int expec_energy_flct(struct BindStruct *X){
             Sz = -1.0; 
           }
         }
-        tmp_Sz   += Sz*tmp_v02;
-        
-        for(isite2=1;isite2<=X->Def.NsiteMPI;isite2++){
-          if(isite2 > X->Def.Nsite){
-            is2_up = X->Def.Tpow[isite2 - 1];
-            ibit2  = (unsigned long int)myrank& is2_up;
-            if(ibit2==is2_up){
-              Sz2 = 1.0; 
-            }else{
-              Sz2 = -1.0; 
-            }
-          }else{
-            is2_up=X->Def.Tpow[isite2-1];
-            ibit2=(j-1)&is2_up;
-            if(ibit2==is2_up){
-              Sz2 = 1.0; 
-            }else{
-              Sz2 = -1.0; 
-            }
-          }
-          tmp_Sz2  += Sz*Sz2*tmp_v02;
+      }
+      tmp_Sz   += Sz*tmp_v02;
+      tmp_Sz2  += Sz*Sz*tmp_v02;
+    }
+  }
+  else{//for generalspin
+    for(j = 1; j <= i_max; j++){ 
+      tmp_v02  = conj(v0[j])*v0[j];
+      Sz       = 0.0;
+      for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+        //prefactor 0.5 is added later.
+        if(isite1 > X->Def.Nsite){
+          Sz += GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+        }else{
+          Sz += GetLocal2Sz(isite1, j-1, X->Def.SiteToBit, X->Def.Tpow);
         }
       }
+      tmp_Sz   += Sz*tmp_v02;
+      tmp_Sz2  += Sz*Sz*tmp_v02;
     }
   }
   break;/*case SpinGC*/
@@ -288,8 +284,9 @@ int expec_energy_flct(struct BindStruct *X){
     v0[i]=0.0+0.0*I;
   }
 
-
+  StartTimer(3201);
   mltply(X, v0, v1); // v0+=H*v1
+  StopTimer(3201);
 /* switch -> SpinGCBoost */
 
   dam_pr=0.0;
