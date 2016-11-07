@@ -16,7 +16,7 @@
 
 #ifndef MPI
 void clock_gettime_general(struct timespec *ts) {
-#ifdef _OSX 
+#ifdef _OSX
   clock_serv_t clock_mac;
   mach_timespec_t mts_mac;
   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &clock_mac);
