@@ -29,6 +29,7 @@
 #include "StdFace_main.h"
 #include "wrapperMPI.h"
 #include "splash.h"
+#include "CalcTime.h"
 
 /*!
   @mainpage
@@ -94,6 +95,10 @@ int main(int argc, char* argv[]){
   }
   else InitializeMPI(argc, argv);
 
+  //Timer
+  InitTimer();
+  StartTimer(0);
+ 
   //MakeDirectory for output
   struct stat tmpst;
   if (myrank == 0) {
@@ -167,10 +172,11 @@ int main(int argc, char* argv[]){
     exitMPI(-1);
   }
 
-
+  StartTimer(1000);
   if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
     exitMPI(-1);
   }
+  StopTimer(1000);
 
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
@@ -178,48 +184,68 @@ int main(int argc, char* argv[]){
     return 0;
   }
 
+  StartTimer(2000);
   diagonalcalc(&(X.Bind));
+  StopTimer(2000);
   
   //Start Calculation
+
   if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
     switch (X.Bind.Def.iCalcType) {
       case Lanczos:
+        StartTimer(4000);
         if (!CalcByLanczos(&X) == TRUE) {
           FinalizeMPI();
+          StopTimer(4000);
           return -1;
         }
-            break;
+        StopTimer(4000);
+        break;
 
       case FullDiag:
+        StartTimer(5000);
         if (nproc != 1) {
           fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
           FinalizeMPI();
+          StopTimer(5000);
           return 0;
         }
-            if (!CalcByFullDiag(&X) == TRUE) {
-              FinalizeMPI();
-              return -1;
-            }
-            break;
-
-      case TPQCalc:
-        if (!CalcByTPQ(NumAve, ExpecInterval, &X) == TRUE) {
+        if (!CalcByFullDiag(&X) == TRUE) {
           FinalizeMPI();
           return -1;
+          StopTimer(5000);
         }
-            break;
+        StopTimer(5000);
+        break;
+
+      case TPQCalc:
+        StartTimer(3000);        
+        if (!CalcByTPQ(NumAve, ExpecInterval, &X) == TRUE) {
+          FinalizeMPI();
+          StopTimer(3000);
+          return -1;
+        }
+        StopTimer(3000);
+        break;
 
       default:
         FinalizeMPI();
-            return 0;
+        StopTimer(0);
+        return 0;
     }
   }
   else{
+    StartTimer(6000);
     if (!CalcSpectrum(&X) == TRUE) {
       FinalizeMPI();
+      StopTimer(6000);
       return -1;
     }
+    StopTimer(6000);
   }
+  
+  StopTimer(0);
+  OutputTimer(&(X.Bind));
   FinalizeMPI();
   return 0;
 }

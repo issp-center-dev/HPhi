@@ -23,6 +23,7 @@
 #include "CalcByLanczos.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
+#include "CalcTime.h"
 
 /**
  * @file   CalcByLanczos.c
@@ -88,27 +89,34 @@ int CalcByLanczos(
       //fclose(fp);
       exitMPI(-1);
     }
- 
+
+    StartTimer(4100);
     if(Lanczos_EigenValue(&(X->Bind))!=0){
       fprintf(stderr, "  Lanczos Eigenvalue is not converged in this process.\n");      
+      StopTimer(4100);
       return(FALSE);
     }
-
+    StopTimer(4100);
+    
     if(X->Bind.Def.iCalcEigenVec==CALCVEC_NOT){
        fprintf(stdoutMPI, "  Lanczos EigenValue = %.10lf \n ",X->Bind.Phys.Target_energy);
-      return(TRUE);
+       return(TRUE);
     }
 
     fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecStart);
-//    printf("debug: X->Bind.Check.idim_maxMPI=%d\n", X->Bind.Check.idim_maxMPI);
 
     if(X->Bind.Check.idim_maxMPI != 1){
+      StartTimer(4200);
       Lanczos_EigenVector(&(X->Bind));
+      StopTimer(4200);
+
+      StartTimer(4300);
       expec_energy(&(X->Bind));
+      StopTimer(4300);
       //check for the accuracy of the eigenvector
       var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
       diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
-      
+
       fprintf(stdoutMPI, "\n");
       fprintf(stdoutMPI, "  Accuracy check !!!\n");
       fprintf(stdoutMPI, "  LanczosEnergy = %.14e \n  EnergyByVec   = %.14e \n  diff_ene      = %.14e \n  var           = %.14e \n",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
@@ -116,6 +124,7 @@ int CalcByLanczos(
         fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is enough.\n");
         fprintf(stdoutMPI, "\n");
       }
+
       /*
       else{
          Comment out: Power Lanczos method
@@ -139,8 +148,12 @@ int CalcByLanczos(
       else if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG){        
         fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is NOT enough\n\n");
         X->Bind.Def.St=1;
+        StartTimer(4400);
         CG_EigenVector(&(X->Bind));
+        StopTimer(4400);
+        StartTimer(4300);
         expec_energy(&(X->Bind));
+        StopTimer(4300);
         var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
         diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
         fprintf(stdoutMPI, "\n");
@@ -152,12 +165,16 @@ int CalcByLanczos(
     }
     else{//idim_max=1
       v0[1]=1;
+      StartTimer(4300);
       expec_energy(&(X->Bind));
+      StopTimer(4300);
     }
   }
   else{// X->Bind.Def.iInputEigenVec=true :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
+    StartTimer(4800);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
+    StartTimer(4801);
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
     childfopenALL(sdt, "rb", &fp);
     if(fp==NULL){
@@ -172,21 +189,26 @@ int CalcByLanczos(
     }
     fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
+    StopTimer(4801);
+    StopTimer(4800);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
   }
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
   // v1 is eigen vector
-    
+
+  StartTimer(4500);
   if(!expec_cisajs(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc OneBodyG.\n");
     exitMPI(-1);
   }
-  
+  StopTimer(4500);
+  StartTimer(4600);  
   if(!expec_cisajscktaltdc(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc TwoBodyG.\n");
     exitMPI(-1);
   }
+  StopTimer(4600);
   
   /* For ver.1.0
      if(!expec_totalspin(&(X->Bind), v1)==0){

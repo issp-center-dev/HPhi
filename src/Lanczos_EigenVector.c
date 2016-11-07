@@ -16,6 +16,7 @@
 
 #include "Common.h"
 #include "mltply.h"
+#include "CalcTime.h"
 #include "Lanczos_EigenVector.h"
 #include "wrapperMPI.h"
 
@@ -145,8 +146,9 @@ void Lanczos_EigenVector(struct BindStruct *X){
       vg[i] = conj(v1[i])*vec[k_exct][1];
     }
   }/*else if(initial_mode==1)*/
-  
+  StartTimer(4201);
   mltply(X, v0, v1);
+  StopTimer(4201);
   
   alpha1=alpha[1];
   beta1=beta[1];
@@ -171,8 +173,9 @@ void Lanczos_EigenVector(struct BindStruct *X){
       v0[j] = -beta1 * temp1;
       v1[j] = temp2;
     }
+    StartTimer(4201);
     mltply(X, v0, v1);
-
+    StopTimer(4201);
     alpha1 = alpha[i];
     beta1 = beta[i];
 #pragma omp parallel for default(none) private(j) shared(vec, v0, v1, vg) firstprivate(alpha1, beta1, i_max, k_exct, i)

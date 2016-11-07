@@ -18,7 +18,7 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "mfmemory.h"
-
+#include "CalcTime.h"
 /**
  * @file   CalcSpectrumByLanczos.c
  * @version 1.1
@@ -58,9 +58,10 @@ int CalcSpectrumByLanczos(
 
     if(X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC) {
+      
         fprintf(stdoutMPI, "  Start: Input vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecStart, "a");
-
+        StartTimer(6201);
         sprintf(sdt, cFileNameOutputRestartVec, X->Bind.Def.CDataFileHead, myrank);
         if (childfopenALL(sdt, "rb", &fp) != 0) {
             exitMPI(-1);
@@ -74,6 +75,7 @@ int CalcSpectrumByLanczos(
         fread(v0, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
         fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
         fclose(fp);
+        StopTimer(6201);
         fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
     }
@@ -83,6 +85,7 @@ int CalcSpectrumByLanczos(
        X->Bind.Def.iFlgCalcSpec ==RECALC_FROM_TMComponents_VEC||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC)
     {
+      StartTimer(6202);
         iret=ReadTMComponents(X, &dnorm, &liLanczosStp);
         if(!iret ==TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
@@ -102,6 +105,7 @@ int CalcSpectrumByLanczos(
             X->Bind.Def.Lanczos_restart=liLanczosStp;
             liLanczosStp = liLanczosStp+X->Bind.Def.Lanczos_max;
         }
+        StopTimer(6202);
     }
 
     // calculate ai, bi
@@ -114,18 +118,23 @@ int CalcSpectrumByLanczos(
         fprintf(stdoutMPI, "    Start: Calculate tridiagonal matrix components.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalStart, "a");
         // Functions in Lanczos_EigenValue
+        StartTimer(6203);
         iret = Lanczos_GetTridiagonalMatrixComponents(&(X->Bind), alpha, beta, tmp_v1, &(liLanczosStp));
+        StopTimer(6203);
         if (iret != TRUE) {
             //Error Message will be added.
             return FALSE;
         }
         fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
+        StartTimer(6204);
         OutputTMComponents(X, alpha,beta, dnorm, liLanczosStp);
+        StopTimer(6204);
     }//X->Bind.Def.iFlgCalcSpec == RECALC_NOT || RECALC_FROM_TMComponents_VEC
 
     fprintf(stdoutMPI, "    Start: Caclulate spectrum from tridiagonal matrix components.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalStart, "a");
+    StartTimer(6205);
     for( i = 0 ; i < Nomega; i++) {
         iret = GetSpectrumByTridiagonalMatrixComponents(alpha, beta, dnorm, dcomega[i], &dcSpectrum[i], liLanczosStp);
         if (iret != TRUE) {
@@ -135,12 +144,14 @@ int CalcSpectrumByLanczos(
         }
         dcSpectrum[i] = dnorm * dcSpectrum[i];
     }
+    StopTimer(6205);
     fprintf(stdoutMPI, "    End:   Caclulate spectrum from tridiagonal matrix components.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalEnd, "a");
 
     //output vectors for recalculation
     if(X->Bind.Def.iFlgCalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec==RECALC_INOUT_TMComponents_VEC){
+      StartTimer(6206);
         fprintf(stdoutMPI, "    Start: Output vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecStart, "a");
 
@@ -156,6 +167,7 @@ int CalcSpectrumByLanczos(
 
         fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
+        StopTimer(6206);
     }
 
     return TRUE;

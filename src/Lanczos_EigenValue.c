@@ -23,7 +23,7 @@
 #include "matrixlapack.h"
 #include "Lanczos_EigenValue.h"
 #include "wrapperMPI.h"
-
+#include "CalcTime.h"
 /** 
  * 
  * 
@@ -149,7 +149,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   
   //Eigenvalues by Lanczos method
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
+  StartTimer(4101);
   mltply(X, v0, v1);
+  StopTimer(4101);
   stp=1;
   TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
 
@@ -180,7 +182,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
   }
   if(i_max_tmp == 1){
     E[1]=alpha[1];
-    vec12(alpha,beta,stp,E,X);		
+    StartTimer(4102);
+    vec12(alpha,beta,stp,E,X);
+    StopTimer(4102);
     X->Large.itr=stp;
     X->Phys.Target_energy=E[k_exct];
     iconv=0;
@@ -202,7 +206,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
       v1[i] =  temp2;
     }
 
+    StartTimer(4101);
     mltply(X, v0, v1);
+    StopTimer(4101);
     TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
     alpha1=creal(X->Large.prdct);
     alpha[stp]=alpha1;
@@ -289,8 +295,10 @@ int Lanczos_EigenValue(struct BindStruct *X)
          tmp_mat[int_i][int_i-1]   = beta[int_i]; 
        }
        tmp_mat[int_i][int_i]       = alpha[int_i+1]; 
-       tmp_mat[int_i][int_i-1]     = beta[int_i]; 
+       tmp_mat[int_i][int_i-1]     = beta[int_i];
+       StartTimer(4103);
        DSEVvalue(stp,tmp_mat,tmp_E);
+       StopTimer(4103);
        E[1] = tmp_E[0];
        E[2] = tmp_E[1];
        E[3] = tmp_E[2];
@@ -318,7 +326,9 @@ int Lanczos_EigenValue(struct BindStruct *X)
     if(stp > Target) {
         if (fabs((E_target - ebefor) / E_target) < eps_Lanczos || fabs(beta[stp]) < pow(10.0, -14)) {
             d_malloc1(tmp_E,stp+1);
+            StartTimer(4102);
             vec12(alpha, beta, stp, tmp_E, X);
+            StopTimer(4102);
             X->Large.itr = stp;
             X->Phys.Target_energy = E_target;
             iconv = 0;

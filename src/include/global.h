@@ -143,6 +143,11 @@ const char* cFileNameOutputRestartVec;
 //For Error
 const char* cFileNameErrorSz;
 
+//For Timer
+//int NTimer=100;
+double *Timer, *TimerStart;
+
+
 /********************************************************************/
 /********************************************************************/
 double eps;

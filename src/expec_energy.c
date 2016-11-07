@@ -18,7 +18,7 @@
 #include "mltply.h"
 #include "expec_energy.h"
 #include "wrapperMPI.h"
-
+#include "CalcTime.h"
 /** 
  * 
  * 
@@ -284,8 +284,21 @@ int expec_energy(struct BindStruct *X){
     v0[i]=0.0+0.0*I;
   }
 
+  int nTimer=3201;
+   if(X->Def.iCalcType==TPQCalc){
+    nTimer=3201;
+  }
+  else if(X->Def.iCalcType==Lanczos){
+    nTimer=4301;
+  }
 
-  mltply(X, v0, v1); // v0+=H*v1
+   StartTimer(nTimer);
+   
+   mltply(X, v0, v1); // v0+=H*v1
+  
+
+   StopTimer(nTimer);
+    
 /* switch -> SpinGCBoost */
 
   dam_pr=0.0;

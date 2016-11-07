@@ -18,6 +18,7 @@
 #include "mltply.h"
 #include "expec_energy_flct.h"
 #include "wrapperMPI.h"
+#include "CalcTime.h"
 
 /** 
  * 
@@ -267,8 +268,9 @@ int expec_energy_flct(struct BindStruct *X){
     v0[i]=0.0+0.0*I;
   }
 
-
+  StartTimer(3201);
   mltply(X, v0, v1); // v0+=H*v1
+  StopTimer(3201);
 /* switch -> SpinGCBoost */
 
   dam_pr=0.0;
