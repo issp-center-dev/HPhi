@@ -35,7 +35,7 @@ For more details, See ÅeCOPYING.LESSERÅf in the root directory of this library.
 #define pkomega_bicg_update __pkomega_bicg_MOD_pkomega_bicg_update
 #define pkomega_bicg_getcoef __pkomega_bicg_MOD_pkomega_bicg_getcoef
 #define pkomega_bicg_getvec __pkomega_bicg_MOD_pkomega_bicg_getvec
-#define pkomega_bicg_finalize __pkomega_bicg__pkomega_bicg_finalize
+#define pkomega_bicg_finalize __pkomega_bicg_MOD_pkomega_bicg_finalize
 #endif
 
 void pkomega_bicg_init(int *ndim, int *nl, int *nz, double complex *x, double complex *z, int *itermax, double *threshold, MPI_Comm *comm);

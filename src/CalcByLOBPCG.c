@@ -29,25 +29,6 @@
 void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
 void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *alpha, double complex *a, int *lda, double complex *b, int *ldb, double complex *beta, double complex *c, int *ldc);
 
-/*
-Conjgate vector product
-*/
-static double complex vec_prod(
-  long unsigned int ndim,
-  double complex *v1,
-  double complex *v2)
-{
-  long unsigned int idim;
-  double complex prod;
-
-  prod = 0.0;
-#pragma omp parallel for default(none) shared(v1,v2,ndim) private(idim) reduction(+: prod)
-  for (idim = 1; idim <= ndim; idim++) prod += conj(v1[idim]) * v2[idim];
-  prod = SumMPI_dc(prod);
-
-  return(prod);
-}/*double complex vec_prod*/
-
 static void diag_ovrp(
   int nsub,
   double complex *hsub,
@@ -248,7 +229,7 @@ static void Initialize_wave(
     }/*#pragma omp parallel*/
 
     for (ie = 0; ie < X->Def.k_exct; ie++) {
-      dnorm = sqrt(creal(vec_prod(i_max, wave[ie], wave[ie])));
+      dnorm = sqrt(creal(VecProdMPI(i_max, wave[ie], wave[ie])));
 #pragma omp parallel for default(none) shared(i_max,wave,dnorm,ie) private(idim)
       for (idim = 1; idim <= i_max; idim++) {
         wave[ie][idim] /= dnorm;
@@ -337,7 +318,7 @@ int LOBPCG_Main(
     for (idim = 1; idim <= i_max; idim++) wxp[2][ie][idim] = 0.0;
     for (idim = 1; idim <= i_max; idim++) hwxp[2][ie][idim] = 0.0;
 
-    eig[ie] = creal(vec_prod(i_max, wxp[1][ie], hwxp[1][ie]));
+    eig[ie] = creal(VecProdMPI(i_max, wxp[1][ie], hwxp[1][ie]));
   }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
 
   fprintf(stdoutMPI, "    Step   Residual-2-norm     Threshold      Energy\n");
@@ -359,7 +340,7 @@ int LOBPCG_Main(
 #pragma omp parallel for default(none) shared(i_max,wxp,hwxp,eig,ie) private(idim)
       for (idim = 1; idim <= i_max; idim++)
         wxp[0][ie][idim] = hwxp[1][ie][idim] - eig[ie] * wxp[1][ie][idim];
-      dnorm = sqrt(creal(vec_prod(i_max, wxp[0][ie], wxp[0][ie])));
+      dnorm = sqrt(creal(VecProdMPI(i_max, wxp[0][ie], wxp[0][ie])));
       if (dnorm > dnormmax) dnormmax = dnorm;
 
       if (stp /= 1) {
@@ -375,7 +356,7 @@ int LOBPCG_Main(
         /*
          Normalize residual vector
         */
-        dnorm = sqrt(creal(vec_prod(i_max, wxp[0][ie], wxp[0][ie])));
+        dnorm = sqrt(creal(VecProdMPI(i_max, wxp[0][ie], wxp[0][ie])));
 #pragma omp parallel for default(none) shared(i_max,wxp,dnorm,ie) private(idim)
         for (idim = 1; idim <= i_max; idim++) wxp[0][ie][idim] /= dnorm;
       }/*if (stp /= 1)*/
@@ -410,9 +391,9 @@ int LOBPCG_Main(
         for (jj = 0; jj < 3; jj++) {
           for (je = 0; je < X->Def.k_exct; je++){
             hsub[je + jj*X->Def.k_exct + ie * nsub + ii * nsub*X->Def.k_exct]
-              = vec_prod(i_max, wxp[jj][je], hwxp[ii][ie]);
+              = VecProdMPI(i_max, wxp[jj][je], hwxp[ii][ie]);
             ovlp[je + jj*X->Def.k_exct + ie * nsub + ii * nsub*X->Def.k_exct]
-              = vec_prod(i_max, wxp[jj][je], wxp[ii][ie]);
+              = VecProdMPI(i_max, wxp[jj][je], wxp[ii][ie]);
           }
         }
       }
@@ -428,8 +409,11 @@ int LOBPCG_Main(
 
 #pragma omp parallel default(none) shared(i_max,X,wxp,hwxp,hsub,nsub,work) private(idim,ie,je,jj,mythread)
     {
+#if defined(_OPENMP)
+      mythread = omp_get_thread_num();
+#else
       mythread = 0;
-#pragma omp mythread = omp_get_thread_num();
+#endif
 
 #pragma omp for
       for (idim = 1; idim <= i_max; idim++) {
@@ -472,7 +456,7 @@ int LOBPCG_Main(
 
     for (ii = 1; ii < 3; ii++) {
       for (ie = 0; ie < X->Def.k_exct; ie++) {
-        dnorm = sqrt(creal(vec_prod(i_max, wxp[ii][ie], wxp[ii][ie])));
+        dnorm = sqrt(creal(VecProdMPI(i_max, wxp[ii][ie], wxp[ii][ie])));
 #pragma omp parallel for default(none) shared(i_max,wxp,hwxp,dnorm,ie,ii) private(idim)
         for (idim = 1; idim <= i_max; idim++) {
           wxp[ii][ie][idim] /= dnorm;

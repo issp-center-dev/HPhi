@@ -87,7 +87,7 @@ EOF
         cat > src/make.sys <<EOF
 CC = mpicc
 LAPACK_FLAGS = -Dlapack -llapack -lblas 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -lm
+FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -lm -lgfortran -lmpi_f90 -lmpi_f77
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v

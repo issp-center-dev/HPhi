@@ -143,7 +143,6 @@ int CalcSpectrum(
         strcat(defname, "_rank_%d.dat");
 //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
         sprintf(sdt, defname, myrank);
-        printf("debug %s\n", sdt);
         childfopenALL(sdt, "rb", &fp);
 
         if (fp == NULL) {
@@ -184,7 +183,7 @@ int CalcSpectrum(
         //normalize vector
 #pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
         for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-          v1[i] = v0[i] / dnorm;
+            v1[i] = v0[i] / dnorm;
         }
 
         /*
@@ -215,21 +214,26 @@ int CalcSpectrum(
   StartTimer(6200);
   switch (X->Bind.Def.iCalcType) {
     case Lanczos:
+
+      iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+
+          if (iret != TRUE) {
+            //Error Message will be added.
+            return FALSE;
+          }
+
+          break;//Lanczos Spectrum
+
     case CG:
 
-      if (X->Bind.Def.iCalcType == Lanczos) {
-        iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
-      }
-      else if (X->Bind.Def.iCalcType == CG) {
-        iret = CalcSpectrumByBiCG(X,v0,v1,vg,Nomega,dcSpectrum,dcomega);
-      }
+      iret = CalcSpectrumByBiCG(X, v0, v1, vg, Nomega, dcSpectrum, dcomega);
 
       if (iret != TRUE) {
         //Error Message will be added.
         return FALSE;
       }
 
-          break;//Lanczos Spectrum
+      break;//Lanczos Spectrum
 
     case TPQCalc:
       fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum.\n");
@@ -353,7 +357,6 @@ int SetOmega
       fgetsMPI(ctmp, 256, fp); //1st line is skipped
       sscanf(ctmp, "Energy  %lf \n", &E1);
       Emax = LargeValue;
-      printf("debug %15.5e %d\n", LargeValue, X->Nsite);
     }/**/
 
     //Read Lanczos_Step
