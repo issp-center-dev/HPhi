@@ -653,7 +653,8 @@ static void PrintCalcMod(struct StdIntList *StdI)
   }
   else {
     fprintf(stdout, "       EigenVecIO = %s\n", StdI->EigenVecIO);
-    if (strcmp(StdI->EigenVecIO, "in") == 0) InputEigenVec = 1;
+    if (strcmp(StdI->EigenVecIO, "none") == 0) InputEigenVec = 0;
+    else if (strcmp(StdI->EigenVecIO, "in") == 0) InputEigenVec = 1;
     else if (strcmp(StdI->EigenVecIO, "out") == 0) OutputEigenVec = 1;
     else if (strcmp(StdI->EigenVecIO, "inout") == 0) {
       InputEigenVec = 1;
