@@ -1071,10 +1071,15 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
     state1 = (origin & mask1) / mask1;
     mask2 = (int) X->Def.Tpow[org_isite3];
     num1 = X_SpinGC_CisAis(origin + 1, X, mask2, org_ispin3);
-    if (state1 == org_ispin2 && num1 != 0) {
+    if (state1 == org_ispin2) {
+      if(num1 !=0){
         Jint = tmp_J;
+      }
+      else{
+        return 0.0;
+      }
     }
-    else if (state1 == org_ispin1) {
+    else{//state1 = org_ispin1
         num1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
         if (num1 != 0) {
             Jint = conj(tmp_J);
