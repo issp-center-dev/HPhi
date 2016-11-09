@@ -858,3 +858,33 @@ void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name
 
 }
 
+/**
+*
+* Initialize Cell for 1D system
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_InitSite1D(struct StdIntList *StdI)
+{
+  int iW, iL, iCell, isiteUC;
+
+  StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
+  for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
+    StdI->tau[isiteUC] = (double *)malloc(sizeof(double) * 2);
+  }
+
+  StdI->Cell = (int **)malloc(sizeof(int*) * StdI->W*StdI->L);
+  for (iCell = 0; iCell < StdI->W*StdI->L; iCell++) {
+    StdI->Cell[iCell] = (int *)malloc(sizeof(int) * 2);
+  }/*for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++)*/
+
+  StdI->NCell = 0;
+  for (iL = 0; iL < StdI->L; iL++) {
+    for (iW = 0; iW < StdI->W; iW++) {
+      StdI->Cell[StdI->NCell][0] = iW;
+      StdI->Cell[StdI->NCell][1] = iL;
+      StdI->NCell += 1;
+    }/*for (iW = Wmin; iW <= Wmax; iW++*/
+  }/*for (iL = Lmin; iL <= Lmax; iL++)*/
+
+}/*StdFace_InitSite1D*/

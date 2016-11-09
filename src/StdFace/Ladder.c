@@ -36,7 +36,6 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   int iL, iW;
   int ktrans, kintr;
 
-  StdI->NsiteUC = 1;
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
@@ -45,6 +44,9 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
   StdFace_RequiredVal_i("L", StdI->L);
   StdFace_RequiredVal_i("W", StdI->W);
+  StdFace_InitSite1D(StdI);
+  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
+  /**/
   StdFace_NotUsed_i("a0W", StdI->a0W);
   StdFace_NotUsed_i("a0L", StdI->a0L);
   StdFace_NotUsed_i("a1W", StdI->a1W);

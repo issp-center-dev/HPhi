@@ -92,6 +92,7 @@ int ReadTMComponents_BiCG(
 
   if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents) {
     X->Bind.Def.Lanczos_restart = 0;
+    liLanczosStp2 = liLanczosStp;
   }
   else if (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC ||
     X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC) {

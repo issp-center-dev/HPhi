@@ -100,6 +100,8 @@ struct StdIntList {
   char Restart[256];
   char InitialVecType[256];
   char EigenVecIO[256];
+  char CalcSpec[256];
+  char SpectrumType[256];
   /*
    Parameter for lattice
   */
@@ -139,4 +141,7 @@ struct StdIntList {
   double OmegaMax;
   double OmegaMin;
   double OmegaIm;
+  double SpectrumQL;
+  double SpectrumQW;
+  int SpectrumBody;
 };
