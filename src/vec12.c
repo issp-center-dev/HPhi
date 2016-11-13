@@ -40,7 +40,6 @@ void vec12(double alpha[],double beta[],unsigned int ndim,
   double *tmpr;
     
   nvec = X->Def.nvec;
-
   d_malloc2(tmpA,ndim,ndim); 
   d_malloc2(tmpvec,ndim,ndim); 
   d_malloc1(tmpr,ndim);

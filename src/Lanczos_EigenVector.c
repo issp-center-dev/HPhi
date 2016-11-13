@@ -57,7 +57,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
   dsfmt_t dsfmt;
 
   //  k_exct = X->Def.k_exct;
-    k_exct = X->Def.LanczosTarget;
+  k_exct = X->Def.LanczosTarget+1;
 	
   iv=X->Large.iv;
   i_max=X->Check.idim_max;
@@ -155,7 +155,6 @@ void Lanczos_EigenVector(struct BindStruct *X){
 
 #pragma omp parallel for default(none) private(j) shared(vec, v0, v1, vg) firstprivate(alpha1, beta1, i_max, k_exct)
   for(j=1;j<=i_max;j++){
-    //    vg[j]+=vec[k_exct][2]*(v0[j]-alpha1*v1[j])/beta1;
     vg[j]+=conj(vec[k_exct][2])*(v0[j]-alpha1*v1[j])/beta1;
   }
 
@@ -180,7 +179,6 @@ void Lanczos_EigenVector(struct BindStruct *X){
     beta1 = beta[i];
 #pragma omp parallel for default(none) private(j) shared(vec, v0, v1, vg) firstprivate(alpha1, beta1, i_max, k_exct, i)
     for (j = 1; j <= i_max; j++) {
-      //      vg[j] += vec[k_exct][i+1]*(v0[j]-alpha1*v1[j])/beta1;
       vg[j] += conj(vec[k_exct][i + 1]) * (v0[j] - alpha1 * v1[j]) / beta1;
     }
   }
@@ -202,7 +200,6 @@ void Lanczos_EigenVector(struct BindStruct *X){
 #pragma omp parallel for default(none) private(j) shared(v0) firstprivate(i_max, dnorm_inv)
   for(j=1;j<=i_max;j++){
     v0[j] = v0[j]*dnorm_inv;
-    //printf("debug: v0[%ld]=(%lf, %lf)\n", j, creal(v0[j]), cimag(v0[j]));
   }
   
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorFinish, "a");
