@@ -2830,41 +2830,40 @@ double conuntings in transfers: i=2 j=0 spni 1 spnj 1
 The name of calculation process, process number and the calculation process time
 are output in order at each lines in the CalcTime.dat file. An example of file format for TPQ method is shown as follows.\\
 
-\begin{minipage}{14cm}
+\begin{minipage}{16cm}
 \begin{screen}
 \begin{verbatim}
-All                                      [0000]      0.30723
-  sz                                     [1000]      0.00196
-  diagonalcalc                           [2000]      0.00370
-  CalcByTPQ                              [3000]      0.26629
-    FirstMultiply                        [3100]      0.00990
-      rand   in FirstMultiply            [3101]      0.00002
-      mltply in FirstMultiply            [3102]      0.00057
-    expec_energy                         [3200]      0.03351
-      mltply in expec_energy             [3201]      0.02732
-    expec_onebody                        [3300]      0.01830
-    expec_twobody                        [3400]      0.15467
-    Multiply                             [3500]      0.01380
-    FileIO                               [3600]      0.03574
+All                                                [0000]     12.94052
+  sz                                               [1000]      0.01795
+  diagonalcalc                                     [2000]      0.00693
+  CalcByTPQ                                        [3000]     12.90670
+    FirstMultiply                                  [3100]      0.08416
+      rand   in FirstMultiply                      [3101]      0.00172
+      mltply in FirstMultiply                      [3102]      0.07707
+    expec_energy_flct                              [3200]      9.06255
+      calc flctuation in expec_energy_flct         [3201]      1.67779
+      mltply in expec_energy_flct                  [3202]      7.31207
+    expec_onebody                                  [3300]      0.11640
+    expec_twobody                                  [3400]      3.28796
+    Multiply                                       [3500]      0.14840
+    FileIO                                         [3600]      0.20493
 ================================================
-All mltply                               [0001]      0.02786
-  diagonal                               [0100]      0.00176
-  SpinGC                                 [0500]      0.02603
-    trans    in SpinGC                   [0510]      0.00001
-      double                             [0511]      0.00000
-      inner                              [0512]      0.00000
-    interall in SpinGC                   [0520]      0.02596
-      double                             [0521]      0.00000
-      single                             [0522]      0.00000
-      inner                              [0523]      0.02585
-    exchange in SpinGC                   [0530]      0.00001
-      double                             [0531]      0.00000
-      single                             [0532]      0.00000
-      inner                              [0533]      0.00000
-    pairlift in SpinGC                   [0540]      0.00001
-      double                             [0541]      0.00000
-      single                             [0542]      0.00000
-      inner                              [0543]      0.00000
+All mltply                                         [0001]      7.38883
+  diagonal                                         [0100]      0.04153
+  Hubbard                                          [0300]      7.34636
+    trans    in Hubbard                            [0310]      7.34595
+      double                                       [0311]      0.00000
+      single                                       [0312]      0.00000
+      inner                                        [0313]      7.34299
+    interall in Hubbard                            [0320]      0.00008
+      interPE                                      [0321]      0.00000
+      inner                                        [0322]      0.00000
+    pairhopp in Hubbard                            [0330]      0.00006
+      interPE                                      [0331]      0.00000
+      inner                                        [0332]      0.00000
+    exchange in Hubbard                            [0340]      0.00004
+      interPE                                      [0341]      0.00000
+      inner                                        [0342]      0.00000
 ================================================
 \end{verbatim}
 \end{screen}
