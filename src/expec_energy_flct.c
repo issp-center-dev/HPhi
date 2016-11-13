@@ -45,8 +45,8 @@ int expec_energy_flct(struct BindStruct *X){
   double N,tmp_N,tmp_N2;
   double Sz,tmp_Sz, tmp_Sz2;
   double tmp_v02;  
-  
   long unsigned int i_max,tmp_list_1;
+  
   switch(X->Def.iCalcType){
   case Lanczos:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
@@ -89,6 +89,16 @@ int expec_energy_flct(struct BindStruct *X){
   tmp_num_up   = 0.0;
   tmp_num_down = 0.0;
 
+
+  int nCalcFlct;
+  if(X->Def.iCalcType == Lanczos){
+    nCalcFlct=4301;
+  }
+  else if (X->Def.iCalcType == TPQCalc){
+    nCalcFlct=3201;
+  }
+  StartTimer(nCalcFlct);
+  
   switch(X->Def.iCalcModel){
   case HubbardGC:
 #pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2, tmp_num_up, tmp_num_down) default(none) shared(v0) \
@@ -277,16 +287,25 @@ int expec_energy_flct(struct BindStruct *X){
   default:
     return -1;
   }
-       
-  #pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
+  StopTimer(nCalcFlct);       
+
+#pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
   for(i = 1; i <= i_max; i++){
     v1[i]=v0[i];
     v0[i]=0.0+0.0*I;
   }
 
-  StartTimer(3201);
+
+  int nCalcExpec;
+  if(X->Def.iCalcType == Lanczos){
+    nCalcExpec=4302;
+  }
+  else if (X->Def.iCalcType == TPQCalc){
+    nCalcExpec=3202;
+  }
+  StartTimer(nCalcExpec);
   mltply(X, v0, v1); // v0+=H*v1
-  StopTimer(3201);
+  StopTimer(nCalcExpec);
 /* switch -> SpinGCBoost */
 
   dam_pr=0.0;
