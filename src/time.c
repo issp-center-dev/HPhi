@@ -86,8 +86,8 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "    FirstMultiply", 3100);
       StampTime(fp, "      rand   in FirstMultiply", 3101);
       StampTime(fp, "      mltply in FirstMultiply", 3102);
-      StampTime(fp, "    expec_energy             ", 3200);
-      StampTime(fp, "      mltply in expec_energy ", 3201);
+      StampTime(fp, "    expec_energy_flct        ", 3200);
+      StampTime(fp, "      mltply in expec_energy_flct ", 3201);
       StampTime(fp, "    expec_onebody            ", 3300);
       StampTime(fp, "    expec_twobody            ", 3400);
       StampTime(fp, "    Multiply                 ", 3500);
@@ -101,8 +101,8 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "      DSEVvalue   in LanczosEigenValue", 4103);
       StampTime(fp, "    LanczosEigenVector", 4200);
       StampTime(fp, "      mltply      in LanczosEigenVector", 4201);
-      StampTime(fp, "    expec_energy", 4300);
-      StampTime(fp, "      mltply in expec_energy ", 4301);
+      StampTime(fp, "    expec_energy_flct", 4300);
+      StampTime(fp, "      mltply in expec_energy_flct ", 4301);
       StampTime(fp, "    CGEigenVector", 4400);
       StampTime(fp, "      mltply in CGEigenVector ", 4401);
       StampTime(fp, "    expec_onebody            ", 4500);
