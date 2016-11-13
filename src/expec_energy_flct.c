@@ -281,8 +281,8 @@ int expec_energy_flct(struct BindStruct *X){
     X->Phys.num_down  = X->Def.Ndown;    
     X->Phys.num       = (X->Def.Nup+X->Def.Ndown);
     X->Phys.num2      = (X->Def.Nup+X->Def.Ndown)*(X->Def.Nup+X->Def.Ndown);
-    X->Phys.Sz        = 0.5*(X->Def.Nup-X->Def.Ndown);
-    X->Phys.Sz2       = 0.25*(X->Def.Nup-X->Def.Ndown)* (X->Def.Nup-X->Def.Ndown);
+    X->Phys.Sz        = 0.5*(X->Def.Total2SzMPI);
+    X->Phys.Sz2       = 0.25*pow((X->Def.Total2SzMPI),2);
     break;
   default:
     return -1;
