@@ -47,6 +47,10 @@ int expec_energy_flct(struct BindStruct *X){
   double tmp_v02;  
   
   long unsigned int i_max,tmp_list_1;
+  unsigned int l_ibit1,u_ibit1,i_32;
+
+  i_32   = (unsigned int)(pow(2,32)-1);
+
   switch(X->Def.iCalcType){
   case Lanczos:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
@@ -178,11 +182,27 @@ int expec_energy_flct(struct BindStruct *X){
   
   case SpinGC:
   if(X->Def.iFlgGeneralSpin == FALSE) {
+    is1_up   = X->Def.Tpow[X->Def.NsiteMPI]-1;
 #pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0)   \
-  firstprivate(i_max,X,myrank) private(j,Sz, is1_up,ibit1,isite1,tmp_v02)
+  firstprivate(i_max,X,myrank,is1_up,i_32) private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1)
     for(j = 1; j <= i_max; j++){ 
       tmp_v02  = conj(v0[j])*v0[j];
       Sz       = 0.0;
+
+// isite1 > X->Def.Nsite
+      ibit1   = (unsigned long int) myrank & is1_up;
+      u_ibit1 = ibit1 >> 32;
+      l_ibit1 = ibit1 & i_32;
+      Sz      += pop(u_ibit1);
+      Sz      += pop(l_ibit1);
+// isite1 <= X->Def.Nsite
+      ibit1   = (j-1)&is1_up;
+      u_ibit1 = ibit1 >> 32;
+      l_ibit1 = ibit1 & i_32;
+      Sz     += pop(u_ibit1);
+      Sz     += pop(l_ibit1);
+      Sz      = 2*Sz-X->Def.NsiteMPI;
+/*
       for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
         if(isite1 > X->Def.Nsite){
           is1_up = X->Def.Tpow[isite1 - 1];
@@ -202,6 +222,7 @@ int expec_energy_flct(struct BindStruct *X){
           }
         }
       }
+*/
       tmp_Sz   += Sz*tmp_v02;
       tmp_Sz2  += Sz*Sz*tmp_v02;
     }

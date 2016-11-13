@@ -117,3 +117,4 @@ void ConvertToList1GeneralSpin(
 
 
 unsigned long int snoob(unsigned long int x);
+int pop(unsigned int x);
