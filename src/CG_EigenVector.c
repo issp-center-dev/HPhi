@@ -50,7 +50,7 @@ int CG_EigenVector(struct BindStruct *X){
   long int i_max;
 
   i_max=X->Check.idim_max;
-  Eig=X->Phys.Target_energy;
+  Eig=X->Phys.Target_CG_energy;
     
   strcpy(sdt_1, cFileNameTimeEV_CG);
   if(childfopenMPI(sdt_1, "w", &fp_0) !=0){

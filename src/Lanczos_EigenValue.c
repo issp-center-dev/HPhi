@@ -311,6 +311,7 @@ int Lanczos_EigenValue(struct BindStruct *X)
             StopTimer(4102);
             X->Large.itr = stp;
             X->Phys.Target_energy = E_target;
+            X->Phys.Target_CG_energy = E[k_exct]; //for CG
             iconv = 0;
             d_free1(tmp_E,stp+1);
             break;
