@@ -115,11 +115,11 @@ int CalcByLanczos(
       StopTimer(4300);
       //check for the accuracy of the eigenvector
       var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
-      diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
+      diff_ene = fabs(X->Bind.Phys.Target_CG_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_CG_energy);
 
       fprintf(stdoutMPI, "\n");
       fprintf(stdoutMPI, "  Accuracy check !!!\n");
-      fprintf(stdoutMPI, "  LanczosEnergy = %.14e \n  EnergyByVec   = %.14e \n  diff_ene      = %.14e \n  var           = %.14e \n",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+      fprintf(stdoutMPI, "  LanczosEnergy = %.14e \n  EnergyByVec   = %.14e \n  diff_ene      = %.14e \n  var           = %.14e \n",X->Bind.Phys.Target_CG_energy,X->Bind.Phys.energy,diff_ene,var);
       if(diff_ene < eps_Energy && var< eps_Energy){
         fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is enough.\n");
         fprintf(stdoutMPI, "\n");
@@ -155,10 +155,10 @@ int CalcByLanczos(
         expec_energy_flct(&(X->Bind));
         StopTimer(4300);
         var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
-        diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
+        diff_ene = fabs(X->Bind.Phys.Target_CG_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_CG_energy);
         fprintf(stdoutMPI, "\n");
         fprintf(stdoutMPI, "  CG Accuracy check !!!\n");
-        fprintf(stdoutMPI, "  LanczosEnergy = %.14e\n  EnergyByVec   = %.14e\n  diff_ene      = %.14e\n  var           = %.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
+        fprintf(stdoutMPI, "  LanczosEnergy = %.14e\n  EnergyByVec   = %.14e\n  diff_ene      = %.14e\n  var           = %.14e \n ",X->Bind.Phys.Target_CG_energy,X->Bind.Phys.energy,diff_ene,var);
         fprintf(stdoutMPI, "\n");
         //}
       }
