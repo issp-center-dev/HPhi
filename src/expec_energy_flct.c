@@ -97,6 +97,9 @@ int expec_energy_flct(struct BindStruct *X){
   else if (X->Def.iCalcType == TPQCalc){
     nCalcFlct=3201;
   }
+  else{//For FullDiag
+    nCalcFlct=5301;
+  }
   StartTimer(nCalcFlct);
   
   switch(X->Def.iCalcModel){
@@ -302,6 +305,9 @@ int expec_energy_flct(struct BindStruct *X){
   }
   else if (X->Def.iCalcType == TPQCalc){
     nCalcExpec=3202;
+  }
+  else{//For FullDiag
+    nCalcExpec=5302;
   }
   StartTimer(nCalcExpec);
   mltply(X, v0, v1); // v0+=H*v1
