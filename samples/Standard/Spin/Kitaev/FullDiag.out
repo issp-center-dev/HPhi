@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.1.1                  
+           9@P~~~9@P             Version 1.2.0    
                                                                 
 
 
@@ -69,7 +69,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
          filehead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
        initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
-             nvec = 1           ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
@@ -110,7 +109,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
   MAX DIMENSION idim_max=4096 
-  APPROXIMATE REQUIRED MEMORY  max_mem=4.294967 GB 
+  APPROXIMATE REQUIRED MEMORY  max_mem=1.073742 GB 
 
 
 ######  MPI site separation summary  ######

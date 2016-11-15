@@ -10,7 +10,6 @@ Nsite          16
 2Sz            0    
 Lanczos_max    2000 
 initial_iv     -1   
-nvec           1    
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    

@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.1.1                  
+           9@P~~~9@P             Version 1.2.0    
                                                                 
 
 
@@ -38,7 +38,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
   MAX DIMENSION idim_max=32 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.000003 GB 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000002 GB 
 
 
 ######  MPI site separation summary  ######
@@ -97,7 +97,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 ######  Start: TPQCalculation.  ######
 
   rand_i / rand_max = 1 / 5
-    CHECK: TPQ complex initial vector 
     step_i/total_step=200/2000 
     step_i/total_step=400/2000 
     step_i/total_step=600/2000 
@@ -108,7 +107,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1600/2000 
     step_i/total_step=1800/2000 
   rand_i / rand_max = 2 / 5
-    CHECK: TPQ complex initial vector 
     step_i/total_step=200/2000 
     step_i/total_step=400/2000 
     step_i/total_step=600/2000 
@@ -119,7 +117,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1600/2000 
     step_i/total_step=1800/2000 
   rand_i / rand_max = 3 / 5
-    CHECK: TPQ complex initial vector 
     step_i/total_step=200/2000 
     step_i/total_step=400/2000 
     step_i/total_step=600/2000 
@@ -130,7 +127,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1600/2000 
     step_i/total_step=1800/2000 
   rand_i / rand_max = 4 / 5
-    CHECK: TPQ complex initial vector 
     step_i/total_step=200/2000 
     step_i/total_step=400/2000 
     step_i/total_step=600/2000 
@@ -141,7 +137,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1600/2000 
     step_i/total_step=1800/2000 
   rand_i / rand_max = 5 / 5
-    CHECK: TPQ complex initial vector 
     step_i/total_step=200/2000 
     step_i/total_step=400/2000 
     step_i/total_step=600/2000 
@@ -153,4 +148,4 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 13 [s].
+Finish: Elapsed time is 14 [s].

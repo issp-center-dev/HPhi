@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.1.1                  
+           9@P~~~9@P             Version 1.2.0    
                                                                 
 
 
@@ -38,7 +38,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
   MAX DIMENSION idim_max=4900 
-  APPROXIMATE REQUIRED MEMORY  max_mem=6.146560 GB 
+  APPROXIMATE REQUIRED MEMORY  max_mem=1.536640 GB 
 
 
 ######  MPI site separation summary  ######

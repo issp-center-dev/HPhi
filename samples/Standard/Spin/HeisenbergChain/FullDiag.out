@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.1.1                  
+           9@P~~~9@P             Version 1.2.0    
                                                                 
 
 
@@ -29,6 +29,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   KEYWORD : lattice              | VALUE : chain 
   KEYWORD : j                    | VALUE : 1.0 
   KEYWORD : 2sz                  | VALUE : 0 
+  KEYWORD : outputmode           | VALUE : none 
 
 #######  Parameter Summary  #######
 
@@ -53,14 +54,13 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
          filehead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
        initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
-             nvec = 1           ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
               2Sz = 0  
-      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+      ioutputmode = 0         
 
 ######  Print Expert input files  ######
 
@@ -95,7 +95,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
   MAX DIMENSION idim_max=12870 
-  APPROXIMATE REQUIRED MEMORY  max_mem=42.403046 GB 
+  APPROXIMATE REQUIRED MEMORY  max_mem=10.600762 GB 
 
 
 ######  MPI site separation summary  ######

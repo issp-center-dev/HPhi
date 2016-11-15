@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.1.1                  
+           9@P~~~9@P             Version 1.2.0    
                                                                 
 
 
@@ -53,7 +53,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
          filehead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
        initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
-             nvec = 1           ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
@@ -94,7 +93,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
   MAX DIMENSION idim_max=729 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.136049 GB 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.034012 GB 
 
 
 ######  MPI site separation summary  ######
@@ -136,7 +135,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
 ######  Start: Calc Expected value.  ######
 
-i=    0 Energy= -8.617423 N=  6.000000 Sz= -0.000000 S2=  0.000000 Doublon=  0.000000 
+i=    0 Energy= -8.617423 N=  6.000000 Sz= -0.000000 S2= -0.000000 Doublon=  0.000000 
 i=    1 Energy= -7.896796 N=  6.000000 Sz= -0.000000 S2=  2.000000 Doublon=  0.000000 
 i=    2 Energy= -7.896796 N=  6.000000 Sz= -1.000000 S2=  2.000000 Doublon=  0.000000 
 i=    3 Energy= -7.896796 N=  6.000000 Sz=  1.000000 S2=  2.000000 Doublon=  0.000000 
@@ -157,7 +156,7 @@ i=   17 Energy= -6.084885 N=  6.000000 Sz=  0.862657 S2=  2.000000 Doublon=  0.0
 i=   18 Energy= -6.084885 N=  6.000000 Sz= -0.111132 S2=  2.000000 Doublon=  0.000000 
 i=   19 Energy= -6.084885 N=  6.000000 Sz=  0.134707 S2=  2.000000 Doublon=  0.000000 
 i=   20 Energy= -6.084885 N=  6.000000 Sz= -0.971271 S2=  2.000000 Doublon=  0.000000 
-i=   21 Energy= -5.449490 N=  6.000000 Sz= -0.000000 S2= -0.000000 Doublon=  0.000000 
+i=   21 Energy= -5.449490 N=  6.000000 Sz=  0.000000 S2= -0.000000 Doublon=  0.000000 
 i=   22 Energy= -5.000000 N=  6.000000 Sz= -0.994848 S2=  2.000000 Doublon=  0.000000 
 i=   23 Energy= -5.000000 N=  6.000000 Sz= -0.004996 S2=  2.000000 Doublon=  0.000000 
 i=   24 Energy= -5.000000 N=  6.000000 Sz=  0.999844 S2=  2.000000 Doublon=  0.000000 
@@ -242,7 +241,7 @@ i=  102 Energy= -3.351558 N=  6.000000 Sz= -0.208652 S2=  6.000000 Doublon=  0.0
 i=  103 Energy= -3.351558 N=  6.000000 Sz= -0.090367 S2=  6.000000 Doublon=  0.000000 
 i=  104 Energy= -3.351558 N=  6.000000 Sz= -1.394139 S2=  6.000000 Doublon=  0.000000 
 i=  105 Energy= -3.351558 N=  6.000000 Sz= -0.162768 S2=  6.000000 Doublon=  0.000000 
-i=  106 Energy= -3.330234 N=  6.000000 Sz=  0.000000 S2=  0.000000 Doublon=  0.000000 
+i=  106 Energy= -3.330234 N=  6.000000 Sz=  0.000000 S2= -0.000000 Doublon=  0.000000 
 i=  107 Energy= -3.000000 N=  6.000000 Sz= -0.252074 S2=  3.163321 Doublon=  0.000000 
 i=  108 Energy= -3.000000 N=  6.000000 Sz=  1.592133 S2=  5.829601 Doublon=  0.000000 
 i=  109 Energy= -3.000000 N=  6.000000 Sz=  0.073190 S2=  1.370135 Doublon=  0.000000 
@@ -594,7 +593,7 @@ i=  454 Energy=  1.000000 N=  6.000000 Sz=  2.972341 S2= 12.000000 Doublon=  0.0
 i=  455 Energy=  1.000000 N=  6.000000 Sz=  1.717096 S2= 12.000000 Doublon=  0.000000 
 i=  456 Energy=  1.000000 N=  6.000000 Sz= -1.867118 S2= 12.000000 Doublon=  0.000000 
 i=  457 Energy=  1.141336 N=  6.000000 Sz= -0.000000 S2= -0.000000 Doublon=  0.000000 
-i=  458 Energy=  1.141336 N=  6.000000 Sz= -0.000000 S2= -0.000000 Doublon=  0.000000 
+i=  458 Energy=  1.141336 N=  6.000000 Sz=  0.000000 S2= -0.000000 Doublon=  0.000000 
 i=  459 Energy=  1.192139 N=  6.000000 Sz= -0.847965 S2=  6.000000 Doublon=  0.000000 
 i=  460 Energy=  1.192139 N=  6.000000 Sz= -0.031674 S2=  6.000000 Doublon=  0.000000 
 i=  461 Energy=  1.192139 N=  6.000000 Sz= -1.151810 S2=  6.000000 Doublon=  0.000000 
@@ -778,7 +777,7 @@ i=  638 Energy=  3.061780 N=  6.000000 Sz=  0.999954 S2=  2.000000 Doublon=  0.0
 i=  639 Energy=  3.061780 N=  6.000000 Sz= -0.318473 S2=  2.000000 Doublon=  0.000000 
 i=  640 Energy=  3.061780 N=  6.000000 Sz= -0.730563 S2=  2.000000 Doublon=  0.000000 
 i=  641 Energy=  3.061780 N=  6.000000 Sz=  0.015438 S2=  2.000000 Doublon=  0.000000 
-i=  642 Energy=  3.084603 N=  6.000000 Sz= -0.000000 S2= -0.000000 Doublon=  0.000000 
+i=  642 Energy=  3.084603 N=  6.000000 Sz=  0.000000 S2= -0.000000 Doublon=  0.000000 
 i=  643 Energy=  3.247544 N=  6.000000 Sz= -0.784163 S2=  6.000000 Doublon=  0.000000 
 i=  644 Energy=  3.247544 N=  6.000000 Sz=  0.977641 S2=  6.000000 Doublon=  0.000000 
 i=  645 Energy=  3.247544 N=  6.000000 Sz= -1.733471 S2=  6.000000 Doublon=  0.000000 
