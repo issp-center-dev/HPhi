@@ -17,6 +17,7 @@
 #include "mltply.h"
 #include "mfmemory.h"
 #include "wrapperMPI.h"
+#include "CalcTime.h"
 
 /** 
  * 
@@ -31,10 +32,7 @@
  */
 int FirstMultiply(int rand_i, struct BindStruct *X) {
 
-  int iproc;
   long int i, i_max;
-  unsigned long int i_max_tmp;
-  double  complex temp1;
   double complex dnorm;
   double Ns;
   long unsigned int u_long_i;
@@ -66,21 +64,18 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
     if (X->Def.iInitialVecType == 0) {
-#pragma omp master
-      fprintf(stdoutMPI, cLogCheckInitComplex);
   
+    StartTimer(3101);
 #pragma omp for
       for (i = 1; i <= i_max; i++)
         v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
     }/*if (X->Def.iInitialVecType == 0)*/
     else {
-#pragma omp master
-      fprintf(stdoutMPI, cLogCheckInitReal);
-
 #pragma omp for
       for (i = 1; i <= i_max; i++)
           v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
     }
+    StopTimer(3101);
 
   }/*#pragma omp parallel*/
   /*
@@ -99,9 +94,11 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
     v1[i] = v1[i]/dnorm;
   }
   
-  TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQStep, "a", step_i);
+  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
+  StartTimer(3102);
   mltply(X, v0, v1);
+  StopTimer(3102);
 #pragma omp parallel for default(none) private(i) shared(v0, v1, list_1) firstprivate(i_max, Ns, LargeValue, myrank)
   for(i = 1; i <= i_max; i++){
     v0[i]=LargeValue*v1[i]-v0[i]/Ns;
@@ -119,8 +116,6 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   for(i=1;i<=i_max;i++){
     v0[i] = v0[i]/dnorm;
   }
-
-  TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQStepEnd,"a", step_i);
-
+  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStepEnd, "a", rand_i, step_i);
   return 0;
 }

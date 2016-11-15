@@ -48,11 +48,20 @@ char *cErrCalcEigenVec;
 char *cErrSetIniVec;
 char *cErrOutputHam;
 char *cErrOutputHamForFullDiag;
+char *cErrRestart;
 char *cErrFiniteTemp;
 char *cErrKW;
 char *cErrKW_ShowList;
 char *cErrKW_Same;
 char *cErrKW_InCorPair;
+
+char *cErrNsite;
+char *cErrNcond;
+char *cErrNumAve;
+char *cErrExpecInterval;
+char *cErrLanczos_max;
+char *cErrLanczosTarget;
+char *cErrLanczosExct;
 
 char *cErrMakeDef;
 char *cErrIncorrectDef;

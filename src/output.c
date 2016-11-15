@@ -93,7 +93,7 @@ int outputHam(struct BindStruct *X){
   if(childfopenMPI(sdt,"w",&fp)!=0){
     return -1;
   }
-  fprintf(fp, cHeader);
+  fprintf(fp, "%s", cHeader);
   fprintf(fp, "%ld %ld %ld \n", imax, imax, ihermite);
   for (i=1; i<=imax; i++){
     for (j=1; j<=i; j++){

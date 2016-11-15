@@ -86,6 +86,8 @@ int expec_cisajscktaltdc
   //For Kond
   double complex dmv;
 
+  if(X->Def.NCisAjtCkuAlvDC <1) return 0;
+
   
   i_max=X->Check.idim_max;
   X->Large.mode=M_CORR;
@@ -103,11 +105,11 @@ int expec_cisajscktaltdc
     if(X->Def.St==0){
       sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGStart,"a");
-      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName2BGreen_CG, X->Def.CDataFileHead);
         TimeKeeper(X, cFileNameTimeKeep, cCGExpecTwoBodyGStart,"a");
-      fprintf(stdoutMPI, cLogLanczosExpecTwoBodyGStart);
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }
     break;
 

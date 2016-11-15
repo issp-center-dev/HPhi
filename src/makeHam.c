@@ -57,9 +57,9 @@ int makeHam(struct BindStruct *X){
   double complex dmv;
   double num1;
   long unsigned int off;
-  int isite1,isite2,isite3,isite4;
+  long unsigned int isite1,isite2,isite3,isite4;
   int sigma1,sigma2,sigma3,sigma4;
-  int isA_up, isB_up;
+	long unsigned int isA_up, isB_up;
   double complex tmp_trans,tmp_V;
   long unsigned int Asum,Bsum,Adiff,Bdiff;
   long unsigned int tmp_off,tmp_off_2;
@@ -245,7 +245,10 @@ int makeHam(struct BindStruct *X){
 	sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
 	sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
 	tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-
+		  if(isite1==1 && sigma1==0 && isite2==4 && sigma2==0 && isite3==17 && sigma3==0 && isite4==19 && sigma4==0) {
+			tmp_V=tmp_V*1.0;
+		  }
+//	fprintf(stdoutMPI, "Debug: %d, %d, %d, %d, %d, %d, %d, %d\n ", isite1, sigma1,isite2, sigma2,isite3, sigma3,isite4, sigma4);
       child_general_int_GetInfo(
        i, 
        X,
@@ -315,9 +318,8 @@ int makeHam(struct BindStruct *X){
     //Exchange
     for(i = 0;i< X->Def.NExchangeCoupling/2; i++){
       for(ihermite=0; ihermite<2; ihermite++){
-	idx=2*i+ihermite;
-	child_exchange_GetInfo(idx, X);
-	
+        idx=2*i+ihermite;
+        child_exchange_GetInfo(idx, X);
 	for(j=1;j<=X->Large.i_max;j++){
 	  dmv          = child_exchange_element(j, v0, v1, X,&tmp_off);
 	  Ham[tmp_off][j] += dmv;

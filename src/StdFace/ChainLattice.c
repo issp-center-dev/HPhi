@@ -251,7 +251,7 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   }
   StdI->ishift_nspin = 4;
   if(StdI->L % 8 != 0){
-    fprintf(stdout, "\n ERROR! L % 8 != 0 \n\n");
+    fprintf(stdout, "\n ERROR! L %% 8 != 0 \n\n");
     exitMPI(-1);
   }
   StdI->W = StdI->L / 2;

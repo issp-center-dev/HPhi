@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcByFullDiag.h"
 #include "wrapperMPI.h"
-
+#include "CalcTime.h"
 /** 
  * 
  * 
@@ -29,25 +29,35 @@ int CalcByFullDiag(
 		   struct EDMainCalStruct *X
 		   )
 {
-  fprintf(stdoutMPI, cLogFullDiag_SetHam_Start);
+  fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
+  StartTimer(5100);
   makeHam(&(X->Bind));
-  fprintf(stdoutMPI, cLogFullDiag_SetHam_End);
+  StopTimer(5100);
+  fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_End);
 
   if(X->Bind.Def.iOutputHam == TRUE){
-    fprintf(stdoutMPI, cLogFullDiag_OutputHam_Start);
+    fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_Start);
+    StartTimer(5500);
     outputHam(&(X->Bind));
-    fprintf(stdoutMPI, cLogFullDiag_OutputHam_End);
-    return 0;
+    StopTimer(5500);
+    fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_End);
+    return TRUE;
   }
-  fprintf(stdoutMPI,cLogFullDiag_Start);
+  fprintf(stdoutMPI, "%s", cLogFullDiag_Start);
+  StartTimer(5200);
   lapack_diag(&(X->Bind));
-  fprintf(stdoutMPI,cLogFullDiag_End);
+  StopTimer(5200);
+  fprintf(stdoutMPI, "%s", cLogFullDiag_End);
 
   X->Bind.Def.St=0;
-  fprintf(stdoutMPI, cLogFullDiag_ExpecValue_Start);
+  fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_Start);
+  StartTimer(5300);
   phys(&(X->Bind));
-  fprintf(stdoutMPI, cLogFullDiag_ExpecValue_End);
+  StopTimer(5300);
+  fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_End);
+  StartTimer(5400);  
   output(&(X->Bind));
-  fprintf(stdoutMPI, cLogFinish);
-  return 0;
+  StopTimer(5400);  
+  fprintf(stdoutMPI, "%s", cLogFinish);
+  return TRUE;
 }

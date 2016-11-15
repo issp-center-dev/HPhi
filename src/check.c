@@ -194,7 +194,7 @@ int check(struct BindStruct *X){
   }  
 
   if(comb_sum==0){
-    fprintf(stderr, cErrNoHilbertSpace);
+    fprintf(stderr, "%s", cErrNoHilbertSpace);
     //    return FALSE;
   }
   
@@ -203,11 +203,47 @@ int check(struct BindStruct *X){
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
   case Lanczos:
+    switch(X->Def.iCalcModel){
+    case Hubbard:
+    case HubbardNConserved:
+    case Kondo:
+    case KondoGC:
+    case Spin:
+      X->Check.max_mem=5.5*X->Check.idim_max*8.0/(pow(10,9));
+      break;
+    case HubbardGC:
+    case SpinGC:
+      X->Check.max_mem=4.5*X->Check.idim_max*8.0/(pow(10,9));
+      break;
+    }
+    break;
   case TPQCalc:
-    X->Check.max_mem=(3+2+1)*X->Check.idim_max*16.0/(pow(10,9));
+    switch(X->Def.iCalcModel){
+    case Hubbard:
+    case HubbardNConserved:
+    case Kondo:
+    case KondoGC:
+    case Spin:
+      if(X->Def.iFlgCalcSpec != CALCSPEC_NOT){
+        X->Check.max_mem=(2)*X->Check.idim_max*16.0/(pow(10,9));
+      }
+      else {
+        X->Check.max_mem = 4.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
+      }
+      break;
+    case HubbardGC:
+    case SpinGC:
+      if(X->Def.iFlgCalcSpec != CALCSPEC_NOT){
+        X->Check.max_mem=(2)*X->Check.idim_max*16.0/(pow(10,9));
+      }
+      else {
+        X->Check.max_mem = 3.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
+      }
+      break;
+    }
     break;
   case FullDiag:
-    X->Check.max_mem=X->Check.idim_max*16.0*X->Check.idim_max*16.0/(pow(10,9));
+    X->Check.max_mem=X->Check.idim_max*8.0*X->Check.idim_max*8.0/(pow(10,9));
     break;
   default:
     return FALSE;

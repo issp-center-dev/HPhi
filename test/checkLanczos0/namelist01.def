@@ -1,0 +1,9 @@
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin zlocspn.def
+Trans zTrans.def
+Hund zHund.def
+PairHop zPairHop.def
+Exchange zExchange.def
+OneBodyG greenone.def
+TwoBodyG greentwo.def

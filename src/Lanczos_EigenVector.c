@@ -16,6 +16,7 @@
 
 #include "Common.h"
 #include "mltply.h"
+#include "CalcTime.h"
 #include "Lanczos_EigenVector.h"
 #include "wrapperMPI.h"
 
@@ -45,7 +46,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVectorStart);
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorStart, "a");
 
-    long int i,j,i_max,iv;
+  long int i,j,i_max,iv;
   int k_exct, iproc;
   double beta1,alpha1,dnorm, dnorm_inv;
   double complex temp1,temp2,cdnorm;
@@ -55,7 +56,8 @@ void Lanczos_EigenVector(struct BindStruct *X){
   long unsigned int u_long_i, sum_i_max, i_max_tmp;
   dsfmt_t dsfmt;
 
-  k_exct = X->Def.k_exct;
+    k_exct = X->Def.k_exct;
+  //k_exct = X->Def.LanczosTarget+1;
 	
   iv=X->Large.iv;
   i_max=X->Check.idim_max;
@@ -84,7 +86,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
             v1[iv - sum_i_max+1] += 1.0*I;
             v1[iv - sum_i_max+1] /= sqrt(2.0);
           }
-	  vg[iv - sum_i_max+1]=vec[k_exct][1]*conj(v1[iv - sum_i_max+1]);
+          vg[iv - sum_i_max+1]=vec[k_exct][1]*conj(v1[iv - sum_i_max+1]);
 
         }/*if (myrank == iproc)*/
       }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
@@ -144,15 +146,15 @@ void Lanczos_EigenVector(struct BindStruct *X){
       vg[i] = conj(v1[i])*vec[k_exct][1];
     }
   }/*else if(initial_mode==1)*/
-  
+  StartTimer(4201);
   mltply(X, v0, v1);
+  StopTimer(4201);
   
   alpha1=alpha[1];
   beta1=beta[1];
 
 #pragma omp parallel for default(none) private(j) shared(vec, v0, v1, vg) firstprivate(alpha1, beta1, i_max, k_exct)
   for(j=1;j<=i_max;j++){
-    //    vg[j]+=vec[k_exct][2]*(v0[j]-alpha1*v1[j])/beta1;
     vg[j]+=conj(vec[k_exct][2])*(v0[j]-alpha1*v1[j])/beta1;
   }
 
@@ -170,13 +172,13 @@ void Lanczos_EigenVector(struct BindStruct *X){
       v0[j] = -beta1 * temp1;
       v1[j] = temp2;
     }
+    StartTimer(4201);
     mltply(X, v0, v1);
-
+    StopTimer(4201);
     alpha1 = alpha[i];
     beta1 = beta[i];
 #pragma omp parallel for default(none) private(j) shared(vec, v0, v1, vg) firstprivate(alpha1, beta1, i_max, k_exct, i)
     for (j = 1; j <= i_max; j++) {
-      //      vg[j] += vec[k_exct][i+1]*(v0[j]-alpha1*v1[j])/beta1;
       vg[j] += conj(vec[k_exct][i + 1]) * (v0[j] - alpha1 * v1[j]) / beta1;
     }
   }
@@ -198,7 +200,6 @@ void Lanczos_EigenVector(struct BindStruct *X){
 #pragma omp parallel for default(none) private(j) shared(v0) firstprivate(i_max, dnorm_inv)
   for(j=1;j<=i_max;j++){
     v0[j] = v0[j]*dnorm_inv;
-    //printf("debug: v0[%ld]=(%lf, %lf)\n", j, creal(v0[j]), cimag(v0[j]));
   }
   
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenVectorFinish, "a");

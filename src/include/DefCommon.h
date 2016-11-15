@@ -20,11 +20,12 @@
 #define PI 3.14159265358979 
 
 /*!< CalcType */
-#define NUM_CALCTYPE 4
+#define NUM_CALCTYPE 5
 #define Lanczos 0 /*!< CalcType is Exact Diagonalization method.*/
 #define TPQCalc 1 /*!< CalcType is TPQ calculation.*/
 #define FullDiag 2 /*!< CalcType is Full Diagonalization method.*/
 #define Spectrum 3 /*!< CalcType is Calculation spectrum */
+#define SpectrumFD 4 /*!< CalcType is Calculation spectrum with full diagonalization*/
 
 /*!< CalcModel */
 #define NUM_CALCMODEL 6 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted. SpinlessFermion and SpinlessFermionGC are not yet supported*/
@@ -50,5 +51,20 @@
 #define CALCVEC_LANCZOSCG  0 /*!< Lanczos + CG method*/
 #define CALCVEC_LANCZOS 1 /*!< Lanczos method*/
 #define CALCVEC_NOT -1 /*!< eigenvector is not calculated*/
+
+/*!< CalcSpectrum */
+#define CALCSPEC_NOT 0
+#define RECALC_NOT 1
+#define RECALC_FROM_TMComponents 2
+#define RECALC_OUTPUT_TMComponents_VEC 3
+#define RECALC_FROM_TMComponents_VEC 4
+#define RECALC_INOUT_TMComponents_VEC 5
+
+/*!< ReStartVector */
+#define NUM_RESTART 4
+#define RESTART_NOT 0
+#define RESTART_OUT 1
+#define RESTART_INOUT 2
+#define RESTART_IN 3
 
 #endif /* HPHI_DEFCOMMON_H */

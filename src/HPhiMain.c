@@ -22,45 +22,47 @@
 #include <CalcByLanczos.h>
 #include <CalcByFullDiag.h>
 #include <CalcByTPQ.h>
+#include <CalcSpectrum.h>
 #include <check.h>
 #include "Common.h"
 #include "readdef.h"
 #include "StdFace_main.h"
 #include "wrapperMPI.h"
 #include "splash.h"
+#include "CalcTime.h"
 
 /*!
-@mainpage
+  @mainpage
 
-<H2>Introduction</H2>
-A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins. The Lanczos algorithm for finding ground states and newly developed Lanczos-based algorithm for finite-temperature properties of these models are implemented for parallel computing. A broad spectrum of users including experimental researchers is cordially welcome.
-<HR>
-<H2>Developers</H2>
-Youhei Yamaji (Quantum-Phase Electronics Center, The University of Tokyo)\n
-Takahiro Misawa (Department of Applied Physics, The University of Tokyo)\n
-Synge Todo (Department of Physics, The University of Tokyo)\n
-Kazuyoshi Yoshimi (Institute for Solid State Physics, The University of Tokyo)\n
-Mitsuaki Kawamura (Institute for Solid State Physics, The University of Tokyo)\n
-Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
-<HR>
-<H2>Methods</H2>
-Lanczos algorithm, thermal pure quantum state, full diagonalization
-<HR>
-<H2>Target models</H2>
-Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heisenberg model, multi-orbital Hubbard model
-<HR>
-<H2>Link</H2>
-https://github.com/QLMS/HPhi
-<HR>
-<H2>Download</H2>
-https://github.com/QLMS/HPhi/releases
-<HR>
-<H2>Forum</H2>
-http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
-<HR>
-<H2>licence</H2>
-<B>GNU GPL version 3</B>\n
-This software is developed under the support of "Project for advancement of software usability in materials science" by The Institute for Solid State Physics, The University of Tokyo.\n
+  <H2>Introduction</H2>
+  A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins. The Lanczos algorithm for finding ground states and newly developed Lanczos-based algorithm for finite-temperature properties of these models are implemented for parallel computing. A broad spectrum of users including experimental researchers is cordially welcome.
+  <HR>
+  <H2>Developers</H2>
+  Youhei Yamaji (Quantum-Phase Electronics Center, The University of Tokyo)\n
+  Takahiro Misawa (Department of Applied Physics, The University of Tokyo)\n
+  Synge Todo (Department of Physics, The University of Tokyo)\n
+  Kazuyoshi Yoshimi (Institute for Solid State Physics, The University of Tokyo)\n
+  Mitsuaki Kawamura (Institute for Solid State Physics, The University of Tokyo)\n
+  Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
+  <HR>
+  <H2>Methods</H2>
+  Lanczos algorithm, thermal pure quantum state, full diagonalization
+  <HR>
+  <H2>Target models</H2>
+  Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heisenberg model, multi-orbital Hubbard model
+  <HR>
+  <H2>Link</H2>
+  https://github.com/QLMS/HPhi
+  <HR>
+  <H2>Download</H2>
+  https://github.com/QLMS/HPhi/releases
+  <HR>
+  <H2>Forum</H2>
+  http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
+  <HR>
+  <H2>licence</H2>
+  <B>GNU GPL version 3</B>\n
+  This software is developed under the support of "Project for advancement of software usability in materials science" by The Institute for Solid State Physics, The University of Tokyo.\n
 */
 
 /** 
@@ -79,6 +81,7 @@ int main(int argc, char* argv[]){
   int mode=0;
   char cFileListName[D_FileNameMax];
 
+  stdoutMPI = stdout;
   if(JudgeDefType(argc, argv, &mode)!=0){
     FinalizeMPI();
     return 0;
@@ -92,6 +95,10 @@ int main(int argc, char* argv[]){
   }
   else InitializeMPI(argc, argv);
 
+  //Timer
+  InitTimer();
+  StartTimer(0);
+ 
   //MakeDirectory for output
   struct stat tmpst;
   if (myrank == 0) {
@@ -118,16 +125,16 @@ int main(int argc, char* argv[]){
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrDefFile);
     FinalizeMPI();
-    return 0;
+    return -1;
   }
 
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
     FinalizeMPI();
-    return 0;
+    return -1;
   }	  
-  fprintf(stdoutMPI,  cProFinishDefFiles);
+  fprintf(stdoutMPI, "%s", cProFinishDefFiles);
   
 
   /*ALLOCATE-------------------------------------------*/
@@ -135,16 +142,19 @@ int main(int argc, char* argv[]){
   /*-----------------------------------------------------*/
 
   /*Read Def files.*/
+  TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefStart, "w");
   if(ReadDefFileIdxPara(&(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
     FinalizeMPI();
-    return 0;
+    return -1;
   }
-  
-  fprintf(stdoutMPI, cProFinishDefCheck);
+  TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefFinish, "a");
+
+
+  fprintf(stdoutMPI, "%s", cProFinishDefCheck);
   if(check(&(X.Bind))==MPIFALSE){
     FinalizeMPI();
-    return 0;
+    return -1;
   }
   
   
@@ -162,10 +172,11 @@ int main(int argc, char* argv[]){
     exitMPI(-1);
   }
 
-
-  if(!sz(&(X.Bind))==0){
+  StartTimer(1000);
+  if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
     exitMPI(-1);
   }
+  StopTimer(1000);
 
   if(X.Bind.Def.WRITE==1){
     output_list(&(X.Bind));
@@ -173,38 +184,68 @@ int main(int argc, char* argv[]){
     return 0;
   }
 
+  StartTimer(2000);
   diagonalcalc(&(X.Bind));
+  StopTimer(2000);
   
   //Start Calculation
-  switch (X.Bind.Def.iCalcType){
-  case Lanczos:    
-    if(!CalcByLanczos(&X)==0){
-      FinalizeMPI();
-      return 0;
-    }    
-    break;
-  case FullDiag:
-    if(nproc !=1){
-      fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
-      FinalizeMPI();
-      return 0;
-    }
-    if(!CalcByFullDiag(&X)==0){
-      FinalizeMPI();
-      return 0;
-    }
-    break;
-  case TPQCalc:
-    if(!CalcBySSM(NumAve, ExpecInterval, &X)==0){
-      FinalizeMPI();
-      return 0;
-    }
-    break;
-  default:
-    FinalizeMPI();
-    return 0;
-  }  
 
+  if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
+    switch (X.Bind.Def.iCalcType) {
+      case Lanczos:
+        StartTimer(4000);
+        if (!CalcByLanczos(&X) == TRUE) {
+          FinalizeMPI();
+          StopTimer(4000);
+          return -1;
+        }
+        StopTimer(4000);
+        break;
+
+      case FullDiag:
+        StartTimer(5000);
+        if (nproc != 1) {
+          fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
+          FinalizeMPI();
+          StopTimer(5000);
+          return 0;
+        }
+        if (!CalcByFullDiag(&X) == TRUE) {
+          FinalizeMPI();
+          return -1;
+          StopTimer(5000);
+        }
+        StopTimer(5000);
+        break;
+
+      case TPQCalc:
+        StartTimer(3000);        
+        if (!CalcByTPQ(NumAve, ExpecInterval, &X) == TRUE) {
+          FinalizeMPI();
+          StopTimer(3000);
+          return -1;
+        }
+        StopTimer(3000);
+        break;
+
+      default:
+        FinalizeMPI();
+        StopTimer(0);
+        return 0;
+    }
+  }
+  else{
+    StartTimer(6000);
+    if (!CalcSpectrum(&X) == TRUE) {
+      FinalizeMPI();
+      StopTimer(6000);
+      return -1;
+    }
+    StopTimer(6000);
+  }
+  
+  StopTimer(0);
+  OutputTimer(&(X.Bind));
   FinalizeMPI();
   return 0;
 }

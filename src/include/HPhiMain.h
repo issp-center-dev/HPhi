@@ -21,6 +21,7 @@
 #include "../FileIO.c"
 #include "../bitcalc.c"
 #include "../output.c"
+#include "../time.c"
 
 #include "../matrixlapack.c"
 #include "../mfmemory.c"

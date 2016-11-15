@@ -18,7 +18,7 @@
 #include "FileIO.h"
 #include "mltply.h"
 #include "wrapperMPI.h"
-
+#include "CalcTime.h"
 /** 
  * 
  * 
@@ -44,15 +44,13 @@ int CG_EigenVector(struct BindStruct *X){
   int i_itr,itr,iv,itr_max;
   int t_itr;
   double bnorm,xnorm,rnorm,rnorm2;
-  double complex alpha,beta,xb,rp,yp,gosa1,tmp_r,gosa2, temp1;
+  double complex alpha,beta,xb,rp,yp,gosa1,tmp_r,gosa2;
   double complex *y,*b;
   long int L_size;
-  long int i_max, i_max_tmp;
-  int iproc;
-  
-  iv=0;
-  i_max=X->Check.idim_max;    
-  Eig=X->Phys.Target_energy;
+  long int i_max;
+
+  i_max=X->Check.idim_max;
+  Eig=X->Phys.Target_CG_energy;
     
   strcpy(sdt_1, cFileNameTimeEV_CG);
   if(childfopenMPI(sdt_1, "w", &fp_0) !=0){
@@ -143,9 +141,9 @@ int CG_EigenVector(struct BindStruct *X){
       for(j=1;j<=i_max;j++){  
 	y[j]=(-Eig+eps_CG)*vg[j];   //y = -E*p
       }
-
+      StartTimer(4401);
       mltply(X,y,vg);      // y += H*p
-
+      StopTimer(4401);
       // (H-E)p=y finish!
       rp=0.0;
       yp=0.0;

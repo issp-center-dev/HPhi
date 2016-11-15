@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 The University of Tokyo */
+/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -14,6 +14,10 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
-#include "Common.h"
 
-int expec_energy(struct BindStruct *X);
+#include "struct.h"
+
+int CalcSpectrumByFullDiag(struct EDMainCalStruct *X,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega);

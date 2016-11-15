@@ -20,6 +20,8 @@
 //readdef.c
 const char* cReadFileNamelist;
 const char* cReadFile;
+const char* cReadDefStart;
+const char* cReadDefFinish;
 
 //sz.c
 const char* cStateLocSpin;
@@ -28,10 +30,15 @@ const char* cInitalSz;
 const char* cOMPSzStart;
 const char* cOMPSzMid;
 const char* cOMPSzFinish;
-const char* cSingleSzStart;
-const char* cSingleSzFinish;
 const char* cReadSzStart;
 const char* cReadSzEnd;
+
+//CalcByLanczos.c
+const char* cReadEigenVecStart;
+const char* cReadEigenVecFinish;
+const char* cOutputEigenVecStart;
+const char* cOutputEigenVecFinish;
+
 
 //CG_EigenVector.c
 const char* cLogCG_EigenVecStart;
@@ -40,7 +47,27 @@ const char* cCG_EigenVecStart;
 const char* cCG_EigenVecFinish;
 
 //diagonalcalc.c
+const char* cDiagonalCalcStart;
 const char* cDiagonalCalcFinish;
+
+//calcspectrum.c
+const char* c_InputEigenVectorStart;
+const char* c_InputEigenVectorEnd;
+const char* c_CalcExcitedStateStart;
+const char* c_CalcExcitedStateEnd;
+const char* c_CalcSpectrumStart;
+const char* c_CalcSpectrumEnd;
+const char* c_GetTridiagonalStart;
+const char* c_GetTridiagonalEnd;
+const char* c_CalcSpectrumFromTridiagonalStart;
+const char* c_CalcSpectrumFromTridiagonalEnd;
+const char* c_OutputSpectrumRecalcvecStart;
+const char* c_OutputSpectrumRecalcvecEnd;
+const char* c_InputSpectrumRecalcvecStart;
+const char* c_InputSpectrumRecalcvecEnd;
+
+//calcspectrum in Lanczos_Eigenvalue.c
+const char* c_Lanczos_SpectrumStep;
 
 
 //FirstMultiply.c, Multiply.c
@@ -102,8 +129,17 @@ const char* cCGExpecEnergyEnd;
 const char* cLogTPQRand;
 const char* cLogSSRand;
 const char* cLogNormRand;
+const char* cLogFlctRand;
 const char* cLogTPQStep;
 const char* cLogTPQEnd;
+
+const char* cLogInputVecStart;
+const char* cLogInputVecFinish;
+const char* cLogOutputVecStart;
+const char* cLogOutputVecFinish;
+const char* cOutputVecStart;
+const char* cOutputVecFinish;
+
 
 //FirstMultiply.c
 const char* cLogCheckInitComplex;
