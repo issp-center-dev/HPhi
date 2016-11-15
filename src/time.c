@@ -118,7 +118,9 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "    MakeHam", 5100);
       StampTime(fp, "    LapackDiag", 5200);
       StampTime(fp, "    CalcPhys", 5300);
-      StampTime(fp, "    Output", 5400);
+    StampTime(fp, "      calc flctuation in expec_energy_flct ", 5301);
+    StampTime(fp, "      mltply in expec_energy_flct ", 5302);
+        StampTime(fp, "    Output", 5400);
       StampTime(fp, "    OutputHam", 5500);
     }
   }
