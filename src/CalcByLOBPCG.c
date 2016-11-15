@@ -274,7 +274,8 @@ int LOBPCG_Main(
   struct BindStruct *X
 )
 {
-  char sdt[D_FileNameMax];
+  char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
+  FILE *fp;
   int iconv = -1, one = 1;
   long int idim, i_max;
   int ii, jj, ie, je, nsub, stp, mythread;
@@ -321,7 +322,10 @@ int LOBPCG_Main(
     eig[ie] = creal(VecProdMPI(i_max, wxp[1][ie], hwxp[1][ie]));
   }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
 
+  sprintf(sdt_2, cFileNameLanczosStep, X->Def.CDataFileHead);
+  childfopenMPI(sdt_2, "w", &fp);
   fprintf(stdoutMPI, "    Step   Residual-2-norm     Threshold      Energy\n");
+  fprintf(fp, "    Step   Residual-2-norm     Threshold      Energy\n");
 
   for (stp = 1; stp <= X->Def.Lanczos_max; stp++) {
     /*
@@ -366,9 +370,13 @@ int LOBPCG_Main(
     Convergence check
     */
     fprintf(stdoutMPI, "%9d %15.5e %15.5e      ", stp, dnormmax, eps_LOBPCG);
-    for (ie = 0; ie < X->Def.k_exct; ie++)
+    fprintf(fp, "%9d %15.5e %15.5e      ", stp, dnormmax, eps_LOBPCG);
+    for (ie = 0; ie < X->Def.k_exct; ie++) {
       fprintf(stdoutMPI, " %15.5e", eig[ie]);
+      fprintf(fp, " %15.5e", eig[ie]);
+    }
     fprintf(stdoutMPI, "\n");
+    fprintf(fp, "\n");
 
     if (dnormmax < eps_LOBPCG) {
       iconv = 0;
@@ -466,6 +474,8 @@ int LOBPCG_Main(
     }/*for (ii = 1; ii < 3; ii++)*/
 
   }/*for (stp = 1; stp <= X->Def.Lanczos_max; stp++)*/
+
+  fclose(fp);
 
   sprintf(sdt, cFileNameTimeKeep, X->Def.CDataFileHead);
 
