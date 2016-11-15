@@ -281,6 +281,7 @@ struct PhysList{
   double *charge_real_cor;
   double *loc_spin_z;
   double Target_energy;
+  double Target_CG_energy;
 };	
 
 //For Boost

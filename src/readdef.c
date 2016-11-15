@@ -2023,7 +2023,16 @@ int JudgeDefType
  int *mode
  )
 {
-  
+   int ver_maj =
+#include "version_major.h"
+;
+   int ver_min =
+#include "version_miner.h"
+;
+   int ver_pat =
+#include "version_patch.h"
+;
+
   if(argc == 3 && 
      (CheckWords(argv[1], "-e") == 0 ||
       CheckWords(argv[1], "--Expert") == 0)){
@@ -2044,7 +2053,7 @@ int JudgeDefType
            (CheckWords(argv[1], "-v") == 0
             || CheckWords(argv[1], "--version") == 0)
            ) {
-    fprintf(stdoutMPI, "\nHPhi version 1.1.1 \n\n");
+    fprintf(stdoutMPI, "\nHPhi version %d.%d.%d \n\n", ver_maj, ver_min, ver_pat);
     exit(-1);
   }
   else{

@@ -32,7 +32,7 @@ void clock_gettime_general(struct timespec *ts) {
 
 void StampTime(FILE *fp, char *str, int num){
   char str1[256];
-  sprintf(str1, "%-40s [%04d] %12.5lf\n", str, num, Timer[num]);
+  sprintf(str1, "%-50s [%04d] %12.5lf\n", str, num, Timer[num]);
   fprintf(fp, str1);
 }
 
@@ -86,8 +86,9 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "    FirstMultiply", 3100);
       StampTime(fp, "      rand   in FirstMultiply", 3101);
       StampTime(fp, "      mltply in FirstMultiply", 3102);
-      StampTime(fp, "    expec_energy             ", 3200);
-      StampTime(fp, "      mltply in expec_energy ", 3201);
+      StampTime(fp, "    expec_energy_flct        ", 3200);
+      StampTime(fp, "      calc flctuation in expec_energy_flct ", 3201);
+      StampTime(fp, "      mltply in expec_energy_flct ", 3202);
       StampTime(fp, "    expec_onebody            ", 3300);
       StampTime(fp, "    expec_twobody            ", 3400);
       StampTime(fp, "    Multiply                 ", 3500);
@@ -101,8 +102,9 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "      DSEVvalue   in LanczosEigenValue", 4103);
       StampTime(fp, "    LanczosEigenVector", 4200);
       StampTime(fp, "      mltply      in LanczosEigenVector", 4201);
-      StampTime(fp, "    expec_energy", 4300);
-      StampTime(fp, "      mltply in expec_energy ", 4301);
+      StampTime(fp, "    expec_energy_flct", 4300);
+      StampTime(fp, "      calc flctuation in expec_energy_flct ", 4301);
+      StampTime(fp, "      mltply in expec_energy_flct ", 4302);
       StampTime(fp, "    CGEigenVector", 4400);
       StampTime(fp, "      mltply in CGEigenVector ", 4401);
       StampTime(fp, "    expec_onebody            ", 4500);
@@ -116,7 +118,9 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "    MakeHam", 5100);
       StampTime(fp, "    LapackDiag", 5200);
       StampTime(fp, "    CalcPhys", 5300);
-      StampTime(fp, "    Output", 5400);
+    StampTime(fp, "      calc flctuation in expec_energy_flct ", 5301);
+    StampTime(fp, "      mltply in expec_energy_flct ", 5302);
+        StampTime(fp, "    Output", 5400);
       StampTime(fp, "    OutputHam", 5500);
     }
   }

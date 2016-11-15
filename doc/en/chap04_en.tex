@@ -817,9 +817,9 @@ TwoBodyG	zcisajscktaltdc.def
            PairLift  &   Pair lift couplings. \\  
            OneBodyG         &   Output components for Green functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
            TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\ 
-           \tr{SingleExcitation} &   Operators for generating single excited state\\ 
-           \tr{PairExcitation} &   Operators for generating pair excited state\\   
-           \tr{SpectrumVec} &   An input vector to calculate a restart vector\\   
+           {SingleExcitation} &   Operators for generating single excited state\\ 
+           {PairExcitation} &   Operators for generating pair excited state\\   
+           {SpectrumVec} &   An input vector to calculate a restart vector\\   
   \hline
   \end{tabular}
 \end{center}
@@ -881,7 +881,7 @@ Parameters correlated with keywords are shown as follows.
 0: Lanczos method,\\
 1: Analysis of the physical properties by using TPQ,\\
 2: Full diagonalization method.\\
-\tr{
+{
 3. Calculate dynamical Green's functions.
 }
 
@@ -890,13 +890,13 @@ Parameters correlated with keywords are shown as follows.
 {\bf Type :} int-type 
 
 {\bf Description :} Select the model from the following list:\\
-0: fermion Hubbard model (Canonical ensemble: \tr{conservation of particles or} conservation of particles and the component of $S_z$)\\
+0: fermion Hubbard model (Canonical ensemble: {conservation of particles or} conservation of particles and the component of $S_z$)\\
 1: Spin model (Canonical ensemble: conservation of the component of $S_z$)\\
 2: Kondo lattice model (Canonical ensemble: conservation of particles, the component of $S_z$)\\
 3: fermion Hubbard model (Grand canonical ensemble)\\
 4: Spin model (Grand canonical ensemble)\\
 5: Kondo lattice model (Grand canonical ensemble)
-\tr{For fermion Hubbard model, you can select the model under the conservation of particles by setting} \verb|NCond| \tr{in the ModPara file. When you want to select the model under the conservation of particles and the component of $S_z$, you set both} \verb|NCond| and \verb|2Sz| \tr{in the ModPara file}.
+{For fermion Hubbard model, you can select the model under the conservation of particles by setting} \verb|NCond| {in the ModPara file. When you want to select the model under the conservation of particles and the component of $S_z$, you set both} \verb|NCond| and \verb|2Sz| {in the ModPara file}.
 %\item  \verb|Outputmode|
 %
 %{\bf Type :} int-type (default value: 0)
@@ -944,7 +944,7 @@ Parameters correlated with keywords are shown as follows.
 {\bf Type :} {int-type (default value: 0)}
 
 {\bf Description :} {
-\tr{
+{
 Select the mode of inputting a restart vector:\\
 0:  not restart calculation,\\
 1:  output a restart vector,\\
@@ -956,10 +956,10 @@ Select the mode of inputting a restart vector:\\
 
 \item  \verb|CalcSpec|
 
-{\bf Type :} {int型 (デフォルト値 0)}
+{\bf Type :} {int-type (default value: 0)}
 
 {\bf Description :} {
-\tr{
+{
 Select the mode of calculating dynamical Green's functions.\\
 0: not calculate  dynamical Green's functions,\\
 1: (not restart) input an initial vector and files for generating single excited or pair excited states,\\
@@ -1137,25 +1137,25 @@ See \ref{Ch:algorithm} for details of setting an initial vector.
 
 {\bf Type :} double-type
 
-{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The maximum value of the real part of the frequency $\omega_{\rm max}$ to calculate dynamical green's functions.}
+{\bf Description :} {(Only use for calculating dynamical green's functions) The maximum value of the real part of the frequency $\omega_{\rm max}$ to calculate dynamical green's functions.}
 
 \item \verb|OmegaMin|
 
 {\bf Type :} double-type
 
-{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The minimum value of the real part of the frequency $\omega_{\rm min}$ to calculate dynamical green's functions.}
+{\bf Description :} {(Only use for calculating dynamical green's functions) The minimum value of the real part of the frequency $\omega_{\rm min}$ to calculate dynamical green's functions.}
 
 \item \verb|OmegaIm|
 
 {\bf Type :} double-type
 
-{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The imaginary part of the frequency $\eta$to calculate dynamical green's functions.}
+{\bf Description :} {(Only use for calculating dynamical green's functions) The imaginary part of the frequency $\eta$to calculate dynamical green's functions.}
  
 \item \verb|NOmega|
 
 {\bf Type :} int-type
 
-{\bf Description :} \tr{(Only use for calculating dynamical green's functions) The integer to define the step size of the frequency $\Delta \omega = (\omega_{\rm max}-\omega_{\rm min} )/N_{\omega}$. The frequency is given by $z_n=\omega_{\rm min} + \Delta \omega \times n+ i\eta$.} 
+{\bf Description :} {(Only use for calculating dynamical green's functions) The integer to define the step size of the frequency $\Delta \omega = (\omega_{\rm max}-\omega_{\rm min} )/N_{\omega}$. The frequency is given by $z_n=\omega_{\rm min} + \Delta \omega \times n+ i\eta$.} 
  
  \end{itemize}
 
@@ -2142,7 +2142,7 @@ An integer giving a spin index,\\
 \end{itemize}
 
 \newpage
-\subsection{\tr{SingleExcitation file}}
+\subsection{{SingleExcitation file}}
 \label{Subsec:singleexcitation}
 Operators to generate single excited state $S_{i\sigma_1}c_{i\sigma_1}(S_{i\sigma_1}c_{i\sigma_1}^{\dagger})$ are defined.
 An example of file format is shown as follows.
@@ -2230,7 +2230,7 @@ An integer giving a type of single excitation operators,\\
 \end{itemize}
 
 \newpage
-\subsection{\tr{PairExcitation file}}
+\subsection{{PairExcitation file}}
 \label{Subsec:pairexcitation}
 Operators to generate pair excited state $S_{i\sigma_1j\sigma_2}c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(S_{i\sigma_1j\sigma_2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$ are defined. The type of pair excitation operators ($c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$ or $c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$) must be same in the input file. In $S_z$ conserved system, $\sigma_1$ must be equal to $\sigma_2$. An example of file format is shown as follows.
 
@@ -2318,7 +2318,7 @@ An integer giving a type of pair excitation operators,\\
 \end{itemize}
 
 \newpage
-\subsection{\tr{SpectrumVec File}}
+\subsection{{SpectrumVec File}}
 \label{Subsec:spectrumvec}
 The header of input file for the initial vector to calculate dynamical Green's functions is defined.
 The file name and the file format (binary type) are shown as follows.
@@ -2349,7 +2349,7 @@ The file name and the file format (binary type) are shown as follows.
 
  {\bf Type :} int-type
 
-{\bf Description :}  \tr{ A number of Lanczos or TPQ steps.}
+{\bf Description :}  { A number of Lanczos or TPQ steps.}
 
  \item  $[$double01$]$, $[$double02$]$
 
@@ -2358,126 +2358,6 @@ The file name and the file format (binary type) are shown as follows.
 {\bf Description :} The coefficient value of an input vector.\\
 $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
 
-\end{itemize}
-
-\newpage
-\subsection{\tr{DynamicalGreen.dat}}
-\label{Subsec:dynamicalG}
-動的グリーン関数の計算結果を出力します。ファイル名およびファイルTypeは以下の通りです。
-
-\subsubsection{ファイル名}
-\begin{itemize}
-   \item{\#\#\_DynamicalGreen.dat}
-\end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
-  
-\subsubsection{ファイルType}
- \begin{itemize}
-   \item  1行目-: $[$double01$]$~~$[$double02$]$~~$[$double03$]$~~$[$double04$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
-
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf Type :} double型 
-
- {\bf Description :} 振動数の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
-
- \item  $[$double03$]$, $[$double04$]$
-
- {\bf Type :} double型 
-
- {\bf Description :} 動的グリーン関数の値を表します。\\
-$[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
-
-\end{itemize}
-
-
-\newpage
-\subsection{\tr{recalcvec.dat}}
-\label{Subsec:restart}
-Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベクトルが出力されます。
-ファイルはバイナリTypeで出力されます。
-ファイル名およびファイルTypeは以下の通りです。
-
-\subsubsection{ファイル名}
-\begin{itemize}
-   \item{\#\#\_recalcvec\_rank\_\$\$.dat}
-\end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。
-
-\subsubsection{ファイルType}
- \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$int02$]$
-   \item  3行目-: $[$double01$]$~~$[$double02$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
-
-  \item  $[$int01$]$
-
- {\bf Type :} int型
-
- {\bf Description :} 動的グリーン関数の計算に要したステップ数を表します。
-
-  \item  $[$int02$]$
-
- {\bf Type :} int型
-
-{\bf Description :} 計算対象のヒルベルト空間数を指定する整数。
-
- 
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf Type :} double型 
-
-{\bf Description :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
-\end{itemize}
-
-\newpage
-\subsection{\tr{TMcomponents.dat}}
-\label{Subsec:restart}
-Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
-ファイル名およびファイルTypeは以下の通りです。
-
-\subsubsection{ファイル名}
-\begin{itemize}
-   \item{\#\#\_TMcomponents.dat}
-\end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
-
-\subsubsection{ファイルType}
- \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$double01$]$
-   \item  3行目-: $[$double02$]$~~$[$double03$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
-
-  \item  $[$int01$]$
-
- {\bf Type :} int型
-
- {\bf Description :} 動的グリーン関数の計算に要したステップ数$N_d$を表します。
-
-  \item  $[$double01$]$
-
- {\bf Type :} double型
-
-{\bf Description :} 励起状態のノルムを表します。
-
- 
- \item  $[$double02$]$, $[$double03$]$
-
- {\bf Type :} double型 
-
-{\bf Description :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
-$[$double02$]$が$\alpha_i$、$[$double03$]$が$\beta_i$に対応します。\\
 \end{itemize}
 
 \newpage
@@ -2826,6 +2706,50 @@ double conuntings in transfers: i=2 j=0 spni 1 spnj 1
 \end{itemize}
 
 \newpage
+\subsection{CalcTimer.dat}
+The name of calculation process, process number and the calculation process time
+are output in order at each lines in the CalcTime.dat file. An example of file format for TPQ method is shown as follows.\\
+
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+All                                                [0000]     12.94052
+  sz                                               [1000]      0.01795
+  diagonalcalc                                     [2000]      0.00693
+  CalcByTPQ                                        [3000]     12.90670
+    FirstMultiply                                  [3100]      0.08416
+      rand   in FirstMultiply                      [3101]      0.00172
+      mltply in FirstMultiply                      [3102]      0.07707
+    expec_energy_flct                              [3200]      9.06255
+      calc flctuation in expec_energy_flct         [3201]      1.67779
+      mltply in expec_energy_flct                  [3202]      7.31207
+    expec_onebody                                  [3300]      0.11640
+    expec_twobody                                  [3400]      3.28796
+    Multiply                                       [3500]      0.14840
+    FileIO                                         [3600]      0.20493
+================================================
+All mltply                                         [0001]      7.38883
+  diagonal                                         [0100]      0.04153
+  Hubbard                                          [0300]      7.34636
+    trans    in Hubbard                            [0310]      7.34595
+      double                                       [0311]      0.00000
+      single                                       [0312]      0.00000
+      inner                                        [0313]      7.34299
+    interall in Hubbard                            [0320]      0.00008
+      interPE                                      [0321]      0.00000
+      inner                                        [0322]      0.00000
+    pairhopp in Hubbard                            [0330]      0.00006
+      interPE                                      [0331]      0.00000
+      inner                                        [0332]      0.00000
+    exchange in Hubbard                            [0340]      0.00004
+      interPE                                      [0341]      0.00000
+      inner                                        [0342]      0.00000
+================================================
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\newpage
 \subsection{TimeKeeper.dat}
 This file is outputted to show the calculation process information.
 An example of file format for Lanczos method is shown as follows.
@@ -3020,7 +2944,7 @@ $[$double01$]$ is a ground energy, $[$double02$]$, $[$double03$]$ and $[$double0
 set 0 step 1:TPQ begins: Wed Jul 13 07:59:20 2016
 set 0 step 2:TPQ begins: Wed Jul 13 07:59:20 2016
 set 0 step 3:TPQ begins: Wed Jul 13 07:59:20 2016
-…
+...
 set 4 step 1997:TPQ begins: Wed Jul 13 07:59:32 2016
 set 4 step 1998:TPQ begins: Wed Jul 13 07:59:32 2016
 set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
@@ -3191,6 +3115,94 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
 
 
   \item $[$int01$]$
+
+ {\bf Type :} int-type 
+
+{\bf Description :} A number of operations of $(l-\hat{H}/N_{s})$ to an initial wave function, where $l$ is \verb|LargeValue| defined in ModPara file and $N_{s}$ is a total number of sites.
+
+ \end{itemize}
+
+\newpage
+\subsection{Flct\_rand.dat}
+\label{Subsec:flctrand}
+(For TPQ method) This file is outputted to show the calculation results of the fluctuation of the particle number, doublon and $S_z$ for TPQ method.
+An example of file format is shown as follows.\\
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+ # inv_temp, N, N^2, D, D^2, Sz, Sz^2, step_i
+0.0826564 12.00 144.00 0.00 0.00 0.0009345626081113 0.2500 1
+0.1639935 12.00 144.00 0.00 0.00 0.0023147006319775 0.2500 2
+0.2440168 12.00 144.00 0.00 0.00 0.0037424057659867 0.2500 3
+...
+135.97669 12.00 144.00 0.00 0.00 -0.0000000000167368 0.2500 1998
+136.04474 12.00 144.00 0.00 0.00 -0.0000000000165344 0.2500 1999
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+ \begin{itemize}
+   \item Flct\_rand??.dat
+  \end{itemize}
+  ?? indicates a number of runs under calculation of TPQ method.
+
+\subsubsection{File format}
+\begin{itemize}
+   \item Line 1: Header
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$double06$]$ $[$double07$]$ $[$int01$]$
+  \end{itemize}
+
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf Type :} double-type
+
+{\bf Description :} Inverse temperature $1/{k_{\rm B}T}$.
+ 
+  \item $[$double02$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :}  A total particle number $\sum_{i} \langle \hat{n}_i \rangle$.
+
+  \item $[$double03$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :} The expected value of square of particle number $\sum_{i} \langle \hat{n}_i^2 \rangle$.
+
+  \item $[$double04$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :} The expected value of doublon $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$ is a total number of sites).
+
+  \item $[$double05$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :} The expected value of square of doublon 
+$\frac{1}{N_s} \sum_{i}\langle (n_{i\uparrow} n_{i\downarrow})^2\rangle$ ($N_s$ is a total number of sites).
+
+  \item $[$double06$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :} The expected value of $S_z$
+$\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle$ ($N_s$ is a total number of sites).
+
+  \item $[$double07$]$
+
+ {\bf Type :} double-type 
+
+{\bf Description :}  The expected value of square of $S_z$
+$\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is a total number of sites).
+
+ \item $[$int01$]$
 
  {\bf Type :} int-type 
 
@@ -3465,7 +3477,7 @@ When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos me
 
  {\bf Type :} int-type
 
-{\bf Description :}  \tr{ A number of Lanczos steps.}
+{\bf Description :}  { A number of Lanczos steps.}
 
  \item  $[$double01$]$, $[$double02$]$
 
@@ -3477,15 +3489,15 @@ $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
  \end{itemize}
 
 \newpage
-\subsection{\tr{tmpvec.dat}}
+\subsection{{tmpvec.dat}}
 \label{Subsec:restart}
 When ReStart=1, 2 in a CalcMod file, vectors after stopping calculation at an indicated step are outputted. A file format is a binary type. 
 An example of file format is shown as follows.
 
 \subsubsection{File name}
 \begin{itemize}
-   \item{Lanczos method：\#\#\_tmpvec\_rank\_\$\$.dat}
-   \item{TPQ method：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
+   \item{Lanczos method: \#\#\_tmpvec\_rank\_\$\$.dat}
+   \item{TPQ method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
 \end{itemize}
   \#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. \&\& is a sampling number for TPQ calculation. 
 
@@ -3510,7 +3522,7 @@ An example of file format is shown as follows.
 
  {\bf Type :} int-type
 
-{\bf Description :}  \tr{ A number of Lanczos (TPQ) steps for Lanczos (TPQ) method.}
+{\bf Description :}  { A number of Lanczos (TPQ) steps for Lanczos (TPQ) method.}
 
  \item  $[$double01$]$, $[$double02$]$ 
 
@@ -3527,7 +3539,7 @@ An example of file format is shown as follows.
  \end{itemize}
 
 \newpage
-\subsection{\tr{DynamicalGreen.dat}}
+\subsection{{DynamicalGreen.dat}}
 \label{Subsec:dynamicalG}
 This file is output files for calculating dynamical Green's function. An example of file format is shown as follows.
 
@@ -3563,8 +3575,8 @@ $[$double03$]$ and $[$double04$]$ are a real and an imaginary part of $G(z)$, re
 
 
 \newpage
-\subsection{\tr{recalcvec.dat}}
-\label{Subsec:restart}
+\subsection{{recalcvec.dat}}
+%\label{Subsec:restart}
 This file is output files for two vectors to recalculate dynamical Green's function by Lanczos method. 
 A file format is a binary type. 
 An example of file format is shown as follows.
@@ -3577,8 +3589,8 @@ An example of file format is shown as follows.
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  Line 1：$[$int01$]$
-   \item  Line 2：$[$int02$]$
+   \item  Line 1: $[$int01$]$
+   \item  Line 2: $[$int02$]$
    \item  Lines 3 - 3+$[$int02$]$: $[$double01$]$~~$[$double02$]$
    \item  Lines 4+$[$int02$]$ - 3+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$
 
@@ -3615,8 +3627,8 @@ $[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec
 \end{itemize}
 
 \newpage
-\subsection{\tr{TMcomponents.dat}}
-\label{Subsec:restart}
+\subsection{{TMcomponents.dat}}
+%\label{Subsec:restart}
 This file is output files for the components of tridiagonal matrix and the norm of the excited state to recalculate dynamical Green's function by Lanczos method. 
 A file format is a binary type. 
 An example of file format is shown as follows.
@@ -3629,8 +3641,8 @@ An example of file format is shown as follows.
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  Line 1：$[$int01$]$
-   \item  Line 2：$[$double01$]$
+   \item  Line 1: $[$int01$]$
+   \item  Line 2: $[$double01$]$
    \item  Lines 3 -: $[$double02$]$~~$[$double03$]$
   \end{itemize}
 \subsubsection{Parametes}
