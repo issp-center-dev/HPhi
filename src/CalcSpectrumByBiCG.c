@@ -174,6 +174,7 @@ int CalcSpectrumByBiCG(
   char sdt[D_FileNameMax];
   unsigned long int idim, i_max;
   FILE *fp;
+  size_t byte_size;
   int iret;
   unsigned long int liLanczosStp_vec = 0;
   double complex *v12, *v14, res_proj;
@@ -200,16 +201,16 @@ int CalcSpectrumByBiCG(
     if (childfopenALL(sdt, "rb", &fp) != 0) {
       exitMPI(-1);
     }
-    fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec), 1, fp);
-    fread(&i_max, sizeof(long int), 1, fp);
+    byte_size = fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec), 1, fp);
+    byte_size = fread(&i_max, sizeof(long int), 1, fp);
     if (i_max != X->Bind.Check.idim_max) {
       fprintf(stderr, "Error: The size of the input vector is incorrect.\n");
       exitMPI(-1);
     }
-    fread(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fread(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fread(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fread(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fread(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fread(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fread(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fread(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
     fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
@@ -299,12 +300,12 @@ int CalcSpectrumByBiCG(
     if (childfopenALL(sdt, "wb", &fp) != 0) {
       exitMPI(-1);
     }
-    fwrite(&status[0], sizeof(status[0]), 1, fp);
-    fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
-    fwrite(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fwrite(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fwrite(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fwrite(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(&status[0], sizeof(status[0]), 1, fp);
+    byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
+    byte_size = fwrite(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
 
     fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");

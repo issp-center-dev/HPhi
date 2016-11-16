@@ -355,7 +355,8 @@ int SetOmega
         return FALSE;
       }/*if (fp == NULL)*/
       fgetsMPI(ctmp, 256, fp); //1st line is skipped
-      sscanf(ctmp, "Energy  %lf \n", &E1);
+      fgetsMPI(ctmp, 256, fp); //1st line is skipped
+      sscanf(ctmp, "  Energy  %lf \n", &E1);
       Emax = LargeValue;
     }/**/
 

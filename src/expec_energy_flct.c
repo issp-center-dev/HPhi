@@ -49,7 +49,6 @@ int expec_energy_flct(struct BindStruct *X){
   
   switch(X->Def.iCalcType){
   case Lanczos:
-  case CG:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
     TimeKeeper(X, cFileNameTimeKeep, cExpecStart, "a");
 
@@ -61,6 +60,7 @@ int expec_energy_flct(struct BindStruct *X){
 #endif
     break;
   case FullDiag:
+  case CG:
     break;
   default:
     return -1;
@@ -332,7 +332,6 @@ int expec_energy_flct(struct BindStruct *X){
 
   switch(X->Def.iCalcType){
   case Lanczos:
-  case CG:
     fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
     TimeKeeper(X, cFileNameTimeKeep, cExpecEnd, "a");
     break;

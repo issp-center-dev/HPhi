@@ -43,13 +43,13 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-void phys(struct BindStruct *X){
+void phys(struct BindStruct *X, unsigned long int neig){
 
     long unsigned int i,j,i_max;
     double tmp_N;
 
     i_max=X->Check.idim_max;
-    for(i=0;i<i_max;i++){
+    for (i = 0; i < neig; i++) {
       for(j=0;j<i_max;j++){
 	v0[j+1] =  L_vec[i][j];
       }

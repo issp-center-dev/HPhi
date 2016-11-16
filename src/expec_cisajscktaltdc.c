@@ -102,7 +102,6 @@ int expec_cisajscktaltdc
   //Make File Name for output
   switch (X->Def.iCalcType){
   case Lanczos:
-  case CG:
     if(X->Def.St==0){
       sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGStart,"a");
@@ -122,6 +121,7 @@ int expec_cisajscktaltdc
     break;
 
   case FullDiag:
+  case CG:
     sprintf(sdt, cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
@@ -728,7 +728,7 @@ int expec_cisajscktaltdc
   
   fclose(fp);
   
-  if(X->Def.iCalcType==Lanczos || X->Def.iCalcType == CG){
+  if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGFinish,"a");
       fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGFinish);

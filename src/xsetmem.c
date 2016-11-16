@@ -195,6 +195,14 @@ int setmem_large
       }
     }
   }
+  else if (X->Def.iCalcType == CG) {
+    d_malloc1(X->Phys.all_num_down, X->Def.k_exct);
+    d_malloc1(X->Phys.all_num_up, X->Def.k_exct);
+    d_malloc1(X->Phys.all_energy, X->Def.k_exct);
+    d_malloc1(X->Phys.all_doublon, X->Def.k_exct);
+    d_malloc1(X->Phys.all_sz, X->Def.k_exct);
+    d_malloc1(X->Phys.all_s2, X->Def.k_exct);
+  }
   
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;

@@ -52,7 +52,7 @@ int CalcByFullDiag(
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_Start);
   StartTimer(5300);
-  phys(&(X->Bind));
+  phys(&(X->Bind), X->Bind.Check.idim_max);
   StopTimer(5300);
   fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_End);
   StartTimer(5400);  

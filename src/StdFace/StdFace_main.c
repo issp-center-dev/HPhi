@@ -1053,7 +1053,8 @@ static void PrintExcitation(struct StdIntList *StdI) {
     }
   }
 
-  if (StdI->S2 > 1 || strcmp(StdI->model, "kondo") == 0) {
+  if ((strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1)
+    || strcmp(StdI->model, "kondo") == 0) {
     printf("####################################\n");
     printf("###########  CAUTION  ##############\n");
     printf("####################################\n");

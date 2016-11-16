@@ -84,7 +84,6 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   dam_pr=0.0;
   switch(X->Def.iCalcType){
   case Lanczos:
-  case CG:
     if(X->Def.St==0){
       sprintf(sdt, cFileName1BGreen_Lanczos, X->Def.CDataFileHead);
         fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGStart);
@@ -104,6 +103,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     //vec=v0;
     break;
   case FullDiag:
+  case CG:
     sprintf(sdt, cFileName1BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     //vec=v0;
     break;
@@ -421,7 +421,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 
   fclose(fp);
   if(X->Def.St==0){
-    if(X->Def.iCalcType==Lanczos || X->Def.iCalcType == CG){
+    if(X->Def.iCalcType==Lanczos){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");
       fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");

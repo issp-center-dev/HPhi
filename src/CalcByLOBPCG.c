@@ -24,12 +24,13 @@
 #include "expec_cisajscktaltdc.h"
 #include "expec_totalspin.h"
 #include "expec_energy_flct.h"
+#include "phys.h"
 #include <math.h>
 
 void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
 void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *alpha, double complex *a, int *lda, double complex *b, int *ldb, double complex *beta, double complex *c, int *ldc);
 
-static void diag_ovrp(
+static int diag_ovrp(
   int nsub,
   double complex *hsub,
   double complex *ovlp,
@@ -88,6 +89,8 @@ static void diag_ovrp(
   free(work);
   free(rwork);
   free(iwork);
+
+  return(nsub2);
 }/*void diag_ovrp*/
 
 static double calc_preshift(
@@ -121,6 +124,7 @@ static void Initialize_wave(
 {
   FILE *fp;
   char sdt[D_FileNameMax];
+  size_t byte_size;
 
   int iproc, ie, one = 1;
   long int idim, iv, i_max;
@@ -144,14 +148,14 @@ static void Initialize_wave(
       fprintf(stdout, "Start from scratch.\n");
     }
     else {
-      fread(&i_max, sizeof(long int), 1, fp);
+      byte_size = fread(&i_max, sizeof(long int), 1, fp);
       //fprintf(stdoutMPI, "Debug: i_max=%ld, step_i=%d\n", i_max, step_i);
       if (i_max != X->Check.idim_max) {
         fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
         exitMPI(-1);
       }
       for (ie = 0; ie < X->Def.k_exct; ie++) 
-        fread(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
+        byte_size = fread(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
       //TimeKeeperWithRandAndStep(X, cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
@@ -245,6 +249,7 @@ static void Output_restart(
   double complex **wave)
 {
   FILE *fp;
+  size_t byte_size;
   char sdt[D_FileNameMax];
   int ie;
 
@@ -254,9 +259,9 @@ static void Output_restart(
   if (childfopenALL(sdt, "wb", &fp) != 0) {
     exitMPI(-1);
   }
-  fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp);
+  byte_size = fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp);
   for (ie = 0; ie < X->Def.k_exct; ie++)
-    fwrite(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
+    byte_size = fwrite(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
   fclose(fp);
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
@@ -278,7 +283,7 @@ int LOBPCG_Main(
   FILE *fp;
   int iconv = -1, one = 1;
   long int idim, i_max;
-  int ii, jj, ie, je, nsub, stp, mythread;
+  int ii, jj, ie, je, nsub, stp, mythread, nsub_cut;
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/, 
     ***hwxp/*[0] h*w, [1] h*x, [2] h*p of Ref.1*/,
     *hsub, *ovlp /*Subspace Hamiltonian and Overlap*/,
@@ -327,6 +332,7 @@ int LOBPCG_Main(
   fprintf(stdoutMPI, "    Step   Residual-2-norm     Threshold      Energy\n");
   fprintf(fp, "    Step   Residual-2-norm     Threshold      Energy\n");
 
+  nsub_cut = nsub;
   for (stp = 1; stp <= X->Def.Lanczos_max; stp++) {
     /*
      Convergence threshold
@@ -352,7 +358,7 @@ int LOBPCG_Main(
          Preconditioning (Point Jacobi)
         */
         preshift = calc_preshift(eig[ie], dnorm, eps_LOBPCG);
-#pragma omp parallel for default(none) shared(wxp,ie,list_Diagonal,preshift,i_max) private(idim,precon)
+#pragma omp parallel for default(none) shared(wxp,ie,list_Diagonal,preshift,i_max,eps_LOBPCG) private(idim,precon)
         for (idim = 1; idim <= i_max; idim++) {
           precon = list_Diagonal[idim] - preshift;
           //if (fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
@@ -375,6 +381,7 @@ int LOBPCG_Main(
       fprintf(stdoutMPI, " %15.5e", eig[ie]);
       fprintf(fp, " %15.5e", eig[ie]);
     }
+    //printf("   %d", nsub_cut);
     fprintf(stdoutMPI, "\n");
     fprintf(fp, "\n");
 
@@ -410,7 +417,7 @@ int LOBPCG_Main(
       eig[ie] =
       creal(hsub[ie + 1 * X->Def.k_exct + ie * nsub + 1 * nsub*X->Def.k_exct]);
 
-    diag_ovrp(nsub, hsub, ovlp, eigsub);
+    nsub_cut = diag_ovrp(nsub, hsub, ovlp, eigsub);
    
     for (ie = 0; ie < X->Def.k_exct; ie++)
       eig[ie] = 0.5 * (eig[ie] + eigsub[ie]);
@@ -496,10 +503,19 @@ int LOBPCG_Main(
   c_free2(work, nthreads, nsub);
 
   c_free3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
-  c_malloc1(v0, X->Check.idim_max + 1);
-#pragma omp parallel for default(none) shared(i_max,wxp,ie,v0,X) private(idim)
-  for (idim = 1; idim <= i_max; idim++) v0[idim] = wxp[1][X->Def.k_exct - 1][idim];
+
+  c_malloc2(L_vec, X->Def.k_exct, X->Check.idim_max + 1);
+#pragma omp parallel default(none) shared(i_max,wxp,ie,L_vec,X) private(idim)
+  {
+    for (ie = 0; ie < X->Def.k_exct; ie++) {
+#pragma omp for nowait
+      for (idim = 0; idim < i_max; idim++)
+        L_vec[ie][idim] = wxp[1][ie][idim + 1];
+    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+  }/*X->Def.k_exct, X->Check.idim_max + 1);*/
   c_free3(wxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
+
+  c_malloc1(v0, X->Check.idim_max + 1);
   c_malloc1(v1, X->Check.idim_max + 1);
   c_malloc1(vg, X->Check.idim_max + 1);
 
@@ -511,8 +527,9 @@ int CalcByLOBPCG(
 )
 {
   char sdt[D_FileNameMax];
+  size_t byte_size;
   double var;
-  long int i_max = 0;
+  long int i_max = 0, ie, idim;
   FILE *fp;
 
   fprintf(stdoutMPI, "######  Eigenvalue with LOBPCG  #######\n\n");
@@ -554,13 +571,6 @@ int CalcByLOBPCG(
       return(FALSE);
     }
 
-    expec_energy_flct(&(X->Bind));
-    var = fabs(X->Bind.Phys.var - X->Bind.Phys.energy*X->Bind.Phys.energy) / fabs(X->Bind.Phys.var);
-    fprintf(stdoutMPI, "\n");
-    fprintf(stdoutMPI, "  LOBPCG Accuracy check !!!\n");
-    fprintf(stdoutMPI, "    variance = %.14e \n ", var);
-    fprintf(stdoutMPI, "\n");
-
   }
   else {// X->Bind.Def.iInputEigenVec=true :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
@@ -571,37 +581,23 @@ int CalcByLOBPCG(
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       exitMPI(-1);
     }
-    fread(&step_i, sizeof(long int), 1, fp);
-    fread(&i_max, sizeof(long int), 1, fp);
+    byte_size = fread(&step_i, sizeof(int), 1, fp);
+    byte_size = fread(&i_max, sizeof(long int), 1, fp);
     if (i_max != X->Bind.Check.idim_max) {
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       exitMPI(-1);
     }
-    fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
   }
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
-  // v1 is eigen vector
-
-  if (!expec_cisajs(&(X->Bind), v1) == 0) {
-    fprintf(stderr, "Error: calc OneBodyG.\n");
-    exitMPI(-1);
-  }
-
-  if (!expec_cisajscktaltdc(&(X->Bind), v1) == 0) {
-    fprintf(stderr, "Error: calc TwoBodyG.\n");
-    exitMPI(-1);
-  }
-
-  if (!expec_totalSz(&(X->Bind), v1) == 0) {
-    fprintf(stderr, "Error: calc TotalSz.\n");
-    exitMPI(-1);
-  }
   /*
-   Output physical variables to a file
+    Output physical variables to a file
   */
+  phys(&(X->Bind), X->Bind.Def.k_exct);
+
   if (X->Bind.Def.St == 0) {
     sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
   }
@@ -612,9 +608,16 @@ int CalcByLOBPCG(
   if (childfopenMPI(sdt, "w", &fp) != 0) {
     exitMPI(-1);
   }
-  fprintf(fp, "Energy  %.16lf \n", X->Bind.Phys.energy);
-  fprintf(fp, "Doublon  %.16lf \n", X->Bind.Phys.doublon);
-  fprintf(fp, "Sz  %.16lf \n", X->Bind.Phys.sz);
+  for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
+    fprintf(fp, "State %ld\n", ie);
+    fprintf(fp, "  Energy  %.16lf \n", X->Bind.Phys.all_energy[ie]);
+    fprintf(fp, "  Doublon  %.16lf \n", X->Bind.Phys.all_doublon[ie]);
+    fprintf(fp, "  Sz  %.16lf \n", X->Bind.Phys.all_sz[ie]);
+    //fprintf(fp, "  S^2  %.16lf \n", X->Bind.Phys.all_s2[ie]);
+    //fprintf(fp, "  N_up  %.16lf \n", X->Bind.Phys.all_num_up[ie]);
+    //fprintf(fp, "  N_down  %.16lf \n", X->Bind.Phys.all_num_down[ie]);
+    fprintf(fp, "\n");
+  }
   fclose(fp);
   /*
    Output Eigenvector to a file
@@ -625,9 +628,14 @@ int CalcByLOBPCG(
     if (childfopenALL(sdt, "wb", &fp) != 0) {
       exitMPI(-1);
     }
-    fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
-    fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
-    fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+
+#pragma omp parallel for default(none) shared(X,v1,L_vec) private(idim)
+    for (idim = 0; idim < X->Bind.Check.idim_max; idim++)
+      v1[idim + 1] = L_vec[0][idim];
+
+    byte_size = fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
+    byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
+    byte_size = fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
   }/*if (X->Bind.Def.iOutputEigenVec == TRUE)*/
