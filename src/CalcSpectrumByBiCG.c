@@ -27,8 +27,7 @@
 
 /**
  * @file   CalcSpectrumByBiCG.c
- * @version 1.1
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Mitsuaki Kawamura (The University of Tokyo)
  * 
  * @brief  File for givinvg functions of calculating spectrum by Lanczos
  * 

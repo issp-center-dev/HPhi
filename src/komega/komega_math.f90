@@ -193,32 +193,4 @@ FUNCTION dabsmax(array, n) RESULT(maxarray)
   !
 END FUNCTION dabsmax
 !
-! MAXVAL with MPI allreduce (for complex(8))
-!
-FUNCTION zabsmax(array, n) RESULT(maxarray)
-  !
-#if defined(MPI)
-  use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_PRECISION, MPI_MAX
-  USE komega_parameter, ONLY : comm
-#endif
-  !
-  IMPLICIT NONE
-  !
-  INTEGER,INTENT(IN) :: n
-  COMPLEX(8),INTENT(IN) :: array(n)
-  REAL(8) maxarray
-  !
-#if defined(MPI)
-  INTEGER :: ierr
-#endif
-  !
-  maxarray = MAXVAL(ABS(array))
-  !
-#if defined(MPI)
-  call MPI_allREDUCE(MPI_IN_PLACE, maxarray, 1, &
-  &                  MPI_DOUBLE_PRECISION, MPI_MAX, comm, ierr)
-#endif
-  !
-END FUNCTION zabsmax
-!
 end MODULE komega_math

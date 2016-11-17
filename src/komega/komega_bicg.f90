@@ -30,11 +30,11 @@ MODULE komega_bicg
   PRIVATE
   !
 #if defined(MPI)
-  PUBLIC pkomega_BICG_init, pkomega_BICG_restart, pkomega_BICG_update, &
-  &      pkomega_BICG_getcoef, pkomega_BICG_getvec, pkomega_BICG_finalize
+  PUBLIC pkomega_BICG_init, pkomega_BICG_restart, pkomega_BICG_update, pkomega_BICG_getcoef, &
+  &      pkomega_BICG_getvec, pkomega_BICG_finalize, pkomega_BICG_getresidual
 #else
-  PUBLIC komega_BICG_init, komega_BICG_restart, komega_BICG_update, &
-  &      komega_BICG_getcoef, komega_BICG_getvec, komega_BICG_finalize
+  PUBLIC komega_BICG_init, komega_BICG_restart, komega_BICG_update, komega_BICG_getcoef, &
+  &      komega_BICG_getvec, komega_BICG_finalize, komega_BICG_getresidual
 #endif
   !
 CONTAINS
@@ -224,10 +224,10 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
 &                       iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0)
 #endif
   !
-  USE komega_parameter, ONLY : iter, itermax, ndim, nl, threshold, iz_seed, lz_conv, nz
+  USE komega_parameter, ONLY : iter, itermax, ndim, nl, threshold, iz_seed, lz_conv, nz, resnorm
   USE komega_vals_c, ONLY : alpha, alpha_old, alpha_save, beta, beta_save, rho, z_seed, pi
   USE komega_vecs_c, ONLY : r_l_save, v3, v5
-  USE komega_math, ONLY : zcopy, zdotcMPI, zabsmax
+  USE komega_math, ONLY : zcopy, zdotcMPI
   !
   IMPLICIT NONE
   !
@@ -295,7 +295,8 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
   !
   ! Convergence check
   !
-  v12(1) = CMPLX(zabsmax(v2, ndim), 0d0, KIND(0d0))
+  v12(1) = CMPLX(SQRT(DBLE(zdotcMPI(ndim,v2,v2))), 0d0, KIND(0d0))
+  resnorm = DBLE(v12(1))
   !
   DO iz = 1, nz
      IF(ABS(v12(1)/pi(iz)) < threshold) lz_conv(iz) = .TRUE.
@@ -341,11 +342,11 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status)
 #endif
   !
   USE komega_parameter, ONLY : iter, itermax, ndim, nl, nz, &
-  &                            threshold, almost0, lz_conv
+  &                            threshold, almost0, lz_conv, resnorm
   USE komega_vals_c, ONLY : alpha, alpha_old, alpha_save, &
   &                         beta, beta_save, rho, z_seed, pi
   USE komega_vecs_c, ONLY : r_l_save, v3, v5
-  USE komega_math, ONLY : zdotcMPI, zcopy, zabsmax
+  USE komega_math, ONLY : zdotcMPI, zcopy
   !
   IMPLICIT NONE
   !
@@ -409,7 +410,8 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status)
   !
   ! Convergence check
   !
-  v12(1) = CMPLX(zabsmax(v2, ndim), 0d0, KIND(0d0))
+  v12(1) = CMPLX(SQRT(DBLE(zdotcMPI(ndim,v2,v2))), 0d0, KIND(0d0))
+  resnorm = DBLE(v12(1))
   !
   DO iz = 1, nz
      IF(ABS(v12(1)/pi(iz)) < threshold) lz_conv(iz) = .TRUE.
@@ -508,6 +510,29 @@ SUBROUTINE komega_BICG_getvec(r_old, r_tilde_old)
 END SUBROUTINE pkomega_BICG_getvec
 #else
 END SUBROUTINE komega_BICG_getvec
+#endif
+!
+! Return Residual Norm
+!
+#if defined(MPI)
+SUBROUTINE pkomega_BICG_getresidual(res)
+#else
+SUBROUTINE komega_BICG_getresidual(res)
+#endif
+  !
+  USE komega_parameter, ONLY : nz, resnorm
+  USE komega_vals_c, ONLY : pi
+  !
+  IMPLICIT NONE
+  !
+  REAL(8),INTENT(OUT) :: res(nz)
+  !
+  res(1:nz) = resnorm / ABS(pi(1:nz))
+  !
+#if defined(MPI)
+END SUBROUTINE pkomega_BICG_getresidual
+#else
+END SUBROUTINE komega_BICG_getresidual
 #endif
 !
 ! Deallocate private arrays
