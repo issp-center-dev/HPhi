@@ -66,9 +66,11 @@ void phys(struct BindStruct *X, unsigned long int neig){
 	fprintf(stderr, "Error: calc TwoBodyG.\n");
 	exitMPI(-1);
       }
-      if(expec_totalspin(X, v1)!=0){
-	fprintf(stderr, "Error: calc TotalSpin.\n");
-	exitMPI(-1);
+      if (X->Def.iCalcType == FullDiag) {
+        if (expec_totalspin(X, v1) != 0) {
+          fprintf(stderr, "Error: calc TotalSpin.\n");
+          exitMPI(-1);
+        }
       }
 
       if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==SpinGC){
@@ -78,7 +80,8 @@ void phys(struct BindStruct *X, unsigned long int neig){
 	tmp_N  = X->Phys.num_up + X->Phys.num_down;
       }
 
-      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n",i,X->Phys.energy,tmp_N, X->Phys.sz,X->Phys.s2,X->Phys.doublon);
+      if (X->Def.iCalcType == FullDiag)
+        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N, X->Phys.sz, X->Phys.s2, X->Phys.doublon);
       X->Phys.all_energy[i]   = X->Phys.energy;
       X->Phys.all_doublon[i]  = X->Phys.doublon;
       X->Phys.all_sz[i]       = X->Phys.sz;
