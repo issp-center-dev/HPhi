@@ -331,6 +331,7 @@ int LOBPCG_Main(
   childfopenMPI(sdt_2, "w", &fp);
   fprintf(stdoutMPI, "    Step   Residual-2-norm     Threshold      Energy\n");
   fprintf(fp, "    Step   Residual-2-norm     Threshold      Energy\n");
+  fclose(fp);
 
   nsub_cut = nsub;
   for (stp = 1; stp <= X->Def.Lanczos_max; stp++) {
@@ -375,6 +376,7 @@ int LOBPCG_Main(
     /*
     Convergence check
     */
+    childfopenMPI(sdt_2, "a", &fp);
     fprintf(stdoutMPI, "%9d %15.5e %15.5e      ", stp, dnormmax, eps_LOBPCG);
     fprintf(fp, "%9d %15.5e %15.5e      ", stp, dnormmax, eps_LOBPCG);
     for (ie = 0; ie < X->Def.k_exct; ie++) {
@@ -384,6 +386,7 @@ int LOBPCG_Main(
     //printf("   %d", nsub_cut);
     fprintf(stdoutMPI, "\n");
     fprintf(fp, "\n");
+    fclose(fp);
 
     if (dnormmax < eps_LOBPCG) {
       iconv = 0;
@@ -482,7 +485,7 @@ int LOBPCG_Main(
 
   }/*for (stp = 1; stp <= X->Def.Lanczos_max; stp++)*/
 
-  fclose(fp);
+  //fclose(fp);
 
   sprintf(sdt, cFileNameTimeKeep, X->Def.CDataFileHead);
 
@@ -609,6 +612,7 @@ int CalcByLOBPCG(
     exitMPI(-1);
   }
   for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
+    //phys(&(X->Bind), ie);
     fprintf(fp, "State %ld\n", ie);
     fprintf(fp, "  Energy  %.16lf \n", X->Bind.Phys.all_energy[ie]);
     fprintf(fp, "  Doublon  %.16lf \n", X->Bind.Phys.all_doublon[ie]);
