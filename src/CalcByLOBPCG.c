@@ -599,7 +599,7 @@ int CalcByLOBPCG(
   /*
     Output physical variables to a file
   */
-  //phys(&(X->Bind), X->Bind.Def.k_exct);
+  phys(&(X->Bind), X->Bind.Def.k_exct);
 
   if (X->Bind.Def.St == 0) {
     sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
@@ -612,7 +612,7 @@ int CalcByLOBPCG(
     exitMPI(-1);
   }
   for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
-    phys(&(X->Bind), ie);
+    //phys(&(X->Bind), ie);
     fprintf(fp, "State %ld\n", ie);
     fprintf(fp, "  Energy  %.16lf \n", X->Bind.Phys.all_energy[ie]);
     fprintf(fp, "  Doublon  %.16lf \n", X->Bind.Phys.all_doublon[ie]);
