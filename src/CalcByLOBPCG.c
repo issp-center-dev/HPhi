@@ -508,7 +508,7 @@ int LOBPCG_Main(
   c_free3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
 
   c_malloc2(L_vec, X->Def.k_exct, X->Check.idim_max + 1);
-#pragma omp parallel default(none) shared(i_max,wxp,ie,L_vec,X) private(idim)
+#pragma omp parallel default(none) shared(i_max,wxp,L_vec,X) private(idim,ie)
   {
     for (ie = 0; ie < X->Def.k_exct; ie++) {
 #pragma omp for nowait
