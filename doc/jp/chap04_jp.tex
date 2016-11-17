@@ -100,12 +100,14 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 \item \verb|method|
   
-{\bf 形式 :} 文字列(\verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|のいずれか)
+  {\bf 形式 :} 文字列(\verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|,
+  \verb|"CG"|のいずれか)
 
 {\bf 説明 :} 実行する計算の種類を指定します。
 上記の文字列はそれぞれランチョス法による少数固有状態の計算, 
 熱力学的純粋状態を用いた有限温度計算, 
-直接法による全固有状態計算
+直接法による全固有状態計算,
+LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数固有状態の計算
 に対応します。
 
 \item \verb|lattice|
@@ -192,10 +194,25 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
   \end{center}
 \end{figure}
 
+\item \verb|2S|
+
 {\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
 
 {\bf 説明 :} スピン模型での局在スピンの大きさ$S$の2倍を指定します。
 (例/ $1/2$スピンならば\verb|1|)
+
+\item \verb|Restart|
+
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
+  \verb|"RestartSave"|のいずれか。デフォルトは\verb|"None"|)
+
+  {\bf 説明 :} 再計算に関する設定を行う。
+  \verb|"None"|では再計算に関連するファイル出力をしない。
+  \verb|"Save"|では一から計算を始めて、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
+  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
+  反復が終了した時点で再計算用のデータをファイル出力する。
 
 \end{itemize}
 
@@ -644,6 +661,90 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 を計算します。
 スピン系の演算子はBogoliubov表現により生成消滅演算子で表されています。
 詳しくは\ref{sec_bogoliubov_rep}をご覧ください。
+
+\item \verb|InitialVecType|
+
+  {\bf 形式 :} 文字 (\verb|"C"|, \verb|"R"|のいずれか。
+  デフォルトは\verb|"C"|)
+
+  {\bf 説明 :} 固有ベクトルの初期値の型を指定する。
+  \verb|C|では複素数型、\verb|R|では実数型とする。
+
+\item \verb|EigenVecIO|
+  
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Out"|, \verb|"In"|のいずれか。
+  デフォルトは\verb|"None"|)
+
+  {\bf 説明 :} 固有ベクトルの入出力を指定する。
+  \verb|"None"|では固有ベクトルの入出力を行わない。
+  \verb|"Out"|では求めた固有ベクトルをファイルに出力する。
+  \verb|"In"|では固有ベクトルをファイルから取り出し、
+  その後の計算(動的グリーン関数など)を行う。
+
+\end{itemize}
+
+\subsection{動的グリーン関数の計算に関するパラメーター}
+
+\begin{itemize}
+\item \verb|CalcSpec|
+  
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Normal"|, \verb|"NoIteration"|,  
+  \verb|"Save"|, \verb|"Restart"|, \verb|"RestartSave"|。デフォルトは\verb|"None"|)
+
+  {\bf 説明 :} 動的グリーン関数の計算に関する設定を行う。
+  \verb|"None"|では動的グリーン関数を計算しない。
+  \verb|"Normal"|では一から動的グリーン関数の計算を始める。
+  \verb|"NoIteration"|では、前回の反復回数と同じところまで反復させる。
+  このとき、ハミルトニアン-ベクトル積演算は行われないため、
+  計算コストは非常に軽いが、十分な精度が出せない場合がある。
+  \verb|"Save"|では一から計算を始めて、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
+  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+
+\item \verb|SpectrumType|
+  
+  {\bf 形式 :} 文字列(\verb|"SzSz"|, \verb|"S+S-"|, \verb|"Density"|,  
+  \verb|"up"|, \verb|"down"|のいずれか。デフォルトは\verb|"SzSz"|)
+
+  {\bf 説明 :} 計算する動的グリーン関数の種類を指定する。
+  \verb|"SzSz"|では$\langle {\hat S}_{z q} {\hat S}_{z q}\rangle$。
+  \verb|"S+S-"|では$\langle {\hat S}^{+}_{q} {\hat S}^{-}_{q}\rangle$。
+  \verb|"Density"|では$\langle {\hat n}_{q} {\hat n}_{q}\rangle$。
+  \verb|"up"|では$\langle {\hat c}^{\dagger}_{q \uparrow} {\hat c}_{q \uparrow}\rangle$。
+  \verb|"down"|では$\langle {\hat c}^{\dagger}_{q \downarrow} {\hat c}_{q \downarrow}\rangle$。
+
+\item \verb|SpectrumQW|, \verb|SpectrumQL|
+  
+  {\bf 形式 :} 実数(デフォルトはともに\verb|0.0|)
+
+  {\bf 説明 :} 計算する動的グリーン関数の波数を
+  Fractional coordinateで指定する。
+  逆格子ベクトルはFigs.
+  \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
+  \ref{fig_ladder}, \ref{fig_kagome}
+  に表されている格子ベクトルと対応するものとなる。
+
+\item \verb|OmegaMin|
+
+    {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の下限。
+    
+  \item \verb|OmegaMax|
+
+    {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の上限。
+
+  \item \verb|OmegaIm|
+
+    {\bf 形式 :} 実数(デフォルトは\verb|0.01*LargeValue|)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数の虚部。
+
+  \item \verb|NOmega|
+  
+    {\bf 形式 :} 正の整数(デフォルトは\verb|200|)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数のグリッド数。
 
 \end{itemize}
 
