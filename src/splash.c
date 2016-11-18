@@ -19,6 +19,15 @@
 #include "wrapperMPI.h"
 
 void splash(){
+   int ver_maj =
+#include "version_major.h"
+;
+   int ver_min =
+#include "version_miner.h"
+;
+   int ver_pat =
+#include "version_patch.h"
+;
 
   fprintf(stdoutMPI, "                                                                \n");
   fprintf(stdoutMPI, "      ,ammmmmmmmmmmmmmb,,        Welcome to the                 \n");
@@ -32,7 +41,7 @@ void splash(){
   fprintf(stdoutMPI, "  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    \n");
   fprintf(stdoutMPI, "    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       \n");
   fprintf(stdoutMPI, "        ~~9@@@@@@@@@  ~                                         \n");
-  fprintf(stdoutMPI, "           9@P~~~9@P             Version 1.1.1                  \n");
+  fprintf(stdoutMPI, "           9@P~~~9@P             Version %d.%d.%d    \n", ver_maj, ver_min, ver_pat);
   fprintf(stdoutMPI, "                                                                \n");
 
 }

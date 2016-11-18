@@ -110,6 +110,9 @@ include/splash.h \
 include/struct.h \
 include/sz.h \
 include/vec12.h \
+include/version_major.h \
+include/version_miner.h \
+include/version_patch.h \
 include/wrapperMPI.h \
 include/xfreemem_large.h \
 include/xsetmem.h \

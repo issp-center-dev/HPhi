@@ -956,7 +956,7 @@ Select the mode of inputting a restart vector:\\
 
 \item  \verb|CalcSpec|
 
-{\bf Type :} {int型 (デフォルト値 0)}
+{\bf Type :} {int-type (default value: 0)}
 
 {\bf Description :} {
 {
@@ -2361,126 +2361,6 @@ $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
 \end{itemize}
 
 \newpage
-\subsection{{DynamicalGreen.dat}}
-\label{Subsec:dynamicalG}
-動的グリーン関数の計算結果を出力します。ファイル名およびファイルTypeは以下の通りです。
-
-\subsubsection{ファイル名}
-\begin{itemize}
-   \item{\#\#\_DynamicalGreen.dat}
-\end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
-  
-\subsubsection{ファイルType}
- \begin{itemize}
-   \item  1行目-: $[$double01$]$~~$[$double02$]$~~$[$double03$]$~~$[$double04$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
-
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf Type :} double型 
-
- {\bf Description :} 振動数の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
-
- \item  $[$double03$]$, $[$double04$]$
-
- {\bf Type :} double型 
-
- {\bf Description :} 動的グリーン関数の値を表します。\\
-$[$double03$]$が実部、$[$double04$]$が虚部を表します。\\
-
-\end{itemize}
-
-
-\newpage
-\subsection{{recalcvec.dat}}
-\label{Subsec:restart}
-Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベクトルが出力されます。
-ファイルはバイナリTypeで出力されます。
-ファイル名およびファイルTypeは以下の通りです。
-
-\subsubsection{ファイル名}
-\begin{itemize}
-   \item{\#\#\_recalcvec\_rank\_\$\$.dat}
-\end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。
-
-\subsubsection{ファイルType}
- \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$int02$]$
-   \item  3行目-: $[$double01$]$~~$[$double02$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
-
-  \item  $[$int01$]$
-
- {\bf Type :} int型
-
- {\bf Description :} 動的グリーン関数の計算に要したステップ数を表します。
-
-  \item  $[$int02$]$
-
- {\bf Type :} int型
-
-{\bf Description :} 計算対象のヒルベルト空間数を指定する整数。
-
- 
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf Type :} double型 
-
-{\bf Description :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
-\end{itemize}
-
-\newpage
-\subsection{{TMcomponents.dat}}
-\label{Subsec:restart}
-Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
-ファイル名およびファイルTypeは以下の通りです。
-
-\subsubsection{ファイル名}
-\begin{itemize}
-   \item{\#\#\_TMcomponents.dat}
-\end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
-
-\subsubsection{ファイルType}
- \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$double01$]$
-   \item  3行目-: $[$double02$]$~~$[$double03$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
-
-  \item  $[$int01$]$
-
- {\bf Type :} int型
-
- {\bf Description :} 動的グリーン関数の計算に要したステップ数$N_d$を表します。
-
-  \item  $[$double01$]$
-
- {\bf Type :} double型
-
-{\bf Description :} 励起状態のノルムを表します。
-
- 
- \item  $[$double02$]$, $[$double03$]$
-
- {\bf Type :} double型 
-
-{\bf Description :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
-$[$double02$]$が$\alpha_i$、$[$double03$]$が$\beta_i$に対応します。\\
-\end{itemize}
-
-\newpage
 \section{Output files}
 \label{Sec:outputfile}
 In this section, details of output files for expert mode are explained.
@@ -3064,7 +2944,7 @@ $[$double01$]$ is a ground energy, $[$double02$]$, $[$double03$]$ and $[$double0
 set 0 step 1:TPQ begins: Wed Jul 13 07:59:20 2016
 set 0 step 2:TPQ begins: Wed Jul 13 07:59:20 2016
 set 0 step 3:TPQ begins: Wed Jul 13 07:59:20 2016
-…
+...
 set 4 step 1997:TPQ begins: Wed Jul 13 07:59:32 2016
 set 4 step 1998:TPQ begins: Wed Jul 13 07:59:32 2016
 set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
@@ -3255,7 +3135,7 @@ An example of file format is shown as follows.\\
 0.0826564 12.00 144.00 0.00 0.00 0.0009345626081113 0.2500 1
 0.1639935 12.00 144.00 0.00 0.00 0.0023147006319775 0.2500 2
 0.2440168 12.00 144.00 0.00 0.00 0.0037424057659867 0.2500 3
-…
+...
 135.97669 12.00 144.00 0.00 0.00 -0.0000000000167368 0.2500 1998
 136.04474 12.00 144.00 0.00 0.00 -0.0000000000165344 0.2500 1999
 \end{verbatim}
@@ -3281,19 +3161,19 @@ An example of file format is shown as follows.\\
   
  {\bf Type :} double-type
 
-{\bf Description :} Inverse temperature $1/{k_{\rm B}T}$。
+{\bf Description :} Inverse temperature $1/{k_{\rm B}T}$.
  
   \item $[$double02$]$
 
  {\bf Type :} double-type 
 
-{\bf Description :}  A total particle number $\sum_{i} \langle \hat{n}_i \rangle$。
+{\bf Description :}  A total particle number $\sum_{i} \langle \hat{n}_i \rangle$.
 
   \item $[$double03$]$
 
  {\bf Type :} double-type 
 
-{\bf Description :} The expected value of square of particle number $\sum_{i} \langle \hat{n}_i^2 \rangle$。
+{\bf Description :} The expected value of square of particle number $\sum_{i} \langle \hat{n}_i^2 \rangle$.
 
   \item $[$double04$]$
 
@@ -3616,8 +3496,8 @@ An example of file format is shown as follows.
 
 \subsubsection{File name}
 \begin{itemize}
-   \item{Lanczos method：\#\#\_tmpvec\_rank\_\$\$.dat}
-   \item{TPQ method：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
+   \item{Lanczos method: \#\#\_tmpvec\_rank\_\$\$.dat}
+   \item{TPQ method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
 \end{itemize}
   \#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. \&\& is a sampling number for TPQ calculation. 
 
@@ -3696,7 +3576,7 @@ $[$double03$]$ and $[$double04$]$ are a real and an imaginary part of $G(z)$, re
 
 \newpage
 \subsection{{recalcvec.dat}}
-\label{Subsec:restart}
+%\label{Subsec:restart}
 This file is output files for two vectors to recalculate dynamical Green's function by Lanczos method. 
 A file format is a binary type. 
 An example of file format is shown as follows.
@@ -3709,8 +3589,8 @@ An example of file format is shown as follows.
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  Line 1：$[$int01$]$
-   \item  Line 2：$[$int02$]$
+   \item  Line 1: $[$int01$]$
+   \item  Line 2: $[$int02$]$
    \item  Lines 3 - 3+$[$int02$]$: $[$double01$]$~~$[$double02$]$
    \item  Lines 4+$[$int02$]$ - 3+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$
 
@@ -3748,7 +3628,7 @@ $[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec
 
 \newpage
 \subsection{{TMcomponents.dat}}
-\label{Subsec:restart}
+%\label{Subsec:restart}
 This file is output files for the components of tridiagonal matrix and the norm of the excited state to recalculate dynamical Green's function by Lanczos method. 
 A file format is a binary type. 
 An example of file format is shown as follows.
@@ -3761,8 +3641,8 @@ An example of file format is shown as follows.
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  Line 1：$[$int01$]$
-   \item  Line 2：$[$double01$]$
+   \item  Line 1: $[$int01$]$
+   \item  Line 2: $[$double01$]$
    \item  Lines 3 -: $[$double02$]$~~$[$double03$]$
   \end{itemize}
 \subsubsection{Parametes}
