@@ -1188,6 +1188,7 @@ static void CheckModPara(struct StdIntList *StdI)
   StdFace_PrintVal_i("exct", &StdI->exct, 1);
   StdFace_PrintVal_i("LanczosEps", &StdI->LanczosEps, 14);
   StdFace_PrintVal_i("LanczosTarget", &StdI->LanczosTarget, 2);
+  if(StdI->LanczosTarget < StdI->exct) StdI->LanczosTarget = StdI->exct;
   StdFace_PrintVal_i("NumAve", &StdI->NumAve, 5);
   StdFace_PrintVal_i("ExpecInterval", &StdI->ExpecInterval, 20);
   StdFace_PrintVal_i("NOmega", &StdI->Nomega, 200);

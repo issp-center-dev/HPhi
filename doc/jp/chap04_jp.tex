@@ -194,26 +194,6 @@ LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数
   \end{center}
 \end{figure}
 
-\item \verb|2S|
-
-{\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
-
-{\bf 説明 :} スピン模型での局在スピンの大きさ$S$の2倍を指定します。
-(例/ $1/2$スピンならば\verb|1|)
-
-\item \verb|Restart|
-
-  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
-  \verb|"RestartSave"|のいずれか。デフォルトは\verb|"None"|)
-
-  {\bf 説明 :} 再計算に関する設定を行う。
-  \verb|"None"|では再計算に関連するファイル出力をしない。
-  \verb|"Save"|では一から計算を始めて、
-  反復が終了した時点で再計算用のデータをファイル出力する。
-  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
-  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
-  反復が終了した時点で再計算用のデータをファイル出力する。
-
 \end{itemize}
 
 \subsection{格子に関するパラメーター}
@@ -526,6 +506,26 @@ $ gnuplot lattice.gp
 \subsection{計算条件のパラメーター}
 
 \begin{itemize}
+\item \verb|2S|
+
+{\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
+
+{\bf 説明 :} スピン模型での局在スピンの大きさ$S$の2倍を指定します。
+(例/ $1/2$スピンならば\verb|1|)
+
+\item \verb|Restart|
+
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
+  \verb|"RestartSave"|のいずれか。デフォルトは\verb|"None"|)
+
+  {\bf 説明 :} 再計算に関する設定を行う。
+  \verb|"None"|では再計算に関連するファイル出力をしない。
+  \verb|"Save"|では一から計算を始めて、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
+  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+
 \item \verb|Lanczos_max|
 
 {\bf 形式 :} 整数(デフォルト値は\verb|2000|)
@@ -565,14 +565,20 @@ $ gnuplot lattice.gp
 
 {\bf 形式 :} 整数(デフォルト値は\verb|1|)
 
-{\bf 説明 :} エネルギーの低いものから数えて、何番目の固有状態を計算するかを指定します。
+{\bf 説明 :}
+\verb|method="Lancoz"|ではエネルギーの低いものから数えて、
+何番目の固有状態を計算するかを指定します。
+\verb|method="CG"|の時には求める固有状態の本数を指定します。
 
 \item \verb|LanczosEps|
 
 {\bf 形式 :} 整数(デフォルト値は\verb|14|)
 
 {\bf 説明 :} ランチョスの収束判定条件を指定します。
-ひとつ前のステップの固有値との相対誤差が, $10^{-{\tt LanczosEps}}$以下になったら収束したと判断します。
+ひとつ前のステップの固有値との相対誤差が,
+$10^{-{\tt LanczosEps}}$以下になったら収束したと判断します。
+\verb|method="CG"|の時には残差ベクトルの2-ノルムが
+$10^{-{\tt LanczosEps}/2}$以下になったら収束したと判断します。
 
 \item \verb|LancczosTarget|
 
@@ -728,12 +734,12 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 
 \item \verb|OmegaMin|
 
-    {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|)
+    {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|$\times$サイト数)
     {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の下限。
     
   \item \verb|OmegaMax|
 
-    {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|)
+    {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|$\times$サイト数)
     {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の上限。
 
   \item \verb|OmegaIm|
@@ -1129,6 +1135,7 @@ ExpecInterval  20
 
 {\bf 説明 :} Lanczos法で求める固有ベクトルの番号を指定する整数。
 例えば、1なら基底状態のベクトル、2なら第一励起状態のベクトルを求めます。
+\verb|method="CG"|では、求める固有ベクトルの本数を指定します。
 %   \verb|nvec| $>=$ \verb|exct| とする必要があります。
 
 \item   \verb|LanczosEps|
@@ -1136,7 +1143,10 @@ ExpecInterval  20
 {\bf 形式 :} int型 (自然数)
 
 {\bf 説明 :} Lanczos法の収束判定条件を指定する整数。
-一つ前のステップの固有値との相対誤差が, $10^{- \verb|LanczosEps|}$以下になった場合に収束したと判定します。
+一つ前のステップの固有値との相対誤差が,
+$10^{- \verb|LanczosEps|}$以下になった場合に収束したと判定します。
+\verb|method="CG"|では、残差ベクトルの2-ノルムが
+$10^{- \verb|LanczosEps|/2}$以下になった場合に収束したと判定します。
 
  \item  \verb|LanczosTarget| 
    
@@ -2914,15 +2924,31 @@ t_itr=275 0.000000
 \newpage
 \subsection{energy.dat}
 \label{subsec:energy.dat}
-(Lanczos法のみ) Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギー、ダブロン{と$\langle S_z \rangle$}を出力します。
+(Lanczos法、LOBCG法のみ) Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギー、ダブロン{と$\langle S_z \rangle$}を出力します。
 以下にファイル例を記載します。\\
 
+\verb|method="Lanczos"|の場合
 \begin{minipage}{12.5cm}
 \begin{screen}
 \begin{verbatim}
 Energy  -7.1043675920 
 Doublon  0.4164356536 
 Sz  0.0000000000 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\verb|method="CG"|の場合
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+State 0
+  Energy  -7.1043675920 
+  Doublon  0.4164356536 
+  Sz  0.0000000000 
+
+State 1
+:
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -2966,7 +2992,9 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$はサ
 
 \newpage
 \subsection{Lanczos\_Step.dat}
-(Lanczos法でのみ出力) Lanczos法で固有ベクトルを求めている際のログを出力します。以下にファイル例を示します。\\
+(Lanczos法、LOBCG法でのみ出力) 固有ベクトルを求めている際のログを出力します。以下にファイル例を示します。\\
+
+\verb|method="Lanczos"|の場合
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3413,7 +3441,7 @@ OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajs.dat
    \item{TPQ法:} \#\#\_cisajs\_set??step\%\%.dat
-   \item{全対角化法:}  \#\#\_cisajs\_eigen{\&\&}.dat
+   \item{全対角化法、LOBCG法:}  \#\#\_cisajs\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
 
@@ -3473,7 +3501,7 @@ TwoBodyGで指定された二体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajscktalt.dat
    \item{TPQ法:} \#\#\_cisajscktalt\_set??step\%\%.dat
-   \item{全対角化法:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
+   \item{全対角化法、LOBCG法:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
 
