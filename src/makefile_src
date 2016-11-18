@@ -33,6 +33,8 @@ lapack_diag.o \
 makeHam.o \
 matrixlapack.o \
 mltply.o \
+mltplySpin.o\
+mltplyHubbard.o\
 mltplyMPI.o \
 mltplyMPIBoost.o \
 CalcByTPQ.o \

@@ -55,6 +55,7 @@ int mltplySpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_
   /*[e] For InterAll */
 
   long unsigned int i_max;
+  i_max = X->Check.idim_max;
   int ihermite=0;
   int idx=0;
 
@@ -227,6 +228,8 @@ int mltplySpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tm
   /*[e] For InterAll */
 
   long unsigned int i_max;
+  i_max = X->Check.idim_max;
+
   int ihermite=0;
   int idx=0;
 
@@ -562,6 +565,7 @@ int mltplySpinGCBoost(struct BindStruct *X, double complex *tmp_v0,double comple
   /* SpinGCBoost */
   
   long unsigned int i_max;
+  i_max = X->Check.idim_max;
 
     c_malloc1(tmp_v2, i_max+1);
     c_malloc1(tmp_v3, i_max+1);
