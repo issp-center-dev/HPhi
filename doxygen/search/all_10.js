@@ -1,13 +1,27 @@
 var searchData=
 [
+  ['r0',['R0',['../struct_boost_list.html#a1dad7c40df79747182b9100445852830',1,'BoostList']]],
   ['rawmode',['RAWMODE',['../_def_common_8h.html#abd4d7cc8b147a5139775f38448c6dcb9',1,'DefCommon.h']]],
   ['read',['READ',['../struct_define_list.html#a3ef6c92551b059a02814173b9701ec2c',1,'DefineList']]],
+  ['read_5fhacker',['read_hacker',['../struct_define_list.html#aa10e338e7a8ef221e5ef057eda8c0e47',1,'DefineList']]],
   ['read_5fsz',['Read_sz',['../sz_8h.html#af01a29b319a21fbaeb2a099bedd86e77',1,'Read_sz(struct BindStruct *X, const long unsigned int irght, const long unsigned int ilft, const long unsigned int ihfbit, long unsigned int *i_max):&#160;sz.c'],['../sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77',1,'Read_sz(struct BindStruct *X, const long unsigned int irght, const long unsigned int ilft, const long unsigned int ihfbit, long unsigned int *i_max):&#160;sz.c']]],
   ['readcalcmodfile',['ReadcalcmodFile',['../readdef_8c.html#ab8b765c6b13b09923368a2c8bec319ca',1,'readdef.c']]],
   ['readdef_2ec',['readdef.c',['../readdef_8c.html',1,'']]],
   ['readdef_2eh',['readdef.h',['../readdef_8h.html',1,'']]],
   ['readdeffileerror',['ReadDefFileError',['../readdef_8c.html#a21479192d729f0d76654f014b63b6d7a',1,'readdef.c']]],
-  ['readdeffileidxpara',['ReadDefFileIdxPara',['../readdef_8c.html#a3e0777f41256f28ec11b3e63e993b3c1',1,'readdef.c']]],
-  ['readdeffilenint',['ReadDefFileNInt',['../readdef_8c.html#aa7a339a09311dd6deb18df34a4d4fb6b',1,'readdef.c']]],
-  ['resetinteractionnum',['ResetInteractionNum',['../readdef_8h.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c'],['../readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c']]]
+  ['readdeffileidxpara',['ReadDefFileIdxPara',['../readdef_8h.html#a052f987ad0a4602ab76d31af1c257e30',1,'ReadDefFileIdxPara(struct DefineList *X, struct BoostList *xBoost):&#160;readdef.c'],['../readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30',1,'ReadDefFileIdxPara(struct DefineList *X, struct BoostList *xBoost):&#160;readdef.c']]],
+  ['readdeffilenint',['ReadDefFileNInt',['../readdef_8h.html#a17c76a94fb506b26d2c69919ff9d5cd1',1,'ReadDefFileNInt(char *xNameListFile, struct DefineList *X, struct BoostList *xBoost):&#160;readdef.c'],['../readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1',1,'ReadDefFileNInt(char *xNameListFile, struct DefineList *X, struct BoostList *xBoost):&#160;readdef.c']]],
+  ['readtmcomponents',['ReadTMComponents',['../_calc_spectrum_by_lanczos_8c.html#a3e5349b13352a4da1915a469aa5276ef',1,'ReadTMComponents(struct EDMainCalStruct *X, double *_dnorm, unsigned long int *_i_max):&#160;CalcSpectrumByLanczos.c'],['../_calc_spectrum_by_lanczos_8h.html#a9ba53c87fb006d452a75dafc05aecd92',1,'ReadTMComponents(struct EDMainCalStruct *X, double *_dnorm, unsigned long int *i_max):&#160;CalcSpectrumByLanczos.c']]],
+  ['readtpqdata',['ReadTPQData',['../_calc_spectrum_by_t_p_q_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817',1,'ReadTPQData(struct EDMainCalStruct *X, double *ene, double *temp, double *specificHeat):&#160;CalcSpectrumByTPQ.c'],['../_calc_spectrum_by_t_p_q_8h.html#ac0bce0e9486a9babd5f85cf8e59ae817',1,'ReadTPQData(struct EDMainCalStruct *X, double *ene, double *temp, double *specificHeat):&#160;CalcSpectrumByTPQ.c']]],
+  ['rearray_5finteractions',['Rearray_Interactions',['../expec__cisajscktaltdc_8c.html#a2ca27868fab714216654436b769197bc',1,'Rearray_Interactions(int i, long unsigned int *org_isite1, long unsigned int *org_isite2, long unsigned int *org_isite3, long unsigned int *org_isite4, long unsigned int *org_sigma1, long unsigned int *org_sigma2, long unsigned int *org_sigma3, long unsigned int *org_sigma4, double complex *tmp_V, struct BindStruct *X):&#160;expec_cisajscktaltdc.c'],['../expec__cisajscktaltdc_8h.html#a2ca27868fab714216654436b769197bc',1,'Rearray_Interactions(int i, long unsigned int *org_isite1, long unsigned int *org_isite2, long unsigned int *org_isite3, long unsigned int *org_isite4, long unsigned int *org_sigma1, long unsigned int *org_sigma2, long unsigned int *org_sigma3, long unsigned int *org_sigma4, double complex *tmp_V, struct BindStruct *X):&#160;expec_cisajscktaltdc.c']]],
+  ['recalc_5ffrom_5ftmcomponents',['RECALC_FROM_TMComponents',['../_def_common_8h.html#ad75009b0bf21f050546f83a3134e316c',1,'DefCommon.h']]],
+  ['recalc_5ffrom_5ftmcomponents_5fvec',['RECALC_FROM_TMComponents_VEC',['../_def_common_8h.html#aea25c22b2a63eae641aa7fca1443e273',1,'DefCommon.h']]],
+  ['recalc_5finout_5ftmcomponents_5fvec',['RECALC_INOUT_TMComponents_VEC',['../_def_common_8h.html#a0ea5cda85e98c77363cabb5d40eb4a2a',1,'DefCommon.h']]],
+  ['recalc_5fnot',['RECALC_NOT',['../_def_common_8h.html#a1b01582b4375d4e9979a1cec6c74da13',1,'DefCommon.h']]],
+  ['recalc_5foutput_5ftmcomponents_5fvec',['RECALC_OUTPUT_TMComponents_VEC',['../_def_common_8h.html#a8b5b43d9dde3ea703966c023f8e43467',1,'DefCommon.h']]],
+  ['resetinteractionnum',['ResetInteractionNum',['../readdef_8h.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c'],['../readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c']]],
+  ['restart_5fin',['RESTART_IN',['../_def_common_8h.html#a04ff145072e1c6d65d000414de77f0a4',1,'DefCommon.h']]],
+  ['restart_5finout',['RESTART_INOUT',['../_def_common_8h.html#a74b239aa42df454a26193dfdd967ecbb',1,'DefCommon.h']]],
+  ['restart_5fnot',['RESTART_NOT',['../_def_common_8h.html#a58a665e43a46a540eb262fc67c5267be',1,'DefCommon.h']]],
+  ['restart_5fout',['RESTART_OUT',['../_def_common_8h.html#a8f7e1f675ec6d6ac296131fcb18f9e62',1,'DefCommon.h']]]
 ];

@@ -1,0 +1,22 @@
+<map id="sz" name="sz">
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="677,240,733,267"/>
+<area shape="rect" id="node3" href="$log_8h.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="347,139,441,165"/>
+<area shape="rect" id="node4" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="childfopenMPI" alt="" coords="511,101,617,128"/>
+<area shape="rect" id="node6" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="325,341,463,368"/>
+<area shape="rect" id="node8" href="$wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="361,291,427,317"/>
+<area shape="rect" id="node9" href="$sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77" title="Read_sz" alt="" coords="147,189,222,216"/>
+<area shape="rect" id="node11" href="$sz_8c.html#a8f36bd38249e55d14a0e1a9da9d49a9c" title="child_omp_sz_KondoGC" alt="" coords="100,341,269,368"/>
+<area shape="rect" id="node12" href="$sz_8c.html#acde07cfd887113fd7624247edc1b9a31" title="Binomial" alt="" coords="148,392,221,419"/>
+<area shape="rect" id="node13" href="$sz_8c.html#a78ae632d86cfad8be3787f304b1e6c6b" title="child_omp_sz" alt="" coords="133,443,237,469"/>
+<area shape="rect" id="node14" href="$sz_8c.html#ad2c800ee4b39c008aec04eb79385fb85" title="child_omp_sz_hacker" alt="" coords="109,544,260,571"/>
+<area shape="rect" id="node15" href="$bitcalc_8c.html#ac837cfea40f6ee80848d2f087e24d205" title="snoob" alt="" coords="365,544,423,571"/>
+<area shape="rect" id="node16" href="$sz_8c.html#a406b25376cf793f5281a82f433605117" title="child_omp_sz_Kondo" alt="" coords="110,645,259,672"/>
+<area shape="rect" id="node17" href="$sz_8c.html#a1a39dc13f7b6dca406ecc4e17212ddf9" title="child_omp_sz_spin_hacker" alt="" coords="93,595,276,621"/>
+<area shape="rect" id="node18" href="$sz_8c.html#ac49f50334c3a68106c310a0982c111de" title="child_omp_sz_spin" alt="" coords="117,696,253,723"/>
+<area shape="rect" id="node19" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="135,747,234,773"/>
+<area shape="rect" id="node21" href="$sz_8c.html#a64400973f303ede60a1874ddc95f6357" title="child_omp_sz_GeneralSpin" alt="" coords="92,797,277,824"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae" title="fopenMPI" alt="" coords="665,101,744,128"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="521,392,607,419"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8h.html#aa75a96d74dddc8e6921813225e318551" title="fgetsMPI" alt="" coords="357,189,431,216"/>
+<area shape="rect" id="node20" href="$bitcalc_8c.html#a9095e4e1a19d0db69a4461d8988ac682" title="get bit at a site for general spin " alt="" coords="341,747,447,773"/>
+</map>

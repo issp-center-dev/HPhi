@@ -1,0 +1,51 @@
+<map id="expec_energy" name="expec_energy">
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="756,215,812,241"/>
+<area shape="rect" id="node3" href="$log_8h.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="313,88,463,115"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="319,240,457,267"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8h.html#a40ff4f9a2622fada050275da64621421" title="SumMPI_d" alt="" coords="159,139,247,165"/>
+<area shape="rect" id="node9" href="$mltply_8h.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="174,1395,231,1421"/>
+<area shape="rect" id="node50" href="$wrapper_m_p_i_8h.html#a7a90e7c667189b600a621be9856fa650" title="SumMPI_dc" alt="" coords="341,189,435,216"/>
+<area shape="rect" id="node4" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="childfopenMPI" alt="" coords="565,139,672,165"/>
+<area shape="rect" id="node6" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="576,240,661,267"/>
+<area shape="rect" id="node8" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="585,189,652,216"/>
+<area shape="rect" id="node10" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="529,1239,708,1265"/>
+<area shape="rect" id="node11" href="$mltply_m_p_i_8h.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="GC_child_general_hopp\l_MPIdouble" alt="" coords="305,1290,471,1331"/>
+<area shape="rect" id="node12" href="$mltply_m_p_i_8h.html#a83da98c99feda75fe253ef0177bbb9ab" title="GC_child_general_hopp\l_MPIsingle" alt="" coords="305,1355,471,1397"/>
+<area shape="rect" id="node13" href="$mltply_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="child_general_hopp\l_GetInfo" alt="" coords="319,1421,457,1462"/>
+<area shape="rect" id="node14" href="$mltply_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="GC_child_general_hopp" alt="" coords="305,1487,471,1513"/>
+<area shape="rect" id="node15" href="$mltply_m_p_i_8h.html#af7bc5450d8bcafa8b0e218916f43ab86" title="CheckPE" alt="" coords="349,1537,427,1564"/>
+<area shape="rect" id="node16" href="$mltply_m_p_i_8h.html#a571209928d6c7125abd413555f89d748" title="X_GC_child_CisAisCjtAjt\l_Hubbard_MPI" alt="" coords="303,1589,473,1630"/>
+<area shape="rect" id="node17" href="$mltply_m_p_i_8h.html#a000b2e28dbe8017d9ebe473c79254ab0" title="X_GC_child_CisAisCjtAku\l_Hubbard_MPI" alt="" coords="299,1654,477,1695"/>
+<area shape="rect" id="node18" href="$mltply_m_p_i_8h.html#a97c47d9723ed20f84541f43bd312a4f4" title="X_GC_child_CisAjtCkuAku\l_Hubbard_MPI" alt="" coords="297,1719,479,1761"/>
+<area shape="rect" id="node19" href="$mltply_m_p_i_8h.html#acd2d8dccdc18723b8168fb42a16594cd" title="X_GC_child_CisAjtCkuAlv\l_Hubbard_MPI" alt="" coords="299,1785,477,1826"/>
+<area shape="rect" id="node20" href="$mltply_8c.html#ad8750d6b426c68d0e931849d094b11ce" title="child_general_int_GetInfo" alt="" coords="301,1851,475,1877"/>
+<area shape="rect" id="node21" href="$mltply_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="GC_child_general_int" alt="" coords="313,1901,463,1928"/>
+<area shape="rect" id="node22" href="$mltply_8c.html#ada83696e48d6a9496eca54980a2fd2a4" title="child_pairhopp_GetInfo" alt="" coords="308,1952,468,1979"/>
+<area shape="rect" id="node23" href="$mltply_8c.html#ad16f7b63b9768957a720004697a7a774" title="GC_child_pairhopp" alt="" coords="320,2003,456,2029"/>
+<area shape="rect" id="node24" href="$mltply_8c.html#ace0e2c1c928c924f7efd3bf106c9122e" title="child_exchange_GetInfo" alt="" coords="305,2053,471,2080"/>
+<area shape="rect" id="node25" href="$mltply_8c.html#a23af00b3160b075156e1c842bb3a879d" title="GC_child_exchange" alt="" coords="317,2104,459,2131"/>
+<area shape="rect" id="node26" href="$mltply_m_p_i_8h.html#ab1b2e0743624e8698eb36484166f92cc" title="child_general_hopp\l_MPIdouble" alt="" coords="319,2155,457,2197"/>
+<area shape="rect" id="node27" href="$mltply_m_p_i_8h.html#aa938067934c1c1a813b5bbc5c94f9d26" title="child_general_hopp\l_MPIsingle" alt="" coords="319,2221,457,2262"/>
+<area shape="rect" id="node28" href="$mltply_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="child_general_hopp" alt="" coords="319,2287,457,2313"/>
+<area shape="rect" id="node29" href="$mltply_m_p_i_8h.html#ac0c99cbb8b6107f22d5f98dda7c261c1" title="X_child_CisAisCjtAjt\l_Hubbard_MPI" alt="" coords="317,2338,459,2379"/>
+<area shape="rect" id="node30" href="$mltply_m_p_i_8h.html#acd53e5827ce49783eb34e66daf83b279" title="X_child_CisAisCjtAku\l_Hubbard_MPI" alt="" coords="313,2403,463,2445"/>
+<area shape="rect" id="node31" href="$mltply_m_p_i_8h.html#a76b1510440a9ab8d2df1e5eea9bed9ac" title="X_child_CisAjtCkuAku\l_Hubbard_MPI" alt="" coords="311,2469,465,2510"/>
+<area shape="rect" id="node32" href="$mltply_m_p_i_8h.html#ad267bd3ca12b29eefc7fefedce54335a" title="X_child_CisAjtCkuAlv\l_Hubbard_MPI" alt="" coords="313,2534,463,2575"/>
+<area shape="rect" id="node33" href="$mltply_8c.html#aef9d79bf221699cecaa1b65b374e5b92" title="child_general_int" alt="" coords="327,2600,449,2627"/>
+<area shape="rect" id="node34" href="$mltply_8c.html#a4d178b47dde9c5e387a87d482463575d" title="child_pairhopp" alt="" coords="333,2651,443,2677"/>
+<area shape="rect" id="node35" href="$mltply_8c.html#a5821f04d36f42ce53a1d522dcb5548c5" title="child_exchange" alt="" coords="331,291,445,317"/>
+<area shape="rect" id="node36" href="$mltply_m_p_i_8h.html#a1d7f900e4cbe1e42cc139fd78cf14c66" title="child_general_int_spin\l_MPIdouble" alt="" coords="311,342,465,383"/>
+<area shape="rect" id="node37" href="$mltply_m_p_i_8h.html#aab94d15aa4b4edd0e53f51921a4b7dd4" title="child_general_int_spin\l_MPIsingle" alt="" coords="311,407,465,449"/>
+<area shape="rect" id="node38" href="$mltply_8c.html#a4f2cb8d2efe39da7c0b1b6d975758c40" title="child_general_int_spin\l_GetInfo" alt="" coords="311,473,465,514"/>
+<area shape="rect" id="node39" href="$mltply_8c.html#aa02ac66be051c651994ed4c9bfd9648e" title="child_general_int_spin" alt="" coords="311,539,465,565"/>
+<area shape="rect" id="node40" href="$mltply_m_p_i_8h.html#a4e5f05080675ce78c92496afca5e5965" title="X_child_general_int\l_spin_MPIdouble" alt="" coords="319,590,457,631"/>
+<area shape="rect" id="node41" href="$mltply_m_p_i_8h.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="319,655,457,697"/>
+<area shape="rect" id="node42" href="$mltply_8c.html#a70512a3c407e79dd6c912a63f9afe4ae" title="child_exchange_spin\l_GetInfo" alt="" coords="315,721,461,762"/>
+<area shape="rect" id="node43" href="$mltply_8c.html#ab975146c2b912899e92ae74ec42b5b45" title="child_exchange_spin" alt="" coords="315,787,461,813"/>
+<area shape="rect" id="node44" href="$mltply_m_p_i_8h.html#a07d9da0f2b4f214b02b24d1a7c7be0a4" title="child_general_int_General\lSpin_MPIdouble" alt="" coords="299,838,477,879"/>
+<area shape="rect" id="node45" href="$mltply_m_p_i_8h.html#a72dee131b34ccae9c95bfd2337a70954" title="child_general_int_General\lSpin_MPIsingle" alt="" coords="299,903,477,945"/>
+<area shape="rect" id="node46" href="$bitcalc_8c.html#a7f1f97c34d65db45cb89116585cabf02" title="function of getting off&#45;diagonal component for general spin " alt="" coords="303,969,473,996"/>
+<area shape="rect" id="node47" href="$bitcalc_8c.html#a39e2c8445bc1c173efefcee2a4c43039" title="function of converting component to list_1 " alt="" coords="295,1020,481,1047"/>
+<area shape="rect" id="node48" href="$mltply_m_p_i_8h.html#a8dce9e4d2f372d138dec39176b2129ce" title="X_GC_child_CisAit_spin\l_MPIdouble" alt="" coords="305,1071,471,1113"/>
+<area shape="rect" id="node49" href="$mltply_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="X_SpinGC_CisAit" alt="" coords="325,1137,451,1164"/>
+</map>

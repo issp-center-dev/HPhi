@@ -4,6 +4,7 @@ var struct_8h =
     [ "CheckList", "struct_check_list.html", "struct_check_list" ],
     [ "LargeList", "struct_large_list.html", "struct_large_list" ],
     [ "PhysList", "struct_phys_list.html", "struct_phys_list" ],
+    [ "BoostList", "struct_boost_list.html", "struct_boost_list" ],
     [ "BindStruct", "struct_bind_struct.html", "struct_bind_struct" ],
     [ "EDMainCalStruct", "struct_e_d_main_cal_struct.html", "struct_e_d_main_cal_struct" ],
     [ "TimeKeepStruct", "struct_time_keep_struct.html", "struct_time_keep_struct" ],

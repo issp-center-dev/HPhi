@@ -1,6 +1,5 @@
 var _chain_lattice_8c =
 [
-    [ "FermionHubbard_ChainLattice", "_chain_lattice_8c.html#ab440e91549b80c28596f6db5786a140f", null ],
-    [ "KondoLattice_ChainLattice", "_chain_lattice_8c.html#acda4c52a642917cba227ebccb21ff06a", null ],
-    [ "Spin_ChainLattice", "_chain_lattice_8c.html#a248bebeb5959dc715f6eec08e776f18f", null ]
+    [ "StdFace_Chain", "_chain_lattice_8c.html#ad5c0113e688b35f3faedbe21fe4e5201", null ],
+    [ "StdFace_Chain_Boost", "_chain_lattice_8c.html#ae7836a0c0e49d88705c77b2b7653774f", null ]
 ];

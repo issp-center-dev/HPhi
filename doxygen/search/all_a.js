@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['k',['K',['../_std_face__vals_8h.html#a74b45da7676e23dd8ec974cfc04c0137',1,'StdFace_vals.h']]],
-  ['k_5fexct',['k_exct',['../struct_define_list.html#ac067c7c0e9fef1899697617fd5afba41',1,'DefineList']]],
+  ['k',['K',['../struct_std_int_list.html#ac2e609467e2d314fb50a9d1e98746b8d',1,'StdIntList']]],
+  ['k_5fexct',['k_exct',['../struct_define_list.html#a7b1557d9f89c207164139b3bd65d73fa',1,'DefineList']]],
+  ['kagome_2ec',['Kagome.c',['../_kagome_8c.html',1,'']]],
   ['kondo',['Kondo',['../_def_common_8h.html#a531ba444bc15b6711c05fd95874f205d',1,'DefCommon.h']]],
   ['kondogc',['KondoGC',['../_def_common_8h.html#a84a2a0896f6c0300a068925d7b299515',1,'DefCommon.h']]],
-  ['kondolattice_5fchainlattice',['KondoLattice_ChainLattice',['../_chain_lattice_8c.html#acda4c52a642917cba227ebccb21ff06a',1,'KondoLattice_ChainLattice(int nelec, int lGC):&#160;ChainLattice.c'],['../_std_face___model_util_8h.html#acda4c52a642917cba227ebccb21ff06a',1,'KondoLattice_ChainLattice(int nelec, int lGC):&#160;ChainLattice.c']]],
-  ['kondolattice_5fhoneycomblattice',['KondoLattice_HoneycombLattice',['../_honeycomb_lattice_8c.html#adbcd0c55473597b4d4f2d814a25b2fcd',1,'KondoLattice_HoneycombLattice(int nelec, int lGC):&#160;HoneycombLattice.c'],['../_std_face___model_util_8h.html#adbcd0c55473597b4d4f2d814a25b2fcd',1,'KondoLattice_HoneycombLattice(int nelec, int lGC):&#160;HoneycombLattice.c']]],
-  ['kondolattice_5fsquarelattice',['KondoLattice_SquareLattice',['../_square_lattice_8c.html#aa9bab3549ff2e0724784e9e15d760af2',1,'KondoLattice_SquareLattice(int nelec, int lGC):&#160;SquareLattice.c'],['../_std_face___model_util_8h.html#aa9bab3549ff2e0724784e9e15d760af2',1,'KondoLattice_SquareLattice(int nelec, int lGC):&#160;SquareLattice.c']]],
-  ['kondolattice_5ftriangularlattice',['KondoLattice_TriangularLattice',['../_std_face___model_util_8h.html#aa9fe3dfcffa4a9cbab4a60382ea1cd08',1,'KondoLattice_TriangularLattice(int nelec, int lGC):&#160;TriangularLattice.c'],['../_triangular_lattice_8c.html#aa9fe3dfcffa4a9cbab4a60382ea1cd08',1,'KondoLattice_TriangularLattice(int nelec, int lGC):&#160;TriangularLattice.c']]],
+  ['kwboost',['KWBoost',['../readdef_8h.html#ad31d6db0ca70c16857ecccf56ba028d0',1,'readdef.h']]],
   ['kwcalcmod',['KWCalcMod',['../readdef_8h.html#a3de740e0481888089ee68a0180ad418e',1,'readdef.h']]],
   ['kwcoulombinter',['KWCoulombInter',['../readdef_8h.html#a7a49ed5b3aee4432a9c696ee1b3f13f7',1,'readdef.h']]],
   ['kwcoulombintra',['KWCoulombIntra',['../readdef_8h.html#a9fca4f434e837521d9c2ce053076c645',1,'readdef.h']]],
@@ -18,8 +16,11 @@ var searchData=
   ['kwlocspin',['KWLocSpin',['../readdef_8h.html#a7194275c5d09c1d6df2bea0c605608a4',1,'readdef.h']]],
   ['kwmodpara',['KWModPara',['../readdef_8h.html#aaba51a82968ba9baf1dac58a92ccb762',1,'readdef.h']]],
   ['kwonebodyg',['KWOneBodyG',['../readdef_8h.html#a984c0fbff653564baa1d36fddbe9a843',1,'readdef.h']]],
+  ['kwpairexcitation',['KWPairExcitation',['../readdef_8h.html#ad3604af8a34a144e4c687c34fbb82268',1,'readdef.h']]],
   ['kwpairhop',['KWPairHop',['../readdef_8h.html#a3c55d2edfac254a6a3b6228870c726a7',1,'readdef.h']]],
   ['kwpairlift',['KWPairLift',['../readdef_8h.html#a5d094ce00aab2d97adb740e8a2bc3c86',1,'readdef.h']]],
+  ['kwsingleexcitation',['KWSingleExcitation',['../readdef_8h.html#aa4e8f146b8dd6fcee32e353974e948c2',1,'readdef.h']]],
+  ['kwspectrumvec',['KWSpectrumVec',['../readdef_8h.html#aca2f9553356788ccc889b93685a31d9c',1,'readdef.h']]],
   ['kwtrans',['KWTrans',['../readdef_8h.html#a2c0182ed0879ed77605bad50257a4ab4',1,'readdef.h']]],
   ['kwtwobodyg',['KWTwoBodyG',['../readdef_8h.html#a29080adba0beae1a58d46e118c9b6587',1,'readdef.h']]]
 ];

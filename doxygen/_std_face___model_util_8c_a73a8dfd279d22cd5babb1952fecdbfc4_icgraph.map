@@ -1,0 +1,12 @@
+<map id="StdFace_SzSz" name="StdFace_SzSz">
+<area shape="rect" id="node2" href="$_std_face___model_util_8h.html#a248bebeb5959dc715f6eec08e776f18f" title="Spin_ChainLattice" alt="" coords="207,5,338,32"/>
+<area shape="rect" id="node5" href="$_std_face___model_util_8h.html#acda4c52a642917cba227ebccb21ff06a" title="KondoLattice_ChainLattice" alt="" coords="182,56,363,83"/>
+<area shape="rect" id="node6" href="$_std_face___model_util_8h.html#a75002fc0f9bd1bdaa57a72fbf61d56e5" title="Spin_HoneycombLattice" alt="" coords="189,107,356,133"/>
+<area shape="rect" id="node7" href="$_std_face___model_util_8h.html#adbcd0c55473597b4d4f2d814a25b2fcd" title="KondoLattice_HoneycombLattice" alt="" coords="164,157,381,184"/>
+<area shape="rect" id="node8" href="$_std_face___model_util_8h.html#a81c580e0655f14514cb7fc1f2a7c7ab0" title="Spin_SquareLattice" alt="" coords="203,208,342,235"/>
+<area shape="rect" id="node9" href="$_std_face___model_util_8h.html#aa9bab3549ff2e0724784e9e15d760af2" title="KondoLattice_SquareLattice" alt="" coords="178,259,367,285"/>
+<area shape="rect" id="node10" href="$_triangular_lattice_8c.html#a06964ed1f0ebe2107cf74e0af6cadebf" title="Spin_TriangularLattice" alt="" coords="195,309,351,336"/>
+<area shape="rect" id="node11" href="$_triangular_lattice_8c.html#aa9fe3dfcffa4a9cbab4a60382ea1cd08" title="KondoLattice_TriangularLattice" alt="" coords="169,360,376,387"/>
+<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="StdFace_main" alt="" coords="429,183,537,209"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="585,183,636,209"/>
+</map>

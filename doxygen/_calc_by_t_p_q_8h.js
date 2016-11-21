@@ -1,4 +1,4 @@
 var _calc_by_t_p_q_8h =
 [
-    [ "CalcBySSM", "_calc_by_t_p_q_8h.html#a7bb0164ecd302a8713c60f99ab50442f", null ]
+    [ "CalcByTPQ", "_calc_by_t_p_q_8h.html#ae03e6c3be031f570a98eaf087be6efd7", null ]
 ];

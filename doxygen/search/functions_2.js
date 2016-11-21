@@ -1,14 +1,15 @@
 var searchData=
 [
   ['d_5ffree1',['d_free1',['../xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f',1,'xfreemem_large.c']]],
+  ['defmodelboost',['defmodelBoost',['../defmodel_boost_8h.html#aa1281183a9abdb8e3816e13513e3ab8f',1,'defmodelBoost.h']]],
   ['dgetrf_5f',['dgetrf_',['../matrixlapack_8c.html#a1551da1b1192068cc91efe42fa54ea95',1,'matrixlapack.c']]],
   ['dgetri_5f',['dgetri_',['../matrixlapack_8c.html#a74888dbee00ea98e0d295500e1b39973',1,'matrixlapack.c']]],
   ['diagonalcalc',['diagonalcalc',['../diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1',1,'diagonalcalc(struct BindStruct *X):&#160;diagonalcalc.c'],['../diagonalcalc_8h.html#a2f45884ecdc978493e3a02d712cae9c1',1,'diagonalcalc(struct BindStruct *X):&#160;diagonalcalc.c']]],
   ['dinv',['DInv',['../matrixlapack_8c.html#a2dd5dfb659b5fc0621e58907648532d2',1,'matrixlapack.c']]],
   ['dlamch_5f',['dlamch_',['../matrixlapack_8c.html#a8f8bef103c45d87276d6508164f5883c',1,'matrixlapack.c']]],
   ['do_5frecursion',['do_recursion',['../d_s_f_m_t_8c.html#a43e33e2235015c9c072bad7dfe1a282c',1,'dSFMT.c']]],
-  ['dsevvalue',['DSEVvalue',['../matrixlapack_8c.html#a38ab897cf91d3022b8ba2de845f7a6ae',1,'matrixlapack.c']]],
-  ['dsevvector',['DSEVvector',['../matrixlapack_8c.html#a7447554c8b594af132a9b2c848509f76',1,'matrixlapack.c']]],
+  ['dsevvalue',['DSEVvalue',['../matrixlapack_8h.html#a38ab897cf91d3022b8ba2de845f7a6ae',1,'DSEVvalue(int xNsize, double **A, double *r):&#160;matrixlapack.c'],['../matrixlapack_8c.html#a38ab897cf91d3022b8ba2de845f7a6ae',1,'DSEVvalue(int xNsize, double **A, double *r):&#160;matrixlapack.c']]],
+  ['dsevvector',['DSEVvector',['../matrixlapack_8h.html#a7447554c8b594af132a9b2c848509f76',1,'DSEVvector(int xNsize, double **A, double *r, double **vec):&#160;matrixlapack.c'],['../matrixlapack_8c.html#a7447554c8b594af132a9b2c848509f76',1,'DSEVvector(int xNsize, double **A, double *r, double **vec):&#160;matrixlapack.c']]],
   ['dsevxu',['DSEVXU',['../matrixlapack_8c.html#a2da8c4a1bcaabe1c6da36cc95fa05ccb',1,'matrixlapack.c']]],
   ['dsfmt_5fchk_5finit_5fby_5farray',['dsfmt_chk_init_by_array',['../d_s_f_m_t_8c.html#a91cef405a85910d4e56b4a1d10fb89f1',1,'dsfmt_chk_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length, int mexp):&#160;dSFMT.c'],['../d_s_f_m_t_8h.html#a91cef405a85910d4e56b4a1d10fb89f1',1,'dsfmt_chk_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length, int mexp):&#160;dSFMT.c']]],
   ['dsfmt_5fchk_5finit_5fgen_5frand',['dsfmt_chk_init_gen_rand',['../d_s_f_m_t_8c.html#a2fa6a84095a280a4e1556415f3d4f259',1,'dsfmt_chk_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed, int mexp):&#160;dSFMT.c'],['../d_s_f_m_t_8h.html#a2fa6a84095a280a4e1556415f3d4f259',1,'dsfmt_chk_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed, int mexp):&#160;dSFMT.c']]],

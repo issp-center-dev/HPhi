@@ -1,20 +1,16 @@
 var searchData=
 [
-  ['t',['t',['../_std_face__vals_8h.html#a87accd1af8e0aff4b818d891374f7cec',1,'StdFace_vals.h']]],
-  ['t0',['t0',['../_std_face__vals_8h.html#a2a6d90c736b9e880fad815952157136f',1,'StdFace_vals.h']]],
-  ['t1',['t1',['../_std_face__vals_8h.html#a59692051ca9586d10f35f14d574229da',1,'StdFace_vals.h']]],
-  ['t2',['t2',['../_std_face__vals_8h.html#a8df5e28b4b4a92003ae9040490efec1f',1,'StdFace_vals.h']]],
-  ['target_5fenergy',['Target_energy',['../struct_phys_list.html#ac645797a0a2163227c055f2d3cb612d3',1,'PhysList']]],
-  ['tend',['tend',['../struct_time_keep_struct.html#aa99971131764062c93f2bf54c8a0bb4b',1,'TimeKeepStruct']]],
-  ['tmp_5fj',['tmp_J',['../struct_large_list.html#a78d3319a46f7b29c350ee26d4adbb340',1,'LargeList']]],
-  ['tmp_5ftrans',['tmp_trans',['../struct_large_list.html#ad48959bc0a579f39cb1c77f7a9ec5dfb',1,'LargeList']]],
-  ['tmp_5fv',['tmp_V',['../struct_large_list.html#ac4c27b0a6605ddec02a985904f2b1639',1,'LargeList']]],
-  ['tnow',['tnow',['../struct_time_keep_struct.html#a353c263a43f26f4953b3c2b6afc3f99f',1,'TimeKeepStruct']]],
-  ['tp',['tp',['../_std_face__vals_8h.html#a27645445b4ea6d3bccd1ab6359ec5d6c',1,'StdFace_vals.h']]],
-  ['tpow',['Tpow',['../struct_define_list.html#a16f8adaa4fca771cb01a28b482224b70',1,'DefineList']]],
-  ['tpp',['tpp',['../_std_face__vals_8h.html#af3f7e91b074d7254422bcaadc77f6292',1,'StdFace_vals.h']]],
-  ['trans',['trans',['../_std_face__vals_8h.html#a261dc6445544ab3a09e5f50b961887b5',1,'StdFace_vals.h']]],
-  ['transfer',['Transfer',['../struct_define_list.html#aedd0006e1b50740b626cb4d821076be9',1,'DefineList']]],
-  ['transindx',['transindx',['../_std_face__vals_8h.html#ac600df10493c8181376f8f6045bd0246',1,'StdFace_vals.h']]],
-  ['tstart',['tstart',['../struct_time_keep_struct.html#abb4d510ac3897933e41b1d6610d5807d',1,'TimeKeepStruct']]]
+  ['s2',['S2',['../struct_std_int_list.html#a211b3f4b3da1f5e1692f32246636ada1',1,'StdIntList::S2()'],['../struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d',1,'PhysList::s2()']]],
+  ['sdim',['sdim',['../struct_check_list.html#a617d47f691e1ea504faabb55c45cb183',1,'CheckList']]],
+  ['sgn',['sgn',['../struct_large_list.html#a3af579bf8c8e3dae9c3c8b518bf08844',1,'LargeList']]],
+  ['singleexcitationoperator',['SingleExcitationOperator',['../struct_define_list.html#ad51b15968e7d7f3c64eb3c599d5a4c22',1,'DefineList']]],
+  ['sitetobit',['SiteToBit',['../struct_define_list.html#a382f41379aeddfc7a721d39a0c5770a2',1,'DefineList']]],
+  ['spin_5freal_5fcor',['spin_real_cor',['../struct_phys_list.html#affa7b2dc9c283f5e020a3a8790fe9241',1,'PhysList']]],
+  ['st',['St',['../struct_define_list.html#a1ff331495c1f203f90e497c95b835619',1,'DefineList']]],
+  ['status',['status',['../struct_d_s_f_m_t___t.html#aa7b5e6f3e8e109b75493514525854931',1,'DSFMT_T']]],
+  ['stdoutmpi',['stdoutMPI',['../wrapper_m_p_i_8h.html#abacbc82cf67663cd6f3708f1274ac207',1,'wrapperMPI.h']]],
+  ['step_5fi',['step_i',['../global_8h.html#ae4b3c259843556181feaef44545e833f',1,'global.h']]],
+  ['step_5fspin',['step_spin',['../global_8h.html#a3a933eb9d9a4329b3525beeb81f1e57e',1,'global.h']]],
+  ['sz',['sz',['../struct_phys_list.html#a9ad90bcd5a7a88548926a99ad5e2ada0',1,'PhysList::sz()'],['../struct_phys_list.html#ac5dca3d91e341e135c764e3200537b67',1,'PhysList::Sz()']]],
+  ['sz2',['Sz2',['../struct_phys_list.html#aee62149eadb7414fc444f5b03d1dd20f',1,'PhysList::Sz2()'],['../struct_std_int_list.html#aea33f2584e7964e85b76d3f6a4377145',1,'StdIntList::Sz2()']]]
 ];

@@ -1,0 +1,12 @@
+<map id="FermionHubbard_TriangularLattice" name="FermionHubbard_TriangularLattice">
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="641,157,697,184"/>
+<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672" title="StdFace_RequiredVal_i" alt="" coords="243,208,405,235"/>
+<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#a40c0095bc5329e343502d453f929fecc" title="StdFace_PrintVal_d" alt="" coords="453,5,593,32"/>
+<area shape="rect" id="node6" href="$_std_face___model_util_8c.html#afb9e23628e57aea2f08ef65acc308c2a" title="StdFace_NotUsed_i" alt="" coords="253,259,395,285"/>
+<area shape="rect" id="node7" href="$_std_face___model_util_8c.html#a05386999c1e68124dd96f79ccdd80dbd" title="StdFace_NotUsed_d" alt="" coords="251,157,397,184"/>
+<area shape="rect" id="node8" href="$_std_face___model_util_8c.html#a4b607adce5209d09c9e4ec65d5934fd2" title="StdFace_trans" alt="" coords="269,309,379,336"/>
+<area shape="rect" id="node9" href="$_std_face___model_util_8c.html#afe20afd6c3e5eb1c5ce127311c9e02a2" title="StdFace_intr" alt="" coords="475,385,572,412"/>
+<area shape="rect" id="node10" href="$_std_face___model_util_8c.html#ac2b90258049d1e0066838f746c036b15" title="StdFace_Coulomb" alt="" coords="258,360,390,387"/>
+<area shape="rect" id="node11" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="StdFace_PrintVal_i" alt="" coords="455,56,591,83"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="490,208,557,235"/>
+</map>

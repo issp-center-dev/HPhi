@@ -1,6 +1,5 @@
 var matrixlapack_8c =
 [
-    [ "M_DSYEV", "matrixlapack_8c.html#a31da509a5ca59a1b668ea60651e3c7a9", null ],
     [ "dgetrf_", "matrixlapack_8c.html#a1551da1b1192068cc91efe42fa54ea95", null ],
     [ "dgetri_", "matrixlapack_8c.html#a74888dbee00ea98e0d295500e1b39973", null ],
     [ "DInv", "matrixlapack_8c.html#a2dd5dfb659b5fc0621e58907648532d2", null ],

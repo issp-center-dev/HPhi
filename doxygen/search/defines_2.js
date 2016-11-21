@@ -11,7 +11,6 @@ var searchData=
   ['d_5ffree5',['d_free5',['../mfmemory_8h.html#a0e40492c687b98b8061833f19237b208',1,'mfmemory.h']]],
   ['d_5ffree6',['d_free6',['../mfmemory_8h.html#a2aaf93d2442d31b9ede47fbd2478ba3b',1,'mfmemory.h']]],
   ['d_5ffree7',['d_free7',['../mfmemory_8h.html#a2aebef504614e42f2c2c75219e7f92da',1,'mfmemory.h']]],
-  ['d_5fikwnumdef',['D_iKWNumDef',['../readdef_8h.html#a7735a5362f33d57b74cbbc7360db2d7f',1,'readdef.h']]],
   ['d_5fmalloc1',['d_malloc1',['../mfmemory_8h.html#ad051544277850c437f8398e3cc6162d0',1,'mfmemory.h']]],
   ['d_5fmalloc2',['d_malloc2',['../mfmemory_8h.html#aa04efd34069caca619d47cba8b1d0909',1,'mfmemory.h']]],
   ['d_5fmalloc3',['d_malloc3',['../mfmemory_8h.html#a2a4bde23ab410d3c909cae780f870a87',1,'mfmemory.h']]],

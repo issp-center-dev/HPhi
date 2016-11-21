@@ -1,0 +1,9 @@
+<map id="StdFace_MagTrans" name="StdFace_MagTrans">
+<area shape="rect" id="node2" href="$_std_face___model_util_8h.html#a16569c5d02965102ed05e30fcc0bf735" title="Spin_ChainLattice" alt="" coords="210,5,341,32"/>
+<area shape="rect" id="node5" href="$_std_face___model_util_8h.html#a08af9352b228cb6ff738b909ae0f6180" title="Spin_HoneycombLattice" alt="" coords="192,56,359,83"/>
+<area shape="rect" id="node6" href="$_std_face___model_util_8h.html#a869f95236a424ca0b8f9260475dc15aa" title="Spin_Ladder" alt="" coords="227,107,324,133"/>
+<area shape="rect" id="node7" href="$_std_face___model_util_8h.html#a0765a40a548335749f16494c5403e92e" title="Spin_SquareLattice" alt="" coords="206,157,345,184"/>
+<area shape="rect" id="node8" href="$_triangular_lattice_8c.html#a866db977387d17c4acc204f2a33d4c58" title="Spin_TriangularLattice" alt="" coords="197,208,353,235"/>
+<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="StdFace_main" alt="" coords="407,107,515,133"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="563,107,613,133"/>
+</map>

@@ -7,5 +7,6 @@ var searchData=
   ['init_5fgen_5frand',['init_gen_rand',['../d_s_f_m_t_8h.html#a8dc496135101ef4140c7e790bf7474cd',1,'dSFMT.h']]],
   ['initial_5fmask',['initial_mask',['../d_s_f_m_t_8c.html#a95a1673e2b7b3a48a7eab8fa19e18e1d',1,'dSFMT.c']]],
   ['initializeinteractionnum',['InitializeInteractionNum',['../readdef_8h.html#a1422ba60c3e8b188b44a30ed63e4ce68',1,'InitializeInteractionNum(struct DefineList *X):&#160;readdef.c'],['../readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68',1,'InitializeInteractionNum(struct DefineList *X):&#160;readdef.c']]],
-  ['initializempi',['InitializeMPI',['../wrapper_m_p_i_8h.html#a24d222d1062d1a2dc4d9aacb506c5c8d',1,'InitializeMPI(int argc, char *argv[]):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d',1,'InitializeMPI(int argc, char *argv[]):&#160;wrapperMPI.c']]]
+  ['initializempi',['InitializeMPI',['../wrapper_m_p_i_8h.html#a24d222d1062d1a2dc4d9aacb506c5c8d',1,'InitializeMPI(int argc, char *argv[]):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d',1,'InitializeMPI(int argc, char *argv[]):&#160;wrapperMPI.c']]],
+  ['inittimer',['InitTimer',['../_calc_time_8h.html#aded9b0ef5cb7a143d739c80442978a1d',1,'InitTimer():&#160;time.c'],['../time_8c.html#aded9b0ef5cb7a143d739c80442978a1d',1,'InitTimer():&#160;time.c']]]
 ];

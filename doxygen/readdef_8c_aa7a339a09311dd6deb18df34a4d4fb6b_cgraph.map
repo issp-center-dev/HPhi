@@ -1,0 +1,12 @@
+<map id="ReadDefFileNInt" name="ReadDefFileNInt">
+<area shape="rect" id="node2" href="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68" title="function of initializeing interactions " alt="" coords="173,5,333,32"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="555,259,611,285"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#a500b57266b13cf3bc4a89f222179a03d" title="Function of Fitting FileName. " alt="" coords="203,208,303,235"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae" title="fopenMPI" alt="" coords="405,157,483,184"/>
+<area shape="rect" id="node6" href="$readdef_8c.html#a21479192d729f0d76654f014b63b6d7a" title="Error Function of reading def files. " alt="" coords="381,259,507,285"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8h.html#aa75a96d74dddc8e6921813225e318551" title="fgetsMPI" alt="" coords="407,309,481,336"/>
+<area shape="rect" id="node9" href="$readdef_8c.html#ab8b765c6b13b09923368a2c8bec319ca" title="Function of Reading calcmod file. " alt="" coords="191,360,316,387"/>
+<area shape="rect" id="node8" href="$readdef_8c.html#ad8ab1bf637b562388b376ffe8bbff91b" title="Function of Checking keyword in NameList file. " alt="" coords="403,208,485,235"/>
+<area shape="rect" id="node10" href="$readdef_8c.html#a3d8c84b499f7188fc876ad1d53349b79" title="Function of Getting keyword and it&#39;s variable from characters. " alt="" coords="389,411,499,437"/>
+<area shape="rect" id="node11" href="$readdef_8c.html#a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a" title="Function of Validating value. " alt="" coords="392,461,496,488"/>
+</map>

@@ -2,6 +2,7 @@ var searchData=
 [
   ['kondo',['Kondo',['../_def_common_8h.html#a531ba444bc15b6711c05fd95874f205d',1,'DefCommon.h']]],
   ['kondogc',['KondoGC',['../_def_common_8h.html#a84a2a0896f6c0300a068925d7b299515',1,'DefCommon.h']]],
+  ['kwboost',['KWBoost',['../readdef_8h.html#ad31d6db0ca70c16857ecccf56ba028d0',1,'readdef.h']]],
   ['kwcalcmod',['KWCalcMod',['../readdef_8h.html#a3de740e0481888089ee68a0180ad418e',1,'readdef.h']]],
   ['kwcoulombinter',['KWCoulombInter',['../readdef_8h.html#a7a49ed5b3aee4432a9c696ee1b3f13f7',1,'readdef.h']]],
   ['kwcoulombintra',['KWCoulombIntra',['../readdef_8h.html#a9fca4f434e837521d9c2ce053076c645',1,'readdef.h']]],
@@ -12,8 +13,11 @@ var searchData=
   ['kwlocspin',['KWLocSpin',['../readdef_8h.html#a7194275c5d09c1d6df2bea0c605608a4',1,'readdef.h']]],
   ['kwmodpara',['KWModPara',['../readdef_8h.html#aaba51a82968ba9baf1dac58a92ccb762',1,'readdef.h']]],
   ['kwonebodyg',['KWOneBodyG',['../readdef_8h.html#a984c0fbff653564baa1d36fddbe9a843',1,'readdef.h']]],
+  ['kwpairexcitation',['KWPairExcitation',['../readdef_8h.html#ad3604af8a34a144e4c687c34fbb82268',1,'readdef.h']]],
   ['kwpairhop',['KWPairHop',['../readdef_8h.html#a3c55d2edfac254a6a3b6228870c726a7',1,'readdef.h']]],
   ['kwpairlift',['KWPairLift',['../readdef_8h.html#a5d094ce00aab2d97adb740e8a2bc3c86',1,'readdef.h']]],
+  ['kwsingleexcitation',['KWSingleExcitation',['../readdef_8h.html#aa4e8f146b8dd6fcee32e353974e948c2',1,'readdef.h']]],
+  ['kwspectrumvec',['KWSpectrumVec',['../readdef_8h.html#aca2f9553356788ccc889b93685a31d9c',1,'readdef.h']]],
   ['kwtrans',['KWTrans',['../readdef_8h.html#a2c0182ed0879ed77605bad50257a4ab4',1,'readdef.h']]],
   ['kwtwobodyg',['KWTwoBodyG',['../readdef_8h.html#a29080adba0beae1a58d46e118c9b6587',1,'readdef.h']]]
 ];

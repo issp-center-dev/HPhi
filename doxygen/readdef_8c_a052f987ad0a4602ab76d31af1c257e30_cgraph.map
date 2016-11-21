@@ -1,0 +1,20 @@
+<map id="ReadDefFileIdxPara" name="ReadDefFileIdxPara">
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="661,473,717,499"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae" title="fopenMPI" alt="" coords="247,42,325,69"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#a21479192d729f0d76654f014b63b6d7a" title="Error Function of reading def files. " alt="" coords="449,346,575,373"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8h.html#aa75a96d74dddc8e6921813225e318551" title="fgetsMPI" alt="" coords="249,143,323,170"/>
+<area shape="rect" id="node6" href="$readdef_8c.html#abb604bcd282e6dea7ea681e43254f4f9" title="Check Site Number. " alt="" coords="648,143,731,170"/>
+<area shape="rect" id="node7" href="$readdef_8c.html#a33a451cbb9e518962b7379382cd6b117" title="function of checking indecies of localized spin " alt="" coords="232,397,340,423"/>
+<area shape="rect" id="node9" href="$readdef_8c.html#aeedd55bd700231dcdf39d36d6361719d" title="Check Site Number for a pair &#45;&gt; (siteA, siteB). " alt="" coords="459,93,565,119"/>
+<area shape="rect" id="node10" href="$readdef_8c.html#ac7c21de82671cc25f4319b55039c4e41" title="function of checking spin index for transfers " alt="" coords="425,599,599,626"/>
+<area shape="rect" id="node11" href="$readdef_8c.html#a512f5660363476a6f0c915ea496a9943" title="Check Hermite for Transfer integrals. " alt="" coords="434,650,590,677"/>
+<area shape="rect" id="node12" href="$readdef_8c.html#afbe7cae20c834c11ef23ad8a1674ac6d" title="function of checking format of spin interactions " alt="" coords="430,701,594,727"/>
+<area shape="rect" id="node13" href="$readdef_8c.html#a95ae79a512a0692d24d463d30b41d75a" title="Check Site Number for a quad &#45;&gt; (siteA, siteB, siteC, siteD). " alt="" coords="228,93,344,119"/>
+<area shape="rect" id="node14" href="$readdef_8c.html#a08b2cb6d21dff0fe22a79e9528c94f4f" title="function of checking format of Kondo interactions " alt="" coords="424,751,600,778"/>
+<area shape="rect" id="node15" href="$readdef_8c.html#acc29011dbce0388d85541f1e4afa2be1" title="function of checking spin index for all interactions " alt="" coords="196,245,376,271"/>
+<area shape="rect" id="node16" href="$readdef_8c.html#a1ee27476e504ff51ff417c1922a35929" title="function of getting diagonal components form interall interactions " alt="" coords="217,498,355,525"/>
+<area shape="rect" id="node18" href="$readdef_8c.html#ac94a4ebce9827cf05d7eaaa14d844c50" title="function of checking hermite conditions about interall interactions " alt="" coords="212,447,360,474"/>
+<area shape="rect" id="node19" href="$readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da" title="function of resetting number of interactions " alt="" coords="213,751,359,778"/>
+<area shape="rect" id="node8" href="$readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0" title="function of checking an input data of total2Sz " alt="" coords="456,397,568,423"/>
+<area shape="rect" id="node17" href="$xsetmem_8h.html#a6e158031b8535726c53a77550a24159b" title="setmem_IntAll_Diagonal" alt="" coords="429,549,595,575"/>
+</map>

@@ -40,6 +40,7 @@ var _std_face__vals_8h =
     [ "nintr", "_std_face__vals_8h.html#a4cb48ec77577739531fe689aa31be9d8", null ],
     [ "nsite", "_std_face__vals_8h.html#a177eb069f4ee1a39ae8d0a3fa9d1ba34", null ],
     [ "ntrans", "_std_face__vals_8h.html#ac40d41b88d362bc241de4037ecf7d194", null ],
+    [ "S2", "_std_face__vals_8h.html#a1802954b3de8e84a689424e0379859a0", null ],
     [ "t", "_std_face__vals_8h.html#a87accd1af8e0aff4b818d891374f7cec", null ],
     [ "t0", "_std_face__vals_8h.html#a2a6d90c736b9e880fad815952157136f", null ],
     [ "t1", "_std_face__vals_8h.html#a59692051ca9586d10f35f14d574229da", null ],

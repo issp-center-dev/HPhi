@@ -1,12 +1,21 @@
 var wrapper_m_p_i_8h =
 [
     [ "BarrierMPI", "wrapper_m_p_i_8h.html#a1de4e228440442f34d491eedd7973622", null ],
+    [ "BcastMPI_li", "wrapper_m_p_i_8h.html#a6c950c3f54e22b4572174c6cd4ce36b0", null ],
     [ "exitMPI", "wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed", null ],
     [ "fgetsMPI", "wrapper_m_p_i_8h.html#aa75a96d74dddc8e6921813225e318551", null ],
     [ "FinalizeMPI", "wrapper_m_p_i_8h.html#ab01492e7612823a34a325619f46862e5", null ],
     [ "fopenMPI", "wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae", null ],
     [ "InitializeMPI", "wrapper_m_p_i_8h.html#a24d222d1062d1a2dc4d9aacb506c5c8d", null ],
+    [ "MaxMPI_d", "wrapper_m_p_i_8h.html#ad6b9f4d67bf6d08880e90b54291b2eee", null ],
+    [ "MaxMPI_li", "wrapper_m_p_i_8h.html#a0de87e095a8bdcba6824486057417362", null ],
+    [ "NormMPI_dc", "wrapper_m_p_i_8h.html#a26d9f2a4d2828fca2b8d6d45cea697a2", null ],
+    [ "SumMPI_d", "wrapper_m_p_i_8h.html#a40ff4f9a2622fada050275da64621421", null ],
+    [ "SumMPI_dc", "wrapper_m_p_i_8h.html#a7a90e7c667189b600a621be9856fa650", null ],
+    [ "SumMPI_i", "wrapper_m_p_i_8h.html#aeab38d65c1c82094276a9b250b9a5049", null ],
+    [ "SumMPI_li", "wrapper_m_p_i_8h.html#afd4574e9353708ef2aa039a1721440b8", null ],
     [ "myrank", "wrapper_m_p_i_8h.html#aa8a2431e50f9fc7d8c78af300d5f3bee", null ],
     [ "nproc", "wrapper_m_p_i_8h.html#ae68326adc3b3862f1162832f70727b06", null ],
+    [ "nthreads", "wrapper_m_p_i_8h.html#a2b6a46c4274b223ea03fb4a7b80f4a5a", null ],
     [ "stdoutMPI", "wrapper_m_p_i_8h.html#abacbc82cf67663cd6f3708f1274ac207", null ]
 ];

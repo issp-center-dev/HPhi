@@ -1,0 +1,10 @@
+<map id="FermionHubbard_HoneycombLattice" name="FermionHubbard_HoneycombLattice">
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="485,88,541,114"/>
+<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672" title="StdFace_RequiredVal_i" alt="" coords="253,37,416,64"/>
+<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#a40c0095bc5329e343502d453f929fecc" title="StdFace_PrintVal_d" alt="" coords="265,88,405,114"/>
+<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#afb9e23628e57aea2f08ef65acc308c2a" title="StdFace_NotUsed_i" alt="" coords="264,138,405,165"/>
+<area shape="rect" id="node6" href="$_std_face___model_util_8c.html#a05386999c1e68124dd96f79ccdd80dbd" title="StdFace_NotUsed_d" alt="" coords="262,189,407,216"/>
+<area shape="rect" id="node7" href="$_std_face___model_util_8c.html#ae0bb595ba53b08ff6d94f0fc64f2e96d" title="StdFace_trans" alt="" coords="280,240,389,266"/>
+<area shape="rect" id="node8" href="$_std_face___model_util_8c.html#a0d98ea4af572af9c4ebf147cbb86b3af" title="StdFace_intr" alt="" coords="464,316,561,342"/>
+<area shape="rect" id="node9" href="$_std_face___model_util_8c.html#a2a4d37887a480ebe9a993a2921423f78" title="StdFace_Coulomb" alt="" coords="269,341,401,368"/>
+</map>

@@ -1,12 +1,12 @@
 var NAVTREE =
 [
   [ "HΦ", "index.html", [
-    [ "Data Structures", null, [
-      [ "Data Structures", "annotated.html", "annotated" ],
+    [ "Data Structures", "annotated.html", [
+      [ "Data Structures", "annotated.html", "annotated_dup" ],
       [ "Data Structure Index", "classes.html", null ],
       [ "Data Fields", "functions.html", [
-        [ "All", "functions.html", null ],
-        [ "Variables", "functions_vars.html", null ]
+        [ "All", "functions.html", "functions_dup" ],
+        [ "Variables", "functions_vars.html", "functions_vars" ]
       ] ]
     ] ],
     [ "Files", null, [
@@ -25,11 +25,14 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_c_g___eigen_vector_8c.html",
-"_log_message_8h.html#a69f36fd6428d05cb2726c0457813b8c5",
-"d_s_f_m_t_8c.html#a2bad2f5ded750e7c250a121cdb61166e",
-"globals_b.html",
-"mltply_8h.html#aa4303428561ce299cf4292bc2dad6ce5",
-"sz_8c.html"
+"_error_message_8h.html#aea45b17b6de478069a606f62fac29af7",
+"_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e",
+"d_s_f_m_t-params_8h.html#a57989a561514d3856d95cc1482420325",
+"global_8h.html#a17fc16c2fdea2a0bc69e9efe63e57a7b",
+"mltply_8c.html#a257628b6ed79f7a93d3d2a9a957bc936",
+"mltply_m_p_i_8h.html#ae4ad198537fcc87eb94dba8535607204",
+"struct_define_list.html#af68333a432a614152ea2a2f3b7caf843",
+"xsetmem_8h.html#a14acd96c3ffb508ef72472ea0963955e"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

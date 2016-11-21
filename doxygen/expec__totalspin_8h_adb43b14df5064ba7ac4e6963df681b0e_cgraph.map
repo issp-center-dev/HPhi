@@ -1,0 +1,9 @@
+<map id="expec_totalSz" name="expec_totalSz">
+<area shape="rect" id="node2" href="$expec__totalspin_8c.html#ab7b5839640e77d0bb01982c7be6f2b69" title="totalSz_SpinGC" alt="" coords="171,5,288,32"/>
+<area shape="rect" id="node8" href="$expec__totalspin_8c.html#a408b344e7ab97dc747e3c6c9c9eb892c" title="totalSz_HubbardGC" alt="" coords="159,56,300,83"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="348,5,447,32"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8h.html#a7a90e7c667189b600a621be9856fa650" title="SumMPI_dc" alt="" coords="350,56,445,83"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#a9095e4e1a19d0db69a4461d8988ac682" title="get bit at a site for general spin " alt="" coords="495,5,601,32"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="515,56,581,83"/>
+<area shape="rect" id="node7" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="649,56,705,83"/>
+</map>

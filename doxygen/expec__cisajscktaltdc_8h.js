@@ -5,5 +5,6 @@ var expec__cisajscktaltdc_8h =
     [ "child_Cor_3", "expec__cisajscktaltdc_8h.html#af49db6a67edc4a26bced22b6a3b4c5e1", null ],
     [ "expec_cisajscktaltdc", "expec__cisajscktaltdc_8h.html#ab1e0307962ebf631818025cd262c4bd9", null ],
     [ "expec_cisajscktaltdc_alldiag", "expec__cisajscktaltdc_8h.html#add5844529f50e34cd7a8642cfb700f8b", null ],
-    [ "expec_cisajscktaltdc_alldiag_spin", "expec__cisajscktaltdc_8h.html#a3e224de99736e8ca65d163cf8fda3605", null ]
+    [ "expec_cisajscktaltdc_alldiag_spin", "expec__cisajscktaltdc_8h.html#a3e224de99736e8ca65d163cf8fda3605", null ],
+    [ "Rearray_Interactions", "expec__cisajscktaltdc_8h.html#a2ca27868fab714216654436b769197bc", null ]
 ];

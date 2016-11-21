@@ -1,0 +1,13 @@
+<map id="Spin_SquareLattice" name="Spin_SquareLattice">
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="591,109,647,135"/>
+<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672" title="StdFace_RequiredVal_i" alt="" coords="192,134,355,161"/>
+<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#a40c0095bc5329e343502d453f929fecc" title="StdFace_PrintVal_d" alt="" coords="403,185,543,211"/>
+<area shape="rect" id="node6" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="StdFace_PrintVal_i" alt="" coords="405,235,541,262"/>
+<area shape="rect" id="node7" href="$_std_face___model_util_8c.html#a05386999c1e68124dd96f79ccdd80dbd" title="StdFace_NotUsed_d" alt="" coords="201,83,346,110"/>
+<area shape="rect" id="node8" href="$_std_face___model_util_8c.html#a4b607adce5209d09c9e4ec65d5934fd2" title="StdFace_trans" alt="" coords="219,286,328,313"/>
+<area shape="rect" id="node9" href="$_std_face___model_util_8c.html#a813f61a8f1e52d9a33f17b789e8fb2c1" title="StdFace_SzSz" alt="" coords="218,337,329,363"/>
+<area shape="rect" id="node11" href="$_std_face___model_util_8c.html#acd2cc9b57a295e9667a5922d9e5e02f1" title="StdFace_exchange" alt="" coords="205,387,342,414"/>
+<area shape="rect" id="node12" href="$_std_face___model_util_8c.html#abdf00922e8f647e411e807b9d952aaf7" title="StdFace_Kitaev" alt="" coords="215,438,331,465"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="439,83,506,110"/>
+<area shape="rect" id="node10" href="$_std_face___model_util_8c.html#afe20afd6c3e5eb1c5ce127311c9e02a2" title="StdFace_intr" alt="" coords="424,387,521,414"/>
+</map>

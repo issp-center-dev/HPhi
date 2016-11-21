@@ -1,0 +1,10 @@
+<map id="GC_child_general_int_GeneralSpin_MPIsingle" name="GC_child_general_int_GeneralSpin_MPIsingle">
+<area shape="rect" id="node2" href="$mltply_m_p_i_8c.html#ab674c454b9c1ae861483c53f32c78919" title="X_GC_child_CisAisCjuAjv\l_GeneralSpin_MPIsingle" alt="" coords="223,71,400,112"/>
+<area shape="rect" id="node8" href="$mltply_m_p_i_8c.html#a6e7184b965a03e38d608d900c78708c1" title="X_GC_child_CisAitCjuAju\l_GeneralSpin_MPIsingle" alt="" coords="224,136,399,177"/>
+<area shape="rect" id="node9" href="$mltply_m_p_i_8c.html#a1f383088ec5f7c8f441c6c389b5c187d" title="X_GC_child_CisAitCjuAjv\l_GeneralSpin_MPIsingle" alt="" coords="225,5,398,47"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#a7f1f97c34d65db45cb89116585cabf02" title="function of getting off&#45;diagonal component for general spin " alt="" coords="448,63,619,90"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#ab60f50af237c37fc1cdd44f22ac69264" title="bit check function for general spin " alt="" coords="667,114,789,141"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="500,13,567,39"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#a9095e4e1a19d0db69a4461d8988ac682" title="get bit at a site for general spin " alt="" coords="837,114,944,141"/>
+<area shape="rect" id="node7" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="700,13,756,39"/>
+</map>

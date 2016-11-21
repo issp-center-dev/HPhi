@@ -1,0 +1,38 @@
+<map id="expec_cisajscktaltdc" name="expec_cisajscktaltdc">
+<area shape="rect" id="node2" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="462,153,599,180"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="819,204,875,231"/>
+<area shape="rect" id="node5" href="$log_8h.html#a6e1528922a48320b30d56b93f1cc8370" title="Functions for writing a time log. " alt="" coords="197,204,401,231"/>
+<area shape="rect" id="node6" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="childfopenMPI" alt="" coords="477,255,584,281"/>
+<area shape="rect" id="node8" href="$mltply_8h.html#ad8750d6b426c68d0e931849d094b11ce" title="child_general_int_GetInfo" alt="" coords="213,931,386,957"/>
+<area shape="rect" id="node9" href="$mltply_8h.html#a6e5c6a3af522a385b4ee60f66efb2557" title="GC_child_CisAisCisAis\l_element" alt="" coords="219,749,379,790"/>
+<area shape="rect" id="node11" href="$mltply_8h.html#a5a389f0d9543e02b5d2e19df0198bafc" title="GC_child_CisAisCjtAku\l_element" alt="" coords="219,487,380,529"/>
+<area shape="rect" id="node17" href="$mltply_8h.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="GC_child_CisAjtCkuAku\l_element" alt="" coords="217,553,382,594"/>
+<area shape="rect" id="node18" href="$mltply_8h.html#a6d06655a28258eea84191579396219e1" title="GC_child_CisAjtCkuAlv\l_element" alt="" coords="219,357,380,398"/>
+<area shape="rect" id="node19" href="$mltply_8h.html#a11e78b661246513350ad6ee2e3985d9f" title="child_CisAisCisAis\l_element" alt="" coords="233,814,365,855"/>
+<area shape="rect" id="node20" href="$mltply_8h.html#a985bdb0d96a952fc6c447e12ea2b906a" title="child_CisAisCjtAku\l_element" alt="" coords="233,618,366,659"/>
+<area shape="rect" id="node21" href="$mltply_8h.html#a8575bdd2f35cf049753b0617d2693edb" title="child_CisAjtCkuAku\l_element" alt="" coords="230,683,369,725"/>
+<area shape="rect" id="node22" href="$mltply_8h.html#a2e64839292192a5851d4be60a4f3561a" title="child_CisAjtCkuAlv\l_element" alt="" coords="233,422,366,463"/>
+<area shape="rect" id="node23" href="$mltply_8h.html#a9f7fc788e6ba0b42f84e2c5a4d187f4a" title="child_CisAisCisAis\l_spin_element" alt="" coords="233,982,365,1023"/>
+<area shape="rect" id="node25" href="$mltply_8h.html#a40a1adaf57adca8173be6dbcf260aabf" title="X_child_exchange_spin\l_element" alt="" coords="449,775,612,817"/>
+<area shape="rect" id="node26" href="$mltply_8h.html#aa25730bebedaef0567be1d1d3a2aa9f7" title="GC_child_CisAisCisAis\l_spin_element" alt="" coords="219,1047,379,1089"/>
+<area shape="rect" id="node28" href="$mltply_8h.html#af675fc77ae3b652589d52ff3fa667b77" title="GC_child_CisAisCitAiu\l_spin_element" alt="" coords="221,1113,378,1154"/>
+<area shape="rect" id="node30" href="$mltply_8h.html#a220085102d48735b8111fe704e5d5993" title="GC_child_CisAitCiuAiu\l_spin_element" alt="" coords="220,1178,379,1219"/>
+<area shape="rect" id="node31" href="$mltply_8h.html#a1b6c6239f632e04606cf340f024d2ed3" title="GC_child_CisAitCiuAiv\l_spin_element" alt="" coords="221,1243,378,1285"/>
+<area shape="rect" id="node32" href="$mltply_8h.html#a5d9e5a462ca77248cbae177465fa02c3" title="X_SpinGC_CisAis" alt="" coords="234,1309,365,1336"/>
+<area shape="rect" id="node33" href="$mltply_8h.html#a707ac2de8043df3be28fcf3c81c44362" title="X_SpinGC_CisAit" alt="" coords="236,1360,363,1387"/>
+<area shape="rect" id="node34" href="$bitcalc_8c.html#ab60f50af237c37fc1cdd44f22ac69264" title="bit check function for general spin " alt="" coords="469,1436,592,1463"/>
+<area shape="rect" id="node36" href="$bitcalc_8c.html#a770fbdea2648a2bf0725601d7ea08a62" title="function of getting off&#45;diagonal component for general spin " alt="" coords="214,1461,385,1488"/>
+<area shape="rect" id="node37" href="$log_8h.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="252,305,347,332"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="671,103,756,129"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae" title="fopenMPI" alt="" coords="674,255,753,281"/>
+<area shape="rect" id="node10" href="$mltply_8c.html#aa81e90673aeb377803302428fe3c7b64" title="X_CisAis" alt="" coords="493,659,569,685"/>
+<area shape="rect" id="node12" href="$mltply_8c.html#a7a06ee438e6410e395f2d2142529bb34" title="X_CisAjt" alt="" coords="494,527,567,553"/>
+<area shape="rect" id="node13" href="$sgn_8h.html#a8a30f55fd2823810152933258e2f138d" title="sgn" alt="" coords="691,441,735,468"/>
+<area shape="rect" id="node14" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign " alt="" coords="683,527,744,553"/>
+<area shape="rect" id="node15" href="$bitcalc_8c.html#ad51df85af8483eabad4118703003fc46" title="function of getting off&#45;diagonal component " alt="" coords="665,680,762,707"/>
+<area shape="rect" id="node16" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="815,680,879,707"/>
+<area shape="rect" id="node24" href="$mltply_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="X_Spin_CisAis" alt="" coords="475,989,586,1016"/>
+<area shape="rect" id="node27" href="$mltply_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="X_SpinGC_CisAis" alt="" coords="465,1120,596,1147"/>
+<area shape="rect" id="node29" href="$mltply_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="X_SpinGC_CisAit" alt="" coords="467,1185,594,1212"/>
+<area shape="rect" id="node35" href="$bitcalc_8c.html#a9095e4e1a19d0db69a4461d8988ac682" title="get bit at a site for general spin " alt="" coords="660,1436,767,1463"/>
+</map>
