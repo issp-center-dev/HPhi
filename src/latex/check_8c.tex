@@ -1,0 +1,73 @@
+\hypertarget{check_8c}{}\section{check.\+c File Reference}
+\label{check_8c}\index{check.\+c@{check.\+c}}
+
+
+File for giving a function of calculating size of Hilbelt space.  
+
+
+{\ttfamily \#include \char`\"{}bitcalc.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}sz.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}File\+I\+O.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mfmemory.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}check.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Check\+M\+P\+I.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{check_8c_a5b7fbf486ba8e11cfc972c2af0611193}{check} (struct Bind\+Struct $\ast$X)
+\begin{DoxyCompactList}\small\item\em A program to check size of dimension for hirbert-\/space. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File for giving a function of calculating size of Hilbelt space. 
+
+\begin{DoxyVersion}{Version}
+0.\+1, 0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{check_8c_a5b7fbf486ba8e11cfc972c2af0611193}{}\index{check.\+c@{check.\+c}!check@{check}}
+\index{check@{check}!check.\+c@{check.\+c}}
+\subsubsection[{check(struct Bind\+Struct $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int check (
+\begin{DoxyParamCaption}
+\item[{struct Bind\+Struct $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{check_8c_a5b7fbf486ba8e11cfc972c2af0611193}
+
+
+A program to check size of dimension for hirbert-\/space. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em X} & Common data set used in H\+Phi.\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em T\+R\+U\+E} & normally finished \\
+\hline
+{\em F\+A\+L\+S\+E} & unnormally finished \\
+\hline
+{\em M\+P\+I\+F\+A\+L\+S\+E} & Check\+M\+P\+I unormally finished \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2
+\end{DoxyVersion}
+add function of calculating hirbert space for canonical ensemble.
+
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}

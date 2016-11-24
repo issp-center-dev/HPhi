@@ -1,0 +1,303 @@
+\hypertarget{sz_8c}{}\section{sz.\+c File Reference}
+\label{sz_8c}\index{sz.\+c@{sz.\+c}}
+
+
+File List.  
+
+
+{\ttfamily \#include $<$bitcalc.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}mfmemory.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}File\+I\+O.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}sz.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}xsetmem.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{sz_8c_ac329cb57c6b95deb1189bad49505e9ba}{sz} (struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+)
+\item 
+long int \hyperlink{sz_8c_acde07cfd887113fd7624247edc1b9a31}{Binomial} (int n, int k, long int $\ast$$\ast$comb, int Nsite)
+\item 
+int \hyperlink{sz_8c_a78ae632d86cfad8be3787f304b1e6c6b}{child\+\_\+omp\+\_\+sz} (long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)
+\item 
+\hypertarget{sz_8c_ad2c800ee4b39c008aec04eb79385fb85}{}int {\bfseries child\+\_\+omp\+\_\+sz\+\_\+hacker} (long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)\label{sz_8c_ad2c800ee4b39c008aec04eb79385fb85}
+
+\item 
+int \hyperlink{sz_8c_a406b25376cf793f5281a82f433605117}{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo} (long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)
+\item 
+int \hyperlink{sz_8c_a8f36bd38249e55d14a0e1a9da9d49a9c}{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo\+G\+C} (long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)
+\item 
+int \hyperlink{sz_8c_ac49f50334c3a68106c310a0982c111de}{child\+\_\+omp\+\_\+sz\+\_\+spin} (long unsigned int ib, long unsigned int ihfbit, unsigned int N, struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)
+\item 
+\hypertarget{sz_8c_a1a39dc13f7b6dca406ecc4e17212ddf9}{}int {\bfseries child\+\_\+omp\+\_\+sz\+\_\+spin\+\_\+hacker} (long unsigned int ib, long unsigned int ihfbit, unsigned int N, struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)\label{sz_8c_a1a39dc13f7b6dca406ecc4e17212ddf9}
+
+\item 
+int \hyperlink{sz_8c_a64400973f303ede60a1874ddc95f6357}{child\+\_\+omp\+\_\+sz\+\_\+\+General\+Spin} (long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+\+Sz\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+\+Sz\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)
+\item 
+int \hyperlink{sz_8c_af01a29b319a21fbaeb2a099bedd86e77}{Read\+\_\+sz} (struct Bind\+Struct $\ast$X, const long unsigned int irght, const long unsigned int ilft, const long unsigned int ihfbit, long unsigned int $\ast$i\+\_\+max)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File List. 
+
+\begin{DoxyVersion}{Version}
+0.\+2
+
+0.\+1
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{sz_8c_acde07cfd887113fd7624247edc1b9a31}{}\index{sz.\+c@{sz.\+c}!Binomial@{Binomial}}
+\index{Binomial@{Binomial}!sz.\+c@{sz.\+c}}
+\subsubsection[{Binomial(int n, int k, long int $\ast$$\ast$comb, int Nsite)}]{\setlength{\rightskip}{0pt plus 5cm}long int Binomial (
+\begin{DoxyParamCaption}
+\item[{int}]{n, }
+\item[{int}]{k, }
+\item[{long int $\ast$$\ast$}]{comb, }
+\item[{int}]{Nsite}
+\end{DoxyParamCaption}
+)}\label{sz_8c_acde07cfd887113fd7624247edc1b9a31}
+
+\begin{DoxyParams}{Parameters}
+{\em n} & \\
+\hline
+{\em k} & \\
+\hline
+{\em comb} & \\
+\hline
+{\em Nsite} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{sz_8c_a78ae632d86cfad8be3787f304b1e6c6b}{}\index{sz.\+c@{sz.\+c}!child\+\_\+omp\+\_\+sz@{child\+\_\+omp\+\_\+sz}}
+\index{child\+\_\+omp\+\_\+sz@{child\+\_\+omp\+\_\+sz}!sz.\+c@{sz.\+c}}
+\subsubsection[{child\+\_\+omp\+\_\+sz(long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$\+X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)}]{\setlength{\rightskip}{0pt plus 5cm}int child\+\_\+omp\+\_\+sz (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{ib, }
+\item[{long unsigned int}]{ihfbit, }
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{long unsigned int $\ast$}]{list\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+2\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+jb\+\_\+}
+\end{DoxyParamCaption}
+)}\label{sz_8c_a78ae632d86cfad8be3787f304b1e6c6b}
+
+\begin{DoxyParams}{Parameters}
+{\em ib} & \\
+\hline
+{\em ihfbit} & \\
+\hline
+{\em N2} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{sz_8c_a64400973f303ede60a1874ddc95f6357}{}\index{sz.\+c@{sz.\+c}!child\+\_\+omp\+\_\+sz\+\_\+\+General\+Spin@{child\+\_\+omp\+\_\+sz\+\_\+\+General\+Spin}}
+\index{child\+\_\+omp\+\_\+sz\+\_\+\+General\+Spin@{child\+\_\+omp\+\_\+sz\+\_\+\+General\+Spin}!sz.\+c@{sz.\+c}}
+\subsubsection[{child\+\_\+omp\+\_\+sz\+\_\+\+General\+Spin(long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$\+X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+\+Sz\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+\+Sz\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)}]{\setlength{\rightskip}{0pt plus 5cm}int child\+\_\+omp\+\_\+sz\+\_\+\+General\+Spin (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{ib, }
+\item[{long unsigned int}]{ihfbit, }
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{long unsigned int $\ast$}]{list\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+2\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+1\+\_\+\+Sz\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+2\+\_\+\+Sz\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+jb\+\_\+}
+\end{DoxyParamCaption}
+)}\label{sz_8c_a64400973f303ede60a1874ddc95f6357}
+
+\begin{DoxyParams}{Parameters}
+{\em ib} & \\
+\hline
+{\em ihfbit} & \\
+\hline
+{\em N} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{sz_8c_a406b25376cf793f5281a82f433605117}{}\index{sz.\+c@{sz.\+c}!child\+\_\+omp\+\_\+sz\+\_\+\+Kondo@{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo}}
+\index{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo@{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo}!sz.\+c@{sz.\+c}}
+\subsubsection[{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo(long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$\+X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)}]{\setlength{\rightskip}{0pt plus 5cm}int child\+\_\+omp\+\_\+sz\+\_\+\+Kondo (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{ib, }
+\item[{long unsigned int}]{ihfbit, }
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{long unsigned int $\ast$}]{list\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+2\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+jb\+\_\+}
+\end{DoxyParamCaption}
+)}\label{sz_8c_a406b25376cf793f5281a82f433605117}
+
+\begin{DoxyParams}{Parameters}
+{\em ib} & \\
+\hline
+{\em ihfbit} & \\
+\hline
+{\em N2} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{sz_8c_a8f36bd38249e55d14a0e1a9da9d49a9c}{}\index{sz.\+c@{sz.\+c}!child\+\_\+omp\+\_\+sz\+\_\+\+Kondo\+G\+C@{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo\+G\+C}}
+\index{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo\+G\+C@{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo\+G\+C}!sz.\+c@{sz.\+c}}
+\subsubsection[{child\+\_\+omp\+\_\+sz\+\_\+\+Kondo\+G\+C(long unsigned int ib, long unsigned int ihfbit, struct Bind\+Struct $\ast$\+X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)}]{\setlength{\rightskip}{0pt plus 5cm}int child\+\_\+omp\+\_\+sz\+\_\+\+Kondo\+G\+C (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{ib, }
+\item[{long unsigned int}]{ihfbit, }
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{long unsigned int $\ast$}]{list\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+2\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+jb\+\_\+}
+\end{DoxyParamCaption}
+)}\label{sz_8c_a8f36bd38249e55d14a0e1a9da9d49a9c}
+
+\begin{DoxyParams}{Parameters}
+{\em ib} & \\
+\hline
+{\em ihfbit} & \\
+\hline
+{\em N2} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{sz_8c_ac49f50334c3a68106c310a0982c111de}{}\index{sz.\+c@{sz.\+c}!child\+\_\+omp\+\_\+sz\+\_\+spin@{child\+\_\+omp\+\_\+sz\+\_\+spin}}
+\index{child\+\_\+omp\+\_\+sz\+\_\+spin@{child\+\_\+omp\+\_\+sz\+\_\+spin}!sz.\+c@{sz.\+c}}
+\subsubsection[{child\+\_\+omp\+\_\+sz\+\_\+spin(long unsigned int ib, long unsigned int ihfbit, unsigned int N, struct Bind\+Struct $\ast$\+X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+, long unsigned int $\ast$list\+\_\+jb\+\_\+)}]{\setlength{\rightskip}{0pt plus 5cm}int child\+\_\+omp\+\_\+sz\+\_\+spin (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{ib, }
+\item[{long unsigned int}]{ihfbit, }
+\item[{unsigned int}]{N, }
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{long unsigned int $\ast$}]{list\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+2\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+jb\+\_\+}
+\end{DoxyParamCaption}
+)}\label{sz_8c_ac49f50334c3a68106c310a0982c111de}
+
+\begin{DoxyParams}{Parameters}
+{\em ib} & \\
+\hline
+{\em ihfbit} & \\
+\hline
+{\em N} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{sz_8c_af01a29b319a21fbaeb2a099bedd86e77}{}\index{sz.\+c@{sz.\+c}!Read\+\_\+sz@{Read\+\_\+sz}}
+\index{Read\+\_\+sz@{Read\+\_\+sz}!sz.\+c@{sz.\+c}}
+\subsubsection[{Read\+\_\+sz(struct Bind\+Struct $\ast$\+X, const long unsigned int irght, const long unsigned int ilft, const long unsigned int ihfbit, long unsigned int $\ast$i\+\_\+max)}]{\setlength{\rightskip}{0pt plus 5cm}int Read\+\_\+sz (
+\begin{DoxyParamCaption}
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{const long unsigned int}]{irght, }
+\item[{const long unsigned int}]{ilft, }
+\item[{const long unsigned int}]{ihfbit, }
+\item[{long unsigned int $\ast$}]{i\+\_\+max}
+\end{DoxyParamCaption}
+)}\label{sz_8c_af01a29b319a21fbaeb2a099bedd86e77}
+
+\begin{DoxyParams}{Parameters}
+{\em X} & \\
+\hline
+{\em irght} & \\
+\hline
+{\em ilft} & \\
+\hline
+{\em ihfbit} & \\
+\hline
+{\em i\+\_\+max} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{sz_8c_ac329cb57c6b95deb1189bad49505e9ba}{}\index{sz.\+c@{sz.\+c}!sz@{sz}}
+\index{sz@{sz}!sz.\+c@{sz.\+c}}
+\subsubsection[{sz(struct Bind\+Struct $\ast$\+X, long unsigned int $\ast$list\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+1\+\_\+, long unsigned int $\ast$list\+\_\+2\+\_\+2\+\_\+)}]{\setlength{\rightskip}{0pt plus 5cm}int sz (
+\begin{DoxyParamCaption}
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{long unsigned int $\ast$}]{list\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+1\+\_\+, }
+\item[{long unsigned int $\ast$}]{list\+\_\+2\+\_\+2\+\_\+}
+\end{DoxyParamCaption}
+)}\label{sz_8c_ac329cb57c6b95deb1189bad49505e9ba}
+
+\begin{DoxyParams}{Parameters}
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}

@@ -1,0 +1,75 @@
+\hypertarget{_calc_spectrum_by_lanczos_8c}{}\section{Calc\+Spectrum\+By\+Lanczos.\+c File Reference}
+\label{_calc_spectrum_by_lanczos_8c}\index{Calc\+Spectrum\+By\+Lanczos.\+c@{Calc\+Spectrum\+By\+Lanczos.\+c}}
+
+
+File for givinvg functions of calculating spectrum by Lanczos.  
+
+
+{\ttfamily \#include \char`\"{}Calc\+Spectrum\+By\+Lanczos.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Lanczos\+\_\+\+Eigen\+Value.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}File\+I\+O.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mfmemory.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Calc\+Time.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{_calc_spectrum_by_lanczos_8c_ad93bf615dd8c2571525cec5a40861d32}{Calc\+Spectrum\+By\+Lanczos} (struct E\+D\+Main\+Cal\+Struct $\ast$X, double complex $\ast$tmp\+\_\+v1, double dnorm, int Nomega, double complex $\ast$dc\+Spectrum, double complex $\ast$dcomega)
+\begin{DoxyCompactList}\small\item\em A main function to calculate spectrum by Lanczos. \end{DoxyCompactList}\item 
+\hypertarget{_calc_spectrum_by_lanczos_8c_aef3837419fbdcabbb82bee3cd912b6c8}{}int {\bfseries Get\+Spectrum\+By\+Tridiagonal\+Matrix\+Components} (double $\ast$tmp\+\_\+alpha, double $\ast$tmp\+\_\+beta, double dnorm, double complex dcomega, double complex $\ast$dc\+Spectrum, unsigned long int il\+Lanczos\+Stp)\label{_calc_spectrum_by_lanczos_8c_aef3837419fbdcabbb82bee3cd912b6c8}
+
+\item 
+\hypertarget{_calc_spectrum_by_lanczos_8c_a3e5349b13352a4da1915a469aa5276ef}{}int {\bfseries Read\+T\+M\+Components} (struct E\+D\+Main\+Cal\+Struct $\ast$X, double $\ast$\+\_\+dnorm, unsigned long int $\ast$\+\_\+i\+\_\+max)\label{_calc_spectrum_by_lanczos_8c_a3e5349b13352a4da1915a469aa5276ef}
+
+\item 
+\hypertarget{_calc_spectrum_by_lanczos_8c_a5af85492f28a3149d635fdbaffa17aa5}{}int {\bfseries Output\+T\+M\+Components} (struct E\+D\+Main\+Cal\+Struct $\ast$X, double $\ast$\+\_\+alpha, double $\ast$\+\_\+beta, double \+\_\+dnorm, int li\+Lanczos\+Stp)\label{_calc_spectrum_by_lanczos_8c_a5af85492f28a3149d635fdbaffa17aa5}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File for givinvg functions of calculating spectrum by Lanczos. 
+
+\begin{DoxyVersion}{Version}
+1.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{_calc_spectrum_by_lanczos_8c_ad93bf615dd8c2571525cec5a40861d32}{}\index{Calc\+Spectrum\+By\+Lanczos.\+c@{Calc\+Spectrum\+By\+Lanczos.\+c}!Calc\+Spectrum\+By\+Lanczos@{Calc\+Spectrum\+By\+Lanczos}}
+\index{Calc\+Spectrum\+By\+Lanczos@{Calc\+Spectrum\+By\+Lanczos}!Calc\+Spectrum\+By\+Lanczos.\+c@{Calc\+Spectrum\+By\+Lanczos.\+c}}
+\subsubsection[{Calc\+Spectrum\+By\+Lanczos(struct E\+D\+Main\+Cal\+Struct $\ast$\+X, double complex $\ast$tmp\+\_\+v1, double dnorm, int Nomega, double complex $\ast$dc\+Spectrum, double complex $\ast$dcomega)}]{\setlength{\rightskip}{0pt plus 5cm}int Calc\+Spectrum\+By\+Lanczos (
+\begin{DoxyParamCaption}
+\item[{struct E\+D\+Main\+Cal\+Struct $\ast$}]{X, }
+\item[{double complex $\ast$}]{tmp\+\_\+v1, }
+\item[{double}]{dnorm, }
+\item[{int}]{Nomega, }
+\item[{double complex $\ast$}]{dc\+Spectrum, }
+\item[{double complex $\ast$}]{dcomega}
+\end{DoxyParamCaption}
+)}\label{_calc_spectrum_by_lanczos_8c_ad93bf615dd8c2571525cec5a40861d32}
+
+
+A main function to calculate spectrum by Lanczos. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em X} & Calc\+Struct list for getting and pushing calculation information \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished \\
+\hline
+{\em -\/1} & unnormally finished\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+1.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}

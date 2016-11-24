@@ -1,0 +1,76 @@
+\hypertarget{_calc_by_lanczos_8c}{}\section{Calc\+By\+Lanczos.\+c File Reference}
+\label{_calc_by_lanczos_8c}\index{Calc\+By\+Lanczos.\+c@{Calc\+By\+Lanczos.\+c}}
+
+
+File for givinvg functions of calculating eigenvalues and eigenvectors by Lanczos method.  
+
+
+{\ttfamily \#include \char`\"{}expec\+\_\+cisajs.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}expec\+\_\+cisajscktaltdc.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}expec\+\_\+totalspin.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}C\+G\+\_\+\+Eigen\+Vector.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}expec\+\_\+energy\+\_\+flct.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Lanczos\+\_\+\+Eigen\+Value.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Lanczos\+\_\+\+Eigen\+Vector.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Calc\+By\+Lanczos.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}File\+I\+O.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Calc\+Time.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{_calc_by_lanczos_8c_a4efefe8077d976196c07adb0803ce2ff}{Calc\+By\+Lanczos} (struct E\+D\+Main\+Cal\+Struct $\ast$X)
+\begin{DoxyCompactList}\small\item\em A main function to calculate eigenvalues and eigenvectors by Lanczos method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File for givinvg functions of calculating eigenvalues and eigenvectors by Lanczos method. 
+
+\begin{DoxyVersion}{Version}
+0.\+1, 0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{_calc_by_lanczos_8c_a4efefe8077d976196c07adb0803ce2ff}{}\index{Calc\+By\+Lanczos.\+c@{Calc\+By\+Lanczos.\+c}!Calc\+By\+Lanczos@{Calc\+By\+Lanczos}}
+\index{Calc\+By\+Lanczos@{Calc\+By\+Lanczos}!Calc\+By\+Lanczos.\+c@{Calc\+By\+Lanczos.\+c}}
+\subsubsection[{Calc\+By\+Lanczos(struct E\+D\+Main\+Cal\+Struct $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Calc\+By\+Lanczos (
+\begin{DoxyParamCaption}
+\item[{struct E\+D\+Main\+Cal\+Struct $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{_calc_by_lanczos_8c_a4efefe8077d976196c07adb0803ce2ff}
+
+
+A main function to calculate eigenvalues and eigenvectors by Lanczos method. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em X} & Calc\+Struct list for getting and pushing calculation information \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished \\
+\hline
+{\em -\/1} & unnormally finished\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2015/10/20 add function of using a flag of i\+Calc\+Eigen\+Vec 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}

@@ -1,0 +1,889 @@
+\hypertarget{readdef_8c}{}\section{readdef.\+c File Reference}
+\label{readdef_8c}\index{readdef.\+c@{readdef.\+c}}
+
+
+File to define functions of reading input files.  
+
+
+{\ttfamily \#include \char`\"{}Common.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}readdef.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$ctype.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}Log\+Message.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}version\+\_\+major.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}version\+\_\+miner.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}version\+\_\+patch.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{readdef_8c_a21479192d729f0d76654f014b63b6d7a}{Read\+Def\+File\+Error} (const char $\ast$defname)
+\begin{DoxyCompactList}\small\item\em Error Function of reading def files. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a}{Validate\+Value} (const int icheck\+Value, const int ilowest\+Value, const int i\+Highest\+Value)
+\begin{DoxyCompactList}\small\item\em Function of Validating value. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_ad8ab1bf637b562388b376ffe8bbff91b}{Check\+K\+W} (const char $\ast$c\+K\+W, char c\+K\+W\+List\mbox{[}$\,$\mbox{]}\mbox{[}D\+\_\+\+Char\+Tmp\+Read\+Def\mbox{]}, int i\+Size\+Of\+K\+Widx, int $\ast$i\+K\+Widx)
+\begin{DoxyCompactList}\small\item\em Function of Checking keyword in Name\+List file. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a3d8c84b499f7188fc876ad1d53349b79}{Get\+K\+W\+With\+Idx} (char $\ast$ctmp\+Line, char $\ast$ctmp, int $\ast$itmp)
+\begin{DoxyCompactList}\small\item\em Function of Getting keyword and it\textquotesingle{}s variable from characters. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_ab8b765c6b13b09923368a2c8bec319ca}{Readcalcmod\+File} (const char $\ast$defname, struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em Function of Reading calcmod file. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a500b57266b13cf3bc4a89f222179a03d}{Get\+File\+Name} (const char $\ast$c\+File\+List\+Name\+File, char c\+File\+Name\+List\mbox{[}$\,$\mbox{]}\mbox{[}D\+\_\+\+Char\+Tmp\+Read\+Def\mbox{]})
+\begin{DoxyCompactList}\small\item\em Function of Fitting File\+Name. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a17c76a94fb506b26d2c69919ff9d5cd1}{Read\+Def\+File\+N\+Int} (char $\ast$x\+Name\+List\+File, struct Define\+List $\ast$X, struct Boost\+List $\ast$x\+Boost)
+\begin{DoxyCompactList}\small\item\em Function of reading informations from def files. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a052f987ad0a4602ab76d31af1c257e30}{Read\+Def\+File\+Idx\+Para} (struct Define\+List $\ast$X, struct Boost\+List $\ast$x\+Boost)
+\begin{DoxyCompactList}\small\item\em function of reading def files to get keyword index \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_abb604bcd282e6dea7ea681e43254f4f9}{Check\+Site} (const int i\+Site, const int i\+Max\+Num)
+\begin{DoxyCompactList}\small\item\em Check Site Number. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_aeedd55bd700231dcdf39d36d6361719d}{Check\+Pair\+Site} (const int i\+Site1, const int i\+Site2, const int i\+Max\+Num)
+\begin{DoxyCompactList}\small\item\em Check Site Number for a pair -\/$>$ (site\+A, site\+B). \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a95ae79a512a0692d24d463d30b41d75a}{Check\+Quad\+Site} (const int i\+Site1, const int i\+Site2, const int i\+Site3, const int i\+Site4, const int i\+Max\+Num)
+\begin{DoxyCompactList}\small\item\em Check Site Number for a quad -\/$>$ (site\+A, site\+B, site\+C, site\+D). \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a512f5660363476a6f0c915ea496a9943}{Check\+Transfer\+Hermite} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em Check Hermite for Transfer integrals. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_ac94a4ebce9827cf05d7eaaa14d844c50}{Check\+Inter\+All\+Hermite} (const struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of checking hermite conditions about interall interactions \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a1ee27476e504ff51ff417c1922a35929}{Get\+Diagonal\+Inter\+All} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of getting diagonal components form interall interactions \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a8bc4135515c28a940d030463bb568a9d}{Judge\+Def\+Type} (const int argc, char $\ast$argv\mbox{[}$\,$\mbox{]}, int $\ast$mode)
+\begin{DoxyCompactList}\small\item\em function of judging a type of define files. \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_afbe7cae20c834c11ef23ad8a1674ac6d}{Check\+Format\+For\+Spin\+Int} (const int site1, const int site2, const int site3, const int site4)
+\begin{DoxyCompactList}\small\item\em function of checking format of spin interactions \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a08b2cb6d21dff0fe22a79e9528c94f4f}{Check\+Format\+For\+Kondo\+Int} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of checking format of Kondo interactions \end{DoxyCompactList}\item 
+void \hyperlink{readdef_8c_a961b43e36e61cc013d0188dc268707a2}{Set\+Convergence\+Factor} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function to set convergence factors \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a33a451cbb9e518962b7379382cd6b117}{Check\+Loc\+Spin} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of checking indecies of localized spin \end{DoxyCompactList}\item 
+void \hyperlink{readdef_8c_a4eaefb0cf68dd2e8cb6cc64b831d67da}{Reset\+Interaction\+Num} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of resetting number of interactions \end{DoxyCompactList}\item 
+void \hyperlink{readdef_8c_a1422ba60c3e8b188b44a30ed63e4ce68}{Initialize\+Interaction\+Num} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of initializeing interactions \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_acc29011dbce0388d85541f1e4afa2be1}{Check\+Spin\+Index\+For\+Inter\+All} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of checking spin index for all interactions \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_ac7c21de82671cc25f4319b55039c4e41}{Check\+Spin\+Index\+For\+Trans} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of checking spin index for transfers \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_a41c26debd050ab7eaab68b5ee0caf0a0}{Check\+Total2\+Sz} (struct Define\+List $\ast$X)
+\begin{DoxyCompactList}\small\item\em function of checking an input data of total2\+Sz \end{DoxyCompactList}\item 
+int \hyperlink{readdef_8c_afad6a8fbb4fc6acbd22bd70e699eb21c}{Check\+Words} (const char $\ast$ctmp, const char $\ast$c\+Key\+Word)
+\begin{DoxyCompactList}\small\item\em function of checking whether ctmp is same as c\+Key\+Word or not \end{DoxyCompactList}\item 
+\hypertarget{readdef_8c_afa1a7211e33cdb1be5abc85e4bb42d9c}{}int {\bfseries Get\+File\+Name\+By\+K\+W} (int i\+K\+Widx, char $\ast$$\ast$File\+Name)\label{readdef_8c_afa1a7211e33cdb1be5abc85e4bb42d9c}
+
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{readdef_8c_aa1a4cb0fc2864b92690212e05951baa8}{}int {\bfseries D\+\_\+i\+K\+W\+Num\+Def} = sizeof(c\+K\+W\+List\+Of\+File\+Name\+List)/sizeof(c\+K\+W\+List\+Of\+File\+Name\+List\mbox{[}0\mbox{]})\label{readdef_8c_aa1a4cb0fc2864b92690212e05951baa8}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File to define functions of reading input files. 
+
+
+
+\subsection{Function Documentation}
+\hypertarget{readdef_8c_a08b2cb6d21dff0fe22a79e9528c94f4f}{}\index{readdef.\+c@{readdef.\+c}!Check\+Format\+For\+Kondo\+Int@{Check\+Format\+For\+Kondo\+Int}}
+\index{Check\+Format\+For\+Kondo\+Int@{Check\+Format\+For\+Kondo\+Int}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Format\+For\+Kondo\+Int(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Format\+For\+Kondo\+Int (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a08b2cb6d21dff0fe22a79e9528c94f4f}
+
+
+function of checking format of Kondo interactions 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & define list to get information of interall interactions\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & format is correct \\
+\hline
+{\em -\/1} & format is incorrect \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_afbe7cae20c834c11ef23ad8a1674ac6d}{}\index{readdef.\+c@{readdef.\+c}!Check\+Format\+For\+Spin\+Int@{Check\+Format\+For\+Spin\+Int}}
+\index{Check\+Format\+For\+Spin\+Int@{Check\+Format\+For\+Spin\+Int}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Format\+For\+Spin\+Int(const int site1, const int site2, const int site3, const int site4)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Format\+For\+Spin\+Int (
+\begin{DoxyParamCaption}
+\item[{const int}]{site1, }
+\item[{const int}]{site2, }
+\item[{const int}]{site3, }
+\item[{const int}]{site4}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_afbe7cae20c834c11ef23ad8a1674ac6d}
+
+
+function of checking format of spin interactions 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em site1} & a site number on site1. \\
+\hline
+\mbox{\tt in}  & {\em site2} & a site number on site2. \\
+\hline
+\mbox{\tt in}  & {\em site3} & a site number on site3. \\
+\hline
+\mbox{\tt in}  & {\em site4} & a site number on site4.\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & format is correct \\
+\hline
+{\em -\/1} & format is incorrect \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_ac94a4ebce9827cf05d7eaaa14d844c50}{}\index{readdef.\+c@{readdef.\+c}!Check\+Inter\+All\+Hermite@{Check\+Inter\+All\+Hermite}}
+\index{Check\+Inter\+All\+Hermite@{Check\+Inter\+All\+Hermite}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Inter\+All\+Hermite(const struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Inter\+All\+Hermite (
+\begin{DoxyParamCaption}
+\item[{const struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_ac94a4ebce9827cf05d7eaaa14d844c50}
+
+
+function of checking hermite conditions about interall interactions 
+
+
+\begin{DoxyParams}{Parameters}
+{\em X} & define list to get interall off diagonal interactions\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & Hermite condition is satisfied \\
+\hline
+{\em -\/1} & Hermite condition is not satisfied \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2
+\end{DoxyVersion}
+rearray a Inter\+All\+\_\+\+Off\+Diagonal array to satisfy a condition of hermite conjugation between 2$\ast$i and 2$\ast$i+1 components.
+
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_ad8ab1bf637b562388b376ffe8bbff91b}{}\index{readdef.\+c@{readdef.\+c}!Check\+K\+W@{Check\+K\+W}}
+\index{Check\+K\+W@{Check\+K\+W}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+K\+W(const char $\ast$c\+K\+W, char c\+K\+W\+List[][D\+\_\+\+Char\+Tmp\+Read\+Def], int i\+Size\+Of\+K\+Widx, int $\ast$i\+K\+Widx)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+K\+W (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{c\+K\+W, }
+\item[{char}]{c\+K\+W\+List\mbox{[}$\,$\mbox{]}\mbox{[}\+D\+\_\+\+Char\+Tmp\+Read\+Def\mbox{]}, }
+\item[{int}]{i\+Size\+Of\+K\+Widx, }
+\item[{int $\ast$}]{i\+K\+Widx}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_ad8ab1bf637b562388b376ffe8bbff91b}
+
+
+Function of Checking keyword in Name\+List file. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \+\_\+c\+K\+W} & keyword candidate \\
+\hline
+\mbox{\tt in}  & {\em \+\_\+c\+K\+W\+List} & Reffercnce of keyword List \\
+\hline
+\mbox{\tt in}  & {\em i\+Size\+Of\+K\+Widx} & number of keyword \\
+\hline
+\mbox{\tt out}  & {\em \+\_\+i\+K\+Widx} & index of keyword \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & keyword is correct. \\
+\hline
+{\em -\/1} & keyword is incorrect. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a33a451cbb9e518962b7379382cd6b117}{}\index{readdef.\+c@{readdef.\+c}!Check\+Loc\+Spin@{Check\+Loc\+Spin}}
+\index{Check\+Loc\+Spin@{Check\+Loc\+Spin}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Loc\+Spin(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Loc\+Spin (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a33a451cbb9e518962b7379382cd6b117}
+
+
+function of checking indecies of localized spin 
+
+
+\begin{DoxyParams}{Parameters}
+{\em } & \\
+\hline
+\end{DoxyParams}
+\hypertarget{readdef_8c_aeedd55bd700231dcdf39d36d6361719d}{}\index{readdef.\+c@{readdef.\+c}!Check\+Pair\+Site@{Check\+Pair\+Site}}
+\index{Check\+Pair\+Site@{Check\+Pair\+Site}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Pair\+Site(const int i\+Site1, const int i\+Site2, const int i\+Max\+Num)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Pair\+Site (
+\begin{DoxyParamCaption}
+\item[{const int}]{i\+Site1, }
+\item[{const int}]{i\+Site2, }
+\item[{const int}]{i\+Max\+Num}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_aeedd55bd700231dcdf39d36d6361719d}
+
+
+Check Site Number for a pair -\/$>$ (site\+A, site\+B). 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em i\+Site1} & a site number on a site A. \\
+\hline
+\mbox{\tt in}  & {\em i\+Site2} & a site number on a site B. \\
+\hline
+\mbox{\tt in}  & {\em i\+Max\+Num} & Max site number. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished reading file. \\
+\hline
+{\em -\/1} & unnormally finished reading file. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a95ae79a512a0692d24d463d30b41d75a}{}\index{readdef.\+c@{readdef.\+c}!Check\+Quad\+Site@{Check\+Quad\+Site}}
+\index{Check\+Quad\+Site@{Check\+Quad\+Site}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Quad\+Site(const int i\+Site1, const int i\+Site2, const int i\+Site3, const int i\+Site4, const int i\+Max\+Num)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Quad\+Site (
+\begin{DoxyParamCaption}
+\item[{const int}]{i\+Site1, }
+\item[{const int}]{i\+Site2, }
+\item[{const int}]{i\+Site3, }
+\item[{const int}]{i\+Site4, }
+\item[{const int}]{i\+Max\+Num}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a95ae79a512a0692d24d463d30b41d75a}
+
+
+Check Site Number for a quad -\/$>$ (site\+A, site\+B, site\+C, site\+D). 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em i\+Site1} & a site number on site A. \\
+\hline
+\mbox{\tt in}  & {\em i\+Site2} & a site number on site B. \\
+\hline
+\mbox{\tt in}  & {\em i\+Site3} & a site number on site C. \\
+\hline
+\mbox{\tt in}  & {\em i\+Site4} & a site number on site D. \\
+\hline
+\mbox{\tt in}  & {\em i\+Max\+Num} & Max site number. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished reading file. \\
+\hline
+{\em -\/1} & unnormally finished reading file. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_abb604bcd282e6dea7ea681e43254f4f9}{}\index{readdef.\+c@{readdef.\+c}!Check\+Site@{Check\+Site}}
+\index{Check\+Site@{Check\+Site}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Site(const int i\+Site, const int i\+Max\+Num)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Site (
+\begin{DoxyParamCaption}
+\item[{const int}]{i\+Site, }
+\item[{const int}]{i\+Max\+Num}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_abb604bcd282e6dea7ea681e43254f4f9}
+
+
+Check Site Number. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em $\ast$i\+Site} & a site number. \\
+\hline
+\mbox{\tt in}  & {\em i\+Max\+Num} & Max site number. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished reading file. \\
+\hline
+{\em -\/1} & unnormally finished reading file. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_acc29011dbce0388d85541f1e4afa2be1}{}\index{readdef.\+c@{readdef.\+c}!Check\+Spin\+Index\+For\+Inter\+All@{Check\+Spin\+Index\+For\+Inter\+All}}
+\index{Check\+Spin\+Index\+For\+Inter\+All@{Check\+Spin\+Index\+For\+Inter\+All}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Spin\+Index\+For\+Inter\+All(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Spin\+Index\+For\+Inter\+All (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_acc29011dbce0388d85541f1e4afa2be1}
+
+
+function of checking spin index for all interactions 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Define list to get informations of all interactions \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em T\+R\+U\+E} & spin index is correct \\
+\hline
+{\em F\+A\+L\+S\+E} & spin index is incorrect \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+
+Takahiro Misawa (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_ac7c21de82671cc25f4319b55039c4e41}{}\index{readdef.\+c@{readdef.\+c}!Check\+Spin\+Index\+For\+Trans@{Check\+Spin\+Index\+For\+Trans}}
+\index{Check\+Spin\+Index\+For\+Trans@{Check\+Spin\+Index\+For\+Trans}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Spin\+Index\+For\+Trans(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Spin\+Index\+For\+Trans (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_ac7c21de82671cc25f4319b55039c4e41}
+
+
+function of checking spin index for transfers 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Define list to get informations of transfers \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em T\+R\+U\+E} & spin index is correct \\
+\hline
+{\em F\+A\+L\+S\+E} & spin index is incorrect \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+
+Takahiro Misawa (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a41c26debd050ab7eaab68b5ee0caf0a0}{}\index{readdef.\+c@{readdef.\+c}!Check\+Total2\+Sz@{Check\+Total2\+Sz}}
+\index{Check\+Total2\+Sz@{Check\+Total2\+Sz}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Total2\+Sz(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Total2\+Sz (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a41c26debd050ab7eaab68b5ee0caf0a0}
+
+
+function of checking an input data of total2\+Sz 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Define list to get informations of transfers \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em T\+R\+U\+E} & spin index is correct \\
+\hline
+{\em F\+A\+L\+S\+E} & spin index is incorrect \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+
+Takahiro Misawa (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a512f5660363476a6f0c915ea496a9943}{}\index{readdef.\+c@{readdef.\+c}!Check\+Transfer\+Hermite@{Check\+Transfer\+Hermite}}
+\index{Check\+Transfer\+Hermite@{Check\+Transfer\+Hermite}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Transfer\+Hermite(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Transfer\+Hermite (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a512f5660363476a6f0c915ea496a9943}
+
+
+Check Hermite for Transfer integrals. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Define List for getting transfer integrals. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & Hermite. \\
+\hline
+{\em -\/1} & Non\+Hermite. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2
+\end{DoxyVersion}
+rearray a General\+Transfer array to satisfy a condition of hermite conjugation between 2$\ast$i and 2$\ast$i+1 components. \begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_afad6a8fbb4fc6acbd22bd70e699eb21c}{}\index{readdef.\+c@{readdef.\+c}!Check\+Words@{Check\+Words}}
+\index{Check\+Words@{Check\+Words}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Check\+Words(const char $\ast$ctmp, const char $\ast$c\+Key\+Word)}]{\setlength{\rightskip}{0pt plus 5cm}int Check\+Words (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{ctmp, }
+\item[{const char $\ast$}]{c\+Key\+Word}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_afad6a8fbb4fc6acbd22bd70e699eb21c}
+
+
+function of checking whether ctmp is same as c\+Key\+Word or not 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ctmp} & \\
+\hline
+\mbox{\tt in}  & {\em c\+Key\+Word} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 ctmp is same as c\+Key\+Word
+\end{DoxyReturn}
+\begin{DoxyVersion}{Version}
+1.\+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a1ee27476e504ff51ff417c1922a35929}{}\index{readdef.\+c@{readdef.\+c}!Get\+Diagonal\+Inter\+All@{Get\+Diagonal\+Inter\+All}}
+\index{Get\+Diagonal\+Inter\+All@{Get\+Diagonal\+Inter\+All}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Get\+Diagonal\+Inter\+All(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Diagonal\+Inter\+All (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a1ee27476e504ff51ff417c1922a35929}
+
+
+function of getting diagonal components form interall interactions 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & define list to get information of interall interactions\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & succeed to get diagonal interactions \\
+\hline
+{\em -\/1} & format of interall interactions is incorrect \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a500b57266b13cf3bc4a89f222179a03d}{}\index{readdef.\+c@{readdef.\+c}!Get\+File\+Name@{Get\+File\+Name}}
+\index{Get\+File\+Name@{Get\+File\+Name}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Get\+File\+Name(const char $\ast$c\+File\+List\+Name\+File, char c\+File\+Name\+List[][D\+\_\+\+Char\+Tmp\+Read\+Def])}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+File\+Name (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{c\+File\+List\+Name\+File, }
+\item[{char}]{c\+File\+Name\+List\mbox{[}$\,$\mbox{]}\mbox{[}\+D\+\_\+\+Char\+Tmp\+Read\+Def\mbox{]}}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a500b57266b13cf3bc4a89f222179a03d}
+
+
+Function of Fitting File\+Name. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \+\_\+c\+File\+List\+Name\+File} & file for getting names of input files. \\
+\hline
+\mbox{\tt out}  & {\em \+\_\+c\+File\+Name\+List} & arrays for getting names of input files. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished reading file. \\
+\hline
+{\em -\/1} & unnormally finished reading file. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a3d8c84b499f7188fc876ad1d53349b79}{}\index{readdef.\+c@{readdef.\+c}!Get\+K\+W\+With\+Idx@{Get\+K\+W\+With\+Idx}}
+\index{Get\+K\+W\+With\+Idx@{Get\+K\+W\+With\+Idx}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Get\+K\+W\+With\+Idx(char $\ast$ctmp\+Line, char $\ast$ctmp, int $\ast$itmp)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+K\+W\+With\+Idx (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{ctmp\+Line, }
+\item[{char $\ast$}]{ctmp, }
+\item[{int $\ast$}]{itmp}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a3d8c84b499f7188fc876ad1d53349b79}
+
+
+Function of Getting keyword and it\textquotesingle{}s variable from characters. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \+\_\+ctmp\+Line} & characters including keyword and it\textquotesingle{}s variable \\
+\hline
+\mbox{\tt out}  & {\em \+\_\+ctmp} & keyword \\
+\hline
+\mbox{\tt out}  & {\em \+\_\+itmp} & variable for a keyword \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & keyword and it\textquotesingle{}s variable are obtained. \\
+\hline
+{\em 1} & ctmp\+Line is a comment line. \\
+\hline
+{\em -\/1} & format of ctmp\+Line is incorrect. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a1422ba60c3e8b188b44a30ed63e4ce68}{}\index{readdef.\+c@{readdef.\+c}!Initialize\+Interaction\+Num@{Initialize\+Interaction\+Num}}
+\index{Initialize\+Interaction\+Num@{Initialize\+Interaction\+Num}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Initialize\+Interaction\+Num(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}void Initialize\+Interaction\+Num (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a1422ba60c3e8b188b44a30ed63e4ce68}
+
+
+function of initializeing interactions 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em X} & Define list to initialize number of interactions \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+
+Takahiro Misawa (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a8bc4135515c28a940d030463bb568a9d}{}\index{readdef.\+c@{readdef.\+c}!Judge\+Def\+Type@{Judge\+Def\+Type}}
+\index{Judge\+Def\+Type@{Judge\+Def\+Type}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Judge\+Def\+Type(const int argc, char $\ast$argv[], int $\ast$mode)}]{\setlength{\rightskip}{0pt plus 5cm}int Judge\+Def\+Type (
+\begin{DoxyParamCaption}
+\item[{const int}]{argc, }
+\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]}, }
+\item[{int $\ast$}]{mode}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a8bc4135515c28a940d030463bb568a9d}
+
+
+function of judging a type of define files. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em argc} & argument count \\
+\hline
+\mbox{\tt in}  & {\em argv} & argument vector \\
+\hline
+\mbox{\tt out}  & {\em mode} & a number to show a type of a define file\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & format is correct \\
+\hline
+{\em -\/1} & format is incorrect \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_ab8b765c6b13b09923368a2c8bec319ca}{}\index{readdef.\+c@{readdef.\+c}!Readcalcmod\+File@{Readcalcmod\+File}}
+\index{Readcalcmod\+File@{Readcalcmod\+File}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Readcalcmod\+File(const char $\ast$defname, struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Readcalcmod\+File (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{defname, }
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_ab8b765c6b13b09923368a2c8bec319ca}
+
+
+Function of Reading calcmod file. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \+\_\+defname} & file name to read. \\
+\hline
+\mbox{\tt out}  & {\em X} & Define List for getting flags of calc-\/mode. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished reading file. \\
+\hline
+{\em -\/1} & unnormally finished reading file. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a21479192d729f0d76654f014b63b6d7a}{}\index{readdef.\+c@{readdef.\+c}!Read\+Def\+File\+Error@{Read\+Def\+File\+Error}}
+\index{Read\+Def\+File\+Error@{Read\+Def\+File\+Error}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Read\+Def\+File\+Error(const char $\ast$defname)}]{\setlength{\rightskip}{0pt plus 5cm}int Read\+Def\+File\+Error (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{defname}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a21479192d729f0d76654f014b63b6d7a}
+
+
+Error Function of reading def files. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \+\_\+defname} & name of def file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a052f987ad0a4602ab76d31af1c257e30}{}\index{readdef.\+c@{readdef.\+c}!Read\+Def\+File\+Idx\+Para@{Read\+Def\+File\+Idx\+Para}}
+\index{Read\+Def\+File\+Idx\+Para@{Read\+Def\+File\+Idx\+Para}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Read\+Def\+File\+Idx\+Para(struct Define\+List $\ast$\+X, struct Boost\+List $\ast$x\+Boost)}]{\setlength{\rightskip}{0pt plus 5cm}int Read\+Def\+File\+Idx\+Para (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X, }
+\item[{struct Boost\+List $\ast$}]{x\+Boost}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a052f987ad0a4602ab76d31af1c257e30}
+
+
+function of reading def files to get keyword index 
+
+
+\begin{DoxyParams}{Parameters}
+{\em X} & define list to get and put informations for calcuation\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished reading file. \\
+\hline
+{\em -\/1} & unnormally finished reading file. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a17c76a94fb506b26d2c69919ff9d5cd1}{}\index{readdef.\+c@{readdef.\+c}!Read\+Def\+File\+N\+Int@{Read\+Def\+File\+N\+Int}}
+\index{Read\+Def\+File\+N\+Int@{Read\+Def\+File\+N\+Int}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Read\+Def\+File\+N\+Int(char $\ast$x\+Name\+List\+File, struct Define\+List $\ast$\+X, struct Boost\+List $\ast$x\+Boost)}]{\setlength{\rightskip}{0pt plus 5cm}int Read\+Def\+File\+N\+Int (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{x\+Name\+List\+File, }
+\item[{struct Define\+List $\ast$}]{X, }
+\item[{struct Boost\+List $\ast$}]{x\+Boost}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a17c76a94fb506b26d2c69919ff9d5cd1}
+
+
+Function of reading informations from def files. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \+\_\+x\+Name\+List\+File} & List of Input File names. \\
+\hline
+\mbox{\tt out}  & {\em X\+X} & Define List for getting flags of calc-\/mode. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished reading file. \\
+\hline
+{\em -\/1} & unnormally finished reading file. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a4eaefb0cf68dd2e8cb6cc64b831d67da}{}\index{readdef.\+c@{readdef.\+c}!Reset\+Interaction\+Num@{Reset\+Interaction\+Num}}
+\index{Reset\+Interaction\+Num@{Reset\+Interaction\+Num}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Reset\+Interaction\+Num(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}void Reset\+Interaction\+Num (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a4eaefb0cf68dd2e8cb6cc64b831d67da}
+
+
+function of resetting number of interactions 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em X} & Define list to add number of ising coulomnb interactions \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+
+Takahiro Misawa (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a961b43e36e61cc013d0188dc268707a2}{}\index{readdef.\+c@{readdef.\+c}!Set\+Convergence\+Factor@{Set\+Convergence\+Factor}}
+\index{Set\+Convergence\+Factor@{Set\+Convergence\+Factor}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Set\+Convergence\+Factor(struct Define\+List $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}void Set\+Convergence\+Factor (
+\begin{DoxyParamCaption}
+\item[{struct Define\+List $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a961b43e36e61cc013d0188dc268707a2}
+
+
+function to set convergence factors 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Define list to get Lanczos eps. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{readdef_8c_a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a}{}\index{readdef.\+c@{readdef.\+c}!Validate\+Value@{Validate\+Value}}
+\index{Validate\+Value@{Validate\+Value}!readdef.\+c@{readdef.\+c}}
+\subsubsection[{Validate\+Value(const int icheck\+Value, const int ilowest\+Value, const int i\+Highest\+Value)}]{\setlength{\rightskip}{0pt plus 5cm}int Validate\+Value (
+\begin{DoxyParamCaption}
+\item[{const int}]{icheck\+Value, }
+\item[{const int}]{ilowest\+Value, }
+\item[{const int}]{i\+Highest\+Value}
+\end{DoxyParamCaption}
+)}\label{readdef_8c_a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a}
+
+
+Function of Validating value. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em icheck\+Value} & value to validate. \\
+\hline
+\mbox{\tt in}  & {\em ilowest\+Value} & lowest value which icheck\+Value can be set. \\
+\hline
+\mbox{\tt in}  & {\em i\+Highest\+Value} & heighest value which icheck\+Value can be set. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & value is correct. \\
+\hline
+{\em -\/1} & value is incorrect. \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}

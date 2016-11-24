@@ -1,0 +1,520 @@
+\hypertarget{bitcalc_8c}{}\section{bitcalc.\+c File Reference}
+\label{bitcalc_8c}\index{bitcalc.\+c@{bitcalc.\+c}}
+
+
+File for giving functions of treating bits on the target of Hilbert space.  
+
+
+{\ttfamily \#include \char`\"{}bitcalc.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{bitcalc_8c_a8151401358ba31213a5bb228b9b57cfc}{Get\+Split\+Bit} (const int Nsite, long unsigned int $\ast$irght, long unsigned int $\ast$ilft, long unsigned int $\ast$ihfbit)
+\begin{DoxyCompactList}\small\item\em function of getting right, left and half bits corresponding to a original hilbert space. \} \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_a78387adc1f4e171d3796235adfcbd87e}{Get\+Split\+Bit\+By\+Model} (const int Nsite, const int i\+Calc\+Model, long unsigned int $\ast$irght, long unsigned int $\ast$ilft, long unsigned int $\ast$ihfbit)
+\begin{DoxyCompactList}\small\item\em function of splitting original bit into right and left hilbert spaces. \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_a88834e90fe5b5ac0529f715c5d3c3a78}{Get\+Split\+Bit\+For\+General\+Spin} (const int Nsite, long unsigned int $\ast$ihfbit, const long int $\ast$Site\+To\+Bit)
+\begin{DoxyCompactList}\small\item\em function of getting right, left and half bits corresponding to a original hilbert space. \end{DoxyCompactList}\item 
+void \hyperlink{bitcalc_8c_ab40eb71d64770d5a59334e8c0aed3d50}{Split\+Bit} (const long unsigned int ibit, const long unsigned int irght, const long unsigned int ilft, const long unsigned int ihfbit, long unsigned int $\ast$isplited\+\_\+\+Bit\+\_\+right, long unsigned int $\ast$isplited\+\_\+\+Bit\+\_\+left)
+\begin{DoxyCompactList}\small\item\em function of splitting a original bit to right and left spaces \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_a36607f9856f8c9a3c43b2a4b87213c25}{Get\+Off\+Comp} (long unsigned int $\ast$\+\_\+list\+\_\+2\+\_\+1, long unsigned int $\ast$\+\_\+list\+\_\+2\+\_\+2, long unsigned int \+\_\+ibit, const long unsigned int \+\_\+irght, const long unsigned int \+\_\+ilft, const long unsigned int \+\_\+ihfbit, long unsigned int $\ast$\+\_\+ioff\+Comp)
+\begin{DoxyCompactList}\small\item\em function of getting off-\/diagonal component \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_a7f1f97c34d65db45cb89116585cabf02}{Get\+Off\+Comp\+General\+Spin} (const long unsigned int org\+\_\+ibit, const int org\+\_\+isite, const int org\+\_\+ispin, const int off\+\_\+ispin, long unsigned int $\ast$\+\_\+ioff\+Comp, const long int $\ast$Site\+To\+Bit, const long int $\ast$Tpow)
+\begin{DoxyCompactList}\small\item\em function of getting off-\/diagonal component for general spin \end{DoxyCompactList}\item 
+void \hyperlink{bitcalc_8c_a39e2c8445bc1c173efefcee2a4c43039}{Convert\+To\+List1\+General\+Spin} (const long unsigned int org\+\_\+ibit, const long unsigned int ihlfbit, long unsigned int $\ast$\+\_\+ilist1\+Comp)
+\begin{DoxyCompactList}\small\item\em function of converting component to list\+\_\+1 \end{DoxyCompactList}\item 
+void \hyperlink{bitcalc_8c_a127de23d3095a800e2d1eaa400c5e55b}{Sgn\+Bit\+\_\+old} (const long unsigned int org\+\_\+bit, int $\ast$sgn)
+\begin{DoxyCompactList}\small\item\em function of getting fermion sign (for 32bit) \end{DoxyCompactList}\item 
+void \hyperlink{bitcalc_8c_a7217ccf6f49458f399f3266ba4bafffb}{Sgn\+Bit} (const long unsigned int org\+\_\+bit, int $\ast$sgn)
+\begin{DoxyCompactList}\small\item\em function of getting fermion sign \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_a3eba086d07082210ad45cf008885e55c}{Bit\+Check} (const long unsigned int org\+\_\+bit, const long unsigned int target\+\_\+bit)
+\begin{DoxyCompactList}\small\item\em bit check function \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_ab60f50af237c37fc1cdd44f22ac69264}{Bit\+Check\+General} (const long unsigned int org\+\_\+bit, const unsigned int org\+\_\+isite, const unsigned int target\+\_\+ispin, const long int $\ast$Site\+To\+Bit, const long int $\ast$Tpow)
+\begin{DoxyCompactList}\small\item\em bit check function for general spin \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_a9095e4e1a19d0db69a4461d8988ac682}{Get\+Bit\+General} (const unsigned int isite, const long unsigned int org\+\_\+bit, const long int $\ast$Site\+To\+Bit, const long int $\ast$Tpow)
+\begin{DoxyCompactList}\small\item\em get bit at a site for general spin \end{DoxyCompactList}\item 
+int \hyperlink{bitcalc_8c_af5a13bcff4925b10b27ecba6079fbb5a}{Get\+Local2\+Sz} (const unsigned int isite, const long unsigned int org\+\_\+bit, const long int $\ast$Site\+To\+Bit, const long unsigned int $\ast$Tpow)
+\begin{DoxyCompactList}\small\item\em get 2sz at a site for general spin \end{DoxyCompactList}\item 
+\hypertarget{bitcalc_8c_ac837cfea40f6ee80848d2f087e24d205}{}unsigned long int {\bfseries snoob} (unsigned long int x)\label{bitcalc_8c_ac837cfea40f6ee80848d2f087e24d205}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File for giving functions of treating bits on the target of Hilbert space. 
+
+\begin{DoxyVersion}{Version}
+0.\+1, 0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{bitcalc_8c_a3eba086d07082210ad45cf008885e55c}{}\index{bitcalc.\+c@{bitcalc.\+c}!Bit\+Check@{Bit\+Check}}
+\index{Bit\+Check@{Bit\+Check}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Bit\+Check(const long unsigned int org\+\_\+bit, const long unsigned int target\+\_\+bit)}]{\setlength{\rightskip}{0pt plus 5cm}int Bit\+Check (
+\begin{DoxyParamCaption}
+\item[{const long unsigned int}]{org\+\_\+bit, }
+\item[{const long unsigned int}]{target\+\_\+bit}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a3eba086d07082210ad45cf008885e55c}
+
+
+bit check function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em org\+\_\+bit} & original bit to check \\
+\hline
+{\em target\+\_\+bit} & target bit to check \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 1} & \\
+\hline
+{\em 0} & \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_ab60f50af237c37fc1cdd44f22ac69264}{}\index{bitcalc.\+c@{bitcalc.\+c}!Bit\+Check\+General@{Bit\+Check\+General}}
+\index{Bit\+Check\+General@{Bit\+Check\+General}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Bit\+Check\+General(const long unsigned int org\+\_\+bit, const unsigned int org\+\_\+isite, const unsigned int target\+\_\+ispin, const long int $\ast$\+Site\+To\+Bit, const long int $\ast$\+Tpow)}]{\setlength{\rightskip}{0pt plus 5cm}int Bit\+Check\+General (
+\begin{DoxyParamCaption}
+\item[{const long unsigned int}]{org\+\_\+bit, }
+\item[{const unsigned int}]{org\+\_\+isite, }
+\item[{const unsigned int}]{target\+\_\+ispin, }
+\item[{const long int $\ast$}]{Site\+To\+Bit, }
+\item[{const long int $\ast$}]{Tpow}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_ab60f50af237c37fc1cdd44f22ac69264}
+
+
+bit check function for general spin 
+
+
+\begin{DoxyParams}{Parameters}
+{\em org\+\_\+bit} & original bit to check \\
+\hline
+{\em org\+\_\+isite} & site index (org\+\_\+isite $>$= 1) \\
+\hline
+{\em target\+\_\+ispin} & target spin to check \\
+\hline
+{\em \+\_\+\+Site\+To\+Bit} & List for getting bit at a site \\
+\hline
+{\em \+\_\+\+T\+Pow} & List for getting total bit at a site before \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & bit does not exists \\
+\hline
+{\em 1} & bit exists\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_a39e2c8445bc1c173efefcee2a4c43039}{}\index{bitcalc.\+c@{bitcalc.\+c}!Convert\+To\+List1\+General\+Spin@{Convert\+To\+List1\+General\+Spin}}
+\index{Convert\+To\+List1\+General\+Spin@{Convert\+To\+List1\+General\+Spin}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Convert\+To\+List1\+General\+Spin(const long unsigned int org\+\_\+ibit, const long unsigned int ihlfbit, long unsigned int $\ast$\+\_\+ilist1\+Comp)}]{\setlength{\rightskip}{0pt plus 5cm}void Convert\+To\+List1\+General\+Spin (
+\begin{DoxyParamCaption}
+\item[{const long unsigned int}]{org\+\_\+ibit, }
+\item[{const long unsigned int}]{ihlfbit, }
+\item[{long unsigned int $\ast$}]{\+\_\+ilist1\+Comp}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a39e2c8445bc1c173efefcee2a4c43039}
+
+
+function of converting component to list\+\_\+1 
+
+
+\begin{DoxyParams}{Parameters}
+{\em org\+\_\+ibit} & a original bit \\
+\hline
+{\em ihlfbit} & a split bit for general spin \\
+\hline
+{\em \+\_\+ilist1\+Comp} & a component converted to list\+\_\+1\\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_a9095e4e1a19d0db69a4461d8988ac682}{}\index{bitcalc.\+c@{bitcalc.\+c}!Get\+Bit\+General@{Get\+Bit\+General}}
+\index{Get\+Bit\+General@{Get\+Bit\+General}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Get\+Bit\+General(const unsigned int isite, const long unsigned int org\+\_\+bit, const long int $\ast$\+Site\+To\+Bit, const long int $\ast$\+Tpow)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Bit\+General (
+\begin{DoxyParamCaption}
+\item[{const unsigned int}]{isite, }
+\item[{const long unsigned int}]{org\+\_\+bit, }
+\item[{const long int $\ast$}]{Site\+To\+Bit, }
+\item[{const long int $\ast$}]{Tpow}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a9095e4e1a19d0db69a4461d8988ac682}
+
+
+get bit at a site for general spin 
+
+
+\begin{DoxyParams}{Parameters}
+{\em isite} & site index (isite $>$= 1) \\
+\hline
+{\em org\+\_\+bit} & original bit to check \\
+\hline
+{\em \+\_\+\+Site\+To\+Bit} & List for getting bit at a site \\
+\hline
+{\em \+\_\+\+Tpow} & List for getting total bit at a site before \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bit at a site
+\end{DoxyReturn}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_af5a13bcff4925b10b27ecba6079fbb5a}{}\index{bitcalc.\+c@{bitcalc.\+c}!Get\+Local2\+Sz@{Get\+Local2\+Sz}}
+\index{Get\+Local2\+Sz@{Get\+Local2\+Sz}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Get\+Local2\+Sz(const unsigned int isite, const long unsigned int org\+\_\+bit, const long int $\ast$\+Site\+To\+Bit, const long unsigned int $\ast$\+Tpow)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Local2\+Sz (
+\begin{DoxyParamCaption}
+\item[{const unsigned int}]{isite, }
+\item[{const long unsigned int}]{org\+\_\+bit, }
+\item[{const long int $\ast$}]{Site\+To\+Bit, }
+\item[{const long unsigned int $\ast$}]{Tpow}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_af5a13bcff4925b10b27ecba6079fbb5a}
+
+
+get 2sz at a site for general spin 
+
+
+\begin{DoxyParams}{Parameters}
+{\em isite} & site index (isite $>$= 1) \\
+\hline
+{\em org\+\_\+bit} & original bit to check \\
+\hline
+{\em \+\_\+\+Site\+To\+Bit} & List for getting bit at a site \\
+\hline
+{\em \+\_\+\+Tpow} & List for getting total bit at a site before \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+2sz at isite
+\end{DoxyReturn}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_a36607f9856f8c9a3c43b2a4b87213c25}{}\index{bitcalc.\+c@{bitcalc.\+c}!Get\+Off\+Comp@{Get\+Off\+Comp}}
+\index{Get\+Off\+Comp@{Get\+Off\+Comp}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Get\+Off\+Comp(long unsigned int $\ast$\+\_\+list\+\_\+2\+\_\+1, long unsigned int $\ast$\+\_\+list\+\_\+2\+\_\+2, long unsigned int \+\_\+ibit, const long unsigned int \+\_\+irght, const long unsigned int \+\_\+ilft, const long unsigned int \+\_\+ihfbit, long unsigned int $\ast$\+\_\+ioff\+Comp)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Off\+Comp (
+\begin{DoxyParamCaption}
+\item[{long unsigned int $\ast$}]{\+\_\+list\+\_\+2\+\_\+1, }
+\item[{long unsigned int $\ast$}]{\+\_\+list\+\_\+2\+\_\+2, }
+\item[{long unsigned int}]{\+\_\+ibit, }
+\item[{const long unsigned int}]{\+\_\+irght, }
+\item[{const long unsigned int}]{\+\_\+ilft, }
+\item[{const long unsigned int}]{\+\_\+ihfbit, }
+\item[{long unsigned int $\ast$}]{\+\_\+ioff\+Comp}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a36607f9856f8c9a3c43b2a4b87213c25}
+
+
+function of getting off-\/diagonal component 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+list\+\_\+2\+\_\+1} & list to right space \\
+\hline
+{\em \+\_\+list\+\_\+2\+\_\+2} & list to left space \\
+\hline
+{\em \+\_\+ibit} & a original bit \\
+\hline
+{\em irght} & a bit to split original hilbert space into right space \\
+\hline
+{\em ilft} & a bit to split original hilbert space into left space \\
+\hline
+{\em ihfbit} & a half bit to split original hilbert space \\
+\hline
+{\em \+\_\+ioff\+Comp} & an off diagonal component \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_a7f1f97c34d65db45cb89116585cabf02}{}\index{bitcalc.\+c@{bitcalc.\+c}!Get\+Off\+Comp\+General\+Spin@{Get\+Off\+Comp\+General\+Spin}}
+\index{Get\+Off\+Comp\+General\+Spin@{Get\+Off\+Comp\+General\+Spin}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Get\+Off\+Comp\+General\+Spin(const long unsigned int org\+\_\+ibit, const int org\+\_\+isite, const int org\+\_\+ispin, const int off\+\_\+ispin, long unsigned int $\ast$\+\_\+ioff\+Comp, const long int $\ast$\+Site\+To\+Bit, const long int $\ast$\+Tpow)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Off\+Comp\+General\+Spin (
+\begin{DoxyParamCaption}
+\item[{const long unsigned int}]{org\+\_\+ibit, }
+\item[{const int}]{org\+\_\+isite, }
+\item[{const int}]{org\+\_\+ispin, }
+\item[{const int}]{off\+\_\+ispin, }
+\item[{long unsigned int $\ast$}]{\+\_\+ioff\+Comp, }
+\item[{const long int $\ast$}]{Site\+To\+Bit, }
+\item[{const long int $\ast$}]{Tpow}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a7f1f97c34d65db45cb89116585cabf02}
+
+
+function of getting off-\/diagonal component for general spin 
+
+
+\begin{DoxyParams}{Parameters}
+{\em org\+\_\+ibit} & a original bit \\
+\hline
+{\em org\+\_\+isite} & a target site \\
+\hline
+{\em org\+\_\+ispin} & a target spin to delete. \\
+\hline
+{\em off\+\_\+ispin} & a target spin to create. \\
+\hline
+{\em \+\_\+ioff\+Comp} & a generated bit \\
+\hline
+{\em \+\_\+\+Site\+To\+Bit} & List for getting bit at a site \\
+\hline
+{\em \+\_\+\+Tpow} & List for getting total bit at a site before \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em F\+A\+L\+S\+E} & off-\/diagonal component does not exist \\
+\hline
+{\em T\+R\+U\+E} & off-\/diagonal component exists\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_a8151401358ba31213a5bb228b9b57cfc}{}\index{bitcalc.\+c@{bitcalc.\+c}!Get\+Split\+Bit@{Get\+Split\+Bit}}
+\index{Get\+Split\+Bit@{Get\+Split\+Bit}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Get\+Split\+Bit(const int Nsite, long unsigned int $\ast$irght, long unsigned int $\ast$ilft, long unsigned int $\ast$ihfbit)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Split\+Bit (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nsite, }
+\item[{long unsigned int $\ast$}]{irght, }
+\item[{long unsigned int $\ast$}]{ilft, }
+\item[{long unsigned int $\ast$}]{ihfbit}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a8151401358ba31213a5bb228b9b57cfc}
+
+
+function of getting right, left and half bits corresponding to a original hilbert space. \} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Nsite} & a total number of sites \\
+\hline
+{\em irght} & a bit to split original hilbert space into right space \\
+\hline
+{\em ilft} & a bit to split original hilbert space into left space \\
+\hline
+{\em ihfbit} & a half bit to split original hilbert space\\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\hypertarget{bitcalc_8c_a78387adc1f4e171d3796235adfcbd87e}{}\index{bitcalc.\+c@{bitcalc.\+c}!Get\+Split\+Bit\+By\+Model@{Get\+Split\+Bit\+By\+Model}}
+\index{Get\+Split\+Bit\+By\+Model@{Get\+Split\+Bit\+By\+Model}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Get\+Split\+Bit\+By\+Model(const int Nsite, const int i\+Calc\+Model, long unsigned int $\ast$irght, long unsigned int $\ast$ilft, long unsigned int $\ast$ihfbit)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Split\+Bit\+By\+Model (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nsite, }
+\item[{const int}]{i\+Calc\+Model, }
+\item[{long unsigned int $\ast$}]{irght, }
+\item[{long unsigned int $\ast$}]{ilft, }
+\item[{long unsigned int $\ast$}]{ihfbit}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a78387adc1f4e171d3796235adfcbd87e}
+
+
+function of splitting original bit into right and left hilbert spaces. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Nsite} & a total number of sites \\
+\hline
+{\em i\+Calc\+Model} & Calc model defined in Calc\+Mode file \\
+\hline
+{\em irght} & a bit to split original hilbert space into right space \\
+\hline
+{\em ilft} & a bit to split original hilbert space into left space \\
+\hline
+{\em ihfbit} & a half bit to split original hilbert space\\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\hypertarget{bitcalc_8c_a88834e90fe5b5ac0529f715c5d3c3a78}{}\index{bitcalc.\+c@{bitcalc.\+c}!Get\+Split\+Bit\+For\+General\+Spin@{Get\+Split\+Bit\+For\+General\+Spin}}
+\index{Get\+Split\+Bit\+For\+General\+Spin@{Get\+Split\+Bit\+For\+General\+Spin}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Get\+Split\+Bit\+For\+General\+Spin(const int Nsite, long unsigned int $\ast$ihfbit, const long int $\ast$\+Site\+To\+Bit)}]{\setlength{\rightskip}{0pt plus 5cm}int Get\+Split\+Bit\+For\+General\+Spin (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nsite, }
+\item[{long unsigned int $\ast$}]{ihfbit, }
+\item[{const long int $\ast$}]{Site\+To\+Bit}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a88834e90fe5b5ac0529f715c5d3c3a78}
+
+
+function of getting right, left and half bits corresponding to a original hilbert space. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Nsite} & a total number of sites \\
+\hline
+{\em ihfbit} & a bit to split original hilbert space\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished \\
+\hline
+{\em -\/1} & unnormally finished\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+0.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_a7217ccf6f49458f399f3266ba4bafffb}{}\index{bitcalc.\+c@{bitcalc.\+c}!Sgn\+Bit@{Sgn\+Bit}}
+\index{Sgn\+Bit@{Sgn\+Bit}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Sgn\+Bit(const long unsigned int org\+\_\+bit, int $\ast$sgn)}]{\setlength{\rightskip}{0pt plus 5cm}void Sgn\+Bit (
+\begin{DoxyParamCaption}
+\item[{const long unsigned int}]{org\+\_\+bit, }
+\item[{int $\ast$}]{sgn}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a7217ccf6f49458f399f3266ba4bafffb}
+
+
+function of getting fermion sign 
+
+
+\begin{DoxyParams}{Parameters}
+{\em org\+\_\+bit} & an original bit \\
+\hline
+{\em \+\_\+sgn} & fermion sign \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_a127de23d3095a800e2d1eaa400c5e55b}{}\index{bitcalc.\+c@{bitcalc.\+c}!Sgn\+Bit\+\_\+old@{Sgn\+Bit\+\_\+old}}
+\index{Sgn\+Bit\+\_\+old@{Sgn\+Bit\+\_\+old}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Sgn\+Bit\+\_\+old(const long unsigned int org\+\_\+bit, int $\ast$sgn)}]{\setlength{\rightskip}{0pt plus 5cm}void Sgn\+Bit\+\_\+old (
+\begin{DoxyParamCaption}
+\item[{const long unsigned int}]{org\+\_\+bit, }
+\item[{int $\ast$}]{sgn}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_a127de23d3095a800e2d1eaa400c5e55b}
+
+
+function of getting fermion sign (for 32bit) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em org\+\_\+bit} & an original bit \\
+\hline
+{\em \+\_\+sgn} & fermion sign \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{bitcalc_8c_ab40eb71d64770d5a59334e8c0aed3d50}{}\index{bitcalc.\+c@{bitcalc.\+c}!Split\+Bit@{Split\+Bit}}
+\index{Split\+Bit@{Split\+Bit}!bitcalc.\+c@{bitcalc.\+c}}
+\subsubsection[{Split\+Bit(const long unsigned int ibit, const long unsigned int irght, const long unsigned int ilft, const long unsigned int ihfbit, long unsigned int $\ast$isplited\+\_\+\+Bit\+\_\+right, long unsigned int $\ast$isplited\+\_\+\+Bit\+\_\+left)}]{\setlength{\rightskip}{0pt plus 5cm}void Split\+Bit (
+\begin{DoxyParamCaption}
+\item[{const long unsigned int}]{ibit, }
+\item[{const long unsigned int}]{irght, }
+\item[{const long unsigned int}]{ilft, }
+\item[{const long unsigned int}]{ihfbit, }
+\item[{long unsigned int $\ast$}]{isplited\+\_\+\+Bit\+\_\+right, }
+\item[{long unsigned int $\ast$}]{isplited\+\_\+\+Bit\+\_\+left}
+\end{DoxyParamCaption}
+)}\label{bitcalc_8c_ab40eb71d64770d5a59334e8c0aed3d50}
+
+
+function of splitting a original bit to right and left spaces 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ibit} & a original bit \\
+\hline
+{\em irght} & a bit to split original hilbert space into right space \\
+\hline
+{\em ilft} & a bit to split original hilbert space into left space \\
+\hline
+{\em ihfbit} & a half bit to split original hilbert space \\
+\hline
+{\em isplited\+\_\+\+Bit\+\_\+right} & a splitted bit reflected on right space \\
+\hline
+{\em isplited\+\_\+\+Bit\+\_\+left} & a splitted bit reflected on left space \\
+\hline
+\end{DoxyParams}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}

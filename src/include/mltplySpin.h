@@ -21,7 +21,16 @@
 
 int mltplySpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
+int mltplyHalfSpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+int mltplyGeneralSpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+
 int mltplySpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+int mltplyHalfSpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+int mltplyGeneralSpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
 int mltplySpinGCBoost(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 

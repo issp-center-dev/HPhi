@@ -1,0 +1,205 @@
+\hypertarget{diagonalcalc_8c}{}\section{diagonalcalc.\+c File Reference}
+\label{diagonalcalc_8c}\index{diagonalcalc.\+c@{diagonalcalc.\+c}}
+
+
+File to define functions for calculating diagonal components.  
+
+
+{\ttfamily \#include $<$bitcalc.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}diagonalcalc.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}File\+I\+O.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mltply.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{diagonalcalc_8c_a2f45884ecdc978493e3a02d712cae9c1}{}int {\bfseries diagonalcalc} (struct Bind\+Struct $\ast$X)\label{diagonalcalc_8c_a2f45884ecdc978493e3a02d712cae9c1}
+
+\item 
+int \hyperlink{diagonalcalc_8c_aeaf8dddfbe8b24106315c11df8917d18}{Set\+Diagonal\+Coulomb\+Intra} (long unsigned int isite1, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$X)
+\begin{DoxyCompactList}\small\item\em coulombintra interaction are given by $ U_i n_ {i \uparrow}n_{i \downarrow} $ \end{DoxyCompactList}\item 
+int \hyperlink{diagonalcalc_8c_aca10c18ae66ae31c08820065e7c2a98b}{Set\+Diagonal\+Chemi} (long unsigned int isite1, double dtmp\+\_\+\+V, long unsigned int spin, struct Bind\+Struct $\ast$X)
+\item 
+int \hyperlink{diagonalcalc_8c_a5364f3694fbc722a1ebb2ce419c5ae59}{Set\+Diagonal\+Coulomb\+Inter} (long unsigned int isite1, long unsigned int isite2, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$X)
+\item 
+int \hyperlink{diagonalcalc_8c_a38b0a8718d7255cf27602f2e63321d5d}{Set\+Diagonal\+Hund} (long unsigned int isite1, long unsigned int isite2, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$X)
+\item 
+int \hyperlink{diagonalcalc_8c_a6dea2f8d1a81ce396a016b0509ad3ae4}{Set\+Diagonal\+Inter\+All} (long unsigned int isite1, long unsigned int isite2, long unsigned int isigma1, long unsigned int isigma2, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$X)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File to define functions for calculating diagonal components. 
+
+\begin{DoxyVersion}{Version}
+0.\+2
+\end{DoxyVersion}
+modify functions to calculate diagonal components for general spin. \begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo)
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{diagonalcalc_8c_aca10c18ae66ae31c08820065e7c2a98b}{}\index{diagonalcalc.\+c@{diagonalcalc.\+c}!Set\+Diagonal\+Chemi@{Set\+Diagonal\+Chemi}}
+\index{Set\+Diagonal\+Chemi@{Set\+Diagonal\+Chemi}!diagonalcalc.\+c@{diagonalcalc.\+c}}
+\subsubsection[{Set\+Diagonal\+Chemi(long unsigned int isite1, double dtmp\+\_\+\+V, long unsigned int spin, struct Bind\+Struct $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Set\+Diagonal\+Chemi (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{isite1, }
+\item[{double}]{dtmp\+\_\+\+V, }
+\item[{long unsigned int}]{spin, }
+\item[{struct Bind\+Struct $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{diagonalcalc_8c_aca10c18ae66ae31c08820065e7c2a98b}
+
+\begin{DoxyParams}{Parameters}
+{\em isite1} & \\
+\hline
+{\em dtmp\+\_\+\+V} & \\
+\hline
+{\em spin} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\hypertarget{diagonalcalc_8c_a5364f3694fbc722a1ebb2ce419c5ae59}{}\index{diagonalcalc.\+c@{diagonalcalc.\+c}!Set\+Diagonal\+Coulomb\+Inter@{Set\+Diagonal\+Coulomb\+Inter}}
+\index{Set\+Diagonal\+Coulomb\+Inter@{Set\+Diagonal\+Coulomb\+Inter}!diagonalcalc.\+c@{diagonalcalc.\+c}}
+\subsubsection[{Set\+Diagonal\+Coulomb\+Inter(long unsigned int isite1, long unsigned int isite2, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Set\+Diagonal\+Coulomb\+Inter (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{isite1, }
+\item[{long unsigned int}]{isite2, }
+\item[{double}]{dtmp\+\_\+\+V, }
+\item[{struct Bind\+Struct $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{diagonalcalc_8c_a5364f3694fbc722a1ebb2ce419c5ae59}
+
+\begin{DoxyParams}{Parameters}
+{\em isite1} & \\
+\hline
+{\em isite2} & \\
+\hline
+{\em dtmp\+\_\+\+V} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\hypertarget{diagonalcalc_8c_aeaf8dddfbe8b24106315c11df8917d18}{}\index{diagonalcalc.\+c@{diagonalcalc.\+c}!Set\+Diagonal\+Coulomb\+Intra@{Set\+Diagonal\+Coulomb\+Intra}}
+\index{Set\+Diagonal\+Coulomb\+Intra@{Set\+Diagonal\+Coulomb\+Intra}!diagonalcalc.\+c@{diagonalcalc.\+c}}
+\subsubsection[{Set\+Diagonal\+Coulomb\+Intra(long unsigned int isite1, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Set\+Diagonal\+Coulomb\+Intra (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{isite1, }
+\item[{double}]{dtmp\+\_\+\+V, }
+\item[{struct Bind\+Struct $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{diagonalcalc_8c_aeaf8dddfbe8b24106315c11df8917d18}
+
+
+coulombintra interaction are given by $ U_i n_ {i \uparrow}n_{i \downarrow} $ 
+
+
+\begin{DoxyParams}{Parameters}
+{\em isite1} & a site number \\
+\hline
+{\em dtmp\+\_\+\+V} & A value of coulombintra interaction $ U_i $ \\
+\hline
+{\em X} & Define list to get dimesnion number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{diagonalcalc_8c_a38b0a8718d7255cf27602f2e63321d5d}{}\index{diagonalcalc.\+c@{diagonalcalc.\+c}!Set\+Diagonal\+Hund@{Set\+Diagonal\+Hund}}
+\index{Set\+Diagonal\+Hund@{Set\+Diagonal\+Hund}!diagonalcalc.\+c@{diagonalcalc.\+c}}
+\subsubsection[{Set\+Diagonal\+Hund(long unsigned int isite1, long unsigned int isite2, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Set\+Diagonal\+Hund (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{isite1, }
+\item[{long unsigned int}]{isite2, }
+\item[{double}]{dtmp\+\_\+\+V, }
+\item[{struct Bind\+Struct $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{diagonalcalc_8c_a38b0a8718d7255cf27602f2e63321d5d}
+
+\begin{DoxyParams}{Parameters}
+{\em isite1} & \\
+\hline
+{\em isite2} & \\
+\hline
+{\em dtmp\+\_\+\+V} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\hypertarget{diagonalcalc_8c_a6dea2f8d1a81ce396a016b0509ad3ae4}{}\index{diagonalcalc.\+c@{diagonalcalc.\+c}!Set\+Diagonal\+Inter\+All@{Set\+Diagonal\+Inter\+All}}
+\index{Set\+Diagonal\+Inter\+All@{Set\+Diagonal\+Inter\+All}!diagonalcalc.\+c@{diagonalcalc.\+c}}
+\subsubsection[{Set\+Diagonal\+Inter\+All(long unsigned int isite1, long unsigned int isite2, long unsigned int isigma1, long unsigned int isigma2, double dtmp\+\_\+\+V, struct Bind\+Struct $\ast$\+X)}]{\setlength{\rightskip}{0pt plus 5cm}int Set\+Diagonal\+Inter\+All (
+\begin{DoxyParamCaption}
+\item[{long unsigned int}]{isite1, }
+\item[{long unsigned int}]{isite2, }
+\item[{long unsigned int}]{isigma1, }
+\item[{long unsigned int}]{isigma2, }
+\item[{double}]{dtmp\+\_\+\+V, }
+\item[{struct Bind\+Struct $\ast$}]{X}
+\end{DoxyParamCaption}
+)}\label{diagonalcalc_8c_a6dea2f8d1a81ce396a016b0509ad3ae4}
+
+\begin{DoxyParams}{Parameters}
+{\em isite1} & \\
+\hline
+{\em isite2} & \\
+\hline
+{\em isigma1} & \\
+\hline
+{\em isigma2} & \\
+\hline
+{\em dtmp\+\_\+\+V} & \\
+\hline
+{\em X} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}

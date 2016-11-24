@@ -1,0 +1,109 @@
+\hypertarget{expec__cisajscktaltdc_8c}{}\section{expec\+\_\+cisajscktaltdc.\+c File Reference}
+\label{expec__cisajscktaltdc_8c}\index{expec\+\_\+cisajscktaltdc.\+c@{expec\+\_\+cisajscktaltdc.\+c}}
+
+
+File for calculating two-\/body green\textquotesingle{}s functions.  
+
+
+{\ttfamily \#include \char`\"{}mltply.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}File\+I\+O.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}bitcalc.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}expec\+\_\+cisajscktaltdc.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mltply\+M\+P\+I.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{expec__cisajscktaltdc_8c_ab1e0307962ebf631818025cd262c4bd9}{expec\+\_\+cisajscktaltdc} (struct Bind\+Struct $\ast$X, double complex $\ast$vec)
+\begin{DoxyCompactList}\small\item\em Parent function to calculate two-\/body green\textquotesingle{}s functions. \end{DoxyCompactList}\item 
+void \hyperlink{expec__cisajscktaltdc_8c_add5844529f50e34cd7a8642cfb700f8b}{expec\+\_\+cisajscktaltdc\+\_\+alldiag} (struct Bind\+Struct $\ast$X, double complex $\ast$vec)
+\item 
+\hypertarget{expec__cisajscktaltdc_8c_a2ca27868fab714216654436b769197bc}{}int {\bfseries Rearray\+\_\+\+Interactions} (int i, long unsigned int $\ast$org\+\_\+isite1, long unsigned int $\ast$org\+\_\+isite2, long unsigned int $\ast$org\+\_\+isite3, long unsigned int $\ast$org\+\_\+isite4, long unsigned int $\ast$org\+\_\+sigma1, long unsigned int $\ast$org\+\_\+sigma2, long unsigned int $\ast$org\+\_\+sigma3, long unsigned int $\ast$org\+\_\+sigma4, double complex $\ast$tmp\+\_\+\+V, struct Bind\+Struct $\ast$X)\label{expec__cisajscktaltdc_8c_a2ca27868fab714216654436b769197bc}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File for calculating two-\/body green\textquotesingle{}s functions. 
+
+\begin{DoxyVersion}{Version}
+0.\+2
+\end{DoxyVersion}
+add function to treat the case of general spin
+
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{expec__cisajscktaltdc_8c_ab1e0307962ebf631818025cd262c4bd9}{}\index{expec\+\_\+cisajscktaltdc.\+c@{expec\+\_\+cisajscktaltdc.\+c}!expec\+\_\+cisajscktaltdc@{expec\+\_\+cisajscktaltdc}}
+\index{expec\+\_\+cisajscktaltdc@{expec\+\_\+cisajscktaltdc}!expec\+\_\+cisajscktaltdc.\+c@{expec\+\_\+cisajscktaltdc.\+c}}
+\subsubsection[{expec\+\_\+cisajscktaltdc(struct Bind\+Struct $\ast$\+X, double complex $\ast$vec)}]{\setlength{\rightskip}{0pt plus 5cm}int expec\+\_\+cisajscktaltdc (
+\begin{DoxyParamCaption}
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{double complex $\ast$}]{vec}
+\end{DoxyParamCaption}
+)}\label{expec__cisajscktaltdc_8c_ab1e0307962ebf631818025cd262c4bd9}
+
+
+Parent function to calculate two-\/body green\textquotesingle{}s functions. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em X} & data list for calculation \\
+\hline
+{\em vec} & eigenvectors\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished \\
+\hline
+{\em -\/1} & unnormally finished \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyNote}{Note}
+the origin of function\textquotesingle{}s name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
+\end{DoxyNote}
+\begin{DoxyVersion}{Version}
+0.\+2
+\end{DoxyVersion}
+add function to treat the case of general spin
+
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{expec__cisajscktaltdc_8c_add5844529f50e34cd7a8642cfb700f8b}{}\index{expec\+\_\+cisajscktaltdc.\+c@{expec\+\_\+cisajscktaltdc.\+c}!expec\+\_\+cisajscktaltdc\+\_\+alldiag@{expec\+\_\+cisajscktaltdc\+\_\+alldiag}}
+\index{expec\+\_\+cisajscktaltdc\+\_\+alldiag@{expec\+\_\+cisajscktaltdc\+\_\+alldiag}!expec\+\_\+cisajscktaltdc.\+c@{expec\+\_\+cisajscktaltdc.\+c}}
+\subsubsection[{expec\+\_\+cisajscktaltdc\+\_\+alldiag(struct Bind\+Struct $\ast$\+X, double complex $\ast$vec)}]{\setlength{\rightskip}{0pt plus 5cm}void expec\+\_\+cisajscktaltdc\+\_\+alldiag (
+\begin{DoxyParamCaption}
+\item[{struct Bind\+Struct $\ast$}]{X, }
+\item[{double complex $\ast$}]{vec}
+\end{DoxyParamCaption}
+)}\label{expec__cisajscktaltdc_8c_add5844529f50e34cd7a8642cfb700f8b}
+\begin{DoxyNote}{Note}
+Not Used now
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em X} & \\
+\hline
+{\em vec} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Takahiro Misawa (The University of Tokyo) 
+
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}

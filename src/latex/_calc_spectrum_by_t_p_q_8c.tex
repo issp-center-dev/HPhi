@@ -1,0 +1,110 @@
+\hypertarget{_calc_spectrum_by_t_p_q_8c}{}\section{Calc\+Spectrum\+By\+T\+P\+Q.\+c File Reference}
+\label{_calc_spectrum_by_t_p_q_8c}\index{Calc\+Spectrum\+By\+T\+P\+Q.\+c@{Calc\+Spectrum\+By\+T\+P\+Q.\+c}}
+
+
+File for givinvg functions of calculating spectrum by Lanczos.  
+
+
+{\ttfamily \#include \char`\"{}Calc\+Spectrum\+By\+T\+P\+Q.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Calc\+Spectrum\+By\+Lanczos.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Lanczos\+\_\+\+Eigen\+Value.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}File\+I\+O.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}wrapper\+M\+P\+I.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}vec12.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mfmemory.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{_calc_spectrum_by_t_p_q_8c_ac0bce0e9486a9babd5f85cf8e59ae817}{Read\+T\+P\+Q\+Data} (struct E\+D\+Main\+Cal\+Struct $\ast$X, double $\ast$ene, double $\ast$temp, double $\ast$specific\+Heat)
+\item 
+\hypertarget{_calc_spectrum_by_t_p_q_8c_a778755c595a2f760086f2e99130d894b}{}int {\bfseries Get\+Calc\+Spectrum\+T\+P\+Q} (double complex dcomega, double dtemp, double dspecificheat, double ene, double $\ast$tmp\+\_\+\+E, int Nsite, int idim\+\_\+max, double complex $\ast$dc\+\_\+tmp\+Spec)\label{_calc_spectrum_by_t_p_q_8c_a778755c595a2f760086f2e99130d894b}
+
+\item 
+int \hyperlink{_calc_spectrum_by_t_p_q_8c_a20b6d1f758a208a87ba808c31c529183}{Calc\+Spectrum\+By\+T\+P\+Q} (struct E\+D\+Main\+Cal\+Struct $\ast$X, double complex $\ast$tmp\+\_\+v1, double dnorm, int Nomega, double complex $\ast$dc\+Spectrum, double complex $\ast$dcomega)
+\begin{DoxyCompactList}\small\item\em A main function to calculate spectrum by T\+P\+Q. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+File for givinvg functions of calculating spectrum by Lanczos. 
+
+\begin{DoxyVersion}{Version}
+1.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{_calc_spectrum_by_t_p_q_8c_a20b6d1f758a208a87ba808c31c529183}{}\index{Calc\+Spectrum\+By\+T\+P\+Q.\+c@{Calc\+Spectrum\+By\+T\+P\+Q.\+c}!Calc\+Spectrum\+By\+T\+P\+Q@{Calc\+Spectrum\+By\+T\+P\+Q}}
+\index{Calc\+Spectrum\+By\+T\+P\+Q@{Calc\+Spectrum\+By\+T\+P\+Q}!Calc\+Spectrum\+By\+T\+P\+Q.\+c@{Calc\+Spectrum\+By\+T\+P\+Q.\+c}}
+\subsubsection[{Calc\+Spectrum\+By\+T\+P\+Q(struct E\+D\+Main\+Cal\+Struct $\ast$\+X, double complex $\ast$tmp\+\_\+v1, double dnorm, int Nomega, double complex $\ast$dc\+Spectrum, double complex $\ast$dcomega)}]{\setlength{\rightskip}{0pt plus 5cm}int Calc\+Spectrum\+By\+T\+P\+Q (
+\begin{DoxyParamCaption}
+\item[{struct E\+D\+Main\+Cal\+Struct $\ast$}]{X, }
+\item[{double complex $\ast$}]{tmp\+\_\+v1, }
+\item[{double}]{dnorm, }
+\item[{int}]{Nomega, }
+\item[{double complex $\ast$}]{dc\+Spectrum, }
+\item[{double complex $\ast$}]{dcomega}
+\end{DoxyParamCaption}
+)}\label{_calc_spectrum_by_t_p_q_8c_a20b6d1f758a208a87ba808c31c529183}
+
+
+A main function to calculate spectrum by T\+P\+Q. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em X} & Calc\+Struct list for getting and pushing calculation information \\
+\hline
+ & {\em tmp\+\_\+v1} & \\
+\hline
+ & {\em dnorm} & \\
+\hline
+ & {\em Nomega} & \\
+\hline
+ & {\em dc\+Spectrum} & \\
+\hline
+ & {\em dcomega} & \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normally finished \\
+\hline
+{\em -\/1} & unnormally finished \\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyVersion}{Version}
+1.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Kazuyoshi Yoshimi (The University of Tokyo) 
+\end{DoxyAuthor}
+\hypertarget{_calc_spectrum_by_t_p_q_8c_ac0bce0e9486a9babd5f85cf8e59ae817}{}\index{Calc\+Spectrum\+By\+T\+P\+Q.\+c@{Calc\+Spectrum\+By\+T\+P\+Q.\+c}!Read\+T\+P\+Q\+Data@{Read\+T\+P\+Q\+Data}}
+\index{Read\+T\+P\+Q\+Data@{Read\+T\+P\+Q\+Data}!Calc\+Spectrum\+By\+T\+P\+Q.\+c@{Calc\+Spectrum\+By\+T\+P\+Q.\+c}}
+\subsubsection[{Read\+T\+P\+Q\+Data(struct E\+D\+Main\+Cal\+Struct $\ast$\+X, double $\ast$ene, double $\ast$temp, double $\ast$specific\+Heat)}]{\setlength{\rightskip}{0pt plus 5cm}int Read\+T\+P\+Q\+Data (
+\begin{DoxyParamCaption}
+\item[{struct E\+D\+Main\+Cal\+Struct $\ast$}]{X, }
+\item[{double $\ast$}]{ene, }
+\item[{double $\ast$}]{temp, }
+\item[{double $\ast$}]{specific\+Heat}
+\end{DoxyParamCaption}
+)}\label{_calc_spectrum_by_t_p_q_8c_ac0bce0e9486a9babd5f85cf8e59ae817}
+Read T\+P\+Q data at \char`\"{}\+X-\/$>$\+Bind.\+Large.\+itr\char`\"{} step in S\+S\+\_\+rand file. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Calc\+Struct list for getting and pushing calculation information \\
+\hline
+\mbox{\tt out}  & {\em ene} & energy \\
+\hline
+\mbox{\tt out}  & {\em temp} & temperature \\
+\hline
+\mbox{\tt out}  & {\em specific\+Heat} & specific heat \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em T\+R\+U\+E} & succeed to read data \\
+\hline
+{\em F\+A\+L\+S\+E} & fail to read data \\
+\hline
+\end{DoxyRetVals}
