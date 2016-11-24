@@ -35,6 +35,7 @@ int expec_energy_flct(struct BindStruct *X){
   long unsigned int irght,ilft,ihfbit;
   long unsigned int isite1;
   long unsigned int is1_up,is1_down;
+  long unsigned int is1_up_a,is1_up_b;
   long unsigned int is1;
   double complex dam_pr,dam_pr1;
 
@@ -118,7 +119,7 @@ int expec_energy_flct(struct BindStruct *X){
         is1_up    = X->Def.Tpow[2*isite1-2];
         is1_down  = X->Def.Tpow[2*isite1-1];
         is1       = is1_up+is1_down;
-        ibit1     = (j-1)&is1;
+        ibit1     =  (unsigned long int)(j-1)&is1;
         num1_up   = ((j-1)&is1_up)/is1_up;
         num1_down = ((j-1)&is1_down)/is1_down;
 
@@ -182,26 +183,35 @@ int expec_energy_flct(struct BindStruct *X){
   
   case SpinGC:
   if(X->Def.iFlgGeneralSpin == FALSE) {
-    is1_up   = X->Def.Tpow[X->Def.NsiteMPI]-1;
+    is1_up_a = 0;
+    is1_up_b = 0;
+    for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+      if(isite1 > X->Def.Nsite){
+        is1_up_a += X->Def.Tpow[isite1 - 1];
+      }else{
+        is1_up_b += X->Def.Tpow[isite1 - 1];
+      }
+    }
 #pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0)   \
-  firstprivate(i_max,X,myrank,is1_up,i_32) private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1)
+  firstprivate(i_max,X,myrank,is1_up,i_32,is1_up_a,is1_up_b) private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1)
     for(j = 1; j <= i_max; j++){ 
       tmp_v02  = conj(v0[j])*v0[j];
       Sz       = 0.0;
 
 // isite1 > X->Def.Nsite
-      ibit1   = (unsigned long int) myrank & is1_up;
+      ibit1   = (unsigned long int) myrank & is1_up_a;
       u_ibit1 = ibit1 >> 32;
       l_ibit1 = ibit1 & i_32;
       Sz      += pop(u_ibit1);
       Sz      += pop(l_ibit1);
 // isite1 <= X->Def.Nsite
-      ibit1   = (j-1)&is1_up;
+      ibit1   = (unsigned long int) (j-1)&is1_up_b;
       u_ibit1 = ibit1 >> 32;
       l_ibit1 = ibit1 & i_32;
       Sz     += pop(u_ibit1);
       Sz     += pop(l_ibit1);
       Sz      = 2*Sz-X->Def.NsiteMPI;
+
 /*
       for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
         if(isite1 > X->Def.Nsite){
@@ -221,7 +231,8 @@ int expec_energy_flct(struct BindStruct *X){
             Sz += -1.0; 
           }
         }
-      }
+     }
+
 */
       tmp_Sz   += Sz*tmp_v02;
       tmp_Sz2  += Sz*Sz*tmp_v02;
