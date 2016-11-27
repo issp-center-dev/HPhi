@@ -99,10 +99,73 @@ int expec_energy_flct(struct BindStruct *X){
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
-#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2, tmp_num_up, tmp_num_down) default(none) shared(v0) \
-  firstprivate(i_max, num1_up, num1_down,X,myrank) private(j, tmp_v02,D,N,Sz,isite1,is1_up,is1_down,is1,ibit1)
+//[s] for bit count
+  is1_up_a   = 0;
+  is1_up_b   = 0;
+  is1_down_a = 0;
+  is1_down_b = 0;
+  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+    if(isite1 > X->Def.Nsite){
+      is1_up_a   += X->Def.Tpow[2*isite1 - 2];
+      is1_down_a += X->Def.Tpow[2*isite1 - 1];
+    }else{
+      is1_up_b   += X->Def.Tpow[2*isite1 - 2];
+      is1_down_b += X->Def.Tpow[2*isite1 - 1];
+    }
+  }
+//[e]
+#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
+  firstprivate(i_max, num1_up, num1_down,X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
+  private(j, tmp_v02,D,N,Sz,isite1,is1,ibit1,tmp_list_1,bit_up,bit_down,bit_D,u_ibit1,l_ibit1,ibit_up,ibit_down,ibit_D)
   for(j = 1; j <= i_max; j++){
     tmp_v02 = conj(v0[j])*v0[j];
+    bit_up     = 0;
+    bit_down   = 0;
+    bit_D      = 0;
+// isite1 > X->Def.Nsite
+    ibit_up    = (unsigned long int) myrank & is1_up_a;
+    u_ibit1    = ibit_up >> 32;
+    l_ibit1    = ibit_up & i_32;
+    bit_up    += pop(u_ibit1);
+    bit_up    += pop(l_ibit1);
+
+    ibit_down  = (unsigned long int) myrank & is1_down_a;
+    u_ibit1    = ibit_down >> 32;
+    l_ibit1    = ibit_down & i_32;
+    bit_down  += pop(u_ibit1);
+    bit_down  += pop(l_ibit1);
+
+    ibit_D     = (ibit_up) & (ibit_down >> 1);
+    u_ibit1    = ibit_D >> 32;
+    l_ibit1    = ibit_D & i_32;
+    bit_D     += pop(u_ibit1);
+    bit_D     += pop(l_ibit1);
+
+// isite1 <= X->Def.Nsite
+    ibit_up    = (unsigned long int) (j-1) & is1_up_b;
+    u_ibit1    = ibit_up >> 32;
+    l_ibit1    = ibit_up & i_32;
+    bit_up    += pop(u_ibit1);
+    bit_up    += pop(l_ibit1);
+
+    ibit_down  = (unsigned long int) (j-1) & is1_down_b;
+    u_ibit1    = ibit_down >> 32;
+    l_ibit1    = ibit_down & i_32;
+    bit_down  += pop(u_ibit1);
+    bit_down  += pop(l_ibit1);
+
+    ibit_D     = (ibit_up) & (ibit_down >> 1);
+    u_ibit1    = ibit_D >> 32;
+    l_ibit1    = ibit_D & i_32;
+    bit_D     += pop(u_ibit1);
+    bit_D     += pop(l_ibit1);
+
+    D          =  bit_D;
+    N          =  bit_up+bit_down;
+    Sz         =  bit_up-bit_down;
+
+
+/*
     D       = 0.0;
     N       = 0.0;
     Sz      = 0.0;
@@ -131,6 +194,7 @@ int expec_energy_flct(struct BindStruct *X){
         Sz       += num1_up-num1_down;
       }
     }
+*/
     tmp_D   += tmp_v02*D;
     tmp_D2  += tmp_v02*D*D;
     tmp_N   += tmp_v02*N;
@@ -143,19 +207,19 @@ int expec_energy_flct(struct BindStruct *X){
   case Hubbard:
   case Kondo:
 //[s] for bit count
-    is1_up_a   = 0;
-    is1_up_b   = 0;
-    is1_down_a = 0;
-    is1_down_b = 0;
-    for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
-      if(isite1 > X->Def.Nsite){
-        is1_up_a   += X->Def.Tpow[2*isite1 - 2];
-        is1_down_a += X->Def.Tpow[2*isite1 - 1];
-      }else{
-        is1_up_b   += X->Def.Tpow[2*isite1 - 2];
-        is1_down_b += X->Def.Tpow[2*isite1 - 1];
-      }
+  is1_up_a   = 0;
+  is1_up_b   = 0;
+  is1_down_a = 0;
+  is1_down_b = 0;
+  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+    if(isite1 > X->Def.Nsite){
+      is1_up_a   += X->Def.Tpow[2*isite1 - 2];
+      is1_down_a += X->Def.Tpow[2*isite1 - 1];
+    }else{
+      is1_up_b   += X->Def.Tpow[2*isite1 - 2];
+      is1_down_b += X->Def.Tpow[2*isite1 - 1];
     }
+  }
 //[e]
 #pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
   firstprivate(i_max, num1_up, num1_down,X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
