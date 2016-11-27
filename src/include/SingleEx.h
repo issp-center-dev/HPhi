@@ -42,7 +42,7 @@
   double complex *tmp_v1,
   unsigned long int idim_max,
   double complex *tmp_v1buf,
-  long int *Tpow 
+                       unsigned long int *Tpow
   );
 
   double complex X_GC_Ajt_MPI(
@@ -53,7 +53,7 @@
   double complex *tmp_v1,
   unsigned long int idim_max,
   double complex *tmp_v1buf,
-  long int *Tpow 
+                       unsigned long int *Tpow
   ); 
 
 

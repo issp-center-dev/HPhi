@@ -233,7 +233,7 @@ int GetOffCompGeneralSpin(
 		const int off_ispin,
 		long  unsigned int *_ioffComp,
 		const long int *SiteToBit,
-		const long int *Tpow
+		const long unsigned int *Tpow
 )
 {
   if(off_ispin>SiteToBit[org_isite-1]-1 ||
@@ -375,7 +375,7 @@ int BitCheckGeneral(
 	     const unsigned int org_isite,
 	     const unsigned int target_ispin,
 	     const long int *SiteToBit,
-	     const long int *Tpow
+	     const long unsigned int *Tpow
 )
 {
 
@@ -403,7 +403,7 @@ int GetBitGeneral(
 	     const unsigned int isite,
 	     const long unsigned int org_bit,
 	     const long int *SiteToBit,
-	     const long int *Tpow
+	     const long unsigned int *Tpow
 )
 {
   long unsigned int tmp_bit=(org_bit/Tpow[isite-1])%SiteToBit[isite-1] ;

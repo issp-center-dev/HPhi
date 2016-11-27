@@ -140,7 +140,7 @@ double complex X_GC_Cis_MPI(
   double complex *tmp_v1 /**< [in] v0 += H v1*/,
   unsigned long int idim_max,
   double complex *v1buf,
-  long int *Tpow 
+                       unsigned long int *Tpow
   ) {
 #ifdef MPI
     int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -208,7 +208,7 @@ double complex X_GC_Ajt_MPI(
   double complex *tmp_v1 /**< [in] v0 += H v1*/,
   unsigned long int idim_max,
   double complex *v1buf,
-  long int *Tpow 
+                       unsigned long int *Tpow
   ) {
 #ifdef MPI
     int mask2, state2, ierr, origin, bit2diff, Fsgn;

@@ -137,7 +137,7 @@ int CalcSpectrumByTPQ(
     int stp;
 
     //Read Ene, temp, C
-    if(!ReadTPQData(X, &dene, &dtemp, &dspecificHeat)==TRUE){
+    if(ReadTPQData(X, &dene, &dtemp, &dspecificHeat)!=TRUE){
         return FALSE;
     }
 
@@ -169,7 +169,7 @@ int CalcSpectrumByTPQ(
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC)
     {
         iret=ReadTMComponents(X, &dnorm, &liLanczosStp);
-        if(!iret ==TRUE){
+        if(iret !=TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
         }

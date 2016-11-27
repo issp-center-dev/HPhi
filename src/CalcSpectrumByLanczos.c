@@ -87,7 +87,7 @@ int CalcSpectrumByLanczos(
     {
       StartTimer(6202);
         iret=ReadTMComponents(X, &dnorm, &liLanczosStp);
-        if(!iret ==TRUE){
+        if(iret !=TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
         }

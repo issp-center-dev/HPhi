@@ -235,12 +235,12 @@ int GetExcitedState
     }
 
     if(X->Def.NSingleExcitationOperator > 0){
-      if(!GetSingleExcitedState(X,tmp_v0, tmp_v1)==TRUE){
+      if(GetSingleExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
         return FALSE;
       }
     }
     else if(X->Def.NPairExcitationOperator >0){
-      if(!GetPairExcitedState(X,tmp_v0, tmp_v1)==TRUE){
+      if(GetPairExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
         return FALSE;
       }
     }
