@@ -152,9 +152,9 @@ END SUBROUTINE komega_BICG_seed_switch
 ! Allocate & initialize variables
 !
 #if defined(MPI)
-SUBROUTINE pkomega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
+SUBROUTINE pkomega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0) BIND(C)
 #else
-SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0)
+SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0) BIND(C)
 #endif
   !
   USE komega_parameter, ONLY : iter, itermax, ndim, nl, nz, &
@@ -218,10 +218,12 @@ END SUBROUTINE komega_BICG_init
 !
 #if defined(MPI)
 SUBROUTINE pkomega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0, status, &
-&                       iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0)
+&                       iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0) &
+&  BIND(C)
 #else
 SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, status, &
-&                       iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0)
+&                       iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0) &
+&  BIND(C)
 #endif
   !
   USE komega_parameter, ONLY : iter, itermax, ndim, nl, threshold, iz_seed, lz_conv, nz, resnorm
@@ -336,9 +338,9 @@ END SUBROUTINE komega_BICG_restart
 ! Update x, p, r
 !
 #if defined(MPI)
-SUBROUTINE pkomega_BICG_update(v12, v2, v14, v4, x, r_l, status)
+SUBROUTINE pkomega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
 #else
-SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status)
+SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
 #endif
   !
   USE komega_parameter, ONLY : iter, itermax, ndim, nl, nz, &
@@ -461,9 +463,9 @@ END SUBROUTINE komega_BICG_update
 ! Return saved alpha, beta, r_l
 !
 #if defined(MPI)
-SUBROUTINE pkomega_BICG_getcoef(alpha_save0, beta_save0, z_seed0, r_l_save0)
+SUBROUTINE pkomega_BICG_getcoef(alpha_save0, beta_save0, z_seed0, r_l_save0) BIND(C)
 #else
-SUBROUTINE komega_BICG_getcoef(alpha_save0, beta_save0, z_seed0, r_l_save0)
+SUBROUTINE komega_BICG_getcoef(alpha_save0, beta_save0, z_seed0, r_l_save0) BIND(C)
 #endif
   !
   USE komega_parameter, ONLY : iter, nl
@@ -490,9 +492,9 @@ END SUBROUTINE komega_BICG_getcoef
 ! Return r_old
 !
 #if defined(MPI)
-SUBROUTINE pkomega_BICG_getvec(r_old, r_tilde_old)
+SUBROUTINE pkomega_BICG_getvec(r_old, r_tilde_old) BIND(C)
 #else
-SUBROUTINE komega_BICG_getvec(r_old, r_tilde_old)
+SUBROUTINE komega_BICG_getvec(r_old, r_tilde_old) BIND(C)
 #endif
   !
   USE komega_parameter, ONLY : ndim
@@ -515,9 +517,9 @@ END SUBROUTINE komega_BICG_getvec
 ! Return Residual Norm
 !
 #if defined(MPI)
-SUBROUTINE pkomega_BICG_getresidual(res)
+SUBROUTINE pkomega_BICG_getresidual(res) BIND(C)
 #else
-SUBROUTINE komega_BICG_getresidual(res)
+SUBROUTINE komega_BICG_getresidual(res) BIND(C)
 #endif
   !
   USE komega_parameter, ONLY : nz, resnorm
@@ -538,9 +540,9 @@ END SUBROUTINE komega_BICG_getresidual
 ! Deallocate private arrays
 !
 #if defined(MPI)
-SUBROUTINE pkomega_BICG_finalize()
+SUBROUTINE pkomega_BICG_finalize() BIND(C)
 #else
-SUBROUTINE komega_BICG_finalize()
+SUBROUTINE komega_BICG_finalize() BIND(C)
 #endif
   !
   USE komega_parameter, ONLY : itermax, lz_conv
