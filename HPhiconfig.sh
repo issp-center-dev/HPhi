@@ -41,13 +41,13 @@ EOF
         cat > src/make.sys <<EOF
 CC = mpifccpx
 LAPACK_FLAGS = -Dlapack -SSL2BLAMP
-FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI -g
+FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI -g -lmpi_f90 -lmpi_f77
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f -v
 AR = ar rv
 F90 = mpifrtpx
-FFLAGS = -g -D MPI -Kfast,openmp,SPARC64IXfx,parallel
+FFLAGS = -g -D MPI -Cpp -Kfast,openmp,SPARC64IXfx,parallel
 EOF
     elif [ ${1} = "sr" ]; then
         cat > src/make.sys <<EOF

@@ -363,7 +363,7 @@ double complex X_Cis_MPI(
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) private(j, dmv) \
-  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
+  firstprivate(idim_max_buf, trans, ioff, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org, _irght, _ilft, _ihfbit)
     for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
         GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
                    _irght, _ilft, _ihfbit, &ioff);
@@ -434,7 +434,7 @@ double complex X_Ajt_MPI(
 
     dam_pr = 0.0;
 #pragma omp parallel for default(none) private(j, dmv) \
-  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
+  firstprivate(idim_max_buf, trans, ioff, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org, _irght, _ilft, _ihfbit)
     for (j = 1; j <= idim_max_buf; j++) {
         GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
                    _irght, _ilft, _ihfbit, &ioff);
