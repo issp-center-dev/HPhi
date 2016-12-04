@@ -11,7 +11,7 @@ komega_vals.o
 libshiftk:libkomega.a
 
 libkomega.a:$(OBJS)
-	ar cr libkomega.a $(OBJS)
+	$(AR) libkomega.a $(OBJS)
 
 .f90.o:
 	$(F90) -c $< $(FFLAGS)

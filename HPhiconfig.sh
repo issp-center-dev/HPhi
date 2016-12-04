@@ -53,11 +53,13 @@ EOF
         cat > src/make.sys <<EOF
 CC = mpcc_r
 LAPACK_FLAGS = -L /usr/lib -lessl
-FLAGS = -D MPI -D SR -q64 -O3 -lm -qsmp=omp 
+FLAGS = -D MPI -D SR -q64 -O3 -lm -qsmp=omp -lxlf90
 MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
 INCLUDE_DIR=./include
 CP = cp -f
 AR = ar -X64 rv 
+F90 = mpxlf2003_r
+FFLAGS = -WF,-DMPI -qsmp=omp -q64 -O3 -qsuffix=cpp=f90
 EOF
     elif [ ${1} = "intel" ]; then
         cat > src/make.sys <<EOF
