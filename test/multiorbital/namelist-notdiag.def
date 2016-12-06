@@ -1,7 +1,0 @@
-CalcMod calcmod.def
-ModPara modpara.def
-LocSpin zlocspn.def
-Trans zTrans-notdiag.def
-InterAll zInterAll-notdiag.def 
-OneBodyG greenone.def
-TwoBodyG greentwo.def
