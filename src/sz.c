@@ -79,9 +79,27 @@ int sz
   int ihfSpinDown=0;
   // [e] for Kondo
     
-  long unsigned int i_max;
+  long unsigned int i_max=0;
   double idim=0.0;
   long unsigned int div_up;
+
+  // [s] for general spin
+  long unsigned int *list_2_1_Sz;
+  long unsigned int *list_2_2_Sz;
+  if(X->Def.iFlgGeneralSpin==TRUE){
+    lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
+    lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+    for(j=0; j<X->Check.sdim+2;j++){
+      list_2_1_Sz[j]=0;
+      }
+    for(j=0; j< (X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2; j++){
+      list_2_2_Sz[j]=0;
+    }
+  }
+  // [e] for general spin
+
+  long unsigned int *list_jb;
+    lui_malloc1(list_jb,X->Large.SizeOflistjb);
 
 //hacker
   int hacker;
@@ -141,6 +159,9 @@ int sz
       if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
         exitMPI(-1);
       }
+      X->Large.irght=irght;
+      X->Large.ilft=ilft;
+      X->Large.ihfbit=ihfbit;
       //fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
      else{
@@ -611,14 +632,16 @@ int sz
        
     }    
     i_max=icnt;
-    //fprintf(stdoutMPI, "Xicnt=%ld \n",icnt);
+    //fprintf(stdoutMPI, "Debug: Xicnt=%ld \n",icnt);
     TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
     TimeKeeper(X, cFileNameTimeKeep, cOMPSzFinish, "a");
 
   }
 
-  if(X->Def.iCalcModel==HubbardNConserved){
-    X->Def.iCalcModel=Hubbard;
+  if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
+    if(X->Def.iCalcModel==HubbardNConserved){
+      X->Def.iCalcModel=Hubbard;
+    }
   }
   
   //Error message
@@ -638,6 +661,12 @@ int sz
   i_free2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
   }
   fprintf(stdoutMPI, "%s", cProEndCalcSz);
+
+    free(list_jb);
+    if(X->Def.iFlgGeneralSpin==TRUE){
+        free(list_2_1_Sz);
+        free(list_2_2_Sz);
+    }
   return 0;    
 }
 

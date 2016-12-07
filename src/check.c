@@ -64,7 +64,11 @@ int check(struct BindStruct *X){
   long unsigned int isite=0;
   int tmp_sz=0;
   int iMinup=0;
-  int iAllup=X->Def.Ne;
+  if(X->Def.iCalcModel ==Spin ||X->Def.iCalcModel ==SpinGC )
+  {
+    X->Def.Ne=X->Def.Nup;
+  }
+    int iAllup=X->Def.Ne;
 
   /*
     Set Site number per MPI process 
@@ -163,7 +167,8 @@ int check(struct BindStruct *X){
 	fprintf(stderr, " 2Sz is incorrect.\n");
 	return FALSE;
       }
-      comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
+      //comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
+      comb_sum= Binomial(Ns, X->Def.Nup, comb, Ns);
     }
     else{
       idimmax = 1;

@@ -793,21 +793,32 @@ int ReadDefFileNInt(
       fprintf(stdoutMPI, cErrExpecInterval, defname);
       return (-1);
     }
-    
+
+
     if(X->nvec==0){
       X->nvec=X->Lanczos_max;
     }
+    if(X->nvec < X->k_exct){
+        X->nvec=X->k_exct;
+    }
+
     if(ValidateValue(X->k_exct, 1, X->nvec)) {
-      fprintf(stdoutMPI, cErrLanczosExct, defname, X->k_exct);
+      fprintf(stdoutMPI, cErrLanczosExct, defname, X->nvec);
       return (-1);
     }
-    if(ValidateValue(X->LanczosTarget, 1, X->Lanczos_max)){
-      fprintf(stdoutMPI, cErrLanczosTarget, defname, X->LanczosTarget, X->nvec, X->Lanczos_max);
+
+    if(ValidateValue(X->LanczosTarget, X->k_exct, X->Lanczos_max)){
+      fprintf(stdoutMPI, cErrLanczosTarget, defname, X->LanczosTarget, X->k_exct, X->Lanczos_max);
       return (-1);
     }
 
   X->Nsize   = 2*X->Ne;
   X->fidx = 0;
+  X->NeMPI=X->Ne;
+  X->NupMPI=X->Nup;
+  X->NdownMPI=X->Ndown;
+  X->NupOrg=X->Nup;
+  X->NdownOrg=X->Ndown;
   return 0;
 }
 

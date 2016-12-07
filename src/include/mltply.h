@@ -24,6 +24,7 @@
 #define M_Ham 2
 #define M_CORR 3
 #define M_TOTALS 4
+#define M_CALCSPEC 4
 
 int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
@@ -653,11 +654,14 @@ long unsigned int *tmp_off
 );
 
 int X_Spin_CisAit(
-long unsigned int j,
-struct BindStruct *X,
-long unsigned int is1_spin,
-long unsigned int sigma2,
-long unsigned int *tmp_off
+        long unsigned int j,
+        struct BindStruct *X,
+        long unsigned int is1_spin,
+        long unsigned int sigma2,
+        long unsigned int *list_1_Org_,
+        long unsigned int *list_2_1_,
+        long unsigned int *list_2_2_,
+        long unsigned int *tmp_off
 );
 
 int X_Spin_CisAis(
@@ -682,6 +686,61 @@ long unsigned int j,
 struct BindStruct *X,
 long unsigned int is1_spin,
 long unsigned int sigma1
+);
+
+double complex GC_Ajt(
+        long unsigned int j,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        long unsigned int is1_spin,
+        double complex tmp_V,
+        long unsigned int *tmp_off
+);
+
+double complex GC_Cis(
+        long unsigned int j,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        long unsigned int is1_spin,
+        double complex tmp_V,
+        long unsigned int *tmp_off
+);
+
+
+
+double complex GC_Ajt(
+        long unsigned int j,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        long unsigned int is1_spin,
+        double complex tmp_V,
+        long unsigned int *tmp_off
+);
+
+int X_Cis(
+        long unsigned int j,
+        long unsigned int is1_spin,
+        long unsigned int *tmp_off,
+        long unsigned int *list_1_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
+);
+
+
+
+double complex X_Ajt(
+        long unsigned int j,
+        long unsigned int is1_spin,
+        long unsigned int *tmp_off,
+        long unsigned int *list_1_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
 );
 
 #endif /* HPHI_MLTPLY_H */

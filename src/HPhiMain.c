@@ -136,7 +136,6 @@ int main(int argc, char* argv[]){
   }	  
   fprintf(stdoutMPI, "%s", cProFinishDefFiles);
   
-
   /*ALLOCATE-------------------------------------------*/
   setmem_def(&X.Bind, &X.Bind.Boost);
   /*-----------------------------------------------------*/
@@ -149,48 +148,44 @@ int main(int argc, char* argv[]){
     return -1;
   }
   TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefFinish, "a");
-
-
   fprintf(stdoutMPI, "%s", cProFinishDefCheck);
-  if(check(&(X.Bind))==MPIFALSE){
-    FinalizeMPI();
-    return -1;
-  }
-  
-  
-  /*LARGE VECTORS ARE ALLOCATED*/
-  if(!setmem_large(&X.Bind)==0){
-    fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
-    exitMPI(-1);
-  }
 
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
 
   /*---------------------------*/
-  if(!HPhiTrans(&(X.Bind))==0){
+  if(!HPhiTrans(&(X.Bind))==0) {
     exitMPI(-1);
   }
 
-  StartTimer(1000);
-  if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
-    exitMPI(-1);
-  }
-  StopTimer(1000);
-
-  if(X.Bind.Def.WRITE==1){
-    output_list(&(X.Bind));
-    FinalizeMPI();
-    return 0;
-  }
-
-  StartTimer(2000);
-  diagonalcalc(&(X.Bind));
-  StopTimer(2000);
-  
   //Start Calculation
-
   if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
+    
+    if(check(&(X.Bind))==MPIFALSE){
+      FinalizeMPI();
+      return -1;
+    }
+    
+    /*LARGE VECTORS ARE ALLOCATED*/
+    if (!setmem_large(&X.Bind) == 0) {
+      fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
+      exitMPI(-1);
+    }
+    
+    StartTimer(1000);
+    if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
+      exitMPI(-1);
+    }
+    StopTimer(1000);
+    if(X.Bind.Def.WRITE==1){
+      output_list(&(X.Bind));
+      FinalizeMPI();
+      return 0;
+    }
+    StartTimer(2000);
+    diagonalcalc(&(X.Bind));
+    StopTimer(2000);
+      
     switch (X.Bind.Def.iCalcType) {
       case Lanczos:
         StartTimer(4000);
@@ -199,6 +194,7 @@ int main(int argc, char* argv[]){
           StopTimer(4000);
           return -1;
         }
+
         StopTimer(4000);
         break;
 
@@ -228,10 +224,10 @@ int main(int argc, char* argv[]){
         StopTimer(3000);
         break;
 
-      default:
-        FinalizeMPI();
-        StopTimer(0);
-        return 0;
+    default:
+      FinalizeMPI();
+      StopTimer(0);
+      return 0;
     }
   }
   else{

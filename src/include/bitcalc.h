@@ -109,7 +109,7 @@ int GetLocal2Sz
  const long unsigned int *Tpow
  );
 
-void ConvertToList1GeneralSpin(
+int ConvertToList1GeneralSpin(
 		const long unsigned int org_ibit,
 		const long unsigned int ihlfbit,
 		long unsigned int *_ilist1Comp

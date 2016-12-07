@@ -56,7 +56,8 @@ char *cErrNumAve= "Error in %s\n NumAve must be positive value.\n ";
 char *cErrExpecInterval= "Error in %s\n ExpecInterval must be positive value.\n ";
 char *cErrLanczos_max="Error in %s\n Lanczos_max must be positive value.\n ";
 char *cErrLanczosExct="Error in %s\n exct=%d must be greater than 1 and smaller than nvec=%d.\n ";
-char *cErrLanczosTarget="Error in %s\n LanczosTarget=%d must be greater than nvec=%d and smaller than Lanczos_Max=%d.\n ";
+char *cErrLanczosTarget="Error in %s\n LanczosTarget=%d must be greater than exct=%d and smaller than Lanczos_max=%d.\n ";
+
 
 char *cErrKW="Error: Wrong keywords '%s' in %s.\n";
 char *cErrKW_ShowList="Choose Keywords as follows: \n";

@@ -13,6 +13,7 @@ CalcSpectrumByFullDiag.o \
 CalcSpectrumByLanczos.o \
 CalcSpectrumByTPQ.o \
 SingleEx.o \
+SingleExHubbard.o \
 FirstMultiply.o \
 Lanczos_EigenValue.o \
 Lanczos_EigenVector.o \
@@ -49,6 +50,8 @@ log.o \
 ErrorMessage.o \
 LogMessage.o \
 PairEx.o \
+PairExHubbard.o \
+PairExSpin.o \
 ProgressMessage.o \
 global.o \
 wrapperMPI.o \
@@ -77,9 +80,12 @@ include/Lanczos_EigenVector.h \
 include/LogMessage.h \
 include/Multiply.h \
 include/PairEx.h \
+include/PairExSpin.h \
+include/PairExHubbard.h \
 include/PowerLanczos.h \
 include/ProgressMessage.h \
 include/SingleEx.h \
+include/SingleExHubbard.h \
 include/StdFace_main.h \
 include/bisec.h \
 include/bitcalc.h \

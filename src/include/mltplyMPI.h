@@ -84,6 +84,8 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(int org_isite1, int
 
 double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
+double complex X_child_CisAit_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_ispin2, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1, double complex *tmp_v1buf, unsigned long int idim_max, long unsigned int *list_1_org, long unsigned int *list_1buf_org, const long unsigned int _ihfbit);
+
 
 void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
   double complex *tmp_v0, double complex *tmp_v1);
@@ -134,6 +136,25 @@ double complex X_GC_child_CisAit_spin_MPIdouble( int org_isite1,  int org_ispin1
 double complex X_GC_child_CisAis_spin_MPIdouble(int org_isite1, int org_ispin1, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
 double complex X_GC_child_AisCis_spin_MPIdouble(int org_isite1, int org_ispin1, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
+
+double complex X_child_CisAit_spin_MPIdouble(
+				       int org_isite1,
+				       int org_ispin2,
+				       double complex tmp_trans,
+				       struct BindStruct *X /**< [inout]*/,
+				       double complex *tmp_v0 /**< [out] Result v0 = H v1*/, 
+				       double complex *tmp_v1, /**< [in] v0 = H v1*/
+                       double complex *tmp_v1buf,
+                       unsigned long int idim_max,
+                       long unsigned int *Tpow,
+                       long unsigned int *list_1_org,
+                       long unsigned int *list_1buf_org,
+                       long unsigned int *list_2_1_target,
+                       long unsigned int *list_2_2_target,
+                       const long unsigned int _irght,
+                       const long unsigned int _ilft,
+                       const long unsigned int _ihfbit
+                                             );
 
 double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
@@ -204,4 +225,95 @@ void child_general_int_spin_MPIBoost
   double complex *tmp_v1,
   double complex *tmp_v2,
   double complex *tmp_v3
+);
+
+double complex X_child_CisAjt_MPIdouble(
+				       int org_isite1,
+				       int org_ispin1,
+				       int org_isite2,
+				       int org_ispin2,
+				       double complex tmp_trans,
+				       struct BindStruct *X,
+				       double complex *tmp_v0, 
+				       double complex *tmp_v1,
+                       double complex *v1buf,
+					   long unsigned int *list_1_org,
+					   long unsigned int *list_1buf_org,
+					   long unsigned int *list_2_1_target,
+					   long unsigned int *list_2_2_target
+);
+
+double complex X_child_CisAjt_MPIsingle(
+                                        int org_isite1,
+                                        int org_ispin1,
+                                        int org_isite2,
+                                        int org_ispin2,
+                                        double complex tmp_trans,
+                                        struct BindStruct *X,
+                                        double complex *tmp_v0,
+                                        double complex *tmp_v1,
+                                        double complex *v1buf,
+                                        long unsigned int *list_1_org,
+                                        long unsigned int *list_1buf_org,
+                                        long unsigned int *list_2_1_target,
+                                        long unsigned int *list_2_2_target
+                                        );
+
+
+double complex X_GC_Cis_MPI(
+		int org_isite,
+		int org_ispin,
+		double complex tmp_trans,
+		double complex *tmp_v0,
+		double complex *tmp_v1,
+		unsigned long int idim_max,
+		double complex *tmp_v1buf,
+		unsigned long int *Tpow
+);
+
+double complex X_GC_Ajt_MPI(
+		int org_isite,
+		int org_ispin,
+		double complex tmp_trans,
+		double complex *tmp_v0,
+		double complex *tmp_v1,
+		unsigned long int idim_max,
+		double complex *tmp_v1buf,
+		long unsigned int *Tpow
+);
+
+double complex X_Cis_MPI(
+		int org_isite,
+		unsigned int org_ispin,
+		double complex tmp_trans,
+		double complex *tmp_v0,
+		double complex *tmp_v1,
+		double complex *tmp_v1buf,
+		unsigned long int idim_max,
+		long unsigned int *Tpow,
+		long unsigned int *list_1_org,
+		long unsigned int *list_1buf_org,
+		long unsigned int *list_2_1_target,
+		long unsigned int *list_2_2_target,
+		const long unsigned int _irght,
+		const long unsigned int _ilft,
+		const long unsigned int _ihfbit
+);
+
+double complex X_Ajt_MPI(
+		int org_isite,
+		unsigned int org_ispin,
+		double complex tmp_trans,
+		double complex *tmp_v0,
+		double complex *tmp_v1,
+		double complex *tmp_v1buf,
+		unsigned long int idim_max,
+		long unsigned int *Tpow,
+		long unsigned int *list_1_org,
+		long unsigned int *list_1buf_org,
+		long unsigned int *list_2_1_target,
+		long unsigned int *list_2_2_target,
+		const long unsigned int _irght,
+		const long unsigned int _ilft,
+		const long unsigned int _ihfbit
 );

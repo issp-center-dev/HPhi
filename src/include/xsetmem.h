@@ -33,6 +33,13 @@ int setmem_large
  struct BindStruct *X
 );
 
+
+int GetlistSize
+        (
+         struct BindStruct *X
+        );
+
+
 void setmem_IntAll_Diagonal
 (
  struct DefineList *X

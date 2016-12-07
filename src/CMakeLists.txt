@@ -7,7 +7,7 @@ endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")
 include_directories(include)
 add_definitions(-DDSFMT_MEXP=19937)
 
-set(SOURCES PowerLanczos.c CG_EigenVector.c CalcByFullDiag.c CalcByLanczos.c CalcByTPQ.c FileIO.c FirstMultiply.c HPhiMain.c HPhiTrans.c Lanczos_EigenValue.c Lanczos_EigenVector.c CalcSpectrum.c CalcSpectrumByLanczos.c CalcSpectrumByTPQ.c CalcSpectrumByFullDiag.c SingleEx.c PairEx.c Multiply.c bisec.c bitcalc.c check.c CheckMPI.c dSFMT.c diagonalcalc.c expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c global.c lapack_diag.c log.c makeHam.c matrixlapack.c mltply.c mltplySpin.c mltplyHubbard.c mltplyMPI.c output.c output_list.c phys.c readdef.c sgn.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c ProgressMessage.c wrapperMPI.c mltplyMPIBoost.c splash.c expec_energy_flct.c time.c)
+set(SOURCES PowerLanczos.c CG_EigenVector.c CalcByFullDiag.c CalcByLanczos.c CalcByTPQ.c FileIO.c FirstMultiply.c HPhiMain.c HPhiTrans.c Lanczos_EigenValue.c Lanczos_EigenVector.c CalcSpectrum.c CalcSpectrumByLanczos.c CalcSpectrumByTPQ.c CalcSpectrumByFullDiag.c SingleEx.c SingleExHubbard.c PairEx.c PairExHubbard.c PairExSpin.c Multiply.c bisec.c bitcalc.c check.c CheckMPI.c dSFMT.c diagonalcalc.c expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c global.c lapack_diag.c log.c makeHam.c matrixlapack.c mltply.c mltplySpin.c mltplyHubbard.c mltplyMPI.c output.c output_list.c phys.c readdef.c sgn.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c ProgressMessage.c wrapperMPI.c mltplyMPIBoost.c splash.c expec_energy_flct.c time.c)
 
 set(SOURCES_STDFACE StdFace/ChainLattice.c StdFace/HoneycombLattice.c StdFace/SquareLattice.c StdFace/StdFace_main.c StdFace/StdFace_ModelUtil.c StdFace/TriangularLattice.c StdFace/Ladder.c StdFace/Kagome.c)
 
