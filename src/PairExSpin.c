@@ -2,6 +2,7 @@
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
 #include "mltply.h"
+#include "PairExSpin.h"
 #ifdef MPI
 #include "mfmemory.h"
 #endif

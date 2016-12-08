@@ -208,8 +208,9 @@ int main(int argc, char* argv[]){
         }
         if (CalcByFullDiag(&X) != TRUE) {
           FinalizeMPI();
-          return -1;
           StopTimer(5000);
+          return -1;
+
         }
         StopTimer(5000);
         break;
