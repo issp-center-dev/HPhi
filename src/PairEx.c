@@ -24,9 +24,6 @@ int GetPairExcitedState
     int iret;
     long unsigned int irght,ilft,ihfbit;
 
-  long unsigned int i,j, idim_maxMPI;
-  long unsigned int is1_up, is, Asum, Adiff;
-  long unsigned int ibitsite1, ibitsite2;
   //  i_max = X->Check.idim_max;
     if(X->Def.iFlgGeneralSpin == FALSE) {
         if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
@@ -44,15 +41,6 @@ int GetPairExcitedState
   X->Large.ilft     = ilft;
   X->Large.ihfbit   = ihfbit;
   X->Large.mode=M_CALCSPEC;
-//    X->Large.mode     = M_MLTPLY;
-
-  double complex *tmp_v1bufOrg;
-    //set size
-#ifdef MPI
-    idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-    c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
-#endif // MPI
-
 
     switch(X->Def.iCalcModel){
   case HubbardGC:
