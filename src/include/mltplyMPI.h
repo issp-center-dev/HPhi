@@ -84,7 +84,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(int org_isite1, int
 
 double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
 
-double complex X_child_CisAit_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_ispin2, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1, double complex *tmp_v1buf, unsigned long int idim_max, long unsigned int *list_1_org, long unsigned int *list_1buf_org, const long unsigned int _ihfbit);
+double complex X_child_CisAit_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_ispin2, double complex tmp_trans, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1, double complex *tmp_v1buf, unsigned long int idim_max, long unsigned int *list_1_org, long unsigned int *list_1buf_org, long unsigned int _ihfbit);
 
 
 void child_general_int_spin_MPIsingle(unsigned long int i_int, struct BindStruct *X,
@@ -151,9 +151,9 @@ double complex X_child_CisAit_spin_MPIdouble(
                        long unsigned int *list_1buf_org,
                        long unsigned int *list_2_1_target,
                        long unsigned int *list_2_2_target,
-                       const long unsigned int _irght,
-                       const long unsigned int _ilft,
-                       const long unsigned int _ihfbit
+                       long unsigned int _irght,
+                       long unsigned int _ilft,
+                       long unsigned int _ihfbit
                                              );
 
 double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble( int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_J, struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1);
@@ -295,9 +295,9 @@ double complex X_Cis_MPI(
 		long unsigned int *list_1buf_org,
 		long unsigned int *list_2_1_target,
 		long unsigned int *list_2_2_target,
-		const long unsigned int _irght,
-		const long unsigned int _ilft,
-		const long unsigned int _ihfbit
+		long unsigned int _irght,
+		long unsigned int _ilft,
+		long unsigned int _ihfbit
 );
 
 double complex X_Ajt_MPI(
@@ -313,7 +313,7 @@ double complex X_Ajt_MPI(
 		long unsigned int *list_1buf_org,
 		long unsigned int *list_2_1_target,
 		long unsigned int *list_2_2_target,
-		const long unsigned int _irght,
-		const long unsigned int _ilft,
-		const long unsigned int _ihfbit
+		long unsigned int _irght,
+		long unsigned int _ilft,
+		long unsigned int _ihfbit
 );

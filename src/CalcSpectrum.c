@@ -238,11 +238,13 @@ int CalcSpectrum(
     case TPQCalc:
       fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum.\n");
       return FALSE;//TPQ is not supprted.
+#ifdef _CALCSPEC_TPQ
       iret = CalcSpectrumByTPQ(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
           if (iret != TRUE) {
             //Error Message will be added.
             return FALSE;
           }
+#endif
           break;
 
     case FullDiag:
