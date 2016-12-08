@@ -1,9 +1,0 @@
-CalcMod calcmod2.def
-ModPara modpara2.def
-LocSpin zlocspn.def
-Trans zTrans.def
-InterAll zInterAll.def
-OneBodyG greenone.def
-TwoBodyG greentwo.def
-PairExcitation pair.def
-SpectrumVec tmpvec_set0
