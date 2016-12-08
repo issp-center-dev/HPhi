@@ -80,7 +80,7 @@ int BitCheckGeneral(
 	     const unsigned int org_isite,
 	     const unsigned int target_ispin,
 	     const long int *SiteToBit,
-	     const long int *TPow	     
+	     const long unsigned int *TPow
 		    );
 
 
@@ -88,7 +88,7 @@ int GetBitGeneral(
 	     const unsigned int isite,
 	     const long unsigned int org_bit,
 	     const long int *SiteToBit,
-	     const long int *TPow	     
+	     const long unsigned int *TPow
 		   );
 
 int GetOffCompGeneralSpin(
@@ -98,7 +98,7 @@ int GetOffCompGeneralSpin(
 		const int off_ispin,
 		long  unsigned int *_ioffComp,
 		const long int *SiteToBit,
-		const long int *TPow
+		const long unsigned int *TPow
 		);
 
 int GetLocal2Sz
@@ -109,7 +109,7 @@ int GetLocal2Sz
  const long unsigned int *Tpow
  );
 
-void ConvertToList1GeneralSpin(
+int ConvertToList1GeneralSpin(
 		const long unsigned int org_ibit,
 		const long unsigned int ihlfbit,
 		long unsigned int *_ilist1Comp
@@ -117,3 +117,4 @@ void ConvertToList1GeneralSpin(
 
 
 unsigned long int snoob(unsigned long int x);
+int pop(unsigned int x);

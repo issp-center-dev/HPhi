@@ -13,15 +13,25 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#pragma once
+
+#ifndef HPHI_MLTPLYSPIN_H
+#define HPHI_MLTPLYSPIN_H
+
 #include "Common.h"
 
-int expec_energy_flct(struct BindStruct *X);
+int mltplySpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
-int expec_energy_flct_Hubbard(struct BindStruct *X);
+int mltplyHalfSpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
-int expec_energy_flct_HubbardGC(struct BindStruct *X);
+int mltplyGeneralSpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
-int expec_energy_flct_HalfSpinGC(struct BindStruct *X);
 
-int expec_energy_flct_GeneralSpinGC(struct BindStruct *X);
+int mltplySpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+int mltplyHalfSpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+int mltplyGeneralSpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+int mltplySpinGCBoost(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+#endif

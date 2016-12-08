@@ -14,46 +14,29 @@
 #include <mpi.h>
 #endif
 
-#ifndef MPI
-void clock_gettime_general(struct timespec *ts) {
-#ifdef _OSX
-  clock_serv_t clock_mac;
-  mach_timespec_t mts_mac;
-  host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &clock_mac);
-  clock_get_time(clock_mac, &mts_mac);
-  mach_port_deallocate(mach_task_self(), clock_mac);
-  ts->tv_sec = mts_mac.tv_sec;
-  ts->tv_nsec = mts_mac.tv_nsec;
-#else
-  clock_gettime(CLOCK_REALTIME, ts);
-#endif
-}
-#endif
-
 void StampTime(FILE *fp, char *str, int num){
+#ifdef MPI
   char str1[256];
   sprintf(str1, "%-50s [%04d] %12.5lf\n", str, num, Timer[num]);
-  fprintf(fp, str1);
+  fprintf(fp, "%s", str1);
+#endif
 }
 
 void InitTimer() {
+#ifdef MPI
   int i;
   int NTimer=10000;
   Timer       = (double*)malloc((NTimer)*sizeof(double));
   TimerStart  = (double*)malloc((NTimer)*sizeof(double));
   for(i=0;i<NTimer;i++) Timer[i]=0.0;
   for(i=0;i<NTimer;i++) TimerStart[i]=0.0;
+#endif
   return;
 }
 
 void StartTimer(int n) {
 #ifdef MPI
   TimerStart[n]=MPI_Wtime();
-#else
-  struct timespec ts;
-  clock_gettime_general(&ts);
-  //clock_gettime(CLOCK_REALTIME,&ts);
-  TimerStart[n]=ts.tv_sec + ts.tv_nsec*1.0e-9;
 #endif
   return;
 }
@@ -61,16 +44,13 @@ void StartTimer(int n) {
 void StopTimer(int n) {
 #ifdef MPI
   Timer[n] += MPI_Wtime() - TimerStart[n];
-#else
-  struct timespec ts;
-  clock_gettime_general(&ts);
-  //clock_gettime(CLOCK_REALTIME,&ts);
-  Timer[n] += ts.tv_sec + ts.tv_nsec*1.0e-9 - TimerStart[n];
 #endif
   return;
 }
 
 void OutputTimer(struct BindStruct *X) {
+
+#ifdef MPI
   char fileName[D_FileNameMax];
   FILE *fp;
   sprintf(fileName, "CalcTimer.dat"); //TBC
@@ -228,5 +208,7 @@ void OutputTimer(struct BindStruct *X) {
   fclose(fp);
   free(Timer);
   free(TimerStart);
+#endif
+  return;
 }
 

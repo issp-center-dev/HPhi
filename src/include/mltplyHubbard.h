@@ -1,5 +1,5 @@
 /* HPhi  -  Quantum Lattice Model Simulator */
-/* Copyright (C) 2015 Takahiro Misawa, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Youhei Yamaji, Synge Todo, Naoki Kawashima */
+/* Copyright (C) 2015 The University of Tokyo */
 
 /* This program is free software: you can redistribute it and/or modify */
 /* it under the terms of the GNU General Public License as published by */
@@ -13,13 +13,15 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#pragma once
+
+#ifndef HPHI_MLTPLYHUBBARD_H
+#define HPHI_MLTPLYHUBBARD_H
+
 #include "Common.h"
 
+int mltplyHubbard(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
-int GetSingleExcitedState
-(
- struct BindStruct *X,
- double complex *tmp_v0, /**< [out] Result v0 = H v1*/
-  double complex *tmp_v1 /**< [in] v0 = H v1*/
-);
+int mltplyHubbardGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+
+
+#endif

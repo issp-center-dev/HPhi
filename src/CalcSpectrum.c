@@ -282,12 +282,12 @@ int GetExcitedState
 
 
     if(X->Def.NSingleExcitationOperator > 0){
-      if(!GetSingleExcitedState(X,tmp_v0, tmp_v1)==TRUE){
+      if(GetSingleExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
         return FALSE;
       }
     }
     else if(X->Def.NPairExcitationOperator >0){
-      if(!GetPairExcitedState(X,tmp_v0, tmp_v1)==TRUE){
+      if(GetPairExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
         return FALSE;
       }
     }
@@ -359,7 +359,6 @@ int SetOmega
       sscanf(ctmp, "  Energy  %lf \n", &E1);
       Emax = LargeValue;
     }/**/
-
     //Read Lanczos_Step
     if(X->iFlgSpecOmegaMax == FALSE){
       X->dOmegaMax= Emax*(double)X->Nsite;
@@ -500,26 +499,35 @@ int MakeExcitedList(
                 case Kondo:
                 case Spin:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
-                        if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
-                            if (X->Def.PairExcitationOperator[0][1] == 0) {//up
-                                X->Def.Nup = X->Def.NupOrg + 1;
-                                X->Def.Ndown = X->Def.NdownOrg - 1;
-                            } else {//down
-                                X->Def.Nup = X->Def.NupOrg - 1;
-                                X->Def.Ndown = X->Def.NdownOrg + 1;
+                        if (X->Def.iFlgGeneralSpin == FALSE) {
+                            if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
+                                if (X->Def.PairExcitationOperator[0][1] == 0) {//up
+                                    X->Def.Nup = X->Def.NupOrg + 1;
+                                    X->Def.Ndown = X->Def.NdownOrg - 1;
+                                } else {//down
+                                    X->Def.Nup = X->Def.NupOrg - 1;
+                                    X->Def.Ndown = X->Def.NdownOrg + 1;
+                                }
+                            } else {//aiscjt
+                                if (X->Def.PairExcitationOperator[0][1] == 0) {//up
+                                    X->Def.Nup = X->Def.NupOrg - 1;
+                                    X->Def.Ndown = X->Def.NdownOrg + 1;
+                                } else {//down
+                                    X->Def.Nup = X->Def.NupOrg + 1;
+                                    X->Def.Ndown = X->Def.NdownOrg - 1;
+                                }
                             }
-                        } else {//aiscjt
-                            if (X->Def.PairExcitationOperator[0][1] == 0) {//up
-                                X->Def.Nup = X->Def.NupOrg - 1;
-                                X->Def.Ndown = X->Def.NdownOrg + 1;
-                            } else {//down
-                                X->Def.Nup = X->Def.NupOrg + 1;
-                                X->Def.Ndown = X->Def.NdownOrg - 1;
+                        }
+                        else{//for general spin
+                            if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
+                                X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
+                            }
+                            else{//aiscjt
+                                X->Def.Total2Sz = X->Def.Total2SzMPI-2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
                             }
                         }
                     }
                     break;
-
             }
         } else {
             return FALSE;
@@ -547,7 +555,7 @@ int MakeExcitedList(
         X->Def.iCalcModel=Hubbard;
     }
 
-    /*
+#ifdef _DEBUG
   if (*iFlgListModifed == TRUE) {
     for(j=1; j<=X->Check.idim_maxOrg; j++){
         fprintf(stdout, "Debug1: myrank=%d, list_1_org[ %ld] = %ld\n", myrank, j, list_1_org[j]+myrank*X->Def.OrgTpow[2*X->Def.NsiteMPI-1]);
@@ -557,7 +565,7 @@ int MakeExcitedList(
         fprintf(stdout, "Debug2: myrank=%d, list_1[ %ld] = %ld\n", myrank, j, list_1[j]+myrank* 64);
     }
     }
-*/
+#endif
 
     return TRUE;
 }

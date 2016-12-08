@@ -2192,6 +2192,72 @@ double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
 #endif
 }
 
+
+
+double complex X_child_CisAit_GeneralSpin_MPIdouble(
+        int org_isite1,
+        int org_ispin1,
+        int org_ispin2,
+        double complex tmp_trans,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        double complex *tmp_v1buf,
+        unsigned long int idim_max,
+        long unsigned int *list_1_org,
+        long unsigned int *list_1buf_org,
+        const long unsigned int _ihfbit)
+{
+#ifdef MPI
+  unsigned long int off, j, tmp_off,idim_max_buf;
+  int origin, ierr;
+  double complex tmp_V, dmv, dam_pr;
+  MPI_Status statusMPI;
+  
+  if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
+                            &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
+    tmp_V = tmp_trans;
+  }
+  else if (GetOffCompGeneralSpin((unsigned long int) myrank,
+                                 org_isite1 + 1, org_ispin2, org_ispin1, &off,
+                                 X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
+    tmp_V = conj(tmp_trans);
+    if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
+  }
+  else return 0.0;
+  
+  origin = (int) off;
+
+  ierr = MPI_Sendrecv(&idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  if(ierr != 0) exitMPI(-1);
+  
+  ierr = MPI_Sendrecv(list_1_org, idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                      list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+  
+  ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                      v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                      MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+
+  if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
+#pragma omp parallel for default(none)\
+  firstprivate(X, tmp_V, idim_max_buf, list_1buf_org) private(j, dmv, tmp_off) shared (tmp_v0, tmp_v1, v1buf)
+        for (j = 1; j <= idim_max_buf; j++) {
+          ConvertToList1GeneralSpin(list_1buf_org[j], X->Large.ihfbit, &tmp_off);
+            dmv = v1buf[j] * tmp_V;
+            tmp_v0[tmp_off] += dmv;
+        }
+    }
+    else {
+      tmp_off=0;
+      return 0;
+    }
+    return 1;
+#endif
+}
+
  /**
  *
  * General interaction term in the Spin model + GC
@@ -2911,7 +2977,7 @@ double complex X_child_CisAit_spin_MPIdouble(
   unsigned long int idim_max_buf, j;
   unsigned long int tmp_off;
   MPI_Status statusMPI;
-  double complex trans, dmv, dam_pr;
+  double complex trans, dmv;
   
   mask1 = (int)X->Def.Tpow[org_isite1];
   origin = myrank ^ mask1;
@@ -2938,7 +3004,6 @@ double complex X_child_CisAit_spin_MPIdouble(
 		      v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
     if(ierr != 0) exitMPI(-1);
     
-    dam_pr = 0.0;
     if(X->Large.mode == M_MLTPLY|| X->Large.mode ==M_CALCSPEC){
 #pragma omp parallel for default(none) private(j, dmv, tmp_off) \
   firstprivate(idim_max_buf, trans, X, list_1buf_org,                   \
@@ -4388,3 +4453,284 @@ double complex X_child_CisAis_Hubbard_MPI
     return dam_pr;
 #endif
 }
+
+
+
+
+/**
+  *
+  * Single creation/annihilation operator
+  * in the inter process region for HubbardGC.
+  *
+  * @author Mitsuaki Kawamura (The University of Tokyo)
+  * @author Kazuyoshi Yoshimi (The University of Tokyo)
+  * @author Youhei Yamaji (The University of Tokyo)
+  */
+double complex X_GC_Cis_MPI(
+        int org_isite,
+        int org_ispin,
+        double complex tmp_trans,
+        double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
+        double complex *tmp_v1 /**< [in] v0 += H v1*/,
+        unsigned long int idim_max,
+        double complex *tmp_v1buf,
+        unsigned long int *Tpow
+) {
+#ifdef MPI
+    int mask2, state2, ierr, origin, bit2diff, Fsgn;
+    unsigned long int idim_max_buf, j;
+    MPI_Status statusMPI;
+    double complex trans, dmv, dam_pr;
+
+    // org_isite >= Nsite
+    mask2 = (int) Tpow[2 * org_isite + org_ispin];
+
+    origin = myrank ^ mask2; // XOR
+    state2 = origin & mask2;
+
+    //if state2 = mask2, the state (org_isite, org_ispin) is not occupied in myrank
+    //origin: if the state (org_isite, org_ispin) is occupied in myrank, the state is not occupied in origin.
+
+    bit2diff = myrank - ((2*mask2-1) & myrank);
+
+    //SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
+    SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
+
+    ierr = MPI_Sendrecv(&idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    if (state2 == mask2) {
+        trans = 0;
+    }
+    else if (state2 == 0) {
+        trans = (double) Fsgn * tmp_trans;
+    }
+    else return 0;
+
+    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
+  firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
+    for (j = 0; j < idim_max_buf; j++) {
+        dmv = trans * tmp_v1buf[j + 1];
+        tmp_v0[j + 1] += dmv;
+        dam_pr += conj(tmp_v1[j + 1]) * dmv;
+    }
+    return (dam_pr);
+#endif
+}/*double complex X_GC_Cis_MPI*/
+
+
+/**
+  *
+  * Single creation/annihilation operator
+  * in the inter process region for HubbardGC.
+  *
+  * @author Mitsuaki Kawamura (The University of Tokyo)
+  * @author Kazuyoshi Yoshimi (The University of Tokyo)
+  * @author Youhei Yamaji (The University of Tokyo)
+  */
+double complex X_GC_Ajt_MPI(
+        int org_isite,
+        int org_ispin,
+        double complex tmp_trans,
+        double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
+        double complex *tmp_v1 /**< [in] v0 += H v1*/,
+        unsigned long int idim_max,
+        double complex *tmp_v1buf,
+        unsigned long int *Tpow
+) {
+#ifdef MPI
+    int mask2, state2, ierr, origin, bit2diff, Fsgn;
+    unsigned long int idim_max_buf, j;
+    MPI_Status statusMPI;
+    double complex trans, dmv, dam_pr;
+
+    // org_isite >= Nsite
+    mask2 = (int) Tpow[2 * org_isite + org_ispin];
+
+    origin = myrank ^ mask2; // XOR
+    state2 = origin & mask2;
+
+    //if state2 = mask2, the state (org_isite, org_ispin) is not occupied in myrank
+    //origin: if the state (org_isite, org_ispin) is occupied in myrank, the state is not occupied in origin.
+
+    bit2diff = myrank - ((2*mask2-1) & myrank);
+
+    //SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
+    SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
+
+    ierr = MPI_Sendrecv(&idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    if (state2 == 0) {
+        trans = 0;
+    }
+    else if (state2 == mask2) {
+        trans = (double) Fsgn * tmp_trans;
+    }
+    else return 0;
+
+    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
+  firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
+    for (j = 0; j < idim_max_buf; j++) {
+        dmv = trans * tmp_v1buf[j + 1];
+        tmp_v0[j + 1] += dmv;
+        dam_pr += conj(tmp_v1[j + 1]) * dmv;
+    }
+    return (dam_pr);
+#endif
+}/*double complex X_GC_Ajt_MPI*/
+
+
+
+double complex X_Cis_MPI(
+        int org_isite,
+        unsigned int org_ispin,
+        double complex tmp_trans,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        double complex *tmp_v1buf,
+        unsigned long int idim_max,
+        long unsigned int *Tpow,
+        long unsigned int *list_1_org,
+        long unsigned int *list_1buf_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
+) {
+#ifdef MPI
+    int mask2, state2, ierr, origin, bit2diff, Fsgn;
+    unsigned long int idim_max_buf, j, ioff;
+    MPI_Status statusMPI;
+    double complex trans, dmv, dam_pr;
+
+    // org_isite >= Nsite
+    mask2 = (int) Tpow[2 * org_isite + org_ispin];
+
+    origin = myrank ^ mask2; // XOR
+    state2 = origin & mask2;
+
+    //if state2 = mask2, the state (org_isite, org_ispin) is not occupied in myrank
+    //origin: if the state (org_isite, org_ispin) is occupied in myrank, the state is not occupied in origin.
+
+    bit2diff = myrank - ((2*mask2-1) & myrank);
+
+    SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
+
+    ierr = MPI_Sendrecv(&idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(list_1_org, idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    if (state2 == mask2) {
+        trans = 0;
+    }
+    else if (state2 == 0) {
+        trans = (double) Fsgn * tmp_trans;
+    }
+    else return 0;
+
+    dam_pr = 0.0;
+#pragma omp parallel for default(none) private(j, dmv) \
+  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
+    for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
+        GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+                   _irght, _ilft, _ihfbit, &ioff);
+        dmv = trans * tmp_v1buf[j];
+        tmp_v0[ioff] += dmv;
+    }
+    return (dam_pr);
+#endif
+}/*double complex X_GC_Cis_MPI*/
+
+
+double complex X_Ajt_MPI(
+        int org_isite,
+        unsigned int org_ispin,
+        double complex tmp_trans,
+        double complex *tmp_v0,
+        double complex *tmp_v1,
+        double complex *tmp_v1buf,
+        unsigned long int idim_max,
+        long unsigned int *Tpow,
+        long unsigned int *list_1_org,
+        long unsigned int *list_1buf_org,
+        long unsigned int *list_2_1_target,
+        long unsigned int *list_2_2_target,
+        const long unsigned int _irght,
+        const long unsigned int _ilft,
+        const long unsigned int _ihfbit
+){
+#ifdef MPI
+    int mask2, state2, ierr, origin, bit2diff, Fsgn;
+    unsigned long int idim_max_buf, j, ioff;
+    MPI_Status statusMPI;
+    double complex trans, dmv, dam_pr;
+
+    // org_isite >= Nsite
+    mask2 = (int) Tpow[2 * org_isite + org_ispin];
+
+    origin = myrank ^ mask2; // XOR
+    state2 = origin & mask2;
+
+    //if state2 = mask2, the state (org_isite, org_ispin) is not occupied in myrank
+    //origin: if the state (org_isite, org_ispin) is occupied in myrank, the state is not occupied in origin.
+
+    bit2diff = myrank - ((2*mask2-1) & myrank);
+
+    SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
+    printf("Debug0: rank=%d test\n", myrank);
+
+    ierr = MPI_Sendrecv(&idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(list_1_org, idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    ierr = MPI_Sendrecv(tmp_v1, idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    if (state2 == 0) {
+        trans = 0;
+    }
+    else if (state2 == mask2) {
+        trans = (double) Fsgn * tmp_trans;
+    }
+    else return 0;
+
+    dam_pr = 0.0;
+#pragma omp parallel for default(none) private(j, dmv) \
+  firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
+    for (j = 1; j <= idim_max_buf; j++) {
+        GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+                   _irght, _ilft, _ihfbit, &ioff);
+        dmv = trans * tmp_v1buf[j];
+        tmp_v0[ioff] += dmv;
+    }
+    return (dam_pr);
+#endif
+}
+

@@ -135,4 +135,5 @@ GRTAGS
 GTAGS
 .idea
 .DS_Store
+cmake-build-debug
 *.mod
