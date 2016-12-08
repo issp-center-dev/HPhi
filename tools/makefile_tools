@@ -1,0 +1,2 @@
+cTPQ.x:cTPQ.f90
+	ifort cTPQ.f90 -o cTPQ.x -check all -warn all
