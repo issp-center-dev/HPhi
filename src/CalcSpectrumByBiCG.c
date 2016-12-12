@@ -149,7 +149,47 @@ int OutputTMComponents_BiCG(
 
   return TRUE;
 }/*int OutputTMComponents_BiCG*/
+/*
+ Initialize Shadow Residual as a vrandom vector
+*/
+void InitShadowRes(
+  struct BindStruct *X, double complex *v4)
+{
+  long int idim, iv;
+  int mythread;
+  double dnorm;
+  /*
+  For DSFMT
+  */
+  long unsigned int u_long_i;
+  dsfmt_t dsfmt;
 
+  iv = X->Def.initial_iv;
+#pragma omp parallel default(none) private(idim, u_long_i, mythread, dsfmt) \
+              shared(v4, iv, X, nthreads, myrank)
+  {
+    /*
+     Initialise MT
+    */
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+    u_long_i = 123432 + labs(iv) + mythread + nthreads * myrank;
+    dsfmt_init_gen_rand(&dsfmt, u_long_i);
+
+#pragma omp for
+    for (idim = 1; idim <= X->Check.idim_max; idim++)
+      v4[idim] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)
+               + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
+  }/*#pragma omp parallel*/
+
+  dnorm = sqrt(creal(VecProdMPI(X->Check.idim_max, v4, v4)));
+#pragma omp parallel for default(none) shared(X,v4,dnorm) private(idim)
+  for (idim = 1; idim <= X->Check.idim_max; idim++) v4[idim] /= dnorm;
+
+}/*void InitShadowRes*/
 /** 
  * @brief A main function to calculate spectrum by BiCG method
  * 
@@ -177,7 +217,8 @@ int CalcSpectrumByBiCG(
   int iret;
   unsigned long int liLanczosStp_vec = 0;
   double complex *v12, *v14, res_proj;
-  int stp, one = 1, status[3];
+  int stp, one = 1, status[3], iomega;
+  double *resz;
 #if defined(MPI)
   int comm;
   comm = MPI_Comm_c2f(MPI_COMM_WORLD);
@@ -187,6 +228,7 @@ int CalcSpectrumByBiCG(
   
   v12 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   v14 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
+  resz = (double*)malloc(Nomega * sizeof(double));
 
   /*
     Read residual vectors
@@ -221,6 +263,7 @@ int CalcSpectrumByBiCG(
       v2[idim] = vrhs[idim];
       v4[idim] = vrhs[idim];
     }
+    //InitShadowRes(&(X->Bind), v4);
   }
   /*
     Input alpha, beta, projected residual, or start from scratch
@@ -249,6 +292,7 @@ int CalcSpectrumByBiCG(
   fprintf(stdoutMPI, "    Start: Calculate tridiagonal matrix components.\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalStart, "a");
   fprintf(stdoutMPI, "\n  Iteration     Status     Seed     Residual-2-Norm\n");
+  childfopenMPI("residual.dat", "w", &fp);
 
   for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++) {
 
@@ -269,9 +313,25 @@ int CalcSpectrumByBiCG(
     komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
 #endif
 
+    if (stp % 10 == 0) {
+#if defined(MPI)
+      pkomega_bicg_getresidual(resz);
+#else
+      komega_bicg_getresidual(resz);
+#endif
+      for (iomega = 0; iomega < Nomega; iomega++) {
+        fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n", 
+          stp, creal(dcomega[iomega]), 
+          creal(dcSpectrum[iomega]), cimag(dcSpectrum[iomega]),
+          resz[iomega]);
+      }
+      fprintf(fp, "\n");
+    }
+
     fprintf(stdoutMPI, "  %9d  %9d %8d %25.15e\n", abs(status[0]), status[1], status[2], creal(v12[1]));
     if (status[0] < 0) break;
   }/*for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++)*/
+  fclose(fp);
 
   fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
@@ -317,6 +377,7 @@ int CalcSpectrumByBiCG(
   komega_bicg_finalize();
 #endif
 
+  free(resz);
   free(v12);
   free(v14);
 
