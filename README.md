@@ -30,7 +30,7 @@ You can install HΦ and also get a manual for HΦ from a [release note](https://
 The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 ([GPL v3](http://www.gnu.org/licenses/gpl-3.0.en.html)). 
 
 ## Official page
-[HPhi portal site](http://qlms.github.io/HPhi/index.html)
+[HPhi portal site](http://qlms.github.io/HPhi/index_en.html)
 
 ## Author
 Youhei Yamaji, Takahiro Misawa, Synge Todo, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Naoki Kawashima.
