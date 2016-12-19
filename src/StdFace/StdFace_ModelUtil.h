@@ -48,12 +48,12 @@ void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
 void StdFace_InputCoulombV(struct StdIntList *StdI, double *V0, char *V0name);
 void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name);
 
-void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp,
-  double Wx0, double Wy0, double Lx0, double Ly0);
+void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp);
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC,
   int *isite, int *jsite, int connect);
 void StdFace_InitSite1D(struct StdIntList *StdI);
+void StdFace_PrintGeometry(struct StdIntList *StdI);
 
 void StdFace_Tetragonal(struct StdIntList *StdI, char *model);
 void StdFace_Chain(struct StdIntList *StdI, char *model);

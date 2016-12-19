@@ -1,14 +1,13 @@
-F90 = gfortran
-CC = gcc
+include ../src/make.sys
 
 fourier:fourier.o key2lower.o
-	$(F90) $^ -lblas -o $@
+	$(F90) $^ -g $(LAPACK_FLAGS) -fcheck=bound -o $@
 
 fourier.o:fourier.f90
-	$(F90) -c $<
+	$(F90) -g -fcheck=bound -c $<
 
 key2lowe.o:key2lower.c
-	$(CC) -c $<
+	$(CC) -g -c $<
 
 clean:
 	rm -f *.o *.mod fourier

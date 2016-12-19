@@ -753,71 +753,57 @@ static void PrintModPara(struct StdIntList *StdI)
 static void Print1Green(struct StdIntList *StdI)
 {
   FILE *fp;
-  int ngreen, igreen, isite, jsite, ispin,jspin, SiMax, SjMax;
+  int ngreen, igreen, store;
+  int isite, jsite, ispin, jspin, SiMax, SjMax;
   int **greenindx;
+  /*
+   Set Indices of correlation functions
+  */
+  ngreen = 0;
+  if (StdI->ioutputmode != 0) {
+    for (store = 0; store < 2; store++) {
 
-  if (StdI->ioutputmode == 0){
-    ngreen = 0;
-  }
-  else if(StdI->ioutputmode == 1){
-    ngreen = 0;
-    for (isite = 0; isite < StdI->nsite; isite++){
-      if (StdI->locspinflag[isite] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (StdI->locspinflag[isite] + 1);
-    }
-  }
-  else{
-    ngreen = 0;
-    for (isite = 0; isite < StdI->nsite; isite++){
-      if (StdI->locspinflag[isite] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (StdI->locspinflag[isite] + 1);
-    }
-    ngreen = ngreen * ngreen;
-  }
-  greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
-  for (igreen = 0; igreen < ngreen; igreen++){
-    greenindx[igreen] = (int *)malloc(sizeof(int) * 4);
-  }
-  if (StdI->ioutputmode == 1){
-    igreen = 0;
-    for (isite = 0; isite < StdI->nsite; isite++){
-
-      if (StdI->locspinflag[isite] == 0) SiMax = 1;
-      else SiMax = StdI->locspinflag[isite];
-      
-      for (ispin = 0; ispin <= SiMax; ispin++){
-        greenindx[igreen][0] = isite;
-        greenindx[igreen][1] = ispin;
-        greenindx[igreen][2] = isite;
-        greenindx[igreen][3] = ispin;
-        igreen++;
-      }
-    }
-  }
-  else if (StdI->ioutputmode == 2){
-    igreen = 0;
-    for (isite = 0; isite < StdI->nsite; isite++){
-
-      if (StdI->locspinflag[isite] == 0) SiMax = 1;
-      else SiMax = StdI->locspinflag[isite];
-
-      for (ispin = 0; ispin <= SiMax; ispin++){
-        for (jsite = 0; jsite < StdI->nsite; jsite++){
-
-          if (StdI->locspinflag[jsite] == 0) SjMax = 1;
-          else SjMax = StdI->locspinflag[jsite];
-
-          for (jspin = 0; jspin <= SjMax; jspin++){
-            greenindx[igreen][0] = isite;
-            greenindx[igreen][1] = ispin;
-            greenindx[igreen][2] = jsite;
-            greenindx[igreen][3] = jspin;
-            igreen++;
-          }
+      if (store == 1) {
+        greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
+        for (igreen = 0; igreen < ngreen; igreen++) {
+          greenindx[igreen] = (int *)malloc(sizeof(int) * 4);
         }
-      }
+        ngreen = 0;
+      }/*if (store == 1)*/
+
+      for (isite = 0; isite < StdI->nsite; isite++) {
+
+        if (StdI->locspinflag[isite] == 0) SiMax = 1;
+        else SiMax = StdI->locspinflag[isite];
+
+        for (ispin = 0; ispin <= SiMax; ispin++) {
+          for (jsite = 0; jsite < StdI->nsite; jsite++) {
+
+            if (StdI->locspinflag[jsite] == 0) SjMax = 1;
+            else SjMax = StdI->locspinflag[jsite];
+
+            for (jspin = 0; jspin <= SjMax; jspin++) {
+
+              if (isite != jsite &&
+                (StdI->locspinflag[isite] != 0 && StdI->locspinflag[jsite] != 0)) continue;
+
+              if (StdI->ioutputmode == 2 || ispin == jspin)
+              {
+                if (store == 1) {
+                  greenindx[ngreen][0] = isite;
+                  greenindx[ngreen][1] = ispin;
+                  greenindx[ngreen][2] = jsite;
+                  greenindx[ngreen][3] = jspin;
+                }
+                ngreen++;
+              }
+
+            }/*for (jspin = 0; jspin <= SjMax; jspin++)*/
+          }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+        }/*for (ispin = 0; ispin <= SiMax; ispin++)*/
+      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
     }
-  }
+  }/*if (StdI->ioutputmode != 0) */
 
   fp = fopen("greenone.def", "w");
   fprintf(fp, "===============================\n");
@@ -848,114 +834,84 @@ static void Print1Green(struct StdIntList *StdI)
  */
 static void Print2Green(struct StdIntList *StdI){
   FILE *fp;
-  int ngreen, igreen;
+  int ngreen, store, igreen;
   int site1, site2, site3, site4;
   int spin1, spin2, spin3, spin4;
   int S1Max, S2Max, S3Max, S4Max;
   int **greenindx;
+  /*
+   Set Indices of correlation functions
+  */
+  ngreen = 0;
+  if (StdI->ioutputmode != 0) {
+    for (store = 0; store < 2; store++) {
 
-  if (StdI->ioutputmode == 0){
-    ngreen = 0;
-  }
-  else if (StdI->ioutputmode == 1){
-    ngreen = 0;
-    for (site1 = 0; site1 < StdI->nsite; site1++){
-      if (StdI->locspinflag[site1] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (StdI->locspinflag[site1] + 1);
-    }
-    ngreen = ngreen * ngreen;
-  }
-  else{
-    ngreen = 0;
-    for (site1 = 0; site1 < StdI->nsite; site1++){
-      if (StdI->locspinflag[site1] == 0) ngreen = ngreen + 2;
-      else ngreen = ngreen + (StdI->locspinflag[site1] + 1);
-    }
-    ngreen = ngreen * ngreen * ngreen * ngreen;
-  }
-  greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
-  for (igreen = 0; igreen < ngreen; igreen++){
-    greenindx[igreen] = (int *)malloc(sizeof(int) * 8);
-  }
-  if (StdI->ioutputmode == 1){
-    igreen = 0;
-    for (site1 = 0; site1 < StdI->nsite; site1++){
-
-      if (StdI->locspinflag[site1] == 0) S1Max = 1;
-      else S1Max = StdI->locspinflag[site1];
-
-      for (spin1 = 0; spin1 <= S1Max; spin1++){
-        for (site2 = 0; site2 < StdI->nsite; site2++){
-
-          if (StdI->locspinflag[site2] == 0) S2Max = 1;
-          else S2Max = StdI->locspinflag[site2];
-
-          for (spin2 = 0; spin2 <= S2Max; spin2++){
-            greenindx[igreen][0] = site1;
-            greenindx[igreen][1] = spin1;
-            greenindx[igreen][2] = site1;
-            greenindx[igreen][3] = spin1;
-            greenindx[igreen][4] = site2;
-            greenindx[igreen][5] = spin2;
-            greenindx[igreen][6] = site2;
-            greenindx[igreen][7] = spin2;
-           igreen++;
-          }
+      if (store == 1) {
+        greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
+        for (igreen = 0; igreen < ngreen; igreen++) {
+          greenindx[igreen] = (int *)malloc(sizeof(int) * 8);
         }
-      }
-    }
-   }
-  else if (StdI->ioutputmode == 2){
-    igreen = 0;
-    for (site1 = 0; site1 < StdI->nsite; site1++){
+        ngreen = 0;
+      }/*if (store == 1)*/
 
-      if (StdI->locspinflag[site1] == 0) S1Max = 1;
-      else S1Max = StdI->locspinflag[site1];
+      for (site1 = 0; site1 < StdI->nsite; site1++) {
 
-      for (spin1 = 0; spin1 <= S1Max; spin1++){
-        for (site2 = 0; site2 < StdI->nsite; site2++){
+        if (StdI->locspinflag[site1] == 0) S1Max = 1;
+        else S1Max = StdI->locspinflag[site1];
 
-          if (StdI->locspinflag[site1] != 0 && StdI->locspinflag[site2] != 0 
-            && site1 != site2) continue;
+        for (spin1 = 0; spin1 <= S1Max; spin1++) {
+          for (site2 = 0; site2 < StdI->nsite; site2++) {
 
-          if (StdI->locspinflag[site2] == 0) S2Max = 1;
-          else S2Max = StdI->locspinflag[site2];
+            if (StdI->locspinflag[site1] != 0 && StdI->locspinflag[site2] != 0
+              && site1 != site2) continue;
 
-          for (spin2 = 0; spin2 <= S2Max; spin2++){
-            for (site3 = 0; site3 < StdI->nsite; site3++){
+            if (StdI->locspinflag[site2] == 0) S2Max = 1;
+            else S2Max = StdI->locspinflag[site2];
 
-              if (StdI->locspinflag[site3] == 0) S3Max = 1;
-              else S3Max = StdI->locspinflag[site3];
+            for (spin2 = 0; spin2 <= S2Max; spin2++) {
+              for (site3 = 0; site3 < StdI->nsite; site3++) {
 
-              for (spin3 = 0; spin3 <= S3Max; spin3++){
-                for (site4 = 0; site4 < StdI->nsite; site4++){
+                if (StdI->locspinflag[site3] == 0) S3Max = 1;
+                else S3Max = StdI->locspinflag[site3];
 
-                  if (StdI->locspinflag[site3] != 0 && StdI->locspinflag[site4] != 0
-                    && site3 != site4) continue;
+                for (spin3 = 0; spin3 <= S3Max; spin3++) {
+                  for (site4 = 0; site4 < StdI->nsite; site4++) {
 
-                  if (StdI->locspinflag[site4] == 0) S4Max = 1;
-                  else S4Max = StdI->locspinflag[site4];
+                    if (StdI->locspinflag[site3] != 0 && StdI->locspinflag[site4] != 0
+                      && site3 != site4) continue;
 
-                  for (spin4 = 0; spin4 <= S4Max; spin4++){
-                    greenindx[igreen][0] = site1;
-                    greenindx[igreen][1] = spin1;
-                    greenindx[igreen][2] = site2;
-                    greenindx[igreen][3] = spin2;
-                    greenindx[igreen][4] = site3;
-                    greenindx[igreen][5] = spin3;
-                    greenindx[igreen][6] = site4;
-                    greenindx[igreen][7] = spin4;
-                    igreen++;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  ngreen = igreen;
+                    if (StdI->locspinflag[site4] == 0) S4Max = 1;
+                    else S4Max = StdI->locspinflag[site4];
+
+                    for (spin4 = 0; spin4 <= S4Max; spin4++) {
+
+                      if (StdI->ioutputmode == 2 ||
+                        (site1 == site2 && site3 == site4 &&
+                          spin1 - spin2 + spin3 - spin4 == 0)) {
+                        if (store == 1) {
+                          greenindx[ngreen][0] = site1;
+                          greenindx[ngreen][1] = spin1;
+                          greenindx[ngreen][2] = site2;
+                          greenindx[ngreen][3] = spin2;
+                          greenindx[ngreen][4] = site3;
+                          greenindx[ngreen][5] = spin3;
+                          greenindx[ngreen][6] = site4;
+                          greenindx[ngreen][7] = spin4;
+                        }
+                        ngreen++;
+                      }
+
+                    }/*for (spin4 = 0; spin4 <= S4Max; spin4++)*/
+                  }/*for (site4 = 0; site4 < StdI->nsite; site4++)*/
+                }/*for (spin3 = 0; spin3 <= S3Max; spin3++*/
+              }/*for (site3 = 0; site3 < StdI->nsite; site3++)*/
+            }/*for (spin2 = 0; spin2 <= S2Max; spin2++)*/
+          }/*for (site2 = 0; site2 < StdI->nsite; site2++)*/
+        }/*for (spin1 = 0; spin1 <= S1Max; spin1++)*/
+      }/*for (site1 = 0; site1 < StdI->nsite; site1++)*/
+
+    }/*for (store = 0; store < 2; store++)*/
+  }/*if (StdI->ioutputmode != 0)*/
 
   fp = fopen("greentwo.def", "w");
   fprintf(fp, "=============================================\n");
@@ -972,10 +928,12 @@ static void Print2Green(struct StdIntList *StdI){
 
   fprintf(stdout, "    greentwo.def is written.\n");
   //[s] free
-  for (igreen = 0; igreen < ngreen; igreen++){
-    free(greenindx[igreen]);
-  }
-  free(greenindx);
+  if (StdI->ioutputmode != 0) {
+    for (igreen = 0; igreen < ngreen; igreen++) {
+      free(greenindx[igreen]);
+    }
+    free(greenindx);
+  }/*if (StdI->ioutputmode != 0)*/
   //[e] free
 }/*void Print2Green(struct StdIntList *StdI)*/
 

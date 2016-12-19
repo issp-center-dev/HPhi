@@ -137,3 +137,4 @@ GTAGS
 .DS_Store
 cmake-build-debug
 *.mod
+tool/fourier

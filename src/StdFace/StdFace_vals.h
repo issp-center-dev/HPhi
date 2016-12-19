@@ -105,10 +105,10 @@ struct StdIntList {
   /*
    Parameter for lattice
   */
-  double bW0;
-  double bW1;
-  double bL0;
-  double bL1;
+  int bW0;
+  int bW1;
+  int bL0;
+  int bL1;
   int NCell;
   int **Cell;
   int NsiteUC;

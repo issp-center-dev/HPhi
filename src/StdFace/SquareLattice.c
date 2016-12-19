@@ -47,7 +47,7 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   StdI->NsiteUC = 1;
   /**/
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
-  /*
+  
   StdFace_PrintVal_d("a", &StdI->a, 1.0);
   StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
   StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
@@ -55,10 +55,8 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   StdFace_PrintVal_d("Wy", &StdI->Wy, 0.0);
   StdFace_PrintVal_d("Lx", &StdI->Lx, 0.0);
   StdFace_PrintVal_d("Ly", &StdI->Ly, StdI->a1);
-  */
-  StdI->a0 = 1.0; StdI->a1 = 1.0;
-  StdFace_InitSite2D(StdI, fp,
-    StdI->a0, 0.0, 0.0, StdI->a1);
+  
+  StdFace_InitSite2D(StdI, fp);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
@@ -244,4 +242,5 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
 
   fprintf(fp, "plot \'-\' w d lc 7\n0.0 0.0\nend\npause -1\n");
   fclose(fp);
+  StdFace_PrintGeometry(StdI);
 }

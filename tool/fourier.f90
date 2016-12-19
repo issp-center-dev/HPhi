@@ -83,9 +83,13 @@ SUBROUTINE read_filename()
   USE fourier_val, ONLY : file_one, file_two, filehead, nsite, nwfc, filetail
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, itmp, lanczos_max, numave, calctype, interval, irun, istep, iwfc
+  INTEGER :: fi = 10, lanczos_max, numave, calctype, interval, irun, istep, iwfc
   CHARACTER(256) :: ctmp, modpara, calcmod, keyname, cirun, cistep, namelist
   !
+  WRITE(*,*) 
+  WRITE(*,*) "#####  Read HPhi/mVMC Input Files  #####" 
+  WRITE(*,*) 
+  !  
   CALL getarg(1, namelist)
   !
   ! Read from NameList file
@@ -128,19 +132,19 @@ SUBROUTINE read_filename()
   READ(fi,*) ctmp
   READ(fi,*) ctmp
   DO
-     READ(fi,*,END=20) keyname, itmp
+     READ(fi,*,END=20) keyname, ctmp
      CALL key2lower(keyname)
      !
      IF(TRIM(ADJUSTL(keyname)) == "nsite") THEN
-        nsite = itmp
+        READ(ctmp,*) nsite
      ELSE IF(TRIM(ADJUSTL(keyname)) == "numave") THEN
-        numave = itmp
+        READ(ctmp,*) numave
      ELSE IF(TRIM(ADJUSTL(keyname)) == "lanczos_max") THEN
-        lanczos_max = itmp
+        READ(ctmp,*) lanczos_max
      ELSE IF(TRIM(ADJUSTL(keyname)) == "expecinterval") THEN
-        interval = itmp
+        READ(ctmp,*) interval
      ELSE IF(TRIM(ADJUSTL(keyname)) == "exct") THEN
-        nwfc = itmp
+        READ(ctmp,*) nwfc
      END IF
   END DO
   !
@@ -157,11 +161,11 @@ SUBROUTINE read_filename()
   OPEN(fi,file = TRIM(calcmod))
   !
   DO
-     READ(fi,*,END=30) keyname, itmp
+     READ(fi,*,END=30) keyname, ctmp
      CALL key2lower(keyname)
      !
      IF(TRIM(ADJUSTL(keyname)) == "calctype") THEN
-        calctype = itmp
+        READ(ctmp,*) calctype
      END IF
   END DO
   !
@@ -234,24 +238,29 @@ SUBROUTINE read_geometry()
   !
   ALLOCATE(site(2,nsite))
   !
+  WRITE(*,*) 
+  WRITE(*,*) "#####  Read Geometry Input File  #####" 
+  WRITE(*,*) 
+  !
   ! "nd argument should be geometry file name
   !
   CALL getarg(2, filename)
   !
+  WRITE(*,*) "  Read from ", TRIM(filename)
   OPEN(fi, file = TRIM(filename))
   !
   ! Direct lattice vector in arbitraly unit
   !
   READ(fi,*) direct(1:2,1)
   READ(fi,*) direct(1:2,2)
-  WRITE(*,*) "  Direct LATTICE VECTOR :"
-  WRITE(*,'(2f15.10)') direct(1:2, 1:2)
+  WRITE(*,*) "    Direct LATTICE VECTOR :"
+  WRITE(*,'(4x2f15.10)') direct(1:2, 1:2)
   !
   ! Supercell index (a0w, a0l, a1w, a1l)
   !
   READ(fi,*) avec(1:2,1)
   READ(fi,*) avec(1:2,2)
-  WRITE(*,*) "  Supercell Index :"
+  WRITE(*,*) "    Supercell Index :"
   WRITE(*,'(2i8)') avec(1:2, 1:2)
   !
   DO isite = 1, nsite
@@ -269,17 +278,17 @@ SUBROUTINE read_geometry()
      nk = -nk
      bvec(1:2,1:2) = - bvec(1:2,1:2)
   END IF
-  WRITE(*,*) "  Number of k point : ", nk
-  WRITE(*,*) "  Reciplocal superlattice vector :"
+  WRITE(*,*) "    Number of k point : ", nk
+  WRITE(*,*) "    Reciprocal superlattice vector (times nk) :"
   WRITE(*,'(2i8)') bvec(1:2, 1:2)
   !
   ! Compute Reciprocal Lattice Vector
   !
-  det = recipr(1,1) * recipr(2,2) - recipr(1,2) * recipr(2,1)
+  det = direct(1,1) * direct(2,2) - direct(1,2) * direct(2,1)
   recipr(1:2,1) = (/  direct(2,2), - direct(1,2)/) / det
   recipr(1:2,2) = (/- direct(2,1),   direct(1,1)/) / det
-  WRITE(*,*) "  Reciplocal lattice vector :"
-  WRITE(*,'(2f15.10)') recipr(1:2, 1:2)
+  WRITE(*,*) "    Reciplocal lattice vector :"
+  WRITE(*,'(4x2f15.10)') recipr(1:2, 1:2)
   !
   RETURN
   !
@@ -367,17 +376,22 @@ SUBROUTINE read_corrindx()
   INTEGER :: fi = 10, itmp(8), icor
   CHARACTER(100) :: ctmp
   !
+  WRITE(*,*) 
+  WRITE(*,*) "#####  Read Correlation Index File  #####" 
+  WRITE(*,*) 
+  !
   ALLOCATE(indx(3,nsite*nsite,8))
   !
   ! Read index for the One-Body Correlation
   !
   OPEN(fi, file = TRIM(file_one))
+  WRITE(*,*) "  Read from ", TRIM(file_one)
   READ(fi,*) ctmp
   READ(fi,*) ctmp, ncor1
   READ(fi,*) ctmp
   READ(fi,*) ctmp
   READ(fi,*) ctmp
-  WRITE(*,*) "  Number of Correlation Function (One body) : ", ncor1
+  WRITE(*,*) "    Number of Correlation Function (One body) : ", ncor1
   !
   ! Search mapping index for up-up and down-down correlation
   !
@@ -386,24 +400,28 @@ SUBROUTINE read_corrindx()
      READ(fi,*) itmp(1), itmp(2), itmp(3), itmp(4)
      IF(itmp(2) == 0 .AND. itmp(4) == 0) THEN ! Up-Up correlation
         ncor(1) = ncor(1) + 1
-        indx(1:3,ncor(1),1) = (/itmp(1), itmp(3), icor/)
+        indx(1:3,ncor(1),1) = (/itmp(1) + 1, itmp(3) + 1, icor/)
      ELSE IF (itmp(2) == 1 .AND. itmp(4) == 1) THEN ! Down-Down correlation
         ncor(2) = ncor(2) + 1
-        indx(1:3,ncor(2),2) = (/itmp(1), itmp(3), icor/)
+        indx(1:3,ncor(2),2) = (/itmp(1) + 1, itmp(3) + 1, icor/)
      END IF
   END DO
+  !
+  WRITE(*,*) "    Number of Up-Up Index : ", ncor(1)
+  WRITE(*,*) "    Number of Down-Down Index : ", ncor(2)
   !
   CLOSE(fi)
   !
   ! Read index for the Two-Body Correlation
   !
   OPEN(fi, file = TRIM(file_two))
+  WRITE(*,*) "  Read from ", TRIM(file_two)
   READ(fi,*) ctmp
   READ(fi,*) ctmp, ncor2
   READ(fi,*) ctmp
   READ(fi,*) ctmp
   READ(fi,*) ctmp
-  WRITE(*,*) "  Number of Correlation Function (Two body) : ", ncor2
+  WRITE(*,*) "    Number of Correlation Function (Two body) : ", ncor2
   !
   ! Search index for up-up, up-up-down-down, etc.
   !
@@ -416,35 +434,42 @@ SUBROUTINE read_corrindx()
      IF(itmp(2) == 0 .AND. itmp(4) == 0) THEN
         IF(itmp(6) == 0 .AND. itmp(8) == 0) THEN ! UpUpUpUp
            ncor(3) = ncor(3) + 1
-           indx(1:3,ncor(3),3) = (/itmp(1), itmp(5), icor/)
+           indx(1:3,ncor(3),3) = (/itmp(1) + 1, itmp(5) + 1, icor/)
         ELSE IF(itmp(6) == 1 .AND. itmp(8) == 1) THEN ! UpUpDownDown
            ncor(4) = ncor(4) + 1
-           indx(1:3,ncor(4),4) = (/itmp(1), itmp(5), icor/)
+           indx(1:3,ncor(4),4) = (/itmp(1) + 1, itmp(5) + 1, icor/)
         END IF
      ELSE IF(itmp(2) == 1 .AND. itmp(4) == 1) THEN
         IF(itmp(6) == 0 .AND. itmp(8) == 0) THEN ! DownDownUpUp
            ncor(5) = ncor(5) + 1
-           indx(1:3,ncor(5),5) = (/itmp(1), itmp(5), icor/)
+           indx(1:3,ncor(5),5) = (/itmp(1) + 1, itmp(5) + 1, icor/)
         ELSE IF(itmp(6) == 1 .AND. itmp(8) == 1) THEN ! DownDownDownDown
            ncor(6) = ncor(6) + 1
-           indx(1:3,ncor(6),6) = (/itmp(1), itmp(5), icor/)
+           indx(1:3,ncor(6),6) = (/itmp(1) + 1, itmp(5) + 1, icor/)
         END IF
-     ELSE IF((itmp(2) == 0 .AND. itmp(4) == 1) .AND. (itmp(6) == 1 .AND. itmp(4) == 0)) THEN
+     ELSE IF((itmp(2) == 0 .AND. itmp(4) == 1) .AND. (itmp(6) == 1 .AND. itmp(8) == 0)) THEN
         !
         ! Up-Down-Down-Up = S+S-
         !
         ncor(7) = ncor(7) + 1
-        indx(1:3,ncor(7),7) = (/itmp(1), itmp(5), icor/)
-     ELSE IF((itmp(2) == 1 .AND. itmp(4) == 0) .AND. (itmp(6) == 0 .AND. itmp(4) == 1)) THEN
+        indx(1:3,ncor(7),7) = (/itmp(1) + 1, itmp(5) + 1, icor/)
+     ELSE IF((itmp(2) == 1 .AND. itmp(4) == 0) .AND. (itmp(6) == 0 .AND. itmp(8) == 1)) THEN
         !
         ! Down-Up-Up-Down = S-S+
         !
         ncor(8) = ncor(8) + 1
-        indx(1:3,ncor(8),8) = (/itmp(1), itmp(5), icor/)
+        indx(1:3,ncor(8),8) = (/itmp(1) + 1, itmp(5) + 1, icor/)
      END IF
   END DO
   !
   CLOSE(fi)
+  !
+  WRITE(*,*) "    Number of UpUpUpUp         Index : ", ncor(3)
+  WRITE(*,*) "    Number of UpUpDownDown     Index : ", ncor(4)
+  WRITE(*,*) "    Number of DownDownUpUp     Index : ", ncor(5)
+  WRITE(*,*) "    Number of DownDownDownDown Index : ", ncor(6)
+  WRITE(*,*) "    Number of Plus-Minus       Index : ", ncor(7)
+  WRITE(*,*) "    Number of Minus-Plus       Index : ", ncor(8)
   !
 END SUBROUTINE read_corrindx
 !
@@ -458,10 +483,11 @@ SUBROUTINE read_corrfile()
   !
   INTEGER :: fi = 10, icor, itmp(8), ii, iwfc
   COMPLEX(8),ALLOCATABLE :: cor0(:)
+  REAL(8) :: cor0_r(2)
   CHARACTER(256) :: filename, set, step
   !
   ALLOCATE(cor(nsite,nsite,6,nwfc), cor0(MAX(ncor1,ncor2)))
-  cor(1:nsite,1:nsite,1:6,1:nwfc) = CMPLX(0d0, 0d0)
+  cor(1:nsite,1:nsite,1:6,1:nwfc) = CMPLX(0d0, 0d0, KIND(1d0))
   !
   ! One Body Correlation Function
   !
@@ -471,7 +497,8 @@ SUBROUTINE read_corrfile()
      OPEN(fi, file = TRIM(filename))
      !
      DO icor = 1, ncor1
-        READ(fi,*) itmp(1:4), cor0(icor)
+        READ(fi,*) itmp(1:4), cor0_r(1:2)
+        cor0(icor) = CMPLX(cor0_r(1), cor0_r(2), KIND(1d0))
      END DO
      CLOSE(fi)
      !
@@ -489,14 +516,15 @@ SUBROUTINE read_corrfile()
      OPEN(fi, file = TRIM(filename))
      !
      DO icor = 1, ncor2
-        READ(fi,*) itmp(1:8), cor0(icor)
+        READ(fi,*) itmp(1:8), cor0_r(1:2)
+        cor0(icor) = CMPLX(cor0_r(1), cor0_r(2), KIND(1d0))
      END DO
      CLOSE(fi)
      !
      ! Map it into Density-Density(3), Sz-Sz(4), S+S-(5), S-S+(6) Correlation
      !
      DO ii = 3, 6, 3
-        DO icor = 1, ncor(3)
+        DO icor = 1, ncor(ii)
            cor(indx(1,icor,ii), indx(2,icor,ii), 3, iwfc) &
            &  = cor( indx(1,icor,ii), indx(2,icor,ii), 3, iwfc) &
            &  + cor0(indx(3,icor,ii))
@@ -506,7 +534,7 @@ SUBROUTINE read_corrfile()
         END DO
      END DO
      DO ii = 4, 5
-        DO icor = 1, ncor(3)
+        DO icor = 1, ncor(ii)
            cor(indx(1,icor,ii), indx(2,icor,ii), 3, iwfc) &
            &  = cor( indx(1,icor,ii), indx(2,icor,ii), 3, iwfc) &
            &  + cor0(indx(3,icor,ii))
@@ -547,13 +575,13 @@ SUBROUTINE fourier_cor()
      DO isite = 1, nsite
         DO ik = 1, nk
            theta = - tpi * DOT_PRODUCT(kvec(1:2,ik), (site(1:2,isite) - site(1:2,jsite)))
-           fmat(ik,isite,jsite) = CMPLX(COS(theta), SIN(theta))
+           fmat(ik,isite,jsite) = CMPLX(COS(theta), SIN(theta), KIND(1d0))
         END DO
      END DO
   END DO
   !
-  CALL zgemm('N', 'N', nk, 6*nwfc, nsite*nsite, CMPLX(1d0, 0d0), fmat, nk, &
-  &          cor, nsite*nsite, CMPLX(0d0,0d0), cor_k, nk)
+  CALL zgemm('N', 'N', nk, 6*nwfc, nsite*nsite, CMPLX(1d0, 0d0, KIND(1d0)), fmat, nk, &
+  &          cor, nsite*nsite, CMPLX(0d0,0d0,KIND(1d0)), cor_k, nk)
   !
   cor_k(1:nk,1:6,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nsite**2)
   !
@@ -573,6 +601,12 @@ SUBROUTINE output_cor()
   CHARACTER(256) :: filename
   !
   ! Output Correlation function in the 1st BZ
+  !
+  WRITE(*,*) 
+  WRITE(*,*) "#####  Output Files  #####" 
+  WRITE(*,*) 
+  !
+  WRITE(*,*) "  Correlation in k-space : ", "output/" // TRIM(filehead) // "_corr", "*.dat"
   !
   DO iwfc = 1, nwfc
      !
@@ -621,5 +655,9 @@ PROGRAM fourier
   CALL read_corrfile()
   CALL fourier_cor()
   CALL output_cor()
+  !
+  WRITE(*,*) 
+  WRITE(*,*) "#####  Done  #####" 
+  WRITE(*,*) 
   !
 END PROGRAM fourier

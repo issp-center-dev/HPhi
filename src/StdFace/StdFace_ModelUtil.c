@@ -414,28 +414,27 @@ void StdFace_RequiredVal_i(
 void StdFace_FoldSite2D(struct StdIntList *StdI, 
   int iW, int iL, int *iCell0, int *iCell1, int *iWfold, int *iLfold)
 {
-  double x0, x1, xW, xL;
-
+  int x0, x1, xW, xL;
   /*
-   Transform to fractional coordinate
+   Transform to fractional coordinate (times NCell)
   */
-  x0 = StdI->bW0 * (double)iW + StdI->bL0 * (double)iL;
-  x1 = StdI->bW1 * (double)iW + StdI->bL1 * (double)iL;
+  x0 = StdI->bW0 * iW + StdI->bL0 * iL;
+  x1 = StdI->bW1 * iW + StdI->bL1 * iL;
+  /*
+   Which supercell contains this cell
+  */
+  *iCell0 = (x0 + StdI->NCell * 1000) / StdI->NCell - 1000;
+  *iCell1 = (x1 + StdI->NCell * 1000) / StdI->NCell - 1000;
+  /*
+    Fractional coordinate (times NCell) in the original supercell
+  */
+  x0 -= StdI->NCell*(*iCell0);
+  x1 -= StdI->NCell*(*iCell1);
   /**/
-  if (x0 + 1.0e-8 >= 0.0) *iCell0 = (int)(x0 + 1.0e-8);
-  else *iCell0 = (int)(x0 + 1.0e-8) - 1;
-  if (x1 + 1.0e-8 >= 0.0) *iCell1 = (int)(x1 + 1.0e-8);
-  else *iCell1 = (int)(x1 + 1.0e-8) - 1;
-  /**/
-  x0 -= (double)*iCell0;
-  x1 -= (double)*iCell1;
-  /**/
-  xW = (double)StdI->a0W * x0 + (double)StdI->a1W * x1;
-  xL = (double)StdI->a0L * x0 + (double)StdI->a1L * x1;
-  if (xW >= 0) *iWfold = (int)(xW + 1.0e-8);
-  else *iWfold = (int)(xW - 1.0e-8);
-  if (xL >= 0) *iLfold = (int)(xL + 1.0e-8);
-  else *iLfold = (int)(xL - 1.0e-8);
+  xW = StdI->a0W * x0 + StdI->a1W * x1;
+  xL = StdI->a0L * x0 + StdI->a1L * x1;
+  *iWfold = (xW + StdI->NCell * 1000) / StdI->NCell - 1000;
+  *iLfold = (xL + StdI->NCell * 1000) / StdI->NCell - 1000;
 }
 
 /**
@@ -444,13 +443,12 @@ void StdFace_FoldSite2D(struct StdIntList *StdI,
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp,
-  double Wx0, double Wy0, double Lx0, double Ly0)
+void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
 {
   int Wmin, Wmax, Lmin, Lmax;
   int iW, iL, ipos;
-  int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC;
-  double pos[4][2], xmin, xmax, det/*, offset[2], scale*/;
+  int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC, NCell0;
+  double pos[4][2], xmin, xmax/*, offset[2], scale*/;
   /*
    check Input parameters
   */
@@ -497,10 +495,6 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp,
     StdFace_PrintVal_i("a1W", &StdI->a1W, 1);
     StdFace_PrintVal_i("a1L", &StdI->a1L, 1);
   }
-  StdI->Wx = Wx0;
-  StdI->Wy = Wy0;
-  StdI->Lx = Lx0;
-  StdI->Ly = Ly0;
   /*
    Structure in a cell
   */
@@ -509,17 +503,25 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp,
     StdI->tau[isiteUC] = (double *)malloc(sizeof(double) * 2);
   }
   /*
-   Calculate reciplocal lattice vectors
+   Calculate reciprocal lattice vectors (times NCell)
   */
-  if (StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W == 0) {
+  StdI->NCell = StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W;
+  printf("         Number of Cell : %d\n", StdI->NCell);
+  if (StdI->NCell == 0) {
     exitMPI(-1);
   }
 
-  det = (double)(StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W);
-  StdI->bW0 = (double)StdI->a1L / det;
-  StdI->bL0 = - (double)StdI->a1W / det;
-  StdI->bW1 = - (double)StdI->a0L / det;
-  StdI->bL1 = (double)StdI->a0W / det;
+  StdI->bW0 = StdI->a1L;
+  StdI->bL0 = - StdI->a1W;
+  StdI->bW1 = - StdI->a0L;
+  StdI->bL1 = StdI->a0W;
+  if (StdI->NCell < 0) {
+    StdI->bW0 *= -1;
+    StdI->bL0 *= -1;
+    StdI->bW1 *= -1;
+    StdI->bL1 *= -1;
+    StdI->NCell *= -1;
+  }/*if (StdI->NCell < 0)*/
   /*
    Initialize gnuplot
   */
@@ -545,19 +547,19 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp,
   /*
    Calculate the number of Unit Cell
   */
-  StdI->Cell = (int **)malloc(sizeof(int*) * (Wmax - Wmin + 1) * (Lmax - Lmin + 1));
-  for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++) {
+  StdI->Cell = (int **)malloc(sizeof(int*) * StdI->NCell);
+  for (iCell = 0; iCell < StdI->NCell; iCell++) {
     StdI->Cell[iCell] = (int *)malloc(sizeof(int) * 2);
   }/*for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++)*/
 
-  StdI->NCell = 0;
+  NCell0 = 0;
   for (iL = Lmin; iL <= Lmax; iL++) {
     for (iW = Wmin; iW <= Wmax; iW++) {
       StdFace_FoldSite2D(StdI, iW, iL, &iCell0, &iCell1, &iWfold, &iLfold);
       if (iCell0 == 0 && iCell1 == 0) {
-        StdI->Cell[StdI->NCell][0] = iW;
-        StdI->Cell[StdI->NCell][1] = iL;
-        StdI->NCell += 1;
+        StdI->Cell[NCell0][0] = iW;
+        StdI->Cell[NCell0][1] = iL;
+        NCell0 += 1;
       }/*if (lUC == 1)*/
     }/*for (iW = Wmin; iW <= Wmax; iW++*/
   }/*for (iL = Lmin; iL <= Lmax; iL++)*/
@@ -888,3 +890,36 @@ void StdFace_InitSite1D(struct StdIntList *StdI)
   }/*for (iL = Lmin; iL <= Lmax; iL++)*/
 
 }/*StdFace_InitSite1D*/
+/*
+ Print geometry of sites for the pos-process of correlation function
+*/
+void StdFace_PrintGeometry(struct StdIntList *StdI) {
+  FILE *fp;
+  int isite, iCell;
+
+  fp = fopen("geometry.dat", "w");
+
+  fprintf(fp, "%25.15e %25.15e\n", StdI->Wx, StdI->Wy);
+  fprintf(fp, "%25.15e %25.15e\n", StdI->Lx, StdI->Ly);
+  fprintf(fp, "%d %d\n", StdI->a0W, StdI->a0L);
+  fprintf(fp, "%d %d\n", StdI->a1W, StdI->a1L);
+
+  for (iCell = 0; iCell < StdI->NCell; iCell++) {
+    for (isite = 0; isite < StdI->NsiteUC; isite++) {
+      fprintf(fp, "%25.15e %25.15e\n",
+        StdI->tau[isite][0] + (double)StdI->Cell[iCell][0], 
+        StdI->tau[isite][1] + (double)StdI->Cell[iCell][1]);
+    }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
+  }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
+  if (strcmp(StdI->model, "kondo") == 0) {
+    for (iCell = 0; iCell < StdI->NCell; iCell++) {
+      for (isite = 0; isite < StdI->NsiteUC; isite++) {
+        fprintf(fp, "%25.15e %25.15e\n",
+          StdI->tau[isite][0] + (double)StdI->Cell[iCell][0],
+          StdI->tau[isite][1] + (double)StdI->Cell[iCell][1]);
+      }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
+    }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
+  }
+  fclose(fp);
+
+}/*void StdFace_PrintGeometry()*/
