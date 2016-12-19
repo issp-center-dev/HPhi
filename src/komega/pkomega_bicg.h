@@ -27,4 +27,5 @@ void pkomega_bicg_restart(int *ndim, int *nl, int *nz, double complex *x, double
 void pkomega_bicg_update(double complex *v12, double complex *v2, double complex *v14, double complex *v4, double complex *x, double complex *r_l, int *status);
 void pkomega_bicg_getcoef(double complex *alpha_save, double complex *beta_save, double complex *z_seed, double complex *r_l_save);
 void pkomega_bicg_getvec(double complex *r_old, double complex *r_tilde_old);
+void pkomega_bicg_getresidual(double *res);
 void pkomega_bicg_finalize();
