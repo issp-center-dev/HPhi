@@ -1,0 +1,14 @@
+F90 = gfortran
+CC = gcc
+
+fourier:fourier.o key2lower.o
+	$(F90) $^ -lblas -o $@
+
+fourier.o:fourier.f90
+	$(F90) -c $<
+
+key2lowe.o:key2lower.c
+	$(CC) -c $<
+
+clean:
+	rm -f *.o *.mod fourier
