@@ -3,6 +3,7 @@ MODULE fourier_val
   IMPLICIT NONE
   !
   INTEGER,SAVE :: &
+  & calctype, & ! (0) Lanczos (1) TPQ (2) FullDiag (3) LOBCG (4) mVMC
   & nwfc, & ! Number of state
   & avec(2,2), & ! Supercell index
   & bvec(2,2), & ! Reciplocal Superlattice Vector times nk
@@ -25,11 +26,11 @@ MODULE fourier_val
   !
   INTEGER,ALLOCATABLE,SAVE :: &
   & indx(:,:,:), & ! (3,nsite*nsite,8) Mapping index for each Correlation function
-  & equiv(:)      ! (nktot)
+  & equiv(:)      ! (nktot) Equivalent k point in the 1st BZ
   !
   REAL(8),ALLOCATABLE,SAVE :: &
-  & kvec(:,:), & ! (2,nk) k-vector in the !st BZ
-  & kvec_tot(:,:), & ! (2,nktot)
+  & kvec(:,:), & ! (2,nk) k-vector in the 1st BZ
+  & kvec_tot(:,:), & ! (2,nktot) k-vector in the lerger area
   & site(:,:)    ! (2,nsite) Site geometry in the fractional coordinate
   !
   COMPLEX(8),ALLOCATABLE,SAVE :: &
@@ -80,38 +81,44 @@ CONTAINS
 !
 SUBROUTINE read_filename()
   !
-  USE fourier_val, ONLY : file_one, file_two, filehead, nsite, nwfc, filetail
+  USE fourier_val, ONLY : file_one, file_two, filehead, nsite, nwfc, filetail, calctype
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, lanczos_max, numave, calctype, interval, irun, istep, iwfc
-  CHARACTER(256) :: ctmp, modpara, calcmod, keyname, cirun, cistep, namelist
+  INTEGER :: fi = 10, lanczos_max, numave, interval, irun, istep, iwfc, idx_start
+  CHARACTER(256) :: modpara, calcmod, keyname, namelist
   !
   WRITE(*,*) 
   WRITE(*,*) "#####  Read HPhi/mVMC Input Files  #####" 
   WRITE(*,*) 
-  !  
+  !
+  namelist = ""
   CALL getarg(1, namelist)
   !
   ! Read from NameList file
   !
   OPEN(fi,file = TRIM(namelist))
   !
+  calcmod = ""
   DO
-     READ(fi,*,END=10) keyname, ctmp
+     READ(fi,*,END=10) keyname
+     BACKSPACE(fi)
      CALL key2lower(keyname)
      !
      IF(TRIM(ADJUSTL(keyname)) == "onebodyg") THEN
-        file_one = TRIM(ADJUSTL(ctmp))
+        READ(fi,*) keyname, file_one
      ELSE IF(TRIM(ADJUSTL(keyname)) == "twobodyg") THEN
-        file_two = TRIM(ADJUSTL(ctmp))
+        READ(fi,*) keyname, file_two
      ELSE IF(TRIM(ADJUSTL(keyname)) == "modpara") THEN
-        modpara = TRIM(ADJUSTL(ctmp))
+        READ(fi,*) keyname, modpara
      ELSE IF(TRIM(ADJUSTL(keyname)) == "calcmod") THEN
-        calcmod = TRIM(ADJUSTL(ctmp))
+        READ(fi,*) keyname, calcmod
+     ELSE
+        READ(fi,*) keyname
      END IF
   END DO
   !
-10 WRITE(*,*) "  Read from ", TRIM(namelist)
+10 CONTINUE
+  WRITE(*,*) "  Read from ", TRIM(namelist)
   CLOSE(FI)
   !
   WRITE(*,*) "    OneBodyG file : ", TRIM(ADJUSTL(file_one))
@@ -123,55 +130,70 @@ SUBROUTINE read_filename()
   !
   OPEN(fi,file = TRIM(modpara))
   !
-  READ(fi,*) ctmp
-  READ(fi,*) ctmp
-  READ(fi,*) ctmp
-  READ(fi,*) ctmp
-  READ(fi,*) ctmp
-  READ(fi,*) keyname, filehead
-  READ(fi,*) ctmp
-  READ(fi,*) ctmp
   DO
-     READ(fi,*,END=20) keyname, ctmp
+     READ(fi,*,END=20) keyname
+     BACKSPACE(fi)
      CALL key2lower(keyname)
      !
      IF(TRIM(ADJUSTL(keyname)) == "nsite") THEN
-        READ(ctmp,*) nsite
+        READ(fi,*) keyname, nsite
+     ELSE IF(TRIM(ADJUSTL(keyname)) == "cdatafilehead") THEN
+        READ(fi,*) keyname, filehead
      ELSE IF(TRIM(ADJUSTL(keyname)) == "numave") THEN
-        READ(ctmp,*) numave
+        READ(fi,*) keyname, numave
      ELSE IF(TRIM(ADJUSTL(keyname)) == "lanczos_max") THEN
-        READ(ctmp,*) lanczos_max
+        READ(fi,*) keyname, lanczos_max
      ELSE IF(TRIM(ADJUSTL(keyname)) == "expecinterval") THEN
-        READ(ctmp,*) interval
+        READ(fi,*) keyname, interval
      ELSE IF(TRIM(ADJUSTL(keyname)) == "exct") THEN
-        READ(ctmp,*) nwfc
+        READ(fi,*) keyname, nwfc
+     ELSE IF(TRIM(ADJUSTL(keyname)) == "ndataidxstart") THEN
+        READ(fi,*) keyname, idx_start
+     ELSE IF(TRIM(ADJUSTL(keyname)) == "ndataqtysmp") THEN
+        READ(fi,*) keyname, numave
+     ELSE
+        READ(fi,*) keyname
      END IF
   END DO
   !
-20 WRITE(*,*) "  Read from ", TRIM(modpara)
+20 CONTINUE
+  WRITE(*,*) "  Read from ", TRIM(modpara)
   WRITE(*,*) "    FileHead : ", TRIM(ADJUSTL(filehead))
   WRITE(*,*) "    Number of site : ", nsite
-  WRITE(*,*) "    Number of run : ", numave
-  WRITE(*,*) "    Maximum iteration : ", lanczos_max
-  WRITE(*,*) "    Expectation interval : ", interval
   CLOSE(FI)
   !
   ! Read from CalcMod file
   !
-  OPEN(fi,file = TRIM(calcmod))
-  !
-  DO
-     READ(fi,*,END=30) keyname, ctmp
-     CALL key2lower(keyname)
+  IF(calcmod == "") THEN
      !
-     IF(TRIM(ADJUSTL(keyname)) == "calctype") THEN
-        READ(ctmp,*) calctype
-     END IF
-  END DO
-  !
-30 WRITE(*,*) "  Read from ", TRIM(calcmod)
-  WRITE(*,*) "    CalcType : ", calctype
-  CLOSE(FI)
+     ! When mVMC
+     !
+     calctype = 4
+     !
+  ELSE
+     !
+     filehead = "output/" // TRIM(ADJUSTL(filehead))
+     !
+     OPEN(fi,file = TRIM(calcmod))
+     !
+     DO
+        READ(fi,*,END=30) keyname
+        BACKSPACE(fi)
+        CALL key2lower(keyname)
+        !
+        IF(TRIM(ADJUSTL(keyname)) == "calctype") THEN
+           READ(fi,*) keyname, calctype
+        ELSE
+           READ(fi,*) keyname
+        END IF
+     END DO
+     !
+30   CONTINUE
+     WRITE(*,*) "  Read from ", TRIM(calcmod)
+     WRITE(*,*) "    CalcType : ", calctype
+     CLOSE(FI)
+     !
+  END IF ! IF(calcmod == "") THEN
   !
   ! Spefify the tail of file name
   !
@@ -180,6 +202,8 @@ SUBROUTINE read_filename()
      nwfc = 1
      ALLOCATE(filetail(nwfc))
      filetail = ".dat"
+     !
+     WRITE(*,*) "    Method : Lanczos"
      !
   ELSE IF (calctype == 1) THEN ! TPQ
      !
@@ -191,13 +215,16 @@ SUBROUTINE read_filename()
         DO istep = 0, lanczos_max - 1
            IF(MOD(istep, interval) == 0) THEN
               iwfc = iwfc + 1
-              WRITE(cirun,*) irun
-              WRITE(cistep,*) istep
-              WRITE(filetail(iwfc),'(5a)') "_set", TRIM(ADJUSTL(cirun)), &
-              &   "step", TRIM(ADJUSTL(cistep)), ".dat"
+              WRITE(filetail(iwfc),'(a,i0,a,i0,a)') &
+              & "_set", irun, "step", istep, ".dat"
            END IF
         END DO
      END DO
+     !
+     WRITE(*,*) "    Method : TPQ"
+     WRITE(*,*) "    Number of Run : ", numave
+     WRITE(*,*) "    Maximum Iteration : ", lanczos_max
+     WRITE(*,*) "    Expectation Interval : ", interval
      !
   ELSE IF (calctype == 2) THEN ! FullDiag
      !
@@ -207,21 +234,34 @@ SUBROUTINE read_filename()
      ALLOCATE(filetail(nwfc))
      !
      DO iwfc = 1, nwfc
-        WRITE(cirun,*) iwfc
-        WRITE(filetail(iwfc),'(a,a,a)') "_eigen", TRIM(ADJUSTL(cirun)), ".dat"
+        WRITE(filetail(iwfc),'(a,i0,a)') "_eigen", iwfc, ".dat"
      END DO
-     !     
-  ELSE ! LOBCG
+     !
+     WRITE(*,*) "    Method : Full Diagonalization"
+     !
+  ELSE IF (calctype == 3) THEN ! LOBCG
      !
      ALLOCATE(filetail(nwfc))
      DO iwfc = 1, nwfc
-        WRITE(cirun,*) iwfc
-        WRITE(filetail(iwfc),'(a,a,a)') "_eigen", TRIM(ADJUSTL(cirun)), ".dat"
+        WRITE(filetail(iwfc),'(a,i0,a)') "_eigen", iwfc, ".dat"
      END DO
      !
-  END IF
+     WRITE(*,*) "    Method : LOBCG"
+     !
+  ELSE ! mVMC
+     !
+     nwfc = numave
+     ALLOCATE(filetail(nwfc))
+     DO iwfc = idx_start, idx_start + numave - 1
+        WRITE(filetail(iwfc),'(a,i3.3,a)') "_", iwfc, ".dat"
+     END DO
+     !
+     WRITE(*,*) "    Method : mVMC"
+     WRITE(*,*) "    Start Index : ", idx_start
+     !
+  END IF ! (clactype == ??)
   !
-  WRITE(*,*) "  Number of states : ", nwfc
+  WRITE(*,*) "    Number of States : ", nwfc
   !
 END SUBROUTINE read_filename
 !
@@ -477,30 +517,37 @@ END SUBROUTINE read_corrindx
 !
 SUBROUTINE read_corrfile()
   !
-  USE fourier_val, ONLY : filehead, filetail, nwfc, &
+  USE fourier_val, ONLY : filehead, filetail, nwfc, calctype, &  
   &                       ncor1, ncor2, ncor, indx, cor, nsite
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, icor, itmp(8), ii, iwfc
   COMPLEX(8),ALLOCATABLE :: cor0(:)
-  REAL(8) :: cor0_r(2)
+  REAL(8),ALLOCATABLE :: cor0_r(:,:)
   CHARACTER(256) :: filename, set, step
   !
-  ALLOCATE(cor(nsite,nsite,6,nwfc), cor0(MAX(ncor1,ncor2)))
+  ALLOCATE(cor(nsite,nsite,6,nwfc))
+  ALLOCATE(cor0(MAX(ncor1,ncor2)), cor0_r(2,MAX(ncor1,ncor2)))
   cor(1:nsite,1:nsite,1:6,1:nwfc) = CMPLX(0d0, 0d0, KIND(1d0))
   !
   ! One Body Correlation Function
   !
   DO iwfc = 1, nwfc
      !
-     filename = "output/" // TRIM(filehead) // "_cisajs" // TRIM(filetail(iwfc))
+     filename = TRIM(filehead) // "_cisajs" // TRIM(filetail(iwfc))
      OPEN(fi, file = TRIM(filename))
+     IF(calctype == 4) THEN ! mVMC
+        READ(fi,*) cor0_r(1:2, 1:ncor1)
+     ELSE ! HPhi
+        DO icor = 1, ncor1
+           READ(fi,*) itmp(1:4), cor0_r(1:2, icor)
+        END DO
+     END IF ! IF(calctype == 4)
+     CLOSE(fi)
      !
      DO icor = 1, ncor1
-        READ(fi,*) itmp(1:4), cor0_r(1:2)
-        cor0(icor) = CMPLX(cor0_r(1), cor0_r(2), KIND(1d0))
+        cor0(icor) = CMPLX(cor0_r(1,icor), cor0_r(2,icor), KIND(1d0))
      END DO
-     CLOSE(fi)
      !
      ! Map it into Up-Up(1) and Down-Down(2) Correlation
      !
@@ -512,14 +559,20 @@ SUBROUTINE read_corrfile()
      !
      ! Two Body Correlation function
      !
-     filename = "output/" // TRIM(filehead) // "_cisajscktalt" // TRIM(filetail(iwfc))
+     filename = TRIM(filehead) // "_cisajscktalt" // TRIM(filetail(iwfc))
      OPEN(fi, file = TRIM(filename))
+     IF(calctype == 4) THEN ! mVMC
+        READ(fi,*) cor0_r(1:2, 1:ncor2)
+     ELSE ! HPhi
+        DO icor = 1, ncor2
+           READ(fi,*) itmp(1:8), cor0_r(1:2, icor)
+        END DO
+     END IF
+     CLOSE(fi)
      !
      DO icor = 1, ncor2
-        READ(fi,*) itmp(1:8), cor0_r(1:2)
-        cor0(icor) = CMPLX(cor0_r(1), cor0_r(2), KIND(1d0))
+        cor0(icor) = CMPLX(cor0_r(1,icor), cor0_r(2,icor), KIND(1d0))
      END DO
-     CLOSE(fi)
      !
      ! Map it into Density-Density(3), Sz-Sz(4), S+S-(5), S-S+(6) Correlation
      !
@@ -552,7 +605,7 @@ SUBROUTINE read_corrfile()
      !
   END DO ! iwfc = 1, nwfc
   !
-  DEALLOCATE(cor0, indx)
+  DEALLOCATE(cor0, cor0_r, indx)
   !
 END SUBROUTINE read_corrfile
 !
@@ -594,11 +647,13 @@ END SUBROUTINE fourier_cor
 SUBROUTINE output_cor()
   !
   USE fourier_val, ONLY : cor_k, nk, nktot, nk_row, kvec, kvec_tot, &
-  &                       equiv, nwfc, recipr, filehead, filetail
+  &                       equiv, nwfc, recipr, filehead, filetail, calctype
   IMPLICIT NONE
   !
   INTEGER :: fo = 20, ik, iwfc
   CHARACTER(256) :: filename
+  COMPLEX(8),ALLOCATABLE :: cor_ave(:,:)
+  REAL(8),ALLOCATABLE :: cor_err(:,:)
   !
   ! Output Correlation function in the 1st BZ
   !
@@ -608,21 +663,68 @@ SUBROUTINE output_cor()
   !
   WRITE(*,*) "  Correlation in k-space : ", "output/" // TRIM(filehead) // "_corr", "*.dat"
   !
-  DO iwfc = 1, nwfc
+  IF(calctype == 4) THEN
      !
-     filename = "output/" // TRIM(filehead) // "_corr" // TRIM(filetail(iwfc))
+     ! mVMC
+     !
+     ALLOCATE(cor_ave(nk,6), cor_err(nk,6))
+     !
+     ! Average
+     !
+     cor_ave(1:nk,1:6) = SUM(cor_k(1:nk,1:6,1:nwfc), 3) / DBLE(nwfc)
+     !
+     ! Variance
+     !
+     cor_err(1:nk,1:6) = 0d0
+     DO iwfc = 1, nwfc
+        cor_err(1:nk,1:6) = DBLE(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2 &
+        &                + AIMAG(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2 
+     END DO
+     !
+     ! Standard Error
+     !
+     IF(nwfc == 1) THEN
+        cor_err(1:nk,1:6) = 0d0
+     ELSE
+        cor_err(1:nk,1:6) = SQRT(cor_err(1:nk,1:6) / DBLE((nwfc - 1)**2 * nwfc))
+     END IF
+     !
+     filename = TRIM(filehead) // "_corr.dat"
      OPEN(fo, file = TRIM(filename))
      !
-     WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4] DownDown[5,6]"
-     WRITE(fo,*) "# Density[7:8] SzSz[9,10] S+S-[11,12] S-S+[13,14]"
+     WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4,15] (Re. Im. Err.) DownDown[5,6,16]"
+     WRITE(fo,*) "# Density[7:8,17] SzSz[9,10,18] S+S-[11,12,19] S-S+[13,14,20]"
      !
      DO ik = 1, nk
-        WRITE(fo,'(20e15.5)') MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), cor_k(ik,1:6,iwfc)
+        WRITE(fo,'(20e15.5)') MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), &
+        &                     cor_ave(ik,1:6), cor_err(ik,1:6)
      END DO
      !
      CLOSE(fo)
      !
-  END DO
+     DEALLOCATE(cor_ave, cor_err)
+     !
+  ELSE
+     !
+     ! HPhi
+     !
+     DO iwfc = 1, nwfc
+        !
+        filename = TRIM(filehead) // "_corr" // TRIM(filetail(iwfc))
+        OPEN(fo, file = TRIM(filename))
+        !
+        WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4] (Re. Im.) DownDown[5,6]"
+        WRITE(fo,*) "# Density[7:8] SzSz[9,10] S+S-[11,12] S-S+[13,14]"
+        !
+        DO ik = 1, nk
+           WRITE(fo,'(14e15.5)') MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), cor_k(ik,1:6,iwfc)
+        END DO
+        !
+        CLOSE(fo)
+        !
+     END DO
+     !
+  END IF ! IF(calctype == 4)
   !
   ! k-points in the larger area
   !
@@ -641,6 +743,8 @@ SUBROUTINE output_cor()
 END SUBROUTINE output_cor
 !
 END MODULE fourier_routine
+!
+! Main routine
 !
 PROGRAM fourier
   !
