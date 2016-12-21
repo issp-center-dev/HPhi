@@ -92,7 +92,7 @@ SUBROUTINE read_filename()
   WRITE(*,*) 
   !
   namelist = ""
-  CALL getarg(1, namelist)
+  CALL GETARG(1, namelist)
   !
   ! Read from NameList file
   !
@@ -284,7 +284,7 @@ SUBROUTINE read_geometry()
   !
   ! "nd argument should be geometry file name
   !
-  CALL getarg(2, filename)
+  CALL GETARG(2, filename)
   !
   WRITE(*,*) "  Read from ", TRIM(filename)
   OPEN(fi, file = TRIM(filename))
@@ -651,9 +651,9 @@ SUBROUTINE output_cor()
   IMPLICIT NONE
   !
   INTEGER :: fo = 20, ik, iwfc
+  REAL(8) :: tpi = 2.0 * ACOS(-1d0)
   CHARACTER(256) :: filename
-  COMPLEX(8),ALLOCATABLE :: cor_ave(:,:)
-  REAL(8),ALLOCATABLE :: cor_err(:,:)
+  COMPLEX(8),ALLOCATABLE :: cor_ave(:,:), cor_err(:,:)
   !
   ! Output Correlation function in the 1st BZ
   !
@@ -677,26 +677,30 @@ SUBROUTINE output_cor()
      !
      cor_err(1:nk,1:6) = 0d0
      DO iwfc = 1, nwfc
-        cor_err(1:nk,1:6) = DBLE(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2 &
-        &                + AIMAG(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2 
+        cor_err(1:nk,1:6) = CMPLX( DBLE(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2, &
+        &                         AIMAG(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2, &
+        &                         KIND(0d0))
      END DO
      !
      ! Standard Error
      !
      IF(nwfc == 1) THEN
-        cor_err(1:nk,1:6) = 0d0
+        cor_err(1:nk,1:6) = CMPLX(0d0, 0d0, KIND(0d0))
      ELSE
-        cor_err(1:nk,1:6) = SQRT(cor_err(1:nk,1:6) / DBLE((nwfc - 1)**2 * nwfc))
+        cor_err(1:nk,1:6) = CMPLX(SQRT( DBLE(cor_err(1:nk,1:6))), &
+        &                         SQRT(AIMAG(cor_err(1:nk,1:6))), KIND(0d0)) &
+        &                 / (DBLE(nwfc - 1) * SQRT(DBLE(nwfc)))
      END IF
      !
      filename = TRIM(filehead) // "_corr.dat"
      OPEN(fo, file = TRIM(filename))
      !
-     WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4,15] (Re. Im. Err.) DownDown[5,6,16]"
-     WRITE(fo,*) "# Density[7:8,17] SzSz[9,10,18] S+S-[11,12,19] S-S+[13,14,20]"
+     WRITE(fo,*) "#mVMC", nk
+     WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4,15,16] (Re. Im. Err.) DownDown[5,6,17,18]"
+     WRITE(fo,*) "# Density[7:8,19,20] SzSz[9,10,21,22] S+S-[11,12,23,24] S-S+[13,14,25.26]"
      !
      DO ik = 1, nk
-        WRITE(fo,'(20e15.5)') MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), &
+        WRITE(fo,'(26e15.5)') tpi * MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), &
         &                     cor_ave(ik,1:6), cor_err(ik,1:6)
      END DO
      !
@@ -713,11 +717,12 @@ SUBROUTINE output_cor()
         filename = TRIM(filehead) // "_corr" // TRIM(filetail(iwfc))
         OPEN(fo, file = TRIM(filename))
         !
+        WRITE(fo,*) "#HPhi", nk
         WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4] (Re. Im.) DownDown[5,6]"
         WRITE(fo,*) "# Density[7:8] SzSz[9,10] S+S-[11,12] S-S+[13,14]"
         !
         DO ik = 1, nk
-           WRITE(fo,'(14e15.5)') MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), cor_k(ik,1:6,iwfc)
+           WRITE(fo,'(14e15.5)') tpi * MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), cor_k(ik,1:6,iwfc)
         END DO
         !
         CLOSE(fo)
@@ -733,7 +738,7 @@ SUBROUTINE output_cor()
   WRITE(fo,*) nktot, nk_row
   !
   DO ik = 1, nktot
-     WRITE(fo,'(2e15.5,i7)') MATMUL(recipr(1:2,1:2), kvec_tot(1:2,ik)), equiv(ik)
+     WRITE(fo,'(2e15.5,i7)') tpi * MATMUL(recipr(1:2,1:2), kvec_tot(1:2,ik)), equiv(ik)
   END DO
   !
   CLOSE(fo)

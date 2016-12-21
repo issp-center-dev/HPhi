@@ -1,10 +1,15 @@
 include ../src/make.sys
 
+all:fourier corplot
+
 fourier:fourier.o key2lower.o
-	$(F90) $^ -g $(LAPACK_FLAGS) -fcheck=bound -o $@
+	$(F90) $^ -g $(LAPACK_FLAGS) -o $@
+
+corplot:corplot.f90
+	$(F90) $^ -g -o $@
 
 fourier.o:fourier.f90
-	$(F90) -g -fcheck=bound -c $<
+	$(F90) -g -c $<
 
 key2lowe.o:key2lower.c
 	$(CC) -g -c $<
