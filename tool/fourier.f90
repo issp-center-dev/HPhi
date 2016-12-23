@@ -650,7 +650,7 @@ SUBROUTINE output_cor()
   &                       equiv, nwfc, recipr, filehead, filetail, calctype
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, iwfc
+  INTEGER :: fo = 20, ik, iwfc, idim
   REAL(8) :: tpi = 2.0 * ACOS(-1d0)
   CHARACTER(256) :: filename
   COMPLEX(8),ALLOCATABLE :: cor_ave(:,:), cor_err(:,:)
@@ -736,6 +736,9 @@ SUBROUTINE output_cor()
   OPEN(fo, file = "kpoints.dat")
   !
   WRITE(fo,*) nktot, nk_row
+  DO idim = 1, 2
+     WRITE(fo,'(3e15.5)') tpi * recipr(1:2,idim)
+  END DO
   !
   DO ik = 1, nktot
      WRITE(fo,'(2e15.5,i7)') tpi * MATMUL(recipr(1:2,1:2), kvec_tot(1:2,ik)), equiv(ik)

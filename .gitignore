@@ -138,3 +138,4 @@ GTAGS
 cmake-build-debug
 *.mod
 tool/fourier
+tool/corplot

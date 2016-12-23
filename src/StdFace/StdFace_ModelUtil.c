@@ -599,6 +599,9 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   xmin -= 2.0;
   xmax += 2.0;
 
+  fprintf(fp, "#set terminal pdf color enhanced \\\n");
+  fprintf(fp, "#dashed dl 1.0 size 20.0cm, 20.0cm \n");
+  fprintf(fp, "#set output \"lattice.pdf\"\n");
   fprintf(fp, "set xrange [%f: %f]\n", xmin, xmax);
   fprintf(fp, "set yrange [%f: %f]\n", xmin, xmax);
   fprintf(fp, "set size square\n");

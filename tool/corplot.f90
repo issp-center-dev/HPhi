@@ -3,6 +3,7 @@ MODULE corplot_val
   IMPLICIT NONE
   !
   INTEGER,SAVE :: &
+  & nline, &
   & itarget, &
   & nwfc, & ! Number of state
   & nktot,   & ! Total number of k
@@ -10,7 +11,10 @@ MODULE corplot_val
   & nk         ! Number of k to be computed
   !
   REAL(8),SAVE :: &
-  & recipr(2,2)    ! Reciprocal lattice vector
+  & bragg(3,26), &
+  & braggnorm(26), &
+  & bz_line(3,2,26*26), &
+  & recipr(3,3)    ! Reciprocal lattice vector
   !
   LOGICAL,SAVE :: &
   & errbar, &
@@ -49,11 +53,11 @@ CONTAINS
 !
 SUBROUTINE read_cor()
   !
-  USE corplot_val, ONLY : nwfc, nktot, nk_row, &
-  &                       cor_k, cor_err, equiv, kvec
+  USE corplot_val, ONLY : nwfc, nktot, nk_row, recipr, &
+  &                       cor_k, cor_err, equiv, kvec, nk
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, ik, iwfc, nk0, nk
+  INTEGER :: fi = 10, ik, iwfc, nk0, idim
   REAL(8) :: rtmp(2)
   CHARACTER(256) :: filename, ctmp1, ctmp2
   !
@@ -101,9 +105,17 @@ SUBROUTINE read_cor()
   OPEN(fi, file = "kpoints.dat")
   !
   READ(fi,*) nktot, nk_row
+  recipr(1:3,1:3) = 0d0
+  DO idim = 1, 2
+     READ(fi,*) recipr(1:2,idim)
+  END DO
+  recipr(3,3) = 1d0
+  !
   ALLOCATE(kvec(2,nktot), equiv(nktot))
   WRITE(*,*) "  Total Number of k : ", nktot
   WRITE(*,*) "  Row for k : ", nk_row
+  WRITE(*,*) "    Reciplocal lattice vector :"
+  WRITE(*,'(4x2f15.10)') recipr(1:2, 1:2)
   !
   DO ik = 1, nktot
      READ(fi,*) kvec(1:2,ik), equiv(ik)
@@ -113,23 +125,222 @@ SUBROUTINE read_cor()
   !
 END SUBROUTINE read_cor
 !
+! Set vectors to difine Bragg's plane
+!
+SUBROUTINE set_bragg_vector()
+  !
+  USE corplot_val, ONLY : recipr, bragg, braggnorm
+  IMPLICIT NONE
+  !
+  INTEGER :: i0, i1, i2, i, ibr
+  !
+  ibr = 0
+  !
+  DO i0 = -1, 1
+     DO i1 = -1, 1
+        DO i2 = -1, 1
+           !
+           IF(ALL((/i0, i1, i2/) == 0)) CYCLE
+           !
+           ibr = ibr + 1
+           bragg(1:3,ibr) = MATMUL(recipr(1:3,1:3), DBLE((/i0, i1, i2/))) * 0.5d0
+           !
+           braggnorm(ibr) = DOT_PRODUCT(bragg(1:3,ibr), bragg(1:3,ibr))
+           !
+        END DO
+     END DO
+  END DO
+  !
+END SUBROUTINE set_bragg_vector
+!
+! Solve linear system
+!
+FUNCTION solve3(a, b) RESULT(det)
+  !
+  IMPLICIT NONE
+  !
+  REAL(8),INTENT(IN) :: a(3,3)
+  REAL(8),INTENT(INOUT) :: b(3)
+  !
+  REAL(8) :: det, c(3)
+  !
+  det = a(1, 1) * (a(2, 2) * a(3, 3) - a(2, 3) * a(3, 2)) &
+  &   + a(1, 2) * (a(2, 3) * a(3, 1) - a(2, 1) * a(3, 3)) &
+  &   + a(1, 3) * (a(2, 1) * a(3, 2) - a(2, 2) * a(3, 1))
+  !
+  c(1) = b(1) * (a(2, 2) * a(3, 3) - a(2, 3) * a(3, 2)) &
+  &    + b(2) * (a(1, 3) * a(3, 2) - a(1, 2) * a(3, 3)) &
+  &    + b(3) * (a(1, 2) * a(2, 3) - a(1, 3) * a(2, 2))
+  !
+  c(2) = b(1) * (a(2, 3) * a(3, 1) - a(2, 1) * a(3, 3)) &
+  &    + b(2) * (a(1, 1) * a(3, 3) - a(1, 3) * a(3, 1)) &
+  &    + b(3) * (a(1, 3) * a(2, 1) - a(1, 1) * a(2, 3))
+  !
+  c(3) = b(1) * (a(2, 1) * a(3, 2) - a(2, 2) * a(3, 1)) &
+  &    + b(2) * (a(1, 2) * a(3, 1) - a(1, 1) * a(3, 2)) &
+  &    + b(3) * (a(1, 1) * a(2, 2) - a(1, 2) * a(2, 1))
+  !
+  b(1:3) = c(1:3) / det
+  !
+  RETURN
+  !
+END FUNCTION solve3
+!
+! Judge wheser this line is the edge of 1st BZ
+!
+FUNCTION bz_corners(ibr, jbr, nbr, corner, corner2) RESULT(lbr)
+  !
+  USE corplot_val, ONLY : bragg, braggnorm
+  IMPLICIT NONE
+  !
+  INTEGER :: ibr, jbr, nbr
+  REAL(8) :: corner(3)
+  REAL(8) :: corner2(3)
+  !
+  INTEGER :: kbr, i, lbr, nbr0
+  REAL(8) :: bmat(3,3), rhs(3), prod, thr = 1d-4, det
+  !
+  nbr0 = nbr
+  !
+  DO kbr = nbr0, 26
+     !
+     bmat(1,1:3) = bragg(1:3,ibr)
+     bmat(2,1:3) = bragg(1:3,jbr)
+     bmat(3,1:3) = bragg(1:3,kbr)
+     !
+     rhs(1) = braggnorm(ibr)
+     rhs(2) = braggnorm(jbr)
+     rhs(3) = braggnorm(kbr)
+     !
+     ! if Bragg planes do not cross, roop next kbr
+     !
+     det = solve3(bmat, rhs)
+     IF (ABS(det) < thr) CYCLE
+     !
+     ! if vert0 = vert1, roop next kbr
+     !
+     prod = DOT_PRODUCT(corner2(1:3) - rhs(1:3), corner2(1:3) - rhs(1:3))
+     IF (prod < thr) CYCLE
+     !
+     ! is this corner really in 1st BZ ?
+     !
+     i = 0
+     DO lbr = 1, 26
+        !
+        prod = DOT_PRODUCT(bragg(1:3,lbr), rhs(1:3))
+        !
+        IF (prod > braggnorm(lbr) + thr) THEN
+           i = 1
+           EXIT
+        END if
+        !
+     END DO
+     !
+     IF(i /= 1) THEN
+        corner(1:3) = rhs(1:3)
+        lbr = kbr + 1
+        RETURN
+     END IF
+     !
+  END DO
+  !
+  !  this line is not a BZ boundary
+  !
+  lbr = 1
+  RETURN
+  !
+END FUNCTION bz_corners
+!
+! Compute Brillouin zone boundariy lines
+!
+SUBROUTINE set_bz_line()
+  !
+  USE corplot_val, ONLY : bz_line, nline
+  IMPLICIT NONE
+  !
+  INTEGER :: ibr, jbr, nbr, i, j, lvert
+  REAL(8) :: corner(3,2)
+  !
+  CALL set_bragg_vector()
+  !
+  nline = 0
+  !
+  DO ibr = 1, 26
+     DO jbr = 1, 26
+        !
+        corner(1:3,1:2) = 0d0
+        nbr = 1
+        lvert = bz_corners(ibr, jbr, nbr, corner(1:3,1), corner(1:3,2))
+        IF(lvert == 1) CYCLE
+        nbr = lvert
+        !
+        lvert = bz_corners(ibr, jbr, nbr, corner(1:3,2), corner(1:3,1))
+        IF(lvert == 1) CYCLE
+        !
+        nline = nline + 1
+        bz_line(1:3,1:2,nline) = corner(1:3,1:2)
+        !
+     END DO
+  END DO
+  !
+END SUBROUTINE set_bz_line
+!
 ! Write gnuplot script
 !
 SUBROUTINE write_gnuplot()
   !
-  USE corplot_val, ONLY : itarget, rpart, errbar, nwfc
+  USE corplot_val, ONLY : itarget, rpart, errbar, nwfc, &
+  &                       cor_k, nk, nwfc, bz_line, nline
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, iwfc
+  INTEGER :: fo = 20, ik, iwfc, iline
+  REAL(8) :: maxz, minz
+  !
+  IF(rpart) THEN
+     maxz = MAXVAL(DBLE( cor_k(1:nk, itarget, 1:nwfc)))
+     minz = MINVAL(DBLE( cor_k(1:nk, itarget, 1:nwfc)))
+  ELSE
+     maxz = MAXVAL(AIMAG(cor_k(1:nk, itarget, 1:nwfc)))
+     minz = MINVAL(AIMAG(cor_k(1:nk, itarget, 1:nwfc)))
+  END IF
   !
   OPEN(fo, file = "correlation.gp")
   !
-  WRITE(fo,*) "set ticslevel 0"
-  WRITE(fo,*) "set hidden3d"
-  WRITE(fo,*) "set xlabel 'kx'"
-  WRITE(fo,*) "set ylabel 'ky'"
-  WRITE(fo,*) "#set pm3d"
-  WRITE(fo,*) "#set contour"
+  WRITE(fo,'(a)') "#set terminal pdf color enhanced \" !"
+  WRITE(fo,'(a)') "#dashed dl 1.0 size 20.0cm, 20.0cm"
+  WRITE(fo,'(a)') "#set output 'correlation.pdf'"
+  WRITE(fo,'(a)') "#set view 60.0, 30.0"
+  !
+  WRITE(fo,*) 
+  WRITE(fo,'(a)') "set ticslevel 0"
+  WRITE(fo,'(a)') "set hidden3d"
+  WRITE(fo,'(a)') "set xlabel 'kx'"
+  WRITE(fo,'(a)') "set ylabel 'ky'"
+  WRITE(fo,'(a,e15.5,a,e15.5,a)') "set zrange [", minz, ":", maxz, "]"
+  WRITE(fo,*) 
+  WRITE(fo,'(a)') "#set pm3d"
+  WRITE(fo,'(a)') "#set contour"
+  WRITE(fo,*) 
+  WRITE(fo,*) "#####  Set Brillouin-Zone Boundary  #####"
+  WRITE(fo,*) 
+  DO iline = 1, nline
+     WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
+     &       "set arrow from ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", minz, &
+     &                  " to ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", maxz, " nohead"
+     WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
+     &       "set arrow from ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", minz, &
+     &                  " to ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", maxz, " nohead"
+     WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
+     &       "set arrow from ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", minz, &
+     &                  " to ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", minz, " nohead"
+     WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
+     &       "set arrow from ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", maxz, &
+     &                  " to ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", maxz, " nohead"
+  END DO ! iline = 1, nline
+  !
+  WRITE(fo,*) 
+  WRITE(fo,*) "#####  End Set Brillouin-Zone Boundary  #####"
+  WRITE(fo,*) 
   WRITE(fo,'(a)') "splot \" !"
   IF(errbar) THEN
      DO iwfc = 1, nwfc
@@ -189,11 +400,12 @@ END MODULE corplot_routine
 !
 PROGRAM corplot
   !
-  USE corplot_routine, ONLY : read_cor, write_gnuplot, write_data
+  USE corplot_routine, ONLY : set_bz_line, read_cor, write_gnuplot, write_data
   USE corplot_val, ONLY : itarget, errbar, rpart
   IMPLICIT NONE
   !
   CALL read_cor()
+  CALL set_bz_line()
   !
   WRITE(*,*) 
   WRITE(*,*) "#####  Plot Start  #####"
@@ -217,8 +429,8 @@ PROGRAM corplot
      rpart = MOD(itarget / 10, 2) == 0
      itarget = MOD(itarget, 10)
      IF(itarget < 1 .OR. 6 < itarget) EXIT
-     CALL write_gnuplot()
      CALL write_data()
+     CALL write_gnuplot()
      CALL SYSTEM("gnuplot correlation.gp")
   END DO
   !

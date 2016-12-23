@@ -15,4 +15,4 @@ key2lowe.o:key2lower.c
 	$(CC) -g -c $<
 
 clean:
-	rm -f *.o *.mod fourier
+	rm -f *.o *.mod fourier corplot
