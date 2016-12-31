@@ -21,7 +21,9 @@
 #include "mpi.h"
 #endif
 #include "Common.h"
-#include "mltply.h"
+#include "mltplyCommon.h"
+#include "mltplyHubbardCore.h"
+#include "mltplySpinCore.h"
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
@@ -159,7 +161,7 @@ double complex X_child_CisAjt_MPIdouble(
     int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
     unsigned long int idim_max_buf, j, ioff;
     MPI_Status statusMPI;
-    double complex trans, dmv, dam_pr;
+    double complex trans, dmv;
 
     mask1 = (int) X->Def.Tpow[2 * org_isite1 + org_ispin1];
     mask2 = (int) X->Def.Tpow[2 * org_isite2 + org_ispin2];
@@ -198,7 +200,6 @@ double complex X_child_CisAjt_MPIdouble(
     if (ierr != 0) {
         exitMPI(-1);
     }
-    dam_pr = 0.0;
     if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) private(j, dmv, ioff)                 \
   firstprivate(idim_max_buf, trans, X, list_2_1_target, list_2_2_target, list_1buf_org) shared(v1buf, tmp_v0)
@@ -2211,7 +2212,7 @@ double complex X_child_CisAit_GeneralSpin_MPIdouble(
 #ifdef MPI
   unsigned long int off, j, tmp_off,idim_max_buf;
   int origin, ierr;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
   
   if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,

@@ -1,5 +1,0 @@
-C_DIR=./include
-CP = cp -f -v
-AR = ar rv
-F90 = ifort
-FFLAGS = -fpp -mkl -xHost -fopenmp -O3 -g -traceback

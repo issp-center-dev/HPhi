@@ -79,7 +79,7 @@ int CalcSpectrum(
 				 ) {
     char sdt[D_FileNameMax];
     char *defname;
-    unsigned long int i, j;
+    unsigned long int i;
     unsigned long int i_max = 0;
     int i_stp;
     int iFlagListModified = FALSE;

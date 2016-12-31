@@ -36,6 +36,8 @@ matrixlapack.o \
 mltply.o \
 mltplySpin.o\
 mltplyHubbard.o\
+mltplySpinCore.o\
+mltplyHubbardCore.o\
 mltplyMPI.o \
 mltplyMPIBoost.o \
 CalcByTPQ.o \
@@ -106,6 +108,10 @@ include/makeHam.h \
 include/matrixlapack.h \
 include/mfmemory.h \
 include/mltply.h \
+include/mltplyHubbard.h \
+include/mltplySpin.h \
+include/mltplyHubbardCore.h \
+include/mltplySpinCore.h \
 include/mltplyMPI.h \
 include/output.h \
 include/output_list.h \
@@ -175,6 +181,10 @@ lapack_diag.o:$(HEADERS)
 makeHam.o:$(HEADERS)
 matrixlapack.o:$(HEADERS)
 mltply.o:$(HEADERS)
+mltplyHubbard.o:$(HEADERS)
+mltplySpin.o:$(HEADERS)
+mltplyHubbardCore.o:$(HEADERS)
+mltplySpinCore.o:$(HEADERS)
 mltplyMPI.o:$(HEADERS)
 mltplyMPIBoost.o:$(HEADERS)
 CalcByTPQ.o:$(HEADERS)

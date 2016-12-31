@@ -19,6 +19,8 @@
 #include "xsetmem.h"
 #include "wrapperMPI.h"
 
+static unsigned long int mfint[7];/*for malloc*/
+
 void setmem_HEAD
 (
  struct BindStruct *X
@@ -218,9 +220,9 @@ int GetlistSize
                 struct BindStruct *X
         )
 {
-    unsigned int idim_maxMPI;
+   // unsigned int idim_maxMPI;
 
-    idim_maxMPI = MaxMPI_li(X->Check.idim_max);
+//    idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
     switch(X->Def.iCalcModel) {
         case Spin:

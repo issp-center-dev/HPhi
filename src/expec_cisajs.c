@@ -14,12 +14,16 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+#include "mltplyCommon.h"
 #include "mltply.h"
 #include "FileIO.h"
 #include "bitcalc.h"
 #include "expec_cisajs.h"
 #include "wrapperMPI.h"
 #include "mltplyMPI.h"
+#include "mltplyHubbard.h"
+#include "mltplyHubbardCore.h"
+#include "mltplySpinCore.h"
 
 /**
  * @file   expec_cisajs.c

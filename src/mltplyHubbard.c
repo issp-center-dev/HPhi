@@ -17,13 +17,11 @@
 //Define Mode for mltply
 // complex version
 #include <bitcalc.h>
-#include "mfmemory.h"
-#include "xsetmem.h"
-#include "mltply.h"
+#include "mltplyCommon.h"
 #include "mltplyHubbard.h"
 #include "mltplyMPI.h"
-#include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "mltplyHubbardCore.h"
 
 /**
  *
@@ -444,3 +442,334 @@ int mltplyHubbardGC(struct BindStruct *X, double complex *tmp_v0,double complex 
   return 0;
 }
 
+/******************************************************************************/
+//[s] child functions
+/******************************************************************************/
+
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex child_pairhopp
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0.0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += child_pairhopp_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+
+    return dam_pr;
+  }
+
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex child_exchange
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += child_exchange_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+    return dam_pr;
+  }
+
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ * @param trans
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex child_general_hopp
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X,
+                  double complex trans
+          ) {
+
+    long unsigned int j, isite1, isite2, Asum, Adiff;
+    long unsigned int i_max = X->Large.i_max;
+
+    isite1 = X->Large.is1_spin;
+    isite2 = X->Large.is2_spin;
+    Asum = X->Large.isA_spin;
+    Adiff = X->Large.A_spin;
+
+    double complex dam_pr = 0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans) * trans;
+    }
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ * @param trans
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex GC_child_general_hopp
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X,
+                  double complex trans
+          ) {
+
+    long unsigned int j, isite1, isite2, Asum, Adiff;
+    long unsigned int tmp_off;
+    long unsigned int i_max = X->Large.i_max;
+
+    isite1 = X->Large.is1_spin;
+    isite2 = X->Large.is2_spin;
+    Asum = X->Large.isA_spin;
+    Adiff = X->Large.A_spin;
+
+    double complex dam_pr = 0;
+    if(isite1==isite2 ){
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1, trans) shared(tmp_v0, tmp_v1)
+      for(j=1;j<=i_max;j++){
+        dam_pr += GC_CisAis(j, tmp_v0, tmp_v1, X, isite1, trans) * trans;
+      }
+    }
+    else{
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j,tmp_off) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+	dam_pr += GC_CisAjt(j, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off) * trans;
+      }
+    }
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex child_general_int(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X) {
+    double complex dam_pr, tmp_V;
+    long unsigned int j, i_max;
+    long unsigned int isite1, isite2, isite3, isite4;
+    long unsigned int Asum, Bsum, Adiff, Bdiff;
+    long unsigned int tmp_off = 0;
+    long unsigned int tmp_off_2 = 0;
+
+    //note: this site is labeled for not only site but site with spin.
+    i_max = X->Large.i_max;
+    isite1 = X->Large.is1_spin;
+    isite2 = X->Large.is2_spin;
+    Asum = X->Large.isA_spin;
+    Adiff = X->Large.A_spin;
+
+    isite3 = X->Large.is3_spin;
+    isite4 = X->Large.is4_spin;
+    Bsum = X->Large.isB_spin;
+    Bdiff = X->Large.B_spin;
+
+    tmp_V = X->Large.tmp_V;
+    dam_pr = 0.0;
+
+    if (isite1 == isite2 && isite3 == isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_off) firstprivate(i_max,X,isite1,isite3,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += child_CisAisCisAis_element(j, isite1, isite3, tmp_V, tmp_v0, tmp_v1, X, &tmp_off);
+      }
+    } else if (isite1 == isite2 && isite3 != isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_off) firstprivate(i_max,X,isite1,isite4,isite3, Bsum, Bdiff, tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, tmp_v0, tmp_v1, X,
+                                             &tmp_off);
+      }
+    } else if (isite1 != isite2 && isite3 == isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j,tmp_off) firstprivate(i_max,X,isite1,isite2,isite3,Asum,Adiff,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, tmp_v0, tmp_v1, X,
+                                             &tmp_off);
+      }
+    } else if (isite1 != isite2 && isite3 != isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_off_2) firstprivate(i_max,X,isite1,isite2,isite3,isite4,Asum,Bsum,Adiff,Bdiff, tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, tmp_v0,
+                                             tmp_v1, X, &tmp_off_2);
+
+      }
+    }
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex GC_child_general_int(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X) {
+    double complex dam_pr, tmp_V;
+    long unsigned int j, i_max;
+    long unsigned int isite1, isite2, isite3, isite4;
+    long unsigned int Asum, Bsum, Adiff, Bdiff;
+    long unsigned int tmp_off = 0;
+    long unsigned int tmp_off_2 = 0;
+
+    i_max = X->Large.i_max;
+    isite1 = X->Large.is1_spin;
+    isite2 = X->Large.is2_spin;
+    Asum = X->Large.isA_spin;
+    Adiff = X->Large.A_spin;
+
+    isite3 = X->Large.is3_spin;
+    isite4 = X->Large.is4_spin;
+    Bsum = X->Large.isB_spin;
+    Bdiff = X->Large.B_spin;
+
+    tmp_V = X->Large.tmp_V;
+    dam_pr = 0.0;
+
+    if (isite1 == isite2 && isite3 == isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAisCisAis_element(j, isite1, isite3, tmp_V, tmp_v0, tmp_v1, X, &tmp_off);
+      }
+    } else if (isite1 == isite2 && isite3 != isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, tmp_v0, tmp_v1, X,
+                                                &tmp_off);
+      }
+    } else if (isite1 != isite2 && isite3 == isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite3,Asum,Adiff,tmp_off,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, tmp_v0, tmp_v1, X,
+                                                &tmp_off);
+      }
+    } else if (isite1 != isite2 && isite3 != isite4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite3,isite4,Asum,Bsum,Adiff,Bdiff, tmp_off_2,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V,
+                                                tmp_v0, tmp_v1, X, &tmp_off_2);
+      }
+    }
+
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex GC_child_pairhopp
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0.0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max,X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += GC_child_pairhopp_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex GC_child_exchange
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0.0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += GC_child_exchange_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+    return dam_pr;
+  }
+/******************************************************************************/
+//[e] child functions
+/******************************************************************************/

@@ -1,7 +1,7 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 #include "mfmemory.h"
-#include "mltply.h"
+#include "mltplyHubbardCore.h"
 #include "mltplyMPI.h"
 #ifdef MPI
 #include "mpi.h"
