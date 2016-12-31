@@ -274,16 +274,7 @@ double complex GC_child_CisAjtCkuAlv_element
  struct BindStruct *X,
  long unsigned int *tmp_off_2
  );
-
-double complex GC_child_general_hopp_element_imp
-(
- const long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
- struct BindStruct *X,
- long unsigned int *tmp_off
- );
-//[e]Grand canonical 
+//[e]Grand canonical
 
 
 //[s]Spin
