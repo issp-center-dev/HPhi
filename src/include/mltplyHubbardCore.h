@@ -19,9 +19,17 @@
 
 #include "Common.h"
 
+double complex child_general_hopp_element
+(
+ long unsigned int j,
+ double complex       *tmp_v0,
+ double complex      *tmp_v1,
+ struct BindStruct *X
+ );
+
 double complex child_pairhopp_element
 (
- const long unsigned int j,
+ long unsigned int j,
  double complex *tmp_v0,
  double complex *tmp_v1,
  struct BindStruct *X,
@@ -30,7 +38,7 @@ double complex child_pairhopp_element
 
 double complex GC_child_exchange_element
 (
- const long unsigned int j,
+ long unsigned int j,
  double complex *tmp_v0,
  double complex *tmp_v1,
  struct BindStruct *X,
@@ -39,7 +47,7 @@ double complex GC_child_exchange_element
 
 double complex GC_child_pairhopp_element
 (
- const long unsigned int j,
+ long unsigned int j,
  double complex *tmp_v0,
  double complex *tmp_v1,
  struct BindStruct *X,
@@ -47,25 +55,25 @@ double complex GC_child_pairhopp_element
  );
 
 double complex child_exchange_element
-        (
-                const long unsigned int j,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
-                struct BindStruct *X,
-                long unsigned int *tmp_off
-        );
+(
+ long unsigned int j,
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X,
+ long unsigned int *tmp_off
+ );
 
 double complex child_CisAisCisAis_element
-        (
-                long unsigned int j,
-                long unsigned int isite1,
-                long unsigned int isite3,
-                double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
-                struct BindStruct *X,
-                long unsigned int *tmp_off
-        );
+(
+ long unsigned int j,
+ long unsigned int isite1,
+ long unsigned int isite3,
+ double complex tmp_V,
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X,
+ long unsigned int *tmp_off
+ );
 
 double complex child_CisAisCjtAku_element
         (
@@ -277,7 +285,7 @@ int child_general_hopp_GetInfo
 
 int child_general_int_GetInfo
 (
- const int iInterAll,
+ int iInterAll,
  struct BindStruct *X,
  long unsigned int isite1,
  long unsigned int isite2,
@@ -293,70 +301,75 @@ int child_general_int_GetInfo
 
 int child_pairhopp_GetInfo
 (
- const int iPairHopp,
+ int iPairHopp,
  struct BindStruct *X 
   );
 
 int child_exchange_GetInfo
 (
- const int iExchange,
+ int iExchange,
  struct BindStruct *X 
  );
 
 
-double complex GC_Ajt(
-        long unsigned int j,
-        double complex *tmp_v0,
-        double complex *tmp_v1,
-        long unsigned int is1_spin,
-        double complex tmp_V,
-        long unsigned int *tmp_off
-);
+double complex GC_Ajt
+(
+ long unsigned int j,
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ long unsigned int is1_spin,
+ double complex tmp_V,
+ long unsigned int *tmp_off
+ );
 
-double complex GC_Cis(
-        long unsigned int j,
-        double complex *tmp_v0,
-        double complex *tmp_v1,
-        long unsigned int is1_spin,
-        double complex tmp_V,
-        long unsigned int *tmp_off
-);
-
-
-
-double complex GC_Ajt(
-        long unsigned int j,
-        double complex *tmp_v0,
-        double complex *tmp_v1,
-        long unsigned int is1_spin,
-        double complex tmp_V,
-        long unsigned int *tmp_off
-);
-
-int X_Cis(
-        long unsigned int j,
-        long unsigned int is1_spin,
-        long unsigned int *tmp_off,
-        long unsigned int *list_1_org,
-        long unsigned int *list_2_1_target,
-        long unsigned int *list_2_2_target,
-        const long unsigned int _irght,
-        const long unsigned int _ilft,
-        const long unsigned int _ihfbit
-);
+double complex GC_Cis
+(
+ long unsigned int j,
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ long unsigned int is1_spin,
+ double complex tmp_V,
+ long unsigned int *tmp_off
+ );
 
 
 
-double complex X_Ajt(
-        long unsigned int j,
-        long unsigned int is1_spin,
-        long unsigned int *tmp_off,
-        long unsigned int *list_1_org,
-        long unsigned int *list_2_1_target,
-        long unsigned int *list_2_2_target,
-        const long unsigned int _irght,
-        const long unsigned int _ilft,
-        const long unsigned int _ihfbit
-);
+double complex GC_Ajt
+(
+ long unsigned int j,
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ long unsigned int is1_spin,
+ double complex tmp_V,
+ long unsigned int *tmp_off
+ );
+
+int X_Cis
+(
+ long unsigned int j,
+ long unsigned int is1_spin,
+ long unsigned int *tmp_off,
+ long unsigned int *list_1_org,
+ long unsigned int *list_2_1_target,
+ long unsigned int *list_2_2_target,
+ long unsigned int _irght,
+ long unsigned int _ilft,
+ long unsigned int _ihfbit
+ );
+
+
+
+double complex X_Ajt
+(
+ long unsigned int j,
+ long unsigned int is1_spin,
+ long unsigned int *tmp_off,
+ long unsigned int *list_1_org,
+ long unsigned int *list_2_1_target,
+ long unsigned int *list_2_2_target,
+ long unsigned int _irght,
+ long unsigned int _ilft,
+ long unsigned int _ihfbit
+ );
 
 #endif

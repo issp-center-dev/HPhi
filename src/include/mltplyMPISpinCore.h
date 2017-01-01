@@ -170,7 +170,7 @@ double complex X_child_CisAit_GeneralSpin_MPIdouble
  unsigned long int idim_max,
  long unsigned int *list_1_org,
  long unsigned int *list_1buf_org,
- const long unsigned int _ihfbit
+ long unsigned int _ihfbit
  );
 
 
@@ -336,9 +336,9 @@ double complex X_child_CisAit_spin_MPIdouble
  long unsigned int *list_1buf_org,
  long unsigned int *list_2_1_target,
  long unsigned int *list_2_2_target,
- const long unsigned int _irght,
- const long unsigned int _ilft,
- const long unsigned int _ihfbit
+ long unsigned int _irght,
+ long unsigned int _ilft,
+ long unsigned int _ihfbit
  );
 
 double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble

@@ -1515,9 +1515,9 @@ double complex X_Cis_MPI(
         long unsigned int *list_1buf_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
-        const long unsigned int _irght,
-        const long unsigned int _ilft,
-        const long unsigned int _ihfbit
+        long unsigned int _irght,
+        long unsigned int _ilft,
+        long unsigned int _ihfbit
 ) {
 #ifdef MPI
     int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -1585,9 +1585,9 @@ double complex X_Ajt_MPI(
         long unsigned int *list_1buf_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
-        const long unsigned int _irght,
-        const long unsigned int _ilft,
-        const long unsigned int _ihfbit
+        long unsigned int _irght,
+        long unsigned int _ilft,
+        long unsigned int _ihfbit
 ){
 #ifdef MPI
     int mask2, state2, ierr, origin, bit2diff, Fsgn;

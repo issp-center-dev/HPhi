@@ -90,7 +90,7 @@
  */
   int child_general_int_GetInfo
           (
-                  const int iInterAll,
+                  int iInterAll,
                   struct BindStruct *X,
                   long unsigned int isite1,
                   long unsigned int isite2,
@@ -173,7 +173,7 @@
  */
   int child_pairhopp_GetInfo
           (
-                  const int iPairHopp,
+                  int iPairHopp,
                   struct BindStruct *X
           ) {
     int isite1 = X->Def.PairHopping[iPairHopp][0] + 1;
@@ -200,7 +200,7 @@
  */
   int child_exchange_GetInfo
           (
-                  const int iExchange,
+                  int iExchange,
                   struct BindStruct *X
           ) {
     int isite1 = X->Def.ExchangeCoupling[iExchange][0] + 1;
@@ -577,7 +577,7 @@ double complex GC_AisCis(
  */
   double complex child_exchange_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,
@@ -646,7 +646,7 @@ double complex GC_AisCis(
  */
   double complex child_pairhopp_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,
@@ -701,7 +701,7 @@ double complex GC_AisCis(
  */
   double complex GC_child_exchange_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,
@@ -768,7 +768,7 @@ double complex GC_AisCis(
  */
   double complex GC_child_pairhopp_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,
@@ -1230,7 +1230,7 @@ double complex GC_AisCis(
  */
   double complex child_general_hopp_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X
@@ -1398,9 +1398,9 @@ int X_Cis(
         long unsigned int *list_1_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
-        const long unsigned int _irght,
-        const long unsigned int _ilft,
-        const long unsigned int _ihfbit
+        long unsigned int _irght,
+        long unsigned int _ilft,
+        long unsigned int _ihfbit
 
 ) {
 
@@ -1446,9 +1446,9 @@ double complex X_Ajt(
         long unsigned int *list_1_org,
         long unsigned int *list_2_1_target,
         long unsigned int *list_2_2_target,
-        const long unsigned int _irght,
-        const long unsigned int _ilft,
-        const long unsigned int _ihfbit
+        long unsigned int _irght,
+        long unsigned int _ilft,
+        long unsigned int _ihfbit
 ) {
     long unsigned int list_1_j, list_1_off;
     long unsigned int ibit_tmp_1;
