@@ -20,10 +20,13 @@
 #include "mfmemory.h"
 #include "mltplyCommon.h"
 #include "mltplySpin.h"
-#include "mltplyMPI.h"
 #include "CalcTime.h"
+//#include ""
 #include "mltplySpinCore.h"
 #include "mltplyHubbardCore.h"
+#include "mltplyMPISpin.h"
+#include "mltplyMPISpinCore.h"
+#include "mltplyMPIBoost.h"
 
 /**
  *

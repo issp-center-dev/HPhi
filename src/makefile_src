@@ -38,7 +38,10 @@ mltplySpin.o\
 mltplyHubbard.o\
 mltplySpinCore.o\
 mltplyHubbardCore.o\
-mltplyMPI.o \
+mltplyMPIHubbard.o \
+mltplyMPIHubbardCore.o \
+mltplyMPISpin.o \
+mltplyMPISpinCore.o \
 mltplyMPIBoost.o \
 CalcByTPQ.o \
 output.o \
@@ -112,7 +115,11 @@ include/mltplyHubbard.h \
 include/mltplySpin.h \
 include/mltplyHubbardCore.h \
 include/mltplySpinCore.h \
-include/mltplyMPI.h \
+include/mltplyMPIBoost.h \
+include/mltplyMPIHubbard.h \
+include/mltplyMPIHubbardCore.h \
+include/mltplyMPISpin.h \
+include/mltplyMPISpinCore.h \
 include/output.h \
 include/output_list.h \
 include/phys.h \

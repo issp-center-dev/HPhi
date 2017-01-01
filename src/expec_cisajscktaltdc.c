@@ -22,7 +22,9 @@
 #include "mltplySpinCore.h"
 #include "mltplyHubbardCore.h"
 #include "wrapperMPI.h"
-#include "mltplyMPI.h"
+#include "mltplyMPISpin.h"
+#include "mltplyMPISpinCore.h"
+#include "mltplyMPIHubbardCore.h"
 
 /**
  * @file   expec_cisajscktaltdc.c

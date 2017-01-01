@@ -1,7 +1,7 @@
 #include "PairExSpin.h"
 #include "bitcalc.h"
 #include "wrapperMPI.h"
-#include "mltplyMPI.h"
+#include "mltplyMPISpinCore.h"
 #include "mltplySpinCore.h"
 #ifdef MPI
 #include "mfmemory.h"

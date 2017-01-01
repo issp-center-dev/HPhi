@@ -2,7 +2,7 @@
 #include "wrapperMPI.h"
 #include "mfmemory.h"
 #include "mltplyHubbardCore.h"
-#include "mltplyMPI.h"
+#include "mltplyMPIHubbardCore.h"
 #ifdef MPI
 #include "mpi.h"
 #endif

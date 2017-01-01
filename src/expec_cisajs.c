@@ -18,12 +18,12 @@
 #include "mltply.h"
 #include "FileIO.h"
 #include "bitcalc.h"
-#include "expec_cisajs.h"
 #include "wrapperMPI.h"
-#include "mltplyMPI.h"
 #include "mltplyHubbard.h"
 #include "mltplyHubbardCore.h"
 #include "mltplySpinCore.h"
+#include "mltplyMPIHubbard.h"
+#include "mltplyMPISpinCore.h"
 
 /**
  * @file   expec_cisajs.c

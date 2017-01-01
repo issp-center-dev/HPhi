@@ -17,7 +17,9 @@
 #include "mltplyCommon.h"
 #include "mltplySpinCore.h"
 #include "wrapperMPI.h"
-#include "mltplyMPI.h"
+#include "mltplyMPISpin.h"
+#include "mltplyMPISpinCore.h"
+
 
 #include "expec_totalspin.h"
 

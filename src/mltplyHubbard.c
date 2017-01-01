@@ -19,9 +19,10 @@
 #include <bitcalc.h>
 #include "mltplyCommon.h"
 #include "mltplyHubbard.h"
-#include "mltplyMPI.h"
+#include "mltplyMPIHubbard.h"
 #include "CalcTime.h"
 #include "mltplyHubbardCore.h"
+#include "mltplyMPIHubbardCore.h"
 
 /**
  *
