@@ -41,7 +41,7 @@
  */
   int child_exchange_spin_GetInfo
           (
-                  const int iExchange,
+                  int iExchange,
                   struct BindStruct *X
           ) {
     int isite1 = X->Def.ExchangeCoupling[iExchange][0] + 1;
@@ -65,7 +65,7 @@
  */
   int child_pairlift_spin_GetInfo
           (
-                  const int iPairLift,
+                  int iPairLift,
                   struct BindStruct *X
           ) {
     int isite1 = X->Def.PairLiftCoupling[iPairLift][0] + 1;
@@ -317,12 +317,12 @@ int X_Spin_CisAis(
  */
   int X_child_exchange_spin_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   struct BindStruct *X,
-                  const long unsigned int isA_up,
-                  const long unsigned int isB_up,
-                  const long unsigned int sigmaA,
-                  const long unsigned int sigmaB,
+                  long unsigned int isA_up,
+                  long unsigned int isB_up,
+                  long unsigned int sigmaA,
+                  long unsigned int sigmaB,
                   long unsigned int *tmp_off
           ) {
     long unsigned int iexchg, off;
@@ -360,7 +360,7 @@ int X_Spin_CisAis(
  */
   double complex child_exchange_spin_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,
@@ -410,7 +410,7 @@ int X_Spin_CisAis(
  */
   double complex GC_child_exchange_spin_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,
@@ -456,7 +456,7 @@ int X_Spin_CisAis(
  */
   double complex child_pairlift_spin_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,
@@ -506,7 +506,7 @@ int X_Spin_CisAis(
  */
   double complex GC_child_pairlift_spin_element
           (
-                  const long unsigned int j,
+                  long unsigned int j,
                   double complex *tmp_v0,
                   double complex *tmp_v1,
                   struct BindStruct *X,

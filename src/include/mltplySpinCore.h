@@ -21,7 +21,7 @@
 
 double complex child_exchange_spin_element
 (
- const long unsigned int j,
+ long unsigned int j,
  double complex       *tmp_v0,
  double complex       *tmp_v1,
  struct BindStruct *X,
@@ -30,7 +30,7 @@ double complex child_exchange_spin_element
 
 double complex GC_child_pairlift_spin_element
 (
- const long unsigned int j,
+ long unsigned int j,
  double complex       *tmp_v0,
  double complex       *tmp_v1,
  struct BindStruct *X, 
@@ -39,7 +39,7 @@ double complex GC_child_pairlift_spin_element
 
 double complex child_pairlift_spin_element
 (
- const long unsigned int j,
+ long unsigned int j,
  double complex       *tmp_v0,
  double complex       *tmp_v1,
  struct BindStruct *X,
@@ -48,7 +48,7 @@ double complex child_pairlift_spin_element
 
 double complex GC_child_exchange_spin_element
 (
- const long unsigned int j,
+ long unsigned int j,
  double complex       *tmp_v0,
  double complex       *tmp_v1,
  struct BindStruct *X,  
@@ -57,12 +57,12 @@ double complex GC_child_exchange_spin_element
 
 int X_child_exchange_spin_element
 (
- const long unsigned int j,
+ long unsigned int j,
  struct BindStruct *X,
- const long unsigned int isA_up,
- const long unsigned int isB_up,
- const long unsigned int sigmaA,
- const long unsigned int sigmaB,
+ long unsigned int isA_up,
+ long unsigned int isB_up,
+ long unsigned int sigmaA,
+ long unsigned int sigmaB,
  long unsigned int *tmp_off
 );
 
@@ -210,13 +210,13 @@ int child_general_int_spin_GetInfo
 
 int child_exchange_spin_GetInfo
 (
- const int iExchange,
+ int iExchange,
  struct BindStruct *X 
  );
 
 int child_pairlift_spin_GetInfo
 (
- const int iPairLift,
+ int iPairLift,
  struct BindStruct *X 
  );
 
