@@ -1805,35 +1805,38 @@ int CheckInterAllHermite
         }
       }
       else if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 && isite4 == itmpsite3) {      //for spin and Kondo
-        if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
-          ddiff_intall = X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]);
-          if (cabs(ddiff_intall) < eps_CheckImag0) {
-            itmpret = 1;
-            if (icheckHermiteCount == FALSE) {
-              icheckHermiteCount = TRUE; // for not double-counting		    
-              if (i <= j) {
-                if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
-                  fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
-                  return(-1);
-                }
-                for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
-                  X->InterAll[2 * icntHermite][itmpIdx] = X->InterAll_OffDiagonal[i][itmpIdx];
-                }
-                for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
-                  X->InterAll[2 * icntHermite + 1][2 * itmpIdx] = X->InterAll_OffDiagonal[i][6 -
-                                                                                             2 * itmpIdx];
-                  X->InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = X->InterAll_OffDiagonal[i][7 - 2 *
-                                                                                                 itmpIdx];
+          if(X->iCalcModel == Kondo ||X->iCalcModel == KondoGC || X->iCalcModel == Spin || X->iCalcModel == SpinGC) {
+              if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
+                  ddiff_intall = X->ParaInterAll_OffDiagonal[i] - conj(X->ParaInterAll_OffDiagonal[j]);
+                  if (cabs(ddiff_intall) < eps_CheckImag0) {
+                      itmpret = 1;
+                      if (icheckHermiteCount == FALSE) {
+                          icheckHermiteCount = TRUE; // for not double-counting
+                          if (i <= j) {
+                              if (2 * icntHermite >= X->NInterAll_OffDiagonal) {
+                                  fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+                                  return (-1);
+                              }
+                              for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
+                                  X->InterAll[2 * icntHermite][itmpIdx] = X->InterAll_OffDiagonal[i][itmpIdx];
+                              }
+                              for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
+                                  X->InterAll[2 * icntHermite + 1][2 * itmpIdx] = X->InterAll_OffDiagonal[i][6 -
+                                                                                                             2 *
+                                                                                                             itmpIdx];
+                                  X->InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = X->InterAll_OffDiagonal[i][7 - 2 *
+                                                                                                                     itmpIdx];
 
-                }
-                X->ParaInterAll[2 * icntHermite] = X->ParaInterAll_OffDiagonal[i];
-                X->ParaInterAll[2 * icntHermite + 1] = X->ParaInterAll_OffDiagonal[j];
-                icntHermite++;
+                              }
+                              X->ParaInterAll[2 * icntHermite] = X->ParaInterAll_OffDiagonal[i];
+                              X->ParaInterAll[2 * icntHermite + 1] = X->ParaInterAll_OffDiagonal[j];
+                              icntHermite++;
+                          }
+                          break;
+                      }
+                  }
               }
-              break;
-            }
           }
-        }
       }
     }
     
