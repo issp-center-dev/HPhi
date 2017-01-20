@@ -234,7 +234,7 @@ SUBROUTINE read_filename()
      ALLOCATE(filetail(nwfc))
      !
      DO iwfc = 1, nwfc
-        WRITE(filetail(iwfc),'(a,i0,a)') "_eigen", iwfc, ".dat"
+        WRITE(filetail(iwfc),'(a,i0,a)') "_eigen", iwfc - 1, ".dat"
      END DO
      !
      WRITE(*,*) "    Method : Full Diagonalization"
@@ -243,7 +243,7 @@ SUBROUTINE read_filename()
      !
      ALLOCATE(filetail(nwfc))
      DO iwfc = 1, nwfc
-        WRITE(filetail(iwfc),'(a,i0,a)') "_eigen", iwfc, ".dat"
+        WRITE(filetail(iwfc),'(a,i0,a)') "_eigen", iwfc - 1, ".dat"
      END DO
      !
      WRITE(*,*) "    Method : LOBCG"

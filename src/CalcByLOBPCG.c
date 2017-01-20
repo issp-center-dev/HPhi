@@ -489,13 +489,6 @@ int LOBPCG_Main(
 
   sprintf(sdt, cFileNameTimeKeep, X->Def.CDataFileHead);
 
-  if (X->Def.iReStart == RESTART_OUT || X->Def.iReStart == RESTART_INOUT) Output_restart(X, wxp[1]);
-
-  if (iconv != 0) {
-    sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
-    return -1;
-  }
-
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
@@ -506,7 +499,13 @@ int LOBPCG_Main(
   c_free2(work, nthreads, nsub);
 
   c_free3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
-
+  /*
+    Output resulting vectors for restart
+  */
+  if (X->Def.iReStart == RESTART_OUT || X->Def.iReStart == RESTART_INOUT) Output_restart(X, wxp[1]);
+  /*
+    Just Move wxp[1] into L_vec. The latter must be start from 0-index (the same as FullDiag)
+  */
   c_malloc2(L_vec, X->Def.k_exct, X->Check.idim_max + 1);
 #pragma omp parallel default(none) shared(i_max,wxp,L_vec,X) private(idim,ie)
   {
@@ -522,7 +521,13 @@ int LOBPCG_Main(
   c_malloc1(v1, X->Check.idim_max + 1);
   c_malloc1(vg, X->Check.idim_max + 1);
 
-  return 0;
+  if (iconv != 0) {
+    sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
+    return -1;
+  }
+  else {
+    return 0;
+  }
 }/*int LOBPCG_Main*/
  
 int CalcByLOBPCG(
