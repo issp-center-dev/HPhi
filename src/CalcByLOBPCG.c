@@ -583,7 +583,7 @@ int CalcByLOBPCG(
   else {// X->Bind.Def.iInputEigenVec=true :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
-    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
+    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, /*X->Bind.Def.k_exct - 1*/ 0, myrank);
     childfopenALL(sdt, "rb", &fp);
     if (fp == NULL) {
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
@@ -633,7 +633,7 @@ int CalcByLOBPCG(
   */
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
-    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
+    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, /*X->Bind.Def.k_exct - 1*/ 0, myrank);
     if (childfopenALL(sdt, "wb", &fp) != 0) {
       exitMPI(-1);
     }
