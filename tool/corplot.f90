@@ -344,15 +344,23 @@ SUBROUTINE write_gnuplot()
   WRITE(fo,'(a)') "splot \" !"
   IF(errbar) THEN
      DO iwfc = 1, nwfc
-        WRITE(fo, '(a,i0,a,i0,a,i0a)') &
-        & "'correlation.dat' u 1:2:($", iwfc+2, "-$", iwfc+2+nwfc, ") w l tit '", iwfc, "-', \" !"
-        WRITE(fo, '(a,i0,a,i0,a,i0a)') &
-        & "'correlation.dat' u 1:2:($", iwfc+2, "+$", iwfc+2+nwfc, ") w l tit '", iwfc, "+', \" !"
+        !
+        WRITE(fo, '(a,i0,a,i0,a,i0,a)',advance='no') &
+        & "'correlation.dat' u 1:2:($", iwfc+2, "-$", iwfc+2+nwfc, ") w l tit '", iwfc, "-'"
+        WRITE(fo, '(a,i0,a,i0,a,i0,a)',advance='no') &
+        & "'correlation.dat' u 1:2:($", iwfc+2, "+$", iwfc+2+nwfc, ") w l tit '", iwfc, "+'"
+        !
+        IF(iwfc /= nwfc) WRITE(fo,'(a)') ", \" !"
+        !
      END DO
   ELSE
      DO iwfc = 1, nwfc
-        WRITE(fo, '(a,i0,a,i0a)') &
-        & "'correlation.dat' u 1:2:", iwfc+2, " w l tit '", iwfc, "', \" !"
+        !
+        WRITE(fo, '(a,i0,a,i0,a)',advance='no') &
+        & "'correlation.dat' u 1:2:", iwfc+2, " w l tit '", iwfc, "'"
+        !
+        IF(iwfc /= nwfc) WRITE(fo,'(a)') ", \" !"
+        !
      END DO
   END IF
   WRITE(fo,*)
