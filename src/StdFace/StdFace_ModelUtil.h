@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ void StdFace_intr(struct StdIntList *StdI, double complex intr0,
   int site3, int spin3, int site4, int spin4);
 
 void StdFace_Hopping(struct StdIntList *StdI, double complex trans0,
-  int isite, int jsite);
+  int isite, int jsite, int loff);
 void StdFace_MagField(struct StdIntList *StdI, int S2, double h, double Gamma, int isite);
 
 void StdFace_Coulomb(struct StdIntList *StdI, double V, int isite, int jsite);
@@ -51,9 +51,9 @@ void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name
 void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp);
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC,
-  int *isite, int *jsite, int connect);
-void StdFace_InitSite1D(struct StdIntList *StdI);
+  int *isite, int *jsite, int connect, double complex *phase);
 void StdFace_PrintGeometry(struct StdIntList *StdI);
+void StdFace_MallocInteractions(struct StdIntList *StdI);
 
 void StdFace_Tetragonal(struct StdIntList *StdI, char *model);
 void StdFace_Chain(struct StdIntList *StdI, char *model);

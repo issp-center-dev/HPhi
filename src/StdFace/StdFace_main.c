@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -23,8 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
 #include <complex.h>
-#include "../include/wrapperMPI.h"
 
+/**
+ * Set Largevalue for TPQ
+ */
 void StdFace_LargeValue(struct StdIntList *StdI) {
   int ktrans, kintr;
   double LargeValue0;
@@ -38,8 +40,290 @@ void StdFace_LargeValue(struct StdIntList *StdI) {
   }
   LargeValue0 /= (double)StdI->nsite;
   StdFace_PrintVal_d("LargeValue", &StdI->LargeValue, LargeValue0);
-}
+}/*void StdFace_LargeValue*/
+/**
+ *
+ * Print calcmod.def
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+static void PrintCalcMod(struct StdIntList *StdI)
+{
+  FILE *fp;
+  int iCalcType, iCalcModel, iRestart, iCalcSpec, 
+    iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec;
 
+  fprintf(stdout, "\n  @ CalcMod\n\n");
+  /*
+   Method
+  */
+  iCalcEigenvec = 0;
+  if (strcmp(StdI->method, "****") == 0){
+    fprintf(stdout, "ERROR ! Method is NOT specified !\n");
+    exit(-1);
+  }
+  else if (strcmp(StdI->method, "lanczos") == 0) iCalcType = 0;
+  else if (strcmp(StdI->method, "lanczosenergy") == 0) { 
+    iCalcType = 0; 
+    iCalcEigenvec = 1;
+  }
+  else if (strcmp(StdI->method, "tpq") == 0) iCalcType = 1;
+  else if (strcmp(StdI->method, "fulldiag") == 0 ||
+    strcmp(StdI->method, "alldiag") == 0 ||
+    strcmp(StdI->method, "direct") == 0 ) iCalcType = 2;
+  else if (strcmp(StdI->method, "cg") == 0) iCalcType = 3;
+  else{
+    fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
+    exit(-1);
+  }
+  /*
+   Model
+  */
+  if (strcmp(StdI->model, "hubbard") == 0) {
+    if (StdI->lGC == 0)iCalcModel = 0;
+    else iCalcModel = 3;
+  }
+  else if (strcmp(StdI->model, "spin") == 0) {
+    if (StdI->lGC == 0)iCalcModel = 1;
+    else iCalcModel = 4;
+  }
+  if (strcmp(StdI->model, "kondo") == 0) {
+    if (StdI->lGC == 0)iCalcModel = 2;
+    else iCalcModel = 5;
+  }
+  /*
+    Restart
+  */
+  if (strcmp(StdI->Restart, "****") == 0) {
+    strcpy(StdI->Restart, "none\0");
+    fprintf(stdout, "          Restart = none        ######  DEFAULT VALUE IS USED  ######\n");
+    iRestart = 0;
+  }
+  else {
+    fprintf(stdout, "          Restart = %s\n", StdI->Restart);
+    if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
+    else if (strcmp(StdI->Restart, "save") == 0) iRestart = 1;
+    else if (strcmp(StdI->Restart, "restartsave") == 0) iRestart = 2;
+    else if (strcmp(StdI->Restart, "restart") == 0) iRestart = 3;
+    else {
+      fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
+      exit(-1);
+    }
+  }
+  /*
+  InitialVecType
+  */
+  if (strcmp(StdI->InitialVecType, "****") == 0) {
+    strcpy(StdI->InitialVecType, "c\0");
+    fprintf(stdout, "   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######\n");
+    iInitialVecTpye = 0;
+  }
+  else {
+    fprintf(stdout, "   InitialVecType = %s\n", StdI->InitialVecType);
+    if (strcmp(StdI->InitialVecType, "c") == 0) iInitialVecTpye = 0;
+    else if (strcmp(StdI->InitialVecType, "r") == 0) iInitialVecTpye = 1;
+    else {
+      fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
+      exit(-1);
+    }
+  }
+  /*
+  EigenVecIO
+  */
+  InputEigenVec = 0;
+  OutputEigenVec = 0;
+  if (strcmp(StdI->EigenVecIO, "****") == 0) {
+    strcpy(StdI->EigenVecIO, "none\0");
+    fprintf(stdout, "       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######\n");
+  }
+  else {
+    fprintf(stdout, "       EigenVecIO = %s\n", StdI->EigenVecIO);
+    if (strcmp(StdI->EigenVecIO, "none") == 0) InputEigenVec = 0;
+    else if (strcmp(StdI->EigenVecIO, "in") == 0) InputEigenVec = 1;
+    else if (strcmp(StdI->EigenVecIO, "out") == 0) OutputEigenVec = 1;
+    else if (strcmp(StdI->EigenVecIO, "inout") == 0) {
+      InputEigenVec = 1;
+      OutputEigenVec = 1;
+    }
+    else {
+      fprintf(stdout, "\n ERROR ! EigenVecIO Mode : %s\n", StdI->Restart);
+      exit(-1);
+    }
+  }
+  /*
+  CalcSpec
+  */
+  if (strcmp(StdI->CalcSpec, "****") == 0) {
+    strcpy(StdI->CalcSpec, "none\0");
+    fprintf(stdout, "         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######\n");
+    iCalcSpec = 0;
+  }
+  else {
+    fprintf(stdout, "         CalcSpec = %s\n", StdI->CalcSpec);
+    if (strcmp(StdI->CalcSpec, "none") == 0) iCalcSpec = 0;
+    else if (strcmp(StdI->CalcSpec, "normal") == 0) iCalcSpec = 1;
+    else if (strcmp(StdI->CalcSpec, "noiteration") == 0) iCalcSpec = 2;
+    else if (strcmp(StdI->CalcSpec, "save") == 0) iCalcSpec = 3;
+    else if (strcmp(StdI->CalcSpec, "restart") == 0) iCalcSpec = 4;
+    else if (strcmp(StdI->CalcSpec, "restartsave") == 0) iCalcSpec = 5;
+    else {
+      fprintf(stdout, "\n ERROR ! CalcSpec : %s\n", StdI->CalcSpec);
+      exit(-1);
+    }
+  }
+
+  fp = fopen("calcmod.def", "w");
+  fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 4:CG\n");
+  fprintf(fp, "#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC\n");
+  fprintf(fp, "#Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart\n");
+  fprintf(fp, "#CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, 4:Restart, 5:Restart&Save\n");
+  fprintf(fp, "CalcType %3d\n", iCalcType);
+  fprintf(fp, "CalcModel %3d\n", iCalcModel);
+  fprintf(fp, "ReStart %3d\n", iRestart);
+  fprintf(fp, "CalcSpec %3d\n", iCalcSpec);
+  fprintf(fp, "CalcEigenVec %3d\n", iCalcEigenvec);
+  fprintf(fp, "InitialVecType %3d\n", iInitialVecTpye);
+  fprintf(fp, "InputEigenVec %3d\n", InputEigenVec);
+  fprintf(fp, "OutputEigenVec %3d\n", OutputEigenVec);
+  fclose(fp);
+  fprintf(stdout, "     calcmod.def is written.\n\n");
+}/*static void PrintCalcMod*/
+/**
+ *
+ * Print single.def or pair.def
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+static void PrintExcitation(struct StdIntList *StdI) {
+  FILE *fp;
+  int NumOp, spin[2][2], isite, ispin, icell, itau;
+  double coef[2], pi, phase;
+  double *fourier_r, *fourier_i;
+
+  fourier_r = (double *)malloc(sizeof(double) * StdI->nsite);
+  fourier_i = (double *)malloc(sizeof(double) * StdI->nsite);
+  pi = acos(-1.0);
+
+  fprintf(stdout, "\n  @ Spectrum\n\n");
+
+  StdFace_PrintVal_d("SpectrumQW", &StdI->SpectrumQW, 0.0);
+  StdFace_PrintVal_d("SpectrumQL", &StdI->SpectrumQL, 0.0);
+
+  if (strcmp(StdI->SpectrumType, "****") == 0) {
+    strcpy(StdI->SpectrumType, "szsz\0");
+    fprintf(stdout, "     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######\n");
+    NumOp = 2;
+    coef[0] = 0.5;
+    coef[1] = -0.5;
+    spin[0][0] = 0;
+    spin[0][1] = 0;
+    spin[1][0] = 1;
+    spin[1][1] = 1;
+    StdI->SpectrumBody = 2;
+  }
+  else {
+    fprintf(stdout, "     SpectrumType = %s\n", StdI->SpectrumType);
+    if (strcmp(StdI->SpectrumType, "szsz") == 0) {
+      NumOp = 2;
+      coef[0] = 0.5;
+      coef[1] = -0.5;
+      spin[0][0] = 0;
+      spin[0][1] = 0;
+      spin[1][0] = 1;
+      spin[1][1] = 1;
+      StdI->SpectrumBody = 2;
+    }
+    else if (strcmp(StdI->SpectrumType, "s+s-") == 0) {
+      NumOp = 1;
+      coef[0] = 1.0;
+      spin[0][0] = 0;
+      spin[0][1] = 1;
+      StdI->SpectrumBody = 2;
+    }
+    else if (strcmp(StdI->SpectrumType, "density") == 0) {
+      NumOp = 2;
+      coef[0] = 1,0;
+      coef[1] = 1.0;
+      spin[0][0] = 0;
+      spin[0][1] = 0;
+      spin[1][0] = 1;
+      spin[1][1] = 1;
+      StdI->SpectrumBody = 2;
+    }
+    else if (strcmp(StdI->SpectrumType, "up") == 0) {
+      NumOp = 1;
+      coef[0] = 1.0;
+      spin[0][0] = 0;
+      StdI->SpectrumBody = 1;
+    }
+    else if (strcmp(StdI->SpectrumType, "down") == 0) {
+      NumOp = 1;
+      coef[0] = 1.0;
+      spin[0][0] = 1;
+      StdI->SpectrumBody = 1;
+    }
+    else {
+      fprintf(stdout, "\n ERROR ! SpectrumType : %s\n", StdI->SpectrumType);
+      exit(-1);
+    }
+  }
+
+  if ((strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1)
+    || strcmp(StdI->model, "kondo") == 0) {
+    printf("####################################\n");
+    printf("###########  CAUTION  ##############\n");
+    printf("####################################\n");
+    printf("\n");
+    printf(" For Kondo or S>1 system, excitation parameter file is NOT generated automatically.\n");
+    printf(" Please write it by hand.\n");
+  }/*if (StdI->S2 > 1 || strcmp(StdI->model, "kondo") == 0)*/
+
+  isite = 0;
+  for (icell = 0; icell < StdI->NCell; icell++) {
+    for (itau = 0; itau < StdI->NsiteUC; itau++) {
+      phase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQW
+            + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQL;
+      fourier_r[isite] = cos(2.0*pi*phase);
+      fourier_i[isite] = sin(2.0*pi*phase);
+      isite += 1;
+    }
+  }
+
+  if (StdI->SpectrumBody == 1) {
+    fp = fopen("single.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NSingle %d\n", StdI->nsite * NumOp);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "============== Single Excitation ============\n");
+    fprintf(fp, "=============================================\n");
+    for (isite = 0; isite < StdI->nsite; isite++) {
+      fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
+        fourier_r[isite]*coef[0], fourier_i[isite] * coef[0]);
+    }
+    fprintf(stdout, "      single.def is written.\n\n");
+  }
+  else {
+    fp = fopen("pair.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NPair %d\n", StdI->nsite * NumOp);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "=============== Pair Excitation =============\n");
+    fprintf(fp, "=============================================\n");
+    for (isite = 0; isite < StdI->nsite; isite++) {
+      for (ispin = 0; ispin < NumOp; ispin++) {
+        fprintf(fp, "%d %d %d %d 0 %25.15f %25.15f\n", 
+          isite, spin[ispin][0], isite, spin[ispin][1],
+          fourier_r[isite] * coef[ispin], fourier_i[isite] * coef[ispin]);
+      }
+    }
+    fprintf(stdout, "        pair.def is written.\n\n");
+  }
+  fclose(fp);
+
+  free(fourier_r);
+  free(fourier_i);
+
+}/*static void PrintExcitation()*/
 /**
 *
 * Clear grobal variables in the standard mode
@@ -80,7 +364,6 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->D[2][2] = 9999.9;
   StdI->K = 9999.9;
   StdI->L = 9999;
-  StdI->LargeValue = 9999.9;
   StdI->Lx = 9999.9;
   StdI->Ly = 9999.9;
   StdI->mu = 9999.9;
@@ -103,26 +386,30 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->W = 9999;
   StdI->Wx = 9999.9;
   StdI->Wy = 9999.9;
+  StdI->phase0 = 9999.9;
+  StdI->phase1 = 9999.9;
+  StdI->pi180 = 0.01745329251994329576;/*Pi/180*/
+
+  StdI->nelec = 9999;
+  StdI->Sz2 = 9999;
+  strcpy(StdI->model, "****\0");
+  strcpy(StdI->lattice, "****\0");
+  strcpy(StdI->outputmode, "****\0");
+  strcpy(StdI->CDataFileHead, "****\0");
+  StdI->LargeValue = 9999.9;
   StdI->OmegaMax = 9999.9;
   StdI->OmegaMin = 9999.9;
   StdI->OmegaIm = 9999.9;
   StdI->Nomega = 9999;
   StdI->SpectrumQW = 9999.9;
   StdI->SpectrumQL = 9999.9;
-
-  strcpy(StdI->model, "****\0");
-  strcpy(StdI->lattice, "****\0");
   strcpy(StdI->method, "****\0");
-  strcpy(StdI->outputmode, "****\0");
-  strcpy(StdI->filehead, "****\0");
   strcpy(StdI->Restart, "****\0");
   strcpy(StdI->EigenVecIO, "****\0");
   strcpy(StdI->InitialVecType, "****\0");
   strcpy(StdI->CalcSpec, "****\0");
   strcpy(StdI->SpectrumType, "****\0");
   StdI->FlgTemp = 1;
-  StdI->nelec = 9999;
-  StdI->Sz2 = 9999;
   StdI->Lanczos_max = 9999;
   StdI->initial_iv = 9999;
   StdI->nvec = 9999;
@@ -131,9 +418,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->LanczosTarget = 9999;
   StdI->NumAve = 9999;
   StdI->ExpecInterval = 9999;
-
-}
-
+}/*static void StdFace_ResetVals*/
 /**
  *
  * Remove : space etc. from keyword and value in an iput file
@@ -164,7 +449,7 @@ static void TrimSpaceQuote(char *value /**< [inout] Keyword or value*/){
   strncpy(value, value2, valuelen2);
   value[valuelen2] = '\0';
 
-}
+}/*static void TrimSpaceQuote*/
 
 /**
  *
@@ -180,12 +465,12 @@ static void StoreWithCheckDup_s(
 {
   if (strcmp(value, "****") != 0){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exitMPI(-1);
+    exit(-1);
   }
   else{
     strcpy(value, valuestring);
   }
-}
+}/*static void StoreWithCheckDup_s*/
 
 /**
  *
@@ -201,12 +486,12 @@ static void StoreWithCheckDup_i(
 {
   if (*value != 9999){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exitMPI(-1);
+    exit(-1);
   }
   else{
     sscanf(valuestring, "%d", value);
   }
-}
+}/*static void StoreWithCheckDup_i*/
 
 /**
  *
@@ -223,13 +508,13 @@ static void StoreWithCheckDup_d(
 
   if (*value != 9999.9){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exitMPI(-1);
+    exit(-1);
   }
   else{
     sscanf(valuestring, "%lf", value);
   }
 
-}
+}/*static void StoreWithCheckDup_d*/
 
 /**
 *
@@ -249,7 +534,7 @@ static void StoreWithCheckDup_c(
 
   if (creal(*value) != 9999.9) {
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
-    exitMPI(-1);
+    exit(-1);
   }
   else {
 
@@ -280,7 +565,7 @@ static void StoreWithCheckDup_c(
       else *value += I * 0.0;
     }
   }
-}
+}/*static void StoreWithCheckDup_c*/
 
 /**
 *
@@ -296,7 +581,7 @@ void PrintLocSpin(struct StdIntList *StdI) {
   for (isite = 0; isite < StdI->nsite; isite++)
     if (StdI->locspinflag[isite] != 0) nlocspin = nlocspin + 1;
 
-  fp = fopen("zlocspn.def", "w");
+  fp = fopen("locspn.def", "w");
   fprintf(fp, "================================ \n");
   fprintf(fp, "NlocalSpin %5d  \n", nlocspin);
   fprintf(fp, "================================ \n");
@@ -307,9 +592,8 @@ void PrintLocSpin(struct StdIntList *StdI) {
     fprintf(fp, "%5d  %5d\n", isite, StdI->locspinflag[isite]);
 
   fclose(fp);
-  fprintf(stdout, "    zlocspin.def is written.\n");
-}
-
+  fprintf(stdout, "    locspn.def is written.\n");
+}/*void PrintLocSpin*/
 /**
 *
 * Print the transfer file
@@ -336,198 +620,30 @@ static void PrintTrans(struct StdIntList *StdI){
   for (ktrans = 0; ktrans < StdI->ntrans; ktrans++){
     if (cabs(StdI->trans[ktrans]) > 0.000001) ntrans0 = ntrans0 + 1;
   }
+  if (ntrans0 != 0 || StdI->lBoost == 1) StdI->Ltrans = 1;
+  else StdI->Ltrans = 0;
 
-  fp = fopen("zTrans.def", "w");
-  fprintf(fp, "======================== \n");
-  if(StdI->lBoost == 0) fprintf(fp, "NTransfer %7d  \n", ntrans0);
-  else  fprintf(fp, "NTransfer %7d  \n", 0);
-  fprintf(fp, "======================== \n");
-  fprintf(fp, "========i_j_s_tijs====== \n");
-  fprintf(fp, "======================== \n");
+  if(StdI->Ltrans == 1){
+    fp = fopen("trans.def", "w");
+    fprintf(fp, "======================== \n");
+    fprintf(fp, "NTransfer %7d  \n", ntrans0);
+    fprintf(fp, "======================== \n");
+    fprintf(fp, "========i_j_s_tijs====== \n");
+    fprintf(fp, "======================== \n");
 
-  if (StdI->lBoost == 0) {
     ntrans0 = 0;
     for (ktrans = 0; ktrans < StdI->ntrans; ktrans++) {
       if (cabs(StdI->trans[ktrans]) > 0.000001)
-        fprintf(fp, "%5d %5d %5d %5d %25.15f  %25.15f\n",
+        fprintf(fp, "%5d %5d %5d %5d %25.15f %25.15f\n",
           StdI->transindx[ktrans][0], StdI->transindx[ktrans][1],
           StdI->transindx[ktrans][2], StdI->transindx[ktrans][3],
           creal(StdI->trans[ktrans]), cimag(StdI->trans[ktrans]));
     }
-  }/*if (StdI->lBoost == 0)*/
 
-  fclose(fp);
-  fprintf(stdout, "      zTrans.def is written.\n");
-}
-
-/**
-*
-* Print zInterAll.def
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
-*/
-static void PrintInter(struct StdIntList *StdI){
-  FILE *fp;
-  int jintr, kintr, nintr0;
-
-  for (jintr = 0; jintr < StdI->nintr; jintr++){
-    for (kintr = jintr + 1; kintr < StdI->nintr; kintr++){
-      if ( 
-        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][0]
-        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][1]
-        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][2]
-        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][3]
-        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][4]
-        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][5]
-        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][6]
-        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][7] )
-        ||
-        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][4]
-        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][5]
-        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][6]
-        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][7]
-        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][0]
-        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][1]
-        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][2]
-        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][3])
-        ){
-        StdI->intr[jintr] = StdI->intr[jintr] + StdI->intr[kintr];
-        StdI->intr[kintr] = 0.0;
-      }
-      else if (
-        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][4]
-        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][5]
-        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][2]
-        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][3]
-        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][0]
-        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][1]
-        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][6]
-        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][7])
-        ||
-        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][0]
-        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][1]
-        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][6]
-        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][7]
-        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][4]
-        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][5]
-        && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][2]
-        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][3])
-        ){
-        StdI->intr[jintr] = StdI->intr[jintr] - StdI->intr[kintr];
-        StdI->intr[kintr] = 0.0;
-      }
-    }/*for (kintr = jintr + 1; kintr < StdI->nintr; kintr++)*/
-  }/*for (jintr = 0; jintr < StdI->nintr; jintr++)*/
-
-  for (jintr = 0; jintr < StdI->nintr; jintr++) {
-    for (kintr = jintr + 1; kintr < StdI->nintr; kintr++) {
-      if (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][4]
-        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][5]
-        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][6]
-        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][7]
-        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][0]
-        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][1]
-        && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][2]
-        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][3]
-        ) {
-        StdI->intrindx[kintr][0] = StdI->intrindx[jintr][6];
-        StdI->intrindx[kintr][1] = StdI->intrindx[jintr][7];
-        StdI->intrindx[kintr][2] = StdI->intrindx[jintr][4];
-        StdI->intrindx[kintr][3] = StdI->intrindx[jintr][5];
-        StdI->intrindx[kintr][4] = StdI->intrindx[jintr][2];
-        StdI->intrindx[kintr][5] = StdI->intrindx[jintr][3];
-        StdI->intrindx[kintr][6] = StdI->intrindx[jintr][0];
-        StdI->intrindx[kintr][7] = StdI->intrindx[jintr][1];
-      }
-      else if (
-        (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][4]
-          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][5]
-          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][2]
-          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][3]
-          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][0]
-          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][1]
-          && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][6]
-          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][7])
-        ||
-        (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][0]
-          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][1]
-          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][6]
-          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][7]
-          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][4]
-          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][5]
-          && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][2]
-          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][3])
-        ) {
-        StdI->intrindx[kintr][0] = StdI->intrindx[jintr][6];
-        StdI->intrindx[kintr][1] = StdI->intrindx[jintr][7];
-        StdI->intrindx[kintr][2] = StdI->intrindx[jintr][4];
-        StdI->intrindx[kintr][3] = StdI->intrindx[jintr][5];
-        StdI->intrindx[kintr][4] = StdI->intrindx[jintr][2];
-        StdI->intrindx[kintr][5] = StdI->intrindx[jintr][3];
-        StdI->intrindx[kintr][6] = StdI->intrindx[jintr][0];
-        StdI->intrindx[kintr][7] = StdI->intrindx[jintr][1];
-
-        StdI->intr[kintr] = -StdI->intr[kintr];
-      }
-    }/*for (kintr = jintr + 1; kintr < StdI->nintr; kintr++)*/
-  }/*for (jintr = 0; jintr < StdI->nintr; jintr++)*/
-
-  for (jintr = 0; jintr < StdI->nintr; jintr++) {
-
-    if (
-      (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][4] 
-        && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][5]) ||
-      (StdI->intrindx[jintr][2] == StdI->intrindx[jintr][6] 
-        && StdI->intrindx[jintr][3] == StdI->intrindx[jintr][7])
-      ) {
-
-      if (!(
-        (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][2] 
-          && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][3])
-        ||
-        (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][6]
-          && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][7]) 
-        ||
-        (StdI->intrindx[jintr][4] == StdI->intrindx[jintr][2] 
-          && StdI->intrindx[jintr][5] == StdI->intrindx[jintr][3])
-        ||
-        (StdI->intrindx[jintr][4] == StdI->intrindx[jintr][6] 
-          && StdI->intrindx[jintr][5] == StdI->intrindx[jintr][7])
-        ))
-        StdI->intr[jintr] = 0.0;
-    }
-  }/*for (jintr = 0; jintr < StdI->nintr; jintr++)*/
- 
-  nintr0 = 0;
-  for (kintr = 0; kintr < StdI->nintr; kintr++){
-    if (cabs(StdI->intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
-  }
-
-  fp = fopen("zInterAll.def", "w");
-  fprintf(fp, "====================== \n");
-  if(StdI->lBoost == 0) fprintf(fp, "NInterAll %7d  \n", nintr0);
-  else fprintf(fp, "NInterAll %7d  \n", 0);
-  fprintf(fp, "====================== \n");
-  fprintf(fp, "========zInterAll===== \n");
-  fprintf(fp, "====================== \n");
-
-  if (StdI->lBoost == 0) {
-    nintr0 = 0;
-    for (kintr = 0; kintr < StdI->nintr; kintr++) {
-      if (cabs(StdI->intr[kintr]) > 0.000001)
-        fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %25.15f  %25.15f\n",
-          StdI->intrindx[kintr][0], StdI->intrindx[kintr][1],
-          StdI->intrindx[kintr][2], StdI->intrindx[kintr][3],
-          StdI->intrindx[kintr][4], StdI->intrindx[kintr][5],
-          StdI->intrindx[kintr][6], StdI->intrindx[kintr][7],
-          creal(StdI->intr[kintr]), cimag(StdI->intr[kintr]));
-    }/*for (kintr = 0; kintr < StdI->nintr; kintr++)*/
-  }/* if (StdI->lBoost == 0)*/
-
-  fclose(fp);
-  fprintf(stdout, "   zInterAll.def is written.\n");
-}
-
+    fclose(fp);
+    fprintf(stdout, "      trans.def is written.\n");
+  }/*if (StdI->Ltrans == 1)*/
+}/*static void PrintTrans*/
 /**
  *
  * Print namelist.def  
@@ -538,172 +654,27 @@ static void PrintNamelist(struct StdIntList *StdI){
   FILE *fp;
 
   fp = fopen("namelist.def", "w");
-  fprintf(fp, "CalcMod calcmod.def\n");
-  fprintf(fp, "ModPara modpara.def\n");
-  fprintf(fp, "LocSpin zlocspn.def\n");
-  fprintf(fp, "Trans zTrans.def\n");
-  fprintf(fp, "InterAll zInterAll.def\n");
-  fprintf(fp, "OneBodyG greenone.def\n");
-  fprintf(fp, "TwoBodyG greentwo.def\n");
+  fprintf(                         fp, "     ModPara  modpara.def\n");
+  fprintf(                         fp, "     LocSpin  locspn.def\n");
+  if (StdI->Ltrans == 1) fprintf(  fp, "       Trans  trans.def\n");
+  if (StdI->LCintra == 1) fprintf( fp, "CoulombIntra  coulombintra.def\n");
+  if (StdI->LCinter == 1) fprintf( fp, "CoulombInter  coulombinter.def\n");
+  if (StdI->LHund == 1)fprintf(    fp, "        Hund  hund.def\n");
+  if (StdI->LEx == 1)fprintf(      fp, "    Exchange  exchange.def\n");
+  if (StdI->LPairLift == 1)fprintf(fp, "    PairLift  pairlift.def\n");
+  if (StdI->Lintr == 1)fprintf(    fp, "    InterAll  interall.def\n");
+  fprintf(                         fp, "    OneBodyG  greenone.def\n");
+  fprintf(                         fp, "    TwoBodyG  greentwo.def\n");
+  fprintf(                         fp, "     CalcMod  calcmod.def\n");
   if(StdI->SpectrumBody == 1) fprintf(fp, "SingleExcitation single.def\n");
-  else fprintf(fp, "PairExcitation pair.def\n");
-  fprintf(fp, "SpectrumVec %s_eigenvec_0\n", StdI->filehead);
-
-  if (StdI->lBoost == 1) 
-    fprintf(fp, "Boost boost.def\n");
+  else fprintf(fp, "PairExcitation  pair.def\n");
+  fprintf(                         fp, " SpectrumVec  %s_eigenvec_0\n",
+                                   StdI->CDataFileHead);
+  if (StdI->lBoost == 1) fprintf(  fp, "       Boost  boost.def\n");
 
   fclose(fp);
   fprintf(stdout, "    namelist.def is written.\n");
-}
-
-/**
- *
- * Print calcmod.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void PrintCalcMod(struct StdIntList *StdI)
-{
-  FILE *fp;
-  int iCalcType, iCalcModel, iRestart, iCalcSpec, 
-    iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec;
-
-  fprintf(stdout, "\n  @ CalcMod\n\n");
-  /*
-   Method
-  */
-  iCalcEigenvec = 0;
-  if (strcmp(StdI->method, "****") == 0){
-    fprintf(stdout, "ERROR ! Method is NOT specified !\n");
-    exitMPI(-1);
-  }
-  else if (strcmp(StdI->method, "lanczos") == 0) iCalcType = 0;
-  else if (strcmp(StdI->method, "lanczosenergy") == 0) { 
-    iCalcType = 0; 
-    iCalcEigenvec = 1;
-  }
-  else if (strcmp(StdI->method, "tpq") == 0) iCalcType = 1;
-  else if (strcmp(StdI->method, "fulldiag") == 0 ||
-    strcmp(StdI->method, "alldiag") == 0 ||
-    strcmp(StdI->method, "direct") == 0 ) iCalcType = 2;
-  else if (strcmp(StdI->method, "cg") == 0) iCalcType = 3;
-  else{
-    fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
-    exitMPI(-1);
-  }
-  /*
-   Model
-  */
-  if (strcmp(StdI->model, "hubbard") == 0) {
-    if (StdI->lGC == 0)iCalcModel = 0;
-    else iCalcModel = 3;
-  }
-  else if (strcmp(StdI->model, "spin") == 0) {
-    if (StdI->lGC == 0)iCalcModel = 1;
-    else iCalcModel = 4;
-  }
-  if (strcmp(StdI->model, "kondo") == 0) {
-    if (StdI->lGC == 0)iCalcModel = 2;
-    else iCalcModel = 5;
-  }
-  /*
-    Restart
-  */
-  if (strcmp(StdI->Restart, "****") == 0) {
-    strcpy(StdI->Restart, "none\0");
-    fprintf(stdout, "          Restart = none        ######  DEFAULT VALUE IS USED  ######\n");
-    iRestart = 0;
-  }
-  else {
-    fprintf(stdout, "          Restart = %s\n", StdI->Restart);
-    if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
-    else if (strcmp(StdI->Restart, "save") == 0) iRestart = 1;
-    else if (strcmp(StdI->Restart, "restartsave") == 0) iRestart = 2;
-    else if (strcmp(StdI->Restart, "restart") == 0) iRestart = 3;
-    else {
-      fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
-      exitMPI(-1);
-    }
-  }
-  /*
-  InitialVecType
-  */
-  if (strcmp(StdI->InitialVecType, "****") == 0) {
-    strcpy(StdI->InitialVecType, "c\0");
-    fprintf(stdout, "   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######\n");
-    iInitialVecTpye = 0;
-  }
-  else {
-    fprintf(stdout, "   InitialVecType = %s\n", StdI->InitialVecType);
-    if (strcmp(StdI->InitialVecType, "c") == 0) iInitialVecTpye = 0;
-    else if (strcmp(StdI->InitialVecType, "r") == 0) iInitialVecTpye = 1;
-    else {
-      fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
-      exitMPI(-1);
-    }
-  }
-  /*
-  EigenVecIO
-  */
-  InputEigenVec = 0;
-  OutputEigenVec = 0;
-  if (strcmp(StdI->EigenVecIO, "****") == 0) {
-    strcpy(StdI->EigenVecIO, "none\0");
-    fprintf(stdout, "       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######\n");
-  }
-  else {
-    fprintf(stdout, "       EigenVecIO = %s\n", StdI->EigenVecIO);
-    if (strcmp(StdI->EigenVecIO, "none") == 0) InputEigenVec = 0;
-    else if (strcmp(StdI->EigenVecIO, "in") == 0) InputEigenVec = 1;
-    else if (strcmp(StdI->EigenVecIO, "out") == 0) OutputEigenVec = 1;
-    else if (strcmp(StdI->EigenVecIO, "inout") == 0) {
-      InputEigenVec = 1;
-      OutputEigenVec = 1;
-    }
-    else {
-      fprintf(stdout, "\n ERROR ! EigenVecIO Mode : %s\n", StdI->Restart);
-      exitMPI(-1);
-    }
-  }
-  /*
-  CalcSpec
-  */
-  if (strcmp(StdI->CalcSpec, "****") == 0) {
-    strcpy(StdI->CalcSpec, "none\0");
-    fprintf(stdout, "         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######\n");
-    iCalcSpec = 0;
-  }
-  else {
-    fprintf(stdout, "         CalcSpec = %s\n", StdI->CalcSpec);
-    if (strcmp(StdI->CalcSpec, "none") == 0) iCalcSpec = 0;
-    else if (strcmp(StdI->CalcSpec, "normal") == 0) iCalcSpec = 1;
-    else if (strcmp(StdI->CalcSpec, "noiteration") == 0) iCalcSpec = 2;
-    else if (strcmp(StdI->CalcSpec, "save") == 0) iCalcSpec = 3;
-    else if (strcmp(StdI->CalcSpec, "restart") == 0) iCalcSpec = 4;
-    else if (strcmp(StdI->CalcSpec, "restartsave") == 0) iCalcSpec = 5;
-    else {
-      fprintf(stdout, "\n ERROR ! CalcSpec : %s\n", StdI->CalcSpec);
-      exitMPI(-1);
-    }
-  }
-
-  fp = fopen("calcmod.def", "w");
-  fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 4:CG\n");
-  fprintf(fp, "#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC\n");
-  fprintf(fp, "#Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart\n");
-  fprintf(fp, "#CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, 4:Restart, 5:Restart&Save\n");
-  fprintf(fp, "CalcType %3d\n", iCalcType);
-  fprintf(fp, "CalcModel %3d\n", iCalcModel);
-  fprintf(fp, "ReStart %3d\n", iRestart);
-  fprintf(fp, "CalcSpec %3d\n", iCalcSpec);
-  fprintf(fp, "CalcEigenVec %3d\n", iCalcEigenvec);
-  fprintf(fp, "InitialVecType %3d\n", iInitialVecTpye);
-  fprintf(fp, "InputEigenVec %3d\n", InputEigenVec);
-  fprintf(fp, "OutputEigenVec %3d\n", OutputEigenVec);
-  fclose(fp);
-  fprintf(stdout, "     calcmod.def is written.\n\n");
-}
-
+}/*static void PrintNamelist*/
 /**
  *
  * Print modpara.def
@@ -720,7 +691,7 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "--------------------\n");
   fprintf(fp, "HPhi_Cal_Parameters\n");
   fprintf(fp, "--------------------\n");
-  fprintf(fp, "CDataFileHead  %s\n", StdI->filehead);
+  fprintf(fp, "CDataFileHead  %s\n", StdI->CDataFileHead);
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", StdI->nsite);
@@ -742,7 +713,7 @@ static void PrintModPara(struct StdIntList *StdI)
 
   fclose(fp);
   fprintf(stdout, "     modpara.def is written.\n");
-}
+}/*static void PrintModPara*/
 
 /**
  *
@@ -811,20 +782,20 @@ static void Print1Green(struct StdIntList *StdI)
   fprintf(fp, "===============================\n");
   fprintf(fp, "======== Green functions ======\n");
   fprintf(fp, "===============================\n");
-  for (igreen = 0; igreen < ngreen; igreen++){
-    fprintf(fp,"%5d %5d %5d %5d\n",
+  for (igreen = 0; igreen < ngreen; igreen++) {
+    fprintf(fp, "%5d %5d %5d %5d\n",
       greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3]);
   }
   fclose(fp);
 
   fprintf(stdout, "    greenone.def is written.\n");
   //[s] free
-  for (igreen = 0; igreen < ngreen; igreen++){
+  for (igreen = 0; igreen < ngreen; igreen++) {
     free(greenindx[igreen]);
   }
   free(greenindx);
   //[e] free
-}/*static void Print1Green(struct StdIntList *StdI)*/
+}/*static void Print1Green*/
 
 /**
  *
@@ -832,7 +803,7 @@ static void Print1Green(struct StdIntList *StdI)
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static void Print2Green(struct StdIntList *StdI){
+static void Print2Green(struct StdIntList *StdI) {
   FILE *fp;
   int ngreen, store, igreen;
   int site1, site2, site3, site4;
@@ -919,155 +890,23 @@ static void Print2Green(struct StdIntList *StdI){
   fprintf(fp, "=============================================\n");
   fprintf(fp, "======== Green functions for Sq AND Nq ======\n");
   fprintf(fp, "=============================================\n");
-  for (igreen = 0; igreen < ngreen; igreen++){
-    fprintf(fp,"%5d %5d %5d %5d %5d %5d %5d %5d\n",
+  for (igreen = 0; igreen < ngreen; igreen++) {
+    fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d\n",
       greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3],
       greenindx[igreen][4], greenindx[igreen][5], greenindx[igreen][6], greenindx[igreen][7]);
   }
   fclose(fp);
 
   fprintf(stdout, "    greentwo.def is written.\n");
-  //[s] free
+
   if (StdI->ioutputmode != 0) {
     for (igreen = 0; igreen < ngreen; igreen++) {
       free(greenindx[igreen]);
     }
     free(greenindx);
   }/*if (StdI->ioutputmode != 0)*/
-  //[e] free
+
 }/*void Print2Green(struct StdIntList *StdI)*/
-
-static void PrintExcitation(struct StdIntList *StdI) {
-  FILE *fp;
-  int NumOp, spin[2][2], isite, ispin, icell, itau;
-  double coef[2], pi, phase;
-  double *fourier_r, *fourier_i;
-
-  fourier_r = (double *)malloc(sizeof(double) * StdI->nsite);
-  fourier_i = (double *)malloc(sizeof(double) * StdI->nsite);
-  pi = acos(-1.0);
-
-  fprintf(stdout, "\n  @ Spectrum\n\n");
-
-  StdFace_PrintVal_d("SpectrumQW", &StdI->SpectrumQW, 0.0);
-  StdFace_PrintVal_d("SpectrumQL", &StdI->SpectrumQL, 0.0);
-
-  if (strcmp(StdI->SpectrumType, "****") == 0) {
-    strcpy(StdI->SpectrumType, "szsz\0");
-    fprintf(stdout, "     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######\n");
-    NumOp = 2;
-    coef[0] = 0.5;
-    coef[1] = -0.5;
-    spin[0][0] = 0;
-    spin[0][1] = 0;
-    spin[1][0] = 1;
-    spin[1][1] = 1;
-    StdI->SpectrumBody = 2;
-  }
-  else {
-    fprintf(stdout, "     SpectrumType = %s\n", StdI->SpectrumType);
-    if (strcmp(StdI->SpectrumType, "szsz") == 0) {
-      NumOp = 2;
-      coef[0] = 0.5;
-      coef[1] = -0.5;
-      spin[0][0] = 0;
-      spin[0][1] = 0;
-      spin[1][0] = 1;
-      spin[1][1] = 1;
-      StdI->SpectrumBody = 2;
-    }
-    else if (strcmp(StdI->SpectrumType, "s+s-") == 0) {
-      NumOp = 1;
-      coef[0] = 1.0;
-      spin[0][0] = 0;
-      spin[0][1] = 1;
-      StdI->SpectrumBody = 2;
-    }
-    else if (strcmp(StdI->SpectrumType, "density") == 0) {
-      NumOp = 2;
-      coef[0] = 1,0;
-      coef[1] = 1.0;
-      spin[0][0] = 0;
-      spin[0][1] = 0;
-      spin[1][0] = 1;
-      spin[1][1] = 1;
-      StdI->SpectrumBody = 2;
-    }
-    else if (strcmp(StdI->SpectrumType, "up") == 0) {
-      NumOp = 1;
-      coef[0] = 1.0;
-      spin[0][0] = 0;
-      StdI->SpectrumBody = 1;
-    }
-    else if (strcmp(StdI->SpectrumType, "down") == 0) {
-      NumOp = 1;
-      coef[0] = 1.0;
-      spin[0][0] = 1;
-      StdI->SpectrumBody = 1;
-    }
-    else {
-      fprintf(stdout, "\n ERROR ! SpectrumType : %s\n", StdI->SpectrumType);
-      exitMPI(-1);
-    }
-  }
-
-  if ((strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1)
-    || strcmp(StdI->model, "kondo") == 0) {
-    printf("####################################\n");
-    printf("###########  CAUTION  ##############\n");
-    printf("####################################\n");
-    printf("\n");
-    printf(" For Kondo or S>1 system, excitation parameter file is NOT generated automatically.\n");
-    printf(" Please write it by hand.\n");
-  }/*if (StdI->S2 > 1 || strcmp(StdI->model, "kondo") == 0)*/
-
-  isite = 0;
-  for (icell = 0; icell < StdI->NCell; icell++) {
-    for (itau = 0; itau < StdI->NsiteUC; itau++) {
-      phase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQW
-            + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQL;
-      fourier_r[isite] = cos(2.0*pi*phase);
-      fourier_i[isite] = sin(2.0*pi*phase);
-      isite += 1;
-    }
-  }
-
-  if (StdI->SpectrumBody == 1) {
-    fp = fopen("single.def", "w");
-    fprintf(fp, "=============================================\n");
-    fprintf(fp, "NSingle %d\n", StdI->nsite * NumOp);
-    fprintf(fp, "=============================================\n");
-    fprintf(fp, "============== Single Excitation ============\n");
-    fprintf(fp, "=============================================\n");
-    for (isite = 0; isite < StdI->nsite; isite++) {
-      fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
-        fourier_r[isite]*coef[0], fourier_i[isite] * coef[0]);
-    }
-    fprintf(stdout, "      single.def is written.\n\n");
-  }
-  else {
-    fp = fopen("pair.def", "w");
-    fprintf(fp, "=============================================\n");
-    fprintf(fp, "NPair %d\n", StdI->nsite * NumOp);
-    fprintf(fp, "=============================================\n");
-    fprintf(fp, "=============== Pair Excitation =============\n");
-    fprintf(fp, "=============================================\n");
-    for (isite = 0; isite < StdI->nsite; isite++) {
-      for (ispin = 0; ispin < NumOp; ispin++) {
-        fprintf(fp, "%d %d %d %d 0 %25.15f %25.15f\n", 
-          isite, spin[ispin][0], isite, spin[ispin][1],
-          fourier_r[isite] * coef[ispin], fourier_i[isite] * coef[ispin]);
-      }
-    }
-    fprintf(stdout, "        pair.def is written.\n\n");
-  }
-  fclose(fp);
-
-  free(fourier_r);
-  free(fourier_i);
-
-}/*static void PrintExcitation()*/
-
 /**
  *
  * Stop HPhi if unsupported model is read 
@@ -1083,9 +922,8 @@ static void UnsupportedSystem(
   fprintf(stdout, "  LATTICE : %s, \n", lattice);
   fprintf(stdout, "is unsupported in the STANDARD MODE...\n");
   fprintf(stdout, "Please use the EXPART MODE, or write a NEW FUNCTION and post us.\n");
-  exitMPI(-1);
-}
-
+  exit(-1);
+}/*static void UnsupportedSystem*/
 /**
  *
  * Verify outputmode
@@ -1121,10 +959,9 @@ static void CheckOutputMode(struct StdIntList *StdI)
   }
   else{
     fprintf(stdout, "\n ERROR ! Unsupported OutPutMode : %s\n", StdI->outputmode);
-    exitMPI(-1);
+    exit(-1);
   }
-}
-
+}/*static void CheckOutputMode*/
 /**
  *
  * Summary numerical parameter check the combination of
@@ -1134,11 +971,11 @@ static void CheckOutputMode(struct StdIntList *StdI)
  */
 static void CheckModPara(struct StdIntList *StdI)
 {
-  if (strcmp(StdI->filehead, "****") == 0) {
-    strcpy(StdI->filehead, "zvo\0");
-    fprintf(stdout, "         filehead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->filehead);
+  if (strcmp(StdI->CDataFileHead, "****") == 0) {
+    strcpy(StdI->CDataFileHead, "zvo\0");
+    fprintf(stdout, "         CDataFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CDataFileHead);
   }
-  else fprintf(stdout, "         filehead = %-s\n", StdI->filehead);
+  else fprintf(stdout, "         CDataFileHead = %-s\n", StdI->CDataFileHead);
   /**/
   StdFace_PrintVal_i("Lanczos_max", &StdI->Lanczos_max, 2000);
   StdFace_PrintVal_i("initial_iv", &StdI->initial_iv, -1);
@@ -1173,8 +1010,305 @@ static void CheckModPara(struct StdIntList *StdI)
       StdFace_NotUsed_i("2Sz", StdI->Sz2);
     }
   }
-}
+}/*static void CheckModPara*/
+/**
+ *
+ * Output .def file for Specific interaction
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+static void PrintInterations(struct StdIntList *StdI)
+{
+  FILE *fp;
+  int nintr0, kintr, jintr;
+  /*
+   Coulomb INTRA
+  */
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->NCintra; kintr++) {
+    if (fabs(StdI->Cintra[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->LCintra = 0;
+  else StdI->LCintra = 1;
 
+  if (StdI->LCintra == 1) {
+    fp = fopen("coulombintra.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NCoulombIntra %10d\n", nintr0);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "================== CoulombIntra ================\n");
+    fprintf(fp, "=============================================\n");
+    for (kintr = 0; kintr < StdI->NCintra; kintr++) {
+      if (fabs(StdI->Cintra[kintr]) > 0.000001)
+        fprintf(fp, "%5d %25.15f\n",
+          StdI->CintraIndx[kintr][0], StdI->Cintra[kintr]);
+    }
+    fclose(fp);
+    fprintf(stdout, "    coulombintra.def is written.\n");
+  }/*if (StdI->LCintra == 1)*/
+  /*
+  Coulomb INTER
+  */
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->NCinter; kintr++) {
+    if (fabs(StdI->Cinter[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->LCinter = 0;
+  else StdI->LCinter = 1;
+
+  if (StdI->LCinter == 1) {
+    fp = fopen("coulombinter.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NCoulombInter %10d\n", nintr0);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "================== CoulombInter ================\n");
+    fprintf(fp, "=============================================\n");
+    for (kintr = 0; kintr < StdI->NCinter; kintr++) {
+      if (fabs(StdI->Cinter[kintr]) > 0.000001)
+        fprintf(fp, "%5d %5d %25.15f\n",
+          StdI->CinterIndx[kintr][0], StdI->CinterIndx[kintr][1], StdI->Cinter[kintr]);
+    }
+    fclose(fp);
+    fprintf(stdout, "    coulombinter.def is written.\n");
+  }/*if (StdI->LCinter == 1)*/
+  /*
+  Hund
+  */
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->NHund; kintr++) {
+    if (fabs(StdI->Hund[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->LHund = 0;
+  else StdI->LHund = 1;
+
+  if (StdI->LHund == 1) {
+    fp = fopen("hund.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NHund %10d\n", nintr0);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "=============== Hund coupling ===============\n");
+    fprintf(fp, "=============================================\n");
+    for (kintr = 0; kintr < StdI->NHund; kintr++) {
+      if (fabs(StdI->Hund[kintr]) > 0.000001)
+        fprintf(fp, "%5d %5d %25.15f\n",
+          StdI->HundIndx[kintr][0], StdI->HundIndx[kintr][1], StdI->Hund[kintr]);
+    }
+    fclose(fp);
+    fprintf(stdout, "    hund.def is written.\n");
+  }/*if (StdI->LHund == 1)*/
+  /*
+  Exchange
+  */
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->NEx; kintr++) {
+    if (fabs(StdI->Ex[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->LEx = 0;
+  else StdI->LEx = 1;
+
+  if (StdI->LEx == 1) {
+    fp = fopen("exchange.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NExchange %10d\n", nintr0);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "====== ExchangeCoupling coupling ============\n");
+    fprintf(fp, "=============================================\n");
+    for (kintr = 0; kintr < StdI->NEx; kintr++) {
+      if (fabs(StdI->Ex[kintr]) > 0.000001)
+        fprintf(fp, "%5d %5d %25.15f\n",
+          StdI->ExIndx[kintr][0], StdI->ExIndx[kintr][1], StdI->Ex[kintr]);
+    }
+    fclose(fp);
+    fprintf(stdout, "    exchange.def is written.\n");
+  }
+  /*
+    PairLift
+  */
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
+    if (fabs(StdI->PairLift[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->LPairLift = 0;
+  else StdI->LPairLift = 1;
+
+  if (StdI->LPairLift == 1) {
+    fp = fopen("exchange.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NExchange %10d\n", nintr0);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "====== ExchangeCoupling coupling ============\n");
+    fprintf(fp, "=============================================\n");
+    for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
+      if (fabs(StdI->PairLift[kintr]) > 0.000001)
+        fprintf(fp, "%5d %5d %25.15f\n",
+          StdI->PLIndx[kintr][0], StdI->PLIndx[kintr][1], StdI->PairLift[kintr]);
+    }
+    fclose(fp);
+    fprintf(stdout, "    exchange.def is written.\n");
+  }
+  /*
+   InterAll
+  */
+  for (jintr = 0; jintr < StdI->nintr; jintr++) {
+    for (kintr = jintr + 1; kintr < StdI->nintr; kintr++) {
+      if (
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][3]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][7])
+        ||
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][7]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][3])
+        ) {
+        StdI->intr[jintr] = StdI->intr[jintr] + StdI->intr[kintr];
+        StdI->intr[kintr] = 0.0;
+      }
+      else if (
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][3]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][7])
+        ||
+        (StdI->intrindx[jintr][0] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][7]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][6] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][3])
+        ) {
+        StdI->intr[jintr] = StdI->intr[jintr] - StdI->intr[kintr];
+        StdI->intr[kintr] = 0.0;
+      }
+    }/*for (kintr = jintr + 1; kintr < StdI->nintr; kintr++)*/
+  }/*for (jintr = 0; jintr < StdI->nintr; jintr++)*/
+
+  for (jintr = 0; jintr < StdI->nintr; jintr++) {
+    for (kintr = jintr + 1; kintr < StdI->nintr; kintr++) {
+      if (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][4]
+        && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][5]
+        && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][6]
+        && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][7]
+        && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][0]
+        && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][1]
+        && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][2]
+        && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][3]
+        ) {
+        StdI->intrindx[kintr][0] = StdI->intrindx[jintr][6];
+        StdI->intrindx[kintr][1] = StdI->intrindx[jintr][7];
+        StdI->intrindx[kintr][2] = StdI->intrindx[jintr][4];
+        StdI->intrindx[kintr][3] = StdI->intrindx[jintr][5];
+        StdI->intrindx[kintr][4] = StdI->intrindx[jintr][2];
+        StdI->intrindx[kintr][5] = StdI->intrindx[jintr][3];
+        StdI->intrindx[kintr][6] = StdI->intrindx[jintr][0];
+        StdI->intrindx[kintr][7] = StdI->intrindx[jintr][1];
+      }
+      else if (
+        (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][3]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][7])
+        ||
+        (StdI->intrindx[jintr][6] == StdI->intrindx[kintr][0]
+          && StdI->intrindx[jintr][7] == StdI->intrindx[kintr][1]
+          && StdI->intrindx[jintr][4] == StdI->intrindx[kintr][6]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[kintr][7]
+          && StdI->intrindx[jintr][2] == StdI->intrindx[kintr][4]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[kintr][5]
+          && StdI->intrindx[jintr][0] == StdI->intrindx[kintr][2]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[kintr][3])
+        ) {
+        StdI->intrindx[kintr][0] = StdI->intrindx[jintr][6];
+        StdI->intrindx[kintr][1] = StdI->intrindx[jintr][7];
+        StdI->intrindx[kintr][2] = StdI->intrindx[jintr][4];
+        StdI->intrindx[kintr][3] = StdI->intrindx[jintr][5];
+        StdI->intrindx[kintr][4] = StdI->intrindx[jintr][2];
+        StdI->intrindx[kintr][5] = StdI->intrindx[jintr][3];
+        StdI->intrindx[kintr][6] = StdI->intrindx[jintr][0];
+        StdI->intrindx[kintr][7] = StdI->intrindx[jintr][1];
+
+        StdI->intr[kintr] = -StdI->intr[kintr];
+      }
+    }/*for (kintr = jintr + 1; kintr < StdI->nintr; kintr++)*/
+  }/*for (jintr = 0; jintr < StdI->nintr; jintr++)*/
+
+  for (jintr = 0; jintr < StdI->nintr; jintr++) {
+
+    if (
+      (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][4]
+        && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][5]) ||
+        (StdI->intrindx[jintr][2] == StdI->intrindx[jintr][6]
+          && StdI->intrindx[jintr][3] == StdI->intrindx[jintr][7])
+      ) {
+
+      if (!(
+        (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][2]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][3])
+        ||
+        (StdI->intrindx[jintr][0] == StdI->intrindx[jintr][6]
+          && StdI->intrindx[jintr][1] == StdI->intrindx[jintr][7])
+        ||
+        (StdI->intrindx[jintr][4] == StdI->intrindx[jintr][2]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[jintr][3])
+        ||
+        (StdI->intrindx[jintr][4] == StdI->intrindx[jintr][6]
+          && StdI->intrindx[jintr][5] == StdI->intrindx[jintr][7])
+        ))
+        StdI->intr[jintr] = 0.0;
+    }
+  }/*for (jintr = 0; jintr < StdI->nintr; jintr++)*/
+
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->nintr; kintr++) {
+    if (cabs(StdI->intr[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->Lintr = 0;
+  else StdI->Lintr = 1;
+
+  if (StdI->Lintr == 1) {
+    fp = fopen("interall.def", "w");
+    fprintf(fp, "====================== \n");
+    fprintf(fp, "NInterAll %7d  \n", nintr0);
+    fprintf(fp, "====================== \n");
+    fprintf(fp, "========zInterAll===== \n");
+    fprintf(fp, "====================== \n");
+
+    if (StdI->lBoost == 0) {
+      nintr0 = 0;
+      for (kintr = 0; kintr < StdI->nintr; kintr++) {
+        if (cabs(StdI->intr[kintr]) > 0.000001)
+          fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %25.15f  %25.15f\n",
+            StdI->intrindx[kintr][0], StdI->intrindx[kintr][1],
+            StdI->intrindx[kintr][2], StdI->intrindx[kintr][3],
+            StdI->intrindx[kintr][4], StdI->intrindx[kintr][5],
+            StdI->intrindx[kintr][6], StdI->intrindx[kintr][7],
+            creal(StdI->intr[kintr]), cimag(StdI->intr[kintr]));
+      }/*for (kintr = 0; kintr < StdI->nintr; kintr++)*/
+    }/* if (StdI->lBoost == 0)*/
+
+    fclose(fp);
+    fprintf(stdout, "    interall.def is written.\n");
+  }
+}/*static void PrintInteractions*/
 /**
 *
 * Main routine for the standard mode
@@ -1193,7 +1327,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   fprintf(stdout, "\n######  Standard Intarface Mode STARTS  ######\n");
   if ((fp = fopen(fname, "r")) == NULL) {
     fprintf(stdout, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
-    exitMPI(-1);
+    exit(-1);
   }
   else {
     fprintf(stdout, "\n  Open Standard-Mode Inputfile %s \n\n", fname);
@@ -1216,7 +1350,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     value = strtok(NULL, "=");
     if (value == NULL) {
       fprintf(stdout, "\n  ERROR !  \"=\" is NOT found !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     TrimSpaceQuote(keyword);
     TrimSpaceQuote(value);
@@ -1229,17 +1363,9 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "a1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.a1);
     else if (strcmp(keyword, "a1l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a1L);
     else if (strcmp(keyword, "a1w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a1W);
-    else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_s(keyword, value, StdI.CalcSpec);
     else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI.D[2][2]);
-    else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI.exct);
-    else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_s(keyword, value, StdI.EigenVecIO);
-    else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ExpecInterval);
-    else if (strcmp(keyword, "filehead") == 0) StoreWithCheckDup_s(keyword, value, StdI.filehead);
-    else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.FlgTemp);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Gamma);
     else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI.h);
-    else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_s(keyword, value, StdI.InitialVecType);
-    else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI.initial_iv);
     else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &StdI.JAll);
     else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][0]);
     else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][1]);
@@ -1312,30 +1438,16 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "j'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[2][1]);
     else if (strcmp(keyword, "k") == 0) StoreWithCheckDup_d(keyword, value, &StdI.K);
     else if (strcmp(keyword, "l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.L);
-    else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosEps);
-    else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosTarget);
-    else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Lanczos_max);
-    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI.LargeValue);
     else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_s(keyword, value, StdI.lattice);
     else if (strcmp(keyword, "lx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Lx);
     else if (strcmp(keyword, "ly") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Ly);
-    else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_s(keyword, value, StdI.method);
     else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_s(keyword, value, StdI.model);
     else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI.mu);
     else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nelec);
-    else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Nomega);
-    else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NumAve);
-    else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nvec);
-    else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMax);
-    else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMin);
-    else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaIm);
-    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, StdI.outputmode);
-    else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_s(keyword, value, StdI.Restart);
-    else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQL);
-    else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQW);
-    else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_s(keyword, value, StdI.SpectrumType);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Sz2);
-    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
+    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, StdI.outputmode);
+    else if (strcmp(keyword, "phase0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase0);
+    else if (strcmp(keyword, "phase1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase1);
     else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t);
     else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0);
     else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t1);
@@ -1354,9 +1466,34 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.W);
     else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Wx);
     else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Wy);
+
+    else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_s(keyword, value, StdI.CalcSpec);
+    else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI.exct);
+    else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_s(keyword, value, StdI.EigenVecIO);
+    else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ExpecInterval);
+    else if (strcmp(keyword, "cdatafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI.CDataFileHead);
+    else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.FlgTemp);
+    else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_s(keyword, value, StdI.InitialVecType);
+    else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI.initial_iv);
+    else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosEps);
+    else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosTarget);
+    else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Lanczos_max);
+    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI.LargeValue);
+    else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_s(keyword, value, StdI.method);
+    else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Nomega);
+    else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NumAve);
+    else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nvec);
+    else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMax);
+    else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMin);
+    else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaIm);
+    else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_s(keyword, value, StdI.Restart);
+    else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQL);
+    else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQW);
+    else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_s(keyword, value, StdI.SpectrumType);
+    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
     else {
       fprintf(stdout, "ERROR ! Unsupported Keyword !\n");
-      exitMPI(-1);
+      exit(-1);
     }
   }
   fclose(fp);
@@ -1437,13 +1574,13 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   fprintf(stdout, "\n");
   PrintLocSpin(&StdI);
   PrintTrans(&StdI);
-  PrintInter(&StdI);
+  PrintInteractions(&StdI);
   PrintExcitation(&StdI);
-  PrintNamelist(&StdI);
   PrintCalcMod(&StdI);
   PrintModPara(&StdI);
   Print1Green(&StdI);
   Print2Green(&StdI);
+  PrintNamelist(&StdI);
   /*
   Finalize All
   */
@@ -1461,4 +1598,4 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
 
   fprintf(stdout, "\n######  Input files are generated.  ######\n\n");
 
-}
+}/*void StdFace_main*/

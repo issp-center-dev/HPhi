@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <complex.h>
 #include "StdFace_vals.h"
-#include "../include/wrapperMPI.h"
 #include <string.h>
 
 /**
@@ -55,14 +54,15 @@ void StdFace_Hopping(
 struct StdIntList *StdI,
   double complex trans0 /**< [in] Hopping integral t, mu, etc. */,
   int isite /**< [in] i for c_{i sigma}^dagger*/,
-  int jsite /**< [in] j for c_{j sigma'}*/
+  int jsite /**< [in] j for c_{j sigma'}*/,
+  int loff
   )
 {
   int ispin;
 
   for (ispin = 0; ispin < 2; ispin++) {
     StdFace_trans(StdI, trans0, jsite, ispin, isite, ispin);
-    if(isite != jsite)
+    if(loff == 1)
       StdFace_trans(StdI, conj(trans0), isite, ispin, jsite, ispin);
   }/*for (ispin = 0; ispin < 2; ispin++)*/
 
@@ -139,10 +139,46 @@ struct StdIntList *StdI,
   int isite /**< [in] i of S_i */,
   int jsite /**< [in] j of S_j */)
 {
-  int ispin, jspin;
+  int ispin, jspin, ZGeneral, ExGeneral;
   double Si, Sj, Siz, Sjz;
   double complex intr0;
+  /*
+   Only For S=1/2 system WO off-diagonal term
+  */
+  ZGeneral = 1;
+  ExGeneral = 1;
+  if (Si2 == 1 || Sj2 == 1) {
 
+    ZGeneral = 0;
+
+    StdI->Hund[StdI->NHund] = -0.5 * J[2][2];
+    StdI->HundIndx[StdI->NHund][0] = isite;
+    StdI->HundIndx[StdI->NHund][1] = jsite;
+    StdI->NHund += 1;
+
+    StdI->Cinter[StdI->NCinter] = -0.25 * J[2][2];
+    StdI->CinterIndx[StdI->NCinter][0] = isite;
+    StdI->CinterIndx[StdI->NCinter][1] = jsite;
+    StdI->NCinter += 1;
+
+    if (J[0][1] < 0.000001 && J[1][0] < 0.000001) {
+
+      ExGeneral = 0;
+
+      StdI->Ex[StdI->NEx] = - 0.25 * (J[0][0] + J[1][1]);
+      StdI->ExIndx[StdI->NEx][0] = isite;
+      StdI->ExIndx[StdI->NEx][1] = jsite;
+      StdI->NEx += 1;
+
+      StdI->PairLift[StdI->NPairLift] = - 0.25 * (J[0][0] - J[1][1]);
+      StdI->PLIndx[StdI->NPairLift][0] = isite;
+      StdI->PLIndx[StdI->NPairLift][1] = jsite;
+      StdI->NPairLift += 1;
+    }
+  }
+  /*
+   For S != 1/2 spin or off-diagonal interaction
+  */
   Si = 0.5 * (double)Si2;
   Sj = 0.5 * (double)Sj2;
 
@@ -153,13 +189,15 @@ struct StdIntList *StdI,
       /*
        S_{i z} * S_{j z}
       */
-      intr0 = J[2][2] * Siz * Sjz;
-      StdFace_intr(StdI, intr0,
-        isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
+      if (ZGeneral == 1) {
+        intr0 = J[2][2] * Siz * Sjz;
+        StdFace_intr(StdI, intr0,
+          isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
+      }
       /*
        S_i^+ S_j^- + S_j^+ S_i^-
       */
-      if (ispin < Si2 && jspin < Sj2) {
+      if ((ispin < Si2 && jspin < Sj2) && ExGeneral == 1) {
         intr0 = 0.25 * (J[0][0] + J[1][1] + I*(J[0][1] - J[1][0]))
           * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0))
           * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
@@ -171,7 +209,7 @@ struct StdIntList *StdI,
       /*
        S_i^+ S_j^+ + S_j^- S_i^-
       */
-      if (ispin < Si2 && jspin < Sj2) {
+      if ((ispin < Si2 && jspin < Sj2) && ExGeneral == 1) {
         intr0 = 0.5 * 0.5 * (J[0][0] - J[1][1] - I*(J[0][1] + J[1][0]))
           * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0))
           * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
@@ -203,7 +241,8 @@ struct StdIntList *StdI,
 
     }/*for (jspin = 0; jspin <= Sj2; jspin++)*/
   }/*for (ispin = 0; ispin <= Si2; ispin++)*/
-}
+
+}/*StdFace_GeneralJ*/
 
 /**
  *
@@ -217,12 +256,10 @@ struct StdIntList *StdI,
   int isite /**< [in] i of n_i */,
   int jsite /**< [in] j of n_j */)
 {
-  int ispin, jspin;
-  for (ispin = 0; ispin < 2; ispin++){
-    for (jspin = 0; jspin < 2; jspin++){
-      StdFace_intr(StdI, V, isite, ispin, isite, ispin, jsite, jspin, jsite, jspin);
-    }
-  }
+  StdI->Cinter[StdI->NCinter] = V;
+  StdI->CinterIndx[StdI->NCinter][0] = isite;
+  StdI->CinterIndx[StdI->NCinter][1] = jsite;
+  StdI->NCinter += 1;
 }
 
 /**
@@ -313,7 +350,7 @@ void StdFace_NotUsed_d(
     fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stdout, "            Please COMMENT-OUT this line \n");
     fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
 }
 
@@ -331,7 +368,7 @@ void StdFace_NotUsed_c(
     fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stdout, "            Please COMMENT-OUT this line \n");
     fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
 }
 
@@ -349,15 +386,15 @@ void StdFace_NotUsed_J(
   int i1, i2;
   char Jname[3][3][10];
 
-  sprintf(Jname[0][0], "%sx%c", valname,'\0');
-  sprintf(Jname[0][1], "%sxy%c", valname,'\0');
-  sprintf(Jname[0][2], "%sxz%c", valname,'\0');
-  sprintf(Jname[1][0], "%syx%c", valname,'\0');
-  sprintf(Jname[1][1], "%sy%c", valname,'\0');
-  sprintf(Jname[1][2], "%syz%c", valname,'\0');
-  sprintf(Jname[2][0], "%szx%c", valname,'\0');
-  sprintf(Jname[2][1], "%szy%c", valname,'\0');
-  sprintf(Jname[2][2], "%sz%c", valname,'\0');
+  sprintf(Jname[0][0], "%sx", valname);
+  sprintf(Jname[0][1], "%sxy", valname);
+  sprintf(Jname[0][2], "%sxz", valname);
+  sprintf(Jname[1][0], "%syx", valname);
+  sprintf(Jname[1][1], "%sy", valname);
+  sprintf(Jname[1][2], "%syz", valname);
+  sprintf(Jname[2][0], "%szx", valname);
+  sprintf(Jname[2][1], "%szy", valname);
+  sprintf(Jname[2][2], "%sz", valname);
 
   StdFace_NotUsed_d(valname, JAll);
 
@@ -383,7 +420,7 @@ void StdFace_NotUsed_i(
     fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stdout, "            Please COMMENT-OUT this line \n");
     fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
 }
 
@@ -400,7 +437,7 @@ void StdFace_RequiredVal_i(
 {
   if (val == 9999){
     fprintf(stdout, "ERROR ! %s is NOT specified !\n", valname);
-    exitMPI(-1);
+    exit(-1);
   }
   else fprintf(stdout, "  %15s = %-3d\n", valname, val);
 }
@@ -411,7 +448,7 @@ void StdFace_RequiredVal_i(
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_FoldSite2D(struct StdIntList *StdI, 
+void StdFace_FoldSite2D(struct StdIntList *StdI,
   int iW, int iL, int *iCell0, int *iCell1, int *iWfold, int *iLfold)
 {
   int x0, x1, xW, xL;
@@ -426,7 +463,7 @@ void StdFace_FoldSite2D(struct StdIntList *StdI,
   *iCell0 = (x0 + StdI->NCell * 1000) / StdI->NCell - 1000;
   *iCell1 = (x1 + StdI->NCell * 1000) / StdI->NCell - 1000;
   /*
-    Fractional coordinate (times NCell) in the original supercell
+   Fractional coordinate (times NCell) in the original supercell
   */
   x0 -= StdI->NCell*(*iCell0);
   x1 -= StdI->NCell*(*iCell1);
@@ -446,8 +483,8 @@ void StdFace_FoldSite2D(struct StdIntList *StdI,
 void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
 {
   int Wmin, Wmax, Lmin, Lmax;
-  int iW, iL, ipos;
-  int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC, NCell0;
+  int iW, iL, ipos, NCell0;
+  int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC;
   double pos[4][2], xmin, xmax/*, offset[2], scale*/;
   /*
    check Input parameters
@@ -455,16 +492,16 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   if ((StdI->L != 9999 || StdI->W != 9999)
     && (StdI->a0L != 9999 || StdI->a0W != 9999 || StdI->a1L != 9999 || StdI->a1W != 9999)) {
     fprintf(stdout, "\nERROR ! (L, W) and (a0W, a0L, a1W, a1L) conflict !\n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   else if (StdI->L != 9999 || StdI->W != 9999) {
     if (StdI->L == 9999) {
       fprintf(stdout, "\nERROR ! W is specified, but L is NOT specified !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     else if (StdI->W == 9999) {
       fprintf(stdout, "\nERROR ! L is specified, but W is NOT specified !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     StdFace_PrintVal_i("L", &StdI->L, 1);
     StdFace_PrintVal_i("W", &StdI->W, 1);
@@ -476,23 +513,23 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   else if (StdI->a0L != 9999 || StdI->a0W != 9999 || StdI->a1L != 9999 || StdI->a1W != 9999) {
     if (StdI->a0W == 9999) {
       fprintf(stdout, "\nERROR ! a0W is NOT specified !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     else if (StdI->a0L == 9999) {
       fprintf(stdout, "\nERROR ! a0L is NOT specified !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     else if (StdI->a1W == 9999) {
       fprintf(stdout, "\nERROR ! a1W is NOT specified !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     else if (StdI->a1L == 9999) {
       fprintf(stdout, "\nERROR ! a1L is NOT specified !\n\n");
-      exitMPI(-1);
+      exit(-1);
     }
     StdFace_PrintVal_i("a0W", &StdI->a0W, 1);
-    StdFace_PrintVal_i("a0L", &StdI->a0L, 1);
-    StdFace_PrintVal_i("a1W", &StdI->a1W, 1);
+    StdFace_PrintVal_i("a0L", &StdI->a0L, 0);
+    StdFace_PrintVal_i("a1W", &StdI->a1W, 0);
     StdFace_PrintVal_i("a1L", &StdI->a1L, 1);
   }
   /*
@@ -508,7 +545,7 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   StdI->NCell = StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W;
   printf("         Number of Cell : %d\n", StdI->NCell);
   if (StdI->NCell == 0) {
-    exitMPI(-1);
+    exit(-1);
   }
 
   StdI->bW0 = StdI->a1L;
@@ -618,11 +655,13 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[3][0], pos[3][1], pos[2][0], pos[2][1]);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[2][0], pos[2][1], pos[0][0], pos[0][1]);
 
-}
-
+}/*void StdFace_InitSite2D*/
+/*
+ * Set Label in the gnuplot display
+ */
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp, 
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC, 
-  int *isite, int *jsite, int connect)
+  int *isite, int *jsite, int connect, double complex *phase)
 {
   int iCell, jCell, kCell;
   int jCell0, jCell1;
@@ -672,6 +711,7 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   jW = iW + diW;
   jL = iL + diL;
   StdFace_FoldSite2D(StdI, jW, jL, &jCell0, &jCell1, &jWfold, &jLfold);
+  *phase = cpow(StdI->ExpPhase0, (double)jCell0) * cpow(StdI->ExpPhase1, (double)jCell1);
   /**/
   for (kCell = 0; kCell < StdI->NCell; kCell++) {
     if (jWfold == StdI->Cell[kCell][0] && jLfold == StdI->Cell[kCell][1]) {
@@ -699,7 +739,7 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
   else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
-}
+}/*void StdFace_SetLabel*/
 
 void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3], 
   double J0All, char *J0name) 
@@ -719,28 +759,28 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
 
   if (StdI->JAll < 9999.0 && J0All < 9999.0) {
     fprintf(stdout, "\n ERROR! J and %s conflict !\n\n", J0name);
-    exitMPI(-1);
+    exit(-1);
   }
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
       if (StdI->JAll < 9999.0 && StdI->J[i1][i2] < 9999.0) {
         fprintf(stdout, "\n ERROR! J and J%s conflict !\n\n", Jname[i1][i2]);
-        exitMPI(-1);
+        exit(-1);
       }
       else if (J0All < 9999.0 && StdI->J[i1][i2] < 9999.0) {
         fprintf(stdout, "\n ERROR! %s and J%s conflict !\n\n",
           J0name, Jname[i1][i2]);
-        exitMPI(-1);
+        exit(-1);
       }
       else if (J0All < 9999.0 && J0[i1][i2] < 9999.0) {
         fprintf(stdout, "\n ERROR! %s and %s%s conflict !\n\n", J0name,
           J0name, Jname[i1][i2]);
-        exitMPI(-1);
+        exit(-1);
       }
       else if (J0[i1][i2] < 9999.0 && StdI->JAll < 9999.0) {
         fprintf(stdout, "\n ERROR! %s%s and J conflict !\n\n",
           J0name, Jname[i1][i2]);
-        exitMPI(-1);
+        exit(-1);
       }
     }/*for (j = 0; j < 3; j++)*/
   }/*for (i = 0; i < 3; i++)*/
@@ -752,7 +792,7 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
           if (J0[i1][i2] < 9999.0 && StdI->J[i3][i4] < 9999.0) {
             fprintf(stdout, "\n ERROR! %s%s and J%s conflict !\n\n", 
               J0name, Jname[i1][i2], Jname[i3][i4]);
-            exitMPI(-1);
+            exit(-1);
           }
         }/*for (i4 = 0; i4 < 3; i4++)*/
       }/*for (i3 = 0; i3 < 3; i3++)*/
@@ -804,7 +844,7 @@ void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
       if (JpAll < 9999.0 && Jp[i1][i2] < 9999.0) {
         fprintf(stdout, "\n ERROR! %s and %s%s conflict !\n\n", Jpname,
           Jpname, Jname[i1][i2]);
-        exitMPI(-1);
+        exit(-1);
       }
     }/*for (j = 0; j < 3; j++)*/
   }/*for (i = 0; i < 3; i++)*/
@@ -830,7 +870,7 @@ void StdFace_InputCoulombV(struct StdIntList *StdI, double *V0, char *V0name)
   
   if (StdI->V < 9999.0 && *V0 < 9999.0) {
     fprintf(stdout, "\n ERROR! V and %s conflict !\n\n", V0name);
-    exitMPI(-1);
+    exit(-1);
   }
   else if (*V0 < 9999.0)
     fprintf(stdout, "  %15s = %-10.5f\n", V0name, *V0);
@@ -849,7 +889,7 @@ void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name
 
   if (creal(StdI->t) < 9999.0 && creal(*t0) < 9999.0) {
     fprintf(stdout, "\n ERROR! t and %s conflict !\n\n", t0name);
-    exitMPI(-1);
+    exit(-1);
   }
   else if (creal(*t0) < 9999.0)
     fprintf(stdout, "  %15s = %-10.5f\n", t0name, creal(*t0));
@@ -861,38 +901,7 @@ void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name
     *t0 = 0.0;
   }
 
-}
-
-/**
-*
-* Initialize Cell for 1D system
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
-*/
-void StdFace_InitSite1D(struct StdIntList *StdI)
-{
-  int iW, iL, iCell, isiteUC;
-
-  StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
-  for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
-    StdI->tau[isiteUC] = (double *)malloc(sizeof(double) * 2);
-  }
-
-  StdI->Cell = (int **)malloc(sizeof(int*) * StdI->W*StdI->L);
-  for (iCell = 0; iCell < StdI->W*StdI->L; iCell++) {
-    StdI->Cell[iCell] = (int *)malloc(sizeof(int) * 2);
-  }/*for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++)*/
-
-  StdI->NCell = 0;
-  for (iL = 0; iL < StdI->L; iL++) {
-    for (iW = 0; iW < StdI->W; iW++) {
-      StdI->Cell[StdI->NCell][0] = iW;
-      StdI->Cell[StdI->NCell][1] = iL;
-      StdI->NCell += 1;
-    }/*for (iW = Wmin; iW <= Wmax; iW++*/
-  }/*for (iL = Lmin; iL <= Lmax; iL++)*/
-
-}/*StdFace_InitSite1D*/
+}/*void StdFace_InputHopp*/
 /*
  Print geometry of sites for the pos-process of correlation function
 */
@@ -910,7 +919,7 @@ void StdFace_PrintGeometry(struct StdIntList *StdI) {
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
     for (isite = 0; isite < StdI->NsiteUC; isite++) {
       fprintf(fp, "%25.15e %25.15e\n",
-        StdI->tau[isite][0] + (double)StdI->Cell[iCell][0], 
+        StdI->tau[isite][0] + (double)StdI->Cell[iCell][0],
         StdI->tau[isite][1] + (double)StdI->Cell[iCell][1]);
     }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
   }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
@@ -926,3 +935,55 @@ void StdFace_PrintGeometry(struct StdIntList *StdI) {
   fclose(fp);
 
 }/*void StdFace_PrintGeometry()*/
+/*
+ * Malloc Arrays for interactions
+ */
+void StdFace_MallocInteractions(struct StdIntList *StdI) {
+  int kintr;
+  /*
+  Coulomb intra
+  */
+  StdI->CintraIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
+  StdI->Cintra = (double *)malloc(sizeof(double) * StdI->nintr);
+  for (kintr = 0; kintr < StdI->nintr; kintr++) {
+    StdI->CintraIndx[kintr] = (int *)malloc(sizeof(int) * 1);
+  }
+  /*
+  Coulomb inter
+  */
+  StdI->CinterIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
+  StdI->Cinter = (double *)malloc(sizeof(double) * StdI->nintr);
+  for (kintr = 0; kintr < StdI->nintr; kintr++) {
+    StdI->CinterIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  }
+  /*
+  Hund
+  */
+  StdI->HundIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
+  StdI->Hund = (double *)malloc(sizeof(double) * StdI->nintr);
+  for (kintr = 0; kintr < StdI->nintr; kintr++) {
+    StdI->HundIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  }
+  /*
+  Excahnge
+  */
+  StdI->ExIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
+  StdI->Ex = (double *)malloc(sizeof(double) * StdI->nintr);
+  for (kintr = 0; kintr < StdI->nintr; kintr++) {
+    StdI->ExIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  }
+  /*
+  PairLift
+  */
+  StdI->PLIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
+  StdI->PairLift = (double *)malloc(sizeof(double) * StdI->nintr);
+  for (kintr = 0; kintr < StdI->nintr; kintr++) {
+    StdI->PLIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  }
+
+  StdI->NCintra = 0;
+  StdI->NCinter = 0;
+  StdI->NHund = 0;
+  StdI->NEx = 0;
+  StdI->NPairLift = 0;
+}/*void StdFace_MallocInteractions*/

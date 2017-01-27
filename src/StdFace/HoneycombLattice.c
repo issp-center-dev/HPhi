@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "../include/mfmemory.h"
 #include <complex.h>
-#include "../include/wrapperMPI.h"
 #include <string.h>
 
 /**
@@ -37,6 +35,8 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
   int iL, iW;
   int ktrans, kintr;
   FILE *fp;
+  double complex phase;
+
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
@@ -60,6 +60,15 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
   StdFace_InitSite2D(StdI, fp);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
   StdI->tau[1][0] = 1.0 / 3.0; StdI->tau[1][1] = 1.0 / 3.0;
+  /**/
+  StdFace_PrintVal_d("phase0", &StdI->phase0, 0.0);
+  StdFace_PrintVal_d("phase1", &StdI->phase1, 0.0);
+  StdI->ExpPhase0 = cos(StdI->pi180 * StdI->phase0) + I*sin(StdI->pi180 * StdI->phase0);
+  StdI->ExpPhase1 = cos(StdI->pi180 * StdI->phase1) + I*sin(StdI->pi180 * StdI->phase1);
+  if (cabs(StdI->ExpPhase0 + 1.0) < 0.000001) StdI->AntiPeriod0 = 1;
+  else StdI->AntiPeriod0 = 0;
+  if (cabs(StdI->ExpPhase1 + 1.0) < 0.000001) StdI->AntiPeriod1 = 1;
+  else StdI->AntiPeriod1 = 0;
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J1'", StdI->J1pAll, StdI->J1p);
@@ -168,6 +177,7 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
   for (kintr = 0; kintr < StdI->nintr; kintr++) {
     StdI->intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
   }
+  StdFace_MallocInteractions(StdI);
   /*
   Set Transfer & Interaction
   */
@@ -190,10 +200,10 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite + 1, isite + 1);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->mu, isite, isite);
-      StdFace_Hopping(StdI, StdI->mu, isite + 1, isite + 1);
-      StdFace_intr(StdI, StdI->U, isite, 0, isite, 0, isite, 1, isite, 1);
-      StdFace_intr(StdI, StdI->U, isite + 1, 0, isite + 1, 0, isite + 1, 1, isite + 1, 1);
+      StdFace_Hopping(StdI, StdI->mu, isite, isite, 0);
+      StdFace_Hopping(StdI, StdI->mu, isite + 1, isite + 1, 0);
+      StdI->Cintra[StdI->NCintra] = StdI->U; StdI->CintraIndx[StdI->NCintra][0] = isite; StdI->NCintra += 1;
+      StdI->Cintra[StdI->NCintra] = StdI->U; StdI->CintraIndx[StdI->NCintra][0] = isite + 1; StdI->NCintra += 1;
       /**/
       if (strcmp(StdI->model, "kondo") == 0 ) {
         jsite = StdI->NsiteUC * kCell;
@@ -204,109 +214,109 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
     /*
     Nearest neighbor intra cell 0 -> 1
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 0, 0, 0, 1, &isite, &jsite, 1);
+    StdFace_SetLabel(StdI, fp, iW, iL, 0, 0, 0, 1, &isite, &jsite, 1, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->t0, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->t0, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
     Nearest neighbor along W 1 -> 0
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 1, 0, &isite, &jsite, 1);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 1, 0, &isite, &jsite, 1, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->t1, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->t1, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
     }
     /*
     Nearest neighbor along L 1 -> 0
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 1, 0, &isite, &jsite, 1);
+    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 1, 0, &isite, &jsite, 1, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, StdI->t2, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->t2, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
     }
     /*
     Second nearest neighbor along W 0 -> 0
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 0, 0, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 0, 0, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
     Second nearest neighbor along W 1 -> 1
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 1, 1, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 1, 1, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
     Second nearest neighbor along L 0 -> 0
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 0, 0, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 0, 0, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
     Second nearest neighbor along L 1 -> 1
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 1, 1, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 1, 1, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
     Second nearest neighbor along W-L 0 -> 0
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, - 1, 0, 0, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, - 1, 0, 0, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
     Second nearest neighbor along W - L 1 -> 1
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, -1, 1, 1, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, -1, 1, 1, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/
@@ -314,7 +324,7 @@ void StdFace_Honeycomb(struct StdIntList *StdI, char *model)
   fprintf(fp, "plot \'-\' w d lc 7\n0.0 0.0\nend\npause -1\n");
   fclose(fp);
   StdFace_PrintGeometry(StdI);
-}
+}/*void StdFace_Honeycomb*/
 
 /**
 *
@@ -330,13 +340,13 @@ void StdFace_Honeycomb_Boost(struct StdIntList *StdI)
 
   if (StdI->a0L != 0 || StdI->a1W != 0) {
     fprintf(stdout, "\nERROR ! (a0W, a0L, a1W, a1L) can not be used with SpinGCBoost.\n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
       if (fabs(StdI->Jp[i1][i2]) > 1.0e-8) {
         fprintf(stdout, "\nERROR ! J' can not be used with SpinGCBoost.\n\n");
-        exitMPI(-1);
+        exit(-1);
       }
     }
   }
@@ -377,21 +387,21 @@ void StdFace_Honeycomb_Boost(struct StdIntList *StdI)
   */
   if (StdI->S2 != 1) {
     fprintf(stdout, "\n ERROR! S2 must be 1 in Boost. \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   StdI->ishift_nspin = 3;
   if (StdI->L < 2) {
     fprintf(stdout, "\n ERROR! L < 2 \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   if (StdI->W % StdI->ishift_nspin != 0) {
     fprintf(stdout, "\n ERROR! W %% %d != 0 \n\n", StdI->ishift_nspin);
-    exitMPI(-1);
+    exit(-1);
   }
   StdI->num_pivot = 2;
   if (StdI->W != 3) {
     fprintf(stdout, "DEBUG: W != 3\n");
-    exitMPI(-1);
+    exit(-1);
   }
   StdI->W = 6;
   fprintf(fp, "# W0  R0  StdI->num_pivot  StdI->ishift_nspin\n");

@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ struct StdIntList {
   /*
   Parameters for LATTICE
   */
+  char lattice[256];
   double a; /**< The lattice constant */
   double a0;
   double a1;
@@ -34,9 +35,18 @@ struct StdIntList {
   int a0W;
   int a1L;
   int a1W;
+  int bW0;
+  int bW1;
+  int bL0;
+  int bL1;
+  int NCell;
+  int **Cell;
+  int NsiteUC;
+  double **tau;
   /*
   Parameters for MODEL
   */
+  char model[256];
   double mu;
   double complex t;
   double complex tp;
@@ -73,8 +83,64 @@ struct StdIntList {
   double Gamma;
   double K;
   /*
+   Phase for the boundary
+  */
+  double pi180;
+  double phase0;
+  double phase1;
+  double complex ExpPhase0;
+  double complex ExpPhase1;
+  int AntiPeriod0;
+  int AntiPeriod1;
+  /*
+   Transfer, Interaction, Locspin
+  */
+  int nsite;
+  int *locspinflag;
+  int ntrans;
+  int Ltrans;
+  int **transindx;
+  double complex *trans;
+  int nintr;
+  int Lintr;
+  int **intrindx;
+  double complex *intr;
+  int NCintra;
+  int LCintra;
+  int **CintraIndx;
+  double *Cintra;
+  int NCinter;
+  int LCinter;
+  int **CinterIndx;
+  double *Cinter;
+  int NHund;
+  int LHund;
+  int **HundIndx;
+  double *Hund;
+  int NEx;
+  int LEx;
+  int **ExIndx;
+  double *Ex;
+  int NPairLift;
+  int LPairLift;
+  int **PLIndx;
+  double *PairLift;
+  int lBoost;
+  /*
    Calculation conditions
   */
+  int lGC;
+  int nelec;
+  int S2;
+  char outputmode[256];
+  char CDataFileHead[256];
+  int Sz2;
+  int ioutputmode;
+  /*HPhi modpara*/
+  char method[256];
+  char Restart[256];
+  char InitialVecType[256];
+  char EigenVecIO[256];
   int FlgTemp;
   int Lanczos_max;
   int initial_iv; 
@@ -84,59 +150,15 @@ struct StdIntList {
   int LanczosTarget;
   int NumAve;
   int ExpecInterval;
-  int Sz2;
-  int nelec;
-  int ioutputmode;
   double LargeValue;
-  int S2;
-  /*
-   Input strings
-  */
-  char model[256];
-  char lattice[256];
-  char method[256];
-  char outputmode[256];
-  char filehead[256];
-  char Restart[256];
-  char InitialVecType[256];
-  char EigenVecIO[256];
-  char CalcSpec[256];
-  char SpectrumType[256];
-  /*
-   Parameter for lattice
-  */
-  int bW0;
-  int bW1;
-  int bL0;
-  int bL1;
-  int NCell;
-  int **Cell;
-  int NsiteUC;
-  double **tau;
-  /*
-   Transfer, Interaction, Locspin
-  */
-  int nsite;
-  int *locspinflag;
-  int ntrans;
-  int **transindx;
-  double complex *trans;
-  int nintr;
-  int **intrindx;
-  double complex *intr;
-  /*
-   Boost
-  */
-  int lBoost;
+  /*Boost*/
   int ***list_6spin_pair;
   int **list_6spin_star;
   int num_pivot;
   int ishift_nspin;
-  /**/
-  int lGC;
-  /*
-   Spectrum
-  */
+  /*Spectrum*/
+  char CalcSpec[256];
+  char SpectrumType[256];
   int Nomega;
   double OmegaMax;
   double OmegaMin;
@@ -144,4 +166,5 @@ struct StdIntList {
   double SpectrumQL;
   double SpectrumQW;
   int SpectrumBody;
+
 };

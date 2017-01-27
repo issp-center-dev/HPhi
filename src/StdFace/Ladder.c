@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <math.h>
 #include <complex.h>
-#include "../include/wrapperMPI.h"
 #include <string.h>
 
 /**
@@ -32,27 +31,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 void StdFace_Ladder(struct StdIntList *StdI, char *model)
 {
+  FILE *fp;
   int isite, jsite, ksite;
   int iL, iW;
   int ktrans, kintr;
+  double complex phase;
 
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
+  /*
+   Initialize Cell
+  */
+  fp = fopen("lattice.gp", "w");
   /**/
-  StdI->NsiteUC = 1;
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
+  
+  StdFace_PrintVal_d("a", &StdI->a, 1.0);
+  StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
+  StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
+  StdFace_PrintVal_d("Wx", &StdI->Wx, StdI->a0);
+  StdFace_PrintVal_d("Wy", &StdI->Wy, 0.0);
+  StdFace_PrintVal_d("Lx", &StdI->Lx, 0.0);
+  StdFace_PrintVal_d("Ly", &StdI->Ly, StdI->a1);
+  
   StdFace_RequiredVal_i("L", StdI->L);
   StdFace_RequiredVal_i("W", StdI->W);
-  StdFace_InitSite1D(StdI);
-  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
-  /**/
   StdFace_NotUsed_i("a0W", StdI->a0W);
   StdFace_NotUsed_i("a0L", StdI->a0L);
   StdFace_NotUsed_i("a1W", StdI->a1W);
   StdFace_NotUsed_i("a1L", StdI->a1L);
   /**/
-  StdFace_PrintVal_d("a", &StdI->a, 1.0);
+  StdI->NsiteUC = StdI->W;
+  StdI->W = 1;
+  StdI->Wx = (double)StdI->NsiteUC;
+  StdFace_InitSite2D(StdI, fp);
+  for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++){
+    StdI->tau[isiteUC][0] = (double)isiteUC;
+    StdI->tau[isiteUC][1] = 0.0;
+  }
+  /**/
+  StdFace_PrintVal_d("phase0", &StdI->phase0, 0.0);
+  StdFace_NotUsed_d("phase1", StdI->phase1);
+  StdI->phase1 = StdI->phase0;
+  StdI->phase0 = 0.0;
+  StdI->ExpPhase0 = cos(StdI->pi180 * StdI->phase0) + I*sin(StdI->pi180 * StdI->phase0);
+  StdI->ExpPhase1 = cos(StdI->pi180 * StdI->phase1) + I*sin(StdI->pi180 * StdI->phase1);
+  if (cabs(StdI->ExpPhase0 + 1.0) < 0.000001) StdI->AntiPeriod0 = 1;
+  else StdI->AntiPeriod0 = 0;
+  if (cabs(StdI->ExpPhase1 + 1.0) < 0.000001) StdI->AntiPeriod1 = 1;
+  else StdI->AntiPeriod1 = 0;
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J", StdI->JAll, StdI->J);
@@ -167,6 +195,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   for (kintr = 0; kintr < StdI->nintr; kintr++) {
     StdI->intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
   }
+  StdFace_MallocInteractions(StdI);
   /*
    Set Transfer & Interaction
   */
@@ -185,8 +214,8 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
         StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, jsite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
       else {
-        StdFace_Hopping(StdI, StdI->mu, isite, isite);
-        StdFace_intr(StdI, StdI->U, isite, 0, isite, 0, isite, 1, isite, 1);
+        StdFace_Hopping(StdI, StdI->mu, isite, isite, 0);
+        StdI->Cintra[StdI->NCintra] = StdI->U; StdI->CintraIndx[StdI->NCintra][0] = isite; StdI->NCintra += 1;
         /**/
         if (strcmp(StdI->model, "kondo") == 0 ) {
           jsite = iW + iL * StdI->W;
@@ -197,25 +226,27 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
        Nearest neighbor along the ladder
       */
       jsite = iW + ((iL + 1) % StdI->L) * StdI->W;
+      phase = cpow(StdI->ExpPhase0, (double)((iL + 1) / StdI->L));
       if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
       /**/
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
       else {
-        StdFace_Hopping(StdI, StdI->t1, isite, jsite);
+        StdFace_Hopping(StdI, phase * StdI->t1, isite, jsite, 1);
         StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
       }/*if (model != "spin")*/
       /*
        Second nearest neighbor along the ladder
       */
       jsite = iW + ((iL + 2) % StdI->L) * StdI->W;
+      phase = cpow(StdI->ExpPhase0, (double)((iL + 2) / StdI->L));
       if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
       else {
-        StdFace_Hopping(StdI, StdI->t1p, isite, jsite);
+        StdFace_Hopping(StdI, phase * StdI->t1p, isite, jsite, 1);
         StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
       }/*if (model != "spin")*/
       /*
@@ -232,7 +263,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
           StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, StdI->t0, isite, jsite);
+          StdFace_Hopping(StdI, StdI->t0, isite, jsite, 1);
           StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
         }/*if (model != "spin")*/
         /*
@@ -245,7 +276,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
           StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, StdI->t2, isite, jsite);
+          StdFace_Hopping(StdI, StdI->t2, isite, jsite, 1);
           StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
         }/*if (model != "spin")*/
         /*
@@ -262,7 +293,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
           StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, ksite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, StdI->t2p, ksite, jsite);
+          StdFace_Hopping(StdI, StdI->t2p, ksite, jsite, 1);
           StdFace_Coulomb(StdI, StdI->V2p, ksite, jsite);
         }/*if (model != "spin")*/
 
@@ -271,7 +302,10 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
     }/*for (iW = 0; iW < StdI->W; iW++)*/
   }/*for (iL = 0; iL < StdI->L; iL++)*/
 
-}
+  fprintf(fp, "plot \'-\' w d lc 7\n0.0 0.0\nend\npause -1\n");
+  fclose(fp);
+  StdFace_PrintGeometry(StdI);
+}/*void StdFace_Ladder*/
 
 /**
 *
@@ -285,6 +319,7 @@ void StdFace_Ladder_Boost(struct StdIntList *StdI)
   int kintr;
   FILE *fp;
 
+  StdI->W = StdI->NsiteUC;
   StdI->NsiteUC = 1;
   /*
   Magnetic field
@@ -337,20 +372,20 @@ void StdFace_Ladder_Boost(struct StdIntList *StdI)
   */
   if (StdI->S2 != 1) {
     fprintf(stdout, "\n ERROR! S2 must be 1 in Boost. \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   StdI->ishift_nspin = 2;
   if (StdI->W != 2) {
     fprintf(stdout, "\n ERROR! W != 2 \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   if (StdI->L % 2 != 0) {
     fprintf(stdout, "\n ERROR! L %% 2 != 0 \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   if (StdI->L < 4) {
     fprintf(stdout, "\n ERROR! L < 4 \n\n");
-    exitMPI(-1);
+    exit(-1);
   }
   StdI->W = StdI->L;
   StdI->L = 2;
@@ -467,5 +502,4 @@ void StdFace_Ladder_Boost(struct StdIntList *StdI)
     free(StdI->list_6spin_pair[ipivot]);
   }
   free(StdI->list_6spin_pair);
-
 }

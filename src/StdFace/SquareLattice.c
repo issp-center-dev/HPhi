@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   int iL, iW, kCell;
   int ktrans, kintr;
   FILE *fp;
+  double complex phase;
 
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
@@ -58,6 +59,15 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   
   StdFace_InitSite2D(StdI, fp);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
+  /**/
+  StdFace_PrintVal_d("phase0", &StdI->phase0, 0.0);
+  StdFace_PrintVal_d("phase1", &StdI->phase1, 0.0);
+  StdI->ExpPhase0 = cos(StdI->pi180 * StdI->phase0) + I*sin(StdI->pi180 * StdI->phase0);
+  StdI->ExpPhase1 = cos(StdI->pi180 * StdI->phase1) + I*sin(StdI->pi180 * StdI->phase1);
+  if (cabs(StdI->ExpPhase0 + 1.0) < 0.000001) StdI->AntiPeriod0 = 1;
+  else StdI->AntiPeriod0 = 0;
+  if (cabs(StdI->ExpPhase1 + 1.0) < 0.000001) StdI->AntiPeriod1 = 1;
+  else StdI->AntiPeriod1 = 0;
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);
@@ -162,6 +172,7 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   for (kintr = 0; kintr < StdI->nintr; kintr++) {
     StdI->intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
   }
+  StdFace_MallocInteractions(StdI);
   /*
    Set Transfer & Interaction
   */
@@ -182,8 +193,8 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, isite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->mu, isite, isite);
-      StdFace_intr(StdI, StdI->U, isite, 0, isite, 0, isite, 1, isite, 1);
+      StdFace_Hopping(StdI, StdI->mu, isite, isite, 0);
+      StdI->Cintra[StdI->NCintra] = StdI->U; StdI->CintraIndx[StdI->NCintra][0] = isite; StdI->NCintra += 1;
       /**/
       if (strcmp(StdI->model, "kondo") == 0 ) {
         jsite = kCell;
@@ -193,49 +204,49 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
     /*
      Nearest neighbor along W
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 0, 0, &isite, &jsite, 1);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 0, 0, &isite, &jsite, 1, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->t0, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->t0, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
      Nearest neighbor along L
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 0, 0, &isite, &jsite, 1);
+    StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 0, 0, &isite, &jsite, 1, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, StdI->t1, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->t1, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
     }
     /*
      Second nearest neighbor 1
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, 1, 0, 0, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, 1, 0, 0, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
      Second nearest neighbor 2
     */
-    StdFace_SetLabel(StdI, fp, iW, iL, 1, -1, 0, 0, &isite, &jsite, 2);
+    StdFace_SetLabel(StdI, fp, iW, iL, 1, -1, 0, 0, &isite, &jsite, 2, &phase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }/*if (model != "spin")*/
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/
