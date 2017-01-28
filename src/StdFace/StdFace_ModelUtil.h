@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <complex.h>
 #include <stdio.h>
 
+void StdFace_exit(int errorcode /**< [in]*/);
+
 void StdFace_intr(struct StdIntList *StdI, double complex intr0,
   int site1, int spin1, int site2, int spin2,
   int site3, int spin3, int site4, int spin4);
@@ -62,7 +64,12 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model);
 void StdFace_Honeycomb(struct StdIntList *StdI, char *model);
 void StdFace_Kagome(struct StdIntList *StdI, char *model);
 
+#if defined(_HPhi)
 void StdFace_Chain_Boost(struct StdIntList *StdI);
 void StdFace_Ladder_Boost(struct StdIntList *StdI);
 void StdFace_Honeycomb_Boost(struct StdIntList *StdI);
 void StdFace_Kagome_Boost(struct StdIntList *StdI);
+#elif defined(_mVMC)
+void StdFace_generate_orb(struct StdIntList *StdI);
+void StdFace_Proj(struct StdIntList *StdI);
+#endif

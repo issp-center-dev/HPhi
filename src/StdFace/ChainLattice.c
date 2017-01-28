@@ -235,6 +235,7 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
   StdFace_PrintGeometry(StdI);
 }/*void StdFace_Chain*/
 
+#if defined(_HPhi)
 /**
 *
 * Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice
@@ -278,12 +279,12 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   */
   if (StdI->S2 != 1) {
     fprintf(stdout, "\n ERROR! S2 must be 1 in Boost. \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   StdI->ishift_nspin = 4;
   if(StdI->L % 8 != 0){
     fprintf(stdout, "\n ERROR! L %% 8 != 0 \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   StdI->W = StdI->L / 2;
   StdI->L = 2;
@@ -409,3 +410,4 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   free(StdI->list_6spin_pair);
 
 }
+#endif

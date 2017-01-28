@@ -136,6 +136,8 @@ struct StdIntList {
   char CDataFileHead[256];
   int Sz2;
   int ioutputmode;
+
+#if defined(_HPhi)
   /*HPhi modpara*/
   char method[256];
   char Restart[256];
@@ -166,5 +168,49 @@ struct StdIntList {
   double SpectrumQL;
   double SpectrumQW;
   int SpectrumBody;
-
+#elif defined(_mVMC)
+  /*mVMC modpara*/
+  char CParaFileHead[256];
+  int NVMCCalMode;
+  int NLanczosMode;
+  int NDataIdxStart;
+  int NDataQtySmp;
+  int NSPGaussLeg;
+  int NMPTrans;
+  int NSROptItrStep;
+  int NSROptItrSmp;
+  int NSROptFixSmp;
+  double DSROptRedCut;
+  double DSROptStaDel;
+  double DSROptStepDt;
+  int NVMCWarmUp;
+  int NVMCInterval;
+  int NVMCSample;
+  int NExUpdatePath;
+  int RndSeed;
+  int NSplitSize;
+  int NStore;
+  int ComplexType;
+  /*
+   Sub-lattice
+  */
+  int Lsub;
+  int Wsub;
+  int a0Lsub;
+  int a0Wsub;
+  int a1Lsub;
+  int a1Wsub;
+  int bW0sub;
+  int bW1sub;
+  int bL0sub;
+  int bL1sub;
+  int NCellsub;
+  /*
+   2-body part of the trial wavefunction
+  */
+  int **Orb;
+  int **AntiOrb;
+  int NOrb;
+  int NSym;
+#endif
 };

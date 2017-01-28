@@ -367,6 +367,8 @@ void StdFace_Kagome(struct StdIntList *StdI, char *model)
   fclose(fp);
   StdFace_PrintGeometry(StdI);
 }/*void StdFace_Kagome*/
+
+#if defined(_HPhi)
 /**
 *
 * Setup a Hamiltonian for the generalized Heisenberg model on a Heisenberg lattice
@@ -381,13 +383,13 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
 
   if (StdI->a0L != 0 || StdI->a1W != 0) {
     fprintf(stdout, "\nERROR ! (a0W, a0L, a1W, a1L) can not be used with SpinGCBoost.\n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
       if (fabs(StdI->Jp[i1][i2]) > 1.0e-8) {
         fprintf(stdout, "\nERROR ! J' can not be used with SpinGCBoost.\n\n");
-        exit(-1);
+        StdFace_exit(-1);
       }
     }
   }
@@ -427,21 +429,21 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   */
   if (StdI->S2 != 1) {
     fprintf(stdout, "\n ERROR! S2 must be 1 in Boost. \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   StdI->ishift_nspin = 3;
   if (StdI->L < 2) {
     fprintf(stdout, "\n ERROR! L < 2 \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   if (StdI->W % StdI->ishift_nspin != 0) {
     fprintf(stdout, "\n ERROR! W %% %d != 0 \n\n", StdI->ishift_nspin);
-    exit(-1);
+    StdFace_exit(-1);
   }
   StdI->num_pivot = 4;
   if (StdI->W != 3) {
     fprintf(stdout, "DEBUG: W != 3\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   StdI->W = 9;
   fprintf(fp, "# W0  R0  StdI->num_pivot  StdI->ishift_nspin\n");
@@ -657,3 +659,4 @@ void StdFace_Kagome_Boost(struct StdIntList *StdI)
   free(StdI->list_6spin_pair);
 
 }
+#endif

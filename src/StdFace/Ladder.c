@@ -66,9 +66,9 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   StdI->W = 1;
   StdI->Wx = (double)StdI->NsiteUC;
   StdFace_InitSite2D(StdI, fp);
-  for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++){
-    StdI->tau[isiteUC][0] = (double)isiteUC;
-    StdI->tau[isiteUC][1] = 0.0;
+  for (isite = 0; isite < StdI->NsiteUC; isite++){
+    StdI->tau[isite][0] = (double)isite;
+    StdI->tau[isite][1] = 0.0;
   }
   /**/
   StdFace_PrintVal_d("phase0", &StdI->phase0, 0.0);
@@ -307,6 +307,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   StdFace_PrintGeometry(StdI);
 }/*void StdFace_Ladder*/
 
+#if defined(_HPhi)
 /**
 *
 * Setup a Hamiltonian for the generalized Heisenberg model on a square lattice
@@ -372,20 +373,20 @@ void StdFace_Ladder_Boost(struct StdIntList *StdI)
   */
   if (StdI->S2 != 1) {
     fprintf(stdout, "\n ERROR! S2 must be 1 in Boost. \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   StdI->ishift_nspin = 2;
   if (StdI->W != 2) {
     fprintf(stdout, "\n ERROR! W != 2 \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   if (StdI->L % 2 != 0) {
     fprintf(stdout, "\n ERROR! L %% 2 != 0 \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   if (StdI->L < 4) {
     fprintf(stdout, "\n ERROR! L < 4 \n\n");
-    exit(-1);
+    StdFace_exit(-1);
   }
   StdI->W = StdI->L;
   StdI->L = 2;
@@ -503,3 +504,4 @@ void StdFace_Ladder_Boost(struct StdIntList *StdI)
   }
   free(StdI->list_6spin_pair);
 }
+#endif
