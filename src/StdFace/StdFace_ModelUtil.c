@@ -42,7 +42,7 @@ void StdFace_exit(int errorcode /**< [in]*/)
   ierr = MPI_Finalize();
   if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
-  StdFace_exit(errorcode);
+  exit(errorcode);
 }
 
 /**
@@ -193,7 +193,7 @@ struct StdIntList *StdI,
       StdI->ExIndx[StdI->NEx][1] = jsite;
       StdI->NEx += 1;
 
-      StdI->PairLift[StdI->NPairLift] = - 0.25 * (J[0][0] - J[1][1]);
+      StdI->PairLift[StdI->NPairLift] = 0.25 * (J[0][0] - J[1][1]);
       StdI->PLIndx[StdI->NPairLift][0] = isite;
       StdI->PLIndx[StdI->NPairLift][1] = jsite;
       StdI->NPairLift += 1;
