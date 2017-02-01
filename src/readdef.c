@@ -1246,15 +1246,15 @@ int ReadDefFileIdxPara(
             }
             
             if(iflg_interall==0){
-              X->InterAll[idx][0]=isite1;
-              X->InterAll[idx][1]=isigma1;
-              X->InterAll[idx][2]=isite2;
-              X->InterAll[idx][3]=isigma2;
-              X->InterAll[idx][4]=isite3;
-              X->InterAll[idx][5]=isigma3;
-              X->InterAll[idx][6]=isite4;
-              X->InterAll[idx][7]=isigma4;
-              X->ParaInterAll[idx]=dvalue_re+I*dvalue_im;
+              X->InterAll[icnt_interall][0]=isite1;
+              X->InterAll[icnt_interall][1]=isigma1;
+              X->InterAll[icnt_interall][2]=isite2;
+              X->InterAll[icnt_interall][3]=isigma2;
+              X->InterAll[icnt_interall][4]=isite3;
+              X->InterAll[icnt_interall][5]=isigma3;
+              X->InterAll[icnt_interall][6]=isite4;
+              X->InterAll[icnt_interall][7]=isigma4;
+              X->ParaInterAll[icnt_interall]=dvalue_re+I*dvalue_im;
             
               if(isite1 == isite2 && isite3 == isite4 &&
                  isigma1 == isigma2 && isigma3 == isigma4)
