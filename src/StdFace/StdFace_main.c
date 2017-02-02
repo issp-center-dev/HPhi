@@ -518,17 +518,18 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   int i, j;
   /**/
   StdI->a = 9999.9;
-  StdI->a0 = 9999.9;
-  StdI->a0L = 9999;
-  StdI->a0W = 9999;
-  StdI->a1 = 9999.9;
-  StdI->a1L = 9999;
-  StdI->a1W = 9999;
+  for (i = 0; i < 3; i++) StdI->length[i] = 9999.9;
+  for (i = 0; i < 3; i++)
+    for (j = 0; j < 3; j++)
+      StdI->box[i][j] = 9999;
   StdI->Gamma = 9999.9;
   StdI->h = 9999.9;
+  StdI->Height = 9999;
   StdI->JAll = 9999.9;
   StdI->JpAll = 9999.9;
+  StdI->JppAll = 9999.9;
   StdI->J0All = 9999.9;
+  StdI->J0pAll = 9999.9;
   StdI->J1All = 9999.9;
   StdI->J1pAll = 9999.9;
   StdI->J2All = 9999.9;
@@ -537,7 +538,9 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
     for (j = 0; j < 3; j++) {
       StdI->J[i][j] = 9999.9;
       StdI->Jp[i][j] = 9999.9;
+      StdI->Jpp[i][j] = 9999.9;
       StdI->J0[i][j] = 9999.9;
+      StdI->J0p[i][j] = 9999.9;
       StdI->J1[i][j] = 9999.9;
       StdI->J1p[i][j] = 9999.9;
       StdI->J2[i][j] = 9999.9;
@@ -548,13 +551,16 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->D[2][2] = 9999.9;
   StdI->K = 9999.9;
   StdI->L = 9999;
-  StdI->Lx = 9999.9;
-  StdI->Ly = 9999.9;
+  for (i = 0; i < 3; i++) 
+    for (j = 0; j < 3; j++)
+      StdI->direct[i][j] = 9999.9;
   StdI->mu = 9999.9;
   StdI->S2 = 9999;
   StdI->t = 9999.9;
   StdI->tp = 9999.9;
+  StdI->tpp = 9999.9;
   StdI->t0 = 9999.9;
+  StdI->t0p = 9999.9;
   StdI->t1 = 9999.9;
   StdI->t1p = 9999.9;
   StdI->t2 = 9999.9;
@@ -562,16 +568,17 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->U = 9999.9;
   StdI->V = 9999.9;
   StdI->Vp = 9999.9;
+  StdI->Vpp = 9999.9;
   StdI->V0 = 9999.9;
+  StdI->V0p = 9999.9;
   StdI->V1 = 9999.9;
   StdI->V1p = 9999.9;
   StdI->V2 = 9999.9;
   StdI->V2p = 9999.9;
   StdI->W = 9999;
-  StdI->Wx = 9999.9;
-  StdI->Wy = 9999.9;
   StdI->phase0 = 9999.9;
   StdI->phase1 = 9999.9;
+  StdI->phase2 = 9999.9;
   StdI->pi180 = 0.01745329251994329576;/*Pi/180*/
 
   StdI->nelec = 9999;
@@ -1688,15 +1695,23 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     fprintf(stdout, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
     if (strcmp(keyword, "a") == 0) StoreWithCheckDup_d(keyword, value, &StdI.a);
-    else if (strcmp(keyword, "a0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.a0);
-    else if (strcmp(keyword, "a0l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a0L);
-    else if (strcmp(keyword, "a0w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a0W);
-    else if (strcmp(keyword, "a1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.a1);
-    else if (strcmp(keyword, "a1l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a1L);
-    else if (strcmp(keyword, "a1w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a1W);
+    else if (strcmp(keyword, "a0h") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[0][2]);
+    else if (strcmp(keyword, "a0l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[0][1]);
+    else if (strcmp(keyword, "a0w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[0][0]);
+    else if (strcmp(keyword, "a1h") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[1][2]);
+    else if (strcmp(keyword, "a1l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[1][1]);
+    else if (strcmp(keyword, "a1w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[1][0]);
+    else if (strcmp(keyword, "a2h") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[2][2]);
+    else if (strcmp(keyword, "a2l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[2][1]);
+    else if (strcmp(keyword, "a2w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[2][0]);
     else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI.D[2][2]);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Gamma);
     else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI.h);
+    else if (strcmp(keyword, "height") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Height);
+    else if (strcmp(keyword, "hlength") == 0) StoreWithCheckDup_d(keyword, value, &StdI.length[2]);
+    else if (strcmp(keyword, "hx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[2][0]);
+    else if (strcmp(keyword, "hy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[2][1]);
+    else if (strcmp(keyword, "hz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[2][2]);
     else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &StdI.JAll);
     else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][0]);
     else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][1]);
@@ -1717,6 +1732,16 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "j0z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[2][2]);
     else if (strcmp(keyword, "j0zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[2][0]);
     else if (strcmp(keyword, "j0zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[2][1]);
+    else if (strcmp(keyword, "j0'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0pAll);
+    else if (strcmp(keyword, "j0'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[0][0]);
+    else if (strcmp(keyword, "j0'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[0][1]);
+    else if (strcmp(keyword, "j0'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[0][2]);
+    else if (strcmp(keyword, "j0'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[1][1]);
+    else if (strcmp(keyword, "j0'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[1][0]);
+    else if (strcmp(keyword, "j0'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[1][2]);
+    else if (strcmp(keyword, "j0'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[2][2]);
+    else if (strcmp(keyword, "j0'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[2][0]);
+    else if (strcmp(keyword, "j0'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[2][1]);
     else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1All);
     else if (strcmp(keyword, "j1x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[0][0]);
     else if (strcmp(keyword, "j1xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[0][1]);
@@ -1767,36 +1792,55 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "j'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[2][2]);
     else if (strcmp(keyword, "j'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[2][0]);
     else if (strcmp(keyword, "j'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[2][1]);
+    else if (strcmp(keyword, "j''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.JppAll);
+    else if (strcmp(keyword, "j''x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[0][0]);
+    else if (strcmp(keyword, "j''xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[0][1]);
+    else if (strcmp(keyword, "j''xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[0][2]);
+    else if (strcmp(keyword, "j''y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[1][1]);
+    else if (strcmp(keyword, "j''yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[1][0]);
+    else if (strcmp(keyword, "j''yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[1][2]);
+    else if (strcmp(keyword, "j''z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[2][2]);
+    else if (strcmp(keyword, "j''zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[2][0]);
+    else if (strcmp(keyword, "j''zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[2][1]);
     else if (strcmp(keyword, "k") == 0) StoreWithCheckDup_d(keyword, value, &StdI.K);
     else if (strcmp(keyword, "l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.L);
     else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_s(keyword, value, StdI.lattice);
-    else if (strcmp(keyword, "lx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Lx);
-    else if (strcmp(keyword, "ly") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Ly);
+    else if (strcmp(keyword, "llength") == 0) StoreWithCheckDup_d(keyword, value, &StdI.length[1]);
+    else if (strcmp(keyword, "lx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][0]);
+    else if (strcmp(keyword, "ly") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][1]);
+    else if (strcmp(keyword, "lz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][2]);
     else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_s(keyword, value, StdI.model);
     else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI.mu);
     else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nelec);
-    else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Sz2);
     else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, StdI.outputmode);
     else if (strcmp(keyword, "phase0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase0);
     else if (strcmp(keyword, "phase1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase1);
+    else if (strcmp(keyword, "phase2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase1);
     else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t);
     else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0);
+    else if (strcmp(keyword, "t0'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0p);
     else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t1);
     else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t1p);
     else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t2);
     else if (strcmp(keyword, "t2'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t2p);
     else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.tp);
+    else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_c(keyword, value, &StdI.tpp);
     else if (strcmp(keyword, "u") == 0) StoreWithCheckDup_d(keyword, value, &StdI.U);
     else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V);
     else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V0);
+    else if (strcmp(keyword, "v0'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V0p);
     else if (strcmp(keyword, "v1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V1);
     else if (strcmp(keyword, "v1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V1p);
     else if (strcmp(keyword, "v2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V2);
     else if (strcmp(keyword, "v2p") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V2);
     else if (strcmp(keyword, "v'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Vp);
+    else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Vpp);
     else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.W);
-    else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Wx);
-    else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Wy);
+    else if (strcmp(keyword, "wlength") == 0) StoreWithCheckDup_d(keyword, value, &StdI.length[0]);
+    else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][0]);
+    else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][1]);
+    else if (strcmp(keyword, "wz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][2]);
+    else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Sz2);
 
 #if defined(_HPhi)
     else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_s(keyword, value, StdI.CalcSpec);
@@ -1909,6 +1953,8 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     || strcmp(StdI.lattice, "kagomelattice") == 0) StdFace_Kagome(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "ladder") == 0
     || strcmp(StdI.lattice, "ladderlattice") == 0) StdFace_Ladder(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "orthorhombic") == 0
+    || strcmp(StdI.lattice, "simpleorthorhombic") == 0) StdFace_Orthorhombic(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "tetragonal") == 0
     || strcmp(StdI.lattice, "tetragonallattice") == 0
     || strcmp(StdI.lattice, "square") == 0
@@ -1935,9 +1981,6 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   }
 #endif
   /**/
-  CheckModPara(&StdI);
-  CheckOutputMode(&StdI);
-  /**/
   fprintf(stdout, "\n");
   fprintf(stdout, "######  Print Expert input files  ######\n");
   fprintf(stdout, "\n");
@@ -1954,7 +1997,9 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintOrb(&StdI);
   PrintGutzwiller(&StdI);
 #endif
+  CheckModPara(&StdI);
   PrintModPara(&StdI);
+  CheckOutputMode(&StdI);
   Print1Green(&StdI);
   Print2Green(&StdI);
   PrintNamelist(&StdI);

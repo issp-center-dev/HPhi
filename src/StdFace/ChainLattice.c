@@ -51,12 +51,12 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
   
   StdFace_PrintVal_d("a", &StdI->a, 1.0);
-  StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
-  StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
-  StdFace_PrintVal_d("Wx", &StdI->Wx, StdI->a0);
-  StdFace_PrintVal_d("Wy", &StdI->Wy, 0.0);
-  StdFace_PrintVal_d("Lx", &StdI->Lx, 0.0);
-  StdFace_PrintVal_d("Ly", &StdI->Ly, StdI->a1);
+  StdFace_PrintVal_d("length[0]", &StdI->length[0], StdI->a);
+  StdFace_PrintVal_d("length[1]", &StdI->length[1], StdI->a);
+  StdFace_PrintVal_d("direct[0][0]", &StdI->direct[0][0], StdI->length[0]);
+  StdFace_PrintVal_d("direct[0][1]", &StdI->direct[0][1], 0.0);
+  StdFace_PrintVal_d("direct[1][0]", &StdI->direct[1][0], 0.0);
+  StdFace_PrintVal_d("direct[1][1]", &StdI->direct[1][1], StdI->length[1]);
   
   StdFace_RequiredVal_i("L", StdI->L);
   StdFace_NotUsed_i("W", StdI->W);
@@ -203,8 +203,7 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
     /*
     Nearest neighbor
    */
-    jsite = (iL + 1) % StdI->L;
-    phase = cpow(StdI->ExpPhase0, (double)((iL + 1) / StdI->L));
+    StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, 0, 0, &isite, &jsite, 1, &phase);
     if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
@@ -217,8 +216,7 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
     /*
     Second nearest neighbor
     */
-    jsite = (iL + 2) % StdI->L;
-    phase = cpow(StdI->ExpPhase0, (double)((iL + 2) / StdI->L));
+    StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, 0, 0, &isite, &jsite, 2, &phase);
     if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {

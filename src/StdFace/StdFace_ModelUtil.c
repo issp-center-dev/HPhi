@@ -471,30 +471,30 @@ void StdFace_RequiredVal_i(
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_FoldSite2D(struct StdIntList *StdI,
-  int iW, int iL, int *iCell0, int *iCell1, int *iWfold, int *iLfold)
+static void StdFace_FoldSite2D(struct StdIntList *StdI,
+  int iCellV[2], int nBox[2], int iCellV_fold[2])
 {
-  int x0, x1, xW, xL;
+  int iCellV_frac[2], ii;
   /*
    Transform to fractional coordinate (times NCell)
   */
-  x0 = StdI->bW0 * iW + StdI->bL0 * iL;
-  x1 = StdI->bW1 * iW + StdI->bL1 * iL;
+  for (ii = 0; ii < 2; ii++)
+    iCellV_frac[ii] = StdI->rbox[ii][0] * iCellV[0] + StdI->rbox[ii][1] * iCellV[1];
   /*
    Which supercell contains this cell
   */
-  *iCell0 = (x0 + StdI->NCell * 1000) / StdI->NCell - 1000;
-  *iCell1 = (x1 + StdI->NCell * 1000) / StdI->NCell - 1000;
+  for (ii = 0; ii < 2; ii++)
+    nBox[ii] = (iCellV_frac[ii] + StdI->NCell * 1000) / StdI->NCell - 1000;
   /*
    Fractional coordinate (times NCell) in the original supercell
   */
-  x0 -= StdI->NCell*(*iCell0);
-  x1 -= StdI->NCell*(*iCell1);
+  for (ii = 0; ii < 2; ii++)
+    iCellV_frac[ii] -= StdI->NCell*(nBox[ii]);
   /**/
-  xW = StdI->a0W * x0 + StdI->a1W * x1;
-  xL = StdI->a0L * x0 + StdI->a1L * x1;
-  *iWfold = (xW + StdI->NCell * 1000) / StdI->NCell - 1000;
-  *iLfold = (xL + StdI->NCell * 1000) / StdI->NCell - 1000;
+  for (ii = 0; ii < 2; ii++) {
+    iCellV_fold[ii] = StdI->box[0][ii] * iCellV_frac[0] + StdI->box[1][ii] * iCellV_frac[1];
+    iCellV_fold[ii] = (iCellV_fold[ii] + StdI->NCell * 1000) / StdI->NCell - 1000;
+  }
 }
 
 /**
@@ -505,121 +505,99 @@ void StdFace_FoldSite2D(struct StdIntList *StdI,
 */
 void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
 {
-  int Wmin, Wmax, Lmin, Lmax;
-  int iW, iL, ipos, NCell0;
-  int iCell, iCell0, iCell1, iWfold, iLfold, isiteUC;
+  int bound[2][2], edge, ii, jj;
+  int ipos;
+  int nBox[2], iCellV_fold[2], iCellV[2];
   double pos[4][2], xmin, xmax/*, offset[2], scale*/;
   /*
    check Input parameters
   */
   if ((StdI->L != 9999 || StdI->W != 9999)
-    && (StdI->a0L != 9999 || StdI->a0W != 9999 || StdI->a1L != 9999 || StdI->a1W != 9999)) {
+    && (StdI->box[0][1] != 9999 || StdI->box[0][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][0] != 9999)) {
     fprintf(stdout, "\nERROR ! (L, W) and (a0W, a0L, a1W, a1L) conflict !\n\n");
     StdFace_exit(-1);
   }
   else if (StdI->L != 9999 || StdI->W != 9999) {
-    if (StdI->L == 9999) {
-      fprintf(stdout, "\nERROR ! W is specified, but L is NOT specified !\n\n");
-      StdFace_exit(-1);
-    }
-    else if (StdI->W == 9999) {
-      fprintf(stdout, "\nERROR ! L is specified, but W is NOT specified !\n\n");
+    if (StdI->L == 9999 || StdI->W == 9999) {
+      fprintf(stdout, "\nERROR ! Both W and L MUST be specified !\n\n");
       StdFace_exit(-1);
     }
     StdFace_PrintVal_i("L", &StdI->L, 1);
     StdFace_PrintVal_i("W", &StdI->W, 1);
-    StdI->a0W = StdI->W;
-    StdI->a0L = 0;
-    StdI->a1W = 0;
-    StdI->a1L = StdI->L;
+    StdI->box[0][0] = StdI->W;
+    StdI->box[0][1] = 0;
+    StdI->box[1][0] = 0;
+    StdI->box[1][1] = StdI->L;
   }
-  else if (StdI->a0L != 9999 || StdI->a0W != 9999 || StdI->a1L != 9999 || StdI->a1W != 9999) {
-    if (StdI->a0W == 9999) {
-      fprintf(stdout, "\nERROR ! a0W is NOT specified !\n\n");
+  else if (StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || 
+           StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999) 
+  {
+    if (StdI->box[0][0] == 9999 || StdI->box[0][1] == 9999 ||
+        StdI->box[1][0] == 9999 || StdI->box[1][1] == 9999) {
+      fprintf(stdout, "\nERROR ! Both a0W, a0L, a1W, a1L MUST be specified !\n\n");
       StdFace_exit(-1);
     }
-    else if (StdI->a0L == 9999) {
-      fprintf(stdout, "\nERROR ! a0L is NOT specified !\n\n");
-      StdFace_exit(-1);
-    }
-    else if (StdI->a1W == 9999) {
-      fprintf(stdout, "\nERROR ! a1W is NOT specified !\n\n");
-      StdFace_exit(-1);
-    }
-    else if (StdI->a1L == 9999) {
-      fprintf(stdout, "\nERROR ! a1L is NOT specified !\n\n");
-      StdFace_exit(-1);
-    }
-    StdFace_PrintVal_i("a0W", &StdI->a0W, 1);
-    StdFace_PrintVal_i("a0L", &StdI->a0L, 0);
-    StdFace_PrintVal_i("a1W", &StdI->a1W, 0);
-    StdFace_PrintVal_i("a1L", &StdI->a1L, 1);
+    StdFace_PrintVal_i("a0W", &StdI->box[0][0], 1);
+    StdFace_PrintVal_i("a0L", &StdI->box[0][1], 0);
+    StdFace_PrintVal_i("a1W", &StdI->box[1][0], 0);
+    StdFace_PrintVal_i("a1L", &StdI->box[1][1], 1);
   }
   /*
    Structure in a cell
   */
   StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
-  for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
-    StdI->tau[isiteUC] = (double *)malloc(sizeof(double) * 2);
+  for (ii = 0; ii < StdI->NsiteUC; ii++) {
+    StdI->tau[ii] = (double *)malloc(sizeof(double) * 2);
   }
   /*
    Calculate reciprocal lattice vectors (times NCell)
   */
-  StdI->NCell = StdI->a0W * StdI->a1L - StdI->a0L * StdI->a1W;
-  printf("         Number of Cell : %d\n", StdI->NCell);
+  StdI->NCell = StdI->box[0][0] * StdI->box[1][1] - StdI->box[0][1] * StdI->box[1][0];
+  printf("         Number of Cell : %d\n", abs(StdI->NCell));
   if (StdI->NCell == 0) {
     StdFace_exit(-1);
   }
 
-  StdI->bW0 = StdI->a1L;
-  StdI->bL0 = - StdI->a1W;
-  StdI->bW1 = - StdI->a0L;
-  StdI->bL1 = StdI->a0W;
+  StdI->rbox[0][0] = StdI->box[1][1];
+  StdI->rbox[0][1] = - StdI->box[1][0];
+  StdI->rbox[1][0] = - StdI->box[0][1];
+  StdI->rbox[1][1] = StdI->box[0][0];
   if (StdI->NCell < 0) {
-    StdI->bW0 *= -1;
-    StdI->bL0 *= -1;
-    StdI->bW1 *= -1;
-    StdI->bL1 *= -1;
+    for (ii = 0; ii < 2; ii++) 
+      for (jj = 0; jj < 2; jj++)
+        StdI->rbox[ii][jj] *= -1;
     StdI->NCell *= -1;
   }/*if (StdI->NCell < 0)*/
   /*
-   Initialize gnuplot
+   Find the lower- and the upper bound for surrowndinf the simulation box
   */
-  Wmax = 0;
-  if (StdI->a0W > Wmax) Wmax = StdI->a0W;
-  if (StdI->a1W > Wmax) Wmax = StdI->a1W;
-  if (StdI->a0W + StdI->a1W > Wmax) Wmax = StdI->a0W + StdI->a1W;
-  /**/
-  Wmin = 0;
-  if (StdI->a0W < Wmin) Wmin = StdI->a0W;
-  if (StdI->a1W < Wmin) Wmin = StdI->a1W;
-  if (StdI->a0W + StdI->a1W < Wmin) Wmin = StdI->a0W + StdI->a1W;
-  /**/
-  Lmax = 0;
-  if (StdI->a0L > Lmax) Lmax = StdI->a0L;
-  if (StdI->a1L > Lmax) Lmax = StdI->a1L;
-  if (StdI->a0L + StdI->a1L > Lmax) Lmax = StdI->a0L + StdI->a1L;
-  /**/
-  Lmin = 0;
-  if (StdI->a0L < Lmin) Lmin = StdI->a0L;
-  if (StdI->a1L < Lmin) Lmin = StdI->a1L;
-  if (StdI->a0L + StdI->a1L < Lmin) Lmin = StdI->a0L + StdI->a1L;
+  for (ii = 0; ii < 2; ii++) {
+    bound[ii][0] = 0;
+    bound[ii][1] = 0;
+    for (nBox[1] = 0; nBox[1] < 2; nBox[1]++) {
+      for (nBox[0] = 0; nBox[0] < 2; nBox[0]++) {
+        edge = nBox[0] * StdI->box[0][ii] + nBox[1] * StdI->box[1][ii];
+        if (edge < bound[ii][0]) bound[ii][0] = edge;
+        if (edge > bound[ii][1]) bound[ii][1] = edge;
+      }
+    }
+  }
   /*
-   Calculate the number of Unit Cell
+   Find Cells in the Simulation Box
   */
   StdI->Cell = (int **)malloc(sizeof(int*) * StdI->NCell);
-  for (iCell = 0; iCell < StdI->NCell; iCell++) {
-    StdI->Cell[iCell] = (int *)malloc(sizeof(int) * 2);
+  for (ii = 0; ii < StdI->NCell; ii++) {
+    StdI->Cell[ii] = (int *)malloc(sizeof(int) * 2);
   }/*for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++)*/
 
-  NCell0 = 0;
-  for (iL = Lmin; iL <= Lmax; iL++) {
-    for (iW = Wmin; iW <= Wmax; iW++) {
-      StdFace_FoldSite2D(StdI, iW, iL, &iCell0, &iCell1, &iWfold, &iLfold);
-      if (iCell0 == 0 && iCell1 == 0) {
-        StdI->Cell[NCell0][0] = iW;
-        StdI->Cell[NCell0][1] = iL;
-        NCell0 += 1;
+  jj = 0;
+  for (iCellV[1] = bound[1][0]; iCellV[1] <= bound[1][1]; iCellV[1]++) {
+    for (iCellV[0] = bound[0][0]; iCellV[0] <= bound[0][1]; iCellV[0]++) {
+      StdFace_FoldSite2D(StdI, iCellV, nBox, iCellV_fold);
+      if (nBox[0] == 0 && nBox[1] == 0) {
+        StdI->Cell[jj][0] = iCellV[0];
+        StdI->Cell[jj][1] = iCellV[1];
+        jj += 1;
       }/*if (lUC == 1)*/
     }/*for (iW = Wmin; iW <= Wmax; iW++*/
   }/*for (iL = Lmin; iL <= Lmax; iL++)*/
@@ -628,16 +606,16 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   */
   pos[0][0] = 0.0;
   pos[0][1] = 0.0;
-  pos[1][0] = StdI->Wx * (double)StdI->a0W + StdI->Lx * (double)StdI->a0L;
-  pos[1][1] = StdI->Wy * (double)StdI->a0W + StdI->Ly * (double)StdI->a0L;
-  pos[2][0] = StdI->Wx * (double)StdI->a1W + StdI->Lx * (double)StdI->a1L;
-  pos[2][1] = StdI->Wy * (double)StdI->a1W + StdI->Ly * (double)StdI->a1L;
+  pos[1][0] = StdI->direct[0][0] * (double)StdI->box[0][0] + StdI->direct[1][0] * (double)StdI->box[0][1];
+  pos[1][1] = StdI->direct[0][1] * (double)StdI->box[0][0] + StdI->direct[1][1] * (double)StdI->box[0][1];
+  pos[2][0] = StdI->direct[0][0] * (double)StdI->box[1][0] + StdI->direct[1][0] * (double)StdI->box[1][1];
+  pos[2][1] = StdI->direct[0][1] * (double)StdI->box[1][0] + StdI->direct[1][1] * (double)StdI->box[1][1];
   pos[3][0] = pos[1][0] + pos[2][0];
   pos[3][1] = pos[1][1] + pos[2][1];
   /**/
   /*
-  scale = sqrt((double)((StdI->a0W + StdI->a1W)*(StdI->a0W + StdI->a1W)
-                      + (StdI->a0L + StdI->a1L)*(StdI->a0L + StdI->a1L)));
+  scale = sqrt((double)((StdI->box[0][0] + StdI->box[1][0])*(StdI->box[0][0] + StdI->box[1][0])
+                      + (StdI->box[0][1] + StdI->box[1][1])*(StdI->box[0][1] + StdI->box[1][1])));
   scale = 0.5 / scale;
   offset[0] = pos[3][0] * scale;
   offset[1] = pos[3][1] * scale;
@@ -687,24 +665,18 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int *isite, int *jsite, int connect, double complex *phase)
 {
   int iCell, jCell, kCell;
-  int jCell0, jCell1;
-  int jWfold, jLfold, jW, jL;
+  int nBox[2];
+  int jCellV_fold[2], jCellV[2];
   double xi, yi, xj, yj;
-  double xiW, xiL, xjW, xjL;
-  /**/
-  xiW = StdI->tau[isiteUC][0];
-  xiL = StdI->tau[isiteUC][1];
-  xjW = StdI->tau[jsiteUC][0];
-  xjL = StdI->tau[jsiteUC][1];
   /*
    Reversed
   */
-  jW = iW - diW;
-  jL = iL - diL;
-  StdFace_FoldSite2D(StdI, jW, jL, &jCell0, &jCell1, &jWfold, &jLfold);
+  jCellV[0] = iW - diW;
+  jCellV[1] = iL - diL;
+  StdFace_FoldSite2D(StdI, jCellV, nBox, jCellV_fold);
   /**/
   for (kCell = 0; kCell < StdI->NCell; kCell++) {
-    if (jWfold == StdI->Cell[kCell][0] && jLfold == StdI->Cell[kCell][1]) {
+    if (jCellV_fold[0] == StdI->Cell[kCell][0] && jCellV_fold[1] == StdI->Cell[kCell][1]) {
       jCell = kCell;
     }
     if (iW == StdI->Cell[kCell][0] && iL == StdI->Cell[kCell][1]) {
@@ -718,11 +690,15 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
     *jsite += StdI->NCell * StdI->NsiteUC;
   }
 
-  xi = StdI->Lx * ((double)iL + xjL) + StdI->Wx * ((double)iW + xjW);
-  yi = StdI->Ly * ((double)iL + xjL) + StdI->Wy * ((double)iW + xjW);
+  xi = StdI->direct[0][0] * ((double)iW + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][0] * ((double)iL + StdI->tau[jsiteUC][1]);
+  yi = StdI->direct[0][1] * ((double)iW + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][1] * ((double)iL + StdI->tau[jsiteUC][1]);
 
-  xj = StdI->Lx * ((double)jL + xiL) + StdI->Wx * ((double)jW + xiW);
-  yj = StdI->Ly * ((double)jL + xiL) + StdI->Wy * ((double)jW + xiW);
+  xj = StdI->direct[0][0] * ((double)jCellV[0] + StdI->tau[isiteUC][0])
+     + StdI->direct[1][0] * ((double)jCellV[1] + StdI->tau[isiteUC][1]);
+  yj = StdI->direct[0][1] * ((double)jCellV[0] + StdI->tau[isiteUC][0])
+     + StdI->direct[1][1] * ((double)jCellV[1] + StdI->tau[isiteUC][1]);
 
   if (*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
   else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
@@ -731,13 +707,13 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
   /*
   */
-  jW = iW + diW;
-  jL = iL + diL;
-  StdFace_FoldSite2D(StdI, jW, jL, &jCell0, &jCell1, &jWfold, &jLfold);
-  *phase = cpow(StdI->ExpPhase0, (double)jCell0) * cpow(StdI->ExpPhase1, (double)jCell1);
+  jCellV[0] = iW + diW;
+  jCellV[1] = iL + diL;
+  StdFace_FoldSite2D(StdI, jCellV, nBox, jCellV_fold);
+  *phase = cpow(StdI->ExpPhase0, (double)nBox[0]) * cpow(StdI->ExpPhase1, (double)nBox[1]);
   /**/
   for (kCell = 0; kCell < StdI->NCell; kCell++) {
-    if (jWfold == StdI->Cell[kCell][0] && jLfold == StdI->Cell[kCell][1]) {
+    if (jCellV_fold[0] == StdI->Cell[kCell][0] && jCellV_fold[1] == StdI->Cell[kCell][1]) {
       jCell = kCell;
     }
     if (iW == StdI->Cell[kCell][0] && iL == StdI->Cell[kCell][1]) {
@@ -751,11 +727,15 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
     *jsite += StdI->NCell * StdI->NsiteUC;
   }
 
-  xi = StdI->Lx * ((double)iL + xiL) + StdI->Wx * ((double)iW + xiW);
-  yi = StdI->Ly * ((double)iL + xiL) + StdI->Wy * ((double)iW + xiW);
+  xi = StdI->direct[1][0] * ((double)iL + StdI->tau[isiteUC][1])
+     + StdI->direct[0][0] * ((double)iW + StdI->tau[isiteUC][0]);
+  yi = StdI->direct[1][1] * ((double)iL + StdI->tau[isiteUC][1])
+     + StdI->direct[0][1] * ((double)iW + StdI->tau[isiteUC][0]);
 
-  xj = StdI->Lx * ((double)jL + xjL) + StdI->Wx * ((double)jW + xjW);
-  yj = StdI->Ly * ((double)jL + xjL) + StdI->Wy * ((double)jW + xjW);
+  xj = StdI->direct[0][0] * ((double)jCellV[0] + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][0] * ((double)jCellV[1] + StdI->tau[jsiteUC][1]);
+  yj = StdI->direct[0][1] * ((double)jCellV[0] + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][1] * ((double)jCellV[1] + StdI->tau[jsiteUC][1]);
 
   if(*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
   else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
@@ -763,7 +743,246 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
   fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
 }/*void StdFace_SetLabel*/
+ /**
+ *
+ * Define whether the specified site is in the unit cell or not.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+static void StdFace_FoldSite3D(struct StdIntList *StdI,
+  int iCellV[3], int nBox[3], int iCellV_fold[3])
+{
+  int ii, jj, iCellV_frac[3];
+  /*
+  Transform to fractional coordinate (times NCell)
+  */
+  for (ii = 0; ii < 3; ii++) {
+    iCellV_frac[ii] = 0;
+    for (jj = 0; jj < 3; jj++)iCellV_frac[ii] += StdI->rbox[ii][jj] * iCellV[jj];
+  }
+  /*
+  Which supercell contains this cell
+  */
+  for (ii = 0; ii < 3; ii++) 
+    nBox[ii] = (iCellV_frac[ii] + StdI->NCell * 1000) / StdI->NCell - 1000;
+  /*
+  Fractional coordinate (times NCell) in the original supercell
+  */
+  for (ii = 0; ii < 3; ii++)
+    iCellV_frac[ii] -= StdI->NCell*(nBox[ii]);
+  /**/
+  for (ii = 0; ii < 3; ii++) {
+    iCellV_fold[ii] = 0;
+    for (jj = 0; jj < 3; jj++) iCellV_fold[ii] += StdI->box[jj][ii] * iCellV_frac[jj];
+    iCellV_fold[ii] = (iCellV_fold[ii] + StdI->NCell * 1000) / StdI->NCell - 1000;
+  }
+}
+/**
+ *
+ * Initialize Cell
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
+{
+  int ii, jj, edge;
+  int bound[3][2], iCellV[3], nBox[3], iCellV_fold[3];
+  /*
+  check Input parameters
+  */
+  if ((StdI->L != 9999 || StdI->W != 9999 || StdI->Height != 9999)
+    && (StdI->box[0][1] != 9999 || StdI->box[0][0] != 9999 || StdI->box[0][2] != 9999 || 
+        StdI->box[1][1] != 9999 || StdI->box[1][0] != 9999 || StdI->box[1][2] != 9999 ||
+        StdI->box[2][1] != 9999 || StdI->box[2][0] != 9999 || StdI->box[2][2] != 9999)) 
+  {
+    fprintf(stdout, "\nERROR ! (L, W, Height) and (a0W, ..., a2H) conflict !\n\n");
+    StdFace_exit(-1);
+  }
+  else if (StdI->W != 9999 || StdI->L != 9999 || StdI->Height != 9999) {
+    if (StdI->L == 9999 || StdI->W == 9999 || StdI->Height == 9999) {
+      fprintf(stdout, "\nERROR ! All of W, L, Height MUST be specified !\n\n");
+      StdFace_exit(-1);
+    }
+    StdFace_PrintVal_i("L", &StdI->L, 1);
+    StdFace_PrintVal_i("W", &StdI->W, 1);
+    StdFace_PrintVal_i("Height", &StdI->Height, 1);
+    for (ii = 0; ii < 3; ii++) for (jj = 0; jj < 3; jj++)
+      StdI->box[ii][jj] = 0;
+    StdI->box[0][0] = StdI->W;
+    StdI->box[1][1] = StdI->L;
+    StdI->box[2][2] = StdI->Height;
+  }
+  else if (
+    StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 || 
+    StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][2] != 9999 ||
+    StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999) {
+    if (StdI->box[0][0] == 9999 || StdI->box[0][1] == 9999 || StdI->box[0][2] == 9999 ||
+        StdI->box[1][0] == 9999 || StdI->box[1][1] == 9999 || StdI->box[1][2] == 9999 ||
+        StdI->box[2][0] == 9999 || StdI->box[2][1] == 9999 || StdI->box[2][2] == 9999) {
+      fprintf(stdout, "\nERROR ! All of a0W, a0L, a0H, a1W, ... MUST be specified !\n\n");
+      StdFace_exit(-1);
+    }
+    StdFace_PrintVal_i("a0W", &StdI->box[0][0], 1);
+    StdFace_PrintVal_i("a0L", &StdI->box[0][1], 0);
+    StdFace_PrintVal_i("a0H", &StdI->box[0][2], 0);
+    StdFace_PrintVal_i("a1W", &StdI->box[1][0], 0);
+    StdFace_PrintVal_i("a1L", &StdI->box[1][1], 1);
+    StdFace_PrintVal_i("a1H", &StdI->box[1][2], 0);
+    StdFace_PrintVal_i("a2W", &StdI->box[2][0], 0);
+    StdFace_PrintVal_i("a2L", &StdI->box[2][1], 0);
+    StdFace_PrintVal_i("a2H", &StdI->box[2][2], 1);
+  }
+  /*
+  Structure in a cell
+  */
+  StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
+  for (ii = 0; ii < StdI->NsiteUC; ii++) {
+    StdI->tau[ii] = (double *)malloc(sizeof(double) * 3);
+  }
+  /*
+  Calculate reciprocal lattice vectors (times NCell)
+  */
+  StdI->NCell = 0;
+  for (ii = 0; ii < 3; ii++) {
+    StdI->NCell += StdI->box[0][ii]
+      * StdI->box[1][(ii + 1) % 3]
+      * StdI->box[2][(ii + 2) % 3]
+      - StdI->box[0][ii]
+      * StdI->box[1][(ii + 2) % 3]
+      * StdI->box[2][(ii + 1) % 3];
+  }
+  printf("         Number of Cell : %d\n", abs(StdI->NCell));
+  if (StdI->NCell == 0) {
+    StdFace_exit(-1);
+  }
 
+  for (ii = 0; ii < 3; ii++) {
+    for (jj = 0; jj < 3; jj++) {
+      StdI->rbox[ii][jj] = StdI->box[(ii + 1) % 3][(jj + 1) % 3] * StdI->box[(ii + 2) % 3][(jj + 2) % 3]
+                         - StdI->box[(ii + 1) % 3][(jj + 2) % 3] * StdI->box[(ii + 2) % 3][(jj + 1) % 3];
+    }
+  }
+  if (StdI->NCell < 0) {
+    for (ii = 0; ii < 3; ii++)
+      for (jj = 0; jj < 3; jj++)
+        StdI->rbox[ii][jj] *= -1;
+    StdI->NCell *= -1;
+  }/*if (StdI->NCell < 0)*/
+  /*
+   Initialize gnuplot
+  */
+  for (ii = 0; ii < 3; ii++) {
+    bound[ii][0] = 0;
+    bound[ii][1] = 0;
+    for (nBox[2] = 0; nBox[2] < 2; nBox[2]++) {
+      for (nBox[1] = 0; nBox[1] < 2; nBox[1]++) {
+        for (nBox[0] = 0; nBox[0] < 2; nBox[0]++) {
+          edge = 0;
+          for (jj = 0; jj < 3; jj++) edge += nBox[jj] * StdI->box[jj][ii];
+          if (edge < bound[ii][0]) bound[ii][0] = edge;
+          if (edge > bound[ii][1]) bound[ii][1] = edge;
+        }
+      }
+    }
+  }
+  /*
+  Calculate the number of Unit Cell
+  */
+  StdI->Cell = (int **)malloc(sizeof(int*) * StdI->NCell);
+  for (ii = 0; ii < StdI->NCell; ii++) {
+    StdI->Cell[ii] = (int *)malloc(sizeof(int) * 3);
+  }/*for (ii = 0; ii < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); ii++)*/
+
+  jj = 0;
+  for (iCellV[2] = bound[2][0]; iCellV[2] <= bound[2][1]; iCellV[2]++) {
+    for (iCellV[1] = bound[1][0]; iCellV[1] <= bound[1][1]; iCellV[1]++) {
+      for (iCellV[0] = bound[0][0]; iCellV[0] <= bound[0][1]; iCellV[0]++) {
+        StdFace_FoldSite3D(StdI, iCellV, nBox, iCellV_fold);
+        if (nBox[0] == 0 && nBox[1] == 0 && nBox[2] == 0) {
+          for (ii = 0; ii < 3; ii++)
+            StdI->Cell[jj][ii] = iCellV[ii];
+          jj += 1;
+        }/*if (lUC == 1)*/
+      }/*for (iCellV[0] = bound[0][0]; iCellV[0] <= bound[0][1]; iCellV[0]++*/
+    }/*for (iCellV[1] = bound[1][0]; iCellV[1] <= bound[1][1]; iCellV[1]++)*/
+  }/*for (iCellV[2] = bound[2][0]; iCellV[2] <= bound[2][1]; iCellV[2]++)*/
+}/*void StdFace_InitSite3D*/
+ /**
+  * Set Label in the gnuplot display
+  */
+void StdFace_FindSite3d(struct StdIntList *StdI,
+  int iW, int iL, int iH, int diW, int diL, int diH, 
+  int isiteUC, int jsiteUC,
+  int *isite, int *jsite, double complex *phase)
+{
+  int iCell, jCell, kCell;
+  int nBox[3];
+  int jCellV_fold[3], jCellV[3];
+  /**/
+  jCellV[0] = iW + diW;
+  jCellV[1] = iL + diL;
+  jCellV[2] = iH + diH;
+  StdFace_FoldSite2D(StdI, jCellV, nBox, jCellV_fold);
+  *phase = cpow(StdI->ExpPhase0, (double)nBox[0]) 
+         * cpow(StdI->ExpPhase1, (double)nBox[1])
+         * cpow(StdI->ExpPhase2, (double)nBox[2]);
+  /**/
+  for (kCell = 0; kCell < StdI->NCell; kCell++) {
+    if (jCellV_fold[0] == StdI->Cell[kCell][0] && 
+        jCellV_fold[1] == StdI->Cell[kCell][1] &&
+        jCellV_fold[2] == StdI->Cell[kCell][2]) {
+      jCell = kCell;
+    }
+    if (iW == StdI->Cell[kCell][0] && 
+        iL == StdI->Cell[kCell][1] &&
+        iH == StdI->Cell[kCell][2]) {
+      iCell = kCell;
+    }
+  }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
+  *isite = iCell * StdI->NsiteUC + isiteUC;
+  *jsite = jCell * StdI->NsiteUC + jsiteUC;
+  if (strcmp(StdI->model, "kondo") == 0) {
+    *isite += StdI->NCell * StdI->NsiteUC;
+    *jsite += StdI->NCell * StdI->NsiteUC;
+  }
+}/*void StdFace_FindSite3d*/
+/**
+ * Print lattice.xsf (XCrysDen format) 
+ */
+void StdFace_PrintXSF(struct StdIntList *StdI) {
+  FILE *fp;
+  int ii, jj, kk, isite, iCell;
+  double vec[3];
+
+  fp = fopen("lattice.xsf", "w");
+  fprintf(fp, "CRYSTAL\n");
+  fprintf(fp, "PRIMVEC\n");
+  for (ii = 0; ii < 3; ii++) {
+    for (jj = 0; jj < 3; jj++) {
+      vec[jj] = 0.0;
+      for (kk = 0; kk < 3; kk++)
+        vec[jj] += StdI->direct[kk][jj] * (double)StdI->box[ii][jj];
+    }
+    fprintf(fp, "%15.5f %15.5f %15.5f\n", vec[0], vec[1], vec[2]);
+  }
+  fprintf(fp, "PRIMCOORD\n");
+  fprintf(fp, "%d 1\n", StdI->NCell * StdI->NsiteUC);
+  for (iCell = 0; iCell < StdI->NCell; iCell++) {
+    for (isite = 0; isite < StdI->NsiteUC; isite++) {
+      for (jj = 0; jj < 3; jj++) {
+        vec[jj] = 0.0;
+        for (kk = 0; kk < 3; kk++)
+          vec[jj] += StdI->direct[kk][jj] * 
+          ((double)StdI->Cell[iCell][kk] + StdI->tau[isite][kk]);
+      }
+      fprintf(fp, "X %15.5f %15.5f %15.5f\n", vec[0], vec[1], vec[2]);
+    }
+  }
+  fclose(fp);
+}/*void StdFace_PrintXSF*/
+/*
+ * Input nearest-neighbor spin-spin interaction
+ */
 void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3], 
   double J0All, char *J0name) 
 {
@@ -934,10 +1153,10 @@ void StdFace_PrintGeometry(struct StdIntList *StdI) {
 
   fp = fopen("geometry.dat", "w");
 
-  fprintf(fp, "%25.15e %25.15e\n", StdI->Wx, StdI->Wy);
-  fprintf(fp, "%25.15e %25.15e\n", StdI->Lx, StdI->Ly);
-  fprintf(fp, "%d %d\n", StdI->a0W, StdI->a0L);
-  fprintf(fp, "%d %d\n", StdI->a1W, StdI->a1L);
+  fprintf(fp, "%25.15e %25.15e\n", StdI->direct[0][0], StdI->direct[0][1]);
+  fprintf(fp, "%25.15e %25.15e\n", StdI->direct[1][0], StdI->direct[1][1]);
+  fprintf(fp, "%d %d\n", StdI->box[0][0], StdI->box[0][1]);
+  fprintf(fp, "%d %d\n", StdI->box[1][0], StdI->box[1][1]);
 
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
     for (isite = 0; isite < StdI->NsiteUC; isite++) {
@@ -1180,15 +1399,15 @@ void StdFace_InitSite2DSub(struct StdIntList *StdI)
       fprintf(stdout, "\nERROR ! a0Wsub is NOT specified !\n\n");
       StdFace_exit(-1);
     }
-    else if (StdI->a0L == 9999) {
+    else if (StdI->box[0][1] == 9999) {
       fprintf(stdout, "\nERROR ! a0Lsub is NOT specified !\n\n");
       StdFace_exit(-1);
     }
-    else if (StdI->a1W == 9999) {
+    else if (StdI->box[1][0] == 9999) {
       fprintf(stdout, "\nERROR ! a1Wsub is NOT specified !\n\n");
       StdFace_exit(-1);
     }
-    else if (StdI->a1L == 9999) {
+    else if (StdI->box[1][1] == 9999) {
       fprintf(stdout, "\nERROR ! a1Lsub is NOT specified !\n\n");
       StdFace_exit(-1);
     }
@@ -1198,10 +1417,10 @@ void StdFace_InitSite2DSub(struct StdIntList *StdI)
     StdFace_PrintVal_i("a1Lsub", &StdI->a1Lsub, 1);
   }
   else {
-    StdFace_PrintVal_i("a0Wsub", &StdI->a0Wsub, StdI->a0W);
-    StdFace_PrintVal_i("a0Lsub", &StdI->a0Lsub, StdI->a0L);
-    StdFace_PrintVal_i("a1Wsub", &StdI->a1Wsub, StdI->a1W);
-    StdFace_PrintVal_i("a1Lsub", &StdI->a1Lsub, StdI->a1L);
+    StdFace_PrintVal_i("a0Wsub", &StdI->a0Wsub, StdI->box[0][0]);
+    StdFace_PrintVal_i("a0Lsub", &StdI->a0Lsub, StdI->box[0][1]);
+    StdFace_PrintVal_i("a1Wsub", &StdI->a1Wsub, StdI->box[1][0]);
+    StdFace_PrintVal_i("a1Lsub", &StdI->a1Lsub, StdI->box[1][1]);
   }
   /*
   Calculate reciplocal sublattice vectors (times NCellsub)
@@ -1226,10 +1445,10 @@ void StdFace_InitSite2DSub(struct StdIntList *StdI)
   /*
    Check : Is the sublattice commensurate ?
   */
-  prod[0] = StdI->bW0sub * (double)StdI->a0W + StdI->bL0sub * (double)StdI->a0L;
-  prod[1] = StdI->bW1sub * (double)StdI->a0W + StdI->bL1sub * (double)StdI->a0L;
-  prod[2] = StdI->bW0sub * (double)StdI->a1W + StdI->bL0sub * (double)StdI->a1L;
-  prod[3] = StdI->bW1sub * (double)StdI->a1W + StdI->bL1sub * (double)StdI->a1L;
+  prod[0] = StdI->bW0sub * (double)StdI->box[0][0] + StdI->bL0sub * (double)StdI->box[0][1];
+  prod[1] = StdI->bW1sub * (double)StdI->box[0][0] + StdI->bL1sub * (double)StdI->box[0][1];
+  prod[2] = StdI->bW0sub * (double)StdI->box[1][0] + StdI->bL0sub * (double)StdI->box[1][1];
+  prod[3] = StdI->bW1sub * (double)StdI->box[1][0] + StdI->bL1sub * (double)StdI->box[1][1];
 
   for (ii = 0; ii < 4; ii++){
     if (prod[ii] % StdI->NCellsub != 0) {

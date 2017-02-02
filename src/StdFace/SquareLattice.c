@@ -50,12 +50,12 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
   
   StdFace_PrintVal_d("a", &StdI->a, 1.0);
-  StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
-  StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
-  StdFace_PrintVal_d("Wx", &StdI->Wx, StdI->a0);
-  StdFace_PrintVal_d("Wy", &StdI->Wy, 0.0);
-  StdFace_PrintVal_d("Lx", &StdI->Lx, 0.0);
-  StdFace_PrintVal_d("Ly", &StdI->Ly, StdI->a1);
+  StdFace_PrintVal_d("length[0]", &StdI->length[0], StdI->a);
+  StdFace_PrintVal_d("length[1]", &StdI->length[1], StdI->a);
+  StdFace_PrintVal_d("direct[0][0]", &StdI->direct[0][0], StdI->length[0]);
+  StdFace_PrintVal_d("direct[0][1]", &StdI->direct[0][1], 0.0);
+  StdFace_PrintVal_d("direct[1][0]", &StdI->direct[1][0], 0.0);
+  StdFace_PrintVal_d("direct[1][1]", &StdI->direct[1][1], StdI->length[1]);
   
   StdFace_InitSite2D(StdI, fp);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;

@@ -32,8 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void StdFace_Ladder(struct StdIntList *StdI, char *model)
 {
   FILE *fp;
-  int isite, jsite, ksite;
-  int iL, iW;
+  int isite, jsite;
+  int iL, isiteUC;
   int ktrans, kintr;
   double complex phase;
 
@@ -48,26 +48,26 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
   
   StdFace_PrintVal_d("a", &StdI->a, 1.0);
-  StdFace_PrintVal_d("a0", &StdI->a0, StdI->a);
-  StdFace_PrintVal_d("a1", &StdI->a1, StdI->a);
-  StdFace_PrintVal_d("Wx", &StdI->Wx, StdI->a0);
-  StdFace_PrintVal_d("Wy", &StdI->Wy, 0.0);
-  StdFace_PrintVal_d("Lx", &StdI->Lx, 0.0);
-  StdFace_PrintVal_d("Ly", &StdI->Ly, StdI->a1);
+  StdFace_PrintVal_d("length[0]", &StdI->length[0], StdI->a);
+  StdFace_PrintVal_d("length[1]", &StdI->length[1], StdI->a);
+  StdFace_PrintVal_d("direct[0][0]", &StdI->direct[0][0], StdI->length[0]);
+  StdFace_PrintVal_d("direct[0][1]", &StdI->direct[0][1], 0.0);
+  StdFace_PrintVal_d("direct[1][0]", &StdI->direct[1][0], 0.0);
+  StdFace_PrintVal_d("direct[1][1]", &StdI->direct[1][1], StdI->length[1]);
   
   StdFace_RequiredVal_i("L", StdI->L);
   StdFace_RequiredVal_i("W", StdI->W);
-  StdFace_NotUsed_i("a0W", StdI->a0W);
-  StdFace_NotUsed_i("a0L", StdI->a0L);
-  StdFace_NotUsed_i("a1W", StdI->a1W);
-  StdFace_NotUsed_i("a1L", StdI->a1L);
+  StdFace_NotUsed_i("a0W", StdI->box[0][0]);
+  StdFace_NotUsed_i("a0L", StdI->box[0][1]);
+  StdFace_NotUsed_i("a1W", StdI->box[1][0]);
+  StdFace_NotUsed_i("a1L", StdI->box[1][1]);
   /**/
   StdI->NsiteUC = StdI->W;
   StdI->W = 1;
-  StdI->Wx = (double)StdI->NsiteUC;
+  StdI->direct[0][0] = (double)StdI->NsiteUC;
   StdFace_InitSite2D(StdI, fp);
   for (isite = 0; isite < StdI->NsiteUC; isite++){
-    StdI->tau[isite][0] = (double)isite;
+    StdI->tau[isite][0] = (double)isite / (double)StdI->NsiteUC;
     StdI->tau[isite][1] = 0.0;
   }
   /**/
@@ -151,7 +151,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   /*
   Local Spin
   */
-  StdI->nsite = StdI->L * StdI->W;
+  StdI->nsite = StdI->L * StdI->NsiteUC;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
   StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
   /**/
@@ -168,18 +168,18 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   The number of Transfer & Interaction
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->L * StdI->W * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->L * StdI->W * (1/*D*/ + 1/*J1*/ + 1/*J1'*/)
+    StdI->ntrans = StdI->L * StdI->NsiteUC * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    StdI->nintr = StdI->L * StdI->NsiteUC * (1/*D*/ + 1/*J1*/ + 1/*J1'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1)
-      + StdI->L * (StdI->W - 1) * (1/*J0*/ + 1/*J2*/ + 1/*J2'*/)
+      + StdI->L * (StdI->NsiteUC - 1) * (1/*J0*/ + 1/*J2*/ + 1/*J2'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else {
-    StdI->ntrans = StdI->L*StdI->W * (1/*mu*/ + 2/*t1*/ + 2/*t1'*/)
-      + StdI->L*(StdI->W - 1) * (2/*t0*/ + 2/*t2*/ + 2/*t2'*/);
-    StdI->nintr = StdI->L*StdI->W * 1/*U*/
-      + StdI->L*StdI->W * 4 * (1/*V1*/ + 1/*V1'*/)
-      + StdI->L*(StdI->W - 1) * 4 * (1/*V0*/ + 1/*V2*/ + 1/*V2'*/);
+    StdI->ntrans = StdI->L*StdI->NsiteUC * (1/*mu*/ + 2/*t1*/ + 2/*t1'*/)
+      + StdI->L*(StdI->NsiteUC - 1) * (2/*t0*/ + 2/*t2*/ + 2/*t2'*/);
+    StdI->nintr = StdI->L*StdI->NsiteUC * 1/*U*/
+      + StdI->L*StdI->NsiteUC * 4 * (1/*V1*/ + 1/*V1'*/)
+      + StdI->L*(StdI->NsiteUC - 1) * 4 * (1/*V0*/ + 1/*V2*/ + 1/*V2'*/);
 
     if (strcmp(StdI->model, "kondo") == 0 ) StdI->nintr += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
   }
@@ -202,10 +202,10 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   StdI->ntrans = 0;
   StdI->nintr = 0;
   for (iL = 0; iL < StdI->L; iL++) {
-    for (iW = 0; iW < StdI->W; iW++) {
+    for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
 
-      isite = iW + iL * StdI->W;
-      if (strcmp(StdI->model, "kondo") == 0 ) isite += StdI->L * StdI->W;
+      isite = isiteUC + iL * StdI->NsiteUC;
+      if (strcmp(StdI->model, "kondo") == 0 ) isite += StdI->L * StdI->NsiteUC;
       /*
        Local term
       */
@@ -218,16 +218,15 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
         StdI->Cintra[StdI->NCintra] = StdI->U; StdI->CintraIndx[StdI->NCintra][0] = isite; StdI->NCintra += 1;
         /**/
         if (strcmp(StdI->model, "kondo") == 0 ) {
-          jsite = iW + iL * StdI->W;
+          jsite = isiteUC + iL * StdI->NsiteUC;
           StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "kondo") == 0 )*/
       }/*if (model != "spin")*/
       /*
        Nearest neighbor along the ladder
       */
-      jsite = iW + ((iL + 1) % StdI->L) * StdI->W;
-      phase = cpow(StdI->ExpPhase0, (double)((iL + 1) / StdI->L));
-      if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
+      StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC, &isite, &jsite, 1, &phase);
+      if (strcmp(StdI->model, "kondo") == 0) jsite += StdI->L * StdI->NsiteUC;
       /**/
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -239,9 +238,8 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
       /*
        Second nearest neighbor along the ladder
       */
-      jsite = iW + ((iL + 2) % StdI->L) * StdI->W;
-      phase = cpow(StdI->ExpPhase0, (double)((iL + 2) / StdI->L));
-      if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
+      StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, isiteUC, isiteUC, &isite, &jsite, 2, &phase);
+      if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
@@ -252,31 +250,31 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
       /*
       Across rung
       */
-      if (iW < StdI->W - 1) {
+      if (isiteUC < StdI->NsiteUC - 1) {
         /*
          Vertical
         */
-        jsite = (iW + 1) + iL * StdI->W;
-        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
+        StdFace_SetLabel(StdI, fp, 0, iL, 0, 0, isiteUC, isiteUC + 1, &isite, &jsite, 1, &phase);
+        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, StdI->t0, isite, jsite, 1);
+          StdFace_Hopping(StdI, phase * StdI->t0, isite, jsite, 1);
           StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
         }/*if (model != "spin")*/
         /*
          Diagonal 1
         */
-        jsite = (iW + 1) + ((iL + 1) % StdI->L) * StdI->W;
-        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
+        StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &phase);
+        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, StdI->t2, isite, jsite, 1);
+          StdFace_Hopping(StdI, phase * StdI->t2, isite, jsite, 1);
           StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
         }/*if (model != "spin")*/
         /*
@@ -285,21 +283,19 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
         }
-        ksite = (iW + 1) + iL * StdI->W;
-        if (strcmp(StdI->model, "kondo") == 0 ) ksite += StdI->L * StdI->W;
-        jsite = iW + ((iL + 1) % StdI->L) * StdI->W;
-        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->W;
+        StdFace_SetLabel(StdI, fp, 0, iL, 0, -1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &phase);
+        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
         if (strcmp(StdI->model, "spin") == 0 ) {
-          StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, ksite, jsite);
+          StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, StdI->t2p, ksite, jsite, 1);
-          StdFace_Coulomb(StdI, StdI->V2p, ksite, jsite);
+          StdFace_Hopping(StdI, phase * StdI->t2p, isite, jsite, 1);
+          StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
         }/*if (model != "spin")*/
 
-      }/*if (iW < StdI->W - 1)*/
+      }/*if (isiteUC < StdI->NsiteUC - 1)*/
 
-    }/*for (iW = 0; iW < StdI->W; iW++)*/
+    }/*for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++)*/
   }/*for (iL = 0; iL < StdI->L; iL++)*/
 
   fprintf(fp, "plot \'-\' w d lc 7\n0.0 0.0\nend\npause -1\n");

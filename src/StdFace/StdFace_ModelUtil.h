@@ -56,6 +56,12 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int *isite, int *jsite, int connect, double complex *phase);
 void StdFace_PrintGeometry(struct StdIntList *StdI);
 void StdFace_MallocInteractions(struct StdIntList *StdI);
+void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp);
+void StdFace_FindSite3d(struct StdIntList *StdI,
+  int iW, int iL, int iH, int diW, int diL, int diH,
+  int isiteUC, int jsiteUC,
+  int *isite, int *jsite, double complex *phase);
+void StdFace_PrintXSF(struct StdIntList *StdI);
 
 void StdFace_Tetragonal(struct StdIntList *StdI, char *model);
 void StdFace_Chain(struct StdIntList *StdI, char *model);
@@ -63,6 +69,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model);
 void StdFace_Triangular(struct StdIntList *StdI, char *model);
 void StdFace_Honeycomb(struct StdIntList *StdI, char *model);
 void StdFace_Kagome(struct StdIntList *StdI, char *model);
+void StdFace_Orthorhombic(struct StdIntList *StdI, char *model);
 
 #if defined(_HPhi)
 void StdFace_Chain_Boost(struct StdIntList *StdI);

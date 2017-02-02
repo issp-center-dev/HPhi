@@ -23,22 +23,13 @@ struct StdIntList {
   */
   char lattice[256];
   double a; /**< The lattice constant */
-  double a0;
-  double a1;
+  double length[3];
   int L;
   int W;
-  double Lx;
-  double Ly;
-  double Wx;
-  double Wy;
-  int a0L;
-  int a0W;
-  int a1L;
-  int a1W;
-  int bW0;
-  int bW1;
-  int bL0;
-  int bL1;
+  int Height;
+  double direct[3][3];
+  int box[3][3];
+  int rbox[3][3];
   int NCell;
   int **Cell;
   int NsiteUC;
@@ -51,33 +42,41 @@ struct StdIntList {
   double complex t;
   double complex tp;
   double complex t0;
+  double complex t0p;
   double complex t1;
   double complex t1p;
   double complex t2;
   double complex t2p;
+  double complex tpp;
   double U;
   double V;
   double Vp;
   double V0;
+  double V0p;
   double V1;
   double V1p;
   double V2;
   double V2p;
+  double Vpp;
   /**/
   double JAll;
   double JpAll;
   double J0All;
+  double J0pAll;
   double J1All;
   double J1pAll;
   double J2All;
   double J2pAll;
+  double JppAll;
   double J[3][3];
   double Jp[3][3];
   double J0[3][3];
+  double J0p[3][3];
   double J1[3][3];
   double J1p[3][3];
   double J2[3][3];
   double J2p[3][3];
+  double Jpp[3][3];
   double D[3][3];
   double h;
   double Gamma;
@@ -88,10 +87,13 @@ struct StdIntList {
   double pi180;
   double phase0;
   double phase1;
+  double phase2;
   double complex ExpPhase0;
   double complex ExpPhase1;
+  double complex ExpPhase2;
   int AntiPeriod0;
   int AntiPeriod1;
+  int AntiPeriod2;
   /*
    Transfer, Interaction, Locspin
   */
