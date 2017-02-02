@@ -2,7 +2,7 @@ include ../make.sys
 
 StdFace_OBJS = StdFace_main.o StdFace_ModelUtil.o
 Lattice_OBJS = SquareLattice.o ChainLattice.o TriangularLattice.o \
-	HoneycombLattice.o Ladder.o Kagome.o Orthorhombic.o
+	HoneycombLattice.o Ladder.o Kagome.o Orthorhombic.o FCOrtho.o
 
 libStdFace.a:$(StdFace_OBJS) $(Lattice_OBJS)
 	$(AR) $@ $(StdFace_OBJS) $(Lattice_OBJS)
@@ -25,3 +25,4 @@ HoneycombLattice.o:HoneycombLattice.c StdFace_vals.h StdFace_ModelUtil.h
 Ladder.o:Ladder.c StdFace_vals.h StdFace_ModelUtil.h
 Kagome.o:Kagome.c StdFace_vals.h StdFace_ModelUtil.h
 Orthorhombic.o:Orthorhombic.c StdFace_vals.h StdFace_ModelUtil.h
+FCOrtho.o:FCOrtho.c StdFace_vals.h StdFace_ModelUtil.h

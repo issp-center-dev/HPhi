@@ -1947,6 +1947,9 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   */
   if (strcmp(StdI.lattice, "chain") == 0
     || strcmp(StdI.lattice, "chainlattice") == 0) StdFace_Chain(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "facecenteredorthorhombic") == 0
+    || strcmp(StdI.lattice, "fcorthorhombic") == 0
+    || strcmp(StdI.lattice, "fco") == 0) StdFace_FCOrtho(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "honeycomb") == 0
     || strcmp(StdI.lattice, "honeycomblattice") == 0) StdFace_Honeycomb(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "kagome") == 0

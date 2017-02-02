@@ -70,6 +70,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model);
 void StdFace_Honeycomb(struct StdIntList *StdI, char *model);
 void StdFace_Kagome(struct StdIntList *StdI, char *model);
 void StdFace_Orthorhombic(struct StdIntList *StdI, char *model);
+void StdFace_FCOrtho(struct StdIntList *StdI, char *model);
 
 #if defined(_HPhi)
 void StdFace_Chain_Boost(struct StdIntList *StdI);

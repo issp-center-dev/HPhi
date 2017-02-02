@@ -790,10 +790,14 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
   /*
   check Input parameters
   */
+  printf("debug %d %d %d\n", StdI->L, StdI->W, StdI->Height);
+  printf("debug %d %d %d\n", StdI->box[0][0], StdI->box[0][1], StdI->box[0][2]);
+  printf("debug %d %d %d\n", StdI->box[1][0], StdI->box[1][1], StdI->box[1][2]);
+  printf("debug %d %d %d\n", StdI->box[2][0], StdI->box[2][1], StdI->box[2][2]);
   if ((StdI->L != 9999 || StdI->W != 9999 || StdI->Height != 9999)
-    && (StdI->box[0][1] != 9999 || StdI->box[0][0] != 9999 || StdI->box[0][2] != 9999 || 
-        StdI->box[1][1] != 9999 || StdI->box[1][0] != 9999 || StdI->box[1][2] != 9999 ||
-        StdI->box[2][1] != 9999 || StdI->box[2][0] != 9999 || StdI->box[2][2] != 9999)) 
+    && (StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 || 
+        StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][2] != 9999 ||
+        StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999)) 
   {
     fprintf(stdout, "\nERROR ! (L, W, Height) and (a0W, ..., a2H) conflict !\n\n");
     StdFace_exit(-1);
@@ -954,6 +958,13 @@ void StdFace_PrintXSF(struct StdIntList *StdI) {
   int ii, jj, kk, isite, iCell;
   double vec[3];
 
+  printf("debug %d %d %d\n", StdI->box[0][0], StdI->box[0][1], StdI->box[0][2]);
+  printf("debug %d %d %d\n", StdI->box[1][0], StdI->box[1][1], StdI->box[1][2]);
+  printf("debug %d %d %d\n", StdI->box[2][0], StdI->box[2][1], StdI->box[2][2]);
+  printf("debug %f %f %f\n", StdI->direct[0][0], StdI->direct[0][1], StdI->direct[0][2]);
+  printf("debug %f %f %f\n", StdI->direct[1][0], StdI->direct[1][1], StdI->direct[1][2]);
+  printf("debug %f %f %f\n", StdI->direct[2][0], StdI->direct[2][1], StdI->direct[2][2]);
+
   fp = fopen("lattice.xsf", "w");
   fprintf(fp, "CRYSTAL\n");
   fprintf(fp, "PRIMVEC\n");
@@ -961,7 +972,7 @@ void StdFace_PrintXSF(struct StdIntList *StdI) {
     for (jj = 0; jj < 3; jj++) {
       vec[jj] = 0.0;
       for (kk = 0; kk < 3; kk++)
-        vec[jj] += StdI->direct[kk][jj] * (double)StdI->box[ii][jj];
+        vec[jj] += (double)StdI->box[ii][kk] * StdI->direct[kk][jj];
     }
     fprintf(fp, "%15.5f %15.5f %15.5f\n", vec[0], vec[1], vec[2]);
   }
@@ -972,10 +983,10 @@ void StdFace_PrintXSF(struct StdIntList *StdI) {
       for (jj = 0; jj < 3; jj++) {
         vec[jj] = 0.0;
         for (kk = 0; kk < 3; kk++)
-          vec[jj] += StdI->direct[kk][jj] * 
-          ((double)StdI->Cell[iCell][kk] + StdI->tau[isite][kk]);
+          vec[jj] += ((double)StdI->Cell[iCell][kk] + StdI->tau[isite][kk])
+          * StdI->direct[kk][jj];
       }
-      fprintf(fp, "X %15.5f %15.5f %15.5f\n", vec[0], vec[1], vec[2]);
+      fprintf(fp, "H %15.5f %15.5f %15.5f\n", vec[0], vec[1], vec[2]);
     }
   }
   fclose(fp);
@@ -1181,46 +1192,62 @@ void StdFace_PrintGeometry(struct StdIntList *StdI) {
  * Malloc Arrays for interactions
  */
 void StdFace_MallocInteractions(struct StdIntList *StdI) {
-  int kintr;
+  int ii;
+  /*
+   Transfer
+  */
+  StdI->transindx = (int **)malloc(sizeof(int*) * StdI->ntrans);
+  StdI->trans = (double complex *)malloc(sizeof(double complex) * StdI->ntrans);
+  for (ii = 0; ii < StdI->ntrans; ii++) {
+    StdI->transindx[ii] = (int *)malloc(sizeof(int) * 4);
+  }
+  /*
+   InterAll
+  */
+  StdI->intrindx = (int **)malloc(sizeof(int*) * StdI->nintr);
+  StdI->intr = (double complex *)malloc(sizeof(double complex) * StdI->nintr);
+  for (ii = 0; ii < StdI->nintr; ii++) {
+    StdI->intrindx[ii] = (int *)malloc(sizeof(int) * 8);
+  }
   /*
   Coulomb intra
   */
   StdI->CintraIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
   StdI->Cintra = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->CintraIndx[kintr] = (int *)malloc(sizeof(int) * 1);
+  for (ii = 0; ii < StdI->nintr; ii++) {
+    StdI->CintraIndx[ii] = (int *)malloc(sizeof(int) * 1);
   }
   /*
   Coulomb inter
   */
   StdI->CinterIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
   StdI->Cinter = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->CinterIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  for (ii = 0; ii < StdI->nintr; ii++) {
+    StdI->CinterIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
   /*
   Hund
   */
   StdI->HundIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
   StdI->Hund = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->HundIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  for (ii = 0; ii < StdI->nintr; ii++) {
+    StdI->HundIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
   /*
   Excahnge
   */
   StdI->ExIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
   StdI->Ex = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->ExIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  for (ii = 0; ii < StdI->nintr; ii++) {
+    StdI->ExIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
   /*
   PairLift
   */
   StdI->PLIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
   StdI->PairLift = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->PLIndx[kintr] = (int *)malloc(sizeof(int) * 2);
+  for (ii = 0; ii < StdI->nintr; ii++) {
+    StdI->PLIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
 
   StdI->NCintra = 0;

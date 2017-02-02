@@ -34,7 +34,6 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
   FILE *fp;
   int isite, jsite;
   int iL;
-  int ktrans, kintr;
   double complex phase;
   
   /**/
@@ -163,17 +162,6 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
       StdI->nintr += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
   }
   /**/
-  StdI->transindx = (int **)malloc(sizeof(int*) * StdI->ntrans);
-  StdI->trans = (double complex *)malloc(sizeof(double complex) * StdI->ntrans);
-  for (ktrans = 0; ktrans < StdI->ntrans; ktrans++){
-    StdI->transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
-  }
-  /**/
-  StdI->intrindx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->intr = (double complex *)malloc(sizeof(double complex) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
-  }
   StdFace_MallocInteractions(StdI);
   /*
    Set Transfer & Interaction
