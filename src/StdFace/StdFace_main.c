@@ -1958,6 +1958,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     || strcmp(StdI.lattice, "ladderlattice") == 0) StdFace_Ladder(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "orthorhombic") == 0
     || strcmp(StdI.lattice, "simpleorthorhombic") == 0) StdFace_Orthorhombic(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "pyrochlore") == 0) StdFace_Pyrochlore(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "tetragonal") == 0
     || strcmp(StdI.lattice, "tetragonallattice") == 0
     || strcmp(StdI.lattice, "square") == 0

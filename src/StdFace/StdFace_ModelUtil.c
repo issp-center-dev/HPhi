@@ -926,7 +926,7 @@ void StdFace_FindSite3d(struct StdIntList *StdI,
   jCellV[0] = iW + diW;
   jCellV[1] = iL + diL;
   jCellV[2] = iH + diH;
-  StdFace_FoldSite2D(StdI, jCellV, nBox, jCellV_fold);
+  StdFace_FoldSite3D(StdI, jCellV, nBox, jCellV_fold);
   *phase = cpow(StdI->ExpPhase0, (double)nBox[0]) 
          * cpow(StdI->ExpPhase1, (double)nBox[1])
          * cpow(StdI->ExpPhase2, (double)nBox[2]);
