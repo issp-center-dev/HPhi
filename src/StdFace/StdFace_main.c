@@ -198,7 +198,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
   int NumOp, spin[2][2], isite, ispin, icell, itau;
-  double coef[2], pi, phase;
+  double coef[2], pi, Cphase;
   double *fourier_r, *fourier_i;
 
   fourier_r = (double *)malloc(sizeof(double) * StdI->nsite);
@@ -282,10 +282,10 @@ static void PrintExcitation(struct StdIntList *StdI) {
   isite = 0;
   for (icell = 0; icell < StdI->NCell; icell++) {
     for (itau = 0; itau < StdI->NsiteUC; itau++) {
-      phase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQW
+      Cphase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQW
             + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQL;
-      fourier_r[isite] = cos(2.0*pi*phase);
-      fourier_i[isite] = sin(2.0*pi*phase);
+      fourier_r[isite] = cos(2.0*pi*Cphase);
+      fourier_i[isite] = sin(2.0*pi*Cphase);
       isite += 1;
     }
   }
@@ -443,7 +443,7 @@ void PrintOrb(struct StdIntList *StdI) {
 
   for (isite = 0; isite < StdI->nsite; isite++) {
     for (jsite = 0; jsite < StdI->nsite; jsite++) {
-      if (StdI->AntiPeriod0 == 1 || StdI->AntiPeriod1 == 1) {
+      if (StdI->AntiPeriod[0] == 1 || StdI->AntiPeriod[1] == 1) {
         fprintf(fp, "%5d  %5d  %5d  %5d\n", isite, jsite, StdI->Orb[isite][jsite], StdI->AntiOrb[isite][jsite]);
       }
       else {
@@ -576,9 +576,9 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->V2 = 9999.9;
   StdI->V2p = 9999.9;
   StdI->W = 9999;
-  StdI->phase0 = 9999.9;
-  StdI->phase1 = 9999.9;
-  StdI->phase2 = 9999.9;
+  StdI->phase[0] = 9999.9;
+  StdI->phase[1] = 9999.9;
+  StdI->phase[2] = 9999.9;
   StdI->pi180 = 0.01745329251994329576;/*Pi/180*/
 
   StdI->nelec = 9999;
@@ -1273,7 +1273,7 @@ static void CheckModPara(struct StdIntList *StdI)
   /*else*/StdFace_PrintVal_i("NDataQtySmp", &StdI->NDataQtySmp, 1);
 
   StdFace_PrintVal_i("NSPGaussLeg", &StdI->NSPGaussLeg, 8);
-  if (StdI->AntiPeriod0 == 1 || StdI->AntiPeriod1 == 1) NSym2 = -StdI->NSym;
+  if (StdI->AntiPeriod[0] == 1 || StdI->AntiPeriod[1] == 1) NSym2 = -StdI->NSym;
   else NSym2 = StdI->NSym;
   StdFace_PrintVal_i("NMPTrans", &StdI->NMPTrans, NSym2);
 
@@ -1813,9 +1813,9 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI.mu);
     else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nelec);
     else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, StdI.outputmode);
-    else if (strcmp(keyword, "phase0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase0);
-    else if (strcmp(keyword, "phase1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase1);
-    else if (strcmp(keyword, "phase2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase1);
+    else if (strcmp(keyword, "phase0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[0]);
+    else if (strcmp(keyword, "phase1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[1]);
+    else if (strcmp(keyword, "phase2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[2]);
     else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t);
     else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0);
     else if (strcmp(keyword, "t0'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0p);

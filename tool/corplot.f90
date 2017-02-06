@@ -58,7 +58,7 @@ SUBROUTINE read_cor()
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, ik, iwfc, nk0, idim
-  REAL(8) :: rtmp(2)
+  REAL(8) :: rtmp(3)
   CHARACTER(256) :: filename, ctmp1, ctmp2
   !
   WRITE(*,*) 
@@ -87,12 +87,12 @@ SUBROUTINE read_cor()
      IF(TRIM(ctmp1) == "#HPhi") THEN
         WRITE(*,'(a,a,a)') "  Read ", TRIM(filename), " as HPhi Correlation File"
         DO ik = 1, nk
-           READ(fi,'(14e15.5)') rtmp(1:2), cor_k(ik,1:6,iwfc)
+           READ(fi,'(15e15.5)') rtmp(1:3), cor_k(ik,1:6,iwfc)
         END DO
      ELSE ! mVMC
         WRITE(*,'(a,a,a)') "  Read ", TRIM(filename), " as mVMC Correlation File"
         DO ik = 1, nk
-           READ(fi,'(26e15.5)') rtmp(1:2), cor_k(ik,1:6,iwfc), cor_err(ik,1:6,iwfc)
+           READ(fi,'(27e15.5)') rtmp(1:3), cor_k(ik,1:6,iwfc), cor_err(ik,1:6,iwfc)
         END DO
      END IF
      !
@@ -105,20 +105,18 @@ SUBROUTINE read_cor()
   OPEN(fi, file = "kpoints.dat")
   !
   READ(fi,*) nktot, nk_row
-  recipr(1:3,1:3) = 0d0
-  DO idim = 1, 2
-     READ(fi,*) recipr(1:2,idim)
+  DO idim = 1, 3
+     READ(fi,*) recipr(1:3,idim)
   END DO
-  recipr(3,3) = 1d0
   !
   ALLOCATE(kvec(2,nktot), equiv(nktot))
   WRITE(*,*) "  Total Number of k : ", nktot
   WRITE(*,*) "  Row for k : ", nk_row
   WRITE(*,*) "    Reciplocal lattice vector :"
-  WRITE(*,'(4x2f15.10)') recipr(1:2, 1:2)
+  WRITE(*,'(4x3f15.10)') recipr(1:3, 1:3)
   !
   DO ik = 1, nktot
-     READ(fi,*) kvec(1:2,ik), equiv(ik)
+     READ(fi,*) kvec(1:3,ik), equiv(ik)
   END DO
   !
   CLOSE(fi)
@@ -278,12 +276,105 @@ SUBROUTINE set_bz_line()
         IF(lvert == 1) CYCLE
         !
         nline = nline + 1
-        bz_line(1:3,1:2,nline) = corner(1:3,1:2)
+        !
+        ! Sort
+        !
+        IF(corner(1,1) - corner(1,2) > 0.000001) THEN
+           bz_line(1:3,1:2,nline) = corner(1:3,1:2)
+        ELSE IF (corner(1,2) - corner(1,1) > 0.000001) THEN
+           bz_line(1:3,1,nline) = corner(1:3,2)
+           bz_line(1:3,2,nline) = corner(1:3,1)
+        ELSE
+           IF(corner(2,1) - corner(2,2) > 0.000001) THEN
+              bz_line(1:3,1:2,nline) = corner(1:3,1:2)
+           ELSE IF (corner(2,2) - corner(2,1) > 0.000001) THEN
+              bz_line(1:3,1,nline) = corner(1:3,2)
+              bz_line(1:3,2,nline) = corner(1:3,1)
+           ELSE
+              IF(corner(3,1) - corner(3,2) > 0.000001) THEN
+                 bz_line(1:3,1:2,nline) = corner(1:3,1:2)
+              ELSE 
+                 bz_line(1:3,1,nline) = corner(1:3,2)
+                 bz_line(1:3,2,nline) = corner(1:3,1)
+              END IF
+           END IF
+        END IF
         !
      END DO
   END DO
   !
 END SUBROUTINE set_bz_line
+!
+! Compute Unique BZ line
+!
+SUBROUTINE uniq_bz_line(minz,maxz,nline2,bz_line2)
+  !
+  USE corplot_val, ONLY : bz_line, nline
+  IMPLICIT NONE
+  !
+  REAL(8),INTENT(IN) :: minz, maxz
+  INTEGER,INTENT(OUT) :: nline2
+  REAL(8),INTENT(OUT) :: bz_line2(3,2,nline*4)
+  !
+  INTEGER :: iline, jline
+  REAL(8) :: bz_line0(3,2)
+  !
+  nline2 = 0
+  DO iline = 1, nline
+     !
+     bz_line0(1:3,1) = (/bz_line(1,1,iline), bz_line(2,1,iline), maxz/)
+     bz_line0(1:3,2) = (/bz_line(1,1,iline), bz_line(2,1,iline), minz/)
+     !
+     DO jline = 1, nline2
+        IF(ALL(ABS(bz_line0(1:3,1:2) - bz_line2(1:3,1:2,jline)) < 0.000001)) GOTO 10
+     END DO
+     !
+     nline2 = nline2 + 1
+     bz_line2(1:3,1:2,nline2) = bz_line0(1:3,1:2)
+     !
+10   CONTINUE
+     !
+     bz_line0(1:3,1) = (/bz_line(1,2,iline), bz_line(2,2,iline), maxz/)
+     bz_line0(1:3,2) = (/bz_line(1,2,iline), bz_line(2,2,iline), minz/)
+     !
+     DO jline = 1, nline2
+        IF(ALL(ABS(bz_line0(1:3,1:2) - bz_line2(1:3,1:2,jline)) < 0.000001)) GOTO 20
+     END DO
+     !
+     nline2 = nline2 + 1
+     bz_line2(1:3,1:2,nline2) = bz_line0(1:3,1:2)
+     !
+20   CONTINUE
+     !
+     IF(ALL(ABS(bz_line(1:2,1,iline) - bz_line(1:2,2,iline)) < 0.000001)) CYCLE
+     !
+     bz_line0(1:3,1) = (/bz_line(1,1,iline), bz_line(2,1,iline), minz/)
+     bz_line0(1:3,2) = (/bz_line(1,2,iline), bz_line(2,2,iline), minz/)
+     !
+     DO jline = 1, nline2
+        IF(ALL(ABS(bz_line0(1:3,1:2) - bz_line2(1:3,1:2,jline)) < 0.000001)) GOTO 30
+     END DO
+     !
+     nline2 = nline2 + 1
+     bz_line2(1:3,1:2,nline2) = bz_line0(1:3,1:2)
+     !
+30   CONTINUE
+     !
+     bz_line0(1:3,1) = (/bz_line(1,1,iline), bz_line(2,1,iline), maxz/)
+     bz_line0(1:3,2) = (/bz_line(1,2,iline), bz_line(2,2,iline), maxz/)
+     !
+     DO jline = 1, nline2
+        IF(ALL(ABS(bz_line0(1:3,1:2) - bz_line2(1:3,1:2,jline)) < 0.000001)) GOTO 40
+     END DO
+     !
+     nline2 = nline2 + 1
+     bz_line2(1:3,1:2,nline2) = bz_line0(1:3,1:2)
+     !
+40   CONTINUE
+     !
+  END DO
+  !
+END SUBROUTINE uniq_bz_line
 !
 ! Write gnuplot script
 !
@@ -293,8 +384,8 @@ SUBROUTINE write_gnuplot()
   &                       cor_k, nk, nwfc, bz_line, nline
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, iwfc, iline
-  REAL(8) :: maxz, minz
+  INTEGER :: fo = 20, ik, iwfc, iline, nline2
+  REAL(8) :: maxz, minz, bz_line2(3,2,nline*4)
   !
   IF(rpart) THEN
      maxz = MAXVAL(DBLE( cor_k(1:nk, itarget, 1:nwfc)))
@@ -303,6 +394,7 @@ SUBROUTINE write_gnuplot()
      maxz = MAXVAL(AIMAG(cor_k(1:nk, itarget, 1:nwfc)))
      minz = MINVAL(AIMAG(cor_k(1:nk, itarget, 1:nwfc)))
   END IF
+  CALL uniq_bz_line(minz,maxz,nline2,bz_line2)
   !
   OPEN(fo, file = "correlation.gp")
   !
@@ -312,6 +404,7 @@ SUBROUTINE write_gnuplot()
   WRITE(fo,'(a)') "#set view 60.0, 30.0"
   !
   WRITE(fo,*) 
+  WRITE(fo,'(a)') "set view equal xy"
   WRITE(fo,'(a)') "set ticslevel 0"
   WRITE(fo,'(a)') "set hidden3d"
   WRITE(fo,'(a)') "set xlabel 'kx'"
@@ -323,19 +416,10 @@ SUBROUTINE write_gnuplot()
   WRITE(fo,*) 
   WRITE(fo,*) "#####  Set Brillouin-Zone Boundary  #####"
   WRITE(fo,*) 
-  DO iline = 1, nline
+  DO iline = 1, nline2
      WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
-     &       "set arrow from ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", minz, &
-     &                  " to ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", maxz, " nohead"
-     WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
-     &       "set arrow from ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", minz, &
-     &                  " to ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", maxz, " nohead"
-     WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
-     &       "set arrow from ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", minz, &
-     &                  " to ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", minz, " nohead"
-     WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
-     &       "set arrow from ", bz_line(1,1,iline), ",", bz_line(2,1,iline), ",", maxz, &
-     &                  " to ", bz_line(1,2,iline), ",", bz_line(2,2,iline), ",", maxz, " nohead"
+     &       "set arrow from ", bz_line2(1,1,iline), ",", bz_line2(2,1,iline), ",", bz_line2(3,1,iline), &
+     &                  " to ", bz_line2(1,2,iline), ",", bz_line2(2,2,iline), ",", bz_line2(3,2,iline), " nohead"
   END DO ! iline = 1, nline
   !
   WRITE(fo,*) 

@@ -543,11 +543,36 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
     StdFace_PrintVal_i("a1L", &StdI->box[1][1], 1);
   }
   /*
+   Parameters for the 3D system will not used.
+  */
+  StdI->box[0][2] = 0;
+  StdI->box[1][2] = 0;
+  StdI->box[2][0] = 0;
+  StdI->box[2][1] = 0;
+  StdI->box[2][2] = 1;
+  StdI->direct[0][2] = 0.0;
+  StdI->direct[1][2] = 0.0;
+  StdI->direct[2][0] = 0.0;
+  StdI->direct[2][1] = 0.0;
+  StdI->direct[2][2] = 1.0;
+  /*
+   Define the phase factor at the boundary
+  */
+  StdI->ExpPhase[0] = cos(StdI->pi180 * StdI->phase[0]) + I*sin(StdI->pi180 * StdI->phase[0]);
+  StdI->ExpPhase[1] = cos(StdI->pi180 * StdI->phase[1]) + I*sin(StdI->pi180 * StdI->phase[1]);
+  if (cabs(StdI->ExpPhase[0] + 1.0) < 0.000001) StdI->AntiPeriod[0] = 1;
+  else StdI->AntiPeriod[0] = 0;
+  if (cabs(StdI->ExpPhase[1] + 1.0) < 0.000001) StdI->AntiPeriod[1] = 1;
+  else StdI->AntiPeriod[1] = 0;
+  StdI->phase[2] = 0.0;
+  StdI->ExpPhase[2] = 1.0;
+  StdI->AntiPeriod[2] = 1;
+  /*
    Structure in a cell
   */
   StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
   for (ii = 0; ii < StdI->NsiteUC; ii++) {
-    StdI->tau[ii] = (double *)malloc(sizeof(double) * 2);
+    StdI->tau[ii] = (double *)malloc(sizeof(double) * 3);
   }
   /*
    Calculate reciprocal lattice vectors (times NCell)
@@ -587,7 +612,7 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
   */
   StdI->Cell = (int **)malloc(sizeof(int*) * StdI->NCell);
   for (ii = 0; ii < StdI->NCell; ii++) {
-    StdI->Cell[ii] = (int *)malloc(sizeof(int) * 2);
+    StdI->Cell[ii] = (int *)malloc(sizeof(int) * 3);
   }/*for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++)*/
 
   jj = 0;
@@ -597,6 +622,7 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
       if (nBox[0] == 0 && nBox[1] == 0) {
         StdI->Cell[jj][0] = iCellV[0];
         StdI->Cell[jj][1] = iCellV[1];
+        StdI->Cell[jj][2] = 0;
         jj += 1;
       }/*if (lUC == 1)*/
     }/*for (iW = Wmin; iW <= Wmax; iW++*/
@@ -662,7 +688,7 @@ void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
  */
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp, 
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC, 
-  int *isite, int *jsite, int connect, double complex *phase)
+  int *isite, int *jsite, int connect, double complex *Cphase)
 {
   int iCell, jCell, kCell;
   int nBox[2];
@@ -710,7 +736,7 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   jCellV[0] = iW + diW;
   jCellV[1] = iL + diL;
   StdFace_FoldSite2D(StdI, jCellV, nBox, jCellV_fold);
-  *phase = cpow(StdI->ExpPhase0, (double)nBox[0]) * cpow(StdI->ExpPhase1, (double)nBox[1]);
+  *Cphase = cpow(StdI->ExpPhase[0], (double)nBox[0]) * cpow(StdI->ExpPhase[1], (double)nBox[1]);
   /**/
   for (kCell = 0; kCell < StdI->NCell; kCell++) {
     if (jCellV_fold[0] == StdI->Cell[kCell][0] && jCellV_fold[1] == StdI->Cell[kCell][1]) {
@@ -837,6 +863,14 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
     StdFace_PrintVal_i("a2H", &StdI->box[2][2], 1);
   }
   /*
+   Define phase factor at the boundary
+  */
+  for (ii = 0; ii < 3; ii++) {
+    StdI->ExpPhase[ii] = cos(StdI->pi180 * StdI->phase[ii]) + I*sin(StdI->pi180 * StdI->phase[ii]);
+    if (cabs(StdI->ExpPhase[ii] + 1.0) < 0.000001) StdI->AntiPeriod[ii] = 1;
+    else StdI->AntiPeriod[ii] = 0;
+  }
+  /*
   Structure in a cell
   */
   StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
@@ -917,7 +951,7 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
 void StdFace_FindSite3d(struct StdIntList *StdI,
   int iW, int iL, int iH, int diW, int diL, int diH, 
   int isiteUC, int jsiteUC,
-  int *isite, int *jsite, double complex *phase)
+  int *isite, int *jsite, double complex *Cphase)
 {
   int iCell, jCell, kCell;
   int nBox[3];
@@ -927,9 +961,9 @@ void StdFace_FindSite3d(struct StdIntList *StdI,
   jCellV[1] = iL + diL;
   jCellV[2] = iH + diH;
   StdFace_FoldSite3D(StdI, jCellV, nBox, jCellV_fold);
-  *phase = cpow(StdI->ExpPhase0, (double)nBox[0]) 
-         * cpow(StdI->ExpPhase1, (double)nBox[1])
-         * cpow(StdI->ExpPhase2, (double)nBox[2]);
+  *Cphase = cpow(StdI->ExpPhase[0], (double)nBox[0]) 
+         * cpow(StdI->ExpPhase[1], (double)nBox[1])
+         * cpow(StdI->ExpPhase[2], (double)nBox[2]);
   /**/
   for (kCell = 0; kCell < StdI->NCell; kCell++) {
     if (jCellV_fold[0] == StdI->Cell[kCell][0] && 
@@ -1164,24 +1198,29 @@ void StdFace_PrintGeometry(struct StdIntList *StdI) {
 
   fp = fopen("geometry.dat", "w");
 
-  fprintf(fp, "%25.15e %25.15e\n", StdI->direct[0][0], StdI->direct[0][1]);
-  fprintf(fp, "%25.15e %25.15e\n", StdI->direct[1][0], StdI->direct[1][1]);
-  fprintf(fp, "%d %d\n", StdI->box[0][0], StdI->box[0][1]);
-  fprintf(fp, "%d %d\n", StdI->box[1][0], StdI->box[1][1]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[0][0], StdI->direct[0][1], StdI->direct[0][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[1][0], StdI->direct[1][1], StdI->direct[1][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[2][0], StdI->direct[2][1], StdI->direct[2][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->phase[0], StdI->phase[1], StdI->phase[2]);
+  fprintf(fp, "%d %d %d\n", StdI->box[0][0], StdI->box[0][1], StdI->box[0][2]);
+  fprintf(fp, "%d %d %d\n", StdI->box[1][0], StdI->box[1][1], StdI->box[1][2]);
+  fprintf(fp, "%d %d %d\n", StdI->box[2][0], StdI->box[2][1], StdI->box[2][2]);
 
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
     for (isite = 0; isite < StdI->NsiteUC; isite++) {
-      fprintf(fp, "%25.15e %25.15e\n",
+      fprintf(fp, "%25.15e %25.15e %25.15e\n",
         StdI->tau[isite][0] + (double)StdI->Cell[iCell][0],
-        StdI->tau[isite][1] + (double)StdI->Cell[iCell][1]);
+        StdI->tau[isite][1] + (double)StdI->Cell[iCell][1],
+        StdI->tau[isite][2] + (double)StdI->Cell[iCell][2]);
     }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
   }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
   if (strcmp(StdI->model, "kondo") == 0) {
     for (iCell = 0; iCell < StdI->NCell; iCell++) {
       for (isite = 0; isite < StdI->NsiteUC; isite++) {
-        fprintf(fp, "%25.15e %25.15e\n",
+        fprintf(fp, "%25.15e %25.15e %25.15e\n",
           StdI->tau[isite][0] + (double)StdI->Cell[iCell][0],
-          StdI->tau[isite][1] + (double)StdI->Cell[iCell][1]);
+          StdI->tau[isite][1] + (double)StdI->Cell[iCell][1],
+          StdI->tau[isite][2] + (double)StdI->Cell[iCell][2]);
       }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
     }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
   }
@@ -1340,12 +1379,12 @@ void StdFace_Proj(struct StdIntList *StdI)
 
               Sym[StdI->NSym][jCell*StdI->NsiteUC + jsite] = kCell*StdI->NsiteUC + jsite;
               Anti[StdI->NSym][jCell*StdI->NsiteUC + jsite] =
-                StdI->AntiPeriod0 * UnitNum0 + StdI->AntiPeriod1 * UnitNum1;
+                StdI->AntiPeriod[0] * UnitNum0 + StdI->AntiPeriod[1] * UnitNum1;
 
               if (strcmp(StdI->model, "kondo") == 0) {
                 Sym[StdI->NSym][StdI->nsite / 2 + jCell*StdI->NsiteUC + jsite] = StdI->nsite / 2 + kCell*StdI->NsiteUC + jsite;
                 Anti[StdI->NSym][StdI->nsite / 2 + jCell*StdI->NsiteUC + jsite]
-                  = StdI->AntiPeriod0 * UnitNum0 + StdI->AntiPeriod1 * UnitNum1;
+                  = StdI->AntiPeriod[0] * UnitNum0 + StdI->AntiPeriod[1] * UnitNum1;
               }/*if (strcmp(StdI->model, "kondo") == 0)*/
 
             }/*for (jsite = 0; jsite < StdI->NsiteUC; jsite++)*/
@@ -1370,7 +1409,7 @@ void StdFace_Proj(struct StdIntList *StdI)
     for (jsite = 0; jsite < StdI->nsite; jsite++) {
       if (Anti[iSym][jsite] % 2 == 0) Anti[iSym][jsite] = 1;
       else Anti[iSym][jsite] = -1;
-      if (StdI->AntiPeriod0 == 1 || StdI->AntiPeriod1 == 1) {
+      if (StdI->AntiPeriod[0] == 1 || StdI->AntiPeriod[1] == 1) {
         fprintf(fp, "%5d  %5d  %5d  %5d\n", iSym, jsite, Sym[iSym][jsite], Anti[iSym][jsite]);
       }
       else {
@@ -1548,7 +1587,7 @@ void StdFace_generate_orb(struct StdIntList *StdI) {
       dW = StdI->Cell[jCell][0] - StdI->Cell[iCell][0];
       dL = StdI->Cell[jCell][1] - StdI->Cell[iCell][1];
       StdFace_FoldSite2D(StdI, dW, dL, &UnitNum0, &UnitNum1, &dWfold, &dLfold);
-      Anti = StdI->AntiPeriod0 * UnitNum0 + StdI->AntiPeriod1 * UnitNum1;
+      Anti = StdI->AntiPeriod[0] * UnitNum0 + StdI->AntiPeriod[1] * UnitNum1;
       if (Anti % 2 == 0) Anti = 1;
       else Anti = -1;
 

@@ -34,7 +34,7 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
   FILE *fp;
   int isite, jsite;
   int iL;
-  double complex phase;
+  double complex Cphase;
   
   /**/
   fprintf(stdout, "\n");
@@ -50,29 +50,23 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
   
   StdFace_PrintVal_d("a", &StdI->a, 1.0);
-  StdFace_PrintVal_d("length[0]", &StdI->length[0], StdI->a);
-  StdFace_PrintVal_d("length[1]", &StdI->length[1], StdI->a);
-  StdFace_PrintVal_d("direct[0][0]", &StdI->direct[0][0], StdI->length[0]);
-  StdFace_PrintVal_d("direct[0][1]", &StdI->direct[0][1], 0.0);
-  StdFace_PrintVal_d("direct[1][0]", &StdI->direct[1][0], 0.0);
-  StdFace_PrintVal_d("direct[1][1]", &StdI->direct[1][1], StdI->length[1]);
-  
+  StdFace_PrintVal_d("Wlength", &StdI->length[0], StdI->a);
+  StdFace_PrintVal_d("Llength", &StdI->length[1], StdI->a);
+  StdFace_PrintVal_d("Wx", &StdI->direct[0][0], StdI->length[0]);
+  StdFace_PrintVal_d("Wy", &StdI->direct[0][1], 0.0);
+  StdFace_PrintVal_d("Lx", &StdI->direct[1][0], 0.0);
+  StdFace_PrintVal_d("Ly", &StdI->direct[1][1], StdI->length[1]);
+
   StdFace_RequiredVal_i("L", StdI->L);
   StdFace_NotUsed_i("W", StdI->W);
   StdI->W = 1;
   StdFace_InitSite2D(StdI, fp);
-  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0;
+  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; StdI->tau[0][2] = 0.0;
   /**/
-  StdFace_PrintVal_d("phase0", &StdI->phase0, 0.0);
-  StdFace_NotUsed_d("phase1", StdI->phase1);
-  StdI->phase1 = StdI->phase0;
-  StdI->phase0 = 0.0;
-  StdI->ExpPhase0 = cos(StdI->pi180 * StdI->phase0) + I*sin(StdI->pi180 * StdI->phase0);
-  StdI->ExpPhase1 = cos(StdI->pi180 * StdI->phase1) + I*sin(StdI->pi180 * StdI->phase1);
-  if (cabs(StdI->ExpPhase0 + 1.0) < 0.000001) StdI->AntiPeriod0 = 1;
-  else StdI->AntiPeriod0 = 0;
-  if (cabs(StdI->ExpPhase1 + 1.0) < 0.000001) StdI->AntiPeriod1 = 1;
-  else StdI->AntiPeriod1 = 0;
+  StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
+  StdFace_NotUsed_d("phase1", StdI->phase[1]);
+  StdI->phase[1] = StdI->phase[0];
+  StdI->phase[0] = 0.0;
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
@@ -191,27 +185,27 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
     /*
     Nearest neighbor
    */
-    StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, 0, 0, &isite, &jsite, 1, &phase);
+    StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, 0, 0, &isite, &jsite, 1, &Cphase);
     if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, phase * StdI->t0, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
     Second nearest neighbor
     */
-    StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, 0, 0, &isite, &jsite, 2, &phase);
+    StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, 0, 0, &isite, &jsite, 2, &Cphase);
     if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, phase * StdI->tp, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, 1);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
   }/*for (iL = 0; iL < StdI->L; iL++)*/

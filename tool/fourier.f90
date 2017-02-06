@@ -5,8 +5,8 @@ MODULE fourier_val
   INTEGER,SAVE :: &
   & calctype, & ! (0) Lanczos (1) TPQ (2) FullDiag (3) LOBCG (4) mVMC
   & nwfc, & ! Number of state
-  & avec(2,2), & ! Supercell index
-  & bvec(2,2), & ! Reciplocal Superlattice Vector times nk
+  & box(3,3), & ! Supercell index
+  & rbox(3,3), & ! Reciplocal Superlattice Vector times nk
   & nsite,   & ! Number of sites
   & ncor1,   & ! Nomber of One-body Correlation function
   & ncor2,   & ! Number of Two-body Correlation function
@@ -16,8 +16,8 @@ MODULE fourier_val
   & nk         ! Number of k to be computed
   !
   REAL(8),SAVE :: &
-  & direct(2,2), & ! Direct lattice vector
-  & recipr(2,2)    ! Reciprocal lattice vector
+  & direct(3,3), & ! Direct lattice vector
+  & recipr(3,3)    ! Reciprocal lattice vector
   !
   CHARACTER(256),SAVE :: &
   & filehead, & ! Filename header for correlation functions
@@ -29,9 +29,9 @@ MODULE fourier_val
   & equiv(:)      ! (nktot) Equivalent k point in the 1st BZ
   !
   REAL(8),ALLOCATABLE,SAVE :: &
-  & kvec(:,:), & ! (2,nk) k-vector in the 1st BZ
-  & kvec_tot(:,:), & ! (2,nktot) k-vector in the lerger area
-  & site(:,:)    ! (2,nsite) Site geometry in the fractional coordinate
+  & kvec(:,:), & ! (3,nk) k-vector in the 1st BZ
+  & kvec_tot(:,:), & ! (3,nktot) k-vector in the lerger area
+  & site(:,:)    ! (3,nsite) Site geometry in the fractional coordinate
   !
   COMPLEX(8),ALLOCATABLE,SAVE :: &
   & cor(:,:,:,:), & ! (nsite,nsite,6,nwfc) Correlation function in real space (See below)
@@ -269,14 +269,14 @@ END SUBROUTINE read_filename
 !
 SUBROUTINE read_geometry()
   !
-  USE fourier_val, ONLY : direct, recipr, avec, bvec, nsite, site, nk
+  USE fourier_val, ONLY : direct, recipr, box, rbox, nsite, site, nk
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, isite
-  REAL(8) :: det
+  INTEGER :: fi = 10, isite, ii, jj
+  REAL(8) :: det, phase(3)
   CHARACTER(256) :: filename
   !
-  ALLOCATE(site(2,nsite))
+  ALLOCATE(site(3,nsite))
   !
   WRITE(*,*) 
   WRITE(*,*) "#####  Read Geometry Input File  #####" 
@@ -291,49 +291,80 @@ SUBROUTINE read_geometry()
   !
   ! Direct lattice vector in arbitraly unit
   !
-  READ(fi,*) direct(1:2,1)
-  READ(fi,*) direct(1:2,2)
+  DO ii = 1, 3
+     READ(fi,*) direct(1:3,ii)
+  END DO
   WRITE(*,*) "    Direct LATTICE VECTOR :"
-  WRITE(*,'(4x2f15.10)') direct(1:2, 1:2)
+  WRITE(*,'(4x3f15.10)') direct(1:3, 1:3)
+  !
+  ! Bondary phase
+  !
+  READ(fi,*) phase(1:3)  
   !
   ! Supercell index (a0w, a0l, a1w, a1l)
   !
-  READ(fi,*) avec(1:2,1)
-  READ(fi,*) avec(1:2,2)
+  DO ii = 1, 3
+     READ(fi,*) box(1:3,ii)
+  END DO
   WRITE(*,*) "    Supercell Index :"
-  WRITE(*,'(2i8)') avec(1:2, 1:2)
+  WRITE(*,'(3i8)') box(1:3, 1:3)
   !
   DO isite = 1, nsite
-     READ(fi,*) site(1:2,isite)
+     READ(fi,*) site(1:3,isite)
   END DO
   !
   CLOSE(fi)
   !
+  ! The number of k in the 1st BZ
+  !
+  nk = 0
+  DO ii = 1, 3
+     nk = nk &
+     &  + box(ii,1) * box(MOD(ii,     3) + 1, 2) * box(MOD(ii + 1, 3) + 1, 3) &
+     &  - box(ii,1) * box(MOD(ii + 1, 3) + 1, 2) * box(MOD(ii,     3) + 1, 3)
+  END DO
+  !
   ! Compute reciprocal SuperLattice Vector
   !
-  nk = avec(1,1) * avec(2,2) - avec(1,2) * avec(2,1)
-  bvec(1:2,1) = (/  avec(2,2), - avec(1,2)/)
-  bvec(1:2,2) = (/- avec(2,1),   avec(1,1)/)
+  DO ii = 1, 3
+     DO jj = 1, 3
+        rbox(jj, ii) = &
+        &   box(MOD(jj,     3) + 1, MOD(ii, 3) + 1) * box(MOD(jj + 1, 3) + 1, MOD(ii + 1, 3) + 1) &
+        & - box(MOD(jj + 1, 3) + 1, MOD(ii, 3) + 1) * box(MOD(jj,     3) + 1, MOD(ii + 1, 3) + 1)
+     END DO
+  END DO
+  !
   IF(nk < 0) THEN
      nk = -nk
-     bvec(1:2,1:2) = - bvec(1:2,1:2)
+     rbox(1:3,1:3) = - rbox(1:3,1:3)
   END IF
   WRITE(*,*) "    Number of k point : ", nk
   WRITE(*,*) "    Reciprocal superlattice vector (times nk) :"
-  WRITE(*,'(2i8)') bvec(1:2, 1:2)
+  WRITE(*,'(3i8)') rbox(1:3, 1:3)
   !
   ! Compute Reciprocal Lattice Vector
   !
-  det = direct(1,1) * direct(2,2) - direct(1,2) * direct(2,1)
-  recipr(1:2,1) = (/  direct(2,2), - direct(1,2)/) / det
-  recipr(1:2,2) = (/- direct(2,1),   direct(1,1)/) / det
+  det = 0d0
+  DO ii = 1, 3
+     det = det &
+     &  + direct(ii,1) * direct(MOD(ii,     3) + 1, 2) * direct(MOD(ii + 1, 3) + 1, 3) &
+     &  - direct(ii,1) * direct(MOD(ii + 1, 3) + 1, 2) * direct(MOD(ii,     3) + 1, 3)
+  END DO
+  !
+  ! Compute reciprocal SuperLattice Vector
+  !
+  DO ii = 1, 3
+     DO jj = 1, 3
+        recipr(jj, ii) = &
+        &   direct(MOD(jj,     3) + 1, MOD(ii, 3) + 1) * direct(MOD(jj + 1, 3) + 1, MOD(ii + 1, 3) + 1) &
+        & - direct(MOD(jj + 1, 3) + 1, MOD(ii, 3) + 1) * direct(MOD(jj,     3) + 1, MOD(ii + 1, 3) + 1)
+     END DO
+  END DO
+  recipr(1:3, 1:3) = recipr(1:3, 1:3) / det
   WRITE(*,*) "    Reciplocal lattice vector :"
-  WRITE(*,'(4x2f15.10)') recipr(1:2, 1:2)
+  WRITE(*,'(4x3f15.10)') recipr(1:3, 1:3)
   !
   RETURN
-  !
-10 WRITE(*,*) "Stop in reading namelist FOURIER !"
-  STOP
   !
 END SUBROUTINE read_geometry
 !
@@ -341,50 +372,60 @@ END SUBROUTINE read_geometry
 !
 SUBROUTINE set_kpoints()
   !
-  USE fourier_val, ONLY : avec, bvec, nk, nktot, kvec, kvec_tot, equiv, nk_row
+  USE fourier_val, ONLY : box, rbox, nk, nktot, kvec, kvec_tot, equiv, nk_row
   !
   IMPLICIT NONE
   !
-  INTEGER :: imax(2), imin(2), i1, i2, ii, edge(2,4), nk0, ik, jk, idim
+  INTEGER :: imax(3), imin(3), i1, i2, i3, ii, edge(3,8), nk0, ik, jk, idim, ikvec0(3)
   INTEGER,ALLOCATABLE :: ikvec(:,:), ikvec_tot(:,:)
+  REAL(8) :: kvec0(3)
   !
   ! Define range of k-grid index spanning [-1:1] in fractional BZ
   !
   ii = 0
-  DO i2 = -1, 1, 2
-     DO i1 = -1, 1, 2
-        ii = ii + 1
-        edge(1:2,ii) = MATMUL((/i1, i2/), avec(1:2,1:2))
+  DO i3 = -1, 1, 2
+     DO i2 = -1, 1, 2
+        DO i1 = -1, 1, 2
+           ii = ii + 1
+           edge(1:3,ii) = MATMUL((/i1, i2, i3/), box(1:3,1:3))
+        END DO
      END DO
   END DO
   !
-  DO idim = 1, 2
-     imin(idim) = MINVAL(edge(idim,1:4))
-     imax(idim) = MAXVAL(edge(idim,1:4))
+  DO idim = 1, 3
+     imin(idim) = MINVAL(edge(idim,1:8))
+     imax(idim) = MAXVAL(edge(idim,1:8))
   END DO
   !
-  nktot = PRODUCT(imax(1:2) - imin(1:2) + 1)
+  nktot = PRODUCT(imax(1:3) - imin(1:3) + 1)
   nk_row = imax(1) - imin(1) + 1
-  ALLOCATE(kvec(2,nk), ikvec(2,nk))
-  ALLOCATE(kvec_tot(2,nktot), ikvec_tot(2,nktot), equiv(nktot))
+  ALLOCATE(kvec(3,nk), ikvec(3,nk))
+  ALLOCATE(kvec_tot(3,nktot), ikvec_tot(3,nktot), equiv(nktot))
   !
   nk0 = 0
   nktot = 0
-  DO i2 = imin(2), imax(2)
-     DO i1 = imin(1), imax(1)
-        !
-        nktot = nktot + 1
-        ikvec_tot(1:2,nktot) = MATMUL(bvec(1:2,1:2), (/i1, i2/))
-        kvec_tot( 1:2,nktot) = DBLE(ikvec_tot(1:2,nktot)) / DBLE(nk)
-        !
-        ! Only k-vectors in the 1st BZ is used in the fourier trans.
-        !
-        IF(ALL(0 <= ikvec_tot(1:2,nktot)) .AND. ALL(ikvec_tot(1:2,nktot) < nk)) THEN
-           nk0 = nk0 + 1
-           ikvec(1:2,nk0) = ikvec_tot(1:2,nktot)
-           kvec( 1:2,nk0) = kvec_tot( 1:2,nktot)
-        END IF
-        !
+  DO i3 = imin(3), imax(3)
+     DO i2 = imin(2), imax(2)
+        DO i1 = imin(1), imax(1)
+           !
+           ikvec0(1:3) = MATMUL(rbox(1:3,1:3), (/i1, i2, i3/))
+           kvec0(1:3) = DBLE(ikvec0(1:3)) / DBLE(nk)
+           !
+           ! Only k-vectors in the 1st BZ is used in the fourier trans.
+           !
+           IF(ALL(0 <= ikvec0(1:3)) .AND. ALL(ikvec0(1:3) < nk)) THEN
+              nk0 = nk0 + 1
+              ikvec(1:3,nk0) = ikvec0(1:3)
+              kvec( 1:3,nk0) = kvec0(1:3)
+           END IF
+           !
+           IF(i3 == 0) THEN
+              nktot = nktot + 1
+              ikvec_tot(1:3,nktot) = ikvec0(1:3)
+              kvec_tot( 1:3,nktot) = kvec0(1:3)
+           END IF
+           !
+        END DO
      END DO
   END DO
   WRITE(*,*) "  Number of k : ", nk0 ! Must be the same as nk
@@ -395,7 +436,7 @@ SUBROUTINE set_kpoints()
      !
      DO jk = 1, nk
         !
-        IF(ALL(MODULO(ikvec_tot(1:2,ik), nk) == ikvec(1:2,jk))) THEN
+        IF(ALL(MODULO(ikvec_tot(1:3,ik), nk) == ikvec(1:3,jk))) THEN
            equiv(ik) = jk
            EXIT
         END IF
@@ -627,7 +668,7 @@ SUBROUTINE fourier_cor()
   DO jsite = 1, nsite
      DO isite = 1, nsite
         DO ik = 1, nk
-           theta = - tpi * DOT_PRODUCT(kvec(1:2,ik), (site(1:2,isite) - site(1:2,jsite)))
+           theta = - tpi * DOT_PRODUCT(kvec(1:3,ik), (site(1:3,isite) - site(1:3,jsite)))
            fmat(ik,isite,jsite) = CMPLX(COS(theta), SIN(theta), KIND(1d0))
         END DO
      END DO
@@ -661,7 +702,7 @@ SUBROUTINE output_cor()
   WRITE(*,*) "#####  Output Files  #####" 
   WRITE(*,*) 
   !
-  WRITE(*,*) "  Correlation in k-space : ", "output/" // TRIM(filehead) // "_corr", "*.dat"
+  WRITE(*,*) "  Correlation in k-space : ", TRIM(filehead) // "_corr", "*.dat"
   !
   IF(calctype == 4) THEN
      !
@@ -696,11 +737,11 @@ SUBROUTINE output_cor()
      OPEN(fo, file = TRIM(filename))
      !
      WRITE(fo,*) "#mVMC", nk
-     WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4,15,16] (Re. Im. Err.) DownDown[5,6,17,18]"
-     WRITE(fo,*) "# Density[7:8,19,20] SzSz[9,10,21,22] S+S-[11,12,23,24] S-S+[13,14,25.26]"
+     WRITE(fo,*) "# kx[1] ky[2] kz[3](Cart.) UpUp[4,5,16,17] (Re. Im. Err.) DownDown[6,7,18,19]"
+     WRITE(fo,*) "# Density[8,9,20,21] SzSz[10,11,22,23] S+S-[12,13,24,25] S-S+[14,15,26.27]"
      !
      DO ik = 1, nk
-        WRITE(fo,'(26e15.5)') tpi * MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), &
+        WRITE(fo,'(27e15.5)') tpi * MATMUL(recipr(1:3,1:3), kvec(1:3,ik)), &
         &                     cor_ave(ik,1:6), cor_err(ik,1:6)
      END DO
      !
@@ -718,11 +759,11 @@ SUBROUTINE output_cor()
         OPEN(fo, file = TRIM(filename))
         !
         WRITE(fo,*) "#HPhi", nk
-        WRITE(fo,*) "# k1[1] k2[2](Cart.) UpUp[3,4] (Re. Im.) DownDown[5,6]"
-        WRITE(fo,*) "# Density[7:8] SzSz[9,10] S+S-[11,12] S-S+[13,14]"
+        WRITE(fo,*) "# kx[1] ky[2] kz[3](Cart.) UpUp[4,5] (Re. Im.) DownDown[6,7]"
+        WRITE(fo,*) "# Density[8,9] SzSz[10,11] S+S-[12,13] S-S+[14,15]"
         !
         DO ik = 1, nk
-           WRITE(fo,'(14e15.5)') tpi * MATMUL(recipr(1:2,1:2), kvec(1:2,ik)), cor_k(ik,1:6,iwfc)
+           WRITE(fo,'(15e15.5)') tpi * MATMUL(recipr(1:3,1:3), kvec(1:3,ik)), cor_k(ik,1:6,iwfc)
         END DO
         !
         CLOSE(fo)
@@ -736,12 +777,12 @@ SUBROUTINE output_cor()
   OPEN(fo, file = "kpoints.dat")
   !
   WRITE(fo,*) nktot, nk_row
-  DO idim = 1, 2
-     WRITE(fo,'(3e15.5)') tpi * recipr(1:2,idim)
+  DO idim = 1, 3
+     WRITE(fo,'(3e15.5)') tpi * recipr(1:3,idim)
   END DO
   !
   DO ik = 1, nktot
-     WRITE(fo,'(2e15.5,i7)') tpi * MATMUL(recipr(1:2,1:2), kvec_tot(1:2,ik)), equiv(ik)
+     WRITE(fo,'(3e15.5,i7)') tpi * MATMUL(recipr(1:3,1:3), kvec_tot(1:3,ik)), equiv(ik)
   END DO
   !
   CLOSE(fo)

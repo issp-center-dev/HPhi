@@ -85,15 +85,9 @@ struct StdIntList {
    Phase for the boundary
   */
   double pi180;
-  double phase0;
-  double phase1;
-  double phase2;
-  double complex ExpPhase0;
-  double complex ExpPhase1;
-  double complex ExpPhase2;
-  int AntiPeriod0;
-  int AntiPeriod1;
-  int AntiPeriod2;
+  double phase[3];
+  double complex ExpPhase[3];
+  int AntiPeriod[3];
   /*
    Transfer, Interaction, Locspin
   */
