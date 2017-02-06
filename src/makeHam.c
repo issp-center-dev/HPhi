@@ -15,7 +15,9 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <bitcalc.h>
-#include "mltply.h"
+#include "mltplyCommon.h"
+#include "mltplyHubbardCore.h"
+#include "mltplySpinCore.h"
 #include "makeHam.h"
 #include "wrapperMPI.h"
 

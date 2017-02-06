@@ -13,34 +13,15 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-#pragma once
 
-//static unsigned long int mfint[7];/*for malloc*/
+#ifndef HPHI_MLTPLYCOMMON_H
+#define HPHI_MLTPLYCOMMON_H
 
-void setmem_HEAD
-(
- struct BindStruct *X
- );
+#define M_MLTPLY 0
+#define M_ENERGY 1
+#define M_Ham 2
+#define M_CORR 3
+#define M_TOTALS 4
+#define M_CALCSPEC 4
 
-void setmem_def
-(
- struct BindStruct *X,
- struct BoostList *xBoost
-);
-
-int setmem_large
-(
- struct BindStruct *X
-);
-
-
-int GetlistSize
-        (
-         struct BindStruct *X
-        );
-
-
-void setmem_IntAll_Diagonal
-(
- struct DefineList *X
-);
+#endif /* HPHI_MLTPLYCOMMON_H */

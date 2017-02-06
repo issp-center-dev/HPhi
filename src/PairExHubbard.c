@@ -1,7 +1,10 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
-#include "mltplyMPI.h"
-#include "mltply.h"
+#include "mltplyCommon.h"
+#include "mltplyHubbard.h"
+#include "mltplyHubbardCore.h"
+#include "mltplyMPIHubbard.h"
+#include "mltplyMPIHubbardCore.h"
 #ifdef MPI
 #include "mfmemory.h"
 #endif
@@ -122,16 +125,14 @@ int GetPairExcitedStateHubbard(
 ){
     long unsigned int i,j, idim_maxMPI;
     long unsigned int irght,ilft,ihfbit;
-    long unsigned int isite1;
     long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
     long unsigned int tmp_off=0;
-    long unsigned int off=0;
 
     double complex tmp_trans=0;
     long int i_max;
     int tmp_sgn, num1;
-    long int ibit1, ibit;
-    long unsigned int is1_up, is, Asum, Adiff;
+    long int ibit;
+    long unsigned int is, Asum, Adiff;
     long unsigned int ibitsite1, ibitsite2;
 
     //  i_max = X->Check.idim_max;

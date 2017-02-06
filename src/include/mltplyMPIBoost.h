@@ -13,34 +13,19 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+//Define Mode for mltply
+// complex version
+
 #pragma once
+#include <complex.h>
+#include "struct.h"
 
-//static unsigned long int mfint[7];/*for malloc*/
-
-void setmem_HEAD
+void child_general_int_spin_MPIBoost
 (
- struct BindStruct *X
- );
-
-void setmem_def
-(
- struct BindStruct *X,
- struct BoostList *xBoost
-);
-
-int setmem_large
-(
- struct BindStruct *X
-);
-
-
-int GetlistSize
-        (
-         struct BindStruct *X
-        );
-
-
-void setmem_IntAll_Diagonal
-(
- struct DefineList *X
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1,
+  double complex *tmp_v2,
+  double complex *tmp_v3
 );
