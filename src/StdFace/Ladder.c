@@ -61,19 +61,19 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
   StdFace_NotUsed_i("a1W", StdI->box[1][0]);
   StdFace_NotUsed_i("a1L", StdI->box[1][1]);
   /**/
-  StdI->NsiteUC = StdI->W;
-  StdI->W = 1;
-  StdI->direct[0][0] = (double)StdI->NsiteUC;
-  StdFace_InitSite2D(StdI, fp);
-  for (isite = 0; isite < StdI->NsiteUC; isite++){
-    StdI->tau[isite][0] = (double)isite / (double)StdI->NsiteUC;
-    StdI->tau[isite][1] = 0.0; StdI->tau[isite][2] = 0.0;
-  }
-  /**/
   StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
   StdFace_NotUsed_d("phase1", StdI->phase[1]);
   StdI->phase[1] = StdI->phase[0];
   StdI->phase[0] = 0.0;
+  /**/
+  StdI->NsiteUC = StdI->W;
+  StdI->W = 1;
+  StdI->direct[0][0] = (double)StdI->NsiteUC;
+  StdFace_InitSite(StdI, fp, 2);
+  for (isite = 0; isite < StdI->NsiteUC; isite++){
+    StdI->tau[isite][0] = (double)isite / (double)StdI->NsiteUC;
+    StdI->tau[isite][1] = 0.0; StdI->tau[isite][2] = 0.0;
+  }
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J", StdI->JAll, StdI->J);

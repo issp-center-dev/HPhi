@@ -60,15 +60,15 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
   StdFace_PrintVal_d("Hy", &StdI->direct[2][1], 0.5 * StdI->length[2]);
   StdFace_PrintVal_d("Hz", &StdI->direct[2][2], 0.0);
 
-  StdFace_InitSite3D(StdI, fp);
+  StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
+  StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
+  StdFace_PrintVal_d("phase2", &StdI->phase[2], 0.0);
+  /**/
+  StdFace_InitSite(StdI, fp, 3);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; ; StdI->tau[0][2] = 0.0;
   StdI->tau[1][0] = 0.5; StdI->tau[1][1] = 0.0; ; StdI->tau[1][2] = 0.0;
   StdI->tau[2][0] = 0.0; StdI->tau[2][1] = 0.5; ; StdI->tau[2][2] = 0.0;
   StdI->tau[3][0] = 0.0; StdI->tau[3][1] = 0.0; ; StdI->tau[3][2] = 0.5;
-  /**/
-  StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
-  StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
-  StdFace_PrintVal_d("phase2", &StdI->phase[2], 0.0);
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_d("K", StdI->K);
@@ -217,7 +217,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (2) Intra-Cell along W
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 0, 0, 1, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 1, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
@@ -229,7 +229,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (3) Intra-Cell along L
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 0, 0, 2, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 2, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -241,7 +241,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (4) Intra-Cell along H
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 0, 0, 3, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 3, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
@@ -253,7 +253,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (5) Intra-Cell along L-H
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 0, 2, 3, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 2, 3, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
@@ -265,7 +265,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (6) Intra-Cell along H-W
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 0, 3, 1, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 3, 1, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
@@ -277,7 +277,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (7) Intra-Cell along W-L
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 0, 1, 2, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 1, 2, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
@@ -289,7 +289,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (8) Inter-Cell along W
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 1, 0, 0, 1, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 0, 1, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
@@ -301,7 +301,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (9) Inter-Cell along L
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 1, 0, 2, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 0, 2, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -313,7 +313,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
      (10) Inter-Cell along H
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 1, 3, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 1, 3, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
@@ -325,7 +325,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
     (11) Inter-Cell along L-H
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, -1, 1, 3, 2, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, -1, 1, 3, 2, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
@@ -337,7 +337,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
     (12) Intra-Cell along H-W
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 1, 0, -1, 1, 3, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, -1, 1, 3, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
@@ -349,7 +349,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     /*
     (13) Intra-Cell along W-L
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, -1, 1, 0, 2, 1, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 0, 2, 1, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);

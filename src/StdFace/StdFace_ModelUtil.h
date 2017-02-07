@@ -50,14 +50,13 @@ void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
 void StdFace_InputCoulombV(struct StdIntList *StdI, double *V0, char *V0name);
 void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name);
 
-void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp);
+void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim);
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC,
   int *isite, int *jsite, int connect, double complex *Cphase);
 void StdFace_PrintGeometry(struct StdIntList *StdI);
 void StdFace_MallocInteractions(struct StdIntList *StdI);
-void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp);
-void StdFace_FindSite3d(struct StdIntList *StdI,
+void StdFace_FindSite(struct StdIntList *StdI,
   int iW, int iL, int iH, int diW, int diL, int diH,
   int isiteUC, int jsiteUC,
   int *isite, int *jsite, double complex *Cphase);

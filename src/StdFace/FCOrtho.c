@@ -60,12 +60,12 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
   StdFace_PrintVal_d("Hy", &StdI->direct[2][1], 0.5 * StdI->length[2]);
   StdFace_PrintVal_d("Hz", &StdI->direct[2][2], 0.0);
 
-  StdFace_InitSite3D(StdI, fp);
-  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; ; StdI->tau[0][2] = 0.0;
-  /**/
   StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
   StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
   StdFace_PrintVal_d("phase2", &StdI->phase[2], 0.0);
+  /**/
+  StdFace_InitSite(StdI, fp, 3);
+  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; ; StdI->tau[0][2] = 0.0;
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_d("K", StdI->K);
@@ -204,7 +204,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (2) Nearest neighbor along W
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 1, 0, 0, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 0, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
@@ -216,7 +216,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (3) Nearest neighbor along W
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 1, -1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, -1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
@@ -228,7 +228,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (4) Nearest neighbor along L
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 1, 0, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 0, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -240,7 +240,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (5) Nearest neighbor along L
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, -1, 1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -252,7 +252,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (6) Nearest neighbor along H
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 0, 0, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
@@ -264,7 +264,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (7) Nearest neighbor along H
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 1, -1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
@@ -276,7 +276,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (8) Second nearest neighbor along -W+L+H
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, -1, 1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
@@ -288,7 +288,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (9) Second nearest neighbor along -L+H+W
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 1, -1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
@@ -300,7 +300,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     /*
      (10) Second nearest neighbor along -H+W+L
     */
-    StdFace_FindSite3d(StdI, iW, iL, iH, 1, 1, -1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 1, -1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);

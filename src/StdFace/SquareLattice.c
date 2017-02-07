@@ -56,11 +56,11 @@ void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
   StdFace_PrintVal_d("Lx", &StdI->direct[1][0], 0.0);
   StdFace_PrintVal_d("Ly", &StdI->direct[1][1], StdI->length[1]);
   
-  StdFace_InitSite2D(StdI, fp);
-  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; StdI->tau[0][2] = 0.0;
-  /**/
   StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
   StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
+  /**/
+  StdFace_InitSite(StdI, fp, 2);
+  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; StdI->tau[0][2] = 0.0;
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);

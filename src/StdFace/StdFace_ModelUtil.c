@@ -464,318 +464,13 @@ void StdFace_RequiredVal_i(
   }
   else fprintf(stdout, "  %15s = %-3d\n", valname, val);
 }
-
 /**
 *
 * Define whether the specified site is in the unit cell or not.
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void StdFace_FoldSite2D(struct StdIntList *StdI,
-  int iCellV[2], int nBox[2], int iCellV_fold[2])
-{
-  int iCellV_frac[2], ii;
-  /*
-   Transform to fractional coordinate (times NCell)
-  */
-  for (ii = 0; ii < 2; ii++)
-    iCellV_frac[ii] = StdI->rbox[ii][0] * iCellV[0] + StdI->rbox[ii][1] * iCellV[1];
-  /*
-   Which supercell contains this cell
-  */
-  for (ii = 0; ii < 2; ii++)
-    nBox[ii] = (iCellV_frac[ii] + StdI->NCell * 1000) / StdI->NCell - 1000;
-  /*
-   Fractional coordinate (times NCell) in the original supercell
-  */
-  for (ii = 0; ii < 2; ii++)
-    iCellV_frac[ii] -= StdI->NCell*(nBox[ii]);
-  /**/
-  for (ii = 0; ii < 2; ii++) {
-    iCellV_fold[ii] = StdI->box[0][ii] * iCellV_frac[0] + StdI->box[1][ii] * iCellV_frac[1];
-    iCellV_fold[ii] = (iCellV_fold[ii] + StdI->NCell * 1000) / StdI->NCell - 1000;
-  }
-}
-
-/**
-*
-* Initialize Cell
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
-*/
-void StdFace_InitSite2D(struct StdIntList *StdI, FILE *fp)
-{
-  int bound[2][2], edge, ii, jj;
-  int ipos;
-  int nBox[2], iCellV_fold[2], iCellV[2];
-  double pos[4][2], xmin, xmax/*, offset[2], scale*/;
-  /*
-   check Input parameters
-  */
-  if ((StdI->L != 9999 || StdI->W != 9999)
-    && (StdI->box[0][1] != 9999 || StdI->box[0][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][0] != 9999)) {
-    fprintf(stdout, "\nERROR ! (L, W) and (a0W, a0L, a1W, a1L) conflict !\n\n");
-    StdFace_exit(-1);
-  }
-  else if (StdI->L != 9999 || StdI->W != 9999) {
-    if (StdI->L == 9999 || StdI->W == 9999) {
-      fprintf(stdout, "\nERROR ! Both W and L MUST be specified !\n\n");
-      StdFace_exit(-1);
-    }
-    StdFace_PrintVal_i("L", &StdI->L, 1);
-    StdFace_PrintVal_i("W", &StdI->W, 1);
-    StdI->box[0][0] = StdI->W;
-    StdI->box[0][1] = 0;
-    StdI->box[1][0] = 0;
-    StdI->box[1][1] = StdI->L;
-  }
-  else if (StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || 
-           StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999) 
-  {
-    if (StdI->box[0][0] == 9999 || StdI->box[0][1] == 9999 ||
-        StdI->box[1][0] == 9999 || StdI->box[1][1] == 9999) {
-      fprintf(stdout, "\nERROR ! Both a0W, a0L, a1W, a1L MUST be specified !\n\n");
-      StdFace_exit(-1);
-    }
-    StdFace_PrintVal_i("a0W", &StdI->box[0][0], 1);
-    StdFace_PrintVal_i("a0L", &StdI->box[0][1], 0);
-    StdFace_PrintVal_i("a1W", &StdI->box[1][0], 0);
-    StdFace_PrintVal_i("a1L", &StdI->box[1][1], 1);
-  }
-  /*
-   Parameters for the 3D system will not used.
-  */
-  StdI->box[0][2] = 0;
-  StdI->box[1][2] = 0;
-  StdI->box[2][0] = 0;
-  StdI->box[2][1] = 0;
-  StdI->box[2][2] = 1;
-  StdI->direct[0][2] = 0.0;
-  StdI->direct[1][2] = 0.0;
-  StdI->direct[2][0] = 0.0;
-  StdI->direct[2][1] = 0.0;
-  StdI->direct[2][2] = 1.0;
-  /*
-   Define the phase factor at the boundary
-  */
-  StdI->ExpPhase[0] = cos(StdI->pi180 * StdI->phase[0]) + I*sin(StdI->pi180 * StdI->phase[0]);
-  StdI->ExpPhase[1] = cos(StdI->pi180 * StdI->phase[1]) + I*sin(StdI->pi180 * StdI->phase[1]);
-  if (cabs(StdI->ExpPhase[0] + 1.0) < 0.000001) StdI->AntiPeriod[0] = 1;
-  else StdI->AntiPeriod[0] = 0;
-  if (cabs(StdI->ExpPhase[1] + 1.0) < 0.000001) StdI->AntiPeriod[1] = 1;
-  else StdI->AntiPeriod[1] = 0;
-  StdI->phase[2] = 0.0;
-  StdI->ExpPhase[2] = 1.0;
-  StdI->AntiPeriod[2] = 1;
-  /*
-   Structure in a cell
-  */
-  StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
-  for (ii = 0; ii < StdI->NsiteUC; ii++) {
-    StdI->tau[ii] = (double *)malloc(sizeof(double) * 3);
-  }
-  /*
-   Calculate reciprocal lattice vectors (times NCell)
-  */
-  StdI->NCell = StdI->box[0][0] * StdI->box[1][1] - StdI->box[0][1] * StdI->box[1][0];
-  printf("         Number of Cell : %d\n", abs(StdI->NCell));
-  if (StdI->NCell == 0) {
-    StdFace_exit(-1);
-  }
-
-  StdI->rbox[0][0] = StdI->box[1][1];
-  StdI->rbox[0][1] = - StdI->box[1][0];
-  StdI->rbox[1][0] = - StdI->box[0][1];
-  StdI->rbox[1][1] = StdI->box[0][0];
-  if (StdI->NCell < 0) {
-    for (ii = 0; ii < 2; ii++) 
-      for (jj = 0; jj < 2; jj++)
-        StdI->rbox[ii][jj] *= -1;
-    StdI->NCell *= -1;
-  }/*if (StdI->NCell < 0)*/
-  /*
-   Find the lower- and the upper bound for surrowndinf the simulation box
-  */
-  for (ii = 0; ii < 2; ii++) {
-    bound[ii][0] = 0;
-    bound[ii][1] = 0;
-    for (nBox[1] = 0; nBox[1] < 2; nBox[1]++) {
-      for (nBox[0] = 0; nBox[0] < 2; nBox[0]++) {
-        edge = nBox[0] * StdI->box[0][ii] + nBox[1] * StdI->box[1][ii];
-        if (edge < bound[ii][0]) bound[ii][0] = edge;
-        if (edge > bound[ii][1]) bound[ii][1] = edge;
-      }
-    }
-  }
-  /*
-   Find Cells in the Simulation Box
-  */
-  StdI->Cell = (int **)malloc(sizeof(int*) * StdI->NCell);
-  for (ii = 0; ii < StdI->NCell; ii++) {
-    StdI->Cell[ii] = (int *)malloc(sizeof(int) * 3);
-  }/*for (iCell = 0; iCell < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); iCell++)*/
-
-  jj = 0;
-  for (iCellV[1] = bound[1][0]; iCellV[1] <= bound[1][1]; iCellV[1]++) {
-    for (iCellV[0] = bound[0][0]; iCellV[0] <= bound[0][1]; iCellV[0]++) {
-      StdFace_FoldSite2D(StdI, iCellV, nBox, iCellV_fold);
-      if (nBox[0] == 0 && nBox[1] == 0) {
-        StdI->Cell[jj][0] = iCellV[0];
-        StdI->Cell[jj][1] = iCellV[1];
-        StdI->Cell[jj][2] = 0;
-        jj += 1;
-      }/*if (lUC == 1)*/
-    }/*for (iW = Wmin; iW <= Wmax; iW++*/
-  }/*for (iL = Lmin; iL <= Lmax; iL++)*/
-  /*
-   Initialize gnuplot
-  */
-  pos[0][0] = 0.0;
-  pos[0][1] = 0.0;
-  pos[1][0] = StdI->direct[0][0] * (double)StdI->box[0][0] + StdI->direct[1][0] * (double)StdI->box[0][1];
-  pos[1][1] = StdI->direct[0][1] * (double)StdI->box[0][0] + StdI->direct[1][1] * (double)StdI->box[0][1];
-  pos[2][0] = StdI->direct[0][0] * (double)StdI->box[1][0] + StdI->direct[1][0] * (double)StdI->box[1][1];
-  pos[2][1] = StdI->direct[0][1] * (double)StdI->box[1][0] + StdI->direct[1][1] * (double)StdI->box[1][1];
-  pos[3][0] = pos[1][0] + pos[2][0];
-  pos[3][1] = pos[1][1] + pos[2][1];
-  /**/
-  /*
-  scale = sqrt((double)((StdI->box[0][0] + StdI->box[1][0])*(StdI->box[0][0] + StdI->box[1][0])
-                      + (StdI->box[0][1] + StdI->box[1][1])*(StdI->box[0][1] + StdI->box[1][1])));
-  scale = 0.5 / scale;
-  offset[0] = pos[3][0] * scale;
-  offset[1] = pos[3][1] * scale;
-  
-  for (ipos = 0; ipos < 4; ipos++) {
-    pos[ipos][0] -= offset[0];
-    pos[ipos][1] -= offset[1];
-  }
-  */
-  /**/
-  xmin = 0.0;
-  xmax = 0.0;
-  for (ipos = 0; ipos < 4; ipos++) {
-    if (pos[ipos][0] < xmin) xmin = pos[ipos][0];
-    if (pos[ipos][0] > xmax) xmax = pos[ipos][0];
-    if (pos[ipos][1] < xmin) xmin = pos[ipos][1];
-    if (pos[ipos][1] > xmax) xmax = pos[ipos][1];
-  }
-  xmin -= 2.0;
-  xmax += 2.0;
-
-  fprintf(fp, "#set terminal pdf color enhanced \\\n");
-  fprintf(fp, "#dashed dl 1.0 size 20.0cm, 20.0cm \n");
-  fprintf(fp, "#set output \"lattice.pdf\"\n");
-  fprintf(fp, "set xrange [%f: %f]\n", xmin, xmax);
-  fprintf(fp, "set yrange [%f: %f]\n", xmin, xmax);
-  fprintf(fp, "set size square\n");
-  fprintf(fp, "unset key\n");
-  fprintf(fp, "unset tics\n");
-  fprintf(fp, "unset border\n");
-
-  fprintf(fp, "set style line 1 lc 1 lt 1\n");
-  fprintf(fp, "set style line 2 lc 5 lt 1\n");
-  fprintf(fp, "set style line 3 lc 0 lt 1\n");
-
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[0][0], pos[0][1], pos[1][0], pos[1][1]);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[1][0], pos[1][1], pos[3][0], pos[3][1]);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[3][0], pos[3][1], pos[2][0], pos[2][1]);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[2][0], pos[2][1], pos[0][0], pos[0][1]);
-
-}/*void StdFace_InitSite2D*/
-/*
- * Set Label in the gnuplot display
- */
-void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp, 
-  int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC, 
-  int *isite, int *jsite, int connect, double complex *Cphase)
-{
-  int iCell, jCell, kCell;
-  int nBox[2];
-  int jCellV_fold[2], jCellV[2];
-  double xi, yi, xj, yj;
-  /*
-   Reversed
-  */
-  jCellV[0] = iW - diW;
-  jCellV[1] = iL - diL;
-  StdFace_FoldSite2D(StdI, jCellV, nBox, jCellV_fold);
-  /**/
-  for (kCell = 0; kCell < StdI->NCell; kCell++) {
-    if (jCellV_fold[0] == StdI->Cell[kCell][0] && jCellV_fold[1] == StdI->Cell[kCell][1]) {
-      jCell = kCell;
-    }
-    if (iW == StdI->Cell[kCell][0] && iL == StdI->Cell[kCell][1]) {
-      iCell = kCell;
-    }
-  }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
-  *isite = iCell * StdI->NsiteUC + jsiteUC;
-  *jsite = jCell * StdI->NsiteUC + isiteUC;
-  if (strcmp(StdI->model, "kondo") == 0) {
-    *isite += StdI->NCell * StdI->NsiteUC;
-    *jsite += StdI->NCell * StdI->NsiteUC;
-  }
-
-  xi = StdI->direct[0][0] * ((double)iW + StdI->tau[jsiteUC][0])
-     + StdI->direct[1][0] * ((double)iL + StdI->tau[jsiteUC][1]);
-  yi = StdI->direct[0][1] * ((double)iW + StdI->tau[jsiteUC][0])
-     + StdI->direct[1][1] * ((double)iL + StdI->tau[jsiteUC][1]);
-
-  xj = StdI->direct[0][0] * ((double)jCellV[0] + StdI->tau[isiteUC][0])
-     + StdI->direct[1][0] * ((double)jCellV[1] + StdI->tau[isiteUC][1]);
-  yj = StdI->direct[0][1] * ((double)jCellV[0] + StdI->tau[isiteUC][0])
-     + StdI->direct[1][1] * ((double)jCellV[1] + StdI->tau[isiteUC][1]);
-
-  if (*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
-  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
-  /*
-  */
-  jCellV[0] = iW + diW;
-  jCellV[1] = iL + diL;
-  StdFace_FoldSite2D(StdI, jCellV, nBox, jCellV_fold);
-  *Cphase = cpow(StdI->ExpPhase[0], (double)nBox[0]) * cpow(StdI->ExpPhase[1], (double)nBox[1]);
-  /**/
-  for (kCell = 0; kCell < StdI->NCell; kCell++) {
-    if (jCellV_fold[0] == StdI->Cell[kCell][0] && jCellV_fold[1] == StdI->Cell[kCell][1]) {
-      jCell = kCell;
-    }
-    if (iW == StdI->Cell[kCell][0] && iL == StdI->Cell[kCell][1]) {
-      iCell = kCell;
-    }
-  }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
-  *isite = iCell * StdI->NsiteUC + isiteUC;
-  *jsite = jCell * StdI->NsiteUC + jsiteUC;
-  if (strcmp(StdI->model, "kondo") == 0) {
-    *isite += StdI->NCell * StdI->NsiteUC;
-    *jsite += StdI->NCell * StdI->NsiteUC;
-  }
-
-  xi = StdI->direct[1][0] * ((double)iL + StdI->tau[isiteUC][1])
-     + StdI->direct[0][0] * ((double)iW + StdI->tau[isiteUC][0]);
-  yi = StdI->direct[1][1] * ((double)iL + StdI->tau[isiteUC][1])
-     + StdI->direct[0][1] * ((double)iW + StdI->tau[isiteUC][0]);
-
-  xj = StdI->direct[0][0] * ((double)jCellV[0] + StdI->tau[jsiteUC][0])
-     + StdI->direct[1][0] * ((double)jCellV[1] + StdI->tau[jsiteUC][1]);
-  yj = StdI->direct[0][1] * ((double)jCellV[0] + StdI->tau[jsiteUC][0])
-     + StdI->direct[1][1] * ((double)jCellV[1] + StdI->tau[jsiteUC][1]);
-
-  if(*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
-  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
-  else fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
-}/*void StdFace_SetLabel*/
- /**
- *
- * Define whether the specified site is in the unit cell or not.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void StdFace_FoldSite3D(struct StdIntList *StdI,
+static void StdFace_FoldSite(struct StdIntList *StdI,
   int iCellV[3], int nBox[3], int iCellV_fold[3])
 {
   int ii, jj, iCellV_frac[3];
@@ -789,7 +484,7 @@ static void StdFace_FoldSite3D(struct StdIntList *StdI,
   /*
   Which supercell contains this cell
   */
-  for (ii = 0; ii < 3; ii++) 
+  for (ii = 0; ii < 3; ii++)
     nBox[ii] = (iCellV_frac[ii] + StdI->NCell * 1000) / StdI->NCell - 1000;
   /*
   Fractional coordinate (times NCell) in the original supercell
@@ -804,33 +499,37 @@ static void StdFace_FoldSite3D(struct StdIntList *StdI,
   }
 }
 /**
- *
- * Initialize Cell
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
+*
+* Initialize Cell
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim)
 {
-  int ii, jj, edge;
-  int bound[3][2], iCellV[3], nBox[3], iCellV_fold[3];
+  int bound[3][2], edge, ii, jj;
+  int ipos;
+  int nBox[3], iCellV_fold[3], iCellV[3];
+  double pos[4][2], xmin, xmax/*, offset[2], scale*/;
   /*
-  check Input parameters
+   check Input parameters
   */
-  printf("debug %d %d %d\n", StdI->L, StdI->W, StdI->Height);
-  printf("debug %d %d %d\n", StdI->box[0][0], StdI->box[0][1], StdI->box[0][2]);
-  printf("debug %d %d %d\n", StdI->box[1][0], StdI->box[1][1], StdI->box[1][2]);
-  printf("debug %d %d %d\n", StdI->box[2][0], StdI->box[2][1], StdI->box[2][2]);
-  if ((StdI->L != 9999 || StdI->W != 9999 || StdI->Height != 9999)
-    && (StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 || 
-        StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][2] != 9999 ||
-        StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999)) 
+  if (
+    (StdI->L != 9999 || StdI->W != 9999 || StdI->Height != 9999)
+    && 
+    (StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 ||
+     StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][2] != 9999 ||
+     StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999)
+    )
   {
     fprintf(stdout, "\nERROR ! (L, W, Height) and (a0W, ..., a2H) conflict !\n\n");
     StdFace_exit(-1);
   }
-  else if (StdI->W != 9999 || StdI->L != 9999 || StdI->Height != 9999) {
+  else if (StdI->L != 9999 || StdI->W != 9999 || StdI->Height != 9999)
+  {
+    if (dim == 2) StdI->Height = 1;
+
     if (StdI->L == 9999 || StdI->W == 9999 || StdI->Height == 9999) {
-      fprintf(stdout, "\nERROR ! All of W, L, Height MUST be specified !\n\n");
+      fprintf(stdout, "\nERROR ! Something in W, L, Height is NOT specified !\n\n");
       StdFace_exit(-1);
     }
     StdFace_PrintVal_i("L", &StdI->L, 1);
@@ -843,12 +542,22 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
     StdI->box[2][2] = StdI->Height;
   }
   else if (
-    StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 || 
+    StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 ||
     StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][2] != 9999 ||
-    StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999) {
-    if (StdI->box[0][0] == 9999 || StdI->box[0][1] == 9999 || StdI->box[0][2] == 9999 ||
-        StdI->box[1][0] == 9999 || StdI->box[1][1] == 9999 || StdI->box[1][2] == 9999 ||
-        StdI->box[2][0] == 9999 || StdI->box[2][1] == 9999 || StdI->box[2][2] == 9999) {
+    StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999) 
+  {
+    if (dim == 2) {
+      StdI->box[0][2] = 0;
+      StdI->box[1][2] = 0;
+      StdI->box[2][0] = 0;
+      StdI->box[2][1] = 0;
+      StdI->box[2][2] = 1;
+    }
+    if (
+      StdI->box[0][0] == 9999 || StdI->box[0][1] == 9999 || StdI->box[0][2] == 9999 ||
+      StdI->box[1][0] == 9999 || StdI->box[1][1] == 9999 || StdI->box[1][2] == 9999 ||
+      StdI->box[2][0] == 9999 || StdI->box[2][1] == 9999 || StdI->box[2][2] == 9999) 
+    {
       fprintf(stdout, "\nERROR ! All of a0W, a0L, a0H, a1W, ... MUST be specified !\n\n");
       StdFace_exit(-1);
     }
@@ -863,22 +572,33 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
     StdFace_PrintVal_i("a2H", &StdI->box[2][2], 1);
   }
   /*
-   Define phase factor at the boundary
+   Parameters for the 3D system will not used.
   */
+  if (dim == 2) {
+    StdI->direct[0][2] = 0.0;
+    StdI->direct[1][2] = 0.0;
+    StdI->direct[2][0] = 0.0;
+    StdI->direct[2][1] = 0.0;
+    StdI->direct[2][2] = 1.0;
+  }
+  /*
+   Define the phase factor at the boundary
+  */
+  if (dim == 2) StdI->phase[2] = 0.0;
   for (ii = 0; ii < 3; ii++) {
     StdI->ExpPhase[ii] = cos(StdI->pi180 * StdI->phase[ii]) + I*sin(StdI->pi180 * StdI->phase[ii]);
     if (cabs(StdI->ExpPhase[ii] + 1.0) < 0.000001) StdI->AntiPeriod[ii] = 1;
     else StdI->AntiPeriod[ii] = 0;
   }
   /*
-  Structure in a cell
+   Structure in a cell
   */
   StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
   for (ii = 0; ii < StdI->NsiteUC; ii++) {
     StdI->tau[ii] = (double *)malloc(sizeof(double) * 3);
   }
   /*
-  Calculate reciprocal lattice vectors (times NCell)
+   Calculate reciprocal lattice vectors (times NCell)
   */
   StdI->NCell = 0;
   for (ii = 0; ii < 3; ii++) {
@@ -907,7 +627,7 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
     StdI->NCell *= -1;
   }/*if (StdI->NCell < 0)*/
   /*
-   Initialize gnuplot
+   Find the lower- and the upper bound for surrowndinf the simulation box
   */
   for (ii = 0; ii < 3; ii++) {
     bound[ii][0] = 0;
@@ -924,18 +644,17 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
     }
   }
   /*
-  Calculate the number of Unit Cell
+   Find Cells in the Simulation Box
   */
   StdI->Cell = (int **)malloc(sizeof(int*) * StdI->NCell);
   for (ii = 0; ii < StdI->NCell; ii++) {
     StdI->Cell[ii] = (int *)malloc(sizeof(int) * 3);
-  }/*for (ii = 0; ii < (Wmax - Wmin + 1) * (Lmax - Lmin + 1); ii++)*/
-
+  }/*for (ii = 0; ii < StdI->NCell; ii++)*/
   jj = 0;
   for (iCellV[2] = bound[2][0]; iCellV[2] <= bound[2][1]; iCellV[2]++) {
     for (iCellV[1] = bound[1][0]; iCellV[1] <= bound[1][1]; iCellV[1]++) {
       for (iCellV[0] = bound[0][0]; iCellV[0] <= bound[0][1]; iCellV[0]++) {
-        StdFace_FoldSite3D(StdI, iCellV, nBox, iCellV_fold);
+        StdFace_FoldSite(StdI, iCellV, nBox, iCellV_fold);
         if (nBox[0] == 0 && nBox[1] == 0 && nBox[2] == 0) {
           for (ii = 0; ii < 3; ii++)
             StdI->Cell[jj][ii] = iCellV[ii];
@@ -944,36 +663,79 @@ void StdFace_InitSite3D(struct StdIntList *StdI, FILE *fp)
       }/*for (iCellV[0] = bound[0][0]; iCellV[0] <= bound[0][1]; iCellV[0]++*/
     }/*for (iCellV[1] = bound[1][0]; iCellV[1] <= bound[1][1]; iCellV[1]++)*/
   }/*for (iCellV[2] = bound[2][0]; iCellV[2] <= bound[2][1]; iCellV[2]++)*/
-}/*void StdFace_InitSite3D*/
- /**
-  * Set Label in the gnuplot display
+  /*
+   Initialize gnuplot
   */
-void StdFace_FindSite3d(struct StdIntList *StdI,
-  int iW, int iL, int iH, int diW, int diL, int diH, 
+  if (dim == 2) {
+    pos[0][0] = 0.0;
+    pos[0][1] = 0.0;
+    pos[1][0] = StdI->direct[0][0] * (double)StdI->box[0][0] + StdI->direct[1][0] * (double)StdI->box[0][1];
+    pos[1][1] = StdI->direct[0][1] * (double)StdI->box[0][0] + StdI->direct[1][1] * (double)StdI->box[0][1];
+    pos[2][0] = StdI->direct[0][0] * (double)StdI->box[1][0] + StdI->direct[1][0] * (double)StdI->box[1][1];
+    pos[2][1] = StdI->direct[0][1] * (double)StdI->box[1][0] + StdI->direct[1][1] * (double)StdI->box[1][1];
+    pos[3][0] = pos[1][0] + pos[2][0];
+    pos[3][1] = pos[1][1] + pos[2][1];
+    /**/
+    xmin = 0.0;
+    xmax = 0.0;
+    for (ipos = 0; ipos < 4; ipos++) {
+      if (pos[ipos][0] < xmin) xmin = pos[ipos][0];
+      if (pos[ipos][0] > xmax) xmax = pos[ipos][0];
+      if (pos[ipos][1] < xmin) xmin = pos[ipos][1];
+      if (pos[ipos][1] > xmax) xmax = pos[ipos][1];
+    }
+    xmin -= 2.0;
+    xmax += 2.0;
+
+    fprintf(fp, "#set terminal pdf color enhanced \\\n");
+    fprintf(fp, "#dashed dl 1.0 size 20.0cm, 20.0cm \n");
+    fprintf(fp, "#set output \"lattice.pdf\"\n");
+    fprintf(fp, "set xrange [%f: %f]\n", xmin, xmax);
+    fprintf(fp, "set yrange [%f: %f]\n", xmin, xmax);
+    fprintf(fp, "set size square\n");
+    fprintf(fp, "unset key\n");
+    fprintf(fp, "unset tics\n");
+    fprintf(fp, "unset border\n");
+
+    fprintf(fp, "set style line 1 lc 1 lt 1\n");
+    fprintf(fp, "set style line 2 lc 5 lt 1\n");
+    fprintf(fp, "set style line 3 lc 0 lt 1\n");
+
+    fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[0][0], pos[0][1], pos[1][0], pos[1][1]);
+    fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[1][0], pos[1][1], pos[3][0], pos[3][1]);
+    fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[3][0], pos[3][1], pos[2][0], pos[2][1]);
+    fprintf(fp, "set arrow from %f, %f to %f, %f nohead front ls 3\n", pos[2][0], pos[2][1], pos[0][0], pos[0][1]);
+  }
+}/*void StdFace_InitSite2D*/
+/**
+ * Find the index of transfer and interaction
+ */
+void StdFace_FindSite(struct StdIntList *StdI,
+  int iW, int iL, int iH, int diW, int diL, int diH,
   int isiteUC, int jsiteUC,
   int *isite, int *jsite, double complex *Cphase)
 {
-  int iCell, jCell, kCell;
-  int nBox[3];
-  int jCellV_fold[3], jCellV[3];
+  int iCell, jCell, kCell, ii;
+  int nBox[3], jCellV[3];
   /**/
   jCellV[0] = iW + diW;
   jCellV[1] = iL + diL;
   jCellV[2] = iH + diH;
-  StdFace_FoldSite3D(StdI, jCellV, nBox, jCellV_fold);
-  *Cphase = cpow(StdI->ExpPhase[0], (double)nBox[0]) 
-         * cpow(StdI->ExpPhase[1], (double)nBox[1])
-         * cpow(StdI->ExpPhase[2], (double)nBox[2]);
+  StdFace_FoldSite(StdI, jCellV, nBox, jCellV);
+  *Cphase = 1.0;
+  for (ii = 0; ii < 3; ii++) *Cphase *= cpow(StdI->ExpPhase[ii], (double)nBox[ii]);
   /**/
   for (kCell = 0; kCell < StdI->NCell; kCell++) {
-    if (jCellV_fold[0] == StdI->Cell[kCell][0] && 
-        jCellV_fold[1] == StdI->Cell[kCell][1] &&
-        jCellV_fold[2] == StdI->Cell[kCell][2]) {
+    if (jCellV[0] == StdI->Cell[kCell][0] &&
+        jCellV[1] == StdI->Cell[kCell][1] &&
+        jCellV[2] == StdI->Cell[kCell][2]) 
+    {
       jCell = kCell;
     }
-    if (iW == StdI->Cell[kCell][0] && 
+    if (iW == StdI->Cell[kCell][0] &&
         iL == StdI->Cell[kCell][1] &&
-        iH == StdI->Cell[kCell][2]) {
+        iH == StdI->Cell[kCell][2])
+    {
       iCell = kCell;
     }
   }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
@@ -983,7 +745,57 @@ void StdFace_FindSite3d(struct StdIntList *StdI,
     *isite += StdI->NCell * StdI->NsiteUC;
     *jsite += StdI->NCell * StdI->NsiteUC;
   }
-}/*void StdFace_FindSite3d*/
+}/*void StdFace_FindSite*/
+ /*
+ * Set Label in the gnuplot display
+ */
+void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp, 
+  int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC, 
+  int *isite, int *jsite, int connect, double complex *Cphase)
+{
+  int iCell, jCell, kCell;
+  int jCellV[3], nBox[2], jCellV_fold[3];
+  double xi, yi, xj, yj;
+  /*
+   Reversed
+  */
+  StdFace_FindSite(StdI, iW, iL, 0, -diW, -diL, 0, jsiteUC, isiteUC, isite, jsite, Cphase);
+
+  xi = StdI->direct[0][0] * ((double)iW + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][0] * ((double)iL + StdI->tau[jsiteUC][1]);
+  yi = StdI->direct[0][1] * ((double)iW + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][1] * ((double)iL + StdI->tau[jsiteUC][1]);
+
+  xj = StdI->direct[0][0] * ((double)(iW - diW) + StdI->tau[isiteUC][0])
+     + StdI->direct[1][0] * ((double)(iL - diL) + StdI->tau[isiteUC][1]);
+  yj = StdI->direct[0][1] * ((double)(iW - diW) + StdI->tau[isiteUC][0])
+     + StdI->direct[1][1] * ((double)(iL - diL) + StdI->tau[isiteUC][1]);
+
+  if (*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
+  else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
+  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
+  else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
+  fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
+  /*
+  */
+  StdFace_FindSite(StdI, iW, iL, 0, diW, diL, 0, isiteUC, jsiteUC, isite, jsite, Cphase);
+
+  xi = StdI->direct[1][0] * ((double)iL + StdI->tau[isiteUC][1])
+     + StdI->direct[0][0] * ((double)iW + StdI->tau[isiteUC][0]);
+  yi = StdI->direct[1][1] * ((double)iL + StdI->tau[isiteUC][1])
+     + StdI->direct[0][1] * ((double)iW + StdI->tau[isiteUC][0]);
+
+  xj = StdI->direct[0][0] * ((double)(iW + diW) + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][0] * ((double)(iL + diL) + StdI->tau[jsiteUC][1]);
+  yj = StdI->direct[0][1] * ((double)(iW + diW) + StdI->tau[jsiteUC][0])
+     + StdI->direct[1][1] * ((double)(iL + diL) + StdI->tau[jsiteUC][1]);
+
+  if (*isite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *isite, xi, yi);
+  else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
+  if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
+  else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
+  fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
+}/*void StdFace_SetLabel*/
 /**
  * Print lattice.xsf (XCrysDen format) 
  */
@@ -991,13 +803,6 @@ void StdFace_PrintXSF(struct StdIntList *StdI) {
   FILE *fp;
   int ii, jj, kk, isite, iCell;
   double vec[3];
-
-  printf("debug %d %d %d\n", StdI->box[0][0], StdI->box[0][1], StdI->box[0][2]);
-  printf("debug %d %d %d\n", StdI->box[1][0], StdI->box[1][1], StdI->box[1][2]);
-  printf("debug %d %d %d\n", StdI->box[2][0], StdI->box[2][1], StdI->box[2][2]);
-  printf("debug %f %f %f\n", StdI->direct[0][0], StdI->direct[0][1], StdI->direct[0][2]);
-  printf("debug %f %f %f\n", StdI->direct[1][0], StdI->direct[1][1], StdI->direct[1][2]);
-  printf("debug %f %f %f\n", StdI->direct[2][0], StdI->direct[2][1], StdI->direct[2][2]);
 
   fp = fopen("lattice.xsf", "w");
   fprintf(fp, "CRYSTAL\n");
@@ -1359,7 +1164,7 @@ void StdFace_Proj(struct StdIntList *StdI)
 
     StdFace_FoldSite3Dsub(StdI, StdI->Cell[iCell], nBox, iCellV);
 
-    StdFace_FoldSite3D(StdI, iCellV, nBox, iCellV);
+    StdFace_FoldSite(StdI, iCellV, nBox, iCellV);
 
     if (iCellV[0] == StdI->Cell[iCell][0] && 
         iCellV[1] == StdI->Cell[iCell][1] && 
@@ -1370,7 +1175,7 @@ void StdFace_Proj(struct StdIntList *StdI)
       for (jCell = 0; jCell < StdI->NCell; jCell++) {
 
         for (ii = 0; ii < 3; ii++)jCellV[ii] = StdI->Cell[jCell][ii] + iCellV[ii];
-        StdFace_FoldSite3D(StdI, jCellV, nBox[3], jCellV[3]);
+        StdFace_FoldSite(StdI, jCellV, nBox[3], jCellV[3]);
 
         for (kCell = 0; kCell < StdI->NCell; kCell++) {
           if (jCellV[0] == StdI->Cell[kCell][0] && 
@@ -1574,7 +1379,7 @@ void StdFace_generate_orb(struct StdIntList *StdI) {
 
     StdFace_FoldSite3Dsub(StdI, StdI->Cell[iCell], nBox, iCellV);
 
-    StdFace_FoldSite3D(StdI, iCellV, nBox, iCellV);
+    StdFace_FoldSite(StdI, iCellV, nBox, iCellV);
 
     for (kCell = 0; kCell < StdI->NCell; kCell++) {
       if (iCellV[0] == StdI->Cell[kCell][0] && 
@@ -1590,7 +1395,7 @@ void StdFace_generate_orb(struct StdIntList *StdI) {
       for (ii = 0; ii < 3; ii++)
         jCellV[ii] = StdI->Cell[jCell][ii] + iCellV[ii] - StdI->Cell[iCell][ii];
 
-      StdFace_FoldSite3D(StdI, jCellV, nBox, jCellV);
+      StdFace_FoldSite(StdI, jCellV, nBox, jCellV);
 
       for (kCell = 0; kCell < StdI->NCell; kCell++) {
         if (jCellV[0] == StdI->Cell[kCell][0] &&
@@ -1605,7 +1410,7 @@ void StdFace_generate_orb(struct StdIntList *StdI) {
       */
       for (ii = 0; ii < 3; ii++)
         dCellV[ii] = StdI->Cell[jCell][ii] - StdI->Cell[iCell][ii];
-      StdFace_FoldSite3D(StdI, dCellV, nBox, dCellV);
+      StdFace_FoldSite(StdI, dCellV, nBox, dCellV);
       Anti = 0;
       for (ii = 0; ii < 3; ii++)Anti += StdI->AntiPeriod[ii] * nBox[ii];
       if (Anti % 2 == 0) Anti = 1;
