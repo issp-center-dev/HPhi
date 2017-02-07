@@ -631,10 +631,10 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->NSplitSize = 9999;
   StdI->NStore = 9999;
   StdI->ComplexType = 9999;
-  StdI->a0Lsub = 9999;
-  StdI->a0Wsub = 9999;
-  StdI->a1Lsub = 9999;
-  StdI->a1Wsub = 9999;
+  for (i = 0; i < 3; i++)
+    for (j = 0; j < 3; j++)
+      StdI->boxsub[i][j] = 9999;
+  StdI->Hsub = 9999;
   StdI->Lsub = 9999;
   StdI->Wsub = 9999;
 #endif
@@ -1868,14 +1868,20 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_s(keyword, value, StdI.SpectrumType);
     else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
 #elif defined(_mVMC)
-    else if (strcmp(keyword, "a0lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a0Lsub);
-    else if (strcmp(keyword, "a0wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a0Wsub);
-    else if (strcmp(keyword, "a1lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a1Lsub);
-    else if (strcmp(keyword, "a1wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.a1Wsub);
+    else if (strcmp(keyword, "a0hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[0][2]);
+    else if (strcmp(keyword, "a0lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[0][1]);
+    else if (strcmp(keyword, "a0wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[0][0]);
+    else if (strcmp(keyword, "a1hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[1][2]);
+    else if (strcmp(keyword, "a1lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[1][1]);
+    else if (strcmp(keyword, "a1wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[1][0]);
+    else if (strcmp(keyword, "a2hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][2]);
+    else if (strcmp(keyword, "a2lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][1]);
+    else if (strcmp(keyword, "a2wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][0]);
     else if (strcmp(keyword, "complextype") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ComplexType);
     else if (strcmp(keyword, "dsroptredcut") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptRedCut);
     else if (strcmp(keyword, "dsroptstadel") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptStaDel);
     else if (strcmp(keyword, "dsroptstepdt") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptStepDt);
+    else if (strcmp(keyword, "hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Hsub);
     else if (strcmp(keyword, "lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Lsub);
     else if (strcmp(keyword, "nvmccalmode") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCCalMode);
     else if (strcmp(keyword, "ndataidxstart") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NDataIdxStart);

@@ -192,15 +192,10 @@ struct StdIntList {
   */
   int Lsub;
   int Wsub;
-  int a0Lsub;
-  int a0Wsub;
-  int a1Lsub;
-  int a1Wsub;
-  int bW0sub;
-  int bW1sub;
-  int bL0sub;
-  int bL1sub;
+  int Hsub;
   int NCellsub;
+  int boxsub[3][3];
+  int rboxsub[3][3];
   /*
    2-body part of the trial wavefunction
   */
