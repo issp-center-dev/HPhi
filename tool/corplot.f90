@@ -11,6 +11,7 @@ MODULE corplot_val
   & nk         ! Number of k to be computed
   !
   REAL(8),SAVE :: &
+  & koff(3), &
   & bragg(3,26), &
   & braggnorm(26), &
   & bz_line(3,2,26*26), &
@@ -53,7 +54,7 @@ CONTAINS
 !
 SUBROUTINE read_cor()
   !
-  USE corplot_val, ONLY : nwfc, nktot, nk_row, recipr, &
+  USE corplot_val, ONLY : nwfc, nktot, nk_row, recipr, koff, &
   &                       cor_k, cor_err, equiv, kvec, nk
   IMPLICIT NONE
   !
@@ -77,11 +78,19 @@ SUBROUTINE read_cor()
      READ(fi,*) ctmp1, nk0
      READ(fi,*) ctmp2
      READ(fi,*) ctmp2
+     READ(fi,*) ctmp2, koff(1:3)
+     !
      IF(iwfc == 1) THEN
+        !
         nk = nk0
         ALLOCATE(cor_k(1:nk,1:6,1:nwfc), cor_err(1:nk,1:6,1:nwfc))
         cor_k(1:nk,1:6,1:nwfc) = CMPLX(0d0, 0d0, KIND(0d0))
         cor_err(1:nk,1:6,1:nwfc) = 0d0
+        !
+        WRITE(*,*) "    Number of k : ", nk
+        WRITE(*,*) "    k-point offset :"
+        WRITE(*,'(4x3f15.10)') koff(1:3)
+        !
      END IF
      !
      IF(TRIM(ctmp1) == "#HPhi") THEN
@@ -411,15 +420,17 @@ SUBROUTINE write_gnuplot()
   WRITE(fo,'(a)') "set ylabel 'ky'"
   WRITE(fo,'(a,e15.5,a,e15.5,a)') "set zrange [", minz, ":", maxz, "]"
   WRITE(fo,*) 
-  WRITE(fo,'(a)') "#set pm3d"
+  WRITE(fo,'(a)') "set pm3d"
+  WRITE(fo,'(a)') "set pm3d interpolate 5, 5"
   WRITE(fo,'(a)') "#set contour"
+  WRITE(fo,'(a)') "set view 0.0, 0.0"
   WRITE(fo,*) 
   WRITE(fo,*) "#####  Set Brillouin-Zone Boundary  #####"
   WRITE(fo,*) 
   DO iline = 1, nline2
      WRITE(fo,'(a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a,e15.5,a)') &
      &       "set arrow from ", bz_line2(1,1,iline), ",", bz_line2(2,1,iline), ",", bz_line2(3,1,iline), &
-     &                  " to ", bz_line2(1,2,iline), ",", bz_line2(2,2,iline), ",", bz_line2(3,2,iline), " nohead"
+     &                  " to ", bz_line2(1,2,iline), ",", bz_line2(2,2,iline), ",", bz_line2(3,2,iline), " nohead front"
   END DO ! iline = 1, nline
   !
   WRITE(fo,*) 
@@ -459,23 +470,32 @@ END SUBROUTINE write_gnuplot
 SUBROUTINE write_data()
   !
   USE corplot_val, ONLY : itarget, rpart, nwfc, nktot, nk_row, &
-  &                       cor_k, cor_err, equiv, kvec
+  &                       cor_k, cor_err, equiv, kvec, koff
   IMPLICIT NONE
   !
   INTEGER :: fo = 20, ik
+  REAL(8) :: koff2(2)
   CHARACTER(100) :: form
   !
   OPEN(fo, file = "correlation.dat")
   WRITE(form,'(a,i0,a)') "(", 2 + nwfc*2, "e15.5)"
   !
+  IF(itarget <= 2) THEN
+     koff2(1:2) = koff(1:2)
+  ELSE
+     koff2(1:2) = 0d0
+  END IF
+  !
   DO ik = 1, nktot
      !
      IF(rpart) THEN
-        WRITE(fo,TRIM(form)) kvec(1:2,ik),  DBLE(cor_k(equiv(ik), itarget, 1:nwfc)), &
-        &                                 DBLE(cor_err(equiv(ik), itarget, 1:nwfc))
+        WRITE(fo,TRIM(form)) kvec(1:2,ik) + koff2(1:2), &
+        &  DBLE(cor_k(  equiv(ik), itarget, 1:nwfc)), &
+        &  DBLE(cor_err(equiv(ik), itarget, 1:nwfc))
      ELSE
-        WRITE(fo,TRIM(form)) kvec(1:2,ik), AIMAG(cor_k(equiv(ik), itarget, 1:nwfc)), &
-        &                                AIMAG(cor_err(equiv(ik), itarget, 1:nwfc))
+        WRITE(fo,TRIM(form)) kvec(1:2,ik) + koff2(1:2), &
+        &  AIMAG(cor_k(  equiv(ik), itarget, 1:nwfc)), &
+        &  AIMAG(cor_err(equiv(ik), itarget, 1:nwfc))
      END IF
      !
      IF(MOD(ik, nk_row) == 0) WRITE(fo,*)

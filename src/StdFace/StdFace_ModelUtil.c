@@ -296,7 +296,7 @@ void StdFace_PrintVal_d(
   double *val /**< [inout] Valiable to be set*/, 
   double val0 /**< [in] The default value*/)
 {
-  if (*val > 9999.0) {
+  if (isnan(*val) == 1) {
     *val = val0;
     fprintf(stdout, "  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
@@ -315,8 +315,8 @@ void StdFace_PrintVal_dd(
   double val0 /**< [in] The default value*/,
   double val1 /**< [in] The default value*/)
 {
-  if (*val > 9999.0) {
-    if (val0 > 9999.0) *val = val1;
+  if (isnan(*val) == 1) {
+    if (isnan(val0) == 1) *val = val1;
     else *val = val0;
     fprintf(stdout, "  %15s = %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
@@ -334,7 +334,7 @@ void StdFace_PrintVal_c(
   double complex *val /**< [inout] Valiable to be set*/,
   double complex val0 /**< [in] The default value*/)
 {
-  if (creal(*val) > 9999.0) {
+  if (isnan(creal(*val)) == 1) {
     *val = val0;
     fprintf(stdout, "  %15s = %-10.5f %-10.5f  ######  DEFAULT VALUE IS USED  ######\n", valname, creal(*val), cimag(*val));
   }
@@ -352,7 +352,9 @@ void StdFace_PrintVal_i(
   int *val /**< [inout] Valiable to be set*/,
   int val0 /**< [in] The default value*/)
 {
-  if (*val == 9999) {
+  int NaN_i = 2147483647;
+
+  if (*val == NaN_i) {
     *val = val0;
     fprintf(stdout, "  %15s = %-10d  ######  DEFAULT VALUE IS USED  ######\n", valname, *val);
   }
@@ -369,7 +371,7 @@ void StdFace_NotUsed_d(
   char* valname /**< [in] Name of the valiable*/,
   double val /**< [in]*/)
 {
-  if (val < 9999.0) {
+  if (isnan(val) == 0) {
     fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stdout, "            Please COMMENT-OUT this line \n");
     fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
@@ -387,7 +389,7 @@ void StdFace_NotUsed_c(
   char* valname /**< [in] Name of the valiable*/,
   double complex val /**< [in]*/)
 {
-  if (creal(val) < 9999.0) {
+  if (isnan(creal(val)) == 0) {
     fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stdout, "            Please COMMENT-OUT this line \n");
     fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
@@ -439,7 +441,9 @@ void StdFace_NotUsed_i(
   char* valname /**< [in] Name of the valiable*/,
   int val /**< [in]*/)
 {
-  if (val != 9999) {
+  int NaN_i = 2147483647;
+
+  if (val != NaN_i) {
     fprintf(stdout, "\n Check !  %s is SPECIFIED but will NOT be USED. \n", valname);
     fprintf(stdout, "            Please COMMENT-OUT this line \n");
     fprintf(stdout, "            or check this input is REALLY APPROPRIATE for your purpose ! \n\n");
@@ -458,7 +462,9 @@ void StdFace_RequiredVal_i(
   char* valname /**< [in] Name of the valiable*/,
   int val /**< [in]*/)
 {
-  if (val == 9999){
+  int NaN_i = 2147483647;
+
+  if (val == NaN_i){
     fprintf(stdout, "ERROR ! %s is NOT specified !\n", valname);
     StdFace_exit(-1);
   }
@@ -514,24 +520,18 @@ void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim)
    check Input parameters
   */
   if (
-    (StdI->L != 9999 || StdI->W != 9999 || StdI->Height != 9999)
+    (StdI->L != StdI->NaN_i || StdI->W != StdI->NaN_i || StdI->Height != StdI->NaN_i)
     && 
-    (StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 ||
-     StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][2] != 9999 ||
-     StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999)
+    (StdI->box[0][0] != StdI->NaN_i || StdI->box[0][1] != StdI->NaN_i || StdI->box[0][2] != StdI->NaN_i ||
+     StdI->box[1][0] != StdI->NaN_i || StdI->box[1][1] != StdI->NaN_i || StdI->box[1][2] != StdI->NaN_i ||
+     StdI->box[2][0] != StdI->NaN_i || StdI->box[2][1] != StdI->NaN_i || StdI->box[2][2] != StdI->NaN_i)
     )
   {
     fprintf(stdout, "\nERROR ! (L, W, Height) and (a0W, ..., a2H) conflict !\n\n");
     StdFace_exit(-1);
   }
-  else if (StdI->L != 9999 || StdI->W != 9999 || StdI->Height != 9999)
+  else if (StdI->L != StdI->NaN_i || StdI->W != StdI->NaN_i || StdI->Height != StdI->NaN_i)
   {
-    if (dim == 2) StdI->Height = 1;
-
-    if (StdI->L == 9999 || StdI->W == 9999 || StdI->Height == 9999) {
-      fprintf(stdout, "\nERROR ! Something in W, L, Height is NOT specified !\n\n");
-      StdFace_exit(-1);
-    }
     StdFace_PrintVal_i("L", &StdI->L, 1);
     StdFace_PrintVal_i("W", &StdI->W, 1);
     StdFace_PrintVal_i("Height", &StdI->Height, 1);
@@ -541,26 +541,8 @@ void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim)
     StdI->box[1][1] = StdI->L;
     StdI->box[2][2] = StdI->Height;
   }
-  else if (
-    StdI->box[0][0] != 9999 || StdI->box[0][1] != 9999 || StdI->box[0][2] != 9999 ||
-    StdI->box[1][0] != 9999 || StdI->box[1][1] != 9999 || StdI->box[1][2] != 9999 ||
-    StdI->box[2][0] != 9999 || StdI->box[2][1] != 9999 || StdI->box[2][2] != 9999) 
+  else
   {
-    if (dim == 2) {
-      StdI->box[0][2] = 0;
-      StdI->box[1][2] = 0;
-      StdI->box[2][0] = 0;
-      StdI->box[2][1] = 0;
-      StdI->box[2][2] = 1;
-    }
-    if (
-      StdI->box[0][0] == 9999 || StdI->box[0][1] == 9999 || StdI->box[0][2] == 9999 ||
-      StdI->box[1][0] == 9999 || StdI->box[1][1] == 9999 || StdI->box[1][2] == 9999 ||
-      StdI->box[2][0] == 9999 || StdI->box[2][1] == 9999 || StdI->box[2][2] == 9999) 
-    {
-      fprintf(stdout, "\nERROR ! All of a0W, a0L, a0H, a1W, ... MUST be specified !\n\n");
-      StdFace_exit(-1);
-    }
     StdFace_PrintVal_i("a0W", &StdI->box[0][0], 1);
     StdFace_PrintVal_i("a0L", &StdI->box[0][1], 0);
     StdFace_PrintVal_i("a0H", &StdI->box[0][2], 0);
@@ -849,27 +831,27 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
   strcpy(Jname[2][1], "zy\0");
   strcpy(Jname[2][2], "z\0");
 
-  if (StdI->JAll < 9999.0 && J0All < 9999.0) {
+  if (isnan(StdI->JAll) == 0 && isnan(J0All)  == 0) {
     fprintf(stdout, "\n ERROR! J and %s conflict !\n\n", J0name);
     StdFace_exit(-1);
   }
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
-      if (StdI->JAll < 9999.0 && StdI->J[i1][i2] < 9999.0) {
+      if (isnan(StdI->JAll) == 0 && isnan(StdI->J[i1][i2]) == 0) {
         fprintf(stdout, "\n ERROR! J and J%s conflict !\n\n", Jname[i1][i2]);
         StdFace_exit(-1);
       }
-      else if (J0All < 9999.0 && StdI->J[i1][i2] < 9999.0) {
+      else if (isnan(J0All) == 0 && isnan(StdI->J[i1][i2]) == 0) {
         fprintf(stdout, "\n ERROR! %s and J%s conflict !\n\n",
           J0name, Jname[i1][i2]);
         StdFace_exit(-1);
       }
-      else if (J0All < 9999.0 && J0[i1][i2] < 9999.0) {
+      else if (isnan(J0All) == 0 && isnan(J0[i1][i2]) == 0) {
         fprintf(stdout, "\n ERROR! %s and %s%s conflict !\n\n", J0name,
           J0name, Jname[i1][i2]);
         StdFace_exit(-1);
       }
-      else if (J0[i1][i2] < 9999.0 && StdI->JAll < 9999.0) {
+      else if (isnan(J0[i1][i2]) == 0 && isnan(StdI->JAll) == 0) {
         fprintf(stdout, "\n ERROR! %s%s and J conflict !\n\n",
           J0name, Jname[i1][i2]);
         StdFace_exit(-1);
@@ -881,7 +863,7 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
     for (i2 = 0; i2 < 3; i2++) {
       for (i3 = 0; i3 < 3; i3++) {
         for (i4 = 0; i4 < 3; i4++) {
-          if (J0[i1][i2] < 9999.0 && StdI->J[i3][i4] < 9999.0) {
+          if (isnan(J0[i1][i2]) == 0 && isnan(StdI->J[i3][i4]) == 0) {
             fprintf(stdout, "\n ERROR! %s%s and J%s conflict !\n\n", 
               J0name, Jname[i1][i2], Jname[i3][i4]);
             StdFace_exit(-1);
@@ -893,17 +875,17 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
 
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
-      if (J0[i1][i2] < 9999.0)
+      if (isnan(J0[i1][i2]) == 0)
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
-      else if (StdI->J[i1][i2] < 9999.0) {
+      else if (isnan(StdI->J[i1][i2])) {
         J0[i1][i2] = StdI->J[i1][i2];
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
       }
-      else if (i1 == i2 && J0All < 9999.0) {
+      else if (i1 == i2 && isnan(J0All) == 0) {
         J0[i1][i2] = J0All;
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
       }
-      else if (i1 == i2 && StdI->JAll < 9999.0) {
+      else if (i1 == i2 && isnan(StdI->JAll) == 0) {
         J0[i1][i2] = StdI->JAll;
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
       }
@@ -933,7 +915,7 @@ void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
 
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
-      if (JpAll < 9999.0 && Jp[i1][i2] < 9999.0) {
+      if (isnan(JpAll) == 0 && isnan(Jp[i1][i2]) == 0) {
         fprintf(stdout, "\n ERROR! %s and %s%s conflict !\n\n", Jpname,
           Jpname, Jname[i1][i2]);
         StdFace_exit(-1);
@@ -943,9 +925,9 @@ void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
 
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
-      if (Jp[i1][i2] < 9999.0)
+      if (isnan(Jp[i1][i2]) == 0)
         fprintf(stdout, "  %14s%s = %-10.5f\n", Jpname, Jname[i1][i2], Jp[i1][i2]);
-      else if (i1 == i2 && JpAll < 9999.0) {
+      else if (i1 == i2 && isnan(JpAll) == 0) {
         Jp[i1][i2] = JpAll;
         fprintf(stdout, "  %14s%s = %-10.5f\n", Jpname, Jname[i1][i2], Jp[i1][i2]);
       }
@@ -960,13 +942,13 @@ void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
 void StdFace_InputCoulombV(struct StdIntList *StdI, double *V0, char *V0name)
 {
   
-  if (StdI->V < 9999.0 && *V0 < 9999.0) {
+  if (isnan(StdI->V) == 0 && isnan(*V0) == 0) {
     fprintf(stdout, "\n ERROR! V and %s conflict !\n\n", V0name);
     StdFace_exit(-1);
   }
-  else if (*V0 < 9999.0)
+  else if (isnan(*V0) == 0)
     fprintf(stdout, "  %15s = %-10.5f\n", V0name, *V0);
-  else if (StdI->V < 9999.0) {
+  else if (isnan(StdI->V) == 0) {
     *V0 = StdI->V;
     fprintf(stdout, "  %15s = %-10.5f\n", V0name, *V0);
   }
@@ -979,13 +961,13 @@ void StdFace_InputCoulombV(struct StdIntList *StdI, double *V0, char *V0name)
 void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name)
 {
 
-  if (creal(StdI->t) < 9999.0 && creal(*t0) < 9999.0) {
+  if (isnan(creal(StdI->t)) == 0 && isnan(creal(*t0)) == 0) {
     fprintf(stdout, "\n ERROR! t and %s conflict !\n\n", t0name);
     StdFace_exit(-1);
   }
-  else if (creal(*t0) < 9999.0)
+  else if (isnan(creal(*t0)) == 0)
     fprintf(stdout, "  %15s = %-10.5f\n", t0name, creal(*t0));
-  else if (creal(StdI->t) < 9999.0) {
+  else if (isnan(creal(StdI->t)) == 0) {
     *t0 = StdI->t;
     fprintf(stdout, "  %15s = %-10.5f\n", t0name, creal(*t0));
   }
@@ -1108,7 +1090,7 @@ void StdFace_MallocInteractions(struct StdIntList *StdI) {
  *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
-static void StdFace_FoldSite3Dsub(struct StdIntList *StdI,
+static void StdFace_FoldSiteSub(struct StdIntList *StdI,
   int iCellV[3], int nBox[3], int iCellV_fold[3])
 {
   int ii, jj, iCellV_frac[3];
@@ -1135,7 +1117,7 @@ static void StdFace_FoldSite3Dsub(struct StdIntList *StdI,
     for (jj = 0; jj < 3; jj++) iCellV_fold[ii] += StdI->boxsub[jj][ii] * iCellV_frac[jj];
     iCellV_fold[ii] = (iCellV_fold[ii] + StdI->NCellsub * 1000) / StdI->NCellsub - 1000;
   }
-}/*static void StdFace_FoldSite3Dsub*/
+}/*static void StdFace_FoldSiteSub*/
 /**
 *
 * Print Quantum number projection
@@ -1162,7 +1144,7 @@ void StdFace_Proj(struct StdIntList *StdI)
   StdI->NSym = 0;
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
 
-    StdFace_FoldSite3Dsub(StdI, StdI->Cell[iCell], nBox, iCellV);
+    StdFace_FoldSiteSub(StdI, StdI->Cell[iCell], nBox, iCellV);
 
     StdFace_FoldSite(StdI, iCellV, nBox, iCellV);
 
@@ -1175,7 +1157,7 @@ void StdFace_Proj(struct StdIntList *StdI)
       for (jCell = 0; jCell < StdI->NCell; jCell++) {
 
         for (ii = 0; ii < 3; ii++)jCellV[ii] = StdI->Cell[jCell][ii] + iCellV[ii];
-        StdFace_FoldSite(StdI, jCellV, nBox[3], jCellV[3]);
+        StdFace_FoldSite(StdI, jCellV, nBox, jCellV);
 
         for (kCell = 0; kCell < StdI->NCell; kCell++) {
           if (jCellV[0] == StdI->Cell[kCell][0] && 
@@ -1221,7 +1203,7 @@ void StdFace_Proj(struct StdIntList *StdI)
     for (jsite = 0; jsite < StdI->nsite; jsite++) {
       if (Anti[iSym][jsite] % 2 == 0) Anti[iSym][jsite] = 1;
       else Anti[iSym][jsite] = -1;
-      if (StdI->AntiPeriod[0] == 1 || StdI->AntiPeriod[1] == 1) {
+      if (StdI->AntiPeriod[0] == 1 || StdI->AntiPeriod[1] == 1 || StdI->AntiPeriod[2] == 1) {
         fprintf(fp, "%5d  %5d  %5d  %5d\n", iSym, jsite, Sym[iSym][jsite], Anti[iSym][jsite]);
       }
       else {
@@ -1245,26 +1227,22 @@ void StdFace_Proj(struct StdIntList *StdI)
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void StdFace_InitSite3Dsub(struct StdIntList *StdI)
+static void StdFace_InitSiteSub(struct StdIntList *StdI)
 {
   int ii, jj, kk, prod;
   int bound[3][2], iCellV[3], nBox[3], iCellV_fold[3];
   /*
   check Input parameters
   */
-  if ((StdI->Lsub != 9999 || StdI->Wsub != 9999 || StdI->Hsub != 9999)
-    && (StdI->boxsub[0][0] != 9999 || StdI->boxsub[0][1] != 9999 || StdI->boxsub[0][2] != 9999 ||
-        StdI->boxsub[1][0] != 9999 || StdI->boxsub[1][1] != 9999 || StdI->boxsub[1][2] != 9999 ||
-        StdI->boxsub[2][0] != 9999 || StdI->boxsub[2][1] != 9999 || StdI->boxsub[2][2] != 9999))
+  if ((StdI->Lsub != StdI->NaN_i || StdI->Wsub != StdI->NaN_i || StdI->Hsub != StdI->NaN_i)
+    && (StdI->boxsub[0][0] != StdI->NaN_i || StdI->boxsub[0][1] != StdI->NaN_i || StdI->boxsub[0][2] != StdI->NaN_i ||
+        StdI->boxsub[1][0] != StdI->NaN_i || StdI->boxsub[1][1] != StdI->NaN_i || StdI->boxsub[1][2] != StdI->NaN_i ||
+        StdI->boxsub[2][0] != StdI->NaN_i || StdI->boxsub[2][1] != StdI->NaN_i || StdI->boxsub[2][2] != StdI->NaN_i))
   {
     fprintf(stdout, "\nERROR ! (Lsub, Wsub, Hsub) and (a0Wsub, ..., a2Hsub) conflict !\n\n");
     StdFace_exit(-1);
   }
-  else if (StdI->Wsub != 9999 || StdI->Lsub != 9999 || StdI->Hsub != 9999) {
-    if (StdI->L == 9999 || StdI->W == 9999 || StdI->Height == 9999) {
-      fprintf(stdout, "\nERROR ! All of Wsub, Lsub, Hsub MUST be specified !\n\n");
-      StdFace_exit(-1);
-    }
+  else if (StdI->Wsub != StdI->NaN_i || StdI->Lsub != StdI->NaN_i || StdI->Hsub != StdI->NaN_i) {
     StdFace_PrintVal_i("Lsub", &StdI->Lsub, 1);
     StdFace_PrintVal_i("Wsub", &StdI->Wsub, 1);
     StdFace_PrintVal_i("Hsub", &StdI->Hsub, 1);
@@ -1273,28 +1251,6 @@ static void StdFace_InitSite3Dsub(struct StdIntList *StdI)
     StdI->boxsub[0][0] = StdI->Wsub;
     StdI->boxsub[1][1] = StdI->Lsub;
     StdI->boxsub[2][2] = StdI->Hsub;
-  }
-  else if (
-    StdI->boxsub[0][0] != 9999 || StdI->boxsub[0][1] != 9999 || StdI->boxsub[0][2] != 9999 ||
-    StdI->boxsub[1][0] != 9999 || StdI->boxsub[1][1] != 9999 || StdI->boxsub[1][2] != 9999 ||
-    StdI->boxsub[2][0] != 9999 || StdI->boxsub[2][1] != 9999 || StdI->boxsub[2][2] != 9999) 
-  {
-    if (StdI->boxsub[0][0] == 9999 || StdI->boxsub[0][1] == 9999 || StdI->boxsub[0][2] == 9999 ||
-        StdI->boxsub[1][0] == 9999 || StdI->boxsub[1][1] == 9999 || StdI->boxsub[1][2] == 9999 ||
-        StdI->boxsub[2][0] == 9999 || StdI->boxsub[2][1] == 9999 || StdI->boxsub[2][2] == 9999)
-    {
-      fprintf(stdout, "\nERROR ! All of a0Wsub, a0Lsub, a0Hsub, a1Wsub, ... MUST be specified !\n\n");
-      StdFace_exit(-1);
-    }
-    StdFace_PrintVal_i("a0Wsub", &StdI->boxsub[0][0], 1);
-    StdFace_PrintVal_i("a0Lsub", &StdI->boxsub[0][1], 0);
-    StdFace_PrintVal_i("a0Hsub", &StdI->boxsub[0][2], 0);
-    StdFace_PrintVal_i("a1Wsub", &StdI->boxsub[1][0], 0);
-    StdFace_PrintVal_i("a1Lsub", &StdI->boxsub[1][1], 1);
-    StdFace_PrintVal_i("a1Hsub", &StdI->boxsub[1][2], 0);
-    StdFace_PrintVal_i("a2Wsub", &StdI->boxsub[2][0], 0);
-    StdFace_PrintVal_i("a2Lsub", &StdI->boxsub[2][1], 0);
-    StdFace_PrintVal_i("a2Hsub", &StdI->boxsub[2][2], 1);
   }
   else {
     StdFace_PrintVal_i("a0Wsub", &StdI->boxsub[0][0], StdI->box[0][0]);
@@ -1349,7 +1305,7 @@ static void StdFace_InitSite3Dsub(struct StdIntList *StdI)
       }/*if (prod % StdI->NCellsub != 0)*/
     }
   }
-}/*void StdFace_InitSite3Dsub*/
+}/*void StdFace_InitSiteSub*/
 /*
  *Generate orbitalindex
 */
@@ -1358,7 +1314,7 @@ void StdFace_generate_orb(struct StdIntList *StdI) {
   int nBox[3], iCellV[3], jCellV[3], dCellV[3], ii;
   int **CellDone;
 
-  StdFace_InitSite3Dsub(StdI);
+  StdFace_InitSiteSub(StdI);
 
   StdI->Orb = (int **)malloc(sizeof(int*) * StdI->nsite);
   StdI->AntiOrb = (int **)malloc(sizeof(int*) * StdI->nsite);
@@ -1377,7 +1333,7 @@ void StdFace_generate_orb(struct StdIntList *StdI) {
   iOrb = 0;
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
 
-    StdFace_FoldSite3Dsub(StdI, StdI->Cell[iCell], nBox, iCellV);
+    StdFace_FoldSiteSub(StdI, StdI->Cell[iCell], nBox, iCellV);
 
     StdFace_FoldSite(StdI, iCellV, nBox, iCellV);
 

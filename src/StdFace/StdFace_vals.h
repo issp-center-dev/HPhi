@@ -19,6 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 struct StdIntList {
   /*
+   Initial (undefined)
+  */
+  int NaN_i;
+  /*
   Parameters for LATTICE
   */
   char lattice[256];
