@@ -516,85 +516,89 @@ static void PrintGutzwiller(struct StdIntList *StdI)
 */
 static void StdFace_ResetVals(struct StdIntList *StdI) {
   int i, j;
+  double NaN_d;
+
+  NaN_d = 0.0 / 0.0;
+  StdI->NaN_i = 2147483647;
   /**/
-  StdI->a = 9999.9;
-  for (i = 0; i < 3; i++) StdI->length[i] = 9999.9;
+  StdI->a = NaN_d;
+  for (i = 0; i < 3; i++) StdI->length[i] = NaN_d;
   for (i = 0; i < 3; i++)
     for (j = 0; j < 3; j++)
-      StdI->box[i][j] = 9999;
-  StdI->Gamma = 9999.9;
-  StdI->h = 9999.9;
-  StdI->Height = 9999;
-  StdI->JAll = 9999.9;
-  StdI->JpAll = 9999.9;
-  StdI->JppAll = 9999.9;
-  StdI->J0All = 9999.9;
-  StdI->J0pAll = 9999.9;
-  StdI->J1All = 9999.9;
-  StdI->J1pAll = 9999.9;
-  StdI->J2All = 9999.9;
-  StdI->J2pAll = 9999.9;
+      StdI->box[i][j] = StdI->NaN_i;
+  StdI->Gamma = NaN_d;
+  StdI->h = NaN_d;
+  StdI->Height = StdI->NaN_i;
+  StdI->JAll = NaN_d;
+  StdI->JpAll = NaN_d;
+  StdI->JppAll = NaN_d;
+  StdI->J0All = NaN_d;
+  StdI->J0pAll = NaN_d;
+  StdI->J1All = NaN_d;
+  StdI->J1pAll = NaN_d;
+  StdI->J2All = NaN_d;
+  StdI->J2pAll = NaN_d;
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
-      StdI->J[i][j] = 9999.9;
-      StdI->Jp[i][j] = 9999.9;
-      StdI->Jpp[i][j] = 9999.9;
-      StdI->J0[i][j] = 9999.9;
-      StdI->J0p[i][j] = 9999.9;
-      StdI->J1[i][j] = 9999.9;
-      StdI->J1p[i][j] = 9999.9;
-      StdI->J2[i][j] = 9999.9;
-      StdI->J2p[i][j] = 9999.9;
+      StdI->J[i][j] = NaN_d;
+      StdI->Jp[i][j] = NaN_d;
+      StdI->Jpp[i][j] = NaN_d;
+      StdI->J0[i][j] = NaN_d;
+      StdI->J0p[i][j] = NaN_d;
+      StdI->J1[i][j] = NaN_d;
+      StdI->J1p[i][j] = NaN_d;
+      StdI->J2[i][j] = NaN_d;
+      StdI->J2p[i][j] = NaN_d;
       StdI->D[i][j] = 0.0;
     }
   }
-  StdI->D[2][2] = 9999.9;
-  StdI->K = 9999.9;
-  StdI->L = 9999;
+  StdI->D[2][2] = NaN_d;
+  StdI->K = NaN_d;
+  StdI->L = StdI->NaN_i;
   for (i = 0; i < 3; i++) 
     for (j = 0; j < 3; j++)
-      StdI->direct[i][j] = 9999.9;
-  StdI->mu = 9999.9;
-  StdI->S2 = 9999;
-  StdI->t = 9999.9;
-  StdI->tp = 9999.9;
-  StdI->tpp = 9999.9;
-  StdI->t0 = 9999.9;
-  StdI->t0p = 9999.9;
-  StdI->t1 = 9999.9;
-  StdI->t1p = 9999.9;
-  StdI->t2 = 9999.9;
-  StdI->t2p = 9999.9;
-  StdI->U = 9999.9;
-  StdI->V = 9999.9;
-  StdI->Vp = 9999.9;
-  StdI->Vpp = 9999.9;
-  StdI->V0 = 9999.9;
-  StdI->V0p = 9999.9;
-  StdI->V1 = 9999.9;
-  StdI->V1p = 9999.9;
-  StdI->V2 = 9999.9;
-  StdI->V2p = 9999.9;
-  StdI->W = 9999;
-  StdI->phase[0] = 9999.9;
-  StdI->phase[1] = 9999.9;
-  StdI->phase[2] = 9999.9;
+      StdI->direct[i][j] = NaN_d;
+  StdI->mu = NaN_d;
+  StdI->S2 = StdI->NaN_i;
+  StdI->t = NaN_d;
+  StdI->tp = NaN_d;
+  StdI->tpp = NaN_d;
+  StdI->t0 = NaN_d;
+  StdI->t0p = NaN_d;
+  StdI->t1 = NaN_d;
+  StdI->t1p = NaN_d;
+  StdI->t2 = NaN_d;
+  StdI->t2p = NaN_d;
+  StdI->U = NaN_d;
+  StdI->V = NaN_d;
+  StdI->Vp = NaN_d;
+  StdI->Vpp = NaN_d;
+  StdI->V0 = NaN_d;
+  StdI->V0p = NaN_d;
+  StdI->V1 = NaN_d;
+  StdI->V1p = NaN_d;
+  StdI->V2 = NaN_d;
+  StdI->V2p = NaN_d;
+  StdI->W = StdI->NaN_i;
+  StdI->phase[0] = NaN_d;
+  StdI->phase[1] = NaN_d;
+  StdI->phase[2] = NaN_d;
   StdI->pi180 = 0.01745329251994329576;/*Pi/180*/
 
-  StdI->nelec = 9999;
-  StdI->Sz2 = 9999;
+  StdI->nelec = StdI->NaN_i;
+  StdI->Sz2 = StdI->NaN_i;
   strcpy(StdI->model, "****\0");
   strcpy(StdI->lattice, "****\0");
   strcpy(StdI->outputmode, "****\0");
   strcpy(StdI->CDataFileHead, "****\0");
 #if defined(_HPhi)
-  StdI->LargeValue = 9999.9;
-  StdI->OmegaMax = 9999.9;
-  StdI->OmegaMin = 9999.9;
-  StdI->OmegaIm = 9999.9;
-  StdI->Nomega = 9999;
-  StdI->SpectrumQW = 9999.9;
-  StdI->SpectrumQL = 9999.9;
+  StdI->LargeValue = NaN_d;
+  StdI->OmegaMax = NaN_d;
+  StdI->OmegaMin = NaN_d;
+  StdI->OmegaIm = NaN_d;
+  StdI->Nomega = StdI->NaN_i;
+  StdI->SpectrumQW = NaN_d;
+  StdI->SpectrumQL = NaN_d;
   strcpy(StdI->method, "****\0");
   strcpy(StdI->Restart, "****\0");
   strcpy(StdI->EigenVecIO, "****\0");
@@ -602,41 +606,41 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->CalcSpec, "****\0");
   strcpy(StdI->SpectrumType, "****\0");
   StdI->FlgTemp = 1;
-  StdI->Lanczos_max = 9999;
-  StdI->initial_iv = 9999;
-  StdI->nvec = 9999;
-  StdI->exct = 9999;
-  StdI->LanczosEps = 9999;
-  StdI->LanczosTarget = 9999;
-  StdI->NumAve = 9999;
-  StdI->ExpecInterval = 9999;
+  StdI->Lanczos_max = StdI->NaN_i;
+  StdI->initial_iv = StdI->NaN_i;
+  StdI->nvec = StdI->NaN_i;
+  StdI->exct = StdI->NaN_i;
+  StdI->LanczosEps = StdI->NaN_i;
+  StdI->LanczosTarget = StdI->NaN_i;
+  StdI->NumAve = StdI->NaN_i;
+  StdI->ExpecInterval = StdI->NaN_i;
 #elif defined(_mVMC)
   strcpy(StdI->CParaFileHead, "****\0");
-  StdI->NVMCCalMode = 9999;
-  StdI->NLanczosMode = 9999;
-  StdI->NDataIdxStart = 9999;
-  StdI->NDataQtySmp = 9999;
-  StdI->NSPGaussLeg = 9999;
-  StdI->NMPTrans = 9999;
-  StdI->NSROptItrStep = 9999;
-  StdI->NSROptItrSmp = 9999;
-  StdI->DSROptRedCut = 9999.9;
-  StdI->DSROptStaDel = 9999.9;
-  StdI->DSROptStepDt = 9999.9;
-  StdI->NVMCWarmUp = 9999;
-  StdI->NVMCInterval = 9999;
-  StdI->NVMCSample = 9999;
-  StdI->NExUpdatePath = 9999;
-  StdI->RndSeed = 9999;
-  StdI->NSplitSize = 9999;
-  StdI->NStore = 9999;
-  StdI->ComplexType = 9999;
+  StdI->NVMCCalMode = StdI->NaN_i;
+  StdI->NLanczosMode = StdI->NaN_i;
+  StdI->NDataIdxStart = StdI->NaN_i;
+  StdI->NDataQtySmp = StdI->NaN_i;
+  StdI->NSPGaussLeg = StdI->NaN_i;
+  StdI->NMPTrans = StdI->NaN_i;
+  StdI->NSROptItrStep = StdI->NaN_i;
+  StdI->NSROptItrSmp = StdI->NaN_i;
+  StdI->DSROptRedCut = NaN_d;
+  StdI->DSROptStaDel = NaN_d;
+  StdI->DSROptStepDt = NaN_d;
+  StdI->NVMCWarmUp = StdI->NaN_i;
+  StdI->NVMCInterval = StdI->NaN_i;
+  StdI->NVMCSample = StdI->NaN_i;
+  StdI->NExUpdatePath = StdI->NaN_i;
+  StdI->RndSeed = StdI->NaN_i;
+  StdI->NSplitSize = StdI->NaN_i;
+  StdI->NStore = StdI->NaN_i;
+  StdI->ComplexType = StdI->NaN_i;
   for (i = 0; i < 3; i++)
     for (j = 0; j < 3; j++)
-      StdI->boxsub[i][j] = 9999;
-  StdI->Hsub = 9999;
-  StdI->Lsub = 9999;
-  StdI->Wsub = 9999;
+      StdI->boxsub[i][j] = StdI->NaN_i;
+  StdI->Hsub = StdI->NaN_i;
+  StdI->Lsub = StdI->NaN_i;
+  StdI->Wsub = StdI->NaN_i;
 #endif
 }/*static void StdFace_ResetVals*/
 /**
@@ -704,7 +708,9 @@ static void StoreWithCheckDup_i(
   char *valuestring /**< [in] value read from the input file*/,
   int *value /**< [out] */)
 {
-  if (*value != 9999){
+  int NaN_i = 2147483647;
+
+  if (*value != NaN_i){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     StdFace_exit(-1);
   }
@@ -726,7 +732,7 @@ static void StoreWithCheckDup_d(
   double *value /**< [out] */)
 {
 
-  if (*value != 9999.9){
+  if (isnan(*value) == 0){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     StdFace_exit(-1);
   }
@@ -752,7 +758,7 @@ static void StoreWithCheckDup_c(
   char *valuestring_r, *valuestring_i;
   double value_r, value_i;
 
-  if (creal(*value) != 9999.9) {
+  if (isnan(creal(*value)) == 0) {
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     StdFace_exit(-1);
   }
@@ -926,11 +932,11 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "CParaFileHead  zqp\n");
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %-5d\n", StdI->nsite);
-  if (StdI->Sz2 != 9999) fprintf(fp, "2Sz            %-5d\n", StdI->Sz2);
-  if (StdI->nelec != 9999) fprintf(fp, "Ncond          %-5d\n", StdI->nelec);
+  if (StdI->Sz2 != StdI->NaN_i) fprintf(fp, "2Sz            %-5d\n", StdI->Sz2);
+  if (StdI->nelec != StdI->NaN_i) fprintf(fp, "Ncond          %-5d\n", StdI->nelec);
   fprintf(fp, "Lanczos_max    %-5d\n", StdI->Lanczos_max);
   fprintf(fp, "initial_iv     %-5d\n", StdI->initial_iv);
-  if(StdI->nvec != 9999) fprintf(fp, "nvec           %-5d\n", StdI->nvec);
+  if(StdI->nvec != StdI->NaN_i) fprintf(fp, "nvec           %-5d\n", StdI->nvec);
   fprintf(fp, "exct           %-5d\n", StdI->exct);
   fprintf(fp, "LanczosEps     %-5d\n", StdI->LanczosEps);
   fprintf(fp, "LanczosTarget  %-5d\n", StdI->LanczosTarget);
@@ -1120,18 +1126,27 @@ static void Print2Green(struct StdIntList *StdI) {
                       if (StdI->ioutputmode == 2 ||
                         (site1 == site2 && site3 == site4 &&
                           spin1 - spin2 + spin3 - spin4 == 0)) {
-#if defined(_mVMC)
-                        if (spin1 != spin2 || spin3 != spin4) continue;
-#endif
                         if (store == 1) {
-                          greenindx[ngreen][0] = site1;
-                          greenindx[ngreen][1] = spin1;
-                          greenindx[ngreen][2] = site2;
-                          greenindx[ngreen][3] = spin2;
-                          greenindx[ngreen][4] = site3;
-                          greenindx[ngreen][5] = spin3;
-                          greenindx[ngreen][6] = site4;
-                          greenindx[ngreen][7] = spin4;
+                          if (spin1 != spin2 || spin3 != spin4) {
+                            greenindx[ngreen][0] = site1;
+                            greenindx[ngreen][1] = spin1;
+                            greenindx[ngreen][2] = site4;
+                            greenindx[ngreen][3] = spin4;
+                            greenindx[ngreen][4] = site3;
+                            greenindx[ngreen][5] = spin3;
+                            greenindx[ngreen][6] = site2;
+                            greenindx[ngreen][7] = spin2;
+                          }
+                          else {
+                            greenindx[ngreen][0] = site1;
+                            greenindx[ngreen][1] = spin1;
+                            greenindx[ngreen][2] = site2;
+                            greenindx[ngreen][3] = spin2;
+                            greenindx[ngreen][4] = site3;
+                            greenindx[ngreen][5] = spin3;
+                            greenindx[ngreen][6] = site4;
+                            greenindx[ngreen][7] = spin4;
+                          }
                         }
                         ngreen++;
                       }
