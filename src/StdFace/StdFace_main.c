@@ -1292,8 +1292,7 @@ static void CheckModPara(struct StdIntList *StdI)
   else NSym2 = StdI->NSym;
   StdFace_PrintVal_i("NMPTrans", &StdI->NMPTrans, NSym2);
 
-  if (StdI->NVMCCalMode == 1) StdFace_NotUsed_i("NSROptItrStep", StdI->NSROptItrStep);
-  /*else*/ StdFace_PrintVal_i("NSROptItrStep", &StdI->NSROptItrStep, 1000);
+  StdFace_PrintVal_i("NSROptItrStep", &StdI->NSROptItrStep, 1000);
   
   if (StdI->NVMCCalMode == 1) StdFace_NotUsed_i("NSROptItrSmp", StdI->NSROptItrSmp);
   /*else*/ StdFace_PrintVal_i("NSROptItrSmp", &StdI->NSROptItrSmp, StdI->NSROptItrStep/10);

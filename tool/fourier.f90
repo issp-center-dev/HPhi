@@ -163,6 +163,8 @@ SUBROUTINE read_filename()
   WRITE(*,*) "    Number of site : ", nsite
   CLOSE(FI)
   !
+  filehead = "output/" // TRIM(ADJUSTL(filehead))
+  !
   ! Read from CalcMod file
   !
   IF(calcmod == "") THEN
@@ -172,8 +174,6 @@ SUBROUTINE read_filename()
      calctype = 4
      !
   ELSE
-     !
-     filehead = "output/" // TRIM(ADJUSTL(filehead))
      !
      OPEN(fi,file = TRIM(calcmod))
      !

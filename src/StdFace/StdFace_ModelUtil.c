@@ -877,7 +877,7 @@ void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
     for (i2 = 0; i2 < 3; i2++) {
       if (isnan(J0[i1][i2]) == 0)
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
-      else if (isnan(StdI->J[i1][i2])) {
+      else if (isnan(StdI->J[i1][i2]) == 0) {
         J0[i1][i2] = StdI->J[i1][i2];
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
       }
