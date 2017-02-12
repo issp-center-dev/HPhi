@@ -1127,7 +1127,9 @@ static void Print2Green(struct StdIntList *StdI) {
                         (site1 == site2 && site3 == site4 &&
                           spin1 - spin2 + spin3 - spin4 == 0)) {
                         if (store == 1) {
-                          if (spin1 != spin2 || spin3 != spin4) {
+#if defined(_mVMC)
+                          if (spin1 != spin2 || spin3 != spin4) 
+                          {
                             greenindx[ngreen][0] = site1;
                             greenindx[ngreen][1] = spin1;
                             greenindx[ngreen][2] = site4;
@@ -1137,7 +1139,9 @@ static void Print2Green(struct StdIntList *StdI) {
                             greenindx[ngreen][6] = site2;
                             greenindx[ngreen][7] = spin2;
                           }
-                          else {
+                          else 
+#endif
+                          {
                             greenindx[ngreen][0] = site1;
                             greenindx[ngreen][1] = spin1;
                             greenindx[ngreen][2] = site2;

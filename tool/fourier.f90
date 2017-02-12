@@ -471,7 +471,7 @@ END SUBROUTINE set_kpoints
 !
 SUBROUTINE read_corrindx()
   !
-  USE fourier_val, ONLY : file_one, file_two, ncor1, ncor2, ncor, indx, nsite
+  USE fourier_val, ONLY : file_one, file_two, ncor1, ncor2, ncor, indx, nsite, calctype
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, itmp(8), icor, itmp0(2)
@@ -551,6 +551,7 @@ SUBROUTINE read_corrindx()
               !
               indx(itmp(1) + 1, itmp(5) + 1, 4) = icor 
            END IF
+           !
         ELSE IF(itmp(2) == 1 .AND. itmp(4) == 1) THEN
            !
            IF(itmp(6) == 0 .AND. itmp(8) == 0) THEN
@@ -564,11 +565,30 @@ SUBROUTINE read_corrindx()
               !
               indx(itmp(1) + 1, itmp(5) + 1, 6) = icor 
            END IF
-        END IF
+           !
+        ELSE IF(calctype /= 4) THEN
+           !
+           ! S+S- & S-S+ for HPhi
+           !
+           IF((itmp(2) == 0 .AND. itmp(4) == 1) .AND. (itmp(6) == 1 .AND. itmp(8) == 0)) THEN
+              !
+              ! Up-Down-Down-Up = S+S-
+              !
+              indx(itmp(1) + 1, itmp(5) + 1, 7) = icor 
+           ELSE IF((itmp(2) == 1 .AND. itmp(4) == 0) .AND. (itmp(6) == 0 .AND. itmp(8) == 1)) THEN
+              !
+              ! Down-Up-Up-Down = S-S+
+              !
+              indx(itmp(1) + 1, itmp(5) + 1, 8) = icor 
+           END IF
+           !
+        END IF ! (calctype /= 4)
         !
      END IF
      !
-     IF(itmp(1) == itmp(7) .AND. itmp(3) == itmp(5)) THEN
+     IF(calctype == 4 .AND. (itmp(1) == itmp(7) .AND. itmp(3) == itmp(5))) THEN
+        !
+        ! S+S- & S-S+ for mVMC
         !
         IF((itmp(2) == 0 .AND. itmp(4) == 0) .AND. (itmp(6) == 1 .AND. itmp(8) == 1)) THEN
            !
@@ -582,7 +602,7 @@ SUBROUTINE read_corrindx()
            indx(itmp(1) + 1, itmp(5) + 1, 8) = icor 
         END IF
         !
-     END IF
+     END IF ! (calctype == 4 .AND. (itmp(1) == itmp(7) .AND. itmp(3) == itmp(5)))
      !
   END DO
   !
@@ -703,11 +723,16 @@ SUBROUTINE read_corrfile()
               cor(isite, jsite, ii, iwfc) = cor0(indx(isite,jsite,ii + 2))
            END DO
            !
-           ! Ciu+ Cid Cjd+ Cju = delta_{ij} Ciu+ Ciu - Ciu+ Cju Cjd+ Cid
-           ! Cid+ Ciu Cju+ Cjd = delta_{ij} Cid+ Cid - Cid+ Cjd Cju+ Ciu
+           ! For mVMC
            !
-           cor(jsite, jsite, ii, iwfc) = cor(isite, isite, ii, iwfc) &
-           & + cor(isite, isite, ii - 4, iwfc) 
+           !   Ciu+ Cid Cjd+ Cju = delta_{ij} Ciu+ Ciu - Ciu+ Cju Cjd+ Cid
+           !   Cid+ Ciu Cju+ Cjd = delta_{ij} Cid+ Cid - Cid+ Cjd Cju+ Ciu
+           !
+           IF (calctype == 4) THEN
+              cor(1:nsite, jsite, ii, iwfc) = - cor(1:nsite, jsite, ii,     iwfc)
+              cor(  jsite, jsite, ii, iwfc) =   cor(jsite,   jsite, ii,     iwfc) &
+              &                             +   cor(jsite,   jsite, ii - 4, iwfc)
+           END IF
            !
         END DO
      END DO
