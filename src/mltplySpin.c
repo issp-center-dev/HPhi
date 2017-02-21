@@ -18,12 +18,15 @@
 // complex version
 #include <bitcalc.h>
 #include "mfmemory.h"
-#include "xsetmem.h"
-#include "mltply.h"
+#include "mltplyCommon.h"
 #include "mltplySpin.h"
-#include "mltplyMPI.h"
-#include "wrapperMPI.h"
 #include "CalcTime.h"
+//#include ""
+#include "mltplySpinCore.h"
+#include "mltplyHubbardCore.h"
+#include "mltplyMPISpin.h"
+#include "mltplyMPISpinCore.h"
+#include "mltplyMPIBoost.h"
 
 /**
  *
@@ -636,12 +639,8 @@ int mltplyGeneralSpinGC(struct BindStruct *X, double complex *tmp_v0,double comp
 int mltplySpinGCBoost(struct BindStruct *X, double complex *tmp_v0, double complex *tmp_v1)
 {
   long unsigned int j;
-  long unsigned int i;
-  long unsigned int countm;
-  long unsigned int sitenum;
 
   double complex dam_pr;
-  double complex dam_prm;
 
   /* SpinGCBoost */
   double complex* tmp_v2;
@@ -670,3 +669,229 @@ int mltplySpinGCBoost(struct BindStruct *X, double complex *tmp_v0, double compl
   StopTimer(500);
   return 0;
 }
+
+/******************************************************************************/
+//[s] child functions
+/******************************************************************************/
+
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex child_exchange_spin
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long unsigned int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += child_exchange_spin_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex child_pairlift_spin
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += child_pairlift_spin_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+    return dam_pr;
+  }
+
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex GC_child_exchange_spin
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long unsigned int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += GC_child_exchange_spin_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex GC_child_pairlift_spin
+          (
+                  double complex *tmp_v0,
+                  double complex *tmp_v1,
+                  struct BindStruct *X
+          ) {
+    long int j;
+    long unsigned int i_max = X->Large.i_max;
+    long unsigned int off = 0;
+    double complex dam_pr = 0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+    for (j = 1; j <= i_max; j++) {
+      dam_pr += GC_child_pairlift_spin_element(j, tmp_v0, tmp_v1, X, &off);
+    }
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex child_general_int_spin(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X) {
+    double complex dam_pr, tmp_V, dmv;
+    long unsigned int j, i_max;
+    long unsigned int org_sigma2, org_sigma4;
+    long unsigned int isA_up, isB_up;
+    long unsigned int tmp_off = 0;
+    int tmp_sgn;
+
+    i_max = X->Large.i_max;
+    org_sigma2 = X->Large.is2_spin;
+    org_sigma4 = X->Large.is4_spin;
+    tmp_V = X->Large.tmp_V;
+    isA_up = X->Large.is1_up;
+    isB_up = X->Large.is2_up;
+    dam_pr = 0.0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(tmp_v1, tmp_v0)
+    for (j = 1; j <= i_max; j++) {
+      tmp_sgn = X_child_exchange_spin_element(j, X, isA_up, isB_up, org_sigma2, org_sigma4, &tmp_off);
+      if (tmp_sgn != 0) {
+        dmv = tmp_v1[j] * tmp_sgn * tmp_V;
+        tmp_v0[tmp_off] += dmv;
+        dam_pr += conj(tmp_v1[tmp_off]) * dmv;
+      }
+    }
+
+    return dam_pr;
+  }
+
+/**
+ *
+ *
+ * @param tmp_v0
+ * @param tmp_v1
+ * @param X
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+  double complex GC_child_general_int_spin(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X) {
+    double complex dam_pr, tmp_V;
+    long unsigned int j, i_max;
+    long unsigned int org_isite1, org_isite2;
+    long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
+    long unsigned int isA_up, isB_up;
+    long unsigned int tmp_off = 0;
+
+    i_max = X->Large.i_max;
+    org_isite1 = X->Large.isite1;
+    org_isite2 = X->Large.isite2;
+    org_sigma1 = X->Large.is1_spin;
+    org_sigma2 = X->Large.is2_spin;
+    org_sigma3 = X->Large.is3_spin;
+    org_sigma4 = X->Large.is4_spin;
+    tmp_V = X->Large.tmp_V;
+    dam_pr = 0.0;
+    isA_up = X->Def.Tpow[org_isite1 - 1];
+    isB_up = X->Def.Tpow[org_isite2 - 1];
+
+    if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off, tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, tmp_v0, tmp_v1,
+                                                     X);
+      }
+    }
+    else if (org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAisCitAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, tmp_v0, tmp_v1,
+                                                     X, &tmp_off);
+      }
+    } else if (org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAitCiuAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, tmp_v0, tmp_v1,
+                                                     X, &tmp_off);
+      }
+    } else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(tmp_v0, tmp_v1)
+      for (j = 1; j <= i_max; j++) {
+        dam_pr += GC_child_CisAitCiuAiv_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, tmp_v0, tmp_v1,
+                                                     X, &tmp_off);
+      }
+    }
+
+    return dam_pr;
+  }
+/******************************************************************************/
+//[e] child functions
+/******************************************************************************/
