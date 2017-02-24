@@ -71,6 +71,7 @@ void StdFace_Kagome(struct StdIntList *StdI, char *model);
 void StdFace_Orthorhombic(struct StdIntList *StdI, char *model);
 void StdFace_FCOrtho(struct StdIntList *StdI, char *model);
 void StdFace_Pyrochlore(struct StdIntList *StdI, char *model);
+void StdFace_Wannier90(struct StdIntList *StdI, char *model);
 
 #if defined(_HPhi)
 void StdFace_Chain_Boost(struct StdIntList *StdI);

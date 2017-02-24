@@ -591,6 +591,9 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->lattice, "****\0");
   strcpy(StdI->outputmode, "****\0");
   strcpy(StdI->CDataFileHead, "****\0");
+  strcpy(StdI->W90_file, "****\0");
+  strcpy(StdI->W90_geom, "****\0");
+  StdI->W90_cutoff = NaN_d;
 #if defined(_HPhi)
   StdI->LargeValue = NaN_d;
   StdI->OmegaMax = NaN_d;
@@ -643,6 +646,21 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->Wsub = StdI->NaN_i;
 #endif
 }/*static void StdFace_ResetVals*/
+/*
+ * Make all characters lower
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+static void Text2Lower(char *value /**< [inout] Keyword or value*/){
+  char value2;
+  int valuelen, valuelen2, ii;
+
+  valuelen = strlen(value);
+  for (ii = 0; ii < valuelen; ii++) {
+    value2 = tolower(value[ii]);
+    value[ii] = value2;
+  }
+}/*static void Text2Lower(char *value /**< [inout] Keyword or value*/
 /**
  *
  * Remove : space etc. from keyword and value in an iput file
@@ -665,7 +683,7 @@ static void TrimSpaceQuote(char *value /**< [inout] Keyword or value*/){
       value[ii] != '\v' &&
       value[ii] != '\n' &&
       value[ii] != '\0'){
-      value2[valuelen2] = tolower(value[ii]);
+      value2[valuelen2] = value[ii];
       valuelen2++;
     }
   }
@@ -674,7 +692,6 @@ static void TrimSpaceQuote(char *value /**< [inout] Keyword or value*/){
   value[valuelen2] = '\0';
 
 }/*static void TrimSpaceQuote*/
-
 /**
  *
  * Store an input value into the valiable (string)
@@ -695,7 +712,28 @@ static void StoreWithCheckDup_s(
     strcpy(value, valuestring);
   }
 }/*static void StoreWithCheckDup_s*/
-
+ /**
+ *
+ * Store an input value into the valiable (string) 
+ * Force string lower.
+ * If duplicated, HPhi will stop.
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+static void StoreWithCheckDup_sl(
+  char *keyword /**< [in] keyword read from the input file*/,
+  char *valuestring /**< [in] value read from the input file*/,
+  char *value /**< [out] */)
+{
+  if (strcmp(value, "****") != 0) {
+    fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
+    StdFace_exit(-1);
+  }
+  else {
+    strcpy(value, valuestring);
+    Text2Lower(value);
+  }
+}/*static void StoreWithCheckDup_sl*/
 /**
  *
  * Store an input value into the valiable (integer)
@@ -1708,8 +1746,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
       fprintf(stdout, "\n  ERROR !  \"=\" is NOT found !\n\n");
       StdFace_exit(-1);
     }
-    TrimSpaceQuote(keyword);
-    TrimSpaceQuote(value);
+    Text2Lower(keyword);
     fprintf(stdout, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
     if (strcmp(keyword, "a") == 0) StoreWithCheckDup_d(keyword, value, &StdI.a);
@@ -1822,15 +1859,15 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "j''zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[2][1]);
     else if (strcmp(keyword, "k") == 0) StoreWithCheckDup_d(keyword, value, &StdI.K);
     else if (strcmp(keyword, "l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.L);
-    else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_s(keyword, value, StdI.lattice);
+    else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_sl(keyword, value, StdI.lattice);
     else if (strcmp(keyword, "llength") == 0) StoreWithCheckDup_d(keyword, value, &StdI.length[1]);
     else if (strcmp(keyword, "lx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][0]);
     else if (strcmp(keyword, "ly") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][1]);
     else if (strcmp(keyword, "lz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][2]);
-    else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_s(keyword, value, StdI.model);
+    else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_sl(keyword, value, StdI.model);
     else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI.mu);
     else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nelec);
-    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_s(keyword, value, StdI.outputmode);
+    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_sl(keyword, value, StdI.outputmode);
     else if (strcmp(keyword, "phase0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[0]);
     else if (strcmp(keyword, "phase1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[1]);
     else if (strcmp(keyword, "phase2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[2]);
@@ -1858,32 +1895,35 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][0]);
     else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][1]);
     else if (strcmp(keyword, "wz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][2]);
+    else if (strcmp(keyword, "w90_cutoff") == 0) StoreWithCheckDup_d(keyword, value, &StdI.W90_cutoff);
+    else if (strcmp(keyword, "w90_file") == 0) StoreWithCheckDup_s(keyword, value, StdI.W90_file);
+    else if (strcmp(keyword, "w90_geom") == 0) StoreWithCheckDup_s(keyword, value, StdI.W90_geom);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Sz2);
 
 #if defined(_HPhi)
-    else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_s(keyword, value, StdI.CalcSpec);
+    else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_sl(keyword, value, StdI.CalcSpec);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI.exct);
-    else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_s(keyword, value, StdI.EigenVecIO);
+    else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_sl(keyword, value, StdI.EigenVecIO);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ExpecInterval);
     else if (strcmp(keyword, "cdatafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI.CDataFileHead);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.FlgTemp);
-    else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_s(keyword, value, StdI.InitialVecType);
+    else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_sl(keyword, value, StdI.InitialVecType);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI.initial_iv);
     else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosEps);
     else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosTarget);
     else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Lanczos_max);
     else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI.LargeValue);
-    else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_s(keyword, value, StdI.method);
+    else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_sl(keyword, value, StdI.method);
     else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Nomega);
     else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NumAve);
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nvec);
     else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMax);
     else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMin);
     else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaIm);
-    else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_s(keyword, value, StdI.Restart);
+    else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_sl(keyword, value, StdI.Restart);
     else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQL);
     else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQW);
-    else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_s(keyword, value, StdI.SpectrumType);
+    else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_sl(keyword, value, StdI.SpectrumType);
     else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
 #elif defined(_mVMC)
     else if (strcmp(keyword, "a0hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[0][2]);
@@ -1896,6 +1936,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "a2lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][1]);
     else if (strcmp(keyword, "a2wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][0]);
     else if (strcmp(keyword, "complextype") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ComplexType);
+    else if (strcmp(keyword, "cparafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI.CParaFileHead);
     else if (strcmp(keyword, "dsroptredcut") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptRedCut);
     else if (strcmp(keyword, "dsroptstadel") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptStaDel);
     else if (strcmp(keyword, "dsroptstepdt") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptStepDt);
@@ -1989,6 +2030,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     || strcmp(StdI.lattice, "squarelattice") == 0) StdFace_Tetragonal(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "triangular") == 0
     || strcmp(StdI.lattice, "triangularlattice") == 0) StdFace_Triangular(&StdI, StdI.model);
+  else if (strcmp(StdI.lattice, "wannier90") == 0) StdFace_Wannier90(&StdI, StdI.model);
   else UnsupportedSystem(StdI.model, StdI.lattice);
   /**/
 #if defined(_HPhi)

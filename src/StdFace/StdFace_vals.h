@@ -136,7 +136,15 @@ struct StdIntList {
   char CDataFileHead[256];
   int Sz2;
   int ioutputmode;
-
+  /*
+   Wannier90 mode
+  */
+  char W90_file[256];
+  char W90_geom[256];
+  int W90_nt;
+  int **W90_indx;
+  double complex *W90_t;
+  double W90_cutoff;
 #if defined(_HPhi)
   /*HPhi modpara*/
   char method[256];

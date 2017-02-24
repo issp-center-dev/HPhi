@@ -188,7 +188,11 @@ struct StdIntList *StdI,
 
       ExGeneral = 0;
 
+#if defined(_mVMC)
       StdI->Ex[StdI->NEx] = - 0.25 * (J[0][0] + J[1][1]);
+#else
+      StdI->Ex[StdI->NEx] = 0.25 * (J[0][0] + J[1][1]);
+#endif
       StdI->ExIndx[StdI->NEx][0] = isite;
       StdI->ExIndx[StdI->NEx][1] = jsite;
       StdI->NEx += 1;
@@ -516,6 +520,8 @@ void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim)
   int ipos;
   int nBox[3], iCellV_fold[3], iCellV[3];
   double pos[4][2], xmin, xmax/*, offset[2], scale*/;
+
+  fprintf(stdout, "\n  @ Super-Lattice setting\n\n");
   /*
    check Input parameters
   */
@@ -591,7 +597,7 @@ void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim)
       * StdI->box[1][(ii + 2) % 3]
       * StdI->box[2][(ii + 1) % 3];
   }
-  printf("         Number of Cell : %d\n", abs(StdI->NCell));
+  printf("         Number of Cell = %d\n", abs(StdI->NCell));
   if (StdI->NCell == 0) {
     StdFace_exit(-1);
   }
@@ -966,10 +972,10 @@ void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name
     StdFace_exit(-1);
   }
   else if (isnan(creal(*t0)) == 0)
-    fprintf(stdout, "  %15s = %-10.5f\n", t0name, creal(*t0));
+    fprintf(stdout, "  %15s = %-10.5f %-10.5f\n", t0name, creal(*t0), cimag(*t0));
   else if (isnan(creal(StdI->t)) == 0) {
     *t0 = StdI->t;
-    fprintf(stdout, "  %15s = %-10.5f\n", t0name, creal(*t0));
+    fprintf(stdout, "  %15s = %-10.5f %-10.5f\n", t0name, creal(*t0), cimag(*t0));
   }
   else {
     *t0 = 0.0;
