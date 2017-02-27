@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "bitcalc.h"
+#include "mltplyCommon.h"
 #include "mltply.h"
 #include "expec_energy_flct.h"
 #include "wrapperMPI.h"

@@ -15,11 +15,16 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "mltply.h"
+#include "mltplyCommon.h"
 #include "FileIO.h"
 #include "bitcalc.h"
 #include "expec_cisajscktaltdc.h"
+#include "mltplySpinCore.h"
+#include "mltplyHubbardCore.h"
 #include "wrapperMPI.h"
-#include "mltplyMPI.h"
+#include "mltplyMPISpin.h"
+#include "mltplyMPISpinCore.h"
+#include "mltplyMPIHubbardCore.h"
 
 /**
  * @file   expec_cisajscktaltdc.c

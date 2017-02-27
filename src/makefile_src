@@ -43,8 +43,14 @@ log.o \
 makeHam.o \
 matrixlapack.o \
 mltply.o \
-mltplyHubbard.o \
-mltplyMPI.o \
+mltplySpin.o\
+mltplyHubbard.o\
+mltplySpinCore.o\
+mltplyHubbardCore.o\
+mltplyMPIHubbard.o \
+mltplyMPIHubbardCore.o \
+mltplyMPISpin.o \
+mltplyMPISpinCore.o \
 mltplyMPIBoost.o \
 mltplySpin.o \
 output.o \
@@ -110,7 +116,15 @@ include/makeHam.h \
 include/matrixlapack.h \
 include/mfmemory.h \
 include/mltply.h \
-include/mltplyMPI.h \
+include/mltplyHubbard.h \
+include/mltplySpin.h \
+include/mltplyHubbardCore.h \
+include/mltplySpinCore.h \
+include/mltplyMPIBoost.h \
+include/mltplyMPIHubbard.h \
+include/mltplyMPIHubbardCore.h \
+include/mltplyMPISpin.h \
+include/mltplyMPISpinCore.h \
 include/output.h \
 include/output_list.h \
 include/phys.h \
@@ -189,6 +203,9 @@ makeHam.o:$(HEADERS)
 matrixlapack.o:$(HEADERS)
 mltply.o:$(HEADERS)
 mltplyHubbard.o:$(HEADERS)
+mltplySpin.o:$(HEADERS)
+mltplyHubbardCore.o:$(HEADERS)
+mltplySpinCore.o:$(HEADERS)
 mltplyMPI.o:$(HEADERS)
 mltplyMPIBoost.o:$(HEADERS)
 mltplySpin.o:$(HEADERS)

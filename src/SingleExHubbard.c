@@ -1,8 +1,8 @@
 #include "bitcalc.h"
 #include "wrapperMPI.h"
 #include "mfmemory.h"
-#include "mltply.h"
-#include "mltplyMPI.h"
+#include "mltplyHubbardCore.h"
+#include "mltplyMPIHubbardCore.h"
 #ifdef MPI
 #include "mpi.h"
 #endif

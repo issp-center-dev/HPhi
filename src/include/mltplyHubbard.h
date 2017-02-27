@@ -23,5 +23,79 @@ int mltplyHubbard(struct BindStruct *X, double complex *tmp_v0,double complex *t
 
 int mltplyHubbardGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
+double complex child_general_hopp_element
+(
+ long unsigned int j,
+ double complex       *tmp_v0,
+ double complex      *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex GC_child_general_hopp
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X,
+ double complex trans
+ );
+
+
+double complex GC_child_general_int(
+			 double complex *tmp_v0,
+			 double complex *tmp_v1,
+			 struct BindStruct *X
+			 );
+
+
+double complex child_general_int
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+
+double complex child_general_hopp
+(
+ double complex       *tmp_v0,
+ double complex       *tmp_v1,
+ struct BindStruct *X,
+ double complex trans
+ );
+
+double complex child_exchange
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex child_pairhopp
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex GC_child_exchange
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex GC_child_pairlift
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex GC_child_pairhopp
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
 
 #endif

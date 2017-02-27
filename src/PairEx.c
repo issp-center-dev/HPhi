@@ -1,5 +1,5 @@
 #include "bitcalc.h"
-#include "mltply.h"
+#include "mltplyCommon.h"
 #include "PairEx.h"
 #include "PairExHubbard.h"
 #include "PairExSpin.h"
