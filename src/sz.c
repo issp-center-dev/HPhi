@@ -338,53 +338,107 @@ int sz
         fprintf(stderr, "Error: CalcHS in ModPara file must be 0 or 1 for Hubbard model.");
         return -1;
       }
-
+      
     case HubbardNConserved:
-      // this part can not be parallelized
-      jb = 0;
-      iSpnup=0;
-      iMinup=0;
-      iAllup=X->Def.Ne;
-      if(X->Def.Ne > X->Def.Nsite){
-        iMinup = X->Def.Ne-X->Def.Nsite;
-        iAllup = X->Def.Nsite;
-      }
-      for(ib=0;ib<X->Check.sdim;ib++){
-        list_jb[ib]=jb;
-        i=ib*ihfbit;
-        num_up=0;
-        for(j=0;j<=N2-2;j+=2){
-          div=i & X->Def.Tpow[j];
-          div=div/X->Def.Tpow[j];
-          num_up+=div;
+      hacker = X->Def.read_hacker;
+      if(hacker==0){
+        // this part can not be parallelized
+        jb = 0;
+        iSpnup=0;
+        iMinup=0;
+        iAllup=X->Def.Ne;
+        if(X->Def.Ne > X->Def.Nsite){
+          iMinup = X->Def.Ne-X->Def.Nsite;
+          iAllup = X->Def.Nsite;
         }
-        num_down=0;
-        for(j=1;j<=N2-1;j+=2){
-          div=i & X->Def.Tpow[j];
-          div=div/X->Def.Tpow[j];
-          num_down+=div;
-        }
-        tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-        all_up   = (X->Def.Nsite+tmp_res)/2;
-        all_down = (X->Def.Nsite-tmp_res)/2;
+        for(ib=0;ib<X->Check.sdim;ib++){
+          list_jb[ib]=jb;
+          i=ib*ihfbit;
+          num_up=0;
+          for(j=0;j<=N2-2;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_up+=div;
+          }
+          num_down=0;
+          for(j=1;j<=N2-1;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_down+=div;
+          }
+          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+          all_up   = (X->Def.Nsite+tmp_res)/2;
+          all_down = (X->Def.Nsite-tmp_res)/2;
 
-        for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
-          tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
-          tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
-          jb   += tmp_1*tmp_2;
+          for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
+            tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
+            tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
+            jb   += tmp_1*tmp_2;
+          }
         }
-      }
-      //#pragma omp barrier
-      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
-      TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+        //#pragma omp barrier
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+        TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
-      icnt = 0;
+        icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
-      for(ib=0;ib<X->Check.sdim;ib++){
-        icnt+=child_omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
+        for(ib=0;ib<X->Check.sdim;ib++){
+          icnt+=child_omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
+        }
+        break;
       }
-      break;
+      else if(hacker==1){
+        // this part can not be parallelized
+        jb = 0;
+        iSpnup=0;
+        iMinup=0;
+        iAllup=X->Def.Ne;
+        if(X->Def.Ne > X->Def.Nsite){
+          iMinup = X->Def.Ne-X->Def.Nsite;
+          iAllup = X->Def.Nsite;
+        }
+        for(ib=0;ib<X->Check.sdim;ib++){
+          list_jb[ib]=jb;
+          i=ib*ihfbit;
+          num_up=0;
+          for(j=0;j<=N2-2;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_up+=div;
+          }
+          num_down=0;
+          for(j=1;j<=N2-1;j+=2){
+            div=i & X->Def.Tpow[j];
+            div=div/X->Def.Tpow[j];
+            num_down+=div;
+          }
+          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+          all_up   = (X->Def.Nsite+tmp_res)/2;
+          all_down = (X->Def.Nsite-tmp_res)/2;
 
+          for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
+            tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
+            tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
+            jb   += tmp_1*tmp_2;
+          }
+        }
+        //#pragma omp barrier
+        TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+        TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+
+        icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
+        for(ib=0;ib<X->Check.sdim;ib++){
+          icnt+=child_omp_sz_hacker(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
+        }
+
+        break;
+      }
+      else{
+        fprintf(stderr, "Error: CalcHS in ModPara file must be 0 or 1 for Hubbard model.");
+        return -1;
+      }
+      
     case Kondo:
       // this part can not be parallelized
       N_all_up   = X->Def.Nup;
