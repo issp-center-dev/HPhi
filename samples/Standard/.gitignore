@@ -1,0 +1,17 @@
+calcmod.def
+coulombintra.def
+coulombinter.def
+geometry.dat
+greenone.def
+greentwo.def
+lattice.gp
+locspn.def
+modpara.def
+namelist.def
+pair.def
+trans.def
+output/
+exchange.def
+hund.def
+boost.def
+pairlift.def

@@ -43,7 +43,6 @@ log.o \
 makeHam.o \
 matrixlapack.o \
 mltply.o \
-mltplySpin.o\
 mltplyHubbard.o\
 mltplySpinCore.o\
 mltplyHubbardCore.o\
@@ -203,7 +202,6 @@ makeHam.o:$(HEADERS)
 matrixlapack.o:$(HEADERS)
 mltply.o:$(HEADERS)
 mltplyHubbard.o:$(HEADERS)
-mltplySpin.o:$(HEADERS)
 mltplyHubbardCore.o:$(HEADERS)
 mltplySpinCore.o:$(HEADERS)
 mltplyMPI.o:$(HEADERS)
