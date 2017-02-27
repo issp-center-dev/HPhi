@@ -208,7 +208,6 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
        Nearest neighbor along the ladder
       */
       StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC, &isite, &jsite, 1, &Cphase);
-      if (strcmp(StdI->model, "kondo") == 0) jsite += StdI->L * StdI->NsiteUC;
       /**/
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -221,7 +220,7 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
        Second nearest neighbor along the ladder
       */
       StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, isiteUC, isiteUC, &isite, &jsite, 2, &Cphase);
-      if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
+      /**/
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
@@ -237,7 +236,6 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
          Vertical
         */
         StdFace_SetLabel(StdI, fp, 0, iL, 0, 0, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase);
-        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
@@ -250,7 +248,6 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
          Diagonal 1
         */
         StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase);
-        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
@@ -262,11 +259,8 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
         /*
          Diagonal 2
         */
-        /**/
-        if (strcmp(StdI->model, "spin") == 0 ) {
-        }
         StdFace_SetLabel(StdI, fp, 0, iL, 0, -1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase);
-        if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L * StdI->NsiteUC;
+        /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/

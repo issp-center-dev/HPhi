@@ -186,7 +186,6 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
     Nearest neighbor
    */
     StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, 0, 0, &isite, &jsite, 1, &Cphase);
-    if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
@@ -199,7 +198,6 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
     Second nearest neighbor
     */
     StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, 0, 0, &isite, &jsite, 2, &Cphase);
-    if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
