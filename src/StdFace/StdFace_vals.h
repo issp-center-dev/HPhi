@@ -139,7 +139,7 @@ struct StdIntList {
   /*
    Wannier90 mode
   */
-  char W90_file[256];
+  char W90_hr[256];
   char W90_geom[256];
   int W90_nt;
   int **W90_indx;

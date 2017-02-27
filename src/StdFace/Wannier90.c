@@ -24,152 +24,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 
 /*
-* Read Wannier90 hamiltonian file
+* Read Geometry file for wannier90
 *
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void read_W90(struct StdIntList *StdI, char *model) 
-{
+static void geometry_W90(struct StdIntList *StdI, int *wan_num) {
+  int isite, ii, ierr;
   FILE *fp;
-  int ierr, it, jt, nt_tot;
-  double dtmp[2], tmax, tabs;
-  char ctmp[256], *ctmp2;
-  double complex *t_tot;
-  int **indx_tot;
 
-  fprintf(stdout, "\n  @ Wannier90 Mode\n\n");
+  fprintf(stdout, "                Wannier90 Geometry file = %s\n", StdI->W90_geom);
 
-  StdFace_PrintVal_d("W90_thr", &StdI->W90_cutoff, 0.1);
-
-  fprintf(stdout, "                       Wannier90 file = %s\n", StdI->W90_file);
-  
-  fp = fopen(StdI->W90_file, "r");
-  ctmp2 = fgets(ctmp, 256, fp);
-  ierr = fscanf(fp, "%d", &StdI->NsiteUC);
-  ierr = fscanf(fp, "%d", &nt_tot);
-  for (it = 0; it < nt_tot; it++) {
-    ierr = fscanf(fp, "%d", &jt);
-  }
-  nt_tot *= StdI->NsiteUC * StdI->NsiteUC;
-  t_tot = (double complex *)malloc(sizeof(double complex) * nt_tot);
-  indx_tot = (int **)malloc(sizeof(int*) * nt_tot);
-  for (it = 0; it < nt_tot; it++) indx_tot[it] = (int *)malloc(sizeof(int) * 5);
-
-  tmax = 0.0;
-  for (it = 0; it < nt_tot; it++) {
-    ierr = fscanf(fp, "%d%d%d%d%d%lf%lf",
-      &indx_tot[it][0], &indx_tot[it][1], &indx_tot[it][2], &indx_tot[it][3], &indx_tot[it][4],
-      &dtmp[0], &dtmp[1]);
-    t_tot[it] = dtmp[0] + I * dtmp[1];
-    tabs = cabs(t_tot[it]);
-    if (tmax < tabs) tmax = tabs;
-    /*
-    Inversion symmetry
-    */
-    for (jt = 0; jt < it; jt++) {
-      if (
-        indx_tot[it][0] == -indx_tot[jt][0] &&
-        indx_tot[it][1] == -indx_tot[jt][1] &&
-        indx_tot[it][2] == -indx_tot[jt][2] &&
-        indx_tot[it][3] == indx_tot[jt][4] &&
-        indx_tot[it][4] == indx_tot[jt][3]
-        )
-        t_tot[it] = 0.0;
-    }/*for (jt = 0; jt < it; jt++)*/
-  }/*for (ii = 0; ii < nt_tot; ii++)*/
-  fclose(fp);
-
-  fprintf(stdout, "              Total number of Hopping = %d\n", nt_tot);
-  fprintf(stdout, "                      Maximum Hopping = %f\n", tmax);
-  fprintf(stdout, "                Threshold for Hopping = %f\n", tmax * StdI->W90_cutoff);
+  fp = fopen(StdI->W90_geom, "r");
   /*
-    Cut-off of Hopping
+   Direct lattice vector
   */
-  /*  Query  */
-  StdI->W90_nt = 0;
-  for (it = 0; it < nt_tot; it++) {
-    if (tmax * StdI->W90_cutoff < cabs(t_tot[it])) StdI->W90_nt += 1;
-  }/*for (it = 0; it < nt_tot; it++))*/
-  fprintf(stdout, "    Total number of EFFECTIVE Hopping = %d\n", StdI->W90_nt);
+  for (ii = 0; ii < 3; ii++)
+    ierr = fscanf(fp, "%lf%lf%lf", &StdI->direct[ii][0], &StdI->direct[ii][1], &StdI->direct[ii][2]);
+  /*
+   Site position
+  */
+  for (isite = 0; isite < StdI->NsiteUC; isite++) free(StdI->tau[isite]);
+  free(StdI->tau);
+  ierr = fscanf(fp, "%d", &StdI->NsiteUC);
+  fprintf(stdout, "              Number of EFFECTIVE Sites = %d\n", StdI->NsiteUC);
 
-  StdI->W90_t = (double complex *)malloc(sizeof(double complex) * StdI->W90_nt);
-  StdI->W90_indx = (int **)malloc(sizeof(int*) * StdI->W90_nt);
-  for (it = 0; it < StdI->W90_nt; it++) StdI->W90_indx[it] = (int *)malloc(sizeof(int) * 5);
+  StdI->tau = (double **)malloc(sizeof(double*) * StdI->NsiteUC);
+  for (ii = 0; ii < StdI->NsiteUC; ii++) StdI->tau[ii] = (double *)malloc(sizeof(double) * 3);
 
-  /*  Store  */
-  StdI->W90_nt = 0;
-  for (it = 0; it < nt_tot; it++) {
-    if (tmax * StdI->W90_cutoff< cabs(t_tot[it])) {
-      for (jt = 0; jt < 3; jt++) StdI->W90_indx[StdI->W90_nt][jt] = indx_tot[it][jt];
-      for (jt = 3; jt < 5; jt++) StdI->W90_indx[StdI->W90_nt][jt] = indx_tot[it][jt] - 1;
-      StdI->W90_t[StdI->W90_nt] = t_tot[it];
-    }
-  }/*for (it = 0; it < nt_tot; it++))*/
-
-  for (it = 0; it < nt_tot; it++) free(indx_tot[it]);
-  free(indx_tot);
-  free(t_tot);
-
-}/*static void read_W90(struct StdIntList *StdI, char *model)*/
-/*
- * Read Geometry file for wannier90
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void geometry_W90(struct StdIntList *StdI) {
-  int isite, ii, jj, ierr;
-  FILE *fp;
-  double vcell, recipr[3][3], tau0[3];
-  
-  if (strcmp(StdI->W90_geom, "****") == 0) {
-    for (ii = 0; ii < 3; ii++) {
-      for (jj = 0; jj < 3; jj++) {
-        StdI->direct[ii][jj] = 0.0;
-      }
-      StdI->direct[ii][ii] = 1.0;
-    }
-    for (isite = 0; isite < StdI->NsiteUC; isite++)
-      for (ii = 0; ii < 3; ii++) StdI->tau[isite][ii] = 0.0;
-  }/*if (strcmp(StdI->StdI->W90_geom, "****") == 0)*/
-  else {
-    fprintf(stdout, "                  Wannier90 Geometry file = %s\n", StdI->W90_geom);
-
-    fp = fopen(StdI->W90_geom, "r");
-    for (ii = 0; ii < 3; ii++)
-      ierr = fscanf(fp, "%lf%lf%lf", &StdI->direct[ii][0], &StdI->direct[ii][1], &StdI->direct[ii][2]);
-    for (isite = 0; isite < StdI->NsiteUC; isite++)
-      ierr = fscanf(fp, "%lf%lf%lf", &StdI->tau[isite][0], &StdI->tau[isite][1], &StdI->tau[isite][2]);
-    fclose(fp);
-    /*
-    Reciprocal lattice vector
-    */
-    vcell = 0.0;
-    for (ii = 0; ii < 3; ii++) {
-      vcell += StdI->direct[0][ii]
-             * StdI->direct[1][(ii + 1) % 3]
-             * StdI->direct[2][(ii + 2) % 3]
-             - StdI->direct[0][ii]
-             * StdI->direct[1][(ii + 2) % 3]
-             * StdI->direct[2][(ii + 1) % 3];
-    }
-
-    for (ii = 0; ii < 3; ii++) {
-      for (jj = 0; jj < 3; jj++) {
-        recipr[ii][jj] = StdI->direct[(ii + 1) % 3][(jj + 1) % 3] * StdI->direct[(ii + 2) % 3][(jj + 2) % 3]
-                       - StdI->direct[(ii + 1) % 3][(jj + 2) % 3] * StdI->direct[(ii + 2) % 3][(jj + 1) % 3];
-        recipr[ii][jj] /= vcell;
-      }/*for (jj = 0; jj < 3; jj++)*/
-    }/*for (jj = 0; jj < 3; jj++)*/
-
-    for (isite = 0; isite < StdI->NsiteUC; isite++){
-      for (ii = 0; ii < 3; ii++) {
-        tau0[ii] = 0.0;
-        for (jj = 0; jj < 3; jj++) tau0[ii] += recipr[ii][jj] * StdI->tau[isite][jj];
-      }
-      for (ii = 0; ii < 3; ii++) StdI->tau[isite][ii] = tau0[ii];
-    }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
-
-  }/*if (strcmp(StdI->StdI->W90_geom, "****") != 0)*/
+  for (isite = 0; isite < StdI->NsiteUC; isite++)
+    ierr = fscanf(fp, "%d%lf%lf%lf", &wan_num[isite],
+      &StdI->tau[isite][0], &StdI->tau[isite][1], &StdI->tau[isite][2]);
+  fclose(fp);
 
   printf("      Direct lattice vectors:\n");
   for (ii = 0; ii < 3; ii++) printf("      %10.5f %10.5f %10.5f\n",
@@ -179,6 +64,156 @@ static void geometry_W90(struct StdIntList *StdI) {
     StdI->tau[isite][0], StdI->tau[isite][1], StdI->tau[isite][2]);
 
 }/*static void geometry_W90(struct StdIntList *StdI) */
+/*
+* Read Wannier90 hamiltonian file
+*
+* @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void read_W90(struct StdIntList *StdI, char *model) 
+{
+  FILE *fp;
+  int ierr, nWan, nWSC, iWSC, jWSC, iWan, jWan, iWan0, jWan0, ii;
+  double dtmp[2], tmax, tabs;
+  char ctmp[256], *ctmp2;
+  double complex ***t_tot, **t0;
+  int **indx_tot, *wan_num;
+
+  fprintf(stdout, "\n  @ Wannier90 Mode\n\n");
+
+  StdFace_PrintVal_d("W90_thr", &StdI->W90_cutoff, 0.1);
+
+  fprintf(stdout, "                         Wannier90 file = %s\n", StdI->W90_hr);
+  
+  fp = fopen(StdI->W90_hr, "r");
+  ctmp2 = fgets(ctmp, 256, fp);
+  ierr = fscanf(fp, "%d", &nWan);
+  ierr = fscanf(fp, "%d", &nWSC);
+  for (iWSC = 0; iWSC < nWSC; iWSC++) {
+    ierr = fscanf(fp, "%d", &ii);
+  }
+  fprintf(stdout, "                      Number of Wannier = %d\n", nWan);
+  fprintf(stdout, "            Number of Wigner-Seitz Cell = %d\n", nWSC);
+
+  t_tot = (double complex ***)malloc(sizeof(double complex **) * nWSC);
+  indx_tot = (int **)malloc(sizeof(int*) * nWSC);
+  for (iWSC = 0; iWSC < nWSC; iWSC++) {
+    t_tot[iWSC] = (double complex **)malloc(sizeof(double complex *) * nWan);
+    indx_tot[iWSC] = (int *)malloc(sizeof(int) * 3);
+    for (iWan = 0; iWan < nWan; iWan++) {
+      t_tot[iWSC][iWan] = (double complex *)malloc(sizeof(double complex) * nWan);
+    }
+  }
+  t0 = (double complex **)malloc(sizeof(double complex *) * nWan);
+  for (iWan = 0; iWan < nWan; iWan++)
+    t0[iWan] = (double complex *)malloc(sizeof(double complex) * nWan);
+  wan_num = (int *)malloc(sizeof(int) * nWan);
+
+  geometry_W90(StdI, wan_num);
+
+  tmax = 0.0;
+  for (iWSC = 0; iWSC < nWSC; iWSC++) {
+    for (iWan = 0; iWan < nWan; iWan++) {
+      for (jWan = 0; jWan < nWan; jWan++) {
+        ierr = fscanf(fp, "%d%d%d%d%d%lf%lf",
+          &indx_tot[iWSC][0], &indx_tot[iWSC][1], &indx_tot[iWSC][2], &iWan0, &jWan0,
+          &dtmp[0], &dtmp[1]);
+        t0[iWan0 - 1][jWan0 - 1] = dtmp[0] + I * dtmp[1];
+      }
+    }
+    for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
+      for (jWan = 0; jWan < StdI->NsiteUC; jWan++) {
+        t_tot[iWSC][iWan][jWan] = t0[wan_num[iWan]][wan_num[jWan]];
+      }
+    }
+    /*
+    Inversion symmetry
+    */
+    for (jWSC = 0; jWSC < iWSC; jWSC++) {
+      if (
+        indx_tot[iWSC][0] == -indx_tot[jWSC][0] &&
+        indx_tot[iWSC][1] == -indx_tot[jWSC][1] &&
+        indx_tot[iWSC][2] == -indx_tot[jWSC][2]
+        )
+        for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
+          for (jWan = 0; jWan < StdI->NsiteUC; jWan++) {
+            t_tot[iWSC][iWan][jWan] = 0.0;
+          }
+        }
+    }/*for (jWSC = 0; jWSC < iWSC; jWSC++)*/
+    if (indx_tot[iWSC][0] == 0 &&
+        indx_tot[iWSC][1] == 0 &&
+        indx_tot[iWSC][2] == 0) 
+      for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
+        for (jWan = 0; jWan < iWan; jWan++) {
+          t_tot[iWSC][iWan][jWan] = 0.0;
+        }
+      }
+    /*
+     Max t
+    */
+    for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
+      for (jWan = 0; jWan < StdI->NsiteUC; jWan++) {
+        tabs = cabs(t_tot[iWSC][iWan][jWan]);
+        if (tmax < tabs) tmax = tabs;
+      }
+    }
+  }/*for (iWSC = 0; iWSC < nWSC; iWSC++)*/
+  fclose(fp);
+
+  fprintf(stdout, "                        Maximum Hopping = %f\n", tmax);
+  fprintf(stdout, "                  Threshold for Hopping = %f\n", tmax * StdI->W90_cutoff);
+  /*
+    Cut-off of Hopping
+  */
+  /*  Query  */
+  StdI->W90_nt = 0;
+  for (iWSC = 0; iWSC < nWSC; iWSC++) {
+    for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
+      for (jWan = 0; jWan < StdI->NsiteUC; jWan++) {
+        if (tmax * StdI->W90_cutoff < cabs(t_tot[iWSC][iWan][jWan])) StdI->W90_nt += 1;
+      }
+    }
+  }
+  fprintf(stdout, "      Total number of EFFECTIVE Hopping = %d\n", StdI->W90_nt);
+
+  StdI->W90_t = (double complex *)malloc(sizeof(double complex) * StdI->W90_nt);
+  StdI->W90_indx = (int **)malloc(sizeof(int*) * StdI->W90_nt);
+  for (ii = 0; ii < StdI->W90_nt; ii++) StdI->W90_indx[ii] = (int *)malloc(sizeof(int) * 5);
+
+  /*  Store  */
+  fprintf(stdout, "      EFFECTIVE Hoppings:\n");
+  StdI->W90_nt = 0;
+  for (iWSC = 0; iWSC < nWSC; iWSC++) {
+    for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
+      for (jWan = 0; jWan < StdI->NsiteUC; jWan++) {
+        if (tmax * StdI->W90_cutoff < cabs(t_tot[iWSC][iWan][jWan])) {
+          for (ii = 0; ii < 3; ii++) StdI->W90_indx[StdI->W90_nt][ii] = indx_tot[iWSC][ii];
+          StdI->W90_indx[StdI->W90_nt][3] = iWan;
+          StdI->W90_indx[StdI->W90_nt][4] = jWan;
+          StdI->W90_t[StdI->W90_nt] = t_tot[iWSC][iWan][jWan];
+          fprintf(stdout, "        %5d%5d%5d%5d%5d%12.6f%12.6f\n", 
+            StdI->W90_indx[StdI->W90_nt][0], StdI->W90_indx[StdI->W90_nt][1], StdI->W90_indx[StdI->W90_nt][2], 
+            StdI->W90_indx[StdI->W90_nt][3], StdI->W90_indx[StdI->W90_nt][4], 
+            creal(StdI->W90_t[StdI->W90_nt]), cimag(StdI->W90_t[StdI->W90_nt]));
+          StdI->W90_nt += 1;
+        }
+      }
+    }
+  }
+
+  for (iWSC = 0; iWSC < nWSC; iWSC++) {
+    for (iWan = 0; iWan < nWan; iWan++) {
+      free(t_tot[iWSC][iWan]);
+    }
+    free(t_tot[iWSC]);
+    free(indx_tot[iWSC]);
+  }
+  free(t_tot);
+  free(indx_tot);
+  for (iWan = 0; iWan < nWan; iWan++) free(t0[iWan]);
+  free(t0);
+  free(wan_num);
+}/*static void read_W90(struct StdIntList *StdI, char *model)*/
 /**
  *
  * Setup a Hamiltonian for the Wannier90 *_hr.dat
@@ -199,13 +234,13 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
   /*
    Initialize Cell
   */
-  read_W90(StdI, model);
+  StdI->NsiteUC = 1;
   StdFace_InitSite(StdI, fp, 3);
-  geometry_W90(StdI);
-  /**/
   StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
   StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
   StdFace_PrintVal_d("phase2", &StdI->phase[2], 0.0);
+  /**/
+  read_W90(StdI, model);
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_d("K", StdI->K);
@@ -238,15 +273,12 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdI->ntrans = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*D*/ + 12/*J*/ + 0/*J'*/ + 0/*J''*/)
+    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*D*/ + StdI->W90_nt/*J*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
-  else {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (StdI->NsiteUC/*mu*/ + 24/*t*/ + 0/*t'*/ + 0/*t''*/);
-    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (12/*V*/ + 0/*V'*/ + 0/*V''*/));
-
-    if (strcmp(StdI->model, "kondo") == 0 )  StdI->nintr += 
-      StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
+  else if (strcmp(StdI->model, "hubbard") == 0) {
+    StdI->ntrans = StdI->NCell * 2/*spin*/ * (StdI->NsiteUC/*mu*/ + StdI->W90_nt * 2/*t*/);
+    StdI->nintr = StdI->NCell * StdI->NsiteUC/*U*/;
   }
   /**/
   StdFace_MallocInteractions(StdI);

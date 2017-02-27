@@ -334,7 +334,7 @@ static void PrintExcitation(struct StdIntList *StdI) {
  */
 void PrintJastrow(struct StdIntList *StdI) {
   FILE *fp;
-  int isite, jsite, NJastrow, iJastrow, isite1, jsite1;
+  int isite, jsite, NJastrow, iJastrow, isite1, jsite1, iorb;
   int **Jastrow;
 
   Jastrow = (int **)malloc(sizeof(int*) * StdI->nsite);
@@ -347,11 +347,15 @@ void PrintJastrow(struct StdIntList *StdI) {
   /*
    Symmetrize
   */
-  for (isite = 0; isite < StdI->nsite; isite++) {
-    for (jsite = 0; jsite < isite; jsite++) {
-      Jastrow[isite][jsite] = Jastrow[jsite][isite];
-    }/*for (jsite = 0; jsite < isite; jsite++)*/
-  }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+  for (iorb = 0; iorb < StdI->NOrb; iorb++) {
+    for (isite = 0; isite < StdI->nsite; isite++) {
+      for (jsite = 0; jsite < StdI->nsite; jsite++) {
+        if (Jastrow[isite][jsite] == iorb) {
+          Jastrow[jsite][isite] = Jastrow[isite][jsite];
+        }
+      }/*for (jsite = 0; jsite < isite; jsite++)*/
+    }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+  }/*for (iorb = 0; iorb < StdI->NOrb; iorb++)*/
   /**/
   if (strcmp(StdI->model, "hubbard") == 0) NJastrow = 0;
   else NJastrow = -1;
@@ -387,7 +391,6 @@ void PrintJastrow(struct StdIntList *StdI) {
       Jastrow[isite][jsite] = -1 - Jastrow[isite][jsite];
     }/*for (jsite = 0; jsite < isite; jsite++)*/
   }/*for (isite = 0; isite < StdI->nsite; isite++)*/
-
 
   fp = fopen("jastrowidx.def", "w");
   fprintf(fp, "=============================================\n");
@@ -468,10 +471,37 @@ void PrintOrb(struct StdIntList *StdI) {
 static void PrintGutzwiller(struct StdIntList *StdI)
 {
   FILE *fp;
-  int isite, NGutzwiller;
+  int isite, jsite, NGutzwiller, iGutz;
+  int *Gutz;
 
-  if (strcmp(StdI->model, "kondo") == 0) NGutzwiller = 2;
-  else NGutzwiller = 1;
+  Gutz = (int *)malloc(sizeof(int) * StdI->nsite);
+  for (isite = 0; isite < StdI->nsite; isite++) Gutz[isite] = StdI->Orb[isite][isite];
+
+  if (strcmp(StdI->model, "hubbard") == 0) NGutzwiller = 0;
+  else NGutzwiller = -1;
+  for (isite = 0; isite < StdI->nsite; isite++) {
+    /*
+    For Local spin
+    */
+    if (StdI->locspinflag[isite] != 0) {
+      Gutz[isite] = -1;
+      continue;
+    }
+    /**/
+    if (Gutz[isite] >= 0) {
+      iGutz = Gutz[isite];
+      NGutzwiller -= 1;
+      for (jsite = 0; jsite < StdI->nsite; jsite++) {
+        if (Gutz[jsite] == iGutz)
+          Gutz[jsite] = NGutzwiller;
+      }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+    }/*if (Gutz[isite] >= 0)*/
+  }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+  /**/
+  NGutzwiller = -NGutzwiller;
+  for (isite = 0; isite < StdI->nsite; isite++) {
+    Gutz[isite] = -1 - Gutz[isite];
+  }/*for (isite = 0; isite < StdI->nsite; isite++)*/
 
   fp = fopen("gutzwilleridx.def", "w");
   fprintf(fp, "=============================================\n");
@@ -480,23 +510,20 @@ static void PrintGutzwiller(struct StdIntList *StdI)
   fprintf(fp, "=============================================\n");
   fprintf(fp, "=============================================\n");
 
+  for (isite = 0; isite < StdI->nsite; isite++)
+    fprintf(fp, "%5d  %5d\n", isite, Gutz[isite]);
+
   if (strcmp(StdI->model, "hubbard") == 0) {
-    for (isite = 0; isite < StdI->nsite; isite++)
-      fprintf(fp, "%5d  %5d\n", isite, 0);
-    fprintf(fp, "%5d  %5d\n", 0, 1);
+    for (iGutz = 0; iGutz < NGutzwiller; iGutz++)
+      fprintf(fp, "%5d  %5d\n", iGutz, 1);
   }
   else if (strcmp(StdI->model, "spin") == 0) {
-    for (isite = 0; isite < StdI->nsite; isite++)
-      fprintf(fp, "%5d  %5d\n", isite, 0);
     fprintf(fp, "%5d  %5d\n", 0, 0);
   }
   else if (strcmp(StdI->model, "kondo") == 0) {
-    for (isite = 0; isite < StdI->nsite; isite++) {
-      if(StdI->locspinflag[isite] == 0) fprintf(fp, "%5d  %5d\n", isite, 0);
-      else fprintf(fp, "%5d  %5d\n", isite, 1);
-    }
-    fprintf(fp, "%5d  %5d\n", 0, 1);
-    fprintf(fp, "%5d  %5d\n", 1, 0);
+    fprintf(fp, "%5d  %5d\n", 0, 0);
+    for (iGutz = 1; iGutz < NGutzwiller; iGutz++)
+      fprintf(fp, "%5d  %5d\n", iGutz, 1);
   }
   else {
     printf("\nSomething wrong. \n\n");
@@ -505,6 +532,7 @@ static void PrintGutzwiller(struct StdIntList *StdI)
   fclose(fp);
   fprintf(stdout, "    gutzwilleridx.def is written.\n");
 
+  free(Gutz);
 }/*static void PrintGutzwiller*/
 #endif
 
@@ -591,8 +619,8 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->lattice, "****\0");
   strcpy(StdI->outputmode, "****\0");
   strcpy(StdI->CDataFileHead, "****\0");
-  strcpy(StdI->W90_file, "****\0");
   strcpy(StdI->W90_geom, "****\0");
+  strcpy(StdI->W90_hr, "****\0");
   StdI->W90_cutoff = NaN_d;
 #if defined(_HPhi)
   StdI->LargeValue = NaN_d;
@@ -1296,9 +1324,9 @@ static void CheckModPara(struct StdIntList *StdI)
 
   if (strcmp(StdI->CDataFileHead, "****") == 0) {
     strcpy(StdI->CDataFileHead, "zvo\0");
-    fprintf(stdout, "         CDataFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CDataFileHead);
+    fprintf(stdout, "    CDataFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CDataFileHead);
   }
-  else fprintf(stdout, "         CDataFileHead = %-s\n", StdI->CDataFileHead);
+  else fprintf(stdout, "    CDataFileHead = %-s\n", StdI->CDataFileHead);
 
   /**/
 #if defined(_HPhi)
@@ -1318,9 +1346,9 @@ static void CheckModPara(struct StdIntList *StdI)
 #elif defined(_mVMC)
   if (strcmp(StdI->CParaFileHead, "****") == 0) {
     strcpy(StdI->CParaFileHead, "zqp\0");
-    fprintf(stdout, "         CParaFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CParaFileHead);
+    fprintf(stdout, "    CParaFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CParaFileHead);
   }
-  else fprintf(stdout, "         CParaFileHead = %-s\n", StdI->CParaFileHead);
+  else fprintf(stdout, "    CParaFileHead = %-s\n", StdI->CParaFileHead);
   
   StdFace_PrintVal_i("NVMCCalMode", &StdI->NVMCCalMode, 0);
   StdFace_PrintVal_i("NLanczosMode", &StdI->NLanczosMode, 0);
@@ -1355,7 +1383,6 @@ static void CheckModPara(struct StdIntList *StdI)
   StdFace_PrintVal_d("DSROptRedCut", &StdI->DSROptRedCut, 0.001);
   StdFace_PrintVal_d("DSROptStaDel", &StdI->DSROptStaDel, 0.02);
   StdFace_PrintVal_d("DSROptStepDt", &StdI->DSROptStepDt, 0.02);
-  StdFace_PrintVal_i("ComplexType", &StdI->ComplexType, 0);
 #endif
   /**/
   if (strcmp(StdI->model, "hubbard") == 0){
@@ -1896,8 +1923,8 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][1]);
     else if (strcmp(keyword, "wz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][2]);
     else if (strcmp(keyword, "w90_cutoff") == 0) StoreWithCheckDup_d(keyword, value, &StdI.W90_cutoff);
-    else if (strcmp(keyword, "w90_file") == 0) StoreWithCheckDup_s(keyword, value, StdI.W90_file);
     else if (strcmp(keyword, "w90_geom") == 0) StoreWithCheckDup_s(keyword, value, StdI.W90_geom);
+    else if (strcmp(keyword, "w90_hr") == 0) StoreWithCheckDup_s(keyword, value, StdI.W90_hr);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Sz2);
 
 #if defined(_HPhi)
@@ -2061,11 +2088,12 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   PrintExcitation(&StdI);
   PrintCalcMod(&StdI);
 #elif defined(_mVMC)
+  StdFace_PrintVal_i("ComplexType", &StdI.ComplexType, 0);
   StdFace_generate_orb(&StdI);
   StdFace_Proj(&StdI);
   PrintJastrow(&StdI);
-  PrintOrb(&StdI);
   PrintGutzwiller(&StdI);
+  PrintOrb(&StdI);
 #endif
   CheckModPara(&StdI);
   PrintModPara(&StdI);
