@@ -175,6 +175,7 @@ struct StdIntList {
   double OmegaIm;
   double SpectrumQL;
   double SpectrumQW;
+  double SpectrumQH;
   int SpectrumBody;
 #elif defined(_mVMC)
   /*mVMC modpara*/

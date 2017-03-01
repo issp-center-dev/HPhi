@@ -209,6 +209,7 @@ static void PrintExcitation(struct StdIntList *StdI) {
 
   StdFace_PrintVal_d("SpectrumQW", &StdI->SpectrumQW, 0.0);
   StdFace_PrintVal_d("SpectrumQL", &StdI->SpectrumQL, 0.0);
+  StdFace_PrintVal_d("SpectrumQH", &StdI->SpectrumQH, 0.0);
 
   if (strcmp(StdI->SpectrumType, "****") == 0) {
     strcpy(StdI->SpectrumType, "szsz\0");
@@ -283,7 +284,8 @@ static void PrintExcitation(struct StdIntList *StdI) {
   for (icell = 0; icell < StdI->NCell; icell++) {
     for (itau = 0; itau < StdI->NsiteUC; itau++) {
       Cphase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQW
-            + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQL;
+             + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQL
+             + (StdI->Cell[icell][2] + StdI->tau[itau][2])*StdI->SpectrumQH;
       fourier_r[isite] = cos(2.0*pi*Cphase);
       fourier_i[isite] = sin(2.0*pi*Cphase);
       isite += 1;
@@ -630,6 +632,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->Nomega = StdI->NaN_i;
   StdI->SpectrumQW = NaN_d;
   StdI->SpectrumQL = NaN_d;
+  StdI->SpectrumQH = NaN_d;
   strcpy(StdI->method, "****\0");
   strcpy(StdI->Restart, "****\0");
   strcpy(StdI->EigenVecIO, "****\0");
@@ -1948,6 +1951,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMin);
     else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaIm);
     else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_sl(keyword, value, StdI.Restart);
+    else if (strcmp(keyword, "spectrumqh") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQH);
     else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQL);
     else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQW);
     else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_sl(keyword, value, StdI.SpectrumType);

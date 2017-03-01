@@ -501,6 +501,21 @@ $ gnuplot lattice.gp
 パラメータ\verb|J'|を指定すると
 \verb|J'x = J'y = J'z = J'|が代入されます。
 \verb|J'|を指定した上で\verb|J'x, J'y, J'z|も指定した場合は$\HPhi$を終了します。
+
+\item \verb|phase0|, \verb|phase1|
+
+  {\bf 形式 :} 複素数(デフォルトでは\verb|1.0|)
+  
+  {\bf 説明 :} 計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます。
+  $\vec{a}_0$方向、$\vec{a}_1$方向それぞれ別の位相因子を用いることが出来ます。
+  １次元系では\verb|phase0|のみ使用できます。
+  例えば、$i$サイトから$j$サイトへのホッピングで、
+  正の方向に境界をまたいだ場合には次のようになります。
+  \begin{align}
+    \exp(i \times {\rm phase0}) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
+    + \exp(-i \times {\rm phase0}) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
+  \end{align}
+
 \end{itemize}
 
 \subsection{計算条件のパラメーター}
@@ -715,11 +730,12 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
   \verb|"up"|, \verb|"down"|のいずれか。デフォルトは\verb|"SzSz"|)
 
   {\bf 説明 :} 計算する動的グリーン関数の種類を指定する。
-  \verb|"SzSz"|では$\langle {\hat S}_{z q} {\hat S}_{z q}\rangle$。
-  \verb|"S+S-"|では$\langle {\hat S}^{+}_{q} {\hat S}^{-}_{q}\rangle$。
-  \verb|"Density"|では$\langle {\hat n}_{q} {\hat n}_{q}\rangle$。
-  \verb|"up"|では$\langle {\hat c}^{\dagger}_{q \uparrow} {\hat c}_{q \uparrow}\rangle$。
-  \verb|"down"|では$\langle {\hat c}^{\dagger}_{q \downarrow} {\hat c}_{q \downarrow}\rangle$。
+  \verb|"SzSz"|では$\langle {\hat S}_{z q} {\hat S}_{z q}\rangle$、
+  \verb|"S+S-"|では$\langle {\hat S}^{+}_{q} {\hat S}^{-}_{q}\rangle$、
+  \verb|"Density"|では$\langle {\hat n}_{q} {\hat n}_{q}\rangle$、
+  \verb|"up"|では$\langle {\hat c}^{\dagger}_{q \uparrow} {\hat c}_{q \uparrow}\rangle$、
+  \verb|"down"|では$\langle {\hat c}^{\dagger}_{q \downarrow} {\hat c}_{q \downarrow}\rangle$
+  となる。
 
 \item \verb|SpectrumQW|, \verb|SpectrumQL|
   
