@@ -191,7 +191,10 @@ struct StdIntList *StdI,
 #if defined(_mVMC)
       StdI->Ex[StdI->NEx] = - 0.25 * (J[0][0] + J[1][1]);
 #else
-      StdI->Ex[StdI->NEx] = 0.25 * (J[0][0] + J[1][1]);
+      if (strcmp(StdI->model, "kondo") == 0)
+        StdI->Ex[StdI->NEx] = -0.25 * (J[0][0] + J[1][1]);
+      else
+        StdI->Ex[StdI->NEx] = 0.25 * (J[0][0] + J[1][1]);
 #endif
       StdI->ExIndx[StdI->NEx][0] = isite;
       StdI->ExIndx[StdI->NEx][1] = jsite;
