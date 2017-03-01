@@ -426,7 +426,7 @@ int makeHam(struct BindStruct *X){
 	  child_pairlift_spin_GetInfo(idx, X);
 
 	  for(j=1;j<=X->Large.i_max;j++){
-	    dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
+	    dmv =GC_child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
 	    Ham[tmp_off+1][j] +=dmv;
 	  }
 	}
