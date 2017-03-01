@@ -163,8 +163,8 @@ help:
 	@echo "<entry> is chosen from below"
 	@echo "      HPhi : Build simulator HPhi in src/ and tool/"
 	@echo " userguide : Generate userguid_jp.pdf & userguide_en.pdf in doc/"
-	@echo "     clean : Remove all generated files excepting makefile"
-	@echo " veryclean : Remove all generated files including makefile"
+	@echo "     clean : Remove all generated files excepting makefile and doc/"
+	@echo " veryclean : Remove all generated files including makefile and doc/"
 	@echo ""
 
 HPhi:
@@ -178,12 +178,12 @@ userguide:
 clean:
 	cd src; make -f makefile_src clean
 	cd tool; make -f makefile_tool clean
-	cd doc/jp; make -f makefile_doc_jp clean
-	cd doc/en; make -f makefile_doc_en clean
-	rm -f doc/userguide_??.pdf
 
 veryclean:
 	make clean
+	cd doc/jp; make -f makefile_doc_jp clean
+	cd doc/en; make -f makefile_doc_en clean
+	rm -f doc/userguide_??.pdf
 	rm -f src/make.sys makefile
 EOF
 fi

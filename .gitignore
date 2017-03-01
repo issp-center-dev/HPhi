@@ -139,3 +139,5 @@ cmake-build-debug
 *.mod
 tool/fourier
 tool/corplot
+doc/fourier/en/_build/
+doc/fourier/ja/_build/
