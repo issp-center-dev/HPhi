@@ -39,6 +39,21 @@ void StdFace_LargeValue(struct StdIntList *StdI) {
   for (kintr = 0; kintr < StdI->nintr; kintr++) {
     LargeValue0 += cabs(StdI->intr[kintr]);
   }
+  for (kintr = 0; kintr < StdI->NCintra; kintr++) {
+    LargeValue0 += fabs(StdI->Cintra[kintr]);
+  }
+  for (kintr = 0; kintr < StdI->NCinter; kintr++) {
+    LargeValue0 += fabs(StdI->Cinter[kintr]);
+  }
+  for (kintr = 0; kintr < StdI->NEx; kintr++) {
+    LargeValue0 += 2.0 * fabs(StdI->Ex[kintr]);
+  }
+  for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
+    LargeValue0 += 2.0 * fabs(StdI->PairLift[kintr]);
+  }
+  for (kintr = 0; kintr < StdI->NHund; kintr++) {
+    LargeValue0 += 2.0 * fabs(StdI->Hund[kintr]);
+  }
   LargeValue0 /= (double)StdI->nsite;
   StdFace_PrintVal_d("LargeValue", &StdI->LargeValue, LargeValue0);
 }/*void StdFace_LargeValue*/
