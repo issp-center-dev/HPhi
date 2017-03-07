@@ -36,7 +36,7 @@ int CalcSpectrumByFullDiag(
   double complex *dcSpectrum,
   double complex *dcomega)
 {
-  int idim, iomega;
+  int idim, jdim, iomega;
   int idim_max_int;
   int incr=1;
   
@@ -61,7 +61,9 @@ int CalcSpectrumByFullDiag(
   StartTimer(6303);
 
   for (idim = 0; idim < idim_max_int; idim++) {
-    zdotc_(&v1[idim], &idim_max_int, &vg[0], &incr, &L_vec[idim][0], &incr);
+    v1[idim] = 0.0;
+    for (jdim = 0; jdim < idim_max_int; jdim++) v1[idim] += conj(vg[jdim]) * L_vec[idim][jdim];
+    //zdotc_(&v1[idim], &idim_max_int, &vg[0], &incr, &L_vec[idim][0], &incr);
     v1[idim] = conj(v1[idim]) * v1[idim];
   }/*for (idim = 0; idim < idim_max_int; idim++)*/
   StopTimer(6303);
