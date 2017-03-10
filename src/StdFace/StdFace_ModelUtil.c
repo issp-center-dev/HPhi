@@ -184,7 +184,7 @@ struct StdIntList *StdI,
     StdI->CinterIndx[StdI->NCinter][1] = jsite;
     StdI->NCinter += 1;
 
-    if (J[0][1] < 0.000001 && J[1][0] < 0.000001) {
+    if (fabs(J[0][1]) < 0.000001 && fabs(J[1][0]) < 0.000001) {
 
       ExGeneral = 0;
 
