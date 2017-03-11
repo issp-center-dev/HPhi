@@ -20,14 +20,15 @@ This utility supports the Fourier transformation of the following quantities:
 One-body correlations
 
 .. math::
+   :nowrap:
 
    \begin{align}
    \langle {\hat c}_{{\bf k} \uparrow}^{\dagger} {\hat c}_{{\bf k} \uparrow}\rangle
-   \equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
+   &\equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
    \langle {\hat c}_{i \uparrow}^{\dagger} {\hat c}_{j \uparrow}\rangle
    \\
    \langle {\hat c}_{{\bf k} \downarrow}^{\dagger} {\hat c}_{{\bf k} \downarrow}\rangle
-   \equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
+   &\equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
    \langle {\hat c}_{i \downarrow}^{\dagger} {\hat c}_{j \downarrow}\rangle
    \end{align}
 
@@ -44,18 +45,19 @@ Density-density correlation
 Spin-Spin correlations
 
 .. math::
+   :nowrap:
 
    \begin{align}
    \langle {\hat S}_{\bf k}^{z} {\hat S}_{\bf k}^{z} \rangle
-   \equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
+   &\equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
    \langle {\hat S}_{i}^{z} {\hat S}_{j}^{z} \rangle
    \\
    \langle {\hat S}_{\bf k}^{+} {\hat S}_{\bf k}^{-} \rangle
-   \equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
+   &\equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
    \langle {\hat S}_{i}^{+} {\hat S}_{j}^{-} \rangle
    \\
    \langle {\hat S}_{\bf k}^{-} {\hat S}_{\bf k}^{+} \rangle
-   \equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
+   &\equiv \frac{1}{N_{\rm site}^2} \sum_{i j}^{N_{\rm site}} e^{-i {\bf k}\cdot({\bf R}_i - {\bf R}_j)}
    \langle {\hat S}_{i}^{-} {\hat S}_{j}^{+} \rangle
    \end{align}
 
