@@ -35,7 +35,7 @@ HPhi/vmc.out の実行
   
   .. code-block:: bash
 
-     $ ../../../../src/vmc.out -s StdFace.def zqp_opt.dat
+     $ ../../../../src/vmc.out -s StdFace.def output/zqp_opt.dat
          
 これにより, カレントディレクトリの ``output/`` 以下に
 1体および2体の相関関数が出力される.
