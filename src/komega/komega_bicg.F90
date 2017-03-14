@@ -21,11 +21,7 @@
 !
 ! Routines for real-valiable CG
 !
-#if defined(MPI)
-MODULE pkomega_bicg
-#else
 MODULE komega_bicg
-#endif
   !
   PRIVATE
   !
@@ -564,8 +560,4 @@ END SUBROUTINE pkomega_BICG_finalize
 END SUBROUTINE komega_BICG_finalize
 #endif
 !
-#if defined(MPI)
-END MODULE pkomega_bicg
-#else
 END MODULE komega_bicg
-#endif

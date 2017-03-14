@@ -10,7 +10,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
-enable_language(C)
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+enable_language(C Fortran)
 
 find_package(OpenMP)
 if(OPENMP_FOUND)
