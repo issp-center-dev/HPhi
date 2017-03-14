@@ -1,6 +1,6 @@
 include make.sys
 
-MTFLAGS = -DDSFMT_MEXP=19937 -D HAVE_SSE2
+MTFLAGS = -DDSFMT_MEXP=19937
 
 OBJS = \
 CG_EigenVector.o \

@@ -64,6 +64,9 @@ SUBROUTINE read_cor()
   INTEGER :: fi = 10, ik, iwfc, nk0, idim
   REAL(8) :: rtmp(3)
   CHARACTER(256) :: filename, ctmp1, ctmp2
+#if defined(SR)
+  INTEGER,INTRINSIC :: IARGC
+#endif
   !
   WRITE(*,*) 
   WRITE(*,*) "#####  Read Files  #####" 
