@@ -28,9 +28,54 @@ else
         cat > src/make.sys <<EOF
 CC = mpicc
 F90 = mpif90
-CFLAGS = -fopenmp -O3 -ipo -xHost -mcmodel=large -shared-intel -g -traceback -D MPI -mkl
-FFLAGS = -fopenmp -O3 -ipo -xHost -mcmodel=large -shared-intel -g -traceback -D MPI -mkl -fpp
-LIBS = -fopenmp -mkl -lifcore
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
+LIBS = -mkl -lifcore
+AR = ar rv
+EOF
+    elif [ ${1} = "mpicc-intel" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
+LIBS = -mkl -lifcore -lmpifort
+AR = ar rv
+EOF
+    elif [ ${1} = "intel" ]; then
+        cat > src/make.sys <<EOF
+CC = icc
+F90 = ifort
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -fpp
+LIBS = -mkl -lifcore
+AR = ar rv
+EOF
+    elif [ ${1} = "mpicc-gcc" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -D MPI -cpp
+LIBS = -fopenmp -lm -lgfortran -llapack -lblas -lmpi_f90 -lmpi_f77
+AR = ar rv
+EOF
+    elif [ ${1} = "gcc" ]; then
+        cat > src/make.sys <<EOF
+CC = gcc
+F90 = gfortran
+CFLAGS = -fopenmp -O3 -g
+FFLAGS = -fopenmp -O3 -g -cpp
+LIBS = -fopenmp -lm -lgfortran -llapack -lblas
+AR = ar rv
+EOF
+    elif [ ${1} = "gcc-mac" ]; then
+        cat > src/make.sys <<EOF
+CC = gcc
+F90 = gfortran
+CFLAGS = -fopenmp -O3 -g -D_OSX
+FFLAGS = -fopenmp -O3 -g -cpp -D NO_ZDOTC
+LIBS = -lm -framework Accelerate -lgfortran
 AR = ar rv
 EOF
     elif [ ${1} = "maki" ]; then
@@ -50,51 +95,6 @@ CFLAGS = -O3 -qsmp=omp -q64 -D SR -D MPI
 FFLAGS = -O3 -qsmp=omp -q64 -qsuffix=cpp=f90 -WF,-DMPI
 LIBS = -L /usr/lib -lm -lessl -lxlf90
 AR = ar -X64 rv 
-EOF
-    elif [ ${1} = "intel" ]; then
-        cat > src/make.sys <<EOF
-CC = icc
-F90 = ifort
-CFLAGS = -fopenmp -O3 -g -traceback -mkl -xHost -D HAVE_SSE2
-FFLAGS = -fopenmp -O3 -g -traceback -mkl -xHost -fpp
-LIBS = -fopenmp -mkl -lifcore
-AR = ar rv
-EOF
-    elif [ ${1} = "mpicc-intel" ]; then
-        cat > src/make.sys <<EOF
-CC = mpicc
-F90 = mpif90
-CFLAGS = -fopenmp -O3 -g -traceback -D MPI -xHost -mkl -D HAVE_SSE2
-FFLAGS = -fopenmp -O3 -g -traceback -D MPI -xHost -mkl -fpp
-LIBS = -fopenmp -mkl -lifcore -lmpifort
-AR = ar rv
-EOF
-    elif [ ${1} = "mpicc-gcc" ]; then
-        cat > src/make.sys <<EOF
-CC = mpicc
-F90 = mpif90
-CFLAGS = -fopenmp -O3 -D MPI -g -D HAVE_SSE2
-FFLAGS = -fopenmp -O3 -D MPI -g -cpp
-LIBS = -fopenmp -lm -lgfortran -lmpi_f90 -lmpi_f77 -llapack -lblas 
-AR = ar rv
-EOF
-    elif [ ${1} = "gcc-mac" ]; then
-        cat > src/make.sys <<EOF
-CC = gcc
-F90 = gfortran
-CFLAGS = -fopenmp -O3 -g -D_OSX
-FFLAGS = -fopenmp -O3 -g -cpp
-LIBS = -lm -framework Accelerate -lgfortran
-AR = ar rv
-EOF
-    elif [ ${1} = "gcc" ]; then
-        cat > src/make.sys <<EOF
-CC = gcc
-F90 = gfortran
-CFLAGS = -fopenmp -g -O3
-FFLAGS = -fopenmp -g -O3 -cpp
-LIBS = -fopenmp -lm -llapack -lblas -lgfortran
-AR = ar rv
 EOF
     else
         echo ""
