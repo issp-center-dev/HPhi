@@ -474,7 +474,7 @@ int ReadDefFileNInt(
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
             double dtmp;
 
-            X->read_hacker = 0;
+            X->read_hacker = 1;
             while (fgetsMPI(ctmp2, 256, fp) != NULL) {
               if (*ctmp2 == '\n') continue;
               sscanf(ctmp2, "%s %lf\n", ctmp, &dtmp);
@@ -1003,16 +1003,20 @@ int ReadDefFileIdxPara(
     case KWCoulombIntra:
       /*coulombintra.def----------------------------------*/
       if(X->NCoulombIntra>0){
+	fprintf(stdoutMPI, "Debug: CI starts\n");
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
+	  fprintf(stdoutMPI, "Debug: CI 1\n");
           if(idx==X->NCoulombIntra){
             fclose(fp);
             return ReadDefFileError(defname);
           }
+	  fprintf(stdoutMPI, "Debug: CI 2\n");
           sscanf(ctmp2, "%d %lf\n",
                  &(X->CoulombIntra[idx][0]),
                  &(X->ParaCoulombIntra[idx])
                  );
-
+	  fprintf(stdoutMPI, "Debug: CI %d, %lf \n", X->CoulombIntra[idx][0], X->ParaCoulombIntra[idx]);
+	  
           if(CheckSite(X->CoulombIntra[idx][0], X->Nsite) !=0){
             fclose(fp);
             return ReadDefFileError(defname);
