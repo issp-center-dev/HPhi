@@ -474,7 +474,7 @@ SUBROUTINE read_corrindx()
   USE fourier_val, ONLY : file_one, file_two, ncor1, ncor2, ncor, indx, nsite, calctype
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, itmp(8), icor, itmp0(2)
+  INTEGER :: fi = 10, itmp(8), icor
   CHARACTER(100) :: ctmp
   !
   WRITE(*,*) 
