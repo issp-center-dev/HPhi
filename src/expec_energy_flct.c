@@ -37,6 +37,7 @@ int expec_energy_flct(struct BindStruct *X){
   double complex dam_pr,dam_pr1;
   long unsigned int i_max;
 
+#if defined(_ORG)
   long unsigned int ibit1, ibit2;
   long unsigned int ibit_up,ibit_down,ibit_D;
   double D,tmp_D,tmp_D2;
@@ -47,6 +48,7 @@ int expec_energy_flct(struct BindStruct *X){
   unsigned int l_ibit1,u_ibit1,i_32;
 
   i_32   = (unsigned int)(pow(2,32)-1);
+#endif
 
   switch(X->Def.iCalcType){
   case Lanczos:

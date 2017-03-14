@@ -48,9 +48,9 @@ int ReadTMComponents_BiCG(
   char sdt[D_FileNameMax];
   char ctmp[256];
 
-  int one = 1, status[3];
+  int one = 1, status[3], idim_max2int, liLanczosStp2int, max_step;
   unsigned long int idx;
-  unsigned long int liLanczosStp, liLanczosStp2;
+  unsigned long int liLanczosStp;
   double complex *alphaCG, *betaCG, *res_save, z_seed;
   double z_seed_r, z_seed_i, alpha_r, alpha_i, beta_r, beta_i, res_r, res_i;
   FILE *fp;
@@ -91,19 +91,22 @@ int ReadTMComponents_BiCG(
 
   if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents) {
     X->Bind.Def.Lanczos_restart = 0;
-    liLanczosStp2 = liLanczosStp;
+    max_step = (int)liLanczosStp;
   }
   else if (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC ||
     X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC) {
     X->Bind.Def.Lanczos_restart = liLanczosStp;
-    liLanczosStp2 = liLanczosStp + X->Bind.Def.Lanczos_max;
+    max_step = (int)(liLanczosStp + X->Bind.Def.Lanczos_max);
   }
+
+  idim_max2int = (int)X->Bind.Check.idim_max;
+  liLanczosStp2int = (int)liLanczosStp;
 #if defined(MPI)
-  pkomega_bicg_restart(&X->Bind.Check.idim_max, &one, &Nomega, dcSpectrum, dcomega, &liLanczosStp2, &eps_Lanczos, &comm, status,
-    &liLanczosStp, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
+  pkomega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm, status,
+    &liLanczosStp2int, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
 #else
-  komega_bicg_restart(&X->Bind.Check.idim_max, &one, &Nomega, dcSpectrum, dcomega, &liLanczosStp2, &eps_Lanczos, status,
-    &liLanczosStp, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
+  komega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
+    &liLanczosStp2int, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
 #endif
   free(alphaCG);
   free(betaCG);
@@ -214,7 +217,7 @@ int CalcSpectrumByBiCG(
   unsigned long int idim, i_max;
   FILE *fp;
   size_t byte_size;
-  int iret;
+  int iret, i_max2int, max_step;
   unsigned long int liLanczosStp_vec = 0;
   double complex *v12, *v14, res_proj;
   int stp, one = 1, status[3], iomega;
@@ -255,6 +258,7 @@ int CalcSpectrumByBiCG(
     fclose(fp);
     fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
+    if(byte_size == 0) printf("byte_size : %d\n", byte_size);
   }
   else {
     i_max = X->Bind.Check.idim_max;
@@ -279,10 +283,12 @@ int CalcSpectrumByBiCG(
     }
   }
   else {
+    i_max2int = (int)i_max;
+    max_step = (int)X->Bind.Def.Lanczos_max;
 #if defined(MPI)
-    pkomega_bicg_init(&i_max, &one, &Nomega, dcSpectrum, dcomega, &X->Bind.Def.Lanczos_max, &eps_Lanczos, &comm);
+    pkomega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
 #else
-    komega_bicg_init(&i_max, &one, &Nomega, dcSpectrum, dcomega, &X->Bind.Def.Lanczos_max, &eps_Lanczos);
+    komega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos);
 #endif
   }
 

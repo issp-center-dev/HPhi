@@ -744,8 +744,6 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC, 
   int *isite, int *jsite, int connect, double complex *Cphase)
 {
-  int iCell, jCell, kCell;
-  int jCellV[3], nBox[2], jCellV_fold[3];
   double xi, yi, xj, yj;
   /*
    Reversed

@@ -58,7 +58,6 @@ output.o \
 output_list.o \
 phys.o \
 readdef.o \
-sgn.o \
 splash.o \
 sz.o \
 time.o \
@@ -130,7 +129,6 @@ include/output.h \
 include/output_list.h \
 include/phys.h \
 include/readdef.h \
-include/sgn.h \
 include/splash.h \
 include/struct.h \
 include/sz.h \
@@ -141,7 +139,9 @@ include/version_patch.h \
 include/wrapperMPI.h \
 include/xsetmem.h \
 include/xsetmem_def.h \
-include/xsetmem_large.h
+include/xsetmem_large.h \
+komega/komega_bicg.h \
+komega/pkomega_bicg.h
 
 all:
 	cd StdFace; make -f makefile_StdFace libStdFace.a
@@ -213,7 +213,6 @@ output.o:$(HEADERS)
 output_list.o:$(HEADERS)
 phys.o:$(HEADERS)
 readdef.o:$(HEADERS)
-sgn.o:$(HEADERS)
 splash.o:$(HEADERS)
 sz.o:$(HEADERS)
 time.o:$(HEADERS)

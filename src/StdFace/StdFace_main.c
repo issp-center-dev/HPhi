@@ -699,14 +699,14 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
  */
 static void Text2Lower(char *value /**< [inout] Keyword or value*/){
   char value2;
-  int valuelen, valuelen2, ii;
+  int valuelen, ii;
 
   valuelen = strlen(value);
   for (ii = 0; ii < valuelen; ii++) {
     value2 = tolower(value[ii]);
     value[ii] = value2;
   }
-}/*static void Text2Lower(char *value /**< [inout] Keyword or value*/
+}/*static void Text2Lower*/
 /**
  *
  * Remove : space etc. from keyword and value in an iput file

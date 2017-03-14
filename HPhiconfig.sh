@@ -83,8 +83,8 @@ EOF
 CC = mpifccpx
 F90 = mpifrtpx
 CFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Kmemalias,alias_const
-FFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Kmemalias,alias_const -Cpp
-LIBS = -SSL2BLAMP -lmpi_f90 -lmpi_f77
+FFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Cpp -D FUJITSU
+LIBS = -Kfast,openmp,parallel -SSL2BLAMP -lmpi_f90 -lmpi_f77
 AR = ar rv
 EOF
     elif [ ${1} = "sr" ]; then

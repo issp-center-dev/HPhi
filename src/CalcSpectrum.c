@@ -245,7 +245,6 @@ int CalcSpectrum(
             return FALSE;
           }
 #endif
-          break;
 
     case FullDiag:
       iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega);

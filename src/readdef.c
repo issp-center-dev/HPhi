@@ -431,7 +431,6 @@ int ReadDefFileNInt(
       case KWLocSpin:
         fprintf(stdoutMPI, cErrMakeDef, cKWListOfFileNameList[iKWidx]);
         return(-1);
-        break;
       default:
         break;
       }
@@ -669,7 +668,6 @@ int ReadDefFileNInt(
       fprintf(stdoutMPI, "%s", cErrIncorrectDef);
       fclose(fp);
       return (-1);
-      break;
     }
     /*=======================================================================*/
     fclose(fp);
@@ -2031,7 +2029,6 @@ int GetDiagonalInterAll
         break;
       default:
         return(-1);
-        break;
       }
       if(iret != -1){
         icnt_offdiagonal++;

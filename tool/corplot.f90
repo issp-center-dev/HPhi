@@ -54,6 +54,9 @@ CONTAINS
 !
 SUBROUTINE read_cor()
   !
+#if defined(FUJITSU)
+  USE service_routines, ONLY : IARGC
+#endif
   USE corplot_val, ONLY : nwfc, nktot, nk_row, recipr, koff, &
   &                       cor_k, cor_err, equiv, kvec, nk
   IMPLICIT NONE
@@ -139,7 +142,7 @@ SUBROUTINE set_bragg_vector()
   USE corplot_val, ONLY : recipr, bragg, braggnorm
   IMPLICIT NONE
   !
-  INTEGER :: i0, i1, i2, i, ibr
+  INTEGER :: i0, i1, i2, ibr
   !
   ibr = 0
   !
@@ -265,7 +268,7 @@ SUBROUTINE set_bz_line()
   USE corplot_val, ONLY : bz_line, nline
   IMPLICIT NONE
   !
-  INTEGER :: ibr, jbr, nbr, i, j, lvert
+  INTEGER :: ibr, jbr, nbr, lvert
   REAL(8) :: corner(3,2)
   !
   CALL set_bragg_vector()
@@ -393,7 +396,7 @@ SUBROUTINE write_gnuplot()
   &                       cor_k, nk, nwfc, bz_line, nline
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, iwfc, iline, nline2
+  INTEGER :: fo = 20, iwfc, iline, nline2
   REAL(8) :: maxz, minz, bz_line2(3,2,nline*4)
   !
   IF(rpart) THEN
