@@ -258,7 +258,7 @@ int CalcSpectrumByBiCG(
     fclose(fp);
     fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
-    if(byte_size == 0) printf("byte_size : %d\n", byte_size);
+    if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
   }
   else {
     i_max = X->Bind.Check.idim_max;

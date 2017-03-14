@@ -622,7 +622,7 @@ END SUBROUTINE read_corrindx
 SUBROUTINE read_corrfile()
   !
   USE fourier_val, ONLY : filehead, filetail, nwfc, calctype, &  
-  &                       ncor1, ncor2, ncor, indx, cor, nsite
+  &                       ncor1, ncor2, indx, cor, nsite
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, icor, itmp(8), ii, iwfc, isite, jsite

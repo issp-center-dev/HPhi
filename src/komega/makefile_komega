@@ -8,10 +8,8 @@ komega_bicg.o \
 komega_math.o \
 komega_vals.o
 
-libshiftk:libkomega.a
-
 libkomega.a:$(OBJS)
-	$(AR) libkomega.a $(OBJS)
+	ar -r -v $(AROPT) libkomega.a $(OBJS)
 
 .F90.o:
 	$(F90) -c $< $(FFLAGS)

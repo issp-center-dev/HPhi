@@ -4,24 +4,25 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "Usage:"
     echo "./HPhiconfig.sh system_name"
     echo " system_name should be chosen from below:"
-    echo "     sekirei : ISSP system-B"
-    echo "        maki : ISSP system-C"
-    echo "          sr : SR16000"
-    echo "       intel : Intel compiler + Linux PC"
-    echo " mpicc-intel : Intel compiler + Linux PC + mpicc"
-    echo "         gcc : GCC + Linux"
-    echo "   mpicc-gcc : GCC + Linux + mpicc"
-    echo "     gcc-mac : GCC + Mac"
+    echo "        sekirei : ISSP system-B (Intel + SGIMPT)"
+    echo "           maki : ISSP system-C (FX10)"
+    echo "             sr : SR16000"
+    echo "          intel : Intel compiler + Linux PC"
+    echo "  intel-openmpi : Intel compiler + OpenMPI"
+    echo "    intel-mpich : Intel compiler + MPICH2"
+    echo " intel-intelmpi : Intel compiler + IntelMPI"
+    echo "            gcc : GCC"
+    echo "    gcc-openmpi : GCC + OpenMPI"
+    echo "      gcc-mpich : GCC + MPICH2"
+    echo "        gcc-mac : GCC + Mac"
     echo ""
-    echo "To configure manually HPhi, please type, for example,  "
-    echo "./HPhiconfig.sh CC=icc LIBS=\"-Dlapack -mkl=parallel\" \\"
-    echo "   FLAGS=\"-qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel\""
-    echo " where"
-    echo "            CC : Compilation command for C"
-    echo "           F90 : Complilation command for fortran"
-    echo "        CFLAGS : Other Compilation options"
-    echo "        FFLAGS : Compilation options for fortran"
-    echo "          LIBS : Compile option for LAPACK"
+    echo "Then src/make.sys is generated."
+    echo "  Variables in src/make.sys"
+    echo "             CC : C complier"
+    echo "            F90 : fortran compiler"
+    echo "         CFLAGS : C compiler options"
+    echo "         FFLAGS : fortran compiler options"
+    echo "           LIBS : Linker option"
     echo ""
 else
     if [ ${1} = "sekirei" ]; then
@@ -31,34 +32,54 @@ F90 = mpif90
 CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI
 FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
 LIBS = -mkl -lifcore
-AR = ar rv
 EOF
-    elif [ ${1} = "mpicc-intel" ]; then
+    elif [ ${1} = "intel-intelmpi" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
 F90 = mpif90
-CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI
 FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
 LIBS = -mkl -lifcore -lmpifort
-AR = ar rv
+EOF
+    elif [ ${1} = "intel-mpich" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
+LIBS = -mkl -lifcore -lmpifort
+EOF
+    elif [ ${1} = "intel-openmpi" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
+LIBS = -mkl -lifcore -lmpi_f90 -lmpi_f77
 EOF
     elif [ ${1} = "intel" ]; then
         cat > src/make.sys <<EOF
 CC = icc
 F90 = ifort
-CFLAGS = -fopenmp -O3 -g -traceback -xHost -D HAVE_SSE2
+CFLAGS = -fopenmp -O3 -g -traceback -xHost
 FFLAGS = -fopenmp -O3 -g -traceback -xHost -fpp
 LIBS = -mkl -lifcore
-AR = ar rv
 EOF
-    elif [ ${1} = "mpicc-gcc" ]; then
+    elif [ ${1} = "gcc-openmpi" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
 F90 = mpif90
-CFLAGS = -fopenmp -O3 -g -D MPI -D HAVE_SSE2
+CFLAGS = -fopenmp -O3 -g -D MPI
 FFLAGS = -fopenmp -O3 -g -D MPI -cpp
 LIBS = -fopenmp -lm -lgfortran -llapack -lblas -lmpi_f90 -lmpi_f77
-AR = ar rv
+EOF
+    elif [ ${1} = "gcc-mpich" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -D MPI
+FFLAGS = -fopenmp -O3 -g -D MPI -cpp
+LIBS = -fopenmp -lm -lgfortran -llapack -lblas -lmpifort
 EOF
     elif [ ${1} = "gcc" ]; then
         cat > src/make.sys <<EOF
@@ -67,7 +88,6 @@ F90 = gfortran
 CFLAGS = -fopenmp -O3 -g
 FFLAGS = -fopenmp -O3 -g -cpp
 LIBS = -fopenmp -lm -lgfortran -llapack -lblas
-AR = ar rv
 EOF
     elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF
@@ -76,7 +96,6 @@ F90 = gfortran
 CFLAGS = -fopenmp -O3 -g -D_OSX
 FFLAGS = -fopenmp -O3 -g -cpp -D NO_ZDOTC
 LIBS = -lm -framework Accelerate -lgfortran
-AR = ar rv
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
@@ -85,7 +104,6 @@ F90 = mpifrtpx
 CFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Kmemalias,alias_const
 FFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Cpp -D FUJITSU
 LIBS = -Kfast,openmp,parallel -SSL2BLAMP -lmpi_f90 -lmpi_f77
-AR = ar rv
 EOF
     elif [ ${1} = "sr" ]; then
         cat > src/make.sys <<EOF
@@ -94,7 +112,7 @@ F90 = mpxlf2003_r
 CFLAGS = -O3 -qsmp=omp -q64 -D SR -D MPI 
 FFLAGS = -O3 -qsmp=omp -q64 -qsuffix=cpp=f90 -WF,-DMPI
 LIBS = -L /usr/lib -lm -lessl -lxlf90
-AR = ar -X64 rv 
+AROPT = -X64
 EOF
     else
         echo ""

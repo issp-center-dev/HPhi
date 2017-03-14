@@ -393,7 +393,7 @@ END SUBROUTINE uniq_bz_line
 SUBROUTINE write_gnuplot()
   !
   USE corplot_val, ONLY : itarget, rpart, errbar, nwfc, &
-  &                       cor_k, nk, nwfc, bz_line, nline
+  &                       cor_k, nk, nwfc, nline
   IMPLICIT NONE
   !
   INTEGER :: fo = 20, iwfc, iline, nline2

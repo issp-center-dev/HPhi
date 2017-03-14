@@ -59,7 +59,8 @@ int CalcByLanczos(
   double diff_ene,var;
   long int i_max=0;
   FILE *fp;
-  
+  size_t byte_size;
+
   if(X->Bind.Def.iInputEigenVec==FALSE){
     // this part will be modified
     switch(X->Bind.Def.iCalcModel){
@@ -181,17 +182,18 @@ int CalcByLanczos(
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       exitMPI(-1);
     }
-    fread(&step_i, sizeof(long int), 1, fp);
-    fread(&i_max, sizeof(long int), 1, fp);
+    byte_size = fread(&step_i, sizeof(int), 1, fp);
+    byte_size = fread(&i_max, sizeof(long int), 1, fp);
     if(i_max != X->Bind.Check.idim_max){
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       exitMPI(-1);
     }
-    fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+    byte_size = fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
     StopTimer(4801);
     StopTimer(4800);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
+    if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
   }
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);

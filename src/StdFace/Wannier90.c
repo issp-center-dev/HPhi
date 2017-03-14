@@ -88,7 +88,7 @@ static void read_W90(struct StdIntList *StdI, char *model)
   fp = fopen(StdI->W90_hr, "r");
   ctmp2 = fgets(ctmp, 256, fp);
   ierr = fscanf(fp, "%d", &nWan);
-  if(ierr != 0) printf("%d %f\n", ierr, ctmp2);
+  if(ierr != 0) printf("%d %s\n", ierr, ctmp2);
   ierr = fscanf(fp, "%d", &nWSC);
   for (iWSC = 0; iWSC < nWSC; iWSC++) {
     ierr = fscanf(fp, "%d", &ii);
@@ -226,7 +226,7 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
 {
   int isite, jsite;
   int iL, iW, iH, kCell, it, ii;
-  double Jtmp[3][3] = {0.0};
+  double Jtmp[3][3] = { {0.0} };
   FILE *fp;
   double complex Cphase;
 

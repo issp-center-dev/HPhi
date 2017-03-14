@@ -160,7 +160,7 @@ static void Initialize_wave(
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
       //StopTimer(3600);
-      if(byte_size == 0) printf("byte_size: %d \n", byte_size);
+      if(byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
       return;
     }
   }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
@@ -266,7 +266,7 @@ static void Output_restart(
   fclose(fp);
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
-  if(byte_size == 0) printf("byte_size : %d\n", byte_size);
+  if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
 
 }/*static void Output_restart*/
 
@@ -602,8 +602,9 @@ int CalcByLOBPCG(
     byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
+
+    if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
   }
-  if(byte_size == 0) printf("byte_size : %d\n", byte_size);
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
   /*

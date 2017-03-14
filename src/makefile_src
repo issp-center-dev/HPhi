@@ -1,6 +1,6 @@
 include make.sys
 
-MTFLAGS = -DDSFMT_MEXP=19937
+MTFLAGS = -DDSFMT_MEXP=19937 -D HAVE_SSE2
 
 OBJS = \
 CG_EigenVector.o \
@@ -144,7 +144,7 @@ komega/komega_bicg.h \
 komega/pkomega_bicg.h
 
 all:
-	cd StdFace; make -f makefile_StdFace libStdFace.a
+	cd StdFace; make -f makefile_StdFace
 	cd komega; make -f makefile_komega
 	make -f makefile_src HPhi
 
@@ -153,7 +153,7 @@ SUFFIXES: .o .c
 .c.o:
 	$(CC) $(CFLAGS) $(MTFLAGS) -I ./include -c $<
 
-HPhi: $(OBJS) make.sys
+HPhi: $(OBJS)
 	$(CC) -o $@ -g $(OBJS) StdFace/libStdFace.a komega/libkomega.a $(LIBS)
 
 clean:
