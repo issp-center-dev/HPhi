@@ -12,7 +12,7 @@ libStdFace.a:$(StdFace_OBJS) $(Lattice_OBJS)
 SUFFIXES: .o .c
 
 .c.o:
-	$(CC) $(FLAGS) -D _HPhi -c $<
+	$(CC) $(CFLAGS) -D _HPhi -c $<
 
 clean:
 	rm -f *.o *.a

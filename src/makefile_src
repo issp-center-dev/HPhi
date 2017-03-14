@@ -1,5 +1,7 @@
 include make.sys
 
+MTFLAGS = -DDSFMT_MEXP=19937
+
 OBJS = \
 CG_EigenVector.o \
 CalcByFullDiag.o \
@@ -149,10 +151,10 @@ all:
 SUFFIXES: .o .c
 
 .c.o:
-	$(CC) $(LAPACK_FLAGS) $(FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) -c $<
+	$(CC) $(CFLAGS) $(MTFLAGS) -I ./include -c $<
 
 HPhi: $(OBJS) make.sys
-	$(CC) -o $@ -g $(OBJS) StdFace/libStdFace.a komega/libkomega.a $(LAPACK_FLAGS) $(MTFLAGS) -I$(INCLUDE_DIR) 
+	$(CC) -o $@ -g $(OBJS) StdFace/libStdFace.a komega/libkomega.a $(LIBS)
 
 clean:
 	cd StdFace; make -f makefile_StdFace clean

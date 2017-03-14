@@ -12,132 +12,89 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "         gcc : GCC + Linux"
     echo "   mpicc-gcc : GCC + Linux + mpicc"
     echo "     gcc-mac : GCC + Mac"
-    echo "      manual : Manual configuration. See below."
     echo ""
     echo "To configure manually HPhi, please type, for example,  "
-    echo "./HPhiconfig.sh CC=icc LAPACK_FLAGS=\"-Dlapack -mkl=parallel\" \\"
+    echo "./HPhiconfig.sh CC=icc LIBS=\"-Dlapack -mkl=parallel\" \\"
     echo "   FLAGS=\"-qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel\""
     echo " where"
     echo "            CC : Compilation command for C"
-    echo "  LAPACK_FLAGS : Compile option for LAPACK"
-    echo "         FLAGS : Other Compilation options"
     echo "           F90 : Complilation command for fortran"
+    echo "        CFLAGS : Other Compilation options"
     echo "        FFLAGS : Compilation options for fortran"
+    echo "          LIBS : Compile option for LAPACK"
     echo ""
 else
     if [ ${1} = "sekirei" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
-LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -qopenmp -O3 -ipo -xHOST -mcmodel=large -shared-intel -D MPI -g -traceback -lifcore
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
 F90 = mpif90
-FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback -D MPI
+CFLAGS = -fopenmp -O3 -ipo -xHost -mcmodel=large -shared-intel -g -traceback -D MPI -mkl
+FFLAGS = -fopenmp -O3 -ipo -xHost -mcmodel=large -shared-intel -g -traceback -D MPI -mkl -fpp
+LIBS = -fopenmp -mkl -lifcore
+AR = ar rv
 EOF
     elif [ ${1} = "maki" ]; then
         cat > src/make.sys <<EOF
 CC = mpifccpx
-LAPACK_FLAGS = -Dlapack -SSL2BLAMP
-FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI -g -lmpi_f90 -lmpi_f77
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
 F90 = mpifrtpx
-FFLAGS = -g -D MPI -Cpp -Kfast,openmp,SPARC64IXfx,parallel
+CFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Kmemalias,alias_const
+FFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Kmemalias,alias_const -Cpp
+LIBS = -SSL2BLAMP -lmpi_f90 -lmpi_f77
+AR = ar rv
 EOF
     elif [ ${1} = "sr" ]; then
         cat > src/make.sys <<EOF
-CC = mpcc_r
-LAPACK_FLAGS = -L /usr/lib -lessl
-FLAGS = -D MPI -D SR -q64 -O3 -lm -qsmp=omp -lxlf90
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f
-AR = ar -X64 rv 
+CC = mpcc_rls
 F90 = mpxlf2003_r
-FFLAGS = -WF,-DMPI -qsmp=omp -q64 -O3 -qsuffix=cpp=f90
+CFLAGS = -O3 -qsmp=omp -q64 -D SR -D MPI 
+FFLAGS = -O3 -qsmp=omp -q64 -qsuffix=cpp=f90 -WF,-DMPI
+LIBS = -L /usr/lib -lm -lessl -lxlf90
+AR = ar -X64 rv 
 EOF
     elif [ ${1} = "intel" ]; then
         cat > src/make.sys <<EOF
 CC = icc
-LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -g -traceback -xHOST -lifcore
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
 F90 = ifort
-FFLAGS = -fpp -mkl -xHost -fopenmp -O3 -g -traceback
+CFLAGS = -fopenmp -O3 -g -traceback -mkl -xHost -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -mkl -xHost -fpp
+LIBS = -fopenmp -mkl -lifcore
+AR = ar rv
 EOF
     elif [ ${1} = "mpicc-intel" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
-LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST -lifcore -lmpifort
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
 F90 = mpif90
-FFLAGS = -fopenmp -fpp -g -traceback -mkl -xHost -O3 -g -traceback -D MPI
+CFLAGS = -fopenmp -O3 -g -traceback -D MPI -xHost -mkl -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -D MPI -xHost -mkl -fpp
+LIBS = -fopenmp -mkl -lifcore -lmpifort
+AR = ar rv
 EOF
     elif [ ${1} = "mpicc-gcc" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
-LAPACK_FLAGS = -Dlapack -llapack -lblas 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -lm -lgfortran -lmpi_f90 -lmpi_f77
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
 F90 = mpif90
-FFLAGS = -fopenmp -cpp -g -lblas -llapack -D MPI
+CFLAGS = -fopenmp -O3 -D MPI -g -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -D MPI -g -cpp
+LIBS = -fopenmp -lm -lgfortran -lmpi_f90 -lmpi_f77 -llapack -lblas 
+AR = ar rv
 EOF
     elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF
 CC = gcc
-LAPACK_FLAGS = -Dlapack -framework Accelerate 
-FLAGS = -fopenmp -lm -O3  -D_OSX -lgfortran
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
 F90 = gfortran
-FFLAGS = -fopenmp -cpp -g -lblas -llapack
+CFLAGS = -fopenmp -O3 -g -D_OSX
+FFLAGS = -fopenmp -O3 -g -cpp
+LIBS = -lm -framework Accelerate -lgfortran
+AR = ar rv
 EOF
     elif [ ${1} = "gcc" ]; then
         cat > src/make.sys <<EOF
 CC = gcc
-LAPACK_FLAGS = -Dlapack -llapack -lblas
-FLAGS = -fopenmp -lm -O3 -lgfortran
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
 F90 = gfortran
-FFLAGS = -fopenmp -cpp -g -lblas -llapack
-EOF
-    elif [ ${1} == "manual" ]; then
-echo " C compiler ?"
-read CC
-echo " LAPACK option ?"
-read LAPACK_FLAGS
-echo " Other compilation flags ?"
-read FLAGS
-        cat > src/make.sys <<EOF
-CC = ${CC}
-LAPACK_FLAGS = ${LAPACK_FLAGS}
-FLAGS = ${FLAGS}
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
+CFLAGS = -fopenmp -g -O3
+FFLAGS = -fopenmp -g -O3 -cpp
+LIBS = -fopenmp -lm -llapack -lblas -lgfortran
 AR = ar rv
-F90 = ${F90}
-FFLAGS = ${FFLAGS}
 EOF
     else
         echo ""

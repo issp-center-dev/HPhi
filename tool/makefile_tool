@@ -3,16 +3,16 @@ include ../src/make.sys
 all:fourier corplot
 
 fourier:fourier.o key2lower.o
-	$(F90) $^ -g $(LAPACK_FLAGS) -o $@
+	$(F90) $^ $(LIBS) -o $@
 
 corplot:corplot.f90
-	$(F90) $^ -g -o $@
+	$(F90) $^ $(LIBS) -o $@
 
 fourier.o:fourier.f90
-	$(F90) -g -c $<
+	$(F90) $(FFLAGS) -c $<
 
 key2lowe.o:key2lower.c
-	$(CC) -g -c $<
+	$(CC) $(FFLAGS) -c $<
 
 clean:
 	rm -f *.o *.mod fourier corplot
