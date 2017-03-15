@@ -9,8 +9,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "             sr : SR16000"
     echo "          intel : Intel compiler + Linux PC"
     echo "  intel-openmpi : Intel compiler + OpenMPI"
-    echo "    intel-mpich : Intel compiler + MPICH2"
-    echo " intel-intelmpi : Intel compiler + IntelMPI"
+    echo "    intel-mpich : Intel compiler + MPICH2 (or IntelMPI)"
     echo "            gcc : GCC"
     echo "    gcc-openmpi : GCC + OpenMPI"
     echo "      gcc-mpich : GCC + MPICH2"
@@ -32,14 +31,6 @@ F90 = mpif90
 CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -D HAVE_SSE2
 FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
 LIBS = -mkl -lifcore
-EOF
-    elif [ ${1} = "intel-intelmpi" ]; then
-        cat > src/make.sys <<EOF
-CC = mpicc
-F90 = mpif90
-CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
-FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
-LIBS = -mkl -lifcore -lmpifort
 EOF
     elif [ ${1} = "intel-mpich" ]; then
         cat > src/make.sys <<EOF
@@ -149,6 +140,8 @@ HPhi:
 userguide:
 	cd doc/jp/;make -f makefile_doc_jp;mv userguide_jp.pdf ../
 	cd doc/en/;make -f makefile_doc_en;mv userguide_en.pdf ../
+	cd doc/fourier/ja; make html latexpdfja
+	cd doc/fourier/en; make html latexpdfja
 
 clean:
 	cd src; make -f makefile_src clean
@@ -158,6 +151,8 @@ veryclean:
 	make clean
 	cd doc/jp; make -f makefile_doc_jp clean
 	cd doc/en; make -f makefile_doc_en clean
+	cd doc/fourier/ja; make clean
+	cd doc/fourier/en; make clean
 	rm -f doc/userguide_??.pdf
 	rm -f src/make.sys makefile
 EOF

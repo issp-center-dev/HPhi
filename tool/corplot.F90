@@ -38,7 +38,7 @@ MODULE corplot_val
   ! (3) N_{i}N_{J} = N_{i up}N_{j up} + N_{i up}N_{j down} + N_{i down}N_{j up} + N_{i down}N_{j down}
   ! (4) Sz_{i}Sz_{J} = 0.25*(N_{i up}N_{j up} - N_{i up}N_{j down} - N_{i down}N_{j up} + N_{i down}N_{j down})
   ! (5) S_{i +   }S_{j -   }
-  ! (6) S_{i -   }S_{j +   }
+  ! (6) S.S
   !
 END MODULE corplot_val
 !
@@ -531,13 +531,13 @@ PROGRAM corplot
   WRITE(*,*) "  Please specify target number from below (0 or Ctrl-C to exit): "
   WRITE(*,*) 
   WRITE(*,*) "  Real Part Without ErrorBar"
-  WRITE(*,*) "    [ 1] Up-Up [ 2] Down-Down [ 3] Density-Density [ 4] SzSz [ 5] S+S- [ 6] S-S+"
+  WRITE(*,*) "    [ 1] Up-Up [ 2] Down-Down [ 3] Density-Density [ 4] SzSz [ 5] S+S- [ 6] S.S"
   WRITE(*,*) "  Imaginary Part Without ErrorBar"
-  WRITE(*,*) "    [11] Up-Up [12] Down-Down [13] Density-Density [14] SzSz [15] S+S- [16] S-S+"
+  WRITE(*,*) "    [11] Up-Up [12] Down-Down [13] Density-Density [14] SzSz [15] S+S- [16] S.S"
   WRITE(*,*) "  Real Part With ErrorBar"
-  WRITE(*,*) "    [21] Up-Up [22] Down-Down [23] Density-Density [24] SzSz [25] S+S- [26] S-S+"
+  WRITE(*,*) "    [21] Up-Up [22] Down-Down [23] Density-Density [24] SzSz [25] S+S- [26] S.S"
   WRITE(*,*) "  Imaginary Part With ErrorBar"
-  WRITE(*,*) "    [31] Up-Up [32] Down-Down [33] Density-Density [34] SzSz [35] S+S- [36] S-S+"
+  WRITE(*,*) "    [31] Up-Up [32] Down-Down [33] Density-Density [34] SzSz [35] S+S- [36] S.S"
   WRITE(*,*) 
   !
   DO

@@ -737,6 +737,12 @@ SUBROUTINE read_corrfile()
         END DO
      END DO
      !
+     ! S.S = Sz Sz + 0.5 * (S+S- + S-S+)
+     !
+     cor(1:nsite,1:nsite, 6, iwfc) = cor(1:nsite,1:nsite, 4, iwfc) &
+     &                   + 0.5d0 * ( cor(1:nsite,1:nsite, 5, iwfc) &
+     &                             + cor(1:nsite,1:nsite, 6, iwfc) )
+     !
   END DO ! iwfc = 1, nwfc
   !
   DEALLOCATE(cor0, cor0_r, indx)
@@ -770,7 +776,7 @@ SUBROUTINE fourier_cor()
   CALL zgemm('N', 'N', nk, 6*nwfc, nsite*nsite, CMPLX(1d0, 0d0, KIND(1d0)), fmat, nk, &
   &          cor, nsite*nsite, CMPLX(0d0,0d0,KIND(1d0)), cor_k, nk)
   !
-  cor_k(1:nk,1:6,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nsite**2)
+  cor_k(1:nk,1:6,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nk)
   !
   DEALLOCATE(fmat, cor, site)
   !
@@ -831,7 +837,7 @@ SUBROUTINE output_cor()
      !
      WRITE(fo,*) "#mVMC", nk
      WRITE(fo,*) "# kx[1] ky[2] kz[3](Cart.) UpUp[4,5,16,17] (Re. Im. Err.) DownDown[6,7,18,19]"
-     WRITE(fo,*) "# Density[8,9,20,21] SzSz[10,11,22,23] S+S-[12,13,24,25] S-S+[14,15,26.27]"
+     WRITE(fo,*) "# Density[8,9,20,21] SzSz[10,11,22,23] S+S-[12,13,24,25] S.S[14,15,26.27]"
      WRITE(fo,'(a,3f15.7)') " #k-offset", koff(1:3)
      !
      DO ik = 1, nk
@@ -854,7 +860,7 @@ SUBROUTINE output_cor()
         !
         WRITE(fo,*) "#HPhi", nk
         WRITE(fo,*) "# kx[1] ky[2] kz[3](Cart.) UpUp[4,5] (Re. Im.) DownDown[6,7]"
-        WRITE(fo,*) "# Density[8,9] SzSz[10,11] S+S-[12,13] S-S+[14,15]"
+        WRITE(fo,*) "# Density[8,9] SzSz[10,11] S+S-[12,13] S.S[14,15]"
         WRITE(fo,'(a,3f15.7)') " #k-offset", koff(1:3)
         !
         DO ik = 1, nk
