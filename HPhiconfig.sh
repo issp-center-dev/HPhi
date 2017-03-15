@@ -5,7 +5,7 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "./HPhiconfig.sh system_name"
     echo " system_name should be chosen from below:"
     echo "        sekirei : ISSP system-B (Intel + SGIMPT)"
-    echo "           maki : ISSP system-C (FX10)"
+    echo "        fujitsu : ISSP system-C (FX10)"
     echo "             sr : SR16000"
     echo "          intel : Intel compiler + Linux PC"
     echo "  intel-openmpi : Intel compiler + OpenMPI"
@@ -88,7 +88,7 @@ CFLAGS = -fopenmp -O3 -g -D_OSX -D HAVE_SSE2
 FFLAGS = -fopenmp -O3 -g -cpp -D NO_ZDOTC
 LIBS = -lm -framework Accelerate -lgfortran
 EOF
-    elif [ ${1} = "maki" ]; then
+    elif [ ${1} = "fujitsu" ]; then
         cat > src/make.sys <<EOF
 CC = mpifccpx
 F90 = mpifrtpx
