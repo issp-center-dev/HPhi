@@ -40,6 +40,7 @@ static void geometry_W90(struct StdIntList *StdI, int *wan_num) {
   */
   for (ii = 0; ii < 3; ii++)
     ierr = fscanf(fp, "%lf%lf%lf", &StdI->direct[ii][0], &StdI->direct[ii][1], &StdI->direct[ii][2]);
+  if(ierr != 0) printf("%d\n", ierr);
   /*
    Site position
   */
@@ -87,6 +88,7 @@ static void read_W90(struct StdIntList *StdI, char *model)
   fp = fopen(StdI->W90_hr, "r");
   ctmp2 = fgets(ctmp, 256, fp);
   ierr = fscanf(fp, "%d", &nWan);
+  if(ierr != 0) printf("%d %s\n", ierr, ctmp2);
   ierr = fscanf(fp, "%d", &nWSC);
   for (iWSC = 0; iWSC < nWSC; iWSC++) {
     ierr = fscanf(fp, "%d", &ii);
@@ -224,7 +226,7 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
 {
   int isite, jsite;
   int iL, iW, iH, kCell, it, ii;
-  double Jtmp[3][3] = {0.0};
+  double Jtmp[3][3] = { {0.0} };
   FILE *fp;
   double complex Cphase;
 
@@ -234,6 +236,8 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
   /*
    Initialize Cell
   */
+  fp = fopen("lattice.xsf", "w");
+  /**/
   StdI->NsiteUC = 1;
   StdFace_InitSite(StdI, fp, 3);
   StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
@@ -331,6 +335,7 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
     }/*for (it = 0; it < StdI->W90_nt; it++)*/
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/
 
+  fclose(fp);
   StdFace_PrintXSF(StdI);
   StdFace_PrintGeometry(StdI);
 

@@ -431,7 +431,6 @@ int ReadDefFileNInt(
       case KWLocSpin:
         fprintf(stdoutMPI, cErrMakeDef, cKWListOfFileNameList[iKWidx]);
         return(-1);
-        break;
       default:
         break;
       }
@@ -669,7 +668,6 @@ int ReadDefFileNInt(
       fprintf(stdoutMPI, "%s", cErrIncorrectDef);
       fclose(fp);
       return (-1);
-      break;
     }
     /*=======================================================================*/
     fclose(fp);
@@ -1003,19 +1001,15 @@ int ReadDefFileIdxPara(
     case KWCoulombIntra:
       /*coulombintra.def----------------------------------*/
       if(X->NCoulombIntra>0){
-	fprintf(stdoutMPI, "Debug: CI starts\n");
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
-	  fprintf(stdoutMPI, "Debug: CI 1\n");
           if(idx==X->NCoulombIntra){
             fclose(fp);
             return ReadDefFileError(defname);
           }
-	  fprintf(stdoutMPI, "Debug: CI 2\n");
           sscanf(ctmp2, "%d %lf\n",
                  &(X->CoulombIntra[idx][0]),
                  &(X->ParaCoulombIntra[idx])
                  );
-	  fprintf(stdoutMPI, "Debug: CI %d, %lf \n", X->CoulombIntra[idx][0], X->ParaCoulombIntra[idx]);
 	  
           if(CheckSite(X->CoulombIntra[idx][0], X->Nsite) !=0){
             fclose(fp);
@@ -2031,7 +2025,6 @@ int GetDiagonalInterAll
         break;
       default:
         return(-1);
-        break;
       }
       if(iret != -1){
         icnt_offdiagonal++;

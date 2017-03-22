@@ -38,7 +38,7 @@ MODULE corplot_val
   ! (3) N_{i}N_{J} = N_{i up}N_{j up} + N_{i up}N_{j down} + N_{i down}N_{j up} + N_{i down}N_{j down}
   ! (4) Sz_{i}Sz_{J} = 0.25*(N_{i up}N_{j up} - N_{i up}N_{j down} - N_{i down}N_{j up} + N_{i down}N_{j down})
   ! (5) S_{i +   }S_{j -   }
-  ! (6) S_{i -   }S_{j +   }
+  ! (6) S.S
   !
 END MODULE corplot_val
 !
@@ -54,6 +54,9 @@ CONTAINS
 !
 SUBROUTINE read_cor()
   !
+#if defined(FUJITSU)
+  USE service_routines, ONLY : IARGC
+#endif
   USE corplot_val, ONLY : nwfc, nktot, nk_row, recipr, koff, &
   &                       cor_k, cor_err, equiv, kvec, nk
   IMPLICIT NONE
@@ -61,6 +64,9 @@ SUBROUTINE read_cor()
   INTEGER :: fi = 10, ik, iwfc, nk0, idim
   REAL(8) :: rtmp(3)
   CHARACTER(256) :: filename, ctmp1, ctmp2
+#if defined(SR)
+  INTEGER,INTRINSIC :: IARGC
+#endif
   !
   WRITE(*,*) 
   WRITE(*,*) "#####  Read Files  #####" 
@@ -139,7 +145,7 @@ SUBROUTINE set_bragg_vector()
   USE corplot_val, ONLY : recipr, bragg, braggnorm
   IMPLICIT NONE
   !
-  INTEGER :: i0, i1, i2, i, ibr
+  INTEGER :: i0, i1, i2, ibr
   !
   ibr = 0
   !
@@ -265,7 +271,7 @@ SUBROUTINE set_bz_line()
   USE corplot_val, ONLY : bz_line, nline
   IMPLICIT NONE
   !
-  INTEGER :: ibr, jbr, nbr, i, j, lvert
+  INTEGER :: ibr, jbr, nbr, lvert
   REAL(8) :: corner(3,2)
   !
   CALL set_bragg_vector()
@@ -390,10 +396,10 @@ END SUBROUTINE uniq_bz_line
 SUBROUTINE write_gnuplot()
   !
   USE corplot_val, ONLY : itarget, rpart, errbar, nwfc, &
-  &                       cor_k, nk, nwfc, bz_line, nline
+  &                       cor_k, nk, nwfc, nline
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, iwfc, iline, nline2
+  INTEGER :: fo = 20, iwfc, iline, nline2
   REAL(8) :: maxz, minz, bz_line2(3,2,nline*4)
   !
   IF(rpart) THEN
@@ -525,13 +531,13 @@ PROGRAM corplot
   WRITE(*,*) "  Please specify target number from below (0 or Ctrl-C to exit): "
   WRITE(*,*) 
   WRITE(*,*) "  Real Part Without ErrorBar"
-  WRITE(*,*) "    [ 1] Up-Up [ 2] Down-Down [ 3] Density-Density [ 4] SzSz [ 5] S+S- [ 6] S-S+"
+  WRITE(*,*) "    [ 1] Up-Up [ 2] Down-Down [ 3] Density-Density [ 4] SzSz [ 5] S+S- [ 6] S.S"
   WRITE(*,*) "  Imaginary Part Without ErrorBar"
-  WRITE(*,*) "    [11] Up-Up [12] Down-Down [13] Density-Density [14] SzSz [15] S+S- [16] S-S+"
+  WRITE(*,*) "    [11] Up-Up [12] Down-Down [13] Density-Density [14] SzSz [15] S+S- [16] S.S"
   WRITE(*,*) "  Real Part With ErrorBar"
-  WRITE(*,*) "    [21] Up-Up [22] Down-Down [23] Density-Density [24] SzSz [25] S+S- [26] S-S+"
+  WRITE(*,*) "    [21] Up-Up [22] Down-Down [23] Density-Density [24] SzSz [25] S+S- [26] S.S"
   WRITE(*,*) "  Imaginary Part With ErrorBar"
-  WRITE(*,*) "    [31] Up-Up [32] Down-Down [33] Density-Density [34] SzSz [35] S+S- [36] S-S+"
+  WRITE(*,*) "    [31] Up-Up [32] Down-Down [33] Density-Density [34] SzSz [35] S+S- [36] S.S"
   WRITE(*,*) 
   !
   DO

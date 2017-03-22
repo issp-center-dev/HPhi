@@ -42,6 +42,8 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
   /*
    Initialize Cell
   */
+  fp = fopen("lattice.xsf", "w");
+  /**/
   StdI->NsiteUC = 4;
   /**/
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
@@ -360,6 +362,7 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
     }
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/
 
+  fclose(fp);
   StdFace_PrintXSF(StdI);
   StdFace_PrintGeometry(StdI);
 }/*void StdFace_Pyrochlore*/

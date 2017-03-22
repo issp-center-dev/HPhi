@@ -1,19 +1,17 @@
 include ../make.sys
 
 .SUFFIXES :
-.SUFFIXES : .o .f90
+.SUFFIXES : .o .F90
 
 OBJS = \
 komega_bicg.o \
 komega_math.o \
 komega_vals.o
 
-libshiftk:libkomega.a
-
 libkomega.a:$(OBJS)
-	$(AR) libkomega.a $(OBJS)
+	ar -r -v $(AROPT) libkomega.a $(OBJS)
 
-.f90.o:
+.F90.o:
 	$(F90) -c $< $(FFLAGS)
 
 clean:

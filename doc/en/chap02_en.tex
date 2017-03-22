@@ -60,32 +60,35 @@ Then environmental configuration file \verb|make.sys| is generated in
 The command-line argument of \verb|HPhiconfig.sh| is as follows:
 \begin{itemize}
 \item \verb|sekirei| : ISSP system-B ''sekirei''
-\item \verb|maki| : ISSP system-C ''maki''
+\item \verb|fujitsu| : ISSP system-C ''maki''
 \item \verb|sr| : HITACHI SR16000
-\item \verb|intel| : intel compiler + Linux PC
-\item \verb|mpicc-intel| : intel compiler + MPI (excepting intelMPI) + Linux PC
-\item \verb|gcc| : GCC + Linux PC
+\item \verb|intel| : Intel compiler
+\item \verb|intel-openmpi| : Intel compiler + OpenMPI
+\item \verb|intel-mpich| : Intel compiler + MPICH2 (or IntelMPI)
+\item \verb|gcc| : GCC
+\item \verb|gcc-openmpi| : GCC + OpenMPI
+\item \verb|gcc-mpich| : GCC + MPICH2
 \item \verb|gcc-mac| : GCC + Mac
 \end{itemize}
 
 \verb|make.sys| is as follows (for ISSP-system-B ''sekirei''):
 \begin{verbatim}
- CC = mpiicc
- LAPACK_FLAGS = -Dlapack -mkl=parallel 
- FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
- MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
- INCLUDE_DIR=./include
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
+LIBS = -mkl -lifcore
 \end{verbatim}
 We explain macros of this file as: 
 \begin{itemize}
-\item \verb|CC| : The Compilation command (\verb|icc|, \verb|gcc|, \verb|fccpx|)
-\item \verb|LAPACK_FLAGS| : Compilation options for LAPACK. \verb|-Dlapack| can not be removed.
-\item \verb|FLAGS| : Other compilation options.
+\item \verb|CC| : C compiler (\verb|icc|, \verb|gcc|, \verb|fccpx|)
+\item \verb|F90| : fortran compiler (\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
+\item \verb|CFLAGS| : C compile options.
   OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
   must be specified.
   When you use MPI, please set \verb|-D MPI|.
-\item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : Options for the Mersenne Twister
-  and additional include directory. You do not have to modify them.
+\item \verb|FFLAGS| : fortran compile options. Similar to \verb|CFLAGS|. 
+\item \verb|LIBS| : Compilation options for LAPACK. \verb|-Dlapack| can not be removed.
 \end{itemize}
 
 

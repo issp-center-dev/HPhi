@@ -126,7 +126,7 @@ static void Initialize_wave(
   char sdt[D_FileNameMax];
   size_t byte_size;
 
-  int iproc, ie, one = 1;
+  int iproc, ie;
   long int idim, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
   int mythread;
@@ -160,6 +160,7 @@ static void Initialize_wave(
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
       //StopTimer(3600);
+      if(byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
       return;
     }
   }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
@@ -265,6 +266,7 @@ static void Output_restart(
   fclose(fp);
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
+  if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
 
 }/*static void Output_restart*/
 
@@ -281,7 +283,7 @@ int LOBPCG_Main(
 {
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
   FILE *fp;
-  int iconv = -1, one = 1;
+  int iconv = -1;
   long int idim, i_max;
   int ii, jj, ie, je, nsub, stp, mythread, nsub_cut;
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/, 
@@ -289,6 +291,7 @@ int LOBPCG_Main(
     *hsub, *ovlp /*Subspace Hamiltonian and Overlap*/,
     **work;
   double *eig, dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub;
+  int do_precon = 0;
 
   nsub = 3 * X->Def.k_exct;
 
@@ -358,12 +361,14 @@ int LOBPCG_Main(
         /*
          Preconditioning (Point Jacobi)
         */
-        preshift = calc_preshift(eig[ie], dnorm, eps_LOBPCG);
+	if(do_precon == 1){
+          preshift = calc_preshift(eig[ie], dnorm, eps_LOBPCG);
 #pragma omp parallel for default(none) shared(wxp,ie,list_Diagonal,preshift,i_max,eps_LOBPCG) private(idim,precon)
-        for (idim = 1; idim <= i_max; idim++) {
-          precon = list_Diagonal[idim] - preshift;
-          //if (fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
-        }
+          for (idim = 1; idim <= i_max; idim++) {
+            precon = list_Diagonal[idim] - preshift;
+            if(fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
+          }
+	}/*if(do_precon == 1)*/
         /*
          Normalize residual vector
         */
@@ -383,7 +388,7 @@ int LOBPCG_Main(
       fprintf(stdoutMPI, " %15.5e", eig[ie]);
       fprintf(fp, " %15.5e", eig[ie]);
     }
-    //printf("   %d", nsub_cut);
+    if(nsub_cut == 0) printf("nsub_cut : %d", nsub_cut);
     fprintf(stdoutMPI, "\n");
     fprintf(fp, "\n");
     fclose(fp);
@@ -536,7 +541,6 @@ int CalcByLOBPCG(
 {
   char sdt[D_FileNameMax];
   size_t byte_size;
-  double var;
   long int i_max = 0, ie, idim;
   FILE *fp;
 
@@ -598,6 +602,8 @@ int CalcByLOBPCG(
     byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
+
+    if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
   }
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);

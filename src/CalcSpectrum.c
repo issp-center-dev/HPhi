@@ -92,6 +92,7 @@ int CalcSpectrum(
     double complex OmegaMax, OmegaMin;
     double complex *dcSpectrum;
     double complex *dcomega;
+    size_t byte_size;
 
     //set omega
     if (SetOmega(&(X->Bind.Def)) != TRUE) {
@@ -150,17 +151,18 @@ int CalcSpectrum(
             return -1;
         }
 
-        fread(&i_stp, sizeof(i_stp), 1, fp);
+        byte_size = fread(&i_stp, sizeof(i_stp), 1, fp);
         X->Bind.Large.itr = i_stp; //For TPQ
-        fread(&i_max, sizeof(i_max), 1, fp);
+        byte_size = fread(&i_max, sizeof(i_max), 1, fp);
         if (i_max != X->Bind.Check.idim_maxOrg) {
             fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
             fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
             return -1;
         }
-        fread(v1Org, sizeof(complex double), i_max + 1, fp);
+        byte_size = fread(v1Org, sizeof(complex double), i_max + 1, fp);
         fclose(fp);
         StopTimer(6101);
+        if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
 
         for (i = 1; i <= X->Bind.Check.idim_max; i++) {
             v0[i] = 0;
@@ -245,7 +247,6 @@ int CalcSpectrum(
             return FALSE;
           }
 #endif
-          break;
 
     case FullDiag:
       iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega);

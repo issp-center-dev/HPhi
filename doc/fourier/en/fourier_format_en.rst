@@ -82,7 +82,7 @@ indices must be specified as follows:
   :math:`(\sigma, \sigma')` ranging from :math:`\uparrow` to :math:`\downarrow`.
 
 - :math:`\langle {\hat S}_{\bf k}^{+} {\hat S}_{\bf k}^{-} \rangle` and
-  :math:`\langle {\hat S}_{\bf k}^{-} {\hat S}_{\bf k}^{+} \rangle`
+  :math:`\langle {\hat {\bf S}}_{\bf k} \cdot {\hat {\bf S}}_{\bf k} \rangle`
 
   For :math:`{\mathcal H}\Phi`,
   :math:`\langle {\hat c}_{i \sigma}^{\dagger} {\hat c}_{i -\sigma} {\hat c}_{j -\sigma}^{\dagger} {\hat c}_{j \sigma}\rangle`

@@ -33,15 +33,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 void StdFace_exit(int errorcode /**< [in]*/)
 {
-  int ierr;
+  int ierr = 0;
   fflush(stdout);
   fflush(stderr);
 #ifdef MPI
   fprintf(stdout, "\n\n #######  You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
   ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
   ierr = MPI_Finalize();
-  if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
+  if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
   exit(errorcode);
 }
 
@@ -744,8 +744,6 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC, 
   int *isite, int *jsite, int connect, double complex *Cphase)
 {
-  int iCell, jCell, kCell;
-  int jCellV[3], nBox[2], jCellV_fold[3];
   double xi, yi, xj, yj;
   /*
    Reversed
@@ -819,6 +817,7 @@ void StdFace_PrintXSF(struct StdIntList *StdI) {
       fprintf(fp, "H %15.5f %15.5f %15.5f\n", vec[0], vec[1], vec[2]);
     }
   }
+  fflush(fp);
   fclose(fp);
 }/*void StdFace_PrintXSF*/
 /*
@@ -1020,6 +1019,7 @@ void StdFace_PrintGeometry(struct StdIntList *StdI) {
       }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
     }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
   }
+  fflush(fp);
   fclose(fp);
 
 }/*void StdFace_PrintGeometry()*/
@@ -1220,6 +1220,7 @@ void StdFace_Proj(struct StdIntList *StdI)
       }
     }
   }
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "    qptransidx.def is written.\n");
 
@@ -1239,7 +1240,6 @@ void StdFace_Proj(struct StdIntList *StdI)
 static void StdFace_InitSiteSub(struct StdIntList *StdI)
 {
   int ii, jj, kk, prod;
-  int bound[3][2], iCellV[3], nBox[3], iCellV_fold[3];
   /*
   check Input parameters
   */

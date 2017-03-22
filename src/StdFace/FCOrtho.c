@@ -42,6 +42,8 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
   /*
    Initialize Cell
   */
+  fp = fopen("lattice.xsf", "w");
+  /**/
   StdI->NsiteUC = 1;
   /**/
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
@@ -311,6 +313,7 @@ void StdFace_FCOrtho(struct StdIntList *StdI, char *model)
     }
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/
 
+  fclose(fp);
   StdFace_PrintXSF(StdI);
   StdFace_PrintGeometry(StdI);
 }/*StdFace_FCOrtho*/

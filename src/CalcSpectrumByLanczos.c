@@ -55,6 +55,7 @@ int CalcSpectrumByLanczos(
     int iret;
     unsigned long int liLanczosStp = X->Bind.Def.Lanczos_max;
     unsigned long int liLanczosStp_vec=0;
+    size_t byte_size;
 
     if(X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC) {
@@ -66,18 +67,19 @@ int CalcSpectrumByLanczos(
         if (childfopenALL(sdt, "rb", &fp) != 0) {
             exitMPI(-1);
         }
-        fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
-        fread(&i_max, sizeof(long int), 1, fp);
+        byte_size = fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
+        byte_size = fread(&i_max, sizeof(long int), 1, fp);
         if(i_max != X->Bind.Check.idim_max){
             fprintf(stderr, "Error: A size of Inputvector is incorrect.\n");
             exitMPI(-1);
         }
-        fread(v0, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-        fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+        byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+        byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
         fclose(fp);
         StopTimer(6201);
         fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
+        if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
     }
 
     //Read diagonal components

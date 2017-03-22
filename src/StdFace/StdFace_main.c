@@ -201,6 +201,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
   fprintf(fp, "InitialVecType %3d\n", iInitialVecTpye);
   fprintf(fp, "InputEigenVec %3d\n", InputEigenVec);
   fprintf(fp, "OutputEigenVec %3d\n", OutputEigenVec);
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "     calcmod.def is written.\n\n");
 }/*static void PrintCalcMod*/
@@ -336,6 +337,7 @@ static void PrintExcitation(struct StdIntList *StdI) {
     }
     fprintf(stdout, "        pair.def is written.\n\n");
   }
+  fflush(fp);
   fclose(fp);
 
   free(fourier_r);
@@ -440,6 +442,7 @@ void PrintJastrow(struct StdIntList *StdI) {
     StdFace_exit(-1);
   }
 
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "    jastrowidx.def is written.\n");
 
@@ -475,6 +478,7 @@ void PrintOrb(struct StdIntList *StdI) {
   for (iOrb = 0; iOrb < StdI->NOrb; iOrb++)
     fprintf(fp, "%5d  %5d\n", iOrb, 1);
 
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "    orbitalidx.def is written.\n");
 
@@ -546,6 +550,7 @@ static void PrintGutzwiller(struct StdIntList *StdI)
     printf("\nSomething wrong. \n\n");
     StdFace_exit(-1);
   }
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "    gutzwilleridx.def is written.\n");
 
@@ -699,14 +704,14 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
  */
 static void Text2Lower(char *value /**< [inout] Keyword or value*/){
   char value2;
-  int valuelen, valuelen2, ii;
+  int valuelen, ii;
 
   valuelen = strlen(value);
   for (ii = 0; ii < valuelen; ii++) {
     value2 = tolower(value[ii]);
     value[ii] = value2;
   }
-}/*static void Text2Lower(char *value /**< [inout] Keyword or value*/
+}/*static void Text2Lower*/
 /**
  *
  * Remove : space etc. from keyword and value in an iput file
@@ -901,6 +906,7 @@ void PrintLocSpin(struct StdIntList *StdI) {
   for (isite = 0; isite < StdI->nsite; isite++)
     fprintf(fp, "%5d  %5d\n", isite, StdI->locspinflag[isite]);
 
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "    locspn.def is written.\n");
 }/*void PrintLocSpin*/
@@ -950,6 +956,7 @@ static void PrintTrans(struct StdIntList *StdI){
           creal(StdI->trans[ktrans]), cimag(StdI->trans[ktrans]));
     }
 
+    fflush(fp);
     fclose(fp);
     fprintf(stdout, "      trans.def is written.\n");
   }/*if (StdI->Ltrans == 1)*/
@@ -992,6 +999,7 @@ static void PrintNamelist(struct StdIntList *StdI){
   fprintf(                         fp, "        TransSym  qptransidx.def\n");
 #endif
   
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "    namelist.def is written.\n");
 }/*static void PrintNamelist*/
@@ -1062,6 +1070,7 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "NStore         %d\n", StdI->NStore);
 #endif
 
+  fflush(fp);
   fclose(fp);
   fprintf(stdout, "     modpara.def is written.\n");
 }/*static void PrintModPara*/
@@ -1136,6 +1145,7 @@ static void Print1Green(struct StdIntList *StdI)
     fprintf(fp,   "%5d %5d %5d %5d\n",
       greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3]);
     }
+    fflush(fp);
     fclose(fp);
 
     fprintf(stdout, "    greenone.def is written.\n");
@@ -1261,6 +1271,7 @@ static void Print2Green(struct StdIntList *StdI) {
         greenindx[igreen][0], greenindx[igreen][1], greenindx[igreen][2], greenindx[igreen][3],
         greenindx[igreen][4], greenindx[igreen][5], greenindx[igreen][6], greenindx[igreen][7]);
     }
+    fflush(fp);
     fclose(fp);
 
     fprintf(stdout, "    greentwo.def is written.\n");
@@ -1482,6 +1493,7 @@ static void PrintInteractions(struct StdIntList *StdI)
         fprintf(fp, "%5d %25.15f\n",
           StdI->CintraIndx[kintr][0], StdI->Cintra[kintr]);
     }
+    fflush(fp);
     fclose(fp);
     fprintf(stdout, "    coulombintra.def is written.\n");
   }/*if (StdI->LCintra == 1)*/
@@ -1507,6 +1519,7 @@ static void PrintInteractions(struct StdIntList *StdI)
         fprintf(fp, "%5d %5d %25.15f\n",
           StdI->CinterIndx[kintr][0], StdI->CinterIndx[kintr][1], StdI->Cinter[kintr]);
     }
+    fflush(fp);
     fclose(fp);
     fprintf(stdout, "    coulombinter.def is written.\n");
   }/*if (StdI->LCinter == 1)*/
@@ -1532,6 +1545,7 @@ static void PrintInteractions(struct StdIntList *StdI)
         fprintf(fp, "%5d %5d %25.15f\n",
           StdI->HundIndx[kintr][0], StdI->HundIndx[kintr][1], StdI->Hund[kintr]);
     }
+    fflush(fp);
     fclose(fp);
     fprintf(stdout, "    hund.def is written.\n");
   }/*if (StdI->LHund == 1)*/
@@ -1557,6 +1571,7 @@ static void PrintInteractions(struct StdIntList *StdI)
         fprintf(fp, "%5d %5d %25.15f\n",
           StdI->ExIndx[kintr][0], StdI->ExIndx[kintr][1], StdI->Ex[kintr]);
     }
+    fflush(fp);
     fclose(fp);
     fprintf(stdout, "    exchange.def is written.\n");
   }
@@ -1582,6 +1597,7 @@ static void PrintInteractions(struct StdIntList *StdI)
         fprintf(fp, "%5d %5d %25.15f\n",
           StdI->PLIndx[kintr][0], StdI->PLIndx[kintr][1], StdI->PairLift[kintr]);
     }
+    fflush(fp);
     fclose(fp);
     fprintf(stdout, "    exchange.def is written.\n");
   }
@@ -1744,6 +1760,7 @@ static void PrintInteractions(struct StdIntList *StdI)
       }/*for (kintr = 0; kintr < StdI->nintr; kintr++)*/
     }/* if (StdI->lBoost == 0)*/
 
+    fflush(fp);
     fclose(fp);
     fprintf(stdout, "    interall.def is written.\n");
   }
@@ -2009,6 +2026,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
       StdFace_exit(-1);
     }
   }
+  fflush(fp);
   fclose(fp);
   /*
   Check the model

@@ -51,6 +51,8 @@ int CalcByTPQ(
   FILE *fp;
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
+  size_t byte_size;
+
   tstruct.tstart=time(NULL);
   
   rand_max = NumAve;
@@ -79,14 +81,14 @@ int CalcByTPQ(
         fprintf(stdout, "Start to calculate in normal procedure.\n");
         iret=1;
       }
-      fread(&step_i, sizeof(step_i), 1, fp);
-      fread(&i_max, sizeof(long int), 1, fp);
+      byte_size = fread(&step_i, sizeof(step_i), 1, fp);
+      byte_size = fread(&i_max, sizeof(long int), 1, fp);
       //fprintf(stdoutMPI, "Debug: i_max=%ld, step_i=%d\n", i_max, step_i);
       if(i_max != X->Bind.Check.idim_max){
         fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
         exitMPI(-1);
       }
-      fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
+      byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
       fclose(fp);
@@ -98,6 +100,7 @@ int CalcByTPQ(
       StopTimer(3200);
 
       step_iO=step_i-1;
+      if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {

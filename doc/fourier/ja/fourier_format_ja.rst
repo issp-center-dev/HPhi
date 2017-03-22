@@ -80,7 +80,7 @@ mVMC/:math:`{\mathcal H}\Phi` で計算する相関関数を指定する.
   :math:`\sigma` および :math:`\sigma'` が :math:`\uparrow`, :math:`\downarrow` を網羅するようにする.
 
 - :math:`\langle {\hat S}_{\bf k}^{+} {\hat S}_{\bf k}^{-} \rangle` および
-  :math:`\langle {\hat S}_{\bf k}^{-} {\hat S}_{\bf k}^{+} \rangle`
+  :math:`\langle {\hat {\bf S}}_{\bf k} \cdot {\hat {\bf S}}_{\bf k} \rangle`
 
   :math:`{\mathcal H}\Phi` の場合は
   :math:`\langle {\hat c}_{i \sigma}^{\dagger} {\hat c}_{i -\sigma} {\hat c}_{j -\sigma}^{\dagger} {\hat c}_{j \sigma}\rangle`

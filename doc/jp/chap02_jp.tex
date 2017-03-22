@@ -61,31 +61,34 @@ $ bash HPhiconfig.sh sekirei
 \verb|HPhiconfig.sh|の引数は次のものに対応しています。
 \begin{itemize}
 \item \verb|sekirei| : 物性研究所システムB ''sekirei''
-\item \verb|maki| : 物性研究所システムC ''maki''
+\item \verb|fujitsu| : 物性研究所システムC ''maki''
 \item \verb|sr| : 日立製作所 SR16000
-\item \verb|intel| : intelコンパイラ + Linux PC
-\item \verb|mpicc-intel| : intelコンパイラ + MPIライブラリ(intelMPI以外) + Linux PC
-\item \verb|gcc| : GCC + Linux PC
+\item \verb|intel| : Intelコンパイラ
+\item \verb|intel-openmpi| : Intelコンパイラ + OpenMPI
+\item \verb|intel-mpich| : Intelコンパイラ + MPICH2 (or IntelMPI)
+\item \verb|gcc| : GCC
+\item \verb|gcc-openmpi| : GCC + OpenMPI
+\item \verb|gcc-mpich| : GCC + MPICH2
 \item \verb|gcc-mac| : GCC + Mac
 \end{itemize}
 
 \verb|make.sys|の中身は次のようになっています(物性研システムB ''sekirei''の場合)。
 \begin{verbatim}
- CC = mpiicc
- LAPACK_FLAGS = -Dlapack -mkl=parallel 
- FLAGS = -qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel -D MPI
- MTFLAGS = -DDSFMT_MEXP=19937 $(FLAGS)
- INCLUDE_DIR=./include
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
+LIBS = -mkl -lifcore
 \end{verbatim}
 となります。それぞれのマクロ(変数)の説明は次のとおりです。
 \begin{itemize}
-\item \verb|CC| : コンパイルコマンド(\verb|icc|, \verb|gcc|, \verb|fccpx|)
-\item \verb|LAPACK_FLAGS| : LAPACKのためのコンパイルオプション。 \verb|-Dlapack|は必須です。
-\item \verb|FLAGS| : その他のコンパイルオプション。
+\item \verb|CC| : C コンパイルコマンド(\verb|icc|, \verb|gcc|, \verb|fccpx|)
+\item \verb|F90| : fortran コンパイルコマンド(\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
+\item \verb|CFLAGS| : C コンパイルオプション。
   \verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|などのOpenMP有効化のオプションは必須です。
   MPI並列を行う場合は\verb|-D MPI|をつけます. 
-\item \verb|MTFLAGS|, \verb|INCLUDE_DIR| : メルセンヌツイスター(乱数発生ルーチン)および
-  追加のインクルードディレクトリを指定します。これらを変更する必要はありません。
+\item \verb|FFLAGS| : fortran コンパイルオプション。\verb|CFLAGS| と同様。
+\item \verb|LIBS| : リンクオプション
 \end{itemize}
 
 これでコンパイルのための準備が整います。その後
