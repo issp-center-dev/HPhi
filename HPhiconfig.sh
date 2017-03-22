@@ -86,7 +86,7 @@ CC = gcc
 F90 = gfortran
 CFLAGS = -fopenmp -O3 -g -D_OSX -D HAVE_SSE2
 FFLAGS = -fopenmp -O3 -g -cpp -D NO_ZDOTC
-LIBS = -lm -framework Accelerate -lgfortran
+LIBS = -fopenmp -lm -framework Accelerate -lgfortran
 EOF
     elif [ ${1} = "fujitsu" ]; then
         cat > src/make.sys <<EOF
