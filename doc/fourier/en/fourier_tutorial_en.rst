@@ -35,7 +35,7 @@ Run HPhi/vmc.out
   
   .. code-block:: bash
 
-     $ ../../../../src/vmc.out -s StdFace.def zqp_opt.dat
+     $ ../../../../src/vmc.out -s StdFace.def output/zqp_opt.dat
          
 Then the one- and two-body correlation function are written to files
 in the ``output/`` directory.
