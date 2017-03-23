@@ -55,7 +55,7 @@ int OutputSpectrum(
 
   for (i = 0; i < Nomega; i++) {
     fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
-      creal(dcomega[i]), cimag(dcomega[i]),
+      creal(dcomega[i]-X->Bind.Def.dcOmegaOrg), cimag(dcomega[i]-X->Bind.Def.dcOmegaOrg),
       creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
   }/*for (i = 0; i < Nomega; i++)*/
 
