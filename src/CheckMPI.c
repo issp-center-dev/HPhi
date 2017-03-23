@@ -32,6 +32,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
 
   NsiteMPI = X->Def.Nsite;
   X->Def.NsiteMPI=NsiteMPI;
+  X->Def.Total2SzMPI = X->Def.Total2Sz;
   switch (X->Def.iCalcModel) {
   case HubbardGC: /****************************************************/
   case Hubbard:
