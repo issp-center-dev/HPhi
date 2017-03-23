@@ -404,6 +404,7 @@ int ReadDefFileNInt(
   X->iNOmega=1000;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
+  X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
   xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
@@ -534,15 +535,15 @@ int ReadDefFileNInt(
                 X->iFlgSpecOmegaMax=TRUE;
               }
               else if(CheckWords(ctmp, "OmegaMin")==0){
-                X->dcOmegaMin=dtmp+dtmp2*I;
+                X->dcOmegaMin =dtmp+dtmp2*I;
                 X->iFlgSpecOmegaMin=TRUE;
               }
               else if(CheckWords(ctmp, "OmegaIm")==0){
-                X->dcOmegaOrg=dtmp*I;
+                X->dcOmegaOrg +=dtmp*I;
                 X->iFlgSpecOmegaOrg=TRUE;
               }
                 else if(CheckWords(ctmp, "OmegaOrg")==0){
-                X->dcOmegaOrg=dtmp+dtmp2*I;
+                X->dcOmegaOrg +=dtmp+dtmp2*I;
                 X->iFlgSpecOmegaOrg=TRUE;
               }
               else if(CheckWords(ctmp, "NOmega")==0){
