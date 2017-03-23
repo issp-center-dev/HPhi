@@ -99,8 +99,8 @@ int CalcSpectrum(
         fprintf(stderr, "Error: Fail to set Omega.\n");
         exitMPI(-1);
     } else {
-        if (X->Bind.Def.iFlgSpecOmegaIm == FALSE) {
-            X->Bind.Def.dOmegaIm = (X->Bind.Def.dOmegaMax - X->Bind.Def.dOmegaMin) / (double) X->Bind.Def.iNOmega;
+        if (X->Bind.Def.iFlgSpecOmegaOrg == FALSE) {
+            X->Bind.Def.dcOmegaOrg = I*(X->Bind.Def.dcOmegaMax - X->Bind.Def.dcOmegaMin) / (double) X->Bind.Def.iNOmega;
         }
     }
     /*
@@ -109,8 +109,8 @@ int CalcSpectrum(
     Nomega = X->Bind.Def.iNOmega;
     c_malloc1(dcSpectrum, Nomega);
     c_malloc1(dcomega, Nomega);
-    OmegaMax = X->Bind.Def.dOmegaMax + X->Bind.Def.dOmegaIm * I;
-    OmegaMin = X->Bind.Def.dOmegaMin + X->Bind.Def.dOmegaIm * I;
+    OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
+    OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
     for (i = 0; i < Nomega; i++) {
         dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
     }
@@ -364,10 +364,10 @@ int SetOmega
     }/**/
     //Read Lanczos_Step
     if(X->iFlgSpecOmegaMax == FALSE){
-      X->dOmegaMax= Emax*(double)X->Nsite;
+      X->dcOmegaMax= Emax*(double)X->Nsite;
     }
     if(X->iFlgSpecOmegaMin == FALSE){
-      X->dOmegaMin= E1;
+      X->dcOmegaMin= E1;
     }
   }/*Omegamax and omegamin is not specified in modpara*/
 

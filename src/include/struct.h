@@ -182,13 +182,13 @@ struct DefineList{
 
 
   //[s] For Spectrum
-  double dOmegaMax;
-  double dOmegaMin;
-  double dOmegaIm;
+  double complex dcOmegaMax;
+  double complex dcOmegaMin;
+  double complex dcOmegaOrg;
   int iNOmega;
   int iFlgSpecOmegaMax;
   int iFlgSpecOmegaMin;
-  int iFlgSpecOmegaIm;
+  int iFlgSpecOmegaOrg;
   int iFlgCalcSpec;
   int iFlagListModified;
   /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
