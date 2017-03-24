@@ -4,24 +4,25 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "Usage:"
     echo "./HPhiconfig.sh system_name"
     echo " system_name should be chosen from below:"
-    echo "        sekirei : ISSP system-B (Intel + SGIMPT)"
-    echo "        fujitsu : ISSP system-C (FX10)"
-    echo "             sr : SR16000"
-    echo "          intel : Intel compiler + Linux PC"
-    echo "  intel-openmpi : Intel compiler + OpenMPI"
-    echo "    intel-mpich : Intel compiler + MPICH2 (or IntelMPI)"
-    echo "            gcc : GCC"
-    echo "    gcc-openmpi : GCC + OpenMPI"
-    echo "      gcc-mpich : GCC + MPICH2"
-    echo "        gcc-mac : GCC + Mac"
+    echo "         sekirei : ISSP system-B (Intel + SGIMPT)"
+    echo "         fujitsu : ISSP system-C (FX10)"
+    echo "              sr : SR16000"
+    echo "           intel : Intel compiler + Linux PC"
+    echo "   intel-openmpi : Intel compiler + OpenMPI"
+    echo "     intel-mpich : Intel compiler + MPICH2"
+    echo "  intel-intelmpi : Intel compiler + IntelMPI"
+    echo "             gcc : GCC"
+    echo "     gcc-openmpi : GCC + OpenMPI"
+    echo "       gcc-mpich : GCC + MPICH2"
+    echo "         gcc-mac : GCC + Mac"
     echo ""
     echo "Then src/make.sys is generated."
     echo "  Variables in src/make.sys"
-    echo "             CC : C complier"
-    echo "            F90 : fortran compiler"
-    echo "         CFLAGS : C compiler options"
-    echo "         FFLAGS : fortran compiler options"
-    echo "           LIBS : Linker option"
+    echo "              CC : C complier"
+    echo "             F90 : fortran compiler"
+    echo "          CFLAGS : C compiler options"
+    echo "          FFLAGS : fortran compiler options"
+    echo "            LIBS : Linker option"
     echo ""
 else
     if [ ${1} = "sekirei" ]; then
@@ -36,6 +37,14 @@ EOF
         cat > src/make.sys <<EOF
 CC = mpicc
 F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
+LIBS = -mkl -lifcore -lmpifort
+EOF
+    elif [ ${1} = "intel-intelmpi" ]; then
+        cat > src/make.sys <<EOF
+CC = mpiicc
+F90 = mpiifort
 CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
 FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
 LIBS = -mkl -lifcore -lmpifort
