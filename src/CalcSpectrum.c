@@ -179,8 +179,16 @@ int CalcSpectrum(
         //calculate norm
         dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
         if (fabs(dnorm) < pow(10.0, -15)) {
-            fprintf(stderr, "Error: Excitation vector is illegal; norm becomes 0.\n");
-            return -1;
+            fprintf(stderr, "Warning: Norm of an excitation vector becomes 0.\n");
+            fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
+            TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+            fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
+            TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
+            for (i = 0; i < Nomega; i++) {
+              dcSpectrum[i]=0;
+            }
+            OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
+            return TRUE;
         }
         //normalize vector
 #pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
@@ -268,6 +276,9 @@ int CalcSpectrum(
     iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
     return TRUE;
   }
+
+  c_free1(dcSpectrum, Nomega);
+  c_free1(dcomega, Nomega);
 
 }/*int CalcSpectrum*/
 
