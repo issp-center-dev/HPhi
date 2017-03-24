@@ -1190,29 +1190,41 @@ $10^{- \verb|LanczosEps|/2}$以下になった場合に収束したと判定し�
 {\bf 説明 :} (TPQ法のみで使用)相関関数の計算を何回のTPQステップおきに行うかの指定する整数。
 頻度を上げると計算コストが増大するので注意してください。
 
-\item \verb|OmegaMax|
+\item \verb|OmegaOrg|
 
-{\bf 形式 :} double型 (実数)
+{\bf 形式 :} complex型 (複素数)
 
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の実部の最大値$\omega_{\rm max}$を指定する実数。}
-
-\item \verb|OmegaMin|
-
-{\bf 形式 :} double型 (実数)
-
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の実部の最小値$\omega_{\rm min}$を指定する実数。}
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の中心点を指定します。
+スペース区切りで実部、虚部の順に指定し、虚部がない場合は実数として扱います。}
 
 \item \verb|OmegaIm|
 
 {\bf 形式 :} double型 (実数)
 
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の虚部$\eta$を指定する実数。}
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の中心点の虚部を指定します。
+中心点\verb|OmegaOrg|が指定されている場合は\verb|OmegaOrg|に虚部\verb|OmegaIm|を加えます。}
+
+\item \verb|OmegaMax|
+
+{\bf 形式 :} complex型 (複素数)
+
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の終点を指定します。
+終点は\verb|OmegaOrg|$+$\verb|OmegaMax|で与えられます。
+スペース区切りで実部、虚部の順に指定し、虚部がない場合は実数として扱います。}
+
+\item \verb|OmegaMin|
+
+{\bf 形式 :} complex型 (複素数)
+
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の始点を指定します。
+終点は\verb|OmegaOrg|$+$\verb|OmegaMin|で与えられます。
+スペース区切りで実部、虚部の順に指定し、虚部がない場合は実数として扱います。}
  
 \item \verb|NOmega|
 
 {\bf 形式 :} int型 (自然数)
 
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数の刻み幅$\Delta \omega = (\omega_{\rm max}-\omega_{\rm min} )/N_{\omega}$を与えるための整数。振動数は$z_n=\omega_{\rm min} + \Delta \omega \times n+ i\eta$で与えられます。} 
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数の刻み幅$\Delta \omega = ($ \verb|OmegaMax|- \verb|OmegaMin|$)/N_{\omega}$を与えるための整数。振動数は$z_n=$\verb|OmegaOrg|$+$\verb|OmegaMax|$+ \Delta \omega \times n$で与えられます。} 
  \end{itemize}
 
 
