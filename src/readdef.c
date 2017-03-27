@@ -1089,17 +1089,21 @@ int ReadDefFileIdxPara(
             return ReadDefFileError(defname);
           }
           sscanf(ctmp2, "%d %d %lf\n",
-                 &(X->PairHopping[idx][0]),
-                 &(X->PairHopping[idx][1]),
-                 &(X->ParaPairHopping[idx])
+                 &(X->PairHopping[2*idx][0]),
+                 &(X->PairHopping[2*idx][1]),
+                 &(X->ParaPairHopping[2*idx])
                  );
 	  
-          if(CheckPairSite(X->PairHopping[idx][0], X->PairHopping[idx][1],X->Nsite) !=0){
+          if(CheckPairSite(X->PairHopping[2*idx][0], X->PairHopping[2*idx][1],X->Nsite) !=0){
             fclose(fp);
             return ReadDefFileError(defname);
           }
+          X->PairHopping[2*idx+1][0]=X->PairHopping[2*idx][1];
+          X->PairHopping[2*idx+1][1]=X->PairHopping[2*idx][0];
+          X->ParaPairHopping[2*idx+1]=X->ParaPairHopping[2*idx];
           idx++;
         }
+        X->NPairHopping *=2;
       }
       break;
 
