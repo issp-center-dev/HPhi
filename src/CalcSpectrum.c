@@ -55,7 +55,7 @@ int OutputSpectrum(
 
   for (i = 0; i < Nomega; i++) {
     fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
-      creal(dcomega[i]), cimag(dcomega[i]),
+      creal(dcomega[i]-X->Bind.Def.dcOmegaOrg), cimag(dcomega[i]-X->Bind.Def.dcOmegaOrg),
       creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
   }/*for (i = 0; i < Nomega; i++)*/
 
@@ -99,8 +99,8 @@ int CalcSpectrum(
         fprintf(stderr, "Error: Fail to set Omega.\n");
         exitMPI(-1);
     } else {
-        if (X->Bind.Def.iFlgSpecOmegaIm == FALSE) {
-            X->Bind.Def.dOmegaIm = (X->Bind.Def.dOmegaMax - X->Bind.Def.dOmegaMin) / (double) X->Bind.Def.iNOmega;
+        if (X->Bind.Def.iFlgSpecOmegaOrg == FALSE) {
+            X->Bind.Def.dcOmegaOrg = I*(X->Bind.Def.dcOmegaMax - X->Bind.Def.dcOmegaMin) / (double) X->Bind.Def.iNOmega;
         }
     }
     /*
@@ -109,8 +109,8 @@ int CalcSpectrum(
     Nomega = X->Bind.Def.iNOmega;
     c_malloc1(dcSpectrum, Nomega);
     c_malloc1(dcomega, Nomega);
-    OmegaMax = X->Bind.Def.dOmegaMax + X->Bind.Def.dOmegaIm * I;
-    OmegaMin = X->Bind.Def.dOmegaMin + X->Bind.Def.dOmegaIm * I;
+    OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
+    OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
     for (i = 0; i < Nomega; i++) {
         dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
     }
@@ -179,8 +179,16 @@ int CalcSpectrum(
         //calculate norm
         dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
         if (fabs(dnorm) < pow(10.0, -15)) {
-            fprintf(stderr, "Error: Excitation vector is illegal; norm becomes 0.\n");
-            return -1;
+            fprintf(stderr, "Warning: Norm of an excitation vector becomes 0.\n");
+            fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
+            TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+            fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
+            TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
+            for (i = 0; i < Nomega; i++) {
+              dcSpectrum[i]=0;
+            }
+            OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
+            return TRUE;
         }
         //normalize vector
 #pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
@@ -268,6 +276,9 @@ int CalcSpectrum(
     iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
     return TRUE;
   }
+
+  c_free1(dcSpectrum, Nomega);
+  c_free1(dcomega, Nomega);
 
 }/*int CalcSpectrum*/
 
@@ -364,10 +375,10 @@ int SetOmega
     }/**/
     //Read Lanczos_Step
     if(X->iFlgSpecOmegaMax == FALSE){
-      X->dOmegaMax= Emax*(double)X->Nsite;
+      X->dcOmegaMax= Emax*(double)X->Nsite;
     }
     if(X->iFlgSpecOmegaMin == FALSE){
-      X->dOmegaMin= E1;
+      X->dcOmegaMin= E1;
     }
   }/*Omegamax and omegamin is not specified in modpara*/
 

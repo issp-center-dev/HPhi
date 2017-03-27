@@ -844,7 +844,7 @@ indices are specified as those on the Bogoliubov representation
     
   \item \verb|OmegaMax|
 
-    {\bf Type :} Double (\verb|LargeValue| times the numver of sites as a deafult.)
+    {\bf Type :} Double (\verb|LargeValue| times the number of sites as a default.)
     {\bf Description :} The upper limit of the real part of the frequency.
 
   \item \verb|OmegaIm|
@@ -854,7 +854,7 @@ indices are specified as those on the Bogoliubov representation
 
   \item \verb|NOmega|
   
-    {\bf Type :} Positive integer (\verb|200| as a default)
+    {\bf Type :} Positive integer (\verb|200| as a default.)
     {\bf Description :} The number of frequencies.
 
 \end{itemize}
@@ -1266,29 +1266,40 @@ becomes smaller than $10^{- \verb|LanczosEps|/2}$.
 {\bf Description :} (Only use for TPQ method) An integer giving the interval steps of calculating correlation functions in TPQ method.\\ 
 {\bf Note:} The small interval increases the time cost of calculations.
  
- \item \verb|OmegaMax|
+ \item \verb|OmegaOrg|
 
-{\bf Type :} double-type
+{\bf Type :} complex-type
 
-{\bf Description :} {(Only use for calculating dynamical green's functions) The maximum value of the real part of the frequency $\omega_{\rm max}$ to calculate dynamical green's functions.}
-
-\item \verb|OmegaMin|
-
-{\bf Type :} double-type
-
-{\bf Description :} {(Only use for calculating dynamical green's functions) The minimum value of the real part of the frequency $\omega_{\rm min}$ to calculate dynamical green's functions.}
+{\bf Description :} {The center value of the frequency. 
+Specify real and imaginary parts in that order separated by a space, 
+and if there is no imaginary part, a real part of the frequency is only given.}
 
 \item \verb|OmegaIm|
 
-{\bf Type :} double-type
+    {\bf Type :} double-type
+    
+    {\bf Description :} The imaginary part of the frequency. 
+    When \verb|OmegaOrg| is defined in a \verb|modpara| file, \verb|OmegaIm| is added to the imaginary value of \verb|OmegaOrg|.
 
-{\bf Description :} {(Only use for calculating dynamical green's functions) The imaginary part of the frequency $\eta$to calculate dynamical green's functions.}
- 
+\item \verb|OmegaMin|
+
+    {\bf Type :} complex-type
+    
+    {\bf Description :} The lower limit of the frequency from \verb|OmegaOrg|. 
+    Specify real and imaginary parts in that order separated by a space, and if there is no imaginary part, a real part of the frequency is only given.
+    
+  \item \verb|OmegaMax|
+
+    {\bf Type :} complex-type
+    
+    {\bf Description :} The upper limit of the frequency from \verb|OmegaOrg|.
+    Specify real and imaginary parts in that order separated by a space, and if there is no imaginary part, a real part of the frequency is only given.
+  
 \item \verb|NOmega|
 
 {\bf Type :} int-type
 
-{\bf Description :} {(Only use for calculating dynamical green's functions) The integer to define the step size of the frequency $\Delta \omega = (\omega_{\rm max}-\omega_{\rm min} )/N_{\omega}$. The frequency is given by $z_n=\omega_{\rm min} + \Delta \omega \times n+ i\eta$.} 
+{\bf Description :} {(Only use for calculating dynamical green's functions) The integer to define the step size of the frequency$\Delta \omega = ($ \verb|OmegaMax|- \verb|OmegaMin|$)/N_{\omega}$. The frequency is given by $z_n=$\verb|OmegaOrg|$+$\verb|OmegaMax|$+ \Delta \omega \times n$.} 
  
  \end{itemize}
 

@@ -400,10 +400,11 @@ int ReadDefFileNInt(
   X->nvec=0;
   X->iFlgSpecOmegaMax=FALSE;
   X->iFlgSpecOmegaMin=FALSE;
-  X->iFlgSpecOmegaIm=FALSE;
+  X->iFlgSpecOmegaOrg=FALSE;
   X->iNOmega=1000;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
+  X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
   xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
@@ -471,12 +472,12 @@ int ReadDefFileNInt(
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %s\n", ctmp, X->CParaFileHead); //7
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
-            double dtmp;
+            double dtmp, dtmp2;
 
             X->read_hacker = 1;
             while (fgetsMPI(ctmp2, 256, fp) != NULL) {
               if (*ctmp2 == '\n') continue;
-              sscanf(ctmp2, "%s %lf\n", ctmp, &dtmp);
+              sscanf(ctmp2, "%s %lf %lf\n", ctmp, &dtmp, &dtmp2);
               if (CheckWords(ctmp, "Nsite") == 0) {
                 X->Nsite = (int) dtmp;
               }
@@ -530,16 +531,20 @@ int ReadDefFileNInt(
                 X->read_hacker = (int) dtmp;
               }
               else if(CheckWords(ctmp, "OmegaMax")==0){
-                X->dOmegaMax=(double)dtmp;
+                X->dcOmegaMax=dtmp+dtmp2*I;
                 X->iFlgSpecOmegaMax=TRUE;
               }
               else if(CheckWords(ctmp, "OmegaMin")==0){
-                X->dOmegaMin=(double)dtmp;
+                X->dcOmegaMin =dtmp+dtmp2*I;
                 X->iFlgSpecOmegaMin=TRUE;
               }
               else if(CheckWords(ctmp, "OmegaIm")==0){
-                X->dOmegaIm=(double)dtmp;
-                X->iFlgSpecOmegaIm=TRUE;
+                X->dcOmegaOrg +=dtmp*I;
+                X->iFlgSpecOmegaOrg=TRUE;
+              }
+                else if(CheckWords(ctmp, "OmegaOrg")==0){
+                X->dcOmegaOrg +=dtmp+dtmp2*I;
+                X->iFlgSpecOmegaOrg=TRUE;
               }
               else if(CheckWords(ctmp, "NOmega")==0){
                 X->iNOmega=(int)dtmp;
