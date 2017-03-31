@@ -594,6 +594,7 @@ int ReadDefFileNInt(
         fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &(X->NPairHopping));
+            X->NPairHopping*=2;
             break;
       case KWExchange:
         /* Read exchange.def--------------------------------------*/
@@ -1084,20 +1085,23 @@ int ReadDefFileIdxPara(
       
       if(X->NPairHopping>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
-          if(idx==X->NPairHopping){
+          if(idx==X->NPairHopping/2){
             fclose(fp);
             return ReadDefFileError(defname);
           }
           sscanf(ctmp2, "%d %d %lf\n",
-                 &(X->PairHopping[idx][0]),
-                 &(X->PairHopping[idx][1]),
-                 &(X->ParaPairHopping[idx])
+                 &(X->PairHopping[2*idx][0]),
+                 &(X->PairHopping[2*idx][1]),
+                 &(X->ParaPairHopping[2*idx])
                  );
 	  
-          if(CheckPairSite(X->PairHopping[idx][0], X->PairHopping[idx][1],X->Nsite) !=0){
+          if(CheckPairSite(X->PairHopping[2*idx][0], X->PairHopping[2*idx][1],X->Nsite) !=0){
             fclose(fp);
             return ReadDefFileError(defname);
           }
+          X->PairHopping[2*idx+1][0]=X->PairHopping[2*idx][1];
+          X->PairHopping[2*idx+1][1]=X->PairHopping[2*idx][0];
+          X->ParaPairHopping[2*idx+1]=X->ParaPairHopping[2*idx];
           idx++;
         }
       }
