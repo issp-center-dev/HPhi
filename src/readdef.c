@@ -594,6 +594,7 @@ int ReadDefFileNInt(
         fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &(X->NPairHopping));
+            X->NPairHopping*=2;
             break;
       case KWExchange:
         /* Read exchange.def--------------------------------------*/
@@ -1084,7 +1085,7 @@ int ReadDefFileIdxPara(
       
       if(X->NPairHopping>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
-          if(idx==X->NPairHopping){
+          if(idx==X->NPairHopping/2){
             fclose(fp);
             return ReadDefFileError(defname);
           }
@@ -1103,7 +1104,6 @@ int ReadDefFileIdxPara(
           X->ParaPairHopping[2*idx+1]=X->ParaPairHopping[2*idx];
           idx++;
         }
-        X->NPairHopping *=2;
       }
       break;
 
