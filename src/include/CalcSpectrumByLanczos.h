@@ -33,19 +33,3 @@ int GetSpectrumByTridiagonalMatrixComponents(
 		double complex *_zSpetcrum,
 		unsigned long int liLanczosStp
 		);
-
-
-int ReadTMComponents(
-        struct EDMainCalStruct *X,
-        double *_dnorm,
-        unsigned long int *i_max
-);
-
-
-int OutputTMComponents(
-        struct EDMainCalStruct *X,
-        double *_alpha,
-        double *_beta,
-        double _dnorm,
-        int liLanczosStp
-);

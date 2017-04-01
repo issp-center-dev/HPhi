@@ -215,6 +215,8 @@ int ReadcalcmodFile(
   X->iOutputHam=0;
   X->iFlgCalcSpec=0;
   X->iReStart=0;
+  X->iFlgMPI=0;
+
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);

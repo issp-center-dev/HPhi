@@ -250,9 +250,6 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       fclose(fp);
       if (stp > Target) {
         if (fabs((E_target - ebefor) / E_target) < eps_Lanczos || fabs(beta[stp]) < pow(10.0, -14)) {
-          if(X->Def.iReStart == RESTART_INOUT ||X->Def.iReStart == RESTART_OUT){
-            break;
-          }
           d_malloc1(tmp_E, stp + 1);
           StartTimer(4102);
           vec12(alpha, beta, stp, tmp_E, X);
@@ -270,7 +267,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
     }
   }
   if (X->Def.iReStart == RESTART_INOUT ||X->Def.iReStart == RESTART_OUT ){
-    OutputTMComponents(X, alpha,beta, dnorm, stp-1);
+    OutputTMComponents(X, alpha, beta, dnorm, stp-1);
     OutputLanczosVector(X, v0, v1, stp-1);
     return 0;
   }
@@ -621,7 +618,7 @@ int OutputTMComponents(
   fprintf(fp, "%d \n",liLanczosStp);
   fprintf(fp, "%.10lf \n",_dnorm);
   for( i = 1 ; i <= liLanczosStp; i++){
-//    fprintf(stdoutMPI, "Debug: %d, %.10lf %.10lf \n",i, _alpha[i], _beta[i]);
+    fprintf(stdoutMPI, "Debug: %d, %.10lf %.10lf \n",i, _alpha[i], _beta[i]);
     fprintf(fp,"%.10lf %.10lf \n", _alpha[i], _beta[i]);
   }
   fclose(fp);

@@ -121,7 +121,8 @@ const char* cFileNameOutputEigen;
 const char* cFileNameInputEigen;
 const char* cFileNameCalcDynamicalGreen;
 const char* cFileNameTridiagonalMatrixComponents;
-
+const char* cFileNameLanczosOutputVector;
+const char* cFileNameLanczosInputVector;
 
 //For TPQ
 const char* cFileNameSSRand;

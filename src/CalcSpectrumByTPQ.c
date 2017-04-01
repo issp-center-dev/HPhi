@@ -14,7 +14,6 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcSpectrumByTPQ.h"
-#include "CalcSpectrumByLanczos.h"
 #include "Lanczos_EigenValue.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -170,7 +169,16 @@ int CalcSpectrumByTPQ(
        X->Bind.Def.iFlgCalcSpec ==RECALC_FROM_TMComponents_VEC||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC)
     {
-        iret=ReadTMComponents(X, &dnorm, &liLanczosStp);
+        int iFlgTMComp=0;
+        if(X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC ||
+           X->Bind.Def.iFlgCalcSpec ==  RECALC_FROM_TMComponents_VEC)
+        {
+            iFlgTMComp=0;
+        }
+        else{
+            iFlgTMComp=1;
+        }
+        iret=ReadTMComponents(&(X->Bind), &dnorm, &liLanczosStp, iFlgTMComp);
         if(iret !=TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
@@ -208,7 +216,7 @@ int CalcSpectrumByTPQ(
         }
         fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
-        OutputTMComponents(X, alpha,beta, dnorm, liLanczosStp);
+        OutputTMComponents(&(X->Bind), alpha,beta, dnorm, liLanczosStp);
     }//X->Bind.Def.iFlgCalcSpec == RECALC_NOT || RECALC_FROM_TMComponents_VEC
 
     stp=liLanczosStp;

@@ -92,13 +92,16 @@ int CalcByLanczos(
     }
 
     StartTimer(4100);
-    if(Lanczos_EigenValue(&(X->Bind))!=0){
-      fprintf(stderr, "  Lanczos Eigenvalue is not converged in this process.\n");      
+    int iret=0;
+    iret=Lanczos_EigenValue(&(X->Bind));
+    if(iret != 0){
       StopTimer(4100);
       return(FALSE);
     }
     StopTimer(4100);
-    
+    if (X->Bind.Def.iReStart == RESTART_INOUT ||X->Bind.Def.iReStart == RESTART_OUT ) {
+      return TRUE;
+    }
     if(X->Bind.Def.iCalcEigenVec==CALCVEC_NOT){
        fprintf(stdoutMPI, "  Lanczos EigenValue = %.10lf \n ",X->Bind.Phys.Target_energy);
        return(TRUE);
