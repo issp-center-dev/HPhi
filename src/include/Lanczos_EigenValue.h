@@ -19,19 +19,19 @@ int Lanczos_GetTridiagonalMatrixComponents(struct BindStruct *X, double *alpha, 
 
 int ReadInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1, unsigned long int *liLanczosStp_vec);
 
-int OutputLanczosVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1, unsigned long int *liLanczosStp_vec);
+int OutputLanczosVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1, unsigned long int liLanczosStp_vec);
 
 int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1);
 
 int ReadTMComponents(
-        struct EDMainCalStruct *X,
+        struct BindStruct *X,
         double *_dnorm,
         unsigned long int *i_max,
         const int iFlg
 );
 
 int OutputTMComponents(
-        struct EDMainCalStruct *X,
+        struct BindStruct *X,
         double *_alpha,
         double *_beta,
         double _dnorm,

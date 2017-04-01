@@ -38,22 +38,18 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueStart);
   FILE *fp;
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
-  int stp, iproc;
-  long int i, iv, i_max;
-  unsigned long int i_max_tmp, sum_i_max;
+  int stp;
+  long int i, i_max;
+  unsigned long int i_max_tmp;
   int k_exct, Target;
   int iconv = -1;
   double beta1, alpha1; //beta,alpha1 should be real
   double complex temp1, temp2;
   double complex cbeta1;
   double E[5], ebefor, E_target;
-  int mythread;
 
 // for GC
   double dnorm=0.0;
-  double complex cdnorm;
-  long unsigned int u_long_i;
-  dsfmt_t dsfmt;
 
   double **tmp_mat;
   double *tmp_E;
@@ -422,7 +418,7 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
 int OutputLanczosVector(struct BindStruct *X,
                         double complex* tmp_v0,
                         double complex *tmp_v1,
-                        unsigned long int *liLanczosStp_vec){
+                        unsigned long int liLanczosStp_vec){
   char sdt[D_FileNameMax];
   FILE *fp;
 
@@ -446,12 +442,9 @@ int OutputLanczosVector(struct BindStruct *X,
 
 
 int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1) {
-  char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
-  int stp, iproc;
+  int iproc;
   long int i, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
-  int k_exct, Target;
-  int iconv = -1;
   int mythread;
 
 // for GC
@@ -459,8 +452,6 @@ int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double comple
   double complex cdnorm;
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
-
-  int int_i, int_j, mfint[7];
 
   i_max = X->Check.idim_max;
   if (initial_mode == 0) {
@@ -566,7 +557,7 @@ int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double comple
 }
 
 int ReadTMComponents(
-        struct EDMainCalStruct *X,
+        struct BindStruct *X,
         double *_dnorm,
         unsigned long int *_i_max,
         int iFlg
@@ -579,14 +570,14 @@ int ReadTMComponents(
   double dnorm;
   FILE *fp;
   idx=1;
-  sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
+  sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Def.CDataFileHead);
   childfopenMPI(sdt,"r", &fp);
 
   fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
   sscanf(ctmp,"%ld \n", &i_max);
   if(iFlg==0) {
-    alpha = (double *) realloc(alpha, sizeof(double) * (i_max + X->Bind.Def.Lanczos_max + 1));
-    beta = (double *) realloc(beta, sizeof(double) * (i_max + X->Bind.Def.Lanczos_max + 1));
+    alpha = (double *) realloc(alpha, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
+    beta = (double *) realloc(beta, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
   }
   else if(iFlg==1){
     alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
@@ -610,7 +601,7 @@ int ReadTMComponents(
 
 
 int OutputTMComponents(
-        struct EDMainCalStruct *X,
+        struct BindStruct *X,
         double *_alpha,
         double *_beta,
         double _dnorm,
@@ -621,7 +612,7 @@ int OutputTMComponents(
   unsigned long int i;
   FILE *fp;
 
-  sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
+  sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Def.CDataFileHead);
   childfopenMPI(sdt,"w", &fp);
   fprintf(fp, "%d \n",liLanczosStp);
   fprintf(fp, "%.10lf \n",_dnorm);

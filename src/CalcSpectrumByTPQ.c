@@ -178,7 +178,7 @@ int CalcSpectrumByTPQ(
         else{
             iFlgTMComp=1;
         }
-        iret=ReadTMComponents(X, &dnorm, &liLanczosStp, iFlgTMComp);
+        iret=ReadTMComponents(&(X->Bind), &dnorm, &liLanczosStp, iFlgTMComp);
         if(iret !=TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
@@ -216,7 +216,7 @@ int CalcSpectrumByTPQ(
         }
         fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
-        OutputTMComponents(X, alpha,beta, dnorm, liLanczosStp);
+        OutputTMComponents(&(X->Bind), alpha,beta, dnorm, liLanczosStp);
     }//X->Bind.Def.iFlgCalcSpec == RECALC_NOT || RECALC_FROM_TMComponents_VEC
 
     stp=liLanczosStp;
