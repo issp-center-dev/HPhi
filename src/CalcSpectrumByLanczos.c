@@ -59,7 +59,14 @@ int CalcSpectrumByLanczos(
 
     if(X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC) {
-      
+
+        StartTimer(6201);
+        if(ReadInitialVector( &(X->Bind), v0, v1, &liLanczosStp_vec)!=0){
+            StopTimer(6201);
+            exitMPI(-1);
+        }
+        StopTimer(6201);
+        /*
         fprintf(stdoutMPI, "  Start: Input vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecStart, "a");
         StartTimer(6201);
@@ -80,6 +87,7 @@ int CalcSpectrumByLanczos(
         fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
         if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+        */
     }
 
     //Read diagonal components
@@ -87,8 +95,17 @@ int CalcSpectrumByLanczos(
        X->Bind.Def.iFlgCalcSpec ==RECALC_FROM_TMComponents_VEC||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC)
     {
-      StartTimer(6202);
-        iret=ReadTMComponents(X, &dnorm, &liLanczosStp);
+        StartTimer(6202);
+        int iFlgTMComp=0;
+        if(X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC ||
+           X->Bind.Def.iFlgCalcSpec ==  RECALC_FROM_TMComponents_VEC)
+        {
+            iFlgTMComp=0;
+        }
+        else{
+            iFlgTMComp=1;
+        }
+        iret=ReadTMComponents(X, &dnorm, &liLanczosStp, iFlgTMComp);
         if(iret !=TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
@@ -225,67 +242,4 @@ int GetSpectrumByTridiagonalMatrixComponents(
     }
     *dcSpectrum = dnorm/(dch);
   return TRUE;
-}
-
-int ReadTMComponents(
-        struct EDMainCalStruct *X,
-        double *_dnorm,
-        unsigned long int *_i_max
-){
-    char sdt[D_FileNameMax];
-    char ctmp[256];
-
-    unsigned long int idx;
-    unsigned long int i_max;
-    double dnorm;
-    FILE *fp;
-    idx=1;
-    sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
-    childfopenMPI(sdt,"r", &fp);
-
-    fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-    sscanf(ctmp,"%ld \n", &i_max);
-    if(X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC||
-       X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC) {
-        alpha=(double*)realloc(alpha, sizeof(double)*(i_max + X->Bind.Def.Lanczos_max + 1));
-        beta=(double*)realloc(beta, sizeof(double)*(i_max + X->Bind.Def.Lanczos_max + 1));
-    }
-    else if(X->Bind.Def.iFlgCalcSpec==RECALC_FROM_TMComponents){
-        alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
-        beta=(double*)realloc(beta, sizeof(double)*(i_max + 1));
-    }
-    fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
-    sscanf(ctmp,"%lf \n", &dnorm);
-    while(fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp) != NULL){
-        sscanf(ctmp,"%lf %lf \n", &alpha[idx], &beta[idx]);
-        idx++;
-    }
-    fclose(fp);
-    *_dnorm=dnorm;
-    *_i_max=i_max;
-    return TRUE;
-}
-
-
-int OutputTMComponents(
-        struct EDMainCalStruct *X,
-        double *_alpha,
-        double *_beta,
-        double _dnorm,
-        int liLanczosStp
-)
-{
-    char sdt[D_FileNameMax];
-    unsigned long int i;
-    FILE *fp;
-
-    sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
-    childfopenMPI(sdt,"w", &fp);
-    fprintf(fp, "%d \n",liLanczosStp);
-    fprintf(fp, "%.10lf \n",_dnorm);
-    for( i = 1 ; i <= liLanczosStp; i++){
-        fprintf(fp,"%.10lf %.10lf \n", _alpha[i], _beta[i]);
-    }
-    fclose(fp);
-    return TRUE;
 }

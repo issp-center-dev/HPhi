@@ -201,6 +201,13 @@ struct DefineList{
    * 2: restart (input and output restart vector) */
   int iReStart;
 
+    /**< MPI mode
+    * 0: butterfly
+    * 1: Parallel Interaction [to be supported]
+    */
+    int iFlgMPI;
+
+
 };
 
 struct CheckList{

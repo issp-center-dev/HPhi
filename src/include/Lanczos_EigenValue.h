@@ -17,3 +17,22 @@
 int Lanczos_EigenValue(struct BindStruct *X);
 int Lanczos_GetTridiagonalMatrixComponents(struct BindStruct *X, double *alpha, double *beta, double complex *_v1, unsigned long int *Lanczos_step);
 
+int ReadInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1, unsigned long int *liLanczosStp_vec);
+
+int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1);
+
+int ReadTMComponents(
+        struct EDMainCalStruct *X,
+        double *_dnorm,
+        unsigned long int *i_max,
+        const int iFlg
+);
+
+int OutputTMComponents(
+        struct EDMainCalStruct *X,
+        double *_alpha,
+        double *_beta,
+        double _dnorm,
+        int liLanczosStp
+);
+
