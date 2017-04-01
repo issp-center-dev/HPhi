@@ -171,21 +171,10 @@ int CalcSpectrumByLanczos(
     if(X->Bind.Def.iFlgCalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec==RECALC_INOUT_TMComponents_VEC){
       StartTimer(6206);
-        fprintf(stdoutMPI, "    Start: Output vectors for recalculation.\n");
-        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecStart, "a");
-
-        sprintf(sdt, cFileNameOutputRestartVec, X->Bind.Def.CDataFileHead, myrank);
-        if(childfopenALL(sdt, "wb", &fp)!=0){
-            exitMPI(-1);
-        }
-        fwrite(&liLanczosStp, sizeof(liLanczosStp),1,fp);
-        fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
-        fwrite(v0, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
-        fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
-        fclose(fp);
-
-        fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
-        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
+      if(OutputLanczosVector(&(X->Bind), v0, v1, liLanczosStp)!=0){
+        StopTimer(6206);
+        exitMPI(-1);
+      }
         StopTimer(6206);
     }
 

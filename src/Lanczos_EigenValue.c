@@ -50,7 +50,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   int mythread;
 
 // for GC
-  double dnorm;
+  double dnorm=0.0;
   double complex cdnorm;
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
@@ -58,15 +58,36 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   double **tmp_mat;
   double *tmp_E;
   int int_i, int_j, mfint[7];
-
+  int iret=0;
   sprintf(sdt_2, cFileNameLanczosStep, X->Def.CDataFileHead);
 
   i_max = X->Check.idim_max;
   k_exct = X->Def.k_exct;
+  unsigned long int liLanczosStp = X->Def.Lanczos_max;
+  unsigned long int liLanczosStp_vec=0;
 
     if (X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN){
+      if(ReadInitialVector( X, v0, v1, &liLanczosStp_vec)!=0){
+        fprintf(stdoutMPI, "  Error: Fail to read initial vectors\n");
+        return FALSE;
+      }
+      iret=ReadTMComponents(X, &dnorm, &liLanczosStp, 0);
+      if(iret !=TRUE){
+        fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
+        return FALSE;
+      }
+      if(liLanczosStp_vec !=liLanczosStp){
+        fprintf(stdoutMPI, "  Error: Input files for vector and TMcomponents are incoorect.\n");
+        fprintf(stdoutMPI, "  Error: Input vector %ld th stps, TMcomponents  %ld th stps.\n", liLanczosStp_vec, liLanczosStp);
+        return FALSE;
+      }
+      X->Def.Lanczos_restart=liLanczosStp;
+      liLanczosStp = liLanczosStp+X->Def.Lanczos_max;
+      alpha1=alpha[X->Def.Lanczos_restart];
+      beta1=beta[X->Def.Lanczos_restart];
 
-    }else {
+    }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
+    else {
       SetInitialVector(X, v0, v1);
       //Eigenvalues by Lanczos method
       TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
@@ -90,17 +111,19 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       beta1 = sqrt(beta1);
       beta[1] = beta1;
       ebefor = 0;
+      liLanczosStp = X->Def.Lanczos_max;
+      X->Def.Lanczos_restart =1;
     }/*else restart*/
 
 /*
       Set Maximum number of loop to the dimention of the Wavefunction
     */
   i_max_tmp = SumMPI_li(i_max);
-  if (i_max_tmp < X->Def.Lanczos_max) {
-    X->Def.Lanczos_max = i_max_tmp;
+  if (i_max_tmp < liLanczosStp) {
+    liLanczosStp = i_max_tmp;
   }
   if (i_max_tmp < X->Def.LanczosTarget) {
-    X->Def.LanczosTarget = i_max_tmp;
+    liLanczosStp = i_max_tmp;
   }
   if (i_max_tmp == 1) {
     E[1] = alpha[1];
@@ -115,7 +138,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   }
 
   fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] Target:E[%d] E_Max/Nsite\n", X->Def.LanczosTarget + 1);
-  for (stp = 2; stp <= X->Def.Lanczos_max; stp++) {
+  for (stp = X->Def.Lanczos_restart+1; stp <= liLanczosStp; stp++) {
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for (i = 1; i <= i_max; i++) {
       temp1 = v1[i];
@@ -257,6 +280,11 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
+  if (X->Def.iReStart == RESTART_INOUT ||X->Def.iReStart == RESTART_OUT ){
+    OutputTMComponents(X, alpha,beta, dnorm, stp-1);
+    OutputLanczosVector(X, v0, v1, stp-1);
+  }
+
   return 0;
 }
 
@@ -390,6 +418,32 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
   if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
   return 0;
 }
+
+int OutputLanczosVector(struct BindStruct *X,
+                        double complex* tmp_v0,
+                        double complex *tmp_v1,
+                        unsigned long int *liLanczosStp_vec){
+  char sdt[D_FileNameMax];
+  FILE *fp;
+
+  fprintf(stdoutMPI, "    Start: Output vectors for recalculation.\n");
+  TimeKeeper(X, cFileNameTimeKeep, c_OutputSpectrumRecalcvecStart, "a");
+
+  sprintf(sdt, cFileNameOutputRestartVec, X->Def.CDataFileHead, myrank);
+  if(childfopenALL(sdt, "wb", &fp)!=0){
+    return -1;
+  }
+  fwrite(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
+  fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max),1,fp);
+  fwrite(tmp_v0, sizeof(complex double),X->Check.idim_max+1, fp);
+  fwrite(tmp_v1, sizeof(complex double),X->Check.idim_max+1, fp);
+  fclose(fp);
+
+  fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
+  TimeKeeper(X, cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
+  return 0;
+}
+
 
 int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1) {
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
