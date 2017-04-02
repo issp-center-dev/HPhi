@@ -861,35 +861,35 @@ indices are specified as those on the Bogoliubov representation
 
 \section{Input files for {\it Expert} mode}
 \label{Ch:HowToExpert}
-In this section, details of input files for expert mode are explained. Input files are categorized by the following four parts.
+In this section, the details of the input files for the expert mode are explained. The input files are categorized according to the following four parts.
 \begin{description}
-\item[(1)~List:] This file is a list of input file names with keywords. Each keywords is fixed, but file names are free to be determined.  
-\item[(2)~Basic parameters:] The following input files give basic parameters. 
-The kinds of input files are determined by keywords. 
-~\\{\bf CalcMod}: Set the parameters for calculation modes.
-~\\{\bf ModPara}: Set the parameters for basic parameters such as site number, electron number, Lanczos step {\it etc}.
-~\\{\bf LocSpin}: Set the location of local spin (only used in Kondo model). 
+\item[(1)~List:] This file is a list of the input file names with the keywords. Each keyword is fixed, but the file names can be determined freely.  
+\item[(2)~Basic parameters:] The following input files give the basic parameters. 
+The types of input files are determined by the keywords. 
+~\\{\bf CalcMod}: Set the parameters for the calculation modes.
+~\\{\bf ModPara}: Set the parameters for the basic parameters, such as site number, electron number, and Lanczos step.
+~\\{\bf LocSpin}: Set the location of the local spin (used only in the Kondo model). 
 \item[(3)~Hamiltonian:] 
-Hamiltonian for $\HPhi$ is denoted by the format of interactions for electron system. 
-The kinds of interactions are determined by the following keywords. 
-~\\{\bf Trans}: The one body part, $c_{i\sigma_1}^{\dag}c_{j\sigma_2}$.
-~\\{\bf InterAll}: The general two body interactions, $c_ {i \sigma_1}^{\dag}c_{j\sigma_2}c_{k \sigma_3}^{\dag}c_{l \sigma_4}$.
-~\\We can set interactions which are often used by the following keywords. 
-~\\{\bf CoulombIntra}: On-site Coulomb interactions, $n_ {i \uparrow}n_{i \downarrow}$ ($n_{i \sigma}=c_{i\sigma}^{\dag}c_{i\sigma}$).
-~\\{\bf CoulombInter}: Off-site Coulomb interactions, $n_ {i}n_{j}$ ($n_i=n_{i\uparrow}+n_{i\downarrow}$).
-~\\{\bf Hund}: Hund couplings, $n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}$.
-~\\{\bf PairHop}: Pair hopping couplings, $c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}$.
-~\\{\bf Exchange}: Exchange couplings, $c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}$.
-~\\{\bf Ising}: Ising interactions, $S_i^z S_j^z$.
+The Hamiltonian for $\HPhi$ is denoted by the format of the interactions for the electron system. 
+The types of interaction are determined by the following keywords. 
+~\\{\bf Trans}: The one-body part, $c_{i\sigma_1}^{\dag}c_{j\sigma_2}$
+~\\{\bf InterAll}: The general two-body interactions, $c_ {i \sigma_1}^{\dag}c_{j\sigma_2}c_{k \sigma_3}^{\dag}c_{l \sigma_4}$.
+~\\We can set the interactions that are frequently used by the following keywords. 
+~\\{\bf CoulombIntra}: On-site Coulomb interactions, $n_ {i \uparrow}n_{i \downarrow}$ ($n_{i \sigma}=c_{i\sigma}^{\dag}c_{i\sigma}$)
+~\\{\bf CoulombInter}: Off-site Coulomb interactions, $n_ {i}n_{j}$ ($n_i=n_{i\uparrow}+n_{i\downarrow}$)
+~\\{\bf Hund}: Hund couplings, $n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}$
+~\\{\bf PairHop}: Pair hopping couplings, $c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}$
+~\\{\bf Exchange}: Exchange couplings, $c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}$
+~\\{\bf Ising}: Ising interactions, $S_i^z S_j^z$
 ~\\{\bf PairLift}: PairLift couplings, $c_ {i \uparrow}^{\dag}c_{i\downarrow}c_{j \uparrow}^{\dag}c_{j \downarrow}$.
-\item[(4)~Output:] Targets for output is determined.
-~\\{\bf OneBodyG }: One-body green functions,  $\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle$.
-~\\{\bf TwoBodyG }: Two-body green functions,  $\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k \sigma_3}c_{l\sigma_4}\rangle$.
+\item[(4)~Output:] The target for the output is determined.
+~\\{\bf OneBodyG }: One-body Green's functions,  $\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle$
+~\\{\bf TwoBodyG }: Two-body Green's functions,  $\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k \sigma_3}c_{l\sigma_4}\rangle$.
 \end{description}
 
-~\subsection{List file for Input files}
-\label{Subsec:InputFileList}.
-This file determines input filenames which are correlated with keywords. File format is shown as follows.\\
+~\subsection{List file for the input files}
+\label{Subsec:InputFileList}
+This file determines the input filenames, which are correlated with the keywords. The file format is as follows.\\
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
@@ -910,51 +910,51 @@ TwoBodyG	zcisajscktaltdc.def
  \begin{itemize}
    \item  $[$string01$]$
    
-   {\bf Type :} string-type
+   {\bf Type :} String
    
    {\bf Description :} Select a word from keywords.
    
    \item  $[$string02$]$
    
-    {\bf Type :} string-type 
+    {\bf Type :} String 
 
-   {\bf Description :} An input filename which is correlated with keywords.
+   {\bf Description :} An input filename that is correlated with the keywords.
  \end{itemize}
 \subsubsection{Use rules}
 \begin{itemize}
-\item  After setting keywords at [string 01], half-width state is needed for writing a filename. You can set the filename freely.
-\item Keywords for input files are shown in Table\ref{Table:Defs}.
-\item Essential keywords are ``CalcMod", ``ModPara" and ``LocSpin".
+\item  After setting keywords at [string 01], the half-width state is needed for writing a filename. You can set the filename freely.
+\item Keywords for input files are shown in Table~\ref{Table:Defs}.
+\item Essential keywords are ``CalcMod", ``ModPara", and ``LocSpin".
 \item Keywords can be set in random order.
-\item If keywords or filenames are incorrect, the program is terminated. 
-\item When the head of line is ``$\#$", the line is skipped.
+\item If the keywords or filenames are incorrect, the program is terminated. 
+\item When the head of a line is ``$\#$", the line is skipped.
 \end{itemize}
 
  \begin{table*}[h!]
 \begin{center}
   \begin{tabular}{ll|} \hline
-           Keywords     & Details for corresponding files       \\   \hline\hline
-           CalcMod      &   Parameters for modes of calculation.  \\  \hline  
-           ModPara       &  Parameters for calculation.        \\ \hline   
-           LocSpin         &  Configurations of the local spins for Hamiltonian.         \\ 
-           Trans       &   Transfer and chemical potential for Hamiltonian.  \\
-           InterAll  &   Two-body interactions for Hamiltonian. \\  
-           CoulombIntra  &   CoulombIntra interactions. \\  
-           CoulombInter  &   CoulombInter  interactions. \\  
-           Hund  &   Hund couplings. \\  
-           PairHop  &  Pair hopping couplings. \\  
-           Exchange  &  Exchange couplings. \\  
-           Ising  &  Ising interactions. \\  
-           PairLift  &   Pair lift couplings. \\  
-           OneBodyG         &   Output components for Green functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
-           TwoBodyG &   Output components for Correlation functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\ 
-           {SingleExcitation} &   Operators for generating single excited state\\ 
-           {PairExcitation} &   Operators for generating pair excited state\\   
+           Keywords     & Details of corresponding files       \\   \hline\hline
+           CalcMod      &   Parameters for modes of calculation  \\  \hline  
+           ModPara       &  Parameters for calculation        \\ \hline   
+           LocSpin         &  Configurations of the local spins for Hamiltonian         \\ 
+           Trans       &   Transfer and chemical potential for Hamiltonian  \\
+           InterAll  &   Two-body interactions for Hamiltonian\\  
+           CoulombIntra  &   CoulombIntra interactions\\  
+           CoulombInter  &   CoulombInter  interactions\\  
+           Hund  &   Hund couplings\\  
+           PairHop  &  Pair hopping couplings \\  
+           Exchange  &  Exchange couplings \\  
+           Ising  &  Ising interactions \\  
+           PairLift  &   Pair lift couplings.\\  
+           OneBodyG         &   Output components for one-body Green's functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle$           \\   
+           TwoBodyG &   Output components for two-body Green's functions $\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle$  \\ 
+           {SingleExcitation} &   Operators for generating a single excited state\\ 
+           {PairExcitation} &   Operators for generating a pair excited state\\   
            {SpectrumVec} &   An input vector to calculate a restart vector\\   
   \hline
   \end{tabular}
 \end{center}
-\caption{List of the definition files.}
+\caption{List of the definition files}
 \label{Table:Defs}
 \end{table*}%
 
@@ -962,7 +962,7 @@ TwoBodyG	zcisajscktaltdc.def
 %----------------------------------
 \subsection{CalcMod file}
 \label{Subsec:calcmod}
-This file determines parameters for calculation method, model and output mode. File format is shown as follows.\\
+This file determines the parameters for the calculation method, model, and output mode. The file format is as follows.\\
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
@@ -980,56 +980,57 @@ CalcEigenVec 0
  \begin{itemize}
    \item  $[$string01$]$
    
-   {\bf Type :} string-type
+   {\bf Type :} String
    
    {\bf Description :} Select a word from keywords.
    
    \item  $[$int01$]$
    
-    {\bf Type :} int-type 
+    {\bf Type :} Int 
 
-   {\bf Description :} A parameter which is correlated with a keyword.\\
+   {\bf Description :} A parameter that is correlated with a keyword.\\
 
    
   \end{itemize}
 
 \subsubsection{Use rules}
 \begin{itemize}
-\item After setting keywords at [string 01], a half-width blank is needed for setting a parameter.
+\item After setting the keywords at [string 01], a half-width blank is needed for setting a parameter.
 \item Keywords can be set in random order.
-\item If keywords or filenames are incorrect, the program is terminated. 
-\item The following keywords, ``CalcType" and ``CalcModel" are essential. 
-\item When the head of line is ``$\#$", the line is skipped.
+\item If the keywords or filenames are incorrect, the program is terminated. 
+\item The keywords ``CalcType" and ``CalcModel" are essential. 
+\item When a head of line is ``$\#$", the line is skipped.
 \end{itemize}
 ~\subsubsection{Keywords and parameters}
-Parameters correlated with keywords are shown as follows.
+The parameters correlated with the keywords are as follows.
 \begin{itemize}
 \item  \verb|CalcType|
 
-{\bf Type :} int-type 
+{\bf Type :} Int 
 
 {\bf Description :} Select the method for calculation from the following list:\\
-0: Lanczos method,\\
-1: Analysis of the physical properties by using TPQ,\\
+0: Lanczos method\\
+1: Analysis of the physical properties by using TPQ\\
 2: Full diagonalization method.\\
 3: LOBCG for the ground state.
 
 
 \item  \verb|CalcModel|
 
-{\bf Type :} int-type 
+{\bf Type :} Int 
 
 {\bf Description :} Select the model from the following list:\\
-0: fermion Hubbard model (Canonical ensemble: {conservation of particles or} conservation of particles and the component of $S_z$)\\
-1: Spin model (Canonical ensemble: conservation of the component of $S_z$)\\
-2: Kondo lattice model (Canonical ensemble: conservation of particles, the component of $S_z$)\\
-3: fermion Hubbard model (Grand canonical ensemble)\\
-4: Spin model (Grand canonical ensemble)\\
-5: Kondo lattice model (Grand canonical ensemble)
-{For fermion Hubbard model, you can select the model under the conservation of particles by setting} \verb|NCond| {in the ModPara file. When you want to select the model under the conservation of particles and the component of $S_z$, you set both} \verb|NCond| and \verb|2Sz| {in the ModPara file}.
+0: Fermion Hubbard model (canonical ensemble: {conservation of particles or} conservation of particles and the component of $S_z$)\\
+1: Spin model (canonical ensemble: conservation of the component of $S_z$)\\
+2: Kondo lattice model (canonical ensemble: conservation of particles, the component of $S_z$)\\
+3: Fermion Hubbard model (grand canonical ensemble)\\
+4: Spin model (grand canonical ensemble)\\
+5: Kondo lattice model (grand canonical ensemble).
+
+For the fermion Hubbard model, you can select the model under the conservation of the particles by setting \verb|NCond| in the ModPara file. When you want to select the model under the conservation of particles and the component of $S_z$, set both \verb|NCond| and \verb|2Sz| {in the ModPara file}.
 %\item  \verb|Outputmode|
 %
-%{\bf Type :} int-type (default value: 0)
+%{\bf Type :} Int (default value: 0)
 %
 %{\bf Description :} Select the output mode from the following list:\\
 %0: Output of Green's function. The components are set by the OneBodyG and TwoBodyG input files.\\
@@ -1037,67 +1038,61 @@ Parameters correlated with keywords are shown as follows.
 
 \item  \verb|CalcEigenVec|
 
-{\bf Type :} int-type (default value: 0)
+{\bf Type :} Int (default value: 0)
 
-{\bf Description :} Select the method to calculate eigenvectors:\\
-0:Lanczos+CG methods (When the convergence of eigenvectors are not enough for using Lanczos method,  CG method is applied to calculate eigenvectors).\\
-1:Lanczos method.\\
+{\bf Description :} Select the method to calculate the eigenvectors:\\
+0: Lanczos+CG methods (when the convergence of eigenvectors is not sufficient for using the Lanczos method, the CG method is applied to calculate eigenvectors).\\
+1: Lanczos method.\\
 
 \item  \verb|InitialVecType|
 
-{\bf Type :} int-type (default value: 0)
+{\bf Type :} Int (default value: 0)
 
 {\bf Description :} Select the type of an initial vector:\\
-0:Complex type.\\
-1:Real type.\\
+0: Complex type\\
+1: Real type.\\
 
 \item  \verb|OutputEigenVec|
 
-{\bf Type :} int-type (default value: 0)
+{\bf Type :} Int (default value: 0)
 
-{\bf Description :} {Select the mode of outputting an eigenvector:\\
-0: not output an eigen vector.\\
-1: output an eigen vector.\\
-}
+{\bf Description :} Select the mode of outputting an eigenvector:\\
+0: Not output an eigenvector\\
+1: Output an eigenvector.\\
+
 
 \item  \verb|InputEigenVec|
 
-{\bf Type :} int-type (default value: 0)
+{\bf Type :} Int (default value: 0)
 
 {\bf Description :} {Select the mode of inputting an eigenvector:\\
-0: not input an eigen vector.\\
-1: input an eigen vector.\\
+0: Not input an eigenvector\\
+1: Input an eigenvector.\\
 }
 
 \item  \verb|ReStart|
 
-{\bf Type :} {int-type (default value: 0)}
+{\bf Type :} {Int (default value: 0)}
 
 {\bf Description :} {
-{
 Select the mode of inputting a restart vector:\\
-0:  not restart calculation,\\
-1:  output a restart vector,\\
-2:  input a restart vector and output a new restart vector,\\
-3: input a restart vector.\\
+0:  Not restart calculation\\
+1:  Output a restart vector\\
+2:  Input a restart vector and output a new restart vector\\
+3: Input a restart vector.\\
 }
-}
-
 
 \item  \verb|CalcSpec|
 
-{\bf Type :} {int-type (default value: 0)}
+{\bf Type :} {Int (default value: 0)}
 
-{\bf Description :} {
-{
-Select the mode of calculating dynamical Green's functions.\\
-0: not calculate  dynamical Green's functions,\\
-1: (not restart) input an initial vector and files for generating single excited or pair excited states,\\
-2: input components of triangular diagonal matrix, \\
-3: output both components of triangular diagonal matrix and a restart vector,\\
-4: input both components of triangular diagonal matrix and a restart vector,\\
-5: input and output  both components of triangular diagonal matrix and a restart vector.\\
-}
+{\bf Description :} {Select the mode of calculating dynamical Green's functions:\\
+0: Not calculate  dynamical Green's functions\\
+1: (not restart) Input an initial vector and files for generating single excited or pair excited states\\
+2: Input components of triangular diagonal matrix\\
+3: Output both components of triangular diagonal matrix and a restart vector\\
+4: Input both components of triangular diagonal matrix and a restart vector\\
+5: Input and output  both components of triangular diagonal matrix and a restart vector.\\
 }
 
 \end{itemize}
@@ -1105,7 +1100,7 @@ Select the mode of calculating dynamical Green's functions.\\
 \newpage
 \subsection{ModPara file}
 \label{Subsec:modpara}
-This file determines parameters for calculation. File format is shown as follows.\\
+This file determines the parameters for calculation. The file format is as follows.\\
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
@@ -1137,72 +1132,71 @@ ExpecInterval  20
    \item  Lines 1-4:  Header
    \item  Line 6:  [string01]~[string02]
    \item  Lines 7-8:  Header
-   \item  Lines 9- : [string01]~[int01]
+   \item  Lines 9- : [string01]~[int01].
   \end{itemize}
 \subsubsection{Parameters}
 \begin{itemize}
    \item  $[$string01$]$
    
-   {\bf Type :} string-type
+   {\bf Type :} String
 
   {\bf Description :} Select a word from keywords.
    
    \item  $[$string02$]$
    
-   {\bf Type :} string-type (blank parameter not allowed)
+   {\bf Type :} String (a blank parameter is not allowed)
 
   {\bf Description :} Set a header for output files.
 
    \item  $[$int01$]$
    
-   {\bf Type :} int-type (blank parameter not allowed)
+   {\bf Type :} Int (a blank parameter is not allowed)
 
-  {\bf Description :} A parameter which is correlated with a keyword.
+  {\bf Description :} A parameter that is correlated with a keyword.
   \end{itemize}
 
 \subsubsection{Use rules}
 \begin{itemize}
-\item From Line 9: After setting keywords at [string 01], a half-width blank is needed for setting a parameter.
-\item All Parameters are needed and the order for parameters is fixed.
+\item From Line 9: After setting keywords at [string 01], a half-width blank is needed for setting a parameter
+\item All the parameters are needed and the order for the parameters is fixed
 \end{itemize}
 
 ~\subsubsection{Keywords and parameters}
  \begin{itemize}
   \item  \verb|CDataFileHead|
 
- {\bf Type :} string-type (blank parameter not allowed)
+ {\bf Type :} String (a blank parameter is not allowed)
 
-{\bf Description :} A header for output files. For example, the output filename for one body Green's function becomes ``{\bf xxx\_Lanczos\_cisajs.dat}" (xxx are characters set by \verb|CDataFileHead|). 
+{\bf Description :} A header for output files. For example, the output filename for one-body Green's function becomes ``{\bf xxx\_Lanczos\_cisajs.dat}" (xxx are the characters set by \verb|CDataFileHead|). 
    
  \item  \verb|Nsite|
 
-{\bf Type :} int-type (Positive integer)
+{\bf Type :} Int (positive integer)
 
 {\bf Description :} The number of sites.  
 
 
  \item  \verb|Ncond|
 
-{\bf Type :} {int-type (Positive integer)}
+{\bf Type :} {Int (positive integer)}
 
 {\bf Description :} {The number of conduction electrons (not used in grand canonical ensemble). }
 
  \item  \verb|2Sz|
 
-{\bf Type :} {int-type (Positive integer)}
+{\bf Type :} {Int (positive integer)}
 
-{\bf Description :} {The total value of $2S_z$ (not used in grand canonical ensemble). For conservation of $S_z$ in the case of } \verb|CalcModel| 
- { =0 (fermion Hubbard model) or 2 (Kondo lattice model), we must set} \verb|Ncond|.
+{\bf Description :} {The total value of $2S_z$ (not used in grand canonical ensemble). For conservation of $S_z$ in the case of } \verb|CalcModel| = 0 (fermion Hubbard model) or 2 (Kondo lattice model), set \verb|Ncond|.
 
  \item  \verb|Lanczos_max|
 
-{\bf Type :} int-type (Positive integer)
+{\bf Type :} Int (positive integer)
 
-{\bf Description :}  The number of Lanczos steps in calculation. When the convergence within the specified accuracy is satisfied, the calculation is finished before a step becomes  \verb|Lanczos_max|.
+{\bf Description :}  The number of Lanczos steps in the calculation. When the convergence within the specified accuracy is satisfied, the calculation is completed before a step reaches  \verb|Lanczos_max|.
 
  \item  \verb|initial_iv|
 
-{\bf Type :} int-type
+{\bf Type :} Int
 
 {\bf Description :} 
 {An initial vector is specified with this parameter.}
@@ -1211,95 +1205,100 @@ ExpecInterval  20
 \begin{itemize}
 \item{For canonical ensemble and \verb|initial_iv| $\geq 0$}
 
-The non-zero components of an initial vector is specified with this parameter. 
+The non-zero components of an initial vector are specified with this parameter. 
 
 \item{For grand canonical ensemble or \verb|initial_iv| $< 0$}
 
-A seed of random generator is given by this parameter and the random vector is used as an initial vector.
+The seed of the random generator is given by this parameter and the random vector is used as the initial vector.
 \end{itemize}
 
 \item{TPQ method}
 
-A seed of random generator is given by this parameter and the random vector is used as an initial vector.
+The seed of the random generator is given by this parameter and the random vector is used as the initial vector.
 \end{itemize}
-See \ref{Ch:algorithm} for details of setting an initial vector.
+See Sec. \ref{Ch:algorithm} for details of setting an initial vector.
 
  \item  \verb|exct|
 
-{\bf Type :} int-type (Positive integer)
+{\bf Type :} Int (positive integer)
 
 {\bf Description :} 
- An integer for setting the number of getting eigenvectors from the ground energy by Lanczos method.\\
+ An integer for setting the number of eigenvectors obtained from the ground energy by the Lanczos method.\\
 %{\bf Note}:  the following condition must be satisfied \verb|nvec| $>=$ \verb|exct|.
 For \verb|method="CG"|, the number of eigenvectors is specified.
 
 \item   \verb|LanczosEps|
    
-{\bf Type :} int-type (Positive integer)
+{\bf Type :} Int (positive integer)
 
-{\bf Description :} An integer for judging a convergence of Lanczos method. The convergence is judged by satisfying the condition that the relative error between an eigenvalue and an eigenvalue at the Lanczos step of the one step before becomes less than $10^{- \verb|LanczosEps|}$.
+{\bf Description :} An integer for judging the convergence of the Lanczos method. The convergence is determined by whether the condition is satisdied that the relative error between an eigenvalue and an eigenvalue at the Lanczos step of the one step before is less than $10^{- \verb|LanczosEps|}$.
 For \verb|method="CG"|, the calculation finishes when the 2-norm of the residual vector
 becomes smaller than $10^{- \verb|LanczosEps|/2}$.
 
  \item  \verb|LanczosTarget| 
    
- {\bf Type :} int-type (Positive integer)
+ {\bf Type :} Int (positive integer)
 
-  {\bf Description :} An integer giving the target of eigenvalue for judging the convergence of Lanczos method. For example, the target becomes a ground state when \verb|LanczosTarget|  is equal to one, and a 1st excited state when  \verb|LanczosTarget|  is equal to two.
+  {\bf Description :} An integer giving the target of the eigenvalue for judging the convergence of the Lanczos method. For example, the target becomes a ground state when \verb|LanczosTarget|  is equal to one, and a first excited state when  \verb|LanczosTarget|  is equal to two.
      
 \item \verb|LargeValue|
 
-{\bf Type :} double-type
+{\bf Type :} Double
 
-{\bf Description :} (Only use for TPQ method) An integer giving $l$ of $l-\hat{H}/N_{s}$ used in TPQ method.
+{\bf Description :} (Use only for the TPQ method) An integer giving $l$ of $l-\hat{H}/N_{s}$ used in the TPQ method.
  
 \item \verb|NumAve|
 
-{\bf Type :} int-type
+{\bf Type :} Int
 
-{\bf Description :} (Only use for TPQ method) An integer giving the number of independent runs for TPQ method. 
+{\bf Description :} (Use only for the TPQ method) An integer giving the number of independent runs for the TPQ method. 
 
 \item \verb|ExpecInterval|
 
-{\bf Type :} int-type
+{\bf Type :} Int
 
-{\bf Description :} (Only use for TPQ method) An integer giving the interval steps of calculating correlation functions in TPQ method.\\ 
-{\bf Note:} The small interval increases the time cost of calculations.
+{\bf Description :} (Use only for the TPQ method) An integer giving the interval steps of calculating the correlation functions in the TPQ method.\\ 
+{\bf Note:} A small interval increases the time cost of calculations.
  
  \item \verb|OmegaOrg|
 
-{\bf Type :} complex-type
+{\bf Type :} Complex
 
-{\bf Description :} {The center value of the frequency. 
-Specify real and imaginary parts in that order separated by a space, 
-and if there is no imaginary part, a real part of the frequency is only given.}
+{\bf Description :} {(Use only for calculating dynamical Green's functions) 
+The center value of the frequency. 
+Specify the real and imaginary parts in that order separated by a space, 
+and if there is no imaginary part, the real part of the frequency is only given.}
 
 \item \verb|OmegaIm|
 
-    {\bf Type :} double-type
+    {\bf Type :} Double
     
-    {\bf Description :} The imaginary part of the frequency. 
+    {\bf Description :} (Use only for calculating dynamical Green's functions) 
+    The imaginary part of the frequency. 
     When \verb|OmegaOrg| is defined in a \verb|modpara| file, \verb|OmegaIm| is added to the imaginary value of \verb|OmegaOrg|.
 
 \item \verb|OmegaMin|
 
-    {\bf Type :} complex-type
+    {\bf Type :} Complex
     
-    {\bf Description :} The lower limit of the frequency from \verb|OmegaOrg|. 
-    Specify real and imaginary parts in that order separated by a space, and if there is no imaginary part, a real part of the frequency is only given.
+    {\bf Description :} (Use only for calculating dynamical Green's functions) 
+    The lower limit of the frequency from \verb|OmegaOrg|. 
+    Specify the real and imaginary parts in that order separated by a space, and if there is no imaginary part, the real part of the frequency is only given.
     
   \item \verb|OmegaMax|
 
-    {\bf Type :} complex-type
+    {\bf Type :} Complex
     
-    {\bf Description :} The upper limit of the frequency from \verb|OmegaOrg|.
-    Specify real and imaginary parts in that order separated by a space, and if there is no imaginary part, a real part of the frequency is only given.
+    {\bf Description :} (Use only for calculating dynamical Green's functions) 
+    The upper limit of the frequency from \verb|OmegaOrg|.
+    Specify the real and imaginary parts in that order separated by a space, and if there is no imaginary part, a real part of the frequency is only given.
   
 \item \verb|NOmega|
 
-{\bf Type :} int-type
+{\bf Type :} Int
 
-{\bf Description :} {(Only use for calculating dynamical green's functions) The integer to define the step size of the frequency$\Delta \omega = ($ \verb|OmegaMax|- \verb|OmegaMin|$)/N_{\omega}$. The frequency is given by $z_n=$\verb|OmegaOrg|$+$\verb|OmegaMax|$+ \Delta \omega \times n$.} 
+{\bf Description :} {(Use only for calculating dynamical Green's functions) 
+ The integer for defining the step size of the frequency$\Delta \omega = ($ \verb|OmegaMax|- \verb|OmegaMin|$)/N_{\omega}$. The frequency is given by $z_n=$\verb|OmegaOrg|$+$\verb|OmegaMax|$+ \Delta \omega \times n$.} 
  
  \end{itemize}
 
@@ -1308,7 +1307,7 @@ and if there is no imaginary part, a real part of the frequency is only given.}
 %----------------------------------
 \subsection{LocSpin file}
 \label{Subsec:locspn}
-This file determines sites with localized spins. File format is shown as follows.\\
+This file determines sites with localized spins. The file format is as follows.\\
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
@@ -1339,47 +1338,47 @@ NlocalSpin     6
    \item  Line 1:  Header
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
-   \item  Lines 6-:  [int02]~[int03]
+   \item  Lines 6-:  [int02]~[int03].
   \end{itemize}
  \subsubsection{Parameters}
  \begin{itemize}
 
  \item  $[$string01$]$
 
- {\bf Type :} string-type (blank parameter not allowed)
+ {\bf Type :} String (a blank parameter is not allowed)
 
-{\bf Description :} A keyword for total number of localized spins. You can freely give a name of the keyword.
+{\bf Description :} A keyword for the total number of localized spins. You can freely give a name to the keyword.
 
 
   \item  $[$int01$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
-{\bf Description :} An integer giving total number of localized spins.
+{\bf Description :} An integer giving the total number of localized spins.
 
  
   \item  $[$int02$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$] <\verb|Nsite|$).
 
  
   \item  $[$int03$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
-{\bf Description :} An integer for selecting an electron state whether localized spin or itinerant electron states:\\
+{\bf Description :} An integer for selecting an electron state whether the electron state is a localized spin or an itinerant electron state:\\
 {
-0: Itinerant electron state,\\
-$n>$0: localized spin state with $2S=n$.
+0: Itinerant electron state\\
+$n>$0: Localized spin state with $2S=n$.
 }\\
  \end{itemize}
 
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when $[$int01$]$ is different from the total number of localized spins indicated by $[$int03$]$.
+\item A program is terminated when $[$int01$]$ is different from the total number of localized spins indicated by $[$int03$]$.
 \item A program is terminated, when $[$int02$]$ is different from the total number of sites.
 \item A program is terminated under the condition $[$int02$]<0$ or $\verb|Nsite|<=[$int02$]$.
 \end{itemize}
@@ -1388,11 +1387,11 @@ $n>$0: localized spin state with $2S=n$.
 \newpage
 \subsection{Trans file}
 \label{Subsec:Trans}
-This file determines values of transfer integrals $t_{ij\sigma_1\sigma2}$,
+This file determines the values of the transfer integrals $t_{ij\sigma_1\sigma2}$,
 \begin{align}
 H +=-\sum_{ij\sigma_1\sigma2} t_{ij\sigma_1\sigma2}c_{i\sigma_1}^{\dag}c_{j\sigma_2}.
 \end{align}
-An example of file format is shown as follows.\\
+An example of the file format is as follows.\\
 \begin{minipage}{12.5cm}
 \begin{screen}
 \begin{verbatim}
@@ -1425,46 +1424,46 @@ NTransfer      24
    \item  Line 1:  Header
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
-   \item  Lines 6-: [int02]~~[int03]~~[int04]~~[int05]~~[double01]~~[double02] 
+   \item  Lines 6-: [int02]~~[int03]~~[int04]~~[int05]~~[double01]~~[double02].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of transfer integrals. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of transfer integrals. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of transfer integrals.
+   {\bf Description :} An integer giving the total number of transfer integrals.
 
   \item  $[$int02$]$, $[$int04$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$],  [$int04$]<\verb|Nsite|$).
 
   \item  $[$int03$]$, $[$int05$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
-{\bf Description :} An integer giving a spin index,\\
-0: up-spin,\\
-1: down-spin.
+{\bf Description :} An integer giving a spin index:\\
+0: Up-spin\\
+1: Down-spin.
 
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}  A value for a real part of $t_{ij\sigma_1\sigma_2}$.
 
  \item  $[$double02$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :} A value for an imaginary part of $t_{ij\sigma_1\sigma_2}$.
 \end{itemize}
@@ -1472,22 +1471,22 @@ NTransfer      24
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $t_{ij\sigma_1\sigma_2}=t_{ji\sigma_2\sigma_1}^{\dagger}$. A program is terminated when the above relation is broken.
-\item A program is terminated, when components of on-site interactions are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of transfer integrals defined in this file.
-\item A program is terminated, when $[$int02$]$-$[$int05$]$ are out of range from the defined values.
+\item Since the Hamiltonian must be Hermitian, the relation $t_{ij\sigma_1\sigma_2}=t_{ji\sigma_2\sigma_1}^{\dagger}$ must be satisfied. A program is terminated when this relation is broken.
+\item A program is terminated when the components of the on-site interactions are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of transfer integrals defined in this file.
+\item A program is terminated when $[$int02$]$-$[$int05$]$ are outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{InterAll file}
 \label{Subsec:interall}
-This file determines values of generalized two body interactions integrals $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}$,
+This file determines the values of generalized two-body interactions integrals $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}$,
 \begin{equation}
 H+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
 I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.
 \end{equation}
-{For Spin, the condition $i=j$ and $k=l$ must be satisfied.}
-An example of file format is shown as follows.
+{For spin, the conditions $i=j$ and $k=l$ must be satisfied.}
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1526,46 +1525,46 @@ NInterAll      36
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-:
-   [int02]~[int03]~[int04]~[int05]~[int06]~[int07]~[int08]~[int09]~[double01]~[double02] 
+   [int02]~[int03]~[int04]~[int05]~[int06]~[int07]~[int08]~[int09]~[double01]~[double02].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of generalized two body interactions. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of generalized two-body interactions. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of generalized two body interactions.
+   {\bf Description :} An integer giving the total number of generalized two-body interactions.
 
   \item  $[$int02$]$, $[$int04$]$, $[$int06$]$, $[$int08$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$],  [$int04$], [$int06$], [$int08$]<\verb|Nsite|$).
  
   \item  $[$int03$]$, $[$int05$]$, $[$int07$]$, $[$int09$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
-{\bf Description :}  An integer giving a spin index,\\
-0: up-spin,\\
-1: down-spin.
+{\bf Description :}  An integer giving a spin index:\\
+0: Up-spin,\\
+1: Down-spin.
 
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}  A value for a real part of $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}$.
 
  \item  $[$double02$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :} A value for an imaginary part of $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}$.
 \end{itemize}
@@ -1573,22 +1572,22 @@ NInterAll      36
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item Since Hamiltonian must be Hermitian, the following relation must be satisfied, $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$. A program is terminated when the above relations are broken.
-It is noted that a term of Hermitian conjugate for $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$ should be inputted as $I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}$ $c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}$.
-\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
-\item A program is terminated, when components of on-site interactions are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of generalized two body interactions defined in this file.
-\item A program is terminated, when $[$int02$]$-$[$int09$]$ are out of range from the defined values.
+\item Since the Hamiltonian must be Hermitian, the relation $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dag}$ must be satisfied. A program is terminated when this relation is broken.
+It is noted that the term of the Hermitian conjugate for $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$ should be inputted as $I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}$ $c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}$.
+\item {A program is terminated when the conditions $i=j$ and $k=l$ are not satisfied for the spin model.}
+\item A program is terminated when the components of the on-site interactions are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of generalized two-body interactions defined in this file.
+\item A program is terminated when $[$int02$]$-$[$int09$]$ are outside the range of the defined values.
 \end{itemize}
 
 
 \newpage
 \subsection{CoulombIntra file}
-This file determines values of on-site interactions $U_i$ {(for $S=1/2$ system)},
+This file determines the values of the on-site interactions $U_i$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i}U_i n_ {i \uparrow}n_{i \downarrow}.
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1613,32 +1612,32 @@ NCoulombIntra 6
    \item  Line 1:  Header
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
-   \item  Lines 6-:  [int02]~[double01] 
+   \item  Lines 6-:  [int02]~[double01].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of on-site interactions. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of on-site interactions. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of on-site interactions.
+   {\bf Description :} An integer giving the total number of on-site interactions.
 
   \item  $[$int02$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$]<\verb|Nsite|$).
  
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}  A value for $U_i$.
 
@@ -1647,19 +1646,19 @@ NCoulombIntra 6
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of on-site interactions are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of on-site interactions defined in this file.
-\item A program is terminated, when $[$int02$]$ is out of range from the defined values.
+\item A program is terminated when the components of on-site interactions are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of on-site interactions defined in this file.
+\item A program is terminated when $[$int02$]$ is outside the range of the defined values.
 \end{itemize}
 
 
 \newpage
 \subsection{CoulombInter file}
-This file determines values of off-site interactions $V_{ij}$ {(for $S=1/2$ system)},
+This file determines the values of off-site interactions $V_{ij}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i,j}V_{ij} n_ {i}n_{j}.
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1685,32 +1684,32 @@ NCoulombInter 6
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~[int03]~[double01] 
+   [int02]~[int03]~[double01].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of off-site interactions. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of off-site interactions. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :}  An integer giving total number of off-site interactions.
+   {\bf Description :}  An integer giving the total number of off-site interactions.
 
   \item  $[$int02$]$, $[$int03$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int03$]<\verb|Nsite|$).
  
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}  A value for $V_{ij}$.
   
@@ -1719,18 +1718,18 @@ NCoulombInter 6
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of off-site interactions are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of off-site interactions defined in this file.
-\item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
+\item A program is terminated when the components of off-site interactions are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of off-site interactions defined in this file.
+\item A program is terminated when either $[$int02$]$ or $[$int03$]$ is outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{Hund file}
-This file determines values of Hund couplings $J_{ij}^{\rm Hund}$ {(for $S=1/2$ system)},
+This file determines the values of Hund couplings $J_{ij}^{\rm Hund}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=-\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}).
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1756,32 +1755,32 @@ NHund 6
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~[int03]~[double01] 
+   [int02]~[int03]~[double01]. 
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :}  A keyword for total number of Hund couplings. You can freely give a name of the keyword.
+   {\bf Description :}  A keyword for the total number of Hund couplings. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of Hund couplings.
+   {\bf Description :} An integer giving the total number of Hund couplings.
 
   \item  $[$int02$]$, $[$int03$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int03$]<\verb|Nsite|$).
  
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}  A value for $J_{ij}^{\rm Hund}$.
   
@@ -1790,18 +1789,18 @@ NHund 6
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of Hund couplings are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of Hund couplings defined in this file.
-\item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
+\item A program is terminated when the components of the Hund couplings are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of Hund couplings defined in this file.
+\item A program is terminated when either $[$int02$]$ or $[$int03$]$ is outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{PairHop file}
-This file determines values of PairHop couplings $J_{ij}^{\rm Pair}$ {(for $S=1/2$ system)},
+This file determines the values of PairHop couplings $J_{ij}^{\rm Pair}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm Pair} (c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}+h.c.).
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1827,32 +1826,32 @@ NPairhop 6
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~[int03]~[double01] 
+   [int02]~[int03]~[double01].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of PairHop couplings. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of PairHop couplings. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :}  An integer giving total number of PairHop couplings.
+   {\bf Description :}  An integer giving the total number of PairHop couplings.
 
   \item  $[$int02$]$, $[$int03$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int03$]<\verb|Nsite|$).
  
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}   A value for $J_{ij}^{\rm Pair}$.
   
@@ -1861,27 +1860,27 @@ NPairhop 6
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when $[$int01$]$ is different from the total number of PairHop couplings defined in this file.
-\item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
+\item A program is terminated when $[$int01$]$ is different from the total number of the PairHop couplings defined in this file.
+\item A program is terminated when either $[$int02$]$ or $[$int03$]$ is outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{Exchange file}
-This file determines values of Exchange couplings $J_{ij}^{\rm Ex}$ {(for $S=1/2$ system)}.
-For fermion electronic system, exchange terms are given as
+This file determines the values of Exchange couplings $J_{ij}^{\rm Ex}$ {(for $S=1/2$ system)}.
+For the fermion electronic system, the exchange terms are given as
 \begin{equation}
-H+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}+c_ {i \downarrow}^{\dag}c_{j\downarrow}c_{j \uparrow}^{\dag}c_{i  \uparrow}).
+H+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}+c_ {i \downarrow}^{\dag}c_{j\downarrow}c_{j \uparrow}^{\dag}c_{i  \uparrow}),
 \end{equation}
-While for Spin system, they are given as
+while for the spin system, they are given as
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm Ex} (S_ {i}^{+}S_{j}^-+ S_ {i}^{-}S_{j}^+).
 \end{equation}
-{\bf We note that $(S_i^+S_j^-+S_i^-S_j^+)$ in Spin system is written by the
+{\bf We note that $(S_i^+S_j^-+S_i^-S_j^+)$ in the spin system is written by the
 operators for electrons as 
 $-(c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{j \downarrow}^{\dag}c_{i  \downarrow}
 +c_ {i \downarrow}^{\dag}c_{j\downarrow}c_{j \uparrow}^{\dag}c_{i  \uparrow})$.
 }
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1907,32 +1906,32 @@ NExchange 6
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~[int03]~[double01] 
+   [int02]~[int03]~[double01].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :}  A keyword for total number of Exchange couplings. You can freely give a name of the keyword.
+   {\bf Description :}  A keyword for the total number of Exchange couplings. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of Exchange couplings.
+   {\bf Description :} An integer giving the total number of Exchange couplings.
 
   \item  $[$int02$]$, $[$int03$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int03$]<\verb|Nsite|$).
  
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}   A value for $J_{ij}^{\rm Ex}$.
   
@@ -1941,24 +1940,24 @@ NExchange 6
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of Exchange couplings are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of Exchange couplings defined in this file.
-\item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
+\item A program is terminated when the components of the exchange couplings are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of exchange couplings defined in this file.
+\item A program is terminated when either $[$int02$]$ or $[$int03$]$ is outside the range of the defined values.
 \end{itemize}
 
 
 \newpage
 \subsection{Ising file}
-This file determines values of Ising interactions $J_{ij}^{z}$ {(for $S=1/2$ system)}.
-For fermion electronic system, Ising terms are given as
+This file determines the values of Ising interactions $J_{ij}^{z}$ {(for $S=1/2$ system)}.
+For the fermion electronic system, the Ising terms are given as
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} ).
 \end{equation}
-For Spin system, they are given as
+For the spin system, they are given as
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z.
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -1984,32 +1983,32 @@ NIsing 6
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~[int03]~[double01] 
+   [int02]~[int03]~[double01].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :}  A keyword for total number of Ising interactions. You can freely give a name of the keyword.
+   {\bf Description :}  A keyword for the total number of Ising interactions. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of Ising interactions.
+   {\bf Description :} An integer giving the total number of Ising interactions.
 
   \item  $[$int02$]$, $[$int03$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int03$]<\verb|Nsite|$).
  
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}   A value for $J_{ij}^{\rm z}$.
   
@@ -2018,20 +2017,20 @@ NIsing 6
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of Ising interactions are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of Ising interactions defined in this file.
-\item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
+\item A program is terminated when the components of the Ising interactions are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of Ising interactions defined in this file.
+\item A program is terminated when either $[$int02$]$ or $[$int03$]$ is outside the range of the defined values.
 \end{itemize}
 
 
 \newpage
 \subsection{PairLift file}
 \label{Subsec:pairlift}
-This file determines values of PairLift couplings $J_{ij}^{\rm PairLift}$ {(for $S=1/2$ system)},
+This file determines the values of PairLift couplings $J_{ij}^{\rm PairLift}$ {(for $S=1/2$ system)},
 \begin{equation}
 H+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dag}c_{i\downarrow}c_{j \uparrow}^{\dag}c_{j \downarrow}+c_ {i \downarrow}^{\dag}c_{i\uparrow}c_{j \downarrow}^{\dag}c_{j \uparrow}).
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2057,32 +2056,32 @@ NPairLift 6
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~[int03]~[double01] 
+   [int02]~[int03]~[double01] .
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
  \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :}  A keyword for total number of PairLift couplings. You can freely give a name of the keyword.
+   {\bf Description :}  A keyword for the total number of PairLift couplings. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of PairLift couplings.
+   {\bf Description :} An integer giving the total number of PairLift couplings.
 
   \item  $[$int02$]$, $[$int03$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int03$]<\verb|Nsite|$).
  
  \item  $[$double01$]$
    
-   {\bf Type :} double-type (blank parameter not allowed)
+   {\bf Type :} Double (a blank parameter is not allowed)
 
   {\bf Description :}  A value for $J_{ij}^{\rm PairLift}$.
     
@@ -2091,15 +2090,15 @@ NPairLift 6
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of PairLift couplings are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of PairLift couplings defined in this file.
-\item A program is terminated, when either $[$int02$]$ or $[$int03$]$ are out of range from the defined values.
+\item A program is terminated when the components of the PairLift couplings are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of PairLift couplings defined in this file.
+\item A program is terminated when either $[$int02$]$ or $[$int03$]$ is outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{OneBodyG file}
 \label{Subsec:onebodyg}
-This file determines the target components of one-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$. An example of file format is shown as follows.
+This file determines the target components of the one-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$. An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2143,53 +2142,53 @@ NCisAjs         24
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-  [int02]~~[int03]~~[int04]~~[int05]
+  [int02]~~[int03]~~[int04]~~[int05].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
     \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of one-body Green's functions. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of one-body Green's functions. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :}  An integer giving total number of one-body Green's functions.
+   {\bf Description :}  An integer giving the total number of one-body Green's functions.
 
   \item  $[$int02$]$, $[$int04$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int04$]<\verb|Nsite|$).
  
   \item  $[$int03$]$, $[$int05$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} 
-An integer giving a spin index,\\
-0: up-spin,\\
-1: down-spin.
+An integer giving a spin index:\\
+0: Up-spin\\
+1: Down-spin.
 
 \end{itemize}
 
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of one-body Green's functions are double counted.
-\item A program is terminated, when $[$int01$]$ is different from the total number of one-body Green's functions defined in this file.
-\item A program is terminated, when $[$int02$]$-$[$int05$]$ are out of range from the defined values.
+\item A program is terminated when the components of the one-body Green's functions are double counted.
+\item A program is terminated when $[$int01$]$ is different from the total number of one-body Green's functions defined in this file.
+\item A program is terminated when $[$int02$]$-$[$int05$]$ are outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{TwoBodyG file}
 \label{Subsec:twobodyg}
-This file determines the target components of two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. {For Spin, the condition $i=j$ and $k=l$ must be satisfied.}
-An example of file format is shown as follows.
+This file determines the target components of the two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. {For the spin system, the conditions $i=j$ and $k=l$ must be satisfied.}
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2235,54 +2234,53 @@ NCisAjsCktAltDC        576
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~~[int03]~~[int04]~~[int05]~~[int06]~~[int07]~~[int08]~~[int09]
+   [int02]~~[int03]~~[int04]~~[int05]~~[int06]~~[int07]~~[int08]~~[int09].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
     \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of two-body Green's functions. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of two-body Green's functions. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :}  An integer giving total number of two-body Green's functions.
+   {\bf Description :}  An integer giving the total number of two-body Green's functions.
 
 
   \item  $[$int02$]$, $[$int04$]$,$[$int06$]$, $[$int08$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int04$], [$int06$], [$int08$]<\verb|Nsite|$).
  
   \item  $[$int03$]$, $[$int05$]$,$[$int07$]$, $[$int09$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} 
-An integer giving a spin index,\\
-0: up-spin,\\
-1: down-spin.
+An integer giving a spin index:\\
+0: Up-spin,\\
+1: Down-spin.
 
 \end{itemize}
 
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of two-body Green's functions are double counted.
-\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
-\item A program is terminated, when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
-\item A program is terminated, when $[$int02$]$-$[$int09$]$ are out of range from the defined values.
+\item A program is terminated when the components of the two-body Green's functions are double counted.
+\item {A program is terminated when the conditions $i=j$ and $k=l$ are not satisfied for the spin model.}
+\item A program is terminated when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
+\item A program is terminated, when $[$int02$]$-$[$int09$]$ are outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{{SingleExcitation file}}
 \label{Subsec:singleexcitation}
-Operators to generate single excited state $S_{i\sigma_1}c_{i\sigma_1}(S_{i\sigma_1}c_{i\sigma_1}^{\dagger})$ are defined.
-An example of file format is shown as follows.
+The operators to generate the single excited state $c_{i\sigma_1}(c_{i\sigma_1}^{\dagger})$ are defined. An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2308,68 +2306,68 @@ NSingle         24
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-   [int02]~~[int03]~~[int04]~~[double01]~~[double02]
+   [int02]~~[int03]~~[int04]~~[double01]~~[double02].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of single excitation operators. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of single excitation operators. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of total number of single excitation operators.
+   {\bf Description :} An integer giving the total number of total number of single excitation operators.
 
   \item  $[$int02$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
  {\bf Description :} An integer giving a site index ($0<= [$int02$]<\verb|Nsite|$).
  
   \item  $[$int03$]$
   
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} 
-An integer giving a spin index,\\
-0: up-spin,\\
-1: down-spin.
+An integer giving a spin index:\\
+0: Up-spin,\\
+1: Down-spin.
 
 \item  $[$int04$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} 
-An integer giving a type of single excitation operators,\\
-0: $ c_{i\sigma_1}$,\\
+An integer giving a type of single excitation operators:\\
+0: $ c_{i\sigma_1}$\\
 1: $ c_{i\sigma_1}^{\dagger}$.\\
 
 \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} double-type (blank parameter not allowed)
+ {\bf Type :} Double (a blank parameter is not allowed)
 
-{\bf Description :}$[$double01$]$ gives the real part of $S_{i\sigma_1}$, while $[$double02$]$ gives the imaginary part of $S_{i\sigma_1}$.
+{\bf Description :}$[$double01$]$ gives the real part of $c_{i\sigma_1} (c_{i\sigma_1} ^{\dag})$, while $[$double02$]$ gives the imaginary part of $c_{i\sigma_1} (c_{i\sigma_1} ^{\dag})$.
 
 \end{itemize}
 
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of single excitation operators are double counted.
-\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
-\item A program is terminated, when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
-\item A program is terminated, when $[$int02$]$-$[$int04$]$ are out of range from the defined values.
+\item A program is terminated when the components of the single excitation operators are double counted.
+\item {A program is terminated when the conditions $i=j$ and $k=l$ are not satisfied for spin model.}
+\item A program is terminated when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
+\item A program is terminated, when $[$int02$]$-$[$int04$]$ are outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{{PairExcitation file}}
 \label{Subsec:pairexcitation}
-Operators to generate pair excited state $S_{i\sigma_1j\sigma_2}c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(S_{i\sigma_1j\sigma_2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$ are defined. The type of pair excitation operators ($c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$ or $c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$) must be same in the input file. In $S_z$ conserved system, $\sigma_1$ must be equal to $\sigma_2$. An example of file format is shown as follows.
+The operators to generate the pair excited state $c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$ are defined. The type of pair excitation operators ($c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$ or $c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$) must be same in the input file. In the $S_z$ conserved system, $\sigma_1$ must be equal to $\sigma_2$. An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2395,82 +2393,82 @@ NPair         24
    \item  Line 2:   [string01]~[int01]
    \item  Lines 3-5:  Header
    \item  Lines 6-: 
-  [int02]~~[int03]~~[int04]~~[int05]~~[int06]~~[double01]~~[double02]
+  [int02]~~[int03]~~[int04]~~[int05]~~[int06]~~[double01]~~[double02].
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
    \item  $[$string01$]$
    
-    {\bf Type :} string-type (blank parameter not allowed)
+    {\bf Type :} String (a blank parameter is not allowed)
 
-   {\bf Description :} A keyword for total number of single excitation operators. You can freely give a name of the keyword.
+   {\bf Description :} A keyword for the total number of the pair excitation operators. You can freely give a name to the keyword.
 
    \item  $[$int01$]$
    
-    {\bf Type :} int-type (blank parameter not allowed)
+    {\bf Type :} Int (a blank parameter is not allowed)
 
-   {\bf Description :} An integer giving total number of total number of single excitation operators.
+   {\bf Description :} An integer giving the total number of pair excitation operators.
 
   \item  $[$int02$]$, $[$int04$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} An integer giving a site index ($0<= [$int02$], [$int04$]<\verb|Nsite|$).
  
  
   \item  $[$int03$]$, $[$int05$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} 
-An integer giving a spin index,\\
-0: up-spin,\\
-1: down-spin.
+An integer giving a spin index:\\
+0: Up-spin\\
+1: Down-spin.
 
 \item  $[$int06$]$
 
- {\bf Type :} int-type (blank parameter not allowed)
+ {\bf Type :} Int (a blank parameter is not allowed)
 
 {\bf Description :} 
-An integer giving a type of pair excitation operators,\\
-0: $ c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$,\\
+An integer giving a type of pair excitation operators:\\
+0: $ c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$\\
 1: $ c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$.
 
 \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} double-type (blank parameter not allowed)
+ {\bf Type :} Double (a blank parameter is not allowed)
 
-{\bf Description :}$[$double01$]$ gives the real part of $S_{i\sigma_1j\sigma_2}$, while $[$double02$]$ gives the imaginary part of $S_{i\sigma_1j\sigma_2}$.
+{\bf Description :} $[$double01$]$ gives the real part of $ c_{i\sigma_1}c_{j\sigma_2}^{\dagger} ( c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$, while $[$double02$]$ gives the imaginary part of $ c_{i\sigma_1}c_{j\sigma_2}^{\dagger} ( c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$.
 
 \end{itemize}
 
 \subsubsection{Use rules}
 \begin{itemize}
 \item Headers cannot be omitted. 
-\item A program is terminated, when components of single excitation operators are double counted.
-\item {A program is terminated, when $i=j$ and $k=l$ are not satisfied for spin model.}
-\item A program is terminated, when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
-\item A program is terminated, when $[$int02$]$-$[$int06$]$ are out of range from the defined values.
+\item A program is terminated when the components of the pair excitation operators are double counted.
+\item {A program is terminated when the conditions $i=j$ and $k=l$ are not satisfied for the spin model.}
+\item A program is terminated when $[$int01$]$ is different from the total number of two-body Green's functions defined in this file.
+\item A program is terminated when $[$int02$]$-$[$int06$]$ are outside the range of the defined values.
 \end{itemize}
 
 \newpage
 \subsection{{SpectrumVec File}}
 \label{Subsec:spectrumvec}
-The header of input file for the initial vector to calculate dynamical Green's functions is defined.
-The file name and the file format (binary type) are shown as follows.
+The header of the input file for the initial vector to calculate the dynamical Green's functions is defined.
+The file name and the file format (binary type) are as follows.
 
 \subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_rank\_\$\$.dat}   
 \end{itemize}
-  \#\# is a name of head indicated by the key word \verb|SpectrumVec| in the  \verb|CalcMod| file, \$\$  is a number of rank respectively.
+  \#\# is the name of the head indicated by the key word \verb|SpectrumVec| in the  \verb|CalcMod| file, and \$\$  is the number of the rank.
 
 \subsubsection{File format}
  \begin{itemize}
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
-   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$
+   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$.
   \end{itemize}
   
 \subsubsection{Parameters}
@@ -2478,36 +2476,36 @@ The file name and the file format (binary type) are shown as follows.
 
   \item  $[$int01$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :}  A total number of targets of Hilbert spaces.
+{\bf Description :}  The total number of the targets of the Hilbert spaces.
 
   \item  $[$int02$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :}  { A number of Lanczos or TPQ steps.}
+{\bf Description :}  { The number of Lanczos or TPQ steps.}
 
  \item  $[$double01$]$, $[$double02$]$
 
  {\bf Type :} double 
 
-{\bf Description :} The coefficient value of an input vector.\\
-$[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
+{\bf Description :} The coefficient value of the input vector.\\
+$[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.\\
 
 \end{itemize}
 
 \newpage
 \section{Output files}
 \label{Sec:outputfile}
-In this section, details of output files for expert mode are explained.
+In this section, the details of the output files of the expert mode are explained.
 \subsection{CHECK\_Chemi.dat}
 \label{Subsec:checkchemi}
 This file is outputted to check the input of chemical potential $\mu_{i\sigma}$,
 \begin{equation}
 H+=\sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}.
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2533,38 +2531,38 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
 
    \item  $[$int01$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} A counted number of inputting terms.
+   {\bf Description :} The counted number of inputting terms.
    
    \item  $[$int02$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :}  An integer for showing a spin index of $\mu_{i\sigma}$,\\
-0: up-spin,\\
-1: down-spin.
+   {\bf Description :}  An integer for showing the spin index of $\mu_{i\sigma}$:\\
+0: Up-spin,\\
+1: Down-spin.
    
    \item  $[$int03$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-    {\bf Description :}  An integer for showing a site index of $\mu_{i\sigma}$.
+    {\bf Description :}  An integer for showing the site index of $\mu_{i\sigma}$.
  
    \item  $[$double01$]$ 
    
-    {\bf Type :} double-type
+    {\bf Type :} Double
 
    {\bf Description :} A value for $\mu_{i\sigma}$.
      
 \end{itemize}
 
 \subsection{CHECK\_InterAll.dat}
-This file is outputted to check the input of diagonal components of general two body interactions,
+This file is outputted to check the input of the diagonal components of general two-body interactions,
 \begin{equation}
 H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}.
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2590,29 +2588,29 @@ i=5 isite1=2 A_spin=0 isite2=3 B_spin=1 tmp_V=-0.500000
 
     \item  $[$int01$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} A counted number of inputting terms.
+   {\bf Description :} The counted number of inputting terms.
    
    \item  $[$int02$]$, $[$int04$]$
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-    {\bf Description :}   An integer for showing a site index of  $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$. \\
+    {\bf Description :}   An integer for showing the site index of  $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$. \\
     $[$int02$]$ and $[$int04$]$ correspond to $i$ and $j$, respectively.
  
    \item  $[$int03$]$, $[$int05$]$  
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :}  An integer for showing a spin index of $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$,\\
-   0: up-spin,\\
-   1: down-spin.\\
+   {\bf Description :}  An integer for showing the spin index of $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$:\\
+   0: Up-spin\\
+   1: Down-spin.\\
    $[$int03$]$ and $[$int05$]$ correspond to  $\sigma_1$ and $\sigma_2$, respectively.\\
  
    \item  $[$double01$]$ 
    
-    {\bf Type :} double-type
+    {\bf Type :} Double
 
    {\bf Description :} A value for $I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}$.
   
@@ -2620,11 +2618,11 @@ i=5 isite1=2 A_spin=0 isite2=3 B_spin=1 tmp_V=-0.500000
 
 \newpage
 \subsection{CHECK\_CoulombIntra.dat}
-This file is outputted to check the input of on-site interactions $U_i$,
+This file is outputted to check the input of the on-site interactions $U_i$,
 \begin{equation}
 H+=\sum_{i} U_i n_{i\uparrow} n_{j \downarrow}.
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2649,30 +2647,30 @@ i=5 isite1=6 tmp_V=4.000000
 
     \item  $[$int01$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} A counted number of inputting terms.
+   {\bf Description :} The counted number of inputting terms.
       
    \item  $[$int02$]$
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-    {\bf Description :}   An integer for showing a site index of $U_i$.
+    {\bf Description :}   An integer for showing the site index of $U_i$.
     
    \item  $[$double01$]$ 
    
-    {\bf Type :} double-type
+    {\bf Type :} Double
 
    {\bf Description :} A value for $U_i$.
 \end{itemize}
 
 \newpage
 \subsection{CHECK\_Hund.dat}
-This file is outputted to check the input of Hund couplings $J_{ij}^{\rm Hund}$,
+This file is outputted to check the input of the Hund couplings $J_{ij}^{\rm Hund}$,
 \begin{align}
 H += -\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}).
 \end{align}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2697,31 +2695,31 @@ i=5 isite1=6 isite2=1 tmp_V=0.250000
 
     \item  $[$int01$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} A counted number of inputting terms. 
+   {\bf Description :} The counted number of inputting terms. 
       
    \item  $[$int02$]$, $[$int03$]$
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-    {\bf Description :}  An integer for showing a site index of $J_{ij}^{\rm Hund}$. \\
+    {\bf Description :}  An integer for showing the site index of $J_{ij}^{\rm Hund}$. \\
     $[$int02$]$ and $[$int03$]$ correspond to $i$ and $j$, respectively.
  
    \item  $[$double01$]$ 
    
-    {\bf Type :} double-type
+    {\bf Type :} Double
 
    {\bf Description :} A value for $J_{ij}^{\rm Hund}$.
 \end{itemize}
 
 \newpage
 \subsection{CHECK\_INTER\_U.dat}
-This file is outputted to check the input of diagonal components of on-site interactions $V_{ij}$,
+This file is outputted to check the input of the diagonal components of the off-site interactions $V_{ij}$,
 \begin{equation}
 H+=\sum_{i} V_{ij} n_{i} n_{j}
 \end{equation}
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2746,20 +2744,20 @@ i=5 isite1=6 isite2=1 tmp_V=-0.125000
 
     \item  $[$int01$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} A counted number of inputting terms.
+   {\bf Description :} The counted number of inputting terms.
       
    \item  $[$int02$]$, $[$int03$]$
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-    {\bf Description :}  An integer giving a site index of $V_{ij}$. \\
+    {\bf Description :}  An integer giving the site index of $V_{ij}$. \\
     $[$int02$]$ and $[$int03$]$ correspond to $i$ and $j$, respectively.
  
    \item  $[$double01$]$ 
    
-    {\bf Type :} double-type
+    {\bf Type :} Double
 
    {\bf Description :} A value for $V_{ij}$.
 \end{itemize}
@@ -2767,8 +2765,8 @@ i=5 isite1=6 isite2=1 tmp_V=-0.125000
 
 \newpage
 \subsection{CHECK\_Memory.dat}
-This file shows the size of memory using the calculation.
-An example of file format is shown as follows.
+This file shows the size of the memory used in the calculation.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2790,23 +2788,23 @@ REQUIRED MEMORY  max_mem=0.000019 GB
 
     \item  $[$int01$]$ 
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} An integer to show total numbers of the Hilbert space under a calculation.
+   {\bf Description :} An integer to show the total numbers of the Hilbert space under a calculation.
       
    \item  $[$double01$]$
    
-    {\bf Type :} double-type
+    {\bf Type :} Double
 
     {\bf Description :}  
-    A size of memory to store the Hilbert space under a calculation (GB unit).
+    The size of memory to store the Hilbert space in a calculation (GB unit).
  
 \end{itemize}
 
 \newpage
 \subsection{WarningOnTransfer.dat}
-This file shows the components double counted of transfer integrals.
-An example of file format is shown as follows.
+This file shows the double counted components of transfer integrals.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2821,7 +2819,7 @@ double conuntings in transfers: i=2 j=0 spni 1 spnj 1
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  double countings in transfers: i=$[$int01$]$ j=$[$int02$]$ spni $[$int03$]$  spnj $[$int04$]$   
+   \item  Double countings in transfers: i=$[$int01$]$ j=$[$int02$]$ spni $[$int03$]$  spnj $[$int04$]$   
  \end{itemize}
  
 \subsubsection{Parameters}
@@ -2829,23 +2827,23 @@ double conuntings in transfers: i=2 j=0 spni 1 spnj 1
 
     \item  $[$int01$]$, $[$int02$]$
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} An integer of a site number where transfer integrals are double counted.
+   {\bf Description :} The integer of the site number where the transfer integrals are double counted.
       
          \item  $[$int03$]$, $[$int04$]$  
    
-    {\bf Type :} int-type
+    {\bf Type :} Int
 
-   {\bf Description :} An integer of a spin index of a transfer integral, \\
-   0: up-spin,\\
-   1: down-spin.\\ 
+   {\bf Description :} The integer of the spin index of a transfer integral: \\
+   0: Up-spin\\
+   1: Down-spin.\\ 
 \end{itemize}
 
 \newpage
 \subsection{CalcTimer.dat}
-The name of calculation process, process number and the calculation process time
-are output in order at each lines in the CalcTime.dat file. An example of file format for TPQ method is shown as follows.\\
+The name of the calculation process, the process number, and the calculation process time
+are outputted in order at each line in the CalcTime.dat file. An example of the file format for the TPQ method is as follows.\\
 
 \begin{minipage}{16cm}
 \begin{screen}
@@ -2889,7 +2887,7 @@ All mltply                                         [0001]      7.38883
 \newpage
 \subsection{TimeKeeper.dat}
 This file is outputted to show the calculation process information.
-An example of file format for Lanczos method is shown as follows.
+An example of the file format for the Lanczos method is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2917,8 +2915,8 @@ CG expec_cisajacktalt begins: Wed Sep 16 22:58:50 2015
   \#\# indicates a header defined by [string02] in a ModPara file.
 
 \subsection{sz\_TimeKeeper.dat}
-This file is outputted to show the process information to obtain the Hilbert space needed for calculation .
-An example of file format is shown as follows.
+This file is outputted to show the process information to obtain the Hilbert space needed for the calculation.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2941,8 +2939,8 @@ omp parallel sz finishes: Wed Sep 16 22:58:49 2015
 \newpage
 \subsection{Time\_CG\_EigenVector.dat}
 \label{Subsec:timecgeigenv}
-(For Lanczos method) The process for calculating eigenvector by CG method is outputted.
-An example of file format is shown as follows.
+(For the Lanczos method) The process for calculating the eigenvector by the CG method is outputted.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2976,8 +2974,8 @@ t_itr=275 0.000000
 \newpage
 \subsection{energy.dat}
 \label{subsec:energy.dat}
-(For Lanczos method) The values of energy, doublon and $\langle S_z \rangle$ calculated by using eigenvector obtained by Lanczos or CG method are outputted.
-An example of file format is shown as follows.\\
+(For the Lanczos method) The values of the energy, doublon, and $\langle S_z \rangle$ calculated by using the eigenvector obtained by the Lanczos or CG method are outputted.
+An example of the file format is as follows.\\
 
 For \verb|method="Lanczos"|
 
@@ -3017,38 +3015,38 @@ State 1
  \begin{itemize}
    \item Line 1: Energy $[$double01$]$
    \item Line 2: Doublon $[$double02$]$
-   \item Line 3: Sz $[$double02$]$
+   \item Line 3: Sz $[$double02$]$.
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$double01$]$
   
- {\bf Type :} double-type
+ {\bf Type :} Double
 
-{\bf Description :} The value of energy calculated by the eigenvetor obtained by Lanczos or CG method.
+{\bf Description :} The value of the energy calculated by the eigenvetor obtained by the Lanczos or CG method.
  
   \item  $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :}  The value of doublon calculated by the eigenvetor obtained by Lanczos or CG method,
-$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$ is a total number of sites).
+{\bf Description :}  The value of the doublon calculated by the eigenvetor obtained by the Lanczos or CG method,
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$ is the total number of sites).
 
   \item  $[$double03$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :}  The value of $S_z$ calculated by the eigenvetor obtained by Lanczos or CG method.
+{\bf Description :}  The value of $S_z$ calculated by the eigenvetor obtained by the Lanczos or CG method.
 
  \end{itemize}
 
 
 \newpage
 \subsection{Lanczos\_Step.dat}
-(For Lanczos method) 
-This file is outputted to show the process information for calculating eigenvector by Lanczos method.
-An example of file format for Lanczos method is shown as follows.\\
+(For the Lanczos method) 
+This file is outputted to show the process information for calculating the eigenvector by Lanczos method.
+An example of the file format for the Lanczos method is shown as follows.\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3077,22 +3075,22 @@ stp=122 -7.1043675920 -7.0817672578 -7.0646589929 -7.0008766356
 
   \item  $[$int01$]$
   
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :} An integer showing Lanczos step.
+{\bf Description :} An integer showing the Lanczos step.
  
   \item  $[$double01$]$, $[$double02$]$, $[$double03$]$, $[$double04$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :} The eigenvalue at the Lanczos step $[$int01$]$.\\
-$[$double01$]$ is a ground energy, $[$double02$]$, $[$double03$]$ and $[$double04$]$ are 1st, 2nd and 3rd excited energies, respectively.
+$[$double01$]$ is the ground energy, $[$double02$]$, $[$double03$]$ and $[$double04$]$ are first, second and third excited energies, respectively.
 
  \end{itemize}
 
 \newpage
 \subsection{Time\_TPQ\_Step.dat}
-(For TPQ method) This file is outputted to show the time for starting calculation of TPQ method at each seeds and steps. An example is shown as follows.\\
+(For the TPQ method) This file is outputted to show the time for starting the calculation of the TPQ method at each seed and step. An example is as follows.\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3115,28 +3113,28 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
 
 \subsubsection{File format}
  \begin{itemize}
-   \item set $[$int01$]$ stp $[$int02$]$: TPQ begins: $[$string01$]$
+   \item Set $[$int01$]$ stp $[$int02$]$: TPQ begins: $[$string01$]$
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$int01$]$
   
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :} A seed number under calculation of TPQ method.
+{\bf Description :} The seed number in the calculation of the TPQ method.
  
   \item  $[$int02$]$
   
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :} A step number under calculation of TPQ method.
+{\bf Description :} The step number in the calculation of the TPQ method.
 
   \item  $[$string01$]$
   
- {\bf Type :} string-type
+ {\bf Type :} String
 
-{\bf Description :} A time for starting calculation of TPQ method at each seeds and steps.
+{\bf Description :} The time for starting the calculation of the TPQ method at each seed and step.
 
  \end{itemize}
 
@@ -3144,8 +3142,8 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
 \newpage
 \subsection{Norm\_rand.dat}
 \label{Subsec:normrand}
-(For TPQ method) This file is outputted to show the calculation process information for TPQ method.
-An example of file format is shown as follows.\\
+(For the TPQ method) This file is outputted to show the calculation process information for the TPQ method.
+An example of the file format is as follows.\\
 \begin{minipage}{12.5cm}
 \begin{screen}
 \begin{verbatim}
@@ -3164,51 +3162,51 @@ An example of file format is shown as follows.\\
  \begin{itemize}
    \item Norm\_rand??.dat
   \end{itemize}
-  ?? indicates a number of runs under calculation of TPQ method.
+  ?? indicates the number of runs in the calculation of the TPQ method.
 
 \subsubsection{File format}
  \begin{itemize}
    \item Line 1: Header
-   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$int01$]$
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$int01$]$.
   \end{itemize}
+  
 \subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$double01$]$
   
- {\bf Type :} double-type
+ {\bf Type :} Double
 
 {\bf Description :}  Inverse temperature $1/{k_{\rm B}T}$.
  
   \item $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :}  A norm of a wave function before normalization 
+{\bf Description :}  The norm of a wave function before normalization 
 given by $\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle$, where $|\tilde{\psi}_{k}\rangle \equiv(l-\hat{H}/N_{s})|\psi_{k-1}\rangle$.
 
 
   \item $[$double03$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} A norm of an initial wave function before normalization 
+{\bf Description :} The norm of an initial wave function before normalization 
 given by $\langle \tilde{\psi}_{0} |\tilde{\psi}_{0}\rangle$, where $|\tilde{\psi}_{0}\rangle$ is an initial random vector.
 
   \item $[$int01$]$
 
- {\bf Type :} int-type 
+ {\bf Type :} Int 
 
-{\bf Description :} A number of operations of $(l-\hat{H}/N_{s})$ to an initial wave function, where $l$ is \verb|LargeValue| defined in ModPara file and $N_{s}$ is a total number of sites.
+{\bf Description :} The number of operations of $(l-\hat{H}/N_{s})$ for an initial wave function, where $l$ is \verb|LargeValue| defined in a ModPara file and $N_{s}$ is the total number of sites.
 
  \end{itemize}
-
 
 \newpage
 \subsection{SS\_rand.dat}
 \label{Subsec:ssrand}
-(For TPQ method) This file is outputted to show the calculation results for TPQ method.
-An example of file format is shown as follows.\\
+(For the TPQ method) This file is outputted to show the calculation results for the TPQ method.
+An example of the file format is as follows.\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3227,61 +3225,61 @@ An example of file format is shown as follows.\\
  \begin{itemize}
    \item SS\_rand??.dat
   \end{itemize}
-  ?? indicates a number of runs under calculation of TPQ method.
+  ?? indicates the number of runs in the calculation of the TPQ method.
 
 \subsubsection{File format}
 \begin{itemize}
    \item Line 1: Header
-   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$int01$]$
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$int01$]$.
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$double01$]$
   
- {\bf Type :} double-type
+ {\bf Type :} Double
 
 {\bf Description :} Inverse temperature $1/{k_{\rm B}T}$.
  
   \item $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :}  The expected value of  energy $\langle H \rangle$.
-
-  \item $[$double03$]$
-
- {\bf Type :} double-type 
-
-{\bf Description :} The expected value of square of Hamiltonian $\langle H^2 \rangle$. 
+{\bf Description :}  The expected value of the energy $\langle H \rangle$.
 
   \item $[$double03$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} The expected value of doublon, 
-$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is a total number of sites).
+{\bf Description :} The expected value of the square of the Hamiltonian $\langle H^2 \rangle$. 
+
+  \item $[$double03$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :} The expected value of the doublon, 
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is the total number of sites).
 
   \item $[$double05$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} A total number of particles $\langle {\hat n} \rangle$.
+{\bf Description :} The total number of particles $\langle {\hat n} \rangle$.
 
 
   \item $[$int01$]$
 
- {\bf Type :} int-type 
+ {\bf Type :} Int 
 
-{\bf Description :} A number of operations of $(l-\hat{H}/N_{s})$ to an initial wave function, where $l$ is \verb|LargeValue| defined in ModPara file and $N_{s}$ is a total number of sites.
+{\bf Description :} The number of operations of $(l-\hat{H}/N_{s})$ for an initial wave function, where $l$ is \verb|LargeValue| defined in a ModPara file and $N_{s}$ is the total number of sites.
 
  \end{itemize}
 
 \newpage
 \subsection{Flct\_rand.dat}
 \label{Subsec:flctrand}
-(For TPQ method) This file is outputted to show the calculation results of the fluctuation of the particle number, doublon and $S_z$ for TPQ method.
-An example of file format is shown as follows.\\
+(For the TPQ method) This file is outputted to show the calculation results of the fluctuation of the particle number, doublon, and $S_z$ for the TPQ method.
+An example of the file format is as follows.\\
 
 \begin{minipage}{15cm}
 \begin{screen}
@@ -3301,12 +3299,12 @@ An example of file format is shown as follows.\\
  \begin{itemize}
    \item Flct\_rand??.dat
   \end{itemize}
-  ?? indicates a number of runs under calculation of TPQ method.
+  ?? indicates the number of runs in the calculation of the TPQ method.
 
 \subsubsection{File format}
 \begin{itemize}
    \item Line 1: Header
-   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$double06$]$ $[$double07$]$ $[$int01$]$
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$double06$]$ $[$double07$]$ $[$int01$]$.
   \end{itemize}
 
 \subsubsection{Parameters}
@@ -3314,54 +3312,54 @@ An example of file format is shown as follows.\\
 
   \item  $[$double01$]$
   
- {\bf Type :} double-type
+ {\bf Type :} Double
 
 {\bf Description :} Inverse temperature $1/{k_{\rm B}T}$.
  
   \item $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :}  A total particle number $\sum_{i} \langle \hat{n}_i \rangle$.
 
   \item $[$double03$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} The expected value of square of particle number $\sum_{i} \langle \hat{n}_i^2 \rangle$.
+{\bf Description :} The expected value of the square of the particle number $\sum_{i} \langle \hat{n}_i^2 \rangle$.
 
   \item $[$double04$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} The expected value of doublon $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$ is a total number of sites).
+{\bf Description :} The expected value of doublon $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$ is the total number of sites).
 
   \item $[$double05$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} The expected value of square of doublon 
-$\frac{1}{N_s} \sum_{i}\langle (n_{i\uparrow} n_{i\downarrow})^2\rangle$ ($N_s$ is a total number of sites).
+{\bf Description :} The expected value of the square of doublon 
+$\frac{1}{N_s} \sum_{i}\langle (n_{i\uparrow} n_{i\downarrow})^2\rangle$ ($N_s$ is the total number of sites).
 
   \item $[$double06$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :} The expected value of $S_z$
-$\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle$ ($N_s$ is a total number of sites).
+$\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle$ ($N_s$ is the total number of sites).
 
   \item $[$double07$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :}  The expected value of square of $S_z$
-$\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is a total number of sites).
+{\bf Description :}  The expected value of the square of $S_z$
+$\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is the total number of sites).
 
  \item $[$int01$]$
 
- {\bf Type :} int-type 
+ {\bf Type :} Int 
 
-{\bf Description :} A number of operations of $(l-\hat{H}/N_{s})$ to an initial wave function, where $l$ is \verb|LargeValue| defined in ModPara file and $N_{s}$ is a total number of sites.
+{\bf Description :} The number of operations of $(l-\hat{H}/N_{s})$ for an initial wave function, where $l$ is \verb|LargeValue| defined in a ModPara file and $N_{s}$ is the total number of sites.
 
  \end{itemize}
 
@@ -3369,7 +3367,7 @@ $\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is a total number 
 \newpage
 \subsection{Eigenvalue.dat}
 \label{Subsec:eigenvalue}
-(For FullDiag method) This file is outputted to show the energies calculated by FullDiag method. An example of file format is shown as follows.\\
+(For the FullDiag method) This file is outputted to show the energies calculated by the FullDiag method. An example of the file format is as follows.\\
 \begin{minipage}{12.5cm}
 \begin{screen}
 \begin{verbatim}
@@ -3393,13 +3391,13 @@ $\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is a total number 
 
   \item  $[$int01$]$
   
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :} An index of eigenvalues. The index 0 is for an energy of a ground state and indexes are counted from the low order of energies.
+{\bf Description :} The index of eigenvalues. The index 0 is for the energy of the ground state and the indexes are labeled in descending order for energies.
 
   \item  $[$double01$]$
   
- {\bf Type :} double-type
+ {\bf Type :} Double
 
 {\bf Description :} The expected value of energy $\langle H \rangle$.
  
@@ -3410,7 +3408,7 @@ $\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is a total number 
 \newpage
 \subsection{phys.dat}
 \label{Subsec:phys}
-(For FullDiag method)  This file is outputted to show the physical values calculated by FullDiag method.  The datas are outputted in the low order of energies. An example of file format is shown as follows.\\
+(For the FullDiag method)  This file is outputted to show the physical values calculated by the FullDiag method.  The data are outputted in descending order for energies. An example of the file format is as follows.\\
 \begin{minipage}{12.5cm}
 \begin{screen}
 \begin{verbatim}
@@ -3427,48 +3425,48 @@ $\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is a total number 
 \subsubsection{File name}
 \begin{itemize}
    \item {Canonical ensemble:} \#\#\_phys\_Nup\_\$\$Ndown\%\%.dat
-   \item {Grand canonical ensemble:} \#\#\_phys.dat
+   \item {Grand canonical ensemble:} \#\#\_phys.dat.
  \end{itemize}
-  \#\#, \$\$ and \%\% indicate [string02], Nup and Ndown defined in a ModPara file, respectively.
+  \#\#, \$\$, and \%\% indicate [string02], Nup, and Ndown defined in a ModPara file, respectively.
 
 \subsubsection{File format}
  \begin{itemize}
    \item Line 1: Header
-   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$.
   \end{itemize}
 \subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$double01$]$
   
- {\bf Type :} double-type
+ {\bf Type :} Double
 
 {\bf Description :} The energy $\langle H\rangle$. 
  
   \item $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :}  A total number of particles $\langle \hat{n}\rangle$.
+{\bf Description :}  The total number of particles $\langle \hat{n}\rangle$.
 
   \item $[$double03$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :}  The expected value of $S_z$, $\langle S_z\rangle$. 
 
   \item $[$double04$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :}  The expected value of ${\bm S^2}$, $\langle {\bm S^2}\rangle$. 
 
   \item $[$double05$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :}  The expected value of doublon, 
-$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is a total number of sites).
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is the total number of sites).
 
 
  \end{itemize}
@@ -3476,9 +3474,9 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
 \newpage
 \subsection{cisajs.dat}
 \label{Subsec:cgcisajs}
-This file is output files for one-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$. 
+This file is the outputted files for one-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$. 
 The target components are set in the input file with the keyword ``OneBodyG".
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -3500,9 +3498,9 @@ An example of file format is shown as follows.
  \begin{itemize}
    \item{Lanczos method:}  \#\#\_cisajs.dat
    \item{TPQ method:} \#\#\_cisajs\_set??step\%\%.dat
-   \item{Full diagonalization method, LOBCG method:}  \#\#\_cisajs\_eigen{\&\&}.dat
+   \item{Full diagonalization method, LOBCG method:}  \#\#\_cisajs\_eigen{\&\&}.dat.
   \end{itemize}
-  \#\#, ??, \%\% and \&\& indicate [string02] in ModPara file, a number of runs under calculation in TPQ method, a number of steps in TPQ method and an index of eigenvalues, respectively.
+  \#\#, ??, \%\%, and \&\& indicate [string02] in a ModPara file, the number of runs in calculation in the TPQ method, the number of steps in the TPQ method, and the index of the eigenvalues, respectively.
 
 
 \subsubsection{File format}
@@ -3514,22 +3512,22 @@ An example of file format is shown as follows.
 
   \item  $[$int01$]$, $[$int03$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :} An integer of the site number. $[$int01$]$ and $[$int03$]$ show the $i$ and $j$ site numbers, respectively.
+{\bf Description :} The integer of the site number. $[$int01$]$ and $[$int03$]$ show the $i$ and $j$ site numbers, respectively.
  
   \item  $[$int02$]$, $[$int04$]$
 
- {\bf Type :} int-type 
+ {\bf Type :} Int 
 
-{\bf Description :} An integer of the spin index,\\
-   0: up-spin,\\
-   1: down-spin.\\ 
+{\bf Description :} The integer of the spin index:\\
+   0: Up-spin\\
+   1: Down-spin.\\ 
 $[$int02$]$ and $[$int04$]$ show $\sigma_1$ and $\sigma_2$, respectively. \\
 
   \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :} The value of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$.\\
 $[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$, respectively.
@@ -3538,9 +3536,9 @@ $[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c
 \newpage
 \subsection{cisajscktalt.dat}
 \label{Subsec:cisajscktalt}
-This file is output files for Two body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. 
+This file is the outputted files for the two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. 
 The target components are set in the input file with the keyword ``TwoBodyG".
-An example of file format is shown as follows.
+An example of the file format is as follows.
 
 \begin{minipage}{15cm}
 \begin{screen}
@@ -3564,12 +3562,12 @@ An example of file format is shown as follows.
    \item{TPQ method:} \#\#\_cisajscktalt\_set??step\%\%.dat
    \item{Full diagonalization method, LOBCG method:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
   \end{itemize}
-  \#\#, ??, \%\% and \&\& indicate [string02] in ModPara file, a number of runs under calculation in TPQ method, a number of steps in TPQ method and an index of eigenvalues, respectively.
+  \#\#, ??, \%\%, and \&\& indicate [string02] in a ModPara file, the number of runs in calculation in the TPQ method, the number of steps in the TPQ method, and the index of the eigenvalues, respectively.
 
 
 \subsubsection{File format}
  \begin{itemize}
-   \item  $[$int01$]$~~$[$int02$]$~~$[$int03$]$~~$[$int04$]$~~$[$int05$]$~~$[$int06$]$~~$[$int07$]$~~$[$int08$]$~~$[$double01$]$~~$[$double02$]$
+   \item  $[$int01$]$~~$[$int02$]$~~$[$int03$]$~~$[$int04$]$~~$[$int05$]$~~$[$int06$]$~~$[$int07$]$~~$[$int08$]$~~$[$double01$]$~~$[$double02$]$.
   \end{itemize}
 
 
@@ -3578,23 +3576,23 @@ An example of file format is shown as follows.
 
  \item  $[$int01$]$, $[$int03$]$,$[$int05$]$, $[$int07$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
 {\bf Description :} 
-An integer of the site number. $[$int01$]$, $[$int03$]$, $[$int05$]$ and $[$int07$]$  show the $i$, $j$, $k$ and $l$site numbers, respectively.
+The integer of the site number. $[$int01$]$, $[$int03$]$, $[$int05$]$, and $[$int07$]$  show the $i$, $j$, $k$, and $l$ site numbers, respectively.
  
   \item  $[$int02$]$, $[$int04$]$,$[$int06$]$, $[$int08$]$
 
- {\bf Type :} int-type 
+ {\bf Type :} Int 
 
-{\bf Description :} An integer of the spin index,\\
-   0: up-spin,\\
-   1: down-spin.\\ 
-$[$int02$]$, $[$int04$]$, $[$int06$]$ and $[$int08$]$ show $\sigma_1$, $\sigma_2$, $\sigma_3$ and $\sigma_4$,  respectively. 
+{\bf Description :} The integer of the spin index:\\
+   0: Up-spin\\
+   1: Down-spin.\\ 
+$[$int02$]$, $[$int04$]$, $[$int06$]$, and $[$int08$]$ show $\sigma_1$, $\sigma_2$, $\sigma_3$, and $\sigma_4$,  respectively. 
 
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
 {\bf Description :} The value of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$.\\
 $[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$, respectively.
@@ -3604,19 +3602,19 @@ $[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c
 \newpage
 \subsection{eigenvec.dat}
 \label{Subsec:eigenvec}
-When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are inputted by this outputted file. A file format is a binary type. 
+When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by the Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file, eigenvectors are inputted by this outputted file. The file format is of the binary type. 
 
 \subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_eigenvec\_{\&\&}\_rank\_{\$\$}.dat}
 \end{itemize}
-  \#\# indicates [string02] in ModPara file, \&\& is a number of eigenvalues, \$\$ is a number of rank respectively.
+  \#\# indicates [string02] in a ModPara file, \&\& is the number of eigenvalues, and \$\$ is a number of rank.
 
 \subsubsection{File format}
  \begin{itemize}
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
-   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$
+   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$.
   \end{itemize}
   
 \subsubsection{Parameters}
@@ -3624,44 +3622,43 @@ When OutputEigenVec=1 in a CalcMod file, eigenvectors calculated by a Lanczos me
 
   \item  $[$int01$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :}  A total number of targets of Hilbert spaces.
+{\bf Description :}  The total number of targets of the Hilbert spaces.
 
   \item  $[$int02$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :}  { A number of Lanczos steps.}
+{\bf Description :}  { The number of Lanczos steps.}
 
  \item  $[$double01$]$, $[$double02$]$
 
  {\bf Type :} double 
 
-{\bf Description :} A value of eigenvectors.\\
-$[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.\\
+{\bf Description :} The value of eigenvectors.\\
+$[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.\\
 
  \end{itemize}
 
 \newpage
 \subsection{{tmpvec.dat}}
 \label{Subsec:restart}
-When ReStart=1, 2 in a CalcMod file, vectors after stopping calculation at an indicated step are outputted. A file format is a binary type. 
-An example of file format is shown as follows.
+When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops at an indicated step are outputted. The file format is of the binary type.  An example of the file format is as follows.
 
 \subsubsection{File name}
 \begin{itemize}
    \item{Lanczos method: \#\#\_tmpvec\_rank\_\$\$.dat}
-   \item{TPQ method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
+   \item{TPQ method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}  .
 \end{itemize}
-  \#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. \&\& is a sampling number for TPQ calculation. 
+  \#\# indicates [string02] in a ModPara file, and \$\$ is the number of rank. \&\& is the sampling number for the TPQ calculation. 
 
 \subsubsection{File format}
  \begin{itemize}
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
    \item  Lines 3 - 3+$[$int01$]$: $[$double01$]$~~$[$double02$]$
-   \item  Lines 4+$[$int01$]$ - 3+2$\times[$int01$]$: $[$double03$]$~~$[$double04$]$
+   \item  Lines 4+$[$int01$]$ - 3+2$\times[$int01$]$: $[$double03$]$~~$[$double04$]$.
   \end{itemize}
 
 \subsubsection{Parameters}
@@ -3669,40 +3666,40 @@ An example of file format is shown as follows.
 
   \item  $[$int01$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :}  A total number of targets of Hilbert spaces.
+{\bf Description :}  The total number of targets of the Hilbert spaces.
 
   \item  $[$int02$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :}  { A number of Lanczos (TPQ) steps for Lanczos (TPQ) method.}
+{\bf Description :}  { The number of Lanczos (TPQ) steps for the Lanczos (TPQ) method.}
 
  \item  $[$double01$]$, $[$double02$]$ 
 
  {\bf Type :} double 
 
-{\bf Description :} A value of two vectors ($\vec{v}_{k+1}$ in Eq.~(\ref{eq: LanczosVector}) for Lanczos method and $\vec{y}_{k+1}$ in Eq~.(\ref{eq: TPQVector}) for TPQ method). $[$double01$]$ is a real part, $[$double02$]$ is an imaginary part.
+{\bf Description :} The value of two vectors ($\vec{v}_{k+1}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method and $\vec{y}_{k+1}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.
 
  \item  $[$double03$]$, $[$double04$]$ 
 
  {\bf Type :} double 
 
-{\bf Description :} A value of two vectors ($\vec{v}_{k}$ in Eq.~(\ref{eq: LanczosVector}) for Lanczos method and $\vec{y}_{k}$ in Eq~.(\ref{eq: TPQVector}) for TPQ method). $[$double03$]$ is a real part, $[$double04$]$ is an imaginary part.\\
+{\bf Description :} The value of two vectors ($\vec{v}_{k}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method and $\vec{y}_{k}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double03$]$ is a real part and $[$double04$]$ is an imaginary part.\\
 
  \end{itemize}
 
 \newpage
 \subsection{{DynamicalGreen.dat}}
 \label{Subsec:dynamicalG}
-This file is output files for calculating dynamical Green's function. An example of file format is shown as follows.
+This file is the outputted file for calculating the dynamical Green's function. An example of the file format is as follows.
 
 \subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_DynamicalGreen.dat}
 \end{itemize}
-\#\# indicates [string02] in ModPara file.
+\#\# indicates [string02] in a ModPara file.
   
 \subsubsection{File format}
  \begin{itemize}
@@ -3714,14 +3711,14 @@ This file is output files for calculating dynamical Green's function. An example
 
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} double-type
+ {\bf Type :} Double
 
  {\bf Description :} The value of the frequency $z$.\\
 $[$double01$]$ and $[$double02$]$ are a real and an imaginary part of $z$, respectively.\\
 
  \item  $[$double03$]$, $[$double04$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
  {\bf Description:} The value of dynamical Green's functions $G(z)$.\\
 $[$double03$]$ and $[$double04$]$ are a real and an imaginary part of $G(z)$, respectively.\\
@@ -3732,22 +3729,21 @@ $[$double03$]$ and $[$double04$]$ are a real and an imaginary part of $G(z)$, re
 \newpage
 \subsection{{recalcvec.dat}}
 %\label{Subsec:restart}
-This file is output files for two vectors to recalculate dynamical Green's function by Lanczos method. 
-A file format is a binary type. 
-An example of file format is shown as follows.
+This file is the outputted file for two vectors to recalculate the dynamical Green's function by the Lanczos method. 
+The file format is of the binary type.  An example of the file format is as follows.
 
 \subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_recalcvec\_rank\_\$\$.dat}
 \end{itemize}
-\#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. 
+\#\# indicates [string02] in a ModPara file and \$\$ is the number of rank. 
 
 \subsubsection{File format}
  \begin{itemize}
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
    \item  Lines 3 - 3+$[$int02$]$: $[$double01$]$~~$[$double02$]$
-   \item  Lines 4+$[$int02$]$ - 3+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$
+   \item  Lines 4+$[$int02$]$ - 3+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$.
 
   \end{itemize}
 \subsubsection{Parameters}
@@ -3755,72 +3751,71 @@ An example of file format is shown as follows.
 
   \item  $[$int01$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
- {\bf Description :} The step for calculating dynamical Green's functions by Lanczos method $N_d$.
+ {\bf Description :} The step for calculating dynamical Green's functions by the Lanczos method $N_d$.
 
   \item  $[$int02$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
-{\bf Description :}  A total number of targets of Hilbert spaces.
+{\bf Description :}  The total number of targets of the Hilbert spaces.
 
  
  \item  $[$double01$]$, $[$double02$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} The value of the vector $\vec{v}_{k+1}$ for recalculating dynamical Green's functions by Lanczos method.\\
+{\bf Description :} The value of the vector $\vec{v}_{k+1}$ for recalculating dynamical Green's functions by the Lanczos method.\\
 $[$double01$]$ and $[$double02$]$ are a real part and an imaginary part of $\vec{v}_{k+1}$, respectively.
 
 \item  $[$double03$]$, $[$double04$]$
 
- {\bf Type :} double-type 
+ {\bf Type :} Double 
 
-{\bf Description :} The value of the vector $\vec{v}_{k}$ for recalculating dynamical Green's functions by Lanczos method.\\
+{\bf Description :} The value of the vector $\vec{v}_{k}$ for recalculating dynamical Green's functions by the Lanczos method.\\
 $[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec{v}_{k}$, respectively.
 \end{itemize}
 
 \newpage
 \subsection{{TMcomponents.dat}}
 %\label{Subsec:restart}
-This file is output files for the components of tridiagonal matrix and the norm of the excited state to recalculate dynamical Green's function by Lanczos method. 
-A file format is a binary type. 
-An example of file format is shown as follows.
+This file is the outputted files for the components of the tridiagonal matrix and the norm of the excited state to recalculate  the dynamical Green's function by the Lanczos method.  The file format is of the binary type. An example of the file format is as follows.
 
 \subsubsection{File name}
 \begin{itemize}
    \item{\#\#\_TMcomponents.dat}
 \end{itemize}
-\#\# indicates [string02] in ModPara file, \$\$ is a number of rank respectively. 
+\#\# indicates [string02] in a ModPara file and \$\$ is the number of rank. 
 
 \subsubsection{File format}
  \begin{itemize}
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$double01$]$
-   \item  Lines 3 -: $[$double02$]$~~$[$double03$]$
+   \item  Lines 3 -: $[$double02$]$~~$[$double03$]$.
   \end{itemize}
-\subsubsection{Parametes}
+  
+\subsubsection{Parameters}
  \begin{itemize}
 
   \item  $[$int01$]$
 
- {\bf Type :} int-type
+ {\bf Type :} Int
 
- {\bf Description :} The step for calculating dynamical Green's functions by Lanczos method $N_d$.
+ {\bf Description :} The step for calculating dynamical Green's functions by the Lanczos method $N_d$.
 
   \item  $[$double01$]$
 
- {\bf Type :} double-type
+ {\bf Type :} Double
 
 {\bf Description :} The value of the norm of the excited state.
  
  \item  $[$double02$]$, $[$double03$]$
 
- {\bf Type :} double-type
+ {\bf Type :} Double
 
-{\bf Description :} The value of the components of the tridiagonal matrix to recalculate dynamical Green'S functions by Lanczos method $\alpha_i,~\beta_i~(i =1,\cdots N_d)$.
-$[$double02$]$ is $\alpha_i$ and $[$double03$]$ is $\beta_i$, respectively\\
+{\bf Description :} The value of the components of the tridiagonal matrix to recalculate dynamical Green's functions by the Lanczos method $\alpha_i,~\beta_i~(i =1,\cdots N_d)$.
+$[$double02$]$ is $\alpha_i$ and $[$double03$]$ is $\beta_i$.\\
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
