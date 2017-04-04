@@ -77,8 +77,10 @@ $ bash HPhiconfig.sh sekirei
 \begin{verbatim}
 CC = mpicc
 F90 = mpif90
-CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI
-FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+         -shared-intel -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+         -shared-intel -D MPI -fpp
 LIBS = -mkl -lifcore
 \end{verbatim}
 となります。それぞれのマクロ(変数)の説明は次のとおりです。

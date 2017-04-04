@@ -1,15 +1,15 @@
 % !TEX root = userguide_en.tex
 %----------------------------------------------------------
-\chapter{How to use $\HPhi$?}
+\chapter{How to use $\HPhi$}
 \label{Ch:HowTo}
 
 \section{Prerequisite}
 
 $\HPhi$ requires the following packages:
 \begin{itemize}
-\item C/fortran compiler (intel, Fujitsu, GNU, etc. )
-\item BLAS/LAPACK library (intel MKL, Fujitsu, ATLAS, etc.)
-\item MPI library (If you do not use MPI, it is not necessary.)
+\item C/fortran compiler (Intel, Fujitsu, GNU, etc. )
+\item BLAS/LAPACK library (Intel MKL, Fujitsu, ATLAS, etc.)
+\item MPI library (if you do not use MPI, this is not requied).
 \end{itemize}
 
 \begin{screen}
@@ -17,10 +17,10 @@ $\HPhi$ requires the following packages:
 {\bf Tips}
 \normalsize
 
-{\bf E. g. / Settings of intel compiler}
+{\bf E.g. /Settings of Intel compiler}
 
-When you use the intel compiler, you can use easily scripts attached to the compiler.
-In the case of the bash in 64 bit OS, write the following in your \verb|~/.bashrc|:
+When you use the Intel compiler, you can easily use the scripts attached to the compiler.
+In the case of the bash in the 64-bit OS, write the following in your \verb|~/.bashrc|:
 \begin{verbatim}
 source /opt/intel/bin/compilervars.sh intel64
 \end{verbatim}
@@ -30,7 +30,7 @@ source /opt/intel/bin/iccvars.sh intel64
 source /opt/intel/mkl/bin/mklvars.sh
 \end{verbatim}
 
-Please read manuals of your compiler/library for more information.
+Please read the manuals of your compiler/library for more information.
 
 \end{screen}
 
@@ -38,7 +38,7 @@ Please read manuals of your compiler/library for more information.
 
 % !TEX root = userguide_en.tex
 %----------------------------------------------------------
-You can download $\HPhi$ in the following place.\\
+You can download $\HPhi$ at the following location.\\
 \url{https://github.com/QLMS/HPhi/releases}
 
 You can obtain the $\HPhi$ directory by typing
@@ -46,21 +46,21 @@ You can obtain the $\HPhi$ directory by typing
 $ tar xzvf HPhi-xxx.tar.gz
 \end{verbatim}
 
-There are two kind of procedures to install $\HPhi$.
+There are two types of procedure for installing $\HPhi$.
 
 \subsection{Using \texttt{HPhiconfig.sh}}
 
-Please run \verb|HPhiconfig.sh| script in the $\HPhi$ directory as follow
-(for ISSP system-B ''sekirei''):
+Please run \verb|HPhiconfig.sh| script in the $\HPhi$ directory as follows
+(for ISSP system-B ``sekirei''):
 \begin{verbatim}
 $ bash HPhiconfig.sh sekirei
 \end{verbatim}
-Then environmental configuration file \verb|make.sys| is generated in 
-\verb|src/| directory.
+Then, the environmental configuration file \verb|make.sys| is generated in 
+the \verb|src/| directory.
 The command-line argument of \verb|HPhiconfig.sh| is as follows:
 \begin{itemize}
-\item \verb|sekirei| : ISSP system-B ''sekirei''
-\item \verb|fujitsu| : ISSP system-C ''maki''
+\item \verb|sekirei| : ISSP system-B ``sekirei''
+\item \verb|fujitsu| : ISSP system-C ``maki''
 \item \verb|sr| : HITACHI SR16000
 \item \verb|intel| : Intel compiler
 \item \verb|intel-openmpi| : Intel compiler + OpenMPI
@@ -69,20 +69,22 @@ The command-line argument of \verb|HPhiconfig.sh| is as follows:
 \item \verb|gcc| : GCC
 \item \verb|gcc-openmpi| : GCC + OpenMPI
 \item \verb|gcc-mpich| : GCC + MPICH2
-\item \verb|gcc-mac| : GCC + Mac
+\item \verb|gcc-mac| : GCC + Mac.
 \end{itemize}
 
-\verb|make.sys| is as follows (for ISSP-system-B ''sekirei''):
+\verb|make.sys| is as follows (for ISSP-system-B ``sekirei''):
 \begin{verbatim}
 CC = mpicc
 F90 = mpif90
-CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI
-FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+         -shared-intel -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+         -shared-intel -D MPI -fpp
 LIBS = -mkl -lifcore
 \end{verbatim}
-We explain macros of this file as: 
+We explain the macros of this file as: 
 \begin{itemize}
-\item \verb|CC| : C compiler (\verb|icc|, \verb|gcc|, \verb|fccpx|)
+\item \verb|CC| : C compiler (\verb|icc|, \verb|gcc|, \verb|fccpx|).
 \item \verb|F90| : fortran compiler (\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
 \item \verb|CFLAGS| : C compile options.
   OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
@@ -93,12 +95,12 @@ We explain macros of this file as:
 \end{itemize}
 
 
-Then you are ready to compile HPhi.
+Then, you are ready to compile HPhi.
 Please type
 \begin{verbatim}
 $ make HPhi
 \end{verbatim}
-and obtain an executable \verb|HPhi| in \verb|src/| directory;
+and obtain an executable \verb|HPhi| in the \verb|src/| directory;
 you should add this directory to the \verb|$PATH|.
 
 
@@ -112,7 +114,7 @@ You can make a PATH to $\HPhi$ as follows:
 \\
 \verb|$ export PATH=${PATH}:|\textit{HPhi\_top\_directory}\verb|/src/|
 \\
-If you keep this PATH, you should write above in \verb|~/.bashrc|
+If you retain this PATH, you should write above in \verb|~/.bashrc|
 (for \verb|bash| as a login shell)
 
 \end{screen}
@@ -134,29 +136,40 @@ source /global/app/materiapps/tool/env.sh
 \end{verbatim}
 \end{screen}
 
-We can compile Hphi as
+We can compile $\HPhi$ as
 \begin{verbatim}
 cd $HOME/build/hphi
 cmake -DCONFIG=gcc $PathTohphi
 make
 \end{verbatim}
-Here, we set a path to $\HPhi$ as \verb| $PathTohphi| and to a build directory as \verb| $HOME/build/hphi|. After compiling, a src folder is constructed below a \verb| $HOME/build/hphi |folder and obtain an executable \verb|HPhi| in \verb|src/| directory. When there is not a MPI library in your system, an executable \verb|HPhi| is automatically compiled without a MPI library.
+Here, we set a path to $\HPhi$ as \verb|$PathTohphi|
+and to a build directory as \verb| $HOME/build/hphi|.
+After compilation, \verb|src| folder is constructed below a \verb|$HOME/build/hphi|
+folder and we obtain an executable \verb|HPhi| in \verb|src/| directory.
+When no MPI library exists in the system, an executable \verb|HPhi|
+is automatically compiled without an MPI library.
 
-In the above example, we compile $\HPhi$ by using a gcc compiler. We can select a compiler by using following options
+In the above example,
+we compile $\HPhi$ by using a gcc compiler.
+We can select a compiler by using the following options:
 \begin{itemize}
-\item \verb|sekirei| : ISSP system-B ''sekirei''
-\item \verb|fujitsu| : Fujitsu compiler (ISSP system-C ''maki'')
-\item \verb|intel| : intel compiler + Linux PC
+\item \verb|sekirei| : ISSP system-B ``sekirei''
+\item \verb|fujitsu| : Fujitsu compiler (ISSP system-C ``maki'')
+\item \verb|intel| : Intel compiler + Linux PC
 \item \verb|gcc| : GCC compiler + Linux PC.
 \end{itemize}
-An example for compiling $\HPhi$ by an intel compiler is shown as follows, 
+An example of compiling $\HPhi$ by using the Intel compiler is shown as follows:
 \begin{verbatim}
 mkdir ./build
 cd ./build
 cmake -DCONFIG=intel ../
 make
 \end{verbatim}
-After compiling,  a \verb|src| folder is made below the \verb|build| folder and an execute $\HPhi$ is made in the  \verb|src| folder. It is noted that  we must delete the  \verb|build| folder and do the above works again when we change the compilers.
+After compilation,
+\verb|src| folder is created below the \verb|build| folder and
+an execute $\HPhi$ in the \verb|src| folder.
+Please note that we must delete the \verb|build| folder and
+repeat the above operations when we change the compiler.
 
 \label{Sec:HowToInstall}
 
@@ -223,30 +236,33 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
 \end{verbatim}
 
 \section{Basic usage}
-$\HPhi$ has two modes; standard mode and expert mode. Here, the basic flows of calculations by standard and expert modes are shown.
+$\HPhi$ has two modes: Standard mode and Expert mode.
+Here, the basic flows of calculations of the Standard and expert modes are shown.
 
 \subsection{{\it Standard} mode}
 
-The procedure of calculation through the standard mode is shown as follows:
+The procedure of calculation through the standard mode is as follows:
 
 \begin{enumerate}
 
-\item  Make a directory for a calculation scenario. 
+\item Create a directory for a calculation scenario
 
-First, you make a working directory for the calculation.
+First, you create a working directory for the calculation.
 
-\item  Make input files for standard mode
+\item Create input files for Standard mode
 
-In the standard mode, you can choose a model (the Heisenberg model, the Hubbard model, etc.) and 
-a lattice (the square lattice, the triangular lattice, etc.) from ones provided;
-you can specify some parameters (such as the first/second nearest neighbor hopping integrals,
-the on-site Coulomb integral, etc.) for them.
+In Standard mode, you can choose a model (the Heisenberg model, Hubbard model, etc.) and 
+a lattice (the square lattice, triangular lattice, etc.) from those provided;
+you can specify some parameters
+(such as the first/second nearest neighbor hopping integrals and
+the on-site Coulomb integral) for them.
 Finally, you have to specify the numerical method (such as the Lanczos method) employed in this calculation.
-The input file format is described in the Sec. \ref{Ch:HowToStandard}.
+The input file format is described in Sec. \ref{Ch:HowToStandard}.
 
 \item  Run
 
-Run a executable \verb|HPhi| in terminal by setting option ``\verb|-s|" (or ``\verb|--standard|'') and the name of input file written in previous step.
+  Run an executable \verb|HPhi| in the terminal by setting option ``\verb|-s|"
+  (or ``\verb|--standard|'') and the name of the input file written in the previous step.
 
 \begin{itemize}
 
@@ -260,18 +276,22 @@ Run a executable \verb|HPhi| in terminal by setting option ``\verb|-s|" (or ``\v
 
   When you use a queuing system in workstations or super computers, 
   sometimes the number of processes is specified as an argument for the job-submitting command.
-  If you need more information, please refer manuals for your system. 
- A number of processes depend on a target of system for models. The details of setting a number of processes are shown in  \ref{subsec:process}.
+  If you need more information, please refer to your system manuals. 
+  The number of processes depends on the target system of the models.
+  The details of setting the number of processes are shown in Sec. \ref{subsec:process}.
 \end{itemize}
 
 \item Watch calculation logs
 
-Log files are outputted in the ``output" folder which is automatically made in the directory for a calculation scenario.
-The details of output files are shown in \ref{Sec:outputfile}.
+  Log files are outputted in the ``output'' folder,
+  which is automatically created in the directory for a calculation scenario.
+  The details of the output files are shown in Sec. \ref{Sec:outputfile}.
 
 \item Results
 
-If the calculation is finished normally, the result files are outputted in  the ``output" folder. The details of output files are shown in \ref{Sec:outputfile}.
+  If the calculation is completed normally,
+  the result files are outputted in  the ``output'' folder.
+  The details of the output files are shown in Sec. \ref{Sec:outputfile}.
 
 \end{enumerate}
 
@@ -283,7 +303,7 @@ If the calculation is finished normally, the result files are outputted in  the 
 {\bf The number of threads for OpenMP}
 
 If you specify the number of OpenMP threads for $\HPhi$,
-you should set it as follows (in case of 16 threads) before the running:
+you should set it as follows (in the case of 16 threads) before running:
 \begin{verbatim}
 export OMP_NUM_THREADS=16
 \end{verbatim}
@@ -291,17 +311,20 @@ export OMP_NUM_THREADS=16
 \end{screen}
 
 \subsection{{\it Expert} mode}
-The procedure of calculation for expert mode is shown as follows.
+The calculation procedure for Expert mode is as follows.
  \begin{enumerate}
-   \item  Make a directory for a calculation scenario. \\
-First, you make a directory named as a calculation scenario (you can attach an arbitrary name to a directory).
-   \item  Make input files for expert mode\\
-For expert mode,  you should make input files 
-for constructing Hamiltonian operators, calculation condition and 
-a list file for the filenames of input files (see the file formats shown in  \ref{Ch:HowToExpert}). \\
-{\bf Note:} A List file can be easily made by using standard mode.
+   \item Create a directory for a calculation scenario \\
+     First, you create a directory and give it the name of a calculation scenario
+     (you can attach an arbitrary name to a directory).
+   \item Create input files for Expert mode\\
+     For Expert mode, you should create input files 
+     for constructing Hamiltonian operators, calculation conditions, and 
+     a list file for the filenames of the input files
+     (see the file formats shown in Sec. \ref{Ch:HowToExpert}). \\
+     {\bf Note:} A list file can be easily created by using Standard mode.
  \item  Run\\
-Run $\HPhi$ in terminal by setting option ``\verb|-e|" (or ``\verb|--expert|'') and a file name of a list file.\\
+   Run $\HPhi$ in the terminal by setting option ``\verb|-e|''
+   (or ``\verb|--expert|'') and the file name of a list file.\\
 
 \begin{itemize}
 
@@ -315,45 +338,60 @@ Run $\HPhi$ in terminal by setting option ``\verb|-e|" (or ``\verb|--expert|'') 
  {A number of processes depend on a target of system for models. The details of setting a number of processes are shown in  \ref{subsec:process}.}
 \end{itemize}
 
-\item Under running\\
-Log files are outputted in the ``output" folder which is automatically made in the directory for a calculation scenario.
-The details of output files are shown in \ref{Sec:outputfile}.
+\item While running\\
+  Log files are outputted in the ``output" folder which is automatically created
+  in the directory for a calculation scenario.
+  The details of the output files are shown in Sec. \ref{Sec:outputfile}.
 
 \item Results\\
-If the calculation is finished normally, the result files are outputted in  the ``output" folder. The details of output files are shown in \ref{Sec:outputfile}.
+  If the calculation is finished normally,
+  the result files are outputted in the ``output'' folder.
+  The details of the output files are shown in Sec. \ref{Sec:outputfile}.
 \end{enumerate}
 
 
 
 \newpage
-\subsection{Setting a process number for MPI/Hybrid parallelization}
+\subsection{Setting the process number for MPI/hybrid parallelization}
 \label{subsec:process}
-{For using MPI/Hybrid parallelization, a process number must be set as follows.}
+For using MPI/hybrid parallelization, the process number must be set as follows.
 \begin{enumerate}
 \item{Standard mode}
 
 \begin{itemize}
-\item{Hubbard / Kondo model}\\
-When \verb|model| in an input file for Standard mode is set as \verb|"Fermion Hubbard"|, \verb|"Kondo Lattice"| or \verb|"Fermion HubbardGC"|,  a process number must be equal to $4^n$.
+\item{Hubbard/Kondo model}\\
+  When \verb|model| in the input file for Standard mode is set as
+  \verb|"Fermion Hubbard"|, \verb|"Kondo Lattice"|, or \verb|"Fermion HubbardGC"|,
+  the process number must be equal to $4^n$.
 
 \item{Spin model}\\
-When \verb|model| in an input file for Standard mode is set as \verb|"Spin"| or \verb|"SpinGC"|,  a process number must be equal to (\verb|2S|+1)${}^n$ where \verb|2S| is set in the input file (a default value is $1$).
+  When \verb|model| in the input file for Standard mode is set as
+  \verb|"Spin"| or \verb|"SpinGC"|, the process number must be equal to
+  (\verb|2S|+1)${}^n$, where \verb|2S| is set in the input file
+  (the default value is $1$).
 
 \end{itemize}
 \item{Expert mode}
 
 \begin{itemize}
-\item{Hubbard / Kondo model}
+\item{Hubbard/Kondo model}
 
-When a model is selected as fermion Hubbard model or Kondo model by setting \verb|CalcModel| in a {\bf CalcMod} file, a process number must be equal to $4^n$.
-See \ref{Subsec:calcmod} for details of a \verb|CalcModel| file.
+  When the model is selected as the Fermion Hubbard model or Kondo model
+  by setting \verb|CalcModel| in a {\bf CalcMod} file,
+  the process number must be equal to $4^n$.
+  See Sec. \ref{Subsec:calcmod} for details of the \verb|CalcModel| file.
 
 \item{Spin model}
 
-When a model is selected as Spin model by setting \verb|CalcModel| in a {\bf CalcMod} file, a process number is fixed by a {\bf LocSpin} file. A process number must be equal to a number calculated by multiplying a state number of localized spin (\verb|2S|+1) in descending order about site numbers.
-See \ref{Subsec:locspn} for details of a {\bf LocSpin} file.
+  When the model is selected as the spin model by setting \verb|CalcModel|
+  in a {\bf CalcMod} file, the process number is fixed by a {\bf LocSpin} file.
+  The process number must be equal to the number calculated by
+  multiplying the state number of the localized spin (\verb|2S|+1)
+  in descending order by the site number.
+  See Sec. \ref{Subsec:locspn} for details of the {\bf LocSpin} file.
 
-For example, when a {\bf LocSpin} file is given as follws, a process number must be equal to $2=1+1,~6=2\times(2+1),~24=6\times(3+1)$.
+  For example, when a {\bf LocSpin} file is given as follows,
+  the process number must be equal to $2=1+1,~6=2\times(2+1),~24=6\times(3+1)$.
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
@@ -373,7 +411,7 @@ NlocalSpin     3
 
 \subsection{Printing version ID}
 
-By using \verb|-v| option as follows, 
+By using the \verb|-v| option as follows, 
 you can check which version of $\HPhi$ you are using.
 
 \begin{verbatim}

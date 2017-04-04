@@ -7,7 +7,7 @@
 
 % !TEX root = userguide_en.tex
 %----------------------------------------------------------
-An example of input file for the standard mode is shown below:
+An example of an input file for the standard mode is as follows:
 
 \begin{minipage}{10cm}
 \begin{screen}
@@ -39,31 +39,30 @@ J'=-0.5
 \item In each line, there is a set of a keyword (before an ``\verb|=|") and a parameter(after an ``\verb|=|"); 
   they are separated by ``\verb|=|".
 \item You can describe keywords in a random order.
-\item Empty lines and lines beginning in a ``\verb|//|''(comment outs) are skipped.
+\item Empty lines and lines beginning with a ``\verb|//|''(comment outs) are skipped.
 \item Upper- and lowercase are not distinguished.
   Double quotes and blanks are ignored.
-\item There are three kinds of parameters.\\ 
+\item There are three types of parameters.\\ 
   1.~Parameters that must be specified~(if not, $\HPhi$ will stop with error messages),\\ 
-  2.~Parameters that is not necessary be specified~(if not, default values are used),\\
+  2.~Parameters that it is not necessary to specified~(if not specified, default values are used),\\
   3.~Parameters that must not be specified~(if specified, $\HPhi$ will stop with error messages).\\
-  An example of 3 is transfer $t$ for the Heisenberg spin system. 
+  An example of type 3 is the transfer $t$ parameter for the Heisenberg spin system. 
   If you choose ``model=spin", you should not specify ``$t$".
 \end{itemize}
 
-We explain each keywords as follows:
+We explain each keyword as follows.
 
-\subsection{Parameters about the kind of a calculation}
+\subsection{Parameters for the type of calculation}
 
 \begin{itemize}
 
 \item \verb|model|
 
-{\bf Type :} String (Choose from \verb|"Fermion Hubbard"|, \verb|"Spin"|, \verb|"Kondo Lattice"|, 
-\verb|"Fermion HubbardGC"|, \verb|"SpinGC"|, \verb|"Kondo LatticeGC"|, \verb|"SpinGCBoost"|)
-\footnote{GC=Grand Canonical}
+{\bf Type :} String (hoose from \verb|"Fermion Hubbard"|, \verb|"Spin"|, \verb|"Kondo Lattice"|, 
+\verb|"Fermion HubbardGC"|, \verb|"SpinGC"|, \verb|"Kondo LatticeGC"|, \verb|"SpinGCBoost"|)\footnote{GC=Grand Canonical}
 
 {\bf Description :} The target model is specified with this parameter;
-above words denote the canonical ensemble of the Fermion in the Hubbard model
+the expressions above denote the canonical ensemble of the Fermion in the Hubbard model
 \begin{align}
 H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma} 
 - \sum_{i \neq j \sigma} t_{i j} c^\dagger_{i \sigma} c_{j \sigma} 
@@ -71,14 +70,14 @@ H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 + \sum_{i \neq j} V_{i j} n_{i} n_{j},
 \label{fml4_1_hubbard}
 \end{align}
-canonical ensemble in the Spin model($\{\sigma_1, \sigma_2\}={x, y, z}$)
+the canonical ensemble in the Spin model($\{\sigma_1, \sigma_2\}={x, y, z}$)
 \begin{align}
 H &= -h \sum_{i} S_{i z} - \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
 \nonumber \\
 &+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,
 \label{fml4_1_spin}
 \end{align}
-canonical ensemble in the Kondo lattice model
+the canonical ensemble in the Kondo lattice model
 \begin{align}
 H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma} 
 - t \sum_{\langle i j \rangle \sigma} c^\dagger_{i \sigma} c_{j \sigma} 
@@ -89,26 +88,26 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \right\},
 \label{fml4_1_kondo}
 \end{align}
-grand canonical ensemble of the Fermion in the Hubbard model [Eqn. (\ref{fml4_1_hubbard})],
-grand canonical ensemble in the Spin model [Eqn. (\ref{fml4_1_spin})],
+the grand canonical ensemble of the Fermion in the Hubbard model [Eqn. (\ref{fml4_1_hubbard})],
+the grand canonical ensemble in the Spin model [Eqn. (\ref{fml4_1_spin})],
 and
-grand canonical ensemble in Kondo lattice model [Eqn. (\ref{fml4_1_kondo})]
+the grand canonical ensemble in the Kondo lattice model [Eqn. (\ref{fml4_1_kondo})],
 respectively.
 
 When \verb|model="SpinGCBoost"|,
-by using more efficient algorithm\footnote{Y. Yamaji \textit{et. al.}, manuscript in preparation.}, 
-$\HPhi$ calculates a system the same as \verb|"SpinGC"|.
+by using a more efficient algorithm\footnote{Y. Yamaji \textit{et. al.}, manuscript in preparation.}, 
+$\HPhi$ calculates a system that is the same as \verb|"SpinGC"|.
 However, supported models and MPI processes are highly limited.
 See \verb|"Lattice"| section.
 
 \item \verb|method|
   
-{\bf Type :} String (Choose from \verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|, \verb|"CG"|)
+{\bf Type :} String (choose from \verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|, \verb|"CG"|)
 
 {\bf Description :} The calculation type is specified with this parameter;
-above words denote 
+the above expressions above denote 
 the single eigenstate calculation by using the Lanczos method,
-at the finite-temperature by thermally pure quantum state,
+at the finite-temperature by using the thermally pure quantum state,
 the full diagonalization method,
 and the multiple eigenstates calculation by using the LOBCG method
 \cite{doi:10.1137/S1064827500366124,transactionJSCES2006},
@@ -116,15 +115,15 @@ respectively.
 
 \item \verb|lattice|
 
-{\bf Type :} String (Choose from \verb|"Chain Lattice"|, \verb|"Square Lattice"|, 
+{\bf Type :} String (choose from \verb|"Chain Lattice"|, \verb|"Square Lattice"|, 
 \verb|"Triangular Lattice"|, \verb|"Honeycomb Lattice"|, \verb|"Ladder"|, \verb|"Kagome"|)
 
 {\bf Description :} The lattice shape is specified with this parameter;
-above words denote
-the one dimensional chain lattice (Fig. \ref{fig_chap04_1_lattice}(a)), 
-the two dimensional square lattice (Fig. \ref{fig_chap04_1_lattice}(b)),
-the two dimensional triangular lattice (Fig. \ref{fig_chap04_1_lattice}(c)),
-the two dimensional anisotropic honeycomb lattice (Fig. \ref{fig_chap04_1_honeycomb}),
+the expressions above denote
+the one-dimensional chain lattice (Fig. \ref{fig_chap04_1_lattice}(a)), 
+the two-dimensional square lattice (Fig. \ref{fig_chap04_1_lattice}(b)),
+the two-dimensional triangular lattice (Fig. \ref{fig_chap04_1_lattice}(c)),
+the two-dimensional anisotropic honeycomb lattice (Fig. \ref{fig_chap04_1_honeycomb}),
 the ladder lattice (Fig. \ref{fig_ladder}),
 and
 the Kagome Lattice(Fig. \ref{fig_kagome})
@@ -133,7 +132,7 @@ respectively.
 In \verb|method="SpinGCBoost"|,
 only \verb|"Chain Lattice"|, \verb|"Honeycomb Lattice"|, 
 \verb|"Ladder"|, and \verb|"Kagome"| are supported.
-Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as follows:
+The limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as follows:
 
 \begin{itemize}
 
@@ -161,12 +160,12 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
   \begin{center}
     \includegraphics[width=8cm]{../figs/chap04_1_lattice.pdf}
     \caption{Schematic illustration of
-      (a) one dimensional chain lattice, 
-      (b) two dimensional square lattice, and 
-      (c) two dimensional triangular lattice.
-      They have $t$, $V$, and $J$ as a nearest neighbor hopping, an offsite Coulomb integral, 
+      (a) one-dimensional chain lattice, 
+      (b) two-dimensional square lattice, and 
+      (c) two-dimensional triangular lattice.
+      They have $t$, $V$, and $J$ as the nearest neighbor hopping, an offsite Coulomb integral, 
       and a spin-coupling constant, respectively (magenta solid lines);
-      They also have $t'$, $V'$, and $J'$ as a next nearest neighbor hopping, offsite Coulomb integral, 
+      they also have $t'$, $V'$, and $J'$ as the next nearest neighbor hopping, offsite Coulomb integral, 
       and spin-coupling constant, respectively (green dashed line).
     }
     \label{fig_chap04_1_lattice}
@@ -178,9 +177,9 @@ Limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as foll
     \includegraphics[width=15cm]{../figs/chap04_1_honeycomb.pdf}
     \caption{Schematic illustration of the anisotropic honeycomb lattice.
       The nearest neighbor 
-      hopping integral, spin coupling, offsite Coulomb integral
+      hopping integral, spin coupling, and offsite Coulomb integral
       depend on the bond direction.
-      Those between second nearest neighbor sites are not supported.
+      Those between the second nearest neighbor sites are not supported.
     }
     \label{fig_chap04_1_honeycomb}
   \end{center}
@@ -245,11 +244,11 @@ with this parameter.
 \begin{figure}[!tbhp]
   \begin{center}
     \includegraphics[width=15cm]{../figs/chap04_1_unitlattice.pdf}
-    \caption{The shape of the numerical cell 
+    \caption{Shape of the numerical cell 
       when ${\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)$
       in the triangular lattice.
       The region surrounded by 
-      ${\vec a}_0$(Magenta dashed arrow) and ${\vec a}_1$(Green dashed arrow)
+      ${\vec a}_0$ (magenta dashed arrow) and ${\vec a}_1$ (green dashed arrow)
       becomes the cell to be calculated (20 sites).
     }
     \label{fig_chap04_1_unitlattice}
@@ -257,9 +256,9 @@ with this parameter.
 \end{figure}
 
 \subsubsection{Tetragonal lattice [Fig. \ref{fig_chap04_1_lattice}(b)], 
-Triangular lattice[Fig. \ref{fig_chap04_1_lattice}(c)],
-Honeycomb lattice(Fig. \ref{fig_chap04_1_honeycomb}),
-Kagome lattice(Fig. \ref{fig_kagome})}
+triangular lattice [Fig. \ref{fig_chap04_1_lattice}(c)],
+honeycomb lattice (Fig. \ref{fig_chap04_1_honeycomb}),
+Kagome lattice (Fig. \ref{fig_kagome})}
 
 In these lattices,
 we can specify the shape of the numerical cell by using the following two methods.
@@ -270,9 +269,9 @@ we can specify the shape of the numerical cell by using the following two method
 
 {\bf Type :} Integer
 
-{\bf Description :} The alignment of original unit cells 
+{\bf Description :} The alignment of the original unit cells 
 (dashed black lines in Figs. \ref{fig_chap04_1_lattice} - \ref{fig_kagome})
-is specified with these parameter.
+is specified with this parameter.
 
 \item \verb|a0W|, \verb|a0L|, \verb|a1W|, \verb|a1L|
 
@@ -280,17 +279,17 @@ is specified with these parameter.
 
 {\bf Description :} 
 We can specify two vectors (${\vec a}_0, {\vec a}_1$)
-that surrounds the numerical cell (Fig. \ref{fig_chap04_1_unitlattice}).
-These vectors should be specified in the Fractional coordinate.
+that surround the numerical cell (Fig. \ref{fig_chap04_1_unitlattice}).
+These vectors should be specified in the fractional coordinate.
 
 \end{itemize}
 
-If we use both of these method, $\HPhi$ stops.
+If we use both these methods, $\HPhi$ stops.
 When \verb|model=SpinGCBoost|, we can use only the former.
 
 We can check the shape of the numerical cell
 by using a file \verb|lattice.gp|
-which is written in the Standard mode.
+which is written in Standard mode.
 This file can be read by \verb|gnuplot| as follows:
 \begin{verbatim}
 $ gnuplot lattice.gp
@@ -313,13 +312,13 @@ it should not be specified.
 
 {\bf Description :} The $z$ component of the twofold total spin is 
 specified with this parameter.
-When \verb|model = "Fermion HubbardGC"| or \verb|SpinGC|,
+When \verb|model = "Fermion HubbardGC"| or \verb|"SpinGC"|,
 it should not be specified. 
 \end{itemize}
 
 
 \subsection{Parameters for the Hamiltonian}
-A default value is set as $0$ unless a specific value is not defined in a description. 
+A default value is $0$ unless a specific value is written in the description. 
 Table~\ref{table_interactions} shows the parameters for each models. 
 In the case of a complex type, a file format is ``{\it a real part, an imaginary part} "
  while in the case of a real type, only ``{\it a real part} ".
@@ -333,7 +332,8 @@ In the case of a complex type, a file format is ``{\it a real part, an imaginary
 
 {\bf Type :} Real
 
-{\bf Description :} (Hubbard and Kondo lattice model) 
+{\bf Description :}
+It is available only for the Hubbard and Kondo lattice model.
 The chemical potential $\mu$ (including the site potential)
 is specified with this parameter.
 
@@ -341,7 +341,8 @@ is specified with this parameter.
 
 {\bf Type :} Real
 
-{\bf Description :} (Hubbard and Kondo lattice model) 
+{\bf Description :}
+It is available only for the Hubbard and Kondo lattice model.
 The onsite Coulomb integral $U$ is specified with this parameter.
 
 \item \verb|Jx|, \verb|Jy|, \verb|Jz|, \verb|Jxy|, 
@@ -349,7 +350,8 @@ The onsite Coulomb integral $U$ is specified with this parameter.
 
 {\bf Type :} Real
 
-{\bf Description :} (Kondo lattice model) 
+{\bf Description :}
+It is available only for the Kondo lattice model.
 The spin-coupling constant between the valence and the local electrons
 is specified with this parameter.
 If the exchange coupling \verb|J| is specified in the input file,
@@ -372,9 +374,9 @@ The single-site anisotropy parameter is not available for \verb|model=SpinGCBoos
 \end{itemize}
 
 The non-local terms described below should be specified
-in different ways depending on the lattice structure:
-For \verb|lattice=Ladder|, the non-local terms are specified in the different way
-from \verb|lattice=Chain Lattice|, \verb|Square Lattice|, \verb|Triangular Lattice|, \verb|Honeycomb Lattice|, \verb|Kagome|. 
+differently according to the lattice structure:
+For \verb|lattice=Ladder|, the non-local terms are specified differently
+from those for the \verb|lattice=Chain Lattice|, \verb|Square Lattice|, \verb|Triangular Lattice|, \verb|Honeycomb Lattice|, \verb|Kagome|. 
 Below, the available parameters for each lattice are shown in
 Table \ref{table_interactions}.
 
@@ -398,7 +400,7 @@ Table \ref{table_interactions}.
     \verb|J2'| ,\verb|t2'|, \verb|V2'|  & -		 &-	 	& -		& -		& -		& $\circ$\\ 
     \hline
 \end{tabular}
-   \caption{Interactions for each models defined in an input file. We can define spin couplings as matrix format.}
+   \caption{Interactions for each model defined in an input file. We can define spin couplings as a matrix format.}
     \label{table_interactions}
 \end{table}
 
@@ -411,7 +413,7 @@ Table \ref{table_interactions}.
 
 {\bf Description :} (Hubbard and Kondo lattice model)
 Hopping integrals in the ladder lattice 
-(See Fig. \ref{fig_ladder}) is specified with this parameter.
+(see Fig. \ref{fig_ladder}) are specified with this parameter.
 
 \item \verb|V0|,  \verb|V1|,  \verb|V1'|,  \verb|V2|,  \verb|V2'|
 
@@ -419,7 +421,7 @@ Hopping integrals in the ladder lattice
 
 {\bf Description :} (Hubbard and Kondo lattice model)
 Offsite Coulomb integrals on the ladder lattice
-(Fig. \ref{fig_chap04_1_honeycomb} are specified with these parameters.
+(Fig. \ref{fig_chap04_1_honeycomb}) are specified with these parameters.
 
 \item \verb|J0x|, \verb|J0y|, \verb|J0z|, \verb|J0xy|, 
   \verb|J0yx|, \verb|J0xz|, \verb|J0zx|, \verb|J0yz|, \verb|J0zy|
@@ -430,13 +432,13 @@ Offsite Coulomb integrals on the ladder lattice
 \item \verb|J2x|, \verb|J2y|, \verb|J2z|, \verb|J2xy|, 
   \verb|J2yx|, \verb|J2xz|, \verb|J2zx|, \verb|J2yz|, \verb|J2zy|
 \item \verb|J2'x|, \verb|J2'y|, \verb|J2'z|, \verb|J2'xy|, 
-  \verb|J2'yx|, \verb|J2'xz|, \verb|J2'zx|, \verb|J2'yz|, \verb|J2'zy|
+  \verb|J2'yx|, \verb|J2'xz|, \verb|J2'zx|, \verb|J2'yz|, \verb|J2'zy|.
 
 {\bf Type :} Real
 
 {\bf Description :} (Spin model)
 Spin-coupling constants in the ladder lattice
-(See Fig. \ref{fig_ladder}) are specified with these parameter.
+(see Fig. \ref{fig_ladder}) are specified with these parameters.
 If the simplified parameter \verb|J0| is specified in the input file instead of
 the diagonal couplings, \verb|J0x, J0y, J0z|,
 these diagonal couplings are set as \verb|J0x = J0y = J0z = J0|.
@@ -455,13 +457,13 @@ The above rules are also valid for the simplified parameters, \verb|J1|, \verb|J
 {\bf Type :} Complex
 
 {\bf Description :} (Hubbard and Kondo lattice model)
-Nearest neighbor hoppings for each direction
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
-are specified with these parameter.
+The nearest neighbor hoppings for each direction
+(see Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with these parameters.
 If there is no bond dependence of the hoppings,
 the simplified parameter \verb|t| is available to specify \verb|t0|,  \verb|t1|, and \verb|t2| as
 \verb|t0 = t1 = t2 = t|.
-If both \verb|t| and the set of the hoppings (\verb|t0|,  \verb|t1|, \verb|t2|) are specified,
+If both \verb|t| and the set of the hoppings (\verb|t0|, \verb|t1|, \verb|t2|) are specified,
 $\HPhi$ will stop.
 
 \item \verb|V0|,  \verb|V1|, \verb|V2|
@@ -469,9 +471,9 @@ $\HPhi$ will stop.
 {\bf Type :} Real
 
 {\bf Description :} (Hubbard and Kondo lattice model)
-Nearest-neighbor offsite Coulomb integrals $V$
+The nearest neighbor offsite Coulomb integrals $V$
  for each direction
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+(see Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
 are specified with these parameters.
 If there is no bond dependence of the offsite Coulomb integrals,
 the simplified parameter \verb|V| is available to specify \verb|V0|,  \verb|V1|, and \verb|V2| as
@@ -489,8 +491,8 @@ $\HPhi$ will stop.
 {\bf Type :} Real
 
 {\bf Description :} (Spin model)
-Nearest-neighbor exchange couplings for each direction
-are specified with thees parameters.
+The nearest neighbor exchange couplings for each direction
+are specified with these parameters.
 If the simplified parameter \verb|J0| is specified, instead of \verb|J0x, J0y, J0z|,
 the exchange couplings, \verb|J0x, J0y, J0z|, are set as \verb|J0x = J0y = J0z = J0|.
 If both \verb|J0| and the set of the exchange couplings (\verb|J0x, J0y, J0z|)
@@ -503,27 +505,27 @@ the simplified parameters,
 \verb|Jyx|, \verb|Jxz|, \verb|Jzx|, \verb|Jyz|, \verb|Jzy|,
 are available to specify the exchange couplings for every bond as
 \verb|J0x = J1x = J2x = Jx|.
-If any simplified parameter (\verb|Jx|$\sim$\verb|Jzy|)
-is specified in addition to its counter parts (\verb|J0x|$\sim$\verb|J2zy|),
+If any simplified parameter (\verb|Jx|-\verb|Jzy|) 
+is specified in addition to its counterparts (\verb|J0x|-\verb|J2zy|),
 $\HPhi$ will stop.
-Below, examples of parameter sets for nearest-neighbor exchange couplings are shown.
+Below, examples of parameter sets for nearest neighbor exchange couplings are shown.
 
 \begin{itemize}
 
-\item If there are no bond-dependent, no anisotropic and offdiagonal exchange couplings (such as $J_{x y}$),
+\item If there are no bond-dependent, and no anisotropic and offdiagonal exchange couplings (such as $J_{x y}$),
 please specify \verb|J| in the input file.
 
 \item If there are no bond-dependent and offdiagonal exchange couplings
-but are anisotropic couplings,
+but there are anisotropic couplings,
 please specify the non-zero couplings in the diagonal parameters, \verb|Jx, Jy, Jz|.
 
 \item If there are no bond-dependent exchange couplings
-but are anisotropic and offdiagonal exchange couplings,
+but there are anisotropic and offdiagonal exchange couplings,
 please specify the non-zero couplings in the nine parameters,
 \verb|Jx, Jy, Jz, Jxy, Jyz, Jxz, Jyx, Jzy, Jzx|.
 
 \item If there are no anisotropic and offdiagonal exchange couplings,
-but are bond-dependent couplings,
+but there are bond-dependent couplings,
 please specify the non-zero couplings in the three parameters,
 \verb|J0, J1, J2|.
 
@@ -531,7 +533,7 @@ please specify the non-zero couplings in the three parameters,
 please specify the non-zero couplings in the nine parameters,
 \verb|J0x, J0y, J0z, J1x, J1y, J1z, J2x, J2y, J2z|.
 
-\item If there are bond-dependent, anisotropic and offdiagonal exchange couplings,
+\item If there are bond-dependent, anisotropic, and offdiagonal exchange couplings,
 please specify the non-zero couplings in the twenty-seven parameters from
 \verb|J0x| to \verb|J2zy|.
 
@@ -541,8 +543,8 @@ please specify the non-zero couplings in the twenty-seven parameters from
 {\bf Type :} Complex
 
 {\bf Description :} (Hubbard and Kondo lattice model)
-Nearest neighbor hoppings for each direction
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+The nearest neighbor hoppings for each direction
+(see Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
 are specified with these parameter.
 
 \item \verb|V'|
@@ -550,10 +552,10 @@ are specified with these parameter.
 {\bf Type :} Real
 
 {\bf Description :} (Hubbard and Kondo lattice model)
-Nearest neighbor-offsite Coulomb integrals $V$
+The nearest neighbor-offsite Coulomb integrals $V$
  for each direction
-(See Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
-are specified with these parameters.
+(see Figs. \ref{fig_chap04_1_lattice}-\ref{fig_kagome})
+are specified with this parameter.
 
 \item \verb|J'x|, \verb|J'y|, \verb|J'z|, \verb|J'xy|, 
   \verb|J'yx|, \verb|J'xz|, \verb|J'zx|, \verb|J'yz|, \verb|J'zy|
@@ -561,15 +563,15 @@ are specified with these parameters.
 {\bf Type :} Real
 
 {\bf Description :} (Spin model)
-Second nearest-neighbor exchange couplings are specified.
+The second nearest neighbor exchange couplings are specified.
 However, for \verb|lattice = Honeycomb Lattice| and  \verb|lattice = Kagome|
 with \verb|model=SpinGCBoost|,
-the second nearest-neighbor exchange couplings are not available in the $Standard$ mode.
+the second nearest neighbor exchange couplings are not available in the $Standard$ mode.
 If the simplified parameter \verb|J'| is specified, instead of
 \verb|J'x, J'y, J'z|,
 the exchange couplings are set as
 \verb|J'x = J'y = J'z = J'|.
-If both \verb|J'| and the set of the couplings (\verb|J'x, J'y, J'z|),
+If both \verb|J'| and the set of the couplings (\verb|J'x, J'y, J'z|) are specified,
 $\HPhi$ will stop.
 
 \item \verb|phase0|, \verb|phase1|
@@ -602,7 +604,7 @@ $\HPhi$ will stop.
 
 \item \verb|Restart|
 
-  {\bf Type :} String (Choose from \verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
+  {\bf Type :} String (choose from \verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
   \verb|"RestartSave"|. \verb|"None"| as a default)
 
   {\bf Description :} The condition of the restart is specified.
@@ -615,33 +617,33 @@ $\HPhi$ will stop.
 
 \item \verb|Lanczos_max|
 
-{\bf Type :} Positive integer (\verb|2000| as a default)
+{\bf Type :} Positive integer (default value: \verb|2000|)
 
-{\bf Description :} Upper limit of the Lanczos step is specified with this parameter.
+{\bf Description :} The upper limit of the Lanczos step is specified with this parameter.
 
 \item \verb|initial_iv|
 
-{\bf Type :} Integer (\verb|-1| as a default)
+{\bf Type :} Integer (default value: \verb|-1|)
 
 {\bf Description :} 
 {An initial vector is specified with this parameter.}
 \begin{itemize}
 \item{Lanczos method}
 \begin{itemize}
-\item{For canonical ensemble and \verb|initial_iv| $\geq 0$}
+\item{For the canonical ensemble and \verb|initial_iv| $\geq 0$}
 
-The non-zero components of an initial vector is specified with this parameter. 
+The non-zero components of an initial vector are specified with this parameter. 
 
-\item{For grand canonical ensemble or \verb|initial_iv| $< 0$}
+\item{For the grand canonical ensemble or \verb|initial_iv| $< 0$}
 
-A seed of random generator is given by this parameter and the random vector is used as an initial vector.
+The seed of the random generator is given by this parameter and the random vector is used as the initial vector.
 \end{itemize}
 
 \item{TPQ method}
 
-A seed of random generator is given by this parameter and the random vector is used as an initial vector.
+The seed of the random generator is given by this parameter and the random vector is used as the initial vector.
 \end{itemize}
-See \ref{Ch:algorithm} for details of setting an initial vector.
+See Sec. \ref{Ch:algorithm} for details of setting an initial vector.
 
 %\item \verb|nvec|
 
@@ -653,40 +655,40 @@ See \ref{Ch:algorithm} for details of setting an initial vector.
 
 \item \verb|exct|
 
-{\bf Type :} Positive integer (\verb|1| as a default)
+{\bf Type :} Positive integer (default value: \verb|1|)
 
-{\bf Description :}  We specify the number of getting eigenvectors from the ground energy by Lanczos method.\\
-When exct=2, we obtain the eigenvector of the first-excited state.
+{\bf Description :} The number of eigenvectors obtained from the ground energy by the Lanczos method are specified.\\
+When exct=2, the eigenvector of the first-excited state is obtained.
 When \verb|method="CG"|, the number of states to be calculated is specified.
 
-{\bf Note}:  the following condition must be satisfied: \verb|nvec| $>=$ \verb|exct|.
+{\bf Note}: The condition \verb|nvec| $>=$ \verb|exct| must be satisfied.
 
 \item \verb|LanczosEps|
 
-{\bf Type :} Positive Integer (\verb|14| as a default)
+{\bf Type :} Positive integer (default value: \verb|14|)
 
-{\bf Description :} The convergence criteria for the Lanczos method is specified with this parameter.
-If the difference between the old and the new target eigenvalue fall below $10^{- \verb|LanczosEps|}$, 
+{\bf Description :} The convergence criterion for the Lanczos method is specified with this parameter.
+If the difference between the old and the new target eigenvalue falls below $10^{- \verb|LanczosEps|}$, 
 the Lanczos step will finish.
 For \verb|method="CG"|, we assume the calculation is converged
 when the 2-norm of the residual vector becomes smaller than $10^{-{\tt LanczosEps}/2}$.
 
 \item \verb|LancczosTarget|
 
-{\bf Type :} Positive integer (\verb|2| as a default)
+{\bf Type :} Positive integer (default value: \verb|2|)
 
-{\bf Description :} We specify the target eigenenergy for the convergence criteria.
-If this set to \verb|1|, target eigenenergy becomes the ground state.
+{\bf Description :} The target eigenenergy for the convergence criterion is specified.
+If it is set to \verb|1|, the target eigenenergy becomes the ground state.
 
 \item \verb|LargeValue|
 
-{\bf Type :} Double (The default value is written below.)
+{\bf Type :} Double (the default value is provided below)
 
 {\bf Description :} (Only for TPQ) 
-We use $l$ as $l-\hat{H}/N_{s}$ in the TPQ calculation.
-Usually, the largest eigenvalue of Hamiltonian is used as $l$. 
-Thus, we take the default value of $l$
-as a summation of the absolute values of each coefficients in the Hamiltonian
+$l$ as $l-\hat{H}/N_{s}$ is used in the TPQ calculation.
+Usually, the largest eigenvalue of the Hamiltonian is used as $l$. 
+Thus, the default value of $l$ is taken
+as the summation of the absolute values of each coefficient in the Hamiltonian
 divided by the number of sites.
 
 
@@ -733,27 +735,28 @@ divided by the number of sites.
 
 \item \verb|NumAve|
 
-{\bf Type :} Positive integer (\verb|5| as a default)
+{\bf Type :} Positive integer (default value: \verb|5|)
 
-{\bf Description :} (Only for the TPQ) The number of independent runs for the TPQ method is specified 
+{\bf Description :} (Only for TPQ)
+The number of independent runs for the TPQ method is specified 
 with this parameter.
 
 \item \verb|ExpecInterval|
 
-{\bf Type :} Positive integer (\verb|20| as a default)
+{\bf Type :} Positive integer (default value: \verb|20|)
 
-{\bf Description :} (Only for the TPQ) 
-We specify the interval steps of calculating correlation functions in TPQ method.\\ 
-{\bf Note:} The small interval increases the time cost of calculations.
+{\bf Description :} (Only for TPQ) 
+The interval of calculating correlation functions in the TPQ iteration is specified.\\ 
+{\bf Note:} A small interval increases the time cost of calculations.
 
 \item \verb|OutputMode|
 
 {\bf Type :} Choose from \verb|"none"|, \verb|"correlation"|, and \verb|"full"|
-(\verb|correlation| as a default)
+(\verb|correlation| as default)
 
 {\bf Description :} Indices of correlation functions
 are specified with this keyword.
-\verb|"none"| indicates correlation functions will not calculated.
+\verb|"none"| indicates correlation functions will not be calculated.
 When \verb|outputmode="correlation"|,
 $\langle c_{i \sigma}^{\dagger}c_{i \sigma} \rangle$ is computed at all $i, \sigma$,
 and
@@ -765,13 +768,13 @@ and
 $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_{i_4 \sigma_4} \rangle$
 is computed at all $i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4$.
 
-In spin system, 
-indices are specified as those on the Bogoliubov representation
-(See \ref{sec_bogoliubov_rep}).
+In a spin system, 
+the indices are specified as those of the Bogoliubov representation
+(see Sec. \ref{sec_bogoliubov_rep}).
 
 \item \verb|InitialVecType|
 
-  {\bf Type :} Character (Choose from \verb|"C"|, \verb|"R"|.
+  {\bf Type :} Character (choose from \verb|"C"|, \verb|"R"|.
   \verb|"C"| as a default)
 
   {\bf Description :} The type of the initial eigenvector is specified.
@@ -779,7 +782,7 @@ indices are specified as those on the Bogoliubov representation
 
 \item \verb|EigenVecIO|
   
-  {\bf Type :} String (Choose from \verb|"None"|, \verb|"Out"|, \verb|"In"|.
+  {\bf Type :} String (choose from \verb|"None"|, \verb|"Out"|, \verb|"In"|.
   \verb|"None"| as a default)
 
   {\bf Description :} The I/O of the eigenvector is specified.
@@ -795,8 +798,8 @@ indices are specified as those on the Bogoliubov representation
 \begin{itemize}
 \item \verb|CalcSpec|
   
-  {\bf Type :} String(Choose from \verb|"None"|, \verb|"Normal"|, \verb|"NoIteration"|,  
-  \verb|"Save"|, \verb|"Restart"|, \verb|"RestartSave"|. \verb|"None"| as a default.)
+  {\bf Type :} String(choose from \verb|"None"|, \verb|"Normal"|, \verb|"NoIteration"|,  
+  \verb|"Save"|, \verb|"Restart"|, \verb|"RestartSave"|. \verb|"None"| as default.)
 
   {\bf Description :} The condition for the calculation of the dynamical
   Green's function is specified.
@@ -815,8 +818,8 @@ indices are specified as those on the Bogoliubov representation
   
 \item \verb|SpectrumType|
   
-  {\bf Type :} String (Choose from \verb|"SzSz"|, \verb|"S+S-"|, \verb|"Density"|,  
-  \verb|"up"|, \verb|"down"|. \verb|"SzSz"| as a default.)
+  {\bf Type :} String (choose from \verb|"SzSz"|, \verb|"S+S-"|, \verb|"Density"|,  
+  \verb|"up"|, \verb|"down"|. \verb|"SzSz"| as default.)
 
   {\bf Description :} The type of the dynamical Green's function
   to be computed is specified.
@@ -828,7 +831,7 @@ indices are specified as those on the Bogoliubov representation
 
 \item \verb|SpectrumQW|, \verb|SpectrumQL|
   
-  {\bf Type :} Double (\verb|0.0| as defaults)
+  {\bf Type :} Double (default value: \verb|0.0|)
 
   {\bf Description :} The wave number (Fractional coordinate) of the
   dynamical Green's function is specified.
@@ -839,12 +842,12 @@ indices are specified as those on the Bogoliubov representation
 
 \item \verb|OmegaMin|
 
-    {\bf Type :} Double (\verb|-LargeValue| times the number of sites as a default.)
+    {\bf Type :} Double (\verb|-LargeValue| times the number of sites as default.)
     {\bf Description :} The lower limit of the real part of the frequency.
     
   \item \verb|OmegaMax|
 
-    {\bf Type :} Double (\verb|LargeValue| times the number of sites as a default.)
+    {\bf Type :} Double (\verb|LargeValue| times the number of sites as default.)
     {\bf Description :} The upper limit of the real part of the frequency.
 
   \item \verb|OmegaIm|
