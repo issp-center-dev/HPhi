@@ -96,7 +96,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \verb|"SpinGCCMA"|では\verb|"SpinGC"|と同じ計算を
 より速いアルゴリズム\footnote{現在論文執筆中。投稿後に掲載します。}を用いて行います。
 ただし、扱うことのできるモデルやMPI並列数に強い制約があります。
-以下の\verb|"Latice"|の項もご参照ください。
+以下の\verb|"Lattice"|の項もご参照ください。
 
 \item \verb|method|
   
@@ -109,6 +109,13 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 直接法による全固有状態計算,
 LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数固有状態の計算
 に対応します。
+
+後述のスペクトル計算において使用される手法もこのパラメーターで指定されます
+\verb|"CG"|とした場合には
+付属している$K\omega$ライブラリ\cite{komega}が呼び出され、
+シードスイッチ付きシフト双共役勾配法
+\cite{Frommer2003,doi:10.1143/JPSJ.77.114713}が適用されます。
+
 
 \item \verb|lattice|
 
@@ -721,6 +728,11 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
   \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
   \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
   反復が終了した時点で再計算用のデータをファイル出力する。
+  スペクトル計算において使用される手法はパラメーター\verb|method|で指定されます。
+  (\verb|method="CG"|とした場合には
+  付属している$K\omega$ライブラリ\cite{komega}が呼び出され、
+  シードスイッチ付きシフト双共役勾配法
+  \cite{Frommer2003,doi:10.1143/JPSJ.77.114713}が使われます。
 
 \item \verb|SpectrumType|
   

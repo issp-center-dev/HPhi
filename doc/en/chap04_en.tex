@@ -113,6 +113,11 @@ and the multiple eigenstates calculation by using the LOBCG method
 \cite{doi:10.1137/S1064827500366124,transactionJSCES2006},
 respectively.
 
+The scheme employed for the spectrum calculation is also specified with this parameter.
+If \verb|"CG"| is chosen, the shifted bi-conjugate gradient method \cite{Frommer2003}
+together with the seed-switch technique \cite{doi:10.1143/JPSJ.77.114713} is employed
+with the help of the $K\omega$ library \cite{komega}.
+
 \item \verb|lattice|
 
 {\bf Type :} String (choose from \verb|"Chain Lattice"|, \verb|"Square Lattice"|, 
@@ -813,6 +818,14 @@ the indices are specified as those of the Bogoliubov representation
   \verb|"Restart"| for starting the calculation with the
   previously written restart-file,
   \verb|"RestartSave"| for \verb|"Restart"| + \verb|"Save"|.
+
+  The scheme for the spectrum calculation is specified
+  by using the parameter \verb|method|.
+  If \verb|method="CG"| is chosen, the shifted bi-conjugate gradient method
+  \cite{Frommer2003}
+  together with the seed-switch technique
+  \cite{doi:10.1143/JPSJ.77.114713} is employed
+  with the help of the $K\omega$ library \cite{komega}.
   
 \item \verb|SpectrumType|
   
