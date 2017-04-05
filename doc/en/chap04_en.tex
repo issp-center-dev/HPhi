@@ -758,10 +758,8 @@ The interval of calculating correlation functions in the TPQ iteration is specif
 are specified with this keyword.
 \verb|"none"| indicates correlation functions will not be calculated.
 When \verb|outputmode="correlation"|,
-$\langle c_{i \sigma}^{\dagger}c_{i \sigma} \rangle$ is computed at all $i, \sigma$,
-and
-$\langle c_{i \sigma}^{\dagger}c_{i \sigma} c_{j \sigma'}^{\dagger}c_{j \sigma'} \rangle$
-is computed at all $i, j, \sigma, \sigma'$.
+the correlation function supported by the utility \verb|fourier| is computed.
+For more details, see the document in \verb|doc/fourier/|.
 If \verb|"full"| is selected,
 $\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle$ is computed at all $i, j, \sigma, \sigma'$,
 and

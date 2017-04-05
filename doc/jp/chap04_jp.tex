@@ -669,11 +669,9 @@ $10^{-{\tt LanczosEps}/2}$以下になったら収束したと判断します。
 
 {\bf 説明 :} 計算を行う相関関数を指定します。
 \verb|"none"|の場合は相関関数を計算しません。
-\verb|"correlation"|を指定した場合には、1体部分はすべての$i, \sigma$について
-$\langle c_{i \sigma}^{\dagger}c_{i \sigma} \rangle$を、
-2体部分はすべての$i, j, \sigma, \sigma'$について
-$\langle c_{i \sigma}^{\dagger}c_{i \sigma} c_{j \sigma'}^{\dagger}c_{j \sigma'} \rangle$
-を計算します。
+\verb|"correlation"|を指定した場合には、付属のユーティリティ
+\verb|fourier|でサポートするものに対応した相関関数を計算します。
+詳しくは\verb|doc/fourier/|内のマニュアルを参照してください。
 \verb|"full"|を指定した場合には、
 1体部分はすべての$i, j, \sigma, \sigma'$について
 $\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle$を、
