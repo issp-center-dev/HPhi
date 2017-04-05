@@ -57,7 +57,7 @@ J'=-0.5
 
 {\bf 形式 :} 文字列(\verb|"Fermion Hubbard"|, \verb|"Spin"|, \verb|"Kondo Lattice"|, 
 \verb|"Fermion HubbardGC"|, \verb|"SpinGC"|, \verb|"Kondo LatticeGC"|, 
-\verb|"SpinGCBoost"|のいずれか)
+\verb|"SpinGCCMA"|のいずれか)
 
 {\bf 説明 :} 計算対象の模型を指定します。上記の文字列はそれぞれ
 カノニカル集団のフェルミ粒子Hubbard模型
@@ -93,7 +93,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 グランドカノニカル集団のスピン模型[式(\ref{fml4_1_spin})]、
 グランドカノニカル集団の近藤格子模型[式(\ref{fml4_1_kondo})]に対応します。
 
-\verb|"SpinGCBoost"|では\verb|"SpinGC"|と同じ計算を
+\verb|"SpinGCCMA"|では\verb|"SpinGC"|と同じ計算を
 より速いアルゴリズム\footnote{現在論文執筆中。投稿後に掲載します。}を用いて行います。
 ただし、扱うことのできるモデルやMPI並列数に強い制約があります。
 以下の\verb|"Latice"|の項もご参照ください。
@@ -123,7 +123,7 @@ LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数
 梯子格子(Fig. \ref{fig_ladder})、
 カゴメ格子(Fig. \ref{fig_kagome})に対応します。
 
-\verb|method="SpinGCBoost"|では、
+\verb|method="SpinGCCMA"|では、
 このうち\verb|"Chain Lattice"|, \verb|"Honeycomb Lattice"|, 
 \verb|"Ladder"|, \verb|"Kagome"|に対応しています。
 
@@ -246,7 +246,7 @@ LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数
 
 これらの格子では、標準の単位胞(図中の黒の破線を参照)を用いて格子形状を指定する方法と、
 それらとは別の方向に格子ベクトルを取る方法が選択できます。
-ただし、\verb|model=SpinGCBoost|の時には前者のみが使えます。
+ただし、\verb|model=SpinGCCMA|の時には前者のみが使えます。
 また、両方を指定した場合には$\HPhi$を終了します。
 
 \begin{itemize}
@@ -333,7 +333,7 @@ $ gnuplot lattice.gp
 {\bf 形式 :} 実数
 
 {\bf 説明 :} スピン模型での縦磁場、横磁場、異方性パラメータを指定します。
-ただし異方性パラメータについては、\verb|model=SpinGCBoost|では使用できません。
+ただし異方性パラメータについては、\verb|model=SpinGCCMA|では使用できません。
 
 \end{itemize}
 
@@ -495,7 +495,7 @@ $ gnuplot lattice.gp
 {\bf 形式 :} 実数
 
 {\bf 説明 :} スピン模型での、次近接サイト間のスピン相互作用を指定します。
-ただし、蜂の巣格子またはカゴメ格子で\verb|model=SpinGCBoost|の場合には
+ただし、蜂の巣格子またはカゴメ格子で\verb|model=SpinGCCMA|の場合には
 まだ対応していません。
 また対角項について、\verb|J'x, J'y, J'z|を指定する代わりに
 パラメータ\verb|J'|を指定すると
@@ -934,7 +934,7 @@ CalcEigenVec 0
 0: Lanczos法\\
 1: TPQを利用した有限温度解析\\
 2: 全対角化\\
-3: LOBCG
+3: LOBCG法\\
 を選択することができます。
 
 \item  \verb|CalcModel|

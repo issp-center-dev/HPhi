@@ -59,7 +59,7 @@ We explain each keyword as follows.
 \item \verb|model|
 
 {\bf Type :} String (hoose from \verb|"Fermion Hubbard"|, \verb|"Spin"|, \verb|"Kondo Lattice"|, 
-\verb|"Fermion HubbardGC"|, \verb|"SpinGC"|, \verb|"Kondo LatticeGC"|, \verb|"SpinGCBoost"|)\footnote{GC=Grand Canonical}
+\verb|"Fermion HubbardGC"|, \verb|"SpinGC"|, \verb|"Kondo LatticeGC"|, \verb|"SpinGCCMA"|)\footnote{GC=Grand Canonical}
 
 {\bf Description :} The target model is specified with this parameter;
 the expressions above denote the canonical ensemble of the Fermion in the Hubbard model
@@ -94,7 +94,7 @@ and
 the grand canonical ensemble in the Kondo lattice model [Eqn. (\ref{fml4_1_kondo})],
 respectively.
 
-When \verb|model="SpinGCBoost"|,
+When \verb|model="SpinGCCMA"|,
 by using a more efficient algorithm\footnote{Y. Yamaji \textit{et. al.}, manuscript in preparation.}, 
 $\HPhi$ calculates a system that is the same as \verb|"SpinGC"|.
 However, supported models and MPI processes are highly limited.
@@ -129,7 +129,7 @@ and
 the Kagome Lattice(Fig. \ref{fig_kagome})
 respectively.
 
-In \verb|method="SpinGCBoost"|,
+In \verb|method="SpinGCCMA"|,
 only \verb|"Chain Lattice"|, \verb|"Honeycomb Lattice"|, 
 \verb|"Ladder"|, and \verb|"Kagome"| are supported.
 The limits of $L$, $W$, and the number of MPI processes ($N_{\rm proc}$) are as follows:
@@ -285,7 +285,7 @@ These vectors should be specified in the fractional coordinate.
 \end{itemize}
 
 If we use both these methods, $\HPhi$ stops.
-When \verb|model=SpinGCBoost|, we can use only the former.
+When \verb|model=SpinGCCMA|, we can use only the former.
 
 We can check the shape of the numerical cell
 by using a file \verb|lattice.gp|
@@ -369,7 +369,7 @@ $\HPhi$ will stop.
 {\bf Description :} (Spin model)
 The longitudinal magnetic field, transverse magnetic field, 
 and the single-site anisotropy parameter are specified with these parameters.
-The single-site anisotropy parameter is not available for \verb|model=SpinGCBoost|.
+The single-site anisotropy parameter is not available for \verb|model=SpinGCCMA|.
 
 \end{itemize}
 
@@ -565,7 +565,7 @@ are specified with this parameter.
 {\bf Description :} (Spin model)
 The second nearest neighbor exchange couplings are specified.
 However, for \verb|lattice = Honeycomb Lattice| and  \verb|lattice = Kagome|
-with \verb|model=SpinGCBoost|,
+with \verb|model=SpinGCCMA|,
 the second nearest neighbor exchange couplings are not available in the $Standard$ mode.
 If the simplified parameter \verb|J'| is specified, instead of
 \verb|J'x, J'y, J'z|,
