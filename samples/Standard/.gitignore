@@ -17,3 +17,7 @@ boost.def
 pairlift.def
 interall.def
 kpoints.dat
+Flct_rand*.dat
+CHECK_CoulombIntra.dat
+CHECK_Hund.dat
+CHECK_INTER_U.dat
