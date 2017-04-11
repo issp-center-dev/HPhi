@@ -40,9 +40,15 @@ struct DefineList{
   unsigned int  NsiteMPI;    /**< */
   unsigned int  Nup;    /**< Read from modpara in readdef */
   unsigned int  Ndown;    /**< */
-  int  Total2Sz;    /**< */
+  unsigned int  NupMPI;    /**< Read from modpara in readdef */
+  unsigned int  NdownMPI;    /**< */
+  unsigned int  NupOrg;    /**< Read from modpara in readdef */
+  unsigned int  NdownOrg;    /**< */
+
+    int  Total2Sz;    /**< */
   int  Total2SzMPI;    /**< */
   unsigned int  Ne;    /**< */
+  unsigned int  NeMPI;    /**< */
   unsigned int  Nsize;    /**< */
   unsigned int Lanczos_max;    /**< */
   int Lanczos_restart;
@@ -176,14 +182,15 @@ struct DefineList{
 
 
   //[s] For Spectrum
-  double dOmegaMax;
-  double dOmegaMin;
-  double dOmegaIm;
+  double complex dcOmegaMax;
+  double complex dcOmegaMin;
+  double complex dcOmegaOrg;
   int iNOmega;
   int iFlgSpecOmegaMax;
   int iFlgSpecOmegaMin;
-  int iFlgSpecOmegaIm;
+  int iFlgSpecOmegaOrg;
   int iFlgCalcSpec;
+  int iFlagListModified;
   /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
 
   //[e] For Spectrum
@@ -194,11 +201,20 @@ struct DefineList{
    * 2: restart (input and output restart vector) */
   int iReStart;
 
+    /**< MPI mode
+    * 0: butterfly
+    * 1: Parallel Interaction [to be supported]
+    */
+    int iFlgMPI;
+
+
 };
 
 struct CheckList{
   unsigned long int  idim_max; /**< */
   unsigned long int  idim_maxMPI; /**< */
+  unsigned long int idim_maxOrg; //For calcspectrum
+  unsigned long int  idim_maxMPIOrg; /**< */
   unsigned long int     sdim;    /**< */
   double   max_mem;  /**< */
 
@@ -209,6 +225,10 @@ struct LargeList{
   int itr;  /**< */
   long int iv;
   long int  i_max;
+  long int SizeOflist_2_1;
+  long int SizeOflist_2_2;
+  long int SizeOflistjb;
+
   double complex tmp_trans;
   double  complex  tmp_J;
   
@@ -232,11 +252,12 @@ struct LargeList{
   long unsigned int A_spin;
   long unsigned int B_spin;
   long unsigned int irght;
-  long unsigned int     ilft;
-  long unsigned int     ihfbit;
+  long unsigned int ilft;
+  long unsigned int ihfbit;
   long unsigned int isA_spin;
   long unsigned int  isB_spin;
   double complex      tmp_V;
+
 };
 
 struct PhysList{

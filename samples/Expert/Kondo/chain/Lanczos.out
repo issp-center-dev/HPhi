@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.2.0    
+           9@P~~~9@P             Version 2.0.0    
                                                                 
 
 
@@ -21,19 +21,25 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
-  Read File 'zlocspn.def' for LocSpin.
-  Read File 'zTrans.def' for Trans.
-  Read File 'zInterAll.def' for InterAll.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
   Read File 'greenone.def' for OneBodyG.
   Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
 
 ######  Definition files are correct.  ######
 
-  Read File 'zlocspn.def'.
-  Read File 'zTrans.def'.
-  Read File 'zInterAll.def'.
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
   Read File 'greenone.def'.
   Read File 'greentwo.def'.
+  Read File 'pair.def'.
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
@@ -134,8 +140,8 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   Accuracy check !!!
   LanczosEnergy = -1.26776213781765e+01 
   EnergyByVec   = -1.26105509490184e+01 
-  diff_ene      = 5.29045845094412e-03 
-  var           = 5.46538037952818e-03 
+  diff_ene      = 5.29045845094413e-03 
+  var           = 5.46538037952811e-03 
   Accuracy of Lanczos vectors is NOT enough
 
   Start: Calculate EigenVector by CG method.
@@ -145,9 +151,9 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   CG Accuracy check !!!
   LanczosEnergy = -1.26776213781765e+01
-  EnergyByVec   = -1.26776213781764e+01
-  diff_ene      = 4.20352553466720e-16
-  var           = 5.87595388872198e-17 
+  EnergyByVec   = -1.26776213781765e+01
+  diff_ene      = 0.00000000000000e+00
+  var           = 2.65554386996686e-16 
  
 
 ######  End  : Calculate Lanczos EigenVec.  ######

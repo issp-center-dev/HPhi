@@ -1,8 +1,8 @@
 W = 3
 L = 3
 model = "SpinGCboost"
-//method = "Lanczos"
-method = "TPQ"
+method = "Lanczos"
+//method = "TPQ"
 lattice = "Honeycomb lattice"
 J0x = -1.0
 J0y =  0.0

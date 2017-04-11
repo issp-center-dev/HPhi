@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.2.0    
+           9@P~~~9@P             Version 2.0.0    
                                                                 
 
 
@@ -21,19 +21,19 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
-  Read File 'zlocspn.def' for LocSpin.
-  Read File 'zTrans.def' for Trans.
-  Read File 'zInterAll.def' for InterAll.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'interall.def' for InterAll.
   Read File 'greenone.def' for OneBodyG.
   Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
 
 ######  Definition files are correct.  ######
 
-  Read File 'zlocspn.def'.
-  Read File 'zTrans.def'.
-  Read File 'zInterAll.def'.
+  Read File 'locspn.def'.
+  Read File 'interall.def'.
   Read File 'greenone.def'.
   Read File 'greentwo.def'.
+  Read File 'pair.def'.
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
@@ -83,7 +83,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   initial_mode=1 (random): iv = -1 i_max=81 k_exct =1 
 
   LanczosStep  E[1] E[2] E[3] E[4] Target:E[3] E_Max/Nsite
-  stp = 2 -2.9138343602 2.7352834600 xxxxxxxxxx xxxxxxxxx  0.0000000000 xxxxxxxxx 
+  stp = 2 -2.9138343602 2.7352834600 xxxxxxxxxx xxxxxxxxx  -nan xxxxxxxxx 
   stp = 4 -5.5252678447 -2.1173912609 1.7642744426 5.0617316082 1.7642744426 0.8436219347
   stp = 6 -7.0609688765 -4.6634592350 -1.9446529517 0.9248997211 -1.9446529517 0.9579500088
   stp = 8 -8.1060114153 -6.0860543822 -4.0707752754 -1.8071540252 -4.0707752754 0.9917929781

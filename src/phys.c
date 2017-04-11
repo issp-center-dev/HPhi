@@ -43,13 +43,13 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-void phys(struct BindStruct *X){
+void phys(struct BindStruct *X, unsigned long int neig){
 
     long unsigned int i,j,i_max;
     double tmp_N;
 
     i_max=X->Check.idim_max;
-    for(i=0;i<i_max;i++){
+    for (i = 0; i < neig; i++) {
       for(j=0;j<i_max;j++){
 	v0[j+1] =  L_vec[i][j];
       }
@@ -66,9 +66,11 @@ void phys(struct BindStruct *X){
 	fprintf(stderr, "Error: calc TwoBodyG.\n");
 	exitMPI(-1);
       }
-      if(expec_totalspin(X, v1)!=0){
-	fprintf(stderr, "Error: calc TotalSpin.\n");
-	exitMPI(-1);
+      if (X->Def.iCalcType == FullDiag) {
+        if (expec_totalspin(X, v1) != 0) {
+          fprintf(stderr, "Error: calc TotalSpin.\n");
+          exitMPI(-1);
+        }
       }
 
       if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==SpinGC){
@@ -78,12 +80,13 @@ void phys(struct BindStruct *X){
 	tmp_N  = X->Phys.num_up + X->Phys.num_down;
       }
 
-      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n",i,X->Phys.energy,tmp_N, X->Phys.sz,X->Phys.s2,X->Phys.doublon);
-      X->Phys.all_energy[i]   = X->Phys.energy;
-      X->Phys.all_doublon[i]  = X->Phys.doublon;
-      X->Phys.all_sz[i]       = X->Phys.sz;
-      X->Phys.all_s2[i]       = X->Phys.s2;
-      X->Phys.all_num_up[i]   = X->Phys.num_up;
-      X->Phys.all_num_down[i] = X->Phys.num_down;
-    }
+      if (X->Def.iCalcType == FullDiag || X->Def.iCalcType == CG)
+        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N, X->Phys.sz, X->Phys.s2, X->Phys.doublon);
+        X->Phys.all_energy[i]   = X->Phys.energy;
+        X->Phys.all_doublon[i]  = X->Phys.doublon;
+        X->Phys.all_sz[i]       = X->Phys.sz;
+        X->Phys.all_s2[i]       = X->Phys.s2;
+        X->Phys.all_num_up[i]   = X->Phys.num_up;
+        X->Phys.all_num_down[i] = X->Phys.num_down;
+      }
 }

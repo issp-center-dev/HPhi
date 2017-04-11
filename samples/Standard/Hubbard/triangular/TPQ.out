@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.2.0    
+           9@P~~~9@P             Version 2.0.0    
                                                                 
 
 
@@ -23,10 +23,10 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   Open Standard-Mode Inputfile StdFace2.def 
 
-  KEYWORD : method               | VALUE : tpq 
+  KEYWORD : method               | VALUE : TPQ 
   KEYWORD : w                    | VALUE : 4 
   KEYWORD : l                    | VALUE : 2 
-  KEYWORD : model                | VALUE : fermionhubbard 
+  KEYWORD : model                | VALUE : FermionHubbard 
   KEYWORD : lattice              | VALUE : triangular 
   KEYWORD : t                    | VALUE : 1.0 
   KEYWORD : u                    | VALUE : 4.0 
@@ -37,23 +37,61 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   @ Lattice Size & Shape
 
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Wlength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Llength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Lx = 0.50000     ######  DEFAULT VALUE IS USED  ######
+               Ly = 0.86603     ######  DEFAULT VALUE IS USED  ######
+           phase0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+           phase1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+
+  @ Super-Lattice setting
+
                 L = 2         
                 W = 4         
+           Height = 1           ######  DEFAULT VALUE IS USED  ######
+         Number of Cell = 8
 
   @ Hamiltonian 
 
                mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
                 U = 4.00000   
-               t0 = 1.00000   
-               t1 = 1.00000   
-               t2 = 1.00000   
+               t0 = 1.00000    0.00000   
+               t1 = 1.00000    0.00000   
+               t2 = 1.00000    0.00000   
                t' = 0.00000    0.00000     ######  DEFAULT VALUE IS USED  ######
                V' = 0.00000     ######  DEFAULT VALUE IS USED  ######
 
   @ Numerical conditions
 
        LargeValue = 16.00000    ######  DEFAULT VALUE IS USED  ######
-         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    locspn.def is written.
+      trans.def is written.
+    coulombintra.def is written.
+
+  @ Spectrum
+
+       SpectrumQW = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQL = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQH = 0.00000     ######  DEFAULT VALUE IS USED  ######
+     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######
+        pair.def is written.
+
+
+  @ CalcMod
+
+          Restart = none        ######  DEFAULT VALUE IS USED  ######
+   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######
+       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######
+         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######
+     calcmod.def is written.
+
+    CDataFileHead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
        initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
@@ -61,38 +99,37 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+           NOmega = 200         ######  DEFAULT VALUE IS USED  ######
+         OmegaMax = 128.00000   ######  DEFAULT VALUE IS USED  ######
+         OmegaMin = -128.00000  ######  DEFAULT VALUE IS USED  ######
+          OmegaIm = 0.16000     ######  DEFAULT VALUE IS USED  ######
             nelec = 8  
-      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
-
-######  Print Expert input files  ######
-
-    zlocspin.def is written.
-      zTrans.def is written.
-   zInterAll.def is written.
-    namelist.def is written.
-     calcmod.def is written.
      modpara.def is written.
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
     greenone.def is written.
     greentwo.def is written.
+    namelist.def is written.
 
 ######  Input files are generated.  ######
 
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
-  Read File 'zlocspn.def' for LocSpin.
-  Read File 'zTrans.def' for Trans.
-  Read File 'zInterAll.def' for InterAll.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombintra.def' for CoulombIntra.
   Read File 'greenone.def' for OneBodyG.
   Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
 
 ######  Definition files are correct.  ######
 
-  Read File 'zlocspn.def'.
-  Read File 'zTrans.def'.
-  Read File 'zInterAll.def'.
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombintra.def'.
   Read File 'greenone.def'.
   Read File 'greentwo.def'.
+  Read File 'pair.def'.
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
@@ -200,4 +237,4 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     step_i/total_step=1800/2000 
 ######  End  : TPQCalculation.  ######
 
-Finish: Elapsed time is 17 [s].
+Finish: Elapsed time is 21 [s].

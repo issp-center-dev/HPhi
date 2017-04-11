@@ -252,3 +252,23 @@ double NormMPI_dc(unsigned long int idim, double complex *_v1){
 
   return dnorm;
 }
+
+/*
+Conjgate vector product
+*/
+double complex VecProdMPI(
+  long unsigned int ndim,
+  double complex *v1,
+  double complex *v2)
+{
+  long unsigned int idim;
+  double complex prod;
+
+  prod = 0.0;
+#pragma omp parallel for default(none) shared(v1,v2,ndim) private(idim) reduction(+: prod)
+  for (idim = 1; idim <= ndim; idim++) prod += conj(v1[idim]) * v2[idim];
+  prod = SumMPI_dc(prod);
+
+  return(prod);
+}/*double complex vec_prod*/
+

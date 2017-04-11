@@ -8,54 +8,59 @@
 %----------------------------------------------------------
 \section{What is $\HPhi$?}
 Comparison between experimental observation and theoretical analysis is a crucial step
-in condensed-matter physics research. Temperature dependence of specific heat and
-magnetic susceptibility, for example, have been studied to extract nature of low energy
-excitations of and magnetic interactions among electrons, respectively, through comparison
-with theories such as Landau's Fermi liquid theory and Curie-Weiss law.
+in condensed-matter physics research. The tTemperature dependence of specific heat and
+magnetic susceptibility, for example, has been studied to extract the nature of low energy
+excitations of and magnetic interactions between electrons, respectively, through comparison
+with theories such as Landau's Fermi liquid theory and the Curie-Weiss law.
 
-For the flexible and quantitative comparison with experimental data, an exact diagonalization
-approach~\cite{Dagotto} is one of the most reliable numerical tools without any approximation or
-inspiration of genius. For last few decades, a numerical diagonalization package for quantum
-spin hamiltonians, TITPACK developed by Prof. Hidetoshi Nishimori in Tokyo Institute of Technology,
-has been widely used in the condensed-matter physics community. Nevertheless, limitation of
-computational resources had hindered the non-expert users from applying the package to
-quantum systems with large number of electrons or spins.
+For the flexible and quantitative comparison of theoretical and  experimental data,
+the exact diagonalization
+approach~\cite{Dagotto} is one of the most reliable numerical tools that requires no approximation or
+inspiration of genius. For the last few decades, a numerical diagonalization package for quantum
+spin Hamiltonians, TITPACK, developed by Prof. Hidetoshi Nishimori of Tokyo Institute of Technology,
+has been widely used in the condensed-matter physics community. Nevertheless, limited
+computational resources have hindered the ability of non-expert users to apply the package to
+quantum systems with a large number of electrons or spins.
 
-In contrast, recent and rapid development of parallel computing infrastructure opens up new
-avenues for user-friendly larger scale diagonalizations up to 18 site Hubbard clusters
+In contrast, the recent and rapid development of a parallel computing infrastructure has opened up new
+avenues for user-friendly larger scale diagonalizations up to 18-site Hubbard clusters
 or 36 $S$=$1/2$ quantum spins. In addition, recent advances in quantum statistical mechanics ~\cite{Imada1986,FTLanczos,Hams,Sugiura2012}
-enable us to calculate finite temperature properties of quantum many-body systems
-with computational costs similar to calculations of ground state properties,
-which also enables us to compare theoretical results for temperature dependence
-of, for example, specific heat and magnetic susceptibility with experimental results quantitatively~\cite{Yamaji2014}.
+allow the finite temperature properties of quantum many-body systems
+to be calculated at computational costs similar to those of the calculations of ground state properties,
+which also allows theoretical results for the temperature dependence
+of, for example, specific heat and magnetic susceptibility,
+to be compared with experimental results quantitatively~\cite{Yamaji2014}.
 To utilize the parallel computing infrastructure with narrow bandwidth and distributed-memory
 architectures, efficient, user-friendly, and highly parallelized diagonalization packages are highly desirable.
 
-$\HPhi$, a flexible diagonalization package for solving quantum lattice hamiltonians,
-has been developed to be such a descendant of the pioneering package TITPACK.
+$\HPhi$, a flexible diagonalization package for solving quantum lattice Hamiltonians,
+has been developed as a descendant of the pioneering package TITPACK.
 The Lanczos method for calculations of the ground state and a few excited states properties,
-and finite temperature calculations based on thermal pure quantum states~\cite{Sugiura2012} are implemented in
-the package $\HPhi$, with an easy-to-use and flexible user interface.
-By using $\HPhi$, you can analyze a wide range of quantum lattice hamiltonians including
+as well as finite temperature calculations based on thermal pure quantum states~\cite{Sugiura2012},
+are implemented in
+the $\HPhi$ package, with an easy-to-use and flexible user interface.
+By using $\HPhi$, you can analyze a wide range of quantum lattice Hamiltonians including
 simple Hubbard and Heisenberg models, multi-band extensions of the Hubbard model,
-exchange couplings that break SU(2) symmetry of quantum spins such as Dzyaloshinskii-Moriya
+exchange couplings that break the SU(2) symmetry of quantum spins, such as Dzyaloshinskii-Moriya
 and Kitaev interactions, and Kondo lattice models describing itinerant electrons coupled with
-quantum spins. $\HPhi$ calculates a variety of physical quantities such as internal energy at zero temperature or finite temperatures, temperature dependence of specific heat, charge/spin structure factors, and so on. A broad spectrum of users including experimental scientists is cordially welcome.
+quantum spins. $\HPhi$ calculates a variety of physical quantities, such as internal energy at zero temperature or finite temperatures, temperature dependence of specific heat, and charge/spin structure factors.
+A broad spectrum of users including experimental scientists is cordially welcome.
 
 \subsection{License}
 The distribution of the program package and the source codes for ${\mathcal H \Phi}$ follow GNU General Public License version 3 (GPL v3). 
 \subsection{Copyright}
-{\it \copyright 2015- The University of Tokyo} {\it  All rights reserved.}
+{\it \copyright 2015- The University of Tokyo.} {\it  All rights reserved.}
 %{\it \copyright 2015- T. Misawa, K. Yoshimi, M. Kawamura, Y. Yamaji, S. Todo and N. Kawashima.} {\it  All rights reserved.}\\
-This software is developed under the support of ``{\it Project for advancement of software usability in materials science }" by The Institute for Solid State Physics, The University of Tokyo. 
+This software was developed with the support of ``{\it Project for advancement of software usability in materials science}" of The Institute for Solid State Physics, The University of Tokyo. 
 %The copyright of this software belongs to The University of Tokyo.
 \subsection{Contributors}
 \label{subsec:contributors}
-This software is developed by following contributors.
+This software was developed by the following contributors.
 \begin{itemize}
-\item{ver.1.2 (released at 2016/11/14)}
-\item{ver.1.1 (released at 2016/5/13)}
-\item{ver.1.0 (released at 2016/4/5)}
+\item{ver.2.0 (released on 2017/4/11)}
+\item{ver.1.2 (released on 2016/11/14)}
+\item{ver.1.1 (released on 2016/5/13)}
+\item{ver.1.0 (released on 2016/4/5)}
 \begin{itemize}
 	\item{\bf Developers}
 	\begin{itemize}
@@ -71,9 +76,9 @@ This software is developed by following contributors.
 	\end{itemize}
 \end{itemize}
 
-\item{ver.0.3 (released at 2016/2/24)}
-\item{ver.0.2 (released at 2015/12/28)}
-\item{ver.0.1 (released at 2015/10/09)}
+\item{ver.0.3 (released on 2016/2/24)}
+\item{ver.0.2 (released on 2015/12/28)}
+\item{ver.0.1 (released on 2015/10/09)}
 \begin{itemize}
 	\item{\bf Developers}
 	\begin{itemize}
@@ -94,11 +99,12 @@ This software is developed by following contributors.
 \end{itemize}
 
 \section{Operating environment}
- $\HPhi$ is tested in the following platforms:
+ $\HPhi$ was tested on the following platforms:
 
 \begin{itemize}
-\item The supercomputer system-B ``sekirei'' and system-C ``maki'' in ISSP
-\item Linux PC + intel compiler
+\item The supercomputer system-B ``sekirei'' in ISSP
+\item Fujitsu Fx-10 and K computer
+\item Linux PC + Intel compiler
 \item Linux PC + gcc
-\item Mac + gcc
+\item Mac + gcc.
 \end{itemize}

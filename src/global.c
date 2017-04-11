@@ -51,6 +51,9 @@ const char* cFileNameOutputEigen="%s_eigenvec_%d_rank_%d.dat";
 const char* cFileNameInputEigen="%s_eigenvec_%d_rank_%d.dat";
 const char* cFileNameCalcDynamicalGreen="%s_DynamicalGreen.dat";
 const char* cFileNameTridiagonalMatrixComponents="%s_TMComponents.dat";
+const char* cFileNameLanczosOutputVector="tmpvec_rank_%d.dat";
+const char* cFileNameLanczosInputVector="tmpvec_rank_%d.dat";
+
 
 //For TPQ
 const char* cFileNameSSRand="SS_rand%d.dat";

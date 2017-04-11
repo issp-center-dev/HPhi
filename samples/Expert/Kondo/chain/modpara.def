@@ -14,6 +14,10 @@ initial_iv     -1
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
-LargeValue     6.000000000000000e+00    
+LargeValue     6.500000000000000e+00    
 NumAve         5    
 ExpecInterval  20   
+NOmega         200  
+OmegaMax       5.200000000000000e+01    
+OmegaMin       -5.200000000000000e+01   
+OmegaIm        6.000000000000000e-02    

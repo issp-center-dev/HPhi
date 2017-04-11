@@ -14,7 +14,6 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcSpectrumByTPQ.h"
-#include "CalcSpectrumByLanczos.h"
 #include "Lanczos_EigenValue.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -135,9 +134,10 @@ int CalcSpectrumByTPQ(
     double *tmp_E;
     double complex dctmp_Spectrum;
     int stp;
+    size_t byte_size;
 
     //Read Ene, temp, C
-    if(!ReadTPQData(X, &dene, &dtemp, &dspecificHeat)==TRUE){
+    if(ReadTPQData(X, &dene, &dtemp, &dspecificHeat)!=TRUE){
         return FALSE;
     }
 
@@ -150,17 +150,18 @@ int CalcSpectrumByTPQ(
         if (childfopenALL(sdt, "rb", &fp) != 0) {
             exitMPI(-1);
         }
-        fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
-        fread(&i_max, sizeof(long int), 1, fp);
+        byte_size = fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
+        byte_size = fread(&i_max, sizeof(long int), 1, fp);
         if(i_max != X->Bind.Check.idim_max){
             fprintf(stderr, "Error: A size of Inputvector is incorrect.\n");
             exitMPI(-1);
         }
-        fread(v0, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-        fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+        byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+        byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
         fclose(fp);
         fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
+        if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
     }
 
     //Read diagonal components
@@ -168,8 +169,17 @@ int CalcSpectrumByTPQ(
        X->Bind.Def.iFlgCalcSpec ==RECALC_FROM_TMComponents_VEC||
        X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC)
     {
-        iret=ReadTMComponents(X, &dnorm, &liLanczosStp);
-        if(!iret ==TRUE){
+        int iFlgTMComp=0;
+        if(X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC ||
+           X->Bind.Def.iFlgCalcSpec ==  RECALC_FROM_TMComponents_VEC)
+        {
+            iFlgTMComp=0;
+        }
+        else{
+            iFlgTMComp=1;
+        }
+        iret=ReadTMComponents(&(X->Bind), &dnorm, &liLanczosStp, iFlgTMComp);
+        if(iret !=TRUE){
             fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
             return FALSE;
         }
@@ -206,7 +216,7 @@ int CalcSpectrumByTPQ(
         }
         fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
-        OutputTMComponents(X, alpha,beta, dnorm, liLanczosStp);
+        OutputTMComponents(&(X->Bind), alpha,beta, dnorm, liLanczosStp);
     }//X->Bind.Def.iFlgCalcSpec == RECALC_NOT || RECALC_FROM_TMComponents_VEC
 
     stp=liLanczosStp;

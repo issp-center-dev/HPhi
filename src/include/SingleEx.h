@@ -16,50 +16,10 @@
 #pragma once
 #include "Common.h"
 
-  double complex GC_Ajt(
-          long unsigned int j,
-          double complex *tmp_v0,
-          double complex *tmp_v1,
-          long unsigned int is1_spin,
-          double complex tmp_V,
-          long unsigned int *tmp_off
-  );
-
-  double complex GC_Cis(
-          long unsigned int j,
-          double complex *tmp_v0,
-          double complex *tmp_v1,
-          long unsigned int is1_spin,
-          double complex tmp_V,
-          long unsigned int *tmp_off
-  );
-
-  double complex X_GC_Cis_MPI(
-				       int org_isite,
-				       int org_ispin,
-				       double complex tmp_trans,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  unsigned long int idim_max,
-  double complex *tmp_v1buf,
-  long int *Tpow 
-  );
-
-  double complex X_GC_Ajt_MPI(
-				       int org_isite,
-				       int org_ispin,
-				       double complex tmp_trans,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  unsigned long int idim_max,
-  double complex *tmp_v1buf,
-  long int *Tpow 
-  ); 
-
 
 int GetSingleExcitedState
 (
  struct BindStruct *X,
  double complex *tmp_v0, /**< [out] Result v0 = H v1*/
   double complex *tmp_v1 /**< [in] v0 = H v1*/
- );
+);

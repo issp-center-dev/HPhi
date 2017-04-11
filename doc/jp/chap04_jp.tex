@@ -57,7 +57,7 @@ J'=-0.5
 
 {\bf 形式 :} 文字列(\verb|"Fermion Hubbard"|, \verb|"Spin"|, \verb|"Kondo Lattice"|, 
 \verb|"Fermion HubbardGC"|, \verb|"SpinGC"|, \verb|"Kondo LatticeGC"|, 
-\verb|"SpinGCBoost"|のいずれか)
+\verb|"SpinGCCMA"|のいずれか)
 
 {\bf 説明 :} 計算対象の模型を指定します。上記の文字列はそれぞれ
 カノニカル集団のフェルミ粒子Hubbard模型
@@ -93,20 +93,29 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 グランドカノニカル集団のスピン模型[式(\ref{fml4_1_spin})]、
 グランドカノニカル集団の近藤格子模型[式(\ref{fml4_1_kondo})]に対応します。
 
-\verb|"SpinGCBoost"|では\verb|"SpinGC"|と同じ計算を
+\verb|"SpinGCCMA"|では\verb|"SpinGC"|と同じ計算を
 より速いアルゴリズム\footnote{現在論文執筆中。投稿後に掲載します。}を用いて行います。
 ただし、扱うことのできるモデルやMPI並列数に強い制約があります。
-以下の\verb|"Latice"|の項もご参照ください。
+以下の\verb|"Lattice"|の項もご参照ください。
 
 \item \verb|method|
   
-{\bf 形式 :} 文字列(\verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|のいずれか)
+  {\bf 形式 :} 文字列(\verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|,
+  \verb|"CG"|のいずれか)
 
 {\bf 説明 :} 実行する計算の種類を指定します。
 上記の文字列はそれぞれランチョス法による少数固有状態の計算, 
 熱力学的純粋状態を用いた有限温度計算, 
-直接法による全固有状態計算
+直接法による全固有状態計算,
+LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数固有状態の計算
 に対応します。
+
+後述のスペクトル計算において使用される手法もこのパラメーターで指定されます
+\verb|"CG"|とした場合には
+付属している$K\omega$ライブラリ\cite{komega}が呼び出され、
+シードスイッチ付きシフト双共役勾配法
+\cite{Frommer2003,doi:10.1143/JPSJ.77.114713}が適用されます。
+
 
 \item \verb|lattice|
 
@@ -121,7 +130,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 梯子格子(Fig. \ref{fig_ladder})、
 カゴメ格子(Fig. \ref{fig_kagome})に対応します。
 
-\verb|method="SpinGCBoost"|では、
+\verb|method="SpinGCCMA"|では、
 このうち\verb|"Chain Lattice"|, \verb|"Honeycomb Lattice"|, 
 \verb|"Ladder"|, \verb|"Kagome"|に対応しています。
 
@@ -192,11 +201,6 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
   \end{center}
 \end{figure}
 
-{\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
-
-{\bf 説明 :} スピン模型での局在スピンの大きさ$S$の2倍を指定します。
-(例/ $1/2$スピンならば\verb|1|)
-
 \end{itemize}
 
 \subsection{格子に関するパラメーター}
@@ -249,7 +253,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 
 これらの格子では、標準の単位胞(図中の黒の破線を参照)を用いて格子形状を指定する方法と、
 それらとは別の方向に格子ベクトルを取る方法が選択できます。
-ただし、\verb|model=SpinGCBoost|の時には前者のみが使えます。
+ただし、\verb|model=SpinGCCMA|の時には前者のみが使えます。
 また、両方を指定した場合には$\HPhi$を終了します。
 
 \begin{itemize}
@@ -336,7 +340,7 @@ $ gnuplot lattice.gp
 {\bf 形式 :} 実数
 
 {\bf 説明 :} スピン模型での縦磁場、横磁場、異方性パラメータを指定します。
-ただし異方性パラメータについては、\verb|model=SpinGCBoost|では使用できません。
+ただし異方性パラメータについては、\verb|model=SpinGCCMA|では使用できません。
 
 \end{itemize}
 
@@ -498,17 +502,52 @@ $ gnuplot lattice.gp
 {\bf 形式 :} 実数
 
 {\bf 説明 :} スピン模型での、次近接サイト間のスピン相互作用を指定します。
-ただし、蜂の巣格子またはカゴメ格子で\verb|model=SpinGCBoost|の場合には
+ただし、蜂の巣格子またはカゴメ格子で\verb|model=SpinGCCMA|の場合には
 まだ対応していません。
 また対角項について、\verb|J'x, J'y, J'z|を指定する代わりに
 パラメータ\verb|J'|を指定すると
 \verb|J'x = J'y = J'z = J'|が代入されます。
 \verb|J'|を指定した上で\verb|J'x, J'y, J'z|も指定した場合は$\HPhi$を終了します。
+
+\item \verb|phase0|, \verb|phase1|
+
+  {\bf 形式 :} 複素数(デフォルトでは\verb|1.0|)
+  
+  {\bf 説明 :} 計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます。
+  $\vec{a}_0$方向、$\vec{a}_1$方向それぞれ別の位相因子を用いることが出来ます。
+  １次元系では\verb|phase0|のみ使用できます。
+  例えば、$i$サイトから$j$サイトへのホッピングで、
+  正の方向に境界をまたいだ場合には次のようになります。
+  \begin{align}
+    \exp(i \times {\rm phase0}) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
+    + \exp(-i \times {\rm phase0}) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
+  \end{align}
+
 \end{itemize}
 
 \subsection{計算条件のパラメーター}
 
 \begin{itemize}
+\item \verb|2S|
+
+{\bf 形式 :} 正の整数(デフォルト値は\verb|1|)
+
+{\bf 説明 :} スピン模型での局在スピンの大きさ$S$の2倍を指定します。
+(例/ $1/2$スピンならば\verb|1|)
+
+\item \verb|Restart|
+
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
+  \verb|"RestartSave"|のいずれか。デフォルトは\verb|"None"|)
+
+  {\bf 説明 :} 再計算に関する設定を行う。
+  \verb|"None"|では再計算に関連するファイル出力をしない。
+  \verb|"Save"|では一から計算を始めて、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
+  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+
 \item \verb|Lanczos_max|
 
 {\bf 形式 :} 整数(デフォルト値は\verb|2000|)
@@ -548,14 +587,20 @@ $ gnuplot lattice.gp
 
 {\bf 形式 :} 整数(デフォルト値は\verb|1|)
 
-{\bf 説明 :} エネルギーの低いものから数えて、何番目の固有状態を計算するかを指定します。
+{\bf 説明 :}
+\verb|method="Lancoz"|ではエネルギーの低いものから数えて、
+何番目の固有状態を計算するかを指定します。
+\verb|method="CG"|の時には求める固有状態の本数を指定します。
 
 \item \verb|LanczosEps|
 
 {\bf 形式 :} 整数(デフォルト値は\verb|14|)
 
 {\bf 説明 :} ランチョスの収束判定条件を指定します。
-ひとつ前のステップの固有値との相対誤差が, $10^{-{\tt LanczosEps}}$以下になったら収束したと判断します。
+ひとつ前のステップの固有値との相対誤差が,
+$10^{-{\tt LanczosEps}}$以下になったら収束したと判断します。
+\verb|method="CG"|の時には残差ベクトルの2-ノルムが
+$10^{-{\tt LanczosEps}/2}$以下になったら収束したと判断します。
 
 \item \verb|LancczosTarget|
 
@@ -631,11 +676,9 @@ $ gnuplot lattice.gp
 
 {\bf 説明 :} 計算を行う相関関数を指定します。
 \verb|"none"|の場合は相関関数を計算しません。
-\verb|"correlation"|を指定した場合には、1体部分はすべての$i, \sigma$について
-$\langle c_{i \sigma}^{\dagger}c_{i \sigma} \rangle$を、
-2体部分はすべての$i, j, \sigma, \sigma'$について
-$\langle c_{i \sigma}^{\dagger}c_{i \sigma} c_{j \sigma'}^{\dagger}c_{j \sigma'} \rangle$
-を計算します。
+\verb|"correlation"|を指定した場合には、付属のユーティリティ
+\verb|fourier|でサポートするものに対応した相関関数を計算します。
+詳しくは\verb|doc/fourier/|内のマニュアルを参照してください。
 \verb|"full"|を指定した場合には、
 1体部分はすべての$i, j, \sigma, \sigma'$について
 $\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle$を、
@@ -644,6 +687,96 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 を計算します。
 スピン系の演算子はBogoliubov表現により生成消滅演算子で表されています。
 詳しくは\ref{sec_bogoliubov_rep}をご覧ください。
+
+\item \verb|InitialVecType|
+
+  {\bf 形式 :} 文字 (\verb|"C"|, \verb|"R"|のいずれか。
+  デフォルトは\verb|"C"|)
+
+  {\bf 説明 :} 固有ベクトルの初期値の型を指定する。
+  \verb|C|では複素数型、\verb|R|では実数型とする。
+
+\item \verb|EigenVecIO|
+  
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Out"|, \verb|"In"|のいずれか。
+  デフォルトは\verb|"None"|)
+
+  {\bf 説明 :} 固有ベクトルの入出力を指定する。
+  \verb|"None"|では固有ベクトルの入出力を行わない。
+  \verb|"Out"|では求めた固有ベクトルをファイルに出力する。
+  \verb|"In"|では固有ベクトルをファイルから取り出し、
+  その後の計算(動的グリーン関数など)を行う。
+
+\end{itemize}
+
+\subsection{動的グリーン関数の計算に関するパラメーター}
+
+\begin{itemize}
+\item \verb|CalcSpec|
+  
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Normal"|, \verb|"NoIteration"|,  
+  \verb|"Save"|, \verb|"Restart"|, \verb|"RestartSave"|。デフォルトは\verb|"None"|)
+
+  {\bf 説明 :} 動的グリーン関数の計算に関する設定を行う。
+  \verb|"None"|では動的グリーン関数を計算しない。
+  \verb|"Normal"|では一から動的グリーン関数の計算を始める。
+  \verb|"NoIteration"|では、前回の反復回数と同じところまで反復させる。
+  このとき、ハミルトニアン-ベクトル積演算は行われないため、
+  計算コストは非常に軽いが、十分な精度が出せない場合がある。
+  \verb|"Save"|では一から計算を始めて、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
+  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
+  反復が終了した時点で再計算用のデータをファイル出力する。
+  スペクトル計算において使用される手法はパラメーター\verb|method|で指定されます。
+  (\verb|method="CG"|とした場合には
+  付属している$K\omega$ライブラリ\cite{komega}が呼び出され、
+  シードスイッチ付きシフト双共役勾配法
+  \cite{Frommer2003,doi:10.1143/JPSJ.77.114713}が使われます。
+
+\item \verb|SpectrumType|
+  
+  {\bf 形式 :} 文字列(\verb|"SzSz"|, \verb|"S+S-"|, \verb|"Density"|,  
+  \verb|"up"|, \verb|"down"|のいずれか。デフォルトは\verb|"SzSz"|)
+
+  {\bf 説明 :} 計算する動的グリーン関数の種類を指定する。
+  \verb|"SzSz"|では$\langle {\hat S}_{z q} {\hat S}_{z q}\rangle$、
+  \verb|"S+S-"|では$\langle {\hat S}^{+}_{q} {\hat S}^{-}_{q}\rangle$、
+  \verb|"Density"|では$\langle {\hat n}_{q} {\hat n}_{q}\rangle$、
+  \verb|"up"|では$\langle {\hat c}^{\dagger}_{q \uparrow} {\hat c}_{q \uparrow}\rangle$、
+  \verb|"down"|では$\langle {\hat c}^{\dagger}_{q \downarrow} {\hat c}_{q \downarrow}\rangle$
+  となる。
+
+\item \verb|SpectrumQW|, \verb|SpectrumQL|
+  
+  {\bf 形式 :} 実数(デフォルトはともに\verb|0.0|)
+
+  {\bf 説明 :} 計算する動的グリーン関数の波数を
+  Fractional coordinateで指定する。
+  逆格子ベクトルはFigs.
+  \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
+  \ref{fig_ladder}, \ref{fig_kagome}
+  に表されている格子ベクトルと対応するものとなる。
+
+\item \verb|OmegaMin|
+
+    {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|$\times$サイト数)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の下限。
+    
+  \item \verb|OmegaMax|
+
+    {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|$\times$サイト数)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の上限。
+
+  \item \verb|OmegaIm|
+
+    {\bf 形式 :} 実数(デフォルトは\verb|0.01*LargeValue|)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数の虚部。
+
+  \item \verb|NOmega|
+  
+    {\bf 形式 :} 正の整数(デフォルトは\verb|200|)
+    {\bf 説明 :} 計算する動的グリーン関数の振動数のグリッド数。
 
 \end{itemize}
 
@@ -811,6 +944,7 @@ CalcEigenVec 0
 0: Lanczos法\\
 1: TPQを利用した有限温度解析\\
 2: 全対角化\\
+3: LOBCG法\\
 を選択することができます。
 
 \item  \verb|CalcModel|
@@ -1028,6 +1162,7 @@ ExpecInterval  20
 
 {\bf 説明 :} Lanczos法で求める固有ベクトルの番号を指定する整数。
 例えば、1なら基底状態のベクトル、2なら第一励起状態のベクトルを求めます。
+\verb|method="CG"|では、求める固有ベクトルの本数を指定します。
 %   \verb|nvec| $>=$ \verb|exct| とする必要があります。
 
 \item   \verb|LanczosEps|
@@ -1035,7 +1170,10 @@ ExpecInterval  20
 {\bf 形式 :} int型 (自然数)
 
 {\bf 説明 :} Lanczos法の収束判定条件を指定する整数。
-一つ前のステップの固有値との相対誤差が, $10^{- \verb|LanczosEps|}$以下になった場合に収束したと判定します。
+一つ前のステップの固有値との相対誤差が,
+$10^{- \verb|LanczosEps|}$以下になった場合に収束したと判定します。
+\verb|method="CG"|では、残差ベクトルの2-ノルムが
+$10^{- \verb|LanczosEps|/2}$以下になった場合に収束したと判定します。
 
  \item  \verb|LanczosTarget| 
    
@@ -1062,29 +1200,41 @@ ExpecInterval  20
 {\bf 説明 :} (TPQ法のみで使用)相関関数の計算を何回のTPQステップおきに行うかの指定する整数。
 頻度を上げると計算コストが増大するので注意してください。
 
-\item \verb|OmegaMax|
+\item \verb|OmegaOrg|
 
-{\bf 形式 :} double型 (実数)
+{\bf 形式 :} complex型 (複素数)
 
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の実部の最大値$\omega_{\rm max}$を指定する実数。}
-
-\item \verb|OmegaMin|
-
-{\bf 形式 :} double型 (実数)
-
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の実部の最小値$\omega_{\rm min}$を指定する実数。}
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の中心点を指定します。
+スペース区切りで実部、虚部の順に指定し、虚部がない場合は実数として扱います。}
 
 \item \verb|OmegaIm|
 
 {\bf 形式 :} double型 (実数)
 
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の虚部$\eta$を指定する実数。}
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の中心点の虚部を指定します。
+中心点\verb|OmegaOrg|が指定されている場合は\verb|OmegaOrg|に虚部\verb|OmegaIm|を加えます。}
+
+\item \verb|OmegaMax|
+
+{\bf 形式 :} complex型 (複素数)
+
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の終点を指定します。
+終点は\verb|OmegaOrg|$+$\verb|OmegaMax|で与えられます。
+スペース区切りで実部、虚部の順に指定し、虚部がない場合は実数として扱います。}
+
+\item \verb|OmegaMin|
+
+{\bf 形式 :} complex型 (複素数)
+
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数$\omega$の始点を指定します。
+終点は\verb|OmegaOrg|$+$\verb|OmegaMin|で与えられます。
+スペース区切りで実部、虚部の順に指定し、虚部がない場合は実数として扱います。}
  
 \item \verb|NOmega|
 
 {\bf 形式 :} int型 (自然数)
 
-{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数の刻み幅$\Delta \omega = (\omega_{\rm max}-\omega_{\rm min} )/N_{\omega}$を与えるための整数。振動数は$z_n=\omega_{\rm min} + \Delta \omega \times n+ i\eta$で与えられます。} 
+{\bf 説明 :} {(動的グリーン関数の計算で使用)動的グリーン関数を計算する際の振動数の刻み幅$\Delta \omega = ($ \verb|OmegaMax|- \verb|OmegaMin|$)/N_{\omega}$を与えるための整数。振動数は$z_n=$\verb|OmegaOrg|$+$\verb|OmegaMax|$+ \Delta \omega \times n$で与えられます。} 
  \end{itemize}
 
 
@@ -1604,7 +1754,7 @@ NHund 6
 \subsection{PairHop指定ファイル}
 PairHopカップリングをハミルトニアンに付け加えます{ ($S=1/2$の系でのみ使用可能)}。付け加える項は以下で与えられます。
 \begin{equation}
-H+=\sum_{i,j}J_{ij}^{\rm Pair} c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}
+H+=\sum_{i,j}J_{ij}^{\rm Pair} (c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarrow}^{\dag}c_{j  \downarrow}+h.c.)
 \end{equation}
 以下にファイル例を記載します。
 
@@ -1612,22 +1762,16 @@ H+=\sum_{i,j}J_{ij}^{\rm Pair} c_ {i \uparrow}^{\dag}c_{j\uparrow}c_{i \downarro
 \begin{screen}
 \begin{verbatim}
 ====================== 
-NPairhop 12  
+NPairhop 6
 ====================== 
 ========Pairhop ====== 
 ====================== 
    0     1  0.50000
-   1     0  0.50000  
    1     2  0.50000
-   2     1  0.50000
    2     3  0.50000
-   3     2  0.50000
    3     4  0.50000
-   4     3  0.50000
    4     5  0.50000
-   5     4  0.50000
    5     0  0.50000
-   0     5  0.50000
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -1674,7 +1818,6 @@ NPairhop 12
 本ファイルを使用するにあたってのルールは以下の通りです。
 \begin{itemize}
 \item 行数固定で読み込みを行う為、ヘッダの省略はできません。
-\item 成分が重複して指定された場合にはエラー終了します。
 \item $[$int01$]$と定義されているPairHopカップリングの総数が異なる場合はエラー終了します。
 \item $[$int02$]$-$[$int03$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
 \end{itemize}
@@ -2105,7 +2248,7 @@ NCisAjsCktAltDC        576
 \newpage
 \subsection{{SingleExcitation指定ファイル}}
 \label{Subsec:singleexcitation}
-一体励起状態を作成するための演算子$S_{i\sigma_1}c_{i\sigma_1}(S_{i\sigma_1}c_{i\sigma_1}^{\dagger})$を定義します。以下にファイル例を記載します。
+一体励起状態を作成するための演算子$c_{i\sigma_1}(c_{i\sigma_1}^{\dagger})$を定義します。以下にファイル例を記載します。
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2176,7 +2319,7 @@ NSingle         24
 
  {\bf 形式 :} double型 (空白不可)
 
-{\bf 説明 :}$S_{i\sigma_1}$の実部を$[$double01$]$、虚部を$[$double02$]$でそれぞれ指定します。
+{\bf 説明 :}$c_{i\sigma_1}(c_{i\sigma_1}^{\dag})$の実部を$[$double01$]$、虚部を$[$double02$]$でそれぞれ指定します。
 
 \end{itemize}
 
@@ -2192,7 +2335,7 @@ NSingle         24
 \newpage
 \subsection{{PairExcitation指定ファイル}}
 \label{Subsec:pairexcitation}
-二体励起状態を作成するための演算子$S_{i\sigma_1j\sigma_2}c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(S_{i\sigma_1j\sigma_2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$を定義します。なお、$c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$と$c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$を混同することは出来ません。また、$S_z$保存の系に対しては$\sigma_1=\sigma_2$とする必要があります。
+二体励起状態を作成するための演算子$c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$を定義します。なお、$c_{i\sigma_1}c_{j\sigma_2}^{\dagger}$と$c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$を混同することは出来ません。また、$S_z$保存の系に対しては$\sigma_1=\sigma_2$とする必要があります。
 以下にファイル例を記載します。
 
 \begin{minipage}{12.5cm}
@@ -2264,7 +2407,7 @@ NPair         24
 
  {\bf 形式 :} double型 (空白不可)
 
-{\bf 説明 :}$S_{i\sigma_1j\sigma_2}$の実部を$[$double01$]$、虚部を$[$double02$]$でそれぞれ指定します。
+{\bf 説明 :} $ c_{i\sigma_1}c_{j\sigma_2}^{\dagger} ( c_{i\sigma_1}^{\dagger}c_{j\sigma_2})$の実部を$[$double01$]$、虚部を$[$double02$]$でそれぞれ指定します。
 
 \end{itemize}
 
@@ -2813,8 +2956,10 @@ t_itr=275 0.000000
 \newpage
 \subsection{energy.dat}
 \label{subsec:energy.dat}
-(Lanczos法のみ) Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギー、ダブロン{と$\langle S_z \rangle$}を出力します。
+(Lanczos法、LOBCG法のみ) Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギー、ダブロン{と$\langle S_z \rangle$}を出力します。
 以下にファイル例を記載します。\\
+
+\verb|method="Lanczos"|の場合
 
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -2822,6 +2967,22 @@ t_itr=275 0.000000
 Energy  -7.1043675920 
 Doublon  0.4164356536 
 Sz  0.0000000000 
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\verb|method="CG"|の場合
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+State 0
+  Energy  -7.1043675920 
+  Doublon  0.4164356536 
+  Sz  0.0000000000 
+
+State 1
+:
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -2865,7 +3026,9 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$はサ
 
 \newpage
 \subsection{Lanczos\_Step.dat}
-(Lanczos法でのみ出力) Lanczos法で固有ベクトルを求めている際のログを出力します。以下にファイル例を示します。\\
+(Lanczos法、LOBCG法でのみ出力) 固有ベクトルを求めている際のログを出力します。以下にファイル例を示します。\\
+
+\verb|method="Lanczos"|の場合
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3312,7 +3475,7 @@ OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajs.dat
    \item{TPQ法:} \#\#\_cisajs\_set??step\%\%.dat
-   \item{全対角化法:}  \#\#\_cisajs\_eigen{\&\&}.dat
+   \item{全対角化法、LOBCG法:}  \#\#\_cisajs\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
 
@@ -3372,7 +3535,7 @@ TwoBodyGで指定された二体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajscktalt.dat
    \item{TPQ法:} \#\#\_cisajscktalt\_set??step\%\%.dat
-   \item{全対角化法:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
+   \item{全対角化法、LOBCG法:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
 

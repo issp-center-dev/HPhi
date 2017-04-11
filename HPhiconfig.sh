@@ -4,120 +4,115 @@ if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo "Usage:"
     echo "./HPhiconfig.sh system_name"
     echo " system_name should be chosen from below:"
-    echo "     sekirei : ISSP system-B"
-    echo "        maki : ISSP system-C"
-    echo "          sr : SR16000"
-    echo "       intel : Intel compiler + Linux PC"
-    echo " mpicc-intel : Intel compiler + Linux PC + mpicc"
-    echo "         gcc : GCC + Linux"
-    echo "   mpicc-gcc : GCC + Linux + mpicc"
-    echo "     gcc-mac : GCC + Mac"
-    echo "      manual : Manual configuration. See below."
+    echo "         sekirei : ISSP system-B (Intel + SGIMPT)"
+    echo "         fujitsu : ISSP system-C (FX10)"
+    echo "              sr : SR16000"
+    echo "           intel : Intel compiler + Linux PC"
+    echo "   intel-openmpi : Intel compiler + OpenMPI"
+    echo "     intel-mpich : Intel compiler + MPICH2"
+    echo "  intel-intelmpi : Intel compiler + IntelMPI"
+    echo "             gcc : GCC"
+    echo "     gcc-openmpi : GCC + OpenMPI"
+    echo "       gcc-mpich : GCC + MPICH2"
+    echo "         gcc-mac : GCC + Mac"
     echo ""
-    echo "To configure manually HPhi, please type, for example,  "
-    echo "./HPhiconfig.sh CC=icc LAPACK_FLAGS=\"-Dlapack -mkl=parallel\" \\"
-    echo "   FLAGS=\"-qopenmp  -O3 -xCORE-AVX2 -mcmodel=large -shared-intel\""
-    echo " where"
-    echo "            CC : Compilation command for C"
-    echo "  LAPACK_FLAGS : Compile option for LAPACK"
-    echo "         FLAGS : Other Compilation options"
+    echo "Then src/make.sys is generated."
+    echo "  Variables in src/make.sys"
+    echo "              CC : C complier"
+    echo "             F90 : fortran compiler"
+    echo "          CFLAGS : C compiler options"
+    echo "          FFLAGS : fortran compiler options"
+    echo "            LIBS : Linker option"
     echo ""
 else
     if [ ${1} = "sekirei" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
-LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -qopenmp -O3 -ipo -xHOST -mcmodel=large -shared-intel -D MPI -g -traceback
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
+LIBS = -mkl -lifcore
 EOF
-    elif [ ${1} = "maki" ]; then
+    elif [ ${1} = "intel-mpich" ]; then
         cat > src/make.sys <<EOF
-CC = mpifccpx
-LAPACK_FLAGS = -Dlapack -SSL2BLAMP
-FLAGS = -Kfast,openmp,SPARC64IXfx,parallel -Kmemalias,alias_const -D MPI -g
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
+LIBS = -mkl -lifcore -lmpifort
 EOF
-    elif [ ${1} = "sr" ]; then
+    elif [ ${1} = "intel-intelmpi" ]; then
         cat > src/make.sys <<EOF
-CC = mpcc_r
-LAPACK_FLAGS = -L /usr/lib -lessl
-FLAGS = -D MPI -D SR -q64 -O3 -lm -qsmp=omp 
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f
-AR = ar -X64 rv 
+CC = mpiicc
+F90 = mpiifort
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
+LIBS = -mkl -lifcore -lmpifort
+EOF
+    elif [ ${1} = "intel-openmpi" ]; then
+        cat > src/make.sys <<EOF
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
+LIBS = -mkl -lifcore -lmpi_f90 -lmpi_f77
 EOF
     elif [ ${1} = "intel" ]; then
         cat > src/make.sys <<EOF
 CC = icc
-LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -g -traceback -xHOST
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
+F90 = ifort
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -fpp
+LIBS = -mkl -lifcore
 EOF
-    elif [ ${1} = "mpicc-intel" ]; then
+    elif [ ${1} = "gcc-openmpi" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
-LAPACK_FLAGS = -Dlapack -mkl=parallel 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -traceback -xHOST
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -D MPI -cpp
+LIBS = -fopenmp -lm -lgfortran -llapack -lblas -lmpi_f90 -lmpi_f77
 EOF
-    elif [ ${1} = "mpicc-gcc" ]; then
+    elif [ ${1} = "gcc-mpich" ]; then
         cat > src/make.sys <<EOF
 CC = mpicc
-LAPACK_FLAGS = -Dlapack -llapack -lblas 
-FLAGS = -fopenmp -O3 -DHAVE_SSE2 -D MPI -g -lm
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
-EOF
-    elif [ ${1} = "gcc-mac" ]; then
-        cat > src/make.sys <<EOF
-CC = gcc
-LAPACK_FLAGS = -Dlapack -framework Accelerate 
-FLAGS = -fopenmp -lm -O3  -D_OSX
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -D MPI -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -D MPI -cpp
+LIBS = -fopenmp -lm -lgfortran -llapack -lblas -lmpifort
 EOF
     elif [ ${1} = "gcc" ]; then
         cat > src/make.sys <<EOF
 CC = gcc
-LAPACK_FLAGS = -Dlapack -llapack -lblas
-FLAGS = -fopenmp  -lm -O3
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
+F90 = gfortran
+CFLAGS = -fopenmp -O3 -g -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -cpp
+LIBS = -fopenmp -lm -lgfortran -llapack -lblas
 EOF
-    elif [ ${1} == "manual" ]; then
-echo " C compiler ?"
-read CC
-echo " LAPACK option ?"
-read LAPACK_FLAGS
-echo " Other compilation flags ?"
-read FLAGS
+    elif [ ${1} = "gcc-mac" ]; then
         cat > src/make.sys <<EOF
-CC = ${CC}
-LAPACK_FLAGS = ${LAPACK_FLAGS}
-FLAGS = ${FLAGS}
-MTFLAGS = -DDSFMT_MEXP=19937 \$(FLAGS)
-INCLUDE_DIR=./include
-CP = cp -f -v
-AR = ar rv
+CC = gcc
+F90 = gfortran
+CFLAGS = -fopenmp -O3 -g -D_OSX -D HAVE_SSE2
+FFLAGS = -fopenmp -O3 -g -cpp -D NO_ZDOTC
+LIBS = -fopenmp -lm -framework Accelerate -lgfortran
+EOF
+    elif [ ${1} = "fujitsu" ]; then
+        cat > src/make.sys <<EOF
+CC = mpifccpx
+F90 = mpifrtpx
+CFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Kmemalias,alias_const -D HAVE_SSE2
+FFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Cpp -D FUJITSU
+LIBS = -Kfast,openmp,parallel -SSL2BLAMP -lmpi_f90 -lmpi_f77
+EOF
+    elif [ ${1} = "sr" ]; then
+        cat > src/make.sys <<EOF
+CC = mpcc_r
+F90 = mpxlf2003_r
+CFLAGS = -O3 -qsmp=omp -q64 -D SR -D MPI 
+FFLAGS = -O3 -qsmp=omp -q64 -qsuffix=cpp=f90 -WF,-DMPI -WF,-DSR
+LIBS = -qsmp=omp -L /usr/lib -lm -lessl -lxlf90
+AROPT = -X64
 EOF
     else
         echo ""
@@ -141,27 +136,32 @@ help:
 	@echo "make <entry>"
 	@echo ""
 	@echo "<entry> is chosen from below"
-	@echo "      HPhi : Build simulator HPhi in src/"
+	@echo "      HPhi : Build simulator HPhi in src/ and tool/"
 	@echo " userguide : Generate userguid_jp.pdf & userguide_en.pdf in doc/"
-	@echo "     clean : Remove all generated files excepting makefile"
-	@echo " veryclean : Remove all generated files including makefile"
+	@echo "     clean : Remove all generated files excepting makefile and doc/"
+	@echo " veryclean : Remove all generated files including makefile and doc/"
 	@echo ""
 
 HPhi:
 	cd src;make -f makefile_src
+	cd tool;make -f makefile_tool
 
 userguide:
-	cd doc/jp/;make -f makefile_doc_jp;mv userguide_jp.pdf ../
-	cd doc/en/;make -f makefile_doc_en;mv userguide_en.pdf ../
+	cd doc/jp/;make -f makefile_doc_jp;
+	cd doc/en/;make -f makefile_doc_en;
+	cd doc/fourier/ja; make html latexpdfja
+	cd doc/fourier/en; make html latexpdfja
 
 clean:
 	cd src; make -f makefile_src clean
-	cd doc/jp; make -f makefile_doc_jp clean
-	cd doc/en; make -f makefile_doc_en clean
-	rm -f doc/userguide_??.pdf
+	cd tool; make -f makefile_tool clean
 
 veryclean:
 	make clean
+	cd doc/jp; make -f makefile_doc_jp clean
+	cd doc/en; make -f makefile_doc_en clean
+	cd doc/fourier/ja; make clean
+	cd doc/fourier/en; make clean
 	rm -f src/make.sys makefile
 EOF
 fi

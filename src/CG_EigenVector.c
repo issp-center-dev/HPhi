@@ -125,10 +125,11 @@ int CG_EigenVector(struct BindStruct *X){
       v0[i]=0.0;
     }
     bnorm = SumMPI_d(bnorm);
-    childfopenMPI(sdt_1,"a",&fp_0);    
-    fprintf(fp_0,"b[%d]=%lf bnorm== %lf \n ",iv,creal(b[iv]),bnorm);
-    fclose(fp_0);           
-       
+    if(iv >= 0){
+      childfopenMPI(sdt_1,"a",&fp_0);    
+      fprintf(fp_0,"b[%d]=%lf bnorm== %lf \n ",iv,creal(b[iv]),bnorm);
+      fclose(fp_0);           
+    }
     //iteration
     if(i_itr==0){
       itr_max=500;
