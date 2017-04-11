@@ -807,6 +807,7 @@ int ReadDefFileNInt(
     if(X->nvec < X->k_exct){
         X->nvec=X->k_exct;
     }
+    if (X->LanczosTarget < X->k_exct) X->LanczosTarget = X->k_exct;
 
     if(ValidateValue(X->k_exct, 1, X->nvec)) {
       fprintf(stdoutMPI, cErrLanczosExct, defname, X->nvec);
