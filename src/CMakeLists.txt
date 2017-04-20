@@ -16,7 +16,7 @@ set(SOURCES PowerLanczos.c CG_EigenVector.c CalcByFullDiag.c CalcByLOBPCG.c Calc
 set(SOURCES_STDFACE StdFace/ChainLattice.c StdFace/FCOrtho.c StdFace/HoneycombLattice.c StdFace/Kagome.c StdFace/Ladder.c StdFace/Orthorhombic.c StdFace/Pyrochlore.c StdFace/SquareLattice.c StdFace/StdFace_main.c StdFace/StdFace_ModelUtil.c StdFace/TriangularLattice.c StdFace/Wannier90.c)
 
 add_executable(HPhi ${SOURCES} ${SOURCES_STDFACE})
-target_link_libraries(HPhi komega ${LAPACK_LIBRARIES})
+target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
 if(MPI_FOUND)
   target_link_libraries(HPhi ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)
