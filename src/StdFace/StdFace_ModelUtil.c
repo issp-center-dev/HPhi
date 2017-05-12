@@ -66,31 +66,46 @@ struct StdIntList *StdI,
   StdI->transindx[StdI->ntrans][3] = jspin;
   StdI->ntrans = StdI->ntrans + 1;
 }
-
 /**
-*
-* Add Hopping and Local potential for the both spin
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
+ Add Hopping for the both spin
+ @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_Hopping(
 struct StdIntList *StdI,
   double complex trans0 /**< [in] Hopping integral t, mu, etc. */,
   int isite /**< [in] i for c_{i sigma}^dagger*/,
-  int jsite /**< [in] j for c_{j sigma'}*/,
-  int loff
+  int jsite /**< [in] j for c_{j sigma'}*/
   )
 {
   int ispin;
 
   for (ispin = 0; ispin < 2; ispin++) {
     StdFace_trans(StdI, trans0, jsite, ispin, isite, ispin);
-    if(loff == 1)
-      StdFace_trans(StdI, conj(trans0), isite, ispin, jsite, ispin);
+    StdFace_trans(StdI, conj(trans0), isite, ispin, jsite, ispin);
   }/*for (ispin = 0; ispin < 2; ispin++)*/
-
-}
-
+}/*void StdFace_Hopping*/
+/**
+ Add intra-Coulomb, magnetic field, chemical potential for the
+ itenerant electron
+ @author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_HubbardLocal(
+  struct StdIntList *StdI,
+  double mu0 /**< [in] Chemical potential*/,
+  double h0 /**< [in] Longitudinal magnetic feild*/,
+  double Gamma0 /**< [in] Transvers magnetic feild*/,
+  double U0 /**< [in] Intra-site Coulomb potential*/,
+  int isite /**< [in] i for c_{i sigma}^dagger*/
+)
+{
+  StdFace_trans(StdI, mu0 + 0.5 * h0, isite, 0, isite, 0);
+  StdFace_trans(StdI, mu0 - 0.5 * h0, isite, 1, isite, 1);
+  StdFace_trans(StdI, -0.5 * Gamma0, isite, 1, isite, 0);
+  StdFace_trans(StdI, -0.5 * Gamma0, isite, 0, isite, 1);
+  StdI->Cintra[StdI->NCintra] = StdI->U;
+  StdI->CintraIndx[StdI->NCintra][0] = isite;
+  StdI->NCintra += 1;
+}/*void StdFace_HubbardLocal*/
 /**
 *
 * Add Longitudinal magnetic field to the list
@@ -184,7 +199,11 @@ struct StdIntList *StdI,
     StdI->CinterIndx[StdI->NCinter][1] = jsite;
     StdI->NCinter += 1;
 
-    if (fabs(J[0][1]) < 0.000001 && fabs(J[1][0]) < 0.000001) {
+    if (fabs(J[0][1]) < 0.000001 && fabs(J[1][0]) < 0.000001
+#if defined(_mVMC)
+      && abs(J[0][0] - J[1][1]) < 0.000001
+#endif
+      ) {
 
       ExGeneral = 0;
 
@@ -204,7 +223,7 @@ struct StdIntList *StdI,
       StdI->PLIndx[StdI->NPairLift][0] = isite;
       StdI->PLIndx[StdI->NPairLift][1] = jsite;
       StdI->NPairLift += 1;
-    }
+    }/*if (fabs(J[0][1]) < 0.000001 && fabs(J[1][0]) < 0.000001)*/
   }
   /*
    For S != 1/2 spin or off-diagonal interaction
@@ -1442,4 +1461,122 @@ void StdFace_generate_orb(struct StdIntList *StdI) {
   for (iCell = 0; iCell < StdI->NCell; iCell++) free(CellDone[iCell]);
   free(CellDone);
 }
+/**
+ * Output Jastrow
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+void PrintJastrow(struct StdIntList *StdI) {
+  FILE *fp;
+  int isite, jsite, isiteUC, jsiteUC, revarsal;
+  int NJastrow, iJastrow;
+  int dCell, iCell, jCell, dCellv[3];
+  int **Jastrow;
+  double complex Cphase;
+
+  Jastrow = (int **)malloc(sizeof(int*) * StdI->nsite);
+  for (isite = 0; isite < StdI->nsite; isite++) 
+    Jastrow[isite] = (int *)malloc(sizeof(int) * StdI->nsite);
+
+  if (strcmp(StdI->model, "spin") == 0) {
+    NJastrow = 1;
+
+    for (isite = 0; isite < StdI->nsite; isite++) {
+      for (jsite = 0; jsite < StdI->nsite; jsite++) {
+        Jastrow[isite][jsite] = 0;
+      }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+    }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+  }/*if (strcmp(StdI->model, "spin") == 0)*/
+  else {
+
+    NJastrow = 0;
+
+    if (strcmp(StdI->model, "kondo") == 0) {
+      /*
+      Local spin - itererant electron part
+      */
+      for (isite = 0; isite < StdI->nsite; isite++) {
+        for (jsite = 0; jsite < StdI->nsite / 2; jsite++) {
+          Jastrow[isite][jsite] = 0;
+          Jastrow[jsite][isite] = 0;
+        }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+
+      NJastrow += 1;
+    }/*if (strcmp(StdI->model, "kondo") == 0)*/
+
+    for (dCell = 0; dCell < StdI->NCell; dCell++) {
+      StdFace_FindSite(StdI,
+        0, 0, 0,
+        -StdI->Cell[dCell][0], -StdI->Cell[dCell][1], -StdI->Cell[dCell][2],
+        0, 0, &isite, &jsite, &Cphase);
+      if (strcmp(StdI->model, "kondo") == 0) jsite += -StdI->NCell * StdI->NsiteUC;
+      iCell = jsite / StdI->NsiteUC;
+      if (iCell < dCell) {
+        /*
+        If -R has been already done, skip.
+        */
+        continue;
+      }
+      else if (iCell == dCell) {
+        /*
+        If revarsal symmetry [Fold(-R) = R], J(R,i,j) = J(R,j,i)
+        */
+        revarsal = 1;
+      }
+      else revarsal = 0;
+
+      for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
+        for (jsiteUC = 0; jsiteUC < StdI->NsiteUC; jsiteUC++) {
+          if (revarsal == 1 && jsiteUC > isiteUC) continue;/*If [Fold(-R) = R]*/
+          if (isiteUC == jsiteUC &&
+            StdI->Cell[dCell][0] == 0 &&
+            StdI->Cell[dCell][1] == 0 &&
+            StdI->Cell[dCell][2] == 0) continue;/*Diagonal*/
+
+          for (iCell = 0; iCell < StdI->NCell; iCell++) {
+            StdFace_FindSite(StdI,
+              StdI->Cell[iCell][0], StdI->Cell[iCell][1], StdI->Cell[iCell][2],
+              StdI->Cell[dCell][0], StdI->Cell[dCell][1], StdI->Cell[dCell][2],
+              isiteUC, jsiteUC, &isite, &jsite, &Cphase);
+
+            Jastrow[isite][jsite] = NJastrow;
+            Jastrow[jsite][isite] = NJastrow;
+
+          }/*for (iCell = 0; iCell < StdI->NCell; iCell++)*/
+
+          NJastrow += 1;
+
+        }/*for (jsiteUC = 0; jsiteUC < StdI->NsiteUC; jsiteUC++)*/
+      }/*for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++)*/
+    }/*for (dCell = 0; dCell < StdI->NCell; dCell++)*/
+  }/*if (strcmp(StdI->model, "spin") != 0)*/
+    
+  fp = fopen("jastrowidx.def", "w");
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "NJastrowIdx %10d\n", NJastrow);
+  fprintf(fp, "ComplexType %10d\n", StdI->ComplexType);
+  fprintf(fp, "=============================================\n");
+  fprintf(fp, "=============================================\n");
+
+  for (isite = 0; isite < StdI->nsite; isite++) {
+    for (jsite = 0; jsite < StdI->nsite; jsite++) {
+      if (isite == jsite) continue;
+      fprintf(fp, "%5d  %5d  %5d\n", isite, jsite, Jastrow[isite][jsite]);
+    }/*for (jsite = 0; jsite < isite; jsite++)*/
+  }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+
+  for (iJastrow = 0; iJastrow < NJastrow; iJastrow++){
+    if (strcmp(StdI->model, "hubbard") == 0 || iJastrow > 0)
+      fprintf(fp, "%5d  %5d\n", iJastrow, 1);
+    else
+      fprintf(fp, "%5d  %5d\n", iJastrow, 0);
+  }/*for (iJastrow = 0; iJastrow < NJastrow; iJastrow++)*/
+  fflush(fp);
+  fclose(fp);
+  fprintf(stdout, "    jastrowidx.def is written.\n");
+
+  for (isite = 0; isite < StdI->nsite; isite++) free(Jastrow[isite]);
+  free(Jastrow);
+}/*void PrintJastrow*/
 #endif

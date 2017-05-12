@@ -642,19 +642,9 @@ SUBROUTINE read_corrfile()
      filename = TRIM(filehead) // "_cisajs" // TRIM(filetail(iwfc))
      OPEN(fi, file = TRIM(filename))
      !
-     IF(calctype == 4) THEN
-        !
-        ! mVMC
-        !
-        READ(fi,*) cor0_r(1:2, 1:ncor1)
-     ELSE
-        !
-        ! HPhi
-        !
-        DO icor = 1, ncor1
-           READ(fi,*) itmp(1:4), cor0_r(1:2, icor)
-        END DO
-     END IF ! (calctype == 4)
+     DO icor = 1, ncor1
+        READ(fi,*) itmp(1:4), cor0_r(1:2, icor)
+     END DO
      !
      CLOSE(fi)
      !

@@ -69,11 +69,11 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
   StdFace_NotUsed_d("V1'", StdI->V1p);
   StdFace_NotUsed_d("V2'", StdI->V2p);
   StdFace_NotUsed_d("K", StdI->K);
+  StdFace_PrintVal_d("h", &StdI->h, 0.0);
+  StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
   /**/
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
-    StdFace_PrintVal_d("h", &StdI->h, 0.0);
-    StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
     StdFace_InputSpinNN(StdI, StdI->J0, StdI->J0All, "J0");
     StdFace_InputSpinNN(StdI, StdI->J1, StdI->J1All, "J1");
@@ -110,8 +110,6 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
     StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
     StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);
     StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
-    StdFace_NotUsed_d("h", StdI->h);
-    StdFace_NotUsed_d("Gamma", StdI->Gamma);
     StdFace_NotUsed_d("D", StdI->D[2][2]);
 
     if (strcmp(StdI->model, "hubbard") == 0 ) {
@@ -150,11 +148,13 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (StdI->NsiteUC/*mu*/ + 6/*t*/ + 6/*t'*/);
+    StdI->ntrans = StdI->NCell * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 6/*t*/ + 6/*t'*/);
     StdI->nintr = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (3/*V*/ + 3/*V'*/));
 
-    if (strcmp(StdI->model, "kondo") == 0 )  StdI->nintr +=
-      StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
+    if (strcmp(StdI->model, "kondo") == 0) {
+      StdI->ntrans = StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+      StdI->nintr += StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
+    }/*if (strcmp(StdI->model, "kondo") == 0)*/
   }
   /**/
   StdFace_MallocInteractions(StdI);
@@ -178,12 +178,11 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, isite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->mu, isite, isite, 0);
-      StdI->Cintra[StdI->NCintra] = StdI->U; StdI->CintraIndx[StdI->NCintra][0] = isite; StdI->NCintra += 1;
-      /**/
+      StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite);
       if (strcmp(StdI->model, "kondo") == 0 ) {
         jsite = kCell;
         StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite, jsite);
+        StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, jsite);
       }/*if (strcmp(StdI->model, "kondo") == 0 )*/
     }
     /*
@@ -195,7 +194,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
@@ -207,7 +206,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite);
       StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
     }
     /*
@@ -219,7 +218,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite);
       StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
     }
     /*
@@ -231,7 +230,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
     /*
@@ -243,7 +242,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }/*if (model != "spin")*/
      /*
@@ -255,7 +254,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, 1);
+      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }/*if (model != "spin")*/
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/

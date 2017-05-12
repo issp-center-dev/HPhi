@@ -224,7 +224,7 @@ static void read_W90(struct StdIntList *StdI, char *model)
  */
 void StdFace_Wannier90(struct StdIntList *StdI, char *model)
 {
-  int isite, jsite;
+  int isite, jsite, ispin;
   int iL, iW, iH, kCell, it, ii;
   double Jtmp[3][3] = { {0.0} };
   FILE *fp;
@@ -248,10 +248,11 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
   /**/
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_d("K", StdI->K);
+  StdFace_PrintVal_d("h", &StdI->h, 0.0);
+  StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
   /**/
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_NotUsed_i("2S", StdI->S2);
-    StdFace_PrintVal_d("h", &StdI->h, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 1.0);
   }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else if (strcmp(StdI->model, "hubbard") == 0) {
@@ -281,7 +282,7 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else if (strcmp(StdI->model, "hubbard") == 0) {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (StdI->NsiteUC/*mu*/ + StdI->W90_nt * 2/*t*/);
+    StdI->ntrans = StdI->NCell * 2/*spin*/ * (2*StdI->NsiteUC/*mu+h+Gamma*/ + StdI->W90_nt * 2/*t*/);
     StdI->nintr = StdI->NCell * StdI->NsiteUC/*U*/;
   }
   /**/
@@ -306,21 +307,35 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
       for (isite = StdI->NsiteUC*kCell; isite < StdI->NsiteUC*(kCell + 1); isite++) {
-        StdFace_Hopping(StdI, StdI->mu, isite, isite, 0);
-        StdI->Cintra[StdI->NCintra] = StdI->U; StdI->CintraIndx[StdI->NCintra][0] = isite; StdI->NCintra += 1;
+        StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite);
       }
     }/*if (strcmp(StdI->model, "spin") != 0 )*/
-    /**/
+    /*
+     Hopping from Wannier90
+    */
     for (it = 0; it < StdI->W90_nt; it++) {
+      /*
+       Local term
+      */
       if (StdI->W90_indx[it][0] == 0 && StdI->W90_indx[it][1] == 0 && StdI->W90_indx[it][2] == 0
         && StdI->W90_indx[it][3] == StdI->W90_indx[it][4])
       {
         if (strcmp(StdI->model, "hubbard") == 0) {
           isite = StdI->NsiteUC*kCell + StdI->W90_indx[it][3];
-          StdFace_Hopping(StdI, StdI->W90_t[it], isite, isite, 0);
+          for (ispin = 0; ispin < 2; ispin++) {
+            StdI->trans[StdI->ntrans] = StdI->W90_t[it];
+            StdI->transindx[StdI->ntrans][0] = isite;
+            StdI->transindx[StdI->ntrans][1] = ispin;
+            StdI->transindx[StdI->ntrans][2] = isite;
+            StdI->transindx[StdI->ntrans][3] = ispin;
+            StdI->ntrans = StdI->ntrans + 1;
+          }/*for (ispin = 0; ispin < 2; ispin++)*/
         }/*if (strcmp(StdI->model, "hubbrad") == 0 )*/
       }/*Local term*/
       else {
+        /*
+         Non-local term
+        */
         StdFace_FindSite(StdI, iW, iL, iH,
           StdI->W90_indx[it][0], StdI->W90_indx[it][1], StdI->W90_indx[it][2],
           StdI->W90_indx[it][3], StdI->W90_indx[it][4], &isite, &jsite, &Cphase);
@@ -329,7 +344,7 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
           StdFace_GeneralJ(StdI, Jtmp, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, Cphase * StdI->W90_t[it], isite, jsite, 1);
+          StdFace_Hopping(StdI, Cphase * StdI->W90_t[it], isite, jsite);
         }
       }/*Non-local term*/
     }/*for (it = 0; it < StdI->W90_nt; it++)*/
