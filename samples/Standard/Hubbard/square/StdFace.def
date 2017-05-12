@@ -1,12 +1,11 @@
 W = 4
 L = 2
 model = "FermionHubbard"
-method = "CG"
+method = "Lanczos"
 //method = "TPQ"
 //method = "FullDiag"
 lattice = "Tetragonal"
 t = 1.0
 U = 4.0
 nelec = 8
-gamma = 1.0
-
+2Sz = 0
