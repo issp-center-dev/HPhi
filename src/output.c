@@ -25,47 +25,47 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int output(struct BindStruct *X){
-  
+int output(struct BindStruct *X) {
+
   FILE *fp;
   char sdt[D_FileNameMax];
-  long int i,i_max;
-  i_max=X->Check.idim_max;
-    
-  if(X->Def.iCalcType==FullDiag){
+  long int i, i_max;
+  i_max = X->Check.idim_max;
+
+  if (X->Def.iCalcType == FullDiag) {
     double tmp_N;
-    switch(X->Def.iCalcModel){
-    case Spin:
-    case Hubbard:
-    case Kondo:	
-      sprintf(sdt,cFileNamePhys_FullDiag, X->Def.CDataFileHead, X->Def.Nup,X->Def.Ndown);
-      break;
-    case SpinGC:
-    case HubbardGC:
-    case KondoGC:	
-      sprintf(sdt,cFileNamePhys_FullDiag_GC, X->Def.CDataFileHead);
-      break;
-    default:
-      break;
+    switch (X->Def.iCalcModel) {
+      case Spin:
+      case Hubbard:
+      case Kondo:
+        sprintf(sdt, cFileNamePhys_FullDiag, X->Def.CDataFileHead, X->Def.Nup, X->Def.Ndown);
+        break;
+      case SpinGC:
+      case HubbardGC:
+      case KondoGC:
+        sprintf(sdt, cFileNamePhys_FullDiag_GC, X->Def.CDataFileHead);
+        break;
+      default:
+        break;
     }
-    if(childfopenMPI(sdt,"w",&fp)!=0){
+    if (childfopenMPI(sdt, "w", &fp) != 0) {
       return -1;
     }
 
-     if(X->Def.iCalcModel==Spin || X->Def.iCalcModel==SpinGC){
-	tmp_N =X->Def.Nsite;
-      }
-      else{
-	tmp_N  = X->Phys.num_up + X->Phys.num_down;
-      }
-    
-    fprintf(fp,"  <H>         <N>        <Sz>       <S2>       <D> \n");
-    for(i=0;i<i_max;i++){
-      fprintf(fp," %10lf %10lf %10lf %10lf %10lf\n",X->Phys.all_energy[i],tmp_N, X->Phys.all_sz[i],X->Phys.all_s2[i],X->Phys.all_doublon[i]);
+    if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) {
+      tmp_N = X->Def.Nsite;
+    } else {
+      tmp_N = X->Phys.num_up + X->Phys.num_down;
+    }
+
+    fprintf(fp, "  <H>         <N>        <Sz>       <S2>       <D> \n");
+    for (i = 0; i < i_max; i++) {
+      fprintf(fp, " %10lf %10lf %10lf %10lf %10lf\n", X->Phys.all_energy[i], X->Phys.all_num_up[i]+X->Phys.all_num_down[i], X->Phys.all_sz[i],
+              X->Phys.all_s2[i], X->Phys.all_doublon[i]);
     }
     fclose(fp);
   }
-    
+
   return 0;
 }
 
