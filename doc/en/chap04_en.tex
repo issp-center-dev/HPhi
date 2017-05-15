@@ -1254,7 +1254,17 @@ becomes smaller than $10^{- \verb|LanczosEps|/2}$.
  {\bf Type :} Int (positive integer)
 
   {\bf Description :} An integer giving the target of the eigenvalue for judging the convergence of the Lanczos method. For example, the target becomes a ground state when \verb|LanczosTarget|  is equal to one, and a first excited state when  \verb|LanczosTarget|  is equal to two.
+
+  \item  \verb|CalcHS| 
+   
+ {\bf Type :} Int (positive integer)
+
+  {\bf Description :} If CalcHS=1, an efficient algorithm for generating the restricted Hilbert space with the specified
+quantum number is used (Details of algorithm is shown in http://qlms.github.io/HPhi/develop/tips.pdf[in Japanese]). 
+Default value is 0 and the efficient algorithm is not used.
      
+
+
 \item \verb|LargeValue|
 
 {\bf Type :} Double

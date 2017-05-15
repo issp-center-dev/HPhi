@@ -1180,6 +1180,14 @@ $10^{- \verb|LanczosEps|/2}$以下になった場合に収束したと判定し�
  {\bf 形式 :} int型 (自然数)
 
   {\bf 説明 :} 何番目の固有値でランチョスの収束判定を行うかを指定する整数。1なら基底状態。2なら第一励起状態を示します。
+
+ \item \verb|CalcHS|
+
+ {\bf 形式 :} int型 (自然数)
+
+ {\bf 説明 :} CalcHS=1で量子数を指定したときのヒルベルト空間生成が高速化される(詳細は~http://qlms.github.io/HPhi/develop/tips.pdfを参照)。
+デフォルトの値は0で、高速化アルゴリズムは使用されない。
+
      
 \item \verb|LargeValue|
 
