@@ -500,7 +500,7 @@ static void PrintGutzwiller(struct StdIntList *StdI)
   fp = fopen("gutzwilleridx.def", "w");
   fprintf(fp, "=============================================\n");
   fprintf(fp, "NGutzwillerIdx %10d\n", NGutzwiller);
-  fprintf(fp, "ComplexType %10d\n", StdI->ComplexType);
+  fprintf(fp, "ComplexType %10d\n", 0);
   fprintf(fp, "=============================================\n");
   fprintf(fp, "=============================================\n");
 
@@ -650,6 +650,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->RndSeed = StdI->NaN_i;
   StdI->NSplitSize = StdI->NaN_i;
   StdI->NStore = StdI->NaN_i;
+  StdI->NSRCG = StdI->NaN_i;
   StdI->ComplexType = StdI->NaN_i;
   for (i = 0; i < 3; i++)
     for (j = 0; j < 3; j++)
@@ -1012,9 +1013,9 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "NDataQtySmp    %d\n", StdI->NDataQtySmp);
   fprintf(fp, "--------------------\n");
   fprintf(fp, "Nsite          %d\n", StdI->nsite);
-  fprintf(fp, "Nelectron      %d\n", StdI->nelec);
+  fprintf(fp, "Ncond          %-5d\n", StdI->nelec);
   fprintf(fp, "NSPGaussLeg    %d\n", StdI->NSPGaussLeg);
-  fprintf(fp, "NSPStot        %d\n", StdI->Sz2);
+  if (StdI->Sz2 != StdI->NaN_i) fprintf(fp, "2Sz            %d\n", StdI->Sz2);
   fprintf(fp, "NMPTrans       %d\n", StdI->NMPTrans);
   fprintf(fp, "NSROptItrStep  %d\n", StdI->NSROptItrStep);
   fprintf(fp, "NSROptItrSmp   %d\n", StdI->NSROptItrSmp);
@@ -1022,12 +1023,13 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "DSROptStaDel   %.10f\n", StdI->DSROptStaDel);
   fprintf(fp, "DSROptStepDt   %.10f\n", StdI->DSROptStepDt);
   fprintf(fp, "NVMCWarmUp     %d\n", StdI->NVMCWarmUp);
-  fprintf(fp, "NVMCInterval  %d\n", StdI->NVMCInterval);
+  fprintf(fp, "NVMCInterval   %d\n", StdI->NVMCInterval);
   fprintf(fp, "NVMCSample     %d\n", StdI->NVMCSample);
   fprintf(fp, "NExUpdatePath  %d\n", StdI->NExUpdatePath);
   fprintf(fp, "RndSeed        %d\n", StdI->RndSeed);
   fprintf(fp, "NSplitSize     %d\n", StdI->NSplitSize);
   fprintf(fp, "NStore         %d\n", StdI->NStore);
+  fprintf(fp, "NSRCG          %d\n", StdI->NSRCG);
 #endif
 
   fflush(fp);
@@ -1361,12 +1363,16 @@ static void CheckModPara(struct StdIntList *StdI)
 
   if (strcmp(StdI->model, "hubbard") == 0) StdI->NExUpdatePath = 0;
   else if (strcmp(StdI->model, "spin") == 0) StdI->NExUpdatePath = 2;
-  else if (strcmp(StdI->model, "kondo") == 0) StdI->NExUpdatePath = 1;
+  else if (strcmp(StdI->model, "kondo") == 0) { 
+    if(StdI->lGC==0) StdI->NExUpdatePath = 1; 
+    else StdI->NExUpdatePath = 3;
+  }
   fprintf(stdout, "  %15s = %-10d\n", "NExUpdatePath", StdI->NExUpdatePath);
 
   StdFace_PrintVal_i("RndSeed", &StdI->RndSeed, 123456789);
   StdFace_PrintVal_i("NSplitSize", &StdI->NSplitSize, 1);
   StdFace_PrintVal_i("NStore", &StdI->NStore, 0);
+  StdFace_PrintVal_i("NSRCG", &StdI->NSRCG, 0);
 
   StdFace_PrintVal_d("DSROptRedCut", &StdI->DSROptRedCut, 0.001);
   StdFace_PrintVal_d("DSROptStaDel", &StdI->DSROptStaDel, 0.02);
@@ -1384,33 +1390,17 @@ static void CheckModPara(struct StdIntList *StdI)
     }
 #else
     StdFace_RequiredVal_i("nelec", StdI->nelec);
-    if (StdI->nelec % 2 != 0) {
-      printf("\nERROR ! nelec should be an even number !\n\n");
-      StdFace_exit(-1);
-    }
-    else {
-      StdI->nelec = StdI->nelec / 2;
-    }
     if (StdI->lGC == 0) StdFace_PrintVal_i("2Sz", &StdI->Sz2, 0);
-    else {
-      StdFace_NotUsed_i("2Sz", StdI->Sz2);
-      StdI->Sz2 = 0;
-    }/*if (strcmp(StdI->model, "hubbard") == 0)*/
+    else StdFace_NotUsed_i("2Sz", StdI->Sz2);
 #endif
   }
   else if (strcmp(StdI->model, "spin") == 0) {
     StdFace_NotUsed_i("nelec", StdI->nelec);
-#if defined(_HPhi)
+#if defined(_mVMC)
+    StdI->nelec = 0;
+#endif
     if (StdI->lGC == 0) StdFace_RequiredVal_i("2Sz", StdI->Sz2);
     else StdFace_NotUsed_i("2Sz", StdI->Sz2);
-#else
-    StdI->nelec = StdI->nsite / 2;
-    if (StdI->lGC == 0) StdFace_RequiredVal_i("2Sz", StdI->Sz2);
-    else {
-      StdFace_NotUsed_i("2Sz", StdI->Sz2);
-      StdI->Sz2 = 0;
-    }
-#endif
   }/*else if (strcmp(StdI->model, "spin") == 0)*/
   else if (strcmp(StdI->model, "kondo") == 0) {
 #if defined(_HPhi)
@@ -1421,18 +1411,8 @@ static void CheckModPara(struct StdIntList *StdI)
     }
 #else
     StdFace_RequiredVal_i("nelec", StdI->nelec);
-    if ((StdI->nelec + StdI->nsite / 2) % 2 != 0) {
-      printf("\nERROR ! nelec + (# of local spin) should be an even number !\n\n");
-      StdFace_exit(-1);
-    }
-    else {
-      StdI->nelec = (StdI->nelec + StdI->nsite / 2) / 2;
-    }
     if (StdI->lGC == 0) StdFace_PrintVal_i("2Sz", &StdI->Sz2, 0);
-    else {
-      StdFace_NotUsed_i("2Sz", StdI->Sz2);
-      StdI->Sz2 = 0;
-    }
+    else StdFace_NotUsed_i("2Sz", StdI->Sz2);
 #endif
   }/*else if (strcmp(StdI->model, "kondo") == 0)*/
 }/*static void CheckModPara*/
@@ -1990,6 +1970,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
     else if (strcmp(keyword, "nsroptitrsmp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSROptItrSmp);
     else if (strcmp(keyword, "nsroptitrstep") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSROptItrStep);
     else if (strcmp(keyword, "nstore") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NStore);
+    else if (strcmp(keyword, "nsrcg") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSRCG);
     else if (strcmp(keyword, "nvmcinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCInterval);
     else if (strcmp(keyword, "nvmcsample") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCSample);
     else if (strcmp(keyword, "nvmcwarmup") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCWarmUp);

@@ -1555,7 +1555,7 @@ void PrintJastrow(struct StdIntList *StdI) {
   fp = fopen("jastrowidx.def", "w");
   fprintf(fp, "=============================================\n");
   fprintf(fp, "NJastrowIdx %10d\n", NJastrow);
-  fprintf(fp, "ComplexType %10d\n", StdI->ComplexType);
+  fprintf(fp, "ComplexType %10d\n", 0);
   fprintf(fp, "=============================================\n");
   fprintf(fp, "=============================================\n");
 

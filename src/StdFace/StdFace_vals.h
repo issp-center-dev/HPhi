@@ -199,6 +199,7 @@ struct StdIntList {
   int RndSeed;
   int NSplitSize;
   int NStore;
+  int NSRCG;
   int ComplexType;
   /*
    Sub-lattice
