@@ -152,7 +152,7 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
     StdI->nintr = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (3/*V*/ + 3/*V'*/));
 
     if (strcmp(StdI->model, "kondo") == 0) {
-      StdI->ntrans = StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+      StdI->ntrans += StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
       StdI->nintr += StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
     }/*if (strcmp(StdI->model, "kondo") == 0)*/
   }
