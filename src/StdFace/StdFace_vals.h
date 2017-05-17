@@ -198,7 +198,9 @@ struct StdIntList {
   int NExUpdatePath;
   int RndSeed;
   int NSplitSize;
+  int NSPStot;
   int NStore;
+  int NSRCG;
   int ComplexType;
   /*
    Sub-lattice
