@@ -25,7 +25,7 @@
 #include <CalcByTPQ.h>
 #include <CalcSpectrum.h>
 #include <check.h>
-#include "Common.h"
+#include "CalcByTEM.h"
 #include "readdef.h"
 #include "StdFace_main.h"
 #include "wrapperMPI.h"
@@ -231,6 +231,12 @@ int main(int argc, char* argv[]){
         }
         StopTimer(3000);
       break;
+
+      case TimeEvolution:
+        if(!CalcByTEM(NumAve, ExpecInterval, &X)==0){
+          FinalizeMPI();
+          return 0;
+        }
 
     default:
       FinalizeMPI();

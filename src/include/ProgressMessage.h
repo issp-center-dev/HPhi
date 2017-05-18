@@ -45,4 +45,6 @@ const char* cLogFullDiag_End;
 const char* cLogFullDiag_ExpecValue_Start;
 const char* cLogFullDiag_ExpecValue_End;
 const char* cLogFinish;
+const char* cLogTEM_Start;
+const char* cLogTEM_End;
 #endif /* HPHI_PROGRESS_MESSAGE_H */

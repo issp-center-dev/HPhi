@@ -52,3 +52,7 @@ const char* cLogFullDiag_End="######  End  : Diagonalization.  ######\n\n";
 const char* cLogFullDiag_ExpecValue_Start="######  Start: Calc Expected value.  ######\n\n";
 const char* cLogFullDiag_ExpecValue_End="######  End  : Calc Expected value.  ######\n\n";
 const char* cLogFinish ="######  Finish Calculation.  ######\n";
+
+const char* cLogTEM_Start="######  Start: TimeEvolution by Taylor Expansion.  ######\n\n";
+const char* cLogTEM_End="######  End  : TimeEvolution by Taylor Expansion.  ######\n\n";
+

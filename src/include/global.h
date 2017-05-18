@@ -32,6 +32,7 @@
 
 double complex *v0; 
 double complex *v1;
+double complex *v2;
 double complex *v1buf;
 
 //For calcSpectrum
@@ -144,6 +145,9 @@ const char* cFileNamePhys_FullDiag_Ham;
 
 //For Spectrum
 const char* cFileNameOutputRestartVec;
+
+//For Time Evolution
+const char* cFileNameInputVec;
 
 
 //For Error

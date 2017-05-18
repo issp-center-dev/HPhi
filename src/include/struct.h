@@ -24,6 +24,15 @@
 #define HPHI_STRUCT_H
 
 /*=================================================================================================*/
+//For TEM
+struct ParamList {
+    //For Time Evolution
+    double Tinit;
+    double TimeSlice;
+    int OutputInterval;
+    int ExpandCoef;
+};
+
 struct DefineList{
   char *CDataFileHead;				/**< Read from Calcmod in readdef. Header of output file such as Green's function */
   char  *CParaFileHead;				/**< Read from Calcmod in readdef. It is not used. Just for the compatibility to mVMC */
@@ -154,7 +163,9 @@ struct DefineList{
   unsigned int NPairExcitationOperator;
   double complex *ParaPairExcitationOperator;  /**< */
 
-
+/// For Time Evolution
+    int NLaser;  /**< */
+    double  *ParaLaser;  /**< [NLaser] */
 
   int iCalcType;
   /**< An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
@@ -207,6 +218,7 @@ struct DefineList{
     */
     int iFlgMPI;
 
+    struct ParamList Param;
 
 };
 
@@ -289,6 +301,7 @@ struct PhysList{
   double *loc_spin_z;
   double Target_energy;
   double Target_CG_energy;
+
 };	
 
 //For Boost
@@ -303,12 +316,12 @@ struct BoostList {
 };
 
 /*=================================================================================================*/
-struct BindStruct{
-  struct DefineList  Def;
-  struct CheckList   Check;
-  struct LargeList   Large;
-  struct PhysList    Phys;
-  struct BoostList   Boost;
+struct BindStruct {
+    struct DefineList Def;
+    struct CheckList Check;
+    struct LargeList Large;
+    struct PhysList Phys;
+    struct BoostList Boost;
 };
 /*=================================================================================================*/
 struct EDMainCalStruct{

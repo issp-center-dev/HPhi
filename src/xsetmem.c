@@ -77,6 +77,8 @@ void setmem_def
   i_malloc2(X->Def.PairExcitationOperator, X->Def.NPairExcitationOperator, 5);
   c_malloc1(X->Def.ParaPairExcitationOperator, X->Def.NPairExcitationOperator);
 
+  d_malloc1(X->Def.ParaLaser, X->Def.NLaser);
+
   unsigned int ipivot,iarrayJ,i,ispin;
   xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
   for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
@@ -142,6 +144,12 @@ int setmem_large
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);
+  if(X->Def.iCalcType == TimeEvolution){
+    c_malloc1(v2, X->Check.idim_max+1);
+  }
+  else{
+    c_malloc1(v2, 1);
+  }
 #ifdef MPI
   c_malloc1(v1buf, idim_maxMPI + 1);
 #endif // MPI

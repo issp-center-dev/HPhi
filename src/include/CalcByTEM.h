@@ -13,10 +13,11 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+#pragma once
+#include "Common.h"
 
-int HPhiTrans(
-	    struct BindStruct *X
-	    );
-
-int TransferWithPeierls(struct BindStruct *X, const double time);
-int TransferForQuench(struct BindStruct *X, const double time);
+int CalcByTEM(
+	    const int NumAve,
+	    const int ExpecInterval,
+	    struct EDMainCalStruct *X
+);

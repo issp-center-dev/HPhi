@@ -19,3 +19,7 @@ int Multiply
 (
  struct BindStruct *X
  );
+
+int MultiplyForTEM(
+        struct BindStruct *X
+);

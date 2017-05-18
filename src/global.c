@@ -76,5 +76,8 @@ const char* cFileNamePhys_FullDiag_Ham="%s_Ham.dat";
 //For Spectrum
 const char* cFileNameOutputRestartVec="%s_recalcvec_rank_%d.dat";
 
+//For TimeEvoulution
+const char* cFileNameInputVec="%s_eigenvec_%d_rank_%d.dat";
+
 //For Error
 const char* cFileNameErrorSz="Err_sz.dat";

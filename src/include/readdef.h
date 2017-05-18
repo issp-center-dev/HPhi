@@ -48,6 +48,7 @@
 #define KWSingleExcitation 15
 #define KWPairExcitation 16
 #define KWSpectrumVec 17
+#define KWLaser 18
 
 int CheckSite(
 	      const int iListToSite,

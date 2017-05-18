@@ -61,6 +61,7 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "SingleExcitation",
   "PairExcitation",
   "SpectrumVec"
+  "Laser"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -526,6 +527,12 @@ int ReadDefFileNInt(
               else if (CheckWords(ctmp, "NumAve") == 0) {
                 NumAve = (int) dtmp;
               }
+              else if(strcmp(ctmp, "TimeSlice")==0){
+                X->Param.TimeSlice=dtmp;
+              }
+              else if(strcmp(ctmp, "ExpandCoef")==0){
+                X->Param.ExpandCoef=(int)dtmp;
+              }
               else if (CheckWords(ctmp, "ExpecInterval") == 0) {
                 ExpecInterval = (int) dtmp;
               }
@@ -634,6 +641,13 @@ int ReadDefFileNInt(
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
             break;
+      case KWLaser:
+        /* Read laser.def--------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+        fgetsMPI(ctmp2, 256, fp);
+        sscanf(ctmp2,"%s %d\n", ctmp, &(X->NLaser));
+        break;
+
       case KWBoost:
         /* Read boost.def--------------------------------*/
         xBoost->NumarrayJ = 0;
@@ -1393,7 +1407,25 @@ int ReadDefFileIdxPara(
         }
       }
       break;
-    case KWBoost:
+
+      case KWLaser:
+        //printf("KWLaser\n");
+        /*laser.def----------------------------------*/
+        if(X->NLaser>0){
+          //printf("Read Start\n");
+          while(fgetsMPI(ctmp2, 256, fp) != NULL){
+            sscanf(ctmp2, "%s %lf\n", &(ctmp), &(X->ParaLaser[idx]));
+            //printf("[%d]:%f\n",idx,X->ParaLaser[idx]);
+            idx++;
+          }
+          if(idx!=X->NLaser){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+        }
+        break;
+
+      case KWBoost:
       /* boost.def--------------------------------*/
       //input magnetic field
       fgetsMPI(ctmp2, 256, fp);
@@ -2335,6 +2367,7 @@ void InitializeInteractionNum
   X->NCisAjtCkuAlvDC=0;
   X->NSingleExcitationOperator=0;
   X->NPairExcitationOperator=0;
+  X->NLaser=0;
 }
 
 /** 
