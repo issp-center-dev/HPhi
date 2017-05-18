@@ -224,7 +224,7 @@ int main(int argc, char* argv[]){
 
       case TPQCalc:
         StartTimer(3000);        
-        if (CalcByTPQ(NumAve, ExpecInterval, &X) != TRUE) {
+        if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
           FinalizeMPI();
           StopTimer(3000);
           return -1;
@@ -233,7 +233,7 @@ int main(int argc, char* argv[]){
       break;
 
       case TimeEvolution:
-        if(!CalcByTEM(NumAve, ExpecInterval, &X)==0){
+        if(!CalcByTEM(NumAve, X.Bind.Def.Param.ExpecInterval, &X)==0){
           FinalizeMPI();
           return 0;
         }

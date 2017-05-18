@@ -31,6 +31,7 @@ struct ParamList {
     double TimeSlice;
     int OutputInterval;
     int ExpandCoef;
+    int ExpecInterval;
 };
 
 struct DefineList{

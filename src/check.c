@@ -201,68 +201,69 @@ int check(struct BindStruct *X){
   //fprintf(stdoutMPI, "Debug: comb_sum= %ld \n",comb_sum);
 
   X->Check.idim_max = comb_sum;
-  switch(X->Def.iCalcType){
-  case Lanczos:
-    switch(X->Def.iCalcModel){
-    case Hubbard:
-    case HubbardNConserved:
-    case Kondo:
-    case KondoGC:
-    case Spin:
-      X->Check.max_mem=5.5*X->Check.idim_max*8.0/(pow(10,9));
-      break;
-    case HubbardGC:
-    case SpinGC:
-      X->Check.max_mem=4.5*X->Check.idim_max*8.0/(pow(10,9));
-      break;
-    }
-    break;
-  case CG:
-    switch (X->Def.iCalcModel) {
-    case Hubbard:
-    case HubbardNConserved:
-    case Kondo:
-    case KondoGC:
-    case Spin:
-      X->Check.max_mem = (6 * X->Def.k_exct + 2)*X->Check.idim_max*16.0 / (pow(10, 9));
-      break;
-    case HubbardGC:
-    case SpinGC:
-      X->Check.max_mem = (6 * X->Def.k_exct + 1.5)*X->Check.idim_max*16.0 / (pow(10, 9));
-      break;
-    }
-    break;
-  case TPQCalc:
-    switch(X->Def.iCalcModel){
-    case Hubbard:
-    case HubbardNConserved:
-    case Kondo:
-    case KondoGC:
-    case Spin:
-      if(X->Def.iFlgCalcSpec != CALCSPEC_NOT){
-        X->Check.max_mem=(2)*X->Check.idim_max*16.0/(pow(10,9));
-      }
-      else {
-        X->Check.max_mem = 4.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
+  switch(X->Def.iCalcType) {
+    case Lanczos:
+      switch (X->Def.iCalcModel) {
+        case Hubbard:
+        case HubbardNConserved:
+        case Kondo:
+        case KondoGC:
+        case Spin:
+          X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
+          break;
+        case HubbardGC:
+        case SpinGC:
+          X->Check.max_mem = 4.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
+          break;
       }
       break;
-    case HubbardGC:
-    case SpinGC:
-      if(X->Def.iFlgCalcSpec != CALCSPEC_NOT){
-        X->Check.max_mem=(2)*X->Check.idim_max*16.0/(pow(10,9));
-      }
-      else {
-        X->Check.max_mem = 3.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
+    case CG:
+      switch (X->Def.iCalcModel) {
+        case Hubbard:
+        case HubbardNConserved:
+        case Kondo:
+        case KondoGC:
+        case Spin:
+          X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          break;
+        case HubbardGC:
+        case SpinGC:
+          X->Check.max_mem = (6 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          break;
       }
       break;
-    }
-    break;
-  case FullDiag:
-    X->Check.max_mem=X->Check.idim_max*8.0*X->Check.idim_max*8.0/(pow(10,9));
-    break;
-  default:
-    return FALSE;
-    //break;
+    case TPQCalc:
+      switch (X->Def.iCalcModel) {
+        case Hubbard:
+        case HubbardNConserved:
+        case Kondo:
+        case KondoGC:
+        case Spin:
+          if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+            X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          } else {
+            X->Check.max_mem = 4.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
+          }
+          break;
+        case HubbardGC:
+        case SpinGC:
+          if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+            X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          } else {
+            X->Check.max_mem = 3.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
+          }
+          break;
+      }
+      break;
+    case FullDiag:
+      X->Check.max_mem = X->Check.idim_max * 8.0 * X->Check.idim_max * 8.0 / (pow(10, 9));
+      break;
+    case TimeEvolution:
+      X->Check.max_mem = (4 + 2 + 1) * X->Check.idim_max * 16.0 / (pow(10, 9));
+      break;
+    default:
+      return FALSE;
+      //break;
   }
 
   //fprintf(stdoutMPI, "  MAX DIMENSION idim_max=%ld \n",X->Check.idim_max);

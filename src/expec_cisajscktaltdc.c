@@ -105,6 +105,7 @@ int expec_cisajscktaltdc
     break;
 
   case TPQCalc:
+  case TimeEvolution:
     step=X->Def.istep;
     rand_i=X->Def.irand;
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGStart, "a", rand_i, step);
@@ -164,6 +165,9 @@ int expec_cisajscktaltdc
     }
   }
   else if(X->Def.iCalcType==TPQCalc){
+    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGFinish, "a", rand_i, step);
+  }
+  else if(X->Def.iCalcType==TimeEvolution){
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGFinish, "a", rand_i, step);
   }
   //[s] this part will be added

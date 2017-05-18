@@ -72,7 +72,7 @@ int     initial_mode;
 
 /*[s] For TPQ*/
 double LargeValue;
-int    NumAve, ExpecInterval;
+int    NumAve;
 long int global_iv;
 int step_i, step_spin;
 double **All_S, **All_C, **All_Sz;

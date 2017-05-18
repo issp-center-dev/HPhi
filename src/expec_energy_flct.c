@@ -57,6 +57,7 @@ int expec_energy_flct(struct BindStruct *X){
 
     break;
   case TPQCalc:
+  case TimeEvolution:
 #ifdef _DEBUG
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
     TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecStart, "a", step_i);
@@ -499,19 +500,20 @@ int expec_energy_flct(struct BindStruct *X){
   X->Phys.energy = dam_pr;
   X->Phys.var    = dam_pr1;
 
-  switch(X->Def.iCalcType){
-  case Lanczos:
-    fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
-    TimeKeeper(X, cFileNameTimeKeep, cExpecEnd, "a");
-    break;
-  case TPQCalc:
+  switch(X->Def.iCalcType) {
+    case Lanczos:
+      fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
+      TimeKeeper(X, cFileNameTimeKeep, cExpecEnd, "a");
+      break;
+    case TPQCalc:
+    case TimeEvolution:
 #ifdef _DEBUG
       fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
       TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecEnd, "a", step_i);
 #endif
-    break;
-      default:
-    break;
+      break;
+    default:
+      break;
   }
   
 

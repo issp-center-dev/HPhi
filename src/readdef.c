@@ -60,7 +60,7 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "Boost",
   "SingleExcitation",
   "PairExcitation",
-  "SpectrumVec"
+  "SpectrumVec",
   "Laser"
 };
 
@@ -412,7 +412,7 @@ int ReadDefFileNInt(
   xBoost->flgBoost=FALSE;	
   InitializeInteractionNum(X);
   NumAve=1;
-  ExpecInterval=1;
+  X->Param.ExpecInterval=1;
   cFileNameListFile = malloc(sizeof(char)*D_CharTmpReadDef*D_iKWNumDef);
 
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
@@ -533,8 +533,14 @@ int ReadDefFileNInt(
               else if(strcmp(ctmp, "ExpandCoef")==0){
                 X->Param.ExpandCoef=(int)dtmp;
               }
+              else if(strcmp(ctmp, "OutputInterval")==0){
+                X->Param.OutputInterval=(int)dtmp;
+              }
               else if (CheckWords(ctmp, "ExpecInterval") == 0) {
-                ExpecInterval = (int) dtmp;
+                X->Param.ExpecInterval = (int) dtmp;
+              }
+              else if(strcmp(ctmp, "Tinit")==0){
+                X->Param.Tinit=dtmp;
               }
               else if (CheckWords(ctmp, "CalcHS") == 0) {
                 X->read_hacker = (int) dtmp;
@@ -809,7 +815,7 @@ int ReadDefFileNInt(
       fprintf(stdoutMPI, cErrNumAve, defname);
       return (-1);
     }
-    if(ExpecInterval<=0){
+    if(X->Param.ExpecInterval<=0){
       fprintf(stdoutMPI, cErrExpecInterval, defname);
       return (-1);
     }
