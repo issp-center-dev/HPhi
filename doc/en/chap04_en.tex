@@ -581,18 +581,18 @@ $\HPhi$ will stop.
 
 \item \verb|phase0|, \verb|phase1|
 
-  {\bf Type :} Double complex (\verb|1.0| as defaults)
+  {\bf Type :} Double (\verb|0.0| as defaults)
   
   {\bf Description :}
-  We can specify the phase for the prefactor for the hopping through the cell boundary
-  with these parameter.
+  We can specify the phase for the hopping through the cell boundary
+  with these parameter (unit: degree).
   These fuctor for the $\vec{a}_0$ direction and the $\vec{a}_1$ direction can be specified independently.
   For the one-dimensional system, only \verb|phase0| can be used.
   For example, a fopping from $i$-th site to $j$-th site through the cell boundary with the positive direction
   becomes as 
   \begin{align}
-    \exp(i \times {\rm phase0}) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
-    + \exp(-i \times {\rm phase0}) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
+    \exp(i \times {\rm phase0}\times\pi/180) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
+    + \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
   \end{align}
 
 \end{itemize}

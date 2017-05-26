@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <complex.h>
 #include <stdio.h>
 
-void StdFace_exit(int errorcode /**< [in]*/);
+void StdFace_exit(int errorcode);
 
 void StdFace_intr(struct StdIntList *StdI, double complex intr0,
   int site1, int spin1, int site2, int spin2,

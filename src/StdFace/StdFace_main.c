@@ -15,6 +15,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Read Input file and write files for Expert mode.
+       Initialize variables.
+       Check parameters.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,8 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #if defined(_HPhi)
 /**
- * Set Largevalue for TPQ
- */
+@brief Set Largevalue (StdIntList::LargeValue) for TPQ.
+       Sum absolute-value of all one- and two- body terms.
+*/
 static void StdFace_LargeValue(struct StdIntList *StdI) {
   int ktrans, kintr;
   double LargeValue0;
@@ -58,17 +64,18 @@ static void StdFace_LargeValue(struct StdIntList *StdI) {
   StdFace_PrintVal_d("LargeValue", &StdI->LargeValue, LargeValue0);
 }/*static void StdFace_LargeValue*/
 /**
- *
- * Print calcmod.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print calcmod.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+
+*/
 static void PrintCalcMod(struct StdIntList *StdI)
 {
   FILE *fp;
   int iCalcType, iCalcModel, iRestart, iCalcSpec, 
     iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec;
-
+  /*
+  First, check all parameters and exit if invalid parameters
+  */
   fprintf(stdout, "\n  @ CalcMod\n\n");
   /*
    Method
@@ -91,30 +98,30 @@ static void PrintCalcMod(struct StdIntList *StdI)
   else{
     fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
     StdFace_exit(-1);
-  }
+  }/*if (strcmp(StdI->method, METHODS) != 0*/
   /*
    Model
   */
   if (strcmp(StdI->model, "hubbard") == 0) {
     if (StdI->lGC == 0)iCalcModel = 0;
     else iCalcModel = 3;
-  }
+  }/*if (strcmp(StdI->model, "hubbard") == 0)*/
   else if (strcmp(StdI->model, "spin") == 0) {
     if (StdI->lGC == 0)iCalcModel = 1;
     else iCalcModel = 4;
-  }
-  if (strcmp(StdI->model, "kondo") == 0) {
+  }/*if (strcmp(StdI->model, "spin") == 0)*/
+  else if (strcmp(StdI->model, "kondo") == 0) {
     if (StdI->lGC == 0)iCalcModel = 2;
     else iCalcModel = 5;
-  }
+  }/*if (strcmp(StdI->model, "kondo") == 0)*/
   /*
-    Restart
+  Restart
   */
   if (strcmp(StdI->Restart, "****") == 0) {
     strcpy(StdI->Restart, "none\0");
     fprintf(stdout, "          Restart = none        ######  DEFAULT VALUE IS USED  ######\n");
     iRestart = 0;
-  }
+  }/*if (strcmp(StdI->Restart, "****") == 0)*/
   else {
     fprintf(stdout, "          Restart = %s\n", StdI->Restart);
     if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
@@ -125,7 +132,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
       fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->Restart, "****") != 0)*/
   /*
   InitialVecType
   */
@@ -133,7 +140,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
     strcpy(StdI->InitialVecType, "c\0");
     fprintf(stdout, "   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######\n");
     iInitialVecTpye = 0;
-  }
+  }/*if (strcmp(StdI->InitialVecType, "****") == 0)*/
   else {
     fprintf(stdout, "   InitialVecType = %s\n", StdI->InitialVecType);
     if (strcmp(StdI->InitialVecType, "c") == 0) iInitialVecTpye = 0;
@@ -142,7 +149,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
       fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->InitialVecType, "****") != 0)*/
   /*
   EigenVecIO
   */
@@ -151,7 +158,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
   if (strcmp(StdI->EigenVecIO, "****") == 0) {
     strcpy(StdI->EigenVecIO, "none\0");
     fprintf(stdout, "       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######\n");
-  }
+  }/*if (strcmp(StdI->EigenVecIO, "****") == 0)*/
   else {
     fprintf(stdout, "       EigenVecIO = %s\n", StdI->EigenVecIO);
     if (strcmp(StdI->EigenVecIO, "none") == 0) InputEigenVec = 0;
@@ -160,12 +167,12 @@ static void PrintCalcMod(struct StdIntList *StdI)
     else if (strcmp(StdI->EigenVecIO, "inout") == 0) {
       InputEigenVec = 1;
       OutputEigenVec = 1;
-    }
+    }/*if (strcmp(StdI->EigenVecIO, "inout") == 0)*/
     else {
       fprintf(stdout, "\n ERROR ! EigenVecIO Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->EigenVecIO, "****") != 0)*/
   /*
   CalcSpec
   */
@@ -173,7 +180,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
     strcpy(StdI->CalcSpec, "none\0");
     fprintf(stdout, "         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######\n");
     iCalcSpec = 0;
-  }
+  }/*if (strcmp(StdI->CalcSpec, "****") == 0)*/
   else {
     fprintf(stdout, "         CalcSpec = %s\n", StdI->CalcSpec);
     if (strcmp(StdI->CalcSpec, "none") == 0) iCalcSpec = 0;
@@ -186,7 +193,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
       fprintf(stdout, "\n ERROR ! CalcSpec : %s\n", StdI->CalcSpec);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->CalcSpec, "****") != 0)*/
 
   fp = fopen("calcmod.def", "w");
   fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG\n");
@@ -206,11 +213,9 @@ static void PrintCalcMod(struct StdIntList *StdI)
   fprintf(stdout, "     calcmod.def is written.\n\n");
 }/*static void PrintCalcMod*/
 /**
- *
- * Print single.def or pair.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print single.def or pair.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
   int NumOp, spin[2][2], isite, ispin, icell, itau;

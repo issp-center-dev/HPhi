@@ -511,16 +511,17 @@ $ gnuplot lattice.gp
 
 \item \verb|phase0|, \verb|phase1|
 
-  {\bf 形式 :} 複素数(デフォルトでは\verb|1.0|)
+  {\bf 形式 :} 実数 (デフォルトでは\verb|1.0|)
   
-  {\bf 説明 :} 計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます。
+  {\bf 説明 :} 計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます
+  (単位: 度)。
   $\vec{a}_0$方向、$\vec{a}_1$方向それぞれ別の位相因子を用いることが出来ます。
   １次元系では\verb|phase0|のみ使用できます。
   例えば、$i$サイトから$j$サイトへのホッピングで、
   正の方向に境界をまたいだ場合には次のようになります。
   \begin{align}
-    \exp(i \times {\rm phase0}) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
-    + \exp(-i \times {\rm phase0}) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
+    \exp(i \times {\rm phase0}\times\pi/180) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
+    + \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
   \end{align}
 
 \end{itemize}
