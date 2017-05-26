@@ -1470,7 +1470,7 @@ void PrintJastrow(struct StdIntList *StdI) {
   FILE *fp;
   int isite, jsite, isiteUC, jsiteUC, revarsal, isite1, jsite1, iorb;
   int NJastrow, iJastrow;
-  int dCell, iCell, jCell, dCellv[3];
+  int dCell, iCell;//, jCell, dCellv[3];
   int **Jastrow;
   double complex Cphase;
 
