@@ -264,44 +264,48 @@ struct StdIntList {
                    StdIntList::SpectrumType*/
 #elif defined(_mVMC)
   /*mVMC modpara*/
-  char CParaFileHead[256];
-  int NVMCCalMode;
-  int NLanczosMode;
-  int NDataIdxStart;
-  int NDataQtySmp;
-  int NSPGaussLeg;
-  int NMPTrans;
-  int NSROptItrStep;
-  int NSROptItrSmp;
-  int NSROptFixSmp;
-  double DSROptRedCut;
-  double DSROptStaDel;
-  double DSROptStepDt;
-  int NVMCWarmUp;
-  int NVMCInterval;
-  int NVMCSample;
-  int NExUpdatePath;
-  int RndSeed;
-  int NSplitSize;
-  int NSPStot;
-  int NStore;
-  int NSRCG;
-  int ComplexType;
+  char CParaFileHead[256];/**@brief Header of the optimized wavefunction,
+                          input from file*/
+  int NVMCCalMode;/**@brief Optimization(=0) or compute correlation
+                  function(=1), input from file.*/
+  int NLanczosMode;/**@brief Power Lanczos(=1), input from file*/
+  int NDataIdxStart;/**@brief Start index of trials, input from file.*/
+  int NDataQtySmp;/**@brief Number of trials, input from file.*/
+  int NSPGaussLeg;/**@brief Number of Gauss-Legendre points for spin projection,
+                  input from file.*/
+  int NMPTrans;/**@brief Number of translation symmetry*/
+  int NSROptItrStep;/**@brief Number of iterations for stocastic reconfiguration*/
+  int NSROptItrSmp;/**@brief Number of steps for sampling*/
+  int NSROptFixSmp;/**@brief */
+  double DSROptRedCut;/**@brief Stocastic reconfiguration parameter, input from file.*/
+  double DSROptStaDel;/**@brief Stocastic reconfiguration parameter, input from file.*/
+  double DSROptStepDt;/**@brief Stocastic reconfiguration parameter, input from file.*/
+  int NVMCWarmUp;/**@brief */
+  int NVMCInterval;/**@brief */
+  int NVMCSample;/**@brief */
+  int NExUpdatePath;/**@brief */
+  int RndSeed;/**@brief */
+  int NSplitSize;/**@brief */
+  int NSPStot;/**@brief */
+  int NStore;/**@brief */
+  int NSRCG;/**@brief */
+  int ComplexType;/**@brief */
   /*
    Sub-lattice
   */
-  int Lsub;
-  int Wsub;
-  int Hsub;
-  int NCellsub;
-  int boxsub[3][3];
-  int rboxsub[3][3];
+  int Lsub;/**@brief Sublattice*/
+  int Wsub;/**@brief Sublattice*/
+  int Hsub;/**@brief Sublattice*/
+  int NCellsub;/**@brief Number of cells in a sublattice*/
+  int boxsub[3][3];/**@brief Sublattice*/
+  int rboxsub[3][3];/**@brief Sublattice*/
   /*
    2-body part of the trial wavefunction
   */
-  int **Orb;
-  int **AntiOrb;
-  int NOrb;
-  int NSym;
+  int **Orb;/**@brief [StdIntList::nsite][StdIntList::nsite] Orbital index*/
+  int **AntiOrb;/**@brief [StdIntList::nsite][StdIntList::nsite] Anti-periodic switch*/
+  int NOrb;/**@brief Number of independent orbital index*/
+  int NSym;/**@brief Number of translation symmetries, 
+           Defined from the number of cells in the sub-lattice.*/
 #endif
 };

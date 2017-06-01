@@ -66,7 +66,6 @@ static void StdFace_LargeValue(struct StdIntList *StdI) {
 /**
 @brief Print calcmod.def
 @author Mitsuaki Kawamura (The University of Tokyo)
-
 */
 static void PrintCalcMod(struct StdIntList *StdI)
 {
@@ -350,9 +349,10 @@ static void PrintExcitation(struct StdIntList *StdI) {
 
 }/*static void PrintExcitation()*/
 #elif defined(_mVMC)
-/*
- * Output Orbital index (up-down)
- */
+/**
+@brief Output Anti-parallel orbital index
+Free StdIntList::Orb
+*/
 static void PrintOrb(struct StdIntList *StdI) {
   FILE *fp;
   int isite, jsite, iOrb;
@@ -386,15 +386,16 @@ static void PrintOrb(struct StdIntList *StdI) {
   free(StdI->Orb);
 }/*void PrintOrb*/
 /**
- * Output OrbitalIdx (up-up & down-down)
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Output parallel orbitalIdx
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintOrbPara(struct StdIntList *StdI) {
   FILE *fp;
   int isite, jsite, NOrbGC, iOrbGC, isite1, jsite1, iorb;
   int **OrbGC, **AntiOrbGC;
-
+  /**@brief
+  (1) Copy from anti-parallel orbital index
+  */
   OrbGC = (int **)malloc(sizeof(int*) * StdI->nsite);
   AntiOrbGC = (int **)malloc(sizeof(int*) * StdI->nsite);
   for (isite = 0; isite < StdI->nsite; isite++) {
@@ -405,9 +406,9 @@ static void PrintOrbPara(struct StdIntList *StdI) {
       AntiOrbGC[isite][jsite] = StdI->AntiOrb[isite][jsite];
     }/*for (jsite = 0; jsite < isite; jsite++)*/
   }/*for (isite = 0; isite < StdI->nsite; isite++)*/
-   /*
-   Symmetrize
-   */
+  /**@brief
+  (2) Symmetrize
+  */
   for (iorb = 0; iorb < StdI->NOrb; iorb++) {
     for (isite = 0; isite < StdI->nsite; isite++) {
       for (jsite = 0; jsite < StdI->nsite; jsite++) {
@@ -473,9 +474,8 @@ static void PrintOrbPara(struct StdIntList *StdI) {
   free(AntiOrbGC);
 }/*static void PrintOrbPara*/
 /**
- * Output .def file for Gutzwiller
- *
- */
+@brief Output .def file for Gutzwiller
+*/
 static void PrintGutzwiller(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -557,15 +557,16 @@ static void PrintGutzwiller(struct StdIntList *StdI)
 }/*static void PrintGutzwiller*/
 #endif
 /**
- *
- * Clear grobal variables in the standard mode
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Clear grobal variables in the standard mode
+All variables refered in this function is modified.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StdFace_ResetVals(struct StdIntList *StdI) {
   int i, j;
   double NaN_d;
-
+  /*
+  NaN is used for not inputed variable
+  */
   NaN_d = 0.0 / 0.0;
   StdI->NaN_i = 2147483647;
   /**/
@@ -698,11 +699,11 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
 #endif
 }/*static void StdFace_ResetVals*/
 /*
- * Make all characters lower
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void Text2Lower(char *value /**< [inout] Keyword or value*/){
+@brief Make all characters lower
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void Text2Lower(char *value //!<[inout] @brief Keyword or value
+){
   char value2;
   int valuelen, ii;
 
@@ -713,12 +714,11 @@ static void Text2Lower(char *value /**< [inout] Keyword or value*/){
   }
 }/*static void Text2Lower*/
 /**
- *
- * Remove : space etc. from keyword and value in an iput file
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void TrimSpaceQuote(char *value /**< [inout] Keyword or value*/){
+@brief Remove : space etc. from keyword and value in an iput file
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void TrimSpaceQuote(char *value //!<[inout] @brief Keyword or value
+){
   char value2[256];
   int valuelen, valuelen2, ii;
 
@@ -744,16 +744,15 @@ static void TrimSpaceQuote(char *value /**< [inout] Keyword or value*/){
 
 }/*static void TrimSpaceQuote*/
 /**
- *
- * Store an input value into the valiable (string)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (string)
+ If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_s(
-  char *keyword /**< [in] keyword read from the input file*/, 
-  char *valuestring /**< [in] value read from the input file*/, 
-  char *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  char *value//!<[out]
+)
 {
   if (strcmp(value, "****") != 0){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
@@ -764,17 +763,15 @@ static void StoreWithCheckDup_s(
   }
 }/*static void StoreWithCheckDup_s*/
 /**
- *
- * Store an input value into the valiable (string) 
- * Force string lower.
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (string) 
+Force string lower. If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_sl(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  char *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  char *value//!<[out]
+)
 {
   if (strcmp(value, "****") != 0) {
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
@@ -786,16 +783,15 @@ static void StoreWithCheckDup_sl(
   }
 }/*static void StoreWithCheckDup_sl*/
 /**
- *
- * Store an input value into the valiable (integer)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (integer)
+If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_i(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  int *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  int *value//!<[out]
+)
 {
   int NaN_i = 2147483647;
 
@@ -808,18 +804,16 @@ static void StoreWithCheckDup_i(
   }
 }/*static void StoreWithCheckDup_i*/
 /**
- *
- * Store an input value into the valiable (double)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (double)
+If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_d(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  double *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  double *value//!<[out]
+)
 {
-
   if (isnan(*value) == 0){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     StdFace_exit(-1);
@@ -827,19 +821,17 @@ static void StoreWithCheckDup_d(
   else{
     sscanf(valuestring, "%lf", value);
   }
-
 }/*static void StoreWithCheckDup_d*/
 /**
- *
- * Store an input value into the valiable (Double complex)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (Double complex)
+      If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_c(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  double complex *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  double complex *value//!<[out]
+)
 {
   int num;
   char *valuestring_r, *valuestring_i;
@@ -880,11 +872,9 @@ static void StoreWithCheckDup_c(
   }
 }/*static void StoreWithCheckDup_c*/
 /**
- *
- * Print the locspin file
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print the locspin file
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintLocSpin(struct StdIntList *StdI) {
   FILE *fp;
   int isite, nlocspin;
@@ -908,11 +898,9 @@ static void PrintLocSpin(struct StdIntList *StdI) {
   fprintf(stdout, "    locspn.def is written.\n");
 }/*static void PrintLocSpin*/
 /**
- *
- * Print the transfer file
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print the transfer file
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintTrans(struct StdIntList *StdI){
   FILE *fp;
   int jtrans, ktrans, ntrans0;
@@ -959,11 +947,9 @@ static void PrintTrans(struct StdIntList *StdI){
   }/*if (StdI->Ltrans == 1)*/
 }/*static void PrintTrans*/
 /**
- *
- * Print namelist.def  
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print namelist.def  
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintNamelist(struct StdIntList *StdI){
   FILE *fp;
 
@@ -1003,11 +989,9 @@ static void PrintNamelist(struct StdIntList *StdI){
   fprintf(stdout, "    namelist.def is written.\n");
 }/*static void PrintNamelist*/
 /**
- *
- * Print modpara.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print modpara.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintModPara(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -1079,11 +1063,9 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(stdout, "     modpara.def is written.\n");
 }/*static void PrintModPara*/
 /**
- *
- * Print greenone.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print greenone.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void Print1Green(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -1161,11 +1143,9 @@ static void Print1Green(struct StdIntList *StdI)
   }/*if (StdI->ioutputmode != 0) */
 }/*static void Print1Green*/
 /**
- *
- * Print greentwo.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print greentwo.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void Print2Green(struct StdIntList *StdI) {
   FILE *fp;
   int ngreen, store, igreen;
@@ -1177,14 +1157,13 @@ static void Print2Green(struct StdIntList *StdI) {
    Set Indices of correlation functions
   */
   ngreen = 0;
-  if (StdI->ioutputmode != 0) {
+  if (StdI->ioutputmode == 1) {
     for (store = 0; store < 2; store++) {
 
       if (store == 1) {
         greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
-        for (igreen = 0; igreen < ngreen; igreen++) {
+        for (igreen = 0; igreen < ngreen; igreen++)
           greenindx[igreen] = (int *)malloc(sizeof(int) * 8);
-        }
         ngreen = 0;
       }/*if (store == 1)*/
 
@@ -1192,8 +1171,71 @@ static void Print2Green(struct StdIntList *StdI) {
 
         if (StdI->locspinflag[site1] == 0) S1Max = 1;
         else S1Max = StdI->locspinflag[site1];
-
         for (spin1 = 0; spin1 <= S1Max; spin1++) {
+          for (spin2 = 0; spin2 <= S1Max; spin2++) {
+
+            for (site3 = 0; site3 < StdI->nsite; site3++) {
+
+              if (StdI->locspinflag[site3] == 0) S3Max = 1;
+              else S3Max = StdI->locspinflag[site3];
+              for (spin3 = 0; spin3 <= S3Max; spin3++) {
+                for (spin4 = 0; spin4 <= S3Max; spin4++) {
+
+                  if (spin1 - spin2 + spin3 - spin4 == 0) {
+                    if (store == 1) {
+#if defined(_mVMC)
+                      if (spin1 != spin2 || spin3 != spin4)
+                      {
+                        greenindx[ngreen][0] = site1;
+                        greenindx[ngreen][1] = spin1;
+                        greenindx[ngreen][2] = site3;
+                        greenindx[ngreen][3] = spin4;
+                        greenindx[ngreen][4] = site3;
+                        greenindx[ngreen][5] = spin3;
+                        greenindx[ngreen][6] = site1;
+                        greenindx[ngreen][7] = spin2;
+                      }
+                      else
+#endif
+                      {
+                        greenindx[ngreen][0] = site1;
+                        greenindx[ngreen][1] = spin1;
+                        greenindx[ngreen][2] = site1;
+                        greenindx[ngreen][3] = spin2;
+                        greenindx[ngreen][4] = site3;
+                        greenindx[ngreen][5] = spin3;
+                        greenindx[ngreen][6] = site3;
+                        greenindx[ngreen][7] = spin4;
+                      }
+                    }/*if (store == 1)*/
+                    ngreen++;
+                  }/*if (spin1 - spin2 + spin3 - spin4 == 0)*/
+
+                }/*for (spin4 = 0; spin4 <= S3Max; spin4++)*/
+              }/*for (spin3 = 0; spin3 <= S3Max; spin3++*/
+            }/*for (site3 = 0; site3 < StdI->nsite; site3++)*/
+          }/*for (spin2 = 0; spin2 <= S1Max; spin2++)*/
+        }/*for (spin1 = 0; spin1 <= S1Max; spin1++)*/
+      }/*for (site1 = 0; site1 < StdI->nsite; site1++)*/
+
+    }/*for (store = 0; store < 2; store++)*/
+  }/*if (StdI->ioutputmode == 1)*/
+  else if (StdI->ioutputmode == 2) {
+    for (store = 0; store < 2; store++) {
+
+      if (store == 1) {
+        greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
+        for (igreen = 0; igreen < ngreen; igreen++)
+          greenindx[igreen] = (int *)malloc(sizeof(int) * 8);
+        ngreen = 0;
+      }/*if (store == 1)*/
+
+      for (site1 = 0; site1 < StdI->nsite; site1++) {
+
+        if (StdI->locspinflag[site1] == 0) S1Max = 1;
+        else S1Max = StdI->locspinflag[site1];
+        for (spin1 = 0; spin1 <= S1Max; spin1++) {
+
           for (site2 = 0; site2 < StdI->nsite; site2++) {
 
             if (StdI->locspinflag[site1] != 0 && StdI->locspinflag[site2] != 0
@@ -1201,14 +1243,14 @@ static void Print2Green(struct StdIntList *StdI) {
 
             if (StdI->locspinflag[site2] == 0) S2Max = 1;
             else S2Max = StdI->locspinflag[site2];
-
             for (spin2 = 0; spin2 <= S2Max; spin2++) {
+
               for (site3 = 0; site3 < StdI->nsite; site3++) {
 
                 if (StdI->locspinflag[site3] == 0) S3Max = 1;
                 else S3Max = StdI->locspinflag[site3];
-
                 for (spin3 = 0; spin3 <= S3Max; spin3++) {
+
                   for (site4 = 0; site4 < StdI->nsite; site4++) {
 
                     if (StdI->locspinflag[site3] != 0 && StdI->locspinflag[site4] != 0
@@ -1216,40 +1258,19 @@ static void Print2Green(struct StdIntList *StdI) {
 
                     if (StdI->locspinflag[site4] == 0) S4Max = 1;
                     else S4Max = StdI->locspinflag[site4];
-
                     for (spin4 = 0; spin4 <= S4Max; spin4++) {
 
-                      if (StdI->ioutputmode == 2 ||
-                        (site1 == site2 && site3 == site4 &&
-                          spin1 - spin2 + spin3 - spin4 == 0)) {
-                        if (store == 1) {
-#if defined(_mVMC)
-                          if (spin1 != spin2 || spin3 != spin4) 
-                          {
-                            greenindx[ngreen][0] = site1;
-                            greenindx[ngreen][1] = spin1;
-                            greenindx[ngreen][2] = site4;
-                            greenindx[ngreen][3] = spin4;
-                            greenindx[ngreen][4] = site3;
-                            greenindx[ngreen][5] = spin3;
-                            greenindx[ngreen][6] = site2;
-                            greenindx[ngreen][7] = spin2;
-                          }
-                          else 
-#endif
-                          {
-                            greenindx[ngreen][0] = site1;
-                            greenindx[ngreen][1] = spin1;
-                            greenindx[ngreen][2] = site2;
-                            greenindx[ngreen][3] = spin2;
-                            greenindx[ngreen][4] = site3;
-                            greenindx[ngreen][5] = spin3;
-                            greenindx[ngreen][6] = site4;
-                            greenindx[ngreen][7] = spin4;
-                          }
-                        }
-                        ngreen++;
-                      }
+                      if (store == 1) {
+                        greenindx[ngreen][0] = site1;
+                        greenindx[ngreen][1] = spin1;
+                        greenindx[ngreen][2] = site2;
+                        greenindx[ngreen][3] = spin2;
+                        greenindx[ngreen][4] = site3;
+                        greenindx[ngreen][5] = spin3;
+                        greenindx[ngreen][6] = site4;
+                        greenindx[ngreen][7] = spin4;
+                      }/*if (store == 1)*/
+                      ngreen++;
 
                     }/*for (spin4 = 0; spin4 <= S4Max; spin4++)*/
                   }/*for (site4 = 0; site4 < StdI->nsite; site4++)*/
@@ -1261,7 +1282,8 @@ static void Print2Green(struct StdIntList *StdI) {
       }/*for (site1 = 0; site1 < StdI->nsite; site1++)*/
 
     }/*for (store = 0; store < 2; store++)*/
-
+  }/*if (StdI->ioutputmode == 2)*/
+  if (StdI->ioutputmode != 0) {
     fp = fopen("greentwo.def", "w");
     fprintf(fp, "=============================================\n");
     fprintf(fp, "NCisAjsCktAltDC %10d\n", ngreen);
@@ -1282,18 +1304,16 @@ static void Print2Green(struct StdIntList *StdI) {
       free(greenindx[igreen]);
     }
     free(greenindx);
-
   }/*if (StdI->ioutputmode != 0)*/
 }/*static void Print2Green(struct StdIntList *StdI)*/
 /**
- *
- * Stop HPhi if unsupported model is read 
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Stop HPhi if unsupported model is read 
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void UnsupportedSystem(
-  char *model /**< [in]*/, 
-  char *lattice /**< [in]*/)
+  char *model,//!<[in]
+  char *lattice//!<[in]
+)
 {
   fprintf(stdout, "\nSorry, specified combination, \n");
   fprintf(stdout, "    MODEL : %s  \n", model);
@@ -1303,11 +1323,9 @@ static void UnsupportedSystem(
   StdFace_exit(-1);
 }/*static void UnsupportedSystem*/
 /**
- *
- * Verify outputmode
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Verify outputmode
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void CheckOutputMode(struct StdIntList *StdI)
 {
   /*
@@ -1341,12 +1359,10 @@ static void CheckOutputMode(struct StdIntList *StdI)
   }
 }/*static void CheckOutputMode*/
 /**
- *
- * Summary numerical parameter check the combination of
- * the number of sites, total spin, the number of electrons
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Summary numerical parameter check the combination of
+ the number of sites, total spin, the number of electrons
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void CheckModPara(struct StdIntList *StdI)
 {
 
@@ -1463,11 +1479,9 @@ static void CheckModPara(struct StdIntList *StdI)
   }/*else if (strcmp(StdI->model, "kondo") == 0)*/
 }/*static void CheckModPara*/
 /**
- *
- * Output .def file for Specific interaction
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Output .def file for Specific interaction
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintInteractions(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -1767,13 +1781,13 @@ static void PrintInteractions(struct StdIntList *StdI)
   }
 }/*static void PrintInteractions*/
 /**
- *
- * Main routine for the standard mode
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_main(char *fname  /**< [in] Input file name for the standard mode */) {
-
+@brief Main routine for the standard mode
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_main(
+  char *fname//!<[in] Input file name for the standard mode
+)
+{
   struct StdIntList StdI;
 
   FILE *fp;
