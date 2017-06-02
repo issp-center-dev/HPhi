@@ -74,7 +74,7 @@ void phys(struct BindStruct *X, unsigned long int neig) {
     }
 
     if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) {
-      tmp_N = X->Def.Nsite;
+      tmp_N = X->Def.NsiteMPI;
     } else {
       tmp_N = X->Phys.num_up + X->Phys.num_down;
     }

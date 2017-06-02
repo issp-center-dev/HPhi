@@ -53,7 +53,7 @@ increment StdIntList::ntrans
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_trans(
-struct StdIntList *StdI,
+  struct StdIntList *StdI,//!<[inout]
   double complex trans0,//!<[in] Hopping integral @f$t, mu@f$, etc.
   int isite,//!<[in] @f$i@f$ for @f$c_{i \sigma}^\dagger@f$
   int ispin,//!<[in] @f$\sigma@f$ for @f$c_{i \sigma}^\dagger@f$
@@ -73,7 +73,7 @@ struct StdIntList *StdI,
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_Hopping(
-struct StdIntList *StdI,
+struct StdIntList *StdI,//!<[inout]
   double complex trans0,//!<[in] Hopping integral @f$t@f$
   int isite,//!<[in] @f$i@f$ for @f$c_{i \sigma}^\dagger@f$
   int jsite//!<[in] @f$j@f$ for @f$c_{j \sigma}@f$
@@ -96,7 +96,7 @@ itenerant electron
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_HubbardLocal(
-  struct StdIntList *StdI,
+  struct StdIntList *StdI,//!<[inout]
   double mu0,//!<[in] Chemical potential
   double h0,//!<[in] Longitudinal magnetic feild
   double Gamma0,//!<[in] Transvers magnetic feild
@@ -122,7 +122,7 @@ void StdFace_HubbardLocal(
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_MagField(
-struct StdIntList *StdI,
+  struct StdIntList *StdI,//!<[inout]
   int S2,//!<[in] Spin moment in @f$i@f$ site
   double h,//!<[in] Longitudinal magnetic field @f$h@f$
   double Gamma,//!<[in] Transvars magnetic field @f$h@f$
@@ -170,7 +170,7 @@ increase the number of that (StdIntList::nintr).
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_intr(
-struct StdIntList *StdI,
+  struct StdIntList *StdI,//!<[inout]
   double complex intr0,//!<[in] Interaction @f$U, V, J@f$, etc.
   int site1,//!<[in] @f$i_1@f$ for @f$c_{i_1 \sigma_1}^\dagger@f$
   int spin1,//!<[in] @f$sigma1_1@f$ for @f$c_{i_1 \sigma_1}^\dagger@f$
@@ -194,7 +194,7 @@ struct StdIntList *StdI,
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_GeneralJ(
-struct StdIntList *StdI,
+struct StdIntList *StdI,//!<[inout]
   double J[3][3],//!<[in] The Spin interaction @f$J_x, J_{xy}@f$, ...
   int Si2,//!<[in] Spin moment in @f$i@f$ site
   int Sj2,//!<[in] Spin moment in @f$j@f$ site
@@ -303,7 +303,7 @@ struct StdIntList *StdI,
         StdFace_intr(StdI, conj(intr0),
           isite, ispin, isite, ispin + 1, jsite, jspin + 1, jsite, jspin);
       }
-      /**@brief
+      /**@brief (3)
       @f[
       I S_i^+ S_j^+ + I^* S_j^- S_i^-
       = \sum_{\sigma, \sigma' = -S}^{S-1}
@@ -323,13 +323,15 @@ struct StdIntList *StdI,
         StdFace_intr(StdI, conj(intr0),
           isite, ispin, isite, ispin + 1, jsite, jspin, jsite, jspin + 1);
       }
-      /**@brief
+      /**@brief (4)
+      @f[
       I S_i^+ S_{j z} + I^* S_{j z} S_i^-= 
       \sum_{\sigma=-S}^{S-1} \sum_{\sigma' = -S}^{S} \sqrt{S_i(S_i+1) - \sigma(\sigma+1)}
       (I c_{i\sigma+1}^\dagger c_{i\sigma} c_{j\sigma'}^\dagger c_{j\sigma'} +
       I^* c_{j\sigma'}^\dagger c_{j\sigma'} c_{i\sigma}^\dagger c_{i\sigma+1})
       \\
       I \equiv \frac{J_{xz} - i J_{yz}}{2}
+      @f]
       */
       if (ispin < Si2) {
         intr0 = 0.5 * (J[0][2] - I * J[1][2]) * sqrt(Si * (Si + 1.0) - Siz * (Siz + 1.0)) * Sjz;
@@ -338,14 +340,16 @@ struct StdIntList *StdI,
         StdFace_intr(StdI, conj(intr0),
           jsite, jspin, jsite, jspin, isite, ispin, isite, ispin + 1);
       }/*if (ispin < Si2)*/
-      /**@brief
-       I S_{i z} S_j^+ + I^* S_j^- S_{i z}=
+      /**@brief (5)
+      @f[
+       I S_{i z} S_j^+ + I^* S_j^- S_{i z} =
        \sum_{\sigma=-S}^{S} \sum_{\sigma' = -S}^{S-1} \sqrt{S_j(S_j+1) - \sigma'(\sigma'+1)}
        (I c_{i\sigma}^\dagger c_{i\sigma} c_{j\sigma'+1}^\dagger c_{j\sigma'} +
        I^* c_{j\sigma'}^\dagger c_{j\sigma'+1} c_{i\sigma}^\dagger c_{i\sigma})
        \\
        I \equiv \frac{J_{zx} - i J_{zy}}{2}
-       */
+       @f]
+      */
       if (jspin < Sj2) {
         intr0 = 0.5 * (J[2][0] - I * J[2][1]) * Siz * sqrt(Sj * (Sj + 1.0) - Sjz * (Sjz + 1.0));
         StdFace_intr(StdI, intr0,
@@ -363,7 +367,7 @@ and increase the number of them (StdIntList::NCinter).
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_Coulomb(
-struct StdIntList *StdI,
+struct StdIntList *StdI,//!<[inout]
   double V,//!<[in] Coulomb integral U, V, etc.
   int isite,//!<[in] i of n_i
   int jsite//!<[in] j of n_j
@@ -561,10 +565,11 @@ void StdFace_RequiredVal_i(
 original supercell.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void StdFace_FoldSite(struct StdIntList *StdI,
+static void StdFace_FoldSite(
+  struct StdIntList *StdI,//!<[inout]
   int iCellV[3],//!<[in] The fractional coordinate of a site
   int nBox[3], //!<[out] the index of supercell
-  int iCellV_fold[3]/**<@brief [out] The fractional coordinate of a site 
+  int iCellV_fold[3]/**<[out] The fractional coordinate of a site 
                     which is moved into the original cell*/
 )
 {
@@ -597,7 +602,8 @@ static void StdFace_FoldSite(struct StdIntList *StdI,
 @brief Initialize the super-cell where simulation is performed.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_InitSite(struct StdIntList *StdI, 
+void StdFace_InitSite(
+  struct StdIntList *StdI,//!<[inout]
   FILE *fp,//!<[in] File pointer to lattice.gp
   int dim//!<[in] dimension of system, if = 2, print lattice.gp
 )
@@ -787,7 +793,8 @@ void StdFace_InitSite(struct StdIntList *StdI,
 /**
 @brief Find the index of transfer and interaction
 */
-void StdFace_FindSite(struct StdIntList *StdI,
+void StdFace_FindSite(
+  struct StdIntList *StdI,//!<[inout]
   int iW,//!<[in] position of initial site
   int iL,//!<[in] position of initial site
   int iH,//!<[in] position of initial site
@@ -835,8 +842,9 @@ void StdFace_FindSite(struct StdIntList *StdI,
 /**
 @brief Set Label in the gnuplot display (Only used in 2D system)
 */
-void StdFace_SetLabel(struct StdIntList *StdI, 
-  FILE *fp, 
+void StdFace_SetLabel(
+  struct StdIntList *StdI,//!<[inout]
+  FILE *fp,//!<[in] File pointer to lattice.gp
   int iW,//!<[in] position of initial site
   int iL,//!<[in] position of initial site
   int diW,//!<[in] Translation from the initial site
@@ -929,7 +937,8 @@ void StdFace_PrintXSF(struct StdIntList *StdI) {
 /**
 @brief Input nearest-neighbor spin-spin interaction
 */
-void StdFace_InputSpinNN(struct StdIntList *StdI, 
+void StdFace_InputSpinNN(
+  struct StdIntList *StdI,//!<[inout]
   double J0[3][3],//!<[in] The anisotropic spin interaction
   double J0All,//!<[in] The isotropic interaction
   char *J0name//!<[in] The name of this spin interaction (e.g. J1)
@@ -1015,7 +1024,8 @@ void StdFace_InputSpinNN(struct StdIntList *StdI,
 /**
 @brief Input spin-spin interaction other than nearest-neighbor
 */
-void StdFace_InputSpin(struct StdIntList *StdI, 
+void StdFace_InputSpin(
+  struct StdIntList *StdI,//!<[inout] 
   double Jp[3][3],//!<[in] Fully anisotropic spin interaction
   double JpAll,//!<[in] The isotropic interaction
   char *Jpname//!<The name of this spin interaction(e.g.J')
@@ -1063,7 +1073,8 @@ void StdFace_InputSpin(struct StdIntList *StdI,
 input file, if it is not specified, use the default value (0
 or the isotropic Coulomb interaction StdIntList::V).
 */
-void StdFace_InputCoulombV(struct StdIntList *StdI, 
+void StdFace_InputCoulombV(
+  struct StdIntList *StdI,//!<[inout]
   double *V0,//<!<[in]
   char *V0name//!<[in] E.g. V1
 )
@@ -1087,7 +1098,8 @@ void StdFace_InputCoulombV(struct StdIntList *StdI,
 input file, if it is not specified, use the default value(0
 or the isotropic hopping StdIntList::V).
 */
-void StdFace_InputHopp(struct StdIntList *StdI,
+void StdFace_InputHopp(
+  struct StdIntList *StdI,//!<[inout]
   double complex *t0,//!<[in]
   char *t0name//!<[in] E.g. t1
 )
@@ -1147,69 +1159,74 @@ void StdFace_PrintGeometry(struct StdIntList *StdI) {
 /**
 @brief Malloc Arrays for interactions
 */
-void StdFace_MallocInteractions(struct StdIntList *StdI) {
+void StdFace_MallocInteractions(
+  struct StdIntList *StdI,//!<[inout]
+  int ntransMax,//!<[in] upper limit of the number of transfer
+  int nintrMax//!<[in] upper limit of the number of interaction
+) {
   int ii;
   /**@brief
   (1) Transfer StdIntList::trans, StdIntList::transindx
   */
-  StdI->transindx = (int **)malloc(sizeof(int*) * StdI->ntrans);
-  StdI->trans = (double complex *)malloc(sizeof(double complex) * StdI->ntrans);
-  for (ii = 0; ii < StdI->ntrans; ii++) {
+  StdI->transindx = (int **)malloc(sizeof(int*) * ntransMax);
+  StdI->trans = (double complex *)malloc(sizeof(double complex) * ntransMax);
+  for (ii = 0; ii < ntransMax; ii++) {
     StdI->transindx[ii] = (int *)malloc(sizeof(int) * 4);
   }
+  StdI->ntrans = 0;
   /**@brief
   (2) InterAll StdIntList::intr, StdIntList::intrindx
   */
-  StdI->intrindx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->intr = (double complex *)malloc(sizeof(double complex) * StdI->nintr);
-  for (ii = 0; ii < StdI->nintr; ii++) {
+  StdI->intrindx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->intr = (double complex *)malloc(sizeof(double complex) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
     StdI->intrindx[ii] = (int *)malloc(sizeof(int) * 8);
   }
+  StdI->nintr = 0;
   /**@brief
   (3) Coulomb intra StdIntList::Cintra, StdIntList::CintraIndx
   */
-  StdI->CintraIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->Cintra = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (ii = 0; ii < StdI->nintr; ii++) {
+  StdI->CintraIndx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->Cintra = (double *)malloc(sizeof(double) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
     StdI->CintraIndx[ii] = (int *)malloc(sizeof(int) * 1);
   }
+  StdI->NCintra = 0;
   /**@brief
   (4) Coulomb inter StdIntList::Cinter, StdIntList::CinterIndx
   */
-  StdI->CinterIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->Cinter = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (ii = 0; ii < StdI->nintr; ii++) {
+  StdI->CinterIndx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->Cinter = (double *)malloc(sizeof(double) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
     StdI->CinterIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
+  StdI->NCinter = 0;
   /**@brief
   (5) Hund StdIntList::Hund, StdIntList::HundIndx
   */
-  StdI->HundIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->Hund = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (ii = 0; ii < StdI->nintr; ii++) {
+  StdI->HundIndx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->Hund = (double *)malloc(sizeof(double) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
     StdI->HundIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
+  StdI->NHund = 0;
   /**@brief
   (6) Excahnge StdIntList::Ex, StdIntList::ExIndx
   */
-  StdI->ExIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->Ex = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (ii = 0; ii < StdI->nintr; ii++) {
+  StdI->ExIndx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->Ex = (double *)malloc(sizeof(double) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
     StdI->ExIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
+  StdI->NEx = 0;
   /**@brief
   (7) PairLift StdIntList::PairLift, StdIntList::PLIndx
   */
-  StdI->PLIndx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->PairLift = (double *)malloc(sizeof(double) * StdI->nintr);
-  for (ii = 0; ii < StdI->nintr; ii++) {
+  StdI->PLIndx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->PairLift = (double *)malloc(sizeof(double) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
     StdI->PLIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
-
-  StdI->NCintra = 0;
-  StdI->NCinter = 0;
-  StdI->NHund = 0;
-  StdI->NEx = 0;
   StdI->NPairLift = 0;
 }/*void StdFace_MallocInteractions*/
 #if defined(_mVMC)
@@ -1217,7 +1234,8 @@ void StdFace_MallocInteractions(struct StdIntList *StdI) {
 @brief Define whether the specified site is in the unit cell or not.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void StdFace_FoldSiteSub(struct StdIntList *StdI,
+static void StdFace_FoldSiteSub(
+  struct StdIntList *StdI,//!<[inout]
   int iCellV[3],//!<[in]
   int nBox[3], //!<[out]
   int iCellV_fold[3]//!<[out]

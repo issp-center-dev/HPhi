@@ -56,7 +56,7 @@ void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC,
   int *isite, int *jsite, int connect, double complex *Cphase);
 void StdFace_PrintGeometry(struct StdIntList *StdI);
-void StdFace_MallocInteractions(struct StdIntList *StdI);
+void StdFace_MallocInteractions(struct StdIntList *StdI, int ntransMax, int nintrMax);
 void StdFace_FindSite(struct StdIntList *StdI,
   int iW, int iL, int iH, int diW, int diL, int diH,
   int isiteUC, int jsiteUC,
