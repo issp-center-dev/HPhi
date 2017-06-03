@@ -23,17 +23,31 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 
+
+/**
+ * @file   CalcByTPQ.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ *
+ * @brief  File for givinvg functions of TPQ method
+ *
+ *
+ */
+
 /** 
  * 
- * 
- * @param NumAve 
- * @param ExpecInterval 
- * @param X 
+ * @brief A main function to calculate physical quqntities by TPQ method
+ *
+ * @param [in] NumAve  Number of samples
+ * @param [in] ExpecInterval interval steps between the steps to calculate physical quantities
+ * @param [in,out] X CalcStruct list for getting and giving calculation information
  * 
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  *
- * @return 
+ * @retval 0 normally finished
+ * @retval -1 unnormally finished
  */
 int CalcByTPQ(
 	    const int NumAve,
@@ -60,7 +74,6 @@ int CalcByTPQ(
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
-
     sprintf(sdt_phys, cFileNameSSRand, rand_i);      
     sprintf(sdt_norm, cFileNameNormRand, rand_i);
     sprintf(sdt_flct, cFileNameFlctRand, rand_i);
@@ -83,7 +96,6 @@ int CalcByTPQ(
       }
       byte_size = fread(&step_i, sizeof(step_i), 1, fp);
       byte_size = fread(&i_max, sizeof(long int), 1, fp);
-      //fprintf(stdoutMPI, "Debug: i_max=%ld, step_i=%d\n", i_max, step_i);
       if(i_max != X->Bind.Check.idim_max){
         fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
         exitMPI(-1);
@@ -95,9 +107,9 @@ int CalcByTPQ(
       StopTimer(3600);
       X->Bind.Def.istep=step_i;
       StartTimer(3200);
-      expec_energy_flct(&(X->Bind));
-      //expec_energy(&(X->Bind));
+      iret=expec_energy_flct(&(X->Bind));
       StopTimer(3200);
+      if(iret != 0) return -1;
 
       step_iO=step_i-1;
       if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
@@ -137,17 +149,20 @@ int CalcByTPQ(
       FirstMultiply(rand_i, &(X->Bind));
       StopTimer(3100);
       StartTimer(3200);
-      expec_energy_flct(&(X->Bind)); //v0 = H*v1
+      iret=expec_energy_flct(&(X->Bind)); //v0 = H*v1
       StopTimer(3200);
+      if(iret !=0) return -1;
 
       inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
       StartTimer(3300);
-      expec_cisajs(&(X->Bind), v1);
+      iret=expec_cisajs(&(X->Bind), v1);
       StopTimer(3300);
-      StartTimer(3400);
-      expec_cisajscktaltdc(&(X->Bind), v1);
-      StopTimer(3400);
+      if(iret !=0) return -1;
 
+      StartTimer(3400);
+      iret=expec_cisajscktaltdc(&(X->Bind), v1);
+      StopTimer(3400);
+      if(iret !=0) return -1;
 
       StartTimer(3600);
       if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
@@ -189,8 +204,10 @@ int CalcByTPQ(
       StopTimer(3500);
 
       StartTimer(3200);
-      expec_energy_flct(&(X->Bind));
+      iret=expec_energy_flct(&(X->Bind));
       StopTimer(3200);
+      if(iret !=0) return -1;
+
 //
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
 
@@ -220,12 +237,14 @@ int CalcByTPQ(
 
       if (step_i%step_spin == 0){
         StartTimer(3300);
-        expec_cisajs(&(X->Bind),v1);
+        iret=expec_cisajs(&(X->Bind),v1);
         StopTimer(3300);
+        if(iret !=0) return -1;
 
         StartTimer(3400);
-        expec_cisajscktaltdc(&(X->Bind), v1);
+        iret=expec_cisajscktaltdc(&(X->Bind), v1);
         StopTimer(3400);
+        if(iret !=0) return -1;
       }
     }
 
