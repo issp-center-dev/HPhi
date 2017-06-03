@@ -87,18 +87,15 @@ int CalcByLanczos(
       }
       break;
     default:
-      //fclose(fp);
       exitMPI(-1);
     }
 
     StartTimer(4100);
     int iret=0;
     iret=Lanczos_EigenValue(&(X->Bind));
-    if(iret != 0){
-      StopTimer(4100);
-      return(FALSE);
-    }
     StopTimer(4100);
+    if(iret != 0) return(FALSE);
+
     if (X->Bind.Def.iReStart == RESTART_INOUT ||X->Bind.Def.iReStart == RESTART_OUT ) {
       return TRUE;
     }
@@ -115,8 +112,10 @@ int CalcByLanczos(
       StopTimer(4200);
 
       StartTimer(4300);
-      expec_energy_flct(&(X->Bind));
+      iret=expec_energy_flct(&(X->Bind));
       StopTimer(4300);
+      if(iret != 0) return(FALSE);
+
       //check for the accuracy of the eigenvector
       var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
       diff_ene = fabs(X->Bind.Phys.Target_CG_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_CG_energy);
@@ -128,36 +127,19 @@ int CalcByLanczos(
         fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is enough.\n");
         fprintf(stdoutMPI, "\n");
       }
-
-      /*
-      else{
-         Comment out: Power Lanczos method
-           fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is NOT enough\n");
-           iconv=1;
-           fprintf(stdoutMPI, "Eigenvector is improved by power Lanczos method \n");
-           fprintf(stdoutMPI, "Power Lanczos starts\n");
-           flag=PowerLanczos(&(X->Bind));
-           fprintf(stdoutMPI, "Power Lanczos ends\n");
-           if(flag==1){
-           var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
-           diff_ene = fabs(X->Bind.Phys.Target_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_energy);
-           fprintf(stdoutMPI,"\n");
-           fprintf(stdoutMPI,"Power Lanczos Accuracy check !!!\n");
-           fprintf(stdoutMPI,"%.14e %.14e: diff_ene=%.14e var=%.14e \n ",X->Bind.Phys.Target_energy,X->Bind.Phys.energy,diff_ene,var);
-           fprintf(stdoutMPI,"\n");
-	
-           }
-     else if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG && iconv==1){     
- */
-      else if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG){        
+      else if(X->Bind.Def.iCalcEigenVec==CALCVEC_LANCZOSCG){
         fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is NOT enough\n\n");
         X->Bind.Def.St=1;
         StartTimer(4400);
-        CG_EigenVector(&(X->Bind));
+        iret=CG_EigenVector(&(X->Bind));
         StopTimer(4400);
+        if(iret != 0) return(FALSE);
+
         StartTimer(4300);
-        expec_energy_flct(&(X->Bind));
+        iret=expec_energy_flct(&(X->Bind));
         StopTimer(4300);
+        if(iret != 0) return(FALSE);
+
         var      = fabs(X->Bind.Phys.var-X->Bind.Phys.energy*X->Bind.Phys.energy)/fabs(X->Bind.Phys.var);
         diff_ene = fabs(X->Bind.Phys.Target_CG_energy-X->Bind.Phys.energy)/fabs(X->Bind.Phys.Target_CG_energy);
         fprintf(stdoutMPI, "\n");
@@ -170,8 +152,9 @@ int CalcByLanczos(
     else{//idim_max=1
       v0[1]=1;
       StartTimer(4300);
-      expec_energy_flct(&(X->Bind));
+      iret=expec_energy_flct(&(X->Bind));
       StopTimer(4300);
+      if(iret != 0) return(FALSE);
     }
   }
   else{// X->Bind.Def.iInputEigenVec=true :input v1:
@@ -214,14 +197,7 @@ int CalcByLanczos(
     exitMPI(-1);
   }
   StopTimer(4600);
-  
-  /* For ver.1.0
-     if(!expec_totalspin(&(X->Bind), v1)==0){
-     fprintf(stderr, "Error: calc TotalSpin.\n");
-     exitMPI(-1);
-     }
-  */
-  
+
   if(!expec_totalSz(&(X->Bind), v1)==0){
     fprintf(stderr, "Error: calc TotalSz.\n");
     exitMPI(-1);
@@ -235,8 +211,7 @@ int CalcByLanczos(
   
   if(childfopenMPI(sdt, "w", &fp)!=0){
     exitMPI(-1);
-  }  
-
+  }
 
   fprintf(fp,"Energy  %.16lf \n",X->Bind.Phys.energy);
   fprintf(fp,"Doublon  %.16lf \n",X->Bind.Phys.doublon);
