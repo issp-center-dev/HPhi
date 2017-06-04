@@ -16,7 +16,9 @@
 
 //Define Mode for mltply
 // complex version
-
+/**@file
+@brief Functions for Hubbar + MPI (Core)
+*/
 #ifdef MPI
 #include "mpi.h"
 #endif
@@ -29,9 +31,9 @@
 #include "wrapperMPI.h"
 
 int CheckPE(
-	    int org_isite,
-	    struct BindStruct *X
-	    )
+     int org_isite,
+     struct BindStruct *X
+     )
 {
   if(org_isite+1 > X->Def.Nsite){
     return TRUE;
@@ -42,9 +44,9 @@ int CheckPE(
 }
 
 int CheckBit_Cis(
-		 long unsigned int is1_spin,
-		 long unsigned int orgbit,
-		 long unsigned int *offbit
+   long unsigned int is1_spin,
+   long unsigned int orgbit,
+   long unsigned int *offbit
 ){
   long unsigned int ibit_tmp;
   ibit_tmp = orgbit & is1_spin;
@@ -57,9 +59,9 @@ int CheckBit_Cis(
 }
 
 int CheckBit_Ajt(
-		 long unsigned int is1_spin,
-		 long unsigned int orgbit,
-		 long unsigned int *offbit
+   long unsigned int is1_spin,
+   long unsigned int orgbit,
+   long unsigned int *offbit
 ){
   long unsigned int ibit_tmp;
   ibit_tmp = orgbit & is1_spin;
@@ -72,18 +74,18 @@ int CheckBit_Ajt(
 }
 
 int CheckBit_InterAllPE(
-			int org_isite1,
-			int org_isigma1,
-			int org_isite2,
-			int org_isigma2,
-			int org_isite3,
-			int org_isigma3,
-			int org_isite4,
-			int org_isigma4,
-			struct BindStruct *X,
-			long unsigned int orgbit,
-			long unsigned int *offbit
-			)
+   int org_isite1,
+   int org_isigma1,
+   int org_isite2,
+   int org_isigma2,
+   int org_isite3,
+   int org_isigma3,
+   int org_isite4,
+   int org_isigma4,
+   struct BindStruct *X,
+   long unsigned int orgbit,
+   long unsigned int *offbit
+   )
 {
   long unsigned int tmp_ispin;
   long unsigned int tmp_org, tmp_off;
@@ -132,13 +134,13 @@ int CheckBit_InterAllPE(
 }
 
 int CheckBit_PairPE(
-		    int org_isite1,
-		    int org_isigma1,
-		    int org_isite3,
-		    int org_isigma3,
-		    struct BindStruct *X,
-		    long unsigned int orgbit
-		    )
+      int org_isite1,
+      int org_isigma1,
+      int org_isite3,
+      int org_isigma3,
+      struct BindStruct *X,
+      long unsigned int orgbit
+      )
 {
   long unsigned int tmp_ispin;
   long unsigned int tmp_org, tmp_off;
@@ -167,15 +169,15 @@ int CheckBit_PairPE(
 }
 
 int GetSgnInterAll(
-		   int isite1,
-		   int isite2,
-		   int isite3,
-		   int isite4,
-		   int *Fsgn,
-		   struct BindStruct *X,
-		   unsigned long int orgbit,
-		   unsigned long int *offbit
-		   )
+     int isite1,
+     int isite2,
+     int isite3,
+     int isite4,
+     int *Fsgn,
+     struct BindStruct *X,
+     unsigned long int orgbit,
+     unsigned long int *offbit
+     )
 {
   long unsigned int diffA;
   long unsigned int tmp_off;
@@ -1375,14 +1377,14 @@ double complex X_child_CisAis_Hubbard_MPI
   * @author Youhei Yamaji (The University of Tokyo)
   */
 double complex X_GC_Cis_MPI(
-        int org_isite,
-        int org_ispin,
-        double complex tmp_trans,
+        int org_isite,//!<[in]
+        int org_ispin,//!<[in]
+        double complex tmp_trans,//!<[in]
         double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
         double complex *tmp_v1 /**< [in] v0 += H v1*/,
-        unsigned long int idim_max,
-        double complex *tmp_v1buf,
-        unsigned long int *Tpow
+        unsigned long int idim_max,//!<[in]
+        double complex *tmp_v1buf,//!<[in]
+        unsigned long int *Tpow//!<[in]
 ) {
 #ifdef MPI
     int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -1443,14 +1445,14 @@ double complex X_GC_Cis_MPI(
   * @author Youhei Yamaji (The University of Tokyo)
   */
 double complex X_GC_Ajt_MPI(
-        int org_isite,
-        int org_ispin,
-        double complex tmp_trans,
+        int org_isite,//!<[in]
+        int org_ispin,//!<[in]
+        double complex tmp_trans,//!<[in]
         double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
         double complex *tmp_v1 /**< [in] v0 += H v1*/,
-        unsigned long int idim_max,
-        double complex *tmp_v1buf,
-        unsigned long int *Tpow
+        unsigned long int idim_max,//!<[in]
+        double complex *tmp_v1buf,//!<[in]
+        unsigned long int *Tpow//!<[in]
 ) {
 #ifdef MPI
     int mask2, state2, ierr, origin, bit2diff, Fsgn;

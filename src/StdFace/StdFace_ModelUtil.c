@@ -1075,7 +1075,7 @@ or the isotropic Coulomb interaction StdIntList::V).
 */
 void StdFace_InputCoulombV(
   struct StdIntList *StdI,//!<[inout]
-  double *V0,//<!<[in]
+  double *V0,//!<[in]
   char *V0name//!<[in] E.g. V1
 )
 {

@@ -13,9 +13,9 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-
-//Define Mode for mltply
-// complex version
+/**@file
+@brief Functions for spin Hamiltonian + MPI
+*/
 
 #ifdef MPI
 #include "mpi.h"
@@ -35,25 +35,22 @@
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void child_general_int_spin_MPIdouble(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+){
 #ifdef MPI
+  double complex dam_pr = 0;
+  dam_pr = X_child_general_int_spin_MPIdouble(
+    (int)X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1],
+    (int)X->Def.InterAll_OffDiagonal[i_int][3], (int)X->Def.InterAll_OffDiagonal[i_int][4],
+    (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
+    X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
 
-    double complex dam_pr = 0;
-    dam_pr=X_child_general_int_spin_MPIdouble
-            (
-                    (int) X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1], (int)X->Def.InterAll_OffDiagonal[i_int][3],
-                    (int) X->Def.InterAll_OffDiagonal[i_int][4], (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
-                    X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
-
-    X->Large.prdct += dam_pr;
-
+  X->Large.prdct += dam_pr;
 #endif
 }/*void child_general_int_spin_MPIdouble*/
-
 /**
  *
  * Exchange term in Spin model
@@ -62,79 +59,76 @@ void child_general_int_spin_MPIdouble(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 double complex X_child_general_int_spin_MPIdouble(
-        int org_isite1,
-        int org_ispin1,
-        int org_ispin2,
-        int org_isite3,
-        int org_ispin3,
-        int org_ispin4,
-        double complex tmp_J,
-        struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
+  int org_isite1,
+  int org_ispin1,
+  int org_ispin2,
+  int org_isite3,
+  int org_ispin3,
+  int org_ispin4,
+  double complex tmp_J,
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
 ) {
 #ifdef MPI
-    int mask1, mask2, state1, state2, ierr, origin;
-    unsigned long int idim_max_buf, j, ioff;
-    MPI_Status statusMPI;
-    double complex Jint, dmv, dam_pr;
+  int mask1, mask2, state1, state2, ierr, origin;
+  unsigned long int idim_max_buf, j, ioff;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr;
 
-    mask1 = (int) X->Def.Tpow[org_isite1];
-    mask2 = (int) X->Def.Tpow[org_isite3];
-    origin = myrank ^ (mask1 + mask2);
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  origin = myrank ^ (mask1 + mask2);
 
-    state1 = (origin & mask1) / mask1;
-    state2 = (origin & mask2) / mask2;
+  state1 = (origin & mask1) / mask1;
+  state2 = (origin & mask2) / mask2;
 
-    if (state1 == org_ispin2 && state2 == org_ispin4) {
-        Jint = tmp_J;
+  if (state1 == org_ispin2 && state2 == org_ispin4) {
+    Jint = tmp_J;
+  }
+  else if (state1 == org_ispin1 && state2 == org_ispin3) {
+    Jint = conj(tmp_J);
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+      Jint = 0;
     }
-    else if (state1 == org_ispin1 && state2 == org_ispin3) {
-        Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
-            Jint = 0;
-        }
-    }
-    else return 0;
+  }
+  else return 0;
 
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
 
-    dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
+  dam_pr = 0.0;
+  if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
   firstprivate(idim_max_buf, Jint, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-        for (j = 1; j <= idim_max_buf; j++) {
-            GetOffComp(list_2_1, list_2_2, list_1buf[j],
-                       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-            dmv = Jint * v1buf[j];
-            tmp_v0[ioff] += dmv;
-            dam_pr += conj(tmp_v1[ioff]) * dmv;
-        }
-
+    for (j = 1; j <= idim_max_buf; j++) {
+      GetOffComp(list_2_1, list_2_2, list_1buf[j],
+        X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+      dmv = Jint * v1buf[j];
+      tmp_v0[ioff] += dmv;
+      dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
-    else {
+  }
+  else {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
   firstprivate(idim_max_buf, Jint, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-        for (j = 1; j <= idim_max_buf; j++) {
-            GetOffComp(list_2_1, list_2_2, list_1buf[j],
-                       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-            dmv = Jint * v1buf[j];
-            dam_pr += conj(tmp_v1[ioff]) * dmv;
-        }
+    for (j = 1; j <= idim_max_buf; j++) {
+      GetOffComp(list_2_1, list_2_2, list_1buf[j],
+        X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+      dmv = Jint * v1buf[j];
+      dam_pr += conj(tmp_v1[ioff]) * dmv;
     }
-    return dam_pr;
+  }
+  return dam_pr;
 #endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
-
-
 /**
  *
  * Exchange term in Spin model
@@ -143,57 +137,53 @@ double complex X_child_general_int_spin_MPIdouble(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 double complex X_child_general_int_spin_TotalS_MPIdouble(
-        int org_isite1,
-        int org_isite3,
-        struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
-)
-{
+  int org_isite1,
+  int org_isite3,
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+){
 #ifdef MPI
-    int mask1, mask2, num1_up, num2_up, ierr, origin;
-    unsigned long int idim_max_buf, j, ioff, ibit_tmp;
-    MPI_Status statusMPI;
-    double complex dmv, dam_pr;
+  int mask1, mask2, num1_up, num2_up, ierr, origin;
+  unsigned long int idim_max_buf, j, ioff, ibit_tmp;
+  MPI_Status statusMPI;
+  double complex dmv, dam_pr;
 
-    mask1 = (int)X->Def.Tpow[org_isite1];
-    mask2 = (int)X->Def.Tpow[org_isite3];
-    if(mask1 == mask2){
-        origin = myrank ^ mask1;
-    }
-    else{
-        origin = myrank ^ (mask1 + mask2);
-    }
-    num1_up = (origin & mask1) / mask1;
-    num2_up = (origin & mask2) / mask2;
+  mask1 = (int)X->Def.Tpow[org_isite1];
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  if (mask1 == mask2) origin = myrank ^ mask1;
+  else origin = myrank ^ (mask1 + mask2);
+  num1_up = (origin & mask1) / mask1;
+  num2_up = (origin & mask2) / mask2;
 
-    ibit_tmp=(num1_up)^(num2_up);
-    if(ibit_tmp ==0) return 0;
+  ibit_tmp = (num1_up) ^ (num2_up);
+  if (ibit_tmp == 0) return 0;
 
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if(ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if(ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if(ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
+                      MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
+                      MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                      MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
 
-    dam_pr = 0.0;
+  dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
     firstprivate(idim_max_buf,  X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
-        GetOffComp(list_2_1, list_2_2, list_1buf[j],
-                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-        dmv = 0.5 * v1buf[j];
-        dam_pr += conj(tmp_v1[ioff]) * dmv;
-    }
-    return dam_pr;
+  for (j = 1; j <= idim_max_buf; j++) {
+    GetOffComp(list_2_1, list_2_2, list_1buf[j],
+      X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+    dmv = 0.5 * v1buf[j];
+    dam_pr += conj(tmp_v1[ioff]) * dmv;
+  }/*for (j = 1; j <= idim_max_buf; j++)*/
+  return dam_pr;
 #endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
-
-
 /**
  *
  * Exchange term in Spin model
@@ -202,135 +192,138 @@ double complex X_child_general_int_spin_TotalS_MPIdouble(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void child_general_int_spin_MPIsingle(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+){
 #ifdef MPI
-    double complex dam_pr = 0;
+  double complex dam_pr = 0;
 
-    dam_pr = X_child_general_int_spin_MPIsingle(
-            (int)X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1], (int)X->Def.InterAll_OffDiagonal[i_int][3],
-            (int)X->Def.InterAll_OffDiagonal[i_int][4], (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
-            X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  dam_pr = X_child_general_int_spin_MPIsingle(
+    (int)X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1], 
+    (int)X->Def.InterAll_OffDiagonal[i_int][3], (int)X->Def.InterAll_OffDiagonal[i_int][4],
+    (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
+    X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
 
     X->Large.prdct += dam_pr;
-
 #endif
 }/*void child_general_int_spin_MPIsingle*/
 
 
 double complex X_child_general_int_spin_MPIsingle(
-        int org_isite1,
-        int org_ispin1,
-        int org_ispin2,
-        int org_isite3,
-        int org_ispin3,
-        int org_ispin4,
-        double complex tmp_J,
-        struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
+  int org_isite1,
+  int org_ispin1,
+  int org_ispin2,
+  int org_isite3,
+  int org_ispin3,
+  int org_ispin4,
+  double complex tmp_J,
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
 ) {
 #ifdef MPI
-    int mask2, state2, ierr, origin;
-    unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
-    MPI_Status statusMPI;
-    double complex Jint, dmv, dam_pr;
-    /*
-    Prepare index in the inter PE
-    */
-    mask2 = (int) X->Def.Tpow[org_isite3];
-    origin = myrank ^ mask2;
-    state2 = (origin & mask2) / mask2;
+  int mask2, state2, ierr, origin;
+  unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
+  MPI_Status statusMPI;
+  double complex Jint, dmv, dam_pr;
+  /*
+  Prepare index in the inter PE
+  */
+  mask2 = (int)X->Def.Tpow[org_isite3];
+  origin = myrank ^ mask2;
+  state2 = (origin & mask2) / mask2;
 
-    if (state2 == org_ispin4) {
-        state1check = (unsigned long int) org_ispin2;
-        Jint = tmp_J;
+  if (state2 == org_ispin4) {
+    state1check = (unsigned long int) org_ispin2;
+    Jint = tmp_J;
+  }
+  else if (state2 == org_ispin3) {
+    state1check = (unsigned long int) org_ispin1;
+    Jint = conj(tmp_J);
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+      Jint = 0;
     }
-    else if (state2 == org_ispin3) {
-        state1check = (unsigned long int) org_ispin1;
-        Jint = conj(tmp_J);
-        if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) {
-            Jint = 0;
-        }
-    }
-    else return 0;
+  }
+  else return 0;
 
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    /*
-    Index in the intra PE
-    */
-    mask1 = X->Def.Tpow[org_isite1];
+  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
+                      MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
+                      MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                      MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(-1);
+  /*
+  Index in the intra PE
+  */
+  mask1 = X->Def.Tpow[org_isite1];
 
-    dam_pr = 0.0;
-    if (X->Large.mode == M_MLTPLY || X->Large.mode ==M_CALCSPEC) {
+  dam_pr = 0.0;
+  if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff, jreal, state1) \
-  firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-        for (j = 1; j <= idim_max_buf; j++) {
+firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) \
+shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+    for (j = 1; j <= idim_max_buf; j++) {
 
-            jreal = list_1buf[j];
+      jreal = list_1buf[j];
 
-            state1 = (jreal & mask1) / mask1;
-            if (state1 == state1check) {
-                GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-                           X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+      state1 = (jreal & mask1) / mask1;
+      if (state1 == state1check) {
+        GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
-                dmv = Jint * v1buf[j];
-                tmp_v0[ioff] += dmv;
-                dam_pr += conj(tmp_v1[ioff]) * dmv;
-            }
-        }
-
+        dmv = Jint * v1buf[j];
+        tmp_v0[ioff] += dmv;
+        dam_pr += conj(tmp_v1[ioff]) * dmv;
+      }
     }
-    else if (X->Large.mode == M_TOTALS) {
+  }
+  else if (X->Large.mode == M_TOTALS) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff, jreal, state1) \
-  firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-        for (j = 1; j <= idim_max_buf; j++) {
+firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) \
+shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+    for (j = 1; j <= idim_max_buf; j++) {
 
-            jreal = list_1buf[j];
+      jreal = list_1buf[j];
 
-            state1 = (jreal & mask1) / mask1;
-            if (state1 == state1check) {
-                GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-                           X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+      state1 = (jreal & mask1) / mask1;
+      if (state1 == state1check) {
+        GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
-                dmv = Jint * v1buf[j];
-                dmv = 0.5 * v1buf[j];
-                dam_pr += conj(tmp_v1[ioff]) * dmv;
-            }
-        }
+        dmv = Jint * v1buf[j];
+        dmv = 0.5 * v1buf[j];
+        dam_pr += conj(tmp_v1[ioff]) * dmv;
+      }
     }
-    else{
+  }
+  else {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff, jreal, state1) \
-  firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-        for (j = 1; j <= idim_max_buf; j++) {
+firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) \
+shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+    for (j = 1; j <= idim_max_buf; j++) {
 
-            jreal = list_1buf[j];
+      jreal = list_1buf[j];
 
-            state1 = (jreal & mask1) / mask1;
-            if (state1 == state1check) {
-                GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-                           X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-                dmv = Jint * v1buf[j];
-                dam_pr += conj(tmp_v1[ioff]) * dmv;
-            }
-        }
+      state1 = (jreal & mask1) / mask1;
+      if (state1 == state1check) {
+        GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+        dmv = Jint * v1buf[j];
+        dam_pr += conj(tmp_v1[ioff]) * dmv;
+      }
     }
-    return dam_pr;
-
+  }
+  return dam_pr;
 #endif
 }
-
 /**
  *
  * General interaction term in the Spin model + GC
@@ -339,24 +332,23 @@ double complex X_child_general_int_spin_MPIsingle(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void GC_child_general_int_spin_MPIdouble(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
-    if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-        X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-        GC_child_CisAisCjuAjv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
-    }
-    else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
-             X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-        GC_child_CisAitCjuAju_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
-    }
-    else {
-        GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
-    }
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+){
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    GC_child_CisAisCjuAjv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    GC_child_CisAitCjuAju_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
+  }
+  else {
+    GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, tmp_v0, tmp_v1);
+  }
 }/*void GC_child_general_int_spin_MPIdouble*/
-
 /**
  *
  * General interaction term in the Spin model + GC
@@ -365,26 +357,23 @@ void GC_child_general_int_spin_MPIdouble(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void GC_child_general_int_spin_MPIsingle(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/)
 {
-    if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-        X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-        GC_child_CisAisCjuAjv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
-
-    }
-    else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
-             X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-        GC_child_CisAitCjuAju_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
-    }
-    else {
-        GC_child_CisAitCiuAiv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
-    }
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    GC_child_CisAisCjuAjv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    GC_child_CisAitCjuAju_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
+  }
+  else {
+    GC_child_CisAitCiuAiv_spin_MPIsingle(i_int, X, tmp_v0, tmp_v1);
+  }
 }/*void GC_child_general_int_spin_MPIsingle*/
-
-
 /**
  *
  * General interaction term in the Spin model + GC
@@ -393,42 +382,39 @@ void GC_child_general_int_spin_MPIsingle(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void GC_child_general_int_GeneralSpin_MPIdouble(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+){
 #ifdef MPI
-    double complex dam_pr;
-    // MPI_Status statusMPI;
+  double complex dam_pr;
+  // MPI_Status statusMPI;
 
-    if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-        X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-        dam_pr = X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                               X->Def.InterAll_OffDiagonal[i_int][1],
-                                                               X->Def.InterAll_OffDiagonal[i_int][4],
-                                                               X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
-                                                               X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
-    }
-    else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
-             X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-        dam_pr = X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                               X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
-                                                               X->Def.InterAll_OffDiagonal[i_int][4],
-                                                               X->Def.InterAll_OffDiagonal[i_int][5],
-                                                               X->Def.ParaInterAll_OffDiagonal[i_int],X, tmp_v0, tmp_v1);
-    }
-    else {
-        dam_pr = X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                               X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
-                                                               X->Def.InterAll_OffDiagonal[i_int][4],
-                                                               X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
-                                                               X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
-    }
-    X->Large.prdct += dam_pr;
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    dam_pr = X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
+      X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
+      X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
+      X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    dam_pr = X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
+      X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
+      X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
+      X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  }
+  else {
+    dam_pr = X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+      X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
+      X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
+      X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
+      X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  }
+  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_general_int_spin_MPIdouble*/
-
 /**
 *
 * General interaction term in the Spin model + GC
@@ -437,43 +423,40 @@ void GC_child_general_int_GeneralSpin_MPIdouble(
 * @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void GC_child_general_int_GeneralSpin_MPIsingle(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+){
 #ifdef MPI
-    double complex dam_pr;
-    //MPI_Status statusMPI;
+  double complex dam_pr;
+  //MPI_Status statusMPI;
 
-    if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
-        X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-        dam_pr = X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                               X->Def.InterAll_OffDiagonal[i_int][1],
-                                                               X->Def.InterAll_OffDiagonal[i_int][4],
-                                                               X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
-                                                               X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
+      X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
+    dam_pr = X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
+      X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
+      X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
+      X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  }
+  else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
+           X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
+    dam_pr = X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
+      X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
+      X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
+      X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
     }
-    else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
-             X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-        dam_pr = X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                               X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
-                                                               X->Def.InterAll_OffDiagonal[i_int][4],
-                                                               X->Def.InterAll_OffDiagonal[i_int][5],
-                                                               X->Def.ParaInterAll_OffDiagonal[i_int],X, tmp_v0, tmp_v1);
-    }
-    else {
-        dam_pr = X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                               X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
-                                                               X->Def.InterAll_OffDiagonal[i_int][4],
-                                                               X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
-                                                               X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
-    }
+  else {
+    dam_pr = X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+      X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
+      X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
+      X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
+      X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  }
 
-    X->Large.prdct += dam_pr;
+  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_general_int_spin_MPIsingle*/
-
 /**
  *
  * General interaction term in the Spin model + GC
@@ -482,21 +465,20 @@ void GC_child_general_int_GeneralSpin_MPIsingle(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  */
 void child_general_int_GeneralSpin_MPIdouble(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+){
     double complex dam_pr;
-    dam_pr = X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                        X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
-                                                        X->Def.InterAll_OffDiagonal[i_int][4],
-                                                        X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
-                                                        X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+    dam_pr = X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+      X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
+      X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
+      X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
+      X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
     X->Large.prdct += dam_pr;
 
 }/*void GC_child_general_int_spin_MPIdouble*/
-
 /**
   *
   * General interaction term in the Spin model + GC
@@ -505,19 +487,18 @@ void child_general_int_GeneralSpin_MPIdouble(
   * @author Mitsuaki Kawamura (The University of Tokyo)
   */
 void child_general_int_GeneralSpin_MPIsingle(
-        unsigned long int i_int /**< [in] Interaction ID*/,
-        struct BindStruct *X /**< [inout]*/,
-        double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-        double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
-    double complex dam_pr;
+  unsigned long int i_int /**< [in] Interaction ID*/,
+  struct BindStruct *X /**< [inout]*/,
+  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex *tmp_v1 /**< [in] v0 = H v1*/
+){
+  double complex dam_pr;
 
-    dam_pr = X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(X->Def.InterAll_OffDiagonal[i_int][0],
-                                                        X->Def.InterAll_OffDiagonal[i_int][1],X->Def.InterAll_OffDiagonal[i_int][3],
-                                                        X->Def.InterAll_OffDiagonal[i_int][4],
-                                                        X->Def.InterAll_OffDiagonal[i_int][5],X->Def.InterAll_OffDiagonal[i_int][7],
-                                                        X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+  dam_pr = X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+    X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
+    X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
+    X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
+    X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
 
-    X->Large.prdct += dam_pr;
-
+  X->Large.prdct += dam_pr;
 }/*void GC_child_general_int_spin_MPIsingle*/

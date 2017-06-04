@@ -12,7 +12,9 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-
+/**@file
+@brief Functions for Hubbard hamiltonian (Core)
+*/
 
 //Define Mode for mltply
 // complex version
@@ -433,16 +435,16 @@ double complex GC_AisCis(
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
   double complex GC_CisAjt(
-          long unsigned int j,
-          double complex *tmp_v0,
-          double complex *tmp_v1,
-          struct BindStruct *X,
-          long unsigned int is1_spin,
-          long unsigned int is2_spin,
-          long unsigned int sum_spin,
-          long unsigned int diff_spin,
-          double complex tmp_V,
-          long unsigned int *tmp_off
+          long unsigned int j,//!<[in]
+          double complex *tmp_v0,//!<[in]
+          double complex *tmp_v1,//!<[in]
+          struct BindStruct *X,//!<[in]
+          long unsigned int is1_spin,//!<[in]
+          long unsigned int is2_spin,//!<[in]
+          long unsigned int sum_spin,//!<[in]
+          long unsigned int diff_spin,//!<[in]
+          double complex tmp_V,//!<[in]
+          long unsigned int *tmp_off//!<[in]
   ) {
 
     long unsigned int list_1_j, list_1_off;
@@ -473,29 +475,19 @@ double complex GC_AisCis(
   }
 
 /**
- *
- *
- * @param list_1_j
- * @param X
- * @param is1_spin
- * @param is2_spin
- * @param sum_spin
- * @param diff_spin
- * @param iexchg
- * @param tmp_off
- *
- * @return
+@brief XXX
+@return YYY
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
   int X_CisAjt(
-          long unsigned int list_1_j,
-          struct BindStruct *X,
-          long unsigned int is1_spin,
-          long unsigned int is2_spin,
-          long unsigned int sum_spin,
-          long unsigned int diff_spin,
-          long unsigned int *tmp_off
+          long unsigned int list_1_j,//!<[in]
+          struct BindStruct *X,//!<[in]
+          long unsigned int is1_spin,//!<[in]
+          long unsigned int is2_spin,//!<[in]
+          long unsigned int sum_spin,//!<[in]
+          long unsigned int diff_spin,//!<[in]
+          long unsigned int *tmp_off//!<[in]
   ) {
     long unsigned int off;
     int sgn = 1;
@@ -513,29 +505,19 @@ double complex GC_AisCis(
   }
 
 /**
- *
- *
- * @param list_1_j
- * @param X
- * @param is1_spin
- * @param is2_spin
- * @param sum_spin
- * @param diff_spin
- * @param iexchg
- * @param tmp_off
- *
- * @return
+@brief XXX
+* @return YYY
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
   int X_GC_CisAjt(
-          long unsigned int list_1_j,
-          struct BindStruct *X,
-          long unsigned int is1_spin,
-          long unsigned int is2_spin,
-          long unsigned int sum_spin,
-          long unsigned int diff_spin,
-          long unsigned int *tmp_off
+          long unsigned int list_1_j,//!<[in]
+          struct BindStruct *X,//!<[in]
+          long unsigned int is1_spin,//!<[in]
+          long unsigned int is2_spin,//!<[in]
+          long unsigned int sum_spin,//!<[in]
+          long unsigned int diff_spin,//!<[in]
+          long unsigned int *tmp_off//!<[in]
   ) {
     long unsigned int ibit_tmp_1, ibit_tmp_2;
     long unsigned int bit, off;
@@ -1289,12 +1271,12 @@ double complex GC_AisCis(
  * @author Youhei Yamaji (The University of Tokyo)
  */
 double complex GC_Cis(
-        long unsigned int j,
-        double complex *tmp_v0,
-        double complex *tmp_v1,
-        long unsigned int is1_spin,
-        double complex tmp_V,
-        long unsigned int *tmp_off
+        long unsigned int j,//!<[in]
+        double complex *tmp_v0,//!<[in]
+        double complex *tmp_v1,//!<[in]
+        long unsigned int is1_spin,//!<[in]
+        double complex tmp_V,//!<[in]
+        long unsigned int *tmp_off//!<[in]
 ) {
 
     long unsigned int list_1_j, list_1_off;
@@ -1333,27 +1315,19 @@ double complex GC_Cis(
 }
 
 /**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param is1_spin
- * @param tmp_V
- *
- * @return
+ * @brief XXX
+ * @return YYY
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * @author Youhei Yamaji (The University of Tokyo)
  */
 double complex GC_Ajt(
-        long unsigned int j,
-        double complex *tmp_v0,
-        double complex *tmp_v1,
-        long unsigned int is1_spin,
-        double complex tmp_V,
-        long unsigned int *tmp_off
+        long unsigned int j,//!<[in]
+        double complex *tmp_v0,//!<[in]
+        double complex *tmp_v1,//!<[in]
+        long unsigned int is1_spin,//!<[in]
+        double complex tmp_V,//!<[in]
+        long unsigned int *tmp_off//!<[in]
 ) {
 
     long unsigned int list_1_j, list_1_off;

@@ -347,7 +347,7 @@ int LOBPCG_Main(
   /**@brief
   <ul>
   <li>Set initial guess of wavefunction: 
-  @f${\bf x}=initial guess@f$</li>
+  @f${\bf x}=@f$initial guess</li>
   */
   Initialize_wave(X, wxp[1]);
 
@@ -426,8 +426,8 @@ int LOBPCG_Main(
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
     /**@brief
     </ul>
-    <li>end do each eigenvector
-    <li>Convergence check
+    <li>@b END @b DO each eigenvector</li>
+    <li>Convergence check</li>
     */
     childfopenMPI(sdt_2, "a", &fp);
     fprintf(stdoutMPI, "%9d %15.5e %15.5e      ", stp, dnormmax, eps_LOBPCG);
@@ -481,10 +481,13 @@ int LOBPCG_Main(
       creal(hsub[ie + 1 * X->Def.k_exct + ie * nsub + 1 * nsub*X->Def.k_exct]);
     /**@brief
     <li>Subspace diagonalization with the Lowdin's orthogonalization for
-        generalized eigenvalue problem
+        generalized eigenvalue problem: @f${\hat H}_{\rm sub}{\bf v}={\hat O}\mu_{\rm sub}{\bf v}@f$,
+        @f${\bf v}=(\alpha, \beta, \gamma)@f$</li>
     */
     nsub_cut = diag_ovrp(nsub, hsub, ovlp, eigsub);
-   
+    /**@brief
+    <li>Update @f$\mu=(\mu+\mu_{\rm sub})/2@f$</li>
+    */
     for (ie = 0; ie < X->Def.k_exct; ie++)
       eig[ie] = 0.5 * (eig[ie] + eigsub[ie]);
 
@@ -500,7 +503,7 @@ int LOBPCG_Main(
       for (idim = 1; idim <= i_max; idim++) {
         /**@brief
         <li>@f${\bf x}=\alpha {\bf w}+\beta {\bf x}+\gamma {\bf p}@f$,
-        Normalize @f$x@f$</li>
+        Normalize @f${\bf x}@f$</li>
         */
         for (ie = 0; ie < X->Def.k_exct; ie++) {
           work[mythread][ie] = 0.0;
@@ -511,7 +514,7 @@ int LOBPCG_Main(
         for (ie = 0; ie < X->Def.k_exct; ie++) wxp[1][ie][idim] = work[mythread][ie];
         /**@brief
         <li>@f${\bf X}=\alpha {\bf W}+\beta {\bf X}+\gamma {\bf P}@f$,
-        Normalize @f$X@f$</li>
+        Normalize @f${\bf X}@f$</li>
         */
         for (ie = 0; ie < X->Def.k_exct; ie++) {
           work[mythread][ie] = 0.0;
@@ -522,7 +525,7 @@ int LOBPCG_Main(
         for (ie = 0; ie < X->Def.k_exct; ie++) hwxp[1][ie][idim] = work[mythread][ie];
         /**@brief
         <li>@f${\bf p}=\alpha {\bf w}+\gamma {\bf p}@f$,
-        Normalize @f$p@f$</li>
+        Normalize @f${\bf p}@f$</li>
         */
         for (ie = 0; ie < X->Def.k_exct; ie++) {
           work[mythread][ie] = 0.0;
@@ -534,7 +537,7 @@ int LOBPCG_Main(
         for (ie = 0; ie < X->Def.k_exct; ie++) wxp[2][ie][idim] = work[mythread][ie];
         /**@brief
         <li>@f${\bf P}=\alpha {\bf W}+\gamma {\bf P}@f$,
-        Normalize @f$P@f$</li>
+        Normalize @f${\bf P}@f$</li>
         */
         for (ie = 0; ie < X->Def.k_exct; ie++) {
           work[mythread][ie] = 0.0;
@@ -563,7 +566,7 @@ int LOBPCG_Main(
   }/*for (stp = 1; stp <= X->Def.Lanczos_max; stp++)*/
   /**@brief
   </ul>
-  <li>end do LOBPCG iteration
+  <li>@b END @b DO LOBPCG iteration
   */
   //fclose(fp);
 
@@ -580,11 +583,12 @@ int LOBPCG_Main(
 
   c_free3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
   /**@brief
-  <li>Output resulting vectors for restart
+  <li>Output resulting vectors for restart</li>
   */
   if (X->Def.iReStart == RESTART_OUT || X->Def.iReStart == RESTART_INOUT) Output_restart(X, wxp[1]);
   /**@brief
-  <li>Just Move wxp[1] into ::L_vec. The latter must be start from 0-index (the same as FullDiag)
+  <li>Just Move wxp[1] into ::L_vec. The latter must be start from 0-index (the same as FullDiag)</li>
+  </ul>
   */
   c_malloc2(L_vec, X->Def.k_exct, X->Check.idim_max + 1);
 #pragma omp parallel default(none) shared(i_max,wxp,L_vec,X) private(idim,ie)
