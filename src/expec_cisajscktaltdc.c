@@ -54,11 +54,11 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
 /** 
  * @brief Parent function to calculate two-body green's functions
  * 
- * @param X data list for calculation
- * @param vec eigenvectors
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
  * 
  * @retval 0 normally finished
- * @retval -1 unnormally finished
+ * @retval -1 abnormally finished
  * @note the origin of function's name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
  *
  * @version 0.2
@@ -166,111 +166,25 @@ int expec_cisajscktaltdc
   else if(X->Def.iCalcType==TPQCalc){
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGFinish, "a", rand_i, step);
   }
-  //[s] this part will be added
-  /* For FullDiag, it is convinient to calculate the total spin for each vector.
-     Such functions will be added 
-     if(X->Def.iCalcType==FullDiag){
-     if(X->Def.iCalcModel==Spin){
-     expec_cisajscktaltdc_alldiag_spin(X,vec);
-     }else if(X->Def.iCalcModel==Hubbard || X->Def.iCalcModel==Kondo){
-     expec_cisajscktaltdc_alldiag(X,vec);
-     }else{// 
-     X->Phys.s2=0.0;   
-     }
-     }
-  */
-  //[e]
   return 0;
 }
 
-
-/** 
- * @note Not Used now
- * 
- * @param X 
- * @param vec 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
-void expec_cisajscktaltdc_alldiag(struct BindStruct *X,double complex *vec){ // only for Spin and Hubbard
-
-  long unsigned int j;
-  long unsigned int irght,ilft,ihfbit;
-  long unsigned int isite1,isite2;
-  long unsigned int is1_up,is2_up,is1_down,is2_down;
-  long unsigned int iexchg, off;
-  int num1_up,num2_up;
-  int num1_down,num2_down; 
-  long unsigned int ibit1_up,ibit2_up,ibit1_down,ibit2_down; 
-  double complex spn_z,chrg_z;
-  double complex spn,chrg;
-  double complex t_spn_z;  
-  
-  int N2,i_max;
-    
-  N2=2*X->Def.Nsite;
-  i_max=X->Check.idim_max;
-    
-  irght=pow(2,((N2+1)/2))-1;
-  ilft=pow(2,N2)-1;
-  ilft=ilft ^ irght; 
-  ihfbit=pow(2,((N2+1)/2));
-  chrg=0.0;
-  spn=0.0;
-  t_spn_z=0.0;
-  
-  for(isite1=1;isite1<=X->Def.Nsite;isite1++){
-    for(isite2=1;isite2<=X->Def.Nsite;isite2++){
-            
-      is1_up=X->Def.Tpow[2*isite1-2];
-      is1_down=X->Def.Tpow[2*isite1-1];
-      is2_up=X->Def.Tpow[2*isite2-2];
-      is2_down=X->Def.Tpow[2*isite2-1];
-      
-#pragma omp parallel for reduction(+: t_spn_z,spn, chrg) firstprivate(i_max, is1_up, is2_up, is1_down, is2_down, irght, ilft, ihfbit) private(ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, spn_z, chrg_z, iexchg, off)
-      for(j=1;j<=i_max;j++){                    
-        ibit1_up= list_1[j]&is1_up;
-        num1_up=ibit1_up/is1_up;            
-        ibit2_up= list_1[j]&is2_up;
-        num2_up=ibit2_up/is2_up;
-            
-        ibit1_down= list_1[j]&is1_down;
-        num1_down=ibit1_down/is1_down;
-            
-        ibit2_down= list_1[j]&is2_down;
-        num2_down=ibit2_down/is2_down;
-            
-        spn_z=(num1_up-num1_down)*(num2_up-num2_down);
-        chrg_z=(num1_up+num1_down)*(num2_up+num2_down);
-            
-        t_spn_z+= conj(vec[j])* vec[j]*(num1_up-num1_down);
-        spn+= conj(vec[j])* vec[j]*spn_z;
-        chrg+= conj(vec[j])* vec[j]*chrg_z;
-            
-        if(isite1==isite2){
-          spn+=2* conj(vec[j])* vec[j]*(num1_up+num1_down-2*num1_up*num1_down);
-        }else{
-          if(ibit1_up!=0 && ibit1_down==0 && ibit2_up==0 &&ibit2_down!=0 ){
-            iexchg= list_1[j]-(is1_up+is2_down);
-            iexchg+=(is2_up+is1_down);
-            GetOffComp(list_2_1, list_2_2, iexchg,  irght, ilft, ihfbit, &off);                    
-            spn+=2* conj(vec[j])* vec[off];
-          }else if(ibit1_up==0 && ibit1_down!=0 && ibit2_up!=0 && ibit2_down==0){
-            iexchg= list_1[j]-(is1_down+is2_up);
-            iexchg+=(is2_down+is1_up);
-            GetOffComp(list_2_1, list_2_2, iexchg,  irght, ilft, ihfbit, &off);
-            spn+=2* conj(vec[j])* vec[off];
-          }
-        }
-      }
-    }
-  }
-  spn = spn/X->Def.Nsite;
-  X->Phys.s2=spn;
-}
-
-
-int Rearray_Interactions(
+///
+/// \brief Rearray components of two-body Green's functions
+/// \param i [in] the index of two-body Green's functions
+/// \param org_isite1 [out] the rearrayed site about the target two-Body Green's functions.
+/// \param org_isite2 [out] the rearrayed site about the target two-Body Green's functions.
+/// \param org_isite3 [out] the rearrayed site about the target two-Body Green's functions.
+/// \param org_isite4 [out] the rearrayed spin index about the target two-Body Green's functions.
+/// \param org_sigma1 [out] the rearrayed spin index about the target two-Body Green's functions.
+/// \param org_sigma2 [out] the rearrayed spin index about the target two-Body Green's functions.
+/// \param org_sigma3 [out] the rearrayed spin index about the target two-Body Green's functions.
+/// \param org_sigma4 [out] the rearrayed spin index about the target two-Body Green's functions.
+/// \param tmp_V [out] the sign obtained by rearraying sites about the target two-Body Green's functions.
+/// \param X [in] struct for getting the information about the target two-Body Green's functions.
+/// \retval 0 normally finished
+/// \retval -1 abnormally finished
+int Rearray_TwoBodyG(
                          int i,
                          long unsigned int *org_isite1,
                          long unsigned int *org_isite2,
@@ -349,7 +263,13 @@ int Rearray_Interactions(
   return 0;
 }
 
-
+///
+/// \brief
+/// \param X [in]
+/// \param vec [in]
+/// \param _fp
+/// \return
+/// \note When X->Large.mode = M_MLTPLY or X->Large.mode = M_CALCSPEC, then vec is modified.
 int expec_cisajscktalt_HubbardGC(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int isite1,isite2,isite3,isite4;
@@ -458,6 +378,11 @@ int expec_cisajscktalt_HubbardGC(struct BindStruct *X,double complex *vec, FILE 
     return 0;
 }
 
+///
+/// \param X
+/// \param vec
+/// \param _fp
+/// \return
 int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int isite1,isite2,isite3,isite4;
@@ -573,6 +498,11 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
     return 0;
 }
 
+///
+/// \param X
+/// \param vec
+/// \param _fp
+/// \return
 int expec_cisajscktalt_Spin(struct BindStruct *X,double complex *vec, FILE **_fp) {
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -583,6 +513,11 @@ int expec_cisajscktalt_Spin(struct BindStruct *X,double complex *vec, FILE **_fp
     return info;
 }
 
+///
+/// \param X
+/// \param vec
+/// \param _fp
+/// \return
 int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
@@ -611,7 +546,7 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
         tmp_org_sigma3   = X->Def.CisAjtCkuAlvDC[i][5];
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
-        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
+        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
             //error message will be added
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
@@ -705,6 +640,11 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
     return 0;
 }
 
+///
+/// \param X
+/// \param vec
+/// \param _fp
+/// \return
 int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
@@ -731,7 +671,7 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
 
-        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
+        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -795,6 +735,11 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
     return 0;
 }
 
+///
+/// \param X
+/// \param vec
+/// \param _fp
+/// \return
 int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp){
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -805,6 +750,11 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
     return info;
 }
 
+///
+/// \param X
+/// \param vec
+/// \param _fp
+/// \return
 int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
@@ -828,7 +778,7 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
 
-        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
+        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
             //error message will be added
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
@@ -906,6 +856,11 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
     return 0;
 }
 
+///
+/// \param X
+/// \param vec
+/// \param _fp
+/// \return
 int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
@@ -930,7 +885,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
 
-        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
+        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
             //error message will be added
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;

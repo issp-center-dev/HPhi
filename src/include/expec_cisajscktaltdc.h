@@ -74,7 +74,7 @@ void expec_cisajscktaltdc_alldiag_spin(
 			          double complex *vec
 				  );
 
-int Rearray_Interactions(
+int Rearray_TwoBodyG(
 			  int i,
 			  long unsigned int *org_isite1,
 			  long unsigned int *org_isite2,

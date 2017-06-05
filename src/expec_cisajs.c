@@ -63,8 +63,8 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @retval 0
- * @retval -1
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
  */
 int expec_cisajs(struct BindStruct *X,double complex *vec){
 
@@ -167,6 +167,15 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   return 0;
 }
 
+/**
+ * @brief function of calculation for one body green's function for Hubbard GC model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_HubbardGC(struct BindStruct *X, double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
@@ -227,6 +236,15 @@ int expec_cisajs_HubbardGC(struct BindStruct *X, double complex *vec, FILE **_fp
     return 0;
 }
 
+/**
+ * @brief function of calculation for one body green's function for Hubbard model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) {
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
@@ -305,6 +323,15 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
     return 0;
 }
 
+/**
+ * @brief function of calculation for one body green's function for Spin model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_Spin(struct BindStruct *X, double complex *vec, FILE **_fp) {
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -315,6 +342,15 @@ int expec_cisajs_Spin(struct BindStruct *X, double complex *vec, FILE **_fp) {
     return info;
 }
 
+/**
+ * @brief function of calculation for one body green's function for Half-Spin model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_SpinHalf(struct BindStruct *X, double complex *vec, FILE **_fp) {
     long unsigned int i,j;
     long unsigned int isite1;
@@ -366,6 +402,15 @@ int expec_cisajs_SpinHalf(struct BindStruct *X, double complex *vec, FILE **_fp)
     return 0;
 }
 
+/**
+ * @brief function of calculation for one body green's function for General-Spin model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_SpinGeneral(struct BindStruct *X, double complex *vec, FILE **_fp) {
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
@@ -422,6 +467,15 @@ int expec_cisajs_SpinGeneral(struct BindStruct *X, double complex *vec, FILE **_
     return 0;
 }
 
+/**
+ * @brief function of calculation for one body green's function for SpinGC model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_SpinGC(struct BindStruct *X, double complex *vec, FILE **_fp) {
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -432,6 +486,15 @@ int expec_cisajs_SpinGC(struct BindStruct *X, double complex *vec, FILE **_fp) {
     return info;
 }
 
+/**
+ * @brief function of calculation for one body green's function for Half-SpinGC model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_SpinGCHalf(struct BindStruct *X, double complex *vec, FILE **_fp) {
     long unsigned int i,j;
     long unsigned int isite1;
@@ -489,7 +552,15 @@ int expec_cisajs_SpinGCHalf(struct BindStruct *X, double complex *vec, FILE **_f
     return 0;
 }
 
-
+/**
+ * @brief function of calculation for one body green's function for General SpinGC model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
 int expec_cisajs_SpinGCGeneral(struct BindStruct *X, double complex *vec, FILE **_fp) {
     long unsigned int i, j;
     long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
