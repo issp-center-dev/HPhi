@@ -384,53 +384,6 @@ double complex GC_child_exchange_spin_element(
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-double complex child_pairlift_spin_element(
-  long unsigned int j,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
-) {
-  long unsigned int off;
-  double complex dmv;
-  long unsigned int iexchg;
-  long unsigned int is1_up = X->Large.is1_up;
-  long unsigned int is2_up = X->Large.is2_up;
-  long unsigned int is_up = X->Large.isA_spin;
-  long unsigned int irght = X->Large.irght;
-  long unsigned int ilft = X->Large.ilft;
-  long unsigned int ihfbit = X->Large.ihfbit;
-  double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
-  double complex dam_pr = 0;
-
-  long unsigned int ibit_tmp;
-  ibit_tmp = ((list_1[j] & is1_up) / is1_up) ^ ((list_1[j] & is2_up) / is2_up);
-  if (ibit_tmp == 0) {
-    iexchg = list_1[j] ^ is_up; //Change: ++ -> -- or -- -> ++
-    GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off);
-    dmv = tmp_J * tmp_v1[j] * ibit_tmp;
-    *tmp_off = off;
-    if (mode == M_MLTPLY) {
-      tmp_v0[off] += dmv;
-    }
-    dam_pr += dmv * conj(tmp_v1[off]);
-  }
-  return dam_pr;
-}/*double complex child_pairlift_spin_element*/
-/**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
 double complex GC_child_pairlift_spin_element(
   long unsigned int j,
   double complex *tmp_v0,

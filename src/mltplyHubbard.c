@@ -39,14 +39,14 @@
     <td>@f$c_{i s}^\dagger@f$</td>
     <td>::Cis, ::X_Cis</td>
     <td>::Cis_MPI, ::X_Cis_MPI</td>
-    <td>::GC_Cis, ::X_GC_Cis_MPI</td>
+    <td>::GC_Cis, ::X_GC_Cis</td>
     <td>::GC_Cis_MPI, ::X_GC_Cis_MPI</td>
   </tr>
   <tr>
     <td>@f$c_{j t}@f$</td>
     <td>::Ajt, ::X_Ajt</td>
     <td>::Ajt_MPI, ::X_Ajt_MPI</td>
-    <td>::GC_Ajt, ::X_Ajt_MPI</td>
+    <td>::GC_Ajt, ::X_GC_Ajt</td>
     <td>::GC_Ajt_MPI, ::X_GC_Ajt_MPI</td>
   </tr>
   <tr>
