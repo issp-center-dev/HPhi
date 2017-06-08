@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Standard mode for wannier90
+*/
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
 #include <stdlib.h>
@@ -23,26 +26,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <complex.h>
 #include <string.h>
 
-/*
-* Read Geometry file for wannier90
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
+/**
+@brief Read Geometry file for wannier90
+@author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void geometry_W90(struct StdIntList *StdI, int *wan_num) {
+static void geometry_W90(
+  struct StdIntList *StdI,//!<[inout]
+  int *wan_num//!<[out]
+) {
   int isite, ii, ierr;
   FILE *fp;
 
   fprintf(stdout, "                Wannier90 Geometry file = %s\n", StdI->W90_geom);
 
   fp = fopen(StdI->W90_geom, "r");
-  /*
-   Direct lattice vector
+  /**@brief
+   Direct lattice vector StdIntList::direct
   */
   for (ii = 0; ii < 3; ii++)
     ierr = fscanf(fp, "%lf%lf%lf", &StdI->direct[ii][0], &StdI->direct[ii][1], &StdI->direct[ii][2]);
   if(ierr != 0) printf("%d\n", ierr);
-  /*
-   Site position
+  /**@brief
+   Intrinsic site position StdIntList::tau and its number StdIntList::NsiteUC
   */
   for (isite = 0; isite < StdI->NsiteUC; isite++) free(StdI->tau[isite]);
   free(StdI->tau);
@@ -65,12 +70,11 @@ static void geometry_W90(struct StdIntList *StdI, int *wan_num) {
     StdI->tau[isite][0], StdI->tau[isite][1], StdI->tau[isite][2]);
 
 }/*static void geometry_W90(struct StdIntList *StdI) */
-/*
-* Read Wannier90 hamiltonian file
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
+/**
+@brief Read Wannier90 hamiltonian file (*_hr)
+@author Mitsuaki Kawamura (The University of Tokyo)
 */
-static void read_W90(struct StdIntList *StdI, char *model) 
+static void read_W90(struct StdIntList *StdI) 
 {
   FILE *fp;
   int ierr, nWan, nWSC, iWSC, jWSC, iWan, jWan, iWan0, jWan0, ii;
@@ -127,8 +131,8 @@ static void read_W90(struct StdIntList *StdI, char *model)
         t_tot[iWSC][iWan][jWan] = t0[wan_num[iWan]][wan_num[jWan]];
       }
     }
-    /*
-    Inversion symmetry
+    /**@brief
+    (1) Apply inversion symmetry and delete duplication
     */
     for (jWSC = 0; jWSC < iWSC; jWSC++) {
       if (
@@ -150,8 +154,8 @@ static void read_W90(struct StdIntList *StdI, char *model)
           t_tot[iWSC][iWan][jWan] = 0.0;
         }
       }
-    /*
-     Max t
+    /**@brief
+    (2) Search maximum transfer for appling cutoff later
     */
     for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
       for (jWan = 0; jWan < StdI->NsiteUC; jWan++) {
@@ -164,10 +168,13 @@ static void read_W90(struct StdIntList *StdI, char *model)
 
   fprintf(stdout, "                        Maximum Hopping = %f\n", tmax);
   fprintf(stdout, "                  Threshold for Hopping = %f\n", tmax * StdI->W90_cutoff);
-  /*
-    Cut-off of Hopping
+  /**@brief
+  (3) Apply cut-off of Hopping
   */
-  /*  Query  */
+  /**@brief
+  (3-1)  Set the number of t with cut-off (StdIntList::W90_nt)
+  with the inputted cut-off StdIntList::W90_cutoff
+  */
   StdI->W90_nt = 0;
   for (iWSC = 0; iWSC < nWSC; iWSC++) {
     for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
@@ -177,12 +184,14 @@ static void read_W90(struct StdIntList *StdI, char *model)
     }
   }
   fprintf(stdout, "      Total number of EFFECTIVE Hopping = %d\n", StdI->W90_nt);
-
+  /**@brief
+  Then malloc and store to the hopping Integeral StdIntList::W90_t and
+  its site index StdIntList::W90_indx
+  */
   StdI->W90_t = (double complex *)malloc(sizeof(double complex) * StdI->W90_nt);
   StdI->W90_indx = (int **)malloc(sizeof(int*) * StdI->W90_nt);
   for (ii = 0; ii < StdI->W90_nt; ii++) StdI->W90_indx[ii] = (int *)malloc(sizeof(int) * 5);
 
-  /*  Store  */
   fprintf(stdout, "      EFFECTIVE Hoppings:\n");
   StdI->W90_nt = 0;
   for (iWSC = 0; iWSC < nWSC; iWSC++) {
@@ -199,9 +208,9 @@ static void read_W90(struct StdIntList *StdI, char *model)
             creal(StdI->W90_t[StdI->W90_nt]), cimag(StdI->W90_t[StdI->W90_nt]));
           StdI->W90_nt += 1;
         }
-      }
-    }
-  }
+      }/*for (jWan = 0; jWan < StdI->NsiteUC; jWan++)*/
+    }/*for (iWan = 0; iWan < StdI->NsiteUC; iWan++)*/
+  }/*for (iWSC = 0; iWSC < nWSC; iWSC++)*/
 
   for (iWSC = 0; iWSC < nWSC; iWSC++) {
     for (iWan = 0; iWan < nWan; iWan++) {
@@ -217,14 +226,15 @@ static void read_W90(struct StdIntList *StdI, char *model)
   free(wan_num);
 }/*static void read_W90(struct StdIntList *StdI, char *model)*/
 /**
- *
- * Setup a Hamiltonian for the Wannier90 *_hr.dat
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_Wannier90(struct StdIntList *StdI, char *model)
+@brief Setup a Hamiltonian for the Wannier90 *_hr.dat
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_Wannier90(
+  struct StdIntList *StdI,//!<[inout]
+  char *model//!<[in] The name of model (e.g. hubbard)
+)
 {
-  int isite, jsite, ispin;
+  int isite, jsite, ispin, ntransMax, nintrMax;
   int iL, iW, iH, kCell, it, ii;
   double Jtmp[3][3] = { {0.0} };
   FILE *fp;
@@ -233,8 +243,8 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
-  /*
-   Initialize Cell
+  /**@brief
+  (1) Compute the shape of the super-cell and sites in the super-cell
   */
   fp = fopen("lattice.xsf", "w");
   /**/
@@ -244,8 +254,10 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
   StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
   StdFace_PrintVal_d("phase2", &StdI->phase[2], 0.0);
   /**/
-  read_W90(StdI, model);
-  /**/
+  read_W90(StdI);
+  /**@brief
+  (2) check & store parameters of Hamiltonian
+  */
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_d("K", StdI->K);
   StdFace_PrintVal_d("h", &StdI->h, 0.0);
@@ -263,8 +275,9 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
     StdFace_exit(-1);
   }/*if (model != "spin")*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
-  /*
-   Local Spin
+  /**@brief
+  (3) Set local spin flag (StdIntList::locspinflag) and 
+  the number of sites (StdIntList::nsite)
   */
   StdI->nsite = StdI->NsiteUC * StdI->NCell;
   StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
@@ -273,25 +286,23 @@ void StdFace_Wannier90(struct StdIntList *StdI, char *model)
     for (isite = 0; isite < StdI->nsite; isite++) StdI->locspinflag[isite] = StdI->S2;
   else if(strcmp(StdI->model, "hubbard") == 0 )
     for (isite = 0; isite < StdI->nsite; isite++) StdI->locspinflag[isite] = 0;
-  /*
-   The number of Transfer & Interaction
+  /**@brief
+  (4) Compute the upper limit of the number of Transfer & Interaction and malloc them.
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*D*/ + StdI->W90_nt/*J*/)
+    ntransMax = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    nintrMax = StdI->NCell * (StdI->NsiteUC/*D*/ + StdI->W90_nt/*J*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else if (strcmp(StdI->model, "hubbard") == 0) {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (2*StdI->NsiteUC/*mu+h+Gamma*/ + StdI->W90_nt * 2/*t*/);
-    StdI->nintr = StdI->NCell * StdI->NsiteUC/*U*/;
+    ntransMax = StdI->NCell * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + StdI->W90_nt * 2/*t*/);
+    nintrMax = StdI->NCell * StdI->NsiteUC/*U*/;
   }
   /**/
-  StdFace_MallocInteractions(StdI);
-  /*
-   Set Transfer & Interaction
+  StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
+  /**@brief
+  (5) Set Transfer & Interaction
   */
-  StdI->ntrans = 0;
-  StdI->nintr = 0;
   for (kCell = 0; kCell < StdI->NCell; kCell++){
     /**/
     iW = StdI->Cell[kCell][0];

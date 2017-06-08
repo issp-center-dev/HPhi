@@ -34,16 +34,18 @@
  * 
  */
 
-
+/**@brief
+Read @f$\alpha, \beta@f$, projected residual for restart
+*/
 int ReadTMComponents_BiCG(
-  struct EDMainCalStruct *X,
-  double complex *v2,
-  double complex *v4,
-  double complex *v12,
-  double complex *v14,
-  int Nomega,
-  double complex *dcSpectrum,
-  double complex *dcomega
+  struct EDMainCalStruct *X,//!<[inout]
+  double complex *v2,//!<[inout] [CheckList::idim_max] Residual vector
+  double complex *v4,//!<[inout] [CheckList::idim_max] Shadow esidual vector
+  double complex *v12,//!<[inout] [CheckList::idim_max] Old residual vector
+  double complex *v14,//!<[inout] [CheckList::idim_max] Old shadow residual vector
+  int Nomega,//!<[in] Number of frequencies
+  double complex *dcSpectrum,//!<[inout] [Nomega] Projected result vector, spectrum
+  double complex *dcomega//!<[in] [Nomega] Frequency
 ) {
   char sdt[D_FileNameMax];
   char ctmp[256];
@@ -114,11 +116,12 @@ int ReadTMComponents_BiCG(
 
   return TRUE;
 }/*int ReadTMComponents_BiCG*/
-
-
+/**@brief
+write @f$\alpha, \beta@f$, projected residual for restart
+*/
 int OutputTMComponents_BiCG(
-  struct EDMainCalStruct *X,
-  int liLanczosStp
+  struct EDMainCalStruct *X,//!<[inout]
+  int liLanczosStp//!<[in] the BiCG step
 )
 {
   char sdt[D_FileNameMax];
@@ -152,11 +155,13 @@ int OutputTMComponents_BiCG(
 
   return TRUE;
 }/*int OutputTMComponents_BiCG*/
-/*
- Initialize Shadow Residual as a vrandom vector
+/**@brief
+Initialize Shadow Residual as a random vector (Experimental)
 */
 void InitShadowRes(
-  struct BindStruct *X, double complex *v4)
+  struct BindStruct *X,//!<[inout]
+  double complex *v4//!<[out] [CheckList::idim_max] shadow residual vector
+)
 {
   long int idim, iv;
   int mythread;
@@ -195,8 +200,10 @@ void InitShadowRes(
 }/*void InitShadowRes*/
 /** 
  * @brief A main function to calculate spectrum by BiCG method
+ * In this function, the @f$K\omega@f$ library is used.
+ * The detailed procedure is written in the document of @f$K\omega@f$.
+ * https://issp-center-dev.github.io/Komega/library/en/_build/html/komega_workflow_en.html#the-schematic-workflow-of-shifted-bicg-library
  * 
- * @param[in,out] X CalcStruct list for getting and pushing calculation information 
  * @retval 0 normally finished
  * @retval -1 error
  *
@@ -204,13 +211,13 @@ void InitShadowRes(
  * 
  */
 int CalcSpectrumByBiCG(		 
-  struct EDMainCalStruct *X,
-  double complex *vrhs,
-  double complex *v2,
-  double complex *v4,
-  int Nomega,
-  double complex *dcSpectrum,
-  double complex *dcomega
+  struct EDMainCalStruct *X,//!<[inout]
+  double complex *vrhs,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
+  double complex *v2,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
+  double complex *v4,//!<[inout] [CheckList::idim_max] Work space for shadow residual vector @f${\bf {\tilde r}}@f$
+  int Nomega,//!<[in] Number of Frequencies
+  double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
+  double complex *dcomega//!<[in] [Nomega] Frequency
 )
 {
   char sdt[D_FileNameMax];
@@ -228,13 +235,17 @@ int CalcSpectrumByBiCG(
 #endif
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
-  
+  /**
+  <ul>
+  <li>Malloc vector for old residual vector (@f${\bf r}_{\rm old}@f$)
+  and old shadow residual vector (@f${\bf {\tilde r}}_{\rm old}@f$).</li>
+  */
   v12 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   v14 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   resz = (double*)malloc(Nomega * sizeof(double));
-
-  /*
-    Read residual vectors
+  /**
+  <li>Set initial result vector(+shadow result vector)
+  Read residual vectors if restart</li>
   */
   if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
       X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC) {
@@ -269,8 +280,8 @@ int CalcSpectrumByBiCG(
     }
     //InitShadowRes(&(X->Bind), v4);
   }
-  /*
-    Input alpha, beta, projected residual, or start from scratch
+  /**
+  <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
   */
   if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents ||
       X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
@@ -291,9 +302,9 @@ int CalcSpectrumByBiCG(
     komega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos);
 #endif
   }
-
-  /*
-  BiCG loop
+  /**
+  <li>@b DO BiCG loop</li>
+  <ul>
   */
   fprintf(stdoutMPI, "    Start: Calculate tridiagonal matrix components.\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalStart, "a");
@@ -301,24 +312,30 @@ int CalcSpectrumByBiCG(
   childfopenMPI("residual.dat", "w", &fp);
 
   for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++) {
-
+    /**
+    <li>@f${\bf v}_{2}={\hat H}{\bf v}_{12}, {\bf v}_{4}={\hat H}{\bf v}_{14}@f$,
+    where @f${\bf v}_{12}, {\bf v}_{14}@f$ are old (shadow) residual vector.</li>
+    */
 #pragma omp parallel for default(none) shared(i_max,v12,v14) private(idim)
     for (idim = 1; idim <= i_max; idim++) {
       v12[idim] = 0.0;
       v14[idim] = 0.0;
     }
-
     iret = mltply(&X->Bind, v12, v2);
     iret = mltply(&X->Bind, v14, v4);
 
     res_proj = VecProdMPI(i_max, vrhs, v2);
-
+    /**
+    <li>Update projected result vector dcSpectrum.</li>
+    */
 #if defined(MPI)
     pkomega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
 #else
     komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
 #endif
-
+    /**
+    <li>Output residuals at each frequency for some analysis</li>
+    */
     if (stp % 10 == 0) {
 #if defined(MPI)
       pkomega_bicg_getresidual(resz);
@@ -338,16 +355,20 @@ int CalcSpectrumByBiCG(
     if (status[0] < 0) break;
   }/*for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++)*/
   fclose(fp);
-
+  /**
+  </ul>
+  <li>@b END @b DO BiCG loop</li>
+  */
   fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
-  /*
-   Save alpha, beta, projected residual
+  /**
+  <li>Save @f$\alpha, \beta@f$, projected residual</li>
   */
   if (X->Bind.Def.iFlgCalcSpec != RECALC_FROM_TMComponents)
     OutputTMComponents_BiCG(X, abs(status[0]));
-  /*
-    output vectors for recalculation
+  /**
+  <li>output vectors for recalculation</li>
+  </ul>
   */
   if (X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
       X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC) {

@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Standard mode for the Ladder lattice
+*/
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
 #include <stdlib.h>
@@ -24,23 +27,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 
 /**
- *
- * Setup a Hamiltonian for the generalized Heisenberg model on a square lattice
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_Ladder(struct StdIntList *StdI, char *model)
+@brief Setup a Hamiltonian for the generalized Heisenberg model on a square lattice
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_Ladder(
+  struct StdIntList *StdI,//!<[inout]
+  char *model//!<[in] The name of model (e.g. hubbard)
+)
 {
   FILE *fp;
-  int isite, jsite;
+  int isite, jsite, ntransMax, nintrMax;
   int iL, isiteUC;
   double complex Cphase;
 
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
-  /*
-   Initialize Cell
+  /**@brief
+  (1) Compute the shape of the super-cell and sites in the super-cell
   */
   fp = fopen("lattice.gp", "w");
   /**/
@@ -74,7 +78,9 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
     StdI->tau[isite][0] = (double)isite / (double)StdI->NsiteUC;
     StdI->tau[isite][1] = 0.0; StdI->tau[isite][2] = 0.0;
   }
-  /**/
+  /**@brief
+  (2) check & store parameters of Hamiltonian
+  */
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J", StdI->JAll, StdI->J);
   StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
@@ -139,8 +145,9 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
     }
   }/*if (model != "spin")*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
-  /*
-  Local Spin
+  /**@brief
+  (3) Set local spin flag (StdIntList::locspinflag) and
+  the number of sites (StdIntList::nsite)
   */
   StdI->nsite = StdI->L * StdI->NsiteUC;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
@@ -155,35 +162,33 @@ void StdFace_Ladder(struct StdIntList *StdI, char *model)
       StdI->locspinflag[isite] = StdI->S2;
       StdI->locspinflag[isite + StdI->nsite / 2] = 0;
     }
-  /*
-  The number of Transfer & Interaction
+  /**@brief
+  (4) Compute the upper limit of the number of Transfer & Interaction and malloc them.
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->L * StdI->NsiteUC * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->L * StdI->NsiteUC * (1/*D*/ + 1/*J1*/ + 1/*J1'*/)
+    ntransMax = StdI->L * StdI->NsiteUC * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    nintrMax = StdI->L * StdI->NsiteUC * (1/*D*/ + 1/*J1*/ + 1/*J1'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1)
       + StdI->L * (StdI->NsiteUC - 1) * (1/*J0*/ + 1/*J2*/ + 1/*J2'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else {
-    StdI->ntrans = StdI->L*StdI->NsiteUC * (2/*mu+h+Gamma*/ + 2/*t1*/ + 2/*t1'*/)
+    ntransMax = StdI->L*StdI->NsiteUC * (2/*mu+h+Gamma*/ + 2/*t1*/ + 2/*t1'*/)
       + StdI->L*(StdI->NsiteUC - 1) * (2/*t0*/ + 2/*t2*/ + 2/*t2'*/);
-    StdI->nintr = StdI->L*StdI->NsiteUC * 1/*U*/
+    nintrMax = StdI->L*StdI->NsiteUC * 1/*U*/
       + StdI->L*StdI->NsiteUC * 4 * (1/*V1*/ + 1/*V1'*/)
       + StdI->L*(StdI->NsiteUC - 1) * 4 * (1/*V0*/ + 1/*V2*/ + 1/*V2'*/);
 
     if (strcmp(StdI->model, "kondo") == 0) {
-      StdI->ntrans += StdI->L * StdI->NsiteUC * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-      StdI->nintr += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
+      ntransMax += StdI->L * StdI->NsiteUC * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+      nintrMax += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
     }/*if (strcmp(StdI->model, "kondo") == 0)*/
   }
   /**/
-  StdFace_MallocInteractions(StdI);
-  /*
-   Set Transfer & Interaction
+  StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
+  /**@brief
+  (5) Set Transfer & Interaction
   */
-  StdI->ntrans = 0;
-  StdI->nintr = 0;
   for (iL = 0; iL < StdI->L; iL++) {
     for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
 

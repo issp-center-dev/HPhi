@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Standard mode for the triangular lattice
+*/
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
 #include <stdlib.h>
@@ -24,14 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 
 /**
- *
- * Setup a Hamiltonian for the Triangular lattice
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Setup a Hamiltonian for the Triangular lattice
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 void StdFace_Triangular(struct StdIntList *StdI, char *model)
 {
-  int isite, jsite, kCell;
+  int isite, jsite, kCell, ntransMax, nintrMax;
   int iL, iW;
   FILE *fp;
   double complex Cphase;
@@ -39,8 +40,8 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
-  /*
-  Initialize Cell
+  /**@brief
+  (1) Compute the shape of the super-cell and sites in the super-cell
   */
   fp = fopen("lattice.gp", "w");
   /**/
@@ -60,7 +61,9 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
   /**/
   StdFace_InitSite(StdI, fp, 2);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; StdI->tau[0][2] = 0.0;
-  /**/
+  /**@brief
+  (2) check & store parameters of Hamiltonian
+  */
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J1'", StdI->J1pAll, StdI->J1p);
   StdFace_NotUsed_J("J2'", StdI->J2pAll, StdI->J2p);
@@ -123,8 +126,9 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
 
   }/*if (model != "spin")*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
-  /*
-   Local Spin
+  /**@brief
+  (3) Set local spin flag (StdIntList::locspinflag) and
+  the number of sites (StdIntList::nsite)
   */
   StdI->nsite = StdI->NsiteUC * StdI->NCell;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
@@ -139,30 +143,28 @@ void StdFace_Triangular(struct StdIntList *StdI, char *model)
       StdI->locspinflag[iL] = StdI->S2;
       StdI->locspinflag[iL + StdI->nsite / 2] = 0;
     }
-  /*
-  The number of Transfer & Interaction
+  /**@brief
+  (4) Compute the upper limit of the number of Transfer & Interaction and malloc them.
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*D*/ + 3/*J*/ + 3/*J'*/)
+    ntransMax = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    nintrMax = StdI->NCell * (StdI->NsiteUC/*D*/ + 3/*J*/ + 3/*J'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 6/*t*/ + 6/*t'*/);
-    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (3/*V*/ + 3/*V'*/));
+    ntransMax = StdI->NCell * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 6/*t*/ + 6/*t'*/);
+    nintrMax = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (3/*V*/ + 3/*V'*/));
 
     if (strcmp(StdI->model, "kondo") == 0) {
-      StdI->ntrans += StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-      StdI->nintr += StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
+      ntransMax += StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+      nintrMax += StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
     }/*if (strcmp(StdI->model, "kondo") == 0)*/
   }
   /**/
-  StdFace_MallocInteractions(StdI);
-  /*
-  Set Transfer & Interaction
+  StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
+  /**@brief
+  (5) Set Transfer & Interaction
   */
-  StdI->ntrans = 0;
-  StdI->nintr = 0;
   for (kCell = 0; kCell < StdI->NCell; kCell++) {
     /**/
     iW = StdI->Cell[kCell][0];
