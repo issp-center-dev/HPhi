@@ -31,12 +31,11 @@ When both site1 and site2 are in the inter process region.
 */
 void GC_child_general_hopp_MPIdouble
 (
- unsigned long int itrans,//![in] Transfer ID
- struct BindStruct *X,//![inout]
- double complex *tmp_v0,//![out] Result v0 = H v1
- double complex *tmp_v1//![in] v0 = H v1
-)
-{
+ unsigned long int itrans,//!<[in] Transfer ID
+ struct BindStruct *X,//!<[inout]
+ double complex *tmp_v0,//!<[out] Result v0 = H v1
+ double complex *tmp_v1//!<[in] v0 = H v1
+){
 #ifdef MPI
   double complex dam_pr = 0;
   dam_pr = X_GC_child_general_hopp_MPIdouble(

@@ -742,28 +742,6 @@ firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
   return dam_pr;
 }/*double complex child_exchange_spin*/
 /**
-@brief Compute pair-lift term of spin Hamiltonian
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
-@author Takahiro Misawa (The University of Tokyo)
-@author Kazuyoshi Yoshimi (The University of Tokyo)
-*/
-double complex child_pairlift_spin(
-  double complex *tmp_v0,//!<[inout] Result vector
-  double complex *tmp_v1,//!<[in] Input producted vector
-  struct BindStruct *X//!<[inout]
-) {
-  long int j;
-  long unsigned int i_max = X->Large.i_max;
-  long unsigned int off = 0;
-  double complex dam_pr = 0;
-
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
-firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
-  for (j = 1; j <= i_max; j++) 
-    dam_pr += child_pairlift_spin_element(j, tmp_v0, tmp_v1, X, &off);
-  return dam_pr;
-}/*double complex child_pairlift_spin*/
-/**
 @brief Compute exchange term of spin Hamiltonian (grandcanonical)
 @return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)

@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief MPI wrapper for init, finalize, bcast, etc.
+*/
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -30,11 +33,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "splash.h"
 
 /**
- *
- * MPI initialization wrapper
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief MPI initialization wrapper
+Process ID(::myrank), Number of processes(::nproc), 
+Number of threads(::nthreads), and pointer to the standard output
+(::stdoutMPI) are specified here.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 void InitializeMPI(int argc, char *argv[]){
   int ierr;
 
@@ -61,14 +65,11 @@ void InitializeMPI(int argc, char *argv[]){
   fprintf(stdoutMPI, "\n\n#####  Parallelization Info.  #####\n\n");
   fprintf(stdoutMPI, "  OpenMP threads : %d\n", nthreads);
   fprintf(stdoutMPI, "  MPI PEs : %d \n\n", nproc);
-}
-
+}/*void InitializeMPI(int argc, char *argv[])*/
 /**
- *
- * MPI Finitialization wrapper
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief MPI Finitialization wrapper
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 void FinalizeMPI(){
   int ierr;
 #ifdef MPI
@@ -77,55 +78,51 @@ void FinalizeMPI(){
 #endif
   if (myrank != 0) fclose(stdoutMPI);
 }
-
 /**
-*
-* MPI Abortation wrapper
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
+@brief MPI Abortation wrapper
+@author Mitsuaki Kawamura (The University of Tokyo)
 */
-void exitMPI(int errorcode /**< [in]*/)
+void exitMPI(
+  int errorcode//!<[in] Error-code to be returned as that of this program
+)
 {
   int ierr;
   fflush(stdout);
 #ifdef MPI
-  /*fprintf(stderr,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");*/
   fprintf(stdout,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
   ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
   ierr = MPI_Finalize();
   if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
   exit(errorcode);
-}
-
+}/*void exitMPI*/
 /**
- *
- * MPI file I/O (open) wrapper
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief MPI file I/O (open) wrapper.
+Only the root node (::myrank = 0) should be open/read/write (small) parameter files.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 FILE* fopenMPI(
-  const char* FileName /**< [in] Input/output file*/, 
-  const char* mode /**< [in] "w", "r", etc. */){
+  const char* FileName,//!<[in] Input/output file
+  const char* mode//!<[in] "w", "r", etc.
+){
   FILE* fp;
 
   if (myrank == 0) fp = fopen(FileName, mode);
   else fp = fopen("/dev/null", "w");
 
   return fp;
-}
-
+}/*FILE* fopenMPI*/
 /**
- *
- * MPI file I/O (get a line) wrapper
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief MPI file I/O (get a line, fgets) wrapper.
+Only the root node (::myrank = 0) reads and broadcast string.
+@return The same as that of fgets
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 char* fgetsMPI(
-  char* InputString, /**< [out] read line.*/
-  int maxcount /**< [in] Length of string*/,
-  FILE* fp /**< [in] file pointer*/)
-{
+  char* InputString,//!<[out] read line.
+  int maxcount,//!<[in] Length of string
+  FILE* fp//!<[in] file pointer
+){
   int inull;
   char *ctmp;
 
@@ -154,16 +151,25 @@ char* fgetsMPI(
   }
 
   return ctmp;
-}
-
+}/*char* fgetsMPI*/
+/**
+@brief MPI barrier wrapper.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 void BarrierMPI(){
 #ifdef MPI
   MPI_Barrier(MPI_COMM_WORLD);
 #endif
-}
-
-unsigned long int MaxMPI_li(unsigned long int idim)
-{
+}/*void BarrierMPI()*/
+/**
+@brief MPI wrapper function to obtain maximum unsigned
+long integer across processes.
+@return Maximum value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+unsigned long int MaxMPI_li(
+  unsigned long int idim//!<[in] Value to be maximized
+){
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
@@ -171,10 +177,16 @@ unsigned long int MaxMPI_li(unsigned long int idim)
   if(ierr != 0) exitMPI(-1);
 #endif
   return(idim);
-}
-
-double MaxMPI_d(double dvalue)
-{
+}/*unsigned long int MaxMPI_li*/
+/**
+@brief MPI wrapper function to obtain maximum Double
+across processes.
+@return Maximum value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+double MaxMPI_d(
+  double dvalue//!<[in] Value to be maximized
+){
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &dvalue, 1,
@@ -182,10 +194,16 @@ double MaxMPI_d(double dvalue)
   if(ierr != 0) exitMPI(-1);
 #endif
   return(dvalue);
-}
-
-double complex SumMPI_dc(double complex norm)
-{
+}/*double MaxMPI_d*/
+/**
+@brief MPI wrapper function to obtain sum of Double
+complex across processes.
+@return Sumed value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+double complex SumMPI_dc(
+  double complex norm//!<[in] Value to be summed
+){
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
@@ -193,10 +211,16 @@ double complex SumMPI_dc(double complex norm)
   if(ierr != 0) exitMPI(-1);
 #endif
   return(norm);
-}
-
-double SumMPI_d(double norm)
-{
+}/*double complex SumMPI_dc*/
+/**
+@brief MPI wrapper function to obtain sum of Double
+across processes.
+@return Sumed value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+double SumMPI_d(
+  double norm//!<[in] Value to be summed
+){
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
@@ -204,10 +228,16 @@ double SumMPI_d(double norm)
   if(ierr != 0) exitMPI(-1);
 #endif
   return(norm);
-}
-
-unsigned long int SumMPI_li(unsigned long int idim)
-{
+}/*double SumMPI_d*/
+/**
+@brief MPI wrapper function to obtain sum of unsigned
+long integer across processes.
+@return Sumed value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+unsigned long int SumMPI_li(
+  unsigned long int idim//!<[in] Value to be summed
+){
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
@@ -215,9 +245,16 @@ unsigned long int SumMPI_li(unsigned long int idim)
   if(ierr != 0) exitMPI(-1);
 #endif
   return(idim);
-}
-
-int SumMPI_i(int idim) {
+}/*unsigned long int SumMPI_li*/
+/**
+@brief MPI wrapper function to obtain sum of
+integer across processes.
+@return Sumed value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+int SumMPI_i(
+  int idim//!<[in] Value to be summed
+) {
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
@@ -225,18 +262,33 @@ int SumMPI_i(int idim) {
   if(ierr != 0) exitMPI(-1);
 #endif
   return(idim);
-}
-
-unsigned long int BcastMPI_li(int root, unsigned long int idim) {
+}/*int SumMPI_i*/
+/**
+@brief MPI wrapper function to broadcast unsigned long
+integer across processes.
+@return Broadcasted value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+unsigned long int BcastMPI_li(
+  int root,//!<[in] The source process of the broadcast
+  unsigned long int idim//!<[in] Value to be broadcasted
+) {
   unsigned long int idim0;
   idim0 = idim;
 #ifdef MPI
     MPI_Bcast(&idim0, 1, MPI_UNSIGNED_LONG, root, MPI_COMM_WORLD);
 #endif
   return(idim0);
-}
-
-double NormMPI_dc(unsigned long int idim, double complex *_v1){
+}/*unsigned long int BcastMPI_li*/
+/**
+@brief Compute norm of process-distributed vector
+@f$|{\bf v}_1|^2@f$
+@return Norm @f$|{\bf v}_1|^2@f$
+*/
+double NormMPI_dc(
+  unsigned long int idim,//!<[in] Local dimension of vector
+  double complex *_v1//!<[in] [idim] vector to be producted
+){
   double complex cdnorm=0;
   double dnorm =0;
   unsigned long int i;
@@ -251,16 +303,17 @@ double NormMPI_dc(unsigned long int idim, double complex *_v1){
   dnorm=sqrt(dnorm);
 
   return dnorm;
-}
-
-/*
-Conjgate vector product
+}/*double NormMPI_dc*/
+/**
+@brief Compute conjugate scaler product of process-distributed vector
+@f${\bf v}_1^* \cdot {\bf v}_2@f$
+@return Conjugate scaler product @f${\bf v}_1^* \cdot {\bf v}_2@f$
 */
 double complex VecProdMPI(
-  long unsigned int ndim,
-  double complex *v1,
-  double complex *v2)
-{
+  long unsigned int ndim,//!<[in] Local dimension of vector
+  double complex *v1,//!<[in] [ndim] vector to be producted
+  double complex *v2//!<[in] [ndim] vector to be producted
+){
   long unsigned int idim;
   double complex prod;
 
@@ -270,5 +323,4 @@ double complex VecProdMPI(
   prod = SumMPI_dc(prod);
 
   return(prod);
-}/*double complex vec_prod*/
-
+}/*double complex VecProdMPI*/

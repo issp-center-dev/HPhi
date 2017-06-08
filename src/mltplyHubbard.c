@@ -14,6 +14,93 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**@file
 @brief Function for Hubbard Hamitonian
+
+<ul>
+<li>mltplyHubbard(): Main routine of hubbard hamiltonian (canonical).</li>
+<li>mltplyHubbardGC(): Main routine of hubbard hamiltonian (grandcanonical).</li>
+</ul>
+
+<table>
+  <tr>
+  <td></td>
+    <td>Canonical</td>
+    <td>Canonical</td>
+    <td>Grand Canonical</td>
+    <td>Grand Canonical</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>Intra Process</td>
+    <td>Inter Process</td>
+    <td>Intra Process</td>
+    <td>Inter Process</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger@f$</td>
+    <td>::Cis, ::X_Cis</td>
+    <td>::Cis_MPI, ::X_Cis_MPI</td>
+    <td>::GC_Cis, ::X_GC_Cis_MPI</td>
+    <td>::GC_Cis_MPI, ::X_GC_Cis_MPI</td>
+  </tr>
+  <tr>
+    <td>@f$c_{j t}@f$</td>
+    <td>::Ajt, ::X_Ajt</td>
+    <td>::Ajt_MPI, ::X_Ajt_MPI</td>
+    <td>::GC_Ajt, ::X_Ajt_MPI</td>
+    <td>::GC_Ajt_MPI, ::X_GC_Ajt_MPI</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i s}@f$</td>
+    <td>::CisAis, ::X_CisAis</td>
+    <td>::child_CisAis_Hubbard_MPI, ::X_child_CisAis_Hubbard_MPI</td>
+    <td>::GC_CisAis, ::X_CisAis</td>
+    <td>::GC_child_CisAis_Hubbard_MPI, ::X_GC_child_CisAis_Hubbard_MPI</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{j t}@f$</td>
+    <td>::CisAjt, ::X_CisAjt</td>
+    <td>::child_CisAjt_MPIsingle, ::child_CisAjt_MPIdouble, ::X_child_CisAjt_MPIsingle, ::X_child_CisAjt_MPIdouble</td>
+    <td>::GC_CisAjt, ::X_GC_CisAjt</td>
+    <td>::GC_child_CisAjt_Hubbard_MPI, ::X_GC_child_CisAjt_Hubbard_MPI</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i s} c_{i s}^\dagger c_{i s}@f$</td>
+    <td>::child_CisAisCisAis_element</td>
+    <td>::X_child_CisAisCisAis_Hubbard_MPI</td>
+    <td>::GC_child_CisAisCisAis_element</td>
+    <td>::X_GC_child_CisAisCisAis_Hubbard_MPI</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i s} c_{j t}^\dagger c_{j t}@f$</td>
+    <td>::child_CisAisCjtAjt_element</td>
+    <td>::X_child_CisAisCjtAjt_Hubbard_MPI</td>
+    <td>::GC_child_CisAisCjtAjt_element</td>
+    <td>::X_GC_child_CisAisCjtAjt_Hubbard_MPI</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i s} c_{j t}^\dagger c_{k u}@f$</td>
+    <td>::child_CisAisCjtAku_element</td>
+    <td>::X_child_CisAisCjtAku_Hubbard_MPI</td>
+    <td>::GC_child_CisAisCjtAku_element</td>
+    <td>::X_GC_child_CisAisCjtAku_Hubbard_MPI</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{j t} c_{k u}^\dagger c_{k u}@f$</td>
+    <td>::child_CisAjtCkuAku_element</td>
+    <td>::X_child_CisAjtCkuAku_Hubbard_MPI</td>
+    <td>::GC_child_CisAjtCkuAku_element</td>
+    <td>::X_GC_child_CisAjtCkuAku_Hubbard_MPI</td>
+  </tr>
+    <tr>
+    <td>@f$c_{i s}^\dagger c_{j t} c_{k u}^\dagger c_{l v}@f$</td>
+    <td>::child_CisAjtCkuAlv_element</td>
+    <td>::X_child_CisAjtCkuAlv_Hubbard_MPI</td>
+    <td>::GC_child_CisAjtCkuAlv_element</td>
+    <td>::X_GC_child_CisAjtCkuAlv_Hubbard_MPI</td>
+  </tr>
+
+</table>
+
 */
 #include <bitcalc.h>
 #include "mltplyCommon.h"

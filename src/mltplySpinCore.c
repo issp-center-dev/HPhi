@@ -173,49 +173,6 @@ int X_Spin_CisAis(
  * @param j
  * @param X
  * @param is1_spin
- * @param is2_spin
- * @param sigma1
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
-int X_Spin_CisAjs(
-  long unsigned int j,
-  struct BindStruct *X,
-  long unsigned int is1_spin,
-  long unsigned int is2_spin,
-  long unsigned int sigma1,
-  long unsigned int *tmp_off
-) {
-  int ibit_tmp;
-  int jbit_tmp;
-  long unsigned int iexchg;
-  long unsigned int irght = X->Large.irght;
-  long unsigned int ilft = X->Large.ilft;
-  long unsigned int ihfbit = X->Large.ihfbit;
-  long unsigned int is_up;
-  is_up = is1_spin + is2_spin;
-
-  //bit_tmp =0 -> down spin, 1 -> up spin
-  ibit_tmp = ((list_1[j] & is1_spin) / is1_spin) ^ (1 - sigma1);//create: 1=(0^1, 1^0) is OK
-  jbit_tmp = ((list_1[j] & is2_spin) / is2_spin) ^ (1 - sigma1);//anihilate: 0=(0^0, 1^1) is OK
-    //1-sigma1 = 0 -> down spin, 1->up spin
-  if (ibit_tmp != 0 && jbit_tmp == 0) {
-    iexchg = list_1[j] ^ is_up;
-    GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, tmp_off);
-    return 1;
-  }
-  *tmp_off = 1;
-  return 0;
-}/*int X_Spin_CisAjs*/
-/**
- *
- *
- * @param j
- * @param X
- * @param is1_spin
  * @param sigma1
  *
  * @return
@@ -547,53 +504,7 @@ double complex child_CisAisCisAis_spin_element(
   dam_pr = conj(tmp_v1[j]) * dmv;
   return dam_pr;
 }/*double complex child_CisAisCisAis_spin_element*/
-/**
- *
- *
- * @param j
- * @param isA_up
- * @param isB_up
- * @param org_sigma2
- * @param org_sigma4
- * @param tmp_V
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
-double complex child_CisAjsCjtAit_spin_element(
-  long unsigned int j,
-  long unsigned int isA_up,
-  long unsigned int isB_up,
-  long unsigned int org_sigma2,
-  long unsigned int org_sigma4,
-  double complex tmp_V,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
-) {
-  int tmp_sgn;
-  long unsigned int tmp_off_1;
-  double complex dmv = 0;
-  double complex dam_pr = 0;
-  tmp_sgn = X_Spin_CisAjs(j, X, isB_up, isA_up, org_sigma4, &tmp_off_1);
-  if (tmp_sgn != 0) {
-    tmp_sgn *= X_Spin_CisAjs(tmp_off_1, X, isA_up, isB_up, org_sigma2, tmp_off);
-    if (tmp_sgn != 0) {
-      dmv = tmp_v1[j] * tmp_V;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off] += dmv;
-      }
-      dam_pr = conj(tmp_v1[*tmp_off]) * dmv;
-    }
-  }
-  return dam_pr;
-}/*double complex child_CisAjsCjtAit_spin_element*/
+
 //[e]Spin
 
 //[s]GC Spin
