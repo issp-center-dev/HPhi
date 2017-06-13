@@ -15,6 +15,52 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**@file
 @brief Functions for spin Hamiltonian + MPI (Core)
+
+General two body term:
+<table>
+  <tr>
+    <td></td>
+    <td>1/2 spin</td>
+    <td>1/2 spin</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>MPI single</td>
+    <td>MPI double</td>
+    <td>MPI single</td>
+    <td>MPI double</td>
+  </tr>
+  <tr>
+    <td>@f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{ju}@f$</td>
+    <td>::GC_child_CisAisCjuAju_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_child_CisAisCjuAju_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::X_child_CisAisCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::X_child_CisAisCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+  </tr>
+  <tr>
+    <td>@f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{jv}@f$</td>
+    <td>::GC_child_CisAisCjuAjv_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_child_CisAisCjuAjv_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::X_child_CisAisCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::X_child_CisAisCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+  </tr>
+  <tr>
+    <td>@f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{ju}@f$</td>
+    <td>::GC_child_CisAitCjuAju_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_child_CisAitCjuAju_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::X_child_CisAitCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle</td>
+    <td>::X_child_CisAitCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle</td>
+  </tr>
+  <tr>
+    <td>@f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{jv}@f$</td>
+    <td>::GC_child_CisAitCjuAjv_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_child_CisAitCjuAjv_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::X_child_CisAitCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::X_child_CisAitCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle</td>
+  </tr>
+</table>
 */
 #ifdef MPI
 #include "mpi.h"

@@ -59,7 +59,8 @@
   <tr>
     <td>@f$c_{i s}^\dagger c_{j t}@f$</td>
     <td>::CisAjt, ::X_CisAjt</td>
-    <td>::child_CisAjt_MPIsingle, ::child_CisAjt_MPIdouble, ::X_child_CisAjt_MPIsingle, ::X_child_CisAjt_MPIdouble</td>
+    <td>::child_CisAjt_MPIsingle, ::child_CisAjt_MPIdouble, 
+    ::X_child_CisAjt_MPIsingle, ::X_child_CisAjt_MPIdouble</td>
     <td>::GC_CisAjt, ::X_GC_CisAjt</td>
     <td>::GC_child_CisAjt_Hubbard_MPI, ::X_GC_child_CisAjt_Hubbard_MPI</td>
   </tr>
@@ -91,16 +92,51 @@
     <td>::GC_child_CisAjtCkuAku_element</td>
     <td>::X_GC_child_CisAjtCkuAku_Hubbard_MPI</td>
   </tr>
-    <tr>
+  <tr>
     <td>@f$c_{i s}^\dagger c_{j t} c_{k u}^\dagger c_{l v}@f$</td>
     <td>::child_CisAjtCkuAlv_element</td>
     <td>::X_child_CisAjtCkuAlv_Hubbard_MPI</td>
     <td>::GC_child_CisAjtCkuAlv_element</td>
     <td>::X_GC_child_CisAjtCkuAlv_Hubbard_MPI</td>
   </tr>
-
 </table>
 
+Other
+
+<table>
+  <tr>
+    <td></td>
+    <td>Get info</td>
+    <td>Canonical</td>
+    <td>Grandcanonical</td>
+  </tr>
+  <tr>
+    <td>Exchange</td>
+    <td>::child_exchange_GetInfo</td>
+    <td>::child_exchange, ::child_exchange_element</td>
+    <td>::GC_child_exchange, ::GC_child_exchange_element</td>
+  </tr>
+  <tr>
+    <td>Pair hop</td>
+    <td>::child_pairhopp_GetInfo</td>
+    <td>::child_pairhopp, ::child_pairhopp_element</td>
+    <td>::GC_child_pairhopp, ::GC_child_pairhopp_element</td>
+  </tr>
+  <tr>
+    <td>General int.</td>
+    <td>::child_general_int_GetInfo</td>
+    <td>::child_general_int</td>
+    <td>::GC_child_general_int</td>
+  </tr>
+  <tr>
+    <td>General hop</td>
+    <td>::child_general_hopp_GetInfo</td>
+    <td>::child_general_hopp, ::child_general_hopp_MPIsingle, 
+    ::child_general_hopp_MPIdouble</td>
+    <td>::GC_child_general_hopp, ::GC_child_general_hopp_MPIsingle, 
+    ::GC_child_general_hopp_MPIdouble</td>
+  </tr>
+</table>
 */
 #include <bitcalc.h>
 #include "mltplyCommon.h"
