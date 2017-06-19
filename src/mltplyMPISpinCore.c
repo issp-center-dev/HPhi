@@ -93,22 +93,24 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 /**
-@brief Exchange and Pairlifting term in Spin model + GC
+@brief @f$c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}@f$ term
+       in Spin model + GC.
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] site i
+  int org_ispin1,//!<[in] spin s
+  int org_ispin2,//!<[in] spin t
+  int org_isite3,//!<[in] site i?
+  int org_ispin3,//!<[in] spin u
+  int org_ispin4,//!<[in] spin v
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin;
@@ -203,15 +205,15 @@ void GC_child_CisAisCjuAjv_spin_MPIdouble(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask1, mask2, state2, ierr;
@@ -276,10 +278,11 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 void GC_child_CisAitCjuAju_spin_MPIdouble(
-  unsigned long int i_int /**< [in] Interaction ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+  unsigned long int i_int,//!<[in] Interaction ID
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
+)
 {
 #ifdef MPI
   double complex dam_pr;
@@ -296,15 +299,15 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask1, mask2, state1, ierr, num1;
@@ -329,7 +332,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
     else {
       return 0.0;
     }
-  }
+  }/*if (state1 == org_ispin2)*/
   else {//state1 = org_ispin1
     num1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
     if (num1 != 0) {
@@ -379,14 +382,14 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ){
 #ifdef MPI
   long unsigned int mask1, mask2, num1,num2;
@@ -425,14 +428,14 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   long unsigned int mask1, mask2, num1, num2;
@@ -473,10 +476,10 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void GC_child_CisAitCiuAiv_spin_MPIsingle(
-  unsigned long int i_int /**< [in] Interaction ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/
+  unsigned long int i_int,//!<[in] Interaction ID
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr;  
@@ -494,16 +497,16 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3, 
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J, 
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin;
@@ -576,11 +579,11 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 void GC_child_CisAisCjuAjv_spin_MPIsingle(
-  unsigned long int i_int /**< [in] Interaction ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int i_int,//!<[in] Interaction ID
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
+){
 #ifdef MPI
   double complex dam_pr;  
   dam_pr =X_GC_child_CisAisCjuAjv_spin_MPIsingle(
@@ -596,15 +599,15 @@ void GC_child_CisAisCjuAjv_spin_MPIsingle(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3, 
-  int org_ispin3,
-  int org_ispin4, 
-  double complex tmp_J,
-  struct BindStruct *X, 
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 1
+  int org_ispin3,//!<[in] Spin 2
+  int org_ispin4,//!<[in] Spin 2
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin;
@@ -676,11 +679,11 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 void GC_child_CisAitCjuAju_spin_MPIsingle(
-  unsigned long int i_int /**< [in] Interaction ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int i_int,//!<[in] Interaction ID
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
+){
 #ifdef MPI
   double complex dam_pr;  
   dam_pr =X_GC_child_CisAitCjuAju_spin_MPIsingle(
@@ -696,15 +699,15 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask2, state2;
@@ -779,17 +782,21 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
   return (dam_pr);
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
-
+/**
+@brief @f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{jv}@f$ term in Spin model.
+ When both site1 and site3 are in the inter process region.
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   unsigned long int off, j;
@@ -853,17 +860,21 @@ private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
   return dam_pr;
 #endif
 }
-
+/**
+@brief @f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{ju}@f$ term in Spin model.
+When both site1 and site3 are in the inter process region.
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Copupling constatnt
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   unsigned long int j, off;

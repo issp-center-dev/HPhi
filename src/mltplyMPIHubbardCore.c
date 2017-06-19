@@ -1329,19 +1329,18 @@ double complex X_child_CisAis_Hubbard_MPI(
 #endif
 }
 /**
-  * Single creation/annihilation operator
-  * in the inter process region for HubbardGC.
-  *
-  * @author Mitsuaki Kawamura (The University of Tokyo)
-  * @author Kazuyoshi Yoshimi (The University of Tokyo)
-  * @author Youhei Yamaji (The University of Tokyo)
-  */
+@brief Single creation/annihilation operator
+ in the inter process region for HubbardGC.
+@author Mitsuaki Kawamura (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+@author Youhei Yamaji (The University of Tokyo)
+*/
 double complex X_GC_Cis_MPI(
   int org_isite,//!<[in]
   int org_ispin,//!<[in]
   double complex tmp_trans,//!<[in]
-  double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
-  double complex *tmp_v1 /**< [in] v0 += H v1*/,
+  double complex *tmp_v0,//!<[out] Result v0 += H v1*/,
+  double complex *tmp_v1,//!<[in] v0 += H v1*/,
   unsigned long int idim_max,//!<[in]
   double complex *tmp_v1buf,//!<[in]
   unsigned long int *Tpow//!<[in]
@@ -1396,19 +1395,18 @@ double complex X_GC_Cis_MPI(
 #endif
 }/*double complex X_GC_Cis_MPI*/
 /**
- * Single creation/annihilation operator
-  * in the inter process region for HubbardGC.
-  *
-  * @author Mitsuaki Kawamura (The University of Tokyo)
-  * @author Kazuyoshi Yoshimi (The University of Tokyo)
-  * @author Youhei Yamaji (The University of Tokyo)
-  */
+@brief Single creation/annihilation operator
+  in the inter process region for HubbardGC.
+@author Mitsuaki Kawamura (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+@author Youhei Yamaji (The University of Tokyo)
+*/
 double complex X_GC_Ajt_MPI(
   int org_isite,//!<[in]
   int org_ispin,//!<[in]
   double complex tmp_trans,//!<[in]
-  double complex *tmp_v0 /**< [out] Result v0 += H v1*/,
-  double complex *tmp_v1 /**< [in] v0 += H v1*/,
+  double complex *tmp_v0,//!<[out] Result v0 += H v1*/,
+  double complex *tmp_v1,//!<[in] v0 += H v1*/,
   unsigned long int idim_max,//!<[in]
   double complex *tmp_v1buf,//!<[in]
   unsigned long int *Tpow//!<[in]

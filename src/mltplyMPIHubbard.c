@@ -200,18 +200,16 @@ double complex X_child_CisAjt_MPIdouble(
 #endif
 }/*void child_CisAjt_MPIdouble*/
 /**
- *
- * Hopping term in Hubbard + GC
- * When only site2 is in the inter process region.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Hopping term in Hubbard + GC
+ When only site2 is in the inter process region.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 void GC_child_general_hopp_MPIsingle(
-  unsigned long int itrans /**< [in] Transfer ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int itrans,//!<[in] Transfer ID
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
+){
 #ifdef MPI
   double complex dam_pr=0;
   dam_pr=X_GC_child_general_hopp_MPIsingle(
@@ -222,22 +220,21 @@ void GC_child_general_hopp_MPIsingle(
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
 /**
- *
- * Hopping term in Hubbard + GC
- * When only site2 is in the inter process region.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Hopping term in Hubbard + GC
+ When only site2 is in the inter process region.
+@author Mitsuaki Kawamura (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex X_GC_child_general_hopp_MPIsingle(
   int org_isite1,//!<[in]
   int org_ispin1,//!<[in]
   int org_isite2,//!<[in]
   int org_ispin2,//!<[in]
   double complex tmp_trans,//!<[in]
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/) {
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
+) {
 #ifdef MPI
   int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
@@ -324,18 +321,16 @@ double complex X_GC_child_general_hopp_MPIsingle(
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
 /**
- *
- * Hopping term in Hubbard (Kondo) + Canonical ensemble
- * When both site1 and site2 are in the inter process region.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Hopping term in Hubbard (Kondo) + Canonical ensemble
+ When both site1 and site2 are in the inter process region.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 void child_general_hopp_MPIdouble(
-  unsigned long int itrans /**< [in] Transfer ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int itrans,//!<[in] Transfer ID
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
+){
 #ifdef MPI
   double complex dam_pr;
   dam_pr =X_child_general_hopp_MPIdouble( 
@@ -346,21 +341,19 @@ void child_general_hopp_MPIdouble(
 #endif
 }/*void child_general_hopp_MPIdouble*/
 /**
- *
- * Hopping term in Hubbard (Kondo) + Canonical ensemble
- * When both site1 and site2 are in the inter process region.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Hopping term in Hubbard (Kondo) + Canonical ensemble
+ When both site1 and site2 are in the inter process region.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 double complex X_child_general_hopp_MPIdouble(
   int org_isite1,//!<[in]
   int org_ispin1,//!<[in]
   int org_isite2,//!<[in]
   int org_ispin2,//!<[in]
   double complex tmp_trans,//!<[in]
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
 ) {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
@@ -430,18 +423,16 @@ double complex X_child_general_hopp_MPIdouble(
 #endif
 }/*void child_general_hopp_MPIdouble*/
 /**
- *
- * Hopping term in Hubbard (Kondo) + Canonical ensemble
- * When only site2 is in the inter process region.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Hopping term in Hubbard (Kondo) + Canonical ensemble
+ When only site2 is in the inter process region.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 void child_general_hopp_MPIsingle(
-  unsigned long int itrans /**< [in] Transfer ID*/,
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
-{
+  unsigned long int itrans,//!<[in] Transfer ID
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
+){
 #ifdef MPI
   double complex dam_pr;
   dam_pr =X_child_general_hopp_MPIsingle(
@@ -452,21 +443,19 @@ void child_general_hopp_MPIsingle(
 #endif
 }/*void child_general_hopp_MPIsingle*/
 /**
- *
- * Hopping term in Hubbard (Kondo) + Canonical ensemble
- * When only site2 is in the inter process region.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Hopping term in Hubbard (Kondo) + Canonical ensemble
+ When only site2 is in the inter process region.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 double complex X_child_general_hopp_MPIsingle(
   int org_isite1,//!<[in]
   int org_ispin1,//!<[in]
   int org_isite2,//!<[in]
   int org_ispin2,//!<[in]
   double complex tmp_trans,//!<[in]
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1//!<[in] v0 = H v1
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -559,21 +548,19 @@ double complex X_child_general_hopp_MPIsingle(
 #endif
 }/*double complex child_general_hopp_MPIsingle*/
 /**
- *
- * Hopping term in Hubbard (Kondo) + Canonical ensemble
- * When only site2 is in the inter process region.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Hopping term in Hubbard (Kondo) + Canonical ensemble
+  When only site2 is in the inter process region.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 double complex X_child_CisAjt_MPIsingle(
   int org_isite1,//!<[in]
   int org_ispin1,//!<[in]
   int org_isite2,//!<[in]
   int org_ispin2,//!<[in]
   double complex tmp_trans,//!<[in]
-  struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/,
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[out] Result v0 = H v1
+  double complex *tmp_v1,//!<[in] v0 = H v1
   double complex *v1buf,//!<[in]
   long unsigned int *list_1_org,//!<[in]
   long unsigned int *list_1buf_org,//!<[in]

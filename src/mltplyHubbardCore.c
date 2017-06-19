@@ -281,16 +281,11 @@ double complex GC_AisCis(
   return dam_pr;
 }/*double complex GC_AisCis*/
 /**
- *
- *
- * @param list_1_j
- * @param X
- * @param is1_spin
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief @f$c_{is}\\dagger c_{is}@f$ term in Hubbard (canonical) 
+@return
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_CisAis(
   long unsigned int list_1_j,
   struct BindStruct *X,
