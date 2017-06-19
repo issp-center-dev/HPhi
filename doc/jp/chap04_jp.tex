@@ -1032,7 +1032,7 @@ CalcEigenVec 0
 \end{itemize}
 
 \newpage
-\subsection{{ModParaファイル}}
+\subsection{\tr{ModParaファイル}}
 \label{Subsec:modpara}
 計算で使用するパラメータを指定します。以下のようなフォーマットをしています。\\
 \begin{minipage}{10cm}
@@ -1041,7 +1041,7 @@ CalcEigenVec 0
 --------------------
 Model_Parameters   0
 --------------------
-VMC_Cal_Parameters
+HPhi_Cal_Parameters
 --------------------
 CDataFileHead  zvo
 CParaFileHead  zqp
@@ -1128,7 +1128,7 @@ ExpecInterval  20
 
 {\bf 形式 :} int型 (自然数)
 
-{\bf 説明 :}  Lanczosステップを行う回数の最大値。
+{\bf 説明 :}  Lanczos\tr{(TPQ法の場合はTPQ, 実時間発展の場合は実時間)}ステップを行う回数の最大値。
 指定した精度内で収束した場合には、これより短い回数で終了します。
 この回数以内で収束しない場合はエラー終了します。
 
@@ -2470,6 +2470,205 @@ NPair         24
 $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
+\newpage
+\subsection{\tr{OneBodyTE指定ファイル}}
+\label{Subsec:1TE}
+各時刻で付加される一体型の演算子$t_{i\sigma_1 j \sigma_2}(t)c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$を定義します。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+==================================
+AllTimeStep         100
+==================================
+===== OneBody Time Evolution =====
+==================================
+    0.0   4
+    0  0  1  0      1.0    0.0
+    1  0  0  0      1.0    0.0
+    0  1  1  1      1.0    0.0
+    1  1  0  1      1.0    0.0
+    0.2   4
+   (continue...)
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+  \end{itemize}
+6行以降は時刻tおよびその時刻での非ゼロの相互作用の個数を最初に指定し、
+続けて対応する一体相互作用を指定する形式を取ります。
+ \begin{itemize}
+    \item  m行: [double01]~~[int02]
+    \item  (m+1) - (m+1+[int02])行: [int03]~~[int04]~~[int05]~~[int06]~~[double02]~~[double03]
+ \end{itemize}
+   
+
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} ファイル内で定義されている総タイムステップ数を表すキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} ファイル内で定義されている総タイムステップ数を指定します。
+
+\item  $[$double01$]$
+
+ {\bf 形式 :} double型 (空白不可)
+
+{\bf 説明 :}  時刻$t$を指定します。
+
+ \item  $[$int02$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} 時刻$t$で付加される一体相互作用の個数を指定します。
+ 
+
+  \item  $[$int03$]$, $[$int05$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
+ 
+  \item  $[$int04$]$, $[$int06$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} スピンを指定する整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を選択することが出来ます。
+
+\item  $[$double02$]$, $[$double03$]$
+
+ {\bf 形式 :} double型 (空白不可)
+
+{\bf 説明 :} 時刻$t$で付加される一体相互作用の実部を$[$double02$]$、虚部を$[$double03$]$でそれぞれ指定します。
+
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item ModParaファイルで指定されるLanczosStepが$[$int02$]$よりも大きい場合にはエラー終了します。
+\item $[$int03$]$-$[$int06$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+
+\newpage
+\subsection{\tr{TwoBodyTE指定ファイル}}
+\label{Subsec:2TE}
+各時刻で付加される二体型の演算子$I_{i\sigma_1j \sigma_2 k \sigma_3 l \sigma_4}(t)c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$を定義します。
+以下にファイル例を記載します。
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+==================================
+AllTimeStep         100
+==================================
+===== TwoBody Time Evolution =====
+==================================
+    0.0   3
+    0  1  0  1  0  0  0  0       1.0    0.0
+    1  0  1  0  0  0  0  0       1.0    0.0
+    1  0  1  0  2  0  2  0       1.0    0.0 
+    0.2   3
+   (continue...)
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル形式}
+以下のように行数に応じ異なる形式をとります。
+ \begin{itemize}
+   \item  1行:  ヘッダ(何が書かれても問題ありません)。
+   \item  2行:   [string01]~[int01]
+   \item  3-5行:  ヘッダ(何が書かれても問題ありません)。
+  \end{itemize}
+6行以降は時刻tおよびその時刻での非ゼロの相互作用の個数を最初に指定し、
+続けて対応する二体相互作用を指定する形式を取ります。
+ \begin{itemize}
+    \item  m行: [double01]~~[int02]
+    \item  (m+1) - (m+1+[int02])行: [int03]~~[int04]~~[int05]~~[int06]~~[int07]~~[int08]~~[int09]~~[int10]~~[double02]~~[double03]
+ \end{itemize}
+   
+
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+   \item  $[$string01$]$
+   
+    {\bf 形式 :} string型 (空白不可)
+
+   {\bf 説明 :} ファイル内で定義されている総タイムステップ数を表すキーワード名を指定します(任意)。
+
+   \item  $[$int01$]$
+   
+    {\bf 形式 :} int型 (空白不可)
+
+   {\bf 説明 :} ファイル内で定義されている総タイムステップ数を指定します。
+
+\item  $[$double01$]$
+
+ {\bf 形式 :} double型 (空白不可)
+
+{\bf 説明 :}  時刻$t$を指定します。
+
+ \item  $[$int02$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} 時刻$t$で付加される二体相互作用の個数を指定します。
+ 
+
+  \item  $[$int03$]$, $[$int05$]$, $[$int07$]$, $[$int09$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} サイト番号を指定する整数。0以上\verb|Nsite|{未満}で指定します。
+ 
+  \item  $[$int04$]$, $[$int06$]$, $[$int08$]$, $[$int10$]$
+
+ {\bf 形式 :} int型 (空白不可)
+
+{\bf 説明 :} スピンを指定する整数。\\
+0: アップスピン\\
+1: ダウンスピン\\
+を選択することが出来ます。
+
+\item  $[$double02$]$, $[$double03$]$
+
+ {\bf 形式 :} double型 (空白不可)
+
+{\bf 説明 :} 時刻$t$で付加される二体相互作用の実部を$[$double02$]$、虚部を$[$double03$]$でそれぞれ指定します。
+
+\end{itemize}
+
+\subsubsection{使用ルール}
+本ファイルを使用するにあたってのルールは以下の通りです。
+\begin{itemize}
+\item 行数固定で読み込みを行う為、ヘッダの省略はできません。
+\item ModParaファイルで指定されるLanczosStepが$[$int02$]$よりも大きい場合にはエラー終了します。
+\item $[$int03$]$-$[$int06$]$を指定する際、範囲外の整数を指定した場合はエラー終了します。
+\end{itemize}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{出力ファイル}
@@ -3036,7 +3235,8 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$はサ
 \subsection{Lanczos\_Step.dat}
 (Lanczos法、LOBCG法でのみ出力) 固有ベクトルを求めている際のログを出力します。以下にファイル例を示します。\\
 
-\verb|method="Lanczos"|の場合
+\verb|method="Lanczos"|の場合\\
+
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3350,6 +3550,252 @@ $\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ の期待値(ただし$N_
  \end{itemize}
 
 \newpage
+\subsection{\tr{Time\_TE\_Step.dat}}
+(実時間発展法でのみ出力) 実時間発展法でのステップ毎の開始時間を出力します。以下にファイル例を示します。\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+step 1:TE begins: Wed Jul 13 07:59:20 2017
+step 2:TE begins: Wed Jul 13 07:59:20 2017
+step 3:TE begins: Wed Jul 13 07:59:20 2017
+…
+step 1997:TE begins: Wed Jul 13 07:59:32 2017
+step 1998:TE begins: Wed Jul 13 07:59:32 2017
+step 1999:TE begins: Wed Jul 13 07:59:32 2017
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item  \#\#\_TE\_Step.dat
+  \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
+
+
+\subsubsection{ファイル形式}
+ \begin{itemize}
+   \item stp $[$int01$]$: TE begins: $[$string01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+  
+ {\bf 形式 :} int型
+
+{\bf 説明 :} TE法でのステップ数。
+
+  \item  $[$string01$]$
+  
+ {\bf 形式 :} string型
+
+{\bf 説明 :} 計算開始時間。
+
+ \end{itemize}
+
+\newpage
+\subsection{\tr{Norm.dat}}
+\label{Subsec:normTE}
+(実時間発展法でのみ出力) 実時間発展法でのタイムステップ毎のログを出力します。以下にファイル例を示します。\\
+
+\tr{実装後に追加}\\
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+ # time, global_norm, step_i 
+T.B.A.
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item Norm.dat
+  \end{itemize}
+
+\subsubsection{ファイル形式}
+1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$double01$]$ $[$double02$]$ $[$int01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} 時間$t$。
+ 
+  \item $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  実時間発展法で計算される時刻$t$での波動関数(ベクトル)のノルム。
+
+  \item $[$int01$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} タイムステップ数。
+
+ \end{itemize}
+
+
+\newpage
+\subsection{\tr{SS.dat}}
+\label{Subsec:ssTE}
+(実時間発展法でのみ出力)実時間発展法での各ステップ毎の計算結果を出力します。以下にファイル例を示します。\\
+\tr{後で追加}
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+# time_step, energy, phys_var, phys_doublon, phys_num, step_i
+T.B.A.
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item SS.dat
+  \end{itemize}
+
+\subsubsection{ファイル形式}
+1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$int01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} 時間$t$。
+ 
+  \item $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  エネルギーの期待値$\langle H \rangle$。
+
+  \item $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} ハミルトニアンの2乗の期待値$\langle H^2 \rangle$。
+
+  \item $[$double04$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} ダブロン
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N_s$はサイト数)。
+
+  \item $[$double05$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 粒子数$\langle {\hat n} \rangle$。
+
+
+  \item $[$int01$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} タイムステップ数。
+
+ \end{itemize}
+
+\newpage
+\subsection{\tr{Flct.dat}}
+\label{Subsec:flctrand}
+(実時間発展法でのみ出力) 実時間発展法での揺らぎに関する各時刻での計算結果を出力します。以下にファイル例を示します。\\
+\tr{あとで追加}
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+ # time_step, N, N^2, D, D^2, Sz, Sz^2, step_i
+T.B.A.
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+ \begin{itemize}
+   \item Flct.dat
+  \end{itemize}
+
+\subsubsection{ファイル形式}
+1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$double06$]$ $[$double07$]$ $[$int01$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} 時間$t$。
+ 
+  \item $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  全粒子数$\sum_{i} \langle \hat{n}_i \rangle$。
+
+  \item $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} 粒子数の2乗の期待値$\sum_{i} \langle \hat{n}_i^2 \rangle$。
+
+  \item $[$double04$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} ダブロン
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ の期待値(ただし$N_s$はサイト数)。
+
+  \item $[$double05$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} ダブロンの二乗
+$\frac{1}{N_s} \sum_{i}\langle (n_{i\uparrow} n_{i\downarrow})^2\rangle$ の期待値(ただし$N_s$はサイト数)。
+
+  \item $[$double06$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} スピンの$Sz$成分
+$\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle$ の期待値(ただし$N_s$はサイト数)。
+
+  \item $[$double07$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :} スピンの$Sz$成分の二乗
+$\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ の期待値(ただし$N_s$はサイト数)。
+
+  \item $[$int01$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} タイムステップ数。
+
+ \end{itemize}
+
+
+\newpage
 \subsection{Eigenvalue.dat}
 \label{Subsec:eigenvalue}
 (FullDiagでのみ出力)全対角法で計算したエネルギーを出力します。以下にファイル例を記載します。\\
@@ -3459,7 +3905,7 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N
 
 
 \newpage
-\subsection{cisajs.dat}
+\subsection{\tr{cisajs.dat}}
 \label{Subsec:cgcisajs}
 OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$の計算結果を出力します。以下にファイル例を記載します。
 
@@ -3483,6 +3929,7 @@ OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajs.dat
    \item{TPQ法:} \#\#\_cisajs\_set??step\%\%.dat
+   \tr{\item{実時間発展法:} \#\#\_cisajs\_step\%\%.dat}
    \item{全対角化法、LOBCG法:}  \#\#\_cisajs\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
@@ -3519,7 +3966,7 @@ $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
 \newpage
-\subsection{cisajscktalt.dat}
+\subsection{\tr{cisajscktalt.dat}}
 \label{Subsec:cisajscktalt}
 TwoBodyGで指定された二体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$の計算結果を出力します。以下にファイル例を記載します。
 
@@ -3543,6 +3990,7 @@ TwoBodyGで指定された二体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajscktalt.dat
    \item{TPQ法:} \#\#\_cisajscktalt\_set??step\%\%.dat
+   \tr{\item{実時間発展法:} \#\#\_cisajscktalt\_step\%\%.dat}
    \item{全対角化法、LOBCG法:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
