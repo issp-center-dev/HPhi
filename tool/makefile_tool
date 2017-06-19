@@ -1,0 +1,22 @@
+include ../src/make.sys
+
+.SUFFIXES :
+.SUFFIXES : .o .F90
+.SUFFIXES : .o .c
+
+all:fourier corplot
+
+fourier:fourier.o key2lower.o
+	$(F90) fourier.o key2lower.o $(LIBS) -o $@
+
+corplot:corplot.o
+	$(F90) corplot.o $(LIBS) -o $@
+
+.F90.o:
+	$(F90) -c $< $(FFLAGS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	rm -f *.o *.mod fourier corplot

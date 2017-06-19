@@ -46,6 +46,82 @@ You can obtain the $\HPhi$ directory by typing
 $ tar xzvf HPhi-xxx.tar.gz
 \end{verbatim}
 
+There are two types of procedure for installing $\HPhi$.
+
+\subsection{Using \texttt{HPhiconfig.sh}}
+
+Please run \verb|HPhiconfig.sh| script in the $\HPhi$ directory as follows
+(for ISSP system-B ``sekirei''):
+\begin{verbatim}
+$ bash HPhiconfig.sh sekirei
+\end{verbatim}
+Then, the environmental configuration file \verb|make.sys| is generated in 
+the \verb|src/| directory.
+The command-line argument of \verb|HPhiconfig.sh| is as follows:
+\begin{itemize}
+\item \verb|sekirei| : ISSP system-B ``sekirei''
+\item \verb|fujitsu| : ISSP system-C ``maki''
+\item \verb|sr| : HITACHI SR16000
+\item \verb|intel| : Intel compiler
+\item \verb|intel-openmpi| : Intel compiler + OpenMPI
+\item \verb|intel-mpich| : Intel compiler + MPICH2
+\item \verb|intel-intelmpi| : Intel compiler + IntelMPI
+\item \verb|gcc| : GCC
+\item \verb|gcc-openmpi| : GCC + OpenMPI
+\item \verb|gcc-mpich| : GCC + MPICH2
+\item \verb|gcc-mac| : GCC + Mac.
+\end{itemize}
+
+\verb|make.sys| is as follows (for ISSP-system-B ``sekirei''):
+\begin{verbatim}
+CC = mpicc
+F90 = mpif90
+CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+         -shared-intel -D MPI
+FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+         -shared-intel -D MPI -fpp
+LIBS = -mkl -lifcore
+\end{verbatim}
+We explain the macros of this file as: 
+\begin{itemize}
+\item \verb|CC| : C compiler (\verb|icc|, \verb|gcc|, \verb|fccpx|).
+\item \verb|F90| : fortran compiler (\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
+\item \verb|CFLAGS| : C compile options.
+  OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
+  must be specified.
+  When you use MPI, please set \verb|-D MPI|.
+\item \verb|FFLAGS| : fortran compile options. Similar to \verb|CFLAGS|. 
+\item \verb|LIBS| : Compilation options for LAPACK. \verb|-Dlapack| can not be removed.
+\end{itemize}
+
+
+Then, you are ready to compile HPhi.
+Please type
+\begin{verbatim}
+$ make HPhi
+\end{verbatim}
+and obtain an executable \verb|HPhi| in the \verb|src/| directory;
+you should add this directory to the \verb|$PATH|.
+
+
+
+\begin{screen}
+\Large 
+{\bf Tips}
+\normalsize
+
+You can make a PATH to $\HPhi$ as follows:
+\\
+\verb|$ export PATH=${PATH}:|\textit{HPhi\_top\_directory}\verb|/src/|
+\\
+If you retain this PATH, you should write above in \verb|~/.bashrc|
+(for \verb|bash| as a login shell)
+
+\end{screen}
+
+
+\subsection{Using \texttt{cmake}}
+
 \begin{screen}
 \Large 
 {\bf Tips}
@@ -153,6 +229,7 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
 |    |--*.c
 |    |--CMakeLists.txt
 |    |--include/*.h
+|    |--makefile_src
 |    ---StdFace/
 |--test/
 ---test_tool/

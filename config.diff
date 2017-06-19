@@ -1,0 +1,680 @@
+diff --git a/HPhiconfig.sh b/HPhiconfig.sh
+new file mode 100755
+index 0000000..1eda794
+--- /dev/null
++++ b/HPhiconfig.sh
+@@ -0,0 +1,167 @@
++#!/bin/bash
++if [ -z ${1} ] || [ ${1} = "help" ]; then
++    echo ""
++    echo "Usage:"
++    echo "./HPhiconfig.sh system_name"
++    echo " system_name should be chosen from below:"
++    echo "         sekirei : ISSP system-B (Intel + SGIMPT)"
++    echo "         fujitsu : ISSP system-C (FX10)"
++    echo "              sr : SR16000"
++    echo "           intel : Intel compiler + Linux PC"
++    echo "   intel-openmpi : Intel compiler + OpenMPI"
++    echo "     intel-mpich : Intel compiler + MPICH2"
++    echo "  intel-intelmpi : Intel compiler + IntelMPI"
++    echo "             gcc : GCC"
++    echo "     gcc-openmpi : GCC + OpenMPI"
++    echo "       gcc-mpich : GCC + MPICH2"
++    echo "         gcc-mac : GCC + Mac"
++    echo ""
++    echo "Then src/make.sys is generated."
++    echo "  Variables in src/make.sys"
++    echo "              CC : C complier"
++    echo "             F90 : fortran compiler"
++    echo "          CFLAGS : C compiler options"
++    echo "          FFLAGS : fortran compiler options"
++    echo "            LIBS : Linker option"
++    echo ""
++else
++    if [ ${1} = "sekirei" ]; then
++        cat > src/make.sys <<EOF
++CC = mpicc
++F90 = mpif90
++CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large -shared-intel -D MPI -fpp
++LIBS = -mkl -lifcore
++EOF
++    elif [ ${1} = "intel-mpich" ]; then
++        cat > src/make.sys <<EOF
++CC = mpicc
++F90 = mpif90
++CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
++LIBS = -mkl -lifcore -lmpifort
++EOF
++    elif [ ${1} = "intel-intelmpi" ]; then
++        cat > src/make.sys <<EOF
++CC = mpiicc
++F90 = mpiifort
++CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
++LIBS = -mkl -lifcore -lmpifort
++EOF
++    elif [ ${1} = "intel-openmpi" ]; then
++        cat > src/make.sys <<EOF
++CC = mpicc
++F90 = mpif90
++CFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -traceback -xHost -D MPI -fpp
++LIBS = -mkl -lifcore -lmpi_f90 -lmpi_f77
++EOF
++    elif [ ${1} = "intel" ]; then
++        cat > src/make.sys <<EOF
++CC = icc
++F90 = ifort
++CFLAGS = -fopenmp -O3 -g -traceback -xHost -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -traceback -xHost -fpp
++LIBS = -mkl -lifcore
++EOF
++    elif [ ${1} = "gcc-openmpi" ]; then
++        cat > src/make.sys <<EOF
++CC = mpicc
++F90 = mpif90
++CFLAGS = -fopenmp -O3 -g -D MPI -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -D MPI -cpp
++LIBS = -fopenmp -lm -lgfortran -llapack -lblas -lmpi_f90 -lmpi_f77
++EOF
++    elif [ ${1} = "gcc-mpich" ]; then
++        cat > src/make.sys <<EOF
++CC = mpicc
++F90 = mpif90
++CFLAGS = -fopenmp -O3 -g -D MPI -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -D MPI -cpp
++LIBS = -fopenmp -lm -lgfortran -llapack -lblas -lmpifort
++EOF
++    elif [ ${1} = "gcc" ]; then
++        cat > src/make.sys <<EOF
++CC = gcc
++F90 = gfortran
++CFLAGS = -fopenmp -O3 -g -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -cpp
++LIBS = -fopenmp -lm -lgfortran -llapack -lblas
++EOF
++    elif [ ${1} = "gcc-mac" ]; then
++        cat > src/make.sys <<EOF
++CC = gcc
++F90 = gfortran
++CFLAGS = -fopenmp -O3 -g -D_OSX -D HAVE_SSE2
++FFLAGS = -fopenmp -O3 -g -cpp -D NO_ZDOTC
++LIBS = -fopenmp -lm -framework Accelerate -lgfortran
++EOF
++    elif [ ${1} = "fujitsu" ]; then
++        cat > src/make.sys <<EOF
++CC = mpifccpx
++F90 = mpifrtpx
++CFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Kmemalias,alias_const -D HAVE_SSE2
++FFLAGS = -Kfast,openmp,SPARC64IXfx,parallel -g -D MPI -Cpp -D FUJITSU
++LIBS = -Kfast,openmp,parallel -SSL2BLAMP -lmpi_f90 -lmpi_f77
++EOF
++    elif [ ${1} = "sr" ]; then
++        cat > src/make.sys <<EOF
++CC = mpcc_r
++F90 = mpxlf2003_r
++CFLAGS = -O3 -qsmp=omp -q64 -D SR -D MPI 
++FFLAGS = -O3 -qsmp=omp -q64 -qsuffix=cpp=f90 -WF,-DMPI -WF,-DSR
++LIBS = -qsmp=omp -L /usr/lib -lm -lessl -lxlf90
++AROPT = -X64
++EOF
++    else
++        echo ""
++        echo "Unsupported system. Please type"
++        echo "./HPhiconfig.sh help"
++        echo ""
++        exit
++    fi
++
++    echo "cat src/make.sys"
++    cat src/make.sys
++
++    echo
++    echo "HPhiconfig DONE"
++    echo
++
++    cat > makefile <<EOF
++help:
++	@echo ""
++	@echo "Usage :"
++	@echo "make <entry>"
++	@echo ""
++	@echo "<entry> is chosen from below"
++	@echo "      HPhi : Build simulator HPhi in src/ and tool/"
++	@echo " userguide : Generate userguid_jp.pdf & userguide_en.pdf in doc/"
++	@echo "     clean : Remove all generated files excepting makefile and doc/"
++	@echo " veryclean : Remove all generated files including makefile and doc/"
++	@echo ""
++
++HPhi:
++	cd src;make -f makefile_src
++	cd tool;make -f makefile_tool
++
++userguide:
++	cd doc/jp/;make -f makefile_doc_jp;
++	cd doc/en/;make -f makefile_doc_en;
++	cd doc/fourier/ja; make html latexpdfja
++	cd doc/fourier/en; make html latexpdfja
++
++clean:
++	cd src; make -f makefile_src clean
++	cd tool; make -f makefile_tool clean
++
++veryclean:
++	make clean
++	cd doc/jp; make -f makefile_doc_jp clean
++	cd doc/en; make -f makefile_doc_en clean
++	cd doc/fourier/ja; make clean
++	cd doc/fourier/en; make clean
++	rm -f src/make.sys makefile
++EOF
++fi
+diff --git a/doc/en/chap02_en.tex b/doc/en/chap02_en.tex
+index 88b85be..e0ead23 100644
+--- a/doc/en/chap02_en.tex
++++ b/doc/en/chap02_en.tex
+@@ -46,6 +46,82 @@ You can obtain the $\HPhi$ directory by typing
+ $ tar xzvf HPhi-xxx.tar.gz
+ \end{verbatim}
+ 
++There are two types of procedure for installing $\HPhi$.
++
++\subsection{Using \texttt{HPhiconfig.sh}}
++
++Please run \verb|HPhiconfig.sh| script in the $\HPhi$ directory as follows
++(for ISSP system-B ``sekirei''):
++\begin{verbatim}
++$ bash HPhiconfig.sh sekirei
++\end{verbatim}
++Then, the environmental configuration file \verb|make.sys| is generated in 
++the \verb|src/| directory.
++The command-line argument of \verb|HPhiconfig.sh| is as follows:
++\begin{itemize}
++\item \verb|sekirei| : ISSP system-B ``sekirei''
++\item \verb|fujitsu| : ISSP system-C ``maki''
++\item \verb|sr| : HITACHI SR16000
++\item \verb|intel| : Intel compiler
++\item \verb|intel-openmpi| : Intel compiler + OpenMPI
++\item \verb|intel-mpich| : Intel compiler + MPICH2
++\item \verb|intel-intelmpi| : Intel compiler + IntelMPI
++\item \verb|gcc| : GCC
++\item \verb|gcc-openmpi| : GCC + OpenMPI
++\item \verb|gcc-mpich| : GCC + MPICH2
++\item \verb|gcc-mac| : GCC + Mac.
++\end{itemize}
++
++\verb|make.sys| is as follows (for ISSP-system-B ``sekirei''):
++\begin{verbatim}
++CC = mpicc
++F90 = mpif90
++CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
++         -shared-intel -D MPI
++FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
++         -shared-intel -D MPI -fpp
++LIBS = -mkl -lifcore
++\end{verbatim}
++We explain the macros of this file as: 
++\begin{itemize}
++\item \verb|CC| : C compiler (\verb|icc|, \verb|gcc|, \verb|fccpx|).
++\item \verb|F90| : fortran compiler (\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
++\item \verb|CFLAGS| : C compile options.
++  OpenMP utilization option (\verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|, etc.)
++  must be specified.
++  When you use MPI, please set \verb|-D MPI|.
++\item \verb|FFLAGS| : fortran compile options. Similar to \verb|CFLAGS|. 
++\item \verb|LIBS| : Compilation options for LAPACK. \verb|-Dlapack| can not be removed.
++\end{itemize}
++
++
++Then, you are ready to compile HPhi.
++Please type
++\begin{verbatim}
++$ make HPhi
++\end{verbatim}
++and obtain an executable \verb|HPhi| in the \verb|src/| directory;
++you should add this directory to the \verb|$PATH|.
++
++
++
++\begin{screen}
++\Large 
++{\bf Tips}
++\normalsize
++
++You can make a PATH to $\HPhi$ as follows:
++\\
++\verb|$ export PATH=${PATH}:|\textit{HPhi\_top\_directory}\verb|/src/|
++\\
++If you retain this PATH, you should write above in \verb|~/.bashrc|
++(for \verb|bash| as a login shell)
++
++\end{screen}
++
++
++\subsection{Using \texttt{cmake}}
++
+ \begin{screen}
+ \Large 
+ {\bf Tips}
+@@ -153,6 +229,7 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
+ |    |--*.c
+ |    |--CMakeLists.txt
+ |    |--include/*.h
++|    |--makefile_src
+ |    ---StdFace/
+ |--test/
+ ---test_tool/
+diff --git a/doc/jp/chap02_jp.tex b/doc/jp/chap02_jp.tex
+index 088b541..bbe7360 100644
+--- a/doc/jp/chap02_jp.tex
++++ b/doc/jp/chap02_jp.tex
+@@ -48,6 +48,75 @@ $\HPhi$ は次の場所からダウンロードできます。\\
+ $ tar xzvf HPhi-xxx.tar.gz
+ \end{verbatim}
+ 
++$\HPhi$は次の2通りの方法でインストールできます。
++
++\subsection{\texttt{HPhiconfig.sh}を使う方法}
++
++展開したディレクトリのなかにある\verb|HPhiconfig.sh|スクリプトを次のように実行してください。
++(物性研システムB''sekirei''の場合)
++\begin{verbatim}
++$ bash HPhiconfig.sh sekirei
++\end{verbatim}
++これによりコンパイル環境設定ファイル\verb|make.sys|が\verb|src/|ディレクトリに作られます。
++\verb|HPhiconfig.sh|の引数は次のものに対応しています。
++\begin{itemize}
++\item \verb|sekirei| : 物性研究所システムB ''sekirei''
++\item \verb|fujitsu| : 物性研究所システムC ''maki''
++\item \verb|sr| : 日立製作所 SR16000
++\item \verb|intel| : Intelコンパイラ
++\item \verb|intel-openmpi| : Intelコンパイラ + OpenMPI
++\item \verb|intel-mpich| : Intelコンパイラ + MPICH2
++\item \verb|intel-intelmpi| : Intelコンパイラ + IntelMPI
++\item \verb|gcc| : GCC
++\item \verb|gcc-openmpi| : GCC + OpenMPI
++\item \verb|gcc-mpich| : GCC + MPICH2
++\item \verb|gcc-mac| : GCC + Mac
++\end{itemize}
++
++\verb|make.sys|の中身は次のようになっています(物性研システムB ''sekirei''の場合)。
++\begin{verbatim}
++CC = mpicc
++F90 = mpif90
++CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
++         -shared-intel -D MPI
++FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
++         -shared-intel -D MPI -fpp
++LIBS = -mkl -lifcore
++\end{verbatim}
++となります。それぞれのマクロ(変数)の説明は次のとおりです。
++\begin{itemize}
++\item \verb|CC| : C コンパイルコマンド(\verb|icc|, \verb|gcc|, \verb|fccpx|)
++\item \verb|F90| : fortran コンパイルコマンド(\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
++\item \verb|CFLAGS| : C コンパイルオプション。
++  \verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|などのOpenMP有効化のオプションは必須です。
++  MPI並列を行う場合は\verb|-D MPI|をつけます. 
++\item \verb|FFLAGS| : fortran コンパイルオプション。\verb|CFLAGS| と同様。
++\item \verb|LIBS| : リンクオプション
++\end{itemize}
++
++これでコンパイルのための準備が整います。その後
++\begin{verbatim}
++$ make HPhi
++\end{verbatim}
++とすることで実行可能ファイル\verb|HPhi|が\verb|src/内に|生成されるので、
++このディレクトリにパスを通すか、
++パスの通っている場所にシンボリックリンクを作ってください。
++
++\begin{screen}
++\Large 
++{\bf Tips}
++\normalsize
++
++実行ファイルにパスを通す時には、次のようにします。
++\\
++\verb|$ export PATH=${PATH}:|\underline{HPhiのディレクトリ}\verb|/src/|
++\\
++この設定を常に残すには、例えばログインシェルが\verb|bash|の場合には
++\verb|~/.bashrc|ファイルに上記のコマンドを記載します。
++\end{screen}
++
++\subsection{cmakeを使う場合}
++
+ \begin{screen}
+ \Large 
+ {\bf Tips}
+@@ -169,8 +238,9 @@ HPhi-xxx.gzを解凍後に構成されるディレクトリ構成を以下に示
+ ├──src/\\
+ │~~~~~~~├──**.c\\
+ │~~~~~~~├──CMakeLists.txt\\
+-│~~~~~~~└──include/\\
+-│~~~~~~~~~~~~~~~└──**.h\\
++│~~~~~~~├──include/\\
++│~~~~~~~│~~~~~~~└──**.h\\
++│~~~~~~~└──makefile\_src\\
+ ├──test/\\
+ └──test\_tool/\\
+ 
+diff --git a/src/StdFace/makefile_StdFace b/src/StdFace/makefile_StdFace
+new file mode 100644
+index 0000000..e801ffd
+--- /dev/null
++++ b/src/StdFace/makefile_StdFace
+@@ -0,0 +1,30 @@
++include ../make.sys
++
++StdFace_OBJS = StdFace_main.o StdFace_ModelUtil.o
++Lattice_OBJS = SquareLattice.o ChainLattice.o TriangularLattice.o \
++	HoneycombLattice.o Ladder.o Kagome.o Orthorhombic.o FCOrtho.o \
++	Pyrochlore.o Wannier90.o
++
++libStdFace.a:$(StdFace_OBJS) $(Lattice_OBJS)
++	ar -r -v $(AROPT) $@ $(StdFace_OBJS) $(Lattice_OBJS)
++
++SUFFIXES: .o .c
++
++.c.o:
++	$(CC) $(CFLAGS) -D _HPhi -c $<
++
++clean:
++	rm -f *.o *.a
++
++StdFace_main.o:StdFace_main.c StdFace_vals.h StdFace_ModelUtil.h
++StdFace_ModelUtil.o:StdFace_ModelUtil.c StdFace_vals.h
++SquareLattice.o:SquareLattice.c StdFace_vals.h StdFace_ModelUtil.h
++ChainLattice.o:ChainLattice.c StdFace_vals.h StdFace_ModelUtil.h
++TriangularLattice.o:TriangularLattice.c StdFace_vals.h StdFace_ModelUtil.h
++HoneycombLattice.o:HoneycombLattice.c StdFace_vals.h StdFace_ModelUtil.h
++Ladder.o:Ladder.c StdFace_vals.h StdFace_ModelUtil.h
++Kagome.o:Kagome.c StdFace_vals.h StdFace_ModelUtil.h
++Orthorhombic.o:Orthorhombic.c StdFace_vals.h StdFace_ModelUtil.h
++FCOrtho.o:FCOrtho.c StdFace_vals.h StdFace_ModelUtil.h
++Pyrochlore.o:Pyrochlore.c StdFace_vals.h StdFace_ModelUtil.h
++Wannier90.o:Wannier90.c StdFace_vals.h StdFace_ModelUtil.h
+diff --git a/src/komega/makefile_komega b/src/komega/makefile_komega
+new file mode 100644
+index 0000000..0994f9f
+--- /dev/null
++++ b/src/komega/makefile_komega
+@@ -0,0 +1,23 @@
++include ../make.sys
++
++.SUFFIXES :
++.SUFFIXES : .o .F90
++
++OBJS = \
++komega_bicg.o \
++komega_math.o \
++komega_vals.o
++
++libkomega.a:$(OBJS)
++	ar -r -v $(AROPT) libkomega.a $(OBJS)
++
++.F90.o:
++	$(F90) -c $< $(FFLAGS)
++
++clean:
++	rm -f *.o *.a *.mod
++
++komega_bicg.o:komega_math.o
++komega_bicg.o:komega_vals.o
++komega_math.o:komega_vals.o
++
+diff --git a/src/makefile_src b/src/makefile_src
+new file mode 100644
+index 0000000..ddeb91c
+--- /dev/null
++++ b/src/makefile_src
+@@ -0,0 +1,221 @@
++include make.sys
++
++MTFLAGS = -DDSFMT_MEXP=19937
++
++OBJS = \
++CG_EigenVector.o \
++CalcByFullDiag.o \
++CalcByLOBPCG.o \
++CalcByLanczos.o \
++CalcByTPQ.o \
++CalcSpectrum.o \
++CalcSpectrumByBiCG.o \
++CalcSpectrumByFullDiag.o \
++CalcSpectrumByLanczos.o \
++CalcSpectrumByTPQ.o \
++CheckMPI.o \
++ErrorMessage.o \
++FileIO.o \
++FirstMultiply.o \
++HPhiMain.o \
++HPhiTrans.o \
++Lanczos_EigenValue.o \
++Lanczos_EigenVector.o \
++LogMessage.o \
++Multiply.o \
++PairEx.o \
++PairExHubbard.o \
++PairExSpin.o \
++PowerLanczos.o \
++ProgressMessage.o \
++SingleEx.o \
++SingleExHubbard.o \
++bisec.o \
++bitcalc.o \
++check.o \
++dSFMT.o \
++diagonalcalc.o \
++expec_cisajs.o \
++expec_cisajscktaltdc.o \
++expec_energy_flct.o \
++expec_totalspin.o \
++global.o \
++lapack_diag.o \
++log.o \
++makeHam.o \
++matrixlapack.o \
++mltply.o \
++mltplyHubbard.o\
++mltplySpinCore.o\
++mltplyHubbardCore.o\
++mltplyMPIHubbard.o \
++mltplyMPIHubbardCore.o \
++mltplyMPISpin.o \
++mltplyMPISpinCore.o \
++mltplyMPIBoost.o \
++mltplySpin.o \
++output.o \
++output_list.o \
++phys.o \
++readdef.o \
++splash.o \
++sz.o \
++time.o \
++vec12.o \
++wrapperMPI.o \
++xsetmem.o \
++StdFace/libStdFace.a \
++komega/libkomega.a
++
++HEADERS= \
++include/CG_EigenVector.h \
++include/CalcByFullDiag.h \
++include/CalcByLanczos.h \
++include/CalcByTPQ.h \
++include/CalcSpectrum.h \
++include/CalcSpectrumByFullDiag.h \
++include/CalcSpectrumByLanczos.h \
++include/CalcSpectrumByTPQ.h \
++include/CalcTime.h\
++include/CheckMPI.h \
++include/Common.h \
++include/DefCommon.h \
++include/ErrorMessage.h \
++include/FileIO.h \
++include/FirstMultiply.h \
++include/HPhiMain.h \
++include/HPhiTrans.h \
++include/Lanczos_EigenValue.h \
++include/Lanczos_EigenVector.h \
++include/LogMessage.h \
++include/Multiply.h \
++include/PairEx.h \
++include/PairExSpin.h \
++include/PairExHubbard.h \
++include/PowerLanczos.h \
++include/ProgressMessage.h \
++include/SingleEx.h \
++include/SingleExHubbard.h \
++include/StdFace_main.h \
++include/bisec.h \
++include/bitcalc.h \
++include/check.h \
++include/dSFMT-params.h \
++include/dSFMT-params19937.h \
++include/dSFMT.h \
++include/defmodelBoost.h \
++include/diagonalcalc.h \
++include/expec_cisajs.h \
++include/expec_cisajscktaltdc.h \
++include/expec_totalspin.h \
++include/expec_energy_flct.h \
++include/global.h \
++include/lapack_diag.h \
++include/log.h \
++include/makeHam.h \
++include/matrixlapack.h \
++include/mfmemory.h \
++include/mltply.h \
++include/mltplyHubbard.h \
++include/mltplySpin.h \
++include/mltplyHubbardCore.h \
++include/mltplySpinCore.h \
++include/mltplyMPIBoost.h \
++include/mltplyMPIHubbard.h \
++include/mltplyMPIHubbardCore.h \
++include/mltplyMPISpin.h \
++include/mltplyMPISpinCore.h \
++include/output.h \
++include/output_list.h \
++include/phys.h \
++include/readdef.h \
++include/splash.h \
++include/struct.h \
++include/sz.h \
++include/vec12.h \
++include/version_major.h \
++include/version_miner.h \
++include/version_patch.h \
++include/wrapperMPI.h \
++include/xsetmem.h \
++include/xsetmem_def.h \
++include/xsetmem_large.h \
++komega/komega_bicg.h \
++komega/pkomega_bicg.h
++
++all:
++	cd StdFace; make -f makefile_StdFace
++	cd komega; make -f makefile_komega
++	make -f makefile_src HPhi
++
++SUFFIXES: .o .c
++
++.c.o:
++	$(CC) $(CFLAGS) $(MTFLAGS) -I ./include -c $<
++
++HPhi: $(OBJS)
++	$(CC) -o $@ -g $(OBJS) StdFace/libStdFace.a komega/libkomega.a $(LIBS)
++
++clean:
++	cd StdFace; make -f makefile_StdFace clean
++	cd komega; make -f makefile_komega clean
++	rm -f HPhi *.o *.a
++
++CG_EigenVector.o:$(HEADERS)
++CalcByFullDiag.o:$(HEADERS)
++CalcByLOBPCG.o:$(HEADERS)
++CalcByLanczos.o:$(HEADERS)
++CalcByTPQ.o:$(HEADERS)
++CalcSpectrum.o:$(HEADERS)
++CalcSpectrumByBiCG.o:$(HEADERS)
++CalcSpectrumByFullDiag.o:$(HEADERS)
++CalcSpectrumByLanczos.o:$(HEADERS)
++CalcSpectrumByTPQ.o:$(HEADERS)
++CheckMPI.o:$(HEADERS)
++ErrorMessage.o:$(HEADERS)
++FileIO.o:$(HEADERS)
++FirstMultiply.o:$(HEADERS)
++HPhiMain.o:$(HEADERS)
++HPhiTrans.o:$(HEADERS)
++Lanczos_EigenValue.o:$(HEADERS)
++Lanczos_EigenVector.o:$(HEADERS)
++LogMessage.o:$(HEADERS)
++Multiply.o:$(HEADERS)
++PairEx.o:$(HEADERS)
++PairExHubbard.o:$(HEADERS)
++PairExSpin.o:$(HEADERS)
++PowerLanczos.o:$(HEADERS)
++ProgressMessage.o:$(HEADERS)
++SingleEx.o:$(HEADERS)
++SingleExHubbard.o:$(HEADERS)
++bisec.o:$(HEADERS)
++bitcalc.o:$(HEADERS)
++check.o:$(HEADERS)
++dSFMT.o:$(HEADERS)
++diagonalcalc.o:$(HEADERS)
++expec_cisajs.o:$(HEADERS)
++expec_cisajscktaltdc.o:$(HEADERS)
++expec_energy_flct.o:$(HEADERS)
++expec_totalspin.o:$(HEADERS)
++global.o:$(HEADERS)
++lapack_diag.o:$(HEADERS)
++log.o:$(HEADERS)
++makeHam.o:$(HEADERS)
++matrixlapack.o:$(HEADERS)
++mltply.o:$(HEADERS)
++mltplyHubbard.o:$(HEADERS)
++mltplyHubbardCore.o:$(HEADERS)
++mltplySpinCore.o:$(HEADERS)
++mltplyMPI.o:$(HEADERS)
++mltplyMPIBoost.o:$(HEADERS)
++mltplySpin.o:$(HEADERS)
++output.o:$(HEADERS)
++output_list.o:$(HEADERS)
++phys.o:$(HEADERS)
++readdef.o:$(HEADERS)
++splash.o:$(HEADERS)
++sz.o:$(HEADERS)
++time.o:$(HEADERS)
++vec12.o:$(HEADERS)
++wrapperMPI.o:$(HEADERS)
++xsetmem.o:$(HEADERS)
+diff --git a/tool/makefile_tool b/tool/makefile_tool
+new file mode 100644
+index 0000000..b7cae3d
+--- /dev/null
++++ b/tool/makefile_tool
+@@ -0,0 +1,22 @@
++include ../src/make.sys
++
++.SUFFIXES :
++.SUFFIXES : .o .F90
++.SUFFIXES : .o .c
++
++all:fourier corplot
++
++fourier:fourier.o key2lower.o
++	$(F90) fourier.o key2lower.o $(LIBS) -o $@
++
++corplot:corplot.o
++	$(F90) corplot.o $(LIBS) -o $@
++
++.F90.o:
++	$(F90) -c $< $(FFLAGS)
++
++.c.o:
++	$(CC) $(CFLAGS) -c $<
++
++clean:
++	rm -f *.o *.mod fourier corplot
