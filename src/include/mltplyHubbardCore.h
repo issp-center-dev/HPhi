@@ -19,14 +19,6 @@
 
 #include "Common.h"
 
-double complex child_general_hopp_element
-(
- long unsigned int j,
- double complex       *tmp_v0,
- double complex      *tmp_v1,
- struct BindStruct *X
- );
-
 double complex child_pairhopp_element
 (
  long unsigned int j,
@@ -183,17 +175,6 @@ double complex GC_child_CisAjtCkuAlv_element
                 long unsigned int *tmp_off_2
         );
 //[e]Grand canonical
-
-double complex CisAis
-(		      
- long unsigned int j,
- double  complex *tmp_v0,
- double complex *tmp_v1,
- struct BindStruct *X,
- long unsigned int is1_spin,
- double complex tmp_trans
-);
-
 
 double complex GC_CisAis
 (

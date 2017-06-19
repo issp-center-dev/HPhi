@@ -14,6 +14,148 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**@file
 @brief Functions for spin Hamiltonian
+
+- mltplySpin() : Main routine of spin Hamiltonian (canonical)
+  - mltplyHalfSpin() : 1/2 spin
+  - mltplyGeneralSpin() : general spin
+- mltplySpinGC() : Main routine of spin Hamiltonian (grandcanonical)
+  - mltplyHalfSpinGC() : 1/2 spin
+  - mltplyGeneralSpinGC() : general spin
+  - mltplySpinGCBoost() : 
+
+Hub routines
+<table>
+  <tr>
+    <td></td>
+    <td>Get info</td>
+    <td>Canonical</td>
+    <td>Grandcanonical</td>
+  </tr>
+  <tr>
+    <td>Exchange</td>
+    <td>::child_exchange_spin_GetInfo</td>
+    <td>::child_exchange_spin, ::child_exchange_spin_element</td>
+    <td>::GC_child_exchange_spin, ::GC_child_exchange_spin_element</td>
+  </tr>
+  <tr>
+    <td>Pair lift</td>
+    <td>::child_pairlift_spin_GetInfo</td>
+    <td></td>
+    <td>::GC_child_pairlift_spin, ::GC_child_pairlift_spin_element</td>
+  </tr>
+  <tr>
+    <td>General int.</td>
+    <td>::child_general_int_spin_GetInfo</td>
+    <td>::child_general_int_spin, ::child_general_int_spin_MPIsingle
+    ::X_child_general_int_spin_MPIsingle, ::child_general_int_spin_MPIdouble,
+    ::X_child_general_int_spin_MPIdouble</td>
+    <td>::GC_child_general_int_spin, ::GC_child_general_int_spin_MPIsingle,
+    ::GC_child_general_int_spin_MPIdouble</td>
+  </tr>
+  <tr>
+    <td>General int for 1/2 spin</td>
+    <td>::child_general_int_spin_GetInfo</td>
+    <td>::child_general_int_spin, ::child_general_int_spin_MPIsingle
+    ::X_child_general_int_spin_MPIsingle, ::child_general_int_spin_MPIdouble,
+    ::X_child_general_int_spin_MPIdouble</td>
+    <td>::GC_child_general_int_spin, ::GC_child_general_int_spin_MPIsingle,
+    ::GC_child_general_int_spin_MPIdouble</td>
+  </tr>
+  <tr>
+    <td>General int for general spin</td>
+    <td></td>
+    <td>::child_general_int_GeneralSpin_MPIsingle,
+    ::child_general_int_GeneralSpin_MPIdouble</td>
+    <td>::GC_child_general_int_GeneralSpin_MPIsingle,
+    ::GC_child_general_int_GeneralSpin_MPIdouble</td>
+  </tr>
+</table>
+
+General on-site term
+<table>
+  <tr>
+    <td></td>
+    <td>1/2 spin</td>
+    <td>1/2 spin</td>
+    <td>1/2 spin</td>
+    <td>1/2 spin</td>
+    <td>General spin</td>
+    <td>General spin</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>Canonical</td>
+    <td>Canonical</td>
+    <td>Grand canonical</td>
+    <td>Grand canonical</td>
+    <td>Canonical</td>
+    <td>Grand canonical</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>In process</td>
+    <td>Across process</td>
+    <td>In process</td>
+    <td>Across process</td>
+    <td>Across process</td>
+    <td>Across process</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i s}@f$</td>
+    <td>::X_Spin_CisAis</td>
+    <td>::X_child_CisAis_spin_MPIdouble</td>
+    <td>::X_SpinGC_CisAis</td>
+    <td>::X_GC_child_CisAis_spin_MPIdouble</td>
+    <td>::X_child_CisAis_GeneralSpin_MPIdouble</td>
+    <td>::X_GC_child_CisAis_GeneralSpin_MPIdouble</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i t}@f$</td>
+    <td>::X_Spin_CisAit</td>
+    <td>::X_child_CisAit_spin_MPIdouble</td>
+    <td>::X_SpinGC_CisAit</td>
+    <td>::X_GC_child_CisAit_spin_MPIdouble</td>
+    <td>::X_child_CisAit_GeneralSpin_MPIdouble</td>
+    <td>::X_GC_child_CisAit_GeneralSpin_MPIdouble</td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i s} c_{i s}^\dagger c_{i s}@f$</td>
+    <td>::child_CisAisCisAis_spin_element</td>
+    <td></td>
+    <td>::GC_child_CisAisCisAis_spin_element</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i s} c_{i t}^\dagger c_{i u}@f$</td>
+    <td></td>
+    <td></td>
+    <td>::GC_child_CisAisCitAiu_spin_element</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i t} c_{i u}^\dagger c_{i u}@f$</td>
+    <td></td>
+    <td></td>
+    <td>::GC_child_CisAitCiuAiu_spin_element</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>@f$c_{i s}^\dagger c_{i t} c_{i u}^\dagger c_{i v}@f$</td>
+    <td></td>
+    <td></td>
+    <td>::GC_child_CisAitCiuAiv_spin_element</td>
+    <td>::GC_child_CisAitCiuAiv_spin_MPIsingle, ::X_GC_child_CisAitCiuAiv_spin_MPIsingle,
+    ::GC_child_CisAitCiuAiv_spin_MPIdouble, ::X_GC_child_CisAitCiuAiv_spin_MPIdouble</td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 */
 #include <bitcalc.h>
 #include "mfmemory.h"
