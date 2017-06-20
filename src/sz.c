@@ -328,9 +328,9 @@ int sz
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
         icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
           icnt+=child_omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
-          //printf("ib=%ld icnt=%ld \n",ib,icnt);
         }
         break;
       }

@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 2.0.0    
+           9@P~~~9@P             Version 2.0.1    
                                                                 
 
 
@@ -62,9 +62,9 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   @ Hamiltonian 
 
-               2S = 1         
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1         
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######
               J0x = -1.00000  
               J0y = 0.00000   
@@ -296,8 +296,8 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   Accuracy check !!!
   LanczosEnergy = -3.57287565553229e+00 
   EnergyByVec   = -3.57283390403128e+00 
-  diff_ene      = 1.16856854366202e-05 
-  var           = 1.32266207122944e-05 
+  diff_ene      = 1.16856854368688e-05 
+  var           = 1.32266207123241e-05 
   Accuracy of Lanczos vectors is NOT enough
 
   Start: Calculate EigenVector by CG method.
@@ -307,9 +307,9 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   CG Accuracy check !!!
   LanczosEnergy = -3.57287565553229e+00
-  EnergyByVec   = -3.57287565553230e+00
-  diff_ene      = 1.49153539948952e-15
-  var           = 8.66043570031656e-16 
+  EnergyByVec   = -3.57287565553229e+00
+  diff_ene      = 1.24294616624127e-16
+  var           = 2.28312883706630e-16 
  
 
 ######  End  : Calculate Lanczos EigenVec.  ######

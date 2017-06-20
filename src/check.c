@@ -198,12 +198,7 @@ int check(struct BindStruct *X){
     return FALSE;
   }  
 
-  if(comb_sum==0){
-    fprintf(stderr, "%s", cErrNoHilbertSpace);
-    //    return FALSE;
-  }
-  
-  //fprintf(stdoutMPI, "comb_sum= %ld \n",comb_sum);
+  //fprintf(stdoutMPI, "Debug: comb_sum= %ld \n",comb_sum);
 
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType){
