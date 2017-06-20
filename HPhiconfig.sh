@@ -1,4 +1,10 @@
 #!/bin/bash
+echo ""
+echo "####################  NOTICE  ########################"
+echo " HPhiconfig.sh will be removed in the future release,"
+echo " and only CMake will be supported."
+echo "######################################################"
+echo ""
 if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo ""
     echo "Usage:"
