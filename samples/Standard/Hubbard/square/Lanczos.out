@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 2.0.0    
+           9@P~~~9@P             Version 2.0.1    
                                                                 
 
 
@@ -32,8 +32,6 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   KEYWORD : u                    | VALUE : 4.0 
   KEYWORD : nelec                | VALUE : 8 
   KEYWORD : 2sz                  | VALUE : 0 
-  Skipping a line.
-  Skipping a line.
 
 #######  Parameter Summary  #######
 
@@ -58,6 +56,8 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   @ Hamiltonian 
 
+                h = 0.00000     ######  DEFAULT VALUE IS USED  ######
+            Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
                mu = 0.00000     ######  DEFAULT VALUE IS USED  ######
                 U = 4.00000   
                t0 = 1.00000    0.00000   
