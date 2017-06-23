@@ -302,6 +302,10 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI, cErrInputHam, defname);
     return (-1);
   }
+  if(X->iInputHam == 1 && X->iOutputHam==1){
+    fprintf(stdoutMPI, cErrInputOutputHam, defname);
+    return (-1);
+  }
 
   if(ValidateValue(X->iReStart, 0, NUM_RESTART-1)){
     fprintf(stdoutMPI, cErrRestart, defname);
