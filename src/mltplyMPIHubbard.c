@@ -222,15 +222,16 @@ void GC_child_general_hopp_MPIsingle(
 /**
 @brief Hopping term in Hubbard + GC
  When only site2 is in the inter process region.
+@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_general_hopp_MPIsingle(
-  int org_isite1,//!<[in]
-  int org_ispin1,//!<[in]
-  int org_isite2,//!<[in]
-  int org_ispin2,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
   double complex *tmp_v1//!<[in] v0 = H v1
@@ -343,14 +344,15 @@ void child_general_hopp_MPIdouble(
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 double complex X_child_general_hopp_MPIdouble(
-  int org_isite1,//!<[in]
-  int org_ispin1,//!<[in]
-  int org_isite2,//!<[in]
-  int org_ispin2,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
   double complex *tmp_v1//!<[in] v0 = H v1
@@ -445,14 +447,15 @@ void child_general_hopp_MPIsingle(
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When only site2 is in the inter process region.
+@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 double complex X_child_general_hopp_MPIsingle(
-  int org_isite1,//!<[in]
-  int org_ispin1,//!<[in]
-  int org_isite2,//!<[in]
-  int org_ispin2,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
   double complex *tmp_v1//!<[in] v0 = H v1
@@ -550,22 +553,23 @@ double complex X_child_general_hopp_MPIsingle(
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
   When only site2 is in the inter process region.
+@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 double complex X_child_CisAjt_MPIsingle(
-  int org_isite1,//!<[in]
-  int org_ispin1,//!<[in]
-  int org_isite2,//!<[in]
-  int org_ispin2,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
   double complex *tmp_v1,//!<[in] v0 = H v1
-  double complex *v1buf,//!<[in]
-  long unsigned int *list_1_org,//!<[in]
-  long unsigned int *list_1buf_org,//!<[in]
-  long unsigned int *list_2_1_target,//!<[in]
-  long unsigned int *list_2_2_target//!<[in]
+  double complex *v1buf,//!<[in] Buffer for sendrecv of wavefunction
+  long unsigned int *list_1_org,//!<[in] Similler to ::list_1
+  long unsigned int *list_1buf_org,//!<[in] Similler to ::list_1buf
+  long unsigned int *list_2_1_target,//!<[in] ???
+  long unsigned int *list_2_2_target//!<[in] ???
 ){
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;

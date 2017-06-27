@@ -298,32 +298,21 @@ int X_CisAis(
   return A_ibit_tmp;
 }
 /**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param is1_spin
- * @param is2_spin
- * @param sum_spin
- * @param diff_spin
- * @param tmp_V
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief @f$c_{is}^\dagger c_{jt}@f$ term for canonical Hubbard
+@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex CisAjt(
-  long unsigned int j,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int is1_spin,
-  long unsigned int is2_spin,
-  long unsigned int sum_spin,
-  long unsigned int diff_spin,
-  double complex tmp_V
+  long unsigned int j,//!<[in] Index of wavefunction
+  double complex *tmp_v0,//!<[inout] @f$v_0 = H v_1@f$
+  double complex *tmp_v1,//!<[in] Vector to be producted
+  struct BindStruct *X,//!<[inout]
+  long unsigned int is1_spin,//!<[in] Mask for occupation of (is)
+  long unsigned int is2_spin,//!<[in] Mask for occupation of (jt)
+  long unsigned int sum_spin,//!<[in] Mask for hopping
+  long unsigned int diff_spin,//!<[in] Mask for Fermion sign
+  double complex tmp_V//!<[in] Hopping integral
 ) {
   long unsigned int ibit_tmp_1, ibit_tmp_2;
   long unsigned int bit, iexchg, off;
@@ -350,33 +339,22 @@ double complex CisAjt(
   }
 }
 /**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param is1_spin
- * @param is2_spin
- * @param sum_spin
- * @param diff_spin
- * @param tmp_V
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief @f$c_{is}^\dagger c_{jt}@f$ term for grandcanonical Hubbard
+@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex GC_CisAjt(
-  long unsigned int j,//!<[in]
-  double complex *tmp_v0,//!<[in]
-  double complex *tmp_v1,//!<[in]
-  struct BindStruct *X,//!<[in]
-  long unsigned int is1_spin,//!<[in]
-  long unsigned int is2_spin,//!<[in]
-  long unsigned int sum_spin,//!<[in]
-  long unsigned int diff_spin,//!<[in]
-  double complex tmp_V,//!<[in]
-  long unsigned int *tmp_off//!<[in]
+  long unsigned int j,//!<[in] Index of wavefunction
+  double complex *tmp_v0,//!<[in] @f$v_0 = H v_1@f$
+  double complex *tmp_v1,//!<[in]Vector to be producted
+  struct BindStruct *X,//!<[inout]
+  long unsigned int is1_spin,//!<[in] Mask for occupation of (is)
+  long unsigned int is2_spin,//!<[in] Mask for occupation of (jt)
+  long unsigned int sum_spin,//!<[in] Mask for hopping
+  long unsigned int diff_spin,//!<[in] Mask for Fermion sign
+  double complex tmp_V,//!<[in] Hopping
+  long unsigned int *tmp_off//!<[in] Index of wavefunction of final state
 ) {
   long unsigned int list_1_j, list_1_off;
   long unsigned int ibit_tmp_1, ibit_tmp_2;
@@ -404,21 +382,21 @@ double complex GC_CisAjt(
   else {
     return 0;
   }
-}
+}/*double complex GC_CisAjt*/
 /**
-@brief XXX
-@return YYY
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute index of wavefunction of final state
+@return Fermion sign
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_CisAjt(
-  long unsigned int list_1_j,//!<[in]
+  long unsigned int list_1_j,//!<[in] Similer to ::list_1 ?
   struct BindStruct *X,//!<[in]
-  long unsigned int is1_spin,//!<[in]
-  long unsigned int is2_spin,//!<[in]
-  long unsigned int sum_spin,//!<[in]
-  long unsigned int diff_spin,//!<[in]
-  long unsigned int *tmp_off//!<[in]
+  long unsigned int is1_spin,//!<[in] Mask for occupation of (is)
+  long unsigned int is2_spin,//!<[in] Mask for occupation of (jt)
+  long unsigned int sum_spin,//!<[in] Mask for hopping
+  long unsigned int diff_spin,//!<[in] Mask for Fermion sign
+  long unsigned int *tmp_off//!<[in] Index of wavefunction of final state
 ) {
   long unsigned int off;
   int sgn = 1;
@@ -435,19 +413,19 @@ int X_CisAjt(
   }
 }
 /**
-@brief XXX
-* @return YYY
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute index of wavefunction of final state
+@return Fermion sign
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_GC_CisAjt(
-  long unsigned int list_1_j,//!<[in]
+  long unsigned int list_1_j,//!<[in] ::list_1 ?
   struct BindStruct *X,//!<[in]
-  long unsigned int is1_spin,//!<[in]
-  long unsigned int is2_spin,//!<[in]
-  long unsigned int sum_spin,//!<[in]
-  long unsigned int diff_spin,//!<[in]
-  long unsigned int *tmp_off//!<[in]
+  long unsigned int is1_spin,//!<[in] Mask for occupation of (is)
+  long unsigned int is2_spin,//!<[in] Mask for occupation of (jt)
+  long unsigned int sum_spin,//!<[in] Mask for hopping
+  long unsigned int diff_spin,//!<[in] Mask for Fermion sign
+  long unsigned int *tmp_off//!<[in] Index of wavefunction of final state
 ) {
   long unsigned int ibit_tmp_1, ibit_tmp_2;
   long unsigned int bit, off;
@@ -475,24 +453,17 @@ int X_GC_CisAjt(
 //[s] child element functions
 /******************************************************************************/
 /**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute exchange term of canonical-Hubbard
+@return @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex child_exchange_element(
-  long unsigned int j,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  double complex *tmp_v0,//!<[inout] @f$v_0 = H v_1@f$
+  double complex *tmp_v1,//!<[in] Vector to be producted
+  struct BindStruct *X,//!<[inout]
+  long unsigned int *tmp_off//!<[in] Index of wavefunction of final state
 ) {
   long unsigned int off;
   long unsigned int ibit1_up, ibit2_up, ibit1_down, ibit2_down;
@@ -537,7 +508,7 @@ double complex child_exchange_element(
     dam_pr += dmv * conj(tmp_v1[off]);
   }
   return dam_pr;
-}
+}/*double complex child_exchange_element*/
 /**
  *
  *
