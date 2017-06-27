@@ -13,7 +13,7 @@ PROGRAM cTPQ
   IF(iargc() /= 1) THEN
      WRITE(*,*)
      WRITE(*,*) "Usage :"
-     WRITE(*,*) "$ cTPQ.x {Modpara file}"
+     WRITE(*,*) "$ cTPQ {Modpara file}"
      WRITE(*,*) 
      STOP
   END IF
@@ -160,6 +160,7 @@ PROGRAM cTPQ
   !
   OPEN(fo, file = "sh.dat")
   !
+  WRITE(fo,'(a)') "# Temperature, Energy, Energy-error, Variance, Variance-error, Specific heat, its error"
   DO iLan = 0, nLan - 1
      !
      beta = beta_m(iLan, 1)!minval(beta_m(iLan, 1:nave))
