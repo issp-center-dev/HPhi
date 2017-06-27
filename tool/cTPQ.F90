@@ -1,102 +1,102 @@
-program cTPQ
+PROGRAM cTPQ
   !
-  implicit none
+  IMPLICIT NONE
   !
-  integer :: iave, iLan, jLan, fi = 10, fo = 20, nAve, nLan, nSite
-  real(8) :: Large, coeff, beta, bb, bHb, bHHb, vecN, vecH, vecH2
-  real(8),allocatable :: norm_m(:,:), ene_m(:,:), ene2_m(:,:), beta_m(:,:), &
+  INTEGER :: iave, iLan, jLan, fi = 10, fo = 20, nAve, nLan, nSite
+  REAL(8) :: Large, coeff, beta, bb, bHb, bHHb, vecN, vecH, vecH2
+  REAL(8),ALLOCATABLE :: norm_m(:,:), ene_m(:,:), ene2_m(:,:), beta_m(:,:), &
   &                      norm_c(:,:), ene_c(:,:), ene2_c(:,:)
-  logical,allocatable :: lscale(:,:)
-  character(256) :: ctemp, command
-  character(256),allocatable :: ss_rand(:), norm_rand(:)
+  LOGICAL,ALLOCATABLE :: lscale(:,:)
+  CHARACTER(256) :: ctemp, command
+  CHARACTER(256),ALLOCATABLE :: ss_rand(:), norm_rand(:)
   !
-  if(iargc() /= 1) then
-     write(*,*)
-     write(*,*) "Usage :"
-     write(*,*) "$ cTPQ.x {Modpara file}"
-     write(*,*) 
-     stop
-  end if
+  IF(iargc() /= 1) THEN
+     WRITE(*,*)
+     WRITE(*,*) "Usage :"
+     WRITE(*,*) "$ cTPQ.x {Modpara file}"
+     WRITE(*,*) 
+     STOP
+  END IF
   !
-  call getarg(1, ctemp)
+  CALL getarg(1, ctemp)
   !
-  write(command, *) "grep -i largevalue ", trim(ctemp), "| awk '{print $2}' > __HPhi_temp__"
-  write(*,*) trim(command)
-  call system(trim(command))
+  WRITE(command, *) "grep -i largevalue ", TRIM(ctemp), "| awk '{print $2}' > __HPhi_temp__"
+  WRITE(*,*) TRIM(command)
+  CALL system(TRIM(command))
   !
-  write(command, *) "grep -i lanczos_max ", trim(ctemp), "| awk '{print $2}' >> __HPhi_temp__"
-  write(*,*) trim(command)
-  call system(trim(command))
+  WRITE(command, *) "grep -i lanczos_max ", TRIM(ctemp), "| awk '{print $2}' >> __HPhi_temp__"
+  WRITE(*,*) TRIM(command)
+  CALL system(TRIM(command))
   !
-  write(command, *) "grep -i nsite ", trim(ctemp), "| awk '{print $2}' >> __HPhi_temp__"
-  write(*,*) trim(command)
-  call system(trim(command))
+  WRITE(command, *) "grep -i nsite ", TRIM(ctemp), "| awk '{print $2}' >> __HPhi_temp__"
+  WRITE(*,*) TRIM(command)
+  CALL system(TRIM(command))
   !
-  call system("find ./ -name 'SS_rand*.dat' | wc -l >> __HPhi_temp__")
-  call system("find ./ -name 'SS_rand*.dat' | sort >> __HPhi_temp__")
-  call system("find ./ -name 'Norm_rand*.dat' | sort >> __HPhi_temp__")
+  CALL system("find ./ -name 'SS_rand*.dat' | wc -l >> __HPhi_temp__")
+  CALL system("find ./ -name 'SS_rand*.dat' | sort >> __HPhi_temp__")
+  CALL system("find ./ -name 'Norm_rand*.dat' | sort >> __HPhi_temp__")
   !
-  open(fi, file = "__HPhi_temp__")
+  OPEN(fi, file = "__HPhi_temp__")
   !
-  read(fi,*) large
-  read(fi,*) nLan
+  READ(fi,*) large
+  READ(fi,*) nLan
   nLan = nLan - 1
-  read(fi,*) nSite
-  read(fi,*) nAve
+  READ(fi,*) nSite
+  READ(fi,*) nAve
   !
-  write(*,*) "  Lanczos_max : ", nLan + 1
-  write(*,*) "        Nsite : ", nSite
-  write(*,*) "   LargeValue : ", Large
-  write(*,*) "       NumAve : ", nAve
+  WRITE(*,*) "  Lanczos_max : ", nLan + 1
+  WRITE(*,*) "        Nsite : ", nSite
+  WRITE(*,*) "   LargeValue : ", Large
+  WRITE(*,*) "       NumAve : ", nAve
   !
-  allocate(norm_m(0:nLan-1, nave), ene_m(0:nLan-1, nave), ene2_m(0:nLan-1, nave), beta_m(0:nLan-1, nave), &
+  ALLOCATE(norm_m(0:nLan-1, nave), ene_m(0:nLan-1, nave), ene2_m(0:nLan-1, nave), beta_m(0:nLan-1, nave), &
   &        norm_c(0:nLan-1, nave), ene_c(0:nLan-1, nave), ene2_c(0:nLan-1, nave), lscale(nLan, 0:nLan-1), &
   &        ss_rand(nAve), norm_rand(nAve)  )
   !
-  do iAve = 1, nAve
-     read(fi,'(a)') ss_rand(iAve)
-  end do
-  do iAve = 1, nAve
-     read(fi,'(a)') norm_rand(iAve)
-  end do
-  close(fi)
-  call system("rm __HPhi_temp__")
+  DO iAve = 1, nAve
+     READ(fi,'(a)') ss_rand(iAve)
+  END DO
+  DO iAve = 1, nAve
+     READ(fi,'(a)') norm_rand(iAve)
+  END DO
+  CLOSE(fi)
+  CALL system("rm __HPhi_temp__")
   !
-  do iave = 1, nave
+  DO iave = 1, nave
      !
      ! Read SS_rand
      !
-     open(fi, file = trim(ss_rand(iAve)))
-     write(*,*) "  Read from ", trim(ss_rand(iAve))
-     read(fi,*) ctemp
+     OPEN(fi, file = TRIM(ss_rand(iAve)))
+     WRITE(*,*) "  Read from ", TRIM(ss_rand(iAve))
+     READ(fi,*) ctemp
      !
-     do iLan = 0, nLan - 1
-        read(fi,*) beta_m(iLan, iave), ene_m(iLan, iave), ene2_m(iLan, iave)
-     end do
+     DO iLan = 0, nLan - 1
+        READ(fi,*) beta_m(iLan, iave), ene_m(iLan, iave), ene2_m(iLan, iave)
+     END DO
      !
-     close(fi)
+     CLOSE(fi)
      !
      ! Read Norm_rand
      !
-     open(fi, file = trim(norm_rand(iAve)))
-     write(*,*) "  Read from ", trim(norm_rand(iAve))
-     read(fi,*) ctemp
+     OPEN(fi, file = TRIM(norm_rand(iAve)))
+     WRITE(*,*) "  Read from ", TRIM(norm_rand(iAve))
+     READ(fi,*) ctemp
      !
      coeff = 1.0d0
      !
-     do iLan = 0, nLan - 1
-        read(fi,*) beta, norm_m(iLan, iave)
+     DO iLan = 0, nLan - 1
+        READ(fi,*) beta, norm_m(iLan, iave)
         norm_m(iLan, iave) = norm_m(iLan, iave)**2 * coeff
-        coeff = dble(nSite * nSite) / dble(2 * (iLan+1) * (2*iLan + 1))
-     end do
+        coeff = DBLE(nSite * nSite) / DBLE(2 * (iLan+1) * (2*iLan + 1))
+     END DO
      !
-     close(fi)
+     CLOSE(fi)
      !
-  enddo
+  ENDdo
   !
-  do iave = 1, nave
+  DO iave = 1, nave
      !
-     do iLan = 0, nLan - 1
+     DO iLan = 0, nLan - 1
         !
         beta = beta_m(iLan, 1)!minval(beta_m(iLan, 1:nave))
         coeff = 1.0d0
@@ -105,82 +105,82 @@ program cTPQ
         bHb  = 0.0d0
         bHHb = 0.0d0
         !
-        do jLan = 1, nLan
+        DO jLan = 1, nLan
            !
            vecN  = norm_m(nLan-jLan, iave)
            vecH  =  ene_m(nLan-jLan, iave)
            vecH2 = ene2_m(nLan-jLan, iave)
            !
            bb = beta * beta * vecN * &
-           &  (bb + coeff * ((1.0d0 + beta * dble(nSite) * large / dble(2 * (nLan-jLan) + 1)) &
-           &                - beta * vecH / dble(2*(nLan-jLan) + 1) &
+           &  (bb + coeff * ((1.0d0 + beta * DBLE(nSite) * large / DBLE(2 * (nLan-jLan) + 1)) &
+           &                - beta * vecH / DBLE(2*(nLan-jLan) + 1) &
            &                ) &
            &  )
            bHb = beta * beta * vecN * &
-           &  (bHb + coeff * ((1.0d0 + beta * dble(nSite) * large / dble(2 * (nLan-jLan) + 1)) * vecH &
-           &                 - beta*vecH2 / dble(2 * (nLan-jLan) + 1) &
+           &  (bHb + coeff * ((1.0d0 + beta * DBLE(nSite) * large / DBLE(2 * (nLan-jLan) + 1)) * vecH &
+           &                 - beta*vecH2 / DBLE(2 * (nLan-jLan) + 1) &
            &                 ) &
            &  )
            bHHb = beta * beta * vecN * &
-           &  (bHHb + coeff * ((1.0d0 - beta * dble(nSite) * large / dble(2 * (nLan-jLan) + 1)) * vecH2 &
-           &                  + (beta * dble(nSite*nSite) * large * large / dble(2 * (nLan-jLan) + 1) &
-           &                    - dble(2 * (nLan-jLan)) / beta &
+           &  (bHHb + coeff * ((1.0d0 - beta * DBLE(nSite) * large / DBLE(2 * (nLan-jLan) + 1)) * vecH2 &
+           &                  + (beta * DBLE(nSite*nSite) * large * large / DBLE(2 * (nLan-jLan) + 1) &
+           &                    - DBLE(2 * (nLan-jLan)) / beta &
            &                    ) * vecH &
            &                  ) &
            &  )
            !
-           if(iave == 1) then
-              if(bb > 1.0d+10) then
+           IF(iave == 1) THEN
+              IF(bb > 1.0d+10) THEN
                  bb    =    bb * (1.0d-10)
                  bHb   =   bHb * (1.0d-10)
                  bHHb  =  bHHb * (1.0d-10)
                  coeff = coeff * (1.0d-10)
-                 lscale(jLan,iLan) = .true.
-              else
-                 lscale(jLan,iLan) = .false.
-              endif
-           else
-              if(lscale(jLan,iLan)) then
+                 lscale(jLan,iLan) = .TRUE.
+              ELSE
+                 lscale(jLan,iLan) = .FALSE.
+              END IF
+           ELSE
+              IF(lscale(jLan,iLan)) THEN
                  bb    =    bb * (1.0d-10)
                  bHb   =   bHb * (1.0d-10)
                  bHHb  =  bHHb * (1.0d-10)
                  coeff = coeff * (1.0d-10)
-              endif
-           end if
+              END IF
+           END IF
            !
-        enddo
+        ENDdo
         !
         norm_c(iLan, iave) = bb
         ene_c( iLan, iave) = bHb
         ene2_c(iLan, iave) = bHHb
         !
-     end do
+     END DO
      !
-  enddo
+  END DO
   !
-  open(fo, file = "sh.dat")
+  OPEN(fo, file = "sh.dat")
   !
-  do iLan = 0, nLan - 1
+  DO iLan = 0, nLan - 1
      !
      beta = beta_m(iLan, 1)!minval(beta_m(iLan, 1:nave))
      !
-     bb   = sum(norm_c(iLan, 1:nAve)) / dble(nAve)
-     bHb  = sum( ene_c(iLan, 1:nAve)) / dble(nAve)
-     bHHb = sum(ene2_c(iLan, 1:nAve)) / dble(nAve)
+     bb   = SUM(norm_c(iLan, 1:nAve)) / DBLE(nAve)
+     bHb  = SUM( ene_c(iLan, 1:nAve)) / DBLE(nAve)
+     bHHb = SUM(ene2_c(iLan, 1:nAve)) / DBLE(nAve)
      !
-     vecN   = sqrt(sum((norm_c(iLan, 1:nAve) -   bb)**2)) / dble(nAve)
-     vecH   = sqrt(sum(( ene_c(iLan, 1:nAve) -  bHb)**2)) / dble(nAve)
-     vecH2  = sqrt(sum((ene2_c(iLan, 1:nAve) - bHHb)**2)) / dble(nAve)
+     vecN   = SQRT(SUM((norm_c(iLan, 1:nAve) -   bb)**2)) / DBLE(nAve)
+     vecH   = SQRT(SUM(( ene_c(iLan, 1:nAve) -  bHb)**2)) / DBLE(nAve)
+     vecH2  = SQRT(SUM((ene2_c(iLan, 1:nAve) - bHHb)**2)) / DBLE(nAve)
      !
-     write(fo,'(10e25.15)') beta, &
-     &  bHb / bb, abs(vecH / bb) + abs(bHb * vecN / bb**2), &
-     &  bHHb / bb, abs(vecH2 / bb) + abs(bHHb * vecN / bb**2), &
+     WRITE(fo,'(10e25.15)') beta, &
+     &  bHb / bb, ABS(vecH / bb) + ABS(bHb * vecN / bb**2), &
+     &  bHHb / bb, ABS(vecH2 / bb) + ABS(bHHb * vecN / bb**2), &
      &  beta**2 * (bHHb / bb - (bHb / bb)**2), &
-     &  beta**2 * ( abs(vecH2 / bb) + abs(2 * bHHb * vecH / bb**2) &
-     &            + abs(-bHHb + 2*bHb**2/bb) / bb**2) * vecN
+     &  beta**2 * ( ABS(vecH2 / bb) + ABS(2 * bHHb * vecH / bb**2) &
+     &            + ABS(-bHHb + 2*bHb**2/bb) / bb**2) * vecN
      !
-  end do
+  END DO
   !
-  close(fo)
+  CLOSE(fo)
   !
-end program cTPQ
+END PROGRAM cTPQ
