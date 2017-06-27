@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.2.0    
+           9@P~~~9@P             Version 2.0.1    
                                                                 
 
 
@@ -23,26 +23,39 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   Open Standard-Mode Inputfile StdFace2.def 
 
-  KEYWORD : method               | VALUE : fulldiag 
+  KEYWORD : method               | VALUE : FullDiag 
   KEYWORD : l                    | VALUE : 16 
-  KEYWORD : model                | VALUE : spin 
+  KEYWORD : model                | VALUE : Spin 
   KEYWORD : lattice              | VALUE : chain 
   KEYWORD : j                    | VALUE : 1.0 
   KEYWORD : 2sz                  | VALUE : 0 
-  KEYWORD : outputmode           | VALUE : none 
 
 #######  Parameter Summary  #######
 
   @ Lattice Size & Shape
 
-                L = 16 
                 a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Wlength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Llength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Lx = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Ly = 1.00000     ######  DEFAULT VALUE IS USED  ######
+           phase0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                L = 16 
+
+  @ Super-Lattice setting
+
+                L = 16        
+                W = 1         
+           Height = 1           ######  DEFAULT VALUE IS USED  ######
+         Number of Cell = 16
 
   @ Hamiltonian 
 
-               2S = 1           ######  DEFAULT VALUE IS USED  ######
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######
               J0x = 1.00000   
               J0y = 1.00000   
@@ -50,8 +63,33 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   @ Numerical conditions
 
-       LargeValue = 2.00000     ######  DEFAULT VALUE IS USED  ######
-         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+       LargeValue = 2.25000     ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    locspn.def is written.
+    coulombinter.def is written.
+    hund.def is written.
+    exchange.def is written.
+
+  @ Spectrum
+
+       SpectrumQW = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQL = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQH = 0.00000     ######  DEFAULT VALUE IS USED  ######
+     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######
+        pair.def is written.
+
+
+  @ CalcMod
+
+          Restart = none        ######  DEFAULT VALUE IS USED  ######
+   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######
+       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######
+         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######
+     calcmod.def is written.
+
+    CDataFileHead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
        initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
@@ -59,38 +97,39 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+           NOmega = 200         ######  DEFAULT VALUE IS USED  ######
+         OmegaMax = 36.00000    ######  DEFAULT VALUE IS USED  ######
+         OmegaMin = -36.00000   ######  DEFAULT VALUE IS USED  ######
+          OmegaIm = 0.02000     ######  DEFAULT VALUE IS USED  ######
               2Sz = 0  
-      ioutputmode = 0         
-
-######  Print Expert input files  ######
-
-    zlocspin.def is written.
-      zTrans.def is written.
-   zInterAll.def is written.
-    namelist.def is written.
-     calcmod.def is written.
      modpara.def is written.
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
     greenone.def is written.
     greentwo.def is written.
+    namelist.def is written.
 
 ######  Input files are generated.  ######
 
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
-  Read File 'zlocspn.def' for LocSpin.
-  Read File 'zTrans.def' for Trans.
-  Read File 'zInterAll.def' for InterAll.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
   Read File 'greenone.def' for OneBodyG.
   Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
 
 ######  Definition files are correct.  ######
 
-  Read File 'zlocspn.def'.
-  Read File 'zTrans.def'.
-  Read File 'zInterAll.def'.
+  Read File 'locspn.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
   Read File 'greenone.def'.
   Read File 'greentwo.def'.
+  Read File 'pair.def'.
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 

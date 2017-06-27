@@ -17,3 +17,7 @@ LanczosTarget  2
 LargeValue     1.200000000000000e+01    
 NumAve         5    
 ExpecInterval  20   
+NOmega         200  
+OmegaMax       9.600000000000000e+01    
+OmegaMin       -9.600000000000000e+01   
+OmegaIm        1.200000000000000e-01    

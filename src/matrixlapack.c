@@ -203,7 +203,7 @@ int DSEVvector(int xNsize, double **A, double *r, double **vec ){
         int *iwork, liwork;
         liwork = 5 * xNsize + 3;
         iwork = (int*)malloc(liwork * sizeof(double));
-        lwork = 2 * xNsize + xNsize * xNsize; /* 3*xNsize OK?*/
+        lwork = 2 * xNsize * xNsize + 6 * xNsize + 1; /* 3*xNsize OK?*/
 #else
         lwork = 4 * xNsize; /* 3*xNsize OK?*/
 #endif
@@ -226,7 +226,7 @@ int DSEVvector(int xNsize, double **A, double *r, double **vec ){
 	uplo = 'U';
 
 #ifdef SR
-        M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &iwork, &liwork, &info);
+        M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, iwork, &liwork, &info);
         free(iwork);
 #else
         dsyev_(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &info);

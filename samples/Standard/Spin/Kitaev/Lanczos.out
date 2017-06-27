@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 1.2.0    
+           9@P~~~9@P             Version 2.0.1    
                                                                 
 
 
@@ -23,11 +23,11 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   Open Standard-Mode Inputfile StdFace2.def 
 
-  KEYWORD : method               | VALUE : lanczos 
+  KEYWORD : method               | VALUE : Lanczos 
   KEYWORD : w                    | VALUE : 2 
   KEYWORD : l                    | VALUE : 3 
-  KEYWORD : model                | VALUE : spingc 
-  KEYWORD : lattice              | VALUE : honeycomb 
+  KEYWORD : model                | VALUE : SpinGC 
+  KEYWORD : lattice              | VALUE : Honeycomb 
   KEYWORD : j0x                  | VALUE : -1.0 
   KEYWORD : j0y                  | VALUE : 0.0 
   KEYWORD : j0z                  | VALUE : 0.0 
@@ -44,14 +44,28 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   @ Lattice Size & Shape
 
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Wlength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Llength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Lx = 0.50000     ######  DEFAULT VALUE IS USED  ######
+               Ly = 0.86603     ######  DEFAULT VALUE IS USED  ######
+           phase0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+           phase1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+
+  @ Super-Lattice setting
+
                 L = 3         
                 W = 2         
+           Height = 1           ######  DEFAULT VALUE IS USED  ######
+         Number of Cell = 6
 
   @ Hamiltonian 
 
-               2S = 1         
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1         
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######
               J0x = -1.00000  
               J0y = 0.00000   
@@ -65,8 +79,34 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
 
   @ Numerical conditions
 
-       LargeValue = 1.50000     ######  DEFAULT VALUE IS USED  ######
-         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+       LargeValue = 1.62500     ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    locspn.def is written.
+    coulombinter.def is written.
+    hund.def is written.
+    exchange.def is written.
+    exchange.def is written.
+
+  @ Spectrum
+
+       SpectrumQW = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQL = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQH = 0.00000     ######  DEFAULT VALUE IS USED  ######
+     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######
+        pair.def is written.
+
+
+  @ CalcMod
+
+          Restart = none        ######  DEFAULT VALUE IS USED  ######
+   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######
+       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######
+         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######
+     calcmod.def is written.
+
+    CDataFileHead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
        initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
@@ -74,37 +114,40 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
-
-######  Print Expert input files  ######
-
-    zlocspin.def is written.
-      zTrans.def is written.
-   zInterAll.def is written.
-    namelist.def is written.
-     calcmod.def is written.
+           NOmega = 200         ######  DEFAULT VALUE IS USED  ######
+         OmegaMax = 19.50000    ######  DEFAULT VALUE IS USED  ######
+         OmegaMin = -19.50000   ######  DEFAULT VALUE IS USED  ######
+          OmegaIm = 0.01000     ######  DEFAULT VALUE IS USED  ######
      modpara.def is written.
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
     greenone.def is written.
     greentwo.def is written.
+    namelist.def is written.
 
 ######  Input files are generated.  ######
 
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
-  Read File 'zlocspn.def' for LocSpin.
-  Read File 'zTrans.def' for Trans.
-  Read File 'zInterAll.def' for InterAll.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
   Read File 'greenone.def' for OneBodyG.
   Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pairlift.def' for PairLift.
+  Read File 'pair.def' for PairExcitation.
 
 ######  Definition files are correct.  ######
 
-  Read File 'zlocspn.def'.
-  Read File 'zTrans.def'.
-  Read File 'zInterAll.def'.
+  Read File 'locspn.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
   Read File 'greenone.def'.
   Read File 'greentwo.def'.
+  Read File 'pairlift.def'.
+  Read File 'pair.def'.
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
@@ -226,8 +269,8 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   Accuracy check !!!
   LanczosEnergy = -2.45007067506078e+00 
   EnergyByVec   = -2.44529208464775e+00 
-  diff_ene      = 1.95038880374515e-03 
-  var           = 2.30618762818336e-03 
+  diff_ene      = 1.95038880374588e-03 
+  var           = 2.30618762818330e-03 
   Accuracy of Lanczos vectors is NOT enough
 
   Start: Calculate EigenVector by CG method.
@@ -238,8 +281,8 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   CG Accuracy check !!!
   LanczosEnergy = -2.45007067506078e+00
   EnergyByVec   = -2.45007067506078e+00
-  diff_ene      = 3.62511346607621e-16
-  var           = 2.64156268162073e-16 
+  diff_ene      = 5.43767019911431e-16
+  var           = 1.16196721403843e-16 
  
 
 ######  End  : Calculate Lanczos EigenVec.  ######

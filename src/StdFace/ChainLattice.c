@@ -1,5 +1,5 @@
 /*
-HPhi  -  Quantum Lattice Model Simulator
+HPhi-mVMC-StdFace - Common input generator
 Copyright (C) 2015 The University of Tokyo
 
 This program is free software: you can redistribute it and/or modify
@@ -15,42 +15,64 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Standard mode for the chain lattice
+*/
 #include "StdFace_vals.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include "StdFace_ModelUtil.h"
 #include <complex.h>
-#include "../include/wrapperMPI.h"
 #include <string.h>
 
 /**
- *
- * Setup a Hamiltonian for the Hubbard model on a Chain lattice
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_Chain(struct StdIntList *StdI, char *model)
+@brief Setup a Hamiltonian for the Hubbard model on a Chain lattice
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_Chain(
+  struct StdIntList *StdI,//!<[inout]
+  char *model//!<[in] The name of model (e.g. hubbard)
+)
 {
-  int isite, jsite;
+  FILE *fp;
+  int isite, jsite, ntransMax, nintrMax;
   int iL;
-  int ktrans, kintr;
-  /**/
+  double complex Cphase;
+  
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
+  /**@brief
+  (1) Compute the shape of the super-cell and sites in the super-cell
+  */
+  fp = fopen("lattice.gp", "w");
   /**/
   StdI->NsiteUC = 1;
+  /**/
   fprintf(stdout, "  @ Lattice Size & Shape\n\n");
+  
+  StdFace_PrintVal_d("a", &StdI->a, 1.0);
+  StdFace_PrintVal_d("Wlength", &StdI->length[0], StdI->a);
+  StdFace_PrintVal_d("Llength", &StdI->length[1], StdI->a);
+  StdFace_PrintVal_d("Wx", &StdI->direct[0][0], StdI->length[0]);
+  StdFace_PrintVal_d("Wy", &StdI->direct[0][1], 0.0);
+  StdFace_PrintVal_d("Lx", &StdI->direct[1][0], 0.0);
+  StdFace_PrintVal_d("Ly", &StdI->direct[1][1], StdI->length[1]);
+
+  StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
+  StdFace_NotUsed_d("phase1", StdI->phase[1]);
+  StdI->phase[1] = StdI->phase[0];
+  StdI->phase[0] = 0.0;
+  /**/
   StdFace_RequiredVal_i("L", StdI->L);
   StdFace_NotUsed_i("W", StdI->W);
-  StdFace_NotUsed_i("a0W", StdI->a0W);
-  StdFace_NotUsed_i("a0L", StdI->a0L);
-  StdFace_NotUsed_i("a1W", StdI->a1W);
-  StdFace_NotUsed_i("a1L", StdI->a1L);
-  /**/
-  StdFace_PrintVal_d("a", &StdI->a, 1.0);
-  /**/
+  StdI->W = 1;
+  StdFace_InitSite(StdI, fp, 2);
+  StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; StdI->tau[0][2] = 0.0;
+  /**@brief
+  (2) check & store parameters of Hamiltonian
+  */
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
   StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);
@@ -65,11 +87,11 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
   StdFace_NotUsed_d("V1'", StdI->V1p);
   StdFace_NotUsed_d("V2'", StdI->V2p);
   StdFace_NotUsed_d("K", StdI->K);
+  StdFace_PrintVal_d("h", &StdI->h, 0.0);
+  StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
   /**/
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
-    StdFace_PrintVal_d("h", &StdI->h, 0.0);
-    StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
     StdFace_InputSpinNN(StdI, StdI->J0, StdI->J0All, "J0");
     StdFace_InputSpin(StdI, StdI->Jp, StdI->JpAll, "J'");
@@ -93,8 +115,6 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
 
     StdFace_NotUsed_J("J0", StdI->J0All, StdI->J0);
     StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
-    StdFace_NotUsed_d("h", StdI->h);
-    StdFace_NotUsed_d("Gamma", StdI->Gamma);
     StdFace_NotUsed_d("D", StdI->D[2][2]);
 
     if (strcmp(StdI->model, "hubbard") == 0 ) {
@@ -107,8 +127,9 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
     }
   }/*if (strcmp(StdI->model, "spin") != 0 )*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
-  /*
-  Local Spin
+  /**@brief
+  (3) Set local spin flag (StdIntList::locspinflag) and
+  the number of sites (StdIntList::nsite)
   */
   StdI->nsite = StdI->L;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
@@ -123,38 +144,28 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
       StdI->locspinflag[isite] = StdI->S2;
       StdI->locspinflag[isite + StdI->nsite / 2] = 0;
     }
-  /*
-   The number of Transfer & Interaction
+  /**@brief
+  (4) Compute the upper limit of the number of Transfer & Interaction and malloc them.
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->L * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->L * (StdI->NsiteUC/*D*/ + 1/*J*/ + 1/*J'*/)
+    ntransMax = StdI->L * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    nintrMax = StdI->L * (StdI->NsiteUC/*D*/ + 1/*J*/ + 1/*J'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->L * 2/*spin*/ * (StdI->NsiteUC/*mu*/ + 2/*t*/ + 2/*t'*/);
-    StdI->nintr = StdI->L * (StdI->NsiteUC/*U*/ + 4 * (1/*V*/ + 1/*V'*/));
+    ntransMax = StdI->L * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 2/*t*/ + 2/*t'*/);
+    nintrMax = StdI->L * (StdI->NsiteUC/*U*/ + 4 * (1/*V*/ + 1/*V'*/));
 
-    if(strcmp(StdI->model, "kondo") == 0 ) 
-      StdI->nintr += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
+    if (strcmp(StdI->model, "kondo") == 0) {
+      ntransMax += StdI->L * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+      nintrMax += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
+    }/*if (strcmp(StdI->model, "kondo") == 0)*/
   }
   /**/
-  StdI->transindx = (int **)malloc(sizeof(int*) * StdI->ntrans);
-  StdI->trans = (double complex *)malloc(sizeof(double complex) * StdI->ntrans);
-  for (ktrans = 0; ktrans < StdI->ntrans; ktrans++){
-    StdI->transindx[ktrans] = (int *)malloc(sizeof(int) * 4);
-  }
-  /**/
-  StdI->intrindx = (int **)malloc(sizeof(int*) * StdI->nintr);
-  StdI->intr = (double complex *)malloc(sizeof(double complex) * StdI->nintr);
-  for (kintr = 0; kintr < StdI->nintr; kintr++) {
-    StdI->intrindx[kintr] = (int *)malloc(sizeof(int) * 8);
-  }
-  /*
-   Set Transfer & Interaction
+  StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
+  /**@brief
+  (5) Set Transfer & Interaction
   */
-  StdI->ntrans = 0;
-  StdI->nintr = 0;
   for (iL = 0; iL < StdI->L; iL++){
 
     isite = iL;
@@ -167,48 +178,48 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
       StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, StdI->mu, isite, isite);
-      StdFace_intr(StdI, StdI->U, isite, 0, isite, 0, isite, 1, isite, 1);
-      /**/
+      StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite);
       if (strcmp(StdI->model, "kondo") == 0 ) {
         jsite = iL;
         StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite, jsite);
+        StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, jsite);
       }/*if (strcmp(StdI->model, "kondo") == 0 )*/
     }/*if (model != "spin")*/
     /*
-    Nearest neighbor
-   */
-    jsite = (iL + 1) % StdI->L;
-    if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
+     Nearest neighbor
+    */
+    StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, 0, 0, &isite, &jsite, 1, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, StdI->t0, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
-    Second nearest neighbor
+     Second nearest neighbor
     */
-    jsite = (iL + 2) % StdI->L;
-    if (strcmp(StdI->model, "kondo") == 0 ) jsite += StdI->L;
+    StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, 0, 0, &isite, &jsite, 2, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, StdI->tp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite);
       StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
     }
   }/*for (iL = 0; iL < StdI->L; iL++)*/
-}
 
+  fprintf(fp, "plot \'-\' w d lc 7\n0.0 0.0\nend\npause -1\n");
+  fclose(fp);
+  StdFace_PrintGeometry(StdI);
+}/*void StdFace_Chain*/
+
+#if defined(_HPhi)
 /**
-*
-* Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
+@brief Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice
+@author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_Chain_Boost(struct StdIntList *StdI)
 {
@@ -247,12 +258,12 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   */
   if (StdI->S2 != 1) {
     fprintf(stdout, "\n ERROR! S2 must be 1 in Boost. \n\n");
-    exitMPI(-1);
+    StdFace_exit(-1);
   }
   StdI->ishift_nspin = 4;
   if(StdI->L % 8 != 0){
     fprintf(stdout, "\n ERROR! L %% 8 != 0 \n\n");
-    exitMPI(-1);
+    StdFace_exit(-1);
   }
   StdI->W = StdI->L / 2;
   StdI->L = 2;
@@ -378,3 +389,4 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
   free(StdI->list_6spin_pair);
 
 }
+#endif

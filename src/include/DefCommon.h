@@ -20,12 +20,11 @@
 #define PI 3.14159265358979 
 
 /*!< CalcType */
-#define NUM_CALCTYPE 5
+#define NUM_CALCTYPE 4
 #define Lanczos 0 /*!< CalcType is Exact Diagonalization method.*/
 #define TPQCalc 1 /*!< CalcType is TPQ calculation.*/
 #define FullDiag 2 /*!< CalcType is Full Diagonalization method.*/
-#define Spectrum 3 /*!< CalcType is Calculation spectrum */
-#define SpectrumFD 4 /*!< CalcType is Calculation spectrum with full diagonalization*/
+#define CG 3 /*!< CalcType is Calculation spectrum */
 
 /*!< CalcModel */
 #define NUM_CALCMODEL 6 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted. SpinlessFermion and SpinlessFermionGC are not yet supported*/
@@ -44,6 +43,9 @@
 #define RAWMODE  0 /*!< calc one body green function and two body green functions.*/
 #define CORRMODE 1 /*!< calc one body green function and two body green functions and correlatinos for charge and spin.*/
 #define NUM_OUTPUTHAM 2 /*!< Number of output Hamiltonian mode */
+
+/*!< InputMode */
+#define NUM_INPUTHAM 2 /*!< Number of input Hamiltonian mode */
 
 /*!< CalcEigenVector */
 #define NUM_SETINITAILVEC 2 /*!< Number of setting type of initial vectors.*/

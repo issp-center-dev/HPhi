@@ -34,4 +34,40 @@ int mltplyGeneralSpinGC(struct BindStruct *X, double complex *tmp_v0,double comp
 
 int mltplySpinGCBoost(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
+double complex GC_child_general_int_spin
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex child_general_int_spin
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+
+double complex GC_child_exchange_spin
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex child_exchange_spin
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
+double complex GC_child_pairlift_spin
+(
+ double complex *tmp_v0,
+ double complex *tmp_v1,
+ struct BindStruct *X
+ );
+
 #endif

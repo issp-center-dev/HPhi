@@ -59,7 +59,8 @@ int CalcByLanczos(
   double diff_ene,var;
   long int i_max=0;
   FILE *fp;
-  
+  size_t byte_size;
+
   if(X->Bind.Def.iInputEigenVec==FALSE){
     // this part will be modified
     switch(X->Bind.Def.iCalcModel){
@@ -91,13 +92,16 @@ int CalcByLanczos(
     }
 
     StartTimer(4100);
-    if(Lanczos_EigenValue(&(X->Bind))!=0){
-      fprintf(stderr, "  Lanczos Eigenvalue is not converged in this process.\n");      
+    int iret=0;
+    iret=Lanczos_EigenValue(&(X->Bind));
+    if(iret != 0){
       StopTimer(4100);
       return(FALSE);
     }
     StopTimer(4100);
-    
+    if (X->Bind.Def.iReStart == RESTART_INOUT ||X->Bind.Def.iReStart == RESTART_OUT ) {
+      return TRUE;
+    }
     if(X->Bind.Def.iCalcEigenVec==CALCVEC_NOT){
        fprintf(stdoutMPI, "  Lanczos EigenValue = %.10lf \n ",X->Bind.Phys.Target_energy);
        return(TRUE);
@@ -181,17 +185,18 @@ int CalcByLanczos(
       fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
       exitMPI(-1);
     }
-    fread(&step_i, sizeof(long int), 1, fp);
-    fread(&i_max, sizeof(long int), 1, fp);
+    byte_size = fread(&step_i, sizeof(int), 1, fp);
+    byte_size = fread(&i_max, sizeof(long int), 1, fp);
     if(i_max != X->Bind.Check.idim_max){
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       exitMPI(-1);
     }
-    fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+    byte_size = fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
     StopTimer(4801);
     StopTimer(4800);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
+    if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
   }
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);

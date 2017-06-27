@@ -30,10 +30,10 @@
  */
 
 #include <bitcalc.h>
-#include "diagonalcalc.h"
 #include "FileIO.h"
-#include "mltply.h" 
-#include "wrapperMPI.h" 
+#include "diagonalcalc.h"
+#include "mltplySpinCore.h"
+#include "wrapperMPI.h"
 
 
 /** 

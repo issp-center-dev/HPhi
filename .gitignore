@@ -136,3 +136,8 @@ GTAGS
 .idea
 .DS_Store
 cmake-build-debug
+*.mod
+tool/fourier
+tool/corplot
+doc/fourier/en/_build/
+doc/fourier/ja/_build/

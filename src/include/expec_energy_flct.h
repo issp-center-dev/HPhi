@@ -17,3 +17,11 @@
 #include "Common.h"
 
 int expec_energy_flct(struct BindStruct *X);
+
+int expec_energy_flct_Hubbard(struct BindStruct *X);
+
+int expec_energy_flct_HubbardGC(struct BindStruct *X);
+
+int expec_energy_flct_HalfSpinGC(struct BindStruct *X);
+
+int expec_energy_flct_GeneralSpinGC(struct BindStruct *X);

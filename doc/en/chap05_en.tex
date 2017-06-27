@@ -6,22 +6,23 @@
 \label{Ch:Lanczos}
 \subsection{Details of Lanczos method}
 Some parts of this section are based on the manual
-of titpack~\cite{titpack} and textbook by M. Sugihara and 
-K. Murota~\cite{SugiharaMurota_en}(These references are written in Japanese).
+of TITPACK~\cite{titpack} and the textbook published by M. Sugihara and 
+K. Murota~\cite{SugiharaMurota_en}(these references are written in Japanese).
 
 In the Lanczos method, by successively operating the Hamiltonian 
 to the initial vector, we obtain the accurate eigenvalues around
 the maximum and minimum eigenvalues and associated eigenvectors.  
-Because we can perform Lanczos method by using only two
-vectors whose dimensions are the dimension of the total Hilbert space
-~\footnote{In $\HPhi$, to reduce the numerical cost,
-we use some additional vectors; vector for accumulating the 
-real-space diagonal elements of the Hamiltonian, 
-vector for specifying the given $S_{z}$ space and given particle space.
+Because we can perform the Lanczos method by using only two
+vectors, the dimensions of which are the dimensions of the total Hilbert space\footnote{In $\HPhi$, 
+to reduce the numerical cost,
+we use some additional vectors;
+a vector for accumulating the 
+real-space diagonal elements of the Hamiltonian and
+a vector for specifying the given $S_{z}$ space and given particle space.
 The dimension of these vectors is that of the Hilbert space.},
-Lanczos method is frequently used for the 
+the Lanczos method is frequently used for the 
 diagonalization of the large matrices.
-As we detail below,
+As explained in detail below,
 one additional vector is necessary for
 obtaining the eigenvector.
 
@@ -32,15 +33,15 @@ by successively operating the Hamiltonian $\Ham$ to the
 arbitrary vector $\vec{x}_{0}$, we generate $\Ham^{n}\vec{x}_{0}$.
 The obtained space 
 $\mathcal{K}_{n+1}(\Ham,\vec{x}_{0})=\{\vec{x}_{0},\Ham^{1}\vec{x}_{0},\dots,\Ham^{n}\vec{x}_{0}\}$
-is called Krylov subspace.
-Initial vector is represented by the superposition 
+is called the Krylov subspace.
+The initial vector is represented by the superposition 
 of the eigenvectors 
-$\vec{e}_{i}$ (corresponding eigenvalues are $E_{i}$) of $\Ham$ as 
+$\vec{e}_{i}$ (the corresponding eigenvalues are $E_{i}$) of $\Ham$ as 
 \begin{align}
 \vec{x}_{0}=\sum_{i}a_{i}\vec{e}_{i}.
 \end{align}
-Here, $E_{0}$ is maximum absolute values of the eigenvalues.
-We note that all the eigenvalues are real number because Hamiltonian is Hermite.
+Here, $E_{0}$ denotes the maximum absolute values of the eigenvalues.
+We note that all the eigenvalues are real numbers because the Hamiltonian is Hermitian.
 By operating $\Ham^{n}$ to the initial vector,
 we obtain the relation as
 \begin{align}
@@ -50,23 +51,23 @@ This relation indicates that
 the eigenvector of $E_{0}$ becomes dominant for sufficiently large $n$. 
 In the Lanczos method,
 we obtain the eigenvalues and eigenvectors 
-by performing the proper transformation for obtained Krylov subspace.
+by performing the appropriate transformation for the obtained Krylov subspace.
 
 In the Lanczos method,
 we successively generate the normalized orthogonal basis 
 ${\vec{v}_{0},\dots,\vec{v}_{n-1}}$ from the Krylov subspace $\mathcal{K}_{n}(\Ham,\vec{x}_{0})$.
-We defines initial vector and associated components as 
+We define an initial vector and associated components as 
 $\vec{v}_{0} =\vec{x}_{0}/|\vec{x}_{0}|$,
 $\beta_{0}=0,\vec{x}_{-1}=0$.
 From this initial condition,
-we can obtain the normalized orthogonal basis  as follows:
+we can obtain the normalized orthogonal basis:
 \begin{align}
 \alpha_{k} &= (\Ham\vec{v}_{k},\vec{v}_{k}), \\
 \vec{w}   &= \Ham\vec{v}_{k}-\beta_{k}\vec{v}_{k-1}-\alpha_{k}\vec{v}_{k}, \\
 \beta_{k+1} &= |\vec{w}|, \\
 \vec{v}_{k+1} &= \frac{\vec{v}_{k}}{|\vec{v}_{k}|}. \label{eq: LanczosVector}
 \end{align}
-From these definitions, it it obvious that $\alpha_{k}$, $\beta_{k}$ are real number.
+From these definitions, it it obvious that $\alpha_{k}$, $\beta_{k}$ are real numbers.
 
 In the subspace spanned by these normalized orthogonal basis,
 the Hamiltonian is transformed as
@@ -74,44 +75,43 @@ the Hamiltonian is transformed as
 T_{n}=V_{n}^{\dagger}\Ham V_{n}.
 \end{align}
 Here,
-$V_{n}$ is matrix whose column vectors are 
-$\vec{v}_{i}(i=0,1,\dots,n-1)$.
-$T_{n}$ is tridiagonal matrix and its diagonal elements
+$V_{n}$ is a matrix whose column vectors are $\vec{v}_{i}(i=0,1,\dots,n-1)$.
+$T_{n}$ is a tridiagonal matrix and its diagonal elements
 are $\alpha_{i}$ and
 subdiagonal elements are $\beta_{i}$.
 It is known that
 the eigenvalues of $\Ham$ are well approximated by 
 the eigenvalues of $T_{n}$ for sufficiently large $n$.
-(We note that $V^{\dagger}V=I$,$I$ is identity matrix).
-The original eigenvectors of $\Ham$ is obtained 
+(We note that $V^{\dagger}V=I$,$I$ is an identity matrix).
+The original eigenvectors of $\Ham$ are obtained 
 by $\vec{e}_{i}=V\tilde{\vec{e}}_{i}$,
-where  $\tilde{\vec{e}}_{i}$ are
+where  $\tilde{\vec{e}}_{i}$ denotes
 the eigenvectors of $T_{n}$.
 From $V$, 
 we can obtain the eigenvectors of $\Ham$
 by performing the Lanczos method.
 However, in the actual calculations,
-it is difficult to keep $V$ because its dimension
-is large [dimension of $V$ = (dimension of the total Hilbert space) $\times$ ($\#$ of Lanczos iterations)].
+it is difficult to keep $V$, because its dimension
+is large [dimension of $V$ = (dimension of the total Hilbert space) $\times$ (the number of Lanczos iterations)].
 Thus, to obtain the eigenvectors, 
 we again perform the same Lanczos calculations
 after we obtain the eigenvalues from the Lanczos methods.
-In the first Lanczos calculation, we keep $\tilde{\vec{e}_{i}}$
-because its dimension is small
-\footnote{upper bound of the dimensions of $\tilde{\vec{e}_{i}}$ is $\#$ of Lanczos iterations.}.
+In the first Lanczos calculation, we keep $\tilde{\vec{e}_{i}}$, 
+because its dimension is small\footnote{Upper bound of the dimensions of $\tilde{\vec{e}_{i}}$ 
+is $\#$ of Lanczos iterations.}.
 From this procedure, we obtain the eigenvectors  from $V$.
 
 In the Lanczos method,
 within a few hundred or thousand Lanczos iterations,
-we obtain the accurate eigenvalues near the maximum and minimum values of eigenvalues.
-The necessary number of iterations is small enough 
+we obtain accurate eigenvalues near the maximum and minimum eigenvalues.
+The necessary number of iterations is sufficiently small as 
 compared to the dimensions
 of the total Hilbert space.
 %Thus, the dimension of $T_{n}$ is 
 %typically less than 100-1000.
 We note that it is shown that
 the errors of the maximum and minimum eigenvalues
-becomes exponentially small as a function of Lanczos iteration 
+become exponentially small as a function of Lanczos iterations 
 (for details, see Ref.~\cite{SugiharaMurota_en}).
 
 \subsection{Inverse iteration method}
@@ -122,51 +122,51 @@ to the initial vector $\vec{y}_{0}$,
 we can obtain the accurate eigenvector for $E_{n}$.
 
 From $(\Ham-E_{n})^{-1}\vec{y}_{0}$,
-we obtain the linear simultaneous equations such as  
+we obtain linear simultaneous equations such as  
 \begin{align}
 \vec{y}_{k}&=(\Ham-E_{n})\vec{y}_{k+1}. \label{eq: TPQVector}
 \end{align}
-By solving this equation by using the
+By solving this equation using the
 conjugate gradient method (CG method),
 we obtain the eigenvector.
 From the obtained eigenvector,
 we can calculate the eigenvalues and correlation functions. 
-We note that additional four vectors are necessary to
+We note that four additional vectors are necessary to
 perform the CG method.
-For large system size,
+For a large system size,
 it may be impossible to allocate memory to the
 additional vectors.
 
 \subsection{Details of implementation}
 \subsubsection*{Initial vector}
-For Lanczos method, an initial vector is specified with \verb|initial_iv|($\equiv r_s$) defined in an input file for Standard mode or a ModPara file for Expert mode. A type of an initial vector can be selected from a real number or complex number by using \verb|InitialVecType| in a ModPara file.
+For the Lanczos method, an initial vector is specified with \verb|initial_iv|($\equiv r_s$) defined in an input file for Standard mode or a ModPara file for Expert mode. The type of initial vector can be selected as a real number or complex number by using \verb|InitialVecType| in a ModPara file.
 \begin{itemize}
 \item{For canonical ensemble and \verb|initial_iv| $\geq 0$}
 
-A component of a target of Hilbert space is given by
+A component of a target of the Hilbert space is given by
 \begin{align}
 (N_{\rm dim}/2 + r_s ) \% N_{\rm dim},
 \end{align}
-where $N_{\rm dim}$ is a total number of the Hilbert space and $N_{\rm dim}/2$ is added to avoid selecting a special Hilbert space for a default value \verb|initial_iv| $=1$.  When a type of an initial vector is selected as a real number, a coefficient value is given by $1$, while as a complex number, the value is given by $(1+i)/\sqrt{2}$.
+where $N_{\rm dim}$ is the total number of the Hilbert spaces and $N_{\rm dim}/2$ is added to avoid selecting a special Hilbert space for a default value \verb|initial_iv| $=1$.  When the type of initial vector is selected as a real number, the coefficient value is given by $1$, while when it is selected as a complex number, the value is given by $(1+i)/\sqrt{2}$.
 
-\item{For grand canonical ensemble or \verb|initial_iv| $< 0$}
+\item{For a grand canonical ensemble or \verb|initial_iv| $< 0$}
 
-An initial vector is given by using a random generator, i.e. coefficients of all components for the initial vector is given by random numbers. The seed is calculated as 
+The initial vector is given by using a random generator, i.e., the coefficients of all the components for the initial vector are given by random numbers. The seed is calculated as 
 \begin{align}
 123432+|r_s|,
 \end{align}
-where $r_s$ is a number given by an input file and $n_{\rm run}$ is a number of runs. A maximum value of $n_{\rm run}$ is defined by \verb|NumAve| in an input file for Standard mode or a ModPara file for Expert mode. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT)\cite{Mutsuo2008}. 
+where $r_s$ is the number given by an input file and $n_{\rm run}$ is the number of runs. The maximum value of $n_{\rm run}$ is defined by \verb|NumAve| in an input file for Standard mode or a ModPara file for Expert mode. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT)\cite{Mutsuo2008}. 
 \end{itemize}
 
 \subsubsection*{Convergence condition}
 In $\HPhi$,
-we use \verb|dsyev| (routine of lapack)
+we use \verb|dsyev| (routine of LAPACK)
 for diagonalization of $T_{n}$.
 We use the energy of the first excited state of $T_{n}$
-as a criteria of convergence. 
+as the criterion of convergence. 
 In the standard setting,
-after five Lanczos step,
-we diagonalize $T_{n}$ every two Lanczos step.
+after five Lanczos steps,
+we diagonalize $T_{n}$ every two Lanczos steps.
 If the energy of the first excited states coincides with
 the previous energy within the specified accuracy,
 the Lanczos iteration finishes.
@@ -184,89 +184,88 @@ If $E_{n}$ coincides with the eigenvalues obtained by the Lanczos iteration and
 $\Delta$ is smaller than the specified value,
 we finish diagonalization.
 
-If the accuracy of Lanczos method is not enough,
+If the accuracy of the Lanczos method is not sufficient,
 we perform the CG method to obtain the eigenvector.
 As an initial vector of the CG method,
 we use the eigenvectors obtained by the Lanczos method in the standard setting.
-This often accelerates the convergence.
+This frequently accelerates the convergence.
 %----------------------------------------------------------
 \section{Full Diagonalization method}
 \label{Ch:AllDiagonalization}
-\subsection{Over view}
-We generate matrix of ${\hat{H}}$ by using the real space configuration 
-$| \psi_j \rangle$($j=1\cdots d_{\rm H}$, $d_{\rm H}$ is dimension of the Hilbert space): 
+\subsection{Overview}
+We generate the matrix of ${\hat{H}}$ by using the real space configuration 
+$| \psi_j \rangle$($j=1\cdots d_{\rm H}$, where $d_{\rm H}$ is the dimension of the Hilbert space): 
 $H_{ij}= \langle \psi_i | {\hat H} | \psi_j \rangle$.
 By diagonalizing this matrix,
 we can obtain all the eigenvalues $E_{i}$ and eigenvectors $|\Phi_i\rangle$ ($i=1 \cdots d_{\rm H}$). 
-In the diagonalization, we use lapack routine such as \verb|dsyev| or \verb|zheev|.
-We also calculate and out put
+In the diagonalization, we use a LAPACK routine, such as \verb|dsyev| or \verb|zheev|.
+We also calculate and output
 the expectation values $\la A_i\ra \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle$.
 These values are used for the finite-temperature calculations.
 
 \subsection{Finite-temperature calculations}
 From
 $\la A_i\ra \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle$,
-we calculate finite-temperature properties by using the relation 
+we calculate the finite-temperature properties by using the relation 
 \begin{equation}
 \langle {\hat A}\rangle=\frac{\sum_{i=1}^N \la A_i\ra {\rm  e}^{-\beta E_i}}{\sum_{i=1}^N{\rm  e}^{-\beta E_i}}.
 \end{equation}
-In the actual calculation are performed as the post scripts.
+The calculation should be performed by using the own postscripts.
 
 %----------------------------------------------------------
-\section{Finite-temperature calculations by TPQ method}
+\section{Finite-temperature calculations by the TPQ method}
 \label{Ch:TPQ}
 %----------------------------------------------------------
-Sugiura and Shimizu show that
+Sugiura and Shimizu showed that
 it is possible to calculate the finite-temperature properties
 from a few wavefunctions (in the thermodynamic limit, only one wave function is necessary)~\cite{Sugiura2012}.
-The wavefunction is called thermal pure quantum (TPQ) state.
-Because TPQ state can be generated by operating the Hamiltonian 
+The wavefunction is called the thermal pure quantum (TPQ) state.
+Because the TPQ state can be generated by operating the Hamiltonian 
 to the random initial wavefunction,
-we directly use the routine Lanczos method to the TPQ calculations.
-Here, we explain how to construct micro canonical TPQ (mTPQ) state,
-which offers the simplest way for finite-temperature calculations.
+we directly use the routine Lanczos method for the TPQ calculations.
+Here, we explain how to construct the micro canonical TPQ (mTPQ) state,
+which offers the simplest method for calculating finite-temperature properties.
 
-Let $|\psi_{0}\rangle$ a random initial vector.
-By operating $(l-\hat{H}/N_{s})^{k}$($l$ is constant, 
-$N_{s}$ represents number of sites) 
+Let $|\psi_{0}\rangle$ be a random initial vector.
+By operating $(l-\hat{H}/N_{s})^{k}$($l$ is constant and $N_{s}$ represents the number of sites) 
 to $|\psi_{0}\rangle$,
 we obtain the $k$th TPQ states as
 \begin{align}
 |\psi_{k}\rangle \equiv \frac{(l-\hat{H}/N_{s})|\psi_{k-1}\rangle}{|(l-\hat{H}/N_{s})|\psi_{k-1}\rangle|}.
 \end{align}
-From  $|\psi_{k}\rangle$, we estimate corresponding inverse temperature $\beta_{k}$ as
+From  $|\psi_{k}\rangle$, we estimate the corresponding inverse temperature $\beta_{k}$ as
 \begin{align}
 \beta_{k}\sim \frac{2k/N_{s}}{l-u_{k}},~~
 u_{k} = \langle \psi_{k}|\hat{H}|\psi_{k}\rangle/N_{s},
 \end{align}
 where $u_{k}$ is the internal energy.
-Arbitrary local physical properties at $\beta_{k}$ is also estimated as
+The arbitrary local physical properties at $\beta_{k}$ are also estimated as
 \begin{align}
 \langle \hat{A}\rangle_{\beta_{k}} =  \langle \psi_{k}|\hat{A}|\psi_{k}\rangle/N_{s}.
 \end{align}
 
-In finite-size system,
+In a finite-size system,
 error is caused by the choice of the initial random vector.
 To estimate the average value and error of the physical properties,
 we perform some independent calculations by changing $|\psi_{0}\rangle$.
 
 \subsection{Details of implementation}
 \subsubsection*{Initial vector}
-For TPQ method, an initial vector is given by using a random generator, i.e. coefficients of all components for the initial vector is given by random numbers. The seed is calculated as 
+For the TPQ method, the initial vector is given by using a random generator, i.e., the coefficients of all the components for the initial vector are given by random numbers. The seed is calculated as 
 \begin{align}
-123432+(n_{\rm run}+1)\times  |r_s|+k_{\rm Thread}+N_{\rm Thread} \times k_{\rm Process}
+123432+(n_{\rm run}+1)\times  |r_s|+k_{\rm Thread}+N_{\rm Thread} \times k_{\rm Process},
 \end{align}
-where $r_s$ is a number given by an input file and $n_{\rm run}$ is a number of runs. $r_s$ and a maximum value of $n_{\rm run}$ are defined by \verb|initial_iv| and \verb|NumAve| in an input file for Standard mode or a ModPara file for Expert mode, respectively. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT)\cite{Mutsuo2008}. We can select a type of initial vector from a real number or complex number by using \verb|InitialVecType| in a ModPara file.
-$k_{\rm Thread}, N_{\rm Thread}, k_{\rm Process}$ indicate 
-the thread ID, the number of threads, the process ID, respectively;
-the initial vector depends both on \verb|initial_iv| and the number of parallelism.
+where $r_s$ is the number given by an input file and $n_{\rm run}$ is the number of runs. $r_s$ and the maximum value of $n_{\rm run}$ are defined by \verb|initial_iv| and \verb|NumAve| in an input file for Standard mode or a ModPara file for Expert mode, respectively. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT)\cite{Mutsuo2008}. We can select the type of initial vector as a real number or complex number by using \verb|InitialVecType| in a ModPara file.
+$k_{\rm Thread}, N_{\rm Thread}, and k_{\rm Process}$ indicate 
+the thread ID, number of threads, process ID, respectively;
+the initial vector depends both on \verb|initial_iv| and the number of parallelisms.
 
 \section{Bogoliubov representation}\label{sec_bogoliubov_rep}
 
 In the spin system,
-the spin indices in input files of \verb|transfer|, \verb|InterAll|,
+the spin indices in the input files of \verb|transfer|, \verb|InterAll|,
 and correlation functions are specified as those of the Bogoliubov representation.
-Spin operators are written by using creation/annihilation operators as follows:
+The spin operators are written by using creation/annihilation operators:
 \begin{align}
   S_{i z} &= \sum_{\sigma = -S}^{S} \sigma c_{i \sigma}^\dagger c_{i \sigma}
   \\

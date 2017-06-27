@@ -19,8 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define HPHI_WRAPPER_H
 #include <complex.h>
 
-int nproc, myrank, nthreads;
-FILE *stdoutMPI;
+int nproc;//!< Number of processors, defined in InitializeMPI()
+int myrank;//!< Process ID, defined in InitializeMPI()
+int nthreads;//!< Number of Threads, defined in InitializeMPI()
+FILE *stdoutMPI;/**@brief File pointer to the standard output
+                defined in InitializeMPI()*/
 
 void InitializeMPI(int argc, char *argv[]);
 void FinalizeMPI();
@@ -36,5 +39,6 @@ unsigned long int SumMPI_li(unsigned long int idim);
 int SumMPI_i(int idim);
 unsigned long int BcastMPI_li(int root, unsigned long int idim);
 double NormMPI_dc(unsigned long int idim, double complex *_v1);
+double complex VecProdMPI(long unsigned int ndim, double complex *v1, double complex *v2);
 
 #endif

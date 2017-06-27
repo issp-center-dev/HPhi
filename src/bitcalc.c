@@ -191,8 +191,8 @@ void SplitBit(
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
 int GetOffComp(
-	        long unsigned int *_list_2_1,
-	        long unsigned int *_list_2_2,
+	    long unsigned int *_list_2_1,
+	    long unsigned int *_list_2_2,
 		long unsigned int _ibit,
 		const long unsigned int _irght,
 		const long unsigned int _ilft,
@@ -268,7 +268,7 @@ int GetOffCompGeneralSpin(
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
-void ConvertToList1GeneralSpin(
+int ConvertToList1GeneralSpin(
 		const long unsigned int org_ibit,
 		const long unsigned int ihlfbit,
 		long unsigned int *_ilist1Comp
@@ -278,6 +278,8 @@ void ConvertToList1GeneralSpin(
   ia=org_ibit%ihlfbit;
   ib=org_ibit/ihlfbit;
   *_ilist1Comp=list_2_1[ia]+list_2_2[ib];
+  if(*_ilist1Comp !=0) return TRUE;
+  else return FALSE;
 }
 
 /** 

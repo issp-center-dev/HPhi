@@ -45,6 +45,8 @@ char *cErrOutputMode="Error in %s\n OutputMode: \n 0: calc one body green functi
 char *cErrCalcEigenVec="Error in %s\n CalcEigenVec: \n 0: Lanczos+CG method,\n 1: Lanczos method.\n";
 char *cErrOutputHam="Error in %s\n OutputHam: \n 0: not output Hamiltonian,\n 1: output Hamiltonian.\n";
 char *cErrOutputHamForFullDiag="Error in %s\n OutputHam is only defined for FullDiag mode, CalcType=2.\n";
+char *cErrInputHam="Error in %s\n InputHam: \n 0: not input Hamiltonian,\n 1: input Hamiltonian.\n";
+char *cErrInputOutputHam="Error in %s\n OutputHam=1 and InputHam=1.\n";
 char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC, 5:KondoGC.\n";
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
@@ -56,7 +58,8 @@ char *cErrNumAve= "Error in %s\n NumAve must be positive value.\n ";
 char *cErrExpecInterval= "Error in %s\n ExpecInterval must be positive value.\n ";
 char *cErrLanczos_max="Error in %s\n Lanczos_max must be positive value.\n ";
 char *cErrLanczosExct="Error in %s\n exct=%d must be greater than 1 and smaller than nvec=%d.\n ";
-char *cErrLanczosTarget="Error in %s\n LanczosTarget=%d must be greater than nvec=%d and smaller than Lanczos_Max=%d.\n ";
+char *cErrLanczosTarget="Error in %s\n LanczosTarget=%d must be greater than exct=%d and smaller than Lanczos_max=%d.\n ";
+
 
 char *cErrKW="Error: Wrong keywords '%s' in %s.\n";
 char *cErrKW_ShowList="Choose Keywords as follows: \n";
