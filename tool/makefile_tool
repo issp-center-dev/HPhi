@@ -4,13 +4,16 @@ include ../src/make.sys
 .SUFFIXES : .o .F90
 .SUFFIXES : .o .c
 
-all:fourier corplot
+all:fourier corplot cTPQ
 
 fourier:fourier.o key2lower.o
 	$(F90) fourier.o key2lower.o $(LIBS) -o $@
 
 corplot:corplot.o
 	$(F90) corplot.o $(LIBS) -o $@
+
+cTPQ:cTPQ.o
+	$(F90) cTPQ.o $(LIBS) -o $@
 
 .F90.o:
 	$(F90) -c $< $(FFLAGS)
@@ -19,4 +22,4 @@ corplot:corplot.o
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm -f *.o *.mod fourier corplot
+	rm -f *.o *.mod fourier corplot CTPQ
