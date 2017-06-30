@@ -134,7 +134,7 @@ SUBROUTINE read_cor()
      READ(fi,*) kvec(1:3,ik), equiv(ik)
   END DO
   !
-  CLOSE(fi)
+  !CLOSE(fi)
   !
 END SUBROUTINE read_cor
 !
