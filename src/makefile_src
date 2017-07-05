@@ -19,6 +19,7 @@ FileIO.o \
 FirstMultiply.o \
 HPhiMain.o \
 HPhiTrans.o \
+input.o \
 Lanczos_EigenValue.o \
 Lanczos_EigenVector.o \
 LogMessage.o \
@@ -110,6 +111,7 @@ include/expec_cisajscktaltdc.h \
 include/expec_totalspin.h \
 include/expec_energy_flct.h \
 include/global.h \
+include/input.h \
 include/lapack_diag.h \
 include/log.h \
 include/makeHam.h \
