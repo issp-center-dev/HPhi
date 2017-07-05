@@ -263,8 +263,8 @@ SUBROUTINE read_filename()
      !
      nwfc = numave
      ALLOCATE(filetail(nwfc))
-     DO iwfc = idx_start, idx_start + numave - 1
-        WRITE(filetail(iwfc),'(a,i3.3,a)') "_", iwfc, ".dat"
+     DO iwfc = 1, nwfc
+        WRITE(filetail(iwfc),'(a,i3.3,a)') "_", iwfc - 1 + idx_start, ".dat"
      END DO
      !
      WRITE(*,*) "    Method : mVMC"
@@ -665,19 +665,9 @@ SUBROUTINE read_corrfile()
      filename = TRIM(filehead) // "_cisajscktalt" // TRIM(filetail(iwfc))
      OPEN(fi, file = TRIM(filename))
      !
-     IF(calctype == 4) THEN
-        !
-        ! mVMC
-        !
-        READ(fi,*) cor0_r(1:2, 1:ncor2)
-     ELSE
-        !
-        ! HPhi
-        !
-        DO icor = 1, ncor2
-           READ(fi,*) itmp(1:8), cor0_r(1:2, icor)
-        END DO
-     END IF
+     DO icor = 1, ncor2
+        READ(fi,*) itmp(1:8), cor0_r(1:2, icor)
+     END DO
      !
      CLOSE(fi)
      !

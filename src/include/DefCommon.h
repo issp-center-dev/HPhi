@@ -44,6 +44,9 @@
 #define CORRMODE 1 /*!< calc one body green function and two body green functions and correlatinos for charge and spin.*/
 #define NUM_OUTPUTHAM 2 /*!< Number of output Hamiltonian mode */
 
+/*!< InputMode */
+#define NUM_INPUTHAM 2 /*!< Number of input Hamiltonian mode */
+
 /*!< CalcEigenVector */
 #define NUM_SETINITAILVEC 2 /*!< Number of setting type of initial vectors.*/
 #define NUM_CALCEIGENVEC 2 /*!< Number of calculating eigenvector mode.*/

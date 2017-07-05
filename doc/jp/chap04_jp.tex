@@ -1029,6 +1029,31 @@ CalcEigenVec 0
 から選択することが出来ます。}
 }
 
+\item  \verb|OutputHam|
+
+{\bf 形式 :} {int型 (デフォルト値 0)}
+
+{\bf 説明 :} {
+{
+(FullDiag) ハミルトニアンの出力モードを指定します。\\
+0: 出力なし\\
+1: 出力あり\\
+から選択することが出来ます。}
+}
+
+\item  \verb|InputHam|
+
+{\bf 形式 :} {int型 (デフォルト値 0)}
+
+{\bf 説明 :} {
+{
+(FullDiag) ハミルトニアンの入力モードを指定します。\\
+0: 入力なし\\
+1: 入力あり\\
+から選択することが出来ます。}
+}
+
+
 
 \end{itemize}
 
@@ -3531,21 +3556,90 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N
 
 
 \newpage
-\subsection{cisajs.dat}
-\label{Subsec:cgcisajs}
-OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$の計算結果を出力します。以下にファイル例を記載します。
+\subsection{phys.dat}
+\label{Subsec:phys}
+(FullDiagでのみ出力)全対角法で計算したエネルギーと物理量を出力します。エネルギーの低い基底エネルギーから順に出力されます。以下にファイル例を記載します。\\
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+ <H>         <N>        <Sz>       <S2>       <D> 
+  -4.814170   0.000000   0.000000  -0.000000   0.590568
+  -3.796850   0.000000   0.000000   1.333333   0.423804
+ …
+ 14.489622   0.000000   0.000000   0.000000   2.550240
+ 14.852520   0.000000   0.000000   0.000000   2.329157
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{ファイル名}
+\begin{itemize}
+   \item {カノニカル:} \#\#\_phys\_Nup\_\$\$Ndown\%\%.dat
+   \item {グランドカノニカル:} \#\#\_phys.dat
+ \end{itemize}
+  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はNup、\%\%はNdownを表します。
+
+\subsubsection{ファイル形式}
+1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。
+ \begin{itemize}
+   \item $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$
+  \end{itemize}
+\subsubsection{パラメータ}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf 形式 :} double型
+
+{\bf 説明 :} エネルギーの期待値$\langle H\rangle$。
+ 
+  \item $[$double02$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  粒子数の期待値$\langle \hat{n}\rangle$。
+
+  \item $[$double03$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  スピンのz成分の期待値$\langle S_z\rangle$。
+
+  \item $[$double04$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  スピンの2乗の期待値$\langle {\bm S}^2\rangle$。
+
+  \item $[$double05$]$
+
+ {\bf 形式 :} double型 
+
+{\bf 説明 :}  ダブロン
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N_s$はサイト数)。
+
+
+ \end{itemize}
+
+
+\newpage
+\subsection{ham.dat}
+\label{Subsec:ham}
+(FullDiagでのみ出力) \verb$CalcMod$ファイルで\verb$OutputHam=1$の場合に、HΦ内部で計算されたハミルトニアンをMatrixMarket形式で出力します。\verb$CalcMod$ファイルで\verb$InputHam=1$とすると、定義ファイル一式と本ファイルを読み込み、再計算することができます。以下にファイル例を記載します。
 
 \begin{minipage}{12.5cm}
 \begin{screen}
 \begin{verbatim}
-    0    0    0    0 0.4452776740 0.0000000000
-    0    1    0    1 0.4452776740 0.0000000000
-    1    0    1    0 0.5000000000 0.0000000000
-    1    1    1    1 0.5000000000 0.0000000000
-    2    0    2    0 0.4452776740 0.0000000000
-    2    1    2    1 0.4452776740 0.0000000000
-    3    0    3    0 0.5000000000 0.0000000000
-    3    1    3    1 0.5000000000 0.0000000000
+%%%%MatrixMarket matrix coordinate complex hermitian
+28 28 56
+1 1 1.000000 0.000000
+2 1 0.500000 0.000000
+3 2 0.500000 0.000000
+4 3 0.500000 0.000000
+5 4 0.500000 0.000000
+6 5 0.500000 0.000000
+7 6 0.500000 0.000000
+7 7 1.000000 0.000000
     …
 \end{verbatim}
 \end{screen}
@@ -3553,41 +3647,45 @@ OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagge
 
 \subsubsection{ファイル名}
  \begin{itemize}
-   \item{Lanczos法:}  \#\#\_cisajs.dat
-   \item{TPQ法:} \#\#\_cisajs\_set??step\%\%.dat
-   \item{全対角化法、LOBCG法:}  \#\#\_cisajs\_eigen{\&\&}.dat
-  \end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
+ \item \#\#\_ham.dat
+ \end{itemize}
+ \#\#はModParaファイル内の[string02]で指定されるヘッダを表します。
 
 
 \subsubsection{ファイル形式}
  \begin{itemize}
-   \item  $[$int01$]$~~$[$int02$]$~~$[$int03$]$~~$[$int04$]$~~$[$double01$]$~~$[$double02$]$
+   \item  1行：ヘッダ
+   \item  2行：$[$int01$]$~~$[$int02$]$~~$[$int03$]$
+   \item  3行-：$[$int04$]$~~$[$int05$]$~~$[$double01$]$~~$[$double02$]$
   \end{itemize}
 \subsubsection{パラメータ}
  \begin{itemize}
 
-  \item  $[$int01$]$, $[$int03$]$
+  \item  $[$int01$]$
 
  {\bf 形式 :} int型
 
-{\bf 説明 :} サイト番号を指定する整数。$[$int01$]$が$i$サイト、$[$int03$]$が$j$サイトを表します。
+{\bf 説明 :} Hamiltonianの行数。
  
-  \item  $[$int02$]$, $[$int04$]$
+  \item  $[$int02$]$
 
  {\bf 形式 :} int型 
 
-{\bf 説明 :} スピンを指定する整数。$[$int02$]$が$\sigma_1$、$[$int03$]$が$\sigma_2$に対応します。\\
-0: アップスピン\\
-1: ダウンスピン\\
-を表します。
+{\bf 説明 :} Hamiltonianの列数。
+
+  \item  $[$int03$]$
+
+ {\bf 形式 :} int型 
+
+{\bf 説明 :} Hamiltonianの非零の要素数。
 
   \item  $[$double01$]$, $[$double02$]$
 
  {\bf 形式 :} double型 
 
-{\bf 説明 :} $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+{\bf 説明 :} Hamiltonianの値を表します。\\
+$[$double01$]$が実部、$[$double02$]$が虚部を表します。
+
 \end{itemize}
 
 \newpage

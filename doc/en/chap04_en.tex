@@ -1109,6 +1109,25 @@ Select the mode of inputting a restart vector:\\
 5: Input and output  both components of triangular diagonal matrix and a restart vector.\\
 }
 
+\item  \verb|OutputHam|
+
+{\bf Type :} {Int (default value: 0)}
+
+{\bf Description :} {Full Diag)Select the mode of outputting Hamiltonian:\\
+0: not output Hamiltonian.\\
+1: output Hamiltonian.\\
+}
+
+\item  \verb|InputHam|
+
+{\bf Type :} {Int (default value: 0)}
+
+{\bf Description :} {(Full Diag)Select the mode of inputting Hamiltonian:\\
+0: not input Hamiltonian.\\
+1: input Hamiltonian.\\
+}
+
+
 \end{itemize}
 
 \newpage
@@ -3577,6 +3596,73 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
 
 
  \end{itemize}
+
+\newpage
+\subsection{ham.dat}
+\label{Subsec:ham}
+(For the FullDiag method) When \verb$OutputHam=1$ in the \verb$CalcMod$ file, the Hamiltonian calculated by $\HPhi$ is outputted by the MatrixMarket format. The recalculation by using this file can be down when \verb$InputHam=1$ in the \verb$CalcMod$ file.
+An example of the file format is as follows.\\
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+%%%%MatrixMarket matrix coordinate complex hermitian
+28 28 56
+1 1 1.000000 0.000000
+2 1 0.500000 0.000000
+3 2 0.500000 0.000000
+4 3 0.500000 0.000000
+5 4 0.500000 0.000000
+6 5 0.500000 0.000000
+7 6 0.500000 0.000000
+7 7 1.000000 0.000000
+    …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+ \begin{itemize}
+ \item \#\#\_ham.dat
+ \end{itemize}
+  \#\# indicates [string02] in a ModPara file.
+  
+\subsubsection{File format}
+ \begin{itemize}
+   \item Line 1: Header
+   \item Line 2: $[$int01$]$~~$[$int02$]$~~$[$int03$]$
+   \item Lines3-：$[$int04$]$~~$[$int05$]$~~$[$double01$]$~~$[$double02$]$
+  \end{itemize}
+  
+  \subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf Type :} Int
+
+{\bf Description :} Number of rows of Hamiltonian.
+ 
+  \item  $[$int02$]$
+
+ {\bf Type :} Int 
+
+{\bf Description :} Number of columns of Hamiltonian.
+
+  \item  $[$int03$]$
+
+ {\bf Type :} Int
+
+{\bf Description :} Number of nonzero elements of Hamiltonian.
+
+  \item  $[$double01$]$, $[$double02$]$
+
+ {\bf Type :} Double
+
+{\bf Description :} The value of Hamiltonian;  $[$double01$]$ and $[$double02$]$  represent real and imaginary part of the Hamiltonian, respectively.
+
+\end{itemize}
+
 
 \newpage
 \subsection{cisajs.dat}
