@@ -81,8 +81,8 @@ struct StdIntList *StdI,//!<[inout]
 {
   int ispin;
   /**@brief
-   Both @f$c_{i \sigma}^\daggerc_{j \sigma}@f$ and
-  @f$c_{j \sigma}^\daggerc_{i \sigma}@f$ for every spin channel
+   Both @f$c_{i \sigma}^\dagger c_{j \sigma}@f$ and
+  @f$c_{j \sigma}^\dagger c_{i \sigma}@f$ for every spin channel
   (@f$\sigma@f$) is specified
   */
   for (ispin = 0; ispin < 2; ispin++) {
