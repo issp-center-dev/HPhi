@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Standard mode for the pyrochlore lattice
+*/
 #include "StdFace_vals.h"
 #include "StdFace_ModelUtil.h"
 #include <stdlib.h>
@@ -24,14 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 
 /**
- *
- * Setup a Hamiltonian for the Pyrochlore structure
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
+@brief Setup a Hamiltonian for the Pyrochlore structure
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_Pyrochlore(
+  struct StdIntList *StdI,//!<[inout]
+  char *model//!<[in] The name of model (e.g. hubbard)
+)
 {
-  int isite, jsite;
+  int isite, jsite, ntransMax, nintrMax;
   int iL, iW, iH, kCell;
   FILE *fp;
   double complex Cphase;
@@ -39,8 +43,8 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
-  /*
-   Initialize Cell
+  /**@brief
+  (1) Compute the shape of the super-cell and sites in the super-cell
   */
   fp = fopen("lattice.xsf", "w");
   /**/
@@ -71,7 +75,9 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
   StdI->tau[1][0] = 0.5; StdI->tau[1][1] = 0.0; ; StdI->tau[1][2] = 0.0;
   StdI->tau[2][0] = 0.0; StdI->tau[2][1] = 0.5; ; StdI->tau[2][2] = 0.0;
   StdI->tau[3][0] = 0.0; StdI->tau[3][1] = 0.0; ; StdI->tau[3][2] = 0.5;
-  /**/
+  /**@brief
+  (2) check & store parameters of Hamiltonian
+  */
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_d("K", StdI->K);
   StdFace_PrintVal_d("h", &StdI->h, 0.0);
@@ -140,8 +146,9 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
  
   }/*if (model != "spin")*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
-  /*
-   Local Spin
+  /**@brief
+  (3) Set local spin flag (StdIntList::locspinflag) and
+  the number of sites (StdIntList::nsite)
   */
   StdI->nsite = StdI->NsiteUC * StdI->NCell;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
@@ -156,30 +163,28 @@ void StdFace_Pyrochlore(struct StdIntList *StdI, char *model)
       StdI->locspinflag[iL] = StdI->S2;
       StdI->locspinflag[iL + StdI->nsite / 2] = 0;
     }
-  /*
-   The number of Transfer & Interaction
+  /**@brief
+  (4) Compute the upper limit of the number of Transfer & Interaction and malloc them.
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*D*/ + 12/*J*/ + 0/*J'*/ + 0/*J''*/)
+    ntransMax = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    nintrMax = StdI->NCell * (StdI->NsiteUC/*D*/ + 12/*J*/ + 0/*J'*/ + 0/*J''*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->NCell * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 24/*t*/ + 0/*t'*/ + 0/*t''*/);
-    StdI->nintr = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (12/*V*/ + 0/*V'*/ + 0/*V''*/));
+    ntransMax = StdI->NCell * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 24/*t*/ + 0/*t'*/ + 0/*t''*/);
+    nintrMax = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (12/*V*/ + 0/*V'*/ + 0/*V''*/));
 
     if (strcmp(StdI->model, "kondo") == 0) {
-      StdI->ntrans += StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-      StdI->nintr += StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
+      ntransMax += StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+      nintrMax += StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
     }
   }
   /**/
-  StdFace_MallocInteractions(StdI);
-  /*
-   Set Transfer & Interaction
+  StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
+  /**@brief
+  (5) Set Transfer & Interaction
   */
-  StdI->ntrans = 0;
-  StdI->nintr = 0;
   for (kCell = 0; kCell < StdI->NCell; kCell++){
     /**/
     iW = StdI->Cell[kCell][0];

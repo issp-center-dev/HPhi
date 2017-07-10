@@ -15,6 +15,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Read Input file and write files for Expert mode.
+       Initialize variables.
+       Check parameters.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,8 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #if defined(_HPhi)
 /**
- * Set Largevalue for TPQ
- */
+@brief Set Largevalue (StdIntList::LargeValue) for TPQ.
+       Sum absolute-value of all one- and two- body terms.
+*/
 static void StdFace_LargeValue(struct StdIntList *StdI) {
   int ktrans, kintr;
   double LargeValue0;
@@ -58,17 +64,17 @@ static void StdFace_LargeValue(struct StdIntList *StdI) {
   StdFace_PrintVal_d("LargeValue", &StdI->LargeValue, LargeValue0);
 }/*static void StdFace_LargeValue*/
 /**
- *
- * Print calcmod.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print calcmod.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintCalcMod(struct StdIntList *StdI)
 {
   FILE *fp;
   int iCalcType, iCalcModel, iRestart, iCalcSpec, 
     iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec;
-
+  /*
+  First, check all parameters and exit if invalid parameters
+  */
   fprintf(stdout, "\n  @ CalcMod\n\n");
   /*
    Method
@@ -91,30 +97,30 @@ static void PrintCalcMod(struct StdIntList *StdI)
   else{
     fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
     StdFace_exit(-1);
-  }
+  }/*if (strcmp(StdI->method, METHODS) != 0*/
   /*
    Model
   */
   if (strcmp(StdI->model, "hubbard") == 0) {
     if (StdI->lGC == 0)iCalcModel = 0;
     else iCalcModel = 3;
-  }
+  }/*if (strcmp(StdI->model, "hubbard") == 0)*/
   else if (strcmp(StdI->model, "spin") == 0) {
     if (StdI->lGC == 0)iCalcModel = 1;
     else iCalcModel = 4;
-  }
-  if (strcmp(StdI->model, "kondo") == 0) {
+  }/*if (strcmp(StdI->model, "spin") == 0)*/
+  else if (strcmp(StdI->model, "kondo") == 0) {
     if (StdI->lGC == 0)iCalcModel = 2;
     else iCalcModel = 5;
-  }
+  }/*if (strcmp(StdI->model, "kondo") == 0)*/
   /*
-    Restart
+  Restart
   */
   if (strcmp(StdI->Restart, "****") == 0) {
     strcpy(StdI->Restart, "none\0");
     fprintf(stdout, "          Restart = none        ######  DEFAULT VALUE IS USED  ######\n");
     iRestart = 0;
-  }
+  }/*if (strcmp(StdI->Restart, "****") == 0)*/
   else {
     fprintf(stdout, "          Restart = %s\n", StdI->Restart);
     if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
@@ -125,7 +131,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
       fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->Restart, "****") != 0)*/
   /*
   InitialVecType
   */
@@ -133,7 +139,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
     strcpy(StdI->InitialVecType, "c\0");
     fprintf(stdout, "   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######\n");
     iInitialVecTpye = 0;
-  }
+  }/*if (strcmp(StdI->InitialVecType, "****") == 0)*/
   else {
     fprintf(stdout, "   InitialVecType = %s\n", StdI->InitialVecType);
     if (strcmp(StdI->InitialVecType, "c") == 0) iInitialVecTpye = 0;
@@ -142,7 +148,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
       fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->InitialVecType, "****") != 0)*/
   /*
   EigenVecIO
   */
@@ -151,7 +157,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
   if (strcmp(StdI->EigenVecIO, "****") == 0) {
     strcpy(StdI->EigenVecIO, "none\0");
     fprintf(stdout, "       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######\n");
-  }
+  }/*if (strcmp(StdI->EigenVecIO, "****") == 0)*/
   else {
     fprintf(stdout, "       EigenVecIO = %s\n", StdI->EigenVecIO);
     if (strcmp(StdI->EigenVecIO, "none") == 0) InputEigenVec = 0;
@@ -160,12 +166,12 @@ static void PrintCalcMod(struct StdIntList *StdI)
     else if (strcmp(StdI->EigenVecIO, "inout") == 0) {
       InputEigenVec = 1;
       OutputEigenVec = 1;
-    }
+    }/*if (strcmp(StdI->EigenVecIO, "inout") == 0)*/
     else {
       fprintf(stdout, "\n ERROR ! EigenVecIO Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->EigenVecIO, "****") != 0)*/
   /*
   CalcSpec
   */
@@ -173,7 +179,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
     strcpy(StdI->CalcSpec, "none\0");
     fprintf(stdout, "         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######\n");
     iCalcSpec = 0;
-  }
+  }/*if (strcmp(StdI->CalcSpec, "****") == 0)*/
   else {
     fprintf(stdout, "         CalcSpec = %s\n", StdI->CalcSpec);
     if (strcmp(StdI->CalcSpec, "none") == 0) iCalcSpec = 0;
@@ -186,7 +192,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
       fprintf(stdout, "\n ERROR ! CalcSpec : %s\n", StdI->CalcSpec);
       StdFace_exit(-1);
     }
-  }
+  }/*if (strcmp(StdI->CalcSpec, "****") != 0)*/
 
   fp = fopen("calcmod.def", "w");
   fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG\n");
@@ -206,11 +212,9 @@ static void PrintCalcMod(struct StdIntList *StdI)
   fprintf(stdout, "     calcmod.def is written.\n\n");
 }/*static void PrintCalcMod*/
 /**
- *
- * Print single.def or pair.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print single.def or pair.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
   int NumOp, spin[2][2], isite, ispin, icell, itau;
@@ -345,9 +349,10 @@ static void PrintExcitation(struct StdIntList *StdI) {
 
 }/*static void PrintExcitation()*/
 #elif defined(_mVMC)
-/*
- * Output Orbital index (up-down)
- */
+/**
+@brief Output Anti-parallel orbital index
+Free StdIntList::Orb
+*/
 static void PrintOrb(struct StdIntList *StdI) {
   FILE *fp;
   int isite, jsite, iOrb;
@@ -381,15 +386,16 @@ static void PrintOrb(struct StdIntList *StdI) {
   free(StdI->Orb);
 }/*void PrintOrb*/
 /**
- * Output OrbitalIdx (up-up & down-down)
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void PrintOrbGC(struct StdIntList *StdI) {
+@brief Output parallel orbitalIdx
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void PrintOrbPara(struct StdIntList *StdI) {
   FILE *fp;
   int isite, jsite, NOrbGC, iOrbGC, isite1, jsite1, iorb;
   int **OrbGC, **AntiOrbGC;
-
+  /**@brief
+  (1) Copy from anti-parallel orbital index
+  */
   OrbGC = (int **)malloc(sizeof(int*) * StdI->nsite);
   AntiOrbGC = (int **)malloc(sizeof(int*) * StdI->nsite);
   for (isite = 0; isite < StdI->nsite; isite++) {
@@ -400,9 +406,9 @@ static void PrintOrbGC(struct StdIntList *StdI) {
       AntiOrbGC[isite][jsite] = StdI->AntiOrb[isite][jsite];
     }/*for (jsite = 0; jsite < isite; jsite++)*/
   }/*for (isite = 0; isite < StdI->nsite; isite++)*/
-   /*
-   Symmetrize
-   */
+  /**@brief
+  (2) Symmetrize
+  */
   for (iorb = 0; iorb < StdI->NOrb; iorb++) {
     for (isite = 0; isite < StdI->nsite; isite++) {
       for (jsite = 0; jsite < StdI->nsite; jsite++) {
@@ -436,7 +442,7 @@ static void PrintOrbGC(struct StdIntList *StdI) {
     }/*for (jsite = 0; jsite < isite; jsite++)*/
   }/*for (isite = 0; isite < StdI->nsite; isite++)*/
 
-  fp = fopen("orbitalidxgc.def", "w");
+  fp = fopen("orbitalidxpara.def", "w");
   fprintf(fp, "=============================================\n");
   fprintf(fp, "NOrbitalIdx %10d\n", NOrbGC);
   fprintf(fp, "ComplexType %10d\n", StdI->ComplexType);
@@ -458,7 +464,7 @@ static void PrintOrbGC(struct StdIntList *StdI) {
 
   fflush(fp);
   fclose(fp);
-  fprintf(stdout, "    orbitalidxgc.def is written.\n");
+  fprintf(stdout, "    orbitalidxpara.def is written.\n");
 
   for (isite = 0; isite < StdI->nsite; isite++) {
     free(OrbGC[isite]);
@@ -466,11 +472,10 @@ static void PrintOrbGC(struct StdIntList *StdI) {
   }
   free(OrbGC);
   free(AntiOrbGC);
-}/*static void PrintOrbGC*/
+}/*static void PrintOrbPara*/
 /**
- * Output .def file for Gutzwiller
- *
- */
+@brief Output .def file for Gutzwiller
+*/
 static void PrintGutzwiller(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -552,15 +557,16 @@ static void PrintGutzwiller(struct StdIntList *StdI)
 }/*static void PrintGutzwiller*/
 #endif
 /**
- *
- * Clear grobal variables in the standard mode
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Clear grobal variables in the standard mode
+All variables refered in this function is modified.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StdFace_ResetVals(struct StdIntList *StdI) {
   int i, j;
   double NaN_d;
-
+  /*
+  NaN is used for not inputed variable
+  */
   NaN_d = 0.0 / 0.0;
   StdI->NaN_i = 2147483647;
   /**/
@@ -693,11 +699,11 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
 #endif
 }/*static void StdFace_ResetVals*/
 /*
- * Make all characters lower
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void Text2Lower(char *value /**< [inout] Keyword or value*/){
+@brief Make all characters lower
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void Text2Lower(char *value //!<[inout] @brief Keyword or value
+){
   char value2;
   int valuelen, ii;
 
@@ -708,12 +714,11 @@ static void Text2Lower(char *value /**< [inout] Keyword or value*/){
   }
 }/*static void Text2Lower*/
 /**
- *
- * Remove : space etc. from keyword and value in an iput file
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void TrimSpaceQuote(char *value /**< [inout] Keyword or value*/){
+@brief Remove : space etc. from keyword and value in an iput file
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void TrimSpaceQuote(char *value //!<[inout] @brief Keyword or value
+){
   char value2[256];
   int valuelen, valuelen2, ii;
 
@@ -739,16 +744,15 @@ static void TrimSpaceQuote(char *value /**< [inout] Keyword or value*/){
 
 }/*static void TrimSpaceQuote*/
 /**
- *
- * Store an input value into the valiable (string)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (string)
+ If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_s(
-  char *keyword /**< [in] keyword read from the input file*/, 
-  char *valuestring /**< [in] value read from the input file*/, 
-  char *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  char *value//!<[out]
+)
 {
   if (strcmp(value, "****") != 0){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
@@ -759,17 +763,15 @@ static void StoreWithCheckDup_s(
   }
 }/*static void StoreWithCheckDup_s*/
 /**
- *
- * Store an input value into the valiable (string) 
- * Force string lower.
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (string) 
+Force string lower. If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_sl(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  char *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  char *value//!<[out]
+)
 {
   if (strcmp(value, "****") != 0) {
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
@@ -781,16 +783,15 @@ static void StoreWithCheckDup_sl(
   }
 }/*static void StoreWithCheckDup_sl*/
 /**
- *
- * Store an input value into the valiable (integer)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (integer)
+If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_i(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  int *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  int *value//!<[out]
+)
 {
   int NaN_i = 2147483647;
 
@@ -803,18 +804,16 @@ static void StoreWithCheckDup_i(
   }
 }/*static void StoreWithCheckDup_i*/
 /**
- *
- * Store an input value into the valiable (double)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (double)
+If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_d(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  double *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  double *value//!<[out]
+)
 {
-
   if (isnan(*value) == 0){
     fprintf(stdout, "ERROR !  Keyword %s is duplicated ! \n", keyword);
     StdFace_exit(-1);
@@ -822,19 +821,17 @@ static void StoreWithCheckDup_d(
   else{
     sscanf(valuestring, "%lf", value);
   }
-
 }/*static void StoreWithCheckDup_d*/
 /**
- *
- * Store an input value into the valiable (Double complex)
- * If duplicated, HPhi will stop.
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Store an input value into the valiable (Double complex)
+      If duplicated, HPhi will stop.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void StoreWithCheckDup_c(
-  char *keyword /**< [in] keyword read from the input file*/,
-  char *valuestring /**< [in] value read from the input file*/,
-  double complex *value /**< [out] */)
+  char *keyword,//!<[in] keyword read from the input file
+  char *valuestring,//!<[in] value read from the input file
+  double complex *value//!<[out]
+)
 {
   int num;
   char *valuestring_r, *valuestring_i;
@@ -875,11 +872,9 @@ static void StoreWithCheckDup_c(
   }
 }/*static void StoreWithCheckDup_c*/
 /**
- *
- * Print the locspin file
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print the locspin file
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintLocSpin(struct StdIntList *StdI) {
   FILE *fp;
   int isite, nlocspin;
@@ -903,11 +898,9 @@ static void PrintLocSpin(struct StdIntList *StdI) {
   fprintf(stdout, "    locspn.def is written.\n");
 }/*static void PrintLocSpin*/
 /**
- *
- * Print the transfer file
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print the transfer file
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintTrans(struct StdIntList *StdI){
   FILE *fp;
   int jtrans, ktrans, ntrans0;
@@ -954,11 +947,9 @@ static void PrintTrans(struct StdIntList *StdI){
   }/*if (StdI->Ltrans == 1)*/
 }/*static void PrintTrans*/
 /**
- *
- * Print namelist.def  
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print namelist.def  
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintNamelist(struct StdIntList *StdI){
   FILE *fp;
 
@@ -988,7 +979,8 @@ static void PrintNamelist(struct StdIntList *StdI){
   fprintf(                         fp, "      Gutzwiller  gutzwilleridx.def\n");
   fprintf(                         fp, "         Jastrow  jastrowidx.def\n");
   fprintf(                         fp, "         Orbital  orbitalidx.def\n");
-  if (StdI->lGC == 1) fprintf(     fp, " OrbitalParallel  orbitalidxgc.def\n");
+  if (StdI->lGC == 1 || (StdI->Sz2 != 0 && StdI->Sz2 != StdI->NaN_i))
+    fprintf(fp, " OrbitalParallel  orbitalidxpara.def\n");
   fprintf(                         fp, "        TransSym  qptransidx.def\n");
 #endif
   
@@ -997,11 +989,9 @@ static void PrintNamelist(struct StdIntList *StdI){
   fprintf(stdout, "    namelist.def is written.\n");
 }/*static void PrintNamelist*/
 /**
- *
- * Print modpara.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print modpara.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintModPara(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -1073,11 +1063,9 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(stdout, "     modpara.def is written.\n");
 }/*static void PrintModPara*/
 /**
- *
- * Print greenone.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print greenone.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void Print1Green(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -1155,11 +1143,9 @@ static void Print1Green(struct StdIntList *StdI)
   }/*if (StdI->ioutputmode != 0) */
 }/*static void Print1Green*/
 /**
- *
- * Print greentwo.def
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Print greentwo.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void Print2Green(struct StdIntList *StdI) {
   FILE *fp;
   int ngreen, store, igreen;
@@ -1171,14 +1157,13 @@ static void Print2Green(struct StdIntList *StdI) {
    Set Indices of correlation functions
   */
   ngreen = 0;
-  if (StdI->ioutputmode != 0) {
+  if (StdI->ioutputmode == 1) {
     for (store = 0; store < 2; store++) {
 
       if (store == 1) {
         greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
-        for (igreen = 0; igreen < ngreen; igreen++) {
+        for (igreen = 0; igreen < ngreen; igreen++)
           greenindx[igreen] = (int *)malloc(sizeof(int) * 8);
-        }
         ngreen = 0;
       }/*if (store == 1)*/
 
@@ -1186,8 +1171,71 @@ static void Print2Green(struct StdIntList *StdI) {
 
         if (StdI->locspinflag[site1] == 0) S1Max = 1;
         else S1Max = StdI->locspinflag[site1];
-
         for (spin1 = 0; spin1 <= S1Max; spin1++) {
+          for (spin2 = 0; spin2 <= S1Max; spin2++) {
+
+            for (site3 = 0; site3 < StdI->nsite; site3++) {
+
+              if (StdI->locspinflag[site3] == 0) S3Max = 1;
+              else S3Max = StdI->locspinflag[site3];
+              for (spin3 = 0; spin3 <= S3Max; spin3++) {
+                for (spin4 = 0; spin4 <= S3Max; spin4++) {
+
+                  if (spin1 - spin2 + spin3 - spin4 == 0) {
+                    if (store == 1) {
+#if defined(_mVMC)
+                      if (spin1 != spin2 || spin3 != spin4)
+                      {
+                        greenindx[ngreen][0] = site1;
+                        greenindx[ngreen][1] = spin1;
+                        greenindx[ngreen][2] = site3;
+                        greenindx[ngreen][3] = spin4;
+                        greenindx[ngreen][4] = site3;
+                        greenindx[ngreen][5] = spin3;
+                        greenindx[ngreen][6] = site1;
+                        greenindx[ngreen][7] = spin2;
+                      }
+                      else
+#endif
+                      {
+                        greenindx[ngreen][0] = site1;
+                        greenindx[ngreen][1] = spin1;
+                        greenindx[ngreen][2] = site1;
+                        greenindx[ngreen][3] = spin2;
+                        greenindx[ngreen][4] = site3;
+                        greenindx[ngreen][5] = spin3;
+                        greenindx[ngreen][6] = site3;
+                        greenindx[ngreen][7] = spin4;
+                      }
+                    }/*if (store == 1)*/
+                    ngreen++;
+                  }/*if (spin1 - spin2 + spin3 - spin4 == 0)*/
+
+                }/*for (spin4 = 0; spin4 <= S3Max; spin4++)*/
+              }/*for (spin3 = 0; spin3 <= S3Max; spin3++*/
+            }/*for (site3 = 0; site3 < StdI->nsite; site3++)*/
+          }/*for (spin2 = 0; spin2 <= S1Max; spin2++)*/
+        }/*for (spin1 = 0; spin1 <= S1Max; spin1++)*/
+      }/*for (site1 = 0; site1 < StdI->nsite; site1++)*/
+
+    }/*for (store = 0; store < 2; store++)*/
+  }/*if (StdI->ioutputmode == 1)*/
+  else if (StdI->ioutputmode == 2) {
+    for (store = 0; store < 2; store++) {
+
+      if (store == 1) {
+        greenindx = (int **)malloc(sizeof(int*) * (ngreen + 1));
+        for (igreen = 0; igreen < ngreen; igreen++)
+          greenindx[igreen] = (int *)malloc(sizeof(int) * 8);
+        ngreen = 0;
+      }/*if (store == 1)*/
+
+      for (site1 = 0; site1 < StdI->nsite; site1++) {
+
+        if (StdI->locspinflag[site1] == 0) S1Max = 1;
+        else S1Max = StdI->locspinflag[site1];
+        for (spin1 = 0; spin1 <= S1Max; spin1++) {
+
           for (site2 = 0; site2 < StdI->nsite; site2++) {
 
             if (StdI->locspinflag[site1] != 0 && StdI->locspinflag[site2] != 0
@@ -1195,14 +1243,14 @@ static void Print2Green(struct StdIntList *StdI) {
 
             if (StdI->locspinflag[site2] == 0) S2Max = 1;
             else S2Max = StdI->locspinflag[site2];
-
             for (spin2 = 0; spin2 <= S2Max; spin2++) {
+
               for (site3 = 0; site3 < StdI->nsite; site3++) {
 
                 if (StdI->locspinflag[site3] == 0) S3Max = 1;
                 else S3Max = StdI->locspinflag[site3];
-
                 for (spin3 = 0; spin3 <= S3Max; spin3++) {
+
                   for (site4 = 0; site4 < StdI->nsite; site4++) {
 
                     if (StdI->locspinflag[site3] != 0 && StdI->locspinflag[site4] != 0
@@ -1210,40 +1258,19 @@ static void Print2Green(struct StdIntList *StdI) {
 
                     if (StdI->locspinflag[site4] == 0) S4Max = 1;
                     else S4Max = StdI->locspinflag[site4];
-
                     for (spin4 = 0; spin4 <= S4Max; spin4++) {
 
-                      if (StdI->ioutputmode == 2 ||
-                        (site1 == site2 && site3 == site4 &&
-                          spin1 - spin2 + spin3 - spin4 == 0)) {
-                        if (store == 1) {
-#if defined(_mVMC)
-                          if (spin1 != spin2 || spin3 != spin4) 
-                          {
-                            greenindx[ngreen][0] = site1;
-                            greenindx[ngreen][1] = spin1;
-                            greenindx[ngreen][2] = site4;
-                            greenindx[ngreen][3] = spin4;
-                            greenindx[ngreen][4] = site3;
-                            greenindx[ngreen][5] = spin3;
-                            greenindx[ngreen][6] = site2;
-                            greenindx[ngreen][7] = spin2;
-                          }
-                          else 
-#endif
-                          {
-                            greenindx[ngreen][0] = site1;
-                            greenindx[ngreen][1] = spin1;
-                            greenindx[ngreen][2] = site2;
-                            greenindx[ngreen][3] = spin2;
-                            greenindx[ngreen][4] = site3;
-                            greenindx[ngreen][5] = spin3;
-                            greenindx[ngreen][6] = site4;
-                            greenindx[ngreen][7] = spin4;
-                          }
-                        }
-                        ngreen++;
-                      }
+                      if (store == 1) {
+                        greenindx[ngreen][0] = site1;
+                        greenindx[ngreen][1] = spin1;
+                        greenindx[ngreen][2] = site2;
+                        greenindx[ngreen][3] = spin2;
+                        greenindx[ngreen][4] = site3;
+                        greenindx[ngreen][5] = spin3;
+                        greenindx[ngreen][6] = site4;
+                        greenindx[ngreen][7] = spin4;
+                      }/*if (store == 1)*/
+                      ngreen++;
 
                     }/*for (spin4 = 0; spin4 <= S4Max; spin4++)*/
                   }/*for (site4 = 0; site4 < StdI->nsite; site4++)*/
@@ -1255,7 +1282,8 @@ static void Print2Green(struct StdIntList *StdI) {
       }/*for (site1 = 0; site1 < StdI->nsite; site1++)*/
 
     }/*for (store = 0; store < 2; store++)*/
-
+  }/*if (StdI->ioutputmode == 2)*/
+  if (StdI->ioutputmode != 0) {
     fp = fopen("greentwo.def", "w");
     fprintf(fp, "=============================================\n");
     fprintf(fp, "NCisAjsCktAltDC %10d\n", ngreen);
@@ -1276,18 +1304,16 @@ static void Print2Green(struct StdIntList *StdI) {
       free(greenindx[igreen]);
     }
     free(greenindx);
-
   }/*if (StdI->ioutputmode != 0)*/
 }/*static void Print2Green(struct StdIntList *StdI)*/
 /**
- *
- * Stop HPhi if unsupported model is read 
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Stop HPhi if unsupported model is read 
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void UnsupportedSystem(
-  char *model /**< [in]*/, 
-  char *lattice /**< [in]*/)
+  char *model,//!<[in]
+  char *lattice//!<[in]
+)
 {
   fprintf(stdout, "\nSorry, specified combination, \n");
   fprintf(stdout, "    MODEL : %s  \n", model);
@@ -1297,11 +1323,9 @@ static void UnsupportedSystem(
   StdFace_exit(-1);
 }/*static void UnsupportedSystem*/
 /**
- *
- * Verify outputmode
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Verify outputmode
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void CheckOutputMode(struct StdIntList *StdI)
 {
   /*
@@ -1335,12 +1359,10 @@ static void CheckOutputMode(struct StdIntList *StdI)
   }
 }/*static void CheckOutputMode*/
 /**
- *
- * Summary numerical parameter check the combination of
- * the number of sites, total spin, the number of electrons
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Summary numerical parameter check the combination of
+ the number of sites, total spin, the number of electrons
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void CheckModPara(struct StdIntList *StdI)
 {
 
@@ -1411,7 +1433,7 @@ static void CheckModPara(struct StdIntList *StdI)
 
   StdFace_PrintVal_i("RndSeed", &StdI->RndSeed, 123456789);
   StdFace_PrintVal_i("NSplitSize", &StdI->NSplitSize, 1);
-  StdFace_PrintVal_i("NStore", &StdI->NStore, 0);
+  StdFace_PrintVal_i("NStore", &StdI->NStore, 1);
   StdFace_PrintVal_i("NSRCG", &StdI->NSRCG, 0);
 
   StdFace_PrintVal_d("DSROptRedCut", &StdI->DSROptRedCut, 0.001);
@@ -1457,11 +1479,9 @@ static void CheckModPara(struct StdIntList *StdI)
   }/*else if (strcmp(StdI->model, "kondo") == 0)*/
 }/*static void CheckModPara*/
 /**
- *
- * Output .def file for Specific interaction
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
+@brief Output .def file for Specific interaction
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
 static void PrintInteractions(struct StdIntList *StdI)
 {
   FILE *fp;
@@ -1761,13 +1781,13 @@ static void PrintInteractions(struct StdIntList *StdI)
   }
 }/*static void PrintInteractions*/
 /**
- *
- * Main routine for the standard mode
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_main(char *fname  /**< [in] Input file name for the standard mode */) {
-
+@brief Main routine for the standard mode
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_main(
+  char *fname//!<[in] Input file name for the standard mode
+)
+{
   struct StdIntList StdI;
 
   FILE *fp;
@@ -2126,7 +2146,7 @@ void StdFace_main(char *fname  /**< [in] Input file name for the standard mode *
   StdFace_Proj(&StdI);
   PrintJastrow(&StdI);
   if(StdI.lGC == 1 || (StdI.Sz2 != 0 && StdI.Sz2 != StdI.NaN_i) )
-    PrintOrbGC(&StdI);
+    PrintOrbPara(&StdI);
   PrintGutzwiller(&StdI);
   PrintOrb(&StdI);
 #endif

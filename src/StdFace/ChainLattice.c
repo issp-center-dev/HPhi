@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**@file
+@brief Standard mode for the chain lattice
+*/
 #include "StdFace_vals.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -24,24 +27,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 
 /**
- *
- * Setup a Hamiltonian for the Hubbard model on a Chain lattice
- *
- * @author Mitsuaki Kawamura (The University of Tokyo)
- */
-void StdFace_Chain(struct StdIntList *StdI, char *model)
+@brief Setup a Hamiltonian for the Hubbard model on a Chain lattice
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void StdFace_Chain(
+  struct StdIntList *StdI,//!<[inout]
+  char *model//!<[in] The name of model (e.g. hubbard)
+)
 {
   FILE *fp;
-  int isite, jsite;
+  int isite, jsite, ntransMax, nintrMax;
   int iL;
   double complex Cphase;
   
-  /**/
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
   fprintf(stdout, "\n");
-  /*
-   Initialize Cell
+  /**@brief
+  (1) Compute the shape of the super-cell and sites in the super-cell
   */
   fp = fopen("lattice.gp", "w");
   /**/
@@ -67,7 +70,9 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
   StdI->W = 1;
   StdFace_InitSite(StdI, fp, 2);
   StdI->tau[0][0] = 0.0; StdI->tau[0][1] = 0.0; StdI->tau[0][2] = 0.0;
-  /**/
+  /**@brief
+  (2) check & store parameters of Hamiltonian
+  */
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
   StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);
@@ -122,8 +127,9 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
     }
   }/*if (strcmp(StdI->model, "spin") != 0 )*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
-  /*
-  Local Spin
+  /**@brief
+  (3) Set local spin flag (StdIntList::locspinflag) and
+  the number of sites (StdIntList::nsite)
   */
   StdI->nsite = StdI->L;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
@@ -138,30 +144,28 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
       StdI->locspinflag[isite] = StdI->S2;
       StdI->locspinflag[isite + StdI->nsite / 2] = 0;
     }
-  /*
-   The number of Transfer & Interaction
+  /**@brief
+  (4) Compute the upper limit of the number of Transfer & Interaction and malloc them.
   */
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdI->ntrans = StdI->L * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-    StdI->nintr = StdI->L * (StdI->NsiteUC/*D*/ + 1/*J*/ + 1/*J'*/)
+    ntransMax = StdI->L * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+    nintrMax = StdI->L * (StdI->NsiteUC/*D*/ + 1/*J*/ + 1/*J'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
   }
   else {
-    StdI->ntrans = StdI->L * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 2/*t*/ + 2/*t'*/);
-    StdI->nintr = StdI->L * (StdI->NsiteUC/*U*/ + 4 * (1/*V*/ + 1/*V'*/));
+    ntransMax = StdI->L * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + 2/*t*/ + 2/*t'*/);
+    nintrMax = StdI->L * (StdI->NsiteUC/*U*/ + 4 * (1/*V*/ + 1/*V'*/));
 
     if (strcmp(StdI->model, "kondo") == 0) {
-      StdI->ntrans += StdI->L * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
-      StdI->nintr += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
+      ntransMax += StdI->L * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
+      nintrMax += StdI->nsite / 2 * (3 * 1 + 1) * (3 * StdI->S2 + 1);
     }/*if (strcmp(StdI->model, "kondo") == 0)*/
   }
   /**/
-  StdFace_MallocInteractions(StdI);
-  /*
-   Set Transfer & Interaction
+  StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
+  /**@brief
+  (5) Set Transfer & Interaction
   */
-  StdI->ntrans = 0;
-  StdI->nintr = 0;
   for (iL = 0; iL < StdI->L; iL++){
 
     isite = iL;
@@ -214,10 +218,8 @@ void StdFace_Chain(struct StdIntList *StdI, char *model)
 
 #if defined(_HPhi)
 /**
-*
-* Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice
-*
-* @author Mitsuaki Kawamura (The University of Tokyo)
+@brief Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice
+@author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_Chain_Boost(struct StdIntList *StdI)
 {

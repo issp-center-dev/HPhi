@@ -511,17 +511,6 @@ int makeHam(struct BindStruct *X){
 	}
     }
 
-    //PairLift
-    for(i = 0;i< X->Def.NPairLiftCoupling/2; i++){
-      for(ihermite=0; ihermite<2; ihermite++){
-	idx=2*i+ihermite;
-	child_pairlift_spin_GetInfo(idx, X);
-	for(j=1;j<=X->Large.i_max;j++){
-	  dmv =child_pairlift_spin_element(j, v0, v1, X,&tmp_off);
-	  Ham[tmp_off][j] +=dmv;
-	}
-      }
-    }
     }
     else{ //For General spin
       //Transfer absorbed in Diagonal term.

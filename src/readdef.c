@@ -214,6 +214,7 @@ int ReadcalcmodFile(
   X->iOutputEigenVec=0;
   X->iInputEigenVec=0;
   X->iOutputHam=0;
+  X->iInputHam=0;
   X->iFlgCalcSpec=0;
   X->iReStart=0;
   X->iFlgMPI=0;
@@ -254,7 +255,9 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "OutputHam")==0){
       X->iOutputHam=itmp;
     }
-
+    else if(CheckWords(ctmp, "InputHam")==0){
+      X->iInputHam=itmp;
+    }
     else if(CheckWords(ctmp, "CalcSpec")==0 || CheckWords(ctmp, "CalcSpectrum")==0){
       X->iFlgCalcSpec=itmp;
     }
@@ -294,6 +297,14 @@ int ReadcalcmodFile(
 
   if(ValidateValue(X->iOutputHam, 0, NUM_OUTPUTHAM-1)){
     fprintf(stdoutMPI, cErrOutputHam, defname);
+    return (-1);
+  }
+  if(ValidateValue(X->iInputHam, 0, NUM_INPUTHAM-1)){
+    fprintf(stdoutMPI, cErrInputHam, defname);
+    return (-1);
+  }
+  if(X->iInputHam == 1 && X->iOutputHam==1){
+    fprintf(stdoutMPI, cErrInputOutputHam, defname);
     return (-1);
   }
 

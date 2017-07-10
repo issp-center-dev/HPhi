@@ -38,6 +38,8 @@ const char* cLogTPQ_Start;
 const char* cLogTPQ_End;
 const char* cLogFullDiag_SetHam_Start;
 const char* cLogFullDiag_SetHam_End;
+const char* cLogFullDiag_InputHam_Start;
+const char* cLogFullDiag_InputHam_End;
 const char* cLogFullDiag_OutputHam_Start;
 const char* cLogFullDiag_OutputHam_End;
 const char* cLogFullDiag_Start;

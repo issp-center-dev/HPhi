@@ -682,9 +682,9 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
                 }
             }else if(org_isite1==org_isite3 && org_sigma1==org_sigma4 && org_sigma3==org_sigma2){
                 dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(i_max,X,isA_up, tmp_V) shared(vec, list_1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(i_max,X,isA_up,org_sigma1, tmp_V) shared(vec, list_1)
                 for(j=1;j<=i_max;j++){
-                    dmv=X_CisAis(list_1[j], X, isA_up);
+                    dmv = X_Spin_CisAis(j, X, isA_up, org_sigma1);
                     dam_pr += vec[j]*tmp_V*dmv*conj(vec[j]);
                 }
             }

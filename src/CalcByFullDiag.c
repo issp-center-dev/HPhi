@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "CalcByFullDiag.h"
+#include "input.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 /** 
@@ -31,7 +32,14 @@ int CalcByFullDiag(
 {
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
-  makeHam(&(X->Bind));
+  if(X->Bind.Def.iInputHam==FALSE){
+    makeHam(&(X->Bind));
+  }
+  else if(X->Bind.Def.iInputHam==TRUE){
+    fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_Start);
+    inputHam(&(X->Bind));
+    fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_End);
+  }
   StopTimer(5100);
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_End);
 
