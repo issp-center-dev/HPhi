@@ -61,7 +61,9 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "SingleExcitation",
   "PairExcitation",
   "SpectrumVec",
-  "Laser"
+  "Laser",
+  "TEOneBody",
+  "TETwoBody"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -664,6 +666,18 @@ int ReadDefFileNInt(
         fgetsMPI(ctmp2, 256, fp);
         sscanf(ctmp2,"%s %d\n", ctmp, &(X->NLaser));
         break;
+
+      case KWTEOneBody:
+        /* Read TEOnebody.def--------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+        fgetsMPI(ctmp2, 256, fp);
+        sscanf(ctmp2,"%s %d\n", ctmp, &(X->NTETimeSteps));
+        break;
+
+      case KWTETwoBody:
+        //[TODO] to be added
+        break;
+
 
       case KWBoost:
         /* Read boost.def--------------------------------*/
@@ -1440,6 +1454,15 @@ int ReadDefFileIdxPara(
             return ReadDefFileError(defname);
           }
         }
+        break;
+
+      case KWTEOneBody:
+        if(X->NTETimeSteps>0){
+        }
+        break;
+
+      case KWTETwoBody:
+        //[TODO] to be added
         break;
 
       case KWBoost:

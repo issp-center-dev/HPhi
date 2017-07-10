@@ -225,6 +225,23 @@ struct DefineList {
 
     struct ParamList Param;
 
+    //[s] For Time Evolution
+    // One-body part
+    int **EDGeneralTransferOrg;      /**< Index of original transfer integrals for Time Evolution. \n
+						   Data Format [Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+    double complex *EDParaGeneralTransferOrg;  /**< Value of original transfer integrals for Time Evolution. \n
+						   Data Format [Ntransfer]. */
+    unsigned int NTETimeSteps;
+    unsigned int *NTETransfer;        /**< Number of time-dependent transfer integrals for Time Evolution.\n
+               Data Format [NTE]*/
+    unsigned int *iFlagTransfer; /**< Flag of transfer integrals to be calculated for Time Evolution.\n
+               Data Format [Ntransfer]*/
+    int ***TETransfer;      /**< Index of time-dependent transfer integrals for Time Evolution. \n
+						   Data Format [NTE][Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+    double complex **TEParaTransfer;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
+						   Data Format [NTE][Ntransfer]. */
+    //Two-body part
+    //[e] For Time Evolution
 };
 
 struct CheckList {
