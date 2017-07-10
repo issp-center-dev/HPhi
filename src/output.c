@@ -16,15 +16,14 @@
 #include "output.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
-/** 
- * 
- * 
- * @param X 
- * 
- * @return 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+
+
+/// \brief output function for FullDiag mode
+///
+/// \param [in] X Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
+/// \retval 0 normally finished.
+/// \retval -1 abnormally finished.
+
 int output(struct BindStruct *X) {
 
   FILE *fp;
@@ -33,7 +32,6 @@ int output(struct BindStruct *X) {
   i_max = X->Check.idim_max;
 
   if (X->Def.iCalcType == FullDiag) {
-    double tmp_N;
     switch (X->Def.iCalcModel) {
       case Spin:
       case Hubbard:
@@ -51,13 +49,6 @@ int output(struct BindStruct *X) {
     if (childfopenMPI(sdt, "w", &fp) != 0) {
       return -1;
     }
-
-    if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) {
-      tmp_N = X->Def.Nsite;
-    } else {
-      tmp_N = X->Phys.num_up + X->Phys.num_down;
-    }
-
     fprintf(fp, "  <H>         <N>        <Sz>       <S2>       <D> \n");
     for (i = 0; i < i_max; i++) {
       fprintf(fp, " %10lf %10lf %10lf %10lf %10lf\n", X->Phys.all_energy[i], X->Phys.all_num_up[i]+X->Phys.all_num_down[i], X->Phys.all_sz[i],
@@ -65,12 +56,21 @@ int output(struct BindStruct *X) {
     }
     fclose(fp);
   }
+  else{
+    fprintf(stdoutMPI, "Error: output function is used only for FullDiag mode.");
+    return -1;
+  }
 
   return 0;
 }
 
+/// \brief output Hamiltonian only used for FullDiag mode
+/// \note global: [in] Ham
+/// \param [in] X Struct to get information about file header names, dimension of hirbert space.
+/// \retval 0 normally finished.
+/// \retval -1 abnormally finished.
+
 int outputHam(struct BindStruct *X){
-  //Output Ham
   long int i=0;
   long int j=0;
   long int imax = X->Check.idim_max;

@@ -17,19 +17,17 @@
 #include "input.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
-/** 
- * 
- * 
- * @param X 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @return 
- */
+
+ /// \brief Parent function for FullDiag mode
+ /// \param X [in,out] Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
+ /// \retval TRUE(=1) normally finished.
+ /// \retval FALSE(=0) abnormally finished.
+
 int CalcByFullDiag(
 		   struct EDMainCalStruct *X
 		   )
 {
+  int iret=0;
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
   if(X->Bind.Def.iInputHam==FALSE){
@@ -42,20 +40,25 @@ int CalcByFullDiag(
   }
   StopTimer(5100);
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_End);
+  if(iret != 0) return FALSE;
+
 
   if(X->Bind.Def.iOutputHam == TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_Start);
     StartTimer(5500);
-    outputHam(&(X->Bind));
+    iret=outputHam(&(X->Bind));
     StopTimer(5500);
     fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_End);
+    if(iret != 0) return FALSE;
     return TRUE;
   }
+
   fprintf(stdoutMPI, "%s", cLogFullDiag_Start);
   StartTimer(5200);
-  lapack_diag(&(X->Bind));
+  iret=lapack_diag(&(X->Bind));
   StopTimer(5200);
   fprintf(stdoutMPI, "%s", cLogFullDiag_End);
+  if(iret != 0) return FALSE;
 
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_Start);
@@ -63,9 +66,12 @@ int CalcByFullDiag(
   phys(&(X->Bind), X->Bind.Check.idim_max);
   StopTimer(5300);
   fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_End);
-  StartTimer(5400);  
-  output(&(X->Bind));
+
+  StartTimer(5400);
+  iret=output(&(X->Bind));
   StopTimer(5400);  
   fprintf(stdoutMPI, "%s", cLogFinish);
+  if(iret != 0) return FALSE;
+
   return TRUE;
 }
