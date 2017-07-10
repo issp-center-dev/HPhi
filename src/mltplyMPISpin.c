@@ -473,7 +473,7 @@ void child_general_int_GeneralSpin_MPIdouble(
 
 }/*void GC_child_general_int_spin_MPIdouble*/
 /**
-@biref General interaction term in the Spin model + GC
+@brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
