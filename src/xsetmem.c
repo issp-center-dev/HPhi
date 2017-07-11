@@ -48,11 +48,17 @@ void setmem_def
   i_malloc1(X->Def.EDSpinChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
   d_malloc1(X->Def.EDParaChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
 
-  i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer, 4);
   i_malloc2(X->Def.GeneralTransfer, X->Def.NTransfer, 4);
-  c_malloc1(X->Def.EDParaGeneralTransfer, X->Def.NTransfer);
-  c_malloc1(X->Def.ParaGeneralTransfer, X->Def.NTransfer);  
-  
+  c_malloc1(X->Def.ParaGeneralTransfer, X->Def.NTransfer);
+
+  if(X->Def.iCalcType == TimeEvolution){
+    i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer+X->Def.NTETransferMax, 4);
+    c_malloc1(X->Def.EDParaGeneralTransfer, X->Def.NTransfer+X->Def.NTETransferMax);
+  }
+  else {
+    i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer, 4);
+    c_malloc1(X->Def.EDParaGeneralTransfer, X->Def.NTransfer);
+  }
   i_malloc2(X->Def.CoulombIntra, X->Def.NCoulombIntra, 1);
   d_malloc1(X->Def.ParaCoulombIntra, X->Def.NCoulombIntra);
   i_malloc2(X->Def.CoulombInter, X->Def.NCoulombInter+X->Def.NIsingCoupling, 2);
@@ -101,7 +107,15 @@ for (iarrayJ = 0; iarrayJ < xBoost->NumarrayJ; iarrayJ++) {
   }
 }
 
-  
+  if (X->Def.iCalcType == TimeEvolution){
+    d_malloc1(X->Def.TETime, X->Def.NTETimeSteps);
+    i_malloc1(X->Def.NTETransfer, X->Def.NTETimeSteps);
+    i_malloc1(X->Def.NTETransferDiagonal, X->Def.NTETimeSteps);
+    i_malloc3(X->Def.TETransfer, X->Def.NTETimeSteps, X->Def.NTETransferMax, 4);
+    i_malloc3(X->Def.TETransferDiagonal, X->Def.NTETimeSteps, X->Def.NTETransferMax, 2);
+    c_malloc2(X->Def.ParaTETransfer, X->Def.NTETimeSteps, X->Def.NTETransferMax);
+    d_malloc2(X->Def.ParaTETransferDiagonal, X->Def.NTETimeSteps,X->Def.NTETransferMax);
+  }
 }
 
 
@@ -213,7 +227,6 @@ int setmem_large
     d_malloc1(X->Phys.all_sz, X->Def.k_exct);
     d_malloc1(X->Phys.all_s2, X->Def.k_exct);
   }
-  
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
   }

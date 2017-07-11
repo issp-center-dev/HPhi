@@ -73,6 +73,11 @@ int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0])
  **/
 static char (*cFileNameListFile)[D_CharTmpReadDef];
 
+int CheckTETransferHermite(struct DefineList *X,
+                           const int NTETrans,
+                           const int idx);
+
+
 /**
  * @brief Error Function of reading def files.
  * @param[in] _defname name of def file.
@@ -411,7 +416,7 @@ int ReadDefFileNInt(
   FILE *fp;
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
-  int itmp;
+  int i,itmp;
   unsigned int iline=0;
   X->nvec=0;
   X->iFlgSpecOmegaMax=FALSE;
@@ -668,13 +673,29 @@ int ReadDefFileNInt(
         break;
 
       case KWTEOneBody:
+        if(X->iCalcType != TimeEvolution) break;
         /* Read TEOnebody.def--------------------------------*/
         fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
         fgetsMPI(ctmp2, 256, fp);
         sscanf(ctmp2,"%s %d\n", ctmp, &(X->NTETimeSteps));
-        break;
+        fgetsMPI(ctmp2, 256, fp);
+        fgetsMPI(ctmp2, 256, fp);
+        fgetsMPI(ctmp2, 256, fp);
+        int iTETransMax=0;
+        if(X->NTETimeSteps>0) {
+          while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+            sscanf(ctmp2, "%lf %d \n", &dtmp, &itmp);
+            for (i = 0; i < itmp; ++i) {
+              fgetsMPI(ctmp2, 256, fp);
+            }
+            if(iTETransMax < itmp) iTETransMax=itmp;
+          }
+        }
+      X->NTETransferMax=iTETransMax;
+      break;
 
       case KWTETwoBody:
+        if(X->iCalcType != TimeEvolution) break;
         //[TODO] to be added
         break;
 
@@ -1458,6 +1479,35 @@ int ReadDefFileIdxPara(
 
       case KWTEOneBody:
         if(X->NTETimeSteps>0){
+          idx=0;
+          while(fgetsMPI(ctmp2, 256, fp) != NULL){
+            sscanf(ctmp2, "%lf %d\n", &(X->TETime[idx]), &(X->NTETransfer[idx]));
+            for(i=0; i<X->NTETransfer[idx]; ++i ){
+              fgetsMPI(ctmp2, 256, fp);
+              sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
+                     &isite1,
+                     &isigma1,
+                     &isite2,
+                     &isigma2,
+                     &dvalue_re,
+                     &dvalue_im
+                    );
+              X->TETransfer[idx][i][0]= isite1;
+              X->TETransfer[idx][i][1]= isigma1;
+              X->TETransfer[idx][i][2]= isite2;
+              X->TETransfer[idx][i][3] = isigma2;
+              X->ParaTETransfer[idx][i]=dvalue_re+dvalue_im*I;
+              //X->TETransfer[idx][i][3]= isigma2;
+              //X->ParaTETransfer[idx][i] = dvalue_re+dvalue_im*I;
+            }
+            //check Transfer Hermite
+            CheckTETransferHermite(X, X->NTETransfer[idx], idx);
+            idx++;
+          }
+          if(idx!=X->NTETimeSteps){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
         }
         break;
 
@@ -2552,5 +2602,128 @@ int GetFileNameByKW(
     return -1;
   }
   *FileName=cFileNameListFile[iKWidx];
+  return 0;
+}
+
+/**
+ * @brief Check Hermite for TETransfer integrals.
+ * @param[in] X Define List for getting transfer integrals.
+ * @retval 0 Hermite.
+ * @retval -1 NonHermite.
+ **/
+int CheckTETransferHermite
+        (
+                struct DefineList *X,
+                const int NTETransfer,
+                const int idx
+        )
+{
+  unsigned int i,j;
+  int isite1, isite2;
+  int isigma1, isigma2;
+  int itmpsite1, itmpsite2;
+  int itmpsigma1, itmpsigma2;
+  int itmperrsite1, itmperrsite2;
+  int itmperrsigma1, itmperrsigma2;
+  double complex dcerrTrans;
+  int icheckHermiteCount=FALSE;
+
+  double  complex ddiff_trans;
+  unsigned int itmpIdx, icntHermite, icntchemi;
+  icntHermite=0;
+  icntchemi=0;
+
+  int** tmp_TETransfer = (int**)malloc((NTETransfer)*sizeof(int*));
+  for(i =0; i<NTETransfer; i++ ){
+    tmp_TETransfer[i] = (int*)malloc((4*sizeof(int)));
+  }
+  double complex*tmp_paraTETransfer = (double complex*)malloc((NTETransfer)*sizeof(double complex));
+
+  //copy
+  for(i=0; i<NTETransfer; i++){
+    for(j=0; j<4; j++){
+      tmp_TETransfer[i][j]=X->TETransfer[idx][i][j];
+      X->TETransfer[idx][i][j]=0;
+    }
+    tmp_paraTETransfer[i] = X->ParaTETransfer[idx][i];
+    X->ParaTETransfer[idx][i]=0.0;
+  }
+
+  for(i=0; i<NTETransfer; i++){
+    isite1=tmp_TETransfer[i][0];
+    isigma1=tmp_TETransfer[i][1];
+    isite2=tmp_TETransfer[i][2];
+    isigma2=tmp_TETransfer[i][3];
+    icheckHermiteCount=FALSE;
+    for(j=0; j<NTETransfer; j++){
+      itmpsite1=tmp_TETransfer[j][0];
+      itmpsigma1=tmp_TETransfer[j][1];
+      itmpsite2=tmp_TETransfer[j][2];
+      itmpsigma2=tmp_TETransfer[j][3];
+      if(isite1 == itmpsite2 && isite2 == itmpsite1){
+        if(isigma1 == itmpsigma2 && isigma2 == itmpsigma1){
+
+          ddiff_trans = tmp_paraTETransfer[i]-conj(tmp_paraTETransfer[j]);
+          if(cabs(ddiff_trans) > eps_CheckImag0 ){
+            itmperrsite1=itmpsite1;
+            itmperrsigma1=itmpsigma1;
+            itmperrsite2=itmpsite2;
+            itmperrsigma2=itmpsigma2;
+            dcerrTrans=tmp_paraTETransfer[j];
+          }
+          else{
+            if (icheckHermiteCount == FALSE) {
+              if(i<=j){
+                if(2*icntHermite >= NTETransfer){
+                  fprintf(stderr, "Elements of Transfers are incorrect.\n");
+                  return(-1);
+                }
+                if(isite1 !=isite2 || isigma1 !=isigma2){
+                  for(itmpIdx=0; itmpIdx<4; itmpIdx++){
+                    X->TETransfer[idx][2*icntHermite][itmpIdx]=tmp_TETransfer[i][itmpIdx];
+                    X->TETransfer[idx][2*icntHermite+1][itmpIdx]=tmp_TETransfer[j][itmpIdx];
+                  }
+                  X->ParaTETransfer[idx][2*icntHermite]=tmp_paraTETransfer[i];
+                  X->ParaTETransfer[idx][2*icntHermite+1]=tmp_paraTETransfer[j];
+                  icntHermite++;
+                }
+                else{
+                  X->TETransferDiagonal[idx][icntchemi][0] = tmp_TETransfer[i][0];
+                  X->TETransferDiagonal[idx][icntchemi][1] = tmp_TETransfer[i][1];
+                  X->ParaTETransferDiagonal[idx][icntchemi] = creal(tmp_paraTETransfer[i]);
+                  icntchemi+=1;
+                }
+              }
+              icheckHermiteCount = TRUE;
+            }
+          }
+        }
+      }
+    }
+
+    //if counterpart for satisfying hermite conjugate does not exist.
+    if(icheckHermiteCount == FALSE){
+      fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(tmp_paraTETransfer[i]), cimag(tmp_paraTETransfer[i]));
+      fprintf(stdoutMPI, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
+      return(-1);
+    }
+  }
+
+  X->NTETransfer[idx]=2*icntHermite;
+  X->NTETransferDiagonal[idx]=icntchemi;
+//DEBUG
+  /*
+  fprintf(stdoutMPI, "DEBUG: NTETransfer=%d, NTETransfer_offDiagonal=%d,NTETransfer_Diagonal=%d\n", NTETransfer, X->NTETransfer[idx], X->NTETransferDiagonal[idx]);
+  for(i =0; i< X->NTETransfer[idx]; i++){
+    fprintf(stdoutMPI, "DEBUG: TetsTETrans_OffDiagonal: %d %d %d %d %lf %lf\n", X->TETransfer[idx][i][0], X->TETransfer[idx][i][1], X->TETransfer[idx][i][2], X->TETransfer[idx][i][3], creal(X->ParaTETransfer[idx][i]), cimag(X->ParaTETransfer[idx][i]));
+    //fprintf(stdoutMPI, "DEBUG: TetsTETrans_OffDiagonal: %d %d %d %d\n", X->TETransfer[idx][i][0], X->TETransfer[idx][i][1], X->TETransfer[idx][i][2], X->TETransfer[idx][i][3]);
+  }
+  for(i =0; i< X->NTETransferDiagonal[idx]; i++){
+    //fprintf(stdoutMPI, "DEBUG: TetsTETrans_Diagonal: %d %d %lf\n", X->TETransferDiagonal[idx][i][0], X->TETransferDiagonal[idx][i][1], X->ParaTETransferDiagonal[idx][i]);
+    fprintf(stdoutMPI, "DEBUG: TetsTETrans_Diagonal: %d %d\n", X->TETransferDiagonal[idx][i][0], X->TETransferDiagonal[idx][i][1]);
+  }
+  */
+  free(tmp_TETransfer);
+  free(tmp_paraTETransfer);
   return 0;
 }

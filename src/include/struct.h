@@ -226,20 +226,32 @@ struct DefineList {
     struct ParamList Param;
 
     //[s] For Time Evolution
-    // One-body part
-    int **EDGeneralTransferOrg;      /**< Index of original transfer integrals for Time Evolution. \n
-						   Data Format [Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
-    double complex *EDParaGeneralTransferOrg;  /**< Value of original transfer integrals for Time Evolution. \n
-						   Data Format [Ntransfer]. */
+    //Information of Time
     unsigned int NTETimeSteps;
+    double *TETime;
+
+    //Information of Transfer integrals
+    unsigned int NTETransferMax;
     unsigned int *NTETransfer;        /**< Number of time-dependent transfer integrals for Time Evolution.\n
                Data Format [NTE]*/
-    unsigned int *iFlagTransfer; /**< Flag of transfer integrals to be calculated for Time Evolution.\n
-               Data Format [Ntransfer]*/
+    unsigned int *NTETransferDiagonal;        /**< Number of time-dependent transfer integrals for Time Evolution.\n
+               Data Format [NTE]*/
     int ***TETransfer;      /**< Index of time-dependent transfer integrals for Time Evolution. \n
 						   Data Format [NTE][Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
-    double complex **TEParaTransfer;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
+    int ***TETransferDiagonal;      /**< Index of time-dependent transfer integrals for Time Evolution. \n
+						   Data Format [NTE][Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+    double complex **ParaTETransfer;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
 						   Data Format [NTE][Ntransfer]. */
+    double **ParaTETransferDiagonal;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
+						   Data Format [NTE][Ntransfer]. */
+
+    /*
+   * 内部変数
+  int **EDGeneralTransferOrg;
+  double complex *EDParaGeneralTransferOrg;
+  unsigned int *iFlagTransfer;
+  */
+
     //Two-body part
     //[e] For Time Evolution
 };
