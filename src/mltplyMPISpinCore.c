@@ -204,6 +204,7 @@ void GC_child_CisAisCjuAjv_spin_MPIdouble(
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
@@ -298,6 +299,7 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
@@ -383,6 +385,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
@@ -431,6 +434,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
@@ -502,6 +506,7 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
 /**
 @brief Exchange and Pairlifting term in Spin model + GC
        When only site2 is in the inter process region.
+@return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
@@ -606,6 +611,7 @@ void GC_child_CisAisCjuAjv_spin_MPIsingle(
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When only site2 is in the inter process region.
+@return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
@@ -706,6 +712,7 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When only site2 is in the inter process region.
+@return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
@@ -872,7 +879,7 @@ private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
   }/*End of parallel region*/
   return dam_pr;
 #endif
-}
+}/*double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble*/
 /**
 @brief @f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{ju}@f$ term in Spin model.
 When both site1 and site3 are in the inter process region.
@@ -943,19 +950,23 @@ shared (tmp_v0, tmp_v1, v1buf)
   }/*End of parallel region*/
   return dam_pr;
 #endif
-}
-
+}/*double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble*/
+/**
+@brief Compute @f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{jv}@f$ term in the
+grandcanonical general spin system when both site is in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int tmp_off, off, j;
@@ -1028,17 +1039,21 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   }/*End of parallel region*/
   return dam_pr;
 #endif
-}
-
+}/*double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble*/
+ /**
+ @brief Compute @f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{ju}@f$ term in the
+ grandcanonical general spin system when both site is in the inter process region
+ @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+ */
 double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int j, num1;
@@ -1078,16 +1093,20 @@ shared (tmp_v0, tmp_v1)
   }/*End of parallel region*/
   return dam_pr;
 #endif
-}
-
+}/*double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble*/
+ /**
+ @brief Compute @f$c_{is}^\dagger c_{it}@f$ term in the
+ grandcanonical general spin system when both site is in the inter process region
+ @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+ */
 double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  double complex tmp_trans,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int off, j;
@@ -1136,15 +1155,20 @@ shared (tmp_v0, tmp_v1, v1buf)
   }/*End of parallel region*/
   return dam_pr;
 #endif
-}
-
+}/*double complex X_GC_child_CisAit_GeneralSpin_MPIdouble*/
+ /**
+ @brief Compute @f$c_{is}^\dagger c_{is}@f$ term in the
+ grandcanonical general spin system when both site is in the inter process region
+ @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+ */
 double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  double complex tmp_trans,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1) {
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  double complex tmp_trans,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
+) {
 #ifdef MPI
   unsigned long int j, num1;
   double complex tmp_V, dmv, dam_pr;
@@ -1179,15 +1203,19 @@ shared (tmp_v0, tmp_v1)
   }/*End of parallel region*/
   return dam_pr;
 #endif
-}
-
+}/*double complex X_GC_child_CisAis_GeneralSpin_MPIdouble*/
+ /**
+ @brief Compute @f$c_{is} c_{is}^\dagger@f$ term in the
+ grandcanonical general spin system when both site is in the inter process region
+ @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+ */
 double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  double complex tmp_trans,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  double complex tmp_trans,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int j, num1;
@@ -1224,20 +1252,25 @@ shared (tmp_v0, tmp_v1)
   return dam_pr;
 #endif
 }/*double complex X_GC_child_AisCis_GeneralSpin_MPIdouble*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{it}@f$ term in the
+canonical general spin system when both site is in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAit_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  double complex tmp_trans,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  double complex *tmp_v1buf,
-  unsigned long int idim_max,
-  long unsigned int *list_1_org,
-  long unsigned int *list_1buf_org,
-  long unsigned int _ihfbit)
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Input wavefunction
+  double complex *tmp_v1buf,//!<[inout] buffer for wavefunction
+  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
+  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
+  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
+  long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
+)
 {
 #ifdef MPI
   unsigned long int off, j, tmp_off,idim_max_buf;
@@ -1291,17 +1324,21 @@ shared (tmp_v0, tmp_v1, v1buf)
   return 1;
 #endif
 }/*double complex X_child_CisAit_GeneralSpin_MPIdouble*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{jv}@f$ term in the
+grandcanonical general spin system when one of these site is in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int off, j, num1;
@@ -1364,17 +1401,21 @@ private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{it}c_{ju}^\dagger c_{ju}@f$ term in the
+grandcanonical general spin system when one of these site is in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int num1, j, off;
@@ -1424,18 +1465,22 @@ shared (tmp_v0, tmp_v1, v1buf)
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{jv}@f$ term in the
+grandcanonical general spin system when one of these site is in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int off, j;
@@ -1502,16 +1547,20 @@ firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{ju}@f$ term in the
+grandcanonical general spin system when one of these site is in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int j, num1;
@@ -1550,18 +1599,22 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{it}c_{ju}^\dagger c_{jv}@f$ term in the
+canonical general spin system when both sites are in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
@@ -1640,16 +1693,20 @@ private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
   return dam_pr;
 #endif
 }/*double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{ju}@f$ term in the
+canonical general spin system when both sites are in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int j, num1;
@@ -1703,16 +1760,20 @@ shared (tmp_v0, tmp_v1)
   return dam_pr;
 #endif
 }/*double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{ju}@f$ term in the
+canonical general spin system when one of these sites is in the inter process region
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 )
 {
 #ifdef MPI
@@ -1753,18 +1814,22 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
   return dam_pr;
 #endif
 }/*double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle*/
-
+ /**
+ @brief Compute @f$c_{is}^\dagger c_{it}c_{ju}^\dagger c_{jv}@f$ term in the
+ canonical general spin system when one of these sites is in the inter process region
+ @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
+ */
 double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
-  int org_isite1,
-  int org_ispin1,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  int org_ispin4,
-  double complex tmp_J,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_J,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
@@ -1845,13 +1910,14 @@ private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
 /**
 @brief Hopping term in Spin + GC
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAit_spin_MPIdouble(
-  int org_isite1,//!<[in]
-  int org_ispin1,//!<[in]
-  int org_ispin2,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1 /**< [in] v0 = H v1*/)
@@ -1916,25 +1982,26 @@ firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
 /**
 @brief Hopping term in Spin + Canonical for CalcSpectrum
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_child_CisAit_spin_MPIdouble(
-  int org_isite1,//!<[in]
-  int org_ispin2,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1, /**< [in] v0 = H v1*/
-  double complex *tmp_v1buf,//!<[in]
-  unsigned long int idim_max,//!<[in]
-  long unsigned int *Tpow,//!<[in]
-  long unsigned int *list_1_org,//!<[in]
-  long unsigned int *list_1buf_org,//!<[in]
-  long unsigned int *list_2_1_target,//!<[in]
-  long unsigned int *list_2_2_target,//!<[in]
-  long unsigned int _irght,//!<[in]
-  long unsigned int _ilft,//!<[in]
-  long unsigned int _ihfbit//!<[in]
+  double complex *tmp_v1buf,//!<[in] buffer for wavefunction
+  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
+  long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
+  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
+  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
+  long unsigned int *list_2_1_target,//!<[in] Similar to ::list_2_1
+  long unsigned int *list_2_2_target,//!<[in] Similar to ::list_2_2
+  long unsigned int _irght,//!<[in] Similer to LargeList::irght
+  long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
+  long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ){
 #ifdef MPI
   int mask1, state1, ierr, origin;
@@ -1991,12 +2058,13 @@ shared(v1buf, tmp_v0)
 /**
 @brief Hopping term in Spin + GC
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_CisAis_spin_MPIdouble(
-  int org_isite1,//!<[in]
-  int org_ispin1,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
  double complex *tmp_v1 /**< [in] v0 = H v1*/
@@ -2035,12 +2103,13 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
 /**
 @brief Hopping term in Spin + GC
        When both site1 and site2 are in the inter process region.
+@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 double complex X_GC_child_AisCis_spin_MPIdouble(
-  int org_isite1,//!<[in]
-  int org_ispin1,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1 /**< [in] v0 = H v1*/
