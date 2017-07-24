@@ -26,10 +26,13 @@
 #include "mltplyMPIHubbardCore.h"
 #include "bitcalc.h"
 #include "wrapperMPI.h"
-
+/**
+@brief Check whether this site is in the inter process region or not
+@return 1 if it is inter-process region, 0 if not.
+*/
 int CheckPE(
-  int org_isite,
-  struct BindStruct *X
+  int org_isite,//!<[in] Site index
+  struct BindStruct *X//!<[inout]
 ){
   if (org_isite + 1 > X->Def.Nsite) {
     return TRUE;
@@ -38,11 +41,16 @@ int CheckPE(
     return FALSE;
   }
 }/*int CheckPE*/
-
+/**
+@brief Check the occupation of @f$(i,s)@f$ state,
+and compute the index of final wavefunction associated to 
+@f$c^\dagger_{is}@f$
+@return 1 if unoccupied, 0 if occupied
+*/
 int CheckBit_Cis(
-  long unsigned int is1_spin,
-  long unsigned int orgbit,
-  long unsigned int *offbit
+  long unsigned int is1_spin,//!<[in] Index of site+spin
+  long unsigned int orgbit,//!<[in] Index of initial wavefunction
+  long unsigned int *offbit//!<[out] Index of final wavefunction
 ) {
   long unsigned int ibit_tmp;
   ibit_tmp = orgbit & is1_spin;
@@ -53,11 +61,16 @@ int CheckBit_Cis(
   *offbit = 0;
   return FALSE;
 }/*int CheckBit_Cis*/
-
+/**
+@brief Check the occupation of @f$(i,s)@f$ state,
+and compute the index of final wavefunction associated to
+@f$c_{jt}@f$
+@return 1 if occupied, 0 if unoccupied
+*/
 int CheckBit_Ajt(
-  long unsigned int is1_spin,
-  long unsigned int orgbit,
-  long unsigned int *offbit
+  long unsigned int is1_spin,//!<[in] Index of site+spin
+  long unsigned int orgbit,//!<[in] Index of initial wavefunction
+  long unsigned int *offbit//!<[out] Index of final wavefunction
 ) {
   long unsigned int ibit_tmp;
   ibit_tmp = orgbit & is1_spin;
@@ -68,19 +81,24 @@ int CheckBit_Ajt(
   *offbit = 0;
   return FALSE;
 }/*int CheckBit_Ajt*/
-
+/**
+@brief Compute the index of final wavefunction associated to
+@f$c_{4}^\dagger c_{3}c_{2}^\dagger c_{1}@f$, and
+check whether this operator is relevant or not
+@return 1 if relevant, 0 if irrelevant
+*/
 int CheckBit_InterAllPE(
-  int org_isite1,
-  int org_isigma1,
-  int org_isite2,
-  int org_isigma2,
-  int org_isite3,
-  int org_isigma3,
-  int org_isite4,
-  int org_isigma4,
-  struct BindStruct *X,
-  long unsigned int orgbit,
-  long unsigned int *offbit
+  int org_isite1,//!<[in] Site 1
+  int org_isigma1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_isigma2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_isigma3,//!<[in] Spin 3
+  int org_isite4,//!<[in] Site 4
+  int org_isigma4,//!<[in] Spin 4
+  struct BindStruct *X,//!<[inout]
+  long unsigned int orgbit,//!<[in] Index of initial wavefunction
+  long unsigned int *offbit//!<[out] Index of final wavefunction
 ){
   long unsigned int tmp_ispin;
   long unsigned int tmp_org, tmp_off;
@@ -127,14 +145,17 @@ int CheckBit_InterAllPE(
   *offbit=tmp_org;
   return TRUE;
 }/*int CheckBit_InterAllPE*/
-
+/**
+@brief Check the occupation of both site 1 and site 3
+@return 1 if both sites are occupied, 0 if not
+*/
 int CheckBit_PairPE(
-  int org_isite1,
-  int org_isigma1,
-  int org_isite3,
-  int org_isigma3,
-  struct BindStruct *X,
-  long unsigned int orgbit
+  int org_isite1,//!<[in] Site 1
+  int org_isigma1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_isigma3,//!<[in] Spin 4
+  struct BindStruct *X,//!<[inout]
+  long unsigned int orgbit//!<[in] Index pf intial wavefunction
 ){
   long unsigned int tmp_ispin;
   long unsigned int tmp_org, tmp_off;
@@ -161,16 +182,21 @@ int CheckBit_PairPE(
 
   return TRUE;
 }/*int CheckBit_PairPE*/
-
+/**
+@brief Compute the index of final wavefunction associated to
+@f$c_{4}^\dagger c_{3}c_{2}^\dagger c_{1}@f$, and
+Fermion sign
+@return 1 if relevant, 0 if irrelevant
+*/
 int GetSgnInterAll(
-  int isite1,
-  int isite2,
-  int isite3,
-  int isite4,
-  int *Fsgn,
-  struct BindStruct *X,
-  unsigned long int orgbit,
-  unsigned long int *offbit
+  int isite1,//!<[in] Site 1
+  int isite2,//!<[in] Site 2
+  int isite3,//!<[in] Site 3
+  int isite4,//!<[in] Site 4
+  int *Fsgn,//!<[out] Fermion sign
+  struct BindStruct *X,//!<[inout]
+  unsigned long int orgbit,//!<[in] Index of initial wavefunction
+  unsigned long int *offbit//!<[out] Index of final wavefunction
 ){
   long unsigned int diffA;
   long unsigned int tmp_off;
@@ -232,16 +258,20 @@ int GetSgnInterAll(
   // exitMPI(-1);
   return TRUE;
 }/*int GetSgnInterAll*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{jt}@f$
+term of grandcanonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
@@ -306,18 +336,22 @@ double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI(
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
+term of grandcanonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite2,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
@@ -477,19 +511,22 @@ firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isi
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI*/
-
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
+term of grandcanonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAisCjtAku_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  int org_isite4,
-  int org_ispin4,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_isite4,//!<[in] Site 4
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0;
@@ -499,20 +536,24 @@ double complex X_GC_child_CisAisCjtAku_Hubbard_MPI(
   return conj(dam_pr);
 #endif
 }/*double complex X_GC_child_CisAisCjtAku_Hubbard_MPI*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
+term of grandcanonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite2,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  int org_isite4,
-  int org_ispin4,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_isite4,//!<[in] Site 4
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0;
@@ -673,14 +714,18 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is}@f$
+term of grandcanonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAis_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
@@ -741,16 +786,20 @@ double complex X_GC_child_CisAis_Hubbard_MPI(
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAis_Hubbard_MPI*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{jt}@f$
+term of grandcanonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_GC_child_CisAjt_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite2,
-  int org_ispin2,
-  double complex tmp_trans,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  double complex tmp_trans,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
@@ -769,16 +818,20 @@ double complex X_GC_child_CisAjt_Hubbard_MPI(
   return dam_pr;
 #endif
 }/*double complex X_GC_child_CisAjt_Hubbard_MPI*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{jt}@f$
+term of canonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAisCjtAjt_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
@@ -841,21 +894,24 @@ shared(tmp_v0, tmp_v1, list_1, org_isite1, org_ispin1, org_isite3, org_ispin3) \
   return dam_pr;
 #endif
 }/*double complex X_child_CisAisCjtAjt_Hubbard_MPI*/
-
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
+term of canonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAjtCkuAlv_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite2,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  int org_isite4,
-  int org_ispin4,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_isite4,//!<[in] Site 4
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0;
@@ -1051,18 +1107,22 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
   return dam_pr;
 #endif
 }/*double complex X_child_CisAjtCkuAlv_Hubbard_MPI*/
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
+term of canonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAjtCkuAku_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite2,
-  int org_ispin2,
-  int org_isite3,
-  int org_ispin3,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite2,//!<[in] Site 2
+  int org_ispin2,//!<[in] Spin 2
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
@@ -1230,19 +1290,22 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org_isite3,
   return dam_pr;
 #endif
 }/*double complex X_child_CisAjtCkuAku_Hubbard_MPI*/
-  
-
+/**
+@brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
+term of canonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_child_CisAisCjtAku_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  int org_isite3,
-  int org_ispin3,
-  int org_isite4,
-  int org_ispin4,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  int org_isite3,//!<[in] Site 3
+  int org_ispin3,//!<[in] Spin 3
+  int org_isite4,//!<[in] Site 4
+  int org_ispin4,//!<[in] Spin 4
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0;
@@ -1256,12 +1319,12 @@ double complex X_child_CisAisCjtAku_Hubbard_MPI(
 }/*double complex X_child_CisAisCjtAku_Hubbard_MPI*/
 
 double complex X_child_CisAis_Hubbard_MPI(
-  int org_isite1,
-  int org_ispin1,
-  double complex tmp_V,
-  struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1
+  int org_isite1,//!<[in] Site 1
+  int org_ispin1,//!<[in] Spin 1
+  double complex tmp_V,//!<[in] Coupling constant
+  struct BindStruct *X,//!<[inout]
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
@@ -1331,14 +1394,14 @@ double complex X_child_CisAis_Hubbard_MPI(
 @author Youhei Yamaji (The University of Tokyo)
 */
 double complex X_GC_Cis_MPI(
-  int org_isite,//!<[in]
-  int org_ispin,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite,//!<[in] Site i
+  int org_ispin,//!<[in] Spin s
+  double complex tmp_trans,//!<[in] Coupling constant//!<[in]
   double complex *tmp_v0,//!<[out] Result v0 += H v1*/,
   double complex *tmp_v1,//!<[in] v0 += H v1*/,
-  unsigned long int idim_max,//!<[in]
-  double complex *tmp_v1buf,//!<[in]
-  unsigned long int *Tpow//!<[in]
+  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
+  double complex *tmp_v1buf,//!<[in] buffer for wavefunction
+  unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -1397,14 +1460,14 @@ double complex X_GC_Cis_MPI(
 @author Youhei Yamaji (The University of Tokyo)
 */
 double complex X_GC_Ajt_MPI(
-  int org_isite,//!<[in]
-  int org_ispin,//!<[in]
-  double complex tmp_trans,//!<[in]
+  int org_isite,//!<[in] Site j
+  int org_ispin,//!<[in] Spin t
+  double complex tmp_trans,//!<[in] Coupling constant//!<[in]
   double complex *tmp_v0,//!<[out] Result v0 += H v1*/,
   double complex *tmp_v1,//!<[in] v0 += H v1*/,
-  unsigned long int idim_max,//!<[in]
-  double complex *tmp_v1buf,//!<[in]
-  unsigned long int *Tpow//!<[in]
+  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
+  double complex *tmp_v1buf,//!<[in] buffer for wavefunction
+  unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -1451,23 +1514,27 @@ firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
   return (dam_pr);
 #endif
 }/*double complex X_GC_Ajt_MPI*/
-
+/**
+@brief Compute @f$c_{is}^\dagger@f$
+term of canonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_Cis_MPI(
-  int org_isite,
-  unsigned int org_ispin,
-  double complex tmp_trans,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  double complex *tmp_v1buf,
-  unsigned long int idim_max,
-  long unsigned int *Tpow,
-  long unsigned int *list_1_org,
-  long unsigned int *list_1buf_org,
-  long unsigned int *list_2_1_target,
-  long unsigned int *list_2_2_target,
-  long unsigned int _irght,
-  long unsigned int _ilft,
-  long unsigned int _ihfbit
+  int org_isite,//!<[in] Site i
+  unsigned int org_ispin,//!<[in] Spin s
+  double complex tmp_trans,//!<[in] Coupling constant
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1,//!<[inout] Initial wavefunction
+  double complex *tmp_v1buf,//!<[in] buffer for wavefunction
+  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
+  long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
+  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
+  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
+  long unsigned int *list_2_1_target,//!<[in] Similar to ::list_2_1
+  long unsigned int *list_2_2_target,//!<[in] Similar to ::list_2_2
+  long unsigned int _irght,//!<[in] Similer to LargeList::irght
+  long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
+  long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -1524,24 +1591,27 @@ shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
   return (dam_pr);
 #endif
 }/*double complex X_GC_Cis_MPI*/
-
-
+/**
+@brief Compute @f$c_{jt}@f$
+term of canonical Hubbard system
+@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
+*/
 double complex X_Ajt_MPI(
-  int org_isite,
-  unsigned int org_ispin,
-  double complex tmp_trans,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  double complex *tmp_v1buf,
-  unsigned long int idim_max,
-  long unsigned int *Tpow,
-  long unsigned int *list_1_org,
-  long unsigned int *list_1buf_org,
-  long unsigned int *list_2_1_target,
-  long unsigned int *list_2_2_target,
-  long unsigned int _irght,
-  long unsigned int _ilft,
-  long unsigned int _ihfbit
+  int org_isite,//!<[in] Site j
+  unsigned int org_ispin,//!<[in] Spin t
+  double complex tmp_trans,//!<[in] Coupling constant
+  double complex *tmp_v0,//!<[inout] Resulting wavefunction
+  double complex *tmp_v1,//!<[inout] Initial wavefunction
+  double complex *tmp_v1buf,//!<[in] buffer for wavefunction
+  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
+  long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
+  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
+  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
+  long unsigned int *list_2_1_target,//!<[in] Similar to ::list_2_1
+  long unsigned int *list_2_2_target,//!<[in] Similar to ::list_2_2
+  long unsigned int _irght,//!<[in] Similer to LargeList::irght
+  long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
+  long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ){
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -1599,4 +1669,3 @@ shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
   return (dam_pr);
 #endif
 }/*double complex X_Ajt_MPI*/
-
