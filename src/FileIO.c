@@ -13,22 +13,22 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/**@file
+@brief Functions to open file(s) in output/ directory.
+*/
 #include "FileIO.h"
 #include "wrapperMPI.h"
-
 /** 
- * @brief 
- * 
- * @param[in] _cPathChild 
- * @param[in] _cmode 
- * @param[in] _fp 
- *
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @return 
- */
-int childfopenMPI(const char* _cPathChild, const char* _cmode, FILE **_fp){
+@brief Only the root process open file in output/ directory
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+@return -1 if file cannot be opened, 0 if not.
+*/
+int childfopenMPI(
+  const char* _cPathChild,//!<[in] File name
+  const char* _cmode,//!<[in] "w", "r", etc.
+  FILE **_fp//!<[inout] File pointer
+){
   char ctmpPath[D_FileNameMax]="";
   strcat(ctmpPath, cParentOutputFolder);
   strcat(ctmpPath, _cPathChild);
@@ -40,21 +40,18 @@ int childfopenMPI(const char* _cPathChild, const char* _cmode, FILE **_fp){
   }
     
   return 0;
-}
-
+}/*int childfopenMPI*/
 /** 
- * @brief 
- * 
- * @param[in] _cPathChild 
- * @param[in] _cmode 
- * @param[in] _fp 
- *
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @return 
- */
-int childfopenALL(const char* _cPathChild, const char* _cmode, FILE **_fp){
+@brief All processes open file in output/ directory
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+@return -1 if file cannot be opened, 0 if not.
+*/
+int childfopenALL(
+  const char* _cPathChild,//!<[in] File name
+  const char* _cmode,//!<[in] "w", "r", etc.
+  FILE **_fp//!<[inout] File pointr
+) {
   char ctmpPath[D_FileNameMax]="";
   strcat(ctmpPath, cParentOutputFolder);
   strcat(ctmpPath, _cPathChild);
@@ -66,4 +63,4 @@ int childfopenALL(const char* _cPathChild, const char* _cmode, FILE **_fp){
   }
     
   return 0;
-}
+}/*int childfopenALL*/
