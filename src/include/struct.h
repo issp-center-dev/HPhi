@@ -244,6 +244,8 @@ struct DefineList {
 						   Data Format [NTE][Ntransfer]. */
     double **ParaTETransferDiagonal;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
 						   Data Format [NTE][Ntransfer]. */
+    //Information of InterAll interactions
+    unsigned int NTEInterAllrMax;
 
     /*
    * 内部変数

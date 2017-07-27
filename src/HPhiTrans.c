@@ -20,188 +20,236 @@
 #include "wrapperMPI.h"
 
 /** 
- * 
- * 
- * @param X 
+ *
+ * @brief  Function of checking transfers
+ *
+ * @param X data list for calculation
+ * @retval 0  normally finished
+ * @retval -1 unnormally finished
  * 
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  *
  * @return 
  */
-int HPhiTrans(struct BindStruct *X){ 
+int HPhiTrans(struct BindStruct *X) {
   FILE *fp_err;
   char sdt_err[D_FileNameMax];
 
-  int i,k;
+  int i, k;
   int cnt_trans;
- 
+
   strcpy(sdt_err, cFileNameWarningOnTransfer);
-  if(childfopenMPI(sdt_err, "w", &fp_err)!=0){
+  if (childfopenMPI(sdt_err, "w", &fp_err) != 0) {
     return -1;
   }
   fclose(fp_err);
-	 
+
   //Transefer
-  cnt_trans=0;
-  
-  for(i=0;i<X->Def.EDNTransfer;i++){
+  cnt_trans = 0;
+
+  for (i = 0; i < X->Def.EDNTransfer; i++) {
     // eliminate double counting
-    for(k=0;k<cnt_trans;k++){
-      if( X->Def.EDGeneralTransfer[i][1] == X->Def.EDGeneralTransfer[k][1]
-	  && X->Def.EDGeneralTransfer[i][3] == X->Def.EDGeneralTransfer[k][3]){
-	if(X->Def.EDGeneralTransfer[i][0] == X->Def.EDGeneralTransfer[k][0]
-	   && X->Def.EDGeneralTransfer[i][2] == X->Def.EDGeneralTransfer[k][2]){
-	  sprintf(sdt_err,"%s",cErrTransfer);
-	  childfopenMPI(sdt_err,"a", &fp_err);
-	  fprintf(fp_err,cErrDoubleCounting, X->Def.EDGeneralTransfer[k][0] ,X->Def.EDGeneralTransfer[k][2], X->Def.EDGeneralTransfer[k][1], X->Def.EDGeneralTransfer[k][3]);
-	  fclose(fp_err);
-//	  return -1;
-	}
+    for (k = 0; k < cnt_trans; k++) {
+      if (X->Def.EDGeneralTransfer[i][1] == X->Def.EDGeneralTransfer[k][1]
+          && X->Def.EDGeneralTransfer[i][3] == X->Def.EDGeneralTransfer[k][3]) {
+        if (X->Def.EDGeneralTransfer[i][0] == X->Def.EDGeneralTransfer[k][0]
+            && X->Def.EDGeneralTransfer[i][2] == X->Def.EDGeneralTransfer[k][2]) {
+          sprintf(sdt_err, "%s", cErrTransfer);
+          childfopenMPI(sdt_err, "a", &fp_err);
+          fprintf(fp_err, cErrDoubleCounting, X->Def.EDGeneralTransfer[k][0], X->Def.EDGeneralTransfer[k][2],
+                  X->Def.EDGeneralTransfer[k][1], X->Def.EDGeneralTransfer[k][3]);
+          fclose(fp_err);
+        }
       }
     }
-    cnt_trans+=1;
+    cnt_trans += 1;
   }
-  
+
   //fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
   //fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
 
   return 0;
 }
 
-int TransferWithPeierls(struct BindStruct *X, const double time){
+///
+/// \param X
+/// \param timeidx
+/// \return
+int MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
+  int i,j;
+  //Clear values
+  for(i=0; i<X->Def.NTETransferMax ;i++) {
+    for(j =0; j<4; j++) {
+      X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = 0;
+    }
+    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=0.0;
+  }
+
+  //Input values
+  for(i=0; i<X->Def.NTETransfer[timeidx] ;i++){
+    for(j =0; j<4; j++) {
+      X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = X->Def.TETransfer[timeidx][i][j];
+    }
+    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=X->Def.ParaTETransfer[timeidx][i];
+  }
+  return 0;
+}
+
+
+/**
+ * @brief  Function of getting transfer with peierls
+ *
+ * @param X data list for calculation
+ * @param time time
+ * @retval 0  normally finished
+ * @retval -1 unnormally finished
+ *
+ * @author Kota Ido (The University of Tokyo)
+ */
+int TransferWithPeierls(struct BindStruct *X, const double time) {
   FILE *fp_err;
   char sdt_err[D_FileNameMax];
 
-  int i,k;
+  int i, k;
   int cnt_trans;
 
-  int ri_x,rj_x;
-  int ri_y,rj_y;
+  int ri_x, rj_x;
+  int ri_y, rj_y;
   int isite1, isite2;
   int isigma1, isigma2;
   double complex dir;
-  const int Mode = (int)(X->Def.ParaLaser[0]);
-  const double Avp    = X->Def.ParaLaser[1];
-  const double omega  = X->Def.ParaLaser[2];
-  const double time_d  = X->Def.ParaLaser[3];
+  const int Mode = (int) (X->Def.ParaLaser[0]);
+  const double Avp = X->Def.ParaLaser[1];
+  const double omega = X->Def.ParaLaser[2];
+  const double time_d = X->Def.ParaLaser[3];
   const double time_c = X->Def.ParaLaser[4];
-  const int Lx = (int)(X->Def.ParaLaser[5]);
-  const int Ly = (int)(X->Def.ParaLaser[6]);
+  const int Lx = (int) (X->Def.ParaLaser[5]);
+  const int Ly = (int) (X->Def.ParaLaser[6]);
   const double dirX = X->Def.ParaLaser[7];
   const double dirY = X->Def.ParaLaser[8];
-  const double dt = time-time_c;
-  const double dt2 = time-(time_c+time_d);
-  const double td = time_c/3.0;
+  const double dt = time - time_c;
+  const double dt2 = time - (time_c + time_d);
+  const double td = time_c / 3.0;
   double VecPot;
 
   //printf("Make Trasfer with Pierles factor");
 
-  if(Mode == 0){//Gaussian Wave
-    VecPot = Avp*cos(omega*dt)*exp(-dt*dt/(2.0*time_d*time_d));
-  }else if(Mode ==1){//Cosine Wave
-    VecPot = Avp*sin(omega*dt);
-  }else if(Mode ==2){//DC Limit
-    VecPot = Avp*dt;
-  }else if(Mode ==3){//Pulse
-    VecPot = Avp*exp(-time_d*dt);
-  }else if(Mode ==4){//Linear
-    if(dt <= 0.0){
+  if (Mode == 0) {//Gaussian Wave
+    VecPot = Avp * cos(omega * dt) * exp(-dt * dt / (2.0 * time_d * time_d));
+  } else if (Mode == 1) {//Cosine Wave
+    VecPot = Avp * sin(omega * dt);
+  } else if (Mode == 2) {//DC Limit
+    VecPot = Avp * dt;
+  } else if (Mode == 3) {//Pulse
+    VecPot = Avp * exp(-time_d * dt);
+  } else if (Mode == 4) {//Linear
+    if (dt <= 0.0) {
       VecPot = 0.0;
-    }else if(dt < time_d){
-      VecPot = Avp*cos(omega*dt)*(dt/time_d);
-    }else{
-      VecPot = Avp*cos(omega*dt);
+    } else if (dt < time_d) {
+      VecPot = Avp * cos(omega * dt) * (dt / time_d);
+    } else {
+      VecPot = Avp * cos(omega * dt);
     }
-  }else if(Mode ==5){//Linear
-    if(time <= 0.0){
+  } else if (Mode == 5) {//Linear
+    if (time <= 0.0) {
       VecPot = 0.0;
-    }else if(time < time_c){
-      VecPot = Avp*cos(omega*dt)*exp(-dt*dt/(2.0*td*td));
-    }else if(time < time_c+time_d){
-      VecPot = Avp*cos(omega*dt);
-    }else{
-      VecPot = Avp*cos(omega*dt)*exp(-dt2*dt2/(2.0*td*td));
+    } else if (time < time_c) {
+      VecPot = Avp * cos(omega * dt) * exp(-dt * dt / (2.0 * td * td));
+    } else if (time < time_c + time_d) {
+      VecPot = Avp * cos(omega * dt);
+    } else {
+      VecPot = Avp * cos(omega * dt) * exp(-dt2 * dt2 / (2.0 * td * td));
     }
   }
 
-  for(i=0; i<X->Def.EDNTransfer; i++){
-    ri_x = X->Def.EDGeneralTransfer[i][0]%Lx;
-    rj_x = X->Def.EDGeneralTransfer[i][2]%Lx;
-    ri_y = X->Def.EDGeneralTransfer[i][0]/Lx;
-    rj_y = X->Def.EDGeneralTransfer[i][2]/Lx;
-    if(ri_x-rj_x > 1){
+  for (i = 0; i < X->Def.EDNTransfer; i++) {
+    ri_x = X->Def.EDGeneralTransfer[i][0] % Lx;
+    rj_x = X->Def.EDGeneralTransfer[i][2] % Lx;
+    ri_y = X->Def.EDGeneralTransfer[i][0] / Lx;
+    rj_y = X->Def.EDGeneralTransfer[i][2] / Lx;
+    if (ri_x - rj_x > 1) {
       rj_x += Lx;
-    }else if(ri_x-rj_x < -1){
+    } else if (ri_x - rj_x < -1) {
       rj_x -= Lx;
     }
-    if(ri_y-rj_y > 1){
+    if (ri_y - rj_y > 1) {
       rj_y += Ly;
-    }else if(ri_y-rj_y < -1){
+    } else if (ri_y - rj_y < -1) {
       rj_y -= Ly;
     }
-    dir = dirX*(ri_x-rj_x)+dirY*(ri_y-rj_y);
+    dir = dirX * (ri_x - rj_x) + dirY * (ri_y - rj_y);
 
-    X->Def.EDParaGeneralTransfer[i] = X->Def.ParaGeneralTransfer[i]*cexp(-I*VecPot*dir);
+    X->Def.EDParaGeneralTransfer[i] = X->Def.ParaGeneralTransfer[i] * cexp(-I * VecPot * dir);
   }
 
   return 0;
 }
 
-int TransferForQuench(struct BindStruct *X, const double time){
+/**
+ * @brief  Function of getting transfer for quench
+ *
+ * @param X data list for calculation
+ * @param time time
+ * @retval 0  normally finished
+ * @retval -1 unnormally finished
+ *
+ * @author Kota Ido (The University of Tokyo)
+ */
+int TransferForQuench(struct BindStruct *X, const double time) {
   FILE *fp_err;
   char sdt_err[D_FileNameMax];
 
-  int i,k;
+  int i, k;
   int cnt_trans;
 
-  int ri_x,rj_x;
-  int ri_y,rj_y;
+  int ri_x, rj_x;
+  int ri_y, rj_y;
   int isite1, isite2;
   int isigma1, isigma2;
   double complex dir;
-  const int Mode = (int)(X->Def.ParaLaser[0]);
-  const double Avp    = X->Def.ParaLaser[1];
-  const double omega  = X->Def.ParaLaser[2];
-  const double time_d  = X->Def.ParaLaser[3];
+  const int Mode = (int) (X->Def.ParaLaser[0]);
+  const double Avp = X->Def.ParaLaser[1];
+  const double omega = X->Def.ParaLaser[2];
+  const double time_d = X->Def.ParaLaser[3];
   const double time_c = X->Def.ParaLaser[4];
-  const int Lx = (int)(X->Def.ParaLaser[5]);
-  const int Ly = (int)(X->Def.ParaLaser[6]);
+  const int Lx = (int) (X->Def.ParaLaser[5]);
+  const int Ly = (int) (X->Def.ParaLaser[6]);
   const double dirX = X->Def.ParaLaser[7];
   const double dirY = X->Def.ParaLaser[8];
-  const double dt = time-time_c;
+  const double dt = time - time_c;
   double Bessel;
 
   //printf("Make Trasfer with Pierles factor");
 
-  if(Mode == 0){//Gaussian Wave
-    if(dt <= 0.0){
+  if (Mode == 0) {//Gaussian Wave
+    if (dt <= 0.0) {
       Bessel = 0.0;
-    }else if(dt < time_d){
-      Bessel = j0(Avp*dt/time_d);
-    }else{
+    } else if (dt < time_d) {
+      Bessel = j0(Avp * dt / time_d);
+    } else {
       Bessel = j0(Avp);
     }
   }
 
-  for(i=0; i<X->Def.EDNTransfer; i++){
-    ri_x = X->Def.EDGeneralTransfer[i][0]%Lx;
-    rj_x = X->Def.EDGeneralTransfer[i][2]%Lx;
-    ri_y = X->Def.EDGeneralTransfer[i][0]/Lx;
-    rj_y = X->Def.EDGeneralTransfer[i][2]/Lx;
-    if(ri_x-rj_x > 1){
+  for (i = 0; i < X->Def.EDNTransfer; i++) {
+    ri_x = X->Def.EDGeneralTransfer[i][0] % Lx;
+    rj_x = X->Def.EDGeneralTransfer[i][2] % Lx;
+    ri_y = X->Def.EDGeneralTransfer[i][0] / Lx;
+    rj_y = X->Def.EDGeneralTransfer[i][2] / Lx;
+    if (ri_x - rj_x > 1) {
       rj_x += Lx;
-    }else if(ri_x-rj_x < -1){
+    } else if (ri_x - rj_x < -1) {
       rj_x -= Lx;
     }
-    if(ri_y-rj_y > 1){
+    if (ri_y - rj_y > 1) {
       rj_y += Ly;
-    }else if(ri_y-rj_y < -1){
+    } else if (ri_y - rj_y < -1) {
       rj_y -= Ly;
     }
-    dir = dirX*(ri_x-rj_x)+dirY*(ri_y-rj_y);
+    dir = dirX * (ri_x - rj_x) + dirY * (ri_y - rj_y);
 
-    X->Def.EDParaGeneralTransfer[i] = X->Def.ParaGeneralTransfer[i]*Bessel;
+    X->Def.EDParaGeneralTransfer[i] = X->Def.ParaGeneralTransfer[i] * Bessel;
   }
 
   return 0;

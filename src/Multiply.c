@@ -20,13 +20,14 @@
 #include "mltply.h"
 
 /** 
+ * @brief  Function of multiplying Hamiltonian for TPQ calculation
  * 
- * 
- * @param X 
- * 
+ * @param X data list for calculation
+ * @retval 0  normally finished
+ * @retval -1 unnormally finished
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int Multiply
 (
@@ -57,6 +58,14 @@ int Multiply
   return 0;
 }
 
+/**
+ * @brief  Function of multiplying Hamiltonian for Time Evolution
+ *
+ * @param X data list for calculation
+ *
+ * @retval 0  normally finished
+ * @retval -1 unnormally finished
+ */
 int MultiplyForTEM
         (
                 struct BindStruct *X
@@ -85,6 +94,8 @@ int MultiplyForTEM
     tmp1 *= -I*dt/(double complex)coef;
     //v2 = H*v1 = H^coef |psi(t)>
     mltply(X, v2, v1);
+    //[TODO] mltply diagonal term
+
 #pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
     for(i = 1; i <= i_max; i++){
       v0[i] += tmp1*v2[i];
