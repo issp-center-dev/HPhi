@@ -1497,11 +1497,12 @@ int ReadDefFileIdxPara(
               X->TETransfer[idx][i][2]= isite2;
               X->TETransfer[idx][i][3] = isigma2;
               X->ParaTETransfer[idx][i]=dvalue_re+dvalue_im*I;
-              //X->TETransfer[idx][i][3]= isigma2;
-              //X->ParaTETransfer[idx][i] = dvalue_re+dvalue_im*I;
             }
             //check Transfer Hermite
-            CheckTETransferHermite(X, X->NTETransfer[idx], idx);
+            if(CheckTETransferHermite(X, X->NTETransfer[idx], idx)!=0){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
             idx++;
           }
           if(idx!=X->NTETimeSteps){
@@ -1811,6 +1812,7 @@ int CheckTransferHermite
   int itmperrsigma1, itmperrsigma2;
   double complex dcerrTrans;
   int icheckHermiteCount=FALSE;
+  int iCount=0;
 
   double  complex ddiff_trans;
   unsigned int itmpIdx, icntHermite, icntchemi;
@@ -1840,6 +1842,9 @@ int CheckTransferHermite
             itmperrsite2=itmpsite2;
             itmperrsigma2=itmpsigma2;
             dcerrTrans=X->ParaGeneralTransfer[j];
+            fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
+            fprintf(stdoutMPI, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
+            iCount++;
           }
           else{
             if (icheckHermiteCount == FALSE) {	      
@@ -1875,11 +1880,13 @@ int CheckTransferHermite
     //if counterpart for satisfying hermite conjugate does not exist.
     if(icheckHermiteCount == FALSE){
       fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(X->ParaGeneralTransfer[i]), cimag(X->ParaGeneralTransfer[i]));
-      fprintf(stdoutMPI, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
-      return(-1);
+      iCount++;
     }
   }
-  
+
+  if(iCount !=0){
+    return -1;
+  }
   X->EDNTransfer=2*icntHermite;
   X->EDNChemi=icntchemi;
 
@@ -2626,7 +2633,8 @@ int CheckTETransferHermite
   int itmperrsite1, itmperrsite2;
   int itmperrsigma1, itmperrsigma2;
   double complex dcerrTrans;
-  int icheckHermiteCount=FALSE;
+  int icheckHermiteCount;
+  int iCount=0;
 
   double  complex ddiff_trans;
   unsigned int itmpIdx, icntHermite, icntchemi;
@@ -2670,6 +2678,9 @@ int CheckTETransferHermite
             itmperrsite2=itmpsite2;
             itmperrsigma2=itmpsigma2;
             dcerrTrans=tmp_paraTETransfer[j];
+            fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(tmp_paraTETransfer[i]), cimag(tmp_paraTETransfer[i]));
+            fprintf(stdoutMPI, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
+            iCount++;
           }
           else{
             if (icheckHermiteCount == FALSE) {
@@ -2704,9 +2715,14 @@ int CheckTETransferHermite
     //if counterpart for satisfying hermite conjugate does not exist.
     if(icheckHermiteCount == FALSE){
       fprintf(stdoutMPI, cErrNonHermiteTrans, isite1, isigma1, isite2, isigma2, creal(tmp_paraTETransfer[i]), cimag(tmp_paraTETransfer[i]));
-      fprintf(stdoutMPI, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
-      return(-1);
+      iCount++;
+      //fprintf(stdoutMPI, cErrNonHermiteTrans, itmperrsite1, itmperrsigma1, itmperrsite2, itmperrsigma2, creal(dcerrTrans), cimag(dcerrTrans));
+      //return(-1);
     }
+  }
+
+  if(iCount !=0){
+    return -1;
   }
 
   X->NTETransfer[idx]=2*icntHermite;
