@@ -48,6 +48,7 @@ int CalcByTEM(
   char sdt_phys[D_FileNameMax];
   char sdt_norm[D_FileNameMax];
   int rand_i, rand_max;
+  int step_initial=0;
   long int i_max = 0;
   FILE *fp;
   double Time = X->Bind.Def.Param.Tinit, Ns;
@@ -83,7 +84,7 @@ int CalcByTEM(
         fclose(fp);
         exitMPI(-1);
       }
-      byte_size = fread(&step_i, sizeof(int), 1, fp);
+      byte_size = fread(&step_initial, sizeof(int), 1, fp);
       byte_size = fread(&i_max, sizeof(long int), 1, fp);
       if (i_max != X->Bind.Check.idim_max) {
         fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
@@ -92,6 +93,9 @@ int CalcByTEM(
       }
       fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
       fclose(fp);
+      if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT){
+        step_initial=0;
+      }
     }
 
     sprintf(sdt_phys, cFileNameSSRand, rand_i);
@@ -108,12 +112,11 @@ int CalcByTEM(
     fprintf(fp, cLogNormRand);
     fclose(fp);
 
-    for (step_i = 0; step_i < X->Bind.Def.Lanczos_max; step_i++) {
-      X->Bind.Def.istep = step_i;
-
+    for (step_i = step_initial; step_i < X->Bind.Def.Lanczos_max; step_i++) {
       if (step_i % (X->Bind.Def.Lanczos_max / 10) == 0) {
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
+
       //TransferWithPeierls(&(X->Bind), Time);
       // [s] Yoshimi
       Time = X->Bind.Def.TETime[step_i];
@@ -125,9 +128,8 @@ int CalcByTEM(
       } else {
         //[TODO] Error procedure
       }
-
-      //SetDiagonal Parts
       //[e] Yoshimi
+
       TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
       MultiplyForTEM(&(X->Bind));
       //Add Diagonal Parts
@@ -154,12 +156,11 @@ int CalcByTEM(
       if (X->Bind.Def.iOutputEigenVec == TRUE) {
         if (step_i % X->Bind.Def.Param.OutputInterval == 0) {
           sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, step_i, myrank);
-          //sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, rand_i, myrank);
-          //sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
           if (childfopenALL(sdt, "wb", &fp) != 0) {
             fclose(fp);
             exitMPI(-1);
           }
+          fwrite(&step_i, sizeof(step_i), 1, fp);
           fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
           fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
           fclose(fp);
@@ -168,11 +169,11 @@ int CalcByTEM(
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, rand_i, myrank);
-      //sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
       if (childfopenALL(sdt, "wb", &fp) != 0) {
         fclose(fp);
         exitMPI(-1);
       }
+      fwrite(&step_i, sizeof(step_i), 1, fp);
       fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
       fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
       fclose(fp);
