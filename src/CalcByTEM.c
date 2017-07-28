@@ -13,8 +13,10 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+#include "Common.h"
 #include "FirstMultiply.h"
 #include "Multiply.h"
+#include "diagonalcalc.h"
 #include "expec_energy_flct.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
@@ -132,6 +134,7 @@ int CalcByTEM(
 
       TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
       MultiplyForTEM(&(X->Bind));
+      diagonalcalcForTE(step_i, &(X->Bind), v0, v1);
       //Add Diagonal Parts
       //Multiply Diagonal
       expec_energy_flct(&(X->Bind));
