@@ -192,8 +192,8 @@ double complex X_child_CisAjt_MPIdouble(
       GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
                  X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
       tmp_v0[ioff] += dmv;
-    }
-  }
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
+  }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
   else return 0.0;
   
   return 1.0;
@@ -269,55 +269,54 @@ double complex X_GC_child_general_hopp_MPIsingle(
   if (state2 == mask2) {
     trans = -(double) Fsgn * tmp_trans;
     state1check = 0;
-  }
+  }/*if (state2 == mask2)*/
   else if (state2 == 0) {
     state1check = mask1;
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
-      trans = 0;
-    }
-
-  }
+    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) trans = 0;
+  }/*if (state2 != mask2)*/
   else return 0;
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
   dam_pr = 0.0;
-  if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, Fsgn, ioff) \
+#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, state1, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(v1buf, tmp_v1, tmp_v0)
-    for (j = 0; j < idim_max_buf; j++) {
+  {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+#pragma omp for
+      for (j = 0; j < idim_max_buf; j++) {
 
-      state1 = j & mask1;
+        state1 = j & mask1;
 
-      if (state1 == state1check) {
+        if (state1 == state1check) {
 
-        SgnBit(j & bit1diff, &Fsgn);
-        ioff = j ^ mask1;
+          SgnBit(j & bit1diff, &Fsgn);
+          ioff = j ^ mask1;
 
-        dmv = (double) Fsgn * trans * v1buf[j + 1];
-        tmp_v0[ioff + 1] += dmv;
-        dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-      }
-    }
-  }
-  else {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, state1, Fsgn, ioff) \
-  firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(v1buf, tmp_v1, tmp_v0)
-    for (j = 0; j < idim_max_buf; j++) {
+          dmv = (double)Fsgn * trans * v1buf[j + 1];
+          tmp_v0[ioff + 1] += dmv;
+          dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
+        }/*if (state1 == state1check)*/
+      }/*for (j = 0; j < idim_max_buf; j++)*/
+    }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
+    else {
+#pragma omp for
+      for (j = 0; j < idim_max_buf; j++) {
 
-      state1 = j & mask1;
+        state1 = j & mask1;
 
-      if (state1 == state1check) {
+        if (state1 == state1check) {
 
-        SgnBit(j & bit1diff, &Fsgn);
-        ioff = j ^ mask1;
+          SgnBit(j & bit1diff, &Fsgn);
+          ioff = j ^ mask1;
 
-        dmv = (double) Fsgn * trans * v1buf[j + 1];
-        dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-      }
-    }
-  }
+          dmv = (double)Fsgn * trans * v1buf[j + 1];
+          dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
+        }/*for (j = 0; j < idim_max_buf; j++)*/
+      }/*for (j = 0; j < idim_max_buf; j++)*/
+    }/*if (! (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC))*/
+  }/*End of parallel region*/
   return (dam_pr);
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
@@ -380,9 +379,7 @@ double complex X_child_general_hopp_MPIdouble(
   }
   else if (state1 == mask1 && state2 == 0) {
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
-      trans = 0;
-    }
+    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) trans = 0;
   }
   else return 0;
 
@@ -400,27 +397,29 @@ double complex X_child_general_hopp_MPIdouble(
   if (ierr != 0) exitMPI(-1);
 
   dam_pr = 0.0;
-  if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
+#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
-      GetOffComp(list_2_1, list_2_2, list_1buf[j],
-                 X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-      dmv = trans * v1buf[j];
-      tmp_v0[ioff] += dmv;
-      dam_pr += conj(tmp_v1[ioff]) * dmv;
-    }
-  }
-  else {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
-  firstprivate(idim_max_buf, trans, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
-      GetOffComp(list_2_1, list_2_2, list_1buf[j],
-                 X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-      dmv = trans * v1buf[j];
-      dam_pr += conj(tmp_v1[ioff]) * dmv;
-    }
-  }
+  {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+#pragma omp for
+      for (j = 1; j <= idim_max_buf; j++) {
+        GetOffComp(list_2_1, list_2_2, list_1buf[j],
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+        dmv = trans * v1buf[j];
+        tmp_v0[ioff] += dmv;
+        dam_pr += conj(tmp_v1[ioff]) * dmv;
+      }/*for (j = 1; j <= idim_max_buf; j++)*/
+    }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
+    else {
+#pragma omp for
+      for (j = 1; j <= idim_max_buf; j++) {
+        GetOffComp(list_2_1, list_2_2, list_1buf[j],
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+        dmv = trans * v1buf[j];
+        dam_pr += conj(tmp_v1[ioff]) * dmv;
+      }/*for (j = 1; j <= idim_max_buf; j++)*/
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
+  }/*End of parallel region*/
   return (dam_pr);
 #endif
 }/*void child_general_hopp_MPIdouble*/
@@ -508,45 +507,46 @@ double complex X_child_general_hopp_MPIsingle(
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
   dam_pr = 0.0;
-  if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff, jreal, state1) \
+#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff, jreal, state1) \
   firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
+  {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+#pragma omp for
+      for (j = 1; j <= idim_max_buf; j++) {
 
-      jreal = list_1buf[j];
-      state1 = jreal & mask1;
+        jreal = list_1buf[j];
+        state1 = jreal & mask1;
 
-      if (state1 == state1check) {
+        if (state1 == state1check) {
+          SgnBit(jreal & bit1diff, &Fsgn);
+          GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
-        SgnBit(jreal & bit1diff, &Fsgn);
-        GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+          dmv = (double)Fsgn * trans * v1buf[j];
+          tmp_v0[ioff] += dmv;
+          dam_pr += conj(tmp_v1[ioff]) * dmv;
+        }/*if (state1 == state1check)*/
+      }/*for (j = 1; j <= idim_max_buf; j++)*/
+    }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
+    else {
+#pragma omp for
+      for (j = 1; j <= idim_max_buf; j++) {
 
-        dmv = (double) Fsgn * trans * v1buf[j];
-        tmp_v0[ioff] += dmv;
-        dam_pr += conj(tmp_v1[ioff]) * dmv;
-      }
-    }
-  }
-  else {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff, jreal, state1) \
-  firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
+        jreal = list_1buf[j];
+        state1 = jreal & mask1;
 
-      jreal = list_1buf[j];
-      state1 = jreal & mask1;
+        if (state1 == state1check) {
 
-      if (state1 == state1check) {
+          SgnBit(jreal & bit1diff, &Fsgn);
+          GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
-        SgnBit(jreal & bit1diff, &Fsgn);
-        GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-
-        dmv = (double) Fsgn * trans * v1buf[j];
-        dam_pr += conj(tmp_v1[ioff]) * dmv;
-      }
-    }
-  }
+          dmv = (double)Fsgn * trans * v1buf[j];
+          dam_pr += conj(tmp_v1[ioff]) * dmv;
+        }/*if (state1 == state1check)*/
+      }/*for (j = 1; j <= idim_max_buf; j++)*/
+    }/*if (! (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC))*/
+  }/*End of parallel region*/
   return (dam_pr);
 #endif
 }/*double complex child_general_hopp_MPIsingle*/
@@ -628,10 +628,10 @@ double complex X_child_CisAjt_MPIsingle(
         if(ioff !=0){
           dmv = (double) Fsgn * trans * v1buf[j];
           tmp_v0[ioff] += dmv;
-        }
-      }
-    }
-  }
+        }/*if(ioff !=0)*/
+      }/*if (state1 == state1check)*/
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
+  }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
   else return 0;
 
   return 1;

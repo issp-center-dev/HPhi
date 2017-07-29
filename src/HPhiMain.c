@@ -47,10 +47,28 @@
   Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
   <HR>
   <H2>Methods</H2>
-  Lanczos algorithm, thermal pure quantum state, full diagonalization
+  - Lanczos algorithm
+  - Locally Optimal Block Preconditioned Conjugate Gradient (LOBPCG) method : See LOBPCG_Main()
+  - Thermal Pure Quantum (TPQ) state
+  - Full Diagonalization
+  - Shifted BiCG method : See CalcSpectrumByBiCG()
+  - Lehmann's spectral representation : See CalcSpectrumByFullDiag()
+  .
   <HR>
   <H2>Target models</H2>
   Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heisenberg model, multi-orbital Hubbard model
+  <HR>
+  <H2>Important functions and source files</H2>
+  <ul>
+    <li>mltply.c : Perform Hamiltonian-vector product</li>
+    <ul>
+      <li>mltplyHubbard.c : For Hubbard and Kondo system</li>
+      <li>mltplySpin.c : For local spin system</li>
+    </ul>
+    <li>StdFace_main.c : Construct typical models</li>
+    <li>global.h, wrapperMPI.h : Global variables</li>
+    <li>struct.h : Binded struct</li>
+  </ul>
   <HR>
   <H2>Link</H2>
   https://github.com/QLMS/HPhi
