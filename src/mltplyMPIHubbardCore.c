@@ -163,10 +163,10 @@ int CheckBit_PairPE(
 }
 
 int GetSgnInterAll(
-  int isite1,
-  int isite2,
-  int isite3,
-  int isite4,
+  unsigned long int isite1,
+  unsigned long int isite2,
+  unsigned long int isite3,
+  unsigned long int isite4,
   int *Fsgn,
   struct BindStruct *X,
   unsigned long int orgbit,
@@ -878,7 +878,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI(
   isite3 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
   isite4 = X->Def.Tpow[2 * org_isite4 + org_ispin4];
 
-    //printf("debug: myrank=%d, isite1=%d, ispin1=%d, isite2=%d, ispin2=%d, isite3=%d, ispin3=%d, isite4=%d, ispin4=%d\n", myrank, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4);
+  //printf("debug: myrank=%d, isite1=%d, ispin1=%d, isite2=%d, ispin2=%d, isite3=%d, ispin3=%d, isite4=%d, ispin4=%d\n", myrank, org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4);
   if (iCheck == TRUE) {
     tmp_isite1 = X->Def.OrgTpow[2 * org_isite1 + org_ispin1];
     tmp_isite2 = X->Def.OrgTpow[2 * org_isite2 + org_ispin2];
@@ -901,6 +901,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI(
       }
     }
     else {
+      //printf("Debug-1: test: myrank=%d\n", myrank);
       return 0.0;
     }
   }
@@ -947,7 +948,6 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
     return dam_pr;
   }//myrank =origin
   else {
-    //printf("debug: myrank=%d, origin=%d\n", myrank, origin);
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
                         &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
@@ -964,8 +964,8 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
     if (ierr != 0) exitMPI(-1);
 
     if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite
-     && org_isite3 + 1 > X->Def.Nsite && org_isite4 + 1 > X->Def.Nsite) {
-
+     && org_isite3 + 1 > X->Def.Nsite && org_isite4 + 1 > X->Def.Nsite)
+    {
       if (isite2 > isite1) Adiff = isite2 - isite1 * 2;
       else Adiff = isite1 - isite2 * 2;
       if (isite4 > isite3) Bdiff = isite4 - isite3 * 2;
@@ -1018,14 +1018,15 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
         for (j = 1; j <= idim_max_buf; j++) {
           if (GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X,
             list_1buf[j] + org_rankbit, &tmp_off) == TRUE) {
-
             if (GetOffComp(list_2_1, list_2_2, tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) == TRUE) {
+
               dmv = tmp_V * v1buf[j] * Fsgn;
               tmp_v0[ioff] += dmv;
               dam_pr += conj(tmp_v1[ioff]) * dmv;
             }
           }
         }
+        //printf("Debug-3: myrank=%d, origin=%d, dam_pr=%lf\n", myrank, origin, creal(dam_pr));
       }
       else {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn, ioff) \
