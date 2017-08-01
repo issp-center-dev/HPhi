@@ -3807,7 +3807,7 @@ When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by the Lanc
  \begin{itemize}
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
-   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$.
+   \item  Line 3 -  $[$int02$]$+3: $[$double01$]$~~$[$double02$]$.
   \end{itemize}
   
 \subsubsection{Parameters}
@@ -3821,7 +3821,7 @@ When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by the Lanc
 
   \item  $[$int02$]$
 
- {\bf Type :} Int
+ {\bf Type :} Long Int
 
 {\bf Description :}  { The number of Lanczos steps.}
 
@@ -3829,8 +3829,8 @@ When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by the Lanc
 
  {\bf Type :} double 
 
-{\bf Description :} The value of eigenvectors.\\
-$[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.\\
+{\bf Description :} The value of eigenvectors. $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.
+The fist component is not used for calculation.\\
 
  \end{itemize}
 
@@ -3851,7 +3851,7 @@ When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops at an i
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
    \item  Lines 3 - 3+$[$int01$]$: $[$double01$]$~~$[$double02$]$
-   \item  Lines 4+$[$int01$]$ - 3+2$\times[$int01$]$: $[$double03$]$~~$[$double04$]$.
+   \item  Lines 4+$[$int01$]$ - 4+2$\times[$int01$]$: $[$double03$]$~~$[$double04$]$.
   \end{itemize}
 
 \subsubsection{Parameters}
@@ -3861,25 +3861,25 @@ When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops at an i
 
  {\bf Type :} Int
 
-{\bf Description :}  The total number of targets of the Hilbert spaces.
+{\bf Description :}  { The number of Lanczos (TPQ) steps for the Lanczos (TPQ) method.}
 
   \item  $[$int02$]$
 
- {\bf Type :} Int
+ {\bf Type :} Long Int
 
-{\bf Description :}  { The number of Lanczos (TPQ) steps for the Lanczos (TPQ) method.}
+{\bf Description :}  The total number of targets of the Hilbert spaces.
 
  \item  $[$double01$]$, $[$double02$]$ 
 
  {\bf Type :} double 
 
-{\bf Description :} The value of two vectors ($\vec{v}_{k+1}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method and $\vec{y}_{k+1}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.
+{\bf Description :} The coefficient of the vector $\vec{v}_{k+1}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method ($\vec{y}_{k+1}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part. The fist component is not used for calculation.
 
  \item  $[$double03$]$, $[$double04$]$ 
 
  {\bf Type :} double 
 
-{\bf Description :} The value of two vectors ($\vec{v}_{k}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method and $\vec{y}_{k}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double03$]$ is a real part and $[$double04$]$ is an imaginary part.\\
+{\bf Description :} The coefficient of the vector $\vec{v}_{k}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method ($\vec{y}_{k}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double03$]$ is a real part and $[$double04$]$ is an imaginary part. The fist component is not used for calculation.\\
 
  \end{itemize}
 
@@ -3936,7 +3936,7 @@ The file format is of the binary type.  An example of the file format is as foll
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
    \item  Lines 3 - 3+$[$int02$]$: $[$double01$]$~~$[$double02$]$
-   \item  Lines 4+$[$int02$]$ - 3+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$.
+   \item  Lines 4+$[$int02$]$ - 4+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$.
 
   \end{itemize}
 \subsubsection{Parameters}
@@ -3950,7 +3950,7 @@ The file format is of the binary type.  An example of the file format is as foll
 
   \item  $[$int02$]$
 
- {\bf Type :} Int
+ {\bf Type :} Long Int
 
 {\bf Description :}  The total number of targets of the Hilbert spaces.
 
@@ -3960,14 +3960,14 @@ The file format is of the binary type.  An example of the file format is as foll
  {\bf Type :} Double 
 
 {\bf Description :} The value of the vector $\vec{v}_{k+1}$ for recalculating dynamical Green's functions by the Lanczos method.\\
-$[$double01$]$ and $[$double02$]$ are a real part and an imaginary part of $\vec{v}_{k+1}$, respectively.
+$[$double01$]$ and $[$double02$]$ are a real part and an imaginary part of $\vec{v}_{k+1}$, respectively. The fist component is not used for calculation.
 
 \item  $[$double03$]$, $[$double04$]$
 
  {\bf Type :} Double 
 
 {\bf Description :} The value of the vector $\vec{v}_{k}$ for recalculating dynamical Green's functions by the Lanczos method.\\
-$[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec{v}_{k}$, respectively.
+$[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec{v}_{k}$, respectively. The fist component is not used for calculation.
 \end{itemize}
 
 \newpage
