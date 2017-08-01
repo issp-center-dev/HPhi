@@ -136,176 +136,176 @@ struct StdIntList {
   /*
    Transfer, Interaction, Locspin
   */
-  int nsite;/**@brief Number of sites, set in the each lattice file.*/
-  int *locspinflag;/**@brief [StdIntList::nsite] LocSpin in Expert mode, 
+  int nsite;/**<@brief Number of sites, set in the each lattice file.*/
+  int *locspinflag;/**<@brief [StdIntList::nsite] LocSpin in Expert mode, 
                    malloc and set in each lattice file.*/
-  int ntrans;/**@brief Number of transfer, counted in each lattice file.*/
-  int Ltrans;/**@brief Print trans.def or not, set in PrintTrans().*/
-  int **transindx;/**@brief [StdIntList::ntrans][4] Site/spin indices of 
+  int ntrans;/**<@brief Number of transfer, counted in each lattice file.*/
+  int Ltrans;/**<@brief Print trans.def or not, set in PrintTrans().*/
+  int **transindx;/**<@brief [StdIntList::ntrans][4] Site/spin indices of 
                   one-body term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_trans().*/
-  double complex *trans;/**@brief [StdIntList::ntrans] Coefficient of 
+  double complex *trans;/**<@brief [StdIntList::ntrans] Coefficient of 
                   one-body term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_trans().*/
-  int nintr;/**@brief Number of InterAll, counted in each lattice file.*/
-  int Lintr;/**@brief Print interall.def or not, set in PrintInteractions().*/
-  int **intrindx;/**@brief [StdIntList::nintr][8] Site/spin indices of 
+  int nintr;/**<@brief Number of InterAll, counted in each lattice file.*/
+  int Lintr;/**<@brief Print interall.def or not, set in PrintInteractions().*/
+  int **intrindx;/**<@brief [StdIntList::nintr][8] Site/spin indices of 
                   two-body term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  double complex *intr;/**@brief [StdIntList::nintr] Coefficient of general
+  double complex *intr;/**<@brief [StdIntList::nintr] Coefficient of general
                   two-body term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  int NCintra;/**@brief Number of intra-site Coulomb interaction,
+  int NCintra;/**<@brief Number of intra-site Coulomb interaction,
               counted in each lattice file.*/
-  int LCintra;/**@brief Print coulombintra.def or not, set in PrintInteractions().*/
-  int **CintraIndx;/**@brief [StdIntList::NCintra][1] Site indices of 
+  int LCintra;/**<@brief Print coulombintra.def or not, set in PrintInteractions().*/
+  int **CintraIndx;/**<@brief [StdIntList::NCintra][1] Site indices of 
                   intra-site Coulomb term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  double *Cintra;/**@brief [StdIntList::NCintra] Coefficient of intra-site
+  double *Cintra;/**<@brief [StdIntList::NCintra] Coefficient of intra-site
                   Coulomb term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  int NCinter;/**@brief Number of inter-site Coulomb interaction,
+  int NCinter;/**<@brief Number of inter-site Coulomb interaction,
               counted in each lattice file.*/
-  int LCinter;/**@brief Print coulombinter.def or not, set in PrintInteractions().*/
-  int **CinterIndx;/**@brief [StdIntList::NCinter][2] Site indices of 
+  int LCinter;/**<@brief Print coulombinter.def or not, set in PrintInteractions().*/
+  int **CinterIndx;/**<@brief [StdIntList::NCinter][2] Site indices of 
                   inter-site Coulomb term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  double *Cinter;/**@brief [StdIntList::NCinter] Coefficient of inter-site
+  double *Cinter;/**<@brief [StdIntList::NCinter] Coefficient of inter-site
                   Coulomb term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  int NHund;/**@brief Number of Hund term, counted in each lattice file.*/
-  int LHund;/**@brief Print hund.def or not, set in PrintInteractions().*/
-  int **HundIndx;/**@brief [StdIntList::NHund][2] Site indices of 
+  int NHund;/**<@brief Number of Hund term, counted in each lattice file.*/
+  int LHund;/**<@brief Print hund.def or not, set in PrintInteractions().*/
+  int **HundIndx;/**<@brief [StdIntList::NHund][2] Site indices of 
                   Hund term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  double *Hund;/**@brief [StdIntList::NHund] Coefficient of Hund term, 
+  double *Hund;/**<@brief [StdIntList::NHund] Coefficient of Hund term, 
                malloc in StdFace_MallocInteractions()
                    and set in StdFace_intr().*/
-  int NEx;/**@brief Number of exchange term, counted in each lattice file.*/
-  int LEx;/**@brief Print exchange.def or not, set in PrintInteractions().*/
-  int **ExIndx;/**@brief [StdIntList::NEx][2] Site indices of 
+  int NEx;/**<@brief Number of exchange term, counted in each lattice file.*/
+  int LEx;/**<@brief Print exchange.def or not, set in PrintInteractions().*/
+  int **ExIndx;/**<@brief [StdIntList::NEx][2] Site indices of 
                   exchange term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  double *Ex;/**@brief [StdIntList::NEx] Coefficient of exchange term, 
+  double *Ex;/**<@brief [StdIntList::NEx] Coefficient of exchange term, 
                malloc in StdFace_MallocInteractions()
                    and set in StdFace_intr().*/
-  int NPairLift;/**@brief Number of pair-lift term, counted in each lattice file.*/
-  int LPairLift;/**@brief Print pairlift.def or not, set in PrintInteractions().*/
-  int **PLIndx;/**@brief [StdIntList::NPairLift][2] Site indices of 
+  int NPairLift;/**<@brief Number of pair-lift term, counted in each lattice file.*/
+  int LPairLift;/**<@brief Print pairlift.def or not, set in PrintInteractions().*/
+  int **PLIndx;/**<@brief [StdIntList::NPairLift][2] Site indices of 
                   pair-lift term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_intr().*/
-  double *PairLift;/**@brief [StdIntList::NPairLift] Coefficient of 
+  double *PairLift;/**<@brief [StdIntList::NPairLift] Coefficient of 
                    pair-lift term, malloc in StdFace_MallocInteractions()
                    and set in StdFace_intr().*/
   int lBoost;
   /*
    Calculation conditions
   */
-  int lGC;/**@brief Switch for computing Grandcanonical ensemble(== 1).
+  int lGC;/**<@brief Switch for computing Grandcanonical ensemble(== 1).
           Setted in StdFace_main() after all keywords are read.*/
-  int nelec;/**@brief Number of electrons, input from file.*/
-  int S2;/**@brief Total spin |S| of a local spin, input from file.*/
-  char outputmode[256];/**@brief Select amount of correlation function,
+  int nelec;/**<@brief Number of electrons, input from file.*/
+  int S2;/**<@brief Total spin |S| of a local spin, input from file.*/
+  char outputmode[256];/**<@brief Select amount of correlation function,
                        input from file.*/
-  char CDataFileHead[256];/**@brief String fron tof the output files,
+  char CDataFileHead[256];/**<@brief String fron tof the output files,
                           input from file*/
-  int Sz2;/**@brief Total Sz, input from file.*/
-  int ioutputmode;/**@brief Switch associated to StdIntList::outputmode*/
+  int Sz2;/**<@brief Total Sz, input from file.*/
+  int ioutputmode;/**<@brief Switch associated to StdIntList::outputmode*/
   /*
    Wannier90 mode
   */
-  char W90_hr[256];/**@brief Name of hopping parameter file from wannier90,
+  char W90_hr[256];/**<@brief Name of hopping parameter file from wannier90,
                    input from file.*/
-  char W90_geom[256];/**@brief Name of geometry file from wannier90 converter,
+  char W90_geom[256];/**<@brief Name of geometry file from wannier90 converter,
                    input from file.*/
-  int W90_nt;/**@brief Number of transfer in wannier90 HR file.*/
-  int **W90_indx;/**@brief [StdIntList::W90_nt][5] Hopping index, 
+  int W90_nt;/**<@brief Number of transfer in wannier90 HR file.*/
+  int **W90_indx;/**<@brief [StdIntList::W90_nt][5] Hopping index, 
                  malloc in read_W90().*/
-  double complex *W90_t;/**@brief [StdIntList::W90_nt] Hopping parameter, 
+  double complex *W90_t;/**<@brief [StdIntList::W90_nt] Hopping parameter, 
                  malloc in read_W90().*/
-  double W90_cutoff;/**@brief Cutoof for the hopping in wannier90, input from file*/
+  double W90_cutoff;/**<@brief Cutoof for the hopping in wannier90, input from file*/
 #if defined(_HPhi)
   /*
   HPhi modpara
   */
-  char method[256];/**@brief The name of method, input from file.*/
-  char Restart[256];/**@brief The name of restart mode, input from file.*/
-  char InitialVecType[256];/**@brief The name of initialguess-type, input from file.*/
-  char EigenVecIO[256];/**@brief The name of I/O mode for eigenvector, input from file*/
-  int FlgTemp;/**@brief */
-  int Lanczos_max;/**@brief The maxixmum number of iterations, input from file*/
-  int initial_iv; /**@brief the number for generating random number, input from file.*/
-  int nvec;/**@brief */
-  int exct;/**@brief The number of eigenvectors to be computed. input from file*/
-  int LanczosEps;/**@brief Convergence threshold for the Lanczos method.*/
-  int LanczosTarget;/**@brief Which eigenvector is used for the convergence check.*/
-  int NumAve;/**@brief Number of trials for TPQ calculation.*/
-  int ExpecInterval;/**@brief Interval for the iteration when the expectation 
+  char method[256];/**<@brief The name of method, input from file.*/
+  char Restart[256];/**<@brief The name of restart mode, input from file.*/
+  char InitialVecType[256];/**<@brief The name of initialguess-type, input from file.*/
+  char EigenVecIO[256];/**<@brief The name of I/O mode for eigenvector, input from file*/
+  int FlgTemp;/**<@brief */
+  int Lanczos_max;/**<@brief The maxixmum number of iterations, input from file*/
+  int initial_iv; /**<@brief the number for generating random number, input from file.*/
+  int nvec;/**<@brief */
+  int exct;/**<@brief The number of eigenvectors to be computed. input from file*/
+  int LanczosEps;/**<@brief Convergence threshold for the Lanczos method.*/
+  int LanczosTarget;/**<@brief Which eigenvector is used for the convergence check.*/
+  int NumAve;/**<@brief Number of trials for TPQ calculation.*/
+  int ExpecInterval;/**<@brief Interval for the iteration when the expectation 
                     value is computed.*/
-  double LargeValue;/**@brief The shift parameter for the TPQ calculation.*/
+  double LargeValue;/**<@brief The shift parameter for the TPQ calculation.*/
   /*
   Boost
   */
-  int ***list_6spin_pair;/**@brief */
-  int **list_6spin_star;/**@brief */
-  int num_pivot;/**@brief */
-  int ishift_nspin;/**@brief */
+  int ***list_6spin_pair;/**<@brief */
+  int **list_6spin_star;/**<@brief */
+  int num_pivot;/**<@brief */
+  int ishift_nspin;/**<@brief */
   /*Spectrum*/
-  char CalcSpec[256];/**@brief The name of mode for spectrum, input from file.*/
-  char SpectrumType[256];/**@brief The type of mode for spectrum, input from file.*/
-  int Nomega;/**@brief Number of frequencies, input from file.*/
-  double OmegaMax;/**@brief Maximum of frequency for spectrum, input from file.*/
-  double OmegaMin;/**@brief Minimum of frequency for spectrum, input from file.*/
-  double OmegaIm;/**@brief Imaginary part of frequency.*/
-  double SpectrumQL;/**@brief wavenumver (q-vector) in fractional coordinate*/
-  double SpectrumQW;/**@brief wavenumver (q-vector) in fractional coordinate*/
-  double SpectrumQH;/**@brief wavenumver (q-vector) in fractional coordinate*/
-  int SpectrumBody;/**@brief one- or two-body excitation, defined from
+  char CalcSpec[256];/**<@brief The name of mode for spectrum, input from file.*/
+  char SpectrumType[256];/**<@brief The type of mode for spectrum, input from file.*/
+  int Nomega;/**<@brief Number of frequencies, input from file.*/
+  double OmegaMax;/**<@brief Maximum of frequency for spectrum, input from file.*/
+  double OmegaMin;/**<@brief Minimum of frequency for spectrum, input from file.*/
+  double OmegaIm;/**<@brief Imaginary part of frequency.*/
+  double SpectrumQL;/**<@brief wavenumver (q-vector) in fractional coordinate*/
+  double SpectrumQW;/**<@brief wavenumver (q-vector) in fractional coordinate*/
+  double SpectrumQH;/**<@brief wavenumver (q-vector) in fractional coordinate*/
+  int SpectrumBody;/**<@brief one- or two-body excitation, defined from
                    StdIntList::SpectrumType*/
 #elif defined(_mVMC)
   /*mVMC modpara*/
-  char CParaFileHead[256];/**@brief Header of the optimized wavefunction,
+  char CParaFileHead[256];/**<@brief Header of the optimized wavefunction,
                           input from file*/
-  int NVMCCalMode;/**@brief Optimization(=0) or compute correlation
+  int NVMCCalMode;/**<@brief Optimization(=0) or compute correlation
                   function(=1), input from file.*/
-  int NLanczosMode;/**@brief Power Lanczos(=1), input from file*/
-  int NDataIdxStart;/**@brief Start index of trials, input from file.*/
-  int NDataQtySmp;/**@brief Number of trials, input from file.*/
-  int NSPGaussLeg;/**@brief Number of Gauss-Legendre points for spin projection,
+  int NLanczosMode;/**<@brief Power Lanczos(=1), input from file*/
+  int NDataIdxStart;/**<@brief Start index of trials, input from file.*/
+  int NDataQtySmp;/**<@brief Number of trials, input from file.*/
+  int NSPGaussLeg;/**<@brief Number of Gauss-Legendre points for spin projection,
                   input from file.*/
-  int NMPTrans;/**@brief Number of translation symmetry*/
-  int NSROptItrStep;/**@brief Number of iterations for stocastic reconfiguration*/
-  int NSROptItrSmp;/**@brief Number of steps for sampling*/
-  int NSROptFixSmp;/**@brief */
-  double DSROptRedCut;/**@brief Stocastic reconfiguration parameter, input from file.*/
-  double DSROptStaDel;/**@brief Stocastic reconfiguration parameter, input from file.*/
-  double DSROptStepDt;/**@brief Stocastic reconfiguration parameter, input from file.*/
-  int NVMCWarmUp;/**@brief */
-  int NVMCInterval;/**@brief */
-  int NVMCSample;/**@brief */
-  int NExUpdatePath;/**@brief */
-  int RndSeed;/**@brief */
-  int NSplitSize;/**@brief */
-  int NSPStot;/**@brief */
-  int NStore;/**@brief */
-  int NSRCG;/**@brief */
-  int ComplexType;/**@brief */
+  int NMPTrans;/**<@brief Number of translation symmetry*/
+  int NSROptItrStep;/**<@brief Number of iterations for stocastic reconfiguration*/
+  int NSROptItrSmp;/**<@brief Number of steps for sampling*/
+  int NSROptFixSmp;/**<@brief */
+  double DSROptRedCut;/**<@brief Stocastic reconfiguration parameter, input from file.*/
+  double DSROptStaDel;/**<@brief Stocastic reconfiguration parameter, input from file.*/
+  double DSROptStepDt;/**<@brief Stocastic reconfiguration parameter, input from file.*/
+  int NVMCWarmUp;/**<@brief */
+  int NVMCInterval;/**<@brief */
+  int NVMCSample;/**<@brief */
+  int NExUpdatePath;/**<@brief */
+  int RndSeed;/**<@brief */
+  int NSplitSize;/**<@brief */
+  int NSPStot;/**<@brief */
+  int NStore;/**<@brief */
+  int NSRCG;/**<@brief */
+  int ComplexType;/**<@brief */
   /*
    Sub-lattice
   */
-  int Lsub;/**@brief Sublattice*/
-  int Wsub;/**@brief Sublattice*/
-  int Hsub;/**@brief Sublattice*/
-  int NCellsub;/**@brief Number of cells in a sublattice*/
-  int boxsub[3][3];/**@brief Sublattice*/
-  int rboxsub[3][3];/**@brief Sublattice*/
+  int Lsub;/**<@brief Sublattice*/
+  int Wsub;/**<@brief Sublattice*/
+  int Hsub;/**<@brief Sublattice*/
+  int NCellsub;/**<@brief Number of cells in a sublattice*/
+  int boxsub[3][3];/**<@brief Sublattice*/
+  int rboxsub[3][3];/**<@brief Sublattice*/
   /*
    2-body part of the trial wavefunction
   */
-  int **Orb;/**@brief [StdIntList::nsite][StdIntList::nsite] Orbital index*/
-  int **AntiOrb;/**@brief [StdIntList::nsite][StdIntList::nsite] Anti-periodic switch*/
-  int NOrb;/**@brief Number of independent orbital index*/
-  int NSym;/**@brief Number of translation symmetries, 
+  int **Orb;/**<@brief [StdIntList::nsite][StdIntList::nsite] Orbital index*/
+  int **AntiOrb;/**<@brief [StdIntList::nsite][StdIntList::nsite] Anti-periodic switch*/
+  int NOrb;/**<@brief Number of independent orbital index*/
+  int NSym;/**<@brief Number of translation symmetries, 
            Defined from the number of cells in the sub-lattice.*/
 #endif
 };

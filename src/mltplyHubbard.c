@@ -14,12 +14,10 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**@file
 @brief Function for Hubbard Hamitonian
-
 <ul>
 <li>mltplyHubbard(): Main routine of hubbard hamiltonian (canonical).</li>
 <li>mltplyHubbardGC(): Main routine of hubbard hamiltonian (grandcanonical).</li>
 </ul>
-
 <table>
   <tr>
   <td></td>
@@ -100,9 +98,7 @@
     <td>::X_GC_child_CisAjtCkuAlv_Hubbard_MPI</td>
   </tr>
 </table>
-
 Other
-
 <table>
   <tr>
     <td></td>

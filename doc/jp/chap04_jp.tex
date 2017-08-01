@@ -1154,9 +1154,11 @@ ExpecInterval  20
 
 {\bf 形式 :} int型 (自然数)
 
-{\bf 説明 :}  Lanczosステップを行う回数の最大値。
+{\bf 説明 :}  Lanczosステップを行う回数の最大値を与えます。
 指定した精度内で収束した場合には、これより短い回数で終了します。
 この回数以内で収束しない場合はエラー終了します。
+TPQ法の場合は総ステップ数を与えます。
+再計算を行う場合には、\verb|Lanczos_max|の最大数を過去のステップ数よりも大きくする必要があります。
 
  \item  \verb|initial_iv|
 
@@ -3178,7 +3180,9 @@ stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.
 
 \newpage
 \subsection{Time\_TPQ\_Step.dat}
-(TPQ法でのみ出力) TPQ法でのステップ毎の開始時間を出力します。以下にファイル例を示します。\\
+(TPQ法でのみ出力) TPQ法でのステップ毎の開始時間を出力します。
+再計算の場合は値が追記されます。
+以下にファイル例を示します。\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3230,7 +3234,9 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
 \newpage
 \subsection{Norm\_rand.dat}
 \label{Subsec:normrand}
-(TPQ法でのみ出力) TPQ法での有限温度計算時のログを出力します。以下にファイル例を示します。\\
+(TPQ法でのみ出力) TPQ法での有限温度計算時のログを出力します。
+再計算の場合は値が追記されます。
+以下にファイル例を示します。\\
 \begin{minipage}{12.5cm}
 \begin{screen}
 \begin{verbatim}
@@ -3291,7 +3297,9 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
 \newpage
 \subsection{SS\_rand.dat}
 \label{Subsec:ssrand}
-(TPQ法でのみ出力)TPQ法での有限温度計算結果を出力します。以下にファイル例を示します。\\
+(TPQ法でのみ出力)TPQ法での有限温度計算結果を出力します。
+再計算の場合は値が追記されます。
+以下にファイル例を示します。\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3363,7 +3371,9 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N
 \newpage
 \subsection{Flct\_rand.dat}
 \label{Subsec:flctrand}
-(TPQ法でのみ出力) TPQ法での揺らぎに関する有限温度計算結果を出力します。以下にファイル例を示します。\\
+(TPQ法でのみ出力) TPQ法での揺らぎに関する有限温度計算結果を出力します。
+再計算の場合は値が追記されます。
+以下にファイル例を示します。\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}

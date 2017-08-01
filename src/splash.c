@@ -14,10 +14,14 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /*-------------------------------------------------------------*/
-
+/**@file
+@brief Print logo mark and version number
+*/
 #include <stdio.h>
 #include "wrapperMPI.h"
-
+/**
+@brief Print logo mark and version number
+*/
 void splash(){
    int ver_maj =
 #include "version_major.h"
@@ -44,4 +48,4 @@ void splash(){
   fprintf(stdoutMPI, "           9@P~~~9@P             Version %d.%d.%d    \n", ver_maj, ver_min, ver_pat);
   fprintf(stdoutMPI, "                                                                \n");
 
-}
+}/*void splash()*/
