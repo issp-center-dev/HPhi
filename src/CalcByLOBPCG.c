@@ -729,13 +729,14 @@ int CalcByLOBPCG(
       exitMPI(-1);
     }
 
-#pragma omp parallel for default(none) shared(X,v1,L_vec) private(idim)
-    for (idim = 0; idim < X->Bind.Check.idim_max; idim++)
-      v1[idim + 1] = L_vec[0][idim];
-
     byte_size = fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
     byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
-    byte_size = fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
+#pragma omp parallel for default(none) shared(X,v1,L_vec,ie) private(idim)
+      for (idim = 0; idim < X->Bind.Check.idim_max; idim++)
+        v1[idim + 1] = L_vec[ie][idim];
+      byte_size = fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    }/*for (ie = 0; ie < X->Bind.Def.k_exct; ie++)*/
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
   }/*if (X->Bind.Def.iOutputEigenVec == TRUE)*/
