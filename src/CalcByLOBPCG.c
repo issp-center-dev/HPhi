@@ -697,6 +697,7 @@ int CalcByLOBPCG(
   */
   phys(&(X->Bind), X->Bind.Def.k_exct);
 
+  X->Bind.Def.St=1;
   if (X->Bind.Def.St == 0) {
     sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
   }
