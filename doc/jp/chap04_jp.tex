@@ -3772,35 +3772,27 @@ CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算され�
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、\&\&は固有値の番号、\$\$はランク番号を表します。
 
 \subsubsection{ファイル形式}
- \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$int02$]$
-   \item  3行目 - $[$int02$]$+3行: $[$double01$]$~~$[$double02$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
 
-  \item  $[$int01$]$
+次のようなソースコードを用いて、バイナリファイルとして出力されます
+(実際の$\HPhi$のソースコードとは変数名等が異なります)。
+\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_eigenvec_0_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&eigen_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
+ただし、\verb|number_of_interations|は反復回数、
+\verb|local_size|は固有ベクトルのサイズ(MPI並列を使っている場合は全ヒルベルト次元とは異なります)、
+\verb|eigen_vector|は複素固有ベクトルをそれぞれ表します。
 
- {\bf 形式 :} int型
-
-{\bf 説明 :} { 計算に要したLanczosステップ数を表します。}
-
-  \item  $[$int02$]$
-
- {\bf 形式 :} long int型
-
-{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
-
- 
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf 形式 :} double型 
-
-{\bf 説明 :} 固有ベクトルの値を表します。一番最初の成分に計算に使用しない値が入っています。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
-\end{itemize}
-
+※ \verb|eigen_vector|の一番最初の成分に計算に使用しない値が入っています。
+  
 \newpage
 \subsection{{tmpvec.dat}}
 \label{Subsec:restart}
@@ -3811,46 +3803,51 @@ CalcModファイルのReStart=1, 2の場合に、計算途中のベクトルを�
 \subsubsection{ファイル名}
 \begin{itemize}
    \item{Lanczos法：\#\#\_tmpvec\_rank\_\$\$.dat}
-   \item{TPQ法：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
+   \item{TPQ法, LOBPCG法：\#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}   
 \end{itemize}
-  \#\#はModParaファイル内の[string02]で指定されるヘッダ、\$\$はランク番号を表します。また、\&\&はTPQ時のサンプリングの番号を表します。
+\#\#はModParaファイル内の[string02]で指定されるヘッダ、
+\$\$はランク番号を表します。また、\&\&はTPQ時のサンプリングの番号
+もしくはLOBPCG法での固有値の番号を表します。
 
 \subsubsection{ファイル形式}
- \begin{itemize}
-   \item  1行目：$[$int01$]$
-   \item  2行目：$[$int02$]$
-   \item  3行目 - $[$int02$]$+3行: $[$double01$]$~~$[$double02$]$
-   \item  4行目 - 2$\times$$[$int02$]$+4行: $[$double03$]$~~$[$double04$]$
-  \end{itemize}
-\subsubsection{パラメータ}
- \begin{itemize}
 
-  \item  $[$int01$]$
+次のようなソースコードを用いて、バイナリファイルとして出力されます
+(実際の$\HPhi$のソースコードとは変数名等が異なります)。
 
- {\bf 形式 :} int型
+Lanczos
+\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_tmpvec_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
+fwrite(&second_last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
 
-{\bf 説明 :} { 計算に要したステップ数を表します。Lanczos法ではLanczosステップ数、TPQ法ではハミルトニアンを乗算した回数が出力されます。}
+TPQおよびLOBPCG
+\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_tmpvec_set_0_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
+ただし、\verb|number_of_interations|は反復回数、
+\verb|local_size|は固有ベクトルのサイズ(MPI並列を使っている場合は全ヒルベルト次元とは異なります)、
+\verb|last_vector|は最後の反復でのベクトル、
+\verb|second_last_vector|は最後から2番目の反復でのベクトルをそれぞれ表します。
 
-  \item  $[$int02$]$
-
- {\bf 形式 :} int型
-
-{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
- 
-  \item  $[$double01$]$, $[$double02$]$ 
-
- {\bf 形式 :} double 
-
-{\bf 説明 :}  Lanczos法の場合は Eq.~(\ref{eq: LanczosVector})の$\vec{v}_{k+1}$、TPQ法の場合はEq~.(\ref{eq: TPQVector})の$\vec{y}_{k+1}$がそれぞれ出力されます。 $[$double01$]$が実部、$[$double02$]$が虚部を表します。一番最初の成分に計算に使用しない値が入っています。\\
-
- \item  $[$double03$]$, $[$double04$]$ 
-
- {\bf 形式 :} double 
-
-{\bf 説明 :}  Lanczos法の場合は Eq.~(\ref{eq: LanczosVector})の$\vec{v}_{k}$、TPQ法の場合はEq~.(\ref{eq: TPQVector})の$\vec{y}_{k}$がそれぞれ出力されます。 $[$double01$]$が実部、$[$double02$]$が虚部を表します。一番最初の成分に計算に使用しない値が入っています。\\
-
-
-\end{itemize}
+※ \verb|last_vector|、\verb|second_last_vector|の一番最初の成分に計算に使用しない値が入っています。
 
 \newpage
 \subsection{{DynamicalGreen.dat}}

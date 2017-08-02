@@ -161,7 +161,7 @@ static void Initialize_wave(
   char sdt[D_FileNameMax];
   size_t byte_size;
 
-  int iproc, ie;
+  int iproc, ie, ierr;
   long int idim, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
   int mythread;
@@ -178,29 +178,41 @@ static void Initialize_wave(
     //StartTimer(3600);
     //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
     fprintf(stdoutMPI, "%s", cLogInputVecStart);
-    sprintf(sdt, cFileNameInputVector, 0, myrank);
-    childfopenALL(sdt, "rb", &fp);
-    if (fp == NULL) {
-      fprintf(stdout, "A file of Inputvector does not exist.\n");
-      fprintf(stdout, "Start from scratch.\n");
-    }
-    else {
-      byte_size = fread(&i_max, sizeof(long int), 1, fp);
-      //fprintf(stdoutMPI, "Debug: i_max=%ld, step_i=%d\n", i_max, step_i);
-      if (i_max != X->Check.idim_max) {
-        fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-        exitMPI(-1);
+
+    ierr = 0;
+    for (ie = 0; ie < X->Def.k_exct; ie++) {
+
+      sprintf(sdt, cFileNameInputVector, ie, myrank);
+      childfopenALL(sdt, "rb", &fp);
+      if (fp == NULL) {
+        fprintf(stdout, "Restart file is not found.\n");
+        fprintf(stdout, "Start from scratch.\n");
+        ierr = 1;
+        break;
       }
-      for (ie = 0; ie < X->Def.k_exct; ie++) 
+      else {
+        byte_size = fread(&iproc, sizeof(int), 1, fp);
+        byte_size = fread(&i_max, sizeof(unsigned long int), 1, fp);
+        //fprintf(stdoutMPI, "Debug: i_max=%ld, step_i=%d\n", i_max, step_i);
+        if (i_max != X->Check.idim_max) {
+          fprintf(stderr, "Error: Invalid restart file.\n");
+          exitMPI(-1);
+        }
         byte_size = fread(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
+        fclose(fp);
+      }
+    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+
+    if (ierr == 0) {
       //TimeKeeperWithRandAndStep(X, cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
       fprintf(stdoutMPI, "%s", cLogInputVecFinish);
-      fclose(fp);
       //StopTimer(3600);
-      if(byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+      if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
       return;
-    }
+    }/*if (ierr == 0)*/
+
   }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
+
   /**@brief
   (B) For scratch (including the case that restart files are not found):
   initialize eigenvectors in the same way as TPQ and Lanczos.
@@ -294,13 +306,15 @@ static void Output_restart(
 
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecStart);
-  sprintf(sdt, cFileNameOutputVector, 0, myrank);
-  if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
   
-  byte_size = fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp);
-  for (ie = 0; ie < X->Def.k_exct; ie++)
+  for (ie = 0; ie < X->Def.k_exct; ie++) {
+    sprintf(sdt, cFileNameOutputVector, ie, myrank);
+    if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
+    byte_size = fwrite(&X->Large.itr, sizeof(X->Large.itr), 1, fp);
+    byte_size = fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp);
     byte_size = fwrite(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
-  fclose(fp);
+    fclose(fp);
+  }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
   if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
@@ -407,14 +421,14 @@ int LOBPCG_Main(
         /**@brief
         <li>Preconditioning (Point Jacobi): @f${\bf w}={\hat T}^{-1} {\bf w}@f$</li>
         */
-	if(do_precon == 1){
+        if (do_precon == 1) {
           preshift = calc_preshift(eig[ie], dnorm, eps_LOBPCG);
 #pragma omp parallel for default(none) shared(wxp,ie,list_Diagonal,preshift,i_max,eps_LOBPCG) private(idim,precon)
           for (idim = 1; idim <= i_max; idim++) {
             precon = list_Diagonal[idim] - preshift;
             if(fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
           }
-	}/*if(do_precon == 1)*/
+        }/*if(do_precon == 1)*/
         /**@brief
         <li>Normalize residual vector: @f${\bf w}={\bf w}/|w|@f$
         */
@@ -570,6 +584,7 @@ int LOBPCG_Main(
   */
   //fclose(fp);
 
+  X->Large.itr = stp;
   sprintf(sdt, cFileNameTimeKeep, X->Def.CDataFileHead);
 
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
@@ -660,7 +675,7 @@ int CalcByLOBPCG(
     }
 
     if (LOBPCG_Main(&(X->Bind)) != 0) {
-      fprintf(stderr, "  LOBPCG is not converged in this process.\n");
+      fprintf(stdoutMPI, "  LOBPCG is not converged in this process.\n");
       return(FALSE);
     }
   }/*if (X->Bind.Def.iInputEigenVec == FALSE)*/
@@ -674,13 +689,13 @@ int CalcByLOBPCG(
     sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, /*X->Bind.Def.k_exct - 1*/ 0, myrank);
     childfopenALL(sdt, "rb", &fp);
     if (fp == NULL) {
-      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
+      fprintf(stderr, "Error: Inputvector file is not found.\n");
       exitMPI(-1);
     }
     byte_size = fread(&step_i, sizeof(int), 1, fp);
     byte_size = fread(&i_max, sizeof(long int), 1, fp);
     if (i_max != X->Bind.Check.idim_max) {
-      fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+      fprintf(stderr, "Error: Invalid Inputvector file.\n");
       exitMPI(-1);
     }
     byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
@@ -725,20 +740,21 @@ int CalcByLOBPCG(
   */
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
-    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, /*X->Bind.Def.k_exct - 1*/ 0, myrank);
-    if (childfopenALL(sdt, "wb", &fp) != 0) {
-      exitMPI(-1);
-    }
 
-    byte_size = fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
-    byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
+
 #pragma omp parallel for default(none) shared(X,v1,L_vec,ie) private(idim)
       for (idim = 0; idim < X->Bind.Check.idim_max; idim++)
         v1[idim + 1] = L_vec[ie][idim];
+      
+      sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
+      if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
+      byte_size = fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
+      byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
       byte_size = fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      fclose(fp);
     }/*for (ie = 0; ie < X->Bind.Def.k_exct; ie++)*/
-    fclose(fp);
+
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
   }/*if (X->Bind.Def.iOutputEigenVec == TRUE)*/
 

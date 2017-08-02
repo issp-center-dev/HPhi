@@ -3809,35 +3809,28 @@ When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by the Lanc
   \#\# indicates [string02] in a ModPara file, \&\& is the number of eigenvalues, and \$\$ is a number of rank.
 
 \subsubsection{File format}
- \begin{itemize}
-   \item  Line 1: $[$int01$]$
-   \item  Line 2: $[$int02$]$
-   \item  Line 3 -  $[$int02$]$+3: $[$double01$]$~~$[$double02$]$.
-  \end{itemize}
-  
-\subsubsection{Parameters}
- \begin{itemize}
 
-  \item  $[$int01$]$
+This file is written through the following source code
+(a little different fron the actual $\HPhi$ source).
+\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_eigenvec_0_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&eigen_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
+where \verb|number_of_interations| is the number of iterations,
+\verb|local_size| is the size of eigenvector
+(if MPI is used, it differs from the dimension of the Hilbert space),
+\verb|eigen_vector| is the (complex) eigenvector.
 
- {\bf Type :} Int
-
-{\bf Description :}  The total number of targets of the Hilbert spaces.
-
-  \item  $[$int02$]$
-
- {\bf Type :} Long Int
-
-{\bf Description :}  { The number of Lanczos steps.}
-
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf Type :} double 
-
-{\bf Description :} The value of eigenvectors. $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.
-The fist component is not used for calculation.\\
-
- \end{itemize}
+{\bf Note: } The fist component of \verb|eigen_vector| (\verb|eigen_vector[0]|)
+is not used for calculation.
 
 \newpage
 \subsection{{tmpvec.dat}}
@@ -3847,46 +3840,53 @@ When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops at an i
 \subsubsection{File name}
 \begin{itemize}
    \item{Lanczos method: \#\#\_tmpvec\_rank\_\$\$.dat}
-   \item{TPQ method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}  .
+   \item{TPQ and LOBPCG method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}  .
 \end{itemize}
-  \#\# indicates [string02] in a ModPara file, and \$\$ is the number of rank. \&\& is the sampling number for the TPQ calculation. 
+\#\# indicates [string02] in a ModPara file, and \$\$ is the number of rank.
+\&\& is the sampling number for the TPQ calculation. 
 
 \subsubsection{File format}
- \begin{itemize}
-   \item  Line 1: $[$int01$]$
-   \item  Line 2: $[$int02$]$
-   \item  Lines 3 - 3+$[$int01$]$: $[$double01$]$~~$[$double02$]$
-   \item  Lines 4+$[$int01$]$ - 4+2$\times[$int01$]$: $[$double03$]$~~$[$double04$]$.
-  \end{itemize}
 
-\subsubsection{Parameters}
- \begin{itemize}
+This file is written through the following source code
+(a little different fron the actual $\HPhi$ source).
 
-  \item  $[$int01$]$
+Lanczos
+\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_tmpvec_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
+fwrite(&second_last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
 
- {\bf Type :} Int
+TPQ and LOBPCG
+\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_tmpvec_set_0_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
+where \verb|number_of_interations| is the number of iterations,
+\verb|local_size| is the size of eigenvector
+(if MPI is used, it differs from the dimension of the Hilbert space),
+\verb|last_vector| is the vector at the last iteration and
+\verb|second_last_vector| is the vector at the second last iteration.
 
-{\bf Description :}  { The number of Lanczos (TPQ) steps for the Lanczos (TPQ) method.}
-
-  \item  $[$int02$]$
-
- {\bf Type :} Long Int
-
-{\bf Description :}  The total number of targets of the Hilbert spaces.
-
- \item  $[$double01$]$, $[$double02$]$ 
-
- {\bf Type :} double 
-
-{\bf Description :} The coefficient of the vector $\vec{v}_{k+1}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method ($\vec{y}_{k+1}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part. The fist component is not used for calculation.
-
- \item  $[$double03$]$, $[$double04$]$ 
-
- {\bf Type :} double 
-
-{\bf Description :} The coefficient of the vector $\vec{v}_{k}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method ($\vec{y}_{k}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double03$]$ is a real part and $[$double04$]$ is an imaginary part. The fist component is not used for calculation.\\
-
- \end{itemize}
+{\bf Note: } The fist component of \verb|last_vector| and \verb|second_last_vector|
+(\verb|last_vector[0]| and \verb|second_last_vector[0]|)
+are not used for calculation.
 
 \newpage
 \subsection{{DynamicalGreen.dat}}
