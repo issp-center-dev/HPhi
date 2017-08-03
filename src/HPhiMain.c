@@ -70,6 +70,11 @@
     <li>struct.h : Binded struct</li>
   </ul>
   <HR>
+  <H2>How to modify HPhi</H2>
+  - @ref page_addstandard
+  - @ref page_newterm
+  .
+  <HR>
   <H2>Link</H2>
   https://github.com/QLMS/HPhi
   <HR>

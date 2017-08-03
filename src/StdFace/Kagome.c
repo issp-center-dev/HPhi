@@ -130,13 +130,13 @@ void StdFace_Kagome(
       StdFace_InputSpin(StdI, StdI->J, StdI->JAll, "J");
     }/*if (model != "hubbard")*/
 
-  }/*if (model != "spin")*/
+  }/*if (model != "spin")@@*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
   /**@brief
   (3) Set local spin flag (StdIntList::locspinflag) and
   the number of sites (StdIntList::nsite)
   */
-  StdI->nsite = 3 * StdI->NCell;
+  StdI->nsite = StdI->NsiteUC * StdI->NCell;
   if (strcmp(StdI->model, "kondo") == 0 ) StdI->nsite *= 2;
   StdI->locspinflag = (int *)malloc(sizeof(int) * StdI->nsite);
   /**/
@@ -152,7 +152,7 @@ void StdFace_Kagome(
   /**@brief
   (4) Compute the upper limit of the number of Transfer & Interaction and malloc them.
   */
-  if (strcmp(StdI->model, "spin") == 0 ) {
+  if (strcmp(StdI->model, "spin") == 0 ) {//>>
     ntransMax = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
     nintrMax = StdI->NCell * (StdI->NsiteUC/*D*/ + 6/*J*/ + 6/*J'*/)
       * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
@@ -165,7 +165,7 @@ void StdFace_Kagome(
       ntransMax += StdI->nsite / 2 * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
       nintrMax += StdI->nsite / 2 * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
     }/*if (strcmp(StdI->model, "kondo") == 0)*/
-  }
+  }//<<
   /**/
   StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
   /**@brief

@@ -31,7 +31,6 @@ The following lattices are supported:
 - 3D Face Centered Orthorhombic : StdFace_FCOrtho()
 - 3D Pyrochlore : StdFace_Pyrochlore()
 
-If you want to create new lattice file, do as these files.
 */
 #include <stdlib.h>
 #include <stdio.h>
@@ -2099,7 +2098,7 @@ void StdFace_main(
   /*
   Generate Hamiltonian definition files
   */
-  if (strcmp(StdI.lattice, "chain") == 0
+  if (strcmp(StdI.lattice, "chain") == 0 //>>
     || strcmp(StdI.lattice, "chainlattice") == 0) StdFace_Chain(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "facecenteredorthorhombic") == 0
     || strcmp(StdI.lattice, "fcorthorhombic") == 0
@@ -2120,7 +2119,7 @@ void StdFace_main(
   else if (strcmp(StdI.lattice, "triangular") == 0
     || strcmp(StdI.lattice, "triangularlattice") == 0) StdFace_Triangular(&StdI, StdI.model);
   else if (strcmp(StdI.lattice, "wannier90") == 0) StdFace_Wannier90(&StdI, StdI.model);
-  else UnsupportedSystem(StdI.model, StdI.lattice);
+  else UnsupportedSystem(StdI.model, StdI.lattice);//<<
   /**/
 #if defined(_HPhi)
   StdFace_LargeValue(&StdI);
@@ -2187,3 +2186,53 @@ void StdFace_main(
   fprintf(stdout, "\n######  Input files are generated.  ######\n\n");
 
 }/*void StdFace_main*/
+/**
+@page page_addstandard Add new lattice model into Standard mode
+
+@section sec_stan_proc Overall procedure
+
+If you want to create new lattice file, do as these files.
+
+-# Copy one of laattice files such as Kagome.c 
+   (Probably the most similar one) and rename it.
+-# @ref sec_lattice
+-# Add that function in the header file, StdFace_ModelUtil.h
+-# Add entry in StdFace_main()
+@dontinclude StdFace_main.c
+@skip >>
+@until <<
+
+<HR> 
+@section sec_lattice Modify lattice model file
+
+To create new lattice file, please modify the following part:
+
+@dontinclude Kagome.c
+Define function as
+@skip StdFace\_Kagome(
+@until {
+Lattice parameter used only in geometry.dat and lattice.gp
+@skip StdFace\_PrintVal\_d
+@until Ly
+these are unit lattice vectors.\n
+Just call this function to initialize all lattice related parameters
+@skipline StdFace\_InitSite
+where "2" indicates 2D
+@skip tau
+@until tau\[2\]\[0\]
+These are the fractional coordinate of internal sites.
+Then set parameters of Hamiltonian
+@skip StdFace\_NotUsed\_J
+@until @@
+to determine the default value of them and unused parameters.
+For more details, please see the description of each functions.
+Then Compute the upper limit of the number of Transfer & Interaction and malloc them.
+@skip >>
+@until <<
+Please estimate the number of bonds per site.
+@skipline kCell
+In this loop, the parameters of Hamiltonian are computed & stored.
+For more details, please see each functions.
+
+StdFace_Kagome_Boost() ? Forget !!
+*/
