@@ -111,7 +111,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   return 0;
 }
 /**
-@page page_newterm How to add new term (three body ? el-ph ?) into Hamiltonian
+@page page_newterm Add new term (three body ? el-ph ?) into Hamiltonian
 
 Never think such things ...
 */

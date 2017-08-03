@@ -2205,7 +2205,8 @@ If you want to create new lattice file, do as these files.
 <HR> 
 @section sec_lattice Modify lattice model file
 
-To create new lattice file, please modify the following part:
+To create new lattice file, please modify the following part
+(Kagome.c as an example):
 
 @dontinclude Kagome.c
 Define function as
@@ -2232,7 +2233,14 @@ Then Compute the upper limit of the number of Transfer & Interaction and malloc 
 Please estimate the number of bonds per site.
 @skipline kCell
 In this loop, the parameters of Hamiltonian are computed & stored.
+The local term is computed as follows:
+@skip >>
+@until <<
+Probably, it is not necessary to modify this part.
+The non-local term is as follows:
+@skip >>
+@until <<
 For more details, please see each functions.
 
-StdFace_Kagome_Boost() ? Forget !!
+StdFace_Kagome_Boost()? Forget!!
 */
