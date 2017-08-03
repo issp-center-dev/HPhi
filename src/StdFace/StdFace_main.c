@@ -2098,26 +2098,26 @@ void StdFace_main(
   Generate Hamiltonian definition files
   */
   if (strcmp(StdI->lattice, "chain") == 0
-    || strcmp(StdI->lattice, "chainlattice") == 0) StdFace_Chain(StdI, StdI->model);
+    || strcmp(StdI->lattice, "chainlattice") == 0) StdFace_Chain(StdI);
   else if (strcmp(StdI->lattice, "facecenteredorthorhombic") == 0
     || strcmp(StdI->lattice, "fcorthorhombic") == 0
-    || strcmp(StdI->lattice, "fco") == 0) StdFace_FCOrtho(StdI, StdI->model);
+    || strcmp(StdI->lattice, "fco") == 0) StdFace_FCOrtho(StdI);
   else if (strcmp(StdI->lattice, "honeycomb") == 0
-    || strcmp(StdI->lattice, "honeycomblattice") == 0) StdFace_Honeycomb(StdI, StdI->model);
+    || strcmp(StdI->lattice, "honeycomblattice") == 0) StdFace_Honeycomb(StdI);
   else if (strcmp(StdI->lattice, "kagome") == 0
-    || strcmp(StdI->lattice, "kagomelattice") == 0) StdFace_Kagome(StdI, StdI->model);
+    || strcmp(StdI->lattice, "kagomelattice") == 0) StdFace_Kagome(StdI);
   else if (strcmp(StdI->lattice, "ladder") == 0
-    || strcmp(StdI->lattice, "ladderlattice") == 0) StdFace_Ladder(StdI, StdI->model);
+    || strcmp(StdI->lattice, "ladderlattice") == 0) StdFace_Ladder(StdI);
   else if (strcmp(StdI->lattice, "orthorhombic") == 0
-    || strcmp(StdI->lattice, "simpleorthorhombic") == 0) StdFace_Orthorhombic(StdI, StdI->model);
-  else if (strcmp(StdI->lattice, "pyrochlore") == 0) StdFace_Pyrochlore(StdI, StdI->model);
+    || strcmp(StdI->lattice, "simpleorthorhombic") == 0) StdFace_Orthorhombic(StdI);
+  else if (strcmp(StdI->lattice, "pyrochlore") == 0) StdFace_Pyrochlore(StdI);
   else if (strcmp(StdI->lattice, "tetragonal") == 0
     || strcmp(StdI->lattice, "tetragonallattice") == 0
     || strcmp(StdI->lattice, "square") == 0
-    || strcmp(StdI->lattice, "squarelattice") == 0) StdFace_Tetragonal(StdI, StdI->model);
+    || strcmp(StdI->lattice, "squarelattice") == 0) StdFace_Tetragonal(StdI);
   else if (strcmp(StdI->lattice, "triangular") == 0
-    || strcmp(StdI->lattice, "triangularlattice") == 0) StdFace_Triangular(StdI, StdI->model);
-  else if (strcmp(StdI->lattice, "wannier90") == 0) StdFace_Wannier90(StdI, StdI->model);
+    || strcmp(StdI->lattice, "triangularlattice") == 0) StdFace_Triangular(StdI);
+  else if (strcmp(StdI->lattice, "wannier90") == 0) StdFace_Wannier90(StdI);
   else UnsupportedSystem(StdI->model, StdI->lattice);//<<
   /**/
 #if defined(_HPhi)

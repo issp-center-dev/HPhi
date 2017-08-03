@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 @brief Setup a Hamiltonian for the square lattice
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_Tetragonal(struct StdIntList *StdI, char *model)
+void StdFace_Tetragonal(struct StdIntList *StdI)
 {
   int isite, jsite, ntransMax, nintrMax;
   int iL, iW, kCell;
