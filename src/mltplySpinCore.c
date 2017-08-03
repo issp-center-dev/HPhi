@@ -28,80 +28,93 @@
 /******************************************************************************/
 
 /**
- *
- *
- * @param iExchange
- * @param X
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Set parameters for the bit operation of spin-exchange term
+@return Always return 0
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int child_exchange_spin_GetInfo(
-  int iExchange,
-  struct BindStruct *X
+  int iExchange,//!<[in] Counter of exchange interaction
+  struct BindStruct *X//!<[inout]
 ) {
   int isite1 = X->Def.ExchangeCoupling[iExchange][0] + 1;
   int isite2 = X->Def.ExchangeCoupling[iExchange][1] + 1;
+  /**
+   Set the exchange coupling constant (LargeList::tmp_J)
+  */
   X->Large.tmp_J = X->Def.ParaExchangeCoupling[iExchange];
+  /**
+  Set the bit mask for computing spin state of both site
+  (LargeList::is1_up, LargeList::is2_up)
+  */
   X->Large.is1_up = X->Def.Tpow[isite1 - 1];
   X->Large.is2_up = X->Def.Tpow[isite2 - 1];
+  /**
+  Set the bit mask for exchange 2 spins (LargeList::isA_spin)
+  */
   X->Large.isA_spin = X->Large.is1_up + X->Large.is2_up;
   return 0;
 }/*int child_exchange_spin_GetInfo*/
 /**
- *
- *
- * @param iPairLift
- * @param X
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Set parameters for the bit operation of spin-pairlift term
+@return Always return 0
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int child_pairlift_spin_GetInfo(
   int iPairLift,
   struct BindStruct *X
 ) {
   int isite1 = X->Def.PairLiftCoupling[iPairLift][0] + 1;
   int isite2 = X->Def.PairLiftCoupling[iPairLift][1] + 1;
+  /**
+  Set the pairlift coupling constant (LargeList::tmp_J)
+  */
   X->Large.tmp_J = X->Def.ParaPairLiftCoupling[iPairLift];
+  /**
+  Set the bit mask for computing spin state of both site
+  (LargeList::is1_up, LargeList::is2_up)
+  */
   X->Large.is1_up = X->Def.Tpow[isite1 - 1];
   X->Large.is2_up = X->Def.Tpow[isite2 - 1];
+  /**
+  Set the bit mask for exchange 2 spins (LargeList::isA_spin)
+  */
   X->Large.isA_spin = X->Large.is1_up + X->Large.is2_up;
   return 0;
 }/*int child_pairlift_spin_GetInfo*/
 /**
- *
- *
- * @param X
- * @param isite1
- * @param isite2
- * @param sigma1
- * @param sigma2
- * @param sigma3
- * @param sigma4
- * @param tmp_V
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Set parameters for the bit operation of spin-general interaction term
+@return Always return 0
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int child_general_int_spin_GetInfo(
-  struct BindStruct *X,
-  long unsigned int isite1,
-  long unsigned int isite2,
-  long unsigned int sigma1,
-  long unsigned int sigma2,
-  long unsigned int sigma3,
-  long unsigned int sigma4,
-  double complex tmp_V
+  struct BindStruct *X,//!<[inout]
+  long unsigned int isite1,//!<[in] Site 1
+  long unsigned int isite2,//!<[in] Site 2
+  long unsigned int sigma1,//!<[in] Sigma 1, final state of site 1
+  long unsigned int sigma2,//!<[in] Sigma 3, initial state of site 1
+  long unsigned int sigma3,//!<[in] Sigma 3, final state of site 2
+  long unsigned int sigma4,//!<[in] Sigma 4, initial state of site 2
+  double complex tmp_V//!<[in] General interaction constatnt
 ) {
+  /**
+  Set the pairlift coupling constant (LargeList::tmp_J)
+  */
   X->Large.tmp_V = tmp_V;
   X->Large.isite1 = isite1;
   X->Large.isite2 = isite2;
+  /**
+  Set the bit mask for computing spin state of both site
+  (LargeList::is1_up, LargeList::is2_up)
+  */
   X->Large.is1_up = X->Def.Tpow[isite1 - 1];
   X->Large.is2_up = X->Def.Tpow[isite2 - 1];
+  /**
+  Set the bit mask for general interaction 
+  (LargeList::is1_spin, LargeList::is2_spin, LargeList::is3_spin, LargeList::is4_spin)
+  */
   X->Large.is1_spin = sigma1;
   X->Large.is2_spin = sigma2;
   X->Large.is3_spin = sigma3;
@@ -118,19 +131,20 @@ int child_general_int_spin_GetInfo(
 /******************************************************************************/
 
 /**
- * @return XXX
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute index of final wavefunction by @f$c_{is}^\dagger c_{it}@f$ term.
+@return 1 if bit-mask is1_spin is sigma2, 0 for the other
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_Spin_CisAit(
-  long unsigned int j,//!<[in]
-  struct BindStruct *X,//!<[in]
-  long unsigned int is1_spin,//!<[in]
-  long unsigned int sigma2,//!<[in]
-  long unsigned int *list_1_Org_,//!<[in]
-  long unsigned int *list_2_1_,//!<[in]
-  long unsigned int *list_2_2_,//!<[in]
-  long unsigned int *tmp_off//!<[in]
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  struct BindStruct *X,//!<[inout]
+  long unsigned int is1_spin,//!<[in] Bit mask for computing spin state
+  long unsigned int sigma2,//!<[in] Spin state at site 2
+  long unsigned int *list_1_Org_,//!<[in] Similar to ::list_1
+  long unsigned int *list_2_1_,//!<[in] Similar to ::list_2_1
+  long unsigned int *list_2_2_,//!<[in] Similar to ::list_2_2
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   long unsigned int list_1_j;
   long unsigned int off;
@@ -145,22 +159,16 @@ int X_Spin_CisAit(
   }
 }/*int X_Spin_CisAit*/
 /**
- *
- *
- * @param j
- * @param X
- * @param is1_spin
- * @param sigma1
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute the spin state with bit mask is1_spin
+@return 1 if the spin state with bit mask is1_spin is sigma1, 0 for the other.
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_Spin_CisAis(
-  long unsigned int j,
-  struct BindStruct *X,
-  long unsigned int is1_spin,
-  long unsigned int sigma1
+  long unsigned int j,//!<[in] Index of wavefunction
+  struct BindStruct *X,//!<[inout]
+  long unsigned int is1_spin,//!<[in] Bit mask
+  long unsigned int sigma1//!<[in] Target spin state
 ) {
   int A_ibit_tmp;
   // off = j
@@ -168,22 +176,16 @@ int X_Spin_CisAis(
   return A_ibit_tmp;
 }/*int X_Spin_CisAis*/
 /**
- *
- *
- * @param j
- * @param X
- * @param is1_spin
- * @param sigma1
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute the grandcanonical spin state with bit mask is1_spin
+@return 1 if the spin state with bit mask is1_spin is sigma1, 0 for the other.
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_SpinGC_CisAis(
-  long unsigned int j,
-  struct BindStruct *X,
-  long unsigned int is1_spin,
-  long unsigned int sigma1
+  long unsigned int j,//!<[in] Index of wavefunction
+  struct BindStruct *X,//!<[inout]
+  long unsigned int is1_spin,//!<[in] Bit mask
+  long unsigned int sigma1//!<[in] Target spin state
 ) {
   int A_ibit_tmp;
   long unsigned int list_1_j;
@@ -193,24 +195,18 @@ int X_SpinGC_CisAis(
   return A_ibit_tmp;
 }/*int X_SpinGC_CisAis*/
 /**
- *
- *
- * @param j
- * @param X
- * @param is1_spin
- * @param sigma2
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute index of final wavefunction by @f$c_{is}^\dagger c_{it}@f$ term
+(grandcanonical).
+@return 1 if bit-mask is1_spin is sigma2, 0 for the other
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_SpinGC_CisAit(
-  long unsigned int j,
-  struct BindStruct *X,
-  long unsigned int is1_spin,
-  long unsigned int sigma2,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of wavefunction
+  struct BindStruct *X,//!<[inout]
+  long unsigned int is1_spin,//!<[in] Bit mask for computing spin state
+  long unsigned int sigma2,//!<[in] Spin state at site 2
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   long unsigned int list_1_j, ibit_tmp_1;
 
@@ -236,28 +232,19 @@ int X_SpinGC_CisAit(
 /******************************************************************************/
 
 /**
- *
- *
- * @param j
- * @param X
- * @param isA_up
- * @param isB_up
- * @param sigmaA
- * @param sigmaB
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute index of final wavefunction associated to spin-exchange term
+@return 1 if spin of site 1 is sigmaA and spin of site 2 is sigmaB. 0 if not. 
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int X_child_exchange_spin_element(
-  long unsigned int j,
-  struct BindStruct *X,
-  long unsigned int isA_up,
-  long unsigned int isB_up,
-  long unsigned int sigmaA,
-  long unsigned int sigmaB,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  struct BindStruct *X,//!<[inout]
+  long unsigned int isA_up,//!<[in] Bit mask for spin 1
+  long unsigned int isB_up,//!<[in] Bit mask for spin 2
+  long unsigned int sigmaA,//!<[in] Target of spin 1
+  long unsigned int sigmaB,//!<[in] Target of spin 2
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   long unsigned int iexchg, off;
   long unsigned int irght = X->Large.irght;
@@ -279,24 +266,17 @@ int X_child_exchange_spin_element(
   }
 }/*int X_child_exchange_spin_element*/
 /**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Multiply Hamiltonian of exchange term of canonical spin system
+@return @f$\langle v_1 | H_{\rm this}| v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex child_exchange_spin_element(
-  long unsigned int j,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  double complex *tmp_v0,//!<[out] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X,//!<[inout]
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   long unsigned int off;
   double complex dmv;
@@ -327,24 +307,17 @@ double complex child_exchange_spin_element(
   }
 }/*double complex child_exchange_spin_element*/
 /**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Multiply Hamiltonian of exchange term of grandcanonical spin system
+@return @f$\langle v_1 | H_{\rm this}| v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex GC_child_exchange_spin_element(
-  long unsigned int j,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  double complex *tmp_v0,//!<[out] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X,//!<[inout]
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   double complex dmv;
   long unsigned int is_up = X->Large.isA_spin;
@@ -372,24 +345,17 @@ double complex GC_child_exchange_spin_element(
   }
 }/*double complex GC_child_exchange_spin_element*/
 /**
- *
- *
- * @param j
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Multiply Hamiltonian of pairlift term of grandcanonical spin system
+@return @f$\langle v_1 | H_{\rm this}| v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex GC_child_pairlift_spin_element(
-  long unsigned int j,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  double complex *tmp_v0,//!<[out] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X,//!<[inout]
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   double complex dmv;
   long unsigned int is_up = X->Large.isA_spin;
@@ -417,32 +383,22 @@ double complex GC_child_pairlift_spin_element(
 }/*double complex GC_child_pairlift_spin_element*/
 //[s]Spin
 /**
- *
- *
- * @param j
- * @param isA_up
- * @param isB_up
- * @param org_sigma2
- * @param org_sigma4
- * @param tmp_V
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute @f$c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}@f$ term of 
+canonical spsin system
+@return Fragment of @f$\langle v_1 | H_{\rm this}|v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex child_CisAisCisAis_spin_element(
-  long unsigned int j,
-  long unsigned int isA_up,
-  long unsigned int isB_up,
-  long unsigned int org_sigma2,
-  long unsigned int org_sigma4,
-  double complex tmp_V,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  long unsigned int isA_up,//!<[in] Bit mask for spin 1
+  long unsigned int isB_up,//!<[in] Bit mask for spin 2
+  long unsigned int org_sigma2,//!<[in] Target for spin 1
+  long unsigned int org_sigma4,//!<[in] Target for spin 2
+  double complex tmp_V,//!<[in] Coupling constatnt
+  double complex *tmp_v0,//!<[in] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X//!<[inout]
 ) {
   int tmp_sgn;
   double complex dmv;
@@ -462,32 +418,22 @@ double complex child_CisAisCisAis_spin_element(
 
 //[s]GC Spin
 /**
- *
- *
- * @param j
- * @param isA_up
- * @param isB_up
- * @param org_sigma2
- * @param org_sigma4
- * @param tmp_V
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute @f$c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}@f$ term of 
+grandcanonical spsin system
+@return Fragment of @f$\langle v_1 | H_{\rm this}|v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex GC_child_CisAisCisAis_spin_element(
-  long unsigned int j,
-  long unsigned int isA_up,
-  long unsigned int isB_up,
-  long unsigned int org_sigma2,
-  long unsigned int org_sigma4,
-  double complex tmp_V,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  long unsigned int isA_up,//!<[in] Bit mask for spin 1
+  long unsigned int isB_up,//!<[in] Bit mask for spin 2
+  long unsigned int org_sigma2,//!<[in] Target for spin 1
+  long unsigned int org_sigma4,//!<[in] Target for spin 2
+  double complex tmp_V,//!<[in] Coupling constatnt
+  double complex *tmp_v0,//!<[in] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X//!<[inout]
 ) {
   int tmp_sgn;
   double complex dmv = 0;
@@ -505,34 +451,23 @@ double complex GC_child_CisAisCisAis_spin_element(
   return dam_pr;
 }/*double complex GC_child_CisAisCisAis_spin_element*/
 /**
- *
- *
- * @param j
- * @param org_sigma2
- * @param org_sigma4
- * @param isA_up
- * @param isB_up
- * @param tmp_V
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute @f$c_{is}^\dagger c_{is} c_{it}^\dagger c_{iu}@f$ term of 
+grandcanonical spsin system
+@return Fragment of @f$\langle v_1 | H_{\rm this}|v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex GC_child_CisAisCitAiu_spin_element(
-  long unsigned int j,
-  long unsigned int org_sigma2,
-  long unsigned int org_sigma4,
-  long unsigned int isA_up,
-  long unsigned int isB_up,
-  double complex tmp_V,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  long unsigned int org_sigma2,//!<[in] Target for spin 1
+  long unsigned int org_sigma4,//!<[in] Target for spin 2
+  long unsigned int isA_up,//!<[in] Bit mask for spin 1
+  long unsigned int isB_up,//!<[in] Bit mask for spin 2
+  double complex tmp_V,//!<[in] Coupling constatnt
+  double complex *tmp_v0,//!<[in] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X,//!<[inout]
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   double complex dmv;
@@ -551,34 +486,23 @@ double complex GC_child_CisAisCitAiu_spin_element(
   return dam_pr;
 }/*double complex GC_child_CisAisCitAiu_spin_element*/
 /**
- *
- *
- * @param j
- * @param org_sigma2
- * @param org_sigma4
- * @param isA_up
- * @param isB_up
- * @param tmp_V
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute @f$c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iu}@f$ term of 
+grandcanonical spsin system
+@return Fragment of @f$\langle v_1 | H_{\rm this}|v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex GC_child_CisAitCiuAiu_spin_element(
-  long unsigned int j,
-  long unsigned int org_sigma2,
-  long unsigned int org_sigma4,
-  long unsigned int isA_up,
-  long unsigned int isB_up,
-  double complex tmp_V,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  long unsigned int org_sigma2,//!<[in] Target for spin 1
+  long unsigned int org_sigma4,//!<[in] Target for spin 2
+  long unsigned int isA_up,//!<[in] Bit mask for spin 1
+  long unsigned int isB_up,//!<[in] Bit mask for spin 2
+  double complex tmp_V,//!<[in] Coupling constatnt
+  double complex *tmp_v0,//!<[in] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X,//!<[inout]
+  long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   double complex dmv;
@@ -597,34 +521,23 @@ double complex GC_child_CisAitCiuAiu_spin_element(
   return dam_pr;
 }/*double complex GC_child_CisAitCiuAiu_spin_element*/
 /**
- *
- *
- * @param j
- * @param org_sigma2
- * @param org_sigma4
- * @param isA_up
- * @param isB_up
- * @param tmp_V
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param tmp_off_2
- *
- * @return
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+@brief Compute @f$c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}@f$ term of
+grandcanonical spsin system
+@return Fragment of @f$\langle v_1 | H_{\rm this}|v_1 \rangle@f$
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 double complex GC_child_CisAitCiuAiv_spin_element(
-  long unsigned int j,
-  long unsigned int org_sigma2,
-  long unsigned int org_sigma4,
-  long unsigned int isA_up,
-  long unsigned int isB_up,
-  double complex tmp_V,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
-  struct BindStruct *X,
-  long unsigned int *tmp_off_2
+  long unsigned int j,//!<[in] Index of initial wavefunction
+  long unsigned int org_sigma2,//!<[in] Target for spin 1
+  long unsigned int org_sigma4,//!<[in] Target for spin 2
+  long unsigned int isA_up,//!<[in] Bit mask for spin 1
+  long unsigned int isB_up,//!<[in] Bit mask for spin 2
+  double complex tmp_V,//!<[in] Coupling constatnt
+  double complex *tmp_v0,//!<[in] Resulting wavefunction
+  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  struct BindStruct *X,//!<[inout]
+  long unsigned int *tmp_off_2//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   long unsigned int tmp_off_1;

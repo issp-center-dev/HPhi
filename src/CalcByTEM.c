@@ -128,7 +128,7 @@ int CalcByTEM(
       X->Bind.Def.istep = step_i;
       if (X->Bind.Def.NTETransferMax > 0) {
         MakeTEDTransfer(&(X->Bind), step_i);
-      } else if (X->Bind.Def.NTEInterAllrMax > 0) {
+      } else if (X->Bind.Def.NTEInterAllMax > 0) {
         //[TODO] Add TEInterAll
       } else {
         //[TODO] Error procedure

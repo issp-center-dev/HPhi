@@ -78,6 +78,29 @@ int CheckTETransferHermite(struct DefineList *X,
                            const int idx);
 
 
+int CheckInterAllCondition(
+        int iCalcModel,
+        int Nsite,
+        int iFlgGeneralSpin,
+        int *iLocSpin,
+        int isite1, int isigma1,
+        int isite2, int isigma2,
+        int isite3, int isigma3,
+        int isite4, int isigma4
+);
+
+int InputInterAllInfo(
+        int *icnt_interall,
+        int **iInterAllInfo,
+        double complex *cInterAllValue,
+        int isite1, int isigma1,
+        int isite2, int isigma2,
+        int isite3, int isigma3,
+        int isite4, int isigma4,
+        double re_value, double im_value
+);
+
+
 /**
  * @brief Error Function of reading def files.
  * @param[in] _defname name of def file.
@@ -399,7 +422,8 @@ int GetFileName(
 }
 
 /** 
- * @brief  Function of reading informations from def files.
+ * @brief  Function of reading information about "ModPara" file and total number of parameters from other def files.
+ *
  * @param[in] _xNameListFile List of Input File names.
  * @param[out] XX Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
@@ -696,7 +720,24 @@ int ReadDefFileNInt(
 
       case KWTETwoBody:
         if(X->iCalcType != TimeEvolution) break;
-        //[TODO] to be added
+        /* Read TETwobody.def--------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+        fgetsMPI(ctmp2, 256, fp);
+        sscanf(ctmp2,"%s %d\n", ctmp, &(X->NTETimeSteps));
+        fgetsMPI(ctmp2, 256, fp);
+        fgetsMPI(ctmp2, 256, fp);
+        fgetsMPI(ctmp2, 256, fp);
+        int iTEInterAllMax=0;
+        if(X->NTETimeSteps>0) {
+          while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+            sscanf(ctmp2, "%lf %d \n", &dtmp, &itmp);
+            for (i = 0; i < itmp; ++i) {
+              fgetsMPI(ctmp2, 256, fp);
+            }
+            if(iTEInterAllMax < itmp) iTEInterAllMax=itmp;
+          }
+        }
+        X->NTEInterAllMax=iTEInterAllMax;
         break;
 
 
@@ -844,32 +885,31 @@ int ReadDefFileNInt(
     break;
   }
 
-    /* Check values*/
-    if(X->Nsite<=0) {
+    /* Check values (Positive)*/
+    if(X->Nsite<=0) {// Nsite must be positve
       fprintf(stdoutMPI, cErrNsite, defname);
       return (-1);
     }
-    if(X->Lanczos_max<=0) {
+    if(X->Lanczos_max<=0) {// Lanczos_max must be positive
       fprintf(stdoutMPI, cErrLanczos_max, defname);
       return (-1);
     }
-    if(X->LanczosEps<=0) {
-      fprintf(stdoutMPI, cErrLanczos_max, defname);
+    if(X->LanczosEps<=0) {// Lanczos_eps must be positive
+      fprintf(stdoutMPI, cErrLanczos_eps, defname);
       return (-1);
     }
-    if(NumAve<=0) {
+    if(NumAve<=0) { // Average number must be positive
       fprintf(stdoutMPI, cErrNumAve, defname);
       return (-1);
     }
-    if(X->Param.ExpecInterval<=0){
+    if(X->Param.ExpecInterval<=0){// Interval to calculate expected values must be positive
       fprintf(stdoutMPI, cErrExpecInterval, defname);
       return (-1);
     }
-
-
     if(X->nvec==0){
       X->nvec=X->Lanczos_max;
     }
+
     if(X->nvec < X->k_exct){
         X->nvec=X->k_exct;
     }
@@ -885,7 +925,6 @@ int ReadDefFileNInt(
       return (-1);
     }
 
-  X->Nsize   = 2*X->Ne;
   X->fidx = 0;
   X->NeMPI=X->Ne;
   X->NupMPI=X->Nup;
@@ -1268,99 +1307,49 @@ int ReadDefFileIdxPara(
       /*interall.def---------------------------------------*/
       X->NInterAll_Diagonal=0;
       X->NInterAll_OffDiagonal=0;
-      if(X->NInterAll>0){
-        icnt_interall=0;
-        while(fgetsMPI(ctmp2, 256, fp) != NULL)
-          {
-            if(idx==X->NInterAll){
-              fclose(fp);
-              return ReadDefFileError(defname);
-            }
-            sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
-                   &isite1,
-                   &isigma1,
-                   &isite2,
-                   &isigma2,
-                   &isite3,
-                   &isigma3,
-                   &isite4,
-                   &isigma4,
-                   &dvalue_re,
-                   &dvalue_im
-                   );
-
-            if(CheckQuadSite(isite1, isite2, isite3, isite4, X->Nsite) !=0){
-              fclose(fp);
-              return ReadDefFileError(defname);
-            }
-
-            if(X->iCalcModel == Spin || X->iCalcModel ==SpinGC){
-              if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
-                fclose(fp);
-                return(-1);
-              }
-            }
-            else if(X->iCalcModel == SpinlessFermion || X->iCalcModel==SpinlessFermionGC){
-              if(isigma1 !=0 || isigma2 != 0 || isigma3 != 0 || isigma4 !=0){
-                fprintf(stderr, "%s", "Error: Spin index of InterAll is incorrect.\n");
-                fclose(fp);
-                return -1;
-              }
-            }
-
-            iflg_interall=0;
-            for( i=0; i < icnt_interall; i++){
-              if(isite1 ==X->InterAll[i][0]   && isite2 == X->InterAll[i][2]  &&
-                 isite3 ==X->InterAll[i][4]   && isite4 == X->InterAll[i][6]  && 
-                 isigma1 == X->InterAll[i][1] && isigma2 == X->InterAll[i][3] &&
-                 isigma3 == X->InterAll[i][5] && isigma4 == X->InterAll[i][7] )
-                {
-                  X->ParaInterAll[i] += dvalue_re+dvalue_im*I;
-                  iflg_interall=1;
-                  continue;
-                }
-            }
-            
-            if(iflg_interall==0){
-              X->InterAll[icnt_interall][0]=isite1;
-              X->InterAll[icnt_interall][1]=isigma1;
-              X->InterAll[icnt_interall][2]=isite2;
-              X->InterAll[icnt_interall][3]=isigma2;
-              X->InterAll[icnt_interall][4]=isite3;
-              X->InterAll[icnt_interall][5]=isigma3;
-              X->InterAll[icnt_interall][6]=isite4;
-              X->InterAll[icnt_interall][7]=isigma4;
-              X->ParaInterAll[icnt_interall]=dvalue_re+I*dvalue_im;
-            
-              if(isite1 == isite2 && isite3 == isite4 &&
-                 isigma1 == isigma2 && isigma3 == isigma4)
-                { //normal diagonal part
-                  icnt_diagonal++;
-                }
-              else if(isite1 == isite4 && isite2 == isite3 &&
-                      isigma1 == isigma4 && isigma2 == isigma3)
-                { //hund term
-                  icnt_diagonal++;
-                }
-              icnt_interall++;
-            }
-            idx++;
+      if(X->NInterAll>0) {
+        icnt_interall = 0;
+        while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+          if (idx == X->NInterAll) {
+            fclose(fp);
+            return ReadDefFileError(defname);
           }
+          sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
+                 &isite1,
+                 &isigma1,
+                 &isite2,
+                 &isigma2,
+                 &isite3,
+                 &isigma3,
+                 &isite4,
+                 &isigma4,
+                 &dvalue_re,
+                 &dvalue_im
+          );
+
+          if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin, X->LocSpn,
+                                     isite1, isigma1, isite2, isigma2,
+                                     isite3, isigma3, isite4, isigma4) != 0) {
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
+          if (InputInterAllInfo(&icnt_interall,
+                                X->InterAll,
+                                X->ParaInterAll,
+                                isite1, isigma1,
+                                isite2, isigma2,
+                                isite3, isigma3,
+                                isite4, isigma4,
+                                dvalue_re, dvalue_im
+          ) != 0) {
+            icnt_diagonal += 1;
+          }
+          idx++;
+        }
       }
 
       X->NInterAll = icnt_interall;
-      
-      if(X->iCalcModel==Kondo){
-        if(CheckFormatForKondoInt(X) !=0){
-          fclose(fp);
-          return(-1);
-        }
-      }
-      if(CheckSpinIndexForInterAll(X)==FALSE){
-        fclose(fp);
-        return(-1);
-      }
-      
       X->NInterAll_Diagonal=icnt_diagonal;
       X->NInterAll_OffDiagonal = X->NInterAll-X->NInterAll_Diagonal;
       
@@ -1373,8 +1362,7 @@ int ReadDefFileIdxPara(
         fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
         fclose(fp);
         return(-1);
-      }      
-      
+      }
       break;
       
     case KWOneBodyG:
@@ -1513,7 +1501,75 @@ int ReadDefFileIdxPara(
         break;
 
       case KWTETwoBody:
-        //[TODO] to be added
+        if(X->NTETimeSteps>0){
+          idx=0;
+          while(fgetsMPI(ctmp2, 256, fp) != NULL){
+            sscanf(ctmp2, "%lf %d\n", &(X->TETime[idx]), &(X->NTEInterAll[idx]));
+            for(i=0; i<X->NTEInterAll[idx]; ++i ){
+              fgetsMPI(ctmp2, 256, fp);
+              sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
+                     &isite1,
+                     &isigma1,
+                     &isite2,
+                     &isigma2,
+                     &isite3,
+                     &isigma3,
+                     &isite4,
+                     &isigma4,
+                     &dvalue_re,
+                     &dvalue_im
+              );
+
+              if(CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin,X->LocSpn,
+                                        isite1, isigma1, isite2, isigma2,
+                                        isite3, isigma3, isite4, isigma4) !=0){
+                fclose(fp);
+                return ReadDefFileError(defname);
+              }
+
+              if (InputInterAllInfo(&icnt_interall,
+                                    X->TEInterAll[idx],
+                                    X->ParaTEInterAll[idx],
+                                    isite1, isigma1,
+                                    isite2, isigma2,
+                                    isite3, isigma3,
+                                    isite4, isigma4,
+                                    dvalue_re, dvalue_im
+              ) != 0) {
+                icnt_diagonal += 1;
+              }
+            }
+
+            X->NTEInterAll[idx] = icnt_interall;
+            X->NTEInterAllDiagonal[idx]=icnt_diagonal;
+            X->NTEInterAllOffDiagonal[idx] = X->NTEInterAll[idx]-X->NTEInterAllDiagonal[idx];
+
+            if(GetTEDiagonalInterAll(X)!=0){
+              fclose(fp);
+              return(-1);
+            }
+
+            if(CheckInterAllHermite(X)!=0){
+              fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
+              fclose(fp);
+              return(-1);
+            }
+
+            //check Transfer Hermite
+            /*
+            if(CheckTETransferHermite(X, X->NTETransfer[idx], idx)!=0){
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+             */
+            idx++;
+          }
+
+          if(idx!=X->NTETimeSteps){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+        }
         break;
 
       case KWBoost:
@@ -1603,8 +1659,6 @@ int ReadDefFileIdxPara(
       break;
 
     case KWSingleExcitation:
-
-
       /*singleexcitation.def----------------------------------------*/
       if(X->NSingleExcitationOperator>0) {
         if(X->iCalcModel == Spin || X->iCalcModel == SpinGC) {
@@ -1637,7 +1691,6 @@ int ReadDefFileIdxPara(
           return ReadDefFileError(defname);
         }
       }
-
       break;
 
     case KWPairExcitation:
@@ -1653,7 +1706,6 @@ int ReadDefFileIdxPara(
                  &dvalue_re,
                  &dvalue_im
                  );
-
           if (CheckPairSite(isite1, isite2, X->Nsite) != 0) {
             fclose(fp);
             return ReadDefFileError(defname);
@@ -2043,6 +2095,8 @@ int CheckInterAllHermite
   return 0;
 }
 
+
+
 /** 
  * @brief function of getting diagonal components form interall interactions
  * 
@@ -2180,6 +2234,144 @@ int GetDiagonalInterAll
   return 0;
 }
 
+
+/**
+ * @brief function of getting diagonal components form Time-dependent interall interactions
+ *
+ * @param[in] X define list to get information of Time-dependent interall interactions
+ *
+ * @retval 0  succeed to get diagonal interactions
+ * @retval -1 format of interall interactions is incorrect
+ * @version 2.1
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int GetTEDiagonalInterAll
+        (
+                struct DefineList *X
+        )
+{
+  unsigned int i,icnt_diagonal, icnt_offdiagonal, tmp_i;
+  int isite1, isite2, isite3, isite4;
+  int isigma1, isigma2, isigma3, isigma4;
+  int iret=0;
+  icnt_diagonal=0;
+  icnt_offdiagonal=0;
+
+  setmem_IntAll_Diagonal(X);
+  for(i=0; i<X->NInterAll; i++){
+    isite1=X->InterAll[i][0];
+    isigma1=X->InterAll[i][1];
+    isite2=X->InterAll[i][2];
+    isigma2=X->InterAll[i][3];
+    isite3=X->InterAll[i][4];
+    isigma3=X->InterAll[i][5];
+    isite4=X->InterAll[i][6];
+    isigma4=X->InterAll[i][7];
+
+    //Get Diagonal term
+    if(isite1 == isite2 && isite3 == isite4 &&
+       isigma1 == isigma2  && isigma3 == isigma4)
+    {
+      X->InterAll_Diagonal[icnt_diagonal][0]=isite1;
+      X->InterAll_Diagonal[icnt_diagonal][1]=isigma1;
+      X->InterAll_Diagonal[icnt_diagonal][2]=isite3;
+      X->InterAll_Diagonal[icnt_diagonal][3]=isigma3;
+      X->ParaInterAll_Diagonal[icnt_diagonal] = creal(X->ParaInterAll[i]);
+      icnt_diagonal++;
+      continue;
+    }
+    else if(isite1 == isite4 && isite2 ==isite3 &&
+            isigma1 == isigma4 && isigma2 ==isigma3)
+    {
+      X->InterAll_Diagonal[icnt_diagonal][0]=isite1;
+      X->InterAll_Diagonal[icnt_diagonal][1]=isigma1;
+      X->InterAll_Diagonal[icnt_diagonal][2]=isite2;
+      X->InterAll_Diagonal[icnt_diagonal][3]=isigma2;
+      X->ParaInterAll_Diagonal[icnt_diagonal] = -creal(X->ParaInterAll[i]);
+      X->EDChemi[X->EDNChemi]     = isite1;
+      X->EDSpinChemi[X->EDNChemi] = isigma1;
+      //transfer integral has minus sign for default setting
+      X->EDParaChemi[X->EDNChemi] = -creal(X->ParaInterAll[i]);
+      icnt_diagonal++;
+      X->EDNChemi +=1;
+      continue;
+    }
+    else{
+      //Get Off-Diagonal term
+      switch(X->iCalcModel){
+        case Hubbard:
+        case HubbardNConserved:
+        case Kondo:
+        case KondoGC:
+        case HubbardGC:
+          if(isigma1 == isigma2 && isigma3 == isigma4){
+            for(tmp_i=0; tmp_i<8; tmp_i++){
+              X->InterAll_OffDiagonal[icnt_offdiagonal][tmp_i]=X->InterAll[i][tmp_i];
+            }
+            X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
+          }
+          else if(isigma1==isigma4 && isigma2 == isigma3){
+            X->InterAll_OffDiagonal[icnt_offdiagonal][0]=isite1;
+            X->InterAll_OffDiagonal[icnt_offdiagonal][1]=isigma1;
+            X->InterAll_OffDiagonal[icnt_offdiagonal][2]=isite4;
+            X->InterAll_OffDiagonal[icnt_offdiagonal][3]=isigma1;
+            X->InterAll_OffDiagonal[icnt_offdiagonal][4]=isite3;
+            X->InterAll_OffDiagonal[icnt_offdiagonal][5]=isigma2;
+            X->InterAll_OffDiagonal[icnt_offdiagonal][6]=isite2;
+            X->InterAll_OffDiagonal[icnt_offdiagonal][7]=isigma2;
+            X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = -X->ParaInterAll[i];
+          }
+          else{
+            // Sz symmetry is assumed
+            if(X->iCalcModel==Hubbard || X->iCalcModel==Kondo){
+              fprintf(stdoutMPI, cErrNonConservedInterAll,
+                      isite1,
+                      isigma1,
+                      isite2,
+                      isigma2,
+                      isite3,
+                      isigma3,
+                      isite4,
+                      isigma4,
+                      creal(X->ParaInterAll[i]),
+                      cimag(X->ParaInterAll[i])
+              );
+              iret=-1;
+            }
+            else{
+              for(tmp_i=0; tmp_i<8; tmp_i++){
+                X->InterAll_OffDiagonal[icnt_offdiagonal][tmp_i]=X->InterAll[i][tmp_i];
+              }
+              X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
+            }
+          }
+          break;
+        case Spin:
+        case SpinGC:
+          if(isite1 == isite2 && isite3 == isite4){
+            for(tmp_i=0; tmp_i<8; tmp_i++){
+              X->InterAll_OffDiagonal[icnt_offdiagonal][tmp_i]=X->InterAll[i][tmp_i];
+            }
+            X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
+          }
+          break;
+        default:
+          return(-1);
+      }
+      if(iret != -1){
+        icnt_offdiagonal++;
+      }
+    }
+
+    if(iret !=0){
+      return(-1);
+    }
+  }
+
+  return 0;
+}
+
+
 /** 
  * @brief function of judging a type of define files.
  * 
@@ -2294,6 +2486,29 @@ int CheckFormatForSpinInt
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int CheckFormatForKondoInt
+        (
+                const int isite1, const int isite2,
+                const int isite3, const int isite4,
+                int* iLocInfo
+        )
+{
+  if (iLocInfo[isite1] != ITINERANT || iLocInfo[isite2] != ITINERANT) {
+    if (isite1 != isite2) {
+      fprintf(stdoutMPI, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
+      return -1;
+    }
+  }
+  if (iLocInfo[isite3] != ITINERANT || iLocInfo[isite4] != ITINERANT) {
+    if (isite3 != isite4) {
+      fprintf(stdoutMPI, cErrIncorrectFormatForKondoInt, isite1, isite2, isite3, isite4);
+      return -1;
+    }
+  }
+  return 0;
+}
+
+/*
+int CheckFormatForKondoInt
 (
  struct DefineList *X
  ){
@@ -2327,6 +2542,7 @@ int CheckFormatForKondoInt
   }  
   return 0;
 }
+*/
 
 /** 
  * @brief function to set convergence factors
@@ -2358,7 +2574,7 @@ void SetConvergenceFactor
 }
 
 /** 
- * @brief function of checking indecies of localized spin
+ * @brief function of checking indexies of localized spin
  * 
  * @param[in/out] X Define list to get and put information of localized spin
  * 
@@ -2464,7 +2680,13 @@ void InitializeInteractionNum
   X->NCisAjtCkuAlvDC=0;
   X->NSingleExcitationOperator=0;
   X->NPairExcitationOperator=0;
+  //[s] Time Evolution
+  X->NTETimeSteps=0;
   X->NLaser=0;
+  X->NTEInterAll=0;
+  X->NTETransfer=0;
+  //[e] Time Evolution
+
 }
 
 /** 
@@ -2477,31 +2699,20 @@ void InitializeInteractionNum
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int CheckSpinIndexForInterAll
+int CheckGeneralSpinIndexForInterAll
 (
- struct DefineList *X
+        const int isite1, const int isigma1,
+        const int isite2, const int isigma2,
+        const int isite3, const int isigma3,
+        const int isite4, const int isigma4,
+        int* iLocInfo
  )
 {
-  unsigned int i=0;
-  int isite1, isite2, isite3, isite4;
-  int isigma1, isigma2, isigma3, isigma4;
-  if(X->iFlgGeneralSpin==TRUE){
-    for(i=0; i<X->NInterAll; i++){
-      isite1 =X->InterAll[i][0];
-      isigma1=X->InterAll[i][1];
-      isite2 =X->InterAll[i][2];
-      isigma2=X->InterAll[i][3];
-      isite3 =X->InterAll[i][4];
-      isigma3=X->InterAll[i][5];
-      isite4 =X->InterAll[i][6];
-      isigma4=X->InterAll[i][7];
-      if(isigma1 > X->LocSpn[isite1] || isigma2 >X->LocSpn[isite2]
-         ||isigma3 > X->LocSpn[isite3] || isigma4 >X->LocSpn[isite4]){
+   if( isigma1 > iLocInfo[isite1] || isigma2 >iLocInfo[isite2]
+         ||isigma3 > iLocInfo[isite3] || isigma4 >iLocInfo[isite4]){
         fprintf(stdoutMPI, "%s", cErrIncorrectSpinIndexForInter);
         return FALSE;
-      } 
     }
-  }
   return TRUE;
 }
 
@@ -2611,6 +2822,116 @@ int GetFileNameByKW(
   *FileName=cFileNameListFile[iKWidx];
   return 0;
 }
+
+
+/**
+ * @brief Check InterAll condition.
+ * @param[in] iCalcModel Target Model defined in CalcMod file (ex. Spin, SpinGC etc.).
+ * @param[in] Nsite  A total number of site.
+ * @param[in] isite1 a site number on the site A.
+ * @param[in] isigma1 a spin index on the site A.
+ * @param[in] isite2 a site number on the site B.
+ * @param[in] isigma2 a spin index on the site B.
+ * @param[in] isite3 a site number on the site C.
+ * @param[in] isigma3 a spin index on the site C.
+ * @param[in] isite4 a site number on the site D.
+ * @param[in] isigma4 a spin index on the site D.
+ * @retval 0 normally finished reading file.
+ * @retval -1 unnormally finished reading file.
+ * @version 2.2
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ **/
+int CheckInterAllCondition(
+        int iCalcModel,
+        int Nsite,
+        int iFlgGeneralSpin,
+        int *iLocInfo,
+        int isite1, int isigma1,
+        int isite2, int isigma2,
+        int isite3, int isigma3,
+        int isite4, int isigma4
+){
+  if(CheckQuadSite(isite1, isite2, isite3, isite4, Nsite) !=0){
+    fprintf(stderr, "%s", "Error: Site index of InterAll is incorrect.\n");
+    return(-1);
+  }
+
+  if(iCalcModel == Spin || iCalcModel ==SpinGC){
+    if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
+      fprintf(stderr, "%s", "Error: Spin index of InterAll is incorrect.\n");
+      return(-1);
+    }
+  }
+  else if(iCalcModel == SpinlessFermion || iCalcModel==SpinlessFermionGC){
+    if(isigma1 !=0 || isigma2 != 0 || isigma3 != 0 || isigma4 !=0){
+      fprintf(stderr, "%s", "Error: Spin index of InterAll is incorrect.\n");
+      return -1;
+    }
+  }
+  else if(iCalcModel == Kondo){
+    if(CheckFormatForKondoInt(isite1, isite2, isite3, isite4, iLocInfo)!=0){
+      return -1;
+    }
+  }
+
+  if(iFlgGeneralSpin ==TRUE) {
+    if(CheckGeneralSpinIndexForInterAll(isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, iLocInfo)!=0){
+      return -1;
+    }
+  }
+  return 0;
+}
+
+int InputInterAllInfo(
+        int *icnt_interall,
+        int **iInterAllInfo,
+        double complex *cInterAllValue,
+        int isite1, int isigma1,
+        int isite2, int isigma2,
+        int isite3, int isigma3,
+        int isite4, int isigma4,
+        double dvalue_re, double dvalue_im
+) {
+  int i = 0;
+  int iflg_interall = 0;
+  //Collect and sum same components of InterAll interactions
+  for (i = 0; i < *icnt_interall; i++) {
+    if (isite1 == iInterAllInfo[i][0] && isite2 == iInterAllInfo[i][2] &&
+        isite3 == iInterAllInfo[i][4] && isite4 == iInterAllInfo[i][6] &&
+        isigma1 == iInterAllInfo[i][1] && isigma2 == iInterAllInfo[i][3] &&
+        isigma3 == iInterAllInfo[i][5] && isigma4 == iInterAllInfo[i][7]) {
+      cInterAllValue[i] += dvalue_re + dvalue_im * I;
+      iflg_interall = 1;
+      return 0;
+    }
+  }
+
+  //Input all InterAll interactions
+  if (iflg_interall == 0) {
+    iInterAllInfo[*icnt_interall][0] = isite1;
+    iInterAllInfo[*icnt_interall][1] = isigma1;
+    iInterAllInfo[*icnt_interall][2] = isite2;
+    iInterAllInfo[*icnt_interall][3] = isigma2;
+    iInterAllInfo[*icnt_interall][4] = isite3;
+    iInterAllInfo[*icnt_interall][5] = isigma3;
+    iInterAllInfo[*icnt_interall][6] = isite4;
+    iInterAllInfo[*icnt_interall][7] = isigma4;
+    cInterAllValue[*icnt_interall] = dvalue_re + I * dvalue_im;
+
+    //Check Diagonal part or not
+    if (isite1 == isite2 && isite3 == isite4 &&
+        isigma1 == isigma2 && isigma3 == isigma4) { //normal diagonal part
+      return 1;
+    } else if (isite1 == isite4 && isite2 == isite3 &&
+               isigma1 == isigma4 && isigma2 == isigma3) { //hund term
+      return 1;
+    }
+    *icnt_interall++;
+  }
+  return 0;
+}
+
+
 
 /**
  * @brief Check Hermite for TETransfer integrals.
@@ -2727,18 +3048,7 @@ int CheckTETransferHermite
 
   X->NTETransfer[idx]=2*icntHermite;
   X->NTETransferDiagonal[idx]=icntchemi;
-//DEBUG
-  /*
-  fprintf(stdoutMPI, "DEBUG: NTETransfer=%d, NTETransfer_offDiagonal=%d,NTETransfer_Diagonal=%d\n", NTETransfer, X->NTETransfer[idx], X->NTETransferDiagonal[idx]);
-  for(i =0; i< X->NTETransfer[idx]; i++){
-    fprintf(stdoutMPI, "DEBUG: TetsTETrans_OffDiagonal: %d %d %d %d %lf %lf\n", X->TETransfer[idx][i][0], X->TETransfer[idx][i][1], X->TETransfer[idx][i][2], X->TETransfer[idx][i][3], creal(X->ParaTETransfer[idx][i]), cimag(X->ParaTETransfer[idx][i]));
-    //fprintf(stdoutMPI, "DEBUG: TetsTETrans_OffDiagonal: %d %d %d %d\n", X->TETransfer[idx][i][0], X->TETransfer[idx][i][1], X->TETransfer[idx][i][2], X->TETransfer[idx][i][3]);
-  }
-  for(i =0; i< X->NTETransferDiagonal[idx]; i++){
-    //fprintf(stdoutMPI, "DEBUG: TetsTETrans_Diagonal: %d %d %lf\n", X->TETransferDiagonal[idx][i][0], X->TETransferDiagonal[idx][i][1], X->ParaTETransferDiagonal[idx][i]);
-    fprintf(stdoutMPI, "DEBUG: TetsTETrans_Diagonal: %d %d\n", X->TETransferDiagonal[idx][i][0], X->TETransferDiagonal[idx][i][1]);
-  }
-  */
+
   free(tmp_TETransfer);
   free(tmp_paraTETransfer);
   return 0;

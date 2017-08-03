@@ -4213,7 +4213,7 @@ CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算され�
  \begin{itemize}
    \item  1行目：$[$int01$]$
    \item  2行目：$[$int02$]$
-   \item  3行目-: $[$double01$]$~~$[$double02$]$
+   \item  3行目 - $[$int02$]$+3行: $[$double01$]$~~$[$double02$]$
   \end{itemize}
 \subsubsection{パラメータ}
  \begin{itemize}
@@ -4222,19 +4222,20 @@ CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算され�
 
  {\bf 形式 :} int型
 
-{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+{\bf 説明 :} { 計算に要したLanczosステップ数を表します。}
 
   \item  $[$int02$]$
 
- {\bf 形式 :} int型
+ {\bf 形式 :} long int型
 
-{\bf 説明 :} { 計算に要したLanczosステップ数を表します。}
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+
  
  \item  $[$double01$]$, $[$double02$]$
 
  {\bf 形式 :} double型 
 
-{\bf 説明 :} 固有ベクトルの値を表します。\\
+{\bf 説明 :} 固有ベクトルの値を表します。一番最初の成分に計算に使用しない値が入っています。\\
 $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
@@ -4256,7 +4257,8 @@ CalcModファイルのReStart=1, 2の場合に、計算途中のベクトルを�
  \begin{itemize}
    \item  1行目：$[$int01$]$
    \item  2行目：$[$int02$]$
-   \item  3行目-: $[$double01$]$~~$[$double02$]$
+   \item  3行目 - $[$int02$]$+3行: $[$double01$]$~~$[$double02$]$
+   \item  4行目 - 2$\times$$[$int02$]$+4行: $[$double03$]$~~$[$double04$]$
   \end{itemize}
 \subsubsection{パラメータ}
  \begin{itemize}
@@ -4265,20 +4267,27 @@ CalcModファイルのReStart=1, 2の場合に、計算途中のベクトルを�
 
  {\bf 形式 :} int型
 
-{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
+{\bf 説明 :} { 計算に要したステップ数を表します。Lanczos法ではLanczosステップ数、TPQ法ではハミルトニアンを乗算した回数が出力されます。}
 
   \item  $[$int02$]$
 
  {\bf 形式 :} int型
 
-{\bf 説明 :} { 計算に要したステップ数を表します。Lanczos法ではLanczosステップ数、TPQ法ではハミルトニアンを乗算した回数が出力されます。}
+{\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
  
- \item  $[$double01$]$, $[$double02$]$
+  \item  $[$double01$]$, $[$double02$]$ 
 
- {\bf 形式 :} double型 
+ {\bf 形式 :} double 
 
-{\bf 説明 :} 固有ベクトルの値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
+{\bf 説明 :}  Lanczos法の場合は Eq.~(\ref{eq: LanczosVector})の$\vec{v}_{k+1}$、TPQ法の場合はEq~.(\ref{eq: TPQVector})の$\vec{y}_{k+1}$がそれぞれ出力されます。 $[$double01$]$が実部、$[$double02$]$が虚部を表します。一番最初の成分に計算に使用しない値が入っています。\\
+
+ \item  $[$double03$]$, $[$double04$]$ 
+
+ {\bf 形式 :} double 
+
+{\bf 説明 :}  Lanczos法の場合は Eq.~(\ref{eq: LanczosVector})の$\vec{v}_{k}$、TPQ法の場合はEq~.(\ref{eq: TPQVector})の$\vec{y}_{k}$がそれぞれ出力されます。 $[$double01$]$が実部、$[$double02$]$が虚部を表します。一番最初の成分に計算に使用しない値が入っています。\\
+
+
 \end{itemize}
 
 \newpage
@@ -4333,7 +4342,8 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベ
  \begin{itemize}
    \item  1行目：$[$int01$]$
    \item  2行目：$[$int02$]$
-   \item  3行目-: $[$double01$]$~~$[$double02$]$
+   \item  3行目 - $[$int02$]$+3行: $[$double01$]$~~$[$double02$]$
+   \item  4行目 - 2$\times$$[$int02$]$+4行: $[$double03$]$~~$[$double04$]$
   \end{itemize}
 \subsubsection{パラメータ}
  \begin{itemize}
@@ -4346,17 +4356,22 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベ
 
   \item  $[$int02$]$
 
- {\bf 形式 :} int型
+ {\bf 形式 :} Long int型
 
 {\bf 説明 :} 計算対象のヒルベルト空間数を指定する整数。
 
+  \item  $[$double01$]$, $[$double02$]$ 
+
+ {\bf 形式 :} double 
+
+{\bf 説明 :}  Lanczos法での$\vec{v}_{k+1}$を出力します。 $[$double01$]$が実部、$[$double02$]$が虚部を表します。一番最初の成分に計算に使用しない値が入っています。\\
+
+ \item  $[$double03$]$, $[$double04$]$ 
+
+ {\bf 形式 :} double 
+
+{\bf 説明 :}  Lanczos法での$\vec{v}_{k+1}$を出力します。 $[$double01$]$が実部、$[$double02$]$が虚部を表します。一番最初の成分に計算に使用しない値が入っています。\\
  
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf 形式 :} double型 
-
-{\bf 説明 :} Lanczos法を用いた動的グリーン関数の再計算に必要な二つのベクトルの係数の値を表します。\\
-$[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
 \newpage
@@ -4375,7 +4390,7 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な三重対�
  \begin{itemize}
    \item  1行目：$[$int01$]$
    \item  2行目：$[$double01$]$
-   \item  3行目-: $[$double02$]$~~$[$double03$]$
+   \item  3行目 - $[$int02$]$+3行: $[$double02$]$~~$[$double03$]$
   \end{itemize}
 \subsubsection{パラメータ}
  \begin{itemize}
@@ -4397,7 +4412,7 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な三重対�
 
  {\bf 形式 :} double型 
 
-{\bf 説明 :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。
+{\bf 説明 :} Lanczso法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素$\alpha_i,~\beta_i~(i =1,\cdots N_d)$の値を表します。一番最初の成分に計算に使用しない値が入っています。
 $[$double02$]$が$\alpha_i$、$[$double03$]$が$\beta_i$に対応します。\\
 \end{itemize}
 

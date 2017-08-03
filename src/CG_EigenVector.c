@@ -13,26 +13,26 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-
+/**@file
+@brief Inversed power method with CG
+*/
 #include "CG_EigenVector.h"
 #include "FileIO.h"
 #include "mltply.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
-/** 
- * 
- * 
- * @param X 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
- */
-int CG_EigenVector(struct BindStruct *X){
+/**
+@brief inversed power method with CG
+@author Takahiro Misawa (The University of Tokyo)
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+@return -1 if file can not be opened, 0 for other.
+*/
+int CG_EigenVector(struct BindStruct *X/**<[inout]*/){
 
   fprintf(stdoutMPI, "%s", cLogCG_EigenVecStart);
   TimeKeeper(X, cFileNameTimeKeep, cCG_EigenVecStart, "a");
 
-    time_t start,mid;
+  time_t start,mid;
   FILE *fp_0;
   char sdt_1[D_FileNameMax];
   dsfmt_t dsfmt;
@@ -76,10 +76,10 @@ int CG_EigenVector(struct BindStruct *X){
   iv = X->Def.initial_iv;
   bnorm = 0.0;
 #pragma omp parallel default(none) private(i, u_long_i, mythread, dsfmt) \
-            shared(v0, v1, iv, X, nthreads, myrank, b, bnorm) firstprivate(i_max)
+  shared(v0, v1, iv, X, nthreads, myrank, b, bnorm) firstprivate(i_max)
   {
     /*
-    Initialise MT
+      Initialise MT
     */
 #ifdef _OPENMP
     mythread = omp_get_thread_num();
@@ -102,7 +102,7 @@ int CG_EigenVector(struct BindStruct *X){
     }
   }/*#pragma omp*/
   /*
-   Normalize b
+    Normalize b
   */
   bnorm = SumMPI_d(bnorm);
   bnorm=sqrt(bnorm);
@@ -140,7 +140,7 @@ int CG_EigenVector(struct BindStruct *X){
     for(itr=1;itr<=itr_max;itr++){
 #pragma omp parallel for default(none) private(j) shared(y, vg) firstprivate(i_max, Eig,eps_CG)
       for(j=1;j<=i_max;j++){  
-	y[j]=(-Eig+eps_CG)*vg[j];   //y = -E*p
+        y[j]=(-Eig+eps_CG)*vg[j];   //y = -E*p
       }
       StartTimer(4401);
       mltply(X,y,vg);      // y += H*p
@@ -150,8 +150,8 @@ int CG_EigenVector(struct BindStruct *X){
       yp=0.0;
 #pragma omp parallel for reduction(+:rp, yp) default(none) private(i) shared(v1, vg, y) firstprivate(i_max) 
       for(i=1;i<=i_max;i++){
-	rp+=v1[i]*conj(v1[i]);
-	yp+=y[i]*conj(vg[i]);
+        rp+=v1[i]*conj(v1[i]);
+        yp+=y[i]*conj(vg[i]);
       }
       rp = SumMPI_dc(rp);
       yp = SumMPI_dc(yp);
@@ -159,18 +159,18 @@ int CG_EigenVector(struct BindStruct *X){
       rnorm=0.0;
 #pragma omp parallel for reduction(+:rnorm) default(none) private(i) shared(v0, v1, vg)firstprivate(i_max, alpha) 
       for(i=1;i<=i_max;i++){
-	v0[i]+=alpha*vg[i];
-	rnorm+=conj(v1[i])*v1[i];
+        v0[i]+=alpha*vg[i];
+        rnorm+=conj(v1[i])*v1[i];
       }
       rnorm = SumMPI_d(rnorm);
       rnorm2=0.0;
       gosa1=0.0;
 #pragma omp parallel for reduction(+:rnorm2, gosa1) default(none) private(i) shared(v1 , y) firstprivate(i_max, alpha) private(tmp_r) 
       for(i=1;i<=i_max;i++){
-	tmp_r=v1[i]-alpha*y[i];
-	gosa1+=conj(tmp_r)*v1[i];// old r and new r should be orthogonal -> gosa1=0
-	v1[i]=tmp_r; 
-	rnorm2+=conj(v1[i])*v1[i];
+        tmp_r=v1[i]-alpha*y[i];
+        gosa1+=conj(tmp_r)*v1[i];// old r and new r should be orthogonal -> gosa1=0
+        v1[i]=tmp_r; 
+        rnorm2+=conj(v1[i])*v1[i];
       }
       gosa1 = SumMPI_dc(gosa1);
       rnorm2 = SumMPI_d(rnorm2);
@@ -178,28 +178,28 @@ int CG_EigenVector(struct BindStruct *X){
       gosa2=0.0;
 #pragma omp parallel for reduction(+:gosa2) default(none) private(i) shared(v1, vg) firstprivate(i_max) 
       for(i=1;i<=i_max;i++){
-	gosa2+=v1[i]*conj(vg[i]); // new r and old p should be orthogonal
+        gosa2+=v1[i]*conj(vg[i]); // new r and old p should be orthogonal
       }
       gosa2 = SumMPI_dc(gosa2);
             
       beta=rnorm2/rnorm;
 #pragma omp parallel for default(none) shared(v1, vg) firstprivate(i_max, beta)
       for(i=1;i<=i_max;i++){
-	vg[i]=v1[i]+beta*vg[i];
+        vg[i]=v1[i]+beta*vg[i];
       }
       // if(itr%5==0){
-	childfopenMPI(sdt_1,"a", &fp_0);
-	fprintf(fp_0,"i_itr=%d itr=%d %.10lf %.10lf \n ",
-		i_itr,itr,sqrt(rnorm2),pow(10,-5)*sqrt(bnorm));
-	fclose(fp_0);                
-	if(sqrt(rnorm2)<eps*sqrt(bnorm)){
-	  t_itr+=itr;
-	  childfopenMPI(sdt_1,"a", &fp_0);
-	  fprintf(fp_0,"CG OK:   t_itr=%d \n ",t_itr);
-	  fclose(fp_0); 
-	  break;
-	}
-	//}
+      childfopenMPI(sdt_1,"a", &fp_0);
+      fprintf(fp_0,"i_itr=%d itr=%d %.10lf %.10lf \n ",
+              i_itr,itr,sqrt(rnorm2),pow(10,-5)*sqrt(bnorm));
+      fclose(fp_0);                
+      if(sqrt(rnorm2)<eps*sqrt(bnorm)){
+        t_itr+=itr;
+        childfopenMPI(sdt_1,"a", &fp_0);
+        fprintf(fp_0,"CG OK:   t_itr=%d \n ",t_itr);
+        fclose(fp_0); 
+        break;
+      }
+      //}
     }
     //CG finish!!
     xnorm=0.0;
@@ -226,20 +226,20 @@ int CG_EigenVector(struct BindStruct *X){
        
     childfopenMPI(sdt_1,"a", &fp_0);
     fprintf(fp_0,"i_itr=%d itr=%d time=%lf  fabs(fabs(xb)-1.0)=%.16lf\n"
-	    ,i_itr,itr,difftime(mid,start),fabs(cabs(xb)-1.0));
+            ,i_itr,itr,difftime(mid,start),fabs(cabs(xb)-1.0));
     fclose(fp_0);
         
     if(fabs(cabs(xb)-1.0)<eps){
       childfopenMPI(sdt_1,"a", &fp_0);
       fprintf(fp_0,"number of iterations in inv1:i_itr=%d itr=%d t_itr=%d %lf\n ",
-	      i_itr,itr,t_itr,fabs(cabs(xb)-1.0));
+              i_itr,itr,t_itr,fabs(cabs(xb)-1.0));
       fclose(fp_0);
       
       break;
     }else{
 #pragma omp parallel for default(none) private(i) shared(b, v0) firstprivate(i_max)
       for(i=1;i<=i_max;i++){
-	b[i]=v0[i];
+        b[i]=v0[i];
       }
     }       
     //inv1 routine finish!!
@@ -252,4 +252,4 @@ int CG_EigenVector(struct BindStruct *X){
   fprintf(stdoutMPI, "%s", cLogCG_EigenVecEnd);
   
   return 0;
-}
+}/*int CG_EigenVector*/

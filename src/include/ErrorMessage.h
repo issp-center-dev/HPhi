@@ -62,6 +62,7 @@ char *cErrNcond;
 char *cErrNumAve;
 char *cErrExpecInterval;
 char *cErrLanczos_max;
+char *cErrLanczos_eps;
 char *cErrLanczosTarget;
 char *cErrLanczosExct;
 

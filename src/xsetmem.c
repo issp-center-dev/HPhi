@@ -109,12 +109,20 @@ for (iarrayJ = 0; iarrayJ < xBoost->NumarrayJ; iarrayJ++) {
 
   if (X->Def.iCalcType == TimeEvolution){
     d_malloc1(X->Def.TETime, X->Def.NTETimeSteps);
+    //Time-dependent Transfer
     i_malloc1(X->Def.NTETransfer, X->Def.NTETimeSteps);
     i_malloc1(X->Def.NTETransferDiagonal, X->Def.NTETimeSteps);
     i_malloc3(X->Def.TETransfer, X->Def.NTETimeSteps, X->Def.NTETransferMax, 4);
     i_malloc3(X->Def.TETransferDiagonal, X->Def.NTETimeSteps, X->Def.NTETransferMax, 2);
     c_malloc2(X->Def.ParaTETransfer, X->Def.NTETimeSteps, X->Def.NTETransferMax);
     d_malloc2(X->Def.ParaTETransferDiagonal, X->Def.NTETimeSteps,X->Def.NTETransferMax);
+    //Time-dependent InterAll
+    i_malloc1(X->Def.NTEInterAll, X->Def.NTETimeSteps);
+    i_malloc1(X->Def.NTEInterAllDiagonal, X->Def.NTETimeSteps);
+    i_malloc3(X->Def.TEInterAll, X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 8);
+    i_malloc3(X->Def.TEInterAllDiagonal, X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 2);
+    c_malloc2(X->Def.ParaTEInterAll, X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
+    d_malloc2(X->Def.ParaTEInterAllDiagonal, X->Def.NTETimeSteps,X->Def.NTEInterAllMax);
   }
 }
 
