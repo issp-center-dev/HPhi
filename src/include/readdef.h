@@ -75,12 +75,17 @@ int CheckQuadSite(
 
 int CheckTransferHermite
 (
- struct DefineList *X
+        struct DefineList *X
 );
 
 int CheckInterAllHermite
 (
- const struct DefineList *X
+        int **InterAll,
+        double complex* ParaInterAll,
+        int **InterAllOffDiagonal,
+        double complex*ParaInterAllOffDiagonal,
+        const int NInterAllOffDiagonal,
+        const int iCalcModel
 );
 
 /*
