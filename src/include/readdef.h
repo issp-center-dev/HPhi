@@ -83,10 +83,28 @@ int CheckInterAllHermite
  const struct DefineList *X
 );
 
+/*
 int GetDiagonalInterAll
 (
  struct DefineList *X
  );
+*/
+
+int GetDiagonalInterAll
+				(
+								int **InterAll,
+								complex double *ParaInterAll,
+								const int NInterAll,
+								int **InterAllDiagonal,
+								double *ParaInterAllDiagonal,
+								int **InterAllOffDiagonal,
+								complex double *ParaInterAllOffDiagonal,
+								int *Chemi,
+								int *SpinChemi,
+								double *ParaChemi,
+								int *NChemi,
+								const int iCalcModel
+				);
 
 int JudgeDefType
 (

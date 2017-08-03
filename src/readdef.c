@@ -1352,13 +1352,39 @@ int ReadDefFileIdxPara(
       X->NInterAll = icnt_interall;
       X->NInterAll_Diagonal=icnt_diagonal;
       X->NInterAll_OffDiagonal = X->NInterAll-X->NInterAll_Diagonal;
-      
+      /*
+        int **InterAll,
+        complex double *ParaInterAll,
+        const int NInterAll,
+        int **InterAllDiagonal,
+        double *ParaInterAllDiagonal,
+        int **InterAllOffDiagonal,
+        complex double *ParaInterAllOffDiagonal,
+        int *Chemi,
+        int *SpinChemi,
+        double *ParaChemi,
+        int *NChemi,
+        const int iCalcModel
+        */
+        /*
       if(GetDiagonalInterAll(X)!=0){
         fclose(fp);
         return(-1);
       }
-      
-      if(CheckInterAllHermite(X)!=0){
+      */
+
+        if(GetDiagonalInterAll(
+                X->InterAll, X->ParaInterAll, X->NInterAll,
+                X->InterAll_Diagonal, X->ParaInterAll_Diagonal,
+                X->InterAll_OffDiagonal, X->ParaInterAll_OffDiagonal,
+                X->EDChemi, X->EDSpinChemi, X->EDParaChemi, &X->EDNChemi,
+                X->iCalcModel
+        )!=0){
+          fclose(fp);
+          return(-1);
+        }
+
+        if(CheckInterAllHermite(X)!=0){
         fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
         fclose(fp);
         return(-1);
@@ -1542,13 +1568,27 @@ int ReadDefFileIdxPara(
 
             X->NTEInterAll[idx] = icnt_interall;
             X->NTEInterAllDiagonal[idx]=icnt_diagonal;
-            X->NTEInterAllOffDiagonal[idx] = X->NTEInterAll[idx]-X->NTEInterAllDiagonal[idx];
+            X->NTEInterAllOffDiagonal[idx] = icnt_interall-icnt_diagonal;
 
-            if(GetTEDiagonalInterAll(X)!=0){
+
+            if(GetDiagonalInterAll(
+                    X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx],
+                    X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx],
+                    X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
+                    X->TEChemi[idx], X->SpinTEChemi[idx], X->ParaTEChemi[idx], &X->NTEChemi[idx],
+                    X->iCalcModel
+            )!=0){
               fclose(fp);
               return(-1);
             }
 
+
+            /*
+            if(GetTEDiagonalInterAll(X)!=0){
+              fclose(fp);
+              return(-1);
+            }
+*/
             if(CheckInterAllHermite(X)!=0){
               fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
               fclose(fp);
@@ -2108,6 +2148,7 @@ int CheckInterAllHermite
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
+/*
 int GetDiagonalInterAll
 (
  struct DefineList *X
@@ -2233,7 +2274,7 @@ int GetDiagonalInterAll
   
   return 0;
 }
-
+*/
 
 /**
  * @brief function of getting diagonal components form Time-dependent interall interactions
@@ -2245,9 +2286,20 @@ int GetDiagonalInterAll
  * @version 2.1
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int GetTEDiagonalInterAll
+int GetDiagonalInterAll
         (
-                struct DefineList *X
+                int **InterAll,
+                complex double *ParaInterAll,
+                const int NInterAll,
+                int **InterAllDiagonal,
+                double *ParaInterAllDiagonal,
+                int **InterAllOffDiagonal,
+                complex double *ParaInterAllOffDiagonal,
+                int *Chemi,
+                int *SpinChemi,
+                double *ParaChemi,
+                int *NChemi,
+                const int iCalcModel
         )
 {
   unsigned int i,icnt_diagonal, icnt_offdiagonal, tmp_i;
@@ -2257,48 +2309,51 @@ int GetTEDiagonalInterAll
   icnt_diagonal=0;
   icnt_offdiagonal=0;
 
-  setmem_IntAll_Diagonal(X);
-  for(i=0; i<X->NInterAll; i++){
-    isite1=X->InterAll[i][0];
-    isigma1=X->InterAll[i][1];
-    isite2=X->InterAll[i][2];
-    isigma2=X->InterAll[i][3];
-    isite3=X->InterAll[i][4];
-    isigma3=X->InterAll[i][5];
-    isite4=X->InterAll[i][6];
-    isigma4=X->InterAll[i][7];
+  setmem_IntAll_Diagonal(
+          InterAllOffDiagonal, ParaInterAllOffDiagonal,
+          InterAllDiagonal, ParaInterAllDiagonal, NInterAll);
+
+  for(i=0; i<NInterAll; i++){
+    isite1=InterAll[i][0];
+    isigma1=InterAll[i][1];
+    isite2=InterAll[i][2];
+    isigma2=InterAll[i][3];
+    isite3=InterAll[i][4];
+    isigma3=InterAll[i][5];
+    isite4=InterAll[i][6];
+    isigma4=InterAll[i][7];
 
     //Get Diagonal term
     if(isite1 == isite2 && isite3 == isite4 &&
        isigma1 == isigma2  && isigma3 == isigma4)
     {
-      X->InterAll_Diagonal[icnt_diagonal][0]=isite1;
-      X->InterAll_Diagonal[icnt_diagonal][1]=isigma1;
-      X->InterAll_Diagonal[icnt_diagonal][2]=isite3;
-      X->InterAll_Diagonal[icnt_diagonal][3]=isigma3;
-      X->ParaInterAll_Diagonal[icnt_diagonal] = creal(X->ParaInterAll[i]);
+      InterAllDiagonal[icnt_diagonal][0]=isite1;
+      InterAllDiagonal[icnt_diagonal][1]=isigma1;
+      InterAllDiagonal[icnt_diagonal][2]=isite3;
+      InterAllDiagonal[icnt_diagonal][3]=isigma3;
+      ParaInterAllDiagonal[icnt_diagonal] = creal(ParaInterAll[i]);
       icnt_diagonal++;
       continue;
     }
     else if(isite1 == isite4 && isite2 ==isite3 &&
             isigma1 == isigma4 && isigma2 ==isigma3)
     {
-      X->InterAll_Diagonal[icnt_diagonal][0]=isite1;
-      X->InterAll_Diagonal[icnt_diagonal][1]=isigma1;
-      X->InterAll_Diagonal[icnt_diagonal][2]=isite2;
-      X->InterAll_Diagonal[icnt_diagonal][3]=isigma2;
-      X->ParaInterAll_Diagonal[icnt_diagonal] = -creal(X->ParaInterAll[i]);
-      X->EDChemi[X->EDNChemi]     = isite1;
-      X->EDSpinChemi[X->EDNChemi] = isigma1;
+      InterAllDiagonal[icnt_diagonal][0]=isite1;
+      InterAllDiagonal[icnt_diagonal][1]=isigma1;
+      InterAllDiagonal[icnt_diagonal][2]=isite2;
+      InterAllDiagonal[icnt_diagonal][3]=isigma2;
+      ParaInterAllDiagonal[icnt_diagonal] = -creal(ParaInterAll[i]);
+      Chemi[*NChemi]     = isite1;
+      SpinChemi[*NChemi] = isigma1;
       //transfer integral has minus sign for default setting
-      X->EDParaChemi[X->EDNChemi] = -creal(X->ParaInterAll[i]);
+      ParaChemi[*NChemi] = -creal(ParaInterAll[i]);
       icnt_diagonal++;
-      X->EDNChemi +=1;
+      *NChemi +=1;
       continue;
     }
     else{
       //Get Off-Diagonal term
-      switch(X->iCalcModel){
+      switch(iCalcModel){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
@@ -2306,24 +2361,24 @@ int GetTEDiagonalInterAll
         case HubbardGC:
           if(isigma1 == isigma2 && isigma3 == isigma4){
             for(tmp_i=0; tmp_i<8; tmp_i++){
-              X->InterAll_OffDiagonal[icnt_offdiagonal][tmp_i]=X->InterAll[i][tmp_i];
+              InterAllOffDiagonal[icnt_offdiagonal][tmp_i]=InterAll[i][tmp_i];
             }
-            X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
+            ParaInterAllOffDiagonal[icnt_offdiagonal] = ParaInterAll[i];
           }
           else if(isigma1==isigma4 && isigma2 == isigma3){
-            X->InterAll_OffDiagonal[icnt_offdiagonal][0]=isite1;
-            X->InterAll_OffDiagonal[icnt_offdiagonal][1]=isigma1;
-            X->InterAll_OffDiagonal[icnt_offdiagonal][2]=isite4;
-            X->InterAll_OffDiagonal[icnt_offdiagonal][3]=isigma1;
-            X->InterAll_OffDiagonal[icnt_offdiagonal][4]=isite3;
-            X->InterAll_OffDiagonal[icnt_offdiagonal][5]=isigma2;
-            X->InterAll_OffDiagonal[icnt_offdiagonal][6]=isite2;
-            X->InterAll_OffDiagonal[icnt_offdiagonal][7]=isigma2;
-            X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = -X->ParaInterAll[i];
+            InterAllOffDiagonal[icnt_offdiagonal][0]=isite1;
+            InterAllOffDiagonal[icnt_offdiagonal][1]=isigma1;
+            InterAllOffDiagonal[icnt_offdiagonal][2]=isite4;
+            InterAllOffDiagonal[icnt_offdiagonal][3]=isigma1;
+            InterAllOffDiagonal[icnt_offdiagonal][4]=isite3;
+            InterAllOffDiagonal[icnt_offdiagonal][5]=isigma2;
+            InterAllOffDiagonal[icnt_offdiagonal][6]=isite2;
+            InterAllOffDiagonal[icnt_offdiagonal][7]=isigma2;
+            ParaInterAllOffDiagonal[icnt_offdiagonal] = -ParaInterAll[i];
           }
           else{
             // Sz symmetry is assumed
-            if(X->iCalcModel==Hubbard || X->iCalcModel==Kondo){
+            if(iCalcModel==Hubbard || iCalcModel==Kondo){
               fprintf(stdoutMPI, cErrNonConservedInterAll,
                       isite1,
                       isigma1,
@@ -2333,16 +2388,16 @@ int GetTEDiagonalInterAll
                       isigma3,
                       isite4,
                       isigma4,
-                      creal(X->ParaInterAll[i]),
-                      cimag(X->ParaInterAll[i])
+                      creal(ParaInterAll[i]),
+                      cimag(ParaInterAll[i])
               );
               iret=-1;
             }
             else{
               for(tmp_i=0; tmp_i<8; tmp_i++){
-                X->InterAll_OffDiagonal[icnt_offdiagonal][tmp_i]=X->InterAll[i][tmp_i];
+                InterAllOffDiagonal[icnt_offdiagonal][tmp_i]=InterAll[i][tmp_i];
               }
-              X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
+              ParaInterAllOffDiagonal[icnt_offdiagonal] = ParaInterAll[i];
             }
           }
           break;
@@ -2350,9 +2405,9 @@ int GetTEDiagonalInterAll
         case SpinGC:
           if(isite1 == isite2 && isite3 == isite4){
             for(tmp_i=0; tmp_i<8; tmp_i++){
-              X->InterAll_OffDiagonal[icnt_offdiagonal][tmp_i]=X->InterAll[i][tmp_i];
+              InterAllOffDiagonal[icnt_offdiagonal][tmp_i]=InterAll[i][tmp_i];
             }
-            X->ParaInterAll_OffDiagonal[icnt_offdiagonal] = X->ParaInterAll[i];
+              ParaInterAllOffDiagonal[icnt_offdiagonal] =ParaInterAll[i];
           }
           break;
         default:

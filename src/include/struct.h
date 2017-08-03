@@ -268,6 +268,10 @@ struct DefineList {
 
     double **ParaTEInterAllDiagonal;  /**< Value of diagonal part of time-dependent InterAll for Time Evolution. \n
 						   Data Format [NTE][Ntransfer]. */
+    int **TEChemi;    /**< [NTE][Nsite] */
+    unsigned int *NTEChemi;   /**< [NTE] */
+    int **SpinTEChemi;  /**< [NTE][Nsite] */
+    double **ParaTEChemi;  /**< [NTE][Nsite] */
     //[e] For Time Evolution
 };
 
