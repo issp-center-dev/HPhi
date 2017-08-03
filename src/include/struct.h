@@ -60,7 +60,6 @@ struct DefineList {
     int Total2SzMPI;    /**< */
     unsigned int Ne;    /**< */
     unsigned int NeMPI;    /**< */
-    unsigned int Nsize;    /**< */
     unsigned int Lanczos_max;    /**< */
     int Lanczos_restart;
     long int initial_iv;    /**< */
@@ -239,22 +238,40 @@ struct DefineList {
     int ***TETransfer;      /**< Index of time-dependent transfer integrals for Time Evolution. \n
 						   Data Format [NTE][Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
     int ***TETransferDiagonal;      /**< Index of time-dependent transfer integrals for Time Evolution. \n
-						   Data Format [NTE][Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+						   Data Format [NTE][Ntransfer][2]: 0->site number i, 1-> spin index on i. */
     double complex **ParaTETransfer;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
 						   Data Format [NTE][Ntransfer]. */
     double **ParaTETransferDiagonal;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
 						   Data Format [NTE][Ntransfer]. */
-    //Information of InterAll interactions
-    unsigned int NTEInterAllrMax;
-
-    /*
-   * 内部変数
-  int **EDGeneralTransferOrg;
-  double complex *EDParaGeneralTransferOrg;
-  unsigned int *iFlagTransfer;
-  */
 
     //Two-body part
+    unsigned int NTEInterAllMax;
+    unsigned int *NTEInterAll;        /**< Number of time-dependent InterAll for Time Evolution.\n
+               Data Format [NTE]*/
+    unsigned int *NTEInterAllOffDiagonal;        /**< Number of off-diagonal part of time-dependent InterAll for Time Evolution.\n
+               Data Format [NTE]*/
+
+    unsigned int *NTEInterAllDiagonal;        /**< Number of diagonal part of time-dependent InterAll for Time Evolution.\n
+               Data Format [NTE]*/
+    int ***TEInterAll;      /**< Index of time-dependent InterAll for Time Evolution. \n
+						   Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
+						   4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
+    int ***TEInterAllOffDiagonal;      /**< Index of off-diagonal part of time-dependent InterAll for Time Evolution. \n
+						   Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
+						   4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
+    int ***TEInterAllDiagonal;      /**< Index of diagonal part of time-dependent InterAll for Time Evolution. \n
+						   Data Format [NTE][NTEInterAll][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+    double complex **ParaTEInterAll;  /**< Value of time-dependent InterAll for Time Evolution. \n
+						   Data Format [NTE][Ntransfer]. */
+    double complex **ParaTEInterAllOffDiagonal;  /**< Value of off-diagonal part of time-dependent InterAll for Time Evolution. \n
+						   Data Format [NTE][Ntransfer]. */
+
+    double **ParaTEInterAllDiagonal;  /**< Value of diagonal part of time-dependent InterAll for Time Evolution. \n
+						   Data Format [NTE][Ntransfer]. */
+    int **TEChemi;    /**< [NTE][Nsite] */
+    unsigned int *NTEChemi;   /**< [NTE] */
+    int **SpinTEChemi;  /**< [NTE][Nsite] */
+    double **ParaTEChemi;  /**< [NTE][Nsite] */
     //[e] For Time Evolution
 };
 

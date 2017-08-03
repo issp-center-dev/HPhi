@@ -42,5 +42,9 @@ int GetlistSize
 
 void setmem_IntAll_Diagonal
 (
- struct DefineList *X
+        int **InterAllOffDiagonal,
+        double complex *ParaInterAllOffDiagonal,
+        int **InterAllDiagonal,
+        double *ParaInterAllDiagonal,
+        const int NInterAll
 );

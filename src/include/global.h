@@ -50,9 +50,6 @@ long unsigned int *list_1;
 long unsigned int *list_1buf;
 long unsigned int *list_2_1;
 long unsigned int *list_2_2;
-//long unsigned int *list_jb;
-
-long unsigned int *list_3;
 long unsigned int *HilbertNumToSz;
 
 /*[s] For Spectrum */
@@ -134,7 +131,6 @@ const char* cFileName1BGreen_TPQ;
 const char* cFileName2BGreen_TPQ;
 const char* cFileNameOutputVector;
 const char* cFileNameInputVector;
-
 
 //For FullDiag
 const char* cFileNamePhys_FullDiag;

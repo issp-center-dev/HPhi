@@ -17,8 +17,6 @@
 #ifndef HPHI_DEFCOMMON_H
 #define HPHI_DEFCOMMON_H
 
-#define PI 3.14159265358979 
-
 /*!< CalcType */
 #define NUM_CALCTYPE 5
 #define Lanczos 0 /*!< CalcType is Exact Diagonalization method.*/

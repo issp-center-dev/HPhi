@@ -54,7 +54,8 @@ int CalcByTEM(
   long int i_max = 0;
   FILE *fp;
   double Time = X->Bind.Def.Param.Tinit, Ns;
-  double dt = X->Bind.Def.Param.TimeSlice;
+  //double dt = X->Bind.Def.Param.TimeSlice;
+  double dt=0.0;
   struct TimeKeepStruct tstruct;
   tstruct.tstart = time(NULL);
 
@@ -122,10 +123,14 @@ int CalcByTEM(
       //TransferWithPeierls(&(X->Bind), Time);
       // [s] Yoshimi
       Time = X->Bind.Def.TETime[step_i];
+      if(step_i==0) dt=0;
+      else{
+        dt=X->Bind.Def.TETime[step_i]-X->Bind.Def.TETime[step_i-1];
+      }
       X->Bind.Def.istep = step_i;
       if (X->Bind.Def.NTETransferMax > 0) {
         MakeTEDTransfer(&(X->Bind), step_i);
-      } else if (X->Bind.Def.NTEInterAllrMax > 0) {
+      } else if (X->Bind.Def.NTEInterAllMax > 0) {
         //[TODO] Add TEInterAll
       } else {
         //[TODO] Error procedure

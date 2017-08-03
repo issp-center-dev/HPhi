@@ -65,10 +65,10 @@ int CheckBit_PairPE
 
 int GetSgnInterAll
 (
- int isite1,
- int isite2,
- int isite3,
- int isite4,
+ unsigned long int isite1,
+ unsigned long int isite2,
+ unsigned long int isite3,
+ unsigned long int isite4,
  int *Fsgn,
  struct BindStruct *X,
  unsigned long int orgbit,

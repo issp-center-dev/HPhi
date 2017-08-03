@@ -19,6 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 @brief Read Input file and write files for Expert mode.
        Initialize variables.
        Check parameters.
+
+The following lattices are supported:
+- 1D Chain : StdFace_Chain()
+- 1D Ladder : StdFace_Ladder()
+- 2D Tetragonal : StdFace_Tetragonal()
+- 2D Triangular : StdFace_Triangular()
+- 2D Honeycomb : StdFace_Honeycomb()
+- 2D Kagome : StdFace_Kagome()
+- 3D Simple Orthorhombic : StdFace_Orthorhombic()
+- 3D Face Centered Orthorhombic : StdFace_FCOrtho()
+- 3D Pyrochlore : StdFace_Pyrochlore()
+
+If you want to create new lattice file, do as these files.
 */
 #include <stdlib.h>
 #include <stdio.h>

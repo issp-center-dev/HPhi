@@ -75,18 +75,41 @@ int CheckQuadSite(
 
 int CheckTransferHermite
 (
- struct DefineList *X
+        struct DefineList *X
 );
 
 int CheckInterAllHermite
 (
- const struct DefineList *X
+        int **InterAll,
+        double complex* ParaInterAll,
+        int **InterAllOffDiagonal,
+        double complex*ParaInterAllOffDiagonal,
+        const int NInterAllOffDiagonal,
+        const int iCalcModel
 );
 
+/*
 int GetDiagonalInterAll
 (
  struct DefineList *X
  );
+*/
+
+int GetDiagonalInterAll
+				(
+								int **InterAll,
+								complex double *ParaInterAll,
+								const int NInterAll,
+								int **InterAllDiagonal,
+								double *ParaInterAllDiagonal,
+								int **InterAllOffDiagonal,
+								complex double *ParaInterAllOffDiagonal,
+								int *Chemi,
+								int *SpinChemi,
+								double *ParaChemi,
+								int *NChemi,
+								const int iCalcModel
+				);
 
 int JudgeDefType
 (
@@ -103,10 +126,18 @@ int CheckFormatForSpinInt
  const int site4
  );
 
+/*
 int CheckFormatForKondoInt
 (
  struct DefineList *X
  );
+*/
+int CheckFormatForKondoInt
+				(
+								const int isite1, const int isite2,
+								const int isite3, const int isite4,
+								int* iLocInfo
+				);
 
 int CheckFormatForKondoTrans
 (
@@ -133,10 +164,14 @@ void InitializeInteractionNum
  struct DefineList *X
  );
 
-int CheckSpinIndexForInterAll
-(
-  struct DefineList *X
- );
+int CheckGeneralSpinIndexForInterAll
+				(
+								const int isite1, const int isigma1,
+								const int isite2, const int isigma2,
+								const int isite3, const int isigma3,
+								const int isite4, const int isigma4,
+								int* iLocInfo
+				);
 
 int CheckSpinIndexForTrans
 (
