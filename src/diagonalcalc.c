@@ -415,7 +415,7 @@ firstprivate(i_max, dtmp_V) private(j)
      for(j = 1;j <= i_max; j++){
        num1=BitCheckGeneral (list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
        if(num1 != 0){
-	 list_Diagonal[j] += dtmp_V;
+         list_Diagonal[j] += dtmp_V;
        }
      }
     }
@@ -1305,4 +1305,62 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
    
   return 0;
 
+}
+
+int SetTETransferDiagonal(
+        const int time_step,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+){
+
+  return 0;
+}
+
+int SetTEInterAllDiagonal(
+        const int time_step,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+){
+
+  return 0;
+}
+
+int SetTEChemi(
+        const int time_step,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+){
+
+  return 0;
+}
+
+
+int TEdiagonalcalc
+        (
+                const int time_step,
+                struct BindStruct *X,
+                double complex *tmp_v0,
+                double complex *tmp_v1
+        )
+{
+  if(X->Def.NTETransferDiagonal[time_step]>0){
+    if(SetTETransferDiagonal(time_step, X, tmp_v0, tmp_v1)!=0){
+      return -1;
+    }
+  }
+  else if (X->Def.NTEInterAllDiagonal[time_step] >0) {
+    if (SetTEInterAllDiagonal(time_step, X, tmp_v0, tmp_v1) != 0) {
+      return -1;
+    }
+
+    if (X->Def.NTEChemi[time_step] > 0) {
+      if (SetTEChemi(time_step, X, tmp_v0, tmp_v1) != 0) {
+        return -1;
+      }
+    }
+  }
+  return 0;
 }

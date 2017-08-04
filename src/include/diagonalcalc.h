@@ -61,3 +61,11 @@ int SetDiagonalInterAll
  double dtmp_V,
  struct BindStruct *X
  );
+
+int TEdiagonalcalc
+        (
+                const int time_step,
+                struct BindStruct *X,
+                double complex *tmp_v0,
+                double complex *tmp_v1
+        );
