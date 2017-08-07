@@ -83,7 +83,7 @@
   https://github.com/QLMS/HPhi/releases
   <HR>
   <H2>Forum</H2>
-  http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
+  https://github.com/QLMS/HPhi/issues
   <HR>
   <H2>licence</H2>
   <B>GNU GPL version 3</B>\n
