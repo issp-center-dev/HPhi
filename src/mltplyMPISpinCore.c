@@ -364,7 +364,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-#pragma for
+#pragma omp for
       for (j = 1; j <= idim_max_buf; j++) {
         dmv = Jint * v1buf[j];
         tmp_v0[j] += dmv;
@@ -372,7 +372,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }
     else {
-#pragma for
+#pragma omp for
       for (j = 1; j <= idim_max_buf; j++) {
         dmv = Jint * v1buf[j];
         dam_pr += conj(tmp_v1[j]) * dmv;
@@ -413,7 +413,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
   firstprivate(tmp_J, X, num1, num2) shared(tmp_v1, tmp_v0)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-#pragma for
+#pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = num1*num2*tmp_v1[j] * tmp_J;
         tmp_v0[j] += dmv;
@@ -421,7 +421,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
       }/*for (j = 1; j <= X->Check.idim_max; j++) */
     }
     else {
-#pragma for
+#pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = num1 * num2 * tmp_v1[j] * tmp_J;
         dam_pr += conj(tmp_v1[j]) * dmv;
@@ -462,7 +462,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
   firstprivate(Jint, X, num2, mask1, org_ispin1) shared(tmp_v1, tmp_v0)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-#pragma for
+#pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
         dmv = Jint * num1 * num2 * tmp_v1[j];
@@ -471,7 +471,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
-#pragma for
+#pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
         dmv = Jint * num1 * num2 * tmp_v1[j];
