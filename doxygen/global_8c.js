@@ -23,6 +23,8 @@ var global_8c =
     [ "cFileNameFlctRand", "global_8c.html#adf9901daf13954565adbafef1701e98c", null ],
     [ "cFileNameInputEigen", "global_8c.html#a1feac96f916bbe837b8dc4ea16b18dd7", null ],
     [ "cFileNameInputVector", "global_8c.html#a7e16b7a9d301e8753138ef83c9845546", null ],
+    [ "cFileNameLanczosInputVector", "global_8c.html#a5d4eb29203f40de8ab415c6b58d1dd6f", null ],
+    [ "cFileNameLanczosOutputVector", "global_8c.html#aa3b8e81f0a41ef0f43f16b7bfd3ec22b", null ],
     [ "cFileNameLanczosStep", "global_8c.html#a6d9c1236054d761303e6cbc2069a2299", null ],
     [ "cFileNameListKondo", "global_8c.html#afac4d1b8605e298a61bc3ba159a70d81", null ],
     [ "cFileNameListModel", "global_8c.html#a40c4194cfa8e5a82682ac707fdc17273", null ],

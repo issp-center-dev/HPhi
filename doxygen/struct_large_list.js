@@ -25,6 +25,9 @@ var struct_large_list =
     [ "mode", "struct_large_list.html#a6364781183a05e11f9bf9174af3e1734", null ],
     [ "prdct", "struct_large_list.html#ac0e932f82f716485a2bb012dc05bc7c1", null ],
     [ "sgn", "struct_large_list.html#a3af579bf8c8e3dae9c3c8b518bf08844", null ],
+    [ "SizeOflist_2_1", "struct_large_list.html#a2616e78a87708584ce3efe42bbf9c168", null ],
+    [ "SizeOflist_2_2", "struct_large_list.html#a2f7125a7fa149116073bceb0df97c033", null ],
+    [ "SizeOflistjb", "struct_large_list.html#af0cde180cab9adb7668d3f8e137ae21e", null ],
     [ "tmp_J", "struct_large_list.html#ac7c192a654ea52b3b7d84c211f2b7f4f", null ],
     [ "tmp_trans", "struct_large_list.html#ad48959bc0a579f39cb1c77f7a9ec5dfb", null ],
     [ "tmp_V", "struct_large_list.html#ad706dd1a7ccaaa6f4e50cdcde74382a9", null ]

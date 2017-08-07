@@ -1,0 +1,14 @@
+<map id="expec_cisajscktalt_SpinHalf" name="expec_cisajscktalt_SpinHalf">
+<area shape="rect" id="node2" href="$mltply_spin_core_8c.html#a9f7fc788e6ba0b42f84e2c5a4d187f4a" title="Compute &#160;term of canonical spsin system. " alt="" coords="197,5,331,46"/>
+<area shape="rect" id="node3" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="393,41,503,68"/>
+<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="557,149,611,176"/>
+<area shape="rect" id="node5" href="$expec__cisajscktaltdc_8c.html#a2ca27868fab714216654436b769197bc" title="Rearray_Interactions" alt="" coords="193,420,335,447"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="217,172,311,199"/>
+<area shape="rect" id="node8" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="185,354,343,395"/>
+<area shape="rect" id="node11" href="$mltply_m_p_i_spin_8c.html#a4e5f05080675ce78c92496afca5e5965" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="197,289,331,330"/>
+<area shape="rect" id="node12" href="$mltply_m_p_i_spin_8c.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="197,223,331,265"/>
+<area shape="rect" id="node13" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="199,471,329,497"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="415,204,481,231"/>
+<area shape="rect" id="node9" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="400,296,496,323"/>
+<area shape="rect" id="node10" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="552,296,616,323"/>
+</map>

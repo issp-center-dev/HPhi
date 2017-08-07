@@ -3,6 +3,8 @@ var searchData=
   ['j',['J',['../struct_std_int_list.html#af2e748a33b818f5347533d65c0059f11',1,'StdIntList']]],
   ['j0',['J0',['../struct_std_int_list.html#a5f3e4d6a825664f646c4ed36a32e1cf4',1,'StdIntList']]],
   ['j0all',['J0All',['../struct_std_int_list.html#a11467f4974cbe3c7658323813bd78df4',1,'StdIntList']]],
+  ['j0p',['J0p',['../struct_std_int_list.html#acac6a701a8a36d04fb0f52fdf40a82c4',1,'StdIntList']]],
+  ['j0pall',['J0pAll',['../struct_std_int_list.html#a4eeacb89beca0961ada8c5452925dc81',1,'StdIntList']]],
   ['j1',['J1',['../struct_std_int_list.html#a1c6cd56756a2766bbd93691474f4feac',1,'StdIntList']]],
   ['j1all',['J1All',['../struct_std_int_list.html#ac94d02e9aa8bc551b2491d94823492f7',1,'StdIntList']]],
   ['j1p',['J1p',['../struct_std_int_list.html#a64f83e7172dfbb6c2b2b92a1a66bee4d',1,'StdIntList']]],
@@ -14,5 +16,7 @@ var searchData=
   ['jall',['JAll',['../struct_std_int_list.html#a52087ff4e3ba6aede54eeed68e53ba5d',1,'StdIntList']]],
   ['jp',['Jp',['../struct_std_int_list.html#a18017a0437363e575ac961f78ebee846',1,'StdIntList']]],
   ['jpall',['JpAll',['../struct_std_int_list.html#aad96b35e2eb2e95986962f4d503292c7',1,'StdIntList']]],
-  ['judgedeftype',['JudgeDefType',['../readdef_8h.html#a8bc4135515c28a940d030463bb568a9d',1,'JudgeDefType(const int argc, char *argv[], int *mode):&#160;readdef.c'],['../readdef_8c.html#a8bc4135515c28a940d030463bb568a9d',1,'JudgeDefType(const int argc, char *argv[], int *mode):&#160;readdef.c']]]
+  ['jpp',['Jpp',['../struct_std_int_list.html#a4c62777ad3ca656ff08ca2c47bd762c1',1,'StdIntList']]],
+  ['jppall',['JppAll',['../struct_std_int_list.html#a739be354a398bcd350115bb13afce77c',1,'StdIntList']]],
+  ['judgedeftype',['JudgeDefType',['../readdef_8c.html#a8bc4135515c28a940d030463bb568a9d',1,'readdef.c']]]
 ];

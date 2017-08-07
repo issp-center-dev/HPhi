@@ -1,0 +1,8 @@
+<map id="X_child_general_int_spin_TotalS_MPIdouble" name="X_child_general_int_spin_TotalS_MPIdouble">
+<area shape="rect" id="node2" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="221,31,325,57"/>
+<area shape="rect" id="node3" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="374,31,487,57"/>
+<area shape="rect" id="node4" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="536,31,587,57"/>
+<area shape="rect" id="node5" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="638,5,751,32"/>
+<area shape="rect" id="node7" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="635,56,755,83"/>
+<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="803,31,853,57"/>
+</map>

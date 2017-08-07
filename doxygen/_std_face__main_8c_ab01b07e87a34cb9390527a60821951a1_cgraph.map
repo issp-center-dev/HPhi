@@ -1,0 +1,51 @@
+<map id="StdFace_driver" name="StdFace_driver">
+<area shape="rect" id="node2" href="$_std_face__main_8c.html#ae44f7164307947c050dbb9a46d41cc4b" title="Main routine for the standard mode. " alt="" coords="165,1519,272,1546"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="950,1291,1005,1318"/>
+<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3" title="MPI Abortation wrapper. " alt="" coords="784,683,883,710"/>
+<area shape="rect" id="node5" href="$_std_face__main_8c.html#a83578085a8db8351a951c66bb8c0c49d" title="Clear grobal variables in the standard mode All variables refered in this function is modified..." alt="" coords="331,2913,469,2939"/>
+<area shape="rect" id="node6" href="$_std_face__main_8c.html#ab77cb41cfccf7b8fd57eae7bcf952f23" title="Remove : space etc. from keyword and value in an iput file. " alt="" coords="340,2963,460,2990"/>
+<area shape="rect" id="node7" href="$_std_face__main_8c.html#ab8de6d8b87af831f22d63a7efb8a1b7e" title="Text2Lower" alt="" coords="577,633,668,659"/>
+<area shape="rect" id="node8" href="$_std_face__main_8c.html#a08a2a735d8c8be9066319d6aaf529ab0" title="Store an input value into the valiable (double) If duplicated, HPhi will stop. " alt="" coords="545,126,701,153"/>
+<area shape="rect" id="node9" href="$_std_face__main_8c.html#ab615ec16fa3782b5f37893ac5188c8b6" title="Store an input value into the valiable (integer) If duplicated, HPhi will stop. " alt="" coords="547,177,699,203"/>
+<area shape="rect" id="node10" href="$_std_face__main_8c.html#a0822a5a1c434b9128925fd864e7426ef" title="Store an input value into the valiable (string) Force string lower. If duplicated, HPhi will stop. " alt="" coords="321,582,479,609"/>
+<area shape="rect" id="node11" href="$_std_face__main_8c.html#a654b6916cc1589fbc0ffdcf0485a3c63" title="Store an input value into the valiable (Double complex) If duplicated, HPhi will stop. " alt="" coords="545,227,701,254"/>
+<area shape="rect" id="node12" href="$_std_face__main_8c.html#ab2806e3a73aaa07a5aceead3e4bbf02b" title="Store an input value into the valiable (string) If duplicated, HPhi will stop. " alt="" coords="545,278,701,305"/>
+<area shape="rect" id="node13" href="$_std_face__main_8c.html#a51d9cb31caa893c65d948e203e20621e" title="Stop HPhi if unsupported model is read. " alt="" coords="552,329,693,355"/>
+<area shape="rect" id="node14" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="344,1545,456,1571"/>
+<area shape="rect" id="node20" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="Print a valiable (integer) read from the input file if it is not specified in the input file (=214748..." alt="" coords="766,1849,901,1875"/>
+<area shape="rect" id="node26" href="$_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d" title="Setup a Hamiltonian for the Face&#45;Centered Orthorhombic lattice. " alt="" coords="336,1443,464,1470"/>
+<area shape="rect" id="node27" href="$_honeycomb_lattice_8c.html#ad6d5522bfadda85057b31b89c25df32f" title="Setup a Hamiltonian for the Hubbard model on a Honeycomb lattice. " alt="" coords="326,1494,474,1521"/>
+<area shape="rect" id="node28" href="$_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068" title="Setup a Hamiltonian for the Kagome lattice. " alt="" coords="337,1393,463,1419"/>
+<area shape="rect" id="node29" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="341,1798,459,1825"/>
+<area shape="rect" id="node30" href="$_orthorhombic_8c.html#a33fb6a1902e42ecafe2d1249640825b1" title="Setup a Hamiltonian for the Simple Orthorhombic lattice. " alt="" coords="322,1595,478,1622"/>
+<area shape="rect" id="node31" href="$_pyrochlore_8c.html#a1bb6dee1ad8080fcb79eb017d12bb2b7" title="Setup a Hamiltonian for the Pyrochlore structure. " alt="" coords="330,1646,470,1673"/>
+<area shape="rect" id="node32" href="$_square_lattice_8c.html#a0449f65a4c6ec527da3e6ebb4253942e" title="Setup a Hamiltonian for the square lattice. " alt="" coords="331,1747,469,1774"/>
+<area shape="rect" id="node33" href="$_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe" title="Setup a Hamiltonian for the Triangular lattice. " alt="" coords="333,1697,467,1723"/>
+<area shape="rect" id="node34" href="$_wannier90_8c.html#ab4fe35c22a4d6f54807e3c5d786f8223" title="Setup a Hamiltonian for the Wannier90 *_hr.dat. " alt="" coords="330,1849,470,1875"/>
+<area shape="rect" id="node35" href="$_std_face__main_8c.html#a68bef417f59021b313b37ec690f18207" title="Set Largevalue (StdIntList::LargeValue) for TPQ. Sum absolute&#45;value of all one&#45; and two&#45; body terms..." alt="" coords="329,3014,471,3041"/>
+<area shape="rect" id="node36" href="$_chain_lattice_8c.html#ae7836a0c0e49d88705c77b2b7653774f" title="Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice. " alt="" coords="546,379,699,406"/>
+<area shape="rect" id="node37" href="$_honeycomb_lattice_8c.html#a6ddb9de9d044c8c792d767cb55a43a47" title="StdFace_Honeycomb_Boost" alt="" coords="528,430,717,457"/>
+<area shape="rect" id="node38" href="$_kagome_8c.html#acaad76b80c634cae1e50211c1b5f8eb6" title="StdFace_Kagome_Boost" alt="" coords="539,481,706,507"/>
+<area shape="rect" id="node39" href="$_ladder_8c.html#a45a234231a8241316d98f01e25bd940a" title="StdFace_Ladder_Boost" alt="" coords="543,734,702,761"/>
+<area shape="rect" id="node40" href="$_std_face__main_8c.html#a4bbf193e35f680cb019235f47a80399b" title="Print the locspin file. " alt="" coords="785,2558,881,2585"/>
+<area shape="rect" id="node41" href="$_std_face__main_8c.html#addfc832d3780ce9682266147dcd4c011" title="Print the transfer file. " alt="" coords="792,2609,875,2635"/>
+<area shape="rect" id="node42" href="$_std_face__main_8c.html#a9a92f545c6413e3cc6eda5dd8c4ba5f7" title="Output .def file for Specific interaction. " alt="" coords="775,2659,892,2686"/>
+<area shape="rect" id="node43" href="$_std_face__main_8c.html#a6327698c5da904237fb5cdc0cfad52a7" title="Print single.def or pair.def. " alt="" coords="569,785,676,811"/>
+<area shape="rect" id="node44" href="$_std_face__main_8c.html#ad5954e5010f9b163888e0c7a3fb49259" title="Print calcmod.def. " alt="" coords="572,835,673,862"/>
+<area shape="rect" id="node45" href="$_std_face__main_8c.html#abeca2989439e3109cacd7a26351b1e72" title="Summary numerical parameter check the combination of the number of sites, total spin, the number of electrons. " alt="" coords="567,2507,679,2534"/>
+<area shape="rect" id="node46" href="$_std_face__main_8c.html#a4954ce4db648715fde3de9df3941a8d0" title="Print modpara.def. " alt="" coords="783,2710,884,2737"/>
+<area shape="rect" id="node47" href="$_std_face__main_8c.html#a4e46335c4a196a5b14246be7829003b9" title="Verify outputmode. " alt="" coords="557,886,688,913"/>
+<area shape="rect" id="node48" href="$_std_face__main_8c.html#a848a41fe20a44380cd9c67a652e5db18" title="Print greenone.def. " alt="" coords="788,2761,879,2787"/>
+<area shape="rect" id="node49" href="$_std_face__main_8c.html#ab855d9f89ad7fced7aa780e9d929ea5d" title="Print greentwo.def. " alt="" coords="788,2811,879,2838"/>
+<area shape="rect" id="node50" href="$_std_face__main_8c.html#aa589e5b8e94dd353602b7b6f30a4fc1c" title="Print namelist.def. " alt="" coords="783,2862,884,2889"/>
+<area shape="rect" id="node15" href="$_std_face___model_util_8c.html#a2a4d37887a480ebe9a993a2921423f78" title="Add onsite/offsite Coulomb term to the list StdIntList::Cinter and StdIntList::CinterIndx, and increase the number of them (StdIntList::NCinter). " alt="" coords="557,1494,688,1521"/>
+<area shape="rect" id="node16" href="$_std_face___model_util_8c.html#add96059e3108ff162542b600ca3b9a80" title="Treat J as a 3*3 matrix [(6S + 1)*(6S&#39; + 1) interactions]. " alt="" coords="557,1697,688,1723"/>
+<area shape="rect" id="node17" href="$_std_face___model_util_8c.html#a756d58525e07a814ac0bd60b5f33f31a" title="Add Hopping for the both spin. " alt="" coords="559,1747,686,1774"/>
+<area shape="rect" id="node18" href="$_std_face___model_util_8c.html#a01c24570458edde44713a0552a802afe" title="Add intra&#45;Coulomb, magnetic field, chemical potential for the itenerant electron. ..." alt="" coords="543,1798,702,1825"/>
+<area shape="rect" id="node19" href="$_std_face___model_util_8c.html#a6080686c51f2da7c33ad0a1479d6efdd" title="Initialize the super&#45;cell where simulation is performed. " alt="" coords="563,1849,682,1875"/>
+<area shape="rect" id="node21" href="$_std_face___model_util_8c.html#acdf7714b0fd7b7fc7de1ad1794523d41" title="Input off&#45;site Coulomb interaction from the input file, if it is not specified, use the default value..." alt="" coords="539,1393,707,1419"/>
+<area shape="rect" id="node22" href="$_std_face___model_util_8c.html#a2c3a928fad71d7283a5105de745067b8" title="Input hopping integral from the input file, if it is not specified, use the default value(0 or the is..." alt="" coords="553,1545,692,1571"/>
+<area shape="rect" id="node23" href="$_std_face___model_util_8c.html#a1add2b81d96890e9564cc2a43742dda7" title="Input spin&#45;spin interaction other than nearest&#45;neighbor. " alt="" coords="556,1342,689,1369"/>
+<area shape="rect" id="node24" href="$_std_face___model_util_8c.html#ace4b16f82a902821eeb32b5877559c0d" title="Input nearest&#45;neighbor spin&#45;spin interaction. " alt="" coords="546,1291,699,1318"/>
+<area shape="rect" id="node25" href="$_std_face___model_util_8c.html#ac1af12b9586d7c8be9dd531c36595717" title="Add longitudinal and transvars magnetic field to the list. " alt="" coords="557,1899,688,1926"/>
+</map>

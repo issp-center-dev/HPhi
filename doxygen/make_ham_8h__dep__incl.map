@@ -1,8 +1,0 @@
-<map id="include/makeHam.h" name="include/makeHam.h">
-<area shape="rect" id="node2" href="$_calc_spectrum_by_full_diag_8c.html" title="CalcSpectrumByFullDiag.c" alt="" coords="5,80,185,107"/>
-<area shape="rect" id="node3" href="$_calc_by_full_diag_8h.html" title="include/CalcByFullDiag.h" alt="" coords="210,80,381,107"/>
-<area shape="rect" id="node7" href="$make_ham_8c.html" title="File for making Hamiltonian. " alt="" coords="371,155,465,181"/>
-<area shape="rect" id="node4" href="$_calc_by_full_diag_8c.html" title="CalcByFullDiag.c" alt="" coords="108,155,232,181"/>
-<area shape="rect" id="node6" href="$_h_phi_main_8c.html" title="HPhiMain.c" alt="" coords="257,155,347,181"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8h.html" title="include/HPhiMain.h" alt="" coords="225,229,363,256"/>
-</map>

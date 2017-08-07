@@ -1,6 +1,7 @@
 <map id="totalspin_SpinGC" name="totalspin_SpinGC">
-<area shape="rect" id="node2" href="$expec__totalspin_8h.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="179,5,293,32"/>
-<area shape="rect" id="node3" href="$phys_8c.html#a4784e37301cd2d9b525dd754f864f60f" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="341,5,392,32"/>
-<area shape="rect" id="node4" href="$_calc_by_full_diag_8h.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="440,5,553,32"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="601,5,652,32"/>
+<area shape="rect" id="node2" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="179,31,293,57"/>
+<area shape="rect" id="node3" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="341,31,392,57"/>
+<area shape="rect" id="node4" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="443,5,557,32"/>
+<area shape="rect" id="node6" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="440,56,560,83"/>
+<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="608,31,659,57"/>
 </map>

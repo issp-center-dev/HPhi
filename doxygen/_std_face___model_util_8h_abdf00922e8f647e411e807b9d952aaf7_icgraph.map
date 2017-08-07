@@ -1,8 +1,0 @@
-<map id="StdFace_Kitaev" name="StdFace_Kitaev">
-<area shape="rect" id="node2" href="$_std_face___model_util_8h.html#ab1bfb2cd105839f4f2904aac78382b0b" title="Spin_ChainLattice" alt="" coords="187,5,318,32"/>
-<area shape="rect" id="node5" href="$_std_face___model_util_8h.html#ad9aa7290483ce466cbf1bce3527447c5" title="Spin_HoneycombLattice" alt="" coords="169,56,336,83"/>
-<area shape="rect" id="node6" href="$_std_face___model_util_8h.html#a0a7ad373196fab9c6022879445ef8ec5" title="Spin_SquareLattice" alt="" coords="183,107,322,133"/>
-<area shape="rect" id="node7" href="$_triangular_lattice_8c.html#a76218d3b8b6ef60af1c79ab8d0e86cd4" title="Spin_TriangularLattice" alt="" coords="175,157,331,184"/>
-<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="StdFace_main" alt="" coords="384,81,492,108"/>
-<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="540,81,591,108"/>
-</map>

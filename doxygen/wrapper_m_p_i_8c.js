@@ -13,5 +13,6 @@ var wrapper_m_p_i_8c =
     [ "SumMPI_d", "wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421", null ],
     [ "SumMPI_dc", "wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650", null ],
     [ "SumMPI_i", "wrapper_m_p_i_8c.html#aeab38d65c1c82094276a9b250b9a5049", null ],
-    [ "SumMPI_li", "wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8", null ]
+    [ "SumMPI_li", "wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8", null ],
+    [ "VecProdMPI", "wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d", null ]
 ];

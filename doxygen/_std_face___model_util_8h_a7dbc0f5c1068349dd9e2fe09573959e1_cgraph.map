@@ -1,6 +1,0 @@
-<map id="StdFace_InitSite2D" name="StdFace_InitSite2D">
-<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="384,26,440,53"/>
-<area shape="rect" id="node3" href="$wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="230,26,297,53"/>
-<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="StdFace_PrintVal_i" alt="" coords="195,77,331,104"/>
-<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#a73d313bef3ff113c635247da8a3674c1" title="StdFace_FoldSite2D" alt="" coords="191,128,336,154"/>
-</map>

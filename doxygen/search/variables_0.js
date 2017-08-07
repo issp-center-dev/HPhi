@@ -1,12 +1,6 @@
 var searchData=
 [
   ['a',['a',['../struct_std_int_list.html#a5dbe7cea79042fa567290f79dd116ce4',1,'StdIntList']]],
-  ['a0',['a0',['../struct_std_int_list.html#aff91ea8b6b6d3e5550bc03c2982bd870',1,'StdIntList']]],
-  ['a0l',['a0L',['../struct_std_int_list.html#aaa4929596bf7af23b1c6c2b8cb0d3d2a',1,'StdIntList']]],
-  ['a0w',['a0W',['../struct_std_int_list.html#a8a34ccc65bfb752a320fe4691f43ee18',1,'StdIntList']]],
-  ['a1',['a1',['../struct_std_int_list.html#a9dc1a6ca5f5279c7e4d356ac73267b97',1,'StdIntList']]],
-  ['a1l',['a1L',['../struct_std_int_list.html#afa320215cc4ed963d5fcfe479b9b216e',1,'StdIntList']]],
-  ['a1w',['a1W',['../struct_std_int_list.html#ac11d24454cfde3be1cfe04f1bc0af3dc',1,'StdIntList']]],
   ['a_5fspin',['A_spin',['../struct_large_list.html#a0595e327f9726774211d82f27477ae07',1,'LargeList']]],
   ['all_5fc',['All_C',['../global_8h.html#a1ec7edb9dbd473c879d7e23a75c44a87',1,'global.h']]],
   ['all_5fdoublon',['all_doublon',['../struct_phys_list.html#a09a06032478edecb43f2bfe8cc3a9ec6',1,'PhysList']]],
@@ -17,5 +11,6 @@ var searchData=
   ['all_5fs2',['all_s2',['../struct_phys_list.html#a22003d95aa953051e7395a262c988d06',1,'PhysList']]],
   ['all_5fsz',['all_sz',['../struct_phys_list.html#a0d2434c6801254e1d11773b7df487c64',1,'PhysList::all_sz()'],['../global_8h.html#a0af7e421307b2a7eebfb06c81e788458',1,'All_Sz():&#160;global.h']]],
   ['alpha',['alpha',['../global_8h.html#aa56b7099de1b08ef9d76d944334f02d4',1,'global.h']]],
+  ['antiperiod',['AntiPeriod',['../struct_std_int_list.html#a54c23d4cfdc2a3bf82245f54aa6a55e5',1,'StdIntList']]],
   ['arrayj',['arrayJ',['../struct_boost_list.html#a5adcc3ddfbc1d8b24dc0516bdfd6f2fe',1,'BoostList']]]
 ];

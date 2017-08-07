@@ -1,12 +1,2 @@
 <map id="xfreemem_large.c" name="xfreemem_large.c">
-<area shape="rect" id="node2" href="$xfreemem__large_8h.html" title="xfreemem_large.h" alt="" coords="461,80,590,107"/>
-<area shape="rect" id="node3" href="$_common_8h.html" title="Common.h" alt="" coords="482,155,569,181"/>
-<area shape="rect" id="node5" href="$_def_common_8h.html" title="DefCommon.h" alt="" coords="41,229,149,256"/>
-<area shape="rect" id="node6" href="$global_8h.html" title="global.h" alt="" coords="152,304,221,331"/>
-<area shape="rect" id="node13" href="$_progress_message_8h.html" title="ProgressMessage.h" alt="" coords="702,229,842,256"/>
-<area shape="rect" id="node14" href="$_error_message_8h.html" title="ErrorMessage.h" alt="" coords="867,229,984,256"/>
-<area shape="rect" id="node15" href="$struct_8h.html" title="struct.h" alt="" coords="1009,229,1074,256"/>
-<area shape="rect" id="node16" href="$log_8h.html" title="log.h" alt="" coords="1099,229,1149,256"/>
-<area shape="rect" id="node18" href="$d_s_f_m_t_8h.html" title="double precision SIMD oriented Fast Mersenne Twister(dSFMT) pseudorandom number generator based on IE..." alt="" coords="1228,229,1305,256"/>
-<area shape="rect" id="node17" href="$_log_message_8h.html" title="LogMessage.h" alt="" coords="1041,304,1151,331"/>
 </map>

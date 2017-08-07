@@ -1,15 +1,3 @@
 <map id="vec12.c" name="vec12.c">
-<area shape="rect" id="node2" href="$matrixlapack_8h.html" title="matrixlapack.h" alt="" coords="1290,80,1398,107"/>
-<area shape="rect" id="node4" href="$_common_8h.html" title="Common.h" alt="" coords="555,80,642,107"/>
-<area shape="rect" id="node22" href="$wrapper_m_p_i_8h.html" title="wrapperMPI.h" alt="" coords="1161,80,1266,107"/>
-<area shape="rect" id="node23" href="$mfmemory_8h.html" title="mfmemory.h" alt="" coords="1423,80,1519,107"/>
-<area shape="rect" id="node24" href="$xsetmem_8h.html" title="xsetmem.h" alt="" coords="1543,80,1630,107"/>
-<area shape="rect" id="node5" href="$_def_common_8h.html" title="DefCommon.h" alt="" coords="1097,155,1205,181"/>
-<area shape="rect" id="node6" href="$global_8h.html" title="global.h" alt="" coords="5,229,75,256"/>
-<area shape="rect" id="node13" href="$_progress_message_8h.html" title="ProgressMessage.h" alt="" coords="598,155,738,181"/>
-<area shape="rect" id="node14" href="$_error_message_8h.html" title="ErrorMessage.h" alt="" coords="763,155,880,181"/>
-<area shape="rect" id="node15" href="$struct_8h.html" title="struct.h" alt="" coords="905,155,970,181"/>
-<area shape="rect" id="node16" href="$log_8h.html" title="log.h" alt="" coords="45,155,96,181"/>
-<area shape="rect" id="node18" href="$d_s_f_m_t_8h.html" title="double precision SIMD oriented Fast Mersenne Twister(dSFMT) pseudorandom number generator based on IE..." alt="" coords="995,155,1072,181"/>
-<area shape="rect" id="node17" href="$_log_message_8h.html" title="LogMessage.h" alt="" coords="99,229,208,256"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8h.html" title="Global variables related to MPI and OpenMP. " alt="" coords="247,80,349,107"/>
 </map>

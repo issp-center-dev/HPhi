@@ -1,8 +1,0 @@
-<map id="include/lapack_diag.h" name="include/lapack_diag.h">
-<area shape="rect" id="node2" href="$_calc_spectrum_by_full_diag_8c.html" title="CalcSpectrumByFullDiag.c" alt="" coords="5,80,185,107"/>
-<area shape="rect" id="node3" href="$_calc_by_full_diag_8h.html" title="include/CalcByFullDiag.h" alt="" coords="210,80,381,107"/>
-<area shape="rect" id="node7" href="$lapack__diag_8c.html" title="lapack_diag.c" alt="" coords="366,155,470,181"/>
-<area shape="rect" id="node4" href="$_calc_by_full_diag_8c.html" title="CalcByFullDiag.c" alt="" coords="103,155,227,181"/>
-<area shape="rect" id="node6" href="$_h_phi_main_8c.html" title="HPhiMain.c" alt="" coords="251,155,342,181"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8h.html" title="include/HPhiMain.h" alt="" coords="223,229,360,256"/>
-</map>

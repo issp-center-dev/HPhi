@@ -1,0 +1,11 @@
+<map id="expec_cisajs_Spin" name="expec_cisajs_Spin">
+<area shape="rect" id="node2" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="expec_cisajs_SpinGeneral" alt="" coords="184,81,360,108"/>
+<area shape="rect" id="node8" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="expec_cisajs_SpinHalf" alt="" coords="195,157,349,184"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="413,5,534,32"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="426,107,521,133"/>
+<area shape="rect" id="node7" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="739,107,794,133"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="587,5,691,32"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="605,107,672,133"/>
+<area shape="rect" id="node9" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="408,208,539,235"/>
+<area shape="rect" id="node10" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="418,259,529,285"/>
+</map>

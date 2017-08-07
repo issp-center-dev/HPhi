@@ -1,0 +1,26 @@
+<map id="GC_child_exchange_spin_element" name="GC_child_exchange_spin_element">
+<area shape="rect" id="node2" href="$mltply_spin_8c.html#a1da5e51d844cfaf0edf806b0e29e3ab8" title="Compute exchange term of spin Hamiltonian (grandcanonical) " alt="" coords="224,200,395,227"/>
+<area shape="rect" id="node24" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="936,107,1019,133"/>
+<area shape="rect" id="node3" href="$mltply_spin_8c.html#aaacfb2aca0416786e4c48f0d5361152e" title="Driver function for Spin 1/2 Hamiltonian (grandcanonical) " alt="" coords="443,219,570,245"/>
+<area shape="rect" id="node4" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="619,295,722,321"/>
+<area shape="rect" id="node5" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="771,304,829,331"/>
+<area shape="rect" id="node6" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1134,157,1287,184"/>
+<area shape="rect" id="node9" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="917,512,1037,539"/>
+<area shape="rect" id="node11" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="913,259,1041,285"/>
+<area shape="rect" id="node16" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="931,208,1024,235"/>
+<area shape="rect" id="node17" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="905,461,1049,488"/>
+<area shape="rect" id="node18" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="903,411,1052,437"/>
+<area shape="rect" id="node19" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="878,41,1077,82"/>
+<area shape="rect" id="node22" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="1155,360,1267,387"/>
+<area shape="rect" id="node23" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="923,309,1031,336"/>
+<area shape="rect" id="node7" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="1351,107,1457,133"/>
+<area shape="rect" id="node8" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1512,259,1563,285"/>
+<area shape="rect" id="node10" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1153,411,1268,437"/>
+<area shape="rect" id="node12" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="1165,259,1257,285"/>
+<area shape="rect" id="node13" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1185,309,1236,336"/>
+<area shape="rect" id="node14" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1347,208,1461,235"/>
+<area shape="rect" id="node15" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1344,309,1464,336"/>
+<area shape="rect" id="node20" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="1125,56,1296,83"/>
+<area shape="rect" id="node21" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="1137,5,1285,32"/>
+<area shape="rect" id="node25" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="1126,107,1295,133"/>
+</map>

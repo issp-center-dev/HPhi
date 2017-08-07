@@ -1,8 +1,8 @@
 <map id="zheev_" name="zheev_">
-<area shape="rect" id="node2" href="$matrixlapack_8c.html#a6591537834cf2a4f86271053cc54dd37" title="ZHEEVall" alt="" coords="119,31,199,57"/>
-<area shape="rect" id="node3" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="lapack_diag" alt="" coords="247,31,340,57"/>
-<area shape="rect" id="node4" href="$_calc_by_full_diag_8h.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="607,5,720,32"/>
-<area shape="rect" id="node6" href="$_calc_spectrum_by_full_diag_8h.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="CalcSpectrumByFullDiag" alt="" coords="388,56,559,83"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="768,31,819,57"/>
-<area shape="rect" id="node7" href="$_calc_spectrum_8h.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="611,56,716,83"/>
+<area shape="rect" id="node2" href="$matrixlapack_8c.html#a6591537834cf2a4f86271053cc54dd37" title="ZHEEVall" alt="" coords="117,31,197,57"/>
+<area shape="rect" id="node3" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="lapack_diag" alt="" coords="245,31,336,57"/>
+<area shape="rect" id="node4" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="603,5,717,32"/>
+<area shape="rect" id="node6" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="385,56,554,83"/>
+<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="765,31,816,57"/>
+<area shape="rect" id="node7" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="607,56,713,83"/>
 </map>

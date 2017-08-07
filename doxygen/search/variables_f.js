@@ -2,6 +2,7 @@ var searchData=
 [
   ['pairexcitationoperator',['PairExcitationOperator',['../struct_define_list.html#ab4b7fb3aef7eac431bf5c5256ad0bccf',1,'DefineList']]],
   ['pairhopping',['PairHopping',['../struct_define_list.html#ad60b3e75def64fc7dbdcd484236419eb',1,'DefineList']]],
+  ['pairlift',['PairLift',['../struct_std_int_list.html#a02be9d143cb103d2e869ec6878db4c9f',1,'StdIntList']]],
   ['pairliftcoupling',['PairLiftCoupling',['../struct_define_list.html#a943addfb585d11f62dc712d6e1662bb0',1,'DefineList']]],
   ['paracoulombinter',['ParaCoulombInter',['../struct_define_list.html#a4c48f0799d8efb637c6a0e245dfd9aab',1,'DefineList']]],
   ['paracoulombintra',['ParaCoulombIntra',['../struct_define_list.html#a9d908d6f501c08dbb0e02a107cc9b070',1,'DefineList']]],
@@ -15,7 +16,9 @@ var searchData=
   ['parapairhopping',['ParaPairHopping',['../struct_define_list.html#ad5e8872cb5fff4eebf3e8b8f1c42ec8e',1,'DefineList']]],
   ['parapairliftcoupling',['ParaPairLiftCoupling',['../struct_define_list.html#a02409ec33f1a07f47fb57e3700550c64',1,'DefineList']]],
   ['parasingleexcitationoperator',['ParaSingleExcitationOperator',['../struct_define_list.html#a06aeb15fc8b6b37061570adfc9670829',1,'DefineList']]],
-  ['paratransfer',['ParaTransfer',['../struct_define_list.html#a4124bfc50f70e0f994801e4b84ed2ec7',1,'DefineList']]],
+  ['phase',['phase',['../struct_std_int_list.html#a3ca2a91da71c02af4b5216365c6049a5',1,'StdIntList']]],
   ['phys',['Phys',['../struct_bind_struct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
+  ['pi180',['pi180',['../struct_std_int_list.html#ad158a81e6d1b20ff0df7142fe4506399',1,'StdIntList']]],
+  ['plindx',['PLIndx',['../struct_std_int_list.html#af7837b504a85b129c98cc7d372b034b6',1,'StdIntList']]],
   ['prdct',['prdct',['../struct_large_list.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList']]]
 ];

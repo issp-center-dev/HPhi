@@ -1,51 +1,51 @@
 <map id="SplitBit" name="SplitBit">
-<area shape="rect" id="node2" href="$bitcalc_8h.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="117,523,215,549"/>
-<area shape="rect" id="node3" href="$expec__cisajscktaltdc_8h.html#add5844529f50e34cd7a8642cfb700f8b" title="expec_cisajscktaltdc\l_alldiag" alt="" coords="276,19,420,61"/>
-<area shape="rect" id="node4" href="$expec__totalspin_8h.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="493,140,624,167"/>
-<area shape="rect" id="node8" href="$expec__totalspin_8h.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="506,88,611,115"/>
-<area shape="rect" id="node9" href="$mltply_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title="CisAjt" alt="" coords="319,1011,377,1037"/>
-<area shape="rect" id="node18" href="$mltply_m_p_i_8c.html#ac3f88b541387e7b9b13758fa855b9327" title="X_child_CisAjtCkuAlv\l_Hubbard_MPI" alt="" coords="903,767,1054,809"/>
-<area shape="rect" id="node20" href="$mltply_m_p_i_8c.html#a67618b30efd1e0dddf58b89407e13736" title="X_child_CisAjtCkuAku\l_Hubbard_MPI" alt="" coords="481,729,636,770"/>
-<area shape="rect" id="node22" href="$mltply_8c.html#a576edff50809bed2a8ac5016b54027a4" title="X_CisAjt" alt="" coords="522,195,595,221"/>
-<area shape="rect" id="node29" href="$mltply_8c.html#a8740df30674f4da18c71ceef567c6524" title="X_Spin_CisAjs" alt="" coords="293,371,403,397"/>
-<area shape="rect" id="node31" href="$mltply_8c.html#a54c462e324115ab5c298e497fa8fba74" title="child_exchange_element" alt="" coords="684,421,853,448"/>
-<area shape="rect" id="node33" href="$mltply_8c.html#a40a1adaf57adca8173be6dbcf260aabf" title="X_child_exchange_spin\l_element" alt="" coords="687,355,850,397"/>
-<area shape="rect" id="node35" href="$mltply_8c.html#ac49bf59f1c574be383b76e2e315e902a" title="child_exchange_spin\l_element" alt="" coords="695,473,842,514"/>
-<area shape="rect" id="node37" href="$mltply_8c.html#a1eb1279a95e116ee2de32bbdd6b23efb" title="child_pairlift_spin\l_element" alt="" coords="286,305,410,346"/>
-<area shape="rect" id="node39" href="$mltply_8c.html#a72af6200bdc7e6474def42f634cfff65" title="child_pairhopp_element" alt="" coords="687,539,851,565"/>
-<area shape="rect" id="node41" href="$mltply_8c.html#a5a04f3c78fb2064cf6940036a6c33cee" title="child_general_hopp\l_element" alt="" coords="279,850,417,891"/>
-<area shape="rect" id="node42" href="$mltply_m_p_i_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="X_child_general_hopp\l_MPIdouble" alt="" coords="691,1394,846,1435"/>
-<area shape="rect" id="node44" href="$mltply_m_p_i_8c.html#af402c076da283e62da488dbd305f36cf" title="X_child_general_hopp\l_MPIsingle" alt="" coords="691,1285,846,1326"/>
-<area shape="rect" id="node46" href="$mltply_m_p_i_8c.html#a4e5f05080675ce78c92496afca5e5965" title="X_child_general_int\l_spin_MPIdouble" alt="" coords="699,1094,838,1135"/>
-<area shape="rect" id="node48" href="$mltply_m_p_i_8c.html#a161394c692ff0cb76ae9f4cd9838872f" title="X_child_general_int\l_spin_TotalS_MPIdouble" alt="" coords="263,137,433,178"/>
-<area shape="rect" id="node49" href="$mltply_m_p_i_8c.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="279,915,417,957"/>
-<area shape="rect" id="node5" href="$expec__totalspin_8h.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="711,5,826,32"/>
-<area shape="rect" id="node6" href="$phys_8c.html#a4784e37301cd2d9b525dd754f864f60f" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1359,472,1409,499"/>
-<area shape="rect" id="node7" href="$_calc_by_full_diag_8h.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1493,320,1607,347"/>
-<area shape="rect" id="node10" href="$mltply_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="child_general_hopp" alt="" coords="699,1183,838,1209"/>
-<area shape="rect" id="node11" href="$expec__cisajs_8h.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="1140,1137,1239,1164"/>
-<area shape="rect" id="node14" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="1161,884,1218,911"/>
-<area shape="rect" id="node16" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="907,1372,1050,1399"/>
-<area shape="rect" id="node12" href="$_calc_by_lanczos_8h.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1493,884,1607,911"/>
-<area shape="rect" id="node13" href="$_calc_by_t_p_q_8h.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="1338,792,1430,819"/>
-<area shape="rect" id="node15" href="$_c_g___eigen_vector_8h.html#a27dc47878d6c847ba4f6732e66204bf9" title="CG_EigenVector" alt="" coords="1323,884,1445,911"/>
-<area shape="rect" id="node17" href="$_calc_spectrum_8h.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="1130,1372,1249,1399"/>
-<area shape="rect" id="node19" href="$expec__cisajscktaltdc_8h.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="1117,539,1261,565"/>
-<area shape="rect" id="node21" href="$mltply_m_p_i_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="X_child_CisAisCjtAku\l_Hubbard_MPI" alt="" coords="693,699,844,741"/>
-<area shape="rect" id="node23" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="937,260,1020,287"/>
-<area shape="rect" id="node25" href="$mltply_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="child_CisAisCjtAku\l_element" alt="" coords="702,57,835,98"/>
-<area shape="rect" id="node27" href="$mltply_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="child_CisAjtCkuAku\l_element" alt="" coords="699,122,838,163"/>
-<area shape="rect" id="node28" href="$mltply_8c.html#a2e64839292192a5851d4be60a4f3561a" title="child_CisAjtCkuAlv\l_element" alt="" coords="702,187,835,229"/>
-<area shape="rect" id="node24" href="$_calc_spectrum_by_full_diag_8h.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="CalcSpectrumByFullDiag" alt="" coords="1104,311,1275,337"/>
-<area shape="rect" id="node26" href="$mltply_8c.html#aef9d79bf221699cecaa1b65b374e5b92" title="child_general_int" alt="" coords="917,159,1040,185"/>
-<area shape="rect" id="node30" href="$mltply_8c.html#a5df9a9e577836e1f41a5087abed3c5a4" title="child_CisAjsCjtAit\l_spin_element" alt="" coords="495,355,622,397"/>
-<area shape="rect" id="node32" href="$mltply_8c.html#a5821f04d36f42ce53a1d522dcb5548c5" title="child_exchange" alt="" coords="921,412,1036,439"/>
-<area shape="rect" id="node34" href="$mltply_8c.html#aa02ac66be051c651994ed4c9bfd9648e" title="child_general_int_spin" alt="" coords="901,361,1056,388"/>
-<area shape="rect" id="node36" href="$mltply_8c.html#ab975146c2b912899e92ae74ec42b5b45" title="child_exchange_spin" alt="" coords="905,463,1052,489"/>
-<area shape="rect" id="node38" href="$mltply_8c.html#ad98281df0128bef6143204cfee393119" title="child_pairlift_spin" alt="" coords="497,253,621,280"/>
-<area shape="rect" id="node40" href="$mltply_8c.html#a4d178b47dde9c5e387a87d482463575d" title="child_pairhopp" alt="" coords="924,665,1033,692"/>
-<area shape="rect" id="node43" href="$mltply_m_p_i_8c.html#ab1b2e0743624e8698eb36484166f92cc" title="child_general_hopp\l_MPIdouble" alt="" coords="909,1423,1048,1465"/>
-<area shape="rect" id="node45" href="$mltply_m_p_i_8c.html#aa938067934c1c1a813b5bbc5c94f9d26" title="child_general_hopp\l_MPIsingle" alt="" coords="909,1255,1048,1297"/>
-<area shape="rect" id="node47" href="$mltply_m_p_i_8c.html#a1d7f900e4cbe1e42cc139fd78cf14c66" title="child_general_int_spin\l_MPIdouble" alt="" coords="901,1037,1056,1078"/>
-<area shape="rect" id="node50" href="$mltply_m_p_i_8c.html#aab94d15aa4b4edd0e53f51921a4b7dd4" title="child_general_int_spin\l_MPIsingle" alt="" coords="481,974,636,1015"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="117,1033,213,1060"/>
+<area shape="rect" id="node3" href="$mltply_hubbard_core_8c.html#acc7b0c2967b4cd90703907383169df59" title="Compute exchange term of canonical&#45;Hubbard. " alt="" coords="747,805,912,832"/>
+<area shape="rect" id="node8" href="$mltply_spin_core_8c.html#a4c4182e4c4fa01e8fb4f2d14146a0f16" title="Multiply Hamiltonian of exchange term of canonical spin system. " alt="" coords="277,346,419,387"/>
+<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#addf4f9287c995be7868555e50bbf898f" title="Compute pairhopp term of canonical Hubbard system. " alt="" coords="750,856,909,883"/>
+<area shape="rect" id="node13" href="$mltply_hubbard_core_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title=" term for canonical Hubbard " alt="" coords="319,1008,377,1035"/>
+<area shape="rect" id="node17" href="$mltply_m_p_i_hubbard_core_8c.html#ac3f88b541387e7b9b13758fa855b9327" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="974,954,1125,995"/>
+<area shape="rect" id="node19" href="$mltply_m_p_i_hubbard_core_8c.html#a67618b30efd1e0dddf58b89407e13736" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="507,1059,661,1101"/>
+<area shape="rect" id="node21" href="$expec__cisajscktaltdc_8c.html#add5844529f50e34cd7a8642cfb700f8b" title="expec_cisajscktaltdc\l_alldiag" alt="" coords="276,1313,420,1354"/>
+<area shape="rect" id="node22" href="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="521,755,647,781"/>
+<area shape="rect" id="node24" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="532,805,636,832"/>
+<area shape="rect" id="node25" href="$mltply_hubbard_core_8c.html#ae302b1f2124063034b348974c361f966" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="321,1379,375,1405"/>
+<area shape="rect" id="node27" href="$mltply_m_p_i_hubbard_core_8c.html#a76860c3ee2aaf4109b0cd9e458cd54e3" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="305,1429,391,1456"/>
+<area shape="rect" id="node28" href="$mltply_m_p_i_spin_core_8c.html#acfd2257b730214abd93e50cffb9d6e52" title="Hopping term in Spin + Canonical for CalcSpectrum When both site1 and site2 are in the inter process ..." alt="" coords="279,1582,417,1623"/>
+<area shape="rect" id="node30" href="$mltply_m_p_i_hubbard_8c.html#a0d286e432184734976ab21cbbb4bdc8b" title="Hopping term in Hubbard + MPI When both site1 and site2 are in the inter process region. " alt="" coords="495,1379,673,1405"/>
+<area shape="rect" id="node31" href="$mltply_m_p_i_hubbard_8c.html#a58b4fbd3fa69809e9633f197f23dced8" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="261,1261,435,1288"/>
+<area shape="rect" id="node32" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="269,426,427,467"/>
+<area shape="rect" id="node35" href="$mltply_m_p_i_hubbard_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="509,1247,659,1289"/>
+<area shape="rect" id="node37" href="$mltply_m_p_i_hubbard_8c.html#af402c076da283e62da488dbd305f36cf" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="509,1313,659,1354"/>
+<area shape="rect" id="node39" href="$mltply_m_p_i_spin_8c.html#a4e5f05080675ce78c92496afca5e5965" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="281,531,415,573"/>
+<area shape="rect" id="node41" href="$mltply_m_p_i_spin_8c.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="281,622,415,663"/>
+<area shape="rect" id="node43" href="$mltply_m_p_i_spin_8c.html#a161394c692ff0cb76ae9f4cd9838872f" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="265,790,431,831"/>
+<area shape="rect" id="node44" href="$mltply_hubbard_core_8c.html#a3f49b75c63d21a51d25b3d414a759be7" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="319,1480,377,1507"/>
+<area shape="rect" id="node45" href="$mltply_m_p_i_hubbard_core_8c.html#a76ed1830af9fb3d1f1f49981f0a6672e" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="303,1531,393,1557"/>
+<area shape="rect" id="node46" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="547,172,621,199"/>
+<area shape="rect" id="node50" href="$mltply_spin_core_8c.html#a6fcc1bc8f09474657a89e0088fac9e45" title="Compute index of final wavefunction by &#160;term. " alt="" coords="295,1648,401,1675"/>
+<area shape="rect" id="node4" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="1008,243,1091,269"/>
+<area shape="rect" id="node6" href="$mltply_hubbard_8c.html#a5821f04d36f42ce53a1d522dcb5548c5" title="Compute Exchange term (canonical) in single process. " alt="" coords="993,828,1105,855"/>
+<area shape="rect" id="node5" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1182,243,1295,269"/>
+<area shape="rect" id="node7" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="1185,1151,1292,1177"/>
+<area shape="rect" id="node9" href="$mltply_spin_8c.html#ab975146c2b912899e92ae74ec42b5b45" title="Compute exchange term of spin Hamiltonian (canonical) " alt="" coords="513,353,655,380"/>
+<area shape="rect" id="node10" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="776,484,883,511"/>
+<area shape="rect" id="node12" href="$mltply_hubbard_8c.html#a4d178b47dde9c5e387a87d482463575d" title="Compute pairhopp term (canonical) " alt="" coords="997,891,1102,917"/>
+<area shape="rect" id="node14" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="517,1196,651,1223"/>
+<area shape="rect" id="node15" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="expec_cisajs_Hubbard" alt="" coords="752,1277,907,1304"/>
+<area shape="rect" id="node16" href="$_pair_ex_hubbard_8c.html#ad6ea48aa669d72fd8cc85162bae8b834" title="GetPairExcitedStateHubbard" alt="" coords="734,1379,925,1405"/>
+<area shape="rect" id="node18" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="1173,625,1304,666"/>
+<area shape="rect" id="node20" href="$mltply_m_p_i_hubbard_core_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="754,1110,905,1151"/>
+<area shape="rect" id="node23" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="773,755,886,781"/>
+<area shape="rect" id="node26" href="$_single_ex_hubbard_8c.html#a5c47554603676d2da6345b76e562cd4f" title="GetSingleExcitedStateHubbard" alt="" coords="483,1480,685,1507"/>
+<area shape="rect" id="node29" href="$_pair_ex_spin_8c.html#a61950043cc9ec8ca800510d959af0359" title="GetPairExcitedStateHalfSpin" alt="" coords="489,1619,679,1645"/>
+<area shape="rect" id="node33" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="519,571,649,613"/>
+<area shape="rect" id="node34" href="$mltply_spin_8c.html#aa02ac66be051c651994ed4c9bfd9648e" title="Compute Inter&#45;All term of spin Hamiltonian (canonical) " alt="" coords="509,404,659,431"/>
+<area shape="rect" id="node36" href="$mltply_m_p_i_hubbard_8c.html#ab1b2e0743624e8698eb36484166f92cc" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="983,1298,1116,1339"/>
+<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_8c.html#aa938067934c1c1a813b5bbc5c94f9d26" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="983,1402,1116,1443"/>
+<area shape="rect" id="node40" href="$mltply_m_p_i_spin_8c.html#a1d7f900e4cbe1e42cc139fd78cf14c66" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="509,506,659,547"/>
+<area shape="rect" id="node42" href="$mltply_m_p_i_spin_8c.html#aab94d15aa4b4edd0e53f51921a4b7dd4" title="Exchange term in Spin model When only site2 is in the inter process region. " alt="" coords="509,689,659,730"/>
+<area shape="rect" id="node47" href="$mltply_hubbard_core_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="762,70,897,111"/>
+<area shape="rect" id="node48" href="$mltply_hubbard_core_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="760,135,899,177"/>
+<area shape="rect" id="node49" href="$mltply_hubbard_core_8c.html#a2e64839292192a5851d4be60a4f3561a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="762,5,897,46"/>
 </map>

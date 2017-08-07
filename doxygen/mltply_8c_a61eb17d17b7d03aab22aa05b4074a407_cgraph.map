@@ -1,51 +1,51 @@
 <map id="mltply" name="mltply">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="133,31,271,57"/>
-<area shape="rect" id="node5" href="$mltply_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="child_general_hopp\l_GetInfo" alt="" coords="133,141,271,182"/>
-<area shape="rect" id="node6" href="$mltply_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="GC_child_general_hopp" alt="" coords="119,207,285,233"/>
-<area shape="rect" id="node8" href="$mltply_8c.html#ad8750d6b426c68d0e931849d094b11ce" title="child_general_int_GetInfo" alt="" coords="115,257,289,284"/>
-<area shape="rect" id="node9" href="$mltply_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="GC_child_general_int" alt="" coords="127,308,277,335"/>
-<area shape="rect" id="node14" href="$mltply_8c.html#ada83696e48d6a9496eca54980a2fd2a4" title="child_pairhopp_GetInfo" alt="" coords="122,359,282,385"/>
-<area shape="rect" id="node15" href="$mltply_8c.html#ad16f7b63b9768957a720004697a7a774" title="GC_child_pairhopp" alt="" coords="134,409,270,436"/>
-<area shape="rect" id="node17" href="$mltply_8c.html#ace0e2c1c928c924f7efd3bf106c9122e" title="child_exchange_GetInfo" alt="" coords="119,460,285,487"/>
-<area shape="rect" id="node18" href="$mltply_8c.html#a23af00b3160b075156e1c842bb3a879d" title="GC_child_exchange" alt="" coords="131,511,273,537"/>
-<area shape="rect" id="node20" href="$mltply_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="child_general_hopp" alt="" coords="133,561,271,588"/>
-<area shape="rect" id="node22" href="$mltply_8c.html#aef9d79bf221699cecaa1b65b374e5b92" title="child_general_int" alt="" coords="141,612,263,639"/>
-<area shape="rect" id="node27" href="$mltply_8c.html#a4d178b47dde9c5e387a87d482463575d" title="child_pairhopp" alt="" coords="147,663,257,689"/>
-<area shape="rect" id="node29" href="$mltply_8c.html#a5821f04d36f42ce53a1d522dcb5548c5" title="child_exchange" alt="" coords="145,713,259,740"/>
-<area shape="rect" id="node31" href="$mltply_8c.html#a4f2cb8d2efe39da7c0b1b6d975758c40" title="child_general_int_spin\l_GetInfo" alt="" coords="125,765,279,806"/>
-<area shape="rect" id="node32" href="$mltply_8c.html#aa02ac66be051c651994ed4c9bfd9648e" title="child_general_int_spin" alt="" coords="125,831,279,857"/>
-<area shape="rect" id="node34" href="$mltply_8c.html#a70512a3c407e79dd6c912a63f9afe4ae" title="child_exchange_spin\l_GetInfo" alt="" coords="129,882,275,923"/>
-<area shape="rect" id="node35" href="$mltply_8c.html#ab975146c2b912899e92ae74ec42b5b45" title="child_exchange_spin" alt="" coords="129,948,275,975"/>
-<area shape="rect" id="node37" href="$mltply_8c.html#a2ccdc49853b6d944a5274784015ff774" title="child_pairlift_spin\l_GetInfo" alt="" coords="140,999,264,1041"/>
-<area shape="rect" id="node38" href="$mltply_8c.html#ad98281df0128bef6143204cfee393119" title="child_pairlift_spin" alt="" coords="140,1065,264,1092"/>
-<area shape="rect" id="node40" href="$mltply_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="X_SpinGC_CisAis" alt="" coords="587,1200,717,1227"/>
-<area shape="rect" id="node41" href="$mltply_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="X_SpinGC_CisAit" alt="" coords="589,1331,715,1357"/>
-<area shape="rect" id="node42" href="$mltply_8c.html#a0dac10eb920ee6f0c6d5c064167b6cf2" title="GC_child_general_int_spin" alt="" coords="111,1228,293,1255"/>
-<area shape="rect" id="node47" href="$mltply_8c.html#a1da5e51d844cfaf0edf806b0e29e3ab8" title="GC_child_exchange_spin" alt="" coords="115,1329,289,1356"/>
-<area shape="rect" id="node48" href="$mltply_8c.html#ae3ae89f559a5119c3d29bfef76f30369" title="GC_child_pairlift_spin" alt="" coords="126,1380,278,1407"/>
-<area shape="rect" id="node49" href="$bitcalc_8c.html#ab60f50af237c37fc1cdd44f22ac69264" title="bit check function for general spin " alt="" coords="379,1475,501,1501"/>
-<area shape="rect" id="node50" href="$bitcalc_8c.html#a770fbdea2648a2bf0725601d7ea08a62" title="function of getting off&#45;diagonal component for general spin " alt="" coords="117,1481,287,1508"/>
-<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="624,5,680,32"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="397,31,483,57"/>
-<area shape="rect" id="node7" href="$mltply_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title="GC_CisAjt" alt="" coords="398,81,482,108"/>
-<area shape="rect" id="node10" href="$mltply_8c.html#a6e5c6a3af522a385b4ee60f66efb2557" title="GC_child_CisAisCisAis\l_element" alt="" coords="360,263,520,305"/>
-<area shape="rect" id="node11" href="$mltply_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="GC_child_CisAisCjtAku\l_element" alt="" coords="359,329,521,370"/>
-<area shape="rect" id="node12" href="$mltply_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="GC_child_CisAjtCkuAku\l_element" alt="" coords="357,133,523,174"/>
-<area shape="rect" id="node13" href="$mltply_8c.html#a6d06655a28258eea84191579396219e1" title="GC_child_CisAjtCkuAlv\l_element" alt="" coords="359,198,521,239"/>
-<area shape="rect" id="node16" href="$mltply_8c.html#a47af1fdf91258fccc366f8e96f600bfb" title="GC_child_pairhopp_element" alt="" coords="345,395,535,421"/>
-<area shape="rect" id="node19" href="$mltply_8c.html#a17e4b4cfa71b3d34cdc969cb22b79ba9" title="GC_child_exchange_element" alt="" coords="341,445,539,472"/>
-<area shape="rect" id="node21" href="$mltply_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title="CisAjt" alt="" coords="411,496,469,523"/>
-<area shape="rect" id="node23" href="$mltply_8c.html#a11e78b661246513350ad6ee2e3985d9f" title="child_CisAisCisAis\l_element" alt="" coords="374,678,506,719"/>
-<area shape="rect" id="node24" href="$mltply_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="child_CisAisCjtAku\l_element" alt="" coords="373,743,507,785"/>
-<area shape="rect" id="node25" href="$mltply_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="child_CisAjtCkuAku\l_element" alt="" coords="371,547,509,589"/>
-<area shape="rect" id="node26" href="$mltply_8c.html#a2e64839292192a5851d4be60a4f3561a" title="child_CisAjtCkuAlv\l_element" alt="" coords="373,613,507,654"/>
-<area shape="rect" id="node28" href="$mltply_8c.html#a72af6200bdc7e6474def42f634cfff65" title="child_pairhopp_element" alt="" coords="358,809,522,836"/>
-<area shape="rect" id="node30" href="$mltply_8c.html#a54c462e324115ab5c298e497fa8fba74" title="child_exchange_element" alt="" coords="355,860,525,887"/>
-<area shape="rect" id="node33" href="$mltply_8c.html#a40a1adaf57adca8173be6dbcf260aabf" title="X_child_exchange_spin\l_element" alt="" coords="359,911,521,953"/>
-<area shape="rect" id="node36" href="$mltply_8c.html#ac49bf59f1c574be383b76e2e315e902a" title="child_exchange_spin\l_element" alt="" coords="367,977,513,1018"/>
-<area shape="rect" id="node39" href="$mltply_8c.html#a1eb1279a95e116ee2de32bbdd6b23efb" title="child_pairlift_spin\l_element" alt="" coords="378,1042,502,1083"/>
-<area shape="rect" id="node43" href="$mltply_8c.html#aa25730bebedaef0567be1d1d3a2aa9f7" title="GC_child_CisAisCisAis\l_spin_element" alt="" coords="360,1159,520,1201"/>
-<area shape="rect" id="node44" href="$mltply_8c.html#af675fc77ae3b652589d52ff3fa667b77" title="GC_child_CisAisCitAiu\l_spin_element" alt="" coords="361,1290,519,1331"/>
-<area shape="rect" id="node45" href="$mltply_8c.html#a220085102d48735b8111fe704e5d5993" title="GC_child_CisAitCiuAiu\l_spin_element" alt="" coords="361,1225,519,1266"/>
-<area shape="rect" id="node46" href="$mltply_8c.html#a1b6c6239f632e04606cf340f024d2ed3" title="GC_child_CisAitCiuAiv\l_spin_element" alt="" coords="361,1355,519,1397"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="765,60,901,87"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="974,162,1149,188"/>
+<area shape="rect" id="node6" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="123,1023,229,1050"/>
+<area shape="rect" id="node7" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="StartTimer" alt="" coords="563,428,645,455"/>
+<area shape="rect" id="node12" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="StopTimer" alt="" coords="563,339,645,366"/>
+<area shape="rect" id="node32" href="$mltply_hubbard_8c.html#a3a8ead6d49a5b1621694d91c05ee3dc2" title="perform Hamiltonian vector product for (extended) Hubbard type model (Grandcanonical). &#160;" alt="" coords="113,1626,239,1652"/>
+<area shape="rect" id="node43" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="135,364,217,391"/>
+<area shape="rect" id="node46" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="125,415,227,442"/>
+<area shape="rect" id="node50" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="129,618,223,644"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1219,187,1274,214"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="1019,60,1104,87"/>
+<area shape="rect" id="node8" href="$mltply_m_p_i_hubbard_8c.html#ab1b2e0743624e8698eb36484166f92cc" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="537,740,671,781"/>
+<area shape="rect" id="node13" href="$mltply_m_p_i_hubbard_8c.html#aa938067934c1c1a813b5bbc5c94f9d26" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="537,805,671,846"/>
+<area shape="rect" id="node15" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="537,1394,671,1436"/>
+<area shape="rect" id="node16" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="767,1191,900,1218"/>
+<area shape="rect" id="node18" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="1207,1724,1286,1751"/>
+<area shape="rect" id="node19" href="$mltply_m_p_i_hubbard_core_8c.html#ac0c99cbb8b6107f22d5f98dda7c261c1" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="761,1528,905,1569"/>
+<area shape="rect" id="node22" href="$mltply_m_p_i_hubbard_core_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="529,1024,679,1065"/>
+<area shape="rect" id="node23" href="$mltply_m_p_i_hubbard_core_8c.html#a67618b30efd1e0dddf58b89407e13736" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="756,1074,911,1116"/>
+<area shape="rect" id="node25" href="$mltply_m_p_i_hubbard_core_8c.html#ac3f88b541387e7b9b13758fa855b9327" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="302,1125,453,1166"/>
+<area shape="rect" id="node26" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="293,1444,462,1471"/>
+<area shape="rect" id="node27" href="$mltply_hubbard_8c.html#aef9d79bf221699cecaa1b65b374e5b92" title="Compute inter&#45;all term (canonical) " alt="" coords="318,719,437,746"/>
+<area shape="rect" id="node28" href="$mltply_hubbard_core_8c.html#a7fbaf32cf6b714a4304e20db480b5404" title="Compute mask for bit operation of pairhop term. " alt="" coords="300,1343,455,1370"/>
+<area shape="rect" id="node29" href="$mltply_hubbard_8c.html#a4d178b47dde9c5e387a87d482463575d" title="Compute pairhopp term (canonical) " alt="" coords="325,770,430,796"/>
+<area shape="rect" id="node30" href="$mltply_hubbard_core_8c.html#a4765a56a883cd352b3f08546fc3bff08" title="Compute mask for bit operation of exchange term. " alt="" coords="296,1394,459,1420"/>
+<area shape="rect" id="node31" href="$mltply_hubbard_8c.html#a5821f04d36f42ce53a1d522dcb5548c5" title="Compute Exchange term (canonical) in single process. " alt="" coords="321,922,433,948"/>
+<area shape="rect" id="node9" href="$mltply_m_p_i_hubbard_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="759,740,908,781"/>
+<area shape="rect" id="node10" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign " alt="" coords="1216,1039,1277,1066"/>
+<area shape="rect" id="node11" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1028,896,1095,923"/>
+<area shape="rect" id="node14" href="$mltply_m_p_i_hubbard_8c.html#af402c076da283e62da488dbd305f36cf" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="759,805,908,846"/>
+<area shape="rect" id="node17" href="$mltply_hubbard_core_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title=" term for canonical Hubbard " alt="" coords="1032,1140,1091,1167"/>
+<area shape="rect" id="node20" href="$mltply_m_p_i_hubbard_core_8c.html#ad7c739742ce1cad082947c7f647d1289" title="Check the occupation of both site 1 and site 3. " alt="" coords="999,1618,1123,1644"/>
+<area shape="rect" id="node21" href="$mltply_m_p_i_hubbard_core_8c.html#a4a379d4c2b9e6fd33972c1049c57a26a" title="Check the occupation of &#160;state, and compute the index of final wavefunction associated to ..." alt="" coords="1197,1519,1296,1546"/>
+<area shape="rect" id="node24" href="$mltply_m_p_i_hubbard_core_8c.html#a030d235af73dc5a86e82993363153156" title="Compute the index of final wavefunction associated to , and check whether this operator is relevant o..." alt="" coords="990,1494,1133,1520"/>
+<area shape="rect" id="node33" href="$mltply_m_p_i_hubbard_8c.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="297,1765,457,1806"/>
+<area shape="rect" id="node34" href="$mltply_m_p_i_hubbard_8c.html#a83da98c99feda75fe253ef0177bbb9ab" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="297,1830,457,1872"/>
+<area shape="rect" id="node35" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="297,1896,457,1923"/>
+<area shape="rect" id="node36" href="$mltply_m_p_i_hubbard_core_8c.html#a571209928d6c7125abd413555f89d748" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="748,1730,919,1772"/>
+<area shape="rect" id="node37" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="515,1562,693,1604"/>
+<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="742,1453,925,1494"/>
+<area shape="rect" id="node39" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="288,1648,467,1689"/>
+<area shape="rect" id="node40" href="$mltply_hubbard_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="Compute inter&#45;all term (canonical) " alt="" coords="304,1947,451,1974"/>
+<area shape="rect" id="node41" href="$mltply_hubbard_8c.html#ad16f7b63b9768957a720004697a7a774" title="Compute pairhopp term (grandcanonical) " alt="" coords="311,2048,443,2075"/>
+<area shape="rect" id="node42" href="$mltply_hubbard_8c.html#a23af00b3160b075156e1c842bb3a879d" title="Compute Exchange term (grandcanonical) in single process. " alt="" coords="308,2099,447,2126"/>
+<area shape="rect" id="node44" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="324,263,431,290"/>
+<area shape="rect" id="node45" href="$mltply_spin_8c.html#a020b096c079862b71fb71eb799e95180" title="Driver function for General Spin hamiltonian. " alt="" coords="313,364,441,391"/>
+<area shape="rect" id="node47" href="$mltply_spin_8c.html#aaacfb2aca0416786e4c48f0d5361152e" title="Driver function for Spin 1/2 Hamiltonian (grandcanonical) " alt="" coords="314,516,441,543"/>
+<area shape="rect" id="node48" href="$mltply_spin_8c.html#a60dc2f1f62e571e890181e959ac95bb2" title="Driver function for General Spin hamiltonian (grandcanonical) " alt="" coords="303,212,451,239"/>
+<area shape="rect" id="node49" href="$mltply_spin_8c.html#af530d989e2ee768e886923be3484ae0e" title="Driver function for Spin hamiltonian (Boost) " alt="" coords="309,415,446,442"/>
 </map>

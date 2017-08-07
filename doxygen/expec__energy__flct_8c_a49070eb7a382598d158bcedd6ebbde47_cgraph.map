@@ -1,0 +1,6 @@
+<map id="expec_energy_flct_Hubbard" name="expec_energy_flct_Hubbard">
+<area shape="rect" id="node2" href="$bitcalc_8c.html#abb04551086c9b8080596b1f439cb6fb8" title="pop" alt="" coords="260,5,303,32"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421" title="MPI wrapper function to obtain sum of Double across processes. " alt="" coords="238,56,325,83"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="373,56,440,83"/>
+<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="489,56,543,83"/>
+</map>

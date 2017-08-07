@@ -1,0 +1,51 @@
+<map id="CalcByLOBPCG" name="CalcByLOBPCG">
+<area shape="rect" id="node2" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="576,97,680,124"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1187,1491,1242,1517"/>
+<area shape="rect" id="node4" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="794,1984,899,2011"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1017,351,1084,377"/>
+<area shape="rect" id="node7" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="173,655,285,681"/>
+<area shape="rect" id="node13" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="582,2288,674,2315"/>
+<area shape="rect" id="node30" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="204,1461,255,1488"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1011,1933,1090,1960"/>
+<area shape="rect" id="node8" href="$_calc_by_l_o_b_p_c_g_8c.html#a27bd313c5c6e4ea3eba5e7715d20b54a" title="Initialize_wave" alt="" coords="351,249,459,276"/>
+<area shape="rect" id="node11" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="580,452,676,479"/>
+<area shape="rect" id="node14" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="599,1127,657,1153"/>
+<area shape="rect" id="node23" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="555,1664,701,1691"/>
+<area shape="rect" id="node24" href="$_calc_by_l_o_b_p_c_g_8c.html#a3e76c956cd831898d183033e84198a4b" title="Compute adaptively shifted preconditionar written in S. Yamada, et al., Transactions of JSCES..." alt="" coords="357,705,453,732"/>
+<area shape="rect" id="node25" href="$_calc_by_l_o_b_p_c_g_8c.html#ae211b265e8918bbbe2d4a21575dfb291" title="Solve the generalized eigenvalue problem &#160;with the Lowdin&#39;s orthogonalization. " alt="" coords="366,604,445,631"/>
+<area shape="rect" id="node28" href="$xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f" title="d_free1" alt="" coords="373,401,438,428"/>
+<area shape="rect" id="node29" href="$_calc_by_l_o_b_p_c_g_8c.html#a977f41b5be3d424fcd341fc93c95ce2e" title="Output eigenvectors for restart LOBPCG method. " alt="" coords="353,351,458,377"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8" title="MPI wrapper function to obtain sum of unsigned long integer across processes. " alt="" coords="803,249,890,276"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0" title="MPI wrapper function to broadcast unsigned long integer across processes. " alt="" coords="581,199,675,225"/>
+<area shape="rect" id="node12" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="799,1212,894,1239"/>
+<area shape="rect" id="node15" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="StartTimer" alt="" coords="1009,1035,1092,1061"/>
+<area shape="rect" id="node16" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="779,1719,915,1745"/>
+<area shape="rect" id="node17" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="963,1313,1138,1340"/>
+<area shape="rect" id="node18" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="StopTimer" alt="" coords="1009,1136,1092,1163"/>
+<area shape="rect" id="node19" href="$mltply_hubbard_8c.html#a3a8ead6d49a5b1621694d91c05ee3dc2" title="perform Hamiltonian vector product for (extended) Hubbard type model (Grandcanonical). &#160;" alt="" coords="783,1111,910,1137"/>
+<area shape="rect" id="node20" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="793,1060,900,1087"/>
+<area shape="rect" id="node21" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="805,908,888,935"/>
+<area shape="rect" id="node22" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="795,959,898,985"/>
+<area shape="rect" id="node26" href="$_calc_by_l_o_b_p_c_g_8c.html#ab3d3474861840c3dc1a09ff1ab028b96" title="zheevd_" alt="" coords="593,604,663,631"/>
+<area shape="rect" id="node27" href="$_calc_by_l_o_b_p_c_g_8c.html#a9c185d22681129ef639f56558ffcb0f1" title="zgemm_" alt="" coords="592,553,664,580"/>
+<area shape="rect" id="node31" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="341,1076,469,1103"/>
+<area shape="rect" id="node39" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="356,2085,455,2112"/>
+<area shape="rect" id="node45" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="333,1857,477,1884"/>
+<area shape="rect" id="node50" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="349,2187,462,2213"/>
+<area shape="rect" id="node32" href="$expec__energy__flct_8c.html#a5190964e652d2168e4a87056a7c818a1" title="expec_energy_flct_HubbardGC" alt="" coords="526,807,730,833"/>
+<area shape="rect" id="node33" href="$bitcalc_8c.html#abb04551086c9b8080596b1f439cb6fb8" title="pop" alt="" coords="825,756,868,783"/>
+<area shape="rect" id="node34" href="$wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421" title="MPI wrapper function to obtain sum of Double across processes. " alt="" coords="803,705,890,732"/>
+<area shape="rect" id="node35" href="$expec__energy__flct_8c.html#a49070eb7a382598d158bcedd6ebbde47" title="expec_energy_flct_Hubbard" alt="" coords="536,857,720,884"/>
+<area shape="rect" id="node36" href="$expec__energy__flct_8c.html#a52105e4ac736e6c832ae28eee5debb9d" title="expec_energy_flct_HalfSpinGC" alt="" coords="525,756,731,783"/>
+<area shape="rect" id="node37" href="$expec__energy__flct_8c.html#a302e00fd432c5c485541733fb42988a1" title="expec_energy_flct_General\lSpinGC" alt="" coords="538,959,718,1001"/>
+<area shape="rect" id="node38" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="798,807,895,833"/>
+<area shape="rect" id="node40" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="528,2085,728,2112"/>
+<area shape="rect" id="node41" href="$expec__cisajs_8c.html#a0d30174954dc8ad83ceeba5932ece811" title="expec_cisajs_HubbardGC" alt="" coords="541,1512,715,1539"/>
+<area shape="rect" id="node42" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="expec_cisajs_Hubbard" alt="" coords="551,1563,705,1589"/>
+<area shape="rect" id="node43" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="563,2136,693,2163"/>
+<area shape="rect" id="node44" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="553,2237,703,2264"/>
+<area shape="rect" id="node46" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="563,1345,693,1386"/>
+<area shape="rect" id="node47" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="563,1279,693,1321"/>
+<area shape="rect" id="node48" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="547,1832,709,1859"/>
+<area shape="rect" id="node49" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="563,1766,693,1807"/>
+</map>

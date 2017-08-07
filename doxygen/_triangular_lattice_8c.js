@@ -1,4 +1,4 @@
 var _triangular_lattice_8c =
 [
-    [ "StdFace_Triangular", "_triangular_lattice_8c.html#a3d3ab965dd2df90f542fedcf06960783", null ]
+    [ "StdFace_Triangular", "_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe", null ]
 ];

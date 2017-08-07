@@ -1,17 +1,3 @@
 <map id="readdef.c" name="readdef.c">
-<area shape="rect" id="node2" href="$_common_8h.html" title="Common.h" alt="" coords="631,80,718,107"/>
-<area shape="rect" id="node16" href="$_log_message_8h.html" title="LogMessage.h" alt="" coords="1291,229,1400,256"/>
-<area shape="rect" id="node21" href="$readdef_8h.html" title="readdef.h" alt="" coords="1523,80,1602,107"/>
-<area shape="rect" id="node24" href="$wrapper_m_p_i_8h.html" title="wrapperMPI.h" alt="" coords="1425,229,1530,256"/>
-<area shape="rect" id="node25" href="$version__major_8h.html" title="version_major.h" alt="" coords="1627,80,1744,107"/>
-<area shape="rect" id="node26" href="$version__miner_8h.html" title="version_miner.h" alt="" coords="1768,80,1885,107"/>
-<area shape="rect" id="node27" href="$version__patch_8h.html" title="version_patch.h" alt="" coords="1910,80,2026,107"/>
-<area shape="rect" id="node4" href="$_def_common_8h.html" title="DefCommon.h" alt="" coords="390,155,498,181"/>
-<area shape="rect" id="node5" href="$global_8h.html" title="global.h" alt="" coords="513,229,583,256"/>
-<area shape="rect" id="node12" href="$_progress_message_8h.html" title="ProgressMessage.h" alt="" coords="1075,155,1215,181"/>
-<area shape="rect" id="node13" href="$_error_message_8h.html" title="ErrorMessage.h" alt="" coords="5,155,123,181"/>
-<area shape="rect" id="node14" href="$struct_8h.html" title="struct.h" alt="" coords="147,155,213,181"/>
-<area shape="rect" id="node15" href="$log_8h.html" title="log.h" alt="" coords="523,155,573,181"/>
-<area shape="rect" id="node17" href="$d_s_f_m_t_8h.html" title="double precision SIMD oriented Fast Mersenne Twister(dSFMT) pseudorandom number generator based on IE..." alt="" coords="237,155,315,181"/>
-<area shape="rect" id="node22" href="$xsetmem_8h.html" title="xsetmem.h" alt="" coords="1519,155,1606,181"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8h.html" title="Global variables related to MPI and OpenMP. " alt="" coords="437,80,539,107"/>
 </map>

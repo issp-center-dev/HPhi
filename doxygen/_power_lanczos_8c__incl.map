@@ -1,14 +1,3 @@
 <map id="PowerLanczos.c" name="PowerLanczos.c">
-<area shape="rect" id="node2" href="$_power_lanczos_8h.html" title="PowerLanczos.h" alt="" coords="607,80,727,107"/>
-<area shape="rect" id="node22" href="$mltply_8h.html" title="mltply.h" alt="" coords="752,80,820,107"/>
-<area shape="rect" id="node23" href="$wrapper_m_p_i_8h.html" title="wrapperMPI.h" alt="" coords="1192,155,1297,181"/>
-<area shape="rect" id="node3" href="$_common_8h.html" title="Common.h" alt="" coords="624,155,711,181"/>
-<area shape="rect" id="node5" href="$_def_common_8h.html" title="DefCommon.h" alt="" coords="5,229,113,256"/>
-<area shape="rect" id="node6" href="$global_8h.html" title="global.h" alt="" coords="781,304,850,331"/>
-<area shape="rect" id="node13" href="$_progress_message_8h.html" title="ProgressMessage.h" alt="" coords="667,229,807,256"/>
-<area shape="rect" id="node14" href="$_error_message_8h.html" title="ErrorMessage.h" alt="" coords="831,229,949,256"/>
-<area shape="rect" id="node15" href="$struct_8h.html" title="struct.h" alt="" coords="973,229,1039,256"/>
-<area shape="rect" id="node16" href="$log_8h.html" title="log.h" alt="" coords="1063,229,1114,256"/>
-<area shape="rect" id="node18" href="$d_s_f_m_t_8h.html" title="double precision SIMD oriented Fast Mersenne Twister(dSFMT) pseudorandom number generator based on IE..." alt="" coords="1138,229,1215,256"/>
-<area shape="rect" id="node17" href="$_log_message_8h.html" title="LogMessage.h" alt="" coords="874,304,983,331"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8h.html" title="Global variables related to MPI and OpenMP. " alt="" coords="239,80,341,107"/>
 </map>

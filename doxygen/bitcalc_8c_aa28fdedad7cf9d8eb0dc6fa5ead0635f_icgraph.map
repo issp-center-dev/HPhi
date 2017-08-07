@@ -1,0 +1,51 @@
+<map id="BitCheckGeneral" name="BitCheckGeneral">
+<area shape="rect" id="node2" href="$expec__cisajs_8c.html#a3aa6dfa28ea11557e0977bf0b0e62b27" title="expec_cisajs_SpinGCGeneral" alt="" coords="659,1757,855,1783"/>
+<area shape="rect" id="node5" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="expec_cisajs_SpinGeneral" alt="" coords="184,1858,360,1885"/>
+<area shape="rect" id="node7" href="$expec__cisajscktaltdc_8c.html#ad2872d8b3f1c758d3933dc9e2b19dd16" title="expec_cisajscktalt\l_SpinGCGeneral" alt="" coords="692,564,823,605"/>
+<area shape="rect" id="node10" href="$expec__cisajscktaltdc_8c.html#a0b7abd184f6ccce7ac4141c21fabf91c" title="expec_cisajscktalt\l_SpinGeneral" alt="" coords="692,123,823,164"/>
+<area shape="rect" id="node12" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="189,957,355,983"/>
+<area shape="rect" id="node19" href="$mltply_m_p_i_spin_core_8c.html#aa75f5ecbbed7438beb33b32592223feb" title=" term in Spin model. When both site1 and site3 are in the inter process region. " alt="" coords="421,688,598,729"/>
+<area shape="rect" id="node21" href="$mltply_spin_8c.html#a60dc2f1f62e571e890181e959ac95bb2" title="Driver function for General Spin hamiltonian (grandcanonical) " alt="" coords="931,826,1079,853"/>
+<area shape="rect" id="node23" href="$mltply_m_p_i_spin_core_8c.html#ae2ee1ba3e3c5795a2d80f8bcc0d89732" title=" term in Spin model. When both site1 and site3 are in the inter process region. " alt="" coords="422,505,597,547"/>
+<area shape="rect" id="node26" href="$_pair_ex_spin_8c.html#a49f7334f2e47aee8e04645c509e0bf67" title="GetPairExcitedStateGeneral\lSpinGC" alt="" coords="664,1521,851,1563"/>
+<area shape="rect" id="node30" href="$_pair_ex_spin_8c.html#a51a79357da3abe458601c1a01ccdf781" title="GetPairExcitedStateGeneralSpin" alt="" coords="651,1357,863,1383"/>
+<area shape="rect" id="node32" href="$mltply_m_p_i_spin_core_8c.html#ab674c454b9c1ae861483c53f32c78919" title="Compute &#160;term in the grandcanonical general spin system when one of these site is in the inter proces..." alt="" coords="421,623,598,664"/>
+<area shape="rect" id="node34" href="$mltply_m_p_i_spin_core_8c.html#a6e7184b965a03e38d608d900c78708c1" title="Compute &#160;term in the grandcanonical general spin system when one of these site is in the inter proces..." alt="" coords="422,819,597,860"/>
+<area shape="rect" id="node42" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="SetDiagonalChemi" alt="" coords="207,1909,337,1935"/>
+<area shape="rect" id="node44" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="SetDiagonalInterAll" alt="" coords="205,1959,339,1986"/>
+<area shape="rect" id="node45" href="$mltply_m_p_i_spin_core_8c.html#a76cf91a2d8317a9349bc362f1aea33f7" title="Compute &#160;term in the canonical general spin system when both sites are in the inter process region..." alt="" coords="187,76,357,117"/>
+<area shape="rect" id="node46" href="$mltply_m_p_i_spin_core_8c.html#a79408eeba2cc4efd8ae0267d3ea351df" title="Compute &#160;term in the canonical general spin system when one of these sites is in the inter process re..." alt="" coords="189,141,355,183"/>
+<area shape="rect" id="node47" href="$mltply_m_p_i_spin_core_8c.html#a3e8684b197911cf3ea3117f096775898" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="177,1612,367,1653"/>
+<area shape="rect" id="node48" href="$mltply_m_p_i_spin_core_8c.html#a26d53e4d5ba3aa9b49fd7e42361a2ff9" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="177,1691,367,1732"/>
+<area shape="rect" id="node49" href="$mltply_m_p_i_spin_core_8c.html#a0f1394dd9dcb5a334f15676d511313b1" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="183,337,361,379"/>
+<area shape="rect" id="node50" href="$mltply_m_p_i_spin_core_8c.html#ace468131cb9d905d4beaec29719db0b2" title="Compute &#160;term in the grandcanonical general spin system when one of these site is in the inter proces..." alt="" coords="183,476,361,517"/>
+<area shape="rect" id="node3" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="930,1782,1081,1809"/>
+<area shape="rect" id="node4" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="1169,1813,1268,1839"/>
+<area shape="rect" id="node6" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="940,1845,1071,1871"/>
+<area shape="rect" id="node8" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="940,468,1071,509"/>
+<area shape="rect" id="node9" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="1147,351,1291,378"/>
+<area shape="rect" id="node11" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="924,226,1087,253"/>
+<area shape="rect" id="node13" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="457,1167,561,1194"/>
+<area shape="rect" id="node15" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="447,1218,571,1245"/>
+<area shape="rect" id="node16" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="468,1117,551,1143"/>
+<area shape="rect" id="node24" href="$mltply_m_p_i_spin_core_8c.html#a15226d2f776230cec607303d8024f4b1" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="422,949,597,991"/>
+<area shape="rect" id="node25" href="$mltply_m_p_i_spin_core_8c.html#ae3efb06f6eab6b17f0527a1ba57090ef" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="416,1437,603,1479"/>
+<area shape="rect" id="node29" href="$mltply_m_p_i_spin_core_8c.html#ada0c9d68b20a680293f23b0593bed434" title="Compute &#160;term in the canonical general spin system when both site is in the inter process region..." alt="" coords="416,1320,603,1361"/>
+<area shape="rect" id="node35" href="$mltply_m_p_i_spin_core_8c.html#a1f383088ec5f7c8f441c6c389b5c187d" title="Compute &#160;term in the grandcanonical general spin system when one of these site is in the inter proces..." alt="" coords="422,753,597,795"/>
+<area shape="rect" id="node36" href="$mltply_m_p_i_spin_core_8c.html#ae8b5eaea3b894110484f2214d7566ecf" title="Compute &#160;term in the canonical general spin system when both sites are in the inter process region..." alt="" coords="425,884,594,925"/>
+<area shape="rect" id="node38" href="$mltply_spin_8c.html#a020b096c079862b71fb71eb799e95180" title="Driver function for General Spin hamiltonian. " alt="" coords="941,1007,1069,1034"/>
+<area shape="rect" id="node40" href="$mltply_m_p_i_spin_core_8c.html#ac43adc132f4ddcfef02f936ba1d9784a" title="Compute &#160;term in the canonical general spin system when one of these sites is in the inter process re..." alt="" coords="427,287,592,328"/>
+<area shape="rect" id="node14" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="701,1218,814,1245"/>
+<area shape="rect" id="node17" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="701,1167,814,1194"/>
+<area shape="rect" id="node18" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="673,1117,842,1143"/>
+<area shape="rect" id="node20" href="$mltply_m_p_i_spin_8c.html#aa620081850694319d0701b7fa3433354" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="673,819,842,860"/>
+<area shape="rect" id="node22" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="1167,826,1270,853"/>
+<area shape="rect" id="node27" href="$_pair_ex_spin_8c.html#a1629a16cc6e353c96f1626bdb0db8eed" title="GetPairExcitedStateSpinGC" alt="" coords="912,1469,1099,1495"/>
+<area shape="rect" id="node28" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="1148,1429,1289,1455"/>
+<area shape="rect" id="node31" href="$_pair_ex_spin_8c.html#acc9ece067d6f261fd9865c9e7ca38c28" title="GetPairExcitedStateSpin" alt="" coords="922,1387,1089,1414"/>
+<area shape="rect" id="node33" href="$mltply_m_p_i_spin_8c.html#a79c83ecf58a479d803f057bacdf2641e" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="675,753,840,795"/>
+<area shape="rect" id="node37" href="$mltply_m_p_i_spin_8c.html#a07d9da0f2b4f214b02b24d1a7c7be0a4" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="672,1000,843,1041"/>
+<area shape="rect" id="node39" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="1177,1007,1260,1034"/>
+<area shape="rect" id="node41" href="$mltply_m_p_i_spin_8c.html#a72dee131b34ccae9c95bfd2337a70954" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="672,392,843,433"/>
+<area shape="rect" id="node43" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="462,1934,557,1961"/>
+</map>

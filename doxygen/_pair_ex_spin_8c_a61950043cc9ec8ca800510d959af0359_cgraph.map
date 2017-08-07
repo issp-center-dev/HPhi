@@ -1,0 +1,12 @@
+<map id="GetPairExcitedStateHalfSpin" name="GetPairExcitedStateHalfSpin">
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="613,18,667,45"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362" title="MPI wrapper function to obtain maximum unsigned long integer across processes. " alt="" coords="273,43,357,70"/>
+<area shape="rect" id="node5" href="$mltply_m_p_i_spin_core_8c.html#acfd2257b730214abd93e50cffb9d6e52" title="Hopping term in Spin + Canonical for CalcSpectrum When both site1 and site2 are in the inter process ..." alt="" coords="245,95,384,136"/>
+<area shape="rect" id="node8" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="259,161,370,187"/>
+<area shape="rect" id="node9" href="$mltply_spin_core_8c.html#a6fcc1bc8f09474657a89e0088fac9e45" title="Compute index of final wavefunction by &#160;term. " alt="" coords="261,211,368,238"/>
+<area shape="rect" id="node11" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="249,262,380,289"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="463,43,529,70"/>
+<area shape="rect" id="node6" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="448,131,544,158"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="608,131,672,158"/>
+<area shape="rect" id="node10" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="433,211,559,238"/>
+</map>

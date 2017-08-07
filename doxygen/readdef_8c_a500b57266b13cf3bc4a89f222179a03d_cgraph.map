@@ -1,8 +1,8 @@
 <map id="GetFileName" name="GetFileName">
-<area shape="rect" id="node2" href="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae" title="fopenMPI" alt="" coords="177,5,255,32"/>
-<area shape="rect" id="node3" href="$readdef_8c.html#a21479192d729f0d76654f014b63b6d7a" title="Error Function of reading def files. " alt="" coords="153,56,279,83"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="348,81,404,108"/>
-<area shape="rect" id="node5" href="$wrapper_m_p_i_8h.html#aa75a96d74dddc8e6921813225e318551" title="fgetsMPI" alt="" coords="179,157,253,184"/>
-<area shape="rect" id="node6" href="$readdef_8c.html#ad8ab1bf637b562388b376ffe8bbff91b" title="Function of Checking keyword in NameList file. " alt="" coords="175,208,257,235"/>
-<area shape="rect" id="node7" href="$readdef_8c.html#afad6a8fbb4fc6acbd22bd70e699eb21c" title="function of checking whether ctmp is same as cKeyWord or not " alt="" coords="327,208,425,235"/>
+<area shape="rect" id="node2" href="$readdef_8c.html#ad8ab1bf637b562388b376ffe8bbff91b" title="Function of Checking keyword in NameList file. " alt="" coords="172,5,255,32"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="176,56,251,83"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="174,107,253,133"/>
+<area shape="rect" id="node6" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="345,183,399,209"/>
+<area shape="rect" id="node7" href="$readdef_8c.html#a21479192d729f0d76654f014b63b6d7a" title="Error Function of reading def files. " alt="" coords="152,208,275,235"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#afad6a8fbb4fc6acbd22bd70e699eb21c" title="function of checking whether ctmp is same as cKeyWord or not " alt="" coords="323,5,421,32"/>
 </map>

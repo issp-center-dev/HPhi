@@ -1,51 +1,51 @@
 <map id="SgnBit" name="SgnBit">
-<area shape="rect" id="node2" href="$mltply_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title="CisAjt" alt="" coords="351,256,408,282"/>
-<area shape="rect" id="node16" href="$mltply_m_p_i_8c.html#a67618b30efd1e0dddf58b89407e13736" title="X_child_CisAjtCkuAku\l_Hubbard_MPI" alt="" coords="519,190,674,231"/>
-<area shape="rect" id="node18" href="$mltply_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title="GC_CisAjt" alt="" coords="337,1082,421,1109"/>
-<area shape="rect" id="node22" href="$mltply_m_p_i_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="X_GC_child_CisAjtCkuAku\l_Hubbard_MPI" alt="" coords="505,535,688,576"/>
-<area shape="rect" id="node25" href="$mltply_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="X_GC_CisAjt" alt="" coords="134,884,234,910"/>
-<area shape="rect" id="node36" href="$mltply_8c.html#a5a04f3c78fb2064cf6940036a6c33cee" title="child_general_hopp\l_element" alt="" coords="115,1268,253,1310"/>
-<area shape="rect" id="node37" href="$mltply_m_p_i_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="X_GC_child_general\l_hopp_MPIdouble" alt="" coords="752,1574,897,1615"/>
-<area shape="rect" id="node40" href="$mltply_m_p_i_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="X_GC_child_general\l_hopp_MPIsingle" alt="" coords="752,1508,897,1550"/>
-<area shape="rect" id="node42" href="$mltply_m_p_i_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="X_child_general_hopp\l_MPIdouble" alt="" coords="747,1378,902,1419"/>
-<area shape="rect" id="node44" href="$mltply_m_p_i_8c.html#af402c076da283e62da488dbd305f36cf" title="X_child_general_hopp\l_MPIsingle" alt="" coords="747,1443,902,1484"/>
-<area shape="rect" id="node46" href="$_single_ex_8c.html#a82057cd7316bca01585868207301cf39" title="GC_Cis" alt="" coords="149,1638,219,1665"/>
-<area shape="rect" id="node48" href="$_single_ex_8c.html#a414245ea3f4742224f9d99a0da15a228" title="GC_Ajt" alt="" coords="151,1689,217,1716"/>
-<area shape="rect" id="node49" href="$_single_ex_8c.html#a2b94d5fabf8b6b178189764993fc4524" title="X_GC_Cis_MPI" alt="" coords="126,1537,242,1564"/>
-<area shape="rect" id="node50" href="$_single_ex_8c.html#a26a65ab9ccf61b540b48787ce369bab8" title="X_GC_Ajt_MPI" alt="" coords="128,1588,240,1614"/>
-<area shape="rect" id="node3" href="$mltply_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="child_general_hopp" alt="" coords="755,1276,894,1302"/>
-<area shape="rect" id="node14" href="$mltply_m_p_i_8c.html#ac3f88b541387e7b9b13758fa855b9327" title="X_child_CisAjtCkuAlv\l_Hubbard_MPI" alt="" coords="999,299,1149,340"/>
-<area shape="rect" id="node4" href="$expec__cisajs_8h.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="1025,1401,1123,1428"/>
-<area shape="rect" id="node9" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="1291,889,1349,916"/>
-<area shape="rect" id="node12" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="1003,1452,1145,1478"/>
-<area shape="rect" id="node5" href="$_calc_by_lanczos_8h.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1632,940,1745,966"/>
-<area shape="rect" id="node6" href="$_calc_by_t_p_q_8h.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="1643,1180,1735,1206"/>
-<area shape="rect" id="node7" href="$phys_8c.html#a4784e37301cd2d9b525dd754f864f60f" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1663,1104,1714,1130"/>
-<area shape="rect" id="node8" href="$_calc_by_full_diag_8h.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1793,1193,1907,1220"/>
-<area shape="rect" id="node10" href="$_c_g___eigen_vector_8h.html#a27dc47878d6c847ba4f6732e66204bf9" title="CG_EigenVector" alt="" coords="1457,901,1580,928"/>
-<area shape="rect" id="node11" href="$expec__energy__flct_8h.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="1453,1078,1584,1105"/>
-<area shape="rect" id="node13" href="$_calc_spectrum_8h.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="1261,1569,1379,1596"/>
-<area shape="rect" id="node15" href="$expec__cisajscktaltdc_8h.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="1248,762,1392,789"/>
-<area shape="rect" id="node17" href="$mltply_m_p_i_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="X_child_CisAisCjtAku\l_Hubbard_MPI" alt="" coords="749,139,900,180"/>
-<area shape="rect" id="node19" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="1033,965,1115,992"/>
-<area shape="rect" id="node21" href="$mltply_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="GC_child_general_hopp" alt="" coords="742,1326,907,1353"/>
-<area shape="rect" id="node24" href="$mltply_m_p_i_8c.html#add9824527f147708e47dc84b8322600e" title="X_GC_child_CisAjtCkuAlv\l_Hubbard_MPI" alt="" coords="985,646,1163,687"/>
-<area shape="rect" id="node20" href="$_calc_spectrum_by_full_diag_8h.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="CalcSpectrumByFullDiag" alt="" coords="1235,940,1405,966"/>
-<area shape="rect" id="node23" href="$mltply_m_p_i_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="X_GC_child_CisAisCjtAku\l_Hubbard_MPI" alt="" coords="736,510,913,551"/>
-<area shape="rect" id="node26" href="$mltply_8c.html#a576edff50809bed2a8ac5016b54027a4" title="X_CisAjt" alt="" coords="560,884,633,910"/>
-<area shape="rect" id="node30" href="$mltply_8c.html#a2e64839292192a5851d4be60a4f3561a" title="child_CisAjtCkuAlv\l_element" alt="" coords="758,779,891,820"/>
-<area shape="rect" id="node31" href="$mltply_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="GC_child_CisAisCjtAku\l_element" alt="" coords="744,1027,905,1068"/>
-<area shape="rect" id="node33" href="$mltply_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="GC_child_CisAjtCkuAku\l_element" alt="" coords="742,1210,907,1251"/>
-<area shape="rect" id="node34" href="$mltply_8c.html#a6d06655a28258eea84191579396219e1" title="GC_child_CisAjtCkuAlv\l_element" alt="" coords="744,1144,905,1186"/>
-<area shape="rect" id="node35" href="$mltply_m_p_i_8c.html#ad64562dd158ea1a086bf192ad982ba54" title="GetSgnInterAll" alt="" coords="325,542,434,569"/>
-<area shape="rect" id="node27" href="$mltply_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="child_CisAisCjtAku\l_element" alt="" coords="758,910,891,951"/>
-<area shape="rect" id="node29" href="$mltply_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="child_CisAjtCkuAku\l_element" alt="" coords="755,844,894,886"/>
-<area shape="rect" id="node28" href="$mltply_8c.html#aef9d79bf221699cecaa1b65b374e5b92" title="child_general_int" alt="" coords="1013,813,1135,840"/>
-<area shape="rect" id="node32" href="$mltply_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="GC_child_general_int" alt="" coords="999,1066,1149,1093"/>
-<area shape="rect" id="node38" href="$mltply_m_p_i_8c.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="GC_child_general_hopp\l_MPIdouble" alt="" coords="991,1620,1157,1662"/>
-<area shape="rect" id="node39" href="$mltply_m_p_i_8c.html#a5d60d0a1211bf7dd5fea8be49de9b655" title="X_GC_child_CisAjt_Hubbard_MPI" alt="" coords="961,1569,1187,1596"/>
-<area shape="rect" id="node41" href="$mltply_m_p_i_8c.html#a83da98c99feda75fe253ef0177bbb9ab" title="GC_child_general_hopp\l_MPIsingle" alt="" coords="991,1503,1157,1544"/>
-<area shape="rect" id="node43" href="$mltply_m_p_i_8c.html#ab1b2e0743624e8698eb36484166f92cc" title="child_general_hopp\l_MPIdouble" alt="" coords="1005,1270,1143,1311"/>
-<area shape="rect" id="node45" href="$mltply_m_p_i_8c.html#aa938067934c1c1a813b5bbc5c94f9d26" title="child_general_hopp\l_MPIsingle" alt="" coords="1005,1335,1143,1376"/>
-<area shape="rect" id="node47" href="$_single_ex_8c.html#a43797ff504ab9bf349fdf9f7561d2038" title="GetSingleExcitedState" alt="" coords="301,1638,457,1665"/>
+<area shape="rect" id="node2" href="$mltply_hubbard_core_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title=" term for canonical Hubbard " alt="" coords="144,345,203,372"/>
+<area shape="rect" id="node9" href="$mltply_m_p_i_hubbard_core_8c.html#a67618b30efd1e0dddf58b89407e13736" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="571,371,725,413"/>
+<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#a414245ea3f4742224f9d99a0da15a228" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="141,1260,206,1287"/>
+<area shape="rect" id="node14" href="$mltply_hubbard_core_8c.html#a82057cd7316bca01585868207301cf39" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="139,1311,208,1337"/>
+<area shape="rect" id="node15" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="349,1007,435,1033"/>
+<area shape="rect" id="node22" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="557,1058,739,1099"/>
+<area shape="rect" id="node26" href="$mltply_hubbard_core_8c.html#ae302b1f2124063034b348974c361f966" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="146,1463,201,1489"/>
+<area shape="rect" id="node28" href="$mltply_m_p_i_hubbard_core_8c.html#a76860c3ee2aaf4109b0cd9e458cd54e3" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="131,1513,216,1540"/>
+<area shape="rect" id="node29" href="$mltply_m_p_i_hubbard_8c.html#a0d286e432184734976ab21cbbb4bdc8b" title="Hopping term in Hubbard + MPI When both site1 and site2 are in the inter process region. " alt="" coords="303,168,481,195"/>
+<area shape="rect" id="node30" href="$mltply_m_p_i_hubbard_8c.html#a58b4fbd3fa69809e9633f197f23dced8" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="305,219,479,245"/>
+<area shape="rect" id="node31" href="$mltply_m_p_i_hubbard_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="317,37,467,78"/>
+<area shape="rect" id="node33" href="$mltply_m_p_i_hubbard_8c.html#af402c076da283e62da488dbd305f36cf" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="317,102,467,143"/>
+<area shape="rect" id="node35" href="$mltply_hubbard_core_8c.html#a3f49b75c63d21a51d25b3d414a759be7" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="144,1564,203,1591"/>
+<area shape="rect" id="node36" href="$mltply_m_p_i_hubbard_core_8c.html#a76ed1830af9fb3d1f1f49981f0a6672e" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="129,1412,218,1439"/>
+<area shape="rect" id="node37" href="$mltply_m_p_i_hubbard_core_8c.html#afb05b7aaa7ae3d03c5c029b807e60358" title="Single creation/annihilation operator in the inter process region for HubbardGC. " alt="" coords="117,1361,229,1388"/>
+<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="577,1421,719,1462"/>
+<area shape="rect" id="node41" href="$mltply_m_p_i_hubbard_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="577,1355,719,1397"/>
+<area shape="rect" id="node43" href="$mltply_m_p_i_hubbard_core_8c.html#a65a9cb52d6f6b78d3c5c26bb091f2b0b" title="Single creation/annihilation operator in the inter process region for HubbardGC. " alt="" coords="115,1209,231,1236"/>
+<area shape="rect" id="node44" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="123,727,224,753"/>
+<area shape="rect" id="node3" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="325,269,459,296"/>
+<area shape="rect" id="node7" href="$mltply_m_p_i_hubbard_core_8c.html#ac3f88b541387e7b9b13758fa855b9327" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="1078,355,1229,397"/>
+<area shape="rect" id="node4" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="expec_cisajs_Hubbard" alt="" coords="571,121,725,148"/>
+<area shape="rect" id="node5" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="1303,177,1409,204"/>
+<area shape="rect" id="node6" href="$_pair_ex_hubbard_8c.html#ad6ea48aa669d72fd8cc85162bae8b834" title="GetPairExcitedStateHubbard" alt="" coords="553,172,743,199"/>
+<area shape="rect" id="node8" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="1291,385,1421,426"/>
+<area shape="rect" id="node10" href="$mltply_m_p_i_hubbard_core_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="829,254,979,295"/>
+<area shape="rect" id="node12" href="$_single_ex_hubbard_8c.html#a1402ad7c646461af3781c428888db645" title="GetSingleExcitedStateHubbardGC" alt="" coords="281,1311,503,1337"/>
+<area shape="rect" id="node13" href="$_single_ex_8c.html#a43797ff504ab9bf349fdf9f7561d2038" title="GetSingleExcitedState" alt="" coords="571,1487,725,1513"/>
+<area shape="rect" id="node16" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="863,719,945,745"/>
+<area shape="rect" id="node18" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="568,1291,728,1317"/>
+<area shape="rect" id="node25" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="1064,999,1243,1041"/>
+<area shape="rect" id="node17" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1097,719,1210,745"/>
+<area shape="rect" id="node19" href="$expec__cisajs_8c.html#a0d30174954dc8ad83ceeba5932ece811" title="expec_cisajs_HubbardGC" alt="" coords="817,1428,991,1455"/>
+<area shape="rect" id="node20" href="$mltply_hubbard_8c.html#a3a8ead6d49a5b1621694d91c05ee3dc2" title="perform Hamiltonian vector product for (extended) Hubbard type model (Grandcanonical). &#160;" alt="" coords="1293,1251,1419,1277"/>
+<area shape="rect" id="node21" href="$_pair_ex_hubbard_8c.html#aab52ec15363468b5cc7dd30215d889fe" title="GetPairExcitedStateHubbardGC" alt="" coords="799,1377,1009,1404"/>
+<area shape="rect" id="node23" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="1291,922,1421,963"/>
+<area shape="rect" id="node24" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="815,1159,993,1201"/>
+<area shape="rect" id="node27" href="$_single_ex_hubbard_8c.html#a5c47554603676d2da6345b76e562cd4f" title="GetSingleExcitedStateHubbard" alt="" coords="291,1487,493,1513"/>
+<area shape="rect" id="node32" href="$mltply_m_p_i_hubbard_8c.html#ab1b2e0743624e8698eb36484166f92cc" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="837,5,971,46"/>
+<area shape="rect" id="node34" href="$mltply_m_p_i_hubbard_8c.html#aa938067934c1c1a813b5bbc5c94f9d26" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="1087,73,1220,114"/>
+<area shape="rect" id="node39" href="$mltply_m_p_i_hubbard_8c.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="1073,1457,1233,1498"/>
+<area shape="rect" id="node40" href="$mltply_m_p_i_hubbard_core_8c.html#a5d60d0a1211bf7dd5fea8be49de9b655" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="793,1479,1015,1505"/>
+<area shape="rect" id="node42" href="$mltply_m_p_i_hubbard_8c.html#a83da98c99feda75fe253ef0177bbb9ab" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="1073,1327,1233,1369"/>
+<area shape="rect" id="node45" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="355,597,429,624"/>
+<area shape="rect" id="node46" href="$mltply_hubbard_core_8c.html#a2e64839292192a5851d4be60a4f3561a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="581,489,715,530"/>
+<area shape="rect" id="node47" href="$mltply_hubbard_core_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="567,657,729,698"/>
+<area shape="rect" id="node48" href="$mltply_hubbard_core_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="565,774,731,815"/>
+<area shape="rect" id="node49" href="$mltply_hubbard_core_8c.html#a6d06655a28258eea84191579396219e1" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="567,839,729,881"/>
+<area shape="rect" id="node50" href="$mltply_m_p_i_hubbard_core_8c.html#a81ceaf1edd9e416156a2430f36ca6de3" title="Compute the index of final wavefunction associated to , and Fermion sign. " alt="" coords="339,777,445,804"/>
 </map>

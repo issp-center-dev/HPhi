@@ -1,7 +1,8 @@
 <map id="CheckModPara" name="CheckModPara">
-<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="561,93,617,120"/>
-<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="StdFace_PrintVal_i" alt="" coords="377,43,513,69"/>
-<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672" title="StdFace_RequiredVal_i" alt="" coords="167,93,329,120"/>
-<area shape="rect" id="node6" href="$_std_face___model_util_8c.html#afb9e23628e57aea2f08ef65acc308c2a" title="StdFace_NotUsed_i" alt="" coords="177,144,319,171"/>
-<area shape="rect" id="node5" href="$wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="412,144,479,171"/>
+<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="561,128,615,155"/>
+<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#afb9e23628e57aea2f08ef65acc308c2a" title="Stop HPhi if a variable (integer) not used is specified in the input file (!=2147483647, the upper limt of Int). " alt="" coords="175,103,315,130"/>
+<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#a40c0095bc5329e343502d453f929fecc" title="Print a valiable (real) read from the input file if it is not specified in the input file (=NaN)..." alt="" coords="373,52,512,79"/>
+<area shape="rect" id="node6" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="Print a valiable (integer) read from the input file if it is not specified in the input file (=214748..." alt="" coords="375,255,510,282"/>
+<area shape="rect" id="node7" href="$_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672" title="Stop HPhi if a variable (integer) which must be specified is absent in the input file (=2147483647..." alt="" coords="166,154,325,180"/>
+<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3" title="MPI Abortation wrapper. " alt="" coords="393,154,492,180"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="totalSz_HubbardGC" name="totalSz_HubbardGC">
-<area shape="rect" id="node2" href="$expec__totalspin_8h.html#adb43b14df5064ba7ac4e6963df681b0e" title="expec_totalSz" alt="" coords="195,5,300,32"/>
-<area shape="rect" id="node3" href="$_calc_by_lanczos_8h.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="348,5,461,32"/>
+<area shape="rect" id="node2" href="$expec__totalspin_8c.html#adb43b14df5064ba7ac4e6963df681b0e" title="expec_totalSz" alt="" coords="193,5,298,32"/>
+<area shape="rect" id="node3" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="347,5,461,32"/>
 <area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="509,5,560,32"/>
 </map>

@@ -20,6 +20,8 @@ var _error_message_8c =
     [ "cErrIncorrectSpinIndexForInter", "_error_message_8c.html#a1237dce85b0631159661115251be53c5", null ],
     [ "cErrIncorrectSpinIndexForTrans", "_error_message_8c.html#a015521bc82ab0bae0d1a48fe7af0c11a", null ],
     [ "cErrIndices", "_error_message_8c.html#aceabc6afdd09edea8fa682cf91aef595", null ],
+    [ "cErrInputHam", "_error_message_8c.html#a4e054eee42b3bacd279feec994e9188b", null ],
+    [ "cErrInputOutputHam", "_error_message_8c.html#a2c7bc54de98f4c6e60a07fb8653e435d", null ],
     [ "cErrKW", "_error_message_8c.html#a0259ff92d7bc6fb9e9f5ab71466c66ad", null ],
     [ "cErrKW_InCorPair", "_error_message_8c.html#a5a7cbac5f607d81c69f56e8e6d279daf", null ],
     [ "cErrKW_Same", "_error_message_8c.html#afb0005b1bf95a7214d6a0a3d8fb729e4", null ],

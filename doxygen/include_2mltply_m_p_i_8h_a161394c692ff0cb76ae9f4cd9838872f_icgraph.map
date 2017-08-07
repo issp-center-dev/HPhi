@@ -1,7 +1,0 @@
-<map id="X_child_general_int_spin_TotalS_MPIdouble" name="X_child_general_int_spin_TotalS_MPIdouble">
-<area shape="rect" id="node2" href="$expec__totalspin_8h.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="224,13,329,39"/>
-<area shape="rect" id="node3" href="$expec__totalspin_8h.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="377,13,492,39"/>
-<area shape="rect" id="node4" href="$phys_8c.html#a4784e37301cd2d9b525dd754f864f60f" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="540,13,591,39"/>
-<area shape="rect" id="node5" href="$_calc_by_full_diag_8h.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="639,13,752,39"/>
-<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="800,13,851,39"/>
-</map>

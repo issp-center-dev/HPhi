@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['expert_5fmode',['EXPERT_MODE',['../readdef_8h.html#a56c951021b5d6f68319a0e1df652b347',1,'readdef.h']]]
+  ['locspin',['LOCSPIN',['../global_8h.html#ab9bea19409ce422341ff83b2df4e1955',1,'global.h']]]
 ];

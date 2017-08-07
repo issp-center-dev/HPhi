@@ -4,6 +4,8 @@ var _progress_message_8c =
     [ "cLogFullDiag_End", "_progress_message_8c.html#aead2c0d63388c7b0fbdadf9345bbbd09", null ],
     [ "cLogFullDiag_ExpecValue_End", "_progress_message_8c.html#ae9a778f477363533e3dba910f769d52b", null ],
     [ "cLogFullDiag_ExpecValue_Start", "_progress_message_8c.html#a405676826ce2662595467ae41fefdbb1", null ],
+    [ "cLogFullDiag_InputHam_End", "_progress_message_8c.html#a1e66ba8e5c54d1959299007c938d44f7", null ],
+    [ "cLogFullDiag_InputHam_Start", "_progress_message_8c.html#a72f33a4cfc5c5b212904fddf0941ecfb", null ],
     [ "cLogFullDiag_OutputHam_End", "_progress_message_8c.html#a2b93016f44c29fbf6f94f98daa07f5f9", null ],
     [ "cLogFullDiag_OutputHam_Start", "_progress_message_8c.html#a9232ff000f60c5c436cd3db055b13614", null ],
     [ "cLogFullDiag_SetHam_End", "_progress_message_8c.html#a85740ac8e64c0acb39dbdb5d8976954f", null ],

@@ -1,51 +1,51 @@
 <map id="CalcSpectrum" name="CalcSpectrum">
-<area shape="rect" id="node2" href="$_calc_spectrum_8c.html#ab57989b65ec16d878470ba35b7903c29" title="SetOmega" alt="" coords="621,1216,707,1243"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1029,1449,1085,1476"/>
-<area shape="rect" id="node7" href="$wrapper_m_p_i_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="exitMPI" alt="" coords="858,401,925,428"/>
-<area shape="rect" id="node8" href="$_calc_time_8h.html#a2581cae87041a26e35cc11d2b36433ea" title="StartTimer" alt="" coords="622,1907,706,1933"/>
-<area shape="rect" id="node10" href="$log_8h.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="617,1637,711,1664"/>
-<area shape="rect" id="node11" href="$readdef_8h.html#aaec5cf09e748516c67d072daff674224" title="GetFileNameByKW" alt="" coords="159,2059,296,2085"/>
-<area shape="rect" id="node12" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="childfopenALL" alt="" coords="611,1805,717,1832"/>
-<area shape="rect" id="node13" href="$_calc_time_8h.html#a7a401c1e932bb7ff998602ee237fbecd" title="StopTimer" alt="" coords="622,2008,706,2035"/>
-<area shape="rect" id="node14" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="168,401,287,428"/>
-<area shape="rect" id="node33" href="$wrapper_m_p_i_8h.html#a26d9f2a4d2828fca2b8d6d45cea697a2" title="NormMPI_dc" alt="" coords="177,2109,277,2136"/>
-<area shape="rect" id="node35" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="344,1688,515,1715"/>
-<area shape="rect" id="node40" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="355,1397,504,1424"/>
-<area shape="rect" id="node45" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="CalcSpectrumByFullDiag" alt="" coords="344,1957,515,1984"/>
-<area shape="rect" id="node50" href="$_calc_spectrum_8c.html#ab25f1866d9e94f458722189a626e8c7f" title="OutputSpectrum" alt="" coords="605,1536,723,1563"/>
-<area shape="rect" id="node3" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="childfopenMPI" alt="" coords="838,1551,945,1577"/>
-<area shape="rect" id="node6" href="$wrapper_m_p_i_8h.html#aa75a96d74dddc8e6921813225e318551" title="fgetsMPI" alt="" coords="854,1315,929,1341"/>
-<area shape="rect" id="node4" href="$wrapper_m_p_i_8h.html#a405f88de519282b8e7605988745f42ae" title="fopenMPI" alt="" coords="1017,1551,1096,1577"/>
-<area shape="rect" id="node9" href="$time_8c.html#a09055e12510906b688d27c7d578beb37" title="clock_gettime_general" alt="" coords="813,1907,969,1933"/>
-<area shape="rect" id="node15" href="$_single_ex_8h.html#a43797ff504ab9bf349fdf9f7561d2038" title="GetSingleExcitedState" alt="" coords="351,193,507,220"/>
-<area shape="rect" id="node20" href="$_pair_ex_8h.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="358,608,501,635"/>
-<area shape="rect" id="node16" href="$_single_ex_8c.html#a2b94d5fabf8b6b178189764993fc4524" title="X_GC_Cis_MPI" alt="" coords="606,92,722,119"/>
-<area shape="rect" id="node17" href="$_single_ex_8c.html#a82057cd7316bca01585868207301cf39" title="GC_Cis" alt="" coords="629,193,699,220"/>
-<area shape="rect" id="node18" href="$_single_ex_8c.html#a26a65ab9ccf61b540b48787ce369bab8" title="X_GC_Ajt_MPI" alt="" coords="608,244,720,271"/>
-<area shape="rect" id="node19" href="$_single_ex_8c.html#a414245ea3f4742224f9d99a0da15a228" title="GC_Ajt" alt="" coords="631,143,697,169"/>
-<area shape="rect" id="node21" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="823,947,960,973"/>
-<area shape="rect" id="node22" href="$mltply_m_p_i_8h.html#a987bcd9d7be83743c90f148481ff5cd3" title="X_GC_child_general\l_hopp_MPIdouble" alt="" coords="591,361,737,402"/>
-<area shape="rect" id="node23" href="$mltply_m_p_i_8h.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="X_GC_child_general\l_hopp_MPIsingle" alt="" coords="591,426,737,467"/>
-<area shape="rect" id="node24" href="$mltply_8h.html#af29e620c3f3ae1fe39112a747bc1b05d" title="GC_AisCis" alt="" coords="621,709,707,736"/>
-<area shape="rect" id="node25" href="$mltply_8h.html#ad2c9c4176ec4f0f7d5087a890467a264" title="child_general_hopp\l_GetInfo" alt="" coords="822,998,961,1039"/>
-<area shape="rect" id="node26" href="$mltply_8h.html#a59f11fc0359c4543168c6a6f61a1ec70" title="GC_child_general_hopp" alt="" coords="581,760,747,787"/>
-<area shape="rect" id="node27" href="$mltply_m_p_i_8h.html#aed2861272c984ba51e9c76bdbdfad67f" title="X_child_general_hopp\l_MPIdouble" alt="" coords="587,491,741,533"/>
-<area shape="rect" id="node28" href="$mltply_m_p_i_8h.html#af402c076da283e62da488dbd305f36cf" title="X_child_general_hopp\l_MPIsingle" alt="" coords="587,295,741,337"/>
-<area shape="rect" id="node29" href="$mltply_8h.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="child_general_hopp" alt="" coords="595,557,733,584"/>
-<area shape="rect" id="node30" href="$mltply_8h.html#a5d9e5a462ca77248cbae177465fa02c3" title="X_SpinGC_CisAis" alt="" coords="599,608,729,635"/>
-<area shape="rect" id="node31" href="$mltply_8h.html#a93558eb8cb0c4df2ce01e0611b771f66" title="X_Spin_CisAis" alt="" coords="836,1064,947,1091"/>
-<area shape="rect" id="node32" href="$bitcalc_8c.html#ab60f50af237c37fc1cdd44f22ac69264" title="bit check function for general spin " alt="" coords="603,659,725,685"/>
-<area shape="rect" id="node34" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="SumMPI_dc" alt="" coords="382,2109,477,2136"/>
-<area shape="rect" id="node36" href="$_calc_spectrum_by_lanczos_8c.html#a3e5349b13352a4da1915a469aa5276ef" title="ReadTMComponents" alt="" coords="589,1485,739,1512"/>
-<area shape="rect" id="node37" href="$_lanczos___eigen_value_8h.html#ac536f009abb3f064667c505d46e9455f" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="563,1419,765,1461"/>
-<area shape="rect" id="node38" href="$_calc_spectrum_by_lanczos_8c.html#a5af85492f28a3149d635fdbaffa17aa5" title="OutputTMComponents" alt="" coords="585,1587,743,1613"/>
-<area shape="rect" id="node39" href="$_calc_spectrum_by_lanczos_8c.html#aef3837419fbdcabbb82bee3cd912b6c8" title="GetSpectrumByTridiagonal\lMatrixComponents" alt="" coords="573,1739,755,1781"/>
-<area shape="rect" id="node41" href="$_calc_spectrum_by_t_p_q_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817" title="ReadTPQData" alt="" coords="609,1267,719,1293"/>
-<area shape="rect" id="node42" href="$vec12_8h.html#ac7dc2d666b774e53e7eb510dcc28946b" title="vec12" alt="" coords="863,1388,920,1415"/>
-<area shape="rect" id="node43" href="$_calc_spectrum_by_t_p_q_8c.html#a778755c595a2f760086f2e99130d894b" title="GetCalcSpectrumTPQ" alt="" coords="814,1115,969,1141"/>
-<area shape="rect" id="node44" href="$xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f" title="d_free1" alt="" coords="631,1317,697,1344"/>
-<area shape="rect" id="node46" href="$_calc_spectrum_by_full_diag_8c.html#a676f26a4a8260fbaf22b7eee149ebbfc" title="zcopy_" alt="" coords="632,2109,696,2136"/>
-<area shape="rect" id="node47" href="$make_ham_8h.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="623,1013,705,1040"/>
-<area shape="rect" id="node48" href="$lapack__diag_8h.html#a21085cc1f3c40e6b673bf469e6584836" title="lapack_diag" alt="" coords="617,1957,711,1984"/>
-<area shape="rect" id="node49" href="$_calc_spectrum_by_full_diag_8c.html#a961b0a8ede3c5d20ece303295df00ea6" title="zdotc_" alt="" coords="633,2059,695,2085"/>
+<area shape="rect" id="node2" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="402,994,555,1021"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1323,1805,1378,1832"/>
+<area shape="rect" id="node4" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="913,1298,1005,1325"/>
+<area shape="rect" id="node6" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="907,994,1011,1021"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1156,690,1223,717"/>
+<area shape="rect" id="node11" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="StartTimer" alt="" coords="917,266,1000,293"/>
+<area shape="rect" id="node12" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="StopTimer" alt="" coords="917,329,1000,356"/>
+<area shape="rect" id="node16" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="635,82,805,109"/>
+<area shape="rect" id="node20" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="160,592,331,618"/>
+<area shape="rect" id="node27" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="171,1476,319,1502"/>
+<area shape="rect" id="node32" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="673,2210,767,2237"/>
+<area shape="rect" id="node38" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="186,1932,305,1958"/>
+<area shape="rect" id="node41" href="$readdef_8c.html#afa1a7211e33cdb1be5abc85e4bb42d9c" title="GetFileNameByKW" alt="" coords="177,1805,314,1832"/>
+<area shape="rect" id="node42" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="MakeExcitedList" alt="" coords="419,2413,538,2440"/>
+<area shape="rect" id="node48" href="$wrapper_m_p_i_8c.html#a26d9f2a4d2828fca2b8d6d45cea697a2" title="Compute norm of process&#45;distributed vector . " alt="" coords="196,808,295,834"/>
+<area shape="rect" id="node49" href="$_calc_spectrum_8c.html#ab25f1866d9e94f458722189a626e8c7f" title="OutputSpectrum" alt="" coords="900,1805,1017,1832"/>
+<area shape="rect" id="node50" href="$_calc_spectrum_8c.html#ab57989b65ec16d878470ba35b7903c29" title="SetOmega" alt="" coords="678,1653,762,1680"/>
+<area shape="rect" id="node5" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1137,1501,1242,1528"/>
+<area shape="rect" id="node8" href="$_calc_spectrum_by_bi_c_g_8c.html#a7ae40c5b4d8e86ddbb51ca029237f52e" title="Read , projected residual for restart. " alt="" coords="627,1450,813,1477"/>
+<area shape="rect" id="node10" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="691,488,749,514"/>
+<area shape="rect" id="node14" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="672,690,768,717"/>
+<area shape="rect" id="node15" href="$_calc_spectrum_by_bi_c_g_8c.html#aff7084decdcdad72ca2dfa626e62ca8c" title="write , projected residual for restart " alt="" coords="862,1096,1055,1122"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="921,1400,996,1426"/>
+<area shape="rect" id="node13" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="911,589,1006,616"/>
+<area shape="rect" id="node17" href="$_calc_spectrum_by_full_diag_8c.html#a676f26a4a8260fbaf22b7eee149ebbfc" title="zcopy_" alt="" coords="927,57,991,84"/>
+<area shape="rect" id="node18" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="917,108,1000,134"/>
+<area shape="rect" id="node19" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="lapack_diag" alt="" coords="913,158,1004,185"/>
+<area shape="rect" id="node21" href="$_lanczos___eigen_value_8c.html#a589f87aa6c08653bdff551e16cb825dc" title="ReadInitialVector" alt="" coords="659,893,781,920"/>
+<area shape="rect" id="node22" href="$_lanczos___eigen_value_8c.html#a08d824aef2e4734073596becf3135c61" title="ReadTMComponents" alt="" coords="647,1501,793,1528"/>
+<area shape="rect" id="node23" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="379,555,578,596"/>
+<area shape="rect" id="node24" href="$_lanczos___eigen_value_8c.html#a6201431fa13bae678e68d8809e80a7e1" title="OutputTMComponents" alt="" coords="401,1501,556,1528"/>
+<area shape="rect" id="node25" href="$_calc_spectrum_by_lanczos_8c.html#aef3837419fbdcabbb82bee3cd912b6c8" title="GetSpectrumByTridiagonal\lMatrixComponents" alt="" coords="389,438,568,479"/>
+<area shape="rect" id="node26" href="$_lanczos___eigen_value_8c.html#a81a9c4d54ef73eb91df2cdf8243548d6" title="OutputLanczosVector" alt="" coords="646,944,794,970"/>
+<area shape="rect" id="node28" href="$_calc_spectrum_by_t_p_q_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817" title="ReadTPQData" alt="" coords="425,1552,533,1578"/>
+<area shape="rect" id="node29" href="$vec12_8c.html#a135e0d7c61f28a9644f71ec0b468eb88" title="vec12" alt="" coords="1161,1906,1218,1933"/>
+<area shape="rect" id="node30" href="$_calc_spectrum_by_t_p_q_8c.html#a778755c595a2f760086f2e99130d894b" title="GetCalcSpectrumTPQ" alt="" coords="1113,1957,1266,1984"/>
+<area shape="rect" id="node31" href="$xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f" title="d_free1" alt="" coords="446,1653,511,1680"/>
+<area shape="rect" id="node33" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="coulombintra interaction are given by &#160;" alt="" coords="1104,2413,1275,2440"/>
+<area shape="rect" id="node34" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="SetDiagonalChemi" alt="" coords="1124,2121,1255,2148"/>
+<area shape="rect" id="node35" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="SetDiagonalCoulombInter" alt="" coords="1104,2174,1275,2201"/>
+<area shape="rect" id="node36" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="SetDiagonalHund" alt="" coords="1127,2232,1251,2258"/>
+<area shape="rect" id="node37" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="SetDiagonalInterAll" alt="" coords="1122,2286,1257,2313"/>
+<area shape="rect" id="node39" href="$_single_ex_8c.html#a43797ff504ab9bf349fdf9f7561d2038" title="GetSingleExcitedState" alt="" coords="401,1906,556,1933"/>
+<area shape="rect" id="node40" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="408,1957,549,1984"/>
+<area shape="rect" id="node43" href="$check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193" title="A program to check size of dimension for hirbert&#45;space. " alt="" coords="930,2058,987,2085"/>
+<area shape="rect" id="node44" href="$wrapper_m_p_i_8c.html#ab01492e7612823a34a325619f46862e5" title="MPI Finitialization wrapper. " alt="" coords="1144,2514,1235,2541"/>
+<area shape="rect" id="node45" href="$xsetmem_8c.html#a515c905af1b73d36feed8e99b4f9171d" title="GetlistSize" alt="" coords="915,2565,1002,2592"/>
+<area shape="rect" id="node46" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="sz" alt="" coords="701,1602,739,1629"/>
+<area shape="rect" id="node47" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="setmem_large" alt="" coords="668,2616,772,2642"/>
 </map>

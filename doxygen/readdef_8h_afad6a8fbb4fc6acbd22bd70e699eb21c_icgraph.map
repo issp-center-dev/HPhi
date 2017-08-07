@@ -1,8 +1,0 @@
-<map id="CheckWords" name="CheckWords">
-<area shape="rect" id="node2" href="$readdef_8c.html#ad8ab1bf637b562388b376ffe8bbff91b" title="Function of Checking keyword in NameList file. " alt="" coords="174,5,255,32"/>
-<area shape="rect" id="node4" href="$readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1" title="Function of reading informations from def files. " alt="" coords="483,81,603,108"/>
-<area shape="rect" id="node6" href="$readdef_8c.html#ab8b765c6b13b09923368a2c8bec319ca" title="Function of Reading calcmod file. " alt="" coords="152,107,277,133"/>
-<area shape="rect" id="node7" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="325,157,435,184"/>
-<area shape="rect" id="node3" href="$readdef_8c.html#a500b57266b13cf3bc4a89f222179a03d" title="Function of Fitting FileName. " alt="" coords="330,5,430,32"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="651,107,701,133"/>
-</map>
