@@ -69,11 +69,3 @@ int diagonalcalcForTE(
         double complex *tmp_v1
 );
 
-int SetDiagonalTETransfer(
-        long unsigned int isite1,
-        double dtmp_V,
-        long unsigned int spin,
-        struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
-);

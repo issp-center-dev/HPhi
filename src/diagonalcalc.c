@@ -35,6 +35,36 @@
 #include "mltplySpinCore.h"
 #include "wrapperMPI.h"
 
+
+int SetDiagonalTETransfer(
+        long unsigned int isite1,
+        double dtmp_V,
+        long unsigned int spin,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+);
+
+int SetDiagonalTEInterAll(
+        long unsigned int isite1,
+        long unsigned int isite2,
+        long unsigned int isigma1,
+        long unsigned int isigma2,
+        double dtmp_V,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+);
+
+int SetDiagonalTEChemi(
+        long unsigned int isite1,
+        long unsigned int spin,
+        double dtmp_V,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+);
+
 /** 
  * @fn function for calculating diagonal components
  * 
@@ -149,13 +179,6 @@ int diagonalcalc
   return 0;
 }
 
-/*
-                  X->TETransferDiagonal[idx][icntchemi][0] = tmp_TETransfer[i][0];
-                  X->TETransferDiagonal[idx][icntchemi][1] = tmp_TETransfer[i][1];
-                  X->ParaTETransferDiagonal[idx][icntchemi] = creal(tmp_paraTETransfer[i]);
-
- */
-
 ///  @fn function for calculating diagonal components
 /// \param X
 /// \param tmp_v0
@@ -174,12 +197,6 @@ int diagonalcalcForTE
   long unsigned int isite1, isite2;
   long unsigned int A_spin, B_spin;
   double tmp_V;
-  long unsigned int i_max = X->Check.idim_max;
-
-#pragma omp parallel for default(none) private(j) shared(list_Diagonal) firstprivate(i_max)
-  for (j = 1; j <= i_max; j++) {
-    list_Diagonal[j] = 0.0;
-  }
 
   if (X->Def.NTETransferDiagonal[_istep] > 0) {
     for (i = 0; i < X->Def.NTETransferDiagonal[_istep]; i++) {
@@ -189,20 +206,30 @@ int diagonalcalcForTE
       SetDiagonalTETransfer(isite1, tmp_V, A_spin, X, tmp_v0, tmp_v1);
     }
   }
+  else if (X->Def.NTEInterAllDiagonal[_istep] >0) {
+    for (i = 0; i < X->Def.NTEInterAllDiagonal[_istep]; i++) {
+      //Assume n_{1\sigma_1} n_{2\sigma_2}
+      isite1 = X->Def.TEInterAllDiagonal[_istep][i][0] + 1;
+      A_spin = X->Def.TEInterAllDiagonal[_istep][i][1];
+      isite2 = X->Def.TEInterAllDiagonal[_istep][i][4] + 1;
+      B_spin = X->Def.TEInterAllDiagonal[_istep][i][5];
+      tmp_V = X->Def.ParaTEInterAllDiagonal[_istep][i];
 
- /*  [TODO] to be added
- else if (X->Def.NInterAll_Diagonal > 0) {
-    for (i = 0; i < X->Def.NInterAll_Diagonal; i++) {
-      isite1 = X->Def.InterAll_Diagonal[i][0] + 1;
-      A_spin = X->Def.InterAll_Diagonal[i][1];
-      isite2 = X->Def.InterAll_Diagonal[i][2] + 1;
-      B_spin = X->Def.InterAll_Diagonal[i][3];
-      tmp_V = X->Def.ParaInterAll_Diagonal[i];
-      SetDiagonalInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X);
+      if (SetDiagonalTEInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X, tmp_v0, tmp_v1) != 0) {
+        return -1;
+      }
     }
-    fclose(fp);
+
+    if (X->Def.NTEChemi[_istep] > 0) {
+      isite1 = X->Def.EDChemi[i]+1;
+      A_spin   = X->Def.EDSpinChemi[i];
+      tmp_V  = -X->Def.EDParaChemi[i];
+
+      if (SetDiagonalTEChemi(isite1, A_spin, tmp_V, X, tmp_v0, tmp_v1) != 0) {
+        return -1;
+      }
+    }
   }
-  */
   return 0;
 }
 
@@ -472,7 +499,7 @@ firstprivate(i_max, dtmp_V) private(j)
      for(j = 1;j <= i_max; j++){
        num1=BitCheckGeneral (list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
        if(num1 != 0){
-	 list_Diagonal[j] += dtmp_V;
+         list_Diagonal[j] += dtmp_V;
        }
      }
     }
@@ -1362,6 +1389,474 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
    
   return 0;
 
+}
+
+int SetDiagonalTEInterAll(
+        long unsigned int isite1,
+        long unsigned int isite2,
+        long unsigned int isigma1,
+        long unsigned int isigma2,
+        double dtmp_V,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+){
+  long unsigned int is1_spin;
+  long unsigned int is2_spin;
+  long unsigned int is1_up;
+  long unsigned int is2_up;
+
+  long unsigned int ibit1_spin;
+  long unsigned int ibit2_spin;
+
+  long unsigned int num1;
+  long unsigned int num2;
+
+  long unsigned int j;
+  long unsigned int i_max=X->Check.idim_max;
+  double complex dam_pr=0.0;
+
+
+  /*
+  Forse isite1 <= isite2
+  */
+  if (isite2 < isite1) {
+    j = isite2;
+    isite2 = isite1;
+    isite1 = j;
+    j = isigma2;
+    isigma2 = isigma1;
+    isigma1 = j;
+  }
+  /*
+  When isite1 & site2 are in the inter process regino
+  */
+  if (isite1 > X->Def.Nsite) {
+
+    switch (X->Def.iCalcModel) {
+
+      case HubbardGC:
+      case KondoGC:
+      case Hubbard:
+      case Kondo:
+        is1_spin = X->Def.Tpow[2 * isite1 - 2 + isigma1];
+        is2_spin = X->Def.Tpow[2 * isite2 - 2 + isigma2];
+        num1 = 0;
+        ibit1_spin = (unsigned long int)myrank&is1_spin;
+        num1 += ibit1_spin / is1_spin;
+        num2 = 0;
+        ibit2_spin = (unsigned long int)myrank&is2_spin;
+        num2 += ibit2_spin / is2_spin;
+        break;/*case HubbardGC, KondoGC, Hubbard, Kondo:*/
+
+      case SpinGC:
+      case Spin:
+        if (X->Def.iFlgGeneralSpin == FALSE) {
+          is1_up = X->Def.Tpow[isite1 - 1];
+          is2_up = X->Def.Tpow[isite2 - 1];
+          num1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, isigma1);
+          num2 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is2_up, isigma2);
+        }/*if (X->Def.iFlgGeneralSpin == FALSE)*/
+        else {//start:generalspin
+          num1 = BitCheckGeneral((unsigned long int) myrank, isite1, isigma1,
+                                 X->Def.SiteToBit, X->Def.Tpow);
+          num2 = BitCheckGeneral((unsigned long int) myrank, isite2, isigma2,
+                                 X->Def.SiteToBit, X->Def.Tpow);
+        }
+        break;/*case SpinGC, Spin:*/
+
+      default:
+        fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+        return -1;
+    }/*if (isite1 > X->Def.Nsite)*/
+
+    if (num1 * num2 != 0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) \
+firstprivate(i_max, dtmp_V) private(j)
+      for (j = 1; j <= i_max; j++) {
+        tmp_v0[j] += dtmp_V * tmp_v1[j];
+        dam_pr += dtmp_V * conj(tmp_v1[j]) * tmp_v1[j];
+      }
+    }
+    X->Large.prdct += dam_pr;
+    return 0;
+
+  }/*if (isite1 > X->Def.Nsite)*/
+  else if (isite2 > X->Def.Nsite) {
+
+    switch (X->Def.iCalcModel) {
+
+      case HubbardGC:
+
+        is1_spin = X->Def.Tpow[2 * isite1 - 2 + isigma1];
+        is2_spin = X->Def.Tpow[2 * isite2 - 2 + isigma2];
+
+        num2 = 0;
+        ibit2_spin = (unsigned long int)myrank&is2_spin;
+        num2 += ibit2_spin / is2_spin;
+        if(num2 !=0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1)\
+                     firstprivate(i_max, dtmp_V, is1_spin) private(num1, ibit1_spin, j)
+          for (j = 1; j <= i_max; j++) {
+            num1 = 0;
+            ibit1_spin = (j - 1) & is1_spin;
+            num1 += ibit1_spin / is1_spin;
+            tmp_v0[j] += dtmp_V * num1 * tmp_v1[j];
+            dam_pr += dtmp_V * num1 * conj(tmp_v1[j]) * tmp_v1[j];
+          }
+        }
+        break;/*case HubbardGC:*/
+
+      case KondoGC:
+      case Hubbard:
+      case Kondo:
+
+        is1_spin = X->Def.Tpow[2 * isite1 - 2 + isigma1];
+        is2_spin = X->Def.Tpow[2 * isite2 - 2 + isigma2];
+
+        num2 = 0;
+        ibit2_spin = (unsigned long int)myrank&is2_spin;
+        num2 += ibit2_spin / is2_spin;
+        if(num2 !=0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1, list_1)\
+                     firstprivate(i_max, dtmp_V, is1_spin) private(num1, ibit1_spin, j)
+          for (j = 1; j <= i_max; j++) {
+            num1 = 0;
+            ibit1_spin = list_1[j] & is1_spin;
+            num1 += ibit1_spin / is1_spin;
+            tmp_v0[j] += dtmp_V *num1*tmp_v1[j];
+            dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+          }
+        }
+        break;/*case KondoGC, Hubbard, Kondo:*/
+
+      case SpinGC:
+
+        if (X->Def.iFlgGeneralSpin == FALSE) {
+          is1_up = X->Def.Tpow[isite1 - 1];
+          is2_up = X->Def.Tpow[isite2 - 1];
+          num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, isigma2);
+
+          if(num2 !=0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1)\
+                     firstprivate(i_max, dtmp_V, is1_up, isigma1, X) private(num1, j)
+            for (j = 1; j <= i_max; j++) {
+              num1 = X_SpinGC_CisAis(j, X, is1_up, isigma1);
+              tmp_v0[j] += dtmp_V * num1 * tmp_v1[j];
+              dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+            }
+          }
+        }/* if (X->Def.iFlgGeneralSpin == FALSE)*/
+        else {//start:generalspin
+          num2 = BitCheckGeneral((unsigned long int)myrank, isite2, isigma2,
+                                 X->Def.SiteToBit, X->Def.Tpow);
+          if (num2 != 0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) \
+firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
+            for (j = 1; j <= i_max; j++) {
+              num1 = BitCheckGeneral(j - 1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+              tmp_v0[j] += dtmp_V * num1 * tmp_v1[j];
+              dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+            }
+          }
+        }/* if (X->Def.iFlgGeneralSpin == TRUE)*/
+
+        break;/*case SpinGC:*/
+
+      case Spin:
+
+        if (X->Def.iFlgGeneralSpin == FALSE) {
+          is1_up = X->Def.Tpow[isite1 - 1];
+          is2_up = X->Def.Tpow[isite2 - 1];
+          num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, isigma2);
+
+          if(num2 !=0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) \
+firstprivate(i_max, dtmp_V, is1_up, isigma1, X, num2) private(j, num1)
+            for (j = 1; j <= i_max; j++) {
+              num1 = X_Spin_CisAis(j, X, is1_up, isigma1);
+              tmp_v0[j] += dtmp_V * num1 * tmp_v1[j];
+              dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+            }
+          }
+        }/* if (X->Def.iFlgGeneralSpin == FALSE)*/
+        else /* if (X->Def.iFlgGeneralSpin == TRUE)*/{
+          num2 = BitCheckGeneral((unsigned long int)myrank, isite2, isigma2, \
+          X->Def.SiteToBit, X->Def.Tpow);
+          if (num2 != 0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1, list_1)\
+firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
+            for (j = 1; j <= i_max; j++) {
+              num1 = BitCheckGeneral(list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+              tmp_v0[j] += dtmp_V * num1 * tmp_v1[j];
+              dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+            }
+          }
+        } /* if (X->Def.iFlgGeneralSpin == TRUE)*/
+
+        break;/*case Spin:*/
+
+      default:
+        fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+        return -1;
+
+    }/*switch (X->Def.iCalcModel)*/
+    X->Large.prdct += dam_pr;
+    return 0;
+  }/*else if (isite2 > X->Def.Nsite)*/
+
+  switch (X->Def.iCalcModel){
+    case HubbardGC: //list_1[j] -> j-1
+      is1_spin   = X->Def.Tpow[2*isite1-2+isigma1];
+      is2_spin   = X->Def.Tpow[2*isite2-2+isigma2];
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_spin, is2_spin) private(num1, ibit1_spin, num2, ibit2_spin)
+      for(j = 1;j <= i_max;j++){
+        num1=0;
+        num2=0;
+        ibit1_spin=(j-1)&is1_spin;
+        num1+=ibit1_spin/is1_spin;
+        ibit2_spin=(j-1)&is2_spin;
+        num2+=ibit2_spin/is2_spin;
+        tmp_v0[j] += dtmp_V * num1*num2*tmp_v1[j];
+        dam_pr += dtmp_V * num1*num2*conj(tmp_v1[j]) * tmp_v1[j];
+      }
+      break;
+    case KondoGC:
+    case Hubbard:
+    case Kondo:
+      is1_spin  = X->Def.Tpow[2*isite1-2+isigma1];
+      is2_spin = X->Def.Tpow[2*isite2-2+isigma2];
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1, list_1) firstprivate(i_max, dtmp_V, is1_spin, is2_spin) private(num1, ibit1_spin, num2, ibit2_spin)
+      for(j = 1;j <= i_max;j++){
+        num1=0;
+        num2=0;
+        ibit1_spin=list_1[j]&is1_spin;
+        num1+=ibit1_spin/is1_spin;
+
+        ibit2_spin=list_1[j]&is2_spin;
+        num2+=ibit2_spin/is2_spin;
+        tmp_v0[j] += dtmp_V * num1*num2*tmp_v1[j];
+        dam_pr += dtmp_V * num1*num2*conj(tmp_v1[j]) * tmp_v1[j];
+      }
+      break;
+
+    case Spin:
+      if(X->Def.iFlgGeneralSpin==FALSE){
+        is1_up   = X->Def.Tpow[isite1-1];
+        is2_up   = X->Def.Tpow[isite2-1];
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1)  firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
+        for(j = 1;j <= i_max; j++){
+          num1=X_Spin_CisAis(j, X, is1_up, isigma1);
+          num2=X_Spin_CisAis(j, X, is2_up, isigma2);
+          tmp_v0[j] += dtmp_V * num1*num2*tmp_v1[j];
+          dam_pr += dtmp_V * num1*num2*conj(tmp_v1[j]) * tmp_v1[j];
+        }
+      }
+      else{
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1, list_1) firstprivate(i_max, dtmp_V, isite1, isite2, isigma1, isigma2, X) private(j, num1)
+        for(j = 1;j <= i_max; j++){
+          num1=BitCheckGeneral (list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+          if(num1 != 0){
+            num1=BitCheckGeneral (list_1[j], isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+            tmp_v0[j] += dtmp_V *num1*tmp_v1[j];
+            dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+          }
+        }
+
+      }
+      break;
+
+    case SpinGC:
+      if(X->Def.iFlgGeneralSpin==FALSE){
+        is1_up   = X->Def.Tpow[isite1-1];
+        is2_up   = X->Def.Tpow[isite2-1];
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, is2_up, isigma1, isigma2, X) private(j, num1, num2)
+        for(j = 1;j <= i_max; j++){
+          num1=X_SpinGC_CisAis(j, X, is1_up, isigma1);
+          num2=X_SpinGC_CisAis(j, X, is2_up, isigma2);
+          tmp_v0[j] += dtmp_V * num1*num2*tmp_v1[j];
+          dam_pr += dtmp_V * num1*num2*conj(tmp_v1[j]) * tmp_v1[j];
+        }
+      }
+      else{//start:generalspin
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, isite1, isite2, isigma1, isigma2, X) private(j, num1)
+        for(j = 1;j <= i_max; j++){
+          num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+          if(num1 != 0){
+            num1=BitCheckGeneral (j-1, isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+            tmp_v0[j] += dtmp_V *num1*tmp_v1[j];
+            dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+          }
+        }
+      }
+      break;
+
+    default:
+      fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+      return -1;
+  }
+  X->Large.prdct += dam_pr;
+  return 0;
+}
+
+int SetDiagonalTEChemi(
+        long unsigned int isite1,
+        long unsigned int spin,
+        double dtmp_V,
+        struct BindStruct *X,
+        double complex *tmp_v0,
+        double complex *tmp_v1
+){
+  long unsigned int is1_up;
+  long unsigned int ibit1_up;
+  long unsigned int num1;
+  long unsigned int isigma1 =spin;
+  long unsigned int is1,ibit1;
+
+  long unsigned int j;
+  long unsigned int i_max=X->Check.idim_max;
+  double complex dam_pr=0;
+
+  /*
+    When isite1 is in the inter process region
+  */
+  if (isite1 > X->Def.Nsite){
+
+    switch (X->Def.iCalcModel) {
+
+      case HubbardGC:
+      case KondoGC:
+      case Hubbard:
+      case Kondo:
+
+        if (spin == 0) {
+          is1 = X->Def.Tpow[2 * isite1 - 2];
+        }
+        else {
+          is1 = X->Def.Tpow[2 * isite1 - 1];
+        }
+        ibit1 = (unsigned long int)myrank & is1;
+        num1 = ibit1 / is1;
+        break;/*case HubbardGC, case KondoGC, Hubbard, Kondo:*/
+
+      case SpinGC:
+      case Spin:
+
+        if (X->Def.iFlgGeneralSpin == FALSE) {
+          is1_up = X->Def.Tpow[isite1 - 1];
+          num1 = (((unsigned long int)myrank& is1_up) / is1_up) ^ (1 - spin);
+        } /*if (X->Def.iFlgGeneralSpin == FALSE)*/
+        else /*if (X->Def.iFlgGeneralSpin == TRUE)*/ {
+          num1 = BitCheckGeneral((unsigned long int)myrank,
+                                 isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+        }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
+        break;/*case SpinGC, Spin:*/
+
+      default:
+        fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+        return -1;
+
+    } /*switch (X->Def.iCalcModel)*/
+    if (num1 != 0) {
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1)  \
+firstprivate(i_max, dtmp_V) private(j)
+      for (j = 1; j <= i_max; j++){
+        tmp_v0[j] += dtmp_V * tmp_v1[j];
+        dam_pr += dtmp_V * conj(tmp_v1[j]) * tmp_v1[j];
+      }
+    }/*if (num1 != 0)*/
+    X->Large.prdct += dam_pr;
+    return 0;
+
+  }/*if (isite1 >= X->Def.Nsite*/
+
+  switch (X->Def.iCalcModel){
+    case HubbardGC:
+      if(spin==0){
+        is1   = X->Def.Tpow[2*isite1-2];
+      }else{
+        is1 = X->Def.Tpow[2*isite1-1];
+      }
+
+      #pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1) private(num1, ibit1)
+      for(j = 1;j <= i_max;j++){
+        ibit1 = (j-1)&is1;
+        num1  = ibit1/is1;
+        tmp_v0[j] += dtmp_V * num1*tmp_v1[j];
+        dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+      }
+      break;
+    case KondoGC:
+    case Hubbard:
+    case Kondo:
+      if(spin==0){
+        is1   = X->Def.Tpow[2*isite1-2];
+      }else{
+        is1 = X->Def.Tpow[2*isite1-1];
+      }
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1) private(num1, ibit1)
+      for(j = 1;j <= i_max;j++){
+
+        ibit1 = list_1[j]&is1;
+        num1  = ibit1/is1;
+        tmp_v0[j] += dtmp_V * num1*tmp_v1[j];
+        dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+      }
+      break;
+
+    case SpinGC:
+      if(X->Def.iFlgGeneralSpin==FALSE){
+        is1_up   = X->Def.Tpow[isite1-1];
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1)
+        for(j = 1;j <= i_max;j++){
+          num1=(((j-1)& is1_up)/is1_up)^(1-spin);
+          tmp_v0[j] += dtmp_V * num1*tmp_v1[j];
+          dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+        }
+      }
+      else{
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
+        for(j = 1;j <= i_max; j++){
+          num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+          if(num1 != 0){
+            tmp_v0[j] += dtmp_V * tmp_v1[j];
+            dam_pr += dtmp_V * conj(tmp_v1[j]) * tmp_v1[j];
+          }
+        }
+      }
+      break;
+
+    case Spin:
+      if(X->Def.iFlgGeneralSpin==FALSE){
+        is1_up   = X->Def.Tpow[isite1-1];
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1, ibit1_up)
+        for(j = 1;j <= i_max;j++){
+          num1=((list_1[j]& is1_up)/is1_up)^(1-spin);
+          tmp_v0[j] += dtmp_V * num1*tmp_v1[j];
+          dam_pr += dtmp_V * num1*conj(tmp_v1[j]) * tmp_v1[j];
+        }
+      }
+      else{
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(tmp_v0, tmp_v1, list_1) firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
+        for(j = 1;j <= i_max; j++){
+          num1=BitCheckGeneral (list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
+          if(num1 != 0){
+            tmp_v0[j] += dtmp_V * tmp_v1[j];
+            dam_pr += dtmp_V * conj(tmp_v1[j]) * tmp_v1[j];
+
+          }
+        }
+      }
+
+      break;
+    default:
+      fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
+      return -1;
+  }
+  X->Large.prdct += dam_pr;
+  return 0;
 }
 
 /**

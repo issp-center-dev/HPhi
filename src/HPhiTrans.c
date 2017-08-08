@@ -72,31 +72,6 @@ int HPhiTrans(struct BindStruct *X) {
   return 0;
 }
 
-///
-/// \param X
-/// \param timeidx
-/// \return
-int MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
-  int i,j;
-  //Clear values
-  for(i=0; i<X->Def.NTETransferMax ;i++) {
-    for(j =0; j<4; j++) {
-      X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = 0;
-    }
-    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=0.0;
-  }
-
-  //Input values
-  for(i=0; i<X->Def.NTETransfer[timeidx] ;i++){
-    for(j =0; j<4; j++) {
-      X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = X->Def.TETransfer[timeidx][i][j];
-    }
-    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=X->Def.ParaTETransfer[timeidx][i];
-  }
-  return 0;
-}
-
-
 /**
  * @brief  Function of getting transfer with peierls
  *

@@ -54,6 +54,7 @@ void setmem_def
   if(X->Def.iCalcType == TimeEvolution){
     i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer+X->Def.NTETransferMax, 4);
     c_malloc1(X->Def.EDParaGeneralTransfer, X->Def.NTransfer+X->Def.NTETransferMax);
+
   }
   else {
     i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer, 4);

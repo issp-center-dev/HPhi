@@ -23,8 +23,9 @@
 #include "CalcByTEM.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
-#include "HPhiTrans.h"
 
+int MakeTEDTransfer(struct BindStruct *X, const int timeidx);
+int MakeTEDInterAll(struct BindStruct *X, const int timeidx);
 
 /** 
  * 
@@ -66,20 +67,14 @@ int CalcByTEM(
   fprintf(stdoutMPI, cLogTEM_Start);
 
   for (rand_i = 0; rand_i < rand_max; rand_i++) {
-    //Time = 0.0;
     if (X->Bind.Def.iInputEigenVec == FALSE) {
-      //calc  v1
-      //fprintf(stdoutMPI, "An Initial Vector is calculated.\n");
-      //if(!CalcByLanczos(&X)==0){
-      //  FinalizeMPI();
-      //  return -1;
-      //}
       fprintf(stderr, "Error: A file of Inputvector is not inputted.\n");
       return -1;
     } else {
       //input v1
       fprintf(stdoutMPI, "An Initial Vector is inputted.\n");
       //sprintf(sdt, cFileNameInputVec, X->Bind.Def.CDataFileHead, rand_i, myrank);
+      //[TODO]: Give input file name (in this version, not for TPQ).
       sprintf(sdt, cFileNameInputVec, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
@@ -115,35 +110,44 @@ int CalcByTEM(
     fprintf(fp, cLogNormRand);
     fclose(fp);
 
+    int iInterAllOffDiagonal_org=X->Bind.Def.NInterAll_OffDiagonal;
+    int iTransfer_org=X->Bind.Def.EDNTransfer;
     for (step_i = step_initial; step_i < X->Bind.Def.Lanczos_max; step_i++) {
+
+      //Reset total number of interactions (changed in MakeTED***function.)
+      X->Bind.Def.EDNTransfer=iTransfer_org;
+      X->Bind.Def.NInterAll_OffDiagonal=iInterAllOffDiagonal_org;
+
       if (step_i % (X->Bind.Def.Lanczos_max / 10) == 0) {
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
 
       //TransferWithPeierls(&(X->Bind), Time);
       // [s] Yoshimi
+      // common procedure
       Time = X->Bind.Def.TETime[step_i];
-      if(step_i==0) dt=0;
+      if(step_i==0) dt=X->Bind.Def.TETime[0];
       else{
         dt=X->Bind.Def.TETime[step_i]-X->Bind.Def.TETime[step_i-1];
       }
-      X->Bind.Def.istep = step_i;
-      if (X->Bind.Def.NTETransferMax > 0) {
+      X->Bind.Def.Param.TimeSlice=dt;
+
+      // Set interactions
+      if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
         MakeTEDTransfer(&(X->Bind), step_i);
-      } else if (X->Bind.Def.NTEInterAllMax > 0) {
-        //[TODO] Add TEInterAll
+      } else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
+        MakeTEDInterAll(&(X->Bind), step_i);
       } else {
-        //[TODO] Error procedure
+        fprintf(stdoutMPI, "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
+        return -1;
       }
       //[e] Yoshimi
 
       TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
-      MultiplyForTEM(&(X->Bind));
-      diagonalcalcForTE(step_i, &(X->Bind), v0, v1);
+      MultiplyForTEM(step_i, &(X->Bind));
       //Add Diagonal Parts
       //Multiply Diagonal
       expec_energy_flct(&(X->Bind));
-      Time += dt;
       if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
         return -1;
       }
@@ -190,6 +194,50 @@ int CalcByTEM(
   fprintf(stdoutMPI, cLogTEM_End);
   tstruct.tend = time(NULL);
   fprintf(stdoutMPI, cLogTEM_End, (int) (tstruct.tend - tstruct.tstart));
+  return 0;
+}
+
+///
+/// \param X
+/// \param timeidx
+/// \return
+int MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
+  int i,j;
+  //Clear values
+  for(i=0; i<X->Def.NTETransferMax ;i++) {
+    for(j =0; j<4; j++) {
+      X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = 0;
+    }
+    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=0.0;
+  }
+
+  //Input values
+  for(i=0; i<X->Def.NTETransfer[timeidx] ;i++){
+    for(j =0; j<4; j++) {
+      X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = X->Def.TETransfer[timeidx][i][j];
+    }
+    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=X->Def.ParaTETransfer[timeidx][i];
+  }
+  return 0;
+}
+
+int MakeTEDInterAll(struct BindStruct *X, const int timeidx){
+  int i,j;
+  //Clear values
+  for(i=0; i<X->Def.NTEInterAllMax ;i++) {
+    for(j =0; j<8; j++) {
+      X->Def.InterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal][j] = 0;
+    }
+    X->Def.ParaInterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal]=0.0;
+  }
+
+  //Input values
+  for(i=0; i<X->Def.NTEInterAllOffDiagonal[timeidx] ;i++){
+    for(j =0; j<8; j++) {
+      X->Def.InterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal][j] = X->Def.TEInterAllOffDiagonal[timeidx][i][j];
+    }
+    X->Def.ParaInterAll_OffDiagonal[i+X->Def.NInterAll_OffDiagonal]=X->Def.ParaTEInterAllOffDiagonal[timeidx][i];
+  }
   return 0;
 }
 

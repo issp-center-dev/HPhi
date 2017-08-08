@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Common.h"
+#include "diagonalcalc.h"
 #include "Multiply.h"
 #include "wrapperMPI.h"
 #include "mltply.h"
@@ -68,6 +69,7 @@ int Multiply
  */
 int MultiplyForTEM
         (
+                const int time_step,
                 struct BindStruct *X
         )
 {
@@ -94,7 +96,7 @@ int MultiplyForTEM
     tmp1 *= -I*dt/(double complex)coef;
     //v2 = H*v1 = H^coef |psi(t)>
     mltply(X, v2, v1);
-    //[TODO] mltply diagonal term
+    diagonalcalcForTE(step_i, X, v2, v1);
 
 #pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
     for(i = 1; i <= i_max; i++){
