@@ -19,6 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 @brief Read Input file and write files for Expert mode.
        Initialize variables.
        Check parameters.
+
+The following lattices are supported:
+- 1D Chain : StdFace_Chain()
+- 1D Ladder : StdFace_Ladder()
+- 2D Tetragonal : StdFace_Tetragonal()
+- 2D Triangular : StdFace_Triangular()
+- 2D Honeycomb : StdFace_Honeycomb()
+- 2D Kagome : StdFace_Kagome()
+- 3D Simple Orthorhombic : StdFace_Orthorhombic()
+- 3D Face Centered Orthorhombic : StdFace_FCOrtho()
+- 3D Pyrochlore : StdFace_Pyrochlore()
+
 */
 #include <stdlib.h>
 #include <stdio.h>
@@ -1785,11 +1797,10 @@ static void PrintInteractions(struct StdIntList *StdI)
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_main(
+  struct StdIntList *StdI,
   char *fname//!<[in] Input file name for the standard mode
 )
 {
-  struct StdIntList StdI;
-
   FILE *fp;
   int ktrans, kintr;
   char ctmpline[256];
@@ -1804,7 +1815,7 @@ void StdFace_main(
     fprintf(stdout, "\n  Open Standard-Mode Inputfile %s \n\n", fname);
   }
 
-  StdFace_ResetVals(&StdI);
+  StdFace_ResetVals(StdI);
 
   while (fgets(ctmpline, 256, fp) != NULL) {
 
@@ -1826,217 +1837,217 @@ void StdFace_main(
     Text2Lower(keyword);
     fprintf(stdout, "  KEYWORD : %-20s | VALUE : %s \n", keyword, value);
 
-    if (strcmp(keyword, "a") == 0) StoreWithCheckDup_d(keyword, value, &StdI.a);
-    else if (strcmp(keyword, "a0h") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[0][2]);
-    else if (strcmp(keyword, "a0l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[0][1]);
-    else if (strcmp(keyword, "a0w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[0][0]);
-    else if (strcmp(keyword, "a1h") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[1][2]);
-    else if (strcmp(keyword, "a1l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[1][1]);
-    else if (strcmp(keyword, "a1w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[1][0]);
-    else if (strcmp(keyword, "a2h") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[2][2]);
-    else if (strcmp(keyword, "a2l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[2][1]);
-    else if (strcmp(keyword, "a2w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.box[2][0]);
-    else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI.D[2][2]);
-    else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Gamma);
-    else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI.h);
-    else if (strcmp(keyword, "height") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Height);
-    else if (strcmp(keyword, "hlength") == 0) StoreWithCheckDup_d(keyword, value, &StdI.length[2]);
-    else if (strcmp(keyword, "hx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[2][0]);
-    else if (strcmp(keyword, "hy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[2][1]);
-    else if (strcmp(keyword, "hz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[2][2]);
-    else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &StdI.JAll);
-    else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][0]);
-    else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][1]);
-    else if (strcmp(keyword, "jxz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[0][2]);
-    else if (strcmp(keyword, "jy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[1][1]);
-    else if (strcmp(keyword, "jyx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[1][0]);
-    else if (strcmp(keyword, "jyz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[1][2]);
-    else if (strcmp(keyword, "jz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[2][2]);
-    else if (strcmp(keyword, "jzx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[2][0]);
-    else if (strcmp(keyword, "jzy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J[2][1]);
-    else if (strcmp(keyword, "j0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0All);
-    else if (strcmp(keyword, "j0x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[0][0]);
-    else if (strcmp(keyword, "j0xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[0][1]);
-    else if (strcmp(keyword, "j0xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[0][2]);
-    else if (strcmp(keyword, "j0y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[1][1]);
-    else if (strcmp(keyword, "j0yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[1][0]);
-    else if (strcmp(keyword, "j0yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[1][2]);
-    else if (strcmp(keyword, "j0z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[2][2]);
-    else if (strcmp(keyword, "j0zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[2][0]);
-    else if (strcmp(keyword, "j0zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0[2][1]);
-    else if (strcmp(keyword, "j0'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0pAll);
-    else if (strcmp(keyword, "j0'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[0][0]);
-    else if (strcmp(keyword, "j0'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[0][1]);
-    else if (strcmp(keyword, "j0'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[0][2]);
-    else if (strcmp(keyword, "j0'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[1][1]);
-    else if (strcmp(keyword, "j0'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[1][0]);
-    else if (strcmp(keyword, "j0'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[1][2]);
-    else if (strcmp(keyword, "j0'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[2][2]);
-    else if (strcmp(keyword, "j0'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[2][0]);
-    else if (strcmp(keyword, "j0'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J0p[2][1]);
-    else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1All);
-    else if (strcmp(keyword, "j1x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[0][0]);
-    else if (strcmp(keyword, "j1xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[0][1]);
-    else if (strcmp(keyword, "j1xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[0][2]);
-    else if (strcmp(keyword, "j1y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[1][1]);
-    else if (strcmp(keyword, "j1yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[1][0]);
-    else if (strcmp(keyword, "j1yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[1][2]);
-    else if (strcmp(keyword, "j1z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[2][2]);
-    else if (strcmp(keyword, "j1zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[2][0]);
-    else if (strcmp(keyword, "j1zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1[2][1]);
-    else if (strcmp(keyword, "j1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1pAll);
-    else if (strcmp(keyword, "j1'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[0][0]);
-    else if (strcmp(keyword, "j1'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[0][1]);
-    else if (strcmp(keyword, "j1'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[0][2]);
-    else if (strcmp(keyword, "j1'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[1][1]);
-    else if (strcmp(keyword, "j1'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[1][0]);
-    else if (strcmp(keyword, "j1'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[1][2]);
-    else if (strcmp(keyword, "j1'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[2][2]);
-    else if (strcmp(keyword, "j1'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[2][0]);
-    else if (strcmp(keyword, "j1'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J1p[2][1]);
-    else if (strcmp(keyword, "j2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2All);
-    else if (strcmp(keyword, "j2x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[0][0]);
-    else if (strcmp(keyword, "j2xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[0][1]);
-    else if (strcmp(keyword, "j2xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[0][2]);
-    else if (strcmp(keyword, "j2y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[1][1]);
-    else if (strcmp(keyword, "j2yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[1][0]);
-    else if (strcmp(keyword, "j2yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[1][2]);
-    else if (strcmp(keyword, "j2z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[2][2]);
-    else if (strcmp(keyword, "j2zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[2][0]);
-    else if (strcmp(keyword, "j2zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2[2][1]);
-    else if (strcmp(keyword, "j2'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2pAll);
-    else if (strcmp(keyword, "j2'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[0][0]);
-    else if (strcmp(keyword, "j2'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[0][1]);
-    else if (strcmp(keyword, "j2'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[0][2]);
-    else if (strcmp(keyword, "j2'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[1][1]);
-    else if (strcmp(keyword, "j2'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[1][0]);
-    else if (strcmp(keyword, "j2'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[1][2]);
-    else if (strcmp(keyword, "j2'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[2][2]);
-    else if (strcmp(keyword, "j2'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[2][0]);
-    else if (strcmp(keyword, "j2'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.J2p[2][1]);
-    else if (strcmp(keyword, "j'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.JpAll);
-    else if (strcmp(keyword, "j'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[0][0]);
-    else if (strcmp(keyword, "j'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[0][1]);
-    else if (strcmp(keyword, "j'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[0][2]);
-    else if (strcmp(keyword, "j'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[1][1]);
-    else if (strcmp(keyword, "j'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[1][0]);
-    else if (strcmp(keyword, "j'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[1][2]);
-    else if (strcmp(keyword, "j'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[2][2]);
-    else if (strcmp(keyword, "j'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[2][0]);
-    else if (strcmp(keyword, "j'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jp[2][1]);
-    else if (strcmp(keyword, "j''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.JppAll);
-    else if (strcmp(keyword, "j''x") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[0][0]);
-    else if (strcmp(keyword, "j''xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[0][1]);
-    else if (strcmp(keyword, "j''xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[0][2]);
-    else if (strcmp(keyword, "j''y") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[1][1]);
-    else if (strcmp(keyword, "j''yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[1][0]);
-    else if (strcmp(keyword, "j''yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[1][2]);
-    else if (strcmp(keyword, "j''z") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[2][2]);
-    else if (strcmp(keyword, "j''zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[2][0]);
-    else if (strcmp(keyword, "j''zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Jpp[2][1]);
-    else if (strcmp(keyword, "k") == 0) StoreWithCheckDup_d(keyword, value, &StdI.K);
-    else if (strcmp(keyword, "l") == 0) StoreWithCheckDup_i(keyword, value, &StdI.L);
-    else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_sl(keyword, value, StdI.lattice);
-    else if (strcmp(keyword, "llength") == 0) StoreWithCheckDup_d(keyword, value, &StdI.length[1]);
-    else if (strcmp(keyword, "lx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][0]);
-    else if (strcmp(keyword, "ly") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][1]);
-    else if (strcmp(keyword, "lz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[1][2]);
-    else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_sl(keyword, value, StdI.model);
-    else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI.mu);
-    else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nelec);
-    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_sl(keyword, value, StdI.outputmode);
-    else if (strcmp(keyword, "phase0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[0]);
-    else if (strcmp(keyword, "phase1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[1]);
-    else if (strcmp(keyword, "phase2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.phase[2]);
-    else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t);
-    else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0);
-    else if (strcmp(keyword, "t0'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t0p);
-    else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t1);
-    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t1p);
-    else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t2);
-    else if (strcmp(keyword, "t2'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.t2p);
-    else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_c(keyword, value, &StdI.tp);
-    else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_c(keyword, value, &StdI.tpp);
-    else if (strcmp(keyword, "u") == 0) StoreWithCheckDup_d(keyword, value, &StdI.U);
-    else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V);
-    else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V0);
-    else if (strcmp(keyword, "v0'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V0p);
-    else if (strcmp(keyword, "v1") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V1);
-    else if (strcmp(keyword, "v1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V1p);
-    else if (strcmp(keyword, "v2") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V2);
-    else if (strcmp(keyword, "v2p") == 0) StoreWithCheckDup_d(keyword, value, &StdI.V2);
-    else if (strcmp(keyword, "v'") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Vp);
-    else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &StdI.Vpp);
-    else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &StdI.W);
-    else if (strcmp(keyword, "wlength") == 0) StoreWithCheckDup_d(keyword, value, &StdI.length[0]);
-    else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][0]);
-    else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][1]);
-    else if (strcmp(keyword, "wz") == 0) StoreWithCheckDup_d(keyword, value, &StdI.direct[0][2]);
-    else if (strcmp(keyword, "w90_cutoff") == 0) StoreWithCheckDup_d(keyword, value, &StdI.W90_cutoff);
-    else if (strcmp(keyword, "w90_geom") == 0) StoreWithCheckDup_s(keyword, value, StdI.W90_geom);
-    else if (strcmp(keyword, "w90_hr") == 0) StoreWithCheckDup_s(keyword, value, StdI.W90_hr);
-    else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Sz2);
+    if (strcmp(keyword, "a") == 0) StoreWithCheckDup_d(keyword, value, &StdI->a);
+    else if (strcmp(keyword, "a0h") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[0][2]);
+    else if (strcmp(keyword, "a0l") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[0][1]);
+    else if (strcmp(keyword, "a0w") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[0][0]);
+    else if (strcmp(keyword, "a1h") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[1][2]);
+    else if (strcmp(keyword, "a1l") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[1][1]);
+    else if (strcmp(keyword, "a1w") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[1][0]);
+    else if (strcmp(keyword, "a2h") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][2]);
+    else if (strcmp(keyword, "a2l") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][1]);
+    else if (strcmp(keyword, "a2w") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][0]);
+    else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI->D[2][2]);
+    else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Gamma);
+    else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI->h);
+    else if (strcmp(keyword, "height") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Height);
+    else if (strcmp(keyword, "hlength") == 0) StoreWithCheckDup_d(keyword, value, &StdI->length[2]);
+    else if (strcmp(keyword, "hx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[2][0]);
+    else if (strcmp(keyword, "hy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[2][1]);
+    else if (strcmp(keyword, "hz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[2][2]);
+    else if (strcmp(keyword, "j") == 0) StoreWithCheckDup_d(keyword, value, &StdI->JAll);
+    else if (strcmp(keyword, "jx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[0][0]);
+    else if (strcmp(keyword, "jxy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[0][1]);
+    else if (strcmp(keyword, "jxz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[0][2]);
+    else if (strcmp(keyword, "jy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[1][1]);
+    else if (strcmp(keyword, "jyx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[1][0]);
+    else if (strcmp(keyword, "jyz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[1][2]);
+    else if (strcmp(keyword, "jz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[2][2]);
+    else if (strcmp(keyword, "jzx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[2][0]);
+    else if (strcmp(keyword, "jzy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J[2][1]);
+    else if (strcmp(keyword, "j0") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0All);
+    else if (strcmp(keyword, "j0x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[0][0]);
+    else if (strcmp(keyword, "j0xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[0][1]);
+    else if (strcmp(keyword, "j0xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[0][2]);
+    else if (strcmp(keyword, "j0y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[1][1]);
+    else if (strcmp(keyword, "j0yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[1][0]);
+    else if (strcmp(keyword, "j0yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[1][2]);
+    else if (strcmp(keyword, "j0z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[2][2]);
+    else if (strcmp(keyword, "j0zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[2][0]);
+    else if (strcmp(keyword, "j0zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0[2][1]);
+    else if (strcmp(keyword, "j0'") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0pAll);
+    else if (strcmp(keyword, "j0'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[0][0]);
+    else if (strcmp(keyword, "j0'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[0][1]);
+    else if (strcmp(keyword, "j0'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[0][2]);
+    else if (strcmp(keyword, "j0'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[1][1]);
+    else if (strcmp(keyword, "j0'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[1][0]);
+    else if (strcmp(keyword, "j0'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[1][2]);
+    else if (strcmp(keyword, "j0'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[2][2]);
+    else if (strcmp(keyword, "j0'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[2][0]);
+    else if (strcmp(keyword, "j0'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J0p[2][1]);
+    else if (strcmp(keyword, "j1") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1All);
+    else if (strcmp(keyword, "j1x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[0][0]);
+    else if (strcmp(keyword, "j1xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[0][1]);
+    else if (strcmp(keyword, "j1xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[0][2]);
+    else if (strcmp(keyword, "j1y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[1][1]);
+    else if (strcmp(keyword, "j1yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[1][0]);
+    else if (strcmp(keyword, "j1yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[1][2]);
+    else if (strcmp(keyword, "j1z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[2][2]);
+    else if (strcmp(keyword, "j1zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[2][0]);
+    else if (strcmp(keyword, "j1zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1[2][1]);
+    else if (strcmp(keyword, "j1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1pAll);
+    else if (strcmp(keyword, "j1'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[0][0]);
+    else if (strcmp(keyword, "j1'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[0][1]);
+    else if (strcmp(keyword, "j1'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[0][2]);
+    else if (strcmp(keyword, "j1'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[1][1]);
+    else if (strcmp(keyword, "j1'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[1][0]);
+    else if (strcmp(keyword, "j1'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[1][2]);
+    else if (strcmp(keyword, "j1'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[2][2]);
+    else if (strcmp(keyword, "j1'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[2][0]);
+    else if (strcmp(keyword, "j1'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J1p[2][1]);
+    else if (strcmp(keyword, "j2") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2All);
+    else if (strcmp(keyword, "j2x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[0][0]);
+    else if (strcmp(keyword, "j2xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[0][1]);
+    else if (strcmp(keyword, "j2xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[0][2]);
+    else if (strcmp(keyword, "j2y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[1][1]);
+    else if (strcmp(keyword, "j2yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[1][0]);
+    else if (strcmp(keyword, "j2yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[1][2]);
+    else if (strcmp(keyword, "j2z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[2][2]);
+    else if (strcmp(keyword, "j2zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[2][0]);
+    else if (strcmp(keyword, "j2zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2[2][1]);
+    else if (strcmp(keyword, "j2'") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2pAll);
+    else if (strcmp(keyword, "j2'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[0][0]);
+    else if (strcmp(keyword, "j2'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[0][1]);
+    else if (strcmp(keyword, "j2'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[0][2]);
+    else if (strcmp(keyword, "j2'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[1][1]);
+    else if (strcmp(keyword, "j2'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[1][0]);
+    else if (strcmp(keyword, "j2'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[1][2]);
+    else if (strcmp(keyword, "j2'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[2][2]);
+    else if (strcmp(keyword, "j2'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[2][0]);
+    else if (strcmp(keyword, "j2'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[2][1]);
+    else if (strcmp(keyword, "j'") == 0) StoreWithCheckDup_d(keyword, value, &StdI->JpAll);
+    else if (strcmp(keyword, "j'x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[0][0]);
+    else if (strcmp(keyword, "j'xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[0][1]);
+    else if (strcmp(keyword, "j'xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[0][2]);
+    else if (strcmp(keyword, "j'y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[1][1]);
+    else if (strcmp(keyword, "j'yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[1][0]);
+    else if (strcmp(keyword, "j'yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[1][2]);
+    else if (strcmp(keyword, "j'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[2][2]);
+    else if (strcmp(keyword, "j'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[2][0]);
+    else if (strcmp(keyword, "j'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jp[2][1]);
+    else if (strcmp(keyword, "j''") == 0) StoreWithCheckDup_d(keyword, value, &StdI->JppAll);
+    else if (strcmp(keyword, "j''x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[0][0]);
+    else if (strcmp(keyword, "j''xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[0][1]);
+    else if (strcmp(keyword, "j''xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[0][2]);
+    else if (strcmp(keyword, "j''y") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[1][1]);
+    else if (strcmp(keyword, "j''yx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[1][0]);
+    else if (strcmp(keyword, "j''yz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[1][2]);
+    else if (strcmp(keyword, "j''z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[2][2]);
+    else if (strcmp(keyword, "j''zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[2][0]);
+    else if (strcmp(keyword, "j''zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Jpp[2][1]);
+    else if (strcmp(keyword, "k") == 0) StoreWithCheckDup_d(keyword, value, &StdI->K);
+    else if (strcmp(keyword, "l") == 0) StoreWithCheckDup_i(keyword, value, &StdI->L);
+    else if (strcmp(keyword, "lattice") == 0) StoreWithCheckDup_sl(keyword, value, StdI->lattice);
+    else if (strcmp(keyword, "llength") == 0) StoreWithCheckDup_d(keyword, value, &StdI->length[1]);
+    else if (strcmp(keyword, "lx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[1][0]);
+    else if (strcmp(keyword, "ly") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[1][1]);
+    else if (strcmp(keyword, "lz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[1][2]);
+    else if (strcmp(keyword, "model") == 0) StoreWithCheckDup_sl(keyword, value, StdI->model);
+    else if (strcmp(keyword, "mu") == 0) StoreWithCheckDup_d(keyword, value, &StdI->mu);
+    else if (strcmp(keyword, "nelec") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nelec);
+    else if (strcmp(keyword, "outputmode") == 0) StoreWithCheckDup_sl(keyword, value, StdI->outputmode);
+    else if (strcmp(keyword, "phase0") == 0) StoreWithCheckDup_d(keyword, value, &StdI->phase[0]);
+    else if (strcmp(keyword, "phase1") == 0) StoreWithCheckDup_d(keyword, value, &StdI->phase[1]);
+    else if (strcmp(keyword, "phase2") == 0) StoreWithCheckDup_d(keyword, value, &StdI->phase[2]);
+    else if (strcmp(keyword, "t") == 0) StoreWithCheckDup_c(keyword, value, &StdI->t);
+    else if (strcmp(keyword, "t0") == 0) StoreWithCheckDup_c(keyword, value, &StdI->t0);
+    else if (strcmp(keyword, "t0'") == 0) StoreWithCheckDup_c(keyword, value, &StdI->t0p);
+    else if (strcmp(keyword, "t1") == 0) StoreWithCheckDup_c(keyword, value, &StdI->t1);
+    else if (strcmp(keyword, "t1'") == 0) StoreWithCheckDup_c(keyword, value, &StdI->t1p);
+    else if (strcmp(keyword, "t2") == 0) StoreWithCheckDup_c(keyword, value, &StdI->t2);
+    else if (strcmp(keyword, "t2'") == 0) StoreWithCheckDup_c(keyword, value, &StdI->t2p);
+    else if (strcmp(keyword, "t'") == 0) StoreWithCheckDup_c(keyword, value, &StdI->tp);
+    else if (strcmp(keyword, "t''") == 0) StoreWithCheckDup_c(keyword, value, &StdI->tpp);
+    else if (strcmp(keyword, "u") == 0) StoreWithCheckDup_d(keyword, value, &StdI->U);
+    else if (strcmp(keyword, "v") == 0) StoreWithCheckDup_d(keyword, value, &StdI->V);
+    else if (strcmp(keyword, "v0") == 0) StoreWithCheckDup_d(keyword, value, &StdI->V0);
+    else if (strcmp(keyword, "v0'") == 0) StoreWithCheckDup_d(keyword, value, &StdI->V0p);
+    else if (strcmp(keyword, "v1") == 0) StoreWithCheckDup_d(keyword, value, &StdI->V1);
+    else if (strcmp(keyword, "v1'") == 0) StoreWithCheckDup_d(keyword, value, &StdI->V1p);
+    else if (strcmp(keyword, "v2") == 0) StoreWithCheckDup_d(keyword, value, &StdI->V2);
+    else if (strcmp(keyword, "v2p") == 0) StoreWithCheckDup_d(keyword, value, &StdI->V2);
+    else if (strcmp(keyword, "v'") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Vp);
+    else if (strcmp(keyword, "v''") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Vpp);
+    else if (strcmp(keyword, "w") == 0) StoreWithCheckDup_i(keyword, value, &StdI->W);
+    else if (strcmp(keyword, "wlength") == 0) StoreWithCheckDup_d(keyword, value, &StdI->length[0]);
+    else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][0]);
+    else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][1]);
+    else if (strcmp(keyword, "wz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][2]);
+    else if (strcmp(keyword, "w90_cutoff") == 0) StoreWithCheckDup_d(keyword, value, &StdI->W90_cutoff);
+    else if (strcmp(keyword, "w90_geom") == 0) StoreWithCheckDup_s(keyword, value, StdI->W90_geom);
+    else if (strcmp(keyword, "w90_hr") == 0) StoreWithCheckDup_s(keyword, value, StdI->W90_hr);
+    else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Sz2);
 
 #if defined(_HPhi)
-    else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_sl(keyword, value, StdI.CalcSpec);
-    else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI.exct);
-    else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_sl(keyword, value, StdI.EigenVecIO);
-    else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ExpecInterval);
-    else if (strcmp(keyword, "cdatafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI.CDataFileHead);
-    else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.FlgTemp);
-    else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_sl(keyword, value, StdI.InitialVecType);
-    else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI.initial_iv);
-    else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosEps);
-    else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &StdI.LanczosTarget);
-    else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Lanczos_max);
-    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI.LargeValue);
-    else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_sl(keyword, value, StdI.method);
-    else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Nomega);
-    else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NumAve);
-    else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI.nvec);
-    else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMax);
-    else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaMin);
-    else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI.OmegaIm);
-    else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_sl(keyword, value, StdI.Restart);
-    else if (strcmp(keyword, "spectrumqh") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQH);
-    else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQL);
-    else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI.SpectrumQW);
-    else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_sl(keyword, value, StdI.SpectrumType);
-    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI.S2);
+    else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_sl(keyword, value, StdI->CalcSpec);
+    else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI->exct);
+    else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_sl(keyword, value, StdI->EigenVecIO);
+    else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI->ExpecInterval);
+    else if (strcmp(keyword, "cdatafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI->CDataFileHead);
+    else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI->FlgTemp);
+    else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->InitialVecType);
+    else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI->initial_iv);
+    else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &StdI->LanczosEps);
+    else if (strcmp(keyword, "lanczostarget") == 0) StoreWithCheckDup_i(keyword, value, &StdI->LanczosTarget);
+    else if (strcmp(keyword, "lanczos_max") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Lanczos_max);
+    else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI->LargeValue);
+    else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_sl(keyword, value, StdI->method);
+    else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Nomega);
+    else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NumAve);
+    else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nvec);
+    else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMax);
+    else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMin);
+    else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaIm);
+    else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_sl(keyword, value, StdI->Restart);
+    else if (strcmp(keyword, "spectrumqh") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQH);
+    else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQL);
+    else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQW);
+    else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->SpectrumType);
+    else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI->S2);
 #elif defined(_mVMC)
-    else if (strcmp(keyword, "a0hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[0][2]);
-    else if (strcmp(keyword, "a0lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[0][1]);
-    else if (strcmp(keyword, "a0wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[0][0]);
-    else if (strcmp(keyword, "a1hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[1][2]);
-    else if (strcmp(keyword, "a1lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[1][1]);
-    else if (strcmp(keyword, "a1wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[1][0]);
-    else if (strcmp(keyword, "a2hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][2]);
-    else if (strcmp(keyword, "a2lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][1]);
-    else if (strcmp(keyword, "a2wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.boxsub[2][0]);
-    else if (strcmp(keyword, "complextype") == 0) StoreWithCheckDup_i(keyword, value, &StdI.ComplexType);
-    else if (strcmp(keyword, "cparafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI.CParaFileHead);
-    else if (strcmp(keyword, "dsroptredcut") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptRedCut);
-    else if (strcmp(keyword, "dsroptstadel") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptStaDel);
-    else if (strcmp(keyword, "dsroptstepdt") == 0) StoreWithCheckDup_d(keyword, value, &StdI.DSROptStepDt);
-    else if (strcmp(keyword, "hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Hsub);
-    else if (strcmp(keyword, "lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Lsub);
-    else if (strcmp(keyword, "nvmccalmode") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCCalMode);
-    else if (strcmp(keyword, "ndataidxstart") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NDataIdxStart);
-    else if (strcmp(keyword, "ndataqtysmp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NDataQtySmp);
-    else if (strcmp(keyword, "nlanczosmode") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NLanczosMode);
-    else if (strcmp(keyword, "nmptrans") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NMPTrans);
-    else if (strcmp(keyword, "nspgaussleg") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSPGaussLeg);
-    else if (strcmp(keyword, "nsplitsize") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSplitSize);
-    else if (strcmp(keyword, "nspstot") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSPStot);
-    else if (strcmp(keyword, "nsroptitrsmp") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSROptItrSmp);
-    else if (strcmp(keyword, "nsroptitrstep") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSROptItrStep);
-    else if (strcmp(keyword, "nstore") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NStore);
-    else if (strcmp(keyword, "nsrcg") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NSRCG);
-    else if (strcmp(keyword, "nvmcinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCInterval);
-    else if (strcmp(keyword, "nvmcsample") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCSample);
-    else if (strcmp(keyword, "nvmcwarmup") == 0) StoreWithCheckDup_i(keyword, value, &StdI.NVMCWarmUp);
-    else if (strcmp(keyword, "rndseed") == 0) StoreWithCheckDup_i(keyword, value, &StdI.RndSeed);
-    else if (strcmp(keyword, "wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI.Wsub);
+    else if (strcmp(keyword, "a0hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[0][2]);
+    else if (strcmp(keyword, "a0lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[0][1]);
+    else if (strcmp(keyword, "a0wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[0][0]);
+    else if (strcmp(keyword, "a1hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[1][2]);
+    else if (strcmp(keyword, "a1lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[1][1]);
+    else if (strcmp(keyword, "a1wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[1][0]);
+    else if (strcmp(keyword, "a2hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[2][2]);
+    else if (strcmp(keyword, "a2lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[2][1]);
+    else if (strcmp(keyword, "a2wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[2][0]);
+    else if (strcmp(keyword, "complextype") == 0) StoreWithCheckDup_i(keyword, value, &StdI->ComplexType);
+    else if (strcmp(keyword, "cparafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI->CParaFileHead);
+    else if (strcmp(keyword, "dsroptredcut") == 0) StoreWithCheckDup_d(keyword, value, &StdI->DSROptRedCut);
+    else if (strcmp(keyword, "dsroptstadel") == 0) StoreWithCheckDup_d(keyword, value, &StdI->DSROptStaDel);
+    else if (strcmp(keyword, "dsroptstepdt") == 0) StoreWithCheckDup_d(keyword, value, &StdI->DSROptStepDt);
+    else if (strcmp(keyword, "hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Hsub);
+    else if (strcmp(keyword, "lsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Lsub);
+    else if (strcmp(keyword, "nvmccalmode") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NVMCCalMode);
+    else if (strcmp(keyword, "ndataidxstart") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NDataIdxStart);
+    else if (strcmp(keyword, "ndataqtysmp") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NDataQtySmp);
+    else if (strcmp(keyword, "nlanczosmode") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NLanczosMode);
+    else if (strcmp(keyword, "nmptrans") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NMPTrans);
+    else if (strcmp(keyword, "nspgaussleg") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NSPGaussLeg);
+    else if (strcmp(keyword, "nsplitsize") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NSplitSize);
+    else if (strcmp(keyword, "nspstot") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NSPStot);
+    else if (strcmp(keyword, "nsroptitrsmp") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NSROptItrSmp);
+    else if (strcmp(keyword, "nsroptitrstep") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NSROptItrStep);
+    else if (strcmp(keyword, "nstore") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NStore);
+    else if (strcmp(keyword, "nsrcg") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NSRCG);
+    else if (strcmp(keyword, "nvmcinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NVMCInterval);
+    else if (strcmp(keyword, "nvmcsample") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NVMCSample);
+    else if (strcmp(keyword, "nvmcwarmup") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NVMCWarmUp);
+    else if (strcmp(keyword, "rndseed") == 0) StoreWithCheckDup_i(keyword, value, &StdI->RndSeed);
+    else if (strcmp(keyword, "wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Wsub);
 #endif
     else {
       fprintf(stdout, "ERROR ! Unsupported Keyword !\n");
@@ -2048,129 +2059,202 @@ void StdFace_main(
   /*
   Check the model
   */
-  StdI.lGC = 0;
-  StdI.lBoost = 0;
-  if (strcmp(StdI.model, "fermionhubbard") == 0
-    || strcmp(StdI.model, "hubbard") == 0)
-    strcpy(StdI.model, "hubbard\0");
-  else if(strcmp(StdI.model, "fermionhubbardgc") == 0
-    || strcmp(StdI.model, "hubbardgc") == 0) {
-    strcpy(StdI.model, "hubbard\0");
-    StdI.lGC = 1;
+  StdI->lGC = 0;
+  StdI->lBoost = 0;
+  if (strcmp(StdI->model, "fermionhubbard") == 0
+    || strcmp(StdI->model, "hubbard") == 0)
+    strcpy(StdI->model, "hubbard\0");
+  else if(strcmp(StdI->model, "fermionhubbardgc") == 0
+    || strcmp(StdI->model, "hubbardgc") == 0) {
+    strcpy(StdI->model, "hubbard\0");
+    StdI->lGC = 1;
   }
-  else if (strcmp(StdI.model, "spin") == 0)
-    strcpy(StdI.model, "spin\0");
-  else if (strcmp(StdI.model, "spingc") == 0) {
-    strcpy(StdI.model, "spin\0");
-    StdI.lGC = 1;
+  else if (strcmp(StdI->model, "spin") == 0)
+    strcpy(StdI->model, "spin\0");
+  else if (strcmp(StdI->model, "spingc") == 0) {
+    strcpy(StdI->model, "spin\0");
+    StdI->lGC = 1;
   }
 #if defined(_HPhi)
-  else if(strcmp(StdI.model, "spingcboost") == 0 ||
-    strcmp(StdI.model, "spingccma") == 0) {
-    strcpy(StdI.model, "spin\0");
-    StdI.lGC = 1;
-    StdI.lBoost = 1;
+  else if(strcmp(StdI->model, "spingcboost") == 0 ||
+    strcmp(StdI->model, "spingccma") == 0) {
+    strcpy(StdI->model, "spin\0");
+    StdI->lGC = 1;
+    StdI->lBoost = 1;
   }
 #endif
-  else if (strcmp(StdI.model, "kondolattice") == 0
-    || strcmp(StdI.model, "kondo") == 0) {
-    strcpy(StdI.model, "kondo\0");
+  else if (strcmp(StdI->model, "kondolattice") == 0
+    || strcmp(StdI->model, "kondo") == 0) {
+    strcpy(StdI->model, "kondo\0");
   }
-  else if(strcmp(StdI.model, "kondolatticegc") == 0
-    || strcmp(StdI.model, "kondogc") == 0) {
-    strcpy(StdI.model, "kondo\0");
-    StdI.lGC = 1;
+  else if(strcmp(StdI->model, "kondolatticegc") == 0
+    || strcmp(StdI->model, "kondogc") == 0) {
+    strcpy(StdI->model, "kondo\0");
+    StdI->lGC = 1;
   }
-  else UnsupportedSystem(StdI.model, StdI.lattice);
+  else UnsupportedSystem(StdI->model, StdI->lattice);
 
-  /*
+  /*>>
   Generate Hamiltonian definition files
   */
-  if (strcmp(StdI.lattice, "chain") == 0
-    || strcmp(StdI.lattice, "chainlattice") == 0) StdFace_Chain(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "facecenteredorthorhombic") == 0
-    || strcmp(StdI.lattice, "fcorthorhombic") == 0
-    || strcmp(StdI.lattice, "fco") == 0) StdFace_FCOrtho(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "honeycomb") == 0
-    || strcmp(StdI.lattice, "honeycomblattice") == 0) StdFace_Honeycomb(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "kagome") == 0
-    || strcmp(StdI.lattice, "kagomelattice") == 0) StdFace_Kagome(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "ladder") == 0
-    || strcmp(StdI.lattice, "ladderlattice") == 0) StdFace_Ladder(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "orthorhombic") == 0
-    || strcmp(StdI.lattice, "simpleorthorhombic") == 0) StdFace_Orthorhombic(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "pyrochlore") == 0) StdFace_Pyrochlore(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "tetragonal") == 0
-    || strcmp(StdI.lattice, "tetragonallattice") == 0
-    || strcmp(StdI.lattice, "square") == 0
-    || strcmp(StdI.lattice, "squarelattice") == 0) StdFace_Tetragonal(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "triangular") == 0
-    || strcmp(StdI.lattice, "triangularlattice") == 0) StdFace_Triangular(&StdI, StdI.model);
-  else if (strcmp(StdI.lattice, "wannier90") == 0) StdFace_Wannier90(&StdI, StdI.model);
-  else UnsupportedSystem(StdI.model, StdI.lattice);
+  if (strcmp(StdI->lattice, "chain") == 0
+    || strcmp(StdI->lattice, "chainlattice") == 0) StdFace_Chain(StdI);
+  else if (strcmp(StdI->lattice, "facecenteredorthorhombic") == 0
+    || strcmp(StdI->lattice, "fcorthorhombic") == 0
+    || strcmp(StdI->lattice, "fco") == 0) StdFace_FCOrtho(StdI);
+  else if (strcmp(StdI->lattice, "honeycomb") == 0
+    || strcmp(StdI->lattice, "honeycomblattice") == 0) StdFace_Honeycomb(StdI);
+  else if (strcmp(StdI->lattice, "kagome") == 0
+    || strcmp(StdI->lattice, "kagomelattice") == 0) StdFace_Kagome(StdI);
+  else if (strcmp(StdI->lattice, "ladder") == 0
+    || strcmp(StdI->lattice, "ladderlattice") == 0) StdFace_Ladder(StdI);
+  else if (strcmp(StdI->lattice, "orthorhombic") == 0
+    || strcmp(StdI->lattice, "simpleorthorhombic") == 0) StdFace_Orthorhombic(StdI);
+  else if (strcmp(StdI->lattice, "pyrochlore") == 0) StdFace_Pyrochlore(StdI);
+  else if (strcmp(StdI->lattice, "tetragonal") == 0
+    || strcmp(StdI->lattice, "tetragonallattice") == 0
+    || strcmp(StdI->lattice, "square") == 0
+    || strcmp(StdI->lattice, "squarelattice") == 0) StdFace_Tetragonal(StdI);
+  else if (strcmp(StdI->lattice, "triangular") == 0
+    || strcmp(StdI->lattice, "triangularlattice") == 0) StdFace_Triangular(StdI);
+  else if (strcmp(StdI->lattice, "wannier90") == 0) StdFace_Wannier90(StdI);
+  else UnsupportedSystem(StdI->model, StdI->lattice);//<<
   /**/
 #if defined(_HPhi)
-  StdFace_LargeValue(&StdI);
+  StdFace_LargeValue(StdI);
   /*
   Generate Hamiltonian for Boost
   */
-  if (StdI.lBoost == 1) {
-    if (strcmp(StdI.lattice, "chain") == 0
-      || strcmp(StdI.lattice, "chainlattice") == 0) StdFace_Chain_Boost(&StdI);
-    else if (strcmp(StdI.lattice, "honeycomb") == 0
-      || strcmp(StdI.lattice, "honeycomblattice") == 0) StdFace_Honeycomb_Boost(&StdI);
-    else if (strcmp(StdI.lattice, "kagome") == 0
-      || strcmp(StdI.lattice, "kagomelattice") == 0) StdFace_Kagome_Boost(&StdI);
-    else if (strcmp(StdI.lattice, "ladder") == 0
-      || strcmp(StdI.lattice, "ladderlattice") == 0) StdFace_Ladder_Boost(&StdI);
-    else UnsupportedSystem(StdI.model, StdI.lattice);
+  if (StdI->lBoost == 1) {
+    if (strcmp(StdI->lattice, "chain") == 0
+      || strcmp(StdI->lattice, "chainlattice") == 0) StdFace_Chain_Boost(StdI);
+    else if (strcmp(StdI->lattice, "honeycomb") == 0
+      || strcmp(StdI->lattice, "honeycomblattice") == 0) StdFace_Honeycomb_Boost(StdI);
+    else if (strcmp(StdI->lattice, "kagome") == 0
+      || strcmp(StdI->lattice, "kagomelattice") == 0) StdFace_Kagome_Boost(StdI);
+    else if (strcmp(StdI->lattice, "ladder") == 0
+      || strcmp(StdI->lattice, "ladderlattice") == 0) StdFace_Ladder_Boost(StdI);
+    else UnsupportedSystem(StdI->model, StdI->lattice);
   }
 #endif
   /**/
   fprintf(stdout, "\n");
   fprintf(stdout, "######  Print Expert input files  ######\n");
   fprintf(stdout, "\n");
-  PrintLocSpin(&StdI);
-  PrintTrans(&StdI);
-  PrintInteractions(&StdI);
+  PrintLocSpin(StdI);
+  PrintTrans(StdI);
+  PrintInteractions(StdI);
 #if defined(_HPhi)
-  PrintExcitation(&StdI);
-  PrintCalcMod(&StdI);
+  PrintExcitation(StdI);
+  PrintCalcMod(StdI);
 #elif defined(_mVMC)
 
-  if(StdI.lGC == 0 && (StdI.Sz2 == 0 || StdI.Sz2 == StdI.NaN_i)) 
-    StdFace_PrintVal_i("ComplexType", &StdI.ComplexType, 0);
-  else StdFace_PrintVal_i("ComplexType", &StdI.ComplexType, 1);
+  if(StdI->lGC == 0 && (StdI->Sz2 == 0 || StdI->Sz2 == StdI->NaN_i)) 
+    StdFace_PrintVal_i("ComplexType", &StdI->ComplexType, 0);
+  else StdFace_PrintVal_i("ComplexType", &StdI->ComplexType, 1);
 
-  StdFace_generate_orb(&StdI);
-  StdFace_Proj(&StdI);
-  PrintJastrow(&StdI);
-  if(StdI.lGC == 1 || (StdI.Sz2 != 0 && StdI.Sz2 != StdI.NaN_i) )
-    PrintOrbPara(&StdI);
-  PrintGutzwiller(&StdI);
-  PrintOrb(&StdI);
+  StdFace_generate_orb(StdI);
+  StdFace_Proj(StdI);
+  PrintJastrow(StdI);
+  if(StdI->lGC == 1 || (StdI->Sz2 != 0 && StdI->Sz2 != StdI->NaN_i) )
+    PrintOrbPara(StdI);
+  PrintGutzwiller(StdI);
+  PrintOrb(StdI);
 #endif
-  CheckModPara(&StdI);
-  PrintModPara(&StdI);
-  CheckOutputMode(&StdI);
-  Print1Green(&StdI);
-  Print2Green(&StdI);
-  PrintNamelist(&StdI);
+  CheckModPara(StdI);
+  PrintModPara(StdI);
+  CheckOutputMode(StdI);
+  Print1Green(StdI);
+  Print2Green(StdI);
+  PrintNamelist(StdI);
   /*
   Finalize All
   */
-  free(StdI.locspinflag);
-  for (ktrans = 0; ktrans < StdI.ntrans; ktrans++) {
-    free(StdI.transindx[ktrans]);
+  free(StdI->locspinflag);
+  for (ktrans = 0; ktrans < StdI->ntrans; ktrans++) {
+    free(StdI->transindx[ktrans]);
   }
-  free(StdI.transindx);
-  free(StdI.trans);
-  for (kintr = 0; kintr < StdI.nintr; kintr++) {
-    free(StdI.intrindx[kintr]);
+  free(StdI->transindx);
+  free(StdI->trans);
+  for (kintr = 0; kintr < StdI->nintr; kintr++) {
+    free(StdI->intrindx[kintr]);
   }
-  free(StdI.intrindx);
-  free(StdI.intr);
+  free(StdI->intrindx);
+  free(StdI->intr);
 
   fprintf(stdout, "\n######  Input files are generated.  ######\n\n");
 
 }/*void StdFace_main*/
+/**
+@brief Driver routine for standard mode.
+Just call StdFace_main().
+*/
+void StdFace_driver(
+  char *fname//!<[in] Input file name for the standard mode
+)
+{
+  struct StdIntList StdI;
+
+  StdFace_main(&StdI, fname);
+}/*void StdFace_driver*/
+/**
+@page page_addstandard Add new lattice model into Standard mode
+
+@section sec_stan_proc Overall procedure
+
+If you want to create new lattice file, do as these files.
+
+-# Copy one of laattice files such as Kagome.c 
+   (Probably the most similar one) and rename it.
+-# @ref sec_lattice
+-# Add that function in the header file, StdFace_ModelUtil.h
+-# Add entry at
+   @dontinclude StdFace_main.c
+   @skip StdFace\_main
+   @until {
+   :
+   @skip >>
+   @until <<
+.
+<HR> 
+@section sec_lattice Modify lattice model file
+
+To create new lattice file, please modify the following part
+(Kagome.c as an example):
+
+@dontinclude Kagome.c
+Define function as
+@skip StdFace\_Kagome(
+@until {
+Lattice parameter used only in geometry.dat and lattice.gp
+@skip StdFace\_PrintVal\_d
+@until Ly
+these are unit lattice vectors.\n
+Just call this function to initialize all lattice related parameters
+@skipline StdFace\_InitSite
+where "2" indicates 2D
+@skip tau
+@until tau\[2\]\[0\]
+These are the fractional coordinate of internal sites.
+Then set parameters of Hamiltonian
+@skip StdFace\_NotUsed\_J
+@until @@
+to determine the default value of them and unused parameters.
+For more details, please see the description of each functions.
+Then Compute the upper limit of the number of Transfer & Interaction and malloc them.
+@skip >>
+@until <<
+Please estimate the number of bonds per site.
+@skipline kCell
+In this loop, the parameters of Hamiltonian are computed & stored.
+The local term is computed as follows:
+@skip >>
+@until <<
+Probably, it is not necessary to modify this part.
+The non-local term is as follows:
+@skip >>
+@until <<
+For more details, please see each functions.
+
+StdFace_Kagome_Boost()? Forget!!
+*/

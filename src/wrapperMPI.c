@@ -34,8 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
 @brief MPI initialization wrapper
-Process ID(::myrank), Number of processes(::nproc), 
-Number of threads(::nthreads), and pointer to the standard output
+Process ID (::myrank), Number of processes (::nproc), 
+Number of threads (::nthreads), and pointer to the standard output
 (::stdoutMPI) are specified here.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */

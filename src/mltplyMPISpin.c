@@ -95,13 +95,13 @@ double complex X_child_general_int_spin_MPIdouble(
   else return 0;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-    &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
   ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-    list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-    v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+                       v1buf,      idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
   dam_pr = 0.0;
@@ -114,8 +114,8 @@ double complex X_child_general_int_spin_MPIdouble(
       dmv = Jint * v1buf[j];
       tmp_v0[ioff] += dmv;
       dam_pr += conj(tmp_v1[ioff]) * dmv;
-    }
-  }
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
+  }/*if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC)*/
   else {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, ioff) \
   firstprivate(idim_max_buf, Jint, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
@@ -124,8 +124,8 @@ double complex X_child_general_int_spin_MPIdouble(
         X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
       dmv = Jint * v1buf[j];
       dam_pr += conj(tmp_v1[ioff]) * dmv;
-    }
-  }
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
+  }/*if (! (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC))*/
   return dam_pr;
 #endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
@@ -473,7 +473,7 @@ void child_general_int_GeneralSpin_MPIdouble(
 
 }/*void GC_child_general_int_spin_MPIdouble*/
 /**
-@biref General interaction term in the Spin model + GC
+@brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */

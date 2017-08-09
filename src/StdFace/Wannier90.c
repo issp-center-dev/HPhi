@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <complex.h>
 #include <string.h>
-
 /**
 @brief Read Geometry file for wannier90
 @author Mitsuaki Kawamura (The University of Tokyo)
@@ -230,8 +229,7 @@ static void read_W90(struct StdIntList *StdI)
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_Wannier90(
-  struct StdIntList *StdI,//!<[inout]
-  char *model//!<[in] The name of model (e.g. hubbard)
+  struct StdIntList *StdI//!<[inout]
 )
 {
   int isite, jsite, ispin, ntransMax, nintrMax;

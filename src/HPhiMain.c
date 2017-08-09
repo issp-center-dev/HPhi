@@ -47,10 +47,34 @@
   Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
   <HR>
   <H2>Methods</H2>
-  Lanczos algorithm, thermal pure quantum state, full diagonalization
+  - Lanczos algorithm
+  - Locally Optimal Block Preconditioned Conjugate Gradient (LOBPCG) method : See LOBPCG_Main()
+  - Thermal Pure Quantum (TPQ) state
+  - Full Diagonalization
+  - Shifted BiCG method : See CalcSpectrumByBiCG()
+  - Lehmann's spectral representation : See CalcSpectrumByFullDiag()
+  .
   <HR>
   <H2>Target models</H2>
   Hubbard model, Heisenberg model, Kondo lattice model, Kitaev model, Kitaev-Heisenberg model, multi-orbital Hubbard model
+  <HR>
+  <H2>Important functions and source files</H2>
+  <ul>
+    <li>mltply.c : Perform Hamiltonian-vector product</li>
+    <ul>
+      <li>mltplyHubbard.c : For Hubbard and Kondo system</li>
+      <li>mltplySpin.c : For local spin system</li>
+    </ul>
+    <li>StdFace_main.c : Construct typical models</li>
+    <li>global.h, wrapperMPI.h : Global variables</li>
+    <li>struct.h : Binded struct</li>
+  </ul>
+  <HR>
+  <H2>How to modify HPhi</H2>
+  - @ref page_codingrule
+  - @ref page_addstandard
+  - @ref page_newterm
+  .
   <HR>
   <H2>Link</H2>
   https://github.com/QLMS/HPhi
@@ -59,11 +83,28 @@
   https://github.com/QLMS/HPhi/releases
   <HR>
   <H2>Forum</H2>
-  http://ma.cms-initiative.jp/ja/community/materiapps-messageboard/e5hes9
+  https://github.com/QLMS/HPhi/issues
   <HR>
   <H2>licence</H2>
   <B>GNU GPL version 3</B>\n
   This software is developed under the support of "Project for advancement of software usability in materials science" by The Institute for Solid State Physics, The University of Tokyo.\n
+
+@page page_codingrule Coding rule
+
+- Do not use TAB character. Use two spaces as an indent.
+- Use @c default(none) for scoping of OpenMP-parallel region. E.g.
+  @dontinclude CalcByLOBPCG.c
+  @skip pragma
+  @until 0.0
+- Variable declared with @c const must not be included in @c firstprivate of OpenMP scoping.
+  Use @c shared.
+- For MPI parallelization, use the following functions for I/O and abortation:
+  - fgetsMPI() instead of @c fgets
+  - @c fprintf(::stdoutMPI,... instead of @c printf(...
+  - fopenMPI() instead of @c fopen
+  - exitMPI() instead of @c exit
+.    
+  
 */
 
 /** 
@@ -114,7 +155,7 @@ int main(int argc, char* argv[]){
   strcpy(cFileListName, argv[2]);
   
   if(mode==STANDARD_MODE || mode == STANDARD_DRY_MODE){
-    if (myrank == 0) StdFace_main(argv[2]);
+    if (myrank == 0) StdFace_driver(argv[2]);
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdout, "Dry run is Finished. \n\n");

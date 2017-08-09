@@ -124,7 +124,7 @@ SUBROUTINE read_cor()
      READ(fi,*) recipr(1:3,idim)
   END DO
   !
-  ALLOCATE(kvec(2,nktot), equiv(nktot))
+  ALLOCATE(kvec(3,nktot), equiv(nktot))
   WRITE(*,*) "  Total Number of k : ", nktot
   WRITE(*,*) "  Row for k : ", nk_row
   WRITE(*,*) "    Reciplocal lattice vector :"

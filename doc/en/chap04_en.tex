@@ -1109,6 +1109,25 @@ Select the mode of inputting a restart vector:\\
 5: Input and output  both components of triangular diagonal matrix and a restart vector.\\
 }
 
+\item  \verb|OutputHam|
+
+{\bf Type :} {Int (default value: 0)}
+
+{\bf Description :} {Full Diag)Select the mode of outputting Hamiltonian:\\
+0: not output Hamiltonian.\\
+1: output Hamiltonian.\\
+}
+
+\item  \verb|InputHam|
+
+{\bf Type :} {Int (default value: 0)}
+
+{\bf Description :} {(Full Diag)Select the mode of inputting Hamiltonian:\\
+0: not input Hamiltonian.\\
+1: input Hamiltonian.\\
+}
+
+
 \end{itemize}
 
 \newpage
@@ -1206,7 +1225,7 @@ ExpecInterval  20
 
 {\bf Type :} Int (positive integer)
 
-{\bf Description :}  The number of Lanczos steps in the calculation. When the convergence within the specified accuracy is satisfied, the calculation is completed before a step reaches  \verb|Lanczos_max|.
+{\bf Description :}  The maximum number of Lanczos steps in the calculation. When the convergence within the specified accuracy is satisfied, the calculation is completed before a step reaches  \verb|Lanczos_max|. For TPQ calculation, the total number of TPQ steps is specified with this parameter. In the case of restart calculation, \verb|Lanczos_max| must be larger than that of the previous calculation.
 
  \item  \verb|initial_iv|
 
@@ -3197,7 +3216,9 @@ For \verb|method="CG"|
 
 \newpage
 \subsection{Time\_TPQ\_Step.dat}
-(For the TPQ method) This file is outputted to show the time for starting the calculation of the TPQ method at each seed and step. An example is as follows.\\
+(For the TPQ method) This file is outputted to show the time for starting the calculation of the TPQ method at each seed and step. 
+In the restart calculation, the values are added to the previous file.
+An example is as follows.\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -3250,6 +3271,7 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
 \subsection{Norm\_rand.dat}
 \label{Subsec:normrand}
 (For the TPQ method) This file is outputted to show the calculation process information for the TPQ method.
+In the restart calculation, the values are added to the previous file.
 An example of the file format is as follows.\\
 \begin{minipage}{12.5cm}
 \begin{screen}
@@ -3313,6 +3335,7 @@ given by $\langle \tilde{\psi}_{0} |\tilde{\psi}_{0}\rangle$, where $|\tilde{\ps
 \subsection{SS\_rand.dat}
 \label{Subsec:ssrand}
 (For the TPQ method) This file is outputted to show the calculation results for the TPQ method.
+In the restart calculation, the values are added to the previous file.
 An example of the file format is as follows.\\
 \begin{minipage}{15cm}
 \begin{screen}
@@ -3386,6 +3409,7 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
 \subsection{Flct\_rand.dat}
 \label{Subsec:flctrand}
 (For the TPQ method) This file is outputted to show the calculation results of the fluctuation of the particle number, doublon, and $S_z$ for the TPQ method.
+In the restart calculation, the values are added to the previous file.
 An example of the file format is as follows.\\
 
 \begin{minipage}{15cm}
@@ -3579,6 +3603,73 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
  \end{itemize}
 
 \newpage
+\subsection{ham.dat}
+\label{Subsec:ham}
+(For the FullDiag method) When \verb$OutputHam=1$ in the \verb$CalcMod$ file, the Hamiltonian calculated by $\HPhi$ is outputted by the MatrixMarket format. The recalculation by using this file can be down when \verb$InputHam=1$ in the \verb$CalcMod$ file.
+An example of the file format is as follows.\\
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+%%%%MatrixMarket matrix coordinate complex hermitian
+28 28 56
+1 1 1.000000 0.000000
+2 1 0.500000 0.000000
+3 2 0.500000 0.000000
+4 3 0.500000 0.000000
+5 4 0.500000 0.000000
+6 5 0.500000 0.000000
+7 6 0.500000 0.000000
+7 7 1.000000 0.000000
+    …
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+ \begin{itemize}
+ \item \#\#\_ham.dat
+ \end{itemize}
+  \#\# indicates [string02] in a ModPara file.
+  
+\subsubsection{File format}
+ \begin{itemize}
+   \item Line 1: Header
+   \item Line 2: $[$int01$]$~~$[$int02$]$~~$[$int03$]$
+   \item Lines3-：$[$int04$]$~~$[$int05$]$~~$[$double01$]$~~$[$double02$]$
+  \end{itemize}
+  
+  \subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+
+ {\bf Type :} Int
+
+{\bf Description :} Number of rows of Hamiltonian.
+ 
+  \item  $[$int02$]$
+
+ {\bf Type :} Int 
+
+{\bf Description :} Number of columns of Hamiltonian.
+
+  \item  $[$int03$]$
+
+ {\bf Type :} Int
+
+{\bf Description :} Number of nonzero elements of Hamiltonian.
+
+  \item  $[$double01$]$, $[$double02$]$
+
+ {\bf Type :} Double
+
+{\bf Description :} The value of Hamiltonian;  $[$double01$]$ and $[$double02$]$  represent real and imaginary part of the Hamiltonian, respectively.
+
+\end{itemize}
+
+
+\newpage
 \subsection{cisajs.dat}
 \label{Subsec:cgcisajs}
 This file is the outputted files for one-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$. 
@@ -3718,35 +3809,28 @@ When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by the Lanc
   \#\# indicates [string02] in a ModPara file, \&\& is the number of eigenvalues, and \$\$ is a number of rank.
 
 \subsubsection{File format}
- \begin{itemize}
-   \item  Line 1: $[$int01$]$
-   \item  Line 2: $[$int02$]$
-   \item  Lines 3 -: $[$double01$]$~~$[$double02$]$.
-  \end{itemize}
-  
-\subsubsection{Parameters}
- \begin{itemize}
 
-  \item  $[$int01$]$
+This file is written through the following source code
+(a little different fron the actual $\HPhi$ source).
+\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_eigenvec_0_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&eigen_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
+where \verb|number_of_interations| is the number of iterations,
+\verb|local_size| is the size of eigenvector
+(if MPI is used, it differs from the dimension of the Hilbert space),
+\verb|eigen_vector| is the (complex) eigenvector.
 
- {\bf Type :} Int
-
-{\bf Description :}  The total number of targets of the Hilbert spaces.
-
-  \item  $[$int02$]$
-
- {\bf Type :} Int
-
-{\bf Description :}  { The number of Lanczos steps.}
-
- \item  $[$double01$]$, $[$double02$]$
-
- {\bf Type :} double 
-
-{\bf Description :} The value of eigenvectors.\\
-$[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.\\
-
- \end{itemize}
+{\bf Note: } The fist component of \verb|eigen_vector| (\verb|eigen_vector[0]|)
+is not used for calculation.
 
 \newpage
 \subsection{{tmpvec.dat}}
@@ -3756,46 +3840,53 @@ When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops at an i
 \subsubsection{File name}
 \begin{itemize}
    \item{Lanczos method: \#\#\_tmpvec\_rank\_\$\$.dat}
-   \item{TPQ method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}  .
+   \item{TPQ and LOBPCG method: \#\#\_tmpvec\_set\_\&\&\_rank\_\$\$.dat}  .
 \end{itemize}
-  \#\# indicates [string02] in a ModPara file, and \$\$ is the number of rank. \&\& is the sampling number for the TPQ calculation. 
+\#\# indicates [string02] in a ModPara file, and \$\$ is the number of rank.
+\&\& is the sampling number for the TPQ calculation. 
 
 \subsubsection{File format}
- \begin{itemize}
-   \item  Line 1: $[$int01$]$
-   \item  Line 2: $[$int02$]$
-   \item  Lines 3 - 3+$[$int01$]$: $[$double01$]$~~$[$double02$]$
-   \item  Lines 4+$[$int01$]$ - 3+2$\times[$int01$]$: $[$double03$]$~~$[$double04$]$.
-  \end{itemize}
 
-\subsubsection{Parameters}
- \begin{itemize}
+This file is written through the following source code
+(a little different fron the actual $\HPhi$ source).
 
-  \item  $[$int01$]$
+Lanczos
+\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_tmpvec_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
+fwrite(&second_last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
 
- {\bf Type :} Int
+TPQ and LOBPCG
+\\
+\begin{minipage}{16cm}
+\begin{screen}
+\begin{verbatim}
+fp = fopen("zvo_tmpvec_set_0_rank_0.dat", "wb");
+fwrite(&number_of_interations, sizeof(int), 1,fp);
+fwrite(&local_size, sizeof(unsigned long int),1,fp);
+fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+\end{verbatim}
+\end{screen}
+\end{minipage}
+where \verb|number_of_interations| is the number of iterations,
+\verb|local_size| is the size of eigenvector
+(if MPI is used, it differs from the dimension of the Hilbert space),
+\verb|last_vector| is the vector at the last iteration and
+\verb|second_last_vector| is the vector at the second last iteration.
 
-{\bf Description :}  The total number of targets of the Hilbert spaces.
-
-  \item  $[$int02$]$
-
- {\bf Type :} Int
-
-{\bf Description :}  { The number of Lanczos (TPQ) steps for the Lanczos (TPQ) method.}
-
- \item  $[$double01$]$, $[$double02$]$ 
-
- {\bf Type :} double 
-
-{\bf Description :} The value of two vectors ($\vec{v}_{k+1}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method and $\vec{y}_{k+1}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.
-
- \item  $[$double03$]$, $[$double04$]$ 
-
- {\bf Type :} double 
-
-{\bf Description :} The value of two vectors ($\vec{v}_{k}$ in Eq.~(\ref{eq: LanczosVector}) for the Lanczos method and $\vec{y}_{k}$ in Eq~.(\ref{eq: TPQVector}) for the TPQ method). $[$double03$]$ is a real part and $[$double04$]$ is an imaginary part.\\
-
- \end{itemize}
+{\bf Note: } The fist component of \verb|last_vector| and \verb|second_last_vector|
+(\verb|last_vector[0]| and \verb|second_last_vector[0]|)
+are not used for calculation.
 
 \newpage
 \subsection{{DynamicalGreen.dat}}
@@ -3850,7 +3941,7 @@ The file format is of the binary type.  An example of the file format is as foll
    \item  Line 1: $[$int01$]$
    \item  Line 2: $[$int02$]$
    \item  Lines 3 - 3+$[$int02$]$: $[$double01$]$~~$[$double02$]$
-   \item  Lines 4+$[$int02$]$ - 3+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$.
+   \item  Lines 4+$[$int02$]$ - 4+2$\times [$int02$]$: $[$double03$]$~~$[$double04$]$.
 
   \end{itemize}
 \subsubsection{Parameters}
@@ -3864,7 +3955,7 @@ The file format is of the binary type.  An example of the file format is as foll
 
   \item  $[$int02$]$
 
- {\bf Type :} Int
+ {\bf Type :} Long Int
 
 {\bf Description :}  The total number of targets of the Hilbert spaces.
 
@@ -3874,14 +3965,14 @@ The file format is of the binary type.  An example of the file format is as foll
  {\bf Type :} Double 
 
 {\bf Description :} The value of the vector $\vec{v}_{k+1}$ for recalculating dynamical Green's functions by the Lanczos method.\\
-$[$double01$]$ and $[$double02$]$ are a real part and an imaginary part of $\vec{v}_{k+1}$, respectively.
+$[$double01$]$ and $[$double02$]$ are a real part and an imaginary part of $\vec{v}_{k+1}$, respectively. The fist component is not used for calculation.
 
 \item  $[$double03$]$, $[$double04$]$
 
  {\bf Type :} Double 
 
 {\bf Description :} The value of the vector $\vec{v}_{k}$ for recalculating dynamical Green's functions by the Lanczos method.\\
-$[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec{v}_{k}$, respectively.
+$[$double03$]$ and $[$double04$]$ are a real part and an imaginary part of $\vec{v}_{k}$, respectively. The fist component is not used for calculation.
 \end{itemize}
 
 \newpage
