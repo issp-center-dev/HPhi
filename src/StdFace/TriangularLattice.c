@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 @brief Setup a Hamiltonian for the Triangular lattice
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void StdFace_Triangular(struct StdIntList *StdI, char *model)
+void StdFace_Triangular(struct StdIntList *StdI)
 {
   int isite, jsite, kCell, ntransMax, nintrMax;
   int iL, iW;

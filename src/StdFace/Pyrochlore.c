@@ -31,11 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_Pyrochlore(
-  struct StdIntList *StdI,//!<[inout]
-  char *model//!<[in] The name of model (e.g. hubbard)
+  struct StdIntList *StdI//!<[inout]
 )
 {
-  int isite, jsite, ntransMax, nintrMax;
+  int isite, jsite, isiteUC, ntransMax, nintrMax;
   int iL, iW, iH, kCell;
   FILE *fp;
   double complex Cphase;
@@ -197,29 +196,22 @@ void StdFace_Pyrochlore(
     if (strcmp(StdI->model, "kondo") == 0) isite += StdI->nsite / 2;
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
-      StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, isite);
-      StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, isite + 1);
-      StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, isite + 2);
-      StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, isite);
-      StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite + 1, isite + 1);
-      StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite + 2, isite + 2);
+      for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
+        StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, isite + isiteUC);
+        StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite + isiteUC, isite + isiteUC);
+      }/*for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++)*/
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite);
-      StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite + 1);
-      StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite + 2);
-      StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite + 3);
+      for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
+        StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite + isiteUC);
+      }/*for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++)*/
       /**/
       if (strcmp(StdI->model, "kondo") == 0) {
         jsite = StdI->NsiteUC * kCell;
-        StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite, jsite);
-        StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite + 1, jsite + 1);
-        StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite + 2, jsite + 2);
-        StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite + 3, jsite + 3);
-        StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, jsite);
-        StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, jsite + 1);
-        StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, jsite + 2);
-        StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, jsite + 3);
+        for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++) {
+          StdFace_GeneralJ(StdI, StdI->J, 1, StdI->S2, isite + 3, jsite + isiteUC);
+          StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, jsite + isiteUC);
+        }/*for (isiteUC = 0; isiteUC < StdI->NsiteUC; isiteUC++)*/
       }/*if (strcmp(StdI->model, "kondo") == 0 )*/
     }/*if (strcmp(StdI->model, "spin") != 0 )*/
     /*

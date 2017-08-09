@@ -9,7 +9,7 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
     ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
         ~~9@@@@@@@@@  ~                                         
-           9@P~~~9@P             Version 2.0.1    
+           9@P~~~9@P             Version 2.0.3    
                                                                 
 
 
@@ -246,10 +246,10 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   End  : Calculate Energy.
 
   Accuracy check !!!
-  LanczosEnergy = -1.04543987874415e+01 
+  LanczosEnergy = -1.04543987874416e+01 
   EnergyByVec   = -1.04502678467302e+01 
-  diff_ene      = 3.95139002758536e-04 
-  var           = 8.01780477652422e-04 
+  diff_ene      = 3.95139002758876e-04 
+  var           = 8.01780477652420e-04 
   Accuracy of Lanczos vectors is NOT enough
 
   Start: Calculate EigenVector by CG method.
@@ -258,10 +258,10 @@ P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
   End  : Calculate Energy.
 
   CG Accuracy check !!!
-  LanczosEnergy = -1.04543987874415e+01
+  LanczosEnergy = -1.04543987874416e+01
   EnergyByVec   = -1.04543987874416e+01
   diff_ene      = 1.18940343951092e-15
-  var           = 1.95710645729447e-16 
+  var           = 2.60047133120041e-16 
  
 
 ######  End  : Calculate Lanczos EigenVec.  ######

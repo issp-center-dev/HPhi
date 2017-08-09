@@ -208,7 +208,7 @@ int MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
     for(j =0; j<4; j++) {
       X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = 0;
     }
-    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=0.0;
+    X->Def.EDParaGeneralTransfer[i+X->Def.EDNTransfer]=0.0;
   }
 
   //Input values
@@ -216,7 +216,7 @@ int MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
     for(j =0; j<4; j++) {
       X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = X->Def.TETransfer[timeidx][i][j];
     }
-    X->Def.EDParaTransfer[i+X->Def.EDNTransfer]=X->Def.ParaTETransfer[timeidx][i];
+    X->Def.EDParaGeneralTransfer[i+X->Def.EDNTransfer]=X->Def.ParaTETransfer[timeidx][i];
   }
   return 0;
 }
