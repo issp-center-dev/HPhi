@@ -65,14 +65,16 @@ int SetDiagonalTEChemi(
         double complex *tmp_v1
 );
 
-/** 
- * @fn function for calculating diagonal components
- * 
- * @param X 
- * 
+/**
+ *
+ *
+ * @breif function for calculating diagonal components
+ *
+ * @param X [in/out]
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
+ * @return
  */
 int diagonalcalc
 (

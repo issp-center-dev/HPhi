@@ -39,6 +39,13 @@
  *
  */
 
+/// \brief Output spectrum.
+/// \param X [in] Read information of the frequency origin.
+/// \param Nomega [in] A total number of discrete frequencies.
+/// \param dcSpectrum [in] Array of spectrum.
+/// \param dcomega [in] Array of discrete frequencies.
+/// \retval FALSE Fail to open the output file.
+/// \retval TRUE Success to output the spectrum.
 int OutputSpectrum(
   struct EDMainCalStruct *X,
   int Nomega,
@@ -51,7 +58,9 @@ int OutputSpectrum(
 
   //output spectrum
   sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
-  childfopenMPI(sdt, "w", &fp);
+  if(!childfopenMPI(sdt, "w", &fp)==0){
+    return FALSE;
+  }
 
   for (i = 0; i < Nomega; i++) {
     fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
@@ -64,9 +73,12 @@ int OutputSpectrum(
 }/*int OutputSpectrum*/
 
 /**
- * @brief A main function to calculate spectrum
+ * @brief A main function to calculate spectrum.
  *
- * @param[in,out] X CalcStruct list for getting and pushing calculation information
+ * @param X [in,out] CalcStruct list for getting and pushing calculation information \n
+ * input: iFlgSpecOmegaOrg, dcOmegaMax, dcOmegaMin, iNOmega etc.\n
+ * output: dcOmegaOrg, iFlagListModified.
+ *
  * @retval 0 normally finished
  * @retval -1 unnormally finished
  *
@@ -196,13 +208,6 @@ int CalcSpectrum(
             v1[i] = v0[i] / dnorm;
         }
 
-        /*
-        for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-          //fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", i+myrank*X->Bind.Def.Tpow[X->Bind.Def.Nsite-1]*2,creal(v0[i]), cimag(v0[i]));
-          // fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", list_1[i],creal(v0[i]), cimag(v0[i]));
-          fprintf(stdout, "DebugExcitedVec: %ld, %lf, %lf\n", list_1[i]+myrank*X->Bind.Def.Tpow[2*X->Bind.Def.Nsite-1]*2,creal(v0[i]), cimag(v0[i]));
-        }
-        */
         fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
     }
@@ -246,7 +251,7 @@ int CalcSpectrum(
       break;//Lanczos Spectrum
 
     case TPQCalc:
-      fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum.\n");
+      fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum mode.\n");
       return FALSE;//TPQ is not supprted.
 #ifdef _CALCSPEC_TPQ
       iret = CalcSpectrumByTPQ(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
@@ -267,7 +272,7 @@ int CalcSpectrum(
   StopTimer(6200);
   
   if (iret != TRUE) {
-    //Error Message will be added.
+    fprintf(stderr, "  Error: The selected calculation type is not supported for calculating spectrum mode.\n");
     return FALSE;
   }
   else {
@@ -282,11 +287,18 @@ int CalcSpectrum(
 
 }/*int CalcSpectrum*/
 
+///
+/// \brief Parent function to calculate the excited state.
+/// \param X [in] Struct to get number of excitation operators.
+/// \param tmp_v0 [out] Result @f$ v_0 = H_{ex} v_1 @f$.
+/// \param tmp_v1 [in] The original state before excitation  @f$ v_1 @f$.
+/// \retval FALSE Fail to calculate the excited state.
+/// \retval TRUE Success to calculate the excited state.
 int GetExcitedState
 (
  struct BindStruct *X,
- double complex *tmp_v0,/**< [out] Result v0 = H v1*/
- double complex *tmp_v1 /**< [in] v0 = H v1*/
+ double complex *tmp_v0,
+ double complex *tmp_v1
 )
 {
    if(X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0){
@@ -309,6 +321,13 @@ int GetExcitedState
   return TRUE;
 }
 
+///
+/// \breif Set target frequencies
+/// \param X [in, out] Struct to give and get the information of target frequencies.\n
+/// Output: dcOmegaMax, dcOmegaMin
+///
+/// \retval FALSE Fail to set frequencies.
+/// \retval TRUE Success to set frequencies.
 int SetOmega
 (
  struct DefineList *X
@@ -385,6 +404,15 @@ int SetOmega
   return TRUE;
 }
 
+///
+/// \breif Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble).
+/// The original lists before the excitation are given by list_xxx_org
+/// \param X [in, out] Struct to get and give information to make the lists for the excited state.\n
+/// Output: iCalcModel (From HubbardNConserved to Hubbard), {Ne, Nup, Ndown, Nsite, Total2Sz} (update for MPI)
+///
+/// \param iFlgListModifed [out] If the list is modified due to the excitation, the value becomes TRUE(1), otherwise FALSE(0).
+/// \retval -1 fail to make lists.
+/// \retval 0  sucsess to make lists.
 int MakeExcitedList(
         struct BindStruct *X,
         int *iFlgListModifed

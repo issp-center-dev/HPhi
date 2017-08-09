@@ -21,32 +21,32 @@
 #include "CalcTime.h"
 /**
  * @file   CalcSpectrumByLanczos.c
+ * @brief Get the spectrum function by continued fraction expansions.\n
+ * Ref. E.Dagotto, Rev. Mod. Phys. 66 (1994), 763.
  * @version 1.1
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @brief  File for givinvg functions of calculating spectrum by Lanczos
- * 
  * 
  */
 
-/** 
- * @brief A main function to calculate spectrum by Lanczos
- * 
- * @param[in,out] X CalcStruct list for getting and pushing calculation information 
- * @retval 0 normally finished
- * @retval -1 unnormally finished
- *
- * @version 1.1
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- */
-int CalcSpectrumByLanczos(		 
+///
+/// \brief A main function to calculate spectrum by continued fraction expansions.
+/// \param X [in,out] Struct for getting and giving calculation information
+/// \param tmp_v1 [in] Normalized excited state.
+/// \param dnorm [in] Norm of the excited state before normalization.
+/// \param Nomega [in] Total number of frequencies.
+/// \param dcSpectrum [out] Calculated spectrum.
+/// \param dcomega [in] Target frequencies.
+/// \retval 0 normally finished
+/// \retval -1 unnormally finished
+/// \version 1.1
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
+int CalcSpectrumByLanczos(
 			  struct EDMainCalStruct *X,
 			  double complex *tmp_v1,
 			  double dnorm,
-              int Nomega,
-              double complex *dcSpectrum,
-              double complex *dcomega
+        int Nomega,
+        double complex *dcSpectrum,
+        double complex *dcomega
 )
 {
     unsigned long int i;
@@ -156,14 +156,23 @@ int CalcSpectrumByLanczos(
     return TRUE;
 }
 
-
+///
+/// \brief Calculate the spectrum by using tridiagonal matrix components obtained by the Lanczos_GetTridiagonalMatrixComponents function.
+/// \param tmp_alpha [in] Tridiagonal matrix components.
+/// \param tmp_beta [in] Tridiagonal matrix components.
+/// \param dnorm [in] Norm for the excited state.
+/// \param dcomega [in] Target frequency.
+/// \param dcSpectrum [out] Spectrum at dcomega.
+/// \param ilLanczosStp [in] Lanczos step required to get tridiagonal matrix components.
+/// \retval FALSE Fail to get the spectrum
+/// \retval TRUE  Success to get the spectrum
 int GetSpectrumByTridiagonalMatrixComponents(
 		double *tmp_alpha,
 		double *tmp_beta,
-        double dnorm,
+    double dnorm,
 		double complex dcomega,
 		double complex *dcSpectrum,
-        unsigned long int ilLanczosStp
+    unsigned long int ilLanczosStp
 		)
 {
     unsigned long int istp=2;
@@ -174,7 +183,7 @@ int GetSpectrumByTridiagonalMatrixComponents(
     double complex dch;
 
     if(ilLanczosStp < 1){
-        //TODO: Add error message
+        fprintf(stdoutMPI, "Error: LanczosStep must be greater than 1.\n");
         return FALSE;
     }
     dcb0 = dcomega-tmp_alpha[1];

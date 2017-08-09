@@ -20,13 +20,22 @@
 #include "wrapperMPI.h"
 #include "mltply.h"
 
-/** 
- * @brief  Function of multiplying Hamiltonian for TPQ calculation
- * 
- * @param X data list for calculation
+/**
+ * @file   Multiply.c
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Kota Ido (The University of Tokyo)
+ *
+ * @brief  File for giving multiplying functions to the wave vectors for TPQ and TE method
+ *
+ */
+
+/**
+ * @brief Function of calculating the i-th step norm as @f[ N^{(i)} = |L v_1^{(i)}-v_0^{(i)}/N_s | @f]
+ * and update the i+1-th wave vector as @f[ v_0^{(i+1)} = \frac{L v_1^{(i)}-v_0^{(i)}/N_s}{N^{(i)}} @f] for TPQ calculation
+ * @param X [in] data list for calculation (idim_max and NsiteMPI)
  * @retval 0  normally finished
  * @retval -1 unnormally finished
- *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -35,7 +44,6 @@ int Multiply
  struct BindStruct *X
  )
 {
-  
   long int i,i_max;
   double complex dnorm;
   double Ns;
@@ -60,9 +68,10 @@ int Multiply
 }
 
 /**
- * @brief  Function of multiplying Hamiltonian for Time Evolution
+ * @brief  Function of multiplying Hamiltonian for Time Evolution.
  *
- * @param X data list for calculation
+ * Make @f$ |v_0 \rangle = |\psi(t+dt) \rangle @f$ from @f$ |v_1 \rangle = | \psi(t) \rangle  @f$ and @f$ |v_0 \rangle = H |\psi(t) \rangle @f$.
+ * @param X [in] data list for calculation (idim_max and TimeSlice)
  *
  * @retval 0  normally finished
  * @retval -1 unnormally finished

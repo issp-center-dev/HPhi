@@ -25,7 +25,8 @@
  * @version 1.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
- * @brief  File for givinvg functions of calculating spectrum by Lanczos
+ * @brief  Calculate spectrum function for the TPQ state. \n
+ * Note: This method is trial and cannot be used in the release mode.
  * 
  * 
  */
@@ -77,6 +78,18 @@ int ReadTPQData(
     return TRUE;
 }
 
+///
+/// \brief Calculate spectrum function from the TPQ state.
+/// \param dcomega [in] Target frequencies.
+/// \param dtemp [in] Temperature corresponding to the target TPQ state.
+/// \param dspecificheat [in] Specific heat.
+/// \param ene [in] Energy for the target TPQ state.
+/// \param tmp_E [in] Energies included in the excited TPQ state obtained by the continued fraction expansions.
+/// \param Nsite [in] Total number of sites.
+/// \param idim_max [in] Dimension of the Hilbert space.
+/// \param dc_tmpSpec [out] Calculated spectrum.
+/// \retval FALSE fail to calculate spectrum.
+/// \retval TRUE sucsceed to calculate spectrum.
 int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecificheat,
                        double ene, double *tmp_E, int Nsite, int idim_max, double complex * dc_tmpSpec)
 {
@@ -104,13 +117,13 @@ int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecifichea
     return TRUE;
 }
 
-/// \brief A main function to calculate spectrum by TPQ
-/// \param [in,out] X CalcStruct list for getting and pushing calculation information
-/// \param tmp_v1
-/// \param dnorm
-/// \param Nomega
-/// \param dcSpectrum
-/// \param dcomega
+/// \brief A main function to calculate spectrum by TPQ (Note: This method is trial)
+/// \param X [in,out] CalcStruct list for getting and pushing calculation information
+/// \param tmp_v1 [in] Normalized excited state.
+/// \param dnorm [in] Norm of the excited state before normalization.
+/// \param Nomega [in] Total number of frequencies.
+/// \param dcSpectrum [out] Calculated spectrum.
+/// \param dcomega [in] Target frequencies.
 /// \retval 0 normally finished
 /// \retval -1 unnormally finished
 /// \version 1.2
