@@ -761,23 +761,27 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 
 \item \verb|OmegaMin|
 
-    {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|$\times$サイト数)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の下限。
-    
-  \item \verb|OmegaMax|
-
-    {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|$\times$サイト数)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の上限。
-
-  \item \verb|OmegaIm|
-
-    {\bf 形式 :} 実数(デフォルトは\verb|0.01*LargeValue|)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数の虚部。
-
-  \item \verb|NOmega|
+  {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|$\times$サイト数)
   
-    {\bf 形式 :} 正の整数(デフォルトは\verb|200|)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数のグリッド数。
+  {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の下限。
+    
+\item \verb|OmegaMax|
+
+  {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|$\times$サイト数)
+  
+  {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の上限。
+
+\item \verb|OmegaIm|
+
+  {\bf 形式 :} 実数(デフォルトは\verb|0.01*LargeValue|)
+  
+  {\bf 説明 :} 計算する動的グリーン関数の振動数の虚部。
+
+\item \verb|NOmega|
+  
+  {\bf 形式 :} 正の整数(デフォルトは\verb|200|)
+    
+  {\bf 説明 :} 計算する動的グリーン関数の振動数のグリッド数。
 
 \end{itemize}
 
@@ -788,16 +792,13 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 \item \verb|nt|
 
   {\bf 形式 :} 正の整数(デフォルトは\verb|1000|)
+  
   {\bf 説明 :} 時間ステップ数。
 
 \item \verb|dt|
   
   {\bf 形式 :} 正の実数(デフォルトは\verb|0.1|)
-  {\bf 説明 :} 時間ステップ幅。
-
-\item \verb|dt|
   
-  {\bf 形式 :} 正の実数(デフォルトは\verb|0.1|)
   {\bf 説明 :} 時間ステップ幅。
 
 \item \verb|PumpType|
@@ -852,7 +853,7 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
   {\bf 形式 :} 実数(デフォルトはともに\verb|0.0|)
 
   {\bf 説明 :} 時刻$t=t_0$でのベクトルポテンシャル${\bf A}_0$を
-  Fractional coordinateで指定する。
+  逆格子のFractional coordinateで指定する。
   逆格子ベクトルはFigs.
   \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
   \ref{fig_ladder}, \ref{fig_kagome}

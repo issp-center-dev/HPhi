@@ -234,13 +234,12 @@ static void PrintCalcMod(struct StdIntList *StdI)
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
   int NumOp, spin[2][2], isite, ispin, icell, itau;
-  double coef[2], pi, Cphase;
+  double coef[2], Cphase;
   double *fourier_r, *fourier_i;
 
   fourier_r = (double *)malloc(sizeof(double) * StdI->nsite);
   fourier_i = (double *)malloc(sizeof(double) * StdI->nsite);
-  pi = acos(-1.0);
-
+  
   fprintf(stdout, "\n  @ Spectrum\n\n");
 
   StdFace_PrintVal_d("SpectrumQW", &StdI->SpectrumQ[0], 0.0);
@@ -322,8 +321,8 @@ static void PrintExcitation(struct StdIntList *StdI) {
       Cphase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQ[0]
              + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQ[1]
              + (StdI->Cell[icell][2] + StdI->tau[itau][2])*StdI->SpectrumQ[2];
-      fourier_r[isite] = cos(2.0*pi*Cphase);
-      fourier_i[isite] = sin(2.0*pi*Cphase);
+      fourier_r[isite] = cos(2.0*StdI->pi*Cphase);
+      fourier_i[isite] = sin(2.0*StdI->pi*Cphase);
       isite += 1;
     }
   }
@@ -498,10 +497,11 @@ static void PrintPump(struct StdIntList *StdI) {
         jtau = jsite % StdI->NsiteUC;
 
         for (ii = 0; ii < 3; ii++)
-          dR[ii] = (double)(StdI->Cell[icell][ii] + StdI->tau[itau][ii] - StdI->Cell[jcell][ii] - StdI->tau[jtau][ii]);
+          dR[ii] = (double)(StdI->Cell[icell][ii] - StdI->Cell[jcell][ii])
+          + StdI->tau[itau][ii] - StdI->tau[jtau][ii];
 
         Cphase = 0.0f;
-        for (ii = 0; ii < 3; ii++) Cphase += At[it][ii] * dR[ii];
+        for (ii = 0; ii < 3; ii++) Cphase += 2.0*StdI->pi * At[it][ii] * dR[ii];
         coef = cos(Cphase) + I * sin(Cphase);
 
         fprintf(fp, "%5d %5d %5d %5d %25.15f %25.15f\n",
@@ -760,6 +760,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   */
   NaN_d = 0.0 / 0.0;
   StdI->NaN_i = 2147483647;
+  StdI->pi = acos(-1.0);
   /**/
   StdI->a = NaN_d;
   for (i = 0; i < 3; i++) StdI->length[i] = NaN_d;
@@ -821,7 +822,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->V2p = NaN_d;
   StdI->W = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->phase[i] = NaN_d;
-  StdI->pi180 = 0.01745329251994329576;/*Pi/180*/
+  StdI->pi180 = StdI->pi / 180.0;
 
   StdI->nelec = StdI->NaN_i;
   StdI->Sz2 = StdI->NaN_i;

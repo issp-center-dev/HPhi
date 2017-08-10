@@ -28,6 +28,7 @@ struct StdIntList {
   int NaN_i;/**<@brief It is used for initializing input parameter. 
             This means that a parameter wich is not specified in input file.
             Set in StdFace_ResetVals().*/
+  double pi;/**<@brief @f$\pi=3.14...@f$*/
   /*
   Parameters for LATTICE
   */
