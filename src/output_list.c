@@ -17,12 +17,23 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   output_list.c
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ *
+ * @brief  Output list_1 for canonical ensembles obtained in sz.c.
+ *
+ */
+
+
 /** 
+ * @brief Output list_1 for canonical ensembles.
  * 
+ * @param X [in] Struct to get the dimension of the target Hilbert space and the information for making the output file name.
  * 
- * @param X 
- * 
- * @return 
+ * @retval -1 fail to output the list.
+ * @retval 0  success to output the list.
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -39,7 +50,7 @@ int output_list(struct BindStruct *X){
   case Hubbard:
   case Spin:
   case SpinGC:
-  sprintf(sdt, cFileNameListModel, X->Def.Nsite,X->Def.Nup,X->Def.Ndown);
+    sprintf(sdt, cFileNameListModel, X->Def.Nsite,X->Def.Nup,X->Def.Ndown);
   break;
   case Kondo:
   case KondoGC:

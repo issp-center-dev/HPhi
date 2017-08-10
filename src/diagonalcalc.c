@@ -16,6 +16,10 @@
 
 /**
  * @file   diagonalcalc.c
+ * @version 2.1
+ * @details add functions to calculate diagonal components for Time evolution.
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ *
  * @version 0.2
  * @details modify functions to calculate diagonal components for general spin.
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -24,7 +28,7 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
- * @brief  File to define functions for calculating diagonal components
+ * @brief  Calculate diagonal components, i.e. @f$ H_d |\phi_0> = E_d |\phi_0> @f$.
  * 
  * 
  */
@@ -68,13 +72,14 @@ int SetDiagonalTEChemi(
 /**
  *
  *
- * @breif function for calculating diagonal components
+ * @breif Calculate diagonal components and obtain the list, list_diagonal.
  *
- * @param X [in/out]
+ * @param X [in] Struct to get the information of the diagonal operators.
  *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return
+ * @retval -1 fail to calculate diagonal components.
+ * @retval 0 succeed to calculate diagonal components.
  */
 int diagonalcalc
 (
@@ -181,11 +186,13 @@ int diagonalcalc
   return 0;
 }
 
-///  @fn function for calculating diagonal components
-/// \param X
-/// \param tmp_v0
-/// \param tmp_v1
-/// \return
+///  @fn Update the vector for diagonal operators ( using in Time Evolution mode).
+/// \param X [in] Struct to get the information of the diagonal operators.
+/// \param tmp_v0 [in/out] Result vector
+/// \param tmp_v1 [in] Input produced vector
+/// \retval -1 fail to update the vector.
+/// \retval  0 succeed to update the vector.
+/// \version 2.1
 int diagonalcalcForTE
         (
                 const int _istep,
@@ -194,8 +201,7 @@ int diagonalcalcForTE
                 double complex *tmp_v1
         ) {
 
-  FILE *fp;
-  long unsigned int i, j;
+  long unsigned int i;
   long unsigned int isite1, isite2;
   long unsigned int A_spin, B_spin;
   double tmp_V;
@@ -239,11 +245,12 @@ int diagonalcalcForTE
 /**
  * 
  * 
- * @brief coulombintra interaction are given by \f$ U_i n_ {i \uparrow}n_{i \downarrow} \f$
- * @param isite1  a site number
- * @param dtmp_V A value of coulombintra interaction \f$ U_i \f$
- * @param X Define list to get dimesnion number 
- * @return 
+ * @brief Calculate the components for Coulombintra interaction, \f$ U_i n_ {i \uparrow}n_{i \downarrow} \f$
+ * @param isite1 [in] a site number
+ * @param dtmp_V [in] A value of coulombintra interaction \f$ U_i \f$
+ * @param X [in] Define list to get dimension number
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
  *
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
@@ -347,17 +354,19 @@ int SetDiagonalCoulombIntra
 }
 
 
-/** 
- * 
- * 
- * @param isite1 
- * @param dtmp_V 
- * @param spin 
- * @param X 
- * 
+/**
+ *
+ *
+ * @brief Calculate the components for the chemical potential \f$ \mu_{i \sigma_1} n_ {i \sigma_1} \f$
+ * @param isite1 [in] a site number
+ * @param dtmp_V [in] A value of coulombintra interaction \f$ \mu_{i \sigma_1} \f$
+ * @param X [in] Define list to get dimension number
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
+ *
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int SetDiagonalChemi
 (
@@ -515,17 +524,19 @@ firstprivate(i_max, dtmp_V) private(j)
   return 0;
 }
 
-/** 
+/**
  * 
- * 
- * @param isite1 
- * @param isite2 
- * @param dtmp_V 
- * @param X 
- * 
+ * @brief Calculate the components for Coulombinter interaction, \f$ V_{ij} n_ {i}n_{j} \f$
+ * @param isite1 [in] a site number \f$i \f$
+ * @param isite2 [in] a site number \f$j \f$
+ * @param dtmp_V [in] A value of coulombinter interaction \f$ V_{ij} \f$
+ * @param X [in] Define list to get the operator information.
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
+ *
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int SetDiagonalCoulombInter
 (
@@ -754,17 +765,19 @@ private(num1, ibit1_up, ibit1_down, j)
   return 0;
 }
 
-/** 
- * 
- * 
- * @param isite1 
- * @param isite2 
- * @param dtmp_V 
- * @param X 
- * 
+/**
+ *
+ * @brief Calculate the components for Hund interaction, \f$ H_{ij}(n_ {i\uparrow}n_{j\uparrow}+ n_ {i\downarrow}n_{j\downarrow})\f$
+ * @param isite1 [in] a site number \f$i \f$
+ * @param isite2 [in] a site number \f$j \f$
+ * @param dtmp_V [in] A value of Hund interaction \f$ H_{ij} \f$
+ * @param X [in] Define list to get the operator information.
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
+ *
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int SetDiagonalHund
 (
@@ -1075,19 +1088,21 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
   return 0;
 }
 
-/** 
- * 
- * 
- * @param isite1 
- * @param isite2 
- * @param isigma1 
- * @param isigma2 
- * @param dtmp_V 
- * @param X 
- * 
+/**
+ *
+ * @brief Calculate the components for general two-body diagonal interaction, \f$ H_{i\sigma_1 j\sigma_2} n_ {i\sigma_1}n_{j\sigma_2}\f$
+ * @param isite1 [in] a site number \f$i \f$
+ * @param isite2 [in] a site number \f$j \f$
+ * @param isigma1 [in] a spin index at \f$i \f$ site.
+ * @param isigma2 [in] a spin index at \f$j \f$ site.
+ * @param dtmp_V [in] A value of general two-body diagonal interaction \f$ H_{i\sigma_1 j\sigma_2} \f$
+ * @param X [in] Define list to get the operator information.
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
+ *
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
  */
 int SetDiagonalInterAll
 (
@@ -1393,6 +1408,24 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
 
 }
 
+/**
+ *
+ * @brief Update the vector by the general two-body diagonal interaction, \f$ H_{i\sigma_1 j\sigma_2} n_ {i\sigma_1}n_{j\sigma_2}\f$.\n
+ * (Using in Time Evolution mode).
+ * @param isite1 [in] a site number \f$i \f$
+ * @param isite2 [in] a site number \f$j \f$
+ * @param isigma1 [in] a spin index at \f$i \f$ site.
+ * @param isigma2 [in] a spin index at \f$j \f$ site.
+ * @param dtmp_V [in] A value of general two-body diagonal interaction \f$ H_{i\sigma_1 j\sigma_2} \f$
+ * @param X [in] Define list to get the operator information.
+ * @param tmp_v0 [in/out] Result vector
+ * @param tmp_v1 [in] Input produced vector
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
+ *
+ * @version 2.1
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 int SetDiagonalTEInterAll(
         long unsigned int isite1,
         long unsigned int isite2,
@@ -1705,6 +1738,24 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
   return 0;
 }
 
+/**
+ *
+ *
+ * @brief Update the vector by the chemical potential \f$ \mu_{i \sigma_1} n_ {i \sigma_1} \f$ \n
+ * generated by the commutation relation in terms of the general two-body interaction, \n
+ * \f$ c_ {i \sigma_1} a_{j\sigma_2}c_ {j \sigma_2}a_ {i \sigma_1} = c_ {i \sigma_1}a_ {i \sigma_1}-c_ {i \sigma_1} a_ {i \sigma_1} c_ {j \sigma_2}a_{j\sigma_2}\f$ .
+ * (Using in Time Evolution mode).
+ * @param isite1 [in] a site number
+ * @param dtmp_V [in] A value of coulombintra interaction \f$ \mu_{i \sigma_1} \f$
+ * @param X [in] Define list to get dimension number
+ * @param tmp_v0 [in/out] Result vector
+ * @param tmp_v1 [in] Input produced vector
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
+ *
+ * @version 2.1
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 int SetDiagonalTEChemi(
         long unsigned int isite1,
         long unsigned int spin,
@@ -1868,16 +1919,21 @@ firstprivate(i_max, dtmp_V) private(j)
 
 /**
  *
+ * @brief Update the vector by the general one-body diagonal interaction, \f$ \mu_{i\sigma_1} n_ {i\sigma_1}\f$.\n
+ * (Using in Time Evolution mode).
+ * @param isite1 [in] a site number \f$i \f$
+ * @param isigma1 [in] a spin index at \f$i \f$ site.
+ * @param dtmp_V [in] A value of general one-body diagonal interaction \f$ \mu_{i\sigma_1} \f$
+ * @param X [in] Define list to get the operator information.
+ * @param tmp_v0 [in/out] Result vector
+ * @param tmp_v1 [in] Input produced vector
+ * @retval -1 fail to calculate the diagonal component.
+ * @retval  0 succeed to calculate the diagonal component.
  *
- * @param isite1
- * @param dtmp_V
- * @param spin
- * @param X
- *
- * @author Takahiro Misawa (The University of Tokyo)
+ * @version 2.1
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return
  */
+
 int SetDiagonalTETransfer
         (
                 long unsigned int isite1,
