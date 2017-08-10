@@ -250,18 +250,31 @@ struct StdIntList {
   int **list_6spin_star;/**<@brief */
   int num_pivot;/**<@brief */
   int ishift_nspin;/**<@brief */
-  /*Spectrum*/
+  /*
+  Spectrum
+  */
   char CalcSpec[256];/**<@brief The name of mode for spectrum, input from file.*/
   char SpectrumType[256];/**<@brief The type of mode for spectrum, input from file.*/
   int Nomega;/**<@brief Number of frequencies, input from file.*/
   double OmegaMax;/**<@brief Maximum of frequency for spectrum, input from file.*/
   double OmegaMin;/**<@brief Minimum of frequency for spectrum, input from file.*/
   double OmegaIm;/**<@brief Imaginary part of frequency.*/
-  double SpectrumQL;/**<@brief wavenumver (q-vector) in fractional coordinate*/
-  double SpectrumQW;/**<@brief wavenumver (q-vector) in fractional coordinate*/
-  double SpectrumQH;/**<@brief wavenumver (q-vector) in fractional coordinate*/
+  double SpectrumQ[3];/**<@brief wavenumver (q-vector) in fractional coordinate*/
   int SpectrumBody;/**<@brief one- or two-body excitation, defined from
                    StdIntList::SpectrumType*/
+  /*
+  Time evolution
+  */
+  double dt;/**<@brief Time step*/
+  double tshift;/**<@brief Shift of time-step of laser*/
+  double tdump;/**<@brief Time scale of dumping*/
+  double freq;/**<@brief Frequency of laser*/
+  double Uquench;/**<@brief Quenched on-site potential*/
+  int nt;/**<@brief Number of Time step*/
+  double VecPot[3];/**<@brief Vector potential*/
+  char PumpType[256];/**<@brief The type of pump*/
+  int PumpBody;/**<@brief one- or two-body pumping, defined from
+                   StdIntList::PumpType*/
 #elif defined(_mVMC)
   /*mVMC modpara*/
   char CParaFileHead[256];/**<@brief Header of the optimized wavefunction,
