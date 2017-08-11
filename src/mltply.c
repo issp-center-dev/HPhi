@@ -13,7 +13,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-//Define Mode for mltply
+// Define Mode for mltply
 // complex version
 #include <bitcalc.h>
 #include "mltply.h"
@@ -24,11 +24,29 @@
 #include "mltplyCommon.h"
 
 /**
+ * @file   mltply.c
  *
+ * @brief  Multiplying the wavefunction by the Hamiltonian. @f$ H v_1@f$.
  *
- * @param X
- * @param tmp_v0
- * @param tmp_v1
+ * @version 0.2
+ * @details add function to treat the case of generalspin
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+
+
+/**
+ * @brief Parent function of multiplying the wavefunction by the Hamiltonian. @f$ H v_1@f$.\n
+ * First, the calculation of diagonal term is done by using the list @f$ \verb|list_diaognal| @f$. \n
+ * Next, the calculation of off-diagonal term is done.\n
+ * @note If @f$ \verb|mode| @f$ in BindStruct X is @f$ \verb|M_CORR| @f$, the wave function is not updated. The expected values are only calculated.\n
+ * Otherwise, the wavefunction @f$ v_0 @f$ is updated as @f$ v_0 += H v_1@f$.
+ *
+ * @param X [in] Struct for getting the information of the operators.
+ * @param tmp_v0 [in, out]
+ * @param tmp_v1 [out]
  *
  * @return
  * @author Takahiro Misawa (The University of Tokyo)

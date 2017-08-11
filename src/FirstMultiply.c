@@ -19,17 +19,24 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 
-/** 
- * 
- * 
- * @param dsfmt 
- * @param X 
- * 
+/**
+ * @file   FirstMultiply.c
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @version 0.1
+ * @brief  Multiplication @f$ v_0 = H v_1 @f$ at the first step for TPQ mode (@f$ v_1 @f$ is the random or inputted vector).
  *
- * @return 
  */
+
+///
+/// \brief Multiplication @f$ v_0 = H v_1 @f$ at the first step for TPQ mode (@f$ v_1 @f$ is the random or inputted vector).
+/// \param rand_i [in] A rundom number seed for giving the initial vector @f$ v_1 @f$.
+/// \param X [in] Struct to get information of the vector @f$ v_1 @f$ for the first step calculation.
+/// \retval -1 fail the multiplication @f$ v_0 = H v_1 @f$.
+/// \retval 0 succeed the multiplication @f$ v_0 = H v_1 @f$.
+/// \version 0.1
+/// \author Takahiro Misawa (The University of Tokyo)
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int FirstMultiply(int rand_i, struct BindStruct *X) {
 
   long int i, i_max;
@@ -97,7 +104,10 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
   StartTimer(3102);
-  mltply(X, v0, v1);
+  if(mltply(X, v0, v1) !=0){
+    StopTimer(3102);
+    return -1;
+  }
   StopTimer(3102);
 #pragma omp parallel for default(none) private(i) shared(v0, v1, list_1) firstprivate(i_max, Ns, LargeValue, myrank)
   for(i = 1; i <= i_max; i++){

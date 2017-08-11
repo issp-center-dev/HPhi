@@ -40,10 +40,11 @@
   <HR>
   <H2>Developers</H2>
   Youhei Yamaji (Quantum-Phase Electronics Center, The University of Tokyo)\n
-  Takahiro Misawa (Department of Applied Physics, The University of Tokyo)\n
+  Takahiro Misawa (Institute for Solid State Physics, The University of Tokyo)\n
   Synge Todo (Department of Physics, The University of Tokyo)\n
   Kazuyoshi Yoshimi (Institute for Solid State Physics, The University of Tokyo)\n
   Mitsuaki Kawamura (Institute for Solid State Physics, The University of Tokyo)\n
+  Kota Ido (Department of Applied Physics, The University of Tokyo)\n
   Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo)
   <HR>
   <H2>Methods</H2>
@@ -110,13 +111,17 @@
 /** 
  * @brief Main program for HPhi
  * 
- * @param argc 
- * @param argv 
+ * @param argc [in] argument count
+ * @param argv [in] argument vector
  *
+ * @version 2.1 Add Time evolution mode.
+ * @version 1.2 Add calculation spectrum mode.
+ * @version 1.0
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
- * @return 
+ * @retval -1 fail the calculation.
+ * @retval 0 succeed the calculation.
  */
 int main(int argc, char* argv[]){
 
