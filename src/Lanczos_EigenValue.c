@@ -24,14 +24,28 @@
 #include "Lanczos_EigenValue.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
-/** 
- * 
- * 
- * @param X 
- * 
+
+/**
+ * @file   Lanczos_EigenValue.c
+ *
+ * @brief  Calculate eigenvalues by the Lanczos method.
+ * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
+ */
+
+/** 
+ * @brief Main function for calculating eigen values by Lanczos method.\n
+ * The energy convergence is judged by the level of target energy determined by  @f$ \verb|k_exct| @f$.\n
+ *
+ * @param X [in] Struct to give the information for calculating the eigen values.
+ * @retval -2 Fail to read the initial vectors or triangular matrix components.
+ * @retval -1 Fail to obtain the eigen values with in the @f$ \verb| Lanczos_max |@f$ step
+ * @retval 0 Succeed to calculate the eigen values.
+ * @version 0.1
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int Lanczos_EigenValue(struct BindStruct *X) {
 
@@ -111,9 +125,9 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       X->Def.Lanczos_restart =1;
     }/*else restart*/
 
-/*
-      Set Maximum number of loop to the dimention of the Wavefunction
-    */
+  /*
+   * Set Maximum number of loop to the dimention of the Wavefunction
+   */
   i_max_tmp = SumMPI_li(i_max);
   if (i_max_tmp < liLanczosStp) {
     liLanczosStp = i_max_tmp;
@@ -290,13 +304,15 @@ int Lanczos_EigenValue(struct BindStruct *X) {
 
 /** 
  * @brief Calculate tridiagonal matrix components by Lanczos method
- * 
- * @param _alpha 
- * @param _beta 
- * @param _v1 
- * @param Lanczos_step 
- * 
- * @return 0
+ *
+ * @param X [in] Struct to give the information to calculate triangular matrix components.
+ * @param _alpha [in,out] Triangular matrix components.
+ * @param _beta [in,out] Triangular matrix components.
+ * @param _v1 [in, out] A temporary vector to calculate triangular matrix components.
+ * @param Lanczos_step [in] The max iteration step.
+ * @version 1.2
+ * @return TRUE
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int Lanczos_GetTridiagonalMatrixComponents(
         struct BindStruct *X,
@@ -304,93 +320,99 @@ int Lanczos_GetTridiagonalMatrixComponents(
         double *_beta,
         double complex *tmp_v1,
         unsigned long int *liLanczos_step
- )
-{
+ ) {
 
- char sdt[D_FileNameMax];
- int stp;
- long int i,i_max;
- i_max=X->Check.idim_max;
- 
- unsigned long int i_max_tmp;
- double beta1,alpha1; //beta,alpha1 should be real
- double  complex temp1,temp2;
- double complex cbeta1;
+  char sdt[D_FileNameMax];
+  int stp;
+  long int i, i_max;
+  i_max = X->Check.idim_max;
 
- sprintf(sdt, cFileNameLanczosStep, X->Def.CDataFileHead);  
-  
+  unsigned long int i_max_tmp;
+  double beta1, alpha1; //beta,alpha1 should be real
+  double complex temp1, temp2;
+  double complex cbeta1;
+
+  sprintf(sdt, cFileNameLanczosStep, X->Def.CDataFileHead);
+
   /*
     Set Maximum number of loop to the dimension of the Wavefunction
   */
- i_max_tmp = SumMPI_li(i_max);
- if(i_max_tmp < *liLanczos_step){
-    *liLanczos_step = i_max_tmp;
-  }
-  if(i_max_tmp < X->Def.LanczosTarget){
+  i_max_tmp = SumMPI_li(i_max);
+  if (i_max_tmp < *liLanczos_step || i_max_tmp < X->Def.LanczosTarget) {
     *liLanczos_step = i_max_tmp;
   }
 
-  if(X->Def.Lanczos_restart==0) {
+  if (X->Def.Lanczos_restart == 0) { // initial procedure (not restart)
 #pragma omp parallel for default(none) private(i) shared(v0, v1, tmp_v1) firstprivate(i_max)
-        for (i = 1; i <= i_max; i++) {
-            v0[i] = 0.0;
-            v1[i] = tmp_v1[i];
-        }
-        stp = 0;
-        mltply(X, v0, tmp_v1);
-        TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
-        alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
-        _alpha[1] = alpha1;
-        cbeta1 = 0.0;
+    for (i = 1; i <= i_max; i++) {
+      v0[i] = 0.0;
+      v1[i] = tmp_v1[i];
+    }
+    stp = 0;
+    mltply(X, v0, tmp_v1);
+    TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
+    alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
+    _alpha[1] = alpha1;
+    cbeta1 = 0.0;
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
-        for (i = 1; i <= i_max; i++) {
-            cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
-        }
-        cbeta1 = SumMPI_dc(cbeta1);
-        beta1 = creal(cbeta1);
-        beta1 = sqrt(beta1);
-        _beta[1] = beta1;
-        X->Def.Lanczos_restart =1;
+    for (i = 1; i <= i_max; i++) {
+      cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
     }
-else{
-        alpha1=alpha[X->Def.Lanczos_restart];
-        beta1=beta[X->Def.Lanczos_restart];
+    cbeta1 = SumMPI_dc(cbeta1);
+    beta1 = creal(cbeta1);
+    beta1 = sqrt(beta1);
+    _beta[1] = beta1;
+    X->Def.Lanczos_restart = 1;
+  } else {  // restart case
+    alpha1 = alpha[X->Def.Lanczos_restart];
+    beta1 = beta[X->Def.Lanczos_restart];
+  }
+
+  for (stp = X->Def.Lanczos_restart + 1; stp <= *liLanczos_step; stp++) {
+    if (fabs(beta[stp - 1]) < pow(10.0, -14)) {
+      *liLanczos_step = stp - 1;
+      break;
     }
-//  for(stp = 2; stp <= *liLanczos_step; stp++){
-    for(stp = X->Def.Lanczos_restart+1; stp <= *liLanczos_step; stp++){
-      if(fabs(beta[stp-1])<pow(10.0, -14)){
-          *liLanczos_step=stp-1;
-          break;
-      }
 
-#pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
-      for(i=1;i<=i_max;i++){
-	temp1 = v1[i];
-	temp2 = (v0[i]-alpha1*v1[i])/beta1;
-	v0[i] = -beta1*temp1;
-	v1[i] =  temp2;
-      }
+#pragma omp parallel for default(none) private(i, temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
+    for (i = 1; i <= i_max; i++) {
+      temp1 = v1[i];
+      temp2 = (v0[i] - alpha1 * v1[i]) / beta1;
+      v0[i] = -beta1 * temp1;
+      v1[i] = temp2;
+    }
 
-      mltply(X, v0, v1);
-      TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
-      alpha1=creal(X->Large.prdct);
-      _alpha[stp]=alpha1;
-      cbeta1=0.0;
-      
+    mltply(X, v0, v1);
+    TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
+    alpha1 = creal(X->Large.prdct);
+    _alpha[stp] = alpha1;
+    cbeta1 = 0.0;
+
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
-      for(i=1;i<=i_max;i++){
-	    cbeta1+=conj(v0[i]-alpha1*v1[i])*(v0[i]-alpha1*v1[i]);
-      }
-      cbeta1 = SumMPI_dc(cbeta1);
-      beta1=creal(cbeta1);
-      beta1=sqrt(beta1);
-      _beta[stp]=beta1;
+    for (i = 1; i <= i_max; i++) {
+      cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+    }
+    cbeta1 = SumMPI_dc(cbeta1);
+    beta1 = creal(cbeta1);
+    beta1 = sqrt(beta1);
+    _beta[stp] = beta1;
   }
 
   return TRUE;
 }
 
+
+///
+/// \brief Read initial vectors for the restart calculation.
+/// \param X [in] Give the dimension for the vector _v0 and _v1.
+/// \param _v0 [out] The inputted vector for recalculation @f$ v_0 @f$.
+/// \param _v1 [out] The inputted vector for recalculation @f$ v_1 @f$.
+/// \param liLanczosStp_vec [in] The max iteration step.
+/// \retval -1 Fail to read the initial vector.
+/// \retval 0 Succeed to read the initial vector.
+/// \version 1.2
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex *_v1, unsigned long int *liLanczosStp_vec)
 {
   size_t byte_size;
@@ -419,6 +441,16 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
   return 0;
 }
 
+///
+/// \brief Output initial vectors for the restart calculation.
+/// \param X [in] Give the dimension for the vector _v0 and _v1.
+/// \param tmp_v0 [in] The outputted vector for recalculation @f$ v_0 @f$.
+/// \param tmp_v1 [in] The outputted vector for recalculation @f$ v_1 @f$.
+/// \param liLanczosStp_vec [in] The step for finishing the iteration.
+/// \retval -1 Fail to output the vector.
+/// \retval 0 Succeed to output the vector.
+/// \version 2.0
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int OutputLanczosVector(struct BindStruct *X,
                         double complex* tmp_v0,
                         double complex *tmp_v1,
@@ -445,7 +477,14 @@ int OutputLanczosVector(struct BindStruct *X,
 }
 
 
-int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1) {
+///
+/// \brief Set initial vector to start the calculation for Lanczos method.\n
+/// \param X [in, out] Get the information of reading initisl vectors.\n
+/// Input: idim_max, iFlgMPI, k_exct, iInitialVecType. \n
+/// Output: Large.iv.
+/// \param tmp_v0 [out] The initial vector whose components are zero.
+/// \param tmp_v1 [out] The initial vector whose components are randomly given when initial_mode=1, otherwise, iv-th component is only given.
+void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1) {
   int iproc;
   long int i, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
@@ -557,9 +596,19 @@ int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double comple
       tmp_v1[i] = tmp_v1[i] / dnorm;
     }
   }/*else if(initial_mode==1)*/
-  return 0;
 }
 
+///
+/// \brief Read tridiagonal matrix components obtained by the Lanczos method.\n
+/// \note The arrays of tridiaonal components alpha and beta are global arrays.
+/// \param X [in] Give the iteration number for the recalculation and the input file name.
+/// \param _dnorm [out] Get the norm.
+/// \param _i_max [in] The iteration step for the input data.
+/// \param iFlg [in] Flag for the recalculation.
+/// \retval FALSE Fail to read the file.
+/// \retval TRUE Succeed to read the file.
+/// \version 1.2
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int ReadTMComponents(
         struct BindStruct *X,
         double *_dnorm,
@@ -575,7 +624,9 @@ int ReadTMComponents(
   FILE *fp;
   idx=1;
   sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Def.CDataFileHead);
-  childfopenMPI(sdt,"r", &fp);
+  if(childfopenMPI(sdt,"r", &fp)!=0){
+    return FALSE;
+  }
 
   fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
   sscanf(ctmp,"%ld \n", &i_max);
@@ -589,7 +640,7 @@ int ReadTMComponents(
   }
   else{
     fclose(fp);
-    return -1;
+    return FALSE;
   }
   fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
   sscanf(ctmp,"%lf \n", &dnorm);
@@ -604,6 +655,17 @@ int ReadTMComponents(
 }
 
 
+///
+/// \brief Output tridiagonal matrix components obtained by the Lanczos method.
+/// \param X [in] Give the input file name.
+/// \param _alpha [in] The array of tridiagonal matrix components.
+/// \param _beta [in] The array of tridiagonal matrix components.
+/// \param _dnorm [in] The norm.
+/// \param liLanczosStp [in] The iteration step.
+/// \retval FALSE Fail to open the file for the output.
+/// \retval TRUE Succeed to open the file for the output.
+/// \version 1.2
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int OutputTMComponents(
         struct BindStruct *X,
         double *_alpha,
@@ -617,11 +679,12 @@ int OutputTMComponents(
   FILE *fp;
 
   sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Def.CDataFileHead);
-  childfopenMPI(sdt,"w", &fp);
+  if(childfopenMPI(sdt,"w", &fp)!=0){
+    return FALSE;
+  }
   fprintf(fp, "%d \n",liLanczosStp);
   fprintf(fp, "%.10lf \n",_dnorm);
   for( i = 1 ; i <= liLanczosStp; i++){
-//    fprintf(stdoutMPI, "Debug: %d, %.10lf %.10lf \n",i, _alpha[i], _beta[i]);
     fprintf(fp,"%.10lf %.10lf \n", _alpha[i], _beta[i]);
   }
   fclose(fp);

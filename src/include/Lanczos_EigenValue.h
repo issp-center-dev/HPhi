@@ -21,7 +21,7 @@ int ReadInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
 
 int OutputLanczosVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1, unsigned long int liLanczosStp_vec);
 
-int SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1);
+void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1);
 
 int ReadTMComponents(
         struct BindStruct *X,

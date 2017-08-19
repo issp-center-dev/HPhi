@@ -19,18 +19,28 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 
+/**
+ * @file   HPhiTrans.c
+ *
+ * @brief  Check the inputted transfer integrals.
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+
 /** 
  *
- * @brief  Function of checking transfers
+ * @brief  Function of checking transfers not to count the same type of operators.\n
+ * @note   The same type transfer integrals such as @f$ t^{(1)}_{ij}c_i a_j +  t^{(2)}_{ij}c_i a_j @f$ should be summarized as @f$ t_{ij} c_i a_j @f$ before calling this function.
  *
- * @param X data list for calculation
+ * @param X [in] Struct to get the information of the operators of transfer integrals.
  * @retval 0  normally finished
  * @retval -1 unnormally finished
  * 
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  *
- * @return 
  */
 int HPhiTrans(struct BindStruct *X) {
   FILE *fp_err;
@@ -66,15 +76,12 @@ int HPhiTrans(struct BindStruct *X) {
     cnt_trans += 1;
   }
 
-  //fprintf(stdoutMPI, cProEDNTrans, cnt_trans);
-  //fprintf(stdoutMPI, cProEDNChemi, cnt_chemi);
-
   return 0;
 }
 
 /**
  * @brief  Function of getting transfer with peierls
- *
+ * @note Not used now and should be delete in ver.2.1.
  * @param X data list for calculation
  * @param time time
  * @retval 0  normally finished
@@ -163,7 +170,7 @@ int TransferWithPeierls(struct BindStruct *X, const double time) {
 
 /**
  * @brief  Function of getting transfer for quench
- *
+ * @note Not used now and should be delete in ver.2.1.
  * @param X data list for calculation
  * @param time time
  * @retval 0  normally finished
