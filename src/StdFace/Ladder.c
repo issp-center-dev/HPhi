@@ -198,7 +198,7 @@ void StdFace_Ladder(
       */
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_MagField(StdI, StdI->S2, -StdI->h, -StdI->Gamma, isite);
-        StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, jsite);
+        StdFace_GeneralJ(StdI, StdI->D, StdI->S2, StdI->S2, isite, isite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
       else {
         StdFace_HubbardLocal(StdI, StdI->mu, -StdI->h, -StdI->Gamma, StdI->U, isite);
