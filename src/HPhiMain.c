@@ -139,7 +139,7 @@ int main(int argc, char* argv[]){
 
   //Timer
   InitTimer();
-  StartTimer(0);
+  if (mode != STANDARD_DRY_MODE) StartTimer(0);
  
   //MakeDirectory for output
   struct stat tmpst;
