@@ -797,7 +797,8 @@ SUBROUTINE output_cor()
      !
      cor_err(1:nk,1:6) = 0d0
      DO iwfc = 1, nwfc
-        cor_err(1:nk,1:6) = CMPLX( DBLE(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2, &
+        cor_err(1:nk,1:6) = cor_err(1:nk,1:6) &
+        &                 + CMPLX( DBLE(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2, &
         &                         AIMAG(cor_k(1:nk,1:6,iwfc) - cor_ave(1:nk,1:6))**2, &
         &                         KIND(0d0))
      END DO

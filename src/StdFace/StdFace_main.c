@@ -1797,10 +1797,10 @@ static void PrintInteractions(struct StdIntList *StdI)
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_main(
-  struct StdIntList *StdI,
   char *fname//!<[in] Input file name for the standard mode
 )
 {
+  struct StdIntList *StdI;
   FILE *fp;
   int ktrans, kintr;
   char ctmpline[256];
@@ -2186,18 +2186,6 @@ void StdFace_main(
 
 }/*void StdFace_main*/
 /**
-@brief Driver routine for standard mode.
-Just call StdFace_main().
-*/
-void StdFace_driver(
-  char *fname//!<[in] Input file name for the standard mode
-)
-{
-  struct StdIntList StdI;
-
-  StdFace_main(&StdI, fname);
-}/*void StdFace_driver*/
-/**
 @page page_addstandard Add new lattice model into Standard mode
 
 @section sec_stan_proc Overall procedure
@@ -2211,7 +2199,7 @@ If you want to create new lattice file, do as these files.
 -# Add entry at
    @dontinclude StdFace_main.c
    @skip StdFace\_main
-   @until {
+   @until StdIntList
    :
    @skip >>
    @until <<
