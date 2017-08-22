@@ -1800,7 +1800,7 @@ void StdFace_main(
   char *fname//!<[in] Input file name for the standard mode
 )
 {
-  struct StdIntList *StdI;
+  struct StdIntList StdI[1];
   FILE *fp;
   int ktrans, kintr;
   char ctmpline[256];
