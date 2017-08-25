@@ -40,7 +40,7 @@
  * @brief Parent function of calculation of total spin
  *
  * @param[in,out] X data list of calculation parameters
- * @param[in] vec eigenvectors
+ * @param[in] vec eigenvector
  *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -80,7 +80,7 @@ int expec_totalspin
  * @brief function of calculating totalspin for Hubbard model
  *
  * @param[in,out] X data list of calculation parameters
- * @param vec eigenvectors
+ * @param vec eigenvector
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -150,10 +150,10 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec) {
 
 
 /**
- * @brief function of calculating totalspin for Hubbard model at grand canonical ensemble
+ * @brief function of calculating totalspin for Hubbard model in grand canonical ensemble
  *
  * @param[in,out] X data list of calculation parameters
- * @param vec eigenvectors
+ * @param vec eigenvector
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -223,7 +223,7 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec) {
  * @brief function of calculating totalspin for spin model
  *
  * @param[in,out] X data list of calculation parameters
- * @param vec eigenvectors
+ * @param vec eigenvector
  * @version 0.2
  * @details modify for hybrid parallel
  * @version 0.1
@@ -410,10 +410,10 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec) {
 
 
 /**
- * @brief function of calculating totalspin for spin model at grand canonical ensemble
+ * @brief function of calculating totalspin for spin model in grand canonical ensemble
  *
  * @param[in,out] X data list of calculation parameters
- * @param vec eigenvectors
+ * @param vec eigenvector
  * @version 0.2
  * @details add function to treat a calculation of total spin for general spin
  *
@@ -674,6 +674,16 @@ int expec_totalSz(
 	return 0;
 }
 
+
+/**
+ * @brief function of calculating totalSz for Hubbard model in grand canonical ensemble
+ *
+ * @param[in,out] X data list of calculation parameters
+ * @param vec eigenvector
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 void totalSz_HubbardGC
 (
  struct BindStruct *X,
@@ -725,6 +735,15 @@ void totalSz_HubbardGC
 	X->Phys.sz = creal(spn_z);
 }
 
+/**
+ * @brief function of calculating totalSz for Spin model in grand canonical ensemble
+ *
+ * @param[in,out] X data list of calculation parameters
+ * @param vec eigenvector
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 void totalSz_SpinGC
 (
  struct BindStruct *X,
