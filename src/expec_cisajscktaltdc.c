@@ -59,7 +59,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
  * 
  * @retval 0 normally finished
  * @retval -1 abnormally finished
- * @note the origin of function's name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
+ * @note The origin of function's name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
  *
  * @version 0.2
  * @details add function to treat the case of general spin
@@ -281,13 +281,16 @@ int Rearray_TwoBodyG(
   return 0;
 }
 
-///
-/// \brief
-/// \param X [in]
-/// \param vec [in]
-/// \param _fp
-/// \return
-/// \note When X->Large.mode = M_MLTPLY or X->Large.mode = M_CALCSPEC, then vec is modified.
+/**
+ * @brief Child function to calculate two-body green's functions for Hubbard GC model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_HubbardGC(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int isite1,isite2,isite3,isite4;
@@ -396,11 +399,16 @@ int expec_cisajscktalt_HubbardGC(struct BindStruct *X,double complex *vec, FILE 
     return 0;
 }
 
-///
-/// \param X
-/// \param vec
-/// \param _fp
-/// \return
+/**
+ * @brief Child function to calculate two-body green's functions for Hubbard model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int isite1,isite2,isite3,isite4;
@@ -516,11 +524,16 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
     return 0;
 }
 
-///
-/// \param X
-/// \param vec
-/// \param _fp
-/// \return
+/**
+ * @brief Parent function to calculate two-body green's functions for Spin model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_Spin(struct BindStruct *X,double complex *vec, FILE **_fp) {
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -531,11 +544,16 @@ int expec_cisajscktalt_Spin(struct BindStruct *X,double complex *vec, FILE **_fp
     return info;
 }
 
-///
-/// \param X
-/// \param vec
-/// \param _fp
-/// \return
+/**
+ * @brief Child function to calculate two-body green's functions for 1/2 Spin model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
@@ -658,11 +676,16 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
     return 0;
 }
 
-///
-/// \param X
-/// \param vec
-/// \param _fp
-/// \return
+/**
+ * @brief Child function to calculate two-body green's functions for General Spin model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
@@ -753,11 +776,16 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
     return 0;
 }
 
-///
-/// \param X
-/// \param vec
-/// \param _fp
-/// \return
+/**
+ * @brief Parent function to calculate two-body green's functions for Spin GC model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp){
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -768,11 +796,16 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
     return info;
 }
 
-///
-/// \param X
-/// \param vec
-/// \param _fp
-/// \return
+/**
+ * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
@@ -874,11 +907,16 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
     return 0;
 }
 
-///
-/// \param X
-/// \param vec
-/// \param _fp
-/// \return
+/**
+ * @brief Child function to calculate two-body green's functions for General Spin GC model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
 int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
     long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
