@@ -102,15 +102,16 @@ See \verb|"Lattice"| section.
 
 \item \verb|method|
   
-{\bf Type :} String (choose from \verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|, \verb|"CG"|)
+{\bf Type :} String (choose from \verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|, \verb|"CG"|, \verb|Time Evolution|)
 
 {\bf Description :} The calculation type is specified with this parameter;
 the above expressions above denote 
 the single eigenstate calculation by using the Lanczos method,
 at the finite-temperature by using the thermally pure quantum state,
 the full diagonalization method,
-and the multiple eigenstates calculation by using the LOBCG method
+the multiple eigenstates calculation by using the LOBCG method
 \cite{doi:10.1137/S1064827500366124,transactionJSCES2006},
+and the simulation of real-time evolution,
 respectively.
 
 The scheme employed for the spectrum calculation is also specified with this parameter.
@@ -846,33 +847,112 @@ the indices are specified as those of the Bogoliubov representation
 
   {\bf Description :} The wave number (Fractional coordinate) of the
   dynamical Green's function is specified.
-  The reciplocal lattice vector is computed from the
+  The reciprocal lattice vector is computed from the
   direct lattice vector shown in Figs.
   \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
   \ref{fig_ladder}, \ref{fig_kagome}.
 
 \item \verb|OmegaMin|
 
-    {\bf Type :} Double (\verb|-LargeValue| times the number of sites as default.)
-    {\bf Description :} The lower limit of the real part of the frequency.
-    
-  \item \verb|OmegaMax|
-
-    {\bf Type :} Double (\verb|LargeValue| times the number of sites as default.)
-    {\bf Description :} The upper limit of the real part of the frequency.
-
-  \item \verb|OmegaIm|
-
-    {\bf Type :} Double (\verb|0.01*LargeValue| as a default.)
-    {\bf Description :} The imaginary part of the frequency.
-
-  \item \verb|NOmega|
+  {\bf Type :} Double (\verb|-LargeValue| times the number of sites as default.)
   
-    {\bf Type :} Positive integer (\verb|200| as a default.)
-    {\bf Description :} The number of frequencies.
+  {\bf Description :} The lower limit of the real part of the frequency.
+    
+\item \verb|OmegaMax|
+
+  {\bf Type :} Double (\verb|LargeValue| times the number of sites as default.)
+    
+  {\bf Description :} The upper limit of the real part of the frequency.
+
+\item \verb|OmegaIm|
+
+  {\bf Type :} Double (\verb|0.01*LargeValue| as a default.)
+    
+  {\bf Description :} The imaginary part of the frequency.
+
+\item \verb|NOmega|
+  
+  {\bf Type :} Positive integer (\verb|200| as a default.)
+    
+  {\bf Description :} The number of frequencies.
 
 \end{itemize}
 
+\subsection{Parameters for time-evolution}
+
+\begin{itemize}
+
+\item \verb|nt|
+
+  {\bf Type :} Positive Integer (Default value : \verb|1000|)
+  
+  {\bf Description :} The number of time steps.
+
+\item \verb|dt|
+  
+  {\bf Type :} Positive Double(Default value : \verb|0.1|)
+  
+  {\bf Description :} The width of time steps.
+
+\item \verb|PumpType|
+  
+  {\bf Type :} String (Chosen from \verb|"Quench"|, \verb|"Pulse Laser"|,
+  \verb|"AC Laser"|, and \verb|"DC Laser"|.Default value : \verb|"Quench"|)
+
+  {\bf Description :} The type of time-dependent Hamiltonian.
+  For \verb|"Quench"|, two body operator 
+  $U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}$ is added.
+  For \verb|"Pulse Laser"|, \verb|"AC Laser"|, and \verb|"DC Laser"|,
+  the hopping term is modulated as
+  $-\sum_{i j \sigma} t_{i j} \exp[{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)] c_{i \sigma} c_{j \sigma}$,
+  where ${\bf A}(t)$ is the vector potential which is defined as
+  ${\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]$,
+  ${\bf A}(t) = {\bf A}_0 \cos[\omega (t-t_0)]$, and
+  ${\bf A}(t) = {\bf A}_0 t$ for
+  for \verb|"Pulse Laser"|,
+  \verb|"AC Laser"|, and
+  \verb|"DC Laser"|, respectively.
+
+  \verb|potential.dat| file is written for displaying the vector potential
+  and the electrical\]{ field at each time step.
+  
+\item \verb|Uquench|
+  
+  {\bf Type :} Double(Default value : \verb|0.0|)
+  
+  {\bf Description :} $U_{\rm quench}$
+
+\item \verb|freq|
+  
+  {\bf Type :} Double(Default value : \verb|0.1|)
+  
+  {\bf Description :} $\omega$
+
+\item \verb|tshift|
+  
+  {\bf Type :} Double(Default value : \verb|0.0|)
+  
+  {\bf Description :} $t_0$
+
+\item \verb|tdump|
+  
+  {\bf Type :} Double (Default value : \verb|0.1|)
+  
+  {\bf Description :} $t_{\rm dump}$
+
+\item \verb|VecPotW|, \verb|VecPotL|
+  
+  {\bf Type :} Double (Default value : \verb|0.0|)
+
+  {\bf Description :} The vector potential (fractional coordinate of the reciprocal space)
+  at $t=t_0$.
+  The reciprocal lattice vector is computed from the
+  direct lattice vector shown in Figs.
+  \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
+  \ref{fig_ladder}, \ref{fig_kagome}.
+
+\end{itemize}
+  
 \section{Input files for {\it Expert} mode}
 \label{Ch:HowToExpert}
 In this section, the details of the input files for the expert mode are explained. The input files are categorized according to the following four parts.

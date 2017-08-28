@@ -101,13 +101,14 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 \item \verb|method|
   
   {\bf 形式 :} 文字列(\verb|"Lanczos"|, \verb|"TPQ"|, \verb|"Full Diag"|,
-  \verb|"CG"|のいずれか)
+  \verb|"CG"|, \verb|"Time-Evolution"|のいずれか)
 
 {\bf 説明 :} 実行する計算の種類を指定します。
 上記の文字列はそれぞれランチョス法による少数固有状態の計算, 
 熱力学的純粋状態を用いた有限温度計算, 
 直接法による全固有状態計算,
-LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数固有状態の計算
+LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数固有状態の計算,
+実時間発展計算
 に対応します。
 
 後述のスペクトル計算において使用される手法もこのパラメーターで指定されます
@@ -115,7 +116,6 @@ LOBCG法\cite{doi:10.1137/S1064827500366124,transactionJSCES2006}による少数
 付属している$K\omega$ライブラリ\cite{komega}が呼び出され、
 シードスイッチ付きシフト双共役勾配法
 \cite{Frommer2003,doi:10.1143/JPSJ.77.114713}が適用されます。
-
 
 \item \verb|lattice|
 
@@ -761,23 +761,103 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 
 \item \verb|OmegaMin|
 
-    {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|$\times$サイト数)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の下限。
-    
-  \item \verb|OmegaMax|
-
-    {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|$\times$サイト数)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の上限。
-
-  \item \verb|OmegaIm|
-
-    {\bf 形式 :} 実数(デフォルトは\verb|0.01*LargeValue|)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数の虚部。
-
-  \item \verb|NOmega|
+  {\bf 形式 :} 実数(デフォルトは\verb|-LargeValue|$\times$サイト数)
   
-    {\bf 形式 :} 正の整数(デフォルトは\verb|200|)
-    {\bf 説明 :} 計算する動的グリーン関数の振動数のグリッド数。
+  {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の下限。
+    
+\item \verb|OmegaMax|
+
+  {\bf 形式 :} 実数(デフォルトは\verb|LargeValue|$\times$サイト数)
+  
+  {\bf 説明 :} 計算する動的グリーン関数の振動数の実部の上限。
+
+\item \verb|OmegaIm|
+
+  {\bf 形式 :} 実数(デフォルトは\verb|0.01*LargeValue|)
+  
+  {\bf 説明 :} 計算する動的グリーン関数の振動数の虚部。
+
+\item \verb|NOmega|
+  
+  {\bf 形式 :} 正の整数(デフォルトは\verb|200|)
+    
+  {\bf 説明 :} 計算する動的グリーン関数の振動数のグリッド数。
+
+\end{itemize}
+
+\subsection{実時間発展計算に関するパラメーター}
+
+\begin{itemize}
+
+\item \verb|nt|
+
+  {\bf 形式 :} 正の整数(デフォルトは\verb|1000|)
+  
+  {\bf 説明 :} 時間ステップ数。
+
+\item \verb|dt|
+  
+  {\bf 形式 :} 正の実数(デフォルトは\verb|0.1|)
+  
+  {\bf 説明 :} 時間ステップ幅。
+
+\item \verb|PumpType|
+  
+  {\bf 形式 :} 文字列(\verb|"Quench"|, \verb|"Pulse Laser"|, \verb|"AC Laser"|,  
+  \verb|"DC Laser"|のいずれか。デフォルトは\verb|"Quench"|)
+
+  {\bf 説明 :} 時間依存ハミルトニアンの種類を指定する。
+  \verb|"Quench"|では2体演算子
+  $U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}$が加えられる。
+  \verb|"Pulse Laser"|, \verb|"AC Laser"|, \verb|"DC Laser"|では、
+  ホッピング項に
+  $-\sum_{i j \sigma} t_{i j} \exp[{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)] c_{i \sigma} c_{j \sigma}$
+  のように位相因子が付く。
+  ここで${\bf A}(t)$はベクトルポテンシャルであり、
+  \verb|"Pulse Laser"|では
+  ${\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]$、
+  \verb|"AC Laser"|では
+  ${\bf A}(t) = {\bf A}_0 \cos[\omega (t-t_0)]$、
+  \verb|"DC Laser"|では
+  ${\bf A}(t) = {\bf A}_0 t$となる。
+
+  また、各時刻でのベクトルポテンシャルと電場を図示するためのファイル
+  \verb|potential.dat|が出力される。
+  
+\item \verb|Uquench|
+  
+  {\bf 形式 :} 実数(デフォルトは\verb|0.0|)
+  
+  {\bf 説明 :} $U_{\rm quench}$
+
+\item \verb|freq|
+  
+  {\bf 形式 :} 実数(デフォルトは\verb|0.1|)
+  
+  {\bf 説明 :} $\omega$
+
+\item \verb|tshift|
+  
+  {\bf 形式 :} 実数(デフォルトは\verb|0.0|)
+  
+  {\bf 説明 :} $t_0$
+
+\item \verb|tdump|
+  
+  {\bf 形式 :} 実数(デフォルトは\verb|0.1|)
+  
+  {\bf 説明 :} $t_{\rm dump}$
+
+\item \verb|VecPotW|, \verb|VecPotL|
+  
+  {\bf 形式 :} 実数(デフォルトはともに\verb|0.0|)
+
+  {\bf 説明 :} 時刻$t=t_0$でのベクトルポテンシャル${\bf A}_0$を
+  逆格子のFractional coordinateで指定する。
+  逆格子ベクトルはFigs.
+  \ref{fig_chap04_1_lattice}, \ref{fig_chap04_1_honeycomb},
+  \ref{fig_ladder}, \ref{fig_kagome}
+  に表されている格子ベクトルと対応するものとなる。
 
 \end{itemize}
 

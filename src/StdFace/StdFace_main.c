@@ -106,10 +106,14 @@ static void PrintCalcMod(struct StdIntList *StdI)
     strcmp(StdI->method, "alldiag") == 0 ||
     strcmp(StdI->method, "direct") == 0 ) iCalcType = 2;
   else if (strcmp(StdI->method, "cg") == 0) iCalcType = 3;
+  else if (strcmp(StdI->method, "te") == 0 ||
+    strcmp(StdI->method, "timeevolution") == 0 ||
+    strcmp(StdI->method, "time-evolution") == 0) iCalcType = 4;
   else{
     fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
     StdFace_exit(-1);
   }/*if (strcmp(StdI->method, METHODS) != 0*/
+  if (iCalcType != 4) StdI->PumpBody = 0;
   /*
    Model
   */
@@ -207,7 +211,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
   }/*if (strcmp(StdI->CalcSpec, "****") != 0)*/
 
   fp = fopen("calcmod.def", "w");
-  fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG\n");
+  fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, 4:Time-evolution\n");
   fprintf(fp, "#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC\n");
   fprintf(fp, "#Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart\n");
   fprintf(fp, "#CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, 4:Restart, 5:Restart&Save\n");
@@ -230,18 +234,17 @@ static void PrintCalcMod(struct StdIntList *StdI)
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
   int NumOp, spin[2][2], isite, ispin, icell, itau;
-  double coef[2], pi, Cphase;
+  double coef[2], Cphase;
   double *fourier_r, *fourier_i;
 
   fourier_r = (double *)malloc(sizeof(double) * StdI->nsite);
   fourier_i = (double *)malloc(sizeof(double) * StdI->nsite);
-  pi = acos(-1.0);
-
+  
   fprintf(stdout, "\n  @ Spectrum\n\n");
 
-  StdFace_PrintVal_d("SpectrumQW", &StdI->SpectrumQW, 0.0);
-  StdFace_PrintVal_d("SpectrumQL", &StdI->SpectrumQL, 0.0);
-  StdFace_PrintVal_d("SpectrumQH", &StdI->SpectrumQH, 0.0);
+  StdFace_PrintVal_d("SpectrumQW", &StdI->SpectrumQ[0], 0.0);
+  StdFace_PrintVal_d("SpectrumQL", &StdI->SpectrumQ[1], 0.0);
+  StdFace_PrintVal_d("SpectrumQH", &StdI->SpectrumQ[2], 0.0);
 
   if (strcmp(StdI->SpectrumType, "****") == 0) {
     strcpy(StdI->SpectrumType, "szsz\0");
@@ -315,11 +318,11 @@ static void PrintExcitation(struct StdIntList *StdI) {
   isite = 0;
   for (icell = 0; icell < StdI->NCell; icell++) {
     for (itau = 0; itau < StdI->NsiteUC; itau++) {
-      Cphase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQW
-             + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQL
-             + (StdI->Cell[icell][2] + StdI->tau[itau][2])*StdI->SpectrumQH;
-      fourier_r[isite] = cos(2.0*pi*Cphase);
-      fourier_i[isite] = sin(2.0*pi*Cphase);
+      Cphase = (StdI->Cell[icell][0] + StdI->tau[itau][0])*StdI->SpectrumQ[0]
+             + (StdI->Cell[icell][1] + StdI->tau[itau][1])*StdI->SpectrumQ[1]
+             + (StdI->Cell[icell][2] + StdI->tau[itau][2])*StdI->SpectrumQ[2];
+      fourier_r[isite] = cos(2.0*StdI->pi*Cphase);
+      fourier_i[isite] = sin(2.0*StdI->pi*Cphase);
       isite += 1;
     }
   }
@@ -360,6 +363,182 @@ static void PrintExcitation(struct StdIntList *StdI) {
   free(fourier_i);
 
 }/*static void PrintExcitation()*/
+ /**
+ @brief Print single.def or pair.def
+ @author Mitsuaki Kawamura (The University of Tokyo)
+ */
+static void PrintPump(struct StdIntList *StdI) {
+  FILE *fp;
+  int it, ii, isite, icell, itau, itrans, jsite, jcell, jtau, ntrans0;
+  double Cphase, time, dR[3];
+  double **At, **Et;
+  double complex coef;
+
+  fprintf(stdout, "\n  @ Time-evolution\n\n");
+
+  StdFace_PrintVal_d("VecPotW", &StdI->VecPot[0], 0.0);
+  StdFace_PrintVal_d("VecPotL", &StdI->VecPot[1], 0.0);
+  StdFace_PrintVal_d("VecPotH", &StdI->VecPot[2], 0.0);
+  StdFace_PrintVal_i("nt", &StdI->nt, 1000);
+  StdFace_PrintVal_d("dt", &StdI->dt, 0.1);
+  StdFace_PrintVal_d("freq", &StdI->freq, 0.1);
+  StdFace_PrintVal_d("tshift", &StdI->tshift, 0.0);
+  StdFace_PrintVal_d("tdump", &StdI->tdump, 0.1);
+  StdFace_PrintVal_d("Uquench", &StdI->Uquench, 0.0);
+  At = (double **)malloc(sizeof(double*) * StdI->nt);
+  Et = (double **)malloc(sizeof(double*) * StdI->nt);
+  for (it = 0; it < StdI->nt; it++) {
+    At[it] = (double *)malloc(sizeof(double) * 3);
+    Et[it] = (double *)malloc(sizeof(double) * 3);
+  }
+
+  if (strcmp(StdI->PumpType, "****") == 0) {
+    strcpy(StdI->PumpType, "quench\0");
+    fprintf(stdout, "     PumpType = quench        ######  DEFAULT VALUE IS USED  ######\n");
+    StdI->PumpBody = 2;
+  }/*if (strcmp(StdI->PumpType, "****")*/
+  else {
+    fprintf(stdout, "     PumpType = %s\n", StdI->PumpType);
+    if (strcmp(StdI->PumpType, "quench") == 0) {
+      StdI->PumpBody = 2;
+    }/*if (strcmp(StdI->PumpType, "quench")*/
+    else if (strcmp(StdI->PumpType, "pulselaser") == 0) {
+      for (it = 0; it < StdI->nt; it++) {
+        time = StdI->dt*(double)it;
+        for (ii = 0; ii < 3; ii++) {
+          At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift))
+            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
+          Et[it][ii] = - StdI->VecPot[ii] 
+            * (
+                (StdI->tshift - time) / (StdI->tdump*StdI->tdump) * cos(StdI->freq*(time - StdI->tshift))
+              - StdI->freq* sin(StdI->freq*(time - StdI->tshift))
+              )
+            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
+        }
+      }/*for (it = 0; it < StdI->nt; it++)*/
+      StdI->PumpBody = 1;
+    }/*if (strcmp(StdI->PumpType, "pulselaser") == 0)*/
+    else if (strcmp(StdI->PumpType, "aclaser") == 0) {
+      for (it = 0; it < StdI->nt; it++) {
+        time = StdI->dt*(double)it;
+        for (ii = 0; ii < 3; ii++) {
+          At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift));
+          Et[it][ii] = StdI->VecPot[ii] * sin(StdI->freq*(time - StdI->tshift)) * StdI->freq;
+        }
+      }/*for (it = 0; it < StdI->nt; it++)*/
+      StdI->PumpBody = 1;
+    }/*if (strcmp(StdI->PumpType, "aclaser") == 0)*/
+    else if (strcmp(StdI->PumpType, "dclaser") == 0) {
+      for (it = 0; it < StdI->nt; it++) {
+        time = StdI->dt*(double)it;
+        for (ii = 0; ii < 3; ii++) {
+          At[it][ii] = StdI->VecPot[ii] * time;
+          Et[it][ii] = - StdI->VecPot[ii];
+        }
+      }/*for (it = 0; it < StdI->nt; it++)*/
+      StdI->PumpBody = 1;
+    }/* if (strcmp(StdI->PumpType, "dclaser") == 0)*/
+    else {
+      fprintf(stdout, "\n ERROR ! PumpType : %s\n", StdI->PumpType);
+      StdFace_exit(-1);
+    }
+  }/*if (! strcmp(StdI->PumpType, "****"))*/
+
+  if ((strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1)
+    || strcmp(StdI->model, "kondo") == 0) {
+    printf("####################################\n");
+    printf("###########  CAUTION  ##############\n");
+    printf("####################################\n");
+    printf("\n");
+    printf(" For Kondo or S>1 system, pumping parameter file is NOT generated automatically.\n");
+    printf(" Please write it by hand.\n");
+  }/*if (StdI->S2 > 1 || strcmp(StdI->model, "kondo") == 0)*/
+
+  if (StdI->PumpBody == 1) {
+
+    fp = fopen("potential.dat", "w");
+    fprintf(fp, "# Time A_W A_L A_H E_W E_L E_H\n");
+    for (it = 0; it < StdI->nt; it++) {
+      time = StdI->dt*(double)it;
+      fprintf(fp, "%f %f %f %f %f %f %f\n",
+        time, At[it][0], At[it][1], At[it][2], Et[it][0], Et[it][1], Et[it][2]);
+    }
+    fflush(fp);
+    fclose(fp);
+
+    ntrans0 = 0;
+    for (itrans = 0; itrans < StdI->ntrans; itrans++) {
+      if (cabs(StdI->trans[itrans]) > 0.000001) ntrans0 = ntrans0 + 1;
+    }
+
+    fp = fopen("teone.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "AllTimeStep %d\n", StdI->nt);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "=========  OneBody Time Evolution  ==========\n");
+    fprintf(fp, "=============================================\n");
+    for (it = 0; it < StdI->nt; it++) {
+      fprintf(fp, "%f  %d\n", StdI->dt*(double)it, ntrans0);
+      for (itrans = 0; itrans < StdI->ntrans; itrans++) {
+
+        if (cabs(StdI->trans[itrans]) <= 0.000001) continue;
+
+        if (strcmp(StdI->model, "kondo") == 0) {
+          isite = StdI->transindx[itrans][0] - StdI->nsite / 2;
+          jsite = StdI->transindx[itrans][2] - StdI->nsite / 2;
+        }
+        else {
+          isite = StdI->transindx[itrans][0];
+          jsite = StdI->transindx[itrans][2];
+        }
+        icell = isite / StdI->NsiteUC;
+        itau = isite % StdI->NsiteUC;
+        jcell = jsite / StdI->NsiteUC;
+        jtau = jsite % StdI->NsiteUC;
+
+        for (ii = 0; ii < 3; ii++)
+          dR[ii] = (double)(StdI->Cell[icell][ii] - StdI->Cell[jcell][ii])
+          + StdI->tau[itau][ii] - StdI->tau[jtau][ii];
+
+        Cphase = 0.0f;
+        for (ii = 0; ii < 3; ii++) Cphase += 2.0*StdI->pi * At[it][ii] * dR[ii];
+        coef = cos(Cphase) + I * sin(Cphase);
+
+        fprintf(fp, "%5d %5d %5d %5d %25.15f %25.15f\n",
+          StdI->transindx[itrans][0], StdI->transindx[itrans][1],
+          StdI->transindx[itrans][2], StdI->transindx[itrans][3],
+          creal(coef * StdI->trans[itrans]), cimag(coef * StdI->trans[itrans]));
+      }/*for (itrans = 0; itrans < StdI->ntrans; itrans++)*/
+    }/*for (it = 0; it < StdI->nt; it++)*/
+    fprintf(stdout, "      teone.def is written.\n\n");
+  }
+  else {
+    fp = fopen("tetwo.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "AllTimeStep %d\n", StdI->nt);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "========== TwoBody Time Evolution ===========\n");
+    fprintf(fp, "=============================================\n");
+    for (it = 0; it < StdI->nt; it++) {
+      fprintf(fp, "%f  %d\n", StdI->dt*(double)it, StdI->nsite);
+      for (isite = 0; isite < StdI->nsite; isite++) {
+        fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %25.15f  %25.15f\n",
+          isite, 0, isite, 0, isite, 1, isite, 1, StdI->Uquench, 0.0);
+      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+    }/*for (it = 0; it < StdI->nt; it++)*/
+    fprintf(stdout, "        tetwo.def is written.\n\n");
+  }
+  fflush(fp);
+  fclose(fp);
+
+  for (it = 0; it < StdI->nt; it++) {
+    free(At[it]);
+    free(Et[it]);
+  }
+  free(At);
+  free(Et);
+
+}/*tatic void PrintPump*/
 #elif defined(_mVMC)
 /**
 @brief Output Anti-parallel orbital index
@@ -581,6 +760,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   */
   NaN_d = 0.0 / 0.0;
   StdI->NaN_i = 2147483647;
+  StdI->pi = acos(-1.0);
   /**/
   StdI->a = NaN_d;
   for (i = 0; i < 3; i++) StdI->length[i] = NaN_d;
@@ -641,10 +821,8 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->V2 = NaN_d;
   StdI->V2p = NaN_d;
   StdI->W = StdI->NaN_i;
-  StdI->phase[0] = NaN_d;
-  StdI->phase[1] = NaN_d;
-  StdI->phase[2] = NaN_d;
-  StdI->pi180 = 0.01745329251994329576;/*Pi/180*/
+  for (i = 0; i < 3; i++)StdI->phase[i] = NaN_d;
+  StdI->pi180 = StdI->pi / 180.0;
 
   StdI->nelec = StdI->NaN_i;
   StdI->Sz2 = StdI->NaN_i;
@@ -661,9 +839,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->OmegaMin = NaN_d;
   StdI->OmegaIm = NaN_d;
   StdI->Nomega = StdI->NaN_i;
-  StdI->SpectrumQW = NaN_d;
-  StdI->SpectrumQL = NaN_d;
-  StdI->SpectrumQH = NaN_d;
+  for (i = 0; i < 3; i++)StdI->SpectrumQ[i] = NaN_d;
   strcpy(StdI->method, "****\0");
   strcpy(StdI->Restart, "****\0");
   strcpy(StdI->EigenVecIO, "****\0");
@@ -679,6 +855,14 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->LanczosTarget = StdI->NaN_i;
   StdI->NumAve = StdI->NaN_i;
   StdI->ExpecInterval = StdI->NaN_i;
+  StdI->dt = NaN_d;
+  StdI->tdump = NaN_d;
+  StdI->tshift = NaN_d;
+  StdI->freq = NaN_d;
+  StdI->Uquench = NaN_d;
+  StdI->nt = StdI->NaN_i;
+  for (i = 0; i < 3; i++)StdI->VecPot[i] = NaN_d;;
+  strcpy(StdI->PumpType, "****\0");
 #elif defined(_mVMC)
   strcpy(StdI->CParaFileHead, "****\0");
   StdI->NVMCCalMode = StdI->NaN_i;
@@ -968,7 +1152,8 @@ static void PrintNamelist(struct StdIntList *StdI){
   fp = fopen("namelist.def", "w");
   fprintf(                         fp, "         ModPara  modpara.def\n");
   fprintf(                         fp, "         LocSpin  locspn.def\n");
-  if (StdI->Ltrans == 1) fprintf(  fp, "           Trans  trans.def\n");
+  if (StdI->Ltrans == 1 && StdI->PumpBody != 1)
+    fprintf(                       fp, "           Trans  trans.def\n");
   if (StdI->LCintra == 1) fprintf( fp, "    CoulombIntra  coulombintra.def\n");
   if (StdI->LCinter == 1) fprintf( fp, "    CoulombInter  coulombinter.def\n");
   if (StdI->LHund == 1)fprintf(    fp, "            Hund  hund.def\n");
@@ -984,10 +1169,15 @@ static void PrintNamelist(struct StdIntList *StdI){
   if(StdI->SpectrumBody == 1) 
     fprintf(                       fp, "SingleExcitation  single.def\n");
   else fprintf(                    fp, "  PairExcitation  pair.def\n");
+  if (StdI->PumpBody == 1)
+    fprintf(                       fp, "       TEOneBody  teone.def\n");
+  else if (StdI->PumpBody == 2)
+    fprintf(                       fp, "       TETwoBody  tetwo.def\n");
   fprintf(                         fp, "     SpectrumVec  %s_eigenvec_0\n",
                                    StdI->CDataFileHead);
   if (StdI->lBoost == 1) fprintf(  fp, "           Boost  boost.def\n");
 #elif defined(_mVMC)
+  if (StdI->Ltrans == 1) fprintf(fp, "           Trans  trans.def\n");
   fprintf(                         fp, "      Gutzwiller  gutzwilleridx.def\n");
   fprintf(                         fp, "         Jastrow  jastrowidx.def\n");
   fprintf(                         fp, "         Orbital  orbitalidx.def\n");
@@ -1994,7 +2184,9 @@ void StdFace_main(
     else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_sl(keyword, value, StdI->EigenVecIO);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI->ExpecInterval);
     else if (strcmp(keyword, "cdatafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI->CDataFileHead);
+    else if (strcmp(keyword, "dt") == 0) StoreWithCheckDup_d(keyword, value, &StdI->dt);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI->FlgTemp);
+    else if (strcmp(keyword, "freq") == 0) StoreWithCheckDup_d(keyword, value, &StdI->freq);
     else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->InitialVecType);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI->initial_iv);
     else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &StdI->LanczosEps);
@@ -2003,16 +2195,24 @@ void StdFace_main(
     else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI->LargeValue);
     else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_sl(keyword, value, StdI->method);
     else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Nomega);
+    else if (strcmp(keyword, "nt") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nt);
     else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NumAve);
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nvec);
     else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMax);
     else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMin);
     else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaIm);
+    else if (strcmp(keyword, "pumptype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->PumpType);
     else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_sl(keyword, value, StdI->Restart);
-    else if (strcmp(keyword, "spectrumqh") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQH);
-    else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQL);
-    else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQW);
+    else if (strcmp(keyword, "spectrumqh") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQ[2]);
+    else if (strcmp(keyword, "spectrumql") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQ[1]);
+    else if (strcmp(keyword, "spectrumqw") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQ[0]);
     else if (strcmp(keyword, "spectrumtype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->SpectrumType);
+    else if (strcmp(keyword, "tdump") == 0) StoreWithCheckDup_d(keyword, value, &StdI->tdump);
+    else if (strcmp(keyword, "tshift") == 0) StoreWithCheckDup_d(keyword, value, &StdI->tshift);
+    else if (strcmp(keyword, "uquench") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Uquench);
+    else if (strcmp(keyword, "vecpoth") == 0) StoreWithCheckDup_d(keyword, value, &StdI->VecPot[2]);
+    else if (strcmp(keyword, "vecpotl") == 0) StoreWithCheckDup_d(keyword, value, &StdI->VecPot[1]);
+    else if (strcmp(keyword, "vecpotw") == 0) StoreWithCheckDup_d(keyword, value, &StdI->VecPot[0]);
     else if (strcmp(keyword, "2s") == 0) StoreWithCheckDup_i(keyword, value, &StdI->S2);
 #elif defined(_mVMC)
     else if (strcmp(keyword, "a0hsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->boxsub[0][2]);
@@ -2146,6 +2346,7 @@ void StdFace_main(
   PrintInteractions(StdI);
 #if defined(_HPhi)
   PrintExcitation(StdI);
+  PrintPump(StdI);
   PrintCalcMod(StdI);
 #elif defined(_mVMC)
 
