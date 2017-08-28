@@ -323,6 +323,12 @@ static void PrintExcitation(struct StdIntList *StdI) {
       isite += 1;
     }
   }
+  if (strcmp(StdI->model, "kondo") == 0) {
+    for (isite = 0; isite < StdI->nsite / 2; isite++) {
+      fourier_r[isite + StdI->nsite / 2] = fourier_r[isite];
+      fourier_i[isite + StdI->nsite / 2] = fourier_i[isite];
+    }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+  }/*if (strcmp(StdI->model, "kondo") == 0)*/
 
   if (StdI->SpectrumBody == 1) {
     fp = fopen("single.def", "w");

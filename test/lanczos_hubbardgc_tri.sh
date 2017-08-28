@@ -1,18 +1,18 @@
 #!/bin/sh
 
-mkdir -p lanczos_hubbard_square/
-cd lanczos_hubbard_square
+mkdir -p lanczos_hubbardgc_tri/
+cd lanczos_hubbardgc_tri
 
 cat > stan.in <<EOF
-W = 4
-L = 2
-model = "FermionHubbard"
+a0w = 3
+a0l = 0
+a1w = -1
+a1l = 2
+model = "HubbardGC"
 method = "Lanczos"
-lattice = "Tetragonal"
+lattice = "Triangular"
 t = 1.0
 U = 4.0
-nelec = 8
-2Sz = 0
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan.in
@@ -20,12 +20,12 @@ if test $? -ne 0 ; then
     exit 1
 fi
 
-echo "\nCheck value\n"
+# Check value
 
 cat > reference.dat <<EOF
-  -10.2529529552637637
-    1.0444442739280932
-    0.0000000000000000
+  -12.3140744040600509
+    0.3472086205791791
+   -0.3753503113209436
 EOF
 
 diff=`paste output/zvo_energy.dat reference.dat | awk '

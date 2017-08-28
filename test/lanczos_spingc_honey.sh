@@ -1,18 +1,24 @@
 #!/bin/sh
 
-mkdir -p lanczos_hubbard_square/
-cd lanczos_hubbard_square
+mkdir -p lanczos_spingc_honey/
+cd lanczos_spingc_honey
 
 cat > stan.in <<EOF
-W = 4
-L = 2
-model = "FermionHubbard"
+W = 2
+L = 3
+model = "SpinGC"
 method = "Lanczos"
-lattice = "Tetragonal"
-t = 1.0
-U = 4.0
-nelec = 8
-2Sz = 0
+lattice = "Honeycomb"
+J0x = -1.0
+J0y =  0.0
+J0z =  0.0
+J1x =  0.0
+J1y = -1.0
+J1z =  0.0
+J2x =  0.0
+J2y =  0.0
+J2z = -1.0
+2S=1
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan.in
@@ -23,14 +29,15 @@ fi
 echo "\nCheck value\n"
 
 cat > reference.dat <<EOF
-  -10.2529529552637637
-    1.0444442739280932
-    0.0000000000000000
+  -2.4500706750607728
+   0.0000000000000000
+   0.0000000000000002
 EOF
 
 diff=`paste output/zvo_energy.dat reference.dat | awk '
 BEGIN{diff=0.0} {diff+=sqrt(($2-$3)**2)} END{printf "%8.6f", diff}'`
 
+echo ${diff}
 test "${diff}" = "0.000000"
 
 exit $?
