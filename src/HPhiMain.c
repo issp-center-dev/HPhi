@@ -103,6 +103,8 @@
   - @c fprintf(::stdoutMPI,... instead of @c printf(...
   - fopenMPI() instead of @c fopen
   - exitMPI() instead of @c exit
+- When you add new features into HPhi, please run @c make @c test,
+  and check whether other features still work fine.
 .    
   
 */
