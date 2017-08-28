@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 mkdir -p fulldiag_spin_tri/
 cd fulldiag_spin_tri
@@ -16,11 +16,8 @@ J = 1.0
 EOF
 
 ../../src/HPhi -s stan.in
-if test $? -ne 0 ; then
-    exit 1
-fi
 
-echo "\nCheck value\n"
+# Check value
 
 cat > reference.dat <<EOF
   <H>         <N>        <Sz>       <S2>       <D>
@@ -45,10 +42,8 @@ cat > reference.dat <<EOF
    2.000000   0.000000   0.000000   6.000000   0.000000
    4.500000   0.000000   0.000000  12.000000   0.000000
 EOF
-
-diff=`paste output/zvo_phys_Nup3_Ndown3.dat reference.dat | awk '
-BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)**2)} END{printf "%8.6f", diff}'`
-
+paste output/zvo_phys_Nup3_Ndown3.dat reference.dat > paste.dat
+diff=`awk 'BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)**2)} END{printf "%8.6f", diff}' paste.dat`
 test "${diff}" = "0.000000"
 
 exit $?

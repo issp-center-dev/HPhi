@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 mkdir -p fulldiag_kondogc_chain/
 cd fulldiag_kondogc_chain
@@ -13,11 +13,8 @@ J = 4.0
 EOF
 
 ../../src/HPhi -s stan.in
-if test $? -ne 0 ; then
-    exit 1
-fi
 
-echo "\nCheck value\n"
+# Check value
 
 cat > reference.dat <<EOF
   <H>         <N>        <Sz>       <S2>       <D>
@@ -86,10 +83,8 @@ cat > reference.dat <<EOF
    4.472136   4.000000  -0.100000   0.275000   0.400000
    4.744563   4.000000   0.000000   0.876035   0.380558
 EOF
-
-diff=`paste output/zvo_phys.dat reference.dat | awk '
-BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)**2)} END{printf "%8.6f", diff}'`
-
+paste output/zvo_phys.dat reference.dat > paste.dat
+diff=`awk 'BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)**2)} END{printf "%8.6f", diff}' paste.dat`
 test "${diff}" = "0.000000"
 
 exit $?

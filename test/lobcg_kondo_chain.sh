@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 mkdir -p lobcg_kondo_chain/
 cd lobcg_kondo_chain
@@ -16,11 +16,8 @@ exct = 3
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan.in
-if test $? -ne 0 ; then
-    exit 1
-fi
 
-echo "\nCheck value\n"
+# Check value
 
 cat > reference.dat <<EOF
  0
@@ -38,11 +35,8 @@ cat > reference.dat <<EOF
   0.3092994621664528 
   0.0000000000000000 
 EOF
-
-diff=`paste output/zvo_energy.dat reference.dat | awk '
-BEGIN{diff=0.0} {diff+=sqrt(($2-$3)**2)} END{printf "%8.6f", diff}'`
-
-echo ${diff}
+paste output/zvo_energy.dat reference.dat > paste.dat
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)**2)} END{printf "%8.6f", diff}' paste.dat`
 test "${diff}" = "0.000000"
 
 exit $?

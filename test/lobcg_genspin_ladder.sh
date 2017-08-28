@@ -1,15 +1,18 @@
 #!/bin/sh -e
 
-mkdir -p lobcg_kondogc_chain/
-cd lobcg_kondogc_chain
+mkdir -p lobcg_genspin_ladder/
+cd lobcg_genspin_ladder
 
 cat > stan.in <<EOF
-L = 4
-model = "KondoGC"
+L = 3
+W = 2
+model = "Spin"
 method = "CG"
-lattice = "chain"
-t = 1.0
-J = 4.0
+lattice = "ladder"
+J0 = 1.0
+J1 = 1.0
+2Sz = 0
+2S = 3
 exct = 3
 EOF
 
@@ -19,19 +22,19 @@ ${MPIRUN} ../../src/HPhi -s stan.in
 
 cat > reference.dat <<EOF
  0
-  -12.6776213781764113 
-  0.1072445462409942 
-  0.0000000000000000 
+  -18.1042786817898111
+  0.0000000000000000
+  0.0000000000000000
 
  1
-  -10.5371064976052171 
-  0.5540651534011468 
-  0.0822952996955437 
+  -17.0874983082940766
+  0.0000000000000000
+  0.0000000000000000
 
  2
-  -10.5371064976049116 
-  0.9181777883286992 
-  -0.0977988871353539 
+  -17.0874983082949292
+  0.0000000000000000
+  0.0000000000000000
 EOF
 paste output/zvo_energy.dat reference.dat > paste.dat
 diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)**2)} END{printf "%8.6f", diff}' paste.dat`
