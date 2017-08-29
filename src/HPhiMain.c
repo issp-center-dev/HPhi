@@ -282,7 +282,7 @@ int main(int argc, char* argv[]){
       break;
 
       case TimeEvolution:
-        if(!CalcByTEM(NumAve, X.Bind.Def.Param.ExpecInterval, &X)==0){
+        if(!CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)==0){
           FinalizeMPI();
           return 0;
         }

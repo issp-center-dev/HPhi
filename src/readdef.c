@@ -1538,14 +1538,12 @@ int ReadDefFileIdxPara(
                      &dvalue_re,
                      &dvalue_im
               );
-              fprintf(stdout, "DEBUG: step-1\n");
               if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin, X->LocSpn,
                                          isite1, isigma1, isite2, isigma2,
                                          isite3, isigma3, isite4, isigma4) != 0) {
                 fclose(fp);
                 return ReadDefFileError(defname);
               }
-              fprintf(stdout, "DEBUG: step-2\n");
               if (InputInterAllInfo(&icnt_interall,
                                     X->TEInterAll[idx],
                                     X->ParaTEInterAll[idx],
@@ -1559,24 +1557,20 @@ int ReadDefFileIdxPara(
               }
             }
 
-            fprintf(stdout, "DEBUG: step-3\n");
             X->NTEInterAll[idx] = icnt_interall;
             X->NTEInterAllDiagonal[idx] = icnt_diagonal;
             X->NTEInterAllOffDiagonal[idx] = icnt_interall - icnt_diagonal;
-            fprintf(stdout, "DEBUG: idx=%d, icnt_interall=%d, icnt_diagonal=%d\n", idx, icnt_interall, icnt_diagonal);
 
             i_malloc2(X->TEInterAllDiagonal[idx], X->NTEInterAll[idx], 4);
             d_malloc1(X->ParaTEInterAllDiagonal[idx], X->NTEInterAll[idx]);
             i_malloc2(X->TEInterAllOffDiagonal[idx], X->NTEInterAll[idx], 8);
             c_malloc1(X->ParaTEInterAllOffDiagonal[idx], X->NTEInterAll[idx]);
-            fprintf(stdout, "DEBUG: step-4\n");
             if (GetDiagonalInterAll(X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx], X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx],
                     X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx], X->TEChemi[idx], X->SpinTEChemi[idx], X->ParaTEChemi[idx], &X->NTEChemi[idx], X->iCalcModel) != 0)
             {
               fclose(fp);
               return (-1);
             }
-            fprintf(stdout, "DEBUG: step-5\n");
 
             if(CheckInterAllHermite(
                     X->TEInterAll[idx], X->ParaTEInterAll[idx],
@@ -1587,8 +1581,6 @@ int ReadDefFileIdxPara(
               fclose(fp);
               return (-1);
             }
-
-            fprintf(stdout, "DEBUG: step-6\n");
 
             //check Transfer Hermite
             /*
@@ -2021,12 +2013,8 @@ int CheckInterAllHermite
   double complex ddiff_intall;
   icntincorrect = 0;
   icntHermite = 0;
-  fprintf(stdout, "step-5-1.\n");
-  fprintf(stdout, "NInterAllOffDiagonal=%d.\n", NInterAllOffDiagonal);
-
   for (i = 0; i < NInterAllOffDiagonal; i++) {
     itmpret = 0;
-    fprintf(stdout, "step-5-1-1.\n");
     isite1 = InterAllOffDiagonal[i][0];
     isigma1 = InterAllOffDiagonal[i][1];
     isite2 = InterAllOffDiagonal[i][2];
@@ -2038,7 +2026,6 @@ int CheckInterAllHermite
     icheckHermiteCount = FALSE;
 
     for (j = 0; j < NInterAllOffDiagonal; j++) {
-      fprintf(stdout, "step-5-1-2.\n");
       itmpsite1 = InterAllOffDiagonal[j][0];
       itmpsigma1 = InterAllOffDiagonal[j][1];
       itmpsite2 = InterAllOffDiagonal[j][2];
@@ -2047,7 +2034,6 @@ int CheckInterAllHermite
       itmpsigma3 = InterAllOffDiagonal[j][5];
       itmpsite4 = InterAllOffDiagonal[j][6];
       itmpsigma4 = InterAllOffDiagonal[j][7];
-      fprintf(stdout, "step-5-1-3.\n");
 
       if (isite1 == itmpsite4 && isite2 == itmpsite3 && isite3 == itmpsite2 && isite4 == itmpsite1) {
         if (isigma1 == itmpsigma4 && isigma2 == itmpsigma3 && isigma3 == itmpsigma2 && isigma4 == itmpsigma1) {
@@ -2112,7 +2098,6 @@ int CheckInterAllHermite
         }
       }
     }
-    fprintf(stdout, "step-5-2.\n");
     //if counterpart for satisfying hermite conjugate does not exist.
     if (itmpret != 1) {
       fprintf(stdoutMPI, cErrNonHermiteInterAll, isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4,
@@ -2125,7 +2110,6 @@ int CheckInterAllHermite
     return (-1);
   }
 
-  fprintf(stdout, "step-5-3.\n");
   for (i = 0; i < NInterAllOffDiagonal; i++) {
     for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
       InterAllOffDiagonal[i][itmpIdx] = InterAll[i][itmpIdx];
@@ -2786,7 +2770,6 @@ int InputInterAllInfo(
   int i = 0;
   int iflg_interall = 0;
   //Collect and sum same components of InterAll interactions
-  fprintf(stdout, "DEBUG: step-2-1\n");
   for (i = 0; i < *icnt_interall; i++) {
     if (isite1 == iInterAllInfo[i][0] && isite2 == iInterAllInfo[i][2] &&
         isite3 == iInterAllInfo[i][4] && isite4 == iInterAllInfo[i][6] &&
@@ -2798,11 +2781,8 @@ int InputInterAllInfo(
     }
   }
 
-  fprintf(stdout, "DEBUG: step-2-2\n");
   //Input all InterAll interactions
   if (iflg_interall == 0) {
-    fprintf(stdout, "DEBUG: step-2-2-1\n");
-    fprintf(stdout, "DEBUG: icnt_interall=%d\n", *icnt_interall);
     iInterAllInfo[*icnt_interall][0] = isite1;
     iInterAllInfo[*icnt_interall][1] = isigma1;
     iInterAllInfo[*icnt_interall][2] = isite2;
@@ -2814,7 +2794,6 @@ int InputInterAllInfo(
     cInterAllValue[*icnt_interall] = dvalue_re + I * dvalue_im;
     *icnt_interall+=1;
     //Check Diagonal part or not
-    fprintf(stdout, "DEBUG: step-2-2-2\n");
     if (isite1 == isite2 && isite3 == isite4 &&
         isigma1 == isigma2 && isigma3 == isigma4) { //normal diagonal part
       return 1;
