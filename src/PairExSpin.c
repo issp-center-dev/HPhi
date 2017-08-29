@@ -8,7 +8,7 @@
 #endif
 
 //
-/// Calculation of pair excited state for Spin Grand canonical system
+/// \brief Calculation of pair excited state for Spin Grand canonical system
 /// \param X define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
