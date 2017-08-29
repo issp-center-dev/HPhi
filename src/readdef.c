@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include "LogMessage.h"
 #include "wrapperMPI.h"
+#include "mfmemory.h"
 
 /**
  * Keyword List in NameListFile.
@@ -1308,7 +1309,7 @@ int ReadDefFileIdxPara(
       X->NInterAll_Diagonal=0;
       X->NInterAll_OffDiagonal=0;
       if(X->NInterAll>0) {
-        icnt_interall = 0;
+        icnt_interall =0;
         while (fgetsMPI(ctmp2, 256, fp) != NULL) {
           if (idx == X->NInterAll) {
             fclose(fp);
@@ -1355,10 +1356,15 @@ int ReadDefFileIdxPara(
 
         int NInterAllSet;
         NInterAllSet= (X->iCalcType==TimeEvolution) ? X->NInterAll: X->NInterAll+X->NTEInterAllMax;
+        i_malloc2(X->InterAll_OffDiagonal, NInterAllSet, 8);
+        c_malloc1(X->ParaInterAll_OffDiagonal, NInterAllSet);
+        i_malloc2(X->InterAll_Diagonal, NInterAllSet, 4);
+        d_malloc1(X->ParaInterAll_Diagonal, NInterAllSet);
+/*
         setmem_IntAll_Diagonal(
                   X->InterAll_OffDiagonal, X->ParaInterAll_OffDiagonal,
                   X->InterAll_Diagonal, X->ParaInterAll_Diagonal, NInterAllSet);
-
+*/
         if(GetDiagonalInterAll(
                 X->InterAll, X->ParaInterAll, X->NInterAll,
                 X->InterAll_Diagonal, X->ParaInterAll_Diagonal,
@@ -1542,7 +1548,6 @@ int ReadDefFileIdxPara(
                 fclose(fp);
                 return ReadDefFileError(defname);
               }
-
               if (InputInterAllInfo(&icnt_interall,
                                     X->TEInterAll[idx],
                                     X->ParaTEInterAll[idx],
@@ -1560,9 +1565,10 @@ int ReadDefFileIdxPara(
             X->NTEInterAllDiagonal[idx]=icnt_diagonal;
             X->NTEInterAllOffDiagonal[idx] = icnt_interall-icnt_diagonal;
 
-            setmem_IntAll_Diagonal(
-                    X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
-                    X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx], X->NTEInterAll[idx]);
+            i_malloc2(X->TEInterAllOffDiagonal[idx], X->NTEInterAll[idx], 8);
+            c_malloc1(X->ParaTEInterAllOffDiagonal[idx], X->NTEInterAll[idx]);
+            i_malloc2(X->TEInterAllDiagonal[idx], X->NTEInterAll[idx], 4);
+            d_malloc1(X->ParaTEInterAllDiagonal[idx], X->NTEInterAll[idx]);
 
             if(GetDiagonalInterAll(
                     X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx],
@@ -2741,7 +2747,7 @@ int CheckInterAllCondition(
   }
 
   if(iFlgGeneralSpin ==TRUE) {
-    if(CheckGeneralSpinIndexForInterAll(isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, iLocInfo)!=0){
+    if(CheckGeneralSpinIndexForInterAll(isite1, isigma1, isite2, isigma2, isite3, isigma3, isite4, isigma4, iLocInfo)!=TRUE){
       return -1;
     }
   }
@@ -2798,7 +2804,7 @@ int InputInterAllInfo(
     iInterAllInfo[*icnt_interall][6] = isite4;
     iInterAllInfo[*icnt_interall][7] = isigma4;
     cInterAllValue[*icnt_interall] = dvalue_re + I * dvalue_im;
-
+    *icnt_interall+=1;
     //Check Diagonal part or not
     if (isite1 == isite2 && isite3 == isite4 &&
         isigma1 == isigma2 && isigma3 == isigma4) { //normal diagonal part
@@ -2807,7 +2813,6 @@ int InputInterAllInfo(
                isigma1 == isigma4 && isigma2 == isigma3) { //hund term
       return 1;
     }
-    *icnt_interall++;
   }
   return 0;
 }
