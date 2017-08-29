@@ -103,8 +103,9 @@
   - @c fprintf(::stdoutMPI,... instead of @c printf(...
   - fopenMPI() instead of @c fopen
   - exitMPI() instead of @c exit
-- When you add new features into HPhi, please run @c make @c test,
+- When you add new features into HPhi, please run <tt>make test</tt>,
   and check whether other features still work fine.
+  Also, try <tt>make test MPIRUN="mpiexec -np 4"</tt> to check MPI feature.
 .    
   
 */
