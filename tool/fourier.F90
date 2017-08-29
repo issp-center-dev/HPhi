@@ -756,7 +756,8 @@ SUBROUTINE fourier_cor()
   CALL zgemm('N', 'N', nk, 6*nwfc, nsite*nsite, CMPLX(1d0, 0d0, KIND(1d0)), fmat, nk, &
   &          cor, nsite*nsite, CMPLX(0d0,0d0,KIND(1d0)), cor_k, nk)
   !
-  cor_k(1:nk,1:6,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nk)
+  cor_k(1:nk,1:2,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nk)
+  cor_k(1:nk,3:6,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nk*nk)
   !
   DEALLOCATE(fmat, cor, site)
   !
