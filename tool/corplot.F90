@@ -447,7 +447,7 @@ SUBROUTINE write_gnuplot()
      DO iwfc = 1, nwfc
         !
         WRITE(fo, '(a,i0,a,i0,a,i0,a)',advance='no') &
-        & "'correlation.dat' u 1:2:($", iwfc+2, "-$", iwfc+2+nwfc, ") w l tit '", iwfc, "-'"
+        & "'correlation.dat' u 1:2:($", iwfc+2, "-$", iwfc+2+nwfc, ") w l tit '", iwfc, "-', "
         WRITE(fo, '(a,i0,a,i0,a,i0,a)',advance='no') &
         & "'correlation.dat' u 1:2:($", iwfc+2, "+$", iwfc+2+nwfc, ") w l tit '", iwfc, "+'"
         !

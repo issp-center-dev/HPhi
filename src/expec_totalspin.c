@@ -56,7 +56,7 @@ int expec_totalspin
   switch(X->Def.iCalcModel){
   case Spin:
      totalspin_Spin(X,vec);
-     X->Phys.sz=X->Def.Total2SzMPI/2.;
+     X->Phys.Sz=X->Def.Total2SzMPI/2.;
      break;
   case SpinGC:
      totalspin_SpinGC(X,vec);
@@ -71,7 +71,7 @@ int expec_totalspin
      break;
   default:
     X->Phys.s2=0.0;
-    X->Phys.sz=0.0;
+    X->Phys.Sz=0.0;
   }
   return 0;
 }
@@ -145,7 +145,7 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec) {
 		}
 	}
 	X->Phys.s2 = creal(spn);
-	X->Phys.sz = creal(spn_z);
+	X->Phys.Sz = creal(spn_z);
 }
 
 
@@ -216,7 +216,7 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec) {
     }
   }
   X->Phys.s2 = creal(spn);
-  X->Phys.sz = creal(spn_z);
+  X->Phys.Sz = creal(spn_z);
 }
 
 /**
@@ -405,7 +405,7 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec) {
 	spn_z = SumMPI_dc(spn_z);
 	spn += spn_zd;
 	X->Phys.s2 = creal(spn);
-	X->Phys.sz = creal(spn_z);
+	X->Phys.Sz = creal(spn_z);
 }
 
 
@@ -643,7 +643,7 @@ void totalspin_SpinGC(struct BindStruct *X,double complex *vec){
   spn_d = SumMPI_dc(spn_d);
   spn_z = SumMPI_dc(spn_z);
   X->Phys.s2=creal(spn+spn_d);
-  X->Phys.sz=creal(spn_z);
+  X->Phys.Sz=creal(spn_z);
 }
 
 int expec_totalSz(
@@ -653,14 +653,14 @@ int expec_totalSz(
 	X->Large.mode = M_TOTALS;
 	switch (X->Def.iCalcModel) {
 		case Spin:
-			X->Phys.sz = X->Def.Total2SzMPI / 2.;
+			X->Phys.Sz = X->Def.Total2SzMPI / 2.;
 			break;
 		case SpinGC:
 			totalSz_SpinGC(X, vec);
 			break;
 		case Hubbard:
 		case Kondo:
-			X->Phys.sz = X->Def.Total2SzMPI / 2.;
+			X->Phys.Sz = X->Def.Total2SzMPI / 2.;
 
 			break;
 		case HubbardGC:
@@ -668,7 +668,7 @@ int expec_totalSz(
 			totalSz_HubbardGC(X, vec);
 			break;
 		default:
-			X->Phys.sz = 0.0;
+			X->Phys.Sz = 0.0;
 	}
 
 	return 0;
@@ -732,7 +732,7 @@ void totalSz_HubbardGC
 		}
 	}
 	spn_z = SumMPI_dc(spn_z);
-	X->Phys.sz = creal(spn_z);
+	X->Phys.Sz = creal(spn_z);
 }
 
 /**
@@ -804,5 +804,5 @@ void totalSz_SpinGC
 		}//isite1
 	}
 	spn_z = SumMPI_dc(spn_z);
-	X->Phys.sz = creal(spn_z);
+	X->Phys.Sz = creal(spn_z);
 }

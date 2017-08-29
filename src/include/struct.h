@@ -349,7 +349,6 @@ struct PhysList {
   double num_up;/**<@brief */
   double num_down;/**<@brief */
   double s2;/**<@brief */
-  double sz;/**<@brief */
   double *all_energy;/**<@brief [CheckList::idim_max+1] Energy for FullDiag and LOBPCG.
                      malloc in setmem_large().*/
   double *all_doublon;/**<@brief [CheckList::idim_max+1] Doublon for FullDiag and LOBPCG.

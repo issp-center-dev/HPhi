@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
+enable_testing()
+
 project(HPhi NONE)
 
 if(CONFIG)
@@ -50,3 +52,5 @@ endif(LAPACK_FOUND)
 
 add_subdirectory(src)
 add_subdirectory(tool)
+add_subdirectory(test)
+

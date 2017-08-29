@@ -104,6 +104,9 @@
   - @c fprintf(::stdoutMPI,... instead of @c printf(...
   - fopenMPI() instead of @c fopen
   - exitMPI() instead of @c exit
+- When you add new features into HPhi, please run <tt>make test</tt>,
+  and check whether other features still work fine.
+  Also, try <tt>make test MPIRUN="mpiexec -np 4"</tt> to check MPI feature.
 .    
   
 */
@@ -144,7 +147,7 @@ int main(int argc, char* argv[]){
 
   //Timer
   InitTimer();
-  StartTimer(0);
+  if (mode != STANDARD_DRY_MODE) StartTimer(0);
  
   //MakeDirectory for output
   struct stat tmpst;
@@ -160,7 +163,7 @@ int main(int argc, char* argv[]){
   strcpy(cFileListName, argv[2]);
   
   if(mode==STANDARD_MODE || mode == STANDARD_DRY_MODE){
-    if (myrank == 0) StdFace_driver(argv[2]);
+    if (myrank == 0) StdFace_main(argv[2]);
     strcpy(cFileListName, "namelist.def");
     if (mode == STANDARD_DRY_MODE){
       fprintf(stdout, "Dry run is Finished. \n\n");

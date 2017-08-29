@@ -326,6 +326,12 @@ static void PrintExcitation(struct StdIntList *StdI) {
       isite += 1;
     }
   }
+  if (strcmp(StdI->model, "kondo") == 0) {
+    for (isite = 0; isite < StdI->nsite / 2; isite++) {
+      fourier_r[isite + StdI->nsite / 2] = fourier_r[isite];
+      fourier_i[isite + StdI->nsite / 2] = fourier_i[isite];
+    }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+  }/*if (strcmp(StdI->model, "kondo") == 0)*/
 
   if (StdI->SpectrumBody == 1) {
     fp = fopen("single.def", "w");
@@ -1987,10 +1993,10 @@ static void PrintInteractions(struct StdIntList *StdI)
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void StdFace_main(
-  struct StdIntList *StdI,
   char *fname//!<[in] Input file name for the standard mode
 )
 {
+  struct StdIntList StdI[1];
   FILE *fp;
   int ktrans, kintr;
   char ctmpline[256];
@@ -2344,6 +2350,8 @@ void StdFace_main(
   PrintLocSpin(StdI);
   PrintTrans(StdI);
   PrintInteractions(StdI);
+  CheckModPara(StdI);
+  PrintModPara(StdI); 
 #if defined(_HPhi)
   PrintExcitation(StdI);
   PrintPump(StdI);
@@ -2362,8 +2370,6 @@ void StdFace_main(
   PrintGutzwiller(StdI);
   PrintOrb(StdI);
 #endif
-  CheckModPara(StdI);
-  PrintModPara(StdI);
   CheckOutputMode(StdI);
   Print1Green(StdI);
   Print2Green(StdI);
@@ -2387,18 +2393,6 @@ void StdFace_main(
 
 }/*void StdFace_main*/
 /**
-@brief Driver routine for standard mode.
-Just call StdFace_main().
-*/
-void StdFace_driver(
-  char *fname//!<[in] Input file name for the standard mode
-)
-{
-  struct StdIntList StdI;
-
-  StdFace_main(&StdI, fname);
-}/*void StdFace_driver*/
-/**
 @page page_addstandard Add new lattice model into Standard mode
 
 @section sec_stan_proc Overall procedure
@@ -2412,7 +2406,7 @@ If you want to create new lattice file, do as these files.
 -# Add entry at
    @dontinclude StdFace_main.c
    @skip StdFace\_main
-   @until {
+   @until StdIntList
    :
    @skip >>
    @until <<
