@@ -193,7 +193,6 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       E[1] = tmp_E[0];
       E[2] = tmp_E[1];
       E[3] = tmp_E[2];
-      E[4] = tmp_E[3];
       if (Target < 3) {
         E_target = tmp_E[Target];
         ebefor = E_target;
