@@ -2150,6 +2150,8 @@ void StdFace_main(
   PrintLocSpin(StdI);
   PrintTrans(StdI);
   PrintInteractions(StdI);
+  CheckModPara(StdI);
+  PrintModPara(StdI); 
 #if defined(_HPhi)
   PrintExcitation(StdI);
   PrintCalcMod(StdI);
@@ -2167,8 +2169,6 @@ void StdFace_main(
   PrintGutzwiller(StdI);
   PrintOrb(StdI);
 #endif
-  CheckModPara(StdI);
-  PrintModPara(StdI);
   CheckOutputMode(StdI);
   Print1Green(StdI);
   Print2Green(StdI);
