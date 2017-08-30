@@ -11,7 +11,9 @@ a1l = 2
 model = "Spin"
 method = "Lanczos"
 lattice = "kagome"
-J = 1.0
+J0 = 1.0
+J1 = 0.5
+J2 = 0.5
 2Sz = 1
 EOF
 
@@ -20,7 +22,7 @@ ${MPIRUN} ../../src/HPhi -s stan.in
 # Check value
 
 cat > reference.dat <<EOF
-  -3.9690017499285153
+  -3.0170209179016370
    0.0000000000000000
    0.5000000000000000
 EOF

@@ -12,7 +12,7 @@ t = 1.0
 J = 4.0
 nelec = 4
 2Sz = 0
-exct = 3
+exct = 2
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan.in
@@ -28,11 +28,6 @@ cat > reference.dat <<EOF
  1
   -9.8347989641820277 
   0.4289751043491778 
-  0.0000000000000000 
-
- 2
-  -9.1829527358164000 
-  0.3092994621664528 
   0.0000000000000000 
 EOF
 paste output/zvo_energy.dat reference.dat > paste.dat
