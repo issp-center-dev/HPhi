@@ -178,9 +178,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       DSEVvalue(stp, tmp_mat, tmp_E);
       E[1] = tmp_E[0];
       E[2] = tmp_E[1];
-      E[3] = tmp_E[2];
-      E[4] = tmp_E[3];
-      if (Target < 3) {
+      if (Target < 2) {
         E_target = tmp_E[Target];
         ebefor = E_target;
       }
@@ -190,7 +188,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       childfopenMPI(sdt_2, "w", &fp);
 
       fprintf(fp, "LanczosStep  E[1] E[2] E[3] E[4] Target:E[%d] E_Max/Nsite\n", Target + 1);
-      if (Target < 3) {
+      if (Target < 2) {
         fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx  %.10lf xxxxxxxxx \n", stp, E[1], E[2],
                 E_target);
         fprintf(fp, "stp = %d %.10lf %.10lf xxxxxxxxxx xxxxxxxxx %.10lf xxxxxxxxx \n", stp, E[1], E[2], E_target);

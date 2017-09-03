@@ -118,6 +118,9 @@ int setmem_large
        lui_malloc1(list_1, X->Check.idim_max + 1);
 #ifdef MPI
        lui_malloc1(list_1buf, idim_maxMPI + 1);
+     for(j=0; j<X->Check.idim_max; j++){
+       list_1buf[j]=0;
+     }
 #endif // MPI
        lui_malloc1(list_2_1, X->Large.SizeOflist_2_1);
        lui_malloc1(list_2_2, X->Large.SizeOflist_2_2);
@@ -142,11 +145,21 @@ int setmem_large
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);
+  for(j =0; j<X->Check.idim_max+1; j++){
+    list_Diagonal[j]=0;
+    v0[j]=0;
+    v1[j]=0;
+  }
 #ifdef MPI
   c_malloc1(v1buf, idim_maxMPI + 1);
+  for(j =0; j<X->Check.idim_max+1; j++) {
+    v1buf[j]=0;
+  }
 #endif // MPI
   if (X->Def.iCalcType == TPQCalc) {c_malloc1(vg, 1);}
-  else {c_malloc1(vg, X->Check.idim_max+1);}
+  else {
+    c_malloc1(vg, X->Check.idim_max+1);
+  }
   d_malloc1(alpha, X->Def.Lanczos_max+1);
   d_malloc1(beta, X->Def.Lanczos_max+1);
 
@@ -155,7 +168,7 @@ int setmem_large
      || v0==NULL
      || v1==NULL
      || vg==NULL
-     ){
+     ) {
     return -1;
   }
 

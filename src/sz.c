@@ -562,8 +562,8 @@ int sz
               jb     = icnt-1;
             }
             
-            list_2_1_[ia] = ja;
-            list_2_2_[ib] = jb;
+            list_2_1_[ia] = ja+1;
+            list_2_2_[ib] = jb+1;
             tmp_j = snoob(tmp_i);
             tmp_i =        tmp_j;
             icnt        +=  1;
@@ -832,8 +832,8 @@ int child_omp_sz(
       }
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
       } 
     }
@@ -854,8 +854,8 @@ int child_omp_sz(
       }
       if( (num_up+num_down) == X->Def.Ne){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
       } 
     }  
@@ -913,8 +913,8 @@ int child_omp_sz_hacker(long unsigned int ib,
         }
         if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
           list_1_[ja+jb]=ia+ib*ihfbit;
-          list_2_1_[ia]=ja;
-          list_2_2_[ib]=jb;
+          list_2_1_[ia]=ja+1;
+          list_2_2_[ib]=jb+1;
           ja+=1;
         }
         if(ia!=0){
@@ -932,8 +932,8 @@ int child_omp_sz_hacker(long unsigned int ib,
             }
             if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
               list_1_[ja+jb]=ia+ib*ihfbit;
-              list_2_1_[ia]=ja;
-              list_2_2_[ib]=jb;
+              list_2_1_[ia]=ja+1;
+              list_2_2_[ib]=jb+1;
               ja+=1;
             }
             ia = snoob(ia);
@@ -947,15 +947,15 @@ int child_omp_sz_hacker(long unsigned int ib,
       ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
       if(ia < X->Check.sdim){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
         if(ia!=0){
           ia = snoob(ia);
           while(ia < X->Check.sdim){
             list_1_[ja+jb]=ia+ib*ihfbit;
-            list_2_1_[ia]=ja;
-            list_2_2_[ib]=jb;
+            list_2_1_[ia]=ja+1;
+            list_2_2_[ib]=jb+1;
             ja+=1;
             ia = snoob(ia);
           }
@@ -1063,8 +1063,13 @@ int child_omp_sz_Kondo(
       
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown && icheck_loc==1){
         list_1_[ja+jb]=ia+ib*ihfbit;
+        /*
         list_2_1_[ia]=ja;
         list_2_2_[ib]=jb;
+         */
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
+        //printf("DEBUG: rank=%d, list_1[%d]=%d, list_2_1_[%d]=%d, list_2_2_[%d]=%d\n", myrank, ja+jb, list_1_[ja+jb], ia, list_2_1[ia], ib, list_2_2[ib]);
         ja+=1;
       }
     }
@@ -1148,8 +1153,8 @@ int child_omp_sz_KondoGC(
       
       if(icheck_loc==1){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
       }
     }
@@ -1209,8 +1214,8 @@ int child_omp_sz_spin(
 
     if(num_up == X->Def.Ne){
       list_1_[ja+jb]=ia+ib*ihfbit;
-      list_2_1_[ia]=ja;
-      list_2_2_[ib]=jb;
+      list_2_1_[ia]=ja+1;
+      list_2_2_[ib]=jb+1;
       ja+=1;
     } 
   }
@@ -1250,8 +1255,8 @@ int child_omp_sz_spin_hacker(
     ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
     if(ia<ihfbit ){          // do not exceed Ne
       list_1_[ja+jb] = ia+ib*ihfbit;
-      list_2_1_[ia]  = ja;
-      list_2_2_[ib]  = jb;
+      list_2_1_[ia]  = ja+1;
+      list_2_2_[ib]  = jb+1;
       ja           += 1;
 
       if(ia!=0){
@@ -1259,8 +1264,8 @@ int child_omp_sz_spin_hacker(
         while(ia < ihfbit){
           //fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
           list_1_[ja+jb]    = ia+ib*ihfbit;
-          list_2_1_[ia]     = ja;
-          list_2_2_[ib]     = jb;
+          list_2_1_[ia]     = ja+1;
+          list_2_2_[ib]     = jb+1;
           ja+=1;
           ia = snoob(ia);
         }
@@ -1306,8 +1311,8 @@ int child_omp_sz_GeneralSpin(
     tmp_2Sz=list_2_1_Sz_[ia]+list_2_2_Sz_ib;
     if(tmp_2Sz == X->Def.Total2Sz){
       list_1_[ja+jb]=ia+ib*ihfbit;
-      list_2_1_[ia]=ja;
-      list_2_2_[ib]=jb;
+      list_2_1_[ia]=ja+1;
+      list_2_2_[ib]=jb+1;
       ja+=1;
     } 
   }

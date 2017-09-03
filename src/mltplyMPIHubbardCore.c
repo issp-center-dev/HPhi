@@ -1630,8 +1630,6 @@ double complex X_Ajt_MPI(
   bit2diff = myrank - ((2 * mask2 - 1) & myrank);
 
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
-  printf("Debug0: rank=%d test\n", myrank);
-
   ierr = MPI_Sendrecv(&idim_max,     1, MPI_UNSIGNED_LONG, origin, 0,
                       &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
                       MPI_COMM_WORLD, &statusMPI);
