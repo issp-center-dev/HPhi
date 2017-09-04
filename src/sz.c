@@ -99,7 +99,10 @@ int sz
   // [e] for general spin
 
   long unsigned int *list_jb;
-    lui_malloc1(list_jb,X->Large.SizeOflistjb);
+  lui_malloc1(list_jb,X->Large.SizeOflistjb);
+  for(i=0; i<X->Large.SizeOflistjb; i++){
+    list_jb[i]=0;
+  }
 
 //hacker
   int hacker;

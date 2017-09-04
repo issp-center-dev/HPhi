@@ -329,12 +329,12 @@ double complex CisAjt(
     if(GetOffComp(list_2_1, list_2_2, iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off)==FALSE){
       return 0;
     }
-
+/*
     if(X->Large.mode==M_CORR){
       fprintf(stdout, "DEBUG-1: myrank=%d, org=%d, bit=%d, iexchg=%d, list_1[%d]=%d\n",
               myrank, list_1[j], bit, iexchg, off, list_1[off]);
     }
-
+*/
     dmv = sgn * tmp_v1[j];
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
       tmp_v0[off] += tmp_V * dmv;

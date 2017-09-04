@@ -497,30 +497,26 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
             isite3 = X->Def.OrgTpow[2*org_isite3-2+org_sigma3] ;
             isite4 = X->Def.OrgTpow[2*org_isite4-2+org_sigma4] ;
             if(isite1 == isite2 && isite3 == isite4){
-
                 dam_pr = X_child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                           org_isite3-1, org_sigma3,
                                                           1.0, X, vec, vec);
             }
             else if(isite1 == isite2 && isite3 != isite4){
-
-                dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
+              //printf("org_isite1=%d, org_isite2=%d, org_isite3=%d, org_isite4=%d\n", org_isite1, org_isite2, org_isite3, org_isite4);
+              dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                           org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                           1.0, X, vec, vec);
-
             }
             else if(isite1 != isite2 && isite3 == isite4){
-
                 dam_pr = X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                           org_isite3-1, org_sigma3,
                                                           1.0, X, vec, vec);
 
             }
             else if(isite1 != isite2 && isite3 != isite4){
-                dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
+              dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                           org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                           1.0, X, vec, vec);
-
             }
 
         }//InterPE
