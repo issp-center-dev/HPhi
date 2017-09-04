@@ -118,7 +118,7 @@ int setmem_large
        lui_malloc1(list_1, X->Check.idim_max + 1);
 #ifdef MPI
        lui_malloc1(list_1buf, idim_maxMPI + 1);
-     for(j=0; j<X->Check.idim_max; j++){
+     for(j=0; j<X->Check.idim_max+1; j++){
        list_1buf[j]=0;
      }
 #endif // MPI
@@ -131,7 +131,7 @@ int setmem_large
        {
            return -1;
        }
-       for(j=0; j<X->Check.idim_max; j++){
+       for(j=0; j<X->Check.idim_max+1; j++){
          list_1[j]=0;
        }
        for(j =0; j<X->Large.SizeOflist_2_1; j++){
