@@ -24,7 +24,7 @@
 /**
  * @file   sz.c
  * 
- * @brief  File List 
+ * @brief  Generating Hilbert spaces
  * 
  * @version 0.2
  * @details 
@@ -40,6 +40,9 @@
  * 
  * 
  * @param X 
+ * @param list_1_   list_1[icnt] = i : icnt  
+ * @param list_2_1_ icnt=list_2_1[]+list_2_2[] 
+ * @param list_2_2_ 
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -729,11 +732,13 @@ int sz
 
 /** 
  * 
+ * @file   sz.c
+ * @brief  calculating binomial coefficients
  * 
- * @param n 
- * @param k 
- * @param comb 
- * @param Nsite 
+ * @param n      n for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
+ * @param k      k for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
+ * @param comb   binomial coefficients @f$_nC_k@f$
+ * @param Nsite  # of sites
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -774,25 +779,28 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
 }
 
 /** 
+ * @brief calculating restricted Hilbert space
  * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N2 
- * @param X 
+ * @param ib   upper half bit of i    
+ * @param ihfbit 2^(Ns/2) 
+ * @param X
+ * @param list_1     list_1_[icnt] = i  
+ * @param list_2_1_  list_2_1_[ib] = jb  
+ * @param list_2_2_  list_2_2_[ia] = ja  
+ * @param list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz(
-                 long unsigned int ib,
-                 long unsigned int ihfbit,
-                 struct BindStruct *X,
-                 long unsigned int *list_1_,
-                 long unsigned int *list_2_1_,
-                 long unsigned int *list_2_2_,
-                 long unsigned int *list_jb_
+                 long unsigned int ib,    //!<[in]
+                 long unsigned int ihfbit, //!<[in]
+                 struct BindStruct *X,     //!<[in]
+                 long unsigned int *list_1_, //!<[out]
+                 long unsigned int *list_2_1_,//!<[out]
+                 long unsigned int *list_2_2_,//!<[out]
+                 long unsigned int *list_jb_ //!<[in]
                  )
 {
   long unsigned int i,j; 
@@ -971,9 +979,9 @@ int child_omp_sz_hacker(long unsigned int ib,
 }
 
 /** 
+ * @brief calculating restricted Hilbert space
  * 
- * 
- * @param ib 
+ * @param ib      
  * @param ihfbit 
  * @param N2 
  * @param X 
@@ -983,13 +991,13 @@ int child_omp_sz_hacker(long unsigned int ib,
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_Kondo(
-                       long unsigned int ib,
-                       long unsigned int ihfbit,
-                       struct BindStruct *X,
-                       long unsigned int *list_1_,
-                       long unsigned int *list_2_1_,
-                       long unsigned int *list_2_2_,
-                       long unsigned int *list_jb_
+                       long unsigned int ib,        //[in]
+                       long unsigned int ihfbit,    //[in]
+                       struct BindStruct *X,        //[in]
+                       long unsigned int *list_1_,  //[out]
+                       long unsigned int *list_2_1_,//[out]
+                       long unsigned int *list_2_2_,//[out]
+                       long unsigned int *list_jb_  //[in]
                        )
 {
   long unsigned int i,j; 
@@ -1094,13 +1102,13 @@ int child_omp_sz_Kondo(
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_KondoGC(
-                         long unsigned int ib,
-                         long unsigned int ihfbit,
-                         struct BindStruct *X,
-                         long unsigned int *list_1_,
-                         long unsigned int *list_2_1_,
-                         long unsigned int *list_2_2_,
-                         long unsigned int *list_jb_
+                         long unsigned int ib,  //!<[in]
+                         long unsigned int ihfbit,//!<[in]
+                         struct BindStruct *X,    //!<[in]
+                         long unsigned int *list_1_, //!<[out]
+                         long unsigned int *list_2_1_,//!<[out]
+                         long unsigned int *list_2_2_,//!<[out]
+                         long unsigned int *list_jb_//!<[in]
                          )
 {
   long unsigned int i,j; 
