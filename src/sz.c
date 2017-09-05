@@ -84,8 +84,8 @@ int sz
   long unsigned int div_up;
 
   // [s] for general spin
-  long unsigned int *list_2_1_Sz;
-  long unsigned int *list_2_2_Sz;
+  long int *list_2_1_Sz;
+  long int *list_2_2_Sz;
   if(X->Def.iFlgGeneralSpin==TRUE){
     lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
     lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
@@ -144,7 +144,7 @@ int sz
     else{
       idim=1;
       for(j=0; j<N; j++){
-	idim *= X->Def.SiteToBit[j];
+	      idim *= X->Def.SiteToBit[j];
       }
     }
     break;
@@ -1299,8 +1299,8 @@ int child_omp_sz_GeneralSpin(
                              long unsigned int *list_1_,
                              long unsigned int *list_2_1_,
                              long unsigned int *list_2_2_,
-                             long unsigned int *list_2_1_Sz_,
-                             long unsigned int *list_2_2_Sz_,
+                             long int *list_2_1_Sz_,
+                             long int *list_2_2_Sz_,
                              long unsigned int *list_jb_
                              )
 {

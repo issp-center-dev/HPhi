@@ -87,8 +87,8 @@ int child_omp_sz_GeneralSpin(
               long unsigned int *list_1_,
               long unsigned int *list_2_1_,
               long unsigned int *list_2_2_,
-              long unsigned int *list_2_1_Sz_,
-              long unsigned int *list_2_2_Sz_,
+              long int *list_2_1_Sz_,
+              long int *list_2_2_Sz_,
               long unsigned int *list_jb_
 			  );
 
