@@ -1254,7 +1254,7 @@ int child_omp_sz_spin_hacker(
   tmp_num_up   = num_up;
   
   // using hacker's delight
-  if(tmp_num_up<=X->Def.Ne){ // do not exceed Ne
+  if(tmp_num_up<=X->Def.Ne && (X->Def.Ne-tmp_num_up)<= X->Def.Nsite-1){ // do not exceed Ne
     ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
     if(ia<ihfbit ){          // do not exceed Ne
       list_1_[ja+jb] = ia+ib*ihfbit;
