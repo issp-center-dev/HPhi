@@ -457,8 +457,7 @@ int GetLocal2Sz
 /** 
  * 
  * @brief "finding the next higher number after a given number that has the same number of 1-bits" 
- * This method is introduced in S.H. Warren, Hacker’S Delight, second ed., Addison-Wesley, ISBN: 0321842685,
-2012.
+ * This method is introduced in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
  *
  * @param x 
  * 
@@ -477,8 +476,7 @@ unsigned long int snoob(unsigned long int x){
 /** 
  * 
  * @brief calculating number of 1-bits in x (32 bit)
- * This method is introduced in S.H. Warren, Hacker’S Delight, second ed., Addison-Wesley, ISBN: 0321842685,
-2012.
+ * This method is introduced in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
  *
  * @param x 
  * 
