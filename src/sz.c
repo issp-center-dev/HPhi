@@ -38,11 +38,12 @@
 
 /** 
  * 
+ * @brief generating Hilbert space
  * 
- * @param X 
- * @param list_1_   list_1[icnt] = i : icnt  
- * @param list_2_1_ icnt=list_2_1[]+list_2_2[] 
- * @param list_2_2_ 
+ * @param[inout] X 
+ * @param[out] list_1_   list_1[icnt] = i (index of full Hilbert space) : icnt = index in the restricted Hilbert space 
+ * @param[out] list_2_1_ icnt=list_2_1[]+list_2_2[] 
+ * @param[out] list_2_2_ 
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -735,10 +736,10 @@ int sz
  * @file   sz.c
  * @brief  calculating binomial coefficients
  * 
- * @param n      n for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
- * @param k      k for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
- * @param comb   binomial coefficients @f$_nC_k@f$
- * @param Nsite  # of sites
+ * @param[in] n      n for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
+ * @param[in] k      k for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
+ * @param[out] comb   binomial coefficients @f$_nC_k@f$
+ * @param[in] Nsite  # of sites
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -779,15 +780,15 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
 }
 
 /** 
- * @brief calculating restricted Hilbert space
+ * @brief calculating restricted Hilbert space for Hubbard systems
  * 
- * @param ib   upper half bit of i    
- * @param ihfbit 2^(Ns/2) 
- * @param X
- * @param list_1     list_1_[icnt] = i  
- * @param list_2_1_  list_2_1_[ib] = jb  
- * @param list_2_2_  list_2_2_[ia] = ja  
- * @param list_jb_   list_jb_[ib]  = jb  
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -874,7 +875,21 @@ int child_omp_sz(
   ja=ja-1;    
   return ja; 
 }
-
+/** 
+ * @brief efficient version of calculating restricted Hilbert space for Hubbard systems  using snoob
+ * details of snoob is found in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
+ * 
+ * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 int child_omp_sz_hacker(long unsigned int ib,
                         long unsigned int ihfbit,
                         struct BindStruct *X,
@@ -979,16 +994,18 @@ int child_omp_sz_hacker(long unsigned int ib,
 }
 
 /** 
- * @brief calculating restricted Hilbert space
- * 
- * @param ib      
- * @param ihfbit 
- * @param N2 
- * @param X 
+ * @brief calculating restricted Hilbert space for Kondo systems
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_Kondo(
                        long unsigned int ib,        //[in]
@@ -1088,18 +1105,19 @@ int child_omp_sz_Kondo(
   ja=ja-1;    
   return ja; 
 }
-
 /** 
- * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N2 
- * @param X 
+ * @brief calculating restricted Hilbert space for Kondo-GC systems
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_KondoGC(
                          long unsigned int ib,  //!<[in]
@@ -1176,16 +1194,18 @@ int child_omp_sz_KondoGC(
 }
 
 /** 
- * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N 
- * @param X 
+ * @brief calculating restricted Hilbert space for spin-1/2 systems
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X          
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_spin(
                       long unsigned int ib, 
@@ -1234,6 +1254,24 @@ int child_omp_sz_spin(
   return ja; 
 }
 
+
+/** 
+ * @brief efficient version of calculating restricted Hilbert space for spin-1/2 systems 
+ * details of snoob is found in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X          
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[out] list_2_1_Sz_  
+ * @param[out] list_2_2_Sz_  
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
+ * 
+ * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 int child_omp_sz_spin_hacker(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
@@ -1287,18 +1325,21 @@ int child_omp_sz_spin_hacker(
   return ja; 
 }
 
-
 /** 
- * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N 
- * @param X 
+ * @brief calculating restricted Hilbert space for general spin systems (S>1/2)
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X          
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[out] list_2_1_Sz_  
+ * @param[out] list_2_2_Sz_  
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_GeneralSpin(
                              long unsigned int ib, 
@@ -1332,13 +1373,13 @@ int child_omp_sz_GeneralSpin(
 }
 
 /** 
+ * @brief reading the list of the restricted Hilbert space
  * 
- * 
- * @param X 
- * @param irght 
- * @param ilft 
- * @param ihfbit 
- * @param i_max 
+ * @param[in] X 
+ * @param[in] irght 
+ * @param[in] ilft 
+ * @param[in] ihfbit 
+ * @param[in] i_max 
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
