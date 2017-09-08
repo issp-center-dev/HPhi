@@ -79,12 +79,15 @@ void phys(struct BindStruct *X, unsigned long int neig) {
       tmp_N = X->Phys.num_up + X->Phys.num_down;
     }
 
-    if (X->Def.iCalcType == FullDiag || X->Def.iCalcType == CG)
+    if (X->Def.iCalcType == FullDiag)
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-              X->Phys.sz, X->Phys.s2, X->Phys.doublon);
+              X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
+    else if (X->Def.iCalcType == CG)
+      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
+              X->Phys.Sz, X->Phys.doublon);
     X->Phys.all_energy[i] = X->Phys.energy;
     X->Phys.all_doublon[i] = X->Phys.doublon;
-    X->Phys.all_sz[i] = X->Phys.sz;
+    X->Phys.all_sz[i] = X->Phys.Sz;
     X->Phys.all_s2[i] = X->Phys.s2;
     X->Phys.all_num_up[i] = X->Phys.num_up;
     X->Phys.all_num_down[i] = X->Phys.num_down;

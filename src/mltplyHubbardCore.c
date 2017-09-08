@@ -325,8 +325,16 @@ double complex CisAjt(
     bit = list_1[j] & diff_spin;
     SgnBit(bit, &sgn); // Fermion sign
     iexchg = list_1[j] ^ sum_spin;
-    GetOffComp(list_2_1, list_2_2, iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
 
+    if(GetOffComp(list_2_1, list_2_2, iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off)==FALSE){
+      return 0;
+    }
+/*
+    if(X->Large.mode==M_CORR){
+      fprintf(stdout, "DEBUG-1: myrank=%d, org=%d, bit=%d, iexchg=%d, list_1[%d]=%d\n",
+              myrank, list_1[j], bit, iexchg, off, list_1[off]);
+    }
+*/
     dmv = sgn * tmp_v1[j];
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
       tmp_v0[off] += tmp_V * dmv;
@@ -403,7 +411,9 @@ int X_CisAjt(
 
   sgn = X_GC_CisAjt(list_1_j, X, is1_spin, is2_spin, sum_spin, diff_spin, tmp_off);
   if (sgn != 0) {
-    GetOffComp(list_2_1, list_2_2, *tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off);
+    if(GetOffComp(list_2_1, list_2_2, *tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off)!=TRUE){
+      return 0;
+    }
     *tmp_off = off;
     return sgn;
   }
@@ -488,7 +498,9 @@ double complex child_exchange_element(
   if (ibit1_up == 0 && ibit1_down != 0 && ibit2_up != 0 && ibit2_down == 0) {
     iexchg = list_1[j] - (is1_down + is2_up);
     iexchg += (is1_up + is2_down);
-    GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off);
+    if(GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off)!=TRUE){
+      return 0;
+    }
     *tmp_off = off;
     dmv = tmp_J * tmp_v1[j];
     if (mode == M_MLTPLY) {
@@ -499,7 +511,9 @@ double complex child_exchange_element(
   else if (ibit1_up != 0 && ibit1_down == 0 && ibit2_up == 0 && ibit2_down != 0) {
     iexchg = list_1[j] - (is1_up + is2_down);
     iexchg += (is1_down + is2_up);
-    GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off);
+    if(GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off)!=TRUE){
+      return 0;
+    }
     *tmp_off = off;
     dmv = tmp_J * tmp_v1[j];
     if (mode == M_MLTPLY) {
@@ -545,7 +559,10 @@ double complex child_pairhopp_element(
   if (ibit1_up == 0 && ibit1_down == 0 && ibit2_up != 0 && ibit2_down != 0) {
     iexchg = list_1[j] - (is2_up + is2_down);
     iexchg += (is1_up + is1_down);
-    GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off);
+
+    if(GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off)!=TRUE){
+      return 0;
+    }
     *tmp_off = off;
     dmv = tmp_J * tmp_v1[j];
     if (mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1094,7 +1111,9 @@ int X_Cis(
 #endif
     list_1_off = list_1_j | is1_spin; // OR
 
-    GetOffComp(list_2_1_target, list_2_2_target, list_1_off, _irght, _ilft, _ihfbit, tmp_off);
+    if(GetOffComp(list_2_1_target, list_2_2_target, list_1_off, _irght, _ilft, _ihfbit, tmp_off)!=TRUE){
+      return 0;
+    }
     sgn *= ipsgn;
     return (sgn);
   }
@@ -1143,7 +1162,9 @@ double complex X_Ajt(
     SgnBit(myrank, &ipsgn); // Fermion sign
 #endif
     list_1_off = list_1_j ^ is1_spin;
-    GetOffComp(list_2_1_target, list_2_2_target, list_1_off, _irght, _ilft, _ihfbit, tmp_off);
+    if(GetOffComp(list_2_1_target, list_2_2_target, list_1_off, _irght, _ilft, _ihfbit, tmp_off)!=TRUE){
+      return 0;
+    }
     sgn *= ipsgn;
     return(sgn);
   }

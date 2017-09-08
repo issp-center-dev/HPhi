@@ -202,10 +202,18 @@ int GetOffComp(
 {
   long unsigned int ia, ib;
   SplitBit(_ibit, _irght, _ilft, _ihfbit, &ia, &ib);
+/*
   *_ioffComp =_list_2_1[ia];
   *_ioffComp+=_list_2_2[ib];
-  if(*_ioffComp !=0) return TRUE;
-  else return FALSE;
+*/
+  if(_list_2_1[ia]*_list_2_2[ib]==0){
+    *_ioffComp=0;
+    return FALSE;
+  }
+  *_ioffComp =_list_2_1[ia]-1;
+  *_ioffComp+=_list_2_2[ib]-1;
+
+  return TRUE;
 }
 
 
@@ -275,11 +283,15 @@ int ConvertToList1GeneralSpin(
 )
 {
   long unsigned int ia, ib;
+  long unsigned int tmp_list;
   ia=org_ibit%ihlfbit;
   ib=org_ibit/ihlfbit;
-  *_ilist1Comp=list_2_1[ia]+list_2_2[ib];
-  if(*_ilist1Comp !=0) return TRUE;
-  else return FALSE;
+  if(list_2_1[ia]*list_2_2[ib]==0){
+    *_ilist1Comp=0;
+    return FALSE;
+  }
+  *_ilist1Comp = list_2_1[ia] + list_2_2[ib] - 2;
+  return TRUE;
 }
 
 /** 

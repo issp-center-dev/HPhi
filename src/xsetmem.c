@@ -36,9 +36,18 @@ void setmem_def
  struct BoostList *xBoost
  )
 {
+  unsigned long int i=0;
   lui_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
   lui_malloc1(X->Def.OrgTpow, 2*X->Def.Nsite+2);
+  for(i=0; i<2*X->Def.Nsite+2; i++){
+    X->Def.Tpow[i]=0;
+    X->Def.OrgTpow[i]=0;
+  }
   li_malloc1(X->Def.SiteToBit, X->Def.Nsite+1);
+  for(i=0; i<X->Def.Nsite+1; i++){
+    X->Def.SiteToBit[i]=0;
+  }
+  
   i_malloc1(X->Def.LocSpn, X->Def.Nsite);
   d_malloc1(X->Phys.spin_real_cor, X->Def.Nsite*X->Def.Nsite);
   d_malloc1(X->Phys.charge_real_cor, X->Def.Nsite*X->Def.Nsite);
@@ -77,7 +86,7 @@ void setmem_def
   i_malloc2(X->Def.PairExcitationOperator, X->Def.NPairExcitationOperator, 5);
   c_malloc1(X->Def.ParaPairExcitationOperator, X->Def.NPairExcitationOperator);
 
-  unsigned int ipivot,iarrayJ,i,ispin;
+  unsigned int ipivot,iarrayJ,ispin;
   xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
   for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
     xBoost->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
@@ -118,6 +127,9 @@ int setmem_large
        lui_malloc1(list_1, X->Check.idim_max + 1);
 #ifdef MPI
        lui_malloc1(list_1buf, idim_maxMPI + 1);
+     for(j=0; j<X->Check.idim_max+1; j++){
+       list_1buf[j]=0;
+     }
 #endif // MPI
        lui_malloc1(list_2_1, X->Large.SizeOflist_2_1);
        lui_malloc1(list_2_2, X->Large.SizeOflist_2_2);
@@ -128,7 +140,7 @@ int setmem_large
        {
            return -1;
        }
-       for(j=0; j<X->Check.idim_max; j++){
+       for(j=0; j<X->Check.idim_max+1; j++){
          list_1[j]=0;
        }
        for(j =0; j<X->Large.SizeOflist_2_1; j++){
@@ -142,11 +154,21 @@ int setmem_large
   d_malloc1(list_Diagonal, X->Check.idim_max+1);
   c_malloc1(v0, X->Check.idim_max+1);
   c_malloc1(v1, X->Check.idim_max+1);
+  for(j =0; j<X->Check.idim_max+1; j++){
+    list_Diagonal[j]=0;
+    v0[j]=0;
+    v1[j]=0;
+  }
 #ifdef MPI
   c_malloc1(v1buf, idim_maxMPI + 1);
+  for(j =0; j<X->Check.idim_max+1; j++) {
+    v1buf[j]=0;
+  }
 #endif // MPI
   if (X->Def.iCalcType == TPQCalc) {c_malloc1(vg, 1);}
-  else {c_malloc1(vg, X->Check.idim_max+1);}
+  else {
+    c_malloc1(vg, X->Check.idim_max+1);
+  }
   d_malloc1(alpha, X->Def.Lanczos_max+1);
   d_malloc1(beta, X->Def.Lanczos_max+1);
 
@@ -155,7 +177,7 @@ int setmem_large
      || v0==NULL
      || v1==NULL
      || vg==NULL
-     ){
+     ) {
     return -1;
   }
 
@@ -171,7 +193,7 @@ int setmem_large
             c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
         }
     }
-  
+    
   if(X->Def.iCalcType == FullDiag){
     d_malloc1(X->Phys.all_num_down, X->Check.idim_max+1);
     d_malloc1(X->Phys.all_num_up, X->Check.idim_max+1);

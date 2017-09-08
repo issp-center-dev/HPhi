@@ -508,7 +508,7 @@ double complex X_child_general_hopp_MPIsingle(
 
   dam_pr = 0.0;
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff, jreal, state1) \
-  firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+  firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff, myrank) shared(list_1, list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
@@ -536,11 +536,14 @@ double complex X_child_general_hopp_MPIsingle(
         state1 = jreal & mask1;
 
         if (state1 == state1check) {
-
           SgnBit(jreal & bit1diff, &Fsgn);
           GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
             X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-
+/*
+          if(X->Large.mode==M_CORR){
+            printf("DEBUG: myrank=%d, org=%d, bit=%d, iexchg=%d, ioff=%d, list_1=%d\n", myrank, jreal, state1, jreal ^ mask1, ioff, list_1[ioff]);
+          }
+*/
           dmv = (double)Fsgn * trans * v1buf[j];
           dam_pr += conj(tmp_v1[ioff]) * dmv;
         }/*if (state1 == state1check)*/
