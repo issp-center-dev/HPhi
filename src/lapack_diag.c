@@ -19,14 +19,16 @@
 
 /** 
  * 
- * 
- * @param X 
+ * @brief performing full diagonalization using lapack
+ * @param[in,out] X 
  * 
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * @return 
  */
-int lapack_diag(struct BindStruct *X){
+int lapack_diag(
+struct BindStruct *X//!<[inout]
+){
   
   FILE *fp;
   char sdt[D_FileNameMax]="";

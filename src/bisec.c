@@ -19,17 +19,24 @@
 #include "bisec.h"
 
 /** 
+ * @brief obtain the eigen energies by using bisection method
+ * This method is based the TITPACK ver 2.
  * 
- * 
- * @param alpha 
- * @param beta 
- * @param ndim 
- * @param E 
- * @param ne 
- * @param eps
+ * @param alpha coefficient of tridiagonal matrix in the Lanczos method
+ * @param beta coefficient of tridiagonal matrix in the Lanczos method 
+ * @param ndim dimension of tridiagonal matrix in the Lanczos method
+ * @param E  eigen energies
+ * @param ne number of excited states  
+ * @param eps precision for bisection method
  * @author Takahiro Misawa (The University of Tokyo)
  */
-void bisec(double *alpha,double *beta,int ndim,double *E,int ne,double eps){
+void bisec(double *alpha, //!<[in]
+           double *beta,  //!<[in]
+           int ndim,  //!<[in]
+           double *E, //!<[out]
+           int ne,  //!<[in]
+           double eps //!<[in]
+){ 
 
     long int i,j,k;
     int numneg,ipass,i_lim;
