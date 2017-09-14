@@ -333,13 +333,26 @@ static void PrintExcitation(struct StdIntList *StdI) {
   if (StdI->SpectrumBody == 1) {
     fp = fopen("single.def", "w");
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "NSingle %d\n", StdI->nsite * NumOp);
+    if (strcmp(StdI->model, "kondo") == 0) {
+      fprintf(fp, "NSingle %d\n", StdI->nsite / 2 * NumOp);
+    }
+    else {
+      fprintf(fp, "NSingle %d\n", StdI->nsite * NumOp);
+    }
     fprintf(fp, "=============================================\n");
     fprintf(fp, "============== Single Excitation ============\n");
     fprintf(fp, "=============================================\n");
-    for (isite = 0; isite < StdI->nsite; isite++) {
-      fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
-        fourier_r[isite]*coef[0], fourier_i[isite] * coef[0]);
+    if (strcmp(StdI->model, "kondo") == 0) {
+      for (isite = StdI->nsite / 2; isite < StdI->nsite; isite++) {
+        fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
+          fourier_r[isite] * coef[0], fourier_i[isite] * coef[0]);
+      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+    }/*if (strcmp(StdI->model, "kondo") == 0)*/
+    else {
+      for (isite = 0; isite < StdI->nsite; isite++) {
+        fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
+          fourier_r[isite] * coef[0], fourier_i[isite] * coef[0]);
+      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
     }
     fprintf(stdout, "      single.def is written.\n\n");
   }
@@ -1037,9 +1050,9 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "NumAve         %-5d\n", StdI->NumAve);
   fprintf(fp, "ExpecInterval  %-5d\n", StdI->ExpecInterval);
   fprintf(fp, "NOmega         %-5d\n", StdI->Nomega);
-  fprintf(fp, "OmegaMax       %-25.15e\n", StdI->OmegaMax);
-  fprintf(fp, "OmegaMin       %-25.15e\n", StdI->OmegaMin);
-  fprintf(fp, "OmegaIm        %-25.15e\n", StdI->OmegaIm);
+  fprintf(fp, "OmegaMax       %-25.15e %-25.15e\n", StdI->OmegaMax, StdI->OmegaIm);
+  fprintf(fp, "OmegaMin       %-25.15e %-25.15e\n", StdI->OmegaMin, StdI->OmegaIm);
+  fprintf(fp, "OmegaOrg       0.0 0.0\n");
 #elif defined(_mVMC)
   fprintf(fp, "VMC_Cal_Parameters\n");
   fprintf(fp, "--------------------\n");

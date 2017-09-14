@@ -256,10 +256,11 @@ int CalcSpectrumByBiCG(
     if (childfopenALL(sdt, "rb", &fp) != 0) {
       exitMPI(-1);
     }
-    byte_size = fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec), 1, fp);
-    byte_size = fread(&i_max, sizeof(long int), 1, fp);
+    byte_size = fread(&liLanczosStp_vec, sizeof(int), 1, fp);
+    byte_size = fread(&i_max, sizeof(i_max), 1, fp);
     if (i_max != X->Bind.Check.idim_max) {
       fprintf(stderr, "Error: The size of the input vector is incorrect.\n");
+      printf("%s %ld %ld %ld\n", sdt, i_max, X->Bind.Check.idim_max, liLanczosStp_vec);
       exitMPI(-1);
     }
     byte_size = fread(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
