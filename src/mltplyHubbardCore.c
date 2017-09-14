@@ -412,13 +412,14 @@ int X_CisAjt(
   sgn = X_GC_CisAjt(list_1_j, X, is1_spin, is2_spin, sum_spin, diff_spin, tmp_off);
   if (sgn != 0) {
     if(GetOffComp(list_2_1, list_2_2, *tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off)!=TRUE){
+      *tmp_off = 0;
       return 0;
     }
     *tmp_off = off;
     return sgn;
   }
   else {
-    *tmp_off = 1;
+    *tmp_off = 0;
     return 0;
   }
 }/*int X_CisAjt*/
@@ -443,6 +444,7 @@ int X_GC_CisAjt(
 
   ibit_tmp_1 = (list_1_j & is1_spin);
   ibit_tmp_2 = (list_1_j & is2_spin);
+
   if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
     bit = list_1_j & diff_spin;
     SgnBit(bit, &sgn); // Fermion sign
