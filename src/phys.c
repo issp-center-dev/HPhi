@@ -26,7 +26,7 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
- * @brief  File for givinvg a parent function to calculate physical quantities  by full diagonalization method 
+ * @brief  File for giving a parent function to calculate physical quantities  by full diagonalization method 
  * 
  * 
  */
@@ -37,13 +37,16 @@
  * 
  * @brief A main function to calculate physical quantities by full diagonalization method.
  * @param[in,out] X CalcStruct list for getting and pushing calculation information 
+ * @param neig number of eigenvalues
  * @version 0.2
  * @details add output process of calculation results for general spin
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-void phys(struct BindStruct *X, unsigned long int neig) {
+void phys(struct BindStruct *X, //!<[inout]
+          unsigned long int neig //!<[in]
+) {
 
   long unsigned int i, j, i_max;
   double tmp_N;
