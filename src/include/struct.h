@@ -41,8 +41,8 @@ struct DefineList {
   int LanczosTarget;/**<@brief Which eigenstate is used to check convergence.
                     Read from Calcmod in readdef.h.*/
   int read_hacker;/**<@brief Whether use an efficient method (=1) in sz.c or not (=0)*/
-  int READ;/**<@brief It is ALWAYS 0.*/
-  int WRITE;/**<@brief It is ALWAYS 0.*/
+  int READ;/**<@brief It is ALWAYS 0 ???*/
+  int WRITE;/**<@brief It is ALWAYS 0 ???*/
 
   unsigned int Nsite;/**<@brief Number of sites in the INTRA process region*/
   unsigned int NsiteMPI;/**<@brief Total number of sites, differ from DefineList::Nsite*/
@@ -68,7 +68,7 @@ struct DefineList {
   long int initial_iv;/**<@brief Seed of random number for initial guesss of wavefunctions.*/
 
   int istep;/**<@brief Index of TPQ step ???*/
-  int irand;/**<@brief */
+  int irand;/**<@brief Input keyword TargetTPQRand ???*/
   int St;/**<@brief 0 or 1, but it affects nothing.*/
 
   int *LocSpn;/**<@brief [DefineList::NLocSpn] Flag (and size) of the local spin.
@@ -97,17 +97,17 @@ struct DefineList {
   unsigned int EDNTransfer;/**<@brief Number of transfer integrals for calculation. */
   int **GeneralTransfer;/**<@brief Index of transfer integrals obtained by a def file. 
                         malloc in setmem_def().\n
-						            Data Format [DefineList::Ntransfer][4]: 
+						            Data Format [DefineList::NTransfer][4]: 
                         0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
   int **EDGeneralTransfer;/**<@brief Index of transfer integrals for calculation. 
                           malloc in setmem_def().\n
-						              Data Format [DefineList::Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+						              Data Format [DefineList::NTransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
   double complex *ParaGeneralTransfer;/**<@brief Value of general transfer integrals by a def file. 
                                       malloc in setmem_def().\n
-						                          Data Format [DefineList::Ntransfer].*/
+						                          Data Format [DefineList::NTransfer].*/
   double complex *EDParaGeneralTransfer;/**<@brief Value of general transfer integrals  by a def file. 
                                         malloc in setmem_def().\n
-						                            Data Format [DefineList::Ntransfer].*/
+						                            Data Format [DefineList::NTransfer].*/
     //[e] Transfer
 
   unsigned int NCoulombIntra;/**< Number of on-site Coulomb interaction*/
@@ -131,13 +131,13 @@ struct DefineList {
   unsigned int NPairHopping;/**<@brief Number of pair-hopping term*/
   int **PairHopping;/**<@brief [DefineList::NPairHopping][2] Index of pair-hopping.
                     malloc in setmem_def().*/
-  double *ParaPairHopping;/**<@brief [DefineList::NPairHopping] Coupling constant of.
+  double *ParaPairHopping;/**<@brief [DefineList::NPairHopping] Coupling constant of
                           pair-hopping term. malloc in setmem_def().*/
 
   unsigned int NExchangeCoupling;/**<@brief Number of exchange term*/
   int **ExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling][2] Index of exchange term.
                          malloc in setmem_def().*/
-  double *ParaExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling] Coupling constant of.
+  double *ParaExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling] Coupling constant of
                                exchange term. malloc in setmem_def().*/
 
   unsigned int NIsingCoupling;/**<@brief Number of Ising term.*/
@@ -145,7 +145,7 @@ struct DefineList {
   unsigned int NPairLiftCoupling;/**<@brief Number of pair-lift term*/
   int **PairLiftCoupling;/**<@brief [DefineList::NPairHopping][2] Index of pair-lift term.
                          malloc in setmem_def().*/
-  double *ParaPairLiftCoupling;/**<@brief [DefineList::NPairHopping] Coupling constant of.
+  double *ParaPairLiftCoupling;/**<@brief [DefineList::NPairHopping] Coupling constant of
                                pair-lift term. malloc in setmem_def().*/
 
     //[s] For InterAll
@@ -155,24 +155,31 @@ struct DefineList {
   unsigned int NInterAll;/**<@brief Total Number of Interacted quartet*/
   unsigned int NInterAll_Diagonal;/**<@brief Number of interall term (diagonal)*/
   unsigned int NInterAll_OffDiagonal;/**<@brief Number of interall term (off-diagonal)*/
-  double complex *ParaInterAll;/**<@brief */
-  double *ParaInterAll_Diagonal;/**<@brief */
-  double complex *ParaInterAll_OffDiagonal;
+  double complex *ParaInterAll;/**<@brief [DefineList::NInterAll] Coupling constant of
+                               inter-all term. malloc in setmem_def().*/
+  double *ParaInterAll_Diagonal;/**<@brief [DefineList::NInterAll_Diagonal] Coupling constant of
+                               diagonal inter-all term. malloc in setmem_def().*/
+  double complex *ParaInterAll_OffDiagonal;/**<@brief [DefineList::NInterAll_OffDiagonal] Coupling constant of
+                               off-diagonal inter-all term. malloc in setmem_def().*/
     //[e] For InterAll
 
-  int **CisAjt;/**<@brief */
-  unsigned int NCisAjt;/**<@brief */
+  int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
+  unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
 
-  int **CisAjtCkuAlvDC;/**<@brief */
-  unsigned int NCisAjtCkuAlvDC;/**<@brief */
+  int **CisAjtCkuAlvDC;/**<@brief [DefineList::NCisAjtCkuAlvDC][4] Indices of two-body correlation function. malloc in setmem_def().*/
+  unsigned int NCisAjtCkuAlvDC;/**<@brief Number of indices of two-body correlation function.*/
 
-  int **SingleExcitationOperator;/**<@brief */
-  unsigned int NSingleExcitationOperator;/**<@brief */
-  double complex *ParaSingleExcitationOperator;/**<@brief */
+  int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
+                                 Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
+  unsigned int NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
+  double complex *ParaSingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator] 
+              Coefficient of single excitaion operator for spectrum. malloc in setmem_def().*/
 
-  int **PairExcitationOperator;/**<@brief */
-  unsigned int NPairExcitationOperator;/**<@brief */
-  double complex *ParaPairExcitationOperator;/**<@brief */
+  int **PairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator][5] 
+                               Indices of pair excitaion operator for spectrum. malloc in setmem_def().*/
+  unsigned int NPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
+  double complex *ParaPairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator]
+                           Coefficient of pair excitaion operator for spectrum. malloc in setmem_def().*/
   
   int iCalcType;/**<@brief Switch for calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
   int iCalcEigenVec;/**<@brief Switch for method to calculate eigenvectors. 
@@ -190,16 +197,15 @@ struct DefineList {
   int iInputHam;/**<brief Switch for reading a Hamiltonian. 0: no input, 1:input*/
 
     //[s] For Spectrum
-  double complex dcOmegaMax;/**<@brief */
-  double complex dcOmegaMin;/**<@brief */
-  double complex dcOmegaOrg;/**<@brief */
+  double complex dcOmegaMax;/**<@brief Upper limit of the frequency for the spectrum.*/
+  double complex dcOmegaMin;/**<@brief Lower limit of the frequency for the spectrum.*/
+  double complex dcOmegaOrg;/**<@brief Origin limit of the frequency for the spectrum.*/
   int iNOmega;/**<@brief Number of frequencies for spectrum.*/
-  int iFlgSpecOmegaMax;/**<@brief */
-  int iFlgSpecOmegaMin;/**<@brief */
-  int iFlgSpecOmegaOrg;/**<@brief */
-  int iFlgCalcSpec;/**<@brief */
-  int iFlagListModified;/**<@brief */
-    /**<@brief An integer for selecting calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
+  int iFlgSpecOmegaMax;/**<@brief Whether DefineList::dcOmegaMax is input or not.*/
+  int iFlgSpecOmegaMin;/**<@brief Whether DefineList::dcOmegaMin is input or not.*/
+  int iFlgSpecOmegaOrg;/**<@brief Whether DefineList::dcOmegaOrg is input or not.*/
+  int iFlgCalcSpec;/**<@brief Input parameter CalcSpec in teh CalcMod file.*/
+  int iFlagListModified;/**<@brief When the Hilbert space of excited state differs from the original one.*/
 
     //[e] For Spectrum
 
@@ -216,74 +222,74 @@ struct DefineList {
 @brief Size of the Hilbert space
 */
 struct CheckList {
-  unsigned long int idim_max;/**<@brief */
-  unsigned long int idim_maxMPI;/**<@brief */
-  unsigned long int idim_maxOrg;/**<@brief calcspectrum*/
-  unsigned long int idim_maxMPIOrg;/**<@brief */
-  unsigned long int sdim;/**<@brief */
-  double max_mem;/**<@brief */
+  unsigned long int idim_max;/**<@brief The dimension of the Hilbert space of this process.*/
+  unsigned long int idim_maxMPI;/**<@brief The total dimension across process.*/
+  unsigned long int idim_maxOrg;/**<@brief The local Hilbert-space dimention of original state for the spectrum.*/
+  unsigned long int idim_maxMPIOrg;/**<@brief The global Hilbert-space dimention of original state for the spectrum.*/
+  unsigned long int sdim;/**<@brief Dimension for Ogata-Lin ???*/
+  double max_mem;/**<@brief Estimated memory size.*/
 };/*struct CheckList*/
 /**
 @brief For Matrix-Vector product
 */
 struct LargeList {
-  double complex prdct;/**<@brief */
-  int itr;/**<@brief */
-  long int iv;/**<@brief */
+  double complex prdct;/**<@brief The expectation value of the energy.*/
+  int itr;/**<@brief Iteration number.*/
+  long int iv;/**<@brief Used for initializing vector.*/
   long int i_max;/**<@brief Length of eigenvector*/
-  long int SizeOflist_2_1;/**<@brief */
-  long int SizeOflist_2_2;/**<@brief */
-  long int SizeOflistjb;/**<@brief */
+  long int SizeOflist_2_1;/**<@brief Size of ::list_2_1*/
+  long int SizeOflist_2_2;/**<@brief Size of ::list_2_2*/
+  long int SizeOflistjb;/**<@brief Used for computing Sz.*/
 
   double complex tmp_trans;/**<@brief Hopping parameter.*/
   double complex tmp_J;/**<@brief Coupling constant*/
 
-  long unsigned int is1_up;/**<@brief */
-  long unsigned int is1_down;/**<@brief */
-  long unsigned int is2_up;/**<@brief */
-  long unsigned int is2_down;/**<@brief */
+  long unsigned int is1_up;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int is1_down;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int is2_up;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int is2_down;/**<@brief Mask used in the bit oeration.*/
 
-  int mode;/**<@brief */
+  int mode;/**<@brief multiply or expectation value.*/
   double sgn;/**<@brief Not used ???*/
-  long unsigned int is1_spin;/**<@brief */
-  long unsigned int is2_spin;/**<@brief */
-  long unsigned int is3_spin;/**<@brief */
-  long unsigned int is4_spin;/**<@brief */
-  int isite1;/**<@brief */
-  int isite2;/**<@brief */
-  int isite3;/**<@brief */
-  int isite4;/**<@brief */
+  long unsigned int is1_spin;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int is2_spin;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int is3_spin;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int is4_spin;/**<@brief Mask used in the bit oeration.*/
+  int isite1;/**<@brief Is it realy used ???*/
+  int isite2;/**<@brief Is it realy used ???*/
+  int isite3;/**<@brief Is it realy used ???*/
+  int isite4;/**<@brief Is it realy used ???*/
 
-  long unsigned int A_spin;/**<@brief */
-  long unsigned int B_spin;/**<@brief */
-  long unsigned int irght;/**<@brief */
-  long unsigned int ilft;/**<@brief */
-  long unsigned int ihfbit;/**<@brief */
-  long unsigned int isA_spin;/**<@brief */
-  long unsigned int isB_spin;/**<@brief */
+  long unsigned int A_spin;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int B_spin;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int irght;/**<@brief Used for Ogata-Lin ???*/
+  long unsigned int ilft;/**<@brief Used for Ogata-Lin ???*/
+  long unsigned int ihfbit;/**<@brief Used for Ogata-Lin ???*/
+  long unsigned int isA_spin;/**<@brief Mask used in the bit oeration.*/
+  long unsigned int isB_spin;/**<@brief Mask used in the bit oeration.*/
   double complex tmp_V;/**<@brief Coupling constant*/
 };/*struct LargeList*/
 /**
-@brief Physical quantities
+@brief Physical quantities (Expectation value)
 */
 struct PhysList {
   //double energy,doublon;
-  double energy;/**<@brief Total energy.*/
-  double doublon;
-  double doublon2;/**<@brief */
-  double num;
-  double num2;/**<@brief */
-  double Sz;
-  double Sz2;/**<@brief */
+  double energy;/**<@brief Expectation value of the total energy.*/
+  double doublon;/**<@brief Expectation value of the Doublon*/
+  double doublon2;/**<@brief Expectation value of the Square of doublon*/
+  double num;/**<@brief Expectation value of the Number of electrons*/
+  double num2;/**<@brief Expectation value of the quare of the number of electrons*/
+  double Sz;/**<@brief Expectation value of the Total Sz*/
+  double Sz2;/**<@brief Expectation value of the Square of total Sz*/
     /*[s] For TPQ*/
-  double var;/**<@brief Energy variance.*/
+  double var;/**<@brief Expectation value of the Energy variance.*/
     /*[e] For TPQ*/
 
     /*[s] For Full Diagonalization*/
-  int eigen_num;/**<@brief */
-  double num_up;/**<@brief */
-  double num_down;/**<@brief */
-  double s2;/**<@brief */
+  int eigen_num;/**<@brief Index of eigenstate used for the file name of the correlation function.*/
+  double num_up;/**<@brief Expectation value of the number of up-spin electtrons*/
+  double num_down;/**<@brief Expectation value of the number of down-spin electtrons*/
+  double s2;/**<@brief Expectation value of the square of the total S.*/
   double *all_energy;/**<@brief [CheckList::idim_max+1] Energy for FullDiag and LOBPCG.
                      malloc in setmem_large().*/
   double *all_doublon;/**<@brief [CheckList::idim_max+1] Doublon for FullDiag and LOBPCG.
@@ -301,8 +307,8 @@ struct PhysList {
   double *spin_real_cor;/**<@brief Malloc, but Not used ???*/
   double *charge_real_cor;/**<@brief Malloc, but Not used ???*/
   double *loc_spin_z;/**<@brief Malloc, but Not used ???*/
-  double Target_energy;/**<@brief */
-  double Target_CG_energy;/**<@brief */
+  double Target_energy;/**<@brief Is it really used ???*/
+  double Target_CG_energy;/**<@brief Taget energy of CG-inversed iteration (NOT LOBCG) method.*/
 };/*struct PhysList*/
 /**
 @brief For Boost
@@ -323,25 +329,25 @@ struct BoostList {
 @brief Bind
 */
 struct BindStruct {
-  struct DefineList Def;/**<@brief */
-  struct CheckList Check;/**<@brief */
-  struct LargeList Large;/**<@brief */
-  struct PhysList Phys;/**<@brief */
-  struct BoostList Boost;/**<@brief */
+  struct DefineList Def;/**<@brief Definision of system (Hamiltonian) etc.*/
+  struct CheckList Check;/**<@brief Size of the Hilbert space*/
+  struct LargeList Large;/**<@brief Variables for Matrix-Vector product*/
+  struct PhysList Phys;/**<@brief Physical quantities*/
+  struct BoostList Boost;/**<@brief For Boost*/
 };/*struct BindStruct*/
 /**
 @brief Bind
 */
 struct EDMainCalStruct {
-  struct BindStruct Bind;/**<@brief */
+  struct BindStruct Bind;/**<@brief Binded struct*/
 };/*struct EDMainCalStruct*/
 /**
 @brief Time keeping
 */
 struct TimeKeepStruct {
-  time_t tstart;/**<@brief */
-  time_t tnow;/**<@brief */
-  time_t tend;/**<@brief */
+  time_t tstart;/**<@brief Start time*/
+  time_t tnow;/**<@brief Current time*/
+  time_t tend;/**<@brief End time*/
 };/*struct TimeKeepStruct*/
 
 /*global variables---------------------------------------------*/
