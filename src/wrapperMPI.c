@@ -292,7 +292,8 @@ double NormMPI_dc(
   double complex cdnorm=0;
   double dnorm =0;
   unsigned long int i;
-#pragma omp parallel for default(none) private(i) shared(_v1, idim) reduction(+: cdnorm)
+  //DEBUG
+#pragma omp parallel for default(none) private(i) firstprivate(myrank) shared(_v1, idim) reduction(+: cdnorm)
   for(i=1;i<=idim;i++){
     cdnorm += conj(_v1[i])*_v1[i];
   }

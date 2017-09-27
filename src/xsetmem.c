@@ -58,9 +58,18 @@ void setmem_def
  struct BoostList *xBoost
  )
 {
+  unsigned long int i=0;
   lui_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
   lui_malloc1(X->Def.OrgTpow, 2*X->Def.Nsite+2);
+  for(i=0; i<2*X->Def.Nsite+2; i++){
+    X->Def.Tpow[i]=0;
+    X->Def.OrgTpow[i]=0;
+  }
   li_malloc1(X->Def.SiteToBit, X->Def.Nsite+1);
+  for(i=0; i<X->Def.Nsite+1; i++){
+    X->Def.SiteToBit[i]=0;
+  }
+  
   i_malloc1(X->Def.LocSpn, X->Def.Nsite);
   d_malloc1(X->Phys.spin_real_cor, X->Def.Nsite*X->Def.Nsite);
   d_malloc1(X->Phys.charge_real_cor, X->Def.Nsite*X->Def.Nsite);
@@ -108,7 +117,7 @@ void setmem_def
 
   d_malloc1(X->Def.ParaLaser, X->Def.NLaser);
 
-  unsigned int ipivot,iarrayJ,i,ispin;
+  unsigned int ipivot,iarrayJ,ispin;
   xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
   for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
     xBoost->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
@@ -176,114 +185,120 @@ for (iarrayJ = 0; iarrayJ < xBoost->NumarrayJ; iarrayJ++) {
 int setmem_large
 (
  struct BindStruct *X
- )
-{
+ ) {
 
-  unsigned long int j=0;
+  unsigned long int j = 0;
   unsigned int idim_maxMPI;
-  
+
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
-   if(GetlistSize(X)==TRUE) {
-       lui_malloc1(list_1, X->Check.idim_max + 1);
+  if (GetlistSize(X) == TRUE) {
+    lui_malloc1(list_1, X->Check.idim_max + 1);
 #ifdef MPI
-       lui_malloc1(list_1buf, idim_maxMPI + 1);
+    lui_malloc1(list_1buf, idim_maxMPI + 1);
+    for (j = 0; j < X->Check.idim_max + 1; j++) {
+      list_1buf[j] = 0;
+    }
 #endif // MPI
-       lui_malloc1(list_2_1, X->Large.SizeOflist_2_1);
-       lui_malloc1(list_2_2, X->Large.SizeOflist_2_2);
-       if(list_1==NULL
-          || list_2_1==NULL
-          || list_2_2==NULL
-               )
-       {
-           return -1;
-       }
-       for(j=0; j<X->Check.idim_max; j++){
-         list_1[j]=0;
-       }
-       for(j =0; j<X->Large.SizeOflist_2_1; j++){
-           list_2_1[j]=0;
-       }
-       for(j =0; j<X->Large.SizeOflist_2_2; j++){
-           list_2_2[j]=0;
-       }
-   }
+    lui_malloc1(list_2_1, X->Large.SizeOflist_2_1);
+    lui_malloc1(list_2_2, X->Large.SizeOflist_2_2);
+    if (list_1 == NULL
+        || list_2_1 == NULL
+        || list_2_2 == NULL
+            ) {
+      return -1;
+    }
+    for (j = 0; j < X->Check.idim_max + 1; j++) {
+      list_1[j] = 0;
+    }
+    for (j = 0; j < X->Large.SizeOflist_2_1; j++) {
+      list_2_1[j] = 0;
+    }
+    for (j = 0; j < X->Large.SizeOflist_2_2; j++) {
+      list_2_2[j] = 0;
+    }
+  }
 
-  d_malloc1(list_Diagonal, X->Check.idim_max+1);
-  c_malloc1(v0, X->Check.idim_max+1);
-  c_malloc1(v1, X->Check.idim_max+1);
-  if(X->Def.iCalcType == TimeEvolution){
-    c_malloc1(v2, X->Check.idim_max+1);
-  }
-  else{
-    c_malloc1(v2, 1);
-  }
+  d_malloc1(list_Diagonal, X->Check.idim_max + 1);
+  c_malloc1(v0, X->Check.idim_max + 1);
+  c_malloc1(v1, X->Check.idim_max + 1);
+  for (j = 0; j < X->Check.idim_max + 1; j++) {
+    list_Diagonal[j] = 0;
+    v0[j] = 0;
+    v1[j] = 0;
+    if (X->Def.iCalcType == TimeEvolution) {
+      c_malloc1(v2, X->Check.idim_max + 1);
+    } else {
+      c_malloc1(v2, 1);
+    }
 #ifdef MPI
-  c_malloc1(v1buf, idim_maxMPI + 1);
+    c_malloc1(v1buf, idim_maxMPI + 1);
+    for (j = 0; j < X->Check.idim_max + 1; j++) {
+      v1buf[j] = 0;
+    }
 #endif // MPI
-  if (X->Def.iCalcType == TPQCalc) {c_malloc1(vg, 1);}
-  else {c_malloc1(vg, X->Check.idim_max+1);}
-  d_malloc1(alpha, X->Def.Lanczos_max+1);
-  d_malloc1(beta, X->Def.Lanczos_max+1);
-
-  if(
-     list_Diagonal==NULL
-     || v0==NULL
-     || v1==NULL
-     || vg==NULL
-     ){
-    return -1;
-  }
-
-
-    if(X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-        c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
+    if (X->Def.iCalcType == TPQCalc) { c_malloc1(vg, 1); }
+    else {
+      c_malloc1(vg, X->Check.idim_max + 1);
     }
-    else if(X->Def.iCalcType==Lanczos || X->Def.iCalcType == CG){
-        if(X->Def.LanczosTarget>X->Def.nvec){
-            c_malloc2(vec,X->Def.LanczosTarget+1, X->Def.Lanczos_max+1);
-        }
-        else{
-            c_malloc2(vec,X->Def.nvec+1, X->Def.Lanczos_max+1);
-        }
-    }
-  
-  if(X->Def.iCalcType == FullDiag){
-    d_malloc1(X->Phys.all_num_down, X->Check.idim_max+1);
-    d_malloc1(X->Phys.all_num_up, X->Check.idim_max+1);
-    d_malloc1(X->Phys.all_energy, X->Check.idim_max+1);
-    d_malloc1(X->Phys.all_doublon, X->Check.idim_max+1);
-    d_malloc1(X->Phys.all_sz, X->Check.idim_max+1);
-    d_malloc1(X->Phys.all_s2, X->Check.idim_max+1);
-    c_malloc2(Ham, X->Check.idim_max+1,X->Check.idim_max+1);
-    c_malloc2(L_vec, X->Check.idim_max+1,X->Check.idim_max+1);
+    d_malloc1(alpha, X->Def.Lanczos_max + 1);
+    d_malloc1(beta, X->Def.Lanczos_max + 1);
 
-    if(X->Phys.all_num_down == NULL
-       ||X->Phys.all_num_up == NULL
-       ||X->Phys.all_energy == NULL
-       ||X->Phys.all_doublon == NULL
-       ||X->Phys.all_s2 ==NULL
-       )
-      {
-	return -1;
-      }
-    for(j=0; j<X->Check.idim_max+1; j++){
-      if(Ham[j]==NULL || L_vec[j]==NULL){
-	return -1;
+    if (
+            list_Diagonal == NULL
+            || v0 == NULL
+            || v1 == NULL
+            || vg == NULL
+            ) {
+      return -1;
+    }
+
+
+    if (X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+      c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
+    } else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
+      if (X->Def.LanczosTarget > X->Def.nvec) {
+        c_malloc2(vec, X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
+      } else {
+        c_malloc2(vec, X->Def.nvec + 1, X->Def.Lanczos_max + 1);
       }
     }
+
+    if (X->Def.iCalcType == FullDiag) {
+      d_malloc1(X->Phys.all_num_down, X->Check.idim_max + 1);
+      d_malloc1(X->Phys.all_num_up, X->Check.idim_max + 1);
+      d_malloc1(X->Phys.all_energy, X->Check.idim_max + 1);
+      d_malloc1(X->Phys.all_doublon, X->Check.idim_max + 1);
+      d_malloc1(X->Phys.all_sz, X->Check.idim_max + 1);
+      d_malloc1(X->Phys.all_s2, X->Check.idim_max + 1);
+      c_malloc2(Ham, X->Check.idim_max + 1, X->Check.idim_max + 1);
+      c_malloc2(L_vec, X->Check.idim_max + 1, X->Check.idim_max + 1);
+
+      if (X->Phys.all_num_down == NULL
+          || X->Phys.all_num_up == NULL
+          || X->Phys.all_energy == NULL
+          || X->Phys.all_doublon == NULL
+          || X->Phys.all_s2 == NULL
+              ) {
+        return -1;
+      }
+      for (j = 0; j < X->Check.idim_max + 1; j++) {
+        if (Ham[j] == NULL || L_vec[j] == NULL) {
+          return -1;
+        }
+      }
+    } else if (X->Def.iCalcType == CG) {
+      d_malloc1(X->Phys.all_num_down, X->Def.k_exct);
+      d_malloc1(X->Phys.all_num_up, X->Def.k_exct);
+      d_malloc1(X->Phys.all_energy, X->Def.k_exct);
+      d_malloc1(X->Phys.all_doublon, X->Def.k_exct);
+      d_malloc1(X->Phys.all_sz, X->Def.k_exct);
+      d_malloc1(X->Phys.all_s2, X->Def.k_exct);
+    }
+    fprintf(stdoutMPI, "%s", cProFinishAlloc);
+    return 0;
   }
-  else if (X->Def.iCalcType == CG) {
-    d_malloc1(X->Phys.all_num_down, X->Def.k_exct);
-    d_malloc1(X->Phys.all_num_up, X->Def.k_exct);
-    d_malloc1(X->Phys.all_energy, X->Def.k_exct);
-    d_malloc1(X->Phys.all_doublon, X->Def.k_exct);
-    d_malloc1(X->Phys.all_sz, X->Def.k_exct);
-    d_malloc1(X->Phys.all_s2, X->Def.k_exct);
-  }
-  fprintf(stdoutMPI, "%s", cProFinishAlloc);
-  return 0;
-  }
+}
 
 ///
 /// \brief Set the size of memories for InterAllDiagonal and InterAllOffDiagonal arrays.
@@ -294,20 +309,19 @@ int setmem_large
 /// \param NInterAll [in] Total number of InterAll interactions.
 /// \authour Kazuyoshi Yoshimi
 /// \version 1.2
-void setmem_IntAll_Diagonal
-(
-        int **InterAllOffDiagonal,
-        double complex*ParaInterAllOffDiagonal,
-        int **InterAllDiagonal,
-        double *ParaInterAllDiagonal,
-        const int NInterAll
- )
-{
-  i_malloc2(InterAllOffDiagonal, NInterAll, 8);
-  c_malloc1(ParaInterAllOffDiagonal, NInterAll);
-  i_malloc2(InterAllDiagonal, NInterAll, 4);
-  d_malloc1(ParaInterAllDiagonal, NInterAll);
-}
+  void setmem_IntAll_Diagonal
+          (
+                  int **InterAllOffDiagonal,
+                  double complex *ParaInterAllOffDiagonal,
+                  int **InterAllDiagonal,
+                  double *ParaInterAllDiagonal,
+                  const int NInterAll
+          ) {
+    i_malloc2(InterAllOffDiagonal, NInterAll, 8);
+    c_malloc1(ParaInterAllOffDiagonal, NInterAll);
+    i_malloc2(InterAllDiagonal, NInterAll, 4);
+    d_malloc1(ParaInterAllDiagonal, NInterAll);
+  }
 
 
 ///
@@ -319,40 +333,39 @@ void setmem_IntAll_Diagonal
 /// \retval FALSE: Unnormally finished
 /// \authour Kazuyoshi Yoshimi
 /// \version 1.2
-int GetlistSize
-        (
-                struct BindStruct *X
-        )
-{
-   // unsigned int idim_maxMPI;
+  int GetlistSize
+          (
+                  struct BindStruct *X
+          ) {
+    // unsigned int idim_maxMPI;
 
 //    idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
-    switch(X->Def.iCalcModel) {
-        case Spin:
-        case Hubbard:
-        case HubbardNConserved:
-        case Kondo:
-        case KondoGC:
-            if (X->Def.iFlgGeneralSpin == FALSE) {
-                if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {
-                    X->Large.SizeOflist_2_1 = X->Check.sdim * 2 + 2;
-                } else {
-                    X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
-                }
-                X->Large.SizeOflist_2_2 = X->Check.sdim + 2;
-                X->Large.SizeOflistjb = X->Check.sdim + 2;
-            } else {//for spin-canonical general spin
-                X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
-                X->Large.SizeOflist_2_2 =
-                        X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
-                X->Large.SizeOflistjb =
-                        X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
-            }
-            break;
-        default:
-            return FALSE;
+    switch (X->Def.iCalcModel) {
+      case Spin:
+      case Hubbard:
+      case HubbardNConserved:
+      case Kondo:
+      case KondoGC:
+        if (X->Def.iFlgGeneralSpin == FALSE) {
+          if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {
+            X->Large.SizeOflist_2_1 = X->Check.sdim * 2 + 2;
+          } else {
+            X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
+          }
+          X->Large.SizeOflist_2_2 = X->Check.sdim + 2;
+          X->Large.SizeOflistjb = X->Check.sdim + 2;
+        } else {//for spin-canonical general spin
+          X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
+          X->Large.SizeOflist_2_2 =
+                  X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
+          X->Large.SizeOflistjb =
+                  X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
+        }
+        break;
+      default:
+        return FALSE;
     }
     return TRUE;
-}
+  }
 

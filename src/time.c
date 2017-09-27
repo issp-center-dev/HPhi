@@ -13,6 +13,12 @@
 #ifdef MPI
 #include <mpi.h>
 #endif
+/** 
+ * 
+ * @brief function for displaying elapse time
+ * 
+ * @version 2.0
+ */
 
 void StampTime(FILE *fp, char *str, int num){
 #ifdef MPI
@@ -22,6 +28,12 @@ void StampTime(FILE *fp, char *str, int num){
 #endif
 }
 
+/** 
+ * 
+ * @brief function for initializing Timer[]
+ * 
+ * @version 2.0
+ */
 void InitTimer() {
 #ifdef MPI
   int i;
@@ -33,6 +45,12 @@ void InitTimer() {
 #endif
   return;
 }
+/** 
+ * 
+ * @brief function for initializing elapse time [start]
+ * 
+ * @version 2.0
+ */
 
 void StartTimer(int n) {
 #ifdef MPI
@@ -40,14 +58,24 @@ void StartTimer(int n) {
 #endif
   return;
 }
-
+/** 
+ * 
+ * @brief function for calculating elapse time [elapse time=StartTimer-StopTimer]
+ * 
+ * @version 2.0
+ */
 void StopTimer(int n) {
 #ifdef MPI
   Timer[n] += MPI_Wtime() - TimerStart[n];
 #endif
   return;
 }
-
+/** 
+ * 
+ * @brief function for outputting elapse time for each function
+ * 
+ * @version 2.0
+ */
 void OutputTimer(struct BindStruct *X) {
 
 #ifdef MPI

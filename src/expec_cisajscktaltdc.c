@@ -448,30 +448,26 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
             isite3 = X->Def.OrgTpow[2*org_isite3-2+org_sigma3] ;
             isite4 = X->Def.OrgTpow[2*org_isite4-2+org_sigma4] ;
             if(isite1 == isite2 && isite3 == isite4){
-
                 dam_pr = X_child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                           org_isite3-1, org_sigma3,
                                                           1.0, X, vec, vec);
             }
             else if(isite1 == isite2 && isite3 != isite4){
-
-                dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
+              //printf("org_isite1=%d, org_isite2=%d, org_isite3=%d, org_isite4=%d\n", org_isite1, org_isite2, org_isite3, org_isite4);
+              dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                           org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                           1.0, X, vec, vec);
-
             }
             else if(isite1 != isite2 && isite3 == isite4){
-
                 dam_pr = X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                           org_isite3-1, org_sigma3,
                                                           1.0, X, vec, vec);
 
             }
             else if(isite1 != isite2 && isite3 != isite4){
-                dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
+              dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                           org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                           1.0, X, vec, vec);
-
             }
 
         }//InterPE
@@ -699,8 +695,11 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
     double complex tmp_V;
     double complex dam_pr;
     long int i_max;
-
+    int tmp_Sz;
+    long unsigned int tmp_org=0;
+    vec[0]=0;
     i_max=X->Check.idim_max;
+    X->Large.mode=M_CORR;
 
     for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
         tmp_org_isite1   = X->Def.CisAjtCkuAlvDC[i][0]+1;
@@ -716,6 +715,18 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
+        tmp_Sz=0;
+
+      for(j=0;j<2; j++) {
+        tmp_org = X->Def.CisAjtCkuAlvDC[i][4*j+1]*X->Def.Tpow[X->Def.CisAjtCkuAlvDC[i][4 * j]];
+        tmp_Sz += GetLocal2Sz(X->Def.CisAjtCkuAlvDC[i][4 * j] + 1, tmp_org, X->Def.SiteToBit, X->Def.Tpow);
+        tmp_org = X->Def.CisAjtCkuAlvDC[i][4*j+3]*X->Def.Tpow[X->Def.CisAjtCkuAlvDC[i][4 * j+2]];
+        tmp_Sz -= GetLocal2Sz(X->Def.CisAjtCkuAlvDC[i][4 * j+2] + 1, tmp_org, X->Def.SiteToBit, X->Def.Tpow);
+      }
+      if(tmp_Sz !=0){ // not Sz conserved
+        fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
+        continue;
+      }
 
         dam_pr = 0.0;
         if(org_isite1 >X->Def.Nsite && org_isite3>X->Def.Nsite){
@@ -754,17 +765,19 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
                 }
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, list1_off, tmp_V) shared(vec, list_1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, list1_off, myrank, tmp_V) shared(vec, list_1)
                 for(j=1;j<=i_max;j++){
-                    num1 = num1*GetOffCompGeneralSpin(list_1[j], org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
-                    if(num1 != FALSE){
-                        num1 = GetOffCompGeneralSpin(tmp_off, org_isite1, org_sigma2, org_sigma1, &tmp_off_2, X->Def.SiteToBit, X->Def.Tpow);
-                        ConvertToList1GeneralSpin(tmp_off_2, X->Check.sdim, &list1_off);
-                        if(num1 != FALSE){
-                            dam_pr +=  tmp_V*conj(vec[list1_off])*vec[j];
-                        }
+                  num1 = GetOffCompGeneralSpin(list_1[j], org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+                  if(num1 != FALSE) {
+                    num1 = GetOffCompGeneralSpin(tmp_off, org_isite1, org_sigma2, org_sigma1, &tmp_off_2,
+                                                 X->Def.SiteToBit, X->Def.Tpow);
+                    if (num1 != FALSE) {
+                      ConvertToList1GeneralSpin(tmp_off_2, X->Check.sdim, &list1_off);
+                      dam_pr += tmp_V * conj(vec[list1_off]) * vec[j];
                     }
+                  }
                 }
+              //printf("DEBUG: rank=%d, dam_pr=%lf\n", myrank, creal(dam_pr));
             }
             else{
                 dam_pr=0.0;
@@ -930,8 +943,10 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
     double complex dam_pr;
     long int i_max;
     i_max=X->Check.idim_max;
+    X->Large.mode=M_CORR;
 
-    for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
+
+  for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
         tmp_org_isite1   = X->Def.CisAjtCkuAlvDC[i][0]+1;
         tmp_org_sigma1   = X->Def.CisAjtCkuAlvDC[i][1];
         tmp_org_isite2   = X->Def.CisAjtCkuAlvDC[i][2]+1;

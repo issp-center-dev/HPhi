@@ -270,15 +270,25 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
         if(X->Def.iFlgSzConserved ==TRUE){
             if(org_sigma1 != org_sigma2){
                 dam_pr =0.0;
-                dam_pr= SumMPI_dc(dam_pr);
                 fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
                 continue;
             }
         }
 
+        if(X->Def.iCalcModel==Kondo || X->Def.iCalcModel==KondoGC) {
+          if( (X->Def.LocSpn[org_isite1 - 1] == 1 && X->Def.LocSpn[org_isite2 - 1] == 0) ||
+                  (X->Def.LocSpn[org_isite1 - 1] == 0 && X->Def.LocSpn[org_isite2 - 1] == 1)
+                  )
+          {
+            dam_pr =0.0;
+            fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+            continue;
+          }
+        }
+
         if (org_isite1  > X->Def.Nsite &&
             org_isite2  > X->Def.Nsite) {
-            if(org_isite1==org_isite2 && org_sigma1==org_sigma2){//diagonal
+          if(org_isite1==org_isite2 && org_sigma1==org_sigma2){//diagonal
 
                 is   = X->Def.Tpow[2 * org_isite1 - 2+org_sigma1];
                 ibit = (unsigned long int)myrank & is;
@@ -294,21 +304,21 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
             }
         }
         else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
-            if(org_isite1 < org_isite2){
-                dam_pr =X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+          if(org_isite1 < org_isite2){
+             dam_pr =X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
             }
             else{
-                dam_pr = X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
+            dam_pr = X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
                 dam_pr = conj(dam_pr);
             }
         }
         else{
-            if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+          if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
                 return -1;
             }
             if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
-
-                is   = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
+              //fprintf(stdoutMPI,"DEBUG1-3-1\n");
+              is   = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 
 #pragma omp parallel for default(none) shared(list_1, vec) reduction(+:dam_pr) firstprivate(i_max, is) private(num1, ibit)
                 for(j = 1;j <= i_max;j++){
@@ -322,7 +332,8 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
             }
         }
         dam_pr= SumMPI_dc(dam_pr);
-        fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+      //fprintf(stdoutMPI, "rank=%d, dam_pr=%lf\n", myrank, creal(dam_pr));
+      fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
     return 0;
 }

@@ -1850,6 +1850,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     org_isite3 + 1, org_ispin4, org_ispin3, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
     isite = org_isite1 + 1;
     IniSpin = org_ispin1;
     FinSpin = org_ispin2;

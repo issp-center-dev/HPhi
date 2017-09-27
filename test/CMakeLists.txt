@@ -106,3 +106,30 @@ add_test(
   NAME fulldiag_genspingc_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_genspingc_ladder.sh
 )
+#
+# Spectrum
+#
+add_test(
+  NAME spectrum_hubbard_square
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_hubbard_square.sh
+)
+add_test(
+  NAME spectrum_kondo_chain
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_kondo_chain.sh
+)
+add_test(
+  NAME spectrum_spin_kagome
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_spin_kagome.sh
+)
+add_test(
+  NAME spectrum_hubbardgc_tri
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_hubbardgc_tri.sh
+)
+add_test(
+  NAME spectrum_kondogc_chain
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_kondogc_chain.sh
+)
+add_test(
+  NAME spectrum_spingc_honey
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_spingc_honey.sh
+)

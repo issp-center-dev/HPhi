@@ -104,7 +104,8 @@ int CheckBit_InterAllPE(
   long unsigned int tmp_org, tmp_off;
   int iflgBitExist = TRUE;
   tmp_org=orgbit;
-  
+  tmp_off=0;
+
   if (CheckPE(org_isite1, X) == TRUE) {
     tmp_ispin = X->Def.Tpow[2 * org_isite1 + org_isigma1];
     if (CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE) {
@@ -113,14 +114,14 @@ int CheckBit_InterAllPE(
     tmp_org = tmp_off;
   }
 
-  if (CheckPE(org_isite2, X) == TRUE) {
+  if (CheckPE(org_isite2, X) == TRUE ) {
     tmp_ispin = X->Def.Tpow[2 * org_isite2 + org_isigma2];
     if (CheckBit_Cis(tmp_ispin, tmp_org, &tmp_off) != TRUE) {
       iflgBitExist = FALSE;
     }
     tmp_org = tmp_off;
   }
-  
+
   if (CheckPE(org_isite3, X) == TRUE) {
     tmp_ispin = X->Def.Tpow[2 * org_isite3 + org_isigma3];
     if (CheckBit_Ajt(tmp_ispin, tmp_org, &tmp_off) != TRUE) {
@@ -203,9 +204,9 @@ int GetSgnInterAll(
   long unsigned int tmp_ispin1, tmp_ispin2;
   int tmp_sgn=0;
 
-  tmp_ispin1=isite1;
-  tmp_ispin2=isite2;
- 
+  tmp_ispin1=isite2;
+  tmp_ispin2=isite1;
+
   if (tmp_ispin1 == tmp_ispin2) {
     if ((orgbit & tmp_ispin1) == 0) {
       *offbit = 0;
@@ -216,12 +217,10 @@ int GetSgnInterAll(
     tmp_off = orgbit;
   }
   else {
-    
     if (tmp_ispin2 > tmp_ispin1) diffA = tmp_ispin2 - tmp_ispin1 * 2;
-    else diffA = tmp_ispin1-tmp_ispin2*2;  
-    
+    else diffA = tmp_ispin1-tmp_ispin2*2;
+
     tmp_sgn=X_GC_CisAjt(orgbit, X, tmp_ispin1, tmp_ispin2, tmp_ispin1+tmp_ispin2, diffA, &tmp_off);
-    
     if(tmp_sgn ==0){
       *offbit =0;
       *Fsgn = 0;
@@ -229,8 +228,9 @@ int GetSgnInterAll(
     }
   }
 
-  tmp_ispin1 = isite3;
-  tmp_ispin2 = isite4;
+  tmp_ispin1 = isite4;
+  tmp_ispin2 = isite3;
+
   if(tmp_ispin1 == tmp_ispin2){
     if( (tmp_off & tmp_ispin1) == 0){
       *offbit =0;
@@ -241,8 +241,7 @@ int GetSgnInterAll(
   }
   else{
     if(tmp_ispin2 > tmp_ispin1) diffA = tmp_ispin2 - tmp_ispin1*2;
-    else diffA = tmp_ispin1-tmp_ispin2*2;  
-    
+    else diffA = tmp_ispin1-tmp_ispin2*2;
     tmp_sgn *=X_GC_CisAjt(tmp_off, X, tmp_ispin1, tmp_ispin2, tmp_ispin1+tmp_ispin2, diffA, offbit);
     
     if(tmp_sgn ==0){
@@ -254,8 +253,6 @@ int GetSgnInterAll(
   
   *Fsgn =tmp_sgn;
   *offbit = *offbit%X->Def.OrgTpow[2*X->Def.Nsite];
-  
-  // exitMPI(-1);
   return TRUE;
 }/*int GetSgnInterAll*/
 /**
@@ -483,9 +480,6 @@ firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isi
         if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
           for (j = 1; j <= idim_max_buf; j++) {
-            /*
-            if(GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, (j-1)+org_rankbit, &tmp_off)==TRUE){
-            */
             if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X, (j - 1) + org_rankbit, &tmp_off) == TRUE) {
               dmv = tmp_V * v1buf[j] * Fsgn;
               tmp_v0[tmp_off + 1] += dmv;
@@ -496,9 +490,6 @@ firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isi
         else {
 #pragma omp for
           for (j = 1; j <= idim_max_buf; j++) {
-            /*
-            if(GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, (j-1)+org_rankbit, &tmp_off)==TRUE){
-            */
             if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X, (j - 1) + org_rankbit, &tmp_off) == TRUE) {
               dmv = tmp_V * v1buf[j] * Fsgn;
               dam_pr += conj(tmp_v1[tmp_off + 1]) * dmv;
@@ -693,7 +684,7 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
       if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
-          if (GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, (j - 1) + org_rankbit, &tmp_off) == TRUE) {
+          if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X, (j - 1) + org_rankbit, &tmp_off) == TRUE) {
             dmv = tmp_V * v1buf[j] * Fsgn;
             tmp_v0[tmp_off + 1] += dmv;
             dam_pr += conj(tmp_v1[tmp_off + 1]) * dmv;
@@ -703,7 +694,7 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
       else {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0)
         for (j = 1; j <= idim_max_buf; j++) {
-          if (GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X, (j - 1) + org_rankbit, &tmp_off) == TRUE) {
+          if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X, (j - 1) + org_rankbit, &tmp_off) == TRUE) {
             dmv = tmp_V * v1buf[j] * Fsgn;
             dam_pr += conj(tmp_v1[tmp_off + 1]) * dmv;
           }
@@ -930,6 +921,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI(
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2,
                                org_isite3, org_ispin3, org_isite4, org_ispin4,
                                X, (long unsigned int) myrank, &origin);
+  //printf("iCheck=%d, myrank=%d, origin=%d\n", iCheck, myrank, origin);
   isite1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
   isite2 = X->Def.Tpow[2 * org_isite2 + org_ispin2];
   isite3 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
@@ -1012,7 +1004,6 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
                         v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
-
     if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite
      && org_isite3 + 1 > X->Def.Nsite && org_isite4 + 1 > X->Def.Nsite)
     {
@@ -1066,14 +1057,14 @@ firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0, list_2_1, lis
       dam_pr = 0;
 
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, tmp_off, Fsgn, ioff) \
-firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, \
+firstprivate(myrank, idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, \
 org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4) \
 shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
       {
         if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
           for (j = 1; j <= idim_max_buf; j++) {
-            if (GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X,
+            if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X,
               list_1buf[j] + org_rankbit, &tmp_off) == TRUE)
             {
               if (GetOffComp(list_2_1, list_2_2, tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) == TRUE)
@@ -1088,7 +1079,7 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
         else {
 #pragma omp for
           for (j = 1; j <= idim_max_buf; j++) {
-            if (GetSgnInterAll(tmp_isite3, tmp_isite4, tmp_isite1, tmp_isite2, &Fsgn, X,
+            if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X,
               list_1buf[j] + org_rankbit, &tmp_off) == TRUE)
             {
               if (GetOffComp(list_2_1, list_2_2, tmp_off,
@@ -1135,8 +1126,10 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI(
   unsigned long int origin, tmp_off;
   unsigned long int org_rankbit;
   MPI_Status statusMPI;
-
+  //printf("Deubg0-0: org_isite1=%d, org_ispin1=%d, org_isite2=%d, org_ispin2=%d, org_isite3=%d, org_ispin3=%d\n", org_isite1, org_ispin1,org_isite2, org_ispin2,org_isite3, org_ispin3);
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite3, org_ispin3, X, (long unsigned int) myrank, &origin);
+  //printf("iCheck=%d, myrank=%d, origin=%d\n", iCheck, myrank, origin);
+
   isite1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
   isite2 = X->Def.Tpow[2 * org_isite2 + org_ispin2];
   isite3 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
@@ -1162,12 +1155,13 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI(
       if (tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3 * 2;
       else Adiff = tmp_isite3 - tmp_isite4 * 2;
       if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0;
+      //printf("tmp_isite1=%ld, tmp_isite2=%ld, Adiff=%ld\n", tmp_isite1, tmp_isite2, Adiff);
     }/*if (iCheck == TRUE)*/
     else return 0.0;   
   }/*if (iCheck == FALSE)*/
 
   if (myrank == origin) {// only k is in PE
-        //for hermite
+    //for hermite
 #pragma omp parallel default(none) reduction(+:dam_pr) \
 firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp_v0, tmp_v1)
     {
@@ -1198,11 +1192,11 @@ firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, ioff, tmp_off, Fsgn, Adiff) \
 firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, isite3) \
 shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org_isite3, myrank, isite1, isite2, org_isite1, org_isite2)
     {
+
       if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite) {
         if (isite2 > isite1) Adiff = isite2 - isite1 * 2;
         else Adiff = isite1 - isite2 * 2;
@@ -1221,7 +1215,7 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org_isite3,
             }/*for (j = 1; j <= idim_max_buf; j++)*/
           }
           else {
-#pragma omp for
+            #pragma omp for
             for (j = 1; j <= idim_max_buf; j++) {
               dmv = tmp_V * v1buf[j];
               GetOffComp(list_2_1, list_2_2, list_1buf[j], X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
@@ -1243,9 +1237,10 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org_isite3,
             }/*for (j = 1; j <= idim_max_buf; j++)*/
           }/*if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC)*/
           else {
-#pragma omp for
+            #pragma omp for
             for (j = 1; j <= idim_max_buf; j++) {
               if (CheckBit_Ajt(isite3, list_1buf[j], &tmp_off) == TRUE) {
+                //printf("calc\n");
                 dmv = tmp_V * v1buf[j];
                 GetOffComp(list_2_1, list_2_2, list_1buf[j],
                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
@@ -1274,7 +1269,7 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org_isite3,
 #pragma omp for
           for (j = 1; j <= idim_max_buf; j++) {
             if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X,
-              list_1buf[j] + org_rankbit, &tmp_off) == TRUE) 
+                      list_1buf[j] + org_rankbit, &tmp_off) == TRUE)
             {
               dmv = tmp_V * v1buf[j] * Fsgn;
               GetOffComp(list_2_1, list_2_2, tmp_off,
@@ -1630,8 +1625,6 @@ double complex X_Ajt_MPI(
   bit2diff = myrank - ((2 * mask2 - 1) & myrank);
 
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
-  printf("Debug0: rank=%d test\n", myrank);
-
   ierr = MPI_Sendrecv(&idim_max,     1, MPI_UNSIGNED_LONG, origin, 0,
                       &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
                       MPI_COMM_WORLD, &statusMPI);

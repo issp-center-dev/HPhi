@@ -184,11 +184,12 @@ int CalcSpectrum(
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
         fprintf(stdoutMPI, "  Start: Calculating an excited Eigenvector.\n");
 
-        //mltply Operator
+      //mltply Operator
         StartTimer(6102);
         GetExcitedState(&(X->Bind), v0, v1Org);
         StopTimer(6102);
-        //calculate norm
+      
+      //calculate norm
         dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
         if (fabs(dnorm) < pow(10.0, -15)) {
             fprintf(stderr, "Warning: Norm of an excitation vector becomes 0.\n");
@@ -542,7 +543,6 @@ int MakeExcitedList(
                 case Spin:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
                         if (X->Def.iFlgGeneralSpin == FALSE) {
-                            if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
                                 if (X->Def.PairExcitationOperator[0][1] == 0) {//up
                                     X->Def.Nup = X->Def.NupOrg + 1;
                                     X->Def.Ndown = X->Def.NdownOrg - 1;
@@ -550,16 +550,7 @@ int MakeExcitedList(
                                     X->Def.Nup = X->Def.NupOrg - 1;
                                     X->Def.Ndown = X->Def.NdownOrg + 1;
                                 }
-                            } else {//aiscjt
-                                if (X->Def.PairExcitationOperator[0][1] == 0) {//up
-                                    X->Def.Nup = X->Def.NupOrg - 1;
-                                    X->Def.Ndown = X->Def.NdownOrg + 1;
-                                } else {//down
-                                    X->Def.Nup = X->Def.NupOrg + 1;
-                                    X->Def.Ndown = X->Def.NdownOrg - 1;
-                                }
-                            }
-                        }
+                           }
                         else{//for general spin
                             if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
                                 X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);

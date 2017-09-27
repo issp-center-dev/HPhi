@@ -593,7 +593,7 @@ double complex child_general_hopp(
   isite2 = X->Large.is2_spin;
   Asum = X->Large.isA_spin;
   Adiff = X->Large.A_spin;
-
+  //fprintf(stdout, "DEBUG, isite1=%ld, isite2=%ld, Asum=%ld, Adiff=%ld \n", isite1, isite2, Asum, Adiff);
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
 firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j) shared(tmp_v0, tmp_v1)
   for (j = 1; j <= i_max; j++)

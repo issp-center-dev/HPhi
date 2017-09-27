@@ -226,6 +226,7 @@ int main(int argc, char* argv[]){
     if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
       exitMPI(-1);
     }
+
     StopTimer(1000);
     if(X.Bind.Def.WRITE==1){
       output_list(&(X.Bind));

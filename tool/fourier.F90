@@ -683,7 +683,9 @@ SUBROUTINE read_corrfile()
            cor(isite, jsite, 3, iwfc) = cor0(indx(isite,jsite,3)) &
            &                          + cor0(indx(isite,jsite,4)) &
            &                          + cor0(indx(isite,jsite,5)) &
-           &                          + cor0(indx(isite,jsite,6))
+           &                          + cor0(indx(isite,jsite,6)) &
+           &                          - SUM(cor(isite, isite, 1:2, iwfc)) &
+           &                          * SUM(cor(jsite, jsite, 1:2, iwfc))
            !
            cor(isite, jsite, 4, iwfc) = cor0(indx(isite,jsite,3)) &
            &                          - cor0(indx(isite,jsite,4)) &
@@ -756,8 +758,8 @@ SUBROUTINE fourier_cor()
   CALL zgemm('N', 'N', nk, 6*nwfc, nsite*nsite, CMPLX(1d0, 0d0, KIND(1d0)), fmat, nk, &
   &          cor, nsite*nsite, CMPLX(0d0,0d0,KIND(1d0)), cor_k, nk)
   !
-  cor_k(1:nk,1:2,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nk)
-  cor_k(1:nk,3:6,1:nwfc) = cor_k(1:nk,1:6,1:nwfc) / dble(nk*nk)
+  cor_k(1:nk,1:2,1:nwfc) = cor_k(1:nk,1:2,1:nwfc) / dble(nk)
+  cor_k(1:nk,3:6,1:nwfc) = cor_k(1:nk,3:6,1:nwfc) / dble(nk*nk)
   !
   DEALLOCATE(fmat, cor, site)
   !

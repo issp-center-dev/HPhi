@@ -25,6 +25,15 @@
 #include "matrixlapack.h"
 #include <stdlib.h>
 #include "mfmemory.h"
+/**
+ * @file   matrixlapack.c
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * 
+ * @brief  wrapper for linear algebra operations using lapack
+ * 
+ * 
+ */
 
 
 int dgetrf_(int *m, int *n, double *a, int *lda, int *ipiv, int *info);
@@ -48,15 +57,19 @@ int dsyevx_(char *jobz, char *range, char *uplo, int *n, double *a, int *lda, do
 
 /** 
  * 
- * 
- * @param N 
- * @param M 
- * @param A 
- * @param a 
+ * @brief function for transforming Row-major matrix (C) to Column-major matrix (Fortran)
+ * @param[in] N 
+ * @param[in] M 
+ * @param[in] A  Row-major matrix
+ * @param[out] a  Column-major matrix
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-void to_f(int N, int M, double **A, double *a){
+void to_f(
+int N,  //!<[in] 
+int M,   //!<[in]
+double **A,   //!<[in]
+double *a   //!<[out]
+){
   int i,j,k;
   k=0;
   for(j=0;j<M;j++){
@@ -69,10 +82,10 @@ void to_f(int N, int M, double **A, double *a){
 
 /** 
  * 
- * 
- * @param xNsize 
- * @param A 
- * @param r 
+ * @brief obtain eigenvalues of real symmetric A
+ * @param[in] xNsize 
+ * @param[in] A  matrix
+ * @param[out] r  eigenvalues
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -129,10 +142,10 @@ int DSEVvalue(int xNsize, double **A, double *r){
 
 /** 
  * 
- * 
- * @param xNsize 
- * @param xM 
- * @param xIM 
+ * @brief obtain eigenvalues of inverse of real matrix xM
+ * @param[in] xNsize  matrix size
+ * @param[in]  xM   matrix
+ * @param[out] xIM  inverse of xM
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -184,10 +197,11 @@ int DInv(int xNsize, double **xM, double **xIM){
 /** 
  * 
  * 
- * @param xNsize 
- * @param A 
- * @param r 
- * @param vec 
+ * @brief obtain eigenvalues and eigenvectors of real symmetric A 
+ * @param xNsize  size of matrix
+ * @param A  matrix
+ * @param r  eigenvalues
+ * @param vec  eignevectos
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -263,11 +277,12 @@ int DSEVvector(int xNsize, double **A, double *r, double **vec ){
 /** 
  * 
  * 
- * @param xNsize 
- * @param A 
- * @param r 
- * @param X 
- * @param xNev 
+ * @brief obtain eigenvalues A 
+ * @param xNsize size of A 
+ * @param A  matrix
+ * @param r  eigenvalues
+ * @param X  eigenvectors
+ * @param xNev number of eigenvalues
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -347,11 +362,11 @@ int DSEVXU(int xNsize, double **A, double *r, double **X, int xNev){
 //For complex Hermite matrix
 /** 
  * 
- * 
- * @param xNsize 
- * @param A 
- * @param r 
- * @param vec 
+ * @brief obtain eigenvalues and eigenvectors of Hermite matrix A
+ * @param xNsize size of matrix
+ * @param A matrix
+ * @param r eigenvalues
+ * @param vec eigenvectors
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -431,5 +446,3 @@ int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **
 
 	return 1;
 }
-
-

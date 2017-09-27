@@ -171,7 +171,7 @@ int GetPairExcitedStateHubbard(
             if (org_isite1  > X->Def.Nsite &&
                 org_isite2  > X->Def.Nsite)
             {
-                X_child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
+              X_child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
             }
             else if (org_isite2  > X->Def.Nsite
                      || org_isite1  > X->Def.Nsite)
@@ -184,12 +184,12 @@ int GetPairExcitedStateHubbard(
                                              tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2); }
             }
             else{
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
-  firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org) \
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1,stdoutMPI)	\
+  firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org, list_1, myrank) \
   private(j, tmp_sgn, tmp_off)
                 for (j = 1; j <= i_max; j++){
-                    tmp_sgn=X_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
-                    tmp_v0[tmp_off] += tmp_trans * tmp_sgn*tmp_v1[j];
+                  tmp_sgn=X_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
+                  tmp_v0[tmp_off] += tmp_trans * tmp_sgn*tmp_v1[j];
                 }
             }
         }

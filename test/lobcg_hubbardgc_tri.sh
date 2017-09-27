@@ -13,7 +13,8 @@ method = "CG"
 lattice = "Triangular"
 t = 1.0
 U = 4.0
-exct = 3
+h = 3.0
+exct = 2
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan.in
@@ -21,23 +22,18 @@ ${MPIRUN} ../../src/HPhi -s stan.in
 # Check value
 
 cat > reference.dat <<EOF
- 0
-  -12.3140744040600154 
-  0.3472086205682052 
-  -0.5677676388658205 
+   0
+ -15.3140744040600296
+   0.3472086205791794
+  -1.0000000000000004
 
- 1
-  -12.3140744040600367 
-  0.3472086205821575 
-  0.8181548814798043 
-
- 2
-  -12.3140744040597578 
-  0.3472086201828553 
-  -0.2503872426138326 
+   1
+ -14.2336534858459416
+   0.4631929500975011
+  -1.4999999999999998
 EOF
 paste output/zvo_energy.dat reference.dat > paste.dat
-diff=`awk 'BEGIN{diff=0.0} $1=="Energy"{diff+=sqrt(($2-$3)**2)} END{printf "%8.6f", diff}' paste.dat`
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)**2)} END{printf "%8.6f", diff}' paste.dat`
 test "${diff}" = "0.000000"
 
 exit $?

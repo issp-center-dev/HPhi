@@ -24,7 +24,7 @@
 /**
  * @file   sz.c
  * 
- * @brief  File List 
+ * @brief  Generating Hilbert spaces
  * 
  * @version 0.2
  * @details 
@@ -38,8 +38,12 @@
 
 /** 
  * 
+ * @brief generating Hilbert space
  * 
- * @param X 
+ * @param[inout] X 
+ * @param[out] list_1_   list_1[icnt] = i (index of full Hilbert space) : icnt = index in the restricted Hilbert space 
+ * @param[out] list_2_1_ icnt=list_2_1[]+list_2_2[] 
+ * @param[out] list_2_2_ 
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -84,8 +88,8 @@ int sz
   long unsigned int div_up;
 
   // [s] for general spin
-  long unsigned int *list_2_1_Sz;
-  long unsigned int *list_2_2_Sz;
+  long int *list_2_1_Sz;
+  long int *list_2_2_Sz;
   if(X->Def.iFlgGeneralSpin==TRUE){
     lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
     lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
@@ -99,7 +103,10 @@ int sz
   // [e] for general spin
 
   long unsigned int *list_jb;
-    lui_malloc1(list_jb,X->Large.SizeOflistjb);
+  lui_malloc1(list_jb,X->Large.SizeOflistjb);
+  for(i=0; i<X->Large.SizeOflistjb; i++){
+    list_jb[i]=0;
+  }
 
 //hacker
   int hacker;
@@ -141,7 +148,7 @@ int sz
     else{
       idim=1;
       for(j=0; j<N; j++){
-	idim *= X->Def.SiteToBit[j];
+	      idim *= X->Def.SiteToBit[j];
       }
     }
     break;
@@ -562,8 +569,8 @@ int sz
               jb     = icnt-1;
             }
             
-            list_2_1_[ia] = ja;
-            list_2_2_[ib] = jb;
+            list_2_1_[ia] = ja+1;
+            list_2_2_[ib] = jb+1;
             tmp_j = snoob(tmp_i);
             tmp_i =        tmp_j;
             icnt        +=  1;
@@ -726,11 +733,13 @@ int sz
 
 /** 
  * 
+ * @file   sz.c
+ * @brief  calculating binomial coefficients
  * 
- * @param n 
- * @param k 
- * @param comb 
- * @param Nsite 
+ * @param[in] n      n for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
+ * @param[in] k      k for @f$_nC_k = \frac{n!}{(n-k)!k!}@f$
+ * @param[out] comb   binomial coefficients @f$_nC_k@f$
+ * @param[in] Nsite  # of sites
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
@@ -771,25 +780,28 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
 }
 
 /** 
+ * @brief calculating restricted Hilbert space for Hubbard systems
  * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N2 
- * @param X 
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz(
-                 long unsigned int ib,
-                 long unsigned int ihfbit,
-                 struct BindStruct *X,
-                 long unsigned int *list_1_,
-                 long unsigned int *list_2_1_,
-                 long unsigned int *list_2_2_,
-                 long unsigned int *list_jb_
+                 long unsigned int ib,    //!<[in]
+                 long unsigned int ihfbit, //!<[in]
+                 struct BindStruct *X,     //!<[in]
+                 long unsigned int *list_1_, //!<[out]
+                 long unsigned int *list_2_1_,//!<[out]
+                 long unsigned int *list_2_2_,//!<[out]
+                 long unsigned int *list_jb_ //!<[in]
                  )
 {
   long unsigned int i,j; 
@@ -832,8 +844,8 @@ int child_omp_sz(
       }
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
       } 
     }
@@ -854,8 +866,8 @@ int child_omp_sz(
       }
       if( (num_up+num_down) == X->Def.Ne){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
       } 
     }  
@@ -863,7 +875,21 @@ int child_omp_sz(
   ja=ja-1;    
   return ja; 
 }
-
+/** 
+ * @brief efficient version of calculating restricted Hilbert space for Hubbard systems  using snoob
+ * details of snoob is found in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
+ * 
+ * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 int child_omp_sz_hacker(long unsigned int ib,
                         long unsigned int ihfbit,
                         struct BindStruct *X,
@@ -913,8 +939,8 @@ int child_omp_sz_hacker(long unsigned int ib,
         }
         if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
           list_1_[ja+jb]=ia+ib*ihfbit;
-          list_2_1_[ia]=ja;
-          list_2_2_[ib]=jb;
+          list_2_1_[ia]=ja+1;
+          list_2_2_[ib]=jb+1;
           ja+=1;
         }
         if(ia!=0){
@@ -932,8 +958,8 @@ int child_omp_sz_hacker(long unsigned int ib,
             }
             if(num_up == X->Def.Nup && num_down == X->Def.Ndown){
               list_1_[ja+jb]=ia+ib*ihfbit;
-              list_2_1_[ia]=ja;
-              list_2_2_[ib]=jb;
+              list_2_1_[ia]=ja+1;
+              list_2_2_[ib]=jb+1;
               ja+=1;
             }
             ia = snoob(ia);
@@ -947,15 +973,15 @@ int child_omp_sz_hacker(long unsigned int ib,
       ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
       if(ia < X->Check.sdim){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
         if(ia!=0){
           ia = snoob(ia);
           while(ia < X->Check.sdim){
             list_1_[ja+jb]=ia+ib*ihfbit;
-            list_2_1_[ia]=ja;
-            list_2_2_[ib]=jb;
+            list_2_1_[ia]=ja+1;
+            list_2_2_[ib]=jb+1;
             ja+=1;
             ia = snoob(ia);
           }
@@ -968,25 +994,27 @@ int child_omp_sz_hacker(long unsigned int ib,
 }
 
 /** 
- * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N2 
- * @param X 
+ * @brief calculating restricted Hilbert space for Kondo systems
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_Kondo(
-                       long unsigned int ib,
-                       long unsigned int ihfbit,
-                       struct BindStruct *X,
-                       long unsigned int *list_1_,
-                       long unsigned int *list_2_1_,
-                       long unsigned int *list_2_2_,
-                       long unsigned int *list_jb_
+                       long unsigned int ib,        //[in]
+                       long unsigned int ihfbit,    //[in]
+                       struct BindStruct *X,        //[in]
+                       long unsigned int *list_1_,  //[out]
+                       long unsigned int *list_2_1_,//[out]
+                       long unsigned int *list_2_2_,//[out]
+                       long unsigned int *list_jb_  //[in]
                        )
 {
   long unsigned int i,j; 
@@ -1063,8 +1091,13 @@ int child_omp_sz_Kondo(
       
       if(num_up == X->Def.Nup && num_down == X->Def.Ndown && icheck_loc==1){
         list_1_[ja+jb]=ia+ib*ihfbit;
+        /*
         list_2_1_[ia]=ja;
         list_2_2_[ib]=jb;
+         */
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
+        //printf("DEBUG: rank=%d, list_1[%d]=%d, list_2_1_[%d]=%d, list_2_2_[%d]=%d\n", myrank, ja+jb, list_1_[ja+jb], ia, list_2_1[ia], ib, list_2_2[ib]);
         ja+=1;
       }
     }
@@ -1072,27 +1105,28 @@ int child_omp_sz_Kondo(
   ja=ja-1;    
   return ja; 
 }
-
 /** 
- * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N2 
- * @param X 
+ * @brief calculating restricted Hilbert space for Kondo-GC systems
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_KondoGC(
-                         long unsigned int ib,
-                         long unsigned int ihfbit,
-                         struct BindStruct *X,
-                         long unsigned int *list_1_,
-                         long unsigned int *list_2_1_,
-                         long unsigned int *list_2_2_,
-                         long unsigned int *list_jb_
+                         long unsigned int ib,  //!<[in]
+                         long unsigned int ihfbit,//!<[in]
+                         struct BindStruct *X,    //!<[in]
+                         long unsigned int *list_1_, //!<[out]
+                         long unsigned int *list_2_1_,//!<[out]
+                         long unsigned int *list_2_2_,//!<[out]
+                         long unsigned int *list_jb_//!<[in]
                          )
 {
   long unsigned int i,j; 
@@ -1148,8 +1182,8 @@ int child_omp_sz_KondoGC(
       
       if(icheck_loc==1){
         list_1_[ja+jb]=ia+ib*ihfbit;
-        list_2_1_[ia]=ja;
-        list_2_2_[ib]=jb;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
         ja+=1;
       }
     }
@@ -1160,16 +1194,18 @@ int child_omp_sz_KondoGC(
 }
 
 /** 
- * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N 
- * @param X 
+ * @brief calculating restricted Hilbert space for spin-1/2 systems
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X          
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_spin(
                       long unsigned int ib, 
@@ -1209,8 +1245,8 @@ int child_omp_sz_spin(
 
     if(num_up == X->Def.Ne){
       list_1_[ja+jb]=ia+ib*ihfbit;
-      list_2_1_[ia]=ja;
-      list_2_2_[ib]=jb;
+      list_2_1_[ia]=ja+1;
+      list_2_2_[ib]=jb+1;
       ja+=1;
     } 
   }
@@ -1218,6 +1254,24 @@ int child_omp_sz_spin(
   return ja; 
 }
 
+
+/** 
+ * @brief efficient version of calculating restricted Hilbert space for spin-1/2 systems 
+ * details of snoob is found in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X          
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[out] list_2_1_Sz_  
+ * @param[out] list_2_2_Sz_  
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
+ * 
+ * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
 int child_omp_sz_spin_hacker(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
@@ -1246,12 +1300,12 @@ int child_omp_sz_spin_hacker(
   tmp_num_up   = num_up;
   
   // using hacker's delight
-  if(tmp_num_up<=X->Def.Ne){ // do not exceed Ne
+  if(tmp_num_up<=X->Def.Ne && (X->Def.Ne-tmp_num_up)<= X->Def.Nsite-1){ // do not exceed Ne
     ia = X->Def.Tpow[X->Def.Ne-tmp_num_up]-1;
     if(ia<ihfbit ){          // do not exceed Ne
       list_1_[ja+jb] = ia+ib*ihfbit;
-      list_2_1_[ia]  = ja;
-      list_2_2_[ib]  = jb;
+      list_2_1_[ia]  = ja+1;
+      list_2_2_[ib]  = jb+1;
       ja           += 1;
 
       if(ia!=0){
@@ -1259,8 +1313,8 @@ int child_omp_sz_spin_hacker(
         while(ia < ihfbit){
           //fprintf(stdoutMPI, " X: ia= %ld ia=%ld \n", ia,ia);
           list_1_[ja+jb]    = ia+ib*ihfbit;
-          list_2_1_[ia]     = ja;
-          list_2_2_[ib]     = jb;
+          list_2_1_[ia]     = ja+1;
+          list_2_2_[ib]     = jb+1;
           ja+=1;
           ia = snoob(ia);
         }
@@ -1271,18 +1325,21 @@ int child_omp_sz_spin_hacker(
   return ja; 
 }
 
-
 /** 
- * 
- * 
- * @param ib 
- * @param ihfbit 
- * @param N 
- * @param X 
+ * @brief calculating restricted Hilbert space for general spin systems (S>1/2)
+ *
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X          
+ * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[out] list_2_1_Sz_  
+ * @param[out] list_2_2_Sz_  
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_GeneralSpin(
                              long unsigned int ib, 
@@ -1291,8 +1348,8 @@ int child_omp_sz_GeneralSpin(
                              long unsigned int *list_1_,
                              long unsigned int *list_2_1_,
                              long unsigned int *list_2_2_,
-                             long unsigned int *list_2_1_Sz_,
-                             long unsigned int *list_2_2_Sz_,
+                             long int *list_2_1_Sz_,
+                             long int *list_2_2_Sz_,
                              long unsigned int *list_jb_
                              )
 {
@@ -1306,8 +1363,8 @@ int child_omp_sz_GeneralSpin(
     tmp_2Sz=list_2_1_Sz_[ia]+list_2_2_Sz_ib;
     if(tmp_2Sz == X->Def.Total2Sz){
       list_1_[ja+jb]=ia+ib*ihfbit;
-      list_2_1_[ia]=ja;
-      list_2_2_[ib]=jb;
+      list_2_1_[ia]=ja+1;
+      list_2_2_[ib]=jb+1;
       ja+=1;
     } 
   }
@@ -1316,13 +1373,13 @@ int child_omp_sz_GeneralSpin(
 }
 
 /** 
+ * @brief reading the list of the restricted Hilbert space
  * 
- * 
- * @param X 
- * @param irght 
- * @param ilft 
- * @param ihfbit 
- * @param i_max 
+ * @param[in] X 
+ * @param[in] irght 
+ * @param[in] ilft 
+ * @param[in] ihfbit 
+ * @param[in] i_max 
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)

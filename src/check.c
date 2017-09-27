@@ -28,21 +28,21 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
- * @brief  File for giving a function of calculating size of Hilbelt space.
+ * @brief  File for giving a function of calculating size of Hilbert space.
  * 
  */
 
 
 /** 
- * @brief A program to check size of dimension for hirbert-space.
+ * @brief A program to check size of dimension for Hilbert-space.
  * 
  * @param[in,out] X  Common data set used in HPhi.
  * 
- * @retval TRUE normally finished
- * @retval FALSE unnormally finished
- * @retval MPIFALSE CheckMPI unormally finished
+ * @retval TRUE normal termination
+ * @retval FALSE abnormal termination
+ * @retval MPIFALSE CheckMPI abnormal termination
  * @version 0.2
- * @details add function of calculating hirbert space for canonical ensemble.
+ * @details add function of calculating Hilbert space for canonical ensemble.
  *  
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)

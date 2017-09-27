@@ -710,11 +710,10 @@ void totalSz_HubbardGC
 			ibit1_down = (unsigned long int) myrank & is1_down;
 			num1_down = ibit1_down / is1_down;
 			num1_sz = num1_up - num1_down;
-#pragma omp parallel for reduction(+:spn_z) default(none) firstprivate(i_max) private(j) shared(vec)
+#pragma omp parallel for reduction(+:spn_z) default(none) firstprivate(i_max) private(j) shared(num1_sz,vec)
 			for (j = 1; j <= i_max; j++) {
-				spn_z += conj(vec[j]) * vec[j];
+        spn_z += (num1_sz) / 2.0 * conj(vec[j]) * vec[j];
 			}
-			spn_z *= (num1_sz) / 2.0;
 #endif
 		} else {//isite1 > X->Def.Nsite
 			is1_up = X->Def.Tpow[2 * isite1 - 2];
