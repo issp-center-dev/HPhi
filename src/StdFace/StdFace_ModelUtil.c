@@ -1413,11 +1413,11 @@ static void StdFace_InitSiteSub(struct StdIntList *StdI)
   StdI->NCellsub = 0;
   for (ii = 0; ii < 3; ii++) {
     StdI->NCellsub += StdI->boxsub[0][ii]
-      * StdI->boxsub[1][(ii + 1) % 3]
-      * StdI->boxsub[2][(ii + 2) % 3]
-      - StdI->boxsub[0][ii]
-      * StdI->boxsub[1][(ii + 2) % 3]
-      * StdI->boxsub[2][(ii + 1) % 3];
+                    * StdI->boxsub[1][(ii + 1) % 3]
+                    * StdI->boxsub[2][(ii + 2) % 3]
+                    - StdI->boxsub[0][ii]
+                    * StdI->boxsub[1][(ii + 2) % 3]
+                    * StdI->boxsub[2][(ii + 1) % 3];
   }
   printf("         Number of Cell in the sublattice: %d\n", abs(StdI->NCellsub));
   if (StdI->NCellsub == 0) {
@@ -1427,7 +1427,7 @@ static void StdFace_InitSiteSub(struct StdIntList *StdI)
   for (ii = 0; ii < 3; ii++) {
     for (jj = 0; jj < 3; jj++) {
       StdI->rboxsub[ii][jj] = StdI->boxsub[(ii + 1) % 3][(jj + 1) % 3] * StdI->boxsub[(ii + 2) % 3][(jj + 2) % 3]
-        - StdI->boxsub[(ii + 1) % 3][(jj + 2) % 3] * StdI->boxsub[(ii + 2) % 3][(jj + 1) % 3];
+                            - StdI->boxsub[(ii + 1) % 3][(jj + 2) % 3] * StdI->boxsub[(ii + 2) % 3][(jj + 1) % 3];
     }
   }
   if (StdI->NCellsub < 0) {

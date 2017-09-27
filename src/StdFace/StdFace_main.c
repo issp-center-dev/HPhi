@@ -2120,7 +2120,7 @@ void StdFace_main(
   */
   if (strcmp(StdI->lattice, "chain") == 0
     || strcmp(StdI->lattice, "chainlattice") == 0) StdFace_Chain(StdI);
-  else if (strcmp(StdI->lattice, "facecenteredorthorhombic") == 0
+  else if (strcmp(StdI->lattice, "face-centeredorthorhombic") == 0
     || strcmp(StdI->lattice, "fcorthorhombic") == 0
     || strcmp(StdI->lattice, "fco") == 0) StdFace_FCOrtho(StdI);
   else if (strcmp(StdI->lattice, "honeycomb") == 0
