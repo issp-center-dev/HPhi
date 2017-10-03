@@ -243,7 +243,7 @@ void StdFace_FCOrtho(
     /*
      (5) Nearest neighbor along L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, -1, 0, 1, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
@@ -267,7 +267,7 @@ void StdFace_FCOrtho(
     /*
      (7) Nearest neighbor along H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 0, 0, 0, &isite, &jsite, &Cphase);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);

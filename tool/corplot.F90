@@ -419,7 +419,7 @@ SUBROUTINE write_gnuplot()
   WRITE(fo,'(a)') "#set view 60.0, 30.0"
   !
   WRITE(fo,*) 
-  WRITE(fo,'(a)') "set view equal xy"
+  WRITE(fo,'(a)') "#set view equal xy"
   WRITE(fo,'(a)') "set ticslevel 0"
   WRITE(fo,'(a)') "set hidden3d"
   WRITE(fo,'(a)') "set xlabel 'kx'"
