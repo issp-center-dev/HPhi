@@ -119,11 +119,6 @@ const char*  cTPQExpecTwoBodyGFinish;
 //expec_energy.c
 const char* cLogExpecEnergyStart;
 const char* cLogExpecEnergyEnd;
-const char* cLogLanczosExpecEnergyEnd;
-const char* cLogCGExpecEnergyEnd;
-const char* cLogEnergy;
-const char* cLanczosExpecEnergyEnd;
-const char* cCGExpecEnergyEnd;
 
 //CalcByTPQ.c
 const char* cLogTPQRand;

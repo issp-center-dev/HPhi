@@ -16,6 +16,13 @@
 
 #include "LogMessage.h"
 
+/**
+ * @file   LogMessage.c
+ *
+ * @brief  File for defining log messages.
+ *
+ *
+ */
 //readdef.c
 const char* cReadFileNamelist = "  Read File '%s'.\n";
 const char* cReadFile = "  Read File '%s' for %s.\n";
@@ -119,11 +126,6 @@ const char*  cTPQExpecTwoBodyGFinish = "set %d step %d:expec_cisajscktaltdc fini
 //expec_energy.c
 const char* cLogExpecEnergyStart="  Start: Calculate Energy.\n";
 const char* cLogExpecEnergyEnd="  End  : Calculate Energy.\n";
-const char* cLogLanczosExpecEnergyEnd="  End  : Calculate Energy by Lanczos method.\n";
-const char* cLogCGExpecEnergyEnd="  End  : Calculate Energy by CG method.\n";
-const char* cLogEnergy="energy=%lf \n";
-const char* cLanczosExpecEnergyEnd= "Lanczos expec energy finishes: %s";
-const char* cCGExpecEnergyEnd= "CG expec energy finishes: %s";
 
 //CalcByTPQ.c
 const char* cLogTPQRand =  "  rand_i / rand_max = %d / %d\n";

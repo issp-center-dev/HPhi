@@ -166,7 +166,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     }
   }else if(X->Def.St==1){
     TimeKeeper(X, cFileNameTimeKeep, cCGExpecOneBodyGFinish, "a");
-    fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
+    fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGEnd);
   }
   return 0;
 }

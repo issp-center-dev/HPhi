@@ -19,14 +19,22 @@
 #include "log.h"
 #include "FileIO.h"
 
+/**
+ * @file   log.c
+ *
+ * @brief  File for defining functions to write log messages.
+ *
+ *
+ */
+
 /*!
  * @brief Functions for writing a time log.
  * @param [in] X Define List for parameters.
  * @param [in] cFileName character for a file name of writing.
  * @param [in] cTimeKeeper_Message character for a sentence writing in a file.
  * @param [in] cWriteType character for determining writing option for fopen.
- * @retval 0 normally finished reading file.
- * @retval -1 unnormally finished reading file.
+ * @retval 0 normally finished.
+ * @retval -1 unnormally finished.
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -61,8 +69,8 @@ int TimeKeeper
  * @param [in] cTimeKeeper_Message character for a sentence writing in a file.
  * @param [in] cWriteType character for determining writing option for fopen.
  * @param [in] istep int for writing steps of progress for a function under calculating.
- * @retval 0 normally finished reading file.
- * @retval -1 unnormally finished reading file.
+ * @retval 0 normally finished.
+ * @retval -1 unnormally finished.
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -100,8 +108,8 @@ int TimeKeeperWithStep
  * @param[in] cWriteType character for determining writing option for fopen.
  * @param[in] irand int for writing a number of seed of rand.
  * @param[in] istep int for writing steps of progress for a function under calculating.
- * @retval 0 normally finished reading file.
- * @retval -1 unnormally finished reading file.
+ * @retval 0 normally finished.
+ * @retval -1 unnormally finished.
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */

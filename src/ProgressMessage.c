@@ -14,14 +14,18 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+/**
+ * @file   ProgressMessage.c
+ *
+ * @brief  File for defining progress messages.
+ *
+ *
+ */
+
 #include "ProgressMessage.h"
 const char* cProFinishDefFiles ="\n######  Definition files are correct.  ######\n\n";
 const char* cProFinishDefCheck ="\n######  Indices and Parameters of Definition files(*.def) are complete.  ######\n\n";
 const char* cProFinishAlloc ="\n######  LARGE ALLOCATE FINISH !  ######\n\n";
-const char* cProEDNTrans ="EDTrans EDNTransfer=%d \n";
-const char* cProEDNChemi ="EDTrans EDNChemi=%d \n";
-const char* cProStartCalcSgn = "  Start: Calculate sgn. \n";
-const char* cProEndCalcSgn = "  End  : Calculate sgn. \n";
 const char* cProStartCalcSz = "  Start: Calculate HilbertNum for fixed Sz. \n";
 const char* cProEndCalcSz = "  End  : Calculate HilbertNum for fixed Sz. \n\n";
 const char* cProStartOutputList = "  Start: output list. \n";

@@ -20,10 +20,6 @@
 const char* cProFinishAlloc;
 const char* cProFinishDefFiles;
 const char* cProFinishDefCheck;
-const char* cProEDNTrans;
-const char* cProEDNChemi;
-const char* cProStartCalcSgn;
-const char* cProEndCalcSgn;
 const char* cProStartCalcSz;
 const char* cProEndCalcSz;
 const char* cProStartOutputList;

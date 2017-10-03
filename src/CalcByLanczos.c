@@ -229,7 +229,7 @@ int CalcByLanczos(
     fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
     fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
     fclose(fp);
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecFinish, "a");
   }
 
   return TRUE;
