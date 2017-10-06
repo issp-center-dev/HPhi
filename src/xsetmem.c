@@ -237,15 +237,15 @@ int setmem_large
       v1buf[j] = 0;
     }
 #endif // MPI
-    if (X->Def.iCalcType == TPQCalc) { c_malloc1(vg, 1); vg[0]=0;}
-    else {
-      c_malloc1(vg, X->Check.idim_max + 1);
-      for (j = 0; j < X->Check.idim_max + 1; j++) {
-        vg[j] = 0;
-      }      
-    }
-    d_malloc1(alpha, X->Def.Lanczos_max + 1);
-    d_malloc1(beta, X->Def.Lanczos_max + 1);
+  if (X->Def.iCalcType == TPQCalc) {c_malloc1(vg, 1); vg[0]=0;}
+  else {
+    c_malloc1(vg, X->Check.idim_max+1);
+    for(j =0; j<X->Check.idim_max+1; j++) {
+      vg[j]=0;
+    } 
+  }
+  d_malloc1(alpha, X->Def.Lanczos_max+1);
+  d_malloc1(beta, X->Def.Lanczos_max+1);
 
     if (
             list_Diagonal == NULL
