@@ -2515,7 +2515,7 @@ void ResetInteractionNum
 }
 
 /** 
- * @brief function of initializeing interactions
+ * @brief function of initializing interactions
  * 
  * @param[out] X Define list to initialize number of interactions
  * @version 0.1
@@ -2742,17 +2742,18 @@ int CheckInterAllCondition(
 }
 
 ///
-/// \param icnt_interall
-/// \param iInterAllInfo
-/// \param cInterAllValue
-/// \param isite1
-/// \param isigma1
-/// \param isite2
-/// \param isigma2
-/// \param isite3
-/// \param isigma3
-/// \param isite4
-/// \param isigma4
+/// \brief Input InterAll Interactions (Operators of the same kinds are grouped together).
+/// \param icnt_interall total number of interall interactions
+/// \param iInterAllInfo arrays of information of interall interactions
+/// \param cInterAllValue arrays of values of interall interactions
+/// \param[in] isite1 a site number on the site A.
+/// \param[in] isigma1 a spin index on the site A.
+/// \param[in] isite2 a site number on the site B.
+/// \param[in] isigma2 a spin index on the site B.
+/// \param[in] isite3 a site number on the site C.
+/// \param[in] isigma3 a spin index on the site C.
+/// \param[in] isite4 a site number on the site D.
+/// \param[in] isigma4 a spin index on the site D.
 /// \param dvalue_re
 /// \param dvalue_im
 /// \return
@@ -2809,6 +2810,8 @@ int InputInterAllInfo(
 /**
  * @brief Check Hermite for TETransfer integrals.
  * @param[in] X Define List for getting transfer integrals.
+ * @param[in] NTETransfer total number of transfer integrals
+ * @param[in] idx index for time step.
  * @retval 0 Hermite.
  * @retval -1 NonHermite.
  **/
