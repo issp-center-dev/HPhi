@@ -25,20 +25,29 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 
-int MakeTEDTransfer(struct BindStruct *X, const int timeidx);
-int MakeTEDInterAll(struct BindStruct *X, const int timeidx);
+void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
+void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
+
+
+/**
+ * @file   calcByTEM.c
+ *
+ * @brief  File to define functions to calculate expected values by Time evolution method.
+ *
+ *
+ */
+
 
 /** 
+ * @brief main function of time evolution calculation
  * 
- * 
- * @param NumAve 
- * @param ExpecInterval 
- * @param X 
- * 
+ * @param ExpecInterval interval to output expected values
+ * @param X struct to get information of calculations.
+ * @return 0 normally finished
+ * @return -1 unnormally finished
+ *
  * @author Kota Ido (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- *
- * @return 
  */
 int CalcByTEM(
         const int ExpecInterval,
@@ -190,11 +199,10 @@ int CalcByTEM(
   return 0;
 }
 
-///
-/// \param X
-/// \param timeidx
-/// \return
-int MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
+/// \brief Set transfer integrals at timeidx-th time
+/// \param X struct for getting information of transfer integrals
+/// \param timeidx index of time
+void MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
   int i,j;
   //Clear values
   for(i=0; i<X->Def.NTETransferMax ;i++) {
@@ -211,10 +219,12 @@ int MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
     }
     X->Def.EDParaGeneralTransfer[i+X->Def.EDNTransfer]=X->Def.ParaTETransfer[timeidx][i];
   }
-  return 0;
 }
 
-int MakeTEDInterAll(struct BindStruct *X, const int timeidx){
+/// \brief Set interall interactions at timeidx-th time
+/// \param X struct for getting information of interall interactions
+/// \param timeidx index of time
+void MakeTEDInterAll(struct BindStruct *X, const int timeidx){
   int i,j;
   //Clear values
   for(i=0; i<X->Def.NTEInterAllMax ;i++) {
@@ -231,6 +241,5 @@ int MakeTEDInterAll(struct BindStruct *X, const int timeidx){
     }
     X->Def.ParaInterAll_OffDiagonal[i+X->Def.NInterAll_OffDiagonal]=X->Def.ParaTEInterAllOffDiagonal[timeidx][i];
   }
-  return 0;
 }
 
