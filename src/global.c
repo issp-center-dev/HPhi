@@ -46,13 +46,10 @@ const char* cFileName2BGreen_Lanczos="%s_cisajscktalt.dat";
 const char* cFileName2BGreen_CG="%s_cisajscktalt.dat";
 const char* cFileNameTimeEV_CG="Time_EigenVector.dat";
 const char* cFileNameListModel="ListForModel_Ns%d_Nup%dNdown%d.dat";
-const char* cFileNameListKondo="ListForKondo_Ns%d_Ncond%d.dat";
 const char* cFileNameOutputEigen="%s_eigenvec_%d_rank_%d.dat";
 const char* cFileNameInputEigen="%s_eigenvec_%d_rank_%d.dat";
 const char* cFileNameCalcDynamicalGreen="%s_DynamicalGreen.dat";
 const char* cFileNameTridiagonalMatrixComponents="%s_TMComponents.dat";
-const char* cFileNameLanczosOutputVector="tmpvec_rank_%d.dat";
-const char* cFileNameLanczosInputVector="tmpvec_rank_%d.dat";
 
 
 //For TPQ
@@ -75,9 +72,6 @@ const char* cFileNamePhys_FullDiag_Ham="%s_Ham.dat";
 
 //For Spectrum
 const char* cFileNameOutputRestartVec="%s_recalcvec_rank_%d.dat";
-
-//For TimeEvoulution
-const char* cFileNameInputVec="%s_eigenvec_%d_rank_%d.dat";
 
 //For Error
 const char* cFileNameErrorSz="Err_sz.dat";

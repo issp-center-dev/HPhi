@@ -2427,10 +2427,7 @@ void SetConvergenceFactor
   eps=pow(10.0, neps);
   eps_CG=pow(10.0, nepsCG);
   eps_Lanczos     = pow(10,-X->LanczosEps);
-  eps_Bisec = pow(10.0, nbisec);
   eps_Energy = pow(10.0, nEnergy);
-  dShiftBeta = pow(10.0, nShiftBeta);
-  eps_vec12 = pow(10.0, nepsvec12);
 }
 
 /** 

@@ -59,7 +59,7 @@ int sz
 {
   FILE *fp,*fp_err;
   char sdt[D_FileNameMax],sdt_err[D_FileNameMax];
-    
+  long unsigned int *HilbertNumToSz;
   long unsigned int i,icnt; 
   long unsigned int ib,jb;
     

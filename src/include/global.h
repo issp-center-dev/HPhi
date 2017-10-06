@@ -40,127 +40,106 @@ double complex *v1Org; /**< An input vector to calculate spectrum function.*/
 double complex *vg; /**< A vector used in the CG mode.*/
 //[e] For calcSpectrum
 
-double *alpha,*beta;
-double complex **vec;
-double *list_Diagonal; 
-double *list_D_num;
-long unsigned int *list_1;
-long unsigned int *list_1buf;
-long unsigned int *list_2_1;
-long unsigned int *list_2_2;
-long unsigned int *HilbertNumToSz;
+double *alpha,*beta; /**< Tridiagonal components used in Lanczos mode.*/
+double complex **vec; /**< Eigen vectors.*/
+double *list_Diagonal; /**< list for diagonal components.*/
+long unsigned int *list_1; /**< list of getting real-space configuration for canonical state*/
+long unsigned int *list_1buf;/**< list of getting real-space configuration for canonical state for MPI*/
+long unsigned int *list_2_1;/**< list to get index of list_1*/
+long unsigned int *list_2_2;/**< list to get index of list_1*/
 
 /*[s] For Spectrum */
-long unsigned int *list_1_org;
-long unsigned int *list_1buf_org;
-long unsigned int *list_2_1_org;
-long unsigned int *list_2_2_org;
-long unsigned int *list_jb_org;
-long unsigned int *list_2_1_Sz_org;
-long unsigned int *list_2_2_Sz_org;
+long unsigned int *list_1_org; /**< list of getting real-space configuration for canonical state before excitation*/
+long unsigned int *list_1buf_org;/**< list of getting real-space configuration for canonical state before excitation for MPI*/
+long unsigned int *list_2_1_org;/**< list to get index of list_1_org*/
+long unsigned int *list_2_2_org;/**< list to get index of list_1_org*/
 /*[e] For Spectrum */
 
 /*[s] For Lanczos */
-//double *eigen_vec;
-int     initial_mode;
+int     initial_mode;/**< mode to get initial state (0: use same random generator for MPI, 1: use each random generator for MPI)*/
 /*[e] For Lanczos */
 
 /*[s] For TPQ*/
-double LargeValue;
-int    NumAve;
-long int global_iv;
-int step_i, step_spin;
-double **All_S, **All_C, **All_Sz;
-double global_spn2;
-double global_norm, global_1st_norm;
+double LargeValue;/**< constant value l for TPQ calculation.*/
+int    NumAve;/**< Average number for TPQ calculation*/
+int step_i;/**< step for TPQ calculation*/
+double global_norm;/**< norm before normalization for TPQ calculation*/
+double global_1st_norm;/**< 1-st norm for TPQ calculation*/
+int step_spin;/**< output step for TE calculation.*/
 /*[e] For TPQ*/
 
 /*[s] For All Diagonalization*/
-double *list_num_up,*list_num_down;
-double complex**Ham;
-double complex **L_vec; 
-//double *eigen_vec_2;
+double complex**Ham; /**> Hamiltonian for full diagonalization. */
+double complex **L_vec;/**> eigen vectors*/
 /*[e] For All Diagonalization*/
 
-/*OutputPath Name*/
-const char* cParentOutputFolder;
+const char* cParentOutputFolder; /**> Path to output results*/
 
 //For TimeKeep
-const char* cFileNameTimeKeep;
-const char* cFileNameSzTimeKeep;
+const char* cFileNameTimeKeep; /**> Name of the file to output calculation processing time*/
+const char* cFileNameSzTimeKeep;/**> Name of the file to output sz calculation time*/
 
 //For Check
-const char* cFileNameCheckCoulombIntra;
-const char* cFileNameCheckChemi;
-const char* cFileNameCheckInterU;
-const char* cFileNameCheckHund;
-const char* cFileNameCheckInterAll;
-const char* cFileNameCheckMemory;
-const char* cFileNameCheckSdim;
+const char* cFileNameCheckCoulombIntra;/**> Name of the file to check Coulomb Intra interactions.*/
+const char* cFileNameCheckChemi;/**> Name of the file to check Chemical potentials.*/
+const char* cFileNameCheckInterU;/**> Name of the file to check Inter U.*/
+const char* cFileNameCheckHund;/**>Name of the file to check Hund interactions. */
+const char* cFileNameCheckInterAll;/**> Name of the file to check InterAll interactions.*/
+const char* cFileNameCheckMemory;/**> Name of the file to check memory.*/
+const char* cFileNameCheckSdim;/**> Name of the file to check dimension.*/
 
 //For EDTrans
-const char* cFileNameWarningOnTransfer;
+const char* cFileNameWarningOnTransfer; /**> Name of the file to output warning of transfer integrals.*/
 
 //For Lanczos
-const char* cFileNameLanczosStep;
-const char* cFileNameEnergy_Lanczos;
-const char* cFileNameEigenvalue_Lanczos;
-const char* cFileNameEnergy_CG;
-const char* cFileName1BGreen_Lanczos;
-const char* cFileName1BGreen_CG;
-const char* cFileName2BGreen_Lanczos;
-const char* cFileName2BGreen_CG;
-const char* cFileNameTimeEV_CG;
-const char* cFileNameListModel;
-const char* cFileNameListKondo;
-const char* cFileNameOutputEigen;
-const char* cFileNameInputEigen;
-const char* cFileNameCalcDynamicalGreen;
-const char* cFileNameTridiagonalMatrixComponents;
-const char* cFileNameLanczosOutputVector;
-const char* cFileNameLanczosInputVector;
+const char* cFileNameLanczosStep;/**> Name of the file to output Lanczos step.*/
+const char* cFileNameEnergy_Lanczos;/**> Name of the file to output energies.*/
+const char* cFileNameEigenvalue_Lanczos;/**> Name of the file to output eigen values.*/
+const char* cFileNameEnergy_CG;/**> Name of the file to output energies obtained by CG method.*/
+const char* cFileName1BGreen_Lanczos;/**> Name of the file to output One-Body Green's functions obtained by Lanczos method.*/
+const char* cFileName1BGreen_CG;/**> Name of the file to output One-Body Green's functions obtained by CG method.*/
+const char* cFileName2BGreen_Lanczos;/**> Name of the file to output Two-Body Green's functions obtained by Lanczos method.*/
+const char* cFileName2BGreen_CG;/**> Name of the file to output Two-Body Green's functions obtained by CG method.*/
+const char* cFileNameTimeEV_CG;/**> Name of the file to output time for getting eigen vector by CG method.*/
+const char* cFileNameListModel;/**> Name of the file to output list.*/
+const char* cFileNameOutputEigen;/**> Name of the file to output eigen vector.*/
+const char* cFileNameInputEigen;/**> Name of the file to input eigen vector.*/
+const char* cFileNameCalcDynamicalGreen;/**> Name of the file to output dynamical Green's function.*/
+const char* cFileNameTridiagonalMatrixComponents;/**> Name of the file to output tridiagonal matrix components.*/
 
 //For TPQ
-const char* cFileNameSSRand;
-const char* cFileNameTPQStep;
-const char* cFileNameNormRand;
-const char* cFileNameFlctRand;
-const char* cFileName1BGreen_TPQ;
-const char* cFileName2BGreen_TPQ;
-const char* cFileNameOutputVector;
-const char* cFileNameInputVector;
+const char* cFileNameSSRand;/**> Name of the SS_rand file.*/
+const char* cFileNameTPQStep;/**> Name of the Time_TPQ_Step file.*/
+const char* cFileNameNormRand;/**> Name of the NormRand file.*/
+const char* cFileNameFlctRand;/**> Name of the Flct file.*/
+const char* cFileName1BGreen_TPQ;/**> Name of the file to output one-body Green's functions for TPQ calculation.*/
+const char* cFileName2BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
+const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
+const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
 //For FullDiag
-const char* cFileNamePhys_FullDiag;
-const char* cFileNamePhys_FullDiag_GC;
-const char* cFileName1BGreen_FullDiag;
-const char* cFileName2BGreen_FullDiag;
-const char* cFileNamePhys_FullDiag_Ham;
+const char* cFileNamePhys_FullDiag;/**> Name of the file to output physical values for canonical ensemble.*/
+const char* cFileNamePhys_FullDiag_GC;/**> Name of the file to output physical values for grand canonical ensemble.*/
+const char* cFileName1BGreen_FullDiag;/**> Name of the file to output one-body Green's functions for Full diagonalization.*/
+const char* cFileName2BGreen_FullDiag;/**> Name of the file to output two-body Green's functions for Full diagonalization.*/
+const char* cFileNamePhys_FullDiag_Ham;/**> Name of the file to output Hamiltonian for Full diagonalization.*/
 
 //For Spectrum
-const char* cFileNameOutputRestartVec;
-
-//For Time Evolution
-const char* cFileNameInputVec;
-
+const char* cFileNameOutputRestartVec;/**> Name of the file to output restart vector for spectrum mode.*/
 
 //For Error
-const char* cFileNameErrorSz;
+const char* cFileNameErrorSz;/**> Name of the file to output Error message for Sz calculation.*/
 
 //For Timer
-//int NTimer=100;
-double *Timer, *TimerStart;
-
+double *Timer; /**> The procedure execution time.*/
+double *TimerStart;/**> Timer when the procedure starts.*/
 
 /********************************************************************/
 /********************************************************************/
-double eps;
-double eps_CG;
-double eps_Lanczos; 
-double eps_Bisec;
-double eps_Energy;
-double eps_CheckImag0;
-double dShiftBeta;
-double eps_vec12;
+double eps; /**> epsilon used in getting spectrum by Lanczos method and Lanczos eigenvector by CG method.*/
+double eps_CG;/**> epsilon used in getting Lanczos eigenvector by CG method.*/
+double eps_Lanczos;/**> epsilon used in LOBPCG, BiCG and Lanczos eigen value.*/
+double eps_Energy;/**> epsilon for energy*/
+double eps_CheckImag0;/**> epsilon for checking values of one-body and two-body interactions.*/
 
 #endif /* HPHI_GLOBAL_H */
