@@ -534,12 +534,7 @@ int MakeExcitedList(
                     }
                   }
                   else{//for general spin
-                    if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
-                      X->Def.Total2Sz = X->Def.Total2SzMPI-2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
-                    }
-                    else{//aiscjt
-                      X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
-                    }
+                      X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][1]-X->Def.PairExcitationOperator[0][3]);
                   }
                 }
                 break;
