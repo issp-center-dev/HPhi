@@ -1819,11 +1819,13 @@ void StdFace_main(
   char *fname//!<[in] Input file name for the standard mode
 )
 {
-  struct StdIntList StdI[1];
+  struct StdIntList *StdI;
   FILE *fp;
   int ktrans, kintr;
   char ctmpline[256];
   char *keyword, *value;
+
+  StdI = (struct StdIntList *)malloc(sizeof(struct StdIntList));
 
   fprintf(stdout, "\n######  Standard Intarface Mode STARTS  ######\n");
   if ((fp = fopen(fname, "r")) == NULL) {
@@ -2118,7 +2120,7 @@ void StdFace_main(
   */
   if (strcmp(StdI->lattice, "chain") == 0
     || strcmp(StdI->lattice, "chainlattice") == 0) StdFace_Chain(StdI);
-  else if (strcmp(StdI->lattice, "facecenteredorthorhombic") == 0
+  else if (strcmp(StdI->lattice, "face-centeredorthorhombic") == 0
     || strcmp(StdI->lattice, "fcorthorhombic") == 0
     || strcmp(StdI->lattice, "fco") == 0) StdFace_FCOrtho(StdI);
   else if (strcmp(StdI->lattice, "honeycomb") == 0
@@ -2202,7 +2204,7 @@ void StdFace_main(
   free(StdI->intr);
 
   fprintf(stdout, "\n######  Input files are generated.  ######\n\n");
-
+  free(StdI);
 }/*void StdFace_main*/
 /**
 @page page_addstandard Add new lattice model into Standard mode
