@@ -74,6 +74,7 @@
   <H2>How to modify HPhi</H2>
   - @ref page_codingrule
   - @ref page_addstandard
+  - @ref page_readdef
   - @ref page_newterm
   .
   <HR>

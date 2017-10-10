@@ -71,7 +71,6 @@ struct DefineList {
   unsigned int Ne;/**<@brief Number of electrons in this process.*/
   unsigned int NeMPI;/**<@brief Total number of electrons across process.
                      Differ from DefineList::Ne .*/
-  unsigned int Nsize;/**<@brief Defined but NEVER used ???*/
   unsigned int Lanczos_max;/**<@brief Maximum number of iterations.*/
   int Lanczos_restart;/**<@brief Number of iterations performed in the restart computation.*/
   long int initial_iv;/**<@brief Seed of random number for initial guesss of wavefunctions.*/

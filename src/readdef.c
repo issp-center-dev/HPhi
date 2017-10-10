@@ -23,6 +23,16 @@
 
 /*=================================================================================================*/
 
+
+/**
+@page page_readdef Add new keyword
+- Add keyword to @c cKWListOfFileNameList in @c readdef.c.
+- Add index of keyword (such as KWCalcMod, KWModPara...) in @c readdef.h.
+- Add reading procedure in @c ReadDeFileNInt function in @c readdef.c.
+- Use @c InitializeInteractionNum function to initialize variables.
+- The memories of arrays are stored in @c xsetmem.c
+ **/
+
 /**
  * @file   readdef.c
  * 
