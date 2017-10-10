@@ -512,27 +512,37 @@ int MakeExcitedList(
                 case KondoGC:
                 case Hubbard:
                 case Kondo:
-                case Spin:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
-                        if (X->Def.iFlgGeneralSpin == FALSE) {
-                                if (X->Def.PairExcitationOperator[0][1] == 0) {//up
-                                    X->Def.Nup = X->Def.NupOrg + 1;
-                                    X->Def.Ndown = X->Def.NdownOrg - 1;
-                                } else {//down
-                                    X->Def.Nup = X->Def.NupOrg - 1;
-                                    X->Def.Ndown = X->Def.NdownOrg + 1;
-                                }
-                           }
-                        else{//for general spin
-                            if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
-                                X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
-                            }
-                            else{//aiscjt
-                                X->Def.Total2Sz = X->Def.Total2SzMPI-2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
-                            }
-                        }
+                      if (X->Def.PairExcitationOperator[0][1] == 0) {//up
+                        X->Def.Nup = X->Def.NupOrg + 1;
+                        X->Def.Ndown = X->Def.NdownOrg - 1;
+                      } else {//down
+                        X->Def.Nup = X->Def.NupOrg - 1;
+                        X->Def.Ndown = X->Def.NdownOrg + 1;
+                      }
                     }
                     break;
+              case Spin:
+                if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
+                  if (X->Def.iFlgGeneralSpin == FALSE) {
+                    if (X->Def.PairExcitationOperator[0][1] == 0) {//down
+                      X->Def.Nup = X->Def.NupOrg - 1;
+                      X->Def.Ndown = X->Def.NdownOrg + 1;
+                    } else {//up
+                      X->Def.Nup = X->Def.NupOrg + 1;
+                      X->Def.Ndown = X->Def.NdownOrg - 1;
+                    }
+                  }
+                  else{//for general spin
+                    if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
+                      X->Def.Total2Sz = X->Def.Total2SzMPI-2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
+                    }
+                    else{//aiscjt
+                      X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
+                    }
+                  }
+                }
+                break;
             }
         } else {
             return FALSE;
