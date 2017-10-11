@@ -9,7 +9,7 @@ cat > stan1.in <<EOF
 L = 3
 W = 2
 model = "Spin"
-method = "Lanczos"
+method = "CG"
 lattice = "ladder"
 J0 = 1.0
 J1 = 1.0
