@@ -54,9 +54,10 @@ int ReadTMComponents_BiCG(
   double complex *alphaCG, *betaCG, *res_save, z_seed;
   double z_seed_r, z_seed_i, alpha_r, alpha_i, beta_r, beta_i, res_r, res_i;
   FILE *fp;
-  int comm[1];
+  int *comm;
 
 #if defined(MPI)
+  comm = (int*)malloc(sizeof(int));
   comm[0] = MPI_Comm_c2f(MPI_COMM_WORLD);
 #else
   comm = NULL;
@@ -109,6 +110,10 @@ int ReadTMComponents_BiCG(
   free(alphaCG);
   free(betaCG);
   free(res_save);
+
+#if defined(MPI)
+  free(comm);
+#endif
 
   return TRUE;
 }/*int ReadTMComponents_BiCG*/
@@ -222,9 +227,10 @@ int CalcSpectrumByBiCG(
   double complex *v12, *v14, res_proj;
   int stp, one = 1, status[3], iomega;
   double *resz;
-  int comm[1];
+  int *comm;
 
 #if defined(MPI)
+  comm = (int*)malloc(sizeof(int));
   comm[0] = MPI_Comm_c2f(MPI_COMM_WORLD);
 #else
   comm = NULL;
@@ -388,6 +394,8 @@ int CalcSpectrumByBiCG(
   free(resz);
   free(v12);
   free(v14);
-
+#if defined(MPI)
+  free(comm);
+#endif
   return TRUE;
 }/*int CalcSpectrumByBiCG*/
