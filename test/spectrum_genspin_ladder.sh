@@ -62,8 +62,8 @@ cat > reference.dat <<EOF
   247.6245948870 1.0000000000 0.0788816799 -0.0002984782
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste2.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste2.dat`
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%7.5f", diff}' paste2.dat`
 
-test "${diff}" = "0.000000"
+test "${diff}" = "0.00000"
 
 exit $?

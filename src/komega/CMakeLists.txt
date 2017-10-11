@@ -4,6 +4,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "Project")
   message(FATAL_ERROR "cmake should be executed not for 'src' subdirectory, but for the top directory of HPhi.")
 endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")
 
+add_definitions(-D__NO_ZDOT)
 set(SOURCES_KOMEGA komega_bicg.F90 komega_math.F90 komega_vals.F90)
 if(MPI_FOUND)
   add_definitions(${MPI_Fortran_COMPILE_FLAGS})

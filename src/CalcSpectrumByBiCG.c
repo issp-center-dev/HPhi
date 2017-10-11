@@ -18,13 +18,11 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "mfmemory.h"
-#if defined(MPI)
-#include "komega/pkomega_bicg.h"
-#else
-#include "komega/komega_bicg.h"
-#endif
+#include "komega/komega.h"
 #include "mltply.h"
-
+#ifdef MPI
+#include <mpi.h>
+#endif
 /**
  * @file   CalcSpectrumByBiCG.c
  * @author Mitsuaki Kawamura (The University of Tokyo)
@@ -56,9 +54,12 @@ int ReadTMComponents_BiCG(
   double complex *alphaCG, *betaCG, *res_save, z_seed;
   double z_seed_r, z_seed_i, alpha_r, alpha_i, beta_r, beta_i, res_r, res_i;
   FILE *fp;
+  int comm[1];
+
 #if defined(MPI)
-  int comm;
-  comm = MPI_Comm_c2f(MPI_COMM_WORLD);
+  comm[0] = MPI_Comm_c2f(MPI_COMM_WORLD);
+#else
+  comm = NULL;
 #endif
 
   idx = 0;
@@ -103,13 +104,8 @@ int ReadTMComponents_BiCG(
 
   idim_max2int = (int)X->Bind.Check.idim_max;
   liLanczosStp2int = (int)liLanczosStp;
-#if defined(MPI)
-  pkomega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm, status,
-    &liLanczosStp2int, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
-#else
   komega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
-    &liLanczosStp2int, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
-#endif
+    &liLanczosStp2int, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save, comm);
   free(alphaCG);
   free(betaCG);
   free(res_save);
@@ -132,11 +128,8 @@ int OutputTMComponents_BiCG(
   alphaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
   betaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
   res_save = (double complex*)malloc(liLanczosStp * sizeof(double complex));
-#if defined(MPI)
-  pkomega_bicg_getcoef(alphaCG, betaCG, &z_seed, res_save);
-#else
+
   komega_bicg_getcoef(alphaCG, betaCG, &z_seed, res_save);
-#endif
 
   sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
   childfopenMPI(sdt, "w", &fp);
@@ -229,9 +222,12 @@ int CalcSpectrumByBiCG(
   double complex *v12, *v14, res_proj;
   int stp, one = 1, status[3], iomega;
   double *resz;
+  int comm[1];
+
 #if defined(MPI)
-  int comm;
-  comm = MPI_Comm_c2f(MPI_COMM_WORLD);
+  comm[0] = MPI_Comm_c2f(MPI_COMM_WORLD);
+#else
+  comm = NULL;
 #endif
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
@@ -297,11 +293,8 @@ int CalcSpectrumByBiCG(
   else {
     i_max2int = (int)i_max;
     max_step = (int)X->Bind.Def.Lanczos_max;
-#if defined(MPI)
-    pkomega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
-#else
-    komega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos);
-#endif
+
+    komega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, comm);
   }
   /**
   <li>@b DO BiCG loop</li>
@@ -329,20 +322,15 @@ int CalcSpectrumByBiCG(
     /**
     <li>Update projected result vector dcSpectrum.</li>
     */
-#if defined(MPI)
-    pkomega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
-#else
+
     komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
-#endif
+
     /**
     <li>Output residuals at each frequency for some analysis</li>
     */
     if (stp % 10 == 0) {
-#if defined(MPI)
-      pkomega_bicg_getresidual(resz);
-#else
       komega_bicg_getresidual(resz);
-#endif
+
       for (iomega = 0; iomega < Nomega; iomega++) {
         fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n", 
           stp, creal(dcomega[iomega]), 
@@ -377,11 +365,7 @@ int CalcSpectrumByBiCG(
     fprintf(stdoutMPI, "    Start: Output vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecStart, "a");
 
-#if defined(MPI)
-    pkomega_bicg_getvec(&v12[1], &v14[1]);
-#else
     komega_bicg_getvec(&v12[1], &v14[1]);
-#endif
 
     sprintf(sdt, cFileNameOutputRestartVec, X->Bind.Def.CDataFileHead, myrank);
     if (childfopenALL(sdt, "wb", &fp) != 0) {
@@ -399,11 +383,7 @@ int CalcSpectrumByBiCG(
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
   }
 
-#if defined(MPI)
-  pkomega_bicg_finalize();
-#else
   komega_bicg_finalize();
-#endif
 
   free(resz);
   free(v12);

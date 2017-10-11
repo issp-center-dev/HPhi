@@ -24,48 +24,48 @@ MODULE komega_math
   !
   INTERFACE
      !
-     DOUBLE PRECISION FUNCTION ddot(n,dx,incx,dy,incy)
-       DOUBLE PRECISION dx(*),dy(*)
+     REAL(8) FUNCTION ddot(n,dx,incx,dy,incy)
+       REAL(8) dx(*),dy(*)
        INTEGER          incx,incy,n
      END FUNCTION ddot
      !
-     DOUBLE COMPLEX FUNCTION zdotc(n,zx,incx,zy,incy)
-       DOUBLE COMPLEX zx(*),zy(*)
+     COMPLEX(8) FUNCTION zdotc(n,zx,incx,zy,incy)
+       COMPLEX(8) zx(*),zy(*)
        INTEGER        incx,incy,n
      END FUNCTION zdotc
      !
-     DOUBLE COMPLEX FUNCTION zdotu(n,zx,incx,zy,incy)
-       DOUBLE COMPLEX zx(*),zy(*)
+     COMPLEX(8) FUNCTION zdotu(n,zx,incx,zy,incy)
+       COMPLEX(8) zx(*),zy(*)
        INTEGER        incx,incy,n
      END FUNCTION zdotu
      !
      SUBROUTINE  dscal(n,da,dx,incx)
-       DOUBLE PRECISION da,dx(*)
+       REAL(8) da,dx(*)
        INTEGER          incx,n
      END SUBROUTINE dscal
      !
      SUBROUTINE  zscal(n,za,zx,incx)
-       DOUBLE COMPLEX za,zx(*)
+       COMPLEX(8) za,zx(*)
        INTEGER        incx,n
      END SUBROUTINE zscal
      !
      SUBROUTINE  dcopy(n,dx,incx,dy,incy)
-       DOUBLE PRECISION dx(*),dy(*)
+       REAL(8) dx(*),dy(*)
        INTEGER          incx,incy,n
      END SUBROUTINE dcopy
      !
      SUBROUTINE  zcopy(n,zx,incx,zy,incy)
-       DOUBLE COMPLEX zx(*),zy(*)
+       COMPLEX(8) zx(*),zy(*)
        INTEGER        incx,incy,n
      END SUBROUTINE zcopy
      !
      SUBROUTINE daxpy(n,da,dx,incx,dy,incy)
-       DOUBLE PRECISION dx(*),dy(*),da
+       REAL(8) dx(*),dy(*),da
        INTEGER          incx,incy,n
      END SUBROUTINE daxpy
      !
      SUBROUTINE zaxpy(n,za,zx,incx,zy,incy)
-       DOUBLE COMPLEX zx(*),zy(*),za
+       COMPLEX(8) zx(*),zy(*),za
        INTEGER        incx,incy,n
      END SUBROUTINE zaxpy
      !
@@ -79,7 +79,7 @@ FUNCTION ddotMPI(n,dx,dy) RESULT(prod)
   !
 #if defined(MPI)
   use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_PRECISION, MPI_SUM
-  USE komega_parameter, ONLY : comm
+  USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
   IMPLICIT NONE
@@ -95,7 +95,8 @@ FUNCTION ddotMPI(n,dx,dy) RESULT(prod)
   prod = ddot(n,dx,1,dy,1)
   !
 #if defined(MPI)
-  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
+  IF(lmpi) &
+  &  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
   &                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
 #endif
   !
@@ -107,7 +108,7 @@ FUNCTION zdotcMPI(n,zx,zy) RESULT(prod)
   !
 #if defined(MPI)
   use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_COMPLEX, MPI_SUM
-  USE komega_parameter, ONLY : comm
+  USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
   IMPLICIT NONE
@@ -120,14 +121,15 @@ FUNCTION zdotcMPI(n,zx,zy) RESULT(prod)
   INTEGER :: ierr
 #endif
   !
-#if defined(NO_ZDOT)
+#if defined(__NO_ZDOT)
   prod = DOT_PRODUCT(zx,zy)
 #else
   prod = zdotc(n,zx,1,zy,1)
 #endif
   !
 #if defined(MPI)
-  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
+  IF(lmpi) &
+  &  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
   &                  MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
 #endif
   !
@@ -139,7 +141,7 @@ FUNCTION zdotuMPI(n,zx,zy) RESULT(prod)
   !
 #if defined(MPI)
   use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_COMPLEX, MPI_SUM
-  USE komega_parameter, ONLY : comm
+  USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
   IMPLICIT NONE
@@ -152,14 +154,15 @@ FUNCTION zdotuMPI(n,zx,zy) RESULT(prod)
   INTEGER :: ierr
 #endif
   !
-#if defined(NO_ZDOT)
+#if defined(__NO_ZDOT)
   prod = SUM(zx(1:n) * zy(1:n))
 #else
   prod = zdotu(n,zx,1,zy,1)
 #endif
   !
 #if defined(MPI)
-  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
+  IF(lmpi) &
+  &  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
   &                  MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
 #endif
   !
@@ -171,7 +174,7 @@ FUNCTION dabsmax(array, n) RESULT(maxarray)
   !
 #if defined(MPI)
   use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_PRECISION, MPI_MAX
-  USE komega_parameter, ONLY : comm
+  USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
   IMPLICIT NONE
@@ -187,7 +190,8 @@ FUNCTION dabsmax(array, n) RESULT(maxarray)
   maxarray = MAXVAL(ABS(array))
   !
 #if defined(MPI)
-  call MPI_allREDUCE(MPI_IN_PLACE, maxarray, 1, &
+  IF(lmpi) &
+  &  call MPI_allREDUCE(MPI_IN_PLACE, maxarray, 1, &
   &                  MPI_DOUBLE_PRECISION, MPI_MAX, comm, ierr)
 #endif
   !
