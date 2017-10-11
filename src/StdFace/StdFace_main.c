@@ -229,9 +229,20 @@ static void PrintCalcMod(struct StdIntList *StdI)
 */
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
-  int NumOp, spin[2][2], isite, ispin, icell, itau;
-  double coef[2], pi, Cphase;
+  int NumOp, **spin, isite, ispin, icell, itau;
+  double *coef, pi, Cphase, S, Sz;
   double *fourier_r, *fourier_i;
+
+  if (strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1) {
+    coef = (double *)malloc(sizeof(double) * StdI->S2 + 1);
+    spin = (int **)malloc(sizeof(int*) * (StdI->S2 + 1));
+    for (ispin = 0; ispin < StdI->S2 + 1; ispin++) spin[ispin] = (int *)malloc(sizeof(int) * 2);
+  }
+  else {
+    coef = (double *)malloc(sizeof(double) * 2);
+    spin = (int **)malloc(sizeof(int*) * 2);
+    for (ispin = 0; ispin < 2; ispin++) spin[ispin] = (int *)malloc(sizeof(int) * 2);
+  }
 
   fourier_r = (double *)malloc(sizeof(double) * StdI->nsite);
   fourier_i = (double *)malloc(sizeof(double) * StdI->nsite);
@@ -246,18 +257,16 @@ static void PrintExcitation(struct StdIntList *StdI) {
   if (strcmp(StdI->SpectrumType, "****") == 0) {
     strcpy(StdI->SpectrumType, "szsz\0");
     fprintf(stdout, "     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######\n");
-    NumOp = 2;
-    coef[0] = 0.5;
-    coef[1] = -0.5;
-    spin[0][0] = 0;
-    spin[0][1] = 0;
-    spin[1][0] = 1;
-    spin[1][1] = 1;
-    StdI->SpectrumBody = 2;
-  }
-  else {
-    fprintf(stdout, "     SpectrumType = %s\n", StdI->SpectrumType);
-    if (strcmp(StdI->SpectrumType, "szsz") == 0) {
+    if (strcmp(StdI->model, "spin") == 0) {
+      NumOp = StdI->S2 + 1;
+      for (ispin = 0; ispin <= StdI->S2; ispin++) {
+        Sz = (double)ispin - (double)StdI->S2 * 0.5;
+        coef[ispin] = Sz;
+        spin[ispin][0] = ispin;
+        spin[ispin][1] = ispin;
+      }
+    }
+    else {
       NumOp = 2;
       coef[0] = 0.5;
       coef[1] = -0.5;
@@ -265,13 +274,49 @@ static void PrintExcitation(struct StdIntList *StdI) {
       spin[0][1] = 0;
       spin[1][0] = 1;
       spin[1][1] = 1;
+    }
+    StdI->SpectrumBody = 2;
+  }
+  else {
+    fprintf(stdout, "     SpectrumType = %s\n", StdI->SpectrumType);
+    if (strcmp(StdI->SpectrumType, "szsz") == 0) {
+      if (strcmp(StdI->model, "spin") == 0) {
+        NumOp = StdI->S2 + 1;
+        for (ispin = 0; ispin <= StdI->S2; ispin++) {
+          Sz = (double)ispin - (double)StdI->S2 * 0.5;
+          coef[ispin] = Sz;
+          spin[ispin][0] = ispin;
+          spin[ispin][1] = ispin;
+        }
+      }
+      else {
+        NumOp = 2;
+        coef[0] = 0.5;
+        coef[1] = -0.5;
+        spin[0][0] = 0;
+        spin[0][1] = 0;
+        spin[1][0] = 1;
+        spin[1][1] = 1;
+      }
       StdI->SpectrumBody = 2;
     }
     else if (strcmp(StdI->SpectrumType, "s+s-") == 0) {
-      NumOp = 1;
-      coef[0] = 1.0;
-      spin[0][0] = 0;
-      spin[0][1] = 1;
+      if (strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1) {
+        NumOp = StdI->S2;
+        S = (double)StdI->S2 * 0.5;
+        for (ispin = 0; ispin < StdI->S2; ispin++) {
+          Sz = (double)ispin - (double)StdI->S2 * 0.5;
+          coef[ispin] = sqrt(S*(S + 1.0) - Sz*(Sz + 1.0));
+          spin[ispin][0] = ispin;
+          spin[ispin][1] = ispin + 1;
+        }
+      }
+      else {
+        NumOp = 1;
+        coef[0] = 1.0;
+        spin[0][0] = 0;
+        spin[0][1] = 1;
+      }
       StdI->SpectrumBody = 2;
     }
     else if (strcmp(StdI->SpectrumType, "density") == 0) {
@@ -301,16 +346,6 @@ static void PrintExcitation(struct StdIntList *StdI) {
       StdFace_exit(-1);
     }
   }
-
-  if ((strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1)
-    || strcmp(StdI->model, "kondo") == 0) {
-    printf("####################################\n");
-    printf("###########  CAUTION  ##############\n");
-    printf("####################################\n");
-    printf("\n");
-    printf(" For Kondo or S>1 system, excitation parameter file is NOT generated automatically.\n");
-    printf(" Please write it by hand.\n");
-  }/*if (StdI->S2 > 1 || strcmp(StdI->model, "kondo") == 0)*/
 
   isite = 0;
   for (icell = 0; icell < StdI->NCell; icell++) {
@@ -377,6 +412,12 @@ static void PrintExcitation(struct StdIntList *StdI) {
 
   free(fourier_r);
   free(fourier_i);
+  if (strcmp(StdI->model, "spin") == 0) 
+    for (ispin = 0; ispin < StdI->S2 + 1; ispin++) free(spin[ispin]);
+  else 
+    for (ispin = 0; ispin < 2; ispin++) free(spin[ispin]);
+  free(spin);
+  free(coef);
 
 }/*static void PrintExcitation()*/
 #elif defined(_mVMC)
