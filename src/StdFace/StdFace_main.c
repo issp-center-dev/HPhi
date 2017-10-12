@@ -136,9 +136,10 @@ static void PrintCalcMod(struct StdIntList *StdI)
   else {
     fprintf(stdout, "          Restart = %s\n", StdI->Restart);
     if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
-    else if (strcmp(StdI->Restart, "save") == 0) iRestart = 1;
-    else if (strcmp(StdI->Restart, "restartsave") == 0) iRestart = 2;
-    else if (strcmp(StdI->Restart, "restart") == 0) iRestart = 3;
+    else if (strcmp(StdI->Restart, "restart_out") == 0) iRestart = 1;
+    else if (strcmp(StdI->Restart, "restartsave") == 0 ||
+             strcmp(StdI->Restart, "restart")     == 0) iRestart = 2;
+    else if (strcmp(StdI->Restart, "restart_in") == 0) iRestart = 3;
     else {
       fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
@@ -197,9 +198,10 @@ static void PrintCalcMod(struct StdIntList *StdI)
     if (strcmp(StdI->CalcSpec, "none") == 0) iCalcSpec = 0;
     else if (strcmp(StdI->CalcSpec, "normal") == 0) iCalcSpec = 1;
     else if (strcmp(StdI->CalcSpec, "noiteration") == 0) iCalcSpec = 2;
-    else if (strcmp(StdI->CalcSpec, "save") == 0) iCalcSpec = 3;
-    else if (strcmp(StdI->CalcSpec, "restart") == 0) iCalcSpec = 4;
-    else if (strcmp(StdI->CalcSpec, "restartsave") == 0) iCalcSpec = 5;
+    else if (strcmp(StdI->CalcSpec, "restart_out") == 0) iCalcSpec = 3;
+    else if (strcmp(StdI->CalcSpec, "restart_in") == 0) iCalcSpec = 4;
+    else if (strcmp(StdI->CalcSpec, "restartsave") == 0 ||
+             strcmp(StdI->CalcSpec, "restart")     == 0) iCalcSpec = 5;
     else {
       fprintf(stdout, "\n ERROR ! CalcSpec : %s\n", StdI->CalcSpec);
       StdFace_exit(-1);

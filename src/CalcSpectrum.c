@@ -135,7 +135,8 @@ int CalcSpectrum(
     //Make excited state
     StartTimer(6100);
     if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
-        X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
+        X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
+       (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
         //input eigen vector
       StartTimer(6101);
         fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
