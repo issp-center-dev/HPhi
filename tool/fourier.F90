@@ -813,7 +813,7 @@ SUBROUTINE output_cor()
      ELSE
         cor_err(1:nk,1:6) = CMPLX(SQRT( DBLE(cor_err(1:nk,1:6))), &
         &                         SQRT(AIMAG(cor_err(1:nk,1:6))), KIND(0d0)) &
-        &                 / (DBLE(nwfc - 1) * SQRT(DBLE(nwfc)))
+        &                 / SQRT(DBLE(nwfc * (nwfc - 1)))
      END IF
      !
      filename = TRIM(filehead) // "_corr.dat"
