@@ -609,16 +609,16 @@ $\HPhi$ will stop.
 
 \item \verb|Restart|
 
-  {\bf Type :} String (choose from \verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
-  \verb|"RestartSave"|. \verb|"None"| as a default)
+  {\bf Type :} String (choose from \verb|"None"|, \verb|"Restart_out"|, \verb|"Restart_in"|,  
+  \verb|"Restart"|. \verb|"None"| as a default)
 
   {\bf Description :} The condition of the restart is specified.
   \verb|"None"| for omitting file IOs for the restart,
-  \verb|"Save"| for starting calculation from scratch
+  \verb|"Restart_out"| for starting calculation from scratch
   and generating a restart-file after the calculation finishes,
-  \verb|"Restart"| for starting calculation with the
+  \verb|"Restart_in"| for starting calculation with the
   restart-file generated in the previous run,
-  \verb|"RestartSave"| for \verb|"Restart"| + \verb|"Save"|.
+  \verb|"Restart"| for \verb|"Restart_out"| + \verb|"Restart_in"|.
 
 \item \verb|Lanczos_max|
 
@@ -802,7 +802,7 @@ the indices are specified as those of the Bogoliubov representation
 \item \verb|CalcSpec|
   
   {\bf Type :} String(choose from \verb|"None"|, \verb|"Normal"|, \verb|"NoIteration"|,  
-  \verb|"Save"|, \verb|"Restart"|, \verb|"RestartSave"|. \verb|"None"| as default.)
+  \verb|"Restart_out"|, \verb|"Restart_in"|, \verb|"Restart"|. \verb|"None"| as default.)
 
   {\bf Description :} The condition for the calculation of the dynamical
   Green's function is specified.
@@ -813,11 +813,11 @@ the indices are specified as those of the Bogoliubov representation
   with the same iteration in the previous run
   (In this case, the Hamiltonian-vector product is not performed.
   Although the numerical cost is very small, the convergence is not guaranteed),
-  \verb|"Save"| for calculating that function from scratch
+  \verb|"Restart_out"| for calculating that function from scratch
   and writing the restart-file at the end,
-  \verb|"Restart"| for starting the calculation with the
+  \verb|"Restart_in"| for starting the calculation with the
   previously written restart-file,
-  \verb|"RestartSave"| for \verb|"Restart"| + \verb|"Save"|.
+  \verb|"Restart"| for \verb|"Restart_out"| + \verb|"Restart_in"|.
 
   The scheme for the spectrum calculation is specified
   by using the parameter \verb|method|.

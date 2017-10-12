@@ -18,25 +18,71 @@
 ! 
 ! For more details, See `COPYING.LESSER' in the root directory of this library.
 !
-!
-! Routines for real-valiable CG
-!
+!> Routines for BiCG
+!!
+!!- \f$G_{i j}(z_k) = 0 (i=1 \cdots N_L,\; j = 1 \cdots N_R,\; k=1 \cdots N_z)\f$
+!!- do \f$j = 1 \cdots N_R\f$
+!!
+!!   - \f${\boldsymbol r} = {\boldsymbol \varphi_j}\f$,
+!!   - \f${\tilde {\boldsymbol r}} =\f$ an arbitrary vector,
+!!     \f${\boldsymbol r}^{\rm old} = {\tilde {\boldsymbol r}}^{\rm old} = {\bf 0}\f$
+!!   - \f$p_{i k} = 0(i=1 \cdots N_L,\; k=1 \cdots N_z),\; \pi_k=\pi_k^{\rm old} = 1(k=1 \cdots N_z)\f$
+!!   - \f$\rho = \infty,\; \alpha = 1,\; z_{\rm seed}=0\f$
+!!   - do iteration
+!!      - \f$\circ\f$ Seed equation
+!!      - \f$\rho^{\rm old} = \rho,\; \rho = {\tilde {\boldsymbol r}}^* \cdot {\boldsymbol r}\f$
+!!      - \f$\beta = \rho / \rho^{\rm old}\f$
+!!      - \f${\boldsymbol q} = (z_{\rm seed} {\hat I} - {\hat H}){\boldsymbol r}\f$
+!!      - \f$\alpha^{\rm old} = \alpha,\;
+!!           \alpha = \frac{\rho}{{\tilde {\boldsymbol r}}^*\cdot{\boldsymbol q} - \beta \rho / \alpha }\f$
+!!      - \f$\circ\f$ Shifted equation
+!!      - do \f$k = 1 \cdots N_z\f$
+!!         - \f$\pi_k^{\rm new} = [1+\alpha(z_k-z_{\rm seed})]\pi_k -
+!!              \frac{\alpha \beta}{\alpha^{\rm old}}(\pi_k^{\rm old} - \pi_k)\f$
+!!         - do \f$i = 1 \cdots N_L\f$
+!!            - \f$p_{i k} = \frac{1}{\pi_k} {\boldsymbol \varphi}_i^* \cdot {\boldsymbol r} +
+!!                 \frac{\pi^{\rm old}_k \pi^{\rm old}_k}{\pi_k \pi_k} \beta p_{i k}\f$
+!!            - \f$G_{i j}(z_k) = G_{i j}(z_k) + \frac{\pi_k}{\pi_k^{\rm new}} \alpha p_{i k}\f$
+!!            - \f$\pi_k^{\rm old} = \pi_k\f$, \f$\pi_k = \pi_k^{\rm new}\f$
+!!         - end do \f$i\f$
+!!      - end do \f$k\f$
+!!      - \f${\boldsymbol q} = \left( 1 + \frac{\alpha \beta}{\alpha^{\rm old}} \right) {\boldsymbol r} -
+!!           \alpha {\boldsymbol q} - \frac{\alpha \beta}{\alpha^{\rm old}} {\boldsymbol r}^{\rm old},\;
+!!           {\boldsymbol r}^{\rm old} = {\boldsymbol r},\; {\boldsymbol r} = {\boldsymbol q}\f$
+!!      - \f${\boldsymbol q} = (z_{\rm seed}^* {\hat I} - {\hat H}) {\tilde {\boldsymbol r}},\;
+!!           {\boldsymbol q} = \left( 1 + \frac{\alpha^* \beta^*}{\alpha^{{\rm old}*}} \right)
+!!           {\tilde {\boldsymbol r}} - \alpha^* {\boldsymbol q} -
+!!           \frac{\alpha^* \beta^*}{\alpha^{{\rm old} *}} {\tilde {\boldsymbol r}}^{\rm old},\;
+!!           {\tilde {\boldsymbol r}}^{\rm old} = {\tilde {\boldsymbol r}},\;
+!!           {\tilde {\boldsymbol r}} = {\boldsymbol q}\f$
+!!      - \f$\circ\f$ Seed switch
+!!      - Search \f$k\f$ which gives the smallest \f$|\pi_k|\f$ .
+!!               \f$\rightarrow z_{\rm seed},\;
+!!               \pi_{\rm seed},\; \pi_{\rm seed}^{\rm old}\f$
+!!      - \f${\boldsymbol r} = {\boldsymbol r} / \pi_{\rm seed},\;
+!!           {\boldsymbol r}^{\rm old} = {\boldsymbol r}^{\rm old} / \pi_{\rm seed}^{\rm old},\;
+!!           {\tilde {\boldsymbol r}} = {\tilde {\boldsymbol r}} / \pi_{\rm seed}^*,\;
+!!           {\tilde {\boldsymbol r}}^{\rm old} =
+!!           {\tilde {\boldsymbol r}}^{\rm old} / \pi_{\rm seed}^{{\rm old}*}\f$
+!!      - \f$\alpha = (\pi_{\rm seed}^{\rm old} / \pi_{\rm seed}) \alpha\f$,
+!!        \f$\rho = \rho / (\pi_{\rm seed}^{\rm old} \pi_{\rm seed}^{\rm old})\f$
+!!      - \f$\{\pi_k = \pi_k / \pi_{\rm seed},\; \pi_k^{\rm old} =
+!!        \pi_k^{\rm old} / \pi_{\rm seed}^{\rm old}\}\f$
+!!      - if( \f$|{\boldsymbol r}| <\f$ Threshold) exit
+!!   - end do iteration
+!!- end do \f$j\f$
+!!
 MODULE komega_bicg
   !
   PRIVATE
   !
-#if defined(MPI)
-  PUBLIC pkomega_BICG_init, pkomega_BICG_restart, pkomega_BICG_update, pkomega_BICG_getcoef, &
-  &      pkomega_BICG_getvec, pkomega_BICG_finalize, pkomega_BICG_getresidual
-#else
   PUBLIC komega_BICG_init, komega_BICG_restart, komega_BICG_update, komega_BICG_getcoef, &
   &      komega_BICG_getvec, komega_BICG_finalize, komega_BICG_getresidual
-#endif
   !
 CONTAINS
-!
-! Shifted Part
-!
+!>
+!! Shifted Part
+!!
 SUBROUTINE komega_BICG_shiftedeqn(r_l, x)
   !
   USE komega_parameter, ONLY : iter, itermax, nl, nz, lz_conv
@@ -69,9 +115,9 @@ SUBROUTINE komega_BICG_shiftedeqn(r_l, x)
   END DO
   !
 END SUBROUTINE komega_BICG_shiftedeqn
-!
-! Seed Switching
-!
+!>
+!! Seed Switching
+!!
 SUBROUTINE komega_BICG_seed_switch(v2, v4, status)
   !
   USE komega_parameter, ONLY : iter, itermax, ndim, nz, nl, iz_seed, almost0, lz_conv
@@ -144,20 +190,14 @@ SUBROUTINE komega_BICG_seed_switch(v2, v4, status)
   END IF
   !
 END SUBROUTINE komega_BICG_seed_switch
-!
-! Allocate & initialize variables
-!
-#if defined(MPI)
-SUBROUTINE pkomega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0) BIND(C)
-#else
-SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0) BIND(C)
-#endif
+!>
+!! Allocate & initialize variables
+!!
+SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0) BIND(C)
   !
+  USE ISO_C_BINDING
   USE komega_parameter, ONLY : iter, itermax, ndim, nl, nz, &
-  &                            threshold, iz_seed, lz_conv
-#if defined(MPI)
-  USE komega_parameter, ONLY : comm
-#endif
+  &                            threshold, iz_seed, lz_conv, lmpi, comm
   USE komega_vals_c, ONLY : alpha, alpha_save, beta, beta_save, pi, &
   &                               pi_old, pi_save, rho, z, z_seed 
   USE komega_vecs_c, ONLY : p, r_l_save, v3, v5
@@ -165,21 +205,23 @@ SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0) BIND(C
   !
   IMPLICIT NONE
   !
-  INTEGER,INTENT(IN) :: ndim0, nl0, nz0, itermax0
-  REAL(8),INTENT(IN) :: threshold0
-  COMPLEX(8),INTENT(IN) :: z0(nz0)
-  COMPLEX(8),INTENT(OUT) :: x(nl0,nz0)
-#if defined(MPI)
-  INTEGER,INTENT(IN) :: comm0
-#endif
+  INTEGER(C_INT),INTENT(IN) :: ndim0, nl0, nz0, itermax0
+  REAL(C_DOUBLE),INTENT(IN) :: threshold0
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: z0(nz0)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: x(nl0,nz0)
+  INTEGER(C_INT),INTENT(IN),OPTIONAL :: comm0
   !
   ndim = ndim0
   nl = nl0
   nz = nz0
   itermax = itermax0
   threshold = threshold0
+  !
+  comm = 0
+  IF(PRESENT(comm0)) comm = comm0
+  lmpi = .FALSE.
 #if defined(MPI)
-  comm = comm0
+  IF(PRESENT(comm0)) lmpi = .TRUE.
 #endif
   !
   ALLOCATE(z(nz), v3(ndim), v5(ndim), pi(nz), pi_old(nz), p(nl,nz), lz_conv(nz))
@@ -204,24 +246,14 @@ SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0) BIND(C
      pi_save(1:nz,-1:0) = CMPLX(1d0, 0d0, KIND(0d0))
   END IF
   !
-#if defined(MPI)
-END SUBROUTINE pkomega_BICG_init
-#else
 END SUBROUTINE komega_BICG_init
-#endif
 !
 ! Restart by input
 !
-#if defined(MPI)
-SUBROUTINE pkomega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0, status, &
-&                       iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0) &
-&  BIND(C)
-#else
 SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, status, &
-&                       iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0) &
-&  BIND(C)
-#endif
+& iter_old, v2, v12, v4, v14, alpha_save0, beta_save0, z_seed0, r_l_save0, comm0) BIND(C)
   !
+  USE ISO_C_BINDING
   USE komega_parameter, ONLY : iter, itermax, ndim, nl, threshold, iz_seed, lz_conv, nz, resnorm
   USE komega_vals_c, ONLY : alpha, alpha_old, alpha_save, beta, beta_save, rho, z_seed, pi
   USE komega_vecs_c, ONLY : r_l_save, v3, v5
@@ -229,31 +261,29 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
   !
   IMPLICIT NONE
   !
-  INTEGER,INTENT(IN) :: ndim0, nl0, nz0, itermax0
-  REAL(8),INTENT(IN) :: threshold0
-  COMPLEX(8),INTENT(IN) :: z0(nz0)
-  COMPLEX(8),INTENT(OUT) :: x(nl0,nz0)
-  INTEGER,INTENT(OUT) :: status(3)
-#if defined(MPI)
-  INTEGER,INTENT(IN) :: comm0
-#endif
+  INTEGER(C_INT),INTENT(IN) :: ndim0, nl0, nz0, itermax0
+  REAL(C_DOUBLE),INTENT(IN) :: threshold0
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: z0(nz0)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: x(nl0,nz0)
+  INTEGER(C_INT),INTENT(OUT) :: status(3)
+  INTEGER(C_INT),INTENT(IN),OPTIONAL :: comm0
   !
   ! For Restarting
   !
-  INTEGER,INTENT(IN) :: iter_old
-  COMPLEX(8),INTENT(IN) :: &
+  INTEGER(C_INT),INTENT(IN) :: iter_old
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: &
   & alpha_save0(iter_old), beta_save0(iter_old), z_seed0
-  COMPLEX(8),INTENT(IN) :: r_l_save0(nl0,iter_old)
-  COMPLEX(8),INTENT(INOUT) :: v2(ndim), v12(ndim)
-  COMPLEX(8),INTENT(INOUT) :: v4(ndim), v14(ndim)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: r_l_save0(nl0,iter_old)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(INOUT) :: v2(ndim), v12(ndim)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(INOUT) :: v4(ndim), v14(ndim)
   !
   INTEGER :: iz
   !
-#if defined(MPI)
-  CALL pkomega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
-#else
-  CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0)
-#endif
+  IF(PRESENT(comm0)) THEN
+     CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
+  ELSE
+     CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0)
+  END IF
   z_seed = z_seed0
   iz_seed = 0
   !
@@ -325,20 +355,13 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
      status(2) = 0
   END IF
   !
-#if defined(MPI)
-END SUBROUTINE pkomega_BICG_restart
-#else
 END SUBROUTINE komega_BICG_restart
-#endif
-!
-! Update x, p, r
-!
-#if defined(MPI)
-SUBROUTINE pkomega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
-#else
+!>
+!! Update x, p, r
+!!
 SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
-#endif
   !
+  USE ISO_C_BINDING
   USE komega_parameter, ONLY : iter, itermax, ndim, nl, nz, &
   &                            threshold, almost0, lz_conv, resnorm
   USE komega_vals_c, ONLY : alpha, alpha_old, alpha_save, &
@@ -348,9 +371,9 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   !
   IMPLICIT NONE
   !
-  COMPLEX(8),INTENT(INOUT) :: v12(ndim), v2(ndim), v14(ndim), v4(ndim), x(nl,nz)
-  COMPLEX(8),INTENT(IN) :: r_l(nl)
-  INTEGER,INTENT(INOUT) :: status(3)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(INOUT) :: v12(ndim), v2(ndim), v14(ndim), v4(ndim), x(nl,nz)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: r_l(nl)
+  INTEGER(C_INT),INTENT(INOUT) :: status(3)
   !
   INTEGER :: iz
   COMPLEX(8) :: rho_old, alpha_denom
@@ -450,20 +473,13 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
      status(2) = 0
   END IF
   !
-#if defined(MPI)
-END SUBROUTINE pkomega_BICG_update
-#else
 END SUBROUTINE komega_BICG_update
-#endif
-!
-! Return saved alpha, beta, r_l
-!
-#if defined(MPI)
-SUBROUTINE pkomega_BICG_getcoef(alpha_save0, beta_save0, z_seed0, r_l_save0) BIND(C)
-#else
+!>
+!! Return saved alpha, beta, r_l
+!!
 SUBROUTINE komega_BICG_getcoef(alpha_save0, beta_save0, z_seed0, r_l_save0) BIND(C)
-#endif
   !
+  USE ISO_C_BINDING
   USE komega_parameter, ONLY : iter, nl
   USE komega_vals_c, ONLY : alpha_save, beta_save, z_seed
   USE komega_vecs_c, ONLY : r_l_save
@@ -471,75 +487,53 @@ SUBROUTINE komega_BICG_getcoef(alpha_save0, beta_save0, z_seed0, r_l_save0) BIND
   !
   IMPLICIT NONE
   !
-  COMPLEX(8),INTENT(OUT) :: alpha_save0(iter), beta_save0(iter), z_seed0
-  COMPLEX(8),INTENT(OUT) :: r_l_save0(nl,iter)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: alpha_save0(iter), beta_save0(iter), z_seed0
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: r_l_save0(nl,iter)
   !
   z_seed0 = z_seed
   CALL zcopy(iter,alpha_save,1,alpha_save0,1)
   CALL zcopy(iter,beta_save,1,beta_save0,1)
   CALL zcopy(nl*iter,r_l_save,1,r_l_save0,1)
   !
-#if defined(MPI)
-END SUBROUTINE pkomega_BICG_getcoef
-#else
 END SUBROUTINE komega_BICG_getcoef
-#endif
-!
-! Return r_old
-!
-#if defined(MPI)
-SUBROUTINE pkomega_BICG_getvec(r_old, r_tilde_old) BIND(C)
-#else
+!>
+!! Return r_old
+!!
 SUBROUTINE komega_BICG_getvec(r_old, r_tilde_old) BIND(C)
-#endif
   !
+  USE ISO_C_BINDING
   USE komega_parameter, ONLY : ndim
   USE komega_vecs_c, ONLY : v3, v5
   USE komega_math, ONLY : zcopy
   !
   IMPLICIT NONE
   !
-  COMPLEX(8),INTENT(OUT) :: r_old(ndim), r_tilde_old(ndim)
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: r_old(ndim), r_tilde_old(ndim)
   !
   CALL zcopy(ndim,v3,1,r_old,1)
   CALL zcopy(ndim,v5,1,r_tilde_old,1)
   !
-#if defined(MPI)
-END SUBROUTINE pkomega_BICG_getvec
-#else
 END SUBROUTINE komega_BICG_getvec
-#endif
-!
-! Return Residual Norm
-!
-#if defined(MPI)
-SUBROUTINE pkomega_BICG_getresidual(res) BIND(C)
-#else
+!>
+!! Return Residual Norm
+!!
 SUBROUTINE komega_BICG_getresidual(res) BIND(C)
-#endif
   !
+  USE ISO_C_BINDING
   USE komega_parameter, ONLY : nz, resnorm
   USE komega_vals_c, ONLY : pi
   !
   IMPLICIT NONE
   !
-  REAL(8),INTENT(OUT) :: res(nz)
+  REAL(C_DOUBLE),INTENT(OUT) :: res(nz)
   !
   res(1:nz) = resnorm / ABS(pi(1:nz))
   !
-#if defined(MPI)
-END SUBROUTINE pkomega_BICG_getresidual
-#else
 END SUBROUTINE komega_BICG_getresidual
-#endif
-!
-! Deallocate private arrays
-!
-#if defined(MPI)
-SUBROUTINE pkomega_BICG_finalize() BIND(C)
-#else
+!>
+!! Deallocate private arrays
+!!
 SUBROUTINE komega_BICG_finalize() BIND(C)
-#endif
   !
   USE komega_parameter, ONLY : itermax, lz_conv
   USE komega_vals_c, ONLY : alpha_save, beta_save, &
@@ -554,10 +548,6 @@ SUBROUTINE komega_BICG_finalize() BIND(C)
      DEALLOCATE(alpha_save, beta_save, r_l_save, pi_save)
   END IF
   !
-#if defined(MPI)
-END SUBROUTINE pkomega_BICG_finalize
-#else
 END SUBROUTINE komega_BICG_finalize
-#endif
 !
 END MODULE komega_bicg

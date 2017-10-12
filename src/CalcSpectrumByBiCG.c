@@ -13,31 +13,25 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/**@file
+@author Mitsuaki Kawamura (The University of Tokyo)
+@brief  File for givinvg functions of calculating spectrum by Lanczos
+*/
+#include "Common.h"
 #include "CalcSpectrumByLanczos.h"
 #include "Lanczos_EigenValue.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "mfmemory.h"
-#if defined(MPI)
-#include "komega/pkomega_bicg.h"
-#else
-#include "komega/komega_bicg.h"
-#endif
+#include "komega/komega.h"
 #include "mltply.h"
-
-/**
- * @file   CalcSpectrumByBiCG.c
- * @author Mitsuaki Kawamura (The University of Tokyo)
- * 
- * @brief  File for givinvg functions of calculating spectrum by Lanczos
- * 
- * 
- */
-
+#ifdef MPI
+#include <mpi.h>
+#endif
 /**@brief
 Read @f$\alpha, \beta@f$, projected residual for restart
 */
-int ReadTMComponents_BiCG(
+void ReadTMComponents_BiCG(
   struct EDMainCalStruct *X,//!<[inout]
   double complex *v2,//!<[inout] [CheckList::idim_max] Residual vector
   double complex *v4,//!<[inout] [CheckList::idim_max] Shadow esidual vector
@@ -50,71 +44,77 @@ int ReadTMComponents_BiCG(
   char sdt[D_FileNameMax];
   char ctmp[256];
 
-  int one = 1, status[3], idim_max2int, liLanczosStp2int, max_step;
+  int one = 1, status[3], idim_max2int, max_step, iter_old;
   unsigned long int idx;
-  unsigned long int liLanczosStp;
   double complex *alphaCG, *betaCG, *res_save, z_seed;
   double z_seed_r, z_seed_i, alpha_r, alpha_i, beta_r, beta_i, res_r, res_i;
   FILE *fp;
+  int *comm;
+
 #if defined(MPI)
-  int comm;
-  comm = MPI_Comm_c2f(MPI_COMM_WORLD);
-#endif
-
-  idx = 0;
-  sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
-  childfopenMPI(sdt, "r", &fp);
-
-  fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
-  sscanf(ctmp, "%ld \n", &liLanczosStp);
-  if (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC ||
-    X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC) {
-    alphaCG = (double complex*)malloc((liLanczosStp + X->Bind.Def.Lanczos_max) * sizeof(double complex));
-    betaCG = (double complex*)malloc((liLanczosStp + X->Bind.Def.Lanczos_max) * sizeof(double complex));
-    res_save = (double complex*)malloc((liLanczosStp + X->Bind.Def.Lanczos_max) * sizeof(double complex));
-  }
-  else if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents) {
-    alphaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
-    betaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
-    res_save = (double complex*)malloc(liLanczosStp * sizeof(double complex));
-  }
-  fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
-  sscanf(ctmp, "%lf %lf\n", &z_seed_r, &z_seed_i);
-  z_seed = z_seed_r + I * z_seed_i;
-  while (fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp) != NULL) {
-    sscanf(ctmp, "%lf %lf %lf %lf %lf %lf\n",
-      &alpha_r, &alpha_i, &beta_r, &beta_i, &res_r, &res_i);
-    alphaCG[idx] = alpha_r + I * alpha_i;
-    betaCG[idx] = beta_r + I * beta_i;
-    res_save[idx] = res_r + I * res_i;
-    idx += 1;
-  }
-  fclose(fp);
-
-  if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents) {
-    X->Bind.Def.Lanczos_restart = 0;
-    max_step = (int)liLanczosStp;
-  }
-  else if (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC ||
-    X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC) {
-    X->Bind.Def.Lanczos_restart = liLanczosStp;
-    max_step = (int)(liLanczosStp + X->Bind.Def.Lanczos_max);
-  }
-
-  idim_max2int = (int)X->Bind.Check.idim_max;
-  liLanczosStp2int = (int)liLanczosStp;
-#if defined(MPI)
-  pkomega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm, status,
-    &liLanczosStp2int, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
+  comm = (int*)malloc(sizeof(int));
+  comm[0] = MPI_Comm_c2f(MPI_COMM_WORLD);
 #else
-  komega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
-    &liLanczosStp2int, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save);
+  comm = NULL;
 #endif
-  free(alphaCG);
-  free(betaCG);
-  free(res_save);
+  idim_max2int = (int)X->Bind.Check.idim_max;
 
-  return TRUE;
+  if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents ||
+      X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
+      X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC)  {
+    sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
+    if (childfopenALL(sdt, "rb", &fp) != 0) {
+      fprintf(stdoutMPI, "INFO: File for the restart is not found.\n");
+      fprintf(stdoutMPI, "      Start from SCRATCH.\n");
+      max_step = (int)X->Bind.Def.Lanczos_max;
+      komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, comm);
+    }
+    else {
+      fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+      sscanf(ctmp, "%d", &iter_old);
+      if (X->Bind.Def.iFlgCalcSpec > RECALC_FROM_TMComponents) {
+        alphaCG = (double complex*)malloc((iter_old + X->Bind.Def.Lanczos_max) * sizeof(double complex));
+        betaCG = (double complex*)malloc((iter_old + X->Bind.Def.Lanczos_max) * sizeof(double complex));
+        res_save = (double complex*)malloc((iter_old + X->Bind.Def.Lanczos_max) * sizeof(double complex));
+      }
+      else {
+        alphaCG = (double complex*)malloc(iter_old * sizeof(double complex));
+        betaCG = (double complex*)malloc(iter_old * sizeof(double complex));
+        res_save = (double complex*)malloc(iter_old * sizeof(double complex));
+      }
+      fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+      sscanf(ctmp, "%lf %lf\n", &z_seed_r, &z_seed_i);
+      z_seed = z_seed_r + I * z_seed_i;
+
+      idx = 0;
+      while (fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp) != NULL) {
+        sscanf(ctmp, "%lf %lf %lf %lf %lf %lf\n",
+          &alpha_r, &alpha_i, &beta_r, &beta_i, &res_r, &res_i);
+        alphaCG[idx] = alpha_r + I * alpha_i;
+        betaCG[idx] = beta_r + I * beta_i;
+        res_save[idx] = res_r + I * res_i;
+        idx += 1;
+      }
+      fclose(fp);
+
+      if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents) X->Bind.Def.Lanczos_max = 0;
+      max_step = (int)(iter_old + X->Bind.Def.Lanczos_max);
+
+      komega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
+        &iter_old, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save, comm);
+      free(alphaCG);
+      free(betaCG);
+      free(res_save);
+    }/*if (childfopenALL(sdt, "rb", &fp) == 0)*/
+  }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_NOT)*/
+  else {
+    max_step = (int)X->Bind.Def.Lanczos_max;
+    komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, comm);
+  }
+
+#if defined(MPI)
+  free(comm);
+#endif
 }/*int ReadTMComponents_BiCG*/
 /**@brief
 write @f$\alpha, \beta@f$, projected residual for restart
@@ -132,11 +132,8 @@ int OutputTMComponents_BiCG(
   alphaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
   betaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
   res_save = (double complex*)malloc(liLanczosStp * sizeof(double complex));
-#if defined(MPI)
-  pkomega_bicg_getcoef(alphaCG, betaCG, &z_seed, res_save);
-#else
+
   komega_bicg_getcoef(alphaCG, betaCG, &z_seed, res_save);
-#endif
 
   sprintf(sdt, cFileNameTridiagonalMatrixComponents, X->Bind.Def.CDataFileHead);
   childfopenMPI(sdt, "w", &fp);
@@ -224,15 +221,11 @@ int CalcSpectrumByBiCG(
   unsigned long int idim, i_max;
   FILE *fp;
   size_t byte_size;
-  int iret, i_max2int, max_step;
+  int iret, max_step;
   unsigned long int liLanczosStp_vec = 0;
   double complex *v12, *v14, res_proj;
   int stp, one = 1, status[3], iomega;
   double *resz;
-#if defined(MPI)
-  int comm;
-  comm = MPI_Comm_c2f(MPI_COMM_WORLD);
-#endif
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
   /**
@@ -254,27 +247,36 @@ int CalcSpectrumByBiCG(
 
     sprintf(sdt, cFileNameOutputRestartVec, X->Bind.Def.CDataFileHead, myrank);
     if (childfopenALL(sdt, "rb", &fp) != 0) {
-      exitMPI(-1);
+      fprintf(stdoutMPI, "INFO: File for the restart is not found.\n");
+      fprintf(stdoutMPI, "      Start from SCRATCH.\n");
+#pragma omp parallel for default(none) shared(v2,v4,vrhs,X) private(idim)
+      for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
+        v2[idim] = vrhs[idim];
+        v4[idim] = vrhs[idim];
+      }
+      //InitShadowRes(&(X->Bind), v4);
     }
-    byte_size = fread(&liLanczosStp_vec, sizeof(liLanczosStp_vec), 1, fp);
-    byte_size = fread(&i_max, sizeof(long int), 1, fp);
-    if (i_max != X->Bind.Check.idim_max) {
-      fprintf(stderr, "Error: The size of the input vector is incorrect.\n");
-      exitMPI(-1);
-    }
-    byte_size = fread(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    byte_size = fread(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    byte_size = fread(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    byte_size = fread(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fclose(fp);
-    fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
-    if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
-  }
+    else {
+      byte_size = fread(&liLanczosStp_vec, sizeof(int), 1, fp);
+      byte_size = fread(&i_max, sizeof(i_max), 1, fp);
+      if (i_max != X->Bind.Check.idim_max) {
+        fprintf(stderr, "Error: The size of the input vector is incorrect.\n");
+        printf("%s %ld %ld %ld\n", sdt, i_max, X->Bind.Check.idim_max, liLanczosStp_vec);
+        exitMPI(-1);
+      }
+      byte_size = fread(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fread(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fread(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fread(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      fclose(fp);
+      fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
+      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
+      if (byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
+    }/*if (childfopenALL(sdt, "rb", &fp) == 0)*/
+  }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_FROM_TMComponents)*/
   else {
-    i_max = X->Bind.Check.idim_max;
-#pragma omp parallel for default(none) shared(i_max,v2,v4,vrhs) private(idim)
-    for (idim = 1; idim <= i_max; idim++) {
+#pragma omp parallel for default(none) shared(v2,v4,vrhs,X) private(idim)
+    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
       v2[idim] = vrhs[idim];
       v4[idim] = vrhs[idim];
     }
@@ -283,25 +285,7 @@ int CalcSpectrumByBiCG(
   /**
   <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
   */
-  if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents ||
-      X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents_VEC ||
-      X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC)
-  {
-    iret = ReadTMComponents_BiCG(X,v2,v4,v12,v14,Nomega,dcSpectrum,dcomega);
-    if (!iret == TRUE) {
-      fprintf(stdoutMPI, "  Error: Fail to read TMcomponents\n");
-      return FALSE;
-    }
-  }
-  else {
-    i_max2int = (int)i_max;
-    max_step = (int)X->Bind.Def.Lanczos_max;
-#if defined(MPI)
-    pkomega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
-#else
-    komega_bicg_init(&i_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos);
-#endif
-  }
+  ReadTMComponents_BiCG(X, v2, v4, v12, v14, Nomega, dcSpectrum, dcomega);
   /**
   <li>@b DO BiCG loop</li>
   <ul>
@@ -311,37 +295,32 @@ int CalcSpectrumByBiCG(
   fprintf(stdoutMPI, "\n  Iteration     Status     Seed     Residual-2-Norm\n");
   childfopenMPI("residual.dat", "w", &fp);
 
-  for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++) {
+  for (stp = 1; stp <= X->Bind.Def.Lanczos_max; stp++) {
     /**
     <li>@f${\bf v}_{2}={\hat H}{\bf v}_{12}, {\bf v}_{4}={\hat H}{\bf v}_{14}@f$,
     where @f${\bf v}_{12}, {\bf v}_{14}@f$ are old (shadow) residual vector.</li>
     */
-#pragma omp parallel for default(none) shared(i_max,v12,v14) private(idim)
-    for (idim = 1; idim <= i_max; idim++) {
+#pragma omp parallel for default(none) shared(X,v12,v14) private(idim)
+    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
       v12[idim] = 0.0;
       v14[idim] = 0.0;
     }
     iret = mltply(&X->Bind, v12, v2);
     iret = mltply(&X->Bind, v14, v4);
 
-    res_proj = VecProdMPI(i_max, vrhs, v2);
+    res_proj = VecProdMPI(X->Bind.Check.idim_max, vrhs, v2);
     /**
     <li>Update projected result vector dcSpectrum.</li>
     */
-#if defined(MPI)
-    pkomega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
-#else
+
     komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
-#endif
+
     /**
     <li>Output residuals at each frequency for some analysis</li>
     */
     if (stp % 10 == 0) {
-#if defined(MPI)
-      pkomega_bicg_getresidual(resz);
-#else
       komega_bicg_getresidual(resz);
-#endif
+
       for (iomega = 0; iomega < Nomega; iomega++) {
         fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n", 
           stp, creal(dcomega[iomega]), 
@@ -372,15 +351,10 @@ int CalcSpectrumByBiCG(
   */
   if (X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
       X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC) {
-
     fprintf(stdoutMPI, "    Start: Output vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecStart, "a");
 
-#if defined(MPI)
-    pkomega_bicg_getvec(&v12[1], &v14[1]);
-#else
     komega_bicg_getvec(&v12[1], &v14[1]);
-#endif
 
     sprintf(sdt, cFileNameOutputRestartVec, X->Bind.Def.CDataFileHead, myrank);
     if (childfopenALL(sdt, "wb", &fp) != 0) {
@@ -396,17 +370,12 @@ int CalcSpectrumByBiCG(
 
     fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
-  }
+  }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_FROM_TMComponents)*/
 
-#if defined(MPI)
-  pkomega_bicg_finalize();
-#else
   komega_bicg_finalize();
-#endif
 
   free(resz);
   free(v12);
   free(v14);
-
   return TRUE;
 }/*int CalcSpectrumByBiCG*/

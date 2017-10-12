@@ -206,6 +206,10 @@ int GetOffComp(
   *_ioffComp =_list_2_1[ia];
   *_ioffComp+=_list_2_2[ib];
 */
+
+  //if(myrank==1)
+  //printf( "DEGBUG:_ibit=%ld, _list_2_1=%ld, _list_2_2=%ld\n", _ibit, _list_2_1[ia], _list_2_2[ib]);
+
   if(_list_2_1[ia]*_list_2_2[ib]==0){
     *_ioffComp=0;
     return FALSE;

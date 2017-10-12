@@ -538,15 +538,15 @@ $ gnuplot lattice.gp
 
 \item \verb|Restart|
 
-  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Save"|, \verb|"Restart"|,  
-  \verb|"RestartSave"|のいずれか。デフォルトは\verb|"None"|)
+  {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Restart_out"|, \verb|"Restart_in"|,  
+  \verb|"Restart"|のいずれか。デフォルトは\verb|"None"|)
 
   {\bf 説明 :} 再計算に関する設定を行う。
   \verb|"None"|では再計算に関連するファイル出力をしない。
-  \verb|"Save"|では一から計算を始めて、
+  \verb|"Restart_out"|では一から計算を始めて、
   反復が終了した時点で再計算用のデータをファイル出力する。
-  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
-  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
+  \verb|"Restart_in"|では再計算用のデータをファイルから受け取り途中から計算を始める。
+  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始め、
   反復が終了した時点で再計算用のデータをファイル出力する。
 
 \item \verb|Lanczos_max|
@@ -716,7 +716,7 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 \item \verb|CalcSpec|
   
   {\bf 形式 :} 文字列(\verb|"None"|, \verb|"Normal"|, \verb|"NoIteration"|,  
-  \verb|"Save"|, \verb|"Restart"|, \verb|"RestartSave"|。デフォルトは\verb|"None"|)
+  \verb|"Restart_out"|, \verb|"Restart_in"|, \verb|"Restart"|。デフォルトは\verb|"None"|)
 
   {\bf 説明 :} 動的グリーン関数の計算に関する設定を行う。
   \verb|"None"|では動的グリーン関数を計算しない。
@@ -724,10 +724,10 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
   \verb|"NoIteration"|では、前回の反復回数と同じところまで反復させる。
   このとき、ハミルトニアン-ベクトル積演算は行われないため、
   計算コストは非常に軽いが、十分な精度が出せない場合がある。
-  \verb|"Save"|では一から計算を始めて、
+  \verb|"Restart_out"|では一から計算を始めて、
   反復が終了した時点で再計算用のデータをファイル出力する。
-  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始める。
-  \verb|"RestartSave"|では再計算用のデータをファイルから受け取り途中から計算を始め、
+  \verb|"Restart_in"|では再計算用のデータをファイルから受け取り途中から計算を始める。
+  \verb|"Restart"|では再計算用のデータをファイルから受け取り途中から計算を始め、
   反復が終了した時点で再計算用のデータをファイル出力する。
   スペクトル計算において使用される手法はパラメーター\verb|method|で指定されます。
   (\verb|method="CG"|とした場合には
