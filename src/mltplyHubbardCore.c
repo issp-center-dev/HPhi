@@ -453,7 +453,7 @@ int X_GC_CisAjt(
     return sgn; // pm 1
   }
   else {
-    *tmp_off = 1;
+    *tmp_off = 0;
     return 0;
   }
 }
@@ -1114,13 +1114,14 @@ int X_Cis(
     list_1_off = list_1_j | is1_spin; // OR
 
     if(GetOffComp(list_2_1_target, list_2_2_target, list_1_off, _irght, _ilft, _ihfbit, tmp_off)!=TRUE){
+      *tmp_off=0;
       return 0;
     }
     sgn *= ipsgn;
     return (sgn);
   }
   else {
-    *tmp_off = 1;
+    *tmp_off = 0;
     return 0;
   }
 }/*int X_Cis*/
@@ -1165,13 +1166,14 @@ double complex X_Ajt(
 #endif
     list_1_off = list_1_j ^ is1_spin;
     if(GetOffComp(list_2_1_target, list_2_2_target, list_1_off, _irght, _ilft, _ihfbit, tmp_off)!=TRUE){
+      *tmp_off=0;
       return 0;
     }
     sgn *= ipsgn;
     return(sgn);
   }
   else {
-    *tmp_off = 1;
+    *tmp_off = 0;
     return 0;
   }
 }/*double complex X_Ajt*/
