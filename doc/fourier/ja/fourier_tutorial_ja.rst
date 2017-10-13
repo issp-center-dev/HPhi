@@ -3,7 +3,8 @@
 チュートリアル
 ==============
 
-このチュートリアルは ``sample/Standard/Spin/HeisenbergSquare/``
+このチュートリアルは ``sample/Standard/Spin/HeisenbergSquare/`` (mVMC)
+および ``sample/CG/Heisenberg/`` (HPhi)
 にあるインプットファイルを用いて行う.
 
 HPhi/vmc.out の実行
@@ -15,7 +16,7 @@ HPhi/vmc.out の実行
   
   .. code-block:: bash
 
-     $ ../../../../src/HPhi -s StdFace.def
+     $ ../../../../src/HPhi -s stan.in
 
 - mVMC の場合
 
@@ -78,6 +79,8 @@ HPhi/vmc.out の実行
 .. code-block:: bash
 
    $ ../../../../tool/corplot output/zvo_corr.dat
+   or
+   $ ../../../../tool/corplot output/zvo_corr_eigen0.dat
 
 この時, ターミナルには次のように標準入力を促すメッセージが現れる.
 

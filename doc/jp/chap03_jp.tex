@@ -10,34 +10,32 @@
 
 以下のチュートリアルはディレクトリ
 \begin{verbatim}
-samples/Standard/Spin/HeisenbergChain/
+samples/CG/Heisenberg/
 \end{verbatim}
 内で行います。
-Heisenberg模型におけるサンプル入力ファイル、参照用出力ディレクトリ、標準出力リダイレクトはそれぞれ
+Heisenberg模型におけるサンプル入力ファイルは
 \begin{verbatim}
-samples/Standard/Spin/HeisenbergChain/StdFace.def
-samples/Standard/Spin/HeisenbergChain/output_FullDiag/
-samples/Standard/Spin/HeisenbergChain/output_Lanczos/
-samples/Standard/Spin/HeisenbergChain/output_TPQ/
-samples/Standard/Spin/HeisenbergChain/FullDiag.out
-samples/Standard/Spin/HeisenbergChain/Lanczos.out
-samples/Standard/Spin/HeisenbergChain/TPQ.out
+samples/CG/Heisenberg/stan.in
 \end{verbatim}
 にあります。
-この例では1次元のHeisenberg鎖(最近接サイト間の反強磁性的スピン結合のみを持つ)
+この例では2次元正方格子のHeisenberg模型(最近接サイト間の反強磁性的スピン結合のみを持つ)
 を考察します。
 \begin{align}
-  {\hat H} = J \sum_{i=1}^{N_{\rm site}} {\hat {\boldsymbol S}}_i \cdot {\hat {\boldsymbol S}}_{i+1}
+  {\hat H} = J \sum_{i,j=1}^{4}(
+  {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i+1 j} +
+  {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i j+1}
+  )
 \end{align}
 インプットファイルの中身は次のとおりです。
 \\
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
-L = 16
 model = "Spin"
-method = "Lanczos"
-lattice = "chain lattice"
+method = "CG"
+lattice = "square"
+W = 4
+L = 4
 J = 1.0
 2Sz = 0
 \end{verbatim}
@@ -67,94 +65,151 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
 実行コマンドと標準出力{(MPI並列/ハイブリッド並列でコンパイルした場合の結果)}は次のとおりです。
 
 \vspace{1cm}\hspace{-0.7cm}
-\verb|$ |\underline{パス}\verb|/HPhi -s StdFace.def|
+\verb|$ |\underline{パス}\verb|/HPhi -s stan.in|
 \small
 \begin{verbatim}
+
+      ,ammmmmmmmmmmmmmb,,        Welcome to the
+    ,@@` dm          mb  ===m
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@
+        ~~9@@@@@@@@@  ~
+           9@P~~~9@P             Version 2.0.3
+
+
+
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 4
-  MPI PEs : 1 
+  OpenMP threads : 1
+  MPI PEs : 1
 
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile ./StdFace.def 
+  Open Standard-Mode Inputfile stan.in
 
-  KEYWORD : l                    | VALUE : 16 
-  KEYWORD : model                | VALUE : spin 
-  KEYWORD : method               | VALUE : lanczos 
-  Skipping a line.
-  Skipping a line.
-  KEYWORD : lattice              | VALUE : chainlattice 
-  KEYWORD : j                    | VALUE : 1.0 
-  KEYWORD : 2sz                  | VALUE : 0 
+  KEYWORD : model                | VALUE : Spin
+  KEYWORD : method               | VALUE : CG
+  KEYWORD : lattice              | VALUE : square
+  KEYWORD : w                    | VALUE : 4
+  KEYWORD : l                    | VALUE : 4
+  KEYWORD : j                    | VALUE : 1.0
+  KEYWORD : 2sz                  | VALUE : 0
 
 #######  Parameter Summary  #######
 
-                L = 16 
+  @ Lattice Size & Shape
+
                 a = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               2S = 1           ######  DEFAULT VALUE IS USED  ######
+          Wlength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Llength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Lx = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Ly = 1.00000     ######  DEFAULT VALUE IS USED  ######
+           phase0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+           phase1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+
+  @ Super-Lattice setting
+
+                L = 4
+                W = 4
+           Height = 1           ######  DEFAULT VALUE IS USED  ######
+         Number of Cell = 16
+
+  @ Hamiltonian
+
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######
-                J = 1.00000   
-               Jz = 1.00000     ######  DEFAULT VALUE IS USED  ######
-              Jxy = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               Jx = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               Jy = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               J' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jz' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-             Jxy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jx' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-       LargeValue = 1           ######  DEFAULT VALUE IS USED  ######
+              J0x = 1.00000
+              J0y = 1.00000
+              J0z = 1.00000
+              J1x = 1.00000
+              J1y = 1.00000
+              J1z = 1.00000
 
-         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+  @ Numerical conditions
+
+       LargeValue = 4.50000     ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    locspn.def is written.
+    coulombinter.def is written.
+    hund.def is written.
+    exchange.def is written.
+    CDataFileHead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
-       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
-             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-              2Sz = 0  
-      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
-
-######  Print Expert input files  ######
-
-    zlocspin.def is written.
-      zTrans.def is written.
-   zInterAll.def is written.
-    namelist.def is written.
-     calcmod.def is written.
+           NOmega = 200         ######  DEFAULT VALUE IS USED  ######
+         OmegaMax = 72.00000    ######  DEFAULT VALUE IS USED  ######
+         OmegaMin = -72.00000   ######  DEFAULT VALUE IS USED  ######
+          OmegaIm = 0.04000     ######  DEFAULT VALUE IS USED  ######
+              2Sz = 0
      modpara.def is written.
+
+  @ Spectrum
+
+       SpectrumQW = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQL = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQH = 0.00000     ######  DEFAULT VALUE IS USED  ######
+     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######
+        pair.def is written.
+
+
+  @ CalcMod
+
+          Restart = none        ######  DEFAULT VALUE IS USED  ######
+   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######
+       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######
+         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######
+     calcmod.def is written.
+
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
     greenone.def is written.
     greentwo.def is written.
+    namelist.def is written.
 
 ######  Input files are generated.  ######
 
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
-  Read File 'zlocspn.def' for LocSpin.
-  Read File 'zTrans.def' for Trans.
-  Read File 'zInterAll.def' for InterAll.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
   Read File 'greenone.def' for OneBodyG.
   Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
 
 ######  Definition files are correct.  ######
 
-  Read File 'zlocspn.def'.
-  Read File 'zTrans.def'.
-  Read File 'zInterAll.def'.
+  Read File 'locspn.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
   Read File 'greenone.def'.
   Read File 'greentwo.def'.
+  Read File 'pair.def'.
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=12870 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.001236 GB 
+  MAX DIMENSION idim_max=12870
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.001647 GB
 
 
 ######  MPI site separation summary  ######
@@ -183,88 +238,97 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
 
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0           12870     8      8      8         0   
+          0           12870     8      8      8         0
 
    Total dimension : 12870
 
 
 ######  LARGE ALLOCATE FINISH !  ######
 
-  Start: Calculate HilbertNum for fixed Sz. 
-  End  : Calculate HilbertNum for fixed Sz. 
+  Start: Calculate HilbertNum for fixed Sz.
+  End  : Calculate HilbertNum for fixed Sz.
 
-  Start: Calculate diagaonal components of Hamiltonian. 
-  End  : Calculate diagaonal components of Hamiltonian. 
+  Start: Calculate diagaonal components of Hamiltonian.
+  End  : Calculate diagaonal components of Hamiltonian.
 
-######  Start: Calculate Lanczos Eigenvalue.  ######
+######  Eigenvalue with LOBPCG  #######
 
-  initial_mode=0 normal: iv = 6437 i_max=12870 k_exct =1 
+  initial_mode=1 (random): iv = -1 i_max=12870 k_exct =1
 
-  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite
-  stp = 2 0.7192235936 2.7807764064 xxxxxxxxxx xxxxxxxxx 
-  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 0.2140174366 
-  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 0.2277205490 
-  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 0.2325450330 
+    Step   Residual-2-norm     Threshold      Energy
+        1     2.44343e+00     1.00000e-07          -5.27456e-01
+        2     2.76604e+00     1.87217e-07          -1.87217e+00
+        3     2.61923e+00     4.19088e-07          -4.19088e+00
+        4     2.57106e+00     5.97098e-07          -5.97098e+00
 \end{verbatim}
 \normalsize
 (中略)
 \small
 \begin{verbatim}
-  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 0.2499999989 
-  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 0.2499999996 
-  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 0.2499999999 
+       40     7.39431e-06     1.12285e-06          -1.12285e+01
+       41     4.15948e-06     1.12285e-06          -1.12285e+01
+       42     2.04898e-06     1.12285e-06          -1.12285e+01
+       43     9.92048e-07     1.12285e-06          -1.12285e+01
 
 ######  End  : Calculate Lanczos EigenValue.  ######
 
-######  Start: Calculate Eigenvector.  ######
 
-  Start: Calculate Lanczos Eigenvector.
-  End  : Calculate Lanczos Eigenvector.
-  Start: Calculate Energy.
-  End  : Calculate Energy.
+######  End  : Calculate Lanczos EigenVec.  ######
 
-  Accuracy check !!!
-  LanczosEnergy = -7.14229636061676e+00 
-  EnergyByVec   = -7.14229636061616e+00 
-  diff_ene      = 8.50586433832080e-14 
-  var           = 9.97303843188625e-14 
-  Accuracy of Lanczos vectors is enough.
-
-######  End  : Calculate Eigenvector.  ######
-
-  Start: Calculate one body Green functions.
-  End  : Calculate one body Green functions.
-
-  Start: Calculate two bodies Green functions.
-  End  : Calculate two bodies Green functions.
-
+i=    0 Energy=-11.228483 N= 16.000000 Sz=  0.000000 Doublon=  0.000000
 \end{verbatim}
 \normalsize
 
 この実行では、はじめにハミルトニアンの詳細を記述するファイル
-\verb|zlocspin.def|、\verb|zTrans.def|、\verb|zInterAll.def|、
+\verb|locspin.def|、\verb|trans.def|、\verb|exchange.def|、
+\verb|coulombintra.def|、\verb|hund.def|、
 \verb|namelist.def|、\verb|calcmod.def|、\verb|modpara.def|
 と、結果として出力する相関関数の要素を指定するファイル
 \verb|greenone.def|、\verb|greentwo.def|が生成されます。
 これらのファイルはエキスパートモードと共通です。
 
-\begin{screen}
-\Large 
-{\bf Tips}
-\normalsize
-
-Lanczos法による計算の偶数ステップで標準出力される情報のうち、
-\verb|E_Max / Nsite|の列の値は最大固有値をサイト数で割ったものとなっています
-(上の例では\verb|0.2499999999=0.25|に収束しています)。
-この値よりも大きい値をTPQ法での\verb|Largevalue|として使うことが出来ます。
-
-\end{screen}
+%\begin{screen}
+%\Large 
+%{\bf Tips}
+%\normalsize
+%
+%Lanczos法による計算の偶数ステップで標準出力される情報のうち、
+%\verb|E_Max / Nsite|の列の値は最大固有値をサイト数で割ったものとなっています
+%(上の例では\verb|0.2499999999=0.25|に収束しています)。
+%この値よりも大きい値をTPQ法での\verb|Largevalue|として使うことが出来ます。
+%
+%\end{screen}
 
 \subsubsection{計算結果出力}
 \begin{description}
+
+\item {\bf 局所最適ブロック共役勾配(LOBCG)法}\\
+入力ファイルで\verb|method = "CG"|を選択すると、LOBCG法での計算が行われます。
+LOBCG法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、
+  二体グリーン関数が計算され、ファイル出力されます。
+以下に、このサンプルでの出力ファイル例を記載します。
+以下に、このサンプルでの出力ファイル例を記載します。
+(xxには0から始まる固有値番号が入ります)。
+
+\begin{minipage}{14cm}
+\begin{screen}
+\begin{verbatim}
+zvo_energy.dat zvo_cisajs_eigen_xx.dat
+zvo_cisajscktalt_eigen_xx.dat
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+スタンダードモードの場合は、\verb|greenone.def|、\verb|greentwo.def|に基づき、
+zvo\_cisajs\_eigen\_xx.dat、zvo\_cisajscktalt\_eigen\_xx.datに
+固有値番号に対応した一体グリーン関数および二体グリーン関数の値が出力されます。
+各ファイルの詳細は、それぞれ\ref{Subsec:eigenvalue} - \ref{Subsec:cisajscktalt}
+に記載がありますので、ご参照ください。
+  
 \item {\bf Lanczos法}\\
-Lanczos法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。
-以下に、このサンプルでの出力ファイル例を記載します。\\
+  Lanczos法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、
+  二体グリーン関数が計算され、ファイル出力されます。
+  
 \begin{minipage}{12cm}
 \begin{screen}
 \begin{verbatim}
@@ -274,10 +338,20 @@ zvo_cisajscktalt.dat
 \end{screen}
 \end{minipage}
 
-スタンダードモードの場合は、\verb|greenone.def|、\verb|greentwo.def|に基づき、一体グリーン関数には$\langle n_{i\sigma} \rangle$、二体グリーン関数には$\langle n_{i\sigma} n_{j\sigma'} \rangle$が自動出力されます。なお、Lanczos法で求めた固有ベクトルが十分な精度を持つ場合にはその固有ベクトルで計算されます。一方、Lanczos法で求めた固有ベクトルが十分な精度を持たない場合には、ログ出力に「Accuracy of Lanczos vetor is not enough」が表示され、CG法で固有ベクトルが求められます。各ファイルの詳細は\ref{subsec:energy.dat}, \ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
+スタンダードモードの場合は、\verb|greenone.def|、\verb|greentwo.def|に基づき、
+一体グリーン関数には$\langle n_{i\sigma} \rangle$、
+二体グリーン関数には$\langle n_{i\sigma} n_{j\sigma'} \rangle$が自動出力されます。
+なお、Lanczos法で求めた固有ベクトルが十分な精度を持つ場合には
+その固有ベクトルで計算されます。
+一方、Lanczos法で求めた固有ベクトルが十分な精度を持たない場合には、
+ログ出力に「Accuracy of Lanczos vetor is not enough」が表示され、
+CG法で固有ベクトルが求められます。各ファイルの詳細は\ref{subsec:energy.dat},
+\ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
 
 \item {\bf TPQ法}\\
-入力ファイルで\verb|method = "TPQ"|を選択すると、TPQ法での計算が行われます。TPQ法での計算が正常終了すると、以下のファイルが出力されます(\%\%にはrunの回数、\&\&にはTPQのステップ数が入ります)。\\
+  入力ファイルで\verb|method = "TPQ"|を選択すると、TPQ法での計算が行われます。
+  TPQ法での計算が正常終了すると、以下のファイルが出力されます
+  (\%\%にはrunの回数、\&\&にはTPQのステップ数が入ります)。\\
 \begin{minipage}{14cm}
 \begin{screen}
 \begin{verbatim}
@@ -288,8 +362,6 @@ zvo_cisajscktalt_set%%step&&.dat
 \end{screen}
 \end{minipage}
 Norm\_rand\%\%.datには、逆温度や波動関数の規格前の大きさなどの基礎情報が、各run回数に応じステップ数とともに出力されます。また、SS\_rand\%\%.datには、逆温度、エネルギー、ハミルトニアンの二乗の期待値などの物理量が各run回数に応じステップ数とともに出力されます。zvo\_cisajs\_set\%\%step\&\&.dat, zvo\_cisajscktalt\_set\%\%step\&\&.datには各run回数でのステップ数に応じた一体グリーン関数および二体グリーン関数が出力されます。各ファイルの詳細はそれぞれ、\ref{Subsec:normrand}, \ref{Subsec:ssrand}, \ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
-
-
 
 \item {\bf 全対角化法}\\
 入力ファイルで\verb|method = "fulldiag"|を選択すると、全対角化法での計算が行われます。
@@ -305,40 +377,18 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 
 Eigenvalue.datには固有値番号およびエネルギー固有値が出力されます。また、zvo\_cisajs\_eigen\_xx.dat、zvo\_cisajscktalt\_eigen\_xx.datには固有値番号に対応した一体グリーン関数および二体グリーン関数の値が出力されます。また、zvo\_phys\_Nup4\_Ndown4.datには、エネルギーやダブロンの期待値などの物理量が出力されます。各ファイルの詳細は、それぞれ\ref{Subsec:eigenvalue} - \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
 
-
 \end{description}
 
 \subsection{その他の系でのチュートリアル}
 
-\verb|samples/Standard/|以下には次のチュートリアルが含まれています。
-
-\begin{itemize}
-\item 2次元正方格子Hubbardモデル
-
-  (\verb|samples/Standard/Hubbard/square/|)
-\item 2次元三角格子Hubbardモデル
-
-  (\verb|samples/Standard/Hubbard/triangular/|)
-\item 1次元近藤格子モデル
-
-  (\verb|samples/Standard/Kondo/chain/|)
-\item 1次元反強磁性的Heisenbergモデル
-
-  (\verb|samples/Standard/Spin/HeisenbergChain/HeisenbergChain/|)
-\item 2次元正方格子反強磁性的Heisenbergモデル
-
-  (\verb|samples/Standard/Spin/HeisenbergSquare/|)
-\item Kitaevモデル(Honeycomb格子、2$\times$3サイト)
-
-  (\verb|samples/Standard/Spin/Kitaev/|)
-
-\end{itemize}
-
-これらのチュートリアルの実行方法は前節と同じです。
+\verb|samples/|以下にはこの他にも様々なチュートリアルが置いてあります。
+それぞれのチュートリアルの内容や手順については、
+各ディレクトリにある\verb|README.md|をご覧ください。
 
 %----------------------------------------------------------
 \newpage
 \section{エキスパートモード}
+
 エキスパートモードでは、入力ファイルとして
 \begin{enumerate}
 \item 入力ファイルリスト
@@ -346,19 +396,18 @@ Eigenvalue.datには固有値番号およびエネルギー固有値が出力さ
 \item Hamiltonian作成用ファイル
 \item 出力結果指定用ファイル
 \end{enumerate}
-を用意した後、計算を行います。計算開始後に関しては、スタンダードモードと同様です。ここでは"{\it InstallDir}/samples/Expert/Spin/HeisenbergChain"にある16サイトの一次元鎖量子ハイゼンベルグ模型
-\begin{equation}
-H=\sum_{i=0}^{15} J {\bm S}_i\cdot {\bm S}_{i+1}
-\end{equation}
-を例に入力ファイルの作成に関する説明を行います(ただし、$J=2$, ${\bm S}_{16}={\bm S}_{0}$)。なお、サンプルディレクトリの中には下記の入力ファイルが用意されています。\\
-\begin{minipage}{15cm}
-\begin{screen}
-\begin{verbatim}
-calcmod.def   greentwo.def  namelist.def  zTrans.def
-greenone.def  modpara.def   zInterAll.def zlocspn.def
-\end{verbatim}
-\end{screen}
-\end{minipage}
+を用意した後、計算を行います。計算開始後に関しては、スタンダードモードと同様です。
+ここでは前節のスタンダードモードでのチュートリアルを行った後の状況
+を例に入力ファイルの作成に関する説明を行います。
+%なお、サンプルディレクトリの中には下記の入力ファイルが用意されています。\\
+%\begin{minipage}{15cm}
+%\begin{screen}
+%\begin{verbatim}
+%calcmod.def   greentwo.def  namelist.def  zTrans.def
+%greenone.def  modpara.def   zInterAll.def zlocspn.def
+%\end{verbatim}
+%\end{screen}
+%\end{minipage}
 
 \subsection{入力ファイルリストファイル}
 入力ファイルの種類と名前を指定するファイルnamelist.defには、下記の内容が記載されています。各入力ファイルリストファイルでは、行毎にKeywordとファイル名を記載し、ファイルの種類の区別を行います。詳細は\ref{Subsec:InputFileList}をご覧ください。
@@ -366,13 +415,16 @@ greenone.def  modpara.def   zInterAll.def zlocspn.def
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
-CalcMod calcmod.def
-ModPara modpara.def
-LocSpin zlocspn.def
-Trans zTrans.def
-InterAll zInterAll.def
-OneBodyG greenone.def
-TwoBodyG greentwo.def
+         ModPara  modpara.def
+         LocSpin  locspn.def
+    CoulombInter  coulombinter.def
+            Hund  hund.def
+        Exchange  exchange.def
+        OneBodyG  greenone.def
+        TwoBodyG  greentwo.def
+         CalcMod  calcmod.def
+  PairExcitation  pair.def
+     SpectrumVec  zvo_eigenvec_0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -381,20 +433,31 @@ TwoBodyG greentwo.def
 計算モード、計算用パラメータ、局在スピンの位置を以下のファイルで指定します。
 \begin{description}
 \item {\bf 計算モードの指定}\\
-CalcModでひも付けられるファイル(ここではcalcmod.def)で計算モードを指定します。ファイルの中身は下記の通りです。\\
+  CalcModでひも付けられるファイル(ここではcalcmod.def)で計算モードを指定します。
+  ファイルの中身は下記の通りです。\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
-#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag
-#CalcMod = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 
-4:SpinGC, 5:KondoGC 
-CalcType   0
+#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG
+#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ..
+#Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart
+#CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, ...
+CalcType   3
 CalcModel   1
+ReStart   0
+CalcSpec   0
+CalcEigenVec   0
+InitialVecType   0
+InputEigenVec   0
+OutputEigenVec   0
 \end{verbatim}
 \end{screen}
 \end{minipage}
 ~\\
-CalcTypeで計算手法の選択、CalcModelで対象モデルの選択を行います。ここでは、計算手法としてLanczos法、対象モデルとしてスピン系(カノニカル)を選択しています。{CalcModファイルでは固有ベクトルの入出力機能も指定することができます。}CalcModファイルの詳細は\ref{Subsec:calcmod}をご覧ください。\\
+CalcTypeで計算手法の選択、CalcModelで対象モデルの選択を行います。
+ここでは、計算手法としてLOBCG法、対象モデルとしてスピン系(カノニカル)を選択しています。
+{CalcModファイルでは固有ベクトルの入出力機能も指定することができます。}
+CalcModファイルの詳細は\ref{Subsec:calcmod}をご覧ください。\\
 
 \item {\bf 計算用パラメータの指定}\\
 ModParaでひも付けられるファイル(ここではmodpara.def)で計算用パラメータを指定します。ファイルの中身は下記の通りです。\\
@@ -404,23 +467,25 @@ ModParaでひも付けられるファイル(ここではmodpara.def)で計算用
 --------------------
 Model_Parameters   0
 --------------------
-VMC_Cal_Parameters
+HPhi_Cal_Parameters
 --------------------
 CDataFileHead  zvo
 CParaFileHead  zqp
 --------------------
 Nsite          16   
-Ncond          16    
 2Sz            0    
-Lanczos_max    1000 
-initial_iv     12   
-nvec           1    
+Lanczos_max    2000 
+initial_iv     -1   
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
-LargeValue     12   
+LargeValue     4.500000000000000e+00    
 NumAve         5    
-ExpecInterval  20 
+ExpecInterval  20   
+NOmega         200  
+OmegaMax       7.200000000000000e+01     4.000000000000000e-02    
+OmegaMin       -7.200000000000000e+01    4.000000000000000e-02    
+OmegaOrg       0.0 0.0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -428,7 +493,7 @@ ExpecInterval  20
 このファイルでは、サイト数、{伝導電子の数、トータル$S_z$}やLanczosステップの最大数などを指定します。ModParaファイルの詳細は\ref{Subsec:modpara}をご覧ください。\\
 
 \item {\bf 局在スピンの位置の指定}\\
-LocSpinでひも付けられるファイル(ここではzlocspn.def)で局在スピンの位置と$S$の値を指定します。ファイルの中身は下記の通りです。\\
+LocSpinでひも付けられるファイル(ここではlocspn.def)で局在スピンの位置と$S$の値を指定します。ファイルの中身は下記の通りです。\\
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
@@ -452,13 +517,15 @@ LocSpinファイルの詳細は\ref{Subsec:locspn}をご覧ください。
 \end{description}
 
 \subsection{Hamiltonianの指定}
-基本パラメータを設定した後は、Hamiltonianを構築するためのファイルを作成します。$\HPhi$では、電子系の表現で計算を行うため、スピン系では以下の関係式
+基本パラメータを設定した後は、Hamiltonianを構築するためのファイルを作成します。
+$\HPhi$では、電子系の表現で計算を行うため、スピン系では以下の関係式
 \begin{align}
 S_z^{(i)}&=(c_{i\uparrow}^{\dag}c_{i\uparrow}-c_{i\downarrow}^{\dag}c_{i\downarrow})/2,\\
 S_+^{(i)}&=c_{i\uparrow}^{\dag}c_{i\downarrow},\\
 S_-^{(i)}&=c_{i\downarrow}^{\dag}c_{i\uparrow}
 \end{align}
 を用い、電子系の演算子に変換しHamiltonianの作成をする必要があります。
+
 \begin{description}
 \item {\bf Transfer部の指定}\\
 Transでひも付けられるファイル(ここではzTrans.def)で電子系のTransferに相当するHamiltonian
@@ -622,33 +689,6 @@ NCisAjsCktAltDC       1024
 ~\\
 計算開始後のプロセスは、スタンダードモードと同様になります。
 
-\subsection{その他の系でのチュートリアル}
-
-\verb|samples/Expert/|以下には次のチュートリアルが含まれています。
-
-\begin{itemize}
-\item 2次元正方格子Hubbardモデル
-
-  (\verb|samples/Expert/Hubbard/square/|)
-\item 2次元三角格子Hubbardモデル
-
-  (\verb|samples/Expert/Hubbard/triangular/|)
-\item 1次元近藤格子モデル
-
-  (\verb|samples/Expert/Kondo/chain/|)
-\item 1次元反強磁性的Heisenbergモデル
-
-  (\verb|samples/Expert/Spin/HeisenbergChain/HeisenbergChain/|)
-\item 2次元正方格子反強磁性的Heisenbergモデル
-
-  (\verb|samples/Expert/Spin/HeisenbergSquare/|)
-\item Kitaevモデル(Honeycomb格子、2$\times$3サイト)
-
-  (\verb|samples/Expert/Spin/Kitaev/|)
-
-\end{itemize}
-
-これらのチュートリアルの実行方法は前節と同じです。
 \newpage
 \section{エキスパート用入力ファイル作成モード}
 スタンダードモードで定義したモデルを対象に、エキスパート用入力ファイルを作成するモードです。使用方法は下記の通りです。
