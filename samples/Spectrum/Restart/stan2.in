@@ -1,0 +1,22 @@
+a0W = 2
+a0L = 2
+a1W = -2
+a1L = 2
+model = "hubbard"
+method = "CG"
+lattice = "square"
+t = 1.0
+t' = 0.5
+U = 4.0
+2Sz = 0
+nelec = 8
+LanczosEPS = 8
+CalcSpec = "Restart"
+SpectrumType = "SzSz"
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+OmegaMin = -10.0
+OmegaMax = 20.0
+OmegaIM = 0.2 
+Lanczos_max = 100
+

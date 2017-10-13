@@ -1,0 +1,8 @@
+model = "Spin"
+lattice = "Chain"
+method = "CG"
+L = 10
+J = 1.0
+2S = 2
+2Sz = 0
+exct = 2

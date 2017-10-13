@@ -1,4 +1,4 @@
-# 8-site Hubbard model on square lattice
+# 6-site Kondo lattice model on the triangular lattice
 
 Compute the ground state and plot correlation function.
 

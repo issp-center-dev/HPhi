@@ -1,0 +1,12 @@
+model = "Kondo"
+method = "CG"
+lattice = "Triangular"
+a0W = 3
+a0L = 0
+a1W = -1
+a1L = 2
+t = 1.0
+J = 1.0
+nelec = 6
+2Sz = 0
+exct = 1
