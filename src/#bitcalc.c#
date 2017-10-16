@@ -52,11 +52,10 @@ int GetSplitBit(
     fprintf(stderr, "%s", cErrSiteNumber);
     return -1;
   }
-  *irght =1;
-  *irght= (*irght<<(unsigned long int)((Nsite+1)/2))-1;
-  *ilft=1;
-  *ilft = (*ilft<<(unsigned long int)Nsite)-1;
-  *ilft= *ilft ^ *irght;
+  *irght=1;
+  *irght=(*ir)pow(2,((Nsite+1)/2))-1;
+  *ilft=pow(2,Nsite)-1;
+  *ilft=*ilft ^ *irght; 
   *ihfbit=pow(2,((Nsite+1)/2));
   return 0;
 }
@@ -208,10 +207,6 @@ int GetOffComp(
   *_ioffComp =_list_2_1[ia];
   *_ioffComp+=_list_2_2[ib];
 */
-
-  //if(myrank==1)
-  //printf( "DEGBUG:_ibit=%ld, _list_2_1=%ld, _list_2_2=%ld\n", _ibit, _list_2_1[ia], _list_2_2[ib]);
-
   if(_list_2_1[ia]*_list_2_2[ib]==0){
     *_ioffComp=0;
     return FALSE;
@@ -463,7 +458,7 @@ int GetLocal2Sz
 /** 
  * 
  * @brief "finding the next higher number after a given number that has the same number of 1-bits" 
- * This method is introduced in S.H. Warren, Hacker$B!G(Bs Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
+ * This method is introduced in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
  *
  * @param x 
  * 
@@ -482,7 +477,7 @@ unsigned long int snoob(unsigned long int x){
 /** 
  * 
  * @brief calculating number of 1-bits in x (32 bit)
- * This method is introduced in S.H. Warren, Hacker$B!G(Bs Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
+ * This method is introduced in S.H. Warren, Hacker’s Delight, second ed., Addison-Wesley, ISBN: 0321842685, 2012.
  *
  * @param x 
  * 
