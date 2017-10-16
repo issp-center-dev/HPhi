@@ -210,11 +210,8 @@ void expec_cisajscktaltdc_alldiag(struct BindStruct *X,double complex *vec){ // 
     
   N2=2*X->Def.Nsite;
   i_max=X->Check.idim_max;
-    
-  irght=pow(2,((N2+1)/2))-1;
-  ilft=pow(2,N2)-1;
-  ilft=ilft ^ irght; 
-  ihfbit=pow(2,((N2+1)/2));
+
+  GetSplitBit(N2, &irght, &ilft, &ihfbit);
   chrg=0.0;
   spn=0.0;
   t_spn_z=0.0;

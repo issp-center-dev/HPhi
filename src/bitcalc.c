@@ -52,12 +52,12 @@ int GetSplitBit(
     fprintf(stderr, "%s", cErrSiteNumber);
     return -1;
   }
-  *irght =1;
-  *irght= (*irght<<(unsigned long int)((Nsite+1)/2))-1;
+  *ihfbit=1;
+  *ihfbit=(*ihfbit<<(unsigned long int)((Nsite+1)/2));
+  *irght = *ihfbit-1;
   *ilft=1;
   *ilft = (*ilft<<(unsigned long int)Nsite)-1;
   *ilft= *ilft ^ *irght;
-  *ihfbit=pow(2,((Nsite+1)/2));
   return 0;
 }
 
