@@ -323,14 +323,13 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
   !
   ! Convergence check
   !
-  v12(1) = CMPLX(SQRT(DBLE(zdotcMPI(ndim,v2,v2))), 0d0, KIND(0d0))
-  resnorm = DBLE(v12(1))
+  resnorm = SQRT(DBLE(zdotcMPI(ndim,v2,v2)))
   !
   DO iz = 1, nz
-     IF(ABS(v12(1)/pi(iz)) < threshold) lz_conv(iz) = .TRUE.
+     IF(ABS(resnorm/pi(iz)) < threshold) lz_conv(iz) = .TRUE.
   END DO
   !
-  IF(DBLE(v12(1)) < threshold) THEN
+  IF(resnorm < threshold) THEN
      !
      ! Converged
      !
@@ -354,6 +353,8 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
      status(1) = iter
      status(2) = 0
   END IF
+  !
+  IF(ndim > 0) v12(1) = resnorm
   !
 END SUBROUTINE komega_BICG_restart
 !>
@@ -431,14 +432,13 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   !
   ! Convergence check
   !
-  v12(1) = CMPLX(SQRT(DBLE(zdotcMPI(ndim,v2,v2))), 0d0, KIND(0d0))
-  resnorm = DBLE(v12(1))
+  resnorm = SQRT(DBLE(zdotcMPI(ndim,v2,v2)))
   !
   DO iz = 1, nz
-     IF(ABS(v12(1)/pi(iz)) < threshold) lz_conv(iz) = .TRUE.
+     IF(ABS(resnorm/pi(iz)) < threshold) lz_conv(iz) = .TRUE.
   END DO
   !
-  IF(DBLE(v12(1)) < threshold) THEN
+  IF(resnorm < threshold) THEN
      !
      ! Converged
      !
@@ -472,6 +472,8 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
      status(1) = iter
      status(2) = 0
   END IF
+  !
+  IF(ndim > 0) v12(1) = resnorm
   !
 END SUBROUTINE komega_BICG_update
 !>
