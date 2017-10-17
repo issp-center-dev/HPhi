@@ -222,10 +222,17 @@ SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
   threshold = threshold0
   !
   comm = 0
-  IF(PRESENT(comm0)) comm = comm0
   lmpi = .FALSE.
-#if defined(MPI)
-  IF(PRESENT(comm0)) lmpi = .TRUE.
+#if defined(FUJITSU)
+  comm = comm0
+  lmpi = .TRUE.
+#elif defined(MPI)
+  IF(PRESENT(comm0)) THEN
+     comm = comm0
+     lmpi = .TRUE.
+  END IF
+#else
+  IF(PRESENT(comm0)) comm = comm0
 #endif
   !
   ALLOCATE(z(nz), v3(ndim), v5(ndim), pi(nz), pi_old(nz), p(nl,nz), lz_conv(nz))
@@ -287,11 +294,15 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
   !
   INTEGER :: iz
   !
+#if defined(FUJITSU)
+  CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
+#else
   IF(PRESENT(comm0)) THEN
      CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
   ELSE
      CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0)
   END IF
+#endif
   z_seed = z_seed0
   iz_seed = 0
   !
