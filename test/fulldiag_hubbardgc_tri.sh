@@ -15,7 +15,7 @@ t = 1.0
 U = 4.0
 EOF
 
-../../src/HPhi -s stan.in
+${MPIRUNFC} ../../src/HPhi -s stan.in
 
 # Check value
 

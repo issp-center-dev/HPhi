@@ -14,7 +14,7 @@ lattice = "triangular"
 J = 1.0
 EOF
 
-../../src/HPhi -s stan.in
+${MPIRUNFC} ../../src/HPhi -s stan.in
 
 # Check value
 
