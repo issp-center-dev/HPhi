@@ -142,8 +142,7 @@ include/wrapperMPI.h \
 include/xsetmem.h \
 include/xsetmem_def.h \
 include/xsetmem_large.h \
-komega/komega_bicg.h \
-komega/pkomega_bicg.h
+komega/komega.h
 
 all:
 	cd StdFace; make -f makefile_StdFace
