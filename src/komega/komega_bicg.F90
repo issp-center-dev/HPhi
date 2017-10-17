@@ -209,7 +209,11 @@ SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
   REAL(C_DOUBLE),INTENT(IN) :: threshold0
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: z0(nz0)
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: x(nl0,nz0)
-  INTEGER,INTENT(IN),OPTIONAL :: comm0
+#if defined(FUJITSU)
+  INTEGER(C_INT),INTENT(IN) :: comm0
+#else
+  INTEGER(C_INT),INTENT(IN),OPTIONAL :: comm0
+#endif
   !
   ndim = ndim0
   nl = nl0
@@ -266,7 +270,11 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: z0(nz0)
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: x(nl0,nz0)
   INTEGER(C_INT),INTENT(OUT) :: status(3)
-  INTEGER,INTENT(IN),OPTIONAL :: comm0
+#if defined(FUJITSU)
+  INTEGER(C_INT),INTENT(IN) :: comm0
+#else
+  INTEGER(C_INT),INTENT(IN),OPTIONAL :: comm0
+#endif
   !
   ! For Restarting
   !
