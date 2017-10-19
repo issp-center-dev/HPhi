@@ -209,11 +209,7 @@ SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
   REAL(C_DOUBLE),INTENT(IN) :: threshold0
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: z0(nz0)
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: x(nl0,nz0)
-#if defined(FUJITSU)
   INTEGER(C_INT),INTENT(IN) :: comm0
-#else
-  INTEGER(C_INT),INTENT(IN),OPTIONAL :: comm0
-#endif
   !
   ndim = ndim0
   nl = nl0
@@ -221,18 +217,11 @@ SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
   itermax = itermax0
   threshold = threshold0
   !
-  comm = 0
-  lmpi = .FALSE.
-#if defined(FUJITSU)
   comm = comm0
+#if defined(MPI)
   lmpi = .TRUE.
-#elif defined(MPI)
-  IF(PRESENT(comm0)) THEN
-     comm = comm0
-     lmpi = .TRUE.
-  END IF
 #else
-  IF(PRESENT(comm0)) comm = comm0
+  lmpi = .FALSE.
 #endif
   !
   ALLOCATE(z(nz), v3(ndim), v5(ndim), pi(nz), pi_old(nz), p(nl,nz), lz_conv(nz))
@@ -277,11 +266,7 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(IN) :: z0(nz0)
   COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: x(nl0,nz0)
   INTEGER(C_INT),INTENT(OUT) :: status(3)
-#if defined(FUJITSU)
   INTEGER(C_INT),INTENT(IN) :: comm0
-#else
-  INTEGER(C_INT),INTENT(IN),OPTIONAL :: comm0
-#endif
   !
   ! For Restarting
   !
@@ -294,15 +279,8 @@ SUBROUTINE komega_BICG_restart(ndim0, nl0, nz0, x, z0, itermax0, threshold0, sta
   !
   INTEGER :: iz
   !
-#if defined(FUJITSU)
   CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
-#else
-  IF(PRESENT(comm0)) THEN
-     CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
-  ELSE
-     CALL komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0)
-  END IF
-#endif
+  !
   z_seed = z_seed0
   iz_seed = 0
   !

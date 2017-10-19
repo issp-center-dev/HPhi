@@ -49,13 +49,12 @@ void ReadTMComponents_BiCG(
   double complex *alphaCG, *betaCG, *res_save, z_seed;
   double z_seed_r, z_seed_i, alpha_r, alpha_i, beta_r, beta_i, res_r, res_i;
   FILE *fp;
-  int *comm;
+  int comm;
 
 #if defined(MPI)
-  comm = (int*)malloc(sizeof(int));
-  comm[0] = MPI_Comm_c2f(MPI_COMM_WORLD);
+  comm = MPI_Comm_c2f(MPI_COMM_WORLD);
 #else
-  comm = NULL;
+  comm = 0;
 #endif
   idim_max2int = (int)X->Bind.Check.idim_max;
 
@@ -67,7 +66,7 @@ void ReadTMComponents_BiCG(
       fprintf(stdoutMPI, "INFO: File for the restart is not found.\n");
       fprintf(stdoutMPI, "      Start from SCRATCH.\n");
       max_step = (int)X->Bind.Def.Lanczos_max;
-      komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, comm);
+      komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
     }
     else {
       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
@@ -101,7 +100,7 @@ void ReadTMComponents_BiCG(
       max_step = (int)(iter_old + X->Bind.Def.Lanczos_max);
 
       komega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
-        &iter_old, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save, comm);
+        &iter_old, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save, &comm);
       free(alphaCG);
       free(betaCG);
       free(res_save);
@@ -109,12 +108,9 @@ void ReadTMComponents_BiCG(
   }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_NOT)*/
   else {
     max_step = (int)X->Bind.Def.Lanczos_max;
-    komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, comm);
+    komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
   }
 
-#if defined(MPI)
-  free(comm);
-#endif
 }/*int ReadTMComponents_BiCG*/
 /**@brief
 write @f$\alpha, \beta@f$, projected residual for restart
