@@ -26,6 +26,7 @@ samples/CG/Heisenberg/stan.in
   {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i j+1}
   )
 \end{align}
+ただし、周期境界条件($S_{1 5} = S_{5 1}= S_{1 1}$)を採用します。
 インプットファイルの中身は次のとおりです。
 \\
 \begin{minipage}{10cm}
@@ -346,7 +347,7 @@ zvo_cisajscktalt.dat
 一方、Lanczos法で求めた固有ベクトルが十分な精度を持たない場合には、
 ログ出力に「Accuracy of Lanczos vetor is not enough」が表示され、
 CG法で固有ベクトルが求められます。各ファイルの詳細は\ref{subsec:energy.dat},
-\ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
+\ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
 
 \item {\bf TPQ法}\\
   入力ファイルで\verb|method = "TPQ"|を選択すると、TPQ法での計算が行われます。
@@ -361,7 +362,7 @@ zvo_cisajscktalt_set%%step&&.dat
 \end{verbatim}
 \end{screen}
 \end{minipage}
-Norm\_rand\%\%.datには、逆温度や波動関数の規格前の大きさなどの基礎情報が、各run回数に応じステップ数とともに出力されます。また、SS\_rand\%\%.datには、逆温度、エネルギー、ハミルトニアンの二乗の期待値などの物理量が各run回数に応じステップ数とともに出力されます。zvo\_cisajs\_set\%\%step\&\&.dat, zvo\_cisajscktalt\_set\%\%step\&\&.datには各run回数でのステップ数に応じた一体グリーン関数および二体グリーン関数が出力されます。各ファイルの詳細はそれぞれ、\ref{Subsec:normrand}, \ref{Subsec:ssrand}, \ref{Subsec:cgcisajs}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
+Norm\_rand\%\%.datには、逆温度や波動関数の規格前の大きさなどの基礎情報が、各run回数に応じステップ数とともに出力されます。また、SS\_rand\%\%.datには、逆温度、エネルギー、ハミルトニアンの二乗の期待値などの物理量が各run回数に応じステップ数とともに出力されます。zvo\_cisajs\_set\%\%step\&\&.dat, zvo\_cisajscktalt\_set\%\%step\&\&.datには各run回数でのステップ数に応じた一体グリーン関数および二体グリーン関数が出力されます。各ファイルの詳細はそれぞれ、\ref{Subsec:normrand}, \ref{Subsec:ssrand}, \ref{Subsec:cisajscktalt}に記載がありますので、ご参照ください。
 
 \item {\bf 全対角化法}\\
 入力ファイルで\verb|method = "fulldiag"|を選択すると、全対角化法での計算が行われます。
@@ -449,7 +450,6 @@ CalcSpec   0
 CalcEigenVec   0
 InitialVecType   0
 InputEigenVec   0
-OutputEigenVec   0
 \end{verbatim}
 \end{screen}
 \end{minipage}

@@ -22,9 +22,10 @@ that has a nearest neighbor spin coupling.
 \begin{align}
   {\hat H} = J \sum_{i,j=1}^{4}(
   {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i+1 j} +
-  {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i j+1}
+  {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i j+1},
   )
 \end{align}
+where we use the periodic boundary condition ($S_{1 5} = S_{5 1}= S_{1 1}$).
 
 The input file is as follows:
 \\
@@ -415,6 +416,7 @@ Secs. \ref{Subsec:eigenvalue} - \ref{Subsec:cisajscktalt}.
 There are many tutorials in \verb|samples/Standard/|.
 For more details, please see \verb|README.md| at each directory.
 
+\newpage
 %----------------------------------------------------------
 \section{{\it Expert} mode}
 For Expert mode, the following input files are needed.
@@ -485,7 +487,6 @@ CalcSpec   0
 CalcEigenVec   0
 InitialVecType   0
 InputEigenVec   0
-OutputEigenVec   0
 \end{verbatim}
 \end{screen}
 \end{minipage}
