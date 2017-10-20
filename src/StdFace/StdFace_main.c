@@ -236,7 +236,7 @@ static void PrintExcitation(struct StdIntList *StdI) {
   double *fourier_r, *fourier_i;
 
   if (strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1) {
-    coef = (double *)malloc(sizeof(double) * StdI->S2 + 1);
+    coef = (double *)malloc(sizeof(double) * (StdI->S2 + 1));
     spin = (int **)malloc(sizeof(int*) * (StdI->S2 + 1));
     for (ispin = 0; ispin < StdI->S2 + 1; ispin++) spin[ispin] = (int *)malloc(sizeof(int) * 2);
   }
