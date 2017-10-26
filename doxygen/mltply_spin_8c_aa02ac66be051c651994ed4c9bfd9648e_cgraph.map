@@ -1,5 +1,5 @@
 <map id="child_general_int_spin" name="child_general_int_spin">
-<area shape="rect" id="node2" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="206,5,365,46"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="413,12,509,39"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="557,12,621,39"/>
+<area shape="rect" id="node2" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="204,5,363,47"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="411,13,507,39"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="555,13,619,39"/>
 </map>

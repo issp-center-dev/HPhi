@@ -1,4 +1,4 @@
 <map id="DSEVvalue" name="DSEVvalue">
-<area shape="rect" id="node2" href="$matrixlapack_8c.html#a39e7fcf71121e849b2cfe07980fa4869" title="M_DSYEV" alt="" coords="145,5,231,32"/>
-<area shape="rect" id="node3" href="$matrixlapack_8c.html#ae23b67a937c690208904b000fc7cbc2a" title="to_f" alt="" coords="166,56,210,83"/>
+<area shape="rect" id="node2" href="$matrixlapack_8c.html#a39e7fcf71121e849b2cfe07980fa4869" title="M_DSYEV" alt="" coords="144,5,231,32"/>
+<area shape="rect" id="node3" href="$matrixlapack_8c.html#ae23b67a937c690208904b000fc7cbc2a" title="function for transforming Row&#45;major matrix (C) to Column&#45;major matrix (Fortran) " alt="" coords="165,56,209,83"/>
 </map>

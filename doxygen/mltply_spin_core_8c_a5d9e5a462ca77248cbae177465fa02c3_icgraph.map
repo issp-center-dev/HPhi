@@ -1,51 +1,51 @@
 <map id="X_SpinGC_CisAis" name="X_SpinGC_CisAis">
-<area shape="rect" id="node2" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="expec_cisajs_SpinGCHalf" alt="" coords="897,107,1071,133"/>
-<area shape="rect" id="node11" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="expec_cisajs_SpinHalf" alt="" coords="685,157,840,184"/>
-<area shape="rect" id="node13" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="1131,222,1261,263"/>
+<area shape="rect" id="node2" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="expec_cisajs_SpinGCHalf" alt="" coords="202,5,377,32"/>
+<area shape="rect" id="node11" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="expec_cisajs_SpinHalf" alt="" coords="459,79,613,105"/>
+<area shape="rect" id="node13" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="471,138,601,179"/>
 <area shape="rect" id="node16" href="$mltply_spin_core_8c.html#aa25730bebedaef0567be1d1d3a2aa9f7" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="209,586,370,627"/>
-<area shape="rect" id="node31" href="$mltply_spin_core_8c.html#af675fc77ae3b652589d52ff3fa667b77" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="210,651,369,693"/>
-<area shape="rect" id="node32" href="$mltply_spin_core_8c.html#a220085102d48735b8111fe704e5d5993" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="210,521,369,562"/>
-<area shape="rect" id="node33" href="$_pair_ex_spin_8c.html#a61950043cc9ec8ca800510d959af0359" title="GetPairExcitedStateHalfSpin" alt="" coords="194,768,385,795"/>
-<area shape="rect" id="node37" href="$_pair_ex_spin_8c.html#af7d49c3443e674c3e095dd37cb62470c" title="GetPairExcitedStateHalfSpinGC" alt="" coords="184,717,395,744"/>
-<area shape="rect" id="node39" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="SetDiagonalInterAll" alt="" coords="917,756,1051,783"/>
-<area shape="rect" id="node41" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="237,56,341,83"/>
-<area shape="rect" id="node43" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="227,5,351,32"/>
+<area shape="rect" id="node27" href="$mltply_spin_core_8c.html#af675fc77ae3b652589d52ff3fa667b77" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="210,651,369,693"/>
+<area shape="rect" id="node28" href="$mltply_spin_core_8c.html#a220085102d48735b8111fe704e5d5993" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="210,521,369,562"/>
+<area shape="rect" id="node29" href="$_pair_ex_spin_8c.html#a61950043cc9ec8ca800510d959af0359" title="GetPairExcitedStateHalfSpin" alt="" coords="194,768,385,795"/>
+<area shape="rect" id="node33" href="$_pair_ex_spin_8c.html#af7d49c3443e674c3e095dd37cb62470c" title="GetPairExcitedStateHalfSpinGC" alt="" coords="184,717,395,744"/>
+<area shape="rect" id="node35" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="SetDiagonalInterAll" alt="" coords="469,819,603,845"/>
+<area shape="rect" id="node41" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="237,157,341,184"/>
+<area shape="rect" id="node43" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="227,208,351,235"/>
 <area shape="rect" id="node44" href="$mltply_m_p_i_spin_core_8c.html#ab23a10d5019fb27103c4726eadb32179" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="201,390,378,431"/>
 <area shape="rect" id="node45" href="$mltply_m_p_i_spin_core_8c.html#a29c17404e94c3971bee0cc0a9de81533" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="201,325,378,366"/>
 <area shape="rect" id="node46" href="$mltply_m_p_i_spin_core_8c.html#a75a9365a3be44e0de5e5850658c92109" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="201,259,378,301"/>
 <area shape="rect" id="node49" href="$mltply_m_p_i_spin_core_8c.html#a8c2107762d44860950b1deb3a1f0ce60" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="202,455,377,497"/>
-<area shape="rect" id="node3" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="1121,107,1271,133"/>
-<area shape="rect" id="node4" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="1559,213,1657,240"/>
-<area shape="rect" id="node5" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1733,391,1848,417"/>
-<area shape="rect" id="node7" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="1745,315,1837,341"/>
-<area shape="rect" id="node8" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1765,264,1816,291"/>
-<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="2064,391,2115,417"/>
-<area shape="rect" id="node9" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1899,315,2013,341"/>
-<area shape="rect" id="node10" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1896,264,2016,291"/>
-<area shape="rect" id="node12" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="1336,161,1467,188"/>
-<area shape="rect" id="node14" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="1320,247,1483,273"/>
-<area shape="rect" id="node15" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="1536,264,1680,291"/>
+<area shape="rect" id="node3" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="683,32,834,59"/>
+<area shape="rect" id="node4" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="924,205,1023,232"/>
+<area shape="rect" id="node5" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1115,256,1229,283"/>
+<area shape="rect" id="node7" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="1126,205,1218,232"/>
+<area shape="rect" id="node8" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1147,312,1197,339"/>
+<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1889,337,1940,364"/>
+<area shape="rect" id="node9" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1314,363,1427,389"/>
+<area shape="rect" id="node10" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1721,312,1841,339"/>
+<area shape="rect" id="node12" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="693,101,824,128"/>
+<area shape="rect" id="node14" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="677,172,840,199"/>
+<area shape="rect" id="node15" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="901,256,1045,283"/>
 <area shape="rect" id="node17" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="expec_cisajscktalt\l_SpinGCHalf" alt="" coords="471,390,601,431"/>
 <area shape="rect" id="node19" href="$mltply_spin_8c.html#a0dac10eb920ee6f0c6d5c064167b6cf2" title="Compute Inter&#45;All term of spin Hamiltonian (grandcanonical) " alt="" coords="447,536,625,563"/>
-<area shape="rect" id="node29" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="495,593,577,620"/>
-<area shape="rect" id="node18" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="697,361,828,402"/>
-<area shape="rect" id="node20" href="$mltply_spin_8c.html#aaacfb2aca0416786e4c48f0d5361152e" title="Driver function for Spin 1/2 Hamiltonian (grandcanonical) " alt="" coords="921,447,1047,473"/>
-<area shape="rect" id="node21" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="1145,439,1247,465"/>
-<area shape="rect" id="node22" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="1373,424,1430,451"/>
-<area shape="rect" id="node23" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1531,517,1685,544"/>
-<area shape="rect" id="node25" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="1548,416,1668,443"/>
-<area shape="rect" id="node26" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="1544,315,1672,341"/>
-<area shape="rect" id="node27" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="1561,365,1655,392"/>
-<area shape="rect" id="node28" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="1536,467,1680,493"/>
-<area shape="rect" id="node24" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="1738,619,1843,645"/>
-<area shape="rect" id="node30" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="678,619,847,645"/>
-<area shape="rect" id="node34" href="$_pair_ex_spin_8c.html#acc9ece067d6f261fd9865c9e7ca38c28" title="GetPairExcitedStateSpin" alt="" coords="453,768,619,795"/>
-<area shape="rect" id="node35" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="692,717,833,744"/>
-<area shape="rect" id="node36" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="925,688,1043,715"/>
-<area shape="rect" id="node38" href="$_pair_ex_spin_8c.html#a1629a16cc6e353c96f1626bdb0db8eed" title="GetPairExcitedStateSpinGC" alt="" coords="443,717,629,744"/>
-<area shape="rect" id="node40" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="1561,720,1655,747"/>
-<area shape="rect" id="node42" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="479,56,593,83"/>
+<area shape="rect" id="node25" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="495,593,577,620"/>
+<area shape="rect" id="node18" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="693,247,824,289"/>
+<area shape="rect" id="node20" href="$mltply_spin_8c.html#aaacfb2aca0416786e4c48f0d5361152e" title="Driver function for Spin 1/2 Hamiltonian (grandcanonical) " alt="" coords="910,479,1037,505"/>
+<area shape="rect" id="node21" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="1121,580,1223,607"/>
+<area shape="rect" id="node22" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="1342,580,1399,607"/>
+<area shape="rect" id="node23" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1512,580,1665,607"/>
+<area shape="rect" id="node24" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="1729,631,1834,657"/>
+<area shape="rect" id="node26" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="1504,631,1673,657"/>
+<area shape="rect" id="node30" href="$_pair_ex_spin_8c.html#acc9ece067d6f261fd9865c9e7ca38c28" title="GetPairExcitedStateSpin" alt="" coords="453,743,619,769"/>
+<area shape="rect" id="node31" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="688,681,829,708"/>
+<area shape="rect" id="node32" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="1529,681,1648,708"/>
+<area shape="rect" id="node34" href="$_pair_ex_spin_8c.html#a1629a16cc6e353c96f1626bdb0db8eed" title="GetPairExcitedStateSpinGC" alt="" coords="443,688,629,715"/>
+<area shape="rect" id="node36" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="1541,783,1636,809"/>
+<area shape="rect" id="node37" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="SetDiagonalHund" alt="" coords="697,831,821,857"/>
+<area shape="rect" id="node38" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="SetDiagonalCoulombInter" alt="" coords="888,831,1059,857"/>
+<area shape="rect" id="node39" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="SetDiagonalChemi" alt="" coords="1107,833,1237,860"/>
+<area shape="rect" id="node40" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="coulombintra interaction are given by &#160;" alt="" coords="1285,833,1456,860"/>
+<area shape="rect" id="node42" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="479,208,593,235"/>
 <area shape="rect" id="node47" href="$mltply_m_p_i_spin_core_8c.html#a1a911186fdf08c6a779332ff149bd51f" title="Wrapper for calculating CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the int..." alt="" coords="455,293,617,334"/>
-<area shape="rect" id="node48" href="$mltply_m_p_i_spin_8c.html#a8fd24a867af4e442da7ca41e93e02a2d" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="689,439,836,481"/>
+<area shape="rect" id="node48" href="$mltply_m_p_i_spin_8c.html#a8fd24a867af4e442da7ca41e93e02a2d" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="685,413,832,454"/>
 <area shape="rect" id="node50" href="$mltply_m_p_i_spin_core_8c.html#aa6784650a42b00706d42d117c5ecde65" title="Wrapper for calculating CisAitCjuAju term in Spin model + GC When both site1 and site2 are in the int..." alt="" coords="457,455,615,497"/>
 </map>

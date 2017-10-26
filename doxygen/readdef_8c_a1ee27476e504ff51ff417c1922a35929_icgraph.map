@@ -1,4 +1,7 @@
 <map id="GetDiagonalInterAll" name="GetDiagonalInterAll">
-<area shape="rect" id="node2" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="190,5,330,32"/>
-<area shape="rect" id="node3" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="379,5,429,32"/>
+<area shape="rect" id="node2" href="$readdef_8c.html#ac94a4ebce9827cf05d7eaaa14d844c50" title="function of checking hermite conditions about interall interactions " alt="" coords="188,107,335,133"/>
+<area shape="rect" id="node5" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="748,81,888,108"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#a512f5660363476a6f0c915ea496a9943" title="Check Hermite for Transfer integrals. " alt="" coords="383,56,537,83"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#a95ae79a512a0692d24d463d30b41d75a" title="Check Site Number for a quad &#45;&gt; (siteA, siteB, siteC, siteD). " alt="" coords="585,5,700,32"/>
+<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="936,81,987,108"/>
 </map>

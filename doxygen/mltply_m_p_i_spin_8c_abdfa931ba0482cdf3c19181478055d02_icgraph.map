@@ -1,29 +1,29 @@
 <map id="X_child_general_int_spin_MPIsingle" name="X_child_general_int_spin_MPIsingle">
-<area shape="rect" id="node2" href="$mltply_m_p_i_spin_8c.html#aab94d15aa4b4edd0e53f51921a4b7dd4" title="Exchange term in Spin model When only site2 is in the inter process region. " alt="" coords="190,410,341,451"/>
-<area shape="rect" id="node3" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="393,359,500,385"/>
-<area shape="rect" id="node24" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="200,475,331,517"/>
-<area shape="rect" id="node27" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="213,541,317,568"/>
-<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="552,297,635,324"/>
-<area shape="rect" id="node5" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="735,263,793,289"/>
-<area shape="rect" id="node6" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1150,107,1303,133"/>
-<area shape="rect" id="node9" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="933,237,1053,264"/>
-<area shape="rect" id="node11" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="929,440,1057,467"/>
-<area shape="rect" id="node16" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="947,389,1040,416"/>
-<area shape="rect" id="node17" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="921,339,1065,365"/>
-<area shape="rect" id="node18" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="919,187,1068,213"/>
-<area shape="rect" id="node19" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="894,19,1093,61"/>
-<area shape="rect" id="node22" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="1171,212,1283,239"/>
-<area shape="rect" id="node23" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="939,288,1047,315"/>
-<area shape="rect" id="node7" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="1367,81,1473,108"/>
-<area shape="rect" id="node8" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1528,389,1579,416"/>
-<area shape="rect" id="node10" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1169,339,1284,365"/>
-<area shape="rect" id="node12" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="1181,415,1273,441"/>
-<area shape="rect" id="node13" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1201,491,1252,517"/>
-<area shape="rect" id="node14" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1363,491,1477,517"/>
-<area shape="rect" id="node15" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1360,440,1480,467"/>
-<area shape="rect" id="node20" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="1141,5,1312,32"/>
-<area shape="rect" id="node21" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="1153,56,1301,83"/>
-<area shape="rect" id="node25" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="683,489,845,516"/>
-<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="921,491,1065,517"/>
-<area shape="rect" id="node28" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="390,541,503,568"/>
+<area shape="rect" id="node2" href="$mltply_m_p_i_spin_8c.html#aab94d15aa4b4edd0e53f51921a4b7dd4" title="Exchange term in Spin model When only site2 is in the inter process region. " alt="" coords="188,410,339,451"/>
+<area shape="rect" id="node3" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="390,359,497,385"/>
+<area shape="rect" id="node24" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="198,475,329,517"/>
+<area shape="rect" id="node27" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="211,541,315,568"/>
+<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="548,297,631,324"/>
+<area shape="rect" id="node5" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="731,263,789,289"/>
+<area shape="rect" id="node6" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1145,107,1298,133"/>
+<area shape="rect" id="node9" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="929,237,1049,264"/>
+<area shape="rect" id="node11" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="925,440,1053,467"/>
+<area shape="rect" id="node16" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="942,389,1035,416"/>
+<area shape="rect" id="node17" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="917,339,1061,365"/>
+<area shape="rect" id="node18" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="914,187,1063,213"/>
+<area shape="rect" id="node19" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="889,19,1088,61"/>
+<area shape="rect" id="node22" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="1165,212,1277,239"/>
+<area shape="rect" id="node23" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="935,288,1043,315"/>
+<area shape="rect" id="node7" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="1362,81,1467,108"/>
+<area shape="rect" id="node8" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1523,389,1573,416"/>
+<area shape="rect" id="node10" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1164,339,1279,365"/>
+<area shape="rect" id="node12" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="1175,415,1267,441"/>
+<area shape="rect" id="node13" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1196,491,1247,517"/>
+<area shape="rect" id="node14" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1358,491,1471,517"/>
+<area shape="rect" id="node15" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1355,440,1475,467"/>
+<area shape="rect" id="node20" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="1136,5,1307,32"/>
+<area shape="rect" id="node21" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="1147,56,1295,83"/>
+<area shape="rect" id="node25" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="679,489,841,516"/>
+<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="917,491,1061,517"/>
+<area shape="rect" id="node28" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="387,541,500,568"/>
 </map>

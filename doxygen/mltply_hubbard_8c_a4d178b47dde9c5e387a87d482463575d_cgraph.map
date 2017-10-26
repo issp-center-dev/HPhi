@@ -1,5 +1,5 @@
 <map id="child_pairhopp" name="child_pairhopp">
-<area shape="rect" id="node2" href="$mltply_hubbard_core_8c.html#addf4f9287c995be7868555e50bbf898f" title="Compute pairhopp term of canonical Hubbard system. " alt="" coords="161,5,319,32"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="368,5,464,32"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="512,5,576,32"/>
+<area shape="rect" id="node2" href="$mltply_hubbard_core_8c.html#addf4f9287c995be7868555e50bbf898f" title="Compute pairhopp term of canonical Hubbard system. " alt="" coords="159,5,317,32"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="365,5,461,32"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="509,5,573,32"/>
 </map>

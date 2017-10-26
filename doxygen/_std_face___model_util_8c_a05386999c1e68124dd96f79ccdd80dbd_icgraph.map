@@ -1,16 +1,15 @@
 <map id="StdFace_NotUsed_d" name="StdFace_NotUsed_d">
-<area shape="rect" id="node2" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="412,5,524,32"/>
-<area shape="rect" id="node6" href="$_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d" title="Setup a Hamiltonian for the Face&#45;Centered Orthorhombic lattice. " alt="" coords="404,56,532,83"/>
-<area shape="rect" id="node7" href="$_honeycomb_lattice_8c.html#ad6d5522bfadda85057b31b89c25df32f" title="Setup a Hamiltonian for the Hubbard model on a Honeycomb lattice. " alt="" coords="394,107,542,133"/>
-<area shape="rect" id="node8" href="$_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068" title="Setup a Hamiltonian for the Kagome lattice. " alt="" coords="405,157,531,184"/>
-<area shape="rect" id="node9" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="409,208,527,235"/>
-<area shape="rect" id="node10" href="$_std_face___model_util_8c.html#a9dec65b2b7a257de0b80f5975be6bf93" title="Stop HPhi if variables (real) not used is specified in the input file (!=NaN). " alt="" coords="197,208,341,235"/>
-<area shape="rect" id="node11" href="$_orthorhombic_8c.html#a33fb6a1902e42ecafe2d1249640825b1" title="Setup a Hamiltonian for the Simple Orthorhombic lattice. " alt="" coords="390,259,546,285"/>
-<area shape="rect" id="node12" href="$_pyrochlore_8c.html#a1bb6dee1ad8080fcb79eb017d12bb2b7" title="Setup a Hamiltonian for the Pyrochlore structure. " alt="" coords="398,309,538,336"/>
-<area shape="rect" id="node13" href="$_square_lattice_8c.html#a0449f65a4c6ec527da3e6ebb4253942e" title="Setup a Hamiltonian for the square lattice. " alt="" coords="399,360,537,387"/>
-<area shape="rect" id="node14" href="$_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe" title="Setup a Hamiltonian for the Triangular lattice. " alt="" coords="401,411,535,437"/>
-<area shape="rect" id="node15" href="$_wannier90_8c.html#ab4fe35c22a4d6f54807e3c5d786f8223" title="Setup a Hamiltonian for the Wannier90 *_hr.dat. " alt="" coords="199,461,339,488"/>
-<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae44f7164307947c050dbb9a46d41cc4b" title="Main routine for the standard mode. " alt="" coords="595,233,701,260"/>
-<area shape="rect" id="node4" href="$_std_face__main_8c.html#ab01b07e87a34cb9390527a60821951a1" title="Driver routine for standard mode. Just call StdFace_main(). " alt="" coords="750,233,861,260"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="909,233,960,260"/>
+<area shape="rect" id="node2" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="411,5,523,32"/>
+<area shape="rect" id="node5" href="$_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d" title="Setup a Hamiltonian for the Face&#45;Centered Orthorhombic lattice. " alt="" coords="403,56,531,83"/>
+<area shape="rect" id="node6" href="$_honeycomb_lattice_8c.html#ad6d5522bfadda85057b31b89c25df32f" title="Setup a Hamiltonian for the Hubbard model on a Honeycomb lattice. " alt="" coords="393,107,541,133"/>
+<area shape="rect" id="node7" href="$_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068" title="Setup a Hamiltonian for the Kagome lattice. " alt="" coords="404,157,531,184"/>
+<area shape="rect" id="node8" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="409,208,526,235"/>
+<area shape="rect" id="node9" href="$_std_face___model_util_8c.html#a9dec65b2b7a257de0b80f5975be6bf93" title="Stop HPhi if variables (real) not used is specified in the input file (!=NaN). " alt="" coords="197,208,341,235"/>
+<area shape="rect" id="node10" href="$_orthorhombic_8c.html#a33fb6a1902e42ecafe2d1249640825b1" title="Setup a Hamiltonian for the Simple Orthorhombic lattice. " alt="" coords="389,259,545,285"/>
+<area shape="rect" id="node11" href="$_pyrochlore_8c.html#a1bb6dee1ad8080fcb79eb017d12bb2b7" title="Setup a Hamiltonian for the Pyrochlore structure. " alt="" coords="397,309,537,336"/>
+<area shape="rect" id="node12" href="$_square_lattice_8c.html#a0449f65a4c6ec527da3e6ebb4253942e" title="Setup a Hamiltonian for the square lattice. " alt="" coords="398,360,537,387"/>
+<area shape="rect" id="node13" href="$_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe" title="Setup a Hamiltonian for the Triangular lattice. " alt="" coords="400,411,535,437"/>
+<area shape="rect" id="node14" href="$_wannier90_8c.html#ab4fe35c22a4d6f54807e3c5d786f8223" title="Setup a Hamiltonian for the Wannier90 *_hr.dat. " alt="" coords="199,461,339,488"/>
+<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="Main routine for the standard mode. " alt="" coords="593,233,700,260"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="748,233,799,260"/>
 </map>

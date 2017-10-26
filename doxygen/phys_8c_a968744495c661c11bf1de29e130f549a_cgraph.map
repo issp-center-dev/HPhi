@@ -1,51 +1,51 @@
 <map id="phys" name="phys">
-<area shape="rect" id="node2" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="921,584,988,611"/>
-<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1046,928,1101,955"/>
-<area shape="rect" id="node4" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="104,633,203,660"/>
-<area shape="rect" id="node27" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="255,949,399,976"/>
-<area shape="rect" id="node34" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="263,1756,391,1783"/>
-<area shape="rect" id="node46" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="270,1313,383,1340"/>
-<area shape="rect" id="node5" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="731,1248,837,1275"/>
-<area shape="rect" id="node7" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="expec_cisajs_Hubbard" alt="" coords="476,452,631,479"/>
-<area shape="rect" id="node13" href="$expec__cisajs_8c.html#a0d30174954dc8ad83ceeba5932ece811" title="expec_cisajs_HubbardGC" alt="" coords="466,507,641,533"/>
-<area shape="rect" id="node17" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="261,608,392,635"/>
-<area shape="rect" id="node20" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="251,401,402,428"/>
-<area shape="rect" id="node23" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="716,1356,852,1383"/>
-<area shape="rect" id="node25" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="507,1212,599,1239"/>
-<area shape="rect" id="node26" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="453,659,653,685"/>
-<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="915,1197,994,1224"/>
-<area shape="rect" id="node8" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="717,296,851,323"/>
-<area shape="rect" id="node9" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="717,478,851,519"/>
-<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="737,877,831,904"/>
-<area shape="rect" id="node11" href="$mltply_m_p_i_hubbard_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="709,347,859,389"/>
-<area shape="rect" id="node12" href="$mltply_m_p_i_hubbard_8c.html#af402c076da283e62da488dbd305f36cf" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="709,413,859,454"/>
-<area shape="rect" id="node14" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="704,675,864,701"/>
-<area shape="rect" id="node15" href="$mltply_m_p_i_hubbard_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="713,609,855,650"/>
-<area shape="rect" id="node16" href="$mltply_m_p_i_hubbard_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="713,543,855,585"/>
-<area shape="rect" id="node18" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="expec_cisajs_SpinGeneral" alt="" coords="465,557,641,584"/>
-<area shape="rect" id="node19" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="expec_cisajs_SpinHalf" alt="" coords="476,608,631,635"/>
-<area shape="rect" id="node21" href="$expec__cisajs_8c.html#a3aa6dfa28ea11557e0977bf0b0e62b27" title="expec_cisajs_SpinGCGeneral" alt="" coords="455,351,651,377"/>
-<area shape="rect" id="node22" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="expec_cisajs_SpinGCHalf" alt="" coords="466,401,641,428"/>
-<area shape="rect" id="node24" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="912,1400,997,1427"/>
-<area shape="rect" id="node28" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="488,1030,619,1071"/>
-<area shape="rect" id="node31" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="488,1095,619,1137"/>
-<area shape="rect" id="node32" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="472,861,635,888"/>
-<area shape="rect" id="node33" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="488,913,619,954"/>
-<area shape="rect" id="node29" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="745,1147,823,1173"/>
-<area shape="rect" id="node30" href="$mltply_hubbard_core_8c.html#a11e78b661246513350ad6ee2e3985d9f" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="717,1030,851,1071"/>
-<area shape="rect" id="node35" href="$expec__energy__flct_8c.html#a302e00fd432c5c485541733fb42988a1" title="expec_energy_flct_General\lSpinGC" alt="" coords="463,1719,643,1761"/>
-<area shape="rect" id="node36" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="735,1435,833,1461"/>
-<area shape="rect" id="node37" href="$wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421" title="MPI wrapper function to obtain sum of Double across processes. " alt="" coords="741,1861,827,1888"/>
-<area shape="rect" id="node38" href="$expec__energy__flct_8c.html#a52105e4ac736e6c832ae28eee5debb9d" title="expec_energy_flct_HalfSpinGC" alt="" coords="451,1887,656,1913"/>
-<area shape="rect" id="node39" href="$bitcalc_8c.html#abb04551086c9b8080596b1f439cb6fb8" title="pop" alt="" coords="763,1963,805,1989"/>
-<area shape="rect" id="node40" href="$expec__energy__flct_8c.html#a49070eb7a382598d158bcedd6ebbde47" title="expec_energy_flct_Hubbard" alt="" coords="461,1937,645,1964"/>
-<area shape="rect" id="node41" href="$expec__energy__flct_8c.html#a5190964e652d2168e4a87056a7c818a1" title="expec_energy_flct_HubbardGC" alt="" coords="451,1988,655,2015"/>
-<area shape="rect" id="node42" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="525,1617,582,1644"/>
-<area shape="rect" id="node43" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="StartTimer" alt="" coords="743,2064,825,2091"/>
-<area shape="rect" id="node44" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="StopTimer" alt="" coords="743,1701,825,1728"/>
-<area shape="rect" id="node45" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="480,1567,627,1593"/>
-<area shape="rect" id="node47" href="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="490,1364,617,1391"/>
-<area shape="rect" id="node48" href="$expec__totalspin_8c.html#a389323595316ed6d873ec6c0c14f4e48" title="function of calculating totalspin for Hubbard model at grand canonical ensemble " alt="" coords="480,1415,627,1441"/>
-<area shape="rect" id="node49" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="501,1313,605,1340"/>
-<area shape="rect" id="node50" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="491,1263,615,1289"/>
+<area shape="rect" id="node2" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1061,697,1127,724"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1207,1031,1261,1057"/>
+<area shape="rect" id="node4" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="127,457,225,484"/>
+<area shape="rect" id="node28" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="104,1791,248,1817"/>
+<area shape="rect" id="node35" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="112,1284,240,1311"/>
+<area shape="rect" id="node46" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="119,685,233,712"/>
+<area shape="rect" id="node5" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1041,1563,1147,1589"/>
+<area shape="rect" id="node7" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="expec_cisajs_Hubbard" alt="" coords="570,331,725,357"/>
+<area shape="rect" id="node13" href="$expec__cisajs_8c.html#a0d30174954dc8ad83ceeba5932ece811" title="expec_cisajs_HubbardGC" alt="" coords="560,483,735,509"/>
+<area shape="rect" id="node17" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="333,432,464,459"/>
+<area shape="rect" id="node20" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="323,280,474,307"/>
+<area shape="rect" id="node23" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="579,1043,715,1069"/>
+<area shape="rect" id="node25" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="353,1664,445,1691"/>
+<area shape="rect" id="node27" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="793,1512,993,1539"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1195,1563,1273,1589"/>
+<area shape="rect" id="node8" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="827,245,960,272"/>
+<area shape="rect" id="node9" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="827,427,960,469"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="846,828,941,855"/>
+<area shape="rect" id="node11" href="$mltply_m_p_i_hubbard_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="819,297,968,338"/>
+<area shape="rect" id="node12" href="$mltply_m_p_i_hubbard_8c.html#af402c076da283e62da488dbd305f36cf" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="819,362,968,403"/>
+<area shape="rect" id="node14" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="813,544,973,571"/>
+<area shape="rect" id="node15" href="$mltply_m_p_i_hubbard_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="823,595,964,637"/>
+<area shape="rect" id="node16" href="$mltply_m_p_i_hubbard_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="823,661,964,702"/>
+<area shape="rect" id="node18" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="expec_cisajs_SpinGeneral" alt="" coords="559,584,735,611"/>
+<area shape="rect" id="node19" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="expec_cisajs_SpinHalf" alt="" coords="570,635,725,661"/>
+<area shape="rect" id="node21" href="$expec__cisajs_8c.html#a3aa6dfa28ea11557e0977bf0b0e62b27" title="expec_cisajs_SpinGCGeneral" alt="" coords="549,280,745,307"/>
+<area shape="rect" id="node22" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="expec_cisajs_SpinGCHalf" alt="" coords="560,229,735,256"/>
+<area shape="rect" id="node24" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="1051,1031,1137,1057"/>
+<area shape="rect" id="node26" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="574,1563,721,1589"/>
+<area shape="rect" id="node29" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="582,1918,713,1959"/>
+<area shape="rect" id="node32" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="582,1766,713,1807"/>
+<area shape="rect" id="node33" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="317,1816,480,1843"/>
+<area shape="rect" id="node34" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="333,1918,464,1959"/>
+<area shape="rect" id="node30" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="854,1816,933,1843"/>
+<area shape="rect" id="node31" href="$mltply_hubbard_core_8c.html#a11e78b661246513350ad6ee2e3985d9f" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="826,1969,961,2010"/>
+<area shape="rect" id="node36" href="$expec__energy__flct_8c.html#a302e00fd432c5c485541733fb42988a1" title="expec_energy_flct_General\lSpinGC" alt="" coords="309,990,489,1031"/>
+<area shape="rect" id="node37" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="599,888,696,915"/>
+<area shape="rect" id="node38" href="$wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421" title="MPI wrapper function to obtain sum of Double across processes. " alt="" coords="604,1157,691,1184"/>
+<area shape="rect" id="node39" href="$expec__energy__flct_8c.html#a52105e4ac736e6c832ae28eee5debb9d" title="expec_energy_flct_HalfSpinGC" alt="" coords="296,1208,501,1235"/>
+<area shape="rect" id="node40" href="$bitcalc_8c.html#abb04551086c9b8080596b1f439cb6fb8" title="calculating number of 1&#45;bits in x (32 bit) This method is introduced in S.H. Warren, Hacker’s Delight, second ed., Addison&#45;Wesley, ISBN: 0321842685, 2012. " alt="" coords="626,1271,669,1297"/>
+<area shape="rect" id="node41" href="$expec__energy__flct_8c.html#a49070eb7a382598d158bcedd6ebbde47" title="expec_energy_flct_Hubbard" alt="" coords="307,1309,491,1336"/>
+<area shape="rect" id="node42" href="$expec__energy__flct_8c.html#a5190964e652d2168e4a87056a7c818a1" title="expec_energy_flct_HubbardGC" alt="" coords="297,1259,501,1285"/>
+<area shape="rect" id="node43" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="370,1411,427,1437"/>
+<area shape="rect" id="node44" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="606,1411,689,1437"/>
+<area shape="rect" id="node45" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="606,1461,689,1488"/>
+<area shape="rect" id="node47" href="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="335,888,462,915"/>
+<area shape="rect" id="node48" href="$expec__totalspin_8c.html#a389323595316ed6d873ec6c0c14f4e48" title="function of calculating totalspin for Hubbard model at grand canonical ensemble " alt="" coords="325,787,472,813"/>
+<area shape="rect" id="node49" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="347,685,451,712"/>
+<area shape="rect" id="node50" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="337,635,461,661"/>
 </map>

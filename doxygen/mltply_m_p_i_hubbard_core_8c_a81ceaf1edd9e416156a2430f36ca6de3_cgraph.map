@@ -1,4 +1,4 @@
 <map id="GetSgnInterAll" name="GetSgnInterAll">
 <area shape="rect" id="node2" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="160,5,261,32"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign " alt="" coords="309,5,371,32"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="309,5,371,32"/>
 </map>

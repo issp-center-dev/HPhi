@@ -1,4 +1,5 @@
 <map id="X_child_CisAisCjuAju_GeneralSpin_MPIsingle" name="X_child_CisAisCjuAju_GeneralSpin_MPIsingle">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="219,12,341,39"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="389,12,493,39"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="219,13,340,39"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="388,13,492,39"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="540,13,637,39"/>
 </map>

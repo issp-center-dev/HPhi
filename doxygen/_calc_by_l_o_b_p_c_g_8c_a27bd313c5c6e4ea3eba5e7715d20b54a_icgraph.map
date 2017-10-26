@@ -1,5 +1,5 @@
 <map id="Initialize_wave" name="Initialize_wave">
-<area shape="rect" id="node2" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="163,5,275,32"/>
-<area shape="rect" id="node3" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="323,5,443,32"/>
-<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="491,5,541,32"/>
+<area shape="rect" id="node2" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="161,5,273,32"/>
+<area shape="rect" id="node3" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="321,5,441,32"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="489,5,540,32"/>
 </map>

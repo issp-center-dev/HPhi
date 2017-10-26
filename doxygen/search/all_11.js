@@ -42,7 +42,6 @@ var searchData=
   ['stdface_5fchain',['StdFace_Chain',['../_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160',1,'ChainLattice.c']]],
   ['stdface_5fchain_5fboost',['StdFace_Chain_Boost',['../_chain_lattice_8c.html#ae7836a0c0e49d88705c77b2b7653774f',1,'ChainLattice.c']]],
   ['stdface_5fcoulomb',['StdFace_Coulomb',['../_std_face___model_util_8c.html#a2a4d37887a480ebe9a993a2921423f78',1,'StdFace_ModelUtil.c']]],
-  ['stdface_5fdriver',['StdFace_driver',['../_std_face__main_8c.html#ab01b07e87a34cb9390527a60821951a1',1,'StdFace_main.c']]],
   ['stdface_5fexit',['StdFace_exit',['../_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3',1,'StdFace_ModelUtil.c']]],
   ['stdface_5ffcortho',['StdFace_FCOrtho',['../_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d',1,'FCOrtho.c']]],
   ['stdface_5ffindsite',['StdFace_FindSite',['../_std_face___model_util_8c.html#adbffafd01d5d6e29468fb0242d9503be',1,'StdFace_ModelUtil.c']]],
@@ -64,7 +63,7 @@ var searchData=
   ['stdface_5fladder_5fboost',['StdFace_Ladder_Boost',['../_ladder_8c.html#a45a234231a8241316d98f01e25bd940a',1,'Ladder.c']]],
   ['stdface_5flargevalue',['StdFace_LargeValue',['../_std_face__main_8c.html#a68bef417f59021b313b37ec690f18207',1,'StdFace_main.c']]],
   ['stdface_5fmagfield',['StdFace_MagField',['../_std_face___model_util_8c.html#ac1af12b9586d7c8be9dd531c36595717',1,'StdFace_ModelUtil.c']]],
-  ['stdface_5fmain',['StdFace_main',['../_std_face__main_8c.html#ae44f7164307947c050dbb9a46d41cc4b',1,'StdFace_main.c']]],
+  ['stdface_5fmain',['StdFace_main',['../_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171',1,'StdFace_main.c']]],
   ['stdface_5fmain_2ec',['StdFace_main.c',['../_std_face__main_8c.html',1,'']]],
   ['stdface_5fmallocinteractions',['StdFace_MallocInteractions',['../_std_face___model_util_8c.html#a875aff64a0c1a54490859b2b7e15bff6',1,'StdFace_ModelUtil.c']]],
   ['stdface_5fmodelutil_2ec',['StdFace_ModelUtil.c',['../_std_face___model_util_8c.html',1,'']]],
@@ -103,7 +102,7 @@ var searchData=
   ['summpi_5fdc',['SumMPI_dc',['../wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650',1,'SumMPI_dc(double complex norm):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8h.html#a7a90e7c667189b600a621be9856fa650',1,'SumMPI_dc(double complex norm):&#160;wrapperMPI.c']]],
   ['summpi_5fi',['SumMPI_i',['../wrapper_m_p_i_8c.html#aeab38d65c1c82094276a9b250b9a5049',1,'SumMPI_i(int idim):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8h.html#aeab38d65c1c82094276a9b250b9a5049',1,'SumMPI_i(int idim):&#160;wrapperMPI.c']]],
   ['summpi_5fli',['SumMPI_li',['../wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8',1,'SumMPI_li(unsigned long int idim):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8h.html#afd4574e9353708ef2aa039a1721440b8',1,'SumMPI_li(unsigned long int idim):&#160;wrapperMPI.c']]],
-  ['sz',['sz',['../struct_phys_list.html#a9ad90bcd5a7a88548926a99ad5e2ada0',1,'PhysList::sz()'],['../struct_phys_list.html#ac5dca3d91e341e135c764e3200537b67',1,'PhysList::Sz()'],['../sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba',1,'sz():&#160;sz.c']]],
+  ['sz',['Sz',['../struct_phys_list.html#ac5dca3d91e341e135c764e3200537b67',1,'PhysList::Sz()'],['../sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba',1,'sz():&#160;sz.c']]],
   ['sz_2ec',['sz.c',['../sz_8c.html',1,'']]],
   ['sz2',['Sz2',['../struct_phys_list.html#aee62149eadb7414fc444f5b03d1dd20f',1,'PhysList::Sz2()'],['../struct_std_int_list.html#aea33f2584e7964e85b76d3f6a4377145',1,'StdIntList::Sz2()']]]
 ];

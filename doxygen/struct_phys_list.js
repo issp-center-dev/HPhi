@@ -19,7 +19,6 @@ var struct_phys_list =
     [ "s2", "struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d", null ],
     [ "spin_real_cor", "struct_phys_list.html#affa7b2dc9c283f5e020a3a8790fe9241", null ],
     [ "Sz", "struct_phys_list.html#ac5dca3d91e341e135c764e3200537b67", null ],
-    [ "sz", "struct_phys_list.html#a9ad90bcd5a7a88548926a99ad5e2ada0", null ],
     [ "Sz2", "struct_phys_list.html#aee62149eadb7414fc444f5b03d1dd20f", null ],
     [ "Target_CG_energy", "struct_phys_list.html#a40e86de11143f54df7a3bf8a4344eb0b", null ],
     [ "Target_energy", "struct_phys_list.html#ac645797a0a2163227c055f2d3cb612d3", null ],

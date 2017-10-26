@@ -1,8 +1,10 @@
 <map id="Read_sz" name="Read_sz">
-<area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="270,134,375,161"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="437,58,491,85"/>
-<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="289,33,356,60"/>
-<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="137,134,212,161"/>
-<area shape="rect" id="node7" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="129,84,221,110"/>
-<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="425,134,503,161"/>
+<area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="711,245,816,272"/>
+<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="876,119,931,145"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="308,43,375,69"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="137,208,211,235"/>
+<area shape="rect" id="node7" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="128,157,220,184"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="864,245,943,272"/>
+<area shape="rect" id="node8" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="268,183,415,209"/>
+<area shape="rect" id="node9" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="463,195,663,221"/>
 </map>

@@ -1,5 +1,8 @@
 <map id="SetDiagonalHund" name="SetDiagonalHund">
-<area shape="rect" id="node2" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="179,31,274,57"/>
-<area shape="rect" id="node3" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="323,5,429,32"/>
-<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="477,31,528,57"/>
+<area shape="rect" id="node2" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="793,56,888,83"/>
+<area shape="rect" id="node5" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="SetDiagonalCoulombInter" alt="" coords="177,31,348,57"/>
+<area shape="rect" id="node3" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="936,31,1041,57"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1089,56,1140,83"/>
+<area shape="rect" id="node6" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="SetDiagonalChemi" alt="" coords="396,81,527,108"/>
+<area shape="rect" id="node7" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="coulombintra interaction are given by &#160;" alt="" coords="575,132,745,159"/>
 </map>

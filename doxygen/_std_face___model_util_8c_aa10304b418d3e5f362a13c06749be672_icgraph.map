@@ -1,8 +1,7 @@
 <map id="StdFace_RequiredVal_i" name="StdFace_RequiredVal_i">
-<area shape="rect" id="node2" href="$_std_face__main_8c.html#abeca2989439e3109cacd7a26351b1e72" title="Summary numerical parameter check the combination of the number of sites, total spin, the number of electrons. " alt="" coords="216,5,328,32"/>
-<area shape="rect" id="node6" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="216,56,328,83"/>
-<area shape="rect" id="node7" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="213,107,331,133"/>
-<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae44f7164307947c050dbb9a46d41cc4b" title="Main routine for the standard mode. " alt="" coords="379,56,485,83"/>
-<area shape="rect" id="node4" href="$_std_face__main_8c.html#ab01b07e87a34cb9390527a60821951a1" title="Driver routine for standard mode. Just call StdFace_main(). " alt="" coords="534,56,645,83"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="693,56,744,83"/>
+<area shape="rect" id="node2" href="$_std_face__main_8c.html#abeca2989439e3109cacd7a26351b1e72" title="Summary numerical parameter check the combination of the number of sites, total spin, the number of electrons. " alt="" coords="215,5,327,32"/>
+<area shape="rect" id="node5" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="215,56,327,83"/>
+<area shape="rect" id="node6" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="212,107,329,133"/>
+<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="Main routine for the standard mode. " alt="" coords="377,56,484,83"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="532,56,583,83"/>
 </map>

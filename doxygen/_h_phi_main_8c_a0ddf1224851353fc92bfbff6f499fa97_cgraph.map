@@ -1,51 +1,51 @@
 <map id="main" name="main">
-<area shape="rect" id="node2" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="126,426,239,452"/>
-<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1134,1908,1189,1935"/>
-<area shape="rect" id="node12" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="StartTimer" alt="" coords="755,831,837,858"/>
-<area shape="rect" id="node13" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="StopTimer" alt="" coords="755,907,837,934"/>
-<area shape="rect" id="node14" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="750,1680,842,1707"/>
-<area shape="rect" id="node15" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="763,2370,829,2396"/>
-<area shape="rect" id="node19" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="312,1110,427,1136"/>
-<area shape="rect" id="node25" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="123,2124,243,2151"/>
-<area shape="rect" id="node27" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="323,1414,415,1440"/>
-<area shape="rect" id="node30" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="317,2123,422,2150"/>
-<area shape="rect" id="node33" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="515,1971,610,1998"/>
-<area shape="rect" id="node34" href="$check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193" title="A program to check size of dimension for hirbert&#45;space. " alt="" coords="767,2420,825,2447"/>
-<area shape="rect" id="node35" href="$wrapper_m_p_i_8c.html#ab01492e7612823a34a325619f46862e5" title="MPI Finitialization wrapper. " alt="" coords="969,2908,1060,2935"/>
-<area shape="rect" id="node36" href="$_h_phi_trans_8c.html#a00c103e199376bcb62c80ae8a87b801e" title="HPhiTrans" alt="" coords="754,2471,838,2498"/>
-<area shape="rect" id="node37" href="$wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre..." alt="" coords="515,2984,610,3011"/>
-<area shape="rect" id="node38" href="$splash_8c.html#aeeeeb5165d303f10bfa7b87c1a27f5df" title="Print logo mark and version number. " alt="" coords="766,3035,826,3062"/>
-<area shape="rect" id="node39" href="$time_8c.html#aded9b0ef5cb7a143d739c80442978a1d" title="InitTimer" alt="" coords="146,2883,219,2910"/>
-<area shape="rect" id="node40" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="961,3086,1068,3112"/>
-<area shape="rect" id="node41" href="$output__list_8c.html#a8768d3acef78de770c73370b9d1df028" title="output_list" alt="" coords="755,2782,837,2808"/>
-<area shape="rect" id="node42" href="$time_8c.html#a60afd43e6c53eb214d9b9111a6522365" title="OutputTimer" alt="" coords="749,2832,843,2859"/>
-<area shape="rect" id="node43" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="945,3136,1085,3163"/>
-<area shape="rect" id="node44" href="$readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1" title="Function of reading informations from def files. " alt="" coords="309,3302,429,3328"/>
-<area shape="rect" id="node45" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="105,3187,261,3214"/>
-<area shape="rect" id="node46" href="$xsetmem_8c.html#ac651829049ab94b6f827081bbca80b67" title="setmem_def" alt="" coords="135,3238,230,3264"/>
-<area shape="rect" id="node47" href="$xsetmem_8c.html#a24cc8ae710b773af06236f4228054ff8" title="setmem_HEAD" alt="" coords="125,3288,240,3315"/>
-<area shape="rect" id="node48" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="setmem_large" alt="" coords="963,3302,1067,3328"/>
-<area shape="rect" id="node49" href="$_std_face__main_8c.html#ab01b07e87a34cb9390527a60821951a1" title="Driver routine for standard mode. Just call StdFace_main(). " alt="" coords="127,3390,238,3416"/>
-<area shape="rect" id="node50" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="sz" alt="" coords="543,2022,582,2048"/>
-<area shape="rect" id="node4" href="$input_8c.html#a53da3ac7824590302b0aec6d7c9ecd57" title="inputHam" alt="" coords="757,628,835,655"/>
-<area shape="rect" id="node6" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="lapack_diag" alt="" coords="751,1218,841,1244"/>
-<area shape="rect" id="node7" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="755,1471,837,1498"/>
-<area shape="rect" id="node8" href="$output_8c.html#ac374eec41d2f3fc839286a068a4d4d90" title="output" alt="" coords="767,147,825,174"/>
-<area shape="rect" id="node9" href="$output_8c.html#a19e886f16b5648a225810fc8c29c2841" title="outputHam" alt="" coords="753,248,839,275"/>
-<area shape="rect" id="node10" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="344,1363,395,1390"/>
-<area shape="rect" id="node5" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="962,1630,1067,1656"/>
-<area shape="rect" id="node11" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="499,958,627,984"/>
-<area shape="rect" id="node16" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="513,1363,612,1390"/>
-<area shape="rect" id="node18" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="491,1414,635,1440"/>
-<area shape="rect" id="node17" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="696,1420,896,1447"/>
-<area shape="rect" id="node20" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="503,451,623,478"/>
-<area shape="rect" id="node21" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="744,2123,848,2150"/>
-<area shape="rect" id="node22" href="$expec__totalspin_8c.html#adb43b14df5064ba7ac4e6963df681b0e" title="expec_totalSz" alt="" coords="510,755,615,782"/>
-<area shape="rect" id="node23" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="491,1110,635,1136"/>
-<area shape="rect" id="node24" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="488,654,637,680"/>
-<area shape="rect" id="node26" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="507,1920,619,1947"/>
-<area shape="rect" id="node28" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="516,907,609,934"/>
-<area shape="rect" id="node29" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Multiply" alt="" coords="529,1616,596,1643"/>
-<area shape="rect" id="node31" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="486,2224,639,2251"/>
-<area shape="rect" id="node32" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="478,1262,647,1288"/>
+<area shape="rect" id="node2" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="125,372,239,399"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1124,2044,1179,2071"/>
+<area shape="rect" id="node12" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="747,651,829,677"/>
+<area shape="rect" id="node13" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="747,904,829,931"/>
+<area shape="rect" id="node14" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="742,1461,834,1488"/>
+<area shape="rect" id="node15" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="755,2221,821,2248"/>
+<area shape="rect" id="node19" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="308,955,423,981"/>
+<area shape="rect" id="node25" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="122,2272,242,2299"/>
+<area shape="rect" id="node27" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="319,1613,411,1640"/>
+<area shape="rect" id="node30" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="313,1816,418,1843"/>
+<area shape="rect" id="node33" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="508,1816,603,1843"/>
+<area shape="rect" id="node34" href="$check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193" title="A program to check size of dimension for Hilbert&#45;space. " alt="" coords="759,2373,817,2400"/>
+<area shape="rect" id="node35" href="$wrapper_m_p_i_8c.html#ab01492e7612823a34a325619f46862e5" title="MPI Finitialization wrapper. " alt="" coords="961,2880,1051,2907"/>
+<area shape="rect" id="node36" href="$_h_phi_trans_8c.html#a00c103e199376bcb62c80ae8a87b801e" title="HPhiTrans" alt="" coords="746,2424,830,2451"/>
+<area shape="rect" id="node37" href="$wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre..." alt="" coords="508,2981,603,3008"/>
+<area shape="rect" id="node38" href="$splash_8c.html#aeeeeb5165d303f10bfa7b87c1a27f5df" title="Print logo mark and version number. " alt="" coords="758,3032,818,3059"/>
+<area shape="rect" id="node39" href="$time_8c.html#aded9b0ef5cb7a143d739c80442978a1d" title="function for initializing Timer[] " alt="" coords="145,2880,219,2907"/>
+<area shape="rect" id="node40" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="953,3083,1059,3109"/>
+<area shape="rect" id="node41" href="$output__list_8c.html#a8768d3acef78de770c73370b9d1df028" title="output_list" alt="" coords="747,2677,829,2704"/>
+<area shape="rect" id="node42" href="$time_8c.html#a60afd43e6c53eb214d9b9111a6522365" title="function for outputting elapse time for each function " alt="" coords="741,2779,835,2805"/>
+<area shape="rect" id="node43" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="936,3133,1076,3160"/>
+<area shape="rect" id="node44" href="$readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1" title="Function of reading informations from def files. " alt="" coords="946,3209,1066,3236"/>
+<area shape="rect" id="node45" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="104,3184,260,3211"/>
+<area shape="rect" id="node46" href="$xsetmem_8c.html#ac651829049ab94b6f827081bbca80b67" title="setmem_def" alt="" coords="318,3336,413,3363"/>
+<area shape="rect" id="node47" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="setmem_large" alt="" coords="503,3285,607,3312"/>
+<area shape="rect" id="node48" href="$xsetmem_8c.html#a24cc8ae710b773af06236f4228054ff8" title="setmem_HEAD" alt="" coords="125,3387,239,3413"/>
+<area shape="rect" id="node49" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="Main routine for the standard mode. " alt="" coords="312,3412,419,3439"/>
+<area shape="rect" id="node50" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="536,1867,575,1893"/>
+<area shape="rect" id="node4" href="$input_8c.html#a53da3ac7824590302b0aec6d7c9ecd57" title="inputHam" alt="" coords="749,397,827,424"/>
+<area shape="rect" id="node6" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="performing full diagonalization using lapack " alt="" coords="743,1157,833,1184"/>
+<area shape="rect" id="node7" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="747,1208,829,1235"/>
+<area shape="rect" id="node8" href="$output_8c.html#ac374eec41d2f3fc839286a068a4d4d90" title="output" alt="" coords="759,499,817,525"/>
+<area shape="rect" id="node9" href="$output_8c.html#a19e886f16b5648a225810fc8c29c2841" title="outputHam" alt="" coords="745,296,831,323"/>
+<area shape="rect" id="node10" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="340,1512,391,1539"/>
+<area shape="rect" id="node5" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="953,1703,1059,1729"/>
+<area shape="rect" id="node11" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="491,955,619,981"/>
+<area shape="rect" id="node16" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="506,1563,605,1589"/>
+<area shape="rect" id="node18" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="483,1512,627,1539"/>
+<area shape="rect" id="node17" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="688,1613,888,1640"/>
+<area shape="rect" id="node20" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="495,448,615,475"/>
+<area shape="rect" id="node21" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="736,2323,840,2349"/>
+<area shape="rect" id="node22" href="$expec__totalspin_8c.html#adb43b14df5064ba7ac4e6963df681b0e" title="expec_totalSz" alt="" coords="503,803,608,829"/>
+<area shape="rect" id="node23" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="483,651,627,677"/>
+<area shape="rect" id="node24" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="481,701,630,728"/>
+<area shape="rect" id="node26" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="499,1968,611,1995"/>
+<area shape="rect" id="node28" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="509,1107,602,1133"/>
+<area shape="rect" id="node29" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Multiply" alt="" coords="522,1613,589,1640"/>
+<area shape="rect" id="node31" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="479,2221,632,2248"/>
+<area shape="rect" id="node32" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="471,1208,640,1235"/>
 </map>

@@ -1,51 +1,51 @@
 <map id="expec_cisajscktaltdc" name="expec_cisajscktaltdc">
-<area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="482,146,587,172"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1450,410,1505,436"/>
-<area shape="rect" id="node5" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="232,1106,363,1148"/>
-<area shape="rect" id="node29" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="232,1761,363,1802"/>
-<area shape="rect" id="node40" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="453,270,616,296"/>
-<area shape="rect" id="node44" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="469,328,600,369"/>
-<area shape="rect" id="node47" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="944,511,1080,538"/>
-<area shape="rect" id="node49" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="251,102,343,128"/>
-<area shape="rect" id="node50" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="197,152,397,179"/>
-<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="733,146,811,172"/>
-<area shape="rect" id="node6" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="1438,2211,1517,2238"/>
-<area shape="rect" id="node7" href="$mltply_hubbard_core_8c.html#a11e78b661246513350ad6ee2e3985d9f" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="467,1409,602,1450"/>
-<area shape="rect" id="node9" href="$mltply_hubbard_core_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="705,1034,839,1076"/>
-<area shape="rect" id="node14" href="$mltply_hubbard_core_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="703,1100,841,1141"/>
-<area shape="rect" id="node15" href="$mltply_hubbard_core_8c.html#a2e64839292192a5851d4be60a4f3561a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="705,917,839,958"/>
-<area shape="rect" id="node16" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="450,1600,619,1627"/>
-<area shape="rect" id="node17" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="965,398,1059,424"/>
-<area shape="rect" id="node19" href="$mltply_m_p_i_hubbard_core_8c.html#ac0c99cbb8b6107f22d5f98dda7c261c1" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="940,1905,1084,1946"/>
-<area shape="rect" id="node22" href="$mltply_m_p_i_hubbard_core_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="697,1165,847,1206"/>
-<area shape="rect" id="node23" href="$mltply_m_p_i_hubbard_core_8c.html#a67618b30efd1e0dddf58b89407e13736" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="935,1169,1089,1210"/>
-<area shape="rect" id="node27" href="$mltply_m_p_i_hubbard_core_8c.html#ac3f88b541387e7b9b13758fa855b9327" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="459,1274,610,1316"/>
-<area shape="rect" id="node8" href="$mltply_hubbard_core_8c.html#aa81e90673aeb377803302428fe3c7b64" title=" term in Hubbard (canonical) " alt="" coords="973,1500,1051,1527"/>
-<area shape="rect" id="node10" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="975,1092,1049,1119"/>
-<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="1427,1526,1528,1552"/>
-<area shape="rect" id="node13" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="1429,1042,1525,1068"/>
-<area shape="rect" id="node12" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign " alt="" coords="1576,1526,1637,1552"/>
-<area shape="rect" id="node18" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1232,840,1299,867"/>
-<area shape="rect" id="node20" href="$mltply_m_p_i_hubbard_core_8c.html#ad7c739742ce1cad082947c7f647d1289" title="Check the occupation of both site 1 and site 3. " alt="" coords="1203,2186,1327,2212"/>
-<area shape="rect" id="node21" href="$mltply_m_p_i_hubbard_core_8c.html#a4a379d4c2b9e6fd33972c1049c57a26a" title="Check the occupation of &#160;state, and compute the index of final wavefunction associated to ..." alt="" coords="1428,2008,1527,2035"/>
-<area shape="rect" id="node24" href="$mltply_m_p_i_hubbard_core_8c.html#a030d235af73dc5a86e82993363153156" title="Compute the index of final wavefunction associated to , and check whether this operator is relevant o..." alt="" coords="1194,2034,1337,2060"/>
-<area shape="rect" id="node25" href="$mltply_hubbard_core_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title=" term for canonical Hubbard " alt="" coords="1236,1194,1295,1220"/>
-<area shape="rect" id="node26" href="$mltply_m_p_i_hubbard_core_8c.html#a81ceaf1edd9e416156a2430f36ca6de3" title="Compute the index of final wavefunction associated to , and Fermion sign. " alt="" coords="1212,1500,1319,1527"/>
-<area shape="rect" id="node28" href="$mltply_m_p_i_hubbard_core_8c.html#ac2399f2f6269841904d827a67af2c2f5" title="X_child_CisAis_Hubbard_MPI" alt="" coords="673,1434,871,1460"/>
-<area shape="rect" id="node30" href="$mltply_hubbard_core_8c.html#a6e5c6a3af522a385b4ee60f66efb2557" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="454,1652,615,1693"/>
-<area shape="rect" id="node31" href="$mltply_hubbard_core_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="691,1586,853,1628"/>
-<area shape="rect" id="node32" href="$mltply_hubbard_core_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="689,1652,855,1693"/>
-<area shape="rect" id="node33" href="$mltply_hubbard_core_8c.html#a6d06655a28258eea84191579396219e1" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="1184,1765,1347,1806"/>
-<area shape="rect" id="node34" href="$mltply_m_p_i_hubbard_core_8c.html#a571209928d6c7125abd413555f89d748" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="927,2225,1097,2266"/>
-<area shape="rect" id="node35" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="683,2174,861,2216"/>
-<area shape="rect" id="node36" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="921,2124,1103,2165"/>
-<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="445,2040,624,2081"/>
-<area shape="rect" id="node37" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="1223,2287,1308,2314"/>
-<area shape="rect" id="node39" href="$mltply_m_p_i_hubbard_core_8c.html#ab59deb7bc8d1509683aa8f2b376cbceb" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="1153,1983,1378,2010"/>
-<area shape="rect" id="node41" href="$expec__cisajscktaltdc_8c.html#a0b7abd184f6ccce7ac4141c21fabf91c" title="expec_cisajscktalt\l_SpinGeneral" alt="" coords="707,262,837,304"/>
-<area shape="rect" id="node43" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="707,197,837,238"/>
-<area shape="rect" id="node42" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="951,296,1073,323"/>
-<area shape="rect" id="node45" href="$expec__cisajscktaltdc_8c.html#ad2872d8b3f1c758d3933dc9e2b19dd16" title="expec_cisajscktalt\l_SpinGCGeneral" alt="" coords="707,328,837,369"/>
-<area shape="rect" id="node46" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="expec_cisajscktalt\l_SpinGCHalf" alt="" coords="707,445,837,486"/>
-<area shape="rect" id="node48" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="1223,511,1308,538"/>
+<area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1157,2522,1263,2549"/>
+<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1394,2193,1449,2220"/>
+<area shape="rect" id="node5" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="197,772,328,814"/>
+<area shape="rect" id="node29" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="197,1534,328,1575"/>
+<area shape="rect" id="node40" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="384,2166,547,2193"/>
+<area shape="rect" id="node43" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="400,2276,531,2318"/>
+<area shape="rect" id="node46" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="881,2117,1017,2144"/>
+<area shape="rect" id="node48" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="419,2497,511,2524"/>
+<area shape="rect" id="node50" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="849,2421,1049,2448"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1382,2522,1461,2549"/>
+<area shape="rect" id="node6" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="1382,1326,1461,1353"/>
+<area shape="rect" id="node7" href="$mltply_hubbard_core_8c.html#a11e78b661246513350ad6ee2e3985d9f" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="398,772,533,814"/>
+<area shape="rect" id="node9" href="$mltply_hubbard_core_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="635,496,769,538"/>
+<area shape="rect" id="node14" href="$mltply_hubbard_core_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="633,562,771,603"/>
+<area shape="rect" id="node15" href="$mltply_hubbard_core_8c.html#a2e64839292192a5851d4be60a4f3561a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="635,160,769,202"/>
+<area shape="rect" id="node16" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="381,1198,550,1225"/>
+<area shape="rect" id="node17" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="902,2066,997,2093"/>
+<area shape="rect" id="node19" href="$mltply_m_p_i_hubbard_core_8c.html#ac0c99cbb8b6107f22d5f98dda7c261c1" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="877,1091,1021,1132"/>
+<area shape="rect" id="node22" href="$mltply_m_p_i_hubbard_core_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="627,328,777,370"/>
+<area shape="rect" id="node23" href="$mltply_m_p_i_hubbard_core_8c.html#a67618b30efd1e0dddf58b89407e13736" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="872,387,1027,428"/>
+<area shape="rect" id="node27" href="$mltply_m_p_i_hubbard_core_8c.html#ac3f88b541387e7b9b13758fa855b9327" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="390,438,541,479"/>
+<area shape="rect" id="node8" href="$mltply_hubbard_core_8c.html#aa81e90673aeb377803302428fe3c7b64" title=" term in Hubbard (canonical) " alt="" coords="911,832,988,858"/>
+<area shape="rect" id="node10" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="912,336,987,362"/>
+<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="1371,602,1472,629"/>
+<area shape="rect" id="node13" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="1373,108,1469,134"/>
+<area shape="rect" id="node12" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="1520,602,1581,629"/>
+<area shape="rect" id="node18" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1177,1653,1243,1680"/>
+<area shape="rect" id="node20" href="$mltply_m_p_i_hubbard_core_8c.html#ad7c739742ce1cad082947c7f647d1289" title="Check the occupation of both site 1 and site 3. " alt="" coords="1148,1250,1272,1277"/>
+<area shape="rect" id="node21" href="$mltply_m_p_i_hubbard_core_8c.html#a4a379d4c2b9e6fd33972c1049c57a26a" title="Check the occupation of &#160;state, and compute the index of final wavefunction associated to ..." alt="" coords="1372,1174,1471,1201"/>
+<area shape="rect" id="node24" href="$mltply_m_p_i_hubbard_core_8c.html#a030d235af73dc5a86e82993363153156" title="Compute the index of final wavefunction associated to , and check whether this operator is relevant o..." alt="" coords="1139,1301,1281,1328"/>
+<area shape="rect" id="node25" href="$mltply_hubbard_core_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title=" term for canonical Hubbard " alt="" coords="1181,133,1239,160"/>
+<area shape="rect" id="node26" href="$mltply_m_p_i_hubbard_core_8c.html#a81ceaf1edd9e416156a2430f36ca6de3" title="Compute the index of final wavefunction associated to , and Fermion sign. " alt="" coords="1157,577,1263,604"/>
+<area shape="rect" id="node28" href="$mltply_m_p_i_hubbard_core_8c.html#ac2399f2f6269841904d827a67af2c2f5" title="X_child_CisAis_Hubbard_MPI" alt="" coords="603,729,801,756"/>
+<area shape="rect" id="node30" href="$mltply_hubbard_core_8c.html#a6e5c6a3af522a385b4ee60f66efb2557" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="385,1315,546,1356"/>
+<area shape="rect" id="node31" href="$mltply_hubbard_core_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="621,882,783,923"/>
+<area shape="rect" id="node32" href="$mltply_hubbard_core_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="619,947,785,988"/>
+<area shape="rect" id="node33" href="$mltply_hubbard_core_8c.html#a6d06655a28258eea84191579396219e1" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="384,1250,547,1291"/>
+<area shape="rect" id="node34" href="$mltply_m_p_i_hubbard_core_8c.html#a571209928d6c7125abd413555f89d748" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="864,1259,1035,1300"/>
+<area shape="rect" id="node35" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="613,1723,791,1764"/>
+<area shape="rect" id="node36" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="858,1504,1041,1546"/>
+<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="376,1534,555,1575"/>
+<area shape="rect" id="node37" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="1167,1584,1253,1610"/>
+<area shape="rect" id="node39" href="$mltply_m_p_i_hubbard_core_8c.html#ab59deb7bc8d1509683aa8f2b376cbceb" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="1097,1149,1323,1176"/>
+<area shape="rect" id="node41" href="$expec__cisajscktaltdc_8c.html#a0b7abd184f6ccce7ac4141c21fabf91c" title="expec_cisajscktalt\l_SpinGeneral" alt="" coords="637,2094,767,2135"/>
+<area shape="rect" id="node42" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="637,2159,767,2200"/>
+<area shape="rect" id="node44" href="$expec__cisajscktaltdc_8c.html#ad2872d8b3f1c758d3933dc9e2b19dd16" title="expec_cisajscktalt\l_SpinGCGeneral" alt="" coords="637,2276,767,2318"/>
+<area shape="rect" id="node45" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="expec_cisajscktalt\l_SpinGCHalf" alt="" coords="637,2342,767,2383"/>
+<area shape="rect" id="node47" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="1167,2117,1253,2144"/>
+<area shape="rect" id="node49" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="629,2509,775,2536"/>
 </map>

@@ -1,3 +1,8 @@
 <map id="JudgeDefType" name="JudgeDefType">
-<area shape="rect" id="node2" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="160,5,211,32"/>
+<area shape="rect" id="node2" href="$readdef_8c.html#a1ee27476e504ff51ff417c1922a35929" title="function of getting diagonal components form interall interactions " alt="" coords="160,157,295,184"/>
+<area shape="rect" id="node7" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1091,157,1141,184"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#ac94a4ebce9827cf05d7eaaa14d844c50" title="function of checking hermite conditions about interall interactions " alt="" coords="343,107,489,133"/>
+<area shape="rect" id="node6" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="903,107,1043,133"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#a512f5660363476a6f0c915ea496a9943" title="Check Hermite for Transfer integrals. " alt="" coords="537,56,692,83"/>
+<area shape="rect" id="node5" href="$readdef_8c.html#a95ae79a512a0692d24d463d30b41d75a" title="Check Site Number for a quad &#45;&gt; (siteA, siteB, siteC, siteD). " alt="" coords="740,5,855,32"/>
 </map>

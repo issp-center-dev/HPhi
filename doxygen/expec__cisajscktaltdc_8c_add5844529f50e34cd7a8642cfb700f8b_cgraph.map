@@ -1,4 +1,6 @@
 <map id="expec_cisajscktaltdc_alldiag" name="expec_cisajscktaltdc_alldiag">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="197,12,293,39"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="341,12,405,39"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="197,5,293,32"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="203,56,288,83"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="341,5,405,32"/>
+<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="346,56,401,83"/>
 </map>

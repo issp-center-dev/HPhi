@@ -13,7 +13,7 @@ var searchData=
   ['readdeffilenint',['ReadDefFileNInt',['../readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1',1,'readdef.c']]],
   ['readinitialvector',['ReadInitialVector',['../_lanczos___eigen_value_8c.html#a589f87aa6c08653bdff551e16cb825dc',1,'Lanczos_EigenValue.c']]],
   ['readtmcomponents',['ReadTMComponents',['../_lanczos___eigen_value_8c.html#a08d824aef2e4734073596becf3135c61',1,'Lanczos_EigenValue.c']]],
-  ['readtmcomponents_5fbicg',['ReadTMComponents_BiCG',['../_calc_spectrum_by_bi_c_g_8c.html#a7ae40c5b4d8e86ddbb51ca029237f52e',1,'CalcSpectrumByBiCG.c']]],
+  ['readtmcomponents_5fbicg',['ReadTMComponents_BiCG',['../_calc_spectrum_by_bi_c_g_8c.html#abe23fa27a17d58cc467a6cca4ae26c17',1,'CalcSpectrumByBiCG.c']]],
   ['readtpqdata',['ReadTPQData',['../_calc_spectrum_by_t_p_q_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817',1,'CalcSpectrumByTPQ.c']]],
   ['rearray_5finteractions',['Rearray_Interactions',['../expec__cisajscktaltdc_8c.html#a2ca27868fab714216654436b769197bc',1,'expec_cisajscktaltdc.c']]],
   ['resetinteractionnum',['ResetInteractionNum',['../readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'readdef.c']]],

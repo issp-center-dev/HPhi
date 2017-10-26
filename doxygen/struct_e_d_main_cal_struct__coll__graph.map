@@ -1,8 +1,8 @@
 <map id="EDMainCalStruct" name="EDMainCalStruct">
-<area shape="rect" id="node2" href="$struct_bind_struct.html" title="Bind. " alt="" coords="201,96,283,123"/>
-<area shape="rect" id="node3" href="$struct_phys_list.html" title="Physical quantities. " alt="" coords="5,5,77,32"/>
-<area shape="rect" id="node4" href="$struct_large_list.html" title="For Matrix&#45;Vector product. " alt="" coords="103,5,176,32"/>
-<area shape="rect" id="node5" href="$struct_check_list.html" title="Size of the Hilbert space. " alt="" coords="202,5,283,32"/>
-<area shape="rect" id="node6" href="$struct_define_list.html" title="Definision of system (Hamiltonian) etc. " alt="" coords="307,5,388,32"/>
-<area shape="rect" id="node7" href="$struct_boost_list.html" title="For Boost. " alt="" coords="413,5,489,32"/>
+<area shape="rect" id="node2" href="$struct_bind_struct.html" title="Bind. " alt="" coords="202,95,285,121"/>
+<area shape="rect" id="node3" href="$struct_phys_list.html" title="Physical quantities (Expectation value) " alt="" coords="5,5,79,32"/>
+<area shape="rect" id="node4" href="$struct_large_list.html" title="For Matrix&#45;Vector product. " alt="" coords="103,5,178,32"/>
+<area shape="rect" id="node5" href="$struct_check_list.html" title="Size of the Hilbert space. " alt="" coords="203,5,284,32"/>
+<area shape="rect" id="node6" href="$struct_define_list.html" title="Definision of system (Hamiltonian) etc. " alt="" coords="308,5,389,32"/>
+<area shape="rect" id="node7" href="$struct_boost_list.html" title="For Boost. " alt="" coords="414,5,491,32"/>
 </map>

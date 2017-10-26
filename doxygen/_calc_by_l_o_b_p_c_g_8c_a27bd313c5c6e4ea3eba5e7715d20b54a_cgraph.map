@@ -1,9 +1,9 @@
 <map id="Initialize_wave" name="Initialize_wave">
-<area shape="rect" id="node2" href="$wrapper_m_p_i_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0" title="MPI wrapper function to broadcast unsigned long integer across processes. " alt="" coords="164,5,257,32"/>
-<area shape="rect" id="node3" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="307,56,411,83"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="574,107,629,133"/>
-<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="459,183,525,209"/>
-<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8" title="MPI wrapper function to obtain sum of unsigned long integer across processes. " alt="" coords="315,208,402,235"/>
-<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="163,259,259,285"/>
-<area shape="rect" id="node8" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="311,259,406,285"/>
+<area shape="rect" id="node2" href="$wrapper_m_p_i_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0" title="MPI wrapper function to broadcast unsigned long integer across processes. " alt="" coords="163,5,256,32"/>
+<area shape="rect" id="node3" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="305,56,409,83"/>
+<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="572,107,627,133"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="457,183,524,209"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8" title="MPI wrapper function to obtain sum of unsigned long integer across processes. " alt="" coords="314,208,401,235"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="161,259,257,285"/>
+<area shape="rect" id="node8" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="310,259,405,285"/>
 </map>

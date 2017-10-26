@@ -1,5 +1,11 @@
 <map id="SetDiagonalChemi" name="SetDiagonalChemi">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="185,5,306,32"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="218,56,273,83"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="355,5,459,32"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="762,5,883,32"/>
+<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="795,157,850,184"/>
+<area shape="rect" id="node6" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="SetDiagonalCoulombInter" alt="" coords="184,132,355,159"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="936,5,1040,32"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1088,5,1185,32"/>
+<area shape="rect" id="node7" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="SetDiagonalHund" alt="" coords="403,107,527,133"/>
+<area shape="rect" id="node8" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="SetDiagonalInterAll" alt="" coords="575,56,709,83"/>
+<area shape="rect" id="node9" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="757,56,888,83"/>
+<area shape="rect" id="node10" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="767,107,878,133"/>
 </map>

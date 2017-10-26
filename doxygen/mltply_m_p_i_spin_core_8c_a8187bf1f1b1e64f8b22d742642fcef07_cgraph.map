@@ -1,6 +1,6 @@
 <map id="GC_child_CisAitCiuAiv_spin_MPIdouble" name="GC_child_CisAitCiuAiv_spin_MPIdouble">
-<area shape="rect" id="node2" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="214,34,389,75"/>
-<area shape="rect" id="node3" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="438,5,607,46"/>
-<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="489,71,556,97"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="657,71,711,97"/>
+<area shape="rect" id="node2" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="212,35,387,76"/>
+<area shape="rect" id="node3" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="435,5,604,47"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="486,71,553,98"/>
+<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="652,71,707,98"/>
 </map>

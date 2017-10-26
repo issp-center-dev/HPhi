@@ -1,14 +1,13 @@
 <map id="StdFace_InputHopp" name="StdFace_InputHopp">
-<area shape="rect" id="node2" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="215,5,327,32"/>
-<area shape="rect" id="node6" href="$_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d" title="Setup a Hamiltonian for the Face&#45;Centered Orthorhombic lattice. " alt="" coords="207,56,335,83"/>
-<area shape="rect" id="node7" href="$_honeycomb_lattice_8c.html#ad6d5522bfadda85057b31b89c25df32f" title="Setup a Hamiltonian for the Hubbard model on a Honeycomb lattice. " alt="" coords="197,107,345,133"/>
-<area shape="rect" id="node8" href="$_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068" title="Setup a Hamiltonian for the Kagome lattice. " alt="" coords="207,157,334,184"/>
-<area shape="rect" id="node9" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="212,208,329,235"/>
-<area shape="rect" id="node10" href="$_orthorhombic_8c.html#a33fb6a1902e42ecafe2d1249640825b1" title="Setup a Hamiltonian for the Simple Orthorhombic lattice. " alt="" coords="193,259,349,285"/>
-<area shape="rect" id="node11" href="$_pyrochlore_8c.html#a1bb6dee1ad8080fcb79eb017d12bb2b7" title="Setup a Hamiltonian for the Pyrochlore structure. " alt="" coords="201,309,341,336"/>
-<area shape="rect" id="node12" href="$_square_lattice_8c.html#a0449f65a4c6ec527da3e6ebb4253942e" title="Setup a Hamiltonian for the square lattice. " alt="" coords="201,360,340,387"/>
-<area shape="rect" id="node13" href="$_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe" title="Setup a Hamiltonian for the Triangular lattice. " alt="" coords="203,411,338,437"/>
-<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae44f7164307947c050dbb9a46d41cc4b" title="Main routine for the standard mode. " alt="" coords="397,208,504,235"/>
-<area shape="rect" id="node4" href="$_std_face__main_8c.html#ab01b07e87a34cb9390527a60821951a1" title="Driver routine for standard mode. Just call StdFace_main(). " alt="" coords="553,208,663,235"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="712,208,763,235"/>
+<area shape="rect" id="node2" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="214,5,326,32"/>
+<area shape="rect" id="node5" href="$_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d" title="Setup a Hamiltonian for the Face&#45;Centered Orthorhombic lattice. " alt="" coords="206,56,334,83"/>
+<area shape="rect" id="node6" href="$_honeycomb_lattice_8c.html#ad6d5522bfadda85057b31b89c25df32f" title="Setup a Hamiltonian for the Hubbard model on a Honeycomb lattice. " alt="" coords="196,107,344,133"/>
+<area shape="rect" id="node7" href="$_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068" title="Setup a Hamiltonian for the Kagome lattice. " alt="" coords="207,157,333,184"/>
+<area shape="rect" id="node8" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="211,208,329,235"/>
+<area shape="rect" id="node9" href="$_orthorhombic_8c.html#a33fb6a1902e42ecafe2d1249640825b1" title="Setup a Hamiltonian for the Simple Orthorhombic lattice. " alt="" coords="192,259,348,285"/>
+<area shape="rect" id="node10" href="$_pyrochlore_8c.html#a1bb6dee1ad8080fcb79eb017d12bb2b7" title="Setup a Hamiltonian for the Pyrochlore structure. " alt="" coords="200,309,340,336"/>
+<area shape="rect" id="node11" href="$_square_lattice_8c.html#a0449f65a4c6ec527da3e6ebb4253942e" title="Setup a Hamiltonian for the square lattice. " alt="" coords="201,360,339,387"/>
+<area shape="rect" id="node12" href="$_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe" title="Setup a Hamiltonian for the Triangular lattice. " alt="" coords="203,411,337,437"/>
+<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="Main routine for the standard mode. " alt="" coords="396,208,503,235"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="551,208,601,235"/>
 </map>

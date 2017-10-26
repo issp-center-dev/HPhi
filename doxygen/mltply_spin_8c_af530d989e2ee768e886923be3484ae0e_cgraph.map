@@ -1,6 +1,6 @@
 <map id="mltplySpinGCBoost" name="mltplySpinGCBoost">
-<area shape="rect" id="node2" href="$mltply_m_p_i_boost_8c.html#a651fc8416da1984e6897163b511aaf90" title="child_general_int_spin\l_MPIBoost" alt="" coords="193,5,343,46"/>
-<area shape="rect" id="node4" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="StartTimer" alt="" coords="227,71,309,97"/>
-<area shape="rect" id="node5" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="StopTimer" alt="" coords="227,121,309,148"/>
-<area shape="rect" id="node3" href="$mltply_m_p_i_boost_8c.html#a87e1b025852f541509ec138735e6241f" title="zgemm_" alt="" coords="392,12,464,39"/>
+<area shape="rect" id="node2" href="$mltply_m_p_i_boost_8c.html#a651fc8416da1984e6897163b511aaf90" title="child_general_int_spin\l_MPIBoost" alt="" coords="191,5,341,47"/>
+<area shape="rect" id="node4" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="225,71,307,98"/>
+<area shape="rect" id="node5" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="225,122,307,149"/>
+<area shape="rect" id="node3" href="$mltply_m_p_i_boost_8c.html#a87e1b025852f541509ec138735e6241f" title="zgemm_" alt="" coords="389,13,461,39"/>
 </map>

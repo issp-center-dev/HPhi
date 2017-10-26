@@ -18,6 +18,6 @@ var searchData=
   ['stdoutmpi',['stdoutMPI',['../wrapper_m_p_i_8h.html#abacbc82cf67663cd6f3708f1274ac207',1,'wrapperMPI.h']]],
   ['step_5fi',['step_i',['../global_8h.html#ae4b3c259843556181feaef44545e833f',1,'global.h']]],
   ['step_5fspin',['step_spin',['../global_8h.html#a3a933eb9d9a4329b3525beeb81f1e57e',1,'global.h']]],
-  ['sz',['sz',['../struct_phys_list.html#a9ad90bcd5a7a88548926a99ad5e2ada0',1,'PhysList::sz()'],['../struct_phys_list.html#ac5dca3d91e341e135c764e3200537b67',1,'PhysList::Sz()']]],
+  ['sz',['Sz',['../struct_phys_list.html#ac5dca3d91e341e135c764e3200537b67',1,'PhysList']]],
   ['sz2',['Sz2',['../struct_phys_list.html#aee62149eadb7414fc444f5b03d1dd20f',1,'PhysList::Sz2()'],['../struct_std_int_list.html#aea33f2584e7964e85b76d3f6a4377145',1,'StdIntList::Sz2()']]]
 ];

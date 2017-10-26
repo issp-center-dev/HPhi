@@ -1,7 +1,7 @@
 <map id="SumMPI_i" name="SumMPI_i">
 <area shape="rect" id="node2" href="$_check_m_p_i_8c.html#a38d463871e9c46f5184bedbf9387ac27" title="Print infomation of MPI parallelization Modify Definelist::Tpow in the inter process region..." alt="" coords="136,5,283,32"/>
-<area shape="rect" id="node3" href="$check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193" title="A program to check size of dimension for hirbert&#45;space. " alt="" coords="331,5,389,32"/>
-<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="760,5,811,32"/>
-<area shape="rect" id="node5" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="MakeExcitedList" alt="" coords="438,31,557,57"/>
-<area shape="rect" id="node6" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="606,31,711,57"/>
+<area shape="rect" id="node3" href="$check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193" title="A program to check size of dimension for Hilbert&#45;space. " alt="" coords="331,5,388,32"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="756,5,807,32"/>
+<area shape="rect" id="node5" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="MakeExcitedList" alt="" coords="436,31,555,57"/>
+<area shape="rect" id="node6" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="603,31,708,57"/>
 </map>

@@ -211,7 +211,7 @@ var searchData=
   ['child_5fgeneral_5fint_5fspin_5fmpidouble',['child_general_int_spin_MPIdouble',['../mltply_m_p_i_spin_8c.html#a1d7f900e4cbe1e42cc139fd78cf14c66',1,'mltplyMPISpin.c']]],
   ['child_5fgeneral_5fint_5fspin_5fmpisingle',['child_general_int_spin_MPIsingle',['../mltply_m_p_i_spin_8c.html#aab94d15aa4b4edd0e53f51921a4b7dd4',1,'mltplyMPISpin.c']]],
   ['child_5fomp_5fsz',['child_omp_sz',['../sz_8c.html#a78ae632d86cfad8be3787f304b1e6c6b',1,'sz.c']]],
-  ['child_5fomp_5fsz_5fgeneralspin',['child_omp_sz_GeneralSpin',['../sz_8c.html#a64400973f303ede60a1874ddc95f6357',1,'sz.c']]],
+  ['child_5fomp_5fsz_5fgeneralspin',['child_omp_sz_GeneralSpin',['../sz_8c.html#ac92f58849003c9291c47bd95defd701a',1,'sz.c']]],
   ['child_5fomp_5fsz_5fhacker',['child_omp_sz_hacker',['../sz_8c.html#ad2c800ee4b39c008aec04eb79385fb85',1,'sz.c']]],
   ['child_5fomp_5fsz_5fkondo',['child_omp_sz_Kondo',['../sz_8c.html#a406b25376cf793f5281a82f433605117',1,'sz.c']]],
   ['child_5fomp_5fsz_5fkondogc',['child_omp_sz_KondoGC',['../sz_8c.html#a8f36bd38249e55d14a0e1a9da9d49a9c',1,'sz.c']]],

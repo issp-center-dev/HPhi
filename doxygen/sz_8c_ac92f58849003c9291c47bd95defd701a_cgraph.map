@@ -1,0 +1,11 @@
+<map id="child_omp_sz_GeneralSpin" name="child_omp_sz_GeneralSpin">
+<area shape="rect" id="node2" href="$sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77" title="reading the list of the restricted Hilbert space " alt="" coords="233,214,308,241"/>
+<area shape="rect" id="node3" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="356,214,448,241"/>
+<area shape="rect" id="node4" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="939,265,1044,292"/>
+<area shape="rect" id="node6" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1104,138,1159,165"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="536,12,603,38"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="365,417,439,444"/>
+<area shape="rect" id="node7" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="496,214,643,241"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1092,265,1171,292"/>
+<area shape="rect" id="node8" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="691,214,891,241"/>
+</map>

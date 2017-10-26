@@ -1,6 +1,0 @@
-<map id="ReadTMComponents_BiCG" name="ReadTMComponents_BiCG">
-<area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="241,31,346,57"/>
-<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="256,81,331,108"/>
-<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="395,5,474,32"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="407,56,462,83"/>
-</map>

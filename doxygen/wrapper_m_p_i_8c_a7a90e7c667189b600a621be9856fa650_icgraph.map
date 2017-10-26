@@ -1,51 +1,51 @@
 <map id="SumMPI_dc" name="SumMPI_dc">
-<area shape="rect" id="node2" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="435,820,555,847"/>
-<area shape="rect" id="node5" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="expec_cisajs_Hubbard" alt="" coords="417,29,572,56"/>
-<area shape="rect" id="node11" href="$expec__cisajs_8c.html#a0d30174954dc8ad83ceeba5932ece811" title="expec_cisajs_HubbardGC" alt="" coords="161,67,335,93"/>
-<area shape="rect" id="node12" href="$expec__cisajs_8c.html#a3aa6dfa28ea11557e0977bf0b0e62b27" title="expec_cisajs_SpinGCGeneral" alt="" coords="150,117,346,144"/>
-<area shape="rect" id="node14" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="expec_cisajs_SpinGCHalf" alt="" coords="161,168,335,195"/>
-<area shape="rect" id="node15" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="expec_cisajs_SpinGeneral" alt="" coords="160,219,336,245"/>
-<area shape="rect" id="node17" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="expec_cisajs_SpinHalf" alt="" coords="171,269,325,296"/>
-<area shape="rect" id="node18" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="429,322,560,363"/>
-<area shape="rect" id="node20" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="429,405,560,446"/>
-<area shape="rect" id="node21" href="$expec__cisajscktaltdc_8c.html#ad2872d8b3f1c758d3933dc9e2b19dd16" title="expec_cisajscktalt\l_SpinGCGeneral" alt="" coords="183,422,313,463"/>
-<area shape="rect" id="node23" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="expec_cisajscktalt\l_SpinGCHalf" alt="" coords="183,487,313,529"/>
-<area shape="rect" id="node24" href="$expec__cisajscktaltdc_8c.html#a0b7abd184f6ccce7ac4141c21fabf91c" title="expec_cisajscktalt\l_SpinGeneral" alt="" coords="183,553,313,594"/>
-<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="183,618,313,659"/>
-<area shape="rect" id="node27" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="664,820,792,847"/>
-<area shape="rect" id="node28" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="448,1073,541,1100"/>
-<area shape="rect" id="node29" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="423,752,567,779"/>
-<area shape="rect" id="node30" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="420,921,569,948"/>
-<area shape="rect" id="node31" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="395,1125,594,1166"/>
-<area shape="rect" id="node35" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="219,1039,277,1065"/>
-<area shape="rect" id="node38" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="441,1241,549,1268"/>
-<area shape="rect" id="node39" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Multiply" alt="" coords="695,1191,761,1217"/>
-<area shape="rect" id="node40" href="$wrapper_m_p_i_8h.html#a26d9f2a4d2828fca2b8d6d45cea697a2" title="Compute norm of process&#45;distributed vector . " alt="" coords="679,1488,777,1515"/>
-<area shape="rect" id="node41" href="$_lanczos___eigen_value_8c.html#ac7c695e113d27f8237bad0e2886286a7" title="SetInitialVector" alt="" coords="193,785,303,812"/>
-<area shape="rect" id="node42" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="196,1292,300,1319"/>
-<area shape="rect" id="node44" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="186,1343,310,1369"/>
-<area shape="rect" id="node45" href="$expec__totalspin_8c.html#a408b344e7ab97dc747e3c6c9c9eb892c" title="totalSz_HubbardGC" alt="" coords="179,887,317,913"/>
-<area shape="rect" id="node47" href="$expec__totalspin_8c.html#ab7b5839640e77d0bb01982c7be6f2b69" title="totalSz_SpinGC" alt="" coords="190,937,306,964"/>
-<area shape="rect" id="node48" href="$wrapper_m_p_i_8h.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="200,1393,296,1420"/>
-<area shape="rect" id="node3" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="861,795,976,821"/>
-<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1192,845,1243,872"/>
-<area shape="rect" id="node6" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="679,261,777,288"/>
-<area shape="rect" id="node7" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="873,871,965,897"/>
-<area shape="rect" id="node8" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="893,744,944,771"/>
-<area shape="rect" id="node9" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1027,744,1141,771"/>
-<area shape="rect" id="node10" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1024,845,1144,872"/>
-<area shape="rect" id="node13" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="419,168,570,195"/>
-<area shape="rect" id="node16" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="429,261,560,288"/>
-<area shape="rect" id="node19" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="656,592,800,619"/>
-<area shape="rect" id="node22" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="429,487,560,529"/>
-<area shape="rect" id="node25" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="413,592,576,619"/>
-<area shape="rect" id="node32" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="643,1140,813,1167"/>
-<area shape="rect" id="node34" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="654,1089,802,1116"/>
-<area shape="rect" id="node33" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="866,1140,971,1167"/>
-<area shape="rect" id="node36" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="418,1292,571,1319"/>
-<area shape="rect" id="node37" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="672,1381,784,1408"/>
-<area shape="rect" id="node43" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="438,1343,551,1369"/>
-<area shape="rect" id="node46" href="$expec__totalspin_8c.html#adb43b14df5064ba7ac4e6963df681b0e" title="expec_totalSz" alt="" coords="442,871,547,897"/>
-<area shape="rect" id="node49" href="$_calc_by_l_o_b_p_c_g_8c.html#a27bd313c5c6e4ea3eba5e7715d20b54a" title="Initialize_wave" alt="" coords="441,1393,549,1420"/>
-<area shape="rect" id="node50" href="$_calc_spectrum_by_bi_c_g_8c.html#ad1927d2e76ab856a12ac639417c4c99f" title="Initialize Shadow Residual as a random vector (Experimental) " alt="" coords="439,1444,550,1471"/>
+<area shape="rect" id="node2" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="431,1005,551,1032"/>
+<area shape="rect" id="node5" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="expec_cisajs_Hubbard" alt="" coords="169,285,323,312"/>
+<area shape="rect" id="node11" href="$expec__cisajs_8c.html#a0d30174954dc8ad83ceeba5932ece811" title="expec_cisajs_HubbardGC" alt="" coords="159,336,333,363"/>
+<area shape="rect" id="node12" href="$expec__cisajs_8c.html#a3aa6dfa28ea11557e0977bf0b0e62b27" title="expec_cisajs_SpinGCGeneral" alt="" coords="148,387,344,413"/>
+<area shape="rect" id="node14" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="expec_cisajs_SpinGCHalf" alt="" coords="159,437,333,464"/>
+<area shape="rect" id="node15" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="expec_cisajs_SpinGeneral" alt="" coords="158,184,334,211"/>
+<area shape="rect" id="node17" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="expec_cisajs_SpinHalf" alt="" coords="169,235,323,261"/>
+<area shape="rect" id="node18" href="$expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15" title="expec_cisajscktalt\l_Hubbard" alt="" coords="426,555,557,597"/>
+<area shape="rect" id="node20" href="$expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0" title="expec_cisajscktalt\l_HubbardGC" alt="" coords="426,621,557,662"/>
+<area shape="rect" id="node21" href="$expec__cisajscktaltdc_8c.html#ad2872d8b3f1c758d3933dc9e2b19dd16" title="expec_cisajscktalt\l_SpinGCGeneral" alt="" coords="181,773,311,814"/>
+<area shape="rect" id="node23" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="expec_cisajscktalt\l_SpinGCHalf" alt="" coords="181,838,311,879"/>
+<area shape="rect" id="node24" href="$expec__cisajscktaltdc_8c.html#a0b7abd184f6ccce7ac4141c21fabf91c" title="expec_cisajscktalt\l_SpinGeneral" alt="" coords="181,539,311,581"/>
+<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="181,605,311,646"/>
+<area shape="rect" id="node27" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="660,752,788,779"/>
+<area shape="rect" id="node28" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="445,453,538,480"/>
+<area shape="rect" id="node29" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="419,1157,563,1184"/>
+<area shape="rect" id="node30" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="417,1259,566,1285"/>
+<area shape="rect" id="node31" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="392,1310,591,1351"/>
+<area shape="rect" id="node35" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="217,1056,275,1083"/>
+<area shape="rect" id="node38" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="437,1208,545,1235"/>
+<area shape="rect" id="node39" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Multiply" alt="" coords="691,104,757,131"/>
+<area shape="rect" id="node40" href="$wrapper_m_p_i_8h.html#a26d9f2a4d2828fca2b8d6d45cea697a2" title="Compute norm of process&#45;distributed vector . " alt="" coords="675,1452,773,1479"/>
+<area shape="rect" id="node41" href="$_lanczos___eigen_value_8c.html#ac7c695e113d27f8237bad0e2886286a7" title="SetInitialVector" alt="" coords="191,1157,301,1184"/>
+<area shape="rect" id="node42" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="194,83,298,109"/>
+<area shape="rect" id="node44" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="184,133,308,160"/>
+<area shape="rect" id="node45" href="$expec__totalspin_8c.html#a408b344e7ab97dc747e3c6c9c9eb892c" title="totalSz_HubbardGC" alt="" coords="422,1427,561,1453"/>
+<area shape="rect" id="node47" href="$expec__totalspin_8c.html#ab7b5839640e77d0bb01982c7be6f2b69" title="totalSz_SpinGC" alt="" coords="188,1376,304,1403"/>
+<area shape="rect" id="node48" href="$wrapper_m_p_i_8h.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="198,955,294,981"/>
+<area shape="rect" id="node3" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="857,953,972,980"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1188,788,1239,815"/>
+<area shape="rect" id="node6" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="675,395,773,421"/>
+<area shape="rect" id="node7" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="869,572,961,599"/>
+<area shape="rect" id="node8" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="889,691,940,717"/>
+<area shape="rect" id="node9" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="1023,725,1137,752"/>
+<area shape="rect" id="node10" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1020,788,1140,815"/>
+<area shape="rect" id="node13" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="expec_cisajs_SpinGC" alt="" coords="416,395,567,421"/>
+<area shape="rect" id="node16" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="426,235,557,261"/>
+<area shape="rect" id="node19" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="652,628,796,655"/>
+<area shape="rect" id="node22" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="expec_cisajscktalt\l_SpinGC" alt="" coords="426,686,557,727"/>
+<area shape="rect" id="node25" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="410,504,573,531"/>
+<area shape="rect" id="node32" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="639,1267,809,1293"/>
+<area shape="rect" id="node34" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="650,1317,798,1344"/>
+<area shape="rect" id="node33" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="862,1267,967,1293"/>
+<area shape="rect" id="node36" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="415,955,568,981"/>
+<area shape="rect" id="node37" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="668,828,780,855"/>
+<area shape="rect" id="node43" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="435,133,548,160"/>
+<area shape="rect" id="node46" href="$expec__totalspin_8c.html#adb43b14df5064ba7ac4e6963df681b0e" title="expec_totalSz" alt="" coords="671,1376,777,1403"/>
+<area shape="rect" id="node49" href="$_calc_by_l_o_b_p_c_g_8c.html#a27bd313c5c6e4ea3eba5e7715d20b54a" title="Initialize_wave" alt="" coords="437,853,545,880"/>
+<area shape="rect" id="node50" href="$_calc_spectrum_by_bi_c_g_8c.html#ad1927d2e76ab856a12ac639417c4c99f" title="Initialize Shadow Residual as a random vector (Experimental) " alt="" coords="436,904,547,931"/>
 </map>

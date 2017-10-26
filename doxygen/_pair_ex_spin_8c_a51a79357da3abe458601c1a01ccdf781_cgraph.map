@@ -1,10 +1,11 @@
 <map id="GetPairExcitedStateGeneralSpin" name="GetPairExcitedStateGeneralSpin">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="734,10,855,37"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="502,124,685,150"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="767,229,822,256"/>
-<area shape="rect" id="node6" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="510,36,677,62"/>
-<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362" title="MPI wrapper function to obtain maximum unsigned long integer across processes. " alt="" coords="318,204,402,230"/>
-<area shape="rect" id="node9" href="$mltply_m_p_i_spin_core_8c.html#ada0c9d68b20a680293f23b0593bed434" title="Compute &#160;term in the canonical general spin system when both site is in the inter process region..." alt="" coords="267,87,453,128"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="904,10,1008,37"/>
-<area shape="rect" id="node8" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="560,204,627,230"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="731,10,852,37"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="500,124,683,150"/>
+<area shape="rect" id="node6" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="764,229,819,256"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="508,36,675,62"/>
+<area shape="rect" id="node8" href="$wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362" title="MPI wrapper function to obtain maximum unsigned long integer across processes. " alt="" coords="317,204,401,230"/>
+<area shape="rect" id="node10" href="$mltply_m_p_i_spin_core_8c.html#ada0c9d68b20a680293f23b0593bed434" title="Compute &#160;term in the canonical general spin system when both site is in the inter process region..." alt="" coords="265,87,452,128"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="900,10,1004,37"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1052,10,1149,37"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="558,204,625,230"/>
 </map>

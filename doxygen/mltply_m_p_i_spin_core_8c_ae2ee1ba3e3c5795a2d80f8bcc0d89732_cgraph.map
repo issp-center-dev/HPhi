@@ -1,7 +1,8 @@
 <map id="X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble" name="X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="446,5,567,32"/>
-<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="280,81,347,108"/>
-<area shape="rect" id="node6" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="230,31,397,57"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="616,5,720,32"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="479,81,534,108"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="443,5,564,32"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="278,81,345,108"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="228,31,395,57"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="612,5,716,32"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="764,5,861,32"/>
+<area shape="rect" id="node6" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="476,81,531,108"/>
 </map>

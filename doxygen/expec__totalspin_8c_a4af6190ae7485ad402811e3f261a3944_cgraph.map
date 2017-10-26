@@ -1,25 +1,25 @@
 <map id="expec_totalspin" name="expec_totalspin">
-<area shape="rect" id="node2" href="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="178,56,305,83"/>
-<area shape="rect" id="node8" href="$expec__totalspin_8c.html#a389323595316ed6d873ec6c0c14f4e48" title="function of calculating totalspin for Hubbard model at grand canonical ensemble " alt="" coords="168,543,315,569"/>
-<area shape="rect" id="node9" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="189,340,293,367"/>
-<area shape="rect" id="node20" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="179,492,303,519"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="387,5,523,32"/>
-<area shape="rect" id="node6" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="632,136,728,163"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="838,56,893,83"/>
-<area shape="rect" id="node5" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="637,56,723,83"/>
-<area shape="rect" id="node7" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="833,136,897,163"/>
-<area shape="rect" id="node10" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="389,391,520,417"/>
-<area shape="rect" id="node11" href="$mltply_m_p_i_spin_8c.html#a161394c692ff0cb76ae9f4cd9838872f" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="371,158,538,199"/>
-<area shape="rect" id="node13" href="$mltply_m_p_i_spin_8c.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="387,223,522,265"/>
-<area shape="rect" id="node14" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="406,543,503,569"/>
-<area shape="rect" id="node15" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="813,517,917,544"/>
-<area shape="rect" id="node16" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="371,492,538,519"/>
-<area shape="rect" id="node18" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="363,289,546,316"/>
-<area shape="rect" id="node19" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="407,441,502,468"/>
-<area shape="rect" id="node12" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="647,416,713,443"/>
-<area shape="rect" id="node17" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="619,492,741,519"/>
-<area shape="rect" id="node21" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="367,594,542,635"/>
-<area shape="rect" id="node23" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="367,659,542,701"/>
-<area shape="rect" id="node22" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="595,594,765,635"/>
-<area shape="rect" id="node24" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="617,667,743,693"/>
+<area shape="rect" id="node2" href="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="177,56,303,83"/>
+<area shape="rect" id="node8" href="$expec__totalspin_8c.html#a389323595316ed6d873ec6c0c14f4e48" title="function of calculating totalspin for Hubbard model at grand canonical ensemble " alt="" coords="167,593,313,620"/>
+<area shape="rect" id="node9" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="188,340,292,367"/>
+<area shape="rect" id="node20" href="$expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e" title="function of calculating totalspin for spin model at grand canonical ensemble " alt="" coords="178,543,302,569"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="385,5,521,32"/>
+<area shape="rect" id="node6" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="629,136,725,163"/>
+<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="834,56,889,83"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="634,56,719,83"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="829,136,893,163"/>
+<area shape="rect" id="node10" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="387,492,518,519"/>
+<area shape="rect" id="node11" href="$mltply_m_p_i_spin_8c.html#a161394c692ff0cb76ae9f4cd9838872f" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="369,158,536,199"/>
+<area shape="rect" id="node13" href="$mltply_m_p_i_spin_8c.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="385,223,520,265"/>
+<area shape="rect" id="node14" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="628,568,725,595"/>
+<area shape="rect" id="node15" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="809,568,913,595"/>
+<area shape="rect" id="node16" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="369,543,536,569"/>
+<area shape="rect" id="node18" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="361,289,544,316"/>
+<area shape="rect" id="node19" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="405,441,500,468"/>
+<area shape="rect" id="node12" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="643,416,710,443"/>
+<area shape="rect" id="node17" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="616,517,737,544"/>
+<area shape="rect" id="node21" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="365,594,540,635"/>
+<area shape="rect" id="node23" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="365,711,540,753"/>
+<area shape="rect" id="node22" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="592,619,761,661"/>
+<area shape="rect" id="node24" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="613,719,740,745"/>
 </map>

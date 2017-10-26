@@ -1,5 +1,6 @@
 <map id="X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle" name="X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="446,12,567,39"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="230,37,397,64"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="616,12,720,39"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="443,13,564,39"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="228,38,395,65"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="612,13,716,39"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="764,13,861,39"/>
 </map>

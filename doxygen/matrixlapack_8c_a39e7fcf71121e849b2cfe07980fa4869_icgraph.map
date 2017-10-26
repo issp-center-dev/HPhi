@@ -1,10 +1,10 @@
 <map id="M_DSYEV" name="M_DSYEV">
-<area shape="rect" id="node2" href="$matrixlapack_8c.html#a38ab897cf91d3022b8ba2de845f7a6ae" title="DSEVvalue" alt="" coords="285,5,376,32"/>
-<area shape="rect" id="node6" href="$matrixlapack_8c.html#a7447554c8b594af132a9b2c848509f76" title="DSEVvector" alt="" coords="142,56,237,83"/>
-<area shape="rect" id="node3" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="427,5,571,32"/>
-<area shape="rect" id="node4" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="621,5,736,32"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="784,31,835,57"/>
-<area shape="rect" id="node7" href="$vec12_8c.html#a135e0d7c61f28a9644f71ec0b468eb88" title="vec12" alt="" coords="302,56,359,83"/>
-<area shape="rect" id="node8" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="425,56,573,83"/>
-<area shape="rect" id="node9" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="626,56,731,83"/>
+<area shape="rect" id="node2" href="$matrixlapack_8c.html#a38ab897cf91d3022b8ba2de845f7a6ae" title="obtain eigenvalues of real symmetric A " alt="" coords="283,5,373,32"/>
+<area shape="rect" id="node6" href="$matrixlapack_8c.html#a7447554c8b594af132a9b2c848509f76" title="obtain eigenvalues and eigenvectors of real symmetric A " alt="" coords="140,56,235,83"/>
+<area shape="rect" id="node3" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="423,5,567,32"/>
+<area shape="rect" id="node4" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="617,5,732,32"/>
+<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="780,31,831,57"/>
+<area shape="rect" id="node7" href="$vec12_8c.html#a135e0d7c61f28a9644f71ec0b468eb88" title="vec12" alt="" coords="299,56,357,83"/>
+<area shape="rect" id="node8" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="421,56,569,83"/>
+<area shape="rect" id="node9" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="622,56,727,83"/>
 </map>

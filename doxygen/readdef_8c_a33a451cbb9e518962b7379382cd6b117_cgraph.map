@@ -1,4 +1,8 @@
 <map id="CheckLocSpin" name="CheckLocSpin">
-<area shape="rect" id="node2" href="$readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0" title="function of checking an input data of total2Sz " alt="" coords="160,5,272,32"/>
-<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="321,5,375,32"/>
+<area shape="rect" id="node2" href="$readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0" title="function of checking an input data of total2Sz " alt="" coords="1007,5,1119,32"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da" title="function of resetting number of interactions " alt="" coords="160,56,307,83"/>
+<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1167,56,1221,83"/>
+<area shape="rect" id="node5" href="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68" title="function of initializeing interactions " alt="" coords="355,56,513,83"/>
+<area shape="rect" id="node6" href="$readdef_8c.html#acc29011dbce0388d85541f1e4afa2be1" title="function of checking spin index for all interactions " alt="" coords="561,56,740,83"/>
+<area shape="rect" id="node7" href="$readdef_8c.html#ac7c21de82671cc25f4319b55039c4e41" title="function of checking spin index for transfers " alt="" coords="788,56,959,83"/>
 </map>

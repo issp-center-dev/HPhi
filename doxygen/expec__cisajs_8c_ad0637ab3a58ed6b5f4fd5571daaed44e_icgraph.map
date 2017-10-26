@@ -1,10 +1,10 @@
 <map id="expec_cisajs_SpinGeneral" name="expec_cisajs_SpinGeneral">
 <area shape="rect" id="node2" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="expec_cisajs_Spin" alt="" coords="229,56,360,83"/>
 <area shape="rect" id="node3" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="408,56,507,83"/>
-<area shape="rect" id="node4" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="699,5,813,32"/>
+<area shape="rect" id="node4" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="697,5,812,32"/>
 <area shape="rect" id="node6" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="555,56,647,83"/>
-<area shape="rect" id="node7" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="576,107,627,133"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="864,81,915,108"/>
-<area shape="rect" id="node8" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="699,107,813,133"/>
-<area shape="rect" id="node9" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="696,157,816,184"/>
+<area shape="rect" id="node7" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="575,107,626,133"/>
+<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="863,81,913,108"/>
+<area shape="rect" id="node8" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="698,107,811,133"/>
+<area shape="rect" id="node9" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="695,157,815,184"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="StampTime" name="StampTime">
-<area shape="rect" id="node2" href="$time_8c.html#a60afd43e6c53eb214d9b9111a6522365" title="OutputTimer" alt="" coords="145,5,239,32"/>
-<area shape="rect" id="node3" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="288,5,339,32"/>
+<area shape="rect" id="node2" href="$time_8c.html#a60afd43e6c53eb214d9b9111a6522365" title="function for outputting elapse time for each function " alt="" coords="143,5,237,32"/>
+<area shape="rect" id="node3" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="285,5,336,32"/>
 </map>

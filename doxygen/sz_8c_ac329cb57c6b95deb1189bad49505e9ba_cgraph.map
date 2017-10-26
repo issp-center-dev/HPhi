@@ -1,22 +1,24 @@
 <map id="sz" name="sz">
-<area shape="rect" id="node2" href="$sz_8c.html#acde07cfd887113fd7624247edc1b9a31" title="Binomial" alt="" coords="148,5,220,32"/>
-<area shape="rect" id="node3" href="$sz_8c.html#a78ae632d86cfad8be3787f304b1e6c6b" title="child_omp_sz" alt="" coords="133,56,235,83"/>
-<area shape="rect" id="node4" href="$sz_8c.html#a64400973f303ede60a1874ddc95f6357" title="child_omp_sz_GeneralSpin" alt="" coords="94,107,274,133"/>
-<area shape="rect" id="node5" href="$sz_8c.html#ad2c800ee4b39c008aec04eb79385fb85" title="child_omp_sz_hacker" alt="" coords="110,208,258,235"/>
-<area shape="rect" id="node6" href="$bitcalc_8c.html#ac837cfea40f6ee80848d2f087e24d205" title="snoob" alt="" coords="362,208,419,235"/>
-<area shape="rect" id="node7" href="$sz_8c.html#a406b25376cf793f5281a82f433605117" title="child_omp_sz_Kondo" alt="" coords="111,259,257,285"/>
-<area shape="rect" id="node8" href="$sz_8c.html#a8f36bd38249e55d14a0e1a9da9d49a9c" title="child_omp_sz_KondoGC" alt="" coords="101,309,267,336"/>
-<area shape="rect" id="node9" href="$sz_8c.html#ac49f50334c3a68106c310a0982c111de" title="child_omp_sz_spin" alt="" coords="117,360,251,387"/>
-<area shape="rect" id="node10" href="$sz_8c.html#a1a39dc13f7b6dca406ecc4e17212ddf9" title="child_omp_sz_spin_hacker" alt="" coords="95,157,273,184"/>
-<area shape="rect" id="node11" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="507,816,613,843"/>
-<area shape="rect" id="node13" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="674,639,729,665"/>
-<area shape="rect" id="node14" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="357,639,424,665"/>
-<area shape="rect" id="node15" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="135,461,233,488"/>
-<area shape="rect" id="node17" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left hilbert spaces. " alt="" coords="323,563,459,589"/>
-<area shape="rect" id="node19" href="$sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77" title="Read_sz" alt="" coords="147,740,221,767"/>
-<area shape="rect" id="node21" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="345,689,437,716"/>
-<area shape="rect" id="node12" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="662,816,741,843"/>
-<area shape="rect" id="node16" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="339,461,443,488"/>
-<area shape="rect" id="node18" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original hilbert space..." alt="" coords="517,588,603,615"/>
-<area shape="rect" id="node20" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="353,791,428,817"/>
+<area shape="rect" id="node2" href="$sz_8c.html#acde07cfd887113fd7624247edc1b9a31" title="Binomial" alt="" coords="146,5,218,32"/>
+<area shape="rect" id="node3" href="$sz_8c.html#a78ae632d86cfad8be3787f304b1e6c6b" title="calculating restricted Hilbert space for Hubbard systems " alt="" coords="131,56,233,83"/>
+<area shape="rect" id="node4" href="$sz_8c.html#ac92f58849003c9291c47bd95defd701a" title="calculating restricted Hilbert space for general spin systems (S&gt;1/2) " alt="" coords="92,461,272,488"/>
+<area shape="rect" id="node5" href="$sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77" title="reading the list of the restricted Hilbert space " alt="" coords="335,411,409,437"/>
+<area shape="rect" id="node6" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1055,335,1160,361"/>
+<area shape="rect" id="node8" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1220,512,1275,539"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="485,563,551,589"/>
+<area shape="rect" id="node11" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="472,411,564,437"/>
+<area shape="rect" id="node14" href="$sz_8c.html#ad2c800ee4b39c008aec04eb79385fb85" title="efficient version of calculating restricted Hilbert space for Hubbard systems using snoob details of ..." alt="" coords="108,765,256,792"/>
+<area shape="rect" id="node15" href="$bitcalc_8c.html#ac837cfea40f6ee80848d2f087e24d205" title="&quot;finding the next higher number after a given number that has the same number of 1&#45;bits&quot; This method ..." alt="" coords="343,765,401,792"/>
+<area shape="rect" id="node16" href="$sz_8c.html#a406b25376cf793f5281a82f433605117" title="calculating restricted Hilbert space for Kondo systems " alt="" coords="109,867,255,893"/>
+<area shape="rect" id="node17" href="$sz_8c.html#a8f36bd38249e55d14a0e1a9da9d49a9c" title="calculating restricted Hilbert space for Kondo&#45;GC systems " alt="" coords="99,917,265,944"/>
+<area shape="rect" id="node18" href="$sz_8c.html#ac49f50334c3a68106c310a0982c111de" title="calculating restricted Hilbert space for spin&#45;1/2 systems " alt="" coords="115,968,249,995"/>
+<area shape="rect" id="node19" href="$sz_8c.html#a1a39dc13f7b6dca406ecc4e17212ddf9" title="efficient version of calculating restricted Hilbert space for spin&#45;1/2 systems details of snoob is fo..." alt="" coords="93,816,271,843"/>
+<area shape="rect" id="node20" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="133,1019,231,1045"/>
+<area shape="rect" id="node22" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="839,613,975,640"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="481,157,555,184"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1208,335,1287,361"/>
+<area shape="rect" id="node12" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="612,411,759,437"/>
+<area shape="rect" id="node13" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="807,411,1007,437"/>
+<area shape="rect" id="node21" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="320,1019,424,1045"/>
+<area shape="rect" id="node23" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="1065,664,1150,691"/>
 </map>
