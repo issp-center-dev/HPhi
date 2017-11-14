@@ -13,27 +13,28 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-
+/**@file
+@brief Functions to Diagonalize a tri-diagonal matrix and store eigenvectors 
+into ::vec
+*/
 #include "matrixlapack.h"
 #include "Common.h"
 #include "wrapperMPI.h"
 #include "mfmemory.h"
 #include "xsetmem.h"
-
-/** 
- * 
- * 
- * @param alpha 
- * @param beta 
- * @param ndim 
- * @param E 
- * @param X 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Youhei Yamaji (The University of Tokyo)
- */
-void vec12(double alpha[],double beta[],unsigned int ndim,
-	   double tmp_E[],struct BindStruct *X){
-  
+/**
+@brief Diagonalize a tri-diagonal matrix and store eigenvectors 
+into ::vec
+@author Takahiro Misawa (The University of Tokyo)
+@author Youhei Yamaji (The University of Tokyo)
+*/
+void vec12(
+  double alpha[],
+  double beta[],
+  unsigned int ndim,
+  double tmp_E[], 
+  struct BindStruct *X
+) {
   unsigned int j,k,nvec;
 
   double **tmpA, **tmpvec;
@@ -45,55 +46,41 @@ void vec12(double alpha[],double beta[],unsigned int ndim,
   d_malloc1(tmpr,ndim);
 
 #pragma omp parallel for default(none) firstprivate(ndim) private(j,k) shared(tmpA)
-  for(k=0;k<=ndim-1;k++){
-    for(j=0;j<=ndim-1;j++){
-      tmpA[k][j]=0.0;
-    }
-  }
+  for(k=0;k<=ndim-1;k++)
+    for(j=0;j<=ndim-1;j++) tmpA[k][j]=0.0;
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(vec)
-  for(k=1;k<=nvec;k++){
-    for(j=1;j<=ndim;j++){
-      vec[k][j]=0.0;
-    }
-  }
+  for(k=1;k<=nvec;k++)
+    for(j=1;j<=ndim;j++) vec[k][j]=0.0;
 
 #pragma omp parallel for default(none) firstprivate(ndim, alpha, beta) private(j) shared(tmpA)
   for(j=0;j<=ndim-2;j++){
     tmpA[j][j]=alpha[j+1];
     tmpA[j][j+1]=beta[j+1];
     tmpA[j+1][j]=beta[j+1];
-  }
+  }/*for(j=0;j<=ndim-2;j++)*/
   tmpA[ndim-1][ndim-1]=alpha[ndim];
 
   DSEVvector( ndim, tmpA, tmpr, tmpvec );
-  if(X->Def.iCalcType==Lanczos && X->Def.iFlgCalcSpec == 0){
+  if(X->Def.iCalcType==Lanczos && X->Def.iFlgCalcSpec == 0)
     fprintf(stdoutMPI, "  Lanczos EigenValue in vec12 = %.10lf \n ",tmpr[0]);
-  }
  
-  if(nvec<=ndim){
-    if(nvec < X->Def.LanczosTarget){
-      nvec=X->Def.LanczosTarget;
-    }
+  if (nvec <= ndim) {
+    if (nvec < X->Def.LanczosTarget) nvec = X->Def.LanczosTarget;
+    
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
     for(k=1;k<=nvec;k++){
       tmp_E[k]=tmpr[k-1];
-      for(j=1;j<=ndim;j++){
-        vec[k][j]=tmpvec[k-1][j-1];
-      } 
-    }
-  }
+      for (j = 1; j <= ndim; j++) vec[k][j] = tmpvec[k - 1][j - 1];
+    }/*for(k=1;k<=nvec;k++)*/
+  }/*if(nvec<=ndim)*/
   else{
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
     for(k=1;k<=ndim;k++){
       tmp_E[k]=tmpr[k-1];
-      for(j=1;j<=ndim;j++){
-        vec[k][j]=tmpvec[k-1][j-1];
-      } 
-    }
-  }
-
+      for (j = 1; j <= ndim; j++) vec[k][j] = tmpvec[k - 1][j - 1];
+    }/*for(k=1;k<=ndim;k++)*/
+  }/*if(nvec>ndim)*/
   free(tmpA);
   free(tmpr);
   free(tmpvec);
-
-}
+}/*void vec12*/
