@@ -20,8 +20,10 @@ cp -rf * HPhi-${vid}
 #
 cd HPhi-${vid}/doc/jp
 make -f makefile_doc_jp
+cp userguide_jp.pdf ../../../
 cd ../en
 make -f makefile_doc_en
+cp userguide_en.pdf ../../../
 cd ../fourier/ja
 sed -i -e "s/mathjax/pngmath/g" conf.py
 make latexpdfja
