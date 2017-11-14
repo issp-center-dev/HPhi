@@ -1,24 +1,24 @@
-#!/bin/sh -e
+#!/bin/sh
 #
-echo
-echo "===  HPhi distribution tool  ==="
-echo
-echo "  Did you clean the GIT directory? e.g."
-echo "  $ git clean -f -d -x"
-echo ""
-echo -n "  Start ? yes/no [no] : "
-read yesno
-if [ -z ${yesno} ] || [ ! ${yesno} = "yes" ]; then
-    exit
-fi
+# #############  Note  ################################
+# Before packing, you should clean the GIT directory as
+# $ git clean -f -d -x
+# #####################################################
 #
-mkdir HPhi-${1}
+# Version ID
 #
-cp -rf * HPhi-${1}
+major=`cat src/include/version_major.h`
+minor=`cat src/include/version_miner.h`
+patch=`cat src/include/version_patch.h`
+vid=`echo ${major}.${minor}.${patch}`
+#
+mkdir HPhi-${vid}
+#
+cp -rf * HPhi-${vid}
 #
 # Build docments
 #
-cd HPhi-${1}/doc/jp
+cd HPhi-${vid}/doc/jp
 make -f makefile_doc_jp
 cd ../en
 make -f makefile_doc_en
@@ -36,9 +36,10 @@ cd ../../../
 #
 find ./ -name ".git*" -delete
 rm dist.sh
+rm -rf HPhi-${vid}
 #
 # Pack
 #
 cd ../
-tar czvf HPhi-${1}.tar.gz HPhi-${1}
-rm -rf HPhi-${1}
+tar czvf HPhi-${vid}.tar.gz HPhi-${vid}
+rm -rf HPhi-${vid}
