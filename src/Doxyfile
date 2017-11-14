@@ -774,7 +774,6 @@ WARN_LOGFILE           =
 INPUT                  = ./ \
                          ./StdFace/ \
                          ./komega/ \
-                         include/wrapperMPI.h \
                          include/global.h \
                          include/struct.h \
                          StdFace/StdFace_vals.h

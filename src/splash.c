@@ -18,7 +18,7 @@
 @brief Print logo mark and version number
 */
 #include <stdio.h>
-#include "wrapperMPI.h"
+#include "global.h"
 /**
 @brief Print logo mark and version number
 */

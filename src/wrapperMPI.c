@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <complex.h>
 #include "splash.h"
+#include "global.h"
 
 /**
 @brief MPI initialization wrapper

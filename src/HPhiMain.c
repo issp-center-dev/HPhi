@@ -66,14 +66,19 @@
       <li>mltplySpin.c : For local spin system</li>
     </ul>
     <li>StdFace_main.c : Construct typical models</li>
-    <li>global.h, wrapperMPI.h : Global variables</li>
+    <li>global.h : Global variables</li>
     <li>struct.h : Binded struct</li>
   </ul>
   <HR>
   <H2>How to modify HPhi</H2>
   - @ref page_codingrule
   - @ref page_addstandard
-  - @ref page_newterm
+  - @ref page_addstandardval
+  - @ref page_variable
+  - @ref page_setmem
+  - @ref page_cmake
+  - @ref page_addmodpara
+  - @ref page_addexpert
   .
   <HR>
   <H2>Link</H2>
@@ -107,6 +112,8 @@
   and check whether other features still work fine.
   Also, try <tt>make test MPIRUN="mpiexec -np 4"</tt> to check MPI feature.
 .    
+
+@page page_cmake Add new file into CMakeList
   
 */
 

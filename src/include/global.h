@@ -19,6 +19,7 @@
 
 #include <complex.h>
 #include <math.h>
+#include <stdio.h>
 #define D_FileNameMax 256
 #define MPIFALSE -1
 #define FALSE 0
@@ -165,4 +166,25 @@ double eps_CheckImag0;
 double dShiftBeta;
 double eps_vec12;
 
+/*
+ Variables for the MPI parallelism
+*/
+int nproc;//!< Number of processors, defined in InitializeMPI()
+int myrank;//!< Process ID, defined in InitializeMPI()
+int nthreads;//!< Number of Threads, defined in InitializeMPI()
+FILE *stdoutMPI;/**<@brief File pointer to the standard output
+                defined in InitializeMPI()*/
+
 #endif /* HPHI_GLOBAL_H */
+
+/**
+@page page_variable Global variables and Data structure
+
+HPhi uses global variables. List of them can be found in global.h
+
+Sometimes, we pass variables function as
+@code
+func(&(X.Bind.Def))
+@endcode
+This C-structure can be found in struct.h
+*/

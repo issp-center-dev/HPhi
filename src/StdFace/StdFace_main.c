@@ -2309,4 +2309,11 @@ The non-local term is as follows:
 For more details, please see each functions.
 
 StdFace_Kagome_Boost()? Forget!!
+
+@page page_addstandardval Add new input variable into Standard mode
+
+- StdFace_main(): Parser of input file
+- StdFace_vals.h: If it should be shared.
+- StdFace_ResetVals(): Initialize
+.
 */

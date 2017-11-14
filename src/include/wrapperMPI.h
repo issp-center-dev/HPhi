@@ -22,12 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define HPHI_WRAPPER_H
 #include <complex.h>
 
-int nproc;//!< Number of processors, defined in InitializeMPI()
-int myrank;//!< Process ID, defined in InitializeMPI()
-int nthreads;//!< Number of Threads, defined in InitializeMPI()
-FILE *stdoutMPI;/**@brief File pointer to the standard output
-                defined in InitializeMPI()*/
-
 void InitializeMPI(int argc, char *argv[]);
 void FinalizeMPI();
 void exitMPI(int errorcode);
