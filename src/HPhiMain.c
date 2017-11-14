@@ -70,7 +70,7 @@
     <li>struct.h : Binded struct</li>
   </ul>
   <HR>
-  <H2>How to modify HPhi</H2>
+  <H2>How to modify HPhi (Developer's note)</H2>
   - @ref page_codingrule
   - @ref page_addstandard
   - @ref page_addstandardval
@@ -79,6 +79,9 @@
   - @ref page_cmake
   - @ref page_addmodpara
   - @ref page_addexpert
+  - @ref page_time
+  - @ref page_log
+  - Some contrivances for HPhi (only in Jananese) http://qlms.github.io/HPhi/develop/tips.pdf
   .
   <HR>
   <H2>Link</H2>

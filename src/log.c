@@ -130,3 +130,6 @@ int TimeKeeperWithRandAndStep
   return 0;
   
 }
+/**
+@page page_log Various kind of Logs
+*/
