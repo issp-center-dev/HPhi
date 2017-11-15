@@ -142,3 +142,6 @@ tool/corplot
 tool/cTPQ
 doc/fourier/en/_build/
 doc/fourier/ja/_build/
+
+#p4merge
+*.orig
