@@ -100,7 +100,7 @@ int GetSplitBitByModel(
     return -1;
   }
 
-  if(!GetSplitBit(tmpNsite, irght, ilft, ihfbit)==0){
+  if(GetSplitBit(tmpNsite, irght, ilft, ihfbit)!=0){
     return -1;
   }
   

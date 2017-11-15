@@ -1450,7 +1450,7 @@ int ReadDefFileIdxPara(
                  );
 
           if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
-            if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
+            if(CheckFormatForSpinInt(isite1, isite2, isite3, isite4)!=0){
               X->NCisAjtCkuAlvDC--;
               continue;
             }
@@ -2154,7 +2154,7 @@ int GetDiagonalInterAll
                 int *Chemi,
                 int *SpinChemi,
                 double *ParaChemi,
-                int *NChemi,
+                unsigned int *NChemi,
                 const int iCalcModel
         )
 {
@@ -2726,7 +2726,7 @@ int CheckInterAllCondition(
   }
 
   if(iCalcModel == Spin || iCalcModel ==SpinGC){
-    if(!CheckFormatForSpinInt(isite1, isite2, isite3, isite4)==0){
+    if(CheckFormatForSpinInt(isite1, isite2, isite3, isite4)!=0){
       fprintf(stderr, "%s", "Error: Spin index of InterAll is incorrect.\n");
       return(-1);
     }

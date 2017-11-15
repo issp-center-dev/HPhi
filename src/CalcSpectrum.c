@@ -58,7 +58,7 @@ int OutputSpectrum(
 
   //output spectrum
   sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
-  if(!childfopenMPI(sdt, "w", &fp)==0){
+  if(childfopenMPI(sdt, "w", &fp)!=0){
     return FALSE;
   }
 
@@ -584,7 +584,7 @@ int MakeExcitedList(
     }
 
     //set memory
-    if (!setmem_large(X) == 0) {
+    if (setmem_large(X) != 0) {
         fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
         exitMPI(-1);
     }

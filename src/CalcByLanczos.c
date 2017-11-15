@@ -186,19 +186,19 @@ int CalcByLanczos(
   // v1 is eigen vector
 
   StartTimer(4500);
-  if(!expec_cisajs(&(X->Bind), v1)==0){
+  if(expec_cisajs(&(X->Bind), v1)!=0){
     fprintf(stderr, "Error: calc OneBodyG.\n");
     exitMPI(-1);
   }
   StopTimer(4500);
   StartTimer(4600);  
-  if(!expec_cisajscktaltdc(&(X->Bind), v1)==0){
+  if(expec_cisajscktaltdc(&(X->Bind), v1)!=0){
     fprintf(stderr, "Error: calc TwoBodyG.\n");
     exitMPI(-1);
   }
   StopTimer(4600);
 
-  if(!expec_totalSz(&(X->Bind), v1)==0){
+  if(expec_totalSz(&(X->Bind), v1)!=0){
     fprintf(stderr, "Error: calc TotalSz.\n");
     exitMPI(-1);
   }

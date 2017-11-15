@@ -214,7 +214,7 @@ int main(int argc, char* argv[]){
   SetConvergenceFactor(&(X.Bind.Def));
 
   /*---------------------------*/
-  if(!HPhiTrans(&(X.Bind))==0) {
+  if(HPhiTrans(&(X.Bind))!=0) {
     exitMPI(-1);
   }
 
@@ -227,13 +227,13 @@ int main(int argc, char* argv[]){
     }
     
     /*LARGE VECTORS ARE ALLOCATED*/
-    if (!setmem_large(&X.Bind) == 0) {
+    if (setmem_large(&X.Bind) != 0) {
       fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
       exitMPI(-1);
     }
     
     StartTimer(1000);
-    if(!sz(&(X.Bind), list_1, list_2_1, list_2_2)==0){
+    if(sz(&(X.Bind), list_1, list_2_1, list_2_2)!=0){
       exitMPI(-1);
     }
 
@@ -259,7 +259,7 @@ int main(int argc, char* argv[]){
       break;
 
     case CG:
-      if (!CalcByLOBPCG(&X) == TRUE) {
+      if (CalcByLOBPCG(&X) != TRUE) {
         FinalizeMPI();
         return -1;
       }
@@ -293,7 +293,7 @@ int main(int argc, char* argv[]){
       break;
 
       case TimeEvolution:
-        if(!CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)==0){
+        if(CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)!=0){
           FinalizeMPI();
           return 0;
         }

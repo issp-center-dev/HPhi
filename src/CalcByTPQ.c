@@ -117,19 +117,19 @@ int CalcByTPQ(
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
       StartTimer(3600);
-      if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
+      if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%s", cLogSSRand);
       fclose(fp);
 // for norm
-      if (!childfopenMPI(sdt_norm, "w", &fp) == 0) {
+      if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%s", cLogNormRand);
       fclose(fp);
 // for fluctuations
-      if (!childfopenMPI(sdt_flct, "w", &fp) == 0) {
+      if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%s", cLogFlctRand);
@@ -165,20 +165,20 @@ int CalcByTPQ(
       if(iret !=0) return -1;
 
       StartTimer(3600);
-      if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
               X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
       fclose(fp);
 // for norm
-      if (!childfopenMPI(sdt_norm, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
 // for fluctuations
-      if (!childfopenMPI(sdt_flct, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
@@ -212,21 +212,21 @@ int CalcByTPQ(
       inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
 
       StartTimer(3600);
-      if(!childfopenMPI(sdt_phys, "a", &fp)==0){
+      if(childfopenMPI(sdt_phys, "a", &fp)!=0){
         return FALSE;
       }
       fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
 // for
       fclose(fp);
 
-      if(!childfopenMPI(sdt_norm, "a", &fp)==0){
+      if(childfopenMPI(sdt_norm, "a", &fp)!=0){
         return FALSE;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
       fclose(fp);
 
 // for fluctuations
-      if (!childfopenMPI(sdt_flct, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);

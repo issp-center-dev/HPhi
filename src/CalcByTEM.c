@@ -68,13 +68,13 @@ int CalcByTEM(
 
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
-  fprintf(stdoutMPI, cLogTEM_Start);
+  fprintf(stdoutMPI, "%s", cLogTEM_Start);
   if (X->Bind.Def.iInputEigenVec == FALSE) {
     fprintf(stderr, "Error: A file of Inputvector is not inputted.\n");
     return -1;
   } else {
     //input v1
-    fprintf(stdoutMPI, "An Initial Vector is inputted.\n");
+    fprintf(stdoutMPI, "%s","An Initial Vector is inputted.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
     GetFileNameByKW(KWSpectrumVec, &defname);
     strcat(defname, "_rank_%d.dat");
@@ -100,17 +100,17 @@ int CalcByTEM(
   }
 
   sprintf(sdt_phys, cFileNameSSRand, rand_i);
-  if (!childfopenMPI(sdt_phys, "w", &fp) == 0) {
+  if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
     return -1;
   }
-  fprintf(fp, cLogSSRand);
+  fprintf(fp, "%s",cLogSSRand);
   fclose(fp);
 
   sprintf(sdt_norm, cFileNameNormRand, rand_i);
-  if (!childfopenMPI(sdt_norm, "w", &fp) == 0) {
+  if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
     return -1;
   }
-  fprintf(fp, cLogNormRand);
+  fprintf(fp, "%s",cLogNormRand);
   fclose(fp);
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
@@ -152,14 +152,14 @@ int CalcByTEM(
     //Add Diagonal Parts
     //Multiply Diagonal
     expec_energy_flct(&(X->Bind));
-    if (!childfopenMPI(sdt_phys, "a", &fp) == 0) {
+    if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
       return -1;
     }
     fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", Time, X->Bind.Phys.energy, X->Bind.Phys.var,
             X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
     fclose(fp);
 
-    if (!childfopenMPI(sdt_norm, "a", &fp) == 0) {
+    if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
       return -1;
     }
     fprintf(fp, "%.16lf %.16lf %.16lf %d\n", Time, global_norm, global_1st_norm, step_i);
@@ -195,7 +195,7 @@ int CalcByTEM(
     fclose(fp);
   }
 
-  fprintf(stdoutMPI, cLogTEM_End);
+  fprintf(stdoutMPI, "%s",cLogTEM_End);
   return 0;
 }
 

@@ -107,7 +107,7 @@ int GetDiagonalInterAll
 								int *Chemi,
 								int *SpinChemi,
 								double *ParaChemi,
-								int *NChemi,
+								unsigned int *NChemi,
 								const int iCalcModel
 				);
 

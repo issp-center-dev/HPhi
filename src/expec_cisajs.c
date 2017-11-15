@@ -117,7 +117,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     break;
   }
   
-  if(!childfopenMPI(sdt, "w", &fp)==0){
+  if(childfopenMPI(sdt, "w", &fp)!=0){
     return -1;
   } 
   switch(X->Def.iCalcModel){

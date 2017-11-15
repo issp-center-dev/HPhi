@@ -91,8 +91,8 @@ int sz
   long int *list_2_1_Sz;
   long int *list_2_2_Sz;
   if(X->Def.iFlgGeneralSpin==TRUE){
-    lui_malloc1(list_2_1_Sz, X->Check.sdim+2);
-    lui_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+    li_malloc1(list_2_1_Sz, X->Check.sdim+2);
+    li_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
     for(j=0; j<X->Check.sdim+2;j++){
       list_2_1_Sz[j]=0;
       }
@@ -184,7 +184,7 @@ int sz
   jb=0;
 
   if(X->Def.READ==1){
-    if(!Read_sz(X, irght, ilft, ihfbit, &i_max)==0){
+    if(Read_sz(X, irght, ilft, ihfbit, &i_max)!=0){
       exitMPI(-1);
     }
   }

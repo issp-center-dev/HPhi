@@ -131,7 +131,7 @@ int expec_cisajscktaltdc
     break;
   }
 
-  if(!childfopenMPI(sdt, "w", &fp)==0){
+  if(childfopenMPI(sdt, "w", &fp)!=0){
     return -1;
   }
 
