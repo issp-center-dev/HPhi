@@ -140,9 +140,10 @@ static void PrintCalcMod(struct StdIntList *StdI)
   else {
     fprintf(stdout, "          Restart = %s\n", StdI->Restart);
     if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
-    else if (strcmp(StdI->Restart, "save") == 0) iRestart = 1;
-    else if (strcmp(StdI->Restart, "restartsave") == 0) iRestart = 2;
-    else if (strcmp(StdI->Restart, "restart") == 0) iRestart = 3;
+    else if (strcmp(StdI->Restart, "restart_out") == 0) iRestart = 1;
+    else if (strcmp(StdI->Restart, "restartsave") == 0 ||
+             strcmp(StdI->Restart, "restart")     == 0) iRestart = 2;
+    else if (strcmp(StdI->Restart, "restart_in") == 0) iRestart = 3;
     else {
       fprintf(stdout, "\n ERROR ! Restart Mode : %s\n", StdI->Restart);
       StdFace_exit(-1);
@@ -201,9 +202,10 @@ static void PrintCalcMod(struct StdIntList *StdI)
     if (strcmp(StdI->CalcSpec, "none") == 0) iCalcSpec = 0;
     else if (strcmp(StdI->CalcSpec, "normal") == 0) iCalcSpec = 1;
     else if (strcmp(StdI->CalcSpec, "noiteration") == 0) iCalcSpec = 2;
-    else if (strcmp(StdI->CalcSpec, "save") == 0) iCalcSpec = 3;
-    else if (strcmp(StdI->CalcSpec, "restart") == 0) iCalcSpec = 4;
-    else if (strcmp(StdI->CalcSpec, "restartsave") == 0) iCalcSpec = 5;
+    else if (strcmp(StdI->CalcSpec, "restart_out") == 0) iCalcSpec = 3;
+    else if (strcmp(StdI->CalcSpec, "restart_in") == 0) iCalcSpec = 4;
+    else if (strcmp(StdI->CalcSpec, "restartsave") == 0 ||
+             strcmp(StdI->CalcSpec, "restart")     == 0) iCalcSpec = 5;
     else {
       fprintf(stdout, "\n ERROR ! CalcSpec : %s\n", StdI->CalcSpec);
       StdFace_exit(-1);
@@ -233,9 +235,20 @@ static void PrintCalcMod(struct StdIntList *StdI)
 */
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
-  int NumOp, spin[2][2], isite, ispin, icell, itau;
-  double coef[2], Cphase;
+  int NumOp, **spin, isite, ispin, icell, itau;
+  double *coef, pi, Cphase, S, Sz;
   double *fourier_r, *fourier_i;
+
+  if (strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1) {
+    coef = (double *)malloc(sizeof(double) * (StdI->S2 + 1));
+    spin = (int **)malloc(sizeof(int*) * (StdI->S2 + 1));
+    for (ispin = 0; ispin < StdI->S2 + 1; ispin++) spin[ispin] = (int *)malloc(sizeof(int) * 2);
+  }
+  else {
+    coef = (double *)malloc(sizeof(double) * 2);
+    spin = (int **)malloc(sizeof(int*) * 2);
+    for (ispin = 0; ispin < 2; ispin++) spin[ispin] = (int *)malloc(sizeof(int) * 2);
+  }
 
   fourier_r = (double *)malloc(sizeof(double) * StdI->nsite);
   fourier_i = (double *)malloc(sizeof(double) * StdI->nsite);
@@ -249,18 +262,16 @@ static void PrintExcitation(struct StdIntList *StdI) {
   if (strcmp(StdI->SpectrumType, "****") == 0) {
     strcpy(StdI->SpectrumType, "szsz\0");
     fprintf(stdout, "     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######\n");
-    NumOp = 2;
-    coef[0] = 0.5;
-    coef[1] = -0.5;
-    spin[0][0] = 0;
-    spin[0][1] = 0;
-    spin[1][0] = 1;
-    spin[1][1] = 1;
-    StdI->SpectrumBody = 2;
-  }
-  else {
-    fprintf(stdout, "     SpectrumType = %s\n", StdI->SpectrumType);
-    if (strcmp(StdI->SpectrumType, "szsz") == 0) {
+    if (strcmp(StdI->model, "spin") == 0) {
+      NumOp = StdI->S2 + 1;
+      for (ispin = 0; ispin <= StdI->S2; ispin++) {
+        Sz = (double)ispin - (double)StdI->S2 * 0.5;
+        coef[ispin] = Sz;
+        spin[ispin][0] = ispin;
+        spin[ispin][1] = ispin;
+      }
+    }
+    else {
       NumOp = 2;
       coef[0] = 0.5;
       coef[1] = -0.5;
@@ -268,13 +279,49 @@ static void PrintExcitation(struct StdIntList *StdI) {
       spin[0][1] = 0;
       spin[1][0] = 1;
       spin[1][1] = 1;
+    }
+    StdI->SpectrumBody = 2;
+  }
+  else {
+    fprintf(stdout, "     SpectrumType = %s\n", StdI->SpectrumType);
+    if (strcmp(StdI->SpectrumType, "szsz") == 0) {
+      if (strcmp(StdI->model, "spin") == 0) {
+        NumOp = StdI->S2 + 1;
+        for (ispin = 0; ispin <= StdI->S2; ispin++) {
+          Sz = (double)ispin - (double)StdI->S2 * 0.5;
+          coef[ispin] = Sz;
+          spin[ispin][0] = ispin;
+          spin[ispin][1] = ispin;
+        }
+      }
+      else {
+        NumOp = 2;
+        coef[0] = 0.5;
+        coef[1] = -0.5;
+        spin[0][0] = 0;
+        spin[0][1] = 0;
+        spin[1][0] = 1;
+        spin[1][1] = 1;
+      }
       StdI->SpectrumBody = 2;
     }
     else if (strcmp(StdI->SpectrumType, "s+s-") == 0) {
-      NumOp = 1;
-      coef[0] = 1.0;
-      spin[0][0] = 0;
-      spin[0][1] = 1;
+      if (strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1) {
+        NumOp = StdI->S2;
+        S = (double)StdI->S2 * 0.5;
+        for (ispin = 0; ispin < StdI->S2; ispin++) {
+          Sz = (double)ispin - (double)StdI->S2 * 0.5;
+          coef[ispin] = sqrt(S*(S + 1.0) - Sz*(Sz + 1.0));
+          spin[ispin][0] = ispin;
+          spin[ispin][1] = ispin + 1;
+        }
+      }
+      else {
+        NumOp = 1;
+        coef[0] = 1.0;
+        spin[0][0] = 0;
+        spin[0][1] = 1;
+      }
       StdI->SpectrumBody = 2;
     }
     else if (strcmp(StdI->SpectrumType, "density") == 0) {
@@ -304,16 +351,6 @@ static void PrintExcitation(struct StdIntList *StdI) {
       StdFace_exit(-1);
     }
   }
-
-  if ((strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1)
-    || strcmp(StdI->model, "kondo") == 0) {
-    printf("####################################\n");
-    printf("###########  CAUTION  ##############\n");
-    printf("####################################\n");
-    printf("\n");
-    printf(" For Kondo or S>1 system, excitation parameter file is NOT generated automatically.\n");
-    printf(" Please write it by hand.\n");
-  }/*if (StdI->S2 > 1 || strcmp(StdI->model, "kondo") == 0)*/
 
   isite = 0;
   for (icell = 0; icell < StdI->NCell; icell++) {
@@ -380,6 +417,12 @@ static void PrintExcitation(struct StdIntList *StdI) {
 
   free(fourier_r);
   free(fourier_i);
+  if (strcmp(StdI->model, "spin") == 0) 
+    for (ispin = 0; ispin < StdI->S2 + 1; ispin++) free(spin[ispin]);
+  else 
+    for (ispin = 0; ispin < 2; ispin++) free(spin[ispin]);
+  free(spin);
+  free(coef);
 
 }/*static void PrintExcitation()*/
  /**
@@ -2467,4 +2510,11 @@ The non-local term is as follows:
 For more details, please see each functions.
 
 StdFace_Kagome_Boost()? Forget!!
+
+@page page_addstandardval Add new input variable into Standard mode
+
+- StdFace_main(): Parser of input file
+- StdFace_vals.h: If it should be shared.
+- StdFace_ResetVals(): Initialize
+.
 */

@@ -43,7 +43,7 @@ cat > reference.dat <<EOF
   68.4000000000 1.0000000000 0.0104120987 -0.0001336193
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste1.dat
-diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste1.dat`
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste1.dat`
 #
 # S+S- spectrum
 #
@@ -63,7 +63,7 @@ cat > reference.dat <<EOF
 68.4000000000 1.0000000000 0.0128263888 -0.0001612665
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste2.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste2.dat`
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste2.dat`
 #
 # Density-Density spectrum
 #
@@ -83,7 +83,7 @@ cat > reference.dat <<EOF
   68.4000000000 1.0000000000 0.0330773262 -0.0004338026
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste3.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste3.dat`
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste3.dat`
 #
 # Up-Up spectrum
 #
@@ -103,7 +103,7 @@ cat > reference.dat <<EOF
   68.4000000000 1.0000000000 0.0003645766 -0.0000047999
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste4.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste4.dat`
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste4.dat`
 #
 # Down-Down spectrum
 #
@@ -123,7 +123,7 @@ cat > reference.dat <<EOF
   68.4000000000 1.0000000000 0.0166857670 -0.0002047483
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste5.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste5.dat`
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste5.dat`
 
 test "${diff}" = "0.000000"
 

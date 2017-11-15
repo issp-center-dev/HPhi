@@ -183,7 +183,7 @@ int expec_energy_flct_HubbardGC(struct BindStruct *X) {
     unsigned int l_ibit1, u_ibit1, i_32;
     i_max=X->Check.idim_max;
 
-    i_32 = (unsigned int) (pow(2, 32) - 1);
+    i_32 = 0xFFFFFFFF; //2^32 - 1
     // tentative doublon
     tmp_D        = 0.0;
     tmp_D2       = 0.0;
@@ -423,7 +423,7 @@ int expec_energy_flct_HalfSpinGC(struct BindStruct *X){
     unsigned int l_ibit1,u_ibit1,i_32;
     i_max=X->Check.idim_max;
 
-    i_32   = (unsigned int)(pow(2,32)-1);
+    i_32 = 0xFFFFFFFF; //2^32 - 1
 
     // tentative doublon
     tmp_Sz       = 0.0;

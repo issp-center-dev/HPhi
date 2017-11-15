@@ -187,99 +187,89 @@ int expec_cisajscktaltdc
   return 0;
 }
 
-///
-/// \brief Rearray components of two-body Green's functions
-/// \param i [in] the index of two-body Green's functions
-/// \param org_isite1 [out] the rearrayed site about the target two-Body Green's functions.
-/// \param org_isite2 [out] the rearrayed site about the target two-Body Green's functions.
-/// \param org_isite3 [out] the rearrayed site about the target two-Body Green's functions.
-/// \param org_isite4 [out] the rearrayed spin index about the target two-Body Green's functions.
-/// \param org_sigma1 [out] the rearrayed spin index about the target two-Body Green's functions.
-/// \param org_sigma2 [out] the rearrayed spin index about the target two-Body Green's functions.
-/// \param org_sigma3 [out] the rearrayed spin index about the target two-Body Green's functions.
-/// \param org_sigma4 [out] the rearrayed spin index about the target two-Body Green's functions.
-/// \param tmp_V [out] the sign obtained by rearraying sites about the target two-Body Green's functions.
-/// \param X [in] struct for getting the information about the target two-Body Green's functions.
-/// \retval 0 normally finished
-/// \retval -1 abnormally finished
-int Rearray_TwoBodyG(
-                         int i,
-                         long unsigned int *org_isite1,
-                         long unsigned int *org_isite2,
-                         long unsigned int *org_isite3,
-                         long unsigned int *org_isite4,
-                         long unsigned int *org_sigma1,
-                         long unsigned int *org_sigma2,
-                         long unsigned int *org_sigma3,
-                         long unsigned int *org_sigma4,
-                         double complex *tmp_V, 
-                         struct BindStruct *X
-                         )
-{
-  long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
-  long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
+
+/** 
+ * @note Not Used now
+ * 
+ * @param X 
+ * @param vec 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+void expec_cisajscktaltdc_alldiag(struct BindStruct *X,double complex *vec){ // only for Spin and Hubbard
+
+  long unsigned int j;
+  long unsigned int irght,ilft,ihfbit;
+  long unsigned int isite1,isite2;
+  long unsigned int is1_up,is2_up,is1_down,is2_down;
+  long unsigned int iexchg, off;
+  int num1_up,num2_up;
+  int num1_down,num2_down; 
+  long unsigned int ibit1_up,ibit2_up,ibit1_down,ibit2_down; 
+  double complex spn_z,chrg_z;
+  double complex spn,chrg;
+  double complex t_spn_z;  
   
-  tmp_org_isite1   = X->Def.CisAjtCkuAlvDC[i][0]+1;
-  tmp_org_sigma1   = X->Def.CisAjtCkuAlvDC[i][1];
-  tmp_org_isite2   = X->Def.CisAjtCkuAlvDC[i][2]+1;
-  tmp_org_sigma2   = X->Def.CisAjtCkuAlvDC[i][3];
-  tmp_org_isite3   = X->Def.CisAjtCkuAlvDC[i][4]+1;
-  tmp_org_sigma3   = X->Def.CisAjtCkuAlvDC[i][5];
-  tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
-  tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
-  
-  if(tmp_org_isite1==tmp_org_isite2 && tmp_org_isite3==tmp_org_isite4){
-    if(tmp_org_isite1 > tmp_org_isite3){
-      *org_isite1   = tmp_org_isite3;
-      *org_sigma1   = tmp_org_sigma3;
-      *org_isite2   = tmp_org_isite4;
-      *org_sigma2   = tmp_org_sigma4;
-      *org_isite3   = tmp_org_isite1;
-      *org_sigma3   = tmp_org_sigma1;
-      *org_isite4   = tmp_org_isite2;
-      *org_sigma4   = tmp_org_sigma2;
-    }
-    else{
-      *org_isite1   = tmp_org_isite1;
-      *org_sigma1   = tmp_org_sigma1;
-      *org_isite2   = tmp_org_isite2;
-      *org_sigma2   = tmp_org_sigma2;
-      *org_isite3   = tmp_org_isite3;
-      *org_sigma3   = tmp_org_sigma3;
-      *org_isite4   = tmp_org_isite4;
-      *org_sigma4   = tmp_org_sigma4;
-    }
-    *tmp_V = 1.0;
+  int N2,i_max;
     
-  }
-  else if(tmp_org_isite1==tmp_org_isite4 && tmp_org_isite3==tmp_org_isite2){
-    if(tmp_org_isite1 > tmp_org_isite3){
-      *org_isite1   = tmp_org_isite3;
-      *org_sigma1   = tmp_org_sigma3;
-      *org_isite2   = tmp_org_isite2;
-      *org_sigma2   = tmp_org_sigma2;
-      *org_isite3   = tmp_org_isite1;
-      *org_sigma3   = tmp_org_sigma1;
-      *org_isite4   = tmp_org_isite4;
-      *org_sigma4   = tmp_org_sigma4;
+  N2=2*X->Def.Nsite;
+  i_max=X->Check.idim_max;
+
+  GetSplitBit(N2, &irght, &ilft, &ihfbit);
+  chrg=0.0;
+  spn=0.0;
+  t_spn_z=0.0;
+  
+  for(isite1=1;isite1<=X->Def.Nsite;isite1++){
+    for(isite2=1;isite2<=X->Def.Nsite;isite2++){
+            
+      is1_up=X->Def.Tpow[2*isite1-2];
+      is1_down=X->Def.Tpow[2*isite1-1];
+      is2_up=X->Def.Tpow[2*isite2-2];
+      is2_down=X->Def.Tpow[2*isite2-1];
+      
+#pragma omp parallel for reduction(+: t_spn_z,spn, chrg) firstprivate(i_max, is1_up, is2_up, is1_down, is2_down, irght, ilft, ihfbit) private(ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, spn_z, chrg_z, iexchg, off)
+      for(j=1;j<=i_max;j++){                    
+        ibit1_up= list_1[j]&is1_up;
+        num1_up=ibit1_up/is1_up;            
+        ibit2_up= list_1[j]&is2_up;
+        num2_up=ibit2_up/is2_up;
+            
+        ibit1_down= list_1[j]&is1_down;
+        num1_down=ibit1_down/is1_down;
+            
+        ibit2_down= list_1[j]&is2_down;
+        num2_down=ibit2_down/is2_down;
+            
+        spn_z=(num1_up-num1_down)*(num2_up-num2_down);
+        chrg_z=(num1_up+num1_down)*(num2_up+num2_down);
+            
+        t_spn_z+= conj(vec[j])* vec[j]*(num1_up-num1_down);
+        spn+= conj(vec[j])* vec[j]*spn_z;
+        chrg+= conj(vec[j])* vec[j]*chrg_z;
+            
+        if(isite1==isite2){
+          spn+=2* conj(vec[j])* vec[j]*(num1_up+num1_down-2*num1_up*num1_down);
+        }else{
+          if(ibit1_up!=0 && ibit1_down==0 && ibit2_up==0 &&ibit2_down!=0 ){
+            iexchg= list_1[j]-(is1_up+is2_down);
+            iexchg+=(is2_up+is1_down);
+            GetOffComp(list_2_1, list_2_2, iexchg,  irght, ilft, ihfbit, &off);                    
+            spn+=2* conj(vec[j])* vec[off];
+          }else if(ibit1_up==0 && ibit1_down!=0 && ibit2_up!=0 && ibit2_down==0){
+            iexchg= list_1[j]-(is1_down+is2_up);
+            iexchg+=(is2_down+is1_up);
+            GetOffComp(list_2_1, list_2_2, iexchg,  irght, ilft, ihfbit, &off);
+            spn+=2* conj(vec[j])* vec[off];
+          }
+        }
+      }
     }
-    else{
-      *org_isite1   = tmp_org_isite1;
-      *org_sigma1   = tmp_org_sigma1;
-      *org_isite2   = tmp_org_isite4;
-      *org_sigma2   = tmp_org_sigma4;
-      *org_isite3   = tmp_org_isite3;
-      *org_sigma3   = tmp_org_sigma3;
-      *org_isite4   = tmp_org_isite2;
-      *org_sigma4   = tmp_org_sigma2;
-    }
-    *tmp_V =-1.0;
   }
-  else{
-    return -1;
-  }
-  return 0;
+  spn = spn/X->Def.Nsite;
+  X->Phys.s2=spn;
 }
+
 
 /**
  * @brief Child function to calculate two-body green's functions for Hubbard GC model
@@ -578,11 +568,6 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
         tmp_org_sigma3   = X->Def.CisAjtCkuAlvDC[i][5];
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
-        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
-            //error message will be added
-            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
-            continue;
-        }
 
         dam_pr = 0.0;
         if(org_isite1 >X->Def.Nsite && org_isite3>X->Def.Nsite){
@@ -711,10 +696,6 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
 
-        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
-            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
-            continue;
-        }
         tmp_Sz=0;
 
       for(j=0;j<2; j++) {
@@ -842,12 +823,6 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
 
-        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
-            //error message will be added
-            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
-            continue;
-        }
-
         dam_pr=0.0;
         if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){ //org_isite3 >= org_isite1 > Nsite
 
@@ -955,13 +930,6 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
         tmp_org_sigma3   = X->Def.CisAjtCkuAlvDC[i][5];
         tmp_org_isite4   = X->Def.CisAjtCkuAlvDC[i][6]+1;
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
-
-        if(Rearray_TwoBodyG(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
-            //error message will be added
-            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
-            continue;
-        }
-
         dam_pr = 0.0;
         if(org_isite1 > X->Def.Nsite && org_isite3 > X->Def.Nsite){
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal

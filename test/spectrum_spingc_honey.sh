@@ -49,7 +49,7 @@ cat > reference.dat <<EOF
   41.6700000000 1.0000000000 0.0430380901 -0.0008709165
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste1.dat
-diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste1.dat`
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste1.dat`
 #
 # S+S- spectrum
 #
@@ -69,7 +69,7 @@ cat > reference.dat <<EOF
 41.6700000000 1.0000000000 0.0966933489 -0.0019541325
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste2.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste2.dat`
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste2.dat`
 #
 # Density-Density spectrum
 #
@@ -89,7 +89,7 @@ cat > reference.dat <<EOF
   41.6700000000 1.0000000000 0.0000000000 0.0000000000
 EOF
 paste output/zvo_DynamicalGreen.dat reference.dat > paste3.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)**2)+sqrt(($4-$8)**2)} END{printf "%8.6f", diff}' paste3.dat`
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste3.dat`
 
 test "${diff}" = "0.000000"
 

@@ -1,0 +1,7 @@
+model = "Spin"
+method = "CG"
+lattice = "square"
+W = 4
+L = 4
+J = 1.0
+2Sz = 0

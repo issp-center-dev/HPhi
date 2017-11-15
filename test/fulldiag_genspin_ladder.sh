@@ -15,7 +15,7 @@ J1 = 1.0
 2Sz = 0
 EOF
 
-../../src/HPhi -s stan.in
+${MPIRUNFC} ../../src/HPhi -s stan.in
 
 # Check value
 
@@ -67,7 +67,7 @@ cat > reference.dat <<EOF
   13.500000   0.000000   0.000000  42.000000   0.000000
 EOF
 paste output/zvo_phys_Nup2_Ndown2.dat reference.dat > paste.dat
-diff=`awk 'BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)**2)} END{printf "%8.6f", diff}' paste.dat`
+diff=`awk 'BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)*($1-$6))} END{printf "%8.6f", diff}' paste.dat`
 test "${diff}" = "0.000000"
 
 exit $?

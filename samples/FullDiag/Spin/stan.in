@@ -1,0 +1,7 @@
+L = 2
+W = 2
+model = "Spin"
+lattice = "Kagome"
+method = "FullDiag"
+J = 1.0
+2Sz = 0

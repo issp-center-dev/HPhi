@@ -9,36 +9,34 @@
 
 This tutorial should be performed in 
 \begin{verbatim}
-samples/Standard/Spin/HeisenbergChain/
+samples/CG/Heisenberg/
 \end{verbatim}
 
-The input file, reference outputs, and redirected standard output are
-provided as follows:
+The input file is provided as follows:
 \begin{verbatim}
-samples/Standard/Spin/HeisenbergChain/StdFace.def
-samples/Standard/Spin/HeisenbergChain/output_FullDiag/
-samples/Standard/Spin/HeisenbergChain/output_Lanczos/
-samples/Standard/Spin/HeisenbergChain/output_TPQ/
-samples/Standard/Spin/HeisenbergChain/FullDiag.out
-samples/Standard/Spin/HeisenbergChain/Lanczos.out
-samples/Standard/Spin/HeisenbergChain/TPQ.out
+samples/CG/Heisenberg/stan.in
 \end{verbatim}
 %
-In this case, we treat the one-dimensional antiferromagnetic Heisenberg chain
+In this case, we treat the two-dimensional antiferromagnetic Heisenberg model
 that has a nearest neighbor spin coupling.
 \begin{align}
-  {\hat H} = J \sum_{i=1}^{N_{\rm site}} {\hat {\boldsymbol S}}_i \cdot {\hat {\boldsymbol S}}_{i+1}
+  {\hat H} = J \sum_{i,j=1}^{4}(
+  {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i+1 j} +
+  {\hat {\boldsymbol S}}_{i j} \cdot {\hat {\boldsymbol S}}_{i j+1},
+  )
 \end{align}
+where we use the periodic boundary condition ($S_{1 5} = S_{5 1}= S_{1 1}$).
 
 The input file is as follows:
 \\
 \begin{minipage}{10cm}
 \begin{screen}
 \begin{verbatim}
-L = 16
 model = "Spin"
-method = "Lanczos"
-lattice = "chain lattice"
+method = "CG"
+lattice = "square"
+W = 4
+L = 4
 J = 1.0
 2Sz = 0
 \end{verbatim}
@@ -70,98 +68,155 @@ The details of the outputted files are shown in Secs.
 We execute
 
 \hspace{-0.7cm}
-\verb|$ |\textit{Path}\verb|/HPhi -s StdFace.def|
+\verb|$ |\underline{パス}\verb|/HPhi -s stan.in|
 \\
 and obtain the following standard outputs
 (the compilation mode is MPI parallel/hybrid parallel):
 
 \small
 \begin{verbatim}
+
+      ,ammmmmmmmmmmmmmb,,        Welcome to the
+    ,@@` dm          mb  ===m
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@
+        ~~9@@@@@@@@@  ~
+           9@P~~~9@P             Version 2.0.3
+
+
+
 #####  Parallelization Info.  #####
 
-  OpenMP threads : 4
-  MPI PEs : 1 
+  OpenMP threads : 1
+  MPI PEs : 1
 
 
 ######  Standard Intarface Mode STARTS  ######
 
-  Open Standard-Mode Inputfile ./StdFace.def 
+  Open Standard-Mode Inputfile stan.in
 
-  KEYWORD : l                    | VALUE : 16 
-  KEYWORD : model                | VALUE : spin 
-  KEYWORD : method               | VALUE : lanczos 
-  Skipping a line.
-  Skipping a line.
-  KEYWORD : lattice              | VALUE : chainlattice 
-  KEYWORD : j                    | VALUE : 1.0 
-  KEYWORD : 2sz                  | VALUE : 0 
+  KEYWORD : model                | VALUE : Spin
+  KEYWORD : method               | VALUE : CG
+  KEYWORD : lattice              | VALUE : square
+  KEYWORD : w                    | VALUE : 4
+  KEYWORD : l                    | VALUE : 4
+  KEYWORD : j                    | VALUE : 1.0
+  KEYWORD : 2sz                  | VALUE : 0
 
 #######  Parameter Summary  #######
 
-                L = 16 
+  @ Lattice Size & Shape
+
                 a = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               2S = 1           ######  DEFAULT VALUE IS USED  ######
+          Wlength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Llength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Lx = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Ly = 1.00000     ######  DEFAULT VALUE IS USED  ######
+           phase0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+           phase1 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+
+  @ Super-Lattice setting
+
+                L = 4
+                W = 4
+           Height = 1           ######  DEFAULT VALUE IS USED  ######
+         Number of Cell = 16
+
+  @ Hamiltonian
+
                 h = 0.00000     ######  DEFAULT VALUE IS USED  ######
             Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1           ######  DEFAULT VALUE IS USED  ######
                 D = 0.00000     ######  DEFAULT VALUE IS USED  ######
-                J = 1.00000   
-               Jz = 1.00000     ######  DEFAULT VALUE IS USED  ######
-              Jxy = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               Jx = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               Jy = 1.00000     ######  DEFAULT VALUE IS USED  ######
-               J' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jz' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-             Jxy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jx' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-              Jy' = 0.00000     ######  DEFAULT VALUE IS USED  ######
-       LargeValue = 1           ######  DEFAULT VALUE IS USED  ######
+              J0x = 1.00000
+              J0y = 1.00000
+              J0z = 1.00000
+              J1x = 1.00000
+              J1y = 1.00000
+              J1z = 1.00000
 
-         filehead = zvo         ######  DEFAULT VALUE IS USED  ######
+  @ Numerical conditions
+
+       LargeValue = 4.50000     ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    locspn.def is written.
+    coulombinter.def is written.
+    hund.def is written.
+    exchange.def is written.
+    CDataFileHead = zvo         ######  DEFAULT VALUE IS USED  ######
       Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
-       initial_iv = 1           ######  DEFAULT VALUE IS USED  ######
-             nvec = 1           ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
              exct = 1           ######  DEFAULT VALUE IS USED  ######
        LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
     LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
            NumAve = 5           ######  DEFAULT VALUE IS USED  ######
     ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
-              2Sz = 0  
-      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
-
-######  Print Expert input files  ######
-
-    zlocspin.def is written.
-      zTrans.def is written.
-   zInterAll.def is written.
-    namelist.def is written.
-     calcmod.def is written.
+           NOmega = 200         ######  DEFAULT VALUE IS USED  ######
+         OmegaMax = 72.00000    ######  DEFAULT VALUE IS USED  ######
+         OmegaMin = -72.00000   ######  DEFAULT VALUE IS USED  ######
+          OmegaIm = 0.04000     ######  DEFAULT VALUE IS USED  ######
+              2Sz = 0
      modpara.def is written.
+
+  @ Spectrum
+
+       SpectrumQW = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQL = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQH = 0.00000     ######  DEFAULT VALUE IS USED  ######
+     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######
+        pair.def is written.
+
+
+  @ CalcMod
+
+          Restart = none        ######  DEFAULT VALUE IS USED  ######
+   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######
+       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######
+         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######
+     calcmod.def is written.
+
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
     greenone.def is written.
     greentwo.def is written.
+    namelist.def is written.
 
 ######  Input files are generated.  ######
 
   Read File 'namelist.def'.
   Read File 'calcmod.def' for CalcMod.
   Read File 'modpara.def' for ModPara.
-  Read File 'zlocspn.def' for LocSpin.
-  Read File 'zTrans.def' for Trans.
-  Read File 'zInterAll.def' for InterAll.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
   Read File 'greenone.def' for OneBodyG.
   Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
 
 ######  Definition files are correct.  ######
 
-  Read File 'zlocspn.def'.
-  Read File 'zTrans.def'.
-  Read File 'zInterAll.def'.
+  Read File 'locspn.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
   Read File 'greenone.def'.
   Read File 'greentwo.def'.
+  Read File 'pair.def'.
 
 ######  Indices and Parameters of Definition files(*.def) are complete.  ######
 
-  MAX DIMENSION idim_max=12870 
-  APPROXIMATE REQUIRED MEMORY  max_mem=0.001236 GB 
+  MAX DIMENSION idim_max=12870
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.001647 GB
 
 
 ######  MPI site separation summary  ######
@@ -190,88 +245,90 @@ and obtain the following standard outputs
 
   Process element info
     Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
-          0           12870     8      8      8         0   
+          0           12870     8      8      8         0
 
    Total dimension : 12870
 
 
 ######  LARGE ALLOCATE FINISH !  ######
 
-  Start: Calculate HilbertNum for fixed Sz. 
-  End  : Calculate HilbertNum for fixed Sz. 
+  Start: Calculate HilbertNum for fixed Sz.
+  End  : Calculate HilbertNum for fixed Sz.
 
-  Start: Calculate diagaonal components of Hamiltonian. 
-  End  : Calculate diagaonal components of Hamiltonian. 
+  Start: Calculate diagaonal components of Hamiltonian.
+  End  : Calculate diagaonal components of Hamiltonian.
 
-######  Start: Calculate Lanczos Eigenvalue.  ######
+######  Eigenvalue with LOBPCG  #######
 
-  initial_mode=0 normal: iv = 6437 i_max=12870 k_exct =1 
+  initial_mode=1 (random): iv = -1 i_max=12870 k_exct =1
 
-  LanczosStep  E[1] E[2] E[3] E[4], E_Max / Nsite
-  stp = 2 0.7192235936 2.7807764064 xxxxxxxxxx xxxxxxxxx 
-  stp = 4 -1.1878294823 0.6833997592 2.1864630296 3.4242789858 0.2140174366 
-  stp = 6 -2.4623912732 -0.8925857144 0.5104359160 1.7443963706 0.2277205490 
-  stp = 8 -3.5878334190 -2.0969913075 -0.8250723080 0.3369317092 0.2325450330 
+    Step   Residual-2-norm     Threshold      Energy
+        1     2.44343e+00     1.00000e-07          -5.27456e-01
+        2     2.76604e+00     1.87217e-07          -1.87217e+00
+        3     2.61923e+00     4.19088e-07          -4.19088e+00
+        4     2.57106e+00     5.97098e-07          -5.97098e+00
 \end{verbatim}
 \normalsize
 ( snip )
 \small
 \begin{verbatim}
-  stp = 60 -7.1422963606 -6.8721066784 -6.6965474265 -6.5234070570 0.2499999989 
-  stp = 62 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070573 0.2499999996 
-  stp = 64 -7.1422963606 -6.8721066784 -6.6965474266 -6.5234070574 0.2499999999 
+       40     7.39431e-06     1.12285e-06          -1.12285e+01
+       41     4.15948e-06     1.12285e-06          -1.12285e+01
+       42     2.04898e-06     1.12285e-06          -1.12285e+01
+       43     9.92048e-07     1.12285e-06          -1.12285e+01
 
 ######  End  : Calculate Lanczos EigenValue.  ######
 
-######  Start: Calculate Eigenvector.  ######
 
-  Start: Calculate Lanczos Eigenvector.
-  End  : Calculate Lanczos Eigenvector.
-  Start: Calculate Energy.
-  End  : Calculate Energy.
+######  End  : Calculate Lanczos EigenVec.  ######
 
-  Accuracy check !!!
-  LanczosEnergy = -7.14229636061676e+00 
-  EnergyByVec   = -7.14229636061616e+00 
-  diff_ene      = 8.50586433832080e-14 
-  var           = 9.97303843188625e-14 
-  Accuracy of Lanczos vectors is enough.
-
-######  End  : Calculate Eigenvector.  ######
-
-  Start: Calculate one body Green functions.
-  End  : Calculate one body Green functions.
-
-  Start: Calculate two bodies Green functions.
-  End  : Calculate two bodies Green functions.
+i=    0 Energy=-11.228483 N= 16.000000 Sz=  0.000000 Doublon=  0.000000
 \end{verbatim}
 \normalsize
 
 In the beginning of this run,
 files describing the details of the considered Hamiltonian 
-(\verb|zlocspin.def|, \verb|zTrans.def|, \verb|zInterAll.def|, 
-\verb|namelist.def|, \verb|calcmod.def|, \verb|modpara.def|)
+(\verb|locspin.def|、\verb|trans.def|、\verb|exchange.def|、
+\verb|coulombintra.def|、\verb|hund.def|、
+\verb|namelist.def|、\verb|calcmod.def|、\verb|modpara.def|)
 and files specifying the elements of the correlation functions
 that will be calculated
 (\verb|greenone.def|, \verb|greentwo.def|)
 are generated.
 
-\begin{screen}
-\Large 
-{\bf Tips}
-\normalsize
-
-In the standard outputs at each even step, 
-the quantity of the \verb|E_Max / Nsite| column indicates 
-the maximum energy per site
-(in this example, it converges to \verb|0.2499999999=0.25|).
-In the TPQ calculation, you can set \verb|Largevalue| %to an integer 
-larger than \verb|E_Max / Nsite|.
-
-\end{screen}
+%\begin{screen}
+%\Large 
+%{\bf Tips}
+%\normalsize
+%
+%In the standard outputs at each even step, 
+%the quantity of the \verb|E_Max / Nsite| column indicates 
+%the maximum energy per site
+%(in this example, it converges to \verb|0.2499999999=0.25|).
+%In the TPQ calculation, you can set \verb|Largevalue| %to an integer 
+%larger than \verb|E_Max / Nsite|.
+%
+%\end{screen}
 
 \subsubsection{Outputs for calculation results}
 \begin{description}
+
+\item {\bf Locally Optimal Block Conjugate Gradient (LOBCG) method}\\
+  When a calculation by the LOBCG method is finished normally,
+  eigenenergies, one-body Green's functions, and two-body Green's functions
+  are calculated and outputted to the files, respectively.
+  In this sample, the following files are outputted.\\
+
+\begin{minipage}{14cm}
+\begin{screen}
+\begin{verbatim}
+zvo_energy.dat
+zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
+\end{verbatim}
+\end{screen}
+\end{minipage}
+where xx is the number of the eigenstate counting from 0. \\
+ 
 \item {\bf Lanczos method}\\
   When a calculation by the Lanczos method is completed normally,
   eigenenergies, one-body Green's functions, and two-body Green's functions
@@ -356,32 +413,10 @@ Secs. \ref{Subsec:eigenvalue} - \ref{Subsec:cisajscktalt}.
 
 \subsection{Other tutorials}
 
-The following tutorials are located at
-\verb|samples/Standard/|.
+There are many tutorials in \verb|samples/Standard/|.
+For more details, please see \verb|README.md| at each directory.
 
-\begin{itemize}
-\item The Hubbard model on the two-dimansional square lattice
-
-  (\verb|samples/Standard/Hubbard/square/|)
-\item The Hubbard model on the two-dimansional triangular lattice
-  
-  (\verb|samples/Standard/Hubbard/triangular/|)
-\item The one-dimensional Kondo chain
-
-  (\verb|samples/Standard/Kondo/chain/|)
-\item The one-dimensional antiferromagnetic Heisenberg chain
-  
-  (\verb|samples/Standard/Spin/HeisenbergChain/HeisenbergChain/|)
-\item The antiferromagnetic Heisenberg model on the two-dimansional square lattice
-  
-  (\verb|samples/Standard/Spin/HeisenbergSquare/|)
-\item The Kitaev model with 2$\times$3 unit cells on the Honeycomb lattice
-  
-  (\verb|samples/Standard/Spin/Kitaev/|).
-\end{itemize}
-
-We can perform these tutorials in the same manner as the previous one.
-
+\newpage
 %----------------------------------------------------------
 \section{{\it Expert} mode}
 For Expert mode, the following input files are needed.
@@ -392,21 +427,22 @@ For Expert mode, the following input files are needed.
 \item Files for setting output components.
 \end{enumerate}
 The process after calculation is the same as in Standard mode.
-In this section, we show a demonstration for one-dimensional
-antiferromagnetic Heisenberg chain model that has a nearest neighbor spin coupling
-\begin{equation}
-H=\sum_{i=0}^{15} J {\bm S}_i\cdot {\bm S}_{i+1},
-\end{equation}
-where $J=2$, ${\bm S}_{16}={\bm S}_{0}$.\\
-We use the following input files in samples/Expert/Spin/HeisenbergChain.\\
-\begin{minipage}{15cm}
-\begin{screen}
-\begin{verbatim}
-calcmod.def   greentwo.def  namelist.def  zTrans.def
-greenone.def  modpara.def   zInterAll.def zlocspn.def
-\end{verbatim}
-\end{screen}
-\end{minipage}
+In this section, we demonstrate Expert mode in the directory where
+the tutorial at the previous section was performed.
+%antiferromagnetic Heisenberg chain model that has a nearest neighbor spin coupling
+%\begin{equation}
+%H=\sum_{i=0}^{15} J {\bm S}_i\cdot {\bm S}_{i+1},
+%\end{equation}
+%where $J=2$, ${\bm S}_{16}={\bm S}_{0}$.\\
+%We use the following input files in samples/Expert/Spin/HeisenbergChain.\\
+%\begin{minipage}{15cm}
+%\begin{screen}
+%\begin{verbatim}
+%calcmod.def   greentwo.def  namelist.def  zTrans.def
+%greenone.def  modpara.def   zInterAll.def zlocspn.def
+%\end{verbatim}
+%\end{screen}
+%\end{minipage}
 
 \subsection{File list for input files}
 In namelist.def, the types of input files and filenames are defined as shown below.
@@ -416,13 +452,16 @@ The details of namelist.def are shown in Sec. \ref{Subsec:InputFileList}.
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
-CalcMod calcmod.def
-ModPara modpara.def
-LocSpin zlocspn.def
-Trans zTrans.def
-InterAll zInterAll.def
-OneBodyG greenone.def
-TwoBodyG greentwo.def
+         ModPara  modpara.def
+         LocSpin  locspn.def
+    CoulombInter  coulombinter.def
+            Hund  hund.def
+        Exchange  exchange.def
+        OneBodyG  greenone.def
+        TwoBodyG  greentwo.def
+         CalcMod  calcmod.def
+  PairExcitation  pair.def
+     SpectrumVec  zvo_eigenvec_0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -437,11 +476,17 @@ the parameters for the calculation, and the positions of the localized spins.
 \begin{minipage}{15cm}
 \begin{screen}
 \begin{verbatim}
-#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag
-#CalcMod = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 
-4:SpinGC, 5:KondoGC 
-CalcType   0
+#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG
+#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ..
+#Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart
+#CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, ...
+CalcType   3
 CalcModel   1
+ReStart   0
+CalcSpec   0
+CalcEigenVec   0
+InitialVecType   0
+InputEigenVec   0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -461,23 +506,25 @@ The details of a CalcMod file are shown in Sec. \ref{Subsec:calcmod}.\\
 --------------------
 Model_Parameters   0
 --------------------
-VMC_Cal_Parameters
+HPhi_Cal_Parameters
 --------------------
 CDataFileHead  zvo
 CParaFileHead  zqp
 --------------------
 Nsite          16   
-Ncond          0    
 2Sz            0    
-Lanczos_max    1000 
-initial_iv     12   
-nvec           1    
+Lanczos_max    2000 
+initial_iv     -1   
 exct           1    
 LanczosEps     14   
 LanczosTarget  2    
-LargeValue     12   
+LargeValue     4.500000000000000e+00    
 NumAve         5    
-ExpecInterval  20 
+ExpecInterval  20   
+NOmega         200  
+OmegaMax       7.200000000000000e+01     4.000000000000000e-02    
+OmegaMin       -7.200000000000000e+01    4.000000000000000e-02    
+OmegaOrg       0.0 0.0
 \end{verbatim}
 \end{screen}
 \end{minipage}
@@ -682,35 +729,6 @@ After creating all the input files above, we are ready to run a program.
 For Expert mode, we must set an option ``-e" and a file name list (in this sample, namelist.def) as arguments to run $\HPhi$.\\
 \verb|$ |\textit{Path}\verb|/HPhi -e namelist.def|\\
 The process after the calculation is the same as that of Standard mode.
-
-\subsection{Other tutorials}
-
-The following tutorials are located at \verb|samples/Expert/|.
-
-\begin{itemize}
-\item The Hubbard model on the two-dimansional square lattice
-
-  (\verb|samples/Expert/Hubbard/square/|)
-\item The Hubbard model on the two-dimansional triangular lattice
-  
-  (\verb|samples/Expert/Hubbard/triangular/|)
-\item The one-dimensional Kondo chain
-
-  (\verb|samples/Expert/Kondo/chain/|)
-\item The one-dimensional antiferromagnetic Heisenberg chain
-  
-  (\verb|samples/Expert/Spin/HeisenbergChain/HeisenbergChain/|)
-\item The antiferromagnetic Heisenberg model on the two-dimansional square lattice
-  
-  (\verb|samples/Expert/Spin/HeisenbergSquare/|)
-      
-\item The Kitaev model with 2$\times$3 unit cells on the Honeycomb lattice
-
-  (\verb|samples/Expert/Spin/Kitaev/|).
-
-\end{itemize}
-
-We can perform these tutorials in the same manner as the previous one.
 
 \newpage
 \section{Creating input files for {\it Expert} mode}

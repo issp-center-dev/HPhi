@@ -154,7 +154,7 @@ int X_Spin_CisAit(
     return 1;
   }
   else {
-    *tmp_off = 1;
+    *tmp_off = 0;
     return 0;
   }
 }/*int X_Spin_CisAit*/
@@ -222,7 +222,7 @@ int X_SpinGC_CisAit(
     return 1;
   }
   else {
-    *tmp_off = 1;
+    *tmp_off = 0;
     return 0;
   }
 }/*int X_SpinGC_CisAit*/
@@ -261,7 +261,7 @@ int X_child_exchange_spin_element(
     return 1;
   }
   else {
-    *tmp_off = 1; // just tentative
+    *tmp_off = 0; // just tentative
     return 0;
   }
 }/*int X_child_exchange_spin_element*/

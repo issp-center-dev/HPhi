@@ -313,7 +313,7 @@ int GetPairExcitedStateHalfSpin(
   firstprivate(i_max, isite1, org_sigma2, X, tmp_trans, list_1_org, list_1, list_2_1, list_2_2) shared(tmp_v0, tmp_v1)
                 for (j = 1; j <= i_max; j++) {
                     num1=X_Spin_CisAit(j, X, isite1, org_sigma2, list_1_org, list_2_1, list_2_2, &tmp_off);
-                    tmp_v0[tmp_off] +=  tmp_v1[j] * tmp_trans*(double)num1;
+                    if (num1 != 0) tmp_v0[tmp_off] +=  tmp_v1[j] * tmp_trans*(double)num1;
                 }
             }
         }

@@ -240,3 +240,6 @@ void OutputTimer(struct BindStruct *X) {
   return;
 }
 
+/**
+@page page_time Compute elapsed time for new functions
+*/

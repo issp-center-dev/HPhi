@@ -370,5 +370,11 @@ int setmem_large
         return FALSE;
     }
     return TRUE;
-  }
+}
+/**
+@page page_setmem Malloc vectors
 
+setmem_def()
+setmem_large()
+mfmemmory.h
+*/

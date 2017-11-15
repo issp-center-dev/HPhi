@@ -1,0 +1,14 @@
+a0w = 3
+a0l = 0
+a1w = -1
+a1l = 2
+model = "Hubbard"
+method = "CG"
+lattice = "triangular"
+t = 1.0
+U = 4.0
+nelec = 6
+2Sz = 0
+LanczosEPS = 8
+Lanczos_max = 10
+restart = "Restart"

@@ -4,7 +4,8 @@ Tutorial
 ========
 
 This tutorial is done by using the input file
-in ``sample/Standard/Spin/HeisenbergSquare/``.
+in ``sample/Standard/Spin/HeisenbergSquare/`` (mVMC) or
+``sample/CG/Heisenberg/`` (HPhi).
 
 Run HPhi/vmc.out
 ----------------
@@ -15,7 +16,7 @@ Run HPhi/vmc.out
   
   .. code-block:: bash
 
-     $ ../../../../src/HPhi -s StdFace.def
+     $ ../../../../src/HPhi -s stan.in
 
 - For mVMC
 
@@ -78,6 +79,8 @@ by using the utility ``corplot``.
 .. code-block:: bash
 
    $ ../../../../tool/corplot output/zvo_corr.dat
+   or
+   $ ../../../../tool/corplot output/zvo_corr_eigen0.dat
 
 Then the following message appears in the terminal.
 

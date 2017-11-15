@@ -122,6 +122,10 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_spin_kagome.sh
 )
 add_test(
+  NAME spectrum_genspin_ladder
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_genspin_ladder.sh
+)
+add_test(
   NAME spectrum_hubbardgc_tri
   COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_hubbardgc_tri.sh
 )
@@ -132,4 +136,8 @@ add_test(
 add_test(
   NAME spectrum_spingc_honey
   COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_spingc_honey.sh
+)
+add_test(
+  NAME spectrum_genspingc_ladder
+  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_genspingc_ladder.sh
 )

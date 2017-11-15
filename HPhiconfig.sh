@@ -5,21 +5,6 @@ echo " HPhiconfig.sh will be removed in the future release,"
 echo " and only CMake will be supported."
 echo "######################################################"
 echo ""
-echo -n "  Really continue ? yes/no [no] : "
-read yesno
-if [ -z ${yesno} ] || [ ! ${yesno} = "yes" ]; then
-    exit
-fi
-echo -n "  Really, really continue ? yes/no [no] : "
-read yesno
-if [ -z ${yesno} ] || [ ! ${yesno} = "yes" ]; then
-    exit
-fi
-echo -n "  Quit ? yes/no [yes] : "
-read yesno
-if [ -z ${yesno} ] || [ ! ${yesno} = "no" ]; then
-    exit
-fi
 
 if [ -z ${1} ] || [ ${1} = "help" ]; then
     echo ""

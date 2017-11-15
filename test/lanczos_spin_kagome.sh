@@ -28,7 +28,7 @@ cat > reference.dat <<EOF
    0.5000000000000000
 EOF
 paste output/zvo_energy.dat reference.dat > paste1.dat
-diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)**2)} END{printf "%8.6f", diff}' paste1.dat`
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)*($2-$3))} END{printf "%8.6f", diff}' paste1.dat`
 
 cat > reference.dat <<EOF
     0    0    0    0 0.2364075803 0.0000000000
@@ -69,7 +69,7 @@ cat > reference.dat <<EOF
     8    1    8    1 0.4515371235 0.0000000000
 EOF
 paste output/zvo_cisajs.dat reference.dat > paste2.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($5-$11)**2+($6-$12)**2)} 
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($5-$11)*($5-$11)+($6-$12)*($6-$12))} 
 END{printf "%8.6f", diff}' paste2.dat`
 
 cat > reference.dat <<EOF
@@ -1371,7 +1371,7 @@ cat > reference.dat <<EOF
     8    1    8    1    8    1    8    1 0.4515371235 0.0000000000 
 EOF
 paste output/zvo_cisajscktalt.dat reference.dat > paste3.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($9-$19)**2+($10-$20)**2)} 
+diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($9-$19)*($9-$19)+($10-$20)*($10-$20))} 
 END{printf "%8.6f", diff}' paste3.dat`
 
 test "${diff}" = "0.000000"

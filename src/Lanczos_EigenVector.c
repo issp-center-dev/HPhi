@@ -88,7 +88,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
             v1[iv - sum_i_max+1] += 1.0*I;
             v1[iv - sum_i_max+1] /= sqrt(2.0);
           }
-          vg[iv - sum_i_max+1]=vec[k_exct][1]*conj(v1[iv - sum_i_max+1]);
+          vg[iv - sum_i_max+1]=conj(vec[k_exct][1])*v1[iv - sum_i_max+1];
 
         }/*if (myrank == iproc)*/
       }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
@@ -145,7 +145,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
 #pragma omp parallel for default(none) private(i) shared(v1, vec, vg) firstprivate(i_max, dnorm, k_exct)
     for(i=1;i<=i_max;i++){
       v1[i] = v1[i]/dnorm;
-      vg[i] = conj(v1[i])*vec[k_exct][1];
+      vg[i] = v1[i]*conj(vec[k_exct][1]);
     }
   }/*else if(initial_mode==1)*/
   StartTimer(4201);

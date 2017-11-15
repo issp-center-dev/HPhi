@@ -73,17 +73,3 @@ void expec_cisajscktaltdc_alldiag_spin(
 				  struct BindStruct *X,
 			          double complex *vec
 				  );
-
-int Rearray_TwoBodyG(
-			  int i,
-			  long unsigned int *org_isite1,
-			  long unsigned int *org_isite2,
-			  long unsigned int *org_isite3,
-			  long unsigned int *org_isite4,
-			  long unsigned int *org_sigma1,
-			  long unsigned int *org_sigma2,
-			  long unsigned int *org_sigma3,
-			  long unsigned int *org_sigma4,
-			  double complex *tmp_V, 
-			  struct BindStruct *X
-			  );

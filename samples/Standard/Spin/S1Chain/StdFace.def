@@ -1,8 +1,0 @@
-L = 6
-model = "SpinGC"
-lattice = "Chain"
-method = "Lanczos"
-//method = "TPQ"
-//method = "FullDiag"
-2S=2
-J=1.0

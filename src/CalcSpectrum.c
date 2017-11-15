@@ -143,11 +143,15 @@ int CalcSpectrum(
 
     //Set Memory
     c_malloc1(v1Org, X->Bind.Check.idim_maxOrg+1);
-
+    for(i=0; i<X->Bind.Check.idim_maxOrg+1; i++){
+      v1Org[i]=0;
+    }
+    
     //Make excited state
     StartTimer(6100);
     if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
-        X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC) {
+        X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
+       (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
         //input eigen vector
       StartTimer(6101);
         fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
@@ -176,7 +180,7 @@ int CalcSpectrum(
         StopTimer(6101);
         if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
 
-        for (i = 1; i <= X->Bind.Check.idim_max; i++) {
+        for (i = 0; i <= X->Bind.Check.idim_max; i++) {
             v0[i] = 0;
         }
         fprintf(stdoutMPI, "  End:   An Inputcector is inputted in CalcSpectrum.\n\n");
@@ -540,27 +544,32 @@ int MakeExcitedList(
                 case KondoGC:
                 case Hubbard:
                 case Kondo:
-                case Spin:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
-                        if (X->Def.iFlgGeneralSpin == FALSE) {
-                                if (X->Def.PairExcitationOperator[0][1] == 0) {//up
-                                    X->Def.Nup = X->Def.NupOrg + 1;
-                                    X->Def.Ndown = X->Def.NdownOrg - 1;
-                                } else {//down
-                                    X->Def.Nup = X->Def.NupOrg - 1;
-                                    X->Def.Ndown = X->Def.NdownOrg + 1;
-                                }
-                           }
-                        else{//for general spin
-                            if (X->Def.PairExcitationOperator[0][4] == 1) { //cisajt
-                                X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
-                            }
-                            else{//aiscjt
-                                X->Def.Total2Sz = X->Def.Total2SzMPI-2*(X->Def.PairExcitationOperator[0][3]-X->Def.PairExcitationOperator[0][1]);
-                            }
-                        }
+                      if (X->Def.PairExcitationOperator[0][1] == 0) {//up
+                        X->Def.Nup = X->Def.NupOrg + 1;
+                        X->Def.Ndown = X->Def.NdownOrg - 1;
+                      } else {//down
+                        X->Def.Nup = X->Def.NupOrg - 1;
+                        X->Def.Ndown = X->Def.NdownOrg + 1;
+                      }
                     }
                     break;
+              case Spin:
+                if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
+                  if (X->Def.iFlgGeneralSpin == FALSE) {
+                    if (X->Def.PairExcitationOperator[0][1] == 0) {//down
+                      X->Def.Nup = X->Def.NupOrg - 1;
+                      X->Def.Ndown = X->Def.NdownOrg + 1;
+                    } else {//up
+                      X->Def.Nup = X->Def.NupOrg + 1;
+                      X->Def.Ndown = X->Def.NdownOrg - 1;
+                    }
+                  }
+                  else{//for general spin
+                      X->Def.Total2Sz = X->Def.Total2SzMPI+2*(X->Def.PairExcitationOperator[0][1]-X->Def.PairExcitationOperator[0][3]);
+                  }
+                }
+                break;
             }
         } else {
             return FALSE;

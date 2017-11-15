@@ -1,9 +1,0 @@
-L = 4
-W = 4
-model = "Spin"
-method = "Lanczos"
-//method = "TPQ"
-//method = "FullDiag"
-lattice = "tetragonal"
-J = 1.0
-2Sz = 0
