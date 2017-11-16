@@ -38,6 +38,7 @@ void StdFace_Orthorhombic(
   int iL, iW, iH, kCell;
   FILE *fp;
   double complex Cphase;
+  double dR[3];
 
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
@@ -207,157 +208,157 @@ void StdFace_Orthorhombic(
     /*
      (2) Nearest neighbor along W
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 0, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 0, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
      (3) Nearest neighbor along L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 0, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 0, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
     }
     /*
      (4) Nearest neighbor along H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
     }
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
     }
     /*
      (5) Second nearest neighbor along +L+H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V0p, isite, jsite);
     }
     /*
      (6) Second nearest neighbor along +L-H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, -1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, -1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V0p, isite, jsite);
     }
     /*
      (7) Second nearest neighbor along +H+W
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
     }
     /*
      (8) Second nearest neighbor along +H-W
     */
-    StdFace_FindSite(StdI, iW, iL, iH, -1, 0, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, -1, 0, 1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
     }
     /*
      (9) Second nearest neighbor along +W+L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, 1, 0, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 1, 0, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
     }
     /*
      (10) Second nearest neighbor along +W-L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 0, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 0, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
     }
     /*
      (11) Third nearest neighbor along +W+L+H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, 1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 1, 1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->Jpp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->Vpp, isite, jsite);
     }
     /*
      (12) Third nearest neighbor along -W+L+H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->Jpp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->Vpp, isite, jsite);
     }
     /*
      (13) Third nearest neighbor along +W-L+H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, -1, 1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->Jpp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->Vpp, isite, jsite);
     }
     /*
      (14) Third nearest neighbor along +W+L-H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, 1, -1, 0, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 1, -1, 0, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->Jpp, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->tpp, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->Vpp, isite, jsite);
     }
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/

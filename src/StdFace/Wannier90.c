@@ -237,6 +237,7 @@ void StdFace_Wannier90(
   double Jtmp[3][3] = { {0.0} };
   FILE *fp;
   double complex Cphase;
+  double dR[3];
 
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
@@ -347,13 +348,13 @@ void StdFace_Wannier90(
         */
         StdFace_FindSite(StdI, iW, iL, iH,
           StdI->W90_indx[it][0], StdI->W90_indx[it][1], StdI->W90_indx[it][2],
-          StdI->W90_indx[it][3], StdI->W90_indx[it][4], &isite, &jsite, &Cphase);
+          StdI->W90_indx[it][3], StdI->W90_indx[it][4], &isite, &jsite, &Cphase, dR);
         if (strcmp(StdI->model, "spin") == 0) {
           for (ii = 0; ii < 3; ii++) Jtmp[ii][ii] = StdI->W90_t[it] * conj(StdI->W90_t[it]) / StdI->U;
           StdFace_GeneralJ(StdI, Jtmp, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, Cphase * StdI->W90_t[it], isite, jsite);
+          StdFace_Hopping(StdI, Cphase * StdI->W90_t[it], isite, jsite, dR);
         }
       }/*Non-local term*/
     }/*for (it = 0; it < StdI->W90_nt; it++)*/

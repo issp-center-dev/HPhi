@@ -76,19 +76,46 @@ void StdFace_Hopping(
 struct StdIntList *StdI,//!<[inout]
   double complex trans0,//!<[in] Hopping integral @f$t@f$
   int isite,//!<[in] @f$i@f$ for @f$c_{i \sigma}^\dagger@f$
-  int jsite//!<[in] @f$j@f$ for @f$c_{j \sigma}@f$
+  int jsite,//!<[in] @f$j@f$ for @f$c_{j \sigma}@f$
+  double *dR//!<[in] R_i - R_j
 )
 {
-  int ispin;
+  int ispin, it, ii;
+  double complex Cphase, coef;
   /**@brief
    Both @f$c_{i \sigma}^\dagger c_{j \sigma}@f$ and
   @f$c_{j \sigma}^\dagger c_{i \sigma}@f$ for every spin channel
   (@f$\sigma@f$) is specified
   */
-  for (ispin = 0; ispin < 2; ispin++) {
-    StdFace_trans(StdI, trans0, jsite, ispin, isite, ispin);
-    StdFace_trans(StdI, conj(trans0), isite, ispin, jsite, ispin);
-  }/*for (ispin = 0; ispin < 2; ispin++)*/
+#if defined(_HPhi)
+  if (strcmp(StdI->method, "timeevolution") == 0 && StdI->PumpBody == 1) {
+    for (it = 0; it < StdI->nt; it++) {
+      Cphase = 0.0f;
+      for (ii = 0; ii < 3; ii++) Cphase += 2.0*StdI->pi * StdI->At[it][ii] * dR[ii];
+      coef = cos(Cphase) + I * sin(Cphase);
+      for (ispin = 0; ispin < 2; ispin++) {
+        StdI->pump[it][StdI->npump[it]] = coef * trans0;
+        StdI->pumpindx[it][StdI->npump[it]][0] = isite;
+        StdI->pumpindx[it][StdI->npump[it]][1] = ispin;
+        StdI->pumpindx[it][StdI->npump[it]][2] = jsite;
+        StdI->pumpindx[it][StdI->npump[it]][3] = ispin;
+        StdI->npump[it] = StdI->npump[it] + 1;
+
+        StdI->pump[it][StdI->npump[it]] = conj(coef * trans0);
+        StdI->pumpindx[it][StdI->npump[it]][0] = jsite;
+        StdI->pumpindx[it][StdI->npump[it]][1] = ispin;
+        StdI->pumpindx[it][StdI->npump[it]][2] = isite;
+        StdI->pumpindx[it][StdI->npump[it]][3] = ispin;
+        StdI->npump[it] = StdI->npump[it] + 1;
+      }/*for (ispin = 0; ispin < 2; ispin++)*/
+    }/*for (it = 0; it < StdI->nt; it++)*/
+  }/*if (strcmp(StdI->method, "timeevolution") == 0)*/
+  else
+#endif
+    for (ispin = 0; ispin < 2; ispin++) {
+      StdFace_trans(StdI, trans0, jsite, ispin, isite, ispin);
+      StdFace_trans(StdI, conj(trans0), isite, ispin, jsite, ispin);
+    }/*for (ispin = 0; ispin < 2; ispin++)*/
 }/*void StdFace_Hopping*/
 /**
 @brief Add intra-Coulomb, magnetic field, chemical potential for the
@@ -805,11 +832,16 @@ void StdFace_FindSite(
   int jsiteUC,//!<[in] Intrinsic site index of final site
   int *isite,//!<[out] initial site
   int *jsite,//!<[out] final site
-  double complex *Cphase//!<[out] Boundary phase, if it across boundary
+  double complex *Cphase,//!<[out] Boundary phase, if it across boundary
+  double *dR//!<[out] R_i - R_j in the fractional coordinate
 )
 {
   int iCell, jCell, kCell, ii;
   int nBox[3], jCellV[3];
+  /**/
+  dR[0] = (double)diW + StdI->tau[isiteUC][0] - StdI->tau[jsiteUC][0];
+  dR[1] = (double)diL + StdI->tau[isiteUC][1] - StdI->tau[jsiteUC][1];
+  dR[2] = (double)diH + StdI->tau[isiteUC][2] - StdI->tau[jsiteUC][2];
   /**/
   jCellV[0] = iW + diW;
   jCellV[1] = iL + diL;
@@ -854,14 +886,15 @@ void StdFace_SetLabel(
   int *isite,//!<[out] initial site 
   int *jsite,//!<[out] final site 
   int connect,//!<[in] 1 for nearest neighbor, 2 for 2nd nearest
-  double complex *Cphase//!<[out] Boundary phase, if it across boundary
+  double complex *Cphase,//!<[out] Boundary phase, if it across boundary
+  double *dR//!<[out] R_i - R_j
 )
 {
   double xi, yi, xj, yj;
   /**@brief
   First print the reversed one
   */
-  StdFace_FindSite(StdI, iW, iL, 0, -diW, -diL, 0, jsiteUC, isiteUC, isite, jsite, Cphase);
+  StdFace_FindSite(StdI, iW, iL, 0, -diW, -diL, 0, jsiteUC, isiteUC, isite, jsite, Cphase, dR);
 
   xi = StdI->direct[0][0] * ((double)iW + StdI->tau[jsiteUC][0])
      + StdI->direct[1][0] * ((double)iL + StdI->tau[jsiteUC][1]);
@@ -881,7 +914,7 @@ void StdFace_SetLabel(
   /**@brief
   Then print the normal one, these are different when they cross boundary.
   */
-  StdFace_FindSite(StdI, iW, iL, 0, diW, diL, 0, isiteUC, jsiteUC, isite, jsite, Cphase);
+  StdFace_FindSite(StdI, iW, iL, 0, diW, diL, 0, isiteUC, jsiteUC, isite, jsite, Cphase, dR);
 
   xi = StdI->direct[1][0] * ((double)iL + StdI->tau[isiteUC][1])
      + StdI->direct[0][0] * ((double)iW + StdI->tau[isiteUC][0]);
@@ -1165,6 +1198,9 @@ void StdFace_MallocInteractions(
   int nintrMax//!<[in] upper limit of the number of interaction
 ) {
   int ii;
+#if defined(_HPhi)
+  int it;
+#endif
   /**@brief
   (1) Transfer StdIntList::trans, StdIntList::transindx
   */
@@ -1174,6 +1210,21 @@ void StdFace_MallocInteractions(
     StdI->transindx[ii] = (int *)malloc(sizeof(int) * 4);
   }
   StdI->ntrans = 0;
+#if defined(_HPhi)
+  if (strcmp(StdI->method, "timeevolution") == 0 && StdI->PumpBody == 1) {
+    StdI->npump = (int *)malloc(sizeof(int) * StdI->nt);
+    StdI->pumpindx = (int ***)malloc(sizeof(int**) * StdI->nt);
+    StdI->pump = (double complex **)malloc(sizeof(double complex*) * StdI->nt);
+    for (it = 0; it < StdI->nt;) {
+      StdI->npump[it] = 0;
+      StdI->pumpindx[it] = (int **)malloc(sizeof(int*) * ntransMax);
+      StdI->pump[it] = (double complex *)malloc(sizeof(double complex*) * ntransMax);
+      for (ii = 0; ii < ntransMax; ii++) {
+        StdI->pumpindx[it][ii] = (int *)malloc(sizeof(int) * 4);
+      }
+    }/*for (it = 0; it < StdI->nt;)*/
+  }/*if (strcmp(StdI->method, "timeevolution") == 0*/
+#endif
   /**@brief
   (2) InterAll StdIntList::intr, StdIntList::intrindx
   */
