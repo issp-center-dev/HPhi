@@ -38,6 +38,7 @@ void StdFace_Pyrochlore(
   int iL, iW, iH, kCell;
   FILE *fp;
   double complex Cphase;
+  double dR[3];
 
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
@@ -217,145 +218,145 @@ void StdFace_Pyrochlore(
     /*
      (2) Intra-Cell along W
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 1, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 1, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
      (3) Intra-Cell along L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 2, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 2, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
     }
     /*
      (4) Intra-Cell along H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 3, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 0, 3, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
     }
     /*
      (5) Intra-Cell along L-H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 2, 3, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 2, 3, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V0p, isite, jsite);
     }
     /*
      (6) Intra-Cell along H-W
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 3, 1, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 3, 1, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
     }
     /*
      (7) Intra-Cell along W-L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 1, 2, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 0, 1, 2, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
     }
     /*
      (8) Inter-Cell along W
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 0, 1, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, 0, 1, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
     }
     /*
      (9) Inter-Cell along L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 0, 2, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 1, 0, 2, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
     }
     /*
      (10) Inter-Cell along H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 1, 3, 0, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, 0, 1, 3, 0, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
     }
     /*
     (11) Inter-Cell along L-H
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 0, -1, 1, 3, 2, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 0, -1, 1, 3, 2, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V0p, isite, jsite);
     }
     /*
     (12) Intra-Cell along H-W
     */
-    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, -1, 1, 3, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, 1, 0, -1, 1, 3, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
     }
     /*
     (13) Intra-Cell along W-L
     */
-    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 0, 2, 1, &isite, &jsite, &Cphase);
+    StdFace_FindSite(StdI, iW, iL, iH, -1, 1, 0, 2, 1, &isite, &jsite, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0) {
       StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite, dR);
       StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
     }
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/

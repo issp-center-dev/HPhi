@@ -38,6 +38,7 @@ void StdFace_Ladder(
   int isite, jsite, ntransMax, nintrMax;
   int iL, isiteUC;
   double complex Cphase;
+  double dR[3];
 
   fprintf(stdout, "\n");
   fprintf(stdout, "#######  Parameter Summary  #######\n");
@@ -211,25 +212,25 @@ void StdFace_Ladder(
       /*
        Nearest neighbor along the ladder
       */
-      StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC, &isite, &jsite, 1, &Cphase);
+      StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC, &isite, &jsite, 1, &Cphase, dR);
       /**/
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1, StdI->S2, StdI->S2, isite, jsite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
       else {
-        StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite);
+        StdFace_Hopping(StdI, Cphase * StdI->t1, isite, jsite, dR);
         StdFace_Coulomb(StdI, StdI->V1, isite, jsite);
       }/*if (model != "spin")*/
       /*
        Second nearest neighbor along the ladder
       */
-      StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, isiteUC, isiteUC, &isite, &jsite, 2, &Cphase);
+      StdFace_SetLabel(StdI, fp, 0, iL, 0, 2, isiteUC, isiteUC, &isite, &jsite, 2, &Cphase, dR);
       /**/
       if (strcmp(StdI->model, "spin") == 0 ) {
         StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
       }/*if (strcmp(StdI->model, "spin") == 0 )*/
       else {
-        StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite);
+        StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite, dR);
         StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
       }/*if (model != "spin")*/
       /*
@@ -239,37 +240,37 @@ void StdFace_Ladder(
         /*
          Vertical
         */
-        StdFace_SetLabel(StdI, fp, 0, iL, 0, 0, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase);
+        StdFace_SetLabel(StdI, fp, 0, iL, 0, 0, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase, dR);
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J0, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite);
+          StdFace_Hopping(StdI, Cphase * StdI->t0, isite, jsite, dR);
           StdFace_Coulomb(StdI, StdI->V0, isite, jsite);
         }/*if (model != "spin")*/
         /*
          Diagonal 1
         */
-        StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase);
+        StdFace_SetLabel(StdI, fp, 0, iL, 0, 1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase, dR);
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J2, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite);
+          StdFace_Hopping(StdI, Cphase * StdI->t2, isite, jsite, dR);
           StdFace_Coulomb(StdI, StdI->V2, isite, jsite);
         }/*if (model != "spin")*/
         /*
          Diagonal 2
         */
-        StdFace_SetLabel(StdI, fp, 0, iL, 0, -1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase);
+        StdFace_SetLabel(StdI, fp, 0, iL, 0, -1, isiteUC, isiteUC + 1, &isite, &jsite, 1, &Cphase, dR);
         /**/
         if (strcmp(StdI->model, "spin") == 0 ) {
           StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
         }/*if (strcmp(StdI->model, "spin") == 0 )*/
         else {
-          StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite);
+          StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite, dR);
           StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
         }/*if (model != "spin")*/
 

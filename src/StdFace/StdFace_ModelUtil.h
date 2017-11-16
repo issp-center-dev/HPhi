@@ -24,7 +24,7 @@ void StdFace_intr(struct StdIntList *StdI, double complex intr0,
   int site1, int spin1, int site2, int spin2,
   int site3, int spin3, int site4, int spin4);
 
-void StdFace_Hopping(struct StdIntList *StdI, double complex trans0, int isite, int jsite);
+void StdFace_Hopping(struct StdIntList *StdI, double complex trans0, int isite, int jsite, double *dR);
 void StdFace_HubbardLocal(struct StdIntList *StdI, double mu0, double h0,
   double Gamma0, double U0, int isite);
 void StdFace_MagField(struct StdIntList *StdI, int S2, double h, double Gamma, int isite);
@@ -54,13 +54,13 @@ void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name
 void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim);
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
   int iW, int iL, int diW, int diL, int isiteUC, int jsiteUC,
-  int *isite, int *jsite, int connect, double complex *Cphase);
+  int *isite, int *jsite, int connect, double complex *Cphase, double *dR);
 void StdFace_PrintGeometry(struct StdIntList *StdI);
 void StdFace_MallocInteractions(struct StdIntList *StdI, int ntransMax, int nintrMax);
 void StdFace_FindSite(struct StdIntList *StdI,
   int iW, int iL, int iH, int diW, int diL, int diH,
   int isiteUC, int jsiteUC,
-  int *isite, int *jsite, double complex *Cphase);
+  int *isite, int *jsite, double complex *Cphase, double *dR);
 void StdFace_PrintXSF(struct StdIntList *StdI);
 
 void StdFace_Tetragonal(struct StdIntList *StdI);

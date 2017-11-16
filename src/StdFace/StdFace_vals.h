@@ -141,7 +141,6 @@ struct StdIntList {
   int *locspinflag;/**<@brief [StdIntList::nsite] LocSpin in Expert mode, 
                    malloc and set in each lattice file.*/
   int ntrans;/**<@brief Number of transfer, counted in each lattice file.*/
-  int Ltrans;/**<@brief Print trans.def or not, set in PrintTrans().*/
   int **transindx;/**<@brief [StdIntList::ntrans][4] Site/spin indices of 
                   one-body term, malloc in StdFace_MallocInteractions()
                   and set in StdFace_trans().*/
@@ -276,6 +275,14 @@ struct StdIntList {
   char PumpType[256];/**<@brief The type of pump*/
   int PumpBody;/**<@brief one- or two-body pumping, defined from
                    StdIntList::PumpType*/
+  int *npump;/**<@brief [StdIntList::nt] Number of transfer, counted in each lattice file.*/
+  int ***pumpindx;/**<@brief [StdIntList::nt][StdIntList::npump][4] Site/spin indices of
+                  one-body term, malloc in StdFace_MallocInteractions()
+                  and set in StdFace_trans().*/
+  double complex **pump;/**<@brief [StdIntList::nt][StdIntList::npump] Coefficient of
+                        one-body term, malloc in StdFace_MallocInteractions()
+                        and set in StdFace_trans().*/
+  double **At;/**<@brief [StdIntList::nt][3] Vector potential.*/
 #elif defined(_mVMC)
   /*mVMC modpara*/
   char CParaFileHead[256];/**<@brief Header of the optimized wavefunction,

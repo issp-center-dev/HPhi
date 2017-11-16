@@ -425,15 +425,14 @@ static void PrintExcitation(struct StdIntList *StdI) {
   free(coef);
 
 }/*static void PrintExcitation()*/
- /**
- @brief Print single.def or pair.def
- @author Mitsuaki Kawamura (The University of Tokyo)
- */
-static void PrintPump(struct StdIntList *StdI) {
+/*
+@brief Compute vectorpotential
+*/
+static void VectorPotential(struct StdIntList *StdI) {
   FILE *fp;
   int it, ii, isite, icell, itau, itrans, jsite, jcell, jtau, ntrans0;
   double Cphase, time, dR[3];
-  double **At, **Et;
+  double **Et;
   double complex coef;
 
   fprintf(stdout, "\n  @ Time-evolution\n\n");
@@ -447,10 +446,10 @@ static void PrintPump(struct StdIntList *StdI) {
   StdFace_PrintVal_d("tshift", &StdI->tshift, 0.0);
   StdFace_PrintVal_d("tdump", &StdI->tdump, 0.1);
   StdFace_PrintVal_d("Uquench", &StdI->Uquench, 0.0);
-  At = (double **)malloc(sizeof(double*) * StdI->nt);
+  StdI->At = (double **)malloc(sizeof(double*) * StdI->nt);
   Et = (double **)malloc(sizeof(double*) * StdI->nt);
   for (it = 0; it < StdI->nt; it++) {
-    At[it] = (double *)malloc(sizeof(double) * 3);
+    StdI->At[it] = (double *)malloc(sizeof(double) * 3);
     Et[it] = (double *)malloc(sizeof(double) * 3);
   }
 
@@ -468,11 +467,11 @@ static void PrintPump(struct StdIntList *StdI) {
       for (it = 0; it < StdI->nt; it++) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
-          At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift))
+          StdI->At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift))
             * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
-          Et[it][ii] = - StdI->VecPot[ii] 
+          Et[it][ii] = -StdI->VecPot[ii]
             * (
-                (StdI->tshift - time) / (StdI->tdump*StdI->tdump) * cos(StdI->freq*(time - StdI->tshift))
+            (StdI->tshift - time) / (StdI->tdump*StdI->tdump) * cos(StdI->freq*(time - StdI->tshift))
               - StdI->freq* sin(StdI->freq*(time - StdI->tshift))
               )
             * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
@@ -484,7 +483,7 @@ static void PrintPump(struct StdIntList *StdI) {
       for (it = 0; it < StdI->nt; it++) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
-          At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift));
+          StdI->At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift));
           Et[it][ii] = StdI->VecPot[ii] * sin(StdI->freq*(time - StdI->tshift)) * StdI->freq;
         }
       }/*for (it = 0; it < StdI->nt; it++)*/
@@ -494,8 +493,8 @@ static void PrintPump(struct StdIntList *StdI) {
       for (it = 0; it < StdI->nt; it++) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
-          At[it][ii] = StdI->VecPot[ii] * time;
-          Et[it][ii] = - StdI->VecPot[ii];
+          StdI->At[it][ii] = StdI->VecPot[ii] * time;
+          Et[it][ii] = -StdI->VecPot[ii];
         }
       }/*for (it = 0; it < StdI->nt; it++)*/
       StdI->PumpBody = 1;
@@ -506,32 +505,30 @@ static void PrintPump(struct StdIntList *StdI) {
     }
   }/*if (! strcmp(StdI->PumpType, "****"))*/
 
-  if ((strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1)
-    || strcmp(StdI->model, "kondo") == 0) {
-    printf("####################################\n");
-    printf("###########  CAUTION  ##############\n");
-    printf("####################################\n");
-    printf("\n");
-    printf(" For Kondo or S>1 system, pumping parameter file is NOT generated automatically.\n");
-    printf(" Please write it by hand.\n");
-  }/*if (StdI->S2 > 1 || strcmp(StdI->model, "kondo") == 0)*/
-
   if (StdI->PumpBody == 1) {
-
     fp = fopen("potential.dat", "w");
     fprintf(fp, "# Time A_W A_L A_H E_W E_L E_H\n");
     for (it = 0; it < StdI->nt; it++) {
       time = StdI->dt*(double)it;
       fprintf(fp, "%f %f %f %f %f %f %f\n",
-        time, At[it][0], At[it][1], At[it][2], Et[it][0], Et[it][1], Et[it][2]);
+        time, StdI->At[it][0], StdI->At[it][1], StdI->At[it][2], Et[it][0], Et[it][1], Et[it][2]);
     }
     fflush(fp);
     fclose(fp);
+  }/*if (StdI->PumpBody == 1)*/
 
-    ntrans0 = 0;
-    for (itrans = 0; itrans < StdI->ntrans; itrans++) {
-      if (cabs(StdI->trans[itrans]) > 0.000001) ntrans0 = ntrans0 + 1;
-    }
+  for (it = 0; it < StdI->nt; it++) free(Et[it]);
+  free(Et);
+}/*static void VectorPotential(struct StdIntList *StdI)*/
+/**
+@brief Print single.def or pair.def
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+static void PrintPump(struct StdIntList *StdI) {
+  FILE *fp;
+  int it, ii, isite, ipump, jpump, npump0;
+
+  if (StdI->PumpBody == 1) {
 
     fp = fopen("teone.def", "w");
     fprintf(fp, "=============================================\n");
@@ -540,36 +537,36 @@ static void PrintPump(struct StdIntList *StdI) {
     fprintf(fp, "=========  OneBody Time Evolution  ==========\n");
     fprintf(fp, "=============================================\n");
     for (it = 0; it < StdI->nt; it++) {
-      fprintf(fp, "%f  %d\n", StdI->dt*(double)it, ntrans0);
-      for (itrans = 0; itrans < StdI->ntrans; itrans++) {
+      /*
+      Sum equivalent pumping
+      */
+      for (ipump = 0; ipump < StdI->npump[it]; ipump++) {
+        for (jpump = ipump + 1; jpump < StdI->npump[it]; jpump++) {
+          if (StdI->pumpindx[it][ipump][0] == StdI->pumpindx[it][jpump][0]
+            && StdI->pumpindx[it][ipump][1] == StdI->pumpindx[it][jpump][1]
+            && StdI->pumpindx[it][ipump][2] == StdI->pumpindx[it][jpump][2]
+            && StdI->pumpindx[it][ipump][3] == StdI->pumpindx[it][jpump][3]) {
+            StdI->pump[it][ipump] = StdI->pump[it][ipump] + StdI->pump[it][jpump];
+            StdI->pump[it][jpump] = 0.0;
+          }
+        }/*for (ktrans = jtrans + 1; ktrans < StdI->ntrans; ktrans++)*/
+      }/*for (jtrans = 0; jtrans < StdI->ntrans; jtrans++)*/
+      /*
+      Count the number of finite pumping
+      */
+      npump0 = 0;
+      for (ipump = 0; ipump < StdI->npump[it]; ipump++) 
+        if (cabs(StdI->pump[it][ipump]) > 0.000001) npump0 += 1;
 
-        if (cabs(StdI->trans[itrans]) <= 0.000001) continue;
+      fprintf(fp, "%f  %d\n", StdI->dt*(double)it, npump0);
+      for (ipump = 0; ipump < StdI->npump[it]; ipump++) {
 
-        if (strcmp(StdI->model, "kondo") == 0) {
-          isite = StdI->transindx[itrans][0] - StdI->nsite / 2;
-          jsite = StdI->transindx[itrans][2] - StdI->nsite / 2;
-        }
-        else {
-          isite = StdI->transindx[itrans][0];
-          jsite = StdI->transindx[itrans][2];
-        }
-        icell = isite / StdI->NsiteUC;
-        itau = isite % StdI->NsiteUC;
-        jcell = jsite / StdI->NsiteUC;
-        jtau = jsite % StdI->NsiteUC;
-
-        for (ii = 0; ii < 3; ii++)
-          dR[ii] = (double)(StdI->Cell[icell][ii] - StdI->Cell[jcell][ii])
-          + StdI->tau[itau][ii] - StdI->tau[jtau][ii];
-
-        Cphase = 0.0f;
-        for (ii = 0; ii < 3; ii++) Cphase += 2.0*StdI->pi * At[it][ii] * dR[ii];
-        coef = cos(Cphase) + I * sin(Cphase);
+        if (cabs(StdI->pump[it][ipump]) <= 0.000001) continue;
 
         fprintf(fp, "%5d %5d %5d %5d %25.15f %25.15f\n",
-          StdI->transindx[itrans][0], StdI->transindx[itrans][1],
-          StdI->transindx[itrans][2], StdI->transindx[itrans][3],
-          creal(coef * StdI->trans[itrans]), cimag(coef * StdI->trans[itrans]));
+          StdI->pumpindx[it][ipump][0], StdI->pumpindx[it][ipump][1],
+          StdI->pumpindx[it][ipump][2], StdI->pumpindx[it][ipump][3],
+          creal(StdI->pump[it][ipump]), cimag(StdI->pump[it][ipump]));
       }/*for (itrans = 0; itrans < StdI->ntrans; itrans++)*/
     }/*for (it = 0; it < StdI->nt; it++)*/
     fprintf(stdout, "      teone.def is written.\n\n");
@@ -592,14 +589,6 @@ static void PrintPump(struct StdIntList *StdI) {
   }
   fflush(fp);
   fclose(fp);
-
-  for (it = 0; it < StdI->nt; it++) {
-    free(At[it]);
-    free(Et[it]);
-  }
-  free(At);
-  free(Et);
-
 }/*tatic void PrintPump*/
 #elif defined(_mVMC)
 /**
@@ -1179,30 +1168,26 @@ static void PrintTrans(struct StdIntList *StdI){
   for (ktrans = 0; ktrans < StdI->ntrans; ktrans++){
     if (cabs(StdI->trans[ktrans]) > 0.000001) ntrans0 = ntrans0 + 1;
   }
-  if (ntrans0 != 0 || StdI->lBoost == 1) StdI->Ltrans = 1;
-  else StdI->Ltrans = 0;
 
-  if(StdI->Ltrans == 1){
-    fp = fopen("trans.def", "w");
-    fprintf(fp, "======================== \n");
-    fprintf(fp, "NTransfer %7d  \n", ntrans0);
-    fprintf(fp, "======================== \n");
-    fprintf(fp, "========i_j_s_tijs====== \n");
-    fprintf(fp, "======================== \n");
+  fp = fopen("trans.def", "w");
+  fprintf(fp, "======================== \n");
+  fprintf(fp, "NTransfer %7d  \n", ntrans0);
+  fprintf(fp, "======================== \n");
+  fprintf(fp, "========i_j_s_tijs====== \n");
+  fprintf(fp, "======================== \n");
 
-    ntrans0 = 0;
-    for (ktrans = 0; ktrans < StdI->ntrans; ktrans++) {
-      if (cabs(StdI->trans[ktrans]) > 0.000001)
-        fprintf(fp, "%5d %5d %5d %5d %25.15f %25.15f\n",
-          StdI->transindx[ktrans][0], StdI->transindx[ktrans][1],
-          StdI->transindx[ktrans][2], StdI->transindx[ktrans][3],
-          creal(StdI->trans[ktrans]), cimag(StdI->trans[ktrans]));
-    }
+  ntrans0 = 0;
+  for (ktrans = 0; ktrans < StdI->ntrans; ktrans++) {
+    if (cabs(StdI->trans[ktrans]) > 0.000001)
+      fprintf(fp, "%5d %5d %5d %5d %25.15f %25.15f\n",
+        StdI->transindx[ktrans][0], StdI->transindx[ktrans][1],
+        StdI->transindx[ktrans][2], StdI->transindx[ktrans][3],
+        creal(StdI->trans[ktrans]), cimag(StdI->trans[ktrans]));
+  }
 
-    fflush(fp);
-    fclose(fp);
-    fprintf(stdout, "      trans.def is written.\n");
-  }/*if (StdI->Ltrans == 1)*/
+  fflush(fp);
+  fclose(fp);
+  fprintf(stdout, "      trans.def is written.\n");
 }/*static void PrintTrans*/
 /**
 @brief Print namelist.def  
@@ -1214,8 +1199,7 @@ static void PrintNamelist(struct StdIntList *StdI){
   fp = fopen("namelist.def", "w");
   fprintf(                         fp, "         ModPara  modpara.def\n");
   fprintf(                         fp, "         LocSpin  locspn.def\n");
-  if (StdI->Ltrans == 1 && StdI->PumpBody != 1)
-    fprintf(                       fp, "           Trans  trans.def\n");
+  fprintf(                         fp, "           Trans  trans.def\n");
   if (StdI->LCintra == 1) fprintf( fp, "    CoulombIntra  coulombintra.def\n");
   if (StdI->LCinter == 1) fprintf( fp, "    CoulombInter  coulombinter.def\n");
   if (StdI->LHund == 1)fprintf(    fp, "            Hund  hund.def\n");
@@ -1231,15 +1215,16 @@ static void PrintNamelist(struct StdIntList *StdI){
   if(StdI->SpectrumBody == 1) 
     fprintf(                       fp, "SingleExcitation  single.def\n");
   else fprintf(                    fp, "  PairExcitation  pair.def\n");
-  if (StdI->PumpBody == 1)
-    fprintf(                       fp, "       TEOneBody  teone.def\n");
-  else if (StdI->PumpBody == 2)
-    fprintf(                       fp, "       TETwoBody  tetwo.def\n");
+  if (strcmp(StdI->method, "timeevolution") == 0) {
+    if (StdI->PumpBody == 1)
+      fprintf(fp, "       TEOneBody  teone.def\n");
+    else if (StdI->PumpBody == 2)
+      fprintf(fp, "       TETwoBody  tetwo.def\n");
+  }/*if (strcmp(StdI->method, "timeevolution") == 0)*/
   fprintf(                         fp, "     SpectrumVec  %s_eigenvec_0\n",
                                    StdI->CDataFileHead);
   if (StdI->lBoost == 1) fprintf(  fp, "           Boost  boost.def\n");
 #elif defined(_mVMC)
-  if (StdI->Ltrans == 1) fprintf(fp, "           Trans  trans.def\n");
   fprintf(                         fp, "      Gutzwiller  gutzwilleridx.def\n");
   fprintf(                         fp, "         Jastrow  jastrowidx.def\n");
   fprintf(                         fp, "         Orbital  orbitalidx.def\n");
@@ -2357,7 +2342,21 @@ void StdFace_main(
     StdI->lGC = 1;
   }
   else UnsupportedSystem(StdI->model, StdI->lattice);
-
+#if defined(_HPhi)
+  /*
+  Check the method
+  */
+  if (strcmp(StdI->method, "direct") == 0
+    || strcmp(StdI->model, "alldiag") == 0)
+    strcpy(StdI->model, "fulldiag\0");
+  else if (strcmp(StdI->model, "te") == 0
+    || strcmp(StdI->model, "time-evolution") == 0) {
+    strcpy(StdI->model, "timeevolution\0");
+  }
+  /*
+  */
+  if (strcmp(StdI->method, "timeevolution") == 0) VectorPotential(StdI);
+#endif
   /*>>
   Generate Hamiltonian definition files
   */
@@ -2412,7 +2411,7 @@ void StdFace_main(
   PrintModPara(StdI); 
 #if defined(_HPhi)
   PrintExcitation(StdI);
-  PrintPump(StdI);
+  if (strcmp(StdI->method, "timeevolution") == 0) PrintPump(StdI);
   PrintCalcMod(StdI);
 #elif defined(_mVMC)
 
