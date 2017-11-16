@@ -259,7 +259,6 @@ int ReadcalcmodFile(
   X->iFlgCalcSpec=0;
   X->iReStart=0;
   X->iFlgMPI=0;
-
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -1980,14 +1979,14 @@ int CheckTransferHermite
   X->EDNTransfer=2*icntHermite;
   X->EDNChemi=icntchemi;
 
-  /*
+  //To realize ido-san's result
     for(i=0; i<X->EDNTransfer; i++){
     for(itmpIdx=0; itmpIdx<4; itmpIdx++){
     X->GeneralTransfer[i][itmpIdx]=X->EDGeneralTransfer[i][itmpIdx];
     }
     X->ParaGeneralTransfer[i]=X->EDParaGeneralTransfer[i];
     } 
-  */
+
 
   return 0;
 }

@@ -24,6 +24,7 @@
 #include "CalcByTEM.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
+#include "HPhiTrans.h"
 
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
@@ -58,13 +59,12 @@ int CalcByTEM(
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
   char sdt_norm[D_FileNameMax];
-  int rand_i;
+  int rand_i=0;
   int step_initial = 0;
   long int i_max = 0;
   FILE *fp;
-  double Time = X->Bind.Def.Param.Tinit, Ns;
-  //double dt = X->Bind.Def.Param.TimeSlice;
-  double dt = 0.0;
+  double Time = X->Bind.Def.Param.Tinit;
+  double dt = ((X->Bind.Def.NLaser==0)? 0.0: X->Bind.Def.Param.TimeSlice);
 
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
@@ -125,33 +125,38 @@ int CalcByTEM(
       fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
     }
 
-    //TransferWithPeierls(&(X->Bind), Time);
-    // [s] Yoshimi
-    // common procedure
-    Time = X->Bind.Def.TETime[step_i];
-    if (step_i == 0) dt = X->Bind.Def.TETime[0];
-    else {
-      dt = X->Bind.Def.TETime[step_i] - X->Bind.Def.TETime[step_i - 1];
-    }
-    X->Bind.Def.Param.TimeSlice = dt;
+      if(X->Bind.Def.NLaser !=0) {
+          TransferWithPeierls(&(X->Bind), Time);
+      }
+      else {
+          // common procedure
+          Time = X->Bind.Def.TETime[step_i];
+          if (step_i == 0) dt = X->Bind.Def.TETime[0];
+          else {
+              dt = X->Bind.Def.TETime[step_i] - X->Bind.Def.TETime[step_i - 1];
+          }
+          X->Bind.Def.Param.TimeSlice = dt;
 
-    // Set interactions
-    if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
-      MakeTEDTransfer(&(X->Bind), step_i);
-    } else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
-      MakeTEDInterAll(&(X->Bind), step_i);
-    } else {
-      fprintf(stdoutMPI,
-              "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
-      return -1;
-    }
-    //[e] Yoshimi
+          // Set interactions
+          if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
+              MakeTEDTransfer(&(X->Bind), step_i);
+          } else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
+              MakeTEDInterAll(&(X->Bind), step_i);
+          } else {
+              fprintf(stdoutMPI,
+                      "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
+              return -1;
+          }
+          //[e] Yoshimi
+      }
 
     TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
     MultiplyForTEM(step_i, &(X->Bind));
     //Add Diagonal Parts
     //Multiply Diagonal
     expec_energy_flct(&(X->Bind));
+
+      if(X->Bind.Def.NLaser >0 ) Time+=dt;
     if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
       return -1;
     }
