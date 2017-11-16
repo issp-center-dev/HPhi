@@ -904,10 +904,10 @@ the indices are specified as those of the Bogoliubov representation
   $U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}$ is added.
   For \verb|"Pulse Laser"|, \verb|"AC Laser"|, and \verb|"DC Laser"|,
   the hopping term is modulated as
-  $-\sum_{i j \sigma} t_{i j} \exp[{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)] c_{i \sigma} c_{j \sigma}$,
+  $-\sum_{i j \sigma} t_{i j} \exp[-{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c_{i \sigma} c_{j \sigma}$,
   where ${\bf A}(t)$ is the vector potential which is defined as
   ${\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]$,
-  ${\bf A}(t) = {\bf A}_0 \cos[\omega (t-t_0)]$, and
+  ${\bf A}(t) = {\bf A}_0 \sin[\omega (t-t_0)]$, and
   ${\bf A}(t) = {\bf A}_0 t$ for
   for \verb|"Pulse Laser"|,
   \verb|"AC Laser"|, and

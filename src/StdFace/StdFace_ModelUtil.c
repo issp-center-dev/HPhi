@@ -91,8 +91,8 @@ struct StdIntList *StdI,//!<[inout]
   if (strcmp(StdI->method, "timeevolution") == 0 && StdI->PumpBody == 1) {
     for (it = 0; it < StdI->nt; it++) {
       Cphase = 0.0f;
-      for (ii = 0; ii < 3; ii++) Cphase += 2.0*StdI->pi * StdI->At[it][ii] * dR[ii];
-      coef = cos(Cphase) + I * sin(Cphase);
+      for (ii = 0; ii < 3; ii++) Cphase += /*2.0*StdI->pi */ StdI->At[it][ii] * dR[ii];
+      coef = cos(Cphase) + I * sin(-Cphase);
       for (ispin = 0; ispin < 2; ispin++) {
         StdI->pump[it][StdI->npump[it]] = coef * trans0;
         StdI->pumpindx[it][StdI->npump[it]][0] = isite;
@@ -839,9 +839,9 @@ void StdFace_FindSite(
   int iCell, jCell, kCell, ii;
   int nBox[3], jCellV[3];
   /**/
-  dR[0] = (double)diW + StdI->tau[isiteUC][0] - StdI->tau[jsiteUC][0];
-  dR[1] = (double)diL + StdI->tau[isiteUC][1] - StdI->tau[jsiteUC][1];
-  dR[2] = (double)diH + StdI->tau[isiteUC][2] - StdI->tau[jsiteUC][2];
+  dR[0] = - (double)diW + StdI->tau[isiteUC][0] - StdI->tau[jsiteUC][0];
+  dR[1] = - (double)diL + StdI->tau[isiteUC][1] - StdI->tau[jsiteUC][1];
+  dR[2] = - (double)diH + StdI->tau[isiteUC][2] - StdI->tau[jsiteUC][2];
   /**/
   jCellV[0] = iW + diW;
   jCellV[1] = iL + diL;
@@ -1215,10 +1215,10 @@ void StdFace_MallocInteractions(
     StdI->npump = (int *)malloc(sizeof(int) * StdI->nt);
     StdI->pumpindx = (int ***)malloc(sizeof(int**) * StdI->nt);
     StdI->pump = (double complex **)malloc(sizeof(double complex*) * StdI->nt);
-    for (it = 0; it < StdI->nt;) {
+    for (it = 0; it < StdI->nt; it++) {
       StdI->npump[it] = 0;
       StdI->pumpindx[it] = (int **)malloc(sizeof(int*) * ntransMax);
-      StdI->pump[it] = (double complex *)malloc(sizeof(double complex*) * ntransMax);
+      StdI->pump[it] = (double complex *)malloc(sizeof(double complex) * ntransMax);
       for (ii = 0; ii < ntransMax; ii++) {
         StdI->pumpindx[it][ii] = (int *)malloc(sizeof(int) * 4);
       }

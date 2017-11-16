@@ -811,13 +811,13 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
   $U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}$が加えられる。
   \verb|"Pulse Laser"|, \verb|"AC Laser"|, \verb|"DC Laser"|では、
   ホッピング項に
-  $-\sum_{i j \sigma} t_{i j} \exp[{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)] c_{i \sigma} c_{j \sigma}$
+  $-\sum_{i j \sigma} t_{i j} \exp[-i{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c_{i \sigma} c_{j \sigma}$
   のように位相因子が付く。
   ここで${\bf A}(t)$はベクトルポテンシャルであり、
   \verb|"Pulse Laser"|では
   ${\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]$、
   \verb|"AC Laser"|では
-  ${\bf A}(t) = {\bf A}_0 \cos[\omega (t-t_0)]$、
+  ${\bf A}(t) = {\bf A}_0 \sin[\omega (t-t_0)]$、
   \verb|"DC Laser"|では
   ${\bf A}(t) = {\bf A}_0 t$となる。
 

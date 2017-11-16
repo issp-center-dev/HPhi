@@ -102,13 +102,9 @@ static void PrintCalcMod(struct StdIntList *StdI)
     iCalcEigenvec = 1;
   }
   else if (strcmp(StdI->method, "tpq") == 0) iCalcType = 1;
-  else if (strcmp(StdI->method, "fulldiag") == 0 ||
-    strcmp(StdI->method, "alldiag") == 0 ||
-    strcmp(StdI->method, "direct") == 0 ) iCalcType = 2;
+  else if (strcmp(StdI->method, "fulldiag") == 0 ) iCalcType = 2;
   else if (strcmp(StdI->method, "cg") == 0) iCalcType = 3;
-  else if (strcmp(StdI->method, "te") == 0 ||
-    strcmp(StdI->method, "timeevolution") == 0 ||
-    strcmp(StdI->method, "time-evolution") == 0) iCalcType = 4;
+  else if (strcmp(StdI->method, "timeevolution") == 0) iCalcType = 4;
   else{
     fprintf(stdout, "\n ERROR ! Unsupported Solver : %s\n", StdI->method);
     StdFace_exit(-1);
@@ -483,8 +479,8 @@ static void VectorPotential(struct StdIntList *StdI) {
       for (it = 0; it < StdI->nt; it++) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
-          StdI->At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift));
-          Et[it][ii] = StdI->VecPot[ii] * sin(StdI->freq*(time - StdI->tshift)) * StdI->freq;
+          StdI->At[it][ii] = StdI->VecPot[ii] * sin(StdI->freq*(time - StdI->tshift));
+          Et[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift)) * StdI->freq;
         }
       }/*for (it = 0; it < StdI->nt; it++)*/
       StdI->PumpBody = 1;
@@ -2347,13 +2343,14 @@ void StdFace_main(
   Check the method
   */
   if (strcmp(StdI->method, "direct") == 0
-    || strcmp(StdI->model, "alldiag") == 0)
-    strcpy(StdI->model, "fulldiag\0");
-  else if (strcmp(StdI->model, "te") == 0
-    || strcmp(StdI->model, "time-evolution") == 0) {
-    strcpy(StdI->model, "timeevolution\0");
+    || strcmp(StdI->method, "alldiag") == 0)
+    strcpy(StdI->method, "fulldiag\0");
+  else if (strcmp(StdI->method, "te") == 0
+    || strcmp(StdI->method, "time-evolution") == 0) {
+    strcpy(StdI->method, "timeevolution\0");
   }
   /*
+  Compute vector potential and electrical field
   */
   if (strcmp(StdI->method, "timeevolution") == 0) VectorPotential(StdI);
 #endif
