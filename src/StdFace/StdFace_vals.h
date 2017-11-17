@@ -283,6 +283,7 @@ struct StdIntList {
                         one-body term, malloc in StdFace_MallocInteractions()
                         and set in StdFace_trans().*/
   double **At;/**<@brief [StdIntList::nt][3] Vector potential.*/
+  int ExpandCoef;/**<@brief The number of Hamiltonian-vector operation for the time-evolution*/
 #elif defined(_mVMC)
   /*mVMC modpara*/
   char CParaFileHead[256];/**<@brief Header of the optimized wavefunction,

@@ -442,6 +442,7 @@ static void VectorPotential(struct StdIntList *StdI) {
   StdFace_PrintVal_d("tshift", &StdI->tshift, 0.0);
   StdFace_PrintVal_d("tdump", &StdI->tdump, 0.1);
   StdFace_PrintVal_d("Uquench", &StdI->Uquench, 0.0);
+  StdFace_PrintVal_i("ExpandCoef", &StdI->ExpandCoef, 10);
   StdI->At = (double **)malloc(sizeof(double*) * StdI->nt);
   Et = (double **)malloc(sizeof(double*) * StdI->nt);
   for (it = 0; it < StdI->nt; it++) {
@@ -910,6 +911,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->nt = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->VecPot[i] = NaN_d;;
   strcpy(StdI->PumpType, "****\0");
+  StdI->ExpandCoef = StdI->NaN_i;
 #elif defined(_mVMC)
   strcpy(StdI->CParaFileHead, "****\0");
   StdI->NVMCCalMode = StdI->NaN_i;
@@ -1267,6 +1269,8 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "OmegaMax       %-25.15e %-25.15e\n", StdI->OmegaMax, StdI->OmegaIm);
   fprintf(fp, "OmegaMin       %-25.15e %-25.15e\n", StdI->OmegaMin, StdI->OmegaIm);
   fprintf(fp, "OmegaOrg       0.0 0.0\n");
+  if (strcmp(StdI->method, "timeevolution") == 0)
+    fprintf(fp, "ExpandCoef     %-5d\n", StdI->ExpandCoef);
 #elif defined(_mVMC)
   fprintf(fp, "VMC_Cal_Parameters\n");
   fprintf(fp, "--------------------\n");
@@ -2227,6 +2231,7 @@ void StdFace_main(
     else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_sl(keyword, value, StdI->CalcSpec);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI->exct);
     else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_sl(keyword, value, StdI->EigenVecIO);
+    else if (strcmp(keyword, "expandcoef") == 0) StoreWithCheckDup_i(keyword, value, &StdI->ExpandCoef);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI->ExpecInterval);
     else if (strcmp(keyword, "cdatafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI->CDataFileHead);
     else if (strcmp(keyword, "dt") == 0) StoreWithCheckDup_d(keyword, value, &StdI->dt);
