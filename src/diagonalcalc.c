@@ -219,8 +219,8 @@ int diagonalcalcForTE
       //Assume n_{1\sigma_1} n_{2\sigma_2}
       isite1 = X->Def.TEInterAllDiagonal[_istep][i][0] + 1;
       A_spin = X->Def.TEInterAllDiagonal[_istep][i][1];
-      isite2 = X->Def.TEInterAllDiagonal[_istep][i][4] + 1;
-      B_spin = X->Def.TEInterAllDiagonal[_istep][i][5];
+      isite2 = X->Def.TEInterAllDiagonal[_istep][i][2] + 1;
+      B_spin = X->Def.TEInterAllDiagonal[_istep][i][3];
       tmp_V = X->Def.ParaTEInterAllDiagonal[_istep][i];
 
       if (SetDiagonalTEInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X, tmp_v0, tmp_v1) != 0) {
