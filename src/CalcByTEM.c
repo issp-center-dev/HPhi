@@ -224,6 +224,7 @@ void MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
     }
     X->Def.EDParaGeneralTransfer[i+X->Def.EDNTransfer]=X->Def.ParaTETransfer[timeidx][i];
   }
+  X->Def.EDNTransfer += X->Def.NTETransfer[timeidx];
 }
 
 /// \brief Set interall interactions at timeidx-th time
