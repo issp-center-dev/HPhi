@@ -1450,8 +1450,9 @@ int ReadDefFileIdxPara(
 
           if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
             if(CheckFormatForSpinInt(isite1, isite2, isite3, isite4)!=0){
-              X->NCisAjtCkuAlvDC--;
-              continue;
+                exitMPI(-1);
+              //X->NCisAjtCkuAlvDC--;
+              //continue;
             }
           }
 
