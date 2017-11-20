@@ -89,7 +89,7 @@ struct StdIntList *StdI,//!<[inout]
   */
 #if defined(_HPhi)
   if (strcmp(StdI->method, "timeevolution") == 0 && StdI->PumpBody == 1) {
-    for (it = 0; it < StdI->nt; it++) {
+    for (it = 0; it < StdI->Lanczos_max; it++) {
       Cphase = 0.0f;
       for (ii = 0; ii < 3; ii++) Cphase += /*2.0*StdI->pi */ StdI->At[it][ii] * dR[ii];
       coef = cos(Cphase) + I * sin(-Cphase);
@@ -108,7 +108,7 @@ struct StdIntList *StdI,//!<[inout]
         StdI->pumpindx[it][StdI->npump[it]][3] = ispin;
         StdI->npump[it] = StdI->npump[it] + 1;
       }/*for (ispin = 0; ispin < 2; ispin++)*/
-    }/*for (it = 0; it < StdI->nt; it++)*/
+    }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
   }/*if (strcmp(StdI->method, "timeevolution") == 0)*/
   else
 #endif
@@ -1212,17 +1212,17 @@ void StdFace_MallocInteractions(
   StdI->ntrans = 0;
 #if defined(_HPhi)
   if (strcmp(StdI->method, "timeevolution") == 0 && StdI->PumpBody == 1) {
-    StdI->npump = (int *)malloc(sizeof(int) * StdI->nt);
-    StdI->pumpindx = (int ***)malloc(sizeof(int**) * StdI->nt);
-    StdI->pump = (double complex **)malloc(sizeof(double complex*) * StdI->nt);
-    for (it = 0; it < StdI->nt; it++) {
+    StdI->npump = (int *)malloc(sizeof(int) * StdI->Lanczos_max);
+    StdI->pumpindx = (int ***)malloc(sizeof(int**) * StdI->Lanczos_max);
+    StdI->pump = (double complex **)malloc(sizeof(double complex*) * StdI->Lanczos_max);
+    for (it = 0; it < StdI->Lanczos_max; it++) {
       StdI->npump[it] = 0;
       StdI->pumpindx[it] = (int **)malloc(sizeof(int*) * ntransMax);
       StdI->pump[it] = (double complex *)malloc(sizeof(double complex) * ntransMax);
       for (ii = 0; ii < ntransMax; ii++) {
         StdI->pumpindx[it][ii] = (int *)malloc(sizeof(int) * 4);
       }
-    }/*for (it = 0; it < StdI->nt;)*/
+    }/*for (it = 0; it < StdI->Lanczos_max;)*/
   }/*if (strcmp(StdI->method, "timeevolution") == 0*/
 #endif
   /**@brief

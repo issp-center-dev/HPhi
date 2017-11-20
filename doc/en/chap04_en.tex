@@ -625,7 +625,8 @@ $\HPhi$ will stop.
 
 {\bf Type :} Positive integer (default value: \verb|2000|)
 
-{\bf Description :} The upper limit of the Lanczos step is specified with this parameter.
+{\bf Description :} The upper limit of the Lanczos/LOBCG/BiCG step
+and the number of steps for TPQ/Time-evolution are specified with this parameter.
 
 \item \verb|initial_iv|
 
@@ -881,12 +882,6 @@ the indices are specified as those of the Bogoliubov representation
 \subsection{Parameters for time-evolution}
 
 \begin{itemize}
-
-\item \verb|nt|
-
-  {\bf Type :} Positive Integer (Default value : \verb|1000|)
-  
-  {\bf Description :} The number of time steps.
 
 \item \verb|dt|
   

@@ -270,7 +270,6 @@ struct StdIntList {
   double tdump;/**<@brief Time scale of dumping*/
   double freq;/**<@brief Frequency of laser*/
   double Uquench;/**<@brief Quenched on-site potential*/
-  int nt;/**<@brief Number of Time step*/
   double VecPot[3];/**<@brief Vector potential*/
   char PumpType[256];/**<@brief The type of pump*/
   int PumpBody;/**<@brief one- or two-body pumping, defined from

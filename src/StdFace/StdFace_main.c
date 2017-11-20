@@ -185,6 +185,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
       StdFace_exit(-1);
     }
   }/*if (strcmp(StdI->EigenVecIO, "****") != 0)*/
+  if (strcmp(StdI->method, "timeevolution") == 0) InputEigenVec = 1;
   /*
   CalcSpec
   */
@@ -436,16 +437,16 @@ static void VectorPotential(struct StdIntList *StdI) {
   StdFace_PrintVal_d("VecPotW", &StdI->VecPot[0], 0.0);
   StdFace_PrintVal_d("VecPotL", &StdI->VecPot[1], 0.0);
   StdFace_PrintVal_d("VecPotH", &StdI->VecPot[2], 0.0);
-  StdFace_PrintVal_i("nt", &StdI->nt, 1000);
+  StdFace_PrintVal_i("Lanczos_max", &StdI->Lanczos_max, 1000);
   StdFace_PrintVal_d("dt", &StdI->dt, 0.1);
   StdFace_PrintVal_d("freq", &StdI->freq, 0.1);
   StdFace_PrintVal_d("tshift", &StdI->tshift, 0.0);
   StdFace_PrintVal_d("tdump", &StdI->tdump, 0.1);
   StdFace_PrintVal_d("Uquench", &StdI->Uquench, 0.0);
   StdFace_PrintVal_i("ExpandCoef", &StdI->ExpandCoef, 10);
-  StdI->At = (double **)malloc(sizeof(double*) * StdI->nt);
-  Et = (double **)malloc(sizeof(double*) * StdI->nt);
-  for (it = 0; it < StdI->nt; it++) {
+  StdI->At = (double **)malloc(sizeof(double*) * StdI->Lanczos_max);
+  Et = (double **)malloc(sizeof(double*) * StdI->Lanczos_max);
+  for (it = 0; it < StdI->Lanczos_max; it++) {
     StdI->At[it] = (double *)malloc(sizeof(double) * 3);
     Et[it] = (double *)malloc(sizeof(double) * 3);
   }
@@ -461,7 +462,7 @@ static void VectorPotential(struct StdIntList *StdI) {
       StdI->PumpBody = 2;
     }/*if (strcmp(StdI->PumpType, "quench")*/
     else if (strcmp(StdI->PumpType, "pulselaser") == 0) {
-      for (it = 0; it < StdI->nt; it++) {
+      for (it = 0; it < StdI->Lanczos_max; it++) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
           StdI->At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift))
@@ -473,27 +474,27 @@ static void VectorPotential(struct StdIntList *StdI) {
               )
             * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
         }
-      }/*for (it = 0; it < StdI->nt; it++)*/
+      }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
       StdI->PumpBody = 1;
     }/*if (strcmp(StdI->PumpType, "pulselaser") == 0)*/
     else if (strcmp(StdI->PumpType, "aclaser") == 0) {
-      for (it = 0; it < StdI->nt; it++) {
+      for (it = 0; it < StdI->Lanczos_max; it++) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
           StdI->At[it][ii] = StdI->VecPot[ii] * sin(StdI->freq*(time - StdI->tshift));
           Et[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift)) * StdI->freq;
         }
-      }/*for (it = 0; it < StdI->nt; it++)*/
+      }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
       StdI->PumpBody = 1;
     }/*if (strcmp(StdI->PumpType, "aclaser") == 0)*/
     else if (strcmp(StdI->PumpType, "dclaser") == 0) {
-      for (it = 0; it < StdI->nt; it++) {
+      for (it = 0; it < StdI->Lanczos_max; it++) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
           StdI->At[it][ii] = StdI->VecPot[ii] * time;
           Et[it][ii] = -StdI->VecPot[ii];
         }
-      }/*for (it = 0; it < StdI->nt; it++)*/
+      }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
       StdI->PumpBody = 1;
     }/* if (strcmp(StdI->PumpType, "dclaser") == 0)*/
     else {
@@ -505,7 +506,7 @@ static void VectorPotential(struct StdIntList *StdI) {
   if (StdI->PumpBody == 1) {
     fp = fopen("potential.dat", "w");
     fprintf(fp, "# Time A_W A_L A_H E_W E_L E_H\n");
-    for (it = 0; it < StdI->nt; it++) {
+    for (it = 0; it < StdI->Lanczos_max; it++) {
       time = StdI->dt*(double)it;
       fprintf(fp, "%f %f %f %f %f %f %f\n",
         time, StdI->At[it][0], StdI->At[it][1], StdI->At[it][2], Et[it][0], Et[it][1], Et[it][2]);
@@ -514,7 +515,7 @@ static void VectorPotential(struct StdIntList *StdI) {
     fclose(fp);
   }/*if (StdI->PumpBody == 1)*/
 
-  for (it = 0; it < StdI->nt; it++) free(Et[it]);
+  for (it = 0; it < StdI->Lanczos_max; it++) free(Et[it]);
   free(Et);
 }/*static void VectorPotential(struct StdIntList *StdI)*/
 /**
@@ -529,11 +530,11 @@ static void PrintPump(struct StdIntList *StdI) {
 
     fp = fopen("teone.def", "w");
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "AllTimeStep %d\n", StdI->nt);
+    fprintf(fp, "AllTimeStep %d\n", StdI->Lanczos_max);
     fprintf(fp, "=============================================\n");
     fprintf(fp, "=========  OneBody Time Evolution  ==========\n");
     fprintf(fp, "=============================================\n");
-    for (it = 0; it < StdI->nt; it++) {
+    for (it = 0; it < StdI->Lanczos_max; it++) {
       /*
       Sum equivalent pumping
       */
@@ -565,23 +566,23 @@ static void PrintPump(struct StdIntList *StdI) {
           StdI->pumpindx[it][ipump][2], StdI->pumpindx[it][ipump][3],
           creal(StdI->pump[it][ipump]), cimag(StdI->pump[it][ipump]));
       }/*for (itrans = 0; itrans < StdI->ntrans; itrans++)*/
-    }/*for (it = 0; it < StdI->nt; it++)*/
+    }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
     fprintf(stdout, "      teone.def is written.\n\n");
   }
   else {
     fp = fopen("tetwo.def", "w");
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "AllTimeStep %d\n", StdI->nt);
+    fprintf(fp, "AllTimeStep %d\n", StdI->Lanczos_max);
     fprintf(fp, "=============================================\n");
     fprintf(fp, "========== TwoBody Time Evolution ===========\n");
     fprintf(fp, "=============================================\n");
-    for (it = 0; it < StdI->nt; it++) {
+    for (it = 0; it < StdI->Lanczos_max; it++) {
       fprintf(fp, "%f  %d\n", StdI->dt*(double)it, StdI->nsite);
       for (isite = 0; isite < StdI->nsite; isite++) {
         fprintf(fp, "%5d %5d %5d %5d %5d %5d %5d %5d %25.15f  %25.15f\n",
           isite, 0, isite, 0, isite, 1, isite, 1, StdI->Uquench, 0.0);
       }/*for (isite = 0; isite < StdI->nsite; isite++)*/
-    }/*for (it = 0; it < StdI->nt; it++)*/
+    }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
     fprintf(stdout, "        tetwo.def is written.\n\n");
   }
   fflush(fp);
@@ -908,7 +909,6 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->tshift = NaN_d;
   StdI->freq = NaN_d;
   StdI->Uquench = NaN_d;
-  StdI->nt = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->VecPot[i] = NaN_d;;
   strcpy(StdI->PumpType, "****\0");
   StdI->ExpandCoef = StdI->NaN_i;
@@ -2245,7 +2245,6 @@ void StdFace_main(
     else if (strcmp(keyword, "largevalue") == 0) StoreWithCheckDup_d(keyword, value, &StdI->LargeValue);
     else if (strcmp(keyword, "method") == 0) StoreWithCheckDup_sl(keyword, value, StdI->method);
     else if (strcmp(keyword, "nomega") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Nomega);
-    else if (strcmp(keyword, "nt") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nt);
     else if (strcmp(keyword, "numave") == 0) StoreWithCheckDup_i(keyword, value, &StdI->NumAve);
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nvec);
     else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMax);

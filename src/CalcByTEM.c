@@ -116,6 +116,7 @@ int CalcByTEM(
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;
   for (step_i = step_initial; step_i < X->Bind.Def.Lanczos_max; step_i++) {
+    X->Bind.Def.istep = step_i;
 
     //Reset total number of interactions (changed in MakeTED***function.)
     X->Bind.Def.EDNTransfer = iTransfer_org;

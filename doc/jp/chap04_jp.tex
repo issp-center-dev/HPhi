@@ -553,7 +553,8 @@ $ gnuplot lattice.gp
 
 {\bf 形式 :} 整数(デフォルト値は\verb|2000|)
 
-{\bf 説明 :} ランチョスステップの上限を指定します。
+{\bf 説明 :} ランチョスステップの上限、LOBCGステップの上限、
+TPQステップ数、時間発展ステップ数、BiCGステップの上限を指定します。
 
 \item \verb|initial_iv|
 
@@ -788,12 +789,6 @@ $\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_
 \subsection{実時間発展計算に関するパラメーター}
 
 \begin{itemize}
-
-\item \verb|nt|
-
-  {\bf 形式 :} 正の整数(デフォルトは\verb|1000|)
-  
-  {\bf 説明 :} 時間ステップ数。
 
 \item \verb|dt|
   
