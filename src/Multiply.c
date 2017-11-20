@@ -105,10 +105,7 @@ int MultiplyForTEM
     tmp1 *= -I*dt/(double complex)coef;
     //v2 = H*v1 = H^coef |psi(t)>
     mltply(X, v2, v1);
-      //TODO Delete this branch when ido-sann's version will be removed
-    if(X->Def.NLaser == 0) {
-        diagonalcalcForTE(step_i, X, v2, v1);
-    }
+
 #pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
     for(i = 1; i <= i_max; i++){
       v0[i] += tmp1*v2[i];
