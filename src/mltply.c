@@ -47,14 +47,14 @@
  *
  * @param X [in] Struct for getting the information of the operators.
  * @param tmp_v0 [in, out]
- * @param tmp_v1 [out]
+ * @param tmp_v1 [in]
  *
  * @return
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) {
-    long unsigned int j=0;
+  long unsigned int j=0;
   long unsigned int irght=0;
   long unsigned int ilft=0;
   long unsigned int ihfbit=0;

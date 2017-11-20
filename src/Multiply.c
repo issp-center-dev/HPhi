@@ -77,10 +77,10 @@ int Multiply
  * @retval -1 unnormally finished
  */
 int MultiplyForTEM
-        (
-                const int time_step,
-                struct BindStruct *X
-        )
+(
+ const int time_step,
+ struct BindStruct *X
+ )
 {
 
   long int i,i_max;

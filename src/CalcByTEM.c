@@ -126,30 +126,30 @@ int CalcByTEM(
       fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
     }
 
-      if(X->Bind.Def.NLaser !=0) {
-          TransferWithPeierls(&(X->Bind), Time);
-      }
+    if(X->Bind.Def.NLaser !=0) {
+      TransferWithPeierls(&(X->Bind), Time);
+    }
+    else {
+      // common procedure
+      Time = X->Bind.Def.TETime[step_i];
+      if (step_i == 0) dt = X->Bind.Def.TETime[0];
       else {
-          // common procedure
-          Time = X->Bind.Def.TETime[step_i];
-          if (step_i == 0) dt = X->Bind.Def.TETime[0];
-          else {
-              dt = X->Bind.Def.TETime[step_i] - X->Bind.Def.TETime[step_i - 1];
-          }
-          X->Bind.Def.Param.TimeSlice = dt;
-
-          // Set interactions
-          if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
-              MakeTEDTransfer(&(X->Bind), step_i);
-          } else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
-              MakeTEDInterAll(&(X->Bind), step_i);
-          } else {
-              fprintf(stdoutMPI,
-                      "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
-              return -1;
-          }
-          //[e] Yoshimi
+        dt = X->Bind.Def.TETime[step_i] - X->Bind.Def.TETime[step_i - 1];
       }
+      X->Bind.Def.Param.TimeSlice = dt;
+
+      // Set interactions
+      if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
+        MakeTEDTransfer(&(X->Bind), step_i);
+      } else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
+        MakeTEDInterAll(&(X->Bind), step_i);
+      } else {
+        fprintf(stdoutMPI,
+                "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
+        return -1;
+      }
+      //[e] Yoshimi
+    }
 
     TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
     MultiplyForTEM(step_i, &(X->Bind));
@@ -157,7 +157,7 @@ int CalcByTEM(
     //Multiply Diagonal
     expec_energy_flct(&(X->Bind));
 
-      if(X->Bind.Def.NLaser >0 ) Time+=dt;
+    if(X->Bind.Def.NLaser >0 ) Time+=dt;
     if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
       return -1;
     }
