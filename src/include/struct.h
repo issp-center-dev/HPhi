@@ -226,6 +226,11 @@ struct DefineList {
     - 1: Parallel Interaction [to be supported]
     */
 
+    int iFlgCUDA;/**<@brief GPU mode ( only for FullDiag )
+    - 0: Use lapack
+    - 1: Use magma
+    */
+
 
     struct ParamList Param;
 

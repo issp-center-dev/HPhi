@@ -16,6 +16,9 @@
 #include "lapack_diag.h"
 #include "matrixlapack.h"
 #include "FileIO.h"
+#ifdef _MAGMA
+#include "matrixlapack_magma.h"
+#endif
 
 /** 
  * 
@@ -28,29 +31,42 @@
  */
 int lapack_diag(
 struct BindStruct *X//!<[inout]
-){
-  
-  FILE *fp;
-  char sdt[D_FileNameMax]="";
-  int i,j,i_max,xMsize;
- 
-  i_max=X->Check.idim_max;   
+) {
 
-  for(i=0;i<i_max;i++){
-    for(j=0;j<i_max;j++){
-     Ham[i][j] =Ham[i+1][j+1];
+  FILE *fp;
+  char sdt[D_FileNameMax] = "";
+  int i, j, i_max, xMsize;
+
+  i_max = X->Check.idim_max;
+
+  for (i = 0; i < i_max; i++) {
+    for (j = 0; j < i_max; j++) {
+      Ham[i][j] = Ham[i + 1][j + 1];
     }
   }
   xMsize = i_max;
-  //DSEVvector(xMsize, Ham, v0, L_vec);
-  ZHEEVall(xMsize, Ham, v0, L_vec);
-  strcpy(sdt,cFileNameEigenvalue_Lanczos);
-  if(childfopenMPI(sdt,"w",&fp)!=0){
+  if (X->Def.iFlgCUDA == 0) {
+    ZHEEVall(xMsize, Ham, v0, L_vec);
+  } else {
+#ifdef _MAGMA
+    if(diag_magma_cmp(xMsize, Ham, v0, L_vec, 2) != 0) {
     return -1;
   }
-  for(i=0;i<i_max;i++){
-    fprintf(fp," %d %.10lf \n",i, creal(v0[i]));
+#else
+    fprintf(stdoutMPI, "Warnign: MAGMA is not used in this calculation.");
+    ZHEEVall(xMsize, Ham, v0, L_vec);
+#endif
+  }
+
+  strcpy(sdt, cFileNameEigenvalue_Lanczos);
+  if (childfopenMPI(sdt, "w", &fp) != 0) {
+    return -1;
+  }
+  for (i = 0; i < i_max; i++) {
+    fprintf(fp, " %d %.10lf \n", i, creal(v0[i]));
   }
   fclose(fp);
+
+
   return 0;
 }

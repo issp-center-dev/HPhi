@@ -52,6 +52,8 @@ char *cErrInputOutputHam;
 char *cErrOutputHamForFullDiag;
 char *cErrRestart;
 char *cErrFiniteTemp;
+char *cErrCUDA;
+
 char *cErrKW;
 char *cErrKW_ShowList;
 char *cErrKW_Same;
