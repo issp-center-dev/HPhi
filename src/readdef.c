@@ -259,7 +259,11 @@ int ReadcalcmodFile(
   X->iFlgCalcSpec=0;
   X->iReStart=0;
   X->iFlgMPI=0;
-  X->iFlgCUDA=0;
+#ifdef _MAGMA
+  X->iNGPU=2;
+#else
+  X->iNGPU=0;
+#endif
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -305,8 +309,8 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "ReStart")==0){
       X->iReStart=itmp;
     }
-    else if(CheckWords(ctmp, "CUDA")==0){
-        X->iFlgCUDA=itmp;
+    else if(CheckWords(ctmp, "NGPU")==0){
+        X->iNGPU=itmp;
     }
     else{
       fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);
@@ -355,7 +359,7 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI, cErrRestart, defname);
     return (-1);
   }
-    if(ValidateValue(X->iFlgCUDA, 0, 1)){
+    if(X->iNGPU < 0){
         fprintf(stdoutMPI, cErrCUDA, defname);
         return (-1);
     }

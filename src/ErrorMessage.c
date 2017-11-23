@@ -51,7 +51,7 @@ char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
 char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
-char *cErrCUDA="Error in %s\n CUDA: \n 0: not use CUDA (default).\n 1: use CUDA.\n";
+char *cErrCUDA="Error in %s\n NGPU: NGPU must be greater than 0.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
 char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";
