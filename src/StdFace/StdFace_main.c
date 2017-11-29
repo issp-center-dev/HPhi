@@ -136,7 +136,8 @@ static void PrintCalcMod(struct StdIntList *StdI)
   else {
     fprintf(stdout, "          Restart = %s\n", StdI->Restart);
     if (strcmp(StdI->Restart, "none") == 0) iRestart = 0;
-    else if (strcmp(StdI->Restart, "restart_out") == 0) iRestart = 1;
+    else if (strcmp(StdI->Restart, "restart_out") == 0 ||
+             strcmp(StdI->Restart, "save") == 0) iRestart = 1;
     else if (strcmp(StdI->Restart, "restartsave") == 0 ||
              strcmp(StdI->Restart, "restart")     == 0) iRestart = 2;
     else if (strcmp(StdI->Restart, "restart_in") == 0) iRestart = 3;
