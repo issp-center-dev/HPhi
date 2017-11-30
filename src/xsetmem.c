@@ -188,7 +188,7 @@ int setmem_large
  ) {
 
   unsigned long int j = 0;
-  unsigned int idim_maxMPI;
+  unsigned long int idim_maxMPI;
 
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
