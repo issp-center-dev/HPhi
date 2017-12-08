@@ -28,7 +28,7 @@
 @brief Calculation of Single excited state for Hubbard canonical system
 @returns TRUE: Normally finished
 @returns FALSE: Abnormally finished
-@authour Kazuyoshi Yoshimi
+@author Kazuyoshi Yoshimi
 @version 1.2
 */
 int GetSingleExcitedStateHubbard(
@@ -98,7 +98,7 @@ int GetSingleExcitedStateHubbard(
 @brief Calculation of Single excited state for Hubbard Grand canonical system
 @returns TRUE: Normally finished
 @returns FALSE: Abnormally finished
-@authour Kazuyoshi Yoshimi
+@author Kazuyoshi Yoshimi
 @version 1.2
 */
 int GetSingleExcitedStateHubbardGC(

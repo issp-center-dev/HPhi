@@ -785,7 +785,7 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
  * @param[in] ib   upper half bit of i    
  * @param[in] ihfbit 2^(Ns/2) 
  * @param[in] X
- * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
  * @param[out] list_2_1_  list_2_1_[ib] = jb  
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
  * @param[in] list_jb_   list_jb_[ib]  = jb  
@@ -882,7 +882,7 @@ int child_omp_sz(
  * @param[in] ib   upper half bit of i    
  * @param[in] ihfbit 2^(Ns/2) 
  * @param[in] X
- * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
  * @param[out] list_2_1_  list_2_1_[ib] = jb  
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
  * @param[in] list_jb_   list_jb_[ib]  = jb  
@@ -999,7 +999,7 @@ int child_omp_sz_hacker(long unsigned int ib,
  * @param[in] ib   upper half bit of i    
  * @param[in] ihfbit 2^(Ns/2) 
  * @param[in] X
- * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
  * @param[out] list_2_1_  list_2_1_[ib] = jb  
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
  * @param[in] list_jb_   list_jb_[ib]  = jb  
@@ -1111,7 +1111,7 @@ int child_omp_sz_Kondo(
  * @param[in] ib   upper half bit of i    
  * @param[in] ihfbit 2^(Ns/2) 
  * @param[in] X
- * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
  * @param[out] list_2_1_  list_2_1_[ib] = jb  
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
  * @param[in] list_jb_   list_jb_[ib]  = jb  
@@ -1199,7 +1199,8 @@ int child_omp_sz_KondoGC(
  * @param[in] ib   upper half bit of i    
  * @param[in] ihfbit 2^(Ns/2) 
  * @param[in] X          
- * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[in] N ???
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia)
  * @param[out] list_2_1_  list_2_1_[ib] = jb  
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
  * @param[in] list_jb_   list_jb_[ib]  = jb  
@@ -1262,11 +1263,10 @@ int child_omp_sz_spin(
  * @param[in] ib   upper half bit of i    
  * @param[in] ihfbit 2^(Ns/2) 
  * @param[in] X          
- * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[in] N ???
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia)
  * @param[out] list_2_1_  list_2_1_[ib] = jb  
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
- * @param[out] list_2_1_Sz_  
- * @param[out] list_2_2_Sz_  
  * @param[in] list_jb_   list_jb_[ib]  = jb  
  * 
  * @return 
@@ -1331,7 +1331,7 @@ int child_omp_sz_spin_hacker(
  * @param[in] ib   upper half bit of i    
  * @param[in] ihfbit 2^(Ns/2) 
  * @param[in] X          
- * @param[out] list_1     list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
  * @param[out] list_2_1_  list_2_1_[ib] = jb  
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
  * @param[out] list_2_1_Sz_  

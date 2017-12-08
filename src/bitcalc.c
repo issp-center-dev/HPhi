@@ -184,9 +184,9 @@ void SplitBit(
  * @param _list_2_1 list to right space
  * @param _list_2_2 list to left space
  * @param _ibit a original bit 
- * @param irght a bit to split original  space into right space
- * @param ilft a bit to split original  space into left space
- * @param ihfbit a half bit to split original  space
+ * @param _irght a bit to split original  space into right space
+ * @param _ilft a bit to split original  space into left space
+ * @param _ihfbit a half bit to split original  space
  * @param _ioffComp an off diagonal component
  * @version 0.1 
  * @author Takahiro Misawa (The University of Tokyo) 
@@ -232,8 +232,8 @@ int GetOffComp(
  * @param org_ispin a target spin to delete.
  * @param off_ispin a target spin to create.
  * @param _ioffComp a generated bit 
- * @param _SiteToBit List for getting bit at a site
- * @param _Tpow List for getting total bit at a site before
+ * @param SiteToBit List for getting bit at a site
+ * @param Tpow List for getting total bit at a site before
  * @retval FALSE off-diagonal component does not exist
  * @retval TRUE off-diagonal component exists
  * 
@@ -305,7 +305,7 @@ int ConvertToList1GeneralSpin(
  * @brief function of getting fermion signs (for 32bit)
  * 
  * @param org_bit an original bit
- * @param _sgn fermion sign 
+ * @param sgn fermion sign 
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo) 
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
@@ -330,7 +330,7 @@ void SgnBit_old(
  * @brief function of getting fermion sign (64 bit)
  * 
  * @param org_bit an original bit
- * @param _sgn fermion sign 
+ * @param sgn fermion sign 
  * @version 0.1
  *
  * @author Takahiro Misawa (The University of Tokyo) 
@@ -382,8 +382,8 @@ int BitCheck(
  * @param org_bit original bit to check
  * @param org_isite site index (org_isite >= 1)
  * @param target_ispin target spin to check 
- * @param _SiteToBit List for getting bit at a site
- * @param _TPow List for getting total bit at a site before
+ * @param SiteToBit List for getting bit at a site
+ * @param Tpow List for getting total bit at a site before
  * @retval 0 bit does not exists
  * @retval 1 bit exists
  * 
@@ -412,8 +412,8 @@ int BitCheckGeneral(
  *
  * @param isite site index (isite >= 1)
  * @param org_bit original bit to check 
- * @param _SiteToBit List for getting bit at a site
- * @param _Tpow List for getting total bit at a site before
+ * @param SiteToBit List for getting bit at a site
+ * @param Tpow List for getting total bit at a site before
  * @return bit at a site
  * 
  * @version 0.2
@@ -437,8 +437,8 @@ int GetBitGeneral(
  *
  * @param isite site index (isite >= 1)
  * @param org_bit original bit to check 
- * @param _SiteToBit List for getting bit at a site
- * @param _Tpow List for getting total bit at a site before
+ * @param SiteToBit List for getting bit at a site
+ * @param Tpow List for getting total bit at a site before
  * @return 2sz at isite
  * 
  * @version 0.2

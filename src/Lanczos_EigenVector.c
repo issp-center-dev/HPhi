@@ -36,7 +36,7 @@
  * The calculated tridiagonal matrix components @f$ \alpha_i, \beta_i@f$ are stored in each array @f$ \verb|alpha| @f$ and @f$\verb|beta|@f$\n
  * (@f$ i = 0\cdots N_c@f$, where @f$ N_c@f$ is the step where the calculated energy satisfies the convergence condition).
  * 
- * @param _X [in,out] Struct for getting information to calculate eigenvectors.
+ * @param X [in,out] Struct for getting information to calculate eigenvectors.
  * @version 0.2
  * @details add an option to choose a type of initial vectors from complex or real types. 
  * @version 0.1

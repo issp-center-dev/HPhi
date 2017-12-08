@@ -24,7 +24,7 @@
 Target System: Hubbard, Kondo
 @returns TRUE: Normally finished
 @returns FALSE: Abnormally finished
-@authour Kazuyoshi Yoshimi
+@author Kazuyoshi Yoshimi
 @version 1.2
 */
 int GetSingleExcitedState(

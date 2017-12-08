@@ -114,7 +114,7 @@ int InputInterAllInfo(
 
 /**
  * @brief Error Function of reading def files.
- * @param[in] _defname name of def file.
+ * @param[in] defname name of def file.
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -151,10 +151,10 @@ int ValidateValue(
 
 /**
  * @brief Function of Checking keyword in NameList file.
- * @param[in] _cKW keyword candidate
- * @param[in] _cKWList Reffercnce of keyword List
+ * @param[in] cKW keyword candidate
+ * @param[in] cKWList Reffercnce of keyword List
  * @param[in] iSizeOfKWidx number of keyword
- * @param[out] _iKWidx index of keyword
+ * @param[out] iKWidx index of keyword
  * @retval 0 keyword is correct.
  * @retval -1 keyword is incorrect.
  * @version 0.1
@@ -184,9 +184,9 @@ int CheckKW(
 
 /**
  * @brief Function of Getting keyword and it's variable from characters.
- * @param[in] _ctmpLine characters including keyword and it's variable 
- * @param[out] _ctmp keyword
- * @param[out] _itmp variable for a keyword
+ * @param[in] ctmpLine characters including keyword and it's variable 
+ * @param[out] ctmp keyword
+ * @param[out] itmp variable for a keyword
  * @retval 0 keyword and it's variable are obtained.
  * @retval 1 ctmpLine is a comment line.
  * @retval -1 format of ctmpLine is incorrect.
@@ -229,7 +229,7 @@ int GetKWWithIdx(
 
 /**
  * @brief Function of Reading calcmod file.
- * @param[in]  _defname file name to read.
+ * @param[in] defname file name to read.
  * @param[out] X Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
@@ -369,8 +369,8 @@ int ReadcalcmodFile(
 
 /**
  * @brief Function of Fitting FileName
- * @param[in]  _cFileListNameFile file for getting names of input files.
- * @param[out] _cFileNameList arrays for getting names of input files.
+ * @param[in]  cFileListNameFile file for getting names of input files.
+ * @param[out] cFileNameList arrays for getting names of input files.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @version 0.1
@@ -434,8 +434,9 @@ int GetFileName(
 /** 
  * @brief  Function of reading information about "ModPara" file and total number of parameters from other def files.
  *
- * @param[in] _xNameListFile List of Input File names.
- * @param[out] XX Define List for getting flags of calc-mode.
+ * @param[in] xNameListFile List of Input File names.
+ * @param[out] X Define List for getting flags of calc-mode.
+ * @param[out] xBoost Define List for getting flags of Boost calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @author Takahiro Misawa (The University of Tokyo)
@@ -948,7 +949,8 @@ int ReadDefFileNInt(
  * @brief function of reading def files to get keyword index
  * 
  * @param X define list to get and put informations for calcuation
- * 
+ * @param xBoost list to get and put informations for Boost (CMA) calcuation
+ *
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @version 0.1
@@ -1995,7 +1997,6 @@ int CheckTransferHermite
 /** 
  * @brief function of checking hermite conditions about interall interactions
  * 
- * @param X define list to get interall off diagonal interactions
  * 
  * @retval 0 Hermite condition is satisfied
  * @retval -1 Hermite condition is not satisfied
@@ -2135,7 +2136,6 @@ int CheckInterAllHermite
 /**
  * @brief function of getting diagonal components form Time-dependent interall interactions
  *
- * @param[in] X define list to get information of Time-dependent interall interactions
  *
  * @retval 0  succeed to get diagonal interactions
  * @retval -1 format of interall interactions is incorrect
@@ -2384,7 +2384,6 @@ int CheckFormatForSpinInt
  * 
  * @brief function of checking format of Kondo interactions
  * 
- * @param[in] X define list to get information of interall interactions
  * 
  * @retval 0 format is correct
  * @retval -1 format is incorrect
@@ -2443,7 +2442,7 @@ void SetConvergenceFactor
 /** 
  * @brief function of checking indexies of localized spin
  * 
- * @param[in/out] X Define list to get and put information of localized spin
+ * @param [inout] X Define list to get and put information of localized spin
  * 
  * @return TURE Indecies of localizes spin is correct
  * @return FALSE Indecies of localizes spin is incorrect
@@ -2559,7 +2558,6 @@ void InitializeInteractionNum
 /** 
  * @brief function of checking spin index for all interactions
  * 
- * @param[in] X Define list to get informations of all interactions
  * @retval TRUE spin index is correct
  * @retval FALSE spin index is incorrect
  * @version 0.2

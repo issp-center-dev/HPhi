@@ -9,15 +9,15 @@
 
 //
 /// \brief Calculation of pair excited state for Spin Grand canonical system
-/// \param X define list to get and put information of calculation
+/// \param X [inout] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
 /// \returns FALSE: Abnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
 int GetPairExcitedStateSpinGC(
-        struct BindStruct *X,
+        struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -36,15 +36,15 @@ int GetPairExcitedStateSpinGC(
 
 //
 /// Calculation of pair excited state for Half Spin Grand canonical system
-/// \param X define list to get and put information of calculation
+/// \param X [inout] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
 /// \returns FALSE: Abnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
 int GetPairExcitedStateHalfSpinGC(
-        struct BindStruct *X,
+        struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -118,15 +118,15 @@ int GetPairExcitedStateHalfSpinGC(
 
 //
 /// Calculation of pair excited state for general Spin Grand canonical system
-/// \param X define list to get and put information of calculation
+/// \param X [inout] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
 /// \returns FALSE: Abnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
 int GetPairExcitedStateGeneralSpinGC(
-        struct BindStruct *X,
+        struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -200,15 +200,15 @@ int GetPairExcitedStateGeneralSpinGC(
 
 //
 /// Calculation of pair excited state for Spin canonical system
-/// \param X define list to get and put information of calculation
+/// \param X [inout] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
 /// \returns FALSE: Abnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
 int GetPairExcitedStateSpin(
-        struct BindStruct *X,
+        struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -225,15 +225,15 @@ int GetPairExcitedStateSpin(
 
 //
 /// Calculation of pair excited state for Half Spin canonical system
-/// \param X define list to get and put information of calculation
+/// \param X [inout] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
 /// \returns FALSE: Abnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
 int GetPairExcitedStateHalfSpin(
-        struct BindStruct *X,
+        struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -324,15 +324,15 @@ int GetPairExcitedStateHalfSpin(
 
 //
 /// Calculation of pair excited state for general Spin canonical system
-/// \param X define list to get and put information of calculation
+/// \param X [inout] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
 /// \returns FALSE: Abnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
 int GetPairExcitedStateGeneralSpin(
-        struct BindStruct *X,
+        struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 

@@ -327,7 +327,7 @@ int GetExcitedState
 }
 
 ///
-/// \breif Set target frequencies
+/// \brief Set target frequencies
 /// \param X [in, out] Struct to give and get the information of target frequencies.\n
 /// Output: dcOmegaMax, dcOmegaMin
 ///
@@ -410,7 +410,7 @@ int SetOmega
 }
 
 ///
-/// \breif Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble).
+/// \brief Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble).
 /// The original lists before the excitation are given by list_xxx_org
 /// \param X [in, out] Struct to get and give information to make the lists for the excited state.\n
 /// Output: iCalcModel (From HubbardNConserved to Hubbard), {Ne, Nup, Ndown, Nsite, Total2Sz} (update for MPI)
