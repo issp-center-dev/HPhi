@@ -71,7 +71,6 @@ int Multiply
  * @brief  Function of multiplying Hamiltonian for Time Evolution.
  *
  * Make @f$ |v_0 \rangle = |\psi(t+dt) \rangle @f$ from @f$ |v_1 \rangle = | \psi(t) \rangle  @f$ and @f$ |v_0 \rangle = H |\psi(t) \rangle @f$.
- * @param time_step [in] This is not used ???
  * @param X [in] data list for calculation (idim_max and TimeSlice)
  *
  * @retval 0  normally finished
@@ -79,7 +78,6 @@ int Multiply
  */
 int MultiplyForTEM
 (
- const int time_step,
  struct BindStruct *X
  )
 {
