@@ -132,9 +132,9 @@ int CalcSpectrumByTPQ(
 			  struct EDMainCalStruct *X,
 			  double complex *tmp_v1,
 			  double dnorm,
-              int Nomega,
-              double complex *dcSpectrum,
-              double complex *dcomega
+        int Nomega,
+        double complex *dcSpectrum,
+        double complex *dcomega
 )
 {
     char sdt[D_FileNameMax];

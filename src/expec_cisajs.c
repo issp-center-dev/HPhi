@@ -54,8 +54,8 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **
 /** 
  * @brief function of calculation for one body green's function
  * 
- * @param X  list for getting information to calculate one body green's function.
- * @param vec eigenvectors.
+ * @param X [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvectors.
  * 
  * @version 0.2
  * @details add calculation one body green's functions for general spin

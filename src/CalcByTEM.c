@@ -152,7 +152,7 @@ int CalcByTEM(
     }
 
     TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
-    MultiplyForTEM(step_i, &(X->Bind));
+    MultiplyForTEM(&(X->Bind));
     //Add Diagonal Parts
     //Multiply Diagonal
     expec_energy_flct(&(X->Bind));

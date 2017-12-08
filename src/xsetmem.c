@@ -305,10 +305,10 @@ int setmem_large
 
 ///
 /// \brief Set the size of memories for InterAllDiagonal and InterAllOffDiagonal arrays.
-/// \param InterAllOffDiagonal [in/out] Arrays of cites and spin indexes of off-diagonal parts of InterAll interactions.
-/// \param ParaInterAllOffDiagonal [in/out] Arrays of parameters of off-diagonal parts of InterAll interactions.
-/// \param InterAllDiagonal [in/out] Arrays of cites and spin indexes of diagonal parts of InterAll interactions.
-/// \param ParaInterAllDiagonal [in/out] Arrays of parameters of diagonal parts of InterAll interactions.
+/// \param InterAllOffDiagonal [in,out] Arrays of cites and spin indexes of off-diagonal parts of InterAll interactions.
+/// \param ParaInterAllOffDiagonal [in,out] Arrays of parameters of off-diagonal parts of InterAll interactions.
+/// \param InterAllDiagonal [in,out] Arrays of cites and spin indexes of diagonal parts of InterAll interactions.
+/// \param ParaInterAllDiagonal [in,out] Arrays of parameters of diagonal parts of InterAll interactions.
 /// \param NInterAll [in] Total number of InterAll interactions.
 /// \author Kazuyoshi Yoshimi
 /// \version 1.2

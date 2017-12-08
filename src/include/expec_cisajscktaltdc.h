@@ -64,11 +64,6 @@ int expec_cisajscktaltdc(
 			 double complex *vec
 			 );
 
-void expec_cisajscktaltdc_alldiag(
-				  struct BindStruct *X,
-			          double complex *vec
-				  );
-
 void expec_cisajscktaltdc_alldiag_spin(
 				  struct BindStruct *X,
 			          double complex *vec

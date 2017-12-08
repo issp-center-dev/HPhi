@@ -2781,14 +2781,14 @@ int CheckInterAllCondition(
 /// \param icnt_interall total number of interall interactions
 /// \param iInterAllInfo arrays of information of interall interactions
 /// \param cInterAllValue arrays of values of interall interactions
-/// \param[in] isite1 a site number on the site A.
-/// \param[in] isigma1 a spin index on the site A.
-/// \param[in] isite2 a site number on the site B.
-/// \param[in] isigma2 a spin index on the site B.
-/// \param[in] isite3 a site number on the site C.
-/// \param[in] isigma3 a spin index on the site C.
-/// \param[in] isite4 a site number on the site D.
-/// \param[in] isigma4 a spin index on the site D.
+/// \param[in] isite1 a site number on the site 1.
+/// \param[in] isigma1 a spin index on the site 1.
+/// \param[in] isite2 a site number on the site 2.
+/// \param[in] isigma2 a spin index on the site 2.
+/// \param[in] isite3 a site number on the site 3.
+/// \param[in] isigma3 a spin index on the site 3.
+/// \param[in] isite4 a site number on the site 4.
+/// \param[in] isigma4 a spin index on the site 4.
 /// \param dvalue_re
 /// \param dvalue_im
 /// \return 0 Interaction is off-diagonal
