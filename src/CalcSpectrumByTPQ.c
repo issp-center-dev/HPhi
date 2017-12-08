@@ -31,7 +31,7 @@
  * 
  */
 
-/// \breif Read TPQ data at "X->Bind.Large.itr" step in SS_rand file.
+/// \brief Read TPQ data at "X->Bind.Large.itr" step in SS_rand file.
 /// \param [in] X CalcStruct list for getting and pushing calculation information
 /// \param [out] ene energy
 /// \param [out] temp temperature

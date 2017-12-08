@@ -72,7 +72,7 @@ int SetDiagonalTEChemi(
 /**
  *
  *
- * @breif Calculate diagonal components and obtain the list, list_diagonal.
+ * @brief Calculate diagonal components and obtain the list, list_diagonal.
  *
  * @param X [in] Struct to get the information of the diagonal operators.
  *
@@ -186,7 +186,7 @@ int diagonalcalc
   return 0;
 }
 
-///  @fn Update the vector for diagonal operators ( using in Time Evolution mode).
+///  @fn diagonalcalcForTE() Update the vector for diagonal operators ( using in Time Evolution mode).
 /// \param X [in] Struct to get the information of the diagonal operators.
 /// \param tmp_v0 [in/out] Result vector
 /// \param tmp_v1 [in] Input produced vector
@@ -360,6 +360,7 @@ int SetDiagonalCoulombIntra
  * @brief Calculate the components for the chemical potential \f$ \mu_{i \sigma_1} n_ {i \sigma_1} \f$
  * @param isite1 [in] a site number
  * @param dtmp_V [in] A value of coulombintra interaction \f$ \mu_{i \sigma_1} \f$
+ * @param spin [in] Spin index for the chemical potential
  * @param X [in] Define list to get dimension number
  * @retval -1 fail to calculate the diagonal component.
  * @retval  0 succeed to calculate the diagonal component.
@@ -1746,6 +1747,7 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
  * \f$ c_ {i \sigma_1} a_{j\sigma_2}c_ {j \sigma_2}a_ {i \sigma_1} = c_ {i \sigma_1}a_ {i \sigma_1}-c_ {i \sigma_1} a_ {i \sigma_1} c_ {j \sigma_2}a_{j\sigma_2}\f$ .
  * (Using in Time Evolution mode).
  * @param isite1 [in] a site number
+ * @param spin [in] a spin number
  * @param dtmp_V [in] A value of coulombintra interaction \f$ \mu_{i \sigma_1} \f$
  * @param X [in] Define list to get dimension number
  * @param tmp_v0 [in/out] Result vector
@@ -1922,7 +1924,7 @@ firstprivate(i_max, dtmp_V) private(j)
  * @brief Update the vector by the general one-body diagonal interaction, \f$ \mu_{i\sigma_1} n_ {i\sigma_1}\f$.\n
  * (Using in Time Evolution mode).
  * @param isite1 [in] a site number \f$i \f$
- * @param isigma1 [in] a spin index at \f$i \f$ site.
+ * @param spin [in] a spin index at \f$i \f$ site.
  * @param dtmp_V [in] A value of general one-body diagonal interaction \f$ \mu_{i\sigma_1} \f$
  * @param X [in] Define list to get the operator information.
  * @param tmp_v0 [in/out] Result vector

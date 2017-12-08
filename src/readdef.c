@@ -114,7 +114,7 @@ int InputInterAllInfo(
 
 /**
  * @brief Error Function of reading def files.
- * @param[in] _defname name of def file.
+ * @param[in] defname name of def file.
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -151,10 +151,10 @@ int ValidateValue(
 
 /**
  * @brief Function of Checking keyword in NameList file.
- * @param[in] _cKW keyword candidate
- * @param[in] _cKWList Reffercnce of keyword List
+ * @param[in] cKW keyword candidate
+ * @param[in] cKWList Reffercnce of keyword List
  * @param[in] iSizeOfKWidx number of keyword
- * @param[out] _iKWidx index of keyword
+ * @param[out] iKWidx index of keyword
  * @retval 0 keyword is correct.
  * @retval -1 keyword is incorrect.
  * @version 0.1
@@ -184,9 +184,9 @@ int CheckKW(
 
 /**
  * @brief Function of Getting keyword and it's variable from characters.
- * @param[in] _ctmpLine characters including keyword and it's variable 
- * @param[out] _ctmp keyword
- * @param[out] _itmp variable for a keyword
+ * @param[in] ctmpLine characters including keyword and it's variable 
+ * @param[out] ctmp keyword
+ * @param[out] itmp variable for a keyword
  * @retval 0 keyword and it's variable are obtained.
  * @retval 1 ctmpLine is a comment line.
  * @retval -1 format of ctmpLine is incorrect.
@@ -229,7 +229,7 @@ int GetKWWithIdx(
 
 /**
  * @brief Function of Reading calcmod file.
- * @param[in]  _defname file name to read.
+ * @param[in] defname file name to read.
  * @param[out] X Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
@@ -369,8 +369,8 @@ int ReadcalcmodFile(
 
 /**
  * @brief Function of Fitting FileName
- * @param[in]  _cFileListNameFile file for getting names of input files.
- * @param[out] _cFileNameList arrays for getting names of input files.
+ * @param[in]  cFileListNameFile file for getting names of input files.
+ * @param[out] cFileNameList arrays for getting names of input files.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @version 0.1
@@ -434,8 +434,9 @@ int GetFileName(
 /** 
  * @brief  Function of reading information about "ModPara" file and total number of parameters from other def files.
  *
- * @param[in] _xNameListFile List of Input File names.
- * @param[out] XX Define List for getting flags of calc-mode.
+ * @param[in] xNameListFile List of Input File names.
+ * @param[out] X Define List for getting flags of calc-mode.
+ * @param[out] xBoost Define List for getting flags of Boost calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @author Takahiro Misawa (The University of Tokyo)
@@ -948,7 +949,8 @@ int ReadDefFileNInt(
  * @brief function of reading def files to get keyword index
  * 
  * @param X define list to get and put informations for calcuation
- * 
+ * @param xBoost list to get and put informations for Boost (CMA) calcuation
+ *
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @version 0.1
@@ -1804,7 +1806,7 @@ int ReadDefFileIdxPara(
 
 /**
  * @brief Check Site Number.
- * @param[in] *iSite a site number.
+ * @param[in] iSite a site number.
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
@@ -1992,20 +1994,22 @@ int CheckTransferHermite
   return 0;
 }
 
-/** 
- * @brief function of checking hermite conditions about interall interactions
- * 
- * @param X define list to get interall off diagonal interactions
- * 
- * @retval 0 Hermite condition is satisfied
- * @retval -1 Hermite condition is not satisfied
- * @version 0.2
- * @details rearray a InterAll_OffDiagonal array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
- * 
- * @version 0.1
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+///
+/// \brief function of checking hermite conditions about interall interactions
+/// \param InterAll arrays of information of interall interactions
+/// \param ParaInterAll arrays of values of interall interactions
+/// \param InterAllOffDiagonal arrays of information of off-diagonal part of interall interactions
+/// \param ParaInterAllOffDiagonal arrays of values of off-diagonal part of interall interactions
+/// \param NInterAllOffDiagonal total number of off-diagonal part of interall interactions
+/// \param iCalcModel Target Model defined in CalcMod file (ex. Spin, SpinGC etc.)
+/// \retval 0 Hermite condition is satisfied
+/// \retval -1 Hermite condition is not satisfied
+/// @version 0.2
+/// @details rearray a InterAll_OffDiagonal array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
+///
+/// @version 0.1
+/// @author Takahiro Misawa (The University of Tokyo)
+/// @author Kazuyoshi Yoshimi (The University of Tokyo)
 int CheckInterAllHermite
         (
                 int **InterAll,
@@ -2132,16 +2136,23 @@ int CheckInterAllHermite
   return 0;
 }
 
-/**
- * @brief function of getting diagonal components form Time-dependent interall interactions
- *
- * @param[in] X define list to get information of Time-dependent interall interactions
- *
- * @retval 0  succeed to get diagonal interactions
- * @retval -1 format of interall interactions is incorrect
- * @version 2.1
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+/// \brief function of getting diagonal components
+/// \param InterAll  arrays of information of interall interactions
+/// \param ParaInterAll arrays of values of interall interactions
+/// \param NInterAll total number of interall interactions
+/// \param InterAllDiagonal arrays of information of diagonal part of interall interactions
+/// \param ParaInterAllDiagonal arrays of values of diagonal part of interall interactions
+/// \param InterAllOffDiagonal arrays of information of off-diagonal part of interall interactions
+/// \param ParaInterAllOffDiagonal arrays of values of off-diagonal part of interall interactions
+/// \param Chemi arrays of the site of chemical potential
+/// \param SpinChemi arrays of the spin of chemical potential
+/// \param ParaChemi arrays of the value of chemical potential
+/// \param NChemi total number of chemical potential
+/// \param iCalcModel Target Model defined in CalcMod file (ex. Spin, SpinGC etc.)
+/// \retval 0 succeed to get diagonal interactions.
+/// \retval -1 format of interall interactions is incorrect.
+/// \version 2.1
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int GetDiagonalInterAll
         (
                 int **InterAll,
@@ -2380,18 +2391,17 @@ int CheckFormatForSpinInt
 
 }
 
-/** 
- * 
- * @brief function of checking format of Kondo interactions
- * 
- * @param[in] X define list to get information of interall interactions
- * 
- * @retval 0 format is correct
- * @retval -1 format is incorrect
- * @version 0.1
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+/// \brief function of checking format of Kondo interactions
+/// \param isite1 a site number on site1
+/// \param isite2 a site number on site2
+/// \param isite3 a site number on site3
+/// \param isite4 a site number on site4
+/// \param iLocInfo An array with the value of S at each site.
+/// \retval  0 format is correct
+/// \retval  -1 format is incorrect
+/// \version 0.1
+/// \author Takahiro Misawa (The University of Tokyo)
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int CheckFormatForKondoInt
         (
                 const int isite1, const int isite2,
@@ -2443,7 +2453,7 @@ void SetConvergenceFactor
 /** 
  * @brief function of checking indexies of localized spin
  * 
- * @param[in/out] X Define list to get and put information of localized spin
+ * @param [inout] X Define list to get and put information of localized spin
  * 
  * @return TURE Indecies of localizes spin is correct
  * @return FALSE Indecies of localizes spin is incorrect
@@ -2556,16 +2566,22 @@ void InitializeInteractionNum
 
 }
 
-/** 
- * @brief function of checking spin index for all interactions
- * 
- * @param[in] X Define list to get informations of all interactions
- * @retval TRUE spin index is correct
- * @retval FALSE spin index is incorrect
- * @version 0.2
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @author Takahiro Misawa (The University of Tokyo)
- */
+///
+/// \brief function of checking spin index for all interactions
+/// \param isite1 a site number on site1
+/// \param isigma1 a spin index on site1
+/// \param isite2 a site number on site2
+/// \param isigma2 a spin index on site2
+/// \param isite3 a site number on site3
+/// \param isigma3 a spin index on site3
+/// \param isite4 a site number on site4
+/// \param isigma4 a spin index on site4
+/// \param iLocInfo An array with the value of S at each site.
+/// \retval  TRUE spin index is correct
+/// \retval  FALSE spin index is incorrect
+/// \version 0.2
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
+/// \author Takahiro Misawa (The University of Tokyo)
 int CheckGeneralSpinIndexForInterAll
 (
         const int isite1, const int isigma1,
@@ -2643,14 +2659,14 @@ int CheckTotal2Sz
   return TRUE;
 }
 
-/** 
- * 
+/**
+ *
  * @brief function of checking whether ctmp is same as cKeyWord or not
- * 
- * @param[in] ctmp 
- * @param[in] cKeyWord 
+ *
+ * @param[in] ctmp A word to be checked whether it matches the registerd keyword or not.
+ * @param[in] cKeyWord Registered keyword name
  * @return 0 ctmp is same as cKeyWord
- * 
+ *
  * @version 1.1.0
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -2679,6 +2695,12 @@ int CheckWords(
   return(strncmp(ctmp_small, cKW_small, n));
 }
 
+///
+/// \brief function of getting file name labeled by the keyword
+/// \param iKWidx index of keyword
+/// \param FileName filename
+/// \retval 0 normally finished getting file name.
+/// \retval -1 unnormally finished getting file name.
 int GetFileNameByKW(
         int iKWidx,
         char **FileName
@@ -2766,7 +2788,8 @@ int CheckInterAllCondition(
 /// \param[in] isigma4 a spin index on the site D.
 /// \param dvalue_re
 /// \param dvalue_im
-/// \return
+/// \return 0 Interaction is off-diagonal
+/// \return 1 Interaction is diagonal
 int InputInterAllInfo(
         int *icnt_interall,
         int **iInterAllInfo,

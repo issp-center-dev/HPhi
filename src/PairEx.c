@@ -25,7 +25,7 @@
 /// \param tmp_v1 [in] The wave vector @f$ v_1 @f$ to be mltiplied by the Hamiltonian @f$ H v_1 @f$.
 /// \returns TRUE: Normally finished
 /// \returns FALSE: Unnormally finished
-/// \authour Kazuyoshi Yoshimi (The University of Tokyo)
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 /// \version 1.2
 int GetPairExcitedState
 (

@@ -117,7 +117,11 @@
   Also, try <tt>make test MPIRUN="mpiexec -np 4"</tt> to check MPI feature.
 .    
 
-@page page_cmake Add new file into CMakeList
+@page page_cmake Add new source-file or new executable
+
+@section sec_newsource New source code
+
+@section sec_newexecutable New executable
   
 */
 

@@ -194,10 +194,10 @@ int GetSgnInterAll(
   unsigned long int isite2,//!<[in] Site 2
   unsigned long int isite3,//!<[in] Site 3
   unsigned long int isite4,//!<[in] Site 4
-  int *Fsgn,
-  struct BindStruct *X,
-  unsigned long int orgbit,
-  unsigned long int *offbit
+  int *Fsgn,//!<[out] Fermion sign
+  struct BindStruct *X,//!<[inout]
+  unsigned long int orgbit,//!<[in] Index of the initial state
+  unsigned long int *offbit//!<[out] Index of the final state
 ){
   long unsigned int diffA;
   long unsigned int tmp_off;

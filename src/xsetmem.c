@@ -310,7 +310,7 @@ int setmem_large
 /// \param InterAllDiagonal [in/out] Arrays of cites and spin indexes of diagonal parts of InterAll interactions.
 /// \param ParaInterAllDiagonal [in/out] Arrays of parameters of diagonal parts of InterAll interactions.
 /// \param NInterAll [in] Total number of InterAll interactions.
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
   void setmem_IntAll_Diagonal
           (
@@ -334,7 +334,7 @@ int setmem_large
 /// Output: LargeList.SizeOflist_2_1, LargeList.SizeOflist_2_2, LargeList.SizeOflistjb
 /// \retval TRUE: Normally finished
 /// \retval FALSE: Unnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
   int GetlistSize
           (

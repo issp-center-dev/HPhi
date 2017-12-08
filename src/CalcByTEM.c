@@ -31,7 +31,7 @@ void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
 
 
 /**
- * @file   calcByTEM.c
+ * @file   CalcByTEM.c
  *
  * @brief  File to define functions to calculate expected values by Time evolution method.
  *
