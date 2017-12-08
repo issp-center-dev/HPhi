@@ -11,7 +11,7 @@
 
 ///
 /// Calculation of pair excited state for Hubbard Grand canonical system
-/// \param X [inout] define list to get and put information of calculation
+/// \param X [in,out] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
@@ -111,7 +111,7 @@ int GetPairExcitedStateHubbardGC(
 
 ///
 /// Calculation of pair excited state for Hubbard canonical system
-/// \param X [inout] define list to get and put information of calculation
+/// \param X [in,out] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
 /// \returns TRUE: Normally finished
