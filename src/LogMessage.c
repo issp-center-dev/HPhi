@@ -141,8 +141,3 @@ const char* cLogOutputVecStart="  Start:  Output vector.\n";
 const char* cLogOutputVecFinish="  End  :  Output vector.\n";
 const char* cOutputVecStart="  set %d step %d:output vector starts: %s\n";
 const char* cOutputVecFinish="  set %d step %d:output vector finishes: %s\n";
-
-
-//FirstMultiply.c
-const char* cLogCheckInitComplex = "    CHECK: TPQ complex initial vector \n";
-const char* cLogCheckInitReal = "    CHECK: TPQ real initial vector \n";
