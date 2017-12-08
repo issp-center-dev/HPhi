@@ -1994,6 +1994,7 @@ int CheckTransferHermite
   return 0;
 }
 
+
 ///
 /// \brief function of checking hermite conditions about interall interactions
 /// \param InterAll arrays of information of interall interactions
@@ -2391,6 +2392,7 @@ int CheckFormatForSpinInt
 
 }
 
+
 /// \brief function of checking format of Kondo interactions
 /// \param isite1 a site number on site1
 /// \param isite2 a site number on site2
@@ -2565,6 +2567,7 @@ void InitializeInteractionNum
   //[e] Time Evolution
 
 }
+
 
 ///
 /// \brief function of checking spin index for all interactions
