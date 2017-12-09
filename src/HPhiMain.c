@@ -117,11 +117,14 @@
   Also, try <tt>make test MPIRUN="mpiexec -np 4"</tt> to check MPI feature.
 .    
 
-@page page_cmake Add new source-file or new executable
+@page page_cmake Add new source-file, executable, scripts (handle CMake)
+
+HPhi uses CMake for the building system.
+We have to modify the CMake configuration file when we add new sources, executables, scripts.
 
 @section sec_newsource New source code
 
-If you want to add new source code for the HPhi program, please add the file-name
+When we add new source code for the HPhi program, we have to add the file-name
 into the following part of @c src/CMakeLists.txt
 
 \code{cmake}
@@ -130,8 +133,8 @@ set(SOURCES source1.c source2.c ...)
 
 @section sec_newexecutable New executable
 
-If you want to add new executable ("myprog" in this case),
-please add the following command in @c src/CMakeLists.txt.
+When we add new executable ("myprog" in this case),
+we have to add following command in @c src/CMakeLists.txt.
 
 \code{CMake}
 set(SOURCES_MYPROG source1.c source2.c ...)
@@ -145,8 +148,8 @@ install(TARGETS myprog RUNTIME DESTINATION bin)
 
 @section sec_newscript New script
 
-If you want to add new script written in python, sh, etc. ("myshell" in this case)
-into @c tool/, please add the following command in @c tool/CMakeLists.txt.
+When we add new script written in python, sh, etc. ("myshell" in this case)
+into @c tool/, we have to add the following command in @c tool/CMakeLists.txt.
 
 \code{CMake}
 configure_file(myscript.sh myscript.sh COPYONLY)
