@@ -201,7 +201,7 @@ int expec_cisajscktaltdc
 }
 
 ///
-/// \breif Rearray interactions
+/// \brief Rearray interactions
 /// \param i
 /// \param org_isite1 a site number on the site 1.
 /// \param org_isite2 a site number on the site 2.
