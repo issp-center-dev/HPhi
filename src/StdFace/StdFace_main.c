@@ -2552,6 +2552,4 @@ for the integer, and
 strcpy(StdI->new_val, "****\0");
 \endcode
 for the string.
-
-
 */
