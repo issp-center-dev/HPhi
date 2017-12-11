@@ -2958,7 +2958,7 @@ int CheckTETransferHermite
   return 0;
 }
 /**
-@page page_readdef Add new keyword
+@page page_addexpert Add new input-file for Expert mode
 When you add a new keyword to _namelist file_,
 the following procedures must be needed.
 In the follwoing, we add the keyword "test" as an example.
@@ -3090,7 +3090,4 @@ to get the name of keyword, i.e. cKWListOfFileNameList[KWTest] = "Test".
  ```
  .
 @sa ReadDefFileNInt, CheckWords
-
-@page page_addexpert Add new input-file for Expert mode
-
 */
