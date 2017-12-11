@@ -23,122 +23,6 @@
 
 /*=================================================================================================*/
 
-
-/**
-@page page_readdef Add new keyword
-When you add a new keyword to _namelist file_,
-the following procedures must be needed.
-In the follwoing, we add the keyword "test" as an example.
-
-1. Add a new keyword to the end of @c cKWListOfFileNameList in @c readdef.c.
-```
-static char cKWListOfFileNameList[][D_CharTmpReadDef]
-={
-  "CalcMod",
-  "ModPara",
-  "LocSpin",
-  "Trans",
-  "CoulombIntra",
-  "CoulombInter",
-  "Hund",
-  "PairHop",
-  "Exchange",
-  "InterAll",
-  "OneBodyG",
-  "TwoBodyG",
-  "PairLift",
-  "Ising",
-  "Boost",
-  "SingleExcitation",
-  "PairExcitation",
-  "SpectrumVec",
-  "Laser",
-  "TEOneBody",
-  "TETwoBody"
-  "Test"
-}
-```
-Here, `` D_CharTmpReadDef `` is set as `` 200 `` in readdef.h. 
-If the the character number of added keyword exceeds `` 200 ``, please change the value.
-
-2. Define the index of keyword (such as KWCalcMod, KWModPara...) in @c readdef.h.
-```
-#define KWCalcMod 0
-#define KWModPara 1
-#define KWLocSpin 2
-#define KWTrans 3
-#define KWCoulombIntra 4
-#define KWCoulombInter 5
-#define KWHund 6
-#define KWPairHop 7
-#define KWExchange 8
-#define KWInterAll 9
-#define KWOneBodyG 10
-#define KWTwoBodyG 11
-#define KWPairLift 12
-#define KWIsing 13
-#define KWBoost 14
-#define KWSingleExcitation 15
-#define KWPairExcitation 16
-#define KWSpectrumVec 17
-#define KWLaser 18
-#define KWTEOneBody 19
-#define KWTETwoBody 20
-#define KWTest 21
-```
-The defined value must be same as the index of cKWListOfFileNameList
-to get the name of keyword, i.e. cKWListOfFileNameList[KWTest] = "Test".
-
-3. Add procedure of reading the file in @c ReadDefFileNInt function in @c readdef.c.
- ```
- for(iKWidx=0; iKWidx< D_iKWNumDef; iKWidx++) {
-    strcpy(defname, cFileNameListFile[iKWidx]);
-
-    if (strcmp(defname, "") == 0) continue;
-    if(iKWidx==KWSpectrumVec){
-      continue;
-    }
-    fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
-    fp = fopenMPI(defname, "r");
-    if (fp == NULL) return ReadDefFileError(defname);
-    switch (iKWidx) {
-    case KWTest:
-        fgetsMPI(...); //Add the procedure to read-line here.
-    }
- ```
-@sa ReadDefFileNInt
-
-4. Use @c InitializeInteractionNum function to initialize variables.
- ```
- void InitializeInteractionNum
-(
- struct DefineList *X
- )
-{
-  X->NTransfer=0;
-  X->NCoulombIntra=0;
-  X->NCoulombInter=0;
-  X->NIsingCoupling=0;
-  X->NPairLiftCoupling=0;
-  X->NInterAll=0;
-  X->NCisAjt=0;
-  X->NCisAjtCkuAlvDC=0;
-  X->NSingleExcitationOperator=0;
-  X->NPairExcitationOperator=0;
-  //[s] Time Evolution
-  X->NTETimeSteps=0;
-  X->NLaser=0;
-  X->NTEInterAll=0;
-  X->NTETransfer=0;
-  //[e] Time Evolution
-  X->NTest = 0;
-}
- ```
-    @sa  InitializeInteractionNum
-5. The memories of arrays are stored by setmem_def function in @c xsetmem.c.
-   @sa  setmem_def
- **/
-
 /**
  * @file   readdef.c
  * 
@@ -623,7 +507,8 @@ int ReadDefFileNInt(
       case KWModPara:
         /* Read modpara.def---------------------------------------*/
         //TODO: add error procedure here when parameters are not enough.
-        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        //! Read Header (5 lines).
+          fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &itmp); //2
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //3
@@ -637,6 +522,7 @@ int ReadDefFileNInt(
             double dtmp, dtmp2;
 
             X->read_hacker = 1;
+        //! Read lines.
             while (fgetsMPI(ctmp2, 256, fp) != NULL) {
               if (*ctmp2 == '\n') continue;
               sscanf(ctmp2, "%s %lf %lf\n", ctmp, &dtmp, &dtmp2);
@@ -3072,7 +2958,138 @@ int CheckTETransferHermite
   return 0;
 }
 /**
+@page page_readdef Add new keyword
+When you add a new keyword to _namelist file_,
+the following procedures must be needed.
+In the follwoing, we add the keyword "test" as an example.
+
+1. Add a new keyword to the end of @c cKWListOfFileNameList in @c readdef.c.
+```
+static char cKWListOfFileNameList[][D_CharTmpReadDef]
+={
+  "CalcMod",
+  "ModPara",
+  "LocSpin",
+  "Trans",
+  "CoulombIntra",
+  "CoulombInter",
+  "Hund",
+  "PairHop",
+  "Exchange",
+  "InterAll",
+  "OneBodyG",
+  "TwoBodyG",
+  "PairLift",
+  "Ising",
+  "Boost",
+  "SingleExcitation",
+  "PairExcitation",
+  "SpectrumVec",
+  "Laser",
+  "TEOneBody",
+  "TETwoBody"
+  "Test"
+}
+```
+Here, `` D_CharTmpReadDef `` is set as `` 200 `` in readdef.h.
+If the the character number of added keyword exceeds `` 200 ``, please change the value.
+
+2. Define the index of keyword (such as KWCalcMod, KWModPara...) in @c readdef.h.
+```
+#define KWCalcMod 0
+#define KWModPara 1
+#define KWLocSpin 2
+#define KWTrans 3
+#define KWCoulombIntra 4
+#define KWCoulombInter 5
+#define KWHund 6
+#define KWPairHop 7
+#define KWExchange 8
+#define KWInterAll 9
+#define KWOneBodyG 10
+#define KWTwoBodyG 11
+#define KWPairLift 12
+#define KWIsing 13
+#define KWBoost 14
+#define KWSingleExcitation 15
+#define KWPairExcitation 16
+#define KWSpectrumVec 17
+#define KWLaser 18
+#define KWTEOneBody 19
+#define KWTETwoBody 20
+#define KWTest 21
+```
+The defined value must be same as the index of cKWListOfFileNameList
+to get the name of keyword, i.e. cKWListOfFileNameList[KWTest] = "Test".
+
+3. Add procedure of reading the file in @c ReadDefFileNInt function in @c readdef.c.
+ ```
+ for(iKWidx=0; iKWidx< D_iKWNumDef; iKWidx++) {
+    strcpy(defname, cFileNameListFile[iKWidx]);
+
+    if (strcmp(defname, "") == 0) continue;
+    if(iKWidx==KWSpectrumVec){
+      continue;
+    }
+    fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
+    fp = fopenMPI(defname, "r");
+    if (fp == NULL) return ReadDefFileError(defname);
+    switch (iKWidx) {
+    case KWTest:
+        fgetsMPI(...); //Add the procedure to read-line here.
+    }
+ ```
+@sa ReadDefFileNInt
+
+4. Use @c InitializeInteractionNum function to initialize variables.
+ ```
+ void InitializeInteractionNum
+(
+ struct DefineList *X
+ )
+{
+  X->NTransfer=0;
+  X->NCoulombIntra=0;
+  X->NCoulombInter=0;
+  X->NIsingCoupling=0;
+  X->NPairLiftCoupling=0;
+  X->NInterAll=0;
+  X->NCisAjt=0;
+  X->NCisAjtCkuAlvDC=0;
+  X->NSingleExcitationOperator=0;
+  X->NPairExcitationOperator=0;
+  //[s] Time Evolution
+  X->NTETimeSteps=0;
+  X->NLaser=0;
+  X->NTEInterAll=0;
+  X->NTETransfer=0;
+  //[e] Time Evolution
+  X->NTest = 0;
+}
+ ```
+    @sa  InitializeInteractionNum
+5. The memories of arrays are stored by setmem_def function in @c xsetmem.c.
+   @sa  setmem_def
+ **/
+
+/**
 @page page_addmodpara Add new parameter into modpara
+
+ Parameters in ``modpara`` file are set in `` ReadDefFileNInt `` function.
+
+ To add new parameter, the switch statement where ``iKWidx`` matches ``KWModPara`` is used.
+ The first five lines are header and thus skipped.
+ Then, each line is read by ``` fgetsMPI(ctmp2, 256, fp) ``` function.
+ The line is divided into keyword and number by using ``CheckWords`` function.
+
+ For example, when you add new key word "NTest", then you can get the value as follows:
+ ```
+  if (CheckWords(ctmp, "NTest") == 0) {
+                X->NTest = (int) dtmp;
+              }
+ ```
+ .
+@sa ReadDefFileNInt, CheckWords
 
 @page page_addexpert Add new input-file for Expert mode
 
