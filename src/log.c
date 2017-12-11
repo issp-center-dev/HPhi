@@ -140,4 +140,12 @@ int TimeKeeperWithRandAndStep
 }
 /**
 @page page_log Various kind of Logs
+
+Functions in log.c is used to output the time-stamp for the iterative method.
+
+LogMessage.c contains the format (for print function) of log messages.
+If we use this format, include header-file as
+@code{C}
+#include "LogMessage.h"
+@endcode 
 */

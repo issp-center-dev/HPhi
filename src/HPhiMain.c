@@ -117,12 +117,45 @@
   Also, try <tt>make test MPIRUN="mpiexec -np 4"</tt> to check MPI feature.
 .    
 
-@page page_cmake Add new source-file or new executable
+@page page_cmake Add new source-file, executable, scripts (handle CMake)
+
+HPhi uses CMake for the building system.
+We have to modify the CMake configuration file when we add new sources, executables, scripts.
 
 @section sec_newsource New source code
 
+When we add new source code for the HPhi program, we have to add the file-name
+into the following part of @c src/CMakeLists.txt
+
+\code{cmake}
+set(SOURCES source1.c source2.c ...)
+\endcode
+
 @section sec_newexecutable New executable
-  
+
+When we add new executable ("myprog" in this case),
+we have to add following command in @c src/CMakeLists.txt.
+
+\code{CMake}
+set(SOURCES_MYPROG source1.c source2.c ...)
+add_executable(myprog ${SOURCES_MYPROG})
+target_link_libraries(myprog ${LAPACK_LIBRARIES} m)
+if(MPI_FOUND)
+target_link_libraries(myprog ${MPI_C_LIBRARIES})
+endif(MPI_FOUND)
+install(TARGETS myprog RUNTIME DESTINATION bin)
+\endcode
+
+@section sec_newscript New script
+
+When we add new script written in python, sh, etc. ("myshell" in this case)
+into @c tool/, we have to add the following command in @c tool/CMakeLists.txt.
+
+\code{CMake}
+configure_file(myscript.sh myscript.sh COPYONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/myscript.sh DESTINATION bin
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+\endcode
 */
 
 /** 

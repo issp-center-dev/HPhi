@@ -101,6 +101,7 @@ int expec_energy_flct(struct BindStruct *X){
   break;/*case SpinGC*/
   /* SpinGCBoost */
   case Spin:
+    X->Phys.Sz = 0.5 * (double)X->Def.Total2SzMPI;
     break;
   default:
     return -1;
