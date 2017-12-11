@@ -2959,9 +2959,9 @@ int CheckTETransferHermite
 }
 /**
 @page page_addexpert Add new input-file for Expert mode
-When you add a new keyword to _namelist file_,
+When you add a new input file to _namelist file_,
 the following procedures must be needed.
-In the follwoing, we add the keyword "test" as an example.
+In the following, we add the keyword "test" as an example.
 
 1. Add a new keyword to the end of @c cKWListOfFileNameList in @c readdef.c.
 ```
