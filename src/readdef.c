@@ -514,13 +514,15 @@ int ReadDefFileNInt(
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //3
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //4
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //5
+        //! Read header name for files about data
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %s\n", ctmp, X->CDataFileHead); //6
+        //! Read header name for files about parameters
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %s\n", ctmp, X->CParaFileHead); //7
+        //! Read header (1 line).
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
             double dtmp, dtmp2;
-
             X->read_hacker = 1;
         //! Read lines.
             while (fgetsMPI(ctmp2, 256, fp) != NULL) {
@@ -3075,19 +3077,46 @@ to get the name of keyword, i.e. cKWListOfFileNameList[KWTest] = "Test".
 /**
 @page page_addmodpara Add new parameter into modpara
 
- Parameters in ``modpara`` file are set in `` ReadDefFileNInt `` function.
+You can set a value of parameters with a new keyword in ``modpara`` file by following way.
 
- To add new parameter, the switch statement where ``iKWidx`` matches ``KWModPara`` is used.
- The first five lines are header and thus skipped.
- Then, each line is read by ``` fgetsMPI(ctmp2, 256, fp) ``` function.
- The line is divided into keyword and number by using ``CheckWords`` function.
+- Define a new variable corresponding to the above parameter in @c struct.h file.
 
- For example, when you add new key word "NTest", then you can get the value as follows:
- ```
-  if (CheckWords(ctmp, "NTest") == 0) {
+- The value with the keyword are read by `` ReadDefFileNInt `` function in @c readdef.c.
+
+  In the following, we describe the detail of the flow of reading the parameter.
+
+  To read the parameter, the switch statement where ``iKWidx`` matches ``KWModPara`` is used.
+  The detail of the reading flow in this function are described as follows.
+
+1. The first eight lines are header (not touch!).
+  ```
+        //! Read Header (5 lines).
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //1
+       fgetsMPI(ctmp2, 256, fp);
+       sscanf(ctmp2, "%s %d\n", ctmp, &itmp); //2
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //3
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //4
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //5
+       //! Read header name for files about data
+       fgetsMPI(ctmp2, 256, fp);
+       sscanf(ctmp2, "%s %s\n", ctmp, X->CDataFileHead); //6
+        //! Read header name for files about parameters
+       fgetsMPI(ctmp2, 256, fp);
+       sscanf(ctmp2, "%s %s\n", ctmp, X->CParaFileHead); //7
+       //! Read header (1 line).
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
+  ```
+
+2. Each line is read by ``` fgetsMPI(ctmp2, 256, fp) ``` function.
+
+3. The line is divided into keyword and number by using ``CheckWords`` function.
+
+   For example, when you add new key word "NTest", then you can get the value as follows:
+   ```
+        if (CheckWords(ctmp, "NTest") == 0) {
                 X->NTest = (int) dtmp;
               }
- ```
- .
+   ```
+
 @sa ReadDefFileNInt, CheckWords
 */
