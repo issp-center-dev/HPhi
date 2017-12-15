@@ -109,6 +109,8 @@ const char* cTPQExpecOneBodyGStart;
 const char* cTPQExpecOneBodyGFinish;
 const char* cCGExpecOneBodyGStart;
 const char* cCGExpecOneBodyGFinish;
+const char* cTEExpecOneBodyGStart;
+const char* cTEExpecOneBodyGFinish;
 
 //expec_cisajucktaltdc.c
 const char*  cLogLanczosExpecTwoBodyGStart;
@@ -120,6 +122,8 @@ const char*  cCGExpecTwoBodyGStart;
 const char*  cCGExpecTwoBodyGFinish;
 const char*  cTPQExpecTwoBodyGStart;
 const char*  cTPQExpecTwoBodyGFinish;
+const char*  cTEExpecTwoBodyGStart;
+const char*  cTEExpecTwoBodyGFinish;
 
 //expec_energy.c
 const char* cLogExpecEnergyStart;

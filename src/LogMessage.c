@@ -115,6 +115,8 @@ const char* cLanczosExpecOneBodyGFinish ="Lanczos expec_cisajs finishes: %s";
 const char* cLanczosExpecOneBodyGStart="Lanczos expec_cisajs Starts: %s";
 const char* cTPQExpecOneBodyGStart = "set %d step %d:expec_cisajs begins: %s";
 const char* cTPQExpecOneBodyGFinish = "set %d step %d:expec_cisajs finishes: %s";
+const char* cTEExpecOneBodyGStart = "step %d:expec_cisajs begins: %s";
+const char* cTEExpecOneBodyGFinish = "step %d:expec_cisajs finishes: %s";
 const char* cCGExpecOneBodyGStart= "CG expec_cisajs starts:       %s";
 const char* cCGExpecOneBodyGFinish="CG expec_cisajs finishes:     %s";
 
@@ -128,6 +130,9 @@ const char*  cCGExpecTwoBodyGStart= "CG expec_cisajacktalt begins: %s";
 const char*  cCGExpecTwoBodyGFinish= "CG expec_cisajacktalt finishes: %s";
 const char*  cTPQExpecTwoBodyGStart = "set %d step %d:expec_cisajscktaltdc finishes: %s";
 const char*  cTPQExpecTwoBodyGFinish = "set %d step %d:expec_cisajscktaltdc finishes: %s";
+const char*  cTEExpecTwoBodyGStart = "step %d:expec_cisajscktaltdc finishes: %s";
+const char*  cTEExpecTwoBodyGFinish = "step %d:expec_cisajscktaltdc finishes: %s";
+
 
 //expec_energy.c
 const char* cLogExpecEnergyStart="  Start: Calculate Energy.\n";

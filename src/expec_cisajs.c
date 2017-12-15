@@ -103,13 +103,18 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     //vec=v0;
     break;
   case TPQCalc:
-  case TimeEvolution:
     step=X->Def.istep;
     rand_i=X->Def.irand;
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep,  cTPQExpecOneBodyGStart, "a", rand_i, step);
     sprintf(sdt, cFileName1BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
     //vec=v0;
     break;
+  case TimeEvolution:
+      step=X->Def.istep;
+      TimeKeeperWithStep(X, cFileNameTimeKeep,  cTEExpecOneBodyGStart, "a", step);
+      sprintf(sdt, cFileName1BGreen_TE, X->Def.CDataFileHead, step);
+      break;
+
   case FullDiag:
   case CG:
     sprintf(sdt, cFileName1BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
@@ -162,7 +167,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGFinish, "a", rand_i, step);     
     }
     else if(X->Def.iCalcType==TimeEvolution){
-      TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGFinish, "a", rand_i, step);
+      TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecOneBodyGFinish, "a", step);
     }
   }else if(X->Def.St==1){
     TimeKeeper(X, cFileNameTimeKeep, cCGExpecOneBodyGFinish, "a");

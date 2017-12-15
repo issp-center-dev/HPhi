@@ -118,11 +118,16 @@ int expec_cisajscktaltdc
     break;
 
   case TPQCalc:
-  case TimeEvolution:
     step=X->Def.istep;
     rand_i=X->Def.irand;
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGStart, "a", rand_i, step);
     sprintf(sdt, cFileName2BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
+    break;
+
+  case TimeEvolution:
+    step=X->Def.istep;
+    TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecTwoBodyGStart, "a", step);
+    sprintf(sdt, cFileName2BGreen_TE, X->Def.CDataFileHead, rand_i, step);
     break;
 
   case FullDiag:
@@ -181,7 +186,7 @@ int expec_cisajscktaltdc
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGFinish, "a", rand_i, step);
   }
   else if(X->Def.iCalcType==TimeEvolution){
-    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGFinish, "a", rand_i, step);
+    TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecTwoBodyGFinish, "a", step);
   }
   //[s] this part will be added
   /* For FullDiag, it is convinient to calculate the total spin for each vector.

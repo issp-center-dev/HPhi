@@ -115,6 +115,8 @@ const char* cFileNameNormRand;/**> Name of the NormRand file.*/
 const char* cFileNameFlctRand;/**> Name of the Flct file.*/
 const char* cFileName1BGreen_TPQ;/**> Name of the file to output one-body Green's functions for TPQ calculation.*/
 const char* cFileName2BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
+const char* cFileName1BGreen_TE;/**> Name of the file to output one-body Green's functions for Time Evolution calculation.*/
+const char* cFileName2BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
 const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
 const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 

@@ -59,6 +59,8 @@ const char* cFileNameNormRand="Norm_rand%d.dat";
 const char* cFileNameFlctRand="Flct_rand%d.dat";
 const char* cFileName1BGreen_TPQ="%s_cisajs_set%dstep%d.dat";
 const char* cFileName2BGreen_TPQ="%s_cisajscktalt_set%dstep%d.dat";
+const char* cFileName1BGreen_TE="%s_cisajs_step%d.dat";
+const char* cFileName2BGreen_TE="%s_cisajscktalt_step%d.dat";
 const char* cFileNameOutputVector="tmpvec_set%d_rank_%d.dat";
 const char* cFileNameInputVector="tmpvec_set%d_rank_%d.dat";
 
