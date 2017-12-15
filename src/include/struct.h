@@ -226,6 +226,11 @@ struct DefineList {
     - 1: Parallel Interaction [to be supported]
     */
 
+    int iNGPU;/**<@brief GPU mode ( only for FullDiag )
+    - 0: Use lapack
+    - >0: Use GPU
+    */
+
 
     struct ParamList Param;
 

@@ -23,16 +23,6 @@
 
 /*=================================================================================================*/
 
-
-/**
-@page page_readdef Add new keyword
-- Add keyword to @c cKWListOfFileNameList in @c readdef.c.
-- Add index of keyword (such as KWCalcMod, KWModPara...) in @c readdef.h.
-- Add reading procedure in @c ReadDeFileNInt function in @c readdef.c.
-- Use @c InitializeInteractionNum function to initialize variables.
-- The memories of arrays are stored in @c xsetmem.c
- **/
-
 /**
  * @file   readdef.c
  * 
@@ -114,7 +104,7 @@ int InputInterAllInfo(
 
 /**
  * @brief Error Function of reading def files.
- * @param[in] _defname name of def file.
+ * @param[in] defname name of def file.
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -151,10 +141,10 @@ int ValidateValue(
 
 /**
  * @brief Function of Checking keyword in NameList file.
- * @param[in] _cKW keyword candidate
- * @param[in] _cKWList Reffercnce of keyword List
+ * @param[in] cKW keyword candidate
+ * @param[in] cKWList Reffercnce of keyword List
  * @param[in] iSizeOfKWidx number of keyword
- * @param[out] _iKWidx index of keyword
+ * @param[out] iKWidx index of keyword
  * @retval 0 keyword is correct.
  * @retval -1 keyword is incorrect.
  * @version 0.1
@@ -184,9 +174,9 @@ int CheckKW(
 
 /**
  * @brief Function of Getting keyword and it's variable from characters.
- * @param[in] _ctmpLine characters including keyword and it's variable 
- * @param[out] _ctmp keyword
- * @param[out] _itmp variable for a keyword
+ * @param[in] ctmpLine characters including keyword and it's variable 
+ * @param[out] ctmp keyword
+ * @param[out] itmp variable for a keyword
  * @retval 0 keyword and it's variable are obtained.
  * @retval 1 ctmpLine is a comment line.
  * @retval -1 format of ctmpLine is incorrect.
@@ -229,7 +219,7 @@ int GetKWWithIdx(
 
 /**
  * @brief Function of Reading calcmod file.
- * @param[in]  _defname file name to read.
+ * @param[in] defname file name to read.
  * @param[out] X Define List for getting flags of calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
@@ -259,6 +249,11 @@ int ReadcalcmodFile(
   X->iFlgCalcSpec=0;
   X->iReStart=0;
   X->iFlgMPI=0;
+#ifdef _MAGMA
+  X->iNGPU=2;
+#else
+  X->iNGPU=0;
+#endif
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -304,6 +299,9 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "ReStart")==0){
       X->iReStart=itmp;
     }
+    else if(CheckWords(ctmp, "NGPU")==0){
+        X->iNGPU=itmp;
+    }
     else{
       fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);
       return(-1);
@@ -347,11 +345,15 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI, cErrInputOutputHam, defname);
     return (-1);
   }
-
   if(ValidateValue(X->iReStart, 0, NUM_RESTART-1)){
     fprintf(stdoutMPI, cErrRestart, defname);
     return (-1);
   }
+    if(X->iNGPU < 0){
+        fprintf(stdoutMPI, cErrCUDA, defname);
+        return (-1);
+    }
+
 
   /* In the case of Full Diagonalization method(iCalcType=2)*/
   if(X->iCalcType==2 && ValidateValue(X->iFlgFiniteTemperature, 0, 1)){
@@ -369,8 +371,8 @@ int ReadcalcmodFile(
 
 /**
  * @brief Function of Fitting FileName
- * @param[in]  _cFileListNameFile file for getting names of input files.
- * @param[out] _cFileNameList arrays for getting names of input files.
+ * @param[in]  cFileListNameFile file for getting names of input files.
+ * @param[out] cFileNameList arrays for getting names of input files.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @version 0.1
@@ -434,8 +436,9 @@ int GetFileName(
 /** 
  * @brief  Function of reading information about "ModPara" file and total number of parameters from other def files.
  *
- * @param[in] _xNameListFile List of Input File names.
- * @param[out] XX Define List for getting flags of calc-mode.
+ * @param[in] xNameListFile List of Input File names.
+ * @param[out] X Define List for getting flags of calc-mode.
+ * @param[out] xBoost Define List for getting flags of Boost calc-mode.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @author Takahiro Misawa (The University of Tokyo)
@@ -516,20 +519,24 @@ int ReadDefFileNInt(
       case KWModPara:
         /* Read modpara.def---------------------------------------*/
         //TODO: add error procedure here when parameters are not enough.
-        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        //! Read Header (5 lines).
+          fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &itmp); //2
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //3
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //4
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //5
+        //! Read header name for files about data
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %s\n", ctmp, X->CDataFileHead); //6
+        //! Read header name for files about parameters
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %s\n", ctmp, X->CParaFileHead); //7
+        //! Read header (1 line).
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
             double dtmp, dtmp2;
-
             X->read_hacker = 1;
+        //! Read lines.
             while (fgetsMPI(ctmp2, 256, fp) != NULL) {
               if (*ctmp2 == '\n') continue;
               sscanf(ctmp2, "%s %lf %lf\n", ctmp, &dtmp, &dtmp2);
@@ -948,7 +955,8 @@ int ReadDefFileNInt(
  * @brief function of reading def files to get keyword index
  * 
  * @param X define list to get and put informations for calcuation
- * 
+ * @param xBoost list to get and put informations for Boost (CMA) calcuation
+ *
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
  * @version 0.1
@@ -1804,7 +1812,7 @@ int ReadDefFileIdxPara(
 
 /**
  * @brief Check Site Number.
- * @param[in] *iSite a site number.
+ * @param[in] iSite a site number.
  * @param[in] iMaxNum Max site number.
  * @retval 0 normally finished reading file.
  * @retval -1 unnormally finished reading file.
@@ -1992,20 +2000,23 @@ int CheckTransferHermite
   return 0;
 }
 
-/** 
- * @brief function of checking hermite conditions about interall interactions
- * 
- * @param X define list to get interall off diagonal interactions
- * 
- * @retval 0 Hermite condition is satisfied
- * @retval -1 Hermite condition is not satisfied
- * @version 0.2
- * @details rearray a InterAll_OffDiagonal array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
- * 
- * @version 0.1
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+
+///
+/// \brief function of checking hermite conditions about interall interactions
+/// \param InterAll arrays of information of interall interactions
+/// \param ParaInterAll arrays of values of interall interactions
+/// \param InterAllOffDiagonal arrays of information of off-diagonal part of interall interactions
+/// \param ParaInterAllOffDiagonal arrays of values of off-diagonal part of interall interactions
+/// \param NInterAllOffDiagonal total number of off-diagonal part of interall interactions
+/// \param iCalcModel Target Model defined in CalcMod file (ex. Spin, SpinGC etc.)
+/// \retval 0 Hermite condition is satisfied
+/// \retval -1 Hermite condition is not satisfied
+/// @version 0.2
+/// @details rearray a InterAll_OffDiagonal array to satisfy a condition of hermite conjugation between 2*i and 2*i+1 components.
+///
+/// @version 0.1
+/// @author Takahiro Misawa (The University of Tokyo)
+/// @author Kazuyoshi Yoshimi (The University of Tokyo)
 int CheckInterAllHermite
         (
                 int **InterAll,
@@ -2132,16 +2143,23 @@ int CheckInterAllHermite
   return 0;
 }
 
-/**
- * @brief function of getting diagonal components form Time-dependent interall interactions
- *
- * @param[in] X define list to get information of Time-dependent interall interactions
- *
- * @retval 0  succeed to get diagonal interactions
- * @retval -1 format of interall interactions is incorrect
- * @version 2.1
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+/// \brief function of getting diagonal components
+/// \param InterAll  arrays of information of interall interactions
+/// \param ParaInterAll arrays of values of interall interactions
+/// \param NInterAll total number of interall interactions
+/// \param InterAllDiagonal arrays of information of diagonal part of interall interactions
+/// \param ParaInterAllDiagonal arrays of values of diagonal part of interall interactions
+/// \param InterAllOffDiagonal arrays of information of off-diagonal part of interall interactions
+/// \param ParaInterAllOffDiagonal arrays of values of off-diagonal part of interall interactions
+/// \param Chemi arrays of the site of chemical potential
+/// \param SpinChemi arrays of the spin of chemical potential
+/// \param ParaChemi arrays of the value of chemical potential
+/// \param NChemi total number of chemical potential
+/// \param iCalcModel Target Model defined in CalcMod file (ex. Spin, SpinGC etc.)
+/// \retval 0 succeed to get diagonal interactions.
+/// \retval -1 format of interall interactions is incorrect.
+/// \version 2.1
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int GetDiagonalInterAll
         (
                 int **InterAll,
@@ -2380,18 +2398,18 @@ int CheckFormatForSpinInt
 
 }
 
-/** 
- * 
- * @brief function of checking format of Kondo interactions
- * 
- * @param[in] X define list to get information of interall interactions
- * 
- * @retval 0 format is correct
- * @retval -1 format is incorrect
- * @version 0.1
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
+
+/// \brief function of checking format of Kondo interactions
+/// \param isite1 a site number on site1
+/// \param isite2 a site number on site2
+/// \param isite3 a site number on site3
+/// \param isite4 a site number on site4
+/// \param iLocInfo An array with the value of S at each site.
+/// \retval  0 format is correct
+/// \retval  -1 format is incorrect
+/// \version 0.1
+/// \author Takahiro Misawa (The University of Tokyo)
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int CheckFormatForKondoInt
         (
                 const int isite1, const int isite2,
@@ -2443,7 +2461,7 @@ void SetConvergenceFactor
 /** 
  * @brief function of checking indexies of localized spin
  * 
- * @param[in/out] X Define list to get and put information of localized spin
+ * @param [inout] X Define list to get and put information of localized spin
  * 
  * @return TURE Indecies of localizes spin is correct
  * @return FALSE Indecies of localizes spin is incorrect
@@ -2556,16 +2574,23 @@ void InitializeInteractionNum
 
 }
 
-/** 
- * @brief function of checking spin index for all interactions
- * 
- * @param[in] X Define list to get informations of all interactions
- * @retval TRUE spin index is correct
- * @retval FALSE spin index is incorrect
- * @version 0.2
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @author Takahiro Misawa (The University of Tokyo)
- */
+
+///
+/// \brief function of checking spin index for all interactions
+/// \param isite1 a site number on site1
+/// \param isigma1 a spin index on site1
+/// \param isite2 a site number on site2
+/// \param isigma2 a spin index on site2
+/// \param isite3 a site number on site3
+/// \param isigma3 a spin index on site3
+/// \param isite4 a site number on site4
+/// \param isigma4 a spin index on site4
+/// \param iLocInfo An array with the value of S at each site.
+/// \retval  TRUE spin index is correct
+/// \retval  FALSE spin index is incorrect
+/// \version 0.2
+/// \author Kazuyoshi Yoshimi (The University of Tokyo)
+/// \author Takahiro Misawa (The University of Tokyo)
 int CheckGeneralSpinIndexForInterAll
 (
         const int isite1, const int isigma1,
@@ -2643,14 +2668,14 @@ int CheckTotal2Sz
   return TRUE;
 }
 
-/** 
- * 
+/**
+ *
  * @brief function of checking whether ctmp is same as cKeyWord or not
- * 
- * @param[in] ctmp 
- * @param[in] cKeyWord 
+ *
+ * @param[in] ctmp A word to be checked whether it matches the registerd keyword or not.
+ * @param[in] cKeyWord Registered keyword name
  * @return 0 ctmp is same as cKeyWord
- * 
+ *
  * @version 1.1.0
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -2679,6 +2704,12 @@ int CheckWords(
   return(strncmp(ctmp_small, cKW_small, n));
 }
 
+///
+/// \brief function of getting file name labeled by the keyword
+/// \param iKWidx index of keyword
+/// \param FileName filename
+/// \retval 0 normally finished getting file name.
+/// \retval -1 unnormally finished getting file name.
 int GetFileNameByKW(
         int iKWidx,
         char **FileName
@@ -2756,17 +2787,18 @@ int CheckInterAllCondition(
 /// \param icnt_interall total number of interall interactions
 /// \param iInterAllInfo arrays of information of interall interactions
 /// \param cInterAllValue arrays of values of interall interactions
-/// \param[in] isite1 a site number on the site A.
-/// \param[in] isigma1 a spin index on the site A.
-/// \param[in] isite2 a site number on the site B.
-/// \param[in] isigma2 a spin index on the site B.
-/// \param[in] isite3 a site number on the site C.
-/// \param[in] isigma3 a spin index on the site C.
-/// \param[in] isite4 a site number on the site D.
-/// \param[in] isigma4 a spin index on the site D.
+/// \param[in] isite1 a site number on the site 1.
+/// \param[in] isigma1 a spin index on the site 1.
+/// \param[in] isite2 a site number on the site 2.
+/// \param[in] isigma2 a spin index on the site 2.
+/// \param[in] isite3 a site number on the site 3.
+/// \param[in] isigma3 a spin index on the site 3.
+/// \param[in] isite4 a site number on the site 4.
+/// \param[in] isigma4 a spin index on the site 4.
 /// \param dvalue_re
 /// \param dvalue_im
-/// \return
+/// \return 0 Interaction is off-diagonal
+/// \return 1 Interaction is diagonal
 int InputInterAllInfo(
         int *icnt_interall,
         int **iInterAllInfo,
@@ -2940,8 +2972,163 @@ int CheckTETransferHermite
   return 0;
 }
 /**
+@page page_addexpert Add new input-file for Expert mode
+When you add a new input file to _namelist file_,
+the following procedures must be needed.
+In the following, we add the keyword "test" as an example.
+
+1. Add a new keyword to the end of @c cKWListOfFileNameList in @c readdef.c.
+```
+static char cKWListOfFileNameList[][D_CharTmpReadDef]
+={
+  "CalcMod",
+  "ModPara",
+  "LocSpin",
+  "Trans",
+  "CoulombIntra",
+  "CoulombInter",
+  "Hund",
+  "PairHop",
+  "Exchange",
+  "InterAll",
+  "OneBodyG",
+  "TwoBodyG",
+  "PairLift",
+  "Ising",
+  "Boost",
+  "SingleExcitation",
+  "PairExcitation",
+  "SpectrumVec",
+  "Laser",
+  "TEOneBody",
+  "TETwoBody"
+  "Test"
+}
+```
+Here, `` D_CharTmpReadDef `` is set as `` 200 `` in readdef.h.
+If the the character number of added keyword exceeds `` 200 ``, please change the value.
+
+2. Define the index of keyword (such as KWCalcMod, KWModPara...) in @c readdef.h.
+```
+#define KWCalcMod 0
+#define KWModPara 1
+#define KWLocSpin 2
+#define KWTrans 3
+#define KWCoulombIntra 4
+#define KWCoulombInter 5
+#define KWHund 6
+#define KWPairHop 7
+#define KWExchange 8
+#define KWInterAll 9
+#define KWOneBodyG 10
+#define KWTwoBodyG 11
+#define KWPairLift 12
+#define KWIsing 13
+#define KWBoost 14
+#define KWSingleExcitation 15
+#define KWPairExcitation 16
+#define KWSpectrumVec 17
+#define KWLaser 18
+#define KWTEOneBody 19
+#define KWTETwoBody 20
+#define KWTest 21
+```
+The defined value must be same as the index of cKWListOfFileNameList
+to get the name of keyword, i.e. cKWListOfFileNameList[KWTest] = "Test".
+
+3. Add procedure of reading the file in @c ReadDefFileNInt function in @c readdef.c.
+ ```
+ for(iKWidx=0; iKWidx< D_iKWNumDef; iKWidx++) {
+    strcpy(defname, cFileNameListFile[iKWidx]);
+
+    if (strcmp(defname, "") == 0) continue;
+    if(iKWidx==KWSpectrumVec){
+      continue;
+    }
+    fprintf(stdoutMPI, cReadFile, defname, cKWListOfFileNameList[iKWidx]);
+    fp = fopenMPI(defname, "r");
+    if (fp == NULL) return ReadDefFileError(defname);
+    switch (iKWidx) {
+    case KWTest:
+        fgetsMPI(...); //Add the procedure to read-line here.
+    }
+ ```
+@sa ReadDefFileNInt
+
+4. Use @c InitializeInteractionNum function to initialize variables.
+ ```
+ void InitializeInteractionNum
+(
+ struct DefineList *X
+ )
+{
+  X->NTransfer=0;
+  X->NCoulombIntra=0;
+  X->NCoulombInter=0;
+  X->NIsingCoupling=0;
+  X->NPairLiftCoupling=0;
+  X->NInterAll=0;
+  X->NCisAjt=0;
+  X->NCisAjtCkuAlvDC=0;
+  X->NSingleExcitationOperator=0;
+  X->NPairExcitationOperator=0;
+  //[s] Time Evolution
+  X->NTETimeSteps=0;
+  X->NLaser=0;
+  X->NTEInterAll=0;
+  X->NTETransfer=0;
+  //[e] Time Evolution
+  X->NTest = 0;
+}
+ ```
+    @sa  InitializeInteractionNum
+5. The memories of arrays are stored by setmem_def function in @c xsetmem.c.
+   @sa  setmem_def
+ **/
+
+/**
 @page page_addmodpara Add new parameter into modpara
 
-@page page_addexpert Add new input-file for Expert mode
+You can set a value of parameters with a new keyword in ``modpara`` file by following way.
 
+- Define a new variable corresponding to the above parameter in @c struct.h file.
+
+- The value with the keyword are read by `` ReadDefFileNInt `` function in @c readdef.c.
+
+  In the following, we describe the detail of the flow of reading the parameter.
+
+  To read the parameter, the switch statement where ``iKWidx`` matches ``KWModPara`` is used.
+  The detail of the reading flow in this function are described as follows.
+
+1. The first eight lines are header (not touch!).
+  ```
+        //! Read Header (5 lines).
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //1
+       fgetsMPI(ctmp2, 256, fp);
+       sscanf(ctmp2, "%s %d\n", ctmp, &itmp); //2
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //3
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //4
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp); //5
+       //! Read header name for files about data
+       fgetsMPI(ctmp2, 256, fp);
+       sscanf(ctmp2, "%s %s\n", ctmp, X->CDataFileHead); //6
+        //! Read header name for files about parameters
+       fgetsMPI(ctmp2, 256, fp);
+       sscanf(ctmp2, "%s %s\n", ctmp, X->CParaFileHead); //7
+       //! Read header (1 line).
+       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
+  ```
+
+2. Each line is read by ``` fgetsMPI(ctmp2, 256, fp) ``` function.
+
+3. The line is divided into keyword and number by using ``CheckWords`` function.
+
+   For example, when you add new key word "NTest", then you can get the value as follows:
+   ```
+        if (CheckWords(ctmp, "NTest") == 0) {
+                X->NTest = (int) dtmp;
+              }
+   ```
+
+@sa ReadDefFileNInt, CheckWords
 */

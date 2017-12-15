@@ -122,6 +122,9 @@ const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
 //For Time evolution
 const char* cFileNameTEStep; /**> Name of the Time_TE_Step file.*/
+const char* cFileNameSS;/**> Name of the SS file.*/
+const char* cFileNameNorm;/**> Name of the Norm file.*/
+const char* cFileNameFlct;/**> Name of the Flct file.*/
 
 //For FullDiag
 const char* cFileNamePhys_FullDiag;/**> Name of the file to output physical values for canonical ensemble.*/

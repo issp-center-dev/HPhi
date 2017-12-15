@@ -2514,8 +2514,42 @@ StdFace_Kagome_Boost()? Forget!!
 
 @page page_addstandardval Add new input variable into Standard mode
 
-- StdFace_main(): Parser of input file
-- StdFace_vals.h: If it should be shared.
-- StdFace_ResetVals(): Initialize
-.
+We add new input variable in Standard mode through the following procedure:
+
+@section sec_parse_standard Parse the input file
+
+The input file for Standared mode is read in StdFace_main().
+In that function, the keyword value pair is found as follows:
+
+@dontinclude StdFace_main.c
+@skip (fgets(ctmpline
+@until fclose
+
+We have to add new variable (new_val in this case) as
+@code{C}
+else if (strcmp(keyword, "new_val") == 0) StoreWithCheckDup_i(keyword, value, &StdI->new_val);
+@endcode
+where StoreWithCheckDup_i() is for the integer variable;
+for other type, please refer the above link.
+
+@section sec_share_standard If it should be shared
+
+If the inputted variable should be shared among routines in Standard mode,
+we have to add it to the list in StdFace_vals.h.
+
+Also, the variable should be intialized before it is read.
+This initiallization is performed in the function StdFace_ResetVals().
+We have to initialize new variable in this function as:
+@code{C}
+StdI->new_val = NaN_d;
+\endcode
+for the float,
+@code{C}
+StdI->new_val = NaN_i;
+\endcode
+for the integer, and
+@code{C}
+strcpy(StdI->new_val, "****\0");
+\endcode
+for the string.
 */

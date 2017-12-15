@@ -66,6 +66,9 @@ const char* cFileNameInputVector="tmpvec_set%d_rank_%d.dat";
 
 //Fot Time evolution
 const char* cFileNameTEStep="%s_Time_TE_Step.dat";
+const char* cFileNameSS="SS.dat";
+const char* cFileNameNorm="Norm.dat";
+const char* cFileNameFlct="Flct.dat";
 
 //For FullDiag
 const char* cFileNamePhys_FullDiag="%s_phys_Nup%d_Ndown%d.dat";

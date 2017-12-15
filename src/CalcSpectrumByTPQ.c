@@ -31,7 +31,7 @@
  * 
  */
 
-/// \breif Read TPQ data at "X->Bind.Large.itr" step in SS_rand file.
+/// \brief Read TPQ data at "X->Bind.Large.itr" step in SS_rand file.
 /// \param [in] X CalcStruct list for getting and pushing calculation information
 /// \param [out] ene energy
 /// \param [out] temp temperature
@@ -132,9 +132,9 @@ int CalcSpectrumByTPQ(
 			  struct EDMainCalStruct *X,
 			  double complex *tmp_v1,
 			  double dnorm,
-              int Nomega,
-              double complex *dcSpectrum,
-              double complex *dcomega
+        int Nomega,
+        double complex *dcSpectrum,
+        double complex *dcomega
 )
 {
     char sdt[D_FileNameMax];

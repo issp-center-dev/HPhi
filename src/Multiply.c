@@ -78,7 +78,6 @@ int Multiply
  */
 int MultiplyForTEM
 (
- const int time_step,
  struct BindStruct *X
  )
 {

@@ -306,8 +306,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
  * @param X [in] Struct to give the information to calculate triangular matrix components.
  * @param _alpha [in,out] Triangular matrix components.
  * @param _beta [in,out] Triangular matrix components.
- * @param _v1 [in, out] A temporary vector to calculate triangular matrix components.
- * @param Lanczos_step [in] The max iteration step.
+ * @param tmp_v1 [in, out] A temporary vector to calculate triangular matrix components.
+ * @param liLanczos_step [in] The max iteration step.
  * @version 1.2
  * @return TRUE
  * @author Kazuyoshi Yoshimi (The University of Tokyo)

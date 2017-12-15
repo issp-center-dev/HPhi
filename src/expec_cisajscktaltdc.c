@@ -205,90 +205,21 @@ int expec_cisajscktaltdc
   return 0;
 }
 
-
-/** 
- * @note Not Used now
- * 
- * @param X 
- * @param vec 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
-void expec_cisajscktaltdc_alldiag(struct BindStruct *X,double complex *vec){ // only for Spin and Hubbard
-
-  long unsigned int j;
-  long unsigned int irght,ilft,ihfbit;
-  long unsigned int isite1,isite2;
-  long unsigned int is1_up,is2_up,is1_down,is2_down;
-  long unsigned int iexchg, off;
-  int num1_up,num2_up;
-  int num1_down,num2_down; 
-  long unsigned int ibit1_up,ibit2_up,ibit1_down,ibit2_down; 
-  double complex spn_z,chrg_z;
-  double complex spn,chrg;
-  double complex t_spn_z;  
-  
-  int N2,i_max;
-    
-  N2=2*X->Def.Nsite;
-  i_max=X->Check.idim_max;
-
-  GetSplitBit(N2, &irght, &ilft, &ihfbit);
-  chrg=0.0;
-  spn=0.0;
-  t_spn_z=0.0;
-  
-  for(isite1=1;isite1<=X->Def.Nsite;isite1++){
-    for(isite2=1;isite2<=X->Def.Nsite;isite2++){
-            
-      is1_up=X->Def.Tpow[2*isite1-2];
-      is1_down=X->Def.Tpow[2*isite1-1];
-      is2_up=X->Def.Tpow[2*isite2-2];
-      is2_down=X->Def.Tpow[2*isite2-1];
-      
-#pragma omp parallel for reduction(+: t_spn_z,spn, chrg) firstprivate(i_max, is1_up, is2_up, is1_down, is2_down, irght, ilft, ihfbit) private(ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, spn_z, chrg_z, iexchg, off)
-      for(j=1;j<=i_max;j++){                    
-        ibit1_up= list_1[j]&is1_up;
-        num1_up=ibit1_up/is1_up;            
-        ibit2_up= list_1[j]&is2_up;
-        num2_up=ibit2_up/is2_up;
-            
-        ibit1_down= list_1[j]&is1_down;
-        num1_down=ibit1_down/is1_down;
-            
-        ibit2_down= list_1[j]&is2_down;
-        num2_down=ibit2_down/is2_down;
-            
-        spn_z=(num1_up-num1_down)*(num2_up-num2_down);
-        chrg_z=(num1_up+num1_down)*(num2_up+num2_down);
-            
-        t_spn_z+= conj(vec[j])* vec[j]*(num1_up-num1_down);
-        spn+= conj(vec[j])* vec[j]*spn_z;
-        chrg+= conj(vec[j])* vec[j]*chrg_z;
-            
-        if(isite1==isite2){
-          spn+=2* conj(vec[j])* vec[j]*(num1_up+num1_down-2*num1_up*num1_down);
-        }else{
-          if(ibit1_up!=0 && ibit1_down==0 && ibit2_up==0 &&ibit2_down!=0 ){
-            iexchg= list_1[j]-(is1_up+is2_down);
-            iexchg+=(is2_up+is1_down);
-            GetOffComp(list_2_1, list_2_2, iexchg,  irght, ilft, ihfbit, &off);                    
-            spn+=2* conj(vec[j])* vec[off];
-          }else if(ibit1_up==0 && ibit1_down!=0 && ibit2_up!=0 && ibit2_down==0){
-            iexchg= list_1[j]-(is1_down+is2_up);
-            iexchg+=(is2_down+is1_up);
-            GetOffComp(list_2_1, list_2_2, iexchg,  irght, ilft, ihfbit, &off);
-            spn+=2* conj(vec[j])* vec[off];
-          }
-        }
-      }
-    }
-  }
-  spn = spn/X->Def.Nsite;
-  X->Phys.s2=spn;
-}
-
-
+///
+/// \brief Rearray interactions
+/// \param i
+/// \param org_isite1 a site number on the site 1.
+/// \param org_isite2 a site number on the site 2.
+/// \param org_isite3 a site number on the site 3.
+/// \param org_isite4 a site number on the site 4.
+/// \param org_sigma1 a spin index on the site 1.
+/// \param org_sigma2 a spin index on the site 2.
+/// \param org_sigma3 a spin index on the site 3.
+/// \param org_sigma4 a spin index on the site 4.
+/// \param tmp_V a value of interaction
+/// \param X  data list for calculation
+/// \return 0 normally finished
+/// \return -1 unnormally finished
 int Rearray_Interactions(
                          int i,
                          long unsigned int *org_isite1,

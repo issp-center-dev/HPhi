@@ -1206,7 +1206,7 @@ Select the mode of inputting a restart vector:\\
 \end{itemize}
 
 \newpage
-\subsection{ModPara file}
+\subsection{\tr{ModPara file}}
 \label{Subsec:modpara}
 This file determines the parameters for calculation. The file format is as follows.\\
 \begin{minipage}{10cm}
@@ -1270,6 +1270,9 @@ ExpecInterval  20
 \end{itemize}
 
 ~\subsubsection{Keywords and parameters}
+In the following, common parameters and parameters for each method are shown.
+
+~\subsubsection{Common parameters}
  \begin{itemize}
   \item  \verb|CDataFileHead|
 
@@ -1296,12 +1299,6 @@ ExpecInterval  20
 
 {\bf Description :} {The total value of $2S_z$ (not used in grand canonical ensemble). For conservation of $S_z$ in the case of } \verb|CalcModel| = 0 (fermion Hubbard model) or 2 (Kondo lattice model), set \verb|Ncond|.
 
- \item  \verb|Lanczos_max|
-
-{\bf Type :} Int (positive integer)
-
-{\bf Description :}  The maximum number of Lanczos steps in the calculation. When the convergence within the specified accuracy is satisfied, the calculation is completed before a step reaches  \verb|Lanczos_max|. For TPQ calculation, the total number of TPQ steps is specified with this parameter. In the case of restart calculation, \verb|Lanczos_max| must be larger than that of the previous calculation.
-
  \item  \verb|initial_iv|
 
 {\bf Type :} Int
@@ -1326,29 +1323,6 @@ The seed of the random generator is given by this parameter and the random vecto
 \end{itemize}
 See Sec. \ref{Ch:algorithm} for details of setting an initial vector.
 
- \item  \verb|exct|
-
-{\bf Type :} Int (positive integer)
-
-{\bf Description :} 
- An integer for setting the number of eigenvectors obtained from the ground energy by the Lanczos method.\\
-%{\bf Note}:  the following condition must be satisfied \verb|nvec| $>=$ \verb|exct|.
-For \verb|method="CG"|, the number of eigenvectors is specified.
-
-\item   \verb|LanczosEps|
-   
-{\bf Type :} Int (positive integer)
-
-{\bf Description :} An integer for judging the convergence of the Lanczos method. The convergence is determined by whether the condition is satisdied that the relative error between an eigenvalue and an eigenvalue at the Lanczos step of the one step before is less than $10^{- \verb|LanczosEps|}$.
-For \verb|method="CG"|, the calculation finishes when the 2-norm of the residual vector
-becomes smaller than $10^{- \verb|LanczosEps|/2}$.
-
- \item  \verb|LanczosTarget| 
-   
- {\bf Type :} Int (positive integer)
-
-  {\bf Description :} An integer giving the target of the eigenvalue for judging the convergence of the Lanczos method. For example, the target becomes a ground state when \verb|LanczosTarget|  is equal to one, and a first excited state when  \verb|LanczosTarget|  is equal to two.
-
   \item  \verb|CalcHS| 
    
  {\bf Type :} Int (positive integer)
@@ -1356,34 +1330,110 @@ becomes smaller than $10^{- \verb|LanczosEps|/2}$.
   {\bf Description :} If CalcHS=1, an efficient algorithm for generating the restricted Hilbert space with the specified
 quantum number is used (Details of algorithm is shown in http://qlms.github.io/HPhi/develop/tips.pdf[in Japanese]). 
 Default value is 1 and the efficient algorithm is used.
-     
 
+ \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+~\subsubsection{Lanczos method}
+\begin{itemize}
+
+ \item  \verb|Lanczos_max|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :}  The maximum number of Lanczos steps in the calculation. When the convergence within the specified accuracy is satisfied, the calculation is completed before a step reaches  \verb|Lanczos_max|. In the case of restart calculation, \verb|Lanczos_max| must be larger than that of the previous calculation.
+
+\item  \verb|exct|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :} 
+ An integer for setting the number of eigenvectors obtained from the ground energy by the Lanczos method.
+
+\item   \verb|LanczosEps|
+   
+{\bf Type :} Int (positive integer)
+
+{\bf Description :} An integer for judging the convergence of the Lanczos method. The convergence is determined by whether the condition is satisdied that the relative error between an eigenvalue and an eigenvalue at the Lanczos step of the one step before is less than $10^{- \verb|LanczosEps|}$.
+
+ \item  \verb|LanczosTarget| 
+   
+ {\bf Type :} Int (positive integer)
+
+  {\bf Description :} An integer giving the target of the eigenvalue for judging the convergence of the Lanczos method. For example, the target becomes a ground state when \verb|LanczosTarget|  is equal to one, and a first excited state when  \verb|LanczosTarget|  is equal to two.
+
+     
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+~\subsubsection{CG method}
+
+\begin{itemize}
+
+\item  \verb|exct|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :} 
+ The number of eigenvectors is specified.
+
+ \item  \verb|Lanczos_max|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :}  The maximum number of iteration steps in the calculation. When the convergence within the specified accuracy is satisfied, the calculation is completed before a step reaches  \verb|Lanczos_max|. In the case of restart calculation, \verb|Lanczos_max| must be larger than that of the previous calculation.
+
+\item   \verb|LanczosEps|
+   
+{\bf Type :} Int (positive integer)
+
+{\bf Description :} For \verb|method="CG"|, the calculation finishes when the 2-norm of the residual vector
+becomes smaller than $10^{- \verb|LanczosEps|/2}$.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+~\subsubsection{TPQ method}
+
+\begin{itemize}
+
+\item  \verb|Lanczos_max|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :}  The total number of TPQ steps is specified with this parameter. In the case of restart calculation, \verb|Lanczos_max| must be larger than that of the previous calculation.
 
 \item \verb|LargeValue|
 
 {\bf Type :} Double
 
-{\bf Description :} (Use only for the TPQ method) An integer giving $l$ of $l-\hat{H}/N_{s}$ used in the TPQ method.
+{\bf Description :} An integer giving $l$ of $l-\hat{H}/N_{s}$ used in the TPQ method.
  
 \item \verb|NumAve|
 
 {\bf Type :} Int
 
-{\bf Description :} (Use only for the TPQ method) An integer giving the number of independent runs for the TPQ method. 
+{\bf Description :} An integer giving the number of independent runs for the TPQ method. 
 
 \item \verb|ExpecInterval|
 
 {\bf Type :} Int
 
-{\bf Description :} (Use only for the TPQ method) An integer giving the interval steps of calculating the correlation functions in the TPQ method.\\ 
+{\bf Description :} An integer giving the interval steps of calculating the correlation functions in the TPQ method.\\ 
 {\bf Note:} A small interval increases the time cost of calculations.
+
+\end{itemize} 
  
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+~\subsubsection{Calculating dynamical Green's functions}
+
+\begin{itemize}
+
  \item \verb|OmegaOrg|
 
 {\bf Type :} Complex
 
-{\bf Description :} {(Use only for calculating dynamical Green's functions) 
-The center value of the frequency. 
+{\bf Description :} {The center value of the frequency. 
 Specify the real and imaginary parts in that order separated by a space, 
 and if there is no imaginary part, the real part of the frequency is only given.}
 
@@ -1391,34 +1441,68 @@ and if there is no imaginary part, the real part of the frequency is only given.
 
     {\bf Type :} Double
     
-    {\bf Description :} (Use only for calculating dynamical Green's functions) 
-    The imaginary part of the frequency. 
-    When \verb|OmegaOrg| is defined in a \verb|modpara| file, \verb|OmegaIm| is added to the imaginary value of \verb|OmegaOrg|.
+    {\bf Description :} {The imaginary part of the frequency. 
+    When \verb|OmegaOrg| is defined in a \verb|modpara| file, \verb|OmegaIm| is added to the imaginary value of \verb|OmegaOrg|.}
 
 \item \verb|OmegaMin|
 
     {\bf Type :} Complex
     
-    {\bf Description :} (Use only for calculating dynamical Green's functions) 
-    The lower limit of the frequency from \verb|OmegaOrg|. 
-    Specify the real and imaginary parts in that order separated by a space, and if there is no imaginary part, the real part of the frequency is only given.
+    {\bf Description :} {The lower limit of the frequency from \verb|OmegaOrg|. 
+    Specify the real and imaginary parts in that order separated by a space, and if there is no imaginary part, the real part of the frequency is only given.}
     
   \item \verb|OmegaMax|
 
     {\bf Type :} Complex
     
-    {\bf Description :} (Use only for calculating dynamical Green's functions) 
-    The upper limit of the frequency from \verb|OmegaOrg|.
+    {\bf Description :}{The upper limit of the frequency from \verb|OmegaOrg|.
     Specify the real and imaginary parts in that order separated by a space, and if there is no imaginary part, a real part of the frequency is only given.
-  
+   }
 \item \verb|NOmega|
 
 {\bf Type :} Int
 
-{\bf Description :} {(Use only for calculating dynamical Green's functions) 
- The integer for defining the step size of the frequency$\Delta \omega = ($ \verb|OmegaMax|- \verb|OmegaMin|$)/N_{\omega}$. The frequency is given by $z_n=$\verb|OmegaOrg|$+$\verb|OmegaMax|$+ \Delta \omega \times n$.} 
+{\bf Description :} {
+ The integer for defining the step size of the frequency$\Delta \omega = ($ \verb|OmegaMax|- \verb|OmegaMin|$)/N_{\omega}$. The frequency is given by $z_n=$\verb|OmegaOrg|$+$\verb|OmegaMin|$+ \Delta \omega \times n$.} 
  
  \end{itemize}
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+~\subsubsection{Real time evolution method}
+
+\begin{itemize}     
+ \item  \verb|Lanczos_max|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :}  The total number of real time evolution steps is specified with this parameter. 
+In the case of restart calculation, \verb|Lanczos_max| must be larger than that of the previous calculation.
+
+ \item  \verb|ExpandCoef|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :}   An integer giving the expansion order $n$ for real time evolution method; 
+\begin{equation}
+\exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n .
+\end{equation}
+
+\item \verb|ExpecInterval|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :} An integer giving the interval steps of calculating the correlation functions.\\ 
+{\bf Note:} A small interval increases the time cost of calculations.
+
+
+\item \verb|OutputInterval|
+
+{\bf Type :} Int (positive integer)
+
+{\bf Description :} An integer giving the interval steps of output the wave function.\\ 
+The wave vector is output when \verb|OutputEigenVec=1| in \verb|CalcMod| file.
+
+\end{itemize}
 
 
 \newpage
@@ -2625,6 +2709,200 @@ $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.\\
 \end{itemize}
 
 \newpage
+\subsection{\tr{OneBodyTE file}}
+\label{Subsec:1TE}
+This file determines the values of the transfer integrals $t_{ij\sigma_1\sigma_2} (t)$ at each time $t$,
+\begin{align}
+H(t) +=-\sum_{ij\sigma_1\sigma_2} t_{ij\sigma_1\sigma_2}(t)c_{i\sigma_1}^{\dag}c_{j\sigma_2}.
+\end{align}
+An example of the file format is as follows.\\
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+==================================
+AllTimeStep         100
+==================================
+===== OneBody Time Evolution =====
+==================================
+    0.0   4
+    0  0  1  0      1.0    0.0
+    1  0  0  0      1.0    0.0
+    0  1  1  1      1.0    0.0
+    1  1  0  1      1.0    0.0
+    0.2   4
+   (continue...)
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item  Line 1:  Header
+   \item  Line 2:  [string01]~[int01]
+   \item Lines 3-5:  Header
+ \end{itemize}
+From line 6, time $t$ and total number of transfer integrals $N(t)$ are first defined and 
+next the transfer integrals $t_{ij\sigma_1\sigma_2} (t)$ are defined.
+ \begin{itemize}
+    \item  Line m: [double01]~~[int02]
+    \item  Lines (m+1) - (m+1+[int02]): [int03]~~[int04]~~[int05]~~[int06]~~[double02]~~[double03]
+ \end{itemize}
+   
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$string01$]$
+   
+    {\bf Type :} String (a blank parameter is not allowed)
+
+   {\bf Description :} A keyword for the total number of transfer integrals. You can freely give a name to the keyword.
+  
+   \item  $[$int01$]$
+   
+    {\bf Type :} Int (a blank parameter is not allowed)
+
+   {\bf Description :}  An integer giving the total time steps defined in this file.
+
+\item  $[$double01$]$
+
+ {\bf Type :} Double (a blank parameter is not allowed)
+
+{\bf Description :}  Time $t$.
+
+ \item  $[$int02$]$
+
+ {\bf Type :}  Int (a blank parameter is not allowed)
+
+{\bf Description :} An integer giving the total number of transfer integrals at time $t$. 
+
+  \item  $[$int03$]$, $[$int05$]$
+
+ {\bf Type :}  Int (a blank parameter is not allowed)
+
+{\bf Description :} An integer giving a site index ($0<= [$int03$],  [$int05$]<\verb|Nsite|$).
+ 
+  \item  $[$int04$]$, $[$int06$]$
+
+ {\bf Type :}  Int (a blank parameter is not allowed)
+
+{\bf Description :} An integer giving a spin index:\\
+0: Up-spin\\
+1: Down-spin.
+
+\item  $[$double02$]$, $[$double03$]$
+
+ {\bf Type :} Double (a blank parameter is not allowed)
+
+{\bf Description :} A value for real and imaginary part of $t_{ij\sigma_1\sigma_2}(t)$ at time $t$ is defined $[$double02$]$ and $[$double03$]$, respectively.
+\end{itemize}
+
+\subsubsection{Use rules}
+\begin{itemize}
+\item Headers cannot be omitted. 
+\item A program is terminated when \verb|LanczosStep| defined in \verb|ModPara| is greater than $[$int02$]$.
+\item A program is terminated when $[$int03$]$-$[$int06$]$ are outside the range of the defined values.
+\end{itemize}
+
+
+\newpage
+\subsection{\tr{TwoBodyTE file}}
+\label{Subsec:2TE}
+This file determines the values of the two-body interactions $I_{i\sigma_1j \sigma_2 k \sigma_3 l \sigma_4}(t)c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$ at each time $t$,
+\begin{align}
+H(t) +=\sum_{ijkl}\sum_{\sigma_1\sigma_2\sigma_3\sigma_4} I_{i\sigma_1j \sigma_2 k \sigma_3 l \sigma_4}(t) c_{i\sigma_1}^{\dag}c_{j\sigma_2}c_{k\sigma_3}^{\dag}c_{l\sigma_4}.
+\end{align}
+An example of the file format is as follows.\\
+
+\begin{minipage}{12.5cm}
+\begin{screen}
+\begin{verbatim}
+==================================
+AllTimeStep         100
+==================================
+===== TwoBody Time Evolution =====
+==================================
+    0.0   3
+    0  1  0  1  0  0  0  0       1.0    0.0
+    1  0  1  0  0  0  0  0       1.0    0.0
+    1  0  1  0  2  0  2  0       1.0    0.0 
+    0.2   3
+   (continue...)
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item  Line 1:  Header
+   \item  Line 2:  [string01]~[int01]
+   \item Lines 3-5:  Header
+ \end{itemize}
+From line 6, time $t$ and total number of transfer integrals $N(t)$ are first defined and 
+next the two-body interactions $ I_{i\sigma_1j \sigma_2 k \sigma_3 l \sigma_4}(t) $ are defined.
+ \begin{itemize}
+    \item  Line m: [double01]~~[int02]
+    \item  Lines (m+1) - (m+1+[int02]): [int03]~~[int04]~~[int05]~~[int06]~~[int07]~~[int08]~~[int09]~~[int10]~~[double02]~~[double03]
+ \end{itemize}
+   
+
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$string01$]$
+   
+    {\bf Type :} String (a blank parameter is not allowed)
+
+   {\bf Description :} A keyword for the total number of generalized two-body interactions. You can freely give a name to the keyword.
+
+   \item  $[$int01$]$
+   
+    {\bf Type :} Int (a blank parameter is not allowed)
+
+   {\bf Description :}  An integer giving the total time steps defined in this file.
+
+\item  $[$double01$]$
+
+ {\bf Type :} Double (a blank parameter is not allowed)
+
+{\bf Description :}  Time $t$.
+
+ \item  $[$int02$]$
+
+ {\bf Type :}  Int (a blank parameter is not allowed)
+
+{\bf Description :} An integer giving the total number of two-body interactions at time $t$. 
+
+  \item  $[$int03$]$, $[$int05$]$, $[$int07$]$, $[$int09$]$
+
+ {\bf Type :}  Int (a blank parameter is not allowed)
+
+{\bf Description :} An integer giving a site index ($0<= $[$int03$]$, $[$int05$]$, $[$int07$]$, $[$int09$]$<\verb|Nsite|$).
+ 
+ \item  $[$int04$]$, $[$int06$]$, $[$int08$]$, $[$int10$]$
+
+ {\bf Type :}  Int (a blank parameter is not allowed)
+
+{\bf Description :} An integer giving a spin index:\\
+0: Up-spin\\
+1: Down-spin.
+
+\item  $[$double02$]$, $[$double03$]$
+
+ {\bf Type :} Double (a blank parameter is not allowed)
+
+{\bf Description :} A value for real and imaginary part of $I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}(t)$ at time $t$ is defined $[$double02$]$ and $[$double03$]$, respectively.
+
+\end{itemize}
+
+\subsubsection{Use rules}
+\begin{itemize}
+\item Headers cannot be omitted. 
+\item A program is terminated when \verb|LanczosStep| defined in \verb|ModPara| is greater than $[$int02$]$.
+\item A program is terminated when $[$int03$]$-$[$int10$]$ are outside the range of the defined values.
+\end{itemize}
+
+\newpage
 \section{Output files}
 \label{Sec:outputfile}
 In this section, the details of the output files of the expert mode are explained.
@@ -3543,7 +3821,7 @@ An example of the file format is as follows.\\
 
  {\bf Type :} Double 
 
-{\bf Description :} The expected value of the square of the particle number $\sum_{i} \langle \hat{n}_i^2 \rangle$.
+{\bf Description :} The expected value of the square of the particle number $ \langle (\sum_{i} \hat{n}_i)^2 \rangle$.
 
   \item $[$double04$]$
 
@@ -3556,7 +3834,7 @@ An example of the file format is as follows.\\
  {\bf Type :} Double 
 
 {\bf Description :} The expected value of the square of doublon 
-$\frac{1}{N_s} \sum_{i}\langle (n_{i\uparrow} n_{i\downarrow})^2\rangle$ ($N_s$ is the total number of sites).
+$\frac{1}{N_s}\langle ( \sum_{i} n_{i\uparrow} n_{i\downarrow})^2\rangle$ ($N_s$ is the total number of sites).
 
   \item $[$double06$]$
 
@@ -3570,7 +3848,7 @@ $\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle$ ($N_s$ is the total number of
  {\bf Type :} Double 
 
 {\bf Description :}  The expected value of the square of $S_z$
-$\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is the total number of sites).
+$\frac{1}{N_s} \langle (\sum_{i} \hat{S}_i^z)^2\rangle$ ($N_s$ is the total number of sites).
 
  \item $[$int01$]$
 
@@ -3580,6 +3858,285 @@ $\frac{1}{N_s} \sum_{i}\langle (\hat{S}_i^z)^2\rangle$ ($N_s$ is the total numbe
 
  \end{itemize}
 
+\newpage
+\subsection{\tr{Time\_TE\_Step.dat}}
+(For the real time evolution method) 
+This file is outputted to show the time for starting the calculation of the real time evolution method at each step. 
+In the restart calculation, the values are added to the previous file. An example is as follows.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+step 1:TE begins: Wed Jul 13 07:59:20 2017
+step 2:TE begins: Wed Jul 13 07:59:20 2017
+step 3:TE begins: Wed Jul 13 07:59:20 2017
+…
+step 1997:TE begins: Wed Jul 13 07:59:32 2017
+step 1998:TE begins: Wed Jul 13 07:59:32 2017
+step 1999:TE begins: Wed Jul 13 07:59:32 2017
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+ \begin{itemize}
+   \item  \#\#\_TE\_Step.dat
+  \end{itemize}
+  \#\# indicates a header defined by [string02] in a ModPara file.
+
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item stp $[$int01$]$: TE begins: $[$string01$]$
+  \end{itemize}
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$int01$]$
+  
+ {\bf Type :} Int
+
+{\bf Description :} The step number in the calculation.
+
+  \item  $[$string01$]$
+  
+ {\bf Type :} String
+
+{\bf Description :} The time for starting the calculation at each step.
+
+ \end{itemize}
+
+\newpage
+\subsection{\tr{Norm.dat}}
+\label{Subsec:normTE}
+(For the real time evolution method)  This file is outputted to show the calculation process information for the real time evolution method.
+In the restart calculation, the values are added to the previous file.
+An example of the file format is as follows.\\
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+ # time, global_norm, global_1st_norm, step_i
+0.0000000000000000 0.9999999999999994 0.0000000000000000 0
+0.0100000000000000 1.0000233421898765 0.0000000000000000 1
+0.0200000000000000 1.0000211100654208 0.0000000000000000 2
+0.0300000000000000 1.0000182214014706 0.0000000000000000 3
+0.0400000000000000 1.0000148460317946 0.0000000000000000 4
+0.0500000000000000 1.0000111372562455 0.0000000000000000 5
+0.0600000000000000 1.0000072252313270 0.0000000000000000 6
+0.0700000000000000 1.0000032174168609 0.0000000000000000 7
+0.0800000000000000 0.9999992048382456 0.0000000000000000 8
+0.0900000000000000 0.9999952720176869 0.0000000000000000 9
+0.1000000000000000 0.9999915078951970 0.0000000000000000 10
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+\begin{itemize}
+   \item Norm.dat
+  \end{itemize}
+
+\subsubsection{File format}
+ \begin{itemize}
+   \item Line 1: Header
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$int01$]$.
+  \end{itemize}
+
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf Type :} Double
+
+{\bf Description :} Time $t$。
+ 
+  \item $[$double02$]$
+
+ {\bf Type :} Double
+
+{\bf Description :}  The norm of a wave function at $t$.
+
+  \item $[$int01$]$
+
+ {\bf Type :} Int 
+
+{\bf Description :} Time step.
+
+ \end{itemize}
+
+
+\newpage
+\subsection{\tr{SS.dat}}
+\label{Subsec:ssTE}
+(For the real time evolution method) This file is outputted to show the calculation results.
+In the restart calculation, the values are added to the previous file.
+An example of the file format is as follows.\\
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+ # time, energy, phys_var, phys_doublon, phys_num, step_i
+0.0000000000000000  -6.0412438187293001 38.8635272290786489 ...
+0.0100000000000000  -5.9310482979751606 37.9593669819686923 ...
+0.0200000000000000  -5.8287182777288828 37.1390062697724801 ...
+0.0300000000000000  -5.7384311863736031 36.4282319427381651 ...
+0.0400000000000000  -5.6636677030535481 35.8466140292489897 ...
+0.0500000000000000  -5.6070659264425551 35.4081795274108799 ...
+0.0600000000000000  -5.5703150294725914 35.1222606981659666 ...
+0.0700000000000000  -5.5540895348193438 34.9942503380419154 ...
+0.0800000000000000  -5.5580244678717312 35.0260574979670665 ...
+0.0900000000000000  -5.5807312981978212 35.2161499389042660 ...
+0.1000000000000000  -5.6198544688797947 35.5591788356216298 ...
+...
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+ \begin{itemize}
+   \item SS.dat
+  \end{itemize}
+
+\subsubsection{File format}
+\begin{itemize}
+   \item Line 1: Header
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$int01$]$.
+  \end{itemize}
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf Type :} Double
+
+{\bf Description :} Time $t$.
+ 
+  \item $[$double02$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :}  The expected value of the energy $\langle H \rangle$.
+
+  \item $[$double03$]$
+
+ {\bf Type :} Double
+
+{\bf Description :} The expected value of the square of the Hamiltonian $\langle H^2 \rangle$. 
+
+  \item $[$double04$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :} The expected value of the doublon, 
+$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is the total number of sites).
+
+  \item $[$double05$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :} The total number of particles $\langle {\hat n} \rangle$.
+
+
+  \item $[$int01$]$
+
+ {\bf Type :} Int
+
+{\bf Description :} Time step.
+
+ \end{itemize}
+
+\newpage
+\subsection{\tr{Flct.dat}}
+\label{Subsec:flctrand}
+(For the real time evolution method)  This file is outputted to show the calculation results of the fluctuation of the particle number, doublon, and $S_z$.
+In the restart calculation, the values are added to the previous file.
+An example of the file format is as follows.\\
+
+\begin{minipage}{15cm}
+\begin{screen}
+\begin{verbatim}
+ # time, N, N^2, D, D^2, Sz, Sz^2, step_i
+0.0000000000000000 7.9999999999999991 63.9999999999999929 ...
+0.0100000000000000 8.0000000000000604 64.0000000000004832 ...
+0.0200000000000000 8.0000000000000018 64.0000000000000142 ...
+0.0300000000000000 8.0000000000001013 64.0000000000008100 ...
+0.0400000000000000 7.9999999999999183 63.9999999999993463 ...
+0.0500000000000000 7.9999999999999520 63.9999999999996163 ...
+0.0600000000000000 7.9999999999999627 63.9999999999997016 ...
+0.0700000000000000 8.0000000000000835 64.0000000000006679 ...
+0.0800000000000000 8.0000000000000924 64.0000000000007390 ...
+0.0900000000000000 7.9999999999999600 63.9999999999996803 ...
+0.1000000000000000 7.9999999999999067 63.9999999999992539 ...
+...
+\end{verbatim}
+\end{screen}
+\end{minipage}
+
+\subsubsection{File name}
+ \begin{itemize}
+   \item Flct.dat
+  \end{itemize}
+
+\subsubsection{File format}
+\begin{itemize}
+   \item Line 1: Header
+   \item Lines 2-: $[$double01$]$ $[$double02$]$ $[$double03$]$ $[$double04$]$ $[$double05$]$ $[$double06$]$ $[$double07$]$ $[$int01$]$.
+  \end{itemize}
+\subsubsection{Parameters}
+ \begin{itemize}
+
+  \item  $[$double01$]$
+  
+ {\bf Type :} Double
+
+{\bf Description :} Time $t$。
+ 
+  \item $[$double02$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :}  A total particle number $\sum_{i} \langle \hat{n}_i \rangle$.
+
+  \item $[$double03$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :} The expected value of the square of the particle number $ \langle (\sum_{i} \hat{n}_i)^2 \rangle$.
+
+ \item $[$double04$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :} The expected value of doublon $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_s$ is the total number of sites).
+
+  \item $[$double05$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :} The expected value of the square of doublon 
+$\frac{1}{N_s}\langle ( \sum_{i} n_{i\uparrow} n_{i\downarrow})^2\rangle$ ($N_s$ is the total number of sites).
+
+  \item $[$double06$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :} The expected value of $S_z$
+$\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle$ ($N_s$ is the total number of sites).
+
+  \item $[$double07$]$
+
+ {\bf Type :} Double 
+
+{\bf Description :}  The expected value of the square of $S_z$
+$\frac{1}{N_s} \langle (\sum_{i} \hat{S}_i^z)^2\rangle$ ($N_s$ is the total number of sites).
+
+ \item $[$int01$]$
+
+ {\bf Type :} Int 
+
+{\bf Description :} Time step.
+
+ \end{itemize}
 
 \newpage
 \subsection{Eigenvalue.dat}
@@ -3756,7 +4313,7 @@ An example of the file format is as follows.\\
 
 
 \newpage
-\subsection{cisajs.dat}
+\subsection{\tr{cisajs.dat}}
 \label{Subsec:cgcisajs}
 This file is the outputted files for one-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$. 
 The target components are set in the input file with the keyword ``OneBodyG".
@@ -3783,6 +4340,7 @@ An example of the file format is as follows.
    \item{Lanczos method:}  \#\#\_cisajs.dat
    \item{TPQ method:} \#\#\_cisajs\_set??step\%\%.dat
    \item{Full diagonalization method, LOBCG method:}  \#\#\_cisajs\_eigen{\&\&}.dat.
+   \tr{\item{Real time evolution method:} \#\#\_cisajs\_step\%\%.dat}
   \end{itemize}
   \#\#, ??, \%\%, and \&\& indicate [string02] in a ModPara file, the number of runs in calculation in the TPQ method, the number of steps in the TPQ method, and the index of the eigenvalues, respectively.
 
@@ -3818,7 +4376,7 @@ $[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c
 \end{itemize}
 
 \newpage
-\subsection{cisajscktalt.dat}
+\subsection{\tr{cisajscktalt.dat}}
 \label{Subsec:cisajscktalt}
 This file is the outputted files for the two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. 
 The target components are set in the input file with the keyword ``TwoBodyG".
@@ -3845,6 +4403,7 @@ An example of the file format is as follows.
    \item{Lanczos method:}  \#\#\_cisajscktalt.dat
    \item{TPQ method:} \#\#\_cisajscktalt\_set??step\%\%.dat
    \item{Full diagonalization method, LOBCG method:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
+   \tr{\item{Real time evolution method:} \#\#\_cisajscktalt\_step\%\%.dat}
   \end{itemize}
   \#\#, ??, \%\%, and \&\& indicate [string02] in a ModPara file, the number of runs in calculation in the TPQ method, the number of steps in the TPQ method, and the index of the eigenvalues, respectively.
 

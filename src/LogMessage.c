@@ -153,7 +153,8 @@ const char* cLogOutputVecFinish="  End  :  Output vector.\n";
 const char* cOutputVecStart="  set %d step %d:output vector starts: %s\n";
 const char* cOutputVecFinish="  set %d step %d:output vector finishes: %s\n";
 
-
-//FirstMultiply.c
-const char* cLogCheckInitComplex = "    CHECK: TPQ complex initial vector \n";
-const char* cLogCheckInitReal = "    CHECK: TPQ real initial vector \n";
+//CalcByTEM.c
+const char* cLogTEStep = "    step_i/total_step=%d/%d \n";
+const char* cLogSS =  " # time, energy, phys_var, phys_doublon, phys_num, step_i\n";
+const char* cLogNorm = " # time, norm, step_i \n";
+const char* cLogFlct = " # time, N, N^2, D, D^2, Sz, Sz^2, step_i \n";

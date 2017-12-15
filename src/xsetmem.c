@@ -305,12 +305,12 @@ int setmem_large
 
 ///
 /// \brief Set the size of memories for InterAllDiagonal and InterAllOffDiagonal arrays.
-/// \param InterAllOffDiagonal [in/out] Arrays of cites and spin indexes of off-diagonal parts of InterAll interactions.
-/// \param ParaInterAllOffDiagonal [in/out] Arrays of parameters of off-diagonal parts of InterAll interactions.
-/// \param InterAllDiagonal [in/out] Arrays of cites and spin indexes of diagonal parts of InterAll interactions.
-/// \param ParaInterAllDiagonal [in/out] Arrays of parameters of diagonal parts of InterAll interactions.
+/// \param InterAllOffDiagonal [in,out] Arrays of cites and spin indexes of off-diagonal parts of InterAll interactions.
+/// \param ParaInterAllOffDiagonal [in,out] Arrays of parameters of off-diagonal parts of InterAll interactions.
+/// \param InterAllDiagonal [in,out] Arrays of cites and spin indexes of diagonal parts of InterAll interactions.
+/// \param ParaInterAllDiagonal [in,out] Arrays of parameters of diagonal parts of InterAll interactions.
 /// \param NInterAll [in] Total number of InterAll interactions.
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
   void setmem_IntAll_Diagonal
           (
@@ -334,7 +334,7 @@ int setmem_large
 /// Output: LargeList.SizeOflist_2_1, LargeList.SizeOflist_2_2, LargeList.SizeOflistjb
 /// \retval TRUE: Normally finished
 /// \retval FALSE: Unnormally finished
-/// \authour Kazuyoshi Yoshimi
+/// \author Kazuyoshi Yoshimi
 /// \version 1.2
   int GetlistSize
           (
@@ -374,7 +374,22 @@ int setmem_large
 /**
 @page page_setmem Malloc vectors
 
-setmem_def()
-setmem_large()
-mfmemmory.h
+ To set memory, we use ```?malloc%``` function defined in @c mfmemmory.h,
+ where ```?``` indicates the type of the array and ```%``` means the dimension.
+
+ For example, ```char_malloc2(X, N1, N2)``` function sets the size of memories N1@f$ \times @f$ N2 characters to two dimensional array X.
+
+ For setting memories to global arrays, we prepare two functions, setmem_def() and setmem_large() functions.
+
+ - setmem_def()
+    In this function, the memories of the arrays which have not large memory are stored.
+
+    Arrays for defining interactions and correlation functions are mainly defined.
+
+ - setmem_large()
+    In this function, the memories of the arrays which have large memory are stored.
+
+    Arrays for defining Hamiltonian and vectors are mainly defined.
+
+@sa setmem_def(), setmem_large()
 */

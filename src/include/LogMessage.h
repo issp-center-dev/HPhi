@@ -137,6 +137,12 @@ const char* cLogFlctRand;
 const char* cLogTPQStep;
 const char* cLogTPQEnd;
 
+//CalcByTEM.c
+const char* cLogTEStep;
+const char* cLogSS;
+const char* cLogNorm;
+const char* cLogFlct;
+
 const char* cLogInputVecStart;
 const char* cLogInputVecFinish;
 const char* cLogOutputVecStart;

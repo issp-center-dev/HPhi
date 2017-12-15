@@ -31,7 +31,7 @@ void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
 
 
 /**
- * @file   calcByTEM.c
+ * @file   CalcByTEM.c
  *
  * @brief  File to define functions to calculate expected values by Time evolution method.
  *
@@ -59,6 +59,7 @@ int CalcByTEM(
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
   char sdt_norm[D_FileNameMax];
+  char sdt_flct[D_FileNameMax];
   int rand_i=0;
   int step_initial = 0;
   long int i_max = 0;
@@ -99,19 +100,27 @@ int CalcByTEM(
     }
   }
 
-  sprintf(sdt_phys, cFileNameSSRand, rand_i);
+  sprintf(sdt_phys, "%s", cFileNameSS);
   if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
     return -1;
   }
-  fprintf(fp, "%s",cLogSSRand);
+  fprintf(fp, "%s",cLogSS);
   fclose(fp);
 
-  sprintf(sdt_norm, cFileNameNormRand, rand_i);
+  sprintf(sdt_norm, "%s", cFileNameNorm);
   if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
     return -1;
   }
-  fprintf(fp, "%s",cLogNormRand);
+  fprintf(fp, "%s",cLogNorm);
   fclose(fp);
+
+  sprintf(sdt_flct, "%s", cFileNameFlct);
+  if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
+    return -1;
+  }
+  fprintf(fp, "%s",cLogFlct);
+  fclose(fp);
+
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;
@@ -123,7 +132,7 @@ int CalcByTEM(
     X->Bind.Def.NInterAll_OffDiagonal = iInterAllOffDiagonal_org;
 
     if (step_i % (X->Bind.Def.Lanczos_max / 10) == 0) {
-      fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
+      fprintf(stdoutMPI, cLogTEStep, step_i, X->Bind.Def.Lanczos_max);
     }
 
     if(X->Bind.Def.NLaser !=0) {
@@ -157,7 +166,7 @@ int CalcByTEM(
     else {
       TimeKeeperWithStep(&(X->Bind), cFileNameTEStep, cTEStep, "a", step_i);
     }
-    MultiplyForTEM(step_i, &(X->Bind));
+    MultiplyForTEM(&(X->Bind));
     //Add Diagonal Parts
     //Multiply Diagonal
     expec_energy_flct(&(X->Bind));
@@ -173,8 +182,16 @@ int CalcByTEM(
     if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
       return -1;
     }
-    fprintf(fp, "%.16lf %.16lf %.16lf %d\n", Time, global_norm, global_1st_norm, step_i);
+    fprintf(fp, "%.16lf %.16lf %d\n", Time, global_norm, step_i);
     fclose(fp);
+
+    if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
+      return -1;
+    }
+    fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", Time,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
+    fclose(fp);
+
+
 
     if (step_i % step_spin == 0) {
       expec_cisajs(&(X->Bind), v1);
