@@ -79,6 +79,12 @@ const char* c_Lanczos_SpectrumStep="%3d th Lanczos step for calculating spectrum
 const char* cTPQStep="set %d step %d:TPQ begins: %s";
 const char* cTPQStepEnd="set %d step %d:TPQ finishes: %s";
 
+//CalcByTEM.c
+const char* cTEStep="step %d:TE begins: %s";
+const char* cTEStepEnd="step %d:TE finishes: %s";
+
+
+
 //Lanczos_EigenValue.c
 const char* cLogLanczos_EigenValueNotConverged="Lanczos Eigenvalue is not converged in this process.";
 

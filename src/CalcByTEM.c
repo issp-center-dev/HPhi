@@ -151,7 +151,12 @@ int CalcByTEM(
       //[e] Yoshimi
     }
 
-    TimeKeeperWithStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", step_i);
+    if(step_i == step_initial){
+      TimeKeeperWithStep(&(X->Bind), cFileNameTEStep, cTEStep, "w", step_i);
+    }
+    else {
+      TimeKeeperWithStep(&(X->Bind), cFileNameTEStep, cTEStep, "a", step_i);
+    }
     MultiplyForTEM(step_i, &(X->Bind));
     //Add Diagonal Parts
     //Multiply Diagonal

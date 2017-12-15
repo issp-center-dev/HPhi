@@ -74,6 +74,11 @@ const char* c_Lanczos_SpectrumStep;
 const char* cTPQStep;
 const char* cTPQStepEnd;
 
+//CalcByTEM.c
+const char* cTEStep;
+const char* cTEStepEnd;
+
+
 //Lanczos_EigenValue.c
 const char* cLogLanczos_EigenValueNotConverged;
 const char* cLanczos_EigenValueStart;

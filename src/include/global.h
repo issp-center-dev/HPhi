@@ -118,6 +118,9 @@ const char* cFileName2BGreen_TPQ;/**> Name of the file to output two-body Green'
 const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
 const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
+//For Time evolution
+const char* cFileNameTEStep; /**> Name of the Time_TE_Step file.*/
+
 //For FullDiag
 const char* cFileNamePhys_FullDiag;/**> Name of the file to output physical values for canonical ensemble.*/
 const char* cFileNamePhys_FullDiag_GC;/**> Name of the file to output physical values for grand canonical ensemble.*/
