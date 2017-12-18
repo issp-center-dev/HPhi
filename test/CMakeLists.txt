@@ -170,6 +170,18 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_spingc_honey.sh
 )
 add_test(
-  NAME spectrum_genspingc_ladder
-  COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_genspingc_ladder.sh
+  NAME te_ac_hubbard_square
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_ac_hubbard_square.sh
+)
+add_test(
+  NAME te_dc_hubbard_square
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_dc_hubbard_square.sh
+)
+add_test(
+  NAME te_pulse_hubbard_square
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_pulse_hubbard_square.sh
+)
+add_test(
+  NAME te_quench_hubbard_square
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_quench_hubbard_square.sh
 )
