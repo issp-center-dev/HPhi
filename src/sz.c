@@ -36,6 +36,16 @@
  * 
  */
 
+int child_omp_sz_Kondo_hacker(
+        long unsigned int ib,
+        long unsigned int ihfbit,
+        struct BindStruct *X,
+        long unsigned int *list_1_,
+        long unsigned int *list_2_1_,
+        long unsigned int *list_2_2_,
+        long unsigned int *list_jb_
+);
+
 /** 
  * 
  * @brief generating Hilbert space
