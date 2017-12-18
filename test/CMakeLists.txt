@@ -87,6 +87,22 @@ add_test(
   NAME lobcg_genspingc_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_genspingc_ladder.sh
 )
+add_test(
+  NAME lobcg_hubbard_square_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_hubbard_square_restart.sh
+)
+add_test(
+  NAME lobcg_kondo_chain_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_kondo_chain_restart.sh
+)
+add_test(
+  NAME lobcg_spin_kagome_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spin_kagome_restart.sh
+)
+add_test(
+  NAME lobcg_genspin_ladder_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_genspin_ladder_restart.sh
+)
 #
 # Full Diag
 #

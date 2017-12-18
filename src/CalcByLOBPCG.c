@@ -685,20 +685,27 @@ int CalcByLOBPCG(
     and read from files.
     */
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
-    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, /*X->Bind.Def.k_exct - 1*/ 0, myrank);
-    childfopenALL(sdt, "rb", &fp);
-    if (fp == NULL) {
-      fprintf(stderr, "Error: Inputvector file is not found.\n");
-      exitMPI(-1);
-    }
-    byte_size = fread(&step_i, sizeof(int), 1, fp);
-    byte_size = fread(&i_max, sizeof(long int), 1, fp);
-    if (i_max != X->Bind.Check.idim_max) {
-      fprintf(stderr, "Error: Invalid Inputvector file.\n");
-      exitMPI(-1);
-    }
-    byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    c_malloc2(L_vec, X->Bind.Def.k_exct, X->Bind.Check.idim_max + 1);
+    for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
+      TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
+      sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
+      childfopenALL(sdt, "rb", &fp);
+      if (fp == NULL) {
+        fprintf(stderr, "Error: Inputvector file is not found.\n");
+        exitMPI(-1);
+      }
+      byte_size = fread(&step_i, sizeof(int), 1, fp);
+      byte_size = fread(&i_max, sizeof(long int), 1, fp);
+      if (i_max != X->Bind.Check.idim_max) {
+        fprintf(stderr, "Error: Invalid Inputvector file.\n");
+        exitMPI(-1);
+      }
+      byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+#pragma omp parallel for default(none) shared(L_vec, v1) firstprivate(i_max, ie), private(idim)
+      for (idim = 0; idim < i_max; idim++) {
+        L_vec[ie][idim] = v1[idim + 1];
+      }
+    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
 
