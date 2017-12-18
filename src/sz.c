@@ -1220,8 +1220,8 @@ int child_omp_sz_Kondo_hacker(
         if(num_up == X->Def.Nup && num_down == X->Def.Ndown && icheck_loc==1){
           //printf("ia=%ud ja=%ud \n",ia,ja);
           list_1_[ja+jb]=ia+ib*ihfbit;
-          list_2_1_[ia]=ja;
-          list_2_2_[ib]=jb;
+          list_2_1_[ia]=ja+1;
+          list_2_2_[ib]=jb+1;
           ja+=1;
         }
         ia = snoob(ia);
