@@ -48,91 +48,9 @@ $\HPhi$ は次の場所からダウンロードできます。\\
 $ tar xzvf HPhi-xxx.tar.gz
 \end{verbatim}
 
-$\HPhi$は次の2通りの方法でインストールできます。
-
-\subsection{\texttt{HPhiconfig.sh}を使う方法}
-
-展開したディレクトリのなかにある\verb|HPhiconfig.sh|スクリプトを次のように実行してください。
-(物性研システムB''sekirei''の場合)
-\begin{verbatim}
-$ bash HPhiconfig.sh sekirei
-\end{verbatim}
-これによりコンパイル環境設定ファイル\verb|make.sys|が\verb|src/|ディレクトリに作られます。
-\verb|HPhiconfig.sh|の引数は次のものに対応しています。
-\begin{itemize}
-\item \verb|sekirei| : 物性研究所システムB ''sekirei''
-\item \verb|fujitsu| : 物性研究所システムC ''maki''
-\item \verb|sr| : 日立製作所 SR16000
-\item \verb|intel| : Intelコンパイラ
-\item \verb|intel-openmpi| : Intelコンパイラ + OpenMPI
-\item \verb|intel-mpich| : Intelコンパイラ + MPICH2
-\item \verb|intel-intelmpi| : Intelコンパイラ + IntelMPI
-\item \verb|gcc| : GCC
-\item \verb|gcc-openmpi| : GCC + OpenMPI
-\item \verb|gcc-mpich| : GCC + MPICH2
-\item \verb|gcc-mac| : GCC + Mac
-\end{itemize}
-
-\verb|make.sys|の中身は次のようになっています(物性研システムB ''sekirei''の場合)。
-\begin{verbatim}
-CC = mpicc
-F90 = mpif90
-CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
-         -shared-intel -D MPI
-FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
-         -shared-intel -D MPI -fpp
-LIBS = -mkl -lifcore
-\end{verbatim}
-となります。それぞれのマクロ(変数)の説明は次のとおりです。
-\begin{itemize}
-\item \verb|CC| : C コンパイルコマンド(\verb|icc|, \verb|gcc|, \verb|fccpx|)
-\item \verb|F90| : fortran コンパイルコマンド(\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
-\item \verb|CFLAGS| : C コンパイルオプション。
-  \verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|などのOpenMP有効化のオプションは必須です。
-  MPI並列を行う場合は\verb|-D MPI|をつけます. 
-\item \verb|FFLAGS| : fortran コンパイルオプション。\verb|CFLAGS| と同様。
-\item \verb|LIBS| : リンクオプション
-\end{itemize}
-
-これでコンパイルのための準備が整います。その後
-\begin{verbatim}
-$ make HPhi
-\end{verbatim}
-とすることで実行可能ファイル\verb|HPhi|が\verb|src/内に|生成されるので、
-このディレクトリにパスを通すか、
-パスの通っている場所にシンボリックリンクを作ってください。
-
-\begin{screen}
-\Large 
-{\bf Tips}
-\normalsize
-
-実行ファイルにパスを通す時には、次のようにします。
-\\
-\verb|$ export PATH=${PATH}:|\underline{HPhiのディレクトリ}\verb|/src/|
-\\
-この設定を常に残すには、例えばログインシェルが\verb|bash|の場合には
-\verb|~/.bashrc|ファイルに上記のコマンドを記載します。
-\end{screen}
-
-\subsection{cmakeを使う場合}
-
-\begin{screen}
-\Large 
-{\bf Tips}
-\normalsize\\
-sekirei で cmake を利用するには
-\begin{verbatim}
-source /home/issp/materiapps/tool/env.sh
-\end{verbatim}
-maki では
-\begin{verbatim}
-source /global/app/materiapps/tool/env.sh
-\end{verbatim}
-をあらかじめ実行する必要があります。
-\end{screen}
-
-HPhiを展開したディレクトリのパスを\$PathTohphi 、ビルドディレクトリを\$HOME/build/hphi (任意の場所を指定可能)とした場合に、
+%$\HPhi$は次の2通りの方法でインストールできます。
+$\HPhi$はcmakeを利用してインストールできます\footnote{\texttt{HPhiconfig.sh}を使う方法はver.3.0よりサポート外となりました}。
+$\HPhi$を展開したディレクトリのパスを\$PathTohphi 、ビルドディレクトリを\$HOME/build/hphi (任意の場所を指定可能)とした場合に、
 \begin{verbatim}
 cd $HOME/build/hphi
 cmake -DCONFIG=gcc $PathTohphi
@@ -156,8 +74,87 @@ make
 \end{verbatim}
 実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。
 なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、新規に上記作業を行うことをお薦めします。
+また、SSE2が使用出来る場合には、cmakeでのコンパイル時\verb$-DHAVE_SSE2$を付け加えてください.
 
-SSE2が使用出来る場合には、cmakeでのコンパイル時\verb$-DHAVE_SSE2$を付け加えてください.
+\Large 
+\begin{screen}
+{\bf Tips}
+\normalsize\\
+sekirei で cmake を利用するには
+\begin{verbatim}
+source /home/issp/materiapps/tool/env.sh
+\end{verbatim}
+をあらかじめ実行する必要があります。
+\end{screen}
+
+\normalsize
+
+%\subsection{\texttt{HPhiconfig.sh}を使う方法}
+
+%展開したディレクトリのなかにある\verb|HPhiconfig.sh|スクリプトを次のように実行してください。
+%(物性研システムB''sekirei''の場合)
+%\begin{verbatim}
+%$ bash HPhiconfig.sh sekirei
+%\end{verbatim}
+%これによりコンパイル環境設定ファイル\verb|make.sys|が\verb|src/|ディレクトリに作られます。
+%\verb|HPhiconfig.sh|の引数は次のものに対応しています。
+%\begin{itemize}
+%\item \verb|sekirei| : 物性研究所システムB ''sekirei''
+%\item \verb|fujitsu| : 物性研究所システムC ''maki''
+%\item \verb|sr| : 日立製作所 SR16000
+%\item \verb|intel| : Intelコンパイラ
+%\item \verb|intel-openmpi| : Intelコンパイラ + OpenMPI
+%\item \verb|intel-mpich| : Intelコンパイラ + MPICH2
+%\item \verb|intel-intelmpi| : Intelコンパイラ + IntelMPI
+%\item \verb|gcc| : GCC
+%\item \verb|gcc-openmpi| : GCC + OpenMPI
+%\item \verb|gcc-mpich| : GCC + MPICH2
+%\item \verb|gcc-mac| : GCC + Mac
+%\end{itemize}
+%
+%\verb|make.sys|の中身は次のようになっています(物性研システムB ''sekirei''の場合)。
+%\begin{verbatim}
+%CC = mpicc
+%F90 = mpif90
+%CFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+%         -shared-intel -D MPI
+%FFLAGS = -fopenmp -O3 -g -traceback -xHost -ipo -mcmodel=large \
+%         -shared-intel -D MPI -fpp
+%LIBS = -mkl -lifcore
+%\end{verbatim}
+%となります。それぞれのマクロ(変数)の説明は次のとおりです。
+%\begin{itemize}
+%\item \verb|CC| : C コンパイルコマンド(\verb|icc|, \verb|gcc|, \verb|fccpx|)
+%\item \verb|F90| : fortran コンパイルコマンド(\verb|ifort|, \verb|gfortran|, \verb|frtpx|)
+%\item \verb|CFLAGS| : C コンパイルオプション。
+%  \verb|-openmp|, \verb|-fopenmp|, \verb|-qopenmp|などのOpenMP有効化のオプションは必須です。
+%  MPI並列を行う場合は\verb|-D MPI|をつけます. 
+%\item \verb|FFLAGS| : fortran コンパイルオプション。\verb|CFLAGS| と同様。
+%\item \verb|LIBS| : リンクオプション
+%\end{itemize}
+%
+%これでコンパイルのための準備が整います。その後
+%\begin{verbatim}
+%$ make HPhi
+%\end{verbatim}
+%とすることで実行可能ファイル\verb|HPhi|が\verb|src/内に|生成されるので、
+%このディレクトリにパスを通すか、
+%パスの通っている場所にシンボリックリンクを作ってください。
+%
+%\begin{screen}
+%\Large 
+%{\bf Tips}
+%\normalsize
+%
+%実行ファイルにパスを通す時には、次のようにします。
+%\\
+%\verb|$ export PATH=${PATH}:|\underline{HPhiのディレクトリ}\verb|/src/|
+%\\
+%この設定を常に残すには、例えばログインシェルが\verb|bash|の場合には
+%\verb|~/.bashrc|ファイルに上記のコマンドを記載します。
+%\end{screen}
+%
+%\subsection{cmakeを使う場合}
 
 \label{Sec:HowToInstall}
 \section{ディレクトリ構成}
