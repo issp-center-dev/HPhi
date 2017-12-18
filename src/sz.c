@@ -221,8 +221,8 @@ int sz
       // this part can not be parallelized
       jb = 0;
       num_loc=0;
-      for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
-        if(X->Def.LocSpn[j] != ITINERANT){
+      for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){ // counting # of localized spins
+        if(X->Def.LocSpn[j] != ITINERANT){ // //ITINERANT ==0 -> itinerant
           num_loc += 1;
         }
       }
@@ -262,26 +262,27 @@ int sz
     break;
 
     case Hubbard:
-
       hacker = X->Def.read_hacker;
       if(hacker==0){
         // this part can not be parallelized
         jb = 0;
-        for(ib=0;ib<X->Check.sdim;ib++){
-          list_jb[ib]=jb;
-          i=ib*ihfbit;
-          num_up=0;
-          for(j=0;j<=N2-2;j+=2){
+        for(ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
+          list_jb[ib] = jb;
+          i           = ib*ihfbit;
+          //[s] counting # of up and down electrons
+          num_up      = 0;
+          for(j=0;j<=N2-2;j+=2){ // even -> up spin
             div=i & X->Def.Tpow[j];
             div=div/X->Def.Tpow[j];
             num_up+=div;
           }
           num_down=0;
-          for(j=1;j<=N2-1;j+=2){
+          for(j=1;j<=N2-1;j+=2){ // odd -> down spin
             div=i & X->Def.Tpow[j];
             div=div/X->Def.Tpow[j];
             num_down+=div;
           }
+          //[e] counting # of up and down electrons
           tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
           all_up   = (X->Def.Nsite+tmp_res)/2;
           all_down = (X->Def.Nsite-tmp_res)/2;
@@ -454,18 +455,18 @@ int sz
 
       jb = 0;
       num_loc=0;
-      for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
+      for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){// counting localized # of spins
         if(X->Def.LocSpn[j] != ITINERANT){
           num_loc += 1;
         }
       }
 
-      for(ib=0;ib<X->Check.sdim;ib++){
-        list_jb[ib]=jb;
-        i=ib*ihfbit;
-        num_up=0;
-        num_down=0;	
-        icheck_loc=1;
+      for(ib=0;ib<X->Check.sdim;ib++){ //sdim = 2^(N/2)
+        list_jb[ib] = jb;
+        i           = ib*ihfbit; // ihfbit=pow(2,((Nsite+1)/2))
+        num_up      = 0;
+        num_down    = 0;	
+        icheck_loc  = 1;
 
         for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
           div_up    = i & X->Def.Tpow[2*j];
@@ -478,22 +479,21 @@ int sz
           }else{    
             num_up   += div_up;     
             num_down += div_down;
-            if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+            if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){ // odd site
               icheck_loc= icheck_loc;
               ihfSpinDown=div_down;
               if(div_down ==0){
                 num_up += 1;
               }
-            }
-            else{
-              icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+            }else{
+              icheck_loc   = icheck_loc*(div_up^div_down);// exclude empty or doubly occupied site
             }
           }
         }
 
-        if(icheck_loc == 1){
+        if(icheck_loc == 1){ // itinerant of local spins without holon or doublon
           tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-          all_loc =  X->Def.NLocSpn-num_loc;
+          all_loc =  X->Def.NLocSpn-num_loc; // # of local spins
           all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
           all_down = (X->Def.Nsite-tmp_res)/2-all_loc;
           if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
@@ -526,10 +526,19 @@ int sz
       TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
       TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
-      icnt = 0;
+      hacker = X->Def.read_hacker;
+      if(hacker==0){
+        icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
-      for(ib=0;ib<X->Check.sdim;ib++){
-        icnt+=child_omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+        for(ib=0;ib<X->Check.sdim;ib++){
+          icnt+=child_omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+        }
+      }else if(hacker==1){
+        icnt = 0;
+#pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
+        for(ib=0;ib<X->Check.sdim;ib++){
+          icnt+=child_omp_sz_Kondo_hacker(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+        } 
       }
       break;
 
@@ -1118,6 +1127,126 @@ int child_omp_sz_Kondo(
  * 
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
+ */
+int child_omp_sz_Kondo_hacker(
+                       long unsigned int ib,
+                       long unsigned int ihfbit,
+                       struct BindStruct *X,
+                       long unsigned int *list_1_,
+                       long unsigned int *list_2_1_,
+                       long unsigned int *list_2_2_,
+                       long unsigned int *list_jb_
+                       )
+{
+  long unsigned int i,j; 
+  long unsigned int ia,ja,jb;
+  long unsigned int div_down, div_up;
+  long unsigned int num_up,num_down;
+  long unsigned int tmp_num_up,tmp_num_down;
+  int icheck_loc;
+    
+  jb = list_jb_[ib];
+  i  = ib*ihfbit;
+    
+  num_up   = 0;
+  num_down = 0;
+  icheck_loc=1;
+  for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
+    div_up    = i & X->Def.Tpow[2*j];
+    div_up    = div_up/X->Def.Tpow[2*j];
+    div_down  = i & X->Def.Tpow[2*j+1];
+    div_down  = div_down/X->Def.Tpow[2*j+1];
+
+    if(X->Def.LocSpn[j] == ITINERANT){
+      num_up   += div_up;        
+      num_down += div_down;  
+    }else{    
+      num_up   += div_up;        
+      num_down += div_down;
+      if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+        icheck_loc= icheck_loc;
+      }
+      else{
+        icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubly occupied site
+      }
+    }
+  }
+//[s] get ja  
+  ja           = 1;
+  tmp_num_up   = num_up;
+  tmp_num_down = num_down;
+  if(icheck_loc ==1){
+    //for(ia=0;ia<X->Check.sdim;ia++){
+    ia = X->Def.Tpow[X->Def.Nup+X->Def.Ndown-tmp_num_up-tmp_num_down]-1;
+    //ia = 1;
+    //if(ia < X->Check.sdim && ia!=0){
+    //ia = snoob(ia);
+    while(ia < X->Check.sdim && ia!=0){
+    // for(ia=0;ia<X->Check.sdim;ia++){
+        //[s] proceed ja
+        i        = ia;
+        num_up   =  tmp_num_up;
+        num_down =  tmp_num_down;
+        icheck_loc=1;
+        for(j=0;j<(X->Def.Nsite+1)/2;j++){
+          div_up    = i & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = i & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+  	
+          if(X->Def.LocSpn[j] ==  ITINERANT){
+            num_up   += div_up;        
+            num_down += div_down;  
+          }else{    
+            num_up   += div_up;        
+            num_down += div_down;  
+            if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+              icheck_loc= icheck_loc;
+            }
+            else{
+              icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+            }
+          }
+        }
+        
+        if(icheck_loc == 1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT && X->Def.Nsite%2==1){
+          div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
+          div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
+          div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
+          div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
+          icheck_loc= icheck_loc*(div_up^div_down);
+        }
+        
+        if(num_up == X->Def.Nup && num_down == X->Def.Ndown && icheck_loc==1){
+          //printf("ia=%ud ja=%ud \n",ia,ja);
+          list_1_[ja+jb]=ia+ib*ihfbit;
+          list_2_1_[ia]=ja+1;
+          list_2_2_[ib]=jb+1;
+          ja+=1;
+        }
+        ia = snoob(ia);
+        //[e] proceed ja
+        //ia+=1;
+      //}
+    }
+  }
+//[e] get ja
+  ja=ja-1;    
+  return ja; 
+}
+
+
+/** 
+ * 
+ * 
+ * @param ib 
+ * @param ihfbit 
+ * @param N2 
+ * @param X 
+ * 
+ * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int child_omp_sz_KondoGC(
                          long unsigned int ib,  //!<[in]

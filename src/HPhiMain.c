@@ -290,7 +290,7 @@ int main(int argc, char* argv[]){
       if (CalcByLanczos(&X) != TRUE) {
         FinalizeMPI();
         StopTimer(4000);
-        return -1;
+        return 0;
       }
       StopTimer(4000);
       break;
@@ -298,7 +298,7 @@ int main(int argc, char* argv[]){
     case CG:
       if (CalcByLOBPCG(&X) != TRUE) {
         FinalizeMPI();
-        return -1;
+        return 0;
       }
       break;
 
@@ -313,7 +313,7 @@ int main(int argc, char* argv[]){
         if (CalcByFullDiag(&X) != TRUE) {
           FinalizeMPI();
           StopTimer(5000);
-          return -1;
+          return 0;
 
         }
         StopTimer(5000);
@@ -324,7 +324,7 @@ int main(int argc, char* argv[]){
         if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
           FinalizeMPI();
           StopTimer(3000);
-          return -1;
+          return 0;
         }
         StopTimer(3000);
       break;
@@ -346,7 +346,7 @@ int main(int argc, char* argv[]){
     if (CalcSpectrum(&X) != TRUE) {
       FinalizeMPI();
       StopTimer(6000);
-      return -1;
+      return 0;
     }
     StopTimer(6000);
   }
