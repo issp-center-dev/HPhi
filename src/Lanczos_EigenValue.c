@@ -92,6 +92,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
         return -2;
       }
       X->Def.Lanczos_restart=liLanczosStp;
+      //Calculate EigenValue
+
       liLanczosStp = liLanczosStp+X->Def.Lanczos_max;
       alpha1=alpha[X->Def.Lanczos_restart];
       beta1=beta[X->Def.Lanczos_restart];
@@ -214,8 +216,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       fclose(fp);
     }
 
-    if (stp > 2 && stp % 2 == 0) {
-
+    //if (stp > 2 && stp % 2 == 0) {
+    if (stp > 2) {
       childfopenMPI(sdt_2, "a", &fp);
 
       d_malloc2(tmp_mat, stp, stp);
@@ -262,9 +264,11 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       fclose(fp);
       if (stp > Target) {
         if (fabs((E_target - ebefor) / E_target) < eps_Lanczos || fabs(beta[stp]) < pow(10.0, -14)) {
+          /*
           if(X->Def.iReStart == RESTART_INOUT ||X->Def.iReStart == RESTART_OUT){
             break;
           }
+           */
           d_malloc1(tmp_E, stp + 1);
           StartTimer(4102);
           vec12(alpha, beta, stp, tmp_E, X);
@@ -282,15 +286,17 @@ int Lanczos_EigenValue(struct BindStruct *X) {
     }
   }
   if (X->Def.iReStart == RESTART_INOUT ||X->Def.iReStart == RESTART_OUT ){
-    OutputTMComponents(X, alpha,beta, dnorm, stp-1);
-    OutputLanczosVector(X, v0, v1, stp-1);
-    return 0;
+    if(stp != X->Def.Lanczos_restart+2) { // 2 steps are needed to get the value: E[stp+2]-E[stp+1]
+      OutputTMComponents(X, alpha, beta, dnorm, stp - 1);
+      OutputLanczosVector(X, v0, v1, stp - 1);
+    }
+    //return 0;
   }
 
   sprintf(sdt, cFileNameTimeKeep, X->Def.CDataFileHead);
   if (iconv != 0) {
     sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
-    fprintf(stderr, "  Lanczos Eigenvalue is not converged in this process.\n");
+    fprintf(stdoutMPI, "  Lanczos Eigenvalue is not converged in this process.\n");
     return -1;
   }
 
