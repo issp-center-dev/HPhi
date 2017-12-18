@@ -36,6 +36,22 @@ add_test(
   NAME lanczos_genspingc_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_genspingc_ladder.sh
 )
+add_test(
+  NAME lanczos_hubbard_square_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_hubbard_square_restart.sh
+)
+add_test(
+  NAME lanczos_kondo_chain_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_kondo_chain_restart.sh
+)
+add_test(
+  NAME lanczos_spin_kagome_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spin_kagome_restart.sh
+)
+add_test(
+  NAME lanczos_genspin_ladder_restart
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_genspin_ladder_restart.sh
+)
 #
 # LOBCG
 #
