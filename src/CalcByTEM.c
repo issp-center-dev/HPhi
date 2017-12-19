@@ -67,6 +67,10 @@ int CalcByTEM(
   double Time = X->Bind.Def.Param.Tinit;
   double dt = ((X->Bind.Def.NLaser==0)? 0.0: X->Bind.Def.Param.TimeSlice);
 
+  if(X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max){
+    fprintf(stdoutMPI, "Error: NTETimeSteps must be larger than Lanczos_max.\n");
+    return -1;
+  }
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
   fprintf(stdoutMPI, "%s", cLogTEM_Start);
@@ -141,21 +145,22 @@ int CalcByTEM(
     else {
       // common procedure
       Time = X->Bind.Def.TETime[step_i];
-      if (step_i == 0) dt = X->Bind.Def.TETime[0];
+      if (step_i == 0) dt = 0.0;
       else {
         dt = X->Bind.Def.TETime[step_i] - X->Bind.Def.TETime[step_i - 1];
       }
       X->Bind.Def.Param.TimeSlice = dt;
 
       // Set interactions
-      if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
-        MakeTEDTransfer(&(X->Bind), step_i);
-      } else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
-        MakeTEDInterAll(&(X->Bind), step_i);
-      } else {
+      if(X->Bind.Def.NTETransferMax != 0 && X->Bind.Def.NTEInterAllMax!=0){
         fprintf(stdoutMPI,
                 "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
         return -1;
+      }
+      else if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
+        MakeTEDTransfer(&(X->Bind), step_i);
+      }else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
+        MakeTEDInterAll(&(X->Bind), step_i);
       }
       //[e] Yoshimi
     }
@@ -270,5 +275,6 @@ void MakeTEDInterAll(struct BindStruct *X, const int timeidx){
     }
     X->Def.ParaInterAll_OffDiagonal[i+X->Def.NInterAll_OffDiagonal]=X->Def.ParaTEInterAllOffDiagonal[timeidx][i];
   }
+  X->Def.NInterAll_OffDiagonal += X->Def.NTEInterAllOffDiagonal[timeidx];
 }
 
