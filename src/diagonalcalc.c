@@ -229,12 +229,13 @@ int diagonalcalcForTE
     }
 
     if (X->Def.NTEChemi[_istep] > 0) {
-      isite1 = X->Def.EDChemi[i]+1;
-      A_spin   = X->Def.EDSpinChemi[i];
-      tmp_V  = -X->Def.EDParaChemi[i];
-
-      if (SetDiagonalTEChemi(isite1, A_spin, tmp_V, X, tmp_v0, tmp_v1) != 0) {
-        return -1;
+      for(i=0; i< X->Def.NTEChemi[_istep]; i++) {
+        isite1 = X->Def.TEChemi[_istep][i] + 1;
+        A_spin = X->Def.SpinTEChemi[_istep][i];
+        tmp_V = -X->Def.ParaTEChemi[_istep][i];
+        if (SetDiagonalTEChemi(isite1, A_spin, tmp_V, X, tmp_v0, tmp_v1) != 0) {
+          return -1;
+        }
       }
     }
   }
@@ -1767,7 +1768,6 @@ int SetDiagonalTEChemi(
         double complex *tmp_v1
 ){
   long unsigned int is1_up;
-  long unsigned int ibit1_up;
   long unsigned int num1;
   long unsigned int isigma1 =spin;
   long unsigned int is1,ibit1;
