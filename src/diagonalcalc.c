@@ -1890,7 +1890,7 @@ firstprivate(i_max, dtmp_V) private(j)
     case Spin:
       if(X->Def.iFlgGeneralSpin==FALSE){
         is1_up   = X->Def.Tpow[isite1-1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1, ibit1_up)
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1)
         for(j = 1;j <= i_max;j++){
           num1=((list_1[j]& is1_up)/is1_up)^(1-spin);
           tmp_v0[j] += dtmp_V * num1*tmp_v1[j];
