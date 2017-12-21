@@ -1583,6 +1583,7 @@ int ReadDefFileIdxPara(
             d_malloc1(X->ParaTEInterAllDiagonal[idx], X->NTEInterAll[idx]);
             i_malloc2(X->TEInterAllOffDiagonal[idx], X->NTEInterAll[idx], 8);
             c_malloc1(X->ParaTEInterAllOffDiagonal[idx], X->NTEInterAll[idx]);
+            //Diagonal -> OffDiagonal -> search pair -> hermite
             if (GetDiagonalInterAll(X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx], X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx],
                     X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx], X->TEChemi[idx], X->SpinTEChemi[idx], X->ParaTEChemi[idx], &X->NTEChemi[idx], X->iCalcModel) != 0)
             {

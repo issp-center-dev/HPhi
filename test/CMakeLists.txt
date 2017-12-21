@@ -169,6 +169,10 @@ add_test(
   NAME spectrum_spingc_honey
   COMMAND ${CMAKE_SOURCE_DIR}/test/spectrum_spingc_honey.sh
 )
+
+#
+# Time evolution
+#
 add_test(
   NAME te_ac_hubbard_square
   COMMAND ${CMAKE_SOURCE_DIR}/test/te_ac_hubbard_square.sh
@@ -184,4 +188,20 @@ add_test(
 add_test(
   NAME te_quench_hubbard_square
   COMMAND ${CMAKE_SOURCE_DIR}/test/te_quench_hubbard_square.sh
+)
+add_test(
+  NAME te_hubbard_chain_interall
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_hubbard_chain_interall.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME te_hubbard_chain_interall_diagonal
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_hubbard_chain_interall_diagonal.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME te_spin_chain_interall
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_spin_chain_interall.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME te_kondo_chain_interall
+  COMMAND ${CMAKE_SOURCE_DIR}/test/te_kondo_chain_interall.sh ${CMAKE_SOURCE_DIR}
 )
