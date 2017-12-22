@@ -972,7 +972,7 @@ int ReadDefFileIdxPara(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
-  unsigned int i,idx, itype;
+  unsigned int i,j, idx, itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -1578,11 +1578,6 @@ int ReadDefFileIdxPara(
             X->NTEInterAll[idx] = icnt_interall;
             X->NTEInterAllDiagonal[idx] = icnt_diagonal;
             X->NTEInterAllOffDiagonal[idx] = icnt_interall - icnt_diagonal;
-
-            i_malloc2(X->TEInterAllDiagonal[idx], X->NTEInterAll[idx], 4);
-            d_malloc1(X->ParaTEInterAllDiagonal[idx], X->NTEInterAll[idx]);
-            i_malloc2(X->TEInterAllOffDiagonal[idx], X->NTEInterAll[idx], 8);
-            c_malloc1(X->ParaTEInterAllOffDiagonal[idx], X->NTEInterAll[idx]);
             //Diagonal -> OffDiagonal -> search pair -> hermite
             if (GetDiagonalInterAll(X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx], X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx],
                     X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx], X->TEChemi[idx], X->SpinTEChemi[idx], X->ParaTEChemi[idx], &X->NTEChemi[idx], X->iCalcModel) != 0)
@@ -1600,14 +1595,6 @@ int ReadDefFileIdxPara(
               fclose(fp);
               return (-1);
             }
-
-            //check Transfer Hermite
-            /*
-            if(CheckTETransferHermite(X, X->NTETransfer[idx], idx)!=0){
-              fclose(fp);
-              return ReadDefFileError(defname);
-            }
-             */
             idx++;
           }
 

@@ -258,22 +258,22 @@ void MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
 /// \brief Set interall interactions at timeidx-th time
 /// \param X struct for getting information of interall interactions
 /// \param timeidx index of time
-void MakeTEDInterAll(struct BindStruct *X, const int timeidx){
-  int i,j;
+void MakeTEDInterAll(struct BindStruct *X, const int timeidx) {
+  int i, j;
   //Clear values
-  for(i=0; i<X->Def.NTEInterAllMax ;i++) {
-    for(j =0; j<8; j++) {
+  for (i = 0; i < X->Def.NTEInterAllMax; i++) {
+    for (j = 0; j < 8; j++) {
       X->Def.InterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal][j] = 0;
     }
-    X->Def.ParaInterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal]=0.0;
+    X->Def.ParaInterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal] = 0.0;
   }
 
   //Input values
-  for(i=0; i<X->Def.NTEInterAllOffDiagonal[timeidx] ;i++){
-    for(j =0; j<8; j++) {
+  for (i = 0; i < X->Def.NTEInterAllOffDiagonal[timeidx]; i++) {
+    for (j = 0; j < 8; j++) {
       X->Def.InterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal][j] = X->Def.TEInterAllOffDiagonal[timeidx][i][j];
     }
-    X->Def.ParaInterAll_OffDiagonal[i+X->Def.NInterAll_OffDiagonal]=X->Def.ParaTEInterAllOffDiagonal[timeidx][i];
+    X->Def.ParaInterAll_OffDiagonal[i + X->Def.NInterAll_OffDiagonal] = X->Def.ParaTEInterAllOffDiagonal[timeidx][i];
   }
   X->Def.NInterAll_OffDiagonal += X->Def.NTEInterAllOffDiagonal[timeidx];
 }
