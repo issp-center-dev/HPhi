@@ -38,7 +38,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">HΦ
-   &#160;<span id="projectnumber">2.0.4</span>
+   &#160;<span id="projectnumber">3.0.0</span>
    </div>
   </td>
  </tr>
@@ -116,6 +116,9 @@ $(document).ready(function(){initNavTree('_progress_message_8c.html','');});
 <div class="title">ProgressMessage.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>File for defining progress messages.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;ProgressMessage.h&quot;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Include dependency graph for ProgressMessage.c:</div>
@@ -137,14 +140,6 @@ Variables</h2></td></tr>
 <tr class="separator:aa59a240a778bfd11454781b8afe4df08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a625722908c6f9849c4832504c9e5b95c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#a625722908c6f9849c4832504c9e5b95c">cProFinishAlloc</a> =&quot;\n###### LARGE ALLOCATE FINISH ! ######\n\n&quot;</td></tr>
 <tr class="separator:a625722908c6f9849c4832504c9e5b95c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6869dfa0aa83d5c10b9d6ff58d4f60b8"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#a6869dfa0aa83d5c10b9d6ff58d4f60b8">cProEDNTrans</a> =&quot;EDTrans EDNTransfer=%d \n&quot;</td></tr>
-<tr class="separator:a6869dfa0aa83d5c10b9d6ff58d4f60b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fe9826527bbe1fe93f817e196ff62ae"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#a1fe9826527bbe1fe93f817e196ff62ae">cProEDNChemi</a> =&quot;EDTrans EDNChemi=%d \n&quot;</td></tr>
-<tr class="separator:a1fe9826527bbe1fe93f817e196ff62ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab115a5c15a37686974ba852bbd7b4e9b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#ab115a5c15a37686974ba852bbd7b4e9b">cProStartCalcSgn</a> = &quot; Start: Calculate sgn. \n&quot;</td></tr>
-<tr class="separator:ab115a5c15a37686974ba852bbd7b4e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaae2eee376a204c8b4ca3c53259e8db2"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#aaae2eee376a204c8b4ca3c53259e8db2">cProEndCalcSgn</a> = &quot; End : Calculate sgn. \n&quot;</td></tr>
-<tr class="separator:aaae2eee376a204c8b4ca3c53259e8db2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f52c07303f8d6df182f4b3dbf382161"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#a3f52c07303f8d6df182f4b3dbf382161">cProStartCalcSz</a> = &quot; Start: Calculate HilbertNum for fixed Sz. \n&quot;</td></tr>
 <tr class="separator:a3f52c07303f8d6df182f4b3dbf382161"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2cff93c9c12dfd14b063e59b70f259c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#ad2cff93c9c12dfd14b063e59b70f259c">cProEndCalcSz</a> = &quot; End : Calculate HilbertNum for fixed Sz. \n\n&quot;</td></tr>
@@ -191,8 +186,16 @@ Variables</h2></td></tr>
 <tr class="separator:ae9a778f477363533e3dba910f769d52b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b6e84df61500ce3ccb0302204110e62"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#a7b6e84df61500ce3ccb0302204110e62">cLogFinish</a> =&quot;###### Finish Calculation. ######\n&quot;</td></tr>
 <tr class="separator:a7b6e84df61500ce3ccb0302204110e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe044f8c788d7d223452a22efa0fea1e"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#afe044f8c788d7d223452a22efa0fea1e">cLogTEM_Start</a> =&quot;###### Start: TimeEvolution by Taylor Expansion. ######\n\n&quot;</td></tr>
+<tr class="separator:afe044f8c788d7d223452a22efa0fea1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4a862f2e1dd7fcbf606c8f2557c21cf"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_progress_message_8c.html#aa4a862f2e1dd7fcbf606c8f2557c21cf">cLogTEM_End</a> =&quot;###### End : TimeEvolution by Taylor Expansion. ######\n\n&quot;</td></tr>
+<tr class="separator:aa4a862f2e1dd7fcbf606c8f2557c21cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Variable Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>File for defining progress messages. </p>
+
+<p>Definition in file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+</div><h2 class="groupheader">Variable Documentation</h2>
 <a class="anchor" id="a7b6e84df61500ce3ccb0302204110e62"></a>
 <div class="memitem">
 <div class="memproto">
@@ -203,9 +206,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00058">58</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00062">62</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -219,9 +222,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00054">54</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00058">58</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -235,9 +238,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00057">57</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00061">61</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -251,9 +254,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00056">56</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00060">60</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -267,9 +270,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00046">46</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00050">50</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -283,9 +286,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00045">45</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00049">49</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -299,9 +302,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00050">50</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00054">54</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -315,9 +318,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00049">49</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00053">53</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -331,9 +334,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00043">43</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00047">47</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -347,9 +350,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00042">42</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00046">46</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -363,9 +366,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00053">53</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00057">57</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>.</p>
 
 </div>
 </div>
@@ -379,9 +382,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00033">33</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00037">37</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -395,9 +398,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00032">32</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00036">36</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>.</p>
 
 </div>
 </div>
@@ -411,7 +414,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00035">35</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00039">39</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>.</p>
 
@@ -427,9 +430,41 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00034">34</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00038">38</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa4a862f2e1dd7fcbf606c8f2557c21cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cLogTEM_End =&quot;###### End : TimeEvolution by Taylor Expansion. ######\n\n&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00065">65</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="afe044f8c788d7d223452a22efa0fea1e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cLogTEM_Start =&quot;###### Start: TimeEvolution by Taylor Expansion. ######\n\n&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00064">64</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -443,9 +478,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00039">39</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00043">43</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -459,37 +494,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00038">38</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00042">42</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a1fe9826527bbe1fe93f817e196ff62ae"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cProEDNChemi =&quot;EDTrans EDNChemi=%d \n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00022">22</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a6869dfa0aa83d5c10b9d6ff58d4f60b8"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cProEDNTrans =&quot;EDTrans EDNTransfer=%d \n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00021">21</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -503,23 +510,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00030">30</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00034">34</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00049">diagonalcalc()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aaae2eee376a204c8b4ca3c53259e8db2"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cProEndCalcSgn = &quot; End : Calculate sgn. \n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00024">24</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00085">diagonalcalc()</a>.</p>
 
 </div>
 </div>
@@ -533,9 +526,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00026">26</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00030">30</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -549,9 +542,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00028">28</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00032">32</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="output__list_8c_source.html#l00029">output_list()</a>.</p>
+<p>Referenced by <a class="el" href="output__list_8c_source.html#l00040">output_list()</a>.</p>
 
 </div>
 </div>
@@ -565,9 +558,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00020">20</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00028">28</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -581,9 +574,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00019">19</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00027">27</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>.</p>
+<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>.</p>
 
 </div>
 </div>
@@ -597,9 +590,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00018">18</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00026">26</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>.</p>
+<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>.</p>
 
 </div>
 </div>
@@ -613,23 +606,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00029">29</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00033">33</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00049">diagonalcalc()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ab115a5c15a37686974ba852bbd7b4e9b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cProStartCalcSgn = &quot; Start: Calculate sgn. \n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00023">23</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00085">diagonalcalc()</a>.</p>
 
 </div>
 </div>
@@ -643,9 +622,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00025">25</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00029">29</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -659,9 +638,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00027">27</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_progress_message_8c_source.html#l00031">31</a> of file <a class="el" href="_progress_message_8c_source.html">ProgressMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="output__list_8c_source.html#l00029">output_list()</a>.</p>
+<p>Referenced by <a class="el" href="output__list_8c_source.html#l00040">output_list()</a>.</p>
 
 </div>
 </div>
@@ -671,7 +650,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="_progress_message_8c.html">ProgressMessage.c</a></li>
-    <li class="footer">Generated on Thu Oct 26 2017 15:48:21 for HΦ by
+    <li class="footer">Generated on Mon Dec 25 2017 18:13:04 for HΦ by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

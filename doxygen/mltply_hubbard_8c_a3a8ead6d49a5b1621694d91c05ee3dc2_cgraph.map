@@ -1,40 +1,39 @@
 <map id="mltplyHubbardGC" name="mltplyHubbardGC">
-<area shape="rect" id="node2" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="1147,93,1225,120"/>
-<area shape="rect" id="node3" href="$mltply_hubbard_core_8c.html#a4765a56a883cd352b3f08546fc3bff08" title="Compute mask for bit operation of exchange term. " alt="" coords="188,873,351,900"/>
-<area shape="rect" id="node4" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="203,925,336,966"/>
-<area shape="rect" id="node5" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="185,991,354,1017"/>
-<area shape="rect" id="node6" href="$mltply_hubbard_core_8c.html#a7fbaf32cf6b714a4304e20db480b5404" title="Compute mask for bit operation of pairhop term. " alt="" coords="192,1041,347,1068"/>
-<area shape="rect" id="node7" href="$mltply_hubbard_8c.html#a23af00b3160b075156e1c842bb3a879d" title="Compute Exchange term (grandcanonical) in single process. " alt="" coords="200,1092,339,1119"/>
-<area shape="rect" id="node9" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="189,667,349,693"/>
-<area shape="rect" id="node13" href="$mltply_m_p_i_hubbard_8c.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="423,718,583,759"/>
-<area shape="rect" id="node17" href="$mltply_m_p_i_hubbard_8c.html#a83da98c99feda75fe253ef0177bbb9ab" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="423,783,583,825"/>
-<area shape="rect" id="node19" href="$mltply_hubbard_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="Compute inter&#45;all term (canonical) " alt="" coords="686,872,833,899"/>
-<area shape="rect" id="node26" href="$mltply_hubbard_8c.html#ad16f7b63b9768957a720004697a7a774" title="Compute pairhopp term (grandcanonical) " alt="" coords="203,1143,335,1169"/>
-<area shape="rect" id="node28" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="228,1193,311,1220"/>
-<area shape="rect" id="node29" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="228,1244,311,1271"/>
-<area shape="rect" id="node30" href="$mltply_m_p_i_hubbard_core_8c.html#a571209928d6c7125abd413555f89d748" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="674,86,845,127"/>
-<area shape="rect" id="node33" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="413,297,592,338"/>
-<area shape="rect" id="node34" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="668,347,851,389"/>
-<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="180,381,359,422"/>
-<area shape="rect" id="node8" href="$mltply_hubbard_core_8c.html#a85a5f403eb683e5ebee4ab40a8a390e5" title="Compute exchange term of grandcanonical Hubbard system. " alt="" coords="407,1092,599,1119"/>
-<area shape="rect" id="node10" href="$mltply_hubbard_core_8c.html#acf3b726a0fbe639a2b7169210c3a24c4" title="Operation of &#160;(Grandcanonical) " alt="" coords="459,667,547,693"/>
-<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="961,515,1046,541"/>
-<area shape="rect" id="node12" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="1285,624,1347,651"/>
-<area shape="rect" id="node14" href="$mltply_m_p_i_hubbard_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="689,617,830,658"/>
-<area shape="rect" id="node15" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="970,571,1037,597"/>
-<area shape="rect" id="node16" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1159,571,1213,597"/>
-<area shape="rect" id="node18" href="$mltply_m_p_i_hubbard_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="689,682,830,723"/>
-<area shape="rect" id="node20" href="$mltply_hubbard_core_8c.html#a6e5c6a3af522a385b4ee60f66efb2557" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="923,995,1084,1037"/>
-<area shape="rect" id="node22" href="$mltply_hubbard_core_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="922,865,1085,906"/>
-<area shape="rect" id="node24" href="$mltply_hubbard_core_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="920,930,1087,971"/>
-<area shape="rect" id="node25" href="$mltply_hubbard_core_8c.html#a6d06655a28258eea84191579396219e1" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="922,799,1085,841"/>
-<area shape="rect" id="node21" href="$mltply_hubbard_core_8c.html#aa81e90673aeb377803302428fe3c7b64" title=" term in Hubbard (canonical) " alt="" coords="1147,937,1225,964"/>
-<area shape="rect" id="node23" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="1135,777,1237,804"/>
-<area shape="rect" id="node27" href="$mltply_hubbard_core_8c.html#ab45a0a7e963c4c9d2d4bfa86ca5c44b8" title="Compute pairhopp term of grandcanonical Hubbard system. " alt="" coords="410,1143,595,1169"/>
-<area shape="rect" id="node31" href="$mltply_m_p_i_hubbard_core_8c.html#ad7c739742ce1cad082947c7f647d1289" title="Check the occupation of both site 1 and site 3. " alt="" coords="941,93,1065,120"/>
-<area shape="rect" id="node32" href="$mltply_m_p_i_hubbard_core_8c.html#a4a379d4c2b9e6fd33972c1049c57a26a" title="Check the occupation of &#160;state, and compute the index of final wavefunction associated to ..." alt="" coords="1137,195,1235,221"/>
-<area shape="rect" id="node35" href="$mltply_m_p_i_hubbard_core_8c.html#a030d235af73dc5a86e82993363153156" title="Compute the index of final wavefunction associated to , and check whether this operator is relevant o..." alt="" coords="932,245,1075,272"/>
-<area shape="rect" id="node37" href="$mltply_m_p_i_hubbard_core_8c.html#a81ceaf1edd9e416156a2430f36ca6de3" title="Compute the index of final wavefunction associated to , and Fermion sign. " alt="" coords="950,413,1057,440"/>
-<area shape="rect" id="node36" href="$mltply_m_p_i_hubbard_core_8c.html#ae4ad198537fcc87eb94dba8535607204" title="Check the occupation of &#160;state, and compute the index of final wavefunction associated to ..." alt="" coords="1135,245,1237,272"/>
-<area shape="rect" id="node39" href="$mltply_m_p_i_hubbard_core_8c.html#ab59deb7bc8d1509683aa8f2b376cbceb" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="647,195,872,221"/>
+<area shape="rect" id="node2" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="1147,144,1225,170"/>
+<area shape="rect" id="node3" href="$mltply_hubbard_core_8c.html#a4765a56a883cd352b3f08546fc3bff08" title="Compute mask for bit operation of exchange term. " alt="" coords="188,777,351,804"/>
+<area shape="rect" id="node4" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="203,828,336,870"/>
+<area shape="rect" id="node5" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="185,894,354,921"/>
+<area shape="rect" id="node6" href="$mltply_hubbard_core_8c.html#a7fbaf32cf6b714a4304e20db480b5404" title="Compute mask for bit operation of pairhop term. " alt="" coords="192,945,347,972"/>
+<area shape="rect" id="node7" href="$mltply_hubbard_8c.html#a23af00b3160b075156e1c842bb3a879d" title="Compute Exchange term (grandcanonical) in single process. " alt="" coords="200,996,339,1022"/>
+<area shape="rect" id="node9" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="189,98,349,125"/>
+<area shape="rect" id="node13" href="$mltply_m_p_i_hubbard_8c.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="423,672,583,714"/>
+<area shape="rect" id="node16" href="$mltply_m_p_i_hubbard_8c.html#a83da98c99feda75fe253ef0177bbb9ab" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="423,738,583,779"/>
+<area shape="rect" id="node18" href="$mltply_hubbard_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="Compute inter&#45;all term (canonical) " alt="" coords="686,928,833,954"/>
+<area shape="rect" id="node25" href="$mltply_hubbard_8c.html#ad16f7b63b9768957a720004697a7a774" title="Compute pairhopp term (grandcanonical) " alt="" coords="203,1046,335,1073"/>
+<area shape="rect" id="node27" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="228,1097,311,1124"/>
+<area shape="rect" id="node28" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="228,1148,311,1174"/>
+<area shape="rect" id="node29" href="$mltply_m_p_i_hubbard_core_8c.html#a571209928d6c7125abd413555f89d748" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="674,134,845,175"/>
+<area shape="rect" id="node32" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="413,403,592,444"/>
+<area shape="rect" id="node33" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="668,462,851,503"/>
+<area shape="rect" id="node37" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="180,454,359,495"/>
+<area shape="rect" id="node8" href="$mltply_hubbard_core_8c.html#a85a5f403eb683e5ebee4ab40a8a390e5" title="Compute exchange term of grandcanonical Hubbard system. " alt="" coords="407,996,599,1022"/>
+<area shape="rect" id="node10" href="$mltply_hubbard_core_8c.html#acf3b726a0fbe639a2b7169210c3a24c4" title="Operation of &#160;(Grandcanonical) " alt="" coords="459,98,547,125"/>
+<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="961,250,1046,277"/>
+<area shape="rect" id="node12" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="1285,680,1347,706"/>
+<area shape="rect" id="node14" href="$mltply_m_p_i_hubbard_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="689,672,830,714"/>
+<area shape="rect" id="node15" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="970,625,1037,652"/>
+<area shape="rect" id="node17" href="$mltply_m_p_i_hubbard_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="689,738,830,779"/>
+<area shape="rect" id="node19" href="$mltply_hubbard_core_8c.html#a6e5c6a3af522a385b4ee60f66efb2557" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="923,1051,1084,1092"/>
+<area shape="rect" id="node21" href="$mltply_hubbard_core_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="922,920,1085,962"/>
+<area shape="rect" id="node23" href="$mltply_hubbard_core_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="920,986,1087,1027"/>
+<area shape="rect" id="node24" href="$mltply_hubbard_core_8c.html#a6d06655a28258eea84191579396219e1" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="922,855,1085,896"/>
+<area shape="rect" id="node20" href="$mltply_hubbard_core_8c.html#aa81e90673aeb377803302428fe3c7b64" title=" term in Hubbard (canonical) " alt="" coords="1147,993,1225,1020"/>
+<area shape="rect" id="node22" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="1135,833,1237,860"/>
+<area shape="rect" id="node26" href="$mltply_hubbard_core_8c.html#ab45a0a7e963c4c9d2d4bfa86ca5c44b8" title="Compute pairhopp term of grandcanonical Hubbard system. " alt="" coords="410,1046,595,1073"/>
+<area shape="rect" id="node30" href="$mltply_m_p_i_hubbard_core_8c.html#ad7c739742ce1cad082947c7f647d1289" title="Check the occupation of both site 1 and site 3. " alt="" coords="941,144,1065,170"/>
+<area shape="rect" id="node31" href="$mltply_m_p_i_hubbard_core_8c.html#a4a379d4c2b9e6fd33972c1049c57a26a" title="Check the occupation of &#160;state, and compute the index of final wavefunction associated to ..." alt="" coords="1137,301,1235,328"/>
+<area shape="rect" id="node34" href="$mltply_m_p_i_hubbard_core_8c.html#a030d235af73dc5a86e82993363153156" title="Compute the index of final wavefunction associated to , and check whether this operator is relevant o..." alt="" coords="932,352,1075,378"/>
+<area shape="rect" id="node36" href="$mltply_m_p_i_hubbard_core_8c.html#a81ceaf1edd9e416156a2430f36ca6de3" title="Compute the index of final wavefunction associated to , and Fermion sign. " alt="" coords="950,570,1057,597"/>
+<area shape="rect" id="node35" href="$mltply_m_p_i_hubbard_core_8c.html#ae4ad198537fcc87eb94dba8535607204" title="Check the occupation of &#160;state, and compute the index of final wavefunction associated to ..." alt="" coords="1135,352,1237,378"/>
+<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_core_8c.html#ab59deb7bc8d1509683aa8f2b376cbceb" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="647,301,872,328"/>
 </map>

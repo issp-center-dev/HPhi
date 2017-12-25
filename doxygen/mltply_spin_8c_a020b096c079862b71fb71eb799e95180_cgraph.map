@@ -1,15 +1,14 @@
 <map id="mltplyGeneralSpin" name="mltplyGeneralSpin">
 <area shape="rect" id="node2" href="$mltply_m_p_i_spin_8c.html#a07d9da0f2b4f214b02b24d1a7c7be0a4" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="181,58,352,99"/>
 <area shape="rect" id="node4" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="617,48,800,74"/>
-<area shape="rect" id="node7" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="625,149,792,176"/>
-<area shape="rect" id="node11" href="$mltply_m_p_i_spin_8c.html#a72dee131b34ccae9c95bfd2337a70954" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="181,123,352,164"/>
-<area shape="rect" id="node13" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="225,240,308,266"/>
-<area shape="rect" id="node14" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="225,290,308,317"/>
+<area shape="rect" id="node6" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="625,149,792,176"/>
+<area shape="rect" id="node10" href="$mltply_m_p_i_spin_8c.html#a72dee131b34ccae9c95bfd2337a70954" title="General interaction term in the Spin model + GC When both site1 and site2 are in the inter process re..." alt="" coords="181,123,352,164"/>
+<area shape="rect" id="node12" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="225,240,308,266"/>
+<area shape="rect" id="node13" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="225,290,308,317"/>
 <area shape="rect" id="node3" href="$mltply_m_p_i_spin_core_8c.html#ae8b5eaea3b894110484f2214d7566ecf" title="Compute &#160;term in the canonical general spin system when both sites are in the inter process region..." alt="" coords="400,58,569,99"/>
 <area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="675,98,742,125"/>
-<area shape="rect" id="node6" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="881,98,936,125"/>
-<area shape="rect" id="node8" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="848,149,969,176"/>
-<area shape="rect" id="node9" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="1017,149,1121,176"/>
-<area shape="rect" id="node10" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1169,149,1267,176"/>
-<area shape="rect" id="node12" href="$mltply_m_p_i_spin_core_8c.html#ac43adc132f4ddcfef02f936ba1d9784a" title="Compute &#160;term in the canonical general spin system when one of these sites is in the inter process re..." alt="" coords="402,123,567,164"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="848,149,969,176"/>
+<area shape="rect" id="node8" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="1017,149,1121,176"/>
+<area shape="rect" id="node9" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1169,149,1267,176"/>
+<area shape="rect" id="node11" href="$mltply_m_p_i_spin_core_8c.html#ac43adc132f4ddcfef02f936ba1d9784a" title="Compute &#160;term in the canonical general spin system when one of these sites is in the inter process re..." alt="" coords="402,123,567,164"/>
 </map>

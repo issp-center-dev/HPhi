@@ -1,8 +1,8 @@
 var searchData=
 [
   ['b_5fspin',['B_spin',['../struct_large_list.html#a7d84518da32ee1be30b4031b77e4b282',1,'LargeList']]],
-  ['barriermpi',['BarrierMPI',['../wrapper_m_p_i_8c.html#a1de4e228440442f34d491eedd7973622',1,'BarrierMPI():&#160;wrapperMPI.c'],['../wrapper_m_p_i_8h.html#a1de4e228440442f34d491eedd7973622',1,'BarrierMPI():&#160;wrapperMPI.c']]],
-  ['bcastmpi_5fli',['BcastMPI_li',['../wrapper_m_p_i_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0',1,'BcastMPI_li(int root, unsigned long int idim):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8h.html#a6c950c3f54e22b4572174c6cd4ce36b0',1,'BcastMPI_li(int root, unsigned long int idim):&#160;wrapperMPI.c']]],
+  ['barriermpi',['BarrierMPI',['../wrapper_m_p_i_8c.html#a1de4e228440442f34d491eedd7973622',1,'wrapperMPI.c']]],
+  ['bcastmpi_5fli',['BcastMPI_li',['../wrapper_m_p_i_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0',1,'wrapperMPI.c']]],
   ['beta',['beta',['../global_8h.html#acfb326d0978323ff7ff092dc0e2efc53',1,'global.h']]],
   ['bind',['Bind',['../struct_e_d_main_cal_struct.html#ac28ad147bf75b9b2864d9feb74bd4d29',1,'EDMainCalStruct']]],
   ['bindstruct',['BindStruct',['../struct_bind_struct.html',1,'']]],

@@ -1,51 +1,51 @@
 <map id="LOBPCG_Main" name="LOBPCG_Main">
-<area shape="rect" id="node2" href="$_calc_by_l_o_b_p_c_g_8c.html#a3e76c956cd831898d183033e84198a4b" title="Compute adaptively shifted preconditionar written in S. Yamada, et al., Transactions of JSCES..." alt="" coords="165,5,261,32"/>
-<area shape="rect" id="node3" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1220,157,1325,184"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1420,436,1475,463"/>
-<area shape="rect" id="node6" href="$xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f" title="d_free1" alt="" coords="181,1471,246,1497"/>
-<area shape="rect" id="node7" href="$_calc_by_l_o_b_p_c_g_8c.html#ae211b265e8918bbbe2d4a21575dfb291" title="Solve the generalized eigenvalue problem &#160;with the Lowdin&#39;s orthogonalization. " alt="" coords="174,2104,253,2131"/>
-<area shape="rect" id="node10" href="$_calc_by_l_o_b_p_c_g_8c.html#a27bd313c5c6e4ea3eba5e7715d20b54a" title="Initialize_wave" alt="" coords="519,512,627,539"/>
-<area shape="rect" id="node15" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="752,664,848,691"/>
-<area shape="rect" id="node17" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="185,1420,242,1447"/>
-<area shape="rect" id="node47" href="$_calc_by_l_o_b_p_c_g_8c.html#a977f41b5be3d424fcd341fc93c95ce2e" title="Output eigenvectors for restart LOBPCG method. " alt="" coords="985,411,1090,437"/>
-<area shape="rect" id="node48" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="527,259,619,285"/>
-<area shape="rect" id="node49" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="727,208,873,235"/>
-<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1408,157,1487,184"/>
-<area shape="rect" id="node8" href="$_calc_by_l_o_b_p_c_g_8c.html#a9c185d22681129ef639f56558ffcb0f1" title="zgemm_" alt="" coords="337,2104,409,2131"/>
-<area shape="rect" id="node9" href="$_calc_by_l_o_b_p_c_g_8c.html#ab3d3474861840c3dc1a09ff1ab028b96" title="zheevd_" alt="" coords="337,2155,408,2181"/>
-<area shape="rect" id="node11" href="$wrapper_m_p_i_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0" title="MPI wrapper function to broadcast unsigned long integer across processes. " alt="" coords="753,411,847,437"/>
-<area shape="rect" id="node12" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="1221,461,1325,488"/>
-<area shape="rect" id="node13" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1239,613,1306,640"/>
-<area shape="rect" id="node14" href="$wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8" title="MPI wrapper function to obtain sum of unsigned long integer across processes. " alt="" coords="994,613,1081,640"/>
-<area shape="rect" id="node16" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="990,664,1085,691"/>
-<area shape="rect" id="node18" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="532,1420,615,1447"/>
-<area shape="rect" id="node19" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="969,1179,1105,1205"/>
-<area shape="rect" id="node21" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original space. " alt="" coords="1185,689,1360,716"/>
-<area shape="rect" id="node22" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="532,1871,615,1897"/>
-<area shape="rect" id="node23" href="$mltply_hubbard_8c.html#a3a8ead6d49a5b1621694d91c05ee3dc2" title="perform Hamiltonian vector product for (extended) Hubbard type model (Grandcanonical). &#160;" alt="" coords="309,1289,436,1316"/>
-<area shape="rect" id="node39" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="319,1572,426,1599"/>
-<area shape="rect" id="node45" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="331,1673,414,1700"/>
-<area shape="rect" id="node46" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="321,1724,424,1751"/>
-<area shape="rect" id="node20" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="1230,1100,1315,1127"/>
-<area shape="rect" id="node24" href="$mltply_m_p_i_hubbard_8c.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="493,1187,653,1229"/>
-<area shape="rect" id="node25" href="$mltply_m_p_i_hubbard_8c.html#a83da98c99feda75fe253ef0177bbb9ab" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="493,1253,653,1294"/>
-<area shape="rect" id="node26" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="507,1623,640,1665"/>
-<area shape="rect" id="node27" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="493,1319,653,1345"/>
-<area shape="rect" id="node28" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="534,1369,613,1396"/>
-<area shape="rect" id="node29" href="$mltply_m_p_i_hubbard_core_8c.html#a571209928d6c7125abd413555f89d748" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="715,1179,885,1221"/>
-<area shape="rect" id="node30" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="711,1011,889,1053"/>
-<area shape="rect" id="node31" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="946,982,1129,1023"/>
-<area shape="rect" id="node32" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="484,1070,663,1111"/>
-<area shape="rect" id="node33" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="489,1471,658,1497"/>
-<area shape="rect" id="node34" href="$mltply_hubbard_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="Compute inter&#45;all term (canonical) " alt="" coords="500,816,647,843"/>
-<area shape="rect" id="node35" href="$mltply_hubbard_core_8c.html#a7fbaf32cf6b714a4304e20db480b5404" title="Compute mask for bit operation of pairhop term. " alt="" coords="496,1521,651,1548"/>
-<area shape="rect" id="node36" href="$mltply_hubbard_8c.html#ad16f7b63b9768957a720004697a7a774" title="Compute pairhopp term (grandcanonical) " alt="" coords="507,867,639,893"/>
-<area shape="rect" id="node37" href="$mltply_hubbard_core_8c.html#a4765a56a883cd352b3f08546fc3bff08" title="Compute mask for bit operation of exchange term. " alt="" coords="492,1572,655,1599"/>
-<area shape="rect" id="node38" href="$mltply_hubbard_8c.html#a23af00b3160b075156e1c842bb3a879d" title="Compute Exchange term (grandcanonical) in single process. " alt="" coords="504,917,643,944"/>
-<area shape="rect" id="node40" href="$mltply_m_p_i_hubbard_8c.html#ab1b2e0743624e8698eb36484166f92cc" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="507,1689,640,1730"/>
-<area shape="rect" id="node41" href="$mltply_m_p_i_hubbard_8c.html#aa938067934c1c1a813b5bbc5c94f9d26" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="507,1754,640,1795"/>
-<area shape="rect" id="node42" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="507,1820,640,1847"/>
-<area shape="rect" id="node43" href="$mltply_m_p_i_hubbard_core_8c.html#ac0c99cbb8b6107f22d5f98dda7c261c1" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="501,1922,645,1963"/>
-<area shape="rect" id="node44" href="$mltply_m_p_i_hubbard_core_8c.html#a59452329e5c334718f67ab4d3d8b8431" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="498,1987,649,2029"/>
-<area shape="rect" id="node50" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="937,208,1137,235"/>
+<area shape="rect" id="node2" href="$_calc_by_l_o_b_p_c_g_8c.html#a3e76c956cd831898d183033e84198a4b" title="Compute adaptively shifted preconditionar written in S. Yamada, et al., Transactions of JSCES..." alt="" coords="165,36,261,63"/>
+<area shape="rect" id="node3" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="817,1727,922,1753"/>
+<area shape="rect" id="node5" href="$_calc_by_l_o_b_p_c_g_8c.html#ae211b265e8918bbbe2d4a21575dfb291" title="Solve the generalized eigenvalue problem &#160;with the Lowdin&#39;s orthogonalization. " alt="" coords="174,87,253,113"/>
+<area shape="rect" id="node8" href="$_calc_by_l_o_b_p_c_g_8c.html#a27bd313c5c6e4ea3eba5e7715d20b54a" title="Initialize_wave" alt="" coords="578,112,686,139"/>
+<area shape="rect" id="node13" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="821,239,917,265"/>
+<area shape="rect" id="node15" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="185,1047,242,1073"/>
+<area shape="rect" id="node47" href="$_calc_by_l_o_b_p_c_g_8c.html#a977f41b5be3d424fcd341fc93c95ce2e" title="Output eigenvectors for restart LOBPCG method. " alt="" coords="579,188,685,215"/>
+<area shape="rect" id="node48" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="167,1651,259,1677"/>
+<area shape="rect" id="node49" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="323,1701,470,1728"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1059,1727,1137,1753"/>
+<area shape="rect" id="node6" href="$_calc_by_l_o_b_p_c_g_8c.html#a9c185d22681129ef639f56558ffcb0f1" title="zgemm_" alt="" coords="361,36,433,63"/>
+<area shape="rect" id="node7" href="$_calc_by_l_o_b_p_c_g_8c.html#ab3d3474861840c3dc1a09ff1ab028b96" title="zheevd_" alt="" coords="361,87,432,113"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0" title="MPI wrapper function to broadcast unsigned long integer across processes. " alt="" coords="823,36,916,63"/>
+<area shape="rect" id="node10" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="817,137,921,164"/>
+<area shape="rect" id="node11" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1237,252,1304,279"/>
+<area shape="rect" id="node12" href="$wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8" title="MPI wrapper function to obtain sum of unsigned long integer across processes. " alt="" coords="1055,11,1141,37"/>
+<area shape="rect" id="node14" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="1051,315,1145,341"/>
+<area shape="rect" id="node16" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="591,1499,673,1525"/>
+<area shape="rect" id="node17" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="329,1531,465,1557"/>
+<area shape="rect" id="node19" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original space. " alt="" coords="309,1359,484,1385"/>
+<area shape="rect" id="node20" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="591,1549,673,1576"/>
+<area shape="rect" id="node21" href="$diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456" title="diagonalcalcForTE" alt="" coords="331,441,462,468"/>
+<area shape="rect" id="node26" href="$mltply_hubbard_8c.html#a3a8ead6d49a5b1621694d91c05ee3dc2" title="perform Hamiltonian vector product for (extended) Hubbard type model (Grandcanonical). &#160;" alt="" coords="333,1047,460,1073"/>
+<area shape="rect" id="node42" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="343,1257,450,1284"/>
+<area shape="rect" id="node45" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="355,945,438,972"/>
+<area shape="rect" id="node46" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="345,996,448,1023"/>
+<area shape="rect" id="node18" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="589,1600,675,1627"/>
+<area shape="rect" id="node22" href="$diagonalcalc_8c.html#ac0c46bfcea684ca1a9c4f339d396b902" title="Update the vector by the general one&#45;body diagonal interaction, . (Using in Time Evolution mode)..." alt="" coords="790,340,949,367"/>
+<area shape="rect" id="node23" href="$diagonalcalc_8c.html#aa8384a120b6131a6f4ba29823b6bc9e1" title="Update the vector by the general two&#45;body diagonal interaction, . (Using in Time Evolution mode)..." alt="" coords="794,441,945,468"/>
+<area shape="rect" id="node24" href="$diagonalcalc_8c.html#a719a974666d65bf6d1d766f047f1d144" title="Update the vector by the chemical potential &#160;&#160;generated by the commutation relation in terms of the g..." alt="" coords="558,391,706,417"/>
+<area shape="rect" id="node25" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="Calculate the components for Coulombintra interaction, . " alt="" coords="547,492,717,519"/>
+<area shape="rect" id="node27" href="$mltply_m_p_i_hubbard_8c.html#a7a8d32b95ea4b6d9b943d35d67deb88b" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="552,813,712,854"/>
+<area shape="rect" id="node28" href="$mltply_m_p_i_hubbard_8c.html#a83da98c99feda75fe253ef0177bbb9ab" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="552,543,712,585"/>
+<area shape="rect" id="node29" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="565,1250,699,1291"/>
+<area shape="rect" id="node30" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="552,609,712,636"/>
+<area shape="rect" id="node31" href="$mltply_m_p_i_hubbard_core_8c.html#a14e2a1172cc6ad1cfd4a23c33a63b761" title="Check whether this site is in the inter process region or not. " alt="" coords="593,1316,671,1343"/>
+<area shape="rect" id="node32" href="$mltply_m_p_i_hubbard_core_8c.html#a571209928d6c7125abd413555f89d748" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="784,813,955,854"/>
+<area shape="rect" id="node33" href="$mltply_m_p_i_hubbard_core_8c.html#a11e540019dd7ff6b6b611767d483fa60" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="780,981,959,1022"/>
+<area shape="rect" id="node34" href="$mltply_m_p_i_hubbard_core_8c.html#a2d5b96ff0d102ab1501330d94d23d866" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="1007,955,1189,997"/>
+<area shape="rect" id="node35" href="$mltply_m_p_i_hubbard_core_8c.html#add9824527f147708e47dc84b8322600e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="543,930,721,971"/>
+<area shape="rect" id="node36" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="547,1097,717,1124"/>
+<area shape="rect" id="node37" href="$mltply_hubbard_8c.html#a70e66e6ab9f74ec21130ed2363e24a51" title="Compute inter&#45;all term (canonical) " alt="" coords="559,660,705,687"/>
+<area shape="rect" id="node38" href="$mltply_hubbard_core_8c.html#a7fbaf32cf6b714a4304e20db480b5404" title="Compute mask for bit operation of pairhop term. " alt="" coords="555,1148,709,1175"/>
+<area shape="rect" id="node39" href="$mltply_hubbard_8c.html#ad16f7b63b9768957a720004697a7a774" title="Compute pairhopp term (grandcanonical) " alt="" coords="566,711,698,737"/>
+<area shape="rect" id="node40" href="$mltply_hubbard_core_8c.html#a4765a56a883cd352b3f08546fc3bff08" title="Compute mask for bit operation of exchange term. " alt="" coords="551,1199,713,1225"/>
+<area shape="rect" id="node41" href="$mltply_hubbard_8c.html#a23af00b3160b075156e1c842bb3a879d" title="Compute Exchange term (grandcanonical) in single process. " alt="" coords="563,761,701,788"/>
+<area shape="rect" id="node43" href="$mltply_m_p_i_hubbard_8c.html#ab1b2e0743624e8698eb36484166f92cc" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="565,1433,699,1474"/>
+<area shape="rect" id="node44" href="$mltply_m_p_i_hubbard_8c.html#aa938067934c1c1a813b5bbc5c94f9d26" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="565,1367,699,1409"/>
+<area shape="rect" id="node50" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="532,1701,732,1728"/>
 </map>

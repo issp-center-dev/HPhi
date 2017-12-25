@@ -38,7 +38,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">HΦ
-   &#160;<span id="projectnumber">2.0.4</span>
+   &#160;<span id="projectnumber">3.0.0</span>
    </div>
   </td>
  </tr>
@@ -119,6 +119,7 @@ $(document).ready(function(){initNavTree('global_8h.html','');});
 <div class="contents">
 <div class="textblock"><code>#include &lt;complex.h&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Include dependency graph for global.h:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -139,6 +140,8 @@ $(document).ready(function(){initNavTree('global_8h.html','');});
 <area shape="rect" id="node5" href="log_8h.html" title="include/log.h" alt="" coords="66,80,161,107"/>
 <area shape="rect" id="node6" href="_calc_spectrum_by_full_diag_8c.html" title="Functions to perform spectrum calculations with the full&#45;diagonalization method. " alt="" coords="185,80,365,107"/>
 <area shape="rect" id="node7" href="global_8c.html" title="global.c" alt="" coords="389,80,456,107"/>
+<area shape="rect" id="node8" href="splash_8c.html" title="Print logo mark and version number. " alt="" coords="481,80,551,107"/>
+<area shape="rect" id="node9" href="wrapper_m_p_i_8c.html" title="MPI wrapper for init, finalize, bcast, etc. " alt="" coords="575,80,678,107"/>
 <area shape="rect" id="node3" href="bitcalc_8h.html" title="include/bitcalc.h" alt="" coords="13,229,129,256"/>
 <area shape="rect" id="node4" href="bitcalc_8c.html" title="File for giving functions of treating bits on the target of Hilbert space. " alt="" coords="35,304,106,331"/>
 </map>
@@ -167,6 +170,8 @@ Variables</h2></td></tr>
 <tr class="separator:a7f64d09e17650bdbda576fd7235b8600"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fbff38d5659324379db905b39b7625e"><td class="memItemLeft" align="right" valign="top">double complex *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a9fbff38d5659324379db905b39b7625e">v1</a></td></tr>
 <tr class="separator:a9fbff38d5659324379db905b39b7625e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97fbc83d45f0e9674962f580b99ce67d"><td class="memItemLeft" align="right" valign="top">double complex *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a97fbc83d45f0e9674962f580b99ce67d">v2</a></td></tr>
+<tr class="separator:a97fbc83d45f0e9674962f580b99ce67d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9705c5a555c717a9667442bd8f6f2c6b"><td class="memItemLeft" align="right" valign="top">double complex *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a9705c5a555c717a9667442bd8f6f2c6b">v1buf</a></td></tr>
 <tr class="separator:a9705c5a555c717a9667442bd8f6f2c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a404d2e8f5bb3cbf39c3df4940adf25c7"><td class="memItemLeft" align="right" valign="top">double complex *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a404d2e8f5bb3cbf39c3df4940adf25c7">v1Org</a></td></tr>
@@ -181,8 +186,6 @@ Variables</h2></td></tr>
 <tr class="separator:ad7960e15bbb3ec77e0480d11807de888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac14b3c4e0a92adbe3322b8546a9af48b"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ac14b3c4e0a92adbe3322b8546a9af48b">list_Diagonal</a></td></tr>
 <tr class="separator:ac14b3c4e0a92adbe3322b8546a9af48b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c1dc7a1f83105a9b8fd28b486015043"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a7c1dc7a1f83105a9b8fd28b486015043">list_D_num</a></td></tr>
-<tr class="separator:a7c1dc7a1f83105a9b8fd28b486015043"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac189678ecde40ac11f263e1b98ac5969"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ac189678ecde40ac11f263e1b98ac5969">list_1</a></td></tr>
 <tr class="separator:ac189678ecde40ac11f263e1b98ac5969"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaeae04212831284600919d95216b9c5a"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aaeae04212831284600919d95216b9c5a">list_1buf</a></td></tr>
@@ -191,10 +194,6 @@ Variables</h2></td></tr>
 <tr class="separator:a59e163bd798ad16a8c9d47e545e2e42f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac1d1cc6d1099e228cb1f505ef0c86c6"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aac1d1cc6d1099e228cb1f505ef0c86c6">list_2_2</a></td></tr>
 <tr class="separator:aac1d1cc6d1099e228cb1f505ef0c86c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cc4d09090764ceda6d6e035628ab4c0"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a8cc4d09090764ceda6d6e035628ab4c0">list_3</a></td></tr>
-<tr class="separator:a8cc4d09090764ceda6d6e035628ab4c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc7f2a21cc698910a0904c9f95ca8b03"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#abc7f2a21cc698910a0904c9f95ca8b03">HilbertNumToSz</a></td></tr>
-<tr class="separator:abc7f2a21cc698910a0904c9f95ca8b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e2e45bf7e1194670acdd42d8616ccac"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a1e2e45bf7e1194670acdd42d8616ccac">list_1_org</a></td></tr>
 <tr class="separator:a1e2e45bf7e1194670acdd42d8616ccac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace1c1d1c9eee33eb2928335c3c4fe1b3"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ace1c1d1c9eee33eb2928335c3c4fe1b3">list_1buf_org</a></td></tr>
@@ -203,42 +202,20 @@ Variables</h2></td></tr>
 <tr class="separator:a3eb2343dce9fe241f80a9e9e9c1906cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf7d5ab0ac7ac8e208636bd9ec2ec391"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#acf7d5ab0ac7ac8e208636bd9ec2ec391">list_2_2_org</a></td></tr>
 <tr class="separator:acf7d5ab0ac7ac8e208636bd9ec2ec391"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c31123a2b6847792de37b425d3cc94b"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a7c31123a2b6847792de37b425d3cc94b">list_jb_org</a></td></tr>
-<tr class="separator:a7c31123a2b6847792de37b425d3cc94b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbdc653ca479186f8e5576e3933fa12f"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#acbdc653ca479186f8e5576e3933fa12f">list_2_1_Sz_org</a></td></tr>
-<tr class="separator:acbdc653ca479186f8e5576e3933fa12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d5d78bd7dab0502f740ebb33bb22807"><td class="memItemLeft" align="right" valign="top">long unsigned int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a6d5d78bd7dab0502f740ebb33bb22807">list_2_2_Sz_org</a></td></tr>
-<tr class="separator:a6d5d78bd7dab0502f740ebb33bb22807"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf6505bf4cb28b071eb6296f586da52c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#adf6505bf4cb28b071eb6296f586da52c">initial_mode</a></td></tr>
 <tr class="separator:adf6505bf4cb28b071eb6296f586da52c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a270bb83326735979bf6a3c81ab993fdd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a270bb83326735979bf6a3c81ab993fdd">LargeValue</a></td></tr>
 <tr class="separator:a270bb83326735979bf6a3c81ab993fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e22af59b031f04f2928772d4b7f12af"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a1e22af59b031f04f2928772d4b7f12af">NumAve</a></td></tr>
 <tr class="separator:a1e22af59b031f04f2928772d4b7f12af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b9ddfddbaece016b6266da9c40b317e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a2b9ddfddbaece016b6266da9c40b317e">ExpecInterval</a></td></tr>
-<tr class="separator:a2b9ddfddbaece016b6266da9c40b317e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7095e29d834dacc3ede1067bd08ca99a"><td class="memItemLeft" align="right" valign="top">long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a7095e29d834dacc3ede1067bd08ca99a">global_iv</a></td></tr>
-<tr class="separator:a7095e29d834dacc3ede1067bd08ca99a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4b3c259843556181feaef44545e833f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ae4b3c259843556181feaef44545e833f">step_i</a></td></tr>
 <tr class="separator:ae4b3c259843556181feaef44545e833f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a933eb9d9a4329b3525beeb81f1e57e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a3a933eb9d9a4329b3525beeb81f1e57e">step_spin</a></td></tr>
-<tr class="separator:a3a933eb9d9a4329b3525beeb81f1e57e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb8e51f368b75e08a6349dbbb40ec4de"><td class="memItemLeft" align="right" valign="top">double **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aeb8e51f368b75e08a6349dbbb40ec4de">All_S</a></td></tr>
-<tr class="separator:aeb8e51f368b75e08a6349dbbb40ec4de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ec7edb9dbd473c879d7e23a75c44a87"><td class="memItemLeft" align="right" valign="top">double **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a1ec7edb9dbd473c879d7e23a75c44a87">All_C</a></td></tr>
-<tr class="separator:a1ec7edb9dbd473c879d7e23a75c44a87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0af7e421307b2a7eebfb06c81e788458"><td class="memItemLeft" align="right" valign="top">double **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a0af7e421307b2a7eebfb06c81e788458">All_Sz</a></td></tr>
-<tr class="separator:a0af7e421307b2a7eebfb06c81e788458"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dcce997a9b1bf13aa7da54fb034ceef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a7dcce997a9b1bf13aa7da54fb034ceef">global_spn2</a></td></tr>
-<tr class="separator:a7dcce997a9b1bf13aa7da54fb034ceef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a633b54cb7aa03a7af7ce6c13b8a434ba"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a633b54cb7aa03a7af7ce6c13b8a434ba">global_norm</a></td></tr>
 <tr class="separator:a633b54cb7aa03a7af7ce6c13b8a434ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab49961427db962dd360f977920909700"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ab49961427db962dd360f977920909700">global_1st_norm</a></td></tr>
 <tr class="separator:ab49961427db962dd360f977920909700"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afabeecb7911904cb767f1d99c7dc4fec"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#afabeecb7911904cb767f1d99c7dc4fec">list_num_up</a></td></tr>
-<tr class="separator:afabeecb7911904cb767f1d99c7dc4fec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89ca8bbae001ee6f3cdea618391e5b33"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a89ca8bbae001ee6f3cdea618391e5b33">list_num_down</a></td></tr>
-<tr class="separator:a89ca8bbae001ee6f3cdea618391e5b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a933eb9d9a4329b3525beeb81f1e57e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a3a933eb9d9a4329b3525beeb81f1e57e">step_spin</a></td></tr>
+<tr class="separator:a3a933eb9d9a4329b3525beeb81f1e57e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aade638705bab07f8514708b0422133f0"><td class="memItemLeft" align="right" valign="top">double complex **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aade638705bab07f8514708b0422133f0">Ham</a></td></tr>
 <tr class="separator:aade638705bab07f8514708b0422133f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af964b432d6b4264b8f3e88ec42754730"><td class="memItemLeft" align="right" valign="top">double complex **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#af964b432d6b4264b8f3e88ec42754730">L_vec</a></td></tr>
@@ -285,8 +262,6 @@ Variables</h2></td></tr>
 <tr class="separator:a33b6e526b5066bcd959b94ac93a3c560"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40c4194cfa8e5a82682ac707fdc17273"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a40c4194cfa8e5a82682ac707fdc17273">cFileNameListModel</a></td></tr>
 <tr class="separator:a40c4194cfa8e5a82682ac707fdc17273"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afac4d1b8605e298a61bc3ba159a70d81"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#afac4d1b8605e298a61bc3ba159a70d81">cFileNameListKondo</a></td></tr>
-<tr class="separator:afac4d1b8605e298a61bc3ba159a70d81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92fde0d0c05db8f3372fa01eeac4f99e"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a92fde0d0c05db8f3372fa01eeac4f99e">cFileNameOutputEigen</a></td></tr>
 <tr class="separator:a92fde0d0c05db8f3372fa01eeac4f99e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1feac96f916bbe837b8dc4ea16b18dd7"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a1feac96f916bbe837b8dc4ea16b18dd7">cFileNameInputEigen</a></td></tr>
@@ -295,10 +270,6 @@ Variables</h2></td></tr>
 <tr class="separator:a5620040fb43816ee8c0464466eea729d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af84c03637b8045e497a23974e38f3cf5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#af84c03637b8045e497a23974e38f3cf5">cFileNameTridiagonalMatrixComponents</a></td></tr>
 <tr class="separator:af84c03637b8045e497a23974e38f3cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3b8e81f0a41ef0f43f16b7bfd3ec22b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aa3b8e81f0a41ef0f43f16b7bfd3ec22b">cFileNameLanczosOutputVector</a></td></tr>
-<tr class="separator:aa3b8e81f0a41ef0f43f16b7bfd3ec22b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d4eb29203f40de8ab415c6b58d1dd6f"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a5d4eb29203f40de8ab415c6b58d1dd6f">cFileNameLanczosInputVector</a></td></tr>
-<tr class="separator:a5d4eb29203f40de8ab415c6b58d1dd6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b7ad7cb0e6551af2d7635fbe3300fcf"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a5b7ad7cb0e6551af2d7635fbe3300fcf">cFileNameSSRand</a></td></tr>
 <tr class="separator:a5b7ad7cb0e6551af2d7635fbe3300fcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add64be996fb2bdbf8f576da954556a8a"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#add64be996fb2bdbf8f576da954556a8a">cFileNameTPQStep</a></td></tr>
@@ -311,10 +282,22 @@ Variables</h2></td></tr>
 <tr class="separator:a021d7b21798440022affbb56f4fce4a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88f940c2e673ea0ac2352249e76f5201"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a88f940c2e673ea0ac2352249e76f5201">cFileName2BGreen_TPQ</a></td></tr>
 <tr class="separator:a88f940c2e673ea0ac2352249e76f5201"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a688fe8d3fe652ad6d930495f08e100"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a4a688fe8d3fe652ad6d930495f08e100">cFileName1BGreen_TE</a></td></tr>
+<tr class="separator:a4a688fe8d3fe652ad6d930495f08e100"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a233d7c672baf88d830d6ddd086f0ebaa"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a233d7c672baf88d830d6ddd086f0ebaa">cFileName2BGreen_TE</a></td></tr>
+<tr class="separator:a233d7c672baf88d830d6ddd086f0ebaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac03136d3a9635031fbcad0b0331458d4"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ac03136d3a9635031fbcad0b0331458d4">cFileNameOutputVector</a></td></tr>
 <tr class="separator:ac03136d3a9635031fbcad0b0331458d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e16b7a9d301e8753138ef83c9845546"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a7e16b7a9d301e8753138ef83c9845546">cFileNameInputVector</a></td></tr>
 <tr class="separator:a7e16b7a9d301e8753138ef83c9845546"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e10fd508b136d64d09460409a248e15"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a3e10fd508b136d64d09460409a248e15">cFileNameTEStep</a></td></tr>
+<tr class="separator:a3e10fd508b136d64d09460409a248e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acadf97babfa9bfc5cf119890911f1799"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#acadf97babfa9bfc5cf119890911f1799">cFileNameSS</a></td></tr>
+<tr class="separator:acadf97babfa9bfc5cf119890911f1799"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2232d9fe26eff17e863f501a0e7010dc"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a2232d9fe26eff17e863f501a0e7010dc">cFileNameNorm</a></td></tr>
+<tr class="separator:a2232d9fe26eff17e863f501a0e7010dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a927261bfd9ea92ec25fdb4c84947b5b0"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a927261bfd9ea92ec25fdb4c84947b5b0">cFileNameFlct</a></td></tr>
+<tr class="separator:a927261bfd9ea92ec25fdb4c84947b5b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef4eadd082d736f9a2bf428fc1f3447b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aef4eadd082d736f9a2bf428fc1f3447b">cFileNamePhys_FullDiag</a></td></tr>
 <tr class="separator:aef4eadd082d736f9a2bf428fc1f3447b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57906b940facbac6518c17e3eb653765"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a57906b940facbac6518c17e3eb653765">cFileNamePhys_FullDiag_GC</a></td></tr>
@@ -331,24 +314,30 @@ Variables</h2></td></tr>
 <tr class="separator:a053af60b5682458dbce5a65c2a793de3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a670a9b6759f2b8087ab87fd70c6c68"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a4a670a9b6759f2b8087ab87fd70c6c68">Timer</a></td></tr>
 <tr class="separator:a4a670a9b6759f2b8087ab87fd70c6c68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1184374f8a9b29f419dba94a63e25579"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a1184374f8a9b29f419dba94a63e25579">TimerStart</a></td></tr>
-<tr class="separator:a1184374f8a9b29f419dba94a63e25579"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeeeff4ed34e4a32b23cc2424cf15893b"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aeeeff4ed34e4a32b23cc2424cf15893b">TimerStart</a></td></tr>
+<tr class="separator:aeeeff4ed34e4a32b23cc2424cf15893b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a974b448c3d0a13d483d36ef15de369b5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a974b448c3d0a13d483d36ef15de369b5">eps</a></td></tr>
 <tr class="separator:a974b448c3d0a13d483d36ef15de369b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f6dc7c8450fc4a5f1b7a799a604a894"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a4f6dc7c8450fc4a5f1b7a799a604a894">eps_CG</a></td></tr>
 <tr class="separator:a4f6dc7c8450fc4a5f1b7a799a604a894"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add085ab4d786d6d1081e4cd0ab5098c3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#add085ab4d786d6d1081e4cd0ab5098c3">eps_Lanczos</a></td></tr>
 <tr class="separator:add085ab4d786d6d1081e4cd0ab5098c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbbd2f1cd916f2d793bee07597b75fac"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#acbbd2f1cd916f2d793bee07597b75fac">eps_Bisec</a></td></tr>
-<tr class="separator:acbbd2f1cd916f2d793bee07597b75fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad27f75f04d9472efb5179035fc2e589a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ad27f75f04d9472efb5179035fc2e589a">eps_Energy</a></td></tr>
 <tr class="separator:ad27f75f04d9472efb5179035fc2e589a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac861276a05c60f7ba96934662ea6f7cc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ac861276a05c60f7ba96934662ea6f7cc">eps_CheckImag0</a></td></tr>
 <tr class="separator:ac861276a05c60f7ba96934662ea6f7cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17fc16c2fdea2a0bc69e9efe63e57a7b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a17fc16c2fdea2a0bc69e9efe63e57a7b">dShiftBeta</a></td></tr>
-<tr class="separator:a17fc16c2fdea2a0bc69e9efe63e57a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a933b5d3f5ba250abd9d55e162eaac3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a1a933b5d3f5ba250abd9d55e162eaac3">eps_vec12</a></td></tr>
-<tr class="separator:a1a933b5d3f5ba250abd9d55e162eaac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae68326adc3b3862f1162832f70727b06"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#ae68326adc3b3862f1162832f70727b06">nproc</a></td></tr>
+<tr class="memdesc:ae68326adc3b3862f1162832f70727b06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of processors, defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a>  <a href="#ae68326adc3b3862f1162832f70727b06">More...</a><br /></td></tr>
+<tr class="separator:ae68326adc3b3862f1162832f70727b06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8a2431e50f9fc7d8c78af300d5f3bee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#aa8a2431e50f9fc7d8c78af300d5f3bee">myrank</a></td></tr>
+<tr class="memdesc:aa8a2431e50f9fc7d8c78af300d5f3bee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process ID, defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a>  <a href="#aa8a2431e50f9fc7d8c78af300d5f3bee">More...</a><br /></td></tr>
+<tr class="separator:aa8a2431e50f9fc7d8c78af300d5f3bee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b6a46c4274b223ea03fb4a7b80f4a5a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#a2b6a46c4274b223ea03fb4a7b80f4a5a">nthreads</a></td></tr>
+<tr class="memdesc:a2b6a46c4274b223ea03fb4a7b80f4a5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of Threads, defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a>  <a href="#a2b6a46c4274b223ea03fb4a7b80f4a5a">More...</a><br /></td></tr>
+<tr class="separator:a2b6a46c4274b223ea03fb4a7b80f4a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abacbc82cf67663cd6f3708f1274ac207"><td class="memItemLeft" align="right" valign="top">FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="global_8h.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a></td></tr>
+<tr class="memdesc:abacbc82cf67663cd6f3708f1274ac207"><td class="mdescLeft">&#160;</td><td class="mdescRight">File pointer to the standard output defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a>  <a href="#abacbc82cf67663cd6f3708f1274ac207">More...</a><br /></td></tr>
+<tr class="separator:abacbc82cf67663cd6f3708f1274ac207"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="aa68aa1cfd58c60e5cb4877965fa41576"></a>
@@ -361,9 +350,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00022">22</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00023">23</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_file_i_o_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="_file_i_o_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>, <a class="el" href="_h_phi_trans_8c_source.html#l00032">HPhiTrans()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="input_8c_source.html#l00020">inputHam()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00299">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="lapack__diag_8c_source.html#l00029">lapack_diag()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, <a class="el" href="output_8c_source.html#l00028">output()</a>, <a class="el" href="output__list_8c_source.html#l00029">output_list()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>, <a class="el" href="output_8c_source.html#l00072">outputHam()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">OutputLanczosVector()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00042">OutputSpectrum()</a>, <a class="el" href="time_8c_source.html#l00079">OutputTimer()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00605">OutputTMComponents()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00118">OutputTMComponents_BiCG()</a>, <a class="el" href="sz_8c_source.html#l01389">Read_sz()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00392">ReadInitialVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00561">ReadTMComponents()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, <a class="el" href="xsetmem_8c_source.html#l00025">setmem_HEAD()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00318">SetOmega()</a>, <a class="el" href="sz_8c_source.html#l00053">sz()</a>, <a class="el" href="log_8c_source.html#l00034">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00109">TimeKeeperWithRandAndStep()</a>, and <a class="el" href="log_8c_source.html#l00070">TimeKeeperWithStep()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_file_i_o_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="_file_i_o_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>, <a class="el" href="_h_phi_trans_8c_source.html#l00045">HPhiTrans()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="input_8c_source.html#l00020">inputHam()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00321">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="lapack__diag_8c_source.html#l00032">lapack_diag()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, <a class="el" href="output_8c_source.html#l00027">output()</a>, <a class="el" href="output__list_8c_source.html#l00040">output_list()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>, <a class="el" href="output_8c_source.html#l00073">outputHam()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00458">OutputLanczosVector()</a>, <a class="el" href="time_8c_source.html#l00095">OutputTimer()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00673">OutputTMComponents()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00118">OutputTMComponents_BiCG()</a>, <a class="el" href="sz_8c_source.html#l01528">Read_sz()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">ReadInitialVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00616">ReadTMComponents()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, <a class="el" href="xsetmem_8c_source.html#l00042">setmem_HEAD()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00337">SetOmega()</a>, <a class="el" href="sz_8c_source.html#l00063">sz()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00117">TimeKeeperWithRandAndStep()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="_h_phi_trans_8c_source.html#l00181">TransferForQuench()</a>, and <a class="el" href="_h_phi_trans_8c_source.html#l00092">TransferWithPeierls()</a>.</p>
 
 </div>
 </div>
@@ -377,9 +366,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00024">24</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00025">25</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="bitcalc_8c_source.html#l00393">BitCheckGeneral()</a>, <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>, <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, <a class="el" href="check_8c_source.html#l00051">check()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00070">CheckBit_Ajt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00050">CheckBit_Cis()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00090">CheckBit_InterAllPE()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00153">CheckBit_PairPE()</a>, <a class="el" href="readdef_8c_source.html#l01804">CheckInterAllHermite()</a>, <a class="el" href="readdef_8c_source.html#l02256">CheckLocSpin()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00310">CheckMPI_Summary()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00033">CheckPE()</a>, <a class="el" href="readdef_8c_source.html#l02364">CheckSpinIndexForInterAll()</a>, <a class="el" href="readdef_8c_source.html#l02402">CheckSpinIndexForTrans()</a>, <a class="el" href="readdef_8c_source.html#l02435">CheckTotal2Sz()</a>, <a class="el" href="readdef_8c_source.html#l01691">CheckTransferHermite()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00319">expec_cisajs_Spin()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00436">expec_cisajs_SpinGC()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00569">expec_cisajscktalt_Spin()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00808">expec_cisajscktalt_SpinGC()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00919">expec_cisajscktalt_SpinGCGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00701">expec_cisajscktalt_SpinGeneral()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00080">GetCalcSpectrumTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00291">GetExcitedState()</a>, <a class="el" href="xsetmem_8c_source.html#l00252">GetlistSize()</a>, <a class="el" href="bitcalc_8c_source.html#l00195">GetOffComp()</a>, <a class="el" href="bitcalc_8c_source.html#l00243">GetOffCompGeneralSpin()</a>, <a class="el" href="_pair_ex_8c_source.html#l00018">GetPairExcitedState()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00334">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00128">GetPairExcitedStateGeneralSpinGC()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00235">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00046">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00210">GetPairExcitedStateSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00019">GetPairExcitedStateSpinGC()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00192">GetSgnInterAll()</a>, <a class="el" href="_single_ex_8c_source.html#l00016">GetSingleExcitedState()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00160">GetSpectrumByTridiagonalMatrixComponents()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>, <a class="el" href="make_ham_8c_source.html#l00054">makeHam()</a>, <a class="el" href="mltply_8c_source.html#l00037">mltply()</a>, <a class="el" href="mltply_spin_8c_source.html#l00175">mltplySpin()</a>, <a class="el" href="mltply_spin_8c_source.html#l00393">mltplySpinGC()</a>, <a class="el" href="readdef_8c_source.html#l00854">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00402">ReadDefFileNInt()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00277">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01007">SetDiagonalInterAll()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00318">SetOmega()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00131">solve_2ndPolinomial()</a>, <a class="el" href="sz_8c_source.html#l00053">sz()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00424">totalspin_SpinGC()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00728">totalSz_SpinGC()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01315">X_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01701">X_child_CisAisCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01768">X_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00713">X_GC_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01555">X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00808">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00959">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00341">X_GC_child_CisAjtCkuAku_Hubbard_MPI()</a>, and <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00535">X_GC_child_CisAjtCkuAlv_Hubbard_MPI()</a>.</p>
+<p>Referenced by <a class="el" href="bitcalc_8c_source.html#l00393">BitCheckGeneral()</a>, <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="check_8c_source.html#l00051">check()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00070">CheckBit_Ajt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00050">CheckBit_Cis()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00090">CheckBit_InterAllPE()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00153">CheckBit_PairPE()</a>, <a class="el" href="readdef_8c_source.html#l02583">CheckGeneralSpinIndexForInterAll()</a>, <a class="el" href="readdef_8c_source.html#l02009">CheckInterAllHermite()</a>, <a class="el" href="readdef_8c_source.html#l02461">CheckLocSpin()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00310">CheckMPI_Summary()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00033">CheckPE()</a>, <a class="el" href="readdef_8c_source.html#l02610">CheckSpinIndexForTrans()</a>, <a class="el" href="readdef_8c_source.html#l02849">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l02643">CheckTotal2Sz()</a>, <a class="el" href="readdef_8c_source.html#l01888">CheckTransferHermite()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00355">expec_cisajs_Spin()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00499">expec_cisajs_SpinGC()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00551">expec_cisajscktalt_Spin()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00820">expec_cisajscktalt_SpinGC()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00951">expec_cisajscktalt_SpinGCGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00703">expec_cisajscktalt_SpinGeneral()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00093">GetCalcSpectrumTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00303">GetExcitedState()</a>, <a class="el" href="xsetmem_8c_source.html#l00378">GetlistSize()</a>, <a class="el" href="bitcalc_8c_source.html#l00195">GetOffComp()</a>, <a class="el" href="bitcalc_8c_source.html#l00243">GetOffCompGeneralSpin()</a>, <a class="el" href="_pair_ex_8c_source.html#l00047">GetPairExcitedState()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00350">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00144">GetPairExcitedStateGeneralSpinGC()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00062">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00226">GetPairExcitedStateSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00035">GetPairExcitedStateSpinGC()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00192">GetSgnInterAll()</a>, <a class="el" href="_single_ex_8c_source.html#l00030">GetSingleExcitedState()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00169">GetSpectrumByTridiagonalMatrixComponents()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>, <a class="el" href="make_ham_8c_source.html#l00055">makeHam()</a>, <a class="el" href="mltply_8c_source.html#l00056">mltply()</a>, <a class="el" href="mltply_spin_8c_source.html#l00175">mltplySpin()</a>, <a class="el" href="mltply_spin_8c_source.html#l00393">mltplySpinGC()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00673">OutputTMComponents()</a>, <a class="el" href="readdef_8c_source.html#l00966">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00447">ReadDefFileNInt()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00616">ReadTMComponents()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00374">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01110">SetDiagonalInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01762">SetDiagonalTEChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01431">SetDiagonalTEInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01940">SetDiagonalTETransfer()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00337">SetOmega()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00131">solve_2ndPolinomial()</a>, <a class="el" href="sz_8c_source.html#l00063">sz()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00424">totalspin_SpinGC()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00747">totalSz_SpinGC()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01315">X_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01701">X_child_CisAisCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01768">X_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00713">X_GC_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01555">X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00808">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00959">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00341">X_GC_child_CisAjtCkuAku_Hubbard_MPI()</a>, and <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00535">X_GC_child_CisAjtCkuAlv_Hubbard_MPI()</a>.</p>
 
 </div>
 </div>
@@ -394,9 +383,9 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>Kind of electron. For ver.0.1, ITINERANT=1. From ver.0.2, ITINERANT=0. </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00030">30</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00031">31</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l02181">CheckFormatForKondoInt()</a>, <a class="el" href="readdef_8c_source.html#l02256">CheckLocSpin()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="sz_8c_source.html#l01010">child_omp_sz_Kondo()</a>, <a class="el" href="sz_8c_source.html#l01122">child_omp_sz_KondoGC()</a>, <a class="el" href="readdef_8c_source.html#l00854">ReadDefFileIdxPara()</a>, and <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="readdef_8c_source.html#l02402">CheckFormatForKondoInt()</a>, <a class="el" href="readdef_8c_source.html#l02461">CheckLocSpin()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="sz_8c_source.html#l01029">child_omp_sz_Kondo()</a>, <a class="el" href="sz_8c_source.html#l01141">child_omp_sz_Kondo_hacker()</a>, <a class="el" href="sz_8c_source.html#l01261">child_omp_sz_KondoGC()</a>, <a class="el" href="readdef_8c_source.html#l00966">ReadDefFileIdxPara()</a>, and <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -410,9 +399,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00031">31</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00032">32</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l02256">CheckLocSpin()</a>.</p>
+<p>Referenced by <a class="el" href="readdef_8c_source.html#l02461">CheckLocSpin()</a>.</p>
 
 </div>
 </div>
@@ -426,9 +415,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00023">23</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00024">24</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="check_8c_source.html#l00051">check()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>.</p>
+<p>Referenced by <a class="el" href="check_8c_source.html#l00051">check()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>.</p>
 
 </div>
 </div>
@@ -442,55 +431,13 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00025">25</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00026">26</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="bitcalc_8c_source.html#l00393">BitCheckGeneral()</a>, <a class="el" href="_calc_by_full_diag_8c_source.html#l00029">CalcByFullDiag()</a>, <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, <a class="el" href="check_8c_source.html#l00051">check()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00070">CheckBit_Ajt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00050">CheckBit_Cis()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00090">CheckBit_InterAllPE()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00153">CheckBit_PairPE()</a>, <a class="el" href="readdef_8c_source.html#l01804">CheckInterAllHermite()</a>, <a class="el" href="readdef_8c_source.html#l02256">CheckLocSpin()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00033">CheckPE()</a>, <a class="el" href="readdef_8c_source.html#l02364">CheckSpinIndexForInterAll()</a>, <a class="el" href="readdef_8c_source.html#l02402">CheckSpinIndexForTrans()</a>, <a class="el" href="readdef_8c_source.html#l02435">CheckTotal2Sz()</a>, <a class="el" href="readdef_8c_source.html#l01691">CheckTransferHermite()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00230">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00458">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00350">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00080">GetCalcSpectrumTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00291">GetExcitedState()</a>, <a class="el" href="xsetmem_8c_source.html#l00252">GetlistSize()</a>, <a class="el" href="bitcalc_8c_source.html#l00195">GetOffComp()</a>, <a class="el" href="bitcalc_8c_source.html#l00243">GetOffCompGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00334">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00128">GetPairExcitedStateGeneralSpinGC()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00235">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00046">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00121">GetPairExcitedStateHubbard()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00021">GetPairExcitedStateHubbardGC()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00192">GetSgnInterAll()</a>, <a class="el" href="_single_ex_8c_source.html#l00016">GetSingleExcitedState()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00019">GetSingleExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00094">GetSingleExcitedStateHubbardGC()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00160">GetSpectrumByTridiagonalMatrixComponents()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00299">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>, <a class="el" href="mltply_spin_8c_source.html#l00299">mltplyGeneralSpin()</a>, <a class="el" href="mltply_spin_8c_source.html#l00625">mltplyGeneralSpinGC()</a>, <a class="el" href="mltply_hubbard_8c_source.html#l00150">mltplyHubbard()</a>, <a class="el" href="mltply_hubbard_8c_source.html#l00347">mltplyHubbardGC()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00042">OutputSpectrum()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00605">OutputTMComponents()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00118">OutputTMComponents_BiCG()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, <a class="el" href="readdef_8c_source.html#l00198">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l00854">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00402">ReadDefFileNInt()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00561">ReadTMComponents()</a>, <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00318">SetOmega()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00131">solve_2ndPolinomial()</a>, <a class="el" href="sz_8c_source.html#l00053">sz()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l01136">X_Ajt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00817">X_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01260">X_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l01082">X_Cis()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00400">X_CisAjt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00713">X_GC_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00263">X_GC_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01048">X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00808">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01332">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00210">X_GC_child_CisAisCjuAjv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01102">X_GC_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00888">X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01409">X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00959">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01473">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00341">X_GC_child_CisAjtCkuAku_Hubbard_MPI()</a>, and <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00535">X_GC_child_CisAjtCkuAlv_Hubbard_MPI()</a>.</p>
+<p>Referenced by <a class="el" href="bitcalc_8c_source.html#l00393">BitCheckGeneral()</a>, <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="check_8c_source.html#l00051">check()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00070">CheckBit_Ajt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00050">CheckBit_Cis()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00090">CheckBit_InterAllPE()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00153">CheckBit_PairPE()</a>, <a class="el" href="readdef_8c_source.html#l02583">CheckGeneralSpinIndexForInterAll()</a>, <a class="el" href="readdef_8c_source.html#l02732">CheckInterAllCondition()</a>, <a class="el" href="readdef_8c_source.html#l02009">CheckInterAllHermite()</a>, <a class="el" href="readdef_8c_source.html#l02461">CheckLocSpin()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00033">CheckPE()</a>, <a class="el" href="readdef_8c_source.html#l02610">CheckSpinIndexForTrans()</a>, <a class="el" href="readdef_8c_source.html#l02849">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l02643">CheckTotal2Sz()</a>, <a class="el" href="readdef_8c_source.html#l01888">CheckTransferHermite()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00257">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00430">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00312">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00093">GetCalcSpectrumTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00303">GetExcitedState()</a>, <a class="el" href="xsetmem_8c_source.html#l00378">GetlistSize()</a>, <a class="el" href="bitcalc_8c_source.html#l00195">GetOffComp()</a>, <a class="el" href="bitcalc_8c_source.html#l00243">GetOffCompGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00350">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00144">GetPairExcitedStateGeneralSpinGC()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00062">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00037">GetPairExcitedStateHubbardGC()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00192">GetSgnInterAll()</a>, <a class="el" href="_single_ex_8c_source.html#l00030">GetSingleExcitedState()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00104">GetSingleExcitedStateHubbardGC()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00169">GetSpectrumByTridiagonalMatrixComponents()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00321">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>, <a class="el" href="mltply_spin_8c_source.html#l00299">mltplyGeneralSpin()</a>, <a class="el" href="mltply_spin_8c_source.html#l00625">mltplyGeneralSpinGC()</a>, <a class="el" href="mltply_hubbard_8c_source.html#l00150">mltplyHubbard()</a>, <a class="el" href="mltply_hubbard_8c_source.html#l00347">mltplyHubbardGC()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00673">OutputTMComponents()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00118">OutputTMComponents_BiCG()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, <a class="el" href="readdef_8c_source.html#l00230">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l00966">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00447">ReadDefFileNInt()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00616">ReadTMComponents()</a>, <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00337">SetOmega()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00131">solve_2ndPolinomial()</a>, <a class="el" href="sz_8c_source.html#l00063">sz()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l01136">X_Ajt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00817">X_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01260">X_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l01082">X_Cis()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00400">X_CisAjt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00713">X_GC_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00263">X_GC_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01048">X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00808">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01332">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00210">X_GC_child_CisAisCjuAjv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01102">X_GC_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00888">X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01409">X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00959">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01473">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00341">X_GC_child_CisAjtCkuAku_Hubbard_MPI()</a>, and <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00535">X_GC_child_CisAjtCkuAlv_Hubbard_MPI()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a class="anchor" id="a1ec7edb9dbd473c879d7e23a75c44a87"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double ** All_C</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00077">77</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aeb8e51f368b75e08a6349dbbb40ec4de"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double** All_S</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00077">77</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a0af7e421307b2a7eebfb06c81e788458"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double ** All_Sz</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00077">77</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="aa56b7099de1b08ef9d76d944334f02d4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -503,7 +450,7 @@ Variables</h2></td></tr>
 
 <p>Definition at line <a class="el" href="global_8h_source.html#l00044">44</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00299">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00561">ReadTMComponents()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00321">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00616">ReadTMComponents()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -516,10 +463,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Tridiagonal components used in Lanczos mode. </p>
 
 <p>Definition at line <a class="el" href="global_8h_source.html#l00044">44</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00299">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00561">ReadTMComponents()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00321">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00616">ReadTMComponents()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -532,8 +480,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output One-Body Green's functions obtained by Lanczos method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00114">114</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00101">101</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -546,8 +497,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output physical values for grand canonical ensemble. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00141">141</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00132">132</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -560,8 +514,28 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output energies obtained by CG method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00113">113</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00100">100</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a4a688fe8d3fe652ad6d930495f08e100"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cFileName1BGreen_TE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output two-body Green's functions for TPQ calculation. </p>
+</blockquote>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00118">118</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -574,8 +548,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the Flct file. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00132">132</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00116">116</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -588,8 +565,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output Two-Body Green's functions obtained by Lanczos method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00116">116</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00103">103</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -602,8 +582,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output one-body Green's functions for Full diagonalization. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00142">142</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00133">133</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -616,8 +599,28 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output One-Body Green's functions obtained by CG method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00115">115</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00102">102</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a233d7c672baf88d830d6ddd086f0ebaa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cFileName2BGreen_TE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output one-body Green's functions for Time Evolution calculation. </p>
+</blockquote>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00119">119</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -630,8 +633,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output one-body Green's functions for TPQ calculation. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00133">133</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00117">117</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -644,8 +650,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to input eigen vector. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00122">122</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00108">108</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -658,8 +667,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to check Coulomb Intra interactions. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00098">98</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00085">85</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -672,8 +684,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output sz calculation time </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00097">97</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00084">84</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -686,8 +701,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to check Inter U. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00100">100</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00087">87</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -700,8 +718,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>&gt;Name of the file to check Hund interactions. </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00101">101</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00088">88</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -714,8 +733,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to check Chemical potentials. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00099">99</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00086">86</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -728,8 +750,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to check InterAll interactions. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00102">102</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00089">89</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -742,8 +767,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to check memory. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00103">103</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00090">90</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -756,8 +784,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output energies. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00111">111</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00098">98</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -770,8 +801,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output eigen values. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00112">112</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00099">99</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -784,8 +818,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output Lanczos step. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00110">110</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00097">97</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -798,8 +835,28 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output restart vector for spectrum mode. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00150">150</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00140">140</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a927261bfd9ea92ec25fdb4c84947b5b0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cFileNameFlct</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the Norm file. </p>
+</blockquote>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00127">127</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -812,8 +869,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the NormRand file. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00131">131</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00115">115</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -826,8 +886,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output eigen vector. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00121">121</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00107">107</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -840,36 +903,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output TPQ vector. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00135">135</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a5d4eb29203f40de8ab415c6b58d1dd6f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cFileNameLanczosInputVector</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00125">125</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa3b8e81f0a41ef0f43f16b7bfd3ec22b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cFileNameLanczosOutputVector</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00124">124</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00121">121</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -882,22 +920,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output warning of transfer integrals. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00109">109</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="afac4d1b8605e298a61bc3ba159a70d81"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cFileNameListKondo</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00119">119</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00096">96</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -910,8 +937,28 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output time for getting eigen vector by CG method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00118">118</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00105">105</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a2232d9fe26eff17e863f501a0e7010dc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cFileNameNorm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the SS file. </p>
+</blockquote>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00126">126</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -924,8 +971,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the Time_TPQ_Step file. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00130">130</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00114">114</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -938,8 +988,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output list. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00120">120</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00106">106</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -952,8 +1005,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output Hamiltonian for Full diagonalization. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00146">146</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00137">137</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -966,8 +1022,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output two-body Green's functions for Time Evolution calculation. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00134">134</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00120">120</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -980,8 +1039,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the Flct file. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00139">139</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00130">130</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -994,8 +1056,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output physical values for canonical ensemble. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00140">140</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00131">131</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1008,8 +1073,28 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output two-body Green's functions for Full diagonalization. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00143">143</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00134">134</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="acadf97babfa9bfc5cf119890911f1799"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cFileNameSS</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the Time_TE_Step file. </p>
+</blockquote>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00125">125</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1022,8 +1107,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output tridiagonal matrix components. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00128">128</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00112">112</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1036,8 +1124,28 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output calculation processing time </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00094">94</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00081">81</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3e10fd508b136d64d09460409a248e15"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cFileNameTEStep</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to input TPQ vector. </p>
+</blockquote>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00124">124</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1050,8 +1158,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output Two-Body Green's functions obtained by CG method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00117">117</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00104">104</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1064,8 +1175,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Path to output results </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00093">93</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00080">80</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1078,8 +1192,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the SS_rand file. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00129">129</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00113">113</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1092,8 +1209,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output dynamical Green's function. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00123">123</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00109">109</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1106,8 +1226,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to check dimension. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00106">106</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00093">93</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1120,24 +1243,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>eigen vectors </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00090">90</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a17fc16c2fdea2a0bc69e9efe63e57a7b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double dShiftBeta</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00165">165</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l02224">SetConvergenceFactor()</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00077">77</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
 </div>
 </div>
@@ -1150,26 +1260,13 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Timer when the procedure starts. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00159">159</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00148">148</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="bisec_8c_source.html#l00033">bisec()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00160">GetSpectrumByTridiagonalMatrixComponents()</a>, and <a class="el" href="readdef_8c_source.html#l02224">SetConvergenceFactor()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="acbbd2f1cd916f2d793bee07597b75fac"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double eps_Bisec</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00162">162</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l02224">SetConvergenceFactor()</a>.</p>
+<p>Referenced by <a class="el" href="bisec_8c_source.html#l00033">bisec()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00169">GetSpectrumByTridiagonalMatrixComponents()</a>, and <a class="el" href="readdef_8c_source.html#l02432">SetConvergenceFactor()</a>.</p>
 
 </div>
 </div>
@@ -1182,10 +1279,13 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>epsilon used in getting spectrum by Lanczos method and Lanczos eigenvector by CG method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00160">160</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00149">149</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, and <a class="el" href="readdef_8c_source.html#l02224">SetConvergenceFactor()</a>.</p>
+<p>Referenced by <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, and <a class="el" href="readdef_8c_source.html#l02432">SetConvergenceFactor()</a>.</p>
 
 </div>
 </div>
@@ -1198,10 +1298,13 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>epsilon for energy </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00164">164</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00152">152</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l01804">CheckInterAllHermite()</a>, <a class="el" href="readdef_8c_source.html#l01691">CheckTransferHermite()</a>, and <a class="el" href="readdef_8c_source.html#l00854">ReadDefFileIdxPara()</a>.</p>
+<p>Referenced by <a class="el" href="readdef_8c_source.html#l02009">CheckInterAllHermite()</a>, <a class="el" href="readdef_8c_source.html#l02849">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l01888">CheckTransferHermite()</a>, and <a class="el" href="readdef_8c_source.html#l00966">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1214,10 +1317,13 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>epsilon used in LOBPCG, BiCG and Lanczos eigen value. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00163">163</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00151">151</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00160">GetSpectrumByTridiagonalMatrixComponents()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="readdef_8c_source.html#l02224">SetConvergenceFactor()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00169">GetSpectrumByTridiagonalMatrixComponents()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="readdef_8c_source.html#l02432">SetConvergenceFactor()</a>.</p>
 
 </div>
 </div>
@@ -1230,42 +1336,13 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>epsilon used in getting Lanczos eigenvector by CG method. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00161">161</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00150">150</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, and <a class="el" href="readdef_8c_source.html#l02224">SetConvergenceFactor()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a1a933b5d3f5ba250abd9d55e162eaac3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double eps_vec12</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00166">166</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l02224">SetConvergenceFactor()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a2b9ddfddbaece016b6266da9c40b317e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ExpecInterval</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00074">74</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, and <a class="el" href="readdef_8c_source.html#l00402">ReadDefFileNInt()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, and <a class="el" href="readdef_8c_source.html#l02432">SetConvergenceFactor()</a>.</p>
 
 </div>
 </div>
@@ -1278,24 +1355,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>1-st norm for TPQ calculation </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00079">79</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00068">68</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, and <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a7095e29d834dacc3ede1067bd08ca99a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long int global_iv</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00075">75</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1308,24 +1372,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>norm before normalization for TPQ calculation </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00079">79</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00067">67</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>, and <a class="el" href="_multiply_8c_source.html#l00032">Multiply()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a7dcce997a9b1bf13aa7da54fb034ceef"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double global_spn2</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00078">78</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_multiply_8c_source.html#l00043">Multiply()</a>, and <a class="el" href="_multiply_8c_source.html#l00080">MultiplyForTEM()</a>.</p>
 
 </div>
 </div>
@@ -1339,25 +1390,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00084">84</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00073">73</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="input_8c_source.html#l00020">inputHam()</a>, <a class="el" href="lapack__diag_8c_source.html#l00029">lapack_diag()</a>, <a class="el" href="make_ham_8c_source.html#l00054">makeHam()</a>, <a class="el" href="output_8c_source.html#l00072">outputHam()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="abc7f2a21cc698910a0904c9f95ca8b03"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long unsigned int* HilbertNumToSz</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00055">55</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="input_8c_source.html#l00020">inputHam()</a>, <a class="el" href="lapack__diag_8c_source.html#l00032">lapack_diag()</a>, <a class="el" href="make_ham_8c_source.html#l00055">makeHam()</a>, <a class="el" href="output_8c_source.html#l00073">outputHam()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -1370,10 +1405,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>mode to get initial state (0: use same random generator for MPI, 1: use each random generator for MPI) </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00069">69</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00060">60</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00446">SetInitialVector()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00491">SetInitialVector()</a>.</p>
 
 </div>
 </div>
@@ -1386,10 +1422,13 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Hamiltonian for full diagonalization. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00085">85</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00074">74</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="lapack__diag_8c_source.html#l00029">lapack_diag()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="phys_8c_source.html#l00047">phys()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="lapack__diag_8c_source.html#l00032">lapack_diag()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="phys_8c_source.html#l00047">phys()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -1402,10 +1441,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>constant value l for TPQ calculation. </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00073">73</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00064">64</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>, <a class="el" href="_multiply_8c_source.html#l00032">Multiply()</a>, <a class="el" href="readdef_8c_source.html#l00402">ReadDefFileNInt()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00318">SetOmega()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_multiply_8c_source.html#l00043">Multiply()</a>, <a class="el" href="readdef_8c_source.html#l00447">ReadDefFileNInt()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00337">SetOmega()</a>.</p>
 
 </div>
 </div>
@@ -1418,10 +1458,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list of getting real-space configuration for canonical state </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00048">48</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00047">47</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="mltply_hubbard_core_8c_source.html#l00690">child_CisAisCisAis_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00719">child_CisAisCjtAku_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00755">child_CisAjtCkuAku_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00792">child_CisAjtCkuAlv_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00274">child_exchange_spin_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00230">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00380">expec_cisajs_SpinGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00701">expec_cisajscktalt_SpinGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00195">expec_cisajscktaltdc_alldiag()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00636">expec_energy_flct_Hubbard()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00334">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00121">GetPairExcitedStateHubbard()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>, <a class="el" href="make_ham_8c_source.html#l00054">makeHam()</a>, <a class="el" href="mltply_spin_8c_source.html#l00299">mltplyGeneralSpin()</a>, <a class="el" href="output__list_8c_source.html#l00029">output_list()</a>, <a class="el" href="sz_8c_source.html#l01389">Read_sz()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00277">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00445">SetDiagonalCoulombInter()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00167">SetDiagonalCoulombIntra()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00684">SetDiagonalHund()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01007">SetDiagonalInterAll()</a>, <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00088">totalspin_Hubbard()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01315">X_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00817">X_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01768">X_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00240">X_child_exchange_spin_element()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, and <a class="el" href="mltply_spin_core_8c_source.html#l00167">X_Spin_CisAis()</a>.</p>
+<p>Referenced by <a class="el" href="mltply_hubbard_core_8c_source.html#l00690">child_CisAisCisAis_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00719">child_CisAisCjtAku_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00755">child_CisAjtCkuAku_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00792">child_CisAjtCkuAlv_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00274">child_exchange_spin_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00257">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00434">expec_cisajs_SpinGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00703">expec_cisajscktalt_SpinGeneral()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00292">expec_energy_flct_Hubbard()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00350">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>, <a class="el" href="make_ham_8c_source.html#l00055">makeHam()</a>, <a class="el" href="mltply_spin_8c_source.html#l00299">mltplyGeneralSpin()</a>, <a class="el" href="output__list_8c_source.html#l00040">output_list()</a>, <a class="el" href="sz_8c_source.html#l01528">Read_sz()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00374">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00544">SetDiagonalCoulombInter()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00261">SetDiagonalCoulombIntra()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00785">SetDiagonalHund()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01110">SetDiagonalInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01762">SetDiagonalTEChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01431">SetDiagonalTEInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01940">SetDiagonalTETransfer()</a>, <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00088">totalspin_Hubbard()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01315">X_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00817">X_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01768">X_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00240">X_child_exchange_spin_element()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, and <a class="el" href="mltply_spin_core_8c_source.html#l00167">X_Spin_CisAis()</a>.</p>
 
 </div>
 </div>
@@ -1434,10 +1475,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list of getting real-space configuration for canonical state before excitation </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00058">58</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00053">53</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00334">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00235">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00121">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00019">GetSingleExcitedStateHubbard()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00350">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>.</p>
 
 </div>
 </div>
@@ -1450,10 +1492,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list of getting real-space configuration for canonical state across processes </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00049">49</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00048">48</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, and <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>.</p>
+<p>Referenced by <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, and <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>.</p>
 
 </div>
 </div>
@@ -1466,10 +1509,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list of getting real-space configuration for canonical state before excitation across processes </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00059">59</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00054">54</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_pair_ex_spin_8c_source.html#l00334">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00235">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00121">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00019">GetSingleExcitedStateHubbard()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>.</p>
+<p>Referenced by <a class="el" href="_pair_ex_spin_8c_source.html#l00350">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>.</p>
 
 </div>
 </div>
@@ -1482,10 +1526,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list to get index of list_1 </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00050">50</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00049">49</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00274">child_exchange_spin_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00195">expec_cisajscktaltdc_alldiag()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00235">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00121">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00019">GetSingleExcitedStateHubbard()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>, <a class="el" href="sz_8c_source.html#l01389">Read_sz()</a>, <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00088">totalspin_Hubbard()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00240">X_child_exchange_spin_element()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, and <a class="el" href="mltply_hubbard_core_8c_source.html#l00400">X_CisAjt()</a>.</p>
+<p>Referenced by <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00274">child_exchange_spin_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>, <a class="el" href="sz_8c_source.html#l01528">Read_sz()</a>, <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00088">totalspin_Hubbard()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00240">X_child_exchange_spin_element()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, and <a class="el" href="mltply_hubbard_core_8c_source.html#l00400">X_CisAjt()</a>.</p>
 
 </div>
 </div>
@@ -1498,24 +1543,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list to get index of list_1_org </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00060">60</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00055">55</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="acbdc653ca479186f8e5576e3933fa12f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long unsigned int* list_2_1_Sz_org</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00063">63</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>.</p>
 
 </div>
 </div>
@@ -1528,10 +1560,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list to get index of list_1 </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00051">51</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00050">50</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00274">child_exchange_spin_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00195">expec_cisajscktaltdc_alldiag()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00235">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00121">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00019">GetSingleExcitedStateHubbard()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>, <a class="el" href="sz_8c_source.html#l01389">Read_sz()</a>, <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00088">totalspin_Hubbard()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00240">X_child_exchange_spin_element()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, and <a class="el" href="mltply_hubbard_core_8c_source.html#l00400">X_CisAjt()</a>.</p>
+<p>Referenced by <a class="el" href="mltply_hubbard_core_8c_source.html#l00473">child_exchange_element()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00274">child_exchange_spin_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00534">child_pairhopp_element()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00306">CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00285">ConvertToList1GeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="_single_ex_hubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>, <a class="el" href="sz_8c_source.html#l01528">Read_sz()</a>, <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00088">totalspin_Hubbard()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_spin_core_8c_source.html#l00240">X_child_exchange_spin_element()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, and <a class="el" href="mltply_hubbard_core_8c_source.html#l00400">X_CisAjt()</a>.</p>
 
 </div>
 </div>
@@ -1544,52 +1577,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list to get index of list_1_org </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00061">61</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00056">56</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00393">MakeExcitedList()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a6d5d78bd7dab0502f740ebb33bb22807"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long unsigned int* list_2_2_Sz_org</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00064">64</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a8cc4d09090764ceda6d6e035628ab4c0"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long unsigned int* list_3</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00054">54</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a7c1dc7a1f83105a9b8fd28b486015043"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double* list_D_num</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="global_8h_source.html#l00047">47</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>.</p>
 
 </div>
 </div>
@@ -1602,52 +1594,68 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>list for diagonal components. </p>
 
 <p>Definition at line <a class="el" href="global_8h_source.html#l00046">46</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00049">diagonalcalc()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="make_ham_8c_source.html#l00054">makeHam()</a>, <a class="el" href="mltply_8c_source.html#l00037">mltply()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00277">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00445">SetDiagonalCoulombInter()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00167">SetDiagonalCoulombIntra()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00684">SetDiagonalHund()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01007">SetDiagonalInterAll()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00085">diagonalcalc()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="make_ham_8c_source.html#l00055">makeHam()</a>, <a class="el" href="mltply_8c_source.html#l00056">mltply()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00374">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00544">SetDiagonalCoulombInter()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00261">SetDiagonalCoulombIntra()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00785">SetDiagonalHund()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01110">SetDiagonalInterAll()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a7c31123a2b6847792de37b425d3cc94b"></a>
+<a class="anchor" id="aa8a2431e50f9fc7d8c78af300d5f3bee"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long unsigned int* list_jb_org</td>
+          <td class="memname">int myrank</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00062">62</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Process ID, defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a> </p>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00158">158</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00310">CheckMPI_Summary()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00257">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00188">expec_cisajs_HubbardGC()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00434">expec_cisajs_SpinGeneral()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00374">expec_cisajs_SpinHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00571">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00487">expec_energy_flct_GeneralSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00415">expec_energy_flct_HalfSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00292">expec_energy_flct_Hubbard()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00172">expec_energy_flct_HubbardGC()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00122">fgetsMPI()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00074">FinalizeMPI()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00105">fopenMPI()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l01032">GC_Ajt()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l00981">GC_Cis()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00350">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="_pair_ex_hubbard_8c_source.html#l00037">GetPairExcitedStateHubbardGC()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00043">InitializeMPI()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00154">InitShadowRes()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00458">OutputLanczosVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">ReadInitialVector()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00374">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00544">SetDiagonalCoulombInter()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00261">SetDiagonalCoulombIntra()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00785">SetDiagonalHund()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01110">SetDiagonalInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01762">SetDiagonalTEChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01431">SetDiagonalTEInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01940">SetDiagonalTETransfer()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00491">SetInitialVector()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00233">totalspin_Spin()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00424">totalspin_SpinGC()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00688">totalSz_HubbardGC()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00747">totalSz_SpinGC()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l01136">X_Ajt()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01593">X_Ajt_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01315">X_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00817">X_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01701">X_child_CisAisCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01768">X_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01260">X_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01989">X_child_CisAit_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00128">X_child_CisAjt_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00562">X_child_CisAjt_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, <a class="el" href="mltply_hubbard_core_8c_source.html#l01082">X_Cis()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01516">X_Cis_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01456">X_GC_Ajt_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01212">X_GC_child_AisCis_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l02110">X_GC_child_AisCis_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01164">X_GC_child_CisAis_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00713">X_GC_child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l02065">X_GC_child_CisAis_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00263">X_GC_child_CisAisCjtAjt_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01048">X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01555">X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00391">X_GC_child_CisAisCjuAju_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00440">X_GC_child_CisAisCjuAju_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00808">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01332">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00210">X_GC_child_CisAisCjuAjv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00617">X_GC_child_CisAisCjuAjv_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01102">X_GC_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01917">X_GC_child_CisAit_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00103">X_GC_child_CisAitCiuAiv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00512">X_GC_child_CisAitCiuAiv_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00888">X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01409">X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00305">X_GC_child_CisAitCjuAju_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00718">X_GC_child_CisAitCjuAju_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00959">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01473">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00341">X_GC_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00535">X_GC_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00054">X_GC_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00229">X_GC_child_general_hopp_MPIsingle()</a>, and <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01390">X_GC_Cis_MPI()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a89ca8bbae001ee6f3cdea618391e5b33"></a>
+<a class="anchor" id="ae68326adc3b3862f1162832f70727b06"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double * list_num_down</td>
+          <td class="memname">int nproc</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00083">83</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Number of processors, defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a> </p>
+<blockquote class="doxtable">
+<p>epsilon for checking values of one-body and two-body interactions. </p>
+</blockquote>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00157">157</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+<p>Referenced by <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00310">CheckMPI_Summary()</a>, <a class="el" href="mltply_m_p_i_boost_8c_source.html#l00036">child_general_int_spin_MPIBoost()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00043">InitializeMPI()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00491">SetInitialVector()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="afabeecb7911904cb767f1d99c7dc4fec"></a>
+<a class="anchor" id="a2b6a46c4274b223ea03fb4a7b80f4a5a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double* list_num_up</td>
+          <td class="memname">int nthreads</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00083">83</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Number of Threads, defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a> </p>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00159">159</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+<p>Referenced by <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00043">InitializeMPI()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00154">InitShadowRes()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00491">SetInitialVector()</a>.</p>
 
 </div>
 </div>
@@ -1660,10 +1668,29 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Average number for TPQ calculation </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00074">74</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00065">65</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>, and <a class="el" href="readdef_8c_source.html#l00402">ReadDefFileNInt()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, and <a class="el" href="readdef_8c_source.html#l00447">ReadDefFileNInt()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abacbc82cf67663cd6f3708f1274ac207"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FILE* stdoutMPI</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>File pointer to the standard output defined in <a class="el" href="wrapper_m_p_i_8c.html#a24d222d1062d1a2dc4d9aacb506c5c8d" title="MPI initialization wrapper Process ID (myrank), Number of processes (nproc), Number of threads (nthre...">InitializeMPI()</a> </p>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00160">160</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_full_diag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="check_8c_source.html#l00051">check()</a>, <a class="el" href="readdef_8c_source.html#l02402">CheckFormatForKondoInt()</a>, <a class="el" href="readdef_8c_source.html#l02374">CheckFormatForSpinInt()</a>, <a class="el" href="readdef_8c_source.html#l02583">CheckGeneralSpinIndexForInterAll()</a>, <a class="el" href="readdef_8c_source.html#l02009">CheckInterAllHermite()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00027">CheckMPI()</a>, <a class="el" href="_check_m_p_i_8c_source.html#l00310">CheckMPI_Summary()</a>, <a class="el" href="readdef_8c_source.html#l02610">CheckSpinIndexForTrans()</a>, <a class="el" href="readdef_8c_source.html#l02849">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l02643">CheckTotal2Sz()</a>, <a class="el" href="readdef_8c_source.html#l01888">CheckTransferHermite()</a>, <a class="el" href="_file_i_o_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00085">diagonalcalc()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00074">FinalizeMPI()</a>, <a class="el" href="readdef_8c_source.html#l02152">GetDiagonalInterAll()</a>, <a class="el" href="readdef_8c_source.html#l00382">GetFileName()</a>, <a class="el" href="readdef_8c_source.html#l00187">GetKWWithIdx()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00350">GetPairExcitedStateGeneralSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00144">GetPairExcitedStateGeneralSpinGC()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00251">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="_pair_ex_spin_8c_source.html#l00062">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00169">GetSpectrumByTridiagonalMatrixComponents()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>, <a class="el" href="wrapper_m_p_i_8c_source.html#l00043">InitializeMPI()</a>, <a class="el" href="input_8c_source.html#l00020">inputHam()</a>, <a class="el" href="readdef_8c_source.html#l02302">JudgeDefType()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="lapack__diag_8c_source.html#l00032">lapack_diag()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00421">MakeExcitedList()</a>, <a class="el" href="output_8c_source.html#l00027">output()</a>, <a class="el" href="output__list_8c_source.html#l00040">output_list()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00458">OutputLanczosVector()</a>, <a class="el" href="phys_8c_source.html#l00047">phys()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, <a class="el" href="readdef_8c_source.html#l00230">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l00112">ReadDefFileError()</a>, <a class="el" href="readdef_8c_source.html#l00966">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00447">ReadDefFileNInt()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">ReadInitialVector()</a>, <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00374">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00544">SetDiagonalCoulombInter()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00261">SetDiagonalCoulombIntra()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00785">SetDiagonalHund()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01110">SetDiagonalInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01762">SetDiagonalTEChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01431">SetDiagonalTEInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01940">SetDiagonalTETransfer()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00491">SetInitialVector()</a>, <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00337">SetOmega()</a>, <a class="el" href="splash_8c_source.html#l00025">splash()</a>, <a class="el" href="sz_8c_source.html#l00063">sz()</a>, and <a class="el" href="vec12_8c_source.html#l00031">vec12()</a>.</p>
 
 </div>
 </div>
@@ -1676,10 +1703,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>step for TPQ calculation </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00076">76</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00066">66</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>, and <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>, and <a class="el" href="mltply_8c_source.html#l00056">mltply()</a>.</p>
 
 </div>
 </div>
@@ -1692,10 +1720,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>output step for TE calculation. </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00076">76</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00069">69</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, and <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1708,26 +1737,32 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>Name of the file to output Error message for Sz calculation. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00154">154</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00143">143</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="time_8c_source.html#l00037">InitTimer()</a>, <a class="el" href="time_8c_source.html#l00079">OutputTimer()</a>, <a class="el" href="time_8c_source.html#l00023">StampTime()</a>, and <a class="el" href="time_8c_source.html#l00067">StopTimer()</a>.</p>
+<p>Referenced by <a class="el" href="time_8c_source.html#l00053">InitTimer()</a>, <a class="el" href="time_8c_source.html#l00095">OutputTimer()</a>, <a class="el" href="time_8c_source.html#l00039">StampTime()</a>, and <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a1184374f8a9b29f419dba94a63e25579"></a>
+<a class="anchor" id="aeeeff4ed34e4a32b23cc2424cf15893b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double * TimerStart</td>
+          <td class="memname">double* TimerStart</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<blockquote class="doxtable">
+<p>The procedure execution time. </p>
+</blockquote>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00154">154</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00144">144</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="time_8c_source.html#l00037">InitTimer()</a>, <a class="el" href="time_8c_source.html#l00079">OutputTimer()</a>, <a class="el" href="time_8c_source.html#l00055">StartTimer()</a>, and <a class="el" href="time_8c_source.html#l00067">StopTimer()</a>.</p>
+<p>Referenced by <a class="el" href="time_8c_source.html#l00053">InitTimer()</a>, <a class="el" href="time_8c_source.html#l00095">OutputTimer()</a>, <a class="el" href="time_8c_source.html#l00071">StartTimer()</a>, and <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>.</p>
 
 </div>
 </div>
@@ -1740,10 +1775,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>A vector after multiplying Hamiltonian, \( v_0 = H v_1\). </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00033">33</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00034">34</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00821">expec_energy_flct_GeneralSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00754">expec_energy_flct_HalfSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00636">expec_energy_flct_Hubbard()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00521">expec_energy_flct_HubbardGC()</a>, <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00299">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="lapack__diag_8c_source.html#l00029">lapack_diag()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="make_ham_8c_source.html#l00054">makeHam()</a>, <a class="el" href="_multiply_8c_source.html#l00032">Multiply()</a>, <a class="el" href="phys_8c_source.html#l00047">phys()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00487">expec_energy_flct_GeneralSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00415">expec_energy_flct_HalfSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00292">expec_energy_flct_Hubbard()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00172">expec_energy_flct_HubbardGC()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00321">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="lapack__diag_8c_source.html#l00032">lapack_diag()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="make_ham_8c_source.html#l00055">makeHam()</a>, <a class="el" href="_multiply_8c_source.html#l00043">Multiply()</a>, <a class="el" href="_multiply_8c_source.html#l00080">MultiplyForTEM()</a>, <a class="el" href="phys_8c_source.html#l00047">phys()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -1756,10 +1792,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>A vector before multiplying Hamiltonian, \( v_0 = H v_1\). </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00034">34</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00035">35</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>, <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00299">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="make_ham_8c_source.html#l00054">makeHam()</a>, <a class="el" href="_multiply_8c_source.html#l00032">Multiply()</a>, <a class="el" href="phys_8c_source.html#l00047">phys()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>, <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_lanczos___eigen_value_8c_source.html#l00321">Lanczos_GetTridiagonalMatrixComponents()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="make_ham_8c_source.html#l00055">makeHam()</a>, <a class="el" href="_multiply_8c_source.html#l00043">Multiply()</a>, <a class="el" href="_multiply_8c_source.html#l00080">MultiplyForTEM()</a>, <a class="el" href="phys_8c_source.html#l00047">phys()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -1772,10 +1809,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>A temporary vector for MPI. </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00035">35</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00037">37</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01260">X_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01989">X_child_CisAit_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00808">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01332">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00210">X_GC_child_CisAisCjuAjv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00617">X_GC_child_CisAisCjuAjv_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01102">X_GC_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01917">X_GC_child_CisAit_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00103">X_GC_child_CisAitCiuAiv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00512">X_GC_child_CisAitCiuAiv_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00888">X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00305">X_GC_child_CisAitCjuAju_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00959">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01473">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00341">X_GC_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00535">X_GC_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00054">X_GC_child_general_hopp_MPIdouble()</a>, and <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00229">X_GC_child_general_hopp_MPIsingle()</a>.</p>
+<p>Referenced by <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01260">X_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01989">X_child_CisAit_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01607">X_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01822">X_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l01105">X_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00893">X_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00349">X_child_general_hopp_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00452">X_child_general_hopp_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00061">X_child_general_int_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00218">X_child_general_int_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_8c_source.html#l00138">X_child_general_int_spin_TotalS_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00808">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01332">X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00210">X_GC_child_CisAisCjuAjv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00617">X_GC_child_CisAisCjuAjv_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01102">X_GC_child_CisAit_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01917">X_GC_child_CisAit_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00103">X_GC_child_CisAitCiuAiv_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00512">X_GC_child_CisAitCiuAiv_spin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00888">X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00305">X_GC_child_CisAitCjuAju_spin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l00959">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble()</a>, <a class="el" href="mltply_m_p_i_spin_core_8c_source.html#l01473">X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00341">X_GC_child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_core_8c_source.html#l00535">X_GC_child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00054">X_GC_child_general_hopp_MPIdouble()</a>, and <a class="el" href="mltply_m_p_i_hubbard_8c_source.html#l00229">X_GC_child_general_hopp_MPIsingle()</a>.</p>
 
 </div>
 </div>
@@ -1788,10 +1826,28 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>An input vector to calculate spectrum function. </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00039">39</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00040">40</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a97fbc83d45f0e9674962f580b99ce67d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double complex* v2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A temporary vector for time evolution calculation, \( v2 = H*v1 = H^coef |psi(t)&gt;\). </p>
+
+<p>Definition at line <a class="el" href="global_8h_source.html#l00036">36</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+
+<p>Referenced by <a class="el" href="_multiply_8c_source.html#l00080">MultiplyForTEM()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -1804,10 +1860,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Eigen vectors. </p>
 
 <p>Definition at line <a class="el" href="global_8h_source.html#l00045">45</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00080">GetCalcSpectrumTPQ()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>, <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>, <a class="el" href="_std_face___model_util_8c_source.html#l00905">StdFace_PrintXSF()</a>, and <a class="el" href="vec12_8c_source.html#l00034">vec12()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00093">GetCalcSpectrumTPQ()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>, <a class="el" href="_std_face___model_util_8c_source.html#l00938">StdFace_PrintXSF()</a>, and <a class="el" href="vec12_8c_source.html#l00031">vec12()</a>.</p>
 
 </div>
 </div>
@@ -1820,10 +1877,11 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>A vector used in the CG mode. </p>
 
-<p>Definition at line <a class="el" href="global_8h_source.html#l00042">42</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
+<p>Definition at line <a class="el" href="global_8h_source.html#l00041">41</a> of file <a class="el" href="global_8h_source.html">global.h</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="xsetmem_8c_source.html#l00116">setmem_large()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>, <a class="el" href="_calc_spectrum_by_full_diag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>, <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>, <a class="el" href="_power_lanczos_8c_source.html#l00020">PowerLanczos()</a>, and <a class="el" href="xsetmem_8c_source.html#l00224">setmem_large()</a>.</p>
 
 </div>
 </div>
@@ -1833,7 +1891,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="global_8h.html">global.h</a></li>
-    <li class="footer">Generated on Thu Oct 26 2017 15:48:12 for HΦ by
+    <li class="footer">Generated on Mon Dec 25 2017 18:12:52 for HΦ by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

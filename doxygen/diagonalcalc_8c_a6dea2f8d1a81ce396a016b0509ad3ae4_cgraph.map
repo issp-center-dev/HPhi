@@ -1,8 +1,7 @@
 <map id="SetDiagonalInterAll" name="SetDiagonalInterAll">
 <area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="193,5,314,32"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="226,56,281,83"/>
-<area shape="rect" id="node6" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="198,107,309,133"/>
-<area shape="rect" id="node7" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="188,157,319,184"/>
+<area shape="rect" id="node5" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="198,56,309,83"/>
+<area shape="rect" id="node6" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="188,107,319,133"/>
 <area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="367,5,471,32"/>
 <area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="519,5,616,32"/>
 </map>

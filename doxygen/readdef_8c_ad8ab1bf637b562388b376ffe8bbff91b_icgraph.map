@@ -1,5 +1,5 @@
 <map id="CheckKW" name="CheckKW">
 <area shape="rect" id="node2" href="$readdef_8c.html#a500b57266b13cf3bc4a89f222179a03d" title="Function of Fitting FileName. " alt="" coords="136,5,235,32"/>
-<area shape="rect" id="node3" href="$readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1" title="Function of reading informations from def files. " alt="" coords="283,5,403,32"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1" title="Function of reading information about &quot;ModPara&quot; file and total number of parameters from other def fi..." alt="" coords="283,5,403,32"/>
 <area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="451,5,501,32"/>
 </map>

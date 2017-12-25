@@ -38,7 +38,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">HΦ
-   &#160;<span id="projectnumber">2.0.4</span>
+   &#160;<span id="projectnumber">3.0.0</span>
    </div>
   </td>
  </tr>
@@ -112,10 +112,11 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins. The Lanczos algorithm for finding ground states and newly developed Lanczos-based algorithm for finite-temperature properties of these models are implemented for parallel computing. A broad spectrum of users including experimental researchers is cordially welcome. </p><hr/>
  <h2>Developers</h2>
 <p>Youhei Yamaji (Quantum-Phase Electronics Center, The University of Tokyo)<br />
- Takahiro Misawa (Department of Applied Physics, The University of Tokyo)<br />
+ Takahiro Misawa (Institute for Solid State Physics, The University of Tokyo)<br />
  Synge Todo (Department of Physics, The University of Tokyo)<br />
  Kazuyoshi Yoshimi (Institute for Solid State Physics, The University of Tokyo)<br />
  Mitsuaki Kawamura (Institute for Solid State Physics, The University of Tokyo)<br />
+ Kota Ido (Department of Applied Physics, The University of Tokyo)<br />
  Naoki Kawashima (Institute for Solid State Physics, The University of Tokyo) </p><hr/>
  <h2>Methods</h2>
 <ul>
@@ -132,7 +133,7 @@ $(document).ready(function(){initNavTree('index.html','');});
  <h2>Important functions and source files</h2>
 <ul>
 <li>
-<a class="el" href="mltply_8c.html">mltply.c</a> : Perform Hamiltonian-vector product <ul>
+<a class="el" href="mltply_8c.html" title="Multiplying the wavefunction by the Hamiltonian. . ">mltply.c</a> : Perform Hamiltonian-vector product <ul>
 <li>
 <a class="el" href="mltply_hubbard_8c.html" title="Function for Hubbard Hamitonian. ">mltplyHubbard.c</a> : For Hubbard and Kondo system </li>
 <li>
@@ -142,16 +143,24 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li>
 <a class="el" href="_std_face__main_8c.html" title="Read Input file and write files for Expert mode. Initialize variables. Check parameters. ">StdFace_main.c</a> : Construct typical models </li>
 <li>
-<a class="el" href="global_8h.html">global.h</a>, <a class="el" href="wrapper_m_p_i_8h.html" title="Global variables related to MPI and OpenMP. ">wrapperMPI.h</a> : Global variables </li>
+<a class="el" href="global_8h.html">global.h</a> : Global variables </li>
 <li>
 <a class="el" href="struct_8h.html" title="Binded struct. ">struct.h</a> : Binded struct </li>
 </ul>
 <hr/>
- <h2>How to modify HPhi</h2>
+ <h2>How to modify HPhi (Developer's note)</h2>
 <ul>
 <li><a class="el" href="page_codingrule.html">Coding rule</a></li>
 <li><a class="el" href="page_addstandard.html">Add new lattice model into Standard mode</a></li>
-<li><a class="el" href="page_newterm.html">Add new term (three body ? el-ph ?) into Hamiltonian</a></li>
+<li><a class="el" href="page_addstandardval.html">Add new input variable into Standard mode</a></li>
+<li><a class="el" href="page_variable.html">Global variables and Data structure</a></li>
+<li><a class="el" href="page_setmem.html">Malloc vectors</a></li>
+<li><a class="el" href="page_cmake.html">Add new source-file, executable, scripts (handle CMake)</a></li>
+<li><a class="el" href="page_addmodpara.html">Add new parameter into modpara</a></li>
+<li><a class="el" href="page_addexpert.html">Add new input-file for Expert mode</a></li>
+<li><a class="el" href="page_time.html">Compute elapsed time for new functions</a></li>
+<li><a class="el" href="page_log.html">Various kind of Logs</a></li>
+<li>Some contrivances for HPhi (only in Jananese) <a href="http://qlms.github.io/HPhi/develop/tips.pdf">http://qlms.github.io/HPhi/develop/tips.pdf</a></li>
 </ul>
 <hr/>
  <h2>Link</h2>
@@ -169,7 +178,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Oct 26 2017 15:48:27 for HΦ by
+    <li class="footer">Generated on Mon Dec 25 2017 18:13:14 for HΦ by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

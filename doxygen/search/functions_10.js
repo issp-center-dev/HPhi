@@ -11,5 +11,7 @@ var searchData=
   ['totalspin_5fspingc',['totalspin_SpinGC',['../expec__totalspin_8c.html#a49abbebacc35894a580a6b202414ca3e',1,'expec_totalspin.c']]],
   ['totalsz_5fhubbardgc',['totalSz_HubbardGC',['../expec__totalspin_8c.html#a408b344e7ab97dc747e3c6c9c9eb892c',1,'expec_totalspin.c']]],
   ['totalsz_5fspingc',['totalSz_SpinGC',['../expec__totalspin_8c.html#ab7b5839640e77d0bb01982c7be6f2b69',1,'expec_totalspin.c']]],
+  ['transferforquench',['TransferForQuench',['../_h_phi_trans_8c.html#a1d1be1efebf038ade608584084df5bcb',1,'HPhiTrans.c']]],
+  ['transferwithpeierls',['TransferWithPeierls',['../_h_phi_trans_8c.html#ad64aef8deeaf5367dfa5abe52efea872',1,'HPhiTrans.c']]],
   ['trimspacequote',['TrimSpaceQuote',['../_std_face__main_8c.html#ab77cb41cfccf7b8fd57eae7bcf952f23',1,'StdFace_main.c']]]
 ];

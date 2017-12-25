@@ -14,9 +14,5 @@ var wrapper_m_p_i_8h =
     [ "SumMPI_dc", "wrapper_m_p_i_8h.html#a7a90e7c667189b600a621be9856fa650", null ],
     [ "SumMPI_i", "wrapper_m_p_i_8h.html#aeab38d65c1c82094276a9b250b9a5049", null ],
     [ "SumMPI_li", "wrapper_m_p_i_8h.html#afd4574e9353708ef2aa039a1721440b8", null ],
-    [ "VecProdMPI", "wrapper_m_p_i_8h.html#a5af83380d39b0c221d6d1e7f572e3d6d", null ],
-    [ "myrank", "wrapper_m_p_i_8h.html#aa8a2431e50f9fc7d8c78af300d5f3bee", null ],
-    [ "nproc", "wrapper_m_p_i_8h.html#ae68326adc3b3862f1162832f70727b06", null ],
-    [ "nthreads", "wrapper_m_p_i_8h.html#a2b6a46c4274b223ea03fb4a7b80f4a5a", null ],
-    [ "stdoutMPI", "wrapper_m_p_i_8h.html#abacbc82cf67663cd6f3708f1274ac207", null ]
+    [ "VecProdMPI", "wrapper_m_p_i_8h.html#a5af83380d39b0c221d6d1e7f572e3d6d", null ]
 ];

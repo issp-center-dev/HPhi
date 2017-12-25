@@ -1,11 +1,10 @@
 <map id="CheckFormatForSpinInt" name="CheckFormatForSpinInt">
-<area shape="rect" id="node2" href="$readdef_8c.html#a08b2cb6d21dff0fe22a79e9528c94f4f" title="function of checking format of Kondo interactions " alt="" coords="215,157,387,184"/>
-<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1800,107,1855,133"/>
-<area shape="rect" id="node4" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="435,81,591,108"/>
-<area shape="rect" id="node5" href="$readdef_8c.html#a33a451cbb9e518962b7379382cd6b117" title="function of checking indecies of localized spin " alt="" coords="639,68,745,95"/>
-<area shape="rect" id="node6" href="$readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0" title="function of checking an input data of total2Sz " alt="" coords="1640,5,1752,32"/>
-<area shape="rect" id="node7" href="$readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da" title="function of resetting number of interactions " alt="" coords="793,68,940,95"/>
-<area shape="rect" id="node8" href="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68" title="function of initializeing interactions " alt="" coords="988,68,1147,95"/>
-<area shape="rect" id="node9" href="$readdef_8c.html#acc29011dbce0388d85541f1e4afa2be1" title="function of checking spin index for all interactions " alt="" coords="1195,68,1373,95"/>
-<area shape="rect" id="node10" href="$readdef_8c.html#ac7c21de82671cc25f4319b55039c4e41" title="function of checking spin index for transfers " alt="" coords="1421,56,1592,83"/>
+<area shape="rect" id="node2" href="$readdef_8c.html#a530ff519fae4063e6f2e08a11316d5ea" title="function of checking format of Kondo interactions " alt="" coords="215,20,387,47"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="435,20,591,47"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#a33a451cbb9e518962b7379382cd6b117" title="function of checking indexies of localized spin " alt="" coords="639,20,745,47"/>
+<area shape="rect" id="node5" href="$readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0" title="function of checking an input data of total2Sz " alt="" coords="1644,20,1756,47"/>
+<area shape="rect" id="node6" href="$readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da" title="function of resetting number of interactions " alt="" coords="793,47,940,73"/>
+<area shape="rect" id="node7" href="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68" title="function of initializing interactions " alt="" coords="988,49,1147,76"/>
+<area shape="rect" id="node8" href="$readdef_8c.html#a159fe255d7b06db68c9739671189dec9" title="function of checking spin index for all interactions " alt="" coords="1195,43,1377,85"/>
+<area shape="rect" id="node9" href="$readdef_8c.html#ac7c21de82671cc25f4319b55039c4e41" title="function of checking spin index for transfers " alt="" coords="1425,47,1596,73"/>
 </map>

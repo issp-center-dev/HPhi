@@ -1,5 +1,5 @@
 <map id="phys" name="phys">
-<area shape="rect" id="node2" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="107,5,221,32"/>
+<area shape="rect" id="node2" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="Parent function for FullDiag mode. " alt="" coords="107,5,221,32"/>
 <area shape="rect" id="node4" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="104,56,224,83"/>
 <area shape="rect" id="node3" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="272,31,323,57"/>
 </map>

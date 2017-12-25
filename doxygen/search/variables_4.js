@@ -11,16 +11,15 @@ var searchData=
   ['eigenvecio',['EigenVecIO',['../struct_std_int_list.html#ac52cd0b4c08a97f52b26003ea6efb3db',1,'StdIntList']]],
   ['energy',['energy',['../struct_phys_list.html#a0ead805fab300ad3b7423dddd8c5cd4a',1,'PhysList']]],
   ['eps',['eps',['../global_8h.html#a974b448c3d0a13d483d36ef15de369b5',1,'global.h']]],
-  ['eps_5fbisec',['eps_Bisec',['../global_8h.html#acbbd2f1cd916f2d793bee07597b75fac',1,'global.h']]],
   ['eps_5fcg',['eps_CG',['../global_8h.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'global.h']]],
   ['eps_5fcheckimag0',['eps_CheckImag0',['../global_8h.html#ac861276a05c60f7ba96934662ea6f7cc',1,'global.h']]],
   ['eps_5fenergy',['eps_Energy',['../global_8h.html#ad27f75f04d9472efb5179035fc2e589a',1,'global.h']]],
   ['eps_5flanczos',['eps_Lanczos',['../global_8h.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'global.h']]],
-  ['eps_5fvec12',['eps_vec12',['../global_8h.html#a1a933b5d3f5ba250abd9d55e162eaac3',1,'global.h']]],
   ['ex',['Ex',['../struct_std_int_list.html#a1e8da9e1e1996c47273d76dca974922d',1,'StdIntList']]],
   ['exchangecoupling',['ExchangeCoupling',['../struct_define_list.html#aca15af1bddc7adf084cf01542a25f4c2',1,'DefineList']]],
   ['exct',['exct',['../struct_std_int_list.html#a15c2c873d9cf7afbadea24610719cadd',1,'StdIntList']]],
   ['exindx',['ExIndx',['../struct_std_int_list.html#ac8b34a2a4779183756e3a342252406ec',1,'StdIntList']]],
-  ['expecinterval',['ExpecInterval',['../struct_std_int_list.html#a1fc980d0cb10e4fe605b038a168e59b6',1,'StdIntList::ExpecInterval()'],['../global_8h.html#a2b9ddfddbaece016b6266da9c40b317e',1,'ExpecInterval():&#160;global.h']]],
+  ['expandcoef',['ExpandCoef',['../struct_param_list.html#a73f4e7970e37930eac2d3c3d6aeeec34',1,'ParamList::ExpandCoef()'],['../struct_std_int_list.html#aaca31d0c2d0335e06cd6866786bcd4f0',1,'StdIntList::ExpandCoef()']]],
+  ['expecinterval',['ExpecInterval',['../struct_param_list.html#a2bcaf7f7110c9af48376a05cf1cf8418',1,'ParamList::ExpecInterval()'],['../struct_std_int_list.html#a1fc980d0cb10e4fe605b038a168e59b6',1,'StdIntList::ExpecInterval()']]],
   ['expphase',['ExpPhase',['../struct_std_int_list.html#ae34791d571eaa71b67e23898b6823d7c',1,'StdIntList']]]
 ];

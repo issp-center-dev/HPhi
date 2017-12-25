@@ -3,12 +3,11 @@
 <area shape="rect" id="node3" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="769,54,867,80"/>
 <area shape="rect" id="node4" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="181,54,348,80"/>
 <area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="217,222,312,248"/>
-<area shape="rect" id="node9" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="177,156,352,197"/>
-<area shape="rect" id="node11" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="177,273,352,314"/>
-<area shape="rect" id="node13" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="199,339,330,366"/>
+<area shape="rect" id="node8" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="177,156,352,197"/>
+<area shape="rect" id="node10" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="177,273,352,314"/>
+<area shape="rect" id="node12" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="199,339,330,366"/>
 <area shape="rect" id="node5" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="424,54,545,80"/>
 <area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="451,222,518,248"/>
-<area shape="rect" id="node8" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="642,222,697,248"/>
-<area shape="rect" id="node10" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="400,156,569,197"/>
-<area shape="rect" id="node12" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="421,280,548,307"/>
+<area shape="rect" id="node9" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="400,156,569,197"/>
+<area shape="rect" id="node11" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="421,280,548,307"/>
 </map>

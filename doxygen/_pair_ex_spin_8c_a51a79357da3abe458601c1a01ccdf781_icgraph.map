@@ -1,7 +1,7 @@
 <map id="GetPairExcitedStateGeneralSpin" name="GetPairExcitedStateGeneralSpin">
 <area shape="rect" id="node2" href="$_pair_ex_spin_8c.html#acc9ece067d6f261fd9865c9e7ca38c28" title="GetPairExcitedStateSpin" alt="" coords="265,5,432,32"/>
-<area shape="rect" id="node3" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="480,5,621,32"/>
-<area shape="rect" id="node4" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="669,5,788,32"/>
+<area shape="rect" id="node3" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="Calculating the pair excited state by the pair operator; &#160;&#160;&#160;, where &#160;indicates a creation (anti&#45;creat..." alt="" coords="480,5,621,32"/>
+<area shape="rect" id="node4" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="Parent function to calculate the excited state. " alt="" coords="669,5,788,32"/>
 <area shape="rect" id="node5" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="836,5,941,32"/>
 <area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="989,5,1040,32"/>
 </map>

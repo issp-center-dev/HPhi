@@ -1,6 +1,5 @@
 <map id="StdFace_InitSite" name="StdFace_InitSite">
-<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="355,26,409,53"/>
-<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3" title="MPI Abortation wrapper. " alt="" coords="190,26,289,53"/>
-<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#a874deba0d1c76592a2d060c0fae53843" title="Move a site into the original supercell if it is outside the original supercell. " alt="" coords="176,77,303,104"/>
-<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="Print a valiable (integer) read from the input file if it is not specified in the input file (=214748..." alt="" coords="172,128,307,154"/>
+<area shape="rect" id="node2" href="$_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3" title="MPI Abortation wrapper. " alt="" coords="190,5,289,32"/>
+<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#a874deba0d1c76592a2d060c0fae53843" title="Move a site into the original supercell if it is outside the original supercell. " alt="" coords="176,56,303,83"/>
+<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="Print a valiable (integer) read from the input file if it is not specified in the input file (=214748..." alt="" coords="172,107,307,133"/>
 </map>

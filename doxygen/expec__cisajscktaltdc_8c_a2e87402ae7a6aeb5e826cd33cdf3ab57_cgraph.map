@@ -1,21 +1,20 @@
 <map id="expec_cisajscktalt_SpinGCHalf" name="expec_cisajscktalt_SpinGCHalf">
-<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="627,71,681,97"/>
-<area shape="rect" id="node3" href="$mltply_spin_core_8c.html#aa25730bebedaef0567be1d1d3a2aa9f7" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="192,373,353,414"/>
-<area shape="rect" id="node5" href="$mltply_spin_core_8c.html#af675fc77ae3b652589d52ff3fa667b77" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="193,699,352,741"/>
-<area shape="rect" id="node7" href="$mltply_spin_core_8c.html#a220085102d48735b8111fe704e5d5993" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="193,634,352,675"/>
-<area shape="rect" id="node8" href="$mltply_spin_core_8c.html#a1b6c6239f632e04606cf340f024d2ed3" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="193,765,352,806"/>
-<area shape="rect" id="node9" href="$expec__cisajscktaltdc_8c.html#a2ca27868fab714216654436b769197bc" title="Rearray_Interactions" alt="" coords="201,831,344,857"/>
-<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="225,125,320,152"/>
-<area shape="rect" id="node12" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="409,34,579,75"/>
-<area shape="rect" id="node13" href="$mltply_m_p_i_spin_core_8c.html#ab23a10d5019fb27103c4726eadb32179" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="184,438,361,479"/>
-<area shape="rect" id="node14" href="$mltply_m_p_i_spin_core_8c.html#a29c17404e94c3971bee0cc0a9de81533" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="184,569,361,610"/>
-<area shape="rect" id="node15" href="$mltply_m_p_i_spin_core_8c.html#a75a9365a3be44e0de5e5850658c92109" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="184,242,361,283"/>
-<area shape="rect" id="node16" href="$mltply_m_p_i_spin_core_8c.html#a2ad42e0120a7dac9479597ea42c8f55a" title="CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region. " alt="" coords="184,177,361,218"/>
-<area shape="rect" id="node17" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="185,59,360,101"/>
-<area shape="rect" id="node18" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="185,503,360,545"/>
-<area shape="rect" id="node19" href="$mltply_m_p_i_spin_core_8c.html#a8c2107762d44860950b1deb3a1f0ce60" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="185,307,360,349"/>
-<area shape="rect" id="node20" href="$mltply_m_p_i_spin_core_8c.html#accf48effad335c4471e4522e86371e64" title="CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region. " alt="" coords="185,882,360,923"/>
-<area shape="rect" id="node4" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="429,445,559,472"/>
-<area shape="rect" id="node6" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="431,675,557,701"/>
-<area shape="rect" id="node11" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="461,184,527,211"/>
+<area shape="rect" id="node2" href="$mltply_spin_core_8c.html#aa25730bebedaef0567be1d1d3a2aa9f7" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="192,319,353,360"/>
+<area shape="rect" id="node4" href="$mltply_spin_core_8c.html#af675fc77ae3b652589d52ff3fa667b77" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="193,136,352,177"/>
+<area shape="rect" id="node6" href="$mltply_spin_core_8c.html#a220085102d48735b8111fe704e5d5993" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="193,71,352,112"/>
+<area shape="rect" id="node7" href="$mltply_spin_core_8c.html#a1b6c6239f632e04606cf340f024d2ed3" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="193,5,352,47"/>
+<area shape="rect" id="node8" href="$expec__cisajscktaltdc_8c.html#a2ca27868fab714216654436b769197bc" title="Rearray interactions. " alt="" coords="201,267,344,294"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="225,711,320,738"/>
+<area shape="rect" id="node11" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="409,792,579,833"/>
+<area shape="rect" id="node12" href="$mltply_m_p_i_spin_core_8c.html#ab23a10d5019fb27103c4726eadb32179" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="184,449,361,491"/>
+<area shape="rect" id="node13" href="$mltply_m_p_i_spin_core_8c.html#a29c17404e94c3971bee0cc0a9de81533" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="184,201,361,243"/>
+<area shape="rect" id="node14" href="$mltply_m_p_i_spin_core_8c.html#a75a9365a3be44e0de5e5850658c92109" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="184,580,361,621"/>
+<area shape="rect" id="node15" href="$mltply_m_p_i_spin_core_8c.html#a2ad42e0120a7dac9479597ea42c8f55a" title="CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region. " alt="" coords="184,645,361,687"/>
+<area shape="rect" id="node16" href="$mltply_m_p_i_spin_core_8c.html#a340591f9ad97da382724029398a333d6" title=" term in Spin model + GC. When both site1 and site2 are in the inter process region. " alt="" coords="185,763,360,804"/>
+<area shape="rect" id="node17" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="185,384,360,425"/>
+<area shape="rect" id="node18" href="$mltply_m_p_i_spin_core_8c.html#a8c2107762d44860950b1deb3a1f0ce60" title="CisAisCjuAjv term in Spin model + GC When both site1 and site2 are in the inter process region..." alt="" coords="185,515,360,556"/>
+<area shape="rect" id="node19" href="$mltply_m_p_i_spin_core_8c.html#accf48effad335c4471e4522e86371e64" title="CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region. " alt="" coords="185,880,360,921"/>
+<area shape="rect" id="node3" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="429,326,559,353"/>
+<area shape="rect" id="node5" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="431,111,557,138"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="461,621,527,647"/>
 </map>

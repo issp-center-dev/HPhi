@@ -10,6 +10,5 @@ var searchData=
   ['w90_5ft',['W90_t',['../struct_std_int_list.html#aa43694f05a19248fb003627733e84be1',1,'StdIntList']]],
   ['wannier90_2ec',['Wannier90.c',['../_wannier90_8c.html',1,'']]],
   ['wrappermpi_2ec',['wrapperMPI.c',['../wrapper_m_p_i_8c.html',1,'']]],
-  ['wrappermpi_2eh',['wrapperMPI.h',['../wrapper_m_p_i_8h.html',1,'']]],
   ['write',['WRITE',['../struct_define_list.html#a69098ba16708117331d5a75a0038fbfa',1,'DefineList']]]
 ];

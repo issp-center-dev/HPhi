@@ -23,21 +23,13 @@ var searchData=
   ['list_5f1buf_5forg',['list_1buf_org',['../global_8h.html#ace1c1d1c9eee33eb2928335c3c4fe1b3',1,'global.h']]],
   ['list_5f2_5f1',['list_2_1',['../global_8h.html#a59e163bd798ad16a8c9d47e545e2e42f',1,'global.h']]],
   ['list_5f2_5f1_5forg',['list_2_1_org',['../global_8h.html#a3eb2343dce9fe241f80a9e9e9c1906cd',1,'global.h']]],
-  ['list_5f2_5f1_5fsz_5forg',['list_2_1_Sz_org',['../global_8h.html#acbdc653ca479186f8e5576e3933fa12f',1,'global.h']]],
   ['list_5f2_5f2',['list_2_2',['../global_8h.html#aac1d1cc6d1099e228cb1f505ef0c86c6',1,'global.h']]],
   ['list_5f2_5f2_5forg',['list_2_2_org',['../global_8h.html#acf7d5ab0ac7ac8e208636bd9ec2ec391',1,'global.h']]],
-  ['list_5f2_5f2_5fsz_5forg',['list_2_2_Sz_org',['../global_8h.html#a6d5d78bd7dab0502f740ebb33bb22807',1,'global.h']]],
-  ['list_5f3',['list_3',['../global_8h.html#a8cc4d09090764ceda6d6e035628ab4c0',1,'global.h']]],
   ['list_5f6spin_5fpair',['list_6spin_pair',['../struct_boost_list.html#a2d04844ea31e1dfb8680610319edff40',1,'BoostList::list_6spin_pair()'],['../struct_std_int_list.html#ad449608cca34734381bdea41d69019fe',1,'StdIntList::list_6spin_pair()']]],
   ['list_5f6spin_5fstar',['list_6spin_star',['../struct_boost_list.html#aa2447e1f0139a3b17c92322ad0498aa0',1,'BoostList::list_6spin_star()'],['../struct_std_int_list.html#ae441187e06b028593817cd34d9843c6b',1,'StdIntList::list_6spin_star()']]],
-  ['list_5fd_5fnum',['list_D_num',['../global_8h.html#a7c1dc7a1f83105a9b8fd28b486015043',1,'global.h']]],
   ['list_5fdiagonal',['list_Diagonal',['../global_8h.html#ac14b3c4e0a92adbe3322b8546a9af48b',1,'global.h']]],
-  ['list_5fjb_5forg',['list_jb_org',['../global_8h.html#a7c31123a2b6847792de37b425d3cc94b',1,'global.h']]],
-  ['list_5fnum_5fdown',['list_num_down',['../global_8h.html#a89ca8bbae001ee6f3cdea618391e5b33',1,'global.h']]],
-  ['list_5fnum_5fup',['list_num_up',['../global_8h.html#afabeecb7911904cb767f1d99c7dc4fec',1,'global.h']]],
   ['loc_5fspin_5fz',['loc_spin_z',['../struct_phys_list.html#ace4ebae9008c5da6157a2d70888a12dd',1,'PhysList']]],
   ['locspinflag',['locspinflag',['../struct_std_int_list.html#a363f25498f94cf17a3072b856f1a61d8',1,'StdIntList']]],
   ['locspn',['LocSpn',['../struct_define_list.html#a37288a1682503fcf1d0e8c1916b55827',1,'DefineList']]],
-  ['lpairlift',['LPairLift',['../struct_std_int_list.html#a2592e0fceed7ee98272b6621e18905f1',1,'StdIntList']]],
-  ['ltrans',['Ltrans',['../struct_std_int_list.html#a1eba0cf5d85a45d7c0938e594e6a0ad0',1,'StdIntList']]]
+  ['lpairlift',['LPairLift',['../struct_std_int_list.html#a2592e0fceed7ee98272b6621e18905f1',1,'StdIntList']]]
 ];

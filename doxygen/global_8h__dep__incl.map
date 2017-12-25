@@ -3,6 +3,8 @@
 <area shape="rect" id="node5" href="$log_8h.html" title="include/log.h" alt="" coords="66,80,161,107"/>
 <area shape="rect" id="node6" href="$_calc_spectrum_by_full_diag_8c.html" title="Functions to perform spectrum calculations with the full&#45;diagonalization method. " alt="" coords="185,80,365,107"/>
 <area shape="rect" id="node7" href="$global_8c.html" title="global.c" alt="" coords="389,80,456,107"/>
+<area shape="rect" id="node8" href="$splash_8c.html" title="Print logo mark and version number. " alt="" coords="481,80,551,107"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html" title="MPI wrapper for init, finalize, bcast, etc. " alt="" coords="575,80,678,107"/>
 <area shape="rect" id="node3" href="$bitcalc_8h.html" title="include/bitcalc.h" alt="" coords="13,229,129,256"/>
 <area shape="rect" id="node4" href="$bitcalc_8c.html" title="File for giving functions of treating bits on the target of Hilbert space. " alt="" coords="35,304,106,331"/>
 </map>

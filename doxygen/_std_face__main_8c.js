@@ -10,6 +10,7 @@ var _std_face__main_8c =
     [ "PrintLocSpin", "_std_face__main_8c.html#a4bbf193e35f680cb019235f47a80399b", null ],
     [ "PrintModPara", "_std_face__main_8c.html#a4954ce4db648715fde3de9df3941a8d0", null ],
     [ "PrintNamelist", "_std_face__main_8c.html#aa589e5b8e94dd353602b7b6f30a4fc1c", null ],
+    [ "PrintPump", "_std_face__main_8c.html#a99c52d5008d46c10772fa6ec406cac41", null ],
     [ "PrintTrans", "_std_face__main_8c.html#addfc832d3780ce9682266147dcd4c011", null ],
     [ "StdFace_LargeValue", "_std_face__main_8c.html#a68bef417f59021b313b37ec690f18207", null ],
     [ "StdFace_main", "_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171", null ],
@@ -21,5 +22,6 @@ var _std_face__main_8c =
     [ "StoreWithCheckDup_sl", "_std_face__main_8c.html#a0822a5a1c434b9128925fd864e7426ef", null ],
     [ "Text2Lower", "_std_face__main_8c.html#ab8de6d8b87af831f22d63a7efb8a1b7e", null ],
     [ "TrimSpaceQuote", "_std_face__main_8c.html#ab77cb41cfccf7b8fd57eae7bcf952f23", null ],
-    [ "UnsupportedSystem", "_std_face__main_8c.html#a51d9cb31caa893c65d948e203e20621e", null ]
+    [ "UnsupportedSystem", "_std_face__main_8c.html#a51d9cb31caa893c65d948e203e20621e", null ],
+    [ "VectorPotential", "_std_face__main_8c.html#a57ccb8e40005ab6da1868404a3e1f6fb", null ]
 ];
