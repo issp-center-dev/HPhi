@@ -5,10 +5,13 @@ var searchData=
   ['makeexcitedlist',['MakeExcitedList',['../_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c',1,'CalcSpectrum.c']]],
   ['makeham',['makeHam',['../make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b',1,'makeHam.c']]],
   ['makeham_2ec',['makeHam.c',['../make_ham_8c.html',1,'']]],
+  ['maketedinterall',['MakeTEDInterAll',['../_calc_by_t_e_m_8c.html#aa92e7f454d59e5d2f77c5b1abced8a7d',1,'CalcByTEM.c']]],
+  ['maketedtransfer',['MakeTEDTransfer',['../_calc_by_t_e_m_8c.html#a406cb643e48539a16d8d3fa2e35e4433',1,'CalcByTEM.c']]],
   ['matrixlapack_2ec',['matrixlapack.c',['../matrixlapack_8c.html',1,'']]],
+  ['matrixlapack_5fmagma_2ec',['matrixlapack_magma.c',['../matrixlapack__magma_8c.html',1,'']]],
   ['max_5fmem',['max_mem',['../struct_check_list.html#aaf992da196c21c87c8850bb10f0d40b2',1,'CheckList']]],
-  ['maxmpi_5fd',['MaxMPI_d',['../wrapper_m_p_i_8c.html#ad6b9f4d67bf6d08880e90b54291b2eee',1,'MaxMPI_d(double dvalue):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8h.html#ad6b9f4d67bf6d08880e90b54291b2eee',1,'MaxMPI_d(double dvalue):&#160;wrapperMPI.c']]],
-  ['maxmpi_5fli',['MaxMPI_li',['../wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362',1,'MaxMPI_li(unsigned long int idim):&#160;wrapperMPI.c'],['../wrapper_m_p_i_8h.html#a0de87e095a8bdcba6824486057417362',1,'MaxMPI_li(unsigned long int idim):&#160;wrapperMPI.c']]],
+  ['maxmpi_5fd',['MaxMPI_d',['../wrapper_m_p_i_8c.html#ad6b9f4d67bf6d08880e90b54291b2eee',1,'wrapperMPI.c']]],
+  ['maxmpi_5fli',['MaxMPI_li',['../wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362',1,'wrapperMPI.c']]],
   ['method',['method',['../struct_std_int_list.html#a8e251a8bd65217cf4097760279d4f8a5',1,'StdIntList']]],
   ['mfint',['mfint',['../xsetmem_8c.html#a14acd96c3ffb508ef72472ea0963955e',1,'xsetmem.c']]],
   ['mltply',['mltply',['../mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407',1,'mltply.c']]],
@@ -37,5 +40,7 @@ var searchData=
   ['mu',['mu',['../struct_std_int_list.html#a924210957d9b10a640fe39be6a531856',1,'StdIntList']]],
   ['multiply',['Multiply',['../_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e',1,'Multiply.c']]],
   ['multiply_2ec',['Multiply.c',['../_multiply_8c.html',1,'']]],
-  ['myrank',['myrank',['../wrapper_m_p_i_8h.html#aa8a2431e50f9fc7d8c78af300d5f3bee',1,'wrapperMPI.h']]]
+  ['multiplyfortem',['MultiplyForTEM',['../_multiply_8c.html#a6f1bb639d327a924157a9e903a854d2c',1,'Multiply.c']]],
+  ['myrank',['myrank',['../global_8h.html#aa8a2431e50f9fc7d8c78af300d5f3bee',1,'global.h']]],
+  ['malloc_20vectors',['Malloc vectors',['../page_setmem.html',1,'']]]
 ];

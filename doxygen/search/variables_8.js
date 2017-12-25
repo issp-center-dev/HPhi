@@ -23,6 +23,7 @@ var searchData=
   ['iinputeigenvec',['iInputEigenVec',['../struct_define_list.html#ae6e5eb0b027b29d059eea6cbfc338fc6',1,'DefineList']]],
   ['iinputham',['iInputHam',['../struct_define_list.html#adc8af440a1c1fc0270692662dc8538a9',1,'DefineList']]],
   ['ilft',['ilft',['../struct_large_list.html#a8e610d200c449d87882eccdc479b8cab',1,'LargeList']]],
+  ['ingpu',['iNGPU',['../struct_define_list.html#adac7160825c021b81a19945bee892e3a',1,'DefineList']]],
   ['initial_5fiv',['initial_iv',['../struct_define_list.html#a9797f40b9a83ed2deb607fba594df573',1,'DefineList::initial_iv()'],['../struct_std_int_list.html#ad9e32b9eee62e5211894c53ccf0c6be6',1,'StdIntList::initial_iv()']]],
   ['initial_5fmode',['initial_mode',['../global_8h.html#adf6505bf4cb28b071eb6296f586da52c',1,'global.h']]],
   ['initialvectype',['InitialVecType',['../struct_std_int_list.html#a895e25683626e6af152d2a541283f83d',1,'StdIntList']]],

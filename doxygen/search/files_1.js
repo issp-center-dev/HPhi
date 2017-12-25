@@ -3,6 +3,7 @@ var searchData=
   ['calcbyfulldiag_2ec',['CalcByFullDiag.c',['../_calc_by_full_diag_8c.html',1,'']]],
   ['calcbylanczos_2ec',['CalcByLanczos.c',['../_calc_by_lanczos_8c.html',1,'']]],
   ['calcbylobpcg_2ec',['CalcByLOBPCG.c',['../_calc_by_l_o_b_p_c_g_8c.html',1,'']]],
+  ['calcbytem_2ec',['CalcByTEM.c',['../_calc_by_t_e_m_8c.html',1,'']]],
   ['calcbytpq_2ec',['CalcByTPQ.c',['../_calc_by_t_p_q_8c.html',1,'']]],
   ['calcspectrum_2ec',['CalcSpectrum.c',['../_calc_spectrum_8c.html',1,'']]],
   ['calcspectrumbybicg_2ec',['CalcSpectrumByBiCG.c',['../_calc_spectrum_by_bi_c_g_8c.html',1,'']]],

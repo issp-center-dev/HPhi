@@ -1,33 +1,34 @@
 <map id="GetSplitBitByModel" name="GetSplitBitByModel">
-<area shape="rect" id="node2" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="478,56,577,83"/>
-<area shape="rect" id="node9" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="455,107,599,133"/>
-<area shape="rect" id="node10" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="expec_energy_flct" alt="" coords="463,157,591,184"/>
-<area shape="rect" id="node11" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="457,680,598,707"/>
-<area shape="rect" id="node14" href="$_pair_ex_hubbard_8c.html#ad6ea48aa669d72fd8cc85162bae8b834" title="GetPairExcitedStateHubbard" alt="" coords="189,585,380,612"/>
-<area shape="rect" id="node15" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="486,629,569,656"/>
-<area shape="rect" id="node17" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="256,359,313,385"/>
-<area shape="rect" id="node28" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="508,731,547,757"/>
-<area shape="rect" id="node30" href="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="221,8,348,35"/>
-<area shape="rect" id="node32" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="233,71,337,97"/>
-<area shape="rect" id="node3" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="703,309,817,336"/>
-<area shape="rect" id="node5" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="714,157,806,184"/>
-<area shape="rect" id="node6" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="735,107,785,133"/>
-<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1061,444,1112,471"/>
-<area shape="rect" id="node7" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="897,469,1010,496"/>
-<area shape="rect" id="node8" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="893,368,1013,395"/>
-<area shape="rect" id="node12" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="701,680,819,707"/>
-<area shape="rect" id="node13" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="901,528,1006,555"/>
-<area shape="rect" id="node16" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="675,629,845,656"/>
-<area shape="rect" id="node18" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="704,372,816,399"/>
-<area shape="rect" id="node19" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="683,427,837,453"/>
-<area shape="rect" id="node20" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="467,411,587,437"/>
-<area shape="rect" id="node21" href="$_first_multiply_8c.html#ac604557436119bb129e012c1dd4437a8" title="FirstMultiply" alt="" coords="481,208,574,235"/>
-<area shape="rect" id="node22" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Lanczos_EigenValue" alt="" coords="455,309,599,336"/>
-<area shape="rect" id="node23" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="428,563,627,605"/>
-<area shape="rect" id="node26" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Function for calculating eigenvectors by Lanczos method. " alt="" coords="453,360,602,387"/>
-<area shape="rect" id="node27" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="473,259,581,285"/>
-<area shape="rect" id="node24" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="675,528,845,555"/>
-<area shape="rect" id="node25" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="686,477,834,504"/>
-<area shape="rect" id="node29" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="MakeExcitedList" alt="" coords="701,731,819,757"/>
-<area shape="rect" id="node31" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="471,5,584,32"/>
+<area shape="rect" id="node2" href="$expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c" title="function of calculation for one body green&#39;s function " alt="" coords="478,107,577,133"/>
+<area shape="rect" id="node10" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="455,157,599,184"/>
+<area shape="rect" id="node11" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="Parent function to calculate expected values of energy and physical quantities. " alt="" coords="463,208,591,235"/>
+<area shape="rect" id="node12" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="Calculating the pair excited state by the pair operator; &#160;&#160;&#160;, where &#160;indicates a creation (anti&#45;creat..." alt="" coords="457,731,598,757"/>
+<area shape="rect" id="node15" href="$_pair_ex_hubbard_8c.html#ad6ea48aa669d72fd8cc85162bae8b834" title="GetPairExcitedStateHubbard" alt="" coords="189,636,380,663"/>
+<area shape="rect" id="node16" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Making Hamiltonian for the full diagonalization method. The Hamiltonian is stored in the two dimensio..." alt="" coords="486,680,569,707"/>
+<area shape="rect" id="node18" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="256,409,313,436"/>
+<area shape="rect" id="node29" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="508,781,547,808"/>
+<area shape="rect" id="node31" href="$expec__totalspin_8c.html#a747b2d6e3c6a537e4cda730ee9037249" title="function of calculating totalspin for Hubbard model " alt="" coords="221,304,348,331"/>
+<area shape="rect" id="node33" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="233,357,337,384"/>
+<area shape="rect" id="node3" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="702,360,817,387"/>
+<area shape="rect" id="node5" href="$_calc_by_t_e_m_8c.html#a95c436e25727f69519a98af30f6eb00d" title="main function of time evolution calculation " alt="" coords="713,157,806,184"/>
+<area shape="rect" id="node6" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="A main function to calculate physical quqntities by TPQ method. " alt="" coords="906,107,998,133"/>
+<area shape="rect" id="node7" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="734,259,785,285"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1060,360,1111,387"/>
+<area shape="rect" id="node8" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="Parent function for FullDiag mode. " alt="" coords="895,411,1009,437"/>
+<area shape="rect" id="node9" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="892,309,1012,336"/>
+<area shape="rect" id="node13" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="Parent function to calculate the excited state. " alt="" coords="700,727,819,753"/>
+<area shape="rect" id="node14" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="899,651,1005,677"/>
+<area shape="rect" id="node17" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="675,676,844,703"/>
+<area shape="rect" id="node19" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="703,309,815,336"/>
+<area shape="rect" id="node20" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="683,524,836,551"/>
+<area shape="rect" id="node21" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="467,461,587,488"/>
+<area shape="rect" id="node22" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Main function for calculating eigen values by Lanczos method. The energy convergence is judged by the..." alt="" coords="455,512,599,539"/>
+<area shape="rect" id="node23" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="428,614,627,655"/>
+<area shape="rect" id="node25" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Calculate eigenvectors by the Lanczos method. &#160;The calculated tridiagonal matrix components &#160;are stor..." alt="" coords="453,411,602,437"/>
+<area shape="rect" id="node26" href="$_multiply_8c.html#a6f1bb639d327a924157a9e903a854d2c" title="Function of multiplying Hamiltonian for Time Evolution. " alt="" coords="470,56,585,83"/>
+<area shape="rect" id="node28" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="473,360,581,387"/>
+<area shape="rect" id="node24" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ (Note: This method is trial) " alt="" coords="685,625,833,652"/>
+<area shape="rect" id="node27" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Function of calculating the i&#45;th step norm as &#160;and update the i+1&#45;th wave vector as &#160;for TPQ calculat..." alt="" coords="726,5,793,32"/>
+<area shape="rect" id="node30" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble)..." alt="" coords="700,777,819,804"/>
+<area shape="rect" id="node32" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="471,259,584,285"/>
 </map>

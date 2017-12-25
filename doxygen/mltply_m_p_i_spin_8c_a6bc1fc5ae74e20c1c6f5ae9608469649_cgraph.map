@@ -1,11 +1,10 @@
 <map id="GC_child_general_int_spin_MPIsingle" name="GC_child_general_int_spin_MPIsingle">
 <area shape="rect" id="node2" href="$mltply_m_p_i_spin_core_8c.html#a327775323fad02566a123472cb9dc9e7" title="Wrapper for CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="200,5,361,47"/>
-<area shape="rect" id="node6" href="$mltply_m_p_i_spin_core_8c.html#af06b92eb9b5cba3c3e2a28d043b268a9" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="201,71,360,112"/>
-<area shape="rect" id="node9" href="$mltply_m_p_i_spin_core_8c.html#a7ea82506e62fd2ece2dddb3ccaa4b03c" title="Wrapper for CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="201,136,360,177"/>
+<area shape="rect" id="node5" href="$mltply_m_p_i_spin_core_8c.html#af06b92eb9b5cba3c3e2a28d043b268a9" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="201,71,360,112"/>
+<area shape="rect" id="node8" href="$mltply_m_p_i_spin_core_8c.html#a7ea82506e62fd2ece2dddb3ccaa4b03c" title="Wrapper for CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="201,136,360,177"/>
 <area shape="rect" id="node3" href="$mltply_m_p_i_spin_core_8c.html#a2ad42e0120a7dac9479597ea42c8f55a" title="CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region. " alt="" coords="409,5,587,47"/>
 <area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="665,21,731,47"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="809,21,864,47"/>
-<area shape="rect" id="node7" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="411,71,585,112"/>
-<area shape="rect" id="node8" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="635,78,761,105"/>
-<area shape="rect" id="node10" href="$mltply_m_p_i_spin_core_8c.html#accf48effad335c4471e4522e86371e64" title="CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region. " alt="" coords="411,136,585,177"/>
+<area shape="rect" id="node6" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="411,71,585,112"/>
+<area shape="rect" id="node7" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="635,78,761,105"/>
+<area shape="rect" id="node9" href="$mltply_m_p_i_spin_core_8c.html#accf48effad335c4471e4522e86371e64" title="CisAisCjuAjv term in Spin model + GC When only site2 is in the inter process region. " alt="" coords="411,136,585,177"/>
 </map>

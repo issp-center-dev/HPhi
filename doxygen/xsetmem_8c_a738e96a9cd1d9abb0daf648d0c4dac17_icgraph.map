@@ -1,0 +1,8 @@
+<map id="setmem_IntAll_Diagonal" name="setmem_IntAll_Diagonal">
+<area shape="rect" id="node2" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="Set size of memories for Hamiltonian (Ham, L_vec), vectors(vg, v0, v1, v2, vec, alpha, beta), lists (list_1, list_2_1, list_2_2, list_Diagonal) and Phys(BindStruct.PhysList) struct in the case of Full Diag mode. " alt="" coords="217,56,321,83"/>
+<area shape="rect" id="node3" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble)..." alt="" coords="369,5,488,32"/>
+<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="699,81,749,108"/>
+<area shape="rect" id="node6" href="$xsetmem_8c.html#ac651829049ab94b6f827081bbca80b67" title="Set size of memories for Def and Phys in BindStruct. " alt="" coords="381,107,476,133"/>
+<area shape="rect" id="node4" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="541,5,646,32"/>
+<area shape="rect" id="node7" href="$xsetmem_8c.html#a24cc8ae710b773af06236f4228054ff8" title="Set size of memories headers of output files. " alt="" coords="536,157,651,184"/>
+</map>

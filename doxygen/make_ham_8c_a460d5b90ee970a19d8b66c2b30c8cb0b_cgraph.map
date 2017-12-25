@@ -1,47 +1,46 @@
 <map id="makeHam" name="makeHam">
-<area shape="rect" id="node2" href="$mltply_hubbard_core_8c.html#a11e78b661246513350ad6ee2e3985d9f" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="165,200,299,241"/>
-<area shape="rect" id="node4" href="$mltply_hubbard_core_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="165,331,299,372"/>
-<area shape="rect" id="node5" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="421,463,496,490"/>
-<area shape="rect" id="node10" href="$mltply_hubbard_core_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="163,448,301,489"/>
-<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#a2e64839292192a5851d4be60a4f3561a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="165,565,299,607"/>
-<area shape="rect" id="node12" href="$mltply_hubbard_core_8c.html#acc7b0c2967b4cd90703907383169df59" title="Compute exchange term of canonical&#45;Hubbard. " alt="" coords="376,615,541,642"/>
-<area shape="rect" id="node13" href="$mltply_hubbard_core_8c.html#a4765a56a883cd352b3f08546fc3bff08" title="Compute mask for bit operation of exchange term. " alt="" coords="151,834,313,861"/>
-<area shape="rect" id="node14" href="$mltply_spin_core_8c.html#a4c4182e4c4fa01e8fb4f2d14146a0f16" title="Multiply Hamiltonian of exchange term of canonical spin system. " alt="" coords="387,667,530,708"/>
-<area shape="rect" id="node15" href="$mltply_spin_core_8c.html#a007bbe95b8950c59c8bb8db0e1a3fd1c" title="Set parameters for the bit operation of spin&#45;exchange term. " alt="" coords="161,885,303,927"/>
-<area shape="rect" id="node16" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="165,951,299,992"/>
-<area shape="rect" id="node17" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="147,1017,317,1043"/>
-<area shape="rect" id="node18" href="$mltply_spin_core_8c.html#a4f2cb8d2efe39da7c0b1b6d975758c40" title="Set parameters for the bit operation of spin&#45;general interaction term. " alt="" coords="157,1068,307,1109"/>
-<area shape="rect" id="node19" href="$mltply_hubbard_core_8c.html#addf4f9287c995be7868555e50bbf898f" title="Compute pairhopp term of canonical Hubbard system. " alt="" coords="379,733,538,759"/>
-<area shape="rect" id="node20" href="$mltply_hubbard_core_8c.html#a7fbaf32cf6b714a4304e20db480b5404" title="Compute mask for bit operation of pairhop term. " alt="" coords="155,1134,309,1161"/>
-<area shape="rect" id="node21" href="$mltply_spin_core_8c.html#abf1bb94571c8c442fdc3e0158333012e" title="Set parameters for the bit operation of spin&#45;pairlift term. " alt="" coords="171,1185,293,1227"/>
-<area shape="rect" id="node22" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="141,1251,323,1278"/>
-<area shape="rect" id="node23" href="$mltply_hubbard_core_8c.html#a6e5c6a3af522a385b4ee60f66efb2557" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="151,135,313,176"/>
-<area shape="rect" id="node24" href="$mltply_spin_core_8c.html#aa25730bebedaef0567be1d1d3a2aa9f7" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="151,1303,313,1344"/>
-<area shape="rect" id="node26" href="$mltply_spin_core_8c.html#af675fc77ae3b652589d52ff3fa667b77" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="153,1433,311,1475"/>
-<area shape="rect" id="node27" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="395,1470,522,1497"/>
-<area shape="rect" id="node28" href="$mltply_hubbard_core_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="151,69,313,111"/>
-<area shape="rect" id="node29" href="$mltply_spin_core_8c.html#a220085102d48735b8111fe704e5d5993" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="153,1368,311,1409"/>
-<area shape="rect" id="node30" href="$mltply_spin_core_8c.html#a1b6c6239f632e04606cf340f024d2ed3" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="153,1551,311,1592"/>
-<area shape="rect" id="node31" href="$mltply_hubbard_core_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="149,265,315,307"/>
-<area shape="rect" id="node32" href="$mltply_hubbard_core_8c.html#a6d06655a28258eea84191579396219e1" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="377,383,540,424"/>
-<area shape="rect" id="node33" href="$mltply_hubbard_core_8c.html#a85a5f403eb683e5ebee4ab40a8a390e5" title="Compute exchange term of grandcanonical Hubbard system. " alt="" coords="136,1617,328,1643"/>
-<area shape="rect" id="node34" href="$mltply_spin_core_8c.html#a72d3a5af6619f88ee263bee141920227" title="Multiply Hamiltonian of exchange term of grandcanonical spin system. " alt="" coords="147,1668,317,1709"/>
-<area shape="rect" id="node35" href="$mltply_hubbard_core_8c.html#ab45a0a7e963c4c9d2d4bfa86ca5c44b8" title="Compute pairhopp term of grandcanonical Hubbard system. " alt="" coords="139,1734,325,1761"/>
-<area shape="rect" id="node36" href="$mltply_spin_core_8c.html#acb9dd50e6fd2d174e607520fe3a3a240" title="Multiply Hamiltonian of pairlift term of grandcanonical spin system. " alt="" coords="157,1785,307,1827"/>
-<area shape="rect" id="node37" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="599,135,684,162"/>
-<area shape="rect" id="node38" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="149,1851,315,1878"/>
-<area shape="rect" id="node42" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="164,1902,300,1929"/>
-<area shape="rect" id="node45" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="379,784,538,825"/>
-<area shape="rect" id="node46" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="177,1953,287,1979"/>
-<area shape="rect" id="node3" href="$mltply_hubbard_core_8c.html#aa81e90673aeb377803302428fe3c7b64" title=" term in Hubbard (canonical) " alt="" coords="420,245,497,271"/>
-<area shape="rect" id="node6" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="591,346,692,373"/>
-<area shape="rect" id="node8" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="593,674,689,701"/>
-<area shape="rect" id="node7" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="759,241,821,267"/>
-<area shape="rect" id="node9" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="758,674,822,701"/>
-<area shape="rect" id="node25" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="393,1375,524,1402"/>
-<area shape="rect" id="node39" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="398,1851,519,1878"/>
-<area shape="rect" id="node40" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="589,1851,693,1878"/>
-<area shape="rect" id="node41" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="741,1851,839,1878"/>
-<area shape="rect" id="node43" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="614,1927,669,1954"/>
-<area shape="rect" id="node44" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="416,1953,501,1979"/>
+<area shape="rect" id="node2" href="$mltply_hubbard_core_8c.html#a11e78b661246513350ad6ee2e3985d9f" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="165,71,299,112"/>
+<area shape="rect" id="node4" href="$mltply_hubbard_core_8c.html#a985bdb0d96a952fc6c447e12ea2b906a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="165,267,299,308"/>
+<area shape="rect" id="node5" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="421,398,496,425"/>
+<area shape="rect" id="node10" href="$mltply_hubbard_core_8c.html#a8575bdd2f35cf049753b0617d2693edb" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="163,332,301,373"/>
+<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#a2e64839292192a5851d4be60a4f3561a" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="165,449,299,491"/>
+<area shape="rect" id="node12" href="$mltply_hubbard_core_8c.html#acc7b0c2967b4cd90703907383169df59" title="Compute exchange term of canonical&#45;Hubbard. " alt="" coords="376,617,541,643"/>
+<area shape="rect" id="node13" href="$mltply_hubbard_core_8c.html#a4765a56a883cd352b3f08546fc3bff08" title="Compute mask for bit operation of exchange term. " alt="" coords="151,819,313,846"/>
+<area shape="rect" id="node14" href="$mltply_spin_core_8c.html#a4c4182e4c4fa01e8fb4f2d14146a0f16" title="Multiply Hamiltonian of exchange term of canonical spin system. " alt="" coords="387,668,530,709"/>
+<area shape="rect" id="node15" href="$mltply_spin_core_8c.html#a007bbe95b8950c59c8bb8db0e1a3fd1c" title="Set parameters for the bit operation of spin&#45;exchange term. " alt="" coords="161,871,303,912"/>
+<area shape="rect" id="node16" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="165,936,299,977"/>
+<area shape="rect" id="node17" href="$mltply_hubbard_core_8c.html#a913be849115ac81f093256931b45bba2" title="Compute mask for bit operation of general interaction term. " alt="" coords="147,1002,317,1029"/>
+<area shape="rect" id="node18" href="$mltply_spin_core_8c.html#a4f2cb8d2efe39da7c0b1b6d975758c40" title="Set parameters for the bit operation of spin&#45;general interaction term. " alt="" coords="157,1053,307,1095"/>
+<area shape="rect" id="node19" href="$mltply_hubbard_core_8c.html#addf4f9287c995be7868555e50bbf898f" title="Compute pairhopp term of canonical Hubbard system. " alt="" coords="379,734,538,761"/>
+<area shape="rect" id="node20" href="$mltply_hubbard_core_8c.html#a7fbaf32cf6b714a4304e20db480b5404" title="Compute mask for bit operation of pairhop term. " alt="" coords="155,1119,309,1146"/>
+<area shape="rect" id="node21" href="$mltply_spin_core_8c.html#abf1bb94571c8c442fdc3e0158333012e" title="Set parameters for the bit operation of spin&#45;pairlift term. " alt="" coords="171,1171,293,1212"/>
+<area shape="rect" id="node22" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="141,1237,323,1263"/>
+<area shape="rect" id="node23" href="$mltply_hubbard_core_8c.html#a6e5c6a3af522a385b4ee60f66efb2557" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="151,136,313,177"/>
+<area shape="rect" id="node24" href="$mltply_spin_core_8c.html#aa25730bebedaef0567be1d1d3a2aa9f7" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="151,1288,313,1329"/>
+<area shape="rect" id="node26" href="$mltply_spin_core_8c.html#af675fc77ae3b652589d52ff3fa667b77" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="153,1353,311,1395"/>
+<area shape="rect" id="node27" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="395,1455,522,1482"/>
+<area shape="rect" id="node28" href="$mltply_hubbard_core_8c.html#a5a389f0d9543e02b5d2e19df0198bafc" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="151,5,313,47"/>
+<area shape="rect" id="node29" href="$mltply_spin_core_8c.html#a220085102d48735b8111fe704e5d5993" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="153,1419,311,1460"/>
+<area shape="rect" id="node30" href="$mltply_spin_core_8c.html#a1b6c6239f632e04606cf340f024d2ed3" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="153,1536,311,1577"/>
+<area shape="rect" id="node31" href="$mltply_hubbard_core_8c.html#ab7d585bf30bbcee8449b8c54d0bb128e" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="149,201,315,243"/>
+<area shape="rect" id="node32" href="$mltply_hubbard_core_8c.html#a6d06655a28258eea84191579396219e1" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="377,500,540,541"/>
+<area shape="rect" id="node33" href="$mltply_hubbard_core_8c.html#a85a5f403eb683e5ebee4ab40a8a390e5" title="Compute exchange term of grandcanonical Hubbard system. " alt="" coords="136,1602,328,1629"/>
+<area shape="rect" id="node34" href="$mltply_spin_core_8c.html#a72d3a5af6619f88ee263bee141920227" title="Multiply Hamiltonian of exchange term of grandcanonical spin system. " alt="" coords="147,1653,317,1695"/>
+<area shape="rect" id="node35" href="$mltply_hubbard_core_8c.html#ab45a0a7e963c4c9d2d4bfa86ca5c44b8" title="Compute pairhopp term of grandcanonical Hubbard system. " alt="" coords="139,1719,325,1746"/>
+<area shape="rect" id="node36" href="$mltply_spin_core_8c.html#acb9dd50e6fd2d174e607520fe3a3a240" title="Multiply Hamiltonian of pairlift term of grandcanonical spin system. " alt="" coords="157,1771,307,1812"/>
+<area shape="rect" id="node37" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="599,530,684,557"/>
+<area shape="rect" id="node38" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="149,1837,315,1863"/>
+<area shape="rect" id="node42" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="164,1887,300,1914"/>
+<area shape="rect" id="node44" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="379,785,538,827"/>
+<area shape="rect" id="node45" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="177,1938,287,1965"/>
+<area shape="rect" id="node3" href="$mltply_hubbard_core_8c.html#aa81e90673aeb377803302428fe3c7b64" title=" term in Hubbard (canonical) " alt="" coords="420,177,497,203"/>
+<area shape="rect" id="node6" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="591,423,692,450"/>
+<area shape="rect" id="node8" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="593,675,689,702"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="759,459,821,486"/>
+<area shape="rect" id="node9" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="758,675,822,702"/>
+<area shape="rect" id="node25" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="393,1361,524,1387"/>
+<area shape="rect" id="node39" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="398,1837,519,1863"/>
+<area shape="rect" id="node40" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="589,1837,693,1863"/>
+<area shape="rect" id="node41" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="741,1837,839,1863"/>
+<area shape="rect" id="node43" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="416,1887,501,1914"/>
 </map>

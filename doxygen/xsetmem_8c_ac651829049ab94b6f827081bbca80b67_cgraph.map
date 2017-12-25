@@ -1,8 +1,7 @@
 <map id="setmem_def" name="setmem_def">
-<area shape="rect" id="node2" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="setmem_large" alt="" coords="148,81,252,108"/>
+<area shape="rect" id="node2" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="Set size of memories for Hamiltonian (Ham, L_vec), vectors(vg, v0, v1, v2, vec, alpha, beta), lists (list_1, list_2_1, list_2_2, list_Diagonal) and Phys(BindStruct.PhysList) struct in the case of Full Diag mode. " alt="" coords="148,56,252,83"/>
 <area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362" title="MPI wrapper function to obtain maximum unsigned long integer across processes. " alt="" coords="340,5,424,32"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="647,31,701,57"/>
-<area shape="rect" id="node6" href="$xsetmem_8c.html#a515c905af1b73d36feed8e99b4f9171d" title="GetlistSize" alt="" coords="512,132,599,159"/>
-<area shape="rect" id="node7" href="$xsetmem_8c.html#a6e158031b8535726c53a77550a24159b" title="setmem_IntAll_Diagonal" alt="" coords="300,157,464,184"/>
+<area shape="rect" id="node5" href="$xsetmem_8c.html#a515c905af1b73d36feed8e99b4f9171d" title="Set size of lists for the canonical ensemble. " alt="" coords="512,81,599,108"/>
+<area shape="rect" id="node6" href="$xsetmem_8c.html#a738e96a9cd1d9abb0daf648d0c4dac17" title="Set the size of memories for InterAllDiagonal and InterAllOffDiagonal arrays. " alt="" coords="300,107,464,133"/>
 <area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="522,5,589,32"/>
 </map>

@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['d_5ffree1',['d_free1',['../xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f',1,'xfreemem_large.c']]],
   ['dgetrf_5f',['dgetrf_',['../matrixlapack_8c.html#a1551da1b1192068cc91efe42fa54ea95',1,'matrixlapack.c']]],
   ['dgetri_5f',['dgetri_',['../matrixlapack_8c.html#a74888dbee00ea98e0d295500e1b39973',1,'matrixlapack.c']]],
   ['diag_5fovrp',['diag_ovrp',['../_calc_by_l_o_b_p_c_g_8c.html#ae211b265e8918bbbe2d4a21575dfb291',1,'CalcByLOBPCG.c']]],
   ['diagonalcalc',['diagonalcalc',['../diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1',1,'diagonalcalc.c']]],
+  ['diagonalcalcforte',['diagonalcalcForTE',['../diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456',1,'diagonalcalc.c']]],
   ['dinv',['DInv',['../matrixlapack_8c.html#a2dd5dfb659b5fc0621e58907648532d2',1,'matrixlapack.c']]],
   ['dlamch_5f',['dlamch_',['../matrixlapack_8c.html#a8f8bef103c45d87276d6508164f5883c',1,'matrixlapack.c']]],
   ['do_5frecursion',['do_recursion',['../d_s_f_m_t_8c.html#a43e33e2235015c9c072bad7dfe1a282c',1,'dSFMT.c']]],

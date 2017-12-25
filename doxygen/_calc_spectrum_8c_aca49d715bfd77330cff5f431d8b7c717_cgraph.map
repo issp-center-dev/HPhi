@@ -1,51 +1,51 @@
 <map id="CalcSpectrum" name="CalcSpectrum">
-<area shape="rect" id="node2" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="585,1436,739,1463"/>
-<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1485,1765,1540,1792"/>
-<area shape="rect" id="node4" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="1093,1323,1185,1349"/>
-<area shape="rect" id="node6" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="1087,1740,1191,1767"/>
-<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1327,756,1394,783"/>
-<area shape="rect" id="node11" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="1098,828,1181,855"/>
-<area shape="rect" id="node12" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="1098,879,1181,905"/>
-<area shape="rect" id="node16" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="817,575,987,601"/>
-<area shape="rect" id="node20" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by Lanczos. " alt="" coords="344,1052,515,1079"/>
-<area shape="rect" id="node27" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ. " alt="" coords="355,1639,503,1665"/>
-<area shape="rect" id="node32" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="diagonalcalc" alt="" coords="180,2525,275,2552"/>
-<area shape="rect" id="node38" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="GetExcitedState" alt="" coords="603,2247,721,2273"/>
-<area shape="rect" id="node41" href="$_calc_spectrum_8c.html#ab57989b65ec16d878470ba35b7903c29" title="SetOmega" alt="" coords="860,1943,944,1969"/>
-<area shape="rect" id="node42" href="$readdef_8c.html#afa1a7211e33cdb1be5abc85e4bb42d9c" title="GetFileNameByKW" alt="" coords="159,2576,296,2603"/>
-<area shape="rect" id="node43" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="MakeExcitedList" alt="" coords="603,245,721,272"/>
-<area shape="rect" id="node49" href="$wrapper_m_p_i_8c.html#a26d9f2a4d2828fca2b8d6d45cea697a2" title="Compute norm of process&#45;distributed vector . " alt="" coords="178,949,277,976"/>
-<area shape="rect" id="node50" href="$_calc_spectrum_8c.html#ab25f1866d9e94f458722189a626e8c7f" title="OutputSpectrum" alt="" coords="1081,2145,1198,2172"/>
-<area shape="rect" id="node5" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1308,1613,1413,1640"/>
-<area shape="rect" id="node8" href="$_calc_spectrum_by_bi_c_g_8c.html#abe23fa27a17d58cc467a6cca4ae26c17" title="Read , projected residual for restart. " alt="" coords="809,1841,995,1868"/>
-<area shape="rect" id="node10" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="mltply" alt="" coords="873,828,931,855"/>
-<area shape="rect" id="node14" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="854,980,950,1007"/>
-<area shape="rect" id="node15" href="$_calc_spectrum_by_bi_c_g_8c.html#aff7084decdcdad72ca2dfa626e62ca8c" title="write , projected residual for restart " alt="" coords="1043,1487,1236,1513"/>
-<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="1102,1841,1177,1868"/>
-<area shape="rect" id="node13" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="1092,929,1187,956"/>
-<area shape="rect" id="node17" href="$_calc_spectrum_by_full_diag_8c.html#a676f26a4a8260fbaf22b7eee149ebbfc" title="zcopy_" alt="" coords="1107,727,1171,753"/>
-<area shape="rect" id="node18" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Parent function of making Hamiltonian. " alt="" coords="1098,676,1181,703"/>
-<area shape="rect" id="node19" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="performing full diagonalization using lapack " alt="" coords="1094,777,1185,804"/>
-<area shape="rect" id="node21" href="$_lanczos___eigen_value_8c.html#a589f87aa6c08653bdff551e16cb825dc" title="ReadInitialVector" alt="" coords="841,1183,963,1209"/>
-<area shape="rect" id="node22" href="$_lanczos___eigen_value_8c.html#a08d824aef2e4734073596becf3135c61" title="ReadTMComponents" alt="" coords="589,1487,735,1513"/>
-<area shape="rect" id="node23" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="563,1015,761,1057"/>
-<area shape="rect" id="node24" href="$_lanczos___eigen_value_8c.html#a6201431fa13bae678e68d8809e80a7e1" title="OutputTMComponents" alt="" coords="585,1537,739,1564"/>
-<area shape="rect" id="node25" href="$_calc_spectrum_by_lanczos_8c.html#aef3837419fbdcabbb82bee3cd912b6c8" title="GetSpectrumByTridiagonal\lMatrixComponents" alt="" coords="573,898,751,939"/>
-<area shape="rect" id="node26" href="$_lanczos___eigen_value_8c.html#a81a9c4d54ef73eb91df2cdf8243548d6" title="OutputLanczosVector" alt="" coords="828,1233,976,1260"/>
-<area shape="rect" id="node28" href="$_calc_spectrum_by_t_p_q_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817" title="ReadTPQData" alt="" coords="608,1639,716,1665"/>
-<area shape="rect" id="node29" href="$vec12_8c.html#a135e0d7c61f28a9644f71ec0b468eb88" title="vec12" alt="" coords="1332,2399,1389,2425"/>
-<area shape="rect" id="node30" href="$_calc_spectrum_by_t_p_q_8c.html#a778755c595a2f760086f2e99130d894b" title="GetCalcSpectrumTPQ" alt="" coords="1284,2449,1437,2476"/>
-<area shape="rect" id="node31" href="$xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f" title="d_free1" alt="" coords="629,1689,695,1716"/>
-<area shape="rect" id="node33" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="coulombintra interaction are given by &#160;" alt="" coords="344,2652,515,2679"/>
-<area shape="rect" id="node34" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="SetDiagonalChemi" alt="" coords="597,2627,727,2653"/>
-<area shape="rect" id="node35" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="SetDiagonalCoulombInter" alt="" coords="817,2652,987,2679"/>
-<area shape="rect" id="node36" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="SetDiagonalHund" alt="" coords="1077,2703,1201,2729"/>
-<area shape="rect" id="node37" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="SetDiagonalInterAll" alt="" coords="1293,2652,1428,2679"/>
-<area shape="rect" id="node39" href="$_single_ex_8c.html#a43797ff504ab9bf349fdf9f7561d2038" title="GetSingleExcitedState" alt="" coords="825,2297,979,2324"/>
-<area shape="rect" id="node40" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="831,2247,973,2273"/>
-<area shape="rect" id="node44" href="$check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193" title="A program to check size of dimension for Hilbert&#45;space. " alt="" coords="1111,625,1168,652"/>
-<area shape="rect" id="node45" href="$wrapper_m_p_i_8c.html#ab01492e7612823a34a325619f46862e5" title="MPI Finitialization wrapper. " alt="" coords="1315,68,1406,95"/>
-<area shape="rect" id="node46" href="$xsetmem_8c.html#a515c905af1b73d36feed8e99b4f9171d" title="GetlistSize" alt="" coords="1096,169,1183,196"/>
-<area shape="rect" id="node47" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="883,423,921,449"/>
-<area shape="rect" id="node48" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="setmem_large" alt="" coords="850,119,954,145"/>
+<area shape="rect" id="node2" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="400,803,553,829"/>
+<area shape="rect" id="node3" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="671,1465,763,1492"/>
+<area shape="rect" id="node7" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="902,540,1006,567"/>
+<area shape="rect" id="node8" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1151,528,1217,555"/>
+<area shape="rect" id="node12" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="913,97,995,124"/>
+<area shape="rect" id="node15" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="913,199,995,225"/>
+<area shape="rect" id="node25" href="$_calc_spectrum_by_full_diag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7" title="Compute the Green function with the Lehmann representation and FD . " alt="" coords="392,275,561,301"/>
+<area shape="rect" id="node29" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by continued fraction expansions. " alt="" coords="159,920,329,947"/>
+<area shape="rect" id="node30" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ (Note: This method is trial) " alt="" coords="170,971,318,997"/>
+<area shape="rect" id="node37" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="Calculate diagonal components and obtain the list, list_diagonal. " alt="" coords="429,1719,524,1745"/>
+<area shape="rect" id="node38" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="Parent function to calculate the excited state. " alt="" coords="417,1244,536,1271"/>
+<area shape="rect" id="node41" href="$_calc_spectrum_8c.html#ab57989b65ec16d878470ba35b7903c29" title="Set target frequencies. " alt="" coords="675,1212,759,1239"/>
+<area shape="rect" id="node42" href="$readdef_8c.html#afa1a7211e33cdb1be5abc85e4bb42d9c" title="function of getting file name labeled by the keyword " alt="" coords="175,1516,313,1543"/>
+<area shape="rect" id="node43" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble)..." alt="" coords="185,1567,303,1593"/>
+<area shape="rect" id="node49" href="$wrapper_m_p_i_8c.html#a26d9f2a4d2828fca2b8d6d45cea697a2" title="Compute norm of process&#45;distributed vector . " alt="" coords="195,692,293,719"/>
+<area shape="rect" id="node50" href="$_calc_spectrum_8c.html#ab25f1866d9e94f458722189a626e8c7f" title="Output spectrum. " alt="" coords="185,1668,303,1695"/>
+<area shape="rect" id="node4" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1131,1364,1237,1391"/>
+<area shape="rect" id="node9" href="$_calc_spectrum_by_bi_c_g_8c.html#abe23fa27a17d58cc467a6cca4ae26c17" title="Read , projected residual for restart. " alt="" coords="624,705,809,732"/>
+<area shape="rect" id="node11" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="688,908,745,935"/>
+<area shape="rect" id="node23" href="$wrapper_m_p_i_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d" title="Compute conjugate scaler product of process&#45;distributed vector . " alt="" coords="669,655,765,681"/>
+<area shape="rect" id="node24" href="$_calc_spectrum_by_bi_c_g_8c.html#aff7084decdcdad72ca2dfa626e62ca8c" title="write , projected residual for restart " alt="" coords="857,857,1051,884"/>
+<area shape="rect" id="node6" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="881,1364,1027,1391"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1343,1364,1422,1391"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="917,1111,991,1137"/>
+<area shape="rect" id="node13" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="886,1161,1022,1188"/>
+<area shape="rect" id="node14" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original space. " alt="" coords="867,1313,1041,1340"/>
+<area shape="rect" id="node16" href="$diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456" title="diagonalcalcForTE" alt="" coords="889,1719,1019,1745"/>
+<area shape="rect" id="node22" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="907,655,1001,681"/>
+<area shape="rect" id="node17" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="Calculate the components for Coulombintra interaction, . " alt="" coords="1099,1769,1269,1796"/>
+<area shape="rect" id="node18" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="Calculate the components for the chemical potential . " alt="" coords="1317,1820,1448,1847"/>
+<area shape="rect" id="node19" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="Calculate the components for Coulombinter interaction, . " alt="" coords="1496,1845,1667,1872"/>
+<area shape="rect" id="node20" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="Calculate the components for Hund interaction, . " alt="" coords="1715,1845,1839,1872"/>
+<area shape="rect" id="node21" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="Calculate the components for general two&#45;body diagonal interaction, . " alt="" coords="1887,1896,2021,1923"/>
+<area shape="rect" id="node26" href="$_calc_spectrum_by_full_diag_8c.html#a676f26a4a8260fbaf22b7eee149ebbfc" title="zcopy_" alt="" coords="685,249,749,276"/>
+<area shape="rect" id="node27" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Making Hamiltonian for the full diagonalization method. The Hamiltonian is stored in the two dimensio..." alt="" coords="675,756,758,783"/>
+<area shape="rect" id="node28" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="performing full diagonalization using lapack " alt="" coords="909,477,999,504"/>
+<area shape="rect" id="node31" href="$_calc_spectrum_by_t_p_q_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817" title="Read TPQ data at &quot;X&#45;&gt;Bind.Large.itr&quot; step in SS_rand file. " alt="" coords="423,853,531,880"/>
+<area shape="rect" id="node32" href="$_lanczos___eigen_value_8c.html#a08d824aef2e4734073596becf3135c61" title="Read tridiagonal matrix components obtained by the Lanczos method. . " alt="" coords="643,1111,790,1137"/>
+<area shape="rect" id="node33" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="377,905,576,946"/>
+<area shape="rect" id="node34" href="$_lanczos___eigen_value_8c.html#a6201431fa13bae678e68d8809e80a7e1" title="Output tridiagonal matrix components obtained by the Lanczos method. " alt="" coords="877,1516,1031,1543"/>
+<area shape="rect" id="node35" href="$vec12_8c.html#a135e0d7c61f28a9644f71ec0b468eb88" title="Diagonalize a tri&#45;diagonal matrix and store eigenvectors into vec. " alt="" coords="448,971,505,997"/>
+<area shape="rect" id="node36" href="$_calc_spectrum_by_t_p_q_8c.html#a778755c595a2f760086f2e99130d894b" title="Calculate spectrum function from the TPQ state. " alt="" coords="400,1021,553,1048"/>
+<area shape="rect" id="node39" href="$_single_ex_8c.html#a43797ff504ab9bf349fdf9f7561d2038" title="Calculation of single excited state Target System: Hubbard, Kondo. " alt="" coords="639,1263,794,1289"/>
+<area shape="rect" id="node40" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="Calculating the pair excited state by the pair operator; &#160;&#160;&#160;, where &#160;indicates a creation (anti&#45;creat..." alt="" coords="646,1364,787,1391"/>
+<area shape="rect" id="node44" href="$check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193" title="A program to check size of dimension for Hilbert&#45;space. " alt="" coords="688,1567,745,1593"/>
+<area shape="rect" id="node45" href="$wrapper_m_p_i_8c.html#ab01492e7612823a34a325619f46862e5" title="MPI Finitialization wrapper. " alt="" coords="431,1617,522,1644"/>
+<area shape="rect" id="node46" href="$xsetmem_8c.html#a515c905af1b73d36feed8e99b4f9171d" title="Set size of lists for the canonical ensemble. " alt="" coords="673,1972,760,1999"/>
+<area shape="rect" id="node47" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="457,1313,496,1340"/>
+<area shape="rect" id="node48" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="Set size of memories for Hamiltonian (Ham, L_vec), vectors(vg, v0, v1, v2, vec, alpha, beta), lists (list_1, list_2_1, list_2_2, list_Diagonal) and Phys(BindStruct.PhysList) struct in the case of Full Diag mode. " alt="" coords="425,1845,529,1872"/>
 </map>

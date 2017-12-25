@@ -1,0 +1,17 @@
+<map id="CheckGeneralSpinIndexForInterAll" name="CheckGeneralSpinIndexForInterAll">
+<area shape="rect" id="node2" href="$readdef_8c.html#adbfe2cdda441914d5b9c0cdec3d6cf70" title="Check InterAll condition. " alt="" coords="2336,309,2492,336"/>
+<area shape="rect" id="node5" href="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68" title="function of initializing interactions " alt="" coords="236,113,395,140"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="2540,360,2680,387"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="2728,233,2779,260"/>
+<area shape="rect" id="node6" href="$readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1" title="Function of reading information about &quot;ModPara&quot; file and total number of parameters from other def fi..." alt="" coords="637,5,757,32"/>
+<area shape="rect" id="node7" href="$readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da" title="function of resetting number of interactions " alt="" coords="443,113,589,140"/>
+<area shape="rect" id="node8" href="$readdef_8c.html#a33a451cbb9e518962b7379382cd6b117" title="function of checking indexies of localized spin " alt="" coords="644,132,751,159"/>
+<area shape="rect" id="node9" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="805,132,961,159"/>
+<area shape="rect" id="node10" href="$readdef_8c.html#a530ff519fae4063e6f2e08a11316d5ea" title="function of checking format of Kondo interactions " alt="" coords="1009,157,1181,184"/>
+<area shape="rect" id="node11" href="$readdef_8c.html#afbe7cae20c834c11ef23ad8a1674ac6d" title="function of checking format of spin interactions " alt="" coords="1229,208,1391,235"/>
+<area shape="rect" id="node12" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="1439,487,1545,513"/>
+<area shape="rect" id="node13" href="$readdef_8c.html#ac5a8a45ecec5aa4484c187a2ba130f5f" title="function of getting diagonal components " alt="" coords="1593,487,1728,513"/>
+<area shape="rect" id="node14" href="$readdef_8c.html#a89df6600fe7567e815386fef5828a0c7" title="function of checking hermite conditions about interall interactions " alt="" coords="1776,461,1923,488"/>
+<area shape="rect" id="node15" href="$readdef_8c.html#a512f5660363476a6f0c915ea496a9943" title="Check Hermite for Transfer integrals. " alt="" coords="1971,411,2125,437"/>
+<area shape="rect" id="node16" href="$readdef_8c.html#a95ae79a512a0692d24d463d30b41d75a" title="Check Site Number for a quad &#45;&gt; (siteA, siteB, siteC, siteD). " alt="" coords="2173,360,2288,387"/>
+</map>

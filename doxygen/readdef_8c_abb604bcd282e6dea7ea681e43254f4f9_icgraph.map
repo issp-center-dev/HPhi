@@ -1,6 +1,7 @@
 <map id="CheckSite" name="CheckSite">
-<area shape="rect" id="node2" href="$readdef_8c.html#aeedd55bd700231dcdf39d36d6361719d" title="Check Site Number for a pair &#45;&gt; (siteA, siteB). " alt="" coords="136,56,243,83"/>
-<area shape="rect" id="node4" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="453,56,593,83"/>
-<area shape="rect" id="node3" href="$readdef_8c.html#a95ae79a512a0692d24d463d30b41d75a" title="Check Site Number for a quad &#45;&gt; (siteA, siteB, siteC, siteD). " alt="" coords="291,5,405,32"/>
-<area shape="rect" id="node5" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="641,56,692,83"/>
+<area shape="rect" id="node2" href="$readdef_8c.html#aeedd55bd700231dcdf39d36d6361719d" title="Check Site Number for a pair &#45;&gt; (siteA, siteB). " alt="" coords="136,107,243,133"/>
+<area shape="rect" id="node5" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="657,81,797,108"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#a95ae79a512a0692d24d463d30b41d75a" title="Check Site Number for a quad &#45;&gt; (siteA, siteB, siteC, siteD). " alt="" coords="291,56,405,83"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#adbfe2cdda441914d5b9c0cdec3d6cf70" title="Check InterAll condition. " alt="" coords="453,5,609,32"/>
+<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="845,81,896,108"/>
 </map>

@@ -116,6 +116,9 @@ $(document).ready(function(){initNavTree('_log_message_8c.html','');});
 <div class="title">LogMessage.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>File for defining log messages.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;LogMessage.h&quot;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Include dependency graph for LogMessage.c:</div>
@@ -209,6 +212,10 @@ Variables</h2></td></tr>
 <tr class="separator:a9720bbea9d14844abaf83128fda8cafe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa16064f72a917af545fe73f0afb088ea"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#aa16064f72a917af545fe73f0afb088ea">cTPQStepEnd</a> =&quot;set %d step %d:TPQ finishes: %s&quot;</td></tr>
 <tr class="separator:aa16064f72a917af545fe73f0afb088ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec6d10f8caafd11ab446306231c26b04"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#aec6d10f8caafd11ab446306231c26b04">cTEStep</a> =&quot;step %d:TE begins: %s&quot;</td></tr>
+<tr class="separator:aec6d10f8caafd11ab446306231c26b04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b8f75bb46703f82b3ebb3666ee70969"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a9b8f75bb46703f82b3ebb3666ee70969">cTEStepEnd</a> =&quot;step %d:TE finishes: %s&quot;</td></tr>
+<tr class="separator:a9b8f75bb46703f82b3ebb3666ee70969"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fccc19a44c7d13d7c2e13bff95d41a8"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a0fccc19a44c7d13d7c2e13bff95d41a8">cLogLanczos_EigenValueNotConverged</a> =&quot;Lanczos Eigenvalue is not converged in this process.&quot;</td></tr>
 <tr class="separator:a0fccc19a44c7d13d7c2e13bff95d41a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73714c8335365b7fdcd5213755eaebc5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a73714c8335365b7fdcd5213755eaebc5">cLanczos_EigenValueStart</a> = &quot;Lanczos Eigen Value start: %s&quot;</td></tr>
@@ -249,6 +256,10 @@ Variables</h2></td></tr>
 <tr class="separator:abfbae63c56af15da1e81654b9bab8ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbd4a24f01a9bbe87007dd9ec305fc79"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#adbd4a24f01a9bbe87007dd9ec305fc79">cTPQExpecOneBodyGFinish</a> = &quot;set %d step %d:expec_cisajs finishes: %s&quot;</td></tr>
 <tr class="separator:adbd4a24f01a9bbe87007dd9ec305fc79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70bd1a255f99cba37d1aeeec8216060e"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a70bd1a255f99cba37d1aeeec8216060e">cTEExpecOneBodyGStart</a> = &quot;step %d:expec_cisajs begins: %s&quot;</td></tr>
+<tr class="separator:a70bd1a255f99cba37d1aeeec8216060e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab05a5085d4a61b9a92a2113c17d2be4c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#ab05a5085d4a61b9a92a2113c17d2be4c">cTEExpecOneBodyGFinish</a> = &quot;step %d:expec_cisajs finishes: %s&quot;</td></tr>
+<tr class="separator:ab05a5085d4a61b9a92a2113c17d2be4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ca72797776e2fd5262e5e62195b267d"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a7ca72797776e2fd5262e5e62195b267d">cCGExpecOneBodyGStart</a> = &quot;CG <a class="el" href="expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c">expec_cisajs</a> starts: %s&quot;</td></tr>
 <tr class="separator:a7ca72797776e2fd5262e5e62195b267d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49496aaf7d6770a287f477c421e8e8f1"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a49496aaf7d6770a287f477c421e8e8f1">cCGExpecOneBodyGFinish</a> =&quot;CG <a class="el" href="expec__cisajs_8c.html#aaaa7c9da11d8ae60fe21f1d046358a6c">expec_cisajs</a> finishes: %s&quot;</td></tr>
@@ -271,20 +282,14 @@ Variables</h2></td></tr>
 <tr class="separator:acf90179a5d51508dd9973c8389f4aed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fbb46cf5afeb53c4d1879ed2cb2123a"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a9fbb46cf5afeb53c4d1879ed2cb2123a">cTPQExpecTwoBodyGFinish</a> = &quot;set %d step %d:expec_cisajscktaltdc finishes: %s&quot;</td></tr>
 <tr class="separator:a9fbb46cf5afeb53c4d1879ed2cb2123a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7b9876edcd7fb89a7dae61a1e853a9a"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#ae7b9876edcd7fb89a7dae61a1e853a9a">cTEExpecTwoBodyGStart</a> = &quot;step %d:expec_cisajscktaltdc finishes: %s&quot;</td></tr>
+<tr class="separator:ae7b9876edcd7fb89a7dae61a1e853a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fe499b1cbded3afdd638d1c98f26a4b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a6fe499b1cbded3afdd638d1c98f26a4b">cTEExpecTwoBodyGFinish</a> = &quot;step %d:expec_cisajscktaltdc finishes: %s&quot;</td></tr>
+<tr class="separator:a6fe499b1cbded3afdd638d1c98f26a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad22549491de258460f5b23a0714cf15b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#ad22549491de258460f5b23a0714cf15b">cLogExpecEnergyStart</a> =&quot; Start: Calculate Energy.\n&quot;</td></tr>
 <tr class="separator:ad22549491de258460f5b23a0714cf15b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab18d2b9dcb8521b092573e949e53ed29"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#ab18d2b9dcb8521b092573e949e53ed29">cLogExpecEnergyEnd</a> =&quot; End : Calculate Energy.\n&quot;</td></tr>
 <tr class="separator:ab18d2b9dcb8521b092573e949e53ed29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a107437872a0d2b29a06e545f3e451010"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a107437872a0d2b29a06e545f3e451010">cLogLanczosExpecEnergyEnd</a> =&quot; End : Calculate Energy by Lanczos method.\n&quot;</td></tr>
-<tr class="separator:a107437872a0d2b29a06e545f3e451010"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5ae1071f4927d65f3a0b538a5c4fe69"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#ac5ae1071f4927d65f3a0b538a5c4fe69">cLogCGExpecEnergyEnd</a> =&quot; End : Calculate Energy by CG method.\n&quot;</td></tr>
-<tr class="separator:ac5ae1071f4927d65f3a0b538a5c4fe69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5a44ddf77c2f45b6c034d63eb8a9c78"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#ae5a44ddf77c2f45b6c034d63eb8a9c78">cLogEnergy</a> =&quot;energy=%lf \n&quot;</td></tr>
-<tr class="separator:ae5a44ddf77c2f45b6c034d63eb8a9c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8a2669133157d5b76df8c5828bd3179"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#aa8a2669133157d5b76df8c5828bd3179">cLanczosExpecEnergyEnd</a> = &quot;Lanczos expec energy finishes: %s&quot;</td></tr>
-<tr class="separator:aa8a2669133157d5b76df8c5828bd3179"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeca5a7ee6cfeb7164ab0a9affb49283f"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#aeca5a7ee6cfeb7164ab0a9affb49283f">cCGExpecEnergyEnd</a> = &quot;CG expec energy finishes: %s&quot;</td></tr>
-<tr class="separator:aeca5a7ee6cfeb7164ab0a9affb49283f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71af2b6b914e7f6be7b11e5d4b240b26"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a71af2b6b914e7f6be7b11e5d4b240b26">cLogTPQRand</a> = &quot; rand_i / rand_max = %d / %d\n&quot;</td></tr>
 <tr class="separator:a71af2b6b914e7f6be7b11e5d4b240b26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac337f1838e644c60ffa420eaa766913c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#ac337f1838e644c60ffa420eaa766913c">cLogSSRand</a> = &quot; # inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i\n&quot;</td></tr>
@@ -309,12 +314,20 @@ Variables</h2></td></tr>
 <tr class="separator:af2f2f8181c3eade1520021f6199a514a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a293f6f81ae3360f9ceee6619e54617b5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a293f6f81ae3360f9ceee6619e54617b5">cOutputVecFinish</a> =&quot; set %d step %d:output vector finishes: %s\n&quot;</td></tr>
 <tr class="separator:a293f6f81ae3360f9ceee6619e54617b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a862f5e97bcc867798172b20a67710178"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a862f5e97bcc867798172b20a67710178">cLogCheckInitComplex</a> = &quot; CHECK: TPQ complex initial vector \n&quot;</td></tr>
-<tr class="separator:a862f5e97bcc867798172b20a67710178"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26e5901a9d9803d67459bd4c5042b6b3"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a26e5901a9d9803d67459bd4c5042b6b3">cLogCheckInitReal</a> = &quot; CHECK: TPQ real initial vector \n&quot;</td></tr>
-<tr class="separator:a26e5901a9d9803d67459bd4c5042b6b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c8914323bbe01ac6562ec2c0cbbcf34"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a0c8914323bbe01ac6562ec2c0cbbcf34">cLogTEStep</a> = &quot; step_i/total_step=%d/%d \n&quot;</td></tr>
+<tr class="separator:a0c8914323bbe01ac6562ec2c0cbbcf34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa57d25344f2bd3078302446e8baf681e"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#aa57d25344f2bd3078302446e8baf681e">cLogSS</a> = &quot; # time, energy, phys_var, phys_doublon, phys_num, step_i\n&quot;</td></tr>
+<tr class="separator:aa57d25344f2bd3078302446e8baf681e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af71fc60a8638ffb4b8aa42613dbae0dc"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#af71fc60a8638ffb4b8aa42613dbae0dc">cLogNorm</a> = &quot; # time, norm, <a class="el" href="global_8h.html#ae4b3c259843556181feaef44545e833f">step_i</a> \n&quot;</td></tr>
+<tr class="separator:af71fc60a8638ffb4b8aa42613dbae0dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ec9a54f2680d0b638842e420ce000fb"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_log_message_8c.html#a9ec9a54f2680d0b638842e420ce000fb">cLogFlct</a> = &quot; # time, N, N^2, D, D^2, Sz, Sz^2, <a class="el" href="global_8h.html#ae4b3c259843556181feaef44545e833f">step_i</a> \n&quot;</td></tr>
+<tr class="separator:a9ec9a54f2680d0b638842e420ce000fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Variable Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>File for defining log messages. </p>
+
+<p>Definition in file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+</div><h2 class="groupheader">Variable Documentation</h2>
 <a class="anchor" id="aa9367c8a5e667ed1bbca335885935921"></a>
 <div class="memitem">
 <div class="memproto">
@@ -325,9 +338,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00056">56</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00063">63</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -341,9 +354,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00055">55</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00062">62</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -357,9 +370,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00058">58</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00065">65</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -373,9 +386,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00062">62</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00069">69</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, and <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -389,9 +402,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00061">61</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00068">68</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, and <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -405,9 +418,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00057">57</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00064">64</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -421,9 +434,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00060">60</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00067">67</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, and <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, and <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -437,9 +450,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00059">59</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00066">66</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_lanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, and <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, and <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -453,9 +466,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00054">54</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00061">61</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -469,9 +482,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00053">53</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00060">60</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_8c_source.html#l00078">CalcSpectrum()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>, and <a class="el" href="_calc_spectrum_8c_source.html#l00090">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -485,9 +498,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00066">66</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00073">73</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00392">ReadInitialVector()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">ReadInitialVector()</a>.</p>
 
 </div>
 </div>
@@ -501,9 +514,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00065">65</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00072">72</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00392">ReadInitialVector()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">ReadInitialVector()</a>.</p>
 
 </div>
 </div>
@@ -517,9 +530,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00069">69</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00076">76</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00299">Lanczos_GetTridiagonalMatrixComponents()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00321">Lanczos_GetTridiagonalMatrixComponents()</a>.</p>
 
 </div>
 </div>
@@ -533,9 +546,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00064">64</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00071">71</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">OutputLanczosVector()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00458">OutputLanczosVector()</a>.</p>
 
 </div>
 </div>
@@ -549,9 +562,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00063">63</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00070">70</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00118">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00420">OutputLanczosVector()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_spectrum_by_bi_c_g_8c_source.html#l00206">CalcSpectrumByBiCG()</a>, <a class="el" href="_calc_spectrum_by_t_p_q_8c_source.html#l00131">CalcSpectrumByTPQ()</a>, and <a class="el" href="_lanczos___eigen_value_8c_source.html#l00458">OutputLanczosVector()</a>.</p>
 
 </div>
 </div>
@@ -565,7 +578,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00046">46</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00053">53</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>.</p>
 
@@ -581,23 +594,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00045">45</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00052">52</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aeca5a7ee6cfeb7164ab0a9affb49283f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cCGExpecEnergyEnd = &quot;CG expec energy finishes: %s&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00126">126</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 </div>
 </div>
@@ -611,7 +610,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00106">106</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00121">121</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -627,7 +626,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00105">105</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00120">120</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -643,9 +642,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00115">115</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00130">130</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -659,9 +658,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00114">114</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00129">129</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -675,9 +674,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00050">50</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00057">57</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00049">diagonalcalc()</a>.</p>
+<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00085">diagonalcalc()</a>.</p>
 
 </div>
 </div>
@@ -691,9 +690,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00049">49</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00056">56</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00049">diagonalcalc()</a>.</p>
+<p>Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00085">diagonalcalc()</a>.</p>
 
 </div>
 </div>
@@ -707,9 +706,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00090">90</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00103">103</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>.</p>
+<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>.</p>
 
 </div>
 </div>
@@ -723,9 +722,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00089">89</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00102">102</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>.</p>
+<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>.</p>
 
 </div>
 </div>
@@ -739,9 +738,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00028">28</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00035">35</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -755,9 +754,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00080">80</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00093">93</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -771,9 +770,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00078">78</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00091">91</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -787,9 +786,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00079">79</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00092">92</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -803,9 +802,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00086">86</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00099">99</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>.</p>
 
 </div>
 </div>
@@ -819,23 +818,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00085">85</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00098">98</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa8a2669133157d5b76df8c5828bd3179"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cLanczosExpecEnergyEnd = &quot;Lanczos expec energy finishes: %s&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00125">125</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>.</p>
 
 </div>
 </div>
@@ -849,7 +834,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00101">101</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00114">114</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -865,7 +850,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00102">102</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00115">115</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -881,9 +866,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00113">113</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00128">128</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -897,9 +882,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00112">112</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00127">127</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -913,7 +898,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00044">44</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00051">51</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>.</p>
 
@@ -929,23 +914,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00043">43</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00050">50</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_c_g___eigen_vector_8c_source.html#l00030">CG_EigenVector()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ac5ae1071f4927d65f3a0b538a5c4fe69"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cLogCGExpecEnergyEnd =&quot; End : Calculate Energy by CG method.\n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00123">123</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 </div>
 </div>
@@ -959,7 +930,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00099">99</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00112">112</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
 </div>
 </div>
@@ -973,7 +946,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00097">97</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00110">110</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -989,51 +962,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00111">111</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00126">126</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a862f5e97bcc867798172b20a67710178"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cLogCheckInitComplex = &quot; CHECK: TPQ complex initial vector \n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00145">145</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a26e5901a9d9803d67459bd4c5042b6b3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cLogCheckInitReal = &quot; CHECK: TPQ real initial vector \n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00146">146</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ae5a44ddf77c2f45b6c034d63eb8a9c78"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cLogEnergy =&quot;energy=%lf \n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00124">124</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -1047,9 +978,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00121">121</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00139">139</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>.</p>
+<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>.</p>
 
 </div>
 </div>
@@ -1063,9 +994,25 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00120">120</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00138">138</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>.</p>
+<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9ec9a54f2680d0b638842e420ce000fb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cLogFlct = &quot; # time, N, N^2, D, D^2, Sz, Sz^2, <a class="el" href="global_8h.html#ae4b3c259843556181feaef44545e833f">step_i</a> \n&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00160">160</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -1079,9 +1026,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00132">132</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00145">145</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1095,9 +1042,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00137">137</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00150">150</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>.</p>
 
 </div>
 </div>
@@ -1111,9 +1058,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00136">136</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00149">149</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00155">Initialize_wave()</a>.</p>
 
 </div>
 </div>
@@ -1127,9 +1074,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00076">76</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00089">89</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00036">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_value_8c_source.html#l00050">Lanczos_EigenValue()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00330">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -1143,9 +1090,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00084">84</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00097">97</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>.</p>
 
 </div>
 </div>
@@ -1159,23 +1106,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00083">83</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00096">96</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00044">Lanczos_EigenVector()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a107437872a0d2b29a06e545f3e451010"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* cLogLanczosExpecEnergyEnd =&quot; End : Calculate Energy by Lanczos method.\n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00122">122</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Referenced by <a class="el" href="_lanczos___eigen_vector_8c_source.html#l00046">Lanczos_EigenVector()</a>.</p>
 
 </div>
 </div>
@@ -1189,7 +1122,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00098">98</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00111">111</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -1205,7 +1138,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00096">96</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00109">109</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -1221,9 +1154,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00110">110</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00125">125</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -1237,9 +1170,25 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00109">109</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00124">124</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af71fc60a8638ffb4b8aa42613dbae0dc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cLogNorm = &quot; # time, norm, <a class="el" href="global_8h.html#ae4b3c259843556181feaef44545e833f">step_i</a> \n&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00159">159</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -1253,9 +1202,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00131">131</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00144">144</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1269,9 +1218,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00139">139</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00152">152</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>.</p>
 
 </div>
 </div>
@@ -1285,9 +1234,25 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00138">138</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00151">151</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00297">Output_restart()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa57d25344f2bd3078302446e8baf681e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cLogSS = &quot; # time, energy, phys_var, phys_doublon, phys_num, step_i\n&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00158">158</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -1301,9 +1266,25 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00130">130</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00143">143</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a0c8914323bbe01ac6562ec2c0cbbcf34"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cLogTEStep = &quot; step_i/total_step=%d/%d \n&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00157">157</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -1317,9 +1298,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00134">134</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00147">147</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1333,9 +1314,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00129">129</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00142">142</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1349,9 +1330,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00133">133</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00146">146</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1365,9 +1346,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00031">31</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00038">38</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -1381,9 +1362,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00030">30</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00037">37</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -1397,9 +1378,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00029">29</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00036">36</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -1413,7 +1394,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00039">39</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00046">46</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>.</p>
 
 </div>
 </div>
@@ -1427,7 +1410,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00038">38</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00045">45</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>.</p>
 
@@ -1443,9 +1426,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00141">141</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00154">154</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1459,9 +1442,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00140">140</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00153">153</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1475,9 +1458,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00023">23</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00030">30</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>.</p>
+<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>.</p>
 
 </div>
 </div>
@@ -1491,9 +1474,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00022">22</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00029">29</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00124">main()</a>.</p>
+<p>Referenced by <a class="el" href="_h_phi_main_8c_source.html#l00176">main()</a>.</p>
 
 </div>
 </div>
@@ -1507,7 +1490,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00037">37</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00044">44</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>.</p>
 
@@ -1523,7 +1506,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00036">36</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00043">43</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="_calc_by_lanczos_8c_source.html#l00054">CalcByLanczos()</a>, and <a class="el" href="_calc_by_l_o_b_p_c_g_8c_source.html#l00634">CalcByLOBPCG()</a>.</p>
 
@@ -1539,9 +1522,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00021">21</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00028">28</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l00402">ReadDefFileNInt()</a>.</p>
+<p>Referenced by <a class="el" href="readdef_8c_source.html#l00447">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -1555,9 +1538,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00020">20</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00027">27</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="readdef_8c_source.html#l00854">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00402">ReadDefFileNInt()</a>.</p>
+<p>Referenced by <a class="el" href="readdef_8c_source.html#l00966">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00447">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -1571,9 +1554,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00033">33</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00040">40</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l01389">Read_sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l01528">Read_sz()</a>.</p>
 
 </div>
 </div>
@@ -1587,9 +1570,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00032">32</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00039">39</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l01389">Read_sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l01528">Read_sz()</a>.</p>
 
 </div>
 </div>
@@ -1603,9 +1586,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00026">26</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00033">33</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
 
 </div>
 </div>
@@ -1619,9 +1602,103 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00027">27</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00034">34</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="sz_8c_source.html#l00053">sz()</a>.</p>
+<p>Referenced by <a class="el" href="sz_8c_source.html#l00063">sz()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab05a5085d4a61b9a92a2113c17d2be4c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cTEExpecOneBodyGFinish = &quot;step %d:expec_cisajs finishes: %s&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00119">119</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a70bd1a255f99cba37d1aeeec8216060e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cTEExpecOneBodyGStart = &quot;step %d:expec_cisajs begins: %s&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00118">118</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6fe499b1cbded3afdd638d1c98f26a4b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cTEExpecTwoBodyGFinish = &quot;step %d:expec_cisajscktaltdc finishes: %s&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00134">134</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae7b9876edcd7fb89a7dae61a1e853a9a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cTEExpecTwoBodyGStart = &quot;step %d:expec_cisajscktaltdc finishes: %s&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00133">133</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aec6d10f8caafd11ab446306231c26b04"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cTEStep =&quot;step %d:TE begins: %s&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00083">83</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+
+<p>Referenced by <a class="el" href="_calc_by_t_e_m_8c_source.html#l00053">CalcByTEM()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9b8f75bb46703f82b3ebb3666ee70969"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* cTEStepEnd =&quot;step %d:TE finishes: %s&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00084">84</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 </div>
 </div>
@@ -1635,9 +1712,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00092">92</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00105">105</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>.</p>
+<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>.</p>
 
 </div>
 </div>
@@ -1651,7 +1728,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00104">104</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00117">117</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -1667,7 +1744,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00103">103</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00116">116</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 <p>Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00069">expec_cisajs()</a>.</p>
 
@@ -1683,9 +1760,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00091">91</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00104">104</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00033">expec_energy_flct()</a>.</p>
+<p>Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00034">expec_energy_flct()</a>.</p>
 
 </div>
 </div>
@@ -1699,9 +1776,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00117">117</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00132">132</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -1715,9 +1792,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00116">116</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00131">131</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00072">expec_cisajscktaltdc()</a>.</p>
+<p>Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00085">expec_cisajscktaltdc()</a>.</p>
 
 </div>
 </div>
@@ -1731,9 +1808,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00072">72</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00079">79</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
-<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00038">CalcByTPQ()</a>, and <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>.</p>
+<p>Referenced by <a class="el" href="_calc_by_t_p_q_8c_source.html#l00052">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -1747,9 +1824,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00073">73</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
-
-<p>Referenced by <a class="el" href="_first_multiply_8c_source.html#l00033">FirstMultiply()</a>.</p>
+<p>Definition at line <a class="el" href="_log_message_8c_source.html#l00080">80</a> of file <a class="el" href="_log_message_8c_source.html">LogMessage.c</a>.</p>
 
 </div>
 </div>
@@ -1759,7 +1834,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="_log_message_8c.html">LogMessage.c</a></li>
-    <li class="footer">Generated on Thu Oct 26 2017 15:48:13 for HΦ by
+    <li class="footer">Generated on Mon Dec 25 2017 18:12:54 for HΦ by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

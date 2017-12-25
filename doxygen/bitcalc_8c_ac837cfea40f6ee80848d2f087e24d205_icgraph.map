@@ -1,8 +1,9 @@
 <map id="snoob" name="snoob">
 <area shape="rect" id="node2" href="$sz_8c.html#ad2c800ee4b39c008aec04eb79385fb85" title="efficient version of calculating restricted Hilbert space for Hubbard systems using snoob details of ..." alt="" coords="126,5,274,32"/>
-<area shape="rect" id="node3" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="337,56,376,83"/>
-<area shape="rect" id="node7" href="$sz_8c.html#a1a39dc13f7b6dca406ecc4e17212ddf9" title="efficient version of calculating restricted Hilbert space for spin&#45;1/2 systems details of snoob is fo..." alt="" coords="111,107,289,133"/>
-<area shape="rect" id="node4" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="MakeExcitedList" alt="" coords="424,31,543,57"/>
-<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="744,56,795,83"/>
-<area shape="rect" id="node5" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="591,31,696,57"/>
+<area shape="rect" id="node3" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="337,85,376,112"/>
+<area shape="rect" id="node7" href="$sz_8c.html#abbaf326b1fe7720d61770197871061d2" title="calculating restricted Hilbert space for Kondo&#45;GC systems " alt="" coords="127,107,273,149"/>
+<area shape="rect" id="node8" href="$sz_8c.html#a1a39dc13f7b6dca406ecc4e17212ddf9" title="efficient version of calculating restricted Hilbert space for spin&#45;1/2 systems details of snoob is fo..." alt="" coords="111,173,289,200"/>
+<area shape="rect" id="node4" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble)..." alt="" coords="424,60,543,87"/>
+<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="744,85,795,112"/>
+<area shape="rect" id="node5" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="591,60,696,87"/>
 </map>

@@ -2,7 +2,6 @@ var searchData=
 [
   ['d',['D',['../struct_std_int_list.html#a684365c7707466c826248437b06455c4',1,'StdIntList']]],
   ['d_5ffilenamemax',['D_FileNameMax',['../global_8h.html#aa68aa1cfd58c60e5cb4877965fa41576',1,'global.h']]],
-  ['d_5ffree1',['d_free1',['../xfreemem__large_8c.html#afaaab7540572cd236a20f135b46d9c7f',1,'xfreemem_large.c']]],
   ['d_5fikwnumdef',['D_iKWNumDef',['../readdef_8c.html#aa1a4cb0fc2864b92690212e05951baa8',1,'readdef.c']]],
   ['dcomegamax',['dcOmegaMax',['../struct_define_list.html#a6e2e68659bfce724dbde866c1a62b3ef',1,'DefineList']]],
   ['dcomegamin',['dcOmegaMin',['../struct_define_list.html#a6e00e4dafdf629e302e8755c1048cd0b',1,'DefineList']]],
@@ -14,6 +13,7 @@ var searchData=
   ['diag_5fovrp',['diag_ovrp',['../_calc_by_l_o_b_p_c_g_8c.html#ae211b265e8918bbbe2d4a21575dfb291',1,'CalcByLOBPCG.c']]],
   ['diagonalcalc',['diagonalcalc',['../diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1',1,'diagonalcalc.c']]],
   ['diagonalcalc_2ec',['diagonalcalc.c',['../diagonalcalc_8c.html',1,'']]],
+  ['diagonalcalcforte',['diagonalcalcForTE',['../diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456',1,'diagonalcalc.c']]],
   ['dinv',['DInv',['../matrixlapack_8c.html#a2dd5dfb659b5fc0621e58907648532d2',1,'matrixlapack.c']]],
   ['direct',['direct',['../struct_std_int_list.html#a38754a3ac8c04adf8411ebe13054b991',1,'StdIntList']]],
   ['dlamch_5f',['dlamch_',['../matrixlapack_8c.html#a8f8bef103c45d87276d6508164f5883c',1,'matrixlapack.c']]],
@@ -35,7 +35,7 @@ var searchData=
   ['dsfmt_5fget_5fmin_5farray_5fsize',['dsfmt_get_min_array_size',['../d_s_f_m_t_8c.html#af49cc1703b4cc1d0bffbd895917c303a',1,'dSFMT.c']]],
   ['dsfmt_5fglobal_5fdata',['dsfmt_global_data',['../d_s_f_m_t_8c.html#adfee3c4c3505ddcfc334251f94968737',1,'dSFMT.c']]],
   ['dsfmt_5fmexp',['dsfmt_mexp',['../d_s_f_m_t_8c.html#a3720bab32cfc7fed812b49d96cde8636',1,'dSFMT.c']]],
-  ['dshiftbeta',['dShiftBeta',['../global_8h.html#a17fc16c2fdea2a0bc69e9efe63e57a7b',1,'global.h']]],
   ['dsyev_5f',['dsyev_',['../matrixlapack_8c.html#a6c377356f7bcc6c052e05cebca08d5d5',1,'matrixlapack.c']]],
-  ['dsyevx_5f',['dsyevx_',['../matrixlapack_8c.html#aacc25be25627742a46fd226991cd2b40',1,'matrixlapack.c']]]
+  ['dsyevx_5f',['dsyevx_',['../matrixlapack_8c.html#aacc25be25627742a46fd226991cd2b40',1,'matrixlapack.c']]],
+  ['dt',['dt',['../struct_std_int_list.html#a0477aab45009c1e3df4b8ab9a20b4a25',1,'StdIntList']]]
 ];

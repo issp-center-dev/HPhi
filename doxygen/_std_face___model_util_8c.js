@@ -2,10 +2,10 @@ var _std_face___model_util_8c =
 [
     [ "StdFace_Coulomb", "_std_face___model_util_8c.html#a2a4d37887a480ebe9a993a2921423f78", null ],
     [ "StdFace_exit", "_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3", null ],
-    [ "StdFace_FindSite", "_std_face___model_util_8c.html#adbffafd01d5d6e29468fb0242d9503be", null ],
+    [ "StdFace_FindSite", "_std_face___model_util_8c.html#a93cd0aa23728ab13b5021c283d3ab2ca", null ],
     [ "StdFace_FoldSite", "_std_face___model_util_8c.html#a874deba0d1c76592a2d060c0fae53843", null ],
     [ "StdFace_GeneralJ", "_std_face___model_util_8c.html#add96059e3108ff162542b600ca3b9a80", null ],
-    [ "StdFace_Hopping", "_std_face___model_util_8c.html#a756d58525e07a814ac0bd60b5f33f31a", null ],
+    [ "StdFace_Hopping", "_std_face___model_util_8c.html#af11c2301253e545c597a2833d41a1cfc", null ],
     [ "StdFace_HubbardLocal", "_std_face___model_util_8c.html#a01c24570458edde44713a0552a802afe", null ],
     [ "StdFace_InitSite", "_std_face___model_util_8c.html#a6080686c51f2da7c33ad0a1479d6efdd", null ],
     [ "StdFace_InputCoulombV", "_std_face___model_util_8c.html#acdf7714b0fd7b7fc7de1ad1794523d41", null ],
@@ -26,6 +26,6 @@ var _std_face___model_util_8c =
     [ "StdFace_PrintVal_i", "_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9", null ],
     [ "StdFace_PrintXSF", "_std_face___model_util_8c.html#ae665889175f2fb1367aa4349322526f0", null ],
     [ "StdFace_RequiredVal_i", "_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672", null ],
-    [ "StdFace_SetLabel", "_std_face___model_util_8c.html#aa619e567b7a8990ead43b1b5c1d65dcc", null ],
+    [ "StdFace_SetLabel", "_std_face___model_util_8c.html#a8bc881eb932eea5d4616b9bb574630ef", null ],
     [ "StdFace_trans", "_std_face___model_util_8c.html#a53261dfcaa50670bc4b8214be26426fd", null ]
 ];

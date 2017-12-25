@@ -1,0 +1,8 @@
+<map id="SetDiagonalTEChemi" name="SetDiagonalTEChemi">
+<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="408,5,529,32"/>
+<area shape="rect" id="node5" href="$diagonalcalc_8c.html#ac0c46bfcea684ca1a9c4f339d396b902" title="Update the vector by the general one&#45;body diagonal interaction, . (Using in Time Evolution mode)..." alt="" coords="201,31,360,57"/>
+<area shape="rect" id="node6" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="421,68,516,95"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="577,5,681,32"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="729,5,827,32"/>
+<area shape="rect" id="node7" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="596,68,663,95"/>
+</map>

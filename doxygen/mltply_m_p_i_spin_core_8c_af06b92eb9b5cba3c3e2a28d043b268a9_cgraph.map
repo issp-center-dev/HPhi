@@ -1,6 +1,5 @@
 <map id="GC_child_CisAitCiuAiv_spin_MPIsingle" name="GC_child_CisAitCiuAiv_spin_MPIsingle">
 <area shape="rect" id="node2" href="$mltply_m_p_i_spin_core_8c.html#a9f761747b03d3dc6a20f73377f7226d4" title="Exchange and Pairlifting term in Spin model + GC When only site2 is in the inter process region..." alt="" coords="212,23,387,65"/>
 <area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="465,5,531,32"/>
-<area shape="rect" id="node5" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="435,56,561,83"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="609,5,664,32"/>
+<area shape="rect" id="node4" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="435,56,561,83"/>
 </map>

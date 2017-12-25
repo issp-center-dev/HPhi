@@ -1,51 +1,51 @@
 <map id="GetExcitedState" name="GetExcitedState">
-<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1376,1275,1431,1301"/>
-<area shape="rect" id="node3" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="GetPairExcitedState" alt="" coords="179,1119,320,1145"/>
-<area shape="rect" id="node36" href="$_single_ex_8c.html#a43797ff504ab9bf349fdf9f7561d2038" title="GetSingleExcitedState" alt="" coords="172,708,327,735"/>
-<area shape="rect" id="node47" href="$_calc_spectrum_8c.html#ab57989b65ec16d878470ba35b7903c29" title="SetOmega" alt="" coords="951,1612,1035,1639"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="677,1119,813,1145"/>
-<area shape="rect" id="node6" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original space. " alt="" coords="393,1423,567,1449"/>
-<area shape="rect" id="node7" href="$_pair_ex_hubbard_8c.html#aab52ec15363468b5cc7dd30215d889fe" title="GetPairExcitedStateHubbardGC" alt="" coords="375,1043,585,1069"/>
-<area shape="rect" id="node17" href="$_pair_ex_hubbard_8c.html#ad6ea48aa669d72fd8cc85162bae8b834" title="GetPairExcitedStateHubbard" alt="" coords="385,545,575,572"/>
-<area shape="rect" id="node28" href="$_pair_ex_spin_8c.html#acc9ece067d6f261fd9865c9e7ca38c28" title="GetPairExcitedStateSpin" alt="" coords="397,1271,563,1297"/>
-<area shape="rect" id="node33" href="$_pair_ex_spin_8c.html#a1629a16cc6e353c96f1626bdb0db8eed" title="GetPairExcitedStateSpinGC" alt="" coords="387,1220,573,1247"/>
-<area shape="rect" id="node5" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="1180,1157,1265,1184"/>
-<area shape="rect" id="node8" href="$mltply_m_p_i_hubbard_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="922,987,1063,1029"/>
-<area shape="rect" id="node11" href="$mltply_m_p_i_hubbard_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="922,1053,1063,1094"/>
-<area shape="rect" id="node12" href="$mltply_hubbard_core_8c.html#af29e620c3f3ae1fe39112a747bc1b05d" title="Operation of &#160;(Grandcanonical) " alt="" coords="701,1169,789,1196"/>
-<area shape="rect" id="node13" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="678,951,811,993"/>
-<area shape="rect" id="node14" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="665,799,825,825"/>
-<area shape="rect" id="node9" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="1192,515,1253,541"/>
-<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1189,653,1256,680"/>
-<area shape="rect" id="node15" href="$mltply_hubbard_core_8c.html#acf3b726a0fbe639a2b7169210c3a24c4" title="Operation of &#160;(Grandcanonical) " alt="" coords="949,885,1037,912"/>
-<area shape="rect" id="node16" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="950,835,1035,861"/>
-<area shape="rect" id="node18" href="$wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362" title="MPI wrapper function to obtain maximum unsigned long integer across processes. " alt="" coords="951,936,1035,963"/>
-<area shape="rect" id="node19" href="$mltply_m_p_i_hubbard_8c.html#a0d286e432184734976ab21cbbb4bdc8b" title="Hopping term in Hubbard + MPI When both site1 and site2 are in the inter process region. " alt="" coords="904,464,1081,491"/>
-<area shape="rect" id="node21" href="$mltply_m_p_i_hubbard_8c.html#a58b4fbd3fa69809e9633f197f23dced8" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="906,515,1079,541"/>
-<area shape="rect" id="node22" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="707,301,782,328"/>
-<area shape="rect" id="node24" href="$mltply_m_p_i_hubbard_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="918,566,1067,607"/>
-<area shape="rect" id="node25" href="$mltply_m_p_i_hubbard_8c.html#af402c076da283e62da488dbd305f36cf" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="918,398,1067,439"/>
-<area shape="rect" id="node26" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="678,251,811,277"/>
-<area shape="rect" id="node20" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="1175,296,1271,323"/>
-<area shape="rect" id="node23" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="942,296,1043,323"/>
-<area shape="rect" id="node27" href="$mltply_hubbard_core_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title=" term for canonical Hubbard " alt="" coords="963,195,1022,221"/>
-<area shape="rect" id="node29" href="$_pair_ex_spin_8c.html#a61950043cc9ec8ca800510d959af0359" title="GetPairExcitedStateHalfSpin" alt="" coords="649,1372,840,1399"/>
-<area shape="rect" id="node32" href="$_pair_ex_spin_8c.html#a51a79357da3abe458601c1a01ccdf781" title="GetPairExcitedStateGeneralSpin" alt="" coords="639,1271,851,1297"/>
-<area shape="rect" id="node30" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="927,1372,1058,1399"/>
-<area shape="rect" id="node31" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="937,1423,1048,1449"/>
-<area shape="rect" id="node34" href="$_pair_ex_spin_8c.html#af7d49c3443e674c3e095dd37cb62470c" title="GetPairExcitedStateHalfSpinGC" alt="" coords="639,1321,850,1348"/>
-<area shape="rect" id="node35" href="$_pair_ex_spin_8c.html#a49f7334f2e47aee8e04645c509e0bf67" title="GetPairExcitedStateGeneral\lSpinGC" alt="" coords="1129,1209,1316,1250"/>
-<area shape="rect" id="node37" href="$_single_ex_hubbard_8c.html#a1402ad7c646461af3781c428888db645" title="GetSingleExcitedStateHubbardGC" alt="" coords="633,708,856,735"/>
-<area shape="rect" id="node42" href="$_single_ex_hubbard_8c.html#a5c47554603676d2da6345b76e562cd4f" title="GetSingleExcitedStateHubbard" alt="" coords="379,352,581,379"/>
-<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_core_8c.html#a65a9cb52d6f6b78d3c5c26bb091f2b0b" title="Single creation/annihilation operator in the inter process region for HubbardGC. " alt="" coords="935,784,1051,811"/>
-<area shape="rect" id="node39" href="$mltply_hubbard_core_8c.html#a82057cd7316bca01585868207301cf39" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="958,683,1027,709"/>
-<area shape="rect" id="node40" href="$mltply_m_p_i_hubbard_core_8c.html#afb05b7aaa7ae3d03c5c029b807e60358" title="Single creation/annihilation operator in the inter process region for HubbardGC. " alt="" coords="937,733,1049,760"/>
-<area shape="rect" id="node41" href="$mltply_hubbard_core_8c.html#a414245ea3f4742224f9d99a0da15a228" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="960,632,1025,659"/>
-<area shape="rect" id="node43" href="$mltply_m_p_i_hubbard_core_8c.html#a76ed1830af9fb3d1f1f49981f0a6672e" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="948,245,1037,272"/>
-<area shape="rect" id="node44" href="$mltply_hubbard_core_8c.html#a3f49b75c63d21a51d25b3d414a759be7" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="963,93,1022,120"/>
-<area shape="rect" id="node45" href="$mltply_m_p_i_hubbard_core_8c.html#a76860c3ee2aaf4109b0cd9e458cd54e3" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="950,347,1035,373"/>
-<area shape="rect" id="node46" href="$mltply_hubbard_core_8c.html#ae302b1f2124063034b348974c361f966" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="965,43,1020,69"/>
-<area shape="rect" id="node48" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1170,1676,1275,1703"/>
-<area shape="rect" id="node50" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="1185,1625,1260,1652"/>
-<area shape="rect" id="node49" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1364,1676,1443,1703"/>
+<area shape="rect" id="node2" href="$_pair_ex_8c.html#a1bd77a0e185cc54a5e6574efb561b2a0" title="Calculating the pair excited state by the pair operator; &#160;&#160;&#160;, where &#160;indicates a creation (anti&#45;creat..." alt="" coords="172,332,313,359"/>
+<area shape="rect" id="node36" href="$_single_ex_8c.html#a43797ff504ab9bf349fdf9f7561d2038" title="Calculation of single excited state Target System: Hubbard, Kondo. " alt="" coords="389,816,544,843"/>
+<area shape="rect" id="node47" href="$_calc_spectrum_8c.html#ab57989b65ec16d878470ba35b7903c29" title="Set target frequencies. " alt="" coords="201,937,285,964"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="663,307,799,333"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original space. " alt="" coords="379,281,554,308"/>
+<area shape="rect" id="node6" href="$_pair_ex_hubbard_8c.html#aab52ec15363468b5cc7dd30215d889fe" title="GetPairExcitedStateHubbardGC" alt="" coords="361,433,572,460"/>
+<area shape="rect" id="node16" href="$_pair_ex_hubbard_8c.html#ad6ea48aa669d72fd8cc85162bae8b834" title="GetPairExcitedStateHubbard" alt="" coords="371,729,562,756"/>
+<area shape="rect" id="node27" href="$_pair_ex_spin_8c.html#acc9ece067d6f261fd9865c9e7ca38c28" title="GetPairExcitedStateSpin" alt="" coords="383,88,550,115"/>
+<area shape="rect" id="node33" href="$_pair_ex_spin_8c.html#a1629a16cc6e353c96f1626bdb0db8eed" title="Calculation of pair excited state for Spin Grand canonical system. " alt="" coords="373,205,560,232"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="937,173,1022,200"/>
+<area shape="rect" id="node7" href="$mltply_m_p_i_hubbard_8c.html#a987bcd9d7be83743c90f148481ff5cd3" title="Hopping term in Hubbard + GC When both site1 and site2 are in the inter process region. " alt="" coords="909,225,1050,266"/>
+<area shape="rect" id="node10" href="$mltply_m_p_i_hubbard_8c.html#a89d8854d5f7b9da8c6ab596ac926caf9" title="Hopping term in Hubbard + GC When only site2 is in the inter process region. " alt="" coords="909,342,1050,383"/>
+<area shape="rect" id="node11" href="$mltply_hubbard_core_8c.html#af29e620c3f3ae1fe39112a747bc1b05d" title="Operation of &#160;(Grandcanonical) " alt="" coords="687,256,775,283"/>
+<area shape="rect" id="node12" href="$mltply_hubbard_core_8c.html#ad2c9c4176ec4f0f7d5087a890467a264" title="Compute mask for bit operation of hopping term. " alt="" coords="665,561,798,602"/>
+<area shape="rect" id="node13" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="651,509,811,536"/>
+<area shape="rect" id="node8" href="$bitcalc_8c.html#a7217ccf6f49458f399f3266ba4bafffb" title="function of getting fermion sign (64 bit) " alt="" coords="1133,763,1195,789"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1131,636,1197,663"/>
+<area shape="rect" id="node14" href="$mltply_hubbard_core_8c.html#acf3b726a0fbe639a2b7169210c3a24c4" title="Operation of &#160;(Grandcanonical) " alt="" coords="935,408,1023,435"/>
+<area shape="rect" id="node15" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="937,509,1022,536"/>
+<area shape="rect" id="node17" href="$wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362" title="MPI wrapper function to obtain maximum unsigned long integer across processes. " alt="" coords="937,291,1021,317"/>
+<area shape="rect" id="node18" href="$mltply_m_p_i_hubbard_8c.html#a0d286e432184734976ab21cbbb4bdc8b" title="Hopping term in Hubbard + MPI When both site1 and site2 are in the inter process region. " alt="" coords="891,712,1068,739"/>
+<area shape="rect" id="node20" href="$mltply_m_p_i_hubbard_8c.html#a58b4fbd3fa69809e9633f197f23dced8" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="893,763,1066,789"/>
+<area shape="rect" id="node21" href="$mltply_hubbard_core_8c.html#a576edff50809bed2a8ac5016b54027a4" title="Compute index of wavefunction of final state. " alt="" coords="694,1051,769,1077"/>
+<area shape="rect" id="node23" href="$mltply_m_p_i_hubbard_8c.html#aed2861272c984ba51e9c76bdbdfad67f" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When both site1 and site2 are in the inter proce..." alt="" coords="905,814,1054,855"/>
+<area shape="rect" id="node24" href="$mltply_m_p_i_hubbard_8c.html#af402c076da283e62da488dbd305f36cf" title="Hopping term in Hubbard (Kondo) + Canonical ensemble When only site2 is in the inter process region..." alt="" coords="905,879,1054,921"/>
+<area shape="rect" id="node25" href="$mltply_hubbard_8c.html#ac6de5fa85bba8abb6001cea5f4eae19e" title="Compute hopping (canonical) " alt="" coords="665,1101,798,1128"/>
+<area shape="rect" id="node19" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="1116,945,1212,972"/>
+<area shape="rect" id="node22" href="$mltply_hubbard_core_8c.html#a0af550e9f9e1443323aba1b18cc35be0" title="Compute index of wavefunction of final state. " alt="" coords="929,1097,1030,1124"/>
+<area shape="rect" id="node26" href="$mltply_hubbard_core_8c.html#aaf0a9a1a4862be39ce011d0acf118928" title=" term for canonical Hubbard " alt="" coords="950,1199,1009,1225"/>
+<area shape="rect" id="node28" href="$_pair_ex_spin_8c.html#a61950043cc9ec8ca800510d959af0359" title="GetPairExcitedStateHalfSpin" alt="" coords="636,37,827,64"/>
+<area shape="rect" id="node32" href="$_pair_ex_spin_8c.html#a51a79357da3abe458601c1a01ccdf781" title="GetPairExcitedStateGeneralSpin" alt="" coords="625,88,837,115"/>
+<area shape="rect" id="node29" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="914,123,1045,149"/>
+<area shape="rect" id="node30" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="924,5,1035,32"/>
+<area shape="rect" id="node31" href="$mltply_m_p_i_spin_core_8c.html#acfd2257b730214abd93e50cffb9d6e52" title="Hopping term in Spin + Canonical for CalcSpectrum When both site1 and site2 are in the inter process ..." alt="" coords="910,57,1049,98"/>
+<area shape="rect" id="node34" href="$_pair_ex_spin_8c.html#af7d49c3443e674c3e095dd37cb62470c" title="GetPairExcitedStateHalfSpinGC" alt="" coords="626,205,837,232"/>
+<area shape="rect" id="node35" href="$_pair_ex_spin_8c.html#a49f7334f2e47aee8e04645c509e0bf67" title="GetPairExcitedStateGeneral\lSpinGC" alt="" coords="638,139,825,181"/>
+<area shape="rect" id="node37" href="$_single_ex_hubbard_8c.html#a1402ad7c646461af3781c428888db645" title="Calculation of Single excited state for Hubbard Grand canonical system. " alt="" coords="620,627,843,653"/>
+<area shape="rect" id="node42" href="$_single_ex_hubbard_8c.html#a5c47554603676d2da6345b76e562cd4f" title="Calculation of Single excited state for Hubbard canonical system. " alt="" coords="630,975,833,1001"/>
+<area shape="rect" id="node38" href="$mltply_m_p_i_hubbard_core_8c.html#a65a9cb52d6f6b78d3c5c26bb091f2b0b" title="Single creation/annihilation operator in the inter process region for HubbardGC. " alt="" coords="921,459,1037,485"/>
+<area shape="rect" id="node39" href="$mltply_hubbard_core_8c.html#a82057cd7316bca01585868207301cf39" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="945,661,1014,688"/>
+<area shape="rect" id="node40" href="$mltply_m_p_i_hubbard_core_8c.html#afb05b7aaa7ae3d03c5c029b807e60358" title="Single creation/annihilation operator in the inter process region for HubbardGC. " alt="" coords="923,560,1035,587"/>
+<area shape="rect" id="node41" href="$mltply_hubbard_core_8c.html#a414245ea3f4742224f9d99a0da15a228" title="Compute &#160;term of grandcanonical Hubbard system. " alt="" coords="947,611,1012,637"/>
+<area shape="rect" id="node43" href="$mltply_m_p_i_hubbard_core_8c.html#a76ed1830af9fb3d1f1f49981f0a6672e" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="935,945,1024,972"/>
+<area shape="rect" id="node44" href="$mltply_hubbard_core_8c.html#a3f49b75c63d21a51d25b3d414a759be7" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="950,1148,1009,1175"/>
+<area shape="rect" id="node45" href="$mltply_m_p_i_hubbard_core_8c.html#a76860c3ee2aaf4109b0cd9e458cd54e3" title="Compute &#160;term of canonical Hubbard system. " alt="" coords="937,996,1022,1023"/>
+<area shape="rect" id="node46" href="$mltply_hubbard_core_8c.html#ae302b1f2124063034b348974c361f966" title="Compute index of final wavefunction associatesd to &#160;term of canonical Hubbard system. " alt="" coords="952,1047,1007,1073"/>
+<area shape="rect" id="node48" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="414,1129,519,1156"/>
+<area shape="rect" id="node50" href="$wrapper_m_p_i_8c.html#aa75a96d74dddc8e6921813225e318551" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string..." alt="" coords="429,937,504,964"/>
+<area shape="rect" id="node49" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="692,1152,771,1179"/>
 </map>

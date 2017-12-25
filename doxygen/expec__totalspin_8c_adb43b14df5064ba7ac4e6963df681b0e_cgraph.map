@@ -1,9 +1,8 @@
 <map id="expec_totalSz" name="expec_totalSz">
-<area shape="rect" id="node2" href="$expec__totalspin_8c.html#a408b344e7ab97dc747e3c6c9c9eb892c" title="totalSz_HubbardGC" alt="" coords="159,5,297,32"/>
-<area shape="rect" id="node6" href="$expec__totalspin_8c.html#ab7b5839640e77d0bb01982c7be6f2b69" title="totalSz_SpinGC" alt="" coords="345,56,461,83"/>
+<area shape="rect" id="node2" href="$expec__totalspin_8c.html#a408b344e7ab97dc747e3c6c9c9eb892c" title="function of calculating totalSz for Hubbard model in grand canonical ensemble " alt="" coords="159,5,297,32"/>
+<area shape="rect" id="node5" href="$expec__totalspin_8c.html#ab7b5839640e77d0bb01982c7be6f2b69" title="function of calculating totalSz for Spin model in grand canonical ensemble " alt="" coords="345,56,461,83"/>
 <area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="511,5,605,32"/>
 <area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="673,5,740,32"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="807,5,861,32"/>
-<area shape="rect" id="node7" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="509,56,607,83"/>
-<area shape="rect" id="node8" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="655,56,759,83"/>
+<area shape="rect" id="node6" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="509,56,607,83"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="655,56,759,83"/>
 </map>

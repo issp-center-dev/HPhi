@@ -1,18 +1,15 @@
 <map id="CheckTransferHermite" name="CheckTransferHermite">
-<area shape="rect" id="node2" href="$readdef_8c.html#ac94a4ebce9827cf05d7eaaa14d844c50" title="function of checking hermite conditions about interall interactions " alt="" coords="208,371,355,398"/>
-<area shape="rect" id="node3" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="2592,207,2647,234"/>
-<area shape="rect" id="node4" href="$readdef_8c.html#a1ee27476e504ff51ff417c1922a35929" title="function of getting diagonal components form interall interactions " alt="" coords="403,283,537,310"/>
-<area shape="rect" id="node5" href="$xsetmem_8c.html#a6e158031b8535726c53a77550a24159b" title="setmem_IntAll_Diagonal" alt="" coords="585,156,749,183"/>
-<area shape="rect" id="node7" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="614,244,721,271"/>
-<area shape="rect" id="node6" href="$xsetmem_8c.html#a515c905af1b73d36feed8e99b4f9171d" title="GetlistSize" alt="" coords="835,118,921,144"/>
-<area shape="rect" id="node8" href="$readdef_8c.html#afad6a8fbb4fc6acbd22bd70e699eb21c" title="function of checking whether ctmp is same as cKeyWord or not " alt="" coords="829,270,927,296"/>
-<area shape="rect" id="node9" href="$readdef_8c.html#afbe7cae20c834c11ef23ad8a1674ac6d" title="function of checking format of spin interactions " alt="" coords="797,168,959,195"/>
-<area shape="rect" id="node10" href="$readdef_8c.html#a08b2cb6d21dff0fe22a79e9528c94f4f" title="function of checking format of Kondo interactions " alt="" coords="1007,168,1179,195"/>
-<area shape="rect" id="node11" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="1227,131,1383,158"/>
-<area shape="rect" id="node12" href="$readdef_8c.html#a33a451cbb9e518962b7379382cd6b117" title="function of checking indecies of localized spin " alt="" coords="1431,118,1537,144"/>
-<area shape="rect" id="node13" href="$readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0" title="function of checking an input data of total2Sz " alt="" coords="2432,55,2544,82"/>
-<area shape="rect" id="node14" href="$readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da" title="function of resetting number of interactions " alt="" coords="1585,118,1732,144"/>
-<area shape="rect" id="node15" href="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68" title="function of initializeing interactions " alt="" coords="1780,118,1939,144"/>
-<area shape="rect" id="node16" href="$readdef_8c.html#acc29011dbce0388d85541f1e4afa2be1" title="function of checking spin index for all interactions " alt="" coords="1987,118,2165,144"/>
-<area shape="rect" id="node17" href="$readdef_8c.html#ac7c21de82671cc25f4319b55039c4e41" title="function of checking spin index for transfers " alt="" coords="2213,106,2384,132"/>
+<area shape="rect" id="node2" href="$readdef_8c.html#a89df6600fe7567e815386fef5828a0c7" title="function of checking hermite conditions about interall interactions " alt="" coords="208,31,355,57"/>
+<area shape="rect" id="node3" href="$readdef_8c.html#ac5a8a45ecec5aa4484c187a2ba130f5f" title="function of getting diagonal components " alt="" coords="403,31,537,57"/>
+<area shape="rect" id="node4" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="585,31,692,57"/>
+<area shape="rect" id="node5" href="$readdef_8c.html#afad6a8fbb4fc6acbd22bd70e699eb21c" title="function of checking whether ctmp is same as cKeyWord or not " alt="" coords="771,5,870,32"/>
+<area shape="rect" id="node6" href="$readdef_8c.html#afbe7cae20c834c11ef23ad8a1674ac6d" title="function of checking format of spin interactions " alt="" coords="740,56,901,83"/>
+<area shape="rect" id="node7" href="$readdef_8c.html#a530ff519fae4063e6f2e08a11316d5ea" title="function of checking format of Kondo interactions " alt="" coords="949,56,1121,83"/>
+<area shape="rect" id="node8" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="1169,56,1325,83"/>
+<area shape="rect" id="node9" href="$readdef_8c.html#a33a451cbb9e518962b7379382cd6b117" title="function of checking indexies of localized spin " alt="" coords="1373,56,1480,83"/>
+<area shape="rect" id="node10" href="$readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0" title="function of checking an input data of total2Sz " alt="" coords="2379,56,2491,83"/>
+<area shape="rect" id="node11" href="$readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da" title="function of resetting number of interactions " alt="" coords="1528,83,1675,109"/>
+<area shape="rect" id="node12" href="$readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68" title="function of initializing interactions " alt="" coords="1723,85,1881,112"/>
+<area shape="rect" id="node13" href="$readdef_8c.html#a159fe255d7b06db68c9739671189dec9" title="function of checking spin index for all interactions " alt="" coords="1929,79,2112,121"/>
+<area shape="rect" id="node14" href="$readdef_8c.html#ac7c21de82671cc25f4319b55039c4e41" title="function of checking spin index for transfers " alt="" coords="2160,83,2331,109"/>
 </map>

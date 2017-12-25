@@ -45,7 +45,7 @@ var searchData=
   ['geometry_5fw90',['geometry_W90',['../_wannier90_8c.html#a4d1e587e473af8b60a0b9a890e6f3700',1,'Wannier90.c']]],
   ['getbitgeneral',['GetBitGeneral',['../bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701',1,'bitcalc.c']]],
   ['getcalcspectrumtpq',['GetCalcSpectrumTPQ',['../_calc_spectrum_by_t_p_q_8c.html#a778755c595a2f760086f2e99130d894b',1,'CalcSpectrumByTPQ.c']]],
-  ['getdiagonalinterall',['GetDiagonalInterAll',['../readdef_8c.html#a1ee27476e504ff51ff417c1922a35929',1,'readdef.c']]],
+  ['getdiagonalinterall',['GetDiagonalInterAll',['../readdef_8c.html#ac5a8a45ecec5aa4484c187a2ba130f5f',1,'readdef.c']]],
   ['getexcitedstate',['GetExcitedState',['../_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada',1,'CalcSpectrum.c']]],
   ['getfilename',['GetFileName',['../readdef_8c.html#a500b57266b13cf3bc4a89f222179a03d',1,'readdef.c']]],
   ['getfilenamebykw',['GetFileNameByKW',['../readdef_8c.html#afa1a7211e33cdb1be5abc85e4bb42d9c',1,'readdef.c']]],
@@ -74,7 +74,6 @@ var searchData=
   ['global_2ec',['global.c',['../global_8c.html',1,'']]],
   ['global_2eh',['global.h',['../global_8h.html',1,'']]],
   ['global_5f1st_5fnorm',['global_1st_norm',['../global_8h.html#ab49961427db962dd360f977920909700',1,'global.h']]],
-  ['global_5fiv',['global_iv',['../global_8h.html#a7095e29d834dacc3ede1067bd08ca99a',1,'global.h']]],
   ['global_5fnorm',['global_norm',['../global_8h.html#a633b54cb7aa03a7af7ce6c13b8a434ba',1,'global.h']]],
-  ['global_5fspn2',['global_spn2',['../global_8h.html#a7dcce997a9b1bf13aa7da54fb034ceef',1,'global.h']]]
+  ['global_20variables_20and_20data_20structure',['Global variables and Data structure',['../page_variable.html',1,'']]]
 ];

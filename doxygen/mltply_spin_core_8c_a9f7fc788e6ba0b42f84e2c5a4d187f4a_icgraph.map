@@ -1,11 +1,12 @@
 <map id="child_CisAisCisAis_spin_element" name="child_CisAisCisAis_spin_element">
-<area shape="rect" id="node2" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="expec_cisajscktalt\l_SpinHalf" alt="" coords="188,49,319,90"/>
-<area shape="rect" id="node3" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="expec_cisajscktalt_Spin" alt="" coords="367,56,529,83"/>
-<area shape="rect" id="node4" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="577,56,721,83"/>
-<area shape="rect" id="node5" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="912,5,1027,32"/>
-<area shape="rect" id="node7" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="CalcByTPQ" alt="" coords="769,56,861,83"/>
-<area shape="rect" id="node8" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="790,107,841,133"/>
-<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1077,81,1128,108"/>
-<area shape="rect" id="node9" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="CalcByFullDiag" alt="" coords="913,107,1026,133"/>
-<area shape="rect" id="node10" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="909,157,1029,184"/>
+<area shape="rect" id="node2" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin model. " alt="" coords="188,74,319,115"/>
+<area shape="rect" id="node3" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="Parent function to calculate two&#45;body green&#39;s functions for Spin model. " alt="" coords="367,81,529,108"/>
+<area shape="rect" id="node4" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="577,81,721,108"/>
+<area shape="rect" id="node5" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="913,5,1028,32"/>
+<area shape="rect" id="node7" href="$_calc_by_t_e_m_8c.html#a95c436e25727f69519a98af30f6eb00d" title="main function of time evolution calculation " alt="" coords="769,56,863,83"/>
+<area shape="rect" id="node8" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="A main function to calculate physical quqntities by TPQ method. " alt="" coords="770,107,862,133"/>
+<area shape="rect" id="node9" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="791,157,841,184"/>
+<area shape="rect" id="node6" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1079,107,1129,133"/>
+<area shape="rect" id="node10" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="Parent function for FullDiag mode. " alt="" coords="914,157,1027,184"/>
+<area shape="rect" id="node11" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="911,208,1031,235"/>
 </map>

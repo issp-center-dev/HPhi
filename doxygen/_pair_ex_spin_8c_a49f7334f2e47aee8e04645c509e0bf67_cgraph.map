@@ -1,11 +1,10 @@
 <map id="GetPairExcitedStateGeneralSpinGC" name="GetPairExcitedStateGeneralSpinGC">
-<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="717,102,839,129"/>
-<area shape="rect" id="node5" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="751,270,805,297"/>
-<area shape="rect" id="node6" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="491,178,657,205"/>
-<area shape="rect" id="node7" href="$mltply_m_p_i_spin_core_8c.html#a3e8684b197911cf3ea3117f096775898" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="479,5,669,47"/>
-<area shape="rect" id="node8" href="$mltply_m_p_i_spin_core_8c.html#a26d53e4d5ba3aa9b49fd7e42361a2ff9" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="240,61,431,103"/>
-<area shape="rect" id="node9" href="$mltply_m_p_i_spin_core_8c.html#ae3efb06f6eab6b17f0527a1ba57090ef" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="242,229,429,271"/>
-<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="887,102,991,129"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1039,102,1136,129"/>
-<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="541,241,607,267"/>
+<area shape="rect" id="node2" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="717,101,839,127"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="491,189,657,215"/>
+<area shape="rect" id="node6" href="$mltply_m_p_i_spin_core_8c.html#a3e8684b197911cf3ea3117f096775898" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="479,123,669,164"/>
+<area shape="rect" id="node7" href="$mltply_m_p_i_spin_core_8c.html#a26d53e4d5ba3aa9b49fd7e42361a2ff9" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="240,5,431,47"/>
+<area shape="rect" id="node8" href="$mltply_m_p_i_spin_core_8c.html#ae3efb06f6eab6b17f0527a1ba57090ef" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="242,228,429,269"/>
+<area shape="rect" id="node3" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="887,101,991,127"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1039,101,1136,127"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="541,239,607,266"/>
 </map>

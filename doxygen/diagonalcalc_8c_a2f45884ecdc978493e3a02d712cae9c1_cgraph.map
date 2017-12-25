@@ -1,18 +1,23 @@
 <map id="diagonalcalc" name="diagonalcalc">
-<area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="1027,549,1132,576"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="1233,321,1287,348"/>
-<area shape="rect" id="node5" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="SetDiagonalChemi" alt="" coords="367,233,497,260"/>
-<area shape="rect" id="node9" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="SetDiagonalCoulombInter" alt="" coords="545,144,716,171"/>
-<area shape="rect" id="node10" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="SetDiagonalHund" alt="" coords="802,93,926,120"/>
-<area shape="rect" id="node11" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="SetDiagonalInterAll" alt="" coords="1012,43,1147,69"/>
-<area shape="rect" id="node14" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="coulombintra interaction are given by &#160;" alt="" coords="148,284,319,311"/>
-<area shape="rect" id="node15" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="386,461,478,488"/>
-<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1221,549,1299,576"/>
-<area shape="rect" id="node6" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="1199,132,1321,159"/>
-<area shape="rect" id="node7" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="1373,132,1477,159"/>
-<area shape="rect" id="node8" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1525,132,1623,159"/>
-<area shape="rect" id="node12" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="1195,56,1325,83"/>
-<area shape="rect" id="node13" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="1205,5,1315,32"/>
-<area shape="rect" id="node16" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="557,473,704,500"/>
-<area shape="rect" id="node17" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="764,499,964,525"/>
+<area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="826,81,931,108"/>
+<area shape="rect" id="node4" href="$diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456" title="diagonalcalcForTE" alt="" coords="148,309,279,336"/>
+<area shape="rect" id="node15" href="$diagonalcalc_8c.html#aeaf8dddfbe8b24106315c11df8917d18" title="Calculate the components for Coulombintra interaction, . " alt="" coords="327,360,497,387"/>
+<area shape="rect" id="node16" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="Calculate the components for the chemical potential . " alt="" coords="580,411,711,437"/>
+<area shape="rect" id="node17" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="Calculate the components for Coulombinter interaction, . " alt="" coords="793,461,964,488"/>
+<area shape="rect" id="node18" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="Calculate the components for Hund interaction, . " alt="" coords="1024,461,1148,488"/>
+<area shape="rect" id="node19" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="Calculate the components for general two&#45;body diagonal interaction, . " alt="" coords="1220,461,1355,488"/>
+<area shape="rect" id="node20" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="167,107,259,133"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a405f88de519282b8e7605988745f42ae" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame..." alt="" coords="1047,81,1125,108"/>
+<area shape="rect" id="node5" href="$diagonalcalc_8c.html#ac0c46bfcea684ca1a9c4f339d396b902" title="Update the vector by the general one&#45;body diagonal interaction, . (Using in Time Evolution mode)..." alt="" coords="1208,208,1367,235"/>
+<area shape="rect" id="node11" href="$diagonalcalc_8c.html#aa8384a120b6131a6f4ba29823b6bc9e1" title="Update the vector by the general two&#45;body diagonal interaction, . (Using in Time Evolution mode)..." alt="" coords="1212,360,1363,387"/>
+<area shape="rect" id="node14" href="$diagonalcalc_8c.html#a719a974666d65bf6d1d766f047f1d144" title="Update the vector by the chemical potential &#160;&#160;generated by the commutation relation in terms of the g..." alt="" coords="1012,259,1160,285"/>
+<area shape="rect" id="node6" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="1419,360,1541,387"/>
+<area shape="rect" id="node9" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="1433,259,1527,285"/>
+<area shape="rect" id="node7" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="1593,360,1697,387"/>
+<area shape="rect" id="node8" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1745,360,1843,387"/>
+<area shape="rect" id="node10" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1612,259,1679,285"/>
+<area shape="rect" id="node12" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="1415,411,1545,437"/>
+<area shape="rect" id="node13" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="1425,461,1535,488"/>
+<area shape="rect" id="node21" href="$log_8c.html#a07deb00043cb31a691ff307cc8ae0552" title="Functions for writing a time log. " alt="" coords="339,56,485,83"/>
+<area shape="rect" id="node22" href="$log_8c.html#aa7daf8ff6a1c61ea795f4096043f1c19" title="Functions for writing a time log. " alt="" coords="545,5,745,32"/>
 </map>

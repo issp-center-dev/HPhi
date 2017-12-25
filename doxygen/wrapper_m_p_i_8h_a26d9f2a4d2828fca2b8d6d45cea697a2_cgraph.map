@@ -1,5 +1,0 @@
-<map id="NormMPI_dc" name="NormMPI_dc">
-<area shape="rect" id="node2" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="152,5,247,32"/>
-<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="295,5,361,32"/>
-<area shape="rect" id="node4" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="409,5,464,32"/>
-</map>

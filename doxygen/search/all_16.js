@@ -63,6 +63,5 @@ var searchData=
   ['x_5fspin_5fcisait',['X_Spin_CisAit',['../mltply_spin_core_8c.html#a6fcc1bc8f09474657a89e0088fac9e45',1,'mltplySpinCore.c']]],
   ['x_5fspingc_5fcisais',['X_SpinGC_CisAis',['../mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3',1,'mltplySpinCore.c']]],
   ['x_5fspingc_5fcisait',['X_SpinGC_CisAit',['../mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362',1,'mltplySpinCore.c']]],
-  ['xfreemem_5flarge_2ec',['xfreemem_large.c',['../xfreemem__large_8c.html',1,'']]],
   ['xsetmem_2ec',['xsetmem.c',['../xsetmem_8c.html',1,'']]]
 ];

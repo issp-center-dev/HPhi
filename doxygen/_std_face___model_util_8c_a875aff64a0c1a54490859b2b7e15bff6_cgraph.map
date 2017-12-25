@@ -1,7 +1,6 @@
 <map id="StdFace_MallocInteractions" name="StdFace_MallocInteractions">
-<area shape="rect" id="node2" href="$xfreemem__large_8c.html#a5c1bb0da45eec945c4cc3233c7d8427e" title="fprintf" alt="" coords="456,26,511,52"/>
-<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3" title="MPI Abortation wrapper. " alt="" coords="255,26,354,52"/>
-<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#adbffafd01d5d6e29468fb0242d9503be" title="Find the index of transfer and interaction. " alt="" coords="241,127,368,154"/>
-<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#a874deba0d1c76592a2d060c0fae53843" title="Move a site into the original supercell if it is outside the original supercell. " alt="" coords="420,152,547,179"/>
-<area shape="rect" id="node6" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="Print a valiable (integer) read from the input file if it is not specified in the input file (=214748..." alt="" coords="237,76,372,103"/>
+<area shape="rect" id="node2" href="$_std_face___model_util_8c.html#a0a109612d94f6dc277750b5fe3bfa7e3" title="MPI Abortation wrapper. " alt="" coords="255,5,354,32"/>
+<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#a93cd0aa23728ab13b5021c283d3ab2ca" title="Find the index of transfer and interaction. " alt="" coords="241,56,368,83"/>
+<area shape="rect" id="node4" href="$_std_face___model_util_8c.html#a874deba0d1c76592a2d060c0fae53843" title="Move a site into the original supercell if it is outside the original supercell. " alt="" coords="420,81,547,108"/>
+<area shape="rect" id="node5" href="$_std_face___model_util_8c.html#ad0b1739352d13d79ba19e2973abb67f9" title="Print a valiable (integer) read from the input file if it is not specified in the input file (=214748..." alt="" coords="237,157,372,184"/>
 </map>
