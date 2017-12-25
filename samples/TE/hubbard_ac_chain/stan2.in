@@ -1,0 +1,14 @@
+model = "Fermion Hubbard"
+method = "Time-Evolution"
+lattice = "chain lattice"
+L = 8
+t = 1.0
+U = 4.0
+nelec=8
+2Sz=0
+EigenVecIO = "in"
+dt = 0.01
+tshift = 4.0
+freq = 10.0
+PumpType = "AC Laser"
+VecPotL = 0.5

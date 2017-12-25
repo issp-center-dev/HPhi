@@ -1,0 +1,9 @@
+model = "Fermion Hubbard"
+method = "lanczos"
+lattice = "chain lattice"
+L = 8
+t = 1.0
+U = 4.0
+nelec=8
+2Sz=0
+EigenVecIO = "out"
