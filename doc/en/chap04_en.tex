@@ -1206,7 +1206,7 @@ Select the mode of inputting a restart vector:\\
 \end{itemize}
 
 \newpage
-\subsection{\tr{ModPara file}}
+\subsection{{ModPara file}}
 \label{Subsec:modpara}
 This file determines the parameters for calculation. The file format is as follows.\\
 \begin{minipage}{10cm}
@@ -1328,7 +1328,7 @@ See Sec. \ref{Ch:algorithm} for details of setting an initial vector.
  {\bf Type :} Int (positive integer)
 
   {\bf Description :} If CalcHS=1, an efficient algorithm for generating the restricted Hilbert space with the specified
-quantum number is used (Details of algorithm is shown in http://qlms.github.io/HPhi/develop/tips.pdf[in Japanese]). 
+quantum number is used (Details of algorithm is shown in http://issp-center-dep.github.io/HPhi/develop/tips.pdf[in Japanese]). 
 Default value is 1 and the efficient algorithm is used.
 
  \end{itemize}
@@ -2709,7 +2709,7 @@ $[$double01$]$ is a real part and $[$double02$]$ is an imaginary part.\\
 \end{itemize}
 
 \newpage
-\subsection{\tr{OneBodyTE file}}
+\subsection{{OneBodyTE file}}
 \label{Subsec:1TE}
 This file determines the values of the transfer integrals $t_{ij\sigma_1\sigma_2} (t)$ at each time $t$,
 \begin{align}
@@ -2806,7 +2806,7 @@ next the transfer integrals $t_{ij\sigma_1\sigma_2} (t)$ are defined.
 
 
 \newpage
-\subsection{\tr{TwoBodyTE file}}
+\subsection{{TwoBodyTE file}}
 \label{Subsec:2TE}
 This file determines the values of the two-body interactions $I_{i\sigma_1j \sigma_2 k \sigma_3 l \sigma_4}(t)c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$ at each time $t$,
 \begin{align}
@@ -3859,7 +3859,7 @@ $\frac{1}{N_s} \langle (\sum_{i} \hat{S}_i^z)^2\rangle$ ($N_s$ is the total numb
  \end{itemize}
 
 \newpage
-\subsection{\tr{Time\_TE\_Step.dat}}
+\subsection{{Time\_TE\_Step.dat}}
 (For the real time evolution method) 
 This file is outputted to show the time for starting the calculation of the real time evolution method at each step. 
 In the restart calculation, the values are added to the previous file. An example is as follows.\\
@@ -3906,7 +3906,7 @@ step 1999:TE begins: Wed Jul 13 07:59:32 2017
  \end{itemize}
 
 \newpage
-\subsection{\tr{Norm.dat}}
+\subsection{{Norm.dat}}
 \label{Subsec:normTE}
 (For the real time evolution method)  This file is outputted to show the calculation process information for the real time evolution method.
 In the restart calculation, the values are added to the previous file.
@@ -3966,7 +3966,7 @@ An example of the file format is as follows.\\
 
 
 \newpage
-\subsection{\tr{SS.dat}}
+\subsection{{SS.dat}}
 \label{Subsec:ssTE}
 (For the real time evolution method) This file is outputted to show the calculation results.
 In the restart calculation, the values are added to the previous file.
@@ -4046,7 +4046,7 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is 
  \end{itemize}
 
 \newpage
-\subsection{\tr{Flct.dat}}
+\subsection{{Flct.dat}}
 \label{Subsec:flctrand}
 (For the real time evolution method)  This file is outputted to show the calculation results of the fluctuation of the particle number, doublon, and $S_z$.
 In the restart calculation, the values are added to the previous file.
@@ -4313,7 +4313,7 @@ An example of the file format is as follows.\\
 
 
 \newpage
-\subsection{\tr{cisajs.dat}}
+\subsection{{cisajs.dat}}
 \label{Subsec:cgcisajs}
 This file is the outputted files for one-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$. 
 The target components are set in the input file with the keyword ``OneBodyG".
@@ -4340,7 +4340,7 @@ An example of the file format is as follows.
    \item{Lanczos method:}  \#\#\_cisajs.dat
    \item{TPQ method:} \#\#\_cisajs\_set??step\%\%.dat
    \item{Full diagonalization method, LOBCG method:}  \#\#\_cisajs\_eigen{\&\&}.dat.
-   \tr{\item{Real time evolution method:} \#\#\_cisajs\_step\%\%.dat}
+   {\item{Real time evolution method:} \#\#\_cisajs\_step\%\%.dat}
   \end{itemize}
   \#\#, ??, \%\%, and \&\& indicate [string02] in a ModPara file, the number of runs in calculation in the TPQ method, the number of steps in the TPQ method, and the index of the eigenvalues, respectively.
 
@@ -4376,7 +4376,7 @@ $[$double01$]$ and $[$double02$]$ show the real and imaginary part of $\langle c
 \end{itemize}
 
 \newpage
-\subsection{\tr{cisajscktalt.dat}}
+\subsection{{cisajscktalt.dat}}
 \label{Subsec:cisajscktalt}
 This file is the outputted files for the two-body Green's function $\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$. 
 The target components are set in the input file with the keyword ``TwoBodyG".
@@ -4403,7 +4403,7 @@ An example of the file format is as follows.
    \item{Lanczos method:}  \#\#\_cisajscktalt.dat
    \item{TPQ method:} \#\#\_cisajscktalt\_set??step\%\%.dat
    \item{Full diagonalization method, LOBCG method:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
-   \tr{\item{Real time evolution method:} \#\#\_cisajscktalt\_step\%\%.dat}
+   {\item{Real time evolution method:} \#\#\_cisajscktalt\_step\%\%.dat}
   \end{itemize}
   \#\#, ??, \%\%, and \&\& indicate [string02] in a ModPara file, the number of runs in calculation in the TPQ method, the number of steps in the TPQ method, and the index of the eigenvalues, respectively.
 

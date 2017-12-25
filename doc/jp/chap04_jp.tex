@@ -1133,7 +1133,7 @@ CalcEigenVec 0
 \end{itemize}
 
 \newpage
-\subsection{\tr{ModParaファイル}}
+\subsection{{ModParaファイル}}
 \label{Subsec:modpara}
 計算で使用するパラメータを指定します。以下のようなフォーマットをしています。\\
 \begin{minipage}{10cm}
@@ -1258,7 +1258,7 @@ ExpecInterval  20
 
  {\bf 形式 :} int型 (自然数)
 
- {\bf 説明 :} \verb|CalcHS=1|で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は~http://qlms.github.io/HPhi/develop/tips.pdfを参照)。
+ {\bf 説明 :} \verb|CalcHS=1|で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は~http://issp-center-dep.github.io/HPhi/develop/tips.pdfを参照)。
 デフォルトの値は1で、高速化アルゴリズムが使用されます。
 \end{itemize}
 
@@ -2664,7 +2664,7 @@ $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
 \newpage
-\subsection{\tr{OneBodyTE指定ファイル}}
+\subsection{{OneBodyTE指定ファイル}}
 \label{Subsec:1TE}
 各時刻で付加される一体型の演算子$t_{i\sigma_1 j \sigma_2}(t)c_{i\sigma_1}^{\dagger}c_{j\sigma_2}$を定義します。
 以下にファイル例を記載します。
@@ -2764,7 +2764,7 @@ AllTimeStep         100
 
 
 \newpage
-\subsection{\tr{TwoBodyTE指定ファイル}}
+\subsection{{TwoBodyTE指定ファイル}}
 \label{Subsec:2TE}
 各時刻で付加される二体型の演算子$I_{i\sigma_1j \sigma_2 k \sigma_3 l \sigma_4}(t)c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}$を定義します。
 以下にファイル例を記載します。
@@ -3820,7 +3820,7 @@ $\frac{1}{N_s} \langle (\sum_{i} \hat{S}_i^z)^2\rangle$ の期待値(ただし$N
  \end{itemize}
 
 \newpage
-\subsection{\tr{Time\_TE\_Step.dat}}
+\subsection{{Time\_TE\_Step.dat}}
 (実時間発展法でのみ出力) 実時間発展法でのステップ毎の開始時間を出力します。以下にファイル例を示します。\\
 \begin{minipage}{15cm}
 \begin{screen}
@@ -3865,7 +3865,7 @@ step 1999:TE begins: Wed Jul 13 07:59:32 2017
  \end{itemize}
 
 \newpage
-\subsection{\tr{Norm.dat}}
+\subsection{{Norm.dat}}
 \label{Subsec:normTE}
 (実時間発展法でのみ出力) 実時間発展法でのタイムステップ毎のログを出力します。以下にファイル例を示します。\\
 
@@ -3923,7 +3923,7 @@ step 1999:TE begins: Wed Jul 13 07:59:32 2017
 
 
 \newpage
-\subsection{\tr{SS.dat}}
+\subsection{{SS.dat}}
 \label{Subsec:ssTE}
 (実時間発展法でのみ出力)実時間発展法での各ステップ毎の計算結果を出力します。以下にファイル例を示します。\\
 
@@ -4001,7 +4001,7 @@ $\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N
  \end{itemize}
 
 \newpage
-\subsection{\tr{Flct.dat}}
+\subsection{{Flct.dat}}
 \label{Subsec:flctrand}
 (実時間発展法でのみ出力) 実時間発展法での揺らぎに関する各時刻での計算結果を出力します。以下にファイル例を示します。\\
 
@@ -4268,7 +4268,7 @@ $[$double01$]$が実部、$[$double02$]$が虚部を表します。
 \end{itemize}
 
 \newpage
-\subsection{\tr{cisajs.dat}}
+\subsection{{cisajs.dat}}
 \label{Subsec:cgcisajs}
 OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle$の計算結果を出力します。以下にファイル例を記載します。
 
@@ -4292,7 +4292,7 @@ OneBodyGで指定された一体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajs.dat
    \item{TPQ法:} \#\#\_cisajs\_set??step\%\%.dat
-   \tr{\item{実時間発展法:} \#\#\_cisajs\_step\%\%.dat}
+   {\item{実時間発展法:} \#\#\_cisajs\_step\%\%.dat}
    \item{全対角化法、LOBCG法:}  \#\#\_cisajs\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
@@ -4329,7 +4329,7 @@ $[$double01$]$が実部、$[$double02$]$が虚部を表します。\\
 \end{itemize}
 
 \newpage
-\subsection{\tr{cisajscktalt.dat}}
+\subsection{{cisajscktalt.dat}}
 \label{Subsec:cisajscktalt}
 TwoBodyGで指定された二体グリーン関数$\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle$の計算結果を出力します。以下にファイル例を記載します。
 
@@ -4353,7 +4353,7 @@ TwoBodyGで指定された二体グリーン関数$\langle c_{i\sigma_1}^{\dagge
  \begin{itemize}
    \item{Lanczos法:}  \#\#\_cisajscktalt.dat
    \item{TPQ法:} \#\#\_cisajscktalt\_set??step\%\%.dat
-   \tr{\item{実時間発展法:} \#\#\_cisajscktalt\_step\%\%.dat}
+   {\item{実時間発展法:} \#\#\_cisajscktalt\_step\%\%.dat}
    \item{全対角化法、LOBCG法:}  \#\#\_cisajscktalt\_eigen{\&\&}.dat
   \end{itemize}
   \#\#はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、\%\%はTPQ法でのステップ数、\&\&は固有値の番号を表します。
