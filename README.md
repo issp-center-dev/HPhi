@@ -21,7 +21,7 @@ MPI library (If you do not use MPI, it is not necessary.)
 
 ## Install
 
-You can install HΦ and also get a manual for HΦ from a [release note](https://github.com/QLMS/HPhi/releases).
+You can install HΦ and also get a manual for HΦ from a [release note](https://github.com/issp-center-dev/HPhi/releases).
 
 
 ## Licence
