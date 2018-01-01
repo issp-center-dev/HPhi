@@ -50,11 +50,6 @@ for line in f:
         energy = float(line_array[1])
 f.close()
 
-f = open('namelist.def','a')
-f.write('SpectrumVec zvo_eigenvec_0\n')
-f.write('PairExcitation pair.def\n')
-f.close()
-
 f = open('calcmod.def','a')
 f.write('CalcSpec 1\n')
 f.close()
@@ -82,7 +77,7 @@ NCisAitCjtAjs      %i
         f.write('%i 1 %i 1 0 %f %f\n' % (j,j,-wr,-wi))        
     f.close()
     print('Wavenumber %i\n' % (i))
-    subprocess.call(['./Hphi','-e','namelist.def'])
+    subprocess.call(['./HPhi','-e','namelist.def'])
     subprocess.call(['cp','output/zvo_DynamicalGreen.dat','spectrum%i.dat' % (i)])
 
 f = open('spectrum.dat','w')
@@ -93,4 +88,8 @@ for i in range(1, L):
         f.write('%i %f %f\n' % (i,float(line_array[0])-energy,-float(line_array[3])))
     g.close()
     f.write('\n')
+subprocess.call(["mv", "spectrum.dat", "spectrum.dat.bak"])
+subprocess.call(["rm spectrum*.dat"], shell=True)
+subprocess.call(["mv", "spectrum.dat.bak", "spectrum.dat"])
+
 f.close()
