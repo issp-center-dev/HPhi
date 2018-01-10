@@ -388,8 +388,12 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     else Nelec = 0;
     fprintf(stdoutMPI, "  %5d", SumMPI_i(Nelec));
 
-    if (myrank == iproc) Nelec = X->Def.Ne;
+    if (myrank == iproc){
+      Nelec = X->Def.Ne; //X->Def.Nup
+      if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) Nelec += X->Def.Ndown;
+    }
     else Nelec = 0;
+
     fprintf(stdoutMPI, "  %5d", SumMPI_i(Nelec));
 
     if (myrank == iproc) Nelec = X->Def.Total2Sz;
