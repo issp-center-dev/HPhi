@@ -264,12 +264,12 @@ the initial vector depends both on \verb|initial_iv| and the number of paralleli
 \label{Ch:TE}
 In ${\cal H}\Phi$, real time evolution calculation is done by using the following relation
 \begin{equation}
-|\Phi (t_n)\rangle = \exp^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle,
+|\Phi (t_n)\rangle = e^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle,
 \end{equation}
 where $|\Phi(t_0)\rangle$ is an initial wave function and $t_n = \sum_{j=1}^n  \Delta t_j $.
-In calculation, we approximate $\exp^{-i {\cal H}  \Delta t_n}$ as
+In calculation, we approximate $e^{-i {\cal H}  \Delta t_n}$ as
 \begin{equation}
-\exp^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l .
+e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l .
 \end{equation}
 Here, the cut-off integer $m$ can be set by \verb|ExpandCoef| in \verb|ModPara|.
 We can judge whether the expansion order is enough or not by checking the norm conservation $\langle \Phi (t_n)|\Phi (t_n)\rangle=1$.
