@@ -1639,6 +1639,7 @@ void PrintJastrow(struct StdIntList *StdI) {
   int dCell, iCell;//, jCell, dCellv[3];
   int **Jastrow;
   double complex Cphase;
+  double dR[3];
 
   Jastrow = (int **)malloc(sizeof(int*) * StdI->nsite);
   for (isite = 0; isite < StdI->nsite; isite++) 
@@ -1734,7 +1735,7 @@ void PrintJastrow(struct StdIntList *StdI) {
         StdFace_FindSite(StdI,
           0, 0, 0,
           -StdI->Cell[dCell][0], -StdI->Cell[dCell][1], -StdI->Cell[dCell][2],
-          0, 0, &isite, &jsite, &Cphase);
+          0, 0, &isite, &jsite, &Cphase, dR);
         if (strcmp(StdI->model, "kondo") == 0) jsite += -StdI->NCell * StdI->NsiteUC;
         iCell = jsite / StdI->NsiteUC;
         if (iCell < dCell) {
@@ -1763,7 +1764,7 @@ void PrintJastrow(struct StdIntList *StdI) {
               StdFace_FindSite(StdI,
                 StdI->Cell[iCell][0], StdI->Cell[iCell][1], StdI->Cell[iCell][2],
                 StdI->Cell[dCell][0], StdI->Cell[dCell][1], StdI->Cell[dCell][2],
-                isiteUC, jsiteUC, &isite, &jsite, &Cphase);
+                isiteUC, jsiteUC, &isite, &jsite, &Cphase, dR);
 
               Jastrow[isite][jsite] = NJastrow;
               Jastrow[jsite][isite] = NJastrow;
