@@ -718,7 +718,7 @@ void StdFace_InitSite(
       * StdI->box[1][(ii + 2) % 3]
       * StdI->box[2][(ii + 1) % 3];
   }
-  printf("         Number of Cell = %d\n", abs(StdI->NCell));
+  printf("   Number of Cell = %d\n", abs(StdI->NCell));
   if (StdI->NCell == 0) {
     StdFace_exit(-1);
   }
@@ -1279,6 +1279,15 @@ void StdFace_MallocInteractions(
     StdI->PLIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
   StdI->NPairLift = 0;
+  /**@brief
+  (7) PairHopp StdIntList::PairHopp, StdIntList::PHIndx
+  */
+  StdI->PHIndx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->PairHopp = (double *)malloc(sizeof(double) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
+    StdI->PHIndx[ii] = (int *)malloc(sizeof(int) * 2);
+  }
+  StdI->NPairHopp = 0;
 }/*void StdFace_MallocInteractions*/
 #if defined(_mVMC)
 /**

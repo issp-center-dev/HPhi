@@ -880,9 +880,9 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->lattice, "****\0");
   strcpy(StdI->outputmode, "****\0");
   strcpy(StdI->CDataFileHead, "****\0");
-  strcpy(StdI->W90_geom, "****\0");
-  strcpy(StdI->W90_hr, "****\0");
-  StdI->W90_cutoff = NaN_d;
+  StdI->cutoff_t = NaN_d;
+  StdI->cutoff_u = NaN_d;
+  StdI->cutoff_j = NaN_d;
 #if defined(_HPhi)
   StdI->LargeValue = NaN_d;
   StdI->OmegaMax = NaN_d;
@@ -1204,6 +1204,7 @@ static void PrintNamelist(struct StdIntList *StdI){
   if (StdI->LHund == 1)fprintf(    fp, "            Hund  hund.def\n");
   if (StdI->LEx == 1)fprintf(      fp, "        Exchange  exchange.def\n");
   if (StdI->LPairLift == 1)fprintf(fp, "        PairLift  pairlift.def\n");
+  if (StdI->LPairHopp == 1)fprintf(fp, "        PairHopp  pairhopp.def\n");
   if (StdI->Lintr == 1)fprintf(    fp, "        InterAll  interall.def\n");
   if (StdI->ioutputmode != 0) {
     fprintf(                       fp, "        OneBodyG  greenone.def\n");
@@ -1616,12 +1617,6 @@ static void CheckOutputMode(struct StdIntList *StdI)
 static void CheckModPara(struct StdIntList *StdI)
 {
 
-  if (strcmp(StdI->CDataFileHead, "****") == 0) {
-    strcpy(StdI->CDataFileHead, "zvo\0");
-    fprintf(stdout, "    CDataFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CDataFileHead);
-  }
-  else fprintf(stdout, "    CDataFileHead = %-s\n", StdI->CDataFileHead);
-
   /**/
 #if defined(_HPhi)
   StdFace_PrintVal_i("Lanczos_max", &StdI->Lanczos_max, 2000);
@@ -1739,6 +1734,14 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
    Coulomb INTRA
   */
+  for (kintr = 0; kintr < StdI->NCintra; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NCintra; jintr++) 
+      if(StdI->CintraIndx[jintr][0] == StdI->CintraIndx[kintr][0])
+      {
+        StdI->Cintra[kintr] += StdI->Cintra[jintr];
+        StdI->Cintra[jintr] = 0.0;
+      }
+  }
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NCintra; kintr++) {
     if (fabs(StdI->Cintra[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1765,6 +1768,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
   Coulomb INTER
   */
+  for (kintr = 0; kintr < StdI->NCinter; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NCinter; jintr++)
+      if (
+        (    StdI->CintraIndx[jintr][0] == StdI->CintraIndx[kintr][0]
+          && StdI->CintraIndx[jintr][1] == StdI->CintraIndx[kintr][1])
+        ||
+        (    StdI->CintraIndx[jintr][0] == StdI->CintraIndx[kintr][1]
+          && StdI->CintraIndx[jintr][1] == StdI->CintraIndx[kintr][0])
+        )
+      {
+        StdI->Cinter[kintr] += StdI->Cinter[jintr];
+        StdI->Cinter[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NCinter; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NCinter; kintr++) {
     if (fabs(StdI->Cinter[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1791,6 +1808,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
   Hund
   */
+  for (kintr = 0; kintr < StdI->NHund; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NHund; jintr++)
+      if (
+        (StdI->HundIndx[jintr][0] == StdI->HundIndx[kintr][0]
+          && StdI->HundIndx[jintr][1] == StdI->HundIndx[kintr][1])
+        ||
+        (StdI->HundIndx[jintr][0] == StdI->HundIndx[kintr][1]
+          && StdI->HundIndx[jintr][1] == StdI->HundIndx[kintr][0])
+        )
+      {
+        StdI->Hund[kintr] += StdI->Hund[jintr];
+        StdI->Hund[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NHund; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NHund; kintr++) {
     if (fabs(StdI->Hund[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1817,6 +1848,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
   Exchange
   */
+  for (kintr = 0; kintr < StdI->NEx; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NEx; jintr++)
+      if (
+        (StdI->ExIndx[jintr][0] == StdI->ExIndx[kintr][0]
+          && StdI->ExIndx[jintr][1] == StdI->ExIndx[kintr][1])
+        ||
+        (StdI->ExIndx[jintr][0] == StdI->ExIndx[kintr][1]
+          && StdI->ExIndx[jintr][1] == StdI->ExIndx[kintr][0])
+        )
+      {
+        StdI->Ex[kintr] += StdI->Ex[jintr];
+        StdI->Ex[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NEx; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NEx; kintr++) {
     if (fabs(StdI->Ex[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1843,6 +1888,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
     PairLift
   */
+  for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NPairLift; jintr++)
+      if (
+        (StdI->PLIndx[jintr][0] == StdI->PLIndx[kintr][0]
+          && StdI->PLIndx[jintr][1] == StdI->PLIndx[kintr][1])
+        ||
+        (StdI->PLIndx[jintr][0] == StdI->PLIndx[kintr][1]
+          && StdI->PLIndx[jintr][1] == StdI->PLIndx[kintr][0])
+        )
+      {
+        StdI->PairLift[kintr] += StdI->PairLift[jintr];
+        StdI->PairLift[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NPairLift; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
     if (fabs(StdI->PairLift[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1853,9 +1912,9 @@ static void PrintInteractions(struct StdIntList *StdI)
   if (StdI->LPairLift == 1) {
     fp = fopen("pairlift.def", "w");
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "NExchange %10d\n", nintr0);
+    fprintf(fp, "NPairLift %10d\n", nintr0);
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "====== ExchangeCoupling coupling ============\n");
+    fprintf(fp, "====== Pair-Lift term ============\n");
     fprintf(fp, "=============================================\n");
     for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
       if (fabs(StdI->PairLift[kintr]) > 0.000001)
@@ -1864,7 +1923,47 @@ static void PrintInteractions(struct StdIntList *StdI)
     }
     fflush(fp);
     fclose(fp);
-    fprintf(stdout, "    exchange.def is written.\n");
+    fprintf(stdout, "    pairlift.def is written.\n");
+  }
+  /*
+  PairHopp
+  */
+  for (kintr = 0; kintr < StdI->NPairHopp; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NPairHopp; jintr++)
+      if (
+        (StdI->PHIndx[jintr][0] == StdI->PHIndx[kintr][0]
+          && StdI->PHIndx[jintr][1] == StdI->PHIndx[kintr][1])
+        ||
+        (StdI->PHIndx[jintr][0] == StdI->PHIndx[kintr][1]
+          && StdI->PHIndx[jintr][1] == StdI->PHIndx[kintr][0])
+        )
+      {
+        StdI->PairHopp[kintr] += StdI->PairHopp[jintr];
+        StdI->PairHopp[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NPairHopp; kintr++)*/
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->NPairHopp; kintr++) {
+    if (fabs(StdI->PairHopp[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->LPairHopp = 0;
+  else StdI->LPairHopp = 1;
+
+  if (StdI->LPairHopp == 1) {
+    fp = fopen("pairhopp.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NPairHopp %10d\n", nintr0);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "====== Pair-Hopping term ============\n");
+    fprintf(fp, "=============================================\n");
+    for (kintr = 0; kintr < StdI->NPairHopp; kintr++) {
+      if (fabs(StdI->PairHopp[kintr]) > 0.000001)
+        fprintf(fp, "%5d %5d %25.15f\n",
+          StdI->PHIndx[kintr][0], StdI->PHIndx[kintr][1], StdI->PairHopp[kintr]);
+    }
+    fflush(fp);
+    fclose(fp);
+    fprintf(stdout, "    pairhopp.def is written.\n");
   }
   /*
    InterAll
@@ -2046,7 +2145,7 @@ void StdFace_main(
 
   StdI = (struct StdIntList *)malloc(sizeof(struct StdIntList));
 
-  fprintf(stdout, "\n######  Standard Intarface Mode STARTS  ######\n");
+  fprintf(stdout, "\n######  Input Parameter of Standard Intarface  ######\n");
   if ((fp = fopen(fname, "r")) == NULL) {
     fprintf(stdout, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
     StdFace_exit(-1);
@@ -2087,6 +2186,9 @@ void StdFace_main(
     else if (strcmp(keyword, "a2h") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][2]);
     else if (strcmp(keyword, "a2l") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][1]);
     else if (strcmp(keyword, "a2w") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][0]);
+    else if (strcmp(keyword, "cutoff_j") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_j);
+    else if (strcmp(keyword, "cutoff_t") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_t);
+    else if (strcmp(keyword, "cutoff_u") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_u);
     else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI->D[2][2]);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Gamma);
     else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI->h);
@@ -2223,9 +2325,6 @@ void StdFace_main(
     else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][0]);
     else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][1]);
     else if (strcmp(keyword, "wz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][2]);
-    else if (strcmp(keyword, "w90_cutoff") == 0) StoreWithCheckDup_d(keyword, value, &StdI->W90_cutoff);
-    else if (strcmp(keyword, "w90_geom") == 0) StoreWithCheckDup_s(keyword, value, StdI->W90_geom);
-    else if (strcmp(keyword, "w90_hr") == 0) StoreWithCheckDup_s(keyword, value, StdI->W90_hr);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Sz2);
 
 #if defined(_HPhi)
@@ -2306,9 +2405,18 @@ void StdFace_main(
   }
   fflush(fp);
   fclose(fp);
+  fprintf(stdout, "\n");
+  fprintf(stdout, "#######  Construct Model  #######\n");
+  fprintf(stdout, "\n");
   /*
   Check the model
   */
+  if (strcmp(StdI->CDataFileHead, "****") == 0) {
+    strcpy(StdI->CDataFileHead, "zvo\0");
+    fprintf(stdout, "    CDataFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CDataFileHead);
+  }
+  else fprintf(stdout, "    CDataFileHead = %-s\n", StdI->CDataFileHead);
+  /**/
   StdI->lGC = 0;
   StdI->lBoost = 0;
   if (strcmp(StdI->model, "fermionhubbard") == 0

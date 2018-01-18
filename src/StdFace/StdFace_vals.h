@@ -197,6 +197,14 @@ struct StdIntList {
   double *PairLift;/**<@brief [StdIntList::NPairLift] Coefficient of 
                    pair-lift term, malloc in StdFace_MallocInteractions()
                    and set in StdFace_intr().*/
+  int NPairHopp;/**<@brief Number of pair-hopping term, counted in each lattice file.*/
+  int LPairHopp;/**<@brief Print pairhopp.def or not, set in PrintInteractions().*/
+  int **PHIndx;/**<@brief [StdIntList::NPairLift][2] Site indices of
+               pair-hopping term, malloc in StdFace_MallocInteractions()
+               and set in StdFace_intr().*/
+  double *PairHopp;/**<@brief [StdIntList::NPairLift] Coefficient of
+                   pair-hopping term, malloc in StdFace_MallocInteractions()
+                   and set in StdFace_intr().*/
   int lBoost;
   /*
    Calculation conditions
@@ -207,23 +215,16 @@ struct StdIntList {
   int S2;/**<@brief Total spin |S| of a local spin, input from file.*/
   char outputmode[256];/**<@brief Select amount of correlation function,
                        input from file.*/
-  char CDataFileHead[256];/**<@brief String fron tof the output files,
-                          input from file*/
+  char CDataFileHead[256];/**<@brief Header of the output files.
+                          Input from file*/
   int Sz2;/**<@brief Total Sz, input from file.*/
   int ioutputmode;/**<@brief Switch associated to StdIntList::outputmode*/
   /*
    Wannier90 mode
   */
-  char W90_hr[256];/**<@brief Name of hopping parameter file from wannier90,
-                   input from file.*/
-  char W90_geom[256];/**<@brief Name of geometry file from wannier90 converter,
-                   input from file.*/
-  int W90_nt;/**<@brief Number of transfer in wannier90 HR file.*/
-  int **W90_indx;/**<@brief [StdIntList::W90_nt][5] Hopping index, 
-                 malloc in read_W90().*/
-  double complex *W90_t;/**<@brief [StdIntList::W90_nt] Hopping parameter, 
-                 malloc in read_W90().*/
-  double W90_cutoff;/**<@brief Cutoof for the hopping in wannier90, input from file*/
+  double cutoff_t;/**<@brief Cutoof for the hopping in wannier90, input from file*/
+  double cutoff_u;/**<@brief Cutoof for the Coulomb in wannier90, input from file*/
+  double cutoff_j;/**<@brief Cutoof for the Hund in wannier90, input from file*/
 #if defined(_HPhi)
   /*
   HPhi modpara
