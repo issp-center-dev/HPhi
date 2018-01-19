@@ -1,8 +1,8 @@
-# Sr2CuO3 : Downfolding into 1D Heisenberg model
+# Sr2VO4 : Downfolding into 2D three-band Hubbard model
 
 Compute the Wannier function and effective interaction (U and J) with RESPACK.
 Convert that result into HPhi-input.
-Compute it as a 1D spin system (8 site) which has the super exchange and the direct exchange.
+Compute it as a 2D electron system (4 site * 3 band, 4 electrons).
 
 First, we compute the charge density with DFT.
 

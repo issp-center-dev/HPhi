@@ -1204,7 +1204,7 @@ static void PrintNamelist(struct StdIntList *StdI){
   if (StdI->LHund == 1)fprintf(    fp, "            Hund  hund.def\n");
   if (StdI->LEx == 1)fprintf(      fp, "        Exchange  exchange.def\n");
   if (StdI->LPairLift == 1)fprintf(fp, "        PairLift  pairlift.def\n");
-  if (StdI->LPairHopp == 1)fprintf(fp, "        PairHopp  pairhopp.def\n");
+  if (StdI->LPairHopp == 1)fprintf(fp, "         PairHop  pairhopp.def\n");
   if (StdI->Lintr == 1)fprintf(    fp, "        InterAll  interall.def\n");
   if (StdI->ioutputmode != 0) {
     fprintf(                       fp, "        OneBodyG  greenone.def\n");

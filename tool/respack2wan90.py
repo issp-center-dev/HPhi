@@ -113,7 +113,9 @@ def ref2geom(filename):
             centre[iwan, ii] = float(itemlist[ii])
     centre = numpy.dot(centre, bvec)
     #
+    # Bohr -> Angstrom
     #
+    avec[:, :] *= 0.529177249
     #
     with open(filename, 'w') as fo:
         for ii in range(3):
