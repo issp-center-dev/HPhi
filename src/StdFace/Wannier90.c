@@ -100,8 +100,8 @@ static int read_W90_query(
   for (iWSC = 0; iWSC < nWSC; iWSC++) {
     ierr = fscanf(fp, "%d", &ii);
   }
-  fprintf(stdout, "           Number of Wannier = %d\n", nWan);
-  fprintf(stdout, " Number of Wigner-Seitz Cell = %d\n", nWSC);
+  fprintf(stdout, "             Number of Wannier = %d\n", nWan);
+  fprintf(stdout, "   Number of Wigner-Seitz Cell = %d\n", nWSC);
   /*
    Allocation of matgrix element and its index
   */
@@ -156,6 +156,7 @@ static int read_W90_query(
   (3-1)  Compute the number of terms lerger than cut-off.
   */
   fprintf(stdout, "\n      EFFECTIVE terms:\n");
+  fprintf(stdout, "           R0   R1   R2 band_i band_f Hamiltonian\n");
   nMat = 0;
   for (iWSC = 0; iWSC < nWSC; iWSC++) {
     for (iWan = 0; iWan < StdI->NsiteUC; iWan++) {
@@ -319,11 +320,10 @@ void StdFace_Wannier90(
   */
   fp = fopen("lattice.xsf", "w");
   /**/
-  StdI->NsiteUC = 1;
-  StdFace_InitSite(StdI, fp, 3);
   StdFace_PrintVal_d("phase0", &StdI->phase[0], 0.0);
   StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
   StdFace_PrintVal_d("phase2", &StdI->phase[2], 0.0);
+  StdFace_InitSite(StdI, fp, 3);
   /*
   Read Hopping
   */
@@ -345,7 +345,7 @@ void StdFace_Wannier90(
   W90_u = (double complex *)malloc(sizeof(double complex) * n_u);
   u_indx = (int **)malloc(sizeof(int*) * n_u);
   for (ii = 0; ii < n_u; ii++) u_indx[ii] = (int *)malloc(sizeof(int) * 5);
-  read_W90(StdI, filename, StdI->cutoff_t, W90_u, u_indx);
+  read_W90(StdI, filename, StdI->cutoff_u, W90_u, u_indx);
   /*
   Read Hund
   */
@@ -367,7 +367,7 @@ void StdFace_Wannier90(
   StdFace_NotUsed_d("U", StdI->U);
   /**/
   if (strcmp(StdI->model, "spin") == 0 ) {
-    StdFace_NotUsed_i("2S", StdI->S2);
+    StdFace_PrintVal_i("2S", &StdI->S2, 1);
   }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else if (strcmp(StdI->model, "hubbard") == 0) {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
@@ -516,16 +516,26 @@ void StdFace_Wannier90(
         StdI->HundIndx[StdI->NHund][1] = jsite;
         StdI->NHund += 1;
 
-        StdI->Ex[StdI->NEx] = creal(W90_j[it]);
-        StdI->ExIndx[StdI->NEx][0] = isite;
-        StdI->ExIndx[StdI->NEx][1] = jsite;
-        StdI->NEx += 1;
-
         if (strcmp(StdI->model, "hubbard") == 0) {
+          StdI->Ex[StdI->NEx] = creal(W90_j[it]);
+          StdI->ExIndx[StdI->NEx][0] = isite;
+          StdI->ExIndx[StdI->NEx][1] = jsite;
+          StdI->NEx += 1;
+
           StdI->PairHopp[StdI->NPairHopp] = creal(W90_j[it]);
           StdI->PHIndx[StdI->NPairHopp][0] = isite;
           StdI->PHIndx[StdI->NPairHopp][1] = jsite;
           StdI->NPairHopp += 1;
+        }
+        else {
+#if defined(_mVMC)
+          StdI->Ex[StdI->NEx] = creal(W90_j[it]);
+#else
+          StdI->Ex[StdI->NEx] = -creal(W90_j[it]);
+#endif
+          StdI->ExIndx[StdI->NEx][0] = isite;
+          StdI->ExIndx[StdI->NEx][1] = jsite;
+          StdI->NEx += 1;
         }
       }/*Non-local term*/
     }/*for (it = 0; it < n_t; it++)*/

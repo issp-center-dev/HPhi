@@ -1771,11 +1771,11 @@ static void PrintInteractions(struct StdIntList *StdI)
   for (kintr = 0; kintr < StdI->NCinter; kintr++) {
     for (jintr = kintr + 1; jintr < StdI->NCinter; jintr++)
       if (
-        (    StdI->CintraIndx[jintr][0] == StdI->CintraIndx[kintr][0]
-          && StdI->CintraIndx[jintr][1] == StdI->CintraIndx[kintr][1])
+        (    StdI->CinterIndx[jintr][0] == StdI->CinterIndx[kintr][0]
+          && StdI->CinterIndx[jintr][1] == StdI->CinterIndx[kintr][1])
         ||
-        (    StdI->CintraIndx[jintr][0] == StdI->CintraIndx[kintr][1]
-          && StdI->CintraIndx[jintr][1] == StdI->CintraIndx[kintr][0])
+        (    StdI->CinterIndx[jintr][0] == StdI->CinterIndx[kintr][1]
+          && StdI->CinterIndx[jintr][1] == StdI->CinterIndx[kintr][0])
         )
       {
         StdI->Cinter[kintr] += StdI->Cinter[jintr];
