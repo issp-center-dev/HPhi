@@ -6,7 +6,6 @@ MODULE corplot_val
   & nline, &
   & itarget, &
   & nwfc, & ! Number of state
-  & nktot,   & ! Total number of k
   & nk_row,  & ! number row of total k
   & nk         ! Number of k to be computed
   !
@@ -20,9 +19,6 @@ MODULE corplot_val
   LOGICAL,SAVE :: &
   & errbar, &
   & rpart
-  !
-  INTEGER,ALLOCATABLE,SAVE :: &
-  & equiv(:)      ! (nktot) Equivalent k point in the 1st BZ
   !
   REAL(8),ALLOCATABLE,SAVE :: &
   & kvec(:,:) ! (2,nk) k-vector in the 1st BZ
@@ -57,8 +53,8 @@ SUBROUTINE read_cor()
 #if defined(FUJITSU)
   USE service_routines, ONLY : IARGC
 #endif
-  USE corplot_val, ONLY : nwfc, nktot, nk_row, recipr, koff, &
-  &                       cor_k, cor_err, equiv, kvec, nk
+  USE corplot_val, ONLY : nwfc, nk_row, recipr, koff, &
+  &                       cor_k, cor_err, kvec, nk
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, ik, iwfc, nk0, idim
@@ -81,7 +77,10 @@ SUBROUTINE read_cor()
      !
      OPEN(fi, file = TRIM(filename))
      !
-     READ(fi,*) ctmp1, nk0
+     READ(fi,*) ctmp1, nk0, nk_row
+     DO idim = 1, 3
+        READ(fi,*) ctmp2, recipr(1:3,idim)
+     END DO
      READ(fi,*) ctmp2
      READ(fi,*) ctmp2
      READ(fi,*) ctmp2, koff(1:3)
@@ -89,7 +88,7 @@ SUBROUTINE read_cor()
      IF(iwfc == 1) THEN
         !
         nk = nk0
-        ALLOCATE(cor_k(1:nk,1:6,1:nwfc), cor_err(1:nk,1:6,1:nwfc))
+        ALLOCATE(cor_k(1:nk,1:6,1:nwfc), cor_err(1:nk,1:6,1:nwfc), kvec(3,nk))
         cor_k(1:nk,1:6,1:nwfc) = CMPLX(0d0, 0d0, KIND(0d0))
         cor_err(1:nk,1:6,1:nwfc) = 0d0
         !
@@ -102,39 +101,18 @@ SUBROUTINE read_cor()
      IF(TRIM(ctmp1) == "#HPhi") THEN
         WRITE(*,'(a,a,a)') "  Read ", TRIM(filename), " as HPhi Correlation File"
         DO ik = 1, nk
-           READ(fi,'(15e15.5)') rtmp(1:3), cor_k(ik,1:6,iwfc)
+           READ(fi,'(15e15.5)') kvec(1:3, ik), cor_k(ik,1:6,iwfc)
         END DO
      ELSE ! mVMC
         WRITE(*,'(a,a,a)') "  Read ", TRIM(filename), " as mVMC Correlation File"
         DO ik = 1, nk
-           READ(fi,'(27e15.5)') rtmp(1:3), cor_k(ik,1:6,iwfc), cor_err(ik,1:6,iwfc)
+           READ(fi,'(27e15.5)') kvec(1:3, ik), cor_k(ik,1:6,iwfc), cor_err(ik,1:6,iwfc)
         END DO
      END IF
      !
      CLOSE(fi)
      !
   END DO ! iwfc = 1, nwfc
-  !
-  ! k-points in the larger area
-  !
-  OPEN(fi, file = "kpoints.dat")
-  !
-  READ(fi,*) nktot, nk_row
-  DO idim = 1, 3
-     READ(fi,*) recipr(1:3,idim)
-  END DO
-  !
-  ALLOCATE(kvec(3,nktot), equiv(nktot))
-  WRITE(*,*) "  Total Number of k : ", nktot
-  WRITE(*,*) "  Row for k : ", nk_row
-  WRITE(*,*) "    Reciplocal lattice vector :"
-  WRITE(*,'(4x3f15.10)') recipr(1:3, 1:3)
-  !
-  DO ik = 1, nktot
-     READ(fi,*) kvec(1:3,ik), equiv(ik)
-  END DO
-  !
-  CLOSE(fi)
   !
 END SUBROUTINE read_cor
 !
@@ -475,8 +453,8 @@ END SUBROUTINE write_gnuplot
 !
 SUBROUTINE write_data()
   !
-  USE corplot_val, ONLY : itarget, rpart, nwfc, nktot, nk_row, &
-  &                       cor_k, cor_err, equiv, kvec, koff
+  USE corplot_val, ONLY : itarget, rpart, nwfc, nk_row, &
+  &                       cor_k, cor_err, kvec, koff, nk
   IMPLICIT NONE
   !
   INTEGER :: fo = 20, ik
@@ -492,16 +470,16 @@ SUBROUTINE write_data()
      koff2(1:2) = 0d0
   END IF
   !
-  DO ik = 1, nktot
+  DO ik = 1, nk
      !
      IF(rpart) THEN
         WRITE(fo,TRIM(form)) kvec(1:2,ik) + koff2(1:2), &
-        &  DBLE(cor_k(  equiv(ik), itarget, 1:nwfc)), &
-        &  DBLE(cor_err(equiv(ik), itarget, 1:nwfc))
+        &  DBLE(cor_k(  ik, itarget, 1:nwfc)), &
+        &  DBLE(cor_err(ik, itarget, 1:nwfc))
      ELSE
         WRITE(fo,TRIM(form)) kvec(1:2,ik) + koff2(1:2), &
-        &  AIMAG(cor_k(  equiv(ik), itarget, 1:nwfc)), &
-        &  AIMAG(cor_err(equiv(ik), itarget, 1:nwfc))
+        &  AIMAG(cor_k(  ik, itarget, 1:nwfc)), &
+        &  AIMAG(cor_err(ik, itarget, 1:nwfc))
      END IF
      !
      IF(MOD(ik, nk_row) == 0) WRITE(fo,*)
