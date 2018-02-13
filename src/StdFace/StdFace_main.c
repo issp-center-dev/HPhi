@@ -2564,12 +2564,12 @@ void StdFace_main(
 
 @section sec_stan_proc Overall procedure
 
-If you want to create new lattice file, do as these files.
+If you want to create a new lattice file, the following procedures are needed.
 
--# Copy one of laattice files such as Kagome.c 
+-# Copy one of lattice files such as Kagome.c 
    (Probably the most similar one) and rename it.
 -# @ref sec_lattice
--# Add that function in the header file, StdFace_ModelUtil.h
+-# Add the function in the header file, StdFace_ModelUtil.h.
 -# Add entry at
    @dontinclude StdFace_main.c
    @skip StdFace\_main
@@ -2581,29 +2581,29 @@ If you want to create new lattice file, do as these files.
 <HR> 
 @section sec_lattice Modify lattice model file
 
-To create new lattice file, please modify the following part
+To create a new lattice file, please modify the following part
 (Kagome.c as an example):
 
 @dontinclude Kagome.c
 Define function as
 @skip StdFace\_Kagome(
 @until {
-Lattice parameter used only in geometry.dat and lattice.gp
+Lattice parameters are used only in geometry.dat and lattice.gp
 @skip StdFace\_PrintVal\_d
 @until Ly
-these are unit lattice vectors.\n
+These are unit lattice vectors.\n
 Just call this function to initialize all lattice related parameters
 @skipline StdFace\_InitSite
-where "2" indicates 2D
+where "2" indicates 2D.
 @skip tau
 @until tau\[2\]\[0\]
-These are the fractional coordinate of internal sites.
+These are the fractional coordinates of internal sites.
 Then set parameters of Hamiltonian
 @skip StdFace\_NotUsed\_J
 @until @@
-to determine the default value of them and unused parameters.
-For more details, please see the description of each functions.
-Then Compute the upper limit of the number of Transfer & Interaction and malloc them.
+to determine the default values of them and unused parameters.
+For more details, please see the description of each function.
+Then compute the upper limit of the number of Transfer & Interaction and malloc them.
 @skip >>
 @until <<
 Please estimate the number of bonds per site.
@@ -2616,9 +2616,7 @@ Probably, it is not necessary to modify this part.
 The non-local term is as follows:
 @skip >>
 @until <<
-For more details, please see each functions.
-
-StdFace_Kagome_Boost()? Forget!!
+For more details, please see each function.
 
 @page page_addstandardval Add new input variable into Standard mode
 

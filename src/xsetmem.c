@@ -417,14 +417,16 @@ int setmem_large
 
  For example, ```char_malloc2(X, N1, N2)``` function sets the size of memories N1@f$ \times @f$ N2 characters to two dimensional array X.
 
- For setting memories to global arrays, we prepare two functions, setmem_def() and setmem_large() functions.
+ To set memories to global arrays, we prepare two functions, setmem_def() and setmem_large() functions.
 
  - setmem_def()
-    In this function, the memories of the arrays which have not large memory are stored.
+
+    In this function, the memories of the arrays which do not have large memory are stored.
 
     Arrays for defining interactions and correlation functions are mainly defined.
 
  - setmem_large()
+
     In this function, the memories of the arrays which have large memory are stored.
 
     Arrays for defining Hamiltonian and vectors are mainly defined.

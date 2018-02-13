@@ -165,11 +165,11 @@ FILE *stdoutMPI;/**<@brief File pointer to the standard output
 /**
 @page page_variable Global variables and Data structure
 
-HPhi uses global variables. List of them can be found in global.h
+In HPhi, global variables are used. List of them can be found in global.h
 
-Sometimes, we pass variables function as
+Sometimes, we pass variables to the function as
 @code
 func(&(X.Bind.Def))
 @endcode
-This C-structure can be found in struct.h
+This C-structure is defined in struct.h.
 */

@@ -2963,7 +2963,7 @@ int CheckTETransferHermite
 @page page_addexpert Add new input-file for Expert mode
 When you add a new input file to _namelist file_,
 the following procedures must be needed.
-In the following, we add the keyword "test" as an example.
+In the following, we add the keyword "Test" as an example.
 
 1. Add a new keyword to the end of @c cKWListOfFileNameList in @c readdef.c.
 ```
@@ -3111,7 +3111,7 @@ You can set a value of parameters with a new keyword in ``modpara`` file by foll
 
 3. The line is divided into keyword and number by using ``CheckWords`` function.
 
-   For example, when you add new key word "NTest", then you can get the value as follows:
+   For example, when you add new key word "NTest", you can get the value as follows:
    ```
         if (CheckWords(ctmp, "NTest") == 0) {
                 X->NTest = (int) dtmp;
