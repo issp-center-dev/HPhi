@@ -285,7 +285,7 @@ void OutputTimer(struct BindStruct *X) {
 
  ```
 
-When above procedures were done, after calculation, you can see the elapsed time in CalcTimer.dat file as follows.
+When above procedures were done, after calculation, you can see the elapsed time in CalcTimer.dat file as follows. The time unit is second.
 
 ```
  All                                                [0000]     37.94046
