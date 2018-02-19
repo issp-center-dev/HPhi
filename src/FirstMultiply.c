@@ -14,7 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "FirstMultiply.h"
-#include "mltply.h"
+#include "expec_energy_flct.h"
 #include "mfmemory.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
@@ -96,15 +96,16 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   dnorm = SumMPI_dc(dnorm);
   dnorm=sqrt(dnorm);
   global_1st_norm = dnorm;
-#pragma omp parallel for default(none) private(i) shared(v1) firstprivate(i_max, dnorm)
+#pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm)
   for(i=1;i<=i_max;i++){
     v1[i] = v1[i]/dnorm;
+    v0[i] = v1[i]/dnorm;
   }
   
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
   StartTimer(3102);
-  if(mltply(X, v0, v1) !=0){
+  if(expec_energy_flct(X) !=0){
     StopTimer(3102);
     return -1;
   }

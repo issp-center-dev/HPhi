@@ -450,6 +450,10 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
   
   X->Check.idim_maxMPI = SumMPI_li(X->Check.idim_max);
   fprintf(stdoutMPI, "\n   Total dimension : %ld\n\n",  X->Check.idim_maxMPI);
+  if (X->Check.idim_maxMPI < 1) {
+    fprintf(stdoutMPI, "ERROR! Total dimension < 1\n");
+    exitMPI(-1);
+  }
   
   /**@brief
     Reset DefineList::Tpow[DefNsite], DefineList::Tpow[DefNsite + 1] ... 
