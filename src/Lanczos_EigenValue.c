@@ -358,6 +358,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
     alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
     _alpha[1] = alpha1;
     cbeta1 = 0.0;
+    fprintf(stdoutMPI, "  Step / Step_max alpha beta \n");
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
     for (i = 1; i <= i_max; i++) {
@@ -374,7 +375,8 @@ int Lanczos_GetTridiagonalMatrixComponents(
   }
 
   for (stp = X->Def.Lanczos_restart + 1; stp <= *liLanczos_step; stp++) {
-    if (fabs(beta[stp - 1]) < pow(10.0, -14)) {
+
+    if (fabs(_beta[stp - 1]) < pow(10.0, -14)) {
       *liLanczos_step = stp - 1;
       break;
     }
@@ -401,6 +403,9 @@ int Lanczos_GetTridiagonalMatrixComponents(
     beta1 = creal(cbeta1);
     beta1 = sqrt(beta1);
     _beta[stp] = beta1;
+    if(stp %10 == 0) {
+      fprintf(stdoutMPI, "  stp = %d / %lu %.10lf  %.10lf \n", stp,  *liLanczos_step, alpha1, beta1);
+    }
   }
 
   return TRUE;
