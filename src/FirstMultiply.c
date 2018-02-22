@@ -99,7 +99,7 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
 #pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm)
   for(i=1;i<=i_max;i++){
     v1[i] = v1[i]/dnorm;
-    v0[i] = v1[i]/dnorm;
+    v0[i] = v1[i];
   }
   
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
