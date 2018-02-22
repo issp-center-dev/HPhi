@@ -264,80 +264,81 @@ int setmem_large
     list_Diagonal[j] = 0;
     v0[j] = 0;
     v1[j] = 0;
-    if (X->Def.iCalcType == TimeEvolution) {
-      c_malloc1(v2, X->Check.idim_max + 1);
-    } else {
-      c_malloc1(v2, 1);
-    }
-#ifdef MPI
-    c_malloc1(v1buf, idim_maxMPI + 1);
-    for (j = 0; j < X->Check.idim_max + 1; j++) {
-      v1buf[j] = 0;
-    }
-#endif // MPI
-  if (X->Def.iCalcType == TPQCalc) {c_malloc1(vg, 1); vg[0]=0;}
-  else {
-    c_malloc1(vg, X->Check.idim_max+1);
-    for(j =0; j<X->Check.idim_max+1; j++) {
-      vg[j]=0;
-    } 
   }
-  d_malloc1(alpha, X->Def.Lanczos_max+1);
-  d_malloc1(beta, X->Def.Lanczos_max+1);
+  if (X->Def.iCalcType == TimeEvolution) {
+    c_malloc1(v2, X->Check.idim_max + 1);
+  } else {
+    c_malloc1(v2, 1);
+  }
+#ifdef MPI
+  c_malloc1(v1buf, idim_maxMPI + 1);
+  for (j = 0; j < X->Check.idim_max + 1; j++) {
+    v1buf[j] = 0;
+  }
+#endif // MPI
+  if (X->Def.iCalcType == TPQCalc) {
+    c_malloc1(vg, 1);
+    vg[0] = 0;
+  } else {
+    c_malloc1(vg, X->Check.idim_max + 1);
+    for (j = 0; j < X->Check.idim_max + 1; j++) {
+      vg[j] = 0;
+    }
+  }
+  d_malloc1(alpha, X->Def.Lanczos_max + 1);
+  d_malloc1(beta, X->Def.Lanczos_max + 1);
 
-    if (
-            list_Diagonal == NULL
-            || v0 == NULL
-            || v1 == NULL
-            || vg == NULL
+  if (
+          list_Diagonal == NULL
+          || v0 == NULL
+          || v1 == NULL
+          || vg == NULL
+          ) {
+    return -1;
+  }
+
+  if (X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+    c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
+  } else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
+    if (X->Def.LanczosTarget > X->Def.nvec) {
+      c_malloc2(vec, X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
+    } else {
+      c_malloc2(vec, X->Def.nvec + 1, X->Def.Lanczos_max + 1);
+    }
+  }
+
+  if (X->Def.iCalcType == FullDiag) {
+    d_malloc1(X->Phys.all_num_down, X->Check.idim_max + 1);
+    d_malloc1(X->Phys.all_num_up, X->Check.idim_max + 1);
+    d_malloc1(X->Phys.all_energy, X->Check.idim_max + 1);
+    d_malloc1(X->Phys.all_doublon, X->Check.idim_max + 1);
+    d_malloc1(X->Phys.all_sz, X->Check.idim_max + 1);
+    d_malloc1(X->Phys.all_s2, X->Check.idim_max + 1);
+    c_malloc2(Ham, X->Check.idim_max + 1, X->Check.idim_max + 1);
+    c_malloc2(L_vec, X->Check.idim_max + 1, X->Check.idim_max + 1);
+
+    if (X->Phys.all_num_down == NULL
+        || X->Phys.all_num_up == NULL
+        || X->Phys.all_energy == NULL
+        || X->Phys.all_doublon == NULL
+        || X->Phys.all_s2 == NULL
             ) {
       return -1;
     }
-
-
-    if (X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-      c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
-    } else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
-      if (X->Def.LanczosTarget > X->Def.nvec) {
-        c_malloc2(vec, X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
-      } else {
-        c_malloc2(vec, X->Def.nvec + 1, X->Def.Lanczos_max + 1);
-      }
-    }
-
-    if (X->Def.iCalcType == FullDiag) {
-      d_malloc1(X->Phys.all_num_down, X->Check.idim_max + 1);
-      d_malloc1(X->Phys.all_num_up, X->Check.idim_max + 1);
-      d_malloc1(X->Phys.all_energy, X->Check.idim_max + 1);
-      d_malloc1(X->Phys.all_doublon, X->Check.idim_max + 1);
-      d_malloc1(X->Phys.all_sz, X->Check.idim_max + 1);
-      d_malloc1(X->Phys.all_s2, X->Check.idim_max + 1);
-      c_malloc2(Ham, X->Check.idim_max + 1, X->Check.idim_max + 1);
-      c_malloc2(L_vec, X->Check.idim_max + 1, X->Check.idim_max + 1);
-
-      if (X->Phys.all_num_down == NULL
-          || X->Phys.all_num_up == NULL
-          || X->Phys.all_energy == NULL
-          || X->Phys.all_doublon == NULL
-          || X->Phys.all_s2 == NULL
-              ) {
+    for (j = 0; j < X->Check.idim_max + 1; j++) {
+      if (Ham[j] == NULL || L_vec[j] == NULL) {
         return -1;
       }
-      for (j = 0; j < X->Check.idim_max + 1; j++) {
-        if (Ham[j] == NULL || L_vec[j] == NULL) {
-          return -1;
-        }
-      }
-    } else if (X->Def.iCalcType == CG) {
-      d_malloc1(X->Phys.all_num_down, X->Def.k_exct);
-      d_malloc1(X->Phys.all_num_up, X->Def.k_exct);
-      d_malloc1(X->Phys.all_energy, X->Def.k_exct);
-      d_malloc1(X->Phys.all_doublon, X->Def.k_exct);
-      d_malloc1(X->Phys.all_sz, X->Def.k_exct);
-      d_malloc1(X->Phys.all_s2, X->Def.k_exct);
     }
-    fprintf(stdoutMPI, "%s", cProFinishAlloc);
+  } else if (X->Def.iCalcType == CG) {
+    d_malloc1(X->Phys.all_num_down, X->Def.k_exct);
+    d_malloc1(X->Phys.all_num_up, X->Def.k_exct);
+    d_malloc1(X->Phys.all_energy, X->Def.k_exct);
+    d_malloc1(X->Phys.all_doublon, X->Def.k_exct);
+    d_malloc1(X->Phys.all_sz, X->Def.k_exct);
+    d_malloc1(X->Phys.all_s2, X->Def.k_exct);
   }
+  fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
 }
 
