@@ -649,14 +649,14 @@ int ReadTMComponents(
   if(iFlg==0) {
     alpha = (double *) realloc(alpha, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
     beta = (double *) realloc(beta, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
-    for (i = 0; i < X->Def.nvec + 1; i++) {
+    for (i = 0; i <  ivec; i++) {
       vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
     }
   }
   else if(iFlg==1){
     alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
     beta=(double*)realloc(beta, sizeof(double)*(i_max + 1));
-    for (i = 0; i < X->Def.nvec + 1; i++) {
+    for (i = 0; i < ivec; i++) {
       vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
     }
   }
