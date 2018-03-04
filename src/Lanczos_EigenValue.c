@@ -73,7 +73,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
 
   i_max = X->Check.idim_max;
   k_exct = X->Def.k_exct;
-  unsigned long int liLanczosStp = X->Def.Lanczos_max;
+  unsigned long int liLanczosStp;
+  liLanczosStp = X->Def.Lanczos_max;
   unsigned long int liLanczosStp_vec=0;
 
     if (X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN){
@@ -97,7 +98,6 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       liLanczosStp = liLanczosStp+X->Def.Lanczos_max;
       alpha1=alpha[X->Def.Lanczos_restart];
       beta1=beta[X->Def.Lanczos_restart];
-
     }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
     else {
       SetInitialVector(X, v0, v1);
@@ -627,7 +627,7 @@ int ReadTMComponents(
   char sdt[D_FileNameMax];
   char ctmp[256];
 
-  unsigned long int idx;
+  unsigned long int idx, i, ivec;
   unsigned long int i_max;
   double dnorm;
   FILE *fp;
@@ -639,13 +639,26 @@ int ReadTMComponents(
 
   fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
   sscanf(ctmp,"%ld \n", &i_max);
+  if (X->Def.LanczosTarget > X->Def.nvec) {
+    ivec = X->Def.LanczosTarget + 1;
+  }
+  else {
+    ivec =X->Def.nvec + 1;
+  }
+
   if(iFlg==0) {
     alpha = (double *) realloc(alpha, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
     beta = (double *) realloc(beta, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
+    for (i = 0; i <  ivec; i++) {
+      vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
+    }
   }
   else if(iFlg==1){
     alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
     beta=(double*)realloc(beta, sizeof(double)*(i_max + 1));
+    for (i = 0; i < ivec; i++) {
+      vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
+    }
   }
   else{
     fclose(fp);
