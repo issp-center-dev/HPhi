@@ -58,8 +58,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
   long unsigned int u_long_i, sum_i_max, i_max_tmp;
   dsfmt_t dsfmt;
 
-    k_exct = X->Def.k_exct;
-  //k_exct = X->Def.LanczosTarget+1;
+  k_exct = X->Def.LanczosTarget+1;
 	
   iv=X->Large.iv;
   i_max=X->Check.idim_max;
