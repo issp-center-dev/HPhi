@@ -78,6 +78,7 @@
   - @ref page_variable
   - @ref page_setmem
   - @ref page_cmake
+  - @ref page_addcalcmod
   - @ref page_addmodpara
   - @ref page_addexpert
   - @ref page_time

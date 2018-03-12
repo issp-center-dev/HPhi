@@ -3120,3 +3120,59 @@ You can set a value of parameters with a new keyword in ``modpara`` file by foll
 
 @sa ReadDefFileNInt, CheckWords
 */
+
+/**
+@page page_addcalcmod Add new calculation mode into calcmod
+
+You can set a new calculation mode with a new keyword in ``calcmod`` file by following way.
+
+- Define a new variable corresponding to the new calculation mode in @c struct.h file.
+
+- The value with the keyword are read by `` ReadcalcmodFile `` function in @c readdef.c.
+
+In the following, we describe the detail of the flow of setting the calculation mode.
+
+1. Set initial value at the beginning of ReadcalcmodFile function.
+  ```
+  X->iCalcType=0;
+  X->iFlgFiniteTemperature=0;
+  X->iCalcModel=0;
+  X->iOutputMode=0;
+  X->iCalcEigenVec=0;
+  X->iInitialVecType=0;
+  X->iOutputEigenVec=0;
+  X->iInputEigenVec=0;
+  X->iOutputHam=0;
+  X->iInputHam=0;
+  X->iFlgCalcSpec=0;
+  X->iReStart=0;
+  X->iFlgMPI=0;
+  ```
+
+2. Each line is read by ``` fgetsMPI ``` function. 
+   ``GetKWWithIdx`` function reads ctmp = keyword, itmp=index.
+  ```
+   while( fgetsMPI(ctmpLine, D_CharTmpReadDef+D_CharKWDMAX, fp)!=NULL ){
+    if( (iret=GetKWWithIdx(ctmpLine, ctmp, &itmp)) !=0){
+      if(iret==1) continue;
+      return(-1);
+    }   
+    if(CheckWords(ctmp, "CalcType")==0){
+      X->iCalcType=itmp;
+    }
+   ...
+   }
+  ```
+
+
+3. The line is divided into keyword and number by using ``CheckWords`` function.
+
+   For example, when you add new key word "NTest", you can get the value as follows:
+   ```
+        if (CheckWords(ctmp, "NTest") == 0) {
+                X->NTest = (int) dtmp;
+              }
+   ```
+
+@sa ReadcalcmodFile, CheckWords
+*/
