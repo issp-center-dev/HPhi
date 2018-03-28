@@ -1,0 +1,618 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017, H.Togo
+# This file is distributed under the same license as the HΦtest package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HΦtest 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 13:37+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.1\n"
+
+#: ../../howtouse/basicusage_en.rst:4
+msgid "Basic usage"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:6
+msgid ""
+":math:`{\\mathcal H}\\Phi` has two modes: Standard mode and Expert mode. "
+"Here, the basic flows of calculations of the Standard and expert modes "
+"are shown."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:9
+msgid "*Standard* mode"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:11
+msgid "The procedure of calculation through the standard mode is as follows:"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:13 ../../howtouse/basicusage_en.rst:53
+msgid "Create a directory for a calculation scenario"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:15
+msgid "First, you create a working directory for the calculation."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:17
+msgid "Create input files for Standard mode"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:19
+msgid ""
+"In Standard mode, you can choose a model (the Heisenberg model, Hubbard "
+"model, etc.) and a lattice (the square lattice, triangular lattice, etc.)"
+" from those provided; you can specify some parameters (such as the "
+"first/second nearest neighbor hopping integrals and the on-site Coulomb "
+"integral) for them. Finally, you have to specify the numerical method "
+"(such as the Lanczos method) employed in this calculation. The input file"
+" format is described in Sec. :ref:`How to use HPhi <Ch:Prerequisite>`."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:21 ../../howtouse/basicusage_en.rst:65
+msgid "Run"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:23
+msgid ""
+"Run an executable ``HPhi`` in the terminal by setting option \\\" "
+"``-s``\\\" (or \\\" ``--standard``\\\") and the name of the input file "
+"written in the previous step."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:25
+msgid "Serial/OpenMP parallel"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:27
+msgid "``$ Path /HPhi -s Input_file_name``"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:29
+msgid "MPI parallel/ Hybrid parallel"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:31
+msgid "``$ mpiexec -np number_of_processes Path /HPhi -s Input_file_name``"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:33
+msgid ""
+"When you use a queuing system in workstations or super computers, "
+"sometimes the number of processes is specified as an argument for the "
+"job-submitting command. If you need more information, please refer to "
+"your system manuals. The number of processes depends on the target system"
+" of the models. The details of setting the number of processes are shown "
+"in Sec. :ref:`Subsec:CreatingExpert` ."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:35
+msgid "Watch calculation logs"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:37
+msgid ""
+"Log files are outputted in the \\\"output\\\" folder, which is "
+"automatically created in the directory for a calculation scenario. The "
+"details of the output files are shown in Sec. :ref:`Sec:outputfile` ."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:39 ../../howtouse/basicusage_en.rst:82
+msgid "Results"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:41
+msgid ""
+"If the calculation is completed normally, the result files are outputted "
+"in  the \\\"output\\\" folder. The details of the output files are shown "
+"in Sec. :ref:`Sec:outputfile`"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst
+msgid "**The number of threads for OpenMP**"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst
+msgid ""
+"If you specify the number of OpenMP threads for :math:`{\\mathcal "
+"H}\\Phi`, you should set it as follows (in the case of 16 threads) before"
+" running:"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst
+msgid "``export OMP_NUM_THREADS=16``"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:50
+msgid "*Expert* mode"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:84
+msgid "The calculation procedure for Expert mode is as follows."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:55
+msgid ""
+"First, you create a directory and give it the name of a calculation "
+"scenario (you can attach an arbitrary name to a directory)."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:57
+msgid "Create input files for Expert mode"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:59
+msgid ""
+"For Expert mode, you should create input files for constructing "
+"Hamiltonian operators, calculation conditions, and a list file for the "
+"filenames of the input files (see the file formats shown in Sec. "
+":ref:`Ch:HowToExpert`)."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst
+msgid "A list file can be easily created by using Standard mode."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:67
+msgid ""
+"Run :math:`{\\mathcal H}\\Phi` in the terminal by setting option "
+"\\\"``-e``\\\" (or \\\"``--expert``\\\") and the file name of a list "
+"file."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:69
+msgid "Serial/OpenMP"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:71
+msgid "``$ Path/HPhi -e Input_List_file\\_name``"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:73
+msgid "MPI/Hybrid"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst
+msgid "``$ mpiexec -np number_of_processes Path/HPhi -e Input_List_file_name``"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst
+msgid ""
+"A number of processes depend on a target of system for models. The "
+"details of setting a number of processes are shown in Sec. "
+":ref:`Subsec:CreatingExpert`."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:78
+msgid "While running"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:80
+msgid ""
+"Log files are outputted in the \\\"output\\\" folder which is "
+"automatically created in the directory for a calculation scenario. The "
+"details of the output files are shown in Sec. :ref:`Sec:outputfile`."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:84
+msgid ""
+"If the calculation is finished normally, the result files are outputted "
+"in the \\\"output\\\" folder. The details of the output files are shown "
+"in Sec. :ref:`Sec:outputfile`."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:89
+msgid "Creating input files for *Expert* mode"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:91
+msgid ""
+"This mode is for creating input files for *Expert* mode. A set of input "
+"files created using this mode gives a model provided in *Standard* mode. "
+"The usage is shown as follows."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:95
+msgid "Create an input file for *Standard* mode."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:97
+msgid ""
+"Setting an option \\\"-sdry\\\" and an input file (in this example, "
+"StdFace.def), run :math:`{\\mathcal H}\\Phi`. ::"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:102
+msgid ""
+"In this case, you should not use MPI parallelization (mpirun, mpiexec, "
+"etc.)."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:104
+msgid ""
+"The following files are created as the input files for *Expert* mode in "
+"the current working directory."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:114
+msgid "Setting the process number for MPI/hybrid parallelization"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:116
+msgid ""
+"For using MPI/hybrid parallelization, the process number must be set as "
+"follows."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:118
+msgid "Standard mode"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:120 ../../howtouse/basicusage_en.rst:130
+msgid "Hubbard/Kondo model"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:122
+msgid ""
+"When ``model`` in the input file for Standard mode is set as ``\"Fermion "
+"Hubbard\"``, ``\"Kondo Lattice\"``, or ``\"Fermion HubbardGC\"``, the "
+"process number must be equal to :math:`4^n`."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:124 ../../howtouse/basicusage_en.rst:134
+msgid "Spin model"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:126
+msgid ""
+"When ``model`` in the input file for Standard mode is set as ``\"Spin\"``"
+" or ``\"SpinGC\"``, the process number must be equal to :math:`(2S+1)^n`,"
+" where ``2S`` is set in the input file (the default value is :math:`1`)."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:128
+msgid "Expert mode"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:132
+msgid ""
+"When the model is selected as the Fermion Hubbard model or Kondo model by"
+" setting ``CalcModel`` in a **CalcMod** file, the process number must be "
+"equal to :math:`4^n`. See Sec. :ref:`Subsec:calcmod` for details of the "
+"``CalcModel`` file."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:136
+msgid ""
+"When the model is selected as the spin model by setting ``CalcModel`` in "
+"a **CalcMod** file, the process number is fixed by a **LocSpin** file. "
+"The process number must be equal to the number calculated by multiplying "
+"the state number of the localized spin (``2S`` +1) in descending order by"
+" the site number. See Sec. :ref:`Subsec:locspn` for details of the "
+"**LocSpin** file."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:138
+msgid ""
+"For example, when a **LocSpin** file is given as follows, the process "
+"number must be equal to :math:`2=1+1,~6=2\\times(2+1),~24=6\\times(3+1)`."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:152
+msgid "Printing version ID"
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:154
+msgid ""
+"By using the ``-v`` option as follows, you can check which version of "
+":math:`{\\mathcal H}\\Phi` you are using."
+msgstr ""
+
+#: ../../howtouse/basicusage_en.rst:156
+msgid "``$ PATH/HPhi -v``"
+msgstr ""
+
+#: ../../howtouse/directorystructure_en.rst:2
+msgid "Directory structure"
+msgstr ""
+
+#: ../../howtouse/directorystructure_en.rst:4
+msgid ""
+"When HPhi-xxx.tar.gz is unzipped, the following directory structure is "
+"composed. ::"
+msgstr ""
+
+#: ../../howtouse/ho-index.rst:3
+msgid "How to use :math:`{\\mathcal H}\\Phi`"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:2
+msgid "Installation"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:4
+msgid "You can download :math:`{\\mathcal H}\\Phi` at the following location."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:6
+msgid "https://github.com/QLMS/HPhi/releases"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:8
+msgid "You can obtain the :math:`{\\mathcal H}\\Phi` directory by typing"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:10
+msgid "``$ tar xzvf HPhi-xxx.tar.gz``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:12
+msgid ""
+"There are two types of procedure for installing :math:`{\\mathcal "
+"H}\\Phi`."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:15
+msgid "Using ``HPhiconfig.sh``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:17
+msgid ""
+"Please run ``HPhiconfig.sh`` script in the :math:`{\\mathcal H}\\Phi` "
+"directory as follows (for ISSP system-B \\\"sekirei\\\"):"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:20
+msgid "``$ bash HPhiconfig.sh sekirei``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:22
+msgid ""
+"Then, the environmental configuration file ``make.sys`` is generated in "
+"the ``src/`` directory. The command-line argument of ``HPhiconfig.sh`` is"
+" as follows:"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:26 ../../howtouse/installation_en.rst:99
+msgid "``sekirei`` : ISSP system-B \\\"sekirei\\\""
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:27
+msgid "``fujitsu`` : ISSP system-C \\\"maki\\\""
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:28
+msgid "``sr`` : HITACHI SR16000"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:29
+msgid "``intel`` : Intel compiler"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:30
+msgid "``intel-openmpi`` : Intel compiler + OpenMPI"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:31
+msgid "``intel-mpich`` : Intel compiler + MPICH2"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:32
+msgid "``intel-intelmpi`` : Intel compiler + IntelMPI"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:33
+msgid "``gcc`` : GCC"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:34
+msgid "``gcc-openmpi`` : GCC + OpenMPI"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:35
+msgid "``gcc-mpich`` : GCC + MPICH2"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:36
+msgid "``gcc-mac`` : GCC + Mac."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:38
+msgid "``make.sys`` is as follows (for ISSP-system-B \\\"sekirei\\\")::"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:48
+msgid "We explain the macros of this file as:"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:50
+msgid "``CC`` : C compiler (``icc``, ``gcc``, ``fccpx``)."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:51
+msgid "``F90`` : fortran compiler (``ifort``, ``gfortran``, ``frtpx``)"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:52
+msgid ""
+"``CFLAGS`` : C compile options. OpenMP utilization option (``-openmp``, "
+"``-fopenmp``, ``-qopenmp``, etc.) must be specified. When you use MPI, "
+"please set ``-D MPI``."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:53
+msgid "``FFLAGS`` : fortran compile options. Similar to ``CFLAGS``."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:54
+msgid ""
+"``LIBS`` : Compilation options for LAPACK. ``-Dlapack`` can not be "
+"removed."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:56
+msgid "Then, you are ready to compile HPhi. Please type"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:59
+msgid "``$ make HPhi``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:61
+msgid ""
+"and obtain an executable ``HPhi`` in the ``src/`` directory; you should "
+"add this directory to the ``$PATH``."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:64
+msgid ""
+"If SSE2 is available in your system, please add ``-DHAVE_SSE2`` as an "
+"option of CMake."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst
+msgid "You can make a PATH to :math:`{\\mathcal H}\\Phi` as follows:"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst
+msgid "``$ export PATH=${PATH}:HPhi_top_directory/src/``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst
+msgid ""
+"If you retain this PATH, you should write above in ``~/.bashrc`` (for "
+"``bash`` as a login shell)"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:73
+msgid "Using ``cmake``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst
+msgid "Before using cmake for sekirei, you must type"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst
+msgid "``source /home/issp/materiapps/tool/env.sh``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst
+msgid "while for maki, you must type"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst
+msgid "``source /global/app/materiapps/tool/env.sh``"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:82
+msgid "We can compile :math:`{\\mathcal H}\\Phi` as::"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:88
+msgid ""
+"Here, we set a path to :math:`{\\mathcal H}\\Phi` as ``$PathTohphi`` and "
+"to a build directory as ``$HOME/build/hphi``. After compilation, ``src`` "
+"folder is constructed below a ``$HOME/build/hphi`` folder and we obtain "
+"an executable ``HPhi`` in ``src/`` directory. When no MPI library exists "
+"in the system, an executable ``HPhi`` is automatically compiled without "
+"an MPI library."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:95
+msgid ""
+"In the above example, we compile :math:`{\\mathcal H}\\Phi` by using a "
+"gcc compiler. We can select a compiler by using the following options:"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:100
+msgid "``fujitsu`` : Fujitsu compiler (ISSP system-C \\\"maki\\\")"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:101
+msgid "``intel`` : Intel compiler + Linux PC"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:102
+msgid "``gcc`` : GCC compiler + Linux PC."
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:104
+msgid ""
+"An example of compiling :math:`{\\mathcal H}\\Phi` by using the Intel "
+"compiler is shown as follows::"
+msgstr ""
+
+#: ../../howtouse/installation_en.rst:111
+msgid ""
+"After compilation, ``src`` folder is created below the ``build`` folder "
+"and an execute :math:`{\\mathcal H}\\Phi` in the ``src`` folder. Please "
+"note that we must delete the ``build`` folder and repeat the above "
+"operations when we change the compiler."
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst:6
+msgid "Prerequisite"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst:8
+msgid ":math:`{\\mathcal H}\\Phi` requires the following packages:"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst:10
+msgid "C/fortran compiler (Intel, Fujitsu, GNU, etc. )"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst:11
+msgid "BLAS/LAPACK library (Intel MKL, Fujitsu, ATLAS, etc.)"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst:12
+msgid "MPI library (if you do not use MPI, this is not requied)."
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst
+msgid "**E.g. /Settings of Intel compiler**"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst
+msgid ""
+"When you use the Intel compiler, you can easily use the scripts attached "
+"to the compiler."
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst
+msgid ""
+"In the case of the bash in the 64-bit OS, write the following in your "
+"``~/.bashrc``\\:"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst
+msgid "``source /opt/intel/bin/compilervars.sh intel64``"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst
+msgid "or"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst
+msgid "``source /opt/intel/bin/iccvars.sh intel64``"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst
+msgid "``source /opt/intel/mkl/bin/mklvars.sh``"
+msgstr ""
+
+#: ../../howtouse/prerequisite_en.rst:25
+msgid "Please read the manuals of your compiler/library for more information."
+msgstr ""
+
