@@ -101,7 +101,20 @@ int expec_energy_flct(struct BindStruct *X){
   break;/*case SpinGC*/
   /* SpinGCBoost */
   case Spin:
-    X->Phys.Sz = 0.5 * (double)X->Def.Total2SzMPI;
+    /*
+    if(X->Def.iFlgGeneralSpin == FALSE){
+      expec_energy_flct_HalfSpin(X);
+    }
+    else{
+      expec_energy_flct_GeneralSpin(X);
+    }
+     */
+      X->Phys.doublon   = 0.0;
+      X->Phys.doublon2  = 0.0;
+      X->Phys.num       = X->Def.NsiteMPI;
+      X->Phys.num2      = X->Def.NsiteMPI*X->Def.NsiteMPI;
+      X->Phys.Sz        = 0.5 * (double)X->Def.Total2SzMPI;
+      X->Phys.Sz2       = X->Phys.Sz * X->Phys.Sz;
     break;
   default:
     return -1;
@@ -525,4 +538,128 @@ int expec_energy_flct_GeneralSpinGC(struct BindStruct *X){
     X->Phys.num_down  = 0.5*(X->Def.NsiteMPI-tmp_Sz);
 
     return 0;
+}
+
+///
+/// \brief Calculate expected values of energies and physical quantities for Half-Spin model
+/// \param X [in, out] X Struct to get information about file header names, dimension of hirbert space, calc type and output physical quantities.
+/// \retval 0 normally finished.
+/// \retval -1 abnormally finished.
+int expec_energy_flct_HalfSpin(struct BindStruct *X){
+  long unsigned int j;
+  long unsigned int isite1;
+  long unsigned int is1_up_a,is1_up_b;
+
+  long unsigned int ibit1;
+  double Sz,tmp_Sz, tmp_Sz2;
+  double tmp_v02;
+  long unsigned int i_max, tmp_list_1;
+  unsigned int l_ibit1,u_ibit1,i_32;
+  i_max=X->Check.idim_max;
+
+  i_32 = 0xFFFFFFFF; //2^32 - 1
+
+  // tentative doublon
+  tmp_Sz       = 0.0;
+  tmp_Sz2      = 0.0;
+
+//[s] for bit count
+  is1_up_a = 0;
+  is1_up_b = 0;
+  for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+    if(isite1 > X->Def.Nsite){
+      is1_up_a += X->Def.Tpow[isite1 - 1];
+    }else{
+      is1_up_b += X->Def.Tpow[isite1 - 1];
+    }
+  }
+//[e]
+#pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0, list_1)   \
+  firstprivate(i_max,X,myrank,i_32,is1_up_a,is1_up_b) private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1, tmp_list_1)
+  for(j = 1; j <= i_max; j++){
+    tmp_v02  = conj(v0[j])*v0[j];
+    Sz       = 0.0;
+    tmp_list_1 = list_1[j];
+
+// isite1 > X->Def.Nsite
+    ibit1   = (unsigned long int) myrank & is1_up_a;
+    u_ibit1 = ibit1 >> 32;
+    l_ibit1 = ibit1 & i_32;
+    Sz      += pop(u_ibit1);
+    Sz      += pop(l_ibit1);
+// isite1 <= X->Def.Nsite
+    ibit1   = (unsigned long int) tmp_list_1 &is1_up_b;
+    u_ibit1 = ibit1 >> 32;
+    l_ibit1 = ibit1 & i_32;
+    Sz     += pop(u_ibit1);
+    Sz     += pop(l_ibit1);
+    Sz      = 2*Sz-X->Def.NsiteMPI;
+
+    tmp_Sz   += Sz*tmp_v02;
+    tmp_Sz2  += Sz*Sz*tmp_v02;
+  }
+  tmp_Sz       = SumMPI_d(tmp_Sz);
+  tmp_Sz2      = SumMPI_d(tmp_Sz2);
+
+  X->Phys.doublon   = 0.0;
+  X->Phys.doublon2  = 0.0;
+  X->Phys.num       = X->Def.NsiteMPI;
+  X->Phys.num2      = X->Def.NsiteMPI*X->Def.NsiteMPI;
+  X->Phys.Sz        = tmp_Sz*0.5;
+  X->Phys.Sz2       = tmp_Sz2*0.25;
+  X->Phys.num_up    = 0.5*(X->Def.NsiteMPI+tmp_Sz);
+  X->Phys.num_down  = 0.5*(X->Def.NsiteMPI-tmp_Sz);
+
+  return 0;
+}
+
+///
+/// \brief Calculate expected values of energies and physical quantities for General-Spin model
+/// \param X [in, out] X Struct to get information about file header names, dimension of hirbert space, calc type and output physical quantities.
+/// \retval 0 normally finished.
+/// \retval -1 abnormally finished.
+int expec_energy_flct_GeneralSpin(struct BindStruct *X){
+  long unsigned int j;
+  long unsigned int isite1;
+
+  double Sz,tmp_Sz, tmp_Sz2;
+  double tmp_v02;
+  long unsigned int i_max, tmp_list1;
+  i_max=X->Check.idim_max;
+
+  // tentative doublon
+  tmp_Sz       = 0.0;
+  tmp_Sz2      = 0.0;
+
+#pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0, list_1)   \
+  firstprivate(i_max,X,myrank) private(j,Sz,isite1,tmp_v02, tmp_list1)
+  for(j = 1; j <= i_max; j++){
+    tmp_v02  = conj(v0[j])*v0[j];
+    Sz       = 0.0;
+    tmp_list1 = list_1[j];
+    for(isite1=1;isite1<=X->Def.NsiteMPI;isite1++){
+      //prefactor 0.5 is added later.
+      if(isite1 > X->Def.Nsite){
+        Sz += GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+      }else{
+        Sz += GetLocal2Sz(isite1, tmp_list1, X->Def.SiteToBit, X->Def.Tpow);
+      }
+    }
+    tmp_Sz   += Sz*tmp_v02;
+    tmp_Sz2  += Sz*Sz*tmp_v02;
+  }
+
+  tmp_Sz       = SumMPI_d(tmp_Sz);
+  tmp_Sz2      = SumMPI_d(tmp_Sz2);
+
+  X->Phys.doublon   = 0.0;
+  X->Phys.doublon2  = 0.0;
+  X->Phys.num       = X->Def.NsiteMPI;
+  X->Phys.num2      = X->Def.NsiteMPI*X->Def.NsiteMPI;
+  X->Phys.Sz        = tmp_Sz*0.5;
+  X->Phys.Sz2       = tmp_Sz2*0.25;
+  X->Phys.num_up    = 0.5*(X->Def.NsiteMPI+tmp_Sz);
+  X->Phys.num_down  = 0.5*(X->Def.NsiteMPI-tmp_Sz);
+
+  return 0;
 }
