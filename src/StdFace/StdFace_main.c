@@ -1320,7 +1320,7 @@ static void PrintModPara(struct StdIntList *StdI)
 static void Print1Green(struct StdIntList *StdI)
 {
   FILE *fp;
-  int ngreen, igreen, store;
+  int ngreen, igreen, store, xkondo;
   int isite, jsite, ispin, jspin, SiMax, SjMax;
   int **greenindx;
   /*
@@ -1338,24 +1338,60 @@ static void Print1Green(struct StdIntList *StdI)
         ngreen = 0;
       }/*if (store == 1)*/
 
-      for (isite = 0; isite < StdI->nsite; isite++) {
+      if (strcmp(StdI->model, "kondo") == 0) xkondo = 2;
+      else xkondo = 1;
 
-        if (StdI->locspinflag[isite] == 0) SiMax = 1;
-        else SiMax = StdI->locspinflag[isite];
+      if (StdI->ioutputmode == 1) {
+        for (isite = 0; isite < StdI->NsiteUC*xkondo; isite++) {
 
-        for (ispin = 0; ispin <= SiMax; ispin++) {
-          for (jsite = 0; jsite < StdI->nsite; jsite++) {
+          if (isite >= StdI->NsiteUC) isite += StdI->nsite / 2;
 
-            if (StdI->locspinflag[jsite] == 0) SjMax = 1;
-            else SjMax = StdI->locspinflag[jsite];
+          if (StdI->locspinflag[isite] == 0) SiMax = 1;
+          else SiMax = StdI->locspinflag[isite];
 
-            for (jspin = 0; jspin <= SjMax; jspin++) {
+          for (ispin = 0; ispin <= SiMax; ispin++) {
+            for (jsite = 0; jsite < StdI->nsite; jsite++) {
 
-              if (isite != jsite &&
-                (StdI->locspinflag[isite] != 0 && StdI->locspinflag[jsite] != 0)) continue;
+              if (StdI->locspinflag[jsite] == 0) SjMax = 1;
+              else SjMax = StdI->locspinflag[jsite];
 
-              if (StdI->ioutputmode == 2 || ispin == jspin)
-              {
+              for (jspin = 0; jspin <= SjMax; jspin++) {
+
+                if (isite != jsite &&
+                  (StdI->locspinflag[isite] != 0 && StdI->locspinflag[jsite] != 0)) continue;
+
+                if (ispin == jspin){
+                  if (store == 1) {
+                    greenindx[ngreen][0] = isite;
+                    greenindx[ngreen][1] = ispin;
+                    greenindx[ngreen][2] = jsite;
+                    greenindx[ngreen][3] = jspin;
+                  }
+                  ngreen++;
+                }
+
+              }/*for (jspin = 0; jspin <= SjMax; jspin++)*/
+            }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+          }/*for (ispin = 0; ispin <= SiMax; ispin++)*/
+        }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      }/*if (StdI->ioutputmode == 1)*/
+      else {
+        for (isite = 0; isite < StdI->nsite; isite++) {
+
+          if (StdI->locspinflag[isite] == 0) SiMax = 1;
+          else SiMax = StdI->locspinflag[isite];
+
+          for (ispin = 0; ispin <= SiMax; ispin++) {
+            for (jsite = 0; jsite < StdI->nsite; jsite++) {
+
+              if (StdI->locspinflag[jsite] == 0) SjMax = 1;
+              else SjMax = StdI->locspinflag[jsite];
+
+              for (jspin = 0; jspin <= SjMax; jspin++) {
+
+                if (isite != jsite &&
+                  (StdI->locspinflag[isite] != 0 && StdI->locspinflag[jsite] != 0)) continue;
+
                 if (store == 1) {
                   greenindx[ngreen][0] = isite;
                   greenindx[ngreen][1] = ispin;
@@ -1363,13 +1399,13 @@ static void Print1Green(struct StdIntList *StdI)
                   greenindx[ngreen][3] = jspin;
                 }
                 ngreen++;
-              }
 
-            }/*for (jspin = 0; jspin <= SjMax; jspin++)*/
-          }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
-        }/*for (ispin = 0; ispin <= SiMax; ispin++)*/
-      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
-    }
+              }/*for (jspin = 0; jspin <= SjMax; jspin++)*/
+            }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+          }/*for (ispin = 0; ispin <= SiMax; ispin++)*/
+        }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      }/*if (StdI->ioutputmode == 2)*/
+    }/*if (StdI->ioutputmode != 0)*/
 
     fp = fopen("greenone.def", "w");
     fprintf(fp, "===============================\n");
@@ -1399,7 +1435,7 @@ static void Print1Green(struct StdIntList *StdI)
 */
 static void Print2Green(struct StdIntList *StdI) {
   FILE *fp;
-  int ngreen, store, igreen;
+  int ngreen, store, igreen, xkondo;
   int site1, site2, site3, site4;
   int spin1, spin2, spin3, spin4;
   int S1Max, S2Max, S3Max, S4Max;
@@ -1418,7 +1454,12 @@ static void Print2Green(struct StdIntList *StdI) {
         ngreen = 0;
       }/*if (store == 1)*/
 
-      for (site1 = 0; site1 < StdI->nsite; site1++) {
+      if (strcmp(StdI->model, "kondo") == 0) xkondo = 2;
+      else xkondo = 1;
+
+      for (site1 = 0; site1 < StdI->NsiteUC*xkondo; site1++) {
+
+        if (site1 >= StdI->NsiteUC) site1 += StdI->nsite / 2;
 
         if (StdI->locspinflag[site1] == 0) S1Max = 1;
         else S1Max = StdI->locspinflag[site1];
