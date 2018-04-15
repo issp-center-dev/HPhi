@@ -1156,14 +1156,18 @@ void StdFace_InputHopp(
 */
 void StdFace_PrintGeometry(struct StdIntList *StdI) {
   FILE *fp;
-  int isite, iCell;
+  int isite, iCell, ii;
 
   fp = fopen("geometry.dat", "w");
 
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[0][0], StdI->direct[0][1], StdI->direct[0][2]);
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[1][0], StdI->direct[1][1], StdI->direct[1][2]);
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[2][0], StdI->direct[2][1], StdI->direct[2][2]);
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->phase[0], StdI->phase[1], StdI->phase[2]);
+  for (ii = 0; ii < 3; ii++) 
+    fprintf(fp, "%25.15e %25.15e %25.15e\n", 
+      StdI->direct[ii][0], StdI->direct[ii][1], StdI->direct[ii][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n", 
+    StdI->phase[0], StdI->phase[1], StdI->phase[2]);
+  for (ii = 0; ii < 3; ii++)
+    fprintf(fp, "%d %d %d\n",
+      StdI->box[ii][0], StdI->box[ii][1], StdI->box[ii][2]);
 
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
     for (isite = 0; isite < StdI->NsiteUC; isite++) {
