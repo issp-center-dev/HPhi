@@ -42,6 +42,7 @@ Contents
    filespecification/fi-index
    algorithm/al-index
    acknowledgement_en
+   fourier/index
 
 .. Indices and tables
 .. ==================
