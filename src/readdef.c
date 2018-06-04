@@ -937,7 +937,8 @@ int ReadDefFileNInt(
       return (-1);
     }
 
-    if(ValidateValue(X->LanczosTarget, X->k_exct, X->Lanczos_max)){
+    //if(ValidateValue(X->LanczosTarget, X->k_exct,X->Lanczos_max )){
+    if(X->LanczosTarget > X->k_exct){
       fprintf(stdoutMPI, cErrLanczosTarget, defname, X->LanczosTarget, X->k_exct, X->Lanczos_max);
       return (-1);
     }
