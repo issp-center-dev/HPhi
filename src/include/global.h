@@ -72,6 +72,10 @@ int step_spin;/**< output step for TE calculation.*/
 /*[s] For All Diagonalization*/
 double complex**Ham; /**> Hamiltonian for full diagonalization. */
 double complex **L_vec;/**> eigen vectors*/
+#ifdef _SCALAPACK
+double complex *Z_vec; /**> distributed matrix of eigen vector*/
+int descZ_vec[9]; /*descriptor for Z_vec*/
+#endif
 /*[e] For All Diagonalization*/
 
 const char* cParentOutputFolder; /**> Path to output results*/
