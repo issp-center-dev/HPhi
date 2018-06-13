@@ -19,6 +19,9 @@
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
 #include "wrapperMPI.h"
+#ifdef _SCALAPACK
+#include "matrixscalapack.h"
+#endif
 
 /**
  * @file   phys.c
@@ -50,12 +53,32 @@ void phys(struct BindStruct *X, //!<[inout]
 
   long unsigned int i, j, i_max;
   double tmp_N;
+#ifdef _SCALAPACK
+  double complex *vec_tmp;
+  int ictxt, ierr, rank;
+#endif
 
   i_max = X->Check.idim_max;
   for (i = 0; i < neig; i++) {
+#ifdef _SCALAPACK
+    if(use_scalapack){
+      MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+      vec_tmp = malloc(i_max*sizeof(double complex));
+      GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
+      if(rank == 0) {
+        for (j = 0; j < i_max; j++) {
+          v0[j + 1] = vec_tmp[j];
+        }
+      }
+      free(vec_tmp);
+    } else for (j = 0; j < i_max; j++) {
+      v0[j + 1] = L_vec[i][j];
+    }
+#else
     for (j = 0; j < i_max; j++) {
       v0[j + 1] = L_vec[i][j];
     }
+#endif
     X->Phys.eigen_num = i;
     if (expec_energy_flct(X) != 0) {
       fprintf(stderr, "Error: calc expec_energy.\n");

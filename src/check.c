@@ -68,13 +68,20 @@ int check(struct BindStruct *X){
   {
     X->Def.Ne=X->Def.Nup;
   }
-    int iAllup=X->Def.Ne;
 
-  /*
-    Set Site number per MPI process 
-  */
-  if(CheckMPI(X)!=TRUE){
-    return MPIFALSE;
+  int iAllup=X->Def.Ne;
+
+  if(X->Def.iFlgScaLAPACK == 0) {
+    /*
+      Set Site number per MPI process
+    */
+    if (CheckMPI(X) != TRUE) {
+      return MPIFALSE;
+    }
+  }
+  else{
+    X->Def.NsiteMPI = X->Def.Nsite;
+    X->Def.Total2SzMPI = X->Def.Total2Sz;
   }
 
   Ns = X->Def.Nsite;

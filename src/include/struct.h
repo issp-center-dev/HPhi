@@ -231,6 +231,11 @@ struct DefineList {
     - >0: Use GPU
     */
 
+    int iFlgScaLAPACK;/**<@brief ScaLAPACK mode ( only for FullDiag )
+    - 0: Use lapack
+    - 1: Use ScaLAPACK
+    */
+
 
     struct ParamList Param;
 
