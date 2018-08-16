@@ -10,24 +10,22 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
  |    |--fujitsu.cmake
  |    |--gcc.cmake
  |    |--intel.cmake
- |    ---sekirei.cmake
+ |    |--sekirei.cmake
+ |    |--sekirei_acc.cmake
  |--doc/
  |    |--en/
  |    |--jp/
  |    |--fourier/
- |    |    |--en/
- |    |    |--figs/
- |    |    ---ja/
+ |    |--sphinx/
  |    |--userguide_en.pdf
- |    ---userguide_jp.pdf
- |--HPhiconfig.sh
+ |    |--userguide_jp.pdf
  |--samples/
  |--src/
  |    |--*.c
  |    |--CMakeLists.txt
  |    |--include/*.h
  |    |--makefile_src
- |    ---StdFace/
+ |    |--StdFace/
  |--test/
- ---test_tool/
+ |--tool/
 

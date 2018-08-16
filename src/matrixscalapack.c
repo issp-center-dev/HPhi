@@ -14,17 +14,30 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "matrixscalapack.h"
+/**
+ * @file matrixscalapack.c
+ * @version 3.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
+ * 
+ * @brief File for diagonalization using scalapack with functions for getting indices of global and local array
+ * 
+ *
+ */
 
 #ifdef _SCALAPACK
 int use_scalapack = 0;
 
 /**
- * @file matrixscalapack.c
- * @version 3.1
- * 
- * @brief File for diagonalization using scalapack with functions for getting indices of global and local array
+ * @brief compute block size for scalapack
+ * @param[in] Msize size of matrix (Msize x Msize)
+ * @param[in] nproc number of processes
+ * @return block size for scalapack
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
-
 long int GetBlockSize(long int Msize, long int nproc) {
   long int block_size = 16;
   if(Msize*Msize/nproc > block_size*block_size)
@@ -33,51 +46,59 @@ long int GetBlockSize(long int Msize, long int nproc) {
 }
 
 /**
- * @brief A function to get processor array index from global array index
- * @param i global array index
- * @param np processor array dimension
- * @param nb block size
+ * @brief get processor array index from global array index
+ * @param[in] i global array index
+ * @param[in] np processor array dimension
+ * @param[in] nb block size
  * @return processor array index
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 long int GetPArrayIndex(long int i, long int np, long int nb) {
   return (i/nb)%np;
 }
 
 /**
- * @brief A function to get local array index from global array index
- * @param i global array index
- * @param np processor array dimension
- * @param nb block size
+ * @brief get local array index from global array index
+ * @param[in] i global array index
+ * @param[in] np processor array dimension
+ * @param[in] nb block size
  * @return local array index
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 long int GetLocalIndex(long int i, long int np, long int nb) {
   return (i/(np*nb))*nb + i%nb;
 }
 
 /**
- * @brief A function to get global array index from local array index and processor array index
- * @param il local array index
- * @param p processor array index
- * @param np processor array dimension
- * @param nb block size
+ * @brief get global array index from local array index and processor array index
+ * @param[in] il local array index
+ * @param[in] p processor array index
+ * @param[in] np processor array dimension
+ * @param[in] nb block size
  * @return global array index
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 long int GetGlobalIndex(long int il, long int p, long int np, long int nb){
   return ((il/nb)*np+p)*nb + il%nb;
 }
 
 /**
- * @brief A function to get rank of processor from indices of global matrix
- * @param i index of global matrix
- * @param j index of global matrix
- * @param nprow processor array dimension for row
- * @param npcol processor array dimension for column
- * @param nb block size
+ * @brief get rank of processor from indices of global matrix
+ * @param[in] i index of global matrix
+ * @param[in] j index of global matrix
+ * @param[in] nprow processor array dimension for row
+ * @param[in] npcol processor array dimension for column
+ * @param[in] nb block size
  * @return rank of processor
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 long int MatToRank(long int i, long int j, long int nprow, long int npcol, long int nb){
   long int iproc, jproc;
@@ -87,13 +108,15 @@ long int MatToRank(long int i, long int j, long int nprow, long int npcol, long 
 }
 
 /**
- * @brief A function to get column index of global matrix from given rank of processor and column index of local matrix
- * @param lj column index of local matrix
- * @param rank rank of processor
- * @param npcol processor array dimension for column
- * @param nb block size
+ * @brief get column index of global matrix from given rank of processor and column index of local matrix
+ * @param[in] lj column index of local matrix
+ * @param[in] rank rank of processor
+ * @param[in] npcol processor array dimension for column
+ * @param[in] nb block size
  * @return column index of global matrix
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 long int GetMatRawInRank(long int lj, long int rank, long int npcol, long int nb){
   long int pcol = rank/npcol;
@@ -101,14 +124,16 @@ long int GetMatRawInRank(long int lj, long int rank, long int npcol, long int nb
 }
 
 /**
- * @brief A function to get indices of local matrix from indices (need to free memory after this function used)
- * @param i index of local matrix
- * @param j index of local matrix
- * @param nprow processor array dimension for row
- * @param npcol processor array dimension for column
- * @param nb block size
+ * @brief get indices of local matrix from indices (need to free memory after this function used)
+ * @param[in] i index of local matrix
+ * @param[in] j index of local matrix
+ * @param[in] nprow processor array dimension for row
+ * @param[in] npcol processor array dimension for column
+ * @param[in] nb block size
  * @return indices array of local matrix
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 long int *GetMatElementInRank(long int i, long int j, long int nprow, long int npcol, long int nb){
   long int *ij;
@@ -119,13 +144,15 @@ long int *GetMatElementInRank(long int i, long int j, long int nprow, long int n
 }
 
 /**
- * @brief A function to divide matrix
- * @param m index of column of matrix
- * @param n index of row of matrix
- * @param Aorgmn value of matrix in (i, j)
+ * @brief divide matrix
+ * @param[in] m index of column of matrix
+ * @param[in] n index of row of matrix
+ * @param[in] Aorgmn value of matrix in (i, j)
  * @param[in, out] A distribution matrix
- * @param desca descriptor of distribution matrix A
- * @version 3.1 
+ * @param[in] desca descriptor of distribution matrix A
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 void DivMat(long int m, long int n, double complex Aorgmn, double complex *A, int *desca){
   long int mp = m+1, np = n+1;
@@ -133,13 +160,15 @@ void DivMat(long int m, long int n, double complex Aorgmn, double complex *A, in
 }
 
 /**
- * @brief A function to get eigenvector from distributed matrix
- * @param i index of eigenvector
- * @param m size of eigenvector
- * @param Z distribution matrix of eigenvector
- * @param descZ descriptor for Z
+ * @brief get eigenvector from distributed matrix
+ * @param[in] i index of eigenvector
+ * @param[in] m size of eigenvector
+ * @param[in] Z distribution matrix of eigenvector
+ * @param[in] descZ descriptor for Z
  * @param[in, out] vec eigenvector
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 void GetEigenVector(long int i, long int m, double complex *Z, int *descZ, double complex *vec) {
   double complex alpha;
@@ -157,14 +186,16 @@ void GetEigenVector(long int i, long int m, double complex *Z, int *descZ, doubl
 }
 
 /**
- * @brief A function for diagonalization using scalapack
- * @param xNsize size of matrix
- * @param A input matrix
+ * @brief diagonalization using scalapack
+ * @param[in] xNsize size of matrix
+ * @param[in] A input matrix
  * @param[in, out] r eigenvalue
  * @param[in, out] Z distribution matrix of eigenvector
  * @param[in, out] descZ descriptor for Z
  * @return this returns 0 when it finished normally
- * @version 3.1 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 int diag_scalapack_cmp(long int xNsize, double complex **A, 
                        double complex *r, double complex *Z, int *descZ) {

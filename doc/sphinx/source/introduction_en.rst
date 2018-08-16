@@ -18,7 +18,7 @@ In contrast, the recent and rapid development of a parallel computing infrastruc
 License
 -------
 
-The distribution of the program package and the source codes for :math:`{\mathcal H}\Phi` follow GNU General Public License version 3 (GPL v3) or later. 
+The distribution of the program package and the source codes for :math:`{\mathcal H}\Phi` follow GNU General Public License version 3 (GPL v3) or later. We hope that you cite the reference, `Comp. Phys. Commun. 217 (2017) 180-192 <https://www.sciencedirect.com/science/article/pii/S0010465517301200?via%3Dihub>`_ , when you publish the results using :math:`{\mathcal H}\Phi` (hphi).
 
 Copyright
 ---------
@@ -31,7 +31,31 @@ Contributors
 
 This software was developed by the following contributors.
 
-* ver.3.0.0 (released on 2017/12/22)
+* ver.3.1 (released on 2018/9/3)
+
+  * Developers
+
+    * | Takahiro Misawa
+      | (The Institute for Solid State Physics, The University of Tokyo)
+    * | Kazuyoshi Yoshimi
+      | (The Institute for Solid State Physics, The University of Tokyo)
+    * | Mitsuaki Kawamura
+      | (The Institute for Solid State Physics, The University of Tokyo)
+    * | Kota Ido
+      | (Department of Applied Physics, The University of Tokyo)
+    * | Youhei Yamaji
+      | (Department of Applied Physics, The University of Tokyo)
+    * | Synge Todo
+      | (Department of Physics, The University of Tokyo)
+    * | Yusuke Konishi
+      | (Academeia Co., Ltd.)
+   
+  * Project coordinator
+
+    * | Naoki Kawashima
+      | (The Institute for Solid State Physics, The University of Tokyo)
+
+* ver.3.0 (released on 2017/12/22)
 
   * Developers
 
@@ -53,11 +77,6 @@ This software was developed by the following contributors.
     * | Naoki Kawashima
       | (The Institute for Solid State Physics, The University of Tokyo)
 
-
-* ver.2.0.4 (released on 2017/10/24)
-* ver.2.0.3 (released on 2017/8/7)
-* ver.2.0.2 (released on 2017/7/5)
-* ver.2.0.1(released on 2017/6/20)
 * ver.2.0 (released on 2017/4/11)
 * ver.1.2 (released on 2016/11/14)
 * ver.1.1 (released on 2016/5/13)
@@ -78,31 +97,6 @@ This software was developed by the following contributors.
    
   * Project coordinator
 
-    * | Naoki Kawashima
-      | (The Institute for Solid State Physics, The University of Tokyo)
-
-* ver.0.3 (released on 2016/2/24)
-* ver.0.2 (released on 2015/12/28)
-* ver.0.1 (released on 2015/10/09)
-
-  * Developers
-
-    * | Takahiro Misawa
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Kazuyoshi Yoshimi
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Mitsuaki Kawamura
-      | (The Institute for Solid State Physics, The University of Tokyo)
-  
-  * Advisers
-  
-    * | Youhei Yamaji
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Synge Todo
-      | (Department of Physics, The University of Tokyo)
-      
-  * Project coordinator
-  
     * | Naoki Kawashima
       | (The Institute for Solid State Physics, The University of Tokyo)
    

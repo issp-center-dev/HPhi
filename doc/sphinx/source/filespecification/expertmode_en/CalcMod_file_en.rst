@@ -166,6 +166,22 @@ The parameters correlated with the keywords are as follows.
    | 0: not input Hamiltonian.
    | 1: input Hamiltonian.
 
+*  ``Scalapack``
+
+   **Type :** Int (default value: 0)
+
+   | **Description :** (Full Diag)Select to use ScaLAPACK library for full diagonalization:
+   | 0: not to use ScaLAPACK.
+   | 1: use ScaLAPACK.
+
+
+*  ``NGPU``
+
+   **Type :** Int (default value: 2)
+
+   | **Description :** (Full Diag)Select the number of GPU devices for full diagonalization:
+   | :math:`{\mathcal H} \Phi` does not support to use GPU devices at multi-nodes. 
+
 .. raw:: latex
 
    \newpage

@@ -1202,6 +1202,25 @@ Select the mode of inputting a restart vector:\\
 1: input Hamiltonian.\\
 }
 
+\item  \verb|Scalapack|
+
+{\bf Type :} {Int (default value: 0)}
+
+{\bf Description :} {(Full Diag)Select to use ScaLAPACK library for full diagonalization:\\
+0: not to use ScaLAPACK.\\
+ 1: use ScaLAPACK.\\
+}
+   
+\item  \verb|NGPU|
+
+{\bf Type :} {Int (default value: 2)}
+
+{\bf Description :} {
+Select the number of GPU devices for full diagonalization:\\
+$\HPhi$ does not support to use GPU devices at multi-nodes. 
+}
+
+
 
 \end{itemize}
 

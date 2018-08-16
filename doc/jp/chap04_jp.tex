@@ -1128,7 +1128,21 @@ CalcEigenVec 0
 から選択することが出来ます。}
 }
 
+\item  \verb|Scalapack|
 
+{\bf 形式 :} int型 (デフォルト値 0)
+
+{\bf 説明 :} (FullDiag) 全対角化計算でのScaLAPACKライブラリの使用有無を指定します。\\
+0: ScaLAPACKを使用しない。\\
+1: ScaLAPACKを使用する。\\
+で選択することが出来ます。
+
+\item  \verb|NGPU|
+
+{\bf 形式 :} int型 (デフォルト値 2)
+
+{\bf 説明 :} (FullDiag) 全対角化計算でのMAGMAライブラリを使用する場合のGPU数を指定します。
+なお、$\HPhi$ではマルチノードでのGPU計算には対応していません。
 
 \end{itemize}
 
