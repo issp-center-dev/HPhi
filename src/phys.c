@@ -113,9 +113,16 @@ void phys(struct BindStruct *X, //!<[inout]
       tmp_N = X->Phys.num_up + X->Phys.num_down;
     }
 
-    if (X->Def.iCalcType == FullDiag)
-      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-              X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
+    if (X->Def.iCalcType == FullDiag){
+      if (use_scalapack){
+        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
+                X->Phys.Sz, X->Phys.doublon);
+      }
+      else{
+        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
+                X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
+      }
+    }
     else if (X->Def.iCalcType == CG)
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
               X->Phys.Sz, X->Phys.doublon);
