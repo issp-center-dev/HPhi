@@ -92,6 +92,7 @@ void phys(struct BindStruct *X, //!<[inout]
       fprintf(stderr, "Error: calc TwoBodyG.\n");
       exitMPI(-1);
     }
+#ifdef _SCALAPACK
     if(use_scalapack){
       if (X->Def.iCalcType == FullDiag) {
         fprintf(stderr, "In scalapack fulldiag, total spin is not calculated !\n");
@@ -106,7 +107,15 @@ void phys(struct BindStruct *X, //!<[inout]
         }
       }
     } 
-
+#else
+    if (X->Def.iCalcType == FullDiag) {
+      if (expec_totalspin(X, v1) != 0) {
+        fprintf(stderr, "Error: calc TotalSpin.\n");
+        exitMPI(-1);
+      }
+    }
+#endif
+    
     if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) {
       tmp_N = X->Def.NsiteMPI;
     } else {
@@ -114,6 +123,7 @@ void phys(struct BindStruct *X, //!<[inout]
     }
 
     if (X->Def.iCalcType == FullDiag){
+#ifdef _SCALAPACK
       if (use_scalapack){
         fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
                 X->Phys.Sz, X->Phys.doublon);
@@ -122,6 +132,11 @@ void phys(struct BindStruct *X, //!<[inout]
         fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
                 X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
       }
+#else
+      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
+              X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
+      
+#endif      
     }
     else if (X->Def.iCalcType == CG)
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
