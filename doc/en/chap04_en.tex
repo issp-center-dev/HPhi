@@ -368,13 +368,19 @@ the set of exchange couplings (\verb|Jx|, \verb|Jy|, \verb|Jz|)
 and the exchange coupling \verb|J| are specified in the input file,
 $\HPhi$ will stop.
 
-\item \verb|h|, \verb|Gamma|, \verb|D|
+\item \verb|h|
+
+{\bf Type :} Real
+
+{\bf Description :} 
+The longitudinal magnetic field is specified with this parameter.
+
+\item \verb|Gamma|, \verb|D|
 
 {\bf Type :} Real
 
 {\bf Description :} (Spin model)
-The longitudinal magnetic field, transverse magnetic field, 
-and the single-site anisotropy parameter are specified with these parameters.
+The transverse magnetic field and the single-site anisotropy parameter are specified with these parameters.
 The single-site anisotropy parameter is not available for \verb|model=SpinGCCMA|.
 
 \end{itemize}
@@ -3752,7 +3758,7 @@ An example of the file format is as follows.\\
   
  {\bf Type :} Double
 
-{\bf Description :} Inverse temperature $1/{k_{\rm B}T}$.
+{\bf Description :} Inverse temperature $1/{k_{\rm B}T}~( k_{\rm  B}=1)$.
  
   \item $[$double02$]$
 
@@ -3770,8 +3776,7 @@ An example of the file format is as follows.\\
 
  {\bf Type :} Double 
 
-{\bf Description :} The expected value of the doublon, 
-$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ ($N_{s}$ is the total number of sites).
+{\bf Description :} The expected value of the doublon $\sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$.
 
   \item $[$double05$]$
 

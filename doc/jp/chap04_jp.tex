@@ -335,7 +335,13 @@ $ gnuplot lattice.gp
 \verb|Jx = Jy = Jz = J|が代入されます。
 \verb|J|を指定した上で\verb|Jx|, \verb|Jy|, \verb|Jz|を指定した場合は$\HPhi$を終了します。
 
-\item \verb|h|, \verb|Gamma|, \verb|D|
+\item \verb|h|
+
+{\bf 形式 :} 実数
+
+{\bf 説明 :} 縦磁場を指定します。
+
+\item \verb|Gamma|, \verb|D|
 
 {\bf 形式 :} 実数
 
@@ -3709,7 +3715,7 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
   
  {\bf 形式 :} double型
 
-{\bf 説明 :} 逆温度$1/{k_{\rm B}T}$。
+{\bf 説明 :} 逆温度$1/{k_{\rm B}T} ~($ただし, $k_{\rm B} = 1)$。
  
   \item $[$double02$]$
 
@@ -3728,7 +3734,7 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
  {\bf 形式 :} double型 
 
 {\bf 説明 :} ダブロン
-$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N_s$はサイト数)。
+ダブロンの期待値$\sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ 。
 
   \item $[$double05$]$
 

@@ -42,12 +42,17 @@ Local terms
    (``Jx``, ``Jy``, ``Jz``) and the exchange coupling ``J`` are
    specified in the input file, :math:`{\mathcal H}\Phi` will stop.
 
-*   ``h``, ``Gamma``, ``D``
+*   ``h``
 
    **Type :** Real
 
-   **Description :** (Spin model) The longitudinal magnetic field,
-   transverse magnetic field, and the single-site anisotropy parameter
+   **Description :** The longitudinal magnetic field is specified with this parameter.
+
+*   ``Gamma``, ``D``
+
+   **Type :** Real
+
+   **Description :** (Spin model) The transverse magnetic field, and the single-site anisotropy parameter
    are specified with these parameters. The single-site anisotropy
    parameter is not available for ``model=SpinGCCMA``.
 
