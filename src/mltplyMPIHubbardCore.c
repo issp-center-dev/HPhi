@@ -331,6 +331,8 @@ double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI(
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI*/
 /**
@@ -500,6 +502,8 @@ firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isi
     }/*End of parallel region*/
   }/*myrank != origin*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI*/
 /**
@@ -525,6 +529,8 @@ double complex X_GC_child_CisAisCjtAku_Hubbard_MPI(
     org_isite4, org_ispin4, org_isite3, org_ispin3,
     org_isite1, org_ispin1, conj(tmp_V), X, tmp_v0, tmp_v1);
   return conj(dam_pr);
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjtAku_Hubbard_MPI*/
 /**
@@ -703,6 +709,8 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
     }
   }/*myrank != origin*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI*/
 /**
@@ -775,6 +783,8 @@ double complex X_GC_child_CisAis_Hubbard_MPI(
     }/*End of parallel region*/
   }/*if (org_isite1 + 1 <= X->Def.Nsite)*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAis_Hubbard_MPI*/
 /**
@@ -807,6 +817,8 @@ double complex X_GC_child_CisAjt_Hubbard_MPI(
     exitMPI(-1);
   }
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAjt_Hubbard_MPI*/
 /**
@@ -883,6 +895,8 @@ shared(tmp_v0, tmp_v1, list_1, org_isite1, org_ispin1, org_isite3, org_ispin3) \
     }/*if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite)*/
   }/*End of parallel region*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_CisAisCjtAjt_Hubbard_MPI*/
 /**
@@ -1095,6 +1109,8 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2)
     }
   }/*if (myrank != origin)*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_CisAjtCkuAlv_Hubbard_MPI*/
 /**
@@ -1282,6 +1298,8 @@ shared(v1buf, tmp_v1, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org_isite3,
     }/*End of parallel region*/
   }/*if (myrank != origin)*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_CisAjtCkuAku_Hubbard_MPI*/
 /**
@@ -1309,6 +1327,8 @@ double complex X_child_CisAisCjtAku_Hubbard_MPI(
     org_isite1, org_ispin1, conj(tmp_V), X, tmp_v0, tmp_v1);
   
   return conj(dam_pr);
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_CisAisCjtAku_Hubbard_MPI*/
 
@@ -1378,6 +1398,8 @@ double complex X_child_CisAis_Hubbard_MPI(
     }/*End of parallel region*/
   }/*if (org_isite1 + 1 <= X->Def.Nsite)*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_CisAis_Hubbard_MPI*/
 /**
@@ -1444,6 +1466,8 @@ double complex X_GC_Cis_MPI(
     dam_pr += conj(tmp_v1[j + 1]) * dmv;
   }
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_Cis_MPI*/
 /**
@@ -1506,6 +1530,8 @@ firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
     dam_pr += conj(tmp_v1[j + 1]) * dmv;
   }
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_Ajt_MPI*/
 /**
@@ -1583,6 +1609,8 @@ shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
     tmp_v0[ioff] += dmv;
   }/*for (j = 1; j <= idim_max_buf; j++)*/
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_Cis_MPI*/
 /**
@@ -1659,5 +1687,7 @@ shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
     tmp_v0[ioff] += dmv;
   }
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*double complex X_Ajt_MPI*/

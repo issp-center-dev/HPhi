@@ -117,6 +117,8 @@ firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
     }
   }/*End of parallel region*/
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*void GC_child_general_hopp_MPIdouble*/
 /**
@@ -197,6 +199,8 @@ double complex X_child_CisAjt_MPIdouble(
   else return 0.0;
   
   return 1.0;
+#else
+  return 0.0;
 #endif
 }/*void child_CisAjt_MPIdouble*/
 /**
@@ -318,6 +322,8 @@ double complex X_GC_child_general_hopp_MPIsingle(
     }/*if (! (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC))*/
   }/*End of parallel region*/
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
 /**
@@ -421,6 +427,8 @@ double complex X_child_general_hopp_MPIdouble(
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*void child_general_hopp_MPIdouble*/
 /**
@@ -551,6 +559,8 @@ double complex X_child_general_hopp_MPIsingle(
     }/*if (! (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC))*/
   }/*End of parallel region*/
   return (dam_pr);
+#else
+  return 0.0;
 #endif
 }/*double complex child_general_hopp_MPIsingle*/
 /**
@@ -638,5 +648,7 @@ double complex X_child_CisAjt_MPIsingle(
   else return 0;
 
   return 1;
+#else
+  return 0.0;
 #endif
 }/*double complex child_general_hopp_MPIsingle*/

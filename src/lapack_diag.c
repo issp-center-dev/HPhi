@@ -117,7 +117,7 @@ struct BindStruct *X//!<[inout]
     return -1;
   }
   for (i = 0; i < i_max; i++) {
-    fprintf(fp, " %d %.10lf \n", i, creal(v0[i]));
+    fprintf(fp, " %ld %.10lf \n", i, creal(v0[i]));
   }
   fclose(fp);
 
