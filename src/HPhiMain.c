@@ -313,7 +313,6 @@ int main(int argc, char* argv[]){
           FinalizeMPI(); 
         }
         StopTimer(5000);
-        return 0;
       break;
 
       case TPQCalc:
