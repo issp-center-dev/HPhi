@@ -467,13 +467,13 @@ static void VectorPotential(struct StdIntList *StdI) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
           StdI->At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift))
-            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
+            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / (StdI->tdump*StdI->tdump));
           Et[it][ii] = -StdI->VecPot[ii]
             * (
             (StdI->tshift - time) / (StdI->tdump*StdI->tdump) * cos(StdI->freq*(time - StdI->tshift))
               - StdI->freq* sin(StdI->freq*(time - StdI->tshift))
               )
-            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
+            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / (StdI->tdump*StdI->tdump));
         }
       }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
       StdI->PumpBody = 1;
