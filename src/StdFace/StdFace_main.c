@@ -467,13 +467,13 @@ static void VectorPotential(struct StdIntList *StdI) {
         time = StdI->dt*(double)it;
         for (ii = 0; ii < 3; ii++) {
           StdI->At[it][ii] = StdI->VecPot[ii] * cos(StdI->freq*(time - StdI->tshift))
-            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
+            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / (StdI->tdump*StdI->tdump));
           Et[it][ii] = -StdI->VecPot[ii]
             * (
             (StdI->tshift - time) / (StdI->tdump*StdI->tdump) * cos(StdI->freq*(time - StdI->tshift))
               - StdI->freq* sin(StdI->freq*(time - StdI->tshift))
               )
-            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / StdI->tdump*StdI->tdump);
+            * exp(-0.5* (time - StdI->tshift)*(time - StdI->tshift) / (StdI->tdump*StdI->tdump));
         }
       }/*for (it = 0; it < StdI->Lanczos_max; it++)*/
       StdI->PumpBody = 1;
@@ -880,9 +880,9 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->lattice, "****\0");
   strcpy(StdI->outputmode, "****\0");
   strcpy(StdI->CDataFileHead, "****\0");
-  strcpy(StdI->W90_geom, "****\0");
-  strcpy(StdI->W90_hr, "****\0");
-  StdI->W90_cutoff = NaN_d;
+  StdI->cutoff_t = NaN_d;
+  StdI->cutoff_u = NaN_d;
+  StdI->cutoff_j = NaN_d;
 #if defined(_HPhi)
   StdI->LargeValue = NaN_d;
   StdI->OmegaMax = NaN_d;
@@ -1204,6 +1204,7 @@ static void PrintNamelist(struct StdIntList *StdI){
   if (StdI->LHund == 1)fprintf(    fp, "            Hund  hund.def\n");
   if (StdI->LEx == 1)fprintf(      fp, "        Exchange  exchange.def\n");
   if (StdI->LPairLift == 1)fprintf(fp, "        PairLift  pairlift.def\n");
+  if (StdI->LPairHopp == 1)fprintf(fp, "         PairHop  pairhopp.def\n");
   if (StdI->Lintr == 1)fprintf(    fp, "        InterAll  interall.def\n");
   if (StdI->ioutputmode != 0) {
     fprintf(                       fp, "        OneBodyG  greenone.def\n");
@@ -1319,7 +1320,7 @@ static void PrintModPara(struct StdIntList *StdI)
 static void Print1Green(struct StdIntList *StdI)
 {
   FILE *fp;
-  int ngreen, igreen, store;
+  int ngreen, igreen, store, xkondo;
   int isite, jsite, ispin, jspin, SiMax, SjMax;
   int **greenindx;
   /*
@@ -1337,24 +1338,60 @@ static void Print1Green(struct StdIntList *StdI)
         ngreen = 0;
       }/*if (store == 1)*/
 
-      for (isite = 0; isite < StdI->nsite; isite++) {
+      if (strcmp(StdI->model, "kondo") == 0) xkondo = 2;
+      else xkondo = 1;
 
-        if (StdI->locspinflag[isite] == 0) SiMax = 1;
-        else SiMax = StdI->locspinflag[isite];
+      if (StdI->ioutputmode == 1) {
+        for (isite = 0; isite < StdI->NsiteUC*xkondo; isite++) {
 
-        for (ispin = 0; ispin <= SiMax; ispin++) {
-          for (jsite = 0; jsite < StdI->nsite; jsite++) {
+          if (isite >= StdI->NsiteUC) isite += StdI->nsite / 2;
 
-            if (StdI->locspinflag[jsite] == 0) SjMax = 1;
-            else SjMax = StdI->locspinflag[jsite];
+          if (StdI->locspinflag[isite] == 0) SiMax = 1;
+          else SiMax = StdI->locspinflag[isite];
 
-            for (jspin = 0; jspin <= SjMax; jspin++) {
+          for (ispin = 0; ispin <= SiMax; ispin++) {
+            for (jsite = 0; jsite < StdI->nsite; jsite++) {
 
-              if (isite != jsite &&
-                (StdI->locspinflag[isite] != 0 && StdI->locspinflag[jsite] != 0)) continue;
+              if (StdI->locspinflag[jsite] == 0) SjMax = 1;
+              else SjMax = StdI->locspinflag[jsite];
 
-              if (StdI->ioutputmode == 2 || ispin == jspin)
-              {
+              for (jspin = 0; jspin <= SjMax; jspin++) {
+
+                if (isite != jsite &&
+                  (StdI->locspinflag[isite] != 0 && StdI->locspinflag[jsite] != 0)) continue;
+
+                if (ispin == jspin){
+                  if (store == 1) {
+                    greenindx[ngreen][0] = isite;
+                    greenindx[ngreen][1] = ispin;
+                    greenindx[ngreen][2] = jsite;
+                    greenindx[ngreen][3] = jspin;
+                  }
+                  ngreen++;
+                }
+
+              }/*for (jspin = 0; jspin <= SjMax; jspin++)*/
+            }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+          }/*for (ispin = 0; ispin <= SiMax; ispin++)*/
+        }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      }/*if (StdI->ioutputmode == 1)*/
+      else {
+        for (isite = 0; isite < StdI->nsite; isite++) {
+
+          if (StdI->locspinflag[isite] == 0) SiMax = 1;
+          else SiMax = StdI->locspinflag[isite];
+
+          for (ispin = 0; ispin <= SiMax; ispin++) {
+            for (jsite = 0; jsite < StdI->nsite; jsite++) {
+
+              if (StdI->locspinflag[jsite] == 0) SjMax = 1;
+              else SjMax = StdI->locspinflag[jsite];
+
+              for (jspin = 0; jspin <= SjMax; jspin++) {
+
+                if (isite != jsite &&
+                  (StdI->locspinflag[isite] != 0 && StdI->locspinflag[jsite] != 0)) continue;
+
                 if (store == 1) {
                   greenindx[ngreen][0] = isite;
                   greenindx[ngreen][1] = ispin;
@@ -1362,13 +1399,13 @@ static void Print1Green(struct StdIntList *StdI)
                   greenindx[ngreen][3] = jspin;
                 }
                 ngreen++;
-              }
 
-            }/*for (jspin = 0; jspin <= SjMax; jspin++)*/
-          }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
-        }/*for (ispin = 0; ispin <= SiMax; ispin++)*/
-      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
-    }
+              }/*for (jspin = 0; jspin <= SjMax; jspin++)*/
+            }/*for (jsite = 0; jsite < StdI->nsite; jsite++)*/
+          }/*for (ispin = 0; ispin <= SiMax; ispin++)*/
+        }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      }/*if (StdI->ioutputmode == 2)*/
+    }/*if (StdI->ioutputmode != 0)*/
 
     fp = fopen("greenone.def", "w");
     fprintf(fp, "===============================\n");
@@ -1398,7 +1435,7 @@ static void Print1Green(struct StdIntList *StdI)
 */
 static void Print2Green(struct StdIntList *StdI) {
   FILE *fp;
-  int ngreen, store, igreen;
+  int ngreen, store, igreen, xkondo;
   int site1, site2, site3, site4;
   int spin1, spin2, spin3, spin4;
   int S1Max, S2Max, S3Max, S4Max;
@@ -1417,7 +1454,12 @@ static void Print2Green(struct StdIntList *StdI) {
         ngreen = 0;
       }/*if (store == 1)*/
 
-      for (site1 = 0; site1 < StdI->nsite; site1++) {
+      if (strcmp(StdI->model, "kondo") == 0) xkondo = 2;
+      else xkondo = 1;
+
+      for (site1 = 0; site1 < StdI->NsiteUC*xkondo; site1++) {
+
+        if (site1 >= StdI->NsiteUC) site1 += StdI->nsite / 2;
 
         if (StdI->locspinflag[site1] == 0) S1Max = 1;
         else S1Max = StdI->locspinflag[site1];
@@ -1616,12 +1658,6 @@ static void CheckOutputMode(struct StdIntList *StdI)
 static void CheckModPara(struct StdIntList *StdI)
 {
 
-  if (strcmp(StdI->CDataFileHead, "****") == 0) {
-    strcpy(StdI->CDataFileHead, "zvo\0");
-    fprintf(stdout, "    CDataFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CDataFileHead);
-  }
-  else fprintf(stdout, "    CDataFileHead = %-s\n", StdI->CDataFileHead);
-
   /**/
 #if defined(_HPhi)
   StdFace_PrintVal_i("Lanczos_max", &StdI->Lanczos_max, 2000);
@@ -1739,6 +1775,14 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
    Coulomb INTRA
   */
+  for (kintr = 0; kintr < StdI->NCintra; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NCintra; jintr++) 
+      if(StdI->CintraIndx[jintr][0] == StdI->CintraIndx[kintr][0])
+      {
+        StdI->Cintra[kintr] += StdI->Cintra[jintr];
+        StdI->Cintra[jintr] = 0.0;
+      }
+  }
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NCintra; kintr++) {
     if (fabs(StdI->Cintra[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1765,6 +1809,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
   Coulomb INTER
   */
+  for (kintr = 0; kintr < StdI->NCinter; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NCinter; jintr++)
+      if (
+        (    StdI->CinterIndx[jintr][0] == StdI->CinterIndx[kintr][0]
+          && StdI->CinterIndx[jintr][1] == StdI->CinterIndx[kintr][1])
+        ||
+        (    StdI->CinterIndx[jintr][0] == StdI->CinterIndx[kintr][1]
+          && StdI->CinterIndx[jintr][1] == StdI->CinterIndx[kintr][0])
+        )
+      {
+        StdI->Cinter[kintr] += StdI->Cinter[jintr];
+        StdI->Cinter[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NCinter; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NCinter; kintr++) {
     if (fabs(StdI->Cinter[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1791,6 +1849,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
   Hund
   */
+  for (kintr = 0; kintr < StdI->NHund; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NHund; jintr++)
+      if (
+        (StdI->HundIndx[jintr][0] == StdI->HundIndx[kintr][0]
+          && StdI->HundIndx[jintr][1] == StdI->HundIndx[kintr][1])
+        ||
+        (StdI->HundIndx[jintr][0] == StdI->HundIndx[kintr][1]
+          && StdI->HundIndx[jintr][1] == StdI->HundIndx[kintr][0])
+        )
+      {
+        StdI->Hund[kintr] += StdI->Hund[jintr];
+        StdI->Hund[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NHund; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NHund; kintr++) {
     if (fabs(StdI->Hund[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1817,6 +1889,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
   Exchange
   */
+  for (kintr = 0; kintr < StdI->NEx; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NEx; jintr++)
+      if (
+        (StdI->ExIndx[jintr][0] == StdI->ExIndx[kintr][0]
+          && StdI->ExIndx[jintr][1] == StdI->ExIndx[kintr][1])
+        ||
+        (StdI->ExIndx[jintr][0] == StdI->ExIndx[kintr][1]
+          && StdI->ExIndx[jintr][1] == StdI->ExIndx[kintr][0])
+        )
+      {
+        StdI->Ex[kintr] += StdI->Ex[jintr];
+        StdI->Ex[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NEx; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NEx; kintr++) {
     if (fabs(StdI->Ex[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1843,6 +1929,20 @@ static void PrintInteractions(struct StdIntList *StdI)
   /*
     PairLift
   */
+  for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NPairLift; jintr++)
+      if (
+        (StdI->PLIndx[jintr][0] == StdI->PLIndx[kintr][0]
+          && StdI->PLIndx[jintr][1] == StdI->PLIndx[kintr][1])
+        ||
+        (StdI->PLIndx[jintr][0] == StdI->PLIndx[kintr][1]
+          && StdI->PLIndx[jintr][1] == StdI->PLIndx[kintr][0])
+        )
+      {
+        StdI->PairLift[kintr] += StdI->PairLift[jintr];
+        StdI->PairLift[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NPairLift; kintr++)*/
   nintr0 = 0;
   for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
     if (fabs(StdI->PairLift[kintr]) > 0.000001) nintr0 = nintr0 + 1;
@@ -1853,9 +1953,9 @@ static void PrintInteractions(struct StdIntList *StdI)
   if (StdI->LPairLift == 1) {
     fp = fopen("pairlift.def", "w");
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "NExchange %10d\n", nintr0);
+    fprintf(fp, "NPairLift %10d\n", nintr0);
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "====== ExchangeCoupling coupling ============\n");
+    fprintf(fp, "====== Pair-Lift term ============\n");
     fprintf(fp, "=============================================\n");
     for (kintr = 0; kintr < StdI->NPairLift; kintr++) {
       if (fabs(StdI->PairLift[kintr]) > 0.000001)
@@ -1864,7 +1964,47 @@ static void PrintInteractions(struct StdIntList *StdI)
     }
     fflush(fp);
     fclose(fp);
-    fprintf(stdout, "    exchange.def is written.\n");
+    fprintf(stdout, "    pairlift.def is written.\n");
+  }
+  /*
+  PairHopp
+  */
+  for (kintr = 0; kintr < StdI->NPairHopp; kintr++) {
+    for (jintr = kintr + 1; jintr < StdI->NPairHopp; jintr++)
+      if (
+        (StdI->PHIndx[jintr][0] == StdI->PHIndx[kintr][0]
+          && StdI->PHIndx[jintr][1] == StdI->PHIndx[kintr][1])
+        ||
+        (StdI->PHIndx[jintr][0] == StdI->PHIndx[kintr][1]
+          && StdI->PHIndx[jintr][1] == StdI->PHIndx[kintr][0])
+        )
+      {
+        StdI->PairHopp[kintr] += StdI->PairHopp[jintr];
+        StdI->PairHopp[jintr] = 0.0;
+      }
+  }/*for (kintr = 0; kintr < StdI->NPairHopp; kintr++)*/
+  nintr0 = 0;
+  for (kintr = 0; kintr < StdI->NPairHopp; kintr++) {
+    if (fabs(StdI->PairHopp[kintr]) > 0.000001) nintr0 = nintr0 + 1;
+  }
+  if (nintr0 == 0 || StdI->lBoost == 1) StdI->LPairHopp = 0;
+  else StdI->LPairHopp = 1;
+
+  if (StdI->LPairHopp == 1) {
+    fp = fopen("pairhopp.def", "w");
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "NPairHopp %10d\n", nintr0);
+    fprintf(fp, "=============================================\n");
+    fprintf(fp, "====== Pair-Hopping term ============\n");
+    fprintf(fp, "=============================================\n");
+    for (kintr = 0; kintr < StdI->NPairHopp; kintr++) {
+      if (fabs(StdI->PairHopp[kintr]) > 0.000001)
+        fprintf(fp, "%5d %5d %25.15f\n",
+          StdI->PHIndx[kintr][0], StdI->PHIndx[kintr][1], StdI->PairHopp[kintr]);
+    }
+    fflush(fp);
+    fclose(fp);
+    fprintf(stdout, "    pairhopp.def is written.\n");
   }
   /*
    InterAll
@@ -2046,7 +2186,7 @@ void StdFace_main(
 
   StdI = (struct StdIntList *)malloc(sizeof(struct StdIntList));
 
-  fprintf(stdout, "\n######  Standard Intarface Mode STARTS  ######\n");
+  fprintf(stdout, "\n######  Input Parameter of Standard Intarface  ######\n");
   if ((fp = fopen(fname, "r")) == NULL) {
     fprintf(stdout, "\n  ERROR !  Cannot open input file %s !\n\n", fname);
     StdFace_exit(-1);
@@ -2087,6 +2227,9 @@ void StdFace_main(
     else if (strcmp(keyword, "a2h") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][2]);
     else if (strcmp(keyword, "a2l") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][1]);
     else if (strcmp(keyword, "a2w") == 0) StoreWithCheckDup_i(keyword, value, &StdI->box[2][0]);
+    else if (strcmp(keyword, "cutoff_j") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_j);
+    else if (strcmp(keyword, "cutoff_t") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_t);
+    else if (strcmp(keyword, "cutoff_u") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_u);
     else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI->D[2][2]);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Gamma);
     else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI->h);
@@ -2223,9 +2366,6 @@ void StdFace_main(
     else if (strcmp(keyword, "wx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][0]);
     else if (strcmp(keyword, "wy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][1]);
     else if (strcmp(keyword, "wz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->direct[0][2]);
-    else if (strcmp(keyword, "w90_cutoff") == 0) StoreWithCheckDup_d(keyword, value, &StdI->W90_cutoff);
-    else if (strcmp(keyword, "w90_geom") == 0) StoreWithCheckDup_s(keyword, value, StdI->W90_geom);
-    else if (strcmp(keyword, "w90_hr") == 0) StoreWithCheckDup_s(keyword, value, StdI->W90_hr);
     else if (strcmp(keyword, "2sz") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Sz2);
 
 #if defined(_HPhi)
@@ -2306,9 +2446,18 @@ void StdFace_main(
   }
   fflush(fp);
   fclose(fp);
+  fprintf(stdout, "\n");
+  fprintf(stdout, "#######  Construct Model  #######\n");
+  fprintf(stdout, "\n");
   /*
   Check the model
   */
+  if (strcmp(StdI->CDataFileHead, "****") == 0) {
+    strcpy(StdI->CDataFileHead, "zvo\0");
+    fprintf(stdout, "    CDataFileHead = %-12s######  DEFAULT VALUE IS USED  ######\n", StdI->CDataFileHead);
+  }
+  else fprintf(stdout, "    CDataFileHead = %-s\n", StdI->CDataFileHead);
+  /**/
   StdI->lGC = 0;
   StdI->lBoost = 0;
   if (strcmp(StdI->model, "fermionhubbard") == 0
@@ -2456,12 +2605,12 @@ void StdFace_main(
 
 @section sec_stan_proc Overall procedure
 
-If you want to create new lattice file, do as these files.
+If you want to create a new lattice file, the following procedures are needed.
 
--# Copy one of laattice files such as Kagome.c 
+-# Copy one of lattice files such as Kagome.c 
    (Probably the most similar one) and rename it.
 -# @ref sec_lattice
--# Add that function in the header file, StdFace_ModelUtil.h
+-# Add the function in the header file, StdFace_ModelUtil.h.
 -# Add entry at
    @dontinclude StdFace_main.c
    @skip StdFace\_main
@@ -2473,29 +2622,29 @@ If you want to create new lattice file, do as these files.
 <HR> 
 @section sec_lattice Modify lattice model file
 
-To create new lattice file, please modify the following part
+To create a new lattice file, please modify the following part
 (Kagome.c as an example):
 
 @dontinclude Kagome.c
 Define function as
 @skip StdFace\_Kagome(
 @until {
-Lattice parameter used only in geometry.dat and lattice.gp
+Lattice parameters are used only in geometry.dat and lattice.gp
 @skip StdFace\_PrintVal\_d
 @until Ly
-these are unit lattice vectors.\n
+These are unit lattice vectors.\n
 Just call this function to initialize all lattice related parameters
 @skipline StdFace\_InitSite
-where "2" indicates 2D
+where "2" indicates 2D.
 @skip tau
 @until tau\[2\]\[0\]
-These are the fractional coordinate of internal sites.
+These are the fractional coordinates of internal sites.
 Then set parameters of Hamiltonian
 @skip StdFace\_NotUsed\_J
 @until @@
-to determine the default value of them and unused parameters.
-For more details, please see the description of each functions.
-Then Compute the upper limit of the number of Transfer & Interaction and malloc them.
+to determine the default values of them and unused parameters.
+For more details, please see the description of each function.
+Then compute the upper limit of the number of Transfer & Interaction and malloc them.
 @skip >>
 @until <<
 Please estimate the number of bonds per site.
@@ -2508,9 +2657,7 @@ Probably, it is not necessary to modify this part.
 The non-local term is as follows:
 @skip >>
 @until <<
-For more details, please see each functions.
-
-StdFace_Kagome_Boost()? Forget!!
+For more details, please see each function.
 
 @page page_addstandardval Add new input variable into Standard mode
 

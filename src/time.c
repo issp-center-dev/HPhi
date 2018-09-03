@@ -258,4 +258,41 @@ void OutputTimer(struct BindStruct *X) {
 
 /**
 @page page_time Compute elapsed time for new functions
+
+ Using StartTimer and StopTimer functions defined in time.c, we can measure the elapsed time for computation.
+
+ 1. Define an index and an output message by using StampTime function in time.c.
+ For example, the index and the output message for the elapsed time of TPQ calculation is defined as follows.
+ ```
+       StampTime(fp, "  CalcByTPQ", 3000);
+ ```
+
+ 2. Include CalcTime.h in the target source file.
+
+ 3. Set StartTimer and StopTimer functions in the region where you want to measure the time.
+    It is noted that both functions must have the same index defined in time.c.
+ For example, the elapsed time of TPQ calculation can be measured as follows.
+ ```
+       case TPQCalc:
+        StartTimer(3000);
+        if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
+          FinalizeMPI();
+          StopTimer(3000);
+          return 0;
+        }
+        StopTimer(3000);
+      break;
+
+ ```
+
+When above procedures were done, after calculation, you can see the elapsed time in CalcTimer.dat file as follows. The time unit is second.
+
+```
+ All                                                [0000]     37.94046
+  sz                                               [1000]      0.00058
+  diagonalcalc                                     [2000]      0.00046
+  CalcByTPQ                                        [3000]     37.93129
+```
+
+
 */

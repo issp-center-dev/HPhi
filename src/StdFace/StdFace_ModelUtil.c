@@ -718,7 +718,7 @@ void StdFace_InitSite(
       * StdI->box[1][(ii + 2) % 3]
       * StdI->box[2][(ii + 1) % 3];
   }
-  printf("         Number of Cell = %d\n", abs(StdI->NCell));
+  printf("   Number of Cell = %d\n", abs(StdI->NCell));
   if (StdI->NCell == 0) {
     StdFace_exit(-1);
   }
@@ -1156,33 +1156,36 @@ void StdFace_InputHopp(
 */
 void StdFace_PrintGeometry(struct StdIntList *StdI) {
   FILE *fp;
-  int isite, iCell;
+  int isite, iCell, ii;
 
   fp = fopen("geometry.dat", "w");
 
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[0][0], StdI->direct[0][1], StdI->direct[0][2]);
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[1][0], StdI->direct[1][1], StdI->direct[1][2]);
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->direct[2][0], StdI->direct[2][1], StdI->direct[2][2]);
-  fprintf(fp, "%25.15e %25.15e %25.15e\n", StdI->phase[0], StdI->phase[1], StdI->phase[2]);
-  fprintf(fp, "%d %d %d\n", StdI->box[0][0], StdI->box[0][1], StdI->box[0][2]);
-  fprintf(fp, "%d %d %d\n", StdI->box[1][0], StdI->box[1][1], StdI->box[1][2]);
-  fprintf(fp, "%d %d %d\n", StdI->box[2][0], StdI->box[2][1], StdI->box[2][2]);
+  for (ii = 0; ii < 3; ii++) 
+    fprintf(fp, "%25.15e %25.15e %25.15e\n", 
+      StdI->direct[ii][0], StdI->direct[ii][1], StdI->direct[ii][2]);
+  fprintf(fp, "%25.15e %25.15e %25.15e\n", 
+    StdI->phase[0], StdI->phase[1], StdI->phase[2]);
+  for (ii = 0; ii < 3; ii++)
+    fprintf(fp, "%d %d %d\n",
+      StdI->box[ii][0], StdI->box[ii][1], StdI->box[ii][2]);
 
   for (iCell = 0; iCell < StdI->NCell; iCell++) {
     for (isite = 0; isite < StdI->NsiteUC; isite++) {
-      fprintf(fp, "%25.15e %25.15e %25.15e\n",
-        StdI->tau[isite][0] + (double)StdI->Cell[iCell][0],
-        StdI->tau[isite][1] + (double)StdI->Cell[iCell][1],
-        StdI->tau[isite][2] + (double)StdI->Cell[iCell][2]);
+      fprintf(fp, "%d %d %d %d\n",
+        StdI->Cell[iCell][0] - StdI->Cell[0][0],
+        StdI->Cell[iCell][1] - StdI->Cell[0][1],
+        StdI->Cell[iCell][2] - StdI->Cell[0][2],
+        isite);
     }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
   }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
   if (strcmp(StdI->model, "kondo") == 0) {
     for (iCell = 0; iCell < StdI->NCell; iCell++) {
       for (isite = 0; isite < StdI->NsiteUC; isite++) {
-        fprintf(fp, "%25.15e %25.15e %25.15e\n",
-          StdI->tau[isite][0] + (double)StdI->Cell[iCell][0],
-          StdI->tau[isite][1] + (double)StdI->Cell[iCell][1],
-          StdI->tau[isite][2] + (double)StdI->Cell[iCell][2]);
+        fprintf(fp, "%d %d %d %d\n",
+          StdI->Cell[iCell][0] - StdI->Cell[0][0],
+          StdI->Cell[iCell][1] - StdI->Cell[0][1],
+          StdI->Cell[iCell][2] - StdI->Cell[0][2],
+          isite + StdI->NsiteUC);
       }/*for (isite = 0; isite < StdI->NsiteUC; isite++)*/
     }/* for (iCell = 0; iCell < StdI->NCell; iCell++)*/
   }
@@ -1279,6 +1282,15 @@ void StdFace_MallocInteractions(
     StdI->PLIndx[ii] = (int *)malloc(sizeof(int) * 2);
   }
   StdI->NPairLift = 0;
+  /**@brief
+  (7) PairHopp StdIntList::PairHopp, StdIntList::PHIndx
+  */
+  StdI->PHIndx = (int **)malloc(sizeof(int*) * nintrMax);
+  StdI->PairHopp = (double *)malloc(sizeof(double) * nintrMax);
+  for (ii = 0; ii < nintrMax; ii++) {
+    StdI->PHIndx[ii] = (int *)malloc(sizeof(int) * 2);
+  }
+  StdI->NPairHopp = 0;
 }/*void StdFace_MallocInteractions*/
 #if defined(_mVMC)
 /**
@@ -1639,6 +1651,7 @@ void PrintJastrow(struct StdIntList *StdI) {
   int dCell, iCell;//, jCell, dCellv[3];
   int **Jastrow;
   double complex Cphase;
+  double dR[3];
 
   Jastrow = (int **)malloc(sizeof(int*) * StdI->nsite);
   for (isite = 0; isite < StdI->nsite; isite++) 
@@ -1734,7 +1747,7 @@ void PrintJastrow(struct StdIntList *StdI) {
         StdFace_FindSite(StdI,
           0, 0, 0,
           -StdI->Cell[dCell][0], -StdI->Cell[dCell][1], -StdI->Cell[dCell][2],
-          0, 0, &isite, &jsite, &Cphase);
+          0, 0, &isite, &jsite, &Cphase, dR);
         if (strcmp(StdI->model, "kondo") == 0) jsite += -StdI->NCell * StdI->NsiteUC;
         iCell = jsite / StdI->NsiteUC;
         if (iCell < dCell) {
@@ -1763,7 +1776,7 @@ void PrintJastrow(struct StdIntList *StdI) {
               StdFace_FindSite(StdI,
                 StdI->Cell[iCell][0], StdI->Cell[iCell][1], StdI->Cell[iCell][2],
                 StdI->Cell[dCell][0], StdI->Cell[dCell][1], StdI->Cell[dCell][2],
-                isiteUC, jsiteUC, &isite, &jsite, &Cphase);
+                isiteUC, jsiteUC, &isite, &jsite, &Cphase, dR);
 
               Jastrow[isite][jsite] = NJastrow;
               Jastrow[jsite][isite] = NJastrow;

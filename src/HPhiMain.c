@@ -78,6 +78,7 @@
   - @ref page_variable
   - @ref page_setmem
   - @ref page_cmake
+  - @ref page_addcalcmod
   - @ref page_addmodpara
   - @ref page_addexpert
   - @ref page_time
@@ -119,13 +120,13 @@
 
 @page page_cmake Add new source-file, executable, scripts (handle CMake)
 
-HPhi uses CMake for the building system.
+To build HPhi, CMake is required.
 We have to modify the CMake configuration file when we add new sources, executables, scripts.
 
 @section sec_newsource New source code
 
-When we add new source code for the HPhi program, we have to add the file-name
-into the following part of @c src/CMakeLists.txt
+When we add a new source code, we have to add the file-name
+into the following part of @c src/CMakeLists.txt.
 
 \code{cmake}
 set(SOURCES source1.c source2.c ...)
@@ -133,7 +134,7 @@ set(SOURCES source1.c source2.c ...)
 
 @section sec_newexecutable New executable
 
-When we add new executable ("myprog" in this case),
+When we add a new executable ("myprog" in this case),
 we have to add following command in @c src/CMakeLists.txt.
 
 \code{CMake}
@@ -148,7 +149,7 @@ install(TARGETS myprog RUNTIME DESTINATION bin)
 
 @section sec_newscript New script
 
-When we add new script written in python, sh, etc. ("myshell" in this case)
+When we add a new script written in python, sh, etc. ("myscript.sh" in this case)
 into @c tool/, we have to add the following command in @c tool/CMakeLists.txt.
 
 \code{CMake}
@@ -304,17 +305,12 @@ int main(int argc, char* argv[]){
 
       case FullDiag:
         StartTimer(5000);
-        if (nproc != 1) {
-          fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
+        if (X.Bind.Def.iFlgScaLAPACK ==0 && nproc != 1) {
+          fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
           FinalizeMPI();
-          StopTimer(5000);
-          return 0;
         }
         if (CalcByFullDiag(&X) != TRUE) {
-          FinalizeMPI();
-          StopTimer(5000);
-          return 0;
-
+          FinalizeMPI(); 
         }
         StopTimer(5000);
       break;

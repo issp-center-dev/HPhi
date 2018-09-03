@@ -1,0 +1,5382 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017, H.Togo
+# This file is distributed under the same license as the HΦtest package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HΦtest 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 13:37+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.1\n"
+
+#: ../../filespecification/error_en.rst:2
+msgid "Error messages"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:4
+msgid "``ERROR ! Unsupported Keyword !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:6
+msgid "The program stops because unsupported keyword is specified."
+msgstr ""
+
+#: ../../filespecification/error_en.rst:8
+msgid "``\"ERROR !  Keyword`` *keyword* ``is duplicated !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:10
+msgid "The program stops because a parameter is specified twice."
+msgstr ""
+
+#: ../../filespecification/error_en.rst:12
+msgid "``ERROR ! Unsupported Solver :`` *solver*"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:14
+msgid "``ERROR ! Unsupported Model :`` *model*"
+msgstr ""
+
+#: ../../filespecification/error_en.rst
+msgid "``Sorry, this system is unsupported in the STANDARD MODE...``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst
+msgid "``Please use the EXPART MODE, or write a NEW FUNCTION and post it us.``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:19
+msgid ""
+"The program stops because unsupported parameter for ``method``, "
+"``model``, or ``lattice`` is specified."
+msgstr ""
+
+#: ../../filespecification/error_en.rst:22
+#: ../../filespecification/error_en.rst:36
+msgid "``ERROR ! abs(2 * Sz) > nsite in Hubbard model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:24
+msgid "``ERROR ! Nelec > 2 * nsite in Hubbard model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:26
+msgid "``ERROR ! (nelec + 2 * Sz) % 2 != 0 in Hubbard model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:28
+msgid "``ERROR ! nelec <= nsite && 2 * |Sz| > nelec in Hubbard model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:30
+msgid ""
+"``ERROR ! nelec > nsite && 2 * |Sz| > 2 * nsite - nelec in Hubbard model "
+"!``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:32
+msgid "``ERROR ! abs(2 * Sz) > nsite in Spin model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:34
+msgid "``ERROR ! (nsite + 2 * Sz) % 2 != 0 in Spin model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:38
+msgid "``ERROR ! Nelec_cond / 2 + Nelec_loc > nsite in Kondo model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:40
+msgid "``ERROR ! (nelec_cond + nelec_loc + 2 * Sz) % 2 != 0 in Kondo model !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:42
+msgid ""
+"``ERROR ! nelec_cond <= nsite / 2 && 2 * |Sz| > nelec_cond + nelec_loc "
+"...``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:44
+msgid "``ERROR ! nelec_cond > nsite / 2 && abs(Sz2) > nsite / 2 * 3 - nelec...``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:46
+msgid ""
+"In the calculation of the canonical ensemble, there are some irrelevant "
+"combinations of the number of electrons, the number of sites, and the "
+"total spin moment ( the number of electrons is larger twice than the "
+"number of sites); If these situations are detected, the program will "
+"stop."
+msgstr ""
+
+#: ../../filespecification/error_en.rst
+msgid "``Check !``\\ *keyword* ``is SPECIFIED but will NOT be USED.``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst
+msgid "``Please COMMENT-OUT this line``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst
+msgid "``or check this input is REALLY APPROPRIATE for your purpose !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:56
+msgid ""
+"Because an unnecessary parameter is specified, the program suggests "
+"checking the input file. If that parameter is actually unnecessary, "
+"please delete or comment out this line."
+msgstr ""
+
+#: ../../filespecification/error_en.rst:60
+msgid "``ERROR !``\\ *keyword*\\ ``is NOT specified !``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:62
+msgid "The program stops because a prerequisite keyword is not specified."
+msgstr ""
+
+#: ../../filespecification/error_en.rst:64
+msgid "*keyword* ``=`` *value* ``######  DEFAULT VALUE IS USED  ######``"
+msgstr ""
+
+#: ../../filespecification/error_en.rst:66
+msgid ""
+"This is not an error message. The program states that the default value "
+"is used because this keyword is not specified."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:6
+msgid "Input files for *Expert* mode"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:8
+msgid ""
+"In this section, the details of the input files for the expert mode are "
+"explained. The input files are categorized according to the following "
+"four parts."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:14
+msgid "(1) List:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:13
+msgid ""
+"This file is a list of the input file names with the keywords. Each "
+"keyword is fixed, but the file names can be determined freely."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:23
+msgid "(2) Basic parameters:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"The following input files give the basic parameters. The types of input "
+"files are determined by the keywords."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**CalcMod**: Set the parameters for the calculation modes."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**ModPara**: Set the parameters for the basic parameters, such as site "
+"number, electron number, and Lanczos step."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**LocSpin**: Set the location of the local spin (used only in the Kondo "
+"model)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:52
+msgid "(3) Hamiltonian:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"The Hamiltonian for :math:`{\\mathcal H}\\Phi` is denoted by the format "
+"of the interactions for the electron system. The types of interaction are"
+" determined by the following keywords."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Trans**: The one-body part, "
+":math:`c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**InterAll**: The general two-body interactions, :math:`c_ {i "
+"\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k \\sigma_3}^{\\dagger}c_{l "
+"\\sigma_4}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"We can set the interactions that are frequently used by the following "
+"keywords."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**CoulombIntra**: On-site Coulomb interactions, :math:`n_ {i "
+"\\uparrow}n_{i \\downarrow}` (:math:`n_{i "
+"\\sigma}=c_{i\\sigma}^{\\dagger}c_{i\\sigma}`)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**CoulombInter**: Off-site Coulomb interactions, :math:`n_ {i}n_{j}` "
+"(:math:`n_i=n_{i\\uparrow}+n_{i\\downarrow}`)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Hund**: Hund couplings, "
+":math:`n_{i\\uparrow}n_{j\\uparrow}+n_{i\\downarrow}n_{j\\downarrow}`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**PairHop**: Pair hopping couplings, :math:`c_ {i "
+"\\uparrow}^{\\dagger}c_{j\\uparrow}c_{i \\downarrow}^{\\dagger}c_{j  "
+"\\downarrow}`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Exchange**: Exchange couplings, :math:`c_ {i "
+"\\uparrow}^{\\dagger}c_{j\\uparrow}c_{j \\downarrow}^{\\dagger}c_{i  "
+"\\downarrow}`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Ising**: Ising interactions, :math:`S_i~z S_j~z`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**PairLift**: PairLift couplings, :math:`c_ {i "
+"\\uparrow}^{\\dagger}c_{i\\downarrow}c_{j \\uparrow}^{\\dagger}c_{j "
+"\\downarrow}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:61
+msgid "(4) Output:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "The target for the output is determined."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**OneBodyG** : One-body Green’s functions, :math:`\\langle "
+"c^{\\dagger}_{i\\sigma_1}c_{j\\sigma_2}\\rangle`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**TwoBodyG** : Two-body Green’s functions, :math:`\\langle "
+"c^{\\dagger}_{i\\sigma_1}c_{j\\sigma_2}c^{\\dagger}_{k "
+"\\sigma_3}c_{l\\sigma_4}\\rangle`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:66
+msgid "List file for the input files"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:68
+msgid ""
+"This file determines the input filenames, which are correlated with the "
+"keywords. The file format is as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:81
+#: ../../filespecification/expertmode_en.rst:161
+#: ../../filespecification/expertmode_en.rst:348
+#: ../../filespecification/expertmode_en.rst:699
+#: ../../filespecification/expertmode_en.rst:806
+#: ../../filespecification/expertmode_en.rst:934
+#: ../../filespecification/expertmode_en.rst:1058
+#: ../../filespecification/expertmode_en.rst:1149
+#: ../../filespecification/expertmode_en.rst:1241
+#: ../../filespecification/expertmode_en.rst:1333
+#: ../../filespecification/expertmode_en.rst:1432
+#: ../../filespecification/expertmode_en.rst:1531
+#: ../../filespecification/expertmode_en.rst:1625
+#: ../../filespecification/expertmode_en.rst:1732
+#: ../../filespecification/expertmode_en.rst:1850
+#: ../../filespecification/expertmode_en.rst:1954
+#: ../../filespecification/expertmode_en.rst:2075
+#: ../../filespecification/expertmode_en.rst:2188
+#: ../../filespecification/expertmode_en.rst:2258
+#: ../../filespecification/expertmode_en.rst:2379
+#: ../../filespecification/outputfiles_en.rst:36
+#: ../../filespecification/outputfiles_en.rst:98
+#: ../../filespecification/outputfiles_en.rst:172
+#: ../../filespecification/outputfiles_en.rst:227
+#: ../../filespecification/outputfiles_en.rst:285
+#: ../../filespecification/outputfiles_en.rst:335
+#: ../../filespecification/outputfiles_en.rst:380
+#: ../../filespecification/outputfiles_en.rst:597
+#: ../../filespecification/outputfiles_en.rst:702
+#: ../../filespecification/outputfiles_en.rst:807
+#: ../../filespecification/outputfiles_en.rst:874
+#: ../../filespecification/outputfiles_en.rst:956
+#: ../../filespecification/outputfiles_en.rst:1051
+#: ../../filespecification/outputfiles_en.rst:1161
+#: ../../filespecification/outputfiles_en.rst:1222
+#: ../../filespecification/outputfiles_en.rst:1292
+#: ../../filespecification/outputfiles_en.rst:1388
+#: ../../filespecification/outputfiles_en.rst:1487
+#: ../../filespecification/outputfiles_en.rst:1549
+#: ../../filespecification/outputfiles_en.rst:1638
+#: ../../filespecification/outputfiles_en.rst:1724
+#: ../../filespecification/outputfiles_en.rst:1809
+#: ../../filespecification/outputfiles_en.rst:1882
+#: ../../filespecification/outputfiles_en.rst:1931
+#: ../../filespecification/outputfiles_en.rst:1991
+#: ../../filespecification/outputfiles_en.rst:2041
+#: ../../filespecification/outputfiles_en.rst:2116
+msgid "File format"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:83
+msgid "[string01][string02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:86
+#: ../../filespecification/expertmode_en.rst:168
+#: ../../filespecification/expertmode_en.rst:361
+#: ../../filespecification/expertmode_en.rst:712
+#: ../../filespecification/expertmode_en.rst:819
+#: ../../filespecification/expertmode_en.rst:948
+#: ../../filespecification/expertmode_en.rst:1071
+#: ../../filespecification/expertmode_en.rst:1162
+#: ../../filespecification/expertmode_en.rst:1254
+#: ../../filespecification/expertmode_en.rst:1346
+#: ../../filespecification/expertmode_en.rst:1445
+#: ../../filespecification/expertmode_en.rst:1544
+#: ../../filespecification/expertmode_en.rst:1638
+#: ../../filespecification/expertmode_en.rst:1745
+#: ../../filespecification/expertmode_en.rst:1864
+#: ../../filespecification/expertmode_en.rst:1967
+#: ../../filespecification/expertmode_en.rst:2089
+#: ../../filespecification/expertmode_en.rst:2200
+#: ../../filespecification/expertmode_en.rst:2278
+#: ../../filespecification/expertmode_en.rst:2399
+#: ../../filespecification/outputfiles_en.rst:43
+#: ../../filespecification/outputfiles_en.rst:109
+#: ../../filespecification/outputfiles_en.rst:180
+#: ../../filespecification/outputfiles_en.rst:236
+#: ../../filespecification/outputfiles_en.rst:294
+#: ../../filespecification/outputfiles_en.rst:344
+#: ../../filespecification/outputfiles_en.rst:389
+#: ../../filespecification/outputfiles_en.rst:608
+#: ../../filespecification/outputfiles_en.rst:720
+#: ../../filespecification/outputfiles_en.rst:815
+#: ../../filespecification/outputfiles_en.rst:885
+#: ../../filespecification/outputfiles_en.rst:968
+#: ../../filespecification/outputfiles_en.rst:1064
+#: ../../filespecification/outputfiles_en.rst:1169
+#: ../../filespecification/outputfiles_en.rst:1232
+#: ../../filespecification/outputfiles_en.rst:1304
+#: ../../filespecification/outputfiles_en.rst:1401
+#: ../../filespecification/outputfiles_en.rst:1494
+#: ../../filespecification/outputfiles_en.rst:1560
+#: ../../filespecification/outputfiles_en.rst:1650
+#: ../../filespecification/outputfiles_en.rst:1731
+#: ../../filespecification/outputfiles_en.rst:1816
+#: ../../filespecification/outputfiles_en.rst:1999
+#: ../../filespecification/outputfiles_en.rst:2057
+#: ../../filespecification/outputfiles_en.rst:2128
+msgid "Parameters"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:88
+#: ../../filespecification/expertmode_en.rst:170
+#: ../../filespecification/expertmode_en.rst:363
+#: ../../filespecification/expertmode_en.rst:714
+#: ../../filespecification/expertmode_en.rst:821
+#: ../../filespecification/expertmode_en.rst:950
+#: ../../filespecification/expertmode_en.rst:1073
+#: ../../filespecification/expertmode_en.rst:1164
+#: ../../filespecification/expertmode_en.rst:1256
+#: ../../filespecification/expertmode_en.rst:1348
+#: ../../filespecification/expertmode_en.rst:1447
+#: ../../filespecification/expertmode_en.rst:1546
+#: ../../filespecification/expertmode_en.rst:1640
+#: ../../filespecification/expertmode_en.rst:1747
+#: ../../filespecification/expertmode_en.rst:1866
+#: ../../filespecification/expertmode_en.rst:1969
+#: ../../filespecification/expertmode_en.rst:2091
+#: ../../filespecification/expertmode_en.rst:2280
+#: ../../filespecification/expertmode_en.rst:2401
+#: ../../filespecification/outputfiles_en.rst:831
+#: ../../filespecification/outputfiles_en.rst:1177
+msgid "[string01]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:90
+#: ../../filespecification/expertmode_en.rst:96
+#: ../../filespecification/expertmode_en.rst:172
+#: ../../filespecification/expertmode_en.rst:365
+#: ../../filespecification/outputfiles_en.rst:833
+#: ../../filespecification/outputfiles_en.rst:1179
+msgid "**Type :** String"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:92
+#: ../../filespecification/expertmode_en.rst:174
+#: ../../filespecification/expertmode_en.rst:367
+msgid "**Description :** Select a word from keywords."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:94
+#: ../../filespecification/expertmode_en.rst:369
+msgid "[string02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:98
+msgid "**Description :** An input filename that is correlated with the keywords."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:102
+#: ../../filespecification/expertmode_en.rst:185
+#: ../../filespecification/expertmode_en.rst:384
+#: ../../filespecification/expertmode_en.rst:748
+#: ../../filespecification/expertmode_en.rst:867
+#: ../../filespecification/expertmode_en.rst:998
+#: ../../filespecification/expertmode_en.rst:1103
+#: ../../filespecification/expertmode_en.rst:1194
+#: ../../filespecification/expertmode_en.rst:1286
+#: ../../filespecification/expertmode_en.rst:1378
+#: ../../filespecification/expertmode_en.rst:1477
+#: ../../filespecification/expertmode_en.rst:1576
+#: ../../filespecification/expertmode_en.rst:1670
+#: ../../filespecification/expertmode_en.rst:1783
+#: ../../filespecification/expertmode_en.rst:1906
+#: ../../filespecification/expertmode_en.rst:2023
+#: ../../filespecification/expertmode_en.rst:2146
+#: ../../filespecification/expertmode_en.rst:2334
+#: ../../filespecification/expertmode_en.rst:2457
+msgid "Use rules"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:104
+msgid ""
+"After setting keywords at [string01], the half-width state is needed for "
+"writing a filename. You can set the filename freely."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:107
+msgid "Keywords for input files are shown in :numref:`Table 4.2`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:109
+msgid "Essential keywords are “CalcMod\", “ModPara\", and “LocSpin\"."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:111
+#: ../../filespecification/expertmode_en.rst:190
+msgid "Keywords can be set in random order."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:113
+#: ../../filespecification/expertmode_en.rst:192
+msgid "If the keywords or filenames are incorrect, the program is terminated."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:116
+msgid "When the head of a line is \\\"#\", the line is skipped."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:119
+msgid "List of the definition files"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Keywords"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Details of corresponding files"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "CalcMod"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Parameters for modes of calculation"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "ModPara"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Parameters for calculation"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "LocSpin"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Configurations of the local spins for Hamiltonian"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Trans"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Transfer and chemical potential for Hamiltonian"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "InterAll"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Two-body interactions for Hamiltonian"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "CoulombIntra"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "CoulombIntra interactions"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "CoulombInter"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "CoulombInter interactions"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Hund"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Hund couplings"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "PairHop"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Pair hopping couplings"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Exchange"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Exchange couplings"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Ising"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Ising interactions"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "PairLift"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Pair lift couplings."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "OneBodyG"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid ""
+"Output components for one-body Green’s functions :math:`\\langle "
+"c_{i\\sigma}^{\\dagger}c_{j\\sigma}\\rangle`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "TwoBodyG"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid ""
+"Output components for two-body Green’s functions :math:`\\langle "
+"c_{i\\sigma}^{\\dagger}c_{j\\sigma}c_{k\\tau}^{\\dagger}c_{l\\tau}\\rangle`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "SingleExcitation"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Operators for generating a single excited state"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "PairExcitation"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "Operators for generating a pair excited state"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "SpectrumVec"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1
+msgid "An input vector to calculate a restart vector"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:148
+msgid "CalcMod file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:150
+msgid ""
+"This file determines the parameters for the calculation method, model, "
+"and output mode. The file format is as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:163
+msgid "[string01] [int01]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:176
+#: ../../filespecification/expertmode_en.rst:375
+#: ../../filespecification/expertmode_en.rst:721
+#: ../../filespecification/expertmode_en.rst:828
+#: ../../filespecification/expertmode_en.rst:957
+#: ../../filespecification/expertmode_en.rst:1080
+#: ../../filespecification/expertmode_en.rst:1171
+#: ../../filespecification/expertmode_en.rst:1263
+#: ../../filespecification/expertmode_en.rst:1355
+#: ../../filespecification/expertmode_en.rst:1454
+#: ../../filespecification/expertmode_en.rst:1553
+#: ../../filespecification/expertmode_en.rst:1647
+#: ../../filespecification/expertmode_en.rst:1754
+#: ../../filespecification/expertmode_en.rst:1873
+#: ../../filespecification/expertmode_en.rst:1976
+#: ../../filespecification/expertmode_en.rst:2098
+#: ../../filespecification/expertmode_en.rst:2202
+#: ../../filespecification/expertmode_en.rst:2287
+#: ../../filespecification/expertmode_en.rst:2408
+#: ../../filespecification/outputfiles_en.rst:45
+#: ../../filespecification/outputfiles_en.rst:111
+#: ../../filespecification/outputfiles_en.rst:182
+#: ../../filespecification/outputfiles_en.rst:238
+#: ../../filespecification/outputfiles_en.rst:296
+#: ../../filespecification/outputfiles_en.rst:346
+#: ../../filespecification/outputfiles_en.rst:722
+#: ../../filespecification/outputfiles_en.rst:817
+#: ../../filespecification/outputfiles_en.rst:911
+#: ../../filespecification/outputfiles_en.rst:1005
+#: ../../filespecification/outputfiles_en.rst:1118
+#: ../../filespecification/outputfiles_en.rst:1171
+#: ../../filespecification/outputfiles_en.rst:1246
+#: ../../filespecification/outputfiles_en.rst:1341
+#: ../../filespecification/outputfiles_en.rst:1455
+#: ../../filespecification/outputfiles_en.rst:1496
+#: ../../filespecification/outputfiles_en.rst:1652
+#: ../../filespecification/outputfiles_en.rst:2059
+#: ../../filespecification/outputfiles_en.rst:2130
+msgid "[int01]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:178
+#: ../../filespecification/expertmode_en.rst:208
+#: ../../filespecification/expertmode_en.rst:219
+#: ../../filespecification/expertmode_en.rst:440
+#: ../../filespecification/expertmode_en.rst:566
+#: ../../filespecification/expertmode_en.rst:573
+#: ../../filespecification/expertmode_en.rst:620
+#: ../../filespecification/expertmode_en.rst:2204
+#: ../../filespecification/expertmode_en.rst:2211
+#: ../../filespecification/outputfiles_en.rst:47
+#: ../../filespecification/outputfiles_en.rst:53
+#: ../../filespecification/outputfiles_en.rst:62
+#: ../../filespecification/outputfiles_en.rst:113
+#: ../../filespecification/outputfiles_en.rst:119
+#: ../../filespecification/outputfiles_en.rst:128
+#: ../../filespecification/outputfiles_en.rst:184
+#: ../../filespecification/outputfiles_en.rst:190
+#: ../../filespecification/outputfiles_en.rst:240
+#: ../../filespecification/outputfiles_en.rst:246
+#: ../../filespecification/outputfiles_en.rst:298
+#: ../../filespecification/outputfiles_en.rst:304
+#: ../../filespecification/outputfiles_en.rst:348
+#: ../../filespecification/outputfiles_en.rst:393
+#: ../../filespecification/outputfiles_en.rst:400
+#: ../../filespecification/outputfiles_en.rst:724
+#: ../../filespecification/outputfiles_en.rst:819
+#: ../../filespecification/outputfiles_en.rst:826
+#: ../../filespecification/outputfiles_en.rst:913
+#: ../../filespecification/outputfiles_en.rst:1007
+#: ../../filespecification/outputfiles_en.rst:1120
+#: ../../filespecification/outputfiles_en.rst:1173
+#: ../../filespecification/outputfiles_en.rst:1248
+#: ../../filespecification/outputfiles_en.rst:1343
+#: ../../filespecification/outputfiles_en.rst:1457
+#: ../../filespecification/outputfiles_en.rst:1498
+#: ../../filespecification/outputfiles_en.rst:1654
+#: ../../filespecification/outputfiles_en.rst:1660
+#: ../../filespecification/outputfiles_en.rst:1666
+#: ../../filespecification/outputfiles_en.rst:1735
+#: ../../filespecification/outputfiles_en.rst:1743
+#: ../../filespecification/outputfiles_en.rst:1822
+#: ../../filespecification/outputfiles_en.rst:1834
+#: ../../filespecification/outputfiles_en.rst:2061
+#: ../../filespecification/outputfiles_en.rst:2132
+msgid "**Type :** Int"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+#: ../../filespecification/expertmode_en.rst:379
+msgid "**Description :** A parameter that is correlated with a keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:187
+msgid ""
+"After setting the keywords at [string 01], a half-width blank is needed "
+"for setting a parameter."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:195
+msgid "The keywords “CalcType\" and “CalcModel\" are essential."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:197
+msgid "When a head of line is \\\"#\", the line is skipped."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:202
+#: ../../filespecification/expertmode_en.rst:397
+msgid "Keywords and parameters"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:204
+msgid "The parameters correlated with the keywords are as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:206
+msgid "``CalcType``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Description :** Select the method for calculation from the following "
+"list:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: Lanczos method"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: Analysis of the physical properties by using TPQ"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "2: Full diagonalization method."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "3: LOBCG for the ground state."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:217
+msgid "``CalcModel``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** Select the model from the following list:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"0: Fermion Hubbard model (canonical ensemble: conservation of particles "
+"or conservation of particles and the component of :math:`S_z`)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"1: Spin model (canonical ensemble: conservation of the component of "
+":math:`S_z`)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"2: Kondo lattice model (canonical ensemble: conservation of particles, "
+"the component of :math:`S_z`)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "3: Fermion Hubbard model (grand canonical ensemble)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "4: Spin model (grand canonical ensemble)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "5: Kondo lattice model (grand canonical ensemble)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:233
+msgid ""
+"For the fermion Hubbard model, you can select the model under the "
+"conservation of the particles by setting ``NCond`` in the ModPara file. "
+"When you want to select the model under the conservation of particles and"
+" the component of :math:`S_z`, set both ``NCond`` and ``2Sz`` in the "
+"ModPara file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:239
+msgid "``CalcEigenVec``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:241
+#: ../../filespecification/expertmode_en.rst:251
+#: ../../filespecification/expertmode_en.rst:259
+#: ../../filespecification/expertmode_en.rst:267
+#: ../../filespecification/expertmode_en.rst:275
+#: ../../filespecification/expertmode_en.rst:285
+#: ../../filespecification/expertmode_en.rst:297
+#: ../../filespecification/expertmode_en.rst:305
+msgid "**Type :** Int (default value: 0)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** Select the method to calculate the eigenvectors:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"0: Lanczos+CG methods (when the convergence of eigenvectors is not "
+"sufficient for using the Lanczos method, the CG method is applied to "
+"calculate eigenvectors)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: Lanczos method."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:249
+#: ../../filespecification/standardmode_en.rst:699
+msgid "``InitialVecType``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** Select the type of an initial vector:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: Complex type"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: Real type."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:257
+msgid "``OutputEigenVec``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** Select the mode of outputting an eigenvector:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: Not output an eigenvector"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: Output an eigenvector."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:265
+msgid "``InputEigenVec``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** Select the mode of inputting an eigenvector:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: Not input an eigenvector"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: Input an eigenvector."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:273
+msgid "``ReStart``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** Select the mode of inputting a restart vector:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: Not restart calculation"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: Output a restart vector"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "2: Input a restart vector and output a new restart vector"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "3: Input a restart vector."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:283
+#: ../../filespecification/standardmode_en.rst:721
+msgid "``CalcSpec``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Description :** Select the mode of calculating dynamical Green’s "
+"functions:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: Not calculate dynamical Green’s functions"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"1: (not restart) Input an initial vector and files for generating single "
+"excited or pair excited states"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "2: Input components of triangular diagonal matrix"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"3: Output both components of triangular diagonal matrix and a restart "
+"vector"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"4: Input both components of triangular diagonal matrix and a restart "
+"vector"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"5: Input and output both components of triangular diagonal matrix and a "
+"restart vector."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:295
+msgid "``OutputHam``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** Full Diag)Select the mode of outputting Hamiltonian:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: not output Hamiltonian."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: output Hamiltonian."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:303
+msgid "``InputHam``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** (Full Diag)Select the mode of inputting Hamiltonian:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: not input Hamiltonian."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: input Hamiltonian."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:318
+msgid "CalcMod Para file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:321
+msgid ""
+"This file determines the parameters for calculation. The file format is "
+"as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:350
+msgid "Lines 1-4: Header"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:352
+msgid "Line 6: [string01] [string02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:354
+msgid "Lines 7-8: Header"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:356
+msgid "Lines 9- : [string01] [int01]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:371
+#: ../../filespecification/expertmode_en.rst:409
+#: ../../filespecification/expertmode_en.rst:716
+#: ../../filespecification/expertmode_en.rst:823
+#: ../../filespecification/expertmode_en.rst:952
+#: ../../filespecification/expertmode_en.rst:1075
+#: ../../filespecification/expertmode_en.rst:1166
+#: ../../filespecification/expertmode_en.rst:1258
+#: ../../filespecification/expertmode_en.rst:1350
+#: ../../filespecification/expertmode_en.rst:1449
+#: ../../filespecification/expertmode_en.rst:1548
+#: ../../filespecification/expertmode_en.rst:1642
+#: ../../filespecification/expertmode_en.rst:1749
+#: ../../filespecification/expertmode_en.rst:1868
+#: ../../filespecification/expertmode_en.rst:1971
+#: ../../filespecification/expertmode_en.rst:2093
+#: ../../filespecification/expertmode_en.rst:2282
+#: ../../filespecification/expertmode_en.rst:2403
+msgid "**Type :** String (a blank parameter is not allowed)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:373
+msgid "**Description :** Set a header for output files."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:377
+#: ../../filespecification/expertmode_en.rst:723
+#: ../../filespecification/expertmode_en.rst:730
+#: ../../filespecification/expertmode_en.rst:737
+#: ../../filespecification/expertmode_en.rst:830
+#: ../../filespecification/expertmode_en.rst:837
+#: ../../filespecification/expertmode_en.rst:844
+#: ../../filespecification/expertmode_en.rst:959
+#: ../../filespecification/expertmode_en.rst:967
+#: ../../filespecification/expertmode_en.rst:975
+#: ../../filespecification/expertmode_en.rst:1082
+#: ../../filespecification/expertmode_en.rst:1089
+#: ../../filespecification/expertmode_en.rst:1173
+#: ../../filespecification/expertmode_en.rst:1180
+#: ../../filespecification/expertmode_en.rst:1265
+#: ../../filespecification/expertmode_en.rst:1272
+#: ../../filespecification/expertmode_en.rst:1357
+#: ../../filespecification/expertmode_en.rst:1364
+#: ../../filespecification/expertmode_en.rst:1456
+#: ../../filespecification/expertmode_en.rst:1463
+#: ../../filespecification/expertmode_en.rst:1555
+#: ../../filespecification/expertmode_en.rst:1562
+#: ../../filespecification/expertmode_en.rst:1649
+#: ../../filespecification/expertmode_en.rst:1656
+#: ../../filespecification/expertmode_en.rst:1756
+#: ../../filespecification/expertmode_en.rst:1763
+#: ../../filespecification/expertmode_en.rst:1770
+#: ../../filespecification/expertmode_en.rst:1875
+#: ../../filespecification/expertmode_en.rst:1884
+#: ../../filespecification/expertmode_en.rst:1893
+#: ../../filespecification/expertmode_en.rst:1978
+#: ../../filespecification/expertmode_en.rst:1985
+#: ../../filespecification/expertmode_en.rst:1992
+#: ../../filespecification/expertmode_en.rst:2004
+#: ../../filespecification/expertmode_en.rst:2100
+#: ../../filespecification/expertmode_en.rst:2107
+#: ../../filespecification/expertmode_en.rst:2114
+#: ../../filespecification/expertmode_en.rst:2126
+#: ../../filespecification/expertmode_en.rst:2289
+#: ../../filespecification/expertmode_en.rst:2302
+#: ../../filespecification/expertmode_en.rst:2309
+#: ../../filespecification/expertmode_en.rst:2316
+#: ../../filespecification/expertmode_en.rst:2410
+#: ../../filespecification/expertmode_en.rst:2423
+#: ../../filespecification/expertmode_en.rst:2431
+#: ../../filespecification/expertmode_en.rst:2439
+msgid "**Type :** Int (a blank parameter is not allowed)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:386
+msgid ""
+"From Line 9: After setting keywords at [string 01], a half-width blank is"
+" needed for setting a parameter"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:389
+msgid "All the parameters are needed and the order for the parameters is fixed"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:399
+msgid ""
+"In the following, common parameters and parameters for each method are "
+"shown."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:405
+msgid "Common parameters"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:407
+msgid "``CDataFileHead``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:411
+msgid ""
+"**Description :** A header for output files. For example, the output "
+"filename for one-body Green’s function becomes "
+"\"**xxx_Lanczos_cisajs.dat**\" (xxx are the characters set by "
+"``CDataFileHead``)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:416
+msgid "``Nsite``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:418
+#: ../../filespecification/expertmode_en.rst:424
+#: ../../filespecification/expertmode_en.rst:431
+#: ../../filespecification/expertmode_en.rst:466
+#: ../../filespecification/expertmode_en.rst:481
+#: ../../filespecification/expertmode_en.rst:491
+#: ../../filespecification/expertmode_en.rst:498
+#: ../../filespecification/expertmode_en.rst:508
+#: ../../filespecification/expertmode_en.rst:522
+#: ../../filespecification/expertmode_en.rst:528
+#: ../../filespecification/expertmode_en.rst:538
+#: ../../filespecification/expertmode_en.rst:551
+#: ../../filespecification/expertmode_en.rst:632
+#: ../../filespecification/expertmode_en.rst:640
+#: ../../filespecification/expertmode_en.rst:649
+#: ../../filespecification/expertmode_en.rst:657
+msgid "**Type :** Int (positive integer)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:420
+msgid "**Description :** The number of sites."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:422
+msgid "``Ncond``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:426
+msgid ""
+"**Description :** The number of conduction electrons (not used in grand "
+"canonical ensemble)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:429
+#: ../../filespecification/standardmode_en.rst:310
+msgid "``2Sz``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:433
+msgid ""
+"**Description :** The total value of :math:`2S_z` (not used in grand "
+"canonical ensemble). For conservation of :math:`S_z` in the case of "
+"``CalcModel`` = 0 (fermion Hubbard model) or 2 (Kondo lattice model), set"
+" ``Ncond``."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:438
+#: ../../filespecification/standardmode_en.rst:596
+msgid "``initial_iv``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:442
+#: ../../filespecification/standardmode_en.rst:600
+msgid "**Description :** An initial vector is specified with this parameter."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:444
+#: ../../filespecification/expertmode_en.rst:477
+#: ../../filespecification/standardmode_en.rst:602
+msgid "Lanczos method"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:446
+msgid "For canonical ensemble and ``initial_iv`` :math:`\\geq 0`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:448
+#: ../../filespecification/standardmode_en.rst:606
+msgid ""
+"The non-zero components of an initial vector are specified with this "
+"parameter."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:451
+msgid "For grand canonical ensemble or ``initial_iv`` :math:`< 0`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:453
+#: ../../filespecification/expertmode_en.rst:458
+#: ../../filespecification/standardmode_en.rst:611
+#: ../../filespecification/standardmode_en.rst:616
+msgid ""
+"The seed of the random generator is given by this parameter and the "
+"random vector is used as the initial vector."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:456
+#: ../../filespecification/expertmode_en.rst:547
+#: ../../filespecification/standardmode_en.rst:614
+msgid "TPQ method"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:461
+msgid "See Sec. :ref:`Ch:algorithm` for details of setting an initial vector."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:464
+msgid "``CalcHS``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:468
+msgid ""
+"**Description :** If CalcHS=1, an efficient algorithm for generating the "
+"restricted Hilbert space with the specified quantum number is used "
+"(Details of algorithm is shown in "
+"http://qlms.github.io/HPhi/develop/tips.pdf [in Japanese]). Default value"
+" is 1 and the efficient algorithm is used."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:479
+#: ../../filespecification/expertmode_en.rst:526
+#: ../../filespecification/expertmode_en.rst:549
+#: ../../filespecification/expertmode_en.rst:630
+msgid "``Lanczos_max``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:483
+msgid ""
+"**Description :** The maximum number of Lanczos steps in the calculation."
+" When the convergence within the specified accuracy is satisfied, the "
+"calculation is completed before a step reaches ``Lanczos_max``. In the "
+"case of restart calculation, ``Lanczos_max`` must be larger than that of "
+"the previous calculation."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:489
+#: ../../filespecification/expertmode_en.rst:520
+#: ../../filespecification/standardmode_en.rst:622
+msgid "``exct``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:493
+msgid ""
+"**Description :** An integer for setting the number of eigenvectors "
+"obtained from the ground energy by the Lanczos method."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:496
+#: ../../filespecification/expertmode_en.rst:536
+#: ../../filespecification/standardmode_en.rst:635
+msgid "``LanczosEps``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:500
+msgid ""
+"**Description :** An integer for judging the convergence of the Lanczos "
+"method. The convergence is determined by whether the condition is "
+"satisdied that the relative error between an eigenvalue and an eigenvalue"
+" at the Lanczos step of the one step before is less than :math:`10^{- "
+"\\verb|LanczosEps|}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:506
+msgid "``LanczosTarget``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:510
+msgid ""
+"**Description :** An integer giving the target of the eigenvalue for "
+"judging the convergence of the Lanczos method. For example, the target "
+"becomes a ground state when ``LanczosTarget`` is equal to one, and a "
+"first excited state when ``LanczosTarget`` is equal to two."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:518
+msgid "CG method"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:524
+msgid "**Description :** The number of eigenvectors is specified."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:530
+msgid ""
+"**Description :** The maximum number of iteration steps in the "
+"calculation. When the convergence within the specified accuracy is "
+"satisfied, the calculation is completed before a step reaches "
+"Lanczos_max. In the case of restart calculation, ``Lanczos_max`` must be "
+"larger than that of the previous calculation."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:540
+msgid ""
+"**Description :** For ``method=\"CG\"``, the calculation finishes when "
+"the 2-norm of the residual vector becomes smaller than :math:`10^{- "
+"\\verb|LanczosEps|/2}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:553
+msgid ""
+"**Description :** The total number of TPQ steps is specified with this "
+"parameter. In the case of restart calculation, ``Lanczos_max`` must be "
+"larger than that of the previous calculation."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:557
+#: ../../filespecification/standardmode_en.rst:655
+msgid "``LargeValue``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:559
+#: ../../filespecification/expertmode_en.rst:594
+#: ../../filespecification/outputfiles_en.rst:69
+#: ../../filespecification/outputfiles_en.rst:139
+#: ../../filespecification/outputfiles_en.rst:197
+#: ../../filespecification/outputfiles_en.rst:255
+#: ../../filespecification/outputfiles_en.rst:313
+#: ../../filespecification/outputfiles_en.rst:355
+#: ../../filespecification/outputfiles_en.rst:612
+#: ../../filespecification/outputfiles_en.rst:619
+#: ../../filespecification/outputfiles_en.rst:628
+#: ../../filespecification/outputfiles_en.rst:732
+#: ../../filespecification/outputfiles_en.rst:744
+#: ../../filespecification/outputfiles_en.rst:752
+#: ../../filespecification/outputfiles_en.rst:760
+#: ../../filespecification/outputfiles_en.rst:767
+#: ../../filespecification/outputfiles_en.rst:889
+#: ../../filespecification/outputfiles_en.rst:895
+#: ../../filespecification/outputfiles_en.rst:904
+#: ../../filespecification/outputfiles_en.rst:972
+#: ../../filespecification/outputfiles_en.rst:978
+#: ../../filespecification/outputfiles_en.rst:985
+#: ../../filespecification/outputfiles_en.rst:992
+#: ../../filespecification/outputfiles_en.rst:1000
+#: ../../filespecification/outputfiles_en.rst:1068
+#: ../../filespecification/outputfiles_en.rst:1074
+#: ../../filespecification/outputfiles_en.rst:1081
+#: ../../filespecification/outputfiles_en.rst:1088
+#: ../../filespecification/outputfiles_en.rst:1096
+#: ../../filespecification/outputfiles_en.rst:1104
+#: ../../filespecification/outputfiles_en.rst:1112
+#: ../../filespecification/outputfiles_en.rst:1236
+#: ../../filespecification/outputfiles_en.rst:1242
+#: ../../filespecification/outputfiles_en.rst:1308
+#: ../../filespecification/outputfiles_en.rst:1314
+#: ../../filespecification/outputfiles_en.rst:1321
+#: ../../filespecification/outputfiles_en.rst:1328
+#: ../../filespecification/outputfiles_en.rst:1336
+#: ../../filespecification/outputfiles_en.rst:1405
+#: ../../filespecification/outputfiles_en.rst:1411
+#: ../../filespecification/outputfiles_en.rst:1418
+#: ../../filespecification/outputfiles_en.rst:1425
+#: ../../filespecification/outputfiles_en.rst:1433
+#: ../../filespecification/outputfiles_en.rst:1441
+#: ../../filespecification/outputfiles_en.rst:1449
+#: ../../filespecification/outputfiles_en.rst:1506
+#: ../../filespecification/outputfiles_en.rst:1564
+#: ../../filespecification/outputfiles_en.rst:1570
+#: ../../filespecification/outputfiles_en.rst:1577
+#: ../../filespecification/outputfiles_en.rst:1584
+#: ../../filespecification/outputfiles_en.rst:1591
+#: ../../filespecification/outputfiles_en.rst:1672
+#: ../../filespecification/outputfiles_en.rst:1753
+#: ../../filespecification/outputfiles_en.rst:1846
+#: ../../filespecification/outputfiles_en.rst:2003
+#: ../../filespecification/outputfiles_en.rst:2011
+#: ../../filespecification/outputfiles_en.rst:2074
+#: ../../filespecification/outputfiles_en.rst:2084
+#: ../../filespecification/outputfiles_en.rst:2139
+#: ../../filespecification/outputfiles_en.rst:2145
+msgid "**Type :** Double"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:561
+msgid ""
+"**Description :** An integer giving :math:`l` of :math:`l=\\hat{\\mathcal"
+" H}/N_{s}` used in the TPQ method."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:564
+#: ../../filespecification/standardmode_en.rst:665
+msgid "``NumAve``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:568
+msgid ""
+"**Description :** An integer giving the number of independent runs for "
+"the TPQ method."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:571
+#: ../../filespecification/expertmode_en.rst:647
+#: ../../filespecification/standardmode_en.rst:672
+msgid "``ExpecInterval``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Description :** An integer giving the interval steps of calculating the"
+" correlation functions in the TPQ method."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+#: ../../filespecification/standardmode_en.rst
+msgid "**Note:** A small interval increases the time cost of calculations."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:582
+msgid "Calculating dynamical Green’s functions"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:584
+msgid "``OmegaOrg``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:586
+#: ../../filespecification/expertmode_en.rst:602
+#: ../../filespecification/expertmode_en.rst:611
+#: ../../filespecification/standardmode_en.rst:395
+#: ../../filespecification/standardmode_en.rst:440
+#: ../../filespecification/standardmode_en.rst:521
+msgid "**Type :** Complex"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:588
+msgid ""
+"**Description :** The center value of the frequency. Specify the real and"
+" imaginary parts in that order separated by a space, and if there is no "
+"imaginary part, the real part of the frequency is only given."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:592
+#: ../../filespecification/standardmode_en.rst:785
+msgid "``OmegaIm``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:596
+msgid ""
+"**Description :** The imaginary part of the frequency. When ``OmegaOrg`` "
+"is defined in a ``modpara`` file, ``OmegaIm`` is added to the imaginary "
+"value of ``OmegaOrg``."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:600
+#: ../../filespecification/standardmode_en.rst:771
+msgid "``OmegaMin``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:604
+msgid ""
+"**Description :** The lower limit of the frequency from ``OmegaOrg``. "
+"Specify the real and imaginary parts in that order separated by a space, "
+"and if there is no imaginary part, the real part of the frequency is only"
+" given."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:609
+#: ../../filespecification/standardmode_en.rst:778
+msgid "``OmegaMax``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:613
+msgid ""
+"**Description :** The upper limit of the frequency from ``OmegaOrg``. "
+"Specify the real and imaginary parts in that order separated by a space, "
+"and if there is no imaginary part, a real part of the frequency is only "
+"given."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:618
+#: ../../filespecification/standardmode_en.rst:791
+msgid "``NOmega``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:622
+msgid ""
+"**Description :** The integer for defining the step size of the frequency"
+" :math:`\\Delta \\omega = (` ``OmegaMax`` - ``OmegaMin`` "
+":math:`)/N_{\\omega}`. The frequency is given by :math:`z_n=` "
+"``OmegaOrg``\\ :math:`+`\\ ``OmegaMin``\\ :math:`+ \\Delta \\omega "
+"\\times n`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:628
+msgid "Real time evolution method"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:634
+msgid ""
+"**Description :** The total number of real time evolution steps is "
+"specified with this parameter. In the case of restart calculation, "
+"``Lanczos_max`` must be larger than that of the previous calculation."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:638
+msgid "``ExpandCoef``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:642
+msgid ""
+"**Description :** An integer giving the expansion order :math:`n` for "
+"real time evolution method;"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Description :** An integer giving the interval steps of calculating the"
+" correlation functions."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:655
+msgid "``OutputInterval``"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Description :** An integer giving the interval steps of output the wave"
+" function."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "The wave vector is output when ``OutputEigenVec=1`` in ``CalcMod`` file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:671
+msgid "LocSpin file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:674
+msgid ""
+"This file determines sites with localized spins. The file format is as "
+"follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:701
+#: ../../filespecification/expertmode_en.rst:808
+#: ../../filespecification/expertmode_en.rst:936
+#: ../../filespecification/expertmode_en.rst:1060
+#: ../../filespecification/expertmode_en.rst:1151
+#: ../../filespecification/expertmode_en.rst:1243
+#: ../../filespecification/expertmode_en.rst:1335
+#: ../../filespecification/expertmode_en.rst:1434
+#: ../../filespecification/expertmode_en.rst:1533
+#: ../../filespecification/expertmode_en.rst:1627
+#: ../../filespecification/expertmode_en.rst:1734
+#: ../../filespecification/expertmode_en.rst:1852
+#: ../../filespecification/expertmode_en.rst:1956
+#: ../../filespecification/expertmode_en.rst:2077
+#: ../../filespecification/expertmode_en.rst:2260
+#: ../../filespecification/expertmode_en.rst:2381
+#: ../../filespecification/outputfiles_en.rst:876
+#: ../../filespecification/outputfiles_en.rst:958
+#: ../../filespecification/outputfiles_en.rst:1053
+#: ../../filespecification/outputfiles_en.rst:1224
+#: ../../filespecification/outputfiles_en.rst:1294
+#: ../../filespecification/outputfiles_en.rst:1390
+#: ../../filespecification/outputfiles_en.rst:1551
+#: ../../filespecification/outputfiles_en.rst:1640
+msgid "Line 1: Header"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:703
+#: ../../filespecification/expertmode_en.rst:810
+#: ../../filespecification/expertmode_en.rst:938
+#: ../../filespecification/expertmode_en.rst:1062
+#: ../../filespecification/expertmode_en.rst:1153
+#: ../../filespecification/expertmode_en.rst:1245
+#: ../../filespecification/expertmode_en.rst:1337
+#: ../../filespecification/expertmode_en.rst:1436
+#: ../../filespecification/expertmode_en.rst:1535
+#: ../../filespecification/expertmode_en.rst:1629
+#: ../../filespecification/expertmode_en.rst:1736
+#: ../../filespecification/expertmode_en.rst:1854
+#: ../../filespecification/expertmode_en.rst:1958
+#: ../../filespecification/expertmode_en.rst:2079
+#: ../../filespecification/expertmode_en.rst:2262
+#: ../../filespecification/expertmode_en.rst:2383
+msgid "Line 2: [string01] [int01]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:705
+#: ../../filespecification/expertmode_en.rst:812
+#: ../../filespecification/expertmode_en.rst:940
+#: ../../filespecification/expertmode_en.rst:1064
+#: ../../filespecification/expertmode_en.rst:1155
+#: ../../filespecification/expertmode_en.rst:1247
+#: ../../filespecification/expertmode_en.rst:1339
+#: ../../filespecification/expertmode_en.rst:1438
+#: ../../filespecification/expertmode_en.rst:1537
+#: ../../filespecification/expertmode_en.rst:1631
+#: ../../filespecification/expertmode_en.rst:1738
+#: ../../filespecification/expertmode_en.rst:1856
+#: ../../filespecification/expertmode_en.rst:1960
+#: ../../filespecification/expertmode_en.rst:2081
+#: ../../filespecification/expertmode_en.rst:2264
+#: ../../filespecification/expertmode_en.rst:2385
+msgid "Lines 3-5: Header"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:707
+msgid "Lines 6-: [int02] [int03]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:718
+msgid ""
+"**Description :** A keyword for the total number of localized spins. You "
+"can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:725
+msgid "**Description :** An integer giving the total number of localized spins."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:728
+#: ../../filespecification/expertmode_en.rst:1087
+#: ../../filespecification/expertmode_en.rst:1983
+#: ../../filespecification/expertmode_en.rst:2209
+#: ../../filespecification/expertmode_en.rst:2300
+#: ../../filespecification/expertmode_en.rst:2421
+#: ../../filespecification/outputfiles_en.rst:51
+#: ../../filespecification/outputfiles_en.rst:188
+#: ../../filespecification/outputfiles_en.rst:824
+#: ../../filespecification/outputfiles_en.rst:1658
+#: ../../filespecification/outputfiles_en.rst:2066
+msgid "[int02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:732
+#: ../../filespecification/expertmode_en.rst:1091
+#: ../../filespecification/expertmode_en.rst:1987
+msgid ""
+"**Description :** An integer giving a site index (:math:`0<=` [int02] "
+":math:`<` ``Nsite``)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:735
+#: ../../filespecification/expertmode_en.rst:1990
+#: ../../filespecification/outputfiles_en.rst:60
+#: ../../filespecification/outputfiles_en.rst:1664
+msgid "[int03]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"**Description :** An integer for selecting an electron state whether the "
+"electron state is a localized spin or an itinerant electron state:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+"0: Itinerant electron state :math:`n>`\\0: Localized spin state with "
+":math:`2S=n`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:750
+#: ../../filespecification/expertmode_en.rst:869
+#: ../../filespecification/expertmode_en.rst:1000
+#: ../../filespecification/expertmode_en.rst:1105
+#: ../../filespecification/expertmode_en.rst:1196
+#: ../../filespecification/expertmode_en.rst:1288
+#: ../../filespecification/expertmode_en.rst:1380
+#: ../../filespecification/expertmode_en.rst:1479
+#: ../../filespecification/expertmode_en.rst:1578
+#: ../../filespecification/expertmode_en.rst:1672
+#: ../../filespecification/expertmode_en.rst:1785
+#: ../../filespecification/expertmode_en.rst:1908
+#: ../../filespecification/expertmode_en.rst:2025
+#: ../../filespecification/expertmode_en.rst:2148
+#: ../../filespecification/expertmode_en.rst:2336
+#: ../../filespecification/expertmode_en.rst:2459
+msgid "Headers cannot be omitted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:752
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of localized spins indicated by [int03]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:756
+msgid ""
+"A program is terminated, when [int02] is different from the total number "
+"of sites."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:759
+msgid ""
+"A program is terminated under the condition [int02] :math:`<0` or "
+"``Nsite`` :math:`<=` [int02]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:770
+msgid "Trans file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:772
+msgid ""
+"This file determines the values of the transfer integrals "
+":math:`t_{ij\\sigma_1\\sigma2}`,"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:778
+#: ../../filespecification/expertmode_en.rst:1039
+#: ../../filespecification/expertmode_en.rst:1130
+#: ../../filespecification/expertmode_en.rst:1222
+#: ../../filespecification/expertmode_en.rst:1314
+#: ../../filespecification/expertmode_en.rst:1512
+#: ../../filespecification/expertmode_en.rst:1606
+#: ../../filespecification/expertmode_en.rst:2238
+#: ../../filespecification/expertmode_en.rst:2360
+#: ../../filespecification/outputfiles_en.rst:21
+#: ../../filespecification/outputfiles_en.rst:83
+#: ../../filespecification/outputfiles_en.rst:158
+#: ../../filespecification/outputfiles_en.rst:213
+#: ../../filespecification/outputfiles_en.rst:271
+msgid "An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:814
+msgid "Lines 6-: [int02]  [int03]  [int04]  [int05]  [double01]  [double02]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:825
+#: ../../filespecification/expertmode_en.rst:2284
+msgid ""
+"**Description :** A keyword for the total number of transfer integrals. "
+"You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:832
+msgid ""
+"**Description :** An integer giving the total number of transfer "
+"integrals."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:835
+#: ../../filespecification/expertmode_en.rst:1761
+#: ../../filespecification/expertmode_en.rst:2105
+#: ../../filespecification/outputfiles_en.rst:117
+#: ../../filespecification/outputfiles_en.rst:1741
+msgid "[int02], [int04]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:839
+msgid ""
+"**Description :** An integer giving a site index (:math:`0<=` [int02], "
+"[int04] :math:`<` ``Nsite`` )."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:842
+#: ../../filespecification/expertmode_en.rst:1768
+#: ../../filespecification/expertmode_en.rst:2112
+#: ../../filespecification/expertmode_en.rst:2307
+#: ../../filespecification/outputfiles_en.rst:126
+msgid "[int03], [int05]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** An integer giving a spin index:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+#: ../../filespecification/outputfiles_en.rst
+msgid "0: Up-spin"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+#: ../../filespecification/outputfiles_en.rst
+msgid "1: Down-spin."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:850
+#: ../../filespecification/expertmode_en.rst:981
+#: ../../filespecification/expertmode_en.rst:1094
+#: ../../filespecification/expertmode_en.rst:1185
+#: ../../filespecification/expertmode_en.rst:1277
+#: ../../filespecification/expertmode_en.rst:1369
+#: ../../filespecification/expertmode_en.rst:1468
+#: ../../filespecification/expertmode_en.rst:1567
+#: ../../filespecification/expertmode_en.rst:1661
+#: ../../filespecification/expertmode_en.rst:2294
+#: ../../filespecification/expertmode_en.rst:2415
+#: ../../filespecification/outputfiles_en.rst:67
+#: ../../filespecification/outputfiles_en.rst:137
+#: ../../filespecification/outputfiles_en.rst:195
+#: ../../filespecification/outputfiles_en.rst:253
+#: ../../filespecification/outputfiles_en.rst:311
+#: ../../filespecification/outputfiles_en.rst:353
+#: ../../filespecification/outputfiles_en.rst:610
+#: ../../filespecification/outputfiles_en.rst:887
+#: ../../filespecification/outputfiles_en.rst:970
+#: ../../filespecification/outputfiles_en.rst:1066
+#: ../../filespecification/outputfiles_en.rst:1234
+#: ../../filespecification/outputfiles_en.rst:1306
+#: ../../filespecification/outputfiles_en.rst:1403
+#: ../../filespecification/outputfiles_en.rst:1504
+#: ../../filespecification/outputfiles_en.rst:1562
+#: ../../filespecification/outputfiles_en.rst:2137
+msgid "[double01]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:852
+#: ../../filespecification/expertmode_en.rst:859
+#: ../../filespecification/expertmode_en.rst:983
+#: ../../filespecification/expertmode_en.rst:990
+#: ../../filespecification/expertmode_en.rst:1096
+#: ../../filespecification/expertmode_en.rst:1187
+#: ../../filespecification/expertmode_en.rst:1279
+#: ../../filespecification/expertmode_en.rst:1371
+#: ../../filespecification/expertmode_en.rst:1470
+#: ../../filespecification/expertmode_en.rst:1569
+#: ../../filespecification/expertmode_en.rst:1663
+#: ../../filespecification/expertmode_en.rst:2013
+#: ../../filespecification/expertmode_en.rst:2135
+#: ../../filespecification/expertmode_en.rst:2296
+#: ../../filespecification/expertmode_en.rst:2324
+#: ../../filespecification/expertmode_en.rst:2417
+#: ../../filespecification/expertmode_en.rst:2447
+msgid "**Type :** Double (a blank parameter is not allowed)"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:854
+msgid ""
+"**Description :** A value for a real part of "
+":math:`t_{ij\\sigma_1\\sigma_2}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:857
+#: ../../filespecification/expertmode_en.rst:988
+#: ../../filespecification/outputfiles_en.rst:617
+#: ../../filespecification/outputfiles_en.rst:893
+#: ../../filespecification/outputfiles_en.rst:976
+#: ../../filespecification/outputfiles_en.rst:1072
+#: ../../filespecification/outputfiles_en.rst:1240
+#: ../../filespecification/outputfiles_en.rst:1312
+#: ../../filespecification/outputfiles_en.rst:1409
+#: ../../filespecification/outputfiles_en.rst:1568
+msgid "[double02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:861
+msgid ""
+"**Description :** A value for an imaginary part of "
+":math:`t_{ij\\sigma_1\\sigma_2}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:871
+msgid ""
+"Since the Hamiltonian must be Hermitian, the relation "
+":math:`t_{ij\\sigma_1\\sigma_2}=t_{ji\\sigma_2\\sigma_1}^{\\dagger}` must"
+" be satisfied. A program is terminated when this relation is broken."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:875
+#: ../../filespecification/expertmode_en.rst:1014
+msgid ""
+"A program is terminated when the components of the on-site interactions "
+"are double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:878
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of transfer integrals defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:881
+#: ../../filespecification/expertmode_en.rst:1794
+msgid ""
+"A program is terminated when [int02]-[int05] are outside the range of the"
+" defined values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:892
+msgid "InterAll file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:894
+msgid ""
+"This file determines the values of generalized two-body interactions "
+"integrals :math:`I_{ijkl\\sigma_1\\sigma_2\\sigma_3\\sigma_4}`,"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:902
+msgid ""
+"For spin, the conditions :math:`i=j` and :math:`k=l` must be satisfied. "
+"An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:942
+msgid ""
+"Lines 6-: "
+"[int02] [int03] [int04] [int05] [int06] [int07] [int08] [int09] [double01] [double02]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:954
+#: ../../filespecification/expertmode_en.rst:2405
+msgid ""
+"**Description :** A keyword for the total number of generalized two-body "
+"interactions. You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:961
+msgid ""
+"**Description :** An integer giving the total number of generalized two-"
+"body interactions."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:964
+msgid "[int02], [int04], [int06], [int08]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:969
+#: ../../filespecification/expertmode_en.rst:1886
+msgid ""
+"**Description :** An integer giving a site index (:math:`0<=` [int02], "
+"[int04], [int06], [int08] :math:`<` ``Nsite``)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:972
+#: ../../filespecification/expertmode_en.rst:2428
+msgid "[int03], [int05], [int07], [int09]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+#: ../../filespecification/outputfiles_en.rst
+msgid "0: Up-spin,"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:985
+msgid ""
+"**Description :** A value for a real part of "
+":math:`I_{ijkl\\sigma_1\\sigma_2\\sigma_3\\sigma_4}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:992
+msgid ""
+"**Description :** A value for an imaginary part of "
+":math:`I_{ijkl\\sigma_1\\sigma_2\\sigma_3\\sigma_4}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1002
+msgid ""
+"Since the Hamiltonian must be Hermitian, the relation "
+":math:`I_{ijkl\\sigma_1\\sigma_2\\sigma_3\\sigma_4}=I_{lkji\\sigma_4\\sigma_3\\sigma_2\\sigma_1}^{\\dagger}`"
+" must be satisfied. A program is terminated when this relation is broken."
+" It is noted that the term of the Hermitian conjugate for "
+":math:`I_{ijkl\\sigma_1\\sigma_2\\sigma_3\\sigma_4}c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k\\sigma_3}^{\\dagger}c_{l\\sigma_4}`"
+" should be inputted as "
+":math:`I_{lkji\\sigma_4\\sigma_3\\sigma_2\\sigma_1}` "
+":math:`c_{l\\sigma_4}^{\\dagger}c_{k\\sigma_3}c_{j\\sigma_2}^{\\dagger}c_{i\\sigma_1}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1011
+#: ../../filespecification/expertmode_en.rst:1913
+#: ../../filespecification/expertmode_en.rst:2153
+msgid ""
+"A program is terminated when the conditions :math:`i=j` and :math:`k=l` "
+"are not satisfied for the spin model."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1017
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of generalized two-body interactions defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1021
+msgid ""
+"A program is terminated when [int02]-[int09] are outside the range of the"
+" defined values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1030
+msgid "CoulombIntra file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1032
+msgid ""
+"This file determines the values of the on-site interactions :math:`U_i` "
+"(for :math:`S=1/2` system),"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1066
+msgid "Lines 6-: [int02] [double01]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1077
+msgid ""
+"**Description :** A keyword for the total number of on-site interactions."
+" You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1084
+msgid ""
+"**Description :** An integer giving the total number of on-site "
+"interactions."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1098
+#: ../../filespecification/outputfiles_en.rst:199
+msgid "**Description :** A value for :math:`U_i`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1107
+msgid ""
+"A program is terminated when the components of on-site interactions are "
+"double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1110
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of on-site interactions defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1113
+msgid ""
+"A program is terminated when [int02] is outside the range of the defined "
+"values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1121
+msgid "CoulombInter file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1123
+msgid ""
+"This file determines the values of off-site interactions :math:`V_{ij}` "
+"(for :math:`S=1/2` system),"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1157
+#: ../../filespecification/expertmode_en.rst:1249
+#: ../../filespecification/expertmode_en.rst:1341
+#: ../../filespecification/expertmode_en.rst:1440
+#: ../../filespecification/expertmode_en.rst:1539
+msgid "Lines 6-: [int02] [int03] [double01]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1168
+msgid ""
+"**Description :** A keyword for the total number of off-site "
+"interactions. You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1175
+msgid ""
+"**Description :** An integer giving the total number of off-site "
+"interactions."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1178
+#: ../../filespecification/expertmode_en.rst:1270
+#: ../../filespecification/expertmode_en.rst:1362
+#: ../../filespecification/expertmode_en.rst:1461
+#: ../../filespecification/expertmode_en.rst:1560
+#: ../../filespecification/expertmode_en.rst:1654
+#: ../../filespecification/outputfiles_en.rst:244
+#: ../../filespecification/outputfiles_en.rst:302
+msgid "[int02], [int03]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1182
+#: ../../filespecification/expertmode_en.rst:1274
+#: ../../filespecification/expertmode_en.rst:1366
+#: ../../filespecification/expertmode_en.rst:1465
+#: ../../filespecification/expertmode_en.rst:1564
+#: ../../filespecification/expertmode_en.rst:1658
+msgid ""
+"**Description :** An integer giving a site index (:math:`0<=` [int02], "
+"[int03] :math:`<` ``Nsite``)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1189
+#: ../../filespecification/outputfiles_en.rst:315
+msgid "**Description :** A value for :math:`V_{ij}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1198
+msgid ""
+"A program is terminated when the components of off-site interactions are "
+"double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1201
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of off-site interactions defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1204
+#: ../../filespecification/expertmode_en.rst:1296
+#: ../../filespecification/expertmode_en.rst:1385
+#: ../../filespecification/expertmode_en.rst:1487
+#: ../../filespecification/expertmode_en.rst:1586
+#: ../../filespecification/expertmode_en.rst:1680
+msgid ""
+"A program is terminated when either [int02] or [int03] is outside the "
+"range of the defined values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1213
+msgid "Hund file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1215
+msgid ""
+"This file determines the values of Hund couplings :math:`J_{ij}^{\\rm "
+"Hund}` (for :math:`S=1/2` system),"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1260
+msgid ""
+"**Description :** A keyword for the total number of Hund couplings. You "
+"can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1267
+msgid "**Description :** An integer giving the total number of Hund couplings."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1281
+#: ../../filespecification/outputfiles_en.rst:257
+msgid "**Description :** A value for :math:`J_{ij}^{\\rm Hund}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1290
+msgid ""
+"A program is terminated when the components of the Hund couplings are "
+"double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1293
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of Hund couplings defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1305
+msgid "PairHop file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1307
+msgid ""
+"This file determines the values of PairHop couplings :math:`J_{ij}^{\\rm "
+"Pair}` (for :math:`S=1/2` system),"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1352
+msgid ""
+"**Description :** A keyword for the total number of PairHop couplings. "
+"You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1359
+msgid "**Description :** An integer giving the total number of PairHop couplings."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1373
+msgid "**Description :** A value for :math:`J_{ij}^{\\rm Pair}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1382
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of the PairHop couplings defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1394
+msgid "Exchange file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1396
+msgid ""
+"This file determines the values of Exchange couplings :math:`J_{ij}^{\\rm"
+" Ex}` (for :math:`S=1/2` system). For the fermion electronic system, the "
+"exchange terms are given as"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1404
+msgid "while for the spin system, they are given as"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1410
+msgid ""
+"**We note that** :math:`(S_i^{+}S_j^{-} + S_i^{-}S_j^{+})` **in the spin "
+"system is written by the operators for electrons as** :math:`-(c_ {i "
+"\\uparrow}^{\\dagger}c_{j\\uparrow}c_{j \\downarrow}^{\\dagger}c_{i  "
+"\\downarrow} +c_ {i \\downarrow}^{\\dagger}c_{j\\downarrow}c_{j "
+"\\uparrow}^{\\dagger}c_{i  \\uparrow})`. An example of the file format is"
+" as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1451
+msgid ""
+"**Description :** A keyword for the total number of Exchange couplings. "
+"You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1458
+msgid ""
+"**Description :** An integer giving the total number of Exchange "
+"couplings."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1472
+msgid "**Description :** A value for :math:`J_{ij}~{\\rm Ex}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1481
+msgid ""
+"A program is terminated when the components of the exchange couplings are"
+" double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1484
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of exchange couplings defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1496
+msgid "Ising file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1498
+msgid ""
+"This file determines the values of Ising interactions :math:`J_{ij}^{z}` "
+"(for :math:`S=1/2` system). For the fermion electronic system, the Ising "
+"terms are given as"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1506
+msgid "For the spin system, they are given as"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1550
+msgid ""
+"**Description :** A keyword for the total number of Ising interactions. "
+"You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1557
+msgid ""
+"**Description :** An integer giving the total number of Ising "
+"interactions."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1571
+msgid "**Description :** A value for :math:`J_{ij}^{\\rm z}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1580
+msgid ""
+"A program is terminated when the components of the Ising interactions are"
+" double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1583
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of Ising interactions defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1597
+msgid "PairLift file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1599
+msgid ""
+"This file determines the values of PairLift couplings :math:`J_{ij}^{\\rm"
+" PairLift}` (for :math:`S=1/2` system),"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1633
+msgid "Lines 6-: [int02] [int03] [double01] ."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1644
+msgid ""
+"**Description :** A keyword for the total number of PairLift couplings. "
+"You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1651
+msgid ""
+"**Description :** An integer giving the total number of PairLift "
+"couplings."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1665
+msgid "**Description :** A value for :math:`J_{ij}^{\\rm PairLift}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1674
+msgid ""
+"A program is terminated when the components of the PairLift couplings are"
+" double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1677
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of PairLift couplings defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1691
+msgid "OneBodyG file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1693
+msgid ""
+"This file determines the target components of the one-body Green’s "
+"function :math:`\\langle "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}\\rangle`. An example of the file "
+"format is as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1740
+msgid "Lines 6-: [int02]  [int03]  [int04]  [int05]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1751
+msgid ""
+"**Description :** A keyword for the total number of one-body Green’s "
+"functions. You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1758
+msgid ""
+"**Description :** An integer giving the total number of one-body Green’s "
+"functions."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1765
+#: ../../filespecification/expertmode_en.rst:2109
+msgid ""
+"**Description :** An integer giving a site index (:math:`0<=` [int02], "
+"[int04] :math:`<` ``Nsite``)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "For Hubbard or Kondo system, the index can be selected from"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "For Spin system, the index can be selected from"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid ""
+":math:`0, 1, \\cdots, 2S+1` (corresponding to -:math:`S-0.5, -S+0.5, "
+"\\cdots S+0.5`)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1787
+msgid ""
+"A program is terminated when the components of the one-body Green’s "
+"functions are double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1790
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of one-body Green’s functions defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1805
+msgid "TwoBodyG file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1807
+msgid ""
+"This file determines the target components of the two-body Green’s "
+"function :math:`\\langle "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k\\sigma_3}^{\\dagger}c_{l\\sigma_4}\\rangle`."
+" For the spin system, the conditions :math:`i=j` and :math:`k=l` must be "
+"satisfied. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1858
+msgid ""
+"Lines 6-: "
+"[int02]  [int03]  [int04]  [int05]  [int06]  [int07]  [int08]  [int09]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1870
+msgid ""
+"**Description :** A keyword for the total number of two-body Green’s "
+"functions. You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1877
+msgid ""
+"**Description :** An integer giving the total number of two-body Green’s "
+"functions."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1880
+#: ../../filespecification/outputfiles_en.rst:1830
+msgid "[int02], [int04],[int06], [int08]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1889
+msgid "[int03], [int05],[int07], [int09]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1910
+msgid ""
+"A program is terminated when the components of the two-body Green’s "
+"functions are double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1916
+#: ../../filespecification/expertmode_en.rst:2033
+#: ../../filespecification/expertmode_en.rst:2156
+msgid ""
+"A program is terminated when [int01] is different from the total number "
+"of two-body Green’s functions defined in this file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1920
+msgid ""
+"A program is terminated, when [int02]-[int09] are outside the range of "
+"the defined values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1931
+msgid "SingleExcitation file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1933
+msgid ""
+"The operators to generate the single excited state "
+":math:`c_{i\\sigma_1}(c_{i\\sigma_1}^{\\dagger})` are defined. An example"
+" of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1962
+msgid "Lines 6-: [int02]  [int03]  [int04]  [double01]  [double02]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1973
+msgid ""
+"**Description :** A keyword for the total number of single excitation "
+"operators. You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:1980
+msgid ""
+"**Description :** An integer giving the total number of total number of "
+"single excitation operators."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2002
+msgid "[int04]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** An integer giving a type of single excitation operators:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: :math:`c_{i\\sigma_1}`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: :math:`c_{i\\sigma_1}^{\\dagger}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2011
+#: ../../filespecification/expertmode_en.rst:2133
+#: ../../filespecification/expertmode_en.rst:2215
+#: ../../filespecification/outputfiles_en.rst:1670
+#: ../../filespecification/outputfiles_en.rst:1751
+#: ../../filespecification/outputfiles_en.rst:1844
+#: ../../filespecification/outputfiles_en.rst:2001
+#: ../../filespecification/outputfiles_en.rst:2072
+msgid "[double01], [double02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2015
+msgid ""
+"**Description :** [double01] gives the real part of :math:`c_{i\\sigma_1}"
+" (c_{i\\sigma_1} ^{\\dagger})`, while [double02] gives the imaginary part"
+" of :math:`c_{i\\sigma_1} (c_{i\\sigma_1} ^{\\dagger})`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2027
+msgid ""
+"A program is terminated when the components of the single excitation "
+"operators are double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2030
+msgid ""
+"A program is terminated when the conditions :math:`i=j` and :math:`k=l` "
+"are not satisfied for spin model."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2037
+msgid ""
+"A program is terminated, when [int02]-[int04] are outside the range of "
+"the defined values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2048
+msgid "PairExcitation file"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2050
+msgid ""
+"The operators to generate the pair excited state "
+":math:`c_{i\\sigma_1}c_{j\\sigma_2}^{\\dagger}(c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2})`"
+" are defined. The type of pair excitation operators "
+"(:math:`c_{i\\sigma_1}c_{j\\sigma_2}^{\\dagger}` or "
+":math:`c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}`) must be same in the "
+"input file. In the :math:`S_z` conserved system, :math:`\\sigma_1` must "
+"be equal to :math:`\\sigma_2`. An example of the file format is as "
+"follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2083
+msgid ""
+"Lines 6-: "
+"[int02]  [int03]  [int04]  [int05]  [int06]  [double01]  [double02]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2095
+msgid ""
+"**Description :** A keyword for the total number of the pair excitation "
+"operators. You can freely give a name to the keyword."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2102
+msgid ""
+"**Description :** An integer giving the total number of pair excitation "
+"operators."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2124
+msgid "[int06]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** An integer giving a type of pair excitation operators:"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "0: :math:`c_{i\\sigma_1}c_{j\\sigma_2}^{\\dagger}`"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "1: :math:`c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2137
+msgid ""
+"**Description :** [double01] gives the real part of "
+":math:`c_{i\\sigma_1}c_{j\\sigma_2}^{\\dagger} ( "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2})`, while [double02] gives the "
+"imaginary part of :math:`c_{i\\sigma_1}c_{j\\sigma_2}^{\\dagger} ( "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2})`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2150
+msgid ""
+"A program is terminated when the components of the pair excitation "
+"operators are double counted."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2160
+msgid ""
+"A program is terminated when [int02]-[int06] are outside the range of the"
+" defined values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2171
+msgid "SpectrumVec File"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2173
+msgid ""
+"The header of the input file for the initial vector to calculate the "
+"dynamical Green’s functions is defined. The file name and the file format"
+" (binary type) are as follows."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2178
+#: ../../filespecification/outputfiles_en.rst:482
+#: ../../filespecification/outputfiles_en.rst:506
+#: ../../filespecification/outputfiles_en.rst:546
+#: ../../filespecification/outputfiles_en.rst:588
+#: ../../filespecification/outputfiles_en.rst:693
+#: ../../filespecification/outputfiles_en.rst:798
+#: ../../filespecification/outputfiles_en.rst:865
+#: ../../filespecification/outputfiles_en.rst:947
+#: ../../filespecification/outputfiles_en.rst:1042
+#: ../../filespecification/outputfiles_en.rst:1152
+#: ../../filespecification/outputfiles_en.rst:1215
+#: ../../filespecification/outputfiles_en.rst:1285
+#: ../../filespecification/outputfiles_en.rst:1381
+#: ../../filespecification/outputfiles_en.rst:1537
+#: ../../filespecification/outputfiles_en.rst:1629
+#: ../../filespecification/outputfiles_en.rst:1707
+#: ../../filespecification/outputfiles_en.rst:1791
+#: ../../filespecification/outputfiles_en.rst:1872
+#: ../../filespecification/outputfiles_en.rst:1919
+#: ../../filespecification/outputfiles_en.rst:1982
+#: ../../filespecification/outputfiles_en.rst:2032
+#: ../../filespecification/outputfiles_en.rst:2107
+msgid "File name"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2180
+msgid "##_rank_$$.dat"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2182
+msgid ""
+"## is the name of the head indicated by the key word ``SpectrumVec`` in "
+"the ``CalcMod`` file, and $$ is the number of the rank."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2190
+#: ../../filespecification/outputfiles_en.rst:2043
+#: ../../filespecification/outputfiles_en.rst:2118
+msgid "Line 1: [int01]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2192
+#: ../../filespecification/outputfiles_en.rst:2045
+msgid "Line 2: [int02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2194
+msgid "Lines 3 -: [double01]  [double02]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2206
+msgid "**Description :** The total number of the targets of the Hilbert spaces."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2213
+msgid "**Description :** The number of Lanczos or TPQ steps."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2217
+msgid "**Type :** double"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "**Description :** The coefficient value of the input vector."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst
+msgid "[double01] is a real part and [double02] is an imaginary part."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2230
+msgid "OneBodyTE File"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2232
+msgid ""
+"This file determines the values of the transfer integrals "
+":math:`t_{ij\\sigma_1\\sigma_2} (t)` at each time :math:`t`,"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2266
+msgid ""
+"From line 6, time :math:`t` and total number of transfer integrals "
+":math:`N(t)` are first defined and next the transfer integrals "
+":math:`t_{ij\\sigma_1\\sigma_2} (t)` are defined."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2270
+#: ../../filespecification/expertmode_en.rst:2391
+msgid "Line m: [double01]  [int02]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2272
+msgid ""
+"Lines (m+1) - (m+1+[int02]): "
+"[int03]  [int04]  [int05]  [int06]  [double02]  [double03]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2291
+#: ../../filespecification/expertmode_en.rst:2412
+msgid ""
+"**Description :** An integer giving the total time steps defined in this "
+"file."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2298
+#: ../../filespecification/expertmode_en.rst:2419
+#: ../../filespecification/outputfiles_en.rst:1310
+msgid "**Description :** Time :math:`t`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2304
+msgid ""
+"**Description :** An integer giving the total number of transfer "
+"integrals at time :math:`t`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2311
+msgid ""
+"**Description :** An integer giving a site index (:math:`0<=` [int03], "
+"[int05] :math:`<` ``Nsite``)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2314
+msgid "[int04], [int06]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2322
+#: ../../filespecification/expertmode_en.rst:2445
+#: ../../filespecification/outputfiles_en.rst:2143
+msgid "[double02], [double03]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2326
+msgid ""
+"**Description :** A value for real and imaginary part of "
+":math:`t_{ij\\sigma_1\\sigma_2}(t)` at time :math:`t` is defined "
+"[double02] and [double03], respectively."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2338
+#: ../../filespecification/expertmode_en.rst:2461
+msgid ""
+"A program is terminated when ``LanczosStep`` defined in ``ModPara`` is "
+"greater than [int02]."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2341
+msgid ""
+"A program is terminated when [int03]-[int06] are outside the range of the"
+" defined values."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2352
+msgid "TwoBodyTE File"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2354
+msgid ""
+"This file determines the values of the two-body interactions "
+":math:`I_{i\\sigma_1j \\sigma_2 k \\sigma_3 l "
+"\\sigma_4}(t)c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k\\sigma_3}^{\\dagger}c_{l\\sigma_4}`"
+" at each time :math:`t`,"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2387
+msgid ""
+"From line 6, time :math:`t` and total number of transfer integrals "
+":math:`N(t)` are first defined and next the two-body interactions "
+":math:`I_{i\\sigma_1j \\sigma_2 k \\sigma_3 l \\sigma_4}(t)` are defined."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2393
+msgid ""
+"Lines (m+1) - (m+1+[int02]): "
+"[int03]  [int04]  [int05]  [int06]  [int07]  [int08]  [int09]  [int10]  [double02]  [double03]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2425
+msgid ""
+"**Description :** An integer giving the total number of two-body "
+"interactions at time :math:`t`."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2433
+msgid ""
+"**Description :** An integer giving a site index (:math:`0<=` "
+"[int03],[int05],[int07],[int09] :math:`<` ``Nsite``)."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2436
+msgid "[int04], [int06], [int08], [int10]"
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2449
+msgid ""
+"**Description :** A value for real and imaginary part of "
+":math:`I_{ijkl\\sigma_1\\sigma_2\\sigma_3\\sigma_4}(t)` at time :math:`t`"
+" is defined [double02] and [double03], respectively."
+msgstr ""
+
+#: ../../filespecification/expertmode_en.rst:2464
+msgid ""
+"A program is terminated when [int03]-[int10] are outside the range of the"
+" defined values."
+msgstr ""
+
+#: ../../filespecification/fi-index.rst:3
+msgid "File specification"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:6
+msgid "Output files"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:8
+msgid ""
+"In this section, the details of the output files of the expert mode are "
+"explained."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:14
+msgid "CHECK_Chemi.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:16
+msgid ""
+"This file is outputted to check the input of chemical potential "
+":math:`\\mu_{i\\sigma}`,"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:38
+msgid "i=[int01] spin=[int02] isite1=[int03] tmp_V=[double01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:49
+#: ../../filespecification/outputfiles_en.rst:115
+#: ../../filespecification/outputfiles_en.rst:186
+#: ../../filespecification/outputfiles_en.rst:242
+#: ../../filespecification/outputfiles_en.rst:300
+msgid "**Description :** The counted number of inputting terms."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** An integer for showing the spin index of "
+":math:`\\mu_{i\\sigma}`:"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:64
+msgid ""
+"**Description :** An integer for showing the site index of "
+":math:`\\mu_{i\\sigma}`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:71
+msgid "**Description :** A value for :math:`\\mu_{i\\sigma}`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:74
+msgid "CHECK_InterAll.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:76
+msgid ""
+"This file is outputted to check the input of the diagonal components of "
+"general two-body interactions,"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:100
+msgid ""
+"i=[int01] isite1=[int02] A_spin=[int03] isite2=[int04] B_spin=[int05] "
+"tmp_V=[double01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** An integer for showing the site index of "
+":math:`I_{iijj\\sigma_1\\sigma_1\\sigma_2\\sigma_2}`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid "[int02] and [int04] correspond to :math:`i` and :math:`j`, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** An integer for showing the spin index of "
+":math:`I_{iijj\\sigma_1\\sigma_1\\sigma_2\\sigma_2}`:"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[int03] and [int05] correspond to :math:`\\sigma_1` and "
+":math:`\\sigma_2`, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:141
+msgid ""
+"**Description :** A value for "
+":math:`I_{iijj\\sigma_1\\sigma_1\\sigma_2\\sigma_2}`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:149
+msgid "CHECK_CoulombIntra.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:151
+msgid ""
+"This file is outputted to check the input of the on-site interactions "
+":math:`U_i`,"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:174
+msgid "i=[int01] isite1=[int02] tmp_V=[double01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:192
+msgid "**Description :** An integer for showing the site index of :math:`U_i`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:206
+msgid "CHECK_Hund.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:208
+msgid ""
+"This file is outputted to check the input of the Hund couplings "
+":math:`J_{ij}^{\\rm Hund}`,"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:229
+#: ../../filespecification/outputfiles_en.rst:287
+msgid "i=[int01] isite1=[int02] isite2=[int03] tmp_V=[double01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** An integer for showing the site index of "
+":math:`J_{ij}^{\\rm Hund}`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid "[int02] and [int03] correspond to :math:`i` and :math:`j`, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:264
+msgid "CHECK_INTER_U.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:266
+msgid ""
+"This file is outputted to check the input of the diagonal components of "
+"the off-site interactions :math:`V_{ij}`,"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid "**Description :** An integer giving the site index of :math:`V_{ij}`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:322
+msgid "CHECK_Memory.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:324
+msgid ""
+"This file shows the size of the memory used in the calculation. An "
+"example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:337
+msgid "MAX DIMENSION idim_max=[int01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:339
+msgid "REQUIRED MEMORY max_mem =[double01] GB"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:350
+msgid ""
+"**Description :** An integer to show the total numbers of the Hilbert "
+"space under a calculation."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:357
+msgid ""
+"**Description :** The size of memory to store the Hilbert space in a "
+"calculation (GB unit)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:365
+msgid "WarningOnTransfer.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:367
+msgid ""
+"This file shows the double counted components of transfer integrals. An "
+"example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:382
+msgid ""
+"Double countings in transfers: i=[int01] j=[int02] spni [int03] spnj "
+"[int04]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:391
+msgid "[int01], [int02]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:395
+msgid ""
+"**Description :** The integer of the site number where the transfer "
+"integrals are double counted."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:398
+msgid "[int03], [int04]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid "**Description :** The integer of the spin index of a transfer integral:"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:412
+msgid "CalcTimer.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:417
+msgid ""
+"The name of the calculation process, the process number, and the "
+"calculation process time are outputted in order at each line in the "
+"CalcTime.dat file. An example of the file format for the TPQ method is as"
+" follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:459
+msgid "TimeKeeper.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:461
+msgid ""
+"This file is outputted to show the calculation process information. An "
+"example of the file format for the Lanczos method is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:484
+msgid "##_TimeKeeper.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:486
+#: ../../filespecification/outputfiles_en.rst:510
+#: ../../filespecification/outputfiles_en.rst:550
+#: ../../filespecification/outputfiles_en.rst:592
+#: ../../filespecification/outputfiles_en.rst:697
+#: ../../filespecification/outputfiles_en.rst:802
+#: ../../filespecification/outputfiles_en.rst:1156
+msgid "## indicates a header defined by [string02] in a ModPara file."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:489
+msgid "sz_TimeKeeper.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:491
+msgid ""
+"This file is outputted to show the process information to obtain the "
+"Hilbert space needed for the calculation. An example of the file format "
+"is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:508
+msgid "##_sz_TimeKeeper.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:519
+msgid "Time_CG_EigenVector.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:521
+msgid ""
+"(For the Lanczos method) The process for calculating the eigenvector by "
+"the CG method is outputted. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:548
+msgid "##_Time_CG_EigenVector.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:559
+msgid "energy.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:564
+msgid ""
+"(For the Lanczos method) The values of the energy, doublon, and "
+":math:`\\langle S_z \\rangle` calculated by using the eigenvector "
+"obtained by the Lanczos or CG method are outputted. An example of the "
+"file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:565
+#: ../../filespecification/outputfiles_en.rst:643
+msgid "For ``method=\"Lanczos\"``"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:573
+#: ../../filespecification/outputfiles_en.rst:666
+#: ../../filespecification/outputfiles_en.rst:711
+msgid "For ``method=\"CG\"``"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:590
+msgid "##_energy.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:599
+msgid "Line 1: Energy [double01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:601
+msgid "Line 2: Doublon [double02]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:603
+msgid "Line 3: Sz [double02]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:614
+msgid ""
+"**Description :** The value of the energy calculated by the eigenvetor "
+"obtained by the Lanczos or CG method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:621
+msgid ""
+"**Description :** The value of the doublon calculated by the eigenvetor "
+"obtained by the Lanczos or CG method, :math:`\\frac{1}{N_s} "
+"\\sum_{i}\\langle n_{i\\uparrow}n_{i\\downarrow}\\rangle` (:math:`N_s` is"
+" the total number of sites)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:626
+#: ../../filespecification/outputfiles_en.rst:902
+#: ../../filespecification/outputfiles_en.rst:983
+#: ../../filespecification/outputfiles_en.rst:990
+#: ../../filespecification/outputfiles_en.rst:1079
+#: ../../filespecification/outputfiles_en.rst:1319
+#: ../../filespecification/outputfiles_en.rst:1416
+#: ../../filespecification/outputfiles_en.rst:1575
+msgid "[double03]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:630
+msgid ""
+"**Description :** The value of :math:`S_z` calculated by the eigenvetor "
+"obtained by the Lanczos or CG method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:638
+msgid "Lanczos_Step.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:642
+msgid ""
+"(For the Lanczos method) This file is outputted to show the process "
+"information for calculating the eigenvector by Lanczos method. An example"
+" of the file format for the Lanczos method is shown as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:695
+msgid "##_Lanczos_Step.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:704
+msgid "For``method=\"Lanczos\"``"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:706
+msgid ""
+"stp= [int01] [double01] [double02] [double03] [double04] [double-a] "
+"[double-b]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:713
+msgid "[int01] [double-c] [double-d] [double01] [double02] ..."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:726
+msgid "**Description :** The iteration number of the Lanczos and LOBCG method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:729
+msgid "[double01], [double02], [double03], [double04] ..."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:734
+msgid ""
+"**Description :** Eigenvalues computed with the Lanczos or LOBCG method "
+"(ascending order). Four and ``exct`` eigenvalues are printed for the "
+"Lanczos and LOBCG method, respectively (in the above case, ``exct=3``). "
+"While the degenerate eigenstates are printed as a single state in the "
+"Lanczos method, they are printed separately in LOBCG method. In the above"
+" case, we can find there is a degeneracy in the first excited state."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:742
+msgid "[double-a]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:746
+msgid ""
+"**Description :** (Only for the Lanczos method) The eigenvalue used for "
+"the convergence check. It was specified by ``LanczosTarget`` (in the "
+"above case, ``LanczosTarget=3``)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:750
+msgid "[double-b]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:754
+msgid ""
+"**Description :** (Only for the Lanczos method) The maximum eigenvalue "
+"divided by the number of sites. It is the lower limit of ``LargeValue`` "
+"in TPQ method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:758
+msgid "[double-c]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:762
+msgid ""
+"**Description :** (Only for LOBCG method) The maximum of the 2-norm of "
+"each residual vector. It is used for the convergence check."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:765
+msgid "[double-d]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:769
+msgid ""
+"**Description :** (Only for LOBCG method) The convergence threshold. This"
+" is obtained by the value specified with ``LanczosEps`` times the "
+"absolute value of the energy of the ground state."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:778
+msgid "Time_TPQ_Step.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:783
+msgid ""
+"(For the TPQ method) This file is outputted to show the time for starting"
+" the calculation of the TPQ method at each seed and step. In the restart "
+"calculation, the values are added to the previous file. An example is as "
+"follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:800
+msgid "##_TPQ_Step.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:809
+msgid "Set [int01] stp [int02]: TPQ begins: [string01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:821
+msgid "**Description :** The seed number in the calculation of the TPQ method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:828
+msgid "**Description :** The step number in the calculation of the TPQ method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:835
+msgid ""
+"**Description :** The time for starting the calculation of the TPQ method"
+" at each seed and step."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:845
+msgid "Norm_rand.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:850
+msgid ""
+"(For the TPQ method) This file is outputted to show the calculation "
+"process information for the TPQ method. In the restart calculation, the "
+"values are added to the previous file. An example of the file format is "
+"as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:867
+msgid "Norm_rand??.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:869
+#: ../../filespecification/outputfiles_en.rst:951
+#: ../../filespecification/outputfiles_en.rst:1046
+msgid "?? indicates the number of runs in the calculation of the TPQ method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:878
+msgid "Lines 2-: [double01] [double02] [double03] [int01]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:891
+#: ../../filespecification/outputfiles_en.rst:974
+#: ../../filespecification/outputfiles_en.rst:1070
+msgid "**Description :** Inverse temperature :math:`1/{k_{\\rm B}T}`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:897
+msgid ""
+"**Description :** The norm of a wave function before normalization given "
+"by :math:`\\langle \\tilde{\\psi}_{k} |\\tilde{\\psi}_{k}\\rangle`, where"
+" :math:`|\\tilde{\\psi}_{k}\\rangle \\equiv(l-\\hat{\\mathcal "
+"H}/N_{s})|\\psi_{k=1}\\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:906
+msgid ""
+"**Description :** The norm of an initial wave function before "
+"normalization given by :math:`\\langle \\tilde{\\psi}_{0} "
+"|\\tilde{\\psi}_{0}\\rangle`, where :math:`|\\tilde{\\psi}_{0}\\rangle` "
+"is an initial random vector."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:915
+#: ../../filespecification/outputfiles_en.rst:1009
+#: ../../filespecification/outputfiles_en.rst:1122
+msgid ""
+"**Description :** The number of operations of :math:`(l-\\hat{\\mathcal "
+"H}/N_{s})` for an initial wave function, where :math:`l` is "
+"``LargeValue`` defined in a ModPara file and :math:`N_{s}` is the total "
+"number of sites."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:927
+msgid "SS_rand.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:932
+msgid ""
+"(For the TPQ method) This file is outputted to show the calculation "
+"results for the TPQ method. In the restart calculation, the values are "
+"added to the previous file. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:949
+msgid "SS_rand??.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:960
+#: ../../filespecification/outputfiles_en.rst:1296
+msgid "Lines 2-: [double01] [double02] [double03] [double04] [double05] [int01]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:980
+msgid ""
+"**Description :** The expected value of the energy :math:`\\langle "
+"\\mathcal H \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:987
+msgid ""
+"**Description :** The expected value of the square of the Hamiltonian "
+":math:`\\langle \\mathcal H^2 \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:994
+#: ../../filespecification/outputfiles_en.rst:1330
+msgid ""
+"**Description :** The expected value of the doublon, "
+":math:`\\frac{1}{N_s} \\sum_{i}\\langle "
+"n_{i\\uparrow}n_{i\\downarrow}\\rangle` (:math:`N_{s}` is the total "
+"number of sites)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:998
+#: ../../filespecification/outputfiles_en.rst:1094
+#: ../../filespecification/outputfiles_en.rst:1334
+#: ../../filespecification/outputfiles_en.rst:1431
+#: ../../filespecification/outputfiles_en.rst:1589
+msgid "[double05]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1002
+#: ../../filespecification/outputfiles_en.rst:1338
+msgid ""
+"**Description :** The total number of particles :math:`\\langle {\\hat n}"
+" \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1021
+msgid "Flct_rand.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1027
+msgid ""
+"(For the TPQ method) This file is outputted to show the calculation "
+"results of the fluctuation of the particle number, doublon, and "
+":math:`S_z` for the TPQ method. In the restart calculation, the values "
+"are added to the previous file. An example of the file format is as "
+"follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1044
+msgid "Flct_rand??.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1055
+#: ../../filespecification/outputfiles_en.rst:1392
+msgid ""
+"Lines 2-: [double01] [double02] [double03] [double04] [double05] "
+"[double06] [double07] [int01]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1076
+#: ../../filespecification/outputfiles_en.rst:1413
+msgid ""
+"**Description :** A total particle number :math:`\\sum_{i} \\langle "
+"\\hat{n}_i \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1083
+#: ../../filespecification/outputfiles_en.rst:1420
+msgid ""
+"**Description :** The expected value of the square of the particle number"
+" :math:`\\langle (\\sum_{i} \\hat{n}_i)^2 \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1086
+#: ../../filespecification/outputfiles_en.rst:1326
+#: ../../filespecification/outputfiles_en.rst:1423
+#: ../../filespecification/outputfiles_en.rst:1582
+msgid "[double04]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1090
+#: ../../filespecification/outputfiles_en.rst:1427
+msgid ""
+"**Description :** The expected value of doublon :math:`\\frac{1}{N_s} "
+"\\sum_{i}\\langle n_{i\\uparrow}n_{i\\downarrow}\\rangle` (:math:`N_s` is"
+" the total number of sites)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1098
+#: ../../filespecification/outputfiles_en.rst:1435
+msgid ""
+"**Description :** The expected value of the square of doublon "
+":math:`\\frac{1}{N_s}\\langle ( \\sum_{i} n_{i\\uparrow} "
+"n_{i\\downarrow})^2\\rangle` (:math:`N_s` is the total number of sites)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1102
+#: ../../filespecification/outputfiles_en.rst:1439
+msgid "[double06]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1106
+#: ../../filespecification/outputfiles_en.rst:1443
+msgid ""
+"**Description :** The expected value of :math:`S_z` :math:`\\frac{1}{N_s}"
+" \\sum_{i}\\langle \\hat{S}_i^z\\rangle` (:math:`N_s` is the total number"
+" of sites)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1110
+#: ../../filespecification/outputfiles_en.rst:1447
+msgid "[double07]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1114
+#: ../../filespecification/outputfiles_en.rst:1451
+msgid ""
+"**Description :** The expected value of the square of :math:`S_z` "
+":math:`\\frac{1}{N_s} \\langle (\\sum_{i} \\hat{S}_i^z)^2\\rangle` "
+"(:math:`N_s` is the total number of sites)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1132
+msgid "Time_TE_Step.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1137
+msgid ""
+"(For the real time evolution method) This file is outputted to show the "
+"time for starting the calculation of the real time evolution method at "
+"each step. In the restart calculation, the values are added to the "
+"previous file. An example is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1154
+msgid "##_TE_Step.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1163
+msgid "stp [int01]: TE begins: [string01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1175
+msgid "**Description :** The step number in the calculation."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1181
+msgid "**Description :** The time for starting the calculation at each step."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1190
+#: ../../filespecification/outputfiles_en.rst:1217
+msgid "Norm.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1195
+msgid ""
+"(For the real time evolution method) This file is outputted to show the "
+"calculation process information for the real time evolution method. In "
+"the restart calculation, the values are added to the previous file. An "
+"example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1226
+msgid "Lines 2-: [double01] [double02] [int01]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1238
+#: ../../filespecification/outputfiles_en.rst:1407
+msgid "**Description :** Time :math:`t`"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1244
+msgid "**Description :** The norm of a wave function at :math:`t`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1250
+#: ../../filespecification/outputfiles_en.rst:1345
+#: ../../filespecification/outputfiles_en.rst:1459
+msgid "**Description :** Time step."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1259
+#: ../../filespecification/outputfiles_en.rst:1287
+msgid "SS.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1264
+msgid ""
+"(For the real time evolution method) This file is outputted to show the "
+"calculation results. In the restart calculation, the values are added to "
+"the previous file. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1316
+msgid ""
+"**Description :** The expected value of the energy :math:`\\langle H "
+"\\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1323
+msgid ""
+"**Description :** The expected value of the square of the Hamiltonian "
+":math:`\\langle H^2 \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1354
+#: ../../filespecification/outputfiles_en.rst:1383
+msgid "Flct.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1360
+msgid ""
+"(For the real time evolution method) This file is outputted to show the "
+"calculation results of the fluctuation of the particle number, doublon, "
+"and :math:`S_z`. In the restart calculation, the values are added to the "
+"previous file. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1468
+msgid "Eigenvalue.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1472
+msgid ""
+"(For the FullDiag method) This file is outputted to show the energies "
+"calculated by the FullDiag method. An example of the file format is as "
+"follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1489
+msgid "[int01] [double01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1500
+msgid ""
+"**Description :** The index of eigenvalues. The index 0 is for the energy"
+" of the ground state and the indexes are labeled in descending order for "
+"energies."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1508
+msgid ""
+"**Description :** The expected value of energy :math:`\\langle \\mathcal "
+"H \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1518
+msgid "phys.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1523
+msgid ""
+"(For the FullDiag method) This file is outputted to show the physical "
+"values calculated by the FullDiag method. The data are outputted in "
+"descending order for energies. An example of the file format is as "
+"follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1539
+#, python-format
+msgid "Canonical ensemble: ##_phys_Nup_$$Ndown%%.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1541
+msgid "Grand canonical ensemble: ##_phys.dat."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1543
+#, python-format
+msgid ""
+"##, $$, and %% indicate [string02], Nup, and Ndown defined in a ModPara "
+"file, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1553
+msgid "Lines 2-: [double01] [double02] [double03] [double04] [double05]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1566
+msgid "**Description :** The energy :math:`\\langle \\mathcal H\\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1572
+msgid ""
+"**Description :** The total number of particles :math:`\\langle "
+"\\hat{n}\\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1579
+msgid ""
+"**Description :** The expected value of :math:`S_z`, :math:`\\langle "
+"S_z\\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1586
+msgid ""
+"**Description :** The expected value of :math:`{\\boldsymbol S}^2` , "
+":math:`\\langle {\\boldsymbol S}^2 \\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1593
+msgid ""
+"**Description :** The expected value of doublon, :math:`\\frac{1}{N_s} "
+"\\sum_{i}\\langle n_{i\\uparrow}n_{i\\downarrow}\\rangle` (:math:`N_{s}` "
+"is the total number of sites)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1604
+msgid "ham.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1610
+msgid ""
+"(For the FullDiag method) When ``OutputHam=1`` in the ``CalcMod`` file, "
+"the Hamiltonian calculated by :math:`{\\mathcal H}\\Phi` is outputted by "
+"the MatrixMarket format. The recalculation by using this file can be down"
+" when ``InputHam=1`` in the ``CalcMod`` file. An example of the file "
+"format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1631
+msgid "##_ham.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1633
+#: ../../filespecification/outputfiles_en.rst:1986
+msgid "## indicates [string02] in a ModPara file."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1642
+msgid "Line 2: [int01] [int02] [int03]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1645
+msgid "Lines3-:[int04] [int05] [double01] [double02]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1656
+msgid "**Description :** Number of rows of Hamiltonian."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1662
+msgid "**Description :** Number of columns of Hamiltonian."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1668
+msgid "**Description :** Number of nonzero elements of Hamiltonian."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1674
+msgid ""
+"**Description :** The value of Hamiltonian; [double01] and [double02] "
+"represent real and imaginary part of the Hamiltonian, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1685
+msgid "cisajs.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1687
+msgid ""
+"This file is the outputted files for one-body Green’s function "
+":math:`\\langle c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}\\rangle`. The "
+"target components are set in the input file with the keyword “OneBodyG\"."
+" An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1709
+msgid "Lanczos method: ##_cisajs.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1711
+#, python-format
+msgid "TPQ method: ##_cisajs_set??step%%.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1713
+msgid "Full diagonalization method, LOBCG method: ##_cisajs_eigen&&.dat."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1715
+#, python-format
+msgid "Real time evolution method: ## cisajs step%%.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1717
+#: ../../filespecification/outputfiles_en.rst:1802
+#, python-format
+msgid ""
+"##, ??, %%, and && indicate [string02] in a ModPara file, the number of "
+"runs in calculation in the TPQ method, the number of steps in the TPQ "
+"method, and the index of the eigenvalues, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1726
+msgid "[int01]  [int02]  [int03]  [int04]  [double01]  [double02]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1733
+msgid "[int01], [int03]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1737
+msgid ""
+"**Description :** The integer of the site number. [int01] and [int03] "
+"show the :math:`i` and :math:`j` site numbers, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid "**Description :** The integer of the spin index:"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[int02] and [int04] show :math:`\\sigma_1` and :math:`\\sigma_2`, "
+"respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** The value of :math:`\\langle "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}\\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[double01] and [double02] show the real and imaginary part of "
+":math:`\\langle c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}\\rangle`, "
+"respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1769
+msgid "cisajscktalt.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1771
+msgid ""
+"This file is the outputted files for the two-body Green’s function "
+":math:`\\langle "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k\\sigma_3}^{\\dagger}c_{l\\sigma_4}\\rangle`."
+" The target components are set in the input file with the keyword "
+"“TwoBodyG\". An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1793
+msgid "Lanczos method: ##_cisajscktalt.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1795
+#, python-format
+msgid "TPQ method: ##_cisajscktalt_set??step%%.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1797
+msgid "Full diagonalization method, LOBCG method: ##_cisajscktalt_eigen&&.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1800
+#, python-format
+msgid "Real time evolution method: ## cisajscktalt step%%.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1811
+msgid "[int01]  [int02]  [int03]  [int04]  [int05]  [int06]  [int07]  [int08]  [double01]  [double02]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1818
+msgid "[int01], [int03],[int05], [int07]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1824
+msgid ""
+"**Description :** The integer of the site number. [int01], [int03], "
+"[int05], and [int07] show the :math:`i`, :math:`j`, :math:`k`, and "
+":math:`l` site numbers, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[int02], [int04], [int06], and [int08] show :math:`\\sigma_1`, "
+":math:`\\sigma_2`, :math:`\\sigma_3`, and :math:`\\sigma_4`, "
+"respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** The value of :math:`\\langle "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k\\sigma_3}^{\\dagger}c_{l\\sigma_4}\\rangle`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[double01] and [double02] show the real and imaginary part of "
+":math:`\\langle "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k\\sigma_3}^{\\dagger}c_{l\\sigma_4}\\rangle`,"
+" respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1862
+msgid "eigenvec.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1864
+msgid ""
+"When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by "
+"the Lanczos method are outputted. When InputEigenVec=1 in a CalcMod file,"
+" eigenvectors are inputted by this outputted file. The file format is of "
+"the binary type."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1874
+msgid "##_eigenvec\\_&&\\_rank\\_$$.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1876
+msgid ""
+"## indicates [string02] in a ModPara file, && is the number of "
+"eigenvalues, and $$ is a number of rank."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1885
+#: ../../filespecification/outputfiles_en.rst:1933
+msgid ""
+"This file is written through the following source code (a little "
+"different fron the actual :math:`{\\mathcal H}\\Phi` source)."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1895
+msgid ""
+"where ``number_of_interations`` is the number of iterations, "
+"``local_size`` is the size of eigenvector (if MPI is used, it differs "
+"from the dimension of the Hilbert space), ``eigen_vector`` is the "
+"(complex) eigenvector."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1900
+msgid ""
+"**Note:** The fist component of ``eigen_vector`` (``eigen_vector[0]``) is"
+" not used for calculation."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1910
+msgid "tmpvec.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1912
+msgid ""
+"When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops "
+"at an indicated step are outputted. The file format is of the binary "
+"type. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1921
+msgid "Lanczos method: ##_tmpvec_rank_$$.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1923
+msgid "TPQ and LOBPCG method: ##_tmpvec_set_&&_rank_$$.dat ."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1925
+msgid ""
+"## indicates [string02] in a ModPara file, and $$ is the number of rank. "
+"&& is the sampling number for the TPQ calculation."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1936
+msgid "Lanczos"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1947
+msgid "TPQ and LOBPCG"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1957
+msgid ""
+"where ``number_of_interations`` is the number of iterations, "
+"``local_size`` is the size of eigenvector (if MPI is used, it differs "
+"from the dimension of the Hilbert space), ``last_vector`` is the vector "
+"at the last iteration and ``second_last_vector`` is the vector at the "
+"second last iteration."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1963
+msgid ""
+"**Note:** The fist component of ``last_vector`` and "
+"``second_last_vector`` (``last_vector[0]`` and ``second_last_vector[0]``)"
+" are not used for calculation."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1974
+msgid "DynamicalGreen.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1976
+msgid ""
+"This file is the outputted file for calculating the dynamical Green’s "
+"function. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1984
+msgid "##_DynamicalGreen.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:1993
+msgid "Lines 1-: [double01]  [double02]  [double03]  [double04]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid "**Description :** The value of the frequency :math:`z`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[double01] and [double02] are a real and an imaginary part of :math:`z`, "
+"respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2009
+#: ../../filespecification/outputfiles_en.rst:2082
+msgid "[double03], [double04]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid "**Description:** The value of dynamical Green’s functions :math:`G(z)`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[double03] and [double04] are a real and an imaginary part of "
+":math:`G(z)`, respectively."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2023
+msgid "recalcvec.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2025
+msgid ""
+"This file is the outputted file for two vectors to recalculate the "
+"dynamical Green’s function by the Lanczos method. The file format is of "
+"the binary type. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2034
+msgid "##_recalcvec_rank_$$.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2036
+#: ../../filespecification/outputfiles_en.rst:2111
+msgid "## indicates [string02] in a ModPara file and $$ is the number of rank."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2047
+msgid "Lines 3 - 3+ [int02]: [double01]  [double02]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2050
+msgid "Lines 4+ [int02] - 4+2 :math:`\\times` [int02]: [double03]  [double04]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2063
+#: ../../filespecification/outputfiles_en.rst:2134
+msgid ""
+"**Description :** The step for calculating dynamical Green’s functions by"
+" the Lanczos method :math:`N_d`."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2068
+msgid "**Type :** Long Int"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2070
+msgid "**Description :** The total number of targets of the Hilbert spaces."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** The value of the vector :math:`\\boldsymbol{v}_{k+1}` "
+"for recalculating dynamical Green’s functions by the Lanczos method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[double01] and [double02] are a real part and an imaginary part of "
+":math:`\\boldsymbol{v}_{k+1}`, respectively. The fist component is not "
+"used for calculation."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** The value of the vector :math:`\\boldsymbol{v}_{k}` for"
+" recalculating dynamical Green’s functions by the Lanczos method."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"[double03] and [double04] are a real part and an imaginary part of "
+":math:`\\boldsymbol{v}_{k}`, respectively. The fist component is not used"
+" for calculation."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2097
+msgid "TMcomponents.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2099
+msgid ""
+"This file is the outputted files for the components of the tridiagonal "
+"matrix and the norm of the excited state to recalculate the dynamical "
+"Green’s function by the Lanczos method. The file format is of the binary "
+"type. An example of the file format is as follows."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2109
+msgid "##_TMcomponents.dat"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2120
+msgid "Line 2: [double01]"
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2122
+msgid "Lines 3-: [double02]  [double03]."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst:2141
+msgid "**Description :** The value of the norm of the excited state."
+msgstr ""
+
+#: ../../filespecification/outputfiles_en.rst
+msgid ""
+"**Description :** The value of the components of the tridiagonal matrix "
+"to recalculate dynamical Green’s functions by the Lanczos method "
+":math:`\\alpha_i, \\beta_i (i =1,\\cdots N_d)`. [double02] is "
+":math:`\\alpha_i` and [double03] is :math:`\\beta_i`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:6
+msgid "Input files for *Standard* mode"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:8
+msgid "An example of an input file for the standard mode is as follows: ::"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:28
+msgid "**Basic rules for input files**"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:30
+msgid ""
+"In each line, there is a set of a keyword (before an “\\ ``=``\") and a "
+"parameter(after an “\\ ``=``\"); they are separated by “\\ ``=``\"."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:33
+msgid "You can describe keywords in a random order."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:35
+msgid "Empty lines and lines beginning with a “``//``”(comment outs) are skipped."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:38
+msgid ""
+"Upper- and lowercase are not distinguished. Double quotes and blanks are "
+"ignored."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid "There are three types of parameters."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid ""
+"1. Parameters that must be specified (if not, :math:`{\\mathcal H}\\Phi` "
+"will stop with error messages),"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid ""
+"2. Parameters that it is not necessary to specified (if not specified, "
+"default values are used),"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid ""
+"3. Parameters that must not be specified (if specified, :math:`{\\mathcal"
+" H}\\Phi` will stop with error messages)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid ""
+"An example of type 3 is the transfer :math:`t` parameter for the "
+"Heisenberg spin system. If you choose “model=spin\", you should not "
+"specify “\\ :math:`t`\"."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:52
+msgid "We explain each keyword as follows."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:55
+msgid "Parameters for the type of calculation"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:57
+msgid "``model``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:59
+msgid ""
+"**Type :** String (hoose from ``\"Fermion Hubbard\"``, ``\"Spin\"``, "
+"``\"Kondo Lattice\"``, ``\"Fermion HubbardGC\"``, ``\"SpinGC\"``, "
+"``\"Kondo LatticeGC\"``, ``\"SpinGCCMA\"``) [#]_"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:63
+msgid ""
+"**Description :** The target model is specified with this parameter; the "
+"expressions above denote the canonical ensemble of the Fermion in the "
+"Hubbard model"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:75
+msgid ""
+"the canonical ensemble in the Spin model(\\ :math:`\\{\\sigma_1, "
+"\\sigma_2\\}={x, y, z}`)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:85
+msgid "the canonical ensemble in the Kondo lattice model"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:98
+msgid ""
+"the grand canonical ensemble of the Fermion in the Hubbard model [Eqn. "
+":eq:`fml4_1_hubbard`], the grand canonical ensemble in the Spin model "
+"[Eqn. :eq:`fml4_1_spin`], and the grand canonical ensemble in the Kondo "
+"lattice model [Eqn. :eq:`fml4_1_kondo`], respectively."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:104
+msgid ""
+"When ``model=\"SpinGCCMA\"``, by using a more efficient algorithm [#]_, "
+":math:`{\\mathcal H}\\Phi` calculates a system that is the same as "
+"``\"SpinGC\"``. However, supported models and MPI processes are highly "
+"limited. See ``\"Lattice\"`` section."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:109
+msgid "``method``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:111
+msgid ""
+"**Type :** String (choose from ``\"Lanczos\"``, ``\"TPQ\"``, ``\"Full "
+"Diag\"``, ``\"CG\"``, ``Time Evolution``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:114
+msgid ""
+"**Description :** The calculation type is specified with this parameter; "
+"the above expressions above denote the single eigenstate calculation by "
+"using the Lanczos method, at the finite-temperature by using the "
+"thermally pure quantum state, the full diagonalization method, the "
+"multiple eigenstates calculation by using the LOBCG method [7]_ [8]_ , "
+"and the simulation of real-time evolution, respectively."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:122
+msgid ""
+"The scheme employed for the spectrum calculation is also specified with "
+"this parameter. If ``\"CG\"`` is chosen, the shifted bi-conjugate "
+"gradient method [9]_ together with the seed-switch technique [10]_ is "
+"employed with the help of the :math:`K\\omega` library [11]_."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:129
+msgid "``lattice``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:131
+msgid ""
+"**Type :** String (choose from ``\"Chain Lattice\"``, ``\"Square "
+"Lattice\"``, ``\"Triangular Lattice\"``, ``\"Honeycomb Lattice\"``, "
+"``\"Ladder\"``, ``\"Kagome\"``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:135
+msgid ""
+"**Description :** The lattice shape is specified with this parameter; the"
+" expressions above denote the one-dimensional chain lattice ( "
+":numref:`fig_chap04_1_lattice` (a)), the two-dimensional square lattice ("
+" :numref:`fig_chap04_1_lattice` (b)), the two-dimensional triangular "
+"lattice ( :numref:`fig_chap04_1_lattice` (c)), the two-dimensional "
+"anisotropic honeycomb lattice ( :numref:`fig_chap04_1_honeycomb` ), the "
+"ladder lattice ( :numref:`fig_ladder` ), and the Kagome Lattice( "
+":numref:`fig_kagome` ) respectively."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:143
+msgid ""
+"In ``method=\"SpinGCCMA\"``, only ``\"Chain Lattice\"``, ``\"Honeycomb "
+"Lattice\"``, ``\"Ladder\"``, and ``\"Kagome\"`` are supported. The limits"
+" of :math:`L`, :math:`W`, and the number of MPI processes (:math:`N_{\\rm"
+" proc}`) are as follows:"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:148
+msgid "``\"Chain Lattice\"``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:150
+msgid ""
+":math:`L = 8n` (where :math:`n` is an integer number under the condition "
+":math:`n\\geq1`), :math:`N_{\\rm proc} \\leq 2(L=8)`, :math:`N_{\\rm "
+"proc} \\leq 2^{L/2-2}(L>8)`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:154
+msgid "``\"Honeycomb Lattice\"``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:156
+msgid ""
+":math:`W=3, L \\geq 2`, :math:`N_{\\rm proc} \\leq 2(L=2)`, "
+":math:`N_{\\rm proc} \\leq 64(L>2)`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:159
+msgid "``\"Ladder\"``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:161
+msgid ""
+":math:`W=2, L = 2n` (where :math:`n` is an integer number under the "
+"condition :math:`n\\geq4`), :math:`N_{\\rm proc} \\leq 2^{L-4}`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:164
+msgid "``\"Kagome\"``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:166
+msgid ""
+":math:`W=3, L \\geq 2`, :math:`N_{\\rm proc} \\leq 1(L=2)`, "
+":math:`N_{\\rm proc} \\leq 512(L>2)`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:169
+msgid "\\GC=Grand Canonical"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:171
+msgid "\\Y. Yamaji *et. al.*, manuscript in preparation."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:174
+msgid "Parameters for the lattice"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:177
+msgid "Chain [ :numref:`fig_chap04_1_lattice` (a)]"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:179
+#: ../../filespecification/standardmode_en.rst:237
+msgid "``L``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:181
+#: ../../filespecification/standardmode_en.rst:239
+#: ../../filespecification/standardmode_en.rst:246
+#: ../../filespecification/standardmode_en.rst:274
+#: ../../filespecification/standardmode_en.rst:281
+#: ../../filespecification/standardmode_en.rst:312
+msgid "**Type :** Integer"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:183
+msgid ""
+"**Description :** The length of the chain is specified with this "
+"parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:198
+msgid ""
+"Schematic illustration of (a) one-dimensional chain lattice, (b) two-"
+"dimensional square lattice, and (c) two-dimensional triangular lattice. "
+"They have :math:`t`, :math:`V`, and :math:`J` as the nearest neighbor "
+"hopping, an offsite Coulomb integral, and a spin-coupling constant, "
+"respectively (magenta solid lines); they also have :math:`t'`, "
+":math:`V'`, and :math:`J'` as the next nearest neighbor hopping, offsite "
+"Coulomb integral, and spin-coupling constant, respectively (green dashed "
+"line)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:215
+msgid ""
+"Schematic illustration of the anisotropic honeycomb lattice. The nearest "
+"neighbor hopping integral, spin coupling, and offsite Coulomb integral "
+"depend on the bond direction. Those between the second nearest neighbor "
+"sites are not supported."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:225
+msgid "Schematic illustration of the Kagome lattice."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:232
+msgid "Schematic illustration of the ladder lattice."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:235
+msgid "Ladder ( :numref:`fig_ladder` )"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:241
+msgid ""
+"**Description :** The length of the ladder is specified with this "
+"parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:244
+msgid "``W``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:248
+msgid ""
+"**Description :** The number of the ladder is specified with this "
+"parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:260
+msgid ""
+"Shape of the numerical cell when :math:`{\\boldsymbol a}_0 = (6, 2), "
+"{\\boldsymbol a}_1 = (2, 4)` in the triangular lattice. The region "
+"surrounded by :math:`{\\boldsymbol a}_0` (magenta dashed arrow) and "
+":math:`{\\boldsymbol a}_1` (green dashed arrow) becomes the cell to be "
+"calculated (20 sites)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:266
+msgid ""
+"**Tetragonal lattice** [ :numref:`fig_chap04_1_lattice` (b)], triangular "
+"lattice [ :numref:`fig_chap04_1_lattice` (c)], honeycomb lattice [ "
+":numref:`fig_chap04_1_honeycomb` ], Kagome lattice [ :numref:`fig_kagome`"
+" ]"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:269
+msgid ""
+"In these lattices, we can specify the shape of the numerical cell by "
+"using the following two methods."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:272
+msgid "``W``, ``L``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:276
+msgid ""
+"**Description :** The alignment of the original unit cells (dashed black "
+"lines in :numref:`fig_chap04_1_lattice`  - :numref:`fig_kagome` ) is "
+"specified with this parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:279
+msgid "``a0W``, ``a0L``, ``a1W``, ``a1L``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:283
+msgid ""
+"**Description :** We can specify two vectors (:math:`{\\boldsymbol a}_0, "
+"{\\boldsymbol a}_1`) that surround the numerical cell "
+"(:numref:`fig_chap04_1_unitlattice` ). These vectors should be specified "
+"in the fractional coordinate."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:288
+msgid ""
+"If we use both these methods, :math:`{\\mathcal H}\\Phi` stops. When "
+"``model=SpinGCCMA``, we can use only the former."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:291
+msgid ""
+"We can check the shape of the numerical cell by using a file "
+"``lattice.gp`` which is written in Standard mode. This file can be read "
+"by ``gnuplot`` as follows:"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:300
+msgid "Parameters for conserved quantities"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:302
+msgid "``nelec``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:304
+msgid "**Type :** Positive integer"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:306
+msgid ""
+"**Description :** The number of valence electrons is specified with this "
+"parameter. When model = ``\"Fermion HubbardGC\"``, ``\"Spin\"``, or "
+"``\"SpinGC\"``, it should not be specified."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:314
+msgid ""
+"**Description :** The :math:`z` component of the twofold total spin is "
+"specified with this parameter. When model = ``\"Fermion HubbardGC\"`` or "
+"``\"SpinGC\"``, it should not be specified."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:320
+msgid "Parameters for the Hamiltonian"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:322
+msgid ""
+"A default value is :math:`0` unless a specific value is written in the "
+"description. \\ :numref:`table_interactions` shows the parameters for "
+"each models. In the case of a complex type, a file format is “\\ *a real "
+"part, an imaginary part* \" while in the case of a real type, only “\\ *a"
+" real part* \"."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:329
+msgid "Local terms"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:331
+msgid "``mu``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:333
+#: ../../filespecification/standardmode_en.rst:341
+#: ../../filespecification/standardmode_en.rst:350
+#: ../../filespecification/standardmode_en.rst:363
+#: ../../filespecification/standardmode_en.rst:403
+#: ../../filespecification/standardmode_en.rst:424
+#: ../../filespecification/standardmode_en.rst:453
+#: ../../filespecification/standardmode_en.rst:474
+#: ../../filespecification/standardmode_en.rst:529
+#: ../../filespecification/standardmode_en.rst:538
+msgid "**Type :** Real"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:335
+msgid ""
+"**Description :** It is available only for the Hubbard and Kondo lattice "
+"model. The chemical potential :math:`\\mu` (including the site potential)"
+" is specified with this parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:339
+msgid "``U``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:343
+msgid ""
+"**Description :** It is available only for the Hubbard and Kondo lattice "
+"model. The onsite Coulomb integral :math:`U` is specified with this "
+"parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:347
+msgid ""
+"``Jx``, ``Jy``, ``Jz``, ``Jxy``, ``Jyx``, ``Jxz``, ``Jzx``, ``Jyz``, "
+"``Jzy``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:352
+msgid ""
+"**Description :** It is available only for the Kondo lattice model. The "
+"spin-coupling constant between the valence and the local electrons is "
+"specified with this parameter. If the exchange coupling ``J`` is "
+"specified in the input file, instead of ``Jx, Jy, Jz``, the diagonal "
+"exchange couplings, ``Jx, Jy, Jz``, are set as ``Jx = Jy = Jz = J``. When"
+" both the set of exchange couplings (``Jx``, ``Jy``, ``Jz``) and the "
+"exchange coupling ``J`` are specified in the input file, "
+":math:`{\\mathcal H}\\Phi` will stop."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:361
+msgid "``h``, ``Gamma``, ``D``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:365
+msgid ""
+"**Description :** (Spin model) The longitudinal magnetic field, "
+"transverse magnetic field, and the single-site anisotropy parameter are "
+"specified with these parameters. The single-site anisotropy parameter is "
+"not available for ``model=SpinGCCMA``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:370
+msgid ""
+"The non-local terms described below should be specified differently "
+"according to the lattice structure: For ``lattice=Ladder``, the non-local"
+" terms are specified differently from those for the ``lattice=Chain "
+"Lattice``, ``Square Lattice``, ``Triangular Lattice``, ``Honeycomb "
+"Lattice``, ``Kagome``. Below, the available parameters for each lattice "
+"are shown in :numref:`table_interactions` ."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:378
+msgid ""
+"Interactions for each model defined in an input file. We can define spin "
+"couplings as a matrix format."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "Interactions"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "1D chain"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "2D square"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "2D triangular"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "Honeycomb"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "Kagome"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "Ladder"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "J, t, V(simplified)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid ":math:`{\\circ}`"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "\\-"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "J', t', V'"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "J0, t0, V0"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "J1, t1, V1"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "J2, t2, V2"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "J1', t1', V1'"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:1
+msgid "J2', t2', V2'"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:391
+msgid "Non-local terms[ for Ladder ( :numref:`fig_ladder` )]"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:393
+msgid "``t0``, ``t1``, ``t1'``, ``t2``, ``t2'``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:397
+msgid ""
+"**Description :** (Hubbard and Kondo lattice model) Hopping integrals in "
+"the ladder lattice (see :numref:`fig_ladder` ) are specified with this "
+"parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:401
+msgid "``V0``, ``V1``, ``V1'``, ``V2``, ``V2'``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:405
+msgid ""
+"**Description :** (Hubbard and Kondo lattice model) Offsite Coulomb "
+"integrals on the ladder lattice ( :numref:`fig_chap04_1_honeycomb` ) are "
+"specified with these parameters."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:409
+#: ../../filespecification/standardmode_en.rst:465
+msgid ""
+"``J0x``, ``J0y``, ``J0z``, ``J0xy``, ``J0yx``, ``J0xz``, ``J0zx``, "
+"``J0yz``, ``J0zy``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:412
+#: ../../filespecification/standardmode_en.rst:468
+msgid ""
+"``J1x``, ``J1y``, ``J1z``, ``J1xy``, ``J1yx``, ``J1xz``, ``J1zx``, "
+"``J1yz``, ``J1zy``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:415
+msgid ""
+"``J1'x``, ``J1'y``, ``J1'z``, ``J1'xy``, ``J1'yx``, ``J1'xz``, ``J1'zx``,"
+" ``J1'yz``, ``J1'zy``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:418
+#: ../../filespecification/standardmode_en.rst:471
+msgid ""
+"``J2x``, ``J2y``, ``J2z``, ``J2xy``, ``J2yx``, ``J2xz``, ``J2zx``, "
+"``J2yz``, ``J2zy``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:421
+msgid ""
+"``J2'x``, ``J2'y``, ``J2'z``, ``J2'xy``, ``J2'yx``, ``J2'xz``, ``J2'zx``,"
+" ``J2'yz``, ``J2'zy``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:426
+msgid ""
+"**Description :** (Spin model) Spin-coupling constants in the ladder "
+"lattice (see :numref:`fig_ladder` ) are specified with these parameters. "
+"If the simplified parameter ``J0`` is specified in the input file instead"
+" of the diagonal couplings, ``J0x, J0y, J0z``, these diagonal couplings "
+"are set as ``J0x = J0y = J0z = J0``. If both J0 and the set of the "
+"couplings (J0x, J0y, J0z) are specified, :math:`{\\mathcal H}\\Phi` will "
+"stop. The above rules are also valid for the simplified parameters, "
+"``J1``, ``J1'``, ``J2``, and ``J2'``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:435
+msgid ""
+"Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , "
+":numref:`fig_chap04_1_honeycomb` , :numref:`fig_kagome` )]"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:438
+msgid "``t0``, ``t1``, ``t2``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:442
+msgid ""
+"**Description :** (Hubbard and Kondo lattice model) The nearest neighbor "
+"hoppings for each direction (see :numref:`fig_chap04_1_lattice` - "
+":numref:`fig_kagome` ) are specified with these parameters. If there is "
+"no bond dependence of the hoppings, the simplified parameter ``t`` is "
+"available to specify ``t0``, ``t1``, and ``t2`` as ``t0 = t1 = t2 = t``. "
+"If both ``t`` and the set of the hoppings (``t0``, ``t1``, ``t2``) are "
+"specified, :math:`{\\mathcal H}\\Phi` will stop."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:451
+msgid "``V0``, ``V1``, ``V2``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:455
+msgid ""
+"**Description :** (Hubbard and Kondo lattice model) The nearest neighbor "
+"offsite Coulomb integrals :math:`V` for each direction (see "
+":numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` ) are specified "
+"with these parameters. If there is no bond dependence of the offsite "
+"Coulomb integrals, the simplified parameter ``V`` is available to specify"
+" ``V0``, ``V1``, and ``V2`` as ``V0 = V1 = V2 = V``. If both ``V`` and "
+"the set of the Coulomb integrals (``V0``, ``V1``, ``V2``) are specified, "
+":math:`{\\mathcal H}\\Phi` will stop."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:476
+msgid ""
+"**Description :** (Spin model) The nearest neighbor exchange couplings "
+"for each direction are specified with these parameters. If the simplified"
+" parameter ``J0`` is specified, instead of ``J0x, J0y, J0z``, the "
+"exchange couplings, ``J0x, J0y, J0z``, are set as ``J0x = J0y = J0z = "
+"J0``. If both ``J0`` and the set of the exchange couplings (``J0x, J0y, "
+"J0z``) are specified, :math:`{\\mathcal H}\\Phi` will stop. The above "
+"rules are valid for ``J1`` and ``J2``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:484
+msgid ""
+"If there is no bond dependence of the exchange couplings, the simplified "
+"parameters, ``Jx``, ``Jy``, ``Jz``, ``Jxy``, ``Jyx``, ``Jxz``, ``Jzx``, "
+"``Jyz``, ``Jzy``, are available to specify the exchange couplings for "
+"every bond as ``J0x = J1x = J2x = Jx``. If any simplified parameter "
+"(``Jx``-``Jzy``) is specified in addition to its counterparts "
+"(``J0x``-``J2zy``), :math:`{\\mathcal H}\\Phi` will stop. Below, examples"
+" of parameter sets for nearest neighbor exchange couplings are shown."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:493
+msgid ""
+"If there are no bond-dependent, and no anisotropic and offdiagonal "
+"exchange couplings (such as :math:`J_{x y}`), please specify ``J`` in the"
+" input file."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:497
+msgid ""
+"If there are no bond-dependent and offdiagonal exchange couplings but "
+"there are anisotropic couplings, please specify the non-zero couplings in"
+" the diagonal parameters, ``Jx, Jy, Jz``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:501
+msgid ""
+"If there are no bond-dependent exchange couplings but there are "
+"anisotropic and offdiagonal exchange couplings, please specify the non-"
+"zero couplings in the nine parameters, ``Jx, Jy, Jz, Jxy, Jyz, Jxz, Jyx, "
+"Jzy, Jzx``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:506
+msgid ""
+"If there are no anisotropic and offdiagonal exchange couplings, but there"
+" are bond-dependent couplings, please specify the non-zero couplings in "
+"the three parameters, ``J0, J1, J2``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:510
+msgid ""
+"If there are no anisotropic exchange couplings, but are bond-dependent "
+"and offdiagonal couplings, please specify the non-zero couplings in the "
+"nine parameters, ``J0x, J0y, J0z, J1x, J1y, J1z, J2x, J2y, J2z``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:515
+msgid ""
+"If there are bond-dependent, anisotropic, and offdiagonal exchange "
+"couplings, please specify the non-zero couplings in the twenty-seven "
+"parameters from ``J0x`` to ``J2zy``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:519
+msgid "``t'``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:523
+msgid ""
+"**Description :** (Hubbard and Kondo lattice model) The nearest neighbor "
+"hoppings for each direction (see :numref:`fig_chap04_1_lattice` - "
+":numref:`fig_kagome` ) are specified with these parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:527
+msgid "``V'``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:531
+msgid ""
+"**Description :** (Hubbard and Kondo lattice model) The nearest neighbor-"
+"offsite Coulomb integrals :math:`V` for each direction (see "
+":numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` ) are specified "
+"with this parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:535
+msgid ""
+"``J'x``, ``J'y``, ``J'z``, ``J'xy``, ``J'yx``, ``J'xz``, ``J'zx``, "
+"``J'yz``, ``J'zy``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:540
+msgid ""
+"**Description :** (Spin model) The second nearest neighbor exchange "
+"couplings are specified. However, for ``lattice = Honeycomb Lattice`` and"
+" ``lattice = Kagome`` with ``model=SpinGCCMA``, the second nearest "
+"neighbor exchange couplings are not available in the :math:`Standard` "
+"mode. If the simplified parameter ``J'`` is specified, instead of ``J'x, "
+"J'y, J'z``, the exchange couplings are set as ``J'x = J'y = J'z = J'``. "
+"If both ``J'`` and the set of the couplings (``J'x, J'y, J'z``) are "
+"specified, :math:`{\\mathcal H}\\Phi` will stop."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:549
+msgid "``phase0``, ``phase1``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:551
+msgid "**Type :** Double (``0.0`` as defaults)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:553
+msgid ""
+"**Description :** We can specify the phase for the hopping through the "
+"cell boundary with these parameter (unit: degree). These fuctor for the "
+":math:`\\boldsymbol{a}_0` direction and the :math:`\\boldsymbol{a}_1` "
+"direction can be specified independently. For the one-dimensional system,"
+" only ``phase0`` can be used. For example, a fopping from :math:`i`-th "
+"site to :math:`j`-th site through the cell boundary with the positive "
+"direction becomes as"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:567
+msgid "Parameters for the numerical condition"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:569
+msgid "``2S``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:571
+msgid "**Type :** Positive integer (``1`` as a default)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:573
+msgid ""
+"**Description :** The :math:`2 S` at each site in the localized spin "
+"system is specified. (E.g. ``1`` for the :math:`1/2` system)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:576
+msgid "``Restart``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:578
+msgid ""
+"**Type :** String (choose from ``\"None\"``, ``\"Restart_out\"``, "
+"``\"Restart_in\"``, ``\"Restart\"``. ``\"None\"`` as a default)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:581
+msgid ""
+"**Description :** The condition of the restart is specified. ``\"None\"``"
+" for omitting file IOs for the restart, ``\"Restart_out\"`` for starting "
+"calculation from scratch and generating a restart-file after the "
+"calculation finishes, ``\"Restart_in\"`` for starting calculation with "
+"the restart-file generated in the previous run, ``\"Restart\"`` for "
+"``\"Restart_out\"`` + ``\"Restart_in\"``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:588
+msgid "``anczos_max``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:590
+msgid "**Type :** Positive integer (default value: ``2000``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:592
+msgid ""
+"**Description :** The upper limit of the Lanczos/LOBCG/BiCG step and the "
+"number of steps for TPQ/Time=evolution are specified with this parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:598
+msgid "**Type :** Integer (default value: ``-1``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:604
+msgid "For the canonical ensemble and ``initial_iv`` :math:`\\geq 0`"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:609
+msgid "For the grand canonical ensemble or ``initial_iv`` :math:`< 0`"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:619
+msgid "See Sec. :ref:`Ch:Algorithm` for details of setting an initial vector."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:624
+msgid "**Type :** Positive integer (default value: ``1``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid ""
+"**Description :** The number of eigenvectors obtained from the ground "
+"energy by the Lanczos method are specified."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid ""
+"When exct=2, the eigenvector of the first-excited state is obtained. When"
+" ``method=\"CG\"``, the number of states to be calculated is specified."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:632
+msgid "**Note**: The condition ``nvec`` :math:`>=` ``exct`` must be satisfied."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:637
+msgid "**Type :** Positive integer (default value: ``14``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:639
+msgid ""
+"**Description :** The convergence criterion for the Lanczos method is "
+"specified with this parameter. If the difference between the old and the "
+"new target eigenvalue falls below :math:`10^{- LanczosEps|}`, the Lanczos"
+" step will finish. For ``method=\"CG\"``, we assume the calculation is "
+"converged when the 2-norm of the residual vector becomes smaller than "
+":math:`10^{-{\\tt LanczosEps}/2}`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:647
+msgid "``LancczosTarget``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:649
+msgid "**Type :** Positive integer (default value: ``2``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:651
+msgid ""
+"**Description :** The target eigenenergy for the convergence criterion is"
+" specified. If it is set to ``1``, the target eigenenergy becomes the "
+"ground state."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:657
+msgid "**Type :** Double (the default value is provided below)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:659
+msgid ""
+"**Description :** (Only for TPQ) :math:`l` as :math:`l=\\hat{\\mathcal "
+"H}/N_{s}` is used in the TPQ calculation. Usually, the largest eigenvalue"
+" of the Hamiltonian is used as :math:`l`. Thus, the default value of "
+":math:`l` is taken as the summation of the absolute values of each "
+"coefficient in the Hamiltonian divided by the number of sites."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:667
+msgid "**Type :** Positive integer (default value: ``5``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:669
+msgid ""
+"**Description :** (Only for TPQ) The number of independent runs for the "
+"TPQ method is specified with this parameter."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:674
+msgid "**Type :** Positive integer (default value: ``20``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst
+msgid ""
+"**Description :** (Only for TPQ) The interval of calculating correlation "
+"functions in the TPQ iteration is specified."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:680
+msgid "``OutputMode``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:682
+msgid ""
+"**Type :** Choose from ``\"none\"``, ``\"correlation\"``, and "
+"``\"full\"`` (``correlation`` as default)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:685
+msgid ""
+"**Description :** Indices of correlation functions are specified with "
+"this keyword. ``\"none\"`` indicates correlation functions will not be "
+"calculated. When ``outputmode=\"correlation\"``, the correlation function"
+" supported by the utility ``fourier`` is computed. For more details, see "
+"the document in ``doc/fourier/``. If ``\"full\"`` is selected, "
+":math:`\\langle c_{i \\sigma}^{\\dagger}c_{j \\sigma'} \\rangle` is "
+"computed at all :math:`i, j, \\sigma, \\sigma'`, and :math:`\\langle "
+"c_{i_1 \\sigma_1}^{\\dagger}c_{i_2 \\sigma_2} c_{i_3 "
+"\\sigma_3}^{\\dagger}c_{i_4 \\sigma_4} \\rangle` is computed at all "
+":math:`i_1, i_2, i_3, i_4, \\sigma_1, \\sigma_2, \\sigma_3, \\sigma_4`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:696
+msgid ""
+"In a spin system, the indices are specified as those of the Bogoliubov "
+"representation (see Sec. :ref:`Sec:sec_bogoliubov_rep` )."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:701
+msgid ""
+"**Type :** Character (choose from ``\"C\"``, ``\"R\"``. ``\"C\"`` as a "
+"default)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:704
+msgid ""
+"**Description :** The type of the initial eigenvector is specified. ``C``"
+" for the complex number, and ``R`` for the real number."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:707
+msgid "``EigenVecIO``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:709
+msgid ""
+"**Type :** String (choose from ``\"None\"``, ``\"Out\"``, ``\"In\"``. "
+"``\"None\"`` as a default)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:712
+msgid ""
+"**Description :** The I/O of the eigenvector is specified. ``\"None\"`` "
+"for omitting the IO of the eigenvector, ``\"Out\"`` for writing the "
+"eigenvector to a file, ``\"In\"`` for reading the eigenvector from a file"
+" and using it in the subsequent calculation (such as the Green’s "
+"function)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:719
+msgid "Parameters for the dynamical Green’s function"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:723
+msgid ""
+"**Type :** String(choose from ``\"None\"``, ``\"Normal\"``, "
+"``\"NoIteration\"``, ``\"Restart_out\"``, ``\"Restart_in\"``, "
+"``\"Restart\"``. ``\"None\"`` as default.)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:727
+msgid ""
+"**Description :** The condition for the calculation of the dynamical "
+"Green’s function is specified. ``\"None\"`` for omitting the calculation "
+"of the dynamical Green’s function. ``\"Normal\"`` for calculating that "
+"function from scratch, ``\"NoIteration\"`` for calculating that function "
+"with the same iteration in the previous run (In this case, the "
+"Hamiltonian-vector product is not performed. Although the numerical cost "
+"is very small, the convergence is not guaranteed), ``\"Restart_out\"`` "
+"for calculating that function from scratch and writing the restart-file "
+"at the end, ``\"Restart_in\"`` for starting the calculation with the "
+"previously written restart-file, ``\"Restart\"`` for ``\"Restart_out\"`` "
+"+ ``\"Restart_in\"``."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:739
+msgid ""
+"The scheme for the spectrum calculation is specified by using the "
+"parameter ``method``. If ``method=\"CG\"`` is chosen, the shifted bi-"
+"conjugate gradient method [9]_ together with the seed-switch technique "
+"[10]_ is employed with the help of the :math:`K\\omega` library [11]_."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:746
+msgid "``SpectrumType``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:748
+msgid ""
+"**Type :** String (choose from ``\"SzSz\"``, ``\"S+S-\"``, "
+"``\"Density\"``, ``\"up\"``, ``\"down\"``. ``\"SzSz\"`` as default.)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:751
+msgid ""
+"**Description :** The type of the dynamical Green’s function to be "
+"computed is specified. ``\"SzSz\"`` for :math:`\\langle {\\hat S}_{z q} "
+"{\\hat S}_{z q}\\rangle`, ``\"S+S-\"`` for :math:`\\langle {\\hat "
+"S}^{+}_{q} {\\hat S}^{-}_{q}\\rangle`, ``\"Density\"`` for "
+":math:`\\langle {\\hat n}_{q} {\\hat n}_{q}\\rangle`, ``\"up\"`` for "
+":math:`\\langle {\\hat c}^{\\dagger}_{q \\uparrow} {\\hat c}_{q "
+"\\uparrow}\\rangle`, ``\"down\"`` for :math:`\\langle {\\hat "
+"c}^{\\dagger}_{q \\downarrow} {\\hat c}_{q \\downarrow}\\rangle`."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:761
+msgid "``SpectrumQW``, ``SpectrumQL``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:763
+msgid "**Type :** Double (default value: ``0.0``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:765
+msgid ""
+"**Description :** The wave number (Fractional coordinate) of the "
+"dynamical Green’s function is specified. The reciprocal lattice vector is"
+" computed from the direct lattice vector shown in "
+":numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` , "
+":numref:`fig_ladder` , :numref:`fig_kagome` ."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:773
+msgid "**Type :** Double (``-LargeValue`` times the number of sites as default.)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:776
+msgid "**Description :** The lower limit of the real part of the frequency."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:780
+msgid "**Type :** Double (``LargeValue`` times the number of sites as default.)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:783
+msgid "**Description :** The upper limit of the real part of the frequency."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:787
+msgid "**Type :** Double (``0.01*LargeValue`` as a default.)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:789
+msgid "**Description :** The imaginary part of the frequency."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:793
+msgid "**Type :** Positive integer (``200`` as a default.)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:795
+msgid "**Description :** The number of frequencies."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:798
+msgid "Parameters for time-evolution"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:800
+msgid "``dt``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:802
+msgid "**Type :** Positive Double(Default value : ``0.1``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:804
+msgid "**Description :** The width of time steps."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:806
+msgid "``PumpType``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:808
+msgid ""
+"**Type :** String (Chosen from ``\"Quench\"``, ``\"Pulse Laser\"``, "
+"``\"AC Laser\"``, and ``\"DC Laser\"``.Default value : ``\"Quench\"``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:811
+msgid ""
+"**Description :** The type of time-dependent Hamiltonian. For "
+"``\"Quench\"``, two body operator :math:`U_{\\rm quench} \\sum_i n_{i "
+"\\uparrow} n_{i \\downarrow}` is added. For ``\"Pulse Laser\"``, ``\"AC "
+"Laser\"``, and ``\"DC Laser\"``, the hopping term is modulated as "
+":math:`-\\sum_{i j \\sigma} t_{i j} \\exp[-{\\bf A}(t) \\cdot ({\\bf "
+"R}_i-{\\bf R}_j)/(2\\pi)] c_{i \\sigma} c_{j \\sigma}`, where "
+":math:`{\\bf A}(t)` is the vector potential which is defined as "
+":math:`{\\bf A}(t) = {\\bf A}_0 \\exp[-(t-t_0)^2/(2 t_{\\rm dump}^2)] "
+"\\cos[\\omega (t-t_0)]`, :math:`{\\bf A}(t) = {\\bf A}_0 \\sin[\\omega "
+"(t-t_0)]`, and :math:`{\\bf A}(t) = {\\bf A}_0 t` for for ``\"Pulse "
+"Laser\"``, ``\"AC Laser\"``, and ``\"DC Laser\"``, respectively."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:823
+msgid ""
+"``potential.dat`` file is written for displaying the vector potential and"
+" the electrical field at each time step."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:826
+msgid "``Uquench``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:828
+#: ../../filespecification/standardmode_en.rst:840
+msgid "**Type :** Double(Default value : ``0.0``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:830
+msgid "**Description :** :math:`U_{\\rm quench}`"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:832
+msgid "``freq``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:834
+msgid "**Type :** Double(Default value : ``0.1``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:836
+msgid "**Description :** :math:`\\omega`"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:838
+msgid "``tshift``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:842
+msgid "**Description :** :math:`t_0`"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:844
+msgid "``tdump``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:846
+msgid "**Type :** Double (Default value : ``0.1``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:848
+msgid "**Description :** :math:`t_{\\rm dump}`"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:850
+msgid "``VecPotW``, ``VecPotL``"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:852
+msgid "**Type :** Double (Default value : ``0.0``)"
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:854
+msgid ""
+"**Description :** The vector potential (fractional coordinate of the "
+"reciprocal space) at :math:`t=t_0`. The reciprocal lattice vector is "
+"computed from the direct lattice vector shown in "
+":numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` , "
+":numref:`fig_ladder` , :numref:`fig_kagome` ."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:860
+msgid "\\A. V. Knyazev, SIAM Journal on Scientific Computing **23**, 517 (2001)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:861
+msgid "\\山田進, 今村俊幸, 町田昌彦, 日本計算工学会論文集2006, 20060027 (2006)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:862
+msgid "\\A. Frommer, Computing **70**, 87{109 (2003)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:863
+msgid ""
+"\\S. Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of "
+"the Physical Society of Japan **77**, 114713 (2008)."
+msgstr ""
+
+#: ../../filespecification/standardmode_en.rst:864
+msgid "https://github.com/issp-center-dev/Komega."
+msgstr ""
+

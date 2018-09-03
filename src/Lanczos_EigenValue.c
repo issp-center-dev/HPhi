@@ -73,7 +73,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
 
   i_max = X->Check.idim_max;
   k_exct = X->Def.k_exct;
-  unsigned long int liLanczosStp = X->Def.Lanczos_max;
+  unsigned long int liLanczosStp;
+  liLanczosStp = X->Def.Lanczos_max;
   unsigned long int liLanczosStp_vec=0;
 
     if (X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN){
@@ -97,7 +98,6 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       liLanczosStp = liLanczosStp+X->Def.Lanczos_max;
       alpha1=alpha[X->Def.Lanczos_restart];
       beta1=beta[X->Def.Lanczos_restart];
-
     }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
     else {
       SetInitialVector(X, v0, v1);
@@ -275,7 +275,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
           StopTimer(4102);
           X->Large.itr = stp;
           X->Phys.Target_energy = E_target;
-          X->Phys.Target_CG_energy = E[k_exct]; //for CG
+          X->Phys.Target_CG_energy = tmp_E[k_exct]; //for CG
           iconv = 0;
           d_free1(tmp_E, stp + 1);
           break;
@@ -358,6 +358,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
     alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
     _alpha[1] = alpha1;
     cbeta1 = 0.0;
+    fprintf(stdoutMPI, "  Step / Step_max alpha beta \n");
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
     for (i = 1; i <= i_max; i++) {
@@ -374,7 +375,8 @@ int Lanczos_GetTridiagonalMatrixComponents(
   }
 
   for (stp = X->Def.Lanczos_restart + 1; stp <= *liLanczos_step; stp++) {
-    if (fabs(beta[stp - 1]) < pow(10.0, -14)) {
+
+    if (fabs(_beta[stp - 1]) < pow(10.0, -14)) {
       *liLanczos_step = stp - 1;
       break;
     }
@@ -401,6 +403,9 @@ int Lanczos_GetTridiagonalMatrixComponents(
     beta1 = creal(cbeta1);
     beta1 = sqrt(beta1);
     _beta[stp] = beta1;
+    if(stp %10 == 0) {
+      fprintf(stdoutMPI, "  stp = %d / %lu %.10lf  %.10lf \n", stp,  *liLanczos_step, alpha1, beta1);
+    }
   }
 
   return TRUE;
@@ -622,7 +627,7 @@ int ReadTMComponents(
   char sdt[D_FileNameMax];
   char ctmp[256];
 
-  unsigned long int idx;
+  unsigned long int idx, i, ivec;
   unsigned long int i_max;
   double dnorm;
   FILE *fp;
@@ -634,13 +639,26 @@ int ReadTMComponents(
 
   fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
   sscanf(ctmp,"%ld \n", &i_max);
+  if (X->Def.LanczosTarget > X->Def.nvec) {
+    ivec = X->Def.LanczosTarget + 1;
+  }
+  else {
+    ivec =X->Def.nvec + 1;
+  }
+
   if(iFlg==0) {
     alpha = (double *) realloc(alpha, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
     beta = (double *) realloc(beta, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
+    for (i = 0; i <  ivec; i++) {
+      vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
+    }
   }
   else if(iFlg==1){
     alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
     beta=(double*)realloc(beta, sizeof(double)*(i_max + 1));
+    for (i = 0; i < ivec; i++) {
+      vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
+    }
   }
   else{
     fclose(fp);

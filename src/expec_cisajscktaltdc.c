@@ -127,7 +127,7 @@ int expec_cisajscktaltdc
   case TimeEvolution:
     step=X->Def.istep;
     TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecTwoBodyGStart, "a", step);
-    sprintf(sdt, cFileName2BGreen_TE, X->Def.CDataFileHead, rand_i, step);
+    sprintf(sdt, cFileName2BGreen_TE, X->Def.CDataFileHead, step);
     break;
 
   case FullDiag:

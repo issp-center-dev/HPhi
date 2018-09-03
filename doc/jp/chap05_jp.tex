@@ -155,9 +155,6 @@ Lanczos法では、スタンダードモード用の入力ファイル、もし�
 \end{itemize}
 
 
-
-
-
 \subsubsection*{収束判定について}
 $\HPhi$では、$T_{n}$の対角化にlapackのルーチン
 $\rm dsyev$を使用しており、
@@ -258,6 +255,29 @@ u_{k} = \langle \psi_{k}|\hat{H}|\psi_{k}\rangle/N_{s}.
 また、$k_{\rm Thread}, N_{\rm Thread}, k_{\rm Process}$はそれぞれ
 スレッド番号、スレッド数、プロセス番号を表します。
 したがって同じ\verb|initial_iv|を用いても、並列数が異なる場合には別の初期波動関数が生成されます。
+%----------------------------------------------------------
+
+\section{動的グリーン関数}
+${\cal H}\Phi$では励起状態$|\Phi ' \rangle  = \hat{O} | \Phi _0 \rangle$に対する動的関数
+\begin{equation}
+I(z) = \langle \Phi ' | \frac{1}{ {\cal H}- z\hat{I} } | \Phi '\rangle
+\end{equation}
+を計算することができます。
+演算子$\hat{O}$はシングル励起状態
+\begin{equation}
+\sum_{i, \sigma_1} A_{i \sigma_1} c_{i \sigma_1} (c_{i\sigma_1}^{\dag})
+\end{equation}
+およびペア励起状態
+\begin{equation}
+\sum_{i, j, \sigma_1, \sigma_2} A_{i \sigma_1 j \sigma_2} c_{i \sigma_1}c_{j \sigma_2}^{\dag} (c_{i\sigma_1}^{\dag}c_{j\sigma_2})
+\end{equation}
+として、それぞれ定義することが出来ます。例えば、動的スピン感受率を計算する場合はペア励起演算子を用い
+\begin{equation}
+\hat{O} = \hat{S}({\bm k}) = \sum_{j}\hat{S}_j^z e^{i  {\bm k} \cdot \bm {r}_j} = \sum_{j}\frac{1}{2} (c_{j\uparrow}^{\dag}c_{j\uparrow}-c_{j\downarrow}^{\dag}c_{j\downarrow})e^{i  {\bm k} \cdot \bm {r}_j}
+\end{equation}
+のように定義することで計算することができます。
+なお、動的グリーン関数の計算には、Lanczos法を用いた連分数展開による解法~\cite{Dagotto}とシフト型クリロフ理論による解法~\cite{doi:10.1143/JPSJ.77.114713}の2つが実装されています。
+詳細については各文献を参照してください。
 
 %----------------------------------------------------------
 
@@ -265,12 +285,12 @@ u_{k} = \langle \psi_{k}|\hat{H}|\psi_{k}\rangle/N_{s}.
 \label{Ch:TE}
 ${\cal H}\Phi$では初期波動関数を$|\Phi(t_0)\rangle$として、
 \begin{equation}
-|\Phi (t_n)\rangle = \exp^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle
+|\Phi (t_n)\rangle = e^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle
 \end{equation}
 の関係を用いて逐次時間発展の計算をしています。ここで時刻$t_n = \sum_{j=1}^n  \Delta t_j $です。
-実際の計算では$\exp^{-i {\cal H}  \Delta t_n}$を
+実際の計算では$e^{-i {\cal H}  \Delta t_n}$を
 \begin{equation}
-\exp^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l
+e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l
 \end{equation}
 と近似しています。展開次数の上限$m$は\verb|ModPara|ファイルの\verb|ExpandCoef|で指定することができます。
 展開次数が十分かどうかは、

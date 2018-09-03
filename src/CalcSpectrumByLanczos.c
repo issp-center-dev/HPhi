@@ -186,6 +186,7 @@ int GetSpectrumByTridiagonalMatrixComponents(
         fprintf(stdoutMPI, "Error: LanczosStep must be greater than 1.\n");
         return FALSE;
     }
+
     dcb0 = dcomega-tmp_alpha[1];
     if(ilLanczosStp ==1) {
         if(cabs(dcb0)<eps_Energy){

@@ -72,6 +72,10 @@ int step_spin;/**< output step for TE calculation.*/
 /*[s] For All Diagonalization*/
 double complex**Ham; /**> Hamiltonian for full diagonalization. */
 double complex **L_vec;/**> eigen vectors*/
+#ifdef _SCALAPACK
+double complex *Z_vec; /**> distributed matrix of eigen vector*/
+int descZ_vec[9]; /*descriptor for Z_vec*/
+#endif
 /*[e] For All Diagonalization*/
 
 const char* cParentOutputFolder; /**> Path to output results*/
@@ -165,11 +169,11 @@ FILE *stdoutMPI;/**<@brief File pointer to the standard output
 /**
 @page page_variable Global variables and Data structure
 
-HPhi uses global variables. List of them can be found in global.h
+In HPhi, global variables are used. List of them can be found in global.h
 
-Sometimes, we pass variables function as
+Sometimes, we pass variables to the function as
 @code
 func(&(X.Bind.Def))
 @endcode
-This C-structure can be found in struct.h
+This C-structure is defined in struct.h.
 */

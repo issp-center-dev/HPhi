@@ -38,9 +38,6 @@ void StdFace_Tetragonal(struct StdIntList *StdI)
   double complex Cphase;
   double dR[3];
 
-  fprintf(stdout, "\n");
-  fprintf(stdout, "#######  Parameter Summary  #######\n");
-  fprintf(stdout, "\n");
   /**@brief
   (1) Compute the shape of the super-cell and sites in the super-cell
   */

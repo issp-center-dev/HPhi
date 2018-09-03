@@ -137,7 +137,7 @@ int CalcByTPQ(
 
       StopTimer(3600);
 
-      step_i = 1;
+      step_i = 0;
 
       StartTimer(3100);
       if(rand_i==0){
@@ -146,14 +146,28 @@ int CalcByTPQ(
       else{
         TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
       }
+      /**@brief
+      Initialize v1 and compute v0 = H*v1
+      */
       FirstMultiply(rand_i, &(X->Bind));
+      inv_temp = 0.0;
       StopTimer(3100);
-      StartTimer(3200);
-      iret=expec_energy_flct(&(X->Bind)); //v0 = H*v1
-      StopTimer(3200);
-      if(iret !=0) return -1;
-
-      inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
+      if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
+        return -1;
+      }
+      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
+        X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
+      fclose(fp);
+      // for norm
+      if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
+        return -1;
+      }
+      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_1st_norm, global_1st_norm, step_i);
+      fclose(fp);
+      /**@brief
+      Compute expectation value at infinite temperature
+      */
+      X->Bind.Def.istep = 0;
       StartTimer(3300);
       iret=expec_cisajs(&(X->Bind), v1);
       StopTimer(3300);
@@ -164,6 +178,15 @@ int CalcByTPQ(
       StopTimer(3400);
       if(iret !=0) return -1;
 
+      /**@brief
+      Compute v1=0, and compute v0 = H*v1
+      */
+      StartTimer(3200);
+      iret=expec_energy_flct(&(X->Bind)); //v0 = H*v1
+      StopTimer(3200);
+      if(iret !=0) return -1;
+      step_i += 1;
+      inv_temp = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
       StartTimer(3600);
       if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
         return -1;

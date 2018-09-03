@@ -220,8 +220,10 @@ void child_general_int_spin_MPIBoost(
       if(pivot_flag==1){
         matB[0][0] = + X->Boost.vecB[2]; // -BM
         matB[1][1] = - X->Boost.vecB[2]; // -BM
-        matB[0][1] = - X->Boost.vecB[0] + I*X->Boost.vecB[1]; // -BM
-        matB[1][0] = - X->Boost.vecB[0] - I*X->Boost.vecB[1]; // -BM
+        //matB[0][1] = - X->Boost.vecB[0] + I*X->Boost.vecB[1]; // -BM
+        //matB[1][0] = - X->Boost.vecB[0] - I*X->Boost.vecB[1]; // -BM
+        matB[0][1] = - X->Boost.vecB[0] - I*X->Boost.vecB[1]; // -BM
+        matB[1][0] = - X->Boost.vecB[0] + I*X->Boost.vecB[1]; // -BM
         for(ellri=0; ellri<2; ellri++){
         for(ellrj=0; ellrj<2; ellrj++){
         for(ellrk=0; ellrk<2; ellrk++){

@@ -10,6 +10,8 @@ $\HPhi$ requires the following packages:
 \item C/fortran compiler (Intel, Fujitsu, GNU, etc. )
 \item BLAS/LAPACK library (Intel MKL, Fujitsu, ATLAS, etc.)
 \item MPI library (if you do not use MPI, this is not requied).
+\item ScaLAPACK library (if you do not use ScaLAPACK for full diagonalization, this is not required).
+\item MAGMA library (if you do not use MAGMA for full diagonalization, this is not required).
 \end{itemize}
 
 \begin{screen}
@@ -66,7 +68,8 @@ we compile $\HPhi$ by using a gcc compiler.
 We can select a compiler by using the following options:
 \begin{itemize}
 \item \verb|sekirei| : ISSP system-B ``sekirei''
-\item \verb|fujitsu| : Fujitsu compiler (ISSP system-C ``maki'')
+\item \verb|sekirei_acc| : ISSP system-B ``sekirei'' (for using MAGMA library)
+\item \verb|fujitsu| : Fujitsu compiler
 \item \verb|intel| : Intel compiler + Linux PC
 \item \verb|gcc| : GCC compiler + Linux PC.
 \end{itemize}
@@ -77,6 +80,7 @@ cd ./build
 cmake -DCONFIG=intel ../
 make
 \end{verbatim}
+To use ScaLAPACK library for full diagonalization,  the cmake option \verb|-DUSE_SCALAPACK=ON| is needed.
 After compilation,
 \verb|src| folder is created below the \verb|build| folder and
 an execute $\HPhi$ in the \verb|src| folder.
@@ -89,11 +93,7 @@ repeat the above operations when we change the compiler.
 \normalsize\\
 Before using cmake for sekirei, you must type 
 \begin{verbatim}
-source /home/issp/materiapps/tool/env.sh
-\end{verbatim}
-while for maki, you must type
-\begin{verbatim}
-source /global/app/materiapps/tool/env.sh
+source /home/issp/materiapps/tool/env.sh.
 \end{verbatim}
 \end{screen}
 
@@ -185,26 +185,24 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
 |    |--fujitsu.cmake
 |    |--gcc.cmake
 |    |--intel.cmake
-|    ---sekirei.cmake
+|    |--sekirei.cmake
+|    |--sekirei_acc.cmake
 |--doc/
 |    |--en/
 |    |--jp/
 |    |--fourier/
-|    |    |--en/
-|    |    |--figs/
-|    |    ---ja/
+|    |--sphinx/
 |    |--userguide_en.pdf
-|    ---userguide_jp.pdf
-|--HPhiconfig.sh
+|    |--userguide_jp.pdf
 |--samples/
 |--src/
 |    |--*.c
 |    |--CMakeLists.txt
 |    |--include/*.h
 |    |--makefile_src
-|    ---StdFace/
+|    |--StdFace/
 |--test/
----test_tool/
+|--tool/
 \end{verbatim}
 
 \section{Basic usage}

@@ -127,6 +127,8 @@ double complex X_child_general_int_spin_MPIdouble(
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*if (! (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC))*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
 /**
@@ -181,6 +183,8 @@ double complex X_child_general_int_spin_TotalS_MPIdouble(
     dam_pr += conj(tmp_v1[ioff]) * dmv;
   }/*for (j = 1; j <= idim_max_buf; j++)*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
 /**
@@ -326,6 +330,8 @@ shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_general_int_spin_MPIsingle*/
 /**

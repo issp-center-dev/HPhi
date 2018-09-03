@@ -249,6 +249,7 @@ int ReadcalcmodFile(
   X->iFlgCalcSpec=0;
   X->iReStart=0;
   X->iFlgMPI=0;
+  X->iFlgScaLAPACK=0;
 #ifdef _MAGMA
   X->iNGPU=2;
 #else
@@ -302,6 +303,11 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "NGPU")==0){
         X->iNGPU=itmp;
     }
+    else if(CheckWords(ctmp, "ScaLAPACK")==0){
+#ifdef _SCALAPACK
+      X->iFlgScaLAPACK=itmp;
+#endif
+    }
     else{
       fprintf(stdoutMPI, cErrDefFileParam, defname, ctmp);
       return(-1);
@@ -349,11 +355,14 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI, cErrRestart, defname);
     return (-1);
   }
-    if(X->iNGPU < 0){
-        fprintf(stdoutMPI, cErrCUDA, defname);
-        return (-1);
-    }
-
+  if(X->iNGPU < 0){
+    fprintf(stdoutMPI, cErrCUDA, defname);
+    return (-1);
+  }
+  if(ValidateValue(X->iFlgScaLAPACK, 0, 1)){
+    fprintf(stdoutMPI, cErrCUDA, defname);
+    return (-1);
+  }
 
   /* In the case of Full Diagonalization method(iCalcType=2)*/
   if(X->iCalcType==2 && ValidateValue(X->iFlgFiniteTemperature, 0, 1)){
@@ -937,10 +946,11 @@ int ReadDefFileNInt(
       return (-1);
     }
 
-    if(ValidateValue(X->LanczosTarget, X->k_exct, X->Lanczos_max)){
-      fprintf(stdoutMPI, cErrLanczosTarget, defname, X->LanczosTarget, X->k_exct, X->Lanczos_max);
+    if( X->k_exct>X->LanczosTarget ){
+      fprintf(stdoutMPI, cErrLanczosTarget, defname, X->LanczosTarget, X->k_exct);
       return (-1);
     }
+    
 
   X->fidx = 0;
   X->NeMPI=X->Ne;
@@ -2963,7 +2973,7 @@ int CheckTETransferHermite
 @page page_addexpert Add new input-file for Expert mode
 When you add a new input file to _namelist file_,
 the following procedures must be needed.
-In the following, we add the keyword "test" as an example.
+In the following, we add the keyword "Test" as an example.
 
 1. Add a new keyword to the end of @c cKWListOfFileNameList in @c readdef.c.
 ```
@@ -3111,7 +3121,7 @@ You can set a value of parameters with a new keyword in ``modpara`` file by foll
 
 3. The line is divided into keyword and number by using ``CheckWords`` function.
 
-   For example, when you add new key word "NTest", then you can get the value as follows:
+   For example, when you add new key word "NTest", you can get the value as follows:
    ```
         if (CheckWords(ctmp, "NTest") == 0) {
                 X->NTest = (int) dtmp;
@@ -3119,4 +3129,60 @@ You can set a value of parameters with a new keyword in ``modpara`` file by foll
    ```
 
 @sa ReadDefFileNInt, CheckWords
+*/
+
+/**
+@page page_addcalcmod Add new calculation mode into calcmod
+
+You can set a new calculation mode with a new keyword in ``calcmod`` file by following way.
+
+- Define a new variable corresponding to the new calculation mode in @c struct.h file.
+
+- The value with the keyword are read by `` ReadcalcmodFile `` function in @c readdef.c.
+
+In the following, we describe the detail of the flow of setting the calculation mode.
+
+1. Set initial value at the beginning of ReadcalcmodFile function.
+  ```
+  X->iCalcType=0;
+  X->iFlgFiniteTemperature=0;
+  X->iCalcModel=0;
+  X->iOutputMode=0;
+  X->iCalcEigenVec=0;
+  X->iInitialVecType=0;
+  X->iOutputEigenVec=0;
+  X->iInputEigenVec=0;
+  X->iOutputHam=0;
+  X->iInputHam=0;
+  X->iFlgCalcSpec=0;
+  X->iReStart=0;
+  X->iFlgMPI=0;
+  ```
+
+2. Each line is read by ``` fgetsMPI ``` function. 
+   ``GetKWWithIdx`` function reads ctmp = keyword, itmp=index.
+  ```
+   while( fgetsMPI(ctmpLine, D_CharTmpReadDef+D_CharKWDMAX, fp)!=NULL ){
+    if( (iret=GetKWWithIdx(ctmpLine, ctmp, &itmp)) !=0){
+      if(iret==1) continue;
+      return(-1);
+    }   
+    if(CheckWords(ctmp, "CalcType")==0){
+      X->iCalcType=itmp;
+    }
+   ...
+   }
+  ```
+
+
+3. The line is divided into keyword and number by using ``CheckWords`` function.
+
+   For example, when you add new key word "NTest", you can get the value as follows:
+   ```
+        if (CheckWords(ctmp, "NTest") == 0) {
+                X->NTest = (int) dtmp;
+              }
+   ```
+
+@sa ReadcalcmodFile, CheckWords
 */
