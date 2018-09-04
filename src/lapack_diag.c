@@ -97,8 +97,10 @@ struct BindStruct *X//!<[inout]
 #endif
   } else {
 #ifdef _MAGMA
-    if(diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
-    return -1;
+    if(myrank==0){
+      if(diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
+	return -1;
+      }
     }
 #else
     fprintf(stdoutMPI, "Warning: MAGMA is not used in this calculation.");
