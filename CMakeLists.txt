@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 enable_testing()
 
 project(HPhi NONE)
-enable_language(C Fortran)
 option(USE_SCALAPACK "Use Scalapack" OFF)
 
 if(CONFIG)
@@ -17,6 +16,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(ENABLE_MPI "Enable MPI Parallelization" ON)
 option(ENABLE_SCALAPACK "Use Scalapack" ON)
+enable_language(C Fortran)
 
 #set(CMAKE_C_FLAGS "-lscalapack -lgfortran -lm")
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
