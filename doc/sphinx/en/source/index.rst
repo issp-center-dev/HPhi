@@ -16,7 +16,7 @@ Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji, Synge Todo
 
     `Comp. Phys. Commun. 217 (2017) 180-192 <http://www.sciencedirect.com/science/article/pii/S0010465517301200>`_.
 
-in publications that includes results obtained using this software.
+in publications that include results obtained using this software.
 
 
 Copyright

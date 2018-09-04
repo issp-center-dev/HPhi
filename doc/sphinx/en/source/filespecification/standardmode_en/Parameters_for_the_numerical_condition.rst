@@ -81,7 +81,7 @@ Parameters for the numerical condition
    2-norm of the residual vector becomes smaller than
    :math:`10^{-{\tt LanczosEps}/2}`.
 
-*  ``LancczosTarget``
+*  ``LanczosTarget``
 
    **Type :** Positive integer (default value: ``2``)
 

@@ -50,7 +50,7 @@ Parameters
 
    **Type :** Double
 
-   **Description :** Inverse temperature :math:`1/{k_{\rm B}T}`.
+   **Description :** Inverse temperature :math:`1/{k_{\rm B}T} (k_{\rm B} = 1)`.
 
 *  [double02]
 
@@ -71,8 +71,7 @@ Parameters
    **Type :** Double
 
    **Description :** The expected value of the doublon,
-   :math:`\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle`
-   (:math:`N_{s}` is the total number of sites).
+   :math:`\sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle`.
 
 *  [double05]
 
