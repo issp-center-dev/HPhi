@@ -18,6 +18,7 @@
 #pragma once
 #ifdef _SCALAPACK
 #include "mpi.h"
+#include "global.h"
 #include <complex.h>
 #include <stdlib.h>
 

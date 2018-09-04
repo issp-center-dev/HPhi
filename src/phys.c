@@ -34,8 +34,6 @@
  * 
  */
 
-
-
 /** 
  * 
  * @brief A main function to calculate physical quantities by full diagonalization method.
@@ -50,35 +48,48 @@
 void phys(struct BindStruct *X, //!<[inout]
           unsigned long int neig //!<[in]
 ) {
-
   long unsigned int i, j, i_max;
   double tmp_N;
+  i_max = X->Check.idim_max;
 #ifdef _SCALAPACK
   double complex *vec_tmp;
   int ictxt, ierr, rank;
+  if(use_scalapack){
+  fprintf(stdoutMPI, "In scalapack fulldiag, total spin is not calculated !\n");
+  vec_tmp = malloc(i_max*sizeof(double complex));
+  }
 #endif
-
-  i_max = X->Check.idim_max;
   for (i = 0; i < neig; i++) {
 #ifdef _SCALAPACK
+    for (j = 0; j < i_max; j++) {
+      v0[j + 1] = 0.0;
+    }
     if(use_scalapack){
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-      vec_tmp = malloc(i_max*sizeof(double complex));
       GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
       if(rank == 0) {
         for (j = 0; j < i_max; j++) {
           v0[j + 1] = vec_tmp[j];
         }
       }
-      free(vec_tmp);
-    } else for (j = 0; j < i_max; j++) {
-      v0[j + 1] = L_vec[i][j];
+      else{
+	for (j = 0; j < i_max; j++) {
+	  v0[j + 1] = 0.0;
+	}
+      }
+    } else{
+      if(myrank == 0){
+	for (j = 0; j < i_max; j++) {
+	  v0[j + 1] = L_vec[i][j];
+	}
+      }
     }
 #else
     for (j = 0; j < i_max; j++) {
       v0[j + 1] = L_vec[i][j];
-    }
+    }    
 #endif
+
     X->Phys.eigen_num = i;
     if (expec_energy_flct(X) != 0) {
       fprintf(stderr, "Error: calc expec_energy.\n");
@@ -95,7 +106,6 @@ void phys(struct BindStruct *X, //!<[inout]
 #ifdef _SCALAPACK
     if(use_scalapack){
       if (X->Def.iCalcType == FullDiag) {
-        fprintf(stderr, "In scalapack fulldiag, total spin is not calculated !\n");
         X->Phys.s2=0.0;
         X->Phys.Sz=0.0;
       }
@@ -148,4 +158,7 @@ void phys(struct BindStruct *X, //!<[inout]
     X->Phys.all_num_up[i] = X->Phys.num_up;
     X->Phys.all_num_down[i] = X->Phys.num_down;
   }
+#ifdef _SCALAPACK
+  if(use_scalapack) free(vec_tmp);
+#endif  
 }
