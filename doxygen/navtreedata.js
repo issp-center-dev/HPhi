@@ -1,3 +1,26 @@
+/*
+@ @licstart  The following is the entire license notice for the
+JavaScript code in this file.
+
+Copyright (C) 1997-2017 by Dimitri van Heesch
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+@licend  The above is the entire license notice
+for the JavaScript code in this file
+*/
 var NAVTREE =
 [
   [ "HΦ", "index.html", [
@@ -10,6 +33,7 @@ var NAVTREE =
     [ "Various kind of Logs", "page_log.html", null ],
     [ "Add new input-file for Expert mode", "page_addexpert.html", null ],
     [ "Add new parameter into modpara", "page_addmodpara.html", null ],
+    [ "Add new calculation mode into calcmod", "page_addcalcmod.html", null ],
     [ "Compute elapsed time for new functions", "page_time.html", null ],
     [ "Malloc vectors", "page_setmem.html", null ],
     [ "Add new lattice model into Standard mode", "page_addstandard.html", [
@@ -29,8 +53,8 @@ var NAVTREE =
         [ "Variables", "functions_vars.html", "functions_vars" ]
       ] ]
     ] ],
-    [ "Files", null, [
-      [ "File List", "files.html", "files" ],
+    [ "Files", "files.html", [
+      [ "File List", "files.html", "files_dup" ],
       [ "Globals", "globals.html", [
         [ "All", "globals.html", "globals_dup" ],
         [ "Functions", "globals_func.html", "globals_func" ],
@@ -44,11 +68,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_c_g___eigen_vector_8c.html",
-"_log_message_8c.html#ac69fed8cd932e03791c49014f19644d8",
-"expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0",
-"globals_p.html",
-"readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68",
-"struct_phys_list.html#abf178a2544d5fc80ddd317d29d627594"
+"_log_message_8c.html#ac54c04d5fe6f5ce4720838445dc8f976",
+"expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15",
+"globals_o.html",
+"phys_8c.html#a968744495c661c11bf1de29e130f549a",
+"struct_phys_list.html#a517fc1ab30be5ea001cd891be913aabc"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

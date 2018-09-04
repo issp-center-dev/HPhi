@@ -1,6 +1,7 @@
 var searchData=
 [
   ['pairexcitationoperator',['PairExcitationOperator',['../struct_define_list.html#ab4b7fb3aef7eac431bf5c5256ad0bccf',1,'DefineList']]],
+  ['pairhopp',['PairHopp',['../struct_std_int_list.html#a26c399da7ee7743e9f190e8aab67cf51',1,'StdIntList']]],
   ['pairhopping',['PairHopping',['../struct_define_list.html#ad60b3e75def64fc7dbdcd484236419eb',1,'DefineList']]],
   ['pairlift',['PairLift',['../struct_std_int_list.html#a02be9d143cb103d2e869ec6878db4c9f',1,'StdIntList']]],
   ['pairliftcoupling',['PairLiftCoupling',['../struct_define_list.html#a943addfb585d11f62dc712d6e1662bb0',1,'DefineList']]],
@@ -25,6 +26,7 @@ var searchData=
   ['paratetransfer',['ParaTETransfer',['../struct_define_list.html#a54b5c934664f1f8e6bd6780aea894076',1,'DefineList']]],
   ['paratetransferdiagonal',['ParaTETransferDiagonal',['../struct_define_list.html#a2312228537cf857c2a5be459869f81f9',1,'DefineList']]],
   ['phase',['phase',['../struct_std_int_list.html#a3ca2a91da71c02af4b5216365c6049a5',1,'StdIntList']]],
+  ['phindx',['PHIndx',['../struct_std_int_list.html#a1eb5402ab4c92f6e12474e818a752741',1,'StdIntList']]],
   ['phys',['Phys',['../struct_bind_struct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
   ['pi',['pi',['../struct_std_int_list.html#a9c38d9c58db9961aea908532f7d5e5b8',1,'StdIntList']]],
   ['pi180',['pi180',['../struct_std_int_list.html#ad158a81e6d1b20ff0df7142fe4506399',1,'StdIntList']]],

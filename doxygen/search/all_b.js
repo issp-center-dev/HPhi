@@ -44,6 +44,7 @@ var searchData=
   ['locspn',['LocSpn',['../struct_define_list.html#a37288a1682503fcf1d0e8c1916b55827',1,'DefineList']]],
   ['log_2ec',['log.c',['../log_8c.html',1,'']]],
   ['logmessage_2ec',['LogMessage.c',['../_log_message_8c.html',1,'']]],
+  ['lpairhopp',['LPairHopp',['../struct_std_int_list.html#ad7459328bc0d27d660070d027be07dcc',1,'StdIntList']]],
   ['lpairlift',['LPairLift',['../struct_std_int_list.html#a2592e0fceed7ee98272b6621e18905f1',1,'StdIntList']]],
   ['lz',['Lz',['../_power_lanczos_8c.html#a01b67823b598ecf0f8453e68f29b691e',1,'PowerLanczos.c']]]
 ];

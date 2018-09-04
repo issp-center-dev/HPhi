@@ -31,5 +31,6 @@ var searchData=
   ['loc_5fspin_5fz',['loc_spin_z',['../struct_phys_list.html#ace4ebae9008c5da6157a2d70888a12dd',1,'PhysList']]],
   ['locspinflag',['locspinflag',['../struct_std_int_list.html#a363f25498f94cf17a3072b856f1a61d8',1,'StdIntList']]],
   ['locspn',['LocSpn',['../struct_define_list.html#a37288a1682503fcf1d0e8c1916b55827',1,'DefineList']]],
+  ['lpairhopp',['LPairHopp',['../struct_std_int_list.html#ad7459328bc0d27d660070d027be07dcc',1,'StdIntList']]],
   ['lpairlift',['LPairLift',['../struct_std_int_list.html#a2592e0fceed7ee98272b6621e18905f1',1,'StdIntList']]]
 ];

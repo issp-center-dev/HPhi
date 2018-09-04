@@ -29,6 +29,7 @@ var searchData=
   ['nomega',['Nomega',['../struct_std_int_list.html#ad8553e199ab981fe0e7dbf76d393cefd',1,'StdIntList']]],
   ['normmpi_5fdc',['NormMPI_dc',['../wrapper_m_p_i_8c.html#a26d9f2a4d2828fca2b8d6d45cea697a2',1,'wrapperMPI.c']]],
   ['npairexcitationoperator',['NPairExcitationOperator',['../struct_define_list.html#a610b21712f4ab5ed779da40ff90bb0e7',1,'DefineList']]],
+  ['npairhopp',['NPairHopp',['../struct_std_int_list.html#a1dd6651daec2795dddca74b12182314e',1,'StdIntList']]],
   ['npairhopping',['NPairHopping',['../struct_define_list.html#a7f69f45ef995623b96a7387c751da13d',1,'DefineList']]],
   ['npairlift',['NPairLift',['../struct_std_int_list.html#a15e0bdeffcf7d888298a95880dee1d82',1,'StdIntList']]],
   ['npairliftcoupling',['NPairLiftCoupling',['../struct_define_list.html#a9f6593259d7ae5d4d7e1d3f1fed565f9',1,'DefineList']]],

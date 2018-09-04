@@ -28,6 +28,7 @@ var searchData=
   ['nlocspn',['NLocSpn',['../struct_define_list.html#a41d3f55c1563fa6c9421b0fbc90c9b7b',1,'DefineList']]],
   ['nomega',['Nomega',['../struct_std_int_list.html#ad8553e199ab981fe0e7dbf76d393cefd',1,'StdIntList']]],
   ['npairexcitationoperator',['NPairExcitationOperator',['../struct_define_list.html#a610b21712f4ab5ed779da40ff90bb0e7',1,'DefineList']]],
+  ['npairhopp',['NPairHopp',['../struct_std_int_list.html#a1dd6651daec2795dddca74b12182314e',1,'StdIntList']]],
   ['npairhopping',['NPairHopping',['../struct_define_list.html#a7f69f45ef995623b96a7387c751da13d',1,'DefineList']]],
   ['npairlift',['NPairLift',['../struct_std_int_list.html#a15e0bdeffcf7d888298a95880dee1d82',1,'StdIntList']]],
   ['npairliftcoupling',['NPairLiftCoupling',['../struct_define_list.html#a9f6593259d7ae5d4d7e1d3f1fed565f9',1,'DefineList']]],
