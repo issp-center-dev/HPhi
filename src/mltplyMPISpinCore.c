@@ -179,6 +179,8 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 /**
@@ -273,6 +275,8 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
     }
   }
   return (dam_pr);
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
 /**
@@ -380,6 +384,8 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
     }
   }/*End of parallel region*/
   return (dam_pr);
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
 /**
@@ -429,6 +435,8 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
     }
   }/*End of parallel region*/
   return(dam_pr);
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAju_spin_MPIdouble*/
 /**
@@ -480,6 +488,8 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
     }
   }/*End of parallel region*/
   return (dam_pr);
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAju_spin_MPIdouble*/
 /**
@@ -586,6 +596,8 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
     }
   }/*End of parallel region*/
   return (dam_pr);
+#else
+ return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 /**
@@ -687,6 +699,8 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
     }
   }/*End of parallel region*/
   return (dam_pr);
+#else
+ return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 /**
@@ -798,6 +812,8 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
     }
   }/*End of parallel region*/
   return (dam_pr);
+#else
+ return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 /**
@@ -878,6 +894,8 @@ private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble*/
 /**
@@ -949,6 +967,8 @@ shared (tmp_v0, tmp_v1, v1buf)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble*/
 /**
@@ -1038,6 +1058,8 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble*/
  /**
@@ -1092,6 +1114,8 @@ shared (tmp_v0, tmp_v1)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble*/
  /**
@@ -1154,6 +1178,8 @@ shared (tmp_v0, tmp_v1, v1buf)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAit_GeneralSpin_MPIdouble*/
  /**
@@ -1202,6 +1228,8 @@ shared (tmp_v0, tmp_v1)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_CisAis_GeneralSpin_MPIdouble*/
  /**
@@ -1250,6 +1278,8 @@ shared (tmp_v0, tmp_v1)
     }
   }/*End of Parallel region*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_GC_child_AisCis_GeneralSpin_MPIdouble*/
 /**
@@ -1322,6 +1352,8 @@ shared (tmp_v0, tmp_v1, v1buf)
     return 0;
   }
   return 1;
+#else
+ return 0.0;
 #endif
 }/*double complex X_child_CisAit_GeneralSpin_MPIdouble*/
 /**
@@ -1399,6 +1431,8 @@ private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle*/
 /**
@@ -1463,6 +1497,8 @@ shared (tmp_v0, tmp_v1, v1buf)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle*/
 /**
@@ -1545,6 +1581,8 @@ firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle*/
 /**
@@ -1597,6 +1635,8 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle*/
 /**
@@ -1691,6 +1731,8 @@ private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble*/
 /**
@@ -1758,6 +1800,8 @@ shared (tmp_v0, tmp_v1)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble*/
 /**
@@ -1812,6 +1856,8 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle*/
  /**
@@ -1906,6 +1952,8 @@ private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
     }
   }/*End of parallel region*/
   return dam_pr;
+#else
+  return 0.0;
 #endif
 }/*double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle*/
 /**
@@ -1978,6 +2026,8 @@ firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
     }
   }/*End of parallel region*/
   return (dam_pr);
+#else
+ return 0.0;
 #endif
 }/*double complex  X_GC_child_CisAit_spin_MPIdouble*/
 /**
@@ -2054,6 +2104,8 @@ shared(v1buf, tmp_v0)
     return 0;
   }
   return 1;
+#else
+ return 0.0;
 #endif
 }/*double complex  X_child_CisAit_spin_MPIdouble*/
 /**
@@ -2099,6 +2151,8 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
     }/*if (ibit1 != 0)*/
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_CisAis_spin_MPIdouble*/
 /**
@@ -2144,5 +2198,7 @@ double complex X_GC_child_AisCis_spin_MPIdouble(
     }/*if (ibit1 == 0)*/
   }/*End of parallel region*/
   return dam_pr;
+#else
+ return 0.0;
 #endif
 }/*double complex X_GC_child_AisCis_spin_MPIdouble*/

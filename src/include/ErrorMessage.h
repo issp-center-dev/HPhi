@@ -53,6 +53,7 @@ char *cErrOutputHamForFullDiag;
 char *cErrRestart;
 char *cErrFiniteTemp;
 char *cErrCUDA;
+char *cErrScaLAPACK;
 
 char *cErrKW;
 char *cErrKW_ShowList;

@@ -305,17 +305,12 @@ int main(int argc, char* argv[]){
 
       case FullDiag:
         StartTimer(5000);
-        if (nproc != 1) {
-          fprintf(stdoutMPI, "Error: Full Diagonalization is only allowed for one process.\n");
+        if (X.Bind.Def.iFlgScaLAPACK ==0 && nproc != 1) {
+          fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
           FinalizeMPI();
-          StopTimer(5000);
-          return 0;
         }
         if (CalcByFullDiag(&X) != TRUE) {
-          FinalizeMPI();
-          StopTimer(5000);
-          return 0;
-
+          FinalizeMPI(); 
         }
         StopTimer(5000);
       break;

@@ -335,7 +335,13 @@ $ gnuplot lattice.gp
 \verb|Jx = Jy = Jz = J|が代入されます。
 \verb|J|を指定した上で\verb|Jx|, \verb|Jy|, \verb|Jz|を指定した場合は$\HPhi$を終了します。
 
-\item \verb|h|, \verb|Gamma|, \verb|D|
+\item \verb|h|
+
+{\bf 形式 :} 実数
+
+{\bf 説明 :} 縦磁場を指定します。
+
+\item \verb|Gamma|, \verb|D|
 
 {\bf 形式 :} 実数
 
@@ -604,7 +610,7 @@ $10^{-{\tt LanczosEps}}$以下になったら収束したと判断します。
 \verb|method="CG"|の時には残差ベクトルの2-ノルムが
 $10^{-{\tt LanczosEps}/2}$以下になったら収束したと判断します。
 
-\item \verb|LancczosTarget|
+\item \verb|LanczosTarget|
 
 {\bf 形式 :} 整数(デフォルト値は\verb|2|)
 
@@ -1128,7 +1134,21 @@ CalcEigenVec 0
 から選択することが出来ます。}
 }
 
+\item  \verb|Scalapack|
 
+{\bf 形式 :} int型 (デフォルト値 0)
+
+{\bf 説明 :} (FullDiag) 全対角化計算でのScaLAPACKライブラリの使用有無を指定します。\\
+0: ScaLAPACKを使用しない。\\
+1: ScaLAPACKを使用する。\\
+で選択することが出来ます。
+
+\item  \verb|NGPU|
+
+{\bf 形式 :} int型 (デフォルト値 2)
+
+{\bf 説明 :} (FullDiag) 全対角化計算でのMAGMAライブラリを使用する場合のGPU数を指定します。
+なお、$\HPhi$ではマルチノードでのGPU計算には対応していません。
 
 \end{itemize}
 
@@ -3695,7 +3715,7 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
   
  {\bf 形式 :} double型
 
-{\bf 説明 :} 逆温度$1/{k_{\rm B}T}$。
+{\bf 説明 :} 逆温度$1/{k_{\rm B}T} ~($ただし, $k_{\rm B} = 1)$。
  
   \item $[$double02$]$
 
@@ -3714,7 +3734,7 @@ set 4 step 1999:TPQ begins: Wed Jul 13 07:59:32 2016
  {\bf 形式 :} double型 
 
 {\bf 説明 :} ダブロン
-$\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ (ただし$N_s$はサイト数)。
+ダブロンの期待値$\sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle$ 。
 
   \item $[$double05$]$
 

@@ -153,7 +153,7 @@ int expec_energy_flct(struct BindStruct *X){
   }  
   dam_pr = SumMPI_dc(dam_pr);
   dam_pr1 = SumMPI_dc(dam_pr1);
-  //  fprintf(stdoutMPI, "Debug: ene=%lf, var=%lf\n", creal(dam_pr), creal(dam_pr1));
+  //fprintf(stdoutMPI, "Debug: ene=%lf, var=%lf\n", creal(dam_pr), creal(dam_pr1));
   
   X->Phys.energy = dam_pr;
   X->Phys.var    = dam_pr1;

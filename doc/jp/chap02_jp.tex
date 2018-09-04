@@ -10,6 +10,8 @@ $\HPhi$のコンパイル$\cdot$使用には次のものが必要です。
 \item C/fortran コンパイラ (インテル、富士通、GNUなど)
 \item BLAS/LAPACKライブラリ (インテルMKL, 富士通, ATLASなど)
 \item MPIライブラリ (MPI並列を行わない場合は必要ありません)
+\item ScaLAPACKライブラリ (全対角化で使用しない場合は必要ありません)
+\item MAGMAライブラリ (全対角化で使用しない場合は必要ありません)
 \end{itemize}
 
 \begin{screen}
@@ -56,12 +58,13 @@ cd $HOME/build/hphi
 cmake -DCONFIG=gcc $PathTohphi
 make
 \end{verbatim}
-でコンパイルすることができます。コンパイル後、\$HOME/build/hphi 直下にsrcフォルダが作成され、実行ファイルであるHPhiがそのフォルダ内に作成されます。MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。
+でコンパイルすることができます。全対角化の計算に\verb|ScaLAPACK|を使用する場合には、\verb|-DUSE_SCALAPACK=ON|のオプションをcmake時につけてください。コンパイル後、\$HOME/build/hphi 直下にsrcフォルダが作成され、実行ファイルであるHPhiがそのフォルダ内に作成されます。MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。
 
 なお、上の例ではgccコンパイラを前提としたコンパイルになっていますが、
 \begin{itemize}
 \item \verb|sekirei| : 物性研究所システムB ''sekirei''
-\item \verb|fujitsu| : 富士通コンパイラ(物性研究所システムC ''maki'')
+\item \verb|sekirei_acc| : 物性研究所システムB ''sekirei'' (MAGMAライブラリを使用する場合)
+\item \verb|fujitsu| : 富士通コンパイラ
 \item \verb|intel| : intelコンパイラ + Linux PC
 \item \verb|gcc| : GCC + Linux PC
 \end{itemize}
@@ -167,17 +170,15 @@ HPhi-xxx.gzを解凍後に構成されるディレクトリ構成を以下に示
 │~~~~~~~├──fujitsu.cmake\\
 │~~~~~~~├──gcc.cmake\\
 │~~~~~~~├──intel.cmake\\
-│~~~~~~~└──sekirei.cmake\\
+│~~~~~~~├──sekirei.cmake\\
+│~~~~~~~└──sekirei\_acc.cmake\\
 ├──doc/\\
 │~~~~~~~├──en/\\
 │~~~~~~~├──fourier/\\
-│~~~~~~~│~~~~~~├──en/\\
-│~~~~~~~│~~~~~~├──figs/\\
-│~~~~~~~│~~~~~~└──ja/\\
+│~~~~~~~├──sphinx/\\
 │~~~~~~~├──jp/\\
 │~~~~~~~├──userguide\_en.pdf\\
 │~~~~~~~└──userguide\_jp.pdf\\
-├──HPhiconfig.sh\\
 ├──samples/\\
 ├──src/\\
 │~~~~~~~├──**.c\\
@@ -186,7 +187,7 @@ HPhi-xxx.gzを解凍後に構成されるディレクトリ構成を以下に示
 │~~~~~~~│~~~~~~~└──**.h\\
 │~~~~~~~└──makefile\_src\\
 ├──test/\\
-└──test\_tool/\\
+└──tool/\\
 
 \newpage
 \section{基本的な使い方}
