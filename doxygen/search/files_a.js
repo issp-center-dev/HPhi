@@ -3,6 +3,7 @@ var searchData=
   ['makeham_2ec',['makeHam.c',['../make_ham_8c.html',1,'']]],
   ['matrixlapack_2ec',['matrixlapack.c',['../matrixlapack_8c.html',1,'']]],
   ['matrixlapack_5fmagma_2ec',['matrixlapack_magma.c',['../matrixlapack__magma_8c.html',1,'']]],
+  ['matrixscalapack_2ec',['matrixscalapack.c',['../matrixscalapack_8c.html',1,'']]],
   ['mltply_2ec',['mltply.c',['../mltply_8c.html',1,'']]],
   ['mltplyhubbard_2ec',['mltplyHubbard.c',['../mltply_hubbard_8c.html',1,'']]],
   ['mltplyhubbardcore_2ec',['mltplyHubbardCore.c',['../mltply_hubbard_core_8c.html',1,'']]],

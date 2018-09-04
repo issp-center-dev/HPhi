@@ -7,8 +7,6 @@ var searchData=
   ['bind',['Bind',['../struct_e_d_main_cal_struct.html#ac28ad147bf75b9b2864d9feb74bd4d29',1,'EDMainCalStruct']]],
   ['bindstruct',['BindStruct',['../struct_bind_struct.html',1,'']]],
   ['binomial',['Binomial',['../sz_8c.html#acde07cfd887113fd7624247edc1b9a31',1,'sz.c']]],
-  ['bisec',['bisec',['../bisec_8c.html#a5bbdefa937114f145ccedce379b013aa',1,'bisec.c']]],
-  ['bisec_2ec',['bisec.c',['../bisec_8c.html',1,'']]],
   ['bitcalc_2ec',['bitcalc.c',['../bitcalc_8c.html',1,'']]],
   ['bitcheck',['BitCheck',['../bitcalc_8c.html#a3eba086d07082210ad45cf008885e55c',1,'bitcalc.c']]],
   ['bitcheckgeneral',['BitCheckGeneral',['../bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f',1,'bitcalc.c']]],

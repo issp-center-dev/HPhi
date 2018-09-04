@@ -60,6 +60,7 @@ var _error_message_8c =
     [ "cErrOutputMode", "_error_message_8c.html#aa94f43835abdab2a83b28c62c801ca98", null ],
     [ "cErrReadDefFile", "_error_message_8c.html#a555e61e3812f4a7501983309bf343d36", null ],
     [ "cErrRestart", "_error_message_8c.html#a7e632dcd9491da76727f3cb2cf4eaa41", null ],
+    [ "cErrScaLAPACK", "_error_message_8c.html#a5a44ad07ac75e91388fef35c1d9a2200", null ],
     [ "cErrSetIniVec", "_error_message_8c.html#a3f1e2fcc9a279da4cf556e4856d9e920", null ],
     [ "cErrSiteNumber", "_error_message_8c.html#a7eab27d706a1201415ec44749c385567", null ],
     [ "cErrSz", "_error_message_8c.html#a0cfbc728538f8286bd0430b68d31b8ae", null ],
