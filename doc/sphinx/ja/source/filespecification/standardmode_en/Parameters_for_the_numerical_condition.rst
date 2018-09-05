@@ -1,156 +1,145 @@
 .. highlight:: none
 
-Parameters for the numerical condition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+計算条件のパラメーター
+~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``2S``
 
-   **Type :** Positive integer (``1`` as a default)
+   **形式 :** 正の整数(デフォルト値は\ ``1``)
 
-   **Description :** The :math:`2 S` at each site in the localized spin
-   system is specified. (E.g. ``1`` for the :math:`1/2` system)
+   **説明 :**
+   スピン模型での局在スピンの大きさ\ :math:`S`\ の2倍を指定します。 (例/
+   :math:`1/2`\ スピンならば\ ``1``)
 
 *  ``Restart``
 
-   **Type :** String (choose from ``"None"``, ``"Restart_out"``,
-   ``"Restart_in"``, ``"Restart"``. ``"None"`` as a default)
+   **形式 :** 文字列(\ ``"None"``, ``"Restart_out"``, ``"Restart_in"``,
+   ``"Restart"``\ のいずれか。デフォルトは\ ``"None"``)
 
-   **Description :** The condition of the restart is specified.
-   ``"None"`` for omitting file IOs for the restart, ``"Restart_out"``
-   for starting calculation from scratch and generating a restart-file
-   after the calculation finishes, ``"Restart_in"`` for starting
-   calculation with the restart-file generated in the previous run,
-   ``"Restart"`` for ``"Restart_out"`` + ``"Restart_in"``.
+   **説明 :** 再計算に関する設定を行う。
+   ``"None"``\ では再計算に関連するファイル出力をしない。
+   ``"Restart_out"``\ では一から計算を始めて、
+   反復が終了した時点で再計算用のデータをファイル出力する。
+   ``"Restart_in"``\ では再計算用のデータをファイルから受け取り途中から計算を始める。
+   ``"Restart"``\ では再計算用のデータをファイルから受け取り途中から計算を始め、
+   反復が終了した時点で再計算用のデータをファイル出力する。
 
-*  ``anczos_max``
+*  ``Lanczos_max``
 
-   **Type :** Positive integer (default value: ``2000``)
+   **形式 :** 整数(デフォルト値は\ ``2000``)
 
-   **Description :** The upper limit of the Lanczos/LOBCG/BiCG step and
-   the number of steps for TPQ/Time=evolution are specified with this
-   parameter.
+   **説明 :** ランチョスステップの上限、LOBCGステップの上限、
+   TPQステップ数、時間発展ステップ数、BiCGステップの上限を指定します。
 
 *  ``initial_iv``
 
-   **Type :** Integer (default value: ``-1``)
+   **形式 :** 整数(デフォルト値は\ ``-1``)
 
-   **Description :** An initial vector is specified with this parameter.
+   **説明 :** 初期条件のベクトルを与えます。
 
-   *  Lanczos method
+   -  ランチョス法
 
-      *  For the canonical ensemble and ``initial_iv`` :math:`\geq 0`
+      -  カノニカル集団かつ ``initial_iv`` :math:`\geq 0`\ の場合
 
-         The non-zero components of an initial vector are specified with
-         this parameter.
+         ノンゼロの成分が指定されます。
 
-      *  For the grand canonical ensemble or ``initial_iv`` :math:`< 0`
+      -   ``initial_iv`` :math:`< 0`\ の場合
 
-         The seed of the random generator is given by this parameter and
-         the random vector is used as the initial vector.
+         乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。なお、グランドカノニカルの場合は初期状態として多くの状態を持つよう、こちらの様式が適用されます。
 
-   *  TPQ method
+   -  TPQ法
 
-      The seed of the random generator is given by this parameter and
-      the random vector is used as the initial vector.
+      乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。
 
-   See Sec. :ref:`Ch:Algorithm` for details of setting an
-   initial vector.
+   初期ベクトル設定の詳細については、:ref:`Ch:Algorithm` を参照ください。
 
 *  ``exct``
 
-   **Type :** Positive integer (default value: ``1``)
+   **形式 :** 整数(デフォルト値は\ ``1``)
 
-   | **Description :** The number of eigenvectors obtained from the
-     ground energy by the Lanczos method are specified.
-   | When exct=2, the eigenvector of the first-excited state is
-     obtained. When ``method="CG"``, the number of states to be
-     calculated is specified.
+   **説明 :** ``method="Lancoz"``\ ではエネルギーの低いものから数えて、
+   何番目の固有状態を計算するかを指定します。
+   ``method="CG"``\ の時には求める固有状態の本数を指定します。
 
    **Note**: The condition ``nvec`` :math:`>=` ``exct`` must be
    satisfied.
 
 *  ``LanczosEps``
 
-   **Type :** Positive integer (default value: ``14``)
+   **形式 :** 整数(デフォルト値は\ ``14``)
 
-   **Description :** The convergence criterion for the Lanczos method is
-   specified with this parameter. If the difference between the old and
-   the new target eigenvalue falls below
-   :math:`10^{- LanczosEps|}`, the Lanczos step will finish. For
-   ``method="CG"``, we assume the calculation is converged when the
-   2-norm of the residual vector becomes smaller than
-   :math:`10^{-{\tt LanczosEps}/2}`.
+   **説明 :** ランチョスの収束判定条件を指定します。
+   ひとつ前のステップの固有値との相対誤差が,
+   :math:`10^{-{\tt LanczosEps}}`\ 以下になったら収束したと判断します。
+   ``method="CG"``\ の時には残差ベクトルの2-ノルムが
+   :math:`10^{-{\tt LanczosEps}/2}`\ 以下になったら収束したと判断します。
 
 *  ``LanczosTarget``
 
-   **Type :** Positive integer (default value: ``2``)
+   **形式 :** 整数(デフォルト値は\ ``2``)
 
-   **Description :** The target eigenenergy for the convergence
-   criterion is specified. If it is set to ``1``, the target eigenenergy
-   becomes the ground state.
+   **説明 :** エネルギーの低いものから数えて、
+   何番目の固有値でランチョスの収束判定を行うかを指定します。
 
 *  ``LargeValue``
 
-   **Type :** Double (the default value is provided below)
+   **形式 :** 実数(デフォルト値は下記参照)
 
-   **Description :** (Only for TPQ) :math:`l` as :math:`l=\hat{\mathcal H}/N_{s}`
-   is used in the TPQ calculation. Usually, the largest eigenvalue of
-   the Hamiltonian is used as :math:`l`. Thus, the default value of
-   :math:`l` is taken as the summation of the absolute values of each
-   coefficient in the Hamiltonian divided by the number of sites.
+   **説明 :**
+   (TPQ法のみで使用):math:`l-\hat{H}/N_{s}`\ の\ :math:`l`\ 。
+   ハミルトニアンの各項の係数の絶対値の総和をサイト数で割ったものがデフォルト値になります。
 
 *  ``NumAve``
 
-   **Type :** Positive integer (default value: ``5``)
+   **形式 :** 整数(デフォルト値は\ ``5``)
 
-   **Description :** (Only for TPQ) The number of independent runs for
-   the TPQ method is specified with this parameter.
+   **説明 :** (TPQ法のみで使用)独立なrunを何回行うかを指定します。
 
 *  ``ExpecInterval``
 
-   **Type :** Positive integer (default value: ``20``)
+   **形式 :** 整数(デフォルト値は\ ``20``)
 
-   | **Description :** (Only for TPQ) The interval of calculating
-     correlation functions in the TPQ iteration is specified.
-   | **Note:** A small interval increases the time cost of calculations.
+   **説明 :**
+   (TPQ法のみで使用)相関関数の計算を何回のTPQステップおきに行うかの指定。
+   頻度を上げると計算コストが増大するので注意してください。
 
 *  ``OutputMode``
 
-   **Type :** Choose from ``"none"``, ``"correlation"``, and ``"full"``
-   (``correlation`` as default)
+  **形式 :** ``"none"``, ``"correlation"``,
+   ``"full"``\ のいずれか(デフォルトは\ ``correlation``)
 
-   **Description :** Indices of correlation functions are specified with
-   this keyword. ``"none"`` indicates correlation functions will not be
-   calculated. When ``outputmode="correlation"``, the correlation
-   function supported by the utility ``fourier`` is computed. For more
-   details, see the document in ``doc/fourier/``. If ``"full"`` is
-   selected, :math:`\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle`
-   is computed at all :math:`i, j, \sigma, \sigma'`, and
+   **説明 :** 計算を行う相関関数を指定します。
+   ``"none"``\ の場合は相関関数を計算しません。
+   ``"correlation"``\ を指定した場合には、付属のユーティリティ
+   ``fourier``\ でサポートするものに対応した相関関数を計算します。
+   詳しくは\ ``doc/fourier/``\ 内のマニュアルを参照してください。
+   ``"full"``\ を指定した場合には、
+   1体部分はすべての\ :math:`i, j, \sigma, \sigma'`\ について
+   :math:`\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle`\ を、
+   2体部分はすべての\ :math:`i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4`\ について
    :math:`\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_{i_4 \sigma_4} \rangle`
-   is computed at all
-   :math:`i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4`.
-
-   In a spin system, the indices are specified as those of the
-   Bogoliubov representation (see Sec. :ref:`Sec:sec_bogoliubov_rep` ).
+   を計算します。
+   スピン系の演算子はBogoliubov表現により生成消滅演算子で表されています。
+   詳しくは :ref:`Sec:sec_bogoliubov_rep` をご覧ください。
 
 *  ``InitialVecType``
 
-   **Type :** Character (choose from ``"C"``, ``"R"``. ``"C"`` as a
-   default)
+   **形式 :** 文字 (``"C"``, ``"R"``\ のいずれか。
+   デフォルトは\ ``"C"``)
 
-   **Description :** The type of the initial eigenvector is specified.
-   ``C`` for the complex number, and ``R`` for the real number.
+   **説明 :** 固有ベクトルの初期値の型を指定する。
+   ``C``\ では複素数型、\ ``R``\ では実数型とする。
 
 *  ``EigenVecIO``
 
-   **Type :** String (choose from ``"None"``, ``"Out"``, ``"In"``.
-   ``"None"`` as a default)
+   **形式 :** 文字列(\ ``"None"``, ``"Out"``, ``"In"``\ のいずれか。
+   デフォルトは\ ``"None"``)
 
-   **Description :** The I/O of the eigenvector is specified. ``"None"``
-   for omitting the IO of the eigenvector, ``"Out"`` for writing the
-   eigenvector to a file, ``"In"`` for reading the eigenvector from a
-   file and using it in the subsequent calculation (such as the Green’s
-   function).
+   **説明 :** 固有ベクトルの入出力を指定する。
+   ``"None"``\ では固有ベクトルの入出力を行わない。
+   ``"Out"``\ では求めた固有ベクトルをファイルに出力する。
+   ``"In"``\ では固有ベクトルをファイルから取り出し、
+   その後の計算(動的グリーン関数など)を行う。
 
 .. raw:: latex
 

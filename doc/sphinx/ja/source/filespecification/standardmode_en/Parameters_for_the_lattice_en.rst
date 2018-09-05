@@ -1,126 +1,112 @@
 .. highlight:: none
 
-Parameters for the lattice
---------------------------
+格子に関するパラメーター
+------------------------
 
-Chain [ :numref:`fig_chap04_1_lattice` (a)]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1次元鎖 [ :numref:`fig_chap04_1_lattice` (a)]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``L``
 
-   **Type :** Integer
+   **形式 :** 自然数
 
-   **Description :** The length of the chain is specified with this
-   parameter.
+   **説明 :** 鎖の長さを指定します.
 
    .. figure:: /figs/chap04_1_lattice.*
       :name: fig_chap04_1_lattice
       :scale: 100%
-      :alt: Schematic illustration of (a) one-dimensional chain lattice,
-            (b) two-dimensional square lattice, and (c) two-dimensional
-            triangular lattice. They have :math:`t`, :math:`V`, and :math:`J`
-            as the nearest neighbor hopping, an offsite Coulomb integral, and
-            a spin-coupling constant, respectively (magenta solid lines); they
-            also have :math:`t'`, :math:`V'`, and :math:`J'` as the next
-            nearest neighbor hopping, offsite Coulomb integral, and
-            spin-coupling constant, respectively (green dashed line).
+      :alt: (a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図.
+            ホッピング積分、オフサイトクーロン積分、スピン結合は、
+            再近接サイト間(マゼンタの実線)ではそれぞれ\ :math:`t,V,J`\ となり、
+            次近接サイト間(緑の破線)ではそれぞれ\ :math:`t',V',J'`\ となります。
             
-      Schematic illustration of (a) one-dimensional chain lattice, (b)
-      two-dimensional square lattice, and (c) two-dimensional triangular
-      lattice. They have :math:`t`, :math:`V`, and :math:`J` as the
-      nearest neighbor hopping, an offsite Coulomb integral, and a
-      spin-coupling constant, respectively (magenta solid lines); they
-      also have :math:`t'`, :math:`V'`, and :math:`J'` as the next
-      nearest neighbor hopping, offsite Coulomb integral, and
-      spin-coupling constant, respectively (green dashed line). 
+      (a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図.
+      ホッピング積分、オフサイトクーロン積分、スピン結合は、
+      再近接サイト間(マゼンタの実線)ではそれぞれ\ :math:`t,V,J`\ となり、
+      次近接サイト間(緑の破線)ではそれぞれ\ :math:`t',V',J'`\ となります。
 
    .. figure:: /figs/chap04_1_honeycomb.*
       :name: fig_chap04_1_honeycomb
       :scale: 100%
-      :alt: Schematic illustration of the anisotropic honeycomb lattice.
-            The nearest neighbor hopping integral, spin coupling, and offsite
-            Coulomb integral depend on the bond direction. Those between the
-            second nearest neighbor sites are not supported.
+      :alt: 2次元異方的蜂の巣格子の模式図.
+            ホッピング積分、オフサイトクーロン積分、スピン結合は、
+            ボンドの方向によって異なります。
+            また、次近接のホッピング積分、オフサイトクーロン積分、スピン結合
+            には対応していません。
             
-      Schematic illustration of the anisotropic honeycomb lattice. The
-      nearest neighbor hopping integral, spin coupling, and offsite
-      Coulomb integral depend on the bond direction. Those between the
-      second nearest neighbor sites are not supported. 
+      2次元異方的蜂の巣格子の模式図.
+      ホッピング積分、オフサイトクーロン積分、スピン結合は、
+      ボンドの方向によって異なります。
+      また、次近接のホッピング積分、オフサイトクーロン積分、スピン結合
+      には対応していません。 
 
    .. figure:: /figs/kagome.*
       :name: fig_kagome
       :scale: 100%
-      :alt: Schematic illustration of the Kagome lattice.
+      :alt: カゴメ格子の模式図.
       
-      Schematic illustration of the Kagome lattice. 
+      カゴメ格子の模式図. 
 
    .. figure:: /figs/ladder.*
       :name: fig_ladder
       :scale: 100%
-      :alt: Schematic illustration of the ladder lattice.
+      :alt: 梯子格子の模式図.
       
-      Schematic illustration of the ladder lattice. 
+      梯子格子の模式図.
 
-Ladder ( :numref:`fig_ladder` )
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+梯子格子 ( :numref:`fig_ladder` )
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``L``
 
-   **Type :** Integer
+   **形式 :** 自然数
 
-   **Description :** The length of the ladder is specified with this
-   parameter.
+   **説明 :** 梯子の長さを指定します.
 
 *  ``W``
 
-   **Type :** Integer
+   **形式 :** 自然数
 
-   **Description :** The number of the ladder is specified with this
-   parameter.
+   **説明 :** 梯子の本数を指定します.
 
   .. figure:: /figs/chap04_1_unitlattice.*
      :name: fig_chap04_1_unitlattice
      :scale: 100%
-     :alt: Shape of the numerical cell when
-           :math:`{\boldsymbol a}_0 = (6, 2), {\boldsymbol a}_1 = (2, 4)` in the triangular
-           lattice. The region surrounded by :math:`{\boldsymbol a}_0` (magenta dashed
-           arrow) and :math:`{\boldsymbol a}_1` (green dashed arrow) becomes the cell
-           to be calculated (20 sites).
+     :alt: 三角格子において、\ :math:`{\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)`\ とした場合のセル形状。
+           :math:`{\vec a}_0`\ (マゼンタ)および:math:`{\vec a}_1`\ (グリーン)
+           で囲まれた部分(サイト数は20)が計算するセルとなる。
      
-     Shape of the numerical cell when
-     :math:`{\boldsymbol a}_0 = (6, 2), {\boldsymbol a}_1 = (2, 4)` in the triangular
-     lattice. The region surrounded by :math:`{\boldsymbol a}_0` (magenta dashed
-     arrow) and :math:`{\boldsymbol a}_1` (green dashed arrow) becomes the cell
-     to be calculated (20 sites). 
+     三角格子において、\ :math:`{\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)`\ とした場合のセル形状。
+     :math:`{\vec a}_0`\ (マゼンタ)および:math:`{\vec a}_1`\ (グリーン)
+     で囲まれた部分(サイト数は20)が計算するセルとなる。 
 
-**Tetragonal lattice** [ :numref:`fig_chap04_1_lattice` (b)], triangular lattice [ :numref:`fig_chap04_1_lattice` (c)], 
-honeycomb lattice [ :numref:`fig_chap04_1_honeycomb` ], Kagome lattice [ :numref:`fig_kagome` ]
+矩形格子 [ :numref:`fig_chap04_1_lattice` (b)], 三角格子 [ :numref:`fig_chap04_1_lattice` (c)], 
+蜂の巣格子 [ :numref:`fig_chap04_1_honeycomb` ], カゴメ格子 [ :numref:`fig_kagome` ]
 
-In these lattices, we can specify the shape of the numerical cell by
-using the following two methods.
+これらの格子では、標準の単位胞(図中の黒の破線を参照)を用いて格子形状を指定する方法と、
+それらとは別の方向に格子ベクトルを取る方法が選択できます。
+ただし、\ ``model=SpinGCCMA``\ の時には前者のみが使えます。
+また、両方を指定した場合には\ :math:`{\mathcal H}\Phi`\ を終了します。
 
 *   ``W``, ``L``
 
-   **Type :** Integer
+   **形式 :** 自然数
 
-   **Description :** The alignment of the original unit cells (dashed
-   black lines in :numref:`fig_chap04_1_lattice`  - :numref:`fig_kagome` ) is specified with this parameter.
+   **説明 :** 標準の単位胞の並び方を指定します。
 
 *  ``a0W``, ``a0L``, ``a1W``, ``a1L``
 
-   **Type :** Integer
+   **形式 :** 自然数
 
-   **Description :** We can specify two vectors
-   (:math:`{\boldsymbol a}_0, {\boldsymbol a}_1`) that surround the numerical cell
-   (:numref:`fig_chap04_1_unitlattice` ).
-   These vectors should be specified in the fractional coordinate.
+   **説明 :**
+   格子を指定する2本のベクトル(\ :math:`{\vec a}_0, {\vec a}_1`)
+   を指定します (:numref:`fig_chap04_1_unitlattice`)。
+   これらのベクトルは標準の並進ベクトルを基底とした座標(Fractional
+   coordinate) で指定されます。
 
-If we use both these methods, :math:`{\mathcal H}\Phi` stops. When
-``model=SpinGCCMA``, we can use only the former.
-
-We can check the shape of the numerical cell by using a file
-``lattice.gp`` which is written in Standard mode. This file can be read
-by ``gnuplot`` as follows:
+スタンダードモードで出力される\ ``lattice.gp``\ というファイルを使うと、
+自分の意図した通りの格子のとり方になっているかどうかを確かめる事が出来ます。
+このファイルは、次のようにして\ ``gnuplot``\ に読み込ませることが出来ます。
 
 ::
 

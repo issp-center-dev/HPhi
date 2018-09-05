@@ -1,24 +1,22 @@
 .. highlight:: none
 
-Parameters for conserved quantities
------------------------------------
+保存量に関するパラメーター
+--------------------------
 
 *  ``nelec``
 
-   **Type :** Positive integer
+   **形式 :** 整数
 
-   **Description :** The number of valence electrons is specified with
-   this parameter. When model = ``"Fermion HubbardGC"``, ``"Spin"``, or
-   ``"SpinGC"``, it should not be specified.
+   **説明 :** 伝導電子数を指定します。 ``model = "Fermion HubbardGC"``,
+   ``"Spin"``, ``"SpinGC"`` のときには指定しないでください。
 
 *  ``2Sz``
 
-   **Type :** Integer
+   **形式 :** 整数
 
-   **Description :** The :math:`z` component of the twofold total spin
-   is specified with this parameter. When
-   model = ``"Fermion HubbardGC"`` or ``"SpinGC"``, it should not be
-   specified.
+   **説明 :** 全スピンのz 成分の2倍を指定します。
+   ``model = "Fermion HubbardGC"``, ``"SpinGC"``
+   のときには指定しないでください。
 
 .. raw:: latex
 

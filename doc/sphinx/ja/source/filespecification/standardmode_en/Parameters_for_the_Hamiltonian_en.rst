@@ -1,73 +1,65 @@
 .. highlight:: none
 
-Parameters for the Hamiltonian
-------------------------------
+ハミルトニアンの各項の係数
+--------------------------
 
-A default value is :math:`0` unless a specific value is written in the
-description. \ :numref:`table_interactions`
-shows the parameters for each models. In the case of a complex type, a
-file format is “\ *a real part, an imaginary part* " while in the case
-of a real type, only “\ *a real part* ".
+デフォルト値は特に記載されていないものについては0に設定してあります。
+型が複素数のパラメータは「実部, 虚部」(間に“,”)の形式で指定し、
+実数の場合には「実部」で指定が可能です。
 
-Local terms
-~~~~~~~~~~~
+局所項
+~~~~~~
 
 *  ``mu``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** It is available only for the Hubbard and Kondo
-   lattice model. The chemical potential :math:`\mu` (including the site
-   potential) is specified with this parameter.
+   **説明 :**
+   Hubbardおよび近藤格子模型での化学ポテンシャルを指定します。
 
 *  ``U``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** It is available only for the Hubbard and Kondo
-   lattice model. The onsite Coulomb integral :math:`U` is specified
-   with this parameter.
+   **説明 :**
+   Hubbardおよび近藤格子模型でのオンサイトクーロン積分を指定します。
 
 *  ``Jx``, ``Jy``, ``Jz``, ``Jxy``, ``Jyx``, ``Jxz``, ``Jzx``, ``Jyz``,
    ``Jzy``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** It is available only for the Kondo lattice model.
-   The spin-coupling constant between the valence and the local
-   electrons is specified with this parameter. If the exchange coupling
-   ``J`` is specified in the input file, instead of ``Jx, Jy, Jz``, the
-   diagonal exchange couplings, ``Jx, Jy, Jz``, are set as
-   ``Jx = Jy = Jz = J``. When both the set of exchange couplings
-   (``Jx``, ``Jy``, ``Jz``) and the exchange coupling ``J`` are
-   specified in the input file, :math:`{\mathcal H}\Phi` will stop.
+   **説明 :**
+   近藤格子模型での、局在電子と遍歴電子のスピン結合を指定します。
+   また対角項について,
+   ``Jx, Jy, Jz``\ を指定する代わりに、パラメータ\ ``J``\ を指定すると
+   ``Jx = Jy = Jz = J``\ が代入されます。 ``J``\ を指定した上で\ ``Jx``,
+   ``Jy``, ``Jz``\ を指定した場合は\ :math:`{\mathcal H}\Phi`\ を終了します。
 
 *   ``h``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** The longitudinal magnetic field is specified with this parameter.
+   **説明 :** 縦磁場を指定します。
 
 *   ``Gamma``, ``D``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** (Spin model) The transverse magnetic field, and the single-site anisotropy parameter
-   are specified with these parameters. The single-site anisotropy
-   parameter is not available for ``model=SpinGCCMA``.
+   **説明 :**
+   スピン模型での縦磁場、横磁場、異方性パラメータを指定します。
+   ただし異方性パラメータについては、\ ``model=SpinGCCMA``\ では使用できません。
 
-The non-local terms described below should be specified differently
-according to the lattice structure: For ``lattice=Ladder``, the
-non-local terms are specified differently from those for the
-``lattice=Chain Lattice``, ``Square Lattice``, ``Triangular Lattice``,
-``Honeycomb Lattice``, ``Kagome``. Below, the available parameters for
-each lattice are shown in :numref:`table_interactions` .
+下記の非局所項は、梯子格子の場合とそれ以外(１次元鎖、矩形格子、三角格子、蜂の巣格子、カゴメ格子)
+の場合で指定の仕方が異なります。
+また、各格子で指定可能なパラメーターを
+Table :numref:`table_interactions` に表します。
 
 .. _table_interactions:
-.. csv-table:: Interactions for each model defined in an input file. We can define spin couplings as a matrix format.
-   :header: "Interactions", "1D chain", "2D square", "2D triangular", "Honeycomb", "Kagome", "Ladder"
+.. csv-table:: 各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。
+   :header: "相互作用", "1次元鎖", "矩形格子", "三角格子", "蜂の巣格子", "カゴメ格子", "梯子格子"
 
-   "J, t, V(simplified)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
+   "J, t, V(省略形)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
    "J', t', V'", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
    "J0, t0, V0", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
    "J1, t1, V1", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
@@ -76,24 +68,22 @@ each lattice are shown in :numref:`table_interactions` .
    "J2', t2', V2'", "\-", "\-", "\-", "\-", "\-", ":math:`{\circ}`"
 
 
-Non-local terms[ for Ladder ( :numref:`fig_ladder` )]
+非局所項 [ 梯子格子 ( :numref:`fig_ladder` )]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``t0``, ``t1``, ``t1'``, ``t2``, ``t2'``
 
-   **Type :** Complex
+   **形式 :** 複素数
 
-   **Description :** (Hubbard and Kondo lattice model) Hopping integrals
-   in the ladder lattice (see :numref:`fig_ladder` ) are
-   specified with this parameter.
+   **説明 :** 梯子格子でのホッピング(Fig.
+    :numref:`fig_ladder` 参照)を指定します。
 
 *  ``V0``, ``V1``, ``V1'``, ``V2``, ``V2'``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** (Hubbard and Kondo lattice model) Offsite Coulomb
-   integrals on the ladder lattice ( :numref:`fig_chap04_1_honeycomb` ) 
-   are specified with these parameters.
+   **説明 :** 梯子格子でのオフサイトクーロン積分 (Fig.
+  :numref:`fig_chap04_1_honeycomb` 参照)を指定します。
 
 *  ``J0x``, ``J0y``, ``J0z``, ``J0xy``, ``J0yx``, ``J0xz``, ``J0zx``,
    ``J0yz``, ``J0zy``
@@ -110,46 +100,40 @@ Non-local terms[ for Ladder ( :numref:`fig_ladder` )]
 *  ``J2'x``, ``J2'y``, ``J2'z``, ``J2'xy``, ``J2'yx``, ``J2'xz``,
    ``J2'zx``, ``J2'yz``, ``J2'zy``.
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** (Spin model) Spin-coupling constants in the ladder
-   lattice (see :numref:`fig_ladder` ) are specified with
-   these parameters. If the simplified parameter ``J0`` is specified in
-   the input file instead of the diagonal couplings, ``J0x, J0y, J0z``,
-   these diagonal couplings are set as ``J0x = J0y = J0z = J0``. If both
-   J0 and the set of the couplings (J0x, J0y, J0z) are
-   specified, :math:`{\mathcal H}\Phi` will stop. The above rules are also valid
-   for the simplified parameters, ``J1``, ``J1'``, ``J2``, and ``J2'``.
+   **説明 :** 梯子格子でのスピン相互作用 (:numref:`fig_ladder` 参照)
+   を指定します。
+   また対角項について、例えば\ ``J0x, J0y, J0z``\ を指定する代わりに
+   パラメータ\ ``J0``\ を指定すると
+   ``J0x = J0y = J0z = J0``\ が代入されます。
+   ``J0``\ を指定した上で\ ``J0x, J0y, J0z``\ 等も指定した場合は\ :math:`{\mathcal H}\Phi`\ を終了します。
+   ``J1``, ``J1'``, ``J2``, ``J2'``\ についても同様です。
 
-Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` ,
+非局所項 [梯子格子以外 ( :numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` ,
 :numref:`fig_kagome` )]
 
 *  ``t0``, ``t1``, ``t2``
 
-   **Type :** Complex
+   **形式 :** 複素数
 
-   **Description :** (Hubbard and Kondo lattice model) The nearest
-   neighbor hoppings for each direction (see :numref:`fig_chap04_1_lattice` -
-   :numref:`fig_kagome` )
-   are specified with these parameters. If there is no bond dependence
-   of the hoppings, the simplified parameter ``t`` is available to
-   specify ``t0``, ``t1``, and ``t2`` as ``t0 = t1 = t2 = t``. If both
-   ``t`` and the set of the hoppings (``t0``, ``t1``, ``t2``) are
-   specified, :math:`{\mathcal H}\Phi` will stop.
+   **説明 :**
+   Hubbardおよび近藤格子模型での、最近接サイト間の各方向のホッピングを指定します。
+   また、ホッピングのボンド方向依存性がない場合は\ ``t0``, ``t1``,
+   ``t2``\ を
+   別々に指定する代わりにパラメータ\ ``t``\ を指定すると、\ ``t0 = t1 = t2 = t``\ が代入されます。
+   ``t``\ と\ ``t0``\ 等の両方が指定された場合には\ :math:`{\mathcal H}\Phi`\ を終了します。
 
 *  ``V0``, ``V1``, ``V2``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** (Hubbard and Kondo lattice model) The nearest
-   neighbor offsite Coulomb integrals :math:`V` for each direction
-   (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
-   are specified with these parameters. If there is no bond dependence
-   of the offsite Coulomb integrals, the simplified parameter ``V`` is
-   available to specify ``V0``, ``V1``, and ``V2`` as
-   ``V0 = V1 = V2 = V``. If both ``V`` and the set of the Coulomb
-   integrals (``V0``, ``V1``, ``V2``) are specified, :math:`{\mathcal H}\Phi` will
-   stop.
+   **説明 :**
+   Hubbardおよび近藤格子模型での、最近接サイト間のCoulomb積分を指定します。
+   また、サイト間Coulomb積分のボンド方向依存性がない場合は\ ``V0``,
+   ``V1``, ``V2``\ を
+   別々に指定する代わりにパラメータ\ ``V``\ を指定すると、\ ``V0 = V1 = V2 = V``\ が代入されます。
+   ``V``\ と\ ``V0``\ 等の両方が指定された場合には\ :math:`{\mathcal H}\Phi`\ を終了します。
 
 *  ``J0x``, ``J0y``, ``J0z``, ``J0xy``, ``J0yx``, ``J0xz``, ``J0zx``,
    ``J0yz``, ``J0zy``
@@ -160,92 +144,88 @@ Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`f
 *  ``J2x``, ``J2y``, ``J2z``, ``J2xy``, ``J2yx``, ``J2xz``, ``J2zx``,
    ``J2yz``, ``J2zy``
 
-   **Type :** Real
+  **形式 :** 実数
 
-   **Description :** (Spin model) The nearest neighbor exchange
-   couplings for each direction are specified with these parameters. If
-   the simplified parameter ``J0`` is specified, instead of
-   ``J0x, J0y, J0z``, the exchange couplings, ``J0x, J0y, J0z``, are set
-   as ``J0x = J0y = J0z = J0``. If both ``J0`` and the set of the
-   exchange couplings (``J0x, J0y, J0z``) are specified, :math:`{\mathcal H}\Phi`
-   will stop. The above rules are valid for ``J1`` and ``J2``.
+   **説明 :**
+   スピン模型での、最近接サイト間のスピン相互作用を指定します。
+   また対角項について、例えば\ ``J0x, J0y, J0z``\ を指定する代わりに
+   パラメータ\ ``J0``\ を指定すると
+   ``J0x = J0y = J0z = J0``\ が代入されます。
+   ``J0``\ を指定した上で\ ``J0x, J0y, J0z``\ 等も指定した場合は\ :math:`{\mathcal H}\Phi`\ を終了します。
+   ``J1``, ``J2``\ についても同様です。
 
-   If there is no bond dependence of the exchange couplings, the
-   simplified parameters, ``Jx``, ``Jy``, ``Jz``, ``Jxy``, ``Jyx``,
-   ``Jxz``, ``Jzx``, ``Jyz``, ``Jzy``, are available to specify the
-   exchange couplings for every bond as ``J0x = J1x = J2x = Jx``. If any
-   simplified parameter (``Jx``-``Jzy``) is specified in addition to its
-   counterparts (``J0x``-``J2zy``), :math:`{\mathcal H}\Phi` will stop. Below,
-   examples of parameter sets for nearest neighbor exchange couplings
-   are shown.
+   スピン間相互作用のボンド方向依存性がない場合には、 ``Jx``, ``Jy``,
+   ``Jz``, ``Jxy``, ``Jyx``, ``Jxz``, ``Jzx``, ``Jyz``, ``Jzy``
+   を指定すると、\ ``J0x = J1x = J2x = Jx``\ のようにすべてのボンド方向のスピン間相互作用に
+   同じ値を代入することが出来ます。
+   ``Jx``\ :math:`\sim`\ ``Jzy``\ 系列のどれかと\ ``J0x``\ :math:`\sim`\ ``J2zy``\ 系列のどれかを両方指定した
+   場合には\ :math:`{\mathcal H}\Phi`\ を終了します。
 
-   *  If there are no bond-dependent, and no anisotropic and offdiagonal
-      exchange couplings (such as :math:`J_{x y}`), please specify ``J``
-      in the input file.
+   以下に最近接間スピン相互作用の指定方法の例を挙げます。
 
-   *  If there are no bond-dependent and offdiagonal exchange couplings
-      but there are anisotropic couplings, please specify the non-zero
-      couplings in the diagonal parameters, ``Jx, Jy, Jz``.
+   *  ボンド方向依存性、スピン方向依存性、相互作用の非対角成分(\ :math:`J_{x y}`\ 等)がない場合
 
-   *  If there are no bond-dependent exchange couplings but there are
-      anisotropic and offdiagonal exchange couplings, please specify the
-      non-zero couplings in the nine parameters,
-      ``Jx, Jy, Jz, Jxy, Jyz, Jxz, Jyx, Jzy, Jzx``.
+      ``J``\ を指定
 
-   *  If there are no anisotropic and offdiagonal exchange couplings,
-      but there are bond-dependent couplings, please specify the
-      non-zero couplings in the three parameters, ``J0, J1, J2``.
+   *  ボンド方向依存性、相互作用の非対角成分がなく、スピン方向依存性がある場合
 
-   *  If there are no anisotropic exchange couplings, but are
-      bond-dependent and offdiagonal couplings, please specify the
-      non-zero couplings in the nine parameters,
-      ``J0x, J0y, J0z, J1x, J1y, J1z, J2x, J2y, J2z``.
+      ``Jx, Jy, Jz``\ のうち\ ``0``\ でないものを指定
 
-   *  If there are bond-dependent, anisotropic, and offdiagonal exchange
-      couplings, please specify the non-zero couplings in the
-      twenty-seven parameters from ``J0x`` to ``J2zy``.
+   *  ボンド方向依存性がなく、スピン方向依存性、相互作用の非対角成分がある場合
+
+      ``Jx, Jy, Jz, Jxy, Jyz, Jxz, Jyx, Jzy, Jzx``\ のうち\ ``0``\ でないものを指定
+
+   *  スピン方向依存性、相互作用の非対角成分がなく、ボンド方向依存性がある場合
+
+      ``J0, J1, J2``\ のうち\ ``0``\ でないものを指定
+
+   *  スピン方向依存性がなく、ボンド方向依存性、相互作用の非対角成分がある場合
+
+      ``J0x, J0y, J0z, J1x, J1y, J1z, J2x, J2y, J2z``\ のうち\ ``0``\ でないものを指定
+
+   *  ボンド方向依存性、スピン方向依存性、相互作用の非対角成分がある場合
+
+      ``J0x``\ :math:`\sim`\ ``J2zy``\ のすべてのうち\ ``0``\ でないものを指定
 
 *  ``t'``
 
-   **Type :** Complex
+   **形式 :** 複素数
 
-   **Description :** (Hubbard and Kondo lattice model) The nearest
-   neighbor hoppings for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
-   are specified with these parameter.
+   **説明 :**
+   Hubbardおよび近藤格子模型での、次近接サイト間の各方向のホッピングを指定します。
 
 *  ``V'``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** (Hubbard and Kondo lattice model) The nearest
-   neighbor-offsite Coulomb integrals :math:`V` for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
-   are specified with this parameter.
+   **説明 :**
+   Hubbardおよび近藤格子模型での、次近接サイト間のCoulomb積分を指定します。
 
 *  ``J'x``, ``J'y``, ``J'z``, ``J'xy``, ``J'yx``, ``J'xz``, ``J'zx``,
    ``J'yz``, ``J'zy``
 
-   **Type :** Real
+   **形式 :** 実数
 
-   **Description :** (Spin model) The second nearest neighbor exchange
-   couplings are specified. However, for ``lattice = Honeycomb Lattice``
-   and ``lattice = Kagome`` with ``model=SpinGCCMA``, the second nearest
-   neighbor exchange couplings are not available in the :math:`Standard`
-   mode. If the simplified parameter ``J'`` is specified, instead of
-   ``J'x, J'y, J'z``, the exchange couplings are set as
-   ``J'x = J'y = J'z = J'``. If both ``J'`` and the set of the couplings
-   (``J'x, J'y, J'z``) are specified, :math:`{\mathcal H}\Phi` will stop.
+   **説明 :**
+   スピン模型での、次近接サイト間のスピン相互作用を指定します。
+   ただし、蜂の巣格子またはカゴメ格子で\ ``model=SpinGCCMA``\ の場合には
+   まだ対応していません。
+   また対角項について、\ ``J'x, J'y, J'z``\ を指定する代わりに
+   パラメータ\ ``J'``\ を指定すると
+   ``J'x = J'y = J'z = J'``\ が代入されます。
+   ``J'``\ を指定した上で\ ``J'x, J'y, J'z``\ も指定した場合は\ :math:`{\mathcal H}\Phi`\ を終了します。
 
 *  ``phase0``, ``phase1``
 
-   **Type :** Double (``0.0`` as defaults)
+   **形式 :** 実数 (デフォルトでは``0.0``)
 
-   **Description :** We can specify the phase for the hopping through
-   the cell boundary with these parameter (unit: degree). These factors
-   for the :math:`\boldsymbol{a}_0` direction and the :math:`\boldsymbol{a}_1`
-   direction can be specified independently. For the one-dimensional
-   system, only ``phase0`` can be used. For example, a fopping from
-   :math:`i`-th site to :math:`j`-th site through the cell boundary with
-   the positive direction becomes as
+   **説明 :**
+   計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます
+   (単位: 度)。
+   :math:`\vec{a}_0`\ 方向、\ :math:`\vec{a}_1`\ 方向それぞれ別の位相因子を用いることが出来ます。
+   １次元系では\ ``phase0``\ のみ使用できます。
+   例えば、\ :math:`i`\ サイトから\ :math:`j`\ サイトへのホッピングで、
+   正の方向に境界をまたいだ場合には次のようになります。
 
    .. math::
 
