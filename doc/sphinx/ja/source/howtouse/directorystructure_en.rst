@@ -1,7 +1,7 @@
-Directory structure
-===================
+ディレクトリ構成
+================
 
-When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
+HPhi-xxx.gzを解凍後に構成されるディレクトリ構成を以下に示します。
 ::
 
  |--CMakeLists.txt
@@ -28,4 +28,3 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
  |    |--StdFace/
  |--test/
  |--tool/
-

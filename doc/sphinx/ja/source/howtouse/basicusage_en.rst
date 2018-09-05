@@ -1,87 +1,107 @@
 .. highlight:: none
 
-Basic usage
-===========
+基本的な使い方
+==============
 
-:math:`{\mathcal H}\Phi` has two modes: Standard mode and Expert mode. Here, the basic flows of calculations of the Standard and expert modes are shown.
+:math:`{\mathcal H}\Phi`\ ではスタンダードモードとエキスパートモードの2つのモードが存在します。
+ここでは、スタンダードモードおよびエキスパートモードでの計算に関して、それぞれ基本的な流れを記載します。
 
-*Standard* mode
-----------------
+スタンダードモード
+------------------
 
-The procedure of calculation through the standard mode is as follows:
+スタンダードモードでの動作方法は下記の通りです。
 
- 1. Create a directory for a calculation scenario
+ 1. 計算用ディレクトリの作成
  
-  First, you create a working directory for the calculation.
+  計算シナリオ名を記載したディレクトリを作成します。
   
- 2. Create input files for Standard mode
+ 2. スタンダードモード用入力ファイルの作成
  
-  In Standard mode, you can choose a model (the Heisenberg model, Hubbard model, etc.) and a lattice (the square lattice, triangular lattice, etc.) from those provided; you can specify some parameters (such as the first/second nearest neighbor hopping integrals and the on-site Coulomb integral) for them. Finally, you have to specify the numerical method (such as the Lanczos method) employed in this calculation. The input file format is described in Sec. :ref:`How to use HPhi <Ch:Prerequisite>`.
+   スタンダードモードでは、あらかじめ用意されたいくつかの
+   モデル(HeisenbergモデルやHubbardモデル)や格子(正方格子など)を指定し、
+   それらに対するいくつかのパラメーター(最近接\ :math:`\cdot`\ 次近接スピン結合やオンサイトクーロン積分など)と
+   計算手法(Lanczos法、TPQ法など)を設定します。 各ファイルはSec.
+   :ref:`How to use HPhi <Ch:Prerequisite>` に従い記載してください。
   
- 3. Run
+ 3. 実行
  
-  Run an executable ``HPhi`` in the terminal by setting option \" ``-s``\" (or \" ``--standard``\") and the name of the input file written in the previous step.
-  
-   * Serial/OpenMP parallel
-   
+   “``-s``”(“``--standard``” でも可)をオプションとして指定の上、
+   1で作成した入力ファイル名を引数とし、\ ``HPhi``\ を実行します。
+
+   *  シリアル/OpenMP並列 の場合
+
    ``$ Path /HPhi -s Input_file_name``
-   
-   * MPI parallel/ Hybrid parallel
-   
+
+   *  MPI並列/ハイブリッド並列 の場合
+
    ``$ mpiexec -np number_of_processes Path /HPhi -s Input_file_name``
-   
-  When you use a queuing system in workstations or super computers, sometimes the number of processes is specified as an argument for the job-submitting command. If you need more information, please refer to your system manuals. The number of processes depends on the target system of the models. The details of setting the number of processes are shown in Sec. :ref:`Subsec:CreatingExpert` .
+
+   ワークステーションやスパコン等でキューイングシステムを利用している場合は
+   プロセス数をジョブ投入コマンドの引数として与える場合があります。
+   詳しくはお使いのシステムのマニュアルをご参照ください。
+   プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。
+   詳細は :ref:`Subsec:CreatingExpert` を参照ください。
   
- 4. Watch calculation logs
+ 4. 途中経過
  
-  Log files are outputted in the \"output\" folder, which is automatically created in the directory for a calculation scenario. The details of the output files are shown in Sec. :ref:`Sec:outputfile` .
+  計算実行の経過についてoutputフォルダにログファイルが出力されます。
+  出力されるファイルの詳細に関しては :ref:`Sec:outputfile` を参考にしてください。
   
- 5. Results 
+ 5. 最終結果
  
-  If the calculation is completed normally, the result files are outputted in  the \"output\" folder. The details of the output files are shown in Sec. :ref:`Sec:outputfile` 
-  
+  計算が正常終了した場合、
+  計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
+  出力されるファイルの詳細に関しては :ref:`Sec:outputfile` を参考にしてください。
+
 .. tip::
 
- | **The number of threads for OpenMP**
- | If you specify the number of OpenMP threads for :math:`{\mathcal H}\Phi`, you should set it as follows (in the case of 16 threads) before running:
+ | **OpenMPスレッド数の指定**
+ | 実行時のOpenMPのスレッド数を指定する場合は、
+ | :math:`{\mathcal H}\Phi`\ を実行する前に以下の様にしてください(16スレッドの場合)。
  | ``export OMP_NUM_THREADS=16``
   
-*Expert* mode
--------------
+エキスパートモード
+------------------
 
-The calculation procedure for Expert mode is as follows. 
- 1. Create a directory for a calculation scenario
+エキスパートモードでの動作方法は下記の通りです。
+ 1. 計算用ディレクトリの作成
  
-  First, you create a directory and give it the name of a calculation scenario (you can attach an arbitrary name to a directory).
+  計算シナリオ名(名前は任意)を記載したディレクトリを作成します。
   
- 2. Create input files for Expert mode
- 
-  For Expert mode, you should create input files for constructing Hamiltonian operators, calculation conditions, and a list file for the filenames of the input files (see the file formats shown in Sec. :ref:`Ch:HowToExpert`).
+ 2. 詳細入力ファイルの作成
+
+  エキスパートモードでは、ハミルトニアンのすべての項を記述する詳細入力ファイルと計算条件のファイル、
+  ]およびそれらのファイル名のリストファイルを作成します。各ファイルは
+  :ref:`Ch:HowToExpert` に従い記載してください。
   
  .. note::
 
-  | A list file can be easily created by using Standard mode.
+  | リストファイルの作成はスタンダード用のファイルStdFace.defを用いると容易に作成することができます。
   
- 3. Run
+ 3. 実行
  
-  Run :math:`{\mathcal H}\Phi` in the terminal by setting option \"``-e``\" (or \"``--expert``\") and the file name of a list file.
+  “``-e``”(“``--expert``” でも可)をオプションとして指定の上、
+  2で作成した入力リストファイル名を引数とし、ターミナルから\ :math:`{\mathcal H}\Phi`\ を実行します。
   
-   * Serial/OpenMP
+   * シリアル/OpenMP並列
    
     ``$ Path/HPhi -e Input_List_file\_name``
    
-   * MPI/Hybrid
+   * MPI並列/ハイブリッド並列
    
     | ``$ mpiexec -np number_of_processes Path/HPhi -e Input_List_file_name``
-    | A number of processes depend on a target of system for models. The details of setting a number of processes are shown in Sec. :ref:`Subsec:CreatingExpert`.
+    | プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。
+    | :ref:`Subsec:CreatingExpert` を参照ください。
    
- 4. While running
+ 4. 途中経過
  
-  Log files are outputted in the \"output\" folder which is automatically created in the directory for a calculation scenario. The details of the output files are shown in Sec. :ref:`Sec:outputfile`.
+  計算実行の経過についてoutputフォルダにログファイルが出力されます。
+  出力されるファイルの詳細に関しては :ref:`Sec:outputfile` を参考にしてください。
   
- 5. Results
+ 5. 最終結果
  
-  If the calculation is finished normally, the result files are outputted in the \"output\" folder. The details of the output files are shown in Sec. :ref:`Sec:outputfile`. 
+  計算が正常終了した場合、計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
+  出力されるファイルの詳細に関しては :ref:`Sec:outputfile` を参考にしてください。
   
 .. _Subsec:CreatingExpert:
   
@@ -110,32 +130,39 @@ The usage is shown as follows.
   
 .. _Subsec:process:
   
-Setting the process number for MPI/hybrid parallelization
----------------------------------------------------------
+プロセス数の設定
+----------------
 
-For using MPI/hybrid parallelization, the process number must be set as follows.
+MPI並列/ハイブリッド並列を用いる場合、プロセス数は以下のように設定してください。
 
- 1. Standard mode
+ 1. Standardモード
  
-  * Hubbard/Kondo model
+  * 電子系及び近藤格子系
   
-   When ``model`` in the input file for Standard mode is set as ``"Fermion Hubbard"``, ``"Kondo Lattice"``, or ``"Fermion HubbardGC"``, the process number must be equal to :math:`4^n`.
+   スタンダードモード用入力ファイルで\ ``model``\ =\ ``"Fermion Hubbard"``,
+   ``"Kondo Lattice"``,
+   ``"Fermion HubbardGC"``\ の場合は、プロセス数が\ :math:`4^n`\ となるように設定してください。
    
-  * Spin model
+  * スピン系
   
-   When ``model`` in the input file for Standard mode is set as ``"Spin"`` or ``"SpinGC"``, the process number must be equal to :math:`(2S+1)^n`, where ``2S`` is set in the input file (the default value is :math:`1`).
+   スタンダードモード用入力ファイルで\ ``model``\ =\ ``"Spin"``,
+   ``"SpinGC"``\ の場合は、入力ファイルの\ ``2S``\ の値に対して
+   プロセス数が(\ ``2S``\ +1)\ :math:`{}^n`\ となるように設定してください(デフォルトは\ ``2S``\ =1)。
    
- 2. Expert mode
+ 2. Expertモード
  
-  * Hubbard/Kondo model
+  * 電子系及び近藤格子系
   
-   When the model is selected as the Fermion Hubbard model or Kondo model by setting ``CalcModel`` in a **CalcMod** file, the process number must be equal to :math:`4^n`. See Sec. :ref:`Subsec:calcmod` for details of the ``CalcModel`` file. 
+   :ref:`Subsec:calcmod` の **CalcMod**\ ファイルで、\ ``CalcModel``\ としてfermion
+   Hubbard模型、近藤模型を選択した場合は、プロセス数が\ :math:`4^n`\ となるように設定してください。
    
-  * Spin model
+  * スピン系
   
-   When the model is selected as the spin model by setting ``CalcModel`` in a **CalcMod** file, the process number is fixed by a **LocSpin** file. The process number must be equal to the number calculated by multiplying the state number of the localized spin (``2S`` +1) in descending order by the site number. See Sec. :ref:`Subsec:locspn` for details of the **LocSpin** file.
+   :ref:`Subsec:calcmod` の **CalcMod**\ ファイルで、\ ``CalcModel``\ としてスピン模型を選択した場合は、
+   :ref:`Subsec:locspn` の\ **LocSpin**\ ファイルを参考にプロセス数を指定する必要があります。
+   許容されるプロセス数は、サイト数の大きいものから順に局在スピンの状態数(\ ``2S``\ +1)を掛けたもので指定されます。
    
-   For example, when a **LocSpin** file is given as follows, the process number must be equal to :math:`2=1+1,~6=2\times(2+1),~24=6\times(3+1)`. 
+   例えば、\ **LocSpin**\ ファイルが
 
   ::
   
@@ -148,9 +175,12 @@ For using MPI/hybrid parallelization, the process number must be set as follows.
        1      2
        2      1
 
-Printing version ID
--------------------
+  で与えられる場合、許容されるプロセス数は\ :math:`2=1+1,~6=2\times(2+1),~24=6\times(3+1)`\ となります。
+   
+バージョン番号の確認
+--------------------
 
-By using the ``-v`` option as follows, you can check which version of :math:`{\mathcal H}\Phi` you are using.
+次のように\ ``-v``\ オプションをつけて\ :math:`{\mathcal H}\Phi`\ を実行すると,
+バージョン番号を標準出力した後終了します。
 
  ``$ PATH/HPhi -v``

@@ -2,25 +2,27 @@
 
 .. _Ch:Prerequisite:
 
-Prerequisite
-============
+要件
+====
 
-:math:`{\mathcal H}\Phi` requires the following packages:
+:math:`{\mathcal H}\Phi` のコンパイルおよび使用には次のものが必要です。
 
- * C/fortran compiler (Intel, Fujitsu, GNU, etc. )
- * BLAS/LAPACK library (Intel MKL, Fujitsu, ATLAS, etc.)
- * MPI library (if you do not use MPI, this is not required).
+ * C/fortran コンパイラ (インテル、富士通、GNUなど)
+ * BLAS/LAPACKライブラリ (インテルMKL, 富士通, ATLASなど)
+ * MPIライブラリ (MPI並列を行わない場合は必要ありません)
+ * ScaLAPACKライブラリ (全対角化で使用しない場合は必要ありません)
+ * MAGMAライブラリ (全対角化で使用しない場合は必要ありません)
 
 .. tip::
 
- | **E.g. /Settings of Intel compiler**
- | When you use the Intel compiler, you can easily use the scripts attached to the compiler.
- | In the case of the bash in the 64-bit OS, write the following in your ``~/.bashrc``\:
+ | **例/ intelコンパイラーでの設定**
+ | intelコンパイラを使用する場合には、コンパイラに付属の設定用スクリプトを使用するのが簡単です。
+ | 64ビットOSでbashを使っている場合には
  
  | ``source /opt/intel/bin/compilervars.sh intel64``
- | or
+ | または
  | ``source /opt/intel/bin/iccvars.sh intel64``
  | ``source /opt/intel/mkl/bin/mklvars.sh``
  
- Please read the manuals of your compiler/library for more information.
-
+等を\ ``~/.bashrc``\ に記載してください。
+詳しくはお手持ちのコンパイラ、ライブラリのマニュアルをお読みください。
