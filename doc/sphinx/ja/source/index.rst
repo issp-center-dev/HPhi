@@ -35,12 +35,12 @@ Contents
    :maxdepth: 3
    :numbered: 3
 
-   introduction_jp
+   introduction_ja
    howtouse/ho-index
    tutorial/tu-index
    filespecification/fi-index
    algorithm/al-index
-   acknowledgement_jp
+   acknowledgement_ja
    fourier/index
 
 .. Indices and tables
