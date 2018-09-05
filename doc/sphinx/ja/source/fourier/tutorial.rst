@@ -1,19 +1,18 @@
 .. _tutorial:
 
-Tutorial
-========
+チュートリアル
+==============
 
-In this tutorial, we explain through a sample calculation of
-the 8-site Hubbard model on the square lattice.
+このチュートリアルでは, 正方格子ハバードモデル(8サイト)を例にとり説明する.
 
-Run HPhi/vmc.out
-----------------
+HPhi/vmc.out の実行
+-------------------
 
-- For :math:`{\mathcal H}\Phi`
+- :math:`{\mathcal H}\Phi` の場合
 
-  We calculate the ground state and the correlation function with
-  the following input file
-  
+  基底状態および相関関数の計算を行う.
+  入力ファイルは次の通り.
+
   ::
    
      a0w = 2
@@ -32,9 +31,10 @@ Run HPhi/vmc.out
 
      $ HPhi -s input
 
-- For mVMC
+- mVMC の場合
 
-  First, we optimize the trial wavefunction with the following input
+  まず変分波動関数の最適化を行う.
+  入力ファイルは次の通り.
   
   ::
    
@@ -53,33 +53,33 @@ Run HPhi/vmc.out
 
      $ vmc.out -s input
 
-  We add the following line to the input file to compute the correlation function.
+  相関関数を計算するために, 入力ファイルに以下の行を付け加える.
 
   ::
 
      NVMCCalMode = 1
 
-  Compute the correlation function.
+  相関関数を計算する.
   
   .. code-block:: bash
 
      $ vmc.out -s input output/zqp_opt.dat
          
-Then the one- and two-body correlation function are written to files
-in the ``output/`` directory.
+これにより, カレントディレクトリの ``output/`` 以下に
+1体および2体の相関関数が出力される.
 
-Related files
+関連するファイル
 
-- StdFace.def (See the manuals for mVMC/:math:`{\mathcal H}\Phi`)
-- zqp_opt.dat (See the manual for mVMC)
+- StdFace.def (mVMC/:math:`{\mathcal H}\Phi` のマニュアル参照)
+- zqp_opt.dat (mVMCのマニュアル参照)
 - greenone.def (:ref:`greenindex`)
 - greentwo.def (:ref:`greenindex`)
 
-Fourier transformation of correlation functions
------------------------------------------------
+相関関数のフーリエ変換
+----------------------
 
-Perform the Fourier transformation of the correlation function
-by using the utility ``greenr2k``.
+ユーティリティプログラム ``greenr2k`` を使って,
+相関関数をフーリエ変関する.
 
 .. code-block:: bash
 
@@ -91,23 +91,23 @@ by using the utility ``greenr2k``.
    16 16 1" >> geometry.dat
    $ greenr2k namelist.def geometry.dat
      
-Then the Fourier-transformed correlation functions are
-written to a file in ``output/``.
+これにより, カレントディレクトリの ``output/`` 以下に
+フーリエ変換された相関関数が出力される.
 
-Related files
+関連するファイル
 
 - output/zvo_cisajs_001.dat (:ref:`zvocisajs`)
 - output/zvo_cisajs.dat (:ref:`zvocisajs`)
 - output/zvo_cisajscktalt_001.dat (:ref:`zvocisajs`)
 - output/zvo_cisajscktalt.dat (:ref:`zvocisajs`)
 - geometry.dat (:ref:`geometry`)
-- output/zvo_corr.dat (:ref:`zvocorr`)
+- output/zvo_corr*.dat (:ref:`zvocorr`)
 
-Display correlation functions
------------------------------
+相関関数のプロット
+------------------
 
-Plot the correlation function in the *k* space
-by using gnuplot.
+gnuplotを使って,
+相関関数を :math:`k` 空間でプロットする.
 
 .. code-block:: gnuplot
 
@@ -115,13 +115,13 @@ by using gnuplot.
    plot "output/zvo_corr_eigen0.dat" u 1:12 w l
 
 .. _corplotpng:
-
+     
 .. figure:: ../figs/corplot.png
 
-   The spin-spin correlation :math:`\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle`
-   (Column 12).
+   相関関数 :math:`\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle` (12列目)を
+   プロットした図.
 
-Related files
+関連するファイル
 
 - kpath.gp (:ref:`gnuplot`)
-- output/zvo_corr.dat (:ref:`zvocorr`)
+- output/zvo_corr*.dat (:ref:`zvocorr`)
