@@ -103,6 +103,7 @@ void phys(struct BindStruct *X, //!<[inout]
       fprintf(stderr, "Error: calc TwoBodyG.\n");
       exitMPI(-1);
     }
+    
 #ifdef _SCALAPACK
     if(use_scalapack){
       if (X->Def.iCalcType == FullDiag) {
@@ -114,7 +115,7 @@ void phys(struct BindStruct *X, //!<[inout]
         if (expec_totalspin(X, v1) != 0) {
           fprintf(stderr, "Error: calc TotalSpin.\n");
           exitMPI(-1);
-        }
+        }	
       }
     } 
 #else
