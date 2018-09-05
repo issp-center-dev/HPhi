@@ -1,17 +1,16 @@
 .. highlight:: none
 
-Parameters for the type of calculation
---------------------------------------
+計算の種類に関する必須パラメーター
+----------------------------------
 
 *  ``model``
 
-   **Type :** String (choose from ``"Fermion Hubbard"``, ``"Spin"``,
+   **形式 :** 文字列(\ ``"Fermion Hubbard"``, ``"Spin"``,
    ``"Kondo Lattice"``, ``"Fermion HubbardGC"``, ``"SpinGC"``,
-   ``"Kondo LatticeGC"``, ``"SpinGCCMA"``) [#]_
+   ``"Kondo LatticeGC"``, ``"SpinGCCMA"``\ のいずれか) [#]_
 
-   **Description :** The target model is specified with this parameter;
-   the expressions above denote the canonical ensemble of the Fermion in
-   the Hubbard model
+   **説明 :** 計算対象の模型を指定します。上記の文字列はそれぞれ
+   カノニカル集団のフェルミ粒子Hubbard模型
 
    .. math::
       :label: fml4_1_hubbard
@@ -21,8 +20,8 @@ Parameters for the type of calculation
       + \sum_{i} U n_{i \uparrow} n_{i \downarrow}
       + \sum_{i \neq j} V_{i j} n_{i} n_{j},
 
-   the canonical ensemble in the Spin
-   model(\ :math:`\{\sigma_1, \sigma_2\}={x, y, z}`)
+   同じくカノニカル集団のスピン模型
+   (:math:`\{\sigma_1, \sigma_2\}={x, y, z}`)
 
    .. math::
       :label: fml4_1_spin
@@ -31,7 +30,7 @@ Parameters for the type of calculation
       \nonumber \\
       &+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,
 
-   the canonical ensemble in the Kondo lattice model
+   カノニカル集団の近藤格子模型(Hubbard模型と同様に\ :math:`U`\ と\ :math:`J`\ を入れることも可能)
 
    .. math::
       :label: fml4_1_kondo
@@ -44,60 +43,54 @@ Parameters for the type of calculation
       + S_{i z} (n_{i \uparrow} - n_{i \downarrow})
       \right\},
 
-   the grand canonical ensemble of the Fermion in the Hubbard model
-   [Eqn. :eq:`fml4_1_hubbard` ], the grand canonical
-   ensemble in the Spin model [Eqn. :eq:`fml4_1_spin` ],
-   and the grand canonical ensemble in the Kondo lattice model 
-   [Eqn. :eq:`fml4_1_kondo` ], respectively.
+   グランドカノニカル集団のフェルミ粒子Hubbard模型[式(:eq:`fml4_1_hubbard`)]、
+   グランドカノニカル集団のスピン模型[式(:eq:`fml4_1_spin`)]、
+   グランドカノニカル集団の近藤格子模型[式(:eq:`fml4_1_kondo`)]に対応します。
 
-   When ``model="SpinGCCMA"``, by using a more efficient algorithm [#]_,
-   :math:`{\mathcal H}\Phi` calculates a system that is the same as ``"SpinGC"``.
-   However, supported models and MPI processes are highly limited. See
-   ``"Lattice"`` section.
+   ``"SpinGCCMA"``\ では\ ``"SpinGC"``\ と同じ計算を
+   より速いアルゴリズム [#]_ を用いて行います。
+   ただし、扱うことのできるモデルやMPI並列数に強い制約があります。
+   以下の\ ``"Lattice"``\ の項もご参照ください。
 
 -  ``method``
 
-   **Type :** String (choose from ``"Lanczos"``, ``"TPQ"``,
-   ``"Full Diag"``, ``"CG"``, ``Time Evolution``)
+   **形式 :** 文字列(\ ``"Lanczos"``, ``"TPQ"``, ``"Full Diag"``,
+   ``"CG"``, ``"Time-Evolution"``\ のいずれか)
 
-   **Description :** The calculation type is specified with this
-   parameter; the above expressions above denote the single eigenstate
-   calculation by using the Lanczos method, at the finite-temperature by
-   using the thermally pure quantum state, the full diagonalization
-   method, the multiple eigenstates calculation by using the LOBCG
-   method [#]_ [#]_ ,
-   and the simulation of real-time evolution, respectively.
+   **説明 :** 実行する計算の種類を指定します。
+   上記の文字列はそれぞれランチョス法による少数固有状態の計算,
+   熱力学的純粋状態を用いた有限温度計算, 直接法による全固有状態計算,
+   LOBCG法 [#]_ [#]_ による少数固有状態の計算,
+   実時間発展計算 に対応します。
 
-   The scheme employed for the spectrum calculation is also specified
-   with this parameter. If ``"CG"`` is chosen, the shifted bi-conjugate
-   gradient method [#]_ together with the
-   seed-switch technique [#]_
-   is employed with the help of the :math:`K\omega` library
-   [#]_ .
+   後述のスペクトル計算において使用される手法もこのパラメーターで指定されます
+   ``"CG"``\ とした場合には
+   付属している\ :math:`K\omega`\ ライブラリ [#]_ が呼び出され、
+   シードスイッチ [#]_ 付きシフト双共役勾配法 [#]_ が適用されます。
 
 *  ``lattice``
 
-   **Type :** String (choose from ``"Chain Lattice"``,
-   ``"Square Lattice"``, ``"Triangular Lattice"``,
-   ``"Honeycomb Lattice"``, ``"Ladder"``, ``"Kagome"``)
+   **形式 :** 文字列(\ ``"Chain Lattice"``, ``"Square Lattice"``,
+   ``"Triangular Lattice"``, ``"Honeycomb Lattice"``, ``"Ladder"``,
+   ``"Kagome"``\ のいずれか)
 
-   **Description :** The lattice shape is specified with this parameter;
-   the expressions above denote the one-dimensional chain lattice ( :numref:`fig_chap04_1_lattice` (a)),
-   the two-dimensional square lattice ( :numref:`fig_chap04_1_lattice` (b)),
-   the two-dimensional triangular lattice ( :numref:`fig_chap04_1_lattice` (c)),
-   the two-dimensional anisotropic honeycomb lattice ( :numref:`fig_chap04_1_honeycomb` ),
-   the ladder lattice ( :numref:`fig_ladder` ),
-   and the Kagome Lattice( :numref:`fig_kagome` ) respectively.
+   **説明 :** 格子の形状を指定します。 上記文字列はそれぞれ1次元鎖(
+   :numref:`fig_chap04_1_lattice` (a))、 2次元正方格子(
+   :numref:`fig_chap04_1_lattice` (b))、 2次元三角格子(
+   :numref:`fig_chap04_1_lattice` (c))、 2次元異方的蜂の巣格子(
+   :numref:`fig_chap04_1_honeycomb`)、 梯子格子(:numref:`fig_ladder`)、
+   カゴメ格子(:numref:`fig_kagome`)に対応します。
 
-   In ``method="SpinGCCMA"``, only ``"Chain Lattice"``,
-   ``"Honeycomb Lattice"``, ``"Ladder"``, and ``"Kagome"`` are
-   supported. The limits of :math:`L`, :math:`W`, and the number of MPI
-   processes (:math:`N_{\rm proc}`) are as follows:
+   ``method="SpinGCCMA"``\ では、 このうち\ ``"Chain Lattice"``,
+   ``"Honeycomb Lattice"``, ``"Ladder"``,
+   ``"Kagome"``\ に対応しています。
+   各格子についてのサイズ(\ :math:`L`,\ :math:`W`)とMPI並列数(\ :math:`N_{\rm proc}`)の制限は次のとおりです
+   (次節の``L``, ``W``\ もご参照ください)。
 
    *  ``"Chain Lattice"``
 
-      :math:`L = 8n` (where :math:`n` is an integer number under the
-      condition :math:`n\geq1`), :math:`N_{\rm proc} \leq 2(L=8)`,
+      :math:`L = 8n`\ (ただし:math:`n`\ は\ :math:`n\geq1`\ の整数),
+      :math:`N_{\rm proc} \leq 2(L=8)`,
       :math:`N_{\rm proc} \leq 2^{L/2-2}(L>8)`.
 
    *  ``"Honeycomb Lattice"``
@@ -107,8 +100,8 @@ Parameters for the type of calculation
 
    *  ``"Ladder"``
 
-      :math:`W=2, L = 2n` (where :math:`n` is an integer number under
-      the condition :math:`n\geq4`), :math:`N_{\rm proc} \leq 2^{L-4}`.
+      :math:`W=2, L = 2n`\ (ただし:math:`n`\ は\ :math:`n\geq4`\ の整数),
+      :math:`N_{\rm proc} \leq 2^{L-4}`.
 
    *  ``"Kagome"``
 
@@ -119,9 +112,9 @@ Parameters for the type of calculation
 .. [#] \Y. Yamaji *et. al.*, manuscript in preparation.
 .. [#] A.V.Knyazev, SIAM Journal on Scientific Computing **23**, 517 (2001).
 .. [#] S.Yamada, T.Imamura, M.Machida, The Japan Society for Computational Engineering and Science **2006**, 20060027 (2006).
-.. [#] A.Frommer, Computing **70**, 87{109 (2003).
-.. [#] S.Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan **77**, 114713 (2008).
 .. [#] https://github.com/issp-center-dev/Komega.
+.. [#] S.Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan **77**, 114713 (2008).
+.. [#] A.Frommer, Computing **70**, 87{109 (2003).
 
 
 .. raw:: latex
