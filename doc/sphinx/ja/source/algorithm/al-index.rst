@@ -1,13 +1,13 @@
 .. _Ch:Algorithm:
 
-Algorithm
-*********
+アルゴリズム
+**************
 .. toctree::
    :maxdepth: 2
    
-   Lanczos_en
-   Full Diagonalization_en
-   TPQ_en
-   DynamicalGreen_en
-   Realtime_en
-   Bogoliubov_en
+   Lanczos_ja
+   Full Diagonalization_ja
+   TPQ_ja
+   DynamicalGreen_ja
+   Realtime_ja
+   Bogoliubov_ja

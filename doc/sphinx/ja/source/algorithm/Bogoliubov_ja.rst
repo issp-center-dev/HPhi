@@ -2,14 +2,12 @@
 
 .. _Sec:sec_bogoliubov_rep:
 
-Bogoliubov representation
-=========================
+Bogoliubov表現
+--------------
 
-
-In the spin system,
-the spin indices in the input files of ``transfer``, ``InterAll``,
-and correlation functions are specified as those of the Bogoliubov representation.
-The spin operators are written by using creation\/annihilation operators:
+スピン系の計算において一体項(\ ``transfer``)、\ ``InterAll``\ 形式での相互作用、
+相関関数のインデックスの指定にはBogoliubov表現が使われています。
+スピンの演算子は次のように生成\ :math:`\cdot`\ 消滅演算子で書き換えられます。
 
 .. math::
 

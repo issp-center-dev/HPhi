@@ -4,112 +4,139 @@
 What is :math:`{\mathcal H}\Phi`?
 *********************************
 
-What is :math:`{\mathcal H}\Phi`?
+:math:`{\mathcal H}\Phi` とは？
 =================================
 
-Comparison between experimental observation and theoretical analysis is a crucial step in condensed-matter physics research. The temperature dependence of specific heat and magnetic susceptibility, for example, has been studied to extract the nature of low energy excitations of and magnetic interactions between electrons, respectively, through comparison with theories such as Landau's Fermi liquid theory and the Curie-Weiss law.
+実験データと理論模型の解析結果との直接比較は、物質科学の研究プロセスの一つの核となっています。
+例えば、低エネルギー励起構造を反映する比熱の温度依存性や、帯磁率から見積もった有効スピン・モーメントおよびキュリー・ワイス温度等の実験データからその背後にある電子状態を理解するためには、理論模型の解析結果との比較が必要不可欠です。
 
-For the flexible and quantitative comparison of theoretical and  experimental data, the exact diagonalization approach [1]_ is one of the most reliable numerical tools that requires no approximation or inspiration of genius. For the last few decades, a numerical diagonalization package for quantum spin Hamiltonians, TITPACK, developed by Prof. Hidetoshi Nishimori of Tokyo Institute of Technology, has been widely used in the condensed-matter physics community. Nevertheless, limited computational resources have hindered the ability of non-expert users to apply the package to quantum systems with a large number of electrons or spins.
+理論模型の解析手法としては、厳密対角化法 [1]_ が近似を用いず定量的な計算ができる
+最も信頼できる手法です。この目的のためには、東京工業大学の西森秀稔教授が作られた
+固有値問題ソルバパッケージ TITPACK が長年広く利用されてきました。
+これまでは計算機資源の制約もあり、その利用は比較的小さな系への適用に限られてきました。
+しかし、計算機の進歩によって、並列化を利用してハバード模型18格子点、
+スピン1/2の格子スピン模型36格子点程度の計算が容易に実行可能となっています。
+また、量子統計力学の発展 [2]_ [3]_ [4]_ [5]_ により、
+基底状態計算と同程度のコストでの有限温度計算が可能となり、
+比熱や帯磁率の実験との定量的比較が十分可能となってきています [6]_ 。
+これらの計算が可能になった背景には低バンド幅で多数の分散メモリ計算コアを持つ新しい計算機アーキテクチャがあり、
+その性能を最大限に生かしつつ、簡便に利用可能な新しいソフトウェアの登場が待たれていました。
 
-In contrast, the recent and rapid development of a parallel computing infrastructure has opened up new avenues for user-friendly larger scale diagonalizations up to 18-site Hubbard clusters or 36 :math:`S=1/2` quantum spins. In addition, recent advances in quantum statistical mechanics [2]_ [3]_ [4]_ [5]_ allow the finite temperature properties of quantum many-body systems to be calculated at computational costs similar to those of the calculations of ground state properties, which also allows theoretical results for the temperature dependence of, for example, specific heat and magnetic susceptibility, to be compared with experimental results quantitatively [6]_ . To utilize the parallel computing infrastructure with narrow bandwidth and distributed-memory architectures, efficient, user-friendly, and highly parallelized diagonalization packages are highly desirable.
+このような背景に基づき、汎用量子模型ソルバーパッケージ\ :math:`{\mathcal H}\Phi`  は、
+ランチョス法に基づく量子多体模型の基底状態および低励起状態に対する厳密対角化法と、
+熱的純粋量子状態 [5]_ を基礎とした有限温度計算を、
+簡便かつ柔軟なユーザー・インターフェイスとともに並列実装されたアプリケーションを目指して開発されました。
+シンプルなハバード模型やハイゼンベルグ模型に始まり、
+多軌道ハバード模型やジャロシンスキー-守谷相互作用やキタエフ項のようにSU(2)対称性を破る
+相互作用を持つ量子スピン模型、さらに遍歴電子と局在スピンが結合した近藤格子模型まで、
+ユーザーの興味に応じて広汎な量子格子模型を解析することができます。
+基底状態および有限温度での内部エネルギーはもちろん、
+比熱や電荷・スピン構造因子を始めとする様々な物理量が計算可能となっています。
+実験研究者を含む幅広いユーザーに気楽にご利用いただければ幸いです。
 
-:math:`{\mathcal H}\Phi`, a flexible diagonalization package for solving quantum lattice Hamiltonians, has been developed as a descendant of the pioneering package TITPACK. The Lanczos method for calculations of the ground state and a few excited states properties, as well as finite temperature calculations based on thermal pure quantum states [5]_ , are implemented in the :math:`{\mathcal H}\Phi` package, with an easy-to-use and flexible user interface. By using :math:`{\mathcal H}\Phi`, you can analyze a wide range of quantum lattice Hamiltonians including simple Hubbard and Heisenberg models, multi-band extensions of the Hubbard model, exchange couplings that break the SU(2) symmetry of quantum spins, such as Dzyaloshinskii-Moriya and Kitaev interactions, and Kondo lattice models describing itinerant electrons coupled with quantum spins. :math:`{\mathcal H}\Phi` calculates a variety of physical quantities, such as internal energy at zero temperature or finite temperatures, temperature dependence of specific heat, and charge/spin structure factors. A broad spectrum of users including experimental scientists is cordially welcome.
+ライセンス
+~~~~~~~~~~
 
-License
--------
+| 本ソフトウェアのプログラムパッケージおよびソースコード一式はGNU
+  General Public License version 3（GPL v3）に準じて配布されています。
+  :math:`{\mathcal H}\Phi` (hphi)を引用する際には、以下の文献を引用してください。
+| Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji,
+  Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. 217 (2017)
+  180-192.
 
-The distribution of the program package and the source codes for :math:`{\mathcal H}\Phi` follow GNU General Public License version 3 (GPL v3) or later. We hope that you cite the reference, `Comp. Phys. Commun. 217 (2017) 180-192 <https://www.sciencedirect.com/science/article/pii/S0010465517301200?via%3Dihub>`_ , when you publish the results using :math:`{\mathcal H}\Phi` (hphi).
+コピーライト
+~~~~~~~~~~~~
 
-Copyright
----------
+    *©2015- The University of Tokyo.* *All rights reserved.*
 
-© *2015- The University of Tokyo. All rights reserved.*
-This software was developed with the support of \"*Project for advancement of software usability in materials science*\" of The Institute for Solid State Physics, The University of Tokyo. 
+本ソフトウェアは2015, 2016, 2017年度 東京大学物性研究所
+ソフトウェア高度化プロジェクトの支援を受け開発されており、その著作権は東京大学が所持しています。
 
-Contributors
-------------
+開発貢献者
+~~~~~~~~~~
 
-This software was developed by the following contributors.
+本ソフトウェアは以下の開発貢献者により開発されています。
 
-* ver.3.1 (released on 2018/9/3)
+-  ver.3.1 (2018/9/3 リリース)
 
-  * Developers
+   -  開発者
 
-    * | Takahiro Misawa
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Kazuyoshi Yoshimi
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Mitsuaki Kawamura
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Kota Ido
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Youhei Yamaji
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Synge Todo
-      | (Department of Physics, The University of Tokyo)
-    * | Yusuke Konishi
-      | (Academeia Co., Ltd.)
-   
-  * Project coordinator
+      -  三澤 貴宏 (東京大学 物性研究所)
 
-    * | Naoki Kawashima
-      | (The Institute for Solid State Physics, The University of Tokyo)
+      -  河村 光晶 (東京大学 物性研究所)
 
-* ver.3.0 (released on 2017/12/22)
+      -  吉見 一慶 (東京大学 物性研究所)
 
-  * Developers
+      -  井戸 康太 (東京大学大学院 工学系研究科)
 
-    * | Takahiro Misawa
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Kazuyoshi Yoshimi
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Mitsuaki Kawamura
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Kota Ido
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Youhei Yamaji
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Synge Todo
-      | (Department of Physics, The University of Tokyo)
-   
-  * Project coordinator
+      -  山地 洋平 (東京大学大学院 工学系研究科)
 
-    * | Naoki Kawashima
-      | (The Institute for Solid State Physics, The University of Tokyo)
+      -  藤堂 眞治 (東京大学 理学系研究科)
 
-* ver.2.0 (released on 2017/4/11)
-* ver.1.2 (released on 2016/11/14)
-* ver.1.1 (released on 2016/5/13)
-* ver.1.0 (released on 2016/4/5)
+      -  小西 優祐 (株式会社 アカデメイア)
 
-  * Developers
+   -  プロジェクトコーディネーター
 
-    * | Takahiro Misawa
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Kazuyoshi Yoshimi
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Mitsuaki Kawamura
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Youhei Yamaji
-      | (Department of Applied Physics, The University of Tokyo)
-    * | Synge Todo
-      | (Department of Physics, The University of Tokyo)
-   
-  * Project coordinator
+      -  川島 直輝 (東京大学 物性研究所)
 
-    * | Naoki Kawashima
-      | (The Institute for Solid State Physics, The University of Tokyo)
-   
-Operating environment
-=====================
+-  ver.3.0 (2017/12/25 リリース)
 
-:math:`{\mathcal H}\Phi` was tested on the following platforms
+   -  開発者
 
-* The supercomputer system-B \"sekirei\" in ISSP
-* Fujitsu FX-10 and K computer
-* Linux PC + Intel compiler
-* Linux PC + GCC.
-* Mac + GCC.
+      -  三澤 貴宏 (東京大学 物性研究所)
+
+      -  河村 光晶 (東京大学 物性研究所)
+
+      -  吉見 一慶 (東京大学 物性研究所)
+
+      -  井戸 康太 (東京大学大学院 工学系研究科)
+
+      -  山地 洋平 (東京大学大学院 工学系研究科)
+
+      -  藤堂 眞治 (東京大学 理学系研究科)
+
+   -  プロジェクトコーディネーター
+
+      -  川島 直輝 (東京大学 物性研究所)
+
+-  ver.2.0 (2017/4/11リリース)
+
+-  ver.1.2 (2016/11/14リリース)
+
+-  ver.1.1 (2016/5/13リリース)
+
+-  ver.1.0 (2016/4/5リリース)
+
+   -  開発者
+
+      -  三澤 貴宏 (東京大学大学院 物性研究所)
+
+      -  河村 光晶 (東京大学 物性研究所)
+
+      -  吉見 一慶 (東京大学 物性研究所)
+
+      -  山地 洋平 (東京大学大学院 工学系研究科)
+
+      -  藤堂 眞治 (東京大学 理学系研究科)
+
+   -  プロジェクトコーディネーター
+
+      -  川島 直輝 (東京大学 物性研究所)
+
+動作環境
+--------
+
+以下の環境で動作することを確認しています。
+
+-  東京大学物性研究所スーパーコンピューターシステムB「sekirei」
+
+-  富士通 FX-10および京コンピューター
+
+-  Linux PC + intelコンパイラ
+
+-  Linux PC + gcc
+
+-  Mac + gcc
 
 .. [1] \E. Dagotto, Rev. Mod. Phys. **66**, 763-840 (1994).
 .. [2] \M. Imada, M. Takahashi, Journal of the Physical Society of Japan **55**, 3354-3361 (1986).
