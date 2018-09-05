@@ -4,7 +4,7 @@ File specification
 .. toctree::
    :maxdepth: 2
    
-   standardmode_en/index_standardmode_en
-   expertmode_en/index_expertmode_ja
-   outputfiles_en/index_outputfiles_en
-   error_en/error_en
+   standardmode_ja/index_standardmode_ja
+   expertmode_ja/index_expertmode_ja
+   outputfiles_ja/index_outputfiles_ja
+   error_ja/error_ja
