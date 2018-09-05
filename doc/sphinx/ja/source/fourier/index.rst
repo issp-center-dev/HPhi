@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. _fourier:   
+.. _fourier:
    
-HPhi/mVMC Fourier-Transformation utility
-========================================
+相関関数のFourier変換ユーティリティー
+=====================================
 
 .. toctree::
    :maxdepth: 3

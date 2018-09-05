@@ -1,12 +1,14 @@
 Contact
 =======
 
-If you have any comments, questions, bug reports etc. about this utility, 
-please contact to the main developer (Mitsuaki Kawamura) by
-sending the e-mail (the address is shown below).
+このユーティリティについてのご意見, ご質問,
+バグ報告等ありましたら下記までお問い合わせください。
+
+河村光晶
 
 ::
 
     mkawamura_at_issp.u-tokyo.ac.jp
 
-Please change ``_at_`` into ``@``, when you will send the e-mail.
+``_at_`` を ``@`` に変えてください.
+

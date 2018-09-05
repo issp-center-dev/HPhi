@@ -1,61 +1,61 @@
-Behavior of ``greenr2k`` utility
-================================
+``greenr2k`` ユーティリティの動作について
+=========================================
 
-This utility is used as follows:
+このユーティリティーは, 次のようにして使う.
 
 .. code-block:: bash
 
    $ ${PATH}/greenr2k ${NAMELIST} ${GEOMETRY}
 
-where ``${PATH}`` is the path to the directory where
-the executable ``fourier`` exists,
-${NAMELIST} is the NameList input-file name of :math:`{\mathcal H}\Phi`/mVMC, and
-${GEOMETRY} is the path to the :ref:`geometry` file.
+ここで, ``${PATH}`` は ``fourier`` ユーティリティのバイナリのあるディレクトリのパス,
+${NAMELIST}は :math:`{\mathcal H}\Phi`/mVMC の NameList インプットファイル名,
+${GEOMETRY}は :ref:`geometry` ファイルへのパスである.
 
-The behavior of this utility is slightly different between the correlation functions from
-each mode of :math:`{\mathcal H}\Phi` (Lanczos, TPQ, Full diagonalization, LOBCG)
-and mVMC.
-In the following cases, we assume that
-``CDataFileHead`` in the ModPara input file is ``"zvo"`` (default).
+:math:`{\mathcal H}\Phi` の各モード
+(Lanczos, TPQ, 全対角化, LOBCG)および mVMC のどの計算で得られた
+相関関数のFourier変換を行うかによって, 動作が若干異なる.
+以下では ModPara インプットファイルの ``CDataFileHead`` が
+``"zvo"`` (デフォルト値)であるとする.
 
 HPhi-Lanczos
 ~~~~~~~~~~~~
 
-In this case, ``HPhi`` writes correlation functions to the files
-``zvo_cisajs.dat`` (one body) and ``zvo_cisajscktalt.dat`` (two body)
-in ``output/`` directory.
-``fourier`` utility reads this files, performs the Fourier transformation, and
-generate single file ``zvo_corr.dat`` in ``output/`` directory.
+この場合に ``HPhi`` が ``output/`` ディレクトリに出力するサイト表示の相関関数は,
+``zvo_cisajs.dat`` (1体), ``zvo_cisajscktalt.dat`` (2体)である.
+``fourier`` ユーティリティーは, これらを読み込みFourier変換を行った後,
+単一のファイル ``zvo_corr.dat`` を ``output/`` ディレクトリに出力する.
 
 HPhi-TPQ
 ~~~~~~~~
 
-``HPhi`` writes correlation functions to files
-``zvo_cisajs_run*step*.dat`` (one body), ``zvo_cisajscktalt_run*step*.dat`` (two body)
-at each trial and TPQ step to the ``output/`` directory.
-``fourier`` utility reads the one- and the two-body correlation function at each trial/TPQ-step,
-and performs Fourier transformation, and
-write to a file ``zvo_corr_run*step*.dat`` in ``output/`` directory.
+この場合に ``HPhi`` は, 各試行/TPQステップ毎に
+``zvo_cisajs_run*step*.dat`` (1体), ``zvo_cisajscktalt_run*step*.dat`` (2体)というファイルを
+``output/`` ディレクトリに出力する.
+``fourier`` ユーティリティーは, 各試行/TPQステップ毎に
+1体および2体の相関関数を読み込みFourier変換を行った後,
+``zvo_corr_run*step*.dat`` という名前のファイルとして ``output/`` ディレクトリに出力する.
 
-HPhi-Full diagonalization and LOBCG
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+HPhi-全対角化およびLOBCG
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-``HPhi`` writes correlation functions to files
-``zvo_cisajs_eigen*.dat`` (one body) and ``zvo_cisajscktalt_eigen*.dat`` (two body)
-for each wavefunction to the ``output/`` directory.
-``fourier`` utility reads the one- and the two-body correlation function at each state
-and performs Fourier transformation, and
-write to a file ``zvo_corr_eigen*.dat`` in ``output/``.
+この場合に ``HPhi`` は, 各波動関数ごとに
+``zvo_cisajs_eigen*.dat`` (1体), ``zvo_cisajscktalt_eigen*.dat`` (2体)というファイルを
+``output/`` ディレクトリに出力する.
+``fourier`` ユーティリティーは, 各波動関数ごとに
+1体および2体の相関関数を読み込みFourier変換を行った後,
+``zvo_corr_eigen*.dat`` という名前のファイルとして ``output/`` ディレクトリに出力する.
 
 mVMC
 ~~~~
 
-``vmc.out`` performs calculations according to the input parameters ``NDataIdxStart`` and ``NDataQtySmp``
-in ``ModPara`` file, and it generates
-``zvo_cisajs_???.dat`` (one body) and ``zvo_cisajscktalt_???.dat`` (two body)
-in ``output/`` directory.
-``fourier`` utility reads all of these files, performs Fourier transformation,
-computes the average 
+この場合に ``vmc.out`` は, ``ModPara`` インプットファイルで指定された
+``NDataIdxStart`` および ``NDataQtySmp`` というパラメーターに応じて
+試行を行いインデックスをつけられた
+``zvo_cisajs_???.dat`` (1体), ``zvo_cisajscktalt_???.dat`` (2体)というファイルを
+``output/`` ディレクトリに出力する.
+``fourier`` ユーティリティーはそれらのファイルを読み込み, 
+各試行に対してFourier変換を行った後,
+それらの実部, 虚部ごとに平均値
 
 .. math::
 
@@ -63,7 +63,7 @@ computes the average
    \langle A \rangle = \frac{1}{N_{\rm Try}} \sum_{i=1}^{N_{\rm Try}} A_i
    \end{align}
 
-and the standard error
+および標準誤差
 
 .. math::
    
@@ -72,5 +72,6 @@ and the standard error
    \sqrt{\frac{1}{N_{\rm Try}} \sum_{i=1}^{N_{\rm Try}} (A_i - \langle A \rangle)^2}
    \end{align}
 
-of the real- and imaginary-part of each correlation function, and
-writes them to a file ``zvo_corr_eigen*.dat`` in ``output/`` directory.
+を計算し, 平均値と誤差を含んだ単一のファイル
+``zvo_corr_eigen*.dat`` を ``output/`` ディレクトリに出力する.
+
