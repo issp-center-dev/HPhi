@@ -314,7 +314,7 @@ TPQ法での計算が正常終了すると、以下のファイルが出力さ�
  zvo_cisajs_set%%step&&.dat
  zvo_cisajscktalt_set%%step&&.dat
  
-Norm\_rand\%\%.datには、逆温度や波動関数の規格前の大きさなどの基礎情報が、各run回数に応じステップ数とともに出力されます。また、SS\_rand\%\%.datには、逆温度、エネルギー、ハミルトニアンの二乗の期待値などの物理量が各run回数に応じステップ数とともに出力されます。zvo\_cisajs\_set\%\%step\&\&.datとzvo\_cisajscktalt\_set\%\%step\&\&.datには各run回数でのステップ数に応じた一体グリーン関数および二体グリーン関数が出力されます。各ファイルの詳細はそれぞれ、セクション:ref:`Subsec:normrand`, :ref:`Subsec:ssrand`, :ref:`Subsec:cgcisajs`, :ref:`Subsec:cisajscktalt` に記載がありますので、ご参照ください。
+Norm\_rand\%\%.datには、逆温度や波動関数の規格前の大きさなどの基礎情報が、各run回数に応じステップ数とともに出力されます。また、SS\_rand\%\%.datには、逆温度、エネルギー、ハミルトニアンの二乗の期待値などの物理量が各run回数に応じステップ数とともに出力されます。zvo\_cisajs\_set\%\%step\&\&.datとzvo\_cisajscktalt\_set\%\%step\&\&.datには各run回数でのステップ数に応じた一体グリーン関数および二体グリーン関数が出力されます。各ファイルの詳細はそれぞれ、セクション :ref:`Subsec:normrand`, :ref:`Subsec:ssrand`, :ref:`Subsec:cgcisajs`, :ref:`Subsec:cisajscktalt` に記載がありますので、ご参照ください。
 
 **全対角化法**
 """""""""""""""""""""""""""""""

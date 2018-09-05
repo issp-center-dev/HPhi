@@ -5,7 +5,7 @@
 .. toctree::
    :maxdepth: 2
    
-   standardmode_jp
-   expertmode_jp
-   fourier_jp
+   standardmode_ja
+   expertmode_ja
+   fourier_ja
    
