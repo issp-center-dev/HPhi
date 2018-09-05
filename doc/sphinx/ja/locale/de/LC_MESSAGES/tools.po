@@ -1,0 +1,42 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017, H.Togo
+# This file is distributed under the same license as the HΦtest package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HΦtest 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 13:37+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.1\n"
+
+#: ../../tools/SSrand_en.rst:5
+msgid "Calculation of specific heat"
+msgstr ""
+
+#: ../../tools/calc_spectrum_en.rst:4
+msgid "Calculation of spectrum function"
+msgstr ""
+
+#: ../../tools/magnetization_en.rst:4
+msgid "Calculation of magnetization curve"
+msgstr ""
+
+#: ../../tools/tools_index.rst:3
+msgid "Calculation of physical quantities"
+msgstr ""
+
+#: ../../tools/tools_index.rst:5
+msgid ""
+"In this chapter, we explain post procedures to calculate physical "
+"quantities. All scripts used in this chapter are included in ``tool`` "
+"folder."
+msgstr ""
+

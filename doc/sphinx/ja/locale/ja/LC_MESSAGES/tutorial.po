@@ -1,0 +1,501 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017, H.Togo
+# This file is distributed under the same license as the HΦtest package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HΦtest 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 13:37+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.1\n"
+
+#: ../../tutorial/expertmode_en.rst:4
+msgid "Quick guide to *Expert* mode"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:6
+msgid "For Expert mode, the following input files are needed."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:8
+msgid "A file list for input files"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:9 ../../tutorial/expertmode_en.rst:34
+msgid "Files for basic parameters"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:10 ../../tutorial/expertmode_en.rst:108
+msgid "Files for constructing Hamiltonian"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:11
+msgid "Files for setting output components."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:13
+msgid ""
+"The process after calculation is the same as in Standard mode. In this "
+"section, we demonstrate Expert mode in the directory where the tutorial "
+"at the previous section was performed."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:18
+msgid "File list for input files"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:20
+msgid ""
+"In namelist.def, the types of input files and filenames are defined as "
+"shown below. By writing the keyword and filenames at each line, the types"
+" of files are distinguished. The details of namelist.def are shown in "
+"Sec. :ref:`Subsec:InputFileList`. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:36
+msgid ""
+"In this subsection, we show how to set a calculation mode, the parameters"
+" for the calculation, and the positions of the localized spins."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:39
+msgid "**Setting a calculation mode**"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:41
+msgid ""
+"The calculation mode is set in a CalcMod file (in this sample file, "
+"calcmod.def). The contents of the files are as follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:55
+msgid ""
+"We select a calculation method in CalcType and a target model in "
+"CalcModel. In this sample, we set the Lanczos method as a calculation "
+"method and the target model as the spin system (canonical ensemble). The "
+"details of a CalcMod file are shown in Sec. :ref:`Subsec:calcmod`."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:58
+msgid "**Setting parameters for calculation**"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:60
+msgid ""
+"The parameters for the calculation are set in a ModPara file(in this "
+"sample, modpara.def). The contents of this file are as follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:85
+msgid ""
+"In this file, we set the parameters for the calculation, such as the site"
+" number, the total number of conduction electrons, the total :math:`S_z` "
+"and the number of Lanczos steps. The details of the ModPara file are "
+"shown in Sec. :ref:`Subsec:modpara`."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:88
+msgid "**Setting positions of localized spins**"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:90
+msgid ""
+"The positions :math:`S` of the localized spins are defined by a LocSpin "
+"file (in this sample, locspn.def). The contents of the files are as "
+"follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:105
+msgid ""
+"When CalcModel in a CalcMod file is set as the spin system, all the sites"
+" are automatically treated as localized spins. The details of a LocSpin "
+"file are shown in Sec. :ref:`Subsec:locspn`."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:110
+msgid ""
+"After setting the basic parameters, we create input files for "
+"constructing the Hamiltonian. Since the calculations are performed by "
+"using the representation of the fermion operators in :math:`{\\mathcal "
+"H}\\Phi`, we must rewrite the spin operator. For example,  in the case of"
+" :math:`S = 1/2`, we rewrite the equation by using the relation"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:119
+msgid "**Setting transfer integrals**"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:121
+msgid ""
+"In a Trans file (in this sample, zTrans.def), we set the transfer part of"
+" the Hamiltonian,"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:128 ../../tutorial/expertmode_en.rst:157
+msgid "The contents of the files are as follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:136
+msgid ""
+"We can use this term when an electric magnetic field is added in the spin"
+" system. For example, when a magnetic field is added at a site 1 such as "
+":math:`-0.5 S_z^{(1)}` for :math:`S=1/2`, this term can be rewritten as "
+":math:`-0.5/2(c_{1\\uparrow}^{\\dagger}c_{1\\uparrow}-c_{1\\downarrow}^{\\dagger}c_{1\\downarrow})`."
+" Thus, the input file becomes as follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:146
+msgid "The details for a Trans file are shown in Sec. :ref:`Subsec:Trans`."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:149
+msgid "**Setting general two-body interactions**"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:151
+msgid ""
+"In an InterAll file (in this sample, zInterall.def), we set the general "
+"two-body interaction part of the Hamiltonian,"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:172
+msgid ""
+"Here, we explain the interaction between site :math:`i` and site "
+":math:`j` in the case of :math:`S = 1/2`, for simplicity. Using fermion "
+"operators, the interaction terms for the spin operators can be rewritten "
+"as"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:179
+msgid ""
+"Thus, the interaction :math:`S_z^{(i)}S_z^{(i+1)}` for :math:`J=2` can be"
+" written as ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:186
+msgid ""
+"in the format of an InterAll file. The other terms can be written as "
+"follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:191
+msgid ""
+"There are other file formats for constructing the Hamiltonian. The "
+"details of the input formats of two-body interactions are shown in Secs. "
+":ref:`Subsec:interall` - :ref:`Subsec:pairlift`."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:194
+msgid "Setting output components"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:196
+msgid ""
+"In OneBodyG and TwoBodyG files, the indices of one-body and two-body "
+"Green's functions are defined, respectively."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:199
+msgid "**Setting indices of one-body Green's functions**"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:201
+msgid ""
+"In a OneBodyG file (in this sample, greenone.def), the indices of "
+":math:`\\langle c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2} \\rangle` are "
+"defined. The contents of files are as follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:215
+msgid ""
+"The details of the input formats of a OneBodyG file are shown in Sec. "
+":ref:`Subsec:onebodyg`."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:218
+msgid "**Setting indices of two-body Green's functions**"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:220
+msgid ""
+"In the TwoBodyG file (in this sample, greentwo.def), the indices of "
+":math:`\\langle "
+"c_{i\\sigma_1}^{\\dagger}c_{j\\sigma_2}c_{k\\sigma_3}^{\\dagger}c_{l\\sigma_4}"
+" \\rangle` are defined. The contents of this file are as follows. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:234
+msgid ""
+"The details of the input formats of the TwoBodyG file are shown in Sec. "
+":ref:`Subsec:twobodyg`."
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:237
+msgid "Running"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:239
+msgid ""
+"After creating all the input files above, we are ready to run a program. "
+"For Expert mode, we must set an option \\\"-e\\\" and a file name list "
+"(in this sample, namelist.def) as arguments to run :math:`{\\mathcal "
+"H}\\Phi`. ::"
+msgstr ""
+
+#: ../../tutorial/expertmode_en.rst:243
+msgid "The process after the calculation is the same as that of Standard mode."
+msgstr ""
+
+#: ../../tutorial/fourier_en.rst:4
+msgid "Fourier transformation of correlation functions"
+msgstr ""
+
+#: ../../tutorial/fourier_en.rst:6
+msgid ""
+"This package has a utility which performs the Fourier transformation of "
+"the correlation function and plots that function. The manual of this "
+"utility is located in ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:4
+msgid "Quick guide to *Standard* mode"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:7
+msgid "Heisenberg model"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:9
+msgid "This tutorial should be performed in ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:13 ../../tutorial/timeevolution_en.rst:20
+msgid "The input file is provided as follows::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:17
+msgid ""
+"In this case, we treat the two-dimensional antiferromagnetic Heisenberg "
+"model that has a nearest neighbor spin coupling."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:23
+msgid ""
+"where we use the periodic boundary condition :math:`(S_{15}=S_{51}= "
+"S_{11})`."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:25
+msgid "The input file is as follows::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:35
+msgid ""
+"In this tutorial, J and the number of sites are set to 1 (arbitral unit) "
+"and 16, respectively."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:38
+msgid "**Log output**"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:40
+msgid ""
+"Log messages are outputted to the standard output. Log files for the "
+"calculation procedure are created in the \\\"output\\\" directory which "
+"is automatically created. In this example, the following files are "
+"outputted. ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:48
+msgid ""
+"The details of the outputted files are shown in Secs. "
+":ref:`Subsec:checkchemi` - :ref:`Subsec:timecgeigenv`. We execute ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:53
+msgid ""
+"and obtain the following standard outputs (the compilation mode is MPI "
+"parallel/hybrid parallel) ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:261
+msgid ""
+"In the beginning of this run, files describing the details of the "
+"considered Hamiltonian (``locspin.def``, ``trans.def``, ``exchange.def``,"
+" ``coulombintra.def``, ``hund.def``, ``namelist.def``, ``calcmod.def``, "
+"``modpara.def``) and files specifying the elements of the correlation "
+"functions that will be calculated(``greenone.def``, ``greentwo.def``) are"
+" generated."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:266
+msgid "**Outputs for calculation results**"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:269
+msgid "**Locally Optimal Block Conjugate Gradient (LOBCG) method**"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:271
+msgid ""
+"When a calculation by the LOBCG method is finished normally, "
+"eigenenergies, one-body Green's functions, and two-body Green's functions"
+" are calculated and outputted to the files, respectively. In this sample,"
+" the following files are outputted. ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:276
+msgid "where xx is the number of the eigenstate counting from 0."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:279
+msgid "**Lanczos method**"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:281
+msgid ""
+"When a calculation by the Lanczos method is completed normally, "
+"eigenenergies, one-body Green's functions, and two-body Green's functions"
+" are calculated and outputted to the files, respectively. In this sample,"
+" the following files are outputted. ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:286
+msgid ""
+"For Standard mode, all pairs of :math:`\\langle n_{i\\sigma} \\rangle` "
+"are calculated as one-body Green's functions and those of :math:`\\langle"
+" n_{i\\sigma} n_{j\\sigma'} \\rangle` are calculated as two-body Green's "
+"functions on the basis of the definition files, ``greenone.def`` and "
+"``greentwo.def``. When the accuracy of the Lanczos vectors is sufficient,"
+" one-body and two-body Green's functions are calculated by the "
+"eigenvectors obtained by the Lanczos method. When the accuracy of the "
+"Lanczos vectors is *not* sufficient, a message \\\"Accuracy of Lanczos "
+"vector is not enough\\\" is outputted to the standard output and the one-"
+"body and two-body Green's functions are calculated by the eigenvectors "
+"obtained by CG method. The details of output files are shown in Secs. "
+":ref:`Subsec:energy.dat` , :ref:`Subsec:cgcisajs` , "
+":ref:`Subsec:cisajscktalt`."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:289
+msgid "**TPQ method**"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:291
+#, python-format
+msgid ""
+"When ``method=\"TPQ\"`` is selected in an input file, a calculation by "
+"the TPQ method is started. After the calculation is completed normally, "
+"the following files are outputted, where \\%\\% is the number of runs and"
+" \\&\\& is the number of steps for the TPQ method. ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:297
+#, python-format
+msgid ""
+"In Norm\\_rand\\%\\%.dat, basic information such as the inverse of "
+"temperature and the norm of the wave function before normalization is "
+"outputted with a TPQ step for each number of runs. In "
+"SS\\_rand\\%\\%.dat, physical quantities such as the inverse of "
+"temperature, energy, and expected value of the square of the Hamiltonian "
+"are outputted with a TPQ step for each number of runs. In "
+"zvo\\_cisajs\\_set\\%\\%step\\&\\&.dat and "
+"zvo\\_cisajscktalt\\_set\\%\\%step\\&\\&.dat, one-body and two-body "
+"Green's functions are outputted for each number of a TPQ steps and runs. "
+"The details of these files are shown in Secs. :ref:`Subsec:normrand`, "
+":ref:`Subsec:ssrand`, :ref:`Subsec:cgcisajs`, :ref:`Subsec:cisajscktalt`."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:300
+msgid "**Full diagonalization method**"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:302
+msgid ""
+"When ``method = \"fulldiag\"`` is selected in an input file, a "
+"calculation by the full diagonalization method is started. After the "
+"calculation is completed normally, the following files are outputted, "
+"where xx is the number of the eigenstate counting from 0. ::"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:307
+msgid ""
+"In Eigenvalue.dat, an eigennumber and an eigenvalue are outputted for "
+"each line.In zvo\\_cisajs\\_eigen\\_xx.dat and "
+"zvo\\_cisajscktalt\\_eigen\\_xx.dat,one-body Green's functions and two-"
+"body Green's functions are outputted for each eigennumber. In "
+"zvo\\_phys\\_Nup4\\_Ndown4.dat, physical quantities, such as the expected"
+" values of energy and the doublon are outputted. The details of these "
+"files are shown in Secs. :ref:`Subsec:eigenvalue` - "
+":ref:`Subsec:cisajscktalt`."
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:310
+msgid "Other tutorials"
+msgstr ""
+
+#: ../../tutorial/standardmode_en.rst:312
+msgid ""
+"There are many tutorials in ``samples/Standard/``. For more details, "
+"please see ``README.md`` at each directory."
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:4
+msgid "Real time evolution mode"
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:6
+msgid ""
+"In this section, the usage of real time evolution method is explained. "
+"For simplicity, we use *Standard* mode. In this method, we can define "
+"four types of time-dependent interactions."
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:15
+msgid ""
+"In this tutorial, we focus on the ac mode. This tutorial should be "
+"performed in ::"
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:26
+msgid "In this case, we treat the one-dimensional Hubbard model:"
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:32
+msgid "where we use the periodic boundary condition :math:`(c_{8}=c_{0})`."
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:34
+msgid ""
+"To set the ground state as an initial state, we first calculate Lanczos "
+"method and obtain the ground state. The input file is given as "
+"```stan1.in``` file: ::"
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:48
+msgid "Typing the following command in the terminal, the program runs ::"
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:52
+msgid ""
+"After this calculation, the wave function of the grond state is outputted"
+" to  ```output/zvo_eigenvec_0_rank_0.dat```."
+msgstr ""
+
+#: ../../tutorial/timeevolution_en.rst:57
+msgid "**Details (Expert Mode)**"
+msgstr ""
+
+#: ../../tutorial/tu-index.rst:3
+msgid "Tutorial"
+msgstr ""
+

@@ -1,0 +1,275 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017, H.Togo
+# This file is distributed under the same license as the HΦtest package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HΦtest 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-16 13:37+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.1\n"
+
+#: ../../introduction_en.rst:5 ../../introduction_en.rst:8
+msgid "What is :math:`{\\mathcal H}\\Phi`?"
+msgstr ""
+
+#: ../../introduction_en.rst:10
+msgid ""
+"Comparison between experimental observation and theoretical analysis is a"
+" crucial step in condensed-matter physics research. The tTemperature "
+"dependence of specific heat and magnetic susceptibility, for example, has"
+" been studied to extract the nature of low energy excitations of and "
+"magnetic interactions between electrons, respectively, through comparison"
+" with theories such as Landau's Fermi liquid theory and the Curie-Weiss "
+"law."
+msgstr ""
+
+#: ../../introduction_en.rst:12
+msgid ""
+"For the flexible and quantitative comparison of theoretical and  "
+"experimental data, the exact diagonalization approach [1]_ is one of the "
+"most reliable numerical tools that requires no approximation or "
+"inspiration of genius. For the last few decades, a numerical "
+"diagonalization package for quantum spin Hamiltonians, TITPACK, developed"
+" by Prof. Hidetoshi Nishimori of Tokyo Institute of Technology, has been "
+"widely used in the condensed-matter physics community. Nevertheless, "
+"limited computational resources have hindered the ability of non-expert "
+"users to apply the package to quantum systems with a large number of "
+"electrons or spins."
+msgstr ""
+
+#: ../../introduction_en.rst:14
+msgid ""
+"In contrast, the recent and rapid development of a parallel computing "
+"infrastructure has opened up new avenues for user-friendly larger scale "
+"diagonalizations up to 18-site Hubbard clusters or 36 :math:`S=1/2` "
+"quantum spins. In addition, recent advances in quantum statistical "
+"mechanics [2]_ [3]_ [4]_ [5]_ allow the finite temperature properties of "
+"quantum many-body systems to be calculated at computational costs similar"
+" to those of the calculations of ground state properties, which also "
+"allows theoretical results for the temperature dependence of, for "
+"example, specific heat and magnetic susceptibility, to be compared with "
+"experimental results quantitatively [6]_ . To utilize the parallel "
+"computing infrastructure with narrow bandwidth and distributed-memory "
+"architectures, efficient, user-friendly, and highly parallelized "
+"diagonalization packages are highly desirable."
+msgstr ""
+
+#: ../../introduction_en.rst:16
+msgid ""
+":math:`{\\mathcal H}\\Phi`, a flexible diagonalization package for "
+"solving quantum lattice Hamiltonians, has been developed as a descendant "
+"of the pioneering package TITPACK. The Lanczos method for calculations of"
+" the ground state and a few excited states properties, as well as finite "
+"temperature calculations based on thermal pure quantum states [5]_ , are "
+"implemented in the :math:`{\\mathcal H}\\Phi` package, with an easy-to-"
+"use and flexible user interface. By using :math:`{\\mathcal H}\\Phi`, you"
+" can analyze a wide range of quantum lattice Hamiltonians including "
+"simple Hubbard and Heisenberg models, multi-band extensions of the "
+"Hubbard model, exchange couplings that break the SU(2) symmetry of "
+"quantum spins, such as Dzyaloshinskii-Moriya and Kitaev interactions, and"
+" Kondo lattice models describing itinerant electrons coupled with quantum"
+" spins. :math:`{\\mathcal H}\\Phi` calculates a variety of physical "
+"quantities, such as internal energy at zero temperature or finite "
+"temperatures, temperature dependence of specific heat, and charge/spin "
+"structure factors. A broad spectrum of users including experimental "
+"scientists is cordially welcome."
+msgstr ""
+
+#: ../../introduction_en.rst:19
+msgid "License"
+msgstr ""
+
+#: ../../introduction_en.rst:21
+msgid ""
+"The distribution of the program package and the source codes for "
+":math:`{\\mathcal H}\\Phi` follow GNU General Public License version 3 "
+"(GPL v3) or later."
+msgstr ""
+
+#: ../../introduction_en.rst:24
+msgid "Copyright"
+msgstr ""
+
+#: ../../introduction_en.rst:26
+msgid ""
+"© *2015- The University of Tokyo. All rights reserved.* This software was"
+" developed with the support of \\\"*Project for advancement of software "
+"usability in materials science*\\\" of The Institute for Solid State "
+"Physics, The University of Tokyo."
+msgstr ""
+
+#: ../../introduction_en.rst:30
+msgid "Contributors"
+msgstr ""
+
+#: ../../introduction_en.rst:32
+msgid "This software was developed by the following contributors."
+msgstr ""
+
+#: ../../introduction_en.rst:34
+msgid "ver.3.0.0 (released on 2017/12/22)"
+msgstr ""
+
+#: ../../introduction_en.rst:36 ../../introduction_en.rst:66
+#: ../../introduction_en.rst:88
+msgid "Developers"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "Takahiro Misawa"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "(The Institute for Solid State Physics, The University of Tokyo)"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "Kazuyoshi Yoshimi"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "Mitsuaki Kawamura"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "Kota Ido"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "(Department of Applied Physics, The University of Tokyo)"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "Youhei Yamaji"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "Synge Todo"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "(Department of Physics, The University of Tokyo)"
+msgstr ""
+
+#: ../../introduction_en.rst:51 ../../introduction_en.rst:79
+#: ../../introduction_en.rst:104
+msgid "Project coordinator"
+msgstr ""
+
+#: ../../introduction_en.rst
+msgid "Naoki Kawashima"
+msgstr ""
+
+#: ../../introduction_en.rst:57
+msgid "ver.2.0.4 (released on 2017/10/24)"
+msgstr ""
+
+#: ../../introduction_en.rst:58
+msgid "ver.2.0.3 (released on 2017/8/7)"
+msgstr ""
+
+#: ../../introduction_en.rst:59
+msgid "ver.2.0.2 (released on 2017/7/5)"
+msgstr ""
+
+#: ../../introduction_en.rst:60
+msgid "ver.2.0.1(released on 2017/6/20)"
+msgstr ""
+
+#: ../../introduction_en.rst:61
+msgid "ver.2.0 (released on 2017/4/11)"
+msgstr ""
+
+#: ../../introduction_en.rst:62
+msgid "ver.1.2 (released on 2016/11/14)"
+msgstr ""
+
+#: ../../introduction_en.rst:63
+msgid "ver.1.1 (released on 2016/5/13)"
+msgstr ""
+
+#: ../../introduction_en.rst:64
+msgid "ver.1.0 (released on 2016/4/5)"
+msgstr ""
+
+#: ../../introduction_en.rst:84
+msgid "ver.0.3 (released on 2016/2/24)"
+msgstr ""
+
+#: ../../introduction_en.rst:85
+msgid "ver.0.2 (released on 2015/12/28)"
+msgstr ""
+
+#: ../../introduction_en.rst:86
+msgid "ver.0.1 (released on 2015/10/09)"
+msgstr ""
+
+#: ../../introduction_en.rst:97
+msgid "Advisers"
+msgstr ""
+
+#: ../../introduction_en.rst:110
+msgid "Operating environment"
+msgstr ""
+
+#: ../../introduction_en.rst:112
+msgid ":math:`{\\mathcal H}\\Phi` was tested on the following platforms"
+msgstr ""
+
+#: ../../introduction_en.rst:114
+msgid "The supercomputer system-B \\\"sekirei\\\" in ISSP"
+msgstr ""
+
+#: ../../introduction_en.rst:115
+msgid "Fujitsu FX-10 and K computer"
+msgstr ""
+
+#: ../../introduction_en.rst:116
+msgid "Linux PC + Intel compiler"
+msgstr ""
+
+#: ../../introduction_en.rst:117
+msgid "Linux PC + GCC."
+msgstr ""
+
+#: ../../introduction_en.rst:118
+msgid "Mac + GCC."
+msgstr ""
+
+#: ../../introduction_en.rst:120
+msgid "\\E. Dagotto, Rev. Mod. Phys. **66**, 763-840 (1994)."
+msgstr ""
+
+#: ../../introduction_en.rst:121
+msgid ""
+"\\M. Imada, M. Takahashi, Journal of the Physical Society of Japan "
+"**55**, 3354-3361 (1986)."
+msgstr ""
+
+#: ../../introduction_en.rst:122
+msgid "\\J. Jaklič, P. Prelovšek, Phys. Rev. B **49**, 5065-5068 (1994)."
+msgstr ""
+
+#: ../../introduction_en.rst:123
+msgid "\\A. Hams, H. De Raedt, Phys. Rev. E **62**, 4365-4377 (2000)."
+msgstr ""
+
+#: ../../introduction_en.rst:124
+msgid "\\S. Sugiura, A. Shimizu, Phys. Rev. Lett. **108**, 240401 (2012)."
+msgstr ""
+
+#: ../../introduction_en.rst:125
+msgid ""
+"\\Y. Yamaji, Y. Nomura, M. Kurita, R. Arita, M. Imada, Phys. Rev. Lett. "
+"**113**, 107201 (2014)."
+msgstr ""
+
