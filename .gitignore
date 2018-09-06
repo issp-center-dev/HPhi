@@ -112,8 +112,6 @@ Makefile
 make.sys
 *backup*
 *cisajs*.dat
-*Time_*
-*_Time*
 *.a
 *.aux
 *.bbl
