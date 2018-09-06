@@ -15,20 +15,20 @@ mVMC および :math:`{\mathcal H}\Phi` を用いて,
    \nonumber \\
    &+ \sum_{i, \alpha}
    U_{i \alpha i \alpha} n_{i \alpha \uparrow} n_{j \alpha \downarrow}
-   + \sum_{(i, \alpha) \lt (j, \beta)}
+   + \sum_{(i, \alpha) < (j, \beta)}
    U_{i \alpha j \beta} n_{i \alpha} n_{j \beta}
-   - \sum_{(i, \alpha) \lt (j, \beta)}
+   - \sum_{(i, \alpha) < (j, \beta)}
    J_{i \alpha j \beta} (n_{i \alpha \uparrow} n_{j \beta \uparrow}
    + n_{i \alpha \downarrow} n_{j \beta \downarrow})
    \nonumber \\
-   &+ \sum_{(i, \alpha) \lt (j, \beta)}
+   &+ \sum_{(i, \alpha) < (j, \beta)}
    J_{i \alpha j \beta} (
    c_{i \alpha \uparrow}^{\dagger} c_{j \beta \downarrow}^{\dagger}
    c_{i \alpha \downarrow} c_{j \beta \uparrow} +
    c_{j \beta \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
    c_{j \beta \downarrow} c_{j \alpha \uparrow} )
    \nonumber \\
-   &+ \sum_{(i, \alpha) \lt (j, \beta)}
+   &+ \sum_{(i, \alpha) < (j, \beta)}
    J_{i \alpha j \beta} (
    c_{i \alpha \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
    c_{j \beta \downarrow} c_{j \beta \uparrow} +
