@@ -146,7 +146,7 @@ Common parameters
       The seed of the random generator is given by this parameter and
       the random vector is used as the initial vector.
 
-   See Sec. :ref:`Ch:algorithm` for details of setting an
+   See :ref:`Ch:algorithm` for details of setting an
    initial vector.
 
 *  ``CalcHS``

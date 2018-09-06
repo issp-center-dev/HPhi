@@ -16,7 +16,7 @@ The procedure of calculation through the standard mode is as follows:
   
  2. Create input files for Standard mode
  
-  In Standard mode, you can choose a model (the Heisenberg model, Hubbard model, etc.) and a lattice (the square lattice, triangular lattice, etc.) from those provided; you can specify some parameters (such as the first/second nearest neighbor hopping integrals and the on-site Coulomb integral) for them. Finally, you have to specify the numerical method (such as the Lanczos method) employed in this calculation. The input file format is described in Sec. :ref:`How to use HPhi <Ch:Prerequisite>`.
+  In Standard mode, you can choose a model (the Heisenberg model, Hubbard model, etc.) and a lattice (the square lattice, triangular lattice, etc.) from those provided; you can specify some parameters (such as the first/second nearest neighbor hopping integrals and the on-site Coulomb integral) for them. Finally, you have to specify the numerical method (such as the Lanczos method) employed in this calculation. The input file format is described in :ref:`How to use HPhi <Ch:Prerequisite>`.
   
  3. Run
  
@@ -30,15 +30,15 @@ The procedure of calculation through the standard mode is as follows:
    
    ``$ mpiexec -np number_of_processes Path /HPhi -s Input_file_name``
    
-  When you use a queuing system in workstations or super computers, sometimes the number of processes is specified as an argument for the job-submitting command. If you need more information, please refer to your system manuals. The number of processes depends on the target system of the models. The details of setting the number of processes are shown in Sec. :ref:`Subsec:CreatingExpert` .
+  When you use a queuing system in workstations or super computers, sometimes the number of processes is specified as an argument for the job-submitting command. If you need more information, please refer to your system manuals. The number of processes depends on the target system of the models. The details of setting the number of processes are shown in :ref:`Subsec:CreatingExpert` .
   
  4. Watch calculation logs
  
-  Log files are outputted in the \"output\" folder, which is automatically created in the directory for a calculation scenario. The details of the output files are shown in Sec. :ref:`Sec:outputfile` .
+  Log files are outputted in the \"output\" folder, which is automatically created in the directory for a calculation scenario. The details of the output files are shown in :ref:`Sec:outputfile` .
   
  5. Results 
  
-  If the calculation is completed normally, the result files are outputted in  the \"output\" folder. The details of the output files are shown in Sec. :ref:`Sec:outputfile` 
+  If the calculation is completed normally, the result files are outputted in  the \"output\" folder. The details of the output files are shown in :ref:`Sec:outputfile` 
   
 .. tip::
 
@@ -56,7 +56,7 @@ The calculation procedure for Expert mode is as follows.
   
  2. Create input files for Expert mode
  
-  For Expert mode, you should create input files for constructing Hamiltonian operators, calculation conditions, and a list file for the filenames of the input files (see the file formats shown in Sec. :ref:`Ch:HowToExpert`).
+  For Expert mode, you should create input files for constructing Hamiltonian operators, calculation conditions, and a list file for the filenames of the input files (see the file formats shown in :ref:`Ch:HowToExpert`).
   
  .. note::
 
@@ -73,15 +73,15 @@ The calculation procedure for Expert mode is as follows.
    * MPI/Hybrid
    
     | ``$ mpiexec -np number_of_processes Path/HPhi -e Input_List_file_name``
-    | A number of processes depend on a target of system for models. The details of setting a number of processes are shown in Sec. :ref:`Subsec:CreatingExpert`.
+    | A number of processes depend on a target of system for models. The details of setting a number of processes are shown in :ref:`Subsec:CreatingExpert`.
    
  4. While running
  
-  Log files are outputted in the \"output\" folder which is automatically created in the directory for a calculation scenario. The details of the output files are shown in Sec. :ref:`Sec:outputfile`.
+  Log files are outputted in the \"output\" folder which is automatically created in the directory for a calculation scenario. The details of the output files are shown in :ref:`Sec:outputfile`.
   
  5. Results
  
-  If the calculation is finished normally, the result files are outputted in the \"output\" folder. The details of the output files are shown in Sec. :ref:`Sec:outputfile`. 
+  If the calculation is finished normally, the result files are outputted in the \"output\" folder. The details of the output files are shown in :ref:`Sec:outputfile`. 
   
 .. _Subsec:CreatingExpert:
   
@@ -129,11 +129,11 @@ For using MPI/hybrid parallelization, the process number must be set as follows.
  
   * Hubbard/Kondo model
   
-   When the model is selected as the Fermion Hubbard model or Kondo model by setting ``CalcModel`` in a **CalcMod** file, the process number must be equal to :math:`4^n`. See Sec. :ref:`Subsec:calcmod` for details of the ``CalcModel`` file. 
+   When the model is selected as the Fermion Hubbard model or Kondo model by setting ``CalcModel`` in a **CalcMod** file, the process number must be equal to :math:`4^n`. See :ref:`Subsec:calcmod` for details of the ``CalcModel`` file. 
    
   * Spin model
   
-   When the model is selected as the spin model by setting ``CalcModel`` in a **CalcMod** file, the process number is fixed by a **LocSpin** file. The process number must be equal to the number calculated by multiplying the state number of the localized spin (``2S`` +1) in descending order by the site number. See Sec. :ref:`Subsec:locspn` for details of the **LocSpin** file.
+   When the model is selected as the spin model by setting ``CalcModel`` in a **CalcMod** file, the process number is fixed by a **LocSpin** file. The process number must be equal to the number calculated by multiplying the state number of the localized spin (``2S`` +1) in descending order by the site number. See :ref:`Subsec:locspn` for details of the **LocSpin** file.
    
    For example, when a **LocSpin** file is given as follows, the process number must be equal to :math:`2=1+1,~6=2\times(2+1),~24=6\times(3+1)`. 
 

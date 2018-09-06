@@ -282,7 +282,7 @@ When a calculation by the Lanczos method is completed normally, eigenenergies, o
  zvo_energy.dat zvo_cisajs.dat
  zvo_cisajscktalt.dat
  
-For Standard mode, all pairs of :math:`\langle n_{i\sigma} \rangle` are calculated as one-body Green's functions and those of :math:`\langle n_{i\sigma} n_{j\sigma'} \rangle` are calculated as two-body Green's functions on the basis of the definition files, ``greenone.def`` and ``greentwo.def``. When the accuracy of the Lanczos vectors is sufficient, one-body and two-body Green's functions are calculated by the eigenvectors obtained by the Lanczos method. When the accuracy of the Lanczos vectors is *not* sufficient, a message \"Accuracy of Lanczos vector is not enough\" is outputted to the standard output and the one-body and two-body Green's functions are calculated by the eigenvectors obtained by CG method. The details of output files are shown in Secs. :ref:`Subsec:energy.dat` , :ref:`Subsec:cgcisajs` , :ref:`Subsec:cisajscktalt`.
+For Standard mode, all pairs of :math:`\langle n_{i\sigma} \rangle` are calculated as one-body Green's functions and those of :math:`\langle n_{i\sigma} n_{j\sigma'} \rangle` are calculated as two-body Green's functions on the basis of the definition files, ``greenone.def`` and ``greentwo.def``. When the accuracy of the Lanczos vectors is sufficient, one-body and two-body Green's functions are calculated by the eigenvectors obtained by the Lanczos method. When the accuracy of the Lanczos vectors is *not* sufficient, a message \"Accuracy of Lanczos vector is not enough\" is outputted to the standard output and the one-body and two-body Green's functions are calculated by the eigenvectors obtained by CG method. The details of output files are shown in :ref:`Subsec:energy.dat` , :ref:`Subsec:cgcisajs` , :ref:`Subsec:cisajscktalt`.
 
 **TPQ method**
 """"""""""""""
@@ -293,7 +293,7 @@ When ``method="TPQ"`` is selected in an input file, a calculation by the TPQ met
  zvo_cisajs_set%%step&&.dat
  zvo_cisajscktalt_set%%step&&.dat
  
-In Norm\_rand\%\%.dat, basic information such as the inverse of temperature and the norm of the wave function before normalization is outputted with a TPQ step for each number of runs. In SS\_rand\%\%.dat, physical quantities such as the inverse of temperature, energy, and expected value of the square of the Hamiltonian are outputted with a TPQ step for each number of runs. In zvo\_cisajs\_set\%\%step\&\&.dat and zvo\_cisajscktalt\_set\%\%step\&\&.dat, one-body and two-body Green's functions are outputted for each number of a TPQ steps and runs. The details of these files are shown in Secs. :ref:`Subsec:normrand`, :ref:`Subsec:ssrand`, :ref:`Subsec:cgcisajs`, :ref:`Subsec:cisajscktalt`.
+In Norm\_rand\%\%.dat, basic information such as the inverse of temperature and the norm of the wave function before normalization is outputted with a TPQ step for each number of runs. In SS\_rand\%\%.dat, physical quantities such as the inverse of temperature, energy, and expected value of the square of the Hamiltonian are outputted with a TPQ step for each number of runs. In zvo\_cisajs\_set\%\%step\&\&.dat and zvo\_cisajscktalt\_set\%\%step\&\&.dat, one-body and two-body Green's functions are outputted for each number of a TPQ steps and runs. The details of these files are shown in :ref:`Subsec:normrand`, :ref:`Subsec:ssrand`, :ref:`Subsec:cgcisajs`, :ref:`Subsec:cisajscktalt`.
 
 **Full diagonalization method**
 """""""""""""""""""""""""""""""
@@ -303,7 +303,7 @@ When ``method = "fulldiag"`` is selected in an input file, a calculation by the 
  Eigenvalue.dat zvo_cisajs_eigen_xx.dat
  zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
    
-In Eigenvalue.dat, an eigennumber and an eigenvalue are outputted for each line.In zvo\_cisajs\_eigen\_xx.dat and zvo\_cisajscktalt\_eigen\_xx.dat,one-body Green's functions and two-body Green's functions are outputted for each eigennumber. In zvo\_phys\_Nup4\_Ndown4.dat, physical quantities, such as the expected values of energy and the doublon are outputted. The details of these files are shown in Secs. :ref:`Subsec:eigenvalue` - :ref:`Subsec:cisajscktalt`.
+In Eigenvalue.dat, an eigennumber and an eigenvalue are outputted for each line.In zvo\_cisajs\_eigen\_xx.dat and zvo\_cisajscktalt\_eigen\_xx.dat,one-body Green's functions and two-body Green's functions are outputted for each eigennumber. In zvo\_phys\_Nup4\_Ndown4.dat, physical quantities, such as the expected values of energy and the doublon are outputted. The details of these files are shown in :ref:`Subsec:eigenvalue` - :ref:`Subsec:cisajscktalt`.
 
 Other tutorials
 ---------------

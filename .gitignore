@@ -78,7 +78,8 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+doc/en/build/
+doc/ja/build/
 
 # PyBuilder
 target/
@@ -138,8 +139,6 @@ cmake-build-debug
 tool/fourier
 tool/corplot
 tool/cTPQ
-doc/fourier/en/_build/
-doc/fourier/ja/_build/
 
 #p4merge
 *.orig

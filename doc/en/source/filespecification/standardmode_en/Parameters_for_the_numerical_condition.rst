@@ -53,7 +53,7 @@ Parameters for the numerical condition
       The seed of the random generator is given by this parameter and
       the random vector is used as the initial vector.
 
-   See Sec. :ref:`Ch:Algorithm` for details of setting an
+   See :ref:`Ch:Algorithm` for details of setting an
    initial vector.
 
 *  ``exct``
@@ -131,7 +131,7 @@ Parameters for the numerical condition
    :math:`i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4`.
 
    In a spin system, the indices are specified as those of the
-   Bogoliubov representation (see Sec. :ref:`Sec:sec_bogoliubov_rep` ).
+   Bogoliubov representation (see :ref:`Sec:sec_bogoliubov_rep` ).
 
 *  ``InitialVecType``
 

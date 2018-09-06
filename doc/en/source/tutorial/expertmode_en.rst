@@ -17,7 +17,7 @@ the tutorial at the previous section was performed.
 File list for input files
 -------------------------
 
-In namelist.def, the types of input files and filenames are defined as shown below. By writing the keyword and filenames at each line, the types of files are distinguished. The details of namelist.def are shown in Sec. :ref:`Subsec:InputFileList`. ::
+In namelist.def, the types of input files and filenames are defined as shown below. By writing the keyword and filenames at each line, the types of files are distinguished. The details of namelist.def are shown in :ref:`Subsec:InputFileList`. ::
 
         ModPara  modpara.def
         LocSpin  locspn.def
@@ -52,7 +52,7 @@ The calculation mode is set in a CalcMod file (in this sample file, calcmod.def)
  InitialVecType   0
  InputEigenVec   0
   
-We select a calculation method in CalcType and a target model in CalcModel. In this sample, we set the Lanczos method as a calculation method and the target model as the spin system (canonical ensemble). The details of a CalcMod file are shown in Sec. :ref:`Subsec:calcmod`.
+We select a calculation method in CalcType and a target model in CalcModel. In this sample, we set the Lanczos method as a calculation method and the target model as the spin system (canonical ensemble). The details of a CalcMod file are shown in :ref:`Subsec:calcmod`.
 
 **Setting parameters for calculation**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -82,7 +82,7 @@ The parameters for the calculation are set in a ModPara file(in this sample, mod
  OmegaMin       -7.200000000000000e+01    4.000000000000000e-02    
  OmegaOrg       0.0 0.0
   
-In this file, we set the parameters for the calculation, such as the site number, the total number of conduction electrons, the total :math:`S_z` and the number of Lanczos steps. The details of the ModPara file are shown in Sec. :ref:`Subsec:modpara`.
+In this file, we set the parameters for the calculation, such as the site number, the total number of conduction electrons, the total :math:`S_z` and the number of Lanczos steps. The details of the ModPara file are shown in :ref:`Subsec:modpara`.
   
 **Setting positions of localized spins**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -102,7 +102,7 @@ The positions :math:`S` of the localized spins are defined by a LocSpin file (in
      5      1
  ...
  
-When CalcModel in a CalcMod file is set as the spin system, all the sites are automatically treated as localized spins. The details of a LocSpin file are shown in Sec. :ref:`Subsec:locspn`.
+When CalcModel in a CalcMod file is set as the spin system, all the sites are automatically treated as localized spins. The details of a LocSpin file are shown in :ref:`Subsec:locspn`.
 
 Files for constructing Hamiltonian
 ----------------------------------
@@ -143,7 +143,7 @@ We can use this term when an electric magnetic field is added in the spin system
  1 0 1 0 -0.25 0
  1 1 1 1 0.25 0
  
-The details for a Trans file are shown in Sec. :ref:`Subsec:Trans`.
+The details for a Trans file are shown in :ref:`Subsec:Trans`.
 
 **Setting general two-body interactions**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -188,7 +188,7 @@ in the format of an InterAll file. The other terms can be written as follows. ::
     i     0     i     1    i+1     1    i+1     0   1.000000  0.000000
     i     1     i     0    i+1     0    i+1     1   1.000000  0.000000
   
-There are other file formats for constructing the Hamiltonian. The details of the input formats of two-body interactions are shown in Secs. :ref:`Subsec:interall` - :ref:`Subsec:pairlift`.
+There are other file formats for constructing the Hamiltonian. The details of the input formats of two-body interactions are shown in :ref:`Subsec:interall` - :ref:`Subsec:pairlift`.
 
 Setting output components
 -------------------------
@@ -212,7 +212,7 @@ In a OneBodyG file (in this sample, greenone.def), the indices of :math:`\langle
     2     0     2     0
  ...
  
-The details of the input formats of a OneBodyG file are shown in Sec. :ref:`Subsec:onebodyg`.
+The details of the input formats of a OneBodyG file are shown in :ref:`Subsec:onebodyg`.
 
 **Setting indices of two-body Green's functions**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -231,7 +231,7 @@ In the TwoBodyG file (in this sample, greentwo.def), the indices of :math:`\lang
     0     0     0     0     2     0     2     0
  ...
 
-The details of the input formats of the TwoBodyG file are shown in Sec. :ref:`Subsec:twobodyg`.
+The details of the input formats of the TwoBodyG file are shown in :ref:`Subsec:twobodyg`.
 
 Running
 -------
