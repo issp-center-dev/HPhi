@@ -1,0 +1,71 @@
+.. _Ch:HowToStandard:
+
+.. highlight:: none
+
+スタンダードモード用入力ファイル
+================================
+
+スタンダードモード用入力ファイルは次のような格好をしています。
+::
+
+    W = 2
+     L = 4
+     model = "spin"
+     method = "Lanczos"
+
+     lattice = "triangular lattice"
+    //mu = 1.0
+    // t = -1.0
+    // t' = -0.5
+    // U = 8.0
+    //V = 4.0
+    //V'=2.0
+    J = -1.0
+    J'=-0.5
+    // nelec = 8
+    2Sz = 0
+
+| **大まかなルールは次のとおりです。**
+
+*  各行にはひと組ずつキーワード(\ ``=``\ の前)と
+   パラメーター(\ ``=``\ の後)が書かれており間は\ ``=``\ で区切られています。
+
+*  各キーワードは順不同に記述できます。
+
+*  空白行、または\ ``//``\ で始まる行(コメントアウト)は読み飛ばされます。
+
+*  各キーワード、パラメーターの大文字\ :math:`\cdot`\ 小文字は区別されません。
+   ダブルクオート、空白は無視されます。
+
+*  必ず指定しなければいけないパラメーター、
+   指定しない場合デフォルト値が使われるパラメーター、
+   (他のパラメーターの組み合わせによっては)使われないパラメーターが存在します。
+   使われないパラメーターが指定された場合にはプログラムは終了し、
+   入力ファイルをチェックするようにというメッセージが表示されます。
+
+*  | There are three types of parameters.
+   | 1. 必ず指定しなければいけないパラメーター (if not, :math:`{\mathcal H}\Phi` will
+     stop with error messages),
+   | 2. 指定しない場合デフォルト値が使われるパラメーター (if not
+     specified, default values are used),
+   | 3. 使われないパラメーター (使われないパラメーターが指定された場合にはプログラムは終了し、
+   | 入力ファイルをチェックするようにというメッセージが表示されます。)
+   | An example of type 3 is the transfer :math:`t` parameter for the
+   |  Heisenberg spin system. If you choose “model=spin", you should not
+   |  specify “\ :math:`t`".
+
+次に各キーワードの説明をします。
+
+.. toctree::
+   :maxdepth: 1
+
+   Parameters_for_the_type_of_calculation_ja
+   Parameters_for_the_lattice_ja
+   Parameters_for_conserved_quantities_ja
+   Parameters_for_the_Hamiltonian_ja
+   Parameters_for_the_numerical_condition
+   Parameters_for_the_dynamical_Greens_function        
+   Parameters_for_time-evolution
+
+
+
