@@ -20,11 +20,15 @@ explained.
    WarningOnTransfer_en
    CalcTimer_en
    TimeKeeper_en
+   sz_TimeKeeper_en
+   Time_CG_EigenVector_en
    energy_en
    Lanczos_Step_en
+   Time_TPQ_Step_en
    Norm_rand_en
    SS_rand_en
    Flct_rand_en
+   Time_TE_Step_en
    Norm_en
    SS_en
    Flct_en
@@ -38,7 +42,3 @@ explained.
    DynamicalGreen_en
    recalcvec_en
    TMcomponents_en
-.. sz_TimeKeeper_en
-.. Time_CG_EigenVector_en
-.. Time_TPQ_Step_en
-.. Time_TE_Step_en

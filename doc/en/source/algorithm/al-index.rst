@@ -9,5 +9,6 @@ Algorithm
    FullDiagonalization_en
    TPQ_en
    DynamicalGreen_en
+   Realtime_en
    Bogoliubov_en
-..   Realtime_en
+
