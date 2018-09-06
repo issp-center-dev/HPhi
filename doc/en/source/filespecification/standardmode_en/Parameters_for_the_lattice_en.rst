@@ -15,7 +15,6 @@ Chain [ :numref:`fig_chap04_1_lattice` (a)]
 
    .. figure:: ../../../../figs/chap04_1_lattice.png
       :name: fig_chap04_1_lattice
-      :scale: 100%
       :alt: Schematic illustration of (a) one-dimensional chain lattice,
             (b) two-dimensional square lattice, and (c) two-dimensional
             triangular lattice. They have :math:`t`, :math:`V`, and :math:`J`
@@ -36,7 +35,6 @@ Chain [ :numref:`fig_chap04_1_lattice` (a)]
 
    .. figure:: ../../../../figs/chap04_1_honeycomb.png
       :name: fig_chap04_1_honeycomb
-      :scale: 100%
       :alt: Schematic illustration of the anisotropic honeycomb lattice.
             The nearest neighbor hopping integral, spin coupling, and offsite
             Coulomb integral depend on the bond direction. Those between the
@@ -49,14 +47,12 @@ Chain [ :numref:`fig_chap04_1_lattice` (a)]
 
    .. figure:: ../../../../figs/kagome.png
       :name: fig_kagome
-      :scale: 100%
       :alt: Schematic illustration of the Kagome lattice.
       
       Schematic illustration of the Kagome lattice. 
 
    .. figure:: ../../../../figs/ladder.png
       :name: fig_ladder
-      :scale: 100%
       :alt: Schematic illustration of the ladder lattice.
       
       Schematic illustration of the ladder lattice. 

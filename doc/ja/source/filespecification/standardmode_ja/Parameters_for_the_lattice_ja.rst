@@ -14,7 +14,6 @@
 
    .. figure:: ../../../../figs/chap04_1_lattice.png
       :name: fig_chap04_1_lattice
-      :scale: 100%
       :alt: (a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図.
             ホッピング積分、オフサイトクーロン積分、スピン結合は、
             再近接サイト間(マゼンタの実線)ではそれぞれ\ :math:`t,V,J`\ となり、
@@ -27,7 +26,6 @@
 
    .. figure:: ../../../../figs/chap04_1_honeycomb.png
       :name: fig_chap04_1_honeycomb
-      :scale: 100%
       :alt: 2次元異方的蜂の巣格子の模式図.
             ホッピング積分、オフサイトクーロン積分、スピン結合は、
             ボンドの方向によって異なります。
@@ -42,14 +40,12 @@
 
    .. figure:: ../../../../figs/kagome.png
       :name: fig_kagome
-      :scale: 100%
       :alt: カゴメ格子の模式図.
       
       カゴメ格子の模式図. 
 
    .. figure:: ../../../../figs/ladder.png
       :name: fig_ladder
-      :scale: 100%
       :alt: 梯子格子の模式図.
       
       梯子格子の模式図.
