@@ -1482,6 +1482,13 @@ shared (tmp_v0, tmp_v1, v1buf)
           tmp_v0[off + 1] += dmv;
           dam_pr += conj(tmp_v1[off + 1]) * dmv;
         }
+        else if (GetOffCompGeneralSpin(j - 1, isite, FinSpin, IniSpin, &off,
+          X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+        {
+          dmv = tmp_v1[j] * conj(tmp_V);
+          tmp_v0[off + 1] += dmv;
+          dam_pr += conj(tmp_v1[off + 1]) * dmv;
+        }
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
