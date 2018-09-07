@@ -22,10 +22,10 @@ Lanczso法を用いた動的グリーン関数の再計算に必要な2つのベ
 -  2行目：\ :math:`[`\ int02\ :math:`]`
 
 -  3行目 - :math:`[`\ int02\ :math:`]`\ +3行:
-   :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`
+   :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`
 
 -  4行目 - 2\ :math:`\times`\ :math:`[`\ int02\ :math:`]`\ +4行:
-   :math:`[`\ double03\ :math:`]`  :math:`[`\ double04\ :math:`]`
+   :math:`[`\ double03\ :math:`]`  :math:`[`\ double04\ :math:`]`
 
 パラメータ
 ^^^^^^^^^^

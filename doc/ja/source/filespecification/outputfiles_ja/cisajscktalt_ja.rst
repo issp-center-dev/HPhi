@@ -35,7 +35,7 @@ TPQ法: ##\_cisajscktalt\_set??step%%.dat
 ファイル形式
 ^^^^^^^^^^^^
 
--  :math:`[`\ int01\ :math:`]`  :math:`[`\ int02\ :math:`]`  :math:`[`\ int03\ :math:`]`  :math:`[`\ int04\ :math:`]`  :math:`[`\ int05\ :math:`]`  :math:`[`\ int06\ :math:`]`  :math:`[`\ int07\ :math:`]`  :math:`[`\ int08\ :math:`]`  :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`
+-  :math:`[`\ int01\ :math:`]`  :math:`[`\ int02\ :math:`]`  :math:`[`\ int03\ :math:`]`  :math:`[`\ int04\ :math:`]`  :math:`[`\ int05\ :math:`]`  :math:`[`\ int06\ :math:`]`  :math:`[`\ int07\ :math:`]`  :math:`[`\ int08\ :math:`]`  :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`
 
 パラメータ
 ^^^^^^^^^^

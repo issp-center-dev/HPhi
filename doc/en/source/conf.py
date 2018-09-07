@@ -125,7 +125,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'userguidedoc'
+htmlhelp_basename = 'userguide_HPhi_endoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -152,7 +152,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('index', 'userguide.tex', u'H\\(\\Phi\\) Documentation',
+    ('index', 'userguide_HPhi_en.tex', u'H\\(\\Phi\\) Documentation',
      u'University of Tokyo', 'manual', 'True'),
 ]
 
@@ -161,7 +161,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'userguide', u'HΦ userguide Documentation',
+    (master_doc, 'userguide_HPhi_en', u'HΦ userguide_HPhi_en Documentation',
      [author], 1)
 ]
 
@@ -172,8 +172,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'userguide', u'HΦ userguide Documentation',
-     author, 'userguide', 'One line description of project.',
+    (master_doc, 'userguide_HPhi_en', u'HΦ userguide_HPhi_en Documentation',
+     author, 'userguide_HPhi_en', 'One line description of project.',
      'Miscellaneous'),
 ]
 

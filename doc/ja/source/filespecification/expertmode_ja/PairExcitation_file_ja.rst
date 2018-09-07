@@ -29,12 +29,12 @@ PairExcitation指定ファイル
 
 -  1行: ヘッダ(何が書かれても問題ありません)。
 
--  2行: [string01] [int01]
+-  2行: [string01] [int01]
 
 -  3-5行: ヘッダ(何が書かれても問題ありません)。
 
 -  6行以降:
-   [int02]  [int03]  [int04]  [int05]  [int06]  [double01]  [double02]
+   [int02]  [int03]  [int04]  [int05]  [int06]  [double01]  [double02]
 
 パラメータ
 ^^^^^^^^^^

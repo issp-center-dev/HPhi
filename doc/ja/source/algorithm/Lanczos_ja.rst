@@ -80,10 +80,10 @@ Lanczos法では、 :math:`\mathcal{K}_{n}({\mathcal H},\vec{x}_{0})`
 :math:`\vec{e}_{i}=V\tilde{\vec{e}}_{i}`\ で与えられます。
 :math:`V`\ を覚えていれば、Lanczos法を行うと同時に固有ベクトル
 を求めることができますが、実際の場合は
-(Hilbert空間の次元:math:`\times`\ Lanczos法の反復回数)の
+(Hilbert空間の次元 :math:`\times` Lanczos法の反復回数)の
 大きさの行列を保持することは不可能です。
 そこで、Lanczos法で固有値を求めた後、
-:math:`\tilde{\vec{e}_{i}}`\ を保存しておき  [2]_、
+:math:`\tilde{\vec{e}_{i}}`\ を保存しておき  [4]_、
 再び同じLanczos法の計算を行い
 求めた\ :math:`V`\ から元の固有ベクトルを再現 するようにしています。
 

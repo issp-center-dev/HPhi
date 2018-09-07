@@ -18,7 +18,7 @@ DynamicalGreen.dat
 ^^^^^^^^^^^^
 
 -  1行目-:
-   :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`  :math:`[`\ double03\ :math:`]`  :math:`[`\ double04\ :math:`]`
+   :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`  :math:`[`\ double03\ :math:`]`  :math:`[`\ double04\ :math:`]`
 
 パラメータ
 ^^^^^^^^^^

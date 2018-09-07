@@ -24,7 +24,7 @@ SpectrumVec指定ファイル
 -  2行目：\ :math:`[`\ int02\ :math:`]`
 
 -  2行目-:
-   :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`
+   :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`
 
 パラメータ
 ^^^^^^^^^^

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# HΦ documentation build configuration file, created by
+# HPhi documentation build configuration file, created by
 # sphinx-quickstart on Tue Nov 21 16:51:35 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -30,9 +30,11 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.mathjax']
+extensions = ['sphinx.ext.mathjax', 'sphinxcontrib.spelling']
 mathjax_pass = ['https://cdnjs.com/']
 math_number_all = True
+spelling_lang='en_US'
+spelling_word_list_filename='spelling_wordlist.txt'
 numfig = True
 
 # locale_dirs = ["locale"]
@@ -53,7 +55,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'HΦ マニュアル'
+project = u'HΦ Documentation'
 copyright = u'2018, The University of Tokyo'
 author = u'The University of Tokyo'
 
@@ -62,7 +64,7 @@ author = u'The University of Tokyo'
 # built documents.
 #
 # The short X.Y version.
-version = '3.1'
+version = '0.1'
 # The full version, including alpha/beta/rc tags.
 release = u''
 
@@ -71,7 +73,7 @@ release = u''
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'ja'
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -123,7 +125,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'userguide_HPhi_jadoc'
+htmlhelp_basename = 'usergude_HPhidoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -150,18 +152,16 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('index', 'userguide_HPhi_ja.tex', u'H\\(\\Phi\\) Documentation',
+    ('index', 'usergude_HPhi_en.tex', u'H\\(\\Phi\\) Documentation',
      u'University of Tokyo', 'manual', 'True'),
 ]
-
-latex_docclass =  {'manual': 'jsbook'}
 
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'userguide_HPhi_ja', u'HΦ ユーザーガイドマニュアル',
+    (master_doc, 'usergude_HPhi_en', u'HΦ usergude_HPhi Documentation',
      [author], 1)
 ]
 
@@ -172,8 +172,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'userguide_HPhi_ja', u'HΦユーザーガイドマニュアル',
-     author, 'userguide_HPhi_ja', 'One line description of project.',
+    (master_doc, 'usergude_HPhi_en', u'HΦ usergude_HPhi Documentation',
+     author, 'usergude_HPhi', 'One line description of project.',
      'Miscellaneous'),
 ]
 

@@ -5,15 +5,14 @@
 Trans指定ファイル
 ~~~~~~~~~~~~~~~~~
 
-| ここではハミルトニアン
+ここではハミルトニアン
 
   .. math::
 
      \begin{aligned}
      H +=-\sum_{ij\sigma_1\sigma2} t_{ij\sigma_1\sigma2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\end{aligned}
 
-
-  に対するTransfer積分\ :math:`t_{ij\sigma_1\sigma2}`\ を指定します。以下にファイル名を記載します。
+に対するTransfer積分\ :math:`t_{ij\sigma_1\sigma2}`\ を指定します。以下にファイル名を記載します。
 
 ::
 
@@ -45,11 +44,11 @@ Trans指定ファイル
 
 -  1行: ヘッダ(何が書かれても問題ありません)。
 
--  2行: [string01] [int01]
+-  2行: [string01] [int01]
 
 -  3-5行: ヘッダ(何が書かれても問題ありません)。
 
--  6行以降: [int02]  [int03]  [int04]  [int05]  [double01]  [double02]
+-  6行以降: [int02]  [int03]  [int04]  [int05]  [double01]  [double02]
 
 パラメータ
 ^^^^^^^^^^
