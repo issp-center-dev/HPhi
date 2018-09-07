@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.1.7. Parameters for time-evolution &#8212; HΦ Documentation  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.2. Input files for Expert mode" href="../expertmode_en/index_expertmode_en.html" />
+    <link rel="prev" title="4.1.6. Parameters for the dynamical Green’s function" href="Parameters_for_the_dynamical_Greens_function.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="parameters-for-time-evolution">
+<h1>4.1.7. Parameters for time-evolution<a class="headerlink" href="#parameters-for-time-evolution" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">dt</span></code></p>
+<p><strong>Type :</strong> Positive Double(Default value : <code class="docutils literal"><span class="pre">0.1</span></code>)</p>
+<p><strong>Description :</strong> The width of time steps.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">PumpType</span></code></p>
+<p><strong>Type :</strong> String (Chosen from <code class="docutils literal"><span class="pre">&quot;Quench&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Pulse</span> <span class="pre">Laser&quot;</span></code>,
+<code class="docutils literal"><span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>, and <code class="docutils literal"><span class="pre">&quot;DC</span> <span class="pre">Laser&quot;</span></code>.Default value : <code class="docutils literal"><span class="pre">&quot;Quench&quot;</span></code>)</p>
+<p><strong>Description :</strong> The type of time-dependent Hamiltonian. For
+<code class="docutils literal"><span class="pre">&quot;Quench&quot;</span></code>, two body operator
+<span class="math">\(U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}\)</span> is
+added. For <code class="docutils literal"><span class="pre">&quot;Pulse</span> <span class="pre">Laser&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>, and <code class="docutils literal"><span class="pre">&quot;DC</span> <span class="pre">Laser&quot;</span></code>, the
+hopping term is modulated as
+<span class="math">\(-\sum_{i j \sigma} t_{i j} \exp[-{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c_{i \sigma} c_{j \sigma}\)</span>,
+where <span class="math">\({\bf A}(t)\)</span> is the vector potential which is defined as
+<span class="math">\({\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]\)</span>,
+<span class="math">\({\bf A}(t) = {\bf A}_0 \sin[\omega (t-t_0)]\)</span>, and
+<span class="math">\({\bf A}(t) = {\bf A}_0 t\)</span> for for <code class="docutils literal"><span class="pre">&quot;Pulse</span> <span class="pre">Laser&quot;</span></code>,
+<code class="docutils literal"><span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>, and <code class="docutils literal"><span class="pre">&quot;DC</span> <span class="pre">Laser&quot;</span></code>, respectively.</p>
+<p><code class="docutils literal"><span class="pre">potential.dat</span></code> file is written for displaying the vector potential
+and the electrical field at each time step.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">Uquench</span></code></p>
+<p><strong>Type :</strong> Double(Default value : <code class="docutils literal"><span class="pre">0.0</span></code>)</p>
+<p><strong>Description :</strong> <span class="math">\(U_{\rm quench}\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">freq</span></code></p>
+<p><strong>Type :</strong> Double(Default value : <code class="docutils literal"><span class="pre">0.1</span></code>)</p>
+<p><strong>Description :</strong> <span class="math">\(\omega\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">tshift</span></code></p>
+<p><strong>Type :</strong> Double(Default value : <code class="docutils literal"><span class="pre">0.0</span></code>)</p>
+<p><strong>Description :</strong> <span class="math">\(t_0\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">tdump</span></code></p>
+<p><strong>Type :</strong> Double (Default value : <code class="docutils literal"><span class="pre">0.1</span></code>)</p>
+<p><strong>Description :</strong> <span class="math">\(t_{\rm dump}\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">VecPotW</span></code>, <code class="docutils literal"><span class="pre">VecPotL</span></code></p>
+<p><strong>Type :</strong> Double (Default value : <code class="docutils literal"><span class="pre">0.0</span></code>)</p>
+<p><strong>Description :</strong> The vector potential (fractional coordinate of the
+reciprocal space) at <span class="math">\(t=t_0\)</span>. The reciprocal lattice vector is
+computed from the direct lattice vector shown in
+<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span class="std std-numref">Fig. 4.2</span></a> ,
+<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> .</p>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_en.html">4.1.1. Parameters for the type of calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_en.html">4.1.2. Parameters for the lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_en.html">4.1.3. Parameters for conserved quantities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_en.html">4.1.4. Parameters for the Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. Parameters for the numerical condition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. Parameters for the dynamical Green’s function</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.7. Parameters for time-evolution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_en/index_outputfiles_en.html">4.3. Output files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html">4. File specification</a><ul>
+  <li><a href="index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a><ul>
+      <li>Previous: <a href="Parameters_for_the_dynamical_Greens_function.html" title="previous chapter">4.1.6. Parameters for the dynamical Green’s function</a></li>
+      <li>Next: <a href="../expertmode_en/index_expertmode_en.html" title="next chapter">4.2. Input files for <em>Expert</em> mode</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/filespecification/standardmode_en/Parameters_for_time-evolution.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

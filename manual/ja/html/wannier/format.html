@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>8.4. ファイルフォーマット &#8212; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="8.5. Contact" href="contact.html" />
+    <link rel="prev" title="8.3. スタンダードモードの入力パラメーター" href="parameter.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>8.4. ファイルフォーマット<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>HPhi/mVMCのスタンダードモードでは以下のファイルを読み込む.
+これらのファイルはRESPACKのプログラムを実行したディレクトリで,
+HPhi/mVMCに付属のユーティリティー <code class="docutils literal"><span class="pre">respack2wan90.py</span></code> を使うと得られる.</p>
+<div class="section" id="id2">
+<h2>8.4.1. ジオメトリー<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ファイル名は <code class="docutils literal"><span class="pre">[CDataFileHeat]_geom.dat</span></code>.
+このファイルを必要に応じて修正することで取り扱う軌道数を変更できる.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>-1.917800 1.917800 6.280100
+1.917800 -1.917800 6.280100
+1.917800 1.917800 -6.280100
+3
+0.000000 -0.000000 -0.000000
+-0.000000 -0.000000 -0.000000
+0.000000 0.000000 0.000000
+</pre></div>
+</div>
+<ul>
+<li><p class="first">1 - 3行目</p>
+<p>結晶並進ベクトル. デカルト座標系で任意単位.</p>
+</li>
+<li><p class="first">4行目</p>
+<p>mVMC/HPhiで取り入れる, ユニットセルあたりの軌道数.
+<code class="docutils literal"><span class="pre">respack2wan90.py</span></code> によって生成すると, Wannier関数の数と同じになる.
+Wannier関数の数よりも少なくすることも可能であり,
+その場合には先頭からこの数の分だけの軌道を取り入れたモデルが構築される.</p>
+</li>
+<li><p class="first">5行目以降</p>
+<p>各軌道のWannier中心 (フラクショナル座標). Fourier変換ツールで使われる.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="coulomb">
+<h2>8.4.2. ホッピング, Coulomb積分, 交換積分<a class="headerlink" href="#coulomb" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ファイル名は <code class="docutils literal"><span class="pre">[CDataFileHeat]_hr.dat</span></code>, <code class="docutils literal"><span class="pre">[CDataFileHeat]_ur.dat</span></code>, <code class="docutils literal"><span class="pre">[CDataFileHeat]_jr.dat</span></code>.
+Wannier90のホッピング積分の形式に従う.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. 概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. チュートリアル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter.html">8.3. スタンダードモードの入力パラメーター</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.4. ファイルフォーマット</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">8.4.1. ジオメトリー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coulomb">8.4.2. ホッピング, Coulomb積分, 交換積分</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul>
+      <li>Previous: <a href="parameter.html" title="前の章へ">8.3. スタンダードモードの入力パラメーター</a></li>
+      <li>Next: <a href="contact.html" title="次の章へ">8.5. Contact</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/wannier/format.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

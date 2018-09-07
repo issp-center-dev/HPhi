@@ -1,0 +1,177 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>8.1. Overview &#8212; HΦ Documentation  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="8.2. Tutorial" href="tutorial.html" />
+    <link rel="prev" title="8. Downfolding with Wannier functions" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="overview">
+<h1>8.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>In this document, we introduce how we compute downfolded models
+with mVMC or <span class="math">\({\mathcal H}\Phi\)</span> in conjunction to
+<a class="reference external" href="https://sites.google.com/view/kazuma7k6r">RESPACK</a>.</p>
+<div class="math" id="equation-wannier/overview:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-wannier/overview:0" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+{\cal H} &amp;=
+\sum_{i, j, \alpha, \beta, \sigma}
+t_{i \alpha j \beta} c_{i \alpha \sigma}^{\dagger} c_{j \beta \sigma}
+\nonumber \\
+&amp;+ \sum_{i, \alpha}
+U_{i \alpha i \alpha} n_{i \alpha \uparrow} n_{j \alpha \downarrow}
++ \sum_{(i, \alpha) &lt; (j, \beta)}
+U_{i \alpha j \beta} n_{i \alpha} n_{j \beta}
+- \sum_{(i, \alpha) &lt; (j, \beta)}
+J_{i \alpha j \beta} (n_{i \alpha \uparrow} n_{j \beta \uparrow}
++ n_{i \alpha \downarrow} n_{j \beta \downarrow})
+\nonumber \\
+&amp;+ \sum_{(i, \alpha) &lt; (j, \beta)}
+J_{i \alpha j \beta} (
+c_{i \alpha \uparrow}^{\dagger} c_{j \beta \downarrow}^{\dagger}
+c_{i \alpha \downarrow} c_{j \beta \uparrow} +
+c_{j \beta \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
+c_{j \beta \downarrow} c_{j \alpha \uparrow} )
+\nonumber \\
+&amp;+ \sum_{(i, \alpha) &lt; (j, \beta)}
+J_{i \alpha j \beta} (
+c_{i \alpha \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
+c_{j \beta \downarrow} c_{j \beta \uparrow} +
+c_{j \beta \uparrow}^{\dagger} c_{j \beta \downarrow}^{\dagger}
+c_{i \alpha \downarrow} c_{i \alpha \uparrow} )
+\end{aligned}\end{split}\]</div>
+<div class="section" id="prerequisite">
+<h2>8.1.1. Prerequisite<a class="headerlink" href="#prerequisite" title="Permalink to this headline">¶</a></h2>
+<p>We compute the Kohn-Sham orbitals with
+<a class="reference external" href="http://www.quantum-espresso.org/">QuantumESPRESSO</a>
+or
+<a class="reference external" href="http://xtapp.cp.is.s.u-tokyo.ac.jp/">xTAPP</a>,
+and obtain the Wannier function, the dielectric function,
+the effective interaction with RESPACK,
+and simulate quantum lattice models with
+mVMC or <span class="math">\({\mathcal H}\Phi\)</span>.
+Therefore, these programs must be available in our machine.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Downfolding with Wannier functions</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.1. Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisite">8.1.1. Prerequisite</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter.html">8.3. Input parameter for Standard mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html">8.4. File format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">8. Downfolding with Wannier functions</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">8. Downfolding with Wannier functions</a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter">8.2. Tutorial</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/wannier/overview.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

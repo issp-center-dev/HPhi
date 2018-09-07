@@ -1,0 +1,179 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>8.1. 概要 &#8212; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="8.2. チュートリアル" href="tutorial.html" />
+    <link rel="prev" title="8. Wannier関数を用いたダウンフォールディング" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>8.1. 概要<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>本資料では,
+<a class="reference external" href="https://sites.google.com/view/kazuma7k6r">RESPACK</a> と
+mVMC および <span class="math">\({\mathcal H}\Phi\)</span> を用いて,
+ダウンフォールディングをした格子モデルを計算する機能について説明する.</p>
+<div class="math" id="equation-wannier/overview:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-wannier/overview:0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+{\cal H} &amp;=
+\sum_{i, j, \alpha, \beta, \sigma}
+t_{i \alpha j \beta} c_{i \alpha \sigma}^{\dagger} c_{j \beta \sigma}
+\nonumber \\
+&amp;+ \sum_{i, \alpha}
+U_{i \alpha i \alpha} n_{i \alpha \uparrow} n_{j \alpha \downarrow}
++ \sum_{(i, \alpha) &lt; (j, \beta)}
+U_{i \alpha j \beta} n_{i \alpha} n_{j \beta}
+- \sum_{(i, \alpha) &lt; (j, \beta)}
+J_{i \alpha j \beta} (n_{i \alpha \uparrow} n_{j \beta \uparrow}
++ n_{i \alpha \downarrow} n_{j \beta \downarrow})
+\nonumber \\
+&amp;+ \sum_{(i, \alpha) &lt; (j, \beta)}
+J_{i \alpha j \beta} (
+c_{i \alpha \uparrow}^{\dagger} c_{j \beta \downarrow}^{\dagger}
+c_{i \alpha \downarrow} c_{j \beta \uparrow} +
+c_{j \beta \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
+c_{j \beta \downarrow} c_{j \alpha \uparrow} )
+\nonumber \\
+&amp;+ \sum_{(i, \alpha) &lt; (j, \beta)}
+J_{i \alpha j \beta} (
+c_{i \alpha \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
+c_{j \beta \downarrow} c_{j \beta \uparrow} +
+c_{j \beta \uparrow}^{\dagger} c_{j \beta \downarrow}^{\dagger}
+c_{i \alpha \downarrow} c_{i \alpha \uparrow} )
+\end{aligned}\end{split}\]</div>
+<div class="section" id="id2">
+<h2>8.1.1. 要件<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference external" href="http://www.quantum-espresso.org/">QuantumESPRESSO</a>
+もしくは
+<a class="reference external" href="http://xtapp.cp.is.s.u-tokyo.ac.jp/">xTAPP</a>
+を用いてKohn-Sham軌道を用いたのちに,
+RESPACKでWannier関数, 誘電関数, 有効相互作用を計算し,
+それらを用いて構成した格子モデルを
+mVMC もしくは <span class="math">\({\mathcal H}\Phi\)</span>
+で計算する.
+したがってそれらのプログラムが使用可能である必要がある.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.1. 概要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">8.1.1. 要件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. チュートリアル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter.html">8.3. スタンダードモードの入力パラメーター</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html">8.4. ファイルフォーマット</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul>
+      <li>Previous: <a href="index.html" title="前の章へ">8. Wannier関数を用いたダウンフォールディング</a></li>
+      <li>Next: <a href="tutorial.html" title="次の章へ">8.2. チュートリアル</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/wannier/overview.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,224 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.2. エキスパートモード用入力ファイル &#8212; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="next" title="4.2.1. 入力ファイル指定用ファイル" href="List_file_for_the_input_files_ja.html" />
+    <link rel="prev" title="4.1.7. 実時間発展計算に関するパラメーター" href="../standardmode_ja/Parameters_for_time-evolution.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ch-howtoexpert">
+<span id="id1"></span><h1>4.2. エキスパートモード用入力ファイル<a class="headerlink" href="#ch-howtoexpert" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><span class="math">\({\mathcal H}\Phi\)</span> のエキスパートモードで使用する入力ファイル(*def)に関して説明します。
+入力ファイルの種別は以下の4つで分類されます。</p>
+<ol class="arabic">
+<li><p class="first">List:</p>
+<p>キーワード指定なし: 使用するinput fileの名前のリストを書きます。なお、ファイル名は任意に指定することができます。</p>
+</li>
+<li><p class="first">Basic parameters:</p>
+<p><strong>CalcMod</strong>: 計算モードを指定するパラメーターを設定します。</p>
+<p><strong>ModPara</strong>: 計算時に必要な基本的なパラメーター(サイトの数、電子数、Lanczosステップを何回やるかなど)を設定します。</p>
+<p><strong>LocSpin</strong>: 局在スピンの位置を設定します(近藤模型でのみ利用)。</p>
+</li>
+<li><p class="first">Hamiltonian:</p>
+<p><span class="math">\({\mathcal H}\Phi\)</span> のHamiltonianを電子系の表式により指定します。
+具体的には以下のファイルで指定されます。</p>
+<div class="line-block">
+<div class="line"><strong>Trans</strong>:
+<span class="math">\(c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\)</span>で表される一体項を指定します。</div>
+<div class="line"><strong>InterAll</strong>:
+<span class="math">\(c_ {i \sigma_1}^{\dagger}c_{j\sigma_2}c_{k \sigma_3}^{\dagger}c_{l \sigma_4}\)</span>で表される一般二体相互作用を指定します。</div>
+</div>
+<div class="line-block">
+<div class="line">なお、使用頻度の高い相互作用に関しては下記のキーワードで指定することも可能です。</div>
+<div class="line"><strong>CoulombIntra</strong>:
+<span class="math">\(n_ {i \uparrow}n_{i \downarrow}\)</span>で表される相互作用を指定します(<span class="math">\(n_{i \sigma}=c_{i\sigma}^{\dagger}c_{i\sigma}\)</span>)。</div>
+<div class="line"><strong>CoulombInter</strong>:
+<span class="math">\(n_ {i}n_{j}\)</span>で表される相互作用を指定します(<span class="math">\(n_i=n_{i\uparrow}+n_{i\downarrow}\)</span>)。</div>
+<div class="line"><strong>Hund</strong>:
+<span class="math">\(n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}\)</span>で表される相互作用を指定します。</div>
+<div class="line"><strong>PairHop</strong>:
+<span class="math">\(c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{i \downarrow}^{\dagger}c_{j  \downarrow}\)</span>で表される相互作用を指定します。</div>
+<div class="line"><strong>Exchange</strong>:
+<span class="math">\(S_i^+ S_j^-\)</span>で表される相互作用を指定します。</div>
+<div class="line"><strong>Ising</strong>: <span class="math">\(S_i^z S_j^z\)</span>で表される相互作用を指定します。</div>
+<div class="line"><strong>PairLift</strong>:
+<span class="math">\(c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}\)</span>で表される相互作用を指定します。</div>
+</div>
+</li>
+<li><p class="first">Output:</p>
+<div class="line-block">
+<div class="line"><strong>OneBodyG</strong> :出力する一体Green関数を指定します。
+<span class="math">\(\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle\)</span>が出力されます。</div>
+<div class="line"><strong>TwoBodyG</strong> :出力する二体Green関数を指定します。</div>
+</div>
+<p><span class="math">\(\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k \sigma_3}c_{l\sigma_4}\rangle\)</span>
+が出力されます。</p>
+</li>
+</ol>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="List_file_for_the_input_files_ja.html">4.2.1. 入力ファイル指定用ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CalcMod_file_ja.html">4.2.2. CalcModファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ModPara_file_ja.html">4.2.3. ModParaファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LocSpin_file_ja.html">4.2.4. LocSpin指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Trans_file_ja.html">4.2.5. Trans指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="InterAll_file_ja.html">4.2.6. InterAll指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CoulombIntra_file_ja.html">4.2.7. CoulombIntra指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CoulombInter_file_ja.html">4.2.8. CoulombInter指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hund_file_ja.html">4.2.9. Hund指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PairHop_file_ja.html">4.2.10. PairHop指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Exchange_file_ja.html">4.2.11. Exchange指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ising_file_ja.html">4.2.12. Ising指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PairLift_file_ja.html">4.2.13. PairLift指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OneBodyG_file_ja.html">4.2.14. OneBodyG指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TwoBodyG_file_ja.html">4.2.15. TwoBodyG指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SingleExcitation_file_ja.html">4.2.16. SingleExcitation指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PairExcitation_file_ja.html">4.2.17. PairExcitation指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SpectrumVec_File_ja.html">4.2.18. SpectrumVec指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OneBodyTE_File_ja.html">4.2.19. OneBodyTE指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TwoBodyTE_File_ja.html">4.2.20. TwoBodyTE指定ファイル</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.2. エキスパートモード用入力ファイル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="List_file_for_the_input_files_ja.html">4.2.1. 入力ファイル指定用ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CalcMod_file_ja.html">4.2.2. CalcModファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModPara_file_ja.html">4.2.3. ModParaファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="LocSpin_file_ja.html">4.2.4. LocSpin指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Trans_file_ja.html">4.2.5. Trans指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterAll_file_ja.html">4.2.6. InterAll指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CoulombIntra_file_ja.html">4.2.7. CoulombIntra指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CoulombInter_file_ja.html">4.2.8. CoulombInter指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hund_file_ja.html">4.2.9. Hund指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairHop_file_ja.html">4.2.10. PairHop指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Exchange_file_ja.html">4.2.11. Exchange指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Ising_file_ja.html">4.2.12. Ising指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairLift_file_ja.html">4.2.13. PairLift指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="OneBodyG_file_ja.html">4.2.14. OneBodyG指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TwoBodyG_file_ja.html">4.2.15. TwoBodyG指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SingleExcitation_file_ja.html">4.2.16. SingleExcitation指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairExcitation_file_ja.html">4.2.17. PairExcitation指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpectrumVec_File_ja.html">4.2.18. SpectrumVec指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="OneBodyTE_File_ja.html">4.2.19. OneBodyTE指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TwoBodyTE_File_ja.html">4.2.20. TwoBodyTE指定ファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_ja/index_outputfiles_ja.html">4.3. 出力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
+      <li>Previous: <a href="../standardmode_ja/Parameters_for_time-evolution.html" title="前の章へ">4.1.7. 実時間発展計算に関するパラメーター</a></li>
+      <li>Next: <a href="List_file_for_the_input_files_ja.html" title="次の章へ">4.2.1. 入力ファイル指定用ファイル</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/filespecification/expertmode_ja/index_expertmode_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,277 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>7.3. ファイルフォーマット &#8212; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="7.4. greenr2k ユーティリティの動作について" href="util.html" />
+    <link rel="prev" title="7.2. チュートリアル" href="tutorial.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fileformat">
+<span id="id1"></span><h1>7.3. ファイルフォーマット<a class="headerlink" href="#fileformat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="k">
+<span id="geometry"></span><h2>7.3.1. サイトの位置と軌道のインデックス, <em>k</em> 点<a class="headerlink" href="#k" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">チュートリアル</span></a> でのファイル名は <code class="docutils literal"><span class="pre">geometry.dat</span></code> .
+各サイトの位置と軌道の情報は
+mVMC/<span class="math">\({\mathcal H}\Phi\)</span> のスタンンダードモードを用いた場合には
+自動的に生成される.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>1.000000000000000e+00     0.000000000000000e+00     0.000000000000000e+00 (1)
+0.000000000000000e+00     1.000000000000000e+00     0.000000000000000e+00 (1)
+0.000000000000000e+00     0.000000000000000e+00     1.000000000000000e+00 (1)
+0.000000000000000e+00     0.000000000000000e+00     0.000000000000000e+00 (2)
+2 2 0        (3)
+-2 2 0       (3)
+0 0 1        (3)
+0 0 0 0      (4)
+-1 1 0 0     (4)
+0 1 0 0      (4)
+1 1 0 0      (4)
+-1 2 0 0     (4)
+0 2 0 0      (4)
+1 2 0 0      (4)
+0 3 0 0      (4)
+4 20         (5)
+G 0 0 0      (6)
+X 0.5 0 0    (6)
+M 0.5 0.5 0  (6)
+G 0 0 0      (6)
+16 16 1      (7)
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>単位格子ベクトル. 任意の単位 (スタンダードモードで自動生成).</li>
+<li>1体項がシミュレーションセルの境界を跨いだときに付く位相(単位degree)
+(スタンダードモードで自動生成)</li>
+<li>シミュレーションセルの形状を指定する三本の整数ベクトル.
+スタンダードモードの入力パラメーター <code class="docutils literal"><span class="pre">a0W</span></code>, <code class="docutils literal"><span class="pre">a0L</span></code>, <code class="docutils literal"><span class="pre">a0H</span></code>, <code class="docutils literal"><span class="pre">a1W</span></code>…
+に対応する(スタンダードモードで自動生成).</li>
+<li>各サイトの座標結晶並進ベクトル(指数)および内部座標(軌道)のインデックス
+(スタンダードモードで自動生成).</li>
+<li><em>k</em> パスのノード(対称性の高い点)の数と, ノード間の <em>k</em> 点の分割数.</li>
+<li><em>k</em> ノードのラベルとフラクショナル座標</li>
+<li>運動量分布関数のFermiSurferファイルを作成する時の <em>k</em> グリッド</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>7.3.2. サイト表示の1体および2体相関関数<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="greenindex">
+<span id="id3"></span><h3>計算する相関関数のインデックスの指定<a class="headerlink" href="#greenindex" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>mVMC/<span class="math">\({\mathcal H}\Phi\)</span> で計算する相関関数を指定する.
+スタンダードモードを使った場合には自動的に生成される.
+総合的な説明はmVMC/<span class="math">\({\mathcal H}\Phi\)</span> のマニュアルを参照.
+<a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">チュートリアル</span></a> でのファイル名は <code class="docutils literal"><span class="pre">greenone.def</span></code> (1体)および <code class="docutils literal"><span class="pre">greentwo.def</span></code> (2体)である.</p>
+<p><a class="reference internal" href="overview.html#supported"><span class="std std-ref">対応する量</span></a> にある相関関数を計算するためには,
+以下のようにインデックスを指定する必要がある.</p>
+<ul>
+<li><p class="first"><span class="math">\(\langle {\hat c}_{{\bf k}\alpha\uparrow}^{\dagger} {\hat c}_{{\bf k}\beta\uparrow}\rangle\)</span></p>
+<p><span class="math">\(\langle {\hat c}_{{\bf 0}\alpha\uparrow}^{\dagger} {\hat c}_{{\bf R}\beta\uparrow}\rangle\)</span>
+に対して, <span class="math">\({\bf R}\)</span> が全ての単位胞,
+<span class="math">\(\alpha\)</span> および <span class="math">\(\beta\)</span> がそれぞれ全ての軌道を網羅するようにする.</p>
+</li>
+<li><p class="first"><span class="math">\(\langle {\hat c}_{{\bf k}\alpha\downarrow}^{\dagger} {\hat c}_{{\bf k}\beta\downarrow}\rangle\)</span></p>
+<p><span class="math">\(\langle {\hat c}_{{\bf 0}\alpha\downarrow}^{\dagger} {\hat c}_{{\bf R}\beta\downarrow}\rangle\)</span>
+に対して, <span class="math">\({\bf R}\)</span> が全ての単位胞,
+<span class="math">\(\alpha\)</span> および <span class="math">\(\beta\)</span> がそれぞれ全ての軌道を網羅するようにする.</p>
+</li>
+<li><p class="first"><span class="math">\(\langle {\hat \rho}_{{\bf k}\alpha} {\hat \rho}_{{\bf k}\beta}\rangle\)</span> および
+<span class="math">\(\langle {\hat S}_{{\bf k}\alpha}^{z} {\hat S}_{{\bf k}\beta}^{z} \rangle\)</span></p>
+<p><span class="math">\(\langle {\hat c}_{{\bf 0}\alpha\sigma}^{\dagger} {\hat c}_{{\bf 0}\alpha\sigma} {\hat c}_{{\bf R}\beta \sigma'}^{\dagger} {\hat c}_{{\bf R}\beta \sigma'}\rangle\)</span>
+に対して, <span class="math">\({\bf R}\)</span> が全ての単位胞,
+<span class="math">\(\alpha\)</span> および <span class="math">\(\beta\)</span> がそれぞれ全ての軌道を網羅し,
+<span class="math">\(\sigma\)</span> および <span class="math">\(\sigma'\)</span> が <span class="math">\(\uparrow\)</span>, <span class="math">\(\downarrow\)</span> を網羅するようにする.</p>
+</li>
+<li><p class="first"><span class="math">\(\langle {\hat S}_{{\bf k}\alpha}^{+} {\hat S}_{{\bf k}\beta}^{-} \rangle\)</span> および
+<span class="math">\(\langle {\hat {\bf S}}_{{\bf k}\alpha} \cdot {\hat {\bf S}}_{{\bf k}\beta} \rangle\)</span></p>
+<p><span class="math">\({\mathcal H}\Phi\)</span> の場合は
+<span class="math">\(\langle {\hat c}_{{\bf 0}\alpha\sigma}^{\dagger} {\hat c}_{{\bf 0}\alpha-\sigma} {\hat c}_{{\bf R}\beta -\sigma}^{\dagger} {\hat c}_{{\bf R}\beta \sigma}\rangle\)</span>
+に対して, <span class="math">\({\bf R}\)</span> が全ての単位胞,
+<span class="math">\(\alpha\)</span> および <span class="math">\(\beta\)</span> がそれぞれ全ての軌道を網羅し,
+<span class="math">\(\sigma\)</span> が <span class="math">\(\uparrow\)</span>, <span class="math">\(\downarrow\)</span> を網羅するようにする.
+mVMC の場合は
+<span class="math">\(\langle {\hat c}_{{\bf 0}\alpha\sigma}^{\dagger} {\hat c}_{{\bf R}\beta \sigma} {\hat c}_{{\bf R}\beta -\sigma}^{\dagger} {\hat c}_{{\bf 0}\alpha-\sigma}\rangle\)</span>
+に対して, <span class="math">\({\bf R}\)</span> が全ての単位胞,
+<span class="math">\(\alpha\)</span> および <span class="math">\(\beta\)</span> がそれぞれ全ての軌道を網羅し,
+<span class="math">\(\sigma\)</span> が <span class="math">\(\uparrow\)</span>, <span class="math">\(\downarrow\)</span> を網羅するようにする.
+いずれの場合も演算子の順番に注意にすること.</p>
+</li>
+</ul>
+<p>スタンダードモードのデフォルト(<code class="docutils literal"><span class="pre">outputmode=&quot;corr&quot;</span></code>)では,
+自動的に上記のインデックスが指定されるため, 特に気にする必要はない.</p>
+</div>
+<div class="section" id="zvocisajs">
+<span id="id4"></span><h3>サイト表示の1体および2体相関関数の計算結果<a class="headerlink" href="#zvocisajs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p><a class="reference internal" href="#greenindex"><span class="std std-ref">計算する相関関数のインデックスの指定</span></a> で指定したインデックスを持つ相関関数が
+mVMC/<span class="math">\({\mathcal H}\Phi\)</span> によって計算され,
+ファイルに出力される.
+総合的な説明はmVMC/<span class="math">\({\mathcal H}\Phi\)</span> のマニュアルを参照.
+<a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">チュートリアル</span></a> でのファイル名は
+<code class="docutils literal"><span class="pre">output/zvo_cisajs_001.dat</span></code> および <code class="docutils literal"><span class="pre">output/zvo_cisajscktalt_001.dat</span></code> (mVMC),
+<code class="docutils literal"><span class="pre">output/zvo_cisajs.dat</span></code> および <code class="docutils literal"><span class="pre">output/zvo_cisajscktalt.dat</span></code> (<span class="math">\({\mathcal H}\Phi\)</span>).</p>
+<p><code class="docutils literal"><span class="pre">greenr2k</span></code> ユーティリティはこのファイルを読み込んで計算を行う.
+この時, (スタンダードモードを使わず自分でインデックスを指定するなどにより)
+<a class="reference internal" href="#greenindex"><span class="std std-ref">計算する相関関数のインデックスの指定</span></a> で挙げたインデックスの相関関数のなかで欠けているものがある場合,
+それを 0 として扱う.</p>
+</div>
+</div>
+<div class="section" id="zvocorr">
+<span id="id5"></span><h2>7.3.3. <em>k</em> パス上での相関関数<a class="headerlink" href="#zvocorr" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Fourier変換された相関関数(波数表示)が入っている.
+ユーティリイティ <code class="docutils literal"><span class="pre">greenr2k</span></code> によって生成される.
+<a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">チュートリアル</span></a> でのファイル名は <code class="docutils literal"><span class="pre">output/zvo_corr_eigen0.dat</span></code> である.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span># k-length[1]
+# Orbital  1 to Orbital  1
+#  UpUp[   2,   3] (Re. Im.) DownDown[   4,   5]
+#  Density[   6,   7] SzSz[   8,   9] S+S-[  10,  11] S.S[  12,  13]
+0.00000E+00    0.88211E+00   -0.50000E-09    0.88211E+00    0.40000E-09 ...
+0.25000E-01    0.87976E+00   -0.46625E-09    0.87976E+00    0.42882E-09 ...
+0.50000E-01    0.87276E+00   -0.42841E-09    0.87276E+00    0.45201E-09 ...
+:                                                               :
+</pre></div>
+</div>
+<p>はじめに各カラムに出力されている量の説明がコメントとして書かれ,
+それに続いて <em>k</em> 点の距離とそれぞれの相関関数の実部と虚部が書かれている.</p>
+</div>
+<div class="section" id="gnuplot">
+<span id="id6"></span><h2>7.3.4. gnuplot スクリプト<a class="headerlink" href="#gnuplot" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">greenr2k</span></code> にて作成される.
+gnuplotでこれを読み込むことでグラフ中に <em>k</em> 点のラベルを表示する.
+ファイル名は <code class="docutils literal"><span class="pre">kpath.gp</span></code> である.</p>
+<div class="highlight-gnuplot"><div class="highlight"><pre><span></span><span class="k">set</span> <span class="nb">xtics</span> <span class="p">(</span><span class="s">&#39;G&#39;</span>     <span class="mf">0.00000</span><span class="o">,</span> <span class="s">&#39;X&#39;</span>     <span class="mf">0.50000</span><span class="o">,</span> <span class="s">&#39;M&#39;</span>     <span class="mf">1.00000</span><span class="o">,</span> <span class="s">&#39;G&#39;</span>    <span class="mf">1.70711</span><span class="p">)</span>
+<span class="k">set</span> <span class="nb">ylabel</span> <span class="s">&#39;Correlation function&#39;</span>
+<span class="k">set</span> <span class="nb">grid</span> <span class="n">xtics</span> <span class="n">lt</span> <span class="mi">1</span> <span class="n">lc</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fermisurfer">
+<span id="correlation"></span><h2>7.3.5. 運動量分布関数の等値面をプロットするためのFermiSurferファイル<a class="headerlink" href="#fermisurfer" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">greenr2k</span></code> にて作成される.
+ファイル名は <code class="docutils literal"><span class="pre">output/zvo_corr_eigen0.dat.frmsf</span></code></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. 相関関数のFourier変換ユーティリティー</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">7.1. 概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">7.2. チュートリアル</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.3. ファイルフォーマット</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#k">7.3.1. サイトの位置と軌道のインデックス, <em>k</em> 点</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">7.3.2. サイト表示の1体および2体相関関数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zvocorr">7.3.3. <em>k</em> パス上での相関関数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gnuplot">7.3.4. gnuplot スクリプト</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fermisurfer">7.3.5. 運動量分布関数の等値面をプロットするためのFermiSurferファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="util.html">7.4. <code class="docutils literal"><span class="pre">greenr2k</span></code> ユーティリティの動作について</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html">7.5. Contact</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">7. 相関関数のFourier変換ユーティリティー</a><ul>
+      <li>Previous: <a href="tutorial.html" title="前の章へ">7.2. チュートリアル</a></li>
+      <li>Next: <a href="util.html" title="次の章へ">7.4. <code class="docutils literal"><span class="pre">greenr2k</span></code> ユーティリティの動作について</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/fourier/format.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
