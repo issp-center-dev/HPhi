@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['s2',['S2',['../struct_std_int_list.html#a211b3f4b3da1f5e1692f32246636ada1',1,'StdIntList::S2()'],['../struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d',1,'PhysList::s2()']]],
+  ['s2',['s2',['../struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d',1,'PhysList::s2()'],['../struct_std_int_list.html#a211b3f4b3da1f5e1692f32246636ada1',1,'StdIntList::S2()']]],
   ['sdim',['sdim',['../struct_check_list.html#a617d47f691e1ea504faabb55c45cb183',1,'CheckList']]],
   ['setconvergencefactor',['SetConvergenceFactor',['../readdef_8c.html#a961b43e36e61cc013d0188dc268707a2',1,'readdef.c']]],
   ['setdiagonalchemi',['SetDiagonalChemi',['../diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b',1,'diagonalcalc.c']]],

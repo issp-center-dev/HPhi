@@ -1,7 +1,8 @@
 var searchData=
 [
   ['read_5fsz',['Read_sz',['../sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77',1,'sz.c']]],
-  ['read_5fw90',['read_W90',['../_wannier90_8c.html#a5162540c63ca30a8af1db8f5b45bb194',1,'Wannier90.c']]],
+  ['read_5fw90',['read_W90',['../_wannier90_8c.html#ab2f5f0678f7cdea78c40723b510d4d01',1,'Wannier90.c']]],
+  ['read_5fw90_5fquery',['read_W90_query',['../_wannier90_8c.html#aa3d8ee89c31edab9c006d9afab2aff3d',1,'Wannier90.c']]],
   ['readcalcmodfile',['ReadcalcmodFile',['../readdef_8c.html#ab8b765c6b13b09923368a2c8bec319ca',1,'readdef.c']]],
   ['readdeffileerror',['ReadDefFileError',['../readdef_8c.html#a21479192d729f0d76654f014b63b6d7a',1,'readdef.c']]],
   ['readdeffileidxpara',['ReadDefFileIdxPara',['../readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30',1,'readdef.c']]],

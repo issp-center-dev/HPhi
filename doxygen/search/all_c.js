@@ -9,6 +9,7 @@ var searchData=
   ['maketedtransfer',['MakeTEDTransfer',['../_calc_by_t_e_m_8c.html#a406cb643e48539a16d8d3fa2e35e4433',1,'CalcByTEM.c']]],
   ['matrixlapack_2ec',['matrixlapack.c',['../matrixlapack_8c.html',1,'']]],
   ['matrixlapack_5fmagma_2ec',['matrixlapack_magma.c',['../matrixlapack__magma_8c.html',1,'']]],
+  ['matrixscalapack_2ec',['matrixscalapack.c',['../matrixscalapack_8c.html',1,'']]],
   ['max_5fmem',['max_mem',['../struct_check_list.html#aaf992da196c21c87c8850bb10f0d40b2',1,'CheckList']]],
   ['maxmpi_5fd',['MaxMPI_d',['../wrapper_m_p_i_8c.html#ad6b9f4d67bf6d08880e90b54291b2eee',1,'wrapperMPI.c']]],
   ['maxmpi_5fli',['MaxMPI_li',['../wrapper_m_p_i_8c.html#a0de87e095a8bdcba6824486057417362',1,'wrapperMPI.c']]],

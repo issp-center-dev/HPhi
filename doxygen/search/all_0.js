@@ -12,6 +12,7 @@ var searchData=
   ['antiperiod',['AntiPeriod',['../struct_std_int_list.html#a54c23d4cfdc2a3bf82245f54aa6a55e5',1,'StdIntList']]],
   ['arrayj',['arrayJ',['../struct_boost_list.html#a5adcc3ddfbc1d8b24dc0516bdfd6f2fe',1,'BoostList']]],
   ['at',['At',['../struct_std_int_list.html#a37bb2cf2b82d3f2a7b597e2f15d726d3',1,'StdIntList']]],
+  ['add_20new_20calculation_20mode_20into_20calcmod',['Add new calculation mode into calcmod',['../page_addcalcmod.html',1,'']]],
   ['add_20new_20input_2dfile_20for_20expert_20mode',['Add new input-file for Expert mode',['../page_addexpert.html',1,'']]],
   ['add_20new_20parameter_20into_20modpara',['Add new parameter into modpara',['../page_addmodpara.html',1,'']]],
   ['add_20new_20lattice_20model_20into_20standard_20mode',['Add new lattice model into Standard mode',['../page_addstandard.html',1,'']]],
