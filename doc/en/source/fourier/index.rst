@@ -4,7 +4,12 @@
    contain the root `toctree` directive.
 
 .. _fourier:   
-   
+
+.. raw:: latex
+
+   \appendix 
+
+
 HPhi/mVMC Fourier-Transformation utility
 ========================================
 

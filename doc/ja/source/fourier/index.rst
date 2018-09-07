@@ -4,7 +4,11 @@
    contain the root `toctree` directive.
 
 .. _fourier:
-   
+
+.. raw:: latex
+
+   \appendix 
+
 相関関数のFourier変換ユーティリティー
 =====================================
 
