@@ -404,7 +404,7 @@ void GC_child_general_int_GeneralSpin_MPIdouble(
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    dam_pr = X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
+    dam_pr = X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
       X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
       X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);

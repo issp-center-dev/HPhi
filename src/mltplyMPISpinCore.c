@@ -842,7 +842,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
     return 0.0;
   }
 
-  if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite3 + 1, org_ispin4, org_ispin3,
+  if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite3 + 1, org_ispin3, org_ispin4,
     &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     if (BitCheckGeneral(off, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
       tmp_V = tmp_J;
@@ -858,7 +858,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
   if (ihermite == FALSE) {
     if (BitCheckGeneral((unsigned long int) myrank, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow) ==
       TRUE &&
-      GetOffCompGeneralSpin((unsigned long int) myrank, org_isite3 + 1, org_ispin3, org_ispin4, &off,
+      GetOffCompGeneralSpin((unsigned long int) myrank, org_isite3 + 1, org_ispin4, org_ispin3, &off,
         X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
       tmp_V = conj(tmp_J);
       if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
@@ -925,11 +925,11 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
   }
 
   if (BitCheckGeneral((unsigned long int) myrank, org_isite3 + 1, org_ispin3, X->Def.SiteToBit, X->Def.Tpow) == TRUE
-    && GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin2, org_ispin1,
+    && GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
       &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     tmp_V = tmp_J;
   }
-  else if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2, &off,
+  else if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin2, org_ispin1, &off,
                                    X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     if (BitCheckGeneral(off, org_isite3 + 1, org_ispin3, X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
       tmp_V = conj(tmp_J);
