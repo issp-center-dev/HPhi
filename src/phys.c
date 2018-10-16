@@ -77,12 +77,19 @@ void phys(struct BindStruct *X, //!<[inout]
 	  v0[j + 1] = 0.0;
 	}
       }
-    } else{
-      if(myrank == 0){
-	for (j = 0; j < i_max; j++) {
-	  v0[j + 1] = L_vec[i][j];
-	}
-      }
+    } else {
+        if (X->Def.iCalcType == FullDiag) {
+            if (myrank == 0) {
+                for (j = 0; j < i_max; j++) {
+                    v0[j + 1] = L_vec[i][j];
+                }
+            }
+        } else {
+            for (j = 0; j < i_max; j++) {
+                v0[j + 1] = L_vec[i][j];
+            }
+
+        }
     }
 #else
     for (j = 0; j < i_max; j++) {
