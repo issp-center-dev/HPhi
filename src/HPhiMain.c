@@ -320,6 +320,7 @@ int main(int argc, char* argv[]){
         if(CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)!=0){
             exitMPI(0);
         }
+      break;
 
     default:
       StopTimer(0);
