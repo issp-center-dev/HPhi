@@ -168,7 +168,7 @@ void StdFace_Honeycomb(struct StdIntList *StdI)
   }
   else {
     ntransMax = StdI->NCell * 2/*spin*/ * (
-      2 * StdI->NsiteUC/*mu+h+Gamma*/ + 6/*t*/ + 12/*t'*/ + 3/*t''*/);
+      2 * StdI->NsiteUC/*mu+h+Gamma*/ + 6/*t*/ + 12/*t'*/ + 6/*t''*/);
     nintrMax = StdI->NCell * (StdI->NsiteUC/*U*/ + 4 * (3/*V*/ + 6/*V'*/ + 3/*V''*/));
 
     if (strcmp(StdI->model, "kondo") == 0) {

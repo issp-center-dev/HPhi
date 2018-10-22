@@ -2341,7 +2341,7 @@ void StdFace_main(
     else if (strcmp(keyword, "j2'z") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[2][2]);
     else if (strcmp(keyword, "j2'zx") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[2][0]);
     else if (strcmp(keyword, "j2'zy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2p[2][1]);
-    else if (strcmp(keyword, "j2''") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2pAll);
+    else if (strcmp(keyword, "j2''") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2ppAll);
     else if (strcmp(keyword, "j2''x") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2pp[0][0]);
     else if (strcmp(keyword, "j2''xy") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2pp[0][1]);
     else if (strcmp(keyword, "j2''xz") == 0) StoreWithCheckDup_d(keyword, value, &StdI->J2pp[0][2]);
