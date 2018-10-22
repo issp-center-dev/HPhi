@@ -68,12 +68,17 @@ each lattice are shown in :numref:`table_interactions` .
    :header: "Interactions", "1D chain", "2D square", "2D triangular", "Honeycomb", "Kagome", "Ladder"
 
    "J, t, V(simplified)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
-   "J', t', V'", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
    "J0, t0, V0", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
    "J1, t1, V1", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
    "J2, t2, V2", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
-   "J1', t1', V1'", "\-", "\-", "\-", "\-", "\-", ":math:`{\circ}`"
-   "J2', t2', V2'", "\-", "\-", "\-", "\-", "\-", ":math:`{\circ}`"
+   "J', t', V'(simplified)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
+   "J0', t0', V0'", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
+   "J1', t1', V1'", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
+   "J2', t2', V2'", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
+   "J'', t'', V''(simplified)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
+   "J0'', t0'', V0''", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
+   "J1'', t1'', V1''", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
+   "J2'', t2'', V2''", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
 
 
 Non-local terms[ for Ladder ( :numref:`fig_ladder` )]
@@ -121,10 +126,10 @@ Non-local terms[ for Ladder ( :numref:`fig_ladder` )]
    specified, :math:`{\mathcal H}\Phi` will stop. The above rules are also valid
    for the simplified parameters, ``J1``, ``J1'``, ``J2``, and ``J2'``.
 
-Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` ,
-:numref:`fig_kagome` )]
+Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` , :numref:`fig_kagome` )]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*  ``t0``, ``t1``, ``t2``
+*  ``t``, ``t0``, ``t1``, ``t2``
 
    **Type :** Complex
 
@@ -137,7 +142,33 @@ Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`f
    ``t`` and the set of the hoppings (``t0``, ``t1``, ``t2``) are
    specified, :math:`{\mathcal H}\Phi` will stop.
 
-*  ``V0``, ``V1``, ``V2``
+*  ``t'``, ``t0'``, ``t1'``, ``t2'``
+
+   **Type :** Complex
+
+   **Description :** (Hubbard and Kondo lattice model) The second nearest
+   neighbor hoppings for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
+   are specified with these parameter.
+   If there is no bond dependence
+   of the hoppings, the simplified parameter ``t'`` is available to
+   specify ``t0'``, ``t1'``, and ``t2'`` as ``t0' = t1' = t2' = t'``. If both
+   ``t'`` and the set of the hoppings (``t0'``, ``t1'``, ``t2'``) are
+   specified, :math:`{\mathcal H}\Phi` will stop.
+   
+*  ``t''``, ``t0''``, ``t1''``, ``t2''``
+
+   **Type :** Complex
+
+   **Description :** (Hubbard and Kondo lattice model) The third nearest
+   neighbor hoppings for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
+   are specified with these parameter.
+   If there is no bond dependence
+   of the hoppings, the simplified parameter ``t''`` is available to
+   specify ``t0''``, ``t1''``, and ``t2''`` as ``t0'' = t1'' = t2'' = t''``. If both
+   ``t''`` and the set of the hoppings (``t0''``, ``t1''``, ``t2''``) are
+   specified, :math:`{\mathcal H}\Phi` will stop.
+ 
+*  ``V``, ``V0``, ``V1``, ``V2``
 
    **Type :** Real
 
@@ -149,6 +180,34 @@ Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`f
    available to specify ``V0``, ``V1``, and ``V2`` as
    ``V0 = V1 = V2 = V``. If both ``V`` and the set of the Coulomb
    integrals (``V0``, ``V1``, ``V2``) are specified, :math:`{\mathcal H}\Phi` will
+   stop.
+
+*  ``V'``, ``V0'``, ``V1'``, ``V2'``
+
+   **Type :** Real
+
+   **Description :** (Hubbard and Kondo lattice model) The second nearest
+   neighbor-offsite Coulomb integrals :math:`V'` for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
+   are specified with this parameter.
+   If there is no bond dependence
+   of the offsite Coulomb integrals, the simplified parameter ``V'`` is
+   available to specify ``V0'``, ``V1'``, and ``V2'`` as
+   ``V0' = V1' = V2' = V'``. If both ``V'`` and the set of the Coulomb
+   integrals (``V0'``, ``V1'``, ``V2'``) are specified, :math:`{\mathcal H}\Phi` will
+   stop.
+
+*  ``V''``, ``V0''``, ``V1''``, ``V2''``
+
+   **Type :** Real
+
+   **Description :** (Hubbard and Kondo lattice model) The third nearest
+   neighbor-offsite Coulomb integrals :math:`V'` for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
+   are specified with this parameter.
+   If there is no bond dependence
+   of the offsite Coulomb integrals, the simplified parameter ``V''`` is
+   available to specify ``V0''``, ``V1''``, and ``V2''`` as
+   ``V0'' = V1'' = V2'' = V''``. If both ``V''`` and the set of the Coulomb
+   integrals (``V0''``, ``V1''``, ``V2''``) are specified, :math:`{\mathcal H}\Phi` will
    stop.
 
 *  ``J0x``, ``J0y``, ``J0z``, ``J0xy``, ``J0yx``, ``J0xz``, ``J0zx``,
@@ -205,24 +264,14 @@ Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`f
       couplings, please specify the non-zero couplings in the
       twenty-seven parameters from ``J0x`` to ``J2zy``.
 
-*  ``t'``
-
-   **Type :** Complex
-
-   **Description :** (Hubbard and Kondo lattice model) The nearest
-   neighbor hoppings for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
-   are specified with these parameter.
-
-*  ``V'``
-
-   **Type :** Real
-
-   **Description :** (Hubbard and Kondo lattice model) The nearest
-   neighbor-offsite Coulomb integrals :math:`V` for each direction (see :numref:`fig_chap04_1_lattice` - :numref:`fig_kagome` )
-   are specified with this parameter.
-
 *  ``J'x``, ``J'y``, ``J'z``, ``J'xy``, ``J'yx``, ``J'xz``, ``J'zx``,
    ``J'yz``, ``J'zy``
+*  ``J0'x``, ``J0'y``, ``J0'z``, ``J0'xy``, ``J0'yx``, ``J0'xz``, ``J0'zx``,
+   ``J0'yz``, ``J0'zy``
+*  ``J1'x``, ``J1'y``, ``J1'z``, ``J1'xy``, ``J1'yx``, ``J1'xz``, ``J1'zx``,
+   ``J1'yz``, ``J1'zy``
+*  ``J2'x``, ``J2'y``, ``J2'z``, ``J2'xy``, ``J2'yx``, ``J2'xz``, ``J2'zx``,
+   ``J2'yz``, ``J2'zy``
 
    **Type :** Real
 
@@ -234,6 +283,26 @@ Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`f
    ``J'x, J'y, J'z``, the exchange couplings are set as
    ``J'x = J'y = J'z = J'``. If both ``J'`` and the set of the couplings
    (``J'x, J'y, J'z``) are specified, :math:`{\mathcal H}\Phi` will stop.
+
+*  ``J''x``, ``J''y``, ``J''z``, ``J''xy``, ``J''yx``, ``J''xz``, ``J''zx``,
+   ``J''yz``, ``J''zy``
+*  ``J0''x``, ``J0''y``, ``J0''z``, ``J0''xy``, ``J0''yx``, ``J0''xz``, ``J0''zx``,
+   ``J0''yz``, ``J0''zy``
+*  ``J1''x``, ``J1''y``, ``J1''z``, ``J1''xy``, ``J1''yx``, ``J1''xz``, ``J1''zx``,
+   ``J1''yz``, ``J1''zy``
+*  ``J2''x``, ``J2''y``, ``J2''z``, ``J2''xy``, ``J2''yx``, ``J2''xz``, ``J2''zx``,
+   ``J2''yz``, ``J2''zy``
+
+   **Type :** Real
+
+   **Description :** (Spin model) The third nearest neighbor exchange
+   couplings are specified. However, for ``lattice = Honeycomb Lattice``
+   and ``lattice = Kagome`` with ``model=SpinGCCMA``, the third nearest
+   neighbor exchange couplings are not available in the :math:`Standard`
+   mode. If the simplified parameter ``J''`` is specified, instead of
+   ``J''x, J''y, J''z``, the exchange couplings are set as
+   ``J''x = J''y = J''z = J''``. If both ``J''`` and the set of the couplings
+   (``J''x, J''y, J''z``) are specified, :math:`{\mathcal H}\Phi` will stop.
 
 *  ``phase0``, ``phase1``
 
