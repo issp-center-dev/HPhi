@@ -1,0 +1,12 @@
+os: osx
+language: c
+sudo: enabled
+env: OMP_NUM_THREADS=1
+before_install: true
+install:
+  - mkdir build
+  - cd build
+  - cmake ../
+  - make
+script:
+  - make test
