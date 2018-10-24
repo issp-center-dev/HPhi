@@ -2,6 +2,7 @@ matrix:
   include:
   - language: c
     sudo: enabled
+    env: OMP_NUM_THREADS=1
     before_install:
       - sudo apt-get update
       - sudo apt-get install -y gfortran liblapack-dev cmake
@@ -15,6 +16,21 @@ matrix:
       - make test
   - language: c
     sudo: enabled
+    env: OMP_NUM_THREADS=3
+    before_install:
+      - sudo apt-get update
+      - sudo apt-get install -y gfortran liblapack-dev cmake
+      - pip install numpy --user
+    install:
+      - mkdir build
+      - cd build
+      - cmake ../
+      - make
+    script:
+      - make test
+  - language: c
+    sudo: enabled
+    env: OMP_NUM_THREADS=1
     before_install:
       - sudo apt-get update
       - sudo apt-get install -y gfortran liblapack-dev cmake libopenmpi-dev openmpi-bin
