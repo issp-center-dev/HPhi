@@ -69,12 +69,6 @@ void StdFace_Kagome(
   */
   fprintf(stdout, "\n  @ Hamiltonian \n\n");
   /**/
-  StdFace_NotUsed_J("J1'", StdI->J1pAll, StdI->J1p);
-  StdFace_NotUsed_J("J2'", StdI->J2pAll, StdI->J2p);
-  StdFace_NotUsed_d("t1'", StdI->t1p);
-  StdFace_NotUsed_d("t2'", StdI->t2p);
-  StdFace_NotUsed_d("V1'", StdI->V1p);
-  StdFace_NotUsed_d("V2'", StdI->V2p);
   StdFace_NotUsed_d("K", StdI->K);
   StdFace_PrintVal_d("h", &StdI->h, 0.0);
   StdFace_PrintVal_d("Gamma", &StdI->Gamma, 0.0);
@@ -82,40 +76,56 @@ void StdFace_Kagome(
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
-    StdFace_InputSpinNN(StdI, StdI->J0, StdI->J0All, "J0");
-    StdFace_InputSpinNN(StdI, StdI->J1, StdI->J1All, "J1");
-    StdFace_InputSpinNN(StdI, StdI->J2, StdI->J2All, "J2");
-    StdFace_InputSpin(StdI, StdI->Jp, StdI->JpAll, "J'");
+    StdFace_InputSpinNN(StdI->J, StdI->JAll, StdI->J0, StdI->J0All, "J0");
+    StdFace_InputSpinNN(StdI->J, StdI->JAll, StdI->J1, StdI->J1All, "J1");
+    StdFace_InputSpinNN(StdI->J, StdI->JAll, StdI->J2, StdI->J2All, "J2");
+    StdFace_InputSpinNN(StdI->Jp, StdI->JpAll, StdI->J0p, StdI->J0pAll, "J0'");
+    StdFace_InputSpinNN(StdI->Jp, StdI->JpAll, StdI->J1p, StdI->J1pAll, "J1'");
+    StdFace_InputSpinNN(StdI->Jp, StdI->JpAll, StdI->J2p, StdI->J2pAll, "J2'");
     /**/
     StdFace_NotUsed_d("mu", StdI->mu);
     StdFace_NotUsed_d("U", StdI->U);
     StdFace_NotUsed_c("t", StdI->t);
+    StdFace_NotUsed_c("t0", StdI->t);
     StdFace_NotUsed_c("t0", StdI->t0);
     StdFace_NotUsed_c("t1", StdI->t1);
     StdFace_NotUsed_c("t2", StdI->t2);
     StdFace_NotUsed_c("t'", StdI->tp);
+    StdFace_NotUsed_c("t0'", StdI->t0p);
+    StdFace_NotUsed_c("t1'", StdI->t1p);
+    StdFace_NotUsed_c("t2'", StdI->t2p);
     StdFace_NotUsed_d("V", StdI->V);
     StdFace_NotUsed_d("V0", StdI->V0);
     StdFace_NotUsed_d("V1", StdI->V1);
     StdFace_NotUsed_d("V2", StdI->V2);
     StdFace_NotUsed_d("V'", StdI->Vp);
+    StdFace_NotUsed_d("V0'", StdI->V0p);
+    StdFace_NotUsed_d("V1'", StdI->V1p);
+    StdFace_NotUsed_d("V2'", StdI->V2p);
   }/*if (strcmp(StdI->model, "spin") == 0 )*/
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
-    StdFace_InputHopp(StdI, &StdI->t0, "t0");
-    StdFace_InputHopp(StdI, &StdI->t1, "t1");
-    StdFace_InputHopp(StdI, &StdI->t2, "t2");
-    StdFace_PrintVal_c("t'", &StdI->tp, 0.0);
-    StdFace_InputCoulombV(StdI, &StdI->V0, "V0");
-    StdFace_InputCoulombV(StdI, &StdI->V1, "V1");
-    StdFace_InputCoulombV(StdI, &StdI->V2, "V2");
-    StdFace_PrintVal_d("V'", &StdI->Vp, 0.0);
+    StdFace_InputHopp(StdI->t, &StdI->t0, "t0");
+    StdFace_InputHopp(StdI->t, &StdI->t1, "t1");
+    StdFace_InputHopp(StdI->t, &StdI->t2, "t2");
+    StdFace_InputHopp(StdI->tp, &StdI->t0p, "t0'");
+    StdFace_InputHopp(StdI->tp, &StdI->t1p, "t1'");
+    StdFace_InputHopp(StdI->tp, &StdI->t2p, "t2'");
+    StdFace_InputCoulombV(StdI->V, &StdI->V0, "V0");
+    StdFace_InputCoulombV(StdI->V, &StdI->V1, "V1");
+    StdFace_InputCoulombV(StdI->V, &StdI->V2, "V2");
+    StdFace_InputCoulombV(StdI->Vp, &StdI->V0p, "V0'");
+    StdFace_InputCoulombV(StdI->Vp, &StdI->V1p, "V1'");
+    StdFace_InputCoulombV(StdI->Vp, &StdI->V2p, "V2'");
     /**/
     StdFace_NotUsed_J("J0", StdI->J0All, StdI->J0);
     StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
     StdFace_NotUsed_J("J2", StdI->J2All, StdI->J2);
     StdFace_NotUsed_J("J'", StdI->JpAll, StdI->Jp);
+    StdFace_NotUsed_J("J0'", StdI->J0pAll, StdI->J0p);
+    StdFace_NotUsed_J("J1'", StdI->J1pAll, StdI->J1p);
+    StdFace_NotUsed_J("J2'", StdI->J2pAll, StdI->J2p);
     StdFace_NotUsed_d("D", StdI->D[2][2]);
 
     if (strcmp(StdI->model, "hubbard") == 0 ) {
@@ -124,7 +134,7 @@ void StdFace_Kagome(
     }/*if (strcmp(StdI->model, "hubbard") == 0 )*/
     else {
       StdFace_PrintVal_i("2S", &StdI->S2, 1);
-      StdFace_InputSpin(StdI, StdI->J, StdI->JAll, "J");
+      StdFace_InputSpin(StdI->J, StdI->JAll, "J");
     }/*if (model != "hubbard")*/
 
   }/*if (model != "spin")@@*/
@@ -274,11 +284,11 @@ void StdFace_Kagome(
     StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 2, 0, &isite, &jsite, 2, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
-      StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
+      StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, dR);
-      StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite, dR);
+      StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
     }
     /*
     Second nearest neighbor along W 1 -> 2
@@ -286,11 +296,11 @@ void StdFace_Kagome(
     StdFace_SetLabel(StdI, fp, iW, iL, 1, 0, 1, 2, &isite, &jsite, 2, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
-      StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
+      StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, dR);
-      StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite, dR);
+      StdFace_Coulomb(StdI, StdI->V0p, isite, jsite);
     }
     /*
     Second nearest neighbor along L 1 -> 0
@@ -298,11 +308,11 @@ void StdFace_Kagome(
     StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 1, 0, &isite, &jsite, 2, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
-      StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
+      StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, dR);
-      StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite, dR);
+      StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
     }
     /*
     Second nearest neighbor along L 2 -> 1
@@ -310,11 +320,11 @@ void StdFace_Kagome(
     StdFace_SetLabel(StdI, fp, iW, iL, 0, 1, 2, 1, &isite, &jsite, 2, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
-      StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
+      StdFace_GeneralJ(StdI, StdI->J0p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, dR);
-      StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t0p, isite, jsite, dR);
+      StdFace_Coulomb(StdI, StdI->V0p, isite, jsite);
     }
     /*
     Second nearest neighbor along W-L 0 -> 2
@@ -322,11 +332,11 @@ void StdFace_Kagome(
     StdFace_SetLabel(StdI, fp, iW, iL, 1, - 1, 0, 2, &isite, &jsite, 2, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
-      StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
+      StdFace_GeneralJ(StdI, StdI->J1p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, dR);
-      StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t1p, isite, jsite, dR);
+      StdFace_Coulomb(StdI, StdI->V1p, isite, jsite);
     }
     /*
     Second nearest neighbor along L-W 0 -> 1
@@ -334,11 +344,11 @@ void StdFace_Kagome(
     StdFace_SetLabel(StdI, fp, iW, iL, - 1, 1, 0, 1, &isite, &jsite, 2, &Cphase, dR);
     /**/
     if (strcmp(StdI->model, "spin") == 0 ) {
-      StdFace_GeneralJ(StdI, StdI->Jp, StdI->S2, StdI->S2, isite, jsite);
+      StdFace_GeneralJ(StdI, StdI->J2p, StdI->S2, StdI->S2, isite, jsite);
     }/*if (strcmp(StdI->model, "spin") == 0 )*/
     else {
-      StdFace_Hopping(StdI, Cphase * StdI->tp, isite, jsite, dR);
-      StdFace_Coulomb(StdI, StdI->Vp, isite, jsite);
+      StdFace_Hopping(StdI, Cphase * StdI->t2p, isite, jsite, dR);
+      StdFace_Coulomb(StdI, StdI->V2p, isite, jsite);
     }
   }/*for (kCell = 0; kCell < StdI->NCell; kCell++)*/
 

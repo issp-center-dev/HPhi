@@ -80,13 +80,13 @@ void StdFace_Orthorhombic(
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
-    StdFace_InputSpinNN(StdI, StdI->J0, StdI->J0All, "J0");
-    StdFace_InputSpinNN(StdI, StdI->J1, StdI->J1All, "J1");
-    StdFace_InputSpinNN(StdI, StdI->J2, StdI->J2All, "J2");
-    StdFace_InputSpin(StdI, StdI->J0p, StdI->J0pAll, "J0'");
-    StdFace_InputSpin(StdI, StdI->J1p, StdI->J1pAll, "J1'");
-    StdFace_InputSpin(StdI, StdI->J2p, StdI->J2pAll, "J2'");
-    StdFace_InputSpin(StdI, StdI->Jpp, StdI->JppAll, "J''");
+    StdFace_InputSpinNN(StdI->J, StdI->JAll, StdI->J0, StdI->J0All, "J0");
+    StdFace_InputSpinNN(StdI->J, StdI->JAll, StdI->J1, StdI->J1All, "J1");
+    StdFace_InputSpinNN(StdI->J, StdI->JAll, StdI->J2, StdI->J2All, "J2");
+    StdFace_InputSpinNN(StdI->Jp, StdI->JpAll, StdI->J0p, StdI->J0pAll, "J0'");
+    StdFace_InputSpinNN(StdI->Jp, StdI->JpAll, StdI->J1p, StdI->J1pAll, "J1'");
+    StdFace_InputSpinNN(StdI->Jp, StdI->JpAll, StdI->J2p, StdI->J2pAll, "J2'");
+    StdFace_InputSpin(StdI->Jpp, StdI->JppAll, "J''");
     /**/
     StdFace_NotUsed_d("mu", StdI->mu);
     StdFace_NotUsed_d("U", StdI->U);
@@ -107,18 +107,20 @@ void StdFace_Orthorhombic(
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
-    StdFace_InputHopp(StdI, &StdI->t0, "t0");
-    StdFace_InputHopp(StdI, &StdI->t1, "t1");
-    StdFace_InputHopp(StdI, &StdI->t2, "t2");
-    StdFace_PrintVal_c("t0'", &StdI->t0p, 0.0);
-    StdFace_PrintVal_c("t1'", &StdI->t1p, 0.0);
-    StdFace_PrintVal_c("t2'", &StdI->t2p, 0.0);
-    StdFace_InputCoulombV(StdI, &StdI->V0, "V0");
-    StdFace_InputCoulombV(StdI, &StdI->V1, "V1");
-    StdFace_InputCoulombV(StdI, &StdI->V2, "V2");
-    StdFace_PrintVal_d("V0'", &StdI->V0p, 0.0);
-    StdFace_PrintVal_d("V1'", &StdI->V1p, 0.0);
-    StdFace_PrintVal_d("V2'", &StdI->V2p, 0.0);
+    StdFace_InputHopp(StdI->t, &StdI->t0, "t0");
+    StdFace_InputHopp(StdI->t, &StdI->t1, "t1");
+    StdFace_InputHopp(StdI->t, &StdI->t2, "t2");
+    StdFace_InputHopp(StdI->tp, &StdI->t0p, "t0'");
+    StdFace_InputHopp(StdI->tp, &StdI->t1p, "t1'");
+    StdFace_InputHopp(StdI->tp, &StdI->t2p, "t2'");
+    StdFace_PrintVal_c("tpp", &StdI->tpp, 0.0);
+    StdFace_InputCoulombV(StdI->V, &StdI->V0, "V0");
+    StdFace_InputCoulombV(StdI->V, &StdI->V1, "V1");
+    StdFace_InputCoulombV(StdI->V, &StdI->V2, "V2");
+    StdFace_InputCoulombV(StdI->Vp, &StdI->V0p, "V0'");
+    StdFace_InputCoulombV(StdI->Vp, &StdI->V1p, "V1'");
+    StdFace_InputCoulombV(StdI->Vp, &StdI->V2p, "V2'");   
+    StdFace_PrintVal_d("Vpp", &StdI->Vpp, 0.0);
     /**/
     StdFace_NotUsed_J("J0", StdI->J0All, StdI->J0);
     StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
@@ -126,7 +128,9 @@ void StdFace_Orthorhombic(
     StdFace_NotUsed_J("J0'", StdI->J0pAll, StdI->J0p);
     StdFace_NotUsed_J("J1'", StdI->J1pAll, StdI->J1p);
     StdFace_NotUsed_J("J2'", StdI->J2pAll, StdI->J2p);
-    StdFace_NotUsed_J("J''", StdI->JppAll, StdI->Jpp);
+    StdFace_NotUsed_J("J0''", StdI->J0ppAll, StdI->J0pp);
+    StdFace_NotUsed_J("J1''", StdI->J1ppAll, StdI->J1pp);
+    StdFace_NotUsed_J("J2''", StdI->J2ppAll, StdI->J2pp);
     StdFace_NotUsed_d("D", StdI->D[2][2]);
 
     if (strcmp(StdI->model, "hubbard") == 0 ) {
@@ -135,7 +139,7 @@ void StdFace_Orthorhombic(
     }/*if (strcmp(StdI->model, "hubbard") == 0 )*/
     else {
       StdFace_PrintVal_i("2S", &StdI->S2, 1);
-      StdFace_InputSpin(StdI, StdI->J, StdI->JAll, "J");
+      StdFace_InputSpin(StdI->J, StdI->JAll, "J");
     }/*if (model != "hubbard")*/
  
   }/*if (model != "spin")*/

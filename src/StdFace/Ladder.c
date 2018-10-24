@@ -92,11 +92,11 @@ void StdFace_Ladder(
   if (strcmp(StdI->model, "spin") == 0 ) {
     StdFace_PrintVal_i("2S", &StdI->S2, 1);
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
-    StdFace_InputSpin(StdI, StdI->J0, StdI->J0All, "J0");
-    StdFace_InputSpin(StdI, StdI->J1, StdI->J1All, "J1");
-    StdFace_InputSpin(StdI, StdI->J2, StdI->J2All, "J2");
-    StdFace_InputSpin(StdI, StdI->J1p, StdI->J1pAll, "J1'");
-    StdFace_InputSpin(StdI, StdI->J2p, StdI->J2pAll, "J2'");
+    StdFace_InputSpin(StdI->J0, StdI->J0All, "J0");
+    StdFace_InputSpin(StdI->J1, StdI->J1All, "J1");
+    StdFace_InputSpin(StdI->J2, StdI->J2All, "J2");
+    StdFace_InputSpin(StdI->J1p, StdI->J1pAll, "J1'");
+    StdFace_InputSpin(StdI->J2p, StdI->J2pAll, "J2'");
     /**/
     StdFace_NotUsed_d("mu", StdI->mu);
     StdFace_NotUsed_d("U", StdI->U);
@@ -114,16 +114,16 @@ void StdFace_Ladder(
   else {
     StdFace_PrintVal_d("mu", &StdI->mu, 0.0);
     StdFace_PrintVal_d("U", &StdI->U, 0.0);
-    StdFace_InputHopp(StdI, &StdI->t0, "t0");
-    StdFace_InputHopp(StdI, &StdI->t1, "t1");
-    StdFace_InputHopp(StdI, &StdI->t2, "t2");
-    StdFace_InputHopp(StdI, &StdI->t1p, "t1'");
-    StdFace_InputHopp(StdI, &StdI->t2p, "t2'");
-    StdFace_InputCoulombV(StdI, &StdI->V0, "V0");
-    StdFace_InputCoulombV(StdI, &StdI->V1, "V1");
-    StdFace_InputCoulombV(StdI, &StdI->V2, "V2");
-    StdFace_InputCoulombV(StdI, &StdI->V1p, "V1'");
-    StdFace_InputCoulombV(StdI, &StdI->V2p, "V2'");
+    StdFace_InputHopp(StdI->t, &StdI->t0, "t0");
+    StdFace_InputHopp(StdI->t, &StdI->t1, "t1");
+    StdFace_InputHopp(StdI->t, &StdI->t2, "t2");
+    StdFace_InputHopp(StdI->t, &StdI->t1p, "t1'");
+    StdFace_InputHopp(StdI->t, &StdI->t2p, "t2'");
+    StdFace_InputCoulombV(StdI->V, &StdI->V0, "V0");
+    StdFace_InputCoulombV(StdI->V, &StdI->V1, "V1");
+    StdFace_InputCoulombV(StdI->V, &StdI->V2, "V2");
+    StdFace_InputCoulombV(StdI->V, &StdI->V1p, "V1'");
+    StdFace_InputCoulombV(StdI->V, &StdI->V2p, "V2'");
     /**/
     StdFace_NotUsed_J("J0", StdI->J0All, StdI->J0);
     StdFace_NotUsed_J("J1", StdI->J1All, StdI->J1);
@@ -138,7 +138,7 @@ void StdFace_Ladder(
     }
     else {
       StdFace_PrintVal_i("2S", &StdI->S2, 1);
-      StdFace_InputSpin(StdI, StdI->J, StdI->JAll, "J");
+      StdFace_InputSpin(StdI->J, StdI->JAll, "J");
     }
   }/*if (model != "spin")*/
   fprintf(stdout, "\n  @ Numerical conditions\n\n");
