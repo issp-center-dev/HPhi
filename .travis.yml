@@ -25,4 +25,4 @@ matrix:
       - cmake ../
       - make VERBOSE=1
     script:
-      - MPIRUN="mpiexec -np 4" ctest -V
+      - MPIRUN="mpirun -np 4" ctest -V
