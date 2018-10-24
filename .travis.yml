@@ -2,6 +2,10 @@ os: osx
 language: c
 sudo: enabled
 env: OMP_NUM_THREADS=1
+addons:
+  homebrew:
+    packages:
+    - gcc
 before_install: true
 install:
   - mkdir build
