@@ -45,12 +45,10 @@ void StdFace_NotUsed_c(char* valname, double complex val);
 void StdFace_NotUsed_J(char* valname, double JAll, double J[3][3]);
 
 void StdFace_RequiredVal_i(char* valname, int val);
-void StdFace_InputSpinNN(struct StdIntList *StdI, double J0[3][3],
-  double J0All, char *J0name);
-void StdFace_InputSpin(struct StdIntList *StdI, double Jp[3][3],
-  double JpAll, char *Jpname);
-void StdFace_InputCoulombV(struct StdIntList *StdI, double *V0, char *V0name);
-void StdFace_InputHopp(struct StdIntList *StdI, double complex *t0, char *t0name);
+void StdFace_InputSpinNN(double J[3][3], double JAll, double J0[3][3], double J0All, char *J0name);
+void StdFace_InputSpin(double Jp[3][3], double JpAll, char *Jpname);
+void StdFace_InputCoulombV(double V, double *V0, char *V0name);
+void StdFace_InputHopp(double complex t, double complex *t0, char *t0name);
 
 void StdFace_InitSite(struct StdIntList *StdI, FILE *fp, int dim);
 void StdFace_SetLabel(struct StdIntList *StdI, FILE *fp,
