@@ -3,7 +3,7 @@ sudo: enabled
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y gfortran liblapack-dev cmake
-  - sudo pip install -y numpy 
+  - sudo pip install numpy 
 install:
   - mkdir build
   - cd build
