@@ -23,6 +23,6 @@ matrix:
       - mkdir build
       - cd build
       - cmake ../
-      - make
+      - make VERBOSE=1
     script:
-      - make test MPIRUN="mpiexec -np 4"
+      - MPIRUN="mpiexec -np 4" ctest -V
