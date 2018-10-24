@@ -181,7 +181,7 @@ int main(int argc, char* argv[]){
 
   stdoutMPI = stdout;
   if(JudgeDefType(argc, argv, &mode)!=0){
-      exitMPI(0);
+      exitMPI(-1);
   }
 
   if (mode == STANDARD_DRY_MODE) {
@@ -273,7 +273,7 @@ int main(int argc, char* argv[]){
     StopTimer(1000);
     if(X.Bind.Def.WRITE==1){
       output_list(&(X.Bind));
-      exitMPI(0);
+      exitMPI(-2);
     }
     StartTimer(2000);
     diagonalcalc(&(X.Bind));
@@ -284,14 +284,14 @@ int main(int argc, char* argv[]){
       StartTimer(4000);
       if (CalcByLanczos(&X) != TRUE) {
         StopTimer(4000);
-        exitMPI(0);
+        exitMPI(-3);
       }
       StopTimer(4000);
       break;
 
     case CG:
       if (CalcByLOBPCG(&X) != TRUE) {
-          exitMPI(0);
+          exitMPI(-3);
       }
       break;
 
@@ -311,27 +311,27 @@ int main(int argc, char* argv[]){
         StartTimer(3000);        
         if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
           StopTimer(3000);
-          exitMPI(0);
+          exitMPI(-3);
         }
         StopTimer(3000);
       break;
 
       case TimeEvolution:
         if(CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)!=0){
-            exitMPI(0);
+            exitMPI(-3);
         }
       break;
 
     default:
       StopTimer(0);
-      exitMPI(0);
+      exitMPI(-3);
     }
   }
   else{
     StartTimer(6000);
     if (CalcSpectrum(&X) != TRUE) {
       StopTimer(6000);
-      exitMPI(0);
+      exitMPI(-3);
     }
     StopTimer(6000);
   }
