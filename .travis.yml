@@ -9,4 +9,4 @@ install:
   - cmake ../
   - make
 script:
-  - make test
+  - ctest -V
