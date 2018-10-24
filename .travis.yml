@@ -9,5 +9,4 @@ install:
   - cmake ../
   - make
 script:
-  - cd build
   - make test
