@@ -94,7 +94,8 @@ int CalcByLanczos(
     int iret=0;
     iret=Lanczos_EigenValue(&(X->Bind));
     StopTimer(4100);
-    if(iret != 0) return(FALSE);
+    if(iret == 1) return(TRUE);//restart mode.
+    else if(iret != 0) return(FALSE);
 
     if(X->Bind.Def.iCalcEigenVec==CALCVEC_NOT){
        fprintf(stdoutMPI, "  Lanczos EigenValue = %.10lf \n ",X->Bind.Phys.Target_energy);

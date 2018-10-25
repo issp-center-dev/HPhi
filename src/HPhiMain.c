@@ -181,9 +181,8 @@ int main(int argc, char* argv[]){
 
   stdoutMPI = stdout;
   if(JudgeDefType(argc, argv, &mode)!=0){
-    FinalizeMPI();
-    return 0;
-  }  
+      exitMPI(-1);
+  }
 
   if (mode == STANDARD_DRY_MODE) {
     myrank = 0;
@@ -222,16 +221,14 @@ int main(int argc, char* argv[]){
   setmem_HEAD(&X.Bind);
   if(ReadDefFileNInt(cFileListName, &(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrDefFile);
-    FinalizeMPI();
-    return -1;
+    exitMPI(-1);
   }
 
   if (X.Bind.Def.nvec < X.Bind.Def.k_exct){
     fprintf(stdoutMPI, "%s", cErrnvec);
     fprintf(stdoutMPI, cErrnvecShow, X.Bind.Def.nvec, X.Bind.Def.k_exct);
-    FinalizeMPI();
-    return -1;
-  }	  
+    exitMPI(-1);
+  }
   fprintf(stdoutMPI, "%s", cProFinishDefFiles);
   
   /*ALLOCATE-------------------------------------------*/
@@ -242,8 +239,7 @@ int main(int argc, char* argv[]){
   TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefStart, "w");
   if(ReadDefFileIdxPara(&(X.Bind.Def), &(X.Bind.Boost))!=0){
     fprintf(stdoutMPI, "%s", cErrIndices);
-    FinalizeMPI();
-    return -1;
+    exitMPI(-1);
   }
   TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefFinish, "a");
   fprintf(stdoutMPI, "%s", cProFinishDefCheck);
@@ -260,8 +256,7 @@ int main(int argc, char* argv[]){
   if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
     
     if(check(&(X.Bind))==MPIFALSE){
-      FinalizeMPI();
-      return -1;
+     exitMPI(-1);
     }
     
     /*LARGE VECTORS ARE ALLOCATED*/
@@ -278,8 +273,7 @@ int main(int argc, char* argv[]){
     StopTimer(1000);
     if(X.Bind.Def.WRITE==1){
       output_list(&(X.Bind));
-      FinalizeMPI();
-      return 0;
+      exitMPI(-2);
     }
     StartTimer(2000);
     diagonalcalc(&(X.Bind));
@@ -289,17 +283,15 @@ int main(int argc, char* argv[]){
     case Lanczos:
       StartTimer(4000);
       if (CalcByLanczos(&X) != TRUE) {
-        FinalizeMPI();
         StopTimer(4000);
-        return 0;
+        exitMPI(-3);
       }
       StopTimer(4000);
       break;
 
     case CG:
       if (CalcByLOBPCG(&X) != TRUE) {
-        FinalizeMPI();
-        return 0;
+          exitMPI(-3);
       }
       break;
 
@@ -318,31 +310,28 @@ int main(int argc, char* argv[]){
       case TPQCalc:
         StartTimer(3000);        
         if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
-          FinalizeMPI();
           StopTimer(3000);
-          return 0;
+          exitMPI(-3);
         }
         StopTimer(3000);
       break;
 
       case TimeEvolution:
         if(CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)!=0){
-          FinalizeMPI();
-          return 0;
+            exitMPI(-3);
         }
+      break;
 
     default:
-      FinalizeMPI();
       StopTimer(0);
-      return 0;
+      exitMPI(-3);
     }
   }
   else{
     StartTimer(6000);
     if (CalcSpectrum(&X) != TRUE) {
-      FinalizeMPI();
       StopTimer(6000);
-      return 0;
+      exitMPI(-3);
     }
     StopTimer(6000);
   }

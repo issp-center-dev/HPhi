@@ -686,7 +686,7 @@ int sz
           list_jb[ib]=jb;
           i2Sz=0;
           for(j=1;j<=(N-irghtsite); j++){
-            i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
+            i2Sz += GetLocal2Sz(j+irghtsite,ib*ihfbit, X->Def.SiteToBit, X->Def.Tpow);
           }
           list_2_2_Sz[ib]=i2Sz;
           if((X->Def.Total2Sz- i2Sz +(int)Max2Sz)>=0 && (X->Def.Total2Sz- i2Sz) <= (int)Max2Sz){
