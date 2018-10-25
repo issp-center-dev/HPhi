@@ -3,7 +3,11 @@ language: c
 sudo: enabled
 env: OMP_NUM_THREADS=1
 before_install:
-  - brew install gcc
+  - brew update
+  - brew install gcc || true
+  - brew link --overwrite gcc
+  - brew install lapack open-mpi
+  - export FC=gfortran;
 install:
   - mkdir build
   - cd build
