@@ -10,6 +10,7 @@ before_install:
 install:
   - mkdir build
   - cd build
+  - export CC=/usr/local/bin/gcc
 script:
   - cmake ../
   - make
