@@ -602,8 +602,10 @@ int LOBPCG_Main(
   */
   if (X->Def.iReStart == RESTART_OUT || X->Def.iReStart == RESTART_INOUT){
       Output_restart(X, wxp[1]);
-      sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
-      return 1;
+      if(iconv != 0) {
+          sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
+          return 1;
+      }
   }
   /**@brief
   <li>Just Move wxp[1] into ::L_vec. The latter must be start from 0-index (the same as FullDiag)</li>
@@ -680,9 +682,11 @@ int CalcByLOBPCG(
 
     int iret = LOBPCG_Main(&(X->Bind));
     if (iret != 0) {
-      fprintf(stdoutMPI, "  LOBPCG is not converged in this process.\n");
       if(iret ==1) return (TRUE);
-      else return(FALSE);
+      else{
+          fprintf(stdoutMPI, "  LOBPCG is not converged in this process.\n");
+          return(FALSE);
+      }
     }
   }/*if (X->Bind.Def.iInputEigenVec == FALSE)*/
   else {// X->Bind.Def.iInputEigenVec=true :input v1:
