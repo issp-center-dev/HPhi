@@ -290,9 +290,11 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       OutputTMComponents(X, alpha, beta, dnorm, stp - 1);
       OutputLanczosVector(X, v0, v1, stp - 1);
     }
+    if (iconv !=0){
       sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
       fprintf(stdoutMPI, "  Lanczos Eigenvalue is not converged in this process.\n");
       return 1;
+    }
   }
 
   sprintf(sdt, cFileNameTimeKeep, X->Def.CDataFileHead);
