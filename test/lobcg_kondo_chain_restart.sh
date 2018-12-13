@@ -40,6 +40,7 @@ cat > reference.dat <<EOF
 EOF
 paste output/zvo_energy.dat reference.dat > paste.dat
 diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)*($2-$3))} END{printf "%8.6f", diff}' paste.dat`
+rm output/zvo_energy.dat
 
 # Check value for Restart_inout
 cp ./stan.in stan3.in
