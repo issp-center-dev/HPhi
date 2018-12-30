@@ -21,7 +21,7 @@ Heisenberg模型におけるサンプル入力ファイルは ::
 
    \hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)
 
-ただし、周期境界条件:math:`(S_{15}=S_{51}= S_{11})` を採用します。
+ただし、周期境界条件 :math:`(S_{15}=S_{51}= S_{11})` を採用します。
 インプットファイルの中身は次のとおりです。 ::
 
  model = "Spin"
@@ -295,8 +295,8 @@ Lanczos法での計算が正常終了すると、固有エネルギーおよび�
 
 
 スタンダードモードの場合は、``greenone.def`` 、``greentwo.def`` に基づき、
-一体グリーン関数には:math:`\langle n_{i\sigma} \rangle` 、
-二体グリーン関数には:math:`\langle n_{i\sigma} n_{j\sigma'} \rangle` が自動出力されます。なお、Lanczos法で求めた固有ベクトルが十分な精度を持つ場合には
+一体グリーン関数には :math:`\langle n_{i\sigma} \rangle` 、
+二体グリーン関数には :math:`\langle n_{i\sigma} n_{j\sigma'} \rangle` が自動出力されます。なお、Lanczos法で求めた固有ベクトルが十分な精度を持つ場合には
 その固有ベクトルで計算されます。
 一方、Lanczos法で求めた固有ベクトルが十分な精度を持たない場合には、
 ログ出力に「Accuracy of Lanczos vetor is not enough」が表示され、
@@ -330,7 +330,4 @@ Eigenvalue.datには固有値番号およびエネルギー固有値が出力さ
 その他の系でのチュートリアル
 ---------------------------------
 
-There are many tutorials in ``samples/Standard/``
-以下にはこの他にも様々なチュートリアルが置いてあります。
-それぞれのチュートリアルの内容や手順については、
-. For more details, please see ``README.md`` at each directory.
+ ``samples/Standard/`` 以下にはこの他にも様々なチュートリアルが置いてあります。それぞれのチュートリアルの内容や手順については、各フォルダにある ``README.md`` をご覧ください。

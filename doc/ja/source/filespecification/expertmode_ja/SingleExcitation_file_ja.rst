@@ -73,8 +73,8 @@ SingleExcitation指定ファイル
    **形式 :** int型 (空白不可)
 
    | **説明 :** 一体励起演算子のタイプを指定する整数。
-   | 0: :math:` c_{i\sigma_1}`
-   | 1: :math:` c_{i\sigma_1}^{\dagger}`
+   | 0: :math:`c_{i\sigma_1}`
+   | 1: :math:`c_{i\sigma_1}^{\dagger}`
    | を選択することが出来ます。
 
 -  :math:`[`\ double01\ :math:`]`, :math:`[`\ double02\ :math:`]`
