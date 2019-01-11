@@ -18,7 +18,7 @@
 #include "mfmemory.h"
 #include "xsetmem.h"
 #include "wrapperMPI.h"
-
+#include "./common/setmemory.h"
 /**
  * @file   xsetmem.c
  *

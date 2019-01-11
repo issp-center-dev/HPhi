@@ -21,10 +21,11 @@ set(SOURCES_SPECTRUM CalcSpectrum.c CalcSpectrumByBiCG.c CalcSpectrumByLanczos.c
 set(SOURCES_TEM CalcByTEM.c)
 set(SOURCES_PHYS expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c phys.c expec_energy_flct.c)
 
+set(SOURCES_COMMON common/setmemory.c)
 
 set(SOURCES_STDFACE StdFace/ChainLattice.c StdFace/FCOrtho.c StdFace/HoneycombLattice.c StdFace/Kagome.c StdFace/Ladder.c StdFace/Orthorhombic.c StdFace/Pyrochlore.c StdFace/SquareLattice.c StdFace/StdFace_main.c StdFace/StdFace_ModelUtil.c StdFace/TriangularLattice.c StdFace/Wannier90.c)
 
-add_executable(HPhi ${SOURCES} ${SOURCES_LANCZOS} ${SOURCES_CG} ${SOURCES_TPQ} ${SOURCES_SPECTRUM} ${SOURCES_TEM} ${SOURCES_MLTPLY} ${SOURCES_DIAG} ${SOURCES_PHYS} ${SOURCES_STDFACE})
+add_executable(HPhi ${SOURCES} ${SOURCES_LANCZOS} ${SOURCES_CG} ${SOURCES_TPQ} ${SOURCES_SPECTRUM} ${SOURCES_TEM} ${SOURCES_MLTPLY} ${SOURCES_DIAG} ${SOURCES_PHYS} ${SOURCES_STDFACE} ${SOURCES_COMMON})
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
 if(MPI_FOUND)
   target_link_libraries(HPhi ${MPI_C_LIBRARIES})
