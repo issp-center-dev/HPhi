@@ -24,7 +24,7 @@
 #include "PairEx.h"
 #include "wrapperMPI.h"
 #include "FileIO.h"
-#include "mfmemory.h"
+#include "./common/setmemory.h"
 #include "readdef.h"
 #include "sz.h"
 #include "check.h"
@@ -119,8 +119,8 @@ int CalcSpectrum(
      Set & malloc omega grid
     */
     Nomega = X->Bind.Def.iNOmega;
-    c_malloc1(dcSpectrum, Nomega);
-    c_malloc1(dcomega, Nomega);
+    dcSpectrum = cd_1d_allocate(Nomega);
+    dcomega = cd_1d_allocate(Nomega);
     OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
     OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
     for (i = 0; i < Nomega; i++) {
@@ -142,7 +142,7 @@ int CalcSpectrum(
     X->Bind.Def.iFlagListModified=iFlagListModified;
 
     //Set Memory
-    c_malloc1(v1Org, X->Bind.Check.idim_maxOrg+1);
+    v1Org = cd_1d_allocate(X->Bind.Check.idim_maxOrg+1);
     for(i=0; i<X->Bind.Check.idim_maxOrg+1; i++){
       v1Org[i]=0;
     }
@@ -287,8 +287,8 @@ int CalcSpectrum(
     return TRUE;
   }
 
-  c_free1(dcSpectrum, Nomega);
-  c_free1(dcomega, Nomega);
+  free_cd_1d_allocate(dcSpectrum);
+  free_cd_1d_allocate(dcomega);
 
 }/*int CalcSpectrum*/
 
@@ -468,12 +468,15 @@ int MakeExcitedList(
 
     if (*iFlgListModifed == TRUE) {
         if(GetlistSize(X)==TRUE) {
-            lui_malloc1(list_1_org, X->Check.idim_max + 1);
+            list_1_org = lui_1d_allocate(X->Check.idim_max + 1);
 #ifdef MPI
-            lui_malloc1(list_1buf_org, X->Check.idim_maxMPI + 1);
+            list_1buf_org = lui_1d_allocate(X->Check.idim_maxMPI + 1);
+            //lui_malloc1(list_1buf_org, X->Check.idim_maxMPI + 1);
 #endif // MPI
-            lui_malloc1(list_2_1_org, X->Large.SizeOflist_2_1);
-            lui_malloc1(list_2_2_org, X->Large.SizeOflist_2_2);
+            list_2_1_org = lui_1d_allocate(X->Large.SizeOflist_2_1);
+            list_2_2_org = lui_1d_allocate(X->Large.SizeOflist_2_2);
+            //lui_malloc1(list_2_1_org, X->Large.SizeOflist_2_1);
+            //lui_malloc1(list_2_2_org, X->Large.SizeOflist_2_2);
             if(list_1_org==NULL
                || list_2_1_org==NULL
                || list_2_2_org==NULL

@@ -20,13 +20,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 #include "setmemory.h"
+
 ///
 /// \brief Allocation for A[N]
 /// \param N [in] The size of the array A
 /// \param A [in,out] Array to allocate
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
-int *i_1d_allocate(const int N){
+long unsigned int *lui_1d_allocate(const long unsigned int N){
+    long unsigned int *A;
+    A     = (long unsigned int*)malloc((N)*sizeof(long unsigned int));
+    memset(A, 0, sizeof(long unsigned int)*N);
+    return A;
+}
+
+///
+/// \brief Function to free 1d array (int)
+/// \param A Pointer of 1d array A
+void free_lui_1d_allocate(long unsigned int *A){
+    free(A);
+}
+
+///
+/// \brief Allocation for A[N]
+/// \param N [in] The size of the array A
+/// \param A [in,out] Array to allocate
+/// \return A Pointer to array A
+/// \author Kazuyoshi Yoshimi (University of Tokyo)
+int *i_1d_allocate(const long unsigned int N){
     int *A;
     A     = (int*)malloc((N)*sizeof(int));
     memset(A, 0, sizeof(int)*N);
@@ -47,9 +68,9 @@ void free_i_1d_allocate(int *A){
 /// \param M [in] The size of the array M
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
-int **i_2d_allocate(int N, int M) {
+int **i_2d_allocate(const long unsigned int N, const long unsigned int M) {
     int **A;
-    int int_i;
+    long unsigned int int_i;
     A = (int **) malloc((N) * sizeof(int *));
     A[0] = (int *) malloc((M * N) * sizeof(int));
     for (int_i = 0; int_i < N; int_i++) {
@@ -73,7 +94,7 @@ void free_i_2d_allocate(int **A){
 /// \param A [in,out] Array to allocate
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
-double *d_1d_allocate(const int N){
+double *d_1d_allocate(const long unsigned int N){
     double *A;
     A     = (double*)malloc((N)*sizeof(double));
     memset(A, 0.0, sizeof(double)*N);
@@ -93,8 +114,8 @@ void free_d_1d_allocate(double *A){
 /// \param M [in] The size of the array M
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
-double **d_2d_allocate(int N, int M){
-    int int_i;
+double **d_2d_allocate(const long unsigned int N, const long unsigned int M){
+    long unsigned int int_i;
     double **A;
     A     = (double**)malloc((N)*sizeof(double*));
     A[0]  = (double*)malloc((M*N)*sizeof(double));
@@ -119,7 +140,7 @@ void free_d_2d_allocate(double **A){
 /// \param A [in,out] Array to allocate
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
-double complex *cd_1d_allocate(const int N){
+double complex *cd_1d_allocate(const long unsigned int N){
     double complex*A;
     A     = (double complex*)malloc((N)*sizeof(double complex));
     memset(A, 0.0, sizeof(double complex)*N);
@@ -139,8 +160,8 @@ void free_cd_1d_allocate(double complex *A){
 /// \param M [in] The size of the array M
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
-complex double **cd_2d_allocate(int N, int M){
-    int int_i;
+complex double **cd_2d_allocate(const long unsigned int N, const long unsigned int M){
+    long unsigned int int_i;
     complex double **A;
     A     = (complex double**)malloc((N)*sizeof(complex double));
     A[0]  = (complex double*)malloc((M*N)*sizeof(complex double));
@@ -165,8 +186,8 @@ void free_cd_2d_allocate(double complex**A){
 /// \param M [in] The size of the array M
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
-double complex***cd_3d_allocate(int N, int M, int L){
-    int int_i, int_j;
+double complex***cd_3d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L){
+    long unsigned int int_i, int_j;
     double complex***A;
     A     = (double complex***)malloc((N)*sizeof(double complex**));
     A[0]  = (double complex**)malloc((M*N)*sizeof(double complex*));
