@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "FirstMultiply.h"
 #include "expec_energy_flct.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 

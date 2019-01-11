@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Common.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "mltply.h"
 #include "vec12.h"
 #include "bisec.h"
@@ -179,8 +179,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
     Target = X->Def.LanczosTarget;
 
     if (stp == 2) {
-      d_malloc2(tmp_mat, stp, stp);
-      d_malloc1(tmp_E, stp + 1);
+        tmp_mat = d_2d_allocate(stp,stp);
+        tmp_E =  d_1d_allocate(stp+1);
 
       for (int_i = 0; int_i < stp; int_i++) {
         for (int_j = 0; int_j < stp; int_j++) {
@@ -198,8 +198,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
         E_target = tmp_E[Target];
         ebefor = E_target;
       }
-      d_free1(tmp_E, stp + 1);
-      d_free2(tmp_mat, stp, stp);
+      free_d_1d_allocate(tmp_E);
+      free_d_2d_allocate(tmp_mat);
 
       childfopenMPI(sdt_2, "w", &fp);
 
@@ -219,9 +219,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
     //if (stp > 2 && stp % 2 == 0) {
     if (stp > 2) {
       childfopenMPI(sdt_2, "a", &fp);
-
-      d_malloc2(tmp_mat, stp, stp);
-      d_malloc1(tmp_E, stp + 1);
+      tmp_mat = d_2d_allocate(stp,stp);
+      tmp_E =  d_1d_allocate(stp+1);
 
       for (int_i = 0; int_i < stp; int_i++) {
         for (int_j = 0; int_j < stp; int_j++) {
@@ -248,8 +247,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       if (stp > Target) {
         E_target = tmp_E[Target];
       }
-      d_free1(tmp_E, stp + 1);
-      d_free2(tmp_mat, stp, stp);
+      free_d_1d_allocate(tmp_E);
+      free_d_2d_allocate(tmp_mat);
       if (stp > Target) {
         fprintf(stdoutMPI, "  stp = %d %.10lf %.10lf %.10lf %.10lf %.10lf %.10lf\n", stp, E[1], E[2], E[3], E[4],
                 E_target, E[0] / (double) X->Def.NsiteMPI);
@@ -269,7 +268,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
             break;
           }
            */
-          d_malloc1(tmp_E, stp + 1);
+          tmp_E = d_1d_allocate(stp+1);
           StartTimer(4102);
           vec12(alpha, beta, stp, tmp_E, X);
           StopTimer(4102);
@@ -277,7 +276,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
           X->Phys.Target_energy = E_target;
           X->Phys.Target_CG_energy = tmp_E[k_exct]; //for CG
           iconv = 0;
-          d_free1(tmp_E, stp + 1);
+          free_d_1d_allocate(tmp_E);
           break;
         }
         ebefor = E_target;
@@ -292,7 +291,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
     }
     if (iconv !=0){
       sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
-      fprintf(stdoutMPI, "  Lanczos Eigenvalue is not converged in this process.\n");
+      fprintf(stdoutMPI, "Lanczos Eigenvalue is not converged in this process (restart mode).\n");
       return 1;
     }
   }
@@ -300,7 +299,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   sprintf(sdt, cFileNameTimeKeep, X->Def.CDataFileHead);
   if (iconv != 0) {
     sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
-    fprintf(stdoutMPI, "  Lanczos Eigenvalue is not converged in this process.\n");
+    fprintf(stdoutMPI, "Lanczos Eigenvalue is not converged in this process.\n");
     return -1;
   }
 
@@ -653,15 +652,18 @@ int ReadTMComponents(
   if(iFlg==0) {
     alpha = (double *) realloc(alpha, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
     beta = (double *) realloc(beta, sizeof(double) * (i_max + X->Def.Lanczos_max + 1));
+    vec[0] = (complex double *) realloc(vec[0], ivec*(i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
     for (i = 0; i <  ivec; i++) {
-      vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
+        vec[i] = vec[0] + i*(i_max + X->Def.Lanczos_max + 1);
     }
   }
   else if(iFlg==1){
     alpha=(double*)realloc(alpha, sizeof(double)*(i_max + 1));
     beta=(double*)realloc(beta, sizeof(double)*(i_max + 1));
+    vec[0] = (complex double *) realloc(vec[0], ivec*(i_max + 1) * sizeof(complex double));
     for (i = 0; i < ivec; i++) {
-      vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
+      vec[i] = vec[0] + i*(i_max +1);
+      //vec[i] = (complex double *) realloc(vec[i], (i_max + X->Def.Lanczos_max + 1) * sizeof(complex double));
     }
   }
   else{

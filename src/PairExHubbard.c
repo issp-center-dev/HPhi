@@ -22,7 +22,7 @@
 #include "mltplyMPIHubbard.h"
 #include "mltplyMPIHubbardCore.h"
 #ifdef MPI
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #endif
 
 ///
@@ -167,7 +167,7 @@ int GetPairExcitedStateHubbard(
     //set size
 #ifdef MPI
     idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-    c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+    tmp_v1bufOrg= cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
     for(i=0;i<X->Def.NPairExcitationOperator;i++){
@@ -271,5 +271,10 @@ int GetPairExcitedStateHubbard(
             }
         }
     }
+
+#ifdef MPI
+    free_cd_1d_allocate(tmp_v1bufOrg);
+#endif // MPI
+
     return TRUE;
 }

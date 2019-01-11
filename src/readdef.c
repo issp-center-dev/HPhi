@@ -37,7 +37,7 @@
 #include <ctype.h>
 #include "LogMessage.h"
 #include "wrapperMPI.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 
 /**
  * Keyword List in NameListFile.
@@ -2878,10 +2878,7 @@ int CheckTETransferHermite
   icntHermite=0;
   icntchemi=0;
 
-  int** tmp_TETransfer = (int**)malloc((NTETransfer)*sizeof(int*));
-  for(i =0; i<NTETransfer; i++ ){
-    tmp_TETransfer[i] = (int*)malloc((4*sizeof(int)));
-  }
+  int** tmp_TETransfer = i_2d_allocate(NTETransfer, 4);
   double complex*tmp_paraTETransfer = (double complex*)malloc((NTETransfer)*sizeof(double complex));
 
   //copy
@@ -2965,7 +2962,8 @@ int CheckTETransferHermite
   X->NTETransfer[idx]=2*icntHermite;
   X->NTETransferDiagonal[idx]=icntchemi;
 
-  free(tmp_TETransfer);
+
+  free_i_2d_allocate(tmp_TETransfer);
   free(tmp_paraTETransfer);
   return 0;
 }

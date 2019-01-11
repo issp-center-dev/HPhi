@@ -32,13 +32,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /// \param A [in,out] Array to allocate
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
+unsigned int *ui_1d_allocate(const long unsigned int N);
+
+///
+/// \brief Function to free 1d array (int)
+/// \param A Pointer of 1d array A
+void free_ui_1d_allocate(unsigned int *A);
+
+///
+/// \brief Allocation for A[N]
+/// \param N [in] The size of the array A
+/// \param A [in,out] Array to allocate
+/// \return A Pointer to array A
+/// \author Kazuyoshi Yoshimi (University of Tokyo)
+long int *li_1d_allocate(const long unsigned int N);
+
+///
+/// \brief Function to free 1d array (int)
+/// \param A Pointer of 1d array A
+void free_li_1d_allocate(long int *A);
+
+///
+/// \brief Allocation for A[N][M]
+/// \param N [in] The size of the array A
+/// \param M [in] The size of the array M
+/// \return A Pointer to array A
+/// \author Kazuyoshi Yoshimi (University of Tokyo)
+long int **li_2d_allocate(const long unsigned int N, const long unsigned int M);
+///
+/// \brief Function to free 2d array (int)
+/// \param A Pointer of 2d array A
+void free_li_2d_allocate(long int **A);
+
+
+///
+/// \brief Allocation for A[N]
+/// \param N [in] The size of the array A
+/// \param A [in,out] Array to allocate
+/// \return A Pointer to array A
+/// \author Kazuyoshi Yoshimi (University of Tokyo)
 long unsigned int *lui_1d_allocate(const long unsigned int N);
 
 ///
 /// \brief Function to free 1d array (int)
 /// \param A Pointer of 1d array A
 void free_lui_1d_allocate(long unsigned int *A);
-
 
 ///
 /// \brief Allocation for A[N]
@@ -66,6 +104,19 @@ int **i_2d_allocate(const long unsigned int N, const long unsigned int M);
 /// \param A Pointer of 2d array A
 void free_i_2d_allocate(int **A);
 
+
+///
+/// \brief Allocation for A[N][M][L]
+/// \param N [in] The size of the array A
+/// \param M [in] The size of the array A
+/// \param L [in] The size of the array A
+/// \return A Pointer to array A
+/// \author Kazuyoshi Yoshimi (University of Tokyo)
+int ***i_3d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L);
+///
+/// \brief Function to free 3d array (int)
+/// \param A Pointer of 3d array A
+void free_i_3d_allocate(int ***A);
 
 ///
 /// \brief Allocation for A[N]

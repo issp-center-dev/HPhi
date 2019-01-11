@@ -17,7 +17,7 @@
 #include "bitcalc.h"
 #include "sz.h"
 #include "FileIO.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "check.h"
 #include "wrapperMPI.h"
 #include "CheckMPI.h"
@@ -86,7 +86,7 @@ int check(struct BindStruct *X){
 
   Ns = X->Def.Nsite;
 
-  li_malloc2(comb, Ns+1,Ns+1);
+  comb = li_2d_allocate(Ns+1,Ns+1);
 
   //idim_max
   switch(X->Def.iCalcModel){
@@ -201,7 +201,7 @@ int check(struct BindStruct *X){
     break;
   default:
     fprintf(stderr, cErrNoModel, X->Def.iCalcModel);
-    i_free2(comb, Ns+1, Ns+1);
+    free_li_2d_allocate(comb);
     return FALSE;
   }  
 
@@ -280,7 +280,7 @@ int check(struct BindStruct *X){
   double dmax_mem=MaxMPI_d(X->Check.max_mem);
   fprintf(stdoutMPI, "  APPROXIMATE REQUIRED MEMORY  max_mem=%lf GB \n",dmax_mem);
   if(childfopenMPI(cFileNameCheckMemory,"w", &fp)!=0){
-    i_free2(comb, Ns+1, Ns+1);
+    free_li_2d_allocate(comb);
     return FALSE;
   }
   fprintf(fp,"  MAX DIMENSION idim_max=%ld \n", li_dim_max);
@@ -322,13 +322,13 @@ int check(struct BindStruct *X){
     break;
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
-    i_free2(comb, Ns+1, Ns+1);
+    free_li_2d_allocate(comb);
     return FALSE;
   }  
   X->Check.sdim=tmp_sdim;
   
   if(childfopenMPI(cFileNameCheckSdim,"w", &fp)!=0){
-    i_free2(comb, Ns+1, Ns+1);
+    free_li_2d_allocate(comb);
     return FALSE;
   }
 
@@ -350,9 +350,9 @@ int check(struct BindStruct *X){
     break;
   default:
     break;
-  }  
- 
-  i_free2(comb, Ns+1, Ns+1);
+  }
+
+  free_li_2d_allocate(comb);
 
   u_tmp=1;
   X->Def.Tpow[0]=u_tmp;
@@ -408,7 +408,7 @@ int check(struct BindStruct *X){
     break;
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
-    i_free2(comb, Ns+1, Ns+1);
+    free_li_2d_allocate(comb);
     return FALSE;
   }  
   fclose(fp);	 
