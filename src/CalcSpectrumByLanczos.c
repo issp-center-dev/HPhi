@@ -17,7 +17,7 @@
 #include "Lanczos_EigenValue.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "CalcTime.h"
 /**
  * @file   CalcSpectrumByLanczos.c

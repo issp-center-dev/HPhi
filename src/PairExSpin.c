@@ -20,7 +20,7 @@
 #include "mltplyMPISpinCore.h"
 #include "mltplySpinCore.h"
 #ifdef MPI
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #endif
 
 //
@@ -272,7 +272,7 @@ int GetPairExcitedStateHalfSpin(
     //set size
 #ifdef MPI
     idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-    c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+    tmp_v1bufOrg=cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
     for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
@@ -334,6 +334,9 @@ int GetPairExcitedStateHalfSpin(
             }
         }
     }
+#ifdef MPI
+    free_cd_1d_allocate(tmp_v1bufOrg);
+#endif
     return TRUE;
 }
 
@@ -368,81 +371,85 @@ int GetPairExcitedStateGeneralSpin(
     //set size
 #ifdef MPI
     idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-    c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+    tmp_v1bufOrg = cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
-    for(i=0;i<X->Def.NPairExcitationOperator;i++){
-        org_isite1 = X->Def.PairExcitationOperator[i][0]+1;
-        org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
+    for(i=0;i<X->Def.NPairExcitationOperator;i++) {
+        org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
+        org_isite2 = X->Def.PairExcitationOperator[i][2] + 1;
         org_sigma1 = X->Def.PairExcitationOperator[i][1];
         org_sigma2 = X->Def.PairExcitationOperator[i][3];
         tmp_trans = X->Def.ParaPairExcitationOperator[i];
-        if(org_isite1 == org_isite2){
-            if(org_isite1 >X->Def.Nsite){
-                if(org_sigma1==org_sigma2){
+        if (org_isite1 == org_isite2) {
+            if (org_isite1 > X->Def.Nsite) {
+                if (org_sigma1 == org_sigma2) {
                     // longitudinal magnetic field
-                    num1 = BitCheckGeneral((unsigned long int)myrank,
+                    num1 = BitCheckGeneral((unsigned long int) myrank,
                                            org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-                    if(X->Def.PairExcitationOperator[i][4]==0) {
+                    if (X->Def.PairExcitationOperator[i][4] == 0) {
                         if (num1 != 0) {
-#pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0,tmp_v1)
+#pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
                             for (j = 1; j <= i_max; j++) {
                                 tmp_v0[j] += tmp_trans * tmp_v1[j];
                             }
                         }
-                    }
-                    else {
+                    } else {
                         if (num1 == 0) {
-#pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0,tmp_v1)
+#pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
                             for (j = 1; j <= i_max; j++) {
                                 tmp_v0[j] += -tmp_trans * tmp_v1[j];
                             }
                         }
                     }
                 }//org_sigma1=org_sigma2
-                else{//org_sigma1 != org_sigma2
-                    X_child_CisAit_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, i_max, list_1_org, list_1buf_org, X->Large.ihfbit);
+                else {//org_sigma1 != org_sigma2
+                    X_child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0,
+                                                         tmp_v1, tmp_v1bufOrg, i_max, list_1_org, list_1buf_org,
+                                                         X->Large.ihfbit);
                 }
-            }
-            else {//org_isite1 <= X->Def.Nsite
-                if(org_sigma1==org_sigma2) {
+            } else {//org_isite1 <= X->Def.Nsite
+                if (org_sigma1 == org_sigma2) {
                     // longitudinal magnetic field
                     if (X->Def.PairExcitationOperator[i][4] == 0) {
-#pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0,tmp_v1, list_1)
+#pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1, list_1)
                         for (j = 1; j <= i_max; j++) {
                             num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
                             tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
                         }
-                    }else {
-#pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0,tmp_v1, list_1)
+                    } else {
+#pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1, list_1)
                         for (j = 1; j <= i_max; j++) {
                             num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
                             tmp_v0[j] += -tmp_trans * tmp_v1[j] * (1.0 - num1);
                         }
                     }
                 }//org_sigma1=org_sigma2
-                else{//org_sigma1 != org_sigma2
-#pragma omp parallel for default(none) private(j, tmp_sgn,tmp_off)      \
+                else {//org_sigma1 != org_sigma2
+#pragma omp parallel for default(none) private(j, tmp_sgn, tmp_off)      \
   firstprivate(i_max, org_isite1, org_sigma1, org_sigma2, X, off, tmp_trans, myrank) \
   shared(tmp_v0, tmp_v1, list_1_org, list_1)
                     for (j = 1; j <= i_max; j++) {
-                        tmp_sgn = GetOffCompGeneralSpin(list_1_org[j], org_isite1, org_sigma2, org_sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
-                        if(tmp_sgn !=FALSE){
+                        tmp_sgn = GetOffCompGeneralSpin(list_1_org[j], org_isite1, org_sigma2, org_sigma1, &off,
+                                                        X->Def.SiteToBit, X->Def.Tpow);
+                        if (tmp_sgn != FALSE) {
                             ConvertToList1GeneralSpin(off, X->Large.ihfbit, &tmp_off);
 #ifdef _DEBUG
                             printf("rank=%d, org=%ld, tmp_off=%ld, list_1=%ld, ihfbit=%ld\n",myrank, list_1_org[j], off, list_1[tmp_off], X->Large.ihfbit);
 #endif
-                            tmp_v0[tmp_off] += tmp_v1[j]*tmp_trans;
+                            tmp_v0[tmp_off] += tmp_v1[j] * tmp_trans;
                         }
                     }
 
                 }
             }
-        }else{
+        } else {
             fprintf(stdoutMPI, "ERROR: hopping is not allowed in localized spin system\n");
             return FALSE;
         }//org_isite1 != org_isite2
     }
+#ifdef MPI
+    free_cd_1d_allocate(tmp_v1bufOrg);
+#endif // MPI
 
     return TRUE;
 }

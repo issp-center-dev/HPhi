@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <bitcalc.h>
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "FileIO.h"
 #include "sz.h"
 #include "wrapperMPI.h"
@@ -101,8 +101,8 @@ int sz
   long int *list_2_1_Sz;
   long int *list_2_2_Sz;
   if(X->Def.iFlgGeneralSpin==TRUE){
-    li_malloc1(list_2_1_Sz, X->Check.sdim+2);
-    li_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+    list_2_1_Sz = li_1d_allocate(X->Check.sdim+2);
+    list_2_2_Sz = li_1d_allocate((X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
     for(j=0; j<X->Check.sdim+2;j++){
       list_2_1_Sz[j]=0;
       }
@@ -113,7 +113,7 @@ int sz
   // [e] for general spin
 
   long unsigned int *list_jb;
-  lui_malloc1(list_jb,X->Large.SizeOflistjb);
+  list_jb = lui_1d_allocate(X->Large.SizeOflistjb);
   for(i=0; i<X->Large.SizeOflistjb; i++){
     list_jb[i]=0;
   }
@@ -163,7 +163,7 @@ int sz
     }
     break;
   }
-  li_malloc2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
+  comb = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
   i_max=X->Check.idim_max;
   
   switch(X->Def.iCalcModel){
@@ -666,8 +666,8 @@ int sz
         for(j=0; j<X->Def.Nsite; j++){
           Max2Sz += X->Def.LocSpn[j];
         }
-	
-        lui_malloc1(HilbertNumToSz, 2*Max2Sz+1);
+
+        HilbertNumToSz = lui_1d_allocate(2*Max2Sz+1);
         for(ib=0; ib<2*Max2Sz+1; ib++){
           HilbertNumToSz[ib]=0;
         }
@@ -702,8 +702,8 @@ int sz
         for(ib=0;ib<ilftdim; ib++){
           icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
         }
-		
-        i_free1(HilbertNumToSz, 2*Max2Sz+1);	
+
+        free_lui_1d_allocate(HilbertNumToSz);
       }
       
       break;
@@ -737,8 +737,8 @@ int sz
     fclose(fp_err);
     exitMPI(-1);
   }
-  
-  i_free2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
+
+  free_li_2d_allocate(comb);
   }
   fprintf(stdoutMPI, "%s", cProEndCalcSz);
 

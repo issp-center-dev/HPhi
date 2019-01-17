@@ -15,10 +15,9 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Common.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "xsetmem.h"
 #include "wrapperMPI.h"
-
 /**
  * @file   xsetmem.c
  *
@@ -56,160 +55,94 @@ void setmem_def
 (
  struct BindStruct *X,
  struct BoostList *xBoost
- )
-{
-  unsigned long int i=0;
-  unsigned long int j=0;
-  unsigned long int k=0;
-  lui_malloc1(X->Def.Tpow, 2*X->Def.Nsite+2);
-  lui_malloc1(X->Def.OrgTpow, 2*X->Def.Nsite+2);
-  for(i=0; i<2*X->Def.Nsite+2; i++){
-    X->Def.Tpow[i]=0;
-    X->Def.OrgTpow[i]=0;
-  }
-  li_malloc1(X->Def.SiteToBit, X->Def.Nsite+1);
-  for(i=0; i<X->Def.Nsite+1; i++){
-    X->Def.SiteToBit[i]=0;
-  }
-  
-  i_malloc1(X->Def.LocSpn, X->Def.Nsite);
-  d_malloc1(X->Phys.spin_real_cor, X->Def.Nsite*X->Def.Nsite);
-  d_malloc1(X->Phys.charge_real_cor, X->Def.Nsite*X->Def.Nsite);
-  d_malloc1(X->Phys.loc_spin_z, X->Def.Nsite*X->Def.Nsite);
-  
-  i_malloc1(X->Def.EDChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
-  i_malloc1(X->Def.EDSpinChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
-  d_malloc1(X->Def.EDParaChemi, X->Def.EDNChemi+X->Def.NInterAll+X->Def.NTransfer);
+ ) {
+  unsigned long int i = 0;
+  unsigned long int j = 0;
+  unsigned long int k = 0;
+  X->Def.Tpow = lui_1d_allocate(2 * X->Def.Nsite + 2);
+  X->Def.OrgTpow = lui_1d_allocate(2 * X->Def.Nsite + 2);
+  X->Def.SiteToBit = li_1d_allocate(X->Def.Nsite + 1);
+  X->Def.LocSpn = i_1d_allocate(X->Def.Nsite);
+  X->Phys.spin_real_cor = d_1d_allocate(X->Def.Nsite * X->Def.Nsite);
+  X->Phys.charge_real_cor = d_1d_allocate(X->Def.Nsite * X->Def.Nsite);
+  X->Phys.loc_spin_z = d_1d_allocate(X->Def.Nsite * X->Def.Nsite);
 
-  i_malloc2(X->Def.GeneralTransfer, X->Def.NTransfer, 4);
-  c_malloc1(X->Def.ParaGeneralTransfer, X->Def.NTransfer);
+  X->Def.EDChemi = i_1d_allocate(X->Def.EDNChemi + X->Def.NInterAll + X->Def.NTransfer);
+  X->Def.EDSpinChemi = i_1d_allocate(X->Def.EDNChemi + X->Def.NInterAll + X->Def.NTransfer);
+  X->Def.EDParaChemi = d_1d_allocate(X->Def.EDNChemi + X->Def.NInterAll + X->Def.NTransfer);
+  X->Def.GeneralTransfer = i_2d_allocate(X->Def.NTransfer, 4);
+  X->Def.ParaGeneralTransfer = cd_1d_allocate(X->Def.NTransfer);
 
-  if(X->Def.iCalcType == TimeEvolution){
-    i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer+X->Def.NTETransferMax, 4);
-    c_malloc1(X->Def.EDParaGeneralTransfer, X->Def.NTransfer+X->Def.NTETransferMax);
-
-  }
-  else {
-    i_malloc2(X->Def.EDGeneralTransfer, X->Def.NTransfer, 4);
-    c_malloc1(X->Def.EDParaGeneralTransfer, X->Def.NTransfer);
-  }
-  i_malloc2(X->Def.CoulombIntra, X->Def.NCoulombIntra, 1);
-  d_malloc1(X->Def.ParaCoulombIntra, X->Def.NCoulombIntra);
-  i_malloc2(X->Def.CoulombInter, X->Def.NCoulombInter+X->Def.NIsingCoupling, 2);
-  d_malloc1(X->Def.ParaCoulombInter, X->Def.NCoulombInter+X->Def.NIsingCoupling);
-  i_malloc2(X->Def.HundCoupling, X->Def.NHundCoupling+X->Def.NIsingCoupling, 2);
-  d_malloc1(X->Def.ParaHundCoupling, X->Def.NHundCoupling+X->Def.NIsingCoupling);
-  i_malloc2(X->Def.PairHopping, X->Def.NPairHopping, 2);
-  d_malloc1(X->Def.ParaPairHopping, X->Def.NPairHopping); 
-  i_malloc2(X->Def.ExchangeCoupling, X->Def.NExchangeCoupling, 2);
-  d_malloc1(X->Def.ParaExchangeCoupling, X->Def.NExchangeCoupling);
-  i_malloc2(X->Def.PairLiftCoupling, X->Def.NPairLiftCoupling, 2);
-  d_malloc1(X->Def.ParaPairLiftCoupling, X->Def.NPairLiftCoupling);
-
-  i_malloc2(X->Def.InterAll, X->Def.NInterAll, 8);
-  c_malloc1(X->Def.ParaInterAll, X->Def.NInterAll);
-    
-  i_malloc2(X->Def.CisAjt, X->Def.NCisAjt, 4);
-  i_malloc2(X->Def.CisAjtCkuAlvDC, X->Def.NCisAjtCkuAlvDC, 8);
-
-  i_malloc2(X->Def.SingleExcitationOperator, X->Def.NSingleExcitationOperator, 3);
-  c_malloc1(X->Def.ParaSingleExcitationOperator, X->Def.NSingleExcitationOperator);
-  i_malloc2(X->Def.PairExcitationOperator, X->Def.NPairExcitationOperator, 5);
-  c_malloc1(X->Def.ParaPairExcitationOperator, X->Def.NPairExcitationOperator);
-
-  d_malloc1(X->Def.ParaLaser, X->Def.NLaser);
-
-  unsigned int ipivot,iarrayJ,ispin;
-  xBoost->list_6spin_star = (int **)malloc(sizeof(int*) * xBoost->R0 * xBoost->num_pivot);
-  for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
-    xBoost->list_6spin_star[ipivot] = (int *)malloc(sizeof(int) * 7);
-  }
-  
-  xBoost->list_6spin_pair = (int ***)malloc(sizeof(int**) * xBoost->R0 * xBoost->num_pivot);
-  for (ipivot = 0; ipivot <  xBoost->R0 * xBoost->num_pivot; ipivot++) {
-    xBoost->list_6spin_pair[ipivot] = (int **)malloc(sizeof(int*) * 7);
-    for (ispin = 0; ispin < 7; ispin++) {
-      xBoost->list_6spin_pair[ipivot][ispin] = (int *)malloc(sizeof(int) * 15);
-    }
+  if (X->Def.iCalcType == TimeEvolution) {
+    X->Def.EDGeneralTransfer = i_2d_allocate(X->Def.NTransfer + X->Def.NTETransferMax, 4);
+    X->Def.EDParaGeneralTransfer = cd_1d_allocate(X->Def.NTransfer + X->Def.NTETransferMax);
+  } else {
+    X->Def.EDGeneralTransfer = i_2d_allocate(X->Def.NTransfer, 4);
+    X->Def.EDParaGeneralTransfer = cd_1d_allocate(X->Def.NTransfer);
   }
 
-  xBoost->arrayJ = (double complex ***)malloc(sizeof(double complex**) * xBoost->NumarrayJ);
-for (iarrayJ = 0; iarrayJ < xBoost->NumarrayJ; iarrayJ++) {
-  xBoost->arrayJ[iarrayJ] = (double complex **)malloc(sizeof(double complex*) * 3);
-  for (i = 0; i < 3; i++) {
-    xBoost->arrayJ[iarrayJ][i] = (double complex *)malloc(sizeof(double complex) * 3);
-  }
-}
+  X->Def.CoulombIntra = i_2d_allocate(X->Def.NCoulombIntra, 1);
+  X->Def.ParaCoulombIntra = d_1d_allocate(X->Def.NCoulombIntra);
+  X->Def.CoulombInter = i_2d_allocate(X->Def.NCoulombInter + X->Def.NIsingCoupling, 2);
+  X->Def.ParaCoulombInter = d_1d_allocate(X->Def.NCoulombInter + X->Def.NIsingCoupling);
+  X->Def.HundCoupling = i_2d_allocate(X->Def.NHundCoupling + X->Def.NIsingCoupling, 2);
+  X->Def.ParaHundCoupling = d_1d_allocate(X->Def.NHundCoupling + X->Def.NIsingCoupling);
+  X->Def.PairHopping = i_2d_allocate(X->Def.NPairHopping, 2);
+  X->Def.ParaPairHopping = d_1d_allocate(X->Def.NPairHopping);
+  X->Def.ExchangeCoupling = i_2d_allocate(X->Def.NExchangeCoupling, 2);
+  X->Def.ParaExchangeCoupling = d_1d_allocate(X->Def.NExchangeCoupling);
+  X->Def.PairLiftCoupling = i_2d_allocate(X->Def.NPairLiftCoupling, 2);
+  X->Def.ParaPairLiftCoupling = d_1d_allocate(X->Def.NPairLiftCoupling);
+
+  X->Def.InterAll = i_2d_allocate(X->Def.NInterAll, 8);
+  X->Def.ParaInterAll = cd_1d_allocate(X->Def.NInterAll);
+
+  X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
+  X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
+
+  X->Def.SingleExcitationOperator = i_2d_allocate(X->Def.NSingleExcitationOperator, 3);
+  X->Def.ParaSingleExcitationOperator = cd_1d_allocate(X->Def.NSingleExcitationOperator);
+  X->Def.PairExcitationOperator = i_2d_allocate(X->Def.NPairExcitationOperator, 5);
+  X->Def.ParaPairExcitationOperator = cd_1d_allocate(X->Def.NPairExcitationOperator);
+
+  X->Def.ParaLaser = d_1d_allocate(X->Def.NLaser);
+
+  unsigned int ipivot, iarrayJ, ispin;
+  xBoost->list_6spin_star = i_2d_allocate(xBoost->R0 * xBoost->num_pivot, 7);
+  xBoost->list_6spin_pair = i_3d_allocate(xBoost->R0 * xBoost->num_pivot, 7, 15);
+  xBoost->arrayJ = cd_3d_allocate(xBoost->NumarrayJ, 3, 3);
 
   int NInterAllSet;
-  NInterAllSet= (X->Def.iCalcType==TimeEvolution) ? X->Def.NInterAll+X->Def.NTEInterAllMax: X->Def.NInterAll;
-  i_malloc2(X->Def.InterAll_OffDiagonal, NInterAllSet, 8);
-  c_malloc1(X->Def.ParaInterAll_OffDiagonal, NInterAllSet);
-  i_malloc2(X->Def.InterAll_Diagonal, NInterAllSet, 4);
-  d_malloc1(X->Def.ParaInterAll_Diagonal, NInterAllSet);
+  NInterAllSet = (X->Def.iCalcType == TimeEvolution) ? X->Def.NInterAll + X->Def.NTEInterAllMax : X->Def.NInterAll;
+  X->Def.InterAll_OffDiagonal = i_2d_allocate(NInterAllSet, 8);
+  X->Def.ParaInterAll_OffDiagonal = cd_1d_allocate(NInterAllSet);
+  X->Def.InterAll_Diagonal = i_2d_allocate(NInterAllSet, 4);
+  X->Def.ParaInterAll_Diagonal = d_1d_allocate(NInterAllSet);
 
-  if (X->Def.iCalcType == TimeEvolution){
-    d_malloc1(X->Def.TETime, X->Def.NTETimeSteps);
+  if (X->Def.iCalcType == TimeEvolution) {
+    X->Def.TETime = d_1d_allocate(X->Def.NTETimeSteps);
     //Time-dependent Transfer
-    ui_malloc1(X->Def.NTETransfer, X->Def.NTETimeSteps);
-    ui_malloc1(X->Def.NTETransferDiagonal, X->Def.NTETimeSteps);
-    i_malloc3(X->Def.TETransfer, X->Def.NTETimeSteps, X->Def.NTETransferMax, 4);
-    i_malloc3(X->Def.TETransferDiagonal, X->Def.NTETimeSteps, X->Def.NTETransferMax, 2);
-    c_malloc2(X->Def.ParaTETransfer, X->Def.NTETimeSteps, X->Def.NTETransferMax);
-    d_malloc2(X->Def.ParaTETransferDiagonal, X->Def.NTETimeSteps,X->Def.NTETransferMax);
+    X->Def.NTETransfer = ui_1d_allocate(X->Def.NTETimeSteps);
+    X->Def.NTETransferDiagonal = ui_1d_allocate(X->Def.NTETimeSteps);
+    X->Def.TETransfer = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax, 4);
+    X->Def.TETransferDiagonal = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax, 2);
+    X->Def.ParaTETransfer = cd_2d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax);
+    X->Def.ParaTETransferDiagonal = d_2d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax);
     //Time-dependent InterAll
-    ui_malloc1(X->Def.NTEInterAll, X->Def.NTETimeSteps);
-    ui_malloc1(X->Def.NTEInterAllDiagonal, X->Def.NTETimeSteps);
-    i_malloc3(X->Def.TEInterAll, X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 8);
-    i_malloc3(X->Def.TEInterAllDiagonal, X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 4);
-    c_malloc2(X->Def.ParaTEInterAll, X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
-    d_malloc2(X->Def.ParaTEInterAllDiagonal, X->Def.NTETimeSteps,X->Def.NTEInterAllMax);
-    ui_malloc1(X->Def.NTEInterAllOffDiagonal, X->Def.NTETimeSteps);
-    i_malloc3(X->Def.TEInterAllOffDiagonal, X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 8);
-    c_malloc2(X->Def.ParaTEInterAllOffDiagonal, X->Def.NTETimeSteps,X->Def.NTEInterAllMax);
-
+    X->Def.NTEInterAll = ui_1d_allocate(X->Def.NTETimeSteps);
+    X->Def.NTEInterAllDiagonal = ui_1d_allocate(X->Def.NTETimeSteps);
+    X->Def.TEInterAll = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 8);
+    X->Def.TEInterAllDiagonal = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 4);
+    X->Def.ParaTEInterAll = cd_2d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
+    X->Def.ParaTEInterAllDiagonal = d_2d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
+    X->Def.NTEInterAllOffDiagonal = ui_1d_allocate(X->Def.NTETimeSteps);
+    X->Def.TEInterAllOffDiagonal = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax, 8);
+    X->Def.ParaTEInterAllOffDiagonal = cd_2d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
     //Time-dependent Chemi generated by InterAll diagonal components
-    ui_malloc1(X->Def.NTEChemi, X->Def.NTETimeSteps);
-    i_malloc2(X->Def.TEChemi,  X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
-    i_malloc2(X->Def.SpinTEChemi,  X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
-    d_malloc2(X->Def.ParaTEChemi, X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
-
-    for(i = 0; i <  X->Def.NTETimeSteps; i++){
-      X->Def.TETime[i]=0;
-      X->Def.NTETransfer[i]=0;
-      X->Def.NTETransferDiagonal[i]=0;
-      X->Def.NTEChemi[i]=0;
-
-      X->Def.NTEInterAll[i] = 0;
-      X->Def.NTEInterAllDiagonal[i] = 0;
-      X->Def.NTEInterAllOffDiagonal[i] = 0;
-      for(j = 0; j < X->Def.NTETransferMax; j++) {
-        X->Def.ParaTETransfer[i][j]=0;
-        X->Def.ParaTETransferDiagonal[i][j]=0;
-        for(k = 0; k< 4; k++){
-          X->Def.TETransfer[i][j][k]=0;
-        }
-        for(k = 0; k< 2; k++){
-          X->Def.TETransferDiagonal[i][j][k]=0;
-        }
-      }
-      for(j = 0; j < X->Def.NTEInterAllMax; j++){
-        X->Def.ParaTEInterAll[i][j]=0;
-        X->Def.ParaTEInterAllDiagonal[i][j]=0;
-        X->Def.ParaTEInterAllOffDiagonal[i][j]=0;
-        X->Def.TEChemi[i][j]=0;
-        X->Def.SpinTEChemi[i][j]=0;
-        X->Def.ParaTEChemi[i][j]=0;
-        for(k = 0; k< 4; k++){
-          X->Def.TEInterAllDiagonal[i][j][k]=0;
-        }
-        for(k = 0; k< 8; k++){
-          X->Def.TEInterAll[i][j][k]=0;
-          X->Def.TEInterAllOffDiagonal[i][j][k]=0;
-        }
-      }
-    }
-
+    X->Def.NTEChemi = ui_1d_allocate(X->Def.NTETimeSteps);
+    X->Def.TEChemi = i_2d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
+    X->Def.SpinTEChemi = i_2d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
+    X->Def.ParaTEChemi = d_2d_allocate(X->Def.NTETimeSteps, X->Def.NTEInterAllMax);
   }
 }
 
@@ -231,62 +164,38 @@ int setmem_large
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
   if (GetlistSize(X) == TRUE) {
-    lui_malloc1(list_1, X->Check.idim_max + 1);
+      list_1 = lui_1d_allocate(X->Check.idim_max + 1);
 #ifdef MPI
-    lui_malloc1(list_1buf, idim_maxMPI + 1);
-    for (j = 0; j < X->Check.idim_max + 1; j++) {
-      list_1buf[j] = 0;
-    }
+      list_1buf = lui_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
-    lui_malloc1(list_2_1, X->Large.SizeOflist_2_1);
-    lui_malloc1(list_2_2, X->Large.SizeOflist_2_2);
-    if (list_1 == NULL
-        || list_2_1 == NULL
-        || list_2_2 == NULL
-            ) {
-      return -1;
-    }
-    for (j = 0; j < X->Check.idim_max + 1; j++) {
-      list_1[j] = 0;
-    }
-    for (j = 0; j < X->Large.SizeOflist_2_1; j++) {
-      list_2_1[j] = 0;
-    }
-    for (j = 0; j < X->Large.SizeOflist_2_2; j++) {
-      list_2_2[j] = 0;
-    }
+      list_2_1 = lui_1d_allocate(X->Large.SizeOflist_2_1);
+      list_2_2 = lui_1d_allocate(X->Large.SizeOflist_2_2);
+      if (list_1 == NULL
+          || list_2_1 == NULL
+          || list_2_2 == NULL
+              ) {
+          return -1;
+      }
   }
 
-  d_malloc1(list_Diagonal, X->Check.idim_max + 1);
-  c_malloc1(v0, X->Check.idim_max + 1);
-  c_malloc1(v1, X->Check.idim_max + 1);
-  for (j = 0; j < X->Check.idim_max + 1; j++) {
-    list_Diagonal[j] = 0;
-    v0[j] = 0;
-    v1[j] = 0;
-  }
+    list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
+    v0 = cd_1d_allocate(X->Check.idim_max + 1);
+    v1 = cd_1d_allocate(X->Check.idim_max + 1);
   if (X->Def.iCalcType == TimeEvolution) {
-    c_malloc1(v2, X->Check.idim_max + 1);
+      v2 = cd_1d_allocate(X->Check.idim_max + 1);
   } else {
-    c_malloc1(v2, 1);
+      v2 = cd_1d_allocate(1);
   }
 #ifdef MPI
-  c_malloc1(v1buf, idim_maxMPI + 1);
-  for (j = 0; j < X->Check.idim_max + 1; j++) {
-    v1buf[j] = 0;
-  }
+    v1buf = cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
   if (X->Def.iCalcType == TPQCalc) {
-    c_malloc1(vg, 1);
-    vg[0] = 0;
+      vg = cd_1d_allocate(1);
   } else {
-    c_malloc1(vg, X->Check.idim_max + 1);
-    for (j = 0; j < X->Check.idim_max + 1; j++) {
-      vg[j] = 0;
-    }
+      vg = cd_1d_allocate(X->Check.idim_max + 1);
   }
-  d_malloc1(alpha, X->Def.Lanczos_max + 1);
-  d_malloc1(beta, X->Def.Lanczos_max + 1);
+    alpha = d_1d_allocate(X->Def.Lanczos_max + 1);
+    beta = d_1d_allocate(X->Def.Lanczos_max + 1);
 
   if (
           list_Diagonal == NULL
@@ -298,24 +207,24 @@ int setmem_large
   }
 
   if (X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-    c_malloc2(vec, X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
+      vec = cd_2d_allocate(X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
   } else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
     if (X->Def.LanczosTarget > X->Def.nvec) {
-      c_malloc2(vec, X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
+        vec = cd_2d_allocate(X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
     } else {
-      c_malloc2(vec, X->Def.nvec + 1, X->Def.Lanczos_max + 1);
+        vec = cd_2d_allocate(X->Def.nvec + 1, X->Def.Lanczos_max + 1);
     }
   }
 
   if (X->Def.iCalcType == FullDiag) {
-    d_malloc1(X->Phys.all_num_down, X->Check.idim_max + 1);
-    d_malloc1(X->Phys.all_num_up, X->Check.idim_max + 1);
-    d_malloc1(X->Phys.all_energy, X->Check.idim_max + 1);
-    d_malloc1(X->Phys.all_doublon, X->Check.idim_max + 1);
-    d_malloc1(X->Phys.all_sz, X->Check.idim_max + 1);
-    d_malloc1(X->Phys.all_s2, X->Check.idim_max + 1);
-    c_malloc2(Ham, X->Check.idim_max + 1, X->Check.idim_max + 1);
-    c_malloc2(L_vec, X->Check.idim_max + 1, X->Check.idim_max + 1);
+      X->Phys.all_num_down = d_1d_allocate(X->Check.idim_max + 1);
+      X->Phys.all_num_up = d_1d_allocate( X->Check.idim_max + 1);
+      X->Phys.all_energy = d_1d_allocate(X->Check.idim_max + 1);
+      X->Phys.all_doublon = d_1d_allocate(X->Check.idim_max + 1);
+      X->Phys.all_sz = d_1d_allocate(X->Check.idim_max + 1);
+      X->Phys.all_s2 = d_1d_allocate(X->Check.idim_max + 1);
+      Ham = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
+      L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
 
     if (X->Phys.all_num_down == NULL
         || X->Phys.all_num_up == NULL
@@ -331,12 +240,12 @@ int setmem_large
       }
     }
   } else if (X->Def.iCalcType == CG) {
-    d_malloc1(X->Phys.all_num_down, X->Def.k_exct);
-    d_malloc1(X->Phys.all_num_up, X->Def.k_exct);
-    d_malloc1(X->Phys.all_energy, X->Def.k_exct);
-    d_malloc1(X->Phys.all_doublon, X->Def.k_exct);
-    d_malloc1(X->Phys.all_sz, X->Def.k_exct);
-    d_malloc1(X->Phys.all_s2, X->Def.k_exct);
+      X->Phys.all_num_down = d_1d_allocate(X->Def.k_exct);
+      X->Phys.all_num_up = d_1d_allocate(X->Def.k_exct);
+      X->Phys.all_energy = d_1d_allocate(X->Def.k_exct);
+      X->Phys.all_doublon = d_1d_allocate(X->Def.k_exct);
+      X->Phys.all_sz = d_1d_allocate(X->Def.k_exct);
+      X->Phys.all_s2 = d_1d_allocate( X->Def.k_exct);
   }
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
@@ -359,10 +268,10 @@ int setmem_large
                   double *ParaInterAllDiagonal,
                   const int NInterAll
           ) {
-    i_malloc2(InterAllOffDiagonal, NInterAll, 8);
-    c_malloc1(ParaInterAllOffDiagonal, NInterAll);
-    i_malloc2(InterAllDiagonal, NInterAll, 4);
-    d_malloc1(ParaInterAllDiagonal, NInterAll);
+    InterAllOffDiagonal = i_2d_allocate(NInterAll, 8);
+    ParaInterAllOffDiagonal = cd_1d_allocate(NInterAll);
+    InterAllDiagonal = i_2d_allocate(NInterAll, 4);
+    ParaInterAllDiagonal = d_1d_allocate(NInterAll);
   }
 
 

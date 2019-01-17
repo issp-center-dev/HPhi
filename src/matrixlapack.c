@@ -24,7 +24,6 @@
 
 #include "matrixlapack.h"
 #include <stdlib.h>
-#include "mfmemory.h"
 /**
  * @file   matrixlapack.c
  * @version 0.1, 0.2

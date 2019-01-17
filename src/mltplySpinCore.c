@@ -17,7 +17,6 @@
 */
 
 #include <bitcalc.h>
-#include "mfmemory.h"
 #include "xsetmem.h"
 #include "wrapperMPI.h"
 #include "mltplyCommon.h"
