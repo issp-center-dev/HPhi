@@ -40,10 +40,10 @@ Chain [ :numref:`fig_chap04_1_lattice` (a)]
             spin coupling, and offsite
             Coulomb integral depend on the bond direction.
             
-      Schematic illustration of the anisotropic honeycomb lattice. The
-      nearest neighbor hopping integral, spin coupling, and offsite
-      Coulomb integral depend on the bond direction. Those between the
-      second nearest neighbor sites are not supported. 
+      Schematic illustration of the anisotropic honeycomb lattice.
+      The first/second/third nearest neighbor hopping integral,
+      spin coupling, and offsite
+      Coulomb integral depend on the bond direction.
 
    .. figure:: ../../../../figs/kagome.png
       :name: fig_kagome
