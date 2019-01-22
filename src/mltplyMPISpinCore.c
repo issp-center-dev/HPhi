@@ -679,6 +679,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+#pragma omp for
       for (j = 0; j < idim_max_buf; j++) {
         state1 = (j & mask1) / mask1;
         if (state1 == state1check) {
