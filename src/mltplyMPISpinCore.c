@@ -690,6 +690,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
       }/*for (j = 0; j < idim_max_buf; j++)*/
     }
     else {
+#pragma omp for
       for (j = 0; j < idim_max_buf; j++) {
         state1 = (j & mask1) / mask1;
         if (state1 == state1check) {
