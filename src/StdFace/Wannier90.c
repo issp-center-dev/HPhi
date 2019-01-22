@@ -394,11 +394,11 @@ void StdFace_Wannier90(
   if (strcmp(StdI->model, "spin") == 0 ) {
     ntransMax = StdI->nsite * (StdI->S2 + 1/*h*/ + 2 * StdI->S2/*Gamma*/);
     nintrMax = StdI->NCell * (StdI->NsiteUC/*D*/ + n_t/*J*/ + n_u + n_j)
-      * (3 * StdI->S2 + 1) * (3 * StdI->S2 + 1);
+      * (3 * StdI->S2 + 1) * (3 * StdI->S2 + StdI->NsiteUC);
   }
   else if (strcmp(StdI->model, "hubbard") == 0) {
     ntransMax = StdI->NCell * 2/*spin*/ * (2 * StdI->NsiteUC/*mu+h+Gamma*/ + n_t * 2/*t*/);
-    nintrMax = StdI->NCell * (n_u + n_j + 1);
+    nintrMax = StdI->NCell * (n_u + n_j + StdI->NsiteUC);
   }
   /**/
   StdFace_MallocInteractions(StdI, ntransMax, nintrMax);
