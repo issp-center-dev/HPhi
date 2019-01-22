@@ -102,12 +102,12 @@ int check(struct BindStruct *X){
     comb_sum = 1;
     if(X->Def.iFlgGeneralSpin ==FALSE){
       for(i=0;i<X->Def.Nsite;i++){
-	comb_sum= 2*comb_sum;     
+        comb_sum= 2*comb_sum;     
       }
     }
     else{
       for(i=0; i<X->Def.Nsite;i++){
-	comb_sum=comb_sum*X->Def.SiteToBit[i];
+        comb_sum=comb_sum*X->Def.SiteToBit[i];
       }
     }
     break;
@@ -171,8 +171,8 @@ int check(struct BindStruct *X){
 
     if(X->Def.iFlgGeneralSpin ==FALSE){
       if(X->Def.Nup+X->Def.Ndown != X->Def.Nsite){
-	fprintf(stderr, " 2Sz is incorrect.\n");
-	return FALSE;
+        fprintf(stderr, " 2Sz is incorrect.\n");
+        return FALSE;
       }
       //comb_sum= Binomial(Ns, X->Def.Ne, comb, Ns);
       comb_sum= Binomial(Ns, X->Def.Nup, comb, Ns);
@@ -181,19 +181,19 @@ int check(struct BindStruct *X){
       idimmax = 1;
       X->Def.Tpow[0]=idimmax;
       for(isite=0; isite<X->Def.Nsite;isite++){
-	idimmax=idimmax*X->Def.SiteToBit[isite];
-	X->Def.Tpow[isite+1]=idimmax;
+        idimmax=idimmax*X->Def.SiteToBit[isite];
+        X->Def.Tpow[isite+1]=idimmax;
       }
       comb_sum=0;
 #pragma omp parallel for default(none) reduction(+:comb_sum) private(tmp_sz, isite) firstprivate(idimmax, X) 
       for(idim=0; idim<idimmax; idim++){
-	tmp_sz=0;
-	for(isite=0; isite<X->Def.Nsite;isite++){
-	  tmp_sz += GetLocal2Sz(isite+1,idim, X->Def.SiteToBit, X->Def.Tpow );	  
-	}
-	if(tmp_sz == X->Def.Total2Sz){
-	  comb_sum +=1;
-	}
+        tmp_sz=0;
+        for(isite=0; isite<X->Def.Nsite;isite++){
+          tmp_sz += GetLocal2Sz(isite+1,idim, X->Def.SiteToBit, X->Def.Tpow );          
+        }
+        if(tmp_sz == X->Def.Total2Sz){
+          comb_sum +=1;
+        }
       }
       
     }
@@ -312,8 +312,8 @@ int check(struct BindStruct *X){
   case SpinGC:
     if(X->Def.iFlgGeneralSpin==FALSE){ 
       while(tmp <= X->Def.Nsite/2){
-	tmp_sdim=tmp_sdim*2;
-	tmp+=1;
+        tmp_sdim=tmp_sdim*2;
+        tmp+=1;
       }
     }
     else{
@@ -385,11 +385,11 @@ int check(struct BindStruct *X){
    else{
      X->Def.Tpow[0]=u_tmp;
      fprintf(fp,"%d %ld \n", 0, u_tmp);
-      for(i=1;i<X->Def.Nsite;i++){
-	u_tmp=u_tmp*X->Def.SiteToBit[i-1];
-	X->Def.Tpow[i]=u_tmp;
-	fprintf(fp,"%ld %ld \n",i,u_tmp);
-      }
+     for(i=1;i<X->Def.Nsite;i++){
+       u_tmp=u_tmp*X->Def.SiteToBit[i-1];
+       X->Def.Tpow[i]=u_tmp;
+       fprintf(fp,"%ld %ld \n",i,u_tmp);
+     }
    }
    break;
  case Spin:
@@ -411,7 +411,7 @@ int check(struct BindStruct *X){
     free_li_2d_allocate(comb);
     return FALSE;
   }  
-  fclose(fp);	 
+  fclose(fp);
   /*
     Print MPI-site information and Modify Tpow 
     in the inter process region.

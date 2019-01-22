@@ -298,7 +298,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
                 is   = X->Def.Tpow[2 * org_isite1 - 2+org_sigma1];
                 ibit = (unsigned long int)myrank & is;
                 if (ibit == is) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec)	\
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec) \
   firstprivate(i_max) private(j)
                     for (j = 1; j <= i_max; j++) dam_pr += vec[j]*conj(vec[j]);
                 }
@@ -395,7 +395,7 @@ int expec_cisajs_SpinHalf(struct BindStruct *X, double complex *vec, FILE **_fp)
                     ibit1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
                     dam_pr=0;
                     if(ibit1 !=0){
-#pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec)	\
+#pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec) \
   firstprivate(i_max) private(j)
                         for (j = 1; j <= i_max; j++) dam_pr += conj(vec[j])*vec[j];
                     }

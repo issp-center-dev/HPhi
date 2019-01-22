@@ -17,6 +17,6 @@
 #include "Common.h"
 
 int CalcByTEM(
-	    const int ExpecInterval,
-	    struct EDMainCalStruct *X
+              const int ExpecInterval,
+              struct EDMainCalStruct *X
 );

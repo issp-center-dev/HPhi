@@ -18,16 +18,16 @@
 
 double complex child_Cor_1(long unsigned int j,
                    long unsigned int is_A,
-		   long unsigned int is1,
+                   long unsigned int is1,
                    long unsigned int is2,
                    long unsigned int is3,
                    long unsigned int b_sigma_A,
                    long unsigned int irght,
                    long unsigned int ilft,
                    long unsigned int ihfbit,
-		   struct BindStruct *X,
-		   double complex *vec
-		   );
+                   struct BindStruct *X,
+                   double complex *vec
+                   );
 
 double complex child_Cor_2(long unsigned int j,
                    long unsigned int is_B,
@@ -38,9 +38,9 @@ double complex child_Cor_2(long unsigned int j,
                    long unsigned int irght,
                    long unsigned int ilft,
                    long unsigned int ihfbit,
-		   struct BindStruct *X,
-		   double complex *vec
-		   );
+                   struct BindStruct *X,
+                   double complex *vec
+                   );
 
 double complex child_Cor_3(long unsigned int j,
                    long unsigned int is_A,
@@ -54,17 +54,17 @@ double complex child_Cor_3(long unsigned int j,
                    long unsigned int irght,
                    long unsigned int ilft,
                    long unsigned int ihfbit,
-		   struct BindStruct *X,
-		   double complex *vec
-		   );
+                   struct BindStruct *X,
+                   double complex *vec
+                   );
 
 
 int expec_cisajscktaltdc(
-			 struct BindStruct *X,
-			 double complex *vec
-			 );
+                         struct BindStruct *X,
+                         double complex *vec
+                         );
 
 void expec_cisajscktaltdc_alldiag_spin(
-				  struct BindStruct *X,
-			          double complex *vec
-				  );
+                                  struct BindStruct *X,
+                                  double complex *vec
+                                  );

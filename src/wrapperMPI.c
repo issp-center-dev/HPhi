@@ -138,8 +138,8 @@ char* fgetsMPI(
     while(*InputString == '\n' || strncmp(InputString, "#", 1)==0){
       ctmp = fgets(InputString, maxcount, fp);
       if (ctmp == NULL){
-	inull=1;
-	break;
+        inull=1;
+        break;
       }
     }
   }

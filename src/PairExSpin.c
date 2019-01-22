@@ -288,13 +288,13 @@ int GetPairExcitedStateHalfSpin(
                     ibit1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
                     if (X->Def.PairExcitationOperator[i][4] == 0) {
                         if (ibit1 != 0) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
   firstprivate(i_max, tmp_trans) private(j)
                             for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
                         }
                     } else {
                         if (ibit1 == 0) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
   firstprivate(i_max, tmp_trans) private(j)
                             for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
                         }

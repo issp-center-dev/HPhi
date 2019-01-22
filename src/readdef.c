@@ -110,7 +110,7 @@ int InputInterAllInfo(
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int ReadDefFileError(
-                     const	char *defname
+                     const char *defname
                      ){
   fprintf(stdoutMPI, cErrReadDefFile, defname);
   return (-1);
@@ -423,7 +423,7 @@ int GetFileName(
       fprintf(stdoutMPI, cErrKW, ctmpKW, cFileListNameFile);
       fprintf(stdoutMPI, "%s", cErrKW_ShowList);
       for(i=0; i<D_iKWNumDef;i++){
-	    fprintf(stdoutMPI, "%s \n", cKWListOfFileNameList[i]);
+        fprintf(stdoutMPI, "%s \n", cKWListOfFileNameList[i]);
       }
       fclose(fplist);
       return(-1);
@@ -473,7 +473,7 @@ int ReadDefFileNInt(
   X->iFlgSzConserved=FALSE;
   X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
-  xBoost->flgBoost=FALSE;	
+  xBoost->flgBoost=FALSE;
   InitializeInteractionNum(X);
   NumAve=1;
   X->Param.ExpecInterval=1;
@@ -1080,7 +1080,7 @@ int ReadDefFileIdxPara(
                 iboolLoc=1;
                 fprintf(stdoutMPI, cWarningIncorrectFormatForSpin2, isite1, isite2);
               }
-            }	    
+            }
             else if(X->iCalcModel==Kondo){
               if(X->LocSpn[isite1]!=ITINERANT || X->LocSpn[isite2] !=ITINERANT){
                 if(isite1 != isite2){
@@ -1119,7 +1119,7 @@ int ReadDefFileIdxPara(
             }
             idx++;
           }
-	
+
         if(iboolLoc ==1){
           fclose(fp);
           return(-1);
@@ -1152,7 +1152,7 @@ int ReadDefFileIdxPara(
                  &(X->CoulombIntra[idx][0]),
                  &(X->ParaCoulombIntra[idx])
                  );
-	  
+
           if(CheckSite(X->CoulombIntra[idx][0], X->Nsite) !=0){
             fclose(fp);
             return ReadDefFileError(defname);
@@ -1230,7 +1230,7 @@ int ReadDefFileIdxPara(
                  &(X->PairHopping[2*idx][1]),
                  &(X->ParaPairHopping[2*idx])
                  );
-	  
+
           if(CheckPairSite(X->PairHopping[2*idx][0], X->PairHopping[2*idx][1],X->Nsite) !=0){
             fclose(fp);
             return ReadDefFileError(defname);
@@ -1434,7 +1434,7 @@ int ReadDefFileIdxPara(
           X->CisAjt[ idx ][0] = isite1;
           X->CisAjt[ idx ][1] = isigma1;
           X->CisAjt[ idx ][2] = isite2;
-          X->CisAjt[ idx ][3] = isigma2;	  
+          X->CisAjt[ idx ][3] = isigma2;
 
           if(CheckPairSite(isite1, isite2,X->Nsite) !=0){
             fclose(fp);
@@ -1641,7 +1641,7 @@ int ReadDefFileIdxPara(
                    &dArrayValue_re[2]);
             for(ilineIn2=0; ilineIn2<3; ilineIn2++){
               xBoost->arrayJ[iline][ilineIn][ilineIn2]= dArrayValue_re[ilineIn2];
-            }	    
+            }
           }
         }
       }
@@ -1669,7 +1669,7 @@ int ReadDefFileIdxPara(
               xBoost->list_6spin_star[iloop*xBoost->num_pivot+iline][itmp]=xBoost->list_6spin_star[iline][itmp];
             }
           }   
-        }	
+        }
       }
 
       //read list_6spin_pair
@@ -1696,7 +1696,7 @@ int ReadDefFileIdxPara(
             }
           }
         }
-	
+
       }
 
       break;
@@ -1930,7 +1930,7 @@ int CheckTransferHermite
       itmpsigma2=X->GeneralTransfer[j][3];
       if(isite1 == itmpsite2 && isite2 == itmpsite1){
         if(isigma1 == itmpsigma2 && isigma2 == itmpsigma1){
-	  
+
           ddiff_trans = X->ParaGeneralTransfer[i]-conj(X->ParaGeneralTransfer[j]);
           if(cabs(ddiff_trans) > eps_CheckImag0 ){
             itmperrsite1=itmpsite1;
@@ -1943,7 +1943,7 @@ int CheckTransferHermite
             iCount++;
           }
           else{
-            if (icheckHermiteCount == FALSE) {	      
+            if (icheckHermiteCount == FALSE) {
               if(i<=j){
                 if(2*icntHermite >= X->NTransfer){
                   fprintf(stderr, "Elements of Transfers are incorrect.\n");

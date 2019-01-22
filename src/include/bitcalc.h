@@ -18,36 +18,36 @@
 
 //inline int GetSplitBit(
 int GetSplitBit(
-		const int Nsite,
-		long unsigned int *irght,
-		long unsigned int *ilft,
-		long unsigned int *ihfbit
-		);
+  const int Nsite,
+  long unsigned int *irght,
+  long unsigned int *ilft,
+  long unsigned int *ihfbit
+  );
 
 //inline int GetSplitBitByModel(
 int GetSplitBitByModel(
-		       const int Nsite,
-		       const int iCalcModel,
-		       long unsigned int *irght,
-		       long unsigned int *ilft,
-		       long unsigned int *ihfbit
-		       );
+         const int Nsite,
+         const int iCalcModel,
+         long unsigned int *irght,
+         long unsigned int *ilft,
+         long unsigned int *ihfbit
+         );
 
 int GetSplitBitForGeneralSpin(
-		const int Nsite,
-		long unsigned int *ihfbit,
-		const long int *SiteToBit
-			      );
+  const int Nsite,
+  long unsigned int *ihfbit,
+  const long int *SiteToBit
+         );
 
 //inline void SplitBit(
 void SplitBit(
-		  const long unsigned int ibit,
-		  const long unsigned int irght,
-		  const long unsigned int ilft,
-		  const long unsigned int ihfbit,
-		  long unsigned int *isplited_Bit_right,
-		  long unsigned int *isplited_Bit_left
-	      );
+    const long unsigned int ibit,
+    const long unsigned int irght,
+    const long unsigned int ilft,
+    const long unsigned int ihfbit,
+    long unsigned int *isplited_Bit_right,
+    long unsigned int *isplited_Bit_left
+       );
 
 //inline void GetOffComp(
 int GetOffComp(
@@ -58,48 +58,48 @@ int GetOffComp(
                const long unsigned int _ilft,
                const long unsigned int _ihfbit,
                long unsigned int *_ioffComp
-		);
+  );
 
 void SgnBit_old(
-		  const long unsigned int bit,
+    const long unsigned int bit,
                   int *sgn
 );
 
 void SgnBit(
-		  const long unsigned int bit,
+    const long unsigned int bit,
                   int *sgn
 );
 
 int BitCheck( 
-	     const long unsigned int org_bit,
-	     const long unsigned int target_bit
+      const long unsigned int org_bit,
+      const long unsigned int target_bit
 );
 
 int BitCheckGeneral(
-	     const long unsigned int org_bit,
-	     const unsigned int org_isite,
-	     const unsigned int target_ispin,
-	     const long int *SiteToBit,
-	     const long unsigned int *TPow
-		    );
+      const long unsigned int org_bit,
+      const unsigned int org_isite,
+      const unsigned int target_ispin,
+      const long int *SiteToBit,
+      const long unsigned int *TPow
+      );
 
 
 int GetBitGeneral( 
-	     const unsigned int isite,
-	     const long unsigned int org_bit,
-	     const long int *SiteToBit,
-	     const long unsigned int *TPow
-		   );
+      const unsigned int isite,
+      const long unsigned int org_bit,
+      const long int *SiteToBit,
+      const long unsigned int *TPow
+     );
 
 int GetOffCompGeneralSpin(
-		const long unsigned int org_ibit,
-		const int org_isite,
-		const int org_ispin,
-		const int off_ispin,
-		long  unsigned int *_ioffComp,
-		const long int *SiteToBit,
-		const long unsigned int *TPow
-		);
+  const long unsigned int org_ibit,
+  const int org_isite,
+  const int org_ispin,
+  const int off_ispin,
+  long  unsigned int *_ioffComp,
+  const long int *SiteToBit,
+  const long unsigned int *TPow
+  );
 
 int GetLocal2Sz
 (
@@ -110,10 +110,10 @@ int GetLocal2Sz
  );
 
 int ConvertToList1GeneralSpin(
-		const long unsigned int org_ibit,
-		const long unsigned int ihlfbit,
-		long unsigned int *_ilist1Comp
-			       );
+  const long unsigned int org_ibit,
+  const long unsigned int ihlfbit,
+  long unsigned int *_ilist1Comp
+          );
 
 
 unsigned long int snoob(unsigned long int x);

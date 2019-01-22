@@ -88,8 +88,8 @@ int OutputSpectrum(
  *
  */
 int CalcSpectrum(
-		 struct EDMainCalStruct *X
-				 ) {
+                 struct EDMainCalStruct *X
+                 ) {
     char sdt[D_FileNameMax];
     char *defname;
     unsigned long int i;

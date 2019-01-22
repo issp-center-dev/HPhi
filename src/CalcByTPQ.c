@@ -50,9 +50,9 @@
  * @retval -1 unnormally finished
  */
 int CalcByTPQ(
-	    const int NumAve,
-	    const int ExpecInterval,
-	    struct EDMainCalStruct *X
+      const int NumAve,
+      const int ExpecInterval,
+      struct EDMainCalStruct *X
 )
 {
   char sdt[D_FileNameMax];

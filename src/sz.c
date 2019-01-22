@@ -158,7 +158,7 @@ int sz
     else{
       idim=1;
       for(j=0; j<N; j++){
-	      idim *= X->Def.SiteToBit[j];
+        idim *= X->Def.SiteToBit[j];
       }
     }
     break;
@@ -331,7 +331,7 @@ int sz
             div=div/X->Def.Tpow[j];
             num_down+=div;
           }
-	
+
           tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
           all_up   = (X->Def.Nsite+tmp_res)/2;
           all_down = (X->Def.Nsite-tmp_res)/2;
@@ -475,7 +475,7 @@ int sz
         list_jb[ib] = jb;
         i           = ib*ihfbit; // ihfbit=pow(2,((Nsite+1)/2))
         num_up      = 0;
-        num_down    = 0;	
+        num_down    = 0;
         icheck_loc  = 1;
 
         for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
@@ -650,7 +650,7 @@ int sz
         else{
           fprintf(stderr, "Error: CalcHS in ModPara file must be -1 or 0 or 1 for Spin model.");
           return -1;
-        }	
+        }
       }else{
         unsigned int Max2Sz=0;
         unsigned int irghtsite=1;
@@ -671,7 +671,7 @@ int sz
         for(ib=0; ib<2*Max2Sz+1; ib++){
           HilbertNumToSz[ib]=0;
         }
-	
+
         for(ib =0; ib<ihfbit; ib++){
           i2Sz=0;
           for(j=1; j<= irghtsite; j++){
@@ -693,7 +693,7 @@ int sz
             jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
           }
         }
-	
+
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
@@ -1084,7 +1084,7 @@ int child_omp_sz_Kondo(
         div_up    = div_up/X->Def.Tpow[2*j];
         div_down  = i & X->Def.Tpow[2*j+1];
         div_down  = div_down/X->Def.Tpow[2*j+1];
-	
+
         if(X->Def.LocSpn[j] ==  ITINERANT){
           num_up   += div_up;        
           num_down += div_down;  
@@ -1203,7 +1203,7 @@ int child_omp_sz_Kondo_hacker(
           div_up    = div_up/X->Def.Tpow[2*j];
           div_down  = i & X->Def.Tpow[2*j+1];
           div_down  = div_down/X->Def.Tpow[2*j+1];
-  	
+
           if(X->Def.LocSpn[j] ==  ITINERANT){
             num_up   += div_up;        
             num_down += div_down;  
@@ -1300,7 +1300,7 @@ int child_omp_sz_KondoGC(
         div_up    = i & X->Def.Tpow[2*j];
         div_up    = div_up/X->Def.Tpow[2*j];
         div_down  = i & X->Def.Tpow[2*j+1];
-        div_down  = div_down/X->Def.Tpow[2*j+1];	
+        div_down  = div_down/X->Def.Tpow[2*j+1];
         if(X->Def.LocSpn[j] !=  ITINERANT){
           if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
             icheck_loc= icheck_loc;

@@ -41,9 +41,9 @@
 /// \version 1.1
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int CalcSpectrumByLanczos(
-			  struct EDMainCalStruct *X,
-			  double complex *tmp_v1,
-			  double dnorm,
+        struct EDMainCalStruct *X,
+        double complex *tmp_v1,
+        double dnorm,
         int Nomega,
         double complex *dcSpectrum,
         double complex *dcomega
@@ -167,13 +167,13 @@ int CalcSpectrumByLanczos(
 /// \retval FALSE Fail to get the spectrum
 /// \retval TRUE  Success to get the spectrum
 int GetSpectrumByTridiagonalMatrixComponents(
-		double *tmp_alpha,
-		double *tmp_beta,
+    double *tmp_alpha,
+    double *tmp_beta,
     double dnorm,
-		double complex dcomega,
-		double complex *dcSpectrum,
+    double complex dcomega,
+    double complex *dcSpectrum,
     unsigned long int ilLanczosStp
-		)
+    )
 {
     unsigned long int istp=2;
     double complex dcDn;

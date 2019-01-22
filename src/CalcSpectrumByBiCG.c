@@ -203,7 +203,7 @@ void InitShadowRes(
  * @author Mitsuaki Kawamura (The University of Tokyo)
  * 
  */
-int CalcSpectrumByBiCG(		 
+int CalcSpectrumByBiCG(
   struct EDMainCalStruct *X,//!<[inout]
   double complex *vrhs,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
   double complex *v2,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$

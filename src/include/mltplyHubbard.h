@@ -33,10 +33,10 @@ double complex GC_child_general_hopp
 
 
 double complex GC_child_general_int(
-			 double complex *tmp_v0,
-			 double complex *tmp_v1,
-			 struct BindStruct *X
-			 );
+                         double complex *tmp_v0,
+                         double complex *tmp_v1,
+                         struct BindStruct *X
+                         );
 
 
 double complex child_general_int
