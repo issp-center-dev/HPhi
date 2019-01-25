@@ -17,6 +17,11 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spin_kagome.sh
 )
 add_test(
+  NAME lanczos_spin_ladder_DM
+COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spin_ladder_DM.sh  
+)
+
+add_test(
   NAME lanczos_genspin_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_genspin_ladder.sh
 )
