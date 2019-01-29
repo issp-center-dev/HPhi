@@ -158,7 +158,7 @@ General on-site term
 </table>
 */
 #include <bitcalc.h>
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "mltplyCommon.h"
 #include "mltplySpin.h"
 #include "CalcTime.h"
@@ -838,9 +838,9 @@ int mltplySpinGCBoost(
   i_max = X->Check.idim_max;
 
   StartTimer(500);
-  c_malloc1(tmp_v2, i_max+1);
-  c_malloc1(tmp_v3, i_max+1);
-     
+  tmp_v2 = cd_1d_allocate(i_max+1);
+  tmp_v3 = cd_1d_allocate(i_max+1);
+
   child_general_int_spin_MPIBoost(X, tmp_v0, tmp_v1, tmp_v2, tmp_v3);
   dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
@@ -850,8 +850,8 @@ private(j) shared(tmp_v1,tmp_v0) firstprivate(i_max)
   X->Large.prdct += dam_pr;  
     
   /* SpinGCBoost */
-  c_free1(tmp_v2, i_max+1);  
-  c_free1(tmp_v3, i_max+1);  
+  free_cd_1d_allocate(tmp_v2);
+  free_cd_1d_allocate(tmp_v3);
   /* SpinGCBoost */
   StopTimer(500);
   return 0;

@@ -17,7 +17,7 @@
 #include "Common.h"
 
 int CalcByTPQ(
-	    const int NumAve,
-	    const int ExpecInterval,
-	    struct EDMainCalStruct *X
+              const int NumAve,
+              const int ExpecInterval,
+              struct EDMainCalStruct *X
 );

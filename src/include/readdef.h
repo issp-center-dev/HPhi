@@ -53,25 +53,25 @@
 #define KWTETwoBody 20
 
 int CheckSite(
-	      const int iListToSite,
-	      const int iMaxNum
-	      );
+          const int iListToSite,
+          const int iMaxNum
+          );
 
 
 int CheckPairSite(
-	      const int iList1ToSite,
-	      const int iList2ToSite,
-	      const int iMaxNum
-	      );
+          const int iList1ToSite,
+          const int iList2ToSite,
+          const int iMaxNum
+          );
 
 
 int CheckQuadSite(
-	      const int iList1ToSite,
-	      const int iList2ToSite,
-	      const int iList3ToSite,
-	      const int iList4ToSite,
-	      const int iMaxNum
-	      );
+          const int iList1ToSite,
+          const int iList2ToSite,
+          const int iList3ToSite,
+          const int iList4ToSite,
+          const int iMaxNum
+          );
 
 int CheckTransferHermite
 (
@@ -96,20 +96,20 @@ int GetDiagonalInterAll
 */
 
 int GetDiagonalInterAll
-				(
-								int **InterAll,
-								complex double *ParaInterAll,
-								const int NInterAll,
-								int **InterAllDiagonal,
-								double *ParaInterAllDiagonal,
-								int **InterAllOffDiagonal,
-								complex double *ParaInterAllOffDiagonal,
-								int *Chemi,
-								int *SpinChemi,
-								double *ParaChemi,
-								unsigned int *NChemi,
-								const int iCalcModel
-				);
+                (
+                                int **InterAll,
+                                complex double *ParaInterAll,
+                                const int NInterAll,
+                                int **InterAllDiagonal,
+                                double *ParaInterAllDiagonal,
+                                int **InterAllOffDiagonal,
+                                complex double *ParaInterAllOffDiagonal,
+                                int *Chemi,
+                                int *SpinChemi,
+                                double *ParaChemi,
+                                unsigned int *NChemi,
+                                const int iCalcModel
+                );
 
 int JudgeDefType
 (
@@ -133,11 +133,11 @@ int CheckFormatForKondoInt
  );
 */
 int CheckFormatForKondoInt
-				(
-								const int isite1, const int isite2,
-								const int isite3, const int isite4,
-								int* iLocInfo
-				);
+(
+ const int isite1, const int isite2,
+ const int isite3, const int isite4,
+ int* iLocInfo
+ );
 
 int CheckFormatForKondoTrans
 (
@@ -165,13 +165,13 @@ void InitializeInteractionNum
  );
 
 int CheckGeneralSpinIndexForInterAll
-				(
-								const int isite1, const int isigma1,
-								const int isite2, const int isigma2,
-								const int isite3, const int isigma3,
-								const int isite4, const int isigma4,
-								int* iLocInfo
-				);
+(
+ const int isite1, const int isigma1,
+ const int isite2, const int isigma2,
+ const int isite3, const int isigma3,
+ const int isite4, const int isigma4,
+ int* iLocInfo
+ );
 
 int CheckSpinIndexForTrans
 (
@@ -184,22 +184,22 @@ int CheckTotal2Sz
  );
 
 int ReadDefFileNInt(
-		    char *xNameListFile, 
-		    struct DefineList *X,
-		    struct BoostList *xBoost
-		    );
+                    char *xNameListFile, 
+                    struct DefineList *X,
+                    struct BoostList *xBoost
+                    );
 
 int ReadDefFileIdxPara(
-		       struct DefineList *X,
-		       struct BoostList *xBoost
-		       );
+                       struct DefineList *X,
+                       struct BoostList *xBoost
+                       );
 
 int CheckWords(
-	       const char* ctmp,
-	       const char* cKeyWord
-	       );
+               const char* ctmp,
+               const char* cKeyWord
+               );
 
 int GetFileNameByKW(
-		int KWidx,
-		char **FileName
-);
+                    int KWidx,
+                    char **FileName
+                    );

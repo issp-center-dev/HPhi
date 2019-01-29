@@ -17,20 +17,20 @@
 #include "Common.h"
 
 int CalcSpectrum(
-		 struct EDMainCalStruct *X
+                 struct EDMainCalStruct *X
 );
 
 int GetExcitedState(
-		    struct BindStruct *X,
-		    double complex *tmp_v0,
-		    double complex *tmp_v1
+                struct BindStruct *X,
+                double complex *tmp_v0,
+                double complex *tmp_v1
 );
 
 
 int MakeExcitedList(
-		    struct BindStruct *X,
-			int *iFlgListModifed
-		    );
+                struct BindStruct *X,
+                  int *iFlgListModifed
+                );
 
 int ReSetList(struct BindStruct *X);
 

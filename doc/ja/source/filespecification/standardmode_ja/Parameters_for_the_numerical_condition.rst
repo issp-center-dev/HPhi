@@ -61,8 +61,7 @@
    何番目の固有状態を計算するかを指定します。
    ``method="CG"``\ の時には求める固有状態の本数を指定します。
 
-   **Note**: The condition ``nvec`` :math:`>=` ``exct`` must be
-   satisfied.
+   **Note**: ``nvec`` :math:`>=` ``exct`` を満たす必要があります。
 
 *  ``LanczosEps``
 
@@ -86,7 +85,7 @@
    **形式 :** 実数(デフォルト値は下記参照)
 
    **説明 :**
-   (TPQ法のみで使用):math:`l-\hat{H}/N_{s}`\ の\ :math:`l`\ 。
+   (TPQ法のみで使用) :math:`l-\hat{H}/N_{s}`\ の\ :math:`l`\ 。
    ハミルトニアンの各項の係数の絶対値の総和をサイト数で割ったものがデフォルト値になります。
 
 *  ``NumAve``

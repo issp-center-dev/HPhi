@@ -17,17 +17,17 @@
 #include "Common.h"
 
 int CalcSpectrumByTPQ(
-			  struct EDMainCalStruct *X,
-			  double complex *tmp_v1,
-			  double norm,
+  struct EDMainCalStruct *X,
+  double complex *tmp_v1,
+  double norm,
   int Nomega,
   double complex *dcSpectrum,
   double complex *dcomega
 );
 
 int ReadTPQData(
-		struct EDMainCalStruct *X,
-		double* ene,
-		double* temp,
-		double* specificHeat
+  struct EDMainCalStruct *X,
+  double* ene,
+  double* temp,
+  double* specificHeat
 );

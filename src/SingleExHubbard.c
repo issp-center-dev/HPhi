@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "bitcalc.h"
 #include "wrapperMPI.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "mltplyHubbardCore.h"
 #include "mltplyMPIHubbardCore.h"
 #ifdef MPI
@@ -51,7 +51,7 @@ int GetSingleExcitedStateHubbard(
   //set size
 #ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+  tmp_v1bufOrg=cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
   idim_max = X->Check.idim_maxOrg;
@@ -92,6 +92,9 @@ int GetSingleExcitedStateHubbard(
       }
     }
   }
+#ifdef MPI
+  free_cd_1d_allocate(tmp_v1bufOrg);
+#endif
   return TRUE;
 }/*int GetSingleExcitedStateHubbard*/
 /**
@@ -122,7 +125,7 @@ int GetSingleExcitedStateHubbardGC(
   //set size
 #ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+  tmp_v1bufOrg=cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
   // SingleEx
@@ -158,5 +161,8 @@ int GetSingleExcitedStateHubbardGC(
       }
     }
   }
-return TRUE;
+#ifdef MPI
+  free_cd_1d_allocate(tmp_v1bufOrg);
+#endif
+  return TRUE;
 }/*int GetSingleExcitedStateHubbardGC*/

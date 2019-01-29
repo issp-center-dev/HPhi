@@ -43,16 +43,12 @@
    使われないパラメーターが指定された場合にはプログラムは終了し、
    入力ファイルをチェックするようにというメッセージが表示されます。
 
-*  | There are three types of parameters.
-   | 1. 必ず指定しなければいけないパラメーター (if not, :math:`{\mathcal H}\Phi` will
-     stop with error messages),
-   | 2. 指定しない場合デフォルト値が使われるパラメーター (if not
-     specified, default values are used),
+*  | パラメータには三種類あります.
+   | 1. 必ず指定しなければいけないパラメーター (もし存在しない場合には, :math:`{\mathcal H}\Phi` のエラーメッセージが出力され、プログラムは終了します),
+   | 2. 指定しない場合デフォルト値が使われるパラメーター (もし存在しない場合は、デフォルト値が使用されます),
    | 3. 使われないパラメーター (使われないパラメーターが指定された場合にはプログラムは終了し、
    | 入力ファイルをチェックするようにというメッセージが表示されます。)
-   | An example of type 3 is the transfer :math:`t` parameter for the
-   |  Heisenberg spin system. If you choose “model=spin", you should not
-   |  specify “\ :math:`t`".
+   | 例えば、ハイゼンベルグ模型でトランスファー積分 :math:`t` を指定した場合が相当します. もし “model=spin" とした場合には,  “\ :math:`t`" は使用できません.
 
 次に各キーワードの説明をします。
 

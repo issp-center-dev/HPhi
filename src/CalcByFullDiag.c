@@ -24,8 +24,8 @@
  /// \retval FALSE(=0) abnormally finished.
 
 int CalcByFullDiag(
-		   struct EDMainCalStruct *X
-		   )
+       struct EDMainCalStruct *X
+       )
 {
   int iret=0;
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);

@@ -637,7 +637,7 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
                 is2_up = X->Def.Tpow[org_isite3 - 1];
                 num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
                 dam_pr=0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr)shared(vec)	\
+#pragma omp parallel for default(none) reduction(+:dam_pr)shared(vec) \
   firstprivate(i_max, tmp_V, is1_up, org_sigma1, X, num2) private(j, num1)
                 for (j = 1; j <= i_max; j++) {
                     num1 = X_Spin_CisAis(j, X, is1_up, org_sigma1);

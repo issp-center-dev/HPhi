@@ -18,8 +18,7 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "vec12.h"
-#include "mfmemory.h"
-
+#include "common/setmemory.h"
 /**
  * @file   CalcSpectrumByTPQ.c
  * @version 1.2
@@ -129,9 +128,9 @@ int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecifichea
 /// \version 1.2
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int CalcSpectrumByTPQ(
-			  struct EDMainCalStruct *X,
-			  double complex *tmp_v1,
-			  double dnorm,
+        struct EDMainCalStruct *X,
+        double complex *tmp_v1,
+        double dnorm,
         int Nomega,
         double complex *dcSpectrum,
         double complex *dcomega
@@ -233,7 +232,7 @@ int CalcSpectrumByTPQ(
     }//X->Bind.Def.iFlgCalcSpec == RECALC_NOT || RECALC_FROM_TMComponents_VEC
 
     stp=liLanczosStp;
-    d_malloc1(tmp_E,stp+1);
+    tmp_E = d_1d_allocate(stp + 1);
     X->Bind.Def.nvec= stp;
     vec12(alpha,beta,stp,tmp_E, &(X->Bind));
     fprintf(stdoutMPI, "    Start: Caclulate spectrum from tridiagonal matrix components.\n");
@@ -250,7 +249,7 @@ int CalcSpectrumByTPQ(
     fprintf(stdoutMPI, "    End:   Caclulate spectrum from tridiagonal matrix components.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalEnd, "a");
 
-    d_free1(tmp_E,stp+1);
+    free_d_1d_allocate(tmp_E);
     //output vectors for recalculation
     if(X->Bind.Def.iFlgCalcSpec==RECALC_OUTPUT_TMComponents_VEC ||
        X->Bind.Def.iFlgCalcSpec==RECALC_INOUT_TMComponents_VEC){

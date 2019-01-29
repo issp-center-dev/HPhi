@@ -22,7 +22,7 @@
 #include "mltplyMPIHubbard.h"
 #include "mltplyMPIHubbardCore.h"
 #ifdef MPI
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #endif
 
 ///
@@ -69,7 +69,7 @@ int GetPairExcitedStateHubbardGC(
                     }
                     ibit = (unsigned long int) myrank & is;
                     if (ibit == is) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
   firstprivate(i_max, tmp_trans) private(j)
                         for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
                     }
@@ -84,7 +84,7 @@ int GetPairExcitedStateHubbardGC(
                     ibit = (unsigned long int) myrank & is;
                     if (ibit != is) {
                         //minus sign comes from negative tmp_trans due to readdef
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
   firstprivate(i_max, tmp_trans) private(j)
                         for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
                     }
@@ -167,7 +167,7 @@ int GetPairExcitedStateHubbard(
     //set size
 #ifdef MPI
     idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-    c_malloc1(tmp_v1bufOrg, idim_maxMPI + 1);
+    tmp_v1bufOrg= cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
     for(i=0;i<X->Def.NPairExcitationOperator;i++){
@@ -200,7 +200,7 @@ int GetPairExcitedStateHubbard(
                                              tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2); }
             }
             else{
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1,stdoutMPI)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1,stdoutMPI)  \
   firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org, list_1, myrank) \
   private(j, tmp_sgn, tmp_off)
                 for (j = 1; j <= i_max; j++){
@@ -217,14 +217,14 @@ int GetPairExcitedStateHubbard(
                     ibit = (unsigned long int) myrank & is;
                     if( X->Def.PairExcitationOperator[i][4]==0) {
                         if (ibit == is) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
   firstprivate(i_max, tmp_trans) private(j)
                             for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
                         }
                     }
                     else{
                         if (ibit != is) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
   firstprivate(i_max, tmp_trans) private(j)
                             for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
                         }
@@ -271,5 +271,10 @@ int GetPairExcitedStateHubbard(
             }
         }
     }
+
+#ifdef MPI
+    free_cd_1d_allocate(tmp_v1bufOrg);
+#endif // MPI
+
     return TRUE;
 }

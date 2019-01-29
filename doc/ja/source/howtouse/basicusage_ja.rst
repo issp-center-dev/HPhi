@@ -40,7 +40,7 @@
    プロセス数をジョブ投入コマンドの引数として与える場合があります。
    詳しくはお使いのシステムのマニュアルをご参照ください。
    プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。
-   詳細は :ref:`Subsec:CreatingExpert` を参照ください。
+   詳細は :ref:`Subsec:process` を参照ください。
   
  4. 途中経過
  
@@ -91,7 +91,7 @@
    
     | ``$ mpiexec -np number_of_processes Path/HPhi -e Input_List_file_name``
     | プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。
-    | :ref:`Subsec:CreatingExpert` を参照ください。
+    | 詳細は :ref:`Subsec:process` を参照ください。
    
  4. 途中経過
  
@@ -101,32 +101,7 @@
  5. 最終結果
  
   計算が正常終了した場合、計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
-  出力されるファイルの詳細に関しては :ref:`Sec:outputfile` を参考にしてください。
-  
-.. _Subsec:CreatingExpert:
-  
-Creating input files for *Expert* mode
---------------------------------------
-  
-This mode is for creating input files for *Expert* mode.
-A set of input files created using this mode gives a model provided in *Standard* mode.
-The usage is shown as follows.
-
- 1. Create an input file for *Standard* mode.
- 
- 2. Setting an option \"-sdry\" and an input file (in this example, StdFace.def), run :math:`{\mathcal H}\Phi`.
-    ::
-
-     $ Path/HPhi -sdry StdFace.def
-     
-    In this case, you should not use MPI parallelization (mpirun, mpiexec, etc.).
-
- 3. The following files are created as the input files for *Expert* mode in the current working directory.
-
-    ::
-
-     calcmod.def   greentwo.def  namelist.def  zTrans.def
-     greenone.def  modpara.def   zInterAll.def zlocspn.def
+  出力されるファイルの詳細に関しては :ref:`Sec:outputfile` を参考にしてください。  
   
 .. _Subsec:process:
   

@@ -99,7 +99,7 @@ struct BindStruct *X//!<[inout]
 #ifdef _MAGMA
     if(myrank==0){
       if(diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
-	return -1;
+        return -1;
       }
     }
 #else

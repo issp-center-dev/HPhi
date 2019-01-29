@@ -58,19 +58,19 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     if (isite == 0) {
       fprintf(stdoutMPI, "%s", cErrNProcNumberHubbard);
       fprintf(stdoutMPI, cErrNProcNumber, nproc);
-      	NDimInterPE = 1;
-	int ismallNproc=1;
-	int ilargeNproc=1;
-	for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
-	  if (NDimInterPE > nproc) {
-	    ilargeNproc = NDimInterPE;
-	    if(isite >1)
-	      ismallNproc = NDimInterPE/4;
-	    break;
-	  }/*if (NDimInterPE > nproc)*/
-	  NDimInterPE *= 4;
-	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
-	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+      NDimInterPE = 1;
+      int ismallNproc=1;
+      int ilargeNproc=1;
+      for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+        if (NDimInterPE > nproc) {
+          ilargeNproc = NDimInterPE;
+          if(isite >1)
+            ismallNproc = NDimInterPE/4;
+          break;
+        }/*if (NDimInterPE > nproc)*/
+        NDimInterPE *= 4;
+      }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+      fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
         return FALSE;
       //return FALSE;
     } /*if (isite == 0)*/
@@ -182,19 +182,19 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       if (isite == 0) {
         fprintf(stdoutMPI, "%s", cErrNProcNumberSpin);
         fprintf(stdoutMPI, cErrNProcNumber, nproc);
-	NDimInterPE = 1;
-	int ismallNproc=1;
-	int ilargeNproc=1;
-	for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
-	  if (NDimInterPE > nproc) {
-	    ilargeNproc = NDimInterPE;
-	    if(isite >1)
-	      ismallNproc = NDimInterPE/2;
-	    break;
-	  }/*if (NDimInterPE > nproc)*/
-	  NDimInterPE *= 2;
-	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
-	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+      NDimInterPE = 1;
+      int ismallNproc=1;
+      int ilargeNproc=1;
+      for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+        if (NDimInterPE > nproc) {
+          ilargeNproc = NDimInterPE;
+          if(isite >1)
+            ismallNproc = NDimInterPE/2;
+          break;
+        }/*if (NDimInterPE > nproc)*/
+        NDimInterPE *= 2;
+      }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+      fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
         return FALSE;
       }/*if (isite == 0)*/
 
@@ -234,19 +234,19 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       if (isite == 0) {
         fprintf(stdoutMPI, "%s", cErrNProcNumberGneralSpin);
         fprintf(stdoutMPI, cErrNProcNumber, nproc);
-	NDimInterPE = 1;
-	int ismallNproc=1;
-	int ilargeNproc=1;
-	for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
-	  if (NDimInterPE > nproc) {
-	    ilargeNproc = NDimInterPE;
-	    if(isite >1)
-	      ismallNproc = NDimInterPE/X->Def.SiteToBit[isite - 2];
-	    break;
-	  }/*if (NDimInterPE > nproc)*/
-	  NDimInterPE *= X->Def.SiteToBit[isite - 1];
-	}/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
-	fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+      NDimInterPE = 1;
+      int ismallNproc=1;
+      int ilargeNproc=1;
+      for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+        if (NDimInterPE > nproc) {
+          ilargeNproc = NDimInterPE;
+          if(isite >1)
+            ismallNproc = NDimInterPE/X->Def.SiteToBit[isite - 2];
+          break;
+        }/*if (NDimInterPE > nproc)*/
+        NDimInterPE *= X->Def.SiteToBit[isite - 1];
+      }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+      fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
         return FALSE;
       }/*if (isite == 0)*/
 
