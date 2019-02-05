@@ -2489,7 +2489,7 @@ void StdFace_main(
     else if (strcmp(keyword, "wsub") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Wsub);
 #endif
     else {
-      fprintf(stdout, "ERROR ! Unsupported Keyword !\n");
+      fprintf(stdout, "ERROR ! Unsupported Keyword in Standard mode!\n");
       StdFace_exit(-1);
     }
   }

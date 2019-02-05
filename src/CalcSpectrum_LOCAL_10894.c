@@ -24,7 +24,7 @@
 #include "PairEx.h"
 #include "wrapperMPI.h"
 #include "FileIO.h"
-#include "./common/setmemory.h"
+#include "mfmemory.h"
 #include "readdef.h"
 #include "sz.h"
 #include "check.h"
@@ -88,45 +88,43 @@ int OutputSpectrum(
  *
  */
 int CalcSpectrum(
-                 struct EDMainCalStruct *X
-                 ) {
-    char sdt[D_FileNameMax];
-    char *defname;
-    unsigned long int i;
-    unsigned long int i_max = 0;
-    int i_stp;
-    int iFlagListModified = FALSE;
-    FILE *fp;
-    double dnorm;
+		 struct EDMainCalStruct *X
+				 ) {
+  char sdt[D_FileNameMax];
+  char *defname;
+  unsigned long int i;
+  unsigned long int i_max = 0;
+  int i_stp;
+  int iFlagListModified = FALSE;
+  FILE *fp;
+  double dnorm;
 
-    //ToDo: Nomega should be given as a parameter
-    int Nomega;
-    double complex OmegaMax, OmegaMin;
-    double complex *dcSpectrum;
-    double complex *dcomega;
-    size_t byte_size;
+  int Nomega;
+  double complex OmegaMax, OmegaMin;
+  double complex *dcSpectrum;
+  double complex *dcomega;
+  size_t byte_size;
 
-    //set omega
-    if (SetOmega(&(X->Bind.Def)) != TRUE) {
-        fprintf(stderr, "Error: Fail to set Omega.\n");
-        exitMPI(-1);
-    } else {
-        if (X->Bind.Def.iFlgSpecOmegaOrg == FALSE) {
-            X->Bind.Def.dcOmegaOrg = I*(X->Bind.Def.dcOmegaMax - X->Bind.Def.dcOmegaMin) / (double) X->Bind.Def.iNOmega;
-        }
+  //set omega
+  if (SetOmega(&(X->Bind.Def)) != TRUE) {
+    fprintf(stderr, "Error: Fail to set Omega.\n");
+    exitMPI(-1);
+  } else {
+    if (X->Bind.Def.iFlgSpecOmegaOrg == FALSE) {
+      X->Bind.Def.dcOmegaOrg = I * (X->Bind.Def.dcOmegaMax - X->Bind.Def.dcOmegaMin) / (double) X->Bind.Def.iNOmega;
     }
-    /*
-     Set & malloc omega grid
-    */
-    Nomega = X->Bind.Def.iNOmega;
-    dcSpectrum = cd_1d_allocate(Nomega);
-    dcomega = cd_1d_allocate(Nomega);
-    OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
-    OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
-    for (i = 0; i < Nomega; i++) {
-        dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
-    }
-
+  }
+  /*
+   Set & malloc omega grid
+  */
+  Nomega = X->Bind.Def.iNOmega;
+  c_malloc1(dcSpectrum, Nomega);
+  c_malloc1(dcomega, Nomega);
+  OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
+  OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
+  for (i = 0; i < Nomega; i++) {
+    dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
+  }
   fprintf(stdoutMPI, "\nFrequency range:\n");
   fprintf(stdoutMPI, "  Omega Max. : %15.5e %15.5e\n", creal(OmegaMax), cimag(OmegaMax));
   fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
@@ -142,23 +140,23 @@ int CalcSpectrum(
   }
   X->Bind.Def.iFlagListModified = iFlagListModified;
 
-    //Set Memory
-    v1Org = cd_1d_allocate(X->Bind.Check.idim_maxOrg+1);
-    for(i=0; i<X->Bind.Check.idim_maxOrg+1; i++){
-      v1Org[i]=0;
-    }
-    
-    //Make excited state
-    StartTimer(6100);
-    if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
-        X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
-       (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
-        //input eigen vector
-      StartTimer(6101);
-        fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
-        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-        GetFileNameByKW(KWSpectrumVec, &defname);
-        strcat(defname, "_rank_%d.dat");
+  //Set Memory
+  c_malloc1(v1Org, X->Bind.Check.idim_maxOrg + 1);
+  for (i = 0; i < X->Bind.Check.idim_maxOrg + 1; i++) {
+    v1Org[i] = 0;
+  }
+
+  //Make excited state
+  StartTimer(6100);
+  if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
+      X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
+      (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
+    //input eigen vector
+    StartTimer(6101);
+    fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
+    GetFileNameByKW(KWSpectrumVec, &defname);
+    strcat(defname, "_rank_%d.dat");
 //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
     sprintf(sdt, defname, myrank);
     childfopenALL(sdt, "rb", &fp);
@@ -297,8 +295,8 @@ int CalcSpectrum(
   fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
   iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
-  free_cd_1d_allocate(dcSpectrum);
-  free_cd_1d_allocate(dcomega);
+  c_free1(dcSpectrum, Nomega);
+  c_free1(dcomega, Nomega);
   return TRUE;
 
 }/*int CalcSpectrum*/
@@ -479,15 +477,12 @@ int MakeExcitedList(
 
     if (*iFlgListModifed == TRUE) {
         if(GetlistSize(X)==TRUE) {
-            list_1_org = lui_1d_allocate(X->Check.idim_max + 1);
+            lui_malloc1(list_1_org, X->Check.idim_max + 1);
 #ifdef MPI
-            list_1buf_org = lui_1d_allocate(X->Check.idim_maxMPI + 1);
-            //lui_malloc1(list_1buf_org, X->Check.idim_maxMPI + 1);
+            lui_malloc1(list_1buf_org, X->Check.idim_maxMPI + 1);
 #endif // MPI
-            list_2_1_org = lui_1d_allocate(X->Large.SizeOflist_2_1);
-            list_2_2_org = lui_1d_allocate(X->Large.SizeOflist_2_2);
-            //lui_malloc1(list_2_1_org, X->Large.SizeOflist_2_1);
-            //lui_malloc1(list_2_2_org, X->Large.SizeOflist_2_2);
+            lui_malloc1(list_2_1_org, X->Large.SizeOflist_2_1);
+            lui_malloc1(list_2_2_org, X->Large.SizeOflist_2_2);
             if(list_1_org==NULL
                || list_2_1_org==NULL
                || list_2_2_org==NULL

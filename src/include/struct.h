@@ -199,10 +199,11 @@ struct DefineList {
                  3:HubbardGC, 4:SpinGC, 5:KondoGC, 6:HubbardNConserved*/
   int iOutputMode;/**<@brief Switch for output mode. 0: OneBodyG and TwoBodyG. 
                   1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
-  int iOutputEigenVec;/**<@brief ASwitch for outputing an eigenvector. 0: no output, 1:output.*/
+  int iOutputEigenVec;/**<@brief ASwitch for outputting an eigenvector. 0: no output, 1:output.*/
   int iInputEigenVec;/**<@brief Switch for reading an eigenvector. 0: no input, 1:input*/
-  int iOutputHam;/**<brief Switch for outputing a Hamiltonian. 0: no output, 1:output*/
+  int iOutputHam;/**<brief Switch for outputting a Hamiltonian. 0: no output, 1:output*/
   int iInputHam;/**<brief Switch for reading a Hamiltonian. 0: no input, 1:input*/
+  int iOutputExVec; /**<brief Switch for outputting an excited vector. 0: no output, 1:output*/
 
     //[s] For Spectrum
   double complex dcOmegaMax;/**<@brief Upper limit of the frequency for the spectrum.*/

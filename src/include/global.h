@@ -139,6 +139,7 @@ const char* cFileNamePhys_FullDiag_Ham;/**> Name of the file to output Hamiltoni
 
 //For Spectrum
 const char* cFileNameOutputRestartVec;/**> Name of the file to output restart vector for spectrum mode.*/
+const char* cFileNameOutputExcitedVec;/**> Name of the file to output the excited vector for spectrum mode.*/
 
 //For Error
 const char* cFileNameErrorSz;/**> Name of the file to output Error message for Sz calculation.*/

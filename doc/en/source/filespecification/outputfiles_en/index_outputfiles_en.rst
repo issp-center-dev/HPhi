@@ -42,3 +42,4 @@ explained.
    DynamicalGreen_en
    recalcvec_en
    TMcomponents_en
+   excitedvec_en
