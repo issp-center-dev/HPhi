@@ -36,8 +36,8 @@
 /// \version 1.2
 int GetPairExcitedStateHubbardGC(
         struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
-        double complex *tmp_v0, /**< [out] Result v0 = H v1*/
-        double complex *tmp_v1 /**< [in] v0 = H v1*/
+        int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+        double complex **tmp_v1 /**< [in] v0 = H v1*/
 
 ){
 
@@ -102,7 +102,7 @@ int GetPairExcitedStateHubbardGC(
             }
             else {
                 X_GC_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
-                                                  -conj(tmp_trans), X, tmp_v0, tmp_v1);
+                                                  -conj(tmp_trans), X, nstate, tmp_v0, tmp_v1);
             }
         }
         else {
@@ -111,7 +111,7 @@ int GetPairExcitedStateHubbardGC(
                 isite1=X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 #pragma omp parallel for default(none) private(j) firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0, tmp_v1)
                 for(j=1;j<=i_max;j++){
-                    GC_AisCis(j, tmp_v0, tmp_v1, X, isite1, -tmp_trans);
+                    GC_AisCis(j, nstate, tmp_v0, tmp_v1, X, isite1, -tmp_trans);
                 }
             }
             else {
@@ -136,8 +136,8 @@ int GetPairExcitedStateHubbardGC(
 /// \version 1.2
 int GetPairExcitedStateHubbard(
         struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
-        double complex *tmp_v0, /**< [out] Result v0 = H v1*/
-        double complex *tmp_v1 /**< [in] v0 = H v1*/
+        int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+        double complex **tmp_v1 /**< [in] v0 = H v1*/
 ){
     long unsigned int i,j, idim_maxMPI;
     long unsigned int irght,ilft,ihfbit;
@@ -163,7 +163,7 @@ int GetPairExcitedStateHubbard(
     X->Large.mode=M_CALCSPEC;
 //    X->Large.mode     = M_MLTPLY;
 
-    double complex *tmp_v1bufOrg;
+    double complex **tmp_v1bufOrg;
     //set size
 #ifdef MPI
     idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
@@ -187,16 +187,16 @@ int GetPairExcitedStateHubbard(
             if (org_isite1  > X->Def.Nsite &&
                 org_isite2  > X->Def.Nsite)
             {
-              X_child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
+              X_child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
             }
             else if (org_isite2  > X->Def.Nsite
                      || org_isite1  > X->Def.Nsite)
             {
                 if(org_isite1 < org_isite2) {
-                    X_child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, tmp_v0,
+                    X_child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, nstate, tmp_v0,
                                              tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
                 } else{
-                    X_child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, -conj(tmp_trans), X, tmp_v0,
+                    X_child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, -conj(tmp_trans), X, nstate, tmp_v0,
                                              tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2); }
             }
             else{
@@ -231,15 +231,15 @@ int GetPairExcitedStateHubbard(
                     }
                 }
                 else{
-                    X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
+                    X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
                 }
             }
             else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
                 if(org_isite1 < org_isite2){
-                    X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
+                    X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
                 }
                 else{
-                    X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, tmp_v0, tmp_v1);
+                    X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, nstate, tmp_v0, tmp_v1);
                 }
             }
             else{
@@ -249,7 +249,7 @@ int GetPairExcitedStateHubbard(
                 if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
                     is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
                     if( X->Def.PairExcitationOperator[i][4]==0) {
-#pragma omp parallel for default(none) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
+#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
                         for (j = 1; j <= i_max; j++) {
                             ibit = list_1[j] & is;
                             num1 = ibit / is;
@@ -257,7 +257,7 @@ int GetPairExcitedStateHubbard(
                         }
                     }
                     else{
-#pragma omp parallel for default(none) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
+#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
                         for (j = 1; j <= i_max; j++) {
                             ibit = list_1[j] & is;
                             num1 = (1-ibit / is);

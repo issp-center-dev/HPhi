@@ -33,8 +33,8 @@
 */
 int GetSingleExcitedStateHubbard(
   struct BindStruct *X,//!<define list to get and put information of calculation
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ) {
   long int idim_max, idim_maxMPI;
   long unsigned int i, j;
@@ -47,7 +47,7 @@ int GetSingleExcitedStateHubbard(
   if (X->Def.NSingleExcitationOperator == 0) {
     return TRUE;
   }
-  double complex *tmp_v1bufOrg;
+  double complex **tmp_v1bufOrg;
   //set size
 #ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
@@ -63,7 +63,7 @@ int GetSingleExcitedStateHubbard(
     is1_spin = X->Def.Tpow[2 * org_isite + ispin];
     if (itype == 1) {
       if (org_isite >= X->Def.Nsite) {
-        X_Cis_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, tmp_v1bufOrg, idim_max, \
+        X_Cis_MPI(org_isite, ispin, tmpphi, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, idim_max, \
           X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, \
           X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
@@ -78,7 +78,7 @@ int GetSingleExcitedStateHubbard(
     }
     else if (itype == 0) {
       if (org_isite >= X->Def.Nsite) {
-        X_Ajt_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, tmp_v1bufOrg, \
+        X_Ajt_MPI(org_isite, ispin, tmpphi, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, \
           idim_max, X->Def.Tpow, list_1_org, list_1buf_org, \
           list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
@@ -106,8 +106,8 @@ int GetSingleExcitedStateHubbard(
 */
 int GetSingleExcitedStateHubbardGC(
   struct BindStruct *X,//!<define list to get and put information of calculation
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ){
   long int idim_max, idim_maxMPI;
   long unsigned int i, j;
@@ -121,7 +121,7 @@ int GetSingleExcitedStateHubbardGC(
   if (X->Def.NSingleExcitationOperator == 0) {
     return TRUE;
   }
-  double complex *tmp_v1bufOrg;
+  double complex **tmp_v1bufOrg;
   //set size
 #ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
@@ -136,27 +136,27 @@ int GetSingleExcitedStateHubbardGC(
     tmpphi = X->Def.ParaSingleExcitationOperator[i];
     if (itype == 1) {
       if (org_isite >= X->Def.Nsite) {
-        X_GC_Cis_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
+        X_GC_Cis_MPI(org_isite, ispin, tmpphi, nstate, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
       }
       else {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X) \
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
         for (j = 1; j <= idim_max; j++) {
           is1_spin = X->Def.Tpow[2 * org_isite + ispin];
-          GC_Cis(j, tmp_v0, tmp_v1, is1_spin, tmpphi, &tmp_off);
+          GC_Cis(j, nstate, tmp_v0, tmp_v1, is1_spin, tmpphi, &tmp_off);
         }/*for (j = 1; j <= idim_max; j++)*/
       }
     }
     else if (itype == 0) {
       if (org_isite >= X->Def.Nsite) {
-        X_GC_Ajt_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
+        X_GC_Ajt_MPI(org_isite, ispin, tmpphi, nstate, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
       }
       else {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X) \
   firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
         for (j = 1; j <= idim_max; j++) {
           is1_spin = X->Def.Tpow[2 * org_isite + ispin];
-          GC_Ajt(j, tmp_v0, tmp_v1, is1_spin, tmpphi, &tmp_off);
+          GC_Ajt(j, nstate, tmp_v0, tmp_v1, is1_spin, tmpphi, &tmp_off);
         }/*for (j = 1; j <= idim_max; j++)*/
       }
     }

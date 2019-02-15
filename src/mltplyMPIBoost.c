@@ -35,8 +35,8 @@ void zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *
  */
 void child_general_int_spin_MPIBoost(
   struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/,
+  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex **tmp_v1 /**< [in] v0 = H v1*/,
   double complex *tmp_v2 /**< [inout] bufffer*/,
   double complex *tmp_v3 /**< [inout] bufffer*/
   )
@@ -245,7 +245,7 @@ void child_general_int_spin_MPIBoost(
       iomp=i_max/(int)pow(2.0,ishift1+ishift2+ishift3+ishift4+ishift5+2);
 
       #pragma omp parallel default(none) private(arrayx,arrayz,arrayw,ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
-      shared(matJL,matI,iomp,i_max,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
+      shared(matJL,matI,iomp,i_max,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,nstate,tmp_v0,tmp_v1,tmp_v3)
       {
 
         arrayx = cd_1d_allocate(64*((int)pow(2.0,ishift4+ishift5-1)));
@@ -356,7 +356,7 @@ void child_general_int_spin_MPIBoost(
       if(pivot_flag==1){
         iomp=i_max/(int)pow(2.0,X->Boost.ishift_nspin);
         #pragma omp parallel for default(none) private(ell4,ell5,ell6,m0,Ipart1,TRANSA,TRANSB,M,N,K,LDA,LDB,LDC,ALPHA,BETA) \
-        firstprivate(iomp) shared(i_max,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,X,tmp_v0,tmp_v1)
+        firstprivate(iomp) shared(i_max,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,X,nstate,tmp_v0,tmp_v1)
         for(ell5 = 0; ell5 < iomp; ell5++ ){
           for(ell4 = 0; ell4 < (int)pow(2.0,X->Boost.ishift_nspin); ell4++){
             tmp_v0[(1 + ell5+(i_max/(int)pow(2.0,X->Boost.ishift_nspin))*ell4)] = tmp_v1[(1 + ell4+((int)pow(2.0,X->Boost.ishift_nspin))*ell5)];
@@ -373,7 +373,7 @@ void child_general_int_spin_MPIBoost(
       }
       else{ 
         #pragma omp parallel for default(none) private(ell4) \
-        shared(i_max,tmp_v0,tmp_v1,tmp_v3)
+        shared(i_max,nstate,tmp_v0,tmp_v1,tmp_v3)
         for(ell4 = 0; ell4 < i_max; ell4++ ){
           tmp_v0[1 + ell4] = tmp_v1[1 + ell4];
           tmp_v1[1 + ell4] = tmp_v3[1 + ell4];
@@ -392,7 +392,7 @@ void child_general_int_spin_MPIBoost(
 
     iomp=(int)pow(2.0,X->Boost.W0)/nproc;
     #pragma omp parallel for default(none) private(ell4,ell5,ell6) \
-    firstprivate(iomp) shared(i_max,X,nproc,tmp_v0,tmp_v1,tmp_v2,tmp_v3)
+    firstprivate(iomp) shared(i_max,X,nproc,nstate,tmp_v0,tmp_v1,tmp_v2,tmp_v3)
     //for(ell4 = 0; ell4 < (int)pow(2.0,X->Boost.W0)/nproc; ell4++ ){
     for(ell4 = 0; ell4 < iomp; ell4++ ){
       for(ell5 = 0; ell5 < nproc; ell5++ ){
@@ -409,7 +409,7 @@ void child_general_int_spin_MPIBoost(
 /*
   dam_pr= X_child_general_int_spin_MPIBoost
     (
-     matJ, X, tmp_v0, tmp_v1);
+     matJ, X, nstate, tmp_v0, tmp_v1);
   
   X->Large.prdct += dam_pr;
 */

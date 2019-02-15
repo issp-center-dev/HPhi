@@ -79,8 +79,8 @@ General two body term:
 void GC_child_CisAitCiuAiv_spin_MPIdouble(
   unsigned long int i_int /**< [in] Interaction ID*/,
   struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex **tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   double complex dam_pr;  
@@ -88,7 +88,7 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0],  X->Def.InterAll_OffDiagonal[i_int][1], 
     X->Def.InterAll_OffDiagonal[i_int][3],  X->Def.InterAll_OffDiagonal[i_int][4], 
     X->Def.InterAll_OffDiagonal[i_int][5],  X->Def.InterAll_OffDiagonal[i_int][7],
-    X->Def.ParaInterAll_OffDiagonal[i_int],X, tmp_v0, tmp_v1);
+    X->Def.ParaInterAll_OffDiagonal[i_int],X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
@@ -109,8 +109,8 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   int org_ispin4,//!<[in] spin v
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin;
@@ -125,7 +125,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   }
   else {
     if (org_ispin1 == org_ispin4 && org_ispin2 == org_ispin3) { //CisAitCitAis=CisAis
-      dam_pr = X_GC_child_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
+      dam_pr = X_GC_child_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, nstate, tmp_v0, tmp_v1);
       return (dam_pr);
     }
     else { //CisAitCisAit=0
@@ -191,15 +191,15 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
 void GC_child_CisAisCjuAjv_spin_MPIdouble(
   unsigned long int i_int /**< [in] Interaction ID*/,
   struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/
+  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex **tmp_v1 /**< [in] v0 = H v1*/
 ){
 #ifdef MPI
   double complex dam_pr;
   dam_pr = X_GC_child_CisAisCjuAjv_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
-    X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+    X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
@@ -217,8 +217,8 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask1, mask2, state2, ierr;
@@ -287,8 +287,8 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
 void GC_child_CisAitCjuAju_spin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 )
 {
 #ifdef MPI
@@ -296,7 +296,7 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
   dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4], 
-    X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+    X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
@@ -314,8 +314,8 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask1, mask2, state1, ierr, num1;
@@ -401,8 +401,8 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ){
 #ifdef MPI
   long unsigned int mask1, mask2, num1,num2;
@@ -452,8 +452,8 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   long unsigned int mask1, mask2, num1, num2;
@@ -500,8 +500,8 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
 void GC_child_CisAitCiuAiv_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr;  
@@ -509,7 +509,7 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
-    X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+    X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
@@ -528,8 +528,8 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin;
@@ -608,15 +608,15 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
 void GC_child_CisAisCjuAjv_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr;  
   dam_pr =X_GC_child_CisAisCjuAjv_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
-    X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+    X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
@@ -634,8 +634,8 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   int org_ispin4,//!<[in] Spin 2
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin;
@@ -713,15 +713,15 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
 void GC_child_CisAitCjuAju_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr;  
   dam_pr =X_GC_child_CisAitCjuAju_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
-    X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
+    X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
@@ -739,8 +739,8 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   int mask2, state2;
@@ -831,8 +831,8 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   unsigned long int off, j;
@@ -906,8 +906,8 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
-  double complex *tmp_v1//!<[in] Vector to be producted
+  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  double complex **tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
   unsigned long int j, off;
@@ -983,8 +983,8 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int tmp_off, off, j;
@@ -996,7 +996,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4 &&
     org_ispin2 == org_ispin3) { //cisaitcitais=cisais && cisaitcitais =cisais
-    dam_pr = X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
+    dam_pr = X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, nstate, tmp_v0, tmp_v1);
     return (dam_pr);
   }
   //cisaitcisait
@@ -1072,8 +1072,8 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int j, num1;
@@ -1127,8 +1127,8 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int off, j;
@@ -1190,8 +1190,8 @@ double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int j, num1;
@@ -1240,8 +1240,8 @@ double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int j, num1;
@@ -1291,9 +1291,9 @@ double complex X_child_CisAit_GeneralSpin_MPIdouble(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Input wavefunction
-  double complex *tmp_v1buf,//!<[inout] buffer for wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Input wavefunction
+  double complex **tmp_v1buf,//!<[inout] buffer for wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
   long unsigned int *list_1_org,//!<[in] Similar to ::list_1
   long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
@@ -1367,8 +1367,8 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int off, j, num1;
@@ -1446,8 +1446,8 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int num1, j, off;
@@ -1520,8 +1520,8 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int off, j;
@@ -1602,8 +1602,8 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int j, num1;
@@ -1658,8 +1658,8 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
@@ -1752,8 +1752,8 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ) {
 #ifdef MPI
   unsigned long int j, num1;
@@ -1821,8 +1821,8 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 )
 {
 #ifdef MPI
@@ -1879,8 +1879,8 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[inout] Resulting wavefunction
-  double complex *tmp_v1//!<[in] Input wavefunction
+  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  double complex **tmp_v1//!<[in] Input wavefunction
 ){
 #ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
@@ -1973,8 +1973,8 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/)
+  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex **tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
   int mask1, state1, ierr, origin;
@@ -2046,9 +2046,9 @@ double complex X_child_CisAit_spin_MPIdouble(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1, /**< [in] v0 = H v1*/
-  double complex *tmp_v1buf,//!<[in] buffer for wavefunction
+  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex **tmp_v1, /**< [in] v0 = H v1*/
+  double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
   long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
   long unsigned int *list_1_org,//!<[in] Similar to ::list_1
@@ -2124,8 +2124,8 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
- double complex *tmp_v1 /**< [in] v0 = H v1*/
+  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+ double complex **tmp_v1 /**< [in] v0 = H v1*/
 ){
 #ifdef MPI
   long unsigned int j;
@@ -2136,7 +2136,7 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
   ibit1 = (((unsigned long int)myrank& mask1)/mask1)^(1-org_ispin1);
 
   dam_pr = 0.0;
-#pragma omp parallel reduction(+:dam_pr)default(none) shared(tmp_v1, tmp_v0, ibit1) \
+#pragma omp parallel reduction(+:dam_pr)default(none) shared(tmp_v1, nstate, tmp_v0, ibit1) \
   firstprivate(X, tmp_trans) private(j)
   {
     if (ibit1 != 0) {
@@ -2171,8 +2171,8 @@ double complex X_GC_child_AisCis_spin_MPIdouble(
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
-  double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
-  double complex *tmp_v1 /**< [in] v0 = H v1*/
+  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+  double complex **tmp_v1 /**< [in] v0 = H v1*/
 ){
 #ifdef MPI
   long unsigned int j;
@@ -2183,7 +2183,7 @@ double complex X_GC_child_AisCis_spin_MPIdouble(
   ibit1 = (((unsigned long int)myrank& mask1) / mask1) ^ (1 - org_ispin1);
 
   dam_pr = 0.0;
-#pragma omp parallel reduction(+:dam_pr)default(none) shared(tmp_v1, tmp_v0, ibit1) \
+#pragma omp parallel reduction(+:dam_pr)default(none) shared(tmp_v1, nstate, tmp_v0, ibit1) \
   firstprivate(X, tmp_trans) private(j)
   {
     if (ibit1 == 0) {

@@ -24,8 +24,8 @@
 void child_general_int_spin_MPIBoost
 (
   struct BindStruct *X,
-  double complex *tmp_v0,
-  double complex *tmp_v1,
+  int nstate, double complex **tmp_v0,
+  double complex **tmp_v1,
   double complex *tmp_v2,
   double complex *tmp_v3
 );

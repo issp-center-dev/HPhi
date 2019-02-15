@@ -22,8 +22,8 @@
 double complex child_pairhopp_element
 (
  long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int *tmp_off
  );
@@ -31,8 +31,8 @@ double complex child_pairhopp_element
 double complex GC_child_exchange_element
 (
  long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int *tmp_off
  );
@@ -40,8 +40,8 @@ double complex GC_child_exchange_element
 double complex GC_child_pairhopp_element
 (
  long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int *tmp_off
  );
@@ -49,8 +49,8 @@ double complex GC_child_pairhopp_element
 double complex child_exchange_element
 (
  long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int *tmp_off
  );
@@ -61,8 +61,8 @@ double complex child_CisAisCisAis_element
  long unsigned int isite1,
  long unsigned int isite3,
  double complex tmp_V,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int *tmp_off
  );
@@ -76,8 +76,8 @@ double complex child_CisAisCjtAku_element
                 long unsigned int Bsum,
                 long unsigned int Bdiff,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -91,8 +91,8 @@ double complex child_CisAjtCkuAku_element
                 long unsigned int Asum,
                 long unsigned int Adiff,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -109,8 +109,8 @@ double complex child_CisAjtCkuAlv_element
                 long unsigned int Bsum,
                 long unsigned int Bdiff,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off_2
         );
@@ -121,8 +121,8 @@ double complex GC_child_CisAisCisAis_element
                 long unsigned int isite1,
                 long unsigned int isite3,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -136,8 +136,8 @@ double complex GC_child_CisAisCjtAku_element
                 long unsigned int Bsum,
                 long unsigned int Bdiff,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -151,8 +151,8 @@ double complex GC_child_CisAjtCkuAku_element
                 long unsigned int Asum,
                 long unsigned int Adiff,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -169,8 +169,8 @@ double complex GC_child_CisAjtCkuAlv_element
                 long unsigned int Bsum,
                 long unsigned int Bdiff,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off_2
         );
@@ -180,7 +180,7 @@ double complex GC_CisAis
 (
  long unsigned int j,
  double  complex *tmp_v0,
- double complex *tmp_v1,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
  double complex tmp_trans
@@ -188,8 +188,8 @@ double complex GC_CisAis
 
 double complex GC_AisCis(
         long unsigned int j,
-        double complex *tmp_v0,
-        double complex *tmp_v1,
+        int nstate, double complex **tmp_v0,
+        double complex **tmp_v1,
         struct BindStruct *X,
         long unsigned int is1_spin,
         double complex tmp_trans
@@ -230,7 +230,7 @@ double complex CisAjt
 (
  long unsigned int j,
  double  complex *tmp_v0,
- double complex *tmp_v1,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
  long unsigned int is2_spin,
@@ -244,7 +244,7 @@ double complex GC_CisAjt
 (
  long unsigned int j,
  double  complex *tmp_v0,
- double complex *tmp_v1,
+ double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
  long unsigned int is2_spin,
@@ -296,8 +296,8 @@ int child_exchange_GetInfo
 double complex GC_Ajt
 (
  long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  long unsigned int is1_spin,
  double complex tmp_V,
  long unsigned int *tmp_off
@@ -306,8 +306,8 @@ double complex GC_Ajt
 double complex GC_Cis
 (
  long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  long unsigned int is1_spin,
  double complex tmp_V,
  long unsigned int *tmp_off
@@ -318,8 +318,8 @@ double complex GC_Cis
 double complex GC_Ajt
 (
  long unsigned int j,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  long unsigned int is1_spin,
  double complex tmp_V,
  long unsigned int *tmp_off

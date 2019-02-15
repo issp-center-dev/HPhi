@@ -325,7 +325,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
         struct BindStruct *X,
         double *_alpha,
         double *_beta,
-        double complex *tmp_v1,
+        double complex **tmp_v1,
         unsigned long int *liLanczos_step
  ) {
 
@@ -465,7 +465,7 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int OutputLanczosVector(struct BindStruct *X,
                         double complex* tmp_v0,
-                        double complex *tmp_v1,
+                        double complex **tmp_v1,
                         unsigned long int liLanczosStp_vec){
   char sdt[D_FileNameMax];
   FILE *fp;
@@ -496,7 +496,7 @@ int OutputLanczosVector(struct BindStruct *X,
 /// Output: Large.iv.
 /// \param tmp_v0 [out] The initial vector whose components are zero.
 /// \param tmp_v1 [out] The initial vector whose components are randomly given when initial_mode=1, otherwise, iv-th component is only given.
-void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1) {
+void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex **tmp_v1) {
   int iproc;
   long int i, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;

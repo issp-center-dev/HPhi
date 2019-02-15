@@ -66,8 +66,8 @@ double complex child_CisAisCisAis_spin_element
                 long unsigned int org_sigma2,
                 long unsigned int org_sigma4,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X
         );
 
@@ -79,8 +79,8 @@ double complex child_CisAisCitAiu_spin_element
                 long unsigned int isA_up,
                 long unsigned int isB_up,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -93,8 +93,8 @@ double complex child_CisAitCiuAiu_spin_element
                 long unsigned int isA_up,
                 long unsigned int isB_up,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -107,8 +107,8 @@ double complex child_CisAitCiuAiv_spin_element
                 long unsigned int isA_up,
                 long unsigned int isB_up,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off_2
         );
@@ -123,8 +123,8 @@ double complex GC_child_CisAisCisAis_spin_element
                 long unsigned int org_sigma2,
                 long unsigned int org_sigma4,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X
         );
 
@@ -136,8 +136,8 @@ double complex GC_child_CisAisCitAiu_spin_element
                 long unsigned int isA_up,
                 long unsigned int isB_up,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -150,8 +150,8 @@ double complex GC_child_CisAitCiuAiu_spin_element
                 long unsigned int isA_up,
                 long unsigned int isB_up,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off
         );
@@ -164,8 +164,8 @@ double complex GC_child_CisAitCiuAiv_spin_element
                 long unsigned int isA_up,
                 long unsigned int isB_up,
                 double complex tmp_V,
-                double complex *tmp_v0,
-                double complex *tmp_v1,
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1,
                 struct BindStruct *X,
                 long unsigned int *tmp_off_2
         );

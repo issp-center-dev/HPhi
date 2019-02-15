@@ -313,8 +313,8 @@ int CalcSpectrum(
 int GetExcitedState
 (
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
 )
 {
    if(X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0){
@@ -324,12 +324,12 @@ int GetExcitedState
 
 
     if(X->Def.NSingleExcitationOperator > 0){
-      if(GetSingleExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
+      if(GetSingleExcitedState(X,nstate,tmp_v0, tmp_v1)!=TRUE){
         return FALSE;
       }
     }
     else if(X->Def.NPairExcitationOperator >0){
-      if(GetPairExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
+      if(GetPairExcitedState(X,nstate,tmp_v0, tmp_v1)!=TRUE){
         return FALSE;
       }
     }

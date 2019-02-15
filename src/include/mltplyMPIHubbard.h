@@ -25,8 +25,8 @@ void GC_child_general_hopp_MPIdouble
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 double complex X_GC_child_general_hopp_MPIdouble
@@ -37,16 +37,16 @@ double complex X_GC_child_general_hopp_MPIdouble
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void GC_child_general_hopp_MPIsingle
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 double complex X_GC_child_general_hopp_MPIsingle
@@ -57,8 +57,8 @@ double complex X_GC_child_general_hopp_MPIsingle
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 
@@ -66,8 +66,8 @@ void child_general_hopp_MPIdouble
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 double complex X_child_general_hopp_MPIdouble
@@ -78,16 +78,16 @@ double complex X_child_general_hopp_MPIdouble
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void child_general_hopp_MPIsingle
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 double complex X_child_general_hopp_MPIsingle
@@ -98,6 +98,6 @@ double complex X_child_general_hopp_MPIsingle
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );

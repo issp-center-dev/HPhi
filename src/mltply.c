@@ -53,7 +53,7 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) {
+int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1) {
   long unsigned int j=0;
   long unsigned int irght=0;
   long unsigned int ilft=0;
@@ -101,25 +101,25 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   }
   X->Large.prdct += dam_pr;
   StopTimer(100);
-  if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, tmp_v0, tmp_v1);
+  if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, nstate, tmp_v0, tmp_v1);
   
   switch (X->Def.iCalcModel) {
   case HubbardGC:
-    mltplyHubbardGC(X, tmp_v0, tmp_v1);
+    mltplyHubbardGC(X, nstate, tmp_v0, tmp_v1);
     break;
       
   case KondoGC:
   case Hubbard:
   case Kondo:
-    mltplyHubbard(X, tmp_v0, tmp_v1);
+    mltplyHubbard(X, nstate, tmp_v0, tmp_v1);
     break;
       
   case Spin:
-    mltplySpin(X, tmp_v0, tmp_v1);
+    mltplySpin(X, nstate, tmp_v0, tmp_v1);
     break;
       
   case SpinGC:
-    mltplySpinGC(X, tmp_v0, tmp_v1);
+    mltplySpinGC(X, nstate, tmp_v0, tmp_v1);
     break;
       
   default:

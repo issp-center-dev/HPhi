@@ -129,7 +129,7 @@ int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecifichea
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int CalcSpectrumByTPQ(
         struct EDMainCalStruct *X,
-        double complex *tmp_v1,
+        double complex **tmp_v1,
         double dnorm,
         int Nomega,
         double complex *dcSpectrum,

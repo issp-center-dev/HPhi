@@ -272,8 +272,8 @@ int X_child_exchange_spin_element(
 */
 double complex child_exchange_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
-  double complex *tmp_v0,//!<[out] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[out] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
@@ -313,8 +313,8 @@ double complex child_exchange_spin_element(
 */
 double complex GC_child_exchange_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
-  double complex *tmp_v0,//!<[out] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[out] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
@@ -351,8 +351,8 @@ double complex GC_child_exchange_spin_element(
 */
 double complex GC_child_pairlift_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
-  double complex *tmp_v0,//!<[out] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[out] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
@@ -395,8 +395,8 @@ double complex child_CisAisCisAis_spin_element(
   long unsigned int org_sigma2,//!<[in] Target for spin 1
   long unsigned int org_sigma4,//!<[in] Target for spin 2
   double complex tmp_V,//!<[in] Coupling constatnt
-  double complex *tmp_v0,//!<[in] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[in] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X//!<[inout]
 ) {
   int tmp_sgn;
@@ -430,8 +430,8 @@ double complex GC_child_CisAisCisAis_spin_element(
   long unsigned int org_sigma2,//!<[in] Target for spin 1
   long unsigned int org_sigma4,//!<[in] Target for spin 2
   double complex tmp_V,//!<[in] Coupling constatnt
-  double complex *tmp_v0,//!<[in] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[in] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X//!<[inout]
 ) {
   int tmp_sgn;
@@ -463,8 +463,8 @@ double complex GC_child_CisAisCitAiu_spin_element(
   long unsigned int isA_up,//!<[in] Bit mask for spin 1
   long unsigned int isB_up,//!<[in] Bit mask for spin 2
   double complex tmp_V,//!<[in] Coupling constatnt
-  double complex *tmp_v0,//!<[in] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[in] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
@@ -498,8 +498,8 @@ double complex GC_child_CisAitCiuAiu_spin_element(
   long unsigned int isA_up,//!<[in] Bit mask for spin 1
   long unsigned int isB_up,//!<[in] Bit mask for spin 2
   double complex tmp_V,//!<[in] Coupling constatnt
-  double complex *tmp_v0,//!<[in] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[in] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
@@ -533,8 +533,8 @@ double complex GC_child_CisAitCiuAiv_spin_element(
   long unsigned int isA_up,//!<[in] Bit mask for spin 1
   long unsigned int isB_up,//!<[in] Bit mask for spin 2
   double complex tmp_V,//!<[in] Coupling constatnt
-  double complex *tmp_v0,//!<[in] Resulting wavefunction
-  double complex *tmp_v1,//!<[in] Wavefunction to be multiplied
+  int nstate, double complex **tmp_v0,//!<[in] Resulting wavefunction
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
   struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off_2//!<[out] Index of final wavefunction
 ) {

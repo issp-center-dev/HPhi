@@ -33,15 +33,15 @@ void GC_child_general_hopp_MPIdouble
 (
  unsigned long int itrans,//!<[in] Transfer ID
  struct BindStruct *X,//!<[inout]
- double complex *tmp_v0,//!<[out] Result v0 = H v1
- double complex *tmp_v1//!<[in] v0 = H v1
+ int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+ double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr = 0;
   dam_pr = X_GC_child_general_hopp_MPIdouble(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
-    X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1);
+    X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_general_hopp_MPIdouble*/
@@ -58,8 +58,8 @@ double complex X_GC_child_general_hopp_MPIdouble(
   int org_ispin2,//!<[in] @f$\sigma_2@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   double complex tmp_trans,//!<[in] Transfer @f$t@f$
   struct BindStruct *X,//!< [inout]
-  double complex *tmp_v0,//!< [out] Result v0 = H v1
-  double complex *tmp_v1 //!< [in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!< [out] Result v0 = H v1
+  double complex **tmp_v1 //!< [in] v0 = H v1
 ) {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
@@ -134,8 +134,8 @@ double complex X_child_CisAjt_MPIdouble(
   int org_ispin2,//!<[in] @f$\sigma_2@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   double complex tmp_trans,//!<[in] Transfer @f$t@f$
   struct BindStruct *X,//!< [inout]
-  double complex *tmp_v0,//!< [out] Result v0 = H v1
-  double complex *tmp_v1,//!< [in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!< [out] Result v0 = H v1
+  double complex **tmp_v1,//!< [in] v0 = H v1
   double complex *v1buf,//!<[in]
   long unsigned int *list_1_org,//!<[in]
   long unsigned int *list_1buf_org,//!<[in]
@@ -211,15 +211,15 @@ double complex X_child_CisAjt_MPIdouble(
 void GC_child_general_hopp_MPIsingle(
   unsigned long int itrans,//!<[in] Transfer ID
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr=0;
   dam_pr=X_GC_child_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
-    X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1       );
+    X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1       );
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
@@ -237,8 +237,8 @@ double complex X_GC_child_general_hopp_MPIsingle(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ) {
 #ifdef MPI
   int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
@@ -334,15 +334,15 @@ double complex X_GC_child_general_hopp_MPIsingle(
 void child_general_hopp_MPIdouble(
   unsigned long int itrans,//!<[in] Transfer ID
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr;
   dam_pr =X_child_general_hopp_MPIdouble( 
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
-    X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1);
+    X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void child_general_hopp_MPIdouble*/
@@ -359,8 +359,8 @@ double complex X_child_general_hopp_MPIdouble(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ) {
 #ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
@@ -439,15 +439,15 @@ double complex X_child_general_hopp_MPIdouble(
 void child_general_hopp_MPIsingle(
   unsigned long int itrans,//!<[in] Transfer ID
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
   double complex dam_pr;
   dam_pr =X_child_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
-    X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1);
+    X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
 }/*void child_general_hopp_MPIsingle*/
@@ -464,8 +464,8 @@ double complex X_child_general_hopp_MPIsingle(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1//!<[in] v0 = H v1
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
@@ -576,8 +576,8 @@ double complex X_child_CisAjt_MPIsingle(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Hopping integral
   struct BindStruct *X,//!<[inout]
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1,//!<[in] v0 = H v1
+  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1,//!<[in] v0 = H v1
   double complex *v1buf,//!<[in] Buffer for sendrecv of wavefunction
   long unsigned int *list_1_org,//!<[in] Similler to ::list_1
   long unsigned int *list_1buf_org,//!<[in] Similler to ::list_1buf

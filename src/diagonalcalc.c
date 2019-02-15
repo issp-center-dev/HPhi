@@ -45,8 +45,8 @@ int SetDiagonalTETransfer(
         double dtmp_V,
         long unsigned int spin,
         struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
+        int nstate, double complex **tmp_v0,
+        double complex **tmp_v1
 );
 
 int SetDiagonalTEInterAll(
@@ -56,8 +56,8 @@ int SetDiagonalTEInterAll(
         long unsigned int isigma2,
         double dtmp_V,
         struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
+        int nstate, double complex **tmp_v0,
+        double complex **tmp_v1
 );
 
 int SetDiagonalTEChemi(
@@ -65,8 +65,8 @@ int SetDiagonalTEChemi(
         long unsigned int spin,
         double dtmp_V,
         struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
+        int nstate, double complex **tmp_v0,
+        double complex **tmp_v1
 );
 
 /**
@@ -197,8 +197,8 @@ int diagonalcalcForTE
         (
                 const int _istep,
                 struct BindStruct *X,
-                double complex *tmp_v0,
-                double complex *tmp_v1
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1
         ) {
 
   long unsigned int i;
@@ -211,7 +211,7 @@ int diagonalcalcForTE
       isite1 = X->Def.TETransferDiagonal[_istep][i][0] + 1;
       A_spin = X->Def.TETransferDiagonal[_istep][i][1];
       tmp_V = X->Def.ParaTETransferDiagonal[_istep][i];
-      SetDiagonalTETransfer(isite1, tmp_V, A_spin, X, tmp_v0, tmp_v1);
+      SetDiagonalTETransfer(isite1, tmp_V, A_spin, X, nstate, tmp_v0, tmp_v1);
     }
   }
   else if (X->Def.NTEInterAllDiagonal[_istep] >0) {
@@ -223,7 +223,7 @@ int diagonalcalcForTE
       B_spin = X->Def.TEInterAllDiagonal[_istep][i][3];
       tmp_V = X->Def.ParaTEInterAllDiagonal[_istep][i];
 
-      if (SetDiagonalTEInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X, tmp_v0, tmp_v1) != 0) {
+      if (SetDiagonalTEInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X, nstate, tmp_v0, tmp_v1) != 0) {
         return -1;
       }
     }
@@ -233,7 +233,7 @@ int diagonalcalcForTE
         isite1 = X->Def.TEChemi[_istep][i] + 1;
         A_spin = X->Def.SpinTEChemi[_istep][i];
         tmp_V = -X->Def.ParaTEChemi[_istep][i];
-        if (SetDiagonalTEChemi(isite1, A_spin, tmp_V, X, tmp_v0, tmp_v1) != 0) {
+        if (SetDiagonalTEChemi(isite1, A_spin, tmp_V, X, nstate, tmp_v0, tmp_v1) != 0) {
           return -1;
         }
       }
@@ -1435,8 +1435,8 @@ int SetDiagonalTEInterAll(
         long unsigned int isigma2,
         double dtmp_V,
         struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
+        int nstate, double complex **tmp_v0,
+        double complex **tmp_v1
 ){
   long unsigned int is1_spin;
   long unsigned int is2_spin;
@@ -1764,8 +1764,8 @@ int SetDiagonalTEChemi(
         long unsigned int spin,
         double dtmp_V,
         struct BindStruct *X,
-        double complex *tmp_v0,
-        double complex *tmp_v1
+        int nstate, double complex **tmp_v0,
+        double complex **tmp_v1
 ){
   long unsigned int is1_up;
   long unsigned int num1;
@@ -1855,7 +1855,7 @@ firstprivate(i_max, dtmp_V) private(j)
         is1 = X->Def.Tpow[2*isite1-1];
       }
 
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1) private(num1, ibit1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1) private(num1, ibit1)
       for(j = 1;j <= i_max;j++){
 
         ibit1 = list_1[j]&is1;
@@ -1868,7 +1868,7 @@ firstprivate(i_max, dtmp_V) private(j)
     case SpinGC:
       if(X->Def.iFlgGeneralSpin==FALSE){
         is1_up   = X->Def.Tpow[isite1-1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1)
         for(j = 1;j <= i_max;j++){
           num1=(((j-1)& is1_up)/is1_up)^(1-spin);
           tmp_v0[j] += dtmp_V * num1*tmp_v1[j];
@@ -1890,7 +1890,7 @@ firstprivate(i_max, dtmp_V) private(j)
     case Spin:
       if(X->Def.iFlgGeneralSpin==FALSE){
         is1_up   = X->Def.Tpow[isite1-1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1)
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1)
         for(j = 1;j <= i_max;j++){
           num1=((list_1[j]& is1_up)/is1_up)^(1-spin);
           tmp_v0[j] += dtmp_V * num1*tmp_v1[j];
@@ -1942,8 +1942,8 @@ int SetDiagonalTETransfer
                 double dtmp_V,
                 long unsigned int spin,
                 struct BindStruct *X,
-                double complex *tmp_v0,
-                double complex *tmp_v1
+                int nstate, double complex **tmp_v0,
+                double complex **tmp_v1
         ){
   long unsigned int is1_up;
   long unsigned int ibit1_up;
@@ -2011,7 +2011,7 @@ int SetDiagonalTETransfer
         } else {
           is1 = X->Def.Tpow[2 * isite1 - 1];
         }
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) \
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1) \
         firstprivate(i_max, dtmp_V, is1) private(num1, ibit1)
         for (j = 1; j <= i_max; j++) {
           ibit1 = (j - 1) & is1;
@@ -2029,7 +2029,7 @@ int SetDiagonalTETransfer
         } else {
           is1 = X->Def.Tpow[2 * isite1 - 1];
         }
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) \
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1) \
         firstprivate(i_max, dtmp_V, is1) private(num1, ibit1)
         for (j = 1; j <= i_max; j++) {
           ibit1 = list_1[j] & is1;
@@ -2042,7 +2042,7 @@ int SetDiagonalTETransfer
       case SpinGC:
         if (X->Def.iFlgGeneralSpin == FALSE) {
           is1_up = X->Def.Tpow[isite1 - 1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1) \
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1) \
           firstprivate(i_max, dtmp_V, is1_up, spin) private(num1, ibit1_up)
           for (j = 1; j <= i_max; j++) {
             ibit1_up = (((j - 1) & is1_up) / is1_up) ^ (1 - spin);
@@ -2065,7 +2065,7 @@ int SetDiagonalTETransfer
       case Spin:
         if (X->Def.iFlgGeneralSpin == FALSE) {
           is1_up = X->Def.Tpow[isite1 - 1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1)\
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1)\
            firstprivate(i_max, dtmp_V, is1_up, spin) private(num1, ibit1_up)
           for (j = 1; j <= i_max; j++) {
             ibit1_up = ((list_1[j] & is1_up) / is1_up) ^ (1 - spin);
@@ -2073,7 +2073,7 @@ int SetDiagonalTETransfer
             dam_pr += dtmp_V * ibit1_up * conj(tmp_v1[j]) * tmp_v1[j];
           }
         } else {
-#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, tmp_v0, tmp_v1)\
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(list_1, nstate, tmp_v0, tmp_v1)\
           firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
           for (j = 1; j <= i_max; j++) {
             num1 = BitCheckGeneral(list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
