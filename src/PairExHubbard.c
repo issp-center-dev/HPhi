@@ -107,7 +107,7 @@ int GetPairExcitedStateHubbardGC(
         }
         else {
 
-            if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 && X->Def.PairExcitationOperator[i][4] == 1) {
+            if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 && X->Def.PairExcitationOperator[i][4] == 0) {
                 isite1=X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 #pragma omp parallel for default(none) private(j) firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0, tmp_v1)
                 for(j=1;j<=i_max;j++){
