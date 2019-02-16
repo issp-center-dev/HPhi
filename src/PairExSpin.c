@@ -296,7 +296,7 @@ int GetPairExcitedStateHalfSpin(
                         if (ibit1 == 0) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
   firstprivate(i_max, tmp_trans) private(j)
-                            for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+                            for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
                         }
                     }
                 }// org_isite1 > X->Def.Nsite
