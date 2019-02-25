@@ -85,10 +85,10 @@ int GetPairExcitedStateHalfSpinGC(
             if(org_isite1 > X->Def.Nsite){
                 if(org_sigma1==org_sigma2){  // longitudinal magnetic field
                     if(X->Def.PairExcitationOperator[i][4]==0) {
-                        X_GC_child_CisAis_spin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, nstate, tmp_v0, tmp_v1);
+                        X_GC_child_AisCis_spin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
                     }
                     else{
-                        X_GC_child_AisCis_spin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
+                        X_GC_child_CisAis_spin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, nstate, tmp_v0, tmp_v1);
                     }
                 }
                 else{  // transverse magnetic field
@@ -98,7 +98,7 @@ int GetPairExcitedStateHalfSpinGC(
             }else{
                 isite1 = X->Def.Tpow[org_isite1-1];
                 if(org_sigma1==org_sigma2) {
-                    if (X->Def.PairExcitationOperator[i][4] == 1) {
+                    if (X->Def.PairExcitationOperator[i][4] == 0) {
                         // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X,tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
@@ -167,10 +167,10 @@ int GetPairExcitedStateGeneralSpinGC(
                 if(org_sigma1==org_sigma2){
                     if(X->Def.PairExcitationOperator[i][4]==0) {
                         // longitudinal magnetic field
-                        X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, nstate, tmp_v0, tmp_v1);
+                        X_GC_child_AisCis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
                     }
                     else{
-                        X_GC_child_AisCis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
+                        X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, nstate, tmp_v0, tmp_v1);
                     }
                 }else{
                     // transverse magnetic field
@@ -184,7 +184,7 @@ int GetPairExcitedStateGeneralSpinGC(
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
                             num1 = BitCheckGeneral(j - 1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-                            tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
+                            tmp_v0[j] += -tmp_trans * tmp_v1[j] * (1.0-num1);
                         }
                     }
                     else{
@@ -192,7 +192,7 @@ int GetPairExcitedStateGeneralSpinGC(
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
                             num1 = BitCheckGeneral(j - 1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-                            tmp_v0[j] += -tmp_trans * tmp_v1[j] * (1.0-num1);
+                            tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
                         }
                     }
                 }else{
@@ -287,14 +287,14 @@ int GetPairExcitedStateHalfSpin(
                     is1_up = X->Def.Tpow[org_isite1 - 1];
                     ibit1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
                     if (X->Def.PairExcitationOperator[i][4] == 0) {
-                        if (ibit1 != 0) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
+                        if (ibit1 == 0) {
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-                            for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+                            for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
                         }
                     } else {
-                        if (ibit1 == 0) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
+                        if (ibit1 != 0) {
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
                             for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
                         }
@@ -303,7 +303,7 @@ int GetPairExcitedStateHalfSpin(
                 else {
                     isite1 = X->Def.Tpow[org_isite1 - 1];
                     if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 &&
-                        X->Def.PairExcitationOperator[i][4] == 1) {
+                        X->Def.PairExcitationOperator[i][4] == 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
                             tmp_v0[j] += (1.0 - X_Spin_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
@@ -387,17 +387,17 @@ int GetPairExcitedStateGeneralSpin(
                     num1 = BitCheckGeneral((unsigned long int) myrank,
                                            org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
                     if (X->Def.PairExcitationOperator[i][4] == 0) {
-                        if (num1 != 0) {
-#pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
-                            for (j = 1; j <= i_max; j++) {
-                                tmp_v0[j] += tmp_trans * tmp_v1[j];
-                            }
-                        }
-                    } else {
                         if (num1 == 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
                             for (j = 1; j <= i_max; j++) {
                                 tmp_v0[j] += -tmp_trans * tmp_v1[j];
+                            }
+                        }
+                    } else {
+                        if (num1 != 0) {
+#pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
+                            for (j = 1; j <= i_max; j++) {
+                                tmp_v0[j] += tmp_trans * tmp_v1[j];
                             }
                         }
                     }
@@ -414,13 +414,13 @@ int GetPairExcitedStateGeneralSpin(
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1, list_1)
                         for (j = 1; j <= i_max; j++) {
                             num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-                            tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
+                            tmp_v0[j] += -tmp_trans * tmp_v1[j] * (1.0 - num1);
                         }
                     } else {
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1, list_1)
                         for (j = 1; j <= i_max; j++) {
                             num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-                            tmp_v0[j] += -tmp_trans * tmp_v1[j] * (1.0 - num1);
+                            tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
                         }
                     }
                 }//org_sigma1=org_sigma2
