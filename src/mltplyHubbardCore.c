@@ -21,8 +21,6 @@
 #include "mltplyCommon.h"
 #include "mltplyHubbardCore.h"
 
-void zaxpy_(int *n, double complex *a, double complex *x, int *incx, double complex *y, int *incy);
-
 /******************************************************************************/
 //[s] GetInfo functions
 /******************************************************************************/
@@ -228,7 +226,6 @@ int child_exchange_GetInfo(
 /******************************************************************************/
 /**
 @brief Operation of @f$t c_{i\sigma}^\dagger c_{i\sigma}@f$ (Grandcanonical)
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -252,7 +249,6 @@ void GC_CisAis(
 }/*double complex GC_CisAis*/
 /**
 @brief Operation of @f$t c_{i\sigma} c_{i\sigma}^\dagger@f$ (Grandcanonical)
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 void GC_AisCis(
@@ -358,16 +354,15 @@ void GC_CisAjt(
   ibit_tmp_1 = (list_1_j & is1_spin);
   ibit_tmp_2 = (list_1_j & is2_spin);
   *tmp_off = 0;
+  int one = 1;
 
   if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
     bit = list_1_j & diff_spin;
     SgnBit(bit, &sgn); // Fermion sign
     list_1_off = list_1_j ^ sum_spin;
     *tmp_off = list_1_off;
-    dmv = sgn * tmp_v1[j];
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-      tmp_v0[list_1_off + 1] += dmv * tmp_V;
-    }
+    dmv = sgn * tmp_V;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
   else {
     return 0;
@@ -472,6 +467,7 @@ void child_exchange_element(
   long unsigned int ihfbit = X->Large.ihfbit;
   double complex tmp_J = X->Large.tmp_J;
   int mode = X->Large.mode;
+  int one = 1;
 
   ibit1_up = list_1[j] & is1_up;
   ibit2_up = list_1[j] & is2_up;
@@ -485,10 +481,8 @@ void child_exchange_element(
       return 0;
     }
     *tmp_off = off;
-    dmv = tmp_J * tmp_v1[j];
-    if (mode == M_MLTPLY) {
-      tmp_v0[off] += dmv;
-    }
+    dmv = tmp_J;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off][0], &one);
   }
   else if (ibit1_up != 0 && ibit1_down == 0 && ibit2_up == 0 && ibit2_down != 0) {
     iexchg = list_1[j] - (is1_up + is2_down);
@@ -497,15 +491,12 @@ void child_exchange_element(
       return 0;
     }
     *tmp_off = off;
-    dmv = tmp_J * tmp_v1[j];
-    if (mode == M_MLTPLY) {
-      tmp_v0[off] += dmv;
-    }
+    dmv = tmp_J;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off][0], &one);
   }
 }/*double complex child_exchange_element*/
 /**
 @brief Compute pairhopp term of canonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -529,6 +520,7 @@ void child_pairhopp_element(
   long unsigned int ihfbit = X->Large.ihfbit;
   double complex tmp_J = X->Large.tmp_J;
   int mode = X->Large.mode;
+  int one = 1;
 
   ibit1_up = list_1[j] & is1_up;
   ibit2_up = list_1[j] & is2_up;
@@ -543,15 +535,12 @@ void child_pairhopp_element(
       return 0;
     }
     *tmp_off = off;
-    dmv = tmp_J * tmp_v1[j];
-    if (mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-      tmp_v0[off] += dmv;
-    }
+    dmv = tmp_J;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off][0], &one);
   }
 }/*double complex child_pairhopp_element*/
 /**
 @brief Compute exchange term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -572,6 +561,7 @@ void GC_child_exchange_element(
   long unsigned int list_1_j, list_1_off;
   double complex tmp_J = X->Large.tmp_J;
   int mode = X->Large.mode;
+  int one = 1;
 
   list_1_j = j - 1;
   ibit1_up = list_1_j & is1_up;
@@ -586,10 +576,8 @@ void GC_child_exchange_element(
     list_1_off = iexchg;
     *tmp_off = list_1_off;
 
-    dmv = tmp_J * tmp_v1[j];
-    if (mode == M_MLTPLY) {
-      tmp_v0[list_1_off + 1] += dmv;
-    }
+    dmv = tmp_J;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
   else if (ibit1_up != 0 && ibit1_down == 0 && ibit2_up == 0 && ibit2_down != 0) {
     iexchg = list_1_j - (is1_up + is2_down);
@@ -597,15 +585,12 @@ void GC_child_exchange_element(
     list_1_off = iexchg;
     *tmp_off = list_1_off;
 
-    dmv = tmp_J * tmp_v1[j];
-    if (mode == M_MLTPLY) {
-      tmp_v0[list_1_off + 1] += dmv;
-    }
+    dmv = tmp_J;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
 }/*double complex GC_child_exchange_element*/
 /**
 @brief Compute pairhopp term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -626,6 +611,7 @@ void GC_child_pairhopp_element(
   long unsigned int list_1_j, list_1_off;
   double complex tmp_J = X->Large.tmp_J;
   int mode = X->Large.mode;
+  int one = 1;
 
   list_1_j = j - 1;
 
@@ -642,16 +628,13 @@ void GC_child_pairhopp_element(
     iexchg += (is1_up + is1_down);
     list_1_off = iexchg;
     *tmp_off = list_1_off;
-    dmv = tmp_J * tmp_v1[j];
-    if (mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-      tmp_v0[list_1_off + 1] += dmv;
-    }
+    dmv = tmp_J;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
 }
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}@f$
 term of canonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -667,17 +650,15 @@ void child_CisAisCisAis_element(
 ) {
   int tmp_sgn;
   double complex dmv;
+  int one = 1;
   tmp_sgn = X_CisAis(list_1[j], X, isite3);
   tmp_sgn *= X_CisAis(list_1[j], X, isite1);
-  dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-  if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-    tmp_v0[j] += dmv;
-  }
+  dmv = tmp_V * tmp_sgn;
+  zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
 }/*double complex child_CisAisCisAis_element*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
 term of canonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -696,21 +677,19 @@ void child_CisAisCjtAku_element(
 ) {
   int tmp_sgn;
   double complex dmv;
+  int one = 1;
   tmp_sgn = X_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, tmp_off);
   if (tmp_sgn != 0) {
     tmp_sgn *= X_CisAis(list_1[*tmp_off], X, isite1);
     if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off] += dmv;
-      }
+      dmv = tmp_V * tmp_sgn;
+      zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off][0], &one);
     }
   }
 }/*double complex child_CisAisCjtAku_element*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
 term of canonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -729,21 +708,19 @@ void child_CisAjtCkuAku_element(
 ) {
   int tmp_sgn;
   double complex dmv;
+  int one = 1;
   tmp_sgn = X_CisAis(list_1[j], X, isite3);
   if (tmp_sgn != 0) {
     tmp_sgn *= X_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, tmp_off);
     if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off] += dmv;
-      }
+      dmv = tmp_V * tmp_sgn;
+      zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off][0], &one);
     }
   }
 }/*double complex child_CisAjtCkuAku_element*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
 term of canonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -765,6 +742,7 @@ void child_CisAjtCkuAlv_element(
 ) {
   int tmp_sgn;
   long unsigned int tmp_off_1;
+  int one = 1;
 
   double complex dmv;
   tmp_sgn = X_GC_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
@@ -772,10 +750,8 @@ void child_CisAjtCkuAlv_element(
   if (tmp_sgn != 0) {
     tmp_sgn *= X_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
     if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off_2] += dmv;
-      }
+      dmv = tmp_V * tmp_sgn;
+      zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off_2][0], &one);
     }
   }
 }/*double complex child_CisAjtCkuAlv_element*/
@@ -783,7 +759,6 @@ void child_CisAjtCkuAlv_element(
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}@f$
 term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -799,19 +774,17 @@ void GC_child_CisAisCisAis_element(
 ) {
   int tmp_sgn;
   double complex dmv;
+  int one = 1;
   tmp_sgn = X_CisAis(j - 1, X, isite3);
   tmp_sgn *= X_CisAis(j - 1, X, isite1);
   if (tmp_sgn != 0) {
-    dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-      tmp_v0[j] += dmv;
-    }
+    dmv = tmp_V * tmp_sgn;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
   }
 }/*double complex GC_child_CisAisCisAis_element*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
 term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -830,21 +803,19 @@ void GC_child_CisAisCjtAku_element(
 ) {
   int tmp_sgn;
   double complex dmv;
+  int one = 1;
   tmp_sgn = X_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, tmp_off);
   if (tmp_sgn != 0) {
     tmp_sgn *= X_CisAis(*tmp_off, X, isite1);
     if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off + 1] += dmv;
-      }
+      dmv = tmp_V * tmp_sgn;
+      zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off + 1][0], &one);
     }
   }
 }/*double complex GC_child_CisAisCjtAku_element*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
 term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -863,21 +834,19 @@ void GC_child_CisAjtCkuAku_element(
 ) {
   int tmp_sgn;
   double complex dmv;
+  int one = 1;
   tmp_sgn = X_CisAis((j - 1), X, isite3);
   if (tmp_sgn != 0) {
     tmp_sgn *= X_GC_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, tmp_off);
     if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off + 1] += dmv;
-      }
+      dmv = tmp_V * tmp_sgn;
+      zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off + 1][0], &one);
     }/*if (tmp_sgn != 0)*/
   }/*if (tmp_sgn != 0)*/
 }/*double complex GC_child_CisAjtCkuAku_element*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
 term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -900,15 +869,14 @@ void GC_child_CisAjtCkuAlv_element(
   int tmp_sgn;
   long unsigned int tmp_off_1;
   double complex dmv;
+  int one = 1;
 
   tmp_sgn = X_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
   if (tmp_sgn != 0) {
     tmp_sgn *= X_GC_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
     if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off_2 + 1] += dmv;
-      }
+      dmv = tmp_V * tmp_sgn;
+      zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off_2 + 1][0], &one);
     }
   }
 }/*double complex GC_child_CisAjtCkuAlv_element*/
@@ -916,7 +884,6 @@ void GC_child_CisAjtCkuAlv_element(
 /**
 @brief Compute @f$c_{is}^\dagger@f$
 term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Youhei Yamaji (The University of Tokyo)
@@ -934,6 +901,7 @@ void GC_Cis(
   long unsigned int bit;
   int sgn, ipsgn;
   double complex dmv;
+  int one = 1;
 
   list_1_j = j - 1;
 
@@ -953,10 +921,8 @@ void GC_Cis(
 #endif
     list_1_off = list_1_j | is1_spin; // OR
     *tmp_off = list_1_off;
-    dmv = ipsgn * sgn * tmp_v1[j];
-    //if (X->Large.mode == M_MLTPLY) { // for multply
-    tmp_v0[list_1_off + 1] += dmv * tmp_V;
-    //}
+    dmv = ipsgn * sgn * tmp_V;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
   else {
     return 0;
@@ -965,7 +931,6 @@ void GC_Cis(
 /**
 @brief Compute @f$c_{jt}@f$
 term of grandcanonical Hubbard system
-@return Fragment of @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Youhei Yamaji (The University of Tokyo)
@@ -983,6 +948,7 @@ void GC_Ajt(
   long unsigned int bit;
   int sgn, ipsgn;
   double complex dmv;
+  int one = 1;
 
   list_1_j = j - 1;
 
@@ -1001,10 +967,8 @@ void GC_Ajt(
 #endif
     list_1_off = list_1_j ^ is1_spin;
     *tmp_off = list_1_off;
-    dmv = ipsgn * sgn * tmp_v1[j];
-    //if (X->Large.mode == M_MLTPLY) { // for multply
-    tmp_v0[list_1_off + 1] += dmv * tmp_V;
-    //}
+    dmv = ipsgn * sgn * tmp_V;
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
   else {
     return 0;

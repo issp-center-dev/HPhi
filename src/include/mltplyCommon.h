@@ -24,4 +24,6 @@
 #define M_TOTALS 4
 #define M_CALCSPEC 4
 
+void zaxpy_(int *n, double complex *a, double complex *x, int *incx, double complex *y, int *incy);
+
 #endif /* HPHI_MLTPLYCOMMON_H */

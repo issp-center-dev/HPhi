@@ -23,7 +23,7 @@ int mltplyHubbard(struct BindStruct *X, int nstate, double complex **tmp_v0,doub
 
 int mltplyHubbardGC(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-double complex GC_child_general_hopp
+void GC_child_general_hopp
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
@@ -32,14 +32,14 @@ double complex GC_child_general_hopp
  );
 
 
-double complex GC_child_general_int(
+void GC_child_general_int(
                          int nstate, double complex **tmp_v0,
                          double complex **tmp_v1,
                          struct BindStruct *X
                          );
 
 
-double complex child_general_int
+void child_general_int
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
@@ -47,7 +47,7 @@ double complex child_general_int
  );
 
 
-double complex child_general_hopp
+void child_general_hopp
 (
  double complex       *tmp_v0,
  double complex       *tmp_v1,
@@ -55,35 +55,35 @@ double complex child_general_hopp
  double complex trans
  );
 
-double complex child_exchange
+void child_exchange
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex child_pairhopp
+void child_pairhopp
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex GC_child_exchange
+void GC_child_exchange
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex GC_child_pairlift
+void GC_child_pairlift
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex GC_child_pairhopp
+void GC_child_pairhopp
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,

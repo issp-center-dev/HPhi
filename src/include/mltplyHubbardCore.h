@@ -19,7 +19,7 @@
 
 #include "Common.h"
 
-double complex child_pairhopp_element
+void child_pairhopp_element
 (
  long unsigned int j,
  int nstate, double complex **tmp_v0,
@@ -28,7 +28,7 @@ double complex child_pairhopp_element
  long unsigned int *tmp_off
  );
 
-double complex GC_child_exchange_element
+void GC_child_exchange_element
 (
  long unsigned int j,
  int nstate, double complex **tmp_v0,
@@ -37,7 +37,7 @@ double complex GC_child_exchange_element
  long unsigned int *tmp_off
  );
 
-double complex GC_child_pairhopp_element
+void GC_child_pairhopp_element
 (
  long unsigned int j,
  int nstate, double complex **tmp_v0,
@@ -46,7 +46,7 @@ double complex GC_child_pairhopp_element
  long unsigned int *tmp_off
  );
 
-double complex child_exchange_element
+void child_exchange_element
 (
  long unsigned int j,
  int nstate, double complex **tmp_v0,
@@ -55,7 +55,7 @@ double complex child_exchange_element
  long unsigned int *tmp_off
  );
 
-double complex child_CisAisCisAis_element
+void child_CisAisCisAis_element
 (
  long unsigned int j,
  long unsigned int isite1,
@@ -67,7 +67,7 @@ double complex child_CisAisCisAis_element
  long unsigned int *tmp_off
  );
 
-double complex child_CisAisCjtAku_element
+void child_CisAisCjtAku_element
         (
                 long unsigned int j,
                 long unsigned int isite1,
@@ -82,7 +82,7 @@ double complex child_CisAisCjtAku_element
                 long unsigned int *tmp_off
         );
 
-double complex child_CisAjtCkuAku_element
+void child_CisAjtCkuAku_element
         (
                 long unsigned int j,
                 long unsigned int isite1,
@@ -97,7 +97,7 @@ double complex child_CisAjtCkuAku_element
                 long unsigned int *tmp_off
         );
 
-double complex child_CisAjtCkuAlv_element
+void child_CisAjtCkuAlv_element
         (
                 long unsigned int j,
                 long unsigned int isite1,
@@ -115,7 +115,7 @@ double complex child_CisAjtCkuAlv_element
                 long unsigned int *tmp_off_2
         );
 //[s]Grand canonical
-double complex GC_child_CisAisCisAis_element
+void GC_child_CisAisCisAis_element
         (
                 long unsigned int j,
                 long unsigned int isite1,
@@ -127,7 +127,7 @@ double complex GC_child_CisAisCisAis_element
                 long unsigned int *tmp_off
         );
 
-double complex GC_child_CisAisCjtAku_element
+void GC_child_CisAisCjtAku_element
         (
                 long unsigned int j,
                 long unsigned int isite1,
@@ -142,7 +142,7 @@ double complex GC_child_CisAisCjtAku_element
                 long unsigned int *tmp_off
         );
 
-double complex GC_child_CisAjtCkuAku_element
+void GC_child_CisAjtCkuAku_element
         (
                 long unsigned int j,
                 long unsigned int isite1,
@@ -157,7 +157,7 @@ double complex GC_child_CisAjtCkuAku_element
                 long unsigned int *tmp_off
         );
 
-double complex GC_child_CisAjtCkuAlv_element
+void GC_child_CisAjtCkuAlv_element
         (
                 long unsigned int j,
                 long unsigned int isite1,
@@ -176,7 +176,7 @@ double complex GC_child_CisAjtCkuAlv_element
         );
 //[e]Grand canonical
 
-double complex GC_CisAis
+void GC_CisAis
 (
  long unsigned int j,
  double  complex *tmp_v0,
@@ -186,7 +186,7 @@ double complex GC_CisAis
  double complex tmp_trans
 );
 
-double complex GC_AisCis(
+void GC_AisCis(
         long unsigned int j,
         int nstate, double complex **tmp_v0,
         double complex **tmp_v1,
@@ -226,10 +226,10 @@ int X_GC_CisAjt
  );
 
 
-double complex CisAjt
+void CisAjt
 (
  long unsigned int j,
- double  complex *tmp_v0,
+  int nstate, double complex *tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
@@ -240,10 +240,10 @@ double complex CisAjt
  );
 
 
-double complex GC_CisAjt
+void GC_CisAjt
 (
  long unsigned int j,
- double  complex *tmp_v0,
+  int nstate, double complex *tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
@@ -293,7 +293,7 @@ int child_exchange_GetInfo
  );
 
 
-double complex GC_Ajt
+void GC_Ajt
 (
  long unsigned int j,
  int nstate, double complex **tmp_v0,
@@ -303,7 +303,7 @@ double complex GC_Ajt
  long unsigned int *tmp_off
  );
 
-double complex GC_Cis
+void GC_Cis
 (
  long unsigned int j,
  int nstate, double complex **tmp_v0,
@@ -315,7 +315,7 @@ double complex GC_Cis
 
 
 
-double complex GC_Ajt
+void GC_Ajt
 (
  long unsigned int j,
  int nstate, double complex **tmp_v0,
@@ -340,7 +340,7 @@ int X_Cis
 
 
 
-double complex X_Ajt
+void X_Ajt
 (
  long unsigned int j,
  long unsigned int is1_spin,

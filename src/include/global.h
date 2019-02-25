@@ -31,10 +31,10 @@
 #define ITINERANT 0
 #define LOCSPIN 1
 
-double complex *v0;  /**< A vector after multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
-double complex *v1;  /**< A vector before multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
+double complex **v0;  /**< A vector after multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
+double complex **v1;  /**< A vector before multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
 double complex *v2;  /**< A temporary vector for time evolution calculation, @f$ v2 = H*v1 = H^coef |psi(t)>@f$.*/
-double complex *v1buf; /**< A temporary vector for MPI. */
+double complex **v1buf; /**< A temporary vector for MPI. */
 
 //[s] For calcSpectrum
 double complex *v1Org; /**< An input vector to calculate spectrum function.*/

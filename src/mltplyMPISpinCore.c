@@ -83,13 +83,11 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
   double complex **tmp_v1 /**< [in] v0 = H v1*/)
 {
 #ifdef MPI
-  double complex dam_pr;  
-  dam_pr =  X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+   X_GC_child_CisAitCiuAiv_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0],  X->Def.InterAll_OffDiagonal[i_int][1], 
     X->Def.InterAll_OffDiagonal[i_int][3],  X->Def.InterAll_OffDiagonal[i_int][4], 
     X->Def.InterAll_OffDiagonal[i_int][5],  X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int],X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 /**
@@ -100,7 +98,7 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+void X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   int org_isite1,//!<[in] site i
   int org_ispin1,//!<[in] spin s
   int org_ispin2,//!<[in] spin t
@@ -116,7 +114,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   int mask1, mask2, state1, state2, ierr, origin;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv;
 
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
@@ -125,8 +123,8 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   }
   else {
     if (org_ispin1 == org_ispin4 && org_ispin2 == org_ispin3) { //CisAitCitAis=CisAis
-      dam_pr = X_GC_child_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, nstate, tmp_v0, tmp_v1);
-      return (dam_pr);
+      X_GC_child_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, nstate, tmp_v0, tmp_v1);
+      return;
     }
     else { //CisAitCisAit=0
       return 0.0;
@@ -158,29 +156,15 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
+#pragma omp parallel default(none)  private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        dmv = Jint * v1buf[j];
-        tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }
-    else {
-#pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        dmv = Jint * v1buf[j];
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }
+    for (j = 1; j <= idim_max_buf; j++) {
+      dmv = Jint * v1buf[j];
+      tmp_v0[j] += dmv;
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
-  return dam_pr;
-#else
- return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 /**
@@ -195,12 +179,10 @@ void GC_child_CisAisCjuAjv_spin_MPIdouble(
   double complex **tmp_v1 /**< [in] v0 = H v1*/
 ){
 #ifdef MPI
-  double complex dam_pr;
-  dam_pr = X_GC_child_CisAisCjuAjv_spin_MPIdouble(
+  X_GC_child_CisAisCjuAjv_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
     X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 /**
@@ -209,7 +191,7 @@ void GC_child_CisAisCjuAjv_spin_MPIdouble(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
+void X_GC_child_CisAisCjuAjv_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -225,7 +207,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
   long int origin, num1;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4) {//CisAisCitAis
       return 0.0;
@@ -256,27 +238,12 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-  if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
+#pragma omp parallel for default(none)  private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
-      dmv = Jint * v1buf[j];
-      tmp_v0[j] += dmv;
-      dam_pr += conj(tmp_v1[j]) * dmv;
-    }
+  for (j = 1; j <= idim_max_buf; j++) {
+    dmv = Jint * v1buf[j];
+    tmp_v0[j] += dmv;
   }
-  else {
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
-  firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
-      dmv = Jint * v1buf[j];
-      dam_pr += conj(tmp_v1[j]) * dmv;
-    }
-  }
-  return (dam_pr);
-#else
- return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
 /**
@@ -292,12 +259,10 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
 )
 {
 #ifdef MPI
-  double complex dam_pr;
-  dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble(
+  X_GC_child_CisAitCjuAju_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4], 
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 /**
@@ -306,7 +271,7 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
+void X_GC_child_CisAitCjuAju_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -322,7 +287,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
   long int origin;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin3) {//cisaitcisais
     return 0.0;
@@ -363,29 +328,15 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
+#pragma omp parallel default(none)  private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        dmv = Jint * v1buf[j];
-        tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }
-    else {
-#pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        dmv = Jint * v1buf[j];
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }
+    for (j = 1; j <= idim_max_buf; j++) {
+      dmv = Jint * v1buf[j];
+      tmp_v0[j] += dmv;
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
- return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
 /**
@@ -394,7 +345,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
+void X_GC_child_CisAisCjuAju_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -408,35 +359,21 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
   long unsigned int mask1, mask2, num1,num2;
   unsigned long int  j;
 //  MPI_Status statusMPI;
-  double complex dmv, dam_pr;
+  double complex dmv;
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
   num1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask1, org_ispin1);
   num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask2, org_ispin3);
   
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
+#pragma omp parallel default(none)  private(j, dmv) \
   firstprivate(tmp_J, X, num1, num2) shared(tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 1; j <= X->Check.idim_max; j++) {
-        dmv = num1*num2*tmp_v1[j] * tmp_J;
-        tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= X->Check.idim_max; j++) */
-    }
-    else {
-#pragma omp for
-      for (j = 1; j <= X->Check.idim_max; j++) {
-        dmv = num1 * num2 * tmp_v1[j] * tmp_J;
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-    }
+    for (j = 1; j <= X->Check.idim_max; j++) {
+      dmv = num1 * num2*tmp_v1[j] * tmp_J;
+      tmp_v0[j] += dmv;
+    }/*for (j = 1; j <= X->Check.idim_max; j++) */
   }/*End of parallel region*/
-  return(dam_pr);
-#else
- return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAju_spin_MPIdouble*/
 /**
@@ -445,7 +382,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
+void X_GC_child_CisAisCjuAju_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -459,37 +396,22 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
   long unsigned int mask1, mask2, num1, num2;
   unsigned long int j;
 //  MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv;
   Jint = tmp_J;
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
   num2 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, num1) \
+#pragma omp parallel default(none)  private(j, dmv, num1) \
   firstprivate(Jint, X, num2, mask1, org_ispin1) shared(tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 1; j <= X->Check.idim_max; j++) {
-        num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
-        dmv = Jint * num1 * num2 * tmp_v1[j];
-        tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-    }
-    else {
-#pragma omp for
-      for (j = 1; j <= X->Check.idim_max; j++) {
-        num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
-        dmv = Jint * num1 * num2 * tmp_v1[j];
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-    }
+    for (j = 1; j <= X->Check.idim_max; j++) {
+      num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
+      dmv = Jint * num1 * num2 * tmp_v1[j];
+      tmp_v0[j] += dmv;
+    }/*for (j = 1; j <= X->Check.idim_max; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
- return 0.0;
 #endif
 }/*double complex X_GC_child_CisAisCjuAju_spin_MPIdouble*/
 /**
@@ -504,13 +426,11 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
-  double complex dam_pr;  
-  dam_pr =X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+  X_GC_child_CisAitCiuAiv_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 /**
@@ -519,7 +439,7 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+void X_GC_child_CisAitCiuAiv_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -535,7 +455,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
   int mask2, state2, ierr, origin;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, state1check;
   MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv;
   /*
   Prepare index in the inter PE
   */
@@ -569,35 +489,18 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
   */
   mask1 = X->Def.Tpow[org_isite1];
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
+#pragma omp parallel default(none)  private(j, dmv, state1, ioff) \
   firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 0; j < idim_max_buf; j++) {
-        state1 = X_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
-        if (state1 != 0) {
-          dmv = Jint * v1buf[j + 1];
-          tmp_v0[ioff + 1] += dmv;
-          dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-        }/*if (state1 != 0)*/
-      }/*for (j = 0; j < idim_max_buf; j++)*/
-    }
-    else {
-#pragma omp for
-      for (j = 0; j < idim_max_buf; j++) {
-        state1 = X_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
-        if (state1 != 0) {
-          dmv = Jint * v1buf[j + 1];
-          dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-        }/*if (state1 != 0)*/
-      }/*for (j = 0; j < idim_max_buf; j++)*/
-    }
+    for (j = 0; j < idim_max_buf; j++) {
+      state1 = X_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
+      if (state1 != 0) {
+        dmv = Jint * v1buf[j + 1];
+        tmp_v0[ioff + 1] += dmv;
+      }/*if (state1 != 0)*/
+    }/*for (j = 0; j < idim_max_buf; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
- return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 /**
@@ -612,12 +515,10 @@ void GC_child_CisAisCjuAjv_spin_MPIsingle(
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
-  double complex dam_pr;  
-  dam_pr =X_GC_child_CisAisCjuAjv_spin_MPIsingle(
+  X_GC_child_CisAisCjuAjv_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
     X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
 /**
@@ -626,7 +527,7 @@ void GC_child_CisAisCjuAjv_spin_MPIsingle(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
+void X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 2
   int org_isite3,//!<[in] Site 1
@@ -641,7 +542,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   int mask2, state2, ierr, origin;
   unsigned long int mask1, idim_max_buf, j, state1, state1check;
   MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv;
   /*
   Prepare index in the inter PE
   */
@@ -674,35 +575,18 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   */
   mask1 = X->Def.Tpow[org_isite1];
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, state1) \
+#pragma omp parallel default(none)  private(j, dmv, state1) \
   firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 0; j < idim_max_buf; j++) {
-        state1 = (j & mask1) / mask1;
-        if (state1 == state1check) {
-          dmv = Jint * v1buf[j + 1];
-          tmp_v0[j + 1] += dmv;
-          dam_pr += conj(tmp_v1[j + 1]) * dmv;
-        }/*if (state1 == state1check)*/
-      }/*for (j = 0; j < idim_max_buf; j++)*/
-    }
-    else {
-#pragma omp for
-      for (j = 0; j < idim_max_buf; j++) {
-        state1 = (j & mask1) / mask1;
-        if (state1 == state1check) {
-          dmv = Jint * v1buf[j + 1];
-          dam_pr += conj(tmp_v1[j + 1]) * dmv;
-        }/*if (state1 == state1check)*/
-      }/*for (j = 0; j < idim_max_buf; j++)*/
-    }
+    for (j = 0; j < idim_max_buf; j++) {
+      state1 = (j & mask1) / mask1;
+      if (state1 == state1check) {
+        dmv = Jint * v1buf[j + 1];
+        tmp_v0[j + 1] += dmv;
+      }/*if (state1 == state1check)*/
+    }/*for (j = 0; j < idim_max_buf; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
- return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 /**
@@ -717,12 +601,10 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
-  double complex dam_pr;  
-  dam_pr =X_GC_child_CisAitCjuAju_spin_MPIsingle(
+  X_GC_child_CisAitCjuAju_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
 /**
@@ -731,7 +613,7 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
+void X_GC_child_CisAitCjuAju_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -746,7 +628,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
   int mask2, state2;
   unsigned long int mask1, j, ioff, state1, state1check;
   //MPI_Status statusMPI;
-  double complex Jint, dmv, dam_pr;
+  double complex Jint, dmv;
   /*
   Prepare index in the inter PE
   */
@@ -763,59 +645,23 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
 
   mask1 = (int)X->Def.Tpow[org_isite1];
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, state1, ioff) \
+#pragma omp parallel default(none)  private(j, dmv, state1, ioff) \
   firstprivate(Jint, X, state1check, mask1) shared(tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 0; j < X->Check.idim_max; j++) {
+    for (j = 0; j < X->Check.idim_max; j++) {
 
-        state1 = (j & mask1) / mask1;
-        ioff = j ^ mask1;
-        if (state1 == state1check) {
-          dmv = Jint * tmp_v1[j + 1];
-        }
-        else {
-          dmv = conj(Jint) * tmp_v1[j + 1];
-        }
-        tmp_v0[ioff + 1] += dmv;
-        dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-      }/*for (j = 0; j < X->Check.idim_max; j++)*/
-    }
-    else if (X->Large.mode == M_CORR) {
-#pragma omp for
-      for (j = 0; j < X->Check.idim_max; j++) {
-
-        state1 = (j & mask1) / mask1;
-        ioff = j ^ mask1;
-        if (state1 == state1check) {
-          dmv = Jint * tmp_v1[j + 1];
-        }
-        else {
-          dmv = 0.0;
-        }
-        dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-      }/*for (j = 0; j < X->Check.idim_max; j++)*/
-    }
-    else {
-#pragma omp for
-      for (j = 0; j < X->Check.idim_max; j++) {
-        state1 = (j & mask1) / mask1;
-        ioff = j ^ mask1;
-        if (state1 == state1check) {
-          dmv = Jint * tmp_v1[j + 1];
-        }
-        else {
-          dmv = conj(Jint) * tmp_v1[j + 1];
-        }
-        dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-      }/*for (j = 0; j < X->Check.idim_max; j++)*/
-    }
+      state1 = (j & mask1) / mask1;
+      ioff = j ^ mask1;
+      if (state1 == state1check) {
+        dmv = Jint * tmp_v1[j + 1];
+      }
+      else {
+        dmv = conj(Jint) * tmp_v1[j + 1];
+      }
+      tmp_v0[ioff + 1] += dmv;
+    }/*for (j = 0; j < X->Check.idim_max; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
- return 0.0;
 #endif
 }/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
 /**
@@ -823,7 +669,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
  When both site1 and site3 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
+void X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -837,7 +683,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
 #ifdef MPI
   unsigned long int off, j;
   int origin, ierr;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
   int ihermite = TRUE;
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4) {//cisaisciuais=0 && cisaiucisais=0
@@ -868,8 +714,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) \
 private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -877,18 +722,16 @@ private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -898,7 +741,7 @@ private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
 When both site1 and site3 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
+void X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -912,7 +755,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
 #ifdef MPI
   unsigned long int j, off;
   int origin, ierr;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin3) {//cisaitcisais=0 && cisaiscitais=0
@@ -944,8 +787,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) private(j, dmv) \
 shared (tmp_v0, tmp_v1, v1buf)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -953,18 +795,16 @@ shared (tmp_v0, tmp_v1, v1buf)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -974,7 +814,7 @@ shared (tmp_v0, tmp_v1, v1buf)
 grandcanonical general spin system when both site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+void X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -989,15 +829,15 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 #ifdef MPI
   unsigned long int tmp_off, off, j;
   int origin, ierr, ihermite;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
 
   ihermite = TRUE;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4 &&
     org_ispin2 == org_ispin3) { //cisaitcitais=cisais && cisaitcitais =cisais
-    dam_pr = X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, nstate, tmp_v0, tmp_v1);
-    return (dam_pr);
+    X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, nstate, tmp_v0, tmp_v1);
+    return;
   }
   //cisaitcisait
   if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
@@ -1035,8 +875,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) private(j, dmv) \
   shared (tmp_v0, tmp_v1, v1buf)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1044,18 +883,16 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1065,7 +902,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
+void X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1077,7 +914,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
 ) {
 #ifdef MPI
   unsigned long int j, num1;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   //MPI_Status statusMPI;
 
   num1 = BitCheckGeneral((unsigned long int) myrank, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
@@ -1091,8 +928,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   }
   else return 0.0;
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) private(j, dmv) \
 shared (tmp_v0, tmp_v1)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1100,18 +936,16 @@ shared (tmp_v0, tmp_v1)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
   return 0.0;
 #endif
@@ -1121,7 +955,7 @@ shared (tmp_v0, tmp_v1)
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
+void X_GC_child_CisAit_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1133,7 +967,7 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
 #ifdef MPI
   unsigned long int off, j;
   int origin, ierr;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
 
   if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
@@ -1155,8 +989,7 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) private(j, dmv) \
 shared (tmp_v0, tmp_v1, v1buf)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1164,18 +997,16 @@ shared (tmp_v0, tmp_v1, v1buf)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
   return 0.0;
 #endif
@@ -1185,7 +1016,7 @@ shared (tmp_v0, tmp_v1, v1buf)
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
+void X_GC_child_CisAis_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -1195,7 +1026,7 @@ double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
 ) {
 #ifdef MPI
   unsigned long int j, num1;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   //MPI_Status statusMPI;
 
   num1 = BitCheckGeneral((unsigned long int) myrank,
@@ -1205,8 +1036,7 @@ double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
   }
   else return 0.0;
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) private(j, dmv) \
 shared (tmp_v0, tmp_v1)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1214,18 +1044,16 @@ shared (tmp_v0, tmp_v1)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
   return 0.0;
 #endif
@@ -1235,7 +1063,7 @@ shared (tmp_v0, tmp_v1)
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
+void X_GC_child_AisCis_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -1245,7 +1073,7 @@ double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
 ) {
 #ifdef MPI
   unsigned long int j, num1;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   //MPI_Status statusMPI;
 
   num1 = BitCheckGeneral((unsigned long int) myrank,
@@ -1255,8 +1083,7 @@ double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
   }
   else return 0.0;
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) private(j, dmv) \
 shared (tmp_v0, tmp_v1)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1264,18 +1091,16 @@ shared (tmp_v0, tmp_v1)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of Parallel region*/
-  return dam_pr;
+  return;
 #else
   return 0.0;
 #endif
@@ -1285,7 +1110,7 @@ shared (tmp_v0, tmp_v1)
 canonical general spin system when both site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAit_GeneralSpin_MPIdouble(
+void X_child_CisAit_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1359,7 +1184,7 @@ shared (tmp_v0, tmp_v1, v1buf)
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
+void X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1373,7 +1198,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
 #ifdef MPI
   unsigned long int off, j, num1;
   int origin, ierr, isite, IniSpin;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
 
   if (GetOffCompGeneralSpin((unsigned long int)myrank,
@@ -1402,8 +1227,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, isite, IniSpin) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V, isite, IniSpin) \
 private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1413,7 +1237,6 @@ private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
         if (num1 != 0) {
           dmv = v1buf[j] * tmp_V;
           tmp_v0[j] += dmv;
-          dam_pr += conj(tmp_v1[j]) * dmv;
         }/*if (num1 != 0)*/
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
@@ -1423,12 +1246,11 @@ private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
         num1 = BitCheckGeneral(j - 1, isite, IniSpin, X->Def.SiteToBit, X->Def.Tpow);
         if (num1 != 0) {
           dmv = v1buf[j] * tmp_V;
-          dam_pr += conj(tmp_v1[j]) * dmv;
         }/*if (num1 != 0)*/
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1438,7 +1260,7 @@ private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
+void X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1452,7 +1274,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
 #ifdef MPI
   unsigned long int num1, j, off;
   int isite, IniSpin, FinSpin;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   //MPI_Status statusMPI;
 
   num1 = BitCheckGeneral((unsigned long int)myrank, 
@@ -1465,8 +1287,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
   }
   else return 0.0;
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) \
+#pragma omp parallel default(none)  \
 firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, num1, off) \
 shared (tmp_v0, tmp_v1, v1buf)
   {
@@ -1478,14 +1299,12 @@ shared (tmp_v0, tmp_v1, v1buf)
         {
           dmv = tmp_v1[j] * tmp_V;
           tmp_v0[off + 1] += dmv;
-          dam_pr += conj(tmp_v1[off + 1]) * dmv;
         }
         else if (GetOffCompGeneralSpin(j - 1, isite, FinSpin, IniSpin, &off,
           X->Def.SiteToBit, X->Def.Tpow) == TRUE)
         {
           dmv = tmp_v1[j] * conj(tmp_V);
           tmp_v0[off + 1] += dmv;
-          dam_pr += conj(tmp_v1[off + 1]) * dmv;
         }
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
@@ -1496,12 +1315,11 @@ shared (tmp_v0, tmp_v1, v1buf)
           X->Def.SiteToBit, X->Def.Tpow) == TRUE) 
         {
           dmv = tmp_v1[j] * tmp_V;
-          dam_pr += conj(tmp_v1[off + 1]) * dmv;
         }
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1511,7 +1329,7 @@ shared (tmp_v0, tmp_v1, v1buf)
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+void X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1526,7 +1344,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
 #ifdef MPI
   unsigned long int off, j;
   int origin, ierr, isite, IniSpin, FinSpin;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
 
   if (GetOffCompGeneralSpin((unsigned long int)myrank,
@@ -1557,8 +1375,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) \
+#pragma omp parallel default(none)  \
 firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp_v0, tmp_v1, v1buf)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1569,7 +1386,6 @@ firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp
         {
           dmv = v1buf[j] * tmp_V;
           tmp_v0[off + 1] += dmv;
-          dam_pr += conj(tmp_v1[off + 1]) * dmv;
         }
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
@@ -1580,12 +1396,11 @@ firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp
           X->Def.SiteToBit, X->Def.Tpow) == TRUE) 
         {
           dmv = v1buf[j] * tmp_V;
-          dam_pr += conj(tmp_v1[off + 1]) * dmv;
         }
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1595,7 +1410,7 @@ firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
+void X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1607,7 +1422,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
 ){
 #ifdef MPI
   unsigned long int j, num1;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   //MPI_Status statusMPI;
 
   num1 = BitCheckGeneral((unsigned long int)myrank, org_isite3+1, org_ispin3, X->Def.SiteToBit, X->Def.Tpow);
@@ -1616,8 +1431,7 @@ double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   }
   else return 0.0;
   
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) \
+#pragma omp parallel default(none)  \
 firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp_v0, tmp_v1)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1627,7 +1441,6 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
 
         dmv = tmp_v1[j] * tmp_V * num1;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
@@ -1635,11 +1448,10 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
       for (j = 1; j <= X->Check.idim_max; j++) {
         num1 = BitCheckGeneral(j - 1, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
         dmv = tmp_v1[j] * tmp_V * num1;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1649,7 +1461,7 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
 canonical general spin system when both sites are in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+void X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1664,7 +1476,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 #ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
   int origin, ierr;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
   int ihermite=TRUE;
 
@@ -1713,8 +1525,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V, idim_max_buf) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V, idim_max_buf) \
 private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1723,7 +1534,6 @@ private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
         ConvertToList1GeneralSpin(list_1buf[j], X->Check.sdim, &off);
         dmv = v1buf[j] * tmp_V;
         tmp_v0[off] += dmv;
-        dam_pr += conj(tmp_v1[off]) * dmv;
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }
     else {
@@ -1731,11 +1541,10 @@ private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
       for (j = 1; j <= idim_max_buf; j++) {
         ConvertToList1GeneralSpin(list_1buf[j], X->Check.sdim, &off);
         dmv = v1buf[j] * tmp_V;
-        dam_pr += conj(tmp_v1[off]) * dmv;
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1745,7 +1554,7 @@ private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
 canonical general spin system when both sites are in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
+void X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1757,7 +1566,7 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
 ) {
 #ifdef MPI
   unsigned long int j, num1;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin3) {
     num1 = BitCheckGeneral((unsigned long int) myrank, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
@@ -1784,8 +1593,7 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
       return 0.0;
     }
   }
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
+#pragma omp parallel default(none)  firstprivate(X, tmp_V) private(j, dmv) \
 shared (tmp_v0, tmp_v1)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1793,18 +1601,16 @@ shared (tmp_v0, tmp_v1)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = tmp_v1[j] * tmp_V;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1814,7 +1620,7 @@ shared (tmp_v0, tmp_v1)
 canonical general spin system when one of these sites is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
+void X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1827,7 +1633,7 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
 {
 #ifdef MPI
   unsigned long int j, num1;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   //MPI_Status statusMPI;
 
   num1 = BitCheckGeneral((unsigned long int) myrank, org_isite3 + 1, org_ispin3, X->Def.SiteToBit, X->Def.Tpow);
@@ -1836,8 +1642,7 @@ double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   }
   else return 0.0;
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) \
+#pragma omp parallel default(none)  \
 firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp_v0, tmp_v1, list_1)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -1847,7 +1652,6 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
 
         dmv = tmp_v1[j] * tmp_V * num1;
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
@@ -1856,11 +1660,10 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
         num1 = BitCheckGeneral(list_1[j], org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
 
         dmv = tmp_v1[j] * tmp_V * num1;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -1870,7 +1673,7 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
  canonical general spin system when one of these sites is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+void X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1885,7 +1688,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
 #ifdef MPI
   unsigned long int tmp_off, off, j, idim_max_buf;
   int origin, ierr, isite, IniSpin, FinSpin;
-  double complex tmp_V, dmv, dam_pr;
+  double complex tmp_V, dmv;
   MPI_Status statusMPI;
   
   if (GetOffCompGeneralSpin((unsigned long int)myrank,
@@ -1923,8 +1726,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) \
+#pragma omp parallel default(none)  \
 firstprivate(X, tmp_V, idim_max_buf, IniSpin, FinSpin, isite) \
 private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
   {
@@ -1938,7 +1740,6 @@ private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
           ConvertToList1GeneralSpin(tmp_off, X->Check.sdim, &off);
           dmv = v1buf[j] * tmp_V;
           tmp_v0[off] += dmv;
-          dam_pr += conj(tmp_v1[off]) * dmv;
         }
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }
@@ -1951,12 +1752,11 @@ private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
         {
           ConvertToList1GeneralSpin(tmp_off, X->Check.sdim, &off);
           dmv = v1buf[j] * tmp_V;
-          dam_pr += conj(tmp_v1[off]) * dmv;
         }
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
   return 0.0;
 #endif
@@ -1967,7 +1767,7 @@ private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAit_spin_MPIdouble(
+void X_GC_child_CisAit_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1980,7 +1780,7 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   int mask1, state1, ierr, origin;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
-  double complex trans, dmv, dam_pr;
+  double complex trans, dmv;
   
   mask1 = (int)X->Def.Tpow[org_isite1];
   origin = myrank ^ mask1;
@@ -2010,8 +1810,7 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
+#pragma omp parallel default(none)  private(j, dmv) \
 firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -2019,18 +1818,16 @@ firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = trans * v1buf[j];
         tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
     else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = trans * v1buf[j];
-        dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }
   }/*End of parallel region*/
-  return (dam_pr);
+  return;
 #else
  return 0.0;
 #endif
@@ -2041,7 +1838,7 @@ firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_child_CisAit_spin_MPIdouble(
+void X_child_CisAit_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
@@ -2119,7 +1916,7 @@ shared(v1buf, tmp_v0)
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAis_spin_MPIdouble(
+void X_GC_child_CisAis_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -2131,12 +1928,10 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
   long unsigned int j;
   int mask1;
   int ibit1;
-  double complex dam_pr;
   mask1 = (int)X->Def.Tpow[org_isite1];
   ibit1 = (((unsigned long int)myrank& mask1)/mask1)^(1-org_ispin1);
 
-  dam_pr = 0.0;
-#pragma omp parallel reduction(+:dam_pr)default(none) shared(tmp_v1, nstate, tmp_v0, ibit1) \
+#pragma omp parallel default(none) shared(tmp_v1, nstate, tmp_v0, ibit1) \
   firstprivate(X, tmp_trans) private(j)
   {
     if (ibit1 != 0) {
@@ -2144,18 +1939,16 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
 #pragma omp for
         for (j = 1; j <= X->Check.idim_max; j++) {
           tmp_v0[j] += tmp_v1[j] * tmp_trans;
-          dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
         }/*for (j = 1; j <= X->Check.idim_max; j++)*/
       }
       else {
 #pragma omp for
         for (j = 1; j <= X->Check.idim_max; j++) {
-          dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
         }/*for (j = 1; j <= X->Check.idim_max; j++)*/
       }
     }/*if (ibit1 != 0)*/
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif
@@ -2166,7 +1959,7 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_AisCis_spin_MPIdouble(
+void X_GC_child_AisCis_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -2178,31 +1971,20 @@ double complex X_GC_child_AisCis_spin_MPIdouble(
   long unsigned int j;
   int mask1;
   int ibit1;
-  double complex dam_pr;
   mask1 = (int)X->Def.Tpow[org_isite1];
   ibit1 = (((unsigned long int)myrank& mask1) / mask1) ^ (1 - org_ispin1);
 
-  dam_pr = 0.0;
-#pragma omp parallel reduction(+:dam_pr)default(none) shared(tmp_v1, nstate, tmp_v0, ibit1) \
+#pragma omp parallel default(none) shared(tmp_v1, nstate, tmp_v0, ibit1) \
   firstprivate(X, tmp_trans) private(j)
   {
     if (ibit1 == 0) {
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
 #pragma omp for
-        for (j = 1; j <= X->Check.idim_max; j++) {
-          tmp_v0[j] += tmp_v1[j] * tmp_trans;
-          dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
-        }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-      }
-      else {
-#pragma omp for
-        for (j = 1; j <= X->Check.idim_max; j++) {
-          dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
-        }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-      }
+      for (j = 1; j <= X->Check.idim_max; j++) {
+        tmp_v0[j] += tmp_v1[j] * tmp_trans;
+      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }/*if (ibit1 == 0)*/
   }/*End of parallel region*/
-  return dam_pr;
+  return;
 #else
  return 0.0;
 #endif

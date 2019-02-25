@@ -43,7 +43,6 @@ void child_general_int_spin_MPIBoost(
 {
 #ifdef MPI
   
-  //double complex dam_pr = 0;
   // MPI_Status statusMPI;
 
   //  int ierr;
@@ -405,17 +404,6 @@ void child_general_int_spin_MPIBoost(
 
 
   }/* loop for iloop */
-
-/*
-  dam_pr= X_child_general_int_spin_MPIBoost
-    (
-     matJ, X, nstate, tmp_v0, tmp_v1);
-  
-  X->Large.prdct += dam_pr;
-*/
-//  c_free1(arrayz, (int)pow(2.0, 16));
-//  c_free1(arrayx, (int)pow(2.0, 16));
-//  c_free1(arrayw, (int)pow(2.0, 16));
 
   free_cd_2d_allocate(vecJ);
   free_cd_2d_allocate(matJ);

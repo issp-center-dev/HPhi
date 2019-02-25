@@ -198,7 +198,6 @@ int mltplyHalfSpin(
   long unsigned int isite1, isite2, sigma1, sigma2;
   long unsigned int sigma3, sigma4;
 
-  double complex dam_pr;
   /*[s] For InterAll */
   double complex tmp_V;
   /*[e] For InterAll */
@@ -240,8 +239,7 @@ int mltplyHalfSpin(
         sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
         tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
         child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
-        dam_pr = child_general_int_spin(tmp_v0, tmp_v1, X);
-        X->Large.prdct += dam_pr;
+        child_general_int_spin(nstate, tmp_v0, tmp_v1, X);
       }/*for (ihermite = 0; ihermite<2; ihermite++)*/
       StopTimer(414);
     }
@@ -256,7 +254,7 @@ int mltplyHalfSpin(
     if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
         X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(421);
-      dam_pr = X_child_general_int_spin_MPIdouble(
+      X_child_general_int_spin_MPIdouble(
         X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
         X->Def.ParaExchangeCoupling[i], X, nstate, tmp_v0, tmp_v1);
@@ -264,7 +262,7 @@ int mltplyHalfSpin(
     }
     else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(422);
-      dam_pr = X_child_general_int_spin_MPIsingle(
+      X_child_general_int_spin_MPIsingle(
         X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
         X->Def.ParaExchangeCoupling[i], X, nstate, tmp_v0, tmp_v1);
@@ -272,7 +270,7 @@ int mltplyHalfSpin(
     }
     else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
       StartTimer(423);
-      dam_pr = X_child_general_int_spin_MPIsingle(
+      X_child_general_int_spin_MPIsingle(
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
         X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
         conj(X->Def.ParaExchangeCoupling[i]), X, nstate, tmp_v0, tmp_v1);
@@ -281,10 +279,9 @@ int mltplyHalfSpin(
     else {
       StartTimer(424);
       child_exchange_spin_GetInfo(i, X);
-      dam_pr = child_exchange_spin(tmp_v0, tmp_v1, X);
+      child_exchange_spin(nstate, tmp_v0, tmp_v1, X);
       StopTimer(424);
     }
-    X->Large.prdct += dam_pr;
   }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
   StopTimer(420);
 
@@ -310,11 +307,10 @@ int mltplyGeneralSpin(
   long unsigned int isite1, isite2, sigma1, sigma2;
   long unsigned int sigma3, sigma4;
 
-  double complex dam_pr;
   long int tmp_sgn;
   /*[s] For InterAll */
   double complex tmp_V;
-  double complex dmv=0;
+  int one = 1;
   /*[e] For InterAll */
 
   long unsigned int i_max;
@@ -357,9 +353,8 @@ int mltplyGeneralSpin(
         sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
         sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
         tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-        dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
-  private(j, tmp_sgn, dmv, off, tmp_off, tmp_off2) \
+#pragma omp parallel for default(none) \
+  private(j, tmp_sgn, off, tmp_off, tmp_off2) \
   firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V, ihfbit) \
   shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
         for (j = 1; j <= i_max; j++) {
@@ -368,15 +363,10 @@ int mltplyGeneralSpin(
             tmp_sgn = GetOffCompGeneralSpin(tmp_off, isite1, sigma2, sigma1, &tmp_off2, X->Def.SiteToBit, X->Def.Tpow);
             if (tmp_sgn == TRUE) {
               ConvertToList1GeneralSpin(tmp_off2, ihfbit, &off);
-              dmv = tmp_v1[j] * tmp_V;
-              if (X->Large.mode == M_MLTPLY) { // for multply
-                tmp_v0[off] += dmv;
-              }
-              dam_pr += conj(tmp_v1[off]) * dmv;
+              zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[off][0], &one);
             }
           }/*if (tmp_sgn == TRUE)*/
         }/*for (j = 1; j <= i_max; j++)*/
-        X->Large.prdct += dam_pr;
       }/*for (ihermite = 0; ihermite < 2; ihermite++)*/
       StopTimer(413);
     }
@@ -424,11 +414,11 @@ int mltplyHalfSpinGC(
   long unsigned int is1_spin = 0;
   long unsigned int isite1, isite2, sigma1, sigma2;
   long unsigned int sigma3, sigma4;
-  double complex dam_pr;
   double complex tmp_trans;
   long int tmp_sgn;
   /*[s] For InterAll */
   double complex tmp_V;
+  int one = 1;
   /*[e] For InterAll */
 
   long unsigned int i_max;
@@ -442,13 +432,12 @@ int mltplyHalfSpinGC(
   StartTimer(510);
   for (i = 0; i < X->Def.EDNTransfer; i+=2 ) {
     if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite){
-      dam_pr=0;
       if(X->Def.EDGeneralTransfer[i][1]==X->Def.EDGeneralTransfer[i][3]){
         fprintf(stderr, "Transverse_OffDiagonal component is illegal.\n");
       }
       else{
         StartTimer(511);
-        dam_pr += X_GC_child_CisAit_spin_MPIdouble(
+        X_GC_child_CisAit_spin_MPIdouble(
           X->Def.EDGeneralTransfer[i][0], X->Def.EDGeneralTransfer[i][1], 
           X->Def.EDGeneralTransfer[i][3], -X->Def.EDParaGeneralTransfer[i], 
           X, nstate, tmp_v0, tmp_v1);
@@ -457,7 +446,6 @@ int mltplyHalfSpinGC(
     }/*if(X->Def.EDGeneralTransfer[i][0]+1 > X->Def.Nsite)*/
     else{
       StartTimer(512);
-      dam_pr = 0;
       for(ihermite=0; ihermite<2; ihermite++){
         idx=i+ihermite;
         isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
@@ -476,21 +464,19 @@ int mltplyHalfSpinGC(
           // longitudinal magnetic field (considerd in diagonalcalc.c)
           // transverse magnetic field
           is1_spin = X->Def.Tpow[isite1 - 1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
+#pragma omp parallel for default(none) \
 private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) \
 shared(tmp_v0, tmp_v1)
           for (j = 1; j <= i_max; j++) {
             tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
             if(tmp_sgn !=0){
-              tmp_v0[off+1] += tmp_v1[j]*tmp_trans;
-              dam_pr += tmp_trans * conj(tmp_v1[off + 1]) * tmp_v1[j];
+              zaxpy_(&nstate, &tmp_trans, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
             }/*if(tmp_sgn !=0)*/
           }/*for (j = 1; j <= i_max; j++)*/
         }//sigma1 != sigma2
       }/*for(ihermite=0; ihermite<2; ihermite++)*/
       StopTimer(512);
     }
-    X->Large.prdct += dam_pr;
   }/*for (i = 0; i < X->Def.EDNTransfer; i+=2 )*/
   StopTimer(510);
   /**
@@ -526,8 +512,7 @@ shared(tmp_v0, tmp_v1)
         sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
         tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
         child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
-        dam_pr = GC_child_general_int_spin(tmp_v0, tmp_v1, X);
-        X->Large.prdct += dam_pr;
+        GC_child_general_int_spin(nstate, tmp_v0, tmp_v1, X);
       }
       StopTimer(523);
     }
@@ -542,7 +527,7 @@ shared(tmp_v0, tmp_v1)
     if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
         X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
       StartTimer(531);
-      dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+      X_GC_child_CisAitCiuAiv_spin_MPIdouble(
         X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
         X->Def.ParaExchangeCoupling[i], X, nstate, tmp_v0, tmp_v1);
@@ -550,7 +535,7 @@ shared(tmp_v0, tmp_v1)
     }
     else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(532);
-      dam_pr=X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+      X_GC_child_CisAitCiuAiv_spin_MPIsingle(
         X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
         X->Def.ParaExchangeCoupling[i], X, nstate, tmp_v0, tmp_v1);
@@ -558,7 +543,7 @@ shared(tmp_v0, tmp_v1)
     }
     else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
       StartTimer(532);
-      dam_pr=X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+      X_GC_child_CisAitCiuAiv_spin_MPIsingle(
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
         X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
         conj(X->Def.ParaExchangeCoupling[i]), X, nstate, tmp_v0, tmp_v1);
@@ -567,10 +552,9 @@ shared(tmp_v0, tmp_v1)
     else {
       StartTimer(533);
       child_exchange_spin_GetInfo(i, X);
-      dam_pr = GC_child_exchange_spin(tmp_v0, tmp_v1, X);
+      GC_child_exchange_spin(nstate, tmp_v0, tmp_v1, X);
       StopTimer(533);
     }
-    X->Large.prdct += dam_pr;
   }/* for (i = 0; i < X->Def.NExchangeCoupling; i ++) */
   StopTimer(530);
   /**
@@ -582,7 +566,7 @@ shared(tmp_v0, tmp_v1)
     if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite &&
         X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(541);
-      dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+      X_GC_child_CisAitCiuAiv_spin_MPIdouble(
         X->Def.PairLiftCoupling[i][0], sigma1, sigma2, 
         X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
         X->Def.ParaPairLiftCoupling[i], X, nstate, tmp_v0, tmp_v1);
@@ -590,7 +574,7 @@ shared(tmp_v0, tmp_v1)
     }
     else if (X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(542);
-      dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+      X_GC_child_CisAitCiuAiv_spin_MPIsingle(
         X->Def.PairLiftCoupling[i][0], sigma1, sigma2, 
         X->Def.PairLiftCoupling[i][1], sigma1, sigma2, 
         X->Def.ParaPairLiftCoupling[i], X, nstate, tmp_v0, tmp_v1);
@@ -598,7 +582,7 @@ shared(tmp_v0, tmp_v1)
     }
     else if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite) {
       StartTimer(542);
-      dam_pr = X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+      X_GC_child_CisAitCiuAiv_spin_MPIsingle(
         X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
         X->Def.PairLiftCoupling[i][0], sigma1, sigma2,
         conj(X->Def.ParaPairLiftCoupling[i]), X, nstate, tmp_v0, tmp_v1);
@@ -607,10 +591,9 @@ shared(tmp_v0, tmp_v1)
     else {
       StartTimer(543);
       child_pairlift_spin_GetInfo(i, X);
-      dam_pr = GC_child_pairlift_spin(tmp_v0, tmp_v1, X);
+      GC_child_pairlift_spin(nstate, tmp_v0, tmp_v1, X);
       StopTimer(543);
     }
-    X->Large.prdct += dam_pr;
   }/*for (i = 0; i < X->Def.NPairLiftCoupling; i += 2)*/
   StopTimer(540);
 
@@ -633,13 +616,12 @@ int mltplyGeneralSpinGC(
   long unsigned int tmp_off = 0;
   long unsigned int isite1, isite2, sigma1, sigma2;
   long unsigned int sigma3, sigma4;
-  double complex dam_pr;
   double complex tmp_trans;
   long int tmp_sgn;
   double num1 = 0;
   /*[s] For InterAll */
   double complex tmp_V;
-  double complex dmv=0;
+  int one = 1;
   /*[e] For InterAll */
 
   long unsigned int i_max;
@@ -657,13 +639,11 @@ int mltplyGeneralSpinGC(
     sigma1 = X->Def.EDGeneralTransfer[i][1];
     sigma2 = X->Def.EDGeneralTransfer[i][3];
     tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-    dam_pr = 0.0;
     if (isite1 == isite2) {
       if (sigma1 != sigma2) {
         if (isite1 > X->Def.Nsite) {
-          dam_pr = X_GC_child_CisAit_GeneralSpin_MPIdouble(
+          X_GC_child_CisAit_GeneralSpin_MPIdouble(
             isite1 - 1, sigma1, sigma2, tmp_trans, X, nstate, tmp_v0, tmp_v1);
-          X->Large.prdct += dam_pr;
         }/*if (isite1 > X->Def.Nsite)*/
         else {
           for (ihermite = 0; ihermite<2; ihermite++) {
@@ -675,19 +655,16 @@ int mltplyGeneralSpinGC(
             tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
     
             // transverse magnetic field
-            dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
+#pragma omp parallel for default(none) \
 private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) \
 shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
               num1 = GetOffCompGeneralSpin(
                 j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
               if (num1 != 0) { // for multply
-                tmp_v0[off + 1] += tmp_v1[j] * tmp_trans;
-                dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j] * tmp_trans;
+                zaxpy_(&nstate, &tmp_trans, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
               }/*if (num1 != 0)*/
             }/*for (j = 1; j <= i_max; j++)*/
-            X->Large.prdct += dam_pr;
           }/*for (ihermite = 0; ihermite<2; ihermite++)*/
         }
       }// sigma1 != sigma2          
@@ -734,7 +711,6 @@ shared(tmp_v0, tmp_v1)
         sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
         tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
 
-        dam_pr = 0.0;
         if (sigma1 == sigma2) {
           if (sigma3 == sigma4) {
             fprintf(stderr, "InterAll_OffDiagonal component is illegal.\n");
@@ -742,8 +718,8 @@ shared(tmp_v0, tmp_v1)
           }/*if (sigma3 == sigma4)*/
           else {
             //sigma3=sigma4 term is considerd as a diagonal term.
-#pragma omp parallel for default(none) reduction(+:dam_pr)              \
-  private(j, tmp_sgn, dmv, off)                                         \
+#pragma omp parallel for default(none) \
+  private(j, tmp_sgn, off)                                         \
   firstprivate(i_max, isite1, isite2, sigma1, sigma3, sigma4, X, tmp_V) \
   shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
@@ -752,20 +728,16 @@ shared(tmp_v0, tmp_v1)
               if (tmp_sgn == TRUE) {
                 tmp_sgn = BitCheckGeneral(off, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
                 if (tmp_sgn == TRUE) {
-                  dmv = tmp_v1[j] * tmp_V;
-                  if (X->Large.mode == M_MLTPLY) { // for multply
-                    tmp_v0[off + 1] += dmv;
-                  }
-                  dam_pr += conj(tmp_v1[off + 1]) * dmv;
-                }/*if (tmp_sgn == TRUE)*/
+                  zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
+               }/*if (tmp_sgn == TRUE)*/
               }/*if (tmp_sgn == TRUE)*/
             }/*for (j = 1; j <= i_max; j++)*/
           }
         }/*if (sigma1 == sigma2)*/
         else if (sigma3 == sigma4) {
           //sigma1=sigma2 term is considerd as a diagonal term.
-#pragma omp parallel for default(none) reduction(+:dam_pr)              \
-  private(j, tmp_sgn, dmv, off, tmp_off)                                \
+#pragma omp parallel for default(none) \
+  private(j, tmp_sgn, off, tmp_off)                                \
   firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) \
   shared(tmp_v0, tmp_v1)
           for (j = 1; j <= i_max; j++) {
@@ -774,18 +746,14 @@ shared(tmp_v0, tmp_v1)
               tmp_sgn = GetOffCompGeneralSpin(
                 j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
               if (tmp_sgn == TRUE) {
-                dmv = tmp_v1[j] * tmp_V;
-                if (X->Large.mode == M_MLTPLY) { // for multply
-                  tmp_v0[off + 1] += dmv;
-                }
-                dam_pr += conj(tmp_v1[off + 1]) * dmv;
+                zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
               }/*if (tmp_sgn == TRUE)*/
             }/*if (tmp_sgn == TRUE)*/
           }/*for (j = 1; j <= i_max; j++)*/
         }/*else if (sigma3 == sigma4)*/
         else {
-#pragma omp parallel for default(none) reduction(+:dam_pr)              \
-  private(j, tmp_sgn, dmv, off, tmp_off)                                \
+#pragma omp parallel for default(none) \
+  private(j, tmp_sgn, off, tmp_off)                                \
   firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) \
   shared(tmp_v0, tmp_v1)
           for (j = 1; j <= i_max; j++) {
@@ -795,16 +763,11 @@ shared(tmp_v0, tmp_v1)
               tmp_sgn = GetOffCompGeneralSpin(
                 tmp_off, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
               if (tmp_sgn == TRUE) {
-                dmv = tmp_v1[j] * tmp_V;
-                if (X->Large.mode == M_MLTPLY) { // for multply
-                  tmp_v0[off + 1] += dmv;
-                }
-                dam_pr += conj(tmp_v1[off + 1]) * dmv;
+                zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
               }/*if (tmp_sgn == TRUE)*/
             }/*if (tmp_sgn == TRUE)*/
           }/*for (j = 1; j <= i_max; j++)*/
         }
-        X->Large.prdct += dam_pr;
       }
       StopTimer(523);
     }
@@ -827,8 +790,6 @@ int mltplySpinGCBoost(
 {
   long unsigned int j;
 
-  double complex dam_pr;
-
   /* SpinGCBoost */
   double complex* tmp_v2;
   double complex* tmp_v3;
@@ -842,12 +803,6 @@ int mltplySpinGCBoost(
   tmp_v3 = cd_1d_allocate(i_max+1);
 
   child_general_int_spin_MPIBoost(X, nstate, tmp_v0, tmp_v1, tmp_v2, tmp_v3);
-  dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
-private(j) shared(tmp_v1,tmp_v0) firstprivate(i_max) 
-  for(j=1;j<=i_max;j++)
-    dam_pr += conj(tmp_v1[j])*tmp_v0[j]; // <H>=<v1|H|v1>
-  X->Large.prdct += dam_pr;  
     
   /* SpinGCBoost */
   free_cd_1d_allocate(tmp_v2);
@@ -863,11 +818,10 @@ private(j) shared(tmp_v1,tmp_v0) firstprivate(i_max)
 
 /**
 @brief Compute exchange term of spin Hamiltonian (canonical)
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex child_exchange_spin(
+void child_exchange_spin(
   int nstate, double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
@@ -875,21 +829,18 @@ double complex child_exchange_spin(
   long unsigned int j;
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
-  double complex dam_pr = 0;
 
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
+#pragma omp parallel for default(none) \
 firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
   for (j = 1; j <= i_max; j++) 
-    dam_pr += child_exchange_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
-  return dam_pr;
+    child_exchange_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
 }/*double complex child_exchange_spin*/
 /**
 @brief Compute exchange term of spin Hamiltonian (grandcanonical)
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_child_exchange_spin(
+void GC_child_exchange_spin(
   int nstate, double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
@@ -897,21 +848,18 @@ double complex GC_child_exchange_spin(
   long unsigned int j;
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
-  double complex dam_pr = 0;
 
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
+#pragma omp parallel for default(none) \
 firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
   for (j = 1; j <= i_max; j++)
-    dam_pr += GC_child_exchange_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
-  return dam_pr;
+    GC_child_exchange_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
 }/*double complex GC_child_exchange_spin*/
 /**
 @brief Compute pair-lift term of spin Hamiltonian (grandcanonical)
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_child_pairlift_spin(
+void GC_child_pairlift_spin(
   int nstate, double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
@@ -919,31 +867,29 @@ double complex GC_child_pairlift_spin(
   long int j;
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
-  double complex dam_pr = 0;
 
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
+#pragma omp parallel for default(none) \
 firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
   for (j = 1; j <= i_max; j++) 
-    dam_pr += GC_child_pairlift_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
-  return dam_pr;
+    GC_child_pairlift_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
 }/*double complex GC_child_pairlift_spin*/
 /**
 @brief Compute Inter-All term of spin Hamiltonian (canonical)
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex child_general_int_spin(
+void child_general_int_spin(
   int nstate, double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
 ) {
-  double complex dam_pr, tmp_V, dmv;
+  double complex tmp_V, dmv;
   long unsigned int j, i_max;
   long unsigned int org_sigma2, org_sigma4;
   long unsigned int isA_up, isB_up;
   long unsigned int tmp_off = 0;
   int tmp_sgn;
+  int one = 1;
 
   i_max = X->Large.i_max;
   org_sigma2 = X->Large.is2_spin;
@@ -951,32 +897,28 @@ double complex child_general_int_spin(
   tmp_V = X->Large.tmp_V;
   isA_up = X->Large.is1_up;
   isB_up = X->Large.is2_up;
-  dam_pr = 0.0;
 
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) \
+#pragma omp parallel for default(none) private(j, tmp_sgn, dmv) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(tmp_v1, tmp_v0)
   for (j = 1; j <= i_max; j++) {
     tmp_sgn = X_child_exchange_spin_element(j, X, isA_up, isB_up, org_sigma2, org_sigma4, &tmp_off);
     if (tmp_sgn != 0) {
-      dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-      tmp_v0[tmp_off] += dmv;
-      dam_pr += conj(tmp_v1[tmp_off]) * dmv;
+      dmv = tmp_sgn * tmp_V;
+      zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[tmp_off][0], &one);
     }/*if (tmp_sgn != 0)*/
   }/*for (j = 1; j <= i_max; j++)*/
-  return dam_pr;
 }/*double complex child_general_int_spin*/
 /**
 @brief Compute Inter-All term of spin Hamiltonian (grandcanonical)
-@return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_child_general_int_spin(
+void GC_child_general_int_spin(
   int nstate, double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
 ) {
-  double complex dam_pr, tmp_V;
+  double complex tmp_V;
   long unsigned int j, i_max;
   long unsigned int org_isite1, org_isite2;
   long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
@@ -991,40 +933,38 @@ double complex GC_child_general_int_spin(
   org_sigma3 = X->Large.is3_spin;
   org_sigma4 = X->Large.is4_spin;
   tmp_V = X->Large.tmp_V;
-  dam_pr = 0.0;
   isA_up = X->Def.Tpow[org_isite1 - 1];
   isB_up = X->Def.Tpow[org_isite2 - 1];
 
-#pragma omp parallel default(none) reduction(+:dam_pr) \
+#pragma omp parallel default(none) \
 private(j) shared(tmp_v0, tmp_v1) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma1,org_sigma2,org_sigma3,org_sigma4,tmp_off, tmp_V) 
   {
     if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
 #pragma omp for
       for (j = 1; j <= i_max; j++)
-        dam_pr += GC_child_CisAisCisAis_spin_element(
+        GC_child_CisAisCisAis_spin_element(
           j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, nstate, tmp_v0, tmp_v1, X);
     }
     else if (org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4) {
 #pragma omp for
       for (j = 1; j <= i_max; j++)
-        dam_pr += GC_child_CisAisCitAiu_spin_element(
+        GC_child_CisAisCitAiu_spin_element(
           j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, X, &tmp_off);
     }
     else if (org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4) {
 #pragma omp for
       for (j = 1; j <= i_max; j++)
-        dam_pr += GC_child_CisAitCiuAiu_spin_element(
+        GC_child_CisAitCiuAiu_spin_element(
           j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, X, &tmp_off);
     }
     else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
 #pragma omp for
       for (j = 1; j <= i_max; j++)
-        dam_pr += GC_child_CisAitCiuAiv_spin_element(
+        GC_child_CisAitCiuAiv_spin_element(
           j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, X, &tmp_off);
     }
   }/*End of parallel region*/
-  return dam_pr;
 }/*double complex GC_child_general_int_spin*/
 /******************************************************************************/
 //[e] child functions

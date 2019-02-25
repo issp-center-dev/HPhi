@@ -29,7 +29,7 @@ void GC_child_general_hopp_MPIdouble
  double complex **tmp_v1
  );
 
-double complex X_GC_child_general_hopp_MPIdouble
+void X_GC_child_general_hopp_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -49,7 +49,7 @@ void GC_child_general_hopp_MPIsingle
  double complex **tmp_v1
  );
 
-double complex X_GC_child_general_hopp_MPIsingle
+void X_GC_child_general_hopp_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -70,7 +70,7 @@ void child_general_hopp_MPIdouble
  double complex **tmp_v1
  );
 
-double complex X_child_general_hopp_MPIdouble
+void X_child_general_hopp_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -90,7 +90,7 @@ void child_general_hopp_MPIsingle
  double complex **tmp_v1
  );
 
-double complex X_child_general_hopp_MPIsingle
+void X_child_general_hopp_MPIsingle
 (
  int org_isite1,
  int org_ispin1,

@@ -37,12 +37,10 @@ void GC_child_general_hopp_MPIdouble
  double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
-  double complex dam_pr = 0;
-  dam_pr = X_GC_child_general_hopp_MPIdouble(
+  X_GC_child_general_hopp_MPIdouble(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_general_hopp_MPIdouble*/
 /**
@@ -51,7 +49,7 @@ When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 @return fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 */
-double complex X_GC_child_general_hopp_MPIdouble(
+void X_GC_child_general_hopp_MPIdouble(
   int org_isite1,//!<[in] @f$i_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_ispin1,//!<[in] @f$\sigma_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_isite2,//!<[in] @f$i_2@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
@@ -65,7 +63,8 @@ double complex X_GC_child_general_hopp_MPIdouble(
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j;
   MPI_Status statusMPI;
-  double complex trans, dmv, dam_pr;
+  double complex trans;
+  int one = 1;
 
   mask1 = (int)X->Def.Tpow[2 * org_isite1 + org_ispin1];
   mask2 = (int)X->Def.Tpow[2 * org_isite2 + org_ispin2];
@@ -85,7 +84,7 @@ double complex X_GC_child_general_hopp_MPIdouble(
     trans = -(double)Fsgn * conj(tmp_trans);
     if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) trans = 0.0;
   }/*if (state1 == mask1 && state2 == 0)*/
-  else return 0.0;
+  else return;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
                       &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0, 
@@ -96,29 +95,14 @@ double complex X_GC_child_general_hopp_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
+#pragma omp parallel default(none) private(j, dmv) \
 firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        dmv = trans * v1buf[j];
-        tmp_v0[j] += dmv;
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }/*if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC)*/
-    else {
-#pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        dmv = trans * v1buf[j];
-        dam_pr += conj(tmp_v1[j]) * dmv;
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }
+    for (j = 1; j <= idim_max_buf; j++) {
+      zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[j][0], &one);
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
-  return 0.0;
 #endif
 }/*void GC_child_general_hopp_MPIdouble*/
 /**
@@ -127,7 +111,7 @@ When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 @return fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 */
-double complex X_child_CisAjt_MPIdouble(
+void X_child_CisAjt_MPIdouble(
   int org_isite1,//!<[in] @f$i_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_ispin1,//!<[in] @f$\sigma_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_isite2,//!<[in] @f$i_2@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
@@ -147,6 +131,7 @@ double complex X_child_CisAjt_MPIdouble(
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex trans, dmv;
+  int one = 1;
 
   mask1 = (int) X->Def.Tpow[2 * org_isite1 + org_ispin1];
   mask2 = (int) X->Def.Tpow[2 * org_isite2 + org_ispin2];
@@ -168,7 +153,7 @@ double complex X_child_CisAjt_MPIdouble(
       trans = 0;
     }
   }/*if (state1 == mask1 && state2 == 0)*/
-  else return 0;
+  else return;
 
   ierr = MPI_Sendrecv(&X->Check.idim_maxOrg, 1, MPI_UNSIGNED_LONG, origin, 0,
                       &idim_max_buf,         1, MPI_UNSIGNED_LONG, origin, 0,
@@ -190,17 +175,11 @@ double complex X_child_CisAjt_MPIdouble(
   firstprivate(idim_max_buf, trans, X, list_2_1_target, list_2_2_target, list_1buf_org) \
   shared(v1buf, tmp_v0)
     for (j = 1; j <= idim_max_buf; j++){
-      dmv = trans * v1buf[j];
       GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
                  X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-      tmp_v0[ioff] += dmv;
+      zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
-  else return 0.0;
-  
-  return 1.0;
-#else
-  return 0.0;
 #endif
 }/*void child_CisAjt_MPIdouble*/
 /**
@@ -215,12 +194,10 @@ void GC_child_general_hopp_MPIsingle(
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
-  double complex dam_pr=0;
-  dam_pr=X_GC_child_general_hopp_MPIsingle(
+  X_GC_child_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1       );
-  X->Large.prdct += dam_pr;
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
 /**
@@ -230,7 +207,7 @@ void GC_child_general_hopp_MPIsingle(
 @author Mitsuaki Kawamura (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_general_hopp_MPIsingle(
+void X_GC_child_general_hopp_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -244,7 +221,8 @@ double complex X_GC_child_general_hopp_MPIsingle(
   int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
   MPI_Status statusMPI;
-  double complex trans, dmv, dam_pr;
+  double complex trans, dmv;
+  int one = 1;
   /*
     Prepare index in the inter PE
   */
@@ -283,47 +261,25 @@ double complex X_GC_child_general_hopp_MPIsingle(
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, state1, Fsgn, ioff) \
+#pragma omp parallel default(none)  private(j, dmv, state1, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 0; j < idim_max_buf; j++) {
+    for (j = 0; j < idim_max_buf; j++) {
 
-        state1 = j & mask1;
+      state1 = j & mask1;
 
-        if (state1 == state1check) {
+      if (state1 == state1check) {
 
-          SgnBit(j & bit1diff, &Fsgn);
-          ioff = j ^ mask1;
+        SgnBit(j & bit1diff, &Fsgn);
+        ioff = j ^ mask1;
 
-          dmv = (double)Fsgn * trans * v1buf[j + 1];
-          tmp_v0[ioff + 1] += dmv;
-          dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-        }/*if (state1 == state1check)*/
-      }/*for (j = 0; j < idim_max_buf; j++)*/
-    }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
-    else {
-#pragma omp for
-      for (j = 0; j < idim_max_buf; j++) {
+        dmv = (double)Fsgn * trans;
+        zaxpy_(&nstate, &dmv, &v1buf[j + 1][0], &one, &tmp_v0[ioff + 1][0], &one);
+      }/*if (state1 == state1check)*/
+    }/*for (j = 0; j < idim_max_buf; j++)*/
 
-        state1 = j & mask1;
-
-        if (state1 == state1check) {
-
-          SgnBit(j & bit1diff, &Fsgn);
-          ioff = j ^ mask1;
-
-          dmv = (double)Fsgn * trans * v1buf[j + 1];
-          dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
-        }/*for (j = 0; j < idim_max_buf; j++)*/
-      }/*for (j = 0; j < idim_max_buf; j++)*/
-    }/*if (! (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC))*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
-  return 0.0;
 #endif
 }/*void GC_child_general_hopp_MPIsingle*/
 /**
@@ -338,12 +294,10 @@ void child_general_hopp_MPIdouble(
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
-  double complex dam_pr;
-  dam_pr =X_child_general_hopp_MPIdouble( 
+  X_child_general_hopp_MPIdouble( 
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void child_general_hopp_MPIdouble*/
 /**
@@ -352,7 +306,7 @@ void child_general_hopp_MPIdouble(
 @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_child_general_hopp_MPIdouble(
+void X_child_general_hopp_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -366,7 +320,8 @@ double complex X_child_general_hopp_MPIdouble(
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
-  double complex trans, dmv, dam_pr;
+  double complex trans, dmv;
+  int one = 1;
 
   mask1 = (int) X->Def.Tpow[2 * org_isite1 + org_ispin1];
   mask2 = (int) X->Def.Tpow[2 * org_isite2 + org_ispin2];
@@ -387,7 +342,7 @@ double complex X_child_general_hopp_MPIdouble(
     trans = -(double) Fsgn * conj(tmp_trans);
     if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) trans = 0;
   }
-  else return 0;
+  else return;
 
   ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
                       &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
@@ -402,8 +357,7 @@ double complex X_child_general_hopp_MPIdouble(
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
+#pragma omp parallel default(none)  private(j, dmv, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   {
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -411,9 +365,7 @@ double complex X_child_general_hopp_MPIdouble(
       for (j = 1; j <= idim_max_buf; j++) {
         GetOffComp(list_2_1, list_2_2, list_1buf[j],
           X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-        dmv = trans * v1buf[j];
-        tmp_v0[ioff] += dmv;
-        dam_pr += conj(tmp_v1[ioff]) * dmv;
+        zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
     else {
@@ -421,14 +373,10 @@ double complex X_child_general_hopp_MPIdouble(
       for (j = 1; j <= idim_max_buf; j++) {
         GetOffComp(list_2_1, list_2_2, list_1buf[j],
           X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-        dmv = trans * v1buf[j];
-        dam_pr += conj(tmp_v1[ioff]) * dmv;
+        zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
-  return 0.0;
 #endif
 }/*void child_general_hopp_MPIdouble*/
 /**
@@ -443,12 +391,10 @@ void child_general_hopp_MPIsingle(
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 #ifdef MPI
-  double complex dam_pr;
-  dam_pr =X_child_general_hopp_MPIsingle(
+  X_child_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
-  X->Large.prdct += dam_pr;
 #endif
 }/*void child_general_hopp_MPIsingle*/
 /**
@@ -457,7 +403,7 @@ void child_general_hopp_MPIsingle(
 @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_child_general_hopp_MPIsingle(
+void X_child_general_hopp_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -471,7 +417,8 @@ double complex X_child_general_hopp_MPIsingle(
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
   MPI_Status statusMPI;
-  double complex trans, dmv, dam_pr;
+  double complex trans, dmv;
+  int one = 1;
   /*
     Prepare index in the inter PE
   */
@@ -514,53 +461,25 @@ double complex X_child_general_hopp_MPIsingle(
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
-  dam_pr = 0.0;
-#pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff, jreal, state1) \
+#pragma omp parallel default(none)  private(j, dmv, Fsgn, ioff, jreal, state1) \
   firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff, myrank) shared(list_1, list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
+    for (j = 1; j <= idim_max_buf; j++) {
 
-        jreal = list_1buf[j];
-        state1 = jreal & mask1;
+      jreal = list_1buf[j];
+      state1 = jreal & mask1;
 
-        if (state1 == state1check) {
-          SgnBit(jreal & bit1diff, &Fsgn);
-          GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+      if (state1 == state1check) {
+        SgnBit(jreal & bit1diff, &Fsgn);
+        GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
             X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
 
-          dmv = (double)Fsgn * trans * v1buf[j];
-          tmp_v0[ioff] += dmv;
-          dam_pr += conj(tmp_v1[ioff]) * dmv;
-        }/*if (state1 == state1check)*/
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
-    else {
-#pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-
-        jreal = list_1buf[j];
-        state1 = jreal & mask1;
-
-        if (state1 == state1check) {
-          SgnBit(jreal & bit1diff, &Fsgn);
-          GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-/*
-          if(X->Large.mode==M_CORR){
-            printf("DEBUG: myrank=%d, org=%d, bit=%d, iexchg=%d, ioff=%d, list_1=%d\n", myrank, jreal, state1, jreal ^ mask1, ioff, list_1[ioff]);
-          }
-*/
-          dmv = (double)Fsgn * trans * v1buf[j];
-          dam_pr += conj(tmp_v1[ioff]) * dmv;
-        }/*if (state1 == state1check)*/
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }/*if (! (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC))*/
+        dmv = (double)Fsgn * trans;
+        zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
+      }/*if (state1 == state1check)*/
+    }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
-  return (dam_pr);
-#else
-  return 0.0;
 #endif
 }/*double complex child_general_hopp_MPIsingle*/
 /**
@@ -569,7 +488,7 @@ double complex X_child_general_hopp_MPIsingle(
 @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_child_CisAjt_MPIsingle(
+void X_child_CisAjt_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -589,6 +508,7 @@ double complex X_child_CisAjt_MPIsingle(
   unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
   MPI_Status statusMPI;
   double complex trans, dmv;
+  int one = 1;
   /*
     Prepare index in the inter PE
   */
@@ -628,27 +548,20 @@ double complex X_child_CisAjt_MPIsingle(
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
-  if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) private(j, dmv, Fsgn, ioff, jreal, state1) \
   firstprivate(idim_max_buf, trans, X, mask1, state1check, bit1diff,list_2_1_target, list_2_2_target, list_1buf_org, list_1) shared(v1buf, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++) {
-      jreal = list_1buf_org[j];
-      state1 = jreal & mask1;
-      if (state1 == state1check) {
-        SgnBit(jreal & bit1diff, &Fsgn);
-        GetOffComp(list_2_1_target, list_2_2_target, jreal ^ mask1,
-                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-        if(ioff !=0){
-          dmv = (double) Fsgn * trans * v1buf[j];
-          tmp_v0[ioff] += dmv;
-        }/*if(ioff !=0)*/
-      }/*if (state1 == state1check)*/
-    }/*for (j = 1; j <= idim_max_buf; j++)*/
-  }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
-  else return 0;
-
-  return 1;
-#else
-  return 0.0;
+  for (j = 1; j <= idim_max_buf; j++) {
+    jreal = list_1buf_org[j];
+    state1 = jreal & mask1;
+    if (state1 == state1check) {
+      SgnBit(jreal & bit1diff, &Fsgn);
+      GetOffComp(list_2_1_target, list_2_2_target, jreal ^ mask1,
+        X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+      if (ioff != 0) {
+        dmv = (double)Fsgn * trans;
+        zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
+      }/*if(ioff !=0)*/
+    }/*if (state1 == state1check)*/
+  }/*for (j = 1; j <= idim_max_buf; j++)*/
 #endif
 }/*double complex child_general_hopp_MPIsingle*/
