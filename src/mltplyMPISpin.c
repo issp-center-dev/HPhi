@@ -17,9 +17,6 @@
 @brief Functions for spin Hamiltonian + MPI
 */
 
-#ifdef MPI
-#include "mpi.h"
-#endif
 #include "Common.h"
 #include "mltplyCommon.h"
 #include "bitcalc.h"
@@ -38,7 +35,6 @@ void child_general_int_spin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
   X_child_general_int_spin_MPIdouble(
     (int)X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1],
     (int)X->Def.InterAll_OffDiagonal[i_int][3], (int)X->Def.InterAll_OffDiagonal[i_int][4],
@@ -48,12 +44,10 @@ void child_general_int_spin_MPIdouble(
   Add @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
   to LargeList::prdct
   */
-#endif
 }/*void child_general_int_spin_MPIdouble*/
 /**
 @brief Exchange term in Spin model
  When both site1 and site2 are in the inter process region.
-@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void X_child_general_int_spin_MPIdouble(
@@ -68,11 +62,9 @@ void X_child_general_int_spin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-#ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin;
   unsigned long int idim_max_buf, j, ioff;
-  MPI_Status statusMPI;
-  double complex Jint, dmv;
+  double complex Jint;
   int one = 1;
 
   mask1 = (int)X->Def.Tpow[org_isite1];
@@ -93,29 +85,21 @@ void X_child_general_int_spin_MPIdouble(
   }
   else return 0;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                       v1buf,      idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+  SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
+  SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
-#pragma omp parallel for default(none)  private(j, dmv, ioff) \
+#pragma omp parallel for default(none)  private(j, ioff) \
   firstprivate(idim_max_buf, Jint, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
     GetOffComp(list_2_1, list_2_2, list_1buf[j],
         X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
     zaxpy_(&nstate, &Jint, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/
-#endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
 /**
 @brief Exchange term in Spin model
   When both site1 and site2 are in the inter process region.
-@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void X_child_general_int_spin_TotalS_MPIdouble(
@@ -125,10 +109,8 @@ void X_child_general_int_spin_TotalS_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ){
-#ifdef MPI
   int mask1, mask2, num1_up, num2_up, ierr, origin;
   unsigned long int idim_max_buf, j, ioff, ibit_tmp;
-  MPI_Status statusMPI;
   double complex dmv;
 
   mask1 = (int)X->Def.Tpow[org_isite1];
@@ -141,18 +123,9 @@ void X_child_general_int_spin_TotalS_MPIdouble(
   ibit_tmp = (num1_up) ^ (num2_up);
   if (ibit_tmp == 0) return 0;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+  SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
+  SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel for default(none)  private(j, dmv, ioff) \
     firstprivate(idim_max_buf,  X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
@@ -162,14 +135,10 @@ void X_child_general_int_spin_TotalS_MPIdouble(
     dmv = 0.5 * v1buf[j];
   }/*for (j = 1; j <= idim_max_buf; j++)*/
   return;
-#else
-  return 0.0;
-#endif
 }/*double complex X_child_general_int_spin_MPIdouble*/
 /**
 @brief Exchange term in Spin model
   When only site2 is in the inter process region.
-@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void child_general_int_spin_MPIsingle(
@@ -178,7 +147,6 @@ void child_general_int_spin_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
 
   X_child_general_int_spin_MPIsingle(
     (int)X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1], 
@@ -189,12 +157,10 @@ void child_general_int_spin_MPIsingle(
   Add @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
   to LargeList::prdct
   */
-#endif
 }/*void child_general_int_spin_MPIsingle*/
 /*
 @brief General interaction term of canonical spin system.
 site 3 is in the inter process region
-@return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
 void X_child_general_int_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
@@ -208,11 +174,9 @@ void X_child_general_int_spin_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-#ifdef MPI
   int mask2, state2, ierr, origin;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
-  MPI_Status statusMPI;
-  double complex Jint, dmv;
+  double complex Jint;
   int one = 1;
   /*
   Prepare index in the inter PE
@@ -234,24 +198,15 @@ void X_child_general_int_spin_MPIsingle(
   }
   else return 0;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+  SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
+  SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
   /*
   Index in the intra PE
   */
   mask1 = X->Def.Tpow[org_isite1];
 
-#pragma omp parallel for default(none)  private(j, dmv, ioff, jreal, state1) \
+#pragma omp parallel for default(none)  private(j, ioff, jreal, state1) \
 firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) \
 shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   for (j = 1; j <= idim_max_buf; j++) {
@@ -264,7 +219,6 @@ shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
       zaxpy_(&nstate, &Jint, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
     }
   }
-#endif
 }/*double complex X_child_general_int_spin_MPIsingle*/
 /**
 @brief General interaction term in the Spin model + GC
@@ -323,8 +277,6 @@ void GC_child_general_int_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
-  // MPI_Status statusMPI;
 
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
@@ -347,7 +299,6 @@ void GC_child_general_int_GeneralSpin_MPIdouble(
       X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
       X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   }
-#endif
 }/*void GC_child_general_int_spin_MPIdouble*/
 /**
 @brief General interaction term in the Spin model + GC
@@ -360,7 +311,6 @@ void GC_child_general_int_GeneralSpin_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
 
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
@@ -384,7 +334,6 @@ void GC_child_general_int_GeneralSpin_MPIsingle(
       X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   }
 
-#endif
 }/*void GC_child_general_int_spin_MPIsingle*/
 /**
 @brief General interaction term in the Spin model + GC

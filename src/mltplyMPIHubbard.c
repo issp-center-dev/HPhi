@@ -16,9 +16,6 @@
 /**@file
 @brief Functions for Hubbard Hamiltonian + MPI
 */
-#ifdef MPI
-#include "mpi.h"
-#endif
 #include "Common.h"
 #include "bitcalc.h"
 #include "wrapperMPI.h"
@@ -36,12 +33,10 @@ void GC_child_general_hopp_MPIdouble
  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
  double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
   X_GC_child_general_hopp_MPIdouble(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
-#endif
 }/*void GC_child_general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard + GC
@@ -59,12 +54,9 @@ void X_GC_child_general_hopp_MPIdouble(
   int nstate, double complex **tmp_v0,//!< [out] Result v0 = H v1
   double complex **tmp_v1 //!< [in] v0 = H v1
 ) {
-#ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j;
-  MPI_Status statusMPI;
   double complex trans;
-  int one = 1;
 
   mask1 = (int)X->Def.Tpow[2 * org_isite1 + org_ispin1];
   mask2 = (int)X->Def.Tpow[2 * org_isite2 + org_ispin2];
@@ -86,24 +78,10 @@ void X_GC_child_general_hopp_MPIdouble(
   }/*if (state1 == mask1 && state2 == 0)*/
   else return;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0, 
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+  SendRecv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
-#pragma omp parallel default(none) private(j, dmv) \
-firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
-  {
-#pragma omp for
-    for (j = 1; j <= idim_max_buf; j++) {
-      zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[j][0], &one);
-    }/*for (j = 1; j <= idim_max_buf; j++)*/
-  }/*End of parallel region*/
-#endif
+  zaxpy_long(X->Check.idim_max*nstate, trans, &v1buf[1][0], &tmp_v0[1][0]);
 }/*void GC_child_general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard + MPI
@@ -120,17 +98,15 @@ void X_child_CisAjt_MPIdouble(
   struct BindStruct *X,//!< [inout]
   int nstate, double complex **tmp_v0,//!< [out] Result v0 = H v1
   double complex **tmp_v1,//!< [in] v0 = H v1
-  double complex *v1buf,//!<[in]
+  double complex **v1buf,//!<[in]
   long unsigned int *list_1_org,//!<[in]
   long unsigned int *list_1buf_org,//!<[in]
   long unsigned int *list_2_1_target,//!<[in]
   long unsigned int *list_2_2_target//!<[in]
 ) {
-#ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
-  MPI_Status statusMPI;
-  double complex trans, dmv;
+  double complex trans;
   int one = 1;
 
   mask1 = (int) X->Def.Tpow[2 * org_isite1 + org_ispin1];
@@ -155,32 +131,18 @@ void X_child_CisAjt_MPIdouble(
   }/*if (state1 == mask1 && state2 == 0)*/
   else return;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_maxOrg, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,         1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-
-  ierr = MPI_Sendrecv(list_1_org, X->Check.idim_maxOrg + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf_org,      idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_maxOrg + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,          idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_maxOrg);
+  SendRecv_iv(origin, X->Check.idim_maxOrg + 1, idim_max_buf + 1, list_1_org, list_1buf_org);
+  SendRecv_cv(origin, X->Check.idim_maxOrg*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
   
-  if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
-#pragma omp parallel for default(none) private(j, dmv, ioff) \
+#pragma omp parallel for default(none) private(j, ioff) \
   firstprivate(idim_max_buf, trans, X, list_2_1_target, list_2_2_target, list_1buf_org) \
   shared(v1buf, tmp_v0)
-    for (j = 1; j <= idim_max_buf; j++){
-      GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
-                 X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-      zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
-    }/*for (j = 1; j <= idim_max_buf; j++)*/
-  }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
-#endif
+  for (j = 1; j <= idim_max_buf; j++) {
+    GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+               X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+    zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
+  }/*for (j = 1; j <= idim_max_buf; j++)*/
 }/*void child_CisAjt_MPIdouble*/
 /**
 @brief Hopping term in Hubbard + GC
@@ -193,17 +155,14 @@ void GC_child_general_hopp_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
   X_GC_child_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1       );
-#endif
 }/*void GC_child_general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard + GC
  When only site2 is in the inter process region.
-@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -217,10 +176,8 @@ void X_GC_child_general_hopp_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ) {
-#ifdef MPI
   int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
-  MPI_Status statusMPI;
   double complex trans, dmv;
   int one = 1;
   /*
@@ -233,15 +190,9 @@ void X_GC_child_general_hopp_MPIsingle(
 
   SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
 
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
   /*
     Index in the intra PE
@@ -280,7 +231,6 @@ void X_GC_child_general_hopp_MPIsingle(
     }/*for (j = 0; j < idim_max_buf; j++)*/
 
   }/*End of parallel region*/
-#endif
 }/*void GC_child_general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
@@ -293,17 +243,14 @@ void child_general_hopp_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
   X_child_general_hopp_MPIdouble( 
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
-#endif
 }/*void child_general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When both site1 and site2 are in the inter process region.
-@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void X_child_general_hopp_MPIdouble(
@@ -316,10 +263,8 @@ void X_child_general_hopp_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ) {
-#ifdef MPI
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
-  MPI_Status statusMPI;
   double complex trans, dmv;
   int one = 1;
 
@@ -344,40 +289,20 @@ void X_child_general_hopp_MPIdouble(
   }
   else return;
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+  SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
+  SendRecv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel default(none)  private(j, dmv, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        GetOffComp(list_2_1, list_2_2, list_1buf[j],
-          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-        zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
-    else {
-#pragma omp for
-      for (j = 1; j <= idim_max_buf; j++) {
-        GetOffComp(list_2_1, list_2_2, list_1buf[j],
-          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-        zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
+    for (j = 1; j <= idim_max_buf; j++) {
+      GetOffComp(list_2_1, list_2_2, list_1buf[j],
+                 X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+      zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
-#endif
 }/*void child_general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
@@ -390,17 +315,14 @@ void child_general_hopp_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-#ifdef MPI
   X_child_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, nstate, tmp_v0, tmp_v1);
-#endif
 }/*void child_general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When only site2 is in the inter process region.
-@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void X_child_general_hopp_MPIsingle(
@@ -413,10 +335,8 @@ void X_child_general_hopp_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ) {
-#ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
-  MPI_Status statusMPI;
   double complex trans, dmv;
   int one = 1;
   /*
@@ -430,18 +350,9 @@ void X_child_general_hopp_MPIsingle(
 
   SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+  SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
+  SendRecv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
   /*
     Index in the intra PE
   */
@@ -480,12 +391,10 @@ void X_child_general_hopp_MPIsingle(
       }/*if (state1 == state1check)*/
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
-#endif
 }/*double complex child_general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
   When only site2 is in the inter process region.
-@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void X_child_CisAjt_MPIsingle(
@@ -497,16 +406,14 @@ void X_child_CisAjt_MPIsingle(
   struct BindStruct *X,//!<[inout]
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1,//!<[in] v0 = H v1
-  double complex *v1buf,//!<[in] Buffer for sendrecv of wavefunction
+  double complex **v1buf,//!<[in] Buffer for sendrecv of wavefunction
   long unsigned int *list_1_org,//!<[in] Similler to ::list_1
   long unsigned int *list_1buf_org,//!<[in] Similler to ::list_1buf
   long unsigned int *list_2_1_target,//!<[in] ???
   long unsigned int *list_2_2_target//!<[in] ???
 ){
-#ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
-  MPI_Status statusMPI;
   double complex trans, dmv;
   int one = 1;
   /*
@@ -520,18 +427,9 @@ void X_child_CisAjt_MPIsingle(
 
   SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&X->Check.idim_maxOrg, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf,         1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(list_1_org, X->Check.idim_maxOrg + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf_org,      idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-  ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_maxOrg + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      v1buf,          idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, X->Check.idim_maxOrg);
+  SendRecv_iv(origin, X->Check.idim_maxOrg + 1, list_1buf_org + 1, list_1_org, list_1buf_org);
+  SendRecv_cv(origin, X->Check.idim_maxOrg*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
   /*
     Index in the intra PE
   */
@@ -563,5 +461,4 @@ void X_child_CisAjt_MPIsingle(
       }/*if(ioff !=0)*/
     }/*if (state1 == state1check)*/
   }/*for (j = 1; j <= idim_max_buf; j++)*/
-#endif
 }/*double complex child_general_hopp_MPIsingle*/

@@ -54,6 +54,7 @@
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1) {
+  int one = 1;
   long unsigned int j=0;
   long unsigned int irght=0;
   long unsigned int ilft=0;
@@ -94,7 +95,7 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
   StartTimer(100);
 #pragma omp parallel for default(none)  firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
-    tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
+    zaxpy_(&nstate, &list_Diagonal[j], &tmp_v1[j][0], &one, &tmp_v0[tmp_off][0], &one);
   }
   StopTimer(100);
   if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, nstate, tmp_v0, tmp_v1);
@@ -125,4 +126,50 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
   X->Large.prdct = SumMPI_dc(X->Large.prdct);  
   StopTimer(1);
   return 0;
+}
+/**
+@brief Wrapper of zaxpy.
+*/
+void zaxpy_long(
+  unsigned long int n, 
+  double complex a, 
+  double complex *x, 
+  double complex *y
+) {
+  unsigned long int i;
+
+#pragma omp parallel for default(none) private(i) shared(n, a, x, y)
+  for (i = 0; i < n; i++) 
+    y[i] += a * x[i] + y[i];
+}
+/**
+@brief Wrapper of zswap.
+*/
+void zswap_long(
+  unsigned long int n,
+  double complex *x,
+  double complex *y
+) {
+  unsigned long int i;
+  double complex x0;
+
+#pragma omp parallel for default(none) private(i,x0) shared(n, x, y)
+  for (i = 0; i < n; i++) {
+    x0 = x[i];
+    x[i] = y[i];
+    y[i] = x0;
+  }
+}
+/**
+@brief Wrapper of zswap.
+*/
+void zclear(
+  unsigned long int n,
+  double complex *x
+) {
+  unsigned long int i;
+
+#pragma omp parallel for default(none) private(i) shared(n, x)
+  for (i = 0; i < n; i++) 
+    x[i] = 0.0;
 }

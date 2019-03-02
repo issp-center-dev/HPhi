@@ -16,9 +16,6 @@
 /**@file
 @brief Functions for Hubbar + MPI (Core)
 */
-#ifdef MPI
-#include "mpi.h"
-#endif
 #include "Common.h"
 #include "mltplyCommon.h"
 #include "mltplyHubbardCore.h"
@@ -269,46 +266,33 @@ void X_GC_child_CisAisCjtAjt_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   int iCheck;
   unsigned long int tmp_ispin1;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int tmp_off, j;
-  double complex dmv;
   int one = 1;
-  //  MPI_Status statusMPI;
 
   iCheck=CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
   if(iCheck != TRUE){
-    return 0.0;
+    return;
   }
 
-#pragma omp parallel  default(none) shared(org_isite1, org_ispin1, org_isite3, org_ispin3, nstate, tmp_v0, tmp_v1) \
-  firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off, tmp_ispin1)
-  {
+  if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite) {
+    zaxpy_long(i_max*nstate, tmp_V, &tmp_v1[1][0], &tmp_v0[1][0]);
+  }/*if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite)*/
+  else if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite) {
+    if (org_isite1 > org_isite3) tmp_ispin1 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
+    else                         tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
 
-    if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite) {
+#pragma omp parallel  default(none) shared(org_isite1, org_ispin1, org_isite3, org_ispin3, nstate, tmp_v0, tmp_v1) \
+  firstprivate(i_max, tmp_V, X) private(j, tmp_off, tmp_ispin1)
 #pragma omp for
-      for (j = 1; j <= i_max; j++) {
+    for (j = 1; j <= i_max; j++) {
+      if (CheckBit_Ajt(tmp_ispin1, j - 1, &tmp_off) == TRUE) {
         zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
-      }/*for (j = 1; j <= i_max; j++)*/
-    }/*if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite)*/
-    else if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite) {
-      if (org_isite1 > org_isite3) tmp_ispin1 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
-      else                         tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
-      
-#pragma omp for
-      for (j = 1; j <= i_max; j++) {
-        if (CheckBit_Ajt(tmp_ispin1, j - 1, &tmp_off) == TRUE) {
-          zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
-        }
-      }/*for (j = 1; j <= i_max; j++)*/
-    }
-  }/*End of parallel region*/
-  return;
-#else
-  return 0.0;
-#endif
+      }
+    }/*for (j = 1; j <= i_max; j++)*/
+  }
 }/*double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
@@ -326,7 +310,6 @@ void X_GC_child_CisAjtCkuAku_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
   int iCheck, ierr, Fsgn;
@@ -336,7 +319,6 @@ void X_GC_child_CisAjtCkuAku_Hubbard_MPI(
   double complex dmv;
   unsigned long int origin, tmp_off;
   unsigned long int org_rankbit;
-  MPI_Status statusMPI;
   int one = 1;
 
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite3, org_ispin3, X, (long unsigned int) myrank, &origin);
@@ -369,13 +351,13 @@ void X_GC_child_CisAjtCkuAku_Hubbard_MPI(
       }
     }
     else {
-      return 0.0;
+      return;
     }
   }
 
   if (myrank == origin) {// only k is in PE
 
-    if (CheckBit_Ajt(isite3, myrank, &tmp_off) == FALSE) return 0.0;
+    if (CheckBit_Ajt(isite3, myrank, &tmp_off) == FALSE) return;
 
 #pragma omp parallel default(none)  \
 firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
@@ -393,14 +375,8 @@ firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(
     return;
   }//myrank =origin
   else {
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
+    idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+    SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel default(none)  private(j, dmv, tmp_off, Fsgn, org_rankbit, Adiff) \
 shared(v1buf, tmp_v1, nstate, tmp_v0, myrank, origin, isite3, org_isite3, isite1, isite2, org_isite2, org_isite1) \
@@ -439,10 +415,6 @@ firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isi
       }
     }/*End of parallel region*/
   }/*myrank != origin*/
-  return;
-#else
-  return 0.0;
-#endif
 }/*double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
@@ -460,11 +432,9 @@ void X_GC_child_CisAisCjtAku_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   X_GC_child_CisAjtCkuAku_Hubbard_MPI(
     org_isite4, org_ispin4, org_isite3, org_ispin3,
     org_isite1, org_ispin1, conj(tmp_V), X, nstate, tmp_v0, tmp_v1);
-#endif
 }/*double complex X_GC_child_CisAisCjtAku_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
@@ -484,7 +454,6 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
   int iCheck, ierr, Fsgn;
@@ -495,7 +464,6 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
   unsigned long int origin, tmp_off, tmp_off2;
   unsigned long int org_rankbit;
   int iFlgHermite = FALSE;
-  MPI_Status statusMPI;
   int one = 1;
 
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2,
@@ -528,7 +496,7 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
       }
     }
     else {
-      return 0.0;
+      return;
     }
   }
 
@@ -574,14 +542,8 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
     return;
   }//myrank =origin
   else {
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
+    idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+    SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
     if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite
      && org_isite3 + 1 > X->Def.Nsite && org_isite4 + 1 > X->Def.Nsite) {
@@ -601,10 +563,8 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
         Fsgn *= X_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
         tmp_V *= Fsgn;
       }/*if (iFlgHermite == TRUE)*/
-#pragma omp parallel for default(none)  private(j, dmv) firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, tmp_v0)
-      for (j = 1; j <= idim_max_buf; j++) {
-        zaxpy_(&nstate, &tmp_V, &v1buf[j][0], &one, &tmp_v0[j][0], &one);
-      }/*for (j = 1; j <= idim_max_buf; j++)*/
+
+      zaxpy_long(i_max*nstate, tmp_V, &v1buf[1][0], &tmp_v0[1][0]);
     }
     else {
       org_rankbit = X->Def.OrgTpow[2 * X->Def.Nsite] * origin;
@@ -617,10 +577,6 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }
   }/*myrank != origin*/
-  return;
-#else
-  return 0.0;
-#endif
 }/*double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}@f$
@@ -634,29 +590,19 @@ void X_GC_child_CisAis_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int j, isite1, tmp_off;
-  double complex dmv;
   int one = 1;
-  //  MPI_Status statusMPI;
 
   isite1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
   if (org_isite1 + 1 > X->Def.Nsite) {
-    if (CheckBit_Ajt(isite1, (unsigned long int) myrank, &tmp_off) == FALSE) return 0.0;
+    if (CheckBit_Ajt(isite1, (unsigned long int) myrank, &tmp_off) == FALSE) return;
 
-#pragma omp parallel  default(none) shared(tmp_v0, tmp_v1) \
-  firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
-    {
-#pragma omp for
-      for (j = 1; j <= i_max; j++) {
-        zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
-      }/*for (j = 1; j <= i_max; j++)*/
-    }/*End of parallel region*/
+    zaxpy_long(i_max*nstate, tmp_V, &tmp_v1[1][0], &tmp_v0[1][0]);
   }/*if (org_isite1 + 1 > X->Def.Nsite)*/
   else {
 #pragma omp parallel  default(none) shared(tmp_v0, tmp_v1) \
-  firstprivate(i_max, tmp_V, X, isite1) private(dmv, j, tmp_off)
+  firstprivate(i_max, tmp_V, X, isite1) private(j, tmp_off)
     {
 #pragma omp for
       for (j = 1; j <= i_max; j++) {
@@ -666,10 +612,6 @@ void X_GC_child_CisAis_Hubbard_MPI(
       }/*for (j = 1; j <= i_max; j++)*/
     }/*End of parallel region*/
   }/*if (org_isite1 + 1 <= X->Def.Nsite)*/
-  return;
-#else
-  return 0.0;
-#endif
 }/*double complex X_GC_child_CisAis_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt}@f$
@@ -685,8 +627,6 @@ void X_GC_child_CisAjt_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
-//  MPI_Status statusMPI;
 
   if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite) {
     X_GC_child_general_hopp_MPIdouble(org_isite1, org_ispin1, org_isite2, org_ispin2, tmp_trans, X, nstate, tmp_v0, tmp_v1);
@@ -698,10 +638,6 @@ void X_GC_child_CisAjt_Hubbard_MPI(
     //error message will be added.
     exitMPI(-1);
   }
-  return;
-#else
-  return 0.0;
-#endif
 }/*double complex X_GC_child_CisAjt_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{jt}@f$
@@ -717,41 +653,32 @@ void X_child_CisAisCjtAjt_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   int iCheck;
   unsigned long int tmp_ispin1;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int tmp_off, j;
-  double complex dmv;
   int one = 1;
-  //    MPI_Status statusMPI;
 
   iCheck = CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
-  if (iCheck != TRUE) return 0.0;
+  if (iCheck != TRUE) return;
   
-#pragma omp parallel  default(none) \
-shared(tmp_v0, tmp_v1, list_1, org_isite1, org_ispin1, org_isite3, org_ispin3) \
-  firstprivate(i_max, tmp_V, X, tmp_ispin1) private(dmv, j, tmp_off)
-  {
-    if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite) {
+  if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite) {
 #pragma omp for
-      for (j = 1; j <= i_max; j++) {
-        zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
-      }/*for (j = 1; j <= i_max; j++)*/
-    }/*if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite)*/
-    else if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite) {
-      if (org_isite1 > org_isite3) tmp_ispin1 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
-      else                         tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
+    zaxpy_long(i_max*nstate, tmp_V, &tmp_v1[1][0], &tmp_v0[1][0]);
+  }/*if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite)*/
+  else if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite) {
+    if (org_isite1 > org_isite3) tmp_ispin1 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
+    else                         tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
 
-#pragma omp for
-      for (j = 1; j <= i_max; j++) {
-        if (CheckBit_Ajt(tmp_ispin1, list_1[j], &tmp_off) == TRUE) {
-          zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
-        }
-      }/*for (j = 1; j <= i_max; j++)*/
-    }/*if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite)*/
-  }/*End of parallel region*/
-#endif
+#pragma omp parallel for default(none) \
+shared(tmp_v0, tmp_v1, list_1, org_isite1, org_ispin1, org_isite3, org_ispin3) \
+  firstprivate(i_max, tmp_V, X, tmp_ispin1) private(j, tmp_off)
+    for (j = 1; j <= i_max; j++) {
+      if (CheckBit_Ajt(tmp_ispin1, list_1[j], &tmp_off) == TRUE) {
+        zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
+      }
+    }/*for (j = 1; j <= i_max; j++)*/
+  }/*if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite)*/
 }/*double complex X_child_CisAisCjtAjt_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
@@ -771,7 +698,6 @@ void X_child_CisAjtCkuAlv_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
   int iCheck, ierr, Fsgn;
@@ -782,7 +708,6 @@ void X_child_CisAjtCkuAlv_Hubbard_MPI(
   unsigned long int origin, tmp_off, tmp_off2;
   unsigned long int org_rankbit, ioff;
   int iFlgHermite = FALSE;
-  MPI_Status statusMPI;
   int one = 1;
 
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2,
@@ -813,7 +738,7 @@ void X_child_CisAjtCkuAlv_Hubbard_MPI(
       iFlgHermite = TRUE;
       if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0;     
     }/*if (iCheck == TRUE)*/
-    else return 0.0;
+    else return;
   }/*if (iCheck == FALSE)*/
 
   if (myrank == origin) {
@@ -859,20 +784,10 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
     return;
   }//myrank =origin
   else {
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
+    idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+    SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
 
-    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
+    SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
     if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite
      && org_isite3 + 1 > X->Def.Nsite && org_isite4 + 1 > X->Def.Nsite)
     {
@@ -891,7 +806,7 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
         Fsgn *= X_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
         tmp_V *= Fsgn;
       }/*if (iFlgHermite == TRUE)*/
-#pragma omp parallel default(none)  private(j, dmv, ioff) \
+#pragma omp parallel default(none)  private(j, ioff) \
 firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, nstate, tmp_v0, list_2_1, list_2_2, list_1buf)
       {
 #pragma omp for
@@ -928,10 +843,6 @@ shared(v1buf, tmp_v1, nstate, tmp_v0, list_1buf, list_2_1, list_2_2)
       }/*End of parallel region*/
     }
   }/*if (myrank != origin)*/
-  return;
-#else
-  return 0.0;
-#endif
 }/*double complex X_child_CisAjtCkuAlv_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
@@ -949,7 +860,6 @@ void X_child_CisAjtCkuAku_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf, ioff;
   int iCheck, ierr, Fsgn;
@@ -959,7 +869,6 @@ void X_child_CisAjtCkuAku_Hubbard_MPI(
   double complex dmv;
   unsigned long int origin, tmp_off;
   unsigned long int org_rankbit;
-  MPI_Status statusMPI;
   int one = 1;
   //printf("Deubg0-0: org_isite1=%d, org_ispin1=%d, org_isite2=%d, org_ispin2=%d, org_isite3=%d, org_ispin3=%d\n", org_isite1, org_ispin1,org_isite2, org_ispin2,org_isite3, org_ispin3);
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite3, org_ispin3, X, (long unsigned int) myrank, &origin);
@@ -992,7 +901,7 @@ void X_child_CisAjtCkuAku_Hubbard_MPI(
       if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0;
       //printf("tmp_isite1=%ld, tmp_isite2=%ld, Adiff=%ld\n", tmp_isite1, tmp_isite2, Adiff);
     }/*if (iCheck == TRUE)*/
-    else return 0.0;   
+    else return;   
   }/*if (iCheck == FALSE)*/
 
   if (myrank == origin) {// only k is in PE
@@ -1013,19 +922,9 @@ firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp
     return;
   }//myrank =origin
   else {
-    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
-                        &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        list_1buf,   idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
-
-    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                        MPI_COMM_WORLD, &statusMPI);
-    if (ierr != 0) exitMPI(-1);
+    idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
+    SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
+    SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel default(none)  private(j, dmv, ioff, tmp_off, Fsgn, Adiff) \
 firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, isite3) \
@@ -1072,7 +971,6 @@ shared(v1buf, tmp_v1, nstate, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org
       }
     }/*End of parallel region*/
   }/*if (myrank != origin)*/
-#endif
 }/*double complex X_child_CisAjtCkuAku_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
@@ -1090,11 +988,9 @@ void X_child_CisAisCjtAku_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   X_child_CisAjtCkuAku_Hubbard_MPI(
     org_isite4, org_ispin4, org_isite3, org_ispin3,
     org_isite1, org_ispin1, conj(tmp_V), X, nstate, tmp_v0, tmp_v1);
-#endif
 }/*double complex X_child_CisAisCjtAku_Hubbard_MPI*/
 
 void X_child_CisAis_Hubbard_MPI(
@@ -1105,30 +1001,20 @@ void X_child_CisAis_Hubbard_MPI(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-#ifdef MPI
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int j, isite1, tmp_off;
-  double complex dmv;
   int one = 1;
-//  MPI_Status statusMPI;
 
   isite1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
   if (org_isite1 + 1 > X->Def.Nsite) {
     if (CheckBit_Ajt(isite1, (unsigned long int) myrank, &tmp_off) == FALSE)
-      return 0.0;
+      return;
 
-#pragma omp parallel  default(none) shared(tmp_v0, tmp_v1) \
-  firstprivate(i_max, tmp_V, X) private(dmv, j, tmp_off)
-    {
-#pragma omp for
-      for (j = 1; j <= i_max; j++) {
-        zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
-      }/*for (j = 1; j <= i_max; j++)*/
-    }/*End of parallel*/
+    zaxpy_long(i_max*nstate, tmp_V, &tmp_v1[1][0], &tmp_v0[1][0]);
   }/*if (org_isite1 + 1 > X->Def.Nsite)*/
   else {
 #pragma omp parallel  default(none) shared(tmp_v0, tmp_v1, list_1) \
-  firstprivate(i_max, tmp_V, X, isite1) private(dmv, j, tmp_off)
+  firstprivate(i_max, tmp_V, X, isite1) private(j, tmp_off)
     {
 #pragma omp for
       for (j = 1; j <= i_max; j++) {
@@ -1138,7 +1024,6 @@ void X_child_CisAis_Hubbard_MPI(
       }/*for (j = 1; j <= i_max; j++)*/
     }/*End of parallel region*/
   }/*if (org_isite1 + 1 <= X->Def.Nsite)*/
-#endif
 }/*double complex X_child_CisAis_Hubbard_MPI*/
 /**
 @brief Single creation/annihilation operator
@@ -1157,12 +1042,9 @@ void X_GC_Cis_MPI(
   double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
-#ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j;
-  MPI_Status statusMPI;
-  double complex trans, dmv;
-  int one = 1;
+  double complex trans;
 
   // org_isite >= Nsite
   mask2 = (int)Tpow[2 * org_isite + org_ispin];
@@ -1178,15 +1060,8 @@ void X_GC_Cis_MPI(
   //SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&idim_max,     1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-
-  ierr = MPI_Sendrecv(tmp_v1,        idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, idim_max);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
 
   if (state2 == mask2) {
     trans = 0;
@@ -1194,14 +1069,9 @@ void X_GC_Cis_MPI(
   else if (state2 == 0) {
     trans = (double)Fsgn * tmp_trans;
   }
-  else return 0;
+  else return;
 
-#pragma omp parallel for default(none)  private(j, dmv) \
-  firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
-  for (j = 0; j < idim_max_buf; j++) {
-    zaxpy_(&nstate, &trans, &tmp_v1buf[j + 1][0], &one, &tmp_v0[j + 1][0], &one);
-  }
-#endif
+  zaxpy_long(idim_max_buf*nstate, trans, &tmp_v1buf[1][0], &tmp_v0[1][0]);
 }/*double complex X_GC_Cis_MPI*/
 /**
 @brief Single creation/annihilation operator
@@ -1220,12 +1090,9 @@ void X_GC_Ajt_MPI(
   double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
-#ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j;
-  MPI_Status statusMPI;
-  double complex trans, dmv;
-  int one = 1;
+  double complex trans;
 
   // org_isite >= Nsite
   mask2 = (int)Tpow[2 * org_isite + org_ispin];
@@ -1241,29 +1108,15 @@ void X_GC_Ajt_MPI(
   //SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&idim_max,     1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, idim_max);
 
-  ierr = MPI_Sendrecv(tmp_v1,        idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
 
   if (     state2 == 0    ) trans = 0;
   else if (state2 == mask2) trans = (double)Fsgn * tmp_trans;
-  else return 0;
+  else return;
 
-#pragma omp parallel for default(none)  private(j, dmv) \
-firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
-  for (j = 0; j < idim_max_buf; j++) {
-    zaxpy_(&nstate, &trans, &tmp_v1buf[j + 1][0], &one, &tmp_v0[j + 1][0], &one);
-  }
-  return;
-#else
-  return 0.0;
-#endif
+  zaxpy_long(idim_max_buf*nstate, trans, &tmp_v1buf[1][0], &tmp_v0[1][0]);
 }/*double complex X_GC_Ajt_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger@f$
@@ -1286,11 +1139,9 @@ void X_Cis_MPI(
   long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ) {
-#ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
-  MPI_Status statusMPI;
-  double complex trans, dmv;
+  double complex trans;
   int one = 1;
 
   // org_isite >= Nsite
@@ -1306,20 +1157,11 @@ void X_Cis_MPI(
 
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
 
-  ierr = MPI_Sendrecv(&idim_max,     1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, idim_max);
 
-  ierr = MPI_Sendrecv(list_1_org,        idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  SendRecv_iv(origin, idim_max + 1, idim_max_buf + 1, list_1_org, list_1buf_org);
 
-  ierr = MPI_Sendrecv(tmp_v1,        idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
 
   if (state2 == mask2) {
     trans = 0;
@@ -1327,9 +1169,9 @@ void X_Cis_MPI(
   else if (state2 == 0) {
     trans = (double)Fsgn * tmp_trans;
   }
-  else return 0;
+  else retur;
 
-#pragma omp parallel for default(none) private(j, dmv) \
+#pragma omp parallel for default(none) private(j) \
 firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
 shared(tmp_v1buf, tmp_v1, nstate, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
@@ -1337,10 +1179,6 @@ shared(tmp_v1buf, tmp_v1, nstate, tmp_v0, list_1buf_org)
       _irght, _ilft, _ihfbit, &ioff);
     zaxpy_(&nstate, &trans, &tmp_v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/
-  return;
-#else
-  return 0.0;
-#endif
 }/*double complex X_GC_Cis_MPI*/
 /**
 @brief Compute @f$c_{jt}@f$
@@ -1363,11 +1201,9 @@ void X_Ajt_MPI(
   long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ){
-#ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
-  MPI_Status statusMPI;
-  double complex trans, dmv;
+  double complex trans;
   int one = 1;
 
   // org_isite >= Nsite
@@ -1382,20 +1218,9 @@ void X_Ajt_MPI(
   bit2diff = myrank - ((2 * mask2 - 1) & myrank);
 
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
-  ierr = MPI_Sendrecv(&idim_max,     1, MPI_UNSIGNED_LONG, origin, 0,
-                      &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-
-  ierr = MPI_Sendrecv(list_1_org,        idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      list_1buf_org, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
-
-  ierr = MPI_Sendrecv(tmp_v1,        idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      tmp_v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
-                      MPI_COMM_WORLD, &statusMPI);
-  if (ierr != 0) exitMPI(-1);
+  idim_max_buf = SendRecv_i(origin, idim_max);
+  SendRecv_iv(origin, idim_max + 1, idim_max_buf + 1, list_1_org, list_1buf_org);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
 
   if (state2 == 0) {
     trans = 0;
@@ -1403,9 +1228,9 @@ void X_Ajt_MPI(
   else if (state2 == mask2) {
     trans = (double)Fsgn * tmp_trans;
   }
-  else return 0;
+  else return;
 
-#pragma omp parallel for default(none) private(j, dmv) \
+#pragma omp parallel for default(none) private(j) \
 firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
 shared(tmp_v1buf, tmp_v1, nstate, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {
@@ -1413,5 +1238,4 @@ shared(tmp_v1buf, tmp_v1, nstate, tmp_v0, list_1buf_org)
       _irght, _ilft, _ihfbit, &ioff);
     zaxpy_(&nstate, &trans, &tmp_v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }
-#endif
 }/*double complex X_Ajt_MPI*/

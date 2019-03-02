@@ -148,7 +148,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
     }
   }/*else if(initial_mode==1)*/
   StartTimer(4201);
-  mltply(X, v0, v1);
+  mltply(X, 1, v0, v1);
   StopTimer(4201);
 
   alpha1=alpha[1];
@@ -174,7 +174,7 @@ void Lanczos_EigenVector(struct BindStruct *X){
       v1[j] = temp2;
     }
     StartTimer(4201);
-    mltply(X, v0, v1);
+    mltply(X, 1, v0, v1);
     StopTimer(4201);
     alpha1 = alpha[i];
     beta1 = beta[i];

@@ -301,8 +301,8 @@ int CalcSpectrumByBiCG(
       v12[idim] = 0.0;
       v14[idim] = 0.0;
     }
-    iret = mltply(&X->Bind, v12, v2);
-    iret = mltply(&X->Bind, v14, v4);
+    iret = mltply(&X->Bind, 1, v12, v2);
+    iret = mltply(&X->Bind, 1, v14, v4);
 
     res_proj = VecProdMPI(X->Bind.Check.idim_max, vrhs, v2);
     /**

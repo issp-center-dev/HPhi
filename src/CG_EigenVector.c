@@ -143,7 +143,7 @@ int CG_EigenVector(struct BindStruct *X/**<[inout]*/){
         y[j]=(-Eig+eps_CG)*vg[j];   //y = -E*p
       }
       StartTimer(4401);
-      mltply(X,y,vg);      // y += H*p
+      mltply(X,1,y,vg);      // y += H*p
       StopTimer(4401);
       // (H-E)p=y finish!
       rp=0.0;

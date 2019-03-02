@@ -32,10 +32,18 @@ unsigned long int MaxMPI_li(unsigned long int idim);
 double MaxMPI_d(double dvalue);
 double complex SumMPI_dc(double complex norm);
 double SumMPI_d(double norm);
+double SumMPI_dv(int nnorm, double *norm);
+double SumMPI_cv(int nnorm, double complex *norm);
 unsigned long int SumMPI_li(unsigned long int idim);
 int SumMPI_i(int idim);
 unsigned long int BcastMPI_li(int root, unsigned long int idim);
 double NormMPI_dc(unsigned long int idim, double complex *_v1);
+void NormMPI_dv(unsigned long int ndim, int nstate, double complex **_v1, double *dnorm);
 double complex VecProdMPI(long unsigned int ndim, double complex *v1, double complex *v2);
-
+void MultiVecProdMPI(long unsigned int ndim, int nstate, double complex **v1, double complex **v2, double complex *prod);
+void SendRecv_cv(int origin, unsigned long int nMsgS, unsigned long int nMsgR,
+  double complex *vecs, double complex *vecr);
+void SendRecv_iv(int origin, unsigned long int nMsgS, unsigned long int nMsgR,
+  unsigned long int *vecs, unsigned long int *vecr);
+unsigned long int SendRecv_i(int origin, unsigned long int isend);
 #endif

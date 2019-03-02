@@ -288,7 +288,6 @@ int X_CisAis(
 }
 /**
 @brief @f$c_{is}^\dagger c_{jt}@f$ term for canonical Hubbard
-@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -328,7 +327,6 @@ void CisAjt(
 }
 /**
 @brief @f$c_{is}^\dagger c_{jt}@f$ term for grandcanonical Hubbard
-@return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
@@ -443,7 +441,6 @@ int X_GC_CisAjt(
 /******************************************************************************/
 /**
 @brief Compute exchange term of canonical-Hubbard
-@return @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */

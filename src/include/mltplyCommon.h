@@ -25,5 +25,7 @@
 #define M_CALCSPEC 4
 
 void zaxpy_(int *n, double complex *a, double complex *x, int *incx, double complex *y, int *incy);
-
+void zaxpy_long(unsigned long int n, double complex a, double complex *x, double complex *y);
+void zswap_long(unsigned long int n,double complex *x, double complex *y);
+void zclear(unsigned long int n, double complex *x);
 #endif /* HPHI_MLTPLYCOMMON_H */

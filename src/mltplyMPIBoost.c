@@ -43,7 +43,6 @@ void child_general_int_spin_MPIBoost(
 {
 #ifdef MPI
   
-  // MPI_Status statusMPI;
 
   //  int ierr;
   //  int INFO;

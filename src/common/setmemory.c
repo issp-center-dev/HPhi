@@ -295,3 +295,37 @@ void free_cd_3d_allocate(double complex***A){
     free(A[0]);
     free(A);
 }
+
+/// \brief Allocation for A[N][M]
+/// \param N [in] The size of the array A
+/// \param M [in] The size of the array M
+/// \return A Pointer to array A
+/// \author Kazuyoshi Yoshimi (University of Tokyo)
+double complex****cd_4d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L, const long unsigned int K) {
+  long unsigned int int_i, int_j, int_k;
+  double complex****A;
+  A = (double complex****)calloc((N), sizeof(double complex**));
+  A[0] = (double complex***)calloc((M*N), sizeof(double complex*));
+  A[0][0] = (double complex**)calloc((L*M*N), sizeof(double complex));
+  A[0][0][0] = (double complex**)calloc((K*L*M*N), sizeof(double complex));
+  for (int_i = 0; int_i < N; int_i++) {
+    A[int_i] = A[0] + int_i * M;
+    for (int_j = 0; int_j < M; int_j++) {
+      A[int_i][int_j] = A[0][0] + int_i * M*L + int_j * L;
+      for (int_k = 0; int_k < L; int_k++) {
+        A[int_i][int_j][int_k] = A[0][0][0] + int_i * M*L*K + int_j * L*M + int_k * L;
+      }
+    }
+  }
+  return A;
+}
+
+///
+/// \brief Function to free 3d array (complex double)
+/// \param A A pointer of 3d array A
+void free_cd_4d_allocate(double complex****A) {
+  free(A[0][0][0]);
+  free(A[0][0]);
+  free(A[0]);
+  free(A);
+}

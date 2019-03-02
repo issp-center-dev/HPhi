@@ -100,7 +100,7 @@ int MultiplyForTEM
       v1[i]=tmp2;
       v2[i]= 0.0 + I*0.0;
     }
-    mltply(X, v2, v1);
+    mltply(X, 1, v2, v1);
   }
   else {
     tmp1 *= -I * dt;
@@ -114,7 +114,7 @@ int MultiplyForTEM
     for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
       tmp1 *= -I * dt / (double complex) coef;
       //v2 = H*v1 = H^coef |psi(t)>
-      mltply(X, v2, v1);
+      mltply(X, 1, v2, v1);
 
 #pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
       for (i = 1; i <= i_max; i++) {

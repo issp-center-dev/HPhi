@@ -139,7 +139,7 @@ int expec_energy_flct(struct BindStruct *X){
     nCalcExpec=5302;
   }
   StartTimer(nCalcExpec);
-  mltply(X, v0, v1); // v0+=H*v1
+  mltply(X, 1, v0, v1); // v0+=H*v1
   StopTimer(nCalcExpec);
 /* switch -> SpinGCBoost */
 

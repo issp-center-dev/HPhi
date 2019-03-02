@@ -104,7 +104,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       //Eigenvalues by Lanczos method
       TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
       StartTimer(4101);
-      mltply(X, v0, v1);
+      mltply(X, 1, v0, v1);
       StopTimer(4101);
       stp = 1;
       TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
@@ -160,7 +160,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
     }
 
     StartTimer(4101);
-    mltply(X, v0, v1);
+    mltply(X, 1, v0, v1);
     StopTimer(4101);
     TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
     alpha1 = creal(X->Large.prdct);
@@ -356,7 +356,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
       v1[i] = tmp_v1[i];
     }
     stp = 0;
-    mltply(X, v0, tmp_v1);
+    mltply(X, 1, v0, tmp_v1);
     TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
     alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
     _alpha[1] = alpha1;
@@ -392,7 +392,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
       v1[i] = temp2;
     }
 
-    mltply(X, v0, v1);
+    mltply(X, 1, v0, v1);
     TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
     alpha1 = creal(X->Large.prdct);
     _alpha[stp] = alpha1;

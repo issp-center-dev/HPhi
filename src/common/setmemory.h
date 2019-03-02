@@ -182,4 +182,8 @@ double complex***cd_3d_allocate(const long unsigned int N, const long unsigned i
 /// \param A A pointer of 3d array A
 void free_cd_3d_allocate(double complex***A);
 
+double complex****cd_4d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L, const long unsigned int K);
+
+void free_cd_4d_allocate(double complex****A);
+
 #endif //MVMC_SETMEMORY_H

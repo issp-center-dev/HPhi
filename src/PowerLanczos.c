@@ -43,7 +43,7 @@ int PowerLanczos(struct BindStruct *X){
     for(i = 1; i <= i_max; i++){
       v0[i]=0.0+0.0*I;
     }
-    mltply(X, v0, v1); // v0+=H*v1
+    mltply(X, 1, v0, v1); // v0+=H*v1
 
     dam_pr1=0.0;
     dam_pr2a=0.0;
@@ -63,7 +63,7 @@ int PowerLanczos(struct BindStruct *X){
       vg[i]=0.0;
     }
   
-    mltply(X, vg, v0); // vg=H*v0=H*H*v1
+    mltply(X, 1, vg, v0); // vg=H*v0=H*H*v1
     dam_pr2b = 0.0;
     dam_pr3  = 0.0;
     dam_pr4  = 0.0;
