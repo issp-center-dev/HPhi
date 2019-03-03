@@ -77,13 +77,14 @@ static void geometry_W90(
 static int read_W90_query(
   struct StdIntList *StdI,//!<[inout]
   char *filename,//!<[in] Input file name
-  double cutoff//!<[in] Threshold for the Hamiltonian 
+  double cutoff,//!<[in] Threshold for the Hamiltonian 
+  int cutoff_R[3]
 ) 
 {
   FILE *fp;
   int nMat;
-  int ierr, nWan, nWSC, iWSC, jWSC, iWan, jWan, iWan0, jWan0, ii;
-  double dtmp[2];
+  int ierr, nWan, nWSC, iWSC, jWSC, iWan, jWan, iWan0, jWan0, ii, jj;
+  double dtmp[2], dR[3], length;
   char ctmp[256], *ctmp2;
   double complex ***Mat_tot;
   int **indx_tot;
@@ -123,6 +124,25 @@ static int read_W90_query(
         ierr = fscanf(fp, "%d%d%d%d%d%lf%lf",
           &indx_tot[iWSC][0], &indx_tot[iWSC][1], &indx_tot[iWSC][2], &iWan0, &jWan0,
           &dtmp[0], &dtmp[1]);
+        /*
+         Compute Euclid length
+        */
+        for (ii = 0; ii < 3; ii++) {
+          dR[ii] = 0.0;
+          for (jj=0;jj<3;jj++)
+            dR[ii] += StdI->direct[jj][ii] * (StdI->tau[jWan][jj] - StdI->tau[iWan][jj] + indx_tot[iWSC][jj]);
+        }
+        length = sqrt(dR[0] * dR[0] + dR[1] * dR[1] + dR[2] * dR[2]);
+        if (length > StdI->cutoff_length && StdI->cutoff_length > 0.0) {
+          dtmp[0] = 0.0;
+          dtmp[1] = 0.0;
+        }
+        if (abs(indx_tot[iWSC][0]) > cutoff_R[0] ||
+            abs(indx_tot[iWSC][1]) > cutoff_R[1] ||
+            abs(indx_tot[iWSC][2]) > cutoff_R[2]) {
+          dtmp[0] = 0.0;
+          dtmp[1] = 0.0;
+        }
         if(iWan0 <= StdI->NsiteUC && jWan0 <= StdI->NsiteUC)
           Mat_tot[iWSC][iWan0 - 1][jWan0 - 1] = dtmp[0] + I * dtmp[1];
       }
@@ -324,13 +344,14 @@ void StdFace_Wannier90(
   StdFace_PrintVal_d("phase1", &StdI->phase[1], 0.0);
   StdFace_PrintVal_d("phase2", &StdI->phase[2], 0.0);
   StdFace_InitSite(StdI, fp, 3);
+  StdFace_PrintVal_d("cutoff_length", &StdI->cutoff_length, -1.0);
   /*
   Read Hopping
   */
   fprintf(stdout, "\n  @ Wannier90 hopping \n\n");
   StdFace_PrintVal_d("cutoff_t", &StdI->cutoff_t, 1.0e-8);
   sprintf(filename, "%s_hr.dat", StdI->CDataFileHead);
-  n_t = read_W90_query(StdI, filename, StdI->cutoff_t);
+  n_t = read_W90_query(StdI, filename, StdI->cutoff_t, StdI->cutoff_tR);
   W90_t = (double complex *)malloc(sizeof(double complex) * n_t);
   t_indx = (int **)malloc(sizeof(int*) * n_t);
   for (ii = 0; ii < n_t; ii++) t_indx[ii] = (int *)malloc(sizeof(int) * 5);
@@ -341,7 +362,7 @@ void StdFace_Wannier90(
   fprintf(stdout, "\n  @ Wannier90 Coulomb \n\n");
   StdFace_PrintVal_d("cutoff_u", &StdI->cutoff_u, 1.0e-8);
   sprintf(filename, "%s_ur.dat", StdI->CDataFileHead);
-  n_u = read_W90_query(StdI, filename, StdI->cutoff_u);
+  n_u = read_W90_query(StdI, filename, StdI->cutoff_u, StdI->cutoff_UR);
   W90_u = (double complex *)malloc(sizeof(double complex) * n_u);
   u_indx = (int **)malloc(sizeof(int*) * n_u);
   for (ii = 0; ii < n_u; ii++) u_indx[ii] = (int *)malloc(sizeof(int) * 5);
@@ -352,7 +373,7 @@ void StdFace_Wannier90(
   fprintf(stdout, "\n  @ Wannier90 Hund \n\n");
   StdFace_PrintVal_d("cutoff_j", &StdI->cutoff_j, 1.0e-8);
   sprintf(filename, "%s_jr.dat", StdI->CDataFileHead);
-  n_j = read_W90_query(StdI, filename, StdI->cutoff_j);
+  n_j = read_W90_query(StdI, filename, StdI->cutoff_j, StdI->cutoff_JR);
   W90_j = (double complex *)malloc(sizeof(double complex) * n_j);
   j_indx = (int **)malloc(sizeof(int*) * n_j);
   for (ii = 0; ii < n_j; ii++) j_indx[ii] = (int *)malloc(sizeof(int) * 5);
