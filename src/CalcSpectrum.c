@@ -247,17 +247,6 @@ int CalcSpectrum(
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
   StartTimer(6200);
   switch (X->Bind.Def.iCalcType) {
-    case Lanczos:
-
-      iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
-
-      if (iret != TRUE) {
-        //Error Message will be added.
-        return FALSE;
-      }
-
-      break;//Lanczos Spectrum
-
     case CG:
 
       iret = CalcSpectrumByBiCG(X, v0, v1, vg, Nomega, dcSpectrum, dcomega);

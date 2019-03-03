@@ -19,7 +19,6 @@
 #include <HPhiTrans.h>
 #include <output_list.h>
 #include <diagonalcalc.h>
-#include <CalcByLanczos.h>
 #include <CalcByLOBPCG.h>
 #include <CalcByFullDiag.h>
 #include <CalcByTPQ.h>
@@ -280,46 +279,37 @@ int main(int argc, char* argv[]){
     StopTimer(2000);
       
     switch (X.Bind.Def.iCalcType) {
-    case Lanczos:
-      StartTimer(4000);
-      if (CalcByLanczos(&X) != TRUE) {
-        StopTimer(4000);
-        exitMPI(-3);
-      }
-      StopTimer(4000);
-      break;
-
     case CG:
       if (CalcByLOBPCG(&X) != TRUE) {
           exitMPI(-3);
       }
       break;
 
-      case FullDiag:
-        StartTimer(5000);
-        if (X.Bind.Def.iFlgScaLAPACK ==0 && nproc != 1) {
-          fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
-          FinalizeMPI();
-        }
-        if (CalcByFullDiag(&X) != TRUE) {
-          FinalizeMPI(); 
-        }
-        StopTimer(5000);
+    case FullDiag:
+      StartTimer(5000);
+      if (X.Bind.Def.iFlgScaLAPACK == 0 && nproc != 1) {
+        fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
+        FinalizeMPI();
+      }
+      if (CalcByFullDiag(&X) != TRUE) {
+        FinalizeMPI();
+      }
+      StopTimer(5000);
       break;
 
-      case TPQCalc:
-        StartTimer(3000);        
-        if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
-          StopTimer(3000);
-          exitMPI(-3);
-        }
+    case TPQCalc:
+      StartTimer(3000);
+      if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
         StopTimer(3000);
+        exitMPI(-3);
+      }
+      StopTimer(3000);
       break;
 
-      case TimeEvolution:
-        if(CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)!=0){
-            exitMPI(-3);
-        }
+    case TimeEvolution:
+      if (CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X) != 0) {
+        exitMPI(-3);
+      }
       break;
 
     default:

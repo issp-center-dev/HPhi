@@ -21,7 +21,6 @@
 - mltplySpinGC() : Main routine of spin Hamiltonian (grandcanonical)
   - mltplyHalfSpinGC() : 1/2 spin
   - mltplyGeneralSpinGC() : general spin
-  - mltplySpinGCBoost() : 
 
 Hub routines
 <table>
@@ -166,7 +165,6 @@ General on-site term
 #include "mltplyHubbardCore.h"
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
-#include "mltplyMPIBoost.h"
 /**
 @brief Driver function for Spin hamiltonian
 @return error code
@@ -393,9 +391,6 @@ int mltplySpinGC(
 
   if(iret != 0) return iret;
   
-  if(X->Boost.flgBoost == 1)
-    iret = mltplySpinGCBoost(X, nstate, tmp_v0, tmp_v1);
-
   return iret;
 }/*int mltplySpinGC*/
 /**
@@ -777,40 +772,6 @@ shared(tmp_v0, tmp_v1)
   StopTimer(500);
   return 0;
 }/*int mltplyGeneralSpinGC*/
-/**
-@brief Driver function for Spin hamiltonian (Boost)
-@return error code
-@author Kazuyoshi Yoshimi (The University of Tokyo)
-*/
-int mltplySpinGCBoost(
-  struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Result vector
-  double complex **tmp_v1//!<[in] Input producted vector
-)
-{
-  long unsigned int j;
-
-  /* SpinGCBoost */
-  double complex* tmp_v2;
-  double complex* tmp_v3;
-  /* SpinGCBoost */
-  
-  long unsigned int i_max;
-  i_max = X->Check.idim_max;
-
-  StartTimer(500);
-  tmp_v2 = cd_1d_allocate(i_max+1);
-  tmp_v3 = cd_1d_allocate(i_max+1);
-
-  child_general_int_spin_MPIBoost(X, nstate, tmp_v0, tmp_v1, tmp_v2, tmp_v3);
-    
-  /* SpinGCBoost */
-  free_cd_1d_allocate(tmp_v2);
-  free_cd_1d_allocate(tmp_v3);
-  /* SpinGCBoost */
-  StopTimer(500);
-  return 0;
-}/*int mltplySpinGCBoost*/
 
 /******************************************************************************/
 //[s] child functions

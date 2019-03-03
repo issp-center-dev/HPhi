@@ -147,8 +147,6 @@ void totalspin_Hubbard(struct BindStruct *X,double complex *vec) {
   X->Phys.s2 = creal(spn);
   X->Phys.Sz = creal(spn_z);
 }
-
-
 /**
  * @brief function of calculating totalspin for Hubbard model in grand canonical ensemble
  *
@@ -218,7 +216,6 @@ void totalspin_HubbardGC(struct BindStruct *X,double complex *vec) {
   X->Phys.s2 = creal(spn);
   X->Phys.Sz = creal(spn_z);
 }
-
 /**
  * @brief function of calculating totalspin for spin model
  *

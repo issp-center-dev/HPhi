@@ -79,18 +79,6 @@ int expec_cisajs(
   X->Large.mode     = M_CORR;
  
   switch(X->Def.iCalcType){
-  case Lanczos:
-    if(X->Def.St==0){
-      sprintf(sdt, cFileName1BGreen_Lanczos, X->Def.CDataFileHead);
-        fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGStart);
-      TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGStart, "a");
-    }else if(X->Def.St==1){
-      sprintf(sdt, cFileName1BGreen_CG, X->Def.CDataFileHead);
-        TimeKeeper(X, cFileNameTimeKeep, cCGExpecOneBodyGStart, "a");
-        fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGStart);
-    }
-    //vec=v0;
-    break;
   case TPQCalc:
     step=X->Def.istep;
     rand_i=X->Def.irand;
@@ -178,7 +166,7 @@ int expec_cisajs_HubbardGC(
   int nstate,
   double complex **Xvec,
   double complex **vec, 
-  FILE **_fp
+  double complex **prod
 ){
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
@@ -234,7 +222,7 @@ int expec_cisajs_HubbardGC(
       GC_child_general_hopp(nstate, Xvec, vec, X, tmp_OneGreen);
     }
 
-    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod);
+    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
     fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n", 
       org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
   }
@@ -254,7 +242,7 @@ int expec_cisajs_Hubbard(
   int nstate,
   double complex **Xvec,
   double complex **vec, 
-  FILE **_fp
+  double complex **prod
 ) {
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
@@ -276,19 +264,17 @@ int expec_cisajs_Hubbard(
 
     if (X->Def.iFlgSzConserved == TRUE) {
       if (org_sigma1 != org_sigma2) {
-        dam_pr = 0.0;
-        fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
+        zclear(nstate, prod[i]);
         continue;
       }
     }
 
     if (X->Def.iCalcModel == Kondo || X->Def.iCalcModel == KondoGC) {
       if ((X->Def.LocSpn[org_isite1 - 1] == 1 && X->Def.LocSpn[org_isite2 - 1] == 0) ||
-        (X->Def.LocSpn[org_isite1 - 1] == 0 && X->Def.LocSpn[org_isite2 - 1] == 1)
+          (X->Def.LocSpn[org_isite1 - 1] == 0 && X->Def.LocSpn[org_isite2 - 1] == 1)
         )
       {
-        dam_pr = 0.0;
-        fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
+        zclear(nstate, prod[i]);
         continue;
       }
     }
@@ -338,7 +324,7 @@ firstprivate(i_max, is) private(num1, ibit)
         child_general_hopp(nstate, Xvec, vec, X, tmp_OneGreen);
       }
     }
-    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod);
+    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
     fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
@@ -357,7 +343,7 @@ int expec_cisajs_Spin(
   int nstate,
   double complex **Xvec,
   double complex **vec, 
-  FILE **_fp
+    double complex **prod
 ) {
   int info = 0;
   if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -382,7 +368,7 @@ int expec_cisajs_SpinHalf(
   int nstate,
   double complex **Xvec,
   double complex **vec, 
-  FILE **_fp
+  double complex **prod
 ) {
   long unsigned int i, j;
   long unsigned int isite1;
@@ -429,7 +415,7 @@ firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
       // for the canonical case
       dam_pr = 0.0;
     }
-    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod);
+    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
     fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
@@ -448,7 +434,7 @@ int expec_cisajs_SpinGeneral(
   int nstate,
   double complex **Xvec,
   double complex **vec, 
-  FILE **_fp
+  double complex **prod
 ) {
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
@@ -500,7 +486,7 @@ firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec, list_1)
       dam_pr = 0.0;
     }//org_isite1 != org_isite2
 
-    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod);
+    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
     fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
@@ -519,7 +505,7 @@ int expec_cisajs_SpinGC(
   int nstate,
   double complex **Xvec,
   double complex **vec, 
-  FILE **_fp
+  double complex **prod
 ) {
   int info = 0;
   if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -544,7 +530,7 @@ int expec_cisajs_SpinGCHalf(
   int nstate,
   double complex **Xvec,
   double complex **vec, 
-  FILE **_fp
+    double complex **prod
 ) {
   long unsigned int i, j;
   long unsigned int isite1;
@@ -603,7 +589,7 @@ firstprivate(i_max, isite1, org_sigma2, X) shared(vec)
       // hopping is not allowed in localized spin system
       dam_pr = 0.0;
     }
-    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod);
+    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
     fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
       org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
   }
@@ -623,7 +609,7 @@ int expec_cisajs_SpinGCGeneral(
   int nstate,
   double complex **Xvec,
   double complex **vec,
-  FILE **_fp
+  double complex **prod
 ) {
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
@@ -679,7 +665,7 @@ firstprivate(i_max, org_isite1, org_sigma1, org_sigma2, X,tmp_off) shared(vec)
         }
       }
     }
-    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod);
+    MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
     fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
       org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, creal(dam_pr), cimag(dam_pr));
   }

@@ -37,12 +37,9 @@ int expec_energy_flct(struct BindStruct *X){
   long unsigned int irght,ilft,ihfbit;
   double complex dam_pr,dam_pr1;
   long unsigned int i_max;
+  int istate;
 
   switch(X->Def.iCalcType){
-  case Lanczos:
-    fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
-    TimeKeeper(X, cFileNameTimeKeep, cExpecStart, "a");
-    break;
   case TPQCalc:
   case TimeEvolution:
 #ifdef _DEBUG
@@ -67,13 +64,10 @@ int expec_energy_flct(struct BindStruct *X){
   X->Large.ilft     = ilft;
   X->Large.ihfbit   = ihfbit;
   X->Large.mode     = M_ENERGY;
-  X->Phys.energy=0.0;
+  for (istate = 0; istate < X->Def.k_exct; istate++) X->Phys.energy[istate]=0.0;
 
   int nCalcFlct;
-  if(X->Def.iCalcType == Lanczos){
-    nCalcFlct=4301;
-  }
-  else if (X->Def.iCalcType == TPQCalc){
+  if (X->Def.iCalcType == TPQCalc) {
     nCalcFlct=3201;
   }
   else{//For FullDiag
@@ -109,12 +103,14 @@ int expec_energy_flct(struct BindStruct *X){
       expec_energy_flct_GeneralSpin(X);
     }
      */
-      X->Phys.doublon   = 0.0;
-      X->Phys.doublon2  = 0.0;
-      X->Phys.num       = X->Def.NsiteMPI;
-      X->Phys.num2      = X->Def.NsiteMPI*X->Def.NsiteMPI;
-      X->Phys.Sz        = 0.5 * (double)X->Def.Total2SzMPI;
-      X->Phys.Sz2       = X->Phys.Sz * X->Phys.Sz;
+    for (istate = 0; istate < X->Def.k_exct; istate++) {
+      X->Phys.doublon[istate] = 0.0;
+      X->Phys.doublon2[istate] = 0.0;
+      X->Phys.num[istate] = X->Def.NsiteMPI;
+      X->Phys.num2[istate] = X->Def.NsiteMPI*X->Def.NsiteMPI;
+      X->Phys.Sz[istate] = 0.5 * (double)X->Def.Total2SzMPI;
+      X->Phys.Sz2[istate] = X->Phys.Sz * X->Phys.Sz;
+    }
     break;
   default:
     return -1;
@@ -123,46 +119,40 @@ int expec_energy_flct(struct BindStruct *X){
   StopTimer(nCalcFlct);       
 
 #pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
-  for(i = 1; i <= i_max; i++){
-    v1[i]=v0[i];
-    v0[i]=0.0;
+  for (i = 1; i <= i_max; i++) {
+    for (istate = 0; istate < X->Def.k_exct; istate++){
+      v1[i][istate] = v0[i][istate];
+      v0[i][istate] = 0.0;
+    }
   }
 
   int nCalcExpec;
-  if(X->Def.iCalcType == Lanczos){
-    nCalcExpec=4302;
-  }
-  else if (X->Def.iCalcType == TPQCalc){
+  if (X->Def.iCalcType == TPQCalc){
     nCalcExpec=3202;
   }
   else{//For FullDiag
     nCalcExpec=5302;
   }
   StartTimer(nCalcExpec);
-  mltply(X, 1, v0, v1); // v0+=H*v1
+  mltply(X, 1, X->Def.k_exct, v0, v1); // v0+=H*v1
   StopTimer(nCalcExpec);
 /* switch -> SpinGCBoost */
 
-  dam_pr=0.0;
-  dam_pr1=0.0;
+  for (istate = 0; istate < X->Def.k_exct; istate++) {
+    X->Phys.energy[istate] = 0.0;
+    X->Phys.var[istate] = 0.0;
+  }
   #pragma omp parallel for default(none) reduction(+:dam_pr, dam_pr1) private(j) shared(v0, v1)firstprivate(i_max) 
-  for(j=1;j<=i_max;j++){
-    dam_pr   += conj(v1[j])*v0[j]; // E   = <v1|H|v1>=<v1|v0>
-    dam_pr1  += conj(v0[j])*v0[j]; // E^2 = <v1|H*H|v1>=<v0|v0>
-    //v0[j]=v1[j]; v1-> orginal v0=H*v1
+  for (j = 1; j <= i_max; j++) {
+    for (istate = 0; istate < X->Def.k_exct; istate++) {
+      X->Phys.energy += conj(v1[j][istate])*v0[j][istate]; // E   = <v1|H|v1>=<v1|v0>
+      X->Phys.var += conj(v0[j][istate])*v0[j][istate]; // E^2 = <v1|H*H|v1>=<v0|v0>
+    }
   }  
-  dam_pr = SumMPI_dc(dam_pr);
-  dam_pr1 = SumMPI_dc(dam_pr1);
-  //fprintf(stdoutMPI, "Debug: ene=%lf, var=%lf\n", creal(dam_pr), creal(dam_pr1));
-  
-  X->Phys.energy = dam_pr;
-  X->Phys.var    = dam_pr1;
+  SumMPI_cv(X->Def.k_exct, X->Phys.energy);
+  SumMPI_cv(X->Def.k_exct, X->Phys.var);
 
   switch(X->Def.iCalcType) {
-    case Lanczos:
-      fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
-      TimeKeeper(X, cFileNameTimeKeep, cExpecEnd, "a");
-      break;
     case TPQCalc:
     case TimeEvolution:
 #ifdef _DEBUG
@@ -173,130 +163,128 @@ int expec_energy_flct(struct BindStruct *X){
     default:
       break;
   }
-
   return 0;
 }
-
 ///
 /// \brief Calculate expected values of energies and physical quantities for Hubbard GC model
 /// \param X [in, out] X Struct to get information about file header names, dimension of hirbert space, calc type and output physical quantities.
 /// \retval 0 normally finished.
 /// \retval -1 abnormally finished.
 int expec_energy_flct_HubbardGC(struct BindStruct *X) {
-    long unsigned int j;
-    long unsigned int isite1;
-    long unsigned int is1_up_a, is1_up_b;
-    long unsigned int is1_down_a, is1_down_b;
-    int bit_up, bit_down, bit_D;
-    long unsigned int ibit_up, ibit_down, ibit_D;
-    double D, tmp_D, tmp_D2;
-    double N, tmp_N, tmp_N2;
-    double Sz, tmp_Sz, tmp_Sz2;
-    double tmp_v02;
-    long unsigned int i_max;
-    unsigned int l_ibit1, u_ibit1, i_32;
-    i_max=X->Check.idim_max;
+  long unsigned int j;
+  long unsigned int isite1;
+  long unsigned int is1_up_a, is1_up_b;
+  long unsigned int is1_down_a, is1_down_b;
+  int bit_up, bit_down, bit_D;
+  long unsigned int ibit_up, ibit_down, ibit_D;
+  double D, tmp_D, tmp_D2;
+  double N, tmp_N, tmp_N2;
+  double Sz, tmp_Sz, tmp_Sz2;
+  double tmp_v02;
+  long unsigned int i_max;
+  unsigned int l_ibit1, u_ibit1, i_32;
+  i_max = X->Check.idim_max;
 
-    i_32 = 0xFFFFFFFF; //2^32 - 1
+  i_32 = 0xFFFFFFFF; //2^32 - 1
     // tentative doublon
-    tmp_D        = 0.0;
-    tmp_D2       = 0.0;
-    tmp_N        = 0.0;
-    tmp_N2       = 0.0;
-    tmp_Sz       = 0.0;
-    tmp_Sz2      = 0.0;
+  tmp_D = 0.0;
+  tmp_D2 = 0.0;
+  tmp_N = 0.0;
+  tmp_N2 = 0.0;
+  tmp_Sz = 0.0;
+  tmp_Sz2 = 0.0;
 
 //[s] for bit count
-    is1_up_a = 0;
-    is1_up_b = 0;
-    is1_down_a = 0;
-    is1_down_b = 0;
-    for (isite1 = 1; isite1 <= X->Def.NsiteMPI; isite1++) {
-        if (isite1 > X->Def.Nsite) {
-            is1_up_a += X->Def.Tpow[2 * isite1 - 2];
-            is1_down_a += X->Def.Tpow[2 * isite1 - 1];
-        } else {
-            is1_up_b += X->Def.Tpow[2 * isite1 - 2];
-            is1_down_b += X->Def.Tpow[2 * isite1 - 1];
-        }
+  is1_up_a = 0;
+  is1_up_b = 0;
+  is1_down_a = 0;
+  is1_down_b = 0;
+  for (isite1 = 1; isite1 <= X->Def.NsiteMPI; isite1++) {
+    if (isite1 > X->Def.Nsite) {
+      is1_up_a += X->Def.Tpow[2 * isite1 - 2];
+      is1_down_a += X->Def.Tpow[2 * isite1 - 1];
     }
+    else {
+      is1_up_b += X->Def.Tpow[2 * isite1 - 2];
+      is1_down_b += X->Def.Tpow[2 * isite1 - 1];
+    }
+  }
 //[e]
 #pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
   firstprivate(i_max, X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
   private(j, tmp_v02,D,N,Sz,isite1,bit_up,bit_down,bit_D,u_ibit1,l_ibit1,ibit_up,ibit_down,ibit_D)
-    for (j = 1; j <= i_max; j++) {
-        tmp_v02 = conj(v0[j]) * v0[j];
-        bit_up = 0;
-        bit_down = 0;
-        bit_D = 0;
+  for (j = 1; j <= i_max; j++) {
+    tmp_v02 = conj(v0[j]) * v0[j];
+    bit_up = 0;
+    bit_down = 0;
+    bit_D = 0;
 // isite1 > X->Def.Nsite
-        ibit_up = (unsigned long int) myrank & is1_up_a;
-        u_ibit1 = ibit_up >> 32;
-        l_ibit1 = ibit_up & i_32;
-        bit_up += pop(u_ibit1);
-        bit_up += pop(l_ibit1);
+    ibit_up = (unsigned long int) myrank & is1_up_a;
+    u_ibit1 = ibit_up >> 32;
+    l_ibit1 = ibit_up & i_32;
+    bit_up += pop(u_ibit1);
+    bit_up += pop(l_ibit1);
 
-        ibit_down = (unsigned long int) myrank & is1_down_a;
-        u_ibit1 = ibit_down >> 32;
-        l_ibit1 = ibit_down & i_32;
-        bit_down += pop(u_ibit1);
-        bit_down += pop(l_ibit1);
+    ibit_down = (unsigned long int) myrank & is1_down_a;
+    u_ibit1 = ibit_down >> 32;
+    l_ibit1 = ibit_down & i_32;
+    bit_down += pop(u_ibit1);
+    bit_down += pop(l_ibit1);
 
-        ibit_D = (ibit_up) & (ibit_down >> 1);
-        u_ibit1 = ibit_D >> 32;
-        l_ibit1 = ibit_D & i_32;
-        bit_D += pop(u_ibit1);
-        bit_D += pop(l_ibit1);
+    ibit_D = (ibit_up) & (ibit_down >> 1);
+    u_ibit1 = ibit_D >> 32;
+    l_ibit1 = ibit_D & i_32;
+    bit_D += pop(u_ibit1);
+    bit_D += pop(l_ibit1);
 
 // isite1 <= X->Def.Nsite
-        ibit_up = (unsigned long int) (j - 1) & is1_up_b;
-        u_ibit1 = ibit_up >> 32;
-        l_ibit1 = ibit_up & i_32;
-        bit_up += pop(u_ibit1);
-        bit_up += pop(l_ibit1);
+    ibit_up = (unsigned long int) (j - 1) & is1_up_b;
+    u_ibit1 = ibit_up >> 32;
+    l_ibit1 = ibit_up & i_32;
+    bit_up += pop(u_ibit1);
+    bit_up += pop(l_ibit1);
 
-        ibit_down = (unsigned long int) (j - 1) & is1_down_b;
-        u_ibit1 = ibit_down >> 32;
-        l_ibit1 = ibit_down & i_32;
-        bit_down += pop(u_ibit1);
-        bit_down += pop(l_ibit1);
+    ibit_down = (unsigned long int) (j - 1) & is1_down_b;
+    u_ibit1 = ibit_down >> 32;
+    l_ibit1 = ibit_down & i_32;
+    bit_down += pop(u_ibit1);
+    bit_down += pop(l_ibit1);
 
-        ibit_D = (ibit_up) & (ibit_down >> 1);
-        u_ibit1 = ibit_D >> 32;
-        l_ibit1 = ibit_D & i_32;
-        bit_D += pop(u_ibit1);
-        bit_D += pop(l_ibit1);
+    ibit_D = (ibit_up) & (ibit_down >> 1);
+    u_ibit1 = ibit_D >> 32;
+    l_ibit1 = ibit_D & i_32;
+    bit_D += pop(u_ibit1);
+    bit_D += pop(l_ibit1);
 
-        D = bit_D;
-        N = bit_up + bit_down;
-        Sz = bit_up - bit_down;
+    D = bit_D;
+    N = bit_up + bit_down;
+    Sz = bit_up - bit_down;
 
-        tmp_D += tmp_v02 * D;
-        tmp_D2 += tmp_v02 * D * D;
-        tmp_N += tmp_v02 * N;
-        tmp_N2 += tmp_v02 * N * N;
-        tmp_Sz += tmp_v02 * Sz;
-        tmp_Sz2 += tmp_v02 * Sz * Sz;
-    }
-    tmp_D        = SumMPI_d(tmp_D);
-    tmp_D2       = SumMPI_d(tmp_D2);
-    tmp_N        = SumMPI_d(tmp_N);
-    tmp_N2       = SumMPI_d(tmp_N2);
-    tmp_Sz       = SumMPI_d(tmp_Sz);
-    tmp_Sz2      = SumMPI_d(tmp_Sz2);
+    tmp_D += tmp_v02 * D;
+    tmp_D2 += tmp_v02 * D * D;
+    tmp_N += tmp_v02 * N;
+    tmp_N2 += tmp_v02 * N * N;
+    tmp_Sz += tmp_v02 * Sz;
+    tmp_Sz2 += tmp_v02 * Sz * Sz;
+  }
+  tmp_D = SumMPI_d(tmp_D);
+  tmp_D2 = SumMPI_d(tmp_D2);
+  tmp_N = SumMPI_d(tmp_N);
+  tmp_N2 = SumMPI_d(tmp_N2);
+  tmp_Sz = SumMPI_d(tmp_Sz);
+  tmp_Sz2 = SumMPI_d(tmp_Sz2);
 
-    X->Phys.doublon   = tmp_D;
-    X->Phys.doublon2  = tmp_D2;
-    X->Phys.num       = tmp_N;
-    X->Phys.num2      = tmp_N2;
-    X->Phys.Sz        = tmp_Sz*0.5;
-    X->Phys.Sz2       = tmp_Sz2*0.25;
-    X->Phys.num_up    = 0.5*(tmp_N+tmp_Sz);
-    X->Phys.num_down  = 0.5*(tmp_N-tmp_Sz);
+  X->Phys.doublon = tmp_D;
+  X->Phys.doublon2 = tmp_D2;
+  X->Phys.num = tmp_N;
+  X->Phys.num2 = tmp_N2;
+  X->Phys.Sz = tmp_Sz * 0.5;
+  X->Phys.Sz2 = tmp_Sz2 * 0.25;
+  X->Phys.num_up = 0.5*(tmp_N + tmp_Sz);
+  X->Phys.num_down = 0.5*(tmp_N - tmp_Sz);
 
-    return 0;
+  return 0;
 }
-
 ///
 /// \brief Calculate expected values of energies and physical quantities for Hubbard model
 /// \param X [in, out] X Struct to get information about file header names, dimension of hirbert space, calc type and output physical quantities.

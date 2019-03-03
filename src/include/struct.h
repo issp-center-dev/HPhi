@@ -352,15 +352,15 @@ struct LargeList {
 */
 struct PhysList {
   //double energy,doublon;
-  double energy;/**<@brief Expectation value of the total energy.*/
-  double doublon;/**<@brief Expectation value of the Doublon*/
-  double doublon2;/**<@brief Expectation value of the Square of doublon*/
-  double num;/**<@brief Expectation value of the Number of electrons*/
-  double num2;/**<@brief Expectation value of the quare of the number of electrons*/
-  double Sz;/**<@brief Expectation value of the Total Sz*/
-  double Sz2;/**<@brief Expectation value of the Square of total Sz*/
+  double *energy;/**<@brief Expectation value of the total energy.*/
+  double *doublon;/**<@brief Expectation value of the Doublon*/
+  double *doublon2;/**<@brief Expectation value of the Square of doublon*/
+  double *num;/**<@brief Expectation value of the Number of electrons*/
+  double *num2;/**<@brief Expectation value of the quare of the number of electrons*/
+  double *Sz;/**<@brief Expectation value of the Total Sz*/
+  double *Sz2;/**<@brief Expectation value of the Square of total Sz*/
     /*[s] For TPQ*/
-  double var;/**<@brief Expectation value of the Energy variance.*/
+  double *var;/**<@brief Expectation value of the Energy variance.*/
     /*[e] For TPQ*/
 
     /*[s] For Full Diagonalization*/
