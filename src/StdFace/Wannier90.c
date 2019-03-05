@@ -51,7 +51,7 @@ static void geometry_W90(
    Intrinsic site position StdIntList::tau and its number StdIntList::NsiteUC
   */
   for (isite = 0; isite < StdI->NsiteUC; isite++) free(StdI->tau[isite]);
-  free(StdI->tau);
+  //free(StdI->tau);
   ierr = fscanf(fp, "%d", &StdI->NsiteUC);
   fprintf(stdout, "    Number of Correlated Sites = %d\n", StdI->NsiteUC);
 
@@ -350,6 +350,9 @@ void StdFace_Wannier90(
   */
   fprintf(stdout, "\n  @ Wannier90 hopping \n\n");
   StdFace_PrintVal_d("cutoff_t", &StdI->cutoff_t, 1.0e-8);
+  StdFace_PrintVal_i("cutoff_tR[0]: ", &StdI->cutoff_tR[0], StdI->NsiteUC);
+  StdFace_PrintVal_i("cutoff_tR[1]: ", &StdI->cutoff_tR[1], StdI->NsiteUC);
+  StdFace_PrintVal_i("cutoff_tR[2]: ", &StdI->cutoff_tR[2], StdI->NsiteUC);
   sprintf(filename, "%s_hr.dat", StdI->CDataFileHead);
   n_t = read_W90_query(StdI, filename, StdI->cutoff_t, StdI->cutoff_tR);
   W90_t = (double complex *)malloc(sizeof(double complex) * n_t);
@@ -361,6 +364,9 @@ void StdFace_Wannier90(
   */
   fprintf(stdout, "\n  @ Wannier90 Coulomb \n\n");
   StdFace_PrintVal_d("cutoff_u", &StdI->cutoff_u, 1.0e-8);
+  StdFace_PrintVal_i("cutoff_uR[0]: ", &StdI->cutoff_UR[0], StdI->NsiteUC);
+  StdFace_PrintVal_i("cutoff_uR[1]: ", &StdI->cutoff_UR[1], StdI->NsiteUC);
+  StdFace_PrintVal_i("cutoff_uR[2]: ", &StdI->cutoff_UR[2], StdI->NsiteUC);
   sprintf(filename, "%s_ur.dat", StdI->CDataFileHead);
   n_u = read_W90_query(StdI, filename, StdI->cutoff_u, StdI->cutoff_UR);
   W90_u = (double complex *)malloc(sizeof(double complex) * n_u);
@@ -373,6 +379,9 @@ void StdFace_Wannier90(
   fprintf(stdout, "\n  @ Wannier90 Hund \n\n");
   StdFace_PrintVal_d("cutoff_j", &StdI->cutoff_j, 1.0e-8);
   sprintf(filename, "%s_jr.dat", StdI->CDataFileHead);
+  StdFace_PrintVal_i("cutoff_jR[0]: ", &StdI->cutoff_JR[0], StdI->NsiteUC);
+  StdFace_PrintVal_i("cutoff_jR[1]: ", &StdI->cutoff_JR[1], StdI->NsiteUC);
+  StdFace_PrintVal_i("cutoff_jR[2]: ", &StdI->cutoff_JR[2], StdI->NsiteUC);
   n_j = read_W90_query(StdI, filename, StdI->cutoff_j, StdI->cutoff_JR);
   W90_j = (double complex *)malloc(sizeof(double complex) * n_j);
   j_indx = (int **)malloc(sizeof(int*) * n_j);

@@ -897,9 +897,9 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->cutoff_u = NaN_d;
   StdI->cutoff_j = NaN_d;
   StdI->cutoff_length = NaN_d;
-  for (i = 0; i < 3; i++)StdI->cutoff_tR[i] = NaN_d;
-  for (i = 0; i < 3; i++)StdI->cutoff_UR[i] = NaN_d;
-  for (i = 0; i < 3; i++)StdI->cutoff_JR[i] = NaN_d;
+  for (i = 0; i < 3; i++)StdI->cutoff_tR[i] = StdI->NaN_i;
+  for (i = 0; i < 3; i++)StdI->cutoff_UR[i] = StdI->NaN_i;
+  for (i = 0; i < 3; i++)StdI->cutoff_JR[i] = StdI->NaN_i;
 #if defined(_HPhi)
   StdI->LargeValue = NaN_d;
   StdI->OmegaMax = NaN_d;
