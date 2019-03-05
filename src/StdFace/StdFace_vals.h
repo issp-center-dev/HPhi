@@ -246,7 +246,9 @@ struct StdIntList {
   double cutoff_t;/**<@brief Cutoof for the hopping in wannier90, input from file*/
   double cutoff_u;/**<@brief Cutoof for the Coulomb in wannier90, input from file*/
   double cutoff_j;/**<@brief Cutoof for the Hund in wannier90, input from file*/
-  double cutoff_length; /**<@brief Cutoof for R in wannier90, input from file.*/
+  double cutoff_length_t; /**<@brief Cutoof for R in wannier90, input from file.*/
+  double cutoff_length_U; /**<@brief Cutoof for R in wannier90, input from file.*/
+  double cutoff_length_J; /**<@brief Cutoof for R in wannier90, input from file.*/
   int cutoff_tR[3];
   int cutoff_UR[3];
   int cutoff_JR[3];

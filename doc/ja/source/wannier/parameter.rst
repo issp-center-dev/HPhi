@@ -31,7 +31,7 @@ Wannier関数を用いたダウンフォールディングに特有のパラメ�
    ホッピング, Coulomb積分, 交換積分に対して, これらの値を越える並進ベクトル
    :math:`{\bf R}` を持つものを無視するようにする.
 
-* ``cutoff_length``
+* ``cutoff_length_t``, ``cutoff_length_U``, ``cutoff_length_J``
 
    **形式 :** 実数
 

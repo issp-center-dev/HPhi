@@ -896,7 +896,9 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->cutoff_t = NaN_d;
   StdI->cutoff_u = NaN_d;
   StdI->cutoff_j = NaN_d;
-  StdI->cutoff_length = NaN_d;
+  StdI->cutoff_length_t = NaN_d;
+  StdI->cutoff_length_U = NaN_d;
+  StdI->cutoff_length_J = NaN_d;
   for (i = 0; i < 3; i++)StdI->cutoff_tR[i] = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->cutoff_UR[i] = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->cutoff_JR[i] = StdI->NaN_i;
@@ -2248,7 +2250,9 @@ void StdFace_main(
     else if (strcmp(keyword, "cutoff_jh") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_JR[2]);
     else if (strcmp(keyword, "cutoff_jl") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_JR[1]);
     else if (strcmp(keyword, "cutoff_jw") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_JR[0]);
-    else if (strcmp(keyword, "cutoff_length") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_length);
+    else if (strcmp(keyword, "cutoff_length_j") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_length_J);
+    else if (strcmp(keyword, "cutoff_length_u") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_length_U);
+    else if (strcmp(keyword, "cutoff_length_t") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_length_t);
     else if (strcmp(keyword, "cutoff_t") == 0) StoreWithCheckDup_d(keyword, value, &StdI->cutoff_t);
     else if (strcmp(keyword, "cutoff_th") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_tR[2]);
     else if (strcmp(keyword, "cutoff_tl") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_tR[1]);

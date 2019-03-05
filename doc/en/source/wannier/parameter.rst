@@ -31,7 +31,7 @@ of the downfolded model are as follows:
    We ignore these integrals that have lattice vector :math:`{\bf R}`
    larger than these values.
 
-* ``cutoff_length``
+* ``cutoff_length_t``, ``cutoff_length_U``, ``cutoff_length_J``
 
    **Type :** float
 
