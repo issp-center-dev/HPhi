@@ -25,6 +25,7 @@
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplyMPIHubbardCore.h"
+#include "common/setmemory.h"
 /**
  * @file   expec_cisajscktaltdc.c
  * 
@@ -57,18 +58,17 @@
  */
 int expec_cisajscktaltdc
 (
- struct BindStruct *X,
+  struct BindStruct *X,
   int nstate,
   double complex **Xvec, 
   double complex **vec
  ){
   FILE *fp;
   char sdt[D_FileNameMax];
-  long unsigned int irght,ilft,ihfbit;
-
+  long unsigned int irght, ilft, ihfbit, icaca;
+  double complex **prod;
   //For TPQ
-  int step=0;
-  int rand_i=0;
+  int step = 0, rand_i = 0, istate;
 
   if(X->Def.NCisAjtCkuAlvDC <1) return 0;
   X->Large.mode=M_CORR;
@@ -78,33 +78,24 @@ int expec_cisajscktaltdc
   }
 
   //Make File Name for output
+  prod = cd_2d_allocate(X->Def.NCisAjt, nstate);
   switch (X->Def.iCalcType){
   case TPQCalc:
     step=X->Def.istep;
-    rand_i=X->Def.irand;
-    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGStart, "a", rand_i, step);
-    sprintf(sdt, cFileName2BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
+    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGStart, "a", 0, step);
     break;
-
   case TimeEvolution:
     step=X->Def.istep;
     TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecTwoBodyGStart, "a", step);
-    sprintf(sdt, cFileName2BGreen_TE, X->Def.CDataFileHead, step);
     break;
-
   case FullDiag:
   case CG:
-    sprintf(sdt, cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
-  }
-
-  if(childfopenMPI(sdt, "w", &fp)!=0){
-    return -1;
   }
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
-    if (expec_cisajscktalt_HubbardGC(X, nstate, Xvec, vec, &fp) != 0) {
+    if (expec_cisajscktalt_HubbardGC(X, nstate, Xvec, vec, prod) != 0) {
       return -1;
     }
     break;
@@ -112,19 +103,19 @@ int expec_cisajscktaltdc
   case KondoGC:
   case Hubbard:
   case Kondo:
-    if (expec_cisajscktalt_Hubbard(X, nstate, Xvec, vec, &fp) != 0) {
+    if (expec_cisajscktalt_Hubbard(X, nstate, Xvec, vec, prod) != 0) {
       return -1;
     }
     break;
   
   case Spin:
-    if (expec_cisajscktalt_Spin(X, nstate, Xvec, vec, &fp) != 0) {
+    if (expec_cisajscktalt_Spin(X, nstate, Xvec, vec, prod) != 0) {
       return -1;
     }
     break;
 
   case SpinGC:
-    if (expec_cisajscktalt_SpinGC(X, nstate, Xvec, vec, &fp) != 0) {
+    if (expec_cisajscktalt_SpinGC(X, nstate, Xvec, vec, prod) != 0) {
       return -1;
     }
     break;
@@ -133,18 +124,36 @@ int expec_cisajscktaltdc
     return -1;
   }
   
-  fclose(fp);
-  
-  if(X->Def.iCalcType==Lanczos){
-    if(X->Def.St==0){
-      TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGFinish,"a");
-      fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGFinish);
-    }else if(X->Def.St==1){
-      TimeKeeper(X, cFileNameTimeKeep, cCGExpecTwoBodyGFinish,"a");
-      fprintf(stdoutMPI, "%s", cLogCGExpecTwoBodyGFinish);
+  for (istate = 0; istate < nstate; istate++) {
+    switch (X->Def.iCalcModel) {
+    case TPQCalc:
+      step = X->Def.istep;
+      sprintf(sdt, cFileName2BGreen_TPQ, X->Def.CDataFileHead, istate, step);
+      break;
+    case TimeEvolution:
+      step = X->Def.istep;
+      sprintf(sdt, cFileName2BGreen_TE, X->Def.CDataFileHead, step);
+      break;
+    case FullDiag:
+    case CG:
+      sprintf(sdt, cFileName2BGreen_FullDiag, X->Def.CDataFileHead, istate);
+      break;
     }
-  }
-  else if(X->Def.iCalcType==TPQCalc){
+    if (childfopenMPI(sdt, "w", &fp) == 0) {
+      for (icaca = 0; icaca < X->Def.NCisAjt; icaca++) {
+        fprintf(fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
+          X->Def.CisAjtCkuAlvDC[icaca][0], X->Def.CisAjtCkuAlvDC[icaca][1], 
+          X->Def.CisAjtCkuAlvDC[icaca][2], X->Def.CisAjtCkuAlvDC[icaca][3],
+          X->Def.CisAjtCkuAlvDC[icaca][4], X->Def.CisAjtCkuAlvDC[icaca][5],
+          X->Def.CisAjtCkuAlvDC[icaca][6], X->Def.CisAjtCkuAlvDC[icaca][7],
+          creal(prod[icaca][istate]), cimag(prod[icaca][istate]));
+      }
+      fclose(fp);
+    }
+    else return -1;
+  }/*for (istate = 0; istate < nstate; istate++)*/
+  
+  if(X->Def.iCalcType==TPQCalc){
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGFinish, "a", rand_i, step);
   }
   else if(X->Def.iCalcType==TimeEvolution){
@@ -164,6 +173,7 @@ int expec_cisajscktaltdc
      }
   */
   //[e]
+  free_cd_2d_allocate(prod);
   return 0;
 }
 ///
@@ -375,7 +385,6 @@ firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,t
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
-    fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, org_isite3 - 1, org_sigma3, org_isite4 - 1, org_sigma4, creal(dam_pr), cimag(dam_pr));
   }//Intra PE
   return 0;
 }
@@ -420,8 +429,7 @@ int expec_cisajscktalt_Hubbard(
 
     if (X->Def.iFlgSzConserved == TRUE) {
       if (org_sigma1 + org_sigma3 != org_sigma2 + org_sigma4) {
-        MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
-        fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, org_isite3 - 1, org_sigma3, org_isite4 - 1, org_sigma4, creal(dam_pr), cimag(dam_pr));
+        zclear(nstate, prod[i]);
         continue;
       }
     }
@@ -502,7 +510,6 @@ firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,t
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
-    fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, org_isite3 - 1, org_sigma3, org_isite4 - 1, org_sigma4, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
 }
@@ -525,10 +532,10 @@ int expec_cisajscktalt_Spin(
 ) {
   int info = 0;
   if (X->Def.iFlgGeneralSpin == FALSE) {
-    info = expec_cisajscktalt_SpinHalf(X, nstate, Xvec, vec, _fp);
+    info = expec_cisajscktalt_SpinHalf(X, nstate, Xvec, vec, prod);
   }
   else {
-    info = expec_cisajscktalt_SpinGeneral(X, nstate, Xvec, vec, _fp);
+    info = expec_cisajscktalt_SpinGeneral(X, nstate, Xvec, vec, prod);
   }
   return info;
 }
@@ -577,7 +584,7 @@ int expec_cisajscktalt_SpinHalf(
     tmp_org_sigma4 = X->Def.CisAjtCkuAlvDC[i][7];
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
       //error message will be added
-      fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, 0.0, 0.0);
+      zclear(nstate, prod[i]);
       continue;
     }
 
@@ -658,7 +665,6 @@ firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
-    fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
 }
@@ -707,7 +713,7 @@ int expec_cisajscktalt_SpinGeneral(
     tmp_org_sigma4 = X->Def.CisAjtCkuAlvDC[i][7];
 
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
-      fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, 0.0, 0.0);
+      zclear(nstate, prod[i]);
       continue;
     }
     tmp_Sz = 0;
@@ -719,7 +725,7 @@ int expec_cisajscktalt_SpinGeneral(
       tmp_Sz -= GetLocal2Sz(X->Def.CisAjtCkuAlvDC[i][4 * j + 2] + 1, tmp_org, X->Def.SiteToBit, X->Def.Tpow);
     }
     if (tmp_Sz != 0) { // not Sz conserved
-      fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, 0.0, 0.0);
+      zclear(nstate, prod[i]);
       continue;
     }
 
@@ -784,7 +790,6 @@ firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
-    fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
 }
@@ -807,10 +812,10 @@ int expec_cisajscktalt_SpinGC(
 ){
   int info = 0;
   if (X->Def.iFlgGeneralSpin == FALSE) {
-    info = expec_cisajscktalt_SpinGCHalf(X, nstate, Xvec, vec, _fp);
+    info = expec_cisajscktalt_SpinGCHalf(X, nstate, Xvec, vec, prod);
   }
   else {
-    info = expec_cisajscktalt_SpinGCGeneral(X, nstate, Xvec, vec, _fp);
+    info = expec_cisajscktalt_SpinGCGeneral(X, nstate, Xvec, vec, prod);
   }
   return info;
 }
@@ -855,7 +860,7 @@ int expec_cisajscktalt_SpinGCHalf(
 
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
       //error message will be added
-      fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, 0.0, 0.0);
+      zclear(nstate, prod[i]);
       continue;
     }
 
@@ -947,7 +952,6 @@ firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
-    fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
 }
@@ -994,7 +998,7 @@ int expec_cisajscktalt_SpinGCGeneral(
 
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
       //error message will be added
-      fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, 0.0, 0.0);
+      zclear(nstate, prod[i]);
       continue;
     }
 
@@ -1099,7 +1103,6 @@ firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
-    fprintf(*_fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n", tmp_org_isite1 - 1, tmp_org_sigma1, tmp_org_isite2 - 1, tmp_org_sigma2, tmp_org_isite3 - 1, tmp_org_sigma3, tmp_org_isite4 - 1, tmp_org_sigma4, creal(dam_pr), cimag(dam_pr));
   }
   return 0;
 }

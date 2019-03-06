@@ -59,10 +59,7 @@ double complex child_Cor_3(long unsigned int j,
                    );
 
 
-int expec_cisajscktaltdc(
-                         struct BindStruct *X,
-                         double complex *vec
-                         );
+int expec_cisajscktaltdc(struct BindStruct *X, int nstate, double complex **Xvec, double complex **vec);
 
 void expec_cisajscktaltdc_alldiag_spin(
                                   struct BindStruct *X,

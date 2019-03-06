@@ -51,8 +51,8 @@ int output(struct BindStruct *X) {
     }
     fprintf(fp, "  <H>         <N>        <Sz>       <S2>       <D> \n");
     for (i = 0; i < i_max; i++) {
-      fprintf(fp, " %10lf %10lf %10lf %10lf %10lf\n", X->Phys.all_energy[i], X->Phys.all_num_up[i]+X->Phys.all_num_down[i], X->Phys.all_sz[i],
-              X->Phys.all_s2[i], X->Phys.all_doublon[i]);
+      fprintf(fp, " %10lf %10lf %10lf %10lf %10lf\n", X->Phys.energy[i], X->Phys.num_up[i]+X->Phys.num_down[i], X->Phys.Sz[i],
+              X->Phys.s2[i], X->Phys.doublon[i]);
     }
     fclose(fp);
   }

@@ -45,55 +45,55 @@
 /// \version 1.2
 int GetPairExcitedState
 (
- struct BindStruct *X,
- int nstate, double complex **tmp_v0,
- double complex **tmp_v1
- )
+  struct BindStruct *X,
+  int nstate, double complex **tmp_v0,
+  double complex **tmp_v1
+)
 {
-    int iret;
-    long unsigned int irght,ilft,ihfbit;
+  int iret;
+  long unsigned int irght, ilft, ihfbit;
 
   //  i_max = X->Check.idim_max;
-    if(X->Def.iFlgGeneralSpin == FALSE) {
-        if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
-            return -1;
-        }
+  if (X->Def.iFlgGeneralSpin == FALSE) {
+    if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+      return -1;
     }
-    else {
-        if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
-            return -1;
-        }
+  }
+  else {
+    if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+      return -1;
     }
+  }
 
-  X->Large.i_max    =  X->Check.idim_maxOrg;
-  X->Large.irght    = irght;
-  X->Large.ilft     = ilft;
-  X->Large.ihfbit   = ihfbit;
-  X->Large.mode=M_CALCSPEC;
+  X->Large.i_max = X->Check.idim_maxOrg;
+  X->Large.irght = irght;
+  X->Large.ilft = ilft;
+  X->Large.ihfbit = ihfbit;
+  X->Large.mode = M_CALCSPEC;
 
-    switch(X->Def.iCalcModel){
+  switch (X->Def.iCalcModel) {
   case HubbardGC:
-      iret=GetPairExcitedStateHubbardGC(X, nstate, tmp_v0, tmp_v1);
+    iret = GetPairExcitedStateHubbardGC(X, nstate, tmp_v0, tmp_v1);
     break;
 
   case KondoGC:
   case Hubbard:
   case Kondo:
-      iret=GetPairExcitedStateHubbard(X, nstate, tmp_v0, tmp_v1);
+    iret = GetPairExcitedStateHubbard(X, nstate, tmp_v0, tmp_v1);
     break;
 
-    case Spin: // for the Sz-conserved spin system
-      iret =GetPairExcitedStateSpin(X, nstate, tmp_v0, tmp_v1);
-      break;
+  case Spin: // for the Sz-conserved spin system
+    iret = GetPairExcitedStateSpin(X, nstate, tmp_v0, tmp_v1);
+    break;
 
-    case SpinGC:
-      iret=GetPairExcitedStateSpinGC(X,nstate,tmp_v0, tmp_v1);
-      break;
+  case SpinGC:
+    iret = GetPairExcitedStateSpinGC(X, nstate, tmp_v0, tmp_v1);
+    break;
 
-    default:
-        iret =FALSE;
-      break;
-    }
+  default:
+    iret = FALSE;
+    break;
+  }
 
-    return iret;
+  return iret;
 }

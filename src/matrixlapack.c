@@ -428,7 +428,7 @@ int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **
   k=0;
   for(i=0;i<xNsize;i++){
     for(j=0;j<xNsize;j++){
-      vec[i][j]=a[k];
+      vec[j][i]=a[k];
       k++;
     }
   }

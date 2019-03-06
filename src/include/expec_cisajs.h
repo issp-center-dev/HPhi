@@ -18,5 +18,7 @@
 
 int expec_cisajs(
   struct BindStruct *X,
-  double complex *vec
+  int nstate,
+  double complex **Xvec,
+  double complex **vec
 );

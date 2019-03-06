@@ -64,8 +64,8 @@ int     initial_mode;/**< mode to get initial state (0: use same random generato
 double LargeValue;/**< constant value l for TPQ calculation.*/
 int    NumAve;/**< Average number for TPQ calculation*/
 int step_i;/**< step for TPQ calculation*/
-double global_norm;/**< norm before normalization for TPQ calculation*/
-double global_1st_norm;/**< 1-st norm for TPQ calculation*/
+double *global_norm;/**< norm before normalization for TPQ calculation*/
+double *global_1st_norm;/**< 1-st norm for TPQ calculation*/
 int step_spin;/**< output step for TE calculation.*/
 /*[e] For TPQ*/
 

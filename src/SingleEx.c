@@ -29,7 +29,8 @@ Target System: Hubbard, Kondo
 */
 int GetSingleExcitedState(
   struct BindStruct *X,//!<define list to get and put information of calcuation
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate, 
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ) {
   int iret = 0;

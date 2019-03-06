@@ -359,28 +359,12 @@ struct PhysList {
   double *num2;/**<@brief Expectation value of the quare of the number of electrons*/
   double *Sz;/**<@brief Expectation value of the Total Sz*/
   double *Sz2;/**<@brief Expectation value of the Square of total Sz*/
+  double *num_up;/**<@brief Expectation value of the number of up-spin electtrons*/
+  double *num_down;/**<@brief Expectation value of the number of down-spin electtrons*/
+  double *s2;/**<@brief Expectation value of the square of the total S.*/
     /*[s] For TPQ*/
   double *var;/**<@brief Expectation value of the Energy variance.*/
     /*[e] For TPQ*/
-
-    /*[s] For Full Diagonalization*/
-  int eigen_num;/**<@brief Index of eigenstate used for the file name of the correlation function.*/
-  double num_up;/**<@brief Expectation value of the number of up-spin electtrons*/
-  double num_down;/**<@brief Expectation value of the number of down-spin electtrons*/
-  double s2;/**<@brief Expectation value of the square of the total S.*/
-  double *all_energy;/**<@brief [CheckList::idim_max+1] Energy for FullDiag and LOBPCG.
-                     malloc in setmem_large().*/
-  double *all_doublon;/**<@brief [CheckList::idim_max+1] Doublon for FullDiag and LOBPCG.
-                      malloc in setmem_large().*/
-  double *all_sz;/**<@brief [CheckList::idim_max+1] @f$S_z@f$ for FullDiag and LOBPCG.
-                 malloc in setmem_large().*/
-  double *all_s2;/**<@brief [CheckList::idim_max+1] @f$S_z^2@f$ for FullDiag and LOBPCG.
-                 malloc in setmem_large().*/
-  double *all_num_up;/**<@brief [CheckList::idim_max+1] Number of spin-up electrons
-                     for FullDiag and LOBPCG. malloc in setmem_large().*/
-  double *all_num_down;/**<@brief[CheckList::idim_max+1] Number of spin-down electrons 
-                       for FullDiag and LOBPCG. malloc in setmem_large().*/
-    /*[e] For Full Diagonalization*/
 
   double *spin_real_cor;/**<@brief Malloc, but Not used ???*/
   double *charge_real_cor;/**<@brief Malloc, but Not used ???*/

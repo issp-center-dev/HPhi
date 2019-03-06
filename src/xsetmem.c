@@ -164,74 +164,77 @@ int setmem_large
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
   if (GetlistSize(X) == TRUE) {
-      list_1 = lui_1d_allocate(X->Check.idim_max + 1);
+    list_1 = lui_1d_allocate(X->Check.idim_max + 1);
 #ifdef MPI
-      list_1buf = lui_1d_allocate(idim_maxMPI + 1);
+    list_1buf = lui_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
-      list_2_1 = lui_1d_allocate(X->Large.SizeOflist_2_1);
-      list_2_2 = lui_1d_allocate(X->Large.SizeOflist_2_2);
-      if (list_1 == NULL
-          || list_2_1 == NULL
-          || list_2_2 == NULL
-              ) {
-          return -1;
-      }
+    list_2_1 = lui_1d_allocate(X->Large.SizeOflist_2_1);
+    list_2_2 = lui_1d_allocate(X->Large.SizeOflist_2_2);
+    if (list_1 == NULL
+      || list_2_1 == NULL
+      || list_2_2 == NULL
+      ) {
+      return -1;
+    }
   }
 
-    list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
-    v0 = cd_1d_allocate(X->Check.idim_max + 1);
-    v1 = cd_1d_allocate(X->Check.idim_max + 1);
+  list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
+  v0 = cd_1d_allocate(X->Check.idim_max + 1);
+  v1 = cd_1d_allocate(X->Check.idim_max + 1);
   if (X->Def.iCalcType == TimeEvolution) {
-      v2 = cd_1d_allocate(X->Check.idim_max + 1);
+    v2 = cd_1d_allocate(X->Check.idim_max + 1);
   } else {
-      v2 = cd_1d_allocate(1);
+    v2 = cd_1d_allocate(1);
   }
 #ifdef MPI
-    v1buf = cd_1d_allocate(idim_maxMPI + 1);
+  v1buf = cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
   if (X->Def.iCalcType == TPQCalc) {
-      vg = cd_1d_allocate(1);
-  } else {
-      vg = cd_1d_allocate(X->Check.idim_max + 1);
+    vg = cd_1d_allocate(1);
   }
-    alpha = d_1d_allocate(X->Def.Lanczos_max + 1);
-    beta = d_1d_allocate(X->Def.Lanczos_max + 1);
+  else {
+    vg = cd_1d_allocate(X->Check.idim_max + 1);
+  }
+  alpha = d_1d_allocate(X->Def.Lanczos_max + 1);
+  beta = d_1d_allocate(X->Def.Lanczos_max + 1);
 
   if (
-          list_Diagonal == NULL
-          || v0 == NULL
-          || v1 == NULL
-          || vg == NULL
-          ) {
+    list_Diagonal == NULL
+    || v0 == NULL
+    || v1 == NULL
+    || vg == NULL
+    ) {
     return -1;
   }
 
   if (X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-      vec = cd_2d_allocate(X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
-  } else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
+    vec = cd_2d_allocate(X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
+  }
+  else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
     if (X->Def.LanczosTarget > X->Def.nvec) {
-        vec = cd_2d_allocate(X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
-    } else {
-        vec = cd_2d_allocate(X->Def.nvec + 1, X->Def.Lanczos_max + 1);
+      vec = cd_2d_allocate(X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
+    }
+    else {
+      vec = cd_2d_allocate(X->Def.nvec + 1, X->Def.Lanczos_max + 1);
     }
   }
 
   if (X->Def.iCalcType == FullDiag) {
-      X->Phys.all_num_down = d_1d_allocate(X->Check.idim_max + 1);
-      X->Phys.all_num_up = d_1d_allocate( X->Check.idim_max + 1);
-      X->Phys.all_energy = d_1d_allocate(X->Check.idim_max + 1);
-      X->Phys.all_doublon = d_1d_allocate(X->Check.idim_max + 1);
-      X->Phys.all_sz = d_1d_allocate(X->Check.idim_max + 1);
-      X->Phys.all_s2 = d_1d_allocate(X->Check.idim_max + 1);
-      Ham = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
-      L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
+    X->Phys.all_num_down = d_1d_allocate(X->Check.idim_max + 1);
+    X->Phys.all_num_up = d_1d_allocate(X->Check.idim_max + 1);
+    X->Phys.all_energy = d_1d_allocate(X->Check.idim_max + 1);
+    X->Phys.all_doublon = d_1d_allocate(X->Check.idim_max + 1);
+    X->Phys.all_sz = d_1d_allocate(X->Check.idim_max + 1);
+    X->Phys.all_s2 = d_1d_allocate(X->Check.idim_max + 1);
+    Ham = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
+    L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
 
     if (X->Phys.all_num_down == NULL
-        || X->Phys.all_num_up == NULL
-        || X->Phys.all_energy == NULL
-        || X->Phys.all_doublon == NULL
-        || X->Phys.all_s2 == NULL
-            ) {
+      || X->Phys.all_num_up == NULL
+      || X->Phys.all_energy == NULL
+      || X->Phys.all_doublon == NULL
+      || X->Phys.all_s2 == NULL
+      ) {
       return -1;
     }
     for (j = 0; j < X->Check.idim_max + 1; j++) {
@@ -239,13 +242,14 @@ int setmem_large
         return -1;
       }
     }
-  } else if (X->Def.iCalcType == CG) {
-      X->Phys.all_num_down = d_1d_allocate(X->Def.k_exct);
-      X->Phys.all_num_up = d_1d_allocate(X->Def.k_exct);
-      X->Phys.all_energy = d_1d_allocate(X->Def.k_exct);
-      X->Phys.all_doublon = d_1d_allocate(X->Def.k_exct);
-      X->Phys.all_sz = d_1d_allocate(X->Def.k_exct);
-      X->Phys.all_s2 = d_1d_allocate( X->Def.k_exct);
+  }
+  else if (X->Def.iCalcType == CG) {
+    X->Phys.all_num_down = d_1d_allocate(X->Def.k_exct);
+    X->Phys.all_num_up = d_1d_allocate(X->Def.k_exct);
+    X->Phys.all_energy = d_1d_allocate(X->Def.k_exct);
+    X->Phys.all_doublon = d_1d_allocate(X->Def.k_exct);
+    X->Phys.all_sz = d_1d_allocate(X->Def.k_exct);
+    X->Phys.all_s2 = d_1d_allocate(X->Def.k_exct);
   }
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
@@ -260,21 +264,18 @@ int setmem_large
 /// \param NInterAll [in] Total number of InterAll interactions.
 /// \author Kazuyoshi Yoshimi
 /// \version 1.2
-  void setmem_IntAll_Diagonal
-          (
-                  int **InterAllOffDiagonal,
-                  double complex *ParaInterAllOffDiagonal,
-                  int **InterAllDiagonal,
-                  double *ParaInterAllDiagonal,
-                  const int NInterAll
-          ) {
-    InterAllOffDiagonal = i_2d_allocate(NInterAll, 8);
-    ParaInterAllOffDiagonal = cd_1d_allocate(NInterAll);
-    InterAllDiagonal = i_2d_allocate(NInterAll, 4);
-    ParaInterAllDiagonal = d_1d_allocate(NInterAll);
-  }
-
-
+void setmem_IntAll_Diagonal(
+  int **InterAllOffDiagonal,
+  double complex *ParaInterAllOffDiagonal,
+  int **InterAllDiagonal,
+  double *ParaInterAllDiagonal,
+  const int NInterAll
+) {
+  InterAllOffDiagonal = i_2d_allocate(NInterAll, 8);
+  ParaInterAllOffDiagonal = cd_1d_allocate(NInterAll);
+  InterAllDiagonal = i_2d_allocate(NInterAll, 4);
+  ParaInterAllDiagonal = d_1d_allocate(NInterAll);
+}
 ///
 /// \brief Set size of lists for the canonical ensemble.
 /// \param X [in,out] Give the information for getting the list size and get the lists.\n
@@ -284,40 +285,40 @@ int setmem_large
 /// \retval FALSE: Unnormally finished
 /// \author Kazuyoshi Yoshimi
 /// \version 1.2
-  int GetlistSize
-          (
-                  struct BindStruct *X
-          ) {
-    // unsigned int idim_maxMPI;
+int GetlistSize(
+  struct BindStruct *X
+) {
+  // unsigned int idim_maxMPI;
 
 //    idim_maxMPI = MaxMPI_li(X->Check.idim_max);
-
-    switch (X->Def.iCalcModel) {
-      case Spin:
-      case Hubbard:
-      case HubbardNConserved:
-      case Kondo:
-      case KondoGC:
-        if (X->Def.iFlgGeneralSpin == FALSE) {
-          if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {
-            X->Large.SizeOflist_2_1 = X->Check.sdim * 2 + 2;
-          } else {
-            X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
-          }
-          X->Large.SizeOflist_2_2 = X->Check.sdim + 2;
-          X->Large.SizeOflistjb = X->Check.sdim + 2;
-        } else {//for spin-canonical general spin
-          X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
-          X->Large.SizeOflist_2_2 =
-                  X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
-          X->Large.SizeOflistjb =
-                  X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
-        }
-        break;
-      default:
-        return FALSE;
+  switch (X->Def.iCalcModel) {
+  case Spin:
+  case Hubbard:
+  case HubbardNConserved:
+  case Kondo:
+  case KondoGC:
+    if (X->Def.iFlgGeneralSpin == FALSE) {
+      if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {
+        X->Large.SizeOflist_2_1 = X->Check.sdim * 2 + 2;
+      }
+      else {
+        X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
+      }
+      X->Large.SizeOflist_2_2 = X->Check.sdim + 2;
+      X->Large.SizeOflistjb = X->Check.sdim + 2;
     }
-    return TRUE;
+    else {//for spin-canonical general spin
+      X->Large.SizeOflist_2_1 = X->Check.sdim + 2;
+      X->Large.SizeOflist_2_2 =
+        X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
+      X->Large.SizeOflistjb =
+        X->Def.Tpow[X->Def.Nsite - 1] * X->Def.SiteToBit[X->Def.Nsite - 1] / X->Check.sdim + 2;
+    }
+    break;
+  default:
+    return FALSE;
+  }
+  return TRUE;
 }
 /**
 @page page_setmem Malloc vectors
