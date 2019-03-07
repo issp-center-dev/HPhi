@@ -83,7 +83,7 @@ void X_child_general_int_spin_MPIdouble(
       Jint = 0;
     }
   }
-  else return 0;
+  else return;
 
   idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
   SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
@@ -121,7 +121,7 @@ void X_child_general_int_spin_TotalS_MPIdouble(
   num2_up = (origin & mask2) / mask2;
 
   ibit_tmp = (num1_up) ^ (num2_up);
-  if (ibit_tmp == 0) return 0;
+  if (ibit_tmp == 0) return;
 
   idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
   SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
@@ -196,7 +196,7 @@ void X_child_general_int_spin_MPIsingle(
       Jint = 0;
     }
   }
-  else return 0;
+  else return;
 
   idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
   SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);

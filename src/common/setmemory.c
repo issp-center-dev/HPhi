@@ -307,7 +307,7 @@ double complex****cd_4d_allocate(const long unsigned int N, const long unsigned 
   A = (double complex****)calloc((N), sizeof(double complex**));
   A[0] = (double complex***)calloc((M*N), sizeof(double complex*));
   A[0][0] = (double complex**)calloc((L*M*N), sizeof(double complex));
-  A[0][0][0] = (double complex**)calloc((K*L*M*N), sizeof(double complex));
+  A[0][0][0] = (double complex*)calloc((K*L*M*N), sizeof(double complex));
   for (int_i = 0; int_i < N; int_i++) {
     A[int_i] = A[0] + int_i * M;
     for (int_j = 0; int_j < M; int_j++) {

@@ -208,7 +208,7 @@ void X_GC_child_general_hopp_MPIsingle(
     trans = -(double) Fsgn * conj(tmp_trans);
     if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) trans = 0;
   }/*if (state2 != mask2)*/
-  else return 0;
+  else return;
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
@@ -368,7 +368,7 @@ void X_child_general_hopp_MPIsingle(
       trans = 0;
     }
   }
-  else return 0;
+  else return;
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 
@@ -428,7 +428,7 @@ void X_child_CisAjt_MPIsingle(
   SgnBit((unsigned long int) (origin & bit2diff), &Fsgn); // Fermion sign
 
   idim_max_buf = SendRecv_i(origin, X->Check.idim_maxOrg);
-  SendRecv_iv(origin, X->Check.idim_maxOrg + 1, list_1buf_org + 1, list_1_org, list_1buf_org);
+  SendRecv_iv(origin, X->Check.idim_maxOrg + 1, idim_max_buf + 1, list_1_org, list_1buf_org);
   SendRecv_cv(origin, X->Check.idim_maxOrg*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
   /*
     Index in the intra PE
@@ -442,7 +442,7 @@ void X_child_CisAjt_MPIsingle(
     state1check = mask1;
     trans = -(double) Fsgn * conj(tmp_trans);
   }
-  else return 0;
+  else return;
 
   bit1diff = X->Def.Tpow[2 * X->Def.Nsite - 1] * 2 - mask1 * 2;
 

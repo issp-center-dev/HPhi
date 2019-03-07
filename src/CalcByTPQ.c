@@ -195,7 +195,7 @@ int CalcByTPQ(
     StartTimer(3600);
     for (rand_i = 0; rand_i < NumAve; rand_i++) {
       inv_temp[rand_i] = (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy[rand_i] / Ns);
-      if (childfopenMPI(sdt_phys, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_phys[rand_i], "a", &fp) == 0) {
         fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", 
           inv_temp[rand_i], X->Bind.Phys.energy[rand_i], X->Bind.Phys.var[rand_i],
           X->Bind.Phys.doublon[rand_i], X->Bind.Phys.num[rand_i], step_i);
@@ -203,14 +203,14 @@ int CalcByTPQ(
       }
       else return -1;     
       // for norm
-      if (childfopenMPI(sdt_norm, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_norm[rand_i], "a", &fp) == 0) {
         fprintf(fp, "%.16lf %.16lf %.16lf %d\n", 
           inv_temp[rand_i], global_norm[rand_i], global_1st_norm[rand_i], step_i);
         fclose(fp);
       }
       else return -1;
       // for fluctuations
-      if (childfopenMPI(sdt_flct, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_flct[rand_i], "a", &fp) == 0) {
         fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", 
           inv_temp[rand_i], X->Bind.Phys.num[rand_i], X->Bind.Phys.num2[rand_i], 
           X->Bind.Phys.doublon[rand_i], X->Bind.Phys.doublon2[rand_i], 
@@ -246,7 +246,7 @@ int CalcByTPQ(
     StartTimer(3600);
     for (rand_i = 0; rand_i < NumAve; rand_i++) {
       inv_temp[rand_i] = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy[rand_i] / Ns);
-      if (childfopenMPI(sdt_phys, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_phys[rand_i], "a", &fp) == 0) {
         fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", 
           inv_temp[rand_i], X->Bind.Phys.energy[rand_i], X->Bind.Phys.var[rand_i],
           X->Bind.Phys.doublon[rand_i], X->Bind.Phys.num[rand_i], step_i);
@@ -255,7 +255,7 @@ int CalcByTPQ(
       }
       else return FALSE;
 
-      if (childfopenMPI(sdt_norm, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_norm[rand_i], "a", &fp) == 0) {
         fprintf(fp, "%.16lf %.16lf %.16lf %d\n", 
           inv_temp[rand_i], global_norm[rand_i], global_1st_norm[rand_i], step_i);
         fclose(fp);
@@ -263,9 +263,9 @@ int CalcByTPQ(
       else return FALSE;
 
       // for fluctuations
-      if (childfopenMPI(sdt_flct, "a", &fp) == 0) {
+      if (childfopenMPI(sdt_flct[rand_i], "a", &fp) == 0) {
         fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", 
-          inv_temp, X->Bind.Phys.num[rand_i], X->Bind.Phys.num2[rand_i],
+          inv_temp[rand_i], X->Bind.Phys.num[rand_i], X->Bind.Phys.num2[rand_i],
           X->Bind.Phys.doublon[rand_i], X->Bind.Phys.doublon2[rand_i],
           X->Bind.Phys.Sz[rand_i], X->Bind.Phys.Sz2[rand_i], step_i);
         fclose(fp);

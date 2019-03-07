@@ -20,13 +20,6 @@ int CalcSpectrum(
                  struct EDMainCalStruct *X
 );
 
-int GetExcitedState(
-                struct BindStruct *X,
-                int nstate, double complex **tmp_v0,
-                double complex **tmp_v1
-);
-
-
 int MakeExcitedList(
                 struct BindStruct *X,
                   int *iFlgListModifed

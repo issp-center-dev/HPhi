@@ -161,7 +161,7 @@ int GetPairExcitedStateHubbard(
   //set size
 #ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  tmp_v1bufOrg = cd_1d_allocate(idim_maxMPI + 1);
+  tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1, nstate);
 #endif // MPI
 
   for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
@@ -206,7 +206,7 @@ private(j, tmp_sgn, tmp_off)
         for (j = 1; j <= i_max; j++) {
           tmp_sgn = X_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
           dmv = tmp_trans * tmp_sgn;
-          zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
+          zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
         }
       }
     }
@@ -222,7 +222,7 @@ private(j, tmp_sgn, tmp_off)
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
               for (j = 1; j <= i_max; j++) {
-                zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
+                zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
               }
             }
           }
@@ -260,7 +260,7 @@ firstprivate(i_max, is, tmp_trans) private(num1, ibit)
               ibit = list_1[j] & is;
               num1 = (1 - ibit / is);
               dmv = -tmp_trans * num1;
-              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
+              zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
           else {
@@ -270,7 +270,7 @@ firstprivate(i_max, is, tmp_trans) private(num1, ibit)
               ibit = list_1[j] & is;
               num1 = ibit / is;
               dmv = tmp_trans * num1;
-              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
+              zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
         }
@@ -281,7 +281,7 @@ firstprivate(i_max, is, tmp_trans) private(num1, ibit)
     }
   }
 #ifdef MPI
-  free_cd_1d_allocate(tmp_v1bufOrg);
+  free_cd_2d_allocate(tmp_v1bufOrg);
 #endif // MPI
   return TRUE;
 }

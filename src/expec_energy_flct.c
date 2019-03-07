@@ -21,156 +21,6 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "common/setmemory.h"
-
-/** 
- * @brief Parent function to calculate expected values of energy and physical quantities.
- * 
- * @param X [in,out] X Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
- * 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * \retval 0 normally finished.
- * \retval -1 abnormally finished.
- */
-int expec_energy_flct(
-  struct BindStruct *X,
-  int nstate,
-  double complex **tmp_v0,
-  double complex **tmp_v1
-) {
-
-  long unsigned int i, j;
-  long unsigned int irght, ilft, ihfbit;
-  double complex dam_pr, dam_pr1;
-  long unsigned int i_max;
-  int istate;
-
-  switch (X->Def.iCalcType) {
-  case TPQCalc:
-  case TimeEvolution:
-#ifdef _DEBUG
-    fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
-    TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecStart, "a", step_i);
-#endif
-    break;
-  case FullDiag:
-  case CG:
-    break;
-  default:
-    return -1;
-  }
-
-  i_max = X->Check.idim_max;
-  if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
-    return -1;
-  }
-
-  X->Large.i_max = i_max;
-  X->Large.irght = irght;
-  X->Large.ilft = ilft;
-  X->Large.ihfbit = ihfbit;
-  X->Large.mode = M_ENERGY;
-  for (istate = 0; istate < nstate; istate++) X->Phys.energy[istate] = 0.0;
-
-  int nCalcFlct;
-  if (X->Def.iCalcType == TPQCalc) {
-    nCalcFlct = 3201;
-  }
-  else {//For FullDiag
-    nCalcFlct = 5301;
-  }
-  StartTimer(nCalcFlct);
-
-  switch (X->Def.iCalcModel) {
-  case HubbardGC:
-    expec_energy_flct_HubbardGC(X, nstate, tmp_v0);
-    break;
-  case KondoGC:
-  case Hubbard:
-  case Kondo:
-    expec_energy_flct_Hubbard(X, nstate, tmp_v0);
-    break;
-
-  case SpinGC:
-    if (X->Def.iFlgGeneralSpin == FALSE) {
-      expec_energy_flct_HalfSpinGC(X, nstate, tmp_v0);
-    }
-    else {//for generalspin
-      expec_energy_flct_GeneralSpinGC(X, nstate, tmp_v0);
-    }
-    break;/*case SpinGC*/
-    /* SpinGCBoost */
-  case Spin:
-    /*
-    if(X->Def.iFlgGeneralSpin == FALSE){
-      expec_energy_flct_HalfSpin(X);
-    }
-    else{
-      expec_energy_flct_GeneralSpin(X);
-    }
-     */
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.doublon[istate] = 0.0;
-      X->Phys.doublon2[istate] = 0.0;
-      X->Phys.num[istate] = X->Def.NsiteMPI;
-      X->Phys.num2[istate] = X->Def.NsiteMPI*X->Def.NsiteMPI;
-      X->Phys.Sz[istate] = 0.5 * (double)X->Def.Total2SzMPI;
-      X->Phys.Sz2[istate] = X->Phys.Sz[istate] * X->Phys.Sz[istate];
-    }
-    break;
-  default:
-    return -1;
-  }
-
-  StopTimer(nCalcFlct);
-
-#pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
-  for (i = 1; i <= i_max; i++) {
-    for (istate = 0; istate < nstate; istate++) {
-      tmp_v1[i][istate] = tmp_v0[i][istate];
-      tmp_v0[i][istate] = 0.0;
-    }
-  }
-
-  int nCalcExpec;
-  if (X->Def.iCalcType == TPQCalc) {
-    nCalcExpec = 3202;
-  }
-  else {//For FullDiag
-    nCalcExpec = 5302;
-  }
-  StartTimer(nCalcExpec);
-  mltply(X, nstate, tmp_v0, tmp_v1); // v0+=H*v1
-  StopTimer(nCalcExpec);
-  /* switch -> SpinGCBoost */
-
-  for (istate = 0; istate < nstate; istate++) {
-    X->Phys.energy[istate] = 0.0;
-    X->Phys.var[istate] = 0.0;
-  }
-#pragma omp parallel for default(none) reduction(+:dam_pr, dam_pr1) private(j) shared(v0, v1)firstprivate(i_max) 
-  for (j = 1; j <= i_max; j++) {
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.energy[istate] += conj(tmp_v1[j][istate])*tmp_v0[j][istate]; // E   = <v1|H|v1>=<v1|v0>
-      X->Phys.var[istate] += conj(tmp_v0[j][istate])*tmp_v0[j][istate]; // E^2 = <v1|H*H|v1>=<v0|v0>
-    }
-  }
-  SumMPI_cv(nstate, X->Phys.energy);
-  SumMPI_cv(nstate, X->Phys.var);
-
-  switch (X->Def.iCalcType) {
-  case TPQCalc:
-  case TimeEvolution:
-#ifdef _DEBUG
-    fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
-    TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecEnd, "a", step_i);
-#endif
-    break;
-  default:
-    break;
-  }
-  return 0;
-}
 ///
 /// \brief Calculate expected values of energies and physical quantities for Hubbard GC model
 /// \param X [in, out] X Struct to get information about file header names, dimension of hirbert space, calc type and output physical quantities.
@@ -710,5 +560,154 @@ int expec_energy_flct_GeneralSpin(
   }
 
   free_d_1d_allocate(tmp_v02);
+  return 0;
+}
+/**
+ * @brief Parent function to calculate expected values of energy and physical quantities.
+ *
+ * @param X [in,out] X Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * \retval 0 normally finished.
+ * \retval -1 abnormally finished.
+ */
+int expec_energy_flct(
+  struct BindStruct *X,
+  int nstate,
+  double complex **tmp_v0,
+  double complex **tmp_v1
+) {
+
+  long unsigned int i, j;
+  long unsigned int irght, ilft, ihfbit;
+  double complex dam_pr, dam_pr1;
+  long unsigned int i_max;
+  int istate;
+
+  switch (X->Def.iCalcType) {
+  case TPQCalc:
+  case TimeEvolution:
+#ifdef _DEBUG
+    fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
+    TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecStart, "a", step_i);
+#endif
+    break;
+  case FullDiag:
+  case CG:
+    break;
+  default:
+    return -1;
+  }
+
+  i_max = X->Check.idim_max;
+  if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+    return -1;
+  }
+
+  X->Large.i_max = i_max;
+  X->Large.irght = irght;
+  X->Large.ilft = ilft;
+  X->Large.ihfbit = ihfbit;
+  X->Large.mode = M_ENERGY;
+  for (istate = 0; istate < nstate; istate++) X->Phys.energy[istate] = 0.0;
+
+  int nCalcFlct;
+  if (X->Def.iCalcType == TPQCalc) {
+    nCalcFlct = 3201;
+  }
+  else {//For FullDiag
+    nCalcFlct = 5301;
+  }
+  StartTimer(nCalcFlct);
+
+  switch (X->Def.iCalcModel) {
+  case HubbardGC:
+    expec_energy_flct_HubbardGC(X, nstate, tmp_v0);
+    break;
+  case KondoGC:
+  case Hubbard:
+  case Kondo:
+    expec_energy_flct_Hubbard(X, nstate, tmp_v0);
+    break;
+
+  case SpinGC:
+    if (X->Def.iFlgGeneralSpin == FALSE) {
+      expec_energy_flct_HalfSpinGC(X, nstate, tmp_v0);
+    }
+    else {//for generalspin
+      expec_energy_flct_GeneralSpinGC(X, nstate, tmp_v0);
+    }
+    break;/*case SpinGC*/
+    /* SpinGCBoost */
+  case Spin:
+    /*
+    if(X->Def.iFlgGeneralSpin == FALSE){
+      expec_energy_flct_HalfSpin(X);
+    }
+    else{
+      expec_energy_flct_GeneralSpin(X);
+    }
+     */
+    for (istate = 0; istate < nstate; istate++) {
+      X->Phys.doublon[istate] = 0.0;
+      X->Phys.doublon2[istate] = 0.0;
+      X->Phys.num[istate] = X->Def.NsiteMPI;
+      X->Phys.num2[istate] = X->Def.NsiteMPI*X->Def.NsiteMPI;
+      X->Phys.Sz[istate] = 0.5 * (double)X->Def.Total2SzMPI;
+      X->Phys.Sz2[istate] = X->Phys.Sz[istate] * X->Phys.Sz[istate];
+    }
+    break;
+  default:
+    return -1;
+  }
+
+  StopTimer(nCalcFlct);
+
+#pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
+  for (i = 1; i <= i_max; i++) {
+    for (istate = 0; istate < nstate; istate++) {
+      tmp_v1[i][istate] = tmp_v0[i][istate];
+      tmp_v0[i][istate] = 0.0;
+    }
+  }
+
+  int nCalcExpec;
+  if (X->Def.iCalcType == TPQCalc) {
+    nCalcExpec = 3202;
+  }
+  else {//For FullDiag
+    nCalcExpec = 5302;
+  }
+  StartTimer(nCalcExpec);
+  mltply(X, nstate, tmp_v0, tmp_v1); // v0+=H*v1
+  StopTimer(nCalcExpec);
+  /* switch -> SpinGCBoost */
+
+  for (istate = 0; istate < nstate; istate++) {
+    X->Phys.energy[istate] = 0.0;
+    X->Phys.var[istate] = 0.0;
+  }
+#pragma omp parallel for default(none) reduction(+:dam_pr, dam_pr1) private(j) shared(v0, v1)firstprivate(i_max) 
+  for (j = 1; j <= i_max; j++) {
+    for (istate = 0; istate < nstate; istate++) {
+      X->Phys.energy[istate] += conj(tmp_v1[j][istate])*tmp_v0[j][istate]; // E   = <v1|H|v1>=<v1|v0>
+      X->Phys.var[istate] += conj(tmp_v0[j][istate])*tmp_v0[j][istate]; // E^2 = <v1|H*H|v1>=<v0|v0>
+    }
+  }
+  SumMPI_dv(nstate, X->Phys.energy);
+  SumMPI_dv(nstate, X->Phys.var);
+
+  switch (X->Def.iCalcType) {
+  case TPQCalc:
+  case TimeEvolution:
+#ifdef _DEBUG
+    fprintf(stdoutMPI, "%s", cLogExpecEnergyEnd);
+    TimeKeeperWithStep(X, cFileNameTimeKeep, cTPQExpecEnd, "a", step_i);
+#endif
+    break;
+  default:
+    break;
+  }
   return 0;
 }

@@ -90,16 +90,9 @@ int HPhiTrans(struct BindStruct *X) {
  * @author Kota Ido (The University of Tokyo)
  */
 int TransferWithPeierls(struct BindStruct *X, const double time) {
-  FILE *fp_err;
-  char sdt_err[D_FileNameMax];
-
-  int i, k;
-  int cnt_trans;
-
+  int i;
   int ri_x, rj_x;
   int ri_y, rj_y;
-  int isite1, isite2;
-  int isigma1, isigma2;
   double complex dir;
   const int Mode = (int) (X->Def.ParaLaser[0]);
   const double Avp = X->Def.ParaLaser[1];
@@ -179,20 +172,12 @@ int TransferWithPeierls(struct BindStruct *X, const double time) {
  * @author Kota Ido (The University of Tokyo)
  */
 int TransferForQuench(struct BindStruct *X, const double time) {
-  FILE *fp_err;
-  char sdt_err[D_FileNameMax];
-
   int i, k;
-  int cnt_trans;
-
   int ri_x, rj_x;
   int ri_y, rj_y;
-  int isite1, isite2;
-  int isigma1, isigma2;
   double complex dir;
   const int Mode = (int) (X->Def.ParaLaser[0]);
   const double Avp = X->Def.ParaLaser[1];
-  const double omega = X->Def.ParaLaser[2];
   const double time_d = X->Def.ParaLaser[3];
   const double time_c = X->Def.ParaLaser[4];
   const int Lx = (int) (X->Def.ParaLaser[5]);

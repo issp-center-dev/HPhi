@@ -105,9 +105,8 @@ void X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
   int mask1, mask2, state1, state2, ierr, origin;
-  unsigned long int idim_max_buf, j, nstatedim;
+  unsigned long int idim_max_buf, j;
   double complex Jint;
-  int one = 1;
 
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
@@ -143,8 +142,7 @@ void X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
   SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
-  nstatedim = nstate * idim_max_buf;
-  zaxpy_(&nstatedim, &Jint, &v1buf[1][0], &one, &tmp_v0[1][0], &one);
+  zaxpy_long(nstate * idim_max_buf, Jint, &v1buf[1][0], &tmp_v0[1][0]);
 }/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
 /**
 @brief Wrapper for calculating CisAisCjuAjv term in Spin model + GC

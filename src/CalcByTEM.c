@@ -185,24 +185,24 @@ int CalcByTEM(
     if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
       return -1;
     }
-    fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", Time, X->Bind.Phys.energy, X->Bind.Phys.var,
-      X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
+    fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n",
+            Time, X->Bind.Phys.energy[0], X->Bind.Phys.var[0],
+            X->Bind.Phys.doublon[0], X->Bind.Phys.num[0], step_i);
     fclose(fp);
 
     if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
       return -1;
     }
-    fprintf(fp, "%.16lf %.16lf %d\n", Time, global_norm, step_i);
+    fprintf(fp, "%.16lf %.16lf %d\n", Time, global_norm[0], step_i);
     fclose(fp);
 
     if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
       return -1;
     }
     fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", 
-      Time, X->Bind.Phys.num, X->Bind.Phys.num2, X->Bind.Phys.doublon, X->Bind.Phys.doublon2, X->Bind.Phys.Sz, X->Bind.Phys.Sz2, step_i);
+      Time, X->Bind.Phys.num[0], X->Bind.Phys.num2[0], X->Bind.Phys.doublon[0],
+            X->Bind.Phys.doublon2[0], X->Bind.Phys.Sz[0], X->Bind.Phys.Sz2[0], step_i);
     fclose(fp);
-
-
 
     if (step_i % step_spin == 0) {
       expec_cisajs(&(X->Bind), 1, v0, v1);

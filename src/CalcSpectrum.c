@@ -69,7 +69,38 @@ int OutputSpectrum(
   fclose(fp);
   return TRUE;
 }/*int OutputSpectrum*/
+/// \brief Parent function to calculate the excited state.
+/// \param X [in] Struct to get number of excitation operators.
+/// \param tmp_v0 [out] Result @f$ v_0 = H_{ex} v_1 @f$.
+/// \param tmp_v1 [in] The original state before excitation  @f$ v_1 @f$.
+/// \retval FALSE Fail to calculate the excited state.
+/// \retval TRUE Success to calculate the excited state.
+int GetExcitedState
+(
+  struct BindStruct *X,
+  int nstate,
+  double complex **tmp_v0,
+  double complex **tmp_v1
+)
+{
+  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
+    fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
+    return FALSE;
+  }
 
+
+  if (X->Def.NSingleExcitationOperator > 0) {
+    if (GetSingleExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
+    }
+  }
+  else if (X->Def.NPairExcitationOperator > 0) {
+    if (GetPairExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
 /**
  * @brief A main function to calculate spectrum.
  *
@@ -96,7 +127,7 @@ int CalcSpectrum(
   int iFlagListModified = FALSE;
   FILE *fp;
   double dnorm;
-  double complex *v1Org; /**< Input vector to calculate spectrum function.*/
+  double complex **v1Org; /**< Input vector to calculate spectrum function.*/
 
   //ToDo: Nomega should be given as a parameter
   int Nomega;
@@ -143,9 +174,9 @@ int CalcSpectrum(
   X->Bind.Def.iFlagListModified = iFlagListModified;
 
   //Set Memory
-  v1Org = cd_1d_allocate(X->Bind.Check.idim_maxOrg + 1);
+  v1Org = cd_2d_allocate(X->Bind.Check.idim_maxOrg + 1,1);
   for (i = 0; i < X->Bind.Check.idim_maxOrg + 1; i++) {
-    v1Org[i] = 0;
+    v1Org[i][0] = 0;
   }
 
   //Make excited state
@@ -176,7 +207,7 @@ int CalcSpectrum(
       fprintf(stderr, "Error: A file of Input vector is incorrect.\n");
       return -1;
     }
-    byte_size = fread(v1Org, sizeof(complex double), i_max + 1, fp);
+    byte_size = fread(&v1Org[0][0], sizeof(complex double), i_max + 1, fp);
     fclose(fp);
     StopTimer(6101);
     if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
@@ -233,7 +264,7 @@ int CalcSpectrum(
   StopTimer(6100);
   //Reset list_1, list_2_1, list_2_2
   if (iFlagListModified == TRUE) {
-    free(v1Org);
+    free_cd_2d_allocate(v1Org);
     free(list_1_org);
     free(list_2_1_org);
     free(list_2_2_org);
@@ -273,39 +304,6 @@ int CalcSpectrum(
   return TRUE;
 
 }/*int CalcSpectrum*/
-///
-/// \brief Parent function to calculate the excited state.
-/// \param X [in] Struct to get number of excitation operators.
-/// \param tmp_v0 [out] Result @f$ v_0 = H_{ex} v_1 @f$.
-/// \param tmp_v1 [in] The original state before excitation  @f$ v_1 @f$.
-/// \retval FALSE Fail to calculate the excited state.
-/// \retval TRUE Success to calculate the excited state.
-int GetExcitedState
-(
-  struct BindStruct *X,
-  int nstate,
-  double complex **tmp_v0,
-  double complex **tmp_v1
-)
-{
-  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
-    fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
-    return FALSE;
-  }
-
-
-  if (X->Def.NSingleExcitationOperator > 0) {
-    if (GetSingleExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
-      return FALSE;
-    }
-  }
-  else if (X->Def.NPairExcitationOperator > 0) {
-    if (GetPairExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
-      return FALSE;
-    }
-  }
-  return TRUE;
-}
 ///
 /// \brief Set target frequencies
 /// \param X [in, out] Struct to give and get the information of target frequencies.\n

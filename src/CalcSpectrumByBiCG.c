@@ -203,8 +203,8 @@ void InitShadowRes(
  */
 int CalcSpectrumByBiCG(
   struct EDMainCalStruct *X,//!<[inout]
-  double complex *vrhs,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
-  double complex *v2,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
+  double complex **vrhs,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
+  double complex **v2,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
   int Nomega,//!<[in] Number of Frequencies
   double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
   double complex *dcomega//!<[in] [Nomega] Frequency
@@ -216,7 +216,7 @@ int CalcSpectrumByBiCG(
   size_t byte_size;
   int iret, max_step;
   unsigned long int liLanczosStp_vec = 0;
-  double complex *v4, *v12, *v14, res_proj;
+  double complex **v4, **v12, **v14, res_proj;
   int stp, one = 1, status[3], iomega;
   double *resz;
 
@@ -226,10 +226,10 @@ int CalcSpectrumByBiCG(
   <li>Malloc vector for old residual vector (@f${\bf r}_{\rm old}@f$)
   and old shadow residual vector (@f${\bf {\tilde r}}_{\rm old}@f$).</li>
   */
-  v12 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
-  v14 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
-  v4 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
-  resz = (double*)malloc(Nomega * sizeof(double));
+  v12 = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
+  v14 = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
+  v4 =  cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
+  resz = d_1d_allocate(Nomega);
   /**
   <li>Set initial result vector(+shadow result vector)
   Read residual vectors if restart</li>
@@ -245,8 +245,8 @@ int CalcSpectrumByBiCG(
       fprintf(stdoutMPI, "      Start from SCRATCH.\n");
 #pragma omp parallel for default(none) shared(v2,v4,vrhs,X) private(idim)
       for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
-        v2[idim] = vrhs[idim];
-        v4[idim] = vrhs[idim];
+        v2[idim][0] = vrhs[idim][0];
+        v4[idim][0] = vrhs[idim][0];
       }
       //InitShadowRes(&(X->Bind), v4);
     }
@@ -258,10 +258,10 @@ int CalcSpectrumByBiCG(
         printf("%s %ld %ld %ld\n", sdt, i_max, X->Bind.Check.idim_max, liLanczosStp_vec);
         exitMPI(-1);
       }
-      byte_size = fread(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-      byte_size = fread(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-      byte_size = fread(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-      byte_size = fread(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fread(&v2[0][0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fread(&v12[0][0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fread(&v4[0][0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fread(&v14[0][0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
       fclose(fp);
       fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
       TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
@@ -271,15 +271,15 @@ int CalcSpectrumByBiCG(
   else {
 #pragma omp parallel for default(none) shared(v2,v4,vrhs,X) private(idim)
     for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
-      v2[idim] = vrhs[idim];
-      v4[idim] = vrhs[idim];
+      v2[idim][0] = vrhs[idim][0];
+      v4[idim][0] = vrhs[idim][0];
     }
     //InitShadowRes(&(X->Bind), v4);
   }
   /**
   <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
   */
-  ReadTMComponents_BiCG(X, v2, v4, v12, v14, Nomega, dcSpectrum, dcomega);
+  ReadTMComponents_BiCG(X, &v2[0][0], &v4[0][0], &v12[0][0], &v14[0][0], Nomega, dcSpectrum, dcomega);
   /**
   <li>@b DO BiCG loop</li>
   <ul>
@@ -296,18 +296,18 @@ int CalcSpectrumByBiCG(
     */
 #pragma omp parallel for default(none) shared(X,v12,v14) private(idim)
     for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
-      v12[idim] = 0.0;
-      v14[idim] = 0.0;
+      v12[idim][0] = 0.0;
+      v14[idim][0] = 0.0;
     }
     iret = mltply(&X->Bind, 1, v12, v2);
     iret = mltply(&X->Bind, 1, v14, v4);
 
-    res_proj = VecProdMPI(X->Bind.Check.idim_max, vrhs, v2);
+    res_proj = VecProdMPI(X->Bind.Check.idim_max, &vrhs[0][0], &v2[0][0]);
     /**
     <li>Update projected result vector dcSpectrum.</li>
     */
 
-    komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
+    komega_bicg_update(&v12[1][0], &v2[1][0], &v14[1][0], &v4[1][0], dcSpectrum, &res_proj, status);
 
     /**
     <li>Output residuals at each frequency for some analysis</li>
@@ -324,7 +324,7 @@ int CalcSpectrumByBiCG(
       fprintf(fp, "\n");
     }
 
-    fprintf(stdoutMPI, "  %9d  %9d %8d %25.15e\n", abs(status[0]), status[1], status[2], creal(v12[1]));
+    fprintf(stdoutMPI, "  %9d  %9d %8d %25.15e\n", abs(status[0]), status[1], status[2], creal(v12[1][0]));
     if (status[0] < 0) break;
   }/*for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++)*/
   fclose(fp);
@@ -348,7 +348,7 @@ int CalcSpectrumByBiCG(
     fprintf(stdoutMPI, "    Start: Output vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecStart, "a");
 
-    komega_bicg_getvec(&v12[1], &v14[1]);
+    komega_bicg_getvec(&v12[1][0], &v14[1][0]);
 
     sprintf(sdt, cFileNameOutputRestartVec, X->Bind.Def.CDataFileHead, myrank);
     if (childfopenALL(sdt, "wb", &fp) != 0) {
@@ -356,10 +356,10 @@ int CalcSpectrumByBiCG(
     }
     byte_size = fwrite(&status[0], sizeof(status[0]), 1, fp);
     byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
-    byte_size = fwrite(v2, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    byte_size = fwrite(v12, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    byte_size = fwrite(v4, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    byte_size = fwrite(v14, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(&v2[0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(&v12[0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(&v4[0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+    byte_size = fwrite(&v14[0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
 
     fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
@@ -368,9 +368,9 @@ int CalcSpectrumByBiCG(
 
   komega_bicg_finalize();
 
-  free(resz);
-  free(v12);
-  free(v14);
-  free(v4);
+  free_d_1d_allocate(resz);
+  free_cd_2d_allocate(v12);
+  free_cd_2d_allocate(v14);
+  free_cd_2d_allocate(v4);
   return TRUE;
 }/*int CalcSpectrumByBiCG*/

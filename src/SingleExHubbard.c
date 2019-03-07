@@ -53,7 +53,7 @@ int GetSingleExcitedStateHubbard(
   //set size
 #ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  tmp_v1bufOrg = cd_1d_allocate(idim_maxMPI + 1);
+  tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1,nstate);
 #endif // MPI
 
   idim_max = X->Check.idim_maxOrg;
@@ -77,7 +77,7 @@ private(j,  isgn,tmp_off,dmv)
           isgn = X_Cis(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2,
             X->Large.irght, X->Large.ilft, X->Large.ihfbit);
           dmv = isgn * tmpphi;
-          zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
+          zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
         }
       }
     }
@@ -95,13 +95,13 @@ private(j, isgn, tmp_off)
           isgn = X_Ajt(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, 
             X->Large.irght, X->Large.ilft, X->Large.ihfbit);
           dmv = isgn * tmpphi;
-          zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
+          zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
         }
       }
     }
   }
 #ifdef MPI
-  free_cd_1d_allocate(tmp_v1bufOrg);
+  free_cd_2d_allocate(tmp_v1bufOrg);
 #endif
   return TRUE;
 }/*int GetSingleExcitedStateHubbard*/
@@ -134,7 +134,7 @@ int GetSingleExcitedStateHubbardGC(
   //set size
 #ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  tmp_v1bufOrg = cd_1d_allocate(idim_maxMPI + 1);
+  tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1, nstate);
 #endif // MPI
 
   // SingleEx
@@ -173,7 +173,7 @@ int GetSingleExcitedStateHubbardGC(
     }
   }
 #ifdef MPI
-  free_cd_1d_allocate(tmp_v1bufOrg);
+  free_cd_2d_allocate(tmp_v1bufOrg);
 #endif
   return TRUE;
 }/*int GetSingleExcitedStateHubbardGC*/

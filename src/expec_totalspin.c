@@ -34,51 +34,6 @@
  *
  */
 /**
- * @brief Parent function of calculation of total spin
- *
- * @param[in,out] X data list of calculation parameters
- * @param[in] vec eigenvector
- *
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @retval 0 calculation is normally finished
- */
-int expec_totalspin
-(
-  struct BindStruct *X,
-  int nstate,
-  double complex **vec
-)
-{
-  int istate;
-
-  X->Large.mode = M_TOTALS;
-  switch (X->Def.iCalcModel) {
-  case Spin:
-    totalspin_Spin(X, nstate, vec);
-    for (istate = 0; istate < nstate; istate++)
-      X->Phys.Sz[istate] = X->Def.Total2SzMPI / 2.;
-    break;
-  case SpinGC:
-    totalspin_SpinGC(X, nstate, vec);
-    break;
-  case Hubbard:
-  case Kondo:
-    totalspin_Hubbard(X, nstate, vec);
-    break;
-  case HubbardGC:
-  case KondoGC:
-    totalspin_HubbardGC(X, nstate, vec);
-    break;
-  default:
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.s2[istate] = 0.0;
-      X->Phys.Sz[istate] = 0.0;
-    }
-  }
-  return 0;
-}
-/**
  * @brief function of calculating totalspin for Hubbard model
  *
  * @param[in,out] X data list of calculation parameters
@@ -693,4 +648,49 @@ shared(vec)
   }
   SumMPI_dv(nstate, X->Phys.s2);
   SumMPI_dv(nstate, X->Phys.Sz);
+}
+/**
+ * @brief Parent function of calculation of total spin
+ *
+ * @param[in,out] X data list of calculation parameters
+ * @param[in] vec eigenvector
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @retval 0 calculation is normally finished
+ */
+int expec_totalspin
+(
+  struct BindStruct *X,
+  int nstate,
+  double complex **vec
+)
+{
+  int istate;
+
+  X->Large.mode = M_TOTALS;
+  switch (X->Def.iCalcModel) {
+  case Spin:
+    totalspin_Spin(X, nstate, vec);
+    for (istate = 0; istate < nstate; istate++)
+      X->Phys.Sz[istate] = X->Def.Total2SzMPI / 2.;
+    break;
+  case SpinGC:
+    totalspin_SpinGC(X, nstate, vec);
+    break;
+  case Hubbard:
+  case Kondo:
+    totalspin_Hubbard(X, nstate, vec);
+    break;
+  case HubbardGC:
+  case KondoGC:
+    totalspin_HubbardGC(X, nstate, vec);
+    break;
+  default:
+    for (istate = 0; istate < nstate; istate++) {
+      X->Phys.s2[istate] = 0.0;
+      X->Phys.Sz[istate] = 0.0;
+    }
+  }
+  return 0;
 }

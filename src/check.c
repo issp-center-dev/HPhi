@@ -57,7 +57,6 @@ int check(struct BindStruct *X){
   long unsigned int tmp;
   long unsigned int Ns,comb_1,comb_2,comb_3,comb_sum, comb_up, comb_down;
   int u_loc;
-  int mfint[7];
   long int **comb;    
   long unsigned int idimmax=0;
   long unsigned int idim=0;

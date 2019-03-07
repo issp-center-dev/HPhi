@@ -37,133 +37,6 @@
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
  */
-/** 
- * @brief function of calculation for one body green's function
- * 
- * @param X [in] list for getting information to calculate one body green's function.
- * @param vec [in] eigenvectors.
- * 
- * @version 0.2
- * @details add calculation one body green's functions for general spin
- *
- * @version 0.1
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @retval 0 normally finished.
- * @retval -1 abnormally finished.
- */
-int expec_cisajs(
-  struct BindStruct *X,
-  int nstate,
-  double complex **Xvec,
-  double complex **vec
-){
-  FILE *fp;
-  char sdt[D_FileNameMax];
-  double complex **prod;
-  long unsigned int irght, ilft, ihfbit, ica;
-  long int i_max;
-  //For TPQ
-  int step = 0, rand_i = 0, istate;
-
-  if(X->Def.NCisAjt <1) return 0;
-
-  i_max = X->Check.idim_max;      
-  if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
-    return -1;
-  }
-  X->Large.i_max    = i_max;
-  X->Large.irght    = irght;
-  X->Large.ilft     = ilft;
-  X->Large.ihfbit   = ihfbit;
-  X->Large.mode     = M_CORR;
- 
-  switch(X->Def.iCalcType){
-  case TPQCalc:
-    step=X->Def.istep;
-    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep,  cTPQExpecOneBodyGStart, "a", 0, step);
-    break;
-  case TimeEvolution:
-    step = X->Def.istep;
-    TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecOneBodyGStart, "a", step);
-    break;
-  case FullDiag:
-  case CG:
-    break;
-  }
-  
-  prod = cd_2d_allocate(X->Def.NCisAjt, nstate);
-  switch(X->Def.iCalcModel){
-  case HubbardGC:
-    if(expec_cisajs_HubbardGC(X, nstate, Xvec, vec, prod)!=0){
-      return -1;
-    }
-    break;
-    
-  case KondoGC:
-  case Hubbard:
-  case Kondo:
-    if (expec_cisajs_Hubbard(X, nstate, Xvec, vec, prod) != 0) {
-      return -1;
-    }
-    break;
-
-  case Spin: // for the Sz-conserved spin system
-    if (expec_cisajs_Spin(X, nstate, Xvec, vec, prod) != 0) {
-      return -1;
-    }
-    break;
-    
-  case SpinGC:
-    if (expec_cisajs_SpinGC(X, nstate, Xvec, vec, prod) != 0) {
-      return -1;
-    }
-    break;
-        
-  default:
-    return -1;
-  }
-
-  for (istate = 0; istate < nstate; istate++) {
-    switch (X->Def.iCalcModel) {
-    case TPQCalc:
-      step = X->Def.istep;
-      sprintf(sdt, cFileName1BGreen_TPQ, X->Def.CDataFileHead, istate, step);
-      break;
-    case TimeEvolution:
-      step = X->Def.istep;
-      sprintf(sdt, cFileName1BGreen_TE, X->Def.CDataFileHead, step);
-      break;
-    case FullDiag:
-    case CG:
-      sprintf(sdt, cFileName1BGreen_FullDiag, X->Def.CDataFileHead, istate);
-      break;
-    }
-    if (childfopenMPI(sdt, "w", &fp) == 0) {
-      for (ica = 0; ica < X->Def.NCisAjt; ica++) {
-        fprintf(fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
-          X->Def.CisAjt[ica][0], X->Def.CisAjt[ica][1], X->Def.CisAjt[ica][2], X->Def.CisAjt[ica][3],
-          creal(prod[ica][istate]), cimag(prod[ica][istate]));
-      }
-      fclose(fp);
-    }
-    else return -1;
-  }/*for (istate = 0; istate < nstate; istate++)*/
-
-  if(X->Def.St==0){
-    if(X->Def.iCalcType==TPQCalc){
-      TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGFinish, "a", rand_i, step);     
-    }
-    else if(X->Def.iCalcType==TimeEvolution){
-      TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecOneBodyGFinish, "a", step);
-    }
-  }else if(X->Def.St==1){
-    TimeKeeper(X, cFileNameTimeKeep, cCGExpecOneBodyGFinish, "a");
-    fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGEnd);
-  }
-  free_cd_2d_allocate(prod);
-  return 0;
-}
 /**
  * @brief function of calculation for one body green's function for Hubbard GC model.
  *
@@ -339,31 +212,6 @@ firstprivate(i_max, is) private(num1, ibit)
   return 0;
 }
 /**
- * @brief function of calculation for one body green's function for Spin model.
- *
- * @param X  [in] list for getting information to calculate one body green's function.
- * @param vec [in] eigenvector
- * @param _fp [in] pointer to output file
- * @retval 0 normally finished.
- * @retval -1 abnormally finished.
- */
-int expec_cisajs_Spin(
-  struct BindStruct *X,
-  int nstate,
-  double complex **Xvec,
-  double complex **vec, 
-    double complex **prod
-) {
-  int info = 0;
-  if (X->Def.iFlgGeneralSpin == FALSE) {
-    info = expec_cisajs_SpinHalf(X, nstate, Xvec, vec, prod);
-  }
-  else {
-    info = expec_cisajs_SpinGeneral(X, nstate, Xvec, vec, prod);
-  }
-  return info;
-}
-/**
  * @brief function of calculation for one body green's function for Half-Spin model.
  *
  * @param X  [in] list for getting information to calculate one body green's function.
@@ -497,31 +345,6 @@ firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec, list_1)
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
   }
   return 0;
-}
-/**
- * @brief function of calculation for one body green's function for SpinGC model.
- *
- * @param X  [in] list for getting information to calculate one body green's function.
- * @param vec [in] eigenvector
- * @param _fp [in] pointer to output file
- * @retval 0 normally finished.
- * @retval -1 abnormally finished.
- */
-int expec_cisajs_SpinGC(
-  struct BindStruct *X,
-  int nstate,
-  double complex **Xvec,
-  double complex **vec, 
-  double complex **prod
-) {
-  int info = 0;
-  if (X->Def.iFlgGeneralSpin == FALSE) {
-    info = expec_cisajs_SpinGCHalf(X, nstate, Xvec, vec, prod);
-  }
-  else {
-    info = expec_cisajs_SpinGCGeneral(X, nstate, Xvec, vec, prod);
-  }
-  return info;
 }
 /**
  * @brief function of calculation for one body green's function for Half-SpinGC model.
@@ -672,5 +495,184 @@ firstprivate(i_max, org_isite1, org_sigma1, org_sigma2, X,tmp_off) shared(vec)
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
   }
+  return 0;
+}
+/**
+ * @brief function of calculation for one body green's function for Spin model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param _fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
+int expec_cisajs_Spin(
+  struct BindStruct *X,
+  int nstate,
+  double complex **Xvec,
+  double complex **vec,
+  double complex **prod
+) {
+  int info = 0;
+  if (X->Def.iFlgGeneralSpin == FALSE) {
+    info = expec_cisajs_SpinHalf(X, nstate, Xvec, vec, prod);
+  }
+  else {
+    info = expec_cisajs_SpinGeneral(X, nstate, Xvec, vec, prod);
+  }
+  return info;
+}
+
+/**
+ * @brief function of calculation for one body green's function for SpinGC model.
+ *
+ * @param X  [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvector
+ * @param _fp [in] pointer to output file
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
+int expec_cisajs_SpinGC(
+  struct BindStruct *X,
+  int nstate,
+  double complex **Xvec,
+  double complex **vec,
+  double complex **prod
+) {
+  int info = 0;
+  if (X->Def.iFlgGeneralSpin == FALSE) {
+    info = expec_cisajs_SpinGCHalf(X, nstate, Xvec, vec, prod);
+  }
+  else {
+    info = expec_cisajs_SpinGCGeneral(X, nstate, Xvec, vec, prod);
+  }
+  return info;
+}
+/**
+ * @brief function of calculation for one body green's function
+ *
+ * @param X [in] list for getting information to calculate one body green's function.
+ * @param vec [in] eigenvectors.
+ *
+ * @version 0.2
+ * @details add calculation one body green's functions for general spin
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @retval 0 normally finished.
+ * @retval -1 abnormally finished.
+ */
+int expec_cisajs(
+  struct BindStruct *X,
+  int nstate,
+  double complex **Xvec,
+  double complex **vec
+) {
+  FILE *fp;
+  char sdt[D_FileNameMax];
+  double complex **prod;
+  long unsigned int irght, ilft, ihfbit, ica;
+  long int i_max;
+  //For TPQ
+  int step = 0, rand_i = 0, istate;
+
+  if (X->Def.NCisAjt < 1) return 0;
+
+  i_max = X->Check.idim_max;
+  if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+    return -1;
+  }
+  X->Large.i_max = i_max;
+  X->Large.irght = irght;
+  X->Large.ilft = ilft;
+  X->Large.ihfbit = ihfbit;
+  X->Large.mode = M_CORR;
+
+  switch (X->Def.iCalcType) {
+  case TPQCalc:
+    step = X->Def.istep;
+    TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGStart, "a", 0, step);
+    break;
+  case TimeEvolution:
+    step = X->Def.istep;
+    TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecOneBodyGStart, "a", step);
+    break;
+  case FullDiag:
+  case CG:
+    break;
+  }
+
+  prod = cd_2d_allocate(X->Def.NCisAjt, nstate);
+  switch (X->Def.iCalcModel) {
+  case HubbardGC:
+    if (expec_cisajs_HubbardGC(X, nstate, Xvec, vec, prod) != 0) {
+      return -1;
+    }
+    break;
+
+  case KondoGC:
+  case Hubbard:
+  case Kondo:
+    if (expec_cisajs_Hubbard(X, nstate, Xvec, vec, prod) != 0) {
+      return -1;
+    }
+    break;
+
+  case Spin: // for the Sz-conserved spin system
+    if (expec_cisajs_Spin(X, nstate, Xvec, vec, prod) != 0) {
+      return -1;
+    }
+    break;
+
+  case SpinGC:
+    if (expec_cisajs_SpinGC(X, nstate, Xvec, vec, prod) != 0) {
+      return -1;
+    }
+    break;
+
+  default:
+    return -1;
+  }
+
+  for (istate = 0; istate < nstate; istate++) {
+    switch (X->Def.iCalcModel) {
+    case TPQCalc:
+      step = X->Def.istep;
+      sprintf(sdt, cFileName1BGreen_TPQ, X->Def.CDataFileHead, istate, step);
+      break;
+    case TimeEvolution:
+      step = X->Def.istep;
+      sprintf(sdt, cFileName1BGreen_TE, X->Def.CDataFileHead, step);
+      break;
+    case FullDiag:
+    case CG:
+      sprintf(sdt, cFileName1BGreen_FullDiag, X->Def.CDataFileHead, istate);
+      break;
+    }
+    if (childfopenMPI(sdt, "w", &fp) == 0) {
+      for (ica = 0; ica < X->Def.NCisAjt; ica++) {
+        fprintf(fp, " %4d %4d %4d %4d %.10lf %.10lf\n",
+          X->Def.CisAjt[ica][0], X->Def.CisAjt[ica][1], X->Def.CisAjt[ica][2], X->Def.CisAjt[ica][3],
+          creal(prod[ica][istate]), cimag(prod[ica][istate]));
+      }
+      fclose(fp);
+    }
+    else return -1;
+  }/*for (istate = 0; istate < nstate; istate++)*/
+
+  if (X->Def.St == 0) {
+    if (X->Def.iCalcType == TPQCalc) {
+      TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGFinish, "a", rand_i, step);
+    }
+    else if (X->Def.iCalcType == TimeEvolution) {
+      TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecOneBodyGFinish, "a", step);
+    }
+  }
+  else if (X->Def.St == 1) {
+    TimeKeeper(X, cFileNameTimeKeep, cCGExpecOneBodyGFinish, "a");
+    fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGEnd);
+  }
+  free_cd_2d_allocate(prod);
   return 0;
 }
