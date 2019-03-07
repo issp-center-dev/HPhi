@@ -745,8 +745,8 @@ int expec_cisajscktalt_SpinGeneral(
     }
     else if (org_isite3 > X->Def.Nsite || org_isite1 > X->Def.Nsite) {
       if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
-                dam_pr=X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
-                  org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, nstate, Xvec, vec);
+        X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
+          org_isite1 - 1, org_sigma1, org_isite3 - 1, org_sigma3, tmp_V, X, nstate, Xvec, vec);
       }
       else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
         X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(

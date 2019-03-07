@@ -36,7 +36,8 @@
 /// \version 1.2
 int GetPairExcitedStateHubbardGC(
   struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
-  int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+  int nstate, 
+  double complex **tmp_v0, /**< [out] Result v0 = H v1*/
   double complex **tmp_v1 /**< [in] v0 = H v1*/
 ) {
   long unsigned int i, j;
@@ -68,9 +69,7 @@ int GetPairExcitedStateHubbardGC(
           ibit = (unsigned long int) myrank & is;
           if (ibit != is) {
             //minus sign comes from negative tmp_trans due to readdef
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
-  firstprivate(i_max, tmp_trans) private(j)
-            for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
+            zaxpy_long(i_max*nstate, -tmp_trans, &tmp_v1[1][0], &tmp_v0[1][0]);
           }
         }
         else {//X->Def.PairExcitationOperator[i][4]==1
@@ -82,21 +81,19 @@ int GetPairExcitedStateHubbardGC(
           }
           ibit = (unsigned long int) myrank & is;
           if (ibit == is) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
-  firstprivate(i_max, tmp_trans) private(j)
-            for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+            zaxpy_long(i_max*nstate, tmp_trans, &tmp_v1[1][0], &tmp_v0[1][0]);
           }
         }
       }
       else {
-        X_GC_child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X,
-          tmp_v0, tmp_v1);
+        X_GC_child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+          -tmp_trans, X, nstate, tmp_v0, tmp_v1);
       }
     }
     else if (org_isite2 > X->Def.Nsite || org_isite1 > X->Def.Nsite) {
       if (org_isite1 < org_isite2) {
-        X_GC_child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X,
-          tmp_v0, tmp_v1);
+        X_GC_child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+          -tmp_trans, X, nstate, tmp_v0, tmp_v1);
       }
       else {
         X_GC_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
@@ -116,7 +113,7 @@ int GetPairExcitedStateHubbardGC(
         if (child_general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2) != 0) {
           return -1;
         }
-        GC_child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+        GC_child_general_hopp(nstate, tmp_v0, tmp_v1, X, tmp_trans);
       }
     }
   }
@@ -231,9 +228,7 @@ private(j, tmp_sgn, tmp_off)
           }
           else {
             if (ibit == is) {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
-  firstprivate(i_max, tmp_trans) private(j)
-              for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+              zaxpy_long(i_max*nstate, tmp_trans, &tmp_v1[1][0], &tmp_v0[1][0]);
             }
           }
         }

@@ -96,7 +96,7 @@ int CalcSpectrumByFullDiag(
   for (iomega = 0; iomega < Nomega; iomega++) {
     dcSpectrum[iomega] = 0.0;
     for (idim = 0; idim < idim_max_int; idim++) {
-      dcSpectrum[iomega] += v1[idim] / (dcomega[iomega] - X->Bind.Phys.energy[idim]);
+      dcSpectrum[iomega] += vAv2[idim] / (dcomega[iomega] - X->Bind.Phys.energy[idim]);
     }/*for (idim = 0; idim < idim_max_int; idim++)*/
   }/*for (iomega = 0; iomega < Nomega; iomega++)*/
   StopTimer(6304);

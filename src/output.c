@@ -79,10 +79,10 @@ int outputHam(struct BindStruct *X){
   FILE *fp;
   char sdt[D_FileNameMax];
 
-#pragma omp parallel for default(none) reduction(+:ihermite) firstprivate(imax) private(i, j) shared(Ham)
+#pragma omp parallel for default(none) reduction(+:ihermite) firstprivate(imax) private(i, j) shared(v0)
   for (i=1; i<=imax; i++){
     for (j=1; j<=i; j++){
-      if(cabs(Ham[i][j])>1.0e-13){
+      if(cabs(v0[i][j])>1.0e-13){
         ihermite += 1;
       }
     }
@@ -97,8 +97,8 @@ int outputHam(struct BindStruct *X){
   fprintf(fp, "%ld %ld %ld \n", imax, imax, ihermite);
   for (i=1; i<=imax; i++){
     for (j=1; j<=i; j++){
-      if(cabs(Ham[i][j])>1.0e-13){
-        fprintf(fp, "%ld %ld %lf %lf\n",i,j,creal(Ham[i][j]),cimag(Ham[i][j]));
+      if(cabs(v0[i][j])>1.0e-13){
+        fprintf(fp, "%ld %ld %lf %lf\n",i,j,creal(v0[i][j]),cimag(v0[i][j]));
       }
     }
   }

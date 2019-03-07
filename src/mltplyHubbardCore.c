@@ -231,7 +231,8 @@ int child_exchange_GetInfo(
  */
 void GC_CisAis(
   long unsigned int j,//!<[in] Index of element of wavefunction
-  int nstate, double complex **tmp_v0,//!<[inout] Result vector
+  int nstate, 
+  double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Mask for occupation of @f$(i \sigma)@f$
@@ -363,7 +364,7 @@ void GC_CisAjt(
     zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
   else {
-    return 0;
+    return;
   }
 }/*double complex GC_CisAjt*/
 /**
@@ -475,7 +476,7 @@ void child_exchange_element(
     iexchg = list_1[j] - (is1_down + is2_up);
     iexchg += (is1_up + is2_down);
     if(GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off)!=TRUE){
-      return 0;
+      return;
     }
     *tmp_off = off;
     dmv = tmp_J;
@@ -485,7 +486,7 @@ void child_exchange_element(
     iexchg = list_1[j] - (is1_up + is2_down);
     iexchg += (is1_down + is2_up);
     if(GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off)!=TRUE){
-      return 0;
+      return;
     }
     *tmp_off = off;
     dmv = tmp_J;
@@ -529,7 +530,7 @@ void child_pairhopp_element(
     iexchg += (is1_up + is1_down);
 
     if(GetOffComp(list_2_1, list_2_2, iexchg, irght, ilft, ihfbit, &off)!=TRUE){
-      return 0;
+      return;
     }
     *tmp_off = off;
     dmv = tmp_J;
@@ -922,7 +923,7 @@ void GC_Cis(
     zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
   else {
-    return 0;
+    return;
   }
 }/*double complex GC_Cis*/
 /**
@@ -968,7 +969,7 @@ void GC_Ajt(
     zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[list_1_off + 1][0], &one);
   }
   else {
-    return 0;
+    return;
   }
 }/*double complex GC_Ajt*/
 /**
@@ -1033,7 +1034,7 @@ term of canonical Hubbard system
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Youhei Yamaji (The University of Tokyo)
 */
-void X_Ajt(
+int X_Ajt(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int is1_spin,//!<[in] Bit mask
   long unsigned int *tmp_off,//!<[out] Index of final wavefunction

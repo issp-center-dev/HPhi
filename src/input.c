@@ -49,8 +49,8 @@ int inputHam(struct BindStruct *X){
     fgetsMPI(ctmp2, sizeof(ctmp2) / sizeof(char), fp);
     sscanf(ctmp2, "%ld %ld %lf %lf\n",
            &ham_i, &ham_j, &dHam_re, &dHam_im);
-    Ham[ham_i][ham_j]=dHam_re+I*dHam_im;
-    Ham[ham_j][ham_i]=conj(Ham[ham_i][ham_j]);
+    v0[ham_i][ham_j]=dHam_re+I*dHam_im;
+    v0[ham_j][ham_i]=conj(v0[ham_i][ham_j]);
   }
  fclose(fp);
  return 0;

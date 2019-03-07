@@ -79,7 +79,7 @@ void X_GC_child_general_hopp_MPIdouble(
   else return;
 
   idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
-  SendRecv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
+  SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
   zaxpy_long(X->Check.idim_max*nstate, trans, &v1buf[1][0], &tmp_v0[1][0]);
 }/*void GC_child_general_hopp_MPIdouble*/
@@ -291,7 +291,7 @@ void X_child_general_hopp_MPIdouble(
 
   idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
   SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
-  SendRecv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
+  SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel default(none)  private(j, dmv, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
@@ -352,7 +352,7 @@ void X_child_general_hopp_MPIsingle(
 
   idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
   SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
-  SendRecv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
+  SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
   /*
     Index in the intra PE
   */

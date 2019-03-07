@@ -10,14 +10,13 @@ include_directories(include)
 add_definitions(-D_HPhi)
 add_definitions(-DDSFMT_MEXP=19937)
 
-set(SOURCES FileIO.c HPhiMain.c HPhiTrans.c bitcalc.c check.c CheckMPI.c dSFMT.c diagonalcalc.c global.c log.c input.c output.c output_list.c readdef.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c)
+set(SOURCES FileIO.c HPhiMain.c HPhiTrans.c bitcalc.c check.c CheckMPI.c dSFMT.c diagonalcalc.c global.c log.c input.c output.c output_list.c readdef.c sz.c xsetmem.c ErrorMessage.c LogMessage.c ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c)
 
-set(SOURCES_MLTPLY Multiply.c mltply.c mltplySpin.c mltplyHubbard.c mltplyMPIHubbard.c mltplyMPISpin.c mltplyMPIBoost.c mltplyHubbardCore.c mltplySpinCore.c mltplyMPIHubbardCore.c mltplyMPISpinCore.c)
-set(SOURCES_LANCZOS CalcByLanczos.c CG_EigenVector.c Lanczos_EigenValue.c Lanczos_EigenVector.c)
+set(SOURCES_MLTPLY Multiply.c mltply.c mltplySpin.c mltplyHubbard.c mltplyMPIHubbard.c mltplyMPISpin.c mltplyHubbardCore.c mltplySpinCore.c mltplyMPIHubbardCore.c mltplyMPISpinCore.c)
 set(SOURCES_CG CalcByLOBPCG.c )
 set(SOURCES_TPQ CalcByTPQ.c FirstMultiply.c)
-set(SOURCES_DIAG CalcByFullDiag.c lapack_diag.c makeHam.c matrixlapack.c matrixlapack_magma.c matrixscalapack.c )
-set(SOURCES_SPECTRUM CalcSpectrum.c CalcSpectrumByBiCG.c CalcSpectrumByLanczos.c CalcSpectrumByTPQ.c CalcSpectrumByFullDiag.c SingleEx.c SingleExHubbard.c PairEx.c PairExHubbard.c PairExSpin.c )
+set(SOURCES_DIAG CalcByFullDiag.c lapack_diag.c matrixlapack.c matrixlapack_magma.c matrixscalapack.c )
+set(SOURCES_SPECTRUM CalcSpectrum.c CalcSpectrumByBiCG.c CalcSpectrumByFullDiag.c SingleEx.c SingleExHubbard.c PairEx.c PairExHubbard.c PairExSpin.c )
 set(SOURCES_TEM CalcByTEM.c)
 set(SOURCES_PHYS expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c phys.c expec_energy_flct.c)
 
@@ -25,7 +24,7 @@ set(SOURCES_COMMON common/setmemory.c)
 
 set(SOURCES_STDFACE StdFace/ChainLattice.c StdFace/FCOrtho.c StdFace/HoneycombLattice.c StdFace/Kagome.c StdFace/Ladder.c StdFace/Orthorhombic.c StdFace/Pyrochlore.c StdFace/SquareLattice.c StdFace/StdFace_main.c StdFace/StdFace_ModelUtil.c StdFace/TriangularLattice.c StdFace/Wannier90.c)
 
-add_executable(HPhi ${SOURCES} ${SOURCES_LANCZOS} ${SOURCES_CG} ${SOURCES_TPQ} ${SOURCES_SPECTRUM} ${SOURCES_TEM} ${SOURCES_MLTPLY} ${SOURCES_DIAG} ${SOURCES_PHYS} ${SOURCES_STDFACE} ${SOURCES_COMMON})
+add_executable(HPhi ${SOURCES} ${SOURCES_CG} ${SOURCES_TPQ} ${SOURCES_SPECTRUM} ${SOURCES_TEM} ${SOURCES_MLTPLY} ${SOURCES_DIAG} ${SOURCES_PHYS} ${SOURCES_STDFACE} ${SOURCES_COMMON})
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
 if(MPI_FOUND)
   target_link_libraries(HPhi ${MPI_C_LIBRARIES})

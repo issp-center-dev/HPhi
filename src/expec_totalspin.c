@@ -56,7 +56,8 @@ int expec_totalspin
   switch (X->Def.iCalcModel) {
   case Spin:
     totalspin_Spin(X, nstate, vec);
-    X->Phys.Sz = X->Def.Total2SzMPI / 2.;
+    for (istate = 0; istate < nstate; istate++)
+      X->Phys.Sz[istate] = X->Def.Total2SzMPI / 2.;
     break;
   case SpinGC:
     totalspin_SpinGC(X, nstate, vec);
@@ -313,7 +314,7 @@ void totalspin_Spin(
             }
           }
           else {//off diagonal
-            spn += X_child_general_int_spin_TotalS_MPIdouble(isite1 - 1, isite2 - 1, X, nstate, vec, vec);
+            //debug spn += X_child_general_int_spin_TotalS_MPIdouble(isite1 - 1, isite2 - 1, X, nstate, vec, vec);
           }
 #endif
         }
@@ -347,10 +348,10 @@ shared(list_1, vec)
               X->Phys.s2[istate] += conj(vec[j][istate]) * vec[j][istate] * spn_z / 4.0;
           }
           if (isite1 < isite2) {
-            spn += X_child_general_int_spin_MPIsingle(isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec);
+            //debug spn += X_child_general_int_spin_MPIsingle(isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec);
           }
           else {
-            spn += conj(X_child_general_int_spin_MPIsingle(isite2 - 1, 1, 0, isite1 - 1, 0, 1, 1.0, X, nstate, vec, vec));
+            //debug spn += conj(X_child_general_int_spin_MPIsingle(isite2 - 1, 1, 0, isite1 - 1, 0, 1, 1.0, X, nstate, vec, vec));
           }
 #endif
         }//isite1 > Nsite || isite2 > Nsite
@@ -544,8 +545,8 @@ void totalspin_SpinGC(
             }
           }//isite1 = isite2
           else {//off diagonal
-            spn += X_GC_child_CisAitCiuAiv_spin_MPIdouble(
-              isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec) / 2.0;
+            //debug spn += X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+            //debug   isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec) / 2.0;
           }
         }
         else if (isite1 > X->Def.Nsite || isite2 > X->Def.Nsite) {
@@ -575,10 +576,10 @@ private(ibit1_up, num1_up, num1_down, spn_z2, list_1_j) shared(vec)
               X->Phys.s2[istate] += conj(vec[j][istate])*vec[j][istate] * spn_z2 / 4.0;
           }
           if (isite1 < isite2) {
-            spn += X_GC_child_CisAitCiuAiv_spin_MPIsingle(isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec) / 2.0;
+            //debug spn += X_GC_child_CisAitCiuAiv_spin_MPIsingle(isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec) / 2.0;
           }
           else {
-            spn += conj(X_GC_child_CisAitCiuAiv_spin_MPIsingle(isite2 - 1, 1, 0, isite1 - 1, 0, 1, 1.0, X, nstate, vec, vec)) / 2.0;
+            //debug spn += conj(X_GC_child_CisAitCiuAiv_spin_MPIsingle(isite2 - 1, 1, 0, isite1 - 1, 0, 1, 1.0, X, nstate, vec, vec)) / 2.0;
           }
         }
         else {
@@ -670,7 +671,7 @@ shared(vec)
               ibit_tmp = GetOffCompGeneralSpin(off, isite1, sigma_1, sigma_1 - 1, &off_2, X->Def.SiteToBit, X->Def.Tpow);
               if (ibit_tmp != 0) {
                 for (istate = 0; istate < nstate; istate++)
-                  X->Phys.s2[istate] += conj(vec[j][istate])*vec[off_2 + 1]
+                  X->Phys.s2[istate] += conj(vec[j][istate])*vec[off_2 + 1][istate]
                   * sqrt(S2*(S2 + 1) - spn_z2 * (spn_z2 + 1))
                   * sqrt(S1*(S1 + 1) - spn_z1 * (spn_z1 - 1)) / 2.0;
               }
@@ -680,7 +681,7 @@ shared(vec)
               ibit_tmp = GetOffCompGeneralSpin(off, isite1, sigma_1, sigma_1 + 1, &off_2, X->Def.SiteToBit, X->Def.Tpow);
               if (ibit_tmp != 0) {
                 for (istate = 0; istate < nstate; istate++)
-                  X->Phys.s2[istate] += conj(vec[j][istate])*vec[off_2 + 1] 
+                  X->Phys.s2[istate] += conj(vec[j][istate])*vec[off_2 + 1][istate]
                   * sqrt(S2*(S2 + 1) - spn_z2 * (spn_z2 - 1.0))
                   * sqrt(S1*(S1 + 1) - spn_z1 * (spn_z1 + 1)) / 2.0;
               }

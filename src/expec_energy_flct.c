@@ -115,7 +115,7 @@ int expec_energy_flct(
       X->Phys.num[istate] = X->Def.NsiteMPI;
       X->Phys.num2[istate] = X->Def.NsiteMPI*X->Def.NsiteMPI;
       X->Phys.Sz[istate] = 0.5 * (double)X->Def.Total2SzMPI;
-      X->Phys.Sz2[istate] = X->Phys.Sz * X->Phys.Sz;
+      X->Phys.Sz2[istate] = X->Phys.Sz[istate] * X->Phys.Sz[istate];
     }
     break;
   default:
@@ -140,7 +140,7 @@ int expec_energy_flct(
     nCalcExpec = 5302;
   }
   StartTimer(nCalcExpec);
-  mltply(X, 1, nstate, tmp_v0, tmp_v1); // v0+=H*v1
+  mltply(X, nstate, tmp_v0, tmp_v1); // v0+=H*v1
   StopTimer(nCalcExpec);
   /* switch -> SpinGCBoost */
 

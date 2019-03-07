@@ -150,12 +150,10 @@ int CalcByTPQ(
     /**@brief
     Initialize v1 and compute v0 = H*v1
     */
-    for (rand_i = 0; rand_i < NumAve; rand_i++) {
-      FirstMultiply(rand_i, &(X->Bind));
-      inv_temp[rand_i] = 0.0;
-    }
+    FirstMultiply(&(X->Bind));
     StopTimer(3100);
     for (rand_i = 0; rand_i < NumAve; rand_i++) {
+      inv_temp[rand_i] = 0.0;
       if (childfopenMPI(sdt_phys[rand_i], "a", &fp) == 0) {
         fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", 
           inv_temp[rand_i], X->Bind.Phys.energy[rand_i], X->Bind.Phys.var[rand_i],

@@ -70,9 +70,9 @@ int GetSingleExcitedStateHubbard(
           X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
       else {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org) \
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org,one) \
   firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin) \
-private(j,  isgn,tmp_off)
+private(j,  isgn,tmp_off,dmv)
         for (j = 1; j <= idim_max; j++) {//idim_max -> original dimension
           isgn = X_Cis(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2,
             X->Large.irght, X->Large.ilft, X->Large.ihfbit);

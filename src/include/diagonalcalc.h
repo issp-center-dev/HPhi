@@ -65,7 +65,8 @@ int SetDiagonalInterAll
 int diagonalcalcForTE(
         const int _istep,
         struct BindStruct *X,
-        int nstate, double complex **tmp_v0,
-        double complex **tmp_v1
+        int nstate,
+  double complex *tmp_v0,
+        double complex *tmp_v1
 );
 

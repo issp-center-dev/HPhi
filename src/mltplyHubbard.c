@@ -576,7 +576,7 @@ void child_general_hopp(
 #pragma omp parallel for default(none)  \
 firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j) shared(tmp_v0, tmp_v1)
   for (j = 1; j <= i_max; j++)
-    CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans) * trans;
+    CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans);
   return;
 }/*double complex child_general_hopp*/
 /**
@@ -603,13 +603,13 @@ void GC_child_general_hopp(
 #pragma omp parallel for default(none)  \
 private(j) firstprivate(i_max,X,isite1, trans) shared(tmp_v0, tmp_v1)
     for (j = 1; j <= i_max; j++)
-      GC_CisAis(j, nstate, tmp_v0, tmp_v1, X, isite1, trans) * trans;
+      GC_CisAis(j, nstate, tmp_v0, tmp_v1, X, isite1, trans);
   }/*if (isite1 == isite2)*/
   else {
 #pragma omp parallel for default(none)  \
 firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j,tmp_off) shared(tmp_v0, tmp_v1)
     for (j = 1; j <= i_max; j++) 
-      GC_CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off) * trans;
+      GC_CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off);
   }
   return;
 }/*double complex GC_child_general_hopp*/

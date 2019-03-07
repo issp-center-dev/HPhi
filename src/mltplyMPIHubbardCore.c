@@ -1126,7 +1126,8 @@ void X_Cis_MPI(
   int org_isite,//!<[in] Site i
   unsigned int org_ispin,//!<[in] Spin s
   double complex tmp_trans,//!<[in] Coupling constant
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate, 
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[inout] Initial wavefunction
   double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
@@ -1169,7 +1170,7 @@ void X_Cis_MPI(
   else if (state2 == 0) {
     trans = (double)Fsgn * tmp_trans;
   }
-  else retur;
+  else return;
 
 #pragma omp parallel for default(none) private(j) \
 firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \

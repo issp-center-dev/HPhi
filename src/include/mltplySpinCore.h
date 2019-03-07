@@ -22,8 +22,9 @@
 void child_exchange_spin_element
 (
  long unsigned int j,
- double complex       *tmp_v0,
- double complex       *tmp_v1,
+  int nstate,
+ double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X,
   long unsigned int *tmp_off
  );
@@ -31,18 +32,20 @@ void child_exchange_spin_element
 void GC_child_pairlift_spin_element
 (
  long unsigned int j,
- double complex       *tmp_v0,
- double complex       *tmp_v1,
+  int nstate,
+ double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X, 
  long unsigned int *tmp_off
  );
 
 void GC_child_exchange_spin_element
 (
- long unsigned int j,
- double complex       *tmp_v0,
- double complex       *tmp_v1,
- struct BindStruct *X,  
+  long unsigned int j,
+  int nstate,
+  double complex **tmp_v0,
+  double complex **tmp_v1,
+  struct BindStruct *X,  
   long unsigned int *tmp_off 
  );
 

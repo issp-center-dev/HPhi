@@ -109,7 +109,7 @@ void X_child_general_int_spin_TotalS_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ){
-  int mask1, mask2, num1_up, num2_up, ierr, origin;
+  int mask1, mask2, num1_up, num2_up, ierr, origin, one = 1;
   unsigned long int idim_max_buf, j, ioff, ibit_tmp;
   double complex dmv;
 
@@ -132,7 +132,7 @@ void X_child_general_int_spin_TotalS_MPIdouble(
   for (j = 1; j <= idim_max_buf; j++) {
     GetOffComp(list_2_1, list_2_2, list_1buf[j],
       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-    dmv = 0.5 * v1buf[j];
+    zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/
   return;
 }/*double complex X_child_general_int_spin_MPIdouble*/

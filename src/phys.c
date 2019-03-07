@@ -123,7 +123,7 @@ void phys(struct BindStruct *X, //!<[inout]
   }
 #else
   if (X->Def.iCalcType == FullDiag) {
-    if (expec_totalspin(X, v1) != 0) {
+    if (expec_totalspin(X, neig, v1) != 0) {
       fprintf(stderr, "Error: calc TotalSpin.\n");
       exitMPI(-1);
     }

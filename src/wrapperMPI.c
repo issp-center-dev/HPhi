@@ -241,7 +241,7 @@ void SumMPI_dv(
 ) {
 #ifdef MPI
   int ierr;
-  ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, &nnorm,
+  ierr = MPI_Allreduce(MPI_IN_PLACE, norm, nnorm,
     MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
   if (ierr != 0) exitMPI(-1);
 #endif
@@ -257,7 +257,7 @@ void SumMPI_cv(
 ) {
 #ifdef MPI
   int ierr;
-  ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, &nnorm,
+  ierr = MPI_Allreduce(MPI_IN_PLACE, norm, nnorm,
     MPI_DOUBLE_COMPLEX, MPI_SUM, MPI_COMM_WORLD);
   if (ierr != 0) exitMPI(-1);
 #endif
@@ -354,7 +354,6 @@ void NormMPI_dv(
   int istate;
 
   for (istate = 0; istate < nstate; istate++) dnorm[istate] = 0.0;
-#pragma omp parallel for default(none) private(i) firstprivate(myrank) shared(_v1, idim) reduction(+: dnorm)
   for (idim = 1; idim <= ndim; idim++) {
     for (istate = 0; istate < nstate; istate++) {
       dnorm[istate] += conj(_v1[idim][istate])*_v1[idim][istate];
@@ -398,7 +397,6 @@ void MultiVecProdMPI(
   int istate;
 
   for (istate = 0; istate < nstate; istate++) prod[istate] = 0.0;
-#pragma omp parallel for default(none) shared(v1,v2,ndim) private(idim) reduction(+: prod)
   for (idim = 1; idim <= ndim; idim++) {
     for (istate = 0; istate < nstate; istate++) {
       prod[istate] += conj(v1[idim][istate])*v2[idim][istate];

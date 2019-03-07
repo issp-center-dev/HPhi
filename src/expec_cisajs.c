@@ -14,7 +14,6 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include "mltplyCommon.h"
 #include "mltply.h"
 #include "FileIO.h"
 #include "bitcalc.h"
@@ -25,6 +24,7 @@
 #include "mltplyMPIHubbard.h"
 #include "mltplyMPISpinCore.h"
 #include "common/setmemory.h"
+#include "mltplyCommon.h"
 
 /**
  * @file   expec_cisajs.c
@@ -258,7 +258,7 @@ int expec_cisajs_Hubbard(
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   double complex dam_pr = 0;
   long int i_max;
-  int num1;
+  int num1, one = 1;
   long int ibit;
   long unsigned int is;
   double complex tmp_OneGreen = 1.0;
@@ -516,10 +516,10 @@ int expec_cisajs_SpinGC(
 ) {
   int info = 0;
   if (X->Def.iFlgGeneralSpin == FALSE) {
-    info = expec_cisajs_SpinGCHalf(X, nstate, Xvec, vec, _fp);
+    info = expec_cisajs_SpinGCHalf(X, nstate, Xvec, vec, prod);
   }
   else {
-    info = expec_cisajs_SpinGCGeneral(X, nstate, Xvec, vec, _fp);
+    info = expec_cisajs_SpinGCGeneral(X, nstate, Xvec, vec, prod);
   }
   return info;
 }

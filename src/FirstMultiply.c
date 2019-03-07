@@ -37,18 +37,19 @@
 /// \version 0.1
 /// \author Takahiro Misawa (The University of Tokyo)
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
-int FirstMultiply(int rand_i, struct BindStruct *X) {
+int FirstMultiply(struct BindStruct *X) {
 
   long int i, i_max;
   double complex dnorm;
   double Ns;
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
-  int mythread;
+  int mythread, rand_i;
 
   Ns = 1.0*X->Def.NsiteMPI;
   i_max = X->Check.idim_max;
 
+  for (rand_i = 0; rand_i < NumAve; rand_i++) {
 #pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt) \
         shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \
         firstprivate(i_max)
@@ -71,8 +72,8 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
     if (X->Def.iInitialVecType == 0) {
-  
-    StartTimer(3101);
+
+      StartTimer(3101);
 #pragma omp for
       for (i = 1; i <= i_max; i++)
         v1[i][rand_i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
@@ -80,7 +81,7 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
     else {
 #pragma omp for
       for (i = 1; i <= i_max; i++)
-          v1[i][rand_i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+        v1[i][rand_i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
     }
     StopTimer(3101);
 
@@ -89,43 +90,47 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
     Normalize v
   */
   dnorm=0.0;
-#pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
+#pragma omp parallel for default(none) private(i) shared(v1, i_max, rand_i) reduction(+: dnorm) 
   for(i=1;i<=i_max;i++){
     dnorm += conj(v1[i][rand_i])*v1[i][rand_i];
   }
   dnorm = SumMPI_dc(dnorm);
   dnorm=sqrt(dnorm);
   global_1st_norm[rand_i] = dnorm;
-#pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm)
+#pragma omp parallel for default(none) private(i) shared(v0,v1,rand_i) firstprivate(i_max, dnorm)
   for(i=1;i<=i_max;i++){
     v1[i][rand_i] = v1[i][rand_i] / dnorm;
     v0[i][rand_i] = v1[i][rand_i];
   }
-  
+  }/*for (rand_i = 0; rand_i < NumAve; rand_i++)*/
+
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
   StartTimer(3102);
-  if(expec_energy_flct(X) !=0){
+  if(expec_energy_flct(X, NumAve, v0, v1) !=0){
     StopTimer(3102);
     return -1;
   }
   StopTimer(3102);
-#pragma omp parallel for default(none) private(i) shared(v0, v1, list_1) firstprivate(i_max, Ns, LargeValue, myrank)
-  for(i = 1; i <= i_max; i++){
-    v0[i][rand_i] = LargeValue * v1[i][rand_i] - v0[i][rand_i] / Ns;
-  }
 
-  dnorm=0.0;
-#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max) reduction(+: dnorm)
-  for (i = 1; i <= i_max; i++) {
-    dnorm += conj(v0[i][rand_i])*v0[i][rand_i];
-  }
-  dnorm = SumMPI_dc(dnorm);
-  dnorm = sqrt(dnorm);
-  global_norm[rand_i] = dnorm;
-#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)
-  for (i = 1; i <= i_max; i++) {
-    v0[i][rand_i] = v0[i][rand_i] / dnorm;
+  for (rand_i = 0; rand_i < NumAve; rand_i++) {
+#pragma omp parallel for default(none) private(i) shared(v0, v1, list_1,rand_i) firstprivate(i_max, Ns, LargeValue, myrank)
+    for (i = 1; i <= i_max; i++) {
+      v0[i][rand_i] = LargeValue * v1[i][rand_i] - v0[i][rand_i] / Ns;
+    }
+
+    dnorm = 0.0;
+#pragma omp parallel for default(none) private(i) shared(v0,rand_i) firstprivate(i_max) reduction(+: dnorm)
+    for (i = 1; i <= i_max; i++) {
+      dnorm += conj(v0[i][rand_i])*v0[i][rand_i];
+    }
+    dnorm = SumMPI_dc(dnorm);
+    dnorm = sqrt(dnorm);
+    global_norm[rand_i] = dnorm;
+#pragma omp parallel for default(none) private(i) shared(v0,rand_i) firstprivate(i_max, dnorm)
+    for (i = 1; i <= i_max; i++) {
+      v0[i][rand_i] = v0[i][rand_i] / dnorm;
+    }
   }
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStepEnd, "a", rand_i, step_i);
   return 0;

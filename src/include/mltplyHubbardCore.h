@@ -179,7 +179,8 @@ void GC_child_CisAjtCkuAlv_element
 void GC_CisAis
 (
  long unsigned int j,
- double  complex *tmp_v0,
+ int nstate,
+ double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
@@ -229,7 +230,8 @@ int X_GC_CisAjt
 void CisAjt
 (
  long unsigned int j,
-  int nstate, double complex *tmp_v0,
+ int nstate, 
+ double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
@@ -243,7 +245,8 @@ void CisAjt
 void GC_CisAjt
 (
  long unsigned int j,
-  int nstate, double complex *tmp_v0,
+ int nstate, 
+ double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X,
  long unsigned int is1_spin,
@@ -340,7 +343,7 @@ int X_Cis
 
 
 
-void X_Ajt
+int X_Ajt
 (
  long unsigned int j,
  long unsigned int is1_spin,
