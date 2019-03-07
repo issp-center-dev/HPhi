@@ -33,16 +33,8 @@
 
 double complex **v0;  /**< A vector after multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
 double complex **v1;  /**< A vector before multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
-double complex *v2;  /**< A temporary vector for time evolution calculation, @f$ v2 = H*v1 = H^coef |psi(t)>@f$.*/
 double complex **v1buf; /**< A temporary vector for MPI. */
 
-//[s] For calcSpectrum
-double complex *v1Org; /**< An input vector to calculate spectrum function.*/
-double complex *vg; /**< A vector used in the CG mode.*/
-//[e] For calcSpectrum
-
-double *alpha,*beta; /**< Tridiagonal components used in Lanczos mode.*/
-double complex **vec; /**< Eigen vectors.*/
 double *list_Diagonal; /**< list for diagonal components.*/
 long unsigned int *list_1; /**< list of getting real-space configuration for canonical state*/
 long unsigned int *list_1buf;/**< list of getting real-space configuration for canonical state across processes*/
@@ -70,8 +62,6 @@ int step_spin;/**< output step for TE calculation.*/
 /*[e] For TPQ*/
 
 /*[s] For All Diagonalization*/
-double complex**Ham; /**> Hamiltonian for full diagonalization. */
-double complex **L_vec;/**> eigen vectors*/
 #ifdef _SCALAPACK
 double complex *Z_vec; /**> distributed matrix of eigen vector*/
 int descZ_vec[9]; /*descriptor for Z_vec*/

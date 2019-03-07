@@ -46,18 +46,13 @@ void child_general_int
  struct BindStruct *X
  );
 
-
 void child_general_hopp
-(
- double complex       *tmp_v0,
- double complex       *tmp_v1,
- struct BindStruct *X,
- double complex trans
- );
+(int nstate, double complex **tmp_v0, double complex **tmp_v1, struct BindStruct *X, double complex trans);
 
 void child_exchange
 (
- int nstate, double complex **tmp_v0,
+ int nstate, 
+  double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );

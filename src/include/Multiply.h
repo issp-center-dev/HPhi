@@ -15,11 +15,5 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
 
-int Multiply
-(
- struct BindStruct *X
- );
-
-int MultiplyForTEM(
-        struct BindStruct *X
-);
+int Multiply(struct BindStruct *X);
+int MultiplyForTEM(struct BindStruct *X, double complex **v2);

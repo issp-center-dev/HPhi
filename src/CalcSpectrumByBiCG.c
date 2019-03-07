@@ -18,8 +18,6 @@
 @brief  File for givinvg functions of calculating spectrum by Lanczos
 */
 #include "Common.h"
-#include "CalcSpectrumByLanczos.h"
-#include "Lanczos_EigenValue.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "common/setmemory.h"
@@ -207,7 +205,6 @@ int CalcSpectrumByBiCG(
   struct EDMainCalStruct *X,//!<[inout]
   double complex *vrhs,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
   double complex *v2,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
-  double complex *v4,//!<[inout] [CheckList::idim_max] Work space for shadow residual vector @f${\bf {\tilde r}}@f$
   int Nomega,//!<[in] Number of Frequencies
   double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
   double complex *dcomega//!<[in] [Nomega] Frequency
@@ -219,7 +216,7 @@ int CalcSpectrumByBiCG(
   size_t byte_size;
   int iret, max_step;
   unsigned long int liLanczosStp_vec = 0;
-  double complex *v12, *v14, res_proj;
+  double complex *v4, *v12, *v14, res_proj;
   int stp, one = 1, status[3], iomega;
   double *resz;
 
@@ -231,6 +228,7 @@ int CalcSpectrumByBiCG(
   */
   v12 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   v14 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
+  v4 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   resz = (double*)malloc(Nomega * sizeof(double));
   /**
   <li>Set initial result vector(+shadow result vector)
@@ -373,5 +371,6 @@ int CalcSpectrumByBiCG(
   free(resz);
   free(v12);
   free(v14);
+  free(v4);
   return TRUE;
 }/*int CalcSpectrumByBiCG*/

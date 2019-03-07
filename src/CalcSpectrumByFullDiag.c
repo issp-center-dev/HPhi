@@ -22,8 +22,10 @@ full-diagonalization method.
 #include <time.h>
 #include "struct.h"
 #include "lapack_diag.h"
-#include "makeHam.h"
+#include "mltply.h"
+#include "mltplyCommon.h"
 #include "CalcTime.h"
+#include "common/setmemory.h"
 
 void zcopy_(int *n, double complex *x, int *incx, double complex *y, int *incy);
 void zdotc_(double complex *xy, int *n, double complex *x, int *incx, double complex *y, int *incy);
@@ -44,20 +46,27 @@ int CalcSpectrumByFullDiag(
   int idim, jdim, iomega;
   int idim_max_int;
   int incr=1;
+  double *vAv2;
+  double complex *vg, vAv;
   /**
   <ul>
   <li>Generate fully stored Hamiltonian. Because ::v0 & ::v1 are overwritten,
   copy ::v0 into ::vg.</li>
   */
   idim_max_int = (int)X->Bind.Check.idim_max;
-  zcopy_(&idim_max_int, &v0[1], &incr, &vg[0], &incr);
+  vg = cd_1d_allocate(idim_max_int);
+  vAv2 = d_1d_allocate(idim_max_int);
+  zcopy_(&idim_max_int, &v0[1][0], &incr, &vg[0], &incr);
 
   StartTimer(6301);
-  makeHam(&(X->Bind));
+  zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v0[0][0]);
+  zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v1[0][0]);
+  for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) v1[idim][idim] = 1.0;
+  mltply(&(X->Bind), X->Bind.Check.idim_max, v0, v1);
   StopTimer(6301);
   /**
   <li>::v0 becomes eigenvalues in lapack_diag(), and
-   ::L_vec becomes eigenvectors</li>
+   ::v1 becomes eigenvectors</li>
   */
   StartTimer(6302);
   lapack_diag(&(X->Bind));
@@ -69,10 +78,10 @@ int CalcSpectrumByFullDiag(
   StartTimer(6303);
 
   for (idim = 0; idim < idim_max_int; idim++) {
-    v1[idim] = 0.0;
-    for (jdim = 0; jdim < idim_max_int; jdim++) v1[idim] += conj(vg[jdim]) * L_vec[idim][jdim];
+    vAv = 0.0;
+    for (jdim = 0; jdim < idim_max_int; jdim++) vAv += conj(vg[jdim]) * v1[jdim][idim];
     //zdotc_(&v1[idim], &idim_max_int, &vg[0], &incr, &L_vec[idim][0], &incr);
-    v1[idim] = conj(v1[idim]) * v1[idim];
+    vAv2[idim] = conj(vAv) * vAv;
   }/*for (idim = 0; idim < idim_max_int; idim++)*/
   StopTimer(6303);
   /**
@@ -87,10 +96,12 @@ int CalcSpectrumByFullDiag(
   for (iomega = 0; iomega < Nomega; iomega++) {
     dcSpectrum[iomega] = 0.0;
     for (idim = 0; idim < idim_max_int; idim++) {
-      dcSpectrum[iomega] += v1[idim] / (dcomega[iomega] - v0[idim]);
+      dcSpectrum[iomega] += v1[idim] / (dcomega[iomega] - X->Bind.Phys.energy[idim]);
     }/*for (idim = 0; idim < idim_max_int; idim++)*/
   }/*for (iomega = 0; iomega < Nomega; iomega++)*/
   StopTimer(6304);
+  free_cd_1d_allocate(vg);
+  free_d_1d_allocate(vAv2);
   return TRUE;
 }/*CalcSpectrumByFullDiag*/
 

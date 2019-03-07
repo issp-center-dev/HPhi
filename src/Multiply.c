@@ -78,10 +78,10 @@ shared(v0, v1) firstprivate(i_max, Ns, LargeValue)
  */
 int MultiplyForTEM
 (
-  struct BindStruct *X
+  struct BindStruct *X,
+  double complex **v2
 )
 {
-
   long int i, i_max;
   int coef;
   double complex dnorm = 0.0;

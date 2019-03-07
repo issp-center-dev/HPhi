@@ -148,17 +148,16 @@ void setmem_def
 
 
 ///
-/// \brief Set size of memories for Hamiltonian (Ham, L_vec), vectors(vg, v0, v1, v2, vec, alpha, beta), lists (list_1, list_2_1, list_2_2, list_Diagonal) and Phys(BindStruct.PhysList) struct in the case of Full Diag mode.
+/// \brief Set size of memories for vectors(vg, v0, v1, v2, vec, alpha, beta), lists (list_1, list_2_1, list_2_2, list_Diagonal) and Phys(BindStruct.PhysList) struct in the case of Full Diag mode.
 /// \param X [in,out] BindStruct to give information and give size of memories for Hamiltonian, vectors, lists and Phys struct in the case of Full Diag mode.
 /// \retval -1 Fail to set memories.
 /// \retval 0 Normal to set memories.
 /// \version 0.1
 int setmem_large
 (
- struct BindStruct *X
- ) {
-
-  unsigned long int j = 0;
+  struct BindStruct *X
+) {
+  int nstate;
   unsigned long int idim_maxMPI;
 
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
@@ -179,82 +178,40 @@ int setmem_large
   }
 
   list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
-  v0 = cd_1d_allocate(X->Check.idim_max + 1);
-  v1 = cd_1d_allocate(X->Check.idim_max + 1);
-  if (X->Def.iCalcType == TimeEvolution) {
-    v2 = cd_1d_allocate(X->Check.idim_max + 1);
-  } else {
-    v2 = cd_1d_allocate(1);
-  }
-#ifdef MPI
-  v1buf = cd_1d_allocate(idim_maxMPI + 1);
-#endif // MPI
-  if (X->Def.iCalcType == TPQCalc) {
-    vg = cd_1d_allocate(1);
-  }
-  else {
-    vg = cd_1d_allocate(X->Check.idim_max + 1);
-  }
-  alpha = d_1d_allocate(X->Def.Lanczos_max + 1);
-  beta = d_1d_allocate(X->Def.Lanczos_max + 1);
-
-  if (
-    list_Diagonal == NULL
-    || v0 == NULL
-    || v1 == NULL
-    || vg == NULL
-    ) {
-    return -1;
-  }
-
-  if (X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-    vec = cd_2d_allocate(X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
-  }
-  else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
-    if (X->Def.LanczosTarget > X->Def.nvec) {
-      vec = cd_2d_allocate(X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
-    }
-    else {
-      vec = cd_2d_allocate(X->Def.nvec + 1, X->Def.Lanczos_max + 1);
-    }
-  }
 
   if (X->Def.iCalcType == FullDiag) {
-    X->Phys.all_num_down = d_1d_allocate(X->Check.idim_max + 1);
-    X->Phys.all_num_up = d_1d_allocate(X->Check.idim_max + 1);
-    X->Phys.all_energy = d_1d_allocate(X->Check.idim_max + 1);
-    X->Phys.all_doublon = d_1d_allocate(X->Check.idim_max + 1);
-    X->Phys.all_sz = d_1d_allocate(X->Check.idim_max + 1);
-    X->Phys.all_s2 = d_1d_allocate(X->Check.idim_max + 1);
-    Ham = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
-    L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
-
-    if (X->Phys.all_num_down == NULL
-      || X->Phys.all_num_up == NULL
-      || X->Phys.all_energy == NULL
-      || X->Phys.all_doublon == NULL
-      || X->Phys.all_s2 == NULL
-      ) {
-      return -1;
-    }
-    for (j = 0; j < X->Check.idim_max + 1; j++) {
-      if (Ham[j] == NULL || L_vec[j] == NULL) {
-        return -1;
-      }
-    }
+    nstate = X->Check.idim_max + 1;
   }
   else if (X->Def.iCalcType == CG) {
-    X->Phys.all_num_down = d_1d_allocate(X->Def.k_exct);
-    X->Phys.all_num_up = d_1d_allocate(X->Def.k_exct);
-    X->Phys.all_energy = d_1d_allocate(X->Def.k_exct);
-    X->Phys.all_doublon = d_1d_allocate(X->Def.k_exct);
-    X->Phys.all_sz = d_1d_allocate(X->Def.k_exct);
-    X->Phys.all_s2 = d_1d_allocate(X->Def.k_exct);
+    nstate = X->Def.k_exct;
   }
+  else if (X->Def.iCalcType == TPQCalc) {
+    nstate = NumAve;
+  }
+  else {
+    nstate = 1;
+  }
+  v0 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
+  v1 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
+#ifdef MPI
+  v1buf = cd_2d_allocate(idim_maxMPI + 1, nstate);
+#endif // MPI
+
+  X->Phys.num_down = d_1d_allocate(nstate);
+  X->Phys.num_up = d_1d_allocate(nstate);
+  X->Phys.num = d_1d_allocate(nstate);
+  X->Phys.num2 = d_1d_allocate(nstate);
+  X->Phys.energy = d_1d_allocate(nstate);
+  X->Phys.var = d_1d_allocate(nstate);
+  X->Phys.doublon = d_1d_allocate(nstate);
+  X->Phys.doublon2 = d_1d_allocate(nstate);
+  X->Phys.Sz = d_1d_allocate(nstate);
+  X->Phys.Sz2 = d_1d_allocate(nstate);
+  X->Phys.s2 = d_1d_allocate(nstate);
+
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
 }
-
 ///
 /// \brief Set the size of memories for InterAllDiagonal and InterAllOffDiagonal arrays.
 /// \param InterAllOffDiagonal [in,out] Arrays of cites and spin indexes of off-diagonal parts of InterAll interactions.

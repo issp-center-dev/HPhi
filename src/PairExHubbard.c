@@ -141,9 +141,9 @@ int GetPairExcitedStateHubbard(
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
 
-  double complex tmp_trans = 0;
+  double complex tmp_trans = 0, dmv;
   long int i_max;
-  int tmp_sgn, num1;
+  int tmp_sgn, num1, one = 1;
   long int ibit;
   long unsigned int is, Asum, Adiff;
   long unsigned int ibitsite1, ibitsite2;
@@ -184,27 +184,32 @@ int GetPairExcitedStateHubbard(
       if (org_isite1 > X->Def.Nsite &&
         org_isite2 > X->Def.Nsite)
       {
-        X_child_CisAjt_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
+        X_child_CisAjt_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+          -tmp_trans, X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg,
+          list_1_org, list_1buf_org, list_2_1, list_2_2);
       }
       else if (org_isite2 > X->Def.Nsite
         || org_isite1 > X->Def.Nsite)
       {
         if (org_isite1 < org_isite2) {
-          X_child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, nstate, tmp_v0,
-            tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
+          X_child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+            -tmp_trans, X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, 
+            list_1_org, list_1buf_org, list_2_1, list_2_2);
         }
         else {
-          X_child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, -conj(tmp_trans), X, nstate, tmp_v0,
-            tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
+          X_child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
+            -conj(tmp_trans), X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, 
+            list_1_org, list_1buf_org, list_2_1, list_2_2);
         }
       }
       else {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1,stdoutMPI)	\
-  firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org, list_1, myrank) \
-  private(j, tmp_sgn, tmp_off)
+firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org, list_1, myrank) \
+private(j, tmp_sgn, tmp_off)
         for (j = 1; j <= i_max; j++) {
           tmp_sgn = X_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
-          tmp_v0[tmp_off] += tmp_trans * tmp_sgn*tmp_v1[j];
+          dmv = tmp_trans * tmp_sgn;
+          zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
         }
       }
     }
@@ -216,9 +221,12 @@ int GetPairExcitedStateHubbard(
           ibit = (unsigned long int) myrank & is;
           if (X->Def.PairExcitationOperator[i][4] == 0) {
             if (ibit != is) {
+              dmv = -tmp_trans;
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-              for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
+              for (j = 1; j <= i_max; j++) {
+                zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
+              }
             }
           }
           else {
@@ -230,15 +238,18 @@ int GetPairExcitedStateHubbard(
           }
         }
         else {
-          X_child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
+          X_child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+            -tmp_trans, X, nstate, tmp_v0, tmp_v1);
         }
       }
       else if (org_isite2 > X->Def.Nsite || org_isite1 > X->Def.Nsite) {
         if (org_isite1 < org_isite2) {
-          X_child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, nstate, tmp_v0, tmp_v1);
+          X_child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+            -tmp_trans, X, nstate, tmp_v0, tmp_v1);
         }
         else {
-          X_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, -conj(tmp_trans), X, nstate, tmp_v0, tmp_v1);
+          X_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
+            -conj(tmp_trans), X, nstate, tmp_v0, tmp_v1);
         }
       }
       else {
@@ -248,32 +259,34 @@ int GetPairExcitedStateHubbard(
         if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
           is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
           if (X->Def.PairExcitationOperator[i][4] == 0) {
-#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
+#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) \
+firstprivate(i_max, is, tmp_trans) private(num1, ibit)
             for (j = 1; j <= i_max; j++) {
               ibit = list_1[j] & is;
               num1 = (1 - ibit / is);
-              tmp_v0[j] += -tmp_trans * num1 * tmp_v1[j];
+              dmv = -tmp_trans * num1;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
           else {
-#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
+#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) \
+firstprivate(i_max, is, tmp_trans) private(num1, ibit)
             for (j = 1; j <= i_max; j++) {
               ibit = list_1[j] & is;
               num1 = ibit / is;
-              tmp_v0[j] += tmp_trans * num1 * tmp_v1[j];
+              dmv = tmp_trans * num1;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
         }
         else {
-          child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+          child_general_hopp(nstate, tmp_v0, tmp_v1, X, tmp_trans);
         }
       }
     }
   }
-
 #ifdef MPI
   free_cd_1d_allocate(tmp_v1bufOrg);
 #endif // MPI
-
   return TRUE;
 }

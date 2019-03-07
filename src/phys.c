@@ -58,9 +58,7 @@ void phys(struct BindStruct *X, //!<[inout]
   fprintf(stdoutMPI, "In scalapack fulldiag, total spin is not calculated !\n");
   vec_tmp = malloc(i_max*sizeof(double complex));
   }
-#endif
   for (i = 0; i < neig; i++) {
-#ifdef _SCALAPACK
     for (j = 0; j < i_max; j++) {
       v0[j + 1] = 0.0;
     }
@@ -82,22 +80,18 @@ void phys(struct BindStruct *X, //!<[inout]
       if (X->Def.iCalcType == FullDiag) {
         if (myrank == 0) {
           for (j = 0; j < i_max; j++) {
-            v0[j + 1] = L_vec[i][j];
+            v0[j + 1] = v1[i][j];
           }
         }
       }
       else {
         for (j = 0; j < i_max; j++) {
-          v0[j + 1] = L_vec[i][j];
+          v0[j + 1] = v1[i][j];
         }
       }
     }
-#else
-    for (j = 0; j < i_max; j++) {
-      v0[j + 1][i] = L_vec[j][i];
-    }
-#endif
   }/*for (i = 0; i < neig; i++)*/
+#endif
 
   if (expec_energy_flct(X, neig, v0, v1) != 0) {
     fprintf(stderr, "Error: calc expec_energy.\n");

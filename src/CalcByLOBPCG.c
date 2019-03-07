@@ -367,7 +367,6 @@ int LOBPCG_Main(
 
   free(v0);
   free(v1);
-  free(vg);
   wxp = cd_3d_allocate(3, X->Check.idim_max + 1, X->Def.k_exct);
   hwxp = cd_3d_allocate(3, X->Check.idim_max + 1, X->Def.k_exct);
   /**@brief
@@ -605,19 +604,17 @@ int LOBPCG_Main(
       }
   }
   /**@brief
-  <li>Just Move wxp[1] into ::L_vec. The latter must be start from 0-index (the same as FullDiag)</li>
+  <li>Just Move wxp[1] into ::v1. The latter must be start from 0-index (the same as FullDiag)</li>
   </ul>
   */
-  L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
-#pragma omp parallel for default(none) shared(i_max,wxp,L_vec,X) private(idim,ie)
-  for (idim = 0; idim < i_max; idim++)
+  v1 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
+#pragma omp parallel for default(none) shared(i_max,wxp,v1,X) private(idim,ie)
+  for (idim = 1; idim <= i_max; idim++)
     for (ie = 0; ie < X->Def.k_exct; ie++) 
-      L_vec[idim][ie] = wxp[1][idim + 1][ie];
+      v1[idim][ie] = wxp[1][idim][ie];
   free_cd_3d_allocate(wxp);
+  v0 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
 
-  v0 = cd_1d_allocate(X->Check.idim_max + 1, 1);
-  v1 = cd_1d_allocate(X->Check.idim_max + 1, 1);
-  vg = cd_1d_allocate(X->Check.idim_max + 1, 1);
   if (iconv != 0) {
     sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
     return -1;
@@ -688,7 +685,6 @@ int CalcByLOBPCG(
     and read from files.
     */
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
-    L_vec = cd_2d_allocate(X->Bind.Check.idim_max + 1, X->Bind.Def.k_exct);
     vin = cd_1d_allocate(X->Bind.Check.idim_max + 1);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
       TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
@@ -705,9 +701,9 @@ int CalcByLOBPCG(
         exitMPI(-1);
       }
       byte_size = fread(vin, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-#pragma omp parallel for default(none) shared(L_vec, v1) firstprivate(i_max, ie), private(idim)
-      for (idim = 0; idim < i_max; idim++) {
-        L_vec[ie][idim] = vin[idim + 1];
+#pragma omp parallel for default(none) shared(v1) firstprivate(i_max, ie), private(idim)
+      for (idim = 1; idim <= i_max; idim++) {
+        v1[ie][idim] = vin[idim];
       }
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
     fclose(fp);
@@ -756,9 +752,9 @@ int CalcByLOBPCG(
     vin = cd_1d_allocate(X->Bind.Check.idim_max);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
 
-#pragma omp parallel for default(none) shared(X,v1,L_vec,ie) private(idim)
-      for (idim = 0; idim < X->Bind.Check.idim_max; idim++)
-        vin[idim + 1] = L_vec[idim][ie];
+#pragma omp parallel for default(none) shared(X,v1,ie) private(idim)
+      for (idim = 1; idim <= X->Bind.Check.idim_max; idim++)
+        vin[idim] = v1[idim][ie];
       
       sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
       if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);

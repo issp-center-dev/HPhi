@@ -19,6 +19,7 @@
 #include "wrapperMPI.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplySpinCore.h"
+#include "mltplyCommon.h"
 #ifdef MPI
 #include "common/setmemory.h"
 #endif
@@ -36,7 +37,6 @@ int GetPairExcitedStateSpinGC(
   struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
   int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
   double complex **tmp_v1 /**< [in] v0 = H v1*/
-
 ) {
 
   int iret = 0;
@@ -58,7 +58,8 @@ int GetPairExcitedStateSpinGC(
 /// \version 1.2
 int GetPairExcitedStateHalfSpinGC(
   struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
-  int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+  int nstate,
+  double complex **tmp_v0, /**< [out] Result v0 = H v1*/
   double complex **tmp_v1 /**< [in] v0 = H v1*/
 ) {
   long unsigned int i, j;
@@ -66,9 +67,10 @@ int GetPairExcitedStateHalfSpinGC(
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
 
-  double complex tmp_trans = 0;
+  double complex tmp_trans = 0, dmv;
   long int i_max;
-  int tmp_sgn;
+  int tmp_sgn, one = 1;
+
   i_max = X->Check.idim_maxOrg;
 
   for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
@@ -99,14 +101,16 @@ int GetPairExcitedStateHalfSpinGC(
             // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X,tmp_trans) shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
-              tmp_v0[j] += (1.0 - X_SpinGC_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
+              dmv = (1.0 - X_SpinGC_CisAis(j, X, isite1, org_sigma1))* (-tmp_trans);
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
           else {
             // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X,tmp_trans) shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
-              tmp_v0[j] += X_SpinGC_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
+              dmv = X_SpinGC_CisAis(j, X, isite1, org_sigma1)* tmp_trans;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
         }
@@ -117,7 +121,8 @@ int GetPairExcitedStateHalfSpinGC(
           for (j = 1; j <= i_max; j++) {
             tmp_sgn = X_SpinGC_CisAit(j, X, isite1, org_sigma2, &tmp_off);
             if (tmp_sgn != 0) {
-              tmp_v0[tmp_off + 1] += tmp_sgn * tmp_v1[j] * tmp_trans;
+              dmv = (double complex)tmp_sgn * tmp_trans;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off + 1], &one);
             }
           }
         }
@@ -140,7 +145,8 @@ int GetPairExcitedStateHalfSpinGC(
 /// \version 1.2
 int GetPairExcitedStateGeneralSpinGC(
   struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
-  int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+  int nstate,
+  double complex **tmp_v0, /**< [out] Result v0 = H v1*/
   double complex **tmp_v1 /**< [in] v0 = H v1*/
 
 ) {
@@ -148,8 +154,8 @@ int GetPairExcitedStateGeneralSpinGC(
   int num1;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
-
-  double complex tmp_trans = 0;
+  int one = 1;
+  double complex tmp_trans = 0, dmv;
   long int i_max;
   i_max = X->Check.idim_maxOrg;
 
@@ -182,7 +188,8 @@ int GetPairExcitedStateGeneralSpinGC(
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
               num1 = BitCheckGeneral(j - 1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-              tmp_v0[j] += -tmp_trans * tmp_v1[j] * (1.0 - num1);
+              dmv = -tmp_trans * (1.0 - num1);
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
           else {
@@ -190,7 +197,8 @@ int GetPairExcitedStateGeneralSpinGC(
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
               num1 = BitCheckGeneral(j - 1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-              tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
+              dmv = tmp_trans * num1;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
         }
@@ -200,7 +208,8 @@ int GetPairExcitedStateGeneralSpinGC(
           for (j = 1; j <= i_max; j++) {
             num1 = GetOffCompGeneralSpin(j - 1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
             if (num1 != 0) {
-              tmp_v0[tmp_off + 1] += tmp_trans * tmp_v1[j] * num1;
+              dmv = tmp_trans * num1;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off + 1], &one);
             }
           }
         }
@@ -223,7 +232,8 @@ int GetPairExcitedStateGeneralSpinGC(
 /// \version 1.2
 int GetPairExcitedStateSpin(
   struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
-  int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+  int nstate,
+  double complex **tmp_v0, /**< [out] Result v0 = H v1*/
   double complex **tmp_v1 /**< [in] v0 = H v1*/
 
 ) {
@@ -246,19 +256,18 @@ int GetPairExcitedStateSpin(
 /// \version 1.2
 int GetPairExcitedStateHalfSpin(
   struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
-  int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+  int nstate, 
+  double complex **tmp_v0, /**< [out] Result v0 = H v1*/
   double complex **tmp_v1 /**< [in] v0 = H v1*/
-
 )
 {
   long unsigned int i, j, idim_maxMPI;
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
-
-  double complex tmp_trans = 0;
+  double complex tmp_trans = 0, dmv;
   long int i_max;
-  int num1;
+  int num1, one = 1;
   long int ibit1;
   long unsigned int is1_up;
 
@@ -284,16 +293,20 @@ int GetPairExcitedStateHalfSpin(
           ibit1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
           if (X->Def.PairExcitationOperator[i][4] == 0) {
             if (ibit1 == 0) {
+              dmv = -tmp_trans;
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-              for (j = 1; j <= i_max; j++) tmp_v0[j] += -tmp_trans * tmp_v1[j];
+              for (j = 1; j <= i_max; j++) {
+                zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
+              }
             }
           }
           else {
             if (ibit1 != 0) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
-              for (j = 1; j <= i_max; j++) tmp_v0[j] += tmp_trans * tmp_v1[j];
+              for (j = 1; j <= i_max; j++) 
+                zaxpy_(nstate, &tmp_trans, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
         }// org_isite1 > X->Def.Nsite
@@ -303,13 +316,15 @@ int GetPairExcitedStateHalfSpin(
             X->Def.PairExcitationOperator[i][4] == 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
-              tmp_v0[j] += (1.0 - X_Spin_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
+              dmv = (1.0 - X_Spin_CisAis(j, X, isite1, org_sigma1)) * (-tmp_trans);
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
           else {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
             for (j = 1; j <= i_max; j++) {
-              tmp_v0[j] += X_Spin_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
+              dmv = X_Spin_CisAis(j, X, isite1, org_sigma1) * tmp_trans;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
         }
@@ -321,16 +336,22 @@ int GetPairExcitedStateHalfSpin(
     }
     else { //org_sigma1 != org_sigma2             // for the canonical case
       if (org_isite1 > X->Def.Nsite) {//For MPI
-        X_child_CisAit_spin_MPIdouble(org_isite1 - 1, org_sigma2, tmp_trans, X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, i_max, X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
-
+        X_child_CisAit_spin_MPIdouble(org_isite1 - 1, org_sigma2, tmp_trans, 
+          X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, i_max, X->Def.Tpow, 
+          list_1_org, list_1buf_org, list_2_1, list_2_2, 
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
       else {
         isite1 = X->Def.Tpow[org_isite1 - 1];
 #pragma omp parallel for default(none) private(j, tmp_off, num1)        \
-  firstprivate(i_max, isite1, org_sigma2, X, tmp_trans, list_1_org, list_1, list_2_1, list_2_2) shared(tmp_v0, tmp_v1)
+firstprivate(i_max, isite1, org_sigma2, X, tmp_trans, list_1_org, list_1, list_2_1, list_2_2) \
+shared(tmp_v0, tmp_v1)
         for (j = 1; j <= i_max; j++) {
           num1 = X_Spin_CisAit(j, X, isite1, org_sigma2, list_1_org, list_2_1, list_2_2, &tmp_off);
-          if (num1 != 0) tmp_v0[tmp_off] += tmp_v1[j] * tmp_trans*(double)num1;
+          if (num1 != 0) {
+            dmv = tmp_trans*(double)num1;
+            zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
+          }
         }
       }
     }
@@ -350,19 +371,18 @@ int GetPairExcitedStateHalfSpin(
 /// \version 1.2
 int GetPairExcitedStateGeneralSpin(
   struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
-  int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
+  int nstate,
+  double complex **tmp_v0, /**< [out] Result v0 = H v1*/
   double complex **tmp_v1 /**< [in] v0 = H v1*/
-
 )
 {
   long unsigned int i, j, idim_maxMPI;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
   long unsigned int off = 0;
-
-  double complex tmp_trans = 0;
+  double complex tmp_trans = 0, dmv;
   long int i_max;
-  int tmp_sgn, num1;
+  int tmp_sgn, num1, one = 1;
   i_max = X->Check.idim_maxOrg;
 
   double complex **tmp_v1bufOrg;
@@ -388,7 +408,8 @@ int GetPairExcitedStateGeneralSpin(
             if (num1 == 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
-                tmp_v0[j] += -tmp_trans * tmp_v1[j];
+                dmv = -tmp_trans;
+                zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
               }
             }
           }
@@ -396,15 +417,15 @@ int GetPairExcitedStateGeneralSpin(
             if (num1 != 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
               for (j = 1; j <= i_max; j++) {
-                tmp_v0[j] += tmp_trans * tmp_v1[j];
+                zaxpy_(nstate, &tmp_trans, tmp_v1[j], &one, tmp_v0[j], &one);
               }
             }
           }
         }//org_sigma1=org_sigma2
         else {//org_sigma1 != org_sigma2
-          X_child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, tmp_trans, X, nstate, tmp_v0,
-            tmp_v1, tmp_v1bufOrg, i_max, list_1_org, list_1buf_org,
-            X->Large.ihfbit);
+          X_child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, 
+            tmp_trans, X, nstate, tmp_v0, tmp_v1,
+            tmp_v1bufOrg, i_max, list_1_org, list_1buf_org, X->Large.ihfbit);
         }
       }
       else {//org_isite1 <= X->Def.Nsite
@@ -414,14 +435,16 @@ int GetPairExcitedStateGeneralSpin(
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1, list_1)
             for (j = 1; j <= i_max; j++) {
               num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-              tmp_v0[j] += -tmp_trans * tmp_v1[j] * (1.0 - num1);
+              dmv = -tmp_trans * (1.0 - num1);
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
           else {
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1, list_1)
             for (j = 1; j <= i_max; j++) {
               num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-              tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
+              dmv = tmp_trans * num1;
+              zaxpy_(nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
             }
           }
         }//org_sigma1=org_sigma2
@@ -434,13 +457,9 @@ int GetPairExcitedStateGeneralSpin(
               X->Def.SiteToBit, X->Def.Tpow);
             if (tmp_sgn != FALSE) {
               ConvertToList1GeneralSpin(off, X->Large.ihfbit, &tmp_off);
-#ifdef _DEBUG
-              printf("rank=%d, org=%ld, tmp_off=%ld, list_1=%ld, ihfbit=%ld\n", myrank, list_1_org[j], off, list_1[tmp_off], X->Large.ihfbit);
-#endif
-              tmp_v0[tmp_off] += tmp_v1[j] * tmp_trans;
+              zaxpy_(nstate, &tmp_trans, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
             }
           }
-
         }
       }
     }

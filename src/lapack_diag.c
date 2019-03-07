@@ -50,16 +50,10 @@ struct BindStruct *X//!<[inout]
 
   for (i = 0; i < i_max; i++) {
     for (j = 0; j < i_max; j++) {
-      //printf("Ham %f %f ", creal(Ham[i+1][j+1]), cimag(Ham[i+1][j+1]));
-      Ham[i][j] = Ham[i + 1][j + 1];
+      v0[i][j] = v0[i + 1][j];
     }
   }
   xMsize = i_max;
-  /*for(i=0; i<xMsize; i++){
-    for(j=0; j<xMsize; j++){
-      printf("Ham %f %f ", creal(Ham[i][j]), cimag(Ham[i][j]));
-    }
-  }*/
   if (X->Def.iNGPU == 0) {
 #ifdef _SCALAPACK
     if(nproc >1) {
@@ -90,39 +84,36 @@ struct BindStruct *X//!<[inout]
       diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
       //printf("Z %f %f\n", creal(Z_vec[0]), cimag(Z_vec[1]));
     } else {
-      ZHEEVall(xMsize, Ham, v0, L_vec);
+      ZHEEVall(xMsize, Ham, v0, v1);
     }
 #else
-    ZHEEVall(xMsize, Ham, v0, L_vec);
+    ZHEEVall(xMsize, v0, X->Phys.energy, v1);
 #endif
   } else {
 #ifdef _MAGMA
     if(myrank==0){
-      if(diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
+      if(diag_magma_cmp(xMsize, Ham, v0, v1, X->Def.iNGPU) != 0) {
         return -1;
       }
     }
 #else
     fprintf(stdoutMPI, "Warning: MAGMA is not used in this calculation.");
-    ZHEEVall(xMsize, Ham, v0, L_vec);
+    ZHEEVall(xMsize, v0, X->Phys.energy, v1);
 #endif
   }
-
-  /*for (i = 0; i < i_max; i++) {
+  for (i = i_max; i > 0; i--) {
     for (j = 0; j < i_max; j++) {
-      fprintf(stdoutMPI, "%f %f \n", creal(L_vec[i][j]), cimag(L_vec[i][j]));
+      v1[i][j] = v1[i - 1][j];
     }
-  }*/
+  }
 
   strcpy(sdt, cFileNameEigenvalue_Lanczos);
   if (childfopenMPI(sdt, "w", &fp) != 0) {
     return -1;
   }
   for (i = 0; i < i_max; i++) {
-    fprintf(fp, " %ld %.10lf \n", i, creal(v0[i][0]));
+    fprintf(fp, " %ld %.10lf \n", i, X->Phys.energy[i]);
   }
   fclose(fp);
-
-
   return 0;
 }

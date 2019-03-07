@@ -559,7 +559,8 @@ void child_exchange(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 void child_general_hopp(
-  int nstate, double complex **tmp_v0,//!<[inout] Result vector
+  int nstate,
+  double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X,//!<[inout]
   double complex trans//!<[in] Hopping integral
