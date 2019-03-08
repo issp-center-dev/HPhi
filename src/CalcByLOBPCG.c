@@ -31,6 +31,13 @@ localy optimal block (preconditioned) conjugate gradient method.
 #include "mltplyCommon.h"
 #include "./common/setmemory.h"
 
+void debug_print(int num, double complex *var){
+  int i;
+  for (i=0;i<num;i++){
+    printf("debug %d %f %f\n", i, creal(var[i]), cimag(var[i]));
+  }
+}
+
 void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
 void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *alpha, double complex *a, int *lda, double complex *b, int *ldb, double complex *beta, double complex *c, int *ldc);
 /**
@@ -344,7 +351,7 @@ int LOBPCG_Main(
 {
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
   FILE *fp;
-  int iconv = -1;
+  int iconv = -1, i4_max;
   long int idim, i_max;
   int ii, jj, ie, nsub, stp, nsub_cut;
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/,
@@ -364,6 +371,7 @@ int LOBPCG_Main(
   ovlp = cd_4d_allocate(3, X->Def.k_exct, 3, X->Def.k_exct);
 
   i_max = X->Check.idim_max;
+  i4_max = (int)i_max;
 
   free(v0);
   free(v1);
@@ -495,9 +503,9 @@ private(idim,precon,ie)
     */
     for (ii = 0; ii < 3; ii++) {
       for (jj = 0; jj < 3; jj++) {
-        zgemm_(&tN, &tC, &X->Def.k_exct, &X->Def.k_exct, &i_max, &one,
+        zgemm_(&tN, &tC, &X->Def.k_exct, &X->Def.k_exct, &i4_max, &one,
           &wxp[ii][1][0], &X->Def.k_exct, &wxp[jj][1][0], &X->Def.k_exct, &zero, &ovlp[jj][0][ii][0], &nsub);
-        zgemm_(&tN, &tC, &X->Def.k_exct, &X->Def.k_exct, &i_max, &one,
+        zgemm_(&tN, &tC, &X->Def.k_exct, &X->Def.k_exct, &i4_max, &one,
           &wxp[ii][1][0], &X->Def.k_exct, &hwxp[jj][1][0], &X->Def.k_exct, &zero, &hsub[jj][0][ii][0], &nsub);
       }
     }
@@ -523,7 +531,7 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii++) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i_max, &X->Def.k_exct, &one,
+      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
         &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
@@ -534,7 +542,7 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii++) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i_max, &X->Def.k_exct, &one,
+      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
         &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
@@ -545,7 +553,7 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii += 2) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i_max, &X->Def.k_exct, &one,
+      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
         &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
@@ -556,7 +564,7 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii += 2) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i_max, &X->Def.k_exct, &one,
+      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
         &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)

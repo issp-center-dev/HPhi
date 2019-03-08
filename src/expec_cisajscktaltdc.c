@@ -1008,7 +1008,7 @@ int expec_cisajscktaltdc
   }
 
   //Make File Name for output
-  prod = cd_2d_allocate(X->Def.NCisAjt, nstate);
+  prod = cd_2d_allocate(X->Def.NCisAjtCkuAlvDC, nstate);
   switch (X->Def.iCalcType) {
   case TPQCalc:
     step = X->Def.istep;

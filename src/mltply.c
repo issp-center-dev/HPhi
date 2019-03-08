@@ -59,6 +59,7 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
   long unsigned int irght=0;
   long unsigned int ilft=0;
   long unsigned int ihfbit=0;
+  double complex dmv;
 
 
   long unsigned int i_max;
@@ -95,7 +96,8 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
   StartTimer(100);
 #pragma omp parallel for default(none)  firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
-    zaxpy_(&nstate, &list_Diagonal[j], &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
+    dmv = list_Diagonal[j];
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
   }
   StopTimer(100);
   if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, nstate, &tmp_v0[0][0], &tmp_v1[0][0]);
