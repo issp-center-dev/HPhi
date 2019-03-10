@@ -434,7 +434,7 @@ int LOBPCG_Main(
 #pragma omp parallel for default(none) shared(i_max,wxp,hwxp,eig,X) private(idim,ie) 
     for (idim = 1; idim <= i_max; idim++) {
       for (ie = 0; ie < X->Def.k_exct; ie++) {
-        wxp[0][ie][idim] = hwxp[1][idim][ie] - eig[ie] * wxp[1][idim][ie];
+        wxp[0][idim][ie] = hwxp[1][idim][ie] - eig[ie] * wxp[1][idim][ie];
       }
     }        
     NormMPI_dv(i_max, X->Def.k_exct, wxp[0], dnorm);
