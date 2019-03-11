@@ -321,7 +321,7 @@ static void Output_restart(
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecStart);
   
-  vout = cd_1d_allocate(X->Check.idim_max);
+  vout = cd_1d_allocate(X->Check.idim_max + 1);
   for (ie = 0; ie < X->Def.k_exct; ie++) {
     sprintf(sdt, cFileNameOutputVector, ie, myrank);
     if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
@@ -616,13 +616,13 @@ private(idim,precon,ie)
   <li>Just Move wxp[1] into ::v1. The latter must be start from 0-index (the same as FullDiag)</li>
   </ul>
   */
-  v1 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
+  v0 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
 #pragma omp parallel for default(none) shared(i_max,wxp,v1,X) private(idim,ie)
   for (idim = 1; idim <= i_max; idim++)
     for (ie = 0; ie < X->Def.k_exct; ie++) 
-      v1[idim][ie] = wxp[1][idim][ie];
+      v0[idim][ie] = wxp[1][idim][ie];
   free_cd_3d_allocate(wxp);
-  v0 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
+  v1 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
 
   if (iconv != 0) {
     sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);

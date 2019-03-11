@@ -35,9 +35,9 @@ int CalcByFullDiag(
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
   if(X->Bind.Def.iInputHam==FALSE){
-    zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v0[0][0]);
-    zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v1[0][0]);
-    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) v1[idim][idim] = 1.0;
+    zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v0[0][0]);
+    zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v1[0][0]);
+    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) v1[idim][idim-1] = 1.0;
     mltply(&(X->Bind), X->Bind.Check.idim_max, v0, v1);
   }
   else if(X->Bind.Def.iInputHam==TRUE){

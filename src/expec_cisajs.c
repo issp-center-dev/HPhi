@@ -636,7 +636,7 @@ int expec_cisajs(
   }
 
   for (istate = 0; istate < nstate; istate++) {
-    switch (X->Def.iCalcModel) {
+    switch (X->Def.iCalcType) {
     case TPQCalc:
       step = X->Def.istep;
       sprintf(sdt, cFileName1BGreen_TPQ, X->Def.CDataFileHead, istate, step);

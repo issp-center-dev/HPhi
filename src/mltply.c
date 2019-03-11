@@ -142,7 +142,7 @@ void zaxpy_long(
 
 #pragma omp parallel for default(none) private(i) shared(n, a, x, y)
   for (i = 0; i < n; i++) 
-    y[i] += a * x[i] + y[i];
+    y[i] += a * x[i];
 }
 /**
 @brief Wrapper of zswap.

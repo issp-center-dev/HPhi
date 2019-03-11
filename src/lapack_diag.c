@@ -101,9 +101,9 @@ struct BindStruct *X//!<[inout]
     ZHEEVall(xMsize, v0, X->Phys.energy, v1);
 #endif
   }
-  for (i = i_max; i > 0; i--) {
+  for (i = 0; i < i_max; i++) {
     for (j = 0; j < i_max; j++) {
-      v1[i][j] = v1[i - 1][j];
+      v0[i + 1][j] = v1[i][j];
     }
   }
 

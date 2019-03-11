@@ -1055,7 +1055,7 @@ int expec_cisajscktaltdc
   }
 
   for (istate = 0; istate < nstate; istate++) {
-    switch (X->Def.iCalcModel) {
+    switch (X->Def.iCalcType) {
     case TPQCalc:
       step = X->Def.istep;
       sprintf(sdt, cFileName2BGreen_TPQ, X->Def.CDataFileHead, istate, step);
@@ -1070,7 +1070,7 @@ int expec_cisajscktaltdc
       break;
     }
     if (childfopenMPI(sdt, "w", &fp) == 0) {
-      for (icaca = 0; icaca < X->Def.NCisAjt; icaca++) {
+      for (icaca = 0; icaca < X->Def.NCisAjtCkuAlvDC; icaca++) {
         fprintf(fp, " %4d %4d %4d %4d %4d %4d %4d %4d %.10lf %.10lf\n",
           X->Def.CisAjtCkuAlvDC[icaca][0], X->Def.CisAjtCkuAlvDC[icaca][1],
           X->Def.CisAjtCkuAlvDC[icaca][2], X->Def.CisAjtCkuAlvDC[icaca][3],

@@ -180,7 +180,7 @@ int setmem_large
   list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
 
   if (X->Def.iCalcType == FullDiag) {
-    nstate = X->Check.idim_max + 1;
+    nstate = X->Check.idim_max;
   }
   else if (X->Def.iCalcType == CG) {
     nstate = X->Def.k_exct;
