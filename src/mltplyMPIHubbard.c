@@ -265,7 +265,7 @@ void X_child_general_hopp_MPIdouble(
 ) {
   int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
-  double complex trans, dmv;
+  double complex trans;
   int one = 1;
 
   mask1 = (int) X->Def.Tpow[2 * org_isite1 + org_ispin1];
@@ -293,14 +293,14 @@ void X_child_general_hopp_MPIdouble(
   SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
   SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
-#pragma omp parallel default(none)  private(j, dmv, Fsgn, ioff) \
+#pragma omp parallel default(none)  private(j, Fsgn, ioff) \
   firstprivate(idim_max_buf, trans, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
   {
 #pragma omp for
     for (j = 1; j <= idim_max_buf; j++) {
       GetOffComp(list_2_1, list_2_2, list_1buf[j],
                  X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-      zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
+      zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*End of parallel region*/
 }/*void child_general_hopp_MPIdouble*/

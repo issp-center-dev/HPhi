@@ -758,7 +758,7 @@ int CalcByLOBPCG(
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
 
-    vin = cd_1d_allocate(X->Bind.Check.idim_max);
+    vin = cd_1d_allocate(X->Bind.Check.idim_max + 1);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
 
 #pragma omp parallel for default(none) shared(X,v1,ie,vin) private(idim)

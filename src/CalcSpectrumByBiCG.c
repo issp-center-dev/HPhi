@@ -226,7 +226,7 @@ int CalcSpectrumByBiCG(
   <li>Malloc vector for old residual vector (@f${\bf r}_{\rm old}@f$)
   and old shadow residual vector (@f${\bf {\tilde r}}_{\rm old}@f$).</li>
   */
-  v12 = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
+  v12 = cd_2d_allocate(X->Bind.Check.idim_max + 2, 1);
   v14 = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
   v4 =  cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
   resz = d_1d_allocate(Nomega);
@@ -323,7 +323,6 @@ int CalcSpectrumByBiCG(
       }
       fprintf(fp, "\n");
     }
-
     fprintf(stdoutMPI, "  %9d  %9d %8d %25.15e\n", abs(status[0]), status[1], status[2], creal(v12[1][0]));
     if (status[0] < 0) break;
   }/*for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++)*/

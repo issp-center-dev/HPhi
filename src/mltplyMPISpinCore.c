@@ -877,10 +877,7 @@ void X_child_CisAit_GeneralSpin_MPIdouble(
   origin = (int) off;
 
   idim_max_buf = SendRecv_i(origin, idim_max);
-  if(ierr != 0) exitMPI(-1);
-
   SendRecv_iv(origin, idim_max + 1, idim_max_buf + 1, list_1_org, list_1buf_org);
-  
   SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel for default(none)\
@@ -1408,8 +1405,8 @@ void X_GC_child_CisAis_spin_MPIdouble(
   int mask1, ibit1;
   mask1 = (int)X->Def.Tpow[org_isite1];
   ibit1 = (((unsigned long int)myrank& mask1)/mask1)^(1-org_ispin1);
-
-  zaxpy_long(X->Check.idim_max*nstate, tmp_trans, &tmp_v1[1][0], &tmp_v0[1][0]);
+  if (ibit1 != 0) 
+    zaxpy_long(X->Check.idim_max*nstate, tmp_trans, &tmp_v1[1][0], &tmp_v0[1][0]);
 }/*double complex X_GC_child_CisAis_spin_MPIdouble*/
 /**
 @brief Hopping term in Spin + GC

@@ -208,21 +208,6 @@ int check(struct BindStruct *X){
 
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType) {
-    case Lanczos:
-      switch (X->Def.iCalcModel) {
-        case Hubbard:
-        case HubbardNConserved:
-        case Kondo:
-        case KondoGC:
-        case Spin:
-          X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
-          break;
-        case HubbardGC:
-        case SpinGC:
-          X->Check.max_mem = 4.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
-          break;
-      }
-      break;
     case CG:
       switch (X->Def.iCalcModel) {
         case Hubbard:
@@ -230,11 +215,11 @@ int check(struct BindStruct *X){
         case Kondo:
         case KondoGC:
         case Spin:
-          X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          X->Check.max_mem = (7 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
         case HubbardGC:
         case SpinGC:
-          X->Check.max_mem = (6 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          X->Check.max_mem = (7 * X->Def.k_exct + 1.0) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
       }
       break;
@@ -246,7 +231,7 @@ int check(struct BindStruct *X){
         case KondoGC:
         case Spin:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-            X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+            X->Check.max_mem = NumAve * 3 * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
             X->Check.max_mem = 4.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
           }
@@ -254,7 +239,7 @@ int check(struct BindStruct *X){
         case HubbardGC:
         case SpinGC:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-            X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+            X->Check.max_mem = NumAve * 3 * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
             X->Check.max_mem = 3.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
           }

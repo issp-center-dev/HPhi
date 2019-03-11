@@ -212,8 +212,8 @@ int CalcSpectrum(
     StopTimer(6101);
     if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
 
-    for (i = 0; i <= X->Bind.Check.idim_max; i++) {
-      v0[i] = 0;
+    for (i = 1; i <= X->Bind.Check.idim_max; i++) {
+      v0[i][0] = 0;
     }
     fprintf(stdoutMPI, "  End:   An Input vector is inputted in CalcSpectrum.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
@@ -278,7 +278,7 @@ int CalcSpectrum(
   StartTimer(6200);
   switch (X->Bind.Def.iCalcType) {
   case CG:
-    iret = CalcSpectrumByBiCG(X, &v0[0][0], &v1[0][0], Nomega, dcSpectrum, dcomega);
+    iret = CalcSpectrumByBiCG(X, v0, v1, Nomega, dcSpectrum, dcomega);
     if (iret != TRUE) {
       return FALSE;
     }
