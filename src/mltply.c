@@ -94,7 +94,8 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
   X->Large.mode = M_MLTPLY;
 
   StartTimer(100);
-#pragma omp parallel for default(none)  firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
+#pragma omp parallel for default(none) private(dmv) \
+  firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal,one,nstate)
   for (j = 1; j <= i_max; j++) {
     dmv = list_Diagonal[j];
     zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);

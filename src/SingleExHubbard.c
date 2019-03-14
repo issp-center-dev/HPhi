@@ -70,8 +70,8 @@ int GetSingleExcitedStateHubbard(
           X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
       else {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org,one) \
-  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin) \
+#pragma omp parallel for default(none) shared(nstate,tmp_v0, tmp_v1, X, list_1_org,one) \
+firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin) \
 private(j,  isgn,tmp_off,dmv)
         for (j = 1; j <= idim_max; j++) {//idim_max -> original dimension
           isgn = X_Cis(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2,
@@ -88,9 +88,9 @@ private(j,  isgn,tmp_off,dmv)
           list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
       else {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org, list_1) \
-  firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin, myrank) \
-private(j, isgn, tmp_off)
+#pragma omp parallel for default(none) shared(tmp_v0,tmp_v1,X,list_1_org,list_1,one,nstate) \
+firstprivate(idim_max,tmpphi,org_isite,ispin,list_2_1,list_2_2,is1_spin,myrank) \
+private(j, isgn, tmp_off,dmv)
         for (j = 1; j <= idim_max; j++) {//idim_max -> original dimension
           isgn = X_Ajt(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, 
             X->Large.irght, X->Large.ilft, X->Large.ihfbit);
@@ -149,8 +149,8 @@ int GetSingleExcitedStateHubbardGC(
           idim_max, tmp_v1bufOrg, X->Def.Tpow);
       }
       else {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X) \
-  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
+#pragma omp parallel for default(none) shared(tmp_v0,tmp_v1,X,nstate)         \
+firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
         for (j = 1; j <= idim_max; j++) {
           is1_spin = X->Def.Tpow[2 * org_isite + ispin];
           GC_Cis(j, nstate, tmp_v0, tmp_v1, is1_spin, tmpphi, &tmp_off);
@@ -163,8 +163,8 @@ int GetSingleExcitedStateHubbardGC(
           idim_max, tmp_v1bufOrg, X->Def.Tpow);
       }
       else {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X) \
-  firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
+#pragma omp parallel for default(none) shared(tmp_v0,tmp_v1,X,nstate)         \
+firstprivate(idim_max, tmpphi, org_isite, ispin) private(j, is1_spin, tmp_off)
         for (j = 1; j <= idim_max; j++) {
           is1_spin = X->Def.Tpow[2 * org_isite + ispin];
           GC_Ajt(j, nstate, tmp_v0, tmp_v1, is1_spin, tmpphi, &tmp_off);

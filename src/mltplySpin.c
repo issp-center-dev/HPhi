@@ -352,9 +352,9 @@ int mltplyGeneralSpin(
         sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
         tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
 #pragma omp parallel for default(none) \
-  private(j, tmp_sgn, off, tmp_off, tmp_off2) \
-  firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V, ihfbit) \
-  shared(tmp_v0, tmp_v1, list_1, list_2_1, list_2_2)
+private(j,tmp_sgn,off,tmp_off,tmp_off2) \
+firstprivate(i_max,isite1,isite2,sigma1,sigma2,sigma3,sigma4,X,tmp_V,ihfbit) \
+shared(tmp_v0,tmp_v1,list_1,list_2_1,list_2_2,one,nstate)
         for (j = 1; j <= i_max; j++) {
           tmp_sgn = GetOffCompGeneralSpin(list_1[j], isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
           if (tmp_sgn == TRUE) {
@@ -461,7 +461,7 @@ int mltplyHalfSpinGC(
           is1_spin = X->Def.Tpow[isite1 - 1];
 #pragma omp parallel for default(none) \
 private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) \
-shared(tmp_v0, tmp_v1)
+shared(tmp_v0, tmp_v1,one,nstate)
           for (j = 1; j <= i_max; j++) {
             tmp_sgn = X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
             if(tmp_sgn !=0){
@@ -652,7 +652,7 @@ int mltplyGeneralSpinGC(
             // transverse magnetic field
 #pragma omp parallel for default(none) \
 private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) \
-shared(tmp_v0, tmp_v1)
+shared(tmp_v0, tmp_v1,one,nstate)
             for (j = 1; j <= i_max; j++) {
               num1 = GetOffCompGeneralSpin(
                 j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
@@ -716,7 +716,7 @@ shared(tmp_v0, tmp_v1)
 #pragma omp parallel for default(none) \
   private(j, tmp_sgn, off)                                         \
   firstprivate(i_max, isite1, isite2, sigma1, sigma3, sigma4, X, tmp_V) \
-  shared(tmp_v0, tmp_v1)
+  shared(tmp_v0, tmp_v1,one,nstate)
             for (j = 1; j <= i_max; j++) {
               tmp_sgn = GetOffCompGeneralSpin(
                 j - 1, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow);
@@ -734,7 +734,7 @@ shared(tmp_v0, tmp_v1)
 #pragma omp parallel for default(none) \
   private(j, tmp_sgn, off, tmp_off)                                \
   firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) \
-  shared(tmp_v0, tmp_v1)
+  shared(tmp_v0, tmp_v1,one,nstate)
           for (j = 1; j <= i_max; j++) {
             tmp_sgn = BitCheckGeneral(j - 1, isite2, sigma3, X->Def.SiteToBit, X->Def.Tpow);
             if (tmp_sgn == TRUE) {
@@ -750,7 +750,7 @@ shared(tmp_v0, tmp_v1)
 #pragma omp parallel for default(none) \
   private(j, tmp_sgn, off, tmp_off)                                \
   firstprivate(i_max, isite1, isite2, sigma1, sigma2, sigma3, sigma4, X, tmp_V) \
-  shared(tmp_v0, tmp_v1)
+  shared(tmp_v0, tmp_v1,one,nstate)
           for (j = 1; j <= i_max; j++) {
             tmp_sgn = GetOffCompGeneralSpin(
               j - 1, isite2, sigma4, sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
@@ -792,7 +792,7 @@ void child_exchange_spin(
   long unsigned int off = 0;
 
 #pragma omp parallel for default(none) \
-firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+  firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1,nstate)
   for (j = 1; j <= i_max; j++) 
     child_exchange_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
 }/*double complex child_exchange_spin*/
@@ -811,7 +811,7 @@ void GC_child_exchange_spin(
   long unsigned int off = 0;
 
 #pragma omp parallel for default(none) \
-firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+  firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1,nstate)
   for (j = 1; j <= i_max; j++)
     GC_child_exchange_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
 }/*double complex GC_child_exchange_spin*/
@@ -830,7 +830,7 @@ void GC_child_pairlift_spin(
   long unsigned int off = 0;
 
 #pragma omp parallel for default(none) \
-firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+  firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1,nstate)
   for (j = 1; j <= i_max; j++) 
     GC_child_pairlift_spin_element(j, nstate, tmp_v0, tmp_v1, X, &off);
 }/*double complex GC_child_pairlift_spin*/
@@ -860,7 +860,8 @@ void child_general_int_spin(
   isB_up = X->Large.is2_up;
 
 #pragma omp parallel for default(none) private(j, tmp_sgn, dmv) \
-firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(tmp_v1, tmp_v0)
+firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) \
+shared(tmp_v1, tmp_v0,one,nstate)
   for (j = 1; j <= i_max; j++) {
     tmp_sgn = X_child_exchange_spin_element(j, X, isA_up, isB_up, org_sigma2, org_sigma4, &tmp_off);
     if (tmp_sgn != 0) {
@@ -898,8 +899,8 @@ void GC_child_general_int_spin(
   isB_up = X->Def.Tpow[org_isite2 - 1];
 
 #pragma omp parallel default(none) \
-private(j) shared(tmp_v0, tmp_v1) \
-firstprivate(i_max,X,isA_up,isB_up,org_sigma1,org_sigma2,org_sigma3,org_sigma4,tmp_off, tmp_V) 
+private(j) shared(tmp_v0,tmp_v1,nstate) \
+firstprivate(i_max,X,isA_up,isB_up,org_sigma1,org_sigma2,org_sigma3,org_sigma4,tmp_off,tmp_V) 
   {
     if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
 #pragma omp for

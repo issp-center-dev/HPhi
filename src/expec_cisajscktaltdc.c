@@ -160,7 +160,7 @@ int expec_cisajscktalt_HubbardGC(
   long int i_max;
 
   for (i = 0; i < X->Def.NCisAjtCkuAlvDC; i++) {
-    zclear(i_max*nstate, &Xvec[1][0]);
+    zclear(X->Large.i_max*nstate, &Xvec[1][0]);
     org_isite1 = X->Def.CisAjtCkuAlvDC[i][0] + 1;
     org_sigma1 = X->Def.CisAjtCkuAlvDC[i][1];
     org_isite2 = X->Def.CisAjtCkuAlvDC[i][2] + 1;
@@ -216,14 +216,14 @@ int expec_cisajscktalt_HubbardGC(
       Bdiff = X->Large.B_spin;
 
       if (isite1 == isite2 && isite3 == isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate)     \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V)
         for (j = 1; j <= i_max; j++) {
           GC_child_CisAisCisAis_element(j, isite1, isite3, tmp_V, nstate, Xvec, vec, X, &tmp_off);
         }
       }
       else if (isite1 == isite2 && isite3 != isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V)
         for (j = 1; j <= i_max; j++) {
           GC_child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, 
@@ -231,7 +231,7 @@ firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,t
         }
       }
       else if (isite1 != isite2 && isite3 == isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) 
         for (j = 1; j <= i_max; j++) {
           GC_child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, 
@@ -239,7 +239,7 @@ firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,t
         }
       }
       else if (isite1 != isite2 && isite3 != isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) 
         for (j = 1; j <= i_max; j++) {
           GC_child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, 
@@ -279,7 +279,7 @@ int expec_cisajscktalt_Hubbard(
   long int i_max;
 
   for (i = 0; i < X->Def.NCisAjtCkuAlvDC; i++) {
-    zclear(i_max*nstate, &Xvec[1][0]);
+    zclear(X->Large.i_max*nstate, &Xvec[1][0]);
     org_isite1 = X->Def.CisAjtCkuAlvDC[i][0] + 1;
     org_sigma1 = X->Def.CisAjtCkuAlvDC[i][1];
     org_isite2 = X->Def.CisAjtCkuAlvDC[i][2] + 1;
@@ -341,14 +341,14 @@ int expec_cisajscktalt_Hubbard(
 
       tmp_V = 1.0;
       if (isite1 == isite2 && isite3 == isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec,tmp_V) \
+#pragma omp parallel for default(none) private(j) shared(vec,tmp_V,Xvec,nstate) \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2)
         for (j = 1; j <= i_max; j++) {
           child_CisAisCisAis_element(j, isite1, isite3, tmp_V, nstate, Xvec, vec, X, &tmp_off);
         }
       }
       else if (isite1 == isite2 && isite3 != isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec,tmp_V) \
+#pragma omp parallel for default(none) private(j) shared(vec,tmp_V,Xvec,nstate) \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2)
         for (j = 1; j <= i_max; j++) {
           child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, 
@@ -356,7 +356,7 @@ firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,t
         }
       }
       else if (isite1 != isite2 && isite3 == isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec,tmp_V) \
+#pragma omp parallel for default(none) private(j) shared(vec,tmp_V,Xvec,nstate) \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2)
         for (j = 1; j <= i_max; j++) {
           child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, 
@@ -364,7 +364,7 @@ firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,t
         }
       }
       else if (isite1 != isite2 && isite3 != isite4) {
-#pragma omp parallel for default(none) private(j) shared(vec,tmp_V) \
+#pragma omp parallel for default(none) private(j) shared(vec,tmp_V,Xvec,nstate) \
 firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2)
         for (j = 1; j <= i_max; j++) {
           child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, 
@@ -452,8 +452,8 @@ int expec_cisajscktalt_SpinHalf(
         is1_up = X->Def.Tpow[org_isite1 - 1];
         is2_up = X->Def.Tpow[org_isite3 - 1];
         num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
-#pragma omp parallel for default(none)shared(vec) \
-  firstprivate(i_max, tmp_V, is1_up, org_sigma1, X, num2) private(j, num1)
+#pragma omp parallel for default(none)shared(vec,Xvec,nstate,one)      \
+  firstprivate(i_max, tmp_V, is1_up, org_sigma1, X, num2) private(j, num1,dmv)
         for (j = 1; j <= i_max; j++) {
           num1 = X_Spin_CisAis(j, X, is1_up, org_sigma1);
           dmv = tmp_V * num1*num2;
@@ -473,7 +473,7 @@ int expec_cisajscktalt_SpinHalf(
       isA_up = X->Def.Tpow[org_isite1 - 1];
       isB_up = X->Def.Tpow[org_isite3 - 1];
       if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off, tmp_V)
         for (j = 1; j <= i_max; j++) {
           child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4,
@@ -482,14 +482,14 @@ firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off, tmp_V)
       }
       else if (org_isite1 == org_isite3 && org_sigma1 == org_sigma4 && org_sigma3 == org_sigma2) {
 #pragma omp parallel for default(none) private(j, dmv) \
-firstprivate(i_max,X,isA_up,org_sigma1, tmp_V) shared(vec, list_1)
+  firstprivate(i_max,X,isA_up,org_sigma1, tmp_V) shared(vec, list_1,Xvec,nstate,one)
         for (j = 1; j <= i_max; j++) {
           dmv = tmp_V * X_Spin_CisAis(j, X, isA_up, org_sigma1);
           zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
         }
       }
       else if (org_sigma1 == org_sigma4 && org_sigma2 == org_sigma3) { // exchange
-#pragma omp parallel for default(none) private(j, tmp_sgn, dmv) shared(vec) \
+#pragma omp parallel for default(none) private(j, tmp_sgn, dmv) shared(vec,Xvec,nstate,one) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
         for (j = 1; j <= i_max; j++) {
           tmp_sgn = X_child_exchange_spin_element(j, X, isA_up, isB_up, org_sigma2, org_sigma4, &tmp_off);
@@ -595,7 +595,7 @@ int expec_cisajscktalt_SpinGeneral(
     }
     else {
       if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
-#pragma omp parallel for default(none) private(j, num1) shared(vec,list_1) \
+#pragma omp parallel for default(none) private(j, num1) shared(vec,list_1,Xvec,nstate,one) \
 firstprivate(i_max,X,org_isite1, org_sigma1,org_isite3, org_sigma3, tmp_V)
         for (j = 1; j <= i_max; j++) {
           num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
@@ -608,8 +608,9 @@ firstprivate(i_max,X,org_isite1, org_sigma1,org_isite3, org_sigma3, tmp_V)
         }
       }
       else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
-#pragma omp parallel for default(none) private(j, num1) \
-firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, list1_off, myrank, tmp_V) shared(vec, list_1)
+#pragma omp parallel for default(none) private(j,num1) \
+firstprivate(i_max,X,org_isite1,org_isite3,org_sigma1,org_sigma2,org_sigma3,org_sigma4,tmp_off,tmp_off_2,list1_off,myrank,tmp_V) \
+  shared(vec,list_1,Xvec,nstate,one)
         for (j = 1; j <= i_max; j++) {
           num1 = GetOffCompGeneralSpin(list_1[j], org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
           if (num1 != FALSE) {
@@ -621,9 +622,6 @@ firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3
             }
           }
         }
-        //printf("DEBUG: rank=%d, dam_pr=%lf\n", myrank, creal(dam_pr));
-      }
-      else {
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
@@ -729,7 +727,7 @@ int expec_cisajscktalt_SpinGCHalf(
         isA_up = X->Def.Tpow[org_isite2 - 1];
         isB_up = X->Def.Tpow[org_isite4 - 1];
         if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
           for (j = 1; j <= i_max; j++) {
             GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4,
@@ -737,7 +735,7 @@ firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
           }
         }
         else if (org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4) {
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
           for (j = 1; j <= i_max; j++) {
             GC_child_CisAisCitAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up,
@@ -745,7 +743,7 @@ firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
           }
         }
         else if (org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4) {
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
           for (j = 1; j <= i_max; j++) {
             GC_child_CisAitCiuAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, 
@@ -753,7 +751,7 @@ firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
           }
         }
         else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
-#pragma omp parallel for default(none) private(j) shared(vec) \
+#pragma omp parallel for default(none) private(j) shared(vec,Xvec,nstate) \
 firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V)
           for (j = 1; j <= i_max; j++) {
             GC_child_CisAitCiuAiv_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up,
@@ -857,7 +855,7 @@ int expec_cisajscktalt_SpinGCGeneral(
     }
     else {
       if (org_sigma1 == org_sigma2 && org_sigma3 == org_sigma4) { //diagonal
-#pragma omp parallel for default(none) private(j, num1) shared(vec) \
+#pragma omp parallel for default(none) private(j, num1) shared(vec,Xvec,nstate,one) \
 firstprivate(i_max,X,org_isite1, org_sigma1,org_isite3, org_sigma3, tmp_V)
         for (j = 1; j <= i_max; j++) {
           num1 = BitCheckGeneral(j - 1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
@@ -870,7 +868,7 @@ firstprivate(i_max,X,org_isite1, org_sigma1,org_isite3, org_sigma3, tmp_V)
         }
       }
       else if (org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4) {
-#pragma omp parallel for default(none) private(j, num1) shared(vec) \
+#pragma omp parallel for default(none) private(j, num1) shared(vec,Xvec,nstate,one) \
 firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma3,org_sigma4, tmp_off, tmp_V)
         for (j = 1; j <= i_max; j++) {
           num1 = GetOffCompGeneralSpin(j - 1, org_isite3, org_sigma4, org_sigma3,
@@ -884,7 +882,7 @@ firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma3,org_sigma4, 
         }
       }
       else if (org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4) {
-#pragma omp parallel for default(none) private(j, num1) shared(vec) \
+#pragma omp parallel for default(none) private(j, num1) shared(vec,Xvec,nstate,one) \
 firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma2, org_sigma3, tmp_off, tmp_V)
         for (j = 1; j <= i_max; j++) {
           num1 = BitCheckGeneral(j - 1, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
@@ -899,7 +897,8 @@ firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma2, org_sigma3,
       }
       else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
 #pragma omp parallel for default(none) private(j, num1) \
-firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, tmp_V) shared(vec)
+firstprivate(i_max,X,org_isite1,org_isite3,org_sigma1,org_sigma2,org_sigma3,org_sigma4,tmp_off,tmp_off_2,tmp_V) \
+  shared(vec,Xvec,nstate,one)
         for (j = 1; j <= i_max; j++) {
           num1 = GetOffCompGeneralSpin(j - 1, org_isite3, org_sigma4, org_sigma3,
             &tmp_off, X->Def.SiteToBit, X->Def.Tpow);

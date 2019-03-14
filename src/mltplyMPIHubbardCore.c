@@ -284,8 +284,9 @@ void X_GC_child_CisAisCjtAjt_Hubbard_MPI(
     if (org_isite1 > org_isite3) tmp_ispin1 = X->Def.Tpow[2 * org_isite3 + org_ispin3];
     else                         tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
 
-#pragma omp parallel  default(none) shared(org_isite1, org_ispin1, org_isite3, org_ispin3, nstate, tmp_v0, tmp_v1) \
-  firstprivate(i_max, tmp_V, X) private(j, tmp_off, tmp_ispin1)
+#pragma omp parallel  default(none) \
+  shared(org_isite1,org_ispin1,org_isite3,org_ispin3,nstate,one,tmp_v0,tmp_v1) \
+  firstprivate(i_max,tmp_V,X) private(j,tmp_off,tmp_ispin1)
 #pragma omp for
     for (j = 1; j <= i_max; j++) {
       if (CheckBit_Ajt(tmp_ispin1, j - 1, &tmp_off) == TRUE) {
@@ -360,7 +361,8 @@ void X_GC_child_CisAjtCkuAku_Hubbard_MPI(
     if (CheckBit_Ajt(isite3, myrank, &tmp_off) == FALSE) return;
 
 #pragma omp parallel default(none)  \
-firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(tmp_v0, tmp_v1)
+firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) \
+  private(j,tmp_off) shared(tmp_v0, tmp_v1,nstate)
     {
 #pragma omp for
       for (j = 1; j <= i_max; j++) 
@@ -378,9 +380,9 @@ firstprivate(i_max,X,Asum,Adiff,isite1,isite2, tmp_V) private(j,tmp_off) shared(
     idim_max_buf = SendRecv_i(origin, X->Check.idim_max);
     SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
-#pragma omp parallel default(none)  private(j, dmv, tmp_off, Fsgn, org_rankbit, Adiff) \
-shared(v1buf, tmp_v1, nstate, tmp_v0, myrank, origin, isite3, org_isite3, isite1, isite2, org_isite2, org_isite1) \
-firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4)
+#pragma omp parallel default(none) private(j,dmv,tmp_off,Fsgn,org_rankbit,Adiff) \
+  shared(v1buf,tmp_v1,nstate,one,tmp_v0,myrank,origin,isite3,org_isite3,isite1,isite2,org_isite2,org_isite1) \
+firstprivate(idim_max_buf,tmp_V,X,tmp_isite1,tmp_isite2,tmp_isite3,tmp_isite4)
     {
       if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite) {
         if (isite2 > isite1) Adiff = isite2 - isite1 * 2;
@@ -513,7 +515,7 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
       else Adiff = isite1 - isite4 * 2;
 
 #pragma omp parallel for default(none)  private(j, tmp_off) \
-firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
+  firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0,nstate)
       for (j = 1; j <= i_max; j++) 
         GC_CisAjt(j - 1, nstate, tmp_v0, tmp_v1, X, isite1, isite4, (isite1 + isite4), Adiff, tmp_V, &tmp_off);
       
@@ -522,7 +524,7 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
                                           org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
       if (X->Large.mode != M_CORR) { //for hermite
 #pragma omp parallel for default(none)  private(j, tmp_off) \
-firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
+  firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0,nstate)
         for (j = 1; j <= i_max; j++) 
           GC_CisAjt(j - 1, nstate, tmp_v0, tmp_v1, X, isite4, isite1, (isite1 + isite4), Adiff, tmp_V, &tmp_off);
         
@@ -568,7 +570,9 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
     }
     else {
       org_rankbit = X->Def.OrgTpow[2 * X->Def.Nsite] * origin;
-#pragma omp parallel for default(none)  private(j, dmv, tmp_off, Fsgn) firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit) shared(v1buf, tmp_v1, tmp_v0)
+#pragma omp parallel for default(none)  private(j,dmv,tmp_off,Fsgn) \
+  firstprivate(idim_max_buf,tmp_V,X,tmp_isite1,tmp_isite2,tmp_isite3,tmp_isite4,org_rankbit) \
+  shared(v1buf,tmp_v1,tmp_v0,nstate,one)
       for (j = 1; j <= idim_max_buf; j++) {
         if (GetSgnInterAll(tmp_isite4, tmp_isite3, tmp_isite2, tmp_isite1, &Fsgn, X, (j - 1) + org_rankbit, &tmp_off) == TRUE) {
           dmv = tmp_V * Fsgn;
@@ -601,7 +605,7 @@ void X_GC_child_CisAis_Hubbard_MPI(
     zaxpy_long(i_max*nstate, tmp_V, &tmp_v1[1][0], &tmp_v0[1][0]);
   }/*if (org_isite1 + 1 > X->Def.Nsite)*/
   else {
-#pragma omp parallel  default(none) shared(tmp_v0, tmp_v1) \
+#pragma omp parallel  default(none) shared(tmp_v0, tmp_v1,nstate,one) \
   firstprivate(i_max, tmp_V, X, isite1) private(j, tmp_off)
     {
 #pragma omp for
@@ -663,7 +667,6 @@ void X_child_CisAisCjtAjt_Hubbard_MPI(
   if (iCheck != TRUE) return;
   
   if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite) {
-#pragma omp for
     zaxpy_long(i_max*nstate, tmp_V, &tmp_v1[1][0], &tmp_v0[1][0]);
   }/*if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite)*/
   else if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite) {
@@ -671,8 +674,8 @@ void X_child_CisAisCjtAjt_Hubbard_MPI(
     else                         tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
 
 #pragma omp parallel for default(none) \
-shared(tmp_v0, tmp_v1, list_1, org_isite1, org_ispin1, org_isite3, org_ispin3) \
-  firstprivate(i_max, tmp_V, X, tmp_ispin1) private(j, tmp_off)
+shared(tmp_v0,tmp_v1,list_1,org_isite1,org_ispin1,org_isite3,org_ispin3,nstate,one) \
+  firstprivate(i_max,tmp_V,X,tmp_ispin1) private(j,tmp_off)
     for (j = 1; j <= i_max; j++) {
       if (CheckBit_Ajt(tmp_ispin1, list_1[j], &tmp_off) == TRUE) {
         zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
@@ -764,7 +767,7 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, nstate, tmp_
 
       if (X->Large.mode != M_CORR) {  //for hermite
 #pragma omp parallel for default(none)  private(j, tmp_off) \
-firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
+  firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0,nstate)
         for (j = 1; j <= i_max; j++) 
           CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite4, isite1, (isite1 + isite4), Adiff, tmp_V);
                 
@@ -806,8 +809,9 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
         Fsgn *= X_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
         tmp_V *= Fsgn;
       }/*if (iFlgHermite == TRUE)*/
-#pragma omp parallel default(none)  private(j, ioff) \
-firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, nstate, tmp_v0, list_2_1, list_2_2, list_1buf)
+#pragma omp parallel default(none) private(j,ioff) \
+firstprivate(idim_max_buf,tmp_V,X) \
+  shared(v1buf,tmp_v1,nstate,tmp_v0,list_2_1,list_2_2,list_1buf,one)
       {
 #pragma omp for
         for (j = 1; j <= idim_max_buf; j++) {
@@ -826,7 +830,7 @@ firstprivate(idim_max_buf, tmp_V, X) shared(v1buf, tmp_v1, nstate, tmp_v0, list_
 #pragma omp parallel default(none)  private(j, dmv, tmp_off, Fsgn, ioff) \
 firstprivate(myrank, idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, \
 org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite4, org_ispin4) \
-shared(v1buf, tmp_v1, nstate, tmp_v0, list_1buf, list_2_1, list_2_2)
+  shared(v1buf, tmp_v1, nstate,one, tmp_v0, list_1buf, list_2_1, list_2_2)
       {
 #pragma omp for
         for (j = 1; j <= idim_max_buf; j++) {
@@ -907,7 +911,8 @@ void X_child_CisAjtCkuAku_Hubbard_MPI(
   if (myrank == origin) {// only k is in PE
     //for hermite
 #pragma omp parallel default(none)  \
-firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp_v0, tmp_v1)
+firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) \
+  private(j) shared(tmp_v0, tmp_v1,nstate)
     {
 #pragma omp for
       for (j = 1; j <= i_max; j++)
@@ -926,9 +931,9 @@ firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp
     SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
     SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
-#pragma omp parallel default(none)  private(j, dmv, ioff, tmp_off, Fsgn, Adiff) \
-firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, isite3) \
-shared(v1buf, tmp_v1, nstate, tmp_v0, list_1buf, list_2_1, list_2_2, origin, org_isite3, myrank, isite1, isite2, org_isite1, org_isite2)
+#pragma omp parallel default(none)  private(j,dmv,ioff,tmp_off,Fsgn,Adiff) \
+firstprivate(idim_max_buf,tmp_V,X,tmp_isite1,tmp_isite2,tmp_isite3,tmp_isite4,org_rankbit,isite3) \
+  shared(v1buf,tmp_v1,nstate,one,tmp_v0,list_1buf,list_2_1,list_2_2,origin,org_isite3,myrank,isite1,isite2,org_isite1,org_isite2)
     {
 
       if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite) {
@@ -1013,7 +1018,7 @@ void X_child_CisAis_Hubbard_MPI(
     zaxpy_long(i_max*nstate, tmp_V, &tmp_v1[1][0], &tmp_v0[1][0]);
   }/*if (org_isite1 + 1 > X->Def.Nsite)*/
   else {
-#pragma omp parallel  default(none) shared(tmp_v0, tmp_v1, list_1) \
+#pragma omp parallel  default(none) shared(tmp_v0, tmp_v1, list_1,nstate,one) \
   firstprivate(i_max, tmp_V, X, isite1) private(j, tmp_off)
     {
 #pragma omp for
@@ -1174,7 +1179,7 @@ void X_Cis_MPI(
 
 #pragma omp parallel for default(none) private(j) \
 firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
-shared(tmp_v1buf, tmp_v1, nstate, tmp_v0, list_1buf_org)
+  shared(tmp_v1buf, tmp_v1, nstate,one, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
     GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
       _irght, _ilft, _ihfbit, &ioff);
@@ -1233,7 +1238,7 @@ void X_Ajt_MPI(
 
 #pragma omp parallel for default(none) private(j) \
 firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
-shared(tmp_v1buf, tmp_v1, nstate, tmp_v0, list_1buf_org)
+  shared(tmp_v1buf, tmp_v1, nstate,one, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {
     GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
       _irght, _ilft, _ihfbit, &ioff);

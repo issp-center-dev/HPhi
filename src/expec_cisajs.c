@@ -55,7 +55,6 @@ int expec_cisajs_HubbardGC(
 ){
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  double complex dam_pr = 0;
   long int i_max;
   long int ibit;
   long unsigned int is;
@@ -69,7 +68,6 @@ int expec_cisajs_HubbardGC(
     org_isite2 = X->Def.CisAjt[i][2] + 1;
     org_sigma1 = X->Def.CisAjt[i][1];
     org_sigma2 = X->Def.CisAjt[i][3];
-    dam_pr = 0;
     if (org_isite1 > X->Def.Nsite &&
       org_isite2 > X->Def.Nsite) {
       if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
@@ -129,7 +127,6 @@ int expec_cisajs_Hubbard(
 ) {
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  double complex dam_pr = 0;
   long int i_max;
   int num1, one = 1;
   long int ibit;
@@ -143,7 +140,6 @@ int expec_cisajs_Hubbard(
     org_isite2 = X->Def.CisAjt[i][2] + 1;
     org_sigma1 = X->Def.CisAjt[i][1];
     org_sigma2 = X->Def.CisAjt[i][3];
-    dam_pr = 0.0;
 
     if (X->Def.iFlgSzConserved == TRUE) {
       if (org_sigma1 != org_sigma2) {
@@ -195,7 +191,7 @@ int expec_cisajs_Hubbard(
       if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
         is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 
-#pragma omp parallel for default(none) shared(list_1, vec) reduction(+:dam_pr) \
+#pragma omp parallel for default(none) shared(list_1, vec,Xvec,nstate,one,tmp_OneGreen) \
 firstprivate(i_max, is) private(num1, ibit)
         for (j = 1; j <= i_max; j++) {
           ibit = list_1[j] & is;
@@ -230,7 +226,7 @@ int expec_cisajs_SpinHalf(
   long unsigned int i, j;
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  double complex dam_pr = 0, dmv;
+  double complex dmv;
   long int i_max;
   long int ibit1;
   long unsigned int is1_up;
@@ -256,21 +252,14 @@ int expec_cisajs_SpinHalf(
         }// org_isite1 > X->Def.Nsite
         else {
           isite1 = X->Def.Tpow[org_isite1 - 1];
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) \
-firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
+#pragma omp parallel for default(none) private(j,dmv)  \
+  firstprivate(i_max, isite1, org_sigma1, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
             dmv = X_Spin_CisAis(j, X, isite1, org_sigma1);
             zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
           }
         }
       }
-      else {
-        dam_pr = 0.0;
-      }
-    }
-    else {
-      // for the canonical case
-      dam_pr = 0.0;
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
   }
@@ -294,7 +283,7 @@ int expec_cisajs_SpinGeneral(
 ) {
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  double complex dam_pr = 0, dmv;
+  double complex dmv;
   long int i_max;
   int num1, one = 1;
   i_max = X->Check.idim_max;
@@ -312,36 +301,23 @@ int expec_cisajs_SpinGeneral(
           // longitudinal magnetic field
           num1 = BitCheckGeneral((unsigned long int)myrank,
                                            org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-          dam_pr = 0.0;
           if (num1 != 0) {
             zaxpy_long(i_max*nstate, 1.0, &vec[1][0], &Xvec[1][0]);
           }
-        }
-        else {
-          dam_pr = 0.0;
         }
       }
       else {//org_isite1 <= X->Def.Nsite
         if (org_sigma1 == org_sigma2) {
           // longitudinal magnetic field
-          dam_pr = 0.0;
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) \
-firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec, list_1)
+#pragma omp parallel for default(none) private(j, num1,dmv) \
+  firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec,Xvec, list_1,nstate,one)
           for (j = 1; j <= i_max; j++) {
             dmv = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
             zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
           }
         }
-        else {
-          dam_pr = 0.0;
-        }
       }
     }
-    else {
-      // hopping is not allowed in localized spin system
-      dam_pr = 0.0;
-    }//org_isite1 != org_isite2
-
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
   }
   return 0;
@@ -365,7 +341,7 @@ int expec_cisajs_SpinGCHalf(
   long unsigned int i, j;
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  double complex dam_pr = 0, dmv;
+  double complex dmv;
   long int i_max;
   int tmp_sgn, one = 1;
   long unsigned int tmp_off = 0;
@@ -378,7 +354,6 @@ int expec_cisajs_SpinGCHalf(
     org_isite2 = X->Def.CisAjt[i][2] + 1;
     org_sigma1 = X->Def.CisAjt[i][1];
     org_sigma2 = X->Def.CisAjt[i][3];
-    dam_pr = 0.0;
 
     if (org_isite1 == org_isite2) {
       if (org_isite1 > X->Def.Nsite) {
@@ -394,8 +369,8 @@ int expec_cisajs_SpinGCHalf(
 
         if (org_sigma1 == org_sigma2) {
           // longitudinal magnetic field
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) \
-firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
+#pragma omp parallel for default(none) private(j, tmp_sgn,dmv) \
+  firstprivate(i_max, isite1, org_sigma1, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
             dmv = X_SpinGC_CisAis(j, X, isite1, org_sigma1);
             zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
@@ -403,8 +378,8 @@ firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
         }
         else {
           // transverse magnetic field
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, tmp_off) \
-firstprivate(i_max, isite1, org_sigma2, X) shared(vec)
+#pragma omp parallel for default(none) private(j, tmp_sgn, tmp_off,dmv) \
+  firstprivate(i_max, isite1, org_sigma2, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
             tmp_sgn = X_SpinGC_CisAit(j, X, isite1, org_sigma2, &tmp_off);
             if (tmp_sgn != 0) {
@@ -414,10 +389,6 @@ firstprivate(i_max, isite1, org_sigma2, X) shared(vec)
           }
         }
       }
-    }
-    else {
-      // hopping is not allowed in localized spin system
-      dam_pr = 0.0;
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
   }
@@ -441,7 +412,7 @@ int expec_cisajs_SpinGCGeneral(
 ) {
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  double complex dam_pr = 0, dmv;
+  double complex dmv;
   long int i_max;
   long unsigned int tmp_off = 0;
   int num1, one = 1;
@@ -470,8 +441,8 @@ int expec_cisajs_SpinGCGeneral(
       else {//org_isite1 <= X->Def.Nsite
         if (org_sigma1 == org_sigma2) {
           // longitudinal magnetic field
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) \
-firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec)
+#pragma omp parallel for default(none) private(j, num1,dmv) \
+  firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
             num1 = BitCheckGeneral(j - 1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
             dmv = (double complex)num1;
@@ -480,8 +451,8 @@ firstprivate(i_max, org_isite1, org_sigma1, X) shared(vec)
         }
         else {
           // transverse magnetic field
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) \
-firstprivate(i_max, org_isite1, org_sigma1, org_sigma2, X,tmp_off) shared(vec)
+#pragma omp parallel for default(none) private(j, num1,dmv) \
+  firstprivate(i_max, org_isite1, org_sigma1, org_sigma2, X,tmp_off) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
             num1 = GetOffCompGeneralSpin(
               j - 1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);

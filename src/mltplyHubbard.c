@@ -529,7 +529,8 @@ void child_pairhopp(
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
 
-#pragma omp parallel for default(none)  firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) \
+  firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1,nstate)
   for (j = 1; j <= i_max; j++) 
     child_pairhopp_element(j, nstate, tmp_v0, tmp_v1, X, &off);
   return;
@@ -548,7 +549,8 @@ void child_exchange(
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
 
-#pragma omp parallel for default(none)  firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) \
+  firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1,nstate)
   for (j = 1; j <= i_max; j++) 
     child_exchange_element(j, nstate, tmp_v0, tmp_v1, X, &off);
   return;
@@ -572,9 +574,8 @@ void child_general_hopp(
   isite2 = X->Large.is2_spin;
   Asum = X->Large.isA_spin;
   Adiff = X->Large.A_spin;
-  //fprintf(stdout, "DEBUG, isite1=%ld, isite2=%ld, Asum=%ld, Adiff=%ld \n", isite1, isite2, Asum, Adiff);
-#pragma omp parallel for default(none)  \
-firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) private(j) shared(tmp_v0, tmp_v1,nstate) \
+firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) 
   for (j = 1; j <= i_max; j++)
     CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans);
   return;
@@ -601,13 +602,13 @@ void GC_child_general_hopp(
 
   if (isite1 == isite2) {
 #pragma omp parallel for default(none)  \
-private(j) firstprivate(i_max,X,isite1, trans) shared(tmp_v0, tmp_v1)
+  private(j) firstprivate(i_max,X,isite1, trans) shared(tmp_v0, tmp_v1,nstate)
     for (j = 1; j <= i_max; j++)
       GC_CisAis(j, nstate, tmp_v0, tmp_v1, X, isite1, trans);
   }/*if (isite1 == isite2)*/
   else {
-#pragma omp parallel for default(none)  \
-firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans) private(j,tmp_off) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) private(j,tmp_off) shared(tmp_v0,tmp_v1,nstate) \
+firstprivate(i_max,X,Asum,Adiff,isite1,isite2,trans)
     for (j = 1; j <= i_max; j++) 
       GC_CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite1, isite2, Asum, Adiff, trans, &tmp_off);
   }
@@ -647,7 +648,7 @@ void child_general_int(
 #pragma omp parallel default(none)  \
 private(j, tmp_off, tmp_off_2) \
 firstprivate(i_max, X, isite1, isite2, isite3, isite4, Asum, Bsum, Adiff, Bdiff, tmp_V) \
-shared(tmp_v0, tmp_v1)
+  shared(tmp_v0, tmp_v1,nstate)
   {
     if (isite1 == isite2 && isite3 == isite4) {
 #pragma omp for
@@ -706,7 +707,7 @@ void GC_child_general_int(
 
 #pragma omp parallel default(none)  private(j) \
 firstprivate(i_max, X, isite1, isite2, isite4, isite3, Asum, Bsum, Adiff, Bdiff, tmp_off, tmp_off_2, tmp_V) \
-shared(tmp_v0, tmp_v1)
+shared(tmp_v0, tmp_v1,nstate)
   {
     if (isite1 == isite2 && isite3 == isite4) {
 #pragma omp for
@@ -747,7 +748,8 @@ void GC_child_pairhopp(
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
 
-#pragma omp parallel for default(none)  firstprivate(i_max,X,off) private(j) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) \
+firstprivate(i_max,X,off) private(j) shared(tmp_v0, tmp_v1,nstate)
   for (j = 1; j <= i_max; j++) 
     GC_child_pairhopp_element(j, nstate, tmp_v0, tmp_v1, X, &off);
 
@@ -768,7 +770,7 @@ void GC_child_exchange(
   long unsigned int off = 0;
 
 #pragma omp parallel for default(none) \
- firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1)
+ firstprivate(i_max, X,off) private(j) shared(tmp_v0, tmp_v1,nstate)
   for (j = 1; j <= i_max; j++) 
     GC_child_exchange_element(j, nstate, tmp_v0, tmp_v1, X, &off);
   return;

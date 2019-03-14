@@ -297,7 +297,7 @@ static void Initialize_wave(
 
     dnorm = d_1d_allocate(X->Def.k_exct);
     NormMPI_dv(i_max, X->Def.k_exct, wave, dnorm);
-#pragma omp parallel for default(none) shared(i_max,wave,dnorm,ie,X) private(idim)
+#pragma omp parallel for default(none) shared(i_max,wave,dnorm,X) private(idim,ie)
     for (idim = 1; idim <= i_max; idim++) 
       for (ie = 0; ie < X->Def.k_exct; ie++) wave[idim][ie] /= dnorm[ie];
     free_d_1d_allocate(dnorm);
@@ -462,7 +462,7 @@ private(idim,precon,ie)
         <li>Normalize residual vector: @f${\bf w}={\bf w}/|w|@f$
       */
       NormMPI_dv(i_max, X->Def.k_exct, wxp[0], dnorm);
-#pragma omp parallel for default(none) shared(i_max,wxp,dnorm,ie,X) private(idim)
+#pragma omp parallel for default(none) shared(i_max,wxp,dnorm,X) private(idim,ie)
       for (idim = 1; idim <= i_max; idim++)
         for (ie = 0; ie < X->Def.k_exct; ie++)
           wxp[0][idim][ie] /= dnorm[ie];
@@ -617,7 +617,7 @@ private(idim,precon,ie)
   </ul>
   */
   v0 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
-#pragma omp parallel for default(none) shared(i_max,wxp,v1,X) private(idim,ie)
+#pragma omp parallel for default(none) shared(i_max,wxp,v0,X) private(idim,ie)
   for (idim = 1; idim <= i_max; idim++)
     for (ie = 0; ie < X->Def.k_exct; ie++) 
       v0[idim][ie] = wxp[1][idim][ie];

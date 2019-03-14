@@ -45,23 +45,22 @@ int Multiply
 )
 {
   long int i, i_max;
-  double complex dnorm;
   double Ns;
   int rand_i;
 
   i_max = X->Check.idim_max;
   Ns = 1.0*X->Def.NsiteMPI;
   // mltply is in expec_energy.c v0=H*v1
-  for (rand_i = 0; rand_i < NumAve; rand_i++)dnorm = 0.0;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) \
-shared(v0, v1) firstprivate(i_max, Ns, LargeValue)
+#pragma omp parallel for default(none) private(i,rand_i)  \
+  shared(v0, v1,NumAve) firstprivate(i_max, Ns, LargeValue)
   for (i = 1; i <= i_max; i++) {
     for (rand_i = 0; rand_i < NumAve; rand_i++) {
       v0[i][rand_i] = LargeValue * v1[i][rand_i] - v0[i][rand_i] / Ns;  //v0=(l-H/Ns)*v1
     }
   }
   NormMPI_dv(i_max, NumAve, v0, global_norm);
-#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)
+#pragma omp parallel for default(none) private(i,rand_i) \
+shared(v0,NumAve,global_norm) firstprivate(i_max)
   for (i = 1; i <= i_max; i++) 
     for (rand_i = 0; rand_i < NumAve; rand_i++)
       v0[i][rand_i] = v0[i][rand_i] / global_norm[rand_i];

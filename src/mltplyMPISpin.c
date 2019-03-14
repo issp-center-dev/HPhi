@@ -90,7 +90,7 @@ void X_child_general_int_spin_MPIdouble(
   SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel for default(none)  private(j, ioff) \
-  firstprivate(idim_max_buf, Jint, X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+  firstprivate(idim_max_buf,Jint,X) shared(list_2_1,list_2_2,list_1buf,v1buf,tmp_v1,tmp_v0,nstate,one)
   for (j = 1; j <= idim_max_buf; j++) {
     GetOffComp(list_2_1, list_2_2, list_1buf[j],
         X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
@@ -128,7 +128,8 @@ void X_child_general_int_spin_TotalS_MPIdouble(
   SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel for default(none)  private(j, dmv, ioff) \
-    firstprivate(idim_max_buf,  X) shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+    firstprivate(idim_max_buf, X) \
+  shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0,nstate,one)
   for (j = 1; j <= idim_max_buf; j++) {
     GetOffComp(list_2_1, list_2_2, list_1buf[j],
       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
@@ -208,7 +209,7 @@ void X_child_general_int_spin_MPIsingle(
 
 #pragma omp parallel for default(none)  private(j, ioff, jreal, state1) \
 firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) \
-shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0)
+shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0,nstate,one)
   for (j = 1; j <= idim_max_buf; j++) {
     jreal = list_1buf[j];
 

@@ -72,10 +72,6 @@ void totalspin_Hubbard(
       is2_up = X->Def.Tpow[2 * isite2 - 2];
       is2_down = X->Def.Tpow[2 * isite2 - 1];
 
-#pragma omp parallel for reduction(+:spn_z) default(none) \
-firstprivate(i_max, is1_up, is1_down, is2_up, is2_down, irght, ilft, ihfbit, isite1, isite2) \
-private(ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, tmp_spn_z, iexchg, off) \
-shared(vec, list_1, list_2_1, list_2_2)
       for (j = 1; j <= i_max; j++) {
 
         ibit1_up = list_1[j] & is1_up;
@@ -156,10 +152,6 @@ void totalspin_HubbardGC(
       is2_up = X->Def.Tpow[2 * isite2 - 2];
       is2_down = X->Def.Tpow[2 * isite2 - 1];
 
-#pragma omp parallel for reduction(+:spn_z) default(none) \
-firstprivate(i_max, is1_up, is1_down, is2_up, is2_down, isite1, isite2) \
-private(list_1_j, ibit1_up, num1_up, ibit2_up, num2_up, ibit1_down, num1_down, ibit2_down, num2_down, tmp_spn_z, iexchg, off) \
-shared(vec)
       for (j = 1; j <= i_max; j++) {
         list_1_j = j - 1;
         ibit1_up = list_1_j & is1_up;
@@ -254,15 +246,11 @@ void totalspin_Spin(
           num2_down = 1 - num2_up;
           spn_z = (num1_up - num1_down) * (num2_up - num2_down);
 
-#pragma omp parallel for default(none) reduction (+:spn_zd) shared(vec)  \
-  firstprivate(i_max, spn_z) private(j)
           for (j = 1; j <= i_max; j++) {
             for (istate = 0; istate < nstate; istate++)
               X->Phys.s2[istate] += conj(vec[j][istate]) * vec[j][istate] * spn_z / 4.0;
           }
           if (isite1 == isite2) {
-#pragma omp parallel for default(none) reduction (+:spn_zd) shared(vec)  \
-  firstprivate(i_max) private(j)
             for (j = 1; j <= i_max; j++) {
               for (istate = 0; istate < nstate; istate++)
                 X->Phys.s2[istate] += conj(vec[j][istate]) * vec[j][istate] / 2.0;
@@ -290,10 +278,6 @@ void totalspin_Spin(
           num2_down = 1 - num2_up;
 
           //diagonal
-#pragma omp parallel for reduction(+: spn_zd) default(none) \
-firstprivate(i_max, is1_up, num2_up, num2_down) \
-private(ibit1_up, num1_up, num1_down, spn_z) \
-shared(list_1, vec)
           for (j = 1; j <= i_max; j++) {
             ibit1_up = list_1[j] & is1_up;
             num1_up = ibit1_up / is1_up;
@@ -315,10 +299,6 @@ shared(list_1, vec)
           is2_up = X->Def.Tpow[isite2 - 1];
           is_up = is1_up + is2_up;
 
-#pragma omp parallel for reduction(+: spn_zd) default(none) \
-firstprivate(i_max, is_up, is1_up, is2_up, irght, ilft, ihfbit, isite1, isite2) \
-private(ibit1_up, num1_up, ibit2_up, num2_up, num1_down, num2_down, spn_z, iexchg, off, ibit_tmp) \
-shared(list_1, list_2_1, list_2_2, vec)
           for (j = 1; j <= i_max; j++) {
             ibit1_up = list_1[j] & is1_up;
             num1_up = ibit1_up / is1_up;
@@ -357,7 +337,6 @@ shared(list_1, list_2_1, list_2_2, vec)
         S1 = 0.5 * (X->Def.SiteToBit[isite1 - 1] - 1);
         S2 = 0.5 * (X->Def.SiteToBit[isite2 - 1] - 1);
         if (isite1 == isite2) {
-#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(i_max, isite1, X, S1) private (spn_z1)shared(vec, list_1)
           for (j = 1; j <= i_max; j++) {
             spn_z1 = 0.5 * GetLocal2Sz(isite1, list_1[j], X->Def.SiteToBit, X->Def.Tpow);
             for (istate = 0; istate < nstate; istate++) {
@@ -367,9 +346,6 @@ shared(list_1, list_2_1, list_2_2, vec)
           }
         }
         else {
-#pragma omp parallel for reduction(+: ) default(none) \
-firstprivate(i_max, isite1, isite2, X, S1, S2) \
-private(spn_z1, spn_z2, off, off_2, ibit_tmp, sigma_1, sigma_2) shared(vec, list_1)
           for (j = 1; j <= i_max; j++) {
             spn_z1 = 0.5 * GetLocal2Sz(isite1, list_1[j], X->Def.SiteToBit, X->Def.Tpow);
             spn_z2 = 0.5 * GetLocal2Sz(isite2, list_1[j], X->Def.SiteToBit, X->Def.Tpow);
@@ -457,7 +433,6 @@ void totalspin_SpinGC(
         ibit1_up = myrank & is1_up;
         num1_up = ibit1_up / is1_up;
         num1_down = 1 - num1_up;
-#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(i_max, is1_up,  num1_up, num1_down) shared(vec)
         for (j = 1; j <= i_max; j++) {
           for (istate = 0; istate < nstate; istate++)
             X->Phys.Sz[istate] += conj(vec[j][istate])*vec[j][istate] * (num1_up - num1_down) / 2.0;
@@ -465,7 +440,6 @@ void totalspin_SpinGC(
       }
       else {
         is1_up = X->Def.Tpow[isite1 - 1];
-#pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(i_max, is1_up) private(list_1_j, ibit1_up, num1_up, num1_down) shared(vec)
         for (j = 1; j <= i_max; j++) {
           list_1_j = j - 1;
           ibit1_up = list_1_j & is1_up;
@@ -485,15 +459,11 @@ void totalspin_SpinGC(
           num2_up = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, 1);
           num2_down = 1 - num2_up;
           spn_z2 = (num1_up - num1_down)*(num2_up - num2_down) / 4.0;
-#pragma omp parallel for default(none) reduction (+:) shared(vec)  \
-  firstprivate(i_max, spn_z2) private(j)
           for (j = 1; j <= i_max; j++) {
             for (istate = 0; istate < nstate; istate++)
               X->Phys.s2[istate] += conj(vec[j][istate])*vec[j][istate] * spn_z2;
           }
           if (isite1 == isite2) {
-#pragma omp parallel for default(none) reduction (+:) shared(vec)  \
-  firstprivate(i_max) private(j)
             for (j = 1; j <= i_max; j++) {
               for (istate = 0; istate < nstate; istate++)
                 X->Phys.s2[istate] += conj(vec[j][istate])*vec[j][istate] / 2.0;
@@ -518,9 +488,6 @@ void totalspin_SpinGC(
           num2_up = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, 1);
           num2_down = 1 - num2_up;
           //diagonal
-#pragma omp parallel for reduction(+: ) default(none) \
-firstprivate(i_max, is1_up, num2_up, num2_down) \
-private(ibit1_up, num1_up, num1_down, spn_z2, list_1_j) shared(vec)
           for (j = 1; j <= i_max; j++) {
             list_1_j = j - 1;
             ibit1_up = list_1_j & is1_up;
@@ -540,10 +507,6 @@ private(ibit1_up, num1_up, num1_down, spn_z2, list_1_j) shared(vec)
         else {
           is2_up = X->Def.Tpow[isite2 - 1];
           is_up = is1_up + is2_up;
-#pragma omp parallel for reduction(+: ) default(none) \
-firstprivate(i_max, is_up, is1_up, is2_up, isite1, isite2) \
-private(list_1_j, ibit1_up, num1_up, ibit2_up, num2_up, num1_down, num2_down, spn_z2, iexchg, off, ibit_tmp) \
-shared(vec)
           for (j = 1; j <= i_max; j++) {
             list_1_j = j - 1;
             ibit1_up = list_1_j & is1_up;
@@ -582,7 +545,6 @@ shared(vec)
       S1 = 0.5*(X->Def.SiteToBit[isite1 - 1] - 1);
       if (isite1 > X->Def.Nsite) {
         spn_z1 = 0.5*GetLocal2Sz(isite1, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
-#pragma omp parallel for reduction(+: ) default(none) firstprivate(S1, spn_z1,i_max) shared(vec)
         for (j = 1; j <= i_max; j++) {
           for (istate = 0; istate < nstate; istate++) {
             X->Phys.s2[istate] += conj(vec[j][istate])*vec[j][istate] * S1*(S1 + 1.0);
@@ -591,7 +553,6 @@ shared(vec)
         }
       }
       else {
-#pragma omp parallel for reduction(+: ) default(none) firstprivate(i_max, isite1, X, S1) private(spn_z1) shared(vec)
         for (j = 1; j <= i_max; j++) {
           spn_z1 = 0.5*GetLocal2Sz(isite1, j - 1, X->Def.SiteToBit, X->Def.Tpow);
           for (istate = 0; istate < nstate; istate++) {
@@ -608,10 +569,6 @@ shared(vec)
         else if (isite1 > X->Def.Nsite || isite2 > X->Def.Nsite) {
         }
         else { //inner-process
-#pragma omp parallel for reduction(+: ) default(none) \
-firstprivate(i_max, isite1, isite2, X, S1, S2) \
-private(spn_z1, spn_z2, off, off_2, ibit_tmp, sigma_1, sigma_2) \
-shared(vec)
           for (j = 1; j <= i_max; j++) {
             spn_z1 = 0.5*GetLocal2Sz(isite1, j - 1, X->Def.SiteToBit, X->Def.Tpow);
             spn_z2 = 0.5*GetLocal2Sz(isite2, j - 1, X->Def.SiteToBit, X->Def.Tpow);

@@ -304,7 +304,7 @@ void X_GC_child_CisAisCjuAju_spin_MPIdouble(
   num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask2, org_ispin3);
   
 #pragma omp parallel default(none)  private(j, dmv) \
-  firstprivate(tmp_J, X, num1, num2) shared(tmp_v1, tmp_v0)
+  firstprivate(tmp_J, X, num1, num2) shared(tmp_v1, tmp_v0,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= X->Check.idim_max; j++) {
@@ -338,7 +338,7 @@ void X_GC_child_CisAisCjuAju_spin_MPIsingle(
   num2 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
 
 #pragma omp parallel default(none)  private(j, dmv, num1) \
-  firstprivate(Jint, X, num2, mask1, org_ispin1) shared(tmp_v1, tmp_v0)
+  firstprivate(Jint, X, num2, mask1, org_ispin1) shared(tmp_v1, tmp_v0,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= X->Check.idim_max; j++) {
@@ -414,7 +414,8 @@ void X_GC_child_CisAitCiuAiv_spin_MPIsingle(
   mask1 = X->Def.Tpow[org_isite1];
 
 #pragma omp parallel default(none)  private(j, state1, ioff) \
-  firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
+  firstprivate(idim_max_buf, Jint, X, state1check, mask1) \
+  shared(v1buf, tmp_v1, tmp_v0,nstate,one)
   {
 #pragma omp for
     for (j = 0; j < idim_max_buf; j++) {
@@ -488,7 +489,8 @@ void X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   mask1 = X->Def.Tpow[org_isite1];
 
 #pragma omp parallel default(none)  private(j, state1) \
-  firstprivate(idim_max_buf, Jint, X, state1check, mask1) shared(v1buf, tmp_v1, tmp_v0)
+  firstprivate(idim_max_buf, Jint, X, state1check, mask1) \
+  shared(v1buf, tmp_v1, tmp_v0,nstate,one)
   {
 #pragma omp for
     for (j = 0; j < idim_max_buf; j++) {
@@ -552,7 +554,7 @@ void X_GC_child_CisAitCjuAju_spin_MPIsingle(
   mask1 = (int)X->Def.Tpow[org_isite1];
 
 #pragma omp parallel default(none)  private(j, dmv, state1, ioff) \
-  firstprivate(Jint, X, state1check, mask1) shared(tmp_v1, tmp_v0)
+  firstprivate(Jint, X, state1check, mask1) shared(tmp_v1, tmp_v0,nstate,one)
   {
 #pragma omp for
     for (j = 0; j < X->Check.idim_max; j++) {
@@ -882,7 +884,7 @@ void X_child_CisAit_GeneralSpin_MPIdouble(
 
 #pragma omp parallel for default(none)\
 firstprivate(X, tmp_V, idim_max_buf, list_1buf_org) private(j, tmp_off) \
-shared (tmp_v0, tmp_v1, v1buf)
+shared (tmp_v0, tmp_v1, v1buf,nstate,one)
   for (j = 1; j <= idim_max_buf; j++) {
     ConvertToList1GeneralSpin(list_1buf_org[j], X->Large.ihfbit, &tmp_off);
     zaxpy_(&nstate, &tmp_V, &v1buf[j][0], &one, &tmp_v0[tmp_off][0], &one);
@@ -931,7 +933,7 @@ void X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
   SendRecv_cv(origin, X->Check.idim_max*nstate, X->Check.idim_max*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel default(none)  firstprivate(X, tmp_V, isite, IniSpin) \
-private(j, num1) shared (tmp_v0, tmp_v1, v1buf)
+private(j, num1) shared (tmp_v0, tmp_v1, v1buf,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= X->Check.idim_max; j++) {
@@ -971,7 +973,7 @@ void X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
 
 #pragma omp parallel default(none)  \
 firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, num1, off) \
-shared (tmp_v0, tmp_v1, v1buf)
+shared (tmp_v0, tmp_v1, v1buf,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= X->Check.idim_max; j++) {
@@ -1036,7 +1038,8 @@ void X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   SendRecv_cv(origin, X->Check.idim_max*nstate, X->Check.idim_max*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel default(none)  \
-firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, off) shared (tmp_v0, tmp_v1, v1buf)
+firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, off) \
+  shared (tmp_v0, tmp_v1, v1buf,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= X->Check.idim_max; j++) {
@@ -1073,7 +1076,8 @@ void X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   else return;
   
 #pragma omp parallel default(none)  \
-firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp_v0, tmp_v1)
+firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) \
+  shared (tmp_v0, tmp_v1,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= X->Check.idim_max; j++) {
@@ -1141,7 +1145,7 @@ void X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
 #pragma omp parallel default(none)  firstprivate(X, tmp_V, idim_max_buf) \
-private(j, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
+private(j, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= idim_max_buf; j++) {
@@ -1222,7 +1226,8 @@ void X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
   else return;
 
 #pragma omp parallel default(none)  \
-firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp_v0, tmp_v1, list_1)
+firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) \
+  shared (tmp_v0, tmp_v1, list_1,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= X->Check.idim_max; j++) {
@@ -1281,7 +1286,7 @@ void X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
 
 #pragma omp parallel default(none)  \
 firstprivate(X, tmp_V, idim_max_buf, IniSpin, FinSpin, isite) \
-private(j, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
+private(j, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf,nstate,one)
   {
 #pragma omp for
     for (j = 1; j <= idim_max_buf; j++) {
@@ -1382,7 +1387,7 @@ void X_child_CisAit_spin_MPIdouble(
     
 #pragma omp parallel for default(none) private(j, tmp_off) \
 firstprivate(idim_max_buf, trans, X, list_1buf_org, list_2_1_target, list_2_2_target) \
-shared(v1buf, tmp_v0)
+shared(v1buf, tmp_v0,nstate,one)
   for (j = 1; j <= idim_max_buf; j++) {
     GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j], X->Large.irght, X->Large.ilft, X->Large.ihfbit, &tmp_off);
     zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[tmp_off][0], &one);

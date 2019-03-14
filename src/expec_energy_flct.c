@@ -35,25 +35,22 @@ int expec_energy_flct_HubbardGC(
   long unsigned int isite1;
   long unsigned int is1_up_a, is1_up_b;
   long unsigned int is1_down_a, is1_down_b;
-  int bit_up, bit_down, bit_D, istate;
+  int bit_up, bit_down, bit_D, istate, mythread;
   long unsigned int ibit_up, ibit_down, ibit_D;
-  double D, tmp_D, tmp_D2;
-  double N, tmp_N, tmp_N2;
-  double Sz, tmp_Sz, tmp_Sz2;
+  double D, N, Sz;
   double *tmp_v02;
   long unsigned int i_max;
   unsigned int l_ibit1, u_ibit1, i_32;
-  i_max = X->Check.idim_max;
+  double **doublon_t, **doublon2_t, **num_t, **num2_t, **Sz_t, **Sz2_t;
 
-  tmp_v02 = d_1d_allocate(nstate);
+  i_max = X->Check.idim_max;
+  doublon_t = d_2d_allocate(nthreads, nstate);
+  doublon2_t = d_2d_allocate(nthreads, nstate);
+  num_t = d_2d_allocate(nthreads, nstate);
+  num2_t = d_2d_allocate(nthreads, nstate);
+  Sz_t = d_2d_allocate(nthreads, nstate);
+  Sz2_t = d_2d_allocate(nthreads, nstate);
   i_32 = 0xFFFFFFFF; //2^32 - 1
-    // tentative doublon
-  tmp_D = 0.0;
-  tmp_D2 = 0.0;
-  tmp_N = 0.0;
-  tmp_N2 = 0.0;
-  tmp_Sz = 0.0;
-  tmp_Sz2 = 0.0;
 
   //[s] for bit count
   is1_up_a = 0;
@@ -71,63 +68,93 @@ int expec_energy_flct_HubbardGC(
     }
   }
   //[e]
-#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
-  firstprivate(i_max, X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
-  private(j, tmp_v02,D,N,Sz,isite1,bit_up,bit_down,bit_D,u_ibit1,l_ibit1,ibit_up,ibit_down,ibit_D)
-  for (j = 1; j <= i_max; j++) {
-    for (istate = 0; istate < nstate; istate++) tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
-    bit_up = 0;
-    bit_down = 0;
-    bit_D = 0;
-    // isite1 > X->Def.Nsite
-    ibit_up = (unsigned long int) myrank & is1_up_a;
-    u_ibit1 = ibit_up >> 32;
-    l_ibit1 = ibit_up & i_32;
-    bit_up += pop(u_ibit1);
-    bit_up += pop(l_ibit1);
+#pragma omp parallel default(none) \
+shared(tmp_v0,list_1,doublon_t,doublon2_t,num_t,num2_t,Sz_t,Sz2_t,nstate) \
+firstprivate(i_max,X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
+private(j,tmp_v02,D,N,Sz,isite1,bit_up,bit_down,bit_D,u_ibit1,l_ibit1, \
+        ibit_up,ibit_down,ibit_D,mythread,istate)
+  {
+    tmp_v02 = d_1d_allocate(nstate);
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+#pragma omp for
+    for (j = 1; j <= i_max; j++) {
+      for (istate = 0; istate < nstate; istate++)
+        tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
+      bit_up = 0;
+      bit_down = 0;
+      bit_D = 0;
+      // isite1 > X->Def.Nsite
+      ibit_up = (unsigned long int) myrank & is1_up_a;
+      u_ibit1 = ibit_up >> 32;
+      l_ibit1 = ibit_up & i_32;
+      bit_up += pop(u_ibit1);
+      bit_up += pop(l_ibit1);
 
-    ibit_down = (unsigned long int) myrank & is1_down_a;
-    u_ibit1 = ibit_down >> 32;
-    l_ibit1 = ibit_down & i_32;
-    bit_down += pop(u_ibit1);
-    bit_down += pop(l_ibit1);
+      ibit_down = (unsigned long int) myrank & is1_down_a;
+      u_ibit1 = ibit_down >> 32;
+      l_ibit1 = ibit_down & i_32;
+      bit_down += pop(u_ibit1);
+      bit_down += pop(l_ibit1);
 
-    ibit_D = (ibit_up) & (ibit_down >> 1);
-    u_ibit1 = ibit_D >> 32;
-    l_ibit1 = ibit_D & i_32;
-    bit_D += pop(u_ibit1);
-    bit_D += pop(l_ibit1);
+      ibit_D = (ibit_up) & (ibit_down >> 1);
+      u_ibit1 = ibit_D >> 32;
+      l_ibit1 = ibit_D & i_32;
+      bit_D += pop(u_ibit1);
+      bit_D += pop(l_ibit1);
 
-    // isite1 <= X->Def.Nsite
-    ibit_up = (unsigned long int) (j - 1) & is1_up_b;
-    u_ibit1 = ibit_up >> 32;
-    l_ibit1 = ibit_up & i_32;
-    bit_up += pop(u_ibit1);
-    bit_up += pop(l_ibit1);
+      // isite1 <= X->Def.Nsite
+      ibit_up = (unsigned long int) (j - 1) & is1_up_b;
+      u_ibit1 = ibit_up >> 32;
+      l_ibit1 = ibit_up & i_32;
+      bit_up += pop(u_ibit1);
+      bit_up += pop(l_ibit1);
 
-    ibit_down = (unsigned long int) (j - 1) & is1_down_b;
-    u_ibit1 = ibit_down >> 32;
-    l_ibit1 = ibit_down & i_32;
-    bit_down += pop(u_ibit1);
-    bit_down += pop(l_ibit1);
+      ibit_down = (unsigned long int) (j - 1) & is1_down_b;
+      u_ibit1 = ibit_down >> 32;
+      l_ibit1 = ibit_down & i_32;
+      bit_down += pop(u_ibit1);
+      bit_down += pop(l_ibit1);
 
-    ibit_D = (ibit_up) & (ibit_down >> 1);
-    u_ibit1 = ibit_D >> 32;
-    l_ibit1 = ibit_D & i_32;
-    bit_D += pop(u_ibit1);
-    bit_D += pop(l_ibit1);
+      ibit_D = (ibit_up) & (ibit_down >> 1);
+      u_ibit1 = ibit_D >> 32;
+      l_ibit1 = ibit_D & i_32;
+      bit_D += pop(u_ibit1);
+      bit_D += pop(l_ibit1);
 
-    D = bit_D;
-    N = bit_up + bit_down;
-    Sz = bit_up - bit_down;
+      D = bit_D;
+      N = bit_up + bit_down;
+      Sz = bit_up - bit_down;
 
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.doublon[istate] += tmp_v02[istate] * D;
-      X->Phys.doublon2[istate] += tmp_v02[istate] * D * D;
-      X->Phys.num[istate] += tmp_v02[istate] * N;
-      X->Phys.num2[istate] += tmp_v02[istate] * N * N;
-      X->Phys.Sz[istate] += tmp_v02[istate] * Sz;
-      X->Phys.Sz2[istate] += tmp_v02[istate] * Sz * Sz;
+      for (istate = 0; istate < nstate; istate++) {
+        doublon_t[mythread][istate] += tmp_v02[istate] * D;
+        doublon2_t[mythread][istate] += tmp_v02[istate] * D * D;
+        num_t[mythread][istate] += tmp_v02[istate] * N;
+        num2_t[mythread][istate] += tmp_v02[istate] * N * N;
+        Sz_t[mythread][istate] += tmp_v02[istate] * Sz;
+        Sz2_t[mythread][istate] += tmp_v02[istate] * Sz * Sz;
+      }
+    }/*for (j = 1; j <= i_max; j++)*/
+    free_d_1d_allocate(tmp_v02);
+  }/*end of parallel region*/
+
+  for (istate = 0; istate < nstate; istate++) {
+    X->Phys.doublon[istate] = 0.0;
+    X->Phys.doublon2[istate] = 0.0;
+    X->Phys.num[istate] = 0.0;
+    X->Phys.num2[istate] = 0.0;
+    X->Phys.Sz[istate] = 0.0;
+    X->Phys.Sz2[istate] = 0.0;
+    for (mythread = 0; mythread < nthreads; mythread++) {
+      X->Phys.doublon[istate] += doublon_t[mythread][istate];
+      X->Phys.doublon2[istate] += doublon2_t[mythread][istate];
+      X->Phys.num[istate] += num_t[mythread][istate];
+      X->Phys.num2[istate] += num2_t[mythread][istate];
+      X->Phys.Sz[istate] += Sz_t[mythread][istate];
+      X->Phys.Sz2[istate] += Sz2_t[mythread][istate];
     }
   }
   SumMPI_dv(nstate, X->Phys.doublon);
@@ -144,7 +171,12 @@ int expec_energy_flct_HubbardGC(
     X->Phys.num_down[istate] = 0.5*(X->Phys.num[istate] - X->Phys.Sz[istate]);
   }
 
-  free_d_1d_allocate(tmp_v02);
+  free_d_2d_allocate(doublon_t);
+  free_d_2d_allocate(doublon2_t);
+  free_d_2d_allocate(num_t);
+  free_d_2d_allocate(num2_t);
+  free_d_2d_allocate(Sz_t);
+  free_d_2d_allocate(Sz2_t);
   return 0;
 }
 ///
@@ -161,26 +193,23 @@ int expec_energy_flct_Hubbard(
   long unsigned int isite1;
   long unsigned int is1_up_a, is1_up_b;
   long unsigned int is1_down_a, is1_down_b;
-  int bit_up, bit_down, bit_D, istate;
-
+  int bit_up, bit_down, bit_D, istate, mythread;
   long unsigned int ibit_up, ibit_down, ibit_D;
-  double D, tmp_D, tmp_D2;
-  double N, tmp_N, tmp_N2;
-  double Sz, tmp_Sz, tmp_Sz2;
+  double **doublon_t, **doublon2_t, **num_t, **num2_t, **Sz_t, **Sz2_t;
+  double D, N, Sz;
   double *tmp_v02;
   long unsigned int i_max, tmp_list_1;
   unsigned int l_ibit1, u_ibit1, i_32;
+
   i_max = X->Check.idim_max;
 
-  tmp_v02 = d_1d_allocate(nstate);
+  doublon_t = d_2d_allocate(nthreads, nstate);
+  doublon2_t = d_2d_allocate(nthreads, nstate);
+  num_t = d_2d_allocate(nthreads, nstate);
+  num2_t = d_2d_allocate(nthreads, nstate);
+  Sz_t = d_2d_allocate(nthreads, nstate);
+  Sz2_t = d_2d_allocate(nthreads, nstate);
   i_32 = (unsigned int)(pow(2, 32) - 1);
-
-  tmp_D = 0.0;
-  tmp_D2 = 0.0;
-  tmp_N = 0.0;
-  tmp_N2 = 0.0;
-  tmp_Sz = 0.0;
-  tmp_Sz2 = 0.0;
 
   //[s] for bit count
   is1_up_a = 0;
@@ -198,64 +227,94 @@ int expec_energy_flct_Hubbard(
     }
   }
   //[e]
-#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
-  firstprivate(i_max, X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
-  private(j, tmp_v02,D,N,Sz,isite1,tmp_list_1,bit_up,bit_down,bit_D,u_ibit1,l_ibit1,ibit_up,ibit_down,ibit_D)
-  for (j = 1; j <= i_max; j++) {
-    for (istate = 0; istate < nstate; istate++) tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
-    bit_up = 0;
-    bit_down = 0;
-    bit_D = 0;
-    tmp_list_1 = list_1[j];
-    // isite1 > X->Def.Nsite
-    ibit_up = (unsigned long int) myrank & is1_up_a;
-    u_ibit1 = ibit_up >> 32;
-    l_ibit1 = ibit_up & i_32;
-    bit_up += pop(u_ibit1);
-    bit_up += pop(l_ibit1);
+#pragma omp parallel default(none) \
+shared(tmp_v0,list_1,doublon_t,doublon2_t,num_t,num2_t,Sz_t,Sz2_t,nstate) \
+firstprivate(i_max, X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
+private(j,tmp_v02,D,N,Sz,isite1,tmp_list_1,bit_up,bit_down,bit_D,u_ibit1, \
+        l_ibit1,ibit_up,ibit_down,ibit_D,mythread,istate)
+  {
+    tmp_v02 = d_1d_allocate(nstate);
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+#pragma omp for
+    for (j = 1; j <= i_max; j++) {
+      for (istate = 0; istate < nstate; istate++)
+        tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
+      bit_up = 0;
+      bit_down = 0;
+      bit_D = 0;
+      tmp_list_1 = list_1[j];
+      // isite1 > X->Def.Nsite
+      ibit_up = (unsigned long int) myrank & is1_up_a;
+      u_ibit1 = ibit_up >> 32;
+      l_ibit1 = ibit_up & i_32;
+      bit_up += pop(u_ibit1);
+      bit_up += pop(l_ibit1);
 
-    ibit_down = (unsigned long int) myrank & is1_down_a;
-    u_ibit1 = ibit_down >> 32;
-    l_ibit1 = ibit_down & i_32;
-    bit_down += pop(u_ibit1);
-    bit_down += pop(l_ibit1);
+      ibit_down = (unsigned long int) myrank & is1_down_a;
+      u_ibit1 = ibit_down >> 32;
+      l_ibit1 = ibit_down & i_32;
+      bit_down += pop(u_ibit1);
+      bit_down += pop(l_ibit1);
 
-    ibit_D = (ibit_up) & (ibit_down >> 1);
-    u_ibit1 = ibit_D >> 32;
-    l_ibit1 = ibit_D & i_32;
-    bit_D += pop(u_ibit1);
-    bit_D += pop(l_ibit1);
+      ibit_D = (ibit_up) & (ibit_down >> 1);
+      u_ibit1 = ibit_D >> 32;
+      l_ibit1 = ibit_D & i_32;
+      bit_D += pop(u_ibit1);
+      bit_D += pop(l_ibit1);
 
-    // isite1 <= X->Def.Nsite
-    ibit_up = (unsigned long int) tmp_list_1 & is1_up_b;
-    u_ibit1 = ibit_up >> 32;
-    l_ibit1 = ibit_up & i_32;
-    bit_up += pop(u_ibit1);
-    bit_up += pop(l_ibit1);
+      // isite1 <= X->Def.Nsite
+      ibit_up = (unsigned long int) tmp_list_1 & is1_up_b;
+      u_ibit1 = ibit_up >> 32;
+      l_ibit1 = ibit_up & i_32;
+      bit_up += pop(u_ibit1);
+      bit_up += pop(l_ibit1);
 
-    ibit_down = (unsigned long int) tmp_list_1 & is1_down_b;
-    u_ibit1 = ibit_down >> 32;
-    l_ibit1 = ibit_down & i_32;
-    bit_down += pop(u_ibit1);
-    bit_down += pop(l_ibit1);
+      ibit_down = (unsigned long int) tmp_list_1 & is1_down_b;
+      u_ibit1 = ibit_down >> 32;
+      l_ibit1 = ibit_down & i_32;
+      bit_down += pop(u_ibit1);
+      bit_down += pop(l_ibit1);
 
-    ibit_D = (ibit_up) & (ibit_down >> 1);
-    u_ibit1 = ibit_D >> 32;
-    l_ibit1 = ibit_D & i_32;
-    bit_D += pop(u_ibit1);
-    bit_D += pop(l_ibit1);
+      ibit_D = (ibit_up) & (ibit_down >> 1);
+      u_ibit1 = ibit_D >> 32;
+      l_ibit1 = ibit_D & i_32;
+      bit_D += pop(u_ibit1);
+      bit_D += pop(l_ibit1);
 
-    D = bit_D;
-    N = bit_up + bit_down;
-    Sz = bit_up - bit_down;
+      D = bit_D;
+      N = bit_up + bit_down;
+      Sz = bit_up - bit_down;
 
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.doublon[istate] += tmp_v02[istate] * D;
-      X->Phys.doublon2[istate] += tmp_v02[istate] * D * D;
-      X->Phys.num[istate] += tmp_v02[istate] * N;
-      X->Phys.num2[istate] += tmp_v02[istate] * N * N;
-      X->Phys.Sz[istate] += tmp_v02[istate] * Sz;
-      X->Phys.Sz2[istate] += tmp_v02[istate] * Sz * Sz;
+      for (istate = 0; istate < nstate; istate++) {
+        doublon_t[mythread][istate] += tmp_v02[istate] * D;
+        doublon2_t[mythread][istate] += tmp_v02[istate] * D * D;
+        num_t[mythread][istate] += tmp_v02[istate] * N;
+        num2_t[mythread][istate] += tmp_v02[istate] * N * N;
+        Sz_t[mythread][istate] += tmp_v02[istate] * Sz;
+        Sz2_t[mythread][istate] += tmp_v02[istate] * Sz * Sz;
+      }
+    }/*for (j = 1; j <= i_max; j++)*/
+    free_d_1d_allocate(tmp_v02);
+  }/*end of parallel region*/
+
+  for (istate = 0; istate < nstate; istate++) {
+    X->Phys.doublon[istate] = 0.0;
+    X->Phys.doublon2[istate] = 0.0;
+    X->Phys.num[istate] = 0.0;
+    X->Phys.num2[istate] = 0.0;
+    X->Phys.Sz[istate] = 0.0;
+    X->Phys.Sz2[istate] = 0.0;
+    for (mythread = 0; mythread < nthreads; mythread++) {
+      X->Phys.doublon[istate] += doublon_t[mythread][istate];
+      X->Phys.doublon2[istate] += doublon2_t[mythread][istate];
+      X->Phys.num[istate] += num_t[mythread][istate];
+      X->Phys.num2[istate] += num2_t[mythread][istate];
+      X->Phys.Sz[istate] += Sz_t[mythread][istate];
+      X->Phys.Sz2[istate] += Sz2_t[mythread][istate];
     }
   }
   SumMPI_dv(nstate, X->Phys.doublon);
@@ -272,7 +331,12 @@ int expec_energy_flct_Hubbard(
     X->Phys.num_down[istate] = 0.5*(X->Phys.num[istate] - X->Phys.Sz[istate]);
   }
 
-  free_d_1d_allocate(tmp_v02);
+  free_d_2d_allocate(doublon_t);
+  free_d_2d_allocate(doublon2_t);
+  free_d_2d_allocate(num_t);
+  free_d_2d_allocate(num2_t);
+  free_d_2d_allocate(Sz_t);
+  free_d_2d_allocate(Sz2_t);
   return 0;
 }
 ///
@@ -290,20 +354,18 @@ int expec_energy_flct_HalfSpinGC(
   long unsigned int is1_up_a, is1_up_b;
 
   long unsigned int ibit1;
-  double Sz, tmp_Sz, tmp_Sz2;
+  double Sz;
   double *tmp_v02;
   long unsigned int i_max;
   unsigned int l_ibit1, u_ibit1, i_32;
-  int istate;
+  int istate, mythread;
+  double **Sz_t, **Sz2_t;
 
   i_max = X->Check.idim_max;
 
-  tmp_v02 = d_1d_allocate(nstate);
+  Sz_t = d_2d_allocate(nthreads, nstate);
+  Sz2_t = d_2d_allocate(nthreads, nstate);
   i_32 = 0xFFFFFFFF; //2^32 - 1
-
-  // tentative doublon
-  tmp_Sz = 0.0;
-  tmp_Sz2 = 0.0;
 
   //[s] for bit count
   is1_up_a = 0;
@@ -317,29 +379,49 @@ int expec_energy_flct_HalfSpinGC(
     }
   }
   //[e]
-#pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0)   \
-  firstprivate(i_max,X,myrank,i_32,is1_up_a,is1_up_b) private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1)
-  for (j = 1; j <= i_max; j++) {
-    for (istate = 0; istate < nstate; istate++) tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
-    Sz = 0.0;
+#pragma omp parallel default(none) shared(tmp_v0,Sz_t,Sz2_t,nstate)   \
+firstprivate(i_max,X,myrank,i_32,is1_up_a,is1_up_b) \
+private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1,mythread,istate)
+  {
+    tmp_v02 = d_1d_allocate(nstate);
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+#pragma omp for
+    for (j = 1; j <= i_max; j++) {
+      for (istate = 0; istate < nstate; istate++)
+        tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
+      Sz = 0.0;
 
-    // isite1 > X->Def.Nsite
-    ibit1 = (unsigned long int) myrank & is1_up_a;
-    u_ibit1 = ibit1 >> 32;
-    l_ibit1 = ibit1 & i_32;
-    Sz += pop(u_ibit1);
-    Sz += pop(l_ibit1);
-    // isite1 <= X->Def.Nsite
-    ibit1 = (unsigned long int) (j - 1)&is1_up_b;
-    u_ibit1 = ibit1 >> 32;
-    l_ibit1 = ibit1 & i_32;
-    Sz += pop(u_ibit1);
-    Sz += pop(l_ibit1);
-    Sz = 2 * Sz - X->Def.NsiteMPI;
+      // isite1 > X->Def.Nsite
+      ibit1 = (unsigned long int) myrank & is1_up_a;
+      u_ibit1 = ibit1 >> 32;
+      l_ibit1 = ibit1 & i_32;
+      Sz += pop(u_ibit1);
+      Sz += pop(l_ibit1);
+      // isite1 <= X->Def.Nsite
+      ibit1 = (unsigned long int) (j - 1)&is1_up_b;
+      u_ibit1 = ibit1 >> 32;
+      l_ibit1 = ibit1 & i_32;
+      Sz += pop(u_ibit1);
+      Sz += pop(l_ibit1);
+      Sz = 2 * Sz - X->Def.NsiteMPI;
 
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.Sz[istate] += tmp_v02[istate] * Sz;
-      X->Phys.Sz2[istate] += tmp_v02[istate] * Sz * Sz;
+      for (istate = 0; istate < nstate; istate++) {
+        Sz_t[mythread][istate] += tmp_v02[istate] * Sz;
+        Sz2_t[mythread][istate] += tmp_v02[istate] * Sz * Sz;
+      }
+    }/*for (j = 1; j <= i_max; j++)*/
+    free_d_1d_allocate(tmp_v02);
+  }/*End of parallel region*/
+  for (istate = 0; istate < nstate; istate++) {
+    X->Phys.Sz[istate] = 0.0;
+    X->Phys.Sz2[istate] = 0.0;
+    for (mythread = 0; mythread < nthreads; mythread++) {
+      X->Phys.Sz[istate] += Sz_t[mythread][istate];
+      X->Phys.Sz2[istate] += Sz2_t[mythread][istate];
     }
   }
   SumMPI_dv(nstate, X->Phys.Sz);
@@ -356,7 +438,8 @@ int expec_energy_flct_HalfSpinGC(
     X->Phys.num_down[istate] = 0.5*(X->Phys.num[istate] - X->Phys.Sz[istate]);
   }
 
-  free_d_1d_allocate(tmp_v02);
+  free_d_2d_allocate(Sz_t);
+  free_d_2d_allocate(Sz2_t);
   return 0;
 }
 ///
@@ -371,33 +454,53 @@ int expec_energy_flct_GeneralSpinGC(
 ) {
   long unsigned int j;
   long unsigned int isite1;
-  int istate;
-  double Sz, tmp_Sz, tmp_Sz2;
+  int istate, mythread;
+  double Sz;
   double *tmp_v02;
   long unsigned int i_max;
+  double **Sz_t, **Sz2_t;
 
-  tmp_v02 = d_1d_allocate(nstate);
+  Sz_t = d_2d_allocate(nthreads, nstate);
+  Sz2_t = d_2d_allocate(nthreads, nstate);
   i_max = X->Check.idim_max;
 
-  // tentative doublon
-  tmp_Sz = 0.0;
-  tmp_Sz2 = 0.0;
-
-  for (j = 1; j <= i_max; j++) {
-    for (istate = 0; istate < nstate; istate++) tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
-    Sz = 0.0;
-    for (isite1 = 1; isite1 <= X->Def.NsiteMPI; isite1++) {
-      //prefactor 0.5 is added later.
-      if (isite1 > X->Def.Nsite) {
-        Sz += GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+#pragma omp parallel default(none) \
+shared(i_max,nstate,X,myrank,Sz_t,Sz2_t,tmp_v0) \
+private(j,istate,tmp_v02,Sz,isite1,mythread)
+  {
+    tmp_v02 = d_1d_allocate(nstate);
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+#pragma omp for
+    for (j = 1; j <= i_max; j++) {
+      for (istate = 0; istate < nstate; istate++) \
+        tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
+      Sz = 0.0;
+      for (isite1 = 1; isite1 <= X->Def.NsiteMPI; isite1++) {
+        //prefactor 0.5 is added later.
+        if (isite1 > X->Def.Nsite) {
+          Sz += GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+        }
+        else {
+          Sz += GetLocal2Sz(isite1, j - 1, X->Def.SiteToBit, X->Def.Tpow);
+        }
       }
-      else {
-        Sz += GetLocal2Sz(isite1, j - 1, X->Def.SiteToBit, X->Def.Tpow);
+      for (istate = 0; istate < nstate; istate++) {
+        Sz_t[mythread][istate] += tmp_v02[istate] * Sz;
+        Sz2_t[mythread][istate] += tmp_v02[istate] * Sz * Sz;
       }
-    }
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.Sz[istate] += tmp_v02[istate] * Sz;
-      X->Phys.Sz2[istate] += tmp_v02[istate] * Sz * Sz;
+    }/*for (j = 1; j <= i_max; j++)*/
+    free_d_1d_allocate(tmp_v02);
+  }/*End of parallel region*/
+  for (istate = 0; istate < nstate; istate++) {
+    X->Phys.Sz[istate] = 0.0;
+    X->Phys.Sz2[istate] = 0.0;
+    for (mythread = 0; mythread < nthreads; mythread++) {
+      X->Phys.Sz[istate] += Sz_t[mythread][istate];
+      X->Phys.Sz2[istate] += Sz2_t[mythread][istate];
     }
   }
   SumMPI_dv(nstate, X->Phys.Sz);
@@ -414,7 +517,8 @@ int expec_energy_flct_GeneralSpinGC(
     X->Phys.num_down[istate] = 0.5*(X->Phys.num[istate] - X->Phys.Sz[istate]);
   }
 
-  free_d_1d_allocate(tmp_v02);
+  free_d_2d_allocate(Sz_t);
+  free_d_2d_allocate(Sz2_t);
   return 0;
 }
 ///
@@ -432,19 +536,17 @@ int expec_energy_flct_HalfSpin(
   long unsigned int is1_up_a, is1_up_b;
 
   long unsigned int ibit1;
-  double Sz, tmp_Sz, tmp_Sz2;
+  double Sz;
   double *tmp_v02;
   long unsigned int i_max, tmp_list_1;
   unsigned int l_ibit1, u_ibit1, i_32;
-  int istate;
+  int istate, mythread;
+  double **Sz_t, **Sz2_t;
 
   i_max = X->Check.idim_max;
-  tmp_v02 = d_1d_allocate(nstate);
+  Sz_t = d_2d_allocate(nthreads, nstate);
+  Sz2_t = d_2d_allocate(nthreads, nstate);
   i_32 = 0xFFFFFFFF; //2^32 - 1
-
-  // tentative doublon
-  tmp_Sz = 0.0;
-  tmp_Sz2 = 0.0;
 
   //[s] for bit count
   is1_up_a = 0;
@@ -458,30 +560,50 @@ int expec_energy_flct_HalfSpin(
     }
   }
   //[e]
-#pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0, list_1)   \
-  firstprivate(i_max,X,myrank,i_32,is1_up_a,is1_up_b) private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1, tmp_list_1)
-  for (j = 1; j <= i_max; j++) {
-    for (istate = 0; istate < nstate; istate++) tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
-    Sz = 0.0;
-    tmp_list_1 = list_1[j];
+#pragma omp parallel default(none) shared(tmp_v0, list_1,Sz_t,Sz2_t,nstate)   \
+firstprivate(i_max,X,myrank,i_32,is1_up_a,is1_up_b) \
+private(j,Sz,ibit1,isite1,tmp_v02,u_ibit1,l_ibit1, tmp_list_1,mythread,istate)
+  {
+    tmp_v02 = d_1d_allocate(nstate);
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+#pragma omp for
+    for (j = 1; j <= i_max; j++) {
+      for (istate = 0; istate < nstate; istate++) \
+        tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
+      Sz = 0.0;
+      tmp_list_1 = list_1[j];
 
-    // isite1 > X->Def.Nsite
-    ibit1 = (unsigned long int) myrank & is1_up_a;
-    u_ibit1 = ibit1 >> 32;
-    l_ibit1 = ibit1 & i_32;
-    Sz += pop(u_ibit1);
-    Sz += pop(l_ibit1);
-    // isite1 <= X->Def.Nsite
-    ibit1 = (unsigned long int) tmp_list_1 &is1_up_b;
-    u_ibit1 = ibit1 >> 32;
-    l_ibit1 = ibit1 & i_32;
-    Sz += pop(u_ibit1);
-    Sz += pop(l_ibit1);
-    Sz = 2 * Sz - X->Def.NsiteMPI;
+      // isite1 > X->Def.Nsite
+      ibit1 = (unsigned long int) myrank & is1_up_a;
+      u_ibit1 = ibit1 >> 32;
+      l_ibit1 = ibit1 & i_32;
+      Sz += pop(u_ibit1);
+      Sz += pop(l_ibit1);
+      // isite1 <= X->Def.Nsite
+      ibit1 = (unsigned long int) tmp_list_1 &is1_up_b;
+      u_ibit1 = ibit1 >> 32;
+      l_ibit1 = ibit1 & i_32;
+      Sz += pop(u_ibit1);
+      Sz += pop(l_ibit1);
+      Sz = 2 * Sz - X->Def.NsiteMPI;
 
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.Sz[istate] += tmp_v02[istate] * Sz;
-      X->Phys.Sz2[istate] += tmp_v02[istate] * Sz * Sz;
+      for (istate = 0; istate < nstate; istate++) {
+        Sz_t[mythread][istate] += tmp_v02[istate] * Sz;
+        Sz2_t[mythread][istate] += tmp_v02[istate] * Sz * Sz;
+      }
+    }/*for (j = 1; j <= i_max; j++)*/
+    free_d_1d_allocate(tmp_v02);
+  }/*End of parallel region*/
+  for (istate = 0; istate < nstate; istate++) {
+    X->Phys.Sz[istate] = 0.0;
+    X->Phys.Sz2[istate] = 0.0;
+    for (mythread = 0; mythread < nthreads; mythread++) {
+      X->Phys.Sz[istate] += Sz_t[mythread][istate];
+      X->Phys.Sz2[istate] += Sz2_t[mythread][istate];
     }
   }
   SumMPI_dv(nstate, X->Phys.Sz);
@@ -498,7 +620,8 @@ int expec_energy_flct_HalfSpin(
     X->Phys.num_down[istate] = 0.5*(X->Phys.num[istate] - X->Phys.Sz[istate]);
   }
 
-  free_d_1d_allocate(tmp_v02);
+  free_d_2d_allocate(Sz_t);
+  free_d_2d_allocate(Sz2_t); 
   return 0;
 }
 ///
@@ -513,36 +636,53 @@ int expec_energy_flct_GeneralSpin(
 ) {
   long unsigned int j;
   long unsigned int isite1;
-  int istate;
-  double Sz, tmp_Sz, tmp_Sz2;
+  int istate, mythread;
+  double Sz;
   double *tmp_v02;
   long unsigned int i_max, tmp_list1;
+  double **Sz_t, **Sz2_t;
 
-  tmp_v02 = d_1d_allocate(nstate);
+  Sz_t = d_2d_allocate(nthreads, nstate);
+  Sz2_t = d_2d_allocate(nthreads, nstate);
   i_max = X->Check.idim_max;
 
-  // tentative doublon
-  tmp_Sz = 0.0;
-  tmp_Sz2 = 0.0;
-
-#pragma omp parallel for reduction(+:tmp_Sz,tmp_Sz2)default(none) shared(v0, list_1)   \
-  firstprivate(i_max,X,myrank) private(j,Sz,isite1,tmp_v02, tmp_list1)
-  for (j = 1; j <= i_max; j++) {
-    for (istate = 0; istate < nstate; istate++) tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
-    Sz = 0.0;
-    tmp_list1 = list_1[j];
-    for (isite1 = 1; isite1 <= X->Def.NsiteMPI; isite1++) {
-      //prefactor 0.5 is added later.
-      if (isite1 > X->Def.Nsite) {
-        Sz += GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+#pragma omp parallel default(none) shared(tmp_v0, list_1,Sz_t,Sz2_t,nstate)   \
+firstprivate(i_max,X,myrank,mythread) private(j,Sz,isite1,tmp_v02, tmp_list1,istate)
+  {
+    tmp_v02 = d_1d_allocate(nstate);
+#ifdef _OPENMP
+    mythread = omp_get_thread_num();
+#else
+    mythread = 0;
+#endif
+#pragma omp for
+    for (j = 1; j <= i_max; j++) {
+      for (istate = 0; istate < nstate; istate++)
+        tmp_v02[istate] = conj(tmp_v0[j][istate]) * tmp_v0[j][istate];
+      Sz = 0.0;
+      tmp_list1 = list_1[j];
+      for (isite1 = 1; isite1 <= X->Def.NsiteMPI; isite1++) {
+        //prefactor 0.5 is added later.
+        if (isite1 > X->Def.Nsite) {
+          Sz += GetLocal2Sz(isite1, myrank, X->Def.SiteToBit, X->Def.Tpow);
+        }
+        else {
+          Sz += GetLocal2Sz(isite1, tmp_list1, X->Def.SiteToBit, X->Def.Tpow);
+        }
       }
-      else {
-        Sz += GetLocal2Sz(isite1, tmp_list1, X->Def.SiteToBit, X->Def.Tpow);
+      for (istate = 0; istate < nstate; istate++) {
+        Sz_t[mythread][istate] += tmp_v02[istate] * Sz;
+        Sz2_t[mythread][istate] += tmp_v02[istate] * Sz * Sz;
       }
-    }
-    for (istate = 0; istate < nstate; istate++) {
-      X->Phys.Sz[istate] += tmp_v02[istate] * Sz;
-      X->Phys.Sz2[istate] += tmp_v02[istate] * Sz * Sz;
+    }/*for (j = 1; j <= i_max; j++)*/
+    free_d_1d_allocate(tmp_v02);
+  }/*End of parallel region*/
+  for (istate = 0; istate < nstate; istate++) {
+    X->Phys.Sz[istate] = 0.0;
+    X->Phys.Sz2[istate] = 0.0;
+    for (mythread = 0; mythread < nthreads; mythread++) {
+      X->Phys.Sz[istate] += Sz_t[mythread][istate];
+      X->Phys.Sz2[istate] += Sz2_t[mythread][istate];
     }
   }
   SumMPI_dv(nstate, X->Phys.Sz);
@@ -559,7 +699,8 @@ int expec_energy_flct_GeneralSpin(
     X->Phys.num_down[istate] = 0.5*(X->Phys.num[istate] - X->Phys.Sz[istate]);
   }
 
-  free_d_1d_allocate(tmp_v02);
+  free_d_2d_allocate(Sz_t);
+  free_d_2d_allocate(Sz2_t);
   return 0;
 }
 /**
@@ -581,9 +722,9 @@ int expec_energy_flct(
 
   long unsigned int i, j;
   long unsigned int irght, ilft, ihfbit;
-  double complex dam_pr, dam_pr1;
   long unsigned int i_max;
   int istate;
+  double *energy_t, *var_t;
 
   switch (X->Def.iCalcType) {
   case TPQCalc:
@@ -664,7 +805,8 @@ int expec_energy_flct(
 
   StopTimer(nCalcFlct);
 
-#pragma omp parallel for default(none) private(i) shared(v1,v0) firstprivate(i_max)
+#pragma omp parallel for default(none) private(i,istate) \
+shared(tmp_v1,tmp_v0,nstate) firstprivate(i_max)
   for (i = 1; i <= i_max; i++) {
     for (istate = 0; istate < nstate; istate++) {
       tmp_v1[i][istate] = tmp_v0[i][istate];
@@ -688,7 +830,6 @@ int expec_energy_flct(
     X->Phys.energy[istate] = 0.0;
     X->Phys.var[istate] = 0.0;
   }
-#pragma omp parallel for default(none) reduction(+:dam_pr, dam_pr1) private(j) shared(v0, v1)firstprivate(i_max) 
   for (j = 1; j <= i_max; j++) {
     for (istate = 0; istate < nstate; istate++) {
       X->Phys.energy[istate] += conj(tmp_v1[j][istate])*tmp_v0[j][istate]; // E   = <v1|H|v1>=<v1|v0>

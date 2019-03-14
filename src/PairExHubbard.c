@@ -104,7 +104,8 @@ int GetPairExcitedStateHubbardGC(
 
       if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 && X->Def.PairExcitationOperator[i][4] == 0) {
         isite1 = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
-#pragma omp parallel for default(none) private(j) firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0, tmp_v1)
+#pragma omp parallel for default(none) private(j) \
+firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0,tmp_v1,nstate)
         for (j = 1; j <= i_max; j++) {
           GC_AisCis(j, nstate, tmp_v0, tmp_v1, X, isite1, -tmp_trans);
         }
@@ -200,9 +201,9 @@ int GetPairExcitedStateHubbard(
         }
       }
       else {
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1,stdoutMPI)	\
-firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org, list_1, myrank) \
-private(j, tmp_sgn, tmp_off)
+#pragma omp parallel for default(none) shared(tmp_v0,tmp_v1,one,nstate)       \
+firstprivate(i_max,tmp_trans,Asum,Adiff,ibitsite1,ibitsite2,X,list_1_org,list_1,myrank) \
+  private(j,tmp_sgn,tmp_off,dmv)
         for (j = 1; j <= i_max; j++) {
           tmp_sgn = X_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
           dmv = tmp_trans * tmp_sgn;
@@ -219,8 +220,8 @@ private(j, tmp_sgn, tmp_off)
           if (X->Def.PairExcitationOperator[i][4] == 0) {
             if (ibit != is) {
               dmv = -tmp_trans;
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
-  firstprivate(i_max, tmp_trans) private(j)
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1,one,dmv,nstate) \
+firstprivate(i_max, tmp_trans) private(j)
               for (j = 1; j <= i_max; j++) {
                 zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[j], &one);
               }
@@ -254,8 +255,8 @@ private(j, tmp_sgn, tmp_off)
         if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
           is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
           if (X->Def.PairExcitationOperator[i][4] == 0) {
-#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) \
-firstprivate(i_max, is, tmp_trans) private(num1, ibit)
+#pragma omp parallel for default(none) shared(list_1,nstate,tmp_v0,tmp_v1,one) \
+firstprivate(i_max,is,tmp_trans) private(num1,ibit,dmv)
             for (j = 1; j <= i_max; j++) {
               ibit = list_1[j] & is;
               num1 = (1 - ibit / is);
@@ -264,8 +265,8 @@ firstprivate(i_max, is, tmp_trans) private(num1, ibit)
             }
           }
           else {
-#pragma omp parallel for default(none) shared(list_1, nstate, tmp_v0, tmp_v1) \
-firstprivate(i_max, is, tmp_trans) private(num1, ibit)
+#pragma omp parallel for default(none) shared(list_1,nstate,tmp_v0,tmp_v1,one) \
+  firstprivate(i_max,is,tmp_trans) private(num1,ibit,dmv)
             for (j = 1; j <= i_max; j++) {
               ibit = list_1[j] & is;
               num1 = ibit / is;
