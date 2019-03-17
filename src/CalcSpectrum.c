@@ -37,280 +37,13 @@
  *
  */
 
-/// \brief Output spectrum.
-/// \param X [in] Read information of the frequency origin.
-/// \param Nomega [in] A total number of discrete frequencies.
-/// \param dcSpectrum [in] Array of spectrum.
-/// \param dcomega [in] Array of discrete frequencies.
-/// \retval FALSE Fail to open the output file.
-/// \retval TRUE Success to output the spectrum.
-int OutputSpectrum(
-  struct EDMainCalStruct *X,
-  int Nomega,
-  double complex *dcSpectrum,
-  double complex *dcomega) 
-{
-  FILE *fp;
-  char sdt[D_FileNameMax];
-  int i;
-
-  //output spectrum
-  sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
-  if(childfopenMPI(sdt, "w", &fp)!=0){
-    return FALSE;
-  }
-
-  for (i = 0; i < Nomega; i++) {
-    fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
-      creal(dcomega[i]-X->Bind.Def.dcOmegaOrg), cimag(dcomega[i]-X->Bind.Def.dcOmegaOrg),
-      creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
-  }/*for (i = 0; i < Nomega; i++)*/
-
-  fclose(fp);
-  return TRUE;
-}/*int OutputSpectrum*/
-/// \brief Parent function to calculate the excited state.
-/// \param X [in] Struct to get number of excitation operators.
-/// \param tmp_v0 [out] Result @f$ v_0 = H_{ex} v_1 @f$.
-/// \param tmp_v1 [in] The original state before excitation  @f$ v_1 @f$.
-/// \retval FALSE Fail to calculate the excited state.
-/// \retval TRUE Success to calculate the excited state.
-int GetExcitedState
-(
-  struct BindStruct *X,
-  int nstate,
-  double complex **tmp_v0,
-  double complex **tmp_v1
-)
-{
-  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
-    fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
-    return FALSE;
-  }
-
-
-  if (X->Def.NSingleExcitationOperator > 0) {
-    if (GetSingleExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
-      return FALSE;
-    }
-  }
-  else if (X->Def.NPairExcitationOperator > 0) {
-    if (GetPairExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
-      return FALSE;
-    }
-  }
-  return TRUE;
-}
-/**
- * @brief A main function to calculate spectrum.
- *
- * @param X [in,out] CalcStruct list for getting and pushing calculation information \n
- * input: iFlgSpecOmegaOrg, dcOmegaMax, dcOmegaMin, iNOmega etc.\n
- * output: dcOmegaOrg, iFlagListModified.
- *
- * @retval 0 normally finished
- * @retval -1 unnormally finished
- *
- * @version 1.1
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @author Youhei Yamaji (The University of Tokyo)
- *
- */
-int CalcSpectrum(
-  struct EDMainCalStruct *X
-) {
-  char sdt[D_FileNameMax];
-  char *defname;
-  unsigned long int i;
-  unsigned long int i_max = 0;
-  int i_stp;
-  int iFlagListModified = FALSE;
-  FILE *fp;
-  double dnorm;
-  double complex **v1Org; /**< Input vector to calculate spectrum function.*/
-
-  //ToDo: Nomega should be given as a parameter
-  int Nomega;
-  double complex OmegaMax, OmegaMin;
-  double complex *dcSpectrum;
-  double complex *dcomega;
-  size_t byte_size;
-
-  //set omega
-  if (SetOmega(&(X->Bind.Def)) != TRUE) {
-    fprintf(stderr, "Error: Fail to set Omega.\n");
-    exitMPI(-1);
-  }
-  else {
-    if (X->Bind.Def.iFlgSpecOmegaOrg == FALSE) {
-      X->Bind.Def.dcOmegaOrg = I * (X->Bind.Def.dcOmegaMax - X->Bind.Def.dcOmegaMin) / (double)X->Bind.Def.iNOmega;
-    }
-  }
-  /*
-   Set & malloc omega grid
-  */
-  Nomega = X->Bind.Def.iNOmega;
-  dcSpectrum = cd_1d_allocate(Nomega);
-  dcomega = cd_1d_allocate(Nomega);
-  OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
-  OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
-  for (i = 0; i < Nomega; i++) {
-    dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
-  }
-
-  fprintf(stdoutMPI, "\nFrequency range:\n");
-  fprintf(stdoutMPI, "  Omega Max. : %15.5e %15.5e\n", creal(OmegaMax), cimag(OmegaMax));
-  fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
-  fprintf(stdoutMPI, "  Num. of Omega : %d\n", Nomega);
-
-  if (X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0) {
-    fprintf(stderr, "Error: Any excitation operators are not defined.\n");
-    exitMPI(-1);
-  }
-  //Make New Lists
-  if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
-    return FALSE;
-  }
-  X->Bind.Def.iFlagListModified = iFlagListModified;
-
-  //Set Memory
-  v1Org = cd_2d_allocate(X->Bind.Check.idim_maxOrg + 1,1);
-  for (i = 0; i < X->Bind.Check.idim_maxOrg + 1; i++) {
-    v1Org[i][0] = 0;
-  }
-
-  //Make excited state
-  StartTimer(6100);
-  if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
-    X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
-    (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
-    //input eigen vector
-    StartTimer(6101);
-    fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-    GetFileNameByKW(KWSpectrumVec, &defname);
-    strcat(defname, "_rank_%d.dat");
-    //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
-    sprintf(sdt, defname, myrank);
-    childfopenALL(sdt, "rb", &fp);
-
-    if (fp == NULL) {
-      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-      return -1;
-    }
-
-    byte_size = fread(&i_stp, sizeof(i_stp), 1, fp);
-    X->Bind.Large.itr = i_stp; //For TPQ
-    byte_size = fread(&i_max, sizeof(i_max), 1, fp);
-    if (i_max != X->Bind.Check.idim_maxOrg) {
-      fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
-      fprintf(stderr, "Error: A file of Input vector is incorrect.\n");
-      return -1;
-    }
-    byte_size = fread(&v1Org[0][0], sizeof(complex double), i_max + 1, fp);
-    fclose(fp);
-    StopTimer(6101);
-    if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
-
-    for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-      v0[i][0] = 0;
-    }
-    fprintf(stdoutMPI, "  End:   An Input vector is inputted in CalcSpectrum.\n\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
-    fprintf(stdoutMPI, "  Start: Calculating an excited Eigen vector.\n");
-
-    //Multiply Operator
-    StartTimer(6102);
-    GetExcitedState(&(X->Bind), 1, v0, v1Org);
-    StopTimer(6102);
-
-    //calculate norm
-    dnorm = NormMPI_dc(X->Bind.Check.idim_max, &v0[0][0]);
-    if (fabs(dnorm) < pow(10.0, -15)) {
-      fprintf(stderr, "Warning: Norm of an excitation vector becomes 0.\n");
-      fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
-      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
-      fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
-      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
-      for (i = 0; i < Nomega; i++) {
-        dcSpectrum[i] = 0;
-      }
-      OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
-      return TRUE;
-    }
-    //normalize vector
-#pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
-    for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-      v1[i][0] = v0[i][0] / dnorm;
-    }
-
-    //Output excited vector
-    if (X->Bind.Def.iOutputExVec == 1) {
-      sprintf(sdt, cFileNameOutputExcitedVec, X->Bind.Def.CDataFileHead, myrank);
-      if (childfopenALL(sdt, "w", &fp) != 0) {
-        return -1;
-      }
-      fprintf(fp, "%ld\n", X->Bind.Check.idim_max);
-      for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-        fprintf(fp, "%.10lf, %.10lf\n", creal(v1[i][0]), cimag(v1[i][0]));
-      }
-      fclose(fp);
-    }
-
-    fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
-  }
-  StopTimer(6100);
-  //Reset list_1, list_2_1, list_2_2
-  if (iFlagListModified == TRUE) {
-    free_cd_2d_allocate(v1Org);
-    free(list_1_org);
-    free(list_2_1_org);
-    free(list_2_2_org);
-  }
-  //calculate Diagonal term
-  diagonalcalc(&(X->Bind));
-
-  int iret = TRUE;
-  fprintf(stdoutMPI, "  Start: Calculating a spectrum.\n\n");
-  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
-  StartTimer(6200);
-  switch (X->Bind.Def.iCalcType) {
-  case CG:
-    iret = CalcSpectrumByBiCG(X, v0, v1, Nomega, dcSpectrum, dcomega);
-    if (iret != TRUE) {
-      return FALSE;
-    }
-    break;
-  case FullDiag:
-    iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega);
-    break;
-  default:
-    break;
-  }
-  StopTimer(6200);
-
-  if (iret != TRUE) {
-    fprintf(stderr, "  Error: The selected calculation type is not supported for calculating spectrum mode.\n");
-    return FALSE;
-  }
-
-  fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
-  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
-  iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
-  free_cd_1d_allocate(dcSpectrum);
-  free_cd_1d_allocate(dcomega);
-  return TRUE;
-
-}/*int CalcSpectrum*/
-///
-/// \brief Set target frequencies
-/// \param X [in, out] Struct to give and get the information of target frequencies.\n
-/// Output: dcOmegaMax, dcOmegaMin
-///
-/// \retval FALSE Fail to set frequencies.
-/// \retval TRUE Success to set frequencies.
+ ///
+ /// \brief Set target frequencies
+ /// \param X [in, out] Struct to give and get the information of target frequencies.\n
+ /// Output: dcOmegaMax, dcOmegaMin
+ ///
+ /// \retval FALSE Fail to set frequencies.
+ /// \retval TRUE Success to set frequencies.
 int SetOmega
 (
   struct DefineList *X
@@ -589,7 +322,7 @@ int MakeExcitedList(
 #ifdef _DEBUG
   if (*iFlgListModifed == TRUE) {
     for (j = 1; j <= X->Check.idim_maxOrg; j++) {
-      fprintf(stdout, "Debug1: myrank=%d, list_1_org[ %ld] = %ld\n", 
+      fprintf(stdout, "Debug1: myrank=%d, list_1_org[ %ld] = %ld\n",
         myrank, j, list_1_org[j] + myrank * X->Def.OrgTpow[2 * X->Def.NsiteMPI - 1]);
     }
 
@@ -600,4 +333,210 @@ int MakeExcitedList(
 #endif
   return TRUE;
 }
+/// \brief Output spectrum.
+/// \param X [in] Read information of the frequency origin.
+/// \param Nomega [in] A total number of discrete frequencies.
+/// \param dcSpectrum [in] Array of spectrum.
+/// \param dcomega [in] Array of discrete frequencies.
+/// \retval FALSE Fail to open the output file.
+/// \retval TRUE Success to output the spectrum.
+int OutputSpectrum(
+  struct EDMainCalStruct *X,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega) 
+{
+  FILE *fp;
+  char sdt[D_FileNameMax];
+  int i;
 
+  //output spectrum
+  sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
+  if(childfopenMPI(sdt, "w", &fp)!=0){
+    return FALSE;
+  }
+
+  for (i = 0; i < Nomega; i++) {
+    fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
+      creal(dcomega[i]-X->Bind.Def.dcOmegaOrg), cimag(dcomega[i]-X->Bind.Def.dcOmegaOrg),
+      creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
+  }/*for (i = 0; i < Nomega; i++)*/
+
+  fclose(fp);
+  return TRUE;
+}/*int OutputSpectrum*/
+/// \brief Parent function to calculate the excited state.
+/// \param X [in] Struct to get number of excitation operators.
+/// \param tmp_v0 [out] Result @f$ v_0 = H_{ex} v_1 @f$.
+/// \param tmp_v1 [in] The original state before excitation  @f$ v_1 @f$.
+/// \retval FALSE Fail to calculate the excited state.
+/// \retval TRUE Success to calculate the excited state.
+int GetExcitedState
+(
+  struct BindStruct *X,
+  int nstate,
+  double complex **tmp_v0,
+  double complex **tmp_v1
+)
+{
+  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
+    fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
+    return FALSE;
+  }
+
+
+  if (X->Def.NSingleExcitationOperator > 0) {
+    if (GetSingleExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
+    }
+  }
+  else if (X->Def.NPairExcitationOperator > 0) {
+    if (GetPairExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+/**
+ * @brief A main function to calculate spectrum.
+ *
+ * @param X [in,out] CalcStruct list for getting and pushing calculation information \n
+ * input: iFlgSpecOmegaOrg, dcOmegaMax, dcOmegaMin, iNOmega etc.\n
+ * output: dcOmegaOrg, iFlagListModified.
+ *
+ * @retval 0 normally finished
+ * @retval -1 unnormally finished
+ *
+ * @version 1.1
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Youhei Yamaji (The University of Tokyo)
+ *
+ */
+int CalcSpectrum(
+  struct EDMainCalStruct *X
+) {
+  char sdt[D_FileNameMax];
+  char *defname;
+  unsigned long int i;
+  unsigned long int i_max = 0;
+  int i_stp;
+  int iFlagListModified = FALSE;
+  FILE *fp;
+  double dnorm;
+  double complex **v1Org; /**< Input vector to calculate spectrum function.*/
+
+  //ToDo: Nomega should be given as a parameter
+  int Nomega;
+  double complex OmegaMax, OmegaMin;
+  double complex *dcSpectrum;
+  double complex *dcomega;
+  size_t byte_size;
+
+  //set omega
+  if (SetOmega(&(X->Bind.Def)) != TRUE) {
+    fprintf(stderr, "Error: Fail to set Omega.\n");
+    exitMPI(-1);
+  }
+  else {
+    if (X->Bind.Def.iFlgSpecOmegaOrg == FALSE) {
+      X->Bind.Def.dcOmegaOrg = I * (X->Bind.Def.dcOmegaMax - X->Bind.Def.dcOmegaMin) / (double)X->Bind.Def.iNOmega;
+    }
+  }
+  /*
+   Set & malloc omega grid
+  */
+  Nomega = X->Bind.Def.iNOmega;
+  dcSpectrum = cd_1d_allocate(Nomega);
+  dcomega = cd_1d_allocate(Nomega);
+  OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
+  OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
+  for (i = 0; i < Nomega; i++) {
+    dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
+  }
+
+  fprintf(stdoutMPI, "\nFrequency range:\n");
+  fprintf(stdoutMPI, "  Omega Max. : %15.5e %15.5e\n", creal(OmegaMax), cimag(OmegaMax));
+  fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
+  fprintf(stdoutMPI, "  Num. of Omega : %d\n", Nomega);
+
+  if (X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0) {
+    fprintf(stderr, "Error: Any excitation operators are not defined.\n");
+    exitMPI(-1);
+  }
+  //Make New Lists
+  if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
+    return FALSE;
+  }
+  X->Bind.Def.iFlagListModified = iFlagListModified;
+
+  v1Org = cd_2d_allocate(X->Bind.Check.idim_maxOrg + 1,1);
+  
+  //Make excited state
+  StartTimer(6100);
+  if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
+    X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
+    (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
+    //input eigen vector
+    StartTimer(6101);
+    fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
+    GetFileNameByKW(KWSpectrumVec, &defname);
+    strcat(defname, "_rank_%d.dat");
+    //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
+    sprintf(sdt, defname, myrank);
+    childfopenALL(sdt, "rb", &fp);
+
+    if (fp == NULL) {
+      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
+      return -1;
+    }
+
+    byte_size = fread(&i_stp, sizeof(i_stp), 1, fp);
+    X->Bind.Large.itr = i_stp; //For TPQ
+    byte_size = fread(&i_max, sizeof(i_max), 1, fp);
+    if (i_max != X->Bind.Check.idim_maxOrg) {
+      fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
+      fprintf(stderr, "Error: A file of Input vector is incorrect.\n");
+      return -1;
+    }
+    byte_size = fread(&v1Org[0][0], sizeof(complex double), i_max + 1, fp);
+    fclose(fp);
+    StopTimer(6101);
+    if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+  }
+  StopTimer(6100);
+
+  diagonalcalc(&(X->Bind));
+
+  int iret = TRUE;
+  fprintf(stdoutMPI, "  Start: Calculating a spectrum.\n\n");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
+  StartTimer(6200);
+  switch (X->Bind.Def.iCalcType) {
+  case CG:
+    iret = CalcSpectrumByBiCG(X, v0, v1, Nomega, dcSpectrum, dcomega, v1Org);
+    if (iret != TRUE) {
+      return FALSE;
+    }
+    break;
+  case FullDiag:
+    iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega, v1Org);
+    break;
+  default:
+    break;
+  }
+  StopTimer(6200);
+
+  if (iret != TRUE) {
+    fprintf(stderr, "  Error: The selected calculation type is not supported for calculating spectrum mode.\n");
+    return FALSE;
+  }
+
+  fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
+  iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
+  free_cd_1d_allocate(dcSpectrum);
+  free_cd_1d_allocate(dcomega);
+  return TRUE;
+
+}/*int CalcSpectrum*/

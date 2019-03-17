@@ -23,6 +23,8 @@
 #include "common/setmemory.h"
 #include "komega/komega.h"
 #include "mltply.h"
+#include "CalcSpectrum.h"
+#include "mltplyCommon.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -146,49 +148,6 @@ int OutputTMComponents_BiCG(
 
   return TRUE;
 }/*int OutputTMComponents_BiCG*/
-/**@brief
-Initialize Shadow Residual as a random vector (Experimental)
-*/
-void InitShadowRes(
-  struct BindStruct *X,//!<[inout]
-  double complex *v4//!<[out] [CheckList::idim_max] shadow residual vector
-)
-{
-  long int idim, iv;
-  int mythread;
-  double dnorm;
-  /*
-  For DSFMT
-  */
-  long unsigned int u_long_i;
-  dsfmt_t dsfmt;
-
-  iv = X->Def.initial_iv;
-#pragma omp parallel default(none) private(idim, u_long_i, mythread, dsfmt) \
-              shared(v4, iv, X, nthreads, myrank)
-  {
-    /*
-     Initialise MT
-    */
-#ifdef _OPENMP
-    mythread = omp_get_thread_num();
-#else
-    mythread = 0;
-#endif
-    u_long_i = 123432 + labs(iv) + mythread + nthreads * myrank;
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);
-
-#pragma omp for
-    for (idim = 1; idim <= X->Check.idim_max; idim++)
-      v4[idim] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)
-               + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
-  }/*#pragma omp parallel*/
-
-  dnorm = sqrt(creal(VecProdMPI(X->Check.idim_max, v4, v4)));
-#pragma omp parallel for default(none) shared(X,v4,dnorm) private(idim)
-  for (idim = 1; idim <= X->Check.idim_max; idim++) v4[idim] /= dnorm;
-
-}/*void InitShadowRes*/
 /** 
  * @brief A main function to calculate spectrum by BiCG method
  * In this function, the @f$K\omega@f$ library is used.
@@ -203,11 +162,12 @@ void InitShadowRes(
  */
 int CalcSpectrumByBiCG(
   struct EDMainCalStruct *X,//!<[inout]
-  double complex **vrhs,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
-  double complex **v2,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
+  double complex **v2,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
+  double complex **v4,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
   int Nomega,//!<[in] Number of Frequencies
   double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
-  double complex *dcomega//!<[in] [Nomega] Frequency
+  double complex *dcomega,//!<[in] [Nomega] Frequency
+  double complex **v1Org
 )
 {
   char sdt[D_FileNameMax];
@@ -216,7 +176,7 @@ int CalcSpectrumByBiCG(
   size_t byte_size;
   int iret, max_step;
   unsigned long int liLanczosStp_vec = 0;
-  double complex **v4, **v12, **v14, res_proj;
+  double complex **vL, **v12, **v14, *res_proj;
   int stp, one = 1, status[3], iomega;
   double *resz;
 
@@ -228,8 +188,9 @@ int CalcSpectrumByBiCG(
   */
   v12 = cd_2d_allocate(X->Bind.Check.idim_max + 2, 1);
   v14 = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
-  v4 =  cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
+  vL = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
   resz = d_1d_allocate(Nomega);
+  res_proj = cd_1d_allocate(1);
   /**
   <li>Set initial result vector(+shadow result vector)
   Read residual vectors if restart</li>
@@ -243,12 +204,10 @@ int CalcSpectrumByBiCG(
     if (childfopenALL(sdt, "rb", &fp) != 0) {
       fprintf(stdoutMPI, "INFO: File for the restart is not found.\n");
       fprintf(stdoutMPI, "      Start from SCRATCH.\n");
-#pragma omp parallel for default(none) shared(v2,v4,vrhs,X) private(idim)
-      for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
-        v2[idim][0] = vrhs[idim][0];
-        v4[idim][0] = vrhs[idim][0];
-      }
-      //InitShadowRes(&(X->Bind), v4);
+      GetExcitedState(&(X->Bind), 1, v2, v1Org);
+#pragma omp parallel for default(none) shared(v2,v4,v1Org,X) private(idim)
+      for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) 
+        v4[idim][0] = v2[idim][0];
     }
     else {
       byte_size = fread(&liLanczosStp_vec, sizeof(int), 1, fp);
@@ -269,12 +228,10 @@ int CalcSpectrumByBiCG(
     }/*if (childfopenALL(sdt, "rb", &fp) == 0)*/
   }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_FROM_TMComponents)*/
   else {
-#pragma omp parallel for default(none) shared(v2,v4,vrhs,X) private(idim)
-    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
-      v2[idim][0] = vrhs[idim][0];
-      v4[idim][0] = vrhs[idim][0];
-    }
-    //InitShadowRes(&(X->Bind), v4);
+    GetExcitedState(&(X->Bind), 1, v2, v1Org);
+#pragma omp parallel for default(none) shared(v2,v4,v1Org,X) private(idim)
+    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++)
+      v4[idim][0] = v2[idim][0];
   }
   /**
   <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
@@ -294,21 +251,17 @@ int CalcSpectrumByBiCG(
     <li>@f${\bf v}_{2}={\hat H}{\bf v}_{12}, {\bf v}_{4}={\hat H}{\bf v}_{14}@f$,
     where @f${\bf v}_{12}, {\bf v}_{14}@f$ are old (shadow) residual vector.</li>
     */
-#pragma omp parallel for default(none) shared(X,v12,v14) private(idim)
-    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) {
-      v12[idim][0] = 0.0;
-      v14[idim][0] = 0.0;
-    }
+    zclear(X->Bind.Check.idim_max, &v12[1][0]);
+    zclear(X->Bind.Check.idim_max, &v14[1][0]);
     iret = mltply(&X->Bind, 1, v12, v2);
     iret = mltply(&X->Bind, 1, v14, v4);
 
-    res_proj = VecProdMPI(X->Bind.Check.idim_max, &vrhs[0][0], &v2[0][0]);
+    GetExcitedState(&(X->Bind), 1, vL, v1Org);
+    res_proj[0] = VecProdMPI(X->Bind.Check.idim_max, &vL[0][0], &v2[0][0]);
     /**
     <li>Update projected result vector dcSpectrum.</li>
     */
-
-    komega_bicg_update(&v12[1][0], &v2[1][0], &v14[1][0], &v4[1][0], dcSpectrum, &res_proj, status);
-
+    komega_bicg_update(&v12[1][0], &v2[1][0], &v14[1][0], &v4[1][0], dcSpectrum, res_proj, status);
     /**
     <li>Output residuals at each frequency for some analysis</li>
     */
@@ -370,6 +323,7 @@ int CalcSpectrumByBiCG(
   free_d_1d_allocate(resz);
   free_cd_2d_allocate(v12);
   free_cd_2d_allocate(v14);
-  free_cd_2d_allocate(v4);
+  free_cd_2d_allocate(vL);
+  free_cd_1d_allocate(res_proj);
   return TRUE;
 }/*int CalcSpectrumByBiCG*/
