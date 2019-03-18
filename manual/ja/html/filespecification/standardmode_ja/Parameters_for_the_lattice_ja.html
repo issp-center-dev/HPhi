@@ -4,28 +4,17 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>4.1.2. 格子に関するパラメーター &#8212; HΦ マニュアル  ドキュメント</title>
-    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.1.3. 保存量に関するパラメーター" href="Parameters_for_conserved_quantities_ja.html" />
@@ -36,8 +25,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -50,15 +38,15 @@
 <div class="section" id="fig-chap04-1-lattice-a">
 <h2>1次元鎖 [ <a class="reference internal" href="#fig-chap04-1-lattice"><span class="std std-numref">図 4.1</span></a> (a)]<a class="headerlink" href="#fig-chap04-1-lattice-a" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">L</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">L</span></code></p>
 <p><strong>形式 :</strong> 自然数</p>
 <p><strong>説明 :</strong> 鎖の長さを指定します.</p>
 <div class="figure" id="fig-chap04-1-lattice">
 <img alt="(a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図. ホッピング積分、オフサイトクーロン積分、スピン結合は、 再近接サイト間(マゼンタの実線)ではそれぞれ\ :math:`t,V,J`\ となり、 次近接サイト間(緑の破線)ではそれぞれ\ :math:`t',V',J'`\ となります。" src="../../_images/chap04_1_lattice.png" />
 <p class="caption"><span class="caption-number">図 4.1 </span><span class="caption-text">(a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図.
 ホッピング積分、オフサイトクーロン積分、スピン結合は、
-再近接サイト間(マゼンタの実線)ではそれぞれ<span class="math">\(t,V,J\)</span>となり、
-次近接サイト間(緑の破線)ではそれぞれ<span class="math">\(t',V',J'\)</span>となります。</span></p>
+再近接サイト間(マゼンタの実線)ではそれぞれ<span class="math notranslate nohighlight">\(t,V,J\)</span>となり、
+次近接サイト間(緑の破線)ではそれぞれ<span class="math notranslate nohighlight">\(t',V',J'\)</span>となります。</span></p>
 </div>
 <div class="figure" id="fig-chap04-1-honeycomb">
 <img alt="2次元異方的蜂の巣格子の模式図. ホッピング積分、オフサイトクーロン積分、スピン結合は、 ボンドの方向によって異なります。 また、次近接のホッピング積分、オフサイトクーロン積分、スピン結合 には対応していません。" src="../../_images/chap04_1_honeycomb.png" />
@@ -82,20 +70,20 @@
 <div class="section" id="id2">
 <h2>梯子格子 ( <a class="reference internal" href="#fig-ladder"><span class="std std-numref">図 4.4</span></a> )<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">L</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">L</span></code></p>
 <p><strong>形式 :</strong> 自然数</p>
 <p><strong>説明 :</strong> 梯子の長さを指定します.</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">W</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">W</span></code></p>
 <p><strong>形式 :</strong> 自然数</p>
 <p><strong>説明 :</strong> 梯子の本数を指定します.</p>
 </li>
 </ul>
 <blockquote>
 <div><div class="figure" id="fig-chap04-1-unitlattice">
-<a class="reference internal image-reference" href="../../_images/chap04_1_unitlattice.png"><img alt="三角格子において、\ :math:`{\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)`\ とした場合のセル形状。 :math:`{\vec a}_0`\ (マゼンタ)および:math:`{\vec a}_1`\ (グリーン) で囲まれた部分(サイト数は20)が計算するセルとなる。" src="../../_images/chap04_1_unitlattice.png" style="width: 622.0px; height: 350.0px;" /></a>
-<p class="caption"><span class="caption-number">図 4.5 </span><span class="caption-text">三角格子において、<span class="math">\({\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)\)</span>とした場合のセル形状。
-<span class="math">\({\vec a}_0\)</span>(マゼンタ)および:math:<cite>{vec a}_1</cite>(グリーン)
+<a class="reference internal image-reference" href="../../_images/chap04_1_unitlattice.png"><img alt="三角格子において、\ :math:`{\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)`\ とした場合のセル形状。 :math:`{\vec a}_0`\ (マゼンタ)および :math:`{\vec a}_1`\ (グリーン) で囲まれた部分(サイト数は20)が計算するセルとなる。" src="../../_images/chap04_1_unitlattice.png" style="width: 622.0px; height: 350.0px;" /></a>
+<p class="caption"><span class="caption-number">図 4.5 </span><span class="caption-text">三角格子において、<span class="math notranslate nohighlight">\({\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)\)</span>とした場合のセル形状。
+<span class="math notranslate nohighlight">\({\vec a}_0\)</span>(マゼンタ)および:math:<cite>{vec a}_1</cite>(グリーン)
 で囲まれた部分(サイト数は20)が計算するセルとなる。</span></p>
 </div>
 </div></blockquote>
@@ -103,29 +91,29 @@
 蜂の巣格子 [ <a class="reference internal" href="#fig-chap04-1-honeycomb"><span class="std std-numref">図 4.2</span></a> ], カゴメ格子 [ <a class="reference internal" href="#fig-kagome"><span class="std std-numref">図 4.3</span></a> ]</p>
 <p>これらの格子では、標準の単位胞(図中の黒の破線を参照)を用いて格子形状を指定する方法と、
 それらとは別の方向に格子ベクトルを取る方法が選択できます。
-ただし、<code class="docutils literal"><span class="pre">model=SpinGCCMA</span></code>の時には前者のみが使えます。
-また、両方を指定した場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+ただし、<code class="docutils literal notranslate"><span class="pre">model=SpinGCCMA</span></code>の時には前者のみが使えます。
+また、両方を指定した場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">W</span></code>, <code class="docutils literal"><span class="pre">L</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">W</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code></li>
 </ul>
 <blockquote>
 <div><p><strong>形式 :</strong> 自然数</p>
 <p><strong>説明 :</strong> 標準の単位胞の並び方を指定します。</p>
 </div></blockquote>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">a0W</span></code>, <code class="docutils literal"><span class="pre">a0L</span></code>, <code class="docutils literal"><span class="pre">a1W</span></code>, <code class="docutils literal"><span class="pre">a1L</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">a0W</span></code>, <code class="docutils literal notranslate"><span class="pre">a0L</span></code>, <code class="docutils literal notranslate"><span class="pre">a1W</span></code>, <code class="docutils literal notranslate"><span class="pre">a1L</span></code></p>
 <p><strong>形式 :</strong> 自然数</p>
 <p><strong>説明 :</strong>
-格子を指定する2本のベクトル(<span class="math">\({\vec a}_0, {\vec a}_1\)</span>)
+格子を指定する2本のベクトル(<span class="math notranslate nohighlight">\({\vec a}_0, {\vec a}_1\)</span>)
 を指定します (<a class="reference internal" href="#fig-chap04-1-unitlattice"><span class="std std-numref">図 4.5</span></a>)。
 これらのベクトルは標準の並進ベクトルを基底とした座標(Fractional
 coordinate) で指定されます。</p>
 </li>
 </ul>
-<p>スタンダードモードで出力される<code class="docutils literal"><span class="pre">lattice.gp</span></code>というファイルを使うと、
+<p>スタンダードモードで出力される<code class="docutils literal notranslate"><span class="pre">lattice.gp</span></code>というファイルを使うと、
 自分の意図した通りの格子のとり方になっているかどうかを確かめる事が出来ます。
-このファイルは、次のようにして<code class="docutils literal"><span class="pre">gnuplot</span></code>に読み込ませることが出来ます。</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>$ gnuplot lattice.gp
+このファイルは、次のようにして<code class="docutils literal notranslate"><span class="pre">gnuplot</span></code>に読み込ませることが出来ます。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ gnuplot lattice.gp
 </pre></div>
 </div>
 </div>
@@ -153,8 +141,8 @@ coordinate) で指定されます。</p>
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
@@ -193,12 +181,14 @@ coordinate) で指定されます。</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -209,7 +199,7 @@ coordinate) で指定されます。</p>
       &copy;2018, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

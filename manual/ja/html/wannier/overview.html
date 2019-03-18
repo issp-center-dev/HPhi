@@ -4,28 +4,17 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>8.1. 概要 &#8212; HΦ マニュアル  ドキュメント</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="8.2. チュートリアル" href="tutorial.html" />
@@ -36,8 +25,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -49,10 +37,10 @@
 <h1>8.1. 概要<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>本資料では,
 <a class="reference external" href="https://sites.google.com/view/kazuma7k6r">RESPACK</a> と
-mVMC および <span class="math">\({\mathcal H}\Phi\)</span> を用いて,
+mVMC および <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> を用いて,
 ダウンフォールディングをした格子モデルを計算する機能について説明する.</p>
-<div class="math" id="equation-wannier/overview:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-wannier/overview:0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+<div class="math notranslate nohighlight" id="equation-wannier-overview-0">
+<span class="eqno">(8.1)<a class="headerlink" href="#equation-wannier-overview-0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
 {\cal H} &amp;=
 \sum_{i, j, \alpha, \beta, \sigma}
 t_{i \alpha j \beta} c_{i \alpha \sigma}^{\dagger} c_{j \beta \sigma}
@@ -87,7 +75,7 @@ c_{i \alpha \downarrow} c_{i \alpha \uparrow} )
 を用いてKohn-Sham軌道を用いたのちに,
 RESPACKでWannier関数, 誘電関数, 有効相互作用を計算し,
 それらを用いて構成した格子モデルを
-mVMC もしくは <span class="math">\({\mathcal H}\Phi\)</span>
+mVMC もしくは <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>
 で計算する.
 したがってそれらのプログラムが使用可能である必要がある.</p>
 </div>
@@ -115,8 +103,8 @@ mVMC もしくは <span class="math">\({\mathcal H}\Phi\)</span>
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
@@ -148,12 +136,14 @@ mVMC もしくは <span class="math">\({\mathcal H}\Phi\)</span>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -164,7 +154,7 @@ mVMC もしくは <span class="math">\({\mathcal H}\Phi\)</span>
       &copy;2018, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
