@@ -47,7 +47,8 @@ int GetPairExcitedState
 (
   struct BindStruct *X,
   int nstate, double complex **tmp_v0,
-  double complex **tmp_v1
+  double complex **tmp_v1,
+  int iEx
 )
 {
   int iret;
@@ -73,21 +74,21 @@ int GetPairExcitedState
 
   switch (X->Def.iCalcModel) {
   case HubbardGC:
-    iret = GetPairExcitedStateHubbardGC(X, nstate, tmp_v0, tmp_v1);
+    iret = GetPairExcitedStateHubbardGC(X, nstate, tmp_v0, tmp_v1, iEx);
     break;
 
   case KondoGC:
   case Hubbard:
   case Kondo:
-    iret = GetPairExcitedStateHubbard(X, nstate, tmp_v0, tmp_v1);
+    iret = GetPairExcitedStateHubbard(X, nstate, tmp_v0, tmp_v1, iEx);
     break;
 
   case Spin: // for the Sz-conserved spin system
-    iret = GetPairExcitedStateSpin(X, nstate, tmp_v0, tmp_v1);
+    iret = GetPairExcitedStateSpin(X, nstate, tmp_v0, tmp_v1, iEx);
     break;
 
   case SpinGC:
-    iret = GetPairExcitedStateSpinGC(X, nstate, tmp_v0, tmp_v1);
+    iret = GetPairExcitedStateSpinGC(X, nstate, tmp_v0, tmp_v1, iEx);
     break;
 
   default:

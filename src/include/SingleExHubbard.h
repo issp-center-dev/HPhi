@@ -17,6 +17,6 @@
 #include "Common.h"
 
 int GetSingleExcitedStateHubbard(struct BindStruct *X, int nstate,
-  double complex **tmp_v0, double complex **tmp_v1);
+  double complex **tmp_v0, double complex **tmp_v1, int iEx);
 int GetSingleExcitedStateHubbardGC(struct BindStruct *X, int nstate,
-  double complex **tmp_v0, double complex **tmp_v1);
+  double complex **tmp_v0, double complex **tmp_v1, int iEx);

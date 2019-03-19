@@ -233,7 +233,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
 */
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
-  int NumOp, **spin, isite, ispin, icell, itau;
+  int NumOp, **spin, isite, ispin, icell, itau, iEx;
   double *coef, pi, Cphase, S, Sz;
   double *fourier_r, *fourier_i;
 
@@ -371,43 +371,47 @@ static void PrintExcitation(struct StdIntList *StdI) {
   if (StdI->SpectrumBody == 1) {
     fp = fopen("single.def", "w");
     fprintf(fp, "=============================================\n");
-    if (strcmp(StdI->model, "kondo") == 0) {
-      fprintf(fp, "NSingle %d\n", StdI->nsite / 2 * NumOp);
-    }
-    else {
-      fprintf(fp, "NSingle %d\n", StdI->nsite * NumOp);
-    }
+    fprintf(fp, "NSingle %d\n", 2);
     fprintf(fp, "=============================================\n");
     fprintf(fp, "============== Single Excitation ============\n");
     fprintf(fp, "=============================================\n");
     if (strcmp(StdI->model, "kondo") == 0) {
-      for (isite = StdI->nsite / 2; isite < StdI->nsite; isite++) {
-        fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
-          fourier_r[isite] * coef[0], fourier_i[isite] * coef[0]);
-      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      for (iEx = 0; iEx < 2; iEx++) {
+        fprintf(fp, "%d\n", StdI->nsite / 2 * NumOp);
+        for (isite = StdI->nsite / 2; isite < StdI->nsite; isite++) {
+          fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
+            fourier_r[isite] * coef[0], fourier_i[isite] * coef[0]);
+        }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      }/*for (iEx = 0; iEx < 2; iEx++)*/
     }/*if (strcmp(StdI->model, "kondo") == 0)*/
     else {
-      for (isite = 0; isite < StdI->nsite; isite++) {
-        fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
-          fourier_r[isite] * coef[0], fourier_i[isite] * coef[0]);
-      }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      for (iEx = 0; iEx < 2; iEx++) {
+        fprintf(fp, "%d\n", StdI->nsite * NumOp);
+        for (isite = 0; isite < StdI->nsite; isite++) {
+          fprintf(fp, "%d %d 0 %25.15f %25.15f\n", isite, spin[0][0],
+            fourier_r[isite] * coef[0], fourier_i[isite] * coef[0]);
+        }/*for (isite = 0; isite < StdI->nsite; isite++)*/
+      }/*for (iEx = 0; iEx < 2; iEx++)*/
     }
     fprintf(stdout, "      single.def is written.\n\n");
   }
   else {
     fp = fopen("pair.def", "w");
     fprintf(fp, "=============================================\n");
-    fprintf(fp, "NPair %d\n", StdI->nsite * NumOp);
+    fprintf(fp, "NPair %d\n", 2);
     fprintf(fp, "=============================================\n");
     fprintf(fp, "=============== Pair Excitation =============\n");
     fprintf(fp, "=============================================\n");
-    for (isite = 0; isite < StdI->nsite; isite++) {
-      for (ispin = 0; ispin < NumOp; ispin++) {
-        fprintf(fp, "%d %d %d %d 1 %25.15f %25.15f\n", 
-          isite, spin[ispin][0], isite, spin[ispin][1],
-          fourier_r[isite] * coef[ispin], fourier_i[isite] * coef[ispin]);
+    for (iEx = 0; iEx < 2; iEx++) {
+      fprintf(fp, "%d\n", StdI->nsite * NumOp);
+      for (isite = 0; isite < StdI->nsite; isite++) {
+        for (ispin = 0; ispin < NumOp; ispin++) {
+          fprintf(fp, "%d %d %d %d 1 %25.15f %25.15f\n",
+            isite, spin[ispin][0], isite, spin[ispin][1],
+            fourier_r[isite] * coef[ispin], fourier_i[isite] * coef[ispin]);
+        }
       }
-    }
+    }/*for (iEx = 0; iEx < 2; iEx++)*/
     fprintf(stdout, "        pair.def is written.\n\n");
   }
   fflush(fp);

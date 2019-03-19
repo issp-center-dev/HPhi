@@ -38,7 +38,8 @@ void ReadTMComponents_BiCG(
   double complex *v12,//!<[inout] [CheckList::idim_max] Old residual vector
   double complex *v14,//!<[inout] [CheckList::idim_max] Old shadow residual vector
   int Nomega,//!<[in] Number of frequencies
-  double complex *dcSpectrum,//!<[inout] [Nomega] Projected result vector, spectrum
+  int NdcSpectrum, 
+  double complex **dcSpectrum,//!<[inout] [Nomega] Projected result vector, spectrum
   double complex *dcomega//!<[in] [Nomega] Frequency
 ) {
   char sdt[D_FileNameMax];
@@ -66,7 +67,7 @@ void ReadTMComponents_BiCG(
       fprintf(stdoutMPI, "INFO: File for the restart is not found.\n");
       fprintf(stdoutMPI, "      Start from SCRATCH.\n");
       max_step = (int)X->Bind.Def.Lanczos_max;
-      komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
+      komega_bicg_init(&idim_max2int, &NdcSpectrum, &Nomega, &dcSpectrum[0][0], dcomega, &max_step, &eps_Lanczos, &comm);
     }
     else {
       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
@@ -99,7 +100,7 @@ void ReadTMComponents_BiCG(
       if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents) X->Bind.Def.Lanczos_max = 0;
       max_step = (int)(iter_old + X->Bind.Def.Lanczos_max);
 
-      komega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
+      komega_bicg_restart(&idim_max2int, &NdcSpectrum, &Nomega, &dcSpectrum[0][0], dcomega, &max_step, &eps_Lanczos, status,
         &iter_old, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save, &comm);
       free(alphaCG);
       free(betaCG);
@@ -108,7 +109,7 @@ void ReadTMComponents_BiCG(
   }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_NOT)*/
   else {
     max_step = (int)X->Bind.Def.Lanczos_max;
-    komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
+    komega_bicg_init(&idim_max2int, &NdcSpectrum, &Nomega, &dcSpectrum[0][0], dcomega, &max_step, &eps_Lanczos, &comm);
   }
 
 }/*int ReadTMComponents_BiCG*/
@@ -165,7 +166,8 @@ int CalcSpectrumByBiCG(
   double complex **v2,//!<[in] [CheckList::idim_max] Right hand side vector, excited state.
   double complex **v4,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
   int Nomega,//!<[in] Number of Frequencies
-  double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
+  int NdcSpectrum,
+  double complex **dcSpectrum,//!<[out] [Nomega] Spectrum
   double complex *dcomega,//!<[in] [Nomega] Frequency
   double complex **v1Org
 )
@@ -174,7 +176,7 @@ int CalcSpectrumByBiCG(
   unsigned long int idim, i_max;
   FILE *fp;
   size_t byte_size;
-  int iret, max_step;
+  int iret, max_step, idcSpectrum;
   unsigned long int liLanczosStp_vec = 0;
   double complex **vL, **v12, **v14, *res_proj;
   int stp, one = 1, status[3], iomega;
@@ -190,7 +192,7 @@ int CalcSpectrumByBiCG(
   v14 = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
   vL = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
   resz = d_1d_allocate(Nomega);
-  res_proj = cd_1d_allocate(1);
+  res_proj = cd_1d_allocate(NdcSpectrum);
   /**
   <li>Set initial result vector(+shadow result vector)
   Read residual vectors if restart</li>
@@ -204,7 +206,8 @@ int CalcSpectrumByBiCG(
     if (childfopenALL(sdt, "rb", &fp) != 0) {
       fprintf(stdoutMPI, "INFO: File for the restart is not found.\n");
       fprintf(stdoutMPI, "      Start from SCRATCH.\n");
-      GetExcitedState(&(X->Bind), 1, v2, v1Org);
+      zclear(X->Bind.Check.idim_max, &v2[1][0]);
+      GetExcitedState(&(X->Bind), 1, v2, v1Org, 0);
 #pragma omp parallel for default(none) shared(v2,v4,v1Org,X) private(idim)
       for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) 
         v4[idim][0] = v2[idim][0];
@@ -228,7 +231,8 @@ int CalcSpectrumByBiCG(
     }/*if (childfopenALL(sdt, "rb", &fp) == 0)*/
   }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_FROM_TMComponents)*/
   else {
-    GetExcitedState(&(X->Bind), 1, v2, v1Org);
+    zclear(X->Bind.Check.idim_max, &v2[1][0]);
+    GetExcitedState(&(X->Bind), 1, v2, v1Org, 0);
 #pragma omp parallel for default(none) shared(v2,v4,v1Org,X) private(idim)
     for (idim = 1; idim <= X->Bind.Check.idim_max; idim++)
       v4[idim][0] = v2[idim][0];
@@ -236,7 +240,7 @@ int CalcSpectrumByBiCG(
   /**
   <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
   */
-  ReadTMComponents_BiCG(X, &v2[0][0], &v4[0][0], &v12[0][0], &v14[0][0], Nomega, dcSpectrum, dcomega);
+  ReadTMComponents_BiCG(X, &v2[0][0], &v4[0][0], &v12[0][0], &v14[0][0], Nomega, NdcSpectrum, dcSpectrum, dcomega);
   /**
   <li>@b DO BiCG loop</li>
   <ul>
@@ -256,12 +260,15 @@ int CalcSpectrumByBiCG(
     iret = mltply(&X->Bind, 1, v12, v2);
     iret = mltply(&X->Bind, 1, v14, v4);
 
-    GetExcitedState(&(X->Bind), 1, vL, v1Org);
-    res_proj[0] = VecProdMPI(X->Bind.Check.idim_max, &vL[0][0], &v2[0][0]);
+    for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
+      zclear(X->Bind.Check.idim_max, &vL[1][0]);
+      GetExcitedState(&(X->Bind), 1, vL, v1Org, idcSpectrum + 1);
+      res_proj[idcSpectrum] = VecProdMPI(X->Bind.Check.idim_max, &vL[0][0], &v2[0][0]);
+    }
     /**
     <li>Update projected result vector dcSpectrum.</li>
     */
-    komega_bicg_update(&v12[1][0], &v2[1][0], &v14[1][0], &v4[1][0], dcSpectrum, res_proj, status);
+    komega_bicg_update(&v12[1][0], &v2[1][0], &v14[1][0], &v4[1][0], &dcSpectrum[0][0], res_proj, status);
     /**
     <li>Output residuals at each frequency for some analysis</li>
     */
@@ -271,7 +278,7 @@ int CalcSpectrumByBiCG(
       for (iomega = 0; iomega < Nomega; iomega++) {
         fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n", 
           stp, creal(dcomega[iomega]), 
-          creal(dcSpectrum[iomega]), cimag(dcSpectrum[iomega]),
+          creal(dcSpectrum[iomega][0]), cimag(dcSpectrum[iomega][0]),
           resz[iomega]);
       }
       fprintf(fp, "\n");

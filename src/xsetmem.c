@@ -100,10 +100,14 @@ void setmem_def
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
   X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
 
-  X->Def.SingleExcitationOperator = i_2d_allocate(X->Def.NSingleExcitationOperator, 3);
-  X->Def.ParaSingleExcitationOperator = cd_1d_allocate(X->Def.NSingleExcitationOperator);
-  X->Def.PairExcitationOperator = i_2d_allocate(X->Def.NPairExcitationOperator, 5);
-  X->Def.ParaPairExcitationOperator = cd_1d_allocate(X->Def.NPairExcitationOperator);
+  X->Def.NSingleExcitationOperator = ui_1d_allocate(X->Def.NNSingleExcitationOperator);
+  X->Def.SingleExcitationOperator = (int***)malloc(sizeof(int**)*X->Def.NNSingleExcitationOperator);
+  X->Def.ParaSingleExcitationOperator = (double complex**)malloc(
+    sizeof(double complex*)*X->Def.NNSingleExcitationOperator);
+  X->Def.NPairExcitationOperator = ui_1d_allocate(X->Def.NNPairExcitationOperator);
+  X->Def.PairExcitationOperator = (int***)malloc(sizeof(int**)*X->Def.NNPairExcitationOperator);
+  X->Def.ParaPairExcitationOperator = (double complex**)malloc(
+    sizeof(double complex*)*X->Def.NNPairExcitationOperator);
 
   X->Def.ParaLaser = d_1d_allocate(X->Def.NLaser);
 

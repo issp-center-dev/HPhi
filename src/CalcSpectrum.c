@@ -143,7 +143,7 @@ int MakeExcitedList(
   X->Check.idim_maxOrg = X->Check.idim_max;
   X->Check.idim_maxMPIOrg = X->Check.idim_maxMPI;
 
-  if (X->Def.NSingleExcitationOperator > 0) {
+  if (X->Def.NNSingleExcitationOperator > 0) {
     switch (X->Def.iCalcModel) {
     case HubbardGC:
       break;
@@ -158,7 +158,7 @@ int MakeExcitedList(
       return FALSE;
     }
   }
-  else if (X->Def.NPairExcitationOperator > 0) {
+  else if (X->Def.NNPairExcitationOperator > 0) {
     switch (X->Def.iCalcModel) {
     case HubbardGC:
     case SpinGC:
@@ -168,7 +168,7 @@ int MakeExcitedList(
     case Hubbard:
     case Kondo:
     case Spin:
-      if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
+      if (X->Def.PairExcitationOperator[0][0][1] != X->Def.PairExcitationOperator[0][0][3]) {
         *iFlgListModifed = TRUE;
       }
       break;
@@ -209,12 +209,12 @@ int MakeExcitedList(
       return FALSE;
     }
 
-    if (X->Def.NSingleExcitationOperator > 0) {
+    if (X->Def.NNSingleExcitationOperator > 0) {
       switch (X->Def.iCalcModel) {
       case HubbardGC:
         break;
       case HubbardNConserved:
-        if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
+        if (X->Def.SingleExcitationOperator[0][0][2] == 1) { //cis
           X->Def.Ne = X->Def.NeMPI + 1;
         }
         else {
@@ -224,9 +224,9 @@ int MakeExcitedList(
       case KondoGC:
       case Hubbard:
       case Kondo:
-        if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
+        if (X->Def.SingleExcitationOperator[0][0][2] == 1) { //cis
           X->Def.Ne = X->Def.NeMPI + 1;
-          if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
+          if (X->Def.SingleExcitationOperator[0][0][1] == 0) {//up
             X->Def.Nup = X->Def.NupOrg + 1;
             X->Def.Ndown = X->Def.NdownOrg;
           }
@@ -237,7 +237,7 @@ int MakeExcitedList(
         }
         else {//ajt
           X->Def.Ne = X->Def.NeMPI - 1;
-          if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
+          if (X->Def.SingleExcitationOperator[0][0][1] == 0) {//up
             X->Def.Nup = X->Def.NupOrg - 1;
             X->Def.Ndown = X->Def.NdownOrg;
 
@@ -253,7 +253,7 @@ int MakeExcitedList(
         return FALSE;
       }
     }
-    else if (X->Def.NPairExcitationOperator > 0) {
+    else if (X->Def.NNPairExcitationOperator > 0) {
       X->Def.Ne = X->Def.NeMPI;
       switch (X->Def.iCalcModel) {
       case HubbardGC:
@@ -263,8 +263,8 @@ int MakeExcitedList(
       case KondoGC:
       case Hubbard:
       case Kondo:
-        if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
-          if (X->Def.PairExcitationOperator[0][1] == 0) {//up
+        if (X->Def.PairExcitationOperator[0][0][1] != X->Def.PairExcitationOperator[0][0][3]) {
+          if (X->Def.PairExcitationOperator[0][0][1] == 0) {//up
             X->Def.Nup = X->Def.NupOrg + 1;
             X->Def.Ndown = X->Def.NdownOrg - 1;
           }
@@ -275,9 +275,9 @@ int MakeExcitedList(
         }
         break;
       case Spin:
-        if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
+        if (X->Def.PairExcitationOperator[0][0][1] != X->Def.PairExcitationOperator[0][0][3]) {
           if (X->Def.iFlgGeneralSpin == FALSE) {
-            if (X->Def.PairExcitationOperator[0][1] == 0) {//down
+            if (X->Def.PairExcitationOperator[0][0][1] == 0) {//down
               X->Def.Nup = X->Def.NupOrg - 1;
               X->Def.Ndown = X->Def.NdownOrg + 1;
             }
@@ -287,7 +287,7 @@ int MakeExcitedList(
             }
           }
           else {//for general spin
-            X->Def.Total2Sz = X->Def.Total2SzMPI + 2 * (X->Def.PairExcitationOperator[0][1] - X->Def.PairExcitationOperator[0][3]);
+            X->Def.Total2Sz = X->Def.Total2SzMPI + 2 * (X->Def.PairExcitationOperator[0][0][1] - X->Def.PairExcitationOperator[0][0][3]);
           }
         }
         break;
@@ -343,12 +343,13 @@ int MakeExcitedList(
 int OutputSpectrum(
   struct EDMainCalStruct *X,
   int Nomega,
-  double complex *dcSpectrum,
+  int NdcSpectrum,
+  double complex **dcSpectrum,
   double complex *dcomega) 
 {
   FILE *fp;
   char sdt[D_FileNameMax];
-  int i;
+  int iomega, idcSpectrum;
 
   //output spectrum
   sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
@@ -356,11 +357,14 @@ int OutputSpectrum(
     return FALSE;
   }
 
-  for (i = 0; i < Nomega; i++) {
-    fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
-      creal(dcomega[i]-X->Bind.Def.dcOmegaOrg), cimag(dcomega[i]-X->Bind.Def.dcOmegaOrg),
-      creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
-  }/*for (i = 0; i < Nomega; i++)*/
+  for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
+    for (iomega = 0; iomega < Nomega; iomega++) {
+      fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
+        creal(dcomega[iomega] - X->Bind.Def.dcOmegaOrg), cimag(dcomega[iomega] - X->Bind.Def.dcOmegaOrg),
+        creal(dcSpectrum[iomega][idcSpectrum]), cimag(dcSpectrum[iomega][idcSpectrum]));
+    }/*for (i = 0; i < Nomega; i++)*/
+    fprintf(fp, "\n");
+  }
 
   fclose(fp);
   return TRUE;
@@ -376,22 +380,17 @@ int GetExcitedState
   struct BindStruct *X,
   int nstate,
   double complex **tmp_v0,
-  double complex **tmp_v1
+  double complex **tmp_v1,
+  int iEx
 )
 {
-  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
-    fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
-    return FALSE;
-  }
-
-
-  if (X->Def.NSingleExcitationOperator > 0) {
-    if (GetSingleExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
+  if (X->Def.NNSingleExcitationOperator > 0) {
+    if (GetSingleExcitedState(X, nstate, tmp_v0, tmp_v1, iEx) != TRUE) {
       return FALSE;
     }
   }
-  else if (X->Def.NPairExcitationOperator > 0) {
-    if (GetPairExcitedState(X, nstate, tmp_v0, tmp_v1) != TRUE) {
+  else if (X->Def.NNPairExcitationOperator > 0) {
+    if (GetPairExcitedState(X, nstate, tmp_v0, tmp_v1, iEx) != TRUE) {
       return FALSE;
     }
   }
@@ -419,7 +418,7 @@ int CalcSpectrum(
   char *defname;
   unsigned long int i;
   unsigned long int i_max = 0;
-  int i_stp;
+  int i_stp, NdcSpectrum;
   int iFlagListModified = FALSE;
   FILE *fp;
   double dnorm;
@@ -428,7 +427,7 @@ int CalcSpectrum(
   //ToDo: Nomega should be given as a parameter
   int Nomega;
   double complex OmegaMax, OmegaMin;
-  double complex *dcSpectrum;
+  double complex **dcSpectrum;
   double complex *dcomega;
   size_t byte_size;
 
@@ -446,7 +445,6 @@ int CalcSpectrum(
    Set & malloc omega grid
   */
   Nomega = X->Bind.Def.iNOmega;
-  dcSpectrum = cd_1d_allocate(Nomega);
   dcomega = cd_1d_allocate(Nomega);
   OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
   OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
@@ -459,10 +457,24 @@ int CalcSpectrum(
   fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
   fprintf(stdoutMPI, "  Num. of Omega : %d\n", Nomega);
 
-  if (X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0) {
-    fprintf(stderr, "Error: Any excitation operators are not defined.\n");
+  if (X->Bind.Def.NNSingleExcitationOperator == 0){
+    if (X->Bind.Def.NNPairExcitationOperator == 0) {
+      fprintf(stderr, "Error: Any excitation operators are not defined.\n");
+      exitMPI(-1);
+    }
+    else {
+      NdcSpectrum = X->Bind.Def.NNPairExcitationOperator - 1;
+    }
+  }
+  else if (X->Bind.Def.NNPairExcitationOperator == 0) {
+    NdcSpectrum = X->Bind.Def.NNSingleExcitationOperator - 1;
+  }
+  else {
+    fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
     exitMPI(-1);
   }
+  dcSpectrum = cd_2d_allocate(Nomega, NdcSpectrum);
+
   //Make New Lists
   if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
     return FALSE;
@@ -514,13 +526,13 @@ int CalcSpectrum(
   StartTimer(6200);
   switch (X->Bind.Def.iCalcType) {
   case CG:
-    iret = CalcSpectrumByBiCG(X, v0, v1, Nomega, dcSpectrum, dcomega, v1Org);
+    iret = CalcSpectrumByBiCG(X, v0, v1, Nomega, NdcSpectrum, dcSpectrum, dcomega, v1Org);
     if (iret != TRUE) {
       return FALSE;
     }
     break;
   case FullDiag:
-    iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega, v1Org);
+    iret = CalcSpectrumByFullDiag(X, Nomega, NdcSpectrum, dcSpectrum, dcomega, v1Org);
     break;
   default:
     break;
@@ -534,8 +546,8 @@ int CalcSpectrum(
 
   fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
-  iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
-  free_cd_1d_allocate(dcSpectrum);
+  iret = OutputSpectrum(X, Nomega, NdcSpectrum, dcSpectrum, dcomega);
+  free_cd_2d_allocate(dcSpectrum);
   free_cd_1d_allocate(dcomega);
   return TRUE;
 

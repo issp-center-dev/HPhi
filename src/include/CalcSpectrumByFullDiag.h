@@ -18,4 +18,5 @@
 #include "struct.h"
 
 int CalcSpectrumByFullDiag(
-  struct EDMainCalStruct *X, int Nomega, double complex *dcSpectrum, double complex *dcomega, double complex **v1org);
+  struct EDMainCalStruct *X, int Nomega, int NdcSpectrum,
+  double complex **dcSpectrum, double complex *dcomega, double complex **v1org);

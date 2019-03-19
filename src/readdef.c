@@ -799,14 +799,14 @@ int ReadDefFileNInt(
       /* Read singleexcitation.def----------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NSingleExcitationOperator));
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NNSingleExcitationOperator));
       break;
 
     case KWPairExcitation:
       /* Read pairexcitation.def----------------------------------------*/
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fgetsMPI(ctmp2, 256, fp);
-      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairExcitationOperator));
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NNPairExcitationOperator));
       break;
 
     default:
@@ -1707,33 +1707,41 @@ int ReadDefFileIdxPara(
 
     case KWSingleExcitation:
       /*singleexcitation.def----------------------------------------*/
-      if(X->NSingleExcitationOperator>0) {
+      if(X->NNSingleExcitationOperator>0) {
         if(X->iCalcModel == Spin || X->iCalcModel == SpinGC) {
           fprintf(stderr, "SingleExcitation is not allowed for spin system.\n");
           fclose(fp);
           return ReadDefFileError(defname);
         }
         while (fgetsMPI(ctmp2, 256, fp) != NULL) {
-          sscanf(ctmp2, "%d %d %d %lf %lf\n",
-                 &isite1,
-                 &isigma1,
-                 &itype,
-                 &dvalue_re,
-                 &dvalue_im
-                 );
+          sscanf(ctmp2, "%d\n", &X->NSingleExcitationOperator[idx]);
+          X->SingleExcitationOperator[idx] = (int**)malloc(sizeof(int*)*X->NSingleExcitationOperator[idx]);            
+          X->ParaSingleExcitationOperator[idx] = (double complex*)malloc(
+            sizeof(double complex)*X->NSingleExcitationOperator[idx]);
+          for (i = 0; i < X->NSingleExcitationOperator[idx]; ++i) {
+            fgetsMPI(ctmp2, 256, fp); 
+            sscanf(ctmp2, "%d %d %d %lf %lf\n",
+              &isite1,
+              &isigma1,
+              &itype,
+              &dvalue_re,
+              &dvalue_im
+            );
 
-          if (CheckSite(isite1, X->Nsite) != 0) {
-            fclose(fp);
-            return ReadDefFileError(defname);
-          }
+            if (CheckSite(isite1, X->Nsite) != 0) {
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
 
-          X->SingleExcitationOperator[idx][0] = isite1;
-          X->SingleExcitationOperator[idx][1] = isigma1;
-          X->SingleExcitationOperator[idx][2] = itype;
-          X->ParaSingleExcitationOperator[idx] = dvalue_re + I * dvalue_im;
+            X->SingleExcitationOperator[idx][i] = (int*)malloc(sizeof(int) * 3);
+            X->SingleExcitationOperator[idx][i][0] = isite1;
+            X->SingleExcitationOperator[idx][i][1] = isigma1;
+            X->SingleExcitationOperator[idx][i][2] = itype;
+            X->ParaSingleExcitationOperator[idx][i] = dvalue_re + I * dvalue_im;
+          }/*for (i = 0; i < X->NSingleExcitationOperator[idx]; ++i)*/
           idx++;
         }
-        if (idx != X->NSingleExcitationOperator) {
+        if (idx != X->NNSingleExcitationOperator) {
           fclose(fp);
           return ReadDefFileError(defname);
         }
@@ -1742,42 +1750,49 @@ int ReadDefFileIdxPara(
 
     case KWPairExcitation:
       /*pairexcitation.def----------------------------------------*/
-      if(X->NPairExcitationOperator>0) {
+      if(X->NNPairExcitationOperator>0) {
         while (fgetsMPI(ctmp2, 256, fp) != NULL) {
-          sscanf(ctmp2, "%d %d %d %d %d %lf %lf\n",
-                 &isite1,
-                 &isigma1,
-                 &isite2,
-                 &isigma2,
-                 &itype,
-                 &dvalue_re,
-                 &dvalue_im
-                 );
-          if (CheckPairSite(isite1, isite2, X->Nsite) != 0) {
-            fclose(fp);
-            return ReadDefFileError(defname);
-          }
+          sscanf(ctmp2, "%d\n", &X->NPairExcitationOperator[idx]);
+          X->PairExcitationOperator[idx] = (int**)malloc(sizeof(int*)*X->NPairExcitationOperator[idx]);            
+          X->ParaPairExcitationOperator[idx] = (double complex*)malloc(
+            sizeof(double complex)*X->NPairExcitationOperator[idx]);
+          for (i = 0; i < X->NPairExcitationOperator[idx]; ++i) {
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%d %d %d %d %d %lf %lf\n",
+              &isite1,
+              &isigma1,
+              &isite2,
+              &isigma2,
+              &itype,
+              &dvalue_re,
+              &dvalue_im
+            );
+            if (CheckPairSite(isite1, isite2, X->Nsite) != 0) {
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
 
-          if(itype==1){
-            X->PairExcitationOperator[idx][0] = isite1;
-            X->PairExcitationOperator[idx][1] = isigma1;
-            X->PairExcitationOperator[idx][2] = isite2;
-            X->PairExcitationOperator[idx][3] = isigma2;
-            X->PairExcitationOperator[idx][4] = itype;
-            X->ParaPairExcitationOperator[idx] = dvalue_re + I * dvalue_im;
-          }
-          else{
-            X->PairExcitationOperator[idx][0] = isite2;
-            X->PairExcitationOperator[idx][1] = isigma2;
-            X->PairExcitationOperator[idx][2] = isite1;
-            X->PairExcitationOperator[idx][3] = isigma1;
-            X->PairExcitationOperator[idx][4] = itype;
-            X->ParaPairExcitationOperator[idx] = -(dvalue_re + I * dvalue_im);
-          }
-
+            X->PairExcitationOperator[idx][i] = (int*)malloc(sizeof(int) * 5);
+            if (itype == 1) {
+              X->PairExcitationOperator[idx][i][0] = isite1;
+              X->PairExcitationOperator[idx][i][1] = isigma1;
+              X->PairExcitationOperator[idx][i][2] = isite2;
+              X->PairExcitationOperator[idx][i][3] = isigma2;
+              X->PairExcitationOperator[idx][i][4] = itype;
+              X->ParaPairExcitationOperator[idx][i] = dvalue_re + I * dvalue_im;
+            }
+            else {
+              X->PairExcitationOperator[idx][i][0] = isite2;
+              X->PairExcitationOperator[idx][i][1] = isigma2;
+              X->PairExcitationOperator[idx][i][2] = isite1;
+              X->PairExcitationOperator[idx][i][3] = isigma1;
+              X->PairExcitationOperator[idx][i][4] = itype;
+              X->ParaPairExcitationOperator[idx][i] = -(dvalue_re + I * dvalue_im);
+            }
+          }/*for (i = 0; i < X->NPairExcitationOperator[idx]; ++i)*/
           idx++;
         }
-        if (idx != X->NPairExcitationOperator) {
+        if (idx != X->NNPairExcitationOperator) {
           fclose(fp);
           return ReadDefFileError(defname);
         }
@@ -2565,8 +2580,8 @@ void InitializeInteractionNum
   X->NInterAll=0;
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
-  X->NSingleExcitationOperator=0;
-  X->NPairExcitationOperator=0;
+  X->NNSingleExcitationOperator=0;
+  X->NNPairExcitationOperator=0;
   //[s] Time Evolution
   X->NTETimeSteps=0;
   X->NLaser=0;

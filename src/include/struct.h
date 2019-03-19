@@ -177,16 +177,18 @@ struct DefineList {
   int **CisAjtCkuAlvDC;/**<@brief [DefineList::NCisAjtCkuAlvDC][4] Indices of two-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjtCkuAlvDC;/**<@brief Number of indices of two-body correlation function.*/
 
-  int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
+  int ***SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
                                  Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
-  unsigned int NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
-  double complex *ParaSingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator] 
+  unsigned int NNSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
+  unsigned int *NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
+  double complex **ParaSingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator] 
               Coefficient of single excitaion operator for spectrum. malloc in setmem_def().*/
 
-  int **PairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator][5] 
+  int ***PairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator][5] 
                                Indices of pair excitaion operator for spectrum. malloc in setmem_def().*/
-  unsigned int NPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
-  double complex *ParaPairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator]
+  unsigned int NNPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
+  unsigned int *NPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
+  double complex **ParaPairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator]
                            Coefficient of pair excitaion operator for spectrum. malloc in setmem_def().*/
   
   int iCalcType;/**<@brief Switch for calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/

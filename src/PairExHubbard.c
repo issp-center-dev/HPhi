@@ -38,7 +38,8 @@ int GetPairExcitedStateHubbardGC(
   struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
   int nstate, 
   double complex **tmp_v0, /**< [out] Result v0 = H v1*/
-  double complex **tmp_v1 /**< [in] v0 = H v1*/
+  double complex **tmp_v1, /**< [in] v0 = H v1*/
+  int iEx
 ) {
   long unsigned int i, j;
   long unsigned int isite1;
@@ -49,17 +50,17 @@ int GetPairExcitedStateHubbardGC(
   long int ibit;
   long unsigned int is;
   i_max = X->Check.idim_maxOrg;
-  for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
-    org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
-    org_isite2 = X->Def.PairExcitationOperator[i][2] + 1;
-    org_sigma1 = X->Def.PairExcitationOperator[i][1];
-    org_sigma2 = X->Def.PairExcitationOperator[i][3];
-    tmp_trans = X->Def.ParaPairExcitationOperator[i];
+  for (i = 0; i < X->Def.NPairExcitationOperator[iEx]; i++) {
+    org_isite1 = X->Def.PairExcitationOperator[iEx][i][0] + 1;
+    org_isite2 = X->Def.PairExcitationOperator[iEx][i][2] + 1;
+    org_sigma1 = X->Def.PairExcitationOperator[iEx][i][1];
+    org_sigma2 = X->Def.PairExcitationOperator[iEx][i][3];
+    tmp_trans = X->Def.ParaPairExcitationOperator[iEx][i];
 
     if (org_isite1 > X->Def.Nsite &&
       org_isite2 > X->Def.Nsite) {
       if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
-        if (X->Def.PairExcitationOperator[i][4] == 0) {
+        if (X->Def.PairExcitationOperator[iEx][i][4] == 0) {
           if (org_sigma1 == 0) {
             is = X->Def.Tpow[2 * org_isite1 - 2];
           }
@@ -72,7 +73,7 @@ int GetPairExcitedStateHubbardGC(
             zaxpy_long(i_max*nstate, -tmp_trans, &tmp_v1[1][0], &tmp_v0[1][0]);
           }
         }
-        else {//X->Def.PairExcitationOperator[i][4]==1
+        else {//X->Def.PairExcitationOperator[iEx][i][4]==1
           if (org_sigma1 == 0) {
             is = X->Def.Tpow[2 * org_isite1 - 2];
           }
@@ -102,7 +103,7 @@ int GetPairExcitedStateHubbardGC(
     }
     else {
 
-      if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 && X->Def.PairExcitationOperator[i][4] == 0) {
+      if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 && X->Def.PairExcitationOperator[iEx][i][4] == 0) {
         isite1 = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 #pragma omp parallel for default(none) private(j) \
 firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0,tmp_v1,nstate)
@@ -132,7 +133,8 @@ firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0,tmp_v1,nstate)
 int GetPairExcitedStateHubbard(
   struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
   int nstate, double complex **tmp_v0, /**< [out] Result v0 = H v1*/
-  double complex **tmp_v1 /**< [in] v0 = H v1*/
+  double complex **tmp_v1, /**< [in] v0 = H v1*/
+  int iEx
 ) {
   long unsigned int i, j, idim_maxMPI;
   long unsigned int irght, ilft, ihfbit;
@@ -165,12 +167,12 @@ int GetPairExcitedStateHubbard(
   tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1, nstate);
 #endif // MPI
 
-  for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
-    org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
-    org_isite2 = X->Def.PairExcitationOperator[i][2] + 1;
-    org_sigma1 = X->Def.PairExcitationOperator[i][1];
-    org_sigma2 = X->Def.PairExcitationOperator[i][3];
-    tmp_trans = X->Def.ParaPairExcitationOperator[i];
+  for (i = 0; i < X->Def.NPairExcitationOperator[iEx]; i++) {
+    org_isite1 = X->Def.PairExcitationOperator[iEx][i][0] + 1;
+    org_isite2 = X->Def.PairExcitationOperator[iEx][i][2] + 1;
+    org_sigma1 = X->Def.PairExcitationOperator[iEx][i][1];
+    org_sigma2 = X->Def.PairExcitationOperator[iEx][i][3];
+    tmp_trans = X->Def.ParaPairExcitationOperator[iEx][i];
     ibitsite1 = X->Def.OrgTpow[2 * org_isite1 - 2 + org_sigma1];
     ibitsite2 = X->Def.OrgTpow[2 * org_isite2 - 2 + org_sigma2];
     child_general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
@@ -217,7 +219,7 @@ firstprivate(i_max,tmp_trans,Asum,Adiff,ibitsite1,ibitsite2,X,list_1_org,list_1,
         if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {//diagonal
           is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
           ibit = (unsigned long int) myrank & is;
-          if (X->Def.PairExcitationOperator[i][4] == 0) {
+          if (X->Def.PairExcitationOperator[iEx][i][4] == 0) {
             if (ibit != is) {
               dmv = -tmp_trans;
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1,one,dmv,nstate) \
@@ -254,7 +256,7 @@ firstprivate(i_max, tmp_trans) private(j)
         }
         if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
           is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
-          if (X->Def.PairExcitationOperator[i][4] == 0) {
+          if (X->Def.PairExcitationOperator[iEx][i][4] == 0) {
 #pragma omp parallel for default(none) shared(list_1,nstate,tmp_v0,tmp_v1,one) \
 firstprivate(i_max,is,tmp_trans) private(num1,ibit,dmv)
             for (j = 1; j <= i_max; j++) {

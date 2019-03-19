@@ -40,14 +40,15 @@ G(z) = \sum_n \frac{|\langle n|c|0\rangle|^2}{z - E_n}
 int CalcSpectrumByFullDiag(
   struct EDMainCalStruct *X,//!<[inout]
   int Nomega,//!<[in] Number of frequencies
-  double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
+  int NdcSpectrum,
+  double complex **dcSpectrum,//!<[out] [Nomega] Spectrum
   double complex *dcomega,//!<[in] [Nomega] Frequency
   double complex **v1Org
 )
 {
   int idim, jdim, iomega;
   int idim_max_int;
-  int incr=1;
+  int incr = 1, idcSpectrum;
   double complex **vR, **vL, vRv, vLv, *vLvvRv;
   /**
   <ul>
@@ -76,37 +77,40 @@ int CalcSpectrumByFullDiag(
   <li>Compute @f$|\langle n|c|0\rangle|^2@f$ for all @f$n@f$ and store them into ::v1,
   where @f$c|0\rangle@f$ is ::vg.</li>
   */
-  StartTimer(6303);
-
-  GetExcitedState(&(X->Bind), 1, vR, v1Org);
-  GetExcitedState(&(X->Bind), 1, vL, v1Org);
-  for (idim = 0; idim < idim_max_int; idim++) {
-    vRv = 0.0;
-    vLv = 0.0;
-    for (jdim = 0; jdim < idim_max_int; jdim++) {
-      vRv += conj(v1[jdim][idim]) * vR[jdim][1];
-      vLv += conj(v1[jdim][idim]) * vL[jdim][1];
-    }
-    vLvvRv[idim] = conj(vLv) * vRv;
-  }/*for (idim = 0; idim < idim_max_int; idim++)*/
-  StopTimer(6303);
-  /**
-  <li>Compute spectrum
-  @f[
-  \sum_n \frac{|\langle n|c|0\rangle|^2}{z - E_n}
-  @f]
-  </li>
-  </ul>
-  */
-  StartTimer(6304);
-  for (iomega = 0; iomega < Nomega; iomega++) {
-    dcSpectrum[iomega] = 0.0;
+  zclear(X->Bind.Check.idim_max, &vR[1][0]);
+  GetExcitedState(&(X->Bind), 1, vR, v1Org, 0);
+  for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
+    StartTimer(6303);
+    zclear(X->Bind.Check.idim_max, &vL[1][0]);
+    GetExcitedState(&(X->Bind), 1, vL, v1Org, idcSpectrum + 1);
     for (idim = 0; idim < idim_max_int; idim++) {
-      dcSpectrum[iomega] += vLvvRv[idim] / (dcomega[iomega] - X->Bind.Phys.energy[idim]);
+      vRv = 0.0;
+      vLv = 0.0;
+      for (jdim = 0; jdim < idim_max_int; jdim++) {
+        vRv += conj(v1[jdim][idim]) * vR[jdim][1];
+        vLv += conj(v1[jdim][idim]) * vL[jdim][1];
+      }
+      vLvvRv[idim] = conj(vLv) * vRv;
     }/*for (idim = 0; idim < idim_max_int; idim++)*/
-  }/*for (iomega = 0; iomega < Nomega; iomega++)*/
-  StopTimer(6304);
-  free_cd_2d_allocate(vR);
+    StopTimer(6303);
+    /**
+    <li>Compute spectrum
+    @f[
+    \sum_n \frac{|\langle n|c|0\rangle|^2}{z - E_n}
+    @f]
+    </li>
+    </ul>
+    */
+    StartTimer(6304);
+    for (iomega = 0; iomega < Nomega; iomega++) {
+      dcSpectrum[iomega][idcSpectrum] = 0.0;
+      for (idim = 0; idim < idim_max_int; idim++) {
+        dcSpectrum[iomega][idcSpectrum] += vLvvRv[idim] / (dcomega[iomega] - X->Bind.Phys.energy[idim]);
+      }/*for (idim = 0; idim < idim_max_int; idim++)*/
+    }/*for (iomega = 0; iomega < Nomega; iomega++)*/
+    StopTimer(6304);
+  }/*for (idcSpectrum = 1; idcSpectrum < NdcSpectrum; idcSpectrum++)*/
+  free_cd_2d_allocate(vL);
   free_cd_2d_allocate(vR);
   free_cd_1d_allocate(vLvvRv);
   return TRUE;
