@@ -44,7 +44,7 @@ int GetPairExcitedStateHalfSpinGC(
   long unsigned int tmp_off = 0;
 
   double complex tmp_trans = 0, dmv;
-  long int i_max;
+  long unsigned int i_max;
   int tmp_sgn, one = 1;
 
   i_max = X->Check.idim_maxOrg;
@@ -135,7 +135,7 @@ int GetPairExcitedStateGeneralSpinGC(
   long unsigned int tmp_off = 0;
   int one = 1;
   double complex tmp_trans = 0, dmv;
-  long int i_max;
+  long unsigned int i_max;
   i_max = X->Check.idim_maxOrg;
 
   for (i = 0; i < X->Def.NPairExcitationOperator[iEx]; i++) {
@@ -250,7 +250,7 @@ int GetPairExcitedStateHalfSpin(
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
   double complex tmp_trans = 0, dmv;
-  long int i_max;
+  long unsigned int i_max;
   int num1, one = 1;
   long int ibit1;
   long unsigned int is1_up;
@@ -323,9 +323,8 @@ firstprivate(i_max,isite1,org_sigma1,X,tmp_trans) shared(tmp_v0,tmp_v1,one,nstat
     else { //org_sigma1 != org_sigma2             // for the canonical case
       if (org_isite1 > X->Def.Nsite) {//For MPI
         X_child_CisAit_spin_MPIdouble(org_isite1 - 1, org_sigma2, tmp_trans, 
-          X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, i_max, X->Def.Tpow, 
-          list_1_org, list_1buf_org, list_2_1, list_2_2, 
-          X->Large.irght, X->Large.ilft, X->Large.ihfbit);
+          X, nstate, tmp_v0, tmp_v1, i_max, 
+          list_1_org, list_1buf_org, list_2_1, list_2_2);
       }
       else {
         isite1 = X->Def.Tpow[org_isite1 - 1];
@@ -368,7 +367,7 @@ int GetPairExcitedStateGeneralSpin(
   long unsigned int tmp_off = 0;
   long unsigned int off = 0;
   double complex tmp_trans = 0, dmv;
-  long int i_max;
+  long unsigned int i_max;
   int tmp_sgn, num1, one = 1;
   i_max = X->Check.idim_maxOrg;
 
@@ -415,7 +414,7 @@ int GetPairExcitedStateGeneralSpin(
         else {//org_sigma1 != org_sigma2
           X_child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, 
             tmp_trans, X, nstate, tmp_v0, tmp_v1,
-            tmp_v1bufOrg, i_max, list_1_org, list_1buf_org, X->Large.ihfbit);
+            i_max, list_1_org, list_1buf_org);
         }
       }
       else {//org_isite1 <= X->Def.Nsite

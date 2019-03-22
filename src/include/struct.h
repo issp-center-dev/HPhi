@@ -107,7 +107,7 @@ struct DefineList {
                         malloc in setmem_def().\n
                         Data Format [DefineList::NTransfer][4]: 
                         0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
-  int **EDGeneralTransfer;/**<@brief Index of transfer integrals for calculation. 
+  unsigned int **EDGeneralTransfer;/**<@brief Index of transfer integrals for calculation. 
                           malloc in setmem_def().\n
                           Data Format [DefineList::NTransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
   double complex *ParaGeneralTransfer;/**<@brief Value of general transfer integrals by a def file. 
@@ -137,13 +137,13 @@ struct DefineList {
                            malloc in setmem_def().*/
 
   unsigned int NPairHopping;/**<@brief Number of pair-hopping term*/
-  int **PairHopping;/**<@brief [DefineList::NPairHopping][2] Index of pair-hopping.
+  unsigned int **PairHopping;/**<@brief [DefineList::NPairHopping][2] Index of pair-hopping.
                     malloc in setmem_def().*/
   double *ParaPairHopping;/**<@brief [DefineList::NPairHopping] Coupling constant of
                           pair-hopping term. malloc in setmem_def().*/
 
   unsigned int NExchangeCoupling;/**<@brief Number of exchange term*/
-  int **ExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling][2] Index of exchange term.
+  unsigned int **ExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling][2] Index of exchange term.
                          malloc in setmem_def().*/
   double *ParaExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling] Coupling constant of
                                exchange term. malloc in setmem_def().*/
@@ -158,7 +158,7 @@ struct DefineList {
 
     //[s] For InterAll
   int **InterAll;/**<@brief [DefineList::NinterAll][8] Interacted quartet*/
-  int **InterAll_OffDiagonal;/**<@brief [DefineList::NinterAll_OffDiagonal][8] Interacted quartet*/
+  unsigned int **InterAll_OffDiagonal;/**<@brief [DefineList::NinterAll_OffDiagonal][8] Interacted quartet*/
   int **InterAll_Diagonal;/**<@brief [DefineList::NinterAll_Diagonal][4] Interacted quartet*/
   unsigned int NInterAll;/**<@brief Total Number of Interacted quartet*/
   unsigned int NInterAll_Diagonal;/**<@brief Number of interall term (diagonal)*/
@@ -313,7 +313,6 @@ struct CheckList {
 @brief For Matrix-Vector product
 */
 struct LargeList {
-  double complex prdct;/**<@brief The expectation value of the energy.*/
   int itr;/**<@brief Iteration number.*/
   long int iv;/**<@brief Used for initializing vector.*/
   long int i_max;/**<@brief Length of eigenvector*/

@@ -40,10 +40,6 @@ void child_general_int_spin_MPIdouble(
     (int)X->Def.InterAll_OffDiagonal[i_int][3], (int)X->Def.InterAll_OffDiagonal[i_int][4],
     (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-  /**
-  Add @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
-  to LargeList::prdct
-  */
 }/*void child_general_int_spin_MPIdouble*/
 /**
 @brief Exchange term in Spin model
@@ -62,7 +58,7 @@ void X_child_general_int_spin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  int mask1, mask2, state1, state2, ierr, origin;
+  int mask1, mask2, state1, state2, origin;
   unsigned long int idim_max_buf, j, ioff;
   double complex Jint;
   int one = 1;
@@ -109,7 +105,7 @@ void X_child_general_int_spin_TotalS_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ){
-  int mask1, mask2, num1_up, num2_up, ierr, origin, one = 1;
+  int mask1, mask2, num1_up, num2_up, origin, one = 1;
   unsigned long int idim_max_buf, j, ioff, ibit_tmp;
   double complex dmv;
 
@@ -154,10 +150,6 @@ void child_general_int_spin_MPIsingle(
     (int)X->Def.InterAll_OffDiagonal[i_int][3], (int)X->Def.InterAll_OffDiagonal[i_int][4],
     (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-  /**
-  Add @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
-  to LargeList::prdct
-  */
 }/*void child_general_int_spin_MPIsingle*/
 /*
 @brief General interaction term of canonical spin system.
@@ -175,7 +167,7 @@ void X_child_general_int_spin_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  int mask2, state2, ierr, origin;
+  int mask2, state2, origin;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
   double complex Jint;
   int one = 1;

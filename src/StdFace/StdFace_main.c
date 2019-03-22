@@ -234,7 +234,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
   int NumOp, **spin, isite, ispin, icell, itau, iEx;
-  double *coef, pi, Cphase, S, Sz;
+  double *coef, Cphase, S, Sz;
   double *fourier_r, *fourier_i;
 
   if (strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1) {
@@ -324,7 +324,7 @@ static void PrintExcitation(struct StdIntList *StdI) {
     }
     else if (strcmp(StdI->SpectrumType, "density") == 0) {
       NumOp = 2;
-      coef[0] = 1,0;
+      coef[0] = 1.0;
       coef[1] = 1.0;
       spin[0][0] = 0;
       spin[0][1] = 0;
@@ -432,10 +432,9 @@ static void PrintExcitation(struct StdIntList *StdI) {
 */
 static void VectorPotential(struct StdIntList *StdI) {
   FILE *fp;
-  int it, ii, isite, icell, itau, itrans, jsite, jcell, jtau, ntrans0;
-  double Cphase, time, dR[3];
+  int it, ii;
+  double time;
   double **Et;
-  double complex coef;
 
   fprintf(stdout, "\n  @ Time-evolution\n\n");
 
@@ -529,7 +528,7 @@ static void VectorPotential(struct StdIntList *StdI) {
 */
 static void PrintPump(struct StdIntList *StdI) {
   FILE *fp;
-  int it, ii, isite, ipump, jpump, npump0;
+  int it, isite, ipump, jpump, npump0;
 
   if (StdI->PumpBody == 1) {
 

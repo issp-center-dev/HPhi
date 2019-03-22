@@ -54,8 +54,8 @@ void X_GC_child_general_hopp_MPIdouble(
   int nstate, double complex **tmp_v0,//!< [out] Result v0 = H v1
   double complex **tmp_v1 //!< [in] v0 = H v1
 ) {
-  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
-  unsigned long int idim_max_buf, j;
+  int mask1, mask2, state1, state2, origin, bitdiff, Fsgn;
+  unsigned long int idim_max_buf;
   double complex trans;
 
   mask1 = (int)X->Def.Tpow[2 * org_isite1 + org_ispin1];
@@ -104,7 +104,7 @@ void X_child_CisAjt_MPIdouble(
   long unsigned int *list_2_1_target,//!<[in]
   long unsigned int *list_2_2_target//!<[in]
 ) {
-  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+  int mask1, mask2, state1, state2, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
   double complex trans;
   int one = 1;
@@ -176,7 +176,7 @@ void X_GC_child_general_hopp_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ) {
-  int mask2, state1, state2, ierr, origin, bit2diff, Fsgn;
+  int mask2, state1, state2, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, mask1, state1check, bit1diff, ioff;
   double complex trans, dmv;
   int one = 1;
@@ -264,7 +264,7 @@ void X_child_general_hopp_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ) {
-  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+  int mask1, mask2, state1, state2, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
   double complex trans;
   int one = 1;
@@ -337,7 +337,7 @@ void X_child_general_hopp_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ) {
-  int mask2, state2, ierr, origin, bit2diff, Fsgn;
+  int mask2, state2, origin, bit2diff, Fsgn;
   unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
   double complex trans, dmv;
   int one = 1;
@@ -415,7 +415,7 @@ void X_child_CisAjt_MPIsingle(
   long unsigned int *list_2_1_target,//!<[in] ???
   long unsigned int *list_2_2_target//!<[in] ???
 ){
-  int mask2, state2, ierr, origin, bit2diff, Fsgn;
+  int mask2, state2, origin, bit2diff, Fsgn;
   unsigned long int mask1, state1, idim_max_buf, j, state1check, bit1diff, ioff, jreal;
   double complex trans, dmv;
   int one = 1;

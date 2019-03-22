@@ -46,8 +46,8 @@ int HPhiTrans(struct BindStruct *X) {
   FILE *fp_err;
   char sdt_err[D_FileNameMax];
 
-  int i, k;
-  int cnt_trans;
+  unsigned int i, k;
+  unsigned int cnt_trans;
 
   strcpy(sdt_err, cFileNameWarningOnTransfer);
   if (childfopenMPI(sdt_err, "w", &fp_err) != 0) {
@@ -90,7 +90,7 @@ int HPhiTrans(struct BindStruct *X) {
  * @author Kota Ido (The University of Tokyo)
  */
 int TransferWithPeierls(struct BindStruct *X, const double time) {
-  int i;
+  unsigned int i;
   int ri_x, rj_x;
   int ri_y, rj_y;
   double complex dir;
@@ -172,18 +172,15 @@ int TransferWithPeierls(struct BindStruct *X, const double time) {
  * @author Kota Ido (The University of Tokyo)
  */
 int TransferForQuench(struct BindStruct *X, const double time) {
-  int i, k;
+  unsigned int i;
   int ri_x, rj_x;
   int ri_y, rj_y;
-  double complex dir;
   const int Mode = (int) (X->Def.ParaLaser[0]);
   const double Avp = X->Def.ParaLaser[1];
   const double time_d = X->Def.ParaLaser[3];
   const double time_c = X->Def.ParaLaser[4];
   const int Lx = (int) (X->Def.ParaLaser[5]);
   const int Ly = (int) (X->Def.ParaLaser[6]);
-  const double dirX = X->Def.ParaLaser[7];
-  const double dirY = X->Def.ParaLaser[8];
   const double dt = time - time_c;
   double Bessel;
 
@@ -214,7 +211,6 @@ int TransferForQuench(struct BindStruct *X, const double time) {
     } else if (ri_y - rj_y < -1) {
       rj_y -= Ly;
     }
-    dir = dirX * (ri_x - rj_x) + dirY * (ri_y - rj_y);
 
     X->Def.EDParaGeneralTransfer[i] = X->Def.ParaGeneralTransfer[i] * Bessel;
   }

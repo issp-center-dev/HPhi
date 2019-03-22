@@ -104,8 +104,8 @@ void X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  int mask1, mask2, state1, state2, ierr, origin;
-  unsigned long int idim_max_buf, j;
+  int mask1, mask2, state1, state2, origin;
+  unsigned long int idim_max_buf;
   double complex Jint;
 
   mask1 = (int)X->Def.Tpow[org_isite1];
@@ -176,9 +176,9 @@ void X_GC_child_CisAisCjuAjv_spin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  int mask1, mask2, state2, ierr;
+  int mask1, mask2, state2;
   long int origin, num1;
-  unsigned long int idim_max_buf, j;
+  unsigned long int idim_max_buf;
   double complex Jint;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4) {//CisAisCitAis
@@ -239,9 +239,9 @@ void X_GC_child_CisAitCjuAju_spin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  int mask1, mask2, state1, ierr, num1;
+  int mask1, mask2, state1, num1;
   long int origin;
-  unsigned long int idim_max_buf, j;
+  unsigned long int idim_max_buf;
   double complex Jint;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin3) {//cisaitcisais
@@ -382,7 +382,7 @@ void X_GC_child_CisAitCiuAiv_spin_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  int mask2, state2, ierr, origin;
+  int mask2, state2, origin;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, state1check;
   double complex Jint;
   int one = 1;
@@ -458,7 +458,7 @@ void X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  int mask2, state2, ierr, origin;
+  int mask2, state2, origin;
   unsigned long int mask1, idim_max_buf, j, state1, state1check;
   double complex Jint;
   int one = 1;
@@ -513,7 +513,7 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
   X_GC_child_CisAitCjuAju_spin_MPIsingle(
-    X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
+    X->Def.InterAll_OffDiagonal[i_int][0], 
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
 }/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
@@ -524,7 +524,6 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
 */
 void X_GC_child_CisAitCjuAju_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
-  int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
   int org_isite3,//!<[in] Site 3
   int org_ispin3,//!<[in] Spin 3
@@ -586,10 +585,9 @@ void X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  unsigned long int off, j;
-  int origin, ierr;
+  unsigned long int off;
+  int origin;
   double complex tmp_V;
-  int ihermite = TRUE, one = 1;
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4) {//cisaisciuais=0 && cisaiucisais=0
     return;
   }
@@ -632,8 +630,8 @@ void X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
-  unsigned long int j, off;
-  int origin, ierr, one = 1;
+  unsigned long int off;
+  int origin;
   double complex tmp_V;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin3) {//cisaitcisais=0 && cisaiscitais=0
@@ -680,8 +678,8 @@ void X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[in] Input wavefunction
 ) {
-  unsigned long int tmp_off, off, j;
-  int origin, ierr, ihermite, one = 1;
+  unsigned long int tmp_off, off;
+  int origin, ihermite;
   double complex tmp_V;
 
   ihermite = TRUE;
@@ -740,9 +738,8 @@ void X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[in] Input wavefunction
 ) {
-  unsigned long int j, num1;
+  unsigned long int num1;
   double complex tmp_V;
-  int one = 1;
 
   num1 = BitCheckGeneral((unsigned long int) myrank, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
 
@@ -770,8 +767,8 @@ void X_GC_child_CisAit_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[in] Input wavefunction
 ) {
-  unsigned long int off, j;
-  int origin, ierr, one = 1;
+  unsigned long int off;
+  int origin;
   double complex tmp_V;
 
   if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
@@ -804,7 +801,7 @@ void X_GC_child_CisAis_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[in] Input wavefunction
 ) {
-  unsigned long int j, num1;
+  unsigned long int num1;
   double complex tmp_V;
 
   num1 = BitCheckGeneral((unsigned long int) myrank,
@@ -828,9 +825,8 @@ void X_GC_child_AisCis_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[in] Input wavefunction
 ) {
-  unsigned long int j, num1;
+  unsigned long int num1;
   double complex tmp_V;
-  int one = 1;
 
   num1 = BitCheckGeneral((unsigned long int) myrank,
     org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
@@ -851,17 +847,16 @@ void X_child_CisAit_GeneralSpin_MPIdouble(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate, 
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[in] Input wavefunction
-  double complex **tmp_v1buf,//!<[inout] buffer for wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
   long unsigned int *list_1_org,//!<[in] Similar to ::list_1
-  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
-  long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
+  long unsigned int *list_1buf_org//!<[in] Similar to ::list_1buf
 )
 {
   unsigned long int off, j, tmp_off,idim_max_buf;
-  int origin, ierr, one = 1;
+  int origin, one = 1;
   double complex tmp_V;
   
   if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
@@ -906,7 +901,7 @@ void X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
   double complex **tmp_v1//!<[in] Input wavefunction
 ){
   unsigned long int off, j, num1;
-  int origin, ierr, isite, IniSpin, one = 1;
+  int origin, isite, IniSpin, one = 1;
   double complex tmp_V;
 
   if (GetOffCompGeneralSpin((unsigned long int)myrank,
@@ -1009,7 +1004,7 @@ void X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   double complex **tmp_v1//!<[in] Input wavefunction
 ){
   unsigned long int off, j;
-  int origin, ierr, isite, IniSpin, FinSpin, one = 1;
+  int origin, isite, IniSpin, FinSpin, one = 1;
   double complex tmp_V;
 
   if (GetOffCompGeneralSpin((unsigned long int)myrank,
@@ -1105,7 +1100,7 @@ void X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   double complex **tmp_v1//!<[in] Input wavefunction
 ){
   unsigned long int tmp_off, off, j, idim_max_buf;
-  int origin, ierr, one = 1;
+  int origin, one = 1;
   double complex tmp_V;
   int ihermite=TRUE;
 
@@ -1168,9 +1163,8 @@ void X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[in] Input wavefunction
 ) {
-  unsigned long int j, num1;
+  unsigned long int num1;
   double complex tmp_V;
-  int one = 1;
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin3) {
     num1 = BitCheckGeneral((unsigned long int) myrank, org_isite1 + 1, org_ispin1, X->Def.SiteToBit, X->Def.Tpow);
@@ -1255,7 +1249,7 @@ void X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   double complex **tmp_v1//!<[in] Input wavefunction
 ){
   unsigned long int tmp_off, off, j, idim_max_buf;
-  int origin, ierr, isite, IniSpin, FinSpin, one = 1;
+  int origin, isite, IniSpin, FinSpin, one = 1;
   double complex tmp_V;
   
   if (GetOffCompGeneralSpin((unsigned long int)myrank,
@@ -1314,8 +1308,8 @@ void X_GC_child_CisAit_spin_MPIdouble(
   int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex **tmp_v1 /**< [in] v0 = H v1*/)
 {
-  int mask1, state1, ierr, origin;
-  unsigned long int idim_max_buf, j;
+  int mask1, state1, origin;
+  unsigned long int idim_max_buf;
   double complex trans;
   
   mask1 = (int)X->Def.Tpow[org_isite1];
@@ -1352,18 +1346,13 @@ void X_child_CisAit_spin_MPIdouble(
   struct BindStruct *X /**< [inout]*/,
   int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex **tmp_v1, /**< [in] v0 = H v1*/
-  double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
-  long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
   long unsigned int *list_1_org,//!<[in] Similar to ::list_1
   long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
   long unsigned int *list_2_1_target,//!<[in] Similar to ::list_2_1
-  long unsigned int *list_2_2_target,//!<[in] Similar to ::list_2_2
-  long unsigned int _irght,//!<[in] Similer to LargeList::irght
-  long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
-  long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
+  long unsigned int *list_2_2_target//!<[in] Similar to ::list_2_2
 ){
-  int mask1, state1, ierr, origin, one = 1;
+  int mask1, state1, origin, one = 1;
   unsigned long int idim_max_buf, j;
   unsigned long int tmp_off;
   double complex trans;
@@ -1406,7 +1395,6 @@ void X_GC_child_CisAis_spin_MPIdouble(
   int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
  double complex **tmp_v1 /**< [in] v0 = H v1*/
 ){
-  long unsigned int j;
   int mask1, ibit1;
   mask1 = (int)X->Def.Tpow[org_isite1];
   ibit1 = (((unsigned long int)myrank& mask1)/mask1)^(1-org_ispin1);
@@ -1426,7 +1414,6 @@ void X_GC_child_AisCis_spin_MPIdouble(
   int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex **tmp_v1 /**< [in] v0 = H v1*/
 ){
-  long unsigned int j;
   int mask1;
   int ibit1;
   mask1 = (int)X->Def.Tpow[org_isite1];

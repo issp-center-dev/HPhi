@@ -421,7 +421,6 @@ int CalcSpectrum(
   int i_stp, NdcSpectrum;
   int iFlagListModified = FALSE;
   FILE *fp;
-  double dnorm;
   double complex **v1Org; /**< Input vector to calculate spectrum function.*/
 
   //ToDo: Nomega should be given as a parameter

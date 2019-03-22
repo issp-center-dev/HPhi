@@ -34,7 +34,7 @@ static void geometry_W90(
 )
 {
   int isite, ii, ierr;
-  char filename[256];
+  char filename[265];
   FILE *fp;
 
   sprintf(filename, "%s_geom.dat", StdI->CDataFileHead);
@@ -352,7 +352,7 @@ void StdFace_Wannier90(
   int n_t, n_u, n_j;
   double complex *W90_t, *W90_j, *W90_u;
   int **t_indx, **u_indx, **j_indx;
-  char filename[256];
+  char filename[263];
   /**@brief
   (1) Compute the shape of the super-cell and sites in the super-cell
   */

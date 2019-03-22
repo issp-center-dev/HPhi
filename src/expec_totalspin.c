@@ -415,7 +415,6 @@ void totalspin_SpinGC(
   int num1_down, num2_down;
   int sigma_1, sigma_2;
   long unsigned int ibit1_up, ibit2_up, ibit_tmp, is_up;
-  double complex spn_z;
   double complex spn_z1, spn_z2;
   long unsigned int list_1_j;
   long unsigned int i_max;

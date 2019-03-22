@@ -46,8 +46,8 @@ int GetPairExcitedStateHubbardGC(
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
 
   double complex tmp_trans = 0;
-  long int i_max;
-  long int ibit;
+  long unsigned int i_max;
+  long unsigned int ibit;
   long unsigned int is;
   i_max = X->Check.idim_maxOrg;
   for (i = 0; i < X->Def.NPairExcitationOperator[iEx]; i++) {
@@ -142,9 +142,9 @@ int GetPairExcitedStateHubbard(
   long unsigned int tmp_off = 0;
 
   double complex tmp_trans = 0, dmv;
-  long int i_max;
+  long unsigned int i_max;
   int tmp_sgn, num1, one = 1;
-  long int ibit;
+  long unsigned int ibit;
   long unsigned int is, Asum, Adiff;
   long unsigned int ibitsite1, ibitsite2;
 

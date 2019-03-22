@@ -283,7 +283,6 @@ void child_exchange_spin_element(
   long unsigned int ilft = X->Large.ilft;
   long unsigned int ihfbit = X->Large.ihfbit;
   double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
   long unsigned int ibit_tmp;
   int one = 1;
 
@@ -312,7 +311,6 @@ void GC_child_exchange_spin_element(
 ) {
   long unsigned int is_up = X->Large.isA_spin;
   double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
   long unsigned int list_1_j, list_1_off;
   int one = 1;
 
@@ -343,7 +341,6 @@ void GC_child_pairlift_spin_element(
 ) {
   long unsigned int is_up = X->Large.isA_spin;
   double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
   int one = 1;
   long unsigned int list_1_off;
   long unsigned int list_1_j = j - 1;

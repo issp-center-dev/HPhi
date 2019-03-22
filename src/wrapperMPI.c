@@ -349,7 +349,6 @@ void NormMPI_dv(
   double complex **_v1,//!<[in] [idim] vector to be producted
   double *dnorm
 ) {
-  double complex cdnorm = 0;
   unsigned long int idim;
   int istate;
 
@@ -500,6 +499,7 @@ unsigned long int SendRecv_i(
   ierr = MPI_Sendrecv(&isend, 1, MPI_UNSIGNED_LONG, origin, 0,
                       &ircv,  1, MPI_UNSIGNED_LONG, origin, 0,
                       MPI_COMM_WORLD, &statusMPI);
+  if (ierr != 0) exitMPI(ierr);
   return ircv;
 #else
   return isend;

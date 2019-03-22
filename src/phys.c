@@ -48,12 +48,15 @@
 void phys(struct BindStruct *X, //!<[inout]
           unsigned long int neig //!<[in]
 ) {
-  long unsigned int i, j, i_max;
+  long unsigned int i;
   double tmp_N;
-  i_max = X->Check.idim_max;
 #ifdef _SCALAPACK
   double complex *vec_tmp;
   int ictxt, ierr, rank;
+  long unsigned int j, i_max;
+
+  i_max = X->Check.idim_max;
+
   if(use_scalapack){
   fprintf(stdoutMPI, "In scalapack fulldiag, total spin is not calculated !\n");
   vec_tmp = malloc(i_max*sizeof(double complex));

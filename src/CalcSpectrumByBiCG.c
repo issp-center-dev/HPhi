@@ -45,7 +45,7 @@ void ReadTMComponents_BiCG(
   char sdt[D_FileNameMax];
   char ctmp[256];
 
-  int one = 1, status[3], idim_max2int, max_step, iter_old;
+  int status[3], idim_max2int, max_step, iter_old;
   unsigned long int idx;
   double complex *alphaCG, *betaCG, *res_save, z_seed;
   double z_seed_r, z_seed_i, alpha_r, alpha_i, beta_r, beta_i, res_r, res_i;
@@ -176,10 +176,10 @@ int CalcSpectrumByBiCG(
   unsigned long int idim, i_max;
   FILE *fp;
   size_t byte_size;
-  int iret, max_step, idcSpectrum;
+  int idcSpectrum;
   unsigned long int liLanczosStp_vec = 0;
   double complex **vL, **v12, **v14, *res_proj;
-  int stp, one = 1, status[3], iomega;
+  int stp, status[3], iomega;
   double *resz;
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
@@ -257,8 +257,8 @@ int CalcSpectrumByBiCG(
     */
     zclear(X->Bind.Check.idim_max, &v12[1][0]);
     zclear(X->Bind.Check.idim_max, &v14[1][0]);
-    iret = mltply(&X->Bind, 1, v12, v2);
-    iret = mltply(&X->Bind, 1, v14, v4);
+    mltply(&X->Bind, 1, v12, v2);
+    mltply(&X->Bind, 1, v14, v4);
 
     for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
       zclear(X->Bind.Check.idim_max, &vL[1][0]);

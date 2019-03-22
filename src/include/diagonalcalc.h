@@ -21,52 +21,10 @@ int diagonalcalc
  struct BindStruct *X
  );
 
-int SetDiagonalCoulombIntra
-(
- long unsigned int isite1,
- double dtmp_V,
- struct BindStruct *X
- );
-
-int SetDiagonalChemi
-(
- long unsigned int isite1,
- double dtmp_V,
- long unsigned int spin,
- struct BindStruct *X
- );
-
-int SetDiagonalCoulombInter
-(
- long unsigned int isite1,
- long unsigned int isite2,
- double dtmp_V,
- struct BindStruct *X
- );
-
-int SetDiagonalHund
-(
- long unsigned int isite1,
- long unsigned int isite2,
- double dtmp_V,
- struct BindStruct *X
- );
-
-int SetDiagonalInterAll
-(
- long unsigned int isite1,
- long unsigned int isite2,
- long unsigned int isigma1,
- long unsigned int isigma2,
- double dtmp_V,
- struct BindStruct *X
- );
-
 int diagonalcalcForTE(
         const int _istep,
         struct BindStruct *X,
-        int nstate,
-  double complex *tmp_v0,
+        double complex *tmp_v0,
         double complex *tmp_v1
 );
 

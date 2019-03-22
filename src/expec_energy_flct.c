@@ -647,7 +647,7 @@ int expec_energy_flct_GeneralSpin(
   i_max = X->Check.idim_max;
 
 #pragma omp parallel default(none) shared(tmp_v0, list_1,Sz_t,Sz2_t,nstate)   \
-firstprivate(i_max,X,myrank,mythread) private(j,Sz,isite1,tmp_v02, tmp_list1,istate)
+firstprivate(i_max,X,myrank) private(j,Sz,isite1,tmp_v02, tmp_list1,istate,mythread)
   {
     tmp_v02 = d_1d_allocate(nstate);
 #ifdef _OPENMP
@@ -724,7 +724,6 @@ int expec_energy_flct(
   long unsigned int irght, ilft, ihfbit;
   long unsigned int i_max;
   int istate;
-  double *energy_t, *var_t;
 
   switch (X->Def.iCalcType) {
   case TPQCalc:

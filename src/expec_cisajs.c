@@ -53,10 +53,10 @@ int expec_cisajs_HubbardGC(
   double complex **vec, 
   double complex **prod
 ){
-  long unsigned int i, j;
+  long unsigned int i;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  long int i_max;
-  long int ibit;
+  long unsigned int i_max;
+  long unsigned int ibit;
   long unsigned int is;
   double complex tmp_OneGreen = 1.0;
 
@@ -127,11 +127,11 @@ int expec_cisajs_Hubbard(
 ) {
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
-  long int i_max;
+  long unsigned int i_max;
   int num1, one = 1;
-  long int ibit;
+  long unsigned int ibit;
   long unsigned int is;
-  double complex tmp_OneGreen = 1.0;
+  double complex tmp_OneGreen = 1.0, dmv;
 
   i_max = X->Check.idim_max;
   for (i = 0; i < X->Def.NCisAjt; i++) {
@@ -192,11 +192,12 @@ int expec_cisajs_Hubbard(
         is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
 
 #pragma omp parallel for default(none) shared(list_1, vec,Xvec,nstate,one,tmp_OneGreen) \
-firstprivate(i_max, is) private(num1, ibit)
+firstprivate(i_max, is) private(num1, ibit, dmv)
         for (j = 1; j <= i_max; j++) {
           ibit = list_1[j] & is;
           num1 = ibit / is;
-          zaxpy_(&nstate, &tmp_OneGreen, vec[j], &one, Xvec[j], &one);
+          dmv = (double complex)num1;
+          zaxpy_(&nstate, &dmv, vec[j], &one, Xvec[j], &one);
         }
       }
       else {
@@ -227,7 +228,7 @@ int expec_cisajs_SpinHalf(
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   double complex dmv;
-  long int i_max;
+  long unsigned int i_max;
   long int ibit1;
   long unsigned int is1_up;
   int one = 1;
@@ -284,7 +285,7 @@ int expec_cisajs_SpinGeneral(
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   double complex dmv;
-  long int i_max;
+  long unsigned int i_max;
   int num1, one = 1;
   i_max = X->Check.idim_max;
 
@@ -342,7 +343,7 @@ int expec_cisajs_SpinGCHalf(
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   double complex dmv;
-  long int i_max;
+  long unsigned int i_max;
   int tmp_sgn, one = 1;
   long unsigned int tmp_off = 0;
 
@@ -413,7 +414,7 @@ int expec_cisajs_SpinGCGeneral(
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   double complex dmv;
-  long int i_max;
+  long unsigned int i_max;
   long unsigned int tmp_off = 0;
   int num1, one = 1;
 
@@ -544,7 +545,7 @@ int expec_cisajs(
   char sdt[D_FileNameMax];
   double complex **prod;
   long unsigned int irght, ilft, ihfbit, ica;
-  long int i_max;
+  long unsigned int i_max;
   //For TPQ
   int step = 0, rand_i = 0, istate;
 

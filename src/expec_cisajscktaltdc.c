@@ -157,7 +157,7 @@ int expec_cisajscktalt_HubbardGC(
   long unsigned int tmp_off = 0;
   long unsigned int tmp_off_2 = 0;
   double complex tmp_V = 1.0 + 0.0*I;
-  long int i_max;
+  long unsigned int i_max;
 
   for (i = 0; i < X->Def.NCisAjtCkuAlvDC; i++) {
     zclear(X->Large.i_max*nstate, &Xvec[1][0]);
@@ -276,7 +276,7 @@ int expec_cisajscktalt_Hubbard(
   long unsigned int tmp_off = 0;
   long unsigned int tmp_off_2 = 0;
   double complex tmp_V;
-  long int i_max;
+  long unsigned int i_max;
 
   for (i = 0; i < X->Def.NCisAjtCkuAlvDC; i++) {
     zclear(X->Large.i_max*nstate, &Xvec[1][0]);
@@ -396,14 +396,12 @@ int expec_cisajscktalt_SpinHalf(
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_isite3, org_isite4;
   long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
-  long unsigned int tmp_org_isite1, tmp_org_isite2, tmp_org_isite3, tmp_org_isite4;
-  long unsigned int tmp_org_sigma1, tmp_org_sigma2, tmp_org_sigma3, tmp_org_sigma4;
   long unsigned int isA_up, isB_up;
   long unsigned int is1_up, is2_up;
   long unsigned int tmp_off = 0;
   int tmp_sgn, num1, num2, one = 1;
   double complex tmp_V;
-  long int i_max;
+  long unsigned int i_max;
   double complex dmv;
 
   i_max = X->Check.idim_max;
@@ -411,14 +409,6 @@ int expec_cisajscktalt_SpinHalf(
 
   for (i = 0; i < X->Def.NCisAjtCkuAlvDC; i++) {
     zclear(i_max*nstate, &Xvec[1][0]);
-    tmp_org_isite1 = X->Def.CisAjtCkuAlvDC[i][0] + 1;
-    tmp_org_sigma1 = X->Def.CisAjtCkuAlvDC[i][1];
-    tmp_org_isite2 = X->Def.CisAjtCkuAlvDC[i][2] + 1;
-    tmp_org_sigma2 = X->Def.CisAjtCkuAlvDC[i][3];
-    tmp_org_isite3 = X->Def.CisAjtCkuAlvDC[i][4] + 1;
-    tmp_org_sigma3 = X->Def.CisAjtCkuAlvDC[i][5];
-    tmp_org_isite4 = X->Def.CisAjtCkuAlvDC[i][6] + 1;
-    tmp_org_sigma4 = X->Def.CisAjtCkuAlvDC[i][7];
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
       //error message will be added
       zclear(nstate, prod[i]);
@@ -525,14 +515,12 @@ int expec_cisajscktalt_SpinGeneral(
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_isite3, org_isite4;
   long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
-  long unsigned int tmp_org_isite1, tmp_org_isite2, tmp_org_isite3, tmp_org_isite4;
-  long unsigned int tmp_org_sigma1, tmp_org_sigma2, tmp_org_sigma3, tmp_org_sigma4;
   long unsigned int tmp_off = 0;
   long unsigned int tmp_off_2 = 0;
   long unsigned int list1_off = 0;
   int num1, one = 1;
   double complex tmp_V;
-  long int i_max;
+  long unsigned int i_max;
   int tmp_Sz;
   long unsigned int tmp_org = 0;
   i_max = X->Check.idim_max;
@@ -540,14 +528,6 @@ int expec_cisajscktalt_SpinGeneral(
 
   for (i = 0; i < X->Def.NCisAjtCkuAlvDC; i++) {
     zclear(i_max*nstate, &Xvec[1][0]);
-    tmp_org_isite1 = X->Def.CisAjtCkuAlvDC[i][0] + 1;
-    tmp_org_sigma1 = X->Def.CisAjtCkuAlvDC[i][1];
-    tmp_org_isite2 = X->Def.CisAjtCkuAlvDC[i][2] + 1;
-    tmp_org_sigma2 = X->Def.CisAjtCkuAlvDC[i][3];
-    tmp_org_isite3 = X->Def.CisAjtCkuAlvDC[i][4] + 1;
-    tmp_org_sigma3 = X->Def.CisAjtCkuAlvDC[i][5];
-    tmp_org_isite4 = X->Def.CisAjtCkuAlvDC[i][6] + 1;
-    tmp_org_sigma4 = X->Def.CisAjtCkuAlvDC[i][7];
 
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
       zclear(nstate, prod[i]);
@@ -648,24 +628,14 @@ int expec_cisajscktalt_SpinGCHalf(
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_isite3, org_isite4;
   long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
-  long unsigned int tmp_org_isite1, tmp_org_isite2, tmp_org_isite3, tmp_org_isite4;
-  long unsigned int tmp_org_sigma1, tmp_org_sigma2, tmp_org_sigma3, tmp_org_sigma4;
   long unsigned int isA_up, isB_up;
   long unsigned int tmp_off = 0;
   double complex tmp_V;
-  long int i_max;
+  long unsigned int i_max;
   i_max = X->Check.idim_max;
 
   for (i = 0; i < X->Def.NCisAjtCkuAlvDC; i++) {
     zclear(i_max*nstate, &Xvec[1][0]);
-    tmp_org_isite1 = X->Def.CisAjtCkuAlvDC[i][0] + 1;
-    tmp_org_sigma1 = X->Def.CisAjtCkuAlvDC[i][1];
-    tmp_org_isite2 = X->Def.CisAjtCkuAlvDC[i][2] + 1;
-    tmp_org_sigma2 = X->Def.CisAjtCkuAlvDC[i][3];
-    tmp_org_isite3 = X->Def.CisAjtCkuAlvDC[i][4] + 1;
-    tmp_org_sigma3 = X->Def.CisAjtCkuAlvDC[i][5];
-    tmp_org_isite4 = X->Def.CisAjtCkuAlvDC[i][6] + 1;
-    tmp_org_sigma4 = X->Def.CisAjtCkuAlvDC[i][7];
 
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
       //error message will be added
@@ -713,7 +683,7 @@ int expec_cisajscktalt_SpinGCHalf(
       }
       else if (org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4) {
         X_GC_child_CisAitCjuAju_spin_MPIsingle(
-          org_isite1 - 1, org_sigma1, org_sigma2, org_isite3 - 1, org_sigma3, 
+          org_isite1 - 1, org_sigma2, org_isite3 - 1, org_sigma3, 
           tmp_V, X, nstate, Xvec, vec);
       }
       else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
@@ -784,26 +754,16 @@ int expec_cisajscktalt_SpinGCGeneral(
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_isite3, org_isite4;
   long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
-  long unsigned int tmp_org_isite1, tmp_org_isite2, tmp_org_isite3, tmp_org_isite4;
-  long unsigned int tmp_org_sigma1, tmp_org_sigma2, tmp_org_sigma3, tmp_org_sigma4;
   long unsigned int tmp_off = 0;
   long unsigned int tmp_off_2 = 0;
   int  num1, one = 1;
   double complex tmp_V;
-  long int i_max;
+  long unsigned int i_max;
   i_max = X->Check.idim_max;
   X->Large.mode = M_CORR;
 
   for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
     zclear(i_max*nstate, &Xvec[1][0]);
-    tmp_org_isite1 = X->Def.CisAjtCkuAlvDC[i][0] + 1;
-    tmp_org_sigma1 = X->Def.CisAjtCkuAlvDC[i][1];
-    tmp_org_isite2 = X->Def.CisAjtCkuAlvDC[i][2] + 1;
-    tmp_org_sigma2 = X->Def.CisAjtCkuAlvDC[i][3];
-    tmp_org_isite3 = X->Def.CisAjtCkuAlvDC[i][4] + 1;
-    tmp_org_sigma3 = X->Def.CisAjtCkuAlvDC[i][5];
-    tmp_org_isite4 = X->Def.CisAjtCkuAlvDC[i][6] + 1;
-    tmp_org_sigma4 = X->Def.CisAjtCkuAlvDC[i][7];
 
     if (Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X) != 0) {
       //error message will be added

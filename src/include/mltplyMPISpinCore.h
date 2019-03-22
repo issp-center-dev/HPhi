@@ -166,11 +166,9 @@ void X_child_CisAit_GeneralSpin_MPIdouble
  struct BindStruct *X,
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
- double complex **tmp_v1buf,
  unsigned long int idim_max,
  long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int _ihfbit
+ long unsigned int *list_1buf_org
  );
 
 
@@ -256,7 +254,6 @@ void X_GC_child_CisAisCjuAjv_spin_MPIsingle
 void X_GC_child_CisAitCjuAju_spin_MPIsingle
 (
  int org_isite1,
- int org_ispin1,
  int org_ispin2,
  int org_isite3,
  int org_ispin3,
@@ -329,16 +326,11 @@ void X_child_CisAit_spin_MPIdouble
  struct BindStruct *X /**< [inout]*/,
  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/, 
  double complex **tmp_v1, /**< [in] v0 = H v1*/
- double complex **tmp_v1buf,
  unsigned long int idim_max,
- long unsigned int *Tpow,
  long unsigned int *list_1_org,
  long unsigned int *list_1buf_org,
  long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target,
- long unsigned int _irght,
- long unsigned int _ilft,
- long unsigned int _ihfbit
+ long unsigned int *list_2_2_target
  );
 
 void X_child_CisAisCjuAju_GeneralSpin_MPIdouble

@@ -313,7 +313,7 @@ void X_GC_child_CisAjtCkuAku_Hubbard_MPI(
 ) {
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
-  int iCheck, ierr, Fsgn;
+  int iCheck, Fsgn;
   unsigned long int isite1, isite2, isite3;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Asum, Adiff;
@@ -458,7 +458,7 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
 ) {
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
-  int iCheck, ierr, Fsgn;
+  int iCheck, Fsgn;
   unsigned long int isite1, isite2, isite3, isite4;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Adiff, Bdiff;
@@ -703,7 +703,7 @@ void X_child_CisAjtCkuAlv_Hubbard_MPI(
 ) {
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
-  int iCheck, ierr, Fsgn;
+  int iCheck, Fsgn;
   unsigned long int isite1, isite2, isite3, isite4;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Adiff, Bdiff;
@@ -866,7 +866,7 @@ void X_child_CisAjtCkuAku_Hubbard_MPI(
 ) {
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf, ioff;
-  int iCheck, ierr, Fsgn;
+  int iCheck, Fsgn;
   unsigned long int isite1, isite2, isite3;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Asum, Adiff;
@@ -1047,8 +1047,8 @@ void X_GC_Cis_MPI(
   double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
-  int mask2, state2, ierr, origin, bit2diff, Fsgn;
-  unsigned long int idim_max_buf, j;
+  int mask2, state2, origin, bit2diff, Fsgn;
+  unsigned long int idim_max_buf;
   double complex trans;
 
   // org_isite >= Nsite
@@ -1095,8 +1095,8 @@ void X_GC_Ajt_MPI(
   double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
-  int mask2, state2, ierr, origin, bit2diff, Fsgn;
-  unsigned long int idim_max_buf, j;
+  int mask2, state2, origin, bit2diff, Fsgn;
+  unsigned long int idim_max_buf;
   double complex trans;
 
   // org_isite >= Nsite
@@ -1145,7 +1145,7 @@ void X_Cis_MPI(
   long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ) {
-  int mask2, state2, ierr, origin, bit2diff, Fsgn;
+  int mask2, state2, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
   double complex trans;
   int one = 1;
@@ -1207,7 +1207,7 @@ void X_Ajt_MPI(
   long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ){
-  int mask2, state2, ierr, origin, bit2diff, Fsgn;
+  int mask2, state2, origin, bit2diff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
   double complex trans;
   int one = 1;

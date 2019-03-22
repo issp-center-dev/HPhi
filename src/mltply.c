@@ -66,7 +66,6 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
 
   StartTimer(1);
   i_max = X->Check.idim_max;
-  X->Large.prdct = 0.0;
 
   if(i_max!=0){
     if (X->Def.iFlgGeneralSpin == FALSE) {
@@ -101,7 +100,7 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
     zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
   }
   StopTimer(100);
-  if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, nstate, &tmp_v0[0][0], &tmp_v1[0][0]);
+  if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, &tmp_v0[0][0], &tmp_v1[0][0]);
   
   switch (X->Def.iCalcModel) {
   case HubbardGC:
@@ -126,7 +125,6 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
     return -1;
   }
   
-  X->Large.prdct = SumMPI_dc(X->Large.prdct);  
   StopTimer(1);
   return 0;
 }

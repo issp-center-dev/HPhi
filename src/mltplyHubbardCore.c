@@ -464,7 +464,6 @@ void child_exchange_element(
   long unsigned int ilft = X->Large.ilft;
   long unsigned int ihfbit = X->Large.ihfbit;
   double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
   int one = 1;
 
   ibit1_up = list_1[j] & is1_up;
@@ -517,7 +516,6 @@ void child_pairhopp_element(
   long unsigned int ilft = X->Large.ilft;
   long unsigned int ihfbit = X->Large.ihfbit;
   double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
   int one = 1;
 
   ibit1_up = list_1[j] & is1_up;
@@ -558,7 +556,6 @@ void GC_child_exchange_element(
   long unsigned int is2_down = X->Large.is2_down;
   long unsigned int list_1_j, list_1_off;
   double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
   int one = 1;
 
   list_1_j = j - 1;
@@ -608,7 +605,6 @@ void GC_child_pairhopp_element(
   long unsigned int is2_down = X->Large.is2_down;
   long unsigned int list_1_j, list_1_off;
   double complex tmp_J = X->Large.tmp_J;
-  int mode = X->Large.mode;
   int one = 1;
 
   list_1_j = j - 1;

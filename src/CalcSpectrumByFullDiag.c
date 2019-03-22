@@ -48,7 +48,7 @@ int CalcSpectrumByFullDiag(
 {
   int idim, jdim, iomega;
   int idim_max_int;
-  int incr = 1, idcSpectrum;
+  int idcSpectrum;
   double complex **vR, **vL, vRv, vLv, *vLvvRv;
   /**
   <ul>

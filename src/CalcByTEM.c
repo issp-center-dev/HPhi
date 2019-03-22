@@ -98,6 +98,7 @@ int CalcByTEM(
     if (i_max != X->Bind.Check.idim_max) {
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       fclose(fp);
+      printf("byte_size : %d\n", (int)byte_size);
       exitMPI(-1);
     }
     fread(&v1[0][0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);

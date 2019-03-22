@@ -39,7 +39,7 @@ int GetSingleExcitedStateHubbard(
   double complex **tmp_v1,//!<[in] v0 = H v1
   int iEx
 ) {
-  long int idim_max, idim_maxMPI;
+  long unsigned int idim_max, idim_maxMPI;
   long unsigned int i, j;
   long unsigned int org_isite, ispin, itype;
   long unsigned int is1_spin;
@@ -120,7 +120,7 @@ int GetSingleExcitedStateHubbardGC(
   double complex **tmp_v1,//!<[in] v0 = H v1
   int iEx
 ) {
-  long int idim_max, idim_maxMPI;
+  long unsigned int idim_max, idim_maxMPI;
   long unsigned int i, j;
   long unsigned int org_isite, ispin, itype;
   long unsigned int is1_spin;
