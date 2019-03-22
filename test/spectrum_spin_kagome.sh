@@ -3,9 +3,9 @@
 mkdir -p spectrum_spin_kagome/
 cd spectrum_spin_kagome
 #
-# Ground state
+# Sz-Sz spectrum
 #
-cat > stan1.in <<EOF
+cat > stan2.in <<EOF
 a0w = 1
 a0l = 1
 a1w = -1
@@ -18,20 +18,11 @@ J1 = 0.5
 J2 = 0.7
 J'=0.2
 2Sz = 1
-EigenVecIO = out
 SpectrumQW = 0.5
 SpectrumQL = 0.5
 NOmega = 5
 OmegaIm = 1.0
-EOF
-
-${MPIRUN} ../../src/HPhi -s stan1.in
-#
-# Sz-Sz spectrum
-#
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+CalcSpec = "Scratch"
 SpectrumType = "SzSz"
 EOF
 
@@ -49,9 +40,24 @@ diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} E
 #
 # S+S- spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+a0w = 1
+a0l = 1
+a1w = -1
+a1l = 2
+model = "Spin"
+method = "CG"
+lattice = "kagome"
+J0 = 1.0
+J1 = 0.5
+J2 = 0.7
+J'=0.2
+2Sz = 1
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "S+S-"
 EOF
 
@@ -69,9 +75,24 @@ diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$
 #
 # Density-Density spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+a0w = 1
+a0l = 1
+a1w = -1
+a1l = 2
+model = "Spin"
+method = "CG"
+lattice = "kagome"
+J0 = 1.0
+J1 = 0.5
+J2 = 0.7
+J'=0.2
+2Sz = 1
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "Density"
 EOF
 

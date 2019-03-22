@@ -118,7 +118,8 @@ write @f$\alpha, \beta@f$, projected residual for restart
 */
 int OutputTMComponents_BiCG(
   struct EDMainCalStruct *X,//!<[inout]
-  int liLanczosStp//!<[in] the BiCG step
+  int liLanczosStp,//!<[in] the BiCG step
+  int nL
 )
 {
   char sdt[D_FileNameMax];
@@ -128,7 +129,7 @@ int OutputTMComponents_BiCG(
 
   alphaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
   betaCG = (double complex*)malloc(liLanczosStp * sizeof(double complex));
-  res_save = (double complex*)malloc(liLanczosStp * sizeof(double complex));
+  res_save = (double complex*)malloc(liLanczosStp*nL * sizeof(double complex));
 
   komega_bicg_getcoef(alphaCG, betaCG, &z_seed, res_save);
 
@@ -297,7 +298,7 @@ int CalcSpectrumByBiCG(
   <li>Save @f$\alpha, \beta@f$, projected residual</li>
   */
   if (X->Bind.Def.iFlgCalcSpec != RECALC_FROM_TMComponents)
-    OutputTMComponents_BiCG(X, abs(status[0]));
+    OutputTMComponents_BiCG(X, abs(status[0]), NdcSpectrum);
   /**
   <li>output vectors for recalculation</li>
   </ul>

@@ -27,9 +27,6 @@ full-diagonalization method.
 #include "CalcTime.h"
 #include "common/setmemory.h"
 #include "CalcSpectrum.h"
-
-void zcopy_(int *n, double complex *x, int *incx, double complex *y, int *incy);
-void zdotc_(double complex *xy, int *n, double complex *x, int *incx, double complex *y, int *incy);
 /**
 @brief Compute the Green function with the Lehmann representation and FD
 @f[

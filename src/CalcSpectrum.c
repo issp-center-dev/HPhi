@@ -22,7 +22,7 @@
 #include "PairEx.h"
 #include "wrapperMPI.h"
 #include "FileIO.h"
-#include "./common/setmemory.h"
+#include "common/setmemory.h"
 #include "readdef.h"
 #include "sz.h"
 #include "check.h"
@@ -430,6 +430,32 @@ int CalcSpectrum(
   double complex *dcomega;
   size_t byte_size;
 
+  if (X->Bind.Def.iFlgCalcSpec == CALCSPEC_SCRATCH) {
+    free_lui_1d_allocate(list_1);
+    free_lui_1d_allocate(list_2_1);
+    free_lui_1d_allocate(list_2_2);
+    free_d_1d_allocate(list_Diagonal);
+    free_cd_2d_allocate(v0);
+    v1Org = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
+    for (i = 1; i <= X->Bind.Check.idim_max; i++) v1Org[i][0] = v1[i][0];
+    free_cd_2d_allocate(v1);
+#ifdef MPI
+    free_lui_1d_allocate(list_1buf);
+    free_cd_2d_allocate(v1buf);
+#endif // MPI
+    free_d_1d_allocate(X->Bind.Phys.num_down);
+    free_d_1d_allocate(X->Bind.Phys.num_up);
+    free_d_1d_allocate(X->Bind.Phys.num);
+    free_d_1d_allocate(X->Bind.Phys.num2);
+    free_d_1d_allocate(X->Bind.Phys.energy);
+    free_d_1d_allocate(X->Bind.Phys.var);
+    free_d_1d_allocate(X->Bind.Phys.doublon);
+    free_d_1d_allocate(X->Bind.Phys.doublon2);
+    free_d_1d_allocate(X->Bind.Phys.Sz);
+    free_d_1d_allocate(X->Bind.Phys.Sz2);
+    free_d_1d_allocate(X->Bind.Phys.s2);
+  }/*if (X->Bind.Def.iFlgCalcSpec == CALCSPEC_SCRATCH)*/
+
   //set omega
   if (SetOmega(&(X->Bind.Def)) != TRUE) {
     fprintf(stderr, "Error: Fail to set Omega.\n");
@@ -479,14 +505,13 @@ int CalcSpectrum(
     return FALSE;
   }
   X->Bind.Def.iFlagListModified = iFlagListModified;
-
-  v1Org = cd_2d_allocate(X->Bind.Check.idim_maxOrg + 1,1);
   
   //Make excited state
   StartTimer(6100);
   if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
     X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
     (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
+    v1Org = cd_2d_allocate(X->Bind.Check.idim_maxOrg + 1, 1);
     //input eigen vector
     StartTimer(6101);
     fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");

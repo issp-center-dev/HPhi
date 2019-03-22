@@ -30,6 +30,7 @@
 #include "wrapperMPI.h"
 #include "splash.h"
 #include "CalcTime.h"
+#include "common/setmemory.h"
 
 /*!
   @mainpage
@@ -252,7 +253,8 @@ int main(int argc, char* argv[]){
   }
 
   //Start Calculation
-  if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
+  if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT ||
+     X.Bind.Def.iFlgCalcSpec == CALCSPEC_SCRATCH) {
     
     if(check(&(X.Bind))==MPIFALSE){
      exitMPI(-1);
@@ -317,7 +319,8 @@ int main(int argc, char* argv[]){
       exitMPI(-3);
     }
   }
-  else{
+
+  if(X.Bind.Def.iFlgCalcSpec != CALCSPEC_NOT){
     StartTimer(6000);
     if (CalcSpectrum(&X) != TRUE) {
       StopTimer(6000);

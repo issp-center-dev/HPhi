@@ -3,9 +3,9 @@
 mkdir -p spectrum_spingc_honey/
 cd spectrum_spingc_honey
 #
-# Ground state
+# Sz-Sz spectrum
 #
-cat > stan1.in <<EOF
+cat > stan2.in <<EOF
 W = 2
 L = 3
 model = "SpinGC"
@@ -22,20 +22,11 @@ J2y =  2.0
 J2z = 1.0
 2S=1
 h=0.1
-EigenVecIO = out
 SpectrumQW = 0.5
 SpectrumQL = 0.5
 NOmega = 5
 OmegaIm = 1.0
-EOF
-
-${MPIRUN} ../../src/HPhi -s stan1.in
-#
-# Sz-Sz spectrum
-#
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+CalcSpec = "Scratch"
 SpectrumType = "SzSz"
 EOF
 
@@ -53,9 +44,28 @@ diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} E
 #
 # S+S- spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+W = 2
+L = 3
+model = "SpinGC"
+method = "CG"
+lattice = "Honeycomb"
+J0x = -1.0
+J0y =  2.0
+J0z =  3.3
+J1x =  1.0
+J1y = 1.0
+J1z =  0.0
+J2x =  3.0
+J2y =  2.0
+J2z = 1.0
+2S=1
+h=0.1
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "S+S-"
 EOF
 
@@ -73,9 +83,28 @@ diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$
 #
 # Density-Density spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+W = 2
+L = 3
+model = "SpinGC"
+method = "CG"
+lattice = "Honeycomb"
+J0x = -1.0
+J0y =  2.0
+J0z =  3.3
+J1x =  1.0
+J1y = 1.0
+J1z =  0.0
+J2x =  3.0
+J2y =  2.0
+J2z = 1.0
+2S=1
+h=0.1
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "Density"
 EOF
 
