@@ -3,9 +3,9 @@
 mkdir -p spectrum_genspingc_ladder/
 cd spectrum_genspingc_ladder
 #
-# Ground state
+# Sz-Sz spectrum
 #
-cat > stan1.in <<EOF
+cat > stan2.in <<EOF
 L = 2
 W = 2
 model = "SpinGC"
@@ -14,20 +14,11 @@ lattice = "ladder"
 J0 = 1.0
 J1 = 1.0
 2S = 3
-EigenVecIO = out
 SpectrumQW = 0.5
 SpectrumQL = 0.5
 NOmega = 5
 OmegaIm = 1.0
-EOF
-
-${MPIRUN} ../../src/HPhi -s stan1.in
-#
-# Sz-Sz spectrum
-#
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+CalcSpec = "Scratch"
 SpectrumType = "SzSz"
 EOF
 
@@ -45,9 +36,20 @@ diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} E
 #
 # S+S- spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+L = 2
+W = 2
+model = "SpinGC"
+method = "CG"
+lattice = "ladder"
+J0 = 1.0
+J1 = 1.0
+2S = 3
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "S+S-"
 EOF
 

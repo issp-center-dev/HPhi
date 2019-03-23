@@ -3,9 +3,9 @@
 mkdir -p spectrum_kondo_chain/
 cd spectrum_kondo_chain
 #
-# Ground state
+# Sz-Sz spectrum
 #
-cat > stan1.in <<EOF
+cat > stan2.in <<EOF
 L = 4
 model = "Kondo"
 method = "CG"
@@ -14,20 +14,11 @@ t = 1.0
 J = 4.0
 nelec = 4
 2Sz = 0
-EigenVecIO = out
 SpectrumQW = 0.5
 SpectrumQL = 0.5
 NOmega = 5
 OmegaIm = 1.0
-EOF
-
-${MPIRUN} ../../src/HPhi -s stan1.in
-#
-# Sz-Sz spectrum
-#
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+CalcSpec = "Scratch"
 SpectrumType = "SzSz"
 EOF
 
@@ -45,9 +36,20 @@ diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} E
 #
 # S+S- spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+L = 4
+model = "Kondo"
+method = "CG"
+lattice = "chain"
+t = 1.0
+J = 4.0
+nelec = 4
+2Sz = 0
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "S+S-"
 EOF
 
@@ -65,9 +67,20 @@ diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$
 #
 # Density-Density spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+L = 4
+model = "Kondo"
+method = "CG"
+lattice = "chain"
+t = 1.0
+J = 4.0
+nelec = 4
+2Sz = 0
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "Density"
 EOF
 
@@ -85,9 +98,20 @@ diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$
 #
 # Up-Up spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+L = 4
+model = "Kondo"
+method = "CG"
+lattice = "chain"
+t = 1.0
+J = 4.0
+nelec = 4
+2Sz = 0
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "Up"
 EOF
 
@@ -105,9 +129,20 @@ diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$
 #
 # Down-Down spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+L = 4
+model = "Kondo"
+method = "CG"
+lattice = "chain"
+t = 1.0
+J = 4.0
+nelec = 4
+2Sz = 0
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "Down"
 EOF
 
