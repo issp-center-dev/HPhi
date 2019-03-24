@@ -23,6 +23,7 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "common/setmemory.h"
+#include "mltplyCommon.h"
 /**
  * @file   CalcByTPQ.c
  * @version 0.1, 0.2
@@ -65,6 +66,8 @@ int CalcByTPQ(
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
+  global_norm = d_1d_allocate(NumAve);
+  global_1st_norm = d_1d_allocate(NumAve);
 
   //for rand_i =0, rand_i<NumAve
   sdt_phys = (char**)malloc(sizeof(char*)*NumAve);
@@ -169,21 +172,6 @@ int CalcByTPQ(
       }
       else return -1;
     }
-    
-     /**@brief
-    Compute expectation value at infinite temperature
-    */
-    X->Bind.Def.istep = 0;
-    StartTimer(3300);
-    iret = expec_cisajs(&(X->Bind), NumAve, v0, v1);
-    StopTimer(3300);
-    if (iret != 0) return -1;
-
-    StartTimer(3400);
-    iret = expec_cisajscktaltdc(&(X->Bind), NumAve, v0, v1);
-    StopTimer(3400);
-    if (iret != 0) return -1;
-
     /**@brief
     Compute v1=0, and compute v0 = H*v1
     */
@@ -238,6 +226,20 @@ int CalcByTPQ(
     Multiply(&(X->Bind));
     StopTimer(3500);
 
+    if (step_i%step_spin == 0) {
+      StartTimer(3300);
+      zclear(NumAve*X->Bind.Check.idim_max, &v1[1][0]);
+      iret = expec_cisajs(&(X->Bind), NumAve, v1, v0);
+      StopTimer(3300);
+      if (iret != 0) return -1;
+
+      StartTimer(3400);
+      zclear(NumAve*X->Bind.Check.idim_max, &v1[1][0]);
+      iret = expec_cisajscktaltdc(&(X->Bind), NumAve, v1, v0);
+      StopTimer(3400);
+      if (iret != 0) return -1;
+    }
+
     StartTimer(3200);
     iret = expec_energy_flct(&(X->Bind), NumAve, v0, v1);
     StopTimer(3200);
@@ -273,18 +275,6 @@ int CalcByTPQ(
       else return -1;
     }/*for (rand_i = 0; rand_i < NumAve; rand_i++)*/
     StopTimer(3600);
-
-    if (step_i%step_spin == 0) {
-      StartTimer(3300);
-      iret = expec_cisajs(&(X->Bind), NumAve, v0, v1);
-      StopTimer(3300);
-      if (iret != 0) return -1;
-
-      StartTimer(3400);
-      iret = expec_cisajscktaltdc(&(X->Bind), NumAve, v0, v1);
-      StopTimer(3400);
-      if (iret != 0) return -1;
-    }
   }/*for (step_i = X->Bind.Def.istep; step_i < X->Bind.Def.Lanczos_max; step_i++)*/
 
   if (X->Bind.Def.iReStart == RESTART_OUT || X->Bind.Def.iReStart == RESTART_INOUT) {
