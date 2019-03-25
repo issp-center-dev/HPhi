@@ -228,13 +228,11 @@ int CalcByTPQ(
 
     if (step_i%step_spin == 0) {
       StartTimer(3300);
-      zclear(NumAve*X->Bind.Check.idim_max, &v1[1][0]);
       iret = expec_cisajs(&(X->Bind), NumAve, v1, v0);
       StopTimer(3300);
       if (iret != 0) return -1;
 
       StartTimer(3400);
-      zclear(NumAve*X->Bind.Check.idim_max, &v1[1][0]);
       iret = expec_cisajscktaltdc(&(X->Bind), NumAve, v1, v0);
       StopTimer(3400);
       if (iret != 0) return -1;

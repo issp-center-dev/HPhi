@@ -310,11 +310,10 @@ int MakeExcitedList(
     fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
     exitMPI(-1);
   }
-
   if (sz(X, list_1, list_2_1, list_2_2) != 0) {
     return FALSE;
   }
-
+  
   if (X->Def.iCalcModel == HubbardNConserved) {
     X->Def.iCalcModel = Hubbard;
   }
@@ -431,6 +430,11 @@ int CalcSpectrum(
   size_t byte_size;
 
   if (X->Bind.Def.iFlgCalcSpec == CALCSPEC_SCRATCH) {
+    X->Bind.Def.Nsite = X->Bind.Def.NsiteMPI;
+    X->Bind.Def.Total2Sz = X->Bind.Def.Total2SzMPI;
+    X->Bind.Def.Ne = X->Bind.Def.NeMPI;
+    X->Bind.Def.Nup = X->Bind.Def.NupMPI;
+    X->Bind.Def.Ndown = X->Bind.Def.NdownMPI;
     free_lui_1d_allocate(list_1);
     free_lui_1d_allocate(list_2_1);
     free_lui_1d_allocate(list_2_2);

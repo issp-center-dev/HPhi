@@ -56,7 +56,7 @@ int GetSingleExcitedStateHubbard(
   idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
   tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1,nstate);
 #endif // MPI
-
+  
   idim_max = X->Check.idim_maxOrg;
   for (i = 0; i < X->Def.NSingleExcitationOperator[iEx]; i++) {
     org_isite = X->Def.SingleExcitationOperator[iEx][i][0];

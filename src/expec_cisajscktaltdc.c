@@ -177,28 +177,22 @@ int expec_cisajscktalt_HubbardGC(
       isite3 = X->Def.OrgTpow[2 * org_isite3 - 2 + org_sigma3];
       isite4 = X->Def.OrgTpow[2 * org_isite4 - 2 + org_sigma4];
       if (isite1 == isite2 && isite3 == isite4) {
-
         X_GC_child_CisAisCjtAjt_Hubbard_MPI(org_isite1 - 1, org_sigma1, org_isite3 - 1, org_sigma3,
           1.0, X, nstate, Xvec, vec);
       }
       else if (isite1 == isite2 && isite3 != isite4) {
-
         X_GC_child_CisAisCjtAku_Hubbard_MPI(
           org_isite1 - 1, org_sigma1, org_isite3 - 1, org_sigma3, org_isite4 - 1, org_sigma4,
           1.0, X, nstate, Xvec, vec);
-
       }
       else if (isite1 != isite2 && isite3 == isite4) {
-
         X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
           org_isite3 - 1, org_sigma3, 1.0, X, nstate, Xvec, vec);
-
       }
       else if (isite1 != isite2 && isite3 != isite4) {
         X_GC_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
           org_isite3 - 1, org_sigma3, org_isite4 - 1, org_sigma4, 1.0, X, nstate, Xvec, vec);
       }
-
     }//InterPE
     else {
       child_general_int_GetInfo(i, X, org_isite1, org_isite2, org_isite3, org_isite4,

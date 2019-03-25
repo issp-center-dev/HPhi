@@ -67,25 +67,19 @@ int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double comp
   StartTimer(1);
   i_max = X->Check.idim_max;
 
-  if(i_max!=0){
-    if (X->Def.iFlgGeneralSpin == FALSE) {
-      if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+  if (X->Def.iFlgGeneralSpin == FALSE) {
+    if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+      return -1;
+    }
+  }
+  else {
+    if (X->Def.iCalcModel == Spin) {
+      if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
         return -1;
       }
     }
-    else{
-      if(X->Def.iCalcModel==Spin){
-        if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
-          return -1;
-        }
-      }
-    }
-  }
-  else{
-    irght=0;
-    ilft=0;
-    ihfbit=0;
-  }
+  }  
+ 
   X->Large.i_max = i_max;
   X->Large.irght = irght;
   X->Large.ilft = ilft;
@@ -144,25 +138,7 @@ void zaxpy_long(
     y[i] += a * x[i];
 }
 /**
-@brief Wrapper of zswap.
-*/
-void zswap_long(
-  unsigned long int n,
-  double complex *x,
-  double complex *y
-) {
-  unsigned long int i;
-  double complex x0;
-
-#pragma omp parallel for default(none) private(i,x0) shared(n, x, y)
-  for (i = 0; i < n; i++) {
-    x0 = x[i];
-    x[i] = y[i];
-    y[i] = x0;
-  }
-}
-/**
-@brief Wrapper of zswap.
+@brief clear double complex array.
 */
 void zclear(
   unsigned long int n,

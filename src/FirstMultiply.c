@@ -107,13 +107,11 @@ Compute expectation value at infinite temperature
 */
   X->Def.istep = 0;
   StartTimer(3300);
-  zclear(NumAve*i_max, &v0[1][0]);
   iret = expec_cisajs(X, NumAve, v0, v1);
   StopTimer(3300);
   if (iret != 0) return -1;
 
   StartTimer(3400);
-  zclear(NumAve*i_max, &v0[1][0]);
   iret = expec_cisajscktaltdc(X, NumAve, v0, v1);
   StopTimer(3400);
   if (iret != 0) return -1;

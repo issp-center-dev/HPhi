@@ -260,7 +260,7 @@ int CalcSpectrumByBiCG(
     zclear(X->Bind.Check.idim_max, &v14[1][0]);
     mltply(&X->Bind, 1, v12, v2);
     mltply(&X->Bind, 1, v14, v4);
-
+    
     for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
       zclear(X->Bind.Check.idim_max, &vL[1][0]);
       GetExcitedState(&(X->Bind), 1, vL, v1Org, idcSpectrum + 1);

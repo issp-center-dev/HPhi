@@ -198,6 +198,7 @@ void X_child_general_int_spin_MPIsingle(
   Index in the intra PE
   */
   mask1 = X->Def.Tpow[org_isite1];
+  //printf("debug1 %ld\n", idim_max_buf);
 
 #pragma omp parallel for default(none)  private(j, ioff, jreal, state1) \
 firstprivate(idim_max_buf, Jint, X, mask1, state1check, org_isite1) \

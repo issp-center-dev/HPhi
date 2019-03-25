@@ -59,11 +59,13 @@ int expec_cisajs_HubbardGC(
   long unsigned int ibit;
   long unsigned int is;
   double complex tmp_OneGreen = 1.0;
+  int complex_conj, istate;
 
   i_max = X->Check.idim_max;
 
   for (i = 0; i < X->Def.NCisAjt; i++) {
     zclear(i_max*nstate, &Xvec[1][0]);
+    complex_conj = 0;
     org_isite1 = X->Def.CisAjt[i][0] + 1;
     org_isite2 = X->Def.CisAjt[i][2] + 1;
     org_sigma1 = X->Def.CisAjt[i][1];
@@ -95,7 +97,7 @@ int expec_cisajs_HubbardGC(
       else {
         X_GC_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, 
           -tmp_OneGreen, X, nstate, Xvec, vec);
-        zswap_long(i_max*nstate, &vec[1][0], &Xvec[1][0]);
+        complex_conj = 1;
       }
     }
     else {
@@ -106,6 +108,8 @@ int expec_cisajs_HubbardGC(
     }
 
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
+    if (complex_conj == 1) 
+      for (istate = 0; istate < nstate; istate++) prod[i][istate] = conj(prod[i][istate]);
   }
   return 0;
 }
@@ -128,7 +132,7 @@ int expec_cisajs_Hubbard(
   long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int i_max;
-  int num1, one = 1;
+  int num1, one = 1, complex_conj, istate;
   long unsigned int ibit;
   long unsigned int is;
   double complex tmp_OneGreen = 1.0, dmv;
@@ -136,6 +140,7 @@ int expec_cisajs_Hubbard(
   i_max = X->Check.idim_max;
   for (i = 0; i < X->Def.NCisAjt; i++) {
     zclear(i_max*nstate, &Xvec[1][0]);
+    complex_conj = 0;
     org_isite1 = X->Def.CisAjt[i][0] + 1;
     org_isite2 = X->Def.CisAjt[i][2] + 1;
     org_sigma1 = X->Def.CisAjt[i][1];
@@ -161,7 +166,6 @@ int expec_cisajs_Hubbard(
     if (org_isite1 > X->Def.Nsite &&
       org_isite2 > X->Def.Nsite) {
       if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {//diagonal
-
         is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
         ibit = (unsigned long int)myrank & is;
         if (ibit == is) {
@@ -181,7 +185,7 @@ int expec_cisajs_Hubbard(
       else {
         X_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, 
           -tmp_OneGreen, X, nstate, Xvec, vec);
-        zswap_long(i_max*nstate, &vec[1][0], &Xvec[1][0]);
+        complex_conj = 1;
       }
     }
     else {
@@ -205,6 +209,8 @@ firstprivate(i_max, is) private(num1, ibit, dmv)
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
+    if (complex_conj == 1)
+      for (istate = 0; istate < nstate; istate++) prod[i][istate] = conj(prod[i][istate]);
   }
   return 0;
 }

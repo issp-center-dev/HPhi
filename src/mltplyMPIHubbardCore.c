@@ -285,8 +285,8 @@ void X_GC_child_CisAisCjtAjt_Hubbard_MPI(
     else                         tmp_ispin1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
 
 #pragma omp parallel  default(none) \
-  shared(org_isite1,org_ispin1,org_isite3,org_ispin3,nstate,one,tmp_v0,tmp_v1) \
-  firstprivate(i_max,tmp_V,X) private(j,tmp_off,tmp_ispin1)
+  shared(org_isite1,org_ispin1,org_isite3,org_ispin3,nstate,one,tmp_v0,tmp_v1,tmp_ispin1) \
+  firstprivate(i_max,tmp_V,X) private(j,tmp_off)
 #pragma omp for
     for (j = 1; j <= i_max; j++) {
       if (CheckBit_Ajt(tmp_ispin1, j - 1, &tmp_off) == TRUE) {
