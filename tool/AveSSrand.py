@@ -32,7 +32,7 @@ for i in range(0, int(Setnum)):
     f =  open(str_, 'r')
     count=0
     for line in f:
-        if count ==0:
+        if count ==0 or count ==1:
             count +=1
             continue    
         data = line.split()
@@ -42,9 +42,9 @@ for i in range(0, int(Setnum)):
             DataEne.append(np.zeros(Setnum))
             DataC.append(np.zeros(Setnum))
             
-        DataTmp[count-1][i]=1.0/float(data[0])
-        DataEne[count-1][i]=float(data[1])
-        DataC[count-1][i]=pow(float(data[0]),2)*( float(data[2])-pow(float(data[1]),2))
+        DataTmp[count-2][i]=1.0/float(data[0])
+        DataEne[count-2][i]=float(data[1])
+        DataC[count-2][i]=pow(float(data[0]),2)*( float(data[2])-pow(float(data[1]),2))
         count+=1
     f.close()
 
