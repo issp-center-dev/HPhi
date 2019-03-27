@@ -280,7 +280,7 @@ struct DefineList {
     int ***TEInterAll;      /**< Index of time-dependent InterAll for Time Evolution. \n
                Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
                4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
-    int ***TEInterAllOffDiagonal;      /**< Index of off-diagonal part of time-dependent InterAll for Time Evolution. \n
+    unsigned int ***TEInterAllOffDiagonal;      /**< Index of off-diagonal part of time-dependent InterAll for Time Evolution. \n
                Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
                4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
     int ***TEInterAllDiagonal;      /**< Index of diagonal part of time-dependent InterAll for Time Evolution. \n

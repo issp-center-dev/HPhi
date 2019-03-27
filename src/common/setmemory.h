@@ -99,6 +99,7 @@ void free_i_1d_allocate(int *A);
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
 int **i_2d_allocate(const long unsigned int N, const long unsigned int M);
+unsigned int **ui_2d_allocate(const long unsigned int N, const long unsigned int M);
 ///
 /// \brief Function to free 2d array (int)
 /// \param A Pointer of 2d array A
@@ -113,6 +114,7 @@ void free_i_2d_allocate(int **A);
 /// \return A Pointer to array A
 /// \author Kazuyoshi Yoshimi (University of Tokyo)
 int ***i_3d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L);
+unsigned int ***ui_3d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L);
 ///
 /// \brief Function to free 3d array (int)
 /// \param A Pointer of 3d array A

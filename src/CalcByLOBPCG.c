@@ -353,16 +353,17 @@ int LOBPCG_Main(
   FILE *fp;
   int iconv = -1, i4_max;
   long int idim, i_max;
-  int ii, jj, ie, nsub, stp, nsub_cut;
+  int ii, jj, ie, nsub, stp, nsub_cut, nstate;
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/,
     ***hwxp/*[0] h*w, [1] h*x, [2] h*p of Ref.1*/,
     ****hsub, ****ovlp; /*Subspace Hamiltonian and Overlap*/
-  double *eig, *dnorm, eps_LOBPCG, eigabs_max, *preshift, precon, dnormmax, *eigsub;
+  double *eig, *dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub;
   int do_precon = 0;//If = 1, use preconditioning (experimental)
   char tN = 'N', tC = 'C';
   double complex one = 1.0, zero = 0.0;
 
   nsub = 3 * X->Def.k_exct;
+  nstate = X->Def.k_exct;
 
   eig = d_1d_allocate(X->Def.k_exct);
   dnorm = d_1d_allocate(X->Def.k_exct);
@@ -448,12 +449,12 @@ int LOBPCG_Main(
     if (stp /= 1) {
       if (do_precon == 1) {
         for (ie = 0; ie < X->Def.k_exct; ie++) 
-          preshift[ie] = calc_preshift(eig[ie], dnorm[ie], eps_LOBPCG);
+          preshift = calc_preshift(eig[ie], dnorm[ie], eps_LOBPCG);
 #pragma omp parallel for default(none) shared(wxp,list_Diagonal,preshift,i_max,eps_LOBPCG,X) \
 private(idim,precon,ie)
         for (idim = 1; idim <= i_max; idim++) {
           for (ie = 0; ie < X->Def.k_exct; ie++){
-            precon = list_Diagonal[idim] - preshift[ie];
+            precon = list_Diagonal[idim] - preshift;
             if (fabs(precon) > eps_LOBPCG) wxp[0][idim][ie] /= precon;
           }
         }
@@ -503,10 +504,10 @@ private(idim,precon,ie)
     */
     for (ii = 0; ii < 3; ii++) {
       for (jj = 0; jj < 3; jj++) {
-        zgemm_(&tN, &tC, &X->Def.k_exct, &X->Def.k_exct, &i4_max, &one,
-          &wxp[ii][1][0], &X->Def.k_exct, &wxp[jj][1][0], &X->Def.k_exct, &zero, &ovlp[jj][0][ii][0], &nsub);
-        zgemm_(&tN, &tC, &X->Def.k_exct, &X->Def.k_exct, &i4_max, &one,
-          &wxp[ii][1][0], &X->Def.k_exct, &hwxp[jj][1][0], &X->Def.k_exct, &zero, &hsub[jj][0][ii][0], &nsub);
+        zgemm_(&tN, &tC, &nstate, &nstate, &i4_max, &one,
+          &wxp[ii][1][0], &nstate, &wxp[jj][1][0], &nstate, &zero, &ovlp[jj][0][ii][0], &nsub);
+        zgemm_(&tN, &tC, &nstate, &nstate, &i4_max, &one,
+          &wxp[ii][1][0], &nstate, &hwxp[jj][1][0], &nstate, &zero, &hsub[jj][0][ii][0], &nsub);
       }
     }
     SumMPI_cv(nsub*nsub, &ovlp[0][0][0][0]);
@@ -531,8 +532,8 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii++) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
-        &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
       wxp[1][idim][ie] = v1buf[idim][ie];
@@ -542,8 +543,8 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii++) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
-        &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
       hwxp[1][idim][ie] = v1buf[idim][ie];
@@ -553,8 +554,8 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii += 2) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
-        &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
       wxp[2][idim][ie] = v1buf[idim][ie];
@@ -564,8 +565,8 @@ private(idim,precon,ie)
     */
     zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
     for (ii = 0; ii < 3; ii += 2) {
-      zgemm_(&tC, &tN, &X->Def.k_exct, &i4_max, &X->Def.k_exct, &one,
-        &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &X->Def.k_exct, &one, &v1buf[1][0], &X->Def.k_exct);
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
     }
     for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
       hwxp[2][idim][ie] = v1buf[idim][ie];

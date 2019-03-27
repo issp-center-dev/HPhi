@@ -69,6 +69,8 @@ int CalcByTEM(
   double dt = ((X->Bind.Def.NLaser == 0) ? 0.0 : X->Bind.Def.Param.TimeSlice);
   double complex **v2;  /**< Ttemporary vector for time evolution calculation, @f$ v2 = H*v1 = H^coef |psi(t)>@f$.*/
 
+  global_norm = d_1d_allocate(1);
+
   if (X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max) {
     fprintf(stdoutMPI, "Error: NTETimeSteps must be larger than Lanczos_max.\n");
     return -1;
@@ -206,8 +208,8 @@ int CalcByTEM(
     fclose(fp);
 
     if (step_i % step_spin == 0) {
-      expec_cisajs(&(X->Bind), 1, v0, v1);
-      expec_cisajscktaltdc(&(X->Bind), 1, v0, v1);
+      expec_cisajs(&(X->Bind), 1, v2, v1);
+      expec_cisajscktaltdc(&(X->Bind), 1, v2, v1);
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       if (step_i % X->Bind.Def.Param.OutputInterval == 0) {

@@ -75,12 +75,23 @@ cat > reference.dat <<EOF
 EOF
 sed -e "1d" output/Flct.dat > flct.dat
 paste flct.dat reference.dat > paste1.dat
-diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$10)*($2-$10))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$11)*($3-$11))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($4-$12)*($4-$12))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($5-$13)*($5-$13))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($6-$14)*($6-$14))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($7-$15)*($7-$15))} END{printf "%8.6f", diff}' paste1.dat`
-
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$10)*($2-$10))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff N : " ${diff}
 test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$11)*($3-$11))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff N^2 : " ${diff}
+test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($4-$12)*($4-$12))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff D : " ${diff}
+test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($5-$13)*($5-$13))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff D^2 : " ${diff}
+test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($6-$14)*($6-$14))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff Sz : " ${diff}
+test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($7-$15)*($7-$15))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff Sz^2 : " ${diff}
+test "${diff}" = "0.000000"
+
 exit $?

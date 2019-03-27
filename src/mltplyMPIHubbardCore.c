@@ -931,8 +931,8 @@ firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) \
     SendRecv_iv(origin, X->Check.idim_max + 1, idim_max_buf + 1, list_1, list_1buf);
     SendRecv_cv(origin, X->Check.idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
-#pragma omp parallel default(none)  private(j,dmv,ioff,tmp_off,Fsgn,Adiff) \
-firstprivate(idim_max_buf,tmp_V,X,tmp_isite1,tmp_isite2,tmp_isite3,tmp_isite4,org_rankbit,isite3) \
+#pragma omp parallel default(none)  private(j,dmv,ioff,tmp_off,Fsgn,Adiff,org_rankbit) \
+firstprivate(idim_max_buf,tmp_V,X,tmp_isite1,tmp_isite2,tmp_isite3,tmp_isite4,isite3) \
   shared(v1buf,tmp_v1,nstate,one,tmp_v0,list_1buf,list_2_1,list_2_2,origin,org_isite3,myrank,isite1,isite2,org_isite1,org_isite2)
     {
 

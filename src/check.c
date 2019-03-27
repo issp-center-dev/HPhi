@@ -56,7 +56,7 @@ int check(struct BindStruct *X){
   long unsigned int u_tmp;
   long unsigned int tmp;
   long unsigned int Ns,comb_1,comb_2,comb_3,comb_sum, comb_up, comb_down;
-  int u_loc;
+  unsigned int u_loc;
   long int **comb;    
   long unsigned int idimmax=0;
   long unsigned int idim=0;
@@ -68,7 +68,7 @@ int check(struct BindStruct *X){
     X->Def.Ne=X->Def.Nup;
   }
 
-  int iAllup=X->Def.Ne;
+  unsigned int iAllup=X->Def.Ne;
 
   if(X->Def.iFlgScaLAPACK == 0) {
     /*
@@ -132,19 +132,6 @@ int check(struct BindStruct *X){
     break;
     
   case Kondo:
-    //idim_max
-    // calculation of dimension
-    // Nup      = u_loc+u_cond
-    // Ndown    = d_loc+d_cond
-    // NLocSpn  = u_loc+d_loc
-    // Ncond    = Nsite-NLocSpn
-    // idim_max = \sum_{u_loc=0}^{u_loc=Nup} 
-    //              Binomial(NLocSpn,u_loc)
-    //             *Binomial(NCond,Nup-u_loc)
-    //             *Binomial(NCond,Ndown+u_loc-NLocSpn)
-    //comb_1 = Binomial(NLocSpn,u_loc)
-    //comb_2 = Binomial(NCond,Nup-u_loc)
-    //comb_3 = Binomial(NCond,Ndown+u_loc-NLocSpn)
     Nup     = X->Def.Nup;
     Ndown   = X->Def.Ndown;
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
@@ -162,7 +149,7 @@ int check(struct BindStruct *X){
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
     NLocSpn = X->Def.NLocSpn;
     //4^Nc*2^Ns
-    for(i=0;i<(2*NCond+NLocSpn);i++){
+    for(u_loc=0;u_loc <(2*NCond+NLocSpn); u_loc++){
       comb_sum= 2*comb_sum;     
     }
     break;
