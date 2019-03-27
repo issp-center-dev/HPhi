@@ -374,8 +374,8 @@ int LOBPCG_Main(
   i_max = X->Check.idim_max;
   i4_max = (int)i_max;
 
-  free(v0);
-  free(v1);
+  free_cd_2d_allocate(v0);
+  free_cd_2d_allocate(v1);
   wxp = cd_3d_allocate(3, X->Check.idim_max + 1, X->Def.k_exct);
   hwxp = cd_3d_allocate(3, X->Check.idim_max + 1, X->Def.k_exct);
   /**@brief
