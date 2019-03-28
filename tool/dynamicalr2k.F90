@@ -67,6 +67,7 @@ SUBROUTINE read_filename()
   !
   INTEGER :: fi = 10
   CHARACTER(256) :: modpara, keyname, namelist
+  REAL(8) :: eig0
   !
   WRITE(*,*) 
   WRITE(*,*) "#####  Read HPhi Input Files  #####" 
@@ -136,6 +137,14 @@ SUBROUTINE read_filename()
   CLOSE(FI)
   !
   filehead = "output/" // TRIM(ADJUSTL(filehead))
+  !
+  OPEN(fi,file = TRIM(filehead)//"_energy.dat")
+  READ(fi,*) keyname
+  READ(fi,*) keyname, eig0
+  CLOSE(fi)
+  WRITE(*,*) "    Minimum energy : ", eig0
+  omegamin = omegamin - eig0
+  omegamax = omegamax - eig0
   !
 END SUBROUTINE read_filename
 !
@@ -460,9 +469,9 @@ SUBROUTINE output_cor()
   !
   OPEN(fo, file = TRIM(filehead) // "_dyn.dat")
   !
-  DO iomega = 1, nomega
-     omega = (omegamax - omegamin) * DBLE(iomega - 1) / DBLE(nomega) + omegamin
-     DO ik = 1, ikk
+  DO ik = 1, ikk
+     DO iomega = 1, nomega
+        omega = (omegamax - omegamin) * DBLE(iomega - 1) / DBLE(nomega) + omegamin
         WRITE(fo,'(1000e15.5)') xk(ik), omega, cor_k(ik, 1:norb, iomega)
      END DO
      WRITE(fo,*)
