@@ -41,9 +41,8 @@ Number of threads (::nthreads), and pointer to the standard output
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void InitializeMPI(int argc, char *argv[]){
-  int ierr;
-
 #ifdef MPI
+  int ierr;
   ierr = MPI_Init(&argc, &argv);
   ierr = MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   ierr = MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
@@ -72,8 +71,8 @@ void InitializeMPI(int argc, char *argv[]){
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void FinalizeMPI(){
-  int ierr;
 #ifdef MPI
+  int ierr;
   ierr = MPI_Finalize();
   if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
 #endif
@@ -87,10 +86,10 @@ void exitMPI(
   int errorcode//!<[in] Error-code to be returned as that of this program
 )
 {
-  int ierr;
   fflush(stdout);
 #ifdef MPI
   fprintf(stdout,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
+  int ierr;
   ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
   ierr = MPI_Finalize();
   if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);

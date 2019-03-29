@@ -227,13 +227,9 @@ void X_child_CisAjt_MPIdouble
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X,
- int nstate, double complex **tmp_v0, 
- double complex **tmp_v1,
- double complex **v1buf,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target
+ int nstate, 
+  double complex **tmp_v0, 
+ double complex **tmp_v1
  );
 
 void X_child_CisAjt_MPIsingle
@@ -245,12 +241,7 @@ void X_child_CisAjt_MPIsingle
  double complex tmp_trans,
  struct BindStruct *X,
  int nstate, double complex **tmp_v0,
- double complex **tmp_v1,
- double complex **v1buf,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target
+ double complex **tmp_v1
  );
 
 
@@ -262,7 +253,6 @@ void X_GC_Cis_MPI
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  unsigned long int idim_max,
- double complex **tmp_v1buf,
  unsigned long int *Tpow
  );
 
@@ -271,10 +261,10 @@ void X_GC_Ajt_MPI
  int org_isite,
  int org_ispin,
  double complex tmp_trans,
- int nstate, double complex **tmp_v0,
+ int nstate, 
+  double complex **tmp_v0,
  double complex **tmp_v1,
  unsigned long int idim_max,
- double complex **tmp_v1buf,
  long unsigned int *Tpow
  );
 
@@ -285,13 +275,8 @@ void X_Cis_MPI
  double complex tmp_trans,
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
- double complex **tmp_v1buf,
  unsigned long int idim_max,
  long unsigned int *Tpow,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target,
  long unsigned int _irght,
  long unsigned int _ilft,
  long unsigned int _ihfbit
@@ -304,13 +289,8 @@ void X_Ajt_MPI
  double complex tmp_trans,
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
- double complex **tmp_v1buf,
  unsigned long int idim_max,
  long unsigned int *Tpow,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target,
  long unsigned int _irght,
  long unsigned int _ilft,
  long unsigned int _ihfbit

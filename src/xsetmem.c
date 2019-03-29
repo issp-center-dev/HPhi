@@ -155,15 +155,9 @@ int setmem_large
   struct BindStruct *X
 ) {
   int nstate;
-  unsigned long int idim_maxMPI;
-
-  idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
   if (GetlistSize(X) == TRUE) {
     list_1 = lui_1d_allocate(X->Check.idim_max + 1);
-#ifdef MPI
-    list_1buf = lui_1d_allocate(idim_maxMPI + 1);
-#endif // MPI
     list_2_1 = lui_1d_allocate(X->Large.SizeOflist_2_1);
     list_2_2 = lui_1d_allocate(X->Large.SizeOflist_2_2);
     if (list_1 == NULL
@@ -191,7 +185,12 @@ int setmem_large
   v0 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
   v1 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
 #ifdef MPI
-  v1buf = cd_2d_allocate(idim_maxMPI + 1, nstate);
+  unsigned long int MAXidim_max;
+  MAXidim_max = MaxMPI_li(X->Check.idim_max);
+  if (GetlistSize(X) == TRUE) list_1buf = lui_1d_allocate(MAXidim_max + 1);
+  v1buf = cd_2d_allocate(MAXidim_max + 1, nstate);
+#else
+  if (X->Def.iCalcType == CG) v1buf = cd_2d_allocate(X->Check.idim_max + 1, nstate);
 #endif // MPI
 
   X->Phys.num_down = d_1d_allocate(nstate);
@@ -242,9 +241,6 @@ void setmem_IntAll_Diagonal(
 int GetlistSize(
   struct BindStruct *X
 ) {
-  // unsigned int idim_maxMPI;
-
-//    idim_maxMPI = MaxMPI_li(X->Check.idim_max);
   switch (X->Def.iCalcModel) {
   case Spin:
   case Hubbard:

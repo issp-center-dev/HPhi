@@ -136,7 +136,7 @@ int GetPairExcitedStateHubbard(
   double complex **tmp_v1, /**< [in] v0 = H v1*/
   int iEx
 ) {
-  long unsigned int i, j, idim_maxMPI;
+  long unsigned int i, j;
   long unsigned int irght, ilft, ihfbit;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
@@ -158,14 +158,6 @@ int GetPairExcitedStateHubbard(
   X->Large.ilft = ilft;
   X->Large.ihfbit = ihfbit;
   X->Large.mode = M_CALCSPEC;
-  //    X->Large.mode     = M_MLTPLY;
-
-  double complex **tmp_v1bufOrg;
-  //set size
-#ifdef MPI
-  idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1, nstate);
-#endif // MPI
 
   for (i = 0; i < X->Def.NPairExcitationOperator[iEx]; i++) {
     org_isite1 = X->Def.PairExcitationOperator[iEx][i][0] + 1;
@@ -185,21 +177,18 @@ int GetPairExcitedStateHubbard(
         org_isite2 > X->Def.Nsite)
       {
         X_child_CisAjt_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
-          -tmp_trans, X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg,
-          list_1_org, list_1buf_org, list_2_1, list_2_2);
+          -tmp_trans, X, nstate, tmp_v0, tmp_v1);
       }
       else if (org_isite2 > X->Def.Nsite
         || org_isite1 > X->Def.Nsite)
       {
         if (org_isite1 < org_isite2) {
           X_child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
-            -tmp_trans, X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, 
-            list_1_org, list_1buf_org, list_2_1, list_2_2);
+            -tmp_trans, X, nstate, tmp_v0, tmp_v1);
         }
         else {
           X_child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
-            -conj(tmp_trans), X, nstate, tmp_v0, tmp_v1, tmp_v1bufOrg, 
-            list_1_org, list_1buf_org, list_2_1, list_2_2);
+            -conj(tmp_trans), X, nstate, tmp_v0, tmp_v1);
         }
       }
       else {
@@ -283,8 +272,5 @@ firstprivate(i_max,is,tmp_trans) private(num1,ibit,dmv)
       }
     }
   }
-#ifdef MPI
-  free_cd_2d_allocate(tmp_v1bufOrg);
-#endif // MPI
   return TRUE;
 }

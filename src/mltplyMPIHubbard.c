@@ -97,12 +97,7 @@ void X_child_CisAjt_MPIdouble(
   double complex tmp_trans,//!<[in] Transfer @f$t@f$
   struct BindStruct *X,//!< [inout]
   int nstate, double complex **tmp_v0,//!< [out] Result v0 = H v1
-  double complex **tmp_v1,//!< [in] v0 = H v1
-  double complex **v1buf,//!<[in]
-  long unsigned int *list_1_org,//!<[in]
-  long unsigned int *list_1buf_org,//!<[in]
-  long unsigned int *list_2_1_target,//!<[in]
-  long unsigned int *list_2_2_target//!<[in]
+  double complex **tmp_v1//!< [in] v0 = H v1
 ) {
   int mask1, mask2, state1, state2, origin, bitdiff, Fsgn;
   unsigned long int idim_max_buf, j, ioff;
@@ -136,10 +131,10 @@ void X_child_CisAjt_MPIdouble(
   SendRecv_cv(origin, X->Check.idim_maxOrg*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
   
 #pragma omp parallel for default(none) private(j, ioff) \
-  firstprivate(idim_max_buf, trans, X, list_2_1_target, list_2_2_target, list_1buf_org) \
+  firstprivate(idim_max_buf, trans, X, list_2_1, list_2_2, list_1buf_org) \
   shared(v1buf, tmp_v0,nstate,one)
   for (j = 1; j <= idim_max_buf; j++) {
-    GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+    GetOffComp(list_2_1, list_2_2, list_1buf_org[j],
                X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
     zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/

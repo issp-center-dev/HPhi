@@ -245,7 +245,7 @@ int GetPairExcitedStateHalfSpin(
   int iEx
 )
 {
-  long unsigned int i, j, idim_maxMPI;
+  long unsigned int i, j;
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
@@ -256,13 +256,6 @@ int GetPairExcitedStateHalfSpin(
   long unsigned int is1_up;
 
   i_max = X->Check.idim_maxOrg;
-
-  double complex **tmp_v1bufOrg;
-  //set size
-#ifdef MPI
-  idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1, nstate);
-#endif // MPI
 
   for (i = 0; i < X->Def.NPairExcitationOperator[iEx]; i++) {
     org_isite1 = X->Def.PairExcitationOperator[iEx][i][0] + 1;
@@ -323,8 +316,7 @@ firstprivate(i_max,isite1,org_sigma1,X,tmp_trans) shared(tmp_v0,tmp_v1,one,nstat
     else { //org_sigma1 != org_sigma2             // for the canonical case
       if (org_isite1 > X->Def.Nsite) {//For MPI
         X_child_CisAit_spin_MPIdouble(org_isite1 - 1, org_sigma2, tmp_trans, 
-          X, nstate, tmp_v0, tmp_v1, i_max, 
-          list_1_org, list_1buf_org, list_2_1, list_2_2);
+          X, nstate, tmp_v0, tmp_v1, i_max);
       }
       else {
         isite1 = X->Def.Tpow[org_isite1 - 1];
@@ -332,7 +324,7 @@ firstprivate(i_max,isite1,org_sigma1,X,tmp_trans) shared(tmp_v0,tmp_v1,one,nstat
 firstprivate(i_max,isite1,org_sigma2,X,tmp_trans,list_1_org,list_1,list_2_1,list_2_2) \
 shared(tmp_v0,tmp_v1,one,nstate)
         for (j = 1; j <= i_max; j++) {
-          num1 = X_Spin_CisAit(j, X, isite1, org_sigma2, list_1_org, list_2_1, list_2_2, &tmp_off);
+          num1 = X_Spin_CisAit(j, X, isite1, org_sigma2, &tmp_off);
           if (num1 != 0) {
             dmv = tmp_trans*(double)num1;
             zaxpy_(&nstate, &dmv, tmp_v1[j], &one, tmp_v0[tmp_off], &one);
@@ -341,9 +333,6 @@ shared(tmp_v0,tmp_v1,one,nstate)
       }
     }
   }
-#ifdef MPI
-  free_cd_2d_allocate(tmp_v1bufOrg);
-#endif
   return TRUE;
 }
 /// Calculation of pair excited state for general Spin canonical system
@@ -362,7 +351,7 @@ int GetPairExcitedStateGeneralSpin(
   int iEx
 )
 {
-  long unsigned int i, j, idim_maxMPI;
+  long unsigned int i, j;
   long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
   long unsigned int off = 0;
@@ -370,13 +359,6 @@ int GetPairExcitedStateGeneralSpin(
   long unsigned int i_max;
   int tmp_sgn, num1, one = 1;
   i_max = X->Check.idim_maxOrg;
-
-  double complex **tmp_v1bufOrg;
-  //set size
-#ifdef MPI
-  idim_maxMPI = MaxMPI_li(X->Check.idim_maxOrg);
-  tmp_v1bufOrg = cd_2d_allocate(idim_maxMPI + 1, nstate);
-#endif // MPI
 
   for (i = 0; i < X->Def.NPairExcitationOperator[iEx]; i++) {
     org_isite1 = X->Def.PairExcitationOperator[iEx][i][0] + 1;
@@ -413,8 +395,7 @@ int GetPairExcitedStateGeneralSpin(
         }//org_sigma1=org_sigma2
         else {//org_sigma1 != org_sigma2
           X_child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, 
-            tmp_trans, X, nstate, tmp_v0, tmp_v1,
-            i_max, list_1_org, list_1buf_org);
+            tmp_trans, X, nstate, tmp_v0, tmp_v1, i_max);
         }
       }
       else {//org_isite1 <= X->Def.Nsite
@@ -461,9 +442,6 @@ int GetPairExcitedStateGeneralSpin(
       return FALSE;
     }//org_isite1 != org_isite2
   }
-#ifdef MPI
-  free_cd_2d_allocate(tmp_v1bufOrg);
-#endif // MPI
 
   return TRUE;
 }

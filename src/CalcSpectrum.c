@@ -182,13 +182,12 @@ int MakeExcitedList(
     if (GetlistSize(X) == TRUE) {
       list_1_org = lui_1d_allocate(X->Check.idim_max + 1);
 #ifdef MPI
-      list_1buf_org = lui_1d_allocate(X->Check.idim_maxMPI + 1);
-      //lui_malloc1(list_1buf_org, X->Check.idim_maxMPI + 1);
+      unsigned long int MAXidim_max;
+      MAXidim_max = MaxMPI_li(X->Check.idim_max);
+      list_1buf_org = lui_1d_allocate(MAXidim_max + 1);
 #endif // MPI
       list_2_1_org = lui_1d_allocate(X->Large.SizeOflist_2_1);
       list_2_2_org = lui_1d_allocate(X->Large.SizeOflist_2_2);
-      //lui_malloc1(list_2_1_org, X->Large.SizeOflist_2_1);
-      //lui_malloc1(list_2_2_org, X->Large.SizeOflist_2_2);
       if (list_1_org == NULL
         || list_2_1_org == NULL
         || list_2_2_org == NULL
@@ -313,6 +312,15 @@ int MakeExcitedList(
   if (sz(X, list_1, list_2_1, list_2_2) != 0) {
     return FALSE;
   }
+#ifdef MPI
+  unsigned long int MAXidim_max, MAXidim_maxOrg;
+  MAXidim_max = MaxMPI_li(X->Check.idim_max);
+  MAXidim_maxOrg = MaxMPI_li(X->Check.idim_maxOrg);
+  if (MAXidim_max < MAXidim_maxOrg) {
+    free_cd_2d_allocate(v1buf);
+    v1buf = cd_2d_allocate(MAXidim_maxOrg + 1, 1);
+  }
+#endif // MPI
   
   if (X->Def.iCalcModel == HubbardNConserved) {
     X->Def.iCalcModel = Hubbard;
@@ -435,9 +443,11 @@ int CalcSpectrum(
     X->Bind.Def.Ne = X->Bind.Def.NeMPI;
     X->Bind.Def.Nup = X->Bind.Def.NupMPI;
     X->Bind.Def.Ndown = X->Bind.Def.NdownMPI;
-    free_lui_1d_allocate(list_1);
-    free_lui_1d_allocate(list_2_1);
-    free_lui_1d_allocate(list_2_2);
+    if (GetlistSize(&(X->Bind)) == TRUE) {
+      free_lui_1d_allocate(list_1);
+      free_lui_1d_allocate(list_2_1);
+      free_lui_1d_allocate(list_2_2);
+    }
     free_d_1d_allocate(list_Diagonal);
     free_cd_2d_allocate(v0);
     v1Org = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);

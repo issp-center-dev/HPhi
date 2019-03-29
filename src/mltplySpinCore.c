@@ -140,16 +140,13 @@ int X_Spin_CisAit(
   struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Bit mask for computing spin state
   long unsigned int sigma2,//!<[in] Spin state at site 2
-  long unsigned int *list_1_Org_,//!<[in] Similar to ::list_1
-  long unsigned int *list_2_1_,//!<[in] Similar to ::list_2_1
-  long unsigned int *list_2_2_,//!<[in] Similar to ::list_2_2
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   long unsigned int list_1_j;
   long unsigned int off;
-  list_1_j = list_1_Org_[j];
+  list_1_j = list_1_org[j];
   if (X_SpinGC_CisAit(list_1_j + 1, X, is1_spin, sigma2, &off) != 0) {
-    GetOffComp(list_2_1_, list_2_2_, off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, tmp_off);
+    GetOffComp(list_2_1, list_2_2, off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, tmp_off);
     return 1;
   }
   else {

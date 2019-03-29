@@ -1003,7 +1003,8 @@ void X_child_CisAis_Hubbard_MPI(
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate, 
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
   unsigned long int i_max = X->Check.idim_max;
@@ -1041,10 +1042,10 @@ void X_GC_Cis_MPI(
   int org_isite,//!<[in] Site i
   int org_ispin,//!<[in] Spin s
   double complex tmp_trans,//!<[in] Coupling constant//!<[in]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 += H v1*/,
+  int nstate, 
+  double complex **tmp_v0,//!<[out] Result v0 += H v1*/,
   double complex **tmp_v1,//!<[in] v0 += H v1*/,
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
-  double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
   int mask2, state2, origin, bit2diff, Fsgn;
@@ -1066,7 +1067,7 @@ void X_GC_Cis_MPI(
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
 
   idim_max_buf = SendRecv_i(origin, idim_max);
-  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
   if (state2 == mask2) {
     trans = 0;
@@ -1076,7 +1077,7 @@ void X_GC_Cis_MPI(
   }
   else return;
 
-  zaxpy_long(idim_max_buf*nstate, trans, &tmp_v1buf[1][0], &tmp_v0[1][0]);
+  zaxpy_long(idim_max_buf*nstate, trans, &v1buf[1][0], &tmp_v0[1][0]);
 }/*double complex X_GC_Cis_MPI*/
 /**
 @brief Single creation/annihilation operator
@@ -1089,10 +1090,10 @@ void X_GC_Ajt_MPI(
   int org_isite,//!<[in] Site j
   int org_ispin,//!<[in] Spin t
   double complex tmp_trans,//!<[in] Coupling constant//!<[in]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 += H v1*/,
+  int nstate, 
+  double complex **tmp_v0,//!<[out] Result v0 += H v1*/,
   double complex **tmp_v1,//!<[in] v0 += H v1*/,
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
-  double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int *Tpow//!<[in] Similar to DefineList::Tpow
 ) {
   int mask2, state2, origin, bit2diff, Fsgn;
@@ -1114,14 +1115,13 @@ void X_GC_Ajt_MPI(
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
 
   idim_max_buf = SendRecv_i(origin, idim_max);
-
-  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
   if (     state2 == 0    ) trans = 0;
   else if (state2 == mask2) trans = (double)Fsgn * tmp_trans;
   else return;
 
-  zaxpy_long(idim_max_buf*nstate, trans, &tmp_v1buf[1][0], &tmp_v0[1][0]);
+  zaxpy_long(idim_max_buf*nstate, trans, &v1buf[1][0], &tmp_v0[1][0]);
 }/*double complex X_GC_Ajt_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger@f$
@@ -1134,13 +1134,8 @@ void X_Cis_MPI(
   int nstate, 
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[inout] Initial wavefunction
-  double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
   long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
-  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
-  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
-  long unsigned int *list_2_1_target,//!<[in] Similar to ::list_2_1
-  long unsigned int *list_2_2_target,//!<[in] Similar to ::list_2_2
   long unsigned int _irght,//!<[in] Similer to LargeList::irght
   long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
@@ -1164,10 +1159,8 @@ void X_Cis_MPI(
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
 
   idim_max_buf = SendRecv_i(origin, idim_max);
-
   SendRecv_iv(origin, idim_max + 1, idim_max_buf + 1, list_1_org, list_1buf_org);
-
-  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
   if (state2 == mask2) {
     trans = 0;
@@ -1178,12 +1171,12 @@ void X_Cis_MPI(
   else return;
 
 #pragma omp parallel for default(none) private(j) \
-firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
-  shared(tmp_v1buf, tmp_v1, nstate,one, tmp_v0, list_1buf_org)
+firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1, list_2_2) \
+  shared(v1buf, tmp_v1, nstate,one, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
-    GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+    GetOffComp(list_2_1, list_2_2, list_1buf_org[j],
       _irght, _ilft, _ihfbit, &ioff);
-    zaxpy_(&nstate, &trans, &tmp_v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
+    zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/
 }/*double complex X_GC_Cis_MPI*/
 /**
@@ -1196,13 +1189,8 @@ void X_Ajt_MPI(
   double complex tmp_trans,//!<[in] Coupling constant
   int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[inout] Initial wavefunction
-  double complex **tmp_v1buf,//!<[in] buffer for wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
   long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
-  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
-  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
-  long unsigned int *list_2_1_target,//!<[in] Similar to ::list_2_1
-  long unsigned int *list_2_2_target,//!<[in] Similar to ::list_2_2
   long unsigned int _irght,//!<[in] Similer to LargeList::irght
   long unsigned int _ilft,//!<[in] Similer to LargeList::ilft
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
@@ -1226,7 +1214,7 @@ void X_Ajt_MPI(
   SgnBit((unsigned long int) (bit2diff), &Fsgn); // Fermion sign
   idim_max_buf = SendRecv_i(origin, idim_max);
   SendRecv_iv(origin, idim_max + 1, idim_max_buf + 1, list_1_org, list_1buf_org);
-  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &tmp_v1buf[1][0]);
+  SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
 
   if (state2 == 0) {
     trans = 0;
@@ -1237,11 +1225,11 @@ void X_Ajt_MPI(
   else return;
 
 #pragma omp parallel for default(none) private(j) \
-firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
-  shared(tmp_v1buf, tmp_v1, nstate,one, tmp_v0, list_1buf_org)
+firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1, list_2_2) \
+  shared(v1buf, tmp_v1, nstate,one, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {
-    GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+    GetOffComp(list_2_1, list_2_2, list_1buf_org[j],
       _irght, _ilft, _ihfbit, &ioff);
-    zaxpy_(&nstate, &trans, &tmp_v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
+    zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }
 }/*double complex X_Ajt_MPI*/

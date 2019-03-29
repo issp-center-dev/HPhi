@@ -850,9 +850,7 @@ void X_child_CisAit_GeneralSpin_MPIdouble(
   int nstate, 
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[in] Input wavefunction
-  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
-  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
-  long unsigned int *list_1buf_org//!<[in] Similar to ::list_1buf
+  unsigned long int idim_max//!<[in] Similar to CheckList::idim_max
 )
 {
   unsigned long int off, j, tmp_off,idim_max_buf;
@@ -1344,13 +1342,10 @@ void X_child_CisAit_spin_MPIdouble(
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X /**< [inout]*/,
-  int nstate, double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
+  int nstate, 
+  double complex **tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex **tmp_v1, /**< [in] v0 = H v1*/
-  unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
-  long unsigned int *list_1_org,//!<[in] Similar to ::list_1
-  long unsigned int *list_1buf_org,//!<[in] Similar to ::list_1buf
-  long unsigned int *list_2_1_target,//!<[in] Similar to ::list_2_1
-  long unsigned int *list_2_2_target//!<[in] Similar to ::list_2_2
+  unsigned long int idim_max//!<[in] Similar to CheckList::idim_max
 ){
   int mask1, state1, origin, one = 1;
   unsigned long int idim_max_buf, j;
@@ -1375,10 +1370,10 @@ void X_child_CisAit_spin_MPIdouble(
   SendRecv_cv(origin, idim_max*nstate, idim_max_buf*nstate, &tmp_v1[1][0], &v1buf[1][0]);
     
 #pragma omp parallel for default(none) private(j, tmp_off) \
-firstprivate(idim_max_buf, trans, X, list_1buf_org, list_2_1_target, list_2_2_target) \
+firstprivate(idim_max_buf, trans, X, list_1buf_org, list_2_1, list_2_2) \
 shared(v1buf, tmp_v0,nstate,one)
   for (j = 1; j <= idim_max_buf; j++) {
-    GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j], X->Large.irght, X->Large.ilft, X->Large.ihfbit, &tmp_off);
+    GetOffComp(list_2_1, list_2_2, list_1buf_org[j], X->Large.irght, X->Large.ilft, X->Large.ihfbit, &tmp_off);
     zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[tmp_off][0], &one);
   }
 }/*double complex  X_child_CisAit_spin_MPIdouble*/
