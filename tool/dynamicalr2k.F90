@@ -486,7 +486,10 @@ SUBROUTINE output_cor()
      WRITE(fo,'(a,a,a,f10.5,a)',advance="no") "'", TRIM(kname(inode)), "'  ", xk_label(inode), ", "
   END DO
   WRITE(fo,'(a,a,a,f10.5,a)') "'", TRIM(kname(nnode)), "' ", xk_label(nnode), ")"
-  WRITE(fo,'(a)') "set ylabel 'Frequency'"
+  WRITE(fo,'(a)') "set ylabel 'Energy from E_0'"
+  WRITE(fo,'(a)') "set zlabel 'Spectrum' rotate"
+  WRITE(fo,'(a)') "set ticslevel 0"
+  WRITE(fo,'(a)') "set xzeroaxis"
   WRITE(fo,'(a)') "set grid xtics lt 1 lc 0"
   !
   CLOSE(fo)

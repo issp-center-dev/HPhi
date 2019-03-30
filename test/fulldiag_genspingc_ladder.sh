@@ -38,7 +38,11 @@ cat > reference.dat <<EOF
   10.750000   2.000000   2.000000  12.000000   0.000000
 EOF
 paste output/zvo_phys.dat reference.dat > paste.dat
-diff=`awk 'BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)*($1-$6))} END{printf "%8.6f", diff}' paste.dat`
+diff=`awk '
+BEGIN{diff=0.0} 
+NR>1{diff+=sqrt(($1-$6)*($1-$6))} 
+END{printf "%8.6f", diff/NR}
+' paste.dat`
 test "${diff}" = "0.000000"
 
 exit $?
