@@ -234,7 +234,7 @@ SUBROUTINE read_geometry()
   !
   ! Compute Reciprocal Lattice Vector
   !
-  recipr(1:3,1:3) = direct(1:3,1:3)
+  recipr(1:3,1:3) = transpose(direct(1:3,1:3))
   CALL dgetrf(3, 3, recipr, 3, Ipiv, ii)
   CALL dgetri(3, recipr, 3, ipiv, work, 10, ii)
   WRITE(*,*) "    Reciplocal lattice vector :"
