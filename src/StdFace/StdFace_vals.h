@@ -291,7 +291,8 @@ struct StdIntList {
   double SpectrumQ[3];/**<@brief wavenumver (q-vector) in fractional coordinate*/
   int SpectrumBody;/**<@brief one- or two-body excitation, defined from
                    StdIntList::SpectrumType*/
-  /*
+  char OutputExVec[256];/**<@brief The name of output mode for the excited vector, input from file.*/
+    /*
   Time evolution
   */
   double dt;/**<@brief Time step*/

@@ -198,7 +198,7 @@ int CalcSpectrum(
     dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
     if (fabs(dnorm) < pow(10.0, -15)) {
       fprintf(stderr, "Warning: Norm of an excited vector becomes 0.\n");
-      fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
+      fprintf(stdoutMPI, "  End:   Calculating an excited vector.\n\n");
       TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
       fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
       TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
@@ -216,6 +216,7 @@ int CalcSpectrum(
 
     //Output excited vector
     if (X->Bind.Def.iOutputExVec == 1) {
+      fprintf(stdoutMPI, "  Start:   Output an excited vector.\n\n");
       sprintf(sdt, cFileNameOutputExcitedVec, X->Bind.Def.CDataFileHead, myrank);
       if(childfopenALL(sdt, "w", &fp)!=0){
         return -1;
@@ -225,9 +226,10 @@ int CalcSpectrum(
         fprintf(fp, "%.10lf, %.10lf\n", creal(v1[i]), cimag(v1[i]));
       }
       fclose(fp);
+      fprintf(stdoutMPI, "  End:   Output an excited vector.\n\n");
     }
 
-    fprintf(stdoutMPI, "  End:   Calculating an excited Eigenvector.\n\n");
+    fprintf(stdoutMPI, "  End:   Calculating an excited vector.\n\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
   }
   StopTimer(6100);
