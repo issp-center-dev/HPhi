@@ -190,11 +190,11 @@ static void PrintCalcMod(struct StdIntList *StdI)
   /*
    * HamIO
    */
+  iOutputHam = 0;
+  iInputHam = 0;
   if (strcmp(StdI->HamIO, "****") == 0) {
     strcpy(StdI->HamIO, "none\0");
     fprintf(stdout, "         HamIO = none        ######  DEFAULT VALUE IS USED  ######\n");
-    iOutputHam = 0;
-    iInputHam=0;
   }/*if (strcmp(StdI->HamIO, "****") == 0)*/
   else {
     fprintf(stdout, "         HamIO = %s\n", StdI->HamIO);
