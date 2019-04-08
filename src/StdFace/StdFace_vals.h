@@ -260,7 +260,7 @@ struct StdIntList {
   char Restart[256];/**<@brief The name of restart mode, input from file.*/
   char InitialVecType[256];/**<@brief The name of initialguess-type, input from file.*/
   char EigenVecIO[256];/**<@brief The name of I/O mode for eigenvector, input from file*/
-  char OutputHam[256];/**<@brief The name of output mode for Hamiltonian*/
+  char HamIO[256];/**<@brief The name of I/O mode for Hamiltonian, input from file*/
   int FlgTemp;/**<@brief */
   int Lanczos_max;/**<@brief The maxixmum number of iterations, input from file*/
   int initial_iv; /**<@brief the number for generating random number, input from file.*/
