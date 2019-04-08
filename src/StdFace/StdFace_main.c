@@ -83,7 +83,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
 {
   FILE *fp;
   int iCalcType, iCalcModel, iRestart, iCalcSpec, 
-    iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec;
+    iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec, iOutputHam;
   /*
   First, check all parameters and exit if invalid parameters
   */
@@ -188,6 +188,23 @@ static void PrintCalcMod(struct StdIntList *StdI)
   }/*if (strcmp(StdI->EigenVecIO, "****") != 0)*/
   if (strcmp(StdI->method, "timeevolution") == 0) InputEigenVec = 1;
   /*
+   * OutputHam
+   */
+  if (strcmp(StdI->OutputHam, "****") == 0) {
+    strcpy(StdI->OutputHam, "none\0");
+    fprintf(stdout, "         OutputHam = none        ######  DEFAULT VALUE IS USED  ######\n");
+    iOutputHam = 0;
+  }/*if (strcmp(StdI->CalcSpec, "****") == 0)*/
+  else {
+    fprintf(stdout, "         OutputHam = %s\n", StdI->OutputHam);
+    if (strcmp(StdI->OutputHam, "none") == 0) iOutputHam = 0;
+    else if (strcmp(StdI->OutputHam, "out") == 0) iOutputHam = 1;
+    else {
+      fprintf(stdout, "\n ERROR ! OutputHam : %s\n", StdI->OutputHam);
+      StdFace_exit(-1);
+    }
+  }
+  /*
   CalcSpec
   */
   if (strcmp(StdI->CalcSpec, "****") == 0) {
@@ -223,6 +240,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
   fprintf(fp, "InitialVecType %3d\n", iInitialVecTpye);
   fprintf(fp, "InputEigenVec %3d\n", InputEigenVec);
   fprintf(fp, "OutputEigenVec %3d\n", OutputEigenVec);
+  fprintf(fp, "OutputHam %3d\n", iOutputHam);
   fflush(fp);
   fclose(fp);
   fprintf(stdout, "     calcmod.def is written.\n\n");
@@ -913,6 +931,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->Restart, "****\0");
   strcpy(StdI->EigenVecIO, "****\0");
   strcpy(StdI->InitialVecType, "****\0");
+  strcpy(StdI->OutputHam, "****\0");
   strcpy(StdI->CalcSpec, "****\0");
   strcpy(StdI->SpectrumType, "****\0");
   StdI->FlgTemp = 1;
@@ -2439,6 +2458,7 @@ void StdFace_main(
     else if (strcmp(keyword, "calcspec") == 0) StoreWithCheckDup_sl(keyword, value, StdI->CalcSpec);
     else if (strcmp(keyword, "exct") == 0) StoreWithCheckDup_i(keyword, value, &StdI->exct);
     else if (strcmp(keyword, "eigenvecio") == 0) StoreWithCheckDup_sl(keyword, value, StdI->EigenVecIO);
+    else if (strcmp(keyword, "outputham") == 0) StoreWithCheckDup_sl(keyword, value, StdI->OutputHam);
     else if (strcmp(keyword, "expandcoef") == 0) StoreWithCheckDup_i(keyword, value, &StdI->ExpandCoef);
     else if (strcmp(keyword, "expecinterval") == 0) StoreWithCheckDup_i(keyword, value, &StdI->ExpecInterval);
     else if (strcmp(keyword, "cdatafilehead") == 0) StoreWithCheckDup_s(keyword, value, StdI->CDataFileHead);
