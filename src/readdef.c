@@ -267,7 +267,10 @@ int ReadcalcmodFile(
     }   
     if(CheckWords(ctmp, "CalcType")==0){
       X->iCalcType=itmp;
-      if (X->iCalcType == Lanczos)X->iCalcType = CG;
+      if (X->iCalcType == Lanczos) {
+        fprintf(stdoutMPI, "  LOBPCG is used alternative to Lanczos.\n");
+        X->iCalcType = CG;
+      }
     }
     else if(CheckWords(ctmp, "FlgFiniteTemperature")==0){
       X->iFlgFiniteTemperature = itmp;

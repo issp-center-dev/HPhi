@@ -3,7 +3,7 @@
 .. _Subsec:excitedvec:
 
 excitedvec.dat
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 CalcModファイルのOutputExcitedVec=1の場合に、pair.def と入力ベクトルから計算された励起ベクトルを出力します。ファイルはテキスト形式で出力されます。以下にファイル例を記載します。
 

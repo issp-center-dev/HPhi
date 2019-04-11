@@ -1,7 +1,7 @@
 .. _tutorial:
 
-チュートリアル
-==============
+静的相関関数についてのチュートリアル
+====================================
 
 このチュートリアルでは, 正方格子ハバードモデル(8サイト)を例にとり説明する.
 
@@ -125,3 +125,86 @@ gnuplotを使って,
 
 - kpath.gp (:ref:`gnuplot`)
 - output/zvo_corr*.dat (:ref:`zvocorr`)
+
+動的相関関数についてのチュートリアル
+====================================
+
+このチュートリアルでは, 1次元ハイゼンベルグ模型モデル(12サイト)を例にとり説明する.
+
+HPhi の実行
+-----------
+
+基底状態および相関関数の計算を行う.
+入力ファイルは次の通り.
+
+::
+   
+   model = Spin
+   lattice = Chain
+   method = CG
+   L = 12
+   2Sz = 0
+   J = 1.0
+   CalcSpec = Scratch
+   SpectrumType = SzSz_r
+   OmegaIm = 0.1
+   OmegaMin = -6.0
+   OmegaMax = -2.0
+
+.. code-block:: bash
+
+   $ HPhi -s input
+         
+これにより, カレントディレクトリの ``output/`` 以下に
+動的相関関数が出力される.
+
+関連するファイル
+
+- stan.in (mVMC/:math:`{\mathcal H}\Phi` のマニュアル参照)
+
+相関関数のフーリエ変換
+----------------------
+
+ユーティリティプログラム ``dynamicalr2k`` を使って,
+相関関数をフーリエ変関する.
+
+.. code-block:: bash
+
+   $ echo "4 20
+   G 0 0 0
+   X 0.5 0 0
+   M 0.5 0.5 0
+   G 0 0 0" >> geometry.dat
+   $ dynamicalr2k namelist.def geometry.dat
+     
+これにより, カレントディレクトリの ``output/`` 以下に
+フーリエ変換された相関関数が出力される.
+
+関連するファイル
+
+- output/zvo_DynamicalGreen.dat
+- geometry.dat (:ref:`geometry`)
+- output/zvo_dyn.dat
+
+相関関数のプロット
+------------------
+
+gnuplotを使って,
+相関関数を :math:`k` 空間でプロットする.
+
+::
+
+   load "kpath.gp"
+   splot "output/zvo_dyn.dat" u 1:2:(-$4) w l
+
+.. _dynamicalr2gpng:
+     
+.. figure:: ../../../figs/dynamicalr2g.png
+
+   相関関数 :math:`\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle(\omega)` の虚部(4列目)を
+   プロットした図.
+
+関連するファイル
+
+- kpath.gp (:ref:`gnuplot`)
+- output/zvo_dyn.dat
