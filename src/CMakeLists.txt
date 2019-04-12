@@ -12,7 +12,7 @@ add_definitions(-DDSFMT_MEXP=19937)
 
 set(SOURCES FileIO.c HPhiMain.c HPhiTrans.c bitcalc.c check.c CheckMPI.c dSFMT.c diagonalcalc.c global.c log.c input.c output.c output_list.c readdef.c sz.c xsetmem.c ErrorMessage.c LogMessage.c ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c)
 
-set(SOURCES_MLTPLY Multiply.c mltply.c mltplySpin.c mltplyHubbard.c mltplyMPIHubbard.c mltplyMPISpin.c mltplyHubbardCore.c mltplySpinCore.c mltplyMPIHubbardCore.c mltplyMPISpinCore.c)
+set(SOURCES_MLTPLY Multiply.c mltply.c mltplySpin.c mltplyHubbard.c mltplyMPIHubbard.c mltplyMPISpin.c mltplyHubbardCore.c mltplySpinCore.c mltplyMPIHubbardCore.c mltplyMPISpinCore.c mltplyMPIBoost.c)
 set(SOURCES_CG CalcByLOBPCG.c )
 set(SOURCES_TPQ CalcByTPQ.c FirstMultiply.c)
 set(SOURCES_DIAG CalcByFullDiag.c lapack_diag.c matrixlapack.c matrixlapack_magma.c matrixscalapack.c )

@@ -92,7 +92,7 @@ void StdFace_Chain(
     StdFace_PrintVal_d("D", &StdI->D[2][2], 0.0);
     StdFace_InputSpinNN(StdI->J, StdI->JAll, StdI->J0, StdI->J0All, "J0");
     StdFace_InputSpinNN(StdI->Jp, StdI->JpAll, StdI->J0p, StdI->J0pAll, "J0'");
-    StdFace_InputSpinNN(StdI->Jpp, StdI->JppAll, StdI->J0pp, StdI->J0ppAll, "J0'");
+    StdFace_InputSpinNN(StdI->Jpp, StdI->JppAll, StdI->J0pp, StdI->J0ppAll, "J0''");
     /**/
     StdFace_NotUsed_d("mu", StdI->mu);
     StdFace_NotUsed_d("U", StdI->U);
@@ -261,11 +261,11 @@ void StdFace_Chain_Boost(struct StdIntList *StdI)
     0.25 * StdI->J0[2][0], 0.25 * StdI->J0[2][1], 0.25 * StdI->J0[2][2]);
   fprintf(fp, "# J 2\n");
   fprintf(fp, "%25.15e %25.15e %25.15e\n",
-    0.25 * StdI->Jp[0][0], 0.25 * StdI->Jp[0][1], 0.25 * StdI->Jp[0][2]);
+    0.25 * StdI->J0p[0][0], 0.25 * StdI->J0p[0][1], 0.25 * StdI->J0p[0][2]);
   fprintf(fp, "%25.15e %25.15e %25.15e\n",
-    0.25 * StdI->Jp[1][0], 0.25 * StdI->Jp[1][1], 0.25 * StdI->Jp[1][2]);
+    0.25 * StdI->J0p[1][0], 0.25 * StdI->J0p[1][1], 0.25 * StdI->J0p[1][2]);
   fprintf(fp, "%25.15e %25.15e %25.15e\n",
-    0.25 * StdI->Jp[2][0], 0.25 * StdI->Jp[2][1], 0.25 * StdI->Jp[2][2]);
+    0.25 * StdI->J0p[2][0], 0.25 * StdI->J0p[2][1], 0.25 * StdI->J0p[2][2]);
   /*
   Topology
   */

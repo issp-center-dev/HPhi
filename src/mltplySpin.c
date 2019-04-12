@@ -165,6 +165,7 @@ General on-site term
 #include "mltplyHubbardCore.h"
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
+#include "mltplyMPIBoost.h"
 /**
 @brief Driver function for Spin hamiltonian
 @return error code
@@ -374,6 +375,54 @@ shared(tmp_v0,tmp_v1,list_1,list_2_1,list_2_2,one,nstate)
   return 0;  
 }/*int mltplyGeneralSpin*/
 /**
+@brief Driver function for Spin hamiltonian (Boost)
+@return error code
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
+int mltplySpinGCBoost(
+  struct BindStruct *X,//!<[inout]
+  int nstate,
+  double complex **tmp_v0,//!<[inout] Result vector
+  double complex **tmp_v1//!<[in] Input producted vector
+)
+{
+  int istate;
+  /* SpinGCBoost */
+  double complex* tmp_v2, *tmp_tmp_v0, *tmp_tmp_v1;
+  double complex* tmp_v3;
+  /* SpinGCBoost */
+
+  long unsigned int i_max, idim;
+  i_max = X->Check.idim_max;
+
+  StartTimer(500);
+  tmp_tmp_v0 = cd_1d_allocate(i_max + 1);
+  tmp_tmp_v1 = cd_1d_allocate(i_max + 1);
+  tmp_v2 = cd_1d_allocate(i_max + 1);
+  tmp_v3 = cd_1d_allocate(i_max + 1);
+
+  for (istate = 0; istate < nstate; istate++) {
+    for (idim = 1; idim <= i_max; idim++) {
+      tmp_tmp_v0[idim] = tmp_v0[idim][istate];
+      tmp_tmp_v1[idim] = tmp_v1[idim][istate];
+    }
+    child_general_int_spin_MPIBoost(X, tmp_tmp_v0, tmp_tmp_v1, tmp_v2, tmp_v3);
+    for (idim = 1; idim <= i_max; idim++) {
+      tmp_v0[idim][istate] = tmp_tmp_v0[idim];
+      tmp_v1[idim][istate] = tmp_tmp_v1[idim];
+    }
+  }
+
+  /* SpinGCBoost */
+  free_cd_1d_allocate(tmp_tmp_v0);
+  free_cd_1d_allocate(tmp_tmp_v1);
+  free_cd_1d_allocate(tmp_v2);
+  free_cd_1d_allocate(tmp_v3);
+  /* SpinGCBoost */
+  StopTimer(500);
+  return 0;
+}/*int mltplySpinGCBoost*/
+/**
 @brief Driver function for Spin hamiltonian
 @return error code
 @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -391,6 +440,9 @@ int mltplySpinGC(
 
   if(iret != 0) return iret;
   
+  if (X->Boost.flgBoost == 1)
+    iret = mltplySpinGCBoost(X, nstate, tmp_v0, tmp_v1);
+
   return iret;
 }/*int mltplySpinGC*/
 /**
