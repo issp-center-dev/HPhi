@@ -116,6 +116,10 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_hubbard_chain.sh
 )
 add_test(
+  NAME fulldiag_Hamiltonian_IO
+  COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_ham_io.sh
+)
+add_test(
   NAME fulldiag_kondo_chain
   COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_kondo_chain.sh
 )

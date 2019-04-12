@@ -152,6 +152,27 @@ Parameters for the numerical condition
    file and using it in the subsequent calculation (such as the Green’s
    function).
 
+*  ``HamIO``
+
+   **Type :** String (choose from ``"None"``, ``"Out"``, ``In``.
+   ``"None"`` as a default)
+
+   | **Description :** (Only used in Full Diag mode) 
+   | The I/O of the Hamiltonian is specified.
+   | ``None``: not output Hamiltonian.
+   | ``Out``: output Hamiltonian.
+   | ``Iut``: Input Hamiltonian.
+
+*  ``OutputExcitedVec``
+
+   **Type :** String (choose from ``"None"`` or ``"Out"``.
+   ``"None"`` as a default)
+
+   | **Description :**  (Only used in the mode to calculate dynamical green's functions)
+   | The mode to output the excited vector is specified.
+   | ``None``: not output the excited vector.
+   | ``Out``: output the excited vector.
+
 .. raw:: latex
 
    \newpage

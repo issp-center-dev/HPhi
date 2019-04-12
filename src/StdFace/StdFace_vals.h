@@ -260,6 +260,7 @@ struct StdIntList {
   char Restart[256];/**<@brief The name of restart mode, input from file.*/
   char InitialVecType[256];/**<@brief The name of initialguess-type, input from file.*/
   char EigenVecIO[256];/**<@brief The name of I/O mode for eigenvector, input from file*/
+  char HamIO[256];/**<@brief The name of I/O mode for Hamiltonian, input from file*/
   int FlgTemp;/**<@brief */
   int Lanczos_max;/**<@brief The maxixmum number of iterations, input from file*/
   int initial_iv; /**<@brief the number for generating random number, input from file.*/
@@ -290,7 +291,8 @@ struct StdIntList {
   double SpectrumQ[3];/**<@brief wavenumver (q-vector) in fractional coordinate*/
   int SpectrumBody;/**<@brief one- or two-body excitation, defined from
                    StdIntList::SpectrumType*/
-  /*
+  char OutputExVec[256];/**<@brief The name of output mode for the excited vector, input from file.*/
+    /*
   Time evolution
   */
   double dt;/**<@brief Time step*/

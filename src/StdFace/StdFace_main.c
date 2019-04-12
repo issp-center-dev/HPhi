@@ -83,7 +83,8 @@ static void PrintCalcMod(struct StdIntList *StdI)
 {
   FILE *fp;
   int iCalcType, iCalcModel, iRestart, iCalcSpec, 
-    iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec;
+    iCalcEigenvec, iInitialVecTpye, InputEigenVec, OutputEigenVec,
+    iInputHam, iOutputHam, iOutputExVec;
   /*
   First, check all parameters and exit if invalid parameters
   */
@@ -188,6 +189,25 @@ static void PrintCalcMod(struct StdIntList *StdI)
   }/*if (strcmp(StdI->EigenVecIO, "****") != 0)*/
   if (strcmp(StdI->method, "timeevolution") == 0) InputEigenVec = 1;
   /*
+   * HamIO
+   */
+  iOutputHam = 0;
+  iInputHam = 0;
+  if (strcmp(StdI->HamIO, "****") == 0) {
+    strcpy(StdI->HamIO, "none\0");
+    fprintf(stdout, "         HamIO = none        ######  DEFAULT VALUE IS USED  ######\n");
+  }/*if (strcmp(StdI->HamIO, "****") == 0)*/
+  else {
+    fprintf(stdout, "         HamIO = %s\n", StdI->HamIO);
+    if (strcmp(StdI->HamIO, "none") == 0){ iOutputHam = 0; iInputHam=0;}
+    else if (strcmp(StdI->HamIO, "out") == 0) iOutputHam = 1;
+    else if (strcmp(StdI->HamIO, "in") == 0) iInputHam = 1;
+    else {
+      fprintf(stdout, "\n ERROR ! HamIO mode : %s\n", StdI->HamIO);
+      StdFace_exit(-1);
+    }
+  }
+  /*
   CalcSpec
   */
   if (strcmp(StdI->CalcSpec, "****") == 0) {
@@ -209,6 +229,23 @@ static void PrintCalcMod(struct StdIntList *StdI)
       StdFace_exit(-1);
     }
   }/*if (strcmp(StdI->CalcSpec, "****") != 0)*/
+  /*
+  OutputExcitedVec
+  */
+  iOutputExVec = 0;
+  if (strcmp(StdI->OutputExVec, "****") == 0) {
+    strcpy(StdI->OutputExVec, "none\0");
+    fprintf(stdout, "         OutputExcitedVec = none        ######  DEFAULT VALUE IS USED  ######\n");
+  }/*if (strcmp(StdI->OutputExVec, "****") == 0)*/
+  else {
+    fprintf(stdout, "         OutputExcitedVec = %s\n", StdI->OutputExVec);
+    if (strcmp(StdI->OutputExVec, "none") == 0) iOutputExVec = 0;
+    else if (strcmp(StdI->OutputExVec, "out") == 0) iOutputExVec = 1;
+    else {
+      fprintf(stdout, "\n ERROR ! OutputExcitedVec : %s\n", StdI->OutputExVec);
+      StdFace_exit(-1);
+    }
+  }/*if (strcmp(StdI->OutputExVec, "****") != 0)*/
 
   fp = fopen("calcmod.def", "w");
   fprintf(fp, "#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, 4:Time-evolution\n");
@@ -223,6 +260,9 @@ static void PrintCalcMod(struct StdIntList *StdI)
   fprintf(fp, "InitialVecType %3d\n", iInitialVecTpye);
   fprintf(fp, "InputEigenVec %3d\n", InputEigenVec);
   fprintf(fp, "OutputEigenVec %3d\n", OutputEigenVec);
+  fprintf(fp, "InputHam %3d\n", iInputHam);
+  fprintf(fp, "OutputHam %3d\n", iOutputHam);
+  fprintf(fp, "OutputExVec %3d\n", iOutputExVec);
   fflush(fp);
   fclose(fp);
   fprintf(stdout, "     calcmod.def is written.\n\n");
@@ -913,8 +953,10 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->Restart, "****\0");
   strcpy(StdI->EigenVecIO, "****\0");
   strcpy(StdI->InitialVecType, "****\0");
+  strcpy(StdI->HamIO, "****\0");
   strcpy(StdI->CalcSpec, "****\0");
   strcpy(StdI->SpectrumType, "****\0");
+  strcpy(StdI->OutputExVec, "****\0");
   StdI->FlgTemp = 1;
   StdI->Lanczos_max = StdI->NaN_i;
   StdI->initial_iv = StdI->NaN_i;
@@ -2445,6 +2487,7 @@ void StdFace_main(
     else if (strcmp(keyword, "dt") == 0) StoreWithCheckDup_d(keyword, value, &StdI->dt);
     else if (strcmp(keyword, "flgtemp") == 0) StoreWithCheckDup_i(keyword, value, &StdI->FlgTemp);
     else if (strcmp(keyword, "freq") == 0) StoreWithCheckDup_d(keyword, value, &StdI->freq);
+    else if (strcmp(keyword, "hamio") == 0) StoreWithCheckDup_sl(keyword, value, StdI->HamIO);
     else if (strcmp(keyword, "initialvectype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->InitialVecType);
     else if (strcmp(keyword, "initial_iv") == 0) StoreWithCheckDup_i(keyword, value, &StdI->initial_iv);
     else if (strcmp(keyword, "lanczoseps") == 0) StoreWithCheckDup_i(keyword, value, &StdI->LanczosEps);
@@ -2458,6 +2501,7 @@ void StdFace_main(
     else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMax);
     else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMin);
     else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaIm);
+    else if (strcmp(keyword, "outputexcitedvec") == 0) StoreWithCheckDup_sl(keyword, value, StdI->OutputExVec);
     else if (strcmp(keyword, "pumptype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->PumpType);
     else if (strcmp(keyword, "restart") == 0) StoreWithCheckDup_sl(keyword, value, StdI->Restart);
     else if (strcmp(keyword, "spectrumqh") == 0) StoreWithCheckDup_d(keyword, value, &StdI->SpectrumQ[2]);
