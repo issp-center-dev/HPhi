@@ -301,8 +301,10 @@ int main(int argc, char* argv[]){
           fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
           FinalizeMPI();
         }
-        if (CalcByFullDiag(&X) != TRUE) {
-          FinalizeMPI(); 
+        else {
+          if (CalcByFullDiag(&X) != TRUE) {
+            FinalizeMPI();
+          }
         }
         StopTimer(5000);
       break;
