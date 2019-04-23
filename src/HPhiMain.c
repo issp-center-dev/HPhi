@@ -252,6 +252,7 @@ int main(int argc, char* argv[]){
       && nproc != 1) {
     fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
     FinalizeMPI();
+    return(-1);
   }
 
   /*---------------------------*/
