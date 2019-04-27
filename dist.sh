@@ -32,6 +32,8 @@ find ./ -name ".git*" -delete
 #
 # Pack
 #
-cd ../../../
+cd ../../
+rm dist.sh
+cd ../
 tar czvf HPhi-${vid}.tar.gz HPhi-${vid}
 rm -rf HPhi-${vid}
