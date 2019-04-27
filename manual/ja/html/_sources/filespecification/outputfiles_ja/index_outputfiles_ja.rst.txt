@@ -41,3 +41,4 @@
    DynamicalGreen_ja
    recalcvec_ja
    TMcomponents_ja
+   excitedvec_ja

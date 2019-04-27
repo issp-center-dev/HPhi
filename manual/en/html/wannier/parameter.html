@@ -4,27 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>8.3. Input parameter for Standard mode &#8212; HΦ Documentation  documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="8.4. File format" href="format.html" />
@@ -35,8 +24,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -47,7 +35,7 @@
   <div class="section" id="input-parameter-for-standard-mode">
 <h1>8.3. Input parameter for Standard mode<a class="headerlink" href="#input-parameter-for-standard-mode" title="Permalink to this headline">¶</a></h1>
 <p>We show the following example of the input file.</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
 lattice = &quot;wannier90&quot;
 a0w = 2
 a0l = 0
@@ -70,23 +58,46 @@ cutoff_j = 0.1
 <p>The input parameters for the Standard mode to perform calculation
 of the downfolded model are as follows:</p>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;wannier90&quot;</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;wannier90&quot;</span></code></p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">cutoff_t</span></code>, <code class="docutils literal"><span class="pre">cutoff_u</span></code>, <code class="docutils literal"><span class="pre">cutoff_j</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">cutoff_t</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_u</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_j</span></code></p>
 <blockquote>
 <div><p><strong>Type :</strong> float</p>
-<p><strong>Default :</strong> <code class="docutils literal"><span class="pre">1.0e-8</span></code></p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">1.0e-8</span></code></p>
 <p>The cutoff for the hopping, Coulomb, exchange integrals.
 We ignore these integrals smaller than cutoffs.</p>
 </div></blockquote>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">W</span></code>, <code class="docutils literal"><span class="pre">L</span></code>, <code class="docutils literal"><span class="pre">Height</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">cutoff_tW</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_tL</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_tH</span></code></p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">a0W</span></code>, <code class="docutils literal"><span class="pre">a0L</span></code>, <code class="docutils literal"><span class="pre">a0H</span></code>, <code class="docutils literal"><span class="pre">a1W</span></code>, <code class="docutils literal"><span class="pre">a1L</span></code>, <code class="docutils literal"><span class="pre">a1H</span></code>, <code class="docutils literal"><span class="pre">a2W</span></code>, <code class="docutils literal"><span class="pre">a2L</span></code>, <code class="docutils literal"><span class="pre">a2H</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">cutoff_UW</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_UL</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_UH</span></code></p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">Wsub</span></code>, <code class="docutils literal"><span class="pre">Lsub</span></code>, <code class="docutils literal"><span class="pre">Hsub</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">cutoff_JW</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_JL</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_JH</span></code></p>
+<blockquote>
+<div><p><strong>Type :</strong> Integer</p>
+<p><strong>Default :</strong>  Including all range</p>
+<p>The cutoff for the hopping, Coulomb, exchange integrals.
+We ignore these integrals that have lattice vector <span class="math notranslate nohighlight">\({\bf R}\)</span>
+larger than these values.</p>
+</div></blockquote>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">a0Wsub</span></code>, <code class="docutils literal"><span class="pre">a0Lsub</span></code>, <code class="docutils literal"><span class="pre">a0Hsub</span></code>, <code class="docutils literal"><span class="pre">a1Wsub</span></code>, <code class="docutils literal"><span class="pre">a1Lsub</span></code>, <code class="docutils literal"><span class="pre">a1Hsub</span></code>, <code class="docutils literal"><span class="pre">a2Wsub</span></code>, <code class="docutils literal"><span class="pre">a2Lsub</span></code>, <code class="docutils literal"><span class="pre">a2Hsub</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">cutoff_length_t</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_length_U</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_length_J</span></code></p>
+<blockquote>
+<div><p><strong>Type :</strong> float</p>
+<p><strong>Default :</strong> -1.0 (Including all range)</p>
+<p>The cutoff for the hopping, Coulomb, exchange integrals.
+We ignore these integrals whose distance is longer than this value.
+Its distance id computed with the position of the Wannier center and
+unit lattice vectors.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">W</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code>, <code class="docutils literal notranslate"><span class="pre">Height</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">a0W</span></code>, <code class="docutils literal notranslate"><span class="pre">a0L</span></code>, <code class="docutils literal notranslate"><span class="pre">a0H</span></code>, <code class="docutils literal notranslate"><span class="pre">a1W</span></code>, <code class="docutils literal notranslate"><span class="pre">a1L</span></code>, <code class="docutils literal notranslate"><span class="pre">a1H</span></code>, <code class="docutils literal notranslate"><span class="pre">a2W</span></code>, <code class="docutils literal notranslate"><span class="pre">a2L</span></code>, <code class="docutils literal notranslate"><span class="pre">a2H</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">Hsub</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">a0Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a0Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a0Hsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Hsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Hsub</span></code></p>
 <p>The third dimension appears.</p>
 </li>
 </ul>
@@ -114,8 +125,8 @@ We ignore these integrals smaller than cutoffs.</p>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
@@ -144,12 +155,14 @@ We ignore these integrals smaller than cutoffs.</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -157,10 +170,10 @@ We ignore these integrals smaller than cutoffs.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, The University of Tokyo.
+      &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

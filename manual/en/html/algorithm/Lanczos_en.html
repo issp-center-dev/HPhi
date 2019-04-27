@@ -4,27 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>5.1. Lanczos method &#8212; HΦ Documentation  documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="5.2. Full Diagonalization method" href="FullDiagonalization_en.html" />
@@ -35,8 +24,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -61,70 +49,70 @@ obtaining the eigenvector.</p>
 <p>The principle of the Lanczos method is
 based on the power method.
 In the power method,
-by successively operating the Hamiltonian <span class="math">\(\hat{\mathcal H }\)</span> to the
-arbitrary vector <span class="math">\(\boldsymbol{x}_{0}\)</span>, we generate <span class="math">\(\hat{\mathcal H }^{n}\boldsymbol{x}_{0}\)</span>.
+by successively operating the Hamiltonian <span class="math notranslate nohighlight">\(\hat{\mathcal H }\)</span> to the
+arbitrary vector <span class="math notranslate nohighlight">\(\boldsymbol{x}_{0}\)</span>, we generate <span class="math notranslate nohighlight">\(\hat{\mathcal H }^{n}\boldsymbol{x}_{0}\)</span>.
 The obtained space
-<span class="math">\(\mathcal{K}_{n+1}(\hat{\mathcal H },\boldsymbol{x}_{0})=\{\boldsymbol{x}_{0},\hat{\mathcal H }^{1}\boldsymbol{x}_{0},\dots,\hat{\mathcal H }^{n}\boldsymbol{x}_{0}\}\)</span>
+<span class="math notranslate nohighlight">\(\mathcal{K}_{n+1}(\hat{\mathcal H },\boldsymbol{x}_{0})=\{\boldsymbol{x}_{0},\hat{\mathcal H }^{1}\boldsymbol{x}_{0},\dots,\hat{\mathcal H }^{n}\boldsymbol{x}_{0}\}\)</span>
 is called the Krylov subspace.
 The initial vector is represented by the superposition
 of the eigenvectors
-<span class="math">\(\boldsymbol{e}_{i}\)</span> (the corresponding eigenvalues are <span class="math">\(E_{i}\)</span>) of <span class="math">\(\hat{\mathcal H }\)</span> as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-algorithm/Lanczos_en:0" title="Permalink to this equation">¶</a></span>\[\boldsymbol{x}_{0}=\sum_{i}a_{i}\boldsymbol{e}_{i}.\]</div>
-<p>Here, <span class="math">\(E_{0}\)</span> denotes the maximum absolute values of the eigenvalues.
+<span class="math notranslate nohighlight">\(\boldsymbol{e}_{i}\)</span> (the corresponding eigenvalues are <span class="math notranslate nohighlight">\(E_{i}\)</span>) of <span class="math notranslate nohighlight">\(\hat{\mathcal H }\)</span> as</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-en-0">
+<span class="eqno">(5.1)<a class="headerlink" href="#equation-algorithm-lanczos-en-0" title="Permalink to this equation">¶</a></span>\[\boldsymbol{x}_{0}=\sum_{i}a_{i}\boldsymbol{e}_{i}.\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(E_{0}\)</span> denotes the maximum absolute values of the eigenvalues.
 We note that all the eigenvalues are real numbers because the Hamiltonian is Hermitian.
-By operating <span class="math">\(\hat{\mathcal H }^{n}\)</span> to the initial vector,
+By operating <span class="math notranslate nohighlight">\(\hat{\mathcal H }^{n}\)</span> to the initial vector,
 we obtain the relation as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:1">
-<span class="eqno">(2)<a class="headerlink" href="#equation-algorithm/Lanczos_en:1" title="Permalink to this equation">¶</a></span>\[\hat{\mathcal H }^{n}\boldsymbol{x}_{0}=E_{0}^{n}\Big[ a_{0}\boldsymbol{e}_{0}+\sum_{i\neq0}\left(\frac{E_{i}}{E_{0}}\right)^na_{i}\boldsymbol{e}_{i}\Big].\]</div>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-en-1">
+<span class="eqno">(5.2)<a class="headerlink" href="#equation-algorithm-lanczos-en-1" title="Permalink to this equation">¶</a></span>\[\hat{\mathcal H }^{n}\boldsymbol{x}_{0}=E_{0}^{n}\Big[ a_{0}\boldsymbol{e}_{0}+\sum_{i\neq0}\left(\frac{E_{i}}{E_{0}}\right)^na_{i}\boldsymbol{e}_{i}\Big].\]</div>
 <p>This relation indicates that
-the eigenvector of <span class="math">\(E_{0}\)</span> becomes dominant for sufficiently large <span class="math">\(n\)</span>.
+the eigenvector of <span class="math notranslate nohighlight">\(E_{0}\)</span> becomes dominant for sufficiently large <span class="math notranslate nohighlight">\(n\)</span>.
 In the Lanczos method,
 we obtain the eigenvalues and eigenvectors
 by performing the appropriate transformation for the obtained Krylov subspace.</p>
 <p>In the Lanczos method,
 we successively generate the normalized orthogonal basis
-<span class="math">\(\boldsymbol{v}_{0},\dots,\boldsymbol{v}_{n-1}\)</span> from the Krylov subspace <span class="math">\(\mathcal{K}_{n}(\hat{\mathcal H },\boldsymbol{x}_{0})\)</span>.
+<span class="math notranslate nohighlight">\(\boldsymbol{v}_{0},\dots,\boldsymbol{v}_{n-1}\)</span> from the Krylov subspace <span class="math notranslate nohighlight">\(\mathcal{K}_{n}(\hat{\mathcal H },\boldsymbol{x}_{0})\)</span>.
 We define an initial vector and associated components as
-<span class="math">\(\boldsymbol{v}_{0} =\boldsymbol{x}_{0}/|\boldsymbol{x}_{0}|\)</span>,
-<span class="math">\(\beta_{0}=0,\boldsymbol{x}_{-1}=0\)</span>.
+<span class="math notranslate nohighlight">\(\boldsymbol{v}_{0} =\boldsymbol{x}_{0}/|\boldsymbol{x}_{0}|\)</span>,
+<span class="math notranslate nohighlight">\(\beta_{0}=0,\boldsymbol{x}_{-1}=0\)</span>.
 From this initial condition,
 we can obtain the normalized orthogonal basis:</p>
-<div class="math" id="equation-algorithm/Lanczos_en:2">
-<span class="eqno">(3)<a class="headerlink" href="#equation-algorithm/Lanczos_en:2" title="Permalink to this equation">¶</a></span>\[\begin{split}\alpha_{k} &amp;= (\hat{\mathcal H }\boldsymbol{v}_{k},\boldsymbol{v}_{k}), \\
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-en-2">
+<span class="eqno">(5.3)<a class="headerlink" href="#equation-algorithm-lanczos-en-2" title="Permalink to this equation">¶</a></span>\[\begin{split}\alpha_{k} &amp;= (\hat{\mathcal H }\boldsymbol{v}_{k},\boldsymbol{v}_{k}), \\
 \boldsymbol{w}   &amp;= \hat{\mathcal H }\boldsymbol{v}_{k}-\beta_{k}\boldsymbol{v}_{k-1}-\alpha_{k}\boldsymbol{v}_{k}, \\
 \beta_{k+1} &amp;= |\boldsymbol{w}|, \\
 \boldsymbol{v}_{k+1} &amp;= \frac{\boldsymbol{v}_{k}}{|\boldsymbol{v}_{k}|}.\\\end{split}\]</div>
-<p>From these definitions, it it obvious that <span class="math">\(\alpha_{k}\)</span>, <span class="math">\(\beta_{k}\)</span> are real numbers.</p>
+<p>From these definitions, it it obvious that <span class="math notranslate nohighlight">\(\alpha_{k}\)</span>, <span class="math notranslate nohighlight">\(\beta_{k}\)</span> are real numbers.</p>
 <p>In the subspace spanned by these normalized orthogonal basis,
 the Hamiltonian is transformed as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:3">
-<span class="eqno">(4)<a class="headerlink" href="#equation-algorithm/Lanczos_en:3" title="Permalink to this equation">¶</a></span>\[T_{n}=V_{n}^{\dagger}\hat{\mathcal H } V_{n}.\]</div>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-en-3">
+<span class="eqno">(5.4)<a class="headerlink" href="#equation-algorithm-lanczos-en-3" title="Permalink to this equation">¶</a></span>\[T_{n}=V_{n}^{\dagger}\hat{\mathcal H } V_{n}.\]</div>
 <p>Here,
-<span class="math">\(V_{n}\)</span> is a matrix whose column vectors are <span class="math">\(\boldsymbol{v}_{i}(i=0,1,\dots,n-1)\)</span>.
-<span class="math">\(T_{n}\)</span> is a tridiagonal matrix and its diagonal elements
-are <span class="math">\(\alpha_{i}\)</span> and
-subdiagonal elements are <span class="math">\(\beta_{i}\)</span>.
+<span class="math notranslate nohighlight">\(V_{n}\)</span> is a matrix whose column vectors are <span class="math notranslate nohighlight">\(\boldsymbol{v}_{i}(i=0,1,\dots,n-1)\)</span>.
+<span class="math notranslate nohighlight">\(T_{n}\)</span> is a tridiagonal matrix and its diagonal elements
+are <span class="math notranslate nohighlight">\(\alpha_{i}\)</span> and
+subdiagonal elements are <span class="math notranslate nohighlight">\(\beta_{i}\)</span>.
 It is known that
-the eigenvalues of <span class="math">\(\hat{\mathcal H }\)</span> are well approximated by
-the eigenvalues of <span class="math">\(T_{n}\)</span> for sufficiently large <span class="math">\(n\)</span>.
-(We note that <span class="math">\(V^{\dagger}V=I\)</span>, <span class="math">\(I\)</span> is an identity matrix).
-The original eigenvectors of <span class="math">\(\hat{\mathcal H }\)</span> are obtained
-by <span class="math">\(\boldsymbol{e}_{i}=V\tilde{\boldsymbol{e}}_{i}\)</span>,
-where  <span class="math">\(\tilde{\boldsymbol{e}}_{i}\)</span> denotes
-the eigenvectors of <span class="math">\(T_{n}\)</span>.
-From <span class="math">\(V\)</span>,
-we can obtain the eigenvectors of <span class="math">\(\hat{\mathcal H }\)</span>
+the eigenvalues of <span class="math notranslate nohighlight">\(\hat{\mathcal H }\)</span> are well approximated by
+the eigenvalues of <span class="math notranslate nohighlight">\(T_{n}\)</span> for sufficiently large <span class="math notranslate nohighlight">\(n\)</span>.
+(We note that <span class="math notranslate nohighlight">\(V^{\dagger}V=I\)</span>, <span class="math notranslate nohighlight">\(I\)</span> is an identity matrix).
+The original eigenvectors of <span class="math notranslate nohighlight">\(\hat{\mathcal H }\)</span> are obtained
+by <span class="math notranslate nohighlight">\(\boldsymbol{e}_{i}=V\tilde{\boldsymbol{e}}_{i}\)</span>,
+where  <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{e}}_{i}\)</span> denotes
+the eigenvectors of <span class="math notranslate nohighlight">\(T_{n}\)</span>.
+From <span class="math notranslate nohighlight">\(V\)</span>,
+we can obtain the eigenvectors of <span class="math notranslate nohighlight">\(\hat{\mathcal H }\)</span>
 by performing the Lanczos method.
 However, in the actual calculations,
-it is difficult to keep <span class="math">\(V\)</span>, because its dimension
-is large [dimension of <span class="math">\(V\)</span> = (dimension of the total Hilbert space) <span class="math">\(\times\)</span> (the number of Lanczos iterations)].
+it is difficult to keep <span class="math notranslate nohighlight">\(V\)</span>, because its dimension
+is large [dimension of <span class="math notranslate nohighlight">\(V\)</span> = (dimension of the total Hilbert space) <span class="math notranslate nohighlight">\(\times\)</span> (the number of Lanczos iterations)].
 Thus, to obtain the eigenvectors,
 we again perform the same Lanczos calculations
 after we obtain the eigenvalues from the Lanczos methods.
-In the first Lanczos calculation, we keep <span class="math">\(\tilde{\boldsymbol{e}_{i}}\)</span>,
+In the first Lanczos calculation, we keep <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{e}_{i}}\)</span>,
 because its dimension is small <a class="footnote-reference" href="#id10" id="id4">[4]</a> .
-From this procedure, we obtain the eigenvectors  from <span class="math">\(V\)</span>.</p>
+From this procedure, we obtain the eigenvectors  from <span class="math notranslate nohighlight">\(V\)</span>.</p>
 <p>In the Lanczos method,
 within a few hundred or thousand Lanczos iterations,
 we obtain accurate eigenvalues near the maximum and minimum eigenvalues.
@@ -138,14 +126,14 @@ become exponentially small as a function of Lanczos iterations
 </div>
 <div class="section" id="inverse-iteration-method">
 <h2>5.1.2. Inverse iteration method<a class="headerlink" href="#inverse-iteration-method" title="Permalink to this headline">¶</a></h2>
-<p>From the approximate value of the eigenvalues <span class="math">\((E_{n})\)</span>,
-by successively operating <span class="math">\((\hat{\mathcal H }-E_{n})^{-1}\)</span>
-to the initial vector <span class="math">\(\boldsymbol{y}_{0}\)</span>,
-we can obtain the accurate eigenvector for <span class="math">\(E_{n}\)</span>.</p>
-<p>From <span class="math">\((\hat{\mathcal H }-E_{n})^{-1}\boldsymbol{y}_{0}\)</span>,
+<p>From the approximate value of the eigenvalues <span class="math notranslate nohighlight">\((E_{n})\)</span>,
+by successively operating <span class="math notranslate nohighlight">\((\hat{\mathcal H }-E_{n})^{-1}\)</span>
+to the initial vector <span class="math notranslate nohighlight">\(\boldsymbol{y}_{0}\)</span>,
+we can obtain the accurate eigenvector for <span class="math notranslate nohighlight">\(E_{n}\)</span>.</p>
+<p>From <span class="math notranslate nohighlight">\((\hat{\mathcal H }-E_{n})^{-1}\boldsymbol{y}_{0}\)</span>,
 we obtain linear simultaneous equations such as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:4">
-<span class="eqno">(5)<a class="headerlink" href="#equation-algorithm/Lanczos_en:4" title="Permalink to this equation">¶</a></span>\[\boldsymbol{y}_{k}=(\hat{\mathcal H }-E_{n})\boldsymbol{y}_{k+1}.\]</div>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-en-4">
+<span class="eqno">(5.5)<a class="headerlink" href="#equation-algorithm-lanczos-en-4" title="Permalink to this equation">¶</a></span>\[\boldsymbol{y}_{k}=(\hat{\mathcal H }-E_{n})\boldsymbol{y}_{k+1}.\]</div>
 <p>By solving this equation using the
 conjugate gradient method (CG method),
 we obtain the eigenvector.
@@ -161,49 +149,49 @@ additional vectors.</p>
 <h2>5.1.3. Details of implementation<a class="headerlink" href="#details-of-implementation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="initial-vector">
 <h3><strong>Initial vector</strong><a class="headerlink" href="#initial-vector" title="Permalink to this headline">¶</a></h3>
-<p>For the Lanczos method, an initial vector is specified with <code class="docutils literal"><span class="pre">initial_iv</span></code><span class="math">\((\equiv r_s)\)</span> defined in an input file for Standard mode or a ModPara file for Expert mode. The type of initial vector can be selected as a real number or complex number by using <code class="docutils literal"><span class="pre">InitialVecType</span></code> in a ModPara file.</p>
+<p>For the Lanczos method, an initial vector is specified with <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code><span class="math notranslate nohighlight">\((\equiv r_s)\)</span> defined in an input file for Standard mode or a ModPara file for Expert mode. The type of initial vector can be selected as a real number or complex number by using <code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code> in a ModPara file.</p>
 <blockquote>
 <div><ul>
-<li><p class="first">For canonical ensemble and <code class="docutils literal"><span class="pre">initial_iv</span></code><span class="math">\(\geq 0\)</span>
+<li><p class="first">For canonical ensemble and <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code><span class="math notranslate nohighlight">\(\geq 0\)</span>
 A component of a target of the Hilbert space is given by</p>
-<div class="math" id="equation-algorithm/Lanczos_en:5">
-<span class="eqno">(6)<a class="headerlink" href="#equation-algorithm/Lanczos_en:5" title="Permalink to this equation">¶</a></span>\[(N_{\rm dim}/2 + r_s ) \% N_{\rm dim},\]</div>
-<p>where <span class="math">\(N_{\rm dim}\)</span> is the total number of the Hilbert spaces and <span class="math">\(N_{\rm dim}/2\)</span> is added to avoid selecting a special Hilbert space for a default value <code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(=1\)</span>.
-When the type of initial vector is selected as a real number, the coefficient value is given by <span class="math">\(1\)</span>, while when it is selected as a complex number, the value is given by <span class="math">\((1+i)/\sqrt{2}\)</span>.</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-en-5">
+<span class="eqno">(5.6)<a class="headerlink" href="#equation-algorithm-lanczos-en-5" title="Permalink to this equation">¶</a></span>\[(N_{\rm dim}/2 + r_s ) \% N_{\rm dim},\]</div>
+<p>where <span class="math notranslate nohighlight">\(N_{\rm dim}\)</span> is the total number of the Hilbert spaces and <span class="math notranslate nohighlight">\(N_{\rm dim}/2\)</span> is added to avoid selecting a special Hilbert space for a default value <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(=1\)</span>.
+When the type of initial vector is selected as a real number, the coefficient value is given by <span class="math notranslate nohighlight">\(1\)</span>, while when it is selected as a complex number, the value is given by <span class="math notranslate nohighlight">\((1+i)/\sqrt{2}\)</span>.</p>
 </li>
-<li><p class="first">For a grand canonical ensemble or <code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(&lt;0\)</span>
+<li><p class="first">For a grand canonical ensemble or <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(&lt;0\)</span>
 The initial vector is given by using a random generator, i.e., the coefficients of all the components for the initial vector are given by random numbers. The seed is calculated as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:6">
-<span class="eqno">(7)<a class="headerlink" href="#equation-algorithm/Lanczos_en:6" title="Permalink to this equation">¶</a></span>\[123432+|r_s|,\]</div>
-<p>where <span class="math">\(r_s\)</span> is the number given by an input file and <span class="math">\(n_{\rm run}\)</span> is the number of runs. The maximum value of <span class="math">\(n_{\rm run}\)</span> is defined by <code class="docutils literal"><span class="pre">NumAve</span></code> in an input file for Standard mode or a ModPara file for Expert mode. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT) <a class="footnote-reference" href="#id11" id="id6">[5]</a> .</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-en-6">
+<span class="eqno">(5.7)<a class="headerlink" href="#equation-algorithm-lanczos-en-6" title="Permalink to this equation">¶</a></span>\[123432+|r_s|,\]</div>
+<p>where <span class="math notranslate nohighlight">\(r_s\)</span> is the number given by an input file and <span class="math notranslate nohighlight">\(n_{\rm run}\)</span> is the number of runs. The maximum value of <span class="math notranslate nohighlight">\(n_{\rm run}\)</span> is defined by <code class="docutils literal notranslate"><span class="pre">NumAve</span></code> in an input file for Standard mode or a ModPara file for Expert mode. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT) <a class="footnote-reference" href="#id11" id="id6">[5]</a> .</p>
 </li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="convergence-condition">
 <h3><strong>Convergence condition</strong><a class="headerlink" href="#convergence-condition" title="Permalink to this headline">¶</a></h3>
-<p>In <span class="math">\({\mathcal H}\Phi\)</span>,
-we use <code class="docutils literal"><span class="pre">dsyev</span></code> (routine of LAPACK)
-for diagonalization of <span class="math">\(T_{n}\)</span>.
-We use the energy of the first excited state of <span class="math">\(T_{n}\)</span>
+<p>In <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>,
+we use <code class="docutils literal notranslate"><span class="pre">dsyev</span></code> (routine of LAPACK)
+for diagonalization of <span class="math notranslate nohighlight">\(T_{n}\)</span>.
+We use the energy of the first excited state of <span class="math notranslate nohighlight">\(T_{n}\)</span>
 as the criterion of convergence.
 In the standard setting,
 after five Lanczos steps,
-we diagonalize <span class="math">\(T_{n}\)</span> every two Lanczos steps.
+we diagonalize <span class="math notranslate nohighlight">\(T_{n}\)</span> every two Lanczos steps.
 If the energy of the first excited states coincides with
 the previous energy within the specified accuracy,
 the Lanczos iteration finishes.
 The accuracy of the convergence can be specified by
-<code class="docutils literal"><span class="pre">CDataFileHead</span></code>(ModPara file in the expert mode).</p>
+<code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>(ModPara file in the expert mode).</p>
 <p>After obtaining the eigenvalues,
 we again perform the Lanczos iteration
 to obtain the eigenvector.
-From the eigenvectors <span class="math">\(|n\rangle\)</span>,
+From the eigenvectors <span class="math notranslate nohighlight">\(|n\rangle\)</span>,
 we calculate
-energy <span class="math">\(E_{n}=\langle n|\hat{\mathcal H }|n\rangle\)</span> and
-variance <span class="math">\(\Delta=\langle n|\hat{\mathcal H }^{2}|n\rangle -(\langle n|\hat{\mathcal H }|n\rangle)^2\)</span>.
-If <span class="math">\(E_{n}\)</span> coincides with the eigenvalues obtained by the Lanczos iteration and
-<span class="math">\(\Delta\)</span> is smaller than the specified value,
+energy <span class="math notranslate nohighlight">\(E_{n}=\langle n|\hat{\mathcal H }|n\rangle\)</span> and
+variance <span class="math notranslate nohighlight">\(\Delta=\langle n|\hat{\mathcal H }^{2}|n\rangle -(\langle n|\hat{\mathcal H }|n\rangle)^2\)</span>.
+If <span class="math notranslate nohighlight">\(E_{n}\)</span> coincides with the eigenvalues obtained by the Lanczos iteration and
+<span class="math notranslate nohighlight">\(\Delta\)</span> is smaller than the specified value,
 we finish diagonalization.</p>
 <p>If the accuracy of the Lanczos method is not sufficient,
 we perform the CG method to obtain the eigenvector.
@@ -225,13 +213,13 @@ This frequently accelerates the convergence.</p>
 <table class="docutils footnote" frame="void" id="id9" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>In <span class="math">\({\mathcal H}\Phi\)</span>, to reduce the numerical cost, we use some additional vectors; a vector for accumulating the real-space diagonal elements of the Hamiltonian and a vector for specifying the given <span class="math">\(S_{z}\)</span> space and given particle space. The dimension of these vectors is that of the Hilbert space.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>In <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, to reduce the numerical cost, we use some additional vectors; a vector for accumulating the real-space diagonal elements of the Hamiltonian and a vector for specifying the given <span class="math notranslate nohighlight">\(S_{z}\)</span> space and given particle space. The dimension of these vectors is that of the Hilbert space.</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id10" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Upper bound of the dimensions of <span class="math">\(\tilde{\boldsymbol{e}_{i}}\)</span> is # of Lanczos iterations.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Upper bound of the dimensions of <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{e}_{i}}\)</span> is # of Lanczos iterations.</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id11" rules="none">
@@ -266,8 +254,8 @@ This frequently accelerates the convergence.</p>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="al-index.html">5. Algorithm</a><ul class="current">
@@ -302,12 +290,14 @@ This frequently accelerates the convergence.</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -315,10 +305,10 @@ This frequently accelerates the convergence.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, The University of Tokyo.
+      &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

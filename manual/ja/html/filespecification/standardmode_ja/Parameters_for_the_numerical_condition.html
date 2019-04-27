@@ -156,6 +156,23 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
 その後の計算(動的グリーン関数など)を行う。</p>
 </li>
 </ul>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OutputIO</span></code></p>
+<p><strong>形式 :</strong> 文字列 (<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;In&quot;</span></code>のいずれか。
+デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>)</p>
+<p><strong>説明 :</strong> (FullDiagのみ有効) ハミルトニアンの入出力を指定します。
+<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>では 入出力なし。
+<code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>では出力あり。
+<code class="docutils literal notranslate"><span class="pre">&quot;In&quot;</span></code>では入力あり。</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>
+<p><strong>形式 :</strong> 文字列 (<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>のいずれか。
+デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>)</p>
+<p><strong>説明 :</strong> (動的グリーン関数を計算するモードの場合のみ有効) 励起ベクトルの出力の指定を行います。
+<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>では 出力なし。
+<code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>では出力あり。</p>
+</li>
+</ul>
 </div>
 
 
@@ -235,7 +252,7 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, The University of Tokyo.
+      &copy;2019, The University of Tokyo.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>

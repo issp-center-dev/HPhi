@@ -4,27 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>4.3.13. Lanczos_Step.dat &#8212; HΦ Documentation  documentation</title>
-    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.3.14. Time_TPQ_Step.dat" href="Time_TPQ_Step_en.html" />
@@ -35,8 +24,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -50,9 +38,9 @@
 <div class="line">(For the Lanczos method) This file is outputted to show the process
 information for calculating the eigenvector by Lanczos method. An
 example of the file format for the Lanczos method is shown as follows.</div>
-<div class="line">For <code class="docutils literal"><span class="pre">method=&quot;Lanczos&quot;</span></code></div>
+<div class="line">For <code class="docutils literal notranslate"><span class="pre">method=&quot;Lanczos&quot;</span></code></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>LanczosStep  E[1] E[2] E[3] E[4] Target:E[3] E_Max/Nsite
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>LanczosStep  E[1] E[2] E[3] E[4] Target:E[3] E_Max/Nsite
 stp = 2 1.2149586211 14.6560471044 xxxxxxxxxx xxxxxxxxx 0.0000000000 xxxxxxxxx
 stp=4 -5.6626980051 3.1523174817 12.4860778911 21.2322666770 12.4860778911 2.6540333346
 stp=6 -8.5113374325 -2.3219709559 4.3459108959 11.5079386600 4.3459108959 3.0307814358
@@ -65,9 +53,9 @@ stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.
 </pre></div>
 </div>
 <div class="line-block">
-<div class="line">For <code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code></div>
+<div class="line">For <code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>  Step   Residual-2-norm     Threshold      Energy
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Step   Residual-2-norm     Threshold      Energy
       1     6.79819e+00     8.19743e-07    7.86586e+00     8.19743e+00     8.02804e+00
       2     7.47402e+00     3.69905e-07    3.35827e+00     3.63546e+00     3.69905e+00
       3     5.30943e+00     2.44472e-07   -2.44472e+00    -2.23296e+00    -1.95487e+00
@@ -96,7 +84,7 @@ stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.
 [double04] [double-a]
 [double-b]</p>
 </li>
-<li><p class="first">For <code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code></p>
+<li><p class="first">For <code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code></p>
 <p>[int01] [double-c]
 [double-d] [double01]
 [double02] …</p>
@@ -115,9 +103,9 @@ method.</p>
 [double03], [double04] …</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> Eigenvalues computed with the Lanczos or LOBCG
-method (ascending order). Four and <code class="docutils literal"><span class="pre">exct</span></code> eigenvalues are printed
+method (ascending order). Four and <code class="docutils literal notranslate"><span class="pre">exct</span></code> eigenvalues are printed
 for the Lanczos and LOBCG method, respectively (in the above case,
-<code class="docutils literal"><span class="pre">exct=3</span></code>). While the degenerate eigenstates are printed as a single
+<code class="docutils literal notranslate"><span class="pre">exct=3</span></code>). While the degenerate eigenstates are printed as a single
 state in the Lanczos method, they are printed separately in LOBCG
 method. In the above case, we can find there is a degeneracy in the
 first excited state.</p>
@@ -125,15 +113,15 @@ first excited state.</p>
 <li><p class="first">[double-a]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> (Only for the Lanczos method) The eigenvalue used
-for the convergence check. It was specified by <code class="docutils literal"><span class="pre">LanczosTarget</span></code> (in
-the above case, <code class="docutils literal"><span class="pre">LanczosTarget=3</span></code>).</p>
+for the convergence check. It was specified by <code class="docutils literal notranslate"><span class="pre">LanczosTarget</span></code> (in
+the above case, <code class="docutils literal notranslate"><span class="pre">LanczosTarget=3</span></code>).</p>
 </li>
 <li><p class="first">[double-b]</p>
 <blockquote>
 <div><p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> (Only for the Lanczos method) The maximum
 eigenvalue divided by the number of sites. It is the lower limit of
-<code class="docutils literal"><span class="pre">LargeValue</span></code> in TPQ method.</p>
+<code class="docutils literal notranslate"><span class="pre">LargeValue</span></code> in TPQ method.</p>
 </div></blockquote>
 </li>
 <li><p class="first">[double-c]</p>
@@ -144,7 +132,7 @@ of each residual vector. It is used for the convergence check.</p>
 <li><p class="first">[double-d]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> (Only for LOBCG method) The convergence threshold.
-This is obtained by the value specified with <code class="docutils literal"><span class="pre">LanczosEps</span></code> times the
+This is obtained by the value specified with <code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code> times the
 absolute value of the energy of the ground state.</p>
 </li>
 </ul>
@@ -173,8 +161,8 @@ absolute value of the energy of the ground state.</p>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -211,6 +199,7 @@ absolute value of the energy of the ground state.</p>
 <li class="toctree-l3"><a class="reference internal" href="DynamicalGreen_en.html">4.3.29. DynamicalGreen.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recalcvec_en.html">4.3.30. recalcvec.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="TMcomponents_en.html">4.3.31. TMcomponents.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="excitedvec_en.html">4.3.32. eigenvec.dat</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>
@@ -237,12 +226,14 @@ absolute value of the energy of the ground state.</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -250,10 +241,10 @@ absolute value of the energy of the ground state.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, The University of Tokyo.
+      &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

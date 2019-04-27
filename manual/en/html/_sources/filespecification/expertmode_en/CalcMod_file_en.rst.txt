@@ -166,6 +166,14 @@ The parameters correlated with the keywords are as follows.
    | 0: not input Hamiltonian.
    | 1: input Hamiltonian.
 
+*  ``OutputExcitedVec``
+
+   **Type :** Int (default value: 0)
+
+   | **Description :** Select the mode of outputting an excited vector:
+   | 0: Not output an eigenvector
+   | 1: Output an eigenvector.
+   
 *  ``Scalapack``
 
    **Type :** Int (default value: 0)

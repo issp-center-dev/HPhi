@@ -4,27 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>4.2.8. CoulombInter file &#8212; HΦ Documentation  documentation</title>
-    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.2.9. Hund file" href="Hund_file_en.html" />
@@ -35,8 +24,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -46,11 +34,11 @@
             
   <div class="section" id="coulombinter-file">
 <h1>4.2.8. CoulombInter file<a class="headerlink" href="#coulombinter-file" title="Permalink to this headline">¶</a></h1>
-<p>This file determines the values of off-site interactions <span class="math">\(V_{ij}\)</span>
-(for <span class="math">\(S=1/2\)</span> system),</p>
-<div class="math" id="equation-filespecification/expertmode_en/CoulombInter_file_en:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-filespecification/expertmode_en/CoulombInter_file_en:0" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}H+=\sum_{i,j}V_{ij} n_ {i}n_{j}.\\An example of the file format is as follows.\end{aligned}\end{align} \]</div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>======================
+<p>This file determines the values of off-site interactions <span class="math notranslate nohighlight">\(V_{ij}\)</span>
+(for <span class="math notranslate nohighlight">\(S=1/2\)</span> system),</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-coulombinter-file-en-0">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-filespecification-expertmode-en-coulombinter-file-en-0" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}H+=\sum_{i,j}V_{ij} n_ {i}n_{j}.\\An example of the file format is as follows.\end{aligned}\end{align} \]</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>======================
 NCoulombInter 6
 ======================
 ========CoulombInter ======
@@ -75,24 +63,24 @@ NCoulombInter 6
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first"><span class="math">\([\)</span>string01<span class="math">\(]\)</span></p>
+<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>string01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>Type :</strong> String (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> A keyword for the total number of off-site
 interactions. You can freely give a name to the keyword.</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>int01<span class="math">\(]\)</span></p>
+<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> An integer giving the total number of off-site
 interactions.</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>int02<span class="math">\(]\)</span>, <span class="math">\([\)</span>int03<span class="math">\(]\)</span></p>
+<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>, <span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> An integer giving a site index
-(<span class="math">\(0&lt;= [\)</span>int02<span class="math">\(], [\)</span>int03<span class="math">\(]&lt;\verb|Nsite|\)</span>).</p>
+(<span class="math notranslate nohighlight">\(0&lt;= [\)</span>int02<span class="math notranslate nohighlight">\(], [\)</span>int03<span class="math notranslate nohighlight">\(]&lt;\verb|Nsite|\)</span>).</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>double01<span class="math">\(]\)</span></p>
+<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>Type :</strong> Double (a blank parameter is not allowed)</p>
-<p><strong>Description :</strong> A value for <span class="math">\(V_{ij}\)</span>.</p>
+<p><strong>Description :</strong> A value for <span class="math notranslate nohighlight">\(V_{ij}\)</span>.</p>
 </li>
 </ul>
 </div>
@@ -102,10 +90,10 @@ interactions.</p>
 <li>Headers cannot be omitted.</li>
 <li>A program is terminated when the components of off-site interactions
 are double counted.</li>
-<li>A program is terminated when <span class="math">\([\)</span>int01<span class="math">\(]\)</span> is different
+<li>A program is terminated when <span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span> is different
 from the total number of off-site interactions defined in this file.</li>
-<li>A program is terminated when either <span class="math">\([\)</span>int02<span class="math">\(]\)</span> or
-<span class="math">\([\)</span>int03<span class="math">\(]\)</span> is outside the range of the defined
+<li>A program is terminated when either <span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span> or
+<span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span> is outside the range of the defined
 values.</li>
 </ul>
 </div>
@@ -133,8 +121,8 @@ values.</li>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -186,12 +174,14 @@ values.</li>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -199,10 +189,10 @@ values.</li>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, The University of Tokyo.
+      &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
