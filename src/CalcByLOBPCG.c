@@ -18,7 +18,6 @@
 localy optimal block (preconditioned) conjugate gradient method.
 */
 #include "Common.h"
-#include "mfmemory.h"
 #include "xsetmem.h"
 #include "mltply.h"
 #include "FileIO.h"
@@ -29,6 +28,7 @@ localy optimal block (preconditioned) conjugate gradient method.
 #include "expec_energy_flct.h"
 #include "phys.h"
 #include <math.h>
+#include "./common/setmemory.h"
 
 void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
 void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *alpha, double complex *a, int *lda, double complex *b, int *ldb, double complex *beta, double complex *c, int *ldc);
@@ -345,19 +345,19 @@ int LOBPCG_Main(
 
   nsub = 3 * X->Def.k_exct;
 
-  d_malloc1(eig, X->Def.k_exct);
-  d_malloc1(eigsub, nsub);
-  c_malloc1(hsub, nsub*nsub);
-  c_malloc1(ovlp, nsub*nsub);
-  c_malloc2(work, nthreads, nsub);
+  eig = d_1d_allocate(X->Def.k_exct);
+  eigsub = d_1d_allocate(nsub);
+  hsub = cd_1d_allocate(nsub*nsub);
+  ovlp = cd_1d_allocate(nsub*nsub);
+  work = cd_2d_allocate(nthreads, nsub);
 
   i_max = X->Check.idim_max;
 
   free(v0);
   free(v1);
   free(vg);
-  c_malloc3(wxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
-  c_malloc3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
+  wxp = cd_3d_allocate(3, X->Def.k_exct, X->Check.idim_max + 1);
+  hwxp = cd_3d_allocate(3, X->Def.k_exct, X->Check.idim_max + 1);
   /**@brief
   <ul>
   <li>Set initial guess of wavefunction: 
@@ -590,26 +590,27 @@ int LOBPCG_Main(
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
-  d_free1(eig, X->Def.CDataFileHead);
-  d_free1(eigsub, nsub);
-  c_free1(hsub, nsub*nsub);
-  c_free1(ovlp, nsub*nsub);
-  c_free2(work, nthreads, nsub);
-
-  c_free3(hwxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
+  free_d_1d_allocate(eig);
+  free_d_1d_allocate(eigsub);
+  free_cd_1d_allocate(hsub);
+  free_cd_1d_allocate(ovlp);
+  free_cd_2d_allocate(work);
+  free_cd_3d_allocate(hwxp);
   /**@brief
   <li>Output resulting vectors for restart</li>
   */
   if (X->Def.iReStart == RESTART_OUT || X->Def.iReStart == RESTART_INOUT){
       Output_restart(X, wxp[1]);
-      sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
-      return 1;
+      if(iconv != 0) {
+          sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
+          return 1;
+      }
   }
   /**@brief
   <li>Just Move wxp[1] into ::L_vec. The latter must be start from 0-index (the same as FullDiag)</li>
   </ul>
   */
-  c_malloc2(L_vec, X->Def.k_exct, X->Check.idim_max + 1);
+  L_vec = cd_2d_allocate(X->Def.k_exct, X->Check.idim_max + 1);
 #pragma omp parallel default(none) shared(i_max,wxp,L_vec,X) private(idim,ie)
   {
     for (ie = 0; ie < X->Def.k_exct; ie++) {
@@ -618,12 +619,11 @@ int LOBPCG_Main(
         L_vec[ie][idim] = wxp[1][ie][idim + 1];
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
   }/*X->Def.k_exct, X->Check.idim_max + 1);*/
-  c_free3(wxp, 3, X->Def.k_exct, X->Check.idim_max + 1);
+  free_cd_3d_allocate(wxp);
 
-  c_malloc1(v0, X->Check.idim_max + 1);
-  c_malloc1(v1, X->Check.idim_max + 1);
-  c_malloc1(vg, X->Check.idim_max + 1);
-
+  v0 = cd_1d_allocate(X->Check.idim_max + 1);
+  v1 = cd_1d_allocate(X->Check.idim_max + 1);
+  vg = cd_1d_allocate(X->Check.idim_max + 1);
   if (iconv != 0) {
     sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
     return -1;
@@ -680,9 +680,11 @@ int CalcByLOBPCG(
 
     int iret = LOBPCG_Main(&(X->Bind));
     if (iret != 0) {
-      fprintf(stdoutMPI, "  LOBPCG is not converged in this process.\n");
       if(iret ==1) return (TRUE);
-      else return(FALSE);
+      else{
+          fprintf(stdoutMPI, "  LOBPCG is not converged in this process.\n");
+          return(FALSE);
+      }
     }
   }/*if (X->Bind.Def.iInputEigenVec == FALSE)*/
   else {// X->Bind.Def.iInputEigenVec=true :input v1:
@@ -691,7 +693,7 @@ int CalcByLOBPCG(
     and read from files.
     */
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
-    c_malloc2(L_vec, X->Bind.Def.k_exct, X->Bind.Check.idim_max + 1);
+    L_vec = cd_2d_allocate(X->Bind.Def.k_exct, X->Bind.Check.idim_max + 1);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
       TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
       sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, ie, myrank);

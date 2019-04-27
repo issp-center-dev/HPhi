@@ -128,10 +128,10 @@ int diagonalcalc
       tmp_V  = -X->Def.EDParaChemi[i];
       fprintf(fp,"i=%ld spin=%ld isite1=%ld tmp_V=%lf \n",i,spin,isite1,tmp_V);
       if(SetDiagonalChemi(isite1, tmp_V,spin,  X) !=0){
-	return -1;
+        return -1;
       }
     }
-    fclose(fp);	
+    fclose(fp);
   }
    
   if(X->Def.NCoulombInter>0){
@@ -144,7 +144,7 @@ int diagonalcalc
       tmp_V  = X->Def.ParaCoulombInter[i];
       fprintf(fp,"i=%ld isite1=%ld isite2=%ld tmp_V=%lf \n",i,isite1,isite2,tmp_V);
       if(SetDiagonalCoulombInter(isite1, isite2, tmp_V,  X) !=0){
-	return -1;
+        return -1;
       }
     }
     fclose(fp);   
@@ -158,7 +158,7 @@ int diagonalcalc
       isite2 = X->Def.HundCoupling[i][1]+1;
       tmp_V  = -X->Def.ParaHundCoupling[i];
       if(SetDiagonalHund(isite1, isite2, tmp_V,  X) !=0){
-	return -1;
+        return -1;
       }
       fprintf(fp,"i=%ld isite1=%ld isite2=%ld tmp_V=%lf \n",i,isite1,isite2,tmp_V);    
     }
@@ -319,10 +319,10 @@ int SetDiagonalCoulombIntra
       is=is1_up+is1_down;
 #pragma omp parallel for default(none) shared(list_Diagonal, list_1) firstprivate(i_max, is, dtmp_V) private(ibit) 
       for(j = 1;j <= i_max;j++){
-	ibit=(j-1)&is;
-	if(ibit==is){
-	  list_Diagonal[j]+=dtmp_V;
-	}
+        ibit=(j-1)&is;
+        if(ibit==is){
+          list_Diagonal[j]+=dtmp_V;
+        }
       }
       
       break;
@@ -334,10 +334,10 @@ int SetDiagonalCoulombIntra
       is=is1_up+is1_down;
 #pragma omp parallel for default(none) shared(list_Diagonal, list_1) firstprivate(i_max, is, dtmp_V) private(ibit) 
       for(j = 1;j <= i_max;j++){
-	ibit=list_1[j]&is;
-	if(ibit==is){
-	  list_Diagonal[j]+=dtmp_V;
-	}
+        ibit=list_1[j]&is;
+        if(ibit==is){
+          list_Diagonal[j]+=dtmp_V;
+        }
       }
       break;
     
@@ -456,7 +456,7 @@ firstprivate(i_max, dtmp_V) private(j)
       ibit1 = (j-1)&is1;
       num1  = ibit1/is1;
       //fprintf(stdoutMPI, "DEBUG: spin=%ld  is1=%ld: isite1=%ld j=%ld num1=%ld \n",spin,is1,isite1,j,num1);
-	      
+              
       list_Diagonal[j]+=num1*dtmp_V;
     }
     break;
@@ -473,7 +473,7 @@ firstprivate(i_max, dtmp_V) private(j)
     for(j = 1;j <= i_max;j++){
 
       ibit1 = list_1[j]&is1;
-      num1  = ibit1/is1;	      
+      num1  = ibit1/is1;              
       list_Diagonal[j]+=num1*dtmp_V;
     }
     break;
@@ -483,8 +483,8 @@ firstprivate(i_max, dtmp_V) private(j)
       is1_up   = X->Def.Tpow[isite1-1];
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, spin) private(num1, ibit1_up)
       for(j = 1;j <= i_max;j++){
-	ibit1_up=(((j-1)& is1_up)/is1_up)^(1-spin);
-	list_Diagonal[j] += dtmp_V * ibit1_up;
+        ibit1_up=(((j-1)& is1_up)/is1_up)^(1-spin);
+        list_Diagonal[j] += dtmp_V * ibit1_up;
       }
     }
     else{
@@ -492,7 +492,7 @@ firstprivate(i_max, dtmp_V) private(j)
      for(j = 1;j <= i_max; j++){
        num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
        if(num1 != 0){
-	 list_Diagonal[j] += dtmp_V;
+         list_Diagonal[j] += dtmp_V;
        }
      }
     }
@@ -710,19 +710,19 @@ private(num1, ibit1_up, ibit1_down, j)
       is2_down = X->Def.Tpow[2*isite2-1];
 #pragma omp parallel for default(none) shared( list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is1_down, is2_up, is2_down) private(num1, ibit1_up, ibit1_down, num2, ibit2_up, ibit2_down)
       for(j = 1;j <= i_max;j++){
-	num1=0;
-	num2=0;              
-	ibit1_up=(j-1)&is1_up;
-	num1+=ibit1_up/is1_up;
-	ibit1_down=(j-1)&is1_down;
-	num1+=ibit1_down/is1_down;
-	
-	ibit2_up=(j-1)&is2_up;
-	num2+=ibit2_up/is2_up;
-	ibit2_down=(j-1)&is2_down;
-	num2+=ibit2_down/is2_down;
-	
-	list_Diagonal[j]+=num1*num2*dtmp_V;
+        num1=0;
+        num2=0;              
+        ibit1_up=(j-1)&is1_up;
+        num1+=ibit1_up/is1_up;
+        ibit1_down=(j-1)&is1_down;
+        num1+=ibit1_down/is1_down;
+        
+        ibit2_up=(j-1)&is2_up;
+        num2+=ibit2_up/is2_up;
+        ibit2_down=(j-1)&is2_down;
+        num2+=ibit2_down/is2_down;
+        
+        list_Diagonal[j]+=num1*num2*dtmp_V;
       } 
       break;
     case KondoGC:
@@ -735,19 +735,19 @@ private(num1, ibit1_up, ibit1_down, j)
       
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is1_down, is2_up, is2_down) private(num1, ibit1_up, ibit1_down, num2, ibit2_up, ibit2_down)
       for(j = 1;j <= i_max;j++){
-	num1=0;
-	num2=0;              
-	ibit1_up=list_1[j]&is1_up;
-	num1+=ibit1_up/is1_up;
-	ibit1_down=list_1[j]&is1_down;
-	num1+=ibit1_down/is1_down;
-	
-	ibit2_up=list_1[j]&is2_up;
-	num2+=ibit2_up/is2_up;
-	ibit2_down=list_1[j]&is2_down;
-	num2+=ibit2_down/is2_down;
-	
-	list_Diagonal[j]+=num1*num2*dtmp_V;
+        num1=0;
+        num2=0;              
+        ibit1_up=list_1[j]&is1_up;
+        num1+=ibit1_up/is1_up;
+        ibit1_down=list_1[j]&is1_down;
+        num1+=ibit1_down/is1_down;
+        
+        ibit2_up=list_1[j]&is2_up;
+        num2+=ibit2_up/is2_up;
+        ibit2_down=list_1[j]&is2_down;
+        num2+=ibit2_down/is2_down;
+        
+        list_Diagonal[j]+=num1*num2*dtmp_V;
       } 
       break;
       
@@ -755,7 +755,7 @@ private(num1, ibit1_up, ibit1_down, j)
     case SpinGC:
 #pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V)
       for(j = 1;j <= i_max; j++){
-	list_Diagonal[j] += dtmp_V;
+        list_Diagonal[j] += dtmp_V;
       } 
       break;
     default:
@@ -1010,22 +1010,22 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
       
 #pragma omp parallel for default(none) shared( list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is1_down, is2_up, is2_down) private(num1_up, num1_down, num2_up, num2_down, ibit1_up, ibit1_down, ibit2_up, ibit2_down)
       for(j = 1; j <= i_max;j++){
-	num1_up=0;
-	num1_down=0;
-	num2_up=0;
-	num2_down=0;
+        num1_up=0;
+        num1_down=0;
+        num2_up=0;
+        num2_down=0;
         
-	ibit1_up=(j-1)&is1_up;
-	num1_up=ibit1_up/is1_up;
-	ibit1_down=(j-1)&is1_down;
-	num1_down=ibit1_down/is1_down;
+        ibit1_up=(j-1)&is1_up;
+        num1_up=ibit1_up/is1_up;
+        ibit1_down=(j-1)&is1_down;
+        num1_down=ibit1_down/is1_down;
         
-	ibit2_up=(j-1)&is2_up;
-	num2_up=ibit2_up/is2_up;
-	ibit2_down=(j-1)&is2_down;
-	num2_down=ibit2_down/is2_down;
+        ibit2_up=(j-1)&is2_up;
+        num2_up=ibit2_up/is2_up;
+        ibit2_down=(j-1)&is2_down;
+        num2_down=ibit2_down/is2_down;
         
-	list_Diagonal[j]+=dtmp_V*(num1_up*num2_up+num1_down*num2_down);
+        list_Diagonal[j]+=dtmp_V*(num1_up*num2_up+num1_down*num2_down);
       }
       break;
     case KondoGC:
@@ -1038,22 +1038,22 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
       
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is1_down, is2_up, is2_down) private(num1_up, num1_down, num2_up, num2_down, ibit1_up, ibit1_down, ibit2_up, ibit2_down)
       for(j = 1; j <= i_max;j++){
-	num1_up=0;
-	num1_down=0;
-	num2_up=0;
-	num2_down=0;
+        num1_up=0;
+        num1_down=0;
+        num2_up=0;
+        num2_down=0;
         
-	ibit1_up=list_1[j]&is1_up;
-	num1_up=ibit1_up/is1_up;
-	ibit1_down=list_1[j]&is1_down;
-	num1_down=ibit1_down/is1_down;
+        ibit1_up=list_1[j]&is1_up;
+        num1_up=ibit1_up/is1_up;
+        ibit1_down=list_1[j]&is1_down;
+        num1_down=ibit1_down/is1_down;
         
-	ibit2_up=list_1[j]&is2_up;
-	num2_up=ibit2_up/is2_up;
-	ibit2_down=list_1[j]&is2_down;
-	num2_down=ibit2_down/is2_down;
+        ibit2_up=list_1[j]&is2_up;
+        num2_up=ibit2_up/is2_up;
+        ibit2_down=list_1[j]&is2_down;
+        num2_down=ibit2_down/is2_down;
         
-	list_Diagonal[j]+=dtmp_V*(num1_up*num2_up+num1_down*num2_down);
+        list_Diagonal[j]+=dtmp_V*(num1_up*num2_up+num1_down*num2_down);
       }
       break;
       
@@ -1065,7 +1065,7 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
     for(j = 1;j <= i_max;j++){
       ibit = (j-1) & is_up;
       if(ibit == 0 || ibit == is_up){
-	list_Diagonal[j]+= dtmp_V;
+        list_Diagonal[j]+= dtmp_V;
       }
     }
     break;
@@ -1078,7 +1078,7 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
       for(j = 1;j <= i_max;j++){
       ibit = list_1[j] & is_up;
       if(ibit == 0 || ibit == is_up){
-	list_Diagonal[j]+= dtmp_V;
+        list_Diagonal[j]+= dtmp_V;
       }
       }
       break;
@@ -1370,8 +1370,8 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
      for(j = 1;j <= i_max; j++){
        num1=BitCheckGeneral (list_1[j], isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
        if(num1 != 0){
-	 num1=BitCheckGeneral (list_1[j], isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
-	 list_Diagonal[j] += dtmp_V*num1;
+         num1=BitCheckGeneral (list_1[j], isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+         list_Diagonal[j] += dtmp_V*num1;
        }
      }
 
@@ -1394,8 +1394,8 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
      for(j = 1;j <= i_max; j++){
        num1=BitCheckGeneral (j-1, isite1, isigma1, X->Def.SiteToBit, X->Def.Tpow);
        if(num1 != 0){
-	 num1=BitCheckGeneral (j-1, isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
-	 list_Diagonal[j] += dtmp_V*num1;
+         num1=BitCheckGeneral (j-1, isite2, isigma2, X->Def.SiteToBit, X->Def.Tpow);
+         list_Diagonal[j] += dtmp_V*num1;
        }
      }
    }

@@ -15,8 +15,8 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 int HPhiTrans(
-	    struct BindStruct *X
-	    );
+    struct BindStruct *X
+    );
 
 int TransferWithPeierls(struct BindStruct *X, const double time);
 int TransferForQuench(struct BindStruct *X, const double time);

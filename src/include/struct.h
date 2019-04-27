@@ -105,17 +105,17 @@ struct DefineList {
   unsigned int EDNTransfer;/**<@brief Number of transfer integrals for calculation. */
   int **GeneralTransfer;/**<@brief Index of transfer integrals obtained by a def file. 
                         malloc in setmem_def().\n
-						            Data Format [DefineList::NTransfer][4]: 
+                        Data Format [DefineList::NTransfer][4]: 
                         0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
   int **EDGeneralTransfer;/**<@brief Index of transfer integrals for calculation. 
                           malloc in setmem_def().\n
-						              Data Format [DefineList::NTransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+                          Data Format [DefineList::NTransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
   double complex *ParaGeneralTransfer;/**<@brief Value of general transfer integrals by a def file. 
                                       malloc in setmem_def().\n
-						                          Data Format [DefineList::NTransfer].*/
+                                      Data Format [DefineList::NTransfer].*/
   double complex *EDParaGeneralTransfer;/**<@brief Value of general transfer integrals  by a def file. 
                                         malloc in setmem_def().\n
-						                            Data Format [DefineList::NTransfer].*/
+                                        Data Format [DefineList::NTransfer].*/
     //[e] Transfer
 
   unsigned int NCoulombIntra;/**< Number of on-site Coulomb interaction*/
@@ -199,10 +199,11 @@ struct DefineList {
                  3:HubbardGC, 4:SpinGC, 5:KondoGC, 6:HubbardNConserved*/
   int iOutputMode;/**<@brief Switch for output mode. 0: OneBodyG and TwoBodyG. 
                   1: OneBodyG and TwoBodyG and correlations for charge and spin.*/
-  int iOutputEigenVec;/**<@brief ASwitch for outputing an eigenvector. 0: no output, 1:output.*/
+  int iOutputEigenVec;/**<@brief ASwitch for outputting an eigenvector. 0: no output, 1:output.*/
   int iInputEigenVec;/**<@brief Switch for reading an eigenvector. 0: no input, 1:input*/
-  int iOutputHam;/**<brief Switch for outputing a Hamiltonian. 0: no output, 1:output*/
+  int iOutputHam;/**<brief Switch for outputting a Hamiltonian. 0: no output, 1:output*/
   int iInputHam;/**<brief Switch for reading a Hamiltonian. 0: no input, 1:input*/
+  int iOutputExVec; /**<brief Switch for outputting an excited vector. 0: no output, 1:output*/
 
     //[s] For Spectrum
   double complex dcOmegaMax;/**<@brief Upper limit of the frequency for the spectrum.*/
@@ -257,13 +258,13 @@ struct DefineList {
     unsigned int *NTETransferDiagonal;        /**< Number of time-dependent transfer integrals for Time Evolution.\n
                Data Format [NTE]*/
     int ***TETransfer;      /**< Index of time-dependent transfer integrals for Time Evolution. \n
-						   Data Format [NTE][Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+               Data Format [NTE][Ntransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
     int ***TETransferDiagonal;      /**< Index of time-dependent transfer integrals for Time Evolution. \n
-						   Data Format [NTE][Ntransfer][2]: 0->site number i, 1-> spin index on i. */
+               Data Format [NTE][Ntransfer][2]: 0->site number i, 1-> spin index on i. */
     double complex **ParaTETransfer;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
-						   Data Format [NTE][Ntransfer]. */
+               Data Format [NTE][Ntransfer]. */
     double **ParaTETransferDiagonal;  /**< Value of time-dependent transfer integrals for Time Evolution. \n
-						   Data Format [NTE][Ntransfer]. */
+               Data Format [NTE][Ntransfer]. */
 
     //Two-body part
     unsigned int NTEInterAllMax;
@@ -275,20 +276,20 @@ struct DefineList {
     unsigned int *NTEInterAllDiagonal;        /**< Number of diagonal part of time-dependent InterAll for Time Evolution.\n
                Data Format [NTE]*/
     int ***TEInterAll;      /**< Index of time-dependent InterAll for Time Evolution. \n
-						   Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
-						   4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
+               Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
+               4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
     int ***TEInterAllOffDiagonal;      /**< Index of off-diagonal part of time-dependent InterAll for Time Evolution. \n
-						   Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
-						   4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
+               Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
+               4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
     int ***TEInterAllDiagonal;      /**< Index of diagonal part of time-dependent InterAll for Time Evolution. \n
-						   Data Format [NTE][NTEInterAll][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
+               Data Format [NTE][NTEInterAll][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
     double complex **ParaTEInterAll;  /**< Value of time-dependent InterAll for Time Evolution. \n
-						   Data Format [NTE][Ntransfer]. */
+               Data Format [NTE][Ntransfer]. */
     double complex **ParaTEInterAllOffDiagonal;  /**< Value of off-diagonal part of time-dependent InterAll for Time Evolution. \n
-						   Data Format [NTE][Ntransfer]. */
+               Data Format [NTE][Ntransfer]. */
 
     double **ParaTEInterAllDiagonal;  /**< Value of diagonal part of time-dependent InterAll for Time Evolution. \n
-						   Data Format [NTE][Ntransfer]. */
+               Data Format [NTE][Ntransfer]. */
     int **TEChemi;    /**< [NTE][Nsite] */
     unsigned int *NTEChemi;   /**< [NTE] */
     int **SpinTEChemi;  /**< [NTE][Nsite] */

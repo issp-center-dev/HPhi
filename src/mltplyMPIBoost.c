@@ -21,7 +21,7 @@
 #include "mpi.h"
 #endif
 #include "Common.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "wrapperMPI.h"
 
 void zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *ALPHA, double complex *matJL, int *LDA, double complex *arrayz, int *LDB, double complex *BETA, double complex *arrayx, int *LDC);
@@ -83,17 +83,13 @@ void child_general_int_spin_MPIBoost(
   }
 */
 
-  c_malloc2(vecJ, 3, 3); 
-  c_malloc2(matJ, 4, 4); 
-  c_malloc2(matJ2, 4, 4); 
-  c_malloc2(matB, 2, 2); 
-  c_malloc1(matJL, (64*64)); 
-  c_malloc1(matI, (64*64)); 
- 
-//  c_malloc1(arrayx, (64*((int)pow(2.0, 16))));
-//  c_malloc1(arrayz, (64*((int)pow(2.0, 16))));
-//  c_malloc1(arrayw, (64*((int)pow(2.0, 16))));
- 
+  vecJ = cd_2d_allocate( 3, 3);
+  matJ = cd_2d_allocate(4, 4);
+  matJ2 = cd_2d_allocate(4, 4);
+  matB = cd_2d_allocate(2,2);
+  matJL = cd_1d_allocate(64*64);
+  matI = cd_1d_allocate(64*64);
+
   //defmodelBoost(X->Boost.W0, X->Boost.R0, X->Boost.num_pivot, X->Boost.ishift_nspin, X->Boost.list_6spin_star, X->Boost.list_6spin_pair, 1, X->Boost.arrayJ, X->Boost.vecB);
   
   for(iloop=0; iloop < X->Boost.R0; iloop++){
@@ -252,53 +248,53 @@ void child_general_int_spin_MPIBoost(
       shared(matJL,matI,iomp,i_max,myrank,ishift1,ishift2,ishift3,ishift4,ishift5,pow4,pow5,pow41,pow51,tmp_v0,tmp_v1,tmp_v3)
       {
 
-	        c_malloc1(arrayx, (64*((int)pow(2.0,ishift4+ishift5-1))));
-	        c_malloc1(arrayz, (64*((int)pow(2.0,ishift4+ishift5-1))));
-	        c_malloc1(arrayw, (64*((int)pow(2.0,ishift4+ishift5-1))));
+        arrayx = cd_1d_allocate(64*((int)pow(2.0,ishift4+ishift5-1)));
+        arrayz = cd_1d_allocate(64*((int)pow(2.0,ishift4+ishift5-1)));
+        arrayw = cd_1d_allocate(64*((int)pow(2.0,ishift4+ishift5-1)));
 
 #pragma omp for
         for(ell6 = 0; ell6 < iomp; ell6++){
           Ipart1=pow51*2*ell6;
           for(ell5 = 0; ell5 < (int)pow(2.0, ishift5-1); ell5++){
-	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4-1); ell4++){
-	      for(m0 = 0; m0 < 16; m0++){	
-		arrayz[(0 + m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
-		arrayz[(16+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-		arrayz[(32+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-		arrayz[(48+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4          +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-		arrayx[(0 + m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
-		arrayx[(16+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
-		arrayx[(32+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
-		arrayx[(48+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
-	      } 
-	    }
+            for(ell4 = 0; ell4 < (int)pow(2.0, ishift4-1); ell4++){
+              for(m0 = 0; m0 < 16; m0++){        
+                arrayz[(0 + m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+                arrayz[(16+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+                arrayz[(32+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+                arrayz[(48+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4          +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)]=tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+                arrayx[(0 + m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+Ipart1)];
+                arrayx[(16+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+Ipart1)];
+                arrayx[(32+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+Ipart1)];
+                arrayx[(48+ m0 +64*(ell4+ell5*(int)pow(2.0,ishift4-1)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+Ipart1)];
+              } 
+            }
           }
-	  
-	  
+          
+          
           for(ell5 = 0; ell5 < (int)pow(2.0, ishift5-1); ell5++){
-	    for(ell4 = 0; ell4 < (int)pow(2.0, ishift4-1); ell4++){
-	      for(m0 = 0; m0 < 16; m0++){
-		arrayz[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
-		arrayz[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
-		arrayz[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
-		arrayz[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
-		tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
-		arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
-		arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
-		arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
-		arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
-	      }
-	    
-	    }
-	  } 
-	  
+            for(ell4 = 0; ell4 < (int)pow(2.0, ishift4-1); ell4++){
+              for(m0 = 0; m0 < 16; m0++){
+                arrayz[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+                arrayz[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+                arrayz[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+                arrayz[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+                tmp_v3[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)] = tmp_v1[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+                arrayx[(0 + m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4          +pow41*ell5+pow51+Ipart1)];
+                arrayx[(16+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4     +pow41*ell5+pow51+Ipart1)];
+                arrayx[(32+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow5     +pow41*ell5+pow51+Ipart1)];
+                arrayx[(48+ m0+64*(ell4+ell5*(int)pow(2.0,ishift4-1)+(int)pow(2.0,ishift4+ishift5-2)))] = tmp_v0[(1 + m0+16*ell4+pow4+pow5+pow41*ell5+pow51+Ipart1)];
+              }
+            
+            }
+          } 
+          
           TRANSA = 'N';
           TRANSB = 'N';
           M = 64;
@@ -309,9 +305,9 @@ void child_general_int_spin_MPIBoost(
           LDB = 64;
           BETA = 1.0;
           LDC = 64;
-	  
-	        zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
-	        //zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matI,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
+          
+                zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matJL,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
+                //zgemm_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,matI,&LDA,arrayz,&LDB,&BETA,arrayx,&LDC);
 /*          
           for(ell5=0;ell5<(64*N);ell5++){
             arrayw[ell5]=0.0;
@@ -328,7 +324,7 @@ void child_general_int_spin_MPIBoost(
           }
 */          
         
-	  	  
+
 
           for(ell5 = 0; ell5 < (int)pow(2.0,ishift5-1); ell5++){
           for(ell4 = 0; ell4 < (int)pow(2.0,ishift4-1); ell4++){
@@ -352,10 +348,9 @@ void child_general_int_spin_MPIBoost(
           }
 
         }/* omp parallel for */
-      c_free1(arrayz, (64*((int)pow(2.0,ishift4+ishift5-1))) );
-      c_free1(arrayx, (64*((int)pow(2.0,ishift4+ishift5-1))) );
-      c_free1(arrayw, (64*((int)pow(2.0,ishift4+ishift5-1))) );
-
+        free_cd_1d_allocate(arrayz);
+        free_cd_1d_allocate(arrayx);
+        free_cd_1d_allocate(arrayw);
       }/* omp parallel */
 
       if(pivot_flag==1){
@@ -422,13 +417,12 @@ void child_general_int_spin_MPIBoost(
 //  c_free1(arrayx, (int)pow(2.0, 16));
 //  c_free1(arrayw, (int)pow(2.0, 16));
 
-  c_free2(vecJ, 3, 3);
-  c_free2(matJ, 4, 4);
-  c_free2(matJ2, 4, 4);
-  c_free2(matB, 2, 2);
-  c_free1(matJL, (64*64));
-  c_free1(matI, (64*64));
- 
+  free_cd_2d_allocate(vecJ);
+  free_cd_2d_allocate(matJ);
+  free_cd_2d_allocate(matJ2);
+  free_cd_2d_allocate(matB);
+  free_cd_1d_allocate(matJL);
+  free_cd_1d_allocate(matI);
 #endif
   
 }/*void child_general_int_spin_MPIBoost*/

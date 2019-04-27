@@ -65,7 +65,7 @@ SS.dat
 
    **説明 :** ダブロン
    :math:`\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle`
-   (ただし:math:`N_s`\ はサイト数)。
+   (ただし :math:`N_s`\ はサイト数)。
 
 -  :math:`[`\ double05\ :math:`]`
 

@@ -15,7 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <bitcalc.h>
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "FileIO.h"
 #include "sz.h"
 #include "wrapperMPI.h"
@@ -101,8 +101,8 @@ int sz
   long int *list_2_1_Sz;
   long int *list_2_2_Sz;
   if(X->Def.iFlgGeneralSpin==TRUE){
-    li_malloc1(list_2_1_Sz, X->Check.sdim+2);
-    li_malloc1(list_2_2_Sz,(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
+    list_2_1_Sz = li_1d_allocate(X->Check.sdim+2);
+    list_2_2_Sz = li_1d_allocate((X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
     for(j=0; j<X->Check.sdim+2;j++){
       list_2_1_Sz[j]=0;
       }
@@ -113,7 +113,7 @@ int sz
   // [e] for general spin
 
   long unsigned int *list_jb;
-  lui_malloc1(list_jb,X->Large.SizeOflistjb);
+  list_jb = lui_1d_allocate(X->Large.SizeOflistjb);
   for(i=0; i<X->Large.SizeOflistjb; i++){
     list_jb[i]=0;
   }
@@ -158,12 +158,12 @@ int sz
     else{
       idim=1;
       for(j=0; j<N; j++){
-	      idim *= X->Def.SiteToBit[j];
+        idim *= X->Def.SiteToBit[j];
       }
     }
     break;
   }
-  li_malloc2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
+  comb = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
   i_max=X->Check.idim_max;
   
   switch(X->Def.iCalcModel){
@@ -331,7 +331,7 @@ int sz
             div=div/X->Def.Tpow[j];
             num_down+=div;
           }
-	
+
           tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
           all_up   = (X->Def.Nsite+tmp_res)/2;
           all_down = (X->Def.Nsite-tmp_res)/2;
@@ -475,7 +475,7 @@ int sz
         list_jb[ib] = jb;
         i           = ib*ihfbit; // ihfbit=pow(2,((Nsite+1)/2))
         num_up      = 0;
-        num_down    = 0;	
+        num_down    = 0;
         icheck_loc  = 1;
 
         for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
@@ -650,7 +650,7 @@ int sz
         else{
           fprintf(stderr, "Error: CalcHS in ModPara file must be -1 or 0 or 1 for Spin model.");
           return -1;
-        }	
+        }
       }else{
         unsigned int Max2Sz=0;
         unsigned int irghtsite=1;
@@ -666,12 +666,12 @@ int sz
         for(j=0; j<X->Def.Nsite; j++){
           Max2Sz += X->Def.LocSpn[j];
         }
-	
-        lui_malloc1(HilbertNumToSz, 2*Max2Sz+1);
+
+        HilbertNumToSz = lui_1d_allocate(2*Max2Sz+1);
         for(ib=0; ib<2*Max2Sz+1; ib++){
           HilbertNumToSz[ib]=0;
         }
-	
+
         for(ib =0; ib<ihfbit; ib++){
           i2Sz=0;
           for(j=1; j<= irghtsite; j++){
@@ -693,7 +693,7 @@ int sz
             jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
           }
         }
-	
+
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
 
@@ -702,8 +702,8 @@ int sz
         for(ib=0;ib<ilftdim; ib++){
           icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
         }
-		
-        i_free1(HilbertNumToSz, 2*Max2Sz+1);	
+
+        free_lui_1d_allocate(HilbertNumToSz);
       }
       
       break;
@@ -737,8 +737,8 @@ int sz
     fclose(fp_err);
     exitMPI(-1);
   }
-  
-  i_free2(comb, X->Def.Nsite+1,X->Def.Nsite+1);
+
+  free_li_2d_allocate(comb);
   }
   fprintf(stdoutMPI, "%s", cProEndCalcSz);
 
@@ -1084,7 +1084,7 @@ int child_omp_sz_Kondo(
         div_up    = div_up/X->Def.Tpow[2*j];
         div_down  = i & X->Def.Tpow[2*j+1];
         div_down  = div_down/X->Def.Tpow[2*j+1];
-	
+
         if(X->Def.LocSpn[j] ==  ITINERANT){
           num_up   += div_up;        
           num_down += div_down;  
@@ -1203,7 +1203,7 @@ int child_omp_sz_Kondo_hacker(
           div_up    = div_up/X->Def.Tpow[2*j];
           div_down  = i & X->Def.Tpow[2*j+1];
           div_down  = div_down/X->Def.Tpow[2*j+1];
-  	
+
           if(X->Def.LocSpn[j] ==  ITINERANT){
             num_up   += div_up;        
             num_down += div_down;  
@@ -1300,7 +1300,7 @@ int child_omp_sz_KondoGC(
         div_up    = i & X->Def.Tpow[2*j];
         div_up    = div_up/X->Def.Tpow[2*j];
         div_down  = i & X->Def.Tpow[2*j+1];
-        div_down  = div_down/X->Def.Tpow[2*j+1];	
+        div_down  = div_down/X->Def.Tpow[2*j+1];
         if(X->Def.LocSpn[j] !=  ITINERANT){
           if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
             icheck_loc= icheck_loc;

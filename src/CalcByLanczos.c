@@ -51,7 +51,7 @@
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * 
  */
-int CalcByLanczos(		 
+int CalcByLanczos(
                   struct EDMainCalStruct *X
                          )
 {

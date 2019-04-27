@@ -17,5 +17,5 @@
 #include "Common.h"
 
 int CalcByLOBPCG(
-		  struct EDMainCalStruct *X
+      struct EDMainCalStruct *X
 );

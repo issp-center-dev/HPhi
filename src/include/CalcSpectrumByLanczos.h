@@ -17,19 +17,19 @@
 #include "Common.h"
 
 int CalcSpectrumByLanczos(
-			  struct EDMainCalStruct *X,
-			  double complex *tmp_v1,
-			  double norm,
+  struct EDMainCalStruct *X,
+  double complex *tmp_v1,
+  double norm,
   int Nomega,
   double complex *dcSpectrum,
   double complex *dcomega
 );
 
 int GetSpectrumByTridiagonalMatrixComponents(
-		double *tmp_alpha,
-		double *tmp_beta,
-        double dnorm,
-		double complex _zomega,
-		double complex *_zSpetcrum,
-		unsigned long int liLanczosStp
-		);
+  double *tmp_alpha,
+  double *tmp_beta,
+  double dnorm,
+  double complex _zomega,
+  double complex *_zSpetcrum,
+  unsigned long int liLanczosStp
+);

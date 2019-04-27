@@ -20,7 +20,7 @@ into ::vec
 #include "matrixlapack.h"
 #include "Common.h"
 #include "wrapperMPI.h"
-#include "mfmemory.h"
+#include "common/setmemory.h"
 #include "xsetmem.h"
 /**
 @brief Diagonalize a tri-diagonal matrix and store eigenvectors 
@@ -41,9 +41,9 @@ void vec12(
   double *tmpr;
     
   nvec = X->Def.nvec;
-  d_malloc2(tmpA,ndim,ndim); 
-  d_malloc2(tmpvec,ndim,ndim); 
-  d_malloc1(tmpr,ndim);
+  tmpA = d_2d_allocate(ndim, ndim);
+  tmpvec = d_2d_allocate(ndim, ndim);
+  tmpr = d_1d_allocate(ndim);
 
 #pragma omp parallel for default(none) firstprivate(ndim) private(j,k) shared(tmpA)
   for(k=0;k<=ndim-1;k++)
@@ -80,7 +80,7 @@ void vec12(
       for (j = 1; j <= ndim; j++) vec[k][j] = tmpvec[k - 1][j - 1];
     }/*for(k=1;k<=ndim;k++)*/
   }/*if(nvec>ndim)*/
-  free(tmpA);
-  free(tmpr);
-  free(tmpvec);
+  free_d_2d_allocate(tmpA);
+  free_d_1d_allocate(tmpr);
+  free_d_2d_allocate(tmpvec);
 }/*void vec12*/

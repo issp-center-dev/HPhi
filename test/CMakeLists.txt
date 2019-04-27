@@ -17,6 +17,11 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spin_kagome.sh
 )
 add_test(
+  NAME lanczos_spin_ladder_DM
+COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spin_ladder_DM.sh  
+)
+
+add_test(
   NAME lanczos_genspin_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_genspin_ladder.sh
 )
@@ -109,6 +114,10 @@ add_test(
 add_test(
   NAME fulldiag_hubbard_chain
   COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_hubbard_chain.sh
+)
+add_test(
+  NAME fulldiag_Hamiltonian_IO
+  COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_ham_io.sh
 )
 add_test(
   NAME fulldiag_kondo_chain

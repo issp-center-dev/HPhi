@@ -17,6 +17,6 @@
 #include "Common.h"
 
 int expec_cisajs(
-		 struct BindStruct *X,
-                 double complex *vec
-		 );
+  struct BindStruct *X,
+  double complex *vec
+);

@@ -73,9 +73,9 @@ void phys(struct BindStruct *X, //!<[inout]
         }
       }
       else{
-	for (j = 0; j < i_max; j++) {
-	  v0[j + 1] = 0.0;
-	}
+        for (j = 0; j < i_max; j++) {
+          v0[j + 1] = 0.0;
+        }
       }
     } else {
         if (X->Def.iCalcType == FullDiag) {
@@ -122,7 +122,7 @@ void phys(struct BindStruct *X, //!<[inout]
         if (expec_totalspin(X, v1) != 0) {
           fprintf(stderr, "Error: calc TotalSpin.\n");
           exitMPI(-1);
-        }	
+        }
       }
     } 
 #else

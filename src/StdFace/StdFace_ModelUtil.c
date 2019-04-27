@@ -910,7 +910,8 @@ void StdFace_SetLabel(
   else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
   if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
   else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
+  if (connect < 3)
+    fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
   /**@brief
   Then print the normal one, these are different when they cross boundary.
   */
@@ -930,7 +931,8 @@ void StdFace_SetLabel(
   else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *isite, xi, yi);
   if (*jsite < 10)fprintf(fp, "set label \"%1d\" at %f, %f center front\n", *jsite, xj, yj);
   else            fprintf(fp, "set label \"%2d\" at %f, %f center front\n", *jsite, xj, yj);
-  fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
+  if (connect < 3)
+    fprintf(fp, "set arrow from %f, %f to %f, %f nohead ls %d\n", xi, yi, xj, yj, connect);
 }/*void StdFace_SetLabel*/
 /**
 @brief Print lattice.xsf (XCrysDen format) 
@@ -971,7 +973,8 @@ void StdFace_PrintXSF(struct StdIntList *StdI) {
 @brief Input nearest-neighbor spin-spin interaction
 */
 void StdFace_InputSpinNN(
-  struct StdIntList *StdI,//!<[inout]
+  double J[3][3],//!<[in] The anisotropic spin interaction
+  double JAll,//!<[in] The isotropic interaction
   double J0[3][3],//!<[in] The anisotropic spin interaction
   double J0All,//!<[in] The isotropic interaction
   char *J0name//!<[in] The name of this spin interaction (e.g. J1)
@@ -990,17 +993,17 @@ void StdFace_InputSpinNN(
   strcpy(Jname[2][1], "zy\0");
   strcpy(Jname[2][2], "z\0");
 
-  if (isnan(StdI->JAll) == 0 && isnan(J0All)  == 0) {
-    fprintf(stdout, "\n ERROR! J and %s conflict !\n\n", J0name);
+  if (isnan(JAll) == 0 && isnan(J0All)  == 0) {
+    fprintf(stdout, "\n ERROR! %s conflict !\n\n", J0name);
     StdFace_exit(-1);
   }
   for (i1 = 0; i1 < 3; i1++) {
     for (i2 = 0; i2 < 3; i2++) {
-      if (isnan(StdI->JAll) == 0 && isnan(StdI->J[i1][i2]) == 0) {
-        fprintf(stdout, "\n ERROR! J and J%s conflict !\n\n", Jname[i1][i2]);
+      if (isnan(JAll) == 0 && isnan(J[i1][i2]) == 0) {
+        fprintf(stdout, "\n ERROR! J%s conflict !\n\n", Jname[i1][i2]);
         StdFace_exit(-1);
       }
-      else if (isnan(J0All) == 0 && isnan(StdI->J[i1][i2]) == 0) {
+      else if (isnan(J0All) == 0 && isnan(J[i1][i2]) == 0) {
         fprintf(stdout, "\n ERROR! %s and J%s conflict !\n\n",
           J0name, Jname[i1][i2]);
         StdFace_exit(-1);
@@ -1010,8 +1013,8 @@ void StdFace_InputSpinNN(
           J0name, Jname[i1][i2]);
         StdFace_exit(-1);
       }
-      else if (isnan(J0[i1][i2]) == 0 && isnan(StdI->JAll) == 0) {
-        fprintf(stdout, "\n ERROR! %s%s and J conflict !\n\n",
+      else if (isnan(J0[i1][i2]) == 0 && isnan(JAll) == 0) {
+        fprintf(stdout, "\n ERROR! %s%s conflict !\n\n",
           J0name, Jname[i1][i2]);
         StdFace_exit(-1);
       }
@@ -1022,7 +1025,7 @@ void StdFace_InputSpinNN(
     for (i2 = 0; i2 < 3; i2++) {
       for (i3 = 0; i3 < 3; i3++) {
         for (i4 = 0; i4 < 3; i4++) {
-          if (isnan(J0[i1][i2]) == 0 && isnan(StdI->J[i3][i4]) == 0) {
+          if (isnan(J0[i1][i2]) == 0 && isnan(J[i3][i4]) == 0) {
             fprintf(stdout, "\n ERROR! %s%s and J%s conflict !\n\n", 
               J0name, Jname[i1][i2], Jname[i3][i4]);
             StdFace_exit(-1);
@@ -1036,16 +1039,16 @@ void StdFace_InputSpinNN(
     for (i2 = 0; i2 < 3; i2++) {
       if (isnan(J0[i1][i2]) == 0)
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
-      else if (isnan(StdI->J[i1][i2]) == 0) {
-        J0[i1][i2] = StdI->J[i1][i2];
+      else if (isnan(J[i1][i2]) == 0) {
+        J0[i1][i2] = J[i1][i2];
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
       }
       else if (i1 == i2 && isnan(J0All) == 0) {
         J0[i1][i2] = J0All;
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
       }
-      else if (i1 == i2 && isnan(StdI->JAll) == 0) {
-        J0[i1][i2] = StdI->JAll;
+      else if (i1 == i2 && isnan(JAll) == 0) {
+        J0[i1][i2] = JAll;
         fprintf(stdout, "  %14s%s = %-10.5f\n", J0name, Jname[i1][i2], J0[i1][i2]);
       }
       else {
@@ -1058,7 +1061,6 @@ void StdFace_InputSpinNN(
 @brief Input spin-spin interaction other than nearest-neighbor
 */
 void StdFace_InputSpin(
-  struct StdIntList *StdI,//!<[inout] 
   double Jp[3][3],//!<[in] Fully anisotropic spin interaction
   double JpAll,//!<[in] The isotropic interaction
   char *Jpname//!<The name of this spin interaction(e.g.J')
@@ -1107,19 +1109,19 @@ input file, if it is not specified, use the default value (0
 or the isotropic Coulomb interaction StdIntList::V).
 */
 void StdFace_InputCoulombV(
-  struct StdIntList *StdI,//!<[inout]
+  double V,//!<[in]
   double *V0,//!<[in]
   char *V0name//!<[in] E.g. V1
 )
 {
-  if (isnan(StdI->V) == 0 && isnan(*V0) == 0) {
-    fprintf(stdout, "\n ERROR! V and %s conflict !\n\n", V0name);
+  if (isnan(V) == 0 && isnan(*V0) == 0) {
+    fprintf(stdout, "\n ERROR! %s conflicts !\n\n", V0name);
     StdFace_exit(-1);
   }
   else if (isnan(*V0) == 0)
     fprintf(stdout, "  %15s = %-10.5f\n", V0name, *V0);
-  else if (isnan(StdI->V) == 0) {
-    *V0 = StdI->V;
+  else if (isnan(V) == 0) {
+    *V0 = V;
     fprintf(stdout, "  %15s = %-10.5f\n", V0name, *V0);
   }
   else {
@@ -1132,19 +1134,19 @@ input file, if it is not specified, use the default value(0
 or the isotropic hopping StdIntList::V).
 */
 void StdFace_InputHopp(
-  struct StdIntList *StdI,//!<[inout]
+  double complex t,//!<[in]
   double complex *t0,//!<[in]
   char *t0name//!<[in] E.g. t1
 )
 {
-  if (isnan(creal(StdI->t)) == 0 && isnan(creal(*t0)) == 0) {
-    fprintf(stdout, "\n ERROR! t and %s conflict !\n\n", t0name);
+  if (isnan(creal(t)) == 0 && isnan(creal(*t0)) == 0) {
+    fprintf(stdout, "\n ERROR! %s conflicts !\n\n", t0name);
     StdFace_exit(-1);
   }
   else if (isnan(creal(*t0)) == 0)
     fprintf(stdout, "  %15s = %-10.5f %-10.5f\n", t0name, creal(*t0), cimag(*t0));
-  else if (isnan(creal(StdI->t)) == 0) {
-    *t0 = StdI->t;
+  else if (isnan(creal(t)) == 0) {
+    *t0 = t;
     fprintf(stdout, "  %15s = %-10.5f %-10.5f\n", t0name, creal(*t0), cimag(*t0));
   }
   else {

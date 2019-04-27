@@ -17,5 +17,5 @@
 #include "Common.h"
 
 int CalcByLanczos(
-		  struct EDMainCalStruct *X
+                  struct EDMainCalStruct *X
 );

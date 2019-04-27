@@ -21,5 +21,5 @@
 #include "output.h"
 
 int CalcByFullDiag(
-		   struct EDMainCalStruct *X
-		   );
+       struct EDMainCalStruct *X
+       );

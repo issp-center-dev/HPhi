@@ -5,7 +5,7 @@ Compute the ground state and plot correlation function.
 ``` bash
 $ HPhi -s stan.in
 $ gnuplot lattice.gp
-$ echo "3 20
+$ echo "4 20
 G 0 0 0
 M 0.5 0 0
 K 0.66667 0.33333 0

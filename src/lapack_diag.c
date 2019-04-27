@@ -47,19 +47,12 @@ struct BindStruct *X//!<[inout]
 #endif
 
   i_max = X->Check.idim_max;
-
   for (i = 0; i < i_max; i++) {
     for (j = 0; j < i_max; j++) {
-      //printf("Ham %f %f ", creal(Ham[i+1][j+1]), cimag(Ham[i+1][j+1]));
       Ham[i][j] = Ham[i + 1][j + 1];
     }
   }
   xMsize = i_max;
-  /*for(i=0; i<xMsize; i++){
-    for(j=0; j<xMsize; j++){
-      printf("Ham %f %f ", creal(Ham[i][j]), cimag(Ham[i][j]));
-    }
-  }*/
   if (X->Def.iNGPU == 0) {
 #ifdef _SCALAPACK
     if(nproc >1) {
@@ -75,20 +68,10 @@ struct BindStruct *X//!<[inout]
       blacs_gridinfo_(&ictxt, &nprow, &npcol, &myrow, &mycol);
       
       mb = GetBlockSize(xMsize, size);
-
       mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
       nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
       Z_vec = malloc(mp*nq*sizeof(complex double));
-      //printf("xMsize %d\n", xMsize);
-      /*if(rank == 0){
-        for(i=0; i<xMsize; i++){
-          for(j=0; j<xMsize; j++){
-            printf("Ham %f %f ", creal(Ham[i][j]), cimag(Ham[i][j]));
-          }
-        }
-      }*/
       diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
-      //printf("Z %f %f\n", creal(Z_vec[0]), cimag(Z_vec[1]));
     } else {
       ZHEEVall(xMsize, Ham, v0, L_vec);
     }
@@ -99,7 +82,7 @@ struct BindStruct *X//!<[inout]
 #ifdef _MAGMA
     if(myrank==0){
       if(diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
-	return -1;
+        return -1;
       }
     }
 #else
@@ -107,13 +90,6 @@ struct BindStruct *X//!<[inout]
     ZHEEVall(xMsize, Ham, v0, L_vec);
 #endif
   }
-
-  /*for (i = 0; i < i_max; i++) {
-    for (j = 0; j < i_max; j++) {
-      fprintf(stdoutMPI, "%f %f \n", creal(L_vec[i][j]), cimag(L_vec[i][j]));
-    }
-  }*/
-
   strcpy(sdt, cFileNameEigenvalue_Lanczos);
   if (childfopenMPI(sdt, "w", &fp) != 0) {
     return -1;
@@ -122,7 +98,5 @@ struct BindStruct *X//!<[inout]
     fprintf(fp, " %ld %.10lf \n", i, creal(v0[i]));
   }
   fclose(fp);
-
-
   return 0;
 }
