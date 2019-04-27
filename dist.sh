@@ -8,40 +8,30 @@
 # Version ID
 #
 major=`cat src/include/version_major.h`
-minor=`cat src/include/version_miner.h`
+minor=`cat src/include/version_minor.h`
 patch=`cat src/include/version_patch.h`
 vid=`echo ${major}.${minor}.${patch}`
 #
 mkdir HPhi-${vid}
 #
-cp -rf * HPhi-${vid}
+#cp -rf * HPhi-${vid}
+rsync --exclude HPhi-${vid} -a * HPhi-${vid}
 #
 # Build docments
 #
-cd HPhi-${vid}/doc/jp
-make -f makefile_doc_jp
-cp userguide_jp.pdf ../../../
+cd HPhi-${vid}/doc/ja
+make latexpdf
+cp ./build/latex/userguide_HPhi_ja.pdf ../../
 cd ../en
-make -f makefile_doc_en
-cp userguide_en.pdf ../../../
-cd ../fourier/ja
-sed -i -e "s/mathjax/pngmath/g" conf.py
-make latexpdfja
-make html
-cd ../en
-sed -i -e "s/mathjax/pngmath/g" conf.py
-make latexpdfja
-make html
-cd ../../../
+make latexpdf
+cp ./build/latex/userguide_HPhi_en.pdf ../../
 #
 # Remove some files
 #
 find ./ -name ".git*" -delete
-rm dist.sh
-rm -rf HPhi-${vid}
 #
 # Pack
 #
-cd ../
+cd ../../../
 tar czvf HPhi-${vid}.tar.gz HPhi-${vid}
 rm -rf HPhi-${vid}
