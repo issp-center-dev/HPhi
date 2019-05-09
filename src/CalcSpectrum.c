@@ -317,24 +317,28 @@ int GetExcitedState
  struct BindStruct *X,
  double complex *tmp_v0,
  double complex *tmp_v1
-)
-{
-   if(X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0){
+) {
+  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
     fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
     return FALSE;
-    }
+  }
 
 
-    if(X->Def.NSingleExcitationOperator > 0){
-      if(GetSingleExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
-        return FALSE;
-      }
+  if (X->Def.NSingleExcitationOperator > 0) {
+    if (GetSingleExcitedState(X, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
     }
-    else if(X->Def.NPairExcitationOperator >0){
-      if(GetPairExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
-        return FALSE;
-      }
+  } else if (X->Def.NPairExcitationOperator > 0) {
+    if (GetPairExcitedState(X, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
     }
+  } else {
+    unsigned long int i_max, j;
+    i_max = X->Check.idim_maxOrg;
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
+  firstprivate(i_max, tmp_trans) private(j)
+    for (j = 1; j <= i_max; j++) tmp_v0[j] = tmp_v1[j];
+  }
 
   return TRUE;
 }
