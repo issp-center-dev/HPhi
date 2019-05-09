@@ -335,7 +335,15 @@ int GetExcitedState
         return FALSE;
       }
     }
-
+    else {
+      long unsigned int j, idim_max;
+      idim_max = X->Check.idim_maxOrg;
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1) \
+  firstprivate(idim_max) private(j)
+      for (j = 1; j <= idim_max; j++) {
+        tmp_v0[j] = tmp_v1[j];
+      }
+    }
   return TRUE;
 }
 
