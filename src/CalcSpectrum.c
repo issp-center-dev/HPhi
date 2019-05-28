@@ -336,7 +336,7 @@ int GetExcitedState
     unsigned long int i_max, j;
     i_max = X->Check.idim_maxOrg;
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
-  firstprivate(i_max, tmp_trans) private(j)
+  firstprivate(i_max) private(j)
     for (j = 1; j <= i_max; j++) tmp_v0[j] = tmp_v1[j];
   }
 
