@@ -68,12 +68,12 @@ We use ``pw.x`` as
 
    $ pw.x -in nscf.in
 
-Then, we use the utility ``qe2respack.sh`` which is included in the RESPACK package.
+Then, we use the utility ``qe2respack.py`` which is included in the RESPACK package.
 The command-line argument is the name of ``[prefix].save`` directory.
 
 .. code-block:: bash
 
-   $ qe2respack.sh sr2cuo3.save
+   $ qe2respack.py sr2vo4.save
                 
 Wannier function, dielectric function, effective interaction
 ------------------------------------------------------------
@@ -92,26 +92,25 @@ We use ``calc_wannier``, ``calc_chiqw``, ``calc_j3d``,
    $ calc_w3d < respack.in
    $ calc_j3d < respack.in
 
+After finishing calculations, the files are outputted in ``dir-mvmc`` folder. 
+The format of these files is Wannier90 format and the data such as the hopping integrals are written.
+(The folder name will be changed to  ``dir-model`` in the next version of RESPACK)
+
+   
 Quantum lattice mode for HPhi/mVMC
 ----------------------------------
 
-First, we translate the hopping file etc. created by RESPACK
-into the Wannier90 format.
-For this purpose, we use the utility ``respack2wan90.py`` included in HPhi/mVMC.
-The command-line argument should be the same as the input parameter ``CDataFileHead``
-for Standard mode of HPhi/mVMC.
-If we do not specify that argument, the default value ``zvo`` is used.
-
-.. code-block:: bash
-
-   $ respack2wan90.py zvo
-
-Then we can run HPhi/mVMC with the standard mode.
+Using standard mode of HPhi/mVMC, the calculation will be done by reading the files in ``dir-mvmc`` folder.
+First, the files in ``dir-mvmc`` directory should be moved to the current directry.
+Then, the calculation will be started by using standard mode.
+For example, in mVMC, the calculation will be dobe by typing the following command:
                     
-:download:`respack.in <../../../../samples/Wannier/Sr2VO4/stan.in>`
+:download:`stan.in <../../../../samples/Wannier/Sr2VO4/stan.in>`
 
 .. literalinclude:: ../../../../samples/Wannier/Sr2VO4/stan.in
 
 .. code-block:: bash
 
+   $ cp ./dir-mvmc/* .
    $ vmc.out -s stan.in
+   

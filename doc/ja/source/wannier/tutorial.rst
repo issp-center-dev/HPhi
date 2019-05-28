@@ -103,7 +103,7 @@ HPhi/mVMCのスタンダードモードを利用することで,
 スタンダードモードで計算実行を行えばよい.
 例えば, mVMCの場合は以下のコマンドを打つことで計算が実行される(HPhiでもほぼ同様).
                     
-:download:`respack.in <../../../../samples/Wannier/Sr2VO4/stan.in>`
+:download:`stan.in <../../../../samples/Wannier/Sr2VO4/stan.in>`
 
 .. literalinclude:: ../../../../samples/Wannier/Sr2VO4/stan.in
 

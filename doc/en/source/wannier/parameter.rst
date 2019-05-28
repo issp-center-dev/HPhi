@@ -3,6 +3,8 @@ Input parameters for Standard mode
 
 We show the following example of the input file.
 
+:download:`stan.in <../../../../samples/Wannier/Sr2VO4/stan.in>`
+
 .. literalinclude:: ../../../../samples/Wannier/Sr2VO4/stan.in
 
 The input parameters for the Standard mode to perform calculation
@@ -110,17 +112,18 @@ of the downfolded model are as follows:
   To avoid double countings in analyzing the lattice model,
   one body correction is done by subtracting the following terms from one body terms: 
   
-   .. math::
-   
-      \begin{aligned}
-      t_{0 i i}^{\rm DC} &\equiv \alpha U_{0 i i} D_{0 i i}
-      + \sum_{(R, j) (\neq 0, i)} U_{R i j} D_{0 j j}
-	- (1-\alpha) \sum_{(R, j) (\neq 0, i)} J_{R i j} D_{0 j j},
+       .. math::
+	  \begin{aligned}
+	  t_{mm}^{\rm DC}({\bf 0}) &\equiv \alpha U_{mm}({\bf 0}) D_{mm}({\bf 0})
+	  + \sum_{({\bf R}, n) \neq ({\bf 0}, m)} U_{m n} ({\bf R})D_{nn}({\bf 0})\\
+	  & - (1-\alpha) \sum_{({\bf R}, n) \neq ({\bf 0}, 0)} J_{m n}({\bf R}) D_{nn}({\bf R}),\\
+	  t_{mn}^{\rm DC}({\bf R}_{ij}) &\equiv \frac{1}{2} J_{mn}({\bf R}_{ij}) \left(D_{nm}({\bf R}_{ji}) + 2 {\rm Re} [D_{nm}({\bf R}_{ji})]\right)\\
+	  &-\frac{1}{2}  U_{mn}({\bf R}_{ij}) D_{nm}({\bf R}_{ji}),
+	  \quad ({\bf R}_{ij}, m) \neq ({\bf 0}, n),
 	  \\
-      t_{R i j}^{\rm DC} &\equiv \frac{1}{2} J_{R i j} (D_{R i j} + 2 {\rm Re} [D_{R i j}])
-      -\frac{1}{2}  U_{R i j} D_{R i j},
-      \quad (R, j) \neq (0, i),
-      \end{aligned}
+	  D_{mn}({\bf R}_{ij}) &\equiv \sum_{\sigma}
+	  \left\langle c_{im \sigma}^{\dagger} c_{jn \sigma}\right\rangle_{\rm KS},
+	  \end{aligned}
 
   where, the first and second terms correspond to the Hartree and Fock corrections, respectively.
   :math:`\alpha` is a tuning parameter for one body correction from the on-site Coulomb interactions.
