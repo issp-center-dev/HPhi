@@ -223,7 +223,7 @@ int CalcSpectrum(
       }
       fprintf(fp, "%ld\n", X->Bind.Check.idim_max);
       for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-        fprintf(fp, "%.10lf, %.10lf\n", creal(v1[i]), cimag(v1[i]));
+        fprintf(fp, "%.10lf, %.10lf\n", creal(v0[i]), cimag(v0[i]));
       }
       fclose(fp);
       fprintf(stdoutMPI, "  End:   Output an excited vector.\n\n");

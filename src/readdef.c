@@ -2323,7 +2323,7 @@ int JudgeDefType
 #include "version_major.h"
 ;
    int ver_min =
-#include "version_miner.h"
+#include "version_minor.h"
 ;
    int ver_pat =
 #include "version_patch.h"

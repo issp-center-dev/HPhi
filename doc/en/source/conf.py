@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'HΦ Documentation'
-copyright = u'2018, The University of Tokyo'
+copyright = u'2019, The University of Tokyo'
 author = u'The University of Tokyo'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -64,7 +64,7 @@ author = u'The University of Tokyo'
 # built documents.
 #
 # The short X.Y version.
-version = '0.1'
+version = '3.2'
 # The full version, including alpha/beta/rc tags.
 release = u''
 
