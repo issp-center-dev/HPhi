@@ -66,12 +66,12 @@ Kohn-Sham軌道の計算
 
    $ pw.x -in nscf.in
 
-次にRESPACKに付属のユーティリティー ``qe2respack.sh`` を使う.
+次にRESPACKに付属のユーティリティー ``qe2respack.py`` を使う.
 引数は ``[prefix].save`` ディレクトリ名.
 
 .. code-block:: bash
 
-   $ qe2respack.sh sr2cuo3.save
+   $ qe2respack.py sr2vo4.save
                 
 Wannier関数, 誘電関数, 有効相互作用の計算
 -----------------------------------------
@@ -90,23 +90,18 @@ RESPACKのプログラム ``calc_wannier``, ``calc_chiqw``, ``calc_j3d``,
    $ calc_w3d < respack.in
    $ calc_j3d < respack.in
 
+これにより, RESPACKによって出力されたホッピング等のファイルが,
+Wannier90の形式で ``dir-mvmc`` フォルダに格納される.
+(RESPACKの次のバージョンでは,  ``dir-model`` にディレクトリ名が変更予定)
+
 HPhi/mVMCによるモデル計算
 -------------------------
 
-まず, RESPACKによって出力されたホッピング等のファイルを
-Wannier90の形式に変換する.
-これにはHPhi/mVMCに付属のユーティリティー
-respack2wan90.pyを使う.
-引数はHPhi/mVMCのスタンダードモードのパラメーター ``CDataFileHead`` と同じにする.
-引数を指定しない場合は ``zvo`` (HPhi/mVMCの ``CDataFileHead`` のデフォルト)
-が指定されたものとする.
-
-.. code-block:: bash
-
-   $ respack2wan90.py zvo
-
-これで, HPhi/mVMCで実行する準備が出来たので,
-スタンダードモードを用いて計算する.   
+HPhi/mVMCのスタンダードモードを利用することで,
+``dir-mvmc`` のファイルを読み込み該当したモデルの計算ができる.
+最初に ``dir-mvmc`` 以下のファイル一式を, 実行するディレクトリに移したあとに,
+スタンダードモードで計算実行を行えばよい.
+例えば, mVMCの場合は以下のコマンドを打つことで計算が実行される(HPhiでもほぼ同様).
                     
 :download:`respack.in <../../../../samples/Wannier/Sr2VO4/stan.in>`
 
@@ -114,4 +109,5 @@ respack2wan90.pyを使う.
 
 .. code-block:: bash
 
+   $ cp ./dir-mvmc/* .
    $ vmc.out -s stan.in
