@@ -3,7 +3,7 @@ File format
 
 Standard mode of HPhi/mVMC reads the following files.
 We can obtain these files by executing RESPACK.
-The files are outputted in the ``dir-mvmc`` directory.
+The files are outputted in the ``dir-model`` directory.
 
 Geometry
 --------

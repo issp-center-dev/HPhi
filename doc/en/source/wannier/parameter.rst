@@ -34,6 +34,7 @@ of the downfolded model are as follows:
      **Type :** int (positive). In the default setting, ``Wsub=W``, ``Lsub=L``, ``Hsub=Height`` . Namely, there is no sublattice.
 
      **Description :**
+     They are available only in mVMC.
      By using these parameters, we can force the pair-orbital symmetrical to the translation of the sublattice. If the sublattice is incommensurate with the original lattice, ``vmcdry.out`` stops.
 
      
