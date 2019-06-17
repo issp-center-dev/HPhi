@@ -3,20 +3,20 @@
 チュートリアル
 ==============
 
-このチュートリアルでは Sr\ :sub:`2`\ VO\ :sub:`4`
-を2次元3軌道Hubbardモデルにダウンフォールドして,
+このチュートリアルでは Sr\ :sub:`2`\ CuO\ :sub:`3`
+を1次元1軌道Hubbardモデルにダウンフォールドして,
 それをHPhi/mVMCで計算する.
 DFT計算はQuantumESPRESSOで行う.
-入力ファイルは ``samples/Wannier/Sr2VO4`` ディレクトリにある.
+入力ファイルは ``samples/Wannier/Sr2CuO3`` ディレクトリにある.
 
 電荷密度のSCF計算
 -----------------
 
 まず, DFTによる電荷密度のSCF計算を行う.
 
-:download:`scf.in <../../../../samples/Wannier/Sr2VO4/scf.in>`
+:download:`scf.in <../../../../samples/Wannier/Sr2CuO3/scf.in>`
 
-.. literalinclude:: ../../../../samples/Wannier/Sr2VO4/scf.in
+.. literalinclude:: ../../../../samples/Wannier/Sr2CuO3/scf.in
 
 擬ポテンシャル (UPF ファイル) は
 `The SG15 Optimized Norm-Conserving Vanderbilt (ONCV) pseudopotentials <www.quantum-simulation.org/potentials/sg15_oncv/>`_ のものを使う.
@@ -34,9 +34,9 @@ SCF 計算には QuantumESPRESSO内のプログラム ``pw.x`` を使う.
 (Optional) バンド計算と描画
 ---------------------------
 
-:download:`band.in <../../../../samples/Wannier/Sr2VO4/band.in>`
+:download:`band.in <../../../../samples/Wannier/Sr2CuO3/band.in>`
 
-.. literalinclude:: ../../../../samples/Wannier/Sr2VO4/band.in
+.. literalinclude:: ../../../../samples/Wannier/Sr2CuO3/band.in
 
 ここでも ``pw.x`` を使う.
                     
@@ -44,9 +44,9 @@ SCF 計算には QuantumESPRESSO内のプログラム ``pw.x`` を使う.
 
    $ pw.x -in band.in
 
-:download:`bands.in <../../../../samples/Wannier/Sr2VO4/bands.in>`
+:download:`bands.in <../../../../samples/Wannier/Sr2CuO3/bands.in>`
 
-.. literalinclude:: ../../../../samples/Wannier/Sr2VO4/bands.in
+.. literalinclude:: ../../../../samples/Wannier/Sr2CuO3/bands.in
 
 QuantumESPRESSOの ``bands.x`` を使う.
                     
@@ -59,9 +59,9 @@ QuantumESPRESSOの ``bands.x`` を使う.
 Kohn-Sham軌道の計算
 -------------------
 
-:download:`nscf.in <../../../../samples/Wannier/Sr2VO4/nscf.in>`
+:download:`nscf.in <../../../../samples/Wannier/Sr2CuO3/nscf.in>`
 
-.. literalinclude:: ../../../../samples/Wannier/Sr2VO4/nscf.in
+.. literalinclude:: ../../../../samples/Wannier/Sr2CuO3/nscf.in
 
 ここでも ``pw.x`` を使う.
                     
@@ -74,14 +74,14 @@ Kohn-Sham軌道の計算
 
 .. code-block:: bash
 
-   $ qe2respack.py sr2vo4.save
+   $ qe2respack.py sr2cuo3.save
                 
 Wannier関数, 誘電関数, 有効相互作用の計算
 -----------------------------------------
 
-:download:`respack.in <../../../../samples/Wannier/Sr2VO4/respack.in>`
+:download:`respack.in <../../../../samples/Wannier/Sr2CuO3/respack.in>`
 
-.. literalinclude:: ../../../../samples/Wannier/Sr2VO4/respack.in
+.. literalinclude:: ../../../../samples/Wannier/Sr2CuO3/respack.in
 
 RESPACKのプログラム ``calc_wannier``, ``calc_chiqw``, ``calc_j3d``,
 ``calc_w3d`` を使う.                    
@@ -106,9 +106,9 @@ HPhi/mVMCのスタンダードモードを利用することで,
 スタンダードモードで計算実行を行えばよい.
 例えば, HPhiの場合は以下のコマンドを打つことで計算が実行される(mVMCでもほぼ同様).
                     
-:download:`stan.in <../../../../samples/Wannier/Sr2VO4/stan.in>`
+:download:`stan.in <../../../../samples/Wannier/Sr2CuO3/stan.in>`
 
-.. literalinclude:: ../../../../samples/Wannier/Sr2VO4/stan.in
+.. literalinclude:: ../../../../samples/Wannier/Sr2CuO3/stan.in
 
 .. code-block:: bash
 
