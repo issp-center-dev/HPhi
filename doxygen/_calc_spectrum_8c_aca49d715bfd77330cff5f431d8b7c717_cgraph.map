@@ -9,7 +9,7 @@
 <area shape="rect" id="node29" href="$_calc_spectrum_by_lanczos_8c.html#ad93bf615dd8c2571525cec5a40861d32" title="A main function to calculate spectrum by continued fraction expansions. " alt="" coords="159,920,329,947"/>
 <area shape="rect" id="node30" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ (Note: This method is trial) " alt="" coords="170,971,318,997"/>
 <area shape="rect" id="node37" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="Calculate diagonal components and obtain the list, list_diagonal. " alt="" coords="429,1719,524,1745"/>
-<area shape="rect" id="node38" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="Parent function to calculate the excited state. " alt="" coords="417,1244,536,1271"/>
+<area shape="rect" id="node38" href="$_calc_spectrum_8c.html#a887ec2a16db129a80adf6e58092aeada" title="Parent function to calculate the excited state. " alt="" coords="417,1245,536,1272"/>
 <area shape="rect" id="node41" href="$_calc_spectrum_8c.html#ab57989b65ec16d878470ba35b7903c29" title="Set target frequencies. " alt="" coords="675,1212,759,1239"/>
 <area shape="rect" id="node42" href="$readdef_8c.html#afa1a7211e33cdb1be5abc85e4bb42d9c" title="function of getting file name labeled by the keyword " alt="" coords="175,1516,313,1543"/>
 <area shape="rect" id="node43" href="$_calc_spectrum_8c.html#a5b536414f48e81f6daafb35f7700e75c" title="Make the lists for the excited state; list_1, list_2_1 and list_2_2 (for canonical ensemble)..." alt="" coords="185,1567,303,1593"/>
@@ -31,10 +31,10 @@
 <area shape="rect" id="node18" href="$diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b" title="Calculate the components for the chemical potential . " alt="" coords="1317,1820,1448,1847"/>
 <area shape="rect" id="node19" href="$diagonalcalc_8c.html#a5364f3694fbc722a1ebb2ce419c5ae59" title="Calculate the components for Coulombinter interaction, . " alt="" coords="1496,1845,1667,1872"/>
 <area shape="rect" id="node20" href="$diagonalcalc_8c.html#a38b0a8718d7255cf27602f2e63321d5d" title="Calculate the components for Hund interaction, . " alt="" coords="1715,1845,1839,1872"/>
-<area shape="rect" id="node21" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="Calculate the components for general two&#45;body diagonal interaction, . " alt="" coords="1887,1896,2021,1923"/>
+<area shape="rect" id="node21" href="$diagonalcalc_8c.html#a6dea2f8d1a81ce396a016b0509ad3ae4" title="Calculate the components for general two&#45;body diagonal interaction, . " alt="" coords="1887,1871,2021,1897"/>
 <area shape="rect" id="node26" href="$_calc_spectrum_by_full_diag_8c.html#a676f26a4a8260fbaf22b7eee149ebbfc" title="zcopy_" alt="" coords="685,249,749,276"/>
 <area shape="rect" id="node27" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Making Hamiltonian for the full diagonalization method. The Hamiltonian is stored in the two dimensio..." alt="" coords="675,756,758,783"/>
-<area shape="rect" id="node28" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="performing full diagonalization using lapack " alt="" coords="909,477,999,504"/>
+<area shape="rect" id="node28" href="$lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836" title="performing full diagonalization using lapack " alt="" coords="909,464,999,491"/>
 <area shape="rect" id="node31" href="$_calc_spectrum_by_t_p_q_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817" title="Read TPQ data at &quot;X&#45;&gt;Bind.Large.itr&quot; step in SS_rand file. " alt="" coords="423,853,531,880"/>
 <area shape="rect" id="node32" href="$_lanczos___eigen_value_8c.html#a08d824aef2e4734073596becf3135c61" title="Read tridiagonal matrix components obtained by the Lanczos method. . " alt="" coords="643,1111,790,1137"/>
 <area shape="rect" id="node33" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="377,905,576,946"/>
@@ -47,5 +47,5 @@
 <area shape="rect" id="node45" href="$wrapper_m_p_i_8c.html#ab01492e7612823a34a325619f46862e5" title="MPI Finitialization wrapper. " alt="" coords="431,1617,522,1644"/>
 <area shape="rect" id="node46" href="$xsetmem_8c.html#a515c905af1b73d36feed8e99b4f9171d" title="Set size of lists for the canonical ensemble. " alt="" coords="673,1972,760,1999"/>
 <area shape="rect" id="node47" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="457,1313,496,1340"/>
-<area shape="rect" id="node48" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="Set size of memories for Hamiltonian (Ham, L_vec), vectors(vg, v0, v1, v2, vec, alpha, beta), lists (list_1, list_2_1, list_2_2, list_Diagonal) and Phys(BindStruct.PhysList) struct in the case of Full Diag mode. " alt="" coords="425,1845,529,1872"/>
+<area shape="rect" id="node48" href="$xsetmem_8c.html#a98c46bc759ce913d95a44820b2d71a1a" title="Set size of memories for Hamiltonian (Ham, L_vec), vectors(vg, v0, v1, v2, vec, alpha, beta), lists (list_1, list_2_1, list_2_2, list_Diagonal) and Phys(BindStruct.PhysList) struct in the case of Full Diag mode. " alt="" coords="425,1807,529,1833"/>
 </map>

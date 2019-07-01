@@ -1,6 +1,6 @@
 <map id="expec_cisajscktalt_SpinGC" name="expec_cisajscktalt_SpinGC">
 <area shape="rect" id="node2" href="$expec__cisajscktaltdc_8c.html#ad2872d8b3f1c758d3933dc9e2b19dd16" title="Child function to calculate two&#45;body green&#39;s functions for General Spin GC model. ..." alt="" coords="184,356,315,397"/>
-<area shape="rect" id="node19" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin GC model. " alt="" coords="184,1001,315,1043"/>
+<area shape="rect" id="node19" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin GC model. " alt="" coords="184,1000,315,1041"/>
 <area shape="rect" id="node3" href="$expec__cisajscktaltdc_8c.html#a2ca27868fab714216654436b769197bc" title="Rearray interactions. " alt="" coords="380,618,523,645"/>
 <area shape="rect" id="node4" href="$mltply_m_p_i_spin_core_8c.html#a0f1394dd9dcb5a334f15676d511313b1" title="Compute &#160;term in the grandcanonical general spin system when both site is in the inter process region..." alt="" coords="595,5,772,47"/>
 <area shape="rect" id="node5" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="827,262,948,289"/>
@@ -31,5 +31,5 @@
 <area shape="rect" id="node33" href="$mltply_spin_core_8c.html#a220085102d48735b8111fe704e5d5993" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="372,1425,531,1467"/>
 <area shape="rect" id="node34" href="$mltply_spin_core_8c.html#a1b6c6239f632e04606cf340f024d2ed3" title="Compute &#160;term of grandcanonical spsin system. " alt="" coords="372,1491,531,1532"/>
 <area shape="rect" id="node21" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="618,1237,749,1263"/>
-<area shape="rect" id="node30" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="620,1401,747,1427"/>
+<area shape="rect" id="node30" href="$mltply_spin_core_8c.html#a707ac2de8043df3be28fcf3c81c44362" title="Compute index of final wavefunction by &#160;term (grandcanonical). " alt="" coords="620,1399,747,1426"/>
 </map>

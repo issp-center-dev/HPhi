@@ -4,8 +4,8 @@
 <area shape="rect" id="node3" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="2497,208,2548,235"/>
 <area shape="rect" id="node5" href="$readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30" title="function of reading def files to get keyword index " alt="" coords="2309,259,2449,285"/>
 <area shape="rect" id="node6" href="$readdef_8c.html#a33a451cbb9e518962b7379382cd6b117" title="function of checking indexies of localized spin " alt="" coords="413,107,520,133"/>
-<area shape="rect" id="node7" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="575,473,731,500"/>
-<area shape="rect" id="node8" href="$readdef_8c.html#a530ff519fae4063e6f2e08a11316d5ea" title="function of checking format of Kondo interactions " alt="" coords="779,473,951,500"/>
+<area shape="rect" id="node7" href="$readdef_8c.html#a961b43e36e61cc013d0188dc268707a2" title="function to set convergence factors " alt="" coords="575,487,731,513"/>
+<area shape="rect" id="node8" href="$readdef_8c.html#a530ff519fae4063e6f2e08a11316d5ea" title="function of checking format of Kondo interactions " alt="" coords="779,487,951,513"/>
 <area shape="rect" id="node9" href="$readdef_8c.html#afbe7cae20c834c11ef23ad8a1674ac6d" title="function of checking format of spin interactions " alt="" coords="999,436,1160,463"/>
 <area shape="rect" id="node10" href="$readdef_8c.html#adbfe2cdda441914d5b9c0cdec3d6cf70" title="Check InterAll condition. " alt="" coords="2105,461,2261,488"/>
 <area shape="rect" id="node11" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="1208,233,1315,260"/>

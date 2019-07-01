@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['s2',['s2',['../struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d',1,'PhysList::s2()'],['../struct_std_int_list.html#a211b3f4b3da1f5e1692f32246636ada1',1,'StdIntList::S2()']]],
+  ['s2',['S2',['../struct_std_int_list.html#a211b3f4b3da1f5e1692f32246636ada1',1,'StdIntList::S2()'],['../struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d',1,'PhysList::s2()']]],
   ['sdim',['sdim',['../struct_check_list.html#a617d47f691e1ea504faabb55c45cb183',1,'CheckList']]],
   ['setconvergencefactor',['SetConvergenceFactor',['../readdef_8c.html#a961b43e36e61cc013d0188dc268707a2',1,'readdef.c']]],
   ['setdiagonalchemi',['SetDiagonalChemi',['../diagonalcalc_8c.html#aca10c18ae66ae31c08820065e7c2a98b',1,'diagonalcalc.c']]],
@@ -54,10 +54,10 @@ var searchData=
   ['stdface_5fhopping',['StdFace_Hopping',['../_std_face___model_util_8c.html#af11c2301253e545c597a2833d41a1cfc',1,'StdFace_ModelUtil.c']]],
   ['stdface_5fhubbardlocal',['StdFace_HubbardLocal',['../_std_face___model_util_8c.html#a01c24570458edde44713a0552a802afe',1,'StdFace_ModelUtil.c']]],
   ['stdface_5finitsite',['StdFace_InitSite',['../_std_face___model_util_8c.html#a6080686c51f2da7c33ad0a1479d6efdd',1,'StdFace_ModelUtil.c']]],
-  ['stdface_5finputcoulombv',['StdFace_InputCoulombV',['../_std_face___model_util_8c.html#acdf7714b0fd7b7fc7de1ad1794523d41',1,'StdFace_ModelUtil.c']]],
-  ['stdface_5finputhopp',['StdFace_InputHopp',['../_std_face___model_util_8c.html#a2c3a928fad71d7283a5105de745067b8',1,'StdFace_ModelUtil.c']]],
-  ['stdface_5finputspin',['StdFace_InputSpin',['../_std_face___model_util_8c.html#a1add2b81d96890e9564cc2a43742dda7',1,'StdFace_ModelUtil.c']]],
-  ['stdface_5finputspinnn',['StdFace_InputSpinNN',['../_std_face___model_util_8c.html#ace4b16f82a902821eeb32b5877559c0d',1,'StdFace_ModelUtil.c']]],
+  ['stdface_5finputcoulombv',['StdFace_InputCoulombV',['../_std_face___model_util_8c.html#ac3b0601f0db12d7ba7531b8f99ed5766',1,'StdFace_ModelUtil.c']]],
+  ['stdface_5finputhopp',['StdFace_InputHopp',['../_std_face___model_util_8c.html#abb2bdcd418ad4f2ccb26a08c147d7548',1,'StdFace_ModelUtil.c']]],
+  ['stdface_5finputspin',['StdFace_InputSpin',['../_std_face___model_util_8c.html#a5a86fdb31d13d86813dd893b76f485aa',1,'StdFace_ModelUtil.c']]],
+  ['stdface_5finputspinnn',['StdFace_InputSpinNN',['../_std_face___model_util_8c.html#adc16832237834916feec85b243fa7e34',1,'StdFace_ModelUtil.c']]],
   ['stdface_5fintr',['StdFace_intr',['../_std_face___model_util_8c.html#adac0ad1140b2eed16d16bf2f6615eed8',1,'StdFace_ModelUtil.c']]],
   ['stdface_5fkagome',['StdFace_Kagome',['../_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068',1,'Kagome.c']]],
   ['stdface_5fkagome_5fboost',['StdFace_Kagome_Boost',['../_kagome_8c.html#acaad76b80c634cae1e50211c1b5f8eb6',1,'Kagome.c']]],

@@ -40,7 +40,7 @@
 <area shape="rect" id="node42" href="$mltply_spin_core_8c.html#abf1bb94571c8c442fdc3e0158333012e" title="Set parameters for the bit operation of spin&#45;pairlift term. " alt="" coords="396,1802,519,1843"/>
 <area shape="rect" id="node43" href="$mltply_spin_core_8c.html#acb9dd50e6fd2d174e607520fe3a3a240" title="Multiply Hamiltonian of pairlift term of grandcanonical spin system. " alt="" coords="383,1867,532,1909"/>
 <area shape="rect" id="node44" href="$bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d" title="function of getting off&#45;diagonal component for general spin " alt="" coords="374,1933,541,1960"/>
-<area shape="rect" id="node45" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="605,1779,763,1821"/>
+<area shape="rect" id="node45" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="605,1673,763,1714"/>
 <area shape="rect" id="node46" href="$mltply_spin_core_8c.html#a4c4182e4c4fa01e8fb4f2d14146a0f16" title="Multiply Hamiltonian of exchange term of canonical spin system. " alt="" coords="613,1951,755,1993"/>
 <area shape="rect" id="node47" href="$bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f" title="function of converting component to list_1 " alt="" coords="366,2085,549,2112"/>
 <area shape="rect" id="node10" href="$bitcalc_8c.html#a8151401358ba31213a5bb228b9b57cfc" title="function of getting right, left and half bits corresponding to a original Hilbert space..." alt="" coords="641,157,727,184"/>

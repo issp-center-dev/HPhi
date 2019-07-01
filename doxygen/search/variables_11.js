@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['s2',['s2',['../struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d',1,'PhysList::s2()'],['../struct_std_int_list.html#a211b3f4b3da1f5e1692f32246636ada1',1,'StdIntList::S2()']]],
+  ['s2',['S2',['../struct_std_int_list.html#a211b3f4b3da1f5e1692f32246636ada1',1,'StdIntList::S2()'],['../struct_phys_list.html#a42edbfd81a3b895ebdd81e70757a0a7d',1,'PhysList::s2()']]],
   ['sdim',['sdim',['../struct_check_list.html#a617d47f691e1ea504faabb55c45cb183',1,'CheckList']]],
   ['sgn',['sgn',['../struct_large_list.html#a3af579bf8c8e3dae9c3c8b518bf08844',1,'LargeList']]],
   ['singleexcitationoperator',['SingleExcitationOperator',['../struct_define_list.html#ad51b15968e7d7f3c64eb3c599d5a4c22',1,'DefineList']]],

@@ -1,7 +1,7 @@
 <map id="child_pairhopp_element" name="child_pairhopp_element">
-<area shape="rect" id="node2" href="$mltply_hubbard_8c.html#a4d178b47dde9c5e387a87d482463575d" title="Compute pairhopp term (canonical) " alt="" coords="212,204,317,231"/>
+<area shape="rect" id="node2" href="$mltply_hubbard_8c.html#a4d178b47dde9c5e387a87d482463575d" title="Compute pairhopp term (canonical) " alt="" coords="212,217,317,244"/>
 <area shape="rect" id="node24" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Making Hamiltonian for the full diagonalization method. The Hamiltonian is stored in the two dimensio..." alt="" coords="683,69,766,96"/>
-<area shape="rect" id="node3" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="365,259,472,285"/>
+<area shape="rect" id="node3" href="$mltply_hubbard_8c.html#ae34b47523aa0e2619a18e316f3d1e930" title="perform Hamiltonian vector product for (extended) Hubbard type model. &#160;" alt="" coords="365,217,472,244"/>
 <area shape="rect" id="node4" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="520,313,577,340"/>
 <area shape="rect" id="node5" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="880,56,1033,83"/>
 <area shape="rect" id="node8" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="665,541,785,568"/>

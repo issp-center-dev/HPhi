@@ -3,7 +3,7 @@
 <area shape="rect" id="node3" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="203,815,261,841"/>
 <area shape="rect" id="node8" href="$wrapper_m_p_i_8c.html#a7a90e7c667189b600a621be9856fa650" title="MPI wrapper function to obtain sum of Double complex across processes. " alt="" coords="1061,284,1155,311"/>
 <area shape="rect" id="node49" href="$_power_lanczos_8c.html#ae6789bcbdf189fbc888e858728399d8d" title="solve_2ndPolinomial" alt="" coords="161,865,303,892"/>
-<area shape="rect" id="node50" href="$wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421" title="MPI wrapper function to obtain sum of Double across processes. " alt="" coords="1293,208,1380,235"/>
+<area shape="rect" id="node50" href="$wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421" title="MPI wrapper function to obtain sum of Double across processes. " alt="" coords="1293,211,1380,237"/>
 <area shape="rect" id="node4" href="$diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456" title="diagonalcalcForTE" alt="" coords="373,309,503,336"/>
 <area shape="rect" id="node11" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="370,208,506,235"/>
 <area shape="rect" id="node13" href="$bitcalc_8c.html#a88834e90fe5b5ac0529f715c5d3c3a78" title="function of getting right, left and half bits corresponding to a original space. " alt="" coords="351,789,525,816"/>

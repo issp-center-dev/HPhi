@@ -1,26 +1,3 @@
-/*
-@ @licstart  The following is the entire license notice for the
-JavaScript code in this file.
-
-Copyright (C) 1997-2017 by Dimitri van Heesch
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-@licend  The above is the entire license notice
-for the JavaScript code in this file
-*/
 var NAVTREE =
 [
   [ "HΦ", "index.html", [
@@ -53,8 +30,8 @@ var NAVTREE =
         [ "Variables", "functions_vars.html", "functions_vars" ]
       ] ]
     ] ],
-    [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ],
+    [ "Files", null, [
+      [ "File List", "files.html", "files" ],
       [ "Globals", "globals.html", [
         [ "All", "globals.html", "globals_dup" ],
         [ "Functions", "globals_func.html", "globals_func" ],
@@ -70,9 +47,9 @@ var NAVTREEINDEX =
 "_c_g___eigen_vector_8c.html",
 "_log_message_8c.html#ac54c04d5fe6f5ce4720838445dc8f976",
 "expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15",
-"globals_o.html",
-"phys_8c.html#a968744495c661c11bf1de29e130f549a",
-"struct_phys_list.html#a517fc1ab30be5ea001cd891be913aabc"
+"globals_m.html",
+"pages.html",
+"struct_phys_list.html#a40e86de11143f54df7a3bf8a4344eb0b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

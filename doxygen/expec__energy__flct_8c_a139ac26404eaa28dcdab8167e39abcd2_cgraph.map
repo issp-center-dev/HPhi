@@ -1,0 +1,5 @@
+<map id="expec_energy_flct_HalfSpin" name="expec_energy_flct_HalfSpin">
+<area shape="rect" id="node2" href="$bitcalc_8c.html#abb04551086c9b8080596b1f439cb6fb8" title="calculating number of 1&#45;bits in x (32 bit) This method is introduced in S.H. Warren, Hacker’s Delight, second ed., Addison&#45;Wesley, ISBN: 0321842685, 2012. " alt="" coords="261,5,303,32"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#a40ff4f9a2622fada050275da64621421" title="MPI wrapper function to obtain sum of Double across processes. " alt="" coords="239,56,325,83"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="373,56,440,83"/>
+</map>

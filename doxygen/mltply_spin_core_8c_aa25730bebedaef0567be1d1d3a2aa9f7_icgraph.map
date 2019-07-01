@@ -1,8 +1,8 @@
 <map id="GC_child_CisAisCisAis_spin_element" name="GC_child_CisAisCisAis_spin_element">
-<area shape="rect" id="node2" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin GC model. " alt="" coords="238,171,369,213"/>
+<area shape="rect" id="node2" href="$expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin GC model. " alt="" coords="238,243,369,285"/>
 <area shape="rect" id="node12" href="$mltply_spin_8c.html#a0dac10eb920ee6f0c6d5c064167b6cf2" title="Compute Inter&#45;All term of spin Hamiltonian (grandcanonical) " alt="" coords="215,309,392,336"/>
 <area shape="rect" id="node28" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Making Hamiltonian for the full diagonalization method. The Hamiltonian is stored in the two dimensio..." alt="" coords="933,579,1015,605"/>
-<area shape="rect" id="node3" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="Parent function to calculate two&#45;body green&#39;s functions for Spin GC model. " alt="" coords="440,135,571,177"/>
+<area shape="rect" id="node3" href="$expec__cisajscktaltdc_8c.html#ad468e5109f6dc215394c103675b503fb" title="Parent function to calculate two&#45;body green&#39;s functions for Spin GC model. " alt="" coords="440,171,571,213"/>
 <area shape="rect" id="node4" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="902,107,1046,133"/>
 <area shape="rect" id="node5" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1149,259,1263,285"/>
 <area shape="rect" id="node7" href="$_calc_by_t_e_m_8c.html#a95c436e25727f69519a98af30f6eb00d" title="main function of time evolution calculation " alt="" coords="1159,107,1253,133"/>

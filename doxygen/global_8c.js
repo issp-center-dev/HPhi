@@ -31,6 +31,7 @@ var global_8c =
     [ "cFileNameNorm", "global_8c.html#a2232d9fe26eff17e863f501a0e7010dc", null ],
     [ "cFileNameNormRand", "global_8c.html#a2112db731c321a3fe01cf73ab794befa", null ],
     [ "cFileNameOutputEigen", "global_8c.html#a92fde0d0c05db8f3372fa01eeac4f99e", null ],
+    [ "cFileNameOutputExcitedVec", "global_8c.html#ae969e8c1649093efb1395f741c4a6ae8", null ],
     [ "cFileNameOutputRestartVec", "global_8c.html#a066b1e487038c7b99c3f602df75a772c", null ],
     [ "cFileNameOutputVector", "global_8c.html#ac03136d3a9635031fbcad0b0331458d4", null ],
     [ "cFileNamePhys_FullDiag", "global_8c.html#aef4eadd082d736f9a2bf428fc1f3447b", null ],

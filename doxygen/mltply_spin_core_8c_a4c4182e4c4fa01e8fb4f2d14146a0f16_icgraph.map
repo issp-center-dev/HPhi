@@ -1,9 +1,9 @@
 <map id="child_exchange_spin_element" name="child_exchange_spin_element">
-<area shape="rect" id="node2" href="$mltply_spin_8c.html#ab975146c2b912899e92ae74ec42b5b45" title="Compute exchange term of spin Hamiltonian (canonical) " alt="" coords="196,183,339,209"/>
+<area shape="rect" id="node2" href="$mltply_spin_8c.html#ab975146c2b912899e92ae74ec42b5b45" title="Compute exchange term of spin Hamiltonian (canonical) " alt="" coords="196,217,339,244"/>
 <area shape="rect" id="node25" href="$make_ham_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b" title="Making Hamiltonian for the full diagonalization method. The Hamiltonian is stored in the two dimensio..." alt="" coords="835,69,918,96"/>
-<area shape="rect" id="node3" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="387,209,493,236"/>
-<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="541,319,624,345"/>
-<area shape="rect" id="node5" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="672,332,729,359"/>
+<area shape="rect" id="node3" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="387,217,493,244"/>
+<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="541,217,624,244"/>
+<area shape="rect" id="node5" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="672,313,729,340"/>
 <area shape="rect" id="node6" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1032,56,1185,83"/>
 <area shape="rect" id="node9" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="817,541,937,568"/>
 <area shape="rect" id="node11" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="Parent function to calculate expected values of energy and physical quantities. " alt="" coords="813,288,941,315"/>

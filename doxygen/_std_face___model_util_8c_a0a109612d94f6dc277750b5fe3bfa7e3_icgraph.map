@@ -1,40 +1,40 @@
 <map id="StdFace_exit" name="StdFace_exit">
-<area shape="rect" id="node2" href="$_std_face__main_8c.html#a4e46335c4a196a5b14246be7829003b9" title="Verify outputmode. " alt="" coords="416,146,547,173"/>
-<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="Main routine for the standard mode. " alt="" coords="825,982,932,1009"/>
-<area shape="rect" id="node5" href="$_std_face__main_8c.html#ad5954e5010f9b163888e0c7a3fb49259" title="Print calcmod.def. " alt="" coords="431,197,532,224"/>
-<area shape="rect" id="node6" href="$_std_face__main_8c.html#a6327698c5da904237fb5cdc0cfad52a7" title="Print single.def or pair.def. " alt="" coords="646,248,753,274"/>
-<area shape="rect" id="node7" href="$_chain_lattice_8c.html#ae7836a0c0e49d88705c77b2b7653774f" title="Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice. " alt="" coords="170,346,323,373"/>
-<area shape="rect" id="node8" href="$_honeycomb_lattice_8c.html#a6ddb9de9d044c8c792d767cb55a43a47" title="StdFace_Honeycomb_Boost" alt="" coords="152,446,341,473"/>
-<area shape="rect" id="node9" href="$_std_face___model_util_8c.html#a6080686c51f2da7c33ad0a1479d6efdd" title="Initialize the super&#45;cell where simulation is performed. " alt="" coords="422,1058,541,1085"/>
-<area shape="rect" id="node19" href="$_wannier90_8c.html#ab4fe35c22a4d6f54807e3c5d786f8223" title="Setup a Hamiltonian for the Wannier90 *_hr.dat. " alt="" coords="629,1109,769,1136"/>
-<area shape="rect" id="node20" href="$_std_face___model_util_8c.html#acdf7714b0fd7b7fc7de1ad1794523d41" title="Input off&#45;site Coulomb interaction from the input file, if it is not specified, use the default value..." alt="" coords="397,653,565,680"/>
-<area shape="rect" id="node21" href="$_std_face___model_util_8c.html#a2c3a928fad71d7283a5105de745067b8" title="Input hopping integral from the input file, if it is not specified, use the default value(0 or the is..." alt="" coords="412,704,551,730"/>
-<area shape="rect" id="node22" href="$_std_face___model_util_8c.html#a1add2b81d96890e9564cc2a43742dda7" title="Input spin&#45;spin interaction other than nearest&#45;neighbor. " alt="" coords="415,754,548,781"/>
-<area shape="rect" id="node23" href="$_std_face___model_util_8c.html#ace4b16f82a902821eeb32b5877559c0d" title="Input nearest&#45;neighbor spin&#45;spin interaction. " alt="" coords="405,552,558,578"/>
-<area shape="rect" id="node24" href="$_kagome_8c.html#acaad76b80c634cae1e50211c1b5f8eb6" title="StdFace_Kagome_Boost" alt="" coords="163,1464,330,1490"/>
-<area shape="rect" id="node25" href="$_ladder_8c.html#a45a234231a8241316d98f01e25bd940a" title="StdFace_Ladder_Boost" alt="" coords="167,1514,326,1541"/>
-<area shape="rect" id="node26" href="$_std_face___model_util_8c.html#a875aff64a0c1a54490859b2b7e15bff6" title="Malloc Arrays for interactions. " alt="" coords="389,1008,573,1034"/>
-<area shape="rect" id="node27" href="$_std_face___model_util_8c.html#a98d87232d96f1b99e15cdb76f7a586b6" title="Stop HPhi if a variable (complex) not used is specified in the input file (!=NaN). " alt="" coords="409,805,553,832"/>
-<area shape="rect" id="node28" href="$_std_face___model_util_8c.html#a05386999c1e68124dd96f79ccdd80dbd" title="Stop HPhi if a variable (real) not used is specified in the input file (!=NaN). " alt="" coords="175,932,319,958"/>
-<area shape="rect" id="node30" href="$_std_face___model_util_8c.html#afb9e23628e57aea2f08ef65acc308c2a" title="Stop HPhi if a variable (integer) not used is specified in the input file (!=2147483647, the upper limt of Int). " alt="" coords="411,1109,551,1136"/>
-<area shape="rect" id="node32" href="$_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672" title="Stop HPhi if a variable (integer) which must be specified is absent in the input file (=2147483647..." alt="" coords="402,1362,561,1389"/>
-<area shape="rect" id="node33" href="$_std_face__main_8c.html#a654b6916cc1589fbc0ffdcf0485a3c63" title="Store an input value into the valiable (Double complex) If duplicated, HPhi will stop. " alt="" coords="169,1565,325,1592"/>
-<area shape="rect" id="node34" href="$_std_face__main_8c.html#a08a2a735d8c8be9066319d6aaf529ab0" title="Store an input value into the valiable (double) If duplicated, HPhi will stop. " alt="" coords="169,1616,325,1642"/>
-<area shape="rect" id="node35" href="$_std_face__main_8c.html#ab615ec16fa3782b5f37893ac5188c8b6" title="Store an input value into the valiable (integer) If duplicated, HPhi will stop. " alt="" coords="171,1666,323,1693"/>
-<area shape="rect" id="node36" href="$_std_face__main_8c.html#ab2806e3a73aaa07a5aceead3e4bbf02b" title="Store an input value into the valiable (string) If duplicated, HPhi will stop. " alt="" coords="169,1717,325,1744"/>
-<area shape="rect" id="node37" href="$_std_face__main_8c.html#a0822a5a1c434b9128925fd864e7426ef" title="Store an input value into the valiable (string) Force string lower. If duplicated, HPhi will stop. " alt="" coords="167,1768,326,1794"/>
-<area shape="rect" id="node38" href="$_std_face__main_8c.html#a51d9cb31caa893c65d948e203e20621e" title="Stop HPhi if unsupported model is read. " alt="" coords="176,1818,317,1845"/>
-<area shape="rect" id="node39" href="$_std_face__main_8c.html#a57ccb8e40005ab6da1868404a3e1f6fb" title="VectorPotential" alt="" coords="191,1869,302,1896"/>
-<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="980,982,1031,1009"/>
-<area shape="rect" id="node10" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="643,1008,755,1034"/>
-<area shape="rect" id="node11" href="$_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d" title="Setup a Hamiltonian for the Face&#45;Centered Orthorhombic lattice. " alt="" coords="635,754,763,781"/>
-<area shape="rect" id="node12" href="$_honeycomb_lattice_8c.html#ad6d5522bfadda85057b31b89c25df32f" title="Setup a Hamiltonian for the Hubbard model on a Honeycomb lattice. " alt="" coords="625,856,773,882"/>
-<area shape="rect" id="node13" href="$_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068" title="Setup a Hamiltonian for the Kagome lattice. " alt="" coords="636,906,763,933"/>
-<area shape="rect" id="node14" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="641,1058,758,1085"/>
-<area shape="rect" id="node15" href="$_orthorhombic_8c.html#a33fb6a1902e42ecafe2d1249640825b1" title="Setup a Hamiltonian for the Simple Orthorhombic lattice. " alt="" coords="621,704,777,730"/>
-<area shape="rect" id="node16" href="$_pyrochlore_8c.html#a1bb6dee1ad8080fcb79eb017d12bb2b7" title="Setup a Hamiltonian for the Pyrochlore structure. " alt="" coords="629,805,769,832"/>
-<area shape="rect" id="node17" href="$_square_lattice_8c.html#a0449f65a4c6ec527da3e6ebb4253942e" title="Setup a Hamiltonian for the square lattice. " alt="" coords="630,653,769,680"/>
-<area shape="rect" id="node18" href="$_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe" title="Setup a Hamiltonian for the Triangular lattice. " alt="" coords="632,957,767,984"/>
-<area shape="rect" id="node29" href="$_std_face___model_util_8c.html#a9dec65b2b7a257de0b80f5975be6bf93" title="Stop HPhi if variables (real) not used is specified in the input file (!=NaN). " alt="" coords="409,856,553,882"/>
-<area shape="rect" id="node31" href="$_std_face__main_8c.html#abeca2989439e3109cacd7a26351b1e72" title="Summary numerical parameter check the combination of the number of sites, total spin, the number of electrons. " alt="" coords="643,1160,755,1186"/>
+<area shape="rect" id="node2" href="$_std_face__main_8c.html#a4e46335c4a196a5b14246be7829003b9" title="Verify outputmode. " alt="" coords="416,17,547,43"/>
+<area shape="rect" id="node3" href="$_std_face__main_8c.html#ae55faf027f0fa2b17f99755b073ac171" title="Main routine for the standard mode. " alt="" coords="825,954,932,981"/>
+<area shape="rect" id="node5" href="$_std_face__main_8c.html#ad5954e5010f9b163888e0c7a3fb49259" title="Print calcmod.def. " alt="" coords="431,118,532,145"/>
+<area shape="rect" id="node6" href="$_std_face__main_8c.html#a6327698c5da904237fb5cdc0cfad52a7" title="Print single.def or pair.def. " alt="" coords="646,169,753,195"/>
+<area shape="rect" id="node7" href="$_chain_lattice_8c.html#ae7836a0c0e49d88705c77b2b7653774f" title="Setup a Hamiltonian for the generalized Heisenberg model on a Chain lattice. " alt="" coords="170,219,323,246"/>
+<area shape="rect" id="node8" href="$_honeycomb_lattice_8c.html#a6ddb9de9d044c8c792d767cb55a43a47" title="StdFace_Honeycomb_Boost" alt="" coords="152,270,341,297"/>
+<area shape="rect" id="node9" href="$_std_face___model_util_8c.html#a6080686c51f2da7c33ad0a1479d6efdd" title="Initialize the super&#45;cell where simulation is performed. " alt="" coords="422,726,541,753"/>
+<area shape="rect" id="node19" href="$_wannier90_8c.html#ab4fe35c22a4d6f54807e3c5d786f8223" title="Setup a Hamiltonian for the Wannier90 *_hr.dat. " alt="" coords="629,574,769,601"/>
+<area shape="rect" id="node20" href="$_std_face___model_util_8c.html#ac3b0601f0db12d7ba7531b8f99ed5766" title="Input off&#45;site Coulomb interaction from the input file, if it is not specified, use the default value..." alt="" coords="397,777,565,803"/>
+<area shape="rect" id="node21" href="$_std_face___model_util_8c.html#abb2bdcd418ad4f2ccb26a08c147d7548" title="Input hopping integral from the input file, if it is not specified, use the default value(0 or the is..." alt="" coords="412,827,551,854"/>
+<area shape="rect" id="node22" href="$_std_face___model_util_8c.html#a5a86fdb31d13d86813dd893b76f485aa" title="Input spin&#45;spin interaction other than nearest&#45;neighbor. " alt="" coords="415,878,548,905"/>
+<area shape="rect" id="node23" href="$_std_face___model_util_8c.html#adc16832237834916feec85b243fa7e34" title="Input nearest&#45;neighbor spin&#45;spin interaction. " alt="" coords="405,675,558,702"/>
+<area shape="rect" id="node24" href="$_kagome_8c.html#acaad76b80c634cae1e50211c1b5f8eb6" title="StdFace_Kagome_Boost" alt="" coords="163,1258,330,1285"/>
+<area shape="rect" id="node25" href="$_ladder_8c.html#a45a234231a8241316d98f01e25bd940a" title="StdFace_Ladder_Boost" alt="" coords="167,1309,326,1335"/>
+<area shape="rect" id="node26" href="$_std_face___model_util_8c.html#a875aff64a0c1a54490859b2b7e15bff6" title="Malloc Arrays for interactions. " alt="" coords="389,574,573,601"/>
+<area shape="rect" id="node27" href="$_std_face___model_util_8c.html#a98d87232d96f1b99e15cdb76f7a586b6" title="Stop HPhi if a variable (complex) not used is specified in the input file (!=NaN). " alt="" coords="409,1030,553,1057"/>
+<area shape="rect" id="node28" href="$_std_face___model_util_8c.html#a05386999c1e68124dd96f79ccdd80dbd" title="Stop HPhi if a variable (real) not used is specified in the input file (!=NaN). " alt="" coords="175,929,319,955"/>
+<area shape="rect" id="node30" href="$_std_face___model_util_8c.html#afb9e23628e57aea2f08ef65acc308c2a" title="Stop HPhi if a variable (integer) not used is specified in the input file (!=2147483647, the upper limt of Int). " alt="" coords="411,1131,551,1158"/>
+<area shape="rect" id="node32" href="$_std_face___model_util_8c.html#aa10304b418d3e5f362a13c06749be672" title="Stop HPhi if a variable (integer) which must be specified is absent in the input file (=2147483647..." alt="" coords="402,1334,561,1361"/>
+<area shape="rect" id="node33" href="$_std_face__main_8c.html#a654b6916cc1589fbc0ffdcf0485a3c63" title="Store an input value into the valiable (Double complex) If duplicated, HPhi will stop. " alt="" coords="169,1361,325,1387"/>
+<area shape="rect" id="node34" href="$_std_face__main_8c.html#a08a2a735d8c8be9066319d6aaf529ab0" title="Store an input value into the valiable (double) If duplicated, HPhi will stop. " alt="" coords="169,1413,325,1439"/>
+<area shape="rect" id="node35" href="$_std_face__main_8c.html#ab615ec16fa3782b5f37893ac5188c8b6" title="Store an input value into the valiable (integer) If duplicated, HPhi will stop. " alt="" coords="171,1467,323,1494"/>
+<area shape="rect" id="node36" href="$_std_face__main_8c.html#ab2806e3a73aaa07a5aceead3e4bbf02b" title="Store an input value into the valiable (string) If duplicated, HPhi will stop. " alt="" coords="169,1526,325,1553"/>
+<area shape="rect" id="node37" href="$_std_face__main_8c.html#a0822a5a1c434b9128925fd864e7426ef" title="Store an input value into the valiable (string) Force string lower. If duplicated, HPhi will stop. " alt="" coords="167,1593,326,1619"/>
+<area shape="rect" id="node38" href="$_std_face__main_8c.html#a51d9cb31caa893c65d948e203e20621e" title="Stop HPhi if unsupported model is read. " alt="" coords="176,1675,317,1702"/>
+<area shape="rect" id="node39" href="$_std_face__main_8c.html#a57ccb8e40005ab6da1868404a3e1f6fb" title="VectorPotential" alt="" coords="191,1789,302,1815"/>
+<area shape="rect" id="node4" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="980,954,1031,981"/>
+<area shape="rect" id="node10" href="$_chain_lattice_8c.html#a19e850725a6f5def8d78ee6b81d76160" title="Setup a Hamiltonian for the Hubbard model on a Chain lattice. " alt="" coords="643,1030,755,1057"/>
+<area shape="rect" id="node11" href="$_f_c_ortho_8c.html#a2a32d3a86f7cdf7bbb7d345be84d691d" title="Setup a Hamiltonian for the Face&#45;Centered Orthorhombic lattice. " alt="" coords="635,979,763,1006"/>
+<area shape="rect" id="node12" href="$_honeycomb_lattice_8c.html#ad6d5522bfadda85057b31b89c25df32f" title="Setup a Hamiltonian for the Hubbard model on a Honeycomb lattice. " alt="" coords="625,777,773,803"/>
+<area shape="rect" id="node13" href="$_kagome_8c.html#a4fcbd7403146f24148bcd917daf12068" title="Setup a Hamiltonian for the Kagome lattice. " alt="" coords="636,878,763,905"/>
+<area shape="rect" id="node14" href="$_ladder_8c.html#a2d64104994aeea52623f67cce3e604e1" title="Setup a Hamiltonian for the generalized Heisenberg model on a square lattice. " alt="" coords="641,1081,758,1107"/>
+<area shape="rect" id="node15" href="$_orthorhombic_8c.html#a33fb6a1902e42ecafe2d1249640825b1" title="Setup a Hamiltonian for the Simple Orthorhombic lattice. " alt="" coords="621,929,777,955"/>
+<area shape="rect" id="node16" href="$_pyrochlore_8c.html#a1bb6dee1ad8080fcb79eb017d12bb2b7" title="Setup a Hamiltonian for the Pyrochlore structure. " alt="" coords="629,675,769,702"/>
+<area shape="rect" id="node17" href="$_square_lattice_8c.html#a0449f65a4c6ec527da3e6ebb4253942e" title="Setup a Hamiltonian for the square lattice. " alt="" coords="630,726,769,753"/>
+<area shape="rect" id="node18" href="$_triangular_lattice_8c.html#ad018d6d2847251fd450eb248032c97fe" title="Setup a Hamiltonian for the Triangular lattice. " alt="" coords="632,827,767,854"/>
+<area shape="rect" id="node29" href="$_std_face___model_util_8c.html#a9dec65b2b7a257de0b80f5975be6bf93" title="Stop HPhi if variables (real) not used is specified in the input file (!=NaN). " alt="" coords="409,979,553,1006"/>
+<area shape="rect" id="node31" href="$_std_face__main_8c.html#abeca2989439e3109cacd7a26351b1e72" title="Summary numerical parameter check the combination of the number of sites, total spin, the number of electrons. " alt="" coords="643,1131,755,1158"/>
 </map>

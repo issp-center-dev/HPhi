@@ -1,8 +1,8 @@
 <map id="expec_cisajs" name="expec_cisajs">
 <area shape="rect" id="node2" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="909,1103,1015,1129"/>
-<area shape="rect" id="node4" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="function of calculation for one body green&#39;s function for Hubbard model. " alt="" coords="162,188,317,215"/>
+<area shape="rect" id="node4" href="$expec__cisajs_8c.html#a7b526b4cb5619bc0908c98c04428ffab" title="function of calculation for one body green&#39;s function for Hubbard model. " alt="" coords="162,187,317,213"/>
 <area shape="rect" id="node15" href="$expec__cisajs_8c.html#a0d30174954dc8ad83ceeba5932ece811" title="function of calculation for one body green&#39;s function for Hubbard GC model. " alt="" coords="152,381,327,408"/>
-<area shape="rect" id="node21" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="function of calculation for one body green&#39;s function for Spin model. " alt="" coords="174,605,305,632"/>
+<area shape="rect" id="node21" href="$expec__cisajs_8c.html#aa7d0da1c92f3c3acad6ecde3a97e00e9" title="function of calculation for one body green&#39;s function for Spin model. " alt="" coords="174,592,305,619"/>
 <area shape="rect" id="node29" href="$expec__cisajs_8c.html#a3092659d5fbbb2457dbd391a4edf267c" title="function of calculation for one body green&#39;s function for SpinGC model. " alt="" coords="164,875,315,901"/>
 <area shape="rect" id="node38" href="$bitcalc_8c.html#a78387adc1f4e171d3796235adfcbd87e" title="function of splitting original bit into right and left spaces. " alt="" coords="171,951,307,977"/>
 <area shape="rect" id="node40" href="$log_8c.html#a5c659bb0ba9e5d8a508c6cb6b7431f23" title="Functions for writing a time log. " alt="" coords="193,1027,285,1053"/>
@@ -24,14 +24,14 @@
 <area shape="rect" id="node18" href="$mltply_hubbard_8c.html#a59f11fc0359c4543168c6a6f61a1ec70" title="Commpute hopping term (grandcanonical) " alt="" coords="393,188,553,215"/>
 <area shape="rect" id="node19" href="$mltply_hubbard_core_8c.html#acf3b726a0fbe639a2b7169210c3a24c4" title="Operation of &#160;(Grandcanonical) " alt="" coords="675,239,763,265"/>
 <area shape="rect" id="node20" href="$mltply_hubbard_core_8c.html#a257628b6ed79f7a93d3d2a9a957bc936" title=" term for grandcanonical Hubbard " alt="" coords="676,188,761,215"/>
-<area shape="rect" id="node22" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="function of calculation for one body green&#39;s function for Half&#45;Spin model. " alt="" coords="395,520,550,547"/>
-<area shape="rect" id="node25" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="function of calculation for one body green&#39;s function for General&#45;Spin model. " alt="" coords="385,605,561,632"/>
+<area shape="rect" id="node22" href="$expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443" title="function of calculation for one body green&#39;s function for Half&#45;Spin model. " alt="" coords="395,519,550,545"/>
+<area shape="rect" id="node25" href="$expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e" title="function of calculation for one body green&#39;s function for General&#45;Spin model. " alt="" coords="385,592,561,619"/>
 <area shape="rect" id="node23" href="$mltply_spin_core_8c.html#a5d9e5a462ca77248cbae177465fa02c3" title="Compute the grandcanonical spin state with bit mask is1_spin. " alt="" coords="653,523,784,549"/>
 <area shape="rect" id="node24" href="$mltply_spin_core_8c.html#a93558eb8cb0c4df2ce01e0611b771f66" title="Compute the spin state with bit mask is1_spin. " alt="" coords="663,421,774,448"/>
 <area shape="rect" id="node26" href="$bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f" title="bit check function for general spin " alt="" coords="1105,900,1227,927"/>
 <area shape="rect" id="node27" href="$bitcalc_8c.html#ab1c9c0a9f27bc29a0ce2be74ea517701" title="get bit at a site for general spin " alt="" coords="1275,900,1379,927"/>
 <area shape="rect" id="node28" href="$bitcalc_8c.html#af5a13bcff4925b10b27ecba6079fbb5a" title="get 2sz at a site for general spin " alt="" coords="1427,900,1524,927"/>
-<area shape="rect" id="node30" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="function of calculation for one body green&#39;s function for Half&#45;SpinGC model. " alt="" coords="385,677,560,704"/>
+<area shape="rect" id="node30" href="$expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58" title="function of calculation for one body green&#39;s function for Half&#45;SpinGC model. " alt="" coords="385,687,560,713"/>
 <area shape="rect" id="node34" href="$expec__cisajs_8c.html#a3aa6dfa28ea11557e0977bf0b0e62b27" title="function of calculation for one body green&#39;s function for General SpinGC model. " alt="" coords="375,875,571,901"/>
 <area shape="rect" id="node31" href="$mltply_m_p_i_spin_core_8c.html#a7296cf9063676fa3097f40e89d6c9418" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="634,691,803,733"/>
 <area shape="rect" id="node32" href="$mltply_m_p_i_spin_core_8c.html#a8dce9e4d2f372d138dec39176b2129ce" title="Hopping term in Spin + GC When both site1 and site2 are in the inter process region. " alt="" coords="635,574,802,615"/>

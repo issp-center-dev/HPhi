@@ -8,8 +8,8 @@
 <area shape="rect" id="node7" href="$readdef_8c.html#afbe7cae20c834c11ef23ad8a1674ac6d" title="function of checking format of spin interactions " alt="" coords="1608,271,1769,297"/>
 <area shape="rect" id="node8" href="$readdef_8c.html#adbfe2cdda441914d5b9c0cdec3d6cf70" title="Check InterAll condition. " alt="" coords="2715,397,2871,424"/>
 <area shape="rect" id="node9" href="$readdef_8c.html#a8bc4135515c28a940d030463bb568a9d" title="function of judging a type of define files. " alt="" coords="1817,93,1924,120"/>
-<area shape="rect" id="node10" href="$readdef_8c.html#ac5a8a45ecec5aa4484c187a2ba130f5f" title="function of getting diagonal components " alt="" coords="1972,220,2107,247"/>
-<area shape="rect" id="node11" href="$readdef_8c.html#a89df6600fe7567e815386fef5828a0c7" title="function of checking hermite conditions about interall interactions " alt="" coords="2155,220,2301,247"/>
+<area shape="rect" id="node10" href="$readdef_8c.html#ac5a8a45ecec5aa4484c187a2ba130f5f" title="function of getting diagonal components " alt="" coords="1972,195,2107,221"/>
+<area shape="rect" id="node11" href="$readdef_8c.html#a89df6600fe7567e815386fef5828a0c7" title="function of checking hermite conditions about interall interactions " alt="" coords="2155,195,2301,221"/>
 <area shape="rect" id="node12" href="$readdef_8c.html#a512f5660363476a6f0c915ea496a9943" title="Check Hermite for Transfer integrals. " alt="" coords="2349,245,2504,272"/>
 <area shape="rect" id="node13" href="$readdef_8c.html#a95ae79a512a0692d24d463d30b41d75a" title="Check Site Number for a quad &#45;&gt; (siteA, siteB, siteC, siteD). " alt="" coords="2552,296,2667,323"/>
 <area shape="rect" id="node15" href="$readdef_8c.html#a159fe255d7b06db68c9739671189dec9" title="function of checking spin index for all interactions " alt="" coords="384,495,567,537"/>

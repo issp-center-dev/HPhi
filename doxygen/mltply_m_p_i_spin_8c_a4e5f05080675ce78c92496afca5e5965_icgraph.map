@@ -1,8 +1,8 @@
 <map id="X_child_general_int_spin_MPIdouble" name="X_child_general_int_spin_MPIdouble">
-<area shape="rect" id="node2" href="$mltply_m_p_i_spin_8c.html#a1d7f900e4cbe1e42cc139fd78cf14c66" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="188,313,339,354"/>
-<area shape="rect" id="node3" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="387,261,493,288"/>
-<area shape="rect" id="node25" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin model. " alt="" coords="198,385,329,426"/>
-<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="541,248,624,275"/>
+<area shape="rect" id="node2" href="$mltply_m_p_i_spin_8c.html#a1d7f900e4cbe1e42cc139fd78cf14c66" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="188,295,339,337"/>
+<area shape="rect" id="node3" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="387,244,493,271"/>
+<area shape="rect" id="node25" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin model. " alt="" coords="198,367,329,409"/>
+<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="541,243,624,269"/>
 <area shape="rect" id="node5" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="725,241,782,268"/>
 <area shape="rect" id="node6" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1129,27,1283,53"/>
 <area shape="rect" id="node9" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="922,267,1042,293"/>
@@ -17,12 +17,12 @@
 <area shape="rect" id="node8" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1499,292,1549,319"/>
 <area shape="rect" id="node10" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="1149,216,1263,243"/>
 <area shape="rect" id="node12" href="$_calc_by_t_e_m_8c.html#a95c436e25727f69519a98af30f6eb00d" title="main function of time evolution calculation " alt="" coords="1159,419,1253,445"/>
-<area shape="rect" id="node13" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="A main function to calculate physical quqntities by TPQ method. " alt="" coords="1345,457,1437,484"/>
+<area shape="rect" id="node13" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="A main function to calculate physical quqntities by TPQ method. " alt="" coords="1345,444,1437,471"/>
 <area shape="rect" id="node14" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="1181,317,1231,344"/>
 <area shape="rect" id="node15" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="Parent function for FullDiag mode. " alt="" coords="1334,317,1447,344"/>
 <area shape="rect" id="node16" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1331,267,1451,293"/>
 <area shape="rect" id="node20" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ (Note: This method is trial) " alt="" coords="1132,107,1280,133"/>
 <area shape="rect" id="node23" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Function of calculating the i&#45;th step norm as &#160;and update the i+1&#45;th wave vector as &#160;for TPQ calculat..." alt="" coords="1173,520,1239,547"/>
-<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="Parent function to calculate two&#45;body green&#39;s functions for Spin model. " alt="" coords="672,415,835,441"/>
+<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="Parent function to calculate two&#45;body green&#39;s functions for Spin model. " alt="" coords="672,392,835,419"/>
 <area shape="rect" id="node27" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="910,419,1054,445"/>
 </map>

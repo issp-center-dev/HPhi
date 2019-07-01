@@ -1,24 +1,24 @@
 <map id="child_general_int_spin_MPIBoost" name="child_general_int_spin_MPIBoost">
-<area shape="rect" id="node2" href="$mltply_spin_8c.html#af530d989e2ee768e886923be3484ae0e" title="Driver function for Spin hamiltonian (Boost) " alt="" coords="204,229,341,256"/>
-<area shape="rect" id="node3" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="389,229,492,256"/>
-<area shape="rect" id="node4" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="540,229,597,256"/>
-<area shape="rect" id="node5" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="892,15,1045,41"/>
-<area shape="rect" id="node8" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="685,128,805,155"/>
-<area shape="rect" id="node10" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="Parent function to calculate expected values of energy and physical quantities. " alt="" coords="681,331,809,357"/>
-<area shape="rect" id="node16" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Main function for calculating eigen values by Lanczos method. The energy convergence is judged by the..." alt="" coords="673,179,817,205"/>
-<area shape="rect" id="node17" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Calculate eigenvectors by the Lanczos method. &#160;The calculated tridiagonal matrix components &#160;are stor..." alt="" coords="670,229,819,256"/>
-<area shape="rect" id="node18" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="645,62,844,103"/>
-<area shape="rect" id="node20" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="913,229,1025,256"/>
-<area shape="rect" id="node21" href="$_multiply_8c.html#a6f1bb639d327a924157a9e903a854d2c" title="Function of multiplying Hamiltonian for Time Evolution. " alt="" coords="687,381,802,408"/>
-<area shape="rect" id="node23" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="691,432,799,459"/>
-<area shape="rect" id="node6" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="1101,69,1206,96"/>
-<area shape="rect" id="node7" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1261,255,1312,281"/>
-<area shape="rect" id="node9" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="911,179,1026,205"/>
-<area shape="rect" id="node11" href="$_calc_by_t_e_m_8c.html#a95c436e25727f69519a98af30f6eb00d" title="main function of time evolution calculation " alt="" coords="922,381,1015,408"/>
-<area shape="rect" id="node12" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="A main function to calculate physical quqntities by TPQ method. " alt="" coords="1107,381,1199,408"/>
-<area shape="rect" id="node13" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="943,280,994,307"/>
-<area shape="rect" id="node14" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="Parent function for FullDiag mode. " alt="" coords="1097,280,1210,307"/>
-<area shape="rect" id="node15" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1093,229,1213,256"/>
-<area shape="rect" id="node19" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ (Note: This method is trial) " alt="" coords="895,69,1043,96"/>
-<area shape="rect" id="node22" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Function of calculating the i&#45;th step norm as &#160;and update the i+1&#45;th wave vector as &#160;for TPQ calculat..." alt="" coords="935,432,1002,459"/>
+<area shape="rect" id="node2" href="$mltply_spin_8c.html#af530d989e2ee768e886923be3484ae0e" title="Driver function for Spin hamiltonian (Boost) " alt="" coords="204,230,341,257"/>
+<area shape="rect" id="node3" href="$mltply_spin_8c.html#a367fcb99b257491d4370cdef55e496de" title="Driver function for Spin hamiltonian. " alt="" coords="389,230,492,257"/>
+<area shape="rect" id="node4" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="540,230,597,257"/>
+<area shape="rect" id="node5" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="892,15,1045,42"/>
+<area shape="rect" id="node8" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="685,129,805,155"/>
+<area shape="rect" id="node10" href="$expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5" title="Parent function to calculate expected values of energy and physical quantities. " alt="" coords="681,331,809,358"/>
+<area shape="rect" id="node16" href="$_lanczos___eigen_value_8c.html#adffde20ad3202934fdc77cfa37472529" title="Main function for calculating eigen values by Lanczos method. The energy convergence is judged by the..." alt="" coords="673,179,817,206"/>
+<area shape="rect" id="node17" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Calculate eigenvectors by the Lanczos method. &#160;The calculated tridiagonal matrix components &#160;are stor..." alt="" coords="670,230,819,257"/>
+<area shape="rect" id="node18" href="$_lanczos___eigen_value_8c.html#a06b0f00d313fd60d4156393dcb0e50b8" title="Calculate tridiagonal matrix components by Lanczos method. " alt="" coords="645,63,844,104"/>
+<area shape="rect" id="node20" href="$_calc_by_l_o_b_p_c_g_8c.html#abf636cac2045e948fae38a03ed72e14d" title="Core routine for the LOBPCG method This method is introduced inS. Yamada, et al., Transactions of JSC..." alt="" coords="913,230,1025,257"/>
+<area shape="rect" id="node21" href="$_multiply_8c.html#a6f1bb639d327a924157a9e903a854d2c" title="Function of multiplying Hamiltonian for Time Evolution. " alt="" coords="687,382,802,409"/>
+<area shape="rect" id="node23" href="$_power_lanczos_8c.html#a72ac70ac22cd0e642dbf01a49683da87" title="PowerLanczos" alt="" coords="691,433,799,459"/>
+<area shape="rect" id="node6" href="$_calc_spectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717" title="A main function to calculate spectrum. " alt="" coords="1101,70,1206,97"/>
+<area shape="rect" id="node7" href="$_h_phi_main_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="Main program for HPhi. " alt="" coords="1261,255,1312,282"/>
+<area shape="rect" id="node9" href="$_calc_by_lanczos_8c.html#a4efefe8077d976196c07adb0803ce2ff" title="A main function to calculate eigenvalues and eigenvectors by Lanczos method. " alt="" coords="911,179,1026,206"/>
+<area shape="rect" id="node11" href="$_calc_by_t_e_m_8c.html#a95c436e25727f69519a98af30f6eb00d" title="main function of time evolution calculation " alt="" coords="922,382,1015,409"/>
+<area shape="rect" id="node12" href="$_calc_by_t_p_q_8c.html#ae03e6c3be031f570a98eaf087be6efd7" title="A main function to calculate physical quqntities by TPQ method. " alt="" coords="1107,382,1199,409"/>
+<area shape="rect" id="node13" href="$phys_8c.html#a968744495c661c11bf1de29e130f549a" title="A main function to calculate physical quantities by full diagonalization method. " alt="" coords="943,281,994,307"/>
+<area shape="rect" id="node14" href="$_calc_by_full_diag_8c.html#a67653cce7bc65bc9108006c4c8bfa57b" title="Parent function for FullDiag mode. " alt="" coords="1097,281,1210,307"/>
+<area shape="rect" id="node15" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1093,230,1213,257"/>
+<area shape="rect" id="node19" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ (Note: This method is trial) " alt="" coords="895,70,1043,97"/>
+<area shape="rect" id="node22" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Function of calculating the i&#45;th step norm as &#160;and update the i+1&#45;th wave vector as &#160;for TPQ calculat..." alt="" coords="935,433,1002,459"/>
 </map>

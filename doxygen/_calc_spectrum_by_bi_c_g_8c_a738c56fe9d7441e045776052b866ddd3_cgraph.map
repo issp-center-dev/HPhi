@@ -1,7 +1,7 @@
 <map id="CalcSpectrumByBiCG" name="CalcSpectrumByBiCG">
 <area shape="rect" id="node2" href="$_file_i_o_8c.html#adf3a2fbb0cb2da9f3e7de620894a4e3c" title="All processes open file in output/ directory. " alt="" coords="483,9,587,36"/>
 <area shape="rect" id="node3" href="$_file_i_o_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory. " alt="" coords="707,186,813,213"/>
-<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1355,954,1421,981"/>
+<area shape="rect" id="node5" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="1355,941,1421,968"/>
 <area shape="rect" id="node6" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="275,617,332,644"/>
 <area shape="rect" id="node45" href="$_calc_spectrum_by_bi_c_g_8c.html#aff7084decdcdad72ca2dfa626e62ca8c" title="write , projected residual for restart " alt="" coords="207,262,400,289"/>
 <area shape="rect" id="node46" href="$_calc_spectrum_by_bi_c_g_8c.html#abe23fa27a17d58cc467a6cca4ae26c17" title="Read , projected residual for restart. " alt="" coords="211,60,396,86"/>

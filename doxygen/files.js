@@ -2,7 +2,6 @@ var files =
 [
     [ "include", "dir_d44c64559bbebec7f509842c48db8b23.html", "dir_d44c64559bbebec7f509842c48db8b23" ],
     [ "StdFace", "dir_1e461e20856930d8c8341cb19bb280fe.html", "dir_1e461e20856930d8c8341cb19bb280fe" ],
-    [ "bisec.c", "bisec_8c.html", "bisec_8c" ],
     [ "bitcalc.c", "bitcalc_8c.html", "bitcalc_8c" ],
     [ "CalcByFullDiag.c", "_calc_by_full_diag_8c.html", "_calc_by_full_diag_8c" ],
     [ "CalcByLanczos.c", "_calc_by_lanczos_8c.html", "_calc_by_lanczos_8c" ],
@@ -39,6 +38,7 @@ var files =
     [ "makeHam.c", "make_ham_8c.html", "make_ham_8c" ],
     [ "matrixlapack.c", "matrixlapack_8c.html", "matrixlapack_8c" ],
     [ "matrixlapack_magma.c", "matrixlapack__magma_8c.html", null ],
+    [ "matrixscalapack.c", "matrixscalapack_8c.html", null ],
     [ "mltply.c", "mltply_8c.html", "mltply_8c" ],
     [ "mltplyHubbard.c", "mltply_hubbard_8c.html", "mltply_hubbard_8c" ],
     [ "mltplyHubbardCore.c", "mltply_hubbard_core_8c.html", "mltply_hubbard_core_8c" ],

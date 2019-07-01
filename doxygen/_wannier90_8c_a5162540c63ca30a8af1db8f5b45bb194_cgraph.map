@@ -1,4 +1,0 @@
-<map id="read_W90" name="read_W90">
-<area shape="rect" id="node2" href="$_wannier90_8c.html#a4d1e587e473af8b60a0b9a890e6f3700" title="Read Geometry file for wannier90. " alt="" coords="149,5,259,32"/>
-<area shape="rect" id="node3" href="$_std_face___model_util_8c.html#a40c0095bc5329e343502d453f929fecc" title="Print a valiable (real) read from the input file if it is not specified in the input file (=NaN)..." alt="" coords="135,56,273,83"/>
-</map>

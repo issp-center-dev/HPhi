@@ -19,7 +19,7 @@
 <area shape="rect" id="node19" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1287,775,1440,801"/>
 <area shape="rect" id="node20" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="921,383,1041,409"/>
 <area shape="rect" id="node21" href="$diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1" title="Calculate diagonal components and obtain the list, list_diagonal. " alt="" coords="1316,673,1411,700"/>
-<area shape="rect" id="node22" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Calculate eigenvectors by the Lanczos method. &#160;The calculated tridiagonal matrix components &#160;are stor..." alt="" coords="906,459,1055,485"/>
+<area shape="rect" id="node22" href="$_lanczos___eigen_vector_8c.html#a4575347f442614960b1d0555ab1d1ffe" title="Calculate eigenvectors by the Lanczos method. &#160;The calculated tridiagonal matrix components &#160;are stor..." alt="" coords="906,445,1055,472"/>
 <area shape="rect" id="node23" href="$_lanczos___eigen_value_8c.html#a81a9c4d54ef73eb91df2cdf8243548d6" title="Output initial vectors for the restart calculation. " alt="" coords="695,268,843,295"/>
 <area shape="rect" id="node24" href="$sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77" title="reading the list of the restricted Hilbert space " alt="" coords="731,927,806,953"/>
 <area shape="rect" id="node25" href="$sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba" title="generating Hilbert space " alt="" coords="1159,876,1198,903"/>

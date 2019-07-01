@@ -3,7 +3,7 @@
 <area shape="rect" id="node3" href="$mltply_spin_8c.html#a20cf25deeca80bc9540511bcb0b79243" title="Driver function for Spin 1/2 hamiltonian. " alt="" coords="390,294,497,321"/>
 <area shape="rect" id="node25" href="$expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568" title="Child function to calculate two&#45;body green&#39;s functions for 1/2 Spin model. " alt="" coords="198,411,329,452"/>
 <area shape="rect" id="node28" href="$expec__totalspin_8c.html#a19a30df063d280a18c9ebaa4f727f844" title="function of calculating totalspin for spin model " alt="" coords="211,477,315,503"/>
-<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="548,258,631,285"/>
+<area shape="rect" id="node4" href="$mltply_spin_8c.html#a49705894462616c2d3184fb2514c9ff9" title="Driver function for Spin hamiltonian. " alt="" coords="548,285,631,311"/>
 <area shape="rect" id="node5" href="$mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407" title="Parent function of multiplying the wavefunction by the Hamiltonian. . First, the calculation of diago..." alt="" coords="731,249,789,275"/>
 <area shape="rect" id="node6" href="$_calc_spectrum_by_bi_c_g_8c.html#a738c56fe9d7441e045776052b866ddd3" title="A main function to calculate spectrum by BiCG method In this function, the &#160;library is used..." alt="" coords="1136,71,1289,98"/>
 <area shape="rect" id="node9" href="$_c_g___eigen_vector_8c.html#a27dc47878d6c847ba4f6732e66204bf9" title="inversed power method with CG " alt="" coords="929,122,1049,149"/>
@@ -24,7 +24,7 @@
 <area shape="rect" id="node16" href="$_calc_by_l_o_b_p_c_g_8c.html#a318525323fea91c9c78f906b41d20e3b" title="Driver routine for LOB(P)CG method. " alt="" coords="1337,477,1457,503"/>
 <area shape="rect" id="node20" href="$_calc_spectrum_by_t_p_q_8c.html#a20b6d1f758a208a87ba808c31c529183" title="A main function to calculate spectrum by TPQ (Note: This method is trial) " alt="" coords="1139,17,1287,43"/>
 <area shape="rect" id="node23" href="$_multiply_8c.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Function of calculating the i&#45;th step norm as &#160;and update the i+1&#45;th wave vector as &#160;for TPQ calculat..." alt="" coords="1179,375,1246,402"/>
-<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="Parent function to calculate two&#45;body green&#39;s functions for Spin model. " alt="" coords="679,422,841,449"/>
+<area shape="rect" id="node26" href="$expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581" title="Parent function to calculate two&#45;body green&#39;s functions for Spin model. " alt="" coords="679,423,841,450"/>
 <area shape="rect" id="node27" href="$expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9" title="Parent function to calculate two&#45;body green&#39;s functions. " alt="" coords="917,426,1061,453"/>
 <area shape="rect" id="node29" href="$expec__totalspin_8c.html#a4af6190ae7485ad402811e3f261a3944" title="Parent function of calculation of total spin. " alt="" coords="387,477,500,503"/>
 </map>

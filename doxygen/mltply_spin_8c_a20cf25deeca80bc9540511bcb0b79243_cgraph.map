@@ -4,14 +4,14 @@
 <area shape="rect" id="node7" href="$mltply_spin_8c.html#aa02ac66be051c651994ed4c9bfd9648e" title="Compute Inter&#45;All term of spin Hamiltonian (canonical) " alt="" coords="160,61,311,87"/>
 <area shape="rect" id="node9" href="$mltply_spin_core_8c.html#a4f2cb8d2efe39da7c0b1b6d975758c40" title="Set parameters for the bit operation of spin&#45;general interaction term. " alt="" coords="160,411,311,452"/>
 <area shape="rect" id="node10" href="$mltply_m_p_i_spin_8c.html#a1d7f900e4cbe1e42cc139fd78cf14c66" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="160,163,311,204"/>
-<area shape="rect" id="node11" href="$mltply_m_p_i_spin_8c.html#a4e5f05080675ce78c92496afca5e5965" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="371,152,505,193"/>
+<area shape="rect" id="node11" href="$mltply_m_p_i_spin_8c.html#a4e5f05080675ce78c92496afca5e5965" title="Exchange term in Spin model When both site1 and site2 are in the inter process region. " alt="" coords="371,140,505,181"/>
 <area shape="rect" id="node13" href="$mltply_m_p_i_spin_8c.html#aab94d15aa4b4edd0e53f51921a4b7dd4" title="Exchange term in Spin model When only site2 is in the inter process region. " alt="" coords="160,280,311,321"/>
-<area shape="rect" id="node14" href="$mltply_m_p_i_spin_8c.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="371,220,505,261"/>
+<area shape="rect" id="node14" href="$mltply_m_p_i_spin_8c.html#abdfa931ba0482cdf3c19181478055d02" title="X_child_general_int\l_spin_MPIsingle" alt="" coords="371,211,505,252"/>
 <area shape="rect" id="node15" href="$time_8c.html#a2581cae87041a26e35cc11d2b36433ea" title="function for initializing elapse time [start] " alt="" coords="194,477,277,503"/>
 <area shape="rect" id="node16" href="$time_8c.html#a7a401c1e932bb7ff998602ee237fbecd" title="function for calculating elapse time [elapse time=StartTimer&#45;StopTimer] " alt="" coords="194,527,277,554"/>
 <area shape="rect" id="node3" href="$mltply_spin_core_8c.html#a4c4182e4c4fa01e8fb4f2d14146a0f16" title="Multiply Hamiltonian of exchange term of canonical spin system. " alt="" coords="367,5,509,47"/>
-<area shape="rect" id="node4" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="565,130,661,157"/>
-<area shape="rect" id="node5" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="709,130,773,157"/>
-<area shape="rect" id="node8" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="359,76,517,117"/>
-<area shape="rect" id="node12" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="580,189,647,215"/>
+<area shape="rect" id="node4" href="$bitcalc_8c.html#a36607f9856f8c9a3c43b2a4b87213c25" title="function of getting off&#45;diagonal component " alt="" coords="565,119,661,146"/>
+<area shape="rect" id="node5" href="$bitcalc_8c.html#ab40eb71d64770d5a59334e8c0aed3d50" title="function of splitting a original bit to right and left spaces " alt="" coords="709,119,773,146"/>
+<area shape="rect" id="node8" href="$mltply_spin_core_8c.html#a775bcc202a5a6f57d64ce9fcf8212bdb" title="Compute index of final wavefunction associated to spin&#45;exchange term. " alt="" coords="359,72,517,113"/>
+<area shape="rect" id="node12" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="580,177,647,203"/>
 </map>

@@ -128,6 +128,7 @@ var searchData=
   ['cfilenamenorm',['cFileNameNorm',['../global_8c.html#a2232d9fe26eff17e863f501a0e7010dc',1,'cFileNameNorm():&#160;global.c'],['../global_8h.html#a2232d9fe26eff17e863f501a0e7010dc',1,'cFileNameNorm():&#160;global.h']]],
   ['cfilenamenormrand',['cFileNameNormRand',['../global_8c.html#a2112db731c321a3fe01cf73ab794befa',1,'cFileNameNormRand():&#160;global.c'],['../global_8h.html#a2112db731c321a3fe01cf73ab794befa',1,'cFileNameNormRand():&#160;global.h']]],
   ['cfilenameoutputeigen',['cFileNameOutputEigen',['../global_8c.html#a92fde0d0c05db8f3372fa01eeac4f99e',1,'cFileNameOutputEigen():&#160;global.c'],['../global_8h.html#a92fde0d0c05db8f3372fa01eeac4f99e',1,'cFileNameOutputEigen():&#160;global.h']]],
+  ['cfilenameoutputexcitedvec',['cFileNameOutputExcitedVec',['../global_8c.html#ae969e8c1649093efb1395f741c4a6ae8',1,'cFileNameOutputExcitedVec():&#160;global.c'],['../global_8h.html#ae969e8c1649093efb1395f741c4a6ae8',1,'cFileNameOutputExcitedVec():&#160;global.h']]],
   ['cfilenameoutputrestartvec',['cFileNameOutputRestartVec',['../global_8c.html#a066b1e487038c7b99c3f602df75a772c',1,'cFileNameOutputRestartVec():&#160;global.c'],['../global_8h.html#a066b1e487038c7b99c3f602df75a772c',1,'cFileNameOutputRestartVec():&#160;global.h']]],
   ['cfilenameoutputvector',['cFileNameOutputVector',['../global_8c.html#ac03136d3a9635031fbcad0b0331458d4',1,'cFileNameOutputVector():&#160;global.c'],['../global_8h.html#ac03136d3a9635031fbcad0b0331458d4',1,'cFileNameOutputVector():&#160;global.h']]],
   ['cfilenamephys_5ffulldiag',['cFileNamePhys_FullDiag',['../global_8c.html#aef4eadd082d736f9a2bf428fc1f3447b',1,'cFileNamePhys_FullDiag():&#160;global.c'],['../global_8h.html#aef4eadd082d736f9a2bf428fc1f3447b',1,'cFileNamePhys_FullDiag():&#160;global.h']]],
@@ -253,8 +254,14 @@ var searchData=
   ['ctpqstep',['cTPQStep',['../_log_message_8c.html#a9720bbea9d14844abaf83128fda8cafe',1,'LogMessage.c']]],
   ['ctpqstepend',['cTPQStepEnd',['../_log_message_8c.html#aa16064f72a917af545fe73f0afb088ea',1,'LogMessage.c']]],
   ['cutoff_5fj',['cutoff_j',['../struct_std_int_list.html#aff0322f52bf1c9bcc434842edfd0834a',1,'StdIntList']]],
+  ['cutoff_5fjr',['cutoff_JR',['../struct_std_int_list.html#a9a3bfe4118fdb0223b53859b2a800995',1,'StdIntList']]],
+  ['cutoff_5flength_5fj',['cutoff_length_J',['../struct_std_int_list.html#ad5c7175c394c7736671631fb6327a41e',1,'StdIntList']]],
+  ['cutoff_5flength_5ft',['cutoff_length_t',['../struct_std_int_list.html#aef6f6e416802bdb46cc27463305afe38',1,'StdIntList']]],
+  ['cutoff_5flength_5fu',['cutoff_length_U',['../struct_std_int_list.html#a6ce3f7bea9f9dec5ad305cf959a5583c',1,'StdIntList']]],
   ['cutoff_5ft',['cutoff_t',['../struct_std_int_list.html#a320d56bada3a911cd6157b45bb52997e',1,'StdIntList']]],
+  ['cutoff_5ftr',['cutoff_tR',['../struct_std_int_list.html#a39a73bf569d395280d0a0f16e042df85',1,'StdIntList']]],
   ['cutoff_5fu',['cutoff_u',['../struct_std_int_list.html#a200d84229937eea29a2a31818ff46e3e',1,'StdIntList']]],
+  ['cutoff_5fur',['cutoff_UR',['../struct_std_int_list.html#a0113501f7db06c24c9cba95d39653f1f',1,'StdIntList']]],
   ['cwarningincorrectformatforspin',['cWarningIncorrectFormatForSpin',['../_error_message_8c.html#ac3f38e2cd6aa861d4da2633eb85be950',1,'ErrorMessage.c']]],
   ['cwarningincorrectformatforspin2',['cWarningIncorrectFormatForSpin2',['../_error_message_8c.html#a1f305c4637145ea5e5e4fd2fd8369fc6',1,'ErrorMessage.c']]]
 ];

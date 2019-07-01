@@ -1,5 +1,5 @@
 <map id="CheckMPI_Summary" name="CheckMPI_Summary">
-<area shape="rect" id="node2" href="$wrapper_m_p_i_8c.html#aeab38d65c1c82094276a9b250b9a5049" title="MPI wrapper function to obtain sum of integer across processes. " alt="" coords="202,5,285,32"/>
-<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8" title="MPI wrapper function to obtain sum of unsigned long integer across processes. " alt="" coords="200,56,287,83"/>
-<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="335,31,401,57"/>
+<area shape="rect" id="node2" href="$wrapper_m_p_i_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper. " alt="" coords="335,20,401,47"/>
+<area shape="rect" id="node3" href="$wrapper_m_p_i_8c.html#aeab38d65c1c82094276a9b250b9a5049" title="MPI wrapper function to obtain sum of integer across processes. " alt="" coords="202,20,285,47"/>
+<area shape="rect" id="node4" href="$wrapper_m_p_i_8c.html#afd4574e9353708ef2aa039a1721440b8" title="MPI wrapper function to obtain sum of unsigned long integer across processes. " alt="" coords="200,71,287,98"/>
 </map>
