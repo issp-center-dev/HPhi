@@ -4,7 +4,7 @@
 
 HPhi/mVMCのスタンダードモードでは以下のファイルを読み込む.
 これらのファイルはRESPACKのプログラムを実行すると, 
-``dir-mvmc`` ディレクトリに ``[CDataFileHead]=zvo`` として自動出力される.
+``dir-model`` ディレクトリに ``[CDataFileHead]=zvo`` として自動出力される.
 
 ジオメトリー
 ------------

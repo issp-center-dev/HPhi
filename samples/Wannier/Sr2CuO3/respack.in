@@ -5,8 +5,8 @@ flg_cRPA = 1
 /
 &PARAM_WANNIER
 N_wannier = 1
-Lower_energy_window = 8.666
-Upper_energy_window = 11.3589
+Lower_energy_window = 8
+Upper_energy_window = 13
 N_initial_guess = 1
 /
 dx2 0.2 0.500000 0.000000 0.50000 0.0 0.0 1.0  0.0 1.0 0.0 1.0 0.0 0.0
