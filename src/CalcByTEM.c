@@ -154,7 +154,7 @@ int CalcByTEM(
       // Set interactions
       if(X->Bind.Def.NTETransferMax != 0 && X->Bind.Def.NTEInterAllMax!=0){
         fprintf(stdoutMPI,
-                "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
+                "Error: Time Evolution mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
         return -1;
       }
       else if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
