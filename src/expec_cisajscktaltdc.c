@@ -49,7 +49,7 @@ int expec_cisajscktalt_Spin(struct BindStruct *X,double complex *vec, FILE **_fp
 int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
-int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp);
+int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2);
 int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
@@ -90,8 +90,8 @@ int expec_cisajscktaltdc
  )
 {
 
-  FILE *fp;
-  char sdt[D_FileNameMax];
+  FILE *fp,*fp_2;
+  char sdt[D_FileNameMax],sdt_2[D_FileNameMax],*tmp_char;
   long unsigned int irght,ilft,ihfbit;
 
   //For TPQ
@@ -135,10 +135,15 @@ int expec_cisajscktaltdc
   case FullDiag:
   case CG:
     sprintf(sdt, cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
+    tmp_char = "ThreeBody.dat";
+    sprintf(sdt_2,tmp_char,X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
 
   if(childfopenMPI(sdt, "w", &fp)!=0){
+    return -1;
+  }
+  if(childfopenMPI(sdt_2, "w", &fp_2)!=0){
     return -1;
   }
 
@@ -164,7 +169,7 @@ int expec_cisajscktaltdc
     break;
 
   case SpinGC:
-      if(expec_cisajscktalt_SpinGC(X, vec, &fp)!=0){
+      if(expec_cisajscktalt_SpinGC(X, vec, &fp,&fp_2)!=0){
           return -1;
       }
     break;
@@ -174,6 +179,7 @@ int expec_cisajscktaltdc
   }
   
   fclose(fp);
+  fclose(fp_2);
   
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){
@@ -819,11 +825,11 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
  * @retval -1 abnormally finished
  *
  */
-int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp){
+int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2){
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
-        info=expec_cisajscktalt_SpinGCHalf(X,vec, _fp);
-        info=expec_threebody_SpinGCHalf(X,vec, _fp);
+        info = expec_cisajscktalt_SpinGCHalf(X,vec, _fp);
+        info = expec_threebody_SpinGCHalf(X,vec, _fp_2);
     } else {
         info=expec_cisajscktalt_SpinGCGeneral(X,vec, _fp);
     }
@@ -842,12 +848,10 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
  */
 int expec_threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp){
     long unsigned int i,j;
-    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
-    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4;
-    long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
-    long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
-    long unsigned int tmp_org_isite5,tmp_org_isite6;
-    long unsigned int tmp_org_sigma5,tmp_org_sigma6;
+    long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4,tmp_org_isite5,tmp_org_isite6;
+    long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4,tmp_org_sigma5,tmp_org_sigma6;
+    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6;
+    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6;
     long unsigned int isA_up, isB_up;
     long unsigned int tmp_off=0;
     double complex tmp_V;
@@ -857,9 +861,8 @@ int expec_threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **
     long int i_max;
     i_max=X->Check.idim_max;
     vec_pr = cd_1d_allocate(i_max + 1);
-    X->Large.mode=H_CORR;
 
-    for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
+    for(i=0;i<X->Def.NTBody;i++){
         tmp_org_isite1   = X->Def.TBody[i][0]+1;
         tmp_org_sigma1   = X->Def.TBody[i][1];
         tmp_org_isite2   = X->Def.TBody[i][2]+1;
@@ -875,15 +878,23 @@ int expec_threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **
         tmp_org_isite6   = X->Def.TBody[i][10]+1;
         tmp_org_sigma6   = X->Def.TBody[i][11];
 
+        X->Large.mode = M_MLTPLY;
         /* |vec_pr>= c5a6|phi>*/
-        mltplyHalfSpinGC_mini(X,tmp_org_isite5,tmp_org_sigma5,tmp_org_isite6,tmp_org_sigma6,vec_pr,vec);
+        mltplyHalfSpinGC_mini(X,tmp_org_isite5-1,tmp_org_sigma5,tmp_org_isite6-1,tmp_org_sigma6,vec_pr,vec);
+        X->Large.mode = H_CORR;
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
             //error message will be added
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
-
+        /*
+        printf("check: %d %d %d %d %d %d %d %d %d %d %d %d \n",
+        org_isite1-1,org_sigma1 ,org_isite2-1,org_sigma2,
+        org_isite3-1,org_sigma3 ,org_isite4-1,org_sigma4,
+        org_isite5-1,org_sigma5 ,org_isite6-1,org_sigma6
+        );
+        */
         dam_pr=0.0;
         if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){ //org_isite3 >= org_isite1 > Nsite
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
@@ -949,7 +960,11 @@ int expec_threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
-        fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
+        fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",
+        tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, 
+        tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,
+        tmp_org_isite5-1, tmp_org_sigma5, tmp_org_isite6-1, tmp_org_sigma6,
+        creal(dam_pr),cimag(dam_pr));
     }
     return 0;
 }
