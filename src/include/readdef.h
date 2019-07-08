@@ -51,6 +51,7 @@
 #define KWLaser 18
 #define KWTEOneBody 19
 #define KWTETwoBody 20
+#define KWThreeBodyG 21
 
 int CheckSite(
           const int iListToSite,

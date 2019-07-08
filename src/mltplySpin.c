@@ -413,6 +413,88 @@ int mltplySpinGC(
 @return error code
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+void mltplyHalfSpinGC_mini(
+  struct BindStruct *X,//!<[inout]
+  int site_i,
+  int spin_i,
+  int site_j,
+  int spin_j,
+  double complex *tmp_v0,//!<[inout] Result vector
+  double complex *tmp_v1//!<[in] Input producted vector
+) {
+  long unsigned int j;
+  long unsigned int i;
+  long unsigned int off = 0;
+  long unsigned int is1_spin = 0;
+  /**/
+  long unsigned int isite1;
+  long unsigned int org_isite1, org_isite2;
+  long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
+  long unsigned int isA_up, isB_up;
+  long unsigned int tmp_off = 0;
+  double complex dam_pr;
+  double complex tmp_trans;
+  long int tmp_sgn;
+  /*[s] For InterAll */
+  double complex tmp_V;
+  /*[e] For InterAll */
+
+  long unsigned int i_max;
+  i_max = X->Check.idim_max;
+
+  int ihermite=0;
+  int idx=0;
+
+  //EDGeneralTransfer[i][0] -> site_i  
+  //EDGeneralTransfer[i][1] -> spin_i  
+  //EDGeneralTransfer[i][2] -> site_j  
+  //EDGeneralTransfer[i][3] -> spin_j  
+  //X->Large.mode == M_MLTPLY 
+  org_isite1 = site_i+1;
+  org_isite2 = site_j+1;
+  org_sigma1 = spin_i;
+  org_sigma2 = spin_j;
+  dam_pr=0.0;
+  if(org_isite1 == org_isite2){
+    if(org_isite1 > X->Def.Nsite){
+      if(org_sigma1==org_sigma2){  // longitudinal magnetic field
+        dam_pr += X_GC_child_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, tmp_v0, tmp_v1);
+      }else{  // transverse magnetic field
+        dam_pr += X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, tmp_v0, tmp_v1);
+      }
+    }else{
+      isite1 = X->Def.Tpow[org_isite1-1];
+      if(org_sigma1==org_sigma2){
+       // longitudinal magnetic field
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X) shared(tmp_v0,tmp_v1)
+        for(j=1;j<=i_max;j++){
+          tmp_v0[j] += X_SpinGC_CisAis(j, X, isite1, org_sigma1)*tmp_v1[j]; 
+        }
+      }else{
+        // transverse magnetic field
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, tmp_off) firstprivate(i_max, isite1, org_sigma2, X) shared(tmp_v0,tmp_v1)
+        for(j=1;j <= i_max;j++){
+          tmp_sgn  =  X_SpinGC_CisAit(j,X,isite1,org_sigma2,&tmp_off);
+          if(tmp_sgn !=0){
+            tmp_v0[tmp_off+1]  +=  tmp_sgn*tmp_v1[j];
+          }
+        }
+      }
+    }
+  }//else{
+     // hopping is not allowed in localized spin system
+     //dam_pr=0.0;
+  //}
+  //return 0;
+}/*int mltplyHalfSpinGC*/
+
+
+
+/**
+@brief Driver function for Spin 1/2 Hamiltonian (grandcanonical)
+@return error code
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
 int mltplyHalfSpinGC(
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[inout] Result vector

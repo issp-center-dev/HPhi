@@ -100,6 +100,8 @@ void setmem_def
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
   X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
 
+  X->Def.TBody = i_2d_allocate(X->Def.NTBody, 8);
+
   X->Def.SingleExcitationOperator = i_2d_allocate(X->Def.NSingleExcitationOperator, 3);
   X->Def.ParaSingleExcitationOperator = cd_1d_allocate(X->Def.NSingleExcitationOperator);
   X->Def.PairExcitationOperator = i_2d_allocate(X->Def.NPairExcitationOperator, 5);

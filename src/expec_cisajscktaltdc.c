@@ -19,12 +19,14 @@
 #include "FileIO.h"
 #include "bitcalc.h"
 #include "expec_cisajscktaltdc.h"
+#include "mltplySpin.h"
 #include "mltplySpinCore.h"
 #include "mltplyHubbardCore.h"
 #include "wrapperMPI.h"
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplyMPIHubbardCore.h"
+#include "common/setmemory.h"
 
 /**
  * @file   expec_cisajscktaltdc.c
@@ -821,11 +823,137 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
         info=expec_cisajscktalt_SpinGCHalf(X,vec, _fp);
+        info=expec_threebody_SpinGCHalf(X,vec, _fp);
     } else {
         info=expec_cisajscktalt_SpinGCGeneral(X,vec, _fp);
     }
     return info;
 }
+
+/**
+ * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
+int expec_threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp){
+    long unsigned int i,j;
+    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
+    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4;
+    long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
+    long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
+    long unsigned int tmp_org_isite5,tmp_org_isite6;
+    long unsigned int tmp_org_sigma5,tmp_org_sigma6;
+    long unsigned int isA_up, isB_up;
+    long unsigned int tmp_off=0;
+    double complex tmp_V;
+    double complex dam_pr;
+    double complex *vec_pr;
+
+    long int i_max;
+    i_max=X->Check.idim_max;
+    vec_pr = cd_1d_allocate(i_max + 1);
+    X->Large.mode=H_CORR;
+
+    for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
+        tmp_org_isite1   = X->Def.TBody[i][0]+1;
+        tmp_org_sigma1   = X->Def.TBody[i][1];
+        tmp_org_isite2   = X->Def.TBody[i][2]+1;
+        tmp_org_sigma2   = X->Def.TBody[i][3];
+        /**/
+        tmp_org_isite3   = X->Def.TBody[i][4]+1;
+        tmp_org_sigma3   = X->Def.TBody[i][5];
+        tmp_org_isite4   = X->Def.TBody[i][6]+1;
+        tmp_org_sigma4   = X->Def.TBody[i][7];
+        /**/
+        tmp_org_isite5   = X->Def.TBody[i][8]+1;
+        tmp_org_sigma5   = X->Def.TBody[i][9];
+        tmp_org_isite6   = X->Def.TBody[i][10]+1;
+        tmp_org_sigma6   = X->Def.TBody[i][11];
+
+        /* |vec_pr>= c5a6|phi>*/
+        mltplyHalfSpinGC_mini(X,tmp_org_isite5,tmp_org_sigma5,tmp_org_isite6,tmp_org_sigma6,vec_pr,vec);
+
+        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X)!=0){
+            //error message will be added
+            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
+            continue;
+        }
+
+        dam_pr=0.0;
+        if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){ //org_isite3 >= org_isite1 > Nsite
+            if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                dam_pr += X_GC_child_CisAisCjuAju_spin_MPIdouble( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_isite1 ==org_isite3 && org_sigma1 ==org_sigma4 && org_sigma2 ==org_sigma3){ //diagonal (for spin: cuadcdau=cuau)
+                dam_pr += X_GC_child_CisAis_spin_MPIdouble((org_isite1-1), org_sigma1, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr += X_GC_child_CisAisCjuAjv_spin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                dam_pr += X_GC_child_CisAitCjuAju_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr +=  X_GC_child_CisAitCiuAiv_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+        }
+        else if(org_isite3>X->Def.Nsite || org_isite1>X->Def.Nsite){ //org_isite3 > Nsite >= org_isite1
+            if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                dam_pr += X_GC_child_CisAisCjuAju_spin_MPIsingle( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec_pr);
+
+            }
+            else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr += X_GC_child_CisAisCjuAjv_spin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                dam_pr += X_GC_child_CisAitCjuAju_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr +=  X_GC_child_CisAitCiuAiv_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+        }
+        else{
+            if(org_isite1==org_isite2 && org_isite3==org_isite4){
+                isA_up = X->Def.Tpow[org_isite2-1];
+                isB_up = X->Def.Tpow[org_isite4-1];
+                if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr +=GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec_pr, X);
+                    }
+                }else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr += GC_child_CisAisCitAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec_pr, X, &tmp_off);
+                    }
+                }else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr += GC_child_CisAitCiuAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec_pr, X, &tmp_off);
+                    }
+                }else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr += GC_child_CisAitCiuAiv_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec_pr, X, &tmp_off);
+                    }
+                }
+            }
+        }
+        dam_pr = SumMPI_dc(dam_pr);
+        fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
+    }
+    return 0;
+}
+
 
 /**
  * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
