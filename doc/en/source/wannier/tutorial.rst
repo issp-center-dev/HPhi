@@ -6,8 +6,12 @@ Tutorial
 In this tutorial, we downfold Sr\ :sub:`2`\ CuO\ :sub:`3`
 into single orbital 1D Hubbard model,
 and simulate that model with HPhi/mVMC.
-We employ QuantumESPRESSO for the DFT calculation.
+We use QuantumESPRESSO for the DFT calculation.
 Input files are served in ``samples/Wannier/Sr2CuO3`` directory.
+
+
+In actual studies, the input files etc. of each solver should be modified for more high accuracy calculation.
+Please refer to the manuals of each solver for the details of the input files.
 
 SCF calculation of charge density
 ---------------------------------
