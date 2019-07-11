@@ -52,6 +52,7 @@
 #define KWTEOneBody 19
 #define KWTETwoBody 20
 #define KWThreeBodyG 21
+#define KWFourBodyG 22
 
 int CheckSite(
           const int iListToSite,
