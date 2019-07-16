@@ -946,6 +946,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->LargeValue = NaN_d;
   StdI->OmegaMax = NaN_d;
   StdI->OmegaMin = NaN_d;
+  StdI->OmegaOrg = NaN_d;
   StdI->OmegaIm = NaN_d;
   StdI->Nomega = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->SpectrumQ[i] = NaN_d;
@@ -1331,7 +1332,7 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "NOmega         %-5d\n", StdI->Nomega);
   fprintf(fp, "OmegaMax       %-25.15e %-25.15e\n", StdI->OmegaMax, StdI->OmegaIm);
   fprintf(fp, "OmegaMin       %-25.15e %-25.15e\n", StdI->OmegaMin, StdI->OmegaIm);
-  fprintf(fp, "OmegaOrg       0.0 0.0\n");
+  fprintf(fp, "OmegaOrg       %-25.15e %-25.15e\n", StdI->OmegaOrg, 0.0);
   if (strcmp(StdI->method, "timeevolution") == 0)
     fprintf(fp, "ExpandCoef     %-5d\n", StdI->ExpandCoef);
 #elif defined(_mVMC)
@@ -1733,6 +1734,7 @@ static void CheckModPara(struct StdIntList *StdI)
   StdFace_PrintVal_i("NOmega", &StdI->Nomega, 200);
   StdFace_PrintVal_d("OmegaMax", &StdI->OmegaMax, StdI->LargeValue*StdI->nsite);
   StdFace_PrintVal_d("OmegaMin", &StdI->OmegaMin, -StdI->LargeValue*StdI->nsite);
+  StdFace_PrintVal_d("OmegaOrg", &StdI->OmegaOrg, 0.0);
   StdFace_PrintVal_d("OmegaIm", &StdI->OmegaIm, 0.01* (int)StdI->LargeValue);
 #elif defined(_mVMC)
   if (strcmp(StdI->CParaFileHead, "****") == 0) {
@@ -2500,6 +2502,7 @@ void StdFace_main(
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nvec);
     else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMax);
     else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMin);
+    else if (strcmp(keyword, "omegaorg") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaOrg);
     else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaIm);
     else if (strcmp(keyword, "outputexcitedvec") == 0) StoreWithCheckDup_sl(keyword, value, StdI->OutputExVec);
     else if (strcmp(keyword, "pumptype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->PumpType);
