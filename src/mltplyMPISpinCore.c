@@ -839,7 +839,6 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
   int origin, ierr;
   double complex tmp_V, dmv, dam_pr;
   MPI_Status statusMPI;
-  int ihermite = TRUE;
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4) {//cisaisciuais=0 && cisaiucisais=0
     return 0.0;
   }

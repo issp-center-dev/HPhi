@@ -1141,11 +1141,9 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI(
   unsigned long int j, Asum, Adiff;
   double complex dmv;
   unsigned long int origin, tmp_off;
-  unsigned long int org_rankbit;
+  unsigned long int org_rankbit = 0;
   MPI_Status statusMPI;
-  //printf("Deubg0-0: org_isite1=%d, org_ispin1=%d, org_isite2=%d, org_ispin2=%d, org_isite3=%d, org_ispin3=%d\n", org_isite1, org_ispin1,org_isite2, org_ispin2,org_isite3, org_ispin3);
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite3, org_ispin3, X, (long unsigned int) myrank, &origin);
-  //printf("iCheck=%d, myrank=%d, origin=%d\n", iCheck, myrank, origin);
 
   isite1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
   isite2 = X->Def.Tpow[2 * org_isite2 + org_ispin2];
