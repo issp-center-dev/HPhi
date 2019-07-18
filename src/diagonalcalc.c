@@ -549,12 +549,16 @@ int SetDiagonalCoulombInter
  )
 {
 
-  long unsigned int is1_up, is1_down;
-  long unsigned int ibit1_up, ibit1_down;
-  long unsigned int num1;
-  long unsigned int is2_up, is2_down;
-  long unsigned int ibit2_up, ibit2_down;
-  long unsigned int num2;
+  long unsigned int is1_up = 0;
+  long unsigned int is1_down = 0;
+  long unsigned int ibit1_up = 0;
+  long unsigned int ibit1_down = 0;
+  long unsigned int num1 = 0;
+  long unsigned int is2_up = 0;
+  long unsigned int is2_down = 0;
+  long unsigned int ibit2_up = 0;
+  long unsigned int ibit2_down = 0;
+  long unsigned int num2 = 0;
 
   long unsigned int j;
   long unsigned int i_max=X->Check.idim_max;

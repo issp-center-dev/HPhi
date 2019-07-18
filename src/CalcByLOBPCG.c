@@ -159,7 +159,7 @@ static void Initialize_wave(
 {
   FILE *fp;
   char sdt[D_FileNameMax];
-  size_t byte_size;
+  size_t byte_size = 0;
 
   int iproc, ie, ierr;
   long int idim, iv, i_max;
@@ -300,7 +300,7 @@ static void Output_restart(
 )
 {
   FILE *fp;
-  size_t byte_size;
+  size_t byte_size = 0;
   char sdt[D_FileNameMax];
   int ie;
 
@@ -640,7 +640,7 @@ int CalcByLOBPCG(
 )
 {
   char sdt[D_FileNameMax];
-  size_t byte_size;
+  size_t byte_size = 0;
   long int i_max = 0, ie, idim;
   FILE *fp;
 

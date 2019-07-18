@@ -113,9 +113,7 @@ int TransferWithPeierls(struct BindStruct *X, const double time) {
   const double dt = time - time_c;
   const double dt2 = time - (time_c + time_d);
   const double td = time_c / 3.0;
-  double VecPot;
-
-  //printf("Make Trasfer with Pierles factor");
+  double VecPot = 0.0;
 
   if (Mode == 0) {//Gaussian Wave
     VecPot = Avp * cos(omega * dt) * exp(-dt * dt / (2.0 * time_d * time_d));
@@ -200,7 +198,7 @@ int TransferForQuench(struct BindStruct *X, const double time) {
   const double dirX = X->Def.ParaLaser[7];
   const double dirY = X->Def.ParaLaser[8];
   const double dt = time - time_c;
-  double Bessel;
+  double Bessel = 0.0;
 
   //printf("Make Trasfer with Pierles factor");
 

@@ -354,7 +354,7 @@ int mltplyHubbardGC(
   long unsigned int isite3, isite4, sigma3, sigma4;
   long unsigned int ibitsite1, ibitsite2, ibitsite3, ibitsite4;
 
-  double complex dam_pr;
+  double complex dam_pr = 0.0;
   double complex tmp_trans;
   /*[s] For InterAll */
   double complex tmp_V;
@@ -443,7 +443,7 @@ int mltplyHubbardGC(
     }//InterPE
     else{
       StartTimer(222);
-      dam_pr=0.0;
+      dam_pr = 0.0;
       for(ihermite=0; ihermite<2; ihermite++){
         idx=i+ihermite;
         isite1 = X->Def.InterAll_OffDiagonal[idx][0] + 1;

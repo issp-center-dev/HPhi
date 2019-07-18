@@ -97,7 +97,7 @@ int CalcSpectrum(
     int i_stp;
     int iFlagListModified = FALSE;
     FILE *fp;
-    double dnorm;
+    double dnorm = 0.0;
 
     //ToDo: Nomega should be given as a parameter
     int Nomega;
