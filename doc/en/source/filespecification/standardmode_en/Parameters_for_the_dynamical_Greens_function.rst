@@ -53,19 +53,26 @@ Parameters for the dynamical Green’s function
    :numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` ,
    :numref:`fig_ladder` , :numref:`fig_kagome` .
 
+*  ``OmegaOrg``
+
+   **Type :** Double (``0.0`` as default.)
+
+   **Description :** The origin value of the frequency.
+
 *  ``OmegaMin``
 
    **Type :** Double (``-LargeValue`` times the number of sites as
    default.)
 
-   **Description :** The lower limit of the real part of the frequency.
+   **Description :** The lower limit of the real part of the frequency measured from ``OmegaOrg``.
 
 *  ``OmegaMax``
 
    **Type :** Double (``LargeValue`` times the number of sites as
    default.)
 
-   **Description :** The upper limit of the real part of the frequency.
+   **Description :** The upper limit of the real part of the frequency measured from ``OmegaOrg``.
+
 
 *  ``OmegaIm``
 

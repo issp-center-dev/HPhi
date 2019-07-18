@@ -18,3 +18,4 @@ SpectrumQL = 0.5
 OmegaMin = -10.0
 OmegaMax = 20.0
 OmegaIM = 0.2 
+OmegaOrg = 10.0

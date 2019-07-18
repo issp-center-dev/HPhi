@@ -210,7 +210,7 @@ int diagonalcalcForTE
     for (i = 0; i < X->Def.NTETransferDiagonal[_istep]; i++) {
       isite1 = X->Def.TETransferDiagonal[_istep][i][0] + 1;
       A_spin = X->Def.TETransferDiagonal[_istep][i][1];
-      tmp_V = X->Def.ParaTETransferDiagonal[_istep][i];
+      tmp_V = -X->Def.ParaTETransferDiagonal[_istep][i];
       SetDiagonalTETransfer(isite1, tmp_V, A_spin, X, tmp_v0, tmp_v1);
     }
   }
@@ -1950,7 +1950,7 @@ int SetDiagonalTETransfer
   long unsigned int num1;
   long unsigned int isigma1 =spin;
   long unsigned int is1,ibit1;
-  double dam_pr=0.0;
+  double complex dam_pr = 0.0;
 
   long unsigned int j;
   long unsigned int i_max=X->Check.idim_max;

@@ -293,6 +293,7 @@ struct StdIntList {
   int Nomega;/**<@brief Number of frequencies, input from file.*/
   double OmegaMax;/**<@brief Maximum of frequency for spectrum, input from file.*/
   double OmegaMin;/**<@brief Minimum of frequency for spectrum, input from file.*/
+  double OmegaOrg;/**<@brief Origin of frequency for spectrum, input from file.*/
   double OmegaIm;/**<@brief Imaginary part of frequency.*/
   double SpectrumQ[3];/**<@brief wavenumver (q-vector) in fractional coordinate*/
   int SpectrumBody;/**<@brief one- or two-body excitation, defined from
