@@ -59,18 +59,18 @@ Table :numref:`table_interactions` に表します。
 .. csv-table:: 各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。
    :header: "相互作用", "1次元鎖", "矩形格子", "三角格子", "蜂の巣格子", "カゴメ格子", "梯子格子"
 
-   "J, t, V(省略形)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
-   "J0, t0, V0", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
-   "J1, t1, V1", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
-   "J2, t2, V2", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
-   "J', t', V'(省略形)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
-   "J0', t0', V0'", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
-   "J1', t1', V1'", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
-   "J2', t2', V2'", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
-   "J'', t'', V''(省略形)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
-   "J0'', t0'', V0''", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
-   "J1'', t1'', V1''", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
-   "J2'', t2'', V2''", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
+   "``J``, ``t``, ``V`` (省略形)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
+   "``J0``, ``t0``, ``V0``", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
+   "``J1``, ``t1``, ``V1``", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
+   "``J2``, ``t2``, ``V2``", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
+   "``J'``, ``t'``, ``V'`` (省略形)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
+   "``J0'``, ``t0'``, ``V0'``", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-"
+   "``J1'``, ``t1'``, ``V1'``", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
+   "``J2'``, ``t2'``, ``V2'``", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`"
+   "``J''``, ``t''``, ``V''`` (省略形)", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
+   "``J0''``, ``t0''``, ``V0''``", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
+   "``J1''``, ``t1''``, ``V1''``", "\-", ":math:`{\circ}`", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
+   "``J2''``, ``t2''``, ``V2''``", "\-", "\-", ":math:`{\circ}`", ":math:`{\circ}`", "\-", "\-"
 
 
 非局所項 [ 梯子格子 ( :numref:`fig_ladder` )]

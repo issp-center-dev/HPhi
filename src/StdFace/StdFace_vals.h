@@ -252,6 +252,12 @@ struct StdIntList {
   int cutoff_tR[3];
   int cutoff_UR[3];
   int cutoff_JR[3];
+  double lambda; /**<@brief Tuning parameter of U and J in wannier90, input from file.*/
+  double lambda_U; /**<@brief Tuning parameter of U in wannier90, input from file.*/
+  double lambda_J; /**<@brief Tuning parameter of J in wannier90, input from file.*/
+  char double_counting_mode[256];/**<@brief Select mode of double counting, input from file.*/
+  double alpha;/**<@brief Tuning parameter of chemical potential correction in wannier90, input from file.*/
+
 #if defined(_HPhi)
   /*
   HPhi modpara
@@ -287,6 +293,7 @@ struct StdIntList {
   int Nomega;/**<@brief Number of frequencies, input from file.*/
   double OmegaMax;/**<@brief Maximum of frequency for spectrum, input from file.*/
   double OmegaMin;/**<@brief Minimum of frequency for spectrum, input from file.*/
+  double OmegaOrg;/**<@brief Origin of frequency for spectrum, input from file.*/
   double OmegaIm;/**<@brief Imaginary part of frequency.*/
   double SpectrumQ[3];/**<@brief wavenumver (q-vector) in fractional coordinate*/
   int SpectrumBody;/**<@brief one- or two-body excitation, defined from

@@ -210,7 +210,7 @@ int diagonalcalcForTE
     for (i = 0; i < X->Def.NTETransferDiagonal[_istep]; i++) {
       isite1 = X->Def.TETransferDiagonal[_istep][i][0] + 1;
       A_spin = X->Def.TETransferDiagonal[_istep][i][1];
-      tmp_V = X->Def.ParaTETransferDiagonal[_istep][i];
+      tmp_V = -X->Def.ParaTETransferDiagonal[_istep][i];
       SetDiagonalTETransfer(isite1, tmp_V, A_spin, X, tmp_v0, tmp_v1);
     }
   }
@@ -549,12 +549,16 @@ int SetDiagonalCoulombInter
  )
 {
 
-  long unsigned int is1_up, is1_down;
-  long unsigned int ibit1_up, ibit1_down;
-  long unsigned int num1;
-  long unsigned int is2_up, is2_down;
-  long unsigned int ibit2_up, ibit2_down;
-  long unsigned int num2;
+  long unsigned int is1_up = 0;
+  long unsigned int is1_down = 0;
+  long unsigned int ibit1_up = 0;
+  long unsigned int ibit1_down = 0;
+  long unsigned int num1 = 0;
+  long unsigned int is2_up = 0;
+  long unsigned int is2_down = 0;
+  long unsigned int ibit2_up = 0;
+  long unsigned int ibit2_down = 0;
+  long unsigned int num2 = 0;
 
   long unsigned int j;
   long unsigned int i_max=X->Check.idim_max;
@@ -1950,7 +1954,7 @@ int SetDiagonalTETransfer
   long unsigned int num1;
   long unsigned int isigma1 =spin;
   long unsigned int is1,ibit1;
-  double dam_pr=0.0;
+  double complex dam_pr = 0.0;
 
   long unsigned int j;
   long unsigned int i_max=X->Check.idim_max;

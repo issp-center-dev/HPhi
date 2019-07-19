@@ -245,7 +245,9 @@ void totalspin_Spin(struct BindStruct *X,double complex *vec) {
   int sigma_1, sigma_2;
   long unsigned int ibit1_up, ibit2_up, ibit_tmp, is_up;
   double complex spn_z = 0.0;
-  double complex spn_z1, spn_z2, spn_zd;
+  double complex spn_z1 = 0.0;
+  double complex spn_z2 = 0.0;
+  double complex spn_zd = 0.0;
   double complex spn = 0.0;
   long unsigned int i_max;
 

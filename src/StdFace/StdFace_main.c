@@ -274,7 +274,7 @@ static void PrintCalcMod(struct StdIntList *StdI)
 static void PrintExcitation(struct StdIntList *StdI) {
   FILE *fp;
   int NumOp, **spin, isite, ispin, icell, itau;
-  double *coef, pi, Cphase, S, Sz;
+  double *coef, Cphase, S, Sz;
   double *fourier_r, *fourier_i;
 
   if (strcmp(StdI->model, "spin") == 0 && StdI->S2 > 1) {
@@ -364,7 +364,7 @@ static void PrintExcitation(struct StdIntList *StdI) {
     }
     else if (strcmp(StdI->SpectrumType, "density") == 0) {
       NumOp = 2;
-      coef[0] = 1,0;
+      coef[0] = 1.0;
       coef[1] = 1.0;
       spin[0][0] = 0;
       spin[0][1] = 0;
@@ -468,10 +468,9 @@ static void PrintExcitation(struct StdIntList *StdI) {
 */
 static void VectorPotential(struct StdIntList *StdI) {
   FILE *fp;
-  int it, ii, isite, icell, itau, itrans, jsite, jcell, jtau, ntrans0;
-  double Cphase, time, dR[3];
+  int it, ii;
+  double time;
   double **Et;
-  double complex coef;
 
   fprintf(stdout, "\n  @ Time-evolution\n\n");
 
@@ -565,7 +564,7 @@ static void VectorPotential(struct StdIntList *StdI) {
 */
 static void PrintPump(struct StdIntList *StdI) {
   FILE *fp;
-  int it, ii, isite, ipump, jpump, npump0;
+  int it, isite, ipump, jpump, npump0;
 
   if (StdI->PumpBody == 1) {
 
@@ -933,12 +932,17 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   strcpy(StdI->lattice, "****\0");
   strcpy(StdI->outputmode, "****\0");
   strcpy(StdI->CDataFileHead, "****\0");
+  strcpy(StdI->double_counting_mode, "****\0");
   StdI->cutoff_t = NaN_d;
   StdI->cutoff_u = NaN_d;
   StdI->cutoff_j = NaN_d;
   StdI->cutoff_length_t = NaN_d;
   StdI->cutoff_length_U = NaN_d;
   StdI->cutoff_length_J = NaN_d;
+  StdI->lambda = NaN_d;
+  StdI->lambda_U = NaN_d;
+  StdI->lambda_J = NaN_d;
+  StdI->alpha = NaN_d;
   for (i = 0; i < 3; i++)StdI->cutoff_tR[i] = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->cutoff_UR[i] = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->cutoff_JR[i] = StdI->NaN_i;
@@ -946,6 +950,7 @@ static void StdFace_ResetVals(struct StdIntList *StdI) {
   StdI->LargeValue = NaN_d;
   StdI->OmegaMax = NaN_d;
   StdI->OmegaMin = NaN_d;
+  StdI->OmegaOrg = NaN_d;
   StdI->OmegaIm = NaN_d;
   StdI->Nomega = StdI->NaN_i;
   for (i = 0; i < 3; i++)StdI->SpectrumQ[i] = NaN_d;
@@ -1331,7 +1336,7 @@ static void PrintModPara(struct StdIntList *StdI)
   fprintf(fp, "NOmega         %-5d\n", StdI->Nomega);
   fprintf(fp, "OmegaMax       %-25.15e %-25.15e\n", StdI->OmegaMax, StdI->OmegaIm);
   fprintf(fp, "OmegaMin       %-25.15e %-25.15e\n", StdI->OmegaMin, StdI->OmegaIm);
-  fprintf(fp, "OmegaOrg       0.0 0.0\n");
+  fprintf(fp, "OmegaOrg       %-25.15e %-25.15e\n", StdI->OmegaOrg, 0.0);
   if (strcmp(StdI->method, "timeevolution") == 0)
     fprintf(fp, "ExpandCoef     %-5d\n", StdI->ExpandCoef);
 #elif defined(_mVMC)
@@ -1733,6 +1738,7 @@ static void CheckModPara(struct StdIntList *StdI)
   StdFace_PrintVal_i("NOmega", &StdI->Nomega, 200);
   StdFace_PrintVal_d("OmegaMax", &StdI->OmegaMax, StdI->LargeValue*StdI->nsite);
   StdFace_PrintVal_d("OmegaMin", &StdI->OmegaMin, -StdI->LargeValue*StdI->nsite);
+  StdFace_PrintVal_d("OmegaOrg", &StdI->OmegaOrg, 0.0);
   StdFace_PrintVal_d("OmegaIm", &StdI->OmegaIm, 0.01* (int)StdI->LargeValue);
 #elif defined(_mVMC)
   if (strcmp(StdI->CParaFileHead, "****") == 0) {
@@ -2303,7 +2309,12 @@ void StdFace_main(
     else if (strcmp(keyword, "cutoff_uh") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_UR[2]);
     else if (strcmp(keyword, "cutoff_ul") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_UR[1]);
     else if (strcmp(keyword, "cutoff_uw") == 0) StoreWithCheckDup_i(keyword, value, &StdI->cutoff_UR[0]);
+    else if (strcmp(keyword, "lambda") == 0) StoreWithCheckDup_d(keyword, value, &StdI->lambda);
+    else if (strcmp(keyword, "lambda_u") == 0) StoreWithCheckDup_d(keyword, value, &StdI->lambda_U);
+    else if (strcmp(keyword, "lambda_j") == 0) StoreWithCheckDup_d(keyword, value, &StdI->lambda_J);
+    else if (strcmp(keyword, "alpha") == 0) StoreWithCheckDup_d(keyword, value, &StdI->alpha);
     else if (strcmp(keyword, "d") == 0) StoreWithCheckDup_d(keyword, value, &StdI->D[2][2]);
+    else if (strcmp(keyword, "doublecounting") == 0) StoreWithCheckDup_sl(keyword, value, StdI->double_counting_mode);
     else if (strcmp(keyword, "gamma") == 0) StoreWithCheckDup_d(keyword, value, &StdI->Gamma);
     else if (strcmp(keyword, "h") == 0) StoreWithCheckDup_d(keyword, value, &StdI->h);
     else if (strcmp(keyword, "height") == 0) StoreWithCheckDup_i(keyword, value, &StdI->Height);
@@ -2500,6 +2511,7 @@ void StdFace_main(
     else if (strcmp(keyword, "nvec") == 0) StoreWithCheckDup_i(keyword, value, &StdI->nvec);
     else if (strcmp(keyword, "omegamax") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMax);
     else if (strcmp(keyword, "omegamin") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaMin);
+    else if (strcmp(keyword, "omegaorg") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaOrg);
     else if (strcmp(keyword, "omegaim") == 0) StoreWithCheckDup_d(keyword, value, &StdI->OmegaIm);
     else if (strcmp(keyword, "outputexcitedvec") == 0) StoreWithCheckDup_sl(keyword, value, StdI->OutputExVec);
     else if (strcmp(keyword, "pumptype") == 0) StoreWithCheckDup_sl(keyword, value, StdI->PumpType);

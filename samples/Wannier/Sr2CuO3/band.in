@@ -1,6 +1,6 @@
 &CONTROL
  calculation = 'bands'
-  pseudo_dir = './'
+  pseudo_dir = '../pseudo'
 prefix = 'sr2cuo3'
 /
 &SYSTEM
@@ -9,7 +9,7 @@ prefix = 'sr2cuo3'
         ntyp = 3
      ecutwfc = 30.000000
      ecutrho = 240.000000
-        nbnd = 57
+        nbnd = 35
 /
 &ELECTRONS
 /
@@ -18,9 +18,9 @@ CELL_PARAMETERS angstrom
  1.749305 -1.955690 6.351200
  1.749305 1.955690 -6.351200
 ATOMIC_SPECIES
- Sr 87.620000 Sr.pbe-spn-rrkjus_psl.1.0.0.UPF
- Cu 63.546000 Cu_pbe_v1.2.uspp.F.UPF
- O 15.999400 O_pbe_v1.2.uspp.F.UPF
+ Sr 87.620000 Sr_ONCV_PBE-1.0.upf
+ Cu 63.546000 Cu_ONCV_PBE-1.0.upf
+ O 15.999400 O_ONCV_PBE-1.0.upf
 ATOMIC_POSITIONS crystal
  Sr 0.851940 0.351940 0.500000
  Sr 0.148060 0.648060 0.500000

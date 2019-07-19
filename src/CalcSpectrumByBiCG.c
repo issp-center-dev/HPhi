@@ -217,10 +217,10 @@ int CalcSpectrumByBiCG(
   unsigned long int idim, i_max;
   FILE *fp;
   size_t byte_size;
-  int iret, max_step;
+  int iret;
   unsigned long int liLanczosStp_vec = 0;
   double complex *v12, *v14, res_proj;
-  int stp, one = 1, status[3], iomega;
+  int stp, status[3], iomega;
   double *resz;
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
@@ -302,7 +302,11 @@ int CalcSpectrumByBiCG(
       v14[idim] = 0.0;
     }
     iret = mltply(&X->Bind, v12, v2);
+    if (iret == -1){
+      return FALSE;
+    }
     iret = mltply(&X->Bind, v14, v4);
+    if (iret == -1) return FALSE;
 
     res_proj = VecProdMPI(X->Bind.Check.idim_max, vrhs, v2);
     /**
