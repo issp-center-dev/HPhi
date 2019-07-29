@@ -135,11 +135,9 @@ int expec_cisajscktaltdc
 
   case FullDiag:
   case CG:
-    sprintf(sdt, cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
-    tmp_char = "ThreeBody.dat";
-    sprintf(sdt_2,tmp_char,X->Def.CDataFileHead, X->Phys.eigen_num);
-    tmp_char = "FourBody.dat";
-    sprintf(sdt_3,tmp_char,X->Def.CDataFileHead, X->Phys.eigen_num);
+    sprintf(sdt,  cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
+    sprintf(sdt_2,cFileName3BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
+    sprintf(sdt_3,cFileName4BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
 
