@@ -4,16 +4,27 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>4.2.6. InterAll file &#8212; HΦ Documentation  documentation</title>
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.2.7. CoulombIntra file" href="CoulombIntra_file_en.html" />
@@ -24,23 +35,26 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="interall-file">
 <span id="subsec-interall"></span><h1>4.2.6. InterAll file<a class="headerlink" href="#interall-file" title="Permalink to this headline">¶</a></h1>
 <p>This file determines the values of generalized two-body interactions
-integrals <span class="math notranslate nohighlight">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}\)</span>,</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-interall-file-en-0">
-<span class="eqno">(4.7)<a class="headerlink" href="#equation-filespecification-expertmode-en-interall-file-en-0" title="Permalink to this equation">¶</a></span>\[{\mathcal H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
+integrals <span class="math">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}\)</span>,</p>
+<div class="math" id="equation-filespecification/expertmode_en/InterAll_file_en:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-filespecification/expertmode_en/InterAll_file_en:0" title="Permalink to this equation">¶</a></span>\[{\mathcal H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
 I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.\]</div>
-<p>For spin, the conditions <span class="math notranslate nohighlight">\(i=j\)</span> and <span class="math notranslate nohighlight">\(k=l\)</span> must be satisfied. An example of the file format is as follows.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>======================
+<p>For spin, the conditions <span class="math">\(i=j\)</span> and <span class="math">\(k=l\)</span> must be satisfied. An example of the file format is as follows.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>======================
 NInterAll      36
 ======================
 ========zInterAll=====
@@ -93,7 +107,7 @@ two-body interactions.</p>
 [int06], [int08]</p>
 <p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> An integer giving a site index
-(<span class="math notranslate nohighlight">\(0&lt;=\)</span> [int02], [int04], [int06], [int08] <span class="math notranslate nohighlight">\(&lt;\)</span> <code class="docutils literal notranslate"><span class="pre">Nsite</span></code>).</p>
+(<span class="math">\(0&lt;=\)</span> [int02], [int04], [int06], [int08] <span class="math">\(&lt;\)</span> <code class="docutils literal"><span class="pre">Nsite</span></code>).</p>
 </li>
 <li><p class="first">[int03], [int05],
 [int07], [int09]</p>
@@ -107,12 +121,12 @@ two-body interactions.</p>
 <li><p class="first">[double01]</p>
 <p><strong>Type :</strong> Double (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> A value for a real part of
-<span class="math notranslate nohighlight">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}\)</span>.</p>
+<span class="math">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}\)</span>.</p>
 </li>
 <li><p class="first">[double02]</p>
 <p><strong>Type :</strong> Double (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> A value for an imaginary part of
-<span class="math notranslate nohighlight">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}\)</span>.</p>
+<span class="math">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}\)</span>.</p>
 </li>
 </ul>
 </div>
@@ -121,15 +135,15 @@ two-body interactions.</p>
 <ul class="simple">
 <li>Headers cannot be omitted.</li>
 <li>Since the Hamiltonian must be Hermitian, the relation
-<span class="math notranslate nohighlight">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dagger}\)</span>
+<span class="math">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}=I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}^{\dagger}\)</span>
 must be satisfied. A program is terminated when this relation is
 broken. It is noted that the term of the Hermitian conjugate for
-<span class="math notranslate nohighlight">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\)</span>
+<span class="math">\(I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\)</span>
 should be inputted as
-<span class="math notranslate nohighlight">\(I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}\)</span>
-<span class="math notranslate nohighlight">\(c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}\)</span>.</li>
-<li>A program is terminated when the conditions <span class="math notranslate nohighlight">\(i=j\)</span> and
-<span class="math notranslate nohighlight">\(k=l\)</span> are not satisfied for the spin model.</li>
+<span class="math">\(I_{lkji\sigma_4\sigma_3\sigma_2\sigma_1}\)</span>
+<span class="math">\(c_{l\sigma_4}^{\dagger}c_{k\sigma_3}c_{j\sigma_2}^{\dagger}c_{i\sigma_1}\)</span>.</li>
+<li>A program is terminated when the conditions <span class="math">\(i=j\)</span> and
+<span class="math">\(k=l\)</span> are not satisfied for the spin model.</li>
 <li>A program is terminated when the components of the on-site
 interactions are double counted.</li>
 <li>A program is terminated when [int01] is different
@@ -144,6 +158,7 @@ the range of the defined values.</li>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -164,8 +179,8 @@ the range of the defined values.</li>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -217,14 +232,12 @@ the range of the defined values.</li>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -235,8 +248,8 @@ the range of the defined values.</li>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../../_sources/filespecification/expertmode_en/InterAll_file_en.rst.txt"

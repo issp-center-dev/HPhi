@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>3.1. スタンダードモード &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="3.2. エキスパートモード" href="expertmode_ja.html" />
@@ -25,12 +36,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="id1">
@@ -38,22 +52,22 @@
 <div class="section" id="heisenberg">
 <h2>3.1.1. Heisenberg模型<a class="headerlink" href="#heisenberg" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>以下のチュートリアルはディレクトリ</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>samples/CG/Heisenberg/
+<div class="highlight-none"><div class="highlight"><pre><span></span>samples/CG/Heisenberg/
 </pre></div>
 </div>
 <p>内で行います。
 Heisenberg模型におけるサンプル入力ファイルは</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>samples/CG/Heisenberg/stan.in
+<div class="highlight-none"><div class="highlight"><pre><span></span>samples/CG/Heisenberg/stan.in
 </pre></div>
 </div>
 <p>にあります。
 この例では2次元正方格子のHeisenberg模型(最近接サイト間の反強磁性的スピン結合のみを持つ)
 を考察します。</p>
-<div class="math notranslate nohighlight" id="equation-tutorial-standardmode-ja-0">
-<span class="eqno">(3.1)<a class="headerlink" href="#equation-tutorial-standardmode-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)\]</div>
-<p>ただし、周期境界条件 <span class="math notranslate nohighlight">\((S_{15}=S_{51}= S_{11})\)</span> を採用します。
+<div class="math" id="equation-tutorial/standardmode_ja:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-tutorial/standardmode_ja:0" title="この数式へのパーマリンク">¶</a></span>\[\hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)\]</div>
+<p>ただし、周期境界条件 <span class="math">\((S_{15}=S_{51}= S_{11})\)</span> を採用します。
 インプットファイルの中身は次のとおりです。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Spin&quot;
+<div class="highlight-none"><div class="highlight"><pre><span></span>model = &quot;Spin&quot;
 method = &quot;CG&quot;
 lattice = &quot;square&quot;
 W = 4
@@ -62,24 +76,24 @@ J = 1.0
 2Sz = 0
 </pre></div>
 </div>
-<p>この例ではスピン結合 <span class="math notranslate nohighlight">\(J=1\)</span> (任意単位)とし、サイト数は16としました。</p>
+<p>この例ではスピン結合 <span class="math">\(J=1\)</span> (任意単位)とし、サイト数は16としました。</p>
 <div class="section" id="log">
 <h3><strong>Log 出力</strong><a class="headerlink" href="#log" title="このヘッドラインへのパーマリンク">¶</a></h3>
 <p>標準出力でログが出力されます。
-また、 &quot;output&quot; ディレクトリが自動生成され、
+また、 「output」 ディレクトリが自動生成され、
 そこにも計算経過を示すログが出力されます。
 例えば、サンプル実行時には以下のファイルが出力されます。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CHECK_InterAll.dat     Time_CG_EigenVector.dat  zvo_Lanczos_Step.dat
+<div class="highlight-none"><div class="highlight"><pre><span></span>CHECK_InterAll.dat     Time_CG_EigenVector.dat  zvo_Lanczos_Step.dat
 CHECK_Memory.dat       WarningOnTransfer.dat    zvo_sz_TimeKeeper.dat
 CHECK_Sdim.dat         zvo_TimeKeeper.dat
 </pre></div>
 </div>
 <p>ログ出力されるファイルの詳細は <a class="reference internal" href="../filespecification/outputfiles_ja/CHECK_Chemi_ja.html#subsec-checkchemi"><span class="std std-ref">CHECK_Chemi.dat</span></a> 等をご覧ください。</p>
 <p>実行コマンドと標準出力{(MPI並列/ハイブリッド並列でコンパイルした場合の結果)}は次のとおりです。:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ Path/HPhi -s stan.in
+<div class="highlight-none"><div class="highlight"><pre><span></span>$ Path/HPhi -s stan.in
 </pre></div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>      ,ammmmmmmmmmmmmmb,,       Welcome to the
+<div class="highlight-none"><div class="highlight"><pre><span></span>      ,ammmmmmmmmmmmmmb,,       Welcome to the
     ,@@` dm          mb  ===m
   ,@@` d@@@@@@@@@@@@@@@@b Pm,   @@          @@       @@
  d@  d@@@ @@@ @@@@@@ @@@@b ~@a  @@          @@    @@@@@@@@
@@ -286,22 +300,22 @@ i=    0 Energy=-11.228483 N= 16.000000 Sz=  0.000000 Doublon=  0.000000
 </pre></div>
 </div>
 <p>この実行では、はじめにハミルトニアンの詳細を記述するファイル
-(<code class="docutils literal notranslate"><span class="pre">locspin.def</span></code> , <code class="docutils literal notranslate"><span class="pre">trans.def</span></code> , <code class="docutils literal notranslate"><span class="pre">exchange.def</span></code> , <code class="docutils literal notranslate"><span class="pre">coulombintra.def</span></code> , <code class="docutils literal notranslate"><span class="pre">hund.def</span></code> , <code class="docutils literal notranslate"><span class="pre">namelist.def</span></code> , <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code> , <code class="docutils literal notranslate"><span class="pre">modpara.def</span></code> ) と、結果として出力する相関関数の要素を指定するファイル( <code class="docutils literal notranslate"><span class="pre">greenone.def</span></code> , <code class="docutils literal notranslate"><span class="pre">greentwo.def</span></code> ) が生成されます。これらのファイルはエキスパートモードと共通です。</p>
+(<code class="docutils literal"><span class="pre">locspin.def</span></code> , <code class="docutils literal"><span class="pre">trans.def</span></code> , <code class="docutils literal"><span class="pre">exchange.def</span></code> , <code class="docutils literal"><span class="pre">coulombintra.def</span></code> , <code class="docutils literal"><span class="pre">hund.def</span></code> , <code class="docutils literal"><span class="pre">namelist.def</span></code> , <code class="docutils literal"><span class="pre">calcmod.def</span></code> , <code class="docutils literal"><span class="pre">modpara.def</span></code> ) と、結果として出力する相関関数の要素を指定するファイル( <code class="docutils literal"><span class="pre">greenone.def</span></code> , <code class="docutils literal"><span class="pre">greentwo.def</span></code> ) が生成されます。これらのファイルはエキスパートモードと共通です。</p>
 </div>
 <div class="section" id="id2">
 <h3><strong>計算結果出力</strong><a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
 <div class="section" id="lobcg">
 <h4><strong>局所最適ブロック共役勾配(LOBCG)法</strong><a class="headerlink" href="#lobcg" title="このヘッドラインへのパーマリンク">¶</a></h4>
-<p>入力ファイルで&quot;method = &quot;CG&quot;&quot;を選択すると、LOBCG法での計算が行われます。
+<p>入力ファイルで」method = 「CG」「を選択すると、LOBCG法での計算が行われます。
 LOBCG法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。
 以下に、このサンプルでの出力ファイル例を記載します。
 (xxには0から始まる固有値番号が入ります)。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo_energy.dat
+<div class="highlight-none"><div class="highlight"><pre><span></span>zvo_energy.dat
 zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 </pre></div>
 </div>
-<p>スタンダードモードの場合は、&quot;greenone.def&quot;、&quot;greentwo.def&quot;に基づき、:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo\_cisajs\_eigen\_xx.dat、zvo\_cisajscktalt\_eigen\_xx.dat
+<p>スタンダードモードの場合は、」greenone.def」、」greentwo.def」に基づき、:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>zvo\_cisajs\_eigen\_xx.dat、zvo\_cisajscktalt\_eigen\_xx.dat
 </pre></div>
 </div>
 <p>に固有値番号に対応した一体グリーン関数および二体グリーン関数の値が出力されます。</p>
@@ -309,13 +323,13 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 <div class="section" id="lanczos">
 <h4><strong>Lanczos法</strong><a class="headerlink" href="#lanczos" title="このヘッドラインへのパーマリンク">¶</a></h4>
 <p>Lanczos法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo_energy.dat zvo_cisajs.dat
+<div class="highlight-none"><div class="highlight"><pre><span></span>zvo_energy.dat zvo_cisajs.dat
 zvo_cisajscktalt.dat
 </pre></div>
 </div>
-<p>スタンダードモードの場合は、<code class="docutils literal notranslate"><span class="pre">greenone.def</span></code> 、<code class="docutils literal notranslate"><span class="pre">greentwo.def</span></code> に基づき、
-一体グリーン関数には <span class="math notranslate nohighlight">\(\langle n_{i\sigma} \rangle\)</span> 、
-二体グリーン関数には <span class="math notranslate nohighlight">\(\langle n_{i\sigma} n_{j\sigma'} \rangle\)</span> が自動出力されます。なお、Lanczos法で求めた固有ベクトルが十分な精度を持つ場合には
+<p>スタンダードモードの場合は、<code class="docutils literal"><span class="pre">greenone.def</span></code> 、<code class="docutils literal"><span class="pre">greentwo.def</span></code> に基づき、
+一体グリーン関数には <span class="math">\(\langle n_{i\sigma} \rangle\)</span> 、
+二体グリーン関数には <span class="math">\(\langle n_{i\sigma} n_{j\sigma'} \rangle\)</span> が自動出力されます。なお、Lanczos法で求めた固有ベクトルが十分な精度を持つ場合には
 その固有ベクトルで計算されます。
 一方、Lanczos法で求めた固有ベクトルが十分な精度を持たない場合には、
 ログ出力に「Accuracy of Lanczos vetor is not enough」が表示され、
@@ -324,10 +338,10 @@ CG法で固有ベクトルが求められます。
 </div>
 <div class="section" id="tpq">
 <h4><strong>TPQ法</strong><a class="headerlink" href="#tpq" title="このヘッドラインへのパーマリンク">¶</a></h4>
-<p>入力ファイルで <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;TPQ&quot;</span></code> を選択すると、TPQ法での計算が行われます。
+<p>入力ファイルで <code class="docutils literal"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;TPQ&quot;</span></code> を選択すると、TPQ法での計算が行われます。
 TPQ法での計算が正常終了すると、以下のファイルが出力されます
 (%%にはrunの回数、&amp;&amp;にはTPQのステップ数が入ります)。:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Norm_rand%%.dat SS_rand%%.dat
+<div class="highlight-none"><div class="highlight"><pre><span></span>Norm_rand%%.dat SS_rand%%.dat
 zvo_cisajs_set%%step&amp;&amp;.dat
 zvo_cisajscktalt_set%%step&amp;&amp;.dat
 </pre></div>
@@ -336,9 +350,9 @@ zvo_cisajscktalt_set%%step&amp;&amp;.dat
 </div>
 <div class="section" id="id3">
 <h4><strong>全対角化法</strong><a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h4>
-<p>入力ファイルで <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;fulldiag&quot;</span></code> を選択すると、全対角化法での計算が行われます。
+<p>入力ファイルで <code class="docutils literal"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;fulldiag&quot;</span></code> を選択すると、全対角化法での計算が行われます。
 全対角化法での計算が正常終了すると、下記のファイルが出力されます(xxには0から始まる固有値番号が入ります)。:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Eigenvalue.dat zvo_cisajs_eigen_xx.dat
+<div class="highlight-none"><div class="highlight"><pre><span></span>Eigenvalue.dat zvo_cisajs_eigen_xx.dat
 zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 </pre></div>
 </div>
@@ -349,12 +363,13 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 <div class="section" id="id4">
 <h2>3.1.2. その他の系でのチュートリアル<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <blockquote>
-<div><code class="docutils literal notranslate"><span class="pre">samples/Standard/</span></code> 以下にはこの他にも様々なチュートリアルが置いてあります。それぞれのチュートリアルの内容や手順については、各フォルダにある <code class="docutils literal notranslate"><span class="pre">README.md</span></code> をご覧ください。</div></blockquote>
+<div><code class="docutils literal"><span class="pre">samples/Standard/</span></code> 以下にはこの他にも様々なチュートリアルが置いてあります。それぞれのチュートリアルの内容や手順については、各フォルダにある <code class="docutils literal"><span class="pre">README.md</span></code> をご覧ください。</div></blockquote>
 </div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -375,8 +390,8 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="tu-index.html">3. チュートリアル</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">3.1. スタンダードモード</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#heisenberg">3.1.1. Heisenberg模型</a></li>
@@ -407,14 +422,12 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -425,8 +438,8 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/tutorial/standardmode_ja.rst.txt"

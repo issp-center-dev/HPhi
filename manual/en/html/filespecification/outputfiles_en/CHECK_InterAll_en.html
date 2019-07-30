@@ -4,16 +4,27 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>4.3.2. CHECK_InterAll.dat &#8212; HΦ Documentation  documentation</title>
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.3.3. CHECK_CoulombIntra.dat" href="CHECK_CoulombIntra_en.html" />
@@ -24,22 +35,25 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="check-interall-dat">
 <h1>4.3.2. CHECK_InterAll.dat<a class="headerlink" href="#check-interall-dat" title="Permalink to this headline">¶</a></h1>
 <p>This file is outputted to check the input of the diagonal components of
 general two-body interactions,</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-outputfiles-en-check-interall-en-0">
-<span class="eqno">(4.20)<a class="headerlink" href="#equation-filespecification-outputfiles-en-check-interall-en-0" title="Permalink to this equation">¶</a></span>\[\mathcal H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}.\]</div>
+<div class="math" id="equation-filespecification/outputfiles_en/CHECK_InterAll_en:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-filespecification/outputfiles_en/CHECK_InterAll_en:0" title="Permalink to this equation">¶</a></span>\[\mathcal H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}.\]</div>
 <p>An example of the file format is as follows.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i=0 isite1=1 A_spin=0 isite2=2 B_spin=0 tmp_V=0.500000
+<div class="highlight-none"><div class="highlight"><pre><span></span>i=0 isite1=1 A_spin=0 isite2=2 B_spin=0 tmp_V=0.500000
 i=1 isite1=1 A_spin=0 isite2=2 B_spin=1 tmp_V=-0.500000
 i=2 isite1=1 A_spin=1 isite2=2 B_spin=0 tmp_V=-0.500000
 i=3 isite1=1 A_spin=1 isite2=2 B_spin=1 tmp_V=0.500000
@@ -69,26 +83,26 @@ tmp_V=[double01]</li>
 <p><strong>Type :</strong> Int</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> An integer for showing the site index of
-<span class="math notranslate nohighlight">\(I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}\)</span>.</div>
+<span class="math">\(I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}\)</span>.</div>
 <div class="line">[int02] and [int04]
-correspond to <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span>, respectively.</div>
+correspond to <span class="math">\(i\)</span> and <span class="math">\(j\)</span>, respectively.</div>
 </div>
 </li>
 <li><p class="first">[int03], [int05]</p>
 <p><strong>Type :</strong> Int</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> An integer for showing the spin index of
-<span class="math notranslate nohighlight">\(I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}\)</span>:</div>
+<span class="math">\(I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}\)</span>:</div>
 <div class="line">0: Up-spin</div>
 <div class="line">1: Down-spin.</div>
 <div class="line">[int03] and [int05]
-correspond to <span class="math notranslate nohighlight">\(\sigma_1\)</span> and <span class="math notranslate nohighlight">\(\sigma_2\)</span>, respectively.</div>
+correspond to <span class="math">\(\sigma_1\)</span> and <span class="math">\(\sigma_2\)</span>, respectively.</div>
 </div>
 </li>
 <li><p class="first">[double01]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> A value for
-<span class="math notranslate nohighlight">\(I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}\)</span>.</p>
+<span class="math">\(I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}\)</span>.</p>
 </li>
 </ul>
 </div>
@@ -96,6 +110,7 @@ correspond to <span class="math notranslate nohighlight">\(\sigma_1\)</span> and
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -116,8 +131,8 @@ correspond to <span class="math notranslate nohighlight">\(\sigma_1\)</span> and
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -181,14 +196,12 @@ correspond to <span class="math notranslate nohighlight">\(\sigma_1\)</span> and
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -199,8 +212,8 @@ correspond to <span class="math notranslate nohighlight">\(\sigma_1\)</span> and
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../../_sources/filespecification/outputfiles_en/CHECK_InterAll_en.rst.txt"

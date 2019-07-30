@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>7.2. チュートリアル &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="7.3. ファイルフォーマット" href="format.html" />
@@ -25,12 +36,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tutorial">
@@ -39,10 +53,10 @@
 <div class="section" id="hphi-vmc-out">
 <h2>7.2.1. HPhi/vmc.out の実行<a class="headerlink" href="#hphi-vmc-out" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> の場合</p>
+<li><p class="first"><span class="math">\({\mathcal H}\Phi\)</span> の場合</p>
 <p>基底状態および相関関数の計算を行う.
 入力ファイルは次の通り.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>a0w = 2
+<div class="highlight-none"><div class="highlight"><pre><span></span>a0w = 2
 a0l = 2
 a1w = -2
 a1l = 2
@@ -55,14 +69,14 @@ nelec = 8
 2Sz=0
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ HPhi -s input
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ HPhi -s input
 </pre></div>
 </div>
 </li>
 <li><p class="first">mVMC の場合</p>
 <p>まず変分波動関数の最適化を行う.
 入力ファイルは次の通り.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>a0w = 2
+<div class="highlight-none"><div class="highlight"><pre><span></span>a0w = 2
 a0l = 2
 a1w = -2
 a1l = 2
@@ -74,24 +88,24 @@ nelec = 8
 2Sz=0
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ vmc.out -s input
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ vmc.out -s input
 </pre></div>
 </div>
 <p>相関関数を計算するために, 入力ファイルに以下の行を付け加える.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>NVMCCalMode = 1
+<div class="highlight-none"><div class="highlight"><pre><span></span>NVMCCalMode = 1
 </pre></div>
 </div>
 <p>相関関数を計算する.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ vmc.out -s input output/zqp_opt.dat
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ vmc.out -s input output/zqp_opt.dat
 </pre></div>
 </div>
 </li>
 </ul>
-<p>これにより, カレントディレクトリの <code class="docutils literal notranslate"><span class="pre">output/</span></code> 以下に
+<p>これにより, カレントディレクトリの <code class="docutils literal"><span class="pre">output/</span></code> 以下に
 1体および2体の相関関数が出力される.</p>
 <p>関連するファイル</p>
 <ul class="simple">
-<li>StdFace.def (mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のマニュアル参照)</li>
+<li>StdFace.def (mVMC/<span class="math">\({\mathcal H}\Phi\)</span> のマニュアル参照)</li>
 <li>zqp_opt.dat (mVMCのマニュアル参照)</li>
 <li>greenone.def (<a class="reference internal" href="format.html#greenindex"><span class="std std-ref">計算する相関関数のインデックスの指定</span></a>)</li>
 <li>greentwo.def (<a class="reference internal" href="format.html#greenindex"><span class="std std-ref">計算する相関関数のインデックスの指定</span></a>)</li>
@@ -99,9 +113,9 @@ nelec = 8
 </div>
 <div class="section" id="id2">
 <h2>7.2.2. 相関関数のフーリエ変換<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>ユーティリティプログラム <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> を使って,
+<p>ユーティリティプログラム <code class="docutils literal"><span class="pre">greenr2k</span></code> を使って,
 相関関数をフーリエ変関する.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">echo</span> <span class="s2">&quot;4 20</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">echo</span> <span class="s2">&quot;4 20</span>
 <span class="s2">G 0 0 0</span>
 <span class="s2">X 0.5 0 0</span>
 <span class="s2">M 0.5 0.5 0</span>
@@ -110,7 +124,7 @@ nelec = 8
 $ greenr2k namelist.def geometry.dat
 </pre></div>
 </div>
-<p>これにより, カレントディレクトリの <code class="docutils literal notranslate"><span class="pre">output/</span></code> 以下に
+<p>これにより, カレントディレクトリの <code class="docutils literal"><span class="pre">output/</span></code> 以下に
 フーリエ変換された相関関数が出力される.</p>
 <p>関連するファイル</p>
 <ul class="simple">
@@ -125,14 +139,14 @@ $ greenr2k namelist.def geometry.dat
 <div class="section" id="id3">
 <h2>7.2.3. 相関関数のプロット<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>gnuplotを使って,
-相関関数を <span class="math notranslate nohighlight">\(k\)</span> 空間でプロットする.</p>
-<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">load</span> <span class="s">&quot;kpath.gp&quot;</span>
+相関関数を <span class="math">\(k\)</span> 空間でプロットする.</p>
+<div class="highlight-gnuplot"><div class="highlight"><pre><span></span><span class="k">load</span> <span class="s">&quot;kpath.gp&quot;</span>
 <span class="k">plot</span> <span class="s">&quot;output/zvo_corr_eigen0.dat&quot;</span> <span class="nb">u</span> <span class="mi">1</span><span class="o">:</span><span class="mi">12</span> <span class="nb">w</span> <span class="n">l</span>
 </pre></div>
 </div>
 <div class="figure" id="id4">
 <span id="corplotpng"></span><img alt="../_images/corplot.png" src="../_images/corplot.png" />
-<p class="caption"><span class="caption-number">図 7.1 </span><span class="caption-text">相関関数 <span class="math notranslate nohighlight">\(\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle\)</span> (12列目)を
+<p class="caption"><span class="caption-number">図 7.1 </span><span class="caption-text">相関関数 <span class="math">\(\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle\)</span> (12列目)を
 プロットした図.</span></p>
 </div>
 <p>関連するファイル</p>
@@ -145,6 +159,7 @@ $ greenr2k namelist.def geometry.dat
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -165,8 +180,8 @@ $ greenr2k namelist.def geometry.dat
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
@@ -180,7 +195,7 @@ $ greenr2k namelist.def geometry.dat
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="format.html">7.3. ファイルフォーマット</a></li>
-<li class="toctree-l2"><a class="reference internal" href="util.html">7.4. <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> ユーティリティの動作について</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util.html">7.4. <code class="docutils literal"><span class="pre">greenr2k</span></code> ユーティリティの動作について</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contact.html">7.5. Contact</a></li>
 </ul>
 </li>
@@ -200,14 +215,12 @@ $ greenr2k namelist.def geometry.dat
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -218,8 +231,8 @@ $ greenr2k namelist.def geometry.dat
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/fourier/tutorial.rst.txt"

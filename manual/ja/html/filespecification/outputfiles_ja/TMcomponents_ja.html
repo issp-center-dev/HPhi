@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>4.3.31. TMcomponents.dat &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.3.32. excitedvec.dat" href="excitedvec_ja.html" />
@@ -25,12 +36,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tmcomponents-dat">
@@ -47,30 +61,30 @@
 <div class="section" id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul class="simple">
-<li>1行目：<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></li>
-<li>2行目：<span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></li>
-<li>3行目 - <span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>+3行:
-<span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></li>
+<li>1行目：<span class="math">\([\)</span>int01<span class="math">\(]\)</span></li>
+<li>2行目：<span class="math">\([\)</span>double01<span class="math">\(]\)</span></li>
+<li>3行目 - <span class="math">\([\)</span>int02<span class="math">\(]\)</span>+3行:
+<span class="math">\([\)</span>double02<span class="math">\(]\)</span>  <span class="math">\([\)</span>double03<span class="math">\(]\)</span></li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h2>パラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>int01<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> int型</p>
 <p><strong>説明 :</strong>
-動的グリーン関数の計算に要したステップ数<span class="math notranslate nohighlight">\(N_d\)</span>を表します。</p>
+動的グリーン関数の計算に要したステップ数<span class="math">\(N_d\)</span>を表します。</p>
 </li>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>double01<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
 <p><strong>説明 :</strong> 励起状態のノルムを表します。</p>
 </li>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>, <span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>double02<span class="math">\(]\)</span>, <span class="math">\([\)</span>double03<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
 <div class="line-block">
 <div class="line"><strong>説明 :</strong>
-Lanczos法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素<span class="math notranslate nohighlight">\(\alpha_i,~\beta_i~(i =1,\cdots N_d)\)</span>の値を表します。一番最初の成分に計算に使用しない値が入っています。
-<span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>が<span class="math notranslate nohighlight">\(\alpha_i\)</span>、<span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span>が<span class="math notranslate nohighlight">\(\beta_i\)</span>に対応します。</div>
+Lanczos法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素<span class="math">\(\alpha_i,~\beta_i~(i =1,\cdots N_d)\)</span>の値を表します。一番最初の成分に計算に使用しない値が入っています。
+<span class="math">\([\)</span>double02<span class="math">\(]\)</span>が<span class="math">\(\alpha_i\)</span>、<span class="math">\([\)</span>double03<span class="math">\(]\)</span>が<span class="math">\(\beta_i\)</span>に対応します。</div>
 </div>
 </li>
 </ul>
@@ -79,6 +93,7 @@ Lanczos法を用いた動的グリーン関数の再計算に必要な三重対�
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -99,8 +114,8 @@ Lanczos法を用いた動的グリーン関数の再計算に必要な三重対�
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
@@ -164,14 +179,12 @@ Lanczos法を用いた動的グリーン関数の再計算に必要な三重対�
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -182,8 +195,8 @@ Lanczos法を用いた動的グリーン関数の再計算に必要な三重対�
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../../_sources/filespecification/outputfiles_ja/TMcomponents_ja.rst.txt"

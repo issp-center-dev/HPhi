@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>3.2. エキスパートモード &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="3.3. 相関関数のフーリエ変換" href="fourier_ja.html" />
@@ -25,12 +36,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="id1">
@@ -49,7 +63,7 @@
 <p>入力ファイルの種類と名前を指定するファイルnamelist.defには、下記の内容が記載されています。
 各入力ファイルリストファイルでは、行毎にKeywordとファイル名を記載し、ファイルの種類の区別を行います。
 詳細はセクション <a class="reference internal" href="../filespecification/expertmode_ja/List_file_for_the_input_files_ja.html#subsec-inputfilelist"><span class="std std-ref">入力ファイル指定用ファイル</span></a> をご覧ください。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>       ModPara  modpara.def
+<div class="highlight-none"><div class="highlight"><pre><span></span>       ModPara  modpara.def
        LocSpin  locspn.def
   CoulombInter  coulombinter.def
           Hund  hund.def
@@ -70,7 +84,7 @@ PairExcitation  pair.def
 <p>CalcModでひも付けられるファイル(ここではcalcmod.def)で計算モードを指定します。
 ファイルの中身は下記の通りです。
 計算モード、計算用パラメータ、局在スピンの位置を以下のファイルで指定します。:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG
+<div class="highlight-none"><div class="highlight"><pre><span></span>#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG
 #CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ..
 #Restart = 0:None, 1:Save, 2:Restart&amp;Save, 3:Restart
 #CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, ...
@@ -91,7 +105,7 @@ CalcModファイルの詳細は <a class="reference internal" href="../filespeci
 <div class="section" id="id5">
 <h3><strong>計算用パラメータの指定</strong><a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
 <p>ModParaでひも付けられるファイル(ここではmodpara.def)で計算用パラメータを指定します。ファイルの中身は下記の通りです。:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--------------------
+<div class="highlight-none"><div class="highlight"><pre><span></span>--------------------
 Model_Parameters   0
 --------------------
 HPhi_Cal_Parameters
@@ -115,12 +129,12 @@ OmegaMin       -7.200000000000000e+01    4.000000000000000e-02
 OmegaOrg       0.0 0.0
 </pre></div>
 </div>
-<p>このファイルでは、サイト数、伝導電子の数、トータル <span class="math notranslate nohighlight">\(S_z\)</span> やLanczosステップの最大数などを指定します。ModParaファイルの詳細はセクション <a class="reference internal" href="../filespecification/expertmode_ja/ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModParaファイル</span></a> をご覧ください。</p>
+<p>このファイルでは、サイト数、伝導電子の数、トータル <span class="math">\(S_z\)</span> やLanczosステップの最大数などを指定します。ModParaファイルの詳細はセクション <a class="reference internal" href="../filespecification/expertmode_ja/ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModParaファイル</span></a> をご覧ください。</p>
 </div>
 <div class="section" id="id6">
 <h3><strong>局在スピンの位置の指定</strong><a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
-<p>LocSpinでひも付けられるファイル(ここではlocspn.def)で局在スピンの位置と <span class="math notranslate nohighlight">\(S\)</span> の値を指定します。ファイルの中身は下記の通りです。:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>================================
+<p>LocSpinでひも付けられるファイル(ここではlocspn.def)で局在スピンの位置と <span class="math">\(S\)</span> の値を指定します。ファイルの中身は下記の通りです。:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>================================
 NlocalSpin    16
 ================================
 ========i_0LocSpn_1IteElc ======
@@ -141,21 +155,21 @@ NlocalSpin    16
 <h2>3.2.3. Hamiltonianの指定<a class="headerlink" href="#hamiltonian" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <dl class="docutils">
 <dt>基本パラメータを設定した後は、Hamiltonianを構築するためのファイルを作成します。</dt>
-<dd><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> では、電子系の表現で計算を行うため、スピン系では以下の関係式</dd>
+<dd><span class="math">\({\mathcal H}\Phi\)</span> では、電子系の表現で計算を行うため、スピン系では以下の関係式</dd>
 </dl>
-<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-ja-0">
-<span class="eqno">(3.2)<a class="headerlink" href="#equation-tutorial-expertmode-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}S_z^{(i)}&amp;=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
+<div class="math" id="equation-tutorial/expertmode_ja:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-tutorial/expertmode_ja:0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}S_z^{(i)}&amp;=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
 S_+^{(i)}&amp;=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
 S_-^{(i)}&amp;=c_{i\downarrow}^{\dagger}c_{i\uparrow}.\end{split}\]</div>
 <p>を用い、電子系の演算子に変換しHamiltonianの作成をする必要があります。</p>
 <div class="section" id="transfer">
 <h3><strong>Transfer部の指定</strong><a class="headerlink" href="#transfer" title="このヘッドラインへのパーマリンク">¶</a></h3>
 <p>Transでひも付けられるファイル(ここではzTrans.def)で電子系のTransferに相当するHamiltonian</p>
-<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-ja-1">
-<span class="eqno">(3.3)<a class="headerlink" href="#equation-tutorial-expertmode-ja-1" title="この数式へのパーマリンク">¶</a></span>\[\mathcal{H} +=-\sum_{ij\sigma_1\sigma2}
+<div class="math" id="equation-tutorial/expertmode_ja:1">
+<span class="eqno">(2)<a class="headerlink" href="#equation-tutorial/expertmode_ja:1" title="この数式へのパーマリンク">¶</a></span>\[\mathcal{H} +=-\sum_{ij\sigma_1\sigma2}
 t_{ij\sigma_1\sigma2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}.\]</div>
 <p>を指定します。ファイルの中身は下記の通りです。:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>========================
+<div class="highlight-none"><div class="highlight"><pre><span></span>========================
 NTransfer       0
 ========================
 ========i_j_s_tijs======
@@ -163,9 +177,9 @@ NTransfer       0
 </pre></div>
 </div>
 <p>スピン系では外場を掛ける場合などに使用することができます。
-例えば、サイト1に <span class="math notranslate nohighlight">\(-0.5 S_z^{(1)}\)</span> ( <span class="math notranslate nohighlight">\(S=1/2\)</span> )の外場を掛けたい場合には、,
-電子系の表現 <span class="math notranslate nohighlight">\(-0.5/2(c_{1\uparrow}^{\dagger}c_{1\uparrow}-c_{1\downarrow}^{\dagger}c_{1\downarrow})\)</span> に書き換えた以下のファイルを作成することで計算することが出来ます。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>========================
+例えば、サイト1に <span class="math">\(-0.5 S_z^{(1)}\)</span> ( <span class="math">\(S=1/2\)</span> )の外場を掛けたい場合には、,
+電子系の表現 <span class="math">\(-0.5/2(c_{1\uparrow}^{\dagger}c_{1\uparrow}-c_{1\downarrow}^{\dagger}c_{1\downarrow})\)</span> に書き換えた以下のファイルを作成することで計算することが出来ます。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>========================
 NTransfer      1
 ========================
 ========i_j_s_tijs======
@@ -179,10 +193,10 @@ NTransfer      1
 <div class="section" id="id7">
 <h3><strong>二体相互作用部の指定</strong><a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
 <p>InterAllでひも付けられるファイル(ここではzInterAll.def)で電子系の二体相互作用部に相当するHamiltonian</p>
-<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-ja-2">
-<span class="eqno">(3.4)<a class="headerlink" href="#equation-tutorial-expertmode-ja-2" title="この数式へのパーマリンク">¶</a></span>\[\mathcal{H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.\]</div>
+<div class="math" id="equation-tutorial/expertmode_ja:2">
+<span class="eqno">(3)<a class="headerlink" href="#equation-tutorial/expertmode_ja:2" title="この数式へのパーマリンク">¶</a></span>\[\mathcal{H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.\]</div>
 <p>を指定します。ファイルの中身は下記の通りです。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>======================
+<div class="highlight-none"><div class="highlight"><pre><span></span>======================
 NInterAll      96
 ======================
 ========zInterAll=====
@@ -196,16 +210,16 @@ NInterAll      96
 ...
 </pre></div>
 </div>
-<p>ここでは、簡単のためサイト <span class="math notranslate nohighlight">\(i\)</span> とサイト <span class="math notranslate nohighlight">\(i+1\)</span> 間の相互作用に着目して説明します。
-<span class="math notranslate nohighlight">\(S = 1/2\)</span> の場合、相互作用の項をフェルミオン演算子で書き換えると、</p>
-<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-ja-3">
-<span class="eqno">(3.5)<a class="headerlink" href="#equation-tutorial-expertmode-ja-3" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\mathcal{H}_{i,i+1}&amp;=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
+<p>ここでは、簡単のためサイト <span class="math">\(i\)</span> とサイト <span class="math">\(i+1\)</span> 間の相互作用に着目して説明します。
+<span class="math">\(S = 1/2\)</span> の場合、相互作用の項をフェルミオン演算子で書き換えると、</p>
+<div class="math" id="equation-tutorial/expertmode_ja:3">
+<span class="eqno">(4)<a class="headerlink" href="#equation-tutorial/expertmode_ja:3" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\mathcal{H}_{i,i+1}&amp;=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
 &amp;=J \left( \frac{1}{2}S_+^{(i)}S_-^{(i+1)}+\frac{1}{2}S_-^{(i)}S_+^{(i+1)}+S_z^{(i)}S_z^{(i+1)} \right) \nonumber\\
 &amp;=J \left[ \frac{1}{2}c_{i\uparrow}^{\dagger}c_{i\downarrow}c_{i+1\downarrow}^{\dagger}c_{i+1\uparrow}+\frac{1}{2}c_{i\downarrow}^{\dagger}c_{i\uparrow}c_{i+1\uparrow}^{\dagger}c_{i+1\downarrow}+\frac{1}{4}(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})(c_{i+1\uparrow}^{\dagger}c_{i+1\uparrow}-c_{i+1\downarrow}^{\dagger}c_{i+1\downarrow}) \right]. \nonumber\end{split}\]</div>
 <dl class="docutils">
-<dt>となります。したがって、 <span class="math notranslate nohighlight">\(J=2\)</span> に対してInterAllファイルのフォーマットを参考に相互作用を記載すると、</dt>
-<dd><p class="first"><span class="math notranslate nohighlight">\(S_z^{(i)}S_z^{(i+1)}\)</span> の相互作用は</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>i     0     i     0    i+1     0    i+1     0   0.500000  0.000000
+<dt>となります。したがって、 <span class="math">\(J=2\)</span> に対してInterAllファイルのフォーマットを参考に相互作用を記載すると、</dt>
+<dd><p class="first"><span class="math">\(S_z^{(i)}S_z^{(i+1)}\)</span> の相互作用は</p>
+<div class="last highlight-none"><div class="highlight"><pre><span></span>i     0     i     0    i+1     0    i+1     0   0.500000  0.000000
 i     0     i     0    i+1     1    i+1     1  -0.500000  0.000000
 i     1     i     1    i+1     0    i+1     0  -0.500000  0.000000
 i     1     i     1    i+1     1    i+1     1   0.500000  0.000000
@@ -214,7 +228,7 @@ i     1     i     1    i+1     1    i+1     1   0.500000  0.000000
 </dd>
 </dl>
 <p>となり、それ以外の項は</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i     0     i     1    i+1     1    i+1     0   1.000000  0.000000
+<div class="highlight-none"><div class="highlight"><pre><span></span>i     0     i     1    i+1     1    i+1     0   1.000000  0.000000
 i     1     i     0    i+1     0    i+1     1   1.000000  0.000000
 </pre></div>
 </div>
@@ -227,8 +241,8 @@ i     1     i     0    i+1     0    i+1     1   1.000000  0.000000
 <p>一体Green関数および二体Green関数の計算する成分を、それぞれOneBodyG, TwoBodyGでひも付けられるファイルで指定します。</p>
 <div class="section" id="green">
 <h3><strong>一体Green関数の計算対象の指定</strong><a class="headerlink" href="#green" title="このヘッドラインへのパーマリンク">¶</a></h3>
-<p>OneBodyGでひも付けられるファイル(ここではgreenone.def)で計算する一体Green関数  <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2} \rangle\)</span> の成分を指定します。ファイルの中身は下記の通りです</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>===============================
+<p>OneBodyGでひも付けられるファイル(ここではgreenone.def)で計算する一体Green関数  <span class="math">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2} \rangle\)</span> の成分を指定します。ファイルの中身は下記の通りです</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>===============================
 NCisAjs         32
 ===============================
 ======== Green functions ======
@@ -245,8 +259,8 @@ NCisAjs         32
 </div>
 <div class="section" id="id9">
 <h3><strong>二体Green関数の計算対象の指定</strong><a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
-<p>TwoBodyGでひも付けられるファイル(ここではgreentwo.def)で計算する二体Green関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4} \rangle\)</span> の成分を指定します。ファイルの中身は下記の通りです。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>=============================================
+<p>TwoBodyGでひも付けられるファイル(ここではgreentwo.def)で計算する二体Green関数 <span class="math">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4} \rangle\)</span> の成分を指定します。ファイルの中身は下記の通りです。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>=============================================
 NCisAjsCktAltDC       1024
 =============================================
 ======== Green functions for Sq AND Nq ======
@@ -264,8 +278,8 @@ NCisAjsCktAltDC       1024
 </div>
 <div class="section" id="id10">
 <h2>3.2.5. 計算の実行<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>全ての入力ファイルが準備できた後、計算実行します。実行時はエキスパートモードを指定する &quot;-e&quot; をオプションとして指定の上、入力ファイルリストファイル(ここではnamelist.def)を引数とし、ターミナルから <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> を実行します。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ Path/HPhi -e namelist.def
+<p>全ての入力ファイルが準備できた後、計算実行します。実行時はエキスパートモードを指定する 「-e」 をオプションとして指定の上、入力ファイルリストファイル(ここではnamelist.def)を引数とし、ターミナルから <span class="math">\({\mathcal H}\Phi\)</span> を実行します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>$ Path/HPhi -e namelist.def
 </pre></div>
 </div>
 <p>計算開始後のプロセスは、スタンダードモードと同様になります。</p>
@@ -274,6 +288,7 @@ NCisAjsCktAltDC       1024
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -294,8 +309,8 @@ NCisAjsCktAltDC       1024
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="tu-index.html">3. チュートリアル</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="standardmode_ja.html">3.1. スタンダードモード</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">3.2. エキスパートモード</a><ul>
@@ -329,14 +344,12 @@ NCisAjsCktAltDC       1024
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -347,8 +360,8 @@ NCisAjsCktAltDC       1024
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/tutorial/expertmode_ja.rst.txt"

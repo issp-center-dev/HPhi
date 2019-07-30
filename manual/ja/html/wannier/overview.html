@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>8.1. 概要 &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="8.2. チュートリアル" href="tutorial.html" />
@@ -25,48 +36,71 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="id1">
 <h1>8.1. 概要<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>本資料では,
 <a class="reference external" href="https://sites.google.com/view/kazuma7k6r">RESPACK</a> と
-mVMC および <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> を用いて,
-ダウンフォールディングをした格子モデルを計算する機能について説明する.</p>
-<div class="math notranslate nohighlight" id="equation-wannier-overview-0">
-<span class="eqno">(8.1)<a class="headerlink" href="#equation-wannier-overview-0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
-{\cal H} &amp;=
-\sum_{i, j, \alpha, \beta, \sigma}
-t_{i \alpha j \beta} c_{i \alpha \sigma}^{\dagger} c_{j \beta \sigma}
-\nonumber \\
-&amp;+ \sum_{i, \alpha}
-U_{i \alpha i \alpha} n_{i \alpha \uparrow} n_{j \alpha \downarrow}
-+ \sum_{(i, \alpha) &lt; (j, \beta)}
-U_{i \alpha j \beta} n_{i \alpha} n_{j \beta}
-- \sum_{(i, \alpha) &lt; (j, \beta)}
-J_{i \alpha j \beta} (n_{i \alpha \uparrow} n_{j \beta \uparrow}
-+ n_{i \alpha \downarrow} n_{j \beta \downarrow})
-\nonumber \\
-&amp;+ \sum_{(i, \alpha) &lt; (j, \beta)}
-J_{i \alpha j \beta} (
-c_{i \alpha \uparrow}^{\dagger} c_{j \beta \downarrow}^{\dagger}
-c_{i \alpha \downarrow} c_{j \beta \uparrow} +
-c_{j \beta \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
-c_{j \beta \downarrow} c_{j \alpha \uparrow} )
-\nonumber \\
-&amp;+ \sum_{(i, \alpha) &lt; (j, \beta)}
-J_{i \alpha j \beta} (
-c_{i \alpha \uparrow}^{\dagger} c_{i \alpha \downarrow}^{\dagger}
-c_{j \beta \downarrow} c_{j \beta \uparrow} +
-c_{j \beta \uparrow}^{\dagger} c_{j \beta \downarrow}^{\dagger}
-c_{i \alpha \downarrow} c_{i \alpha \uparrow} )
+mVMC および <span class="math">\({\mathcal H}\Phi\)</span> を用いて,
+ダウンフォールディングをした格子モデルを計算する機能について説明する.
+RESPACKでは, 遮蔽直接積分 <span class="math">\(U_{mn}({\bf R},\omega)\)</span> および遮蔽交換積分 <span class="math">\(J_{mn}({\bf R},\omega)\)</span> は以下のような形式で与えられる:</p>
+<div class="math" id="equation-wannier/overview:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-wannier/overview:0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+U_{mn}({\bf R},\omega)&amp;=&amp;\int_V d{\bf r} \int_V  d{\bf r'}
+w_{m{\bf 0}}^*({\bf r}) w_{m{\bf 0}}({\bf r})
+W({\bf r,r'},\omega)
+w_{n{\bf R}}^*({\bf r'}) w_{n{\bf R}}({\bf r'}),\nonumber\\
+J_{mn}({\bf R},\omega)&amp;=&amp;\int_V  d{\bf r}\int_V d{\bf r'}
+w_{m{\bf 0}}^*({\bf r}) w_{n{\bf R}}({\bf r})
+W({\bf r,r'},\omega)
+w_{n{\bf R}}^*({\bf r'}) w_{m{\bf 0}}({\bf r'}).
 \end{aligned}\end{split}\]</div>
+<p>ここで, <span class="math">\(V\)</span> は結晶の体積, <span class="math">\(w_ {i {\bf R}}({\bf r})\)</span> はセル <span class="math">\(\bf R\)</span> の <span class="math">\(i\)</span> 番目のワニエ関数, <span class="math">\(W({\bf r,r'}, \omega)\)</span> は遮蔽クーロン相互作用をそれぞれ表す. 以下, <span class="math">\(\omega=0\)</span> の成分のみを考慮する. この時、二体相互作用部分のハミルトニアンは以下の形式で与えられる：</p>
+<div class="math" id="equation-wannier/overview:1">
+<span class="eqno">(2)<a class="headerlink" href="#equation-wannier/overview:1" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+{\cal H}_{\rm int} &amp;= \frac{1}{2}\sum_{\sigma\rho }\sum_{ij}\sum_{nm} \Bigl[ U_{mn}({\bf R}_{ij})c_{im, \sigma}^{\dagger}c_{jn, \rho}^{\dagger}c_{jn, \rho}c_{im, \sigma}\nonumber\\
+&amp;+ J_{mn}({\bf R}_{ij})(c_{im, \sigma}^{\dagger}c_{jn,\rho}^{\dagger}c_{im,\rho}c_{jn,\sigma} + c_{im, \sigma}^{\dagger}c_{im,\rho}^{\dagger}c_{jn,\rho}c_{jn,\sigma}  )\Bigr],
+\end{aligned}\end{split}\]</div>
+<p>ただし, <span class="math">\({\bf R}_{ij} \equiv {\bf R}_i-{\bf R}_j\)</span> とした. ここで, mVMCおよび <span class="math">\({\mathcal H}\Phi\)</span> では, <span class="math">\({c_{i, \sigma}^{\dagger}c_{j, \rho}^{\dagger}c_{k, \rho'}c_{l, \sigma'}}\)</span> の型の相互作用の入力には対応していないため, 以下のように書き換えたハミルトニアンで定義される：</p>
+<div class="math" id="equation-wannier/overview:2">
+<span class="eqno">(3)<a class="headerlink" href="#equation-wannier/overview:2" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+{\cal H}_{\rm int} &amp;= \sum_{i,m} U_{mm}({\bf 0})n_{im,\uparrow} n_{im, \downarrow} +\sum_{(i,m)&lt;(j,n)}U_{mn}({\bf R}_{ij})n_{im}n_{jn}\nonumber\\
+&amp; - \sum_{(i,m)&lt;(j,n)}J_{mn}({\bf R}_{ij})(n_{im, \uparrow}n_{jn,\uparrow}+n_{im, \downarrow}n_{jn,\downarrow}) \nonumber\\
+&amp; + \sum_{(i,m)&lt;(j,n)}J_{mn}({\bf R}_{ij})(c_{im, \uparrow}^{\dagger}c_{jn,\downarrow}^{\dagger}c_{im,\downarrow}c_{jn,\uparrow}+{\rm h.c.}) \nonumber\\
+&amp; + \sum_{(i,m)&lt;(j,n)}J_{mn}({\bf R}_{ij}) (c_{im, \uparrow}^{\dagger}c_{im,\downarrow}^{\dagger}c_{jn,\downarrow}c_{jn,\uparrow} + {\rm h.c.} ).
+\end{aligned}\end{split}\]</div>
+<p>格子モデルは以下のHamiltonianで定義される：</p>
+<div class="math" id="equation-wannier/overview:3">
+<span class="eqno">(4)<a class="headerlink" href="#equation-wannier/overview:3" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+{\cal H} &amp;=
+\sum_{m,n, i, j,\sigma}
+\left[t_{mn}({\bf R}_{ij}) - t_{mn}^{\rm DC}({\bf R}_{ij})\right] c_{im \sigma}^{\dagger} c_{jn \sigma}
++ {\cal H}_{int},
+\end{aligned}\]</div>
+<p>ただし, <span class="math">\(t_{mn}^{\rm DC}({\bf R}_{ij})\)</span> は一体項の補正を表し,</p>
+<div class="math" id="equation-wannier/overview:4">
+<span class="eqno">(5)<a class="headerlink" href="#equation-wannier/overview:4" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+t_{mm}^{\rm DC}({\bf 0}) &amp;\equiv \alpha U_{mm}({\bf 0}) D_{mm}({\bf 0})
++ \sum_{({\bf R}, n) \neq ({\bf 0}, m)} U_{m n} ({\bf R})D_{nn}({\bf 0})\\
+&amp; - (1-\alpha) \sum_{({\bf R}, n) \neq ({\bf 0}, 0)} J_{m n}({\bf R}) D_{nn}({\bf R}),\\
+t_{mn}^{\rm DC}({\bf R}_{ij}) &amp;\equiv \frac{1}{2} J_{mn}({\bf R}_{ij}) \left(D_{nm}({\bf R}_{ji}) + 2 {\rm Re} [D_{nm}({\bf R}_{ji})]\right)\\
+&amp;-\frac{1}{2}  U_{mn}({\bf R}_{ij}) D_{nm}({\bf R}_{ji}),
+\quad ({\bf R}_{ij}, m) \neq ({\bf 0}, n),
+\\
+D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
+\left\langle c_{im \sigma}^{\dagger} c_{jn \sigma}\right\rangle_{\rm KS},
+\end{aligned}\end{split}\]</div>
+<p>で与えられる. ここで, <span class="math">\(t_{mm}^{\rm DC}({\bf 0})\)</span> は化学ポテンシャルの補正項, <span class="math">\(t_{mn}^{\rm DC}({\bf R}_{ij})\)</span> はFock項に対する補正項を表す. これらは模型を解く際のダブルカウンティングを避けるために導入され, オプションでON/OFFの切り替えが可能になっている. また, 直接積分 <span class="math">\(U_{mn}(\bf{R}_{ij})\)</span> および交換積分 <span class="math">\(J_{mn}({\bf R}_{ij})\)</span> をそれぞれ <span class="math">\(\lambda_U, \lambda_J\)</span> 倍し調節するためのパラメータも用意されている.</p>
 <div class="section" id="id2">
 <h2>8.1.1. 要件<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p><a class="reference external" href="http://www.quantum-espresso.org/">QuantumESPRESSO</a>
@@ -75,7 +109,7 @@ c_{i \alpha \downarrow} c_{i \alpha \uparrow} )
 を用いてKohn-Sham軌道を用いたのちに,
 RESPACKでWannier関数, 誘電関数, 有効相互作用を計算し,
 それらを用いて構成した格子モデルを
-mVMC もしくは <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>
+mVMC もしくは <span class="math">\({\mathcal H}\Phi\)</span>
 で計算する.
 したがってそれらのプログラムが使用可能である必要がある.</p>
 </div>
@@ -83,6 +117,7 @@ mVMC もしくは <span class="math notranslate nohighlight">\({\mathcal H}\Phi\
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -103,8 +138,8 @@ mVMC もしくは <span class="math notranslate nohighlight">\({\mathcal H}\Phi\
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
@@ -136,14 +171,12 @@ mVMC もしくは <span class="math notranslate nohighlight">\({\mathcal H}\Phi\
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -154,8 +187,8 @@ mVMC もしくは <span class="math notranslate nohighlight">\({\mathcal H}\Phi\
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/wannier/overview.rst.txt"

@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>4.3.12. energy.dat &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.3.13. Lanczos_Step.dat" href="Lanczos_Step_ja.html" />
@@ -25,29 +36,32 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="energy-dat">
 <span id="subsec-energy-dat"></span><h1>4.3.12. energy.dat<a class="headerlink" href="#energy-dat" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <div class="line-block">
 <div class="line">(Lanczos法、LOBCG法のみ)
-Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギー、ダブロンと<span class="math notranslate nohighlight">\(\langle S_z \rangle\)</span> を出力します。
+Lanczos法もしくはCG法で求めた固有ベクトルを用いて計算したエネルギー、ダブロンと<span class="math">\(\langle S_z \rangle\)</span> を出力します。
 以下にファイル例を記載します。</div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">method=&quot;Lanczos&quot;</span></code>の場合</div>
+<div class="line"><code class="docutils literal"><span class="pre">method=&quot;Lanczos&quot;</span></code>の場合</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Energy  -7.1043675920
+<div class="highlight-none"><div class="highlight"><pre><span></span>Energy  -7.1043675920
 Doublon  0.4164356536
 Sz  0.0000000000
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>の場合</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>State 0
+<p><code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code>の場合</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>State 0
   Energy  -7.1043675920
   Doublon  0.4164356536
   Sz  0.0000000000
@@ -66,28 +80,28 @@ State 1
 <div class="section" id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul class="simple">
-<li>Energy <span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></li>
-<li>Doublon <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span></li>
-<li>Sz <span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></li>
+<li>Energy <span class="math">\([\)</span>double01<span class="math">\(]\)</span></li>
+<li>Doublon <span class="math">\([\)</span>double02<span class="math">\(]\)</span></li>
+<li>Sz <span class="math">\([\)</span>double03<span class="math">\(]\)</span></li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h2>パラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>double01<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
 <p><strong>説明 :</strong>
 Lanczos法・CG法で求めた固有ベクトルを用い計算したエネルギー。</p>
 </li>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>double02<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
 <p><strong>説明 :</strong> Lanczos法・CG法で求めた固有ベクトルを用い計算したダブロン
-<span class="math notranslate nohighlight">\(\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle\)</span>
-(<span class="math notranslate nohighlight">\(N_s\)</span>はサイト数)。</p>
+<span class="math">\(\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle\)</span>
+(<span class="math">\(N_s\)</span>はサイト数)。</p>
 </li>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>double03<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> 固有ベクトルを用い計算した<span class="math notranslate nohighlight">\(\langle S_z\rangle\)</span>。</p>
+<p><strong>説明 :</strong> 固有ベクトルを用い計算した<span class="math">\(\langle S_z\rangle\)</span>。</p>
 </li>
 </ul>
 </div>
@@ -95,6 +109,7 @@ Lanczos法・CG法で求めた固有ベクトルを用い計算したエネル�
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -115,8 +130,8 @@ Lanczos法・CG法で求めた固有ベクトルを用い計算したエネル�
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
@@ -180,14 +195,12 @@ Lanczos法・CG法で求めた固有ベクトルを用い計算したエネル�
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -198,8 +211,8 @@ Lanczos法・CG法で求めた固有ベクトルを用い計算したエネル�
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../../_sources/filespecification/outputfiles_ja/energy_ja.rst.txt"

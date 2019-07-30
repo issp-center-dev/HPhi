@@ -4,16 +4,27 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>4.2.3. ModPara file &#8212; HΦ Documentation  documentation</title>
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.2.4. LocSpin file" href="LocSpin_file_en.html" />
@@ -24,12 +35,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="modpara-file">
@@ -38,7 +52,7 @@
 <div class="line">This file determines the parameters for calculation. The file format
 is as follows.</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--------------------
+<div class="highlight-none"><div class="highlight"><pre><span></span>--------------------
 Model_Parameters   0
 --------------------
 VMC_Cal_Parameters
@@ -102,40 +116,40 @@ shown.</p>
 <div class="section" id="common-parameters">
 <h2>Common parameters<a class="headerlink" href="#common-parameters" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">CDataFileHead</span></code></p>
 <p><strong>Type :</strong> String (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> A header for output files. For example, the output
 filename for one-body Green’s function becomes
 “<strong>xxx_Lanczos_cisajs.dat</strong>” (xxx are the characters set by
-<code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>).</p>
+<code class="docutils literal"><span class="pre">CDataFileHead</span></code>).</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Nsite</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Nsite</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The number of sites.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Ncond</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Ncond</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The number of conduction electrons (not used in
 grand canonical ensemble).</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">2Sz</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">2Sz</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
-<p><strong>Description :</strong> The total value of <span class="math notranslate nohighlight">\(2S_z\)</span> (not used in grand
-canonical ensemble). For conservation of <span class="math notranslate nohighlight">\(S_z\)</span> in the case of
-<code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0 (fermion Hubbard model) or 2 (Kondo lattice model),
-set <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>.</p>
+<p><strong>Description :</strong> The total value of <span class="math">\(2S_z\)</span> (not used in grand
+canonical ensemble). For conservation of <span class="math">\(S_z\)</span> in the case of
+<code class="docutils literal"><span class="pre">CalcModel</span></code> = 0 (fermion Hubbard model) or 2 (Kondo lattice model),
+set <code class="docutils literal"><span class="pre">Ncond</span></code>.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">initial_iv</span></code></p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> An initial vector is specified with this parameter.</p>
 <ul>
 <li><p class="first">Lanczos method</p>
 <ul>
-<li><p class="first">For canonical ensemble and <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(\geq 0\)</span></p>
+<li><p class="first">For canonical ensemble and <code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(\geq 0\)</span></p>
 <p>The non-zero components of an initial vector are specified with
 this parameter.</p>
 </li>
-<li><p class="first">For grand canonical ensemble or <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(&lt; 0\)</span></p>
+<li><p class="first">For grand canonical ensemble or <code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(&lt; 0\)</span></p>
 <p>The seed of the random generator is given by this parameter and
 the random vector is used as the initial vector.</p>
 </li>
@@ -149,7 +163,7 @@ the random vector is used as the initial vector.</p>
 <p>See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a> for details of setting an
 initial vector.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CalcHS</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">CalcHS</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> If CalcHS=1, an efficient algorithm for generating
 the restricted Hilbert space with the specified quantum number is
@@ -162,79 +176,79 @@ value is 1 and the efficient algorithm is used.</p>
 <div class="section" id="lanczos-method">
 <h2>Lanczos method<a class="headerlink" href="#lanczos-method" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The maximum number of Lanczos steps in the
 calculation. When the convergence within the specified accuracy is
 satisfied, the calculation is completed before a step reaches
-<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
+<code class="docutils literal"><span class="pre">Lanczos_max</span></code>. In the case of restart calculation, <code class="docutils literal"><span class="pre">Lanczos_max</span></code>
 must be larger than that of the previous calculation.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">exct</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">exct</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> An integer for setting the number of eigenvectors
 obtained from the ground energy by the Lanczos method.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">LanczosEps</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> An integer for judging the convergence of the
 Lanczos method. The convergence is determined by whether the
 condition is satisfied that the relative error between an eigenvalue
 and an eigenvalue at the Lanczos step of the one step before is less
-than <span class="math notranslate nohighlight">\(10^{- \verb|LanczosEps|}\)</span>.</p>
+than <span class="math">\(10^{- \verb|LanczosEps|}\)</span>.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">LanczosTarget</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">LanczosTarget</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> An integer giving the target of the eigenvalue for
 judging the convergence of the Lanczos method. For example, the
-target becomes a ground state when <code class="docutils literal notranslate"><span class="pre">LanczosTarget</span></code> is equal to one,
-and a first excited state when <code class="docutils literal notranslate"><span class="pre">LanczosTarget</span></code> is equal to two.</p>
+target becomes a ground state when <code class="docutils literal"><span class="pre">LanczosTarget</span></code> is equal to one,
+and a first excited state when <code class="docutils literal"><span class="pre">LanczosTarget</span></code> is equal to two.</p>
 </li>
 </ul>
 </div>
 <div class="section" id="cg-method">
 <h2>CG method<a class="headerlink" href="#cg-method" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">exct</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">exct</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The number of eigenvectors is specified.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The maximum number of iteration steps in the
 calculation. When the convergence within the specified accuracy is
 satisfied, the calculation is completed before a step reaches
-Lanczos_max. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
+Lanczos_max. In the case of restart calculation, <code class="docutils literal"><span class="pre">Lanczos_max</span></code>
 must be larger than that of the previous calculation.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">LanczosEps</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
-<p><strong>Description :</strong> For <code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>, the calculation finishes when
+<p><strong>Description :</strong> For <code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code>, the calculation finishes when
 the 2-norm of the residual vector becomes smaller than
-<span class="math notranslate nohighlight">\(10^{- \verb|LanczosEps|/2}\)</span>.</p>
+<span class="math">\(10^{- \verb|LanczosEps|/2}\)</span>.</p>
 </li>
 </ul>
 </div>
 <div class="section" id="tpq-method">
 <h2>TPQ method<a class="headerlink" href="#tpq-method" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The total number of TPQ steps is specified with
-this parameter. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
+this parameter. In the case of restart calculation, <code class="docutils literal"><span class="pre">Lanczos_max</span></code>
 must be larger than that of the previous calculation.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> An integer giving <span class="math notranslate nohighlight">\(l\)</span> of
-<span class="math notranslate nohighlight">\(l=\hat{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
+<p><strong>Description :</strong> An integer giving <span class="math">\(l\)</span> of
+<span class="math">\(l=\hat{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">NumAve</span></code></p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> An integer giving the number of independent runs
 for the TPQ method.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">ExpecInterval</span></code></p>
 <p><strong>Type :</strong> Int</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> An integer giving the interval steps of
@@ -247,58 +261,58 @@ calculating the correlation functions in the TPQ method.</div>
 <div class="section" id="calculating-dynamical-greens-functions">
 <h2>Calculating dynamical Green’s functions<a class="headerlink" href="#calculating-dynamical-greens-functions" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OmegaOrg</span></code></p>
 <p><strong>Type :</strong> Complex</p>
 <p><strong>Description :</strong> The center value of the frequency. Specify the real
 and imaginary parts in that order separated by a space, and if there
 is no imaginary part, the real part of the frequency is only given.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OmegaIm</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OmegaIm</span></code></p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> The imaginary part of the frequency. When
-<code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code> is defined in a <code class="docutils literal notranslate"><span class="pre">modpara</span></code> file, <code class="docutils literal notranslate"><span class="pre">OmegaIm</span></code> is added
-to the imaginary value of <code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code>.</p>
+<code class="docutils literal"><span class="pre">OmegaOrg</span></code> is defined in a <code class="docutils literal"><span class="pre">modpara</span></code> file, <code class="docutils literal"><span class="pre">OmegaIm</span></code> is added
+to the imaginary value of <code class="docutils literal"><span class="pre">OmegaOrg</span></code>.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OmegaMin</span></code></p>
 <p><strong>Type :</strong> Complex</p>
-<p><strong>Description :</strong> The lower limit of the frequency from <code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code>.
+<p><strong>Description :</strong> The lower limit of the frequency from <code class="docutils literal"><span class="pre">OmegaOrg</span></code>.
 Specify the real and imaginary parts in that order separated by a
 space, and if there is no imaginary part, the real part of the
 frequency is only given.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OmegaMax</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OmegaMax</span></code></p>
 <p><strong>Type :</strong> Complex</p>
 <p><strong>Description :</strong> The upper limit of the frequency from
-<code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code>. Specify the real and imaginary parts in that order
+<code class="docutils literal"><span class="pre">OmegaOrg</span></code>. Specify the real and imaginary parts in that order
 separated by a space, and if there is no imaginary part, a real part
 of the frequency is only given.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">NOmega</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">NOmega</span></code></p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> The integer for defining the step size of the
-frequency <span class="math notranslate nohighlight">\(\Delta \omega = (\)</span> <code class="docutils literal notranslate"><span class="pre">OmegaMax</span></code> -
-<code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code> <span class="math notranslate nohighlight">\()/N_{\omega}\)</span>. The frequency is given by
-<span class="math notranslate nohighlight">\(z_n=\)</span> <code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code><span class="math notranslate nohighlight">\(+\)</span><code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code><span class="math notranslate nohighlight">\(+ \Delta \omega \times n\)</span>.</p>
+frequency <span class="math">\(\Delta \omega = (\)</span> <code class="docutils literal"><span class="pre">OmegaMax</span></code> -
+<code class="docutils literal"><span class="pre">OmegaMin</span></code> <span class="math">\()/N_{\omega}\)</span>. The frequency is given by
+<span class="math">\(z_n=\)</span> <code class="docutils literal"><span class="pre">OmegaOrg</span></code><span class="math">\(+\)</span><code class="docutils literal"><span class="pre">OmegaMin</span></code><span class="math">\(+ \Delta \omega \times n\)</span>.</p>
 </li>
 </ul>
 </div>
 <div class="section" id="real-time-evolution-method">
 <h2>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The total number of real time evolution steps is
 specified with this parameter. In the case of restart calculation,
-<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> must be larger than that of the previous calculation.</p>
+<code class="docutils literal"><span class="pre">Lanczos_max</span></code> must be larger than that of the previous calculation.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">ExpandCoef</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
-<p><strong>Description :</strong> An integer giving the expansion order <span class="math notranslate nohighlight">\(n\)</span> for
+<p><strong>Description :</strong> An integer giving the expansion order <span class="math">\(n\)</span> for
 real time evolution method;</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-0">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-0" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n .\]</div>
+<div class="math" id="equation-filespecification/expertmode_en/ModPara_file_en:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-filespecification/expertmode_en/ModPara_file_en:0" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n .\]</div>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">ExpecInterval</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> An integer giving the interval steps of
@@ -306,12 +320,12 @@ calculating the correlation functions.</div>
 <div class="line"><strong>Note:</strong> A small interval increases the time cost of calculations.</div>
 </div>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OutputInterval</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> An integer giving the interval steps of output
 the wave function.</div>
-<div class="line">The wave vector is output when <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> in <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>
+<div class="line">The wave vector is output when <code class="docutils literal"><span class="pre">OutputEigenVec=1</span></code> in <code class="docutils literal"><span class="pre">CalcMod</span></code>
 file.</div>
 </div>
 </li>
@@ -321,6 +335,7 @@ file.</div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -341,8 +356,8 @@ file.</div>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -394,14 +409,12 @@ file.</div>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -412,8 +425,8 @@ file.</div>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../../_sources/filespecification/expertmode_en/ModPara_file_en.rst.txt"

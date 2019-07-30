@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>2.2. インストール方法 &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="2.3. ディレクトリ構成" href="directorystructure_ja.html" />
@@ -25,54 +36,57 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="id1">
 <h1>2.2. インストール方法<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
-<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は次の場所からダウンロードできます。</p>
+<p><span class="math">\({\mathcal H}\Phi\)</span> は次の場所からダウンロードできます。</p>
 <p><a class="reference external" href="https://github.com/QLMS/HPhi/releases">https://github.com/QLMS/HPhi/releases</a></p>
 <p>ダウンロードしたファイルを次のように展開してください。</p>
-<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">tar</span> <span class="pre">xzvf</span> <span class="pre">HPhi-xxx.tar.gz</span></code></p>
-<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>はcmakeを利用してインストールできます。</p>
+<p><code class="docutils literal"><span class="pre">$</span> <span class="pre">tar</span> <span class="pre">xzvf</span> <span class="pre">HPhi-xxx.tar.gz</span></code></p>
+<p><span class="math">\({\mathcal H}\Phi\)</span>はcmakeを利用してインストールできます。</p>
 <div class="admonition tip">
 <p class="first admonition-title">ちなみに</p>
 <div class="last line-block">
 <div class="line">sekirei で cmake を利用するには</div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">/home/issp/materiapps/tool/env.sh</span></code></div>
+<div class="line"><code class="docutils literal"><span class="pre">source</span> <span class="pre">/home/issp/materiapps/tool/env.sh</span></code></div>
 <div class="line">をあらかじめ実行する必要があります。</div>
 </div>
 </div>
-<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を展開したディレクトリのパスを$PathTohphi
+<p><span class="math">\({\mathcal H}\Phi\)</span>を展開したディレクトリのパスを$PathTohphi
 、ビルドディレクトリを$HOME/build/hphi
 (任意の場所を指定可能)とした場合に、</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd $HOME/build/hphi
+<div class="highlight-none"><div class="highlight"><pre><span></span>cd $HOME/build/hphi
 cmake -DCONFIG=gcc $PathTohphi
 make
 </pre></div>
 </div>
-<p>でコンパイルすることができます。全対角化の計算に<code class="docutils literal notranslate"><span class="pre">ScaLAPACK</span></code>を使用する場合には、<code class="docutils literal notranslate"><span class="pre">-DUSE_SCALAPACK=ON</span></code>のオプションをcmake時につけてください。
+<p>でコンパイルすることができます。全対角化の計算に<code class="docutils literal"><span class="pre">ScaLAPACK</span></code>を使用する場合には、<code class="docutils literal"><span class="pre">-DUSE_SCALAPACK=ON</span></code>のオプションをcmake時につけてください。
 コンパイル後、$HOME/build/hphi直下にsrcフォルダが作成され、
 実行ファイルであるHPhiがそのフォルダ内に作成されます。
 MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。</p>
 <p>なお、上の例ではgccコンパイラを前提としたコンパイルになっていますが、</p>
 <blockquote>
 <div><ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">sekirei</span></code> : 物性研究所システムB ”sekirei”</li>
-<li><code class="docutils literal notranslate"><span class="pre">sekirei_acc</span></code> : 物性研究所システムB ”sekirei” (MAGMAライブラリを使用する場合)</li>
-<li><code class="docutils literal notranslate"><span class="pre">fujitsu</span></code> : 富士通コンパイラ</li>
-<li><code class="docutils literal notranslate"><span class="pre">intel</span></code> : intelコンパイラ + Linux PC</li>
-<li><code class="docutils literal notranslate"><span class="pre">gcc</span></code> : GCC + Linux PC</li>
+<li><code class="docutils literal"><span class="pre">sekirei</span></code> : 物性研究所システムB ”sekirei”</li>
+<li><code class="docutils literal"><span class="pre">sekirei_acc</span></code> : 物性研究所システムB ”sekirei” (MAGMAライブラリを使用する場合)</li>
+<li><code class="docutils literal"><span class="pre">fujitsu</span></code> : 富士通コンパイラ</li>
+<li><code class="docutils literal"><span class="pre">intel</span></code> : intelコンパイラ + Linux PC</li>
+<li><code class="docutils literal"><span class="pre">gcc</span></code> : GCC + Linux PC</li>
 </ul>
 </div></blockquote>
 <p>のオプションが用意されています。
 以下、HPhiを展開したディレクトリでビルドする例を示します(intelコンパイラの場合)。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mkdir ./build
+<div class="highlight-none"><div class="highlight"><pre><span></span>mkdir ./build
 cd ./build
 cmake -DCONFIG=intel ../
 make
@@ -81,11 +95,12 @@ make
 <p>実行後、buildフォルダ直下にsrcフォルダが作成され、HPhiがsrcフォルダ内に作成されます。
 なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、
 新規に上記作業を行うことをお薦めします。
-また、SSE2が使用出来る場合には、cmakeでのコンパイル時<code class="docutils literal notranslate"><span class="pre">-DHAVE_SSE2</span></code>を付け加えてください.</p>
+また、SSE2が使用出来る場合には、cmakeでのコンパイル時<code class="docutils literal"><span class="pre">-DHAVE_SSE2</span></code>を付け加えてください.</p>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -106,8 +121,8 @@ make
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="prerequisite_ja.html">2.1. 要件</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">2.2. インストール方法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="directorystructure_ja.html">2.3. ディレクトリ構成</a></li>
@@ -126,7 +141,7 @@ make
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul>
+  <li><a href="ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a><ul>
       <li>Previous: <a href="prerequisite_ja.html" title="前の章へ">2.1. 要件</a></li>
       <li>Next: <a href="directorystructure_ja.html" title="次の章へ">2.3. ディレクトリ構成</a></li>
   </ul></li>
@@ -135,14 +150,12 @@ make
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -153,8 +166,8 @@ make
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/howtouse/installation_ja.rst.txt"

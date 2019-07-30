@@ -4,16 +4,27 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>4.3.1. CHECK_Chemi.dat &#8212; HΦ Documentation  documentation</title>
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.3.2. CHECK_InterAll.dat" href="CHECK_InterAll_en.html" />
@@ -24,22 +35,25 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="check-chemi-dat">
 <span id="subsec-checkchemi"></span><h1>4.3.1. CHECK_Chemi.dat<a class="headerlink" href="#check-chemi-dat" title="Permalink to this headline">¶</a></h1>
 <p>This file is outputted to check the input of chemical potential
-<span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>,</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-outputfiles-en-check-chemi-en-0">
-<span class="eqno">(4.19)<a class="headerlink" href="#equation-filespecification-outputfiles-en-check-chemi-en-0" title="Permalink to this equation">¶</a></span>\[\mathcal H+=\sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}.\]</div>
+<span class="math">\(\mu_{i\sigma}\)</span>,</p>
+<div class="math" id="equation-filespecification/outputfiles_en/CHECK_Chemi_en:0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-filespecification/outputfiles_en/CHECK_Chemi_en:0" title="Permalink to this equation">¶</a></span>\[\mathcal H+=\sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}.\]</div>
 <p>An example of the file format is as follows.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i=0 spin=0 isite1=1 tmp_V=0.000000
+<div class="highlight-none"><div class="highlight"><pre><span></span>i=0 spin=0 isite1=1 tmp_V=0.000000
 i=1 spin=0 isite1=2 tmp_V=0.000000
 i=2 spin=0 isite1=3 tmp_V=0.000000
 i=3 spin=0 isite1=4 tmp_V=0.000000
@@ -65,7 +79,7 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
 <p><strong>Type :</strong> Int</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> An integer for showing the spin index of
-<span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>:</div>
+<span class="math">\(\mu_{i\sigma}\)</span>:</div>
 <div class="line">0: Up-spin,</div>
 <div class="line">1: Down-spin.</div>
 </div>
@@ -73,11 +87,11 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
 <li><p class="first">[int03]</p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> An integer for showing the site index of
-<span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>.</p>
+<span class="math">\(\mu_{i\sigma}\)</span>.</p>
 </li>
 <li><p class="first">[double01]</p>
 <p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> A value for <span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>.</p>
+<p><strong>Description :</strong> A value for <span class="math">\(\mu_{i\sigma}\)</span>.</p>
 </li>
 </ul>
 </div>
@@ -85,6 +99,7 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -105,8 +120,8 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -170,14 +185,12 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -188,8 +201,8 @@ i=5 spin=0 isite1=6 tmp_V=0.000000
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../../_sources/filespecification/outputfiles_en/CHECK_Chemi_en.rst.txt"

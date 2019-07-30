@@ -4,17 +4,28 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>8.4. ファイルフォーマット &#8212; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="8.5. Contact" href="contact.html" />
@@ -25,24 +36,27 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="id1">
 <h1>8.4. ファイルフォーマット<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>HPhi/mVMCのスタンダードモードでは以下のファイルを読み込む.
-これらのファイルはRESPACKのプログラムを実行したディレクトリで,
-HPhi/mVMCに付属のユーティリティー <code class="docutils literal notranslate"><span class="pre">respack2wan90.py</span></code> を使うと得られる.</p>
+これらのファイルはRESPACKのプログラムを実行すると,
+<code class="docutils literal"><span class="pre">dir-model</span></code> ディレクトリに <code class="docutils literal"><span class="pre">[CDataFileHead]=zvo</span></code> として自動出力される.</p>
 <div class="section" id="id2">
 <h2>8.4.1. ジオメトリー<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>ファイル名は <code class="docutils literal notranslate"><span class="pre">[CDataFileHeat]_geom.dat</span></code>.
+<p>ファイル名は <code class="docutils literal"><span class="pre">[CDataFileHead]_geom.dat</span></code>.
 このファイルを必要に応じて修正することで取り扱う軌道数を変更できる.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-1.917800 1.917800 6.280100
+<div class="highlight-none"><div class="highlight"><pre><span></span>-1.917800 1.917800 6.280100
 1.917800 -1.917800 6.280100
 1.917800 1.917800 -6.280100
 3
@@ -57,24 +71,56 @@ HPhi/mVMCに付属のユーティリティー <code class="docutils literal notr
 </li>
 <li><p class="first">4行目</p>
 <p>mVMC/HPhiで取り入れる, ユニットセルあたりの軌道数.
-<code class="docutils literal notranslate"><span class="pre">respack2wan90.py</span></code> によって生成すると, Wannier関数の数と同じになる.
 Wannier関数の数よりも少なくすることも可能であり,
 その場合には先頭からこの数の分だけの軌道を取り入れたモデルが構築される.</p>
 </li>
 <li><p class="first">5行目以降</p>
-<p>各軌道のWannier中心 (フラクショナル座標). Fourier変換ツールで使われる.</p>
+<p>各軌道のWannier中心 (フラクショナル座標). Fourier変換ツールで使われる.
+なお, ここで定義されたWannier関数の順番が, 以下の4つのファイルのWannier関数のインデックスに対応する.</p>
 </li>
 </ul>
 </div>
 <div class="section" id="coulomb">
-<h2>8.4.2. ホッピング, Coulomb積分, 交換積分<a class="headerlink" href="#coulomb" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>ファイル名は <code class="docutils literal notranslate"><span class="pre">[CDataFileHeat]_hr.dat</span></code>, <code class="docutils literal notranslate"><span class="pre">[CDataFileHeat]_ur.dat</span></code>, <code class="docutils literal notranslate"><span class="pre">[CDataFileHeat]_jr.dat</span></code>.
-Wannier90のホッピング積分の形式に従う.</p>
+<h2>8.4.2. ホッピング, Coulomb積分, 交換積分, 電荷密度<a class="headerlink" href="#coulomb" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ファイル名は <code class="docutils literal"><span class="pre">[CDataFileHead]_hr.dat</span></code>, <code class="docutils literal"><span class="pre">[CDataFileHead]_ur.dat</span></code>,
+<code class="docutils literal"><span class="pre">[CDataFileHead]_jr.dat</span></code>,  <code class="docutils literal"><span class="pre">[CDataFileHead]_dr.dat</span></code>.
+Wannier90のホッピング積分の形式に従う(詳細はwannier90のuser_guideの <code class="docutils literal"><span class="pre">8.19</span> <span class="pre">seedname_hr.dat</span></code> を参照のこと).</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>wannier90 format for mvmcdry
+8
+343
+1    1    1    1    1    1    1    1    1    1    1    1    1
+...
+ -3   -3   -3    1    1   0.0004104251  -0.0000000000
+ -3   -3   -3    1    2   0.0001515941  -0.0000000006
+ -3   -3   -3    1    3  -0.0001515941   0.0000000002
+</pre></div>
+</div>
+<ul>
+<li><p class="first">1行目</p>
+<p>ファイルヘッダ</p>
+</li>
+<li><p class="first">2行目</p>
+<p>Wannier関数の数.</p>
+</li>
+<li><p class="first">3行目</p>
+<p>スーパーセルの数 <code class="docutils literal"><span class="pre">nrpts</span></code> .</p>
+</li>
+<li><p class="first">4行- 5 + int(<code class="docutils literal"><span class="pre">nrpts</span></code>/15) 行</p>
+<p>各スーパーセルでの縮退値 (基本的には1).</p>
+</li>
+<li><p class="first">6 + int(<code class="docutils literal"><span class="pre">nrpts</span></code>/15) 行 -</p>
+<p>1-3列がスーパーセルの格子ベクトル,
+4列目が原点のWannier軌道のインデックス,
+5列目がスーパーセルのWannier軌道のインデックス,
+6列目が実数値, 7列目が虚数値をそれぞれ与える.</p>
+</li>
+</ul>
 </div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -95,8 +141,8 @@ Wannier90のホッピング積分の形式に従う.</p>
 
 <h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
@@ -108,7 +154,7 @@ Wannier90のホッピング積分の形式に従う.</p>
 <li class="toctree-l2"><a class="reference internal" href="parameter.html">8.3. スタンダードモードの入力パラメーター</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">8.4. ファイルフォーマット</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id2">8.4.1. ジオメトリー</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#coulomb">8.4.2. ホッピング, Coulomb積分, 交換積分</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coulomb">8.4.2. ホッピング, Coulomb積分, 交換積分, 電荷密度</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
@@ -129,14 +175,12 @@ Wannier90のホッピング積分の形式に従う.</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="検索" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -147,8 +191,8 @@ Wannier90のホッピング積分の形式に従う.</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/wannier/format.rst.txt"
