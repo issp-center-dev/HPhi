@@ -200,17 +200,18 @@ static void read_W90(
     }
   }
   for (iWSC = 0; iWSC < nWSC; iWSC++) Weight_tot[iWSC] = 1.0;
-  Model_lattice[0] = StdI->W %2 == 0 ? StdI->W/2 : 0;
-  Model_lattice[1] = StdI->L %2 == 0 ? StdI->L/2 : 0;
-  Model_lattice[2] = StdI->Height %2 == 0 ? StdI->Height/2 : 0;
-  for (ii = 0; ii < 3; ii++) {
-    if (Model_lattice[ii] < Band_lattice[ii] && Model_lattice[ii] != 0) {
-      for (iWSC = 0; iWSC < nWSC; iWSC++) {
-        if (abs(indx_tot[iWSC][ii]) == Model_lattice[ii]) Weight_tot[iWSC] *= 0.5;
+  if (StdI->W != StdI->NaN_i && StdI->L != StdI->NaN_i && StdI->Height != StdI->NaN_i ) {
+    Model_lattice[0] = StdI->W % 2 == 0 ? StdI->W / 2 : 0;
+    Model_lattice[1] = StdI->L % 2 == 0 ? StdI->L / 2 : 0;
+    Model_lattice[2] = StdI->Height % 2 == 0 ? StdI->Height / 2 : 0;
+    for (ii = 0; ii < 3; ii++) {
+      if (Model_lattice[ii] < Band_lattice[ii] && Model_lattice[ii] != 0) {
+        for (iWSC = 0; iWSC < nWSC; iWSC++) {
+          if (abs(indx_tot[iWSC][ii]) == Model_lattice[ii]) Weight_tot[iWSC] *= 0.5;
+        }
       }
     }
   }
-
   /**@brief
   (3-1)  Compute the number of terms larger than cut-off.
   */
@@ -501,11 +502,11 @@ void StdFace_Wannier90(
   // Set parameters to tune the strength of interactions
   if (isnan(StdI->lambda)){ // Lambda is not defined.
     StdFace_PrintVal_d("lambda_U", &StdI->lambda_U, 1.0);
-    StdFace_PrintVal_d("lambda_V", &StdI->lambda_J, 1.0);
+    StdFace_PrintVal_d("lambda_J", &StdI->lambda_J, 1.0);
   }
   else{
-    StdFace_PrintVal_d("lambda_U", &StdI->lambda_U, StdI->lambda);
-    StdFace_PrintVal_d("lambda_V", &StdI->lambda_J, StdI->lambda);
+    StdFace_PrintVal_d("lambda_U",&StdI->lambda_U, StdI->lambda);
+    StdFace_PrintVal_d("lambda_J", &StdI->lambda_J, StdI->lambda);
   }
   if(StdI->lambda_U < 0.0 || StdI->lambda_J < 0.0 ){
     fprintf(stderr, "\n  Error: the value of lambda_U / lambda_J must be greater than or equal to 0. \n\n");
@@ -536,6 +537,13 @@ void StdFace_Wannier90(
   fprintf(stdout, "\n  @ Wannier90 hopping \n\n");
   StdFace_PrintVal_d("cutoff_t", &StdI->cutoff_t, 1.0e-8);
   StdFace_PrintVal_d("cutoff_length_t", &StdI->cutoff_length_t, -1.0);
+  if (StdI->W != StdI->NaN_i) StdFace_PrintVal_i("cutoff_tR[0]", &StdI->cutoff_tR[0], (int)((StdI->W-1)/2));
+  else StdFace_PrintVal_i("cutoff_tR[0]", &StdI->cutoff_tR[0], 0);
+  if (StdI->L != StdI->NaN_i) StdFace_PrintVal_i("cutoff_tR[1]", &StdI->cutoff_tR[1], (int)((StdI->L-1)/2));
+  else StdFace_PrintVal_i("cutoff_tR[1]", &StdI->cutoff_tR[1], 0);
+  if (StdI->Height != StdI->NaN_i) StdFace_PrintVal_i("cutoff_tR[2]", &StdI->cutoff_tR[2], (int)((StdI->Height-1)/2));
+  else StdFace_PrintVal_i("cutoff_tR[2]", &StdI->cutoff_tR[2], 0);
+
   sprintf(filename, "%s_hr.dat", StdI->CDataFileHead);
   read_W90(StdI, filename,
     StdI->cutoff_t, StdI->cutoff_tR, StdI->cutoff_length_t,
@@ -545,7 +553,11 @@ void StdFace_Wannier90(
   */
   fprintf(stdout, "\n  @ Wannier90 Coulomb \n\n");
   StdFace_PrintVal_d("cutoff_u", &StdI->cutoff_u, 1.0e-8);
-  StdFace_PrintVal_d("cutoff_length_U", &StdI->cutoff_length_U, -1.0);
+  StdFace_PrintVal_d("cutoff_length_U", &StdI->cutoff_length_U, 0.3);
+  StdFace_PrintVal_i("cutoff_UR[0]", &StdI->cutoff_UR[0], 0);
+  StdFace_PrintVal_i("cutoff_UR[1]", &StdI->cutoff_UR[1], 0);
+  StdFace_PrintVal_i("cutoff_UR[2]", &StdI->cutoff_UR[2], 0);
+
   sprintf(filename, "%s_ur.dat", StdI->CDataFileHead);
   read_W90(StdI, filename,
     StdI->cutoff_u, StdI->cutoff_UR, StdI->cutoff_length_U, 
@@ -555,7 +567,12 @@ void StdFace_Wannier90(
   */
   fprintf(stdout, "\n  @ Wannier90 Hund \n\n");
   StdFace_PrintVal_d("cutoff_j", &StdI->cutoff_j, 1.0e-8);
-  StdFace_PrintVal_d("cutoff_length_J", &StdI->cutoff_length_J, -1.0);
+  StdFace_PrintVal_d("cutoff_length_J", &StdI->cutoff_length_J, 0.3);
+  StdFace_PrintVal_i("cutoff_JR[0]", &StdI->cutoff_JR[0], 0);
+  StdFace_PrintVal_i("cutoff_JR[1]", &StdI->cutoff_JR[1], 0);
+  StdFace_PrintVal_i("cutoff_JR[2]", &StdI->cutoff_JR[2], 0);
+
+
   sprintf(filename, "%s_jr.dat", StdI->CDataFileHead);
   read_W90(StdI, filename,
     StdI->cutoff_j, StdI->cutoff_JR, StdI->cutoff_length_J, 
