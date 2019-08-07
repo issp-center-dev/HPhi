@@ -27,15 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "setmemory.h"
 
-double _inner(double *r1vec, double *r2vec){
-  int i = 0;
-  double inner = 0.0;
-  for (i = 0; i < 3; i++){
-    inner += r1vec[i]*r2vec[i];
-  }
-  return inner;
-}
-
 void _calc_inverse_matrix(double cutoff_Rvec[][3], double inverse_matrix[][3]) {
   double NMatrix[3][3] = {{},
                           {}};
@@ -57,12 +48,12 @@ void _calc_inverse_matrix(double cutoff_Rvec[][3], double inverse_matrix[][3]) {
   inverse_matrix[0][1] = -(NMatrix[0][1]*NMatrix[2][2] - NMatrix[0][2] * NMatrix[2][1]);
   inverse_matrix[0][2] = NMatrix[0][1]*NMatrix[1][2] - NMatrix[0][2] * NMatrix[1][1];
 
-  inverse_matrix[1][0] = inverse_matrix[0][1];
+  inverse_matrix[1][0] = -(NMatrix[1][0]*NMatrix[2][2] - NMatrix[2][0] * NMatrix[1][2]);
   inverse_matrix[1][1] = NMatrix[0][0]*NMatrix[2][2] - NMatrix[0][2] * NMatrix[2][0];
   inverse_matrix[1][2] = -(NMatrix[0][0]*NMatrix[1][2] - NMatrix[0][2] * NMatrix[1][0]);
 
-  inverse_matrix[2][0] = inverse_matrix[0][2];
-  inverse_matrix[2][1] = inverse_matrix[1][2];
+  inverse_matrix[2][0] = NMatrix[1][0]*NMatrix[2][1] - NMatrix[2][0] * NMatrix[1][1];
+  inverse_matrix[2][1] = -(NMatrix[0][0]*NMatrix[2][1] - NMatrix[2][0] * NMatrix[0][1]);
   inverse_matrix[2][2] = NMatrix[0][0]*NMatrix[1][1] - NMatrix[0][1] * NMatrix[1][0];
 
   for (i = 0; i < 3; i++) {
