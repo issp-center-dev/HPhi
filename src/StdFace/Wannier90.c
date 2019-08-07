@@ -27,6 +27,64 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "setmemory.h"
 
+double _inner(double *r1vec, double *r2vec){
+  int i = 0;
+  double inner = 0.0;
+  for (i = 0; i < 3; i++){
+    inner += r1vec[i]*r2vec[i];
+  }
+  return inner;
+}
+
+void _calc_inverse_matrix(double cutoff_Rvec[][3], double inverse_matrix[][3]) {
+  double NMatrix[3][3] = {{},
+                          {}};
+  int i, j;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      NMatrix[i][j] = cutoff_Rvec[i][j];
+    }
+  }
+
+  double det = NMatrix[0][0] * NMatrix[1][1] * NMatrix[2][2];
+  det += NMatrix[1][0] * NMatrix[2][1] * NMatrix[0][2];
+  det += NMatrix[2][0] * NMatrix[0][1] * NMatrix[1][2];
+  det -= NMatrix[2][0] * NMatrix[1][1] * NMatrix[0][2];
+  det -= NMatrix[1][0] * NMatrix[0][1] * NMatrix[2][2];
+  det -= NMatrix[0][0] * NMatrix[2][1] * NMatrix[1][2];
+
+  inverse_matrix[0][0] = NMatrix[1][1]*NMatrix[2][2] - NMatrix[1][2] * NMatrix[2][1];
+  inverse_matrix[0][1] = -(NMatrix[0][1]*NMatrix[2][2] - NMatrix[0][2] * NMatrix[2][1]);
+  inverse_matrix[0][2] = NMatrix[0][1]*NMatrix[1][2] - NMatrix[0][2] * NMatrix[1][1];
+
+  inverse_matrix[1][0] = inverse_matrix[0][1];
+  inverse_matrix[1][1] = NMatrix[0][0]*NMatrix[2][2] - NMatrix[0][2] * NMatrix[2][0];
+  inverse_matrix[1][2] = -(NMatrix[0][0]*NMatrix[1][2] - NMatrix[0][2] * NMatrix[1][0]);
+
+  inverse_matrix[2][0] = inverse_matrix[0][2];
+  inverse_matrix[2][1] = inverse_matrix[1][2];
+  inverse_matrix[2][2] = NMatrix[0][0]*NMatrix[1][1] - NMatrix[0][1] * NMatrix[1][0];
+
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      inverse_matrix[i][j] /= det;
+    }
+  }
+}
+
+int _check_in_box(int *rvec, double inverse_matrix[][3])
+{
+  double judge_vec[3]={};
+  int i, j;
+  for (i =0; i<3; i++) {
+    for (j = 0; j < 3; j++) {
+      judge_vec[i] += rvec[j]*inverse_matrix[j][i] ;
+    }
+  }
+
+  return (fabs(judge_vec[0])<= 1 && fabs(judge_vec[1])<= 1 && fabs(judge_vec[2])<= 1);
+}
+
 /**
 @brief Read Geometry file for wannier90
 @author Mitsuaki Kawamura (The University of Tokyo)
@@ -85,6 +143,7 @@ static void read_W90(
   char *filename,//!<[in] Input file name
   double cutoff,//!<[in] Threshold for the Hamiltonian 
   int *cutoff_R,
+  double cutoff_Rvec[][3],
   double cutoff_length,
   int itUJ,
   int *NtUJ,
@@ -95,11 +154,14 @@ static void read_W90(
 {
   FILE *fp;
   int ierr, nWan, nWSC, iWSC, jWSC, iWan, jWan, iWan0, jWan0, ii, jj;
+  int flg_vec = (cutoff_Rvec[0][0] != StdI->NaN_i);
   double dtmp[2], dR[3], length;
   char ctmp[256], *ctmp2;
   double complex ***Mat_tot;
+  double inverse_rvec[3][3]={{},{}};
   double *Weight_tot;
   int **indx_tot,*Band_lattice, *Model_lattice;
+
   /*
   Header part
   */
@@ -131,6 +193,12 @@ static void read_W90(
       Mat_tot[iWSC][iWan] = (double complex *)malloc(sizeof(double complex) * nWan);
     }
   }
+
+  if(flg_vec){
+    //Get Inverse Matrix for cutoff_Rvec
+    _calc_inverse_matrix(cutoff_Rvec, inverse_rvec);
+  }
+
   /*
   Read body
   */
@@ -154,11 +222,21 @@ static void read_W90(
           dtmp[0] = 0.0;
           dtmp[1] = 0.0;
         }
-        if (abs(indx_tot[iWSC][0]) > cutoff_R[0] ||
-          abs(indx_tot[iWSC][1]) > cutoff_R[1] ||
-          abs(indx_tot[iWSC][2]) > cutoff_R[2]) {
-          dtmp[0] = 0.0;
-          dtmp[1] = 0.0;
+        if(flg_vec){
+          //Calculate coefficient
+          //Judge inner box or not.
+          if(!_check_in_box(indx_tot[iWSC], inverse_rvec)){
+            dtmp[0] = 0.0;
+            dtmp[1] = 0.0;
+          }
+        }
+        else {
+          if (abs(indx_tot[iWSC][0]) > cutoff_R[0] ||
+              abs(indx_tot[iWSC][1]) > cutoff_R[1] ||
+              abs(indx_tot[iWSC][2]) > cutoff_R[2]) {
+            dtmp[0] = 0.0;
+            dtmp[1] = 0.0;
+          }
         }
         if (iWan0 <= StdI->NsiteUC && jWan0 <= StdI->NsiteUC)
           Mat_tot[iWSC][iWan0 - 1][jWan0 - 1] = lambda *(dtmp[0] + I * dtmp[1]);
@@ -199,6 +277,7 @@ static void read_W90(
       if (abs(indx_tot[iWSC][ii]) > Band_lattice[ii]) Band_lattice[ii] = abs(indx_tot[iWSC][ii]);
     }
   }
+
   for (iWSC = 0; iWSC < nWSC; iWSC++) Weight_tot[iWSC] = 1.0;
   if (StdI->W != StdI->NaN_i && StdI->L != StdI->NaN_i && StdI->Height != StdI->NaN_i ) {
     Model_lattice[0] = StdI->W % 2 == 0 ? StdI->W / 2 : 0;
@@ -212,6 +291,7 @@ static void read_W90(
       }
     }
   }
+
   /**@brief
   (3-1)  Compute the number of terms larger than cut-off.
   */
@@ -266,6 +346,8 @@ static void read_W90(
   free_i_1d_allocate(Model_lattice);
   free_i_1d_allocate(Band_lattice);
 }/*static int read_W90(struct StdIntList *StdI, char *model)*/
+
+
 /**
  @brief Read RESPACK Density-matrix file (*_dr.dat)
  @author Mitsuaki Kawamura (The University of Tokyo)
@@ -486,6 +568,7 @@ void StdFace_Wannier90(
   double complex **tUJ, *****DenMat;
   int ***tUJindx;
   char filename[263];
+  char tempwords[263];
   /**@brief
   (1) Compute the shape of the super-cell and sites in the super-cell
   */
@@ -538,15 +621,21 @@ void StdFace_Wannier90(
   StdFace_PrintVal_d("cutoff_t", &StdI->cutoff_t, 1.0e-8);
   StdFace_PrintVal_d("cutoff_length_t", &StdI->cutoff_length_t, -1.0);
   if (StdI->W != StdI->NaN_i) StdFace_PrintVal_i("cutoff_tR[0]", &StdI->cutoff_tR[0], (int)((StdI->W-1)/2));
-  else StdFace_PrintVal_i("cutoff_tR[0]", &StdI->cutoff_tR[0], 0);
   if (StdI->L != StdI->NaN_i) StdFace_PrintVal_i("cutoff_tR[1]", &StdI->cutoff_tR[1], (int)((StdI->L-1)/2));
-  else StdFace_PrintVal_i("cutoff_tR[1]", &StdI->cutoff_tR[1], 0);
   if (StdI->Height != StdI->NaN_i) StdFace_PrintVal_i("cutoff_tR[2]", &StdI->cutoff_tR[2], (int)((StdI->Height-1)/2));
-  else StdFace_PrintVal_i("cutoff_tR[2]", &StdI->cutoff_tR[2], 0);
+
+  int i, j;
+  for(i = 0; i <3 ; i++) {
+    for(j = 0; j <3 ; j++) {
+      if (StdI->box[i][j] != StdI->NaN_i)
+        sprintf(tempwords, "cutoff_tVec[%d][%d]", i, j);
+        StdFace_PrintVal_d(tempwords, &StdI->cutoff_tVec[i][j], ((double)(StdI->box[i][j]) * 0.5));
+    }
+  }
 
   sprintf(filename, "%s_hr.dat", StdI->CDataFileHead);
   read_W90(StdI, filename,
-    StdI->cutoff_t, StdI->cutoff_tR, StdI->cutoff_length_t,
+    StdI->cutoff_t, StdI->cutoff_tR, StdI->cutoff_tVec, StdI->cutoff_length_t,
      0, NtUJ, tUJindx, 1.0, tUJ);
   /*
   Read Coulomb
@@ -557,10 +646,17 @@ void StdFace_Wannier90(
   StdFace_PrintVal_i("cutoff_UR[0]", &StdI->cutoff_UR[0], 0);
   StdFace_PrintVal_i("cutoff_UR[1]", &StdI->cutoff_UR[1], 0);
   StdFace_PrintVal_i("cutoff_UR[2]", &StdI->cutoff_UR[2], 0);
+  for(i = 0; i <3 ; i++) {
+    for(j = 0; j <3 ; j++) {
+      if (StdI->box[i][j] != StdI->NaN_i)
+        sprintf(tempwords, "cutoff_UVec[%d][%d]", i, j);
+      StdFace_PrintVal_d(tempwords, &StdI->cutoff_UVec[i][j], ((double)(StdI->box[i][j]) * 0.5));
+    }
+  }
 
   sprintf(filename, "%s_ur.dat", StdI->CDataFileHead);
   read_W90(StdI, filename,
-    StdI->cutoff_u, StdI->cutoff_UR, StdI->cutoff_length_U, 
+    StdI->cutoff_u, StdI->cutoff_UR, StdI->cutoff_UVec, StdI->cutoff_length_U,
     1, NtUJ, tUJindx, StdI->lambda_U, tUJ);
   /*
   Read Hund
@@ -571,11 +667,18 @@ void StdFace_Wannier90(
   StdFace_PrintVal_i("cutoff_JR[0]", &StdI->cutoff_JR[0], 0);
   StdFace_PrintVal_i("cutoff_JR[1]", &StdI->cutoff_JR[1], 0);
   StdFace_PrintVal_i("cutoff_JR[2]", &StdI->cutoff_JR[2], 0);
+  for(i = 0; i <3 ; i++) {
+    for(j = 0; j <3 ; j++) {
+      if (StdI->box[i][j] != StdI->NaN_i)
+        sprintf(tempwords, "cutoff_JVec[%d][%d]", i, j);
+      StdFace_PrintVal_d(tempwords, &StdI->cutoff_JVec[i][j],  ((double)(StdI->box[i][j]) * 0.5));
+    }
+  }
 
 
   sprintf(filename, "%s_jr.dat", StdI->CDataFileHead);
   read_W90(StdI, filename,
-    StdI->cutoff_j, StdI->cutoff_JR, StdI->cutoff_length_J, 
+    StdI->cutoff_j, StdI->cutoff_JR, StdI->cutoff_JVec, StdI->cutoff_length_J,
     2, NtUJ, tUJindx, StdI->lambda_J, tUJ);
   /*
   Read Density matrix
