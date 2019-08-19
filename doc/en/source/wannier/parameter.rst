@@ -91,7 +91,7 @@ of the downfolded model are as follows:
 
     **Type :** 
 
-    **Default :**  ``cutoff_tW = int((W-1)/2)``, ``cutoff_tL=int((L-1)/2)``, ``cutoff_tH=int((Height-1)/2)`` and others are set to ``0``. 
+    **Default :**  ``cutoff_tW = int((W-1)/2)``, ``cutoff_tL=int((L-1)/2)``, ``cutoff_tH=int((Height-1)/2)`` (when ``W`` , ``L`` and ``Height`` are not defined, the values are set to 0) and others are set to ``0``. 
 
     **Description :** The cutoff parameters for the hopping, Coulomb, exchange integrals.
     We ignore these integrals that have lattice vector :math:`{\bf R}` larger than these values.
