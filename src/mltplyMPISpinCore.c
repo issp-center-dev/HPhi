@@ -916,7 +916,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
         X->Def.Tpow) == TRUE)
       {
         tmp_V = conj(tmp_J);
-        if(X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+        if(X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
       }/*BitCheckGeneral(off, org_isite1 + 1, org_ispin1)*/
       else return 0.0;
     }/*GetOffCompGeneralSpin(myrank, org_isite3 + 1, org_ispin4, org_ispin3, &off)*/
@@ -984,7 +984,7 @@ double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
       X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
   }
   else if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
     &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
@@ -1081,7 +1081,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
       if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin2, org_ispin1, &off, X->Def.SiteToBit,
                                       X->Def.Tpow) == TRUE) {
         tmp_V = conj(tmp_J);
-        if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+        if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
       }
       else return 0.0;
     }
@@ -1204,7 +1204,7 @@ double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
     org_isite1 + 1, org_ispin2, org_ispin1, &off,
     X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     tmp_V = conj(tmp_trans);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
   }
   else return 0.0;
 
@@ -1374,7 +1374,7 @@ double complex X_child_CisAit_GeneralSpin_MPIdouble(
                                  org_isite1 + 1, org_ispin2, org_ispin1, &off,
                                  X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     tmp_V = conj(tmp_trans);
-    if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
   }
   else return 0.0;
   
@@ -1450,7 +1450,7 @@ double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
     X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
     isite = org_isite1 + 1;
     IniSpin = org_ispin1;
   }
@@ -1604,7 +1604,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
     isite = org_isite1 + 1;
     IniSpin = org_ispin1;
     FinSpin = org_ispin2;
@@ -1749,7 +1749,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
  if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin2, org_ispin1, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
    {
      tmp_V = conj(tmp_J);
-     if(X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC){
+     if(X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC){
        tmp_V=0.0;
      }
    }
@@ -1962,7 +1962,7 @@ double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     org_isite3 + 1, org_ispin4, org_ispin3, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
     isite = org_isite1 + 1;
     IniSpin = org_ispin1;
     FinSpin = org_ispin2;
@@ -2054,7 +2054,7 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   }
   else if(state1 == org_ispin1) {
     trans = conj(tmp_trans);
-    if(X->Large.mode == M_CORR|| X->Large.mode ==M_CALCSPEC || X->Large.mode == M_MLTPLY2){
+    if(X->Large.mode == M_CORR || X->Large.mode == H_CORR|| X->Large.mode ==M_CALCSPEC || X->Large.mode == M_MLTPLY2){
       trans = 0.0;
     }
   }
