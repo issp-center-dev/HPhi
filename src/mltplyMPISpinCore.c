@@ -2054,7 +2054,7 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
   }
   else if(state1 == org_ispin1) {
     trans = conj(tmp_trans);
-    if(X->Large.mode == M_CORR|| X->Large.mode ==M_CALCSPEC){
+    if(X->Large.mode == M_CORR|| X->Large.mode ==M_CALCSPEC || X->Large.mode == M_MLTPLY2){
       trans = 0.0;
     }
   }
@@ -2075,15 +2075,20 @@ double complex X_GC_child_CisAit_spin_MPIdouble(
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
 firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC || X->Large.mode == M_MLTPLY2) {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = trans * v1buf[j];
         tmp_v0[j] += dmv;
         dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-    }
-    else {
+    }else if (X->Large.mode == H_CORR) {
+#pragma omp for
+      for (j = 1; j <= X->Check.idim_max; j++) {
+        dmv = trans * v1buf[j];
+        dam_pr += conj(tmp_v0[j]) * dmv;
+      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+    }else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = trans * v1buf[j];

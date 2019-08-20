@@ -24,5 +24,6 @@
 #define M_TOTALS 4
 #define M_CALCSPEC 4
 #define H_CORR 5
+#define M_MLTPLY2 6
 
 #endif /* HPHI_MLTPLYCOMMON_H */
