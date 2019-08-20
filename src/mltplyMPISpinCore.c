@@ -2258,8 +2258,12 @@ double complex X_GC_child_AisCis_spin_MPIdouble(
           tmp_v0[j] += tmp_v1[j] * tmp_trans;
           dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
         }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-      }
-      else {
+      } else if (X->Large.mode == H_CORR) { //
+#pragma omp for
+        for (j = 1; j <= X->Check.idim_max; j++) {
+          dam_pr    += tmp_trans * conj(tmp_v0[j]) * tmp_v1[j];
+        }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+      }else {
 #pragma omp for
         for (j = 1; j <= X->Check.idim_max; j++) {
           dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];

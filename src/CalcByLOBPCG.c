@@ -79,7 +79,7 @@ static int diag_ovrp(
   */
   nsub2 = 0;
   for (isub = 0; isub < nsub; isub++) {
-    if (eig[isub] > 1.0e-14) {
+    if (eig[isub] > 1.0e-10) { /*to be changed default 1.0e-14*/
       for (jsub = 0; jsub < nsub; jsub++)
         ovlp[jsub + nsub*nsub2] = ovlp[jsub + nsub*isub] / sqrt(eig[isub]);
       nsub2 += 1;

@@ -99,7 +99,7 @@ int expec_cisajscktaltdc
   int step=0;
   int rand_i=0;
 
-  if(X->Def.NCisAjtCkuAlvDC <1) return 0;
+  if(X->Def.NCisAjtCkuAlvDC < 1 && X->Def.NTBody < 1 && X->Def.NFBody < 1) return 0;
   X->Large.mode=M_CORR;
 
   if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
@@ -125,6 +125,8 @@ int expec_cisajscktaltdc
     rand_i=X->Def.irand;
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGStart, "a", rand_i, step);
     sprintf(sdt, cFileName2BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
+    sprintf(sdt_2, cFileName3BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
+    sprintf(sdt_3, cFileName4BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
     break;
 
   case TimeEvolution:
@@ -1200,8 +1202,7 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,2)!=0){
             //error message will be added
-            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
-            continue;
+            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_/home/k0136/k013600/Git/HPhi/src/expec_cisajscktaltdc.ccontinue;
         }
 
         dam_pr=0.0;
