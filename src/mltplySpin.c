@@ -460,9 +460,9 @@ void mltplyHalfSpinGC_mini(
       if(org_sigma1==org_sigma2){  // longitudinal magnetic field
         dam_pr += X_GC_child_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, tmp_v0, tmp_v1);
       }else{  // transverse magnetic field
-        X->Large.mode == M_MLTPLY2 ;
+        X->Large.mode == M_MLTPLY2;
         dam_pr += X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, tmp_v0, tmp_v1);
-        X->Large.mode == M_MLTPLY ;
+        X->Large.mode == M_MLTPLY;
       }
     }else{
       isite1 = X->Def.Tpow[org_isite1-1];

@@ -141,7 +141,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   }
   else if (state1 == org_ispin1 && state2 == org_ispin3) {
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
       Jint = 0;
     }
   }
@@ -246,7 +246,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
   }
   else if (X_SpinGC_CisAis(origin + 1, X, mask1, org_ispin1) == TRUE && state2 == org_ispin3) {
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) Jint = 0;
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) Jint = 0;
   }
   else {
     return 0.0;
@@ -356,7 +356,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
     num1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
     if (num1 != 0) {
       Jint = conj(tmp_J);
-      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+      if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
         Jint = 0;
       }
     }
@@ -578,7 +578,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
   else if (state2 == org_ispin3) {
     state1check = (unsigned long int) org_ispin1;
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
       Jint = 0;
     }
   }
@@ -691,7 +691,7 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
   else if (state2 == org_ispin3) {
     state1check = (unsigned long int) org_ispin1;
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
       Jint = 0;
     }
   }
