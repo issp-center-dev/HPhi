@@ -43,8 +43,8 @@ CalcModでひも付けられるファイル(ここではcalcmod.def)で計算モ
 ファイルの中身は下記の通りです。
 計算モード、計算用パラメータ、局在スピンの位置を以下のファイルで指定します。::
 
- #CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG
- #CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ..
+ #CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, ...
+ #CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ...
  #Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart
  #CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, ...
  CalcType   3
@@ -99,7 +99,7 @@ LocSpinでひも付けられるファイル(ここではlocspn.def)で局在ス�
  ================================
  NlocalSpin    16  
  ================================ 
- ========i_0LocSpn_1IteElc ====== 
+ ========i_0IteElc_1LocSpn ====== 
  ================================ 
      0      1
      1      1
@@ -146,7 +146,7 @@ Transでひも付けられるファイル(ここではzTrans.def)で電子系の
  ======================== 
 
 スピン系では外場を掛ける場合などに使用することができます。
-例えば、サイト1に :math:`-0.5 S_z^{(1)}` ( :math:`S=1/2` )の外場を掛けたい場合には、,
+例えば、サイト1に :math:`-0.5 S_z^{(1)}` ( :math:`S=1/2` )の外場を掛けたい場合には、
 電子系の表現 :math:`-0.5/2(c_{1\uparrow}^{\dagger}c_{1\uparrow}-c_{1\downarrow}^{\dagger}c_{1\downarrow})` に書き換えた以下のファイルを作成することで計算することが出来ます。 ::
 
  ======================== 

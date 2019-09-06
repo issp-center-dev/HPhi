@@ -41,7 +41,7 @@ What is :math:`{\mathcal H}\Phi`?
   General Public License version 3（GPL v3）に準じて配布されています。
   :math:`{\mathcal H}\Phi` (hphi)を引用する際には、以下の文献を引用してください。
 | Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji,
-  Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. 217 (2017)
+  Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. **217** (2017)
   180-192.
 
 コピーライト
