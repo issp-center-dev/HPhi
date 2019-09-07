@@ -58,7 +58,7 @@ Parameters
    **Description :** The norm of a wave function before normalization
    given by :math:`\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle`,
    where
-   :math:`|\tilde{\psi}_{k}\rangle \equiv(l-\hat{\mathcal H}/N_{s})|\psi_{k=1}\rangle`.
+   :math:`|\tilde{\psi}_{k}\rangle \equiv(l-{\mathcal H}/N_{s})|\psi_{k=1}\rangle`.
 
 *  [double03]
 
@@ -74,7 +74,7 @@ Parameters
    **Type :** Int
 
    **Description :** The number of operations of
-   :math:`(l-\hat{\mathcal H}/N_{s})` for an initial wave function, where
+   :math:`(l-{\mathcal H}/N_{s})` for an initial wave function, where
    :math:`l` is ``LargeValue`` defined in a ModPara file and
    :math:`N_{s}` is the total number of sites.
 

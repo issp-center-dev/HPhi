@@ -47,7 +47,7 @@ four parts.
     | **Exchange**: Exchange couplings,
       :math:`c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{j \downarrow}^{\dagger}c_{i  \downarrow}`
        
-    | **Ising**: Ising interactions, :math:`S_i~z S_j~z`  
+    | **Ising**: Ising interactions, :math:`S_i^z S_j^z`  
     | **PairLift**: PairLift couplings,
       :math:`c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}`.
 

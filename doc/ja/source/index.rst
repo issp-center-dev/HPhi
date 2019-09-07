@@ -14,7 +14,7 @@
 
 Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji, Synge Todo, and Naoki Kawashima
 
-    `Comp. Phys. Commun. **217** (2017) 180-192 <http://www.sciencedirect.com/science/article/pii/S0010465517301200>`_.
+    `Comp. Phys. Commun. 217 (2017) 180-192 <http://www.sciencedirect.com/science/article/pii/S0010465517301200>`_.
 
 
 コピーライト

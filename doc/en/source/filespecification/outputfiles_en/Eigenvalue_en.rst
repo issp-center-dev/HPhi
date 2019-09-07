@@ -43,7 +43,7 @@ Parameters
 
    **Type :** Double
 
-   **Description :** The expected value of energy
+   **Description :** The expected value of the Hamiltonian (energy)
    :math:`\langle \mathcal H \rangle`.
 
 .. raw:: latex

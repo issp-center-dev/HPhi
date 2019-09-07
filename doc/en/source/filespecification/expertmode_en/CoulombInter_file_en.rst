@@ -6,9 +6,9 @@ CoulombInter file
 This file determines the values of off-site interactions :math:`V_{ij}`
 (for :math:`S=1/2` system),
 
-.. math:: H+=\sum_{i,j}V_{ij} n_ {i}n_{j}.
+.. math:: \mathcal{H}+=\sum_{i,j}V_{ij} n_ {i}n_{j}.
 
- An example of the file format is as follows.
+An example of the file format is as follows.
 
 ::
 
@@ -57,7 +57,7 @@ Parameters
    **Type :** Int (a blank parameter is not allowed)
 
    **Description :** An integer giving a site index
-   (:math:`0<= [`\ int02\ :math:`], [`\ int03\ :math:`]<\verb|Nsite|`).
+   (:math:`0<= [`\ int02\ :math:`], [`\ int03\ :math:`]<` ``Nsite``).
 
 -  :math:`[`\ double01\ :math:`]`
 

@@ -120,9 +120,9 @@ Hamiltonianの指定
 
 .. math::
 
-    S_z^{(i)}&=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
-    S_+^{(i)}&=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
-    S_-^{(i)}&=c_{i\downarrow}^{\dagger}c_{i\uparrow}.
+    S^z_{i}&=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
+    S^+_{i}&=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
+    S^-_{i}&=c_{i\downarrow}^{\dagger}c_{i\uparrow}.
 
 を用い、電子系の演算子に変換しHamiltonianの作成をする必要があります。
 
@@ -187,12 +187,12 @@ InterAllでひも付けられるファイル(ここではzInterAll.def)で電子
 :math:`S = 1/2` の場合、相互作用の項をフェルミオン演算子で書き換えると、 
 
 .. math::
-   \mathcal{H}_{i,i+1}&=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
-   &=J \left( \frac{1}{2}S_+^{(i)}S_-^{(i+1)}+\frac{1}{2}S_-^{(i)}S_+^{(i+1)}+S_z^{(i)}S_z^{(i+1)} \right) \nonumber\\
+   \mathcal{H}_{i,i+1}&=J(S^x_{i}S^x_{i+1}+S^y_{i}S^y_{i+1}+S^z_{i}S^z_{i+1}) \nonumber\\
+   &=J \left( \frac{1}{2}S^+_{i}S^-_{i+1}+\frac{1}{2}S^-_{i}S^+_{i+1}+S^z_{i}S^z_{i+1} \right) \nonumber\\
    &=J \left[ \frac{1}{2}c_{i\uparrow}^{\dagger}c_{i\downarrow}c_{i+1\downarrow}^{\dagger}c_{i+1\uparrow}+\frac{1}{2}c_{i\downarrow}^{\dagger}c_{i\uparrow}c_{i+1\uparrow}^{\dagger}c_{i+1\downarrow}+\frac{1}{4}(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})(c_{i+1\uparrow}^{\dagger}c_{i+1\uparrow}-c_{i+1\downarrow}^{\dagger}c_{i+1\downarrow}) \right]. \nonumber 
 
 となります。したがって、 :math:`J=2` に対してInterAllファイルのフォーマットを参考に相互作用を記載すると、
- :math:`S_z^{(i)}S_z^{(i+1)}` の相互作用は ::
+ :math:`S^z_{i}S^z_{i+1}` の相互作用は ::
 
     i     0     i     0    i+1     0    i+1     0   0.500000  0.000000
     i     0     i     0    i+1     1    i+1     1  -0.500000  0.000000

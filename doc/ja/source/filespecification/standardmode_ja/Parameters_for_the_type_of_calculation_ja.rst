@@ -71,8 +71,8 @@
 *  ``lattice``
 
    **形式 :** 文字列(\ ``"Chain Lattice"``, ``"Square Lattice"``,
-   ``"Triangular Lattice"``, ``"Honeycomb Lattice"``, ``"Ladder"``,
-   ``"Kagome"``\ のいずれか)
+   ``"Triangular Lattice"``, ``"Honeycomb Lattice"``, ``"Kagome"``, 
+   ``"Ladder"``\ のいずれか)
 
    **説明 :** 格子の形状を指定します。 上記文字列はそれぞれ1次元鎖(
    :numref:`fig_chap04_1_lattice` (a))、 2次元正方格子(
@@ -82,8 +82,7 @@
    梯子格子(:numref:`fig_ladder`)に対応します。
 
    ``method="SpinGCCMA"``\ では、 このうち\ ``"Chain Lattice"``,
-   ``"Honeycomb Lattice"``, ``"Ladder"``,
-   ``"Kagome"``\ に対応しています。
+   ``"Honeycomb Lattice"``, ``"Kagome"``, ``"Ladder"``\ に対応しています。
    各格子についてのサイズ(\ :math:`L`,\ :math:`W`)とMPI並列数(\ :math:`N_{\rm proc}`)の制限は次のとおりです
    (次節の ``L``, ``W``\ もご参照ください)。
 
@@ -98,15 +97,15 @@
       :math:`W=3, L \geq 2`, :math:`N_{\rm proc} \leq 2(L=2)`,
       :math:`N_{\rm proc} \leq 64(L>2)`.
 
-   *  ``"Ladder"``
-
-      :math:`W=2, L = 2n`\ (ただし :math:`n`\ は\ :math:`n\geq4`\ の整数),
-      :math:`N_{\rm proc} \leq 2^{L-4}`.
-
    *  ``"Kagome"``
 
       :math:`W=3, L \geq 2`, :math:`N_{\rm proc} \leq 1(L=2)`,
       :math:`N_{\rm proc} \leq 512(L>2)`.
+
+   *  ``"Ladder"``
+
+      :math:`W=2, L = 2n`\ (ただし :math:`n`\ は\ :math:`n\geq4`\ の整数),
+      :math:`N_{\rm proc} \leq 2^{L-4}`.
 
 .. [#] \GC=Grand Canonical
 .. [#] \Y. Yamaji *et. al.*, manuscript in preparation.

@@ -5,7 +5,7 @@
 
    存在しないキーワードを指定した場合に表示され、プログラムは停止します。
 
--  ``"ERROR !  Keyword`` ``is duplicated !``
+-  ``"ERROR !  Keyword`` *keyword名* ``is duplicated !``
 
    同じキーワードを2回指定した場合に表示され、プログラムは停止します。
 
@@ -51,17 +51,17 @@
    入力されたサイト数、電子数、全スピン\ :math:`z`\ 成分が実現できない組み合わせである場合
    (例えば、電子数がサイト数の2倍よりも大きい、など)プログラムは停止します。
 
--  | ``Check ! `` `` is SPECIFIED but will NOT be USED.``
+-  | ``Check !``\ *keyword名*\ ``is SPECIFIED but will NOT be USED.``
    | ``Please COMMENT-OUT this line``
    | ``or check this input is REALLY APPROPRIATE for your purpose !``
 
    使われないパラメーターを指定した時には、ユーザーに入力ファイルの確認を促しプログラムは停止します。
    実際に必要のないパラメーターの場合は該当する行を削除もしくはコメントアウトしてください。
 
--  ``ERROR ! ``\ `` is NOT specified !``
+-  ``ERROR !``\ *keyword名*\ ``is NOT specified !``
 
    必ず指定しなければならないキーワードが指定されていない場合にはプログラムは停止します。
 
--  ``=`` ``######  DEFAULT VALUE IS USED  ######``
+-  *keyword名* ``=`` *value名* ``######  DEFAULT VALUE IS USED  ######``
 
    これはエラーメッセージではありません。入力ファイルで指定がなかったためにデフォルト値が使われたことを知らせるメッセージです。

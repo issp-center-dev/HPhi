@@ -40,8 +40,8 @@ In this subsection, we show how to set a calculation mode, the parameters for th
 
 The calculation mode is set in a CalcMod file (in this sample file, calcmod.def). The contents of the files are as follows. ::
 
- #CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG
- #CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ..
+ #CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, ...
+ #CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ...
  #Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart
  #CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, ...
  CalcType   3
@@ -92,7 +92,7 @@ The positions :math:`S` of the localized spins are defined by a LocSpin file (in
  ================================
  NlocalSpin    16  
  ================================ 
- ========i_0LocSpn_1IteElc ====== 
+ ========i_0IteElc_1LocSpn ====== 
  ================================ 
      0      1
      1      1
@@ -111,9 +111,9 @@ After setting the basic parameters, we create input files for constructing the H
 
 .. math::
 
-    S_z^{(i)}&=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
-    S_+^{(i)}&=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
-    S_-^{(i)}&=c_{i\downarrow}^{\dagger}c_{i\uparrow}.
+    S^z_{i}&=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
+    S^+_{i}&=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
+    S^-_{i}&=c_{i\downarrow}^{\dagger}c_{i\uparrow}.
 
 **Setting transfer integrals**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -172,11 +172,11 @@ The contents of the files are as follows. ::
 Here, we explain the interaction between site :math:`i` and site :math:`j` in the case of :math:`S = 1/2`, for simplicity. Using fermion operators, the interaction terms for the spin operators can be rewritten as
 
 .. math::
-   \mathcal{H}_{i,i+1}&=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
-   &=J \left( \frac{1}{2}S_+^{(i)}S_-^{(i+1)}+\frac{1}{2}S_-^{(i)}S_+^{(i+1)}+S_z^{(i)}S_z^{(i+1)} \right) \nonumber\\
+   \mathcal{H}_{i,i+1}&=J(S^x_{i}S^x_{i+1}+S^y_{i}S^y_{i+1}+S^z_{i}S^z_{i+1}) \nonumber\\
+   &=J \left( \frac{1}{2}S^+_{i}S^-_{i+1}+\frac{1}{2}S^-_{i}S^+_{i+1}+S^z_{i}S^z_{i+1} \right) \nonumber\\
    &=J \left[ \frac{1}{2}c_{i\uparrow}^{\dagger}c_{i\downarrow}c_{i+1\downarrow}^{\dagger}c_{i+1\uparrow}+\frac{1}{2}c_{i\downarrow}^{\dagger}c_{i\uparrow}c_{i+1\uparrow}^{\dagger}c_{i+1\downarrow}+\frac{1}{4}(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})(c_{i+1\uparrow}^{\dagger}c_{i+1\uparrow}-c_{i+1\downarrow}^{\dagger}c_{i+1\downarrow}) \right]. \nonumber 
 
-Thus, the interaction :math:`S_z^{(i)}S_z^{(i+1)}` for :math:`J=2` can be written as ::
+Thus, the interaction :math:`S^z_{i}S^z_{i+1}` for :math:`J=2` can be written as ::
 
     i     0     i     0    i+1     0    i+1     0   0.500000  0.000000
     i     0     i     0    i+1     1    i+1     1  -0.500000  0.000000
