@@ -63,7 +63,7 @@ int GetSingleExcitedStateHubbard(
     is1_spin = X->Def.Tpow[2 * org_isite + ispin];
     if (itype == 1) {
       if (org_isite >= X->Def.Nsite) {
-        X_Cis_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, tmp_v1bufOrg, idim_max, \
+        child_Cis_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, tmp_v1bufOrg, idim_max, \
           X->Def.Tpow, list_1_org, list_1buf_org, list_2_1, list_2_2, \
           X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
@@ -71,14 +71,14 @@ int GetSingleExcitedStateHubbard(
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org) \
   firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin) private(j,  isgn,tmp_off)
         for (j = 1; j <= idim_max; j++) {//idim_max -> original dimension
-          isgn = X_Cis(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
+          isgn = child_Cis(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
           tmp_v0[tmp_off] += tmp_v1[j] * isgn*tmpphi;
         }
       }
     }
     else if (itype == 0) {
       if (org_isite >= X->Def.Nsite) {
-        X_Ajt_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, tmp_v1bufOrg, \
+        child_Ajt_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, tmp_v1bufOrg, \
           idim_max, X->Def.Tpow, list_1_org, list_1buf_org, \
           list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
       }
@@ -86,7 +86,7 @@ int GetSingleExcitedStateHubbard(
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X, list_1_org, list_1) \
   firstprivate(idim_max, tmpphi, org_isite, ispin, list_2_1, list_2_2, is1_spin, myrank) private(j, isgn, tmp_off)
         for (j = 1; j <= idim_max; j++) {//idim_max -> original dimension
-          isgn = X_Ajt(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
+          isgn = child_Ajt(j, is1_spin, &tmp_off, list_1_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft, X->Large.ihfbit);
           tmp_v0[tmp_off] += tmp_v1[j] * isgn*tmpphi;
         }
       }
@@ -136,7 +136,7 @@ int GetSingleExcitedStateHubbardGC(
     tmpphi = X->Def.ParaSingleExcitationOperator[i];
     if (itype == 1) {
       if (org_isite >= X->Def.Nsite) {
-        X_GC_Cis_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
+        child_GC_Cis_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
       }
       else {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X) \
@@ -149,7 +149,7 @@ int GetSingleExcitedStateHubbardGC(
     }
     else if (itype == 0) {
       if (org_isite >= X->Def.Nsite) {
-        X_GC_Ajt_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
+        child_GC_Ajt_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);
       }
       else {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1, X) \

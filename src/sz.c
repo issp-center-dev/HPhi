@@ -36,7 +36,7 @@
  * 
  */
 
-int child_omp_sz_Kondo_hacker(
+int omp_sz_Kondo_hacker(
         long unsigned int ib,
         long unsigned int ihfbit,
         struct BindStruct *X,
@@ -267,7 +267,7 @@ int sz
       icnt = 0; 
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
       for(ib=0;ib<X->Check.sdim;ib++){
-        icnt+=child_omp_sz_KondoGC(ib, ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+        icnt+=omp_sz_KondoGC(ib, ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
       }      
     break;
 
@@ -308,7 +308,7 @@ int sz
 
         icnt = 0;
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
       }else if(hacker==1){
@@ -348,7 +348,7 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
       }
@@ -401,7 +401,7 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
       }
@@ -447,7 +447,7 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_hacker(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_hacker(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
         }
 
         break;
@@ -541,13 +541,13 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         }
       }else if(hacker==1){
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_Kondo_hacker(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_Kondo_hacker(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         } 
       }
       break;
@@ -618,7 +618,7 @@ int sz
           icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X, list_1_, list_2_1_, list_2_2_, list_jb)
           for(ib=0;ib<X->Check.sdim;ib++){
-            icnt+=child_omp_sz_spin_hacker(ib,ihfbit,N,X, list_1_, list_2_1_, list_2_2_, list_jb);
+            icnt+=omp_sz_spin_hacker(ib,ihfbit,N,X, list_1_, list_2_1_, list_2_2_, list_jb);
           }
           //printf(" rank=%d ib=%ld:Ne=%d icnt=%ld :idim_max=%ld N=%d\n", myrank,ib,X->Def.Ne,icnt,X->Check.idim_max,N);
           // old version
@@ -644,7 +644,7 @@ int sz
           icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
           for(ib=0;ib<X->Check.sdim;ib++){
-            icnt+=child_omp_sz_spin(ib,ihfbit,N,X,list_1_, list_2_1_, list_2_2_, list_jb);
+            icnt+=omp_sz_spin(ib,ihfbit,N,X,list_1_, list_2_1_, list_2_2_, list_jb);
           }
         }
         else{
@@ -700,7 +700,7 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit,  X)  shared(list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb)
         for(ib=0;ib<ilftdim; ib++){
-          icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
+          icnt+=omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
         }
 
         free_lui_1d_allocate(HilbertNumToSz);
@@ -813,7 +813,7 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int child_omp_sz(
+int omp_sz(
                  long unsigned int ib,    //!<[in]
                  long unsigned int ihfbit, //!<[in]
                  struct BindStruct *X,     //!<[in]
@@ -909,7 +909,7 @@ int child_omp_sz(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_hacker(long unsigned int ib,
+int omp_sz_hacker(long unsigned int ib,
                         long unsigned int ihfbit,
                         struct BindStruct *X,
                         long unsigned int *list_1_,
@@ -1026,7 +1026,7 @@ int child_omp_sz_hacker(long unsigned int ib,
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_Kondo(
+int omp_sz_Kondo(
                        long unsigned int ib,        //[in]
                        long unsigned int ihfbit,    //[in]
                        struct BindStruct *X,        //[in]
@@ -1138,7 +1138,7 @@ int child_omp_sz_Kondo(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_Kondo_hacker(
+int omp_sz_Kondo_hacker(
                        long unsigned int ib,
                        long unsigned int ihfbit,
                        struct BindStruct *X,
@@ -1258,7 +1258,7 @@ int child_omp_sz_Kondo_hacker(
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int child_omp_sz_KondoGC(
+int omp_sz_KondoGC(
                          long unsigned int ib,  //!<[in]
                          long unsigned int ihfbit,//!<[in]
                          struct BindStruct *X,    //!<[in]
@@ -1347,7 +1347,7 @@ int child_omp_sz_KondoGC(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_spin(
+int omp_sz_spin(
                       long unsigned int ib, 
                       long unsigned int ihfbit,
                       unsigned int N,
@@ -1411,7 +1411,7 @@ int child_omp_sz_spin(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_spin_hacker(
+int omp_sz_spin_hacker(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
                              unsigned int N,
@@ -1480,7 +1480,7 @@ int child_omp_sz_spin_hacker(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_GeneralSpin(
+int omp_sz_GeneralSpin(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
                              struct BindStruct *X,

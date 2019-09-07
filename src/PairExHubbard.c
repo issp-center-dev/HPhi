@@ -91,17 +91,17 @@ int GetPairExcitedStateHubbardGC(
                 }
             }
             else {
-                X_GC_child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X,
+                child_GC_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X,
                                                   tmp_v0, tmp_v1);
             }
         }
         else if (org_isite2 > X->Def.Nsite || org_isite1 > X->Def.Nsite) {
             if (org_isite1 < org_isite2) {
-                X_GC_child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X,
+                child_GC_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X,
                                                   tmp_v0, tmp_v1);
             }
             else {
-                X_GC_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
+                child_GC_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
                                                   -conj(tmp_trans), X, tmp_v0, tmp_v1);
             }
         }
@@ -115,10 +115,10 @@ int GetPairExcitedStateHubbardGC(
                 }
             }
             else {
-                if (child_general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2) != 0) {
+                if (general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2) != 0) {
                     return -1;
                 }
-                GC_child_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+                GC_general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
             }
         }
     }
@@ -178,7 +178,7 @@ int GetPairExcitedStateHubbard(
         tmp_trans = X->Def.ParaPairExcitationOperator[i];
         ibitsite1 = X->Def.OrgTpow[2*org_isite1-2+org_sigma1] ;
         ibitsite2 = X->Def.OrgTpow[2*org_isite2-2+org_sigma2] ;
-        child_general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
+        general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
         Asum = X->Large.isA_spin;
         Adiff = X->Large.A_spin;
 
@@ -187,16 +187,16 @@ int GetPairExcitedStateHubbard(
             if (org_isite1  > X->Def.Nsite &&
                 org_isite2  > X->Def.Nsite)
             {
-              X_child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
+              child_CisAjt_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
             }
             else if (org_isite2  > X->Def.Nsite
                      || org_isite1  > X->Def.Nsite)
             {
                 if(org_isite1 < org_isite2) {
-                    X_child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, tmp_v0,
+                    child_CisAjt_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, -tmp_trans, X, tmp_v0,
                                              tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2);
                 } else{
-                    X_child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, -conj(tmp_trans), X, tmp_v0,
+                    child_CisAjt_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, -conj(tmp_trans), X, tmp_v0,
                                              tmp_v1, tmp_v1bufOrg, list_1_org, list_1buf_org, list_2_1, list_2_2); }
             }
             else{
@@ -204,7 +204,7 @@ int GetPairExcitedStateHubbard(
   firstprivate(i_max, tmp_trans, Asum, Adiff, ibitsite1, ibitsite2, X, list_1_org, list_1, myrank) \
   private(j, tmp_sgn, tmp_off)
                 for (j = 1; j <= i_max; j++){
-                  tmp_sgn=X_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
+                  tmp_sgn=child_CisAjt(list_1_org[j], X, ibitsite1, ibitsite2, Asum, Adiff, &tmp_off);
                   tmp_v0[tmp_off] += tmp_trans * tmp_sgn*tmp_v1[j];
                 }
             }
@@ -231,19 +231,19 @@ int GetPairExcitedStateHubbard(
                     }
                 }
                 else{
-                    X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
+                    child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
                 }
             }
             else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
                 if(org_isite1 < org_isite2){
-                    X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
+                    child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_trans, X, tmp_v0, tmp_v1);
                 }
                 else{
-                    X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, tmp_v0, tmp_v1);
+                    child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -conj(tmp_trans), X, tmp_v0, tmp_v1);
                 }
             }
             else{
-                if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+                if(general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
                     return -1;
                 }
                 if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
@@ -266,7 +266,7 @@ int GetPairExcitedStateHubbard(
                     }
                 }
                 else{
-                    child_general_hopp(tmp_v0, tmp_v1,X,tmp_trans);
+                    general_hopp(tmp_v0, tmp_v1,X,tmp_trans);
                 }
             }
         }

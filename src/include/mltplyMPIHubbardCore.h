@@ -75,7 +75,7 @@ int GetSgnInterAll
  unsigned long int *offbit
  );
 
-double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
+double complex child_GC_CisAisCjtAjt_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -87,7 +87,7 @@ double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
+double complex child_GC_CisAjtCkuAlv_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -103,7 +103,7 @@ double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
+double complex child_GC_CisAjtCkuAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -117,7 +117,7 @@ double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_GC_child_CisAisCjtAku_Hubbard_MPI
+double complex child_GC_CisAisCjtAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -131,7 +131,7 @@ double complex X_GC_child_CisAisCjtAku_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_GC_child_CisAis_Hubbard_MPI
+double complex child_GC_CisAis_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -141,7 +141,7 @@ double complex X_GC_child_CisAis_Hubbard_MPI
  double complex *tmp_v1
 );
 
-double complex X_GC_child_CisAjt_Hubbard_MPI
+double complex child_GC_CisAjt_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -153,7 +153,7 @@ double complex X_GC_child_CisAjt_Hubbard_MPI
  double complex *tmp_v1
 );
 
-double complex X_child_CisAisCjtAjt_Hubbard_MPI
+double complex child_CisAisCjtAjt_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -165,7 +165,7 @@ double complex X_child_CisAisCjtAjt_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_child_CisAjtCkuAlv_Hubbard_MPI
+double complex child_CisAjtCkuAlv_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -181,7 +181,7 @@ double complex X_child_CisAjtCkuAlv_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_child_CisAjtCkuAku_Hubbard_MPI
+double complex child_CisAjtCkuAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -195,7 +195,7 @@ double complex X_child_CisAjtCkuAku_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_child_CisAisCjtAku_Hubbard_MPI
+double complex child_CisAisCjtAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -209,7 +209,7 @@ double complex X_child_CisAisCjtAku_Hubbard_MPI
  double complex *tmp_v1
  );
 
-double complex X_child_CisAis_Hubbard_MPI
+double complex child_CisAis_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -219,7 +219,7 @@ double complex X_child_CisAis_Hubbard_MPI
  double complex *tmp_v1
 );
 
-double complex X_child_CisAjt_MPIdouble
+double complex child_CisAjt_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -236,7 +236,7 @@ double complex X_child_CisAjt_MPIdouble
  long unsigned int *list_2_2_target
  );
 
-double complex X_child_CisAjt_MPIsingle
+double complex child_CisAjt_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -254,7 +254,7 @@ double complex X_child_CisAjt_MPIsingle
  );
 
 
-double complex X_GC_Cis_MPI
+double complex child_GC_Cis_MPI
 (
  int org_isite,
  int org_ispin,
@@ -266,7 +266,7 @@ double complex X_GC_Cis_MPI
  unsigned long int *Tpow
  );
 
-double complex X_GC_Ajt_MPI
+double complex child_GC_Ajt_MPI
 (
  int org_isite,
  int org_ispin,
@@ -278,7 +278,7 @@ double complex X_GC_Ajt_MPI
  long unsigned int *Tpow
  );
 
-double complex X_Cis_MPI
+double complex child_Cis_MPI
 (
  int org_isite,
  unsigned int org_ispin,
@@ -297,7 +297,7 @@ double complex X_Cis_MPI
  long unsigned int _ihfbit
  );
 
-double complex X_Ajt_MPI
+double complex child_Ajt_MPI
 (
  int org_isite,
  unsigned int org_ispin,

@@ -19,7 +19,7 @@
 
 #include "Common.h"
 
-double complex child_exchange_spin_element
+double complex exchange_spin_element
 (
  long unsigned int j,
  double complex       *tmp_v0,
@@ -28,7 +28,7 @@ double complex child_exchange_spin_element
   long unsigned int *tmp_off
  );
 
-double complex GC_child_pairlift_spin_element
+double complex GC_pairlift_spin_element
 (
  long unsigned int j,
  double complex       *tmp_v0,
@@ -37,7 +37,7 @@ double complex GC_child_pairlift_spin_element
  long unsigned int *tmp_off
  );
 
-double complex GC_child_exchange_spin_element
+double complex GC_exchange_spin_element
 (
  long unsigned int j,
  double complex       *tmp_v0,
@@ -46,7 +46,7 @@ double complex GC_child_exchange_spin_element
   long unsigned int *tmp_off 
  );
 
-int X_child_exchange_spin_element
+int child_exchange_spin_element
 (
  long unsigned int j,
  struct BindStruct *X,
@@ -58,7 +58,7 @@ int X_child_exchange_spin_element
 );
 
 //[s]Spin
-double complex child_CisAisCisAis_spin_element
+double complex CisAisCisAis_spin_element
         (
                 long unsigned int j,
                 long unsigned int isA_up,
@@ -71,7 +71,7 @@ double complex child_CisAisCisAis_spin_element
                 struct BindStruct *X
         );
 
-double complex child_CisAisCitAiu_spin_element
+double complex CisAisCitAiu_spin_element
         (
                 long unsigned int j,
                 long unsigned int org_sigma2,
@@ -85,7 +85,7 @@ double complex child_CisAisCitAiu_spin_element
                 long unsigned int *tmp_off
         );
 
-double complex child_CisAitCiuAiu_spin_element
+double complex CisAitCiuAiu_spin_element
         (
                 long unsigned int j,
                 long unsigned int org_sigma2,
@@ -99,7 +99,7 @@ double complex child_CisAitCiuAiu_spin_element
                 long unsigned int *tmp_off
         );
 
-double complex child_CisAitCiuAiv_spin_element
+double complex CisAitCiuAiv_spin_element
         (
                 long unsigned int j,
                 long unsigned int org_sigma2,
@@ -115,7 +115,7 @@ double complex child_CisAitCiuAiv_spin_element
 //[e]Spin
 
 //[s]GC Spin
-double complex GC_child_CisAisCisAis_spin_element
+double complex GC_CisAisCisAis_spin_element
         (
                 long unsigned int j,
                 long unsigned int isA_up,
@@ -128,7 +128,7 @@ double complex GC_child_CisAisCisAis_spin_element
                 struct BindStruct *X
         );
 
-double complex GC_child_CisAisCitAiu_spin_element
+double complex GC_CisAisCitAiu_spin_element
         (
                 long unsigned int j,
                 long unsigned int org_sigma2,
@@ -142,7 +142,7 @@ double complex GC_child_CisAisCitAiu_spin_element
                 long unsigned int *tmp_off
         );
 
-double complex GC_child_CisAitCiuAiu_spin_element
+double complex GC_CisAitCiuAiu_spin_element
         (
                 long unsigned int j,
                 long unsigned int org_sigma2,
@@ -156,7 +156,7 @@ double complex GC_child_CisAitCiuAiu_spin_element
                 long unsigned int *tmp_off
         );
 
-double complex GC_child_CisAitCiuAiv_spin_element
+double complex GC_CisAitCiuAiv_spin_element
         (
                 long unsigned int j,
                 long unsigned int org_sigma2,
@@ -171,7 +171,7 @@ double complex GC_child_CisAitCiuAiv_spin_element
         );
 //[e]GC Spin
 
-int child_general_int_spin_GetInfo
+int general_int_spin_GetInfo
 (
  struct BindStruct *X,
  long unsigned int isite1,
@@ -184,19 +184,19 @@ int child_general_int_spin_GetInfo
  );
 
 
-int child_exchange_spin_GetInfo
+int exchange_spin_GetInfo
 (
  int iExchange,
  struct BindStruct *X 
  );
 
-int child_pairlift_spin_GetInfo
+int pairlift_spin_GetInfo
 (
  int iPairLift,
  struct BindStruct *X 
  );
 
-int X_SpinGC_CisAit(
+int child_SpinGC_CisAit(
 long unsigned int j,
 struct BindStruct *X,
 long unsigned int is1_spin,
@@ -204,7 +204,7 @@ long unsigned int sigma2,
 long unsigned int *tmp_off
 );
 
-int X_Spin_CisAit(
+int child_Spin_CisAit(
         long unsigned int j,
         struct BindStruct *X,
         long unsigned int is1_spin,
@@ -215,14 +215,14 @@ int X_Spin_CisAit(
         long unsigned int *tmp_off
 );
 
-int X_Spin_CisAis(
+int child_Spin_CisAis(
 long unsigned int j,
 struct BindStruct *X,
 long unsigned int is1_spin,
 long unsigned int sigma1
 );
 
-int X_SpinGC_CisAis(
+int child_SpinGC_CisAis(
 long unsigned int j,
 struct BindStruct *X,
 long unsigned int is1_spin,
