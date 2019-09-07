@@ -22,8 +22,8 @@
  *-------------------------------------------------------------*/
 /*=================================================================================================*/
 
-#ifndef MATRIX_LAPACK_MAGMA_
-#define MATRIX_LAPACK_MAGMA_
+#ifndef MATRIchild_LAPACK_MAGMA_
+#define MATRIchild_LAPACK_MAGMA_
 
 
 #include <stdio.h>

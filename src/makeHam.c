@@ -108,7 +108,7 @@ int makeHam(struct BindStruct *X) {
           sigma1 = X->Def.EDGeneralTransfer[idx][1];
           sigma2 = X->Def.EDGeneralTransfer[idx][3];
 
-          if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+          if (general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
             return -1;
           }
           tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
@@ -135,7 +135,7 @@ int makeHam(struct BindStruct *X) {
           sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
           sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
           tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-          child_general_int_GetInfo(
+          general_int_GetInfo(
                   i,
                   X,
                   isite1,
@@ -165,25 +165,25 @@ int makeHam(struct BindStruct *X) {
           if (isite1 == isite2 && isite3 == isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = GC_child_CisAisCisAis_element(j, isite1, isite3, tmp_V, v0, v1, X, &tmp_off);
+              dmv = GC_CisAisCisAis_element(j, isite1, isite3, tmp_V, v0, v1, X, &tmp_off);
               Ham[j][j] += dmv;
             }
           } else if (isite1 == isite2 && isite3 != isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = GC_child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, v0, v1, X, &tmp_off);
+              dmv = GC_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, v0, v1, X, &tmp_off);
               Ham[tmp_off + 1][j] += dmv;
             }
           } else if (isite1 != isite2 && isite3 == isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = GC_child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, v0, v1, X, &tmp_off);
+              dmv = GC_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, v0, v1, X, &tmp_off);
               Ham[tmp_off + 1][j] += dmv;
             }
           } else if (isite1 != isite2 && isite3 != isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = GC_child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V,
+              dmv = GC_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V,
                                                   v0, v1, X, &tmp_off_2);
               Ham[tmp_off_2 + 1][j] += dmv;
             }
@@ -194,18 +194,18 @@ int makeHam(struct BindStruct *X) {
       for (i = 0; i < X->Def.NPairHopping / 2; i++) {
         for (ihermite = 0; ihermite < 2; ihermite++) {
           idx = 2 * i + ihermite;
-          child_pairhopp_GetInfo(idx, X);
+          pairhopp_GetInfo(idx, X);
           for (j = 1; j <= X->Large.i_max; j++) {
-            dmv = GC_child_pairhopp_element(j, v0, v1, X, &tmp_off);
+            dmv = GC_pairhopp_element(j, v0, v1, X, &tmp_off);
             Ham[tmp_off + 1][j] += dmv;
           }
         }
       }
       //Exchange
       for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-        child_exchange_GetInfo(i, X);
+        exchange_GetInfo(i, X);
         for (j = 1; j <= X->Large.i_max; j++) {
-          dmv = GC_child_exchange_element(j, v0, v1, X, &tmp_off);
+          dmv = GC_exchange_element(j, v0, v1, X, &tmp_off);
           Ham[tmp_off + 1][j] += dmv;
         }
       }
@@ -223,14 +223,14 @@ int makeHam(struct BindStruct *X) {
           sigma1 = X->Def.EDGeneralTransfer[idx][1];
           sigma2 = X->Def.EDGeneralTransfer[idx][3];
 
-          if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+          if (general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
             return -1;
           }
           tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
 
           for (j = 1; j <= X->Large.i_max; j++) {
             dmv = tmp_trans *
-                  X_CisAjt(list_1[j], X, X->Large.is1_spin, X->Large.is2_spin, X->Large.isA_spin, X->Large.A_spin,
+                  child_CisAjt(list_1[j], X, X->Large.is1_spin, X->Large.is2_spin, X->Large.isA_spin, X->Large.A_spin,
                            &tmp_off);
             Ham[tmp_off][j] += dmv;
           }
@@ -255,7 +255,7 @@ int makeHam(struct BindStruct *X) {
             tmp_V = tmp_V * 1.0;
           }
 //  fprintf(stdoutMPI, "Debug: %d, %d, %d, %d, %d, %d, %d, %d\n ", isite1, sigma1,isite2, sigma2,isite3, sigma3,isite4, sigma4);
-          child_general_int_GetInfo(
+          general_int_GetInfo(
                   i,
                   X,
                   isite1,
@@ -285,25 +285,25 @@ int makeHam(struct BindStruct *X) {
           if (isite1 == isite2 && isite3 == isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = child_CisAisCisAis_element(j, isite1, isite3, tmp_V, v0, v1, X, &tmp_off);
+              dmv = CisAisCisAis_element(j, isite1, isite3, tmp_V, v0, v1, X, &tmp_off);
               Ham[j][j] += dmv;
             }
           } else if (isite1 == isite2 && isite3 != isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, v0, v1, X, &tmp_off);
+              dmv = CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, v0, v1, X, &tmp_off);
               Ham[tmp_off][j] += dmv;
             }
           } else if (isite1 != isite2 && isite3 == isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, v0, v1, X, &tmp_off);
+              dmv = CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, v0, v1, X, &tmp_off);
               Ham[tmp_off][j] += dmv;
             }
           } else if (isite1 != isite2 && isite3 != isite4) {
 
             for (j = 1; j <= i_max; j++) {
-              dmv = child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, v0,
+              dmv = CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, v0,
                                                v1, X, &tmp_off_2);
               Ham[tmp_off_2][j] += dmv;
             }
@@ -315,18 +315,18 @@ int makeHam(struct BindStruct *X) {
       for (i = 0; i < X->Def.NPairHopping / 2; i++) {
         for (ihermite = 0; ihermite < 2; ihermite++) {
           idx = 2 * i + ihermite;
-          child_pairhopp_GetInfo(idx, X);
+          pairhopp_GetInfo(idx, X);
           for (j = 1; j <= X->Large.i_max; j++) {
-            dmv = child_pairhopp_element(j, v0, v1, X, &tmp_off);
+            dmv = pairhopp_element(j, v0, v1, X, &tmp_off);
             Ham[tmp_off][j] += dmv;
           }
         }
       }
       //Exchange
       for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-        child_exchange_GetInfo(i, X);
+        exchange_GetInfo(i, X);
         for (j = 1; j <= X->Large.i_max; j++) {
-          dmv = child_exchange_element(j, v0, v1, X, &tmp_off);
+          dmv = exchange_element(j, v0, v1, X, &tmp_off);
           Ham[tmp_off][j] += dmv;
         }
       }
@@ -344,7 +344,7 @@ int makeHam(struct BindStruct *X) {
             sigma2 = X->Def.EDGeneralTransfer[idx][3];
             tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
 
-            if (child_general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+            if (general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
               return -1;
             }
 
@@ -353,14 +353,14 @@ int makeHam(struct BindStruct *X) {
               if (sigma1 == sigma2) {
                 // longitudinal magnetic field
                 for (j = 1; j <= i_max; j++) {
-                  Ham[j][j] += tmp_trans * X_Spin_CisAis(j, X, is1_spin, sigma1);
+                  Ham[j][j] += tmp_trans * child_Spin_CisAis(j, X, is1_spin, sigma1);
                 }
               } else {
                 // transverse magnetic field
                 is1_spin = X->Def.Tpow[isite1 - 1];
 
                 for (j = 1; j <= i_max; j++) {
-                  Ham[off + 1][j] += tmp_trans * X_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
+                  Ham[off + 1][j] += tmp_trans * child_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
                 }
               }
             } else {
@@ -382,28 +382,28 @@ int makeHam(struct BindStruct *X) {
             sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
             tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
 
-            child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
+            general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
             isA_up = X->Def.Tpow[isite1 - 1];
             isB_up = X->Def.Tpow[isite2 - 1];
 
             if (sigma1 == sigma2 && sigma3 == sigma4) { //diagonal
               for (j = 1; j <= i_max; j++) {
-                dmv = GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, sigma2, sigma4, tmp_V, v0, v1, X);
+                dmv = GC_CisAisCisAis_spin_element(j, isA_up, isB_up, sigma2, sigma4, tmp_V, v0, v1, X);
                 Ham[j][j] += dmv;
               }
             } else if (sigma1 == sigma2 && sigma3 != sigma4) {
               for (j = 1; j <= i_max; j++) {
-                dmv = GC_child_CisAisCitAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
+                dmv = GC_CisAisCitAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
                 Ham[tmp_off + 1][j] += dmv;
               }
             } else if (sigma1 != sigma2 && sigma3 == sigma4) {
               for (j = 1; j <= i_max; j++) {
-                dmv = GC_child_CisAitCiuAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
+                dmv = GC_CisAitCiuAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X, &tmp_off);
                 Ham[tmp_off + 1][j] += dmv;
               }
             } else if (sigma1 != sigma2 && sigma3 != sigma4) {
               for (j = 1; j <= i_max; j++) {
-                dmv = GC_child_CisAitCiuAiv_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X,
+                dmv = GC_CisAitCiuAiv_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X,
                                                          &tmp_off_2);
                 Ham[tmp_off_2 + 1][j] += dmv;
               }
@@ -412,9 +412,9 @@ int makeHam(struct BindStruct *X) {
         }
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-          child_exchange_spin_GetInfo(i, X);
+          exchange_spin_GetInfo(i, X);
           for (j = 1; j <= X->Large.i_max; j++) {
-            dmv = GC_child_exchange_spin_element(j, v0, v1, X, &tmp_off);
+            dmv = GC_exchange_spin_element(j, v0, v1, X, &tmp_off);
             Ham[tmp_off + 1][j] += dmv;
           }
         }
@@ -423,10 +423,10 @@ int makeHam(struct BindStruct *X) {
         for (i = 0; i < X->Def.NPairLiftCoupling / 2; i++) {
           for (ihermite = 0; ihermite < 2; ihermite++) {
             idx = 2 * i + ihermite;
-            child_pairlift_spin_GetInfo(idx, X);
+            pairlift_spin_GetInfo(idx, X);
 
             for (j = 1; j <= X->Large.i_max; j++) {
-              dmv = GC_child_pairlift_spin_element(j, v0, v1, X, &tmp_off);
+              dmv = GC_pairlift_spin_element(j, v0, v1, X, &tmp_off);
               Ham[tmp_off + 1][j] += dmv;
             }
           }
@@ -496,12 +496,12 @@ int makeHam(struct BindStruct *X) {
             sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
             tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
 
-            child_general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
+            general_int_spin_GetInfo(X, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);
             isA_up = X->Large.is1_up;
             isB_up = X->Large.is2_up;
 
             for (j = 1; j <= i_max; j++) {
-              tmp_sgn = X_child_exchange_spin_element(j, X, isA_up, isB_up, sigma2, sigma4, &tmp_off);
+              tmp_sgn = child_exchange_spin_element(j, X, isA_up, isB_up, sigma2, sigma4, &tmp_off);
               dmv = tmp_sgn * tmp_V;
               Ham[tmp_off][j] += dmv;
             }
@@ -510,9 +510,9 @@ int makeHam(struct BindStruct *X) {
 
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
-          child_exchange_spin_GetInfo(i, X);
+          exchange_spin_GetInfo(i, X);
           for (j = 1; j <= X->Large.i_max; j++) {
-            dmv = child_exchange_spin_element(j, v0, v1, X, &tmp_off);
+            dmv = exchange_spin_element(j, v0, v1, X, &tmp_off);
             Ham[tmp_off][j] += dmv;
           }
         }

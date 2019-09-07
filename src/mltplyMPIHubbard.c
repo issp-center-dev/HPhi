@@ -29,7 +29,7 @@
 When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_general_hopp_MPIdouble
+void GC_general_hopp_MPIdouble
 (
  unsigned long int itrans,//!<[in] Transfer ID
  struct BindStruct *X,//!<[inout]
@@ -38,20 +38,20 @@ void GC_child_general_hopp_MPIdouble
 ){
 #ifdef MPI
   double complex dam_pr = 0;
-  dam_pr = X_GC_child_general_hopp_MPIdouble(
+  dam_pr = child_GC_general_hopp_MPIdouble(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_general_hopp_MPIdouble*/
+}/*void GC_general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard + GC
 When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 @return fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 */
-double complex X_GC_child_general_hopp_MPIdouble(
+double complex child_GC_general_hopp_MPIdouble(
   int org_isite1,//!<[in] @f$i_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_ispin1,//!<[in] @f$\sigma_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_isite2,//!<[in] @f$i_2@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
@@ -120,14 +120,14 @@ firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
 #else
   return 0.0;
 #endif
-}/*void GC_child_general_hopp_MPIdouble*/
+}/*void GC_general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard + MPI
 When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 @return fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
 */
-double complex X_child_CisAjt_MPIdouble(
+double complex child_CisAjt_MPIdouble(
   int org_isite1,//!<[in] @f$i_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_ispin1,//!<[in] @f$\sigma_1@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
   int org_isite2,//!<[in] @f$i_2@f$ of @f$c_{i_1 \sigma_1}^\dagger c_{i_2 \sigma_2}@f$
@@ -202,13 +202,13 @@ double complex X_child_CisAjt_MPIdouble(
 #else
   return 0.0;
 #endif
-}/*void child_CisAjt_MPIdouble*/
+}/*void CisAjt_MPIdouble*/
 /**
 @brief Hopping term in Hubbard + GC
  When only site2 is in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_general_hopp_MPIsingle(
+void GC_general_hopp_MPIsingle(
   unsigned long int itrans,//!<[in] Transfer ID
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
@@ -216,13 +216,13 @@ void GC_child_general_hopp_MPIsingle(
 ){
 #ifdef MPI
   double complex dam_pr=0;
-  dam_pr=X_GC_child_general_hopp_MPIsingle(
+  dam_pr=child_GC_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1       );
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_general_hopp_MPIsingle*/
+}/*void GC_general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard + GC
  When only site2 is in the inter process region.
@@ -230,7 +230,7 @@ void GC_child_general_hopp_MPIsingle(
 @author Mitsuaki Kawamura (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_general_hopp_MPIsingle(
+double complex child_GC_general_hopp_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -325,13 +325,13 @@ double complex X_GC_child_general_hopp_MPIsingle(
 #else
   return 0.0;
 #endif
-}/*void GC_child_general_hopp_MPIsingle*/
+}/*void GC_general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void child_general_hopp_MPIdouble(
+void general_hopp_MPIdouble(
   unsigned long int itrans,//!<[in] Transfer ID
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
@@ -339,20 +339,20 @@ void child_general_hopp_MPIdouble(
 ){
 #ifdef MPI
   double complex dam_pr;
-  dam_pr =X_child_general_hopp_MPIdouble( 
+  dam_pr =child_general_hopp_MPIdouble( 
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void child_general_hopp_MPIdouble*/
+}/*void general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_child_general_hopp_MPIdouble(
+double complex child_general_hopp_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -430,13 +430,13 @@ double complex X_child_general_hopp_MPIdouble(
 #else
   return 0.0;
 #endif
-}/*void child_general_hopp_MPIdouble*/
+}/*void general_hopp_MPIdouble*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When only site2 is in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void child_general_hopp_MPIsingle(
+void general_hopp_MPIsingle(
   unsigned long int itrans,//!<[in] Transfer ID
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
@@ -444,20 +444,20 @@ void child_general_hopp_MPIsingle(
 ){
 #ifdef MPI
   double complex dam_pr;
-  dam_pr =X_child_general_hopp_MPIsingle(
+  dam_pr =child_general_hopp_MPIsingle(
     X->Def.EDGeneralTransfer[itrans][0], X->Def.EDGeneralTransfer[itrans][1],
     X->Def.EDGeneralTransfer[itrans][2], X->Def.EDGeneralTransfer[itrans][3],
     X->Def.EDParaGeneralTransfer[itrans], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void child_general_hopp_MPIsingle*/
+}/*void general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
  When only site2 is in the inter process region.
 @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_child_general_hopp_MPIsingle(
+double complex child_general_hopp_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -562,14 +562,14 @@ double complex X_child_general_hopp_MPIsingle(
 #else
   return 0.0;
 #endif
-}/*double complex child_general_hopp_MPIsingle*/
+}/*double complex general_hopp_MPIsingle*/
 /**
 @brief Hopping term in Hubbard (Kondo) + Canonical ensemble
   When only site2 is in the inter process region.
 @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_child_CisAjt_MPIsingle(
+double complex child_CisAjt_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -651,4 +651,4 @@ double complex X_child_CisAjt_MPIsingle(
 #else
   return 0.0;
 #endif
-}/*double complex child_general_hopp_MPIsingle*/
+}/*double complex general_hopp_MPIsingle*/
