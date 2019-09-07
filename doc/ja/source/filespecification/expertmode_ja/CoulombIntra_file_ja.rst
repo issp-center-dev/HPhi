@@ -6,7 +6,7 @@ CoulombIntra指定ファイル
 オンサイトクーロン相互作用をハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。付け加える項は以下で与えられます。
 
-.. math:: H+=\sum_{i}U_i n_ {i \uparrow}n_{i \downarrow}
+.. math:: \mathcal{H}+=\sum_{i}U_i n_{i \uparrow}n_{i \downarrow}
 
 以下にファイル例を記載します。
 
@@ -15,7 +15,7 @@ CoulombIntra指定ファイル
     ====================== 
     NCoulombIntra 6  
     ====================== 
-    ========i_0LocSpn_1IteElc ====== 
+    ==== CoulombIntra ====
     ====================== 
        0  4.000000
        1  4.000000

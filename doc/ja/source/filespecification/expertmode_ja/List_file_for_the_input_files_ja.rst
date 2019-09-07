@@ -16,7 +16,7 @@
     Trans    ztransfer.def
     InterAll zinterall.def
     OneBodyG zcisajs.def
-    TwoBodyG    zcisajscktaltdc.def
+    TwoBodyG zcisajscktaltdc.def
 
 | 
 
@@ -47,7 +47,7 @@
 
 -  キーワードを記載後、半角空白を開けた後にファイル名を書きます。ファイル名は自由に設定できます。
 
--  必ず指定しなければいけないパラメーターはCalcMod, ModPara,
+-  必ず指定しなければいけないパラメータはCalcMod, ModPara,
    LocSpinです。
 
 -  各キーワードは順不同に記述できます。
@@ -75,11 +75,13 @@
     "Exchange", "交換相互作用に関する設定をします。"
     "Ising", "イジング相互作用に関する設定をします。"
     "PairLift", "ペアリフト相互作用に関する設定をします。"
-    "OneBodyG", "出力する一体グリーン関数 \ :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle` に関する設定をします。"
-    "TwoBodyG", "出力するニ体グリーン関数 :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle`\ に関する設定をします。"
+    "OneBodyG", "出力する一体グリーン関数 \ :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle` に関する設定をします。"
+    "TwoBodyG", "出力する二体グリーン関数 :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle`\ に関する設定をします。"
     "SingleExcitation", "一体励起状態の生成演算子に関する指定をします。"
-    "PairExcitation", "ニ体励起状態の生成演算子に関する指定をします。"
+    "PairExcitation", "二体励起状態の生成演算子に関する指定をします。"
     "SpectrumVec", "スペクトル関数を計算するためのリスタート用の入力ベクトルを指定します。"                                                               
+    "OneBodyTE", "各時刻で付加される一体型の演算子に関する設定をします。"
+    "TwoBodyTE", "各時刻で付加される二体型の演算子に関する設定をします。"
 
 .. raw:: latex
 

@@ -6,7 +6,7 @@ Hund指定ファイル
 Hundカップリングをハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。付け加える項は以下で与えられます。
 
-.. math:: H+=-\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow})
+.. math:: \mathcal{H}+=-\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow})
 
 以下にファイル例を記載します。
 
