@@ -111,10 +111,14 @@ int expec_cisajscktaltdc
   case Lanczos:
     if(X->Def.St==0){
       sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
+      sprintf(sdt_2, cFileName3BGreen_Lanczos, X->Def.CDataFileHead);
+      sprintf(sdt_3, cFileName4BGreen_Lanczos, X->Def.CDataFileHead);
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGStart,"a");
       fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName2BGreen_CG, X->Def.CDataFileHead);
+      sprintf(sdt_2, cFileName3BGreen_Lanczos, X->Def.CDataFileHead);
+      sprintf(sdt_3, cFileName4BGreen_Lanczos, X->Def.CDataFileHead);
         TimeKeeper(X, cFileNameTimeKeep, cCGExpecTwoBodyGStart,"a");
       fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }
@@ -133,6 +137,8 @@ int expec_cisajscktaltdc
     step=X->Def.istep;
     TimeKeeperWithStep(X, cFileNameTimeKeep, cTEExpecTwoBodyGStart, "a", step);
     sprintf(sdt, cFileName2BGreen_TE, X->Def.CDataFileHead, step);
+    sprintf(sdt_2, cFileName3BGreen_TE, X->Def.CDataFileHead, step);
+    sprintf(sdt_3, cFileName4BGreen_TE, X->Def.CDataFileHead, step);
     break;
 
   case FullDiag:

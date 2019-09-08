@@ -104,6 +104,8 @@ const char* cFileNameEnergy_CG;/**> Name of the file to output energies obtained
 const char* cFileName1BGreen_Lanczos;/**> Name of the file to output One-Body Green's functions obtained by Lanczos method.*/
 const char* cFileName1BGreen_CG;/**> Name of the file to output One-Body Green's functions obtained by CG method.*/
 const char* cFileName2BGreen_Lanczos;/**> Name of the file to output Two-Body Green's functions obtained by Lanczos method.*/
+const char* cFileName3BGreen_Lanczos;/**> Name of the file to output Two-Body Green's functions obtained by Lanczos method.*/
+const char* cFileName4BGreen_Lanczos;/**> Name of the file to output Two-Body Green's functions obtained by Lanczos method.*/
 const char* cFileName2BGreen_CG;/**> Name of the file to output Two-Body Green's functions obtained by CG method.*/
 const char* cFileNameTimeEV_CG;/**> Name of the file to output time for getting eigen vector by CG method.*/
 const char* cFileNameListModel;/**> Name of the file to output list.*/
@@ -123,6 +125,8 @@ const char* cFileName3BGreen_TPQ;/**> Name of the file to output two-body Green'
 const char* cFileName4BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
 const char* cFileName1BGreen_TE;/**> Name of the file to output one-body Green's functions for Time Evolution calculation.*/
 const char* cFileName2BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
+const char* cFileName3BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
+const char* cFileName4BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
 const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
 const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
