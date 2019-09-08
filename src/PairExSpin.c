@@ -85,15 +85,15 @@ int GetPairExcitedStateHalfSpinGC(
             if(org_isite1 > X->Def.Nsite){
                 if(org_sigma1==org_sigma2){  // longitudinal magnetic field
                     if(X->Def.PairExcitationOperator[i][4]==0) {
-                        X_GC_child_AisCis_spin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, tmp_v0, tmp_v1);
+                        child_GC_AisCis_spin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, tmp_v0, tmp_v1);
                     }
                     else{
-                        X_GC_child_CisAis_spin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, tmp_v0, tmp_v1);
+                        child_GC_CisAis_spin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, tmp_v0, tmp_v1);
                     }
                 }
                 else{  // transverse magnetic field
                     //fprintf(stdoutMPI, "Debug: test, org_isite1=%d, org_sigma1=%d, orgsima_2=%d\n", org_isite1, org_sigma1, org_sigma2);
-                    X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1);
+                    child_GC_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1);
                 }
             }else{
                 isite1 = X->Def.Tpow[org_isite1-1];
@@ -102,14 +102,14 @@ int GetPairExcitedStateHalfSpinGC(
                         // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X,tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
-                            tmp_v0[j] += (1.0-X_SpinGC_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
+                            tmp_v0[j] += (1.0-child_SpinGC_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
                         }
                     }
                     else {
                         // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X,tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
-                            tmp_v0[j] += X_SpinGC_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
+                            tmp_v0[j] += child_SpinGC_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
                         }
                     }
                 }else{
@@ -117,7 +117,7 @@ int GetPairExcitedStateHalfSpinGC(
                     // fprintf(stdoutMPI, "Debug: isite1=%d, org_sigma2=%d\n", isite1, org_sigma2);
 #pragma omp parallel for default(none) private(j, tmp_sgn, tmp_off) firstprivate(i_max, isite1, org_sigma2, X, tmp_trans) shared(tmp_v0, tmp_v1)
                     for(j=1;j<=i_max;j++){
-                        tmp_sgn  =  X_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);
+                        tmp_sgn  =  child_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);
                         if(tmp_sgn !=0){
                             tmp_v0[tmp_off+1]+= tmp_sgn*tmp_v1[j]*tmp_trans;
                         }
@@ -167,14 +167,14 @@ int GetPairExcitedStateGeneralSpinGC(
                 if(org_sigma1==org_sigma2){
                     if(X->Def.PairExcitationOperator[i][4]==0) {
                         // longitudinal magnetic field
-                        X_GC_child_AisCis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, tmp_v0, tmp_v1);
+                        child_GC_AisCis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, tmp_v0, tmp_v1);
                     }
                     else{
-                        X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, tmp_v0, tmp_v1);
+                        child_GC_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, tmp_trans, X, tmp_v0, tmp_v1);
                     }
                 }else{
                     // transverse magnetic field
-                    X_GC_child_CisAit_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1);
+                    child_GC_CisAit_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1);
                 }
             }
             else{//org_isite1 <= X->Def.Nsite
@@ -285,7 +285,7 @@ int GetPairExcitedStateHalfSpin(
             if (org_isite1 == org_isite2) {
                 if (org_isite1 > X->Def.Nsite) {
                     is1_up = X->Def.Tpow[org_isite1 - 1];
-                    ibit1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
+                    ibit1 = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
                     if (X->Def.PairExcitationOperator[i][4] == 0) {
                         if (ibit1 == 0) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
@@ -306,12 +306,12 @@ int GetPairExcitedStateHalfSpin(
                         X->Def.PairExcitationOperator[i][4] == 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
-                            tmp_v0[j] += (1.0 - X_Spin_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
+                            tmp_v0[j] += (1.0 - child_Spin_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
                         }
                     } else {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
-                            tmp_v0[j] += X_Spin_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
+                            tmp_v0[j] += child_Spin_CisAis(j, X, isite1, org_sigma1) * tmp_v1[j] * tmp_trans;
                         }
                     }
                 }
@@ -321,14 +321,14 @@ int GetPairExcitedStateHalfSpin(
             }
         } else { //org_sigma1 != org_sigma2             // for the canonical case
             if (org_isite1 > X->Def.Nsite) {//For MPI
-                X_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, i_max, X->Def.Tpow,list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
+                child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma2, tmp_trans, X, tmp_v0, tmp_v1, tmp_v1bufOrg, i_max, X->Def.Tpow,list_1_org, list_1buf_org, list_2_1, list_2_2, X->Large.irght, X->Large.ilft,X->Large.ihfbit);
 
             } else {
                 isite1 = X->Def.Tpow[org_isite1 - 1];
 #pragma omp parallel for default(none) private(j, tmp_off, num1)        \
   firstprivate(i_max, isite1, org_sigma2, X, tmp_trans, list_1_org, list_1, list_2_1, list_2_2) shared(tmp_v0, tmp_v1)
                 for (j = 1; j <= i_max; j++) {
-                    num1=X_Spin_CisAit(j, X, isite1, org_sigma2, list_1_org, list_2_1, list_2_2, &tmp_off);
+                    num1=child_Spin_CisAit(j, X, isite1, org_sigma2, list_1_org, list_2_1, list_2_2, &tmp_off);
                     if (num1 != 0) tmp_v0[tmp_off] +=  tmp_v1[j] * tmp_trans*(double)num1;
                 }
             }
@@ -403,7 +403,7 @@ int GetPairExcitedStateGeneralSpin(
                     }
                 }//org_sigma1=org_sigma2
                 else {//org_sigma1 != org_sigma2
-                    X_child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0,
+                    child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, tmp_trans, X, tmp_v0,
                                                          tmp_v1, tmp_v1bufOrg, i_max, list_1_org, list_1buf_org,
                                                          X->Large.ihfbit);
                 }
