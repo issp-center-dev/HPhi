@@ -59,25 +59,25 @@ matrix:
       - make
       - export OMP_NUM_THREADS=1
       - make test
-      - rm -r test
-      - make
-      - export OMP_NUM_THREADS=3
-      - make test
-      - rm -r *
-      - brew install open-mpi
-      - cmake ../
-      - make
-      - export OMP_NUM_THREADS=1
-      - MPIRUN="mpiexec -np 4" ctest -V
-      - rm -r test
-      - make
-      - export OMP_NUM_THREADS=3
-      - MPIRUN="mpirun -np 4" ctest -V
-      - rm -r test
-      - make
-      - export OMP_NUM_THREADS=1
-      - make test MPIRUN="mpiexec -np 16"
-      - rm -r test
-      - make
-      - export OMP_NUM_THREADS=3
-      - make test MPIRUN="mpiexec -np 16"
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=3
+      # - make test
+      # - rm -r *
+      # - brew install open-mpi
+      # - cmake ../
+      # - make
+      # - export OMP_NUM_THREADS=1
+      # - MPIRUN="mpiexec -np 4" ctest -V
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=3
+      # - MPIRUN="mpirun -np 4" ctest -V
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=1
+      # - make test MPIRUN="mpiexec -np 16"
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=3
+      # - make test MPIRUN="mpiexec -np 16"
