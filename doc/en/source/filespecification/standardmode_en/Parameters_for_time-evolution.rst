@@ -19,7 +19,7 @@ Parameters for time-evolution
    :math:`U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}` is
    added. For ``"Pulse Laser"``, ``"AC Laser"``, and ``"DC Laser"``, the
    hopping term is modulated as
-   :math:`-\sum_{i j \sigma} t_{i j} \exp[-{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c_{i \sigma} c_{j \sigma}`,
+   :math:`-\sum_{i j \sigma} t_{i j} \exp[-{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c^\dagger_{i \sigma} c_{j \sigma}`,
    where :math:`{\bf A}(t)` is the vector potential which is defined as
    :math:`{\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]`,
    :math:`{\bf A}(t) = {\bf A}_0 \sin[\omega (t-t_0)]`, and
@@ -61,7 +61,7 @@ Parameters for time-evolution
    reciprocal space) at :math:`t=t_0`. The reciprocal lattice vector is
    computed from the direct lattice vector shown in
    :numref:`fig_chap04_1_lattice` , :numref:`fig_chap04_1_honeycomb` ,
-   :numref:`fig_ladder` , :numref:`fig_kagome` .
+   :numref:`fig_kagome`, :numref:`fig_ladder` .
 
 .. raw:: latex
 

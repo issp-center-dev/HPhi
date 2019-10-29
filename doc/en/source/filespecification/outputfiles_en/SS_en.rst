@@ -60,15 +60,15 @@ Parameters
 
    **Type :** Double
 
-   **Description :** The expected value of the energy
-   :math:`\langle H \rangle`.
+   **Description :** The expected value of the Hamiltonian (energy)
+   :math:`\langle \mathcal H \rangle`.
 
 *  [double03]
 
    **Type :** Double
 
    **Description :** The expected value of the square of the Hamiltonian
-   :math:`\langle H^2 \rangle`.
+   :math:`\langle \mathcal H^2 \rangle`.
 
 *  [double04]
 

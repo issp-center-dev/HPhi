@@ -79,7 +79,7 @@ Parameters
 
    **Type :** Double (a blank parameter is not allowed)
 
-   **Description :** A value for :math:`J_{ij}~{\rm Ex}`.
+   **Description :** A value for :math:`J_{ij}^{\rm Ex}`.
 
 .. _use_rules_10:
 

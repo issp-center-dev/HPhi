@@ -8,7 +8,7 @@ HamiltonianのHundカップリング
 .. math::
 
    \begin{aligned}
-   H += -\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow})\end{aligned}
+   -\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow})\end{aligned}
 
 
 に関する入力確認を行います。\ :math:`J_{ij}^{\rm Hund}`\ が出力されます。

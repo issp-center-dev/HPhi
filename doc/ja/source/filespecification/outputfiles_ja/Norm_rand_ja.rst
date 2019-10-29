@@ -47,7 +47,7 @@ Norm\_rand.dat
    **形式 :** double型
 
    **説明 :** TPQ法で計算される規格化前の波動関数(ベクトル)のノルム:
-   :math:`\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle`\ 。ただし、\ :math:`|\tilde{\psi}_{k}\rangle \equiv(l-\hat{H}/N_{s})|\psi_{k-1}\rangle`\ 。
+   :math:`\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle`\ 。ただし、\ :math:`|\tilde{\psi}_{k}\rangle \equiv(l-\mathcal{H}/N_{s})|\psi_{k-1}\rangle`\ 。
 
 -  :math:`[`\ double03\ :math:`]`
 
@@ -61,7 +61,7 @@ Norm\_rand.dat
    **形式 :** int型
 
    **説明 :**
-   初期ランダムベクトルに\ :math:`(l-\hat{H}/N_{s})`\ (:math:`l`\ はModParaファイルの\ ``LargeValue``\ 、\ :math:`N_{s}`\ はサイト数)を作用させた回数。
+   初期ランダムベクトルに\ :math:`(l-\mathcal{H}/N_{s})`\ (:math:`l`\ はModParaファイルの\ ``LargeValue``\ 、\ :math:`N_{s}`\ はサイト数)を作用させた回数。
 
 .. raw:: latex
 

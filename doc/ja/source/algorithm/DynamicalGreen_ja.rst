@@ -24,5 +24,5 @@
 なお、動的グリーン関数の計算には、Lanczos法を用いた連分数展開による解法 [1]_ とシフト型クリロフ理論による解法 [2]_ の2つが実装されています。
 詳細については各文献を参照してください。
 
-.. [1] \E. daggerotto, Rev. Mod. Phys. **66**, 763-840 (1994).
+.. [1] \E. Dagotto, Rev. Mod. Phys. **66**, 763-840 (1994).
 .. [2] \S.Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan **77**, 114713 (2008).

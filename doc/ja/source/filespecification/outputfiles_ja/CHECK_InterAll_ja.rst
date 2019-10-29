@@ -5,7 +5,7 @@ CHECK\_InterAll.dat
 
 Hamiltonianの一般二体相互作用のうち対角成分
 
-.. math:: H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}
+.. math:: \sum_{i,j, \sigma_1, \sigma_2} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}
 
 
 に関する入力確認を行います。\ :math:`I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2}`\ が出力されます。
