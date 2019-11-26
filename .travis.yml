@@ -52,7 +52,7 @@ matrix:
       - brew link --overwrite gcc
       - brew install lapack
       - export FC=gfortran;
-      - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+      - sed -i "" 's/git@github.com:/https:\/\/github.com\//' .gitmodules
       - git submodule update --init --recursive
     install:
       - mkdir build
