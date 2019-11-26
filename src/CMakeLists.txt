@@ -23,7 +23,7 @@ set(SOURCES_PHYS expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c phys.c 
 
 set(SOURCES_COMMON common/setmemory.c)
 
-set(SOURCES_STDFACE StdFace/ChainLattice.c StdFace/FCOrtho.c StdFace/HoneycombLattice.c StdFace/Kagome.c StdFace/Ladder.c StdFace/Orthorhombic.c StdFace/Pyrochlore.c StdFace/SquareLattice.c StdFace/StdFace_main.c StdFace/StdFace_ModelUtil.c StdFace/TriangularLattice.c StdFace/Wannier90.c)
+set(SOURCES_STDFACE StdFace/src/ChainLattice.c StdFace/src/FCOrtho.c StdFace/src/HoneycombLattice.c StdFace/src/Kagome.c StdFace/src/Ladder.c StdFace/src/Orthorhombic.c StdFace/src/Pyrochlore.c StdFace/src/SquareLattice.c StdFace/src/StdFace_main.c StdFace/src/StdFace_ModelUtil.c StdFace/src/TriangularLattice.c StdFace/src/Wannier90.c)
 
 add_executable(HPhi ${SOURCES} ${SOURCES_LANCZOS} ${SOURCES_CG} ${SOURCES_TPQ} ${SOURCES_SPECTRUM} ${SOURCES_TEM} ${SOURCES_MLTPLY} ${SOURCES_DIAG} ${SOURCES_PHYS} ${SOURCES_STDFACE} ${SOURCES_COMMON})
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
