@@ -5,7 +5,7 @@ CHECK\_INTER\_U.dat
 
 Hamiltonianのオフサイトクーロン相互作用
 
-.. math:: H+=\sum_{i} V_{ij} n_{i} n_{j}
+.. math:: \sum_{i,j} V_{ij} n_{i} n_{j}
 
 に関する入力確認を行います。\ :math:`V_{ij}`\ が出力されます。
 以下にファイル例を記載します。

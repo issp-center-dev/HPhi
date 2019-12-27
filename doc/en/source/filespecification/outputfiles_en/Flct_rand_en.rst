@@ -59,14 +59,14 @@ Parameters
    **Type :** Double
 
    **Description :** A total particle number
-   :math:`\sum_{i} \langle \hat{n}_i \rangle`.
+   :math:`\sum_{i} \langle {n}_i \rangle`.
 
 *  [double03]
 
    **Type :** Double
 
    **Description :** The expected value of the square of the particle
-   number :math:`\langle (\sum_{i} \hat{n}_i)^2 \rangle`.
+   number :math:`\langle (\sum_{i} {n}_i)^2 \rangle`.
 
 *  [double04]
 
@@ -88,16 +88,16 @@ Parameters
 
    **Type :** Double
 
-   **Description :** The expected value of :math:`S_z`
-   :math:`\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle` (:math:`N_s`
+   **Description :** The expected value of :math:`S_z`,
+   :math:`\frac{1}{N_s} \sum_{i}\langle {S}_i^z\rangle` (:math:`N_s`
    is the total number of sites).
 
 *  [double07]
 
    **Type :** Double
 
-   **Description :** The expected value of the square of :math:`S_z`
-   :math:`\frac{1}{N_s} \langle (\sum_{i} \hat{S}_i^z)^2\rangle`
+   **Description :** The expected value of the square of :math:`S_z`,
+   :math:`\frac{1}{N_s} \langle (\sum_{i} {S}_i^z)^2\rangle`
    (:math:`N_s` is the total number of sites).
 
 *  [int01]
@@ -105,7 +105,7 @@ Parameters
    **Type :** Int
 
    **Description :** The number of operations of
-   :math:`(l-\hat{\mathcal H}/N_{s})` for an initial wave function, where
+   :math:`(l-{\mathcal H}/N_{s})` for an initial wave function, where
    :math:`l` is ``LargeValue`` defined in a ModPara file and
    :math:`N_{s}` is the total number of sites.
 

@@ -10,14 +10,20 @@ Error messages
    The program stops because a parameter is specified twice.
 
 *  ``ERROR ! Unsupported Solver :`` *solver*
+   The program stops because unsupported parameter for ``method``
+   is specified.
 
 *  ``ERROR ! Unsupported Model :`` *model*
 
 *  | ``Sorry, this system is unsupported in the STANDARD MODE...``
-   | ``Please use the EXPART MODE, or write a NEW FUNCTION and post it us.``
+   | ``Sorry, specified combination,``
+   |   ``MODEL :`` *model*
+   |   ``LATTICE :`` *lattice*
+   | ``is unsupported in the STANDARD MODE...``
+   | ``Please use the EXPART MODE, or write a NEW FUNCTION and post us.``
 
-   The program stops because unsupported parameter for ``method``,
-   ``model``, or ``lattice`` is specified.
+   The program stops because unsupported parameter for
+   ``model`` and/or ``lattice`` is specified.
 
 *  ``ERROR ! abs(2 * Sz) > nsite in Hubbard model !``
 
@@ -49,7 +55,7 @@ Error messages
    twice than the number of sites); If these situations are detected,
    the program will stop.
 
-*  | ``Check !``\ *keyword* ``is SPECIFIED but will NOT be USED.``
+*  | ``Check !``\ *keyword*\ ``is SPECIFIED but will NOT be USED.``
    | ``Please COMMENT-OUT this line``
    | ``or check this input is REALLY APPROPRIATE for your purpose !``
 

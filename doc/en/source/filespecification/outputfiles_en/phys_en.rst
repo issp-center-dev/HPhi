@@ -58,7 +58,7 @@ Parameters
    **Type :** Double
 
    **Description :** The total number of particles
-   :math:`\langle \hat{n}\rangle`.
+   :math:`\langle {n}\rangle`.
 
 *  [double03]
 

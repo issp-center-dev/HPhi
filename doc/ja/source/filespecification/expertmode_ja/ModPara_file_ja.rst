@@ -98,14 +98,14 @@ ModParaファイル
 
 -  ``Ncond``
 
-   **形式 :** int型 (自然数)
+   **形式 :** int型 (非負整数)
 
    **説明 :**
    伝導電子数を指定する整数。グランドカノニカルの場合には使用されません。
 
 -  ``2Sz``
 
-   **形式 :** int型 (自然数)
+   **形式 :** int型 (非負整数)
 
    **説明 :**
    :math:`2S_z`\ を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で\ :math:`S_z`\ 保存の計算を行う場合には\ ``Ncond``\ を指定する必要があります。
@@ -137,7 +137,7 @@ ModParaファイル
    **形式 :** int型 (自然数)
 
    **説明 :**
-   ``CalcHS=1``\ で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は http://issp-center-dep.github.io/HPhi/develop/tips.pdfを参照)。
+   ``CalcHS=1``\ で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdfを参照)。
    デフォルトの値は1で、高速化アルゴリズムが使用されます。
 
  
@@ -220,7 +220,7 @@ TPQ法で使用するパラメータ
    **形式 :** double型 (実数)
 
    **説明 :**
-   TPQで使用する\ :math:`l-\hat{H}/N_{s}`\ の\ :math:`l`\ を指定する整数。
+   TPQで使用する\ :math:`l-\mathcal H/N_{s}`\ の\ :math:`l`\ を指定する整数。
 
 -  ``NumAve``
 
@@ -302,7 +302,7 @@ TPQ法で使用するパラメータ
 
    **説明 :** 微小時間\ :math:`\Delta t`\ に対して実時間発展を行う際の
 
-   .. math:: \exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{n=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n
+   .. math:: \exp\left(-i \cal H \Delta t \right) \approx \sum_{n=0}^{N}\frac{1}{n!}\left(-i \cal H \Delta t \right)^n
 
   に対する展開次数\ :math:`N`\ を与えます。
 

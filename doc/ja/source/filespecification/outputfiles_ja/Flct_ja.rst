@@ -52,14 +52,14 @@ Flct.dat
 
    **形式 :** double型
 
-   **説明 :** 全粒子数\ :math:`\sum_{i} \langle \hat{n}_i \rangle`\ 。
+   **説明 :** 全粒子数\ :math:`\sum_{i} \langle {n}_i \rangle`\ 。
 
 -  :math:`[`\ double03\ :math:`]`
 
    **形式 :** double型
 
    **説明 :**
-   粒子数の2乗の期待値\ :math:`\langle (\sum_{i} \hat{n}_i)^2 \rangle`\ 。
+   粒子数の2乗の期待値\ :math:`\langle (\sum_{i} {n}_i)^2 \rangle`\ 。
 
 -  :math:`[`\ double04\ :math:`]`
 
@@ -73,7 +73,7 @@ Flct.dat
 
    **形式 :** double型
 
-   **説明 :** ダブロンの二乗
+   **説明 :** ダブロンの2乗
    :math:`\frac{1}{N_s} \langle (\sum_{i}n_{i\uparrow} n_{i\downarrow})^2\rangle`
    の期待値(ただし\ :math:`N_s`\ はサイト数)。
 
@@ -81,16 +81,16 @@ Flct.dat
 
    **形式 :** double型
 
-   **説明 :** スピンの\ :math:`Sz`\ 成分
-   :math:`\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle`
+   **説明 :** スピンの\ :math:`S_z`\ 成分
+   :math:`\frac{1}{N_s} \sum_{i}\langle {S}_i^z\rangle`
    の期待値(ただし\ :math:`N_s`\ はサイト数)。
 
 -  :math:`[`\ double07\ :math:`]`
 
    **形式 :** double型
 
-   **説明 :** スピンの\ :math:`Sz`\ 成分の二乗
-   :math:`\frac{1}{N_s} \langle (\sum_{i}\hat{S}_i^z)^2\rangle`
+   **説明 :** スピンの\ :math:`S_z`\ 成分の2乗
+   :math:`\frac{1}{N_s} \langle (\sum_{i}{S}_i^z)^2\rangle`
    の期待値(ただし\ :math:`N_s`\ はサイト数)。
 
 -  :math:`[`\ int01\ :math:`]`

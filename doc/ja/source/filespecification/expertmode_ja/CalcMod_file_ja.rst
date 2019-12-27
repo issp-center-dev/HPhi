@@ -9,8 +9,8 @@ CalcModファイル
 
 ::
 
-    CalcType   0
-    CalcModel   2
+    CalcType     0
+    CalcModel    2
     CalcEigenVec 0
 
 | 
@@ -67,6 +67,7 @@ CalcModファイル
    | 1: TPQを利用した有限温度解析
    | 2: 全対角化
    | 3: LOBCG法
+   | 4: 実時間発展
    | を選択することができます。
 
 -  ``CalcModel``

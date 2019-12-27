@@ -10,9 +10,9 @@ Trans指定ファイル
   .. math::
 
      \begin{aligned}
-     H +=-\sum_{ij\sigma_1\sigma2} t_{ij\sigma_1\sigma2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\end{aligned}
+     \mathcal{H} +=-\sum_{ij\sigma_1\sigma_2} t_{ij\sigma_1\sigma_2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\end{aligned}
 
-に対するTransfer積分\ :math:`t_{ij\sigma_1\sigma2}`\ を指定します。以下にファイル名を記載します。
+に対するTransfer積分\ :math:`t_{ij\sigma_1\sigma_2}`\ を指定します。以下にファイル名を記載します。
 
 ::
 

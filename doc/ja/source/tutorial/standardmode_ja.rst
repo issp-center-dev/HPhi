@@ -19,7 +19,8 @@ Heisenberg模型におけるサンプル入力ファイルは ::
 
 .. math::
 
-   \hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)
+   \mathcal H=J \sum_{i,j=1}^{4} ( S_{i j} \cdot  S_{i+1 j} +  S_{i j} \cdot  S_{i j+1})
+..   \hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)
 
 ただし、周期境界条件 :math:`(S_{15}=S_{51}= S_{11})` を採用します。
 インプットファイルの中身は次のとおりです。 ::
@@ -48,7 +49,7 @@ Heisenberg模型におけるサンプル入力ファイルは ::
  
 ログ出力されるファイルの詳細は :ref:`Subsec:checkchemi` 等をご覧ください。
 
-実行コマンドと標準出力{(MPI並列/ハイブリッド並列でコンパイルした場合の結果)}は次のとおりです。::
+実行コマンドと標準出力(MPI並列/ハイブリッド並列でコンパイルした場合の結果)は次のとおりです。::
 
  $ Path/HPhi -s stan.in
  
@@ -269,7 +270,7 @@ Heisenberg模型におけるサンプル入力ファイルは ::
 **局所最適ブロック共役勾配(LOBCG)法**
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-入力ファイルで\"method = "CG"\"を選択すると、LOBCG法での計算が行われます。
+入力ファイルで ``method = "CG"`` を選択すると、LOBCG法での計算が行われます。
 LOBCG法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。
 以下に、このサンプルでの出力ファイル例を記載します。
 (xxには0から始まる固有値番号が入ります)。 ::
@@ -280,7 +281,7 @@ LOBCG法での計算が正常終了すると、固有エネルギーおよび一
 
 スタンダードモードの場合は、\"greenone.def\"、\"greentwo.def\"に基づき、::
 
- zvo\_cisajs\_eigen\_xx.dat、zvo\_cisajscktalt\_eigen\_xx.dat
+ zvo_cisajs_eigen_xx.dat、zvo_cisajscktalt_eigen_xx.dat
 
 に固有値番号に対応した一体グリーン関数および二体グリーン関数の値が出力されます。
  

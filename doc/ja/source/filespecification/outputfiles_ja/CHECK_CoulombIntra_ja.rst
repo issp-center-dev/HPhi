@@ -5,7 +5,7 @@ CHECK\_CoulombIntra.dat
 
 Hamiltonianのオンサイトクーロン相互作用
 
-.. math:: H+=\sum_{i} U_i n_{i\uparrow} n_{j \downarrow}
+.. math:: \sum_{i} U_i n_{i\uparrow} n_{i \downarrow}
 
 に関する入力確認を行います。\ :math:`U_i`\ が出力されます。
 以下にファイル例を記載します。
