@@ -37,7 +37,7 @@ matrix:
       - make
       - export OMP_NUM_THREADS=3
       - make test MPIRUN="mpiexec -np 16"
-  - os: osx
+  - os: osx10
     language: c
     sudo: enabled
     before_install:
