@@ -61,6 +61,7 @@ cd ${ROOTDIR}/hphi-doc/manual
 mkdir -p $docdir && cd $docdir
 for lang in ja en; do
   rm -rf $lang/html
+  mkdir -p $lang
   cp -r ${ROOTDIR}/hphi-doc/build/doc/${lang}/source/html $lang/html
   git add $lang/html
 done
