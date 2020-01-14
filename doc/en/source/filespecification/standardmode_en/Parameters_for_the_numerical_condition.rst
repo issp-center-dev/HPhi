@@ -22,7 +22,7 @@ Parameters for the numerical condition
    calculation with the restart-file generated in the previous run,
    ``"Restart"`` for ``"Restart_out"`` + ``"Restart_in"``.
 
-*  ``anczos_max``
+*  ``Lanczos_max``
 
    **Type :** Positive integer (default value: ``2000``)
 
@@ -76,7 +76,7 @@ Parameters for the numerical condition
    **Description :** The convergence criterion for the Lanczos method is
    specified with this parameter. If the difference between the old and
    the new target eigenvalue falls below
-   :math:`10^{- LanczosEps|}`, the Lanczos step will finish. For
+   :math:`10^{- {\tt LanczosEps}}`, the Lanczos step will finish. For
    ``method="CG"``, we assume the calculation is converged when the
    2-norm of the residual vector becomes smaller than
    :math:`10^{-{\tt LanczosEps}/2}`.
@@ -93,7 +93,7 @@ Parameters for the numerical condition
 
    **Type :** Double (the default value is provided below)
 
-   **Description :** (Only for TPQ) :math:`l` as :math:`l=\hat{\mathcal H}/N_{s}`
+   **Description :** (Only for TPQ) :math:`l` as :math:`l-{\mathcal H}/N_{s}`
    is used in the TPQ calculation. Usually, the largest eigenvalue of
    the Hamiltonian is used as :math:`l`. Thus, the default value of
    :math:`l` is taken as the summation of the absolute values of each
@@ -154,7 +154,7 @@ Parameters for the numerical condition
 
 *  ``HamIO``
 
-   **Type :** String (choose from ``"None"``, ``"Out"``, ``In``.
+   **Type :** String (choose from ``"None"``, ``"Out"``, ``"In"``.
    ``"None"`` as a default)
 
    | **Description :** (Only used in Full Diag mode) 

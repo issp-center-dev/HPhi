@@ -252,6 +252,10 @@ struct StdIntList {
   int cutoff_tR[3];
   int cutoff_UR[3];
   int cutoff_JR[3];
+  double cutoff_tVec[3][3];
+  double cutoff_UVec[3][3];
+  double cutoff_JVec[3][3];
+
   double lambda; /**<@brief Tuning parameter of U and J in wannier90, input from file.*/
   double lambda_U; /**<@brief Tuning parameter of U in wannier90, input from file.*/
   double lambda_J; /**<@brief Tuning parameter of J in wannier90, input from file.*/

@@ -1,58 +1,53 @@
 import sys
 import os.path
 import numpy as np
+import argparse
 
-param = sys.argv
+parser = argparse.ArgumentParser(
+    prog='AveSSrand.py',
+    description='Tool for TPQ calculations.',
+    epilog='end',
+    add_help=True,
+)
 
-if len(param) > 1 and param[1]== "-h":
-    print('usage: argc[1] ')
-    print('argc[1] = total number of samples')
-    sys.exit()
+parser.add_argument('-n', action='store', dest='nsamples',
+                    nargs='?', default=5, type=int, choices=None,
+                    help=('Total number of samples.'),
+                    metavar=None)
 
-if len(param) != 2:
-    print('wrong usage.')
-    print('usage: argc[1] ')
-    print('argc[1] = total number of samples')
-    sys.exit()
-    
-#Check File
-Setnum=int(param[1])
+parser.add_argument('-o', action='store', dest='output',
+                    nargs='?', default="ave_TPQ.dat", type=str, choices=None,
+                    help=('Name of output file.'),
+                    metavar=None)
 
-np.zeros(Setnum)
-DataTmp=[]
-DataEne=[]
-DataC=[]
 
-for i in range(0, int(Setnum)):
-    str_ = "./output/SS_rand"+str(i)+".dat"
-    if os.path.isfile(str_) != True:
-        print('The file ' + str_ + ' does not exist.')
+args = parser.parse_args()
+set_num=args.nsamples
+np.zeros(set_num)
+
+#Get sample size
+str_ = "./output/SS_rand0.dat"
+with open(str_, "r") as f:
+    lines = f.readlines()
+DataTmp = np.zeros( (len(lines)-2, set_num) )
+DataEne = np.zeros( (len(lines)-2, set_num) )
+DataC = np.zeros( (len(lines)-2, set_num) )
+
+for num in range(set_num):
+    str_ = "./output/SS_rand"+str(num)+".dat"
+    if os.path.isfile(str_) is not True:
+        print('The file {} does not exist.'.format(str_))
         sys.exit()
-        
-    f =  open(str_, 'r')
-    count=0
-    for line in f:
-        if count ==0:
-            count +=1
-            continue    
-        data = line.split()
-        
-        if(i ==0):
-            DataTmp.append(np.zeros(Setnum))
-            DataEne.append(np.zeros(Setnum))
-            DataC.append(np.zeros(Setnum))
-            
-        DataTmp[count-1][i]=1.0/float(data[0])
-        DataEne[count-1][i]=float(data[1])
-        DataC[count-1][i]=pow(float(data[0]),2)*( float(data[2])-pow(float(data[1]),2))
-        count+=1
-    f.close()
+    with open(str_, "r") as f:
+        lines = f.readlines()        
+        for count, line in enumerate(lines[2:]):
+            data = line.split()
+            DataTmp[count][num]=1.0/float(data[0])
+            DataEne[count][num]=float(data[1])
+            DataC[count][num]=pow(float(data[0]),2)*( float(data[2])-pow(float(data[1]),2) )
 
-count=0
-for datatmp in DataTmp:
-    print datatmp.mean(), datatmp.std(), \
-          DataEne[count].mean(), DataEne[count].std(),\
-          DataC[count].mean(), DataC[count].std()\
-    
-    count+=1
-    
+with open(args.output, "w") as f:
+    for count, datatmp in enumerate(DataTmp):
+        f.write("{} {} {} {} {} {}\n".format(datatmp.mean(), datatmp.std(), \
+                                           DataEne[count].mean(), DataEne[count].std(),\
+                                           DataC[count].mean(), DataC[count].std()))

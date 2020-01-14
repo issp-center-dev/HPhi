@@ -341,33 +341,33 @@ int expec_cisajscktalt_HubbardGC(struct BindStruct *X,double complex *vec, FILE 
             isite4 = X->Def.OrgTpow[2*org_isite4-2+org_sigma4] ;
             if(isite1 == isite2 && isite3 == isite4){
 
-                dam_pr = X_GC_child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1,
+                dam_pr = child_GC_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                              org_isite3-1, org_sigma3,
                                                              1.0, X, vec, vec);
             }
             else if(isite1 == isite2 && isite3 != isite4){
 
-                dam_pr = X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
+                dam_pr = child_GC_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                              org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                              1.0, X, vec, vec);
 
             }
             else if(isite1 != isite2 && isite3 == isite4){
 
-                dam_pr = X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
+                dam_pr = child_GC_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                              org_isite3-1, org_sigma3,
                                                              1.0, X, vec, vec);
 
             }
             else if(isite1 != isite2 && isite3 != isite4){
-                dam_pr = X_GC_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
+                dam_pr = child_GC_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                              org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                              1.0, X, vec, vec);
             }
 
         }//InterPE
         else{
-            child_general_int_GetInfo
+            general_int_GetInfo
                     (i, X, org_isite1, org_isite2, org_isite3, org_isite4,
                      org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_V
                     );
@@ -387,26 +387,26 @@ int expec_cisajscktalt_HubbardGC(struct BindStruct *X,double complex *vec, FILE 
                 dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
-                    dam_pr += GC_child_CisAisCisAis_element(j, isite1, isite3, tmp_V, vec, vec, X, &tmp_off);
+                    dam_pr += GC_CisAisCisAis_element(j, isite1, isite3, tmp_V, vec, vec, X, &tmp_off);
                 }
             }else if(isite1 == isite2 && isite3 != isite4){
                 dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
-                    dam_pr += GC_child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off);
+                    dam_pr += GC_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off);
                 }
             }else if(isite1 != isite2 && isite3 == isite4){
                 dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
-                    dam_pr +=GC_child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, vec, vec, X, &tmp_off);
+                    dam_pr +=GC_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, vec, vec, X, &tmp_off);
                 }
 
             }else if(isite1 != isite2 && isite3 != isite4){
                 dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2,tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
-                    dam_pr +=GC_child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off_2);
+                    dam_pr +=GC_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off_2);
                 }
             }
         }
@@ -466,31 +466,31 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
             isite3 = X->Def.OrgTpow[2*org_isite3-2+org_sigma3] ;
             isite4 = X->Def.OrgTpow[2*org_isite4-2+org_sigma4] ;
             if(isite1 == isite2 && isite3 == isite4){
-                dam_pr = X_child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1,
+                dam_pr = child_CisAisCjtAjt_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                           org_isite3-1, org_sigma3,
                                                           1.0, X, vec, vec);
             }
             else if(isite1 == isite2 && isite3 != isite4){
               //printf("org_isite1=%d, org_isite2=%d, org_isite3=%d, org_isite4=%d\n", org_isite1, org_isite2, org_isite3, org_isite4);
-              dam_pr = X_child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
+              dam_pr = child_CisAisCjtAku_Hubbard_MPI(org_isite1-1, org_sigma1,
                                                           org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                           1.0, X, vec, vec);
             }
             else if(isite1 != isite2 && isite3 == isite4){
-                dam_pr = X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
+                dam_pr = child_CisAjtCkuAku_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                           org_isite3-1, org_sigma3,
                                                           1.0, X, vec, vec);
 
             }
             else if(isite1 != isite2 && isite3 != isite4){
-              dam_pr = X_child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
+              dam_pr = child_CisAjtCkuAlv_Hubbard_MPI(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,
                                                           org_isite3-1, org_sigma3, org_isite4-1, org_sigma4,
                                                           1.0, X, vec, vec);
             }
 
         }//InterPE
         else{
-            child_general_int_GetInfo(
+            general_int_GetInfo(
                     i, X, org_isite1, org_isite2, org_isite3, org_isite4,
                     org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_V
             );
@@ -511,22 +511,22 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
             if(isite1 == isite2 && isite3 == isite4){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2) shared(vec,tmp_V)
                 for(j=1;j<=i_max;j++){
-                    dam_pr += child_CisAisCisAis_element(j, isite1, isite3, tmp_V, vec, vec, X, &tmp_off);
+                    dam_pr += CisAisCisAis_element(j, isite1, isite3, tmp_V, vec, vec, X, &tmp_off);
                 }
             }else if(isite1 == isite2 && isite3 != isite4){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2) shared(vec,tmp_V)
                 for(j=1;j<=i_max;j++){
-                    dam_pr += child_CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off);
+                    dam_pr += CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off);
                 }
             }else if(isite1 != isite2 && isite3 == isite4){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2) shared(vec,tmp_V)
                 for(j=1;j<=i_max;j++){
-                    dam_pr +=child_CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, vec, vec, X, &tmp_off);
+                    dam_pr +=CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, vec, vec, X, &tmp_off);
                 }
             }else if(isite1 != isite2 && isite3 != isite4){
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isite1,isite2,isite4,isite3,Asum,Bsum,Adiff,Bdiff,tmp_off,tmp_off_2) shared(vec,tmp_V)
                 for(j=1;j<=i_max;j++){
-                    dam_pr +=child_CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off_2);
+                    dam_pr +=CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, vec, vec, X, &tmp_off_2);
 
                 }
             }
@@ -607,8 +607,8 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
                 is1_up = X->Def.Tpow[org_isite1 - 1];
                 is2_up = X->Def.Tpow[org_isite3 - 1];
-                num1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
-                num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
+                num1 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+                num2 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
 #pragma omp parallel for default(none) reduction (+:dam_pr) shared(vec) \
   firstprivate(i_max, num1, num2, tmp_V) private(j)
                 for (j = 1; j <= i_max; j++) {
@@ -617,7 +617,7 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
             }
             else if(org_isite1==org_isite3 && org_sigma1==org_sigma4 && org_sigma2==org_sigma3){
                 is1_up = X->Def.Tpow[org_isite1 - 1];
-                num1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+                num1 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
 #pragma omp parallel for default(none) reduction (+:dam_pr) shared(vec) \
   firstprivate(i_max, num1, num2, tmp_V) private(j)
                 for (j = 1; j <= i_max; j++) {
@@ -625,7 +625,7 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
                 }
             }
             else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){//exchange
-                dam_pr += X_child_general_int_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr += child_general_int_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
             else{  // other process is not allowed
                 // error message will be added
@@ -635,17 +635,17 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
                 is1_up = X->Def.Tpow[org_isite1 - 1];
                 is2_up = X->Def.Tpow[org_isite3 - 1];
-                num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
+                num2 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, org_sigma3);
                 dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr)shared(vec) \
   firstprivate(i_max, tmp_V, is1_up, org_sigma1, X, num2) private(j, num1)
                 for (j = 1; j <= i_max; j++) {
-                    num1 = X_Spin_CisAis(j, X, is1_up, org_sigma1);
+                    num1 = child_Spin_CisAis(j, X, is1_up, org_sigma1);
                     dam_pr += tmp_V*num1*num2*conj(vec[j])*vec[j];
                 }
             }
             else if(org_sigma1==org_sigma4 && org_sigma2==org_sigma3){//exchange
-                dam_pr += X_child_general_int_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr += child_general_int_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
             else{  // other process is not allowed
                 // error message will be added
@@ -659,13 +659,13 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
                 dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off, tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
-                    dam_pr +=child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
+                    dam_pr +=CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
                 }
             }else if(org_isite1==org_isite3 && org_sigma1==org_sigma4 && org_sigma3==org_sigma2){
                 dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) firstprivate(i_max,X,isA_up,org_sigma1, tmp_V) shared(vec, list_1)
                 for(j=1;j<=i_max;j++){
-                    dmv = X_Spin_CisAis(j, X, isA_up, org_sigma1);
+                    dmv = child_Spin_CisAis(j, X, isA_up, org_sigma1);
                     dam_pr += vec[j]*tmp_V*dmv*conj(vec[j]);
                 }
             }
@@ -673,7 +673,7 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
                 dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, dmv) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
-                    tmp_sgn    =  X_child_exchange_spin_element(j,X,isA_up,isB_up,org_sigma2,org_sigma4,&tmp_off);
+                    tmp_sgn    =  child_exchange_spin_element(j,X,isA_up,isB_up,org_sigma2,org_sigma4,&tmp_off);
                     dmv        = vec[j]*tmp_sgn;
                     dam_pr    += conj(vec[tmp_off])*dmv;
                 }
@@ -749,10 +749,10 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
         dam_pr = 0.0;
         if(org_isite1 >X->Def.Nsite && org_isite3>X->Def.Nsite){
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-                dam_pr=X_child_CisAisCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr=child_CisAisCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr=X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
+                dam_pr=child_CisAitCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
             }
             else{
                 dam_pr=0.0;
@@ -760,10 +760,10 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
         }
         else if(org_isite3 > X->Def.Nsite || org_isite1 > X->Def.Nsite){
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-                dam_pr=X_child_CisAisCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr=child_CisAisCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr=X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
+                dam_pr=child_CisAitCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
             }
             else{
                 dam_pr=0.0;
@@ -870,35 +870,35 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
         if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){ //org_isite3 >= org_isite1 > Nsite
 
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-                dam_pr += X_GC_child_CisAisCjuAju_spin_MPIdouble( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec);
+                dam_pr += child_GC_CisAisCjuAju_spin_MPIdouble( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec);
 
             }
             else if(org_isite1 ==org_isite3 && org_sigma1 ==org_sigma4 && org_sigma2 ==org_sigma3){ //diagonal (for spin: cuadcdau=cuau)
-                dam_pr += X_GC_child_CisAis_spin_MPIdouble((org_isite1-1), org_sigma1, tmp_V, X, vec, vec);
+                dam_pr += child_GC_CisAis_spin_MPIdouble((org_isite1-1), org_sigma1, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr += X_GC_child_CisAisCjuAjv_spin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr += child_GC_CisAisCjuAjv_spin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
-                dam_pr += X_GC_child_CisAitCjuAju_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr += child_GC_CisAitCjuAju_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr +=  X_GC_child_CisAitCiuAiv_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr +=  child_GC_CisAitCiuAiv_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
         }
         else if(org_isite3>X->Def.Nsite || org_isite1>X->Def.Nsite){ //org_isite3 > Nsite >= org_isite1
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-                dam_pr += X_GC_child_CisAisCjuAju_spin_MPIsingle( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec);
+                dam_pr += child_GC_CisAisCjuAju_spin_MPIsingle( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec);
 
             }
             else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr += X_GC_child_CisAisCjuAjv_spin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr += child_GC_CisAisCjuAjv_spin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
-                dam_pr += X_GC_child_CisAitCjuAju_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr += child_GC_CisAitCjuAju_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr +=  X_GC_child_CisAitCiuAiv_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr +=  child_GC_CisAitCiuAiv_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
         }
         else{
@@ -909,25 +909,25 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
                     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec)
                     for(j=1;j<=i_max;j++){
-                        dam_pr +=GC_child_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
+                        dam_pr +=GC_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec, X);
                     }
                 }else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
                     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec)
                     for(j=1;j<=i_max;j++){
-                        dam_pr += GC_child_CisAisCitAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
+                        dam_pr += GC_CisAisCitAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
                     }
                 }else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
                     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec)
                     for(j=1;j<=i_max;j++){
-                        dam_pr += GC_child_CisAitCiuAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
+                        dam_pr += GC_CisAitCiuAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
                     }
                 }else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
                     dam_pr = 0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec)
                     for(j=1;j<=i_max;j++){
-                        dam_pr += GC_child_CisAitCiuAiv_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
+                        dam_pr += GC_CisAitCiuAiv_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec, X, &tmp_off);
                     }
                 }
             }
@@ -983,30 +983,30 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
 
       if(org_isite1 > X->Def.Nsite && org_isite3 > X->Def.Nsite){
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-                dam_pr=X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAisCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr=X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
-                dam_pr=X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAitCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr=X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
             }
         }
         else if(org_isite3 > X->Def.Nsite || org_isite1 > X->Def.Nsite){
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-                dam_pr=X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAisCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr=X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
-                dam_pr=X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAitCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
             else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-                dam_pr=X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
+                dam_pr=child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec);
             }
         }
         else{

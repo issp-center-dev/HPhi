@@ -17,7 +17,7 @@ An example of the file format is as follows.
     ====================== 
     NCoulombIntra 6  
     ====================== 
-    ========i_0LocSpn_1IteElc ====== 
+    ==== CoulombIntra ====
     ====================== 
        0  4.000000
        1  4.000000

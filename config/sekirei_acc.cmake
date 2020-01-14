@@ -20,7 +20,7 @@ set(BLA_VENDOR "Intel10_64lp" CACHE STRING "" FORCE)
 set (MAGMA_FOUND ON)
 set (MAGMA_C_LIBRARIES magma)
 # set magma installed directory
-set (MAGMA /home/issp/materiapps/tool/magma/magma-2.2.0)
+set (MAGMA /home/issp/materiapps/tool/magma/magma-2.4.0)
 include_directories(${MAGMA}/include)
 link_directories(${MAGMA}/lib)
 

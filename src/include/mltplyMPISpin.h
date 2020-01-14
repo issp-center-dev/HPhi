@@ -21,7 +21,7 @@
 #include <complex.h>
 #include "struct.h"
 
-void child_general_int_spin_MPIdouble
+void general_int_spin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
@@ -29,7 +29,7 @@ void child_general_int_spin_MPIdouble
  double complex *tmp_v1
  );
 
-double complex X_child_general_int_spin_MPIdouble
+double complex child_general_int_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -44,7 +44,7 @@ double complex X_child_general_int_spin_MPIdouble
  );
 
 
-double complex X_child_general_int_spin_TotalS_MPIdouble
+double complex child_general_int_spin_TotalS_MPIdouble
 (
  int org_isite1,
  int org_isite3,
@@ -53,7 +53,7 @@ double complex X_child_general_int_spin_TotalS_MPIdouble
  double complex *tmp_v1
  );
 
-void child_general_int_spin_MPIsingle
+void general_int_spin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,
@@ -61,7 +61,7 @@ void child_general_int_spin_MPIsingle
  double complex *tmp_v1
  );
 
-double complex X_child_general_int_spin_MPIsingle
+double complex child_general_int_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -75,7 +75,7 @@ double complex X_child_general_int_spin_MPIsingle
  double complex *tmp_v1
  );
 
-void GC_child_general_int_spin_MPIdouble
+void GC_general_int_spin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
@@ -83,7 +83,7 @@ void GC_child_general_int_spin_MPIdouble
  double complex *tmp_v1
  );
 
-void GC_child_general_int_spin_MPIsingle
+void GC_general_int_spin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,
@@ -91,7 +91,7 @@ void GC_child_general_int_spin_MPIsingle
  double complex *tmp_v1
  );
 
-void GC_child_general_int_GeneralSpin_MPIdouble
+void GC_general_int_GeneralSpin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
@@ -99,7 +99,7 @@ void GC_child_general_int_GeneralSpin_MPIdouble
  double complex *tmp_v1
  );
 
-void GC_child_general_int_GeneralSpin_MPIsingle
+void GC_general_int_GeneralSpin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,
@@ -107,7 +107,7 @@ void GC_child_general_int_GeneralSpin_MPIsingle
  double complex *tmp_v1
  );
 
-void child_general_int_GeneralSpin_MPIdouble
+void general_int_GeneralSpin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
@@ -115,7 +115,7 @@ void child_general_int_GeneralSpin_MPIdouble
  double complex *tmp_v1
  );
 
-void child_general_int_GeneralSpin_MPIsingle
+void general_int_GeneralSpin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,

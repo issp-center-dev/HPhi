@@ -33,7 +33,7 @@ void zgemm_(char *TRANSA, char *TRANSB, int *M, int *N, int *K, double complex *
  * @author Mitsuaki Kawamura (The University of Tokyo)
  * @author Youhei Yamaji (The University of Tokyo)
  */
-void child_general_int_spin_MPIBoost(
+void general_int_spin_MPIBoost(
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
   double complex *tmp_v1 /**< [in] v0 = H v1*/,
@@ -407,7 +407,7 @@ void child_general_int_spin_MPIBoost(
   }/* loop for iloop */
 
 /*
-  dam_pr= X_child_general_int_spin_MPIBoost
+  dam_pr= child_general_int_spin_MPIBoost
     (
      matJ, X, tmp_v0, tmp_v1);
   
@@ -425,5 +425,5 @@ void child_general_int_spin_MPIBoost(
   free_cd_1d_allocate(matI);
 #endif
   
-}/*void child_general_int_spin_MPIBoost*/
+}/*void general_int_spin_MPIBoost*/
 
