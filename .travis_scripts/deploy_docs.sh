@@ -60,9 +60,9 @@ fi
 cd ${ROOTDIR}/hphi-doc/manual
 mkdir -p $docdir && cd $docdir
 for lang in ja en; do
-  mkdir -p $lang/html
-  cp -r ${ROOTDIR}/hphi-doc/build/doc/${lang}/source/html/* $lang/html
-  git add $lang
+  rm -rf $lang/html
+  cp -r ${ROOTDIR}/hphi-doc/build/doc/${lang}/source/html $lang/html
+  git add $lang/html
 done
 
 git config --global user.email "hphi-dev@issp.u-tokyo.ac.jp"
