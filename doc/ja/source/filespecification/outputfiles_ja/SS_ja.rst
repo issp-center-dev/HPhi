@@ -50,14 +50,14 @@ SS.dat
 
    **形式 :** double型
 
-   **説明 :** エネルギーの期待値\ :math:`\langle H \rangle`\ 。
+   **説明 :** ハミルトニアンの期待値(エネルギー)\ :math:`\langle \mathcal{H} \rangle`\ 。
 
 -  :math:`[`\ double03\ :math:`]`
 
    **形式 :** double型
 
    **説明 :**
-   ハミルトニアンの2乗の期待値\ :math:`\langle H^2 \rangle`\ 。
+   ハミルトニアンの2乗の期待値\ :math:`\langle \mathcal{H}^2 \rangle`\ 。
 
 -  :math:`[`\ double04\ :math:`]`
 
@@ -71,7 +71,7 @@ SS.dat
 
    **形式 :** double型
 
-   **説明 :** 粒子数\ :math:`\langle {\hat n} \rangle`\ 。
+   **説明 :** 粒子数\ :math:`\langle \sum_i n_i \rangle`\ 。
 
 -  :math:`[`\ int01\ :math:`]`
 

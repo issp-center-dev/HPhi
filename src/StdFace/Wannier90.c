@@ -28,8 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "setmemory.h"
 
 void _calc_inverse_matrix(double cutoff_Rvec[][3], double inverse_matrix[][3]) {
-  double NMatrix[3][3] = {{},
-                          {}};
+  double NMatrix[3][3];
   int i, j;
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
@@ -65,8 +64,9 @@ void _calc_inverse_matrix(double cutoff_Rvec[][3], double inverse_matrix[][3]) {
 
 int _check_in_box(int *rvec, double inverse_matrix[][3])
 {
-  double judge_vec[3]={};
+  double judge_vec[3];
   int i, j;
+  for (i =0; i<3; i++) judge_vec[i] = 0; 
   for (i =0; i<3; i++) {
     for (j = 0; j < 3; j++) {
       judge_vec[i] += rvec[j]*inverse_matrix[j][i] ;
@@ -149,10 +149,16 @@ static void read_W90(
   double dtmp[2], dR[3], length;
   char ctmp[256], *ctmp2;
   double complex ***Mat_tot;
-  double inverse_rvec[3][3]={{},{}};
+  double inverse_rvec[3][3];
   double *Weight_tot;
   int **indx_tot,*Band_lattice, *Model_lattice;
 
+  for (ii = 0; ii < 3; ii++){
+    for (jj = 0; jj < 3; jj++){
+      inverse_rvec[ii][jj] = 0;
+    }
+  }
+  
   /*
   Header part
   */
@@ -551,7 +557,7 @@ void StdFace_Wannier90(
 {
   int isite, jsite, ispin, ntransMax, nintrMax;
   int iL, iW, iH, kCell, it, ii;
-  double Jtmp[3][3] = { {0.0} };
+  double Jtmp[3][3] = {0.0};
   FILE *fp;
   double complex Cphase, DenMat0;
   double dR[3], *Uspin;

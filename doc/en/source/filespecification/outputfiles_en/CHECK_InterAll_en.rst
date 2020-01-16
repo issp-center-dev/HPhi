@@ -8,7 +8,7 @@ general two-body interactions,
 
 .. math:: 
 
-   \mathcal H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}.
+   \sum_{i,j, \sigma_1, \sigma_2} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}.
 
 An example of the file format is as follows.
 

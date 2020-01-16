@@ -8,7 +8,7 @@ PairLift指定ファイル
 PairLiftカップリングをハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。 付け加える項は以下で与えられます。
 
-.. math:: H+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}+c_ {i \downarrow}^{\dagger}c_{i\uparrow}c_{j \downarrow}^{\dagger}c_{j \uparrow})
+.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}+c_ {i \downarrow}^{\dagger}c_{i\uparrow}c_{j \downarrow}^{\dagger}c_{j \uparrow})
 
 以下にファイル例を記載します。
 

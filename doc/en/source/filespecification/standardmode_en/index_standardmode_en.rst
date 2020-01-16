@@ -9,11 +9,11 @@ An example of an input file for the standard mode is as follows:
 ::
 
     W = 2
-     L = 4
-     model = "spin"
-     method = "Lanczos"
+    L = 4
+    model = "spin"
+    method = "Lanczos"
 
-     lattice = "triangular lattice"
+    lattice = "triangular lattice"
     //mu = 1.0
     // t = -1.0
     // t' = -0.5

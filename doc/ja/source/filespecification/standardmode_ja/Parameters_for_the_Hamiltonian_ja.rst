@@ -276,7 +276,7 @@ Table :numref:`table_interactions` に表します。
 
 *  ``phase0``, ``phase1``
 
-   **形式 :** 実数 (デフォルトでは``0.0``)
+   **形式 :** 実数 (デフォルトでは ``0.0``)
 
    **説明 :**
    計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます
@@ -288,8 +288,8 @@ Table :numref:`table_interactions` に表します。
 
    .. math::
 
-          \exp(i \times {\rm phase0}\times\pi/180) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
-          + \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
+          \exp(i \times {\rm phase0}\times\pi/180) \times t {c}_{j \sigma}^\dagger {c}_{i \sigma}
+          + \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {c}_{i \sigma}^\dagger {c}_{j \sigma}
 
 .. raw:: latex
 

@@ -5,18 +5,22 @@
 
    存在しないキーワードを指定した場合に表示され、プログラムは停止します。
 
--  ``"ERROR !  Keyword`` ``is duplicated !``
+-  ``"ERROR !  Keyword`` *keyword名* ``is duplicated !``
 
    同じキーワードを2回指定した場合に表示され、プログラムは停止します。
 
--  ``ERROR ! Unsupported Solver :``  *solver*
-
--  ``ERROR ! Unsupported Model :``  *model*
+-  ``ERROR ! Unsupported Solver :``  *solver名*
+  
+   ``method`` にサポートしていないパラメーターを入れた場合、プログラムは停止します。
 
 -  | ``Sorry, this system is unsupported in the STANDARD MODE...``
-   | ``Please use the EXPART MODE, or write a NEW FUNCTION and post it us.``
+   | ``Sorry, specified combination,``
+   |   ``MODEL :`` *model名*
+   |   ``LATTICE :`` *lattice名*
+   | ``is unsupported in the STANDARD MODE...``
+   | ``Please use the EXPART MODE, or write a NEW FUNCTION and post us.``
 
-   ``method``, ``model``, ``lattice``\ のどれかまたは複数に
+   ``model``, ``lattice``\ のどれかまたは複数に
    サポートしていないパラメーターを入れた場合、プログラムは停止します。
 
 -  ``ERROR ! abs(2 * Sz) > nsite in Hubbard model !``
@@ -47,17 +51,17 @@
    入力されたサイト数、電子数、全スピン\ :math:`z`\ 成分が実現できない組み合わせである場合
    (例えば、電子数がサイト数の2倍よりも大きい、など)プログラムは停止します。
 
--  | ``Check ! `` `` is SPECIFIED but will NOT be USED.``
-   | ``        Please COMMENT-OUT this line``
-   | ``        or check this input is REALLY APPROPRIATE for your purpose !``
+-  | ``Check !``\ *keyword名*\ ``is SPECIFIED but will NOT be USED.``
+   | ``Please COMMENT-OUT this line``
+   | ``or check this input is REALLY APPROPRIATE for your purpose !``
 
    使われないパラメーターを指定した時には、ユーザーに入力ファイルの確認を促しプログラムは停止します。
    実際に必要のないパラメーターの場合は該当する行を削除もしくはコメントアウトしてください。
 
--  ``ERROR ! ``\ `` is NOT specified !``
+-  ``ERROR !``\ *keyword名*\ ``is NOT specified !``
 
    必ず指定しなければならないキーワードが指定されていない場合にはプログラムは停止します。
 
--  ``=`` ``######  DEFAULT VALUE IS USED  ######``
+-  *keyword名* ``=`` *value名* ``######  DEFAULT VALUE IS USED  ######``
 
    これはエラーメッセージではありません。入力ファイルで指定がなかったためにデフォルト値が使われたことを知らせるメッセージです。
