@@ -7,6 +7,7 @@ matrix:
       - sudo apt-get update
       - sudo apt-get install -y gfortran liblapack-dev cmake
       - pip install numpy --user
+      - export ROOTDIR=`pwd`
     install:
       - mkdir build
       - cd build
@@ -37,6 +38,9 @@ matrix:
       - make
       - export OMP_NUM_THREADS=3
       - make test MPIRUN="mpiexec -np 16"
+    after_script:
+      - cd ${ROOTDIR}
+      - /bin/bash -x ${ROOTDIR}/.travis_scripts/deploy_docs.sh
   - os: osx
     osx_image: xcode10.3
     language: c
@@ -57,25 +61,25 @@ matrix:
       - make
       - export OMP_NUM_THREADS=1
       - make test
-      #- rm -r test
-      #- make
-      #- export OMP_NUM_THREADS=3
-      #- make test
-      #- rm -r *
-      #- brew install open-mpi
-      #- cmake ../
-      #- make
-      #- export OMP_NUM_THREADS=1
-      #- MPIRUN="mpiexec -np 4" ctest -V
-      #- rm -r test
-      #- make
-      #- export OMP_NUM_THREADS=3
-      #- MPIRUN="mpirun -np 4" ctest -V
-      #- rm -r test
-      #- make
-      #- export OMP_NUM_THREADS=1
-      #- make test MPIRUN="mpiexec -np 16"
-      #- rm -r test
-      #- make
-      #- export OMP_NUM_THREADS=3
-      #- make test MPIRUN="mpiexec -np 16"
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=3
+      # - make test
+      # - rm -r *
+      # - brew install open-mpi
+      # - cmake ../
+      # - make
+      # - export OMP_NUM_THREADS=1
+      # - MPIRUN="mpiexec -np 4" ctest -V
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=3
+      # - MPIRUN="mpirun -np 4" ctest -V
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=1
+      # - make test MPIRUN="mpiexec -np 16"
+      # - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=3
+      # - make test MPIRUN="mpiexec -np 16"
