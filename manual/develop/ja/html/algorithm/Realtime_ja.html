@@ -1,0 +1,145 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>5.5. 実時間発展 &#8212; HΦ マニュアル  ドキュメント</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="5.6. Bogoliubov表現" href="Bogoliubov_ja.html" />
+    <link rel="prev" title="5.4. 動的グリーン関数" href="DynamicalGreen_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>5.5. 実時間発展<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><span class="math notranslate nohighlight">\({\cal H}\Phi\)</span>では初期波動関数を<span class="math notranslate nohighlight">\(|\Phi(t_0)\rangle\)</span>として、</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-realtime-ja-0">
+<span class="eqno">(5.17)<a class="headerlink" href="#equation-algorithm-realtime-ja-0" title="この数式へのパーマリンク">¶</a></span>\[|\Phi (t_n)\rangle = e^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle\]</div>
+<p>の関係を用いて逐次時間発展の計算をしています。
+ここで時刻 <span class="math notranslate nohighlight">\(t_n = \sum_{j=1}^n  \Delta t_j\)</span> です。
+実際の計算では<span class="math notranslate nohighlight">\(e^{-i {\cal H}  \Delta t_n}\)</span>を</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-realtime-ja-1">
+<span class="eqno">(5.18)<a class="headerlink" href="#equation-algorithm-realtime-ja-1" title="この数式へのパーマリンク">¶</a></span>\[e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l\]</div>
+<p>と近似しています。展開次数の上限<span class="math notranslate nohighlight">\(m\)</span>は<code class="docutils literal notranslate"><span class="pre">ModPara</span></code>ファイルの<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>で指定することができます。
+展開次数が十分かどうかは、
+ノルム<span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\Phi (t_n)\rangle=1\)</span>が成立しているかで検証することができます。</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="al-index.html">5. アルゴリズム</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Lanczos_ja.html">5.1. Lanczos法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FullDiagonalization_ja.html">5.2. 完全対角化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TPQ_ja.html">5.3. 熱的純粋量子状態による有限温度計算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DynamicalGreen_ja.html">5.4. 動的グリーン関数</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.5. 実時間発展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Bogoliubov_ja.html">5.6. Bogoliubov表現</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="al-index.html">5. アルゴリズム</a><ul>
+      <li>Previous: <a href="DynamicalGreen_ja.html" title="前の章へ">5.4. 動的グリーン関数</a></li>
+      <li>Next: <a href="Bogoliubov_ja.html" title="次の章へ">5.6. Bogoliubov表現</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/algorithm/Realtime_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
