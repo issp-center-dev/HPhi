@@ -155,7 +155,7 @@ latex_documents = [
 ]
 
 latex_docclass =  {'manual': 'jsbook'}
-latex_logo = "../figs/logo_HPhi.png"
+latex_logo = "../../figs/logo_HPhi.png"
 
 # -- Options for manual page output ---------------------------------------
 

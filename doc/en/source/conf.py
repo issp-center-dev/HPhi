@@ -155,7 +155,7 @@ latex_documents = [
     ('index', 'userguide_HPhi_en.tex', u'H\\(\\Phi\\) Documentation',
      u'University of Tokyo', 'manual', 'True'),
 ]
-latex_logo = "../figs/logo_HPhi.png"
+latex_logo = "../../figs/logo_HPhi.png"
 
 # -- Options for manual page output ---------------------------------------
 
