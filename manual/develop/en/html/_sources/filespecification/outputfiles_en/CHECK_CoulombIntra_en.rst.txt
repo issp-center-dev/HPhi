@@ -8,7 +8,7 @@ This file is outputted to check the input of the on-site interactions
 
 .. math:: 
 
-   \mathcal H+=\sum_{i} U_i n_{i\uparrow} n_{j \downarrow}.
+   \mathcal \sum_{i} U_i n_{i\uparrow} n_{i \downarrow}.
 
 An example of the file format is as follows.
 

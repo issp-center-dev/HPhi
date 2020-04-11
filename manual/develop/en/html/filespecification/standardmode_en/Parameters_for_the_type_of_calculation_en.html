@@ -46,15 +46,15 @@ the expressions above denote the canonical ensemble of the Fermion in
 the Hubbard model</p>
 <div class="math notranslate nohighlight" id="equation-fml4-1-hubbard">
 <span class="eqno">(4.1)<a class="headerlink" href="#equation-fml4-1-hubbard" title="Permalink to this equation">¶</a></span>\[\mathcal H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
-- \sum_{i \neq j \sigma} t_{i j} c^\dagger_{i \sigma} c_{j \sigma}
+- \sum_{i \neq j, \sigma} t_{i j} c^\dagger_{i \sigma} c_{j \sigma}
 + \sum_{i} U n_{i \uparrow} n_{i \downarrow}
 + \sum_{i \neq j} V_{i j} n_{i} n_{j},\]</div>
 <p>the canonical ensemble in the Spin
-model(<span class="math notranslate nohighlight">\(\{\sigma_1, \sigma_2\}={x, y, z}\)</span>)</p>
+model(<span class="math notranslate nohighlight">\(\{\alpha, \beta\}=\{x, y, z\}\)</span>)</p>
 <div class="math notranslate nohighlight" id="equation-fml4-1-spin">
-<span class="eqno">(4.2)<a class="headerlink" href="#equation-fml4-1-spin" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathcal H &amp;= -h \sum_{i} S_{i z} - \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-fml4-1-spin" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathcal H &amp;= -h \sum_{i} S^z_{i} - \Gamma \sum_{i} S^x_{i} + D \sum_{i} S^z_{i} S^z_{i}
 \nonumber \\
-&amp;+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,\end{split}\]</div>
+&amp;+ \sum_{i j, \alpha}J_{i j \alpha} S^\alpha_{i} S^\alpha_{j}+ \sum_{i j, \alpha \neq \beta} J_{i j \alpha \beta} S_{i}^\alpha S_{j}^\beta,\end{split}\]</div>
 <p>the canonical ensemble in the Kondo lattice model</p>
 <div class="math notranslate nohighlight" id="equation-fml4-1-kondo">
 <span class="eqno">(4.3)<a class="headerlink" href="#equation-fml4-1-kondo" title="Permalink to this equation">¶</a></span>\[\mathcal H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
@@ -62,7 +62,7 @@ model(<span class="math notranslate nohighlight">\(\{\sigma_1, \sigma_2\}={x, y,
 + \frac{J}{2} \sum_{i} \left\{
 S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 + S_{i}^{-} c_{i \uparrow}^\dagger c_{i \downarrow}
-+ S_{i z} (n_{i \uparrow} - n_{i \downarrow})
++ S_{i}^z (n_{i \uparrow} - n_{i \downarrow})
 \right\},\]</div>
 <p>the grand canonical ensemble of the Fermion in the Hubbard model
 [Eqn. <a class="reference internal" href="#equation-fml4-1-hubbard">(4.1)</a> ], the grand canonical
@@ -78,7 +78,7 @@ However, supported models and MPI processes are highly limited. See
 <ul>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">method</span></code></p>
 <p><strong>Type :</strong> String (choose from <code class="docutils literal notranslate"><span class="pre">&quot;Lanczos&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;TPQ&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;Full</span> <span class="pre">Diag&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">Time</span> <span class="pre">Evolution</span></code>)</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;Full</span> <span class="pre">Diag&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Time</span> <span class="pre">Evolution&quot;</span></code>)</p>
 <p><strong>Description :</strong> The calculation type is specified with this
 parameter; the above expressions above denote the single eigenstate
 calculation by using the Lanczos method, at the finite-temperature by
@@ -98,16 +98,16 @@ is employed with the help of the <span class="math notranslate nohighlight">\(K\
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">lattice</span></code></p>
 <p><strong>Type :</strong> String (choose from <code class="docutils literal notranslate"><span class="pre">&quot;Chain</span> <span class="pre">Lattice&quot;</span></code>,
 <code class="docutils literal notranslate"><span class="pre">&quot;Square</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Triangular</span> <span class="pre">Lattice&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Ladder&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Kagome&quot;</span></code>)</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Kagome&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Ladder&quot;</span></code>)</p>
 <p><strong>Description :</strong> The lattice shape is specified with this parameter;
 the expressions above denote the one-dimensional chain lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> (a)),
 the two-dimensional square lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> (b)),
 the two-dimensional triangular lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> (c)),
 the two-dimensional anisotropic honeycomb lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span class="std std-numref">Fig. 4.2</span></a> ),
-the ladder lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> ),
-and the Kagome Lattice( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> ) respectively.</p>
+the Kagome Lattice( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> ),
+and the ladder lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> ) respectively.</p>
 <p>In <code class="docutils literal notranslate"><span class="pre">method=&quot;SpinGCCMA&quot;</span></code>, only <code class="docutils literal notranslate"><span class="pre">&quot;Chain</span> <span class="pre">Lattice&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Ladder&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;Kagome&quot;</span></code> are
+<code class="docutils literal notranslate"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Kagome&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;Ladder&quot;</span></code> are
 supported. The limits of <span class="math notranslate nohighlight">\(L\)</span>, <span class="math notranslate nohighlight">\(W\)</span>, and the number of MPI
 processes (<span class="math notranslate nohighlight">\(N_{\rm proc}\)</span>) are as follows:</p>
 <ul>
@@ -120,13 +120,13 @@ condition <span class="math notranslate nohighlight">\(n\geq1\)</span>), <span c
 <p><span class="math notranslate nohighlight">\(W=3, L \geq 2\)</span>, <span class="math notranslate nohighlight">\(N_{\rm proc} \leq 2(L=2)\)</span>,
 <span class="math notranslate nohighlight">\(N_{\rm proc} \leq 64(L&gt;2)\)</span>.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">&quot;Ladder&quot;</span></code></p>
-<p><span class="math notranslate nohighlight">\(W=2, L = 2n\)</span> (where <span class="math notranslate nohighlight">\(n\)</span> is an integer number under
-the condition <span class="math notranslate nohighlight">\(n\geq4\)</span>), <span class="math notranslate nohighlight">\(N_{\rm proc} \leq 2^{L-4}\)</span>.</p>
-</li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">&quot;Kagome&quot;</span></code></p>
 <p><span class="math notranslate nohighlight">\(W=3, L \geq 2\)</span>, <span class="math notranslate nohighlight">\(N_{\rm proc} \leq 1(L=2)\)</span>,
 <span class="math notranslate nohighlight">\(N_{\rm proc} \leq 512(L&gt;2)\)</span>.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">&quot;Ladder&quot;</span></code></p>
+<p><span class="math notranslate nohighlight">\(W=2, L = 2n\)</span> (where <span class="math notranslate nohighlight">\(n\)</span> is an integer number under
+the condition <span class="math notranslate nohighlight">\(n\geq4\)</span>), <span class="math notranslate nohighlight">\(N_{\rm proc} \leq 2^{L-4}\)</span>.</p>
 </li>
 </ul>
 </li>
@@ -158,7 +158,7 @@ the condition <span class="math notranslate nohighlight">\(n\geq4\)</span>), <sp
 <table class="docutils footnote" frame="void" id="id12" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>A.Frommer, Computing <strong>70</strong>, 87{109 (2003).</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>A.Frommer, Computing <strong>70</strong>, 87-109 (2003).</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id13" rules="none">

@@ -39,7 +39,7 @@
 <p>This file is outputted to check the input of the diagonal components of
 general two-body interactions,</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-outputfiles-en-check-interall-en-0">
-<span class="eqno">(4.20)<a class="headerlink" href="#equation-filespecification-outputfiles-en-check-interall-en-0" title="Permalink to this equation">¶</a></span>\[\mathcal H+=\sum_{i,j, \sigma} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}.\]</div>
+<span class="eqno">(4.20)<a class="headerlink" href="#equation-filespecification-outputfiles-en-check-interall-en-0" title="Permalink to this equation">¶</a></span>\[\sum_{i,j, \sigma_1, \sigma_2} I_{iijj\sigma_1\sigma_1\sigma_2\sigma_2} c_{i\sigma_1}^{\dagger}c_{i\sigma_1}c_{i\sigma_2}^{\dagger}c_{i\sigma_2}.\]</div>
 <p>An example of the file format is as follows.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i=0 isite1=1 A_spin=0 isite2=2 B_spin=0 tmp_V=0.500000
 i=1 isite1=1 A_spin=0 isite2=2 B_spin=1 tmp_V=-0.500000
@@ -158,6 +158,7 @@ correspond to <span class="math notranslate nohighlight">\(\sigma_1\)</span> and
 <li class="toctree-l3"><a class="reference internal" href="recalcvec_en.html">4.3.30. recalcvec.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="TMcomponents_en.html">4.3.31. TMcomponents.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="excitedvec_en.html">4.3.32. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_en.html">4.3.33. residual.dat</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>

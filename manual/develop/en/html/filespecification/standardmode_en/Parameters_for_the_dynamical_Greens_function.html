@@ -41,7 +41,7 @@
 <blockquote>
 <div><p><strong>Type :</strong> String(choose from <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Normal&quot;</span></code>,
 <code class="docutils literal notranslate"><span class="pre">&quot;NoIteration&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code>. <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code> as default.)</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code> as default.)</p>
 <p><strong>Description :</strong> The condition for the calculation of the dynamical
 Green’s function is specified. <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code> for omitting the
 calculation of the dynamical Green’s function. <code class="docutils literal notranslate"><span class="pre">&quot;Normal&quot;</span></code> for
@@ -67,13 +67,13 @@ help of the <span class="math notranslate nohighlight">\(K\omega\)</span> librar
 <code class="docutils literal notranslate"><span class="pre">&quot;up&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;down&quot;</span></code>. <code class="docutils literal notranslate"><span class="pre">&quot;SzSz&quot;</span></code> as default.)</p>
 <p><strong>Description :</strong> The type of the dynamical Green’s function to be
 computed is specified. <code class="docutils literal notranslate"><span class="pre">&quot;SzSz&quot;</span></code> for
-<span class="math notranslate nohighlight">\(\langle {\hat S}_{z q} {\hat S}_{z q}\rangle\)</span>, <code class="docutils literal notranslate"><span class="pre">&quot;S+S-&quot;</span></code> for
-<span class="math notranslate nohighlight">\(\langle {\hat S}^{+}_{q} {\hat S}^{-}_{q}\rangle\)</span>,
-<code class="docutils literal notranslate"><span class="pre">&quot;Density&quot;</span></code> for <span class="math notranslate nohighlight">\(\langle {\hat n}_{q} {\hat n}_{q}\rangle\)</span>,
+<span class="math notranslate nohighlight">\(\langle {S}^z_{-\bf q} {S}^z_{\bf q}\rangle\)</span>, <code class="docutils literal notranslate"><span class="pre">&quot;S+S-&quot;</span></code> for
+<span class="math notranslate nohighlight">\(\langle {S}^{+}_{-\bf q} {S}^{-}_{\bf q}\rangle\)</span>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Density&quot;</span></code> for <span class="math notranslate nohighlight">\(\langle {n}_{-\bf q} {n}_{\bf q}\rangle\)</span>,
 <code class="docutils literal notranslate"><span class="pre">&quot;up&quot;</span></code> for
-<span class="math notranslate nohighlight">\(\langle {\hat c}^{\dagger}_{q \uparrow} {\hat c}_{q \uparrow}\rangle\)</span>,
+<span class="math notranslate nohighlight">\(\langle {c}^{\dagger}_{{\bf q} \uparrow} {c}_{{\bf q} \uparrow}\rangle\)</span>,
 <code class="docutils literal notranslate"><span class="pre">&quot;down&quot;</span></code> for
-<span class="math notranslate nohighlight">\(\langle {\hat c}^{\dagger}_{q \downarrow} {\hat c}_{q \downarrow}\rangle\)</span>.</p>
+<span class="math notranslate nohighlight">\(\langle {c}^{\dagger}_{{\bf q} \downarrow} {c}_{{\bf q} \downarrow}\rangle\)</span>.</p>
 </div></blockquote>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">SpectrumQW</span></code>, <code class="docutils literal notranslate"><span class="pre">SpectrumQL</span></code></p>
@@ -82,7 +82,7 @@ computed is specified. <code class="docutils literal notranslate"><span class="p
 dynamical Green’s function is specified. The reciprocal lattice
 vector is computed from the direct lattice vector shown in
 <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span class="std std-numref">Fig. 4.2</span></a> ,
-<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> .</p>
+<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> .</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
 <p><strong>Type :</strong> Double (<code class="docutils literal notranslate"><span class="pre">0.0</span></code> as default.)</p>
@@ -110,7 +110,7 @@ default.)</p>
 <table class="docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>A. Frommer, Computing <strong>70</strong>, 87{109 (2003).</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>A. Frommer, Computing <strong>70</strong>, 87-109 (2003).</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id5" rules="none">

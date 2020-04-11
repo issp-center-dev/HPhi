@@ -153,10 +153,10 @@ initial vector.</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">CalcHS</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
-<p><strong>Description :</strong> If CalcHS=1, an efficient algorithm for generating
+<p><strong>Description :</strong> If <code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>, an efficient algorithm for generating
 the restricted Hilbert space with the specified quantum number is
 used (Details of algorithm is shown in
-<a class="reference external" href="http://qlms.github.io/HPhi/develop/tips.pdf">http://qlms.github.io/HPhi/develop/tips.pdf</a> [in Japanese]). Default
+<a class="reference external" href="http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf">http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf</a> [in Japanese]). Default
 value is 1 and the efficient algorithm is used.</p>
 </li>
 </ul>
@@ -206,7 +206,7 @@ and a first excited state when <code class="docutils literal notranslate"><span 
 <p><strong>Description :</strong> The maximum number of iteration steps in the
 calculation. When the convergence within the specified accuracy is
 satisfied, the calculation is completed before a step reaches
-Lanczos_max. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
 must be larger than that of the previous calculation.</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
@@ -229,7 +229,7 @@ must be larger than that of the previous calculation.</p>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> An integer giving <span class="math notranslate nohighlight">\(l\)</span> of
-<span class="math notranslate nohighlight">\(l=\hat{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
+<span class="math notranslate nohighlight">\(l-{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
 <p><strong>Type :</strong> Int</p>
@@ -298,7 +298,7 @@ specified with this parameter. In the case of restart calculation,
 <p><strong>Description :</strong> An integer giving the expansion order <span class="math notranslate nohighlight">\(n\)</span> for
 real time evolution method;</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-0">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-0" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n .\]</div>
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-0" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n .\]</div>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>

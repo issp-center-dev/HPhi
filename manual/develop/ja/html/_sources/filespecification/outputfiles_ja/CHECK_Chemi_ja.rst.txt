@@ -7,7 +7,7 @@ CHECK\_Chemi.dat
 
 Hamiltonianのうち化学ポテンシャル
 
-.. math:: H+=\sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}
+.. math:: \sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}
 
 に関する入力確認を行います。\ :math:`\mu_{i\sigma}`\ が出力されます。
 以下にファイル例を記載します。

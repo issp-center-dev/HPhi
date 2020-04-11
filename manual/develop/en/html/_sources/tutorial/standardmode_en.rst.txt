@@ -16,9 +16,9 @@ In this case, we treat the two-dimensional antiferromagnetic Heisenberg model th
 
 .. math::
 
-   \hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)
+  {\mathcal H}=J \sum_{i,j=1}^{4} ({\bf S }_{i j} \cdot {\bf S }_{i+1 j} + {\bf S }_{i j} \cdot {\bf S }_{i j+1}),
 
-where we use the periodic boundary condition :math:`(S_{15}=S_{51}= S_{11})`.
+where we use the periodic boundary condition :math:`({\bf S}_{15}={\bf S}_{51}= {\bf S}_{11})`.
 
 The input file is as follows::
 

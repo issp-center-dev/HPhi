@@ -68,8 +68,8 @@ PairExcitation  pair.def
 <div class="section" id="setting-a-calculation-mode">
 <h3><strong>Setting a calculation mode</strong><a class="headerlink" href="#setting-a-calculation-mode" title="Permalink to this headline">¶</a></h3>
 <p>The calculation mode is set in a CalcMod file (in this sample file, calcmod.def). The contents of the files are as follows.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG
-#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ..
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, ...
+#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ...
 #Restart = 0:None, 1:Save, 2:Restart&amp;Save, 3:Restart
 #CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, ...
 CalcType   3
@@ -118,7 +118,7 @@ OmegaOrg       0.0 0.0
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>================================
 NlocalSpin    16
 ================================
-========i_0LocSpn_1IteElc ======
+========i_0IteElc_1LocSpn ======
 ================================
     0      1
     1      1
@@ -136,9 +136,9 @@ NlocalSpin    16
 <h2>3.2.3. Files for constructing Hamiltonian<a class="headerlink" href="#files-for-constructing-hamiltonian" title="Permalink to this headline">¶</a></h2>
 <p>After setting the basic parameters, we create input files for constructing the Hamiltonian. Since the calculations are performed by using the representation of the fermion operators in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, we must rewrite the spin operator. For example,  in the case of <span class="math notranslate nohighlight">\(S = 1/2\)</span>, we rewrite the equation by using the relation</p>
 <div class="math notranslate nohighlight" id="equation-tutorial-expertmode-en-0">
-<span class="eqno">(3.2)<a class="headerlink" href="#equation-tutorial-expertmode-en-0" title="Permalink to this equation">¶</a></span>\[\begin{split}S_z^{(i)}&amp;=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
-S_+^{(i)}&amp;=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
-S_-^{(i)}&amp;=c_{i\downarrow}^{\dagger}c_{i\uparrow}.\end{split}\]</div>
+<span class="eqno">(3.2)<a class="headerlink" href="#equation-tutorial-expertmode-en-0" title="Permalink to this equation">¶</a></span>\[\begin{split}S^z_{i}&amp;=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
+S^+_{i}&amp;=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
+S^-_{i}&amp;=c_{i\downarrow}^{\dagger}c_{i\uparrow}.\end{split}\]</div>
 <div class="section" id="setting-transfer-integrals">
 <h3><strong>Setting transfer integrals</strong><a class="headerlink" href="#setting-transfer-integrals" title="Permalink to this headline">¶</a></h3>
 <p>In a Trans file (in this sample, zTrans.def), we set the transfer part of the Hamiltonian,</p>
@@ -187,10 +187,10 @@ NInterAll      96
 </div>
 <p>Here, we explain the interaction between site <span class="math notranslate nohighlight">\(i\)</span> and site <span class="math notranslate nohighlight">\(j\)</span> in the case of <span class="math notranslate nohighlight">\(S = 1/2\)</span>, for simplicity. Using fermion operators, the interaction terms for the spin operators can be rewritten as</p>
 <div class="math notranslate nohighlight" id="equation-tutorial-expertmode-en-3">
-<span class="eqno">(3.5)<a class="headerlink" href="#equation-tutorial-expertmode-en-3" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathcal{H}_{i,i+1}&amp;=J(S_x^{(i)}S_x^{(i+1)}+S_y^{(i)}S_y^{(i+1)}+S_z^{(i)}S_z^{(i+1)}) \nonumber\\
-&amp;=J \left( \frac{1}{2}S_+^{(i)}S_-^{(i+1)}+\frac{1}{2}S_-^{(i)}S_+^{(i+1)}+S_z^{(i)}S_z^{(i+1)} \right) \nonumber\\
+<span class="eqno">(3.5)<a class="headerlink" href="#equation-tutorial-expertmode-en-3" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathcal{H}_{i,i+1}&amp;=J(S^x_{i}S^x_{i+1}+S^y_{i}S^y_{i+1}+S^z_{i}S^z_{i+1}) \nonumber\\
+&amp;=J \left( \frac{1}{2}S^+_{i}S^-_{i+1}+\frac{1}{2}S^-_{i}S^+_{i+1}+S^z_{i}S^z_{i+1} \right) \nonumber\\
 &amp;=J \left[ \frac{1}{2}c_{i\uparrow}^{\dagger}c_{i\downarrow}c_{i+1\downarrow}^{\dagger}c_{i+1\uparrow}+\frac{1}{2}c_{i\downarrow}^{\dagger}c_{i\uparrow}c_{i+1\uparrow}^{\dagger}c_{i+1\downarrow}+\frac{1}{4}(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})(c_{i+1\uparrow}^{\dagger}c_{i+1\uparrow}-c_{i+1\downarrow}^{\dagger}c_{i+1\downarrow}) \right]. \nonumber\end{split}\]</div>
-<p>Thus, the interaction <span class="math notranslate nohighlight">\(S_z^{(i)}S_z^{(i+1)}\)</span> for <span class="math notranslate nohighlight">\(J=2\)</span> can be written as</p>
+<p>Thus, the interaction <span class="math notranslate nohighlight">\(S^z_{i}S^z_{i+1}\)</span> for <span class="math notranslate nohighlight">\(J=2\)</span> can be written as</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i     0     i     0    i+1     0    i+1     0   0.500000  0.000000
 i     0     i     0    i+1     1    i+1     1  -0.500000  0.000000
 i     1     i     1    i+1     0    i+1     0  -0.500000  0.000000

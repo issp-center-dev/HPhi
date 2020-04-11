@@ -318,8 +318,8 @@ Non-local terms [other than Ladder ( :numref:`fig_chap04_1_lattice` , :numref:`f
 
    .. math::
 
-          \exp(i \times {\rm phase0}\times\pi/180) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
-          + \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}
+          \exp(i \times {\rm phase0}\times\pi/180) \times t {c}_{j \sigma}^\dagger {c}_{i \sigma}
+          + \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {c}_{i \sigma}^\dagger {c}_{j \sigma}
 
 .. raw:: latex
 

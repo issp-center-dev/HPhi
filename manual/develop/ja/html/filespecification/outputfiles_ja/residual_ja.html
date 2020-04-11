@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>4.3.5. CHECK_INTER_U.dat &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>4.3.33. residual.dat &#8212; HΦ マニュアル  ドキュメント</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -17,8 +17,8 @@
     <script type="text/javascript" src="../../_static/translations.js"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
-    <link rel="next" title="4.3.6. CHECK_Memory.dat" href="CHECK_Memory_ja.html" />
-    <link rel="prev" title="4.3.4. CHECK_Hund.dat" href="CHECK_Hund_ja.html" />
+    <link rel="next" title="4.4. エラーメッセージ一覧" href="../error_ja/error_ja.html" />
+    <link rel="prev" title="4.3.32. excitedvec.dat" href="excitedvec_ja.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -35,48 +35,49 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="check-inter-u-dat">
-<h1>4.3.5. CHECK_INTER_U.dat<a class="headerlink" href="#check-inter-u-dat" title="このヘッドラインへのパーマリンク">¶</a></h1>
-<p>Hamiltonianのオフサイトクーロン相互作用</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-outputfiles-ja-check-inter-u-ja-0">
-<span class="eqno">(4.21)<a class="headerlink" href="#equation-filespecification-outputfiles-ja-check-inter-u-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\sum_{i,j} V_{ij} n_{i} n_{j}\]</div>
-<p>に関する入力確認を行います。<span class="math notranslate nohighlight">\(V_{ij}\)</span>が出力されます。
-以下にファイル例を記載します。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i=0 isite1=1 isite2=2 tmp_V=-0.125000
-i=1 isite1=2 isite2=3 tmp_V=-0.125000
-i=2 isite1=3 isite2=4 tmp_V=-0.125000
-i=3 isite1=4 isite2=5 tmp_V=-0.125000
-i=4 isite1=5 isite2=6 tmp_V=-0.125000
-i=5 isite1=6 isite2=1 tmp_V=-0.125000
-</pre></div>
-</div>
+  <div class="section" id="residual-dat">
+<span id="subsec-residual"></span><h1>4.3.33. residual.dat<a class="headerlink" href="#residual-dat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">method</span></code>=<code class="docutils literal notranslate"><span class="pre">CG</span></code>(<code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>ファイルで<code class="docutils literal notranslate"><span class="pre">CalcType</span></code>が3の場合)を用いた動的グリーン関数の計算のステップ数に依存した途中結果が出力されます。
+ファイル名およびファイル形式は以下の通りです。</p>
 <div class="section" id="id1">
-<h2>ファイル形式<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>以下のようなファイル形式をとります。</p>
+<h2>ファイル名<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul class="simple">
-<li>i=<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span> isite1=<span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>
-isite2=<span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span>
-tmp_V=<span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></li>
+<li>residual.dat</li>
 </ul>
 </div>
 <div class="section" id="id2">
-<h2>パラメータ<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2>ファイル形式<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li>1行目-<code class="docutils literal notranslate"><span class="pre">NOmega</span></code>行目：<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>
+<span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>
+<span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>double04<span class="math notranslate nohighlight">\(]\)</span></li>
+<li><code class="docutils literal notranslate"><span class="pre">NOmega</span></code>+1行目：空行</li>
+<li>以下繰り返し</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>パラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
 <li><p class="first"><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> int型</p>
-<p><strong>説明 :</strong> 入力番号。</p>
-</li>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>, <span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span></p>
-<p><strong>形式 :</strong> int型</p>
-<div class="line-block">
-<div class="line"><strong>説明 :</strong> <span class="math notranslate nohighlight">\(V_{ij}\)</span>のサイト番号を表す整数。</div>
-<div class="line"><span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>が<span class="math notranslate nohighlight">\(i\)</span>,
-<span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span>が<span class="math notranslate nohighlight">\(j\)</span>を表します。</div>
-</div>
+<p><strong>説明 :</strong> 反復ステップ数を表します。10の倍数のみ出力されます。</p>
 </li>
 <li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> <span class="math notranslate nohighlight">\(V_{ij}\)</span>の値。</p>
+<p><strong>説明 :</strong> 振動数の値を表します。</p>
+</li>
+<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>, <span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<div class="line-block">
+<div class="line"><strong>説明 :</strong> 反復数が<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>の時の動的グリーン関数の値を出力します。
+<span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>が実部、<span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span>が虚部を表します。</div>
+</div>
+</li>
+<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>double04<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<div class="line-block">
+<div class="line"><strong>説明 :</strong> 反復数が<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>の時の残差ベクトルのノルムを出力します。</div>
+</div>
 </li>
 </ul>
 </div>
@@ -116,7 +117,7 @@ tmp_V=<span class="math notranslate nohighlight">\([\)</span>double01<span class
 <li class="toctree-l3"><a class="reference internal" href="CHECK_InterAll_ja.html">4.3.2. CHECK_InterAll.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHECK_CoulombIntra_ja.html">4.3.3. CHECK_CoulombIntra.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHECK_Hund_ja.html">4.3.4. CHECK_Hund.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.5. CHECK_INTER_U.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_INTER_U_ja.html">4.3.5. CHECK_INTER_U.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHECK_Memory_ja.html">4.3.6. CHECK_Memory.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="WarningOnTransfer_ja.html">4.3.7. WarningOnTransfer.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CalcTimer_ja.html">4.3.8. CalcTimer.dat</a></li>
@@ -144,7 +145,7 @@ tmp_V=<span class="math notranslate nohighlight">\([\)</span>double01<span class
 <li class="toctree-l3"><a class="reference internal" href="recalcvec_ja.html">4.3.30. recalcvec.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="TMcomponents_ja.html">4.3.31. TMcomponents.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="excitedvec_ja.html">4.3.32. excitedvec.dat</a></li>
-<li class="toctree-l3"><a class="reference internal" href="residual_ja.html">4.3.33. residual.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.33. residual.dat</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
@@ -162,8 +163,8 @@ tmp_V=<span class="math notranslate nohighlight">\([\)</span>double01<span class
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
   <li><a href="index_outputfiles_ja.html">4.3. 出力ファイル</a><ul>
-      <li>Previous: <a href="CHECK_Hund_ja.html" title="前の章へ">4.3.4. CHECK_Hund.dat</a></li>
-      <li>Next: <a href="CHECK_Memory_ja.html" title="次の章へ">4.3.6. CHECK_Memory.dat</a></li>
+      <li>Previous: <a href="excitedvec_ja.html" title="前の章へ">4.3.32. excitedvec.dat</a></li>
+      <li>Next: <a href="../error_ja/error_ja.html" title="次の章へ">4.4. エラーメッセージ一覧</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -201,7 +202,7 @@ tmp_V=<span class="math notranslate nohighlight">\([\)</span>double01<span class
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_ja/CHECK_INTER_U_ja.rst.txt"
+      <a href="../../_sources/filespecification/outputfiles_ja/residual_ja.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

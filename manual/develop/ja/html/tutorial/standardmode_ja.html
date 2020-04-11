@@ -52,7 +52,7 @@ Heisenberg模型におけるサンプル入力ファイルは</p>
 この例では2次元正方格子のHeisenberg模型(最近接サイト間の反強磁性的スピン結合のみを持つ)
 を考察します。</p>
 <div class="math notranslate nohighlight" id="equation-tutorial-standardmode-ja-0">
-<span class="eqno">(3.1)<a class="headerlink" href="#equation-tutorial-standardmode-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)\]</div>
+<span class="eqno">(3.1)<a class="headerlink" href="#equation-tutorial-standardmode-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\mathcal H=J \sum_{i,j=1}^{4} ( S_{i j} \cdot  S_{i+1 j} +  S_{i j} \cdot  S_{i j+1})\]</div>
 <p>ただし、周期境界条件 <span class="math notranslate nohighlight">\((S_{15}=S_{51}= S_{11})\)</span> を採用します。
 インプットファイルの中身は次のとおりです。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Spin&quot;
@@ -77,7 +77,7 @@ CHECK_Sdim.dat         zvo_TimeKeeper.dat
 </pre></div>
 </div>
 <p>ログ出力されるファイルの詳細は <a class="reference internal" href="../filespecification/outputfiles_ja/CHECK_Chemi_ja.html#subsec-checkchemi"><span class="std std-ref">CHECK_Chemi.dat</span></a> 等をご覧ください。</p>
-<p>実行コマンドと標準出力{(MPI並列/ハイブリッド並列でコンパイルした場合の結果)}は次のとおりです。:</p>
+<p>実行コマンドと標準出力(MPI並列/ハイブリッド並列でコンパイルした場合の結果)は次のとおりです。:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ Path/HPhi -s stan.in
 </pre></div>
 </div>
@@ -294,7 +294,7 @@ i=    0 Energy=-11.228483 N= 16.000000 Sz=  0.000000 Doublon=  0.000000
 <h3><strong>計算結果出力</strong><a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
 <div class="section" id="lobcg">
 <h4><strong>局所最適ブロック共役勾配(LOBCG)法</strong><a class="headerlink" href="#lobcg" title="このヘッドラインへのパーマリンク">¶</a></h4>
-<p>入力ファイルで&quot;method = &quot;CG&quot;&quot;を選択すると、LOBCG法での計算が行われます。
+<p>入力ファイルで <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;CG&quot;</span></code> を選択すると、LOBCG法での計算が行われます。
 LOBCG法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。
 以下に、このサンプルでの出力ファイル例を記載します。
 (xxには0から始まる固有値番号が入ります)。</p>
@@ -303,7 +303,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 </pre></div>
 </div>
 <p>スタンダードモードの場合は、&quot;greenone.def&quot;、&quot;greentwo.def&quot;に基づき、:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo\_cisajs\_eigen\_xx.dat、zvo\_cisajscktalt\_eigen\_xx.dat
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo_cisajs_eigen_xx.dat、zvo_cisajscktalt_eigen_xx.dat
 </pre></div>
 </div>
 <p>に固有値番号に対応した一体グリーン関数および二体グリーン関数の値が出力されます。</p>

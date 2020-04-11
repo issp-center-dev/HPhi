@@ -46,7 +46,7 @@ LocSpin  zlocspn.def
 Trans    ztransfer.def
 InterAll zinterall.def
 OneBodyG zcisajs.def
-TwoBodyG    zcisajscktaltdc.def
+TwoBodyG zcisajscktaltdc.def
 </pre></div>
 </div>
 <div class="line-block">
@@ -74,7 +74,7 @@ TwoBodyG    zcisajscktaltdc.def
 <p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
 <ul class="simple">
 <li>キーワードを記載後、半角空白を開けた後にファイル名を書きます。ファイル名は自由に設定できます。</li>
-<li>必ず指定しなければいけないパラメーターはCalcMod, ModPara,
+<li>必ず指定しなければいけないパラメータはCalcMod, ModPara,
 LocSpinです。</li>
 <li>各キーワードは順不同に記述できます。</li>
 <li>指定したキーワード、ファイルが存在しない場合はエラー終了します。</li>
@@ -130,19 +130,25 @@ LocSpinです。</li>
 <td>ペアリフト相互作用に関する設定をします。</td>
 </tr>
 <tr class="row-even"><td>OneBodyG</td>
-<td>出力する一体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle\)</span> に関する設定をします。</td>
+<td>出力する一体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle\)</span> に関する設定をします。</td>
 </tr>
 <tr class="row-odd"><td>TwoBodyG</td>
-<td>出力するニ体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle\)</span>に関する設定をします。</td>
+<td>出力する二体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle\)</span>に関する設定をします。</td>
 </tr>
 <tr class="row-even"><td>SingleExcitation</td>
 <td>一体励起状態の生成演算子に関する指定をします。</td>
 </tr>
 <tr class="row-odd"><td>PairExcitation</td>
-<td>ニ体励起状態の生成演算子に関する指定をします。</td>
+<td>二体励起状態の生成演算子に関する指定をします。</td>
 </tr>
 <tr class="row-even"><td>SpectrumVec</td>
 <td>スペクトル関数を計算するためのリスタート用の入力ベクトルを指定します。</td>
+</tr>
+<tr class="row-odd"><td>OneBodyTE</td>
+<td>各時刻で付加される一体型の演算子に関する設定をします。</td>
+</tr>
+<tr class="row-even"><td>TwoBodyTE</td>
+<td>各時刻で付加される二体型の演算子に関する設定をします。</td>
 </tr>
 </tbody>
 </table>

@@ -42,3 +42,4 @@
    recalcvec_ja
    TMcomponents_ja
    excitedvec_ja
+   residual_ja

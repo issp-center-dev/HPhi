@@ -111,12 +111,12 @@ ExpecInterval  20
 <p><strong>説明 :</strong> サイト数を指定する整数。</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">Ncond</span></code></p>
-<p><strong>形式 :</strong> int型 (自然数)</p>
+<p><strong>形式 :</strong> int型 (非負整数)</p>
 <p><strong>説明 :</strong>
 伝導電子数を指定する整数。グランドカノニカルの場合には使用されません。</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">2Sz</span></code></p>
-<p><strong>形式 :</strong> int型 (自然数)</p>
+<p><strong>形式 :</strong> int型 (非負整数)</p>
 <p><strong>説明 :</strong>
 <span class="math notranslate nohighlight">\(2S_z\)</span>を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で<span class="math notranslate nohighlight">\(S_z\)</span>保存の計算を行う場合には<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>を指定する必要があります。</p>
 </li>
@@ -145,7 +145,7 @@ ExpecInterval  20
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">CalcHS</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong>
-<code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は&nbsp;<a class="reference external" href="http://issp-center-dep.github.io/HPhi/develop/tips">http://issp-center-dep.github.io/HPhi/develop/tips</a>.pdfを参照)。
+<code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は&nbsp;<a class="reference external" href="http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips">http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips</a>.pdfを参照)。
 デフォルトの値は1で、高速化アルゴリズムが使用されます。</p>
 </li>
 </ul>
@@ -210,7 +210,7 @@ ExpecInterval  20
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>形式 :</strong> double型 (実数)</p>
 <p><strong>説明 :</strong>
-TPQで使用する<span class="math notranslate nohighlight">\(l-\hat{H}/N_{s}\)</span>の<span class="math notranslate nohighlight">\(l\)</span>を指定する整数。</p>
+TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s}\)</span>の<span class="math notranslate nohighlight">\(l\)</span>を指定する整数。</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
@@ -274,7 +274,7 @@ TPQで使用する<span class="math notranslate nohighlight">\(l-\hat{H}/N_{s}\)
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> 微小時間<span class="math notranslate nohighlight">\(\Delta t\)</span>に対して実時間発展を行う際の</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-modpara-file-ja-0">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-ja-modpara-file-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{n=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n\]</div>
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-ja-modpara-file-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\exp\left(-i \cal H \Delta t \right) \approx \sum_{n=0}^{N}\frac{1}{n!}\left(-i \cal H \Delta t \right)^n\]</div>
 </li>
 </ul>
 <blockquote>

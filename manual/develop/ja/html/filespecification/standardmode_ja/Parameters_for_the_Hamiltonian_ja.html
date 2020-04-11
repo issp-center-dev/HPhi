@@ -17,8 +17,8 @@
     <script type="text/javascript" src="../../_static/translations.js"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
-    <link rel="next" title="4.1.5. 計算条件のパラメーター" href="Parameters_for_the_numerical_condition.html" />
-    <link rel="prev" title="4.1.3. 保存量に関するパラメーター" href="Parameters_for_conserved_quantities_ja.html" />
+    <link rel="next" title="4.1.5. 計算条件のパラメータ" href="Parameters_for_the_numerical_condition.html" />
+    <link rel="prev" title="4.1.3. 保存量に関するパラメータ" href="Parameters_for_conserved_quantities_ja.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -392,7 +392,7 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 <code class="docutils literal notranslate"><span class="pre">J''</span></code>を指定した上で<code class="docutils literal notranslate"><span class="pre">J''x,</span> <span class="pre">J''y,</span> <span class="pre">J''z</span></code>も指定した場合は<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">phase0</span></code>, <code class="docutils literal notranslate"><span class="pre">phase1</span></code></p>
-<p><strong>形式 :</strong> 実数 (デフォルトでは``0.0``)</p>
+<p><strong>形式 :</strong> 実数 (デフォルトでは <code class="docutils literal notranslate"><span class="pre">0.0</span></code>)</p>
 <p><strong>説明 :</strong>
 計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます
 (単位: 度)。
@@ -401,8 +401,8 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 例えば、<span class="math notranslate nohighlight">\(i\)</span>サイトから<span class="math notranslate nohighlight">\(j\)</span>サイトへのホッピングで、
 正の方向に境界をまたいだ場合には次のようになります。</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-standardmode-ja-parameters-for-the-hamiltonian-ja-0">
-<span class="eqno">(4.4)<a class="headerlink" href="#equation-filespecification-standardmode-ja-parameters-for-the-hamiltonian-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\exp(i \times {\rm phase0}\times\pi/180) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
-+ \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}\]</div>
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-filespecification-standardmode-ja-parameters-for-the-hamiltonian-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\exp(i \times {\rm phase0}\times\pi/180) \times t {c}_{j \sigma}^\dagger {c}_{i \sigma}
++ \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {c}_{i \sigma}^\dagger {c}_{j \sigma}\]</div>
 </li>
 </ul>
 </div>
@@ -436,13 +436,13 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメーター</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.4. ハミルトニアンの各項の係数</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメーター</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメータ</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../expertmode_ja/index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a></li>
@@ -462,8 +462,8 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
   <li><a href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul>
-      <li>Previous: <a href="Parameters_for_conserved_quantities_ja.html" title="前の章へ">4.1.3. 保存量に関するパラメーター</a></li>
-      <li>Next: <a href="Parameters_for_the_numerical_condition.html" title="次の章へ">4.1.5. 計算条件のパラメーター</a></li>
+      <li>Previous: <a href="Parameters_for_conserved_quantities_ja.html" title="前の章へ">4.1.3. 保存量に関するパラメータ</a></li>
+      <li>Next: <a href="Parameters_for_the_numerical_condition.html" title="次の章へ">4.1.5. 計算条件のパラメータ</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

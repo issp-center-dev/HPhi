@@ -52,7 +52,7 @@ after the calculation finishes, <code class="docutils literal notranslate"><span
 calculation with the restart-file generated in the previous run,
 <code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code> for <code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code> + <code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>.</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">anczos_max</span></code></p>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Positive integer (default value: <code class="docutils literal notranslate"><span class="pre">2000</span></code>)</p>
 <p><strong>Description :</strong> The upper limit of the Lanczos/LOBCG/BiCG step and
 the number of steps for TPQ/Time=evolution are specified with this
@@ -99,7 +99,7 @@ satisfied.</p>
 <p><strong>Description :</strong> The convergence criterion for the Lanczos method is
 specified with this parameter. If the difference between the old and
 the new target eigenvalue falls below
-<span class="math notranslate nohighlight">\(10^{- LanczosEps|}\)</span>, the Lanczos step will finish. For
+<span class="math notranslate nohighlight">\(10^{- {\tt LanczosEps}}\)</span>, the Lanczos step will finish. For
 <code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>, we assume the calculation is converged when the
 2-norm of the residual vector becomes smaller than
 <span class="math notranslate nohighlight">\(10^{-{\tt LanczosEps}/2}\)</span>.</p>
@@ -112,7 +112,7 @@ becomes the ground state.</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double (the default value is provided below)</p>
-<p><strong>Description :</strong> (Only for TPQ) <span class="math notranslate nohighlight">\(l\)</span> as <span class="math notranslate nohighlight">\(l=\hat{\mathcal H}/N_{s}\)</span>
+<p><strong>Description :</strong> (Only for TPQ) <span class="math notranslate nohighlight">\(l\)</span> as <span class="math notranslate nohighlight">\(l-{\mathcal H}/N_{s}\)</span>
 is used in the TPQ calculation. Usually, the largest eigenvalue of
 the Hamiltonian is used as <span class="math notranslate nohighlight">\(l\)</span>. Thus, the default value of
 <span class="math notranslate nohighlight">\(l\)</span> is taken as the summation of the absolute values of each
@@ -163,7 +163,7 @@ file and using it in the subsequent calculation (such as the Green’s
 function).</p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">HamIO</span></code></p>
-<p><strong>Type :</strong> String (choose from <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">In</span></code>.
+<p><strong>Type :</strong> String (choose from <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;In&quot;</span></code>.
 <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code> as a default)</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> (Only used in Full Diag mode)</div>

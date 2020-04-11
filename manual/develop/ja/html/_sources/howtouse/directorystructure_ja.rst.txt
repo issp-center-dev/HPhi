@@ -14,9 +14,8 @@ HPhi-xxx.gzを解凍後に構成されるディレクトリ構成を以下に示
  |    |--sekirei_acc.cmake
  |--doc/
  |    |--en/
- |    |--jp/
+ |    |--ja/
  |    |--fourier/
- |    |--sphinx/
  |    |--userguide_en.pdf
  |    |--userguide_jp.pdf
  |--samples/

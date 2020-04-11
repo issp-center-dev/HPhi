@@ -56,7 +56,7 @@ Parameters
 
    **Type :** Double
 
-   **Description :** The expected value of the energy
+   **Description :** The expected value of the Hamiltonian (energy)
    :math:`\langle \mathcal H \rangle`.
 
 *  [double03]
@@ -85,7 +85,7 @@ Parameters
    **Type :** Int
 
    **Description :** The number of operations of
-   :math:`(l-\hat{\mathcal H}/N_{s})` for an initial wave function, where
+   :math:`(l-{\mathcal H}/N_{s})` for an initial wave function, where
    :math:`l` is ``LargeValue`` defined in a ModPara file and
    :math:`N_{s}` is the total number of sites.
 
