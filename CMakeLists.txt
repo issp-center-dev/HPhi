@@ -16,6 +16,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(ENABLE_MPI "Enable MPI Parallelization" ON)
 option(ENABLE_SCALAPACK "Use Scalapack" ON)
+option(GIT_SUBMODULE_UPDATE "Execute `git submodule update --init` automatically" ON)
 enable_language(C Fortran)
 
 #set(CMAKE_C_FLAGS "-lscalapack -lgfortran -lm")
