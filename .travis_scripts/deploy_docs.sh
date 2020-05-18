@@ -68,7 +68,7 @@ done
 
 git config --global user.email "hphi-dev@issp.u-tokyo.ac.jp"
 git config --global user.name "HPhi"
-git commit -m "Update by TravisCI (\\#${TRAVIS_BUILD_NUMBER})"
+git commit -m "Update by TravisCI"
 ST=$?
 if [ $ST == 0 ]; then
   git push origin gh-pages:gh-pages --follow-tags > /dev/null 2>&1
