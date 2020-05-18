@@ -15,10 +15,10 @@ matrix:
       - cd build
     script:
       - cmake ../
-      - make
-      - export OMP_NUM_THREADS=1
-      - make test
-      - rm -r test
+      # - make
+      # - export OMP_NUM_THREADS=1
+      # - make test
+      # - rm -r test
       # - make
       # - export OMP_NUM_THREADS=3
       # - make test
