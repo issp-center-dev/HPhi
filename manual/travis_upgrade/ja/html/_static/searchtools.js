@@ -1,51 +1,57 @@
 /*
- * searchtools.js
+ * searchtools.js_t
  * ~~~~~~~~~~~~~~~~
  *
- * Sphinx JavaScript utilities for the full-text search.
+ * Sphinx JavaScript utilties for the full-text search.
  *
- * :copyright: Copyright 2007-2019 by the Sphinx team, see AUTHORS.
+ * :copyright: Copyright 2007-2016 by the Sphinx team, see AUTHORS.
  * :license: BSD, see LICENSE for details.
  *
  */
 
-if (!Scorer) {
-  /**
-   * Simple result scoring code.
-   */
-  var Scorer = {
-    // Implement the following function to further tweak the score for each result
-    // The function takes a result array [filename, title, anchor, descr, score]
-    // and returns the new score.
-    /*
-    score: function(result) {
-      return result[4];
-    },
-    */
 
-    // query matches the full name of an object
-    objNameMatch: 11,
-    // or matches in the last dotted part of the object name
-    objPartialMatch: 6,
-    // Additive scores depending on the priority of the object
-    objPrio: {0:  15,   // used to be importantResults
-              1:  5,   // used to be objectResults
-              2: -5},  // used to be unimportantResults
-    //  Used when the priority is not in the mapping.
-    objPrioDefault: 0,
-
-    // query found in title
-    title: 15,
-    // query found in terms
-    term: 5
-  };
-}
-
-if (!splitQuery) {
-  function splitQuery(query) {
-    return query.split(/\s+/);
+/* Non-minified version JS is _stemmer.js if file is provided */ 
+/**
+ * Dummy stemmer for languages without stemming rules.
+ */
+var Stemmer = function() {
+  this.stemWord = function(w) {
+    return w;
   }
 }
+
+
+
+/**
+ * Simple result scoring code.
+ */
+var Scorer = {
+  // Implement the following function to further tweak the score for each result
+  // The function takes a result array [filename, title, anchor, descr, score]
+  // and returns the new score.
+  /*
+  score: function(result) {
+    return result[4];
+  },
+  */
+
+  // query matches the full name of an object
+  objNameMatch: 11,
+  // or matches in the last dotted part of the object name
+  objPartialMatch: 6,
+  // Additive scores depending on the priority of the object
+  objPrio: {0:  15,   // used to be importantResults
+            1:  5,   // used to be objectResults
+            2: -5},  // used to be unimportantResults
+  //  Used when the priority is not in the mapping.
+  objPrioDefault: 0,
+
+  // query found in title
+  title: 15,
+  // query found in terms
+  term: 5
+};
+
 
 /**
  * Search Module
@@ -138,13 +144,14 @@ var Search = {
    */
   query : function(query) {
     var i;
+    var stopwords = [];
 
     // stem the searchterms and add them to the correct list
     var stemmer = new Stemmer();
     var searchterms = [];
     var excluded = [];
     var hlterms = [];
-    var tmp = splitQuery(query);
+    var tmp = query.split(/\s+/);
     var objectterms = [];
     for (i = 0; i < tmp.length; i++) {
       if (tmp[i] !== "") {
@@ -158,10 +165,6 @@ var Search = {
       }
       // stem the word
       var word = stemmer.stemWord(tmp[i].toLowerCase());
-      // prevent stemmer from cutting word smaller than two chars
-      if(word.length < 3 && tmp[i].length >= 3) {
-        word = tmp[i];
-      }
       var toAppend;
       // select the correct list
       if (word[0] == '-') {
@@ -259,11 +262,7 @@ var Search = {
             displayNextItem();
           });
         } else if (DOCUMENTATION_OPTIONS.HAS_SOURCE) {
-          var suffix = DOCUMENTATION_OPTIONS.SOURCELINK_SUFFIX;
-          if (suffix === undefined) {
-            suffix = '.txt';
-          }
-          $.ajax({url: DOCUMENTATION_OPTIONS.URL_ROOT + '_sources/' + item[5] + (item[5].slice(-suffix.length) === suffix ? '' : suffix),
+          $.ajax({url: DOCUMENTATION_OPTIONS.URL_ROOT + '_sources/' + item[0] + '.txt',
                   dataType: "text",
                   complete: function(jqxhr, textstatus) {
                     var data = jqxhr.responseText;
@@ -302,7 +301,6 @@ var Search = {
    */
   performObjectSearch : function(object, otherterms) {
     var filenames = this._index.filenames;
-    var docnames = this._index.docnames;
     var objects = this._index.objects;
     var objnames = this._index.objnames;
     var titles = this._index.titles;
@@ -356,7 +354,7 @@ var Search = {
           } else {
             score += Scorer.objPrioDefault;
           }
-          results.push([docnames[match[0]], fullname, '#'+anchor, descr, score, filenames[match[0]]]);
+          results.push([filenames[match[0]], fullname, '#'+anchor, descr, score]);
         }
       }
     }
@@ -368,7 +366,6 @@ var Search = {
    * search for full-text terms in the index
    */
   performTermsSearch : function(searchterms, excluded, terms, titleterms) {
-    var docnames = this._index.docnames;
     var filenames = this._index.filenames;
     var titles = this._index.titles;
 
@@ -443,7 +440,7 @@ var Search = {
         // select one (max) score for the file.
         // for better ranking, we should calculate ranking by using words statistics like basic tf-idf...
         var score = $u.max($u.map(fileMap[file], function(w){return scoreMap[file][w]}));
-        results.push([docnames[file], titles[file], '', null, score, filenames[file]]);
+        results.push([filenames[file], titles[file], '', null, score]);
       }
     }
     return results;
@@ -453,7 +450,7 @@ var Search = {
    * helper function to return a node containing the
    * search summary for a given text. keywords is a list
    * of stemmed words, hlwords is the list of normal, unstemmed
-   * words. the first one is used to find the occurrence, the
+   * words. the first one is used to find the occurance, the
    * latter for highlighting it.
    */
   makeSearchSummary : function(text, keywords, hlwords) {

@@ -1,38 +1,44 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>8.2. チュートリアル &#8212; HΦ マニュアル  ドキュメント</title>
+    
+    <title>8.2. チュートリアル &mdash; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../index.html" />
+    <link rel="up" title="8. Wannier関数を用いたダウンフォールディング" href="index.html" />
     <link rel="next" title="8.3. スタンダードモードの入力パラメーター" href="parameter.html" />
     <link rel="prev" title="8.1. 概要" href="overview.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
-  
+  </head>
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="tutorialwannier">
@@ -41,14 +47,14 @@
 1次元1軌道Hubbardモデルにダウンフォールドし,
 HPhi/mVMCで計算するまでの一連の流れを示す.
 DFT計算はQuantumESPRESSOで行う.
-入力ファイルは <code class="docutils literal notranslate"><span class="pre">samples/Wannier/Sr2CuO3</span></code> ディレクトリにある.</p>
+入力ファイルは <code class="docutils literal"><span class="pre">samples/Wannier/Sr2CuO3</span></code> ディレクトリにある.</p>
 <p>なお, 実際の研究では必要に応じ, 各ソルバーの入力ファイル等を調整する.
 入力ファイルの詳細については, 各ソルバーのマニュアルを参考にすること.</p>
 <div class="section" id="scf">
 <h2>8.2.1. 電荷密度のSCF計算<a class="headerlink" href="#scf" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>まず, DFTによる電荷密度のSCF計算を行う.</p>
-<p><a class="reference download internal" download="" href="../_downloads/66754aed95d03c3746df9dfb635a5084/scf.in"><code class="xref download docutils literal notranslate"><span class="pre">scf.in</span></code></a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
+<p><a class="reference download internal" href="../_downloads/scf.in" download=""><code class="xref download docutils literal"><span class="pre">scf.in</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre>&amp;CONTROL
  calculation = &#39;scf&#39;
   pseudo_dir = &#39;../pseudo&#39;
 prefix = &#39;sr2cuo3&#39;
@@ -85,17 +91,17 @@ K_POINTS automatic
 </div>
 <p>擬ポテンシャル (UPF ファイル) は
 <a class="reference external" href="www.quantum-simulation.org/potentials/sg15_oncv/">The SG15 Optimized Norm-Conserving Vanderbilt (ONCV) pseudopotentials</a> のものを使う.
-実行ディレクトリの直上に <code class="docutils literal notranslate"><span class="pre">pseudo</span></code> ディレクトリを作成して, そこに収める.</p>
+実行ディレクトリの直上に <code class="docutils literal"><span class="pre">pseudo</span></code> ディレクトリを作成して, そこに収める.</p>
 <p><a class="reference external" href="http://www.quantum-simulation.org/potentials/sg15_oncv/sg15_oncv_upf_2015-10-07.tar.gz">http://www.quantum-simulation.org/potentials/sg15_oncv/sg15_oncv_upf_2015-10-07.tar.gz</a></p>
-<p>SCF 計算には QuantumESPRESSO内のプログラム <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> を使う.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pw.x -in scf.in
+<p>SCF 計算には QuantumESPRESSO内のプログラム <code class="docutils literal"><span class="pre">pw.x</span></code> を使う.</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ pw.x -in scf.in
 </pre></div>
 </div>
 </div>
 <div class="section" id="optional">
 <h2>8.2.2. (Optional) バンド計算と描画<a class="headerlink" href="#optional" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p><a class="reference download internal" download="" href="../_downloads/d07ea1db5dfb2f831625ee64e44f3c3f/band.in"><code class="xref download docutils literal notranslate"><span class="pre">band.in</span></code></a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
+<p><a class="reference download internal" href="../_downloads/band.in" download=""><code class="xref download docutils literal"><span class="pre">band.in</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre>&amp;CONTROL
  calculation = &#39;bands&#39;
   pseudo_dir = &#39;../pseudo&#39;
 prefix = &#39;sr2cuo3&#39;
@@ -179,27 +185,27 @@ K_POINTS crystal
         0.5000000000    0.0000000000   -0.0000000000    1.0
 </pre></div>
 </div>
-<p>ここでも <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> を使う.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pw.x -in band.in
+<p>ここでも <code class="docutils literal"><span class="pre">pw.x</span></code> を使う.</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ pw.x -in band.in
 </pre></div>
 </div>
-<p><a class="reference download internal" download="" href="../_downloads/d9941f88c3c1cc7a3727d6cf2eebc481/bands.in"><code class="xref download docutils literal notranslate"><span class="pre">bands.in</span></code></a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;BANDS
+<p><a class="reference download internal" href="../_downloads/bands.in" download=""><code class="xref download docutils literal"><span class="pre">bands.in</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre>&amp;BANDS
       prefix = &#39;sr2cuo3&#39;
        lsym = .false.
 /
 </pre></div>
 </div>
-<p>QuantumESPRESSOの <code class="docutils literal notranslate"><span class="pre">bands.x</span></code> を使う.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ bands.x -in bands.in
+<p>QuantumESPRESSOの <code class="docutils literal"><span class="pre">bands.x</span></code> を使う.</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ bands.x -in bands.in
 </pre></div>
 </div>
-<p>出力された <code class="docutils literal notranslate"><span class="pre">bands.out.gnu</span></code> をGnuPlotなどで読み込んでバンドを描く.</p>
+<p>出力された <code class="docutils literal"><span class="pre">bands.out.gnu</span></code> をGnuPlotなどで読み込んでバンドを描く.</p>
 </div>
 <div class="section" id="kohn-sham">
 <h2>8.2.3. Kohn-Sham軌道の計算<a class="headerlink" href="#kohn-sham" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p><a class="reference download internal" download="" href="../_downloads/e69f3264a386ac9da5619a8d6d54737b/nscf.in"><code class="xref download docutils literal notranslate"><span class="pre">nscf.in</span></code></a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
+<p><a class="reference download internal" href="../_downloads/nscf.in" download=""><code class="xref download docutils literal"><span class="pre">nscf.in</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre>&amp;CONTROL
  calculation = &#39;nscf&#39;
   pseudo_dir = &#39;../pseudo&#39;
   wf_collect = .true.
@@ -235,20 +241,20 @@ K_POINTS automatic
  4 4 4 0 0 0
 </pre></div>
 </div>
-<p>ここでも <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> を使う.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pw.x -in nscf.in
+<p>ここでも <code class="docutils literal"><span class="pre">pw.x</span></code> を使う.</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ pw.x -in nscf.in
 </pre></div>
 </div>
-<p>次にRESPACKに付属のユーティリティー <code class="docutils literal notranslate"><span class="pre">qe2respack.py</span></code> を使う.
-引数は <code class="docutils literal notranslate"><span class="pre">[prefix].save</span></code> ディレクトリ名.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ qe2respack.py sr2cuo3.save
+<p>次にRESPACKに付属のユーティリティー <code class="docutils literal"><span class="pre">qe2respack.py</span></code> を使う.
+引数は <code class="docutils literal"><span class="pre">[prefix].save</span></code> ディレクトリ名.</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ qe2respack.py sr2cuo3.save
 </pre></div>
 </div>
 </div>
 <div class="section" id="wannier">
 <h2>8.2.4. Wannier関数, 誘電関数, 有効相互作用の計算<a class="headerlink" href="#wannier" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p><a class="reference download internal" download="" href="../_downloads/eb32d997e5bddd55e8bc272a54453660/respack.in"><code class="xref download docutils literal notranslate"><span class="pre">respack.in</span></code></a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;PARAM_CHIQW
+<p><a class="reference download internal" href="../_downloads/respack.in" download=""><code class="xref download docutils literal"><span class="pre">respack.in</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre>&amp;PARAM_CHIQW
 Num_freq_grid = 1
 !Ecut_for_eps = 
 flg_cRPA = 1
@@ -294,27 +300,27 @@ iz_intJ_max = 1
 /
 </pre></div>
 </div>
-<p>RESPACKのプログラム <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code>, <code class="docutils literal notranslate"><span class="pre">calc_chiqw</span></code>, <code class="docutils literal notranslate"><span class="pre">calc_j3d</span></code>,
-<code class="docutils literal notranslate"><span class="pre">calc_w3d</span></code> を使う.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ calc_wannier &lt; respack.in
+<p>RESPACKのプログラム <code class="docutils literal"><span class="pre">calc_wannier</span></code>, <code class="docutils literal"><span class="pre">calc_chiqw</span></code>, <code class="docutils literal"><span class="pre">calc_j3d</span></code>,
+<code class="docutils literal"><span class="pre">calc_w3d</span></code> を使う.</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ calc_wannier &lt; respack.in
 $ calc_chiqw &lt; respack.in
 $ calc_w3d &lt; respack.in
 $ calc_j3d &lt; respack.in
 </pre></div>
 </div>
 <p>これにより, RESPACKによって出力されたホッピング等のファイルが,
-Wannier90の形式で <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> ディレクトリに格納される.
-(RESPACKのバージョン20190227 以前では,  <code class="docutils literal notranslate"><span class="pre">dir-mvmc</span></code> ディレクトリ)</p>
+Wannier90の形式で <code class="docutils literal"><span class="pre">dir-model</span></code> ディレクトリに格納される.
+(RESPACKのバージョン20190227 以前では,  <code class="docutils literal"><span class="pre">dir-mvmc</span></code> ディレクトリ)</p>
 </div>
 <div class="section" id="hphi-mvmc">
 <h2>8.2.5. HPhi/mVMCによるモデル計算<a class="headerlink" href="#hphi-mvmc" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>HPhi/mVMCのスタンダードモードを利用することで,
-<code class="docutils literal notranslate"><span class="pre">dir-model</span></code> のファイルを読み込み該当したモデルの計算ができる.
-最初に <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> 以下のファイル一式を, 実行するディレクトリに移したあとに,
+<code class="docutils literal"><span class="pre">dir-model</span></code> のファイルを読み込み該当したモデルの計算ができる.
+最初に <code class="docutils literal"><span class="pre">dir-model</span></code> 以下のファイル一式を, 実行するディレクトリに移したあとに,
 スタンダードモードで計算実行を行えばよい.
 例えば, HPhiの場合は以下のコマンドを打つことで計算が実行される(mVMCでもほぼ同様).</p>
-<p><a class="reference download internal" download="" href="../_downloads/c0dcbd944f0e68a89c89e9acada22614/stan.in"><code class="xref download docutils literal notranslate"><span class="pre">stan.in</span></code></a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
+<p><a class="reference download internal" href="../_downloads/stan1.in" download=""><code class="xref download docutils literal"><span class="pre">stan.in</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
 lattice = &quot;wannier90&quot;
 a0w = 8
 a0l = 0
@@ -333,7 +339,7 @@ cutoff_u = 1.0
 cutoff_j = 0.02
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ cp ./dir-model/* .
+<div class="highlight-bash"><div class="highlight"><pre>$ cp ./dir-model/* .
 $ HPhi -s stan.in
 </pre></div>
 </div>
@@ -342,7 +348,6 @@ $ HPhi -s stan.in
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -358,13 +363,18 @@ $ HPhi -s stan.in
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
@@ -372,7 +382,7 @@ $ HPhi -s stan.in
 <li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. 概要</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">8.2. チュートリアル</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">8.2. チュートリアル</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#scf">8.2.1. 電荷密度のSCF計算</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#optional">8.2.2. (Optional) バンド計算と描画</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#kohn-sham">8.2.3. Kohn-Sham軌道の計算</a></li>
@@ -400,24 +410,17 @@ $ HPhi -s stan.in
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -426,11 +429,11 @@ $ HPhi -s stan.in
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/wannier/tutorial.rst.txt"
+      <a href="../_sources/wannier/tutorial.txt"
           rel="nofollow">Page source</a>
     </div>
 

@@ -1,42 +1,48 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.4. Basic usage &#8212; HΦ Documentation  documentation</title>
+    
+    <title>2.4. Basic usage &mdash; HΦ Documentation  documentation</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="2. How to use \({\mathcal H}\Phi\)" href="ho-index.html" />
     <link rel="next" title="3. Tutorial" href="../tutorial/tu-index.html" />
     <link rel="prev" title="2.3. Directory structure" href="directorystructure_en.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
-  
+  </head>
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="basic-usage">
 <h1>2.4. Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
-<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> has two modes: Standard mode and Expert mode. Here, the basic flows of calculations of the Standard and expert modes are shown.</p>
+<p><span class="math">\({\mathcal H}\Phi\)</span> has two modes: Standard mode and Expert mode. Here, the basic flows of calculations of the Standard and expert modes are shown.</p>
 <div class="section" id="standard-mode">
 <h2>2.4.1. <em>Standard</em> mode<a class="headerlink" href="#standard-mode" title="Permalink to this headline">¶</a></h2>
 <p>The procedure of calculation through the standard mode is as follows:</p>
@@ -50,41 +56,41 @@
 <li>Create input files for Standard mode</li>
 </ol>
 <blockquote>
-<div>In Standard mode, you can choose a model (the Heisenberg model, Hubbard model, etc.) and a lattice (the square lattice, triangular lattice, etc.) from those provided; you can specify some parameters (such as the first/second nearest neighbor hopping integrals and the on-site Coulomb integral) for them. Finally, you have to specify the numerical method (such as the Lanczos method) employed in this calculation. The input file format is described in <a class="reference internal" href="prerequisite_en.html#ch-prerequisite"><span class="std std-ref">How to use HPhi</span></a>.</div></blockquote>
+<div>In Standard mode, you can choose a model (the Heisenberg model, Hubbard model, etc.) and a lattice (the square lattice, triangular lattice, etc.) from those provided; you can specify some parameters (such as the first/second nearest neighbor hopping integrals and the on-site Coulomb integral) for them. Finally, you have to specify the numerical method (such as the Lanczos method) employed in this calculation. The input file format is described in <a class="reference internal" href="prerequisite_en.html#ch-prerequisite"><span>How to use HPhi</span></a>.</div></blockquote>
 <ol class="arabic simple" start="3">
 <li>Run</li>
 </ol>
 <blockquote>
-<div><p>Run an executable <code class="docutils literal notranslate"><span class="pre">HPhi</span></code> in the terminal by setting option “<code class="docutils literal notranslate"><span class="pre">-s</span></code>” (or “<code class="docutils literal notranslate"><span class="pre">--standard</span></code>”) and the name of the input file written in the previous step.</p>
+<div><p>Run an executable <code class="docutils literal"><span class="pre">HPhi</span></code> in the terminal by setting option &#8220;<code class="docutils literal"><span class="pre">-s</span></code>&#8221; (or &#8220;<code class="docutils literal"><span class="pre">--standard</span></code>&#8221;) and the name of the input file written in the previous step.</p>
 <blockquote>
 <div><ul class="simple">
 <li>Serial/OpenMP parallel</li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">Path</span> <span class="pre">/HPhi</span> <span class="pre">-s</span> <span class="pre">Input_file_name</span></code></p>
+<p><code class="docutils literal"><span class="pre">$</span> <span class="pre">Path</span> <span class="pre">/HPhi</span> <span class="pre">-s</span> <span class="pre">Input_file_name</span></code></p>
 <ul class="simple">
 <li>MPI parallel/ Hybrid parallel</li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">number_of_processes</span> <span class="pre">Path</span> <span class="pre">/HPhi</span> <span class="pre">-s</span> <span class="pre">Input_file_name</span></code></p>
+<p><code class="docutils literal"><span class="pre">$</span> <span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">number_of_processes</span> <span class="pre">Path</span> <span class="pre">/HPhi</span> <span class="pre">-s</span> <span class="pre">Input_file_name</span></code></p>
 </div></blockquote>
-<p>When you use a queuing system in workstations or super computers, sometimes the number of processes is specified as an argument for the job-submitting command. If you need more information, please refer to your system manuals. The number of processes depends on the target system of the models. The details of setting the number of processes are shown in <a class="reference internal" href="#subsec-creatingexpert"><span class="std std-ref">Creating input files for Expert mode</span></a> .</p>
+<p>When you use a queuing system in workstations or super computers, sometimes the number of processes is specified as an argument for the job-submitting command. If you need more information, please refer to your system manuals. The number of processes depends on the target system of the models. The details of setting the number of processes are shown in <a class="reference internal" href="#subsec-creatingexpert"><span>Creating input files for Expert mode</span></a> .</p>
 </div></blockquote>
 <ol class="arabic simple" start="4">
 <li>Watch calculation logs</li>
 </ol>
 <blockquote>
-<div>Log files are outputted in the “output” folder, which is automatically created in the directory for a calculation scenario. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span class="std std-ref">Output files</span></a> .</div></blockquote>
+<div>Log files are outputted in the &#8220;output&#8221; folder, which is automatically created in the directory for a calculation scenario. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span>Output files</span></a> .</div></blockquote>
 <ol class="arabic simple" start="5">
 <li>Results</li>
 </ol>
 <blockquote>
-<div>If the calculation is completed normally, the result files are outputted in  the “output” folder. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span class="std std-ref">Output files</span></a></div></blockquote>
+<div>If the calculation is completed normally, the result files are outputted in  the &#8220;output&#8221; folder. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span>Output files</span></a></div></blockquote>
 </div></blockquote>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
 <div class="last line-block">
 <div class="line"><strong>The number of threads for OpenMP</strong></div>
-<div class="line">If you specify the number of OpenMP threads for <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, you should set it as follows (in the case of 16 threads) before running:</div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">OMP_NUM_THREADS=16</span></code></div>
+<div class="line">If you specify the number of OpenMP threads for <span class="math">\({\mathcal H}\Phi\)</span>, you should set it as follows (in the case of 16 threads) before running:</div>
+<div class="line"><code class="docutils literal"><span class="pre">export</span> <span class="pre">OMP_NUM_THREADS=16</span></code></div>
 </div>
 </div>
 </div>
@@ -101,7 +107,7 @@
 <li>Create input files for Expert mode</li>
 </ol>
 <blockquote>
-<div>For Expert mode, you should create input files for constructing Hamiltonian operators, calculation conditions, and a list file for the filenames of the input files (see the file formats shown in <a class="reference internal" href="../filespecification/expertmode_en/index_expertmode_en.html#ch-howtoexpert"><span class="std std-ref">Input files for Expert mode</span></a>).</div></blockquote>
+<div>For Expert mode, you should create input files for constructing Hamiltonian operators, calculation conditions, and a list file for the filenames of the input files (see the file formats shown in <a class="reference internal" href="../filespecification/expertmode_en/index_expertmode_en.html#ch-howtoexpert"><span>Input files for Expert mode</span></a>).</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <div class="last line-block">
@@ -112,20 +118,20 @@
 <li>Run</li>
 </ol>
 <blockquote>
-<div><p>Run <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> in the terminal by setting option “<code class="docutils literal notranslate"><span class="pre">-e</span></code>” (or “<code class="docutils literal notranslate"><span class="pre">--expert</span></code>”) and the file name of a list file.</p>
+<div><p>Run <span class="math">\({\mathcal H}\Phi\)</span> in the terminal by setting option &#8220;<code class="docutils literal"><span class="pre">-e</span></code>&#8221; (or &#8220;<code class="docutils literal"><span class="pre">--expert</span></code>&#8221;) and the file name of a list file.</p>
 <blockquote>
 <div><ul class="simple">
 <li>Serial/OpenMP</li>
 </ul>
 <blockquote>
-<div><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file\_name</span></code></div></blockquote>
+<div><code class="docutils literal"><span class="pre">$</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file\_name</span></code></div></blockquote>
 <ul class="simple">
 <li>MPI/Hybrid</li>
 </ul>
 <blockquote>
 <div><div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">number_of_processes</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file_name</span></code></div>
-<div class="line">A number of processes depend on a target of system for models. The details of setting a number of processes are shown in <a class="reference internal" href="#subsec-creatingexpert"><span class="std std-ref">Creating input files for Expert mode</span></a>.</div>
+<div class="line"><code class="docutils literal"><span class="pre">$</span> <span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">number_of_processes</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file_name</span></code></div>
+<div class="line">A number of processes depend on a target of system for models. The details of setting a number of processes are shown in <a class="reference internal" href="#subsec-creatingexpert"><span>Creating input files for Expert mode</span></a>.</div>
 </div>
 </div></blockquote>
 </div></blockquote>
@@ -134,12 +140,12 @@
 <li>While running</li>
 </ol>
 <blockquote>
-<div>Log files are outputted in the “output” folder which is automatically created in the directory for a calculation scenario. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span class="std std-ref">Output files</span></a>.</div></blockquote>
+<div>Log files are outputted in the &#8220;output&#8221; folder which is automatically created in the directory for a calculation scenario. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span>Output files</span></a>.</div></blockquote>
 <ol class="arabic simple" start="5">
 <li>Results</li>
 </ol>
 <blockquote class="last">
-<div>If the calculation is finished normally, the result files are outputted in the “output” folder. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span class="std std-ref">Output files</span></a>.</div></blockquote>
+<div>If the calculation is finished normally, the result files are outputted in the &#8220;output&#8221; folder. The details of the output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/index_outputfiles_en.html#sec-outputfile"><span>Output files</span></a>.</div></blockquote>
 </dd>
 </dl>
 </div>
@@ -152,14 +158,14 @@ The usage is shown as follows.</p>
 <div><ol class="arabic">
 <li><p class="first">Create an input file for <em>Standard</em> mode.</p>
 </li>
-<li><p class="first">Setting an option “-sdry” and an input file (in this example, StdFace.def), run <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ Path/HPhi -sdry StdFace.def
+<li><p class="first">Setting an option &#8220;-sdry&#8221; and an input file (in this example, StdFace.def), run <span class="math">\({\mathcal H}\Phi\)</span>.</p>
+<div class="highlight-none"><div class="highlight"><pre>$ Path/HPhi -sdry StdFace.def
 </pre></div>
 </div>
 <p>In this case, you should not use MPI parallelization (mpirun, mpiexec, etc.).</p>
 </li>
 <li><p class="first">The following files are created as the input files for <em>Expert</em> mode in the current working directory.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>calcmod.def   greentwo.def  namelist.def  zTrans.def
+<div class="highlight-none"><div class="highlight"><pre>calcmod.def   greentwo.def  namelist.def  zTrans.def
 greenone.def  modpara.def   zInterAll.def zlocspn.def
 </pre></div>
 </div>
@@ -179,12 +185,12 @@ greenone.def  modpara.def   zInterAll.def zlocspn.def
 <li>Hubbard/Kondo model</li>
 </ul>
 <blockquote>
-<div>When <code class="docutils literal notranslate"><span class="pre">model</span></code> in the input file for Standard mode is set as <code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Kondo</span> <span class="pre">Lattice&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">HubbardGC&quot;</span></code>, the process number must be equal to <span class="math notranslate nohighlight">\(4^n\)</span>.</div></blockquote>
+<div>When <code class="docutils literal"><span class="pre">model</span></code> in the input file for Standard mode is set as <code class="docutils literal"><span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Kondo</span> <span class="pre">Lattice&quot;</span></code>, or <code class="docutils literal"><span class="pre">&quot;Fermion</span> <span class="pre">HubbardGC&quot;</span></code>, the process number must be equal to <span class="math">\(4^n\)</span>.</div></blockquote>
 <ul class="simple">
 <li>Spin model</li>
 </ul>
 <blockquote>
-<div>When <code class="docutils literal notranslate"><span class="pre">model</span></code> in the input file for Standard mode is set as <code class="docutils literal notranslate"><span class="pre">&quot;Spin&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;SpinGC&quot;</span></code>, the process number must be equal to <span class="math notranslate nohighlight">\((2S+1)^n\)</span>, where <code class="docutils literal notranslate"><span class="pre">2S</span></code> is set in the input file (the default value is <span class="math notranslate nohighlight">\(1\)</span>).</div></blockquote>
+<div>When <code class="docutils literal"><span class="pre">model</span></code> in the input file for Standard mode is set as <code class="docutils literal"><span class="pre">&quot;Spin&quot;</span></code> or <code class="docutils literal"><span class="pre">&quot;SpinGC&quot;</span></code>, the process number must be equal to <span class="math">\((2S+1)^n\)</span>, where <code class="docutils literal"><span class="pre">2S</span></code> is set in the input file (the default value is <span class="math">\(1\)</span>).</div></blockquote>
 </div></blockquote>
 <ol class="arabic simple" start="2">
 <li>Expert mode</li>
@@ -194,15 +200,15 @@ greenone.def  modpara.def   zInterAll.def zlocspn.def
 <li>Hubbard/Kondo model</li>
 </ul>
 <blockquote>
-<div>When the model is selected as the Fermion Hubbard model or Kondo model by setting <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> in a <strong>CalcMod</strong> file, the process number must be equal to <span class="math notranslate nohighlight">\(4^n\)</span>. See <a class="reference internal" href="../filespecification/expertmode_en/CalcMod_file_en.html#subsec-calcmod"><span class="std std-ref">CalcMod file</span></a> for details of the <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> file.</div></blockquote>
+<div>When the model is selected as the Fermion Hubbard model or Kondo model by setting <code class="docutils literal"><span class="pre">CalcModel</span></code> in a <strong>CalcMod</strong> file, the process number must be equal to <span class="math">\(4^n\)</span>. See <a class="reference internal" href="../filespecification/expertmode_en/CalcMod_file_en.html#subsec-calcmod"><span>CalcMod file</span></a> for details of the <code class="docutils literal"><span class="pre">CalcModel</span></code> file.</div></blockquote>
 <ul class="simple">
 <li>Spin model</li>
 </ul>
 <blockquote>
-<div><p>When the model is selected as the spin model by setting <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> in a <strong>CalcMod</strong> file, the process number is fixed by a <strong>LocSpin</strong> file. The process number must be equal to the number calculated by multiplying the state number of the localized spin (<code class="docutils literal notranslate"><span class="pre">2S</span></code> +1) in descending order by the site number. See <a class="reference internal" href="../filespecification/expertmode_en/LocSpin_file_en.html#subsec-locspn"><span class="std std-ref">LocSpin file</span></a> for details of the <strong>LocSpin</strong> file.</p>
-<p>For example, when a <strong>LocSpin</strong> file is given as follows, the process number must be equal to <span class="math notranslate nohighlight">\(2=1+1,~6=2\times(2+1),~24=6\times(3+1)\)</span>.</p>
+<div><p>When the model is selected as the spin model by setting <code class="docutils literal"><span class="pre">CalcModel</span></code> in a <strong>CalcMod</strong> file, the process number is fixed by a <strong>LocSpin</strong> file. The process number must be equal to the number calculated by multiplying the state number of the localized spin (<code class="docutils literal"><span class="pre">2S</span></code> +1) in descending order by the site number. See <a class="reference internal" href="../filespecification/expertmode_en/LocSpin_file_en.html#subsec-locspn"><span>LocSpin file</span></a> for details of the <strong>LocSpin</strong> file.</p>
+<p>For example, when a <strong>LocSpin</strong> file is given as follows, the process number must be equal to <span class="math">\(2=1+1,~6=2\times(2+1),~24=6\times(3+1)\)</span>.</p>
 </div></blockquote>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>================================
+<div class="highlight-none"><div class="highlight"><pre>================================
 NlocalSpin     3
 ================================
 ========i_0IteElc_2S ======
@@ -217,15 +223,14 @@ NlocalSpin     3
 </div>
 <div class="section" id="printing-version-id">
 <h2>2.4.5. Printing version ID<a class="headerlink" href="#printing-version-id" title="Permalink to this headline">¶</a></h2>
-<p>By using the <code class="docutils literal notranslate"><span class="pre">-v</span></code> option as follows, you can check which version of <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> you are using.</p>
+<p>By using the <code class="docutils literal"><span class="pre">-v</span></code> option as follows, you can check which version of <span class="math">\({\mathcal H}\Phi\)</span> you are using.</p>
 <blockquote>
-<div><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">PATH/HPhi</span> <span class="pre">-v</span></code></div></blockquote>
+<div><code class="docutils literal"><span class="pre">$</span> <span class="pre">PATH/HPhi</span> <span class="pre">-v</span></code></div></blockquote>
 </div>
 </div>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -241,17 +246,22 @@ NlocalSpin     3
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="prerequisite_en.html">2.1. Prerequisite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_en.html">2.2. Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="directorystructure_en.html">2.3. Directory structure</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">2.4. Basic usage</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">2.4. Basic usage</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#standard-mode">2.4.1. <em>Standard</em> mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#expert-mode">2.4.2. <em>Expert</em> mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-input-files-for-expert-mode">2.4.3. Creating input files for <em>Expert</em> mode</a></li>
@@ -273,7 +283,7 @@ NlocalSpin     3
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul>
+  <li><a href="ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a><ul>
       <li>Previous: <a href="directorystructure_en.html" title="previous chapter">2.3. Directory structure</a></li>
       <li>Next: <a href="../tutorial/tu-index.html" title="next chapter">3. Tutorial</a></li>
   </ul></li>
@@ -282,24 +292,17 @@ NlocalSpin     3
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -308,11 +311,11 @@ NlocalSpin     3
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/howtouse/basicusage_en.rst.txt"
+      <a href="../_sources/howtouse/basicusage_en.txt"
           rel="nofollow">Page source</a>
     </div>
 
