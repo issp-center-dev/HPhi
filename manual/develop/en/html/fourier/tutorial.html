@@ -1,37 +1,43 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>7.2. Tutorial &#8212; HΦ Documentation  documentation</title>
+    
+    <title>7.2. Tutorial &mdash; HΦ Documentation  documentation</title>
+    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="7. HPhi/mVMC Fourier-Transformation utility" href="index.html" />
     <link rel="next" title="7.3. File format" href="format.html" />
     <link rel="prev" title="7.1. Overview" href="overview.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
-  
+  </head>
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="tutorial">
@@ -41,10 +47,10 @@ the 8-site Hubbard model on the square lattice.</p>
 <div class="section" id="run-hphi-vmc-out">
 <h2>7.2.1. Run HPhi/vmc.out<a class="headerlink" href="#run-hphi-vmc-out" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">For <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></p>
+<li><p class="first">For <span class="math">\({\mathcal H}\Phi\)</span></p>
 <p>We calculate the ground state and the correlation function with
 the following input file</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>a0w = 2
+<div class="highlight-none"><div class="highlight"><pre>a0w = 2
 a0l = 2
 a1w = -2
 a1l = 2
@@ -57,13 +63,13 @@ nelec = 8
 2Sz=0
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ HPhi -s input
+<div class="highlight-bash"><div class="highlight"><pre>$ HPhi -s input
 </pre></div>
 </div>
 </li>
 <li><p class="first">For mVMC</p>
 <p>First, we optimize the trial wavefunction with the following input</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>a0w = 2
+<div class="highlight-none"><div class="highlight"><pre>a0w = 2
 a0l = 2
 a1w = -2
 a1l = 2
@@ -75,34 +81,34 @@ nelec = 8
 2Sz=0
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ vmc.out -s input
+<div class="highlight-bash"><div class="highlight"><pre>$ vmc.out -s input
 </pre></div>
 </div>
 <p>We add the following line to the input file to compute the correlation function.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>NVMCCalMode = 1
+<div class="highlight-none"><div class="highlight"><pre>NVMCCalMode = 1
 </pre></div>
 </div>
 <p>Compute the correlation function.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ vmc.out -s input output/zqp_opt.dat
+<div class="highlight-bash"><div class="highlight"><pre>$ vmc.out -s input output/zqp_opt.dat
 </pre></div>
 </div>
 </li>
 </ul>
 <p>Then the one- and two-body correlation function are written to files
-in the <code class="docutils literal notranslate"><span class="pre">output/</span></code> directory.</p>
+in the <code class="docutils literal"><span class="pre">output/</span></code> directory.</p>
 <p>Related files</p>
 <ul class="simple">
-<li>StdFace.def (See the manuals for mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>)</li>
+<li>StdFace.def (See the manuals for mVMC/<span class="math">\({\mathcal H}\Phi\)</span>)</li>
 <li>zqp_opt.dat (See the manual for mVMC)</li>
-<li>greenone.def (<a class="reference internal" href="format.html#greenindex"><span class="std std-ref">Specify the index of correlation function to be computed</span></a>)</li>
-<li>greentwo.def (<a class="reference internal" href="format.html#greenindex"><span class="std std-ref">Specify the index of correlation function to be computed</span></a>)</li>
+<li>greenone.def (<a class="reference internal" href="format.html#greenindex"><span>Specify the index of correlation function to be computed</span></a>)</li>
+<li>greentwo.def (<a class="reference internal" href="format.html#greenindex"><span>Specify the index of correlation function to be computed</span></a>)</li>
 </ul>
 </div>
 <div class="section" id="fourier-transformation-of-correlation-functions">
 <h2>7.2.2. Fourier transformation of correlation functions<a class="headerlink" href="#fourier-transformation-of-correlation-functions" title="Permalink to this headline">¶</a></h2>
 <p>Perform the Fourier transformation of the correlation function
-by using the utility <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">echo</span> <span class="s2">&quot;4 20</span>
+by using the utility <code class="docutils literal"><span class="pre">greenr2k</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ <span class="nb">echo</span> <span class="s2">&quot;4 20</span>
 <span class="s2">G 0 0 0</span>
 <span class="s2">X 0.5 0 0</span>
 <span class="s2">M 0.5 0.5 0</span>
@@ -112,41 +118,40 @@ $ greenr2k namelist.def geometry.dat
 </pre></div>
 </div>
 <p>Then the Fourier-transformed correlation functions are
-written to a file in <code class="docutils literal notranslate"><span class="pre">output/</span></code>.</p>
+written to a file in <code class="docutils literal"><span class="pre">output/</span></code>.</p>
 <p>Related files</p>
 <ul class="simple">
-<li>output/zvo_cisajs_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">Results of correlation function in the site representation</span></a>)</li>
-<li>output/zvo_cisajs.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">Results of correlation function in the site representation</span></a>)</li>
-<li>output/zvo_cisajscktalt_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">Results of correlation function in the site representation</span></a>)</li>
-<li>output/zvo_cisajscktalt.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">Results of correlation function in the site representation</span></a>)</li>
-<li>geometry.dat (<a class="reference internal" href="format.html#geometry"><span class="std std-ref">Geometry</span></a>)</li>
-<li>output/zvo_corr.dat (<a class="reference internal" href="format.html#zvocorr"><span class="std std-ref">Correlation functions on the k path</span></a>)</li>
+<li>output/zvo_cisajs_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span>Results of correlation function in the site representation</span></a>)</li>
+<li>output/zvo_cisajs.dat (<a class="reference internal" href="format.html#zvocisajs"><span>Results of correlation function in the site representation</span></a>)</li>
+<li>output/zvo_cisajscktalt_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span>Results of correlation function in the site representation</span></a>)</li>
+<li>output/zvo_cisajscktalt.dat (<a class="reference internal" href="format.html#zvocisajs"><span>Results of correlation function in the site representation</span></a>)</li>
+<li>geometry.dat (<a class="reference internal" href="format.html#geometry"><span>Geometry</span></a>)</li>
+<li>output/zvo_corr.dat (<a class="reference internal" href="format.html#zvocorr"><span>Correlation functions on the k path</span></a>)</li>
 </ul>
 </div>
 <div class="section" id="display-correlation-functions">
 <h2>7.2.3. Display correlation functions<a class="headerlink" href="#display-correlation-functions" title="Permalink to this headline">¶</a></h2>
 <p>Plot the correlation function in the <em>k</em> space
 by using gnuplot.</p>
-<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">load</span> <span class="s">&quot;kpath.gp&quot;</span>
+<div class="highlight-gnuplot"><div class="highlight"><pre><span class="k">load</span> <span class="s">&quot;kpath.gp&quot;</span>
 <span class="k">plot</span> <span class="s">&quot;output/zvo_corr_eigen0.dat&quot;</span> <span class="nb">u</span> <span class="mi">1</span><span class="o">:</span><span class="mi">12</span> <span class="nb">w</span> <span class="n">l</span>
 </pre></div>
 </div>
 <div class="figure" id="id2">
 <span id="corplotpng"></span><img alt="../_images/corplot.png" src="../_images/corplot.png" />
-<p class="caption"><span class="caption-number">Fig. 7.1 </span><span class="caption-text">The spin-spin correlation <span class="math notranslate nohighlight">\(\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle\)</span>
+<p class="caption"><span class="caption-number">Fig. 7.1 </span><span class="caption-text">The spin-spin correlation <span class="math">\(\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle\)</span>
 (Column 12).</span></p>
 </div>
 <p>Related files</p>
 <ul class="simple">
-<li>kpath.gp (<a class="reference internal" href="format.html#gnuplot"><span class="std std-ref">gnuplot script</span></a>)</li>
-<li>output/zvo_corr.dat (<a class="reference internal" href="format.html#zvocorr"><span class="std std-ref">Correlation functions on the k path</span></a>)</li>
+<li>kpath.gp (<a class="reference internal" href="format.html#gnuplot"><span>gnuplot script</span></a>)</li>
+<li>output/zvo_corr.dat (<a class="reference internal" href="format.html#zvocorr"><span>Correlation functions on the k path</span></a>)</li>
 </ul>
 </div>
 </div>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -162,27 +167,32 @@ by using gnuplot.</p>
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">7. HPhi/mVMC Fourier-Transformation utility</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">7.1. Overview</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">7.2. Tutorial</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">7.2. Tutorial</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#run-hphi-vmc-out">7.2.1. Run HPhi/vmc.out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fourier-transformation-of-correlation-functions">7.2.2. Fourier transformation of correlation functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#display-correlation-functions">7.2.3. Display correlation functions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="format.html">7.3. File format</a></li>
-<li class="toctree-l2"><a class="reference internal" href="util.html">7.4. Behavior of <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> utility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util.html">7.4. Behavior of <code class="docutils literal"><span class="pre">greenr2k</span></code> utility</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contact.html">7.5. Contact</a></li>
 </ul>
 </li>
@@ -202,24 +212,17 @@ by using gnuplot.</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -228,11 +231,11 @@ by using gnuplot.</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/fourier/tutorial.rst.txt"
+      <a href="../_sources/fourier/tutorial.txt"
           rel="nofollow">Page source</a>
     </div>
 

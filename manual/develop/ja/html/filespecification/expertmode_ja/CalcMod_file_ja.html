@@ -1,38 +1,44 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>4.2.2. CalcModファイル &#8212; HΦ マニュアル  ドキュメント</title>
+    
+    <title>4.2.2. CalcModファイル &mdash; HΦ マニュアル  ドキュメント</title>
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script type="text/javascript" src="../../_static/translations.js"></script>
-    <link rel="index" title="索引" href="../../genindex.html" />
-    <link rel="search" title="検索" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
+    <link rel="up" title="4.2. エキスパートモード用入力ファイル" href="index_expertmode_ja.html" />
     <link rel="next" title="4.2.3. ModParaファイル" href="ModPara_file_ja.html" />
     <link rel="prev" title="4.2.1. 入力ファイル指定用ファイル" href="List_file_for_the_input_files_ja.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
-  
+  </head>
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="calcmod">
@@ -40,7 +46,7 @@
 <div class="line-block">
 <div class="line">計算手法、計算モデル、出力モードを指定します。以下のようなフォーマットをしています。</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CalcType     0
+<div class="highlight-none"><div class="highlight"><pre>CalcType     0
 CalcModel    2
 CalcEigenVec 0
 </pre></div>
@@ -55,11 +61,11 @@ CalcEigenVec 0
 <div class="section" id="id2">
 <h2>パラメータ<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>string01<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>string01<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> string型 (固定)</p>
 <p><strong>説明 :</strong> キーワードを指定します。</p>
 </li>
-<li><p class="first"><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
+<li><p class="first"><span class="math">\([\)</span>int01<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> int型</p>
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> キーワードにひも付けられるパラメータを指定します。</div>
@@ -76,14 +82,14 @@ CalcEigenVec 0
 <li>指定したキーワード、ファイルが存在しない場合はエラー終了します。</li>
 <li>キーワードCalcType, CalcModelは省略できません。
 省略した場合はエラー終了します。</li>
-<li><span class="math notranslate nohighlight">\(\#\)</span>で始まる行は読み飛ばされます。</li>
+<li><span class="math">\(\#\)</span>で始まる行は読み飛ばされます。</li>
 </ul>
 </div>
 <div class="section" id="id4">
 <h2>キーワード<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>次に各キーワードで指定されるパラメータに関して説明します。</p>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CalcType</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">CalcType</span></code></p>
 <p><strong>形式 :</strong> int型</p>
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> 計算手法の指定を行います。</div>
@@ -95,23 +101,23 @@ CalcEigenVec 0
 <div class="line">を選択することができます。</div>
 </div>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CalcModel</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">CalcModel</span></code></p>
 <p><strong>形式 :</strong> int型</p>
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> 計算モデルの指定を行います。</div>
 <div class="line">0: fermion
-Hubbard模型(カノニカル：粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>保存、粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>非保存)</div>
-<div class="line">1: スピン模型(カノニカル：<span class="math notranslate nohighlight">\(S_z\)</span>保存)</div>
-<div class="line">2: 近藤模型(カノニカル：粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>保存)</div>
+Hubbard模型(カノニカル：粒子数・<span class="math">\(S_z\)</span>保存、粒子数・<span class="math">\(S_z\)</span>非保存)</div>
+<div class="line">1: スピン模型(カノニカル：<span class="math">\(S_z\)</span>保存)</div>
+<div class="line">2: 近藤模型(カノニカル：粒子数・<span class="math">\(S_z\)</span>保存)</div>
 <div class="line">3: fermion
-Hubbard模型(グランドカノニカル：粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>非保存)</div>
-<div class="line">4: スピン模型(グランドカノニカル：<span class="math notranslate nohighlight">\(S_z\)</span>非保存)</div>
-<div class="line">5: 近藤模型(グランドカノニカル：粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>非保存)</div>
+Hubbard模型(グランドカノニカル：粒子数・<span class="math">\(S_z\)</span>非保存)</div>
+<div class="line">4: スピン模型(グランドカノニカル：<span class="math">\(S_z\)</span>非保存)</div>
+<div class="line">5: 近藤模型(グランドカノニカル：粒子数・<span class="math">\(S_z\)</span>非保存)</div>
 <div class="line">を選択することが出来ます。 ferimon
-Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S_z\)</span>非保存を選択する場合は、粒子数のみを指定することで計算が可能となります。</div>
+Hubbard模型で粒子数保存・<span class="math">\(S_z\)</span>非保存を選択する場合は、粒子数のみを指定することで計算が可能となります。</div>
 </div>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CalcEigenVec</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">CalcEigenVec</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> 固有ベクトルを計算する際の手法の指定を行います。</div>
@@ -121,7 +127,7 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 <div class="line">で選択することが出来ます。</div>
 </div>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">InitialVecType</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> 固有ベクトルの初期値の型の指定を行います。</div>
@@ -130,21 +136,21 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 <div class="line">から選択することが出来ます。</div>
 </div>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OutputEigenVec</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OutputEigenVec</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <p><strong>説明 :</strong> 固有ベクトルの出力の指定を行います。
 0: 出力なし
 1: 出力あり
 から選択することが出来ます。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">InputEigenVec</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <p><strong>説明 :</strong> 固有ベクトルの入力の指定を行います。
 0: 入力なし
 1: 入力あり
 から選択することが出来ます。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">ReStart</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">ReStart</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <p><strong>説明 :</strong> 再計算用のモードを指定します。
 0: 再計算なし
@@ -153,7 +159,7 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 3: リスタートベクトル入力あり、出力なし
 から選択することが出来ます。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">CalcSpec</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <p><strong>説明 :</strong> 動的グリーン関数の計算モードを指定します。
 0: 動的グリーン関数の計算なし
@@ -164,28 +170,28 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 5: 三重対角行列の成分と再計算用ベクトルを読み込み再計算・再出力
 から選択することが出来ます。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OutputHam</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OutputHam</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <p><strong>説明 :</strong> (FullDiag) ハミルトニアンの出力モードを指定します。
 0: 出力なし
 1: 出力あり
 から選択することが出来ます。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">InputHam</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">InputHam</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <p><strong>説明 :</strong> (FullDiag) ハミルトニアンの入力モードを指定します。
 0: 入力なし
 1: 入力あり
 から選択することが出来ます。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">OutputExcitedVec</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <p><strong>説明 :</strong> 励起ベクトルの出力の指定を行います。
 0: 出力なし
 1: 出力あり
 から選択することが出来ます。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Scalapack</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Scalapack</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> (FullDiag)
@@ -195,11 +201,11 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 <div class="line">で選択することが出来ます。</div>
 </div>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">NGPU</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">NGPU</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 2)</p>
 <p><strong>説明 :</strong> (FullDiag)
 全対角化計算でのMAGMAライブラリを使用する場合のGPU数を指定します。
-なお、 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> ではマルチノードでのGPU計算には対応していません。</p>
+なお、 <span class="math">\({\mathcal H}\Phi\)</span> ではマルチノードでのGPU計算には対応していません。</p>
 </li>
 </ul>
 </div>
@@ -207,7 +213,6 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -223,19 +228,24 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="List_file_for_the_input_files_ja.html">4.2.1. 入力ファイル指定用ファイル</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.2.2. CalcModファイル</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.2.2. CalcModファイル</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ModPara_file_ja.html">4.2.3. ModParaファイル</a></li>
 <li class="toctree-l3"><a class="reference internal" href="LocSpin_file_ja.html">4.2.4. LocSpin指定ファイル</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Trans_file_ja.html">4.2.5. Trans指定ファイル</a></li>
@@ -281,24 +291,17 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -307,11 +310,11 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/expertmode_ja/CalcMod_file_ja.rst.txt"
+      <a href="../../_sources/filespecification/expertmode_ja/CalcMod_file_ja.txt"
           rel="nofollow">Page source</a>
     </div>
 
