@@ -388,7 +388,7 @@ This calculation will **fail**!
 Please think why the Lanczos method fails for the dimer. 
 
 
-*4. Try to use LOBCG method*
+*5. Try to use LOBCG method*
 """""""""""""""""""""""""""""""
 LOBCG is locally optimal block conjugate gradient method.
 By selecting method as "CG",
@@ -408,5 +408,226 @@ In contrast to the Lanczos method,
 this calculation will work well ! 
 Please think why the CG method works well for the dimer. 
 
-**Full diagonalization**
+Please also check the excited states can
+be correctly obtained by using LOBCG method.
+An example of the input file (stan.in) is as follows::
+
+ L=2
+ model = "SpinGC" 
+ method = "CG" 
+ lattice = "chain"
+ J = 0.5
+ 2S  = 1
+ H   = 2
+ exct = 4
+
+Here, exct represents the number of excited states, which are
+obtained by the LOBCG method.
+
+**Hubbard Dimer**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Let's solve the following the Hubbard dimer model.
+
+.. math::
+
+ H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+{\rm H.c.})
+   +U(n_{0\uparrow}n_{0\downarrow}+n_{1\uparrow}n_{1\downarrow})
+
+The input file (stan.in) is as follows::
+
+ model = "Hubbard" 
+ method = "FullDiag" 
+ lattice = "chain" 
+ L=2
+ t = -0.5 
+ U = 4
+ 2Sz = 0
+ nelec = 2
+
+You can execute HPhi as follows ::
+
+ HPhi -s stan.in
+
+*1. Check the energy*
 """""""""""""""""""""""""""""""
+For the Hubbard dimer at half filling with total Sz=0, 
+energies are given as follows:
+
+ :math:`E=0,U,\frac{U}{2}\times(1\pm\sqrt{(1+(4t/U)^2)})` 
+
+For example, by taking :math:`U=4,t=-1`, the 
+energies are  given as follows:
+
+ :math:`E=-0.828427, 0, 4, 4.828427` 
+
+It is note that simple mathematical calculations 
+can be done using:: 
+
+ bc -l 
+
+on the terminal.
+
+*2. Try to use LOBCG method*
+"""""""""""""""""""""""""""""""
+The input file (stan.in) is as follows::
+
+ model = "Hubbard" 
+ method = "CG" 
+ lattice = "chain" 
+ L=2
+ t = -0.5 
+ U = 4
+ 2Sz = 0
+ nelec = 2
+ exct = 4
+
+Please check whether LOBCG method correctly 
+reproduces the energies including the excited states.
+
+**Hubbard Trimer**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Let's solve the following the Hubbard trimer model 
+(Hubbard model on a triangle).
+
+.. math::
+
+ H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+c_{1\sigma}^{\dagger}c_{2\sigma}
+   +c_{2\sigma}^{\dagger}c_{0\sigma}+{\rm H.c.})
+   +U\sum_{i}(n_{i\uparrow}n_{i\downarrow})
+
+The input file (stan.in) is as follows::
+
+ model = "Hubbard" 
+ method = "FullDiag" 
+ lattice = "chain" 
+ L=2
+ t = -1
+ U = 4
+ 2Sz = 0
+ nelec = 2
+
+Note that the filling is not half filling.
+
+You can execute HPhi as follows ::
+
+ HPhi -s stan.in
+
+*1. Ferromagnetic ground state*
+"""""""""""""""""""""""""""""""
+For the Hubbard model on a triangle with one hole, 
+it is known that the **perfect ferromagnetism** becomes ground state.
+Please check that. 
+It may be interesting
+to see the effects of the sign of the transfer integrals (what happens if you take t = 1 ?).
+
+If you want know the mechanism of the 
+ferromagnetism, please see 
+**Hal Tasaki, Kotai Butsuri, Vol. 31, 173 (1996)**.
+This is one of the simplest example of the 
+Nagaoka's ferromagnetism.
+
+
+*2. Effects of transfer integrals*
+"""""""""""""""""""""""""""""""
+Please the effects of the sign of
+the transfer integrals. 
+**For example, what happens if you take t = 1 ?**
+
+Another interesting example is by changing 
+the transfer integrals between site 0 and site 2.
+Following an example of the **trans.def** ::
+
+  ======================== 
+  NTransfer      12  
+  ======================== 
+  ========i_j_s_tijs====== 
+  ======================== 
+    1     0     0     0         -1.000000000000000         0.000000000000000
+    0     0     1     0         -1.000000000000000         0.000000000000000
+    1     1     0     1         -1.000000000000000         0.000000000000000
+    0     1     1     1         -1.000000000000000         0.000000000000000
+    2     0     0     0         -2.000000000000000         0.000000000000000
+    0     0     2     0         -2.000000000000000         0.000000000000000
+    2     1     0     1         -2.000000000000000         0.000000000000000
+    0     1     2     1         -2.000000000000000         0.000000000000000
+    2     0     1     0         -1.000000000000000         0.000000000000000
+    1     0     2     0         -1.000000000000000         0.000000000000000
+    2     1     1     1         -1.000000000000000         0.000000000000000
+    1     1     2     1         -1.000000000000000         0.000000000000000
+
+Using this transfer integrals, please examine the
+U dependence of the ground state.
+Is there phase transition between singlet ground state and
+the perfect ferromagnetism ?
+
+
+**Heisenberg chain**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Let's solve the following spin 1/2 Heisenberg model on the chain.
+
+.. math::
+
+ H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}
+
+The input file (stan.in) for 16-site Heisenberg model is as follows::
+
+ L       = 16
+ model   = "Spin" 
+ method  = "CG" 
+ lattice = "chain"
+ J = 1
+ 2Sz = 0
+ 2S  = 1
+
+You can execute HPhi as follows ::
+
+ HPhi -s stan.in
+
+*1. Check the energy*
+"""""""""""""""""""""""""""""""
+Please check whether the energies are given as follows.
+
+.. math::
+
+ E_{0}= -7.142296 
+
+*2. Obtainig the excited state*
+"""""""""""""""""""""""""""""""
+By adding **exct=2**, you can obtain the 2 low-energy states.
+Please check the energies.
+
+.. math::
+  
+ E_{0}= -7.142296
+
+ E_{1}= -6.872107 
+
+*3. Size dependence of the spin gap*
+"""""""""""""""""""""""""""""""
+The spin gap at finite system size is defined
+as :math:`\Delta=E_{1}-E_{0}`. For 16-site,
+we obtain :math:`\Delta\sim 0.2701`.
+
+Please examine how :math:`\Delta` behaves
+as a function of system size L.
+(available system size on PC may be L=24)
+
+*4. Haldane gap*
+"""""""""""""""""""""""""""""""
+By performing a similar calculations for S=1 system,
+please examine  how :math:`\Delta` behaves
+as a function of system size L.
+It is known that the finite spin gap exists even
+for the thermodynamic limit (:math:`L=\infty`).
+This spin gap is often called Haldane gap.
+
+
+
+
+
+
+
+
+
+
