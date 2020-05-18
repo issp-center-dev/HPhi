@@ -35,7 +35,8 @@ git clone git@github.com:${TRAVIS_REPO_SLUG} hphi-doc
 cd hphi-doc
 mkdir build && cd build
 cmake -DDocument=ON ../
-make doc
+make doc-ja-html
+make doc-en-html
 
 set +e
 
