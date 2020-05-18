@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>5.1. Lanczos法 &#8212; HΦ マニュアル  ドキュメント</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="5.2. 完全対角化" href="FullDiagonalization_ja.html" />
+    <link rel="prev" title="5. アルゴリズム" href="al-index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="lanczos">
+<h1>5.1. Lanczos法<a class="headerlink" href="#lanczos" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id1">
+<h2>5.1.1. 手法概要<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Lanczos法の解説については TITPACK <a class="footnote-reference" href="#id12" id="id2">[1]</a> のマニュアルと 線形計算の数理 <a class="footnote-reference" href="#id13" id="id3">[2]</a> を参考にしています.</p>
+<p>Lanczos法はある初期ベクトルにハミルトニアン
+を作用させて最大・最小近傍の固有値・固有ベクトルを
+求める方法です。
+Lanczos法で固有値を求める際にはHilbert空間の次元の
+大きさの波動関数を表すベクトルが2つ <a class="footnote-reference" href="#id14" id="id4">[3]</a> あれば原理的には実行可能なため、
+大規模疎行列の対角化手法として有用であることが知られています。
+後述するように、固有ベクトルを求める際にはHilbert空間の次元の大きさのベクトルがもう1本必要です。</p>
+<p>Lanczos法の 原理はべき乗法に基づいています。
+べき乗法ではある任意のベクトル<span class="math notranslate nohighlight">\(\vec{x}_{0}\)</span>に
+Hamitonianを逐次的に作用させて, <span class="math notranslate nohighlight">\({\mathcal H}^{n}\vec{x}_{0}\)</span>
+を作成します。 このとき、生成される空間
+<span class="math notranslate nohighlight">\(\mathcal{K}_{n+1}({\mathcal H},\vec{x}_{0})=\{\vec{x}_{0},{\mathcal H}^{1}\vec{x}_{0},\dots,{\mathcal H}^{n}\vec{x}_{0}\}\)</span>
+はKrylov部分空間といわれます。
+初期ベクトルを<span class="math notranslate nohighlight">\({\mathcal H}\)</span>の固有ベクトル<span class="math notranslate nohighlight">\(\vec{e}_{i}\)</span>(対応する固有値を <span class="math notranslate nohighlight">\(E_{i}\)</span>とする)
+の重ね合わせで表すと</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-0">
+<span class="eqno">(5.1)<a class="headerlink" href="#equation-algorithm-lanczos-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+\vec{x}_{0}=\sum_{i}a_{i}\vec{e}_{i}\end{aligned}\]</div>
+<p>となります。 ここで、<span class="math notranslate nohighlight">\(E_{0}\)</span>を絶対値最大の固有値としました。
+またハミルトニアンはエルミートであるため、
+固有値は全て実数であることに注意する必要があります。
+これにHamiltonianの<span class="math notranslate nohighlight">\({\mathcal H}^{n}\)</span>を作用させると、</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-1">
+<span class="eqno">(5.2)<a class="headerlink" href="#equation-algorithm-lanczos-ja-1" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+{\mathcal H}^{n}\vec{x}_{0}=E_{0}^{n}\Big[ a_{0}\vec{e}_{0}+\sum_{i\neq0}\left(\frac{E_{i}}{E_{0}}\right)^na_{i}\vec{e}_{i}\Big]\end{aligned}\]</div>
+<p>となり、絶対値最大固有値<span class="math notranslate nohighlight">\(E_{0}\)</span>に対応する固有ベクトルが支配的になります。
+適切な変換を行って、この固有ベクトルの成分を抽出するのが Lanczos法です。</p>
+<p>Lanczos法では、 <span class="math notranslate nohighlight">\(\mathcal{K}_{n}({\mathcal H},\vec{x}_{0})\)</span>
+から正規直交ベクトル<span class="math notranslate nohighlight">\({\vec{v}_{0},\dots,\vec{v}_{n-1}}\)</span>を次の手続きにしたがって
+順次生成していきます。 初期条件を
+<span class="math notranslate nohighlight">\(\vec{v}_{0} =\vec{x}_{0}/|\vec{x}_{0}|\)</span>,
+<span class="math notranslate nohighlight">\(\beta_{0}=0,\vec{x}_{-1}=0\)</span>
+とすると、正規直交基底は次の手続きによって逐次的に生成することができます。</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-2">
+<span class="eqno">(5.3)<a class="headerlink" href="#equation-algorithm-lanczos-ja-2" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+\alpha_{k} &amp;= ({\mathcal H}\vec{v}_{k},\vec{v}_{k}) \\
+\vec{w}   &amp;= {\mathcal H}\vec{v}_{k}-\beta_{k}\vec{v}_{k-1}-\alpha_{k}\vec{v}_{k} \\
+\beta_{k+1} &amp;= |\vec{w}| \\
+\vec{v}_{k+1} &amp;= \frac{\vec{v}_{k}}{|\vec{v}_{k}|}\end{aligned}\end{split}\]</div>
+<p>この定義から、<span class="math notranslate nohighlight">\(\alpha_{k}\)</span>,<span class="math notranslate nohighlight">\(\beta_{k}\)</span> ともに実数であることに注意する必要があります。</p>
+<p>これらの正規直交基底が成すKryrov部分空間の中で
+もとのハミルトニアンに対する固有値問題は、</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-3">
+<span class="eqno">(5.4)<a class="headerlink" href="#equation-algorithm-lanczos-ja-3" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+T_{n}=V_{n}^{\dagger}{\mathcal H} V_{n}\end{aligned}\]</div>
+<p>と変形されます。 ここで、
+<span class="math notranslate nohighlight">\(V_{n}\)</span>を<span class="math notranslate nohighlight">\(\vec{v}_{i}(i=0,1,\dots,n-1)\)</span>を
+並べた行列です。 <span class="math notranslate nohighlight">\(T_{n}\)</span>は三重対角行列であり、 その対角成分は
+<span class="math notranslate nohighlight">\(\alpha_{i}\)</span>, 副対角成分は<span class="math notranslate nohighlight">\(\beta_{i}\)</span>で与えられます。
+この三重対角行列<span class="math notranslate nohighlight">\(T_{n}\)</span>の
+固有値はもとのハミルトニアンの固有値の
+近似値となっています(<span class="math notranslate nohighlight">\(V^{\dagger}V=I\)</span>,<span class="math notranslate nohighlight">\(I\)</span>は単位行列であることに注意)。
+<span class="math notranslate nohighlight">\(T_{n}\)</span>の固有ベクトルを<span class="math notranslate nohighlight">\(\tilde{\vec{e}}_{i}\)</span>
+とするともとのハミルトニアンの固有ベクトルとの関係は
+<span class="math notranslate nohighlight">\(\vec{e}_{i}=V\tilde{\vec{e}}_{i}\)</span>で与えられます。
+<span class="math notranslate nohighlight">\(V\)</span>を覚えていれば、Lanczos法を行うと同時に固有ベクトル
+を求めることができますが、実際の場合は
+(Hilbert空間の次元 <span class="math notranslate nohighlight">\(\times\)</span> Lanczos法の反復回数)の
+大きさの行列を保持することは不可能です。
+そこで、Lanczos法で固有値を求めた後、
+<span class="math notranslate nohighlight">\(\tilde{\vec{e}_{i}}\)</span>を保存しておき  <a class="footnote-reference" href="#id15" id="id5">[4]</a>、
+再び同じLanczos法の計算を行い
+求めた<span class="math notranslate nohighlight">\(V\)</span>から元の固有ベクトルを再現 するようにしています。</p>
+<p>Lanczos法では, 元のHilbert空間の次元より十分小さい反復回数
+で最大及び最小に近い固有値を精度よく求めることが
+できることが知られています。
+すなわち<span class="math notranslate nohighlight">\(T_{n}\)</span>の次元<span class="math notranslate nohighlight">\(n\)</span>は数百-数千程度ですみます。
+定量的には、最大及び最小固有値の評価の誤差は
+Lanczosの反復回数に対して指数関数的に減少することが
+示されています(詳細はRef. <a class="footnote-reference" href="#id13" id="id6">[2]</a> を参照して下さい)。</p>
+</div>
+<div class="section" id="id7">
+<h2>5.1.2. 逆反復法<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>固有値の近似値がわかっているときは
+適当なベクトル<span class="math notranslate nohighlight">\(\vec{y}_{0}\)</span>に対して
+<span class="math notranslate nohighlight">\(({\mathcal H}-E_{n})^{-1}\)</span>を 逐次的に作用させれば、
+固有値<span class="math notranslate nohighlight">\(E_{n}\)</span>に対応する固有ベクトルの 成分が支配的になり、
+固有ベクトルを精度良く求めることができます。</p>
+<p><span class="math notranslate nohighlight">\(({\mathcal H}-E_{n})^{-1}\)</span>を作用させる方程式を書き換えると
+以下の連立方程式が得られます。</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-4">
+<span class="eqno">(5.5)<a class="headerlink" href="#equation-algorithm-lanczos-ja-4" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+\vec{y}_{k}&amp;=({\mathcal H}-E_{n})\vec{y}_{k+1}\end{aligned}\]</div>
+<p>この連立方程式を 共役勾配法(CG法)を用いて解くことで、
+固有ベクトルを求めることができます。 その固有ベクトルから
+固有値およびその他の相関関数を 求めることができます。 ただし,
+CG法の実行にはヒルベルト空間の次元のベクトル を4本確保する必要があり、
+大規模系の計算を実行する際にはメモリが足りなくなる恐れがあるので注意が必要です。</p>
+</div>
+<div class="section" id="id8">
+<h2>5.1.3. 実際の実装について<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="id9">
+<h3>初期ベクトルの設定について<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Lanczos法では、スタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定する<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>(<span class="math notranslate nohighlight">\(\equiv r_s\)</span>)により初期ベクトルの設定方法を指定します。また、初期ベクトルはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code>を用い、実数もしくは複素数の指定をすることができます。</p>
+<ul>
+<li><p class="first">カノニカル集団かつ <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(\geq 0\)</span>の場合</p>
+<p>ヒルベルト空間のうち、</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-5">
+<span class="eqno">(5.6)<a class="headerlink" href="#equation-algorithm-lanczos-ja-5" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+(N_{\rm dim}/2 + r_s ) \% N_{\rm dim}\end{aligned}\]</div>
+<p>の成分が与えられます。ここで、 <span class="math notranslate nohighlight">\(N_{\rm dim}\)</span> は対象となるヒルベルト空間の総数で、<span class="math notranslate nohighlight">\(N_{\rm dim}/2\)</span> はデフォルト値<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>
+<span class="math notranslate nohighlight">\(=1\)</span>で特殊なヒルベルト空間の選択をさけるために加えられています。なお、選択された成分の係数は実数の場合は<span class="math notranslate nohighlight">\(1\)</span>、複素数の場合には<span class="math notranslate nohighlight">\((1+i)/\sqrt{2}\)</span>が与えられます。</p>
+</li>
+<li><p class="first">グランドカノニカル集団 もしくは <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(&lt; 0\)</span>の場合</p>
+<p>初期ベクトルはランダムベクトルとして与えられます。乱数のシードは</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-6">
+<span class="eqno">(5.7)<a class="headerlink" href="#equation-algorithm-lanczos-ja-6" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+123432+|r_s|\end{aligned}\]</div>
+<p>で指定します。ここで、<span class="math notranslate nohighlight">\(n_{\rm run}\)</span>はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、もしくはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">NumAve</span></code>で指定します。<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>は入力ファイルで指定します。乱数はSIMD-oriented
+Fast Mersenne Twister
+(dSFMT)を用い発生させています <a class="footnote-reference" href="#id16" id="id10">[5]</a> 。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>収束判定について<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> では、<span class="math notranslate nohighlight">\(T_{n}\)</span>の対角化にlapackのルーチン
+<span class="math notranslate nohighlight">\(\rm dsyev\)</span>を使用しており、
+<span class="math notranslate nohighlight">\(T_{n}\)</span>の基底状態の次の固有値（第一励起状態のエネルギー）
+を収束判定条件に用いています。 デフォルトの設定では、
+最初の5回のLanczosステップの後に、
+２回毎に<span class="math notranslate nohighlight">\(T_{n}\)</span>の対角化を行い、
+前のLanczosステップの第一励起状態のエネルギーと
+指定した精度以内で一致すれば、収束したと判定しています。
+なお、収束する際の精度は <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>  (エキスパートモードではModParaファイル内)で指定することが可能です。</p>
+<p>その後、Lanczos法を再度行い、 逐次<span class="math notranslate nohighlight">\(V\)</span>を求めて、指定した
+準位の固有ベクトルを求めます。
+得られた固有ベクトル<span class="math notranslate nohighlight">\(|n\rangle\)</span>を用い、
+エネルギーの期待値<span class="math notranslate nohighlight">\(E_{n}=\langle n|{\mathcal H}|n\rangle\)</span>
+およびバリアンス<span class="math notranslate nohighlight">\(\Delta=\langle n|{\mathcal H}^{2}|n\rangle -(\langle n|{\mathcal H}|n\rangle)^2\)</span>
+を求めて、<span class="math notranslate nohighlight">\(E_{n}\)</span>がLaczos法で求めた固有値と
+指定した精度で一致しているか、
+バリアンスが指定した精度以下になっているかを チェックしています。
+指定した精度に達していれば、対角化を終了しています。</p>
+<p>指定した精度に達していない場合には
+逆反復法を用いて再度固有ベクトルを求め直します。
+逆反復法の初期ベクトルとしてLanczos法で求めた
+固有ベクトルをとった方が一般に収束が早いので、
+標準の設定ではそのように取っています。</p>
+<table class="docutils footnote" frame="void" id="id12" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>http://www.qa.iir.titech.ac.jp/~nishimori/titpack2_new/index-e.html</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id13" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>M. Sugihara, K. Murota, Theoretical Numerical Linear Algebra, Iwanami Stud-ies in Advanced Mathematics, Iwanami Shoten, Publishers, 2009.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id14" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>高速化のために、In <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> ではハミルトニアンの対角成分を表すベクトル1本と,スピン <span class="math notranslate nohighlight">\(z\)</span> 成分 <span class="math notranslate nohighlight">\(S_{z}\)</span> 保存, 粒子数保存の場合はその状態を指定するベクトル1本を余計に確保しています。いずれのベクトルの大きさもHilbert空間の次元です。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id15" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td><span class="math notranslate nohighlight">\(\tilde{\vec{e}_{i}}\)</span>の次元は高々Lanczos法の反復回数であることに注意。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id16" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td>http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/index.html</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="al-index.html">5. アルゴリズム</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.1. Lanczos法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">5.1.1. 手法概要</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">5.1.2. 逆反復法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">5.1.3. 実際の実装について</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="FullDiagonalization_ja.html">5.2. 完全対角化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TPQ_ja.html">5.3. 熱的純粋量子状態による有限温度計算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DynamicalGreen_ja.html">5.4. 動的グリーン関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Realtime_ja.html">5.5. 実時間発展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Bogoliubov_ja.html">5.6. Bogoliubov表現</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="al-index.html">5. アルゴリズム</a><ul>
+      <li>Previous: <a href="al-index.html" title="前の章へ">5. アルゴリズム</a></li>
+      <li>Next: <a href="FullDiagonalization_ja.html" title="次の章へ">5.2. 完全対角化</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/algorithm/Lanczos_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
