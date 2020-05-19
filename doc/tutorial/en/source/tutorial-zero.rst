@@ -433,7 +433,7 @@ Note that interaction terms must be specified for **(x,y), (x,z), (y,z)**
 and **(y,x), (z,x), (z,y) cannot be used**.
 
 
-** Use eigenvectors **
+**Use eigenvectors**
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 In this tutorial, we will study how to read the eigenvectors.
 In the standard mode, setting ``EigenVecIO = "Out"`` makes HPhi to write the calculated eigenvectors as ``output/zvo_eigenvec_[index]_rank_[rank].dat``, where ``[index]`` is the index of the states (e.g., the ground state has ``[index] = 0``) and ``[rank]`` is the rank of the process.
