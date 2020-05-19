@@ -30,6 +30,7 @@ Contents
    tutorial-finiteT
    tutorial-te
    tutorial-spectrum
+   tutorial-dynamical
 
 .. Indices and tables
 .. ==================
