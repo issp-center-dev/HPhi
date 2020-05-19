@@ -1,6 +1,3 @@
-Tutorials for spectrum calculation
-===================================
-
 Dynamical spin structure factor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -60,7 +57,7 @@ You can execute HPhi as follows ::
  HPhi -s stan1.in
  HPhi -s stan2.in
 
-After finishing calculations, the spectrum :math:`S_{zz}({\bf Q} \equiv (\pi, \pi), \omega) = \langle S_z(-{\bf Q}) \left[H-\omega-\omega_0 + i\eta\right]^{-1}S_z({\bf Q})\rangle` is outputted in `output/zvo_DynamicalGreen.dat`. Here, :math:`S_z({\bf Q})= \sum_{i}e^{i {\bf Q} \cdot {\bf r}_i} S_z^i` and the frequency :math:`\omega` moves from :math:`-10` to :math:`10`, :math:`\omega_0 = 10`, and :math:`\eta` is set as :math:`0.2`. You can check the result by executing the following command on gnuplot::
+After finishing calculations, the spectrum :math:`G_{S_z S_z}({\bf Q} \equiv (\pi, \pi), \omega) = \langle S_z(-{\bf Q}) \left[H-\omega-\omega_0 + i\eta\right]^{-1}S_z({\bf Q})\rangle` is outputted in `output/zvo_DynamicalGreen.dat`. Here, :math:`S_z({\bf Q})= \sum_{i}e^{i {\bf Q} \cdot {\bf r}_i} S_z^i` and the frequency :math:`\omega` moves from :math:`-10` to :math:`10`, :math:`\omega_0 = 10`, and :math:`\eta` is set as :math:`0.2`. You can check the result by executing the following command on gnuplot::
   
  gnuplot
  gnuplot> set xlabel "Energy"
