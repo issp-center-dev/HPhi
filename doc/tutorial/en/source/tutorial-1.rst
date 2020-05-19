@@ -517,8 +517,6 @@ You can execute HPhi as follows ::
 For the Hubbard model on a triangle with one hole, 
 it is known that the **perfect ferromagnetism** becomes ground state.
 Please check that. 
-It may be interesting
-to see the effects of the sign of the transfer integrals (what happens if you take t = 1 ?).
 
 If you want know the mechanism of the 
 ferromagnetism, please see 
@@ -705,7 +703,80 @@ Using gnuplot, you can directly compare the two results ::
   plot "FullDiag.dat" u 1:2 w l,"ave_TPQ.dat" u 1:3:4 w e
 
 
+**J1-J2 Heisenberg model**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Here, we solve the :math:`J_{1}-J_{2}` Heisenberg model on the square lattice, 
+which is a canonical example of the frustrated magnets.
+Its Hamiltonian is defined as
 
+.. math::
+
+  {\mathcal H}=J_{1}\sum_{\langle i,j\rangle }{\bf S}_{i}\cdot{\bf S}_{j}+J_{2}\sum_{\langle\langle i,j\rangle\rangle }{\bf S}_{i}\cdot{\bf S}_{j},
+
+where :math:`J_{1}` (:math:`J_{2}`) represents the nearest (next-nearest) neighbor interactions.
+
+An input file for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
+
+ model = "Spin" 
+ method = "CG" 
+ lattice = "square" 
+ L = 4
+ W = 4
+ J = 1
+ J' = 1
+ 2S = 1
+ 2Sz = 0
+ exct = 2
+
+Here, J (J') represents :math:`J_{1}` (:math:`J_{2}`).
+
+*1. Calculations of spin structure factors for ground state*
+"""""""""""""""""""""""""""""""
+First, we calculate the spin structure factors, which are defined as
+
+.. math::
+
+  S({\bf q})=\frac{1}{N_{\rm s}}\sum_{i,j} {\bf S}_{i}\cdot{\bf S}_{j}
+
+To calculate :math:`S({\bf q})`, it is necessary to prepare
+a proper input file for two-body Green functions.
+By using a python script **MakeGreen.py** (HPhi/tool/ForSq/MakeGreen.py),
+you can generate **greentwo.def** for calculating :math:`S({\bf q})`.
+To use  **MakeGreen.py** , an input file for specifying lattice geometry (**input.txt**) is necessary,
+whose form is given as follows ::
+
+ Lx 4
+ Ly 4
+ Lz 1
+ orb_num 1
+
+Here, Lx (orb_num) represents the length of the x direction (number of orbitals).
+
+By using a python script **CalcSq.py** (HPhi/tool/ForSq/CalcSq.py),
+you can calculate :math:`S({\bf q})` from **output/zvo_cisajscktalt_eigen0.dat**.
+
+Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows ::
+ 1. HPhi -sdrt stan.in
+ 2. pyhton3 MakeGreen.def (input.txt is necessary)
+ 3. HPhi -e namelist.def 
+ 4. python3 CalcSq.py (input.txt is necessary)
+ 5. You can obtain **Sq_eigen0.dat** !!
+ 6. plot "Sq_eigen0.dat" u 1:2:3 (using gnuplot)
+
+Following the procedure, please see how :math:`S({\bf q})` changes
+by changing J'.
+
+*1. Calculations of spin structure factors for excited states*
+"""""""""""""""""""""""""""""""
+By changing exct in stan.in, you can obtain several excited states.
+For those excited states, by changing **max_num=1** as ,for example, **max_num=4**,
+you can obtain  :math:`S({\bf q})` for the excited states.
+
+Please see how :math:`S({\bf q})` in the excited states 
+changes by changing J'. For example, please check 
+what is the nature of the
+first excited state J'=0,0.5, and 1.
+ 
 
 **How to use Expert mode**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
