@@ -29,6 +29,7 @@ Contents
    tutorial-zero
    tutorial-finiteT
    tutorial-te
+   tutorial-spectrum
 
 .. Indices and tables
 .. ==================
