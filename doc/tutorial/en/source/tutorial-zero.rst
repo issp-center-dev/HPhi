@@ -432,3 +432,34 @@ You can also specify the non-diagonal interaction as ::
 Note that interaction terms must be specified for **(x,y), (x,z), (y,z)**
 and **(y,x), (z,x), (z,y) cannot be used**.
 
+
+** Use eigenvectors **
+^^^^^^^^^^^^^^^^^^^^^^^^^
+In this tutorial, we will study how to read the eigenvectors.
+In the standard mode, setting ``EigenVecIO = "Out"`` makes HPhi to write the calculated eigenvectors as ``output/zvo_eigenvec_[index]_rank_[rank].dat``, where ``[index]`` is the index of the states (e.g., the ground state has ``[index] = 0``) and ``[rank]`` is the rank of the process.
+In the MPI parallelization with Npara processes, HPhi splits the whole Hilbert space into the Npara blocks and each process treats the one of them.
+The file format is described in the `reference manual <http://issp-center-dev.github.io/HPhi/manual/master/en/html/filespecification/outputfiles_en/tmpvec_en.html>`_ .
+For example, the following python function reads the vector::
+
+  def read_gs(*, exct=0, rank=0):
+    import os
+    from struct import unpack
+    import numpy as np
+
+    filename = os.path.join("output", "zvo_eigenvec_{}_rank_{}.dat".format(exct, rank))
+    with open(filename, "rb") as f:
+        f.read(4)
+        nelems = unpack("L", f.read(8))[0]
+        ret = np.zeros(nelems, dtype=np.complex)
+        f.read(16)
+        for i in range(nelems):
+            re = unpack("d", f.read(8))[0]
+            im = unpack("d", f.read(8))[0]
+            ret[i] = np.complex(re, im)
+        return ret
+
+Exercise
+"""""""""""
+Confirm that the ground state and the first excited state of a non-degenerated model are orthogonal by seeing the innerproduct between them.
+
+Hint: In the standard mode, ``exct`` option controls the number of eigenvectors to be calculated.
