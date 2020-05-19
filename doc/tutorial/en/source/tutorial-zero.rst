@@ -441,13 +441,13 @@ In the MPI parallelization with Npara processes, HPhi splits the whole Hilbert s
 The file format is described in the `reference manual <http://issp-center-dev.github.io/HPhi/manual/master/en/html/filespecification/outputfiles_en/tmpvec_en.html>`_ .
 For example, the following python function reads the vector::
 
-  def read_gs(*, exct=0, rank=0):
+  def read_gs(*, index=0, rank=0):
       import numpy as np
       from os.path import join
       from struct import unpack
 
       filename = join("output",
-                      "zvo_eigenvec_{}_rank_{}.dat".format(exct,
+                      "zvo_eigenvec_{}_rank_{}.dat".format(index,
                                                            rank))
       with open(filename, "rb") as f:
           f.read(4)
@@ -462,6 +462,6 @@ For example, the following python function reads the vector::
 
 Exercise
 """""""""""
-Confirm that the ground state and the first excited state of a non-degenerated model are orthogonal by seeing the innerproduct between them.
+Check the orthogonality of the eigenvectors calculated by the LOBCG method by calculating the norm and the inner-product of some of the eigenvectors.
 
-Hint: In the standard mode, ``exct`` option controls the number of eigenvectors to be calculated.
+Hint: In the standard mode, the ``exct`` keyword controls the number of eigenvectors to be calculated.
