@@ -442,21 +442,23 @@ The file format is described in the `reference manual <http://issp-center-dev.gi
 For example, the following python function reads the vector::
 
   def read_gs(*, exct=0, rank=0):
-    import os
-    from struct import unpack
-    import numpy as np
+      import numpy as np
+      from os.path import join
+      from struct import unpack
 
-    filename = os.path.join("output", "zvo_eigenvec_{}_rank_{}.dat".format(exct, rank))
-    with open(filename, "rb") as f:
-        f.read(4)
-        nelems = unpack("L", f.read(8))[0]
-        ret = np.zeros(nelems, dtype=np.complex)
-        f.read(16)
-        for i in range(nelems):
-            re = unpack("d", f.read(8))[0]
-            im = unpack("d", f.read(8))[0]
-            ret[i] = np.complex(re, im)
-        return ret
+      filename = join("output",
+                      "zvo_eigenvec_{}_rank_{}.dat".format(exct,
+                                                           rank))
+      with open(filename, "rb") as f:
+          f.read(4)
+          nelems = unpack("L", f.read(8))[0]
+          ret = np.zeros(nelems, dtype=np.complex)
+          f.read(16)
+          for i in range(nelems):
+              re = unpack("d", f.read(8))[0]
+              im = unpack("d", f.read(8))[0]
+              ret[i] = np.complex(re, im)
+          return ret
 
 Exercise
 """""""""""
