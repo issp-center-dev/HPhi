@@ -26,6 +26,7 @@ Contents
    :numbered: 3
 
    tutorial-1
+   tutorial-te
 
 .. Indices and tables
 .. ==================
