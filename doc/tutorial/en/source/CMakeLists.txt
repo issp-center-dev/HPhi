@@ -14,7 +14,7 @@ set(SPHINX_PDF_DIR ${CMAKE_CURRENT_BINARY_DIR}/pdf)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/conf.py ${CMAKE_CURRENT_BINARY_DIR})
 
-add_custom_target(doc-en-html ALL
+add_custom_target(tutorial-en-html ALL
   COMMAND
     ${SPHINX_EXECUTABLE}
     -b html
@@ -23,7 +23,7 @@ add_custom_target(doc-en-html ALL
     ${SPHINX_HTML_DIR}
   )
 
-add_custom_target(doc-en-pdf ALL
+add_custom_target(tutorial-en-pdf ALL
   COMMAND
     ${SPHINX_EXECUTABLE}
     -b latex
@@ -34,15 +34,15 @@ add_custom_target(doc-en-pdf ALL
     cd pdf && make
   )
 
-add_custom_target(doc-en DEPENDS doc-en-html doc-en-pdf)
+add_custom_target(tutorial-en DEPENDS tutorial-en-html tutorial-en-pdf)
 
 install(DIRECTORY ${SPHINX_HTML_DIR}
-  DESTINATION doc/manual/en
+  DESTINATION doc/tutorial/en
   PATTERN "_sources" EXCLUDE
   PATTERN ".buildinfo" EXCLUDE
   PATTERN "objects.inv" EXCLUDE
   )
 install(DIRECTORY ${SPHINX_PDF_DIR}
-  DESTINATION doc/manual/en
+  DESTINATION doc/tutorial/en
   FILES_MATCHING PATTERN "*.pdf"
   )

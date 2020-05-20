@@ -24,7 +24,7 @@ set -e
 sudo apt-get install -y enchant
 sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-lang-japanese texlive-fonts-recommended texlive-fonts-extra latexmk
 kanji-config-updmap-sys ipaex
-sudo pip install sphinx sphinxcontrib.spelling
+sudo apt-get install -y python3 python3-sphinx python3-sphinxcontrib.spelling
 
 openssl aes-256-cbc -K $encrypted_87f43018402c_key -iv $encrypted_87f43018402c_iv -in ${ROOTDIR}/.travis_scripts/id_rsa.enc -out ~/.ssh/id_rsa -d
 
@@ -33,9 +33,12 @@ echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 git clone git@github.com:${TRAVIS_REPO_SLUG} hphi-doc
 cd hphi-doc
+git checkout ${TRAVIS_BRANCH}
 mkdir build && cd build
 cmake -DDocument=ON ../
-make doc
+make doc-ja-html
+make doc-en-html
+make tutorial-en-html
 
 set +e
 
@@ -59,7 +62,7 @@ fi
 
 cd ${ROOTDIR}/hphi-doc/manual
 mkdir -p $docdir && cd $docdir
-for lang in ja en; do
+for lang in ja en tutorial/en; do
   rm -rf $lang/html
   mkdir -p $lang
   cp -r ${ROOTDIR}/hphi-doc/build/doc/${lang}/source/html $lang/html
@@ -68,7 +71,7 @@ done
 
 git config --global user.email "hphi-dev@issp.u-tokyo.ac.jp"
 git config --global user.name "HPhi"
-git commit -m "Update by TravisCI (\\#${TRAVIS_BUILD_NUMBER})"
+git commit -m "Update by TravisCI"
 ST=$?
 if [ $ST == 0 ]; then
   git push origin gh-pages:gh-pages --follow-tags > /dev/null 2>&1
