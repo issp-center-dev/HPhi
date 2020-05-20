@@ -18,6 +18,8 @@ The input file (stan.in) is as follows::
  2Sz = 0
  2S  = 1
 
+It should be noted that the ``L=2`` chain has two sites connected by *two* bonds with each other, and so we let ``J=0.5`` to simulate the dimer model with :math:`J=1`.
+
 You can execute HPhi as follows ::
 
  HPhi -s stan.in
@@ -455,7 +457,7 @@ Use eigenvectors
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 In this tutorial, we will study how to read the eigenvectors.
 In the standard mode, setting ``EigenVecIO = "Out"`` makes HPhi to write the calculated eigenvectors as ``output/zvo_eigenvec_[index]_rank_[rank].dat``, where ``[index]`` is the index of the states (e.g., the ground state has ``[index] = 0``) and ``[rank]`` is the rank of the process.
-In the MPI parallelization with Npara processes, HPhi splits the whole Hilbert space into the Npara blocks and each process treats the one of them.
+In the MPI parallelization with Npara processes, HPhi splits the whole Hilbert space into the Npara blocks and each process treats one of them.
 The file format is described in the `reference manual <http://issp-center-dev.github.io/HPhi/manual/master/en/html/filespecification/outputfiles_en/tmpvec_en.html>`_ .
 For example, the following python function reads the vector::
 
