@@ -188,12 +188,11 @@ By using the above standard input, we will obtain **zvo_energy.dat** in your **o
 Convergence of the microcanonical TPQ
 """""""""""""""""""""""""""""""
 
-Then, we will examine the convergence of the microcanonical TPQ method
+Then, we will examine the convergence of the microcanonical TPQ (mTPQ) method
 introduced by S. Sugiura and A. Shimizu, which is implemented in
-H :math:`\Phi`
-for `method = "TPQ"'.
+H :math:`\Phi` for **method = "TPQ"**.
 
-Input ::
+By using the following standard input file, you can generate 64 mTPQ samples: ::
 
  W = 2
  L = 3
@@ -214,5 +213,17 @@ Input ::
  LargeValue = 4.0
  NumAve = 64
 
+Here, you may use larger **Lanczos_max** and **LargeValue** than those in the default setting.
+
 .. image:: ../../figs/Heat_Capacity_Kitaev_12.*
    :align: center
+
+Then, you can obtain the above temperature dependence of the heat capacity.
+The average of `C` over the 64 mTPQ samples is shown by the blue curve
+while `C` obtained by the full diagonalization is shown by the red curve.
+The grey belt shows the standard deviation :math:`\sqrt{\sigma^2}`,
+and the cyan belt shows the standard error :math:`\sigma_E = \sqrt{\sigma^2/N_{\rm sample}}`,
+where :math:`N_{\rm sample}` is the sample size (:math:`N_{\rm sample}=64`).
+Although the systematic errors in the estimation of temperatures exit in the mTPQ formalism,
+the exact hat capacity (the red curve in the above figure) is within
+the random sample distribution (estimated by :math:`\sqrt{\sigma^2}` and shown by the grey belt).
