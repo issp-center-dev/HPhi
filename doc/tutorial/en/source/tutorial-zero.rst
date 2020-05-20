@@ -436,6 +436,14 @@ You can also specify the non-diagonal interaction as ::
 Note that interaction terms must be specified for **(x,y), (x,z), (y,z)**
 and **(y,x), (z,x), (z,y) cannot be used**.
 
+Exercise
+"""""""""""
+By changing **pair.txt** and **input.txt**,
+you can treat your favorite models.
+For example, please try to make input files
+for the Kitaev model on the honeycomb lattice.
+We note that the Kitaev model can be used in the Standard mode.
+
 
 Use eigenvectors
 ^^^^^^^^^^^^^^^^^^^^^^^^^
