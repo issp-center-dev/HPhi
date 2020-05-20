@@ -1,6 +1,8 @@
 matrix:
   include:
   - language: c
+    os: linux
+    dist: xenial
     sudo: enabled
     before_install:
       - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys

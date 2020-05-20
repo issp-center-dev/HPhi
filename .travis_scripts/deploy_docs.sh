@@ -24,7 +24,7 @@ set -e
 sudo apt-get install -y enchant
 sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-lang-japanese texlive-fonts-recommended texlive-fonts-extra latexmk
 kanji-config-updmap-sys ipaex
-sudo pip install sphinx sphinxcontrib.spelling
+sudo apt-get install -y python3 python3-sphinx python3-sphinxcontrib.spelling
 
 openssl aes-256-cbc -K $encrypted_87f43018402c_key -iv $encrypted_87f43018402c_iv -in ${ROOTDIR}/.travis_scripts/id_rsa.enc -out ~/.ssh/id_rsa -d
 
@@ -35,7 +35,8 @@ git clone git@github.com:${TRAVIS_REPO_SLUG} hphi-doc
 cd hphi-doc
 mkdir build && cd build
 cmake -DDocument=ON ../
-make doc
+make doc-ja-html
+make doc-en-html
 
 set +e
 
@@ -68,7 +69,7 @@ done
 
 git config --global user.email "hphi-dev@issp.u-tokyo.ac.jp"
 git config --global user.name "HPhi"
-git commit -m "Update by TravisCI (\\#${TRAVIS_BUILD_NUMBER})"
+git commit -m "Update by TravisCI"
 ST=$?
 if [ $ST == 0 ]; then
   git push origin gh-pages:gh-pages --follow-tags > /dev/null 2>&1
