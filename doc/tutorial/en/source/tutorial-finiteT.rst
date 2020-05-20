@@ -1,6 +1,6 @@
 Tutorial for finite-temperature calculations
 ==============================
-**Heisenberg chain (finite temperatures)**
+Heisenberg chain (finite temperatures)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Here, we study the finite-temperature
@@ -24,7 +24,7 @@ You can execute HPhi as follows ::
 
  HPhi -s stan.in
 
-*1. Full diagonalization*
+Full diagonalization
 """""""""""""""""""""""""""""""
 After executing the full diagonalization,
 all the eigen energies are output in **output/Eiegenvalue.dat**.
@@ -47,7 +47,7 @@ The 1st row represents temperature, 2nd row represents the energy, and
 the 3rd row represents the specific heat defined 
 by :math:`C=(\langle E^2 \rangle-\langle E \rangle^2)/T^2`.
 
-*2. TPQ method*
+TPQ method
 """""""""""""""""""""""""""""""
 By selecting method as "TPQ",
 you can perform the finite-temperature calculations using the TPQ method.

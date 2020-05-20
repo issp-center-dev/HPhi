@@ -3,7 +3,7 @@ Tutorial for calculations of dynamical properties
 
 .. include:: tutorial-spectrum.rst
 
-**Hubbard chain (optical conductivity)**
+Hubbard chain (optical conductivity)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Here, we calculate the optical conductivity

@@ -57,7 +57,7 @@ You can execute HPhi as follows ::
  HPhi -s stan1.in
  HPhi -s stan2.in
 
-*1. Check norm and energy*
+Check norm and energy
 """""""""""""""""""""""""""""""
 Unitary dynamics of the norm of a wavefunction should be conserved during the real-time evolution.
 Using gnuplot, check the dynamics of the norm for this problem::
@@ -69,7 +69,7 @@ Using gnuplot, check whether the energy is conserved during the real-time evolut
   
   plot "output/SS.dat" u 1:2 w l
 
-*2. Dynamics of double occupation*
+Dynamics of double occupation
 """"""""""""""""""""""""""""""""""
 The double occupation :math:`D=\sum_i \langle n_{i\uparrow}n_{i\downarrow} \rangle` is not conserved because :math:`[D, H] \neq 0`.
 You can check the dynamics of :math:`D` by executing the following command on gnuplot::

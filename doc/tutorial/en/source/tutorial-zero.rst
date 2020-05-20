@@ -1,6 +1,6 @@
 Tutorial for calculations at zero temperature
 ==============================
-**Spin 1/2 Dimer**
+Spin 1/2 Dimer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Let's solve the following spin 1/2 dimer model (2-site Heisenberg model).
 
@@ -22,7 +22,7 @@ You can execute HPhi as follows ::
 
  HPhi -s stan.in
 
-*1. Check the energy*
+Check the energy
 """""""""""""""""""""""""""""""
 Please check whether the energies are given as follows.
 
@@ -30,7 +30,7 @@ Please check whether the energies are given as follows.
 
  :math:`E_{\rm max}=1/4` (triplet) 
 
-*2. Check S dependence*
+Check S dependence
 """""""""""""""""""""""""""""""
 By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1).
 Please check whether the energies are given as follows.
@@ -39,7 +39,7 @@ Please check whether the energies are given as follows.
 
  :math:`E_{\rm max}=S^2` 
 
-*3. Add magnetic field H*
+Add magnetic field H
 """""""""""""""""""""""""""""""
 By adding  H in stan.in, selecting model as "SpinGC", and deleting "2Sz=0" 
 you can examine the 
@@ -57,7 +57,7 @@ An example of the input file (stan.in) is as follows::
 Please check whether the ground state becomes polarized state (Sz=1).
 
 
-*4. Try to use Lanczos method*
+Try to use Lanczos method
 """""""""""""""""""""""""""""""
 **This is just a pedagogical example.**
 
@@ -77,7 +77,7 @@ This calculation will **fail**!
 Please think why the Lanczos method fails for the dimer. 
 
 
-*5. Try to use LOBCG method*
+Try to use LOBCG method
 """""""""""""""""""""""""""""""
 LOBCG is locally optimal block conjugate gradient method.
 By selecting method as "CG",
@@ -113,7 +113,7 @@ An example of the input file (stan.in) is as follows::
 Here, exct represents the number of excited states, which are
 obtained by the LOBCG method.
 
-**Hubbard Dimer**
+Hubbard Dimer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Let's solve the following the Hubbard dimer model.
 
@@ -137,7 +137,7 @@ You can execute HPhi as follows ::
 
  HPhi -s stan.in
 
-*1. Check the energy*
+Check the energy
 """""""""""""""""""""""""""""""
 For the Hubbard dimer at half filling with total Sz=0, 
 energies are given as follows:
@@ -156,7 +156,7 @@ can be done using::
 
 on the terminal.
 
-*2. Try to use LOBCG method*
+Try to use LOBCG method
 """""""""""""""""""""""""""""""
 The input file (stan.in) is as follows::
 
@@ -173,7 +173,7 @@ The input file (stan.in) is as follows::
 Please check whether LOBCG method correctly 
 reproduces the energies including the excited states.
 
-**Hubbard Trimer**
+Hubbard Trimer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Let's solve the following the Hubbard trimer model 
 (Hubbard model on a triangle).
@@ -201,7 +201,7 @@ You can execute HPhi as follows ::
 
  HPhi -s stan.in
 
-*1. Ferromagnetic ground state*
+Ferromagnetic ground state
 """""""""""""""""""""""""""""""
 For the Hubbard model on a triangle with one hole, 
 it is known that the **perfect ferromagnetism** becomes ground state.
@@ -214,7 +214,7 @@ This is one of the simplest example of the
 Nagaoka's ferromagnetism.
 
 
-*2. Effects of transfer integrals*
+Effects of transfer integrals
 """""""""""""""""""""""""""""""
 Please the effects of the sign of
 the transfer integrals. 
@@ -248,7 +248,7 @@ Is there phase transition between singlet ground state and
 the perfect ferromagnetism ?
 
 
-**Heisenberg chain (zero temperature)**
+Heisenberg chain (zero temperature)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let's solve the following spin 1/2 Heisenberg model on the chain.
@@ -271,7 +271,7 @@ You can execute HPhi as follows ::
 
  HPhi -s stan.in
 
-*1. Check the energy*
+Check the energy
 """""""""""""""""""""""""""""""
 Please check whether the energies are given as follows.
 
@@ -279,7 +279,7 @@ Please check whether the energies are given as follows.
 
  E_{0}= -7.142296 
 
-*2. Obtaining the excited state*
+Obtaining the excited state
 """""""""""""""""""""""""""""""
 By adding **exct=2**, you can obtain the 2 low-energy states.
 Please check the energies.
@@ -290,7 +290,7 @@ Please check the energies.
 
  E_{1}= -6.872107 
 
-*3. Size dependence of the spin gap*
+Size dependence of the spin gap
 """""""""""""""""""""""""""""""
 The spin gap at finite system size is defined
 as :math:`\Delta=E_{1}-E_{0}`. For 16-site,
@@ -300,7 +300,7 @@ Please examine how :math:`\Delta` behaves
 as a function of system size L.
 (available system size on PC may be L=24)
 
-*4. Haldane gap*
+Haldane gap
 """""""""""""""""""""""""""""""
 By performing a similar calculations for S=1 system,
 please examine  how :math:`\Delta` behaves
@@ -309,7 +309,7 @@ It is known that the finite spin gap exists even
 in the thermodynamic limit (:math:`L=\infty`).
 This spin gap is often called Haldane gap.
 
-**J1-J2 Heisenberg model**
+J1-J2 Heisenberg model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Here, we solve the :math:`J_{1}-J_{2}` Heisenberg model on the square lattice, 
 which is a canonical example of the frustrated magnets.
@@ -336,7 +336,7 @@ An input file for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
 
 Here, J (J') represents :math:`J_{1}` (:math:`J_{2}`).
 
-*1. Calculations of spin structure factors for ground state*
+Calculations of spin structure factors for ground state
 """""""""""""""""""""""""""""""
 First, we calculate the spin structure factors, which are defined as
 
@@ -372,7 +372,7 @@ Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows
 Following the procedure, please see how :math:`S({\bf q})` changes
 by changing J'.
 
-*1. Calculations of spin structure factors for excited states*
+Calculations of spin structure factors for excited states
 """""""""""""""""""""""""""""""
 By changing exct in stan.in, you can obtain several excited states.
 For those excited states, by changing **max_num=1** as ,for example, **max_num=4**,
@@ -384,7 +384,7 @@ what is the nature of the
 first excited state J'=0,0.5, and 1.
  
 
-**How to use Expert mode**
+How to use Expert mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If you prepare input files, you can perform calculations for
 arbitrary Hamiltonians with any one-body potentials and the two-body interactions.   
@@ -433,7 +433,7 @@ Note that interaction terms must be specified for **(x,y), (x,z), (y,z)**
 and **(y,x), (z,x), (z,y) cannot be used**.
 
 
-**Use eigenvectors**
+Use eigenvectors
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 In this tutorial, we will study how to read the eigenvectors.
 In the standard mode, setting ``EigenVecIO = "Out"`` makes HPhi to write the calculated eigenvectors as ``output/zvo_eigenvec_[index]_rank_[rank].dat``, where ``[index]`` is the index of the states (e.g., the ground state has ``[index] = 0``) and ``[rank]`` is the rank of the process.
