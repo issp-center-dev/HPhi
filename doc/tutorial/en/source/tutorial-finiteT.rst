@@ -88,3 +88,32 @@ You can see the following output image.
 
 Kitaev cluster (finite temperatures)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this subsection, we will examine the convergence of the sampling in the TPQ method.
+Here, we study a 12 site cluster of a typical magnetically frustrated magnet, Kitaev model,
+whose heat capacity shows non-trivial temperature dependence.
+
+.. math::
+
+ H = K \sum_{\gamma=x,y,z}\sum_{\langle i,j\rangle_\gamma}S_{i}^{\gamma} S_{j}^{\gamma}
+
+Input ::
+
+ W = 2
+ L = 3
+ model = "SpinGC"
+ method = "TPQ"
+ lattice = "Honeycomb"
+ J0x = -1.0
+ J0y =  0.0
+ J0z =  0.0
+ J1x =  0.0
+ J1y = -1.0
+ J1z =  0.0
+ J2x =  0.0
+ J2y =  0.0
+ J2z = -1.0
+ 2S=1
+ Lanczos_max = 3000
+ LargeValue = 4.0
+ NumAve = 64
