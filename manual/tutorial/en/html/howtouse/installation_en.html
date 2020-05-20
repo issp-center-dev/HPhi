@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.2. Installation &mdash; HΦ Documentation  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="2. How to use \({\mathcal H}\Phi\)" href="ho-index.html" />
+    <link rel="next" title="2.3. Directory structure" href="directorystructure_en.html" />
+    <link rel="prev" title="2.1. Prerequisite" href="prerequisite_en.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<h1>2.2. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>You can download <span class="math">\({\mathcal H}\Phi\)</span> at the following location.</p>
+<p><a class="reference external" href="https://github.com/QLMS/HPhi/releases">https://github.com/QLMS/HPhi/releases</a></p>
+<p>You can obtain the <span class="math">\({\mathcal H}\Phi\)</span> directory by typing</p>
+<p><code class="docutils literal"><span class="pre">$</span> <span class="pre">tar</span> <span class="pre">xzvf</span> <span class="pre">HPhi-xxx.tar.gz</span></code></p>
+<p><span class="math">\({\mathcal H}\Phi\)</span> can be installed by using cmake.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<div class="last line-block">
+<div class="line">Before using cmake for sekirei, you must type</div>
+<div class="line"><code class="docutils literal"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">cmake</span></code></div>
+<div class="line"><span class="math">\({\mathcal H}\Phi\)</span> has been preinstalled on ISSP supercomputers.</div>
+<div class="line">If you want to use this preinstalled version, please type</div>
+<div class="line"><code class="docutils literal"><span class="pre">source</span> <span class="pre">/home/issp/materiapps/hphi/hphivars.sh</span></code></div>
+</div>
+</div>
+<p>We can compile <span class="math">\({\mathcal H}\Phi\)</span> as:</p>
+<div class="highlight-none"><div class="highlight"><pre>cd $HOME/build/hphi
+cmake -DCONFIG=gcc $PathTohphi
+make
+</pre></div>
+</div>
+<p>To use ScaLAPACK library for full diagonalization, the cmake option <code class="docutils literal"><span class="pre">-DUSE_SCALAPACK=ON</span></code> is needed.
+Here, we set a path to <span class="math">\({\mathcal H}\Phi\)</span> as <code class="docutils literal"><span class="pre">$PathTohphi</span></code>
+and to a build directory as <code class="docutils literal"><span class="pre">$HOME/build/hphi</span></code>.
+After compilation, <code class="docutils literal"><span class="pre">src</span></code> folder is constructed below a <code class="docutils literal"><span class="pre">$HOME/build/hphi</span></code>
+folder and we obtain an executable <code class="docutils literal"><span class="pre">HPhi</span></code> in <code class="docutils literal"><span class="pre">src/</span></code> directory.
+When no MPI library exists in the system, an executable <code class="docutils literal"><span class="pre">HPhi</span></code>
+is automatically compiled without an MPI library.</p>
+<p>In the above example,
+we compile <span class="math">\({\mathcal H}\Phi\)</span> by using a gcc compiler.
+We can select a compiler by using the following options:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">sekirei</span></code> : ISSP system-B &#8220;sekirei&#8221;</li>
+<li><code class="docutils literal"><span class="pre">sekirei_acc</span></code>: ISSP system-B &#8220;sekirei&#8221; (for using MAGMA library)</li>
+<li><code class="docutils literal"><span class="pre">fujitsu</span></code> : Fujitsu compiler</li>
+<li><code class="docutils literal"><span class="pre">intel</span></code> : Intel compiler + Linux PC</li>
+<li><code class="docutils literal"><span class="pre">gcc</span></code> : GCC compiler + Linux PC.</li>
+</ul>
+</div></blockquote>
+<p>An example of compiling <span class="math">\({\mathcal H}\Phi\)</span> by using the Intel compiler is shown as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>mkdir ./build
+cd ./build
+cmake -DCONFIG=intel ../
+make
+</pre></div>
+</div>
+<p>After compilation,
+<code class="docutils literal"><span class="pre">src</span></code> folder is created below the <code class="docutils literal"><span class="pre">build</span></code> folder and
+an execute <span class="math">\({\mathcal H}\Phi\)</span> in the <code class="docutils literal"><span class="pre">src</span></code> folder.
+Please note that we must delete the <code class="docutils literal"><span class="pre">build</span></code> folder and
+repeat the above operations when we change the compiler.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="prerequisite_en.html">2.1. Prerequisite</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">2.2. Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="directorystructure_en.html">2.3. Directory structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basicusage_en.html">2.4. Basic usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a><ul>
+      <li>Previous: <a href="prerequisite_en.html" title="previous chapter">2.1. Prerequisite</a></li>
+      <li>Next: <a href="directorystructure_en.html" title="next chapter">2.3. Directory structure</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/howtouse/installation_en.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

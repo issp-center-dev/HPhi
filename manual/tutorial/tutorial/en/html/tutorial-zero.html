@@ -1,0 +1,581 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Tutorial for calculations at zero temperature &mdash; HΦ Documentation  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="index.html" />
+    <link rel="next" title="3. Tutorial for finite-temperature calculations" href="tutorial-finiteT.html" />
+    <link rel="prev" title="1. Quick guide to Standard mode" href="tutorial-1.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tutorial-for-calculations-at-zero-temperature">
+<h1>2. Tutorial for calculations at zero temperature<a class="headerlink" href="#tutorial-for-calculations-at-zero-temperature" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="spin-1-2-dimer">
+<h2>2.1. Spin 1/2 Dimer<a class="headerlink" href="#spin-1-2-dimer" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s solve the following spin 1/2 dimer model (2-site Heisenberg model).</p>
+<div class="math">
+\[H = J {\bf S}_{0}\cdot{\bf S}_{1}\]</div>
+<p>The input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;Spin&quot;
+method = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2Sz = 0
+2S  = 1
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+</pre></div>
+</div>
+<div class="section" id="check-the-energy">
+<h3>2.1.1. Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this headline">¶</a></h3>
+<p>Please check whether the energies are given as follows.</p>
+<blockquote>
+<div><p><span class="math">\(E_{\rm min}=-3/4\)</span> (singlet)</p>
+<p><span class="math">\(E_{\rm max}=1/4\)</span> (triplet)</p>
+</div></blockquote>
+</div>
+<div class="section" id="check-s-dependence">
+<h3>2.1.2. Check S dependence<a class="headerlink" href="#check-s-dependence" title="Permalink to this headline">¶</a></h3>
+<p>By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1).
+Please check whether the energies are given as follows.</p>
+<blockquote>
+<div><p><span class="math">\(E_{\rm min}=-S(S+1)\)</span></p>
+<p><span class="math">\(E_{\rm max}=S^2\)</span></p>
+</div></blockquote>
+</div>
+<div class="section" id="add-magnetic-field-h">
+<h3>2.1.3. Add magnetic field H<a class="headerlink" href="#add-magnetic-field-h" title="Permalink to this headline">¶</a></h3>
+<p>By adding  H in stan.in, selecting model as &#8220;SpinGC&#8221;, and deleting &#8220;2Sz=0&#8221;
+you can examine the
+effects of the magnetic field in the dimer model.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+</pre></div>
+</div>
+<p>Please check whether the ground state becomes polarized state (Sz=1).</p>
+</div>
+<div class="section" id="try-to-use-lanczos-method">
+<h3>2.1.4. Try to use Lanczos method<a class="headerlink" href="#try-to-use-lanczos-method" title="Permalink to this headline">¶</a></h3>
+<p><strong>This is just a pedagogical example.</strong></p>
+<p>By selecting method as &#8220;Lanczos&#8221;
+you can perform the Lanczos calculations.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;Lanczos&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+</pre></div>
+</div>
+<p>This calculation will <strong>fail</strong>!
+Please think why the Lanczos method fails for the dimer.</p>
+</div>
+<div class="section" id="try-to-use-lobcg-method">
+<h3>2.1.5. Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this headline">¶</a></h3>
+<p>LOBCG is locally optimal block conjugate gradient method.
+By selecting method as &#8220;CG&#8221;,
+you can perform the LOBCG calculations.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;CG&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+</pre></div>
+</div>
+<p>In contrast to the Lanczos method,
+this calculation will work well !
+Please think why the CG method works well for the dimer.</p>
+<p>Please also check the excited states can
+be correctly obtained by using LOBCG method.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;CG&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+exct = 4
+</pre></div>
+</div>
+<p>Here, exct represents the number of excited states, which are
+obtained by the LOBCG method.</p>
+</div>
+</div>
+<div class="section" id="hubbard-dimer">
+<h2>2.2. Hubbard Dimer<a class="headerlink" href="#hubbard-dimer" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s solve the following the Hubbard dimer model.</p>
+<div class="math">
+\[H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+{\rm H.c.})
+  +U(n_{0\uparrow}n_{0\downarrow}+n_{1\uparrow}n_{1\downarrow})\]</div>
+<p>The input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+method = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+L=2
+t = -0.5
+U = 4
+2Sz = 0
+nelec = 2
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>2.2.1. Check the energy<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>For the Hubbard dimer at half filling with total Sz=0,
+energies are given as follows:</p>
+<blockquote>
+<div><span class="math">\(E=0,U,\frac{U}{2}\times(1\pm\sqrt{(1+(4t/U)^2)})\)</span></div></blockquote>
+<p>For example, by taking <span class="math">\(U=4,t=-1\)</span>, the
+energies are  given as follows:</p>
+<blockquote>
+<div><span class="math">\(E=-0.828427, 0, 4, 4.828427\)</span></div></blockquote>
+<p>It is note that simple mathematical calculations
+can be done using:</p>
+<div class="highlight-none"><div class="highlight"><pre>bc -l
+</pre></div>
+</div>
+<p>on the terminal.</p>
+</div>
+<div class="section" id="id2">
+<h3>2.2.2. Try to use LOBCG method<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>The input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+method = &quot;CG&quot;
+lattice = &quot;chain&quot;
+L=2
+t = -0.5
+U = 4
+2Sz = 0
+nelec = 2
+exct = 4
+</pre></div>
+</div>
+<p>Please check whether LOBCG method correctly
+reproduces the energies including the excited states.</p>
+</div>
+</div>
+<div class="section" id="hubbard-trimer">
+<h2>2.3. Hubbard Trimer<a class="headerlink" href="#hubbard-trimer" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s solve the following the Hubbard trimer model
+(Hubbard model on a triangle).</p>
+<div class="math">
+\[H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+c_{1\sigma}^{\dagger}c_{2\sigma}
+  +c_{2\sigma}^{\dagger}c_{0\sigma}+{\rm H.c.})
+  +U\sum_{i}(n_{i\uparrow}n_{i\downarrow})\]</div>
+<p>The input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+method = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+L=2
+t = -1
+U = 4
+2Sz = 0
+nelec = 2
+</pre></div>
+</div>
+<p>Note that the filling is not half filling.</p>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+</pre></div>
+</div>
+<div class="section" id="ferromagnetic-ground-state">
+<h3>2.3.1. Ferromagnetic ground state<a class="headerlink" href="#ferromagnetic-ground-state" title="Permalink to this headline">¶</a></h3>
+<p>For the Hubbard model on a triangle with one hole,
+it is known that the <strong>perfect ferromagnetism</strong> becomes ground state.
+Please check that.</p>
+<p>If you want know the mechanism of the
+ferromagnetism, please see
+<strong>Hal Tasaki, Kotai Butsuri, Vol. 31, 173 (1996)</strong>.
+This is one of the simplest example of the
+Nagaoka&#8217;s ferromagnetism.</p>
+</div>
+<div class="section" id="effects-of-transfer-integrals">
+<h3>2.3.2. Effects of transfer integrals<a class="headerlink" href="#effects-of-transfer-integrals" title="Permalink to this headline">¶</a></h3>
+<p>Please the effects of the sign of
+the transfer integrals.
+<strong>For example, what happens if you take t = 1 ?</strong></p>
+<p>Another interesting example is by changing
+the transfer integrals between site 0 and site 2.
+Following an example of the <strong>trans.def</strong></p>
+<div class="highlight-none"><div class="highlight"><pre>========================
+NTransfer      12
+========================
+========i_j_s_tijs======
+========================
+  1     0     0     0         -1.000000000000000         0.000000000000000
+  0     0     1     0         -1.000000000000000         0.000000000000000
+  1     1     0     1         -1.000000000000000         0.000000000000000
+  0     1     1     1         -1.000000000000000         0.000000000000000
+  2     0     0     0         -2.000000000000000         0.000000000000000
+  0     0     2     0         -2.000000000000000         0.000000000000000
+  2     1     0     1         -2.000000000000000         0.000000000000000
+  0     1     2     1         -2.000000000000000         0.000000000000000
+  2     0     1     0         -1.000000000000000         0.000000000000000
+  1     0     2     0         -1.000000000000000         0.000000000000000
+  2     1     1     1         -1.000000000000000         0.000000000000000
+  1     1     2     1         -1.000000000000000         0.000000000000000
+</pre></div>
+</div>
+<p>Using this transfer integrals, please examine the
+U dependence of the ground state.
+Is there phase transition between singlet ground state and
+the perfect ferromagnetism ?</p>
+</div>
+</div>
+<div class="section" id="heisenberg-chain-zero-temperature">
+<h2>2.4. Heisenberg chain (zero temperature)<a class="headerlink" href="#heisenberg-chain-zero-temperature" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s solve the following spin 1/2 Heisenberg model on the chain.</p>
+<div class="math">
+\[H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}\]</div>
+<p>The input file (stan.in) for 16-site Heisenberg model is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L       = 16
+model   = &quot;Spin&quot;
+method  = &quot;CG&quot;
+lattice = &quot;chain&quot;
+J = 1
+2Sz = 0
+2S  = 1
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>2.4.1. Check the energy<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Please check whether the energies are given as follows.</p>
+<div class="math">
+\[E_{0}= -7.142296\]</div>
+</div>
+<div class="section" id="obtaining-the-excited-state">
+<h3>2.4.2. Obtaining the excited state<a class="headerlink" href="#obtaining-the-excited-state" title="Permalink to this headline">¶</a></h3>
+<p>By adding <strong>exct=2</strong>, you can obtain the 2 low-energy states.
+Please check the energies.</p>
+<div class="math">
+\[E_{0}= -7.142296\]\[E_{1}= -6.872107\]</div>
+</div>
+<div class="section" id="size-dependence-of-the-spin-gap">
+<h3>2.4.3. Size dependence of the spin gap<a class="headerlink" href="#size-dependence-of-the-spin-gap" title="Permalink to this headline">¶</a></h3>
+<p>The spin gap at finite system size is defined
+as <span class="math">\(\Delta=E_{1}-E_{0}\)</span>. For 16-site,
+we obtain <span class="math">\(\Delta\sim 0.2701\)</span>.</p>
+<p>Please examine how <span class="math">\(\Delta\)</span> behaves
+as a function of system size L.
+(available system size on PC may be L=24)</p>
+</div>
+<div class="section" id="haldane-gap">
+<h3>2.4.4. Haldane gap<a class="headerlink" href="#haldane-gap" title="Permalink to this headline">¶</a></h3>
+<p>By performing a similar calculations for S=1 system,
+please examine  how <span class="math">\(\Delta\)</span> behaves
+as a function of system size L.
+It is known that the finite spin gap exists even
+in the thermodynamic limit (<span class="math">\(L=\infty\)</span>).
+This spin gap is often called Haldane gap.</p>
+</div>
+</div>
+<div class="section" id="j1-j2-heisenberg-model">
+<h2>2.5. J1-J2 Heisenberg model<a class="headerlink" href="#j1-j2-heisenberg-model" title="Permalink to this headline">¶</a></h2>
+<p>Here, we solve the <span class="math">\(J_{1}-J_{2}\)</span> Heisenberg model on the square lattice,
+which is a canonical example of the frustrated magnets.
+Its Hamiltonian is defined as</p>
+<div class="math">
+\[{\mathcal H}=J_{1}\sum_{\langle i,j\rangle }{\bf S}_{i}\cdot{\bf S}_{j}+J_{2}\sum_{\langle\langle i,j\rangle\rangle }{\bf S}_{i}\cdot{\bf S}_{j},\]</div>
+<p>where <span class="math">\(J_{1}\)</span> (<span class="math">\(J_{2}\)</span>) represents the nearest (next-nearest) neighbor interactions.</p>
+<p>An input file for treating <span class="math">\(J_{1}-J_{2}\)</span> Heisenberg model is given as</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Spin&quot;
+method = &quot;CG&quot;
+lattice = &quot;square&quot;
+L = 4
+W = 4
+J = 1
+J&#39; = 1
+2S = 1
+2Sz = 0
+exct = 2
+</pre></div>
+</div>
+<p>Here, J (J&#8217;) represents <span class="math">\(J_{1}\)</span> (<span class="math">\(J_{2}\)</span>).</p>
+<div class="section" id="calculations-of-spin-structure-factors-for-ground-state">
+<h3>2.5.1. Calculations of spin structure factors for ground state<a class="headerlink" href="#calculations-of-spin-structure-factors-for-ground-state" title="Permalink to this headline">¶</a></h3>
+<p>First, we calculate the spin structure factors, which are defined as</p>
+<div class="math">
+\[S({\bf q})=\frac{1}{N_{\rm s}}\sum_{i,j} {\bf S}_{i}\cdot{\bf S}_{j}\]</div>
+<p>To calculate <span class="math">\(S({\bf q})\)</span>, it is necessary to prepare
+a proper input file for two-body Green functions.
+By using a python script <strong>MakeGreen.py</strong> (HPhi/tool/ForSq/MakeGreen.py),
+you can generate <strong>greentwo.def</strong> for calculating <span class="math">\(S({\bf q})\)</span>.
+To use  <strong>MakeGreen.py</strong> , an input file for specifying lattice geometry (<strong>input.txt</strong>) is necessary,
+whose form is given as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>Lx 4
+Ly 4
+Lz 1
+orb_num 1
+</pre></div>
+</div>
+<p>Here, Lx (orb_num) represents the length of the x direction (number of orbitals).</p>
+<p>By using a python script <strong>CalcSq.py</strong> (HPhi/tool/ForSq/CalcSq.py),
+you can calculate <span class="math">\(S({\bf q})\)</span> from <strong>output/zvo_cisajscktalt_eigen0.dat</strong>.</p>
+<dl class="docutils">
+<dt>Procedure for calculating and visualizing <span class="math">\(S({\bf q})\)</span> is given as follows ::</dt>
+<dd><ol class="first last arabic simple">
+<li>HPhi -sdrt stan.in</li>
+<li>pyhton3 MakeGreen.def (input.txt is necessary)</li>
+<li>HPhi -e namelist.def</li>
+<li>python3 CalcSq.py (input.txt is necessary)</li>
+<li>You can obtain <strong>Sq_eigen0.dat</strong> !!</li>
+<li>plot &#8220;Sq_eigen0.dat&#8221; u 1:2:3 (using gnuplot)</li>
+</ol>
+</dd>
+</dl>
+<p>Following the procedure, please see how <span class="math">\(S({\bf q})\)</span> changes
+by changing J&#8217;.</p>
+</div>
+<div class="section" id="calculations-of-spin-structure-factors-for-excited-states">
+<h3>2.5.2. Calculations of spin structure factors for excited states<a class="headerlink" href="#calculations-of-spin-structure-factors-for-excited-states" title="Permalink to this headline">¶</a></h3>
+<p>By changing exct in stan.in, you can obtain several excited states.
+For those excited states, by changing <strong>max_num=1</strong> as ,for example, <strong>max_num=4</strong>,
+you can obtain  <span class="math">\(S({\bf q})\)</span> for the excited states.</p>
+<p>Please see how <span class="math">\(S({\bf q})\)</span> in the excited states
+changes by changing J&#8217;. For example, please check
+what is the nature of the
+first excited state J&#8217;=0,0.5, and 1.</p>
+</div>
+</div>
+<div class="section" id="how-to-use-expert-mode">
+<h2>2.6. How to use Expert mode<a class="headerlink" href="#how-to-use-expert-mode" title="Permalink to this headline">¶</a></h2>
+<p>If you prepare input files, you can perform calculations for
+arbitrary Hamiltonians with any one-body potentials and the two-body interactions.
+By taking spin 1/2 system as an example,
+we explain how to prepare input files.
+For spin 1/2 system, we prepare simple python scripts (<strong>HPhi/tool/ExpertSpin/MakeDef.py</strong>)that
+can generate the input files for general Hamiltonians, which are defined as</p>
+<div class="math">
+\[{\mathcal H}=\sum_{i,j} J_{i,j}^{\alpha,\beta} {\bf S}_{i}^{\alpha} {\bf S}_{j}^{\beta}.\]</div>
+<p>To use <em>MakeDef.py</em>, it is necessary to prepare two input files,
+<strong>input.txt</strong> and <strong>pair.txt</strong>.</p>
+<p>In <strong>input.txt</strong>, two parameters <strong>Ns</strong> (number of sites) and <strong>exct</strong> (number of excited states)
+are specified.</p>
+<p>Below is an example of <strong>input.txt</strong> for 2 site Heisenberg model</p>
+<div class="highlight-none"><div class="highlight"><pre>Ns 2
+exct 2
+</pre></div>
+</div>
+<p>In <strong>pair.txt</strong>, you specify the interaction terms in the form</p>
+<div class="math">
+\[i~~~~~j~~~~~\alpha~~~~~\beta~~~~~J_{i,j}^{\alpha,\beta}\]</div>
+<p>Below is an example of <strong>pair.txt</strong> for 2 site Heisenberg model</p>
+<div class="highlight-none"><div class="highlight"><pre>0 1 x x 0.5
+0 1 y y 0.5
+0 1 z z 0.5
+</pre></div>
+</div>
+<p>You can also specify the non-diagonal interaction as</p>
+<div class="highlight-none"><div class="highlight"><pre>0 1 x x 0.5
+0 1 y y 0.5
+0 1 z z 0.5
+0 1 x y 0.5
+0 1 x z 0.5
+0 1 y z 0.5
+</pre></div>
+</div>
+<p>Note that interaction terms must be specified for <strong>(x,y), (x,z), (y,z)</strong>
+and <strong>(y,x), (z,x), (z,y) cannot be used</strong>.</p>
+</div>
+<div class="section" id="use-eigenvectors">
+<h2>2.7. Use eigenvectors<a class="headerlink" href="#use-eigenvectors" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial, we will study how to read the eigenvectors.
+In the standard mode, setting <code class="docutils literal"><span class="pre">EigenVecIO</span> <span class="pre">=</span> <span class="pre">&quot;Out&quot;</span></code> makes HPhi to write the calculated eigenvectors as <code class="docutils literal"><span class="pre">output/zvo_eigenvec_[index]_rank_[rank].dat</span></code>, where <code class="docutils literal"><span class="pre">[index]</span></code> is the index of the states (e.g., the ground state has <code class="docutils literal"><span class="pre">[index]</span> <span class="pre">=</span> <span class="pre">0</span></code>) and <code class="docutils literal"><span class="pre">[rank]</span></code> is the rank of the process.
+In the MPI parallelization with Npara processes, HPhi splits the whole Hilbert space into the Npara blocks and each process treats the one of them.
+The file format is described in the <a class="reference external" href="http://issp-center-dev.github.io/HPhi/manual/master/en/html/filespecification/outputfiles_en/tmpvec_en.html">reference manual</a> .
+For example, the following python function reads the vector:</p>
+<div class="highlight-none"><div class="highlight"><pre>def read_gs(*, index=0, rank=0):
+    import numpy as np
+    from os.path import join
+    from struct import unpack
+
+    filename = join(&quot;output&quot;,
+                    &quot;zvo_eigenvec_{}_rank_{}.dat&quot;.format(index,
+                                                         rank))
+    with open(filename, &quot;rb&quot;) as f:
+        f.read(4)
+        nelems = unpack(&quot;L&quot;, f.read(8))[0]
+        ret = np.zeros(nelems, dtype=np.complex)
+        f.read(16)
+        for i in range(nelems):
+            re = unpack(&quot;d&quot;, f.read(8))[0]
+            im = unpack(&quot;d&quot;, f.read(8))[0]
+            ret[i] = np.complex(re, im)
+        return ret
+</pre></div>
+</div>
+<div class="section" id="exercise">
+<h3>2.7.1. Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>Check the orthogonality of the eigenvectors calculated by the LOBCG method by calculating the norm and the inner-product of some of the eigenvectors.</p>
+<p>Hint: In the standard mode, the <code class="docutils literal"><span class="pre">exct</span></code> keyword controls the number of eigenvectors to be calculated.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial-1.html">1. Quick guide to <em>Standard</em> mode</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">2. Tutorial for calculations at zero temperature</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spin-1-2-dimer">2.1. Spin 1/2 Dimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-the-energy">2.1.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-s-dependence">2.1.2. Check S dependence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-magnetic-field-h">2.1.3. Add magnetic field H</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#try-to-use-lanczos-method">2.1.4. Try to use Lanczos method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#try-to-use-lobcg-method">2.1.5. Try to use LOBCG method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#hubbard-dimer">2.2. Hubbard Dimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">2.2.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">2.2.2. Try to use LOBCG method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#hubbard-trimer">2.3. Hubbard Trimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ferromagnetic-ground-state">2.3.1. Ferromagnetic ground state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#effects-of-transfer-integrals">2.3.2. Effects of transfer integrals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#heisenberg-chain-zero-temperature">2.4. Heisenberg chain (zero temperature)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">2.4.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#obtaining-the-excited-state">2.4.2. Obtaining the excited state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#size-dependence-of-the-spin-gap">2.4.3. Size dependence of the spin gap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haldane-gap">2.4.4. Haldane gap</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#j1-j2-heisenberg-model">2.5. J1-J2 Heisenberg model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#calculations-of-spin-structure-factors-for-ground-state">2.5.1. Calculations of spin structure factors for ground state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#calculations-of-spin-structure-factors-for-excited-states">2.5.2. Calculations of spin structure factors for excited states</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-use-expert-mode">2.6. How to use Expert mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-eigenvectors">2.7. Use eigenvectors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exercise">2.7.1. Exercise</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial-finiteT.html">3. Tutorial for finite-temperature calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial-te.html">4. Tutorials for real-time evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial-dynamical.html">5. Tutorial for calculations of dynamical properties</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial-1.html" title="previous chapter">1. Quick guide to <em>Standard</em> mode</a></li>
+      <li>Next: <a href="tutorial-finiteT.html" title="next chapter">3. Tutorial for finite-temperature calculations</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/tutorial-zero.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

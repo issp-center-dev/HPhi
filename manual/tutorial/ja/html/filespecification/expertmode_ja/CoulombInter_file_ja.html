@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.2.8. CoulombInter指定ファイル &mdash; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
+    <link rel="up" title="4.2. エキスパートモード用入力ファイル" href="index_expertmode_ja.html" />
+    <link rel="next" title="4.2.9. Hund指定ファイル" href="Hund_file_ja.html" />
+    <link rel="prev" title="4.2.7. CoulombIntra指定ファイル" href="CoulombIntra_file_ja.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="coulombinter">
+<h1>4.2.8. CoulombInter指定ファイル<a class="headerlink" href="#coulombinter" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>オフサイトクーロン相互作用をハミルトニアンに付け加えます
+(<span class="math">\(S=1/2\)</span>の系でのみ使用可能)。付け加える項は以下で与えられます。</p>
+<div class="math">
+\[\mathcal{H}+=\sum_{i,j}V_{ij} n_ {i}n_{j}\]</div>
+<p>以下にファイル例を記載します。</p>
+<div class="highlight-none"><div class="highlight"><pre>======================
+NCoulombInter 6
+======================
+========CoulombInter ======
+======================
+   0     1 -0.125000
+   1     2 -0.125000
+   2     3 -0.125000
+   3     4 -0.125000
+   4     5 -0.125000
+   5     0 -0.125000
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h2>ファイル形式<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>以下のように行数に応じ異なる形式をとります。</p>
+<ul class="simple">
+<li>1行: ヘッダ(何が書かれても問題ありません)。</li>
+<li>2行: [string01] [int01]</li>
+<li>3-5行: ヘッダ(何が書かれても問題ありません)。</li>
+<li>6行以降: [int02] [int03] [double01]</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>パラメータ<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p class="first"><span class="math">\([\)</span>string01<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> string型 (空白不可)</p>
+<p><strong>説明 :</strong>
+オフサイトクーロン相互作用の総数のキーワード名を指定します(任意)。</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>int01<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> int型 (空白不可)</p>
+<p><strong>説明 :</strong> オフサイトクーロン相互作用の総数を指定します。</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>int02<span class="math">\(]\)</span>, <span class="math">\([\)</span>int03<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> int型 (空白不可)</p>
+<p><strong>説明 :</strong>
+サイト番号を指定する整数。0以上<code class="docutils literal"><span class="pre">Nsite</span></code>未満で指定します。</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>double01<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> double型 (空白不可)</p>
+<p><strong>説明 :</strong> <span class="math">\(V_{ij}\)</span>を指定します。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>使用ルール<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
+<ul class="simple">
+<li>行数固定で読み込みを行う為、ヘッダの省略はできません。</li>
+<li>成分が重複して指定された場合にはエラー終了します。</li>
+<li><span class="math">\([\)</span>int01<span class="math">\(]\)</span>と定義されているオフサイトクーロン相互作用の総数が異なる場合はエラー終了します。</li>
+<li><span class="math">\([\)</span>int02<span class="math">\(]\)</span>-<span class="math">\([\)</span>int03<span class="math">\(]\)</span>を指定する際、範囲外の整数を指定した場合はエラー終了します。</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="List_file_for_the_input_files_ja.html">4.2.1. 入力ファイル指定用ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CalcMod_file_ja.html">4.2.2. CalcModファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModPara_file_ja.html">4.2.3. ModParaファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="LocSpin_file_ja.html">4.2.4. LocSpin指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Trans_file_ja.html">4.2.5. Trans指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterAll_file_ja.html">4.2.6. InterAll指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CoulombIntra_file_ja.html">4.2.7. CoulombIntra指定ファイル</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.2.8. CoulombInter指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hund_file_ja.html">4.2.9. Hund指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairHop_file_ja.html">4.2.10. PairHop指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Exchange_file_ja.html">4.2.11. Exchange指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Ising_file_ja.html">4.2.12. Ising指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairLift_file_ja.html">4.2.13. PairLift指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="OneBodyG_file_ja.html">4.2.14. OneBodyG指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TwoBodyG_file_ja.html">4.2.15. TwoBodyG指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SingleExcitation_file_ja.html">4.2.16. SingleExcitation指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairExcitation_file_ja.html">4.2.17. PairExcitation指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpectrumVec_File_ja.html">4.2.18. SpectrumVec指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="OneBodyTE_File_ja.html">4.2.19. OneBodyTE指定ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TwoBodyTE_File_ja.html">4.2.20. TwoBodyTE指定ファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_ja/index_outputfiles_ja.html">4.3. 出力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
+  <li><a href="index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a><ul>
+      <li>Previous: <a href="CoulombIntra_file_ja.html" title="前の章へ">4.2.7. CoulombIntra指定ファイル</a></li>
+      <li>Next: <a href="Hund_file_ja.html" title="次の章へ">4.2.9. Hund指定ファイル</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../../_sources/filespecification/expertmode_ja/CoulombInter_file_ja.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

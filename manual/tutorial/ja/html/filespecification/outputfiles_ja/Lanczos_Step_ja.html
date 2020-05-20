@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.3.13. Lanczos_Step.dat &mdash; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
+    <link rel="up" title="4.3. 出力ファイル" href="index_outputfiles_ja.html" />
+    <link rel="next" title="4.3.14. Time_TPQ_Step.dat" href="Time_TPQ_Step_ja.html" />
+    <link rel="prev" title="4.3.12. energy.dat" href="energy_ja.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lanczos-step-dat">
+<h1>4.3.13. Lanczos_Step.dat<a class="headerlink" href="#lanczos-step-dat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="line-block">
+<div class="line">(Lanczos法、LOBCG法でのみ出力)
+固有ベクトルを求めている際のログを出力します。以下にファイル例を示します。</div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre>LanczosStep  E[1] E[2] E[3] E[4] Target:E[3] E_Max/Nsite
+stp = 2 1.2149586211 14.6560471044 xxxxxxxxxx xxxxxxxxx 0.0000000000 xxxxxxxxx
+stp=4 -5.6626980051 3.1523174817 12.4860778911 21.2322666770 12.4860778911 2.6540333346
+stp=6 -8.5113374325 -2.3219709559 4.3459108959 11.5079386600 4.3459108959 3.0307814358
+stp=8 -9.5061025854 -5.2757708534 -0.1734100333 5.2236216333 -0.1734100333 3.2049774861
+stp=10 -9.7541889139 -6.6054773893 -2.9493235242 1.2364826532 -2.9493235242 3.2686702753
+...
+stp=84 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.3731105157
+stp=86 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.3731105157
+stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.3731105157
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code>の場合</div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre>  Step   Residual-2-norm     Threshold      Energy
+      1     6.79819e+00     8.19743e-07    7.86586e+00     8.19743e+00     8.02804e+00
+      2     7.47402e+00     3.69905e-07    3.35827e+00     3.63546e+00     3.69905e+00
+      3     5.30943e+00     2.44472e-07   -2.44472e+00    -2.23296e+00    -1.95487e+00
+      4     4.52737e+00     5.10297e-07   -5.10297e+00    -4.92390e+00    -4.58682e+00
+      5     3.66168e+00     7.14105e-07   -7.14105e+00    -6.91226e+00    -6.44532e+00
+      6     3.12717e+00     8.27201e-07   -8.27201e+00    -7.93262e+00    -7.44680e+00
+...
+    152     1.05602e-06     1.04544e-06   -1.04544e+01    -9.89605e+00    -9.89605e+00
+    153     1.07401e-06     1.04544e-06   -1.04544e+01    -9.89605e+00    -9.89605e+00
+    154     9.45018e-07     1.04544e-06   -1.04544e+01    -9.89605e+00    -9.89605e+00
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h2>ファイル名<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li>##_Lanczos_Step.dat</li>
+</ul>
+<p>##はModParaファイル内の[string02]で指定されるヘッダを表します。</p>
+</div>
+<div class="section" id="id2">
+<h2>ファイル形式<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">method=&quot;Lanczos&quot;</span></code>の場合</p>
+<p>stp= <span class="math">\([\)</span>int01<span class="math">\(]\)</span> <span class="math">\([\)</span>double01<span class="math">\(]\)</span>
+<span class="math">\([\)</span>double02<span class="math">\(]\)</span> <span class="math">\([\)</span>double03<span class="math">\(]\)</span>
+<span class="math">\([\)</span>double04<span class="math">\(]\)</span> <span class="math">\([\)</span>double-a<span class="math">\(]\)</span>
+<span class="math">\([\)</span>double-b<span class="math">\(]\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code>の場合</p>
+<p><span class="math">\([\)</span>int01<span class="math">\(]\)</span> <span class="math">\([\)</span>double-c<span class="math">\(]\)</span>
+<span class="math">\([\)</span>double-d<span class="math">\(]\)</span> <span class="math">\([\)</span>double01<span class="math">\(]\)</span>
+<span class="math">\([\)</span>double02<span class="math">\(]\)</span> ...</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>パラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p class="first"><span class="math">\([\)</span>int01<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> int型</p>
+<p><strong>説明 :</strong> Lanczos法<span class="math">\(\cdot\)</span>LOBCG法での計算ステップ数。</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>double01<span class="math">\(]\)</span>, <span class="math">\([\)</span>double02<span class="math">\(]\)</span>,
+<span class="math">\([\)</span>double03<span class="math">\(]\)</span>, <span class="math">\([\)</span>double04<span class="math">\(]\)</span> ...</p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong>
+Lanczos法<span class="math">\(\cdot\)</span>LOBCG法で計算時に求められた固有値を昇順に並べたもの。
+Lanczos法では4個分,
+LOBCG法では<code class="docutils literal"><span class="pre">exct</span></code>で指定した個数が出力されます
+(上記の例では <code class="docutils literal"><span class="pre">exct=3</span></code>).
+Lanczos法では縮退している固有値はまとめて1個と数えられますが,
+LOBCG法では縮退している個数に応じて固有値が出力されます.
+上記の例では第一励起状態が2重以上に縮退していることが分かります.</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>double-a<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong> (Lanczos法のみ) <code class="docutils literal"><span class="pre">LanczosTarget</span></code>で指定した,
+収束判定に用いられる固有値が出力されます
+(上記の例では <code class="docutils literal"><span class="pre">LanczosTarget=3</span></code>).</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>double-b<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong> (Lanczos法のみ) 最大固有値をサイト数で割ったもの.
+TPQ法での<code class="docutils literal"><span class="pre">LargeValue</span></code>の下限値となります.</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>double-c<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong> (LOBCG法のみ)
+計算した固有ベクトルの残差の2-ノルムの中で最大のもの.
+収束判定に用いられます.</p>
+</li>
+<li><p class="first"><span class="math">\([\)</span>double-d<span class="math">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong> (LOBCG法のみ) 収束判定のしきい値.
+<code class="docutils literal"><span class="pre">LanczosEps</span></code>で指定した値に基底状態のエネルギーの絶対値をかけています.</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_ja/index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_ja.html">4.3. 出力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Chemi_ja.html">4.3.1. CHECK_Chemi.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_InterAll_ja.html">4.3.2. CHECK_InterAll.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_CoulombIntra_ja.html">4.3.3. CHECK_CoulombIntra.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Hund_ja.html">4.3.4. CHECK_Hund.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_INTER_U_ja.html">4.3.5. CHECK_INTER_U.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Memory_ja.html">4.3.6. CHECK_Memory.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="WarningOnTransfer_ja.html">4.3.7. WarningOnTransfer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CalcTimer_ja.html">4.3.8. CalcTimer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TimeKeeper_ja.html">4.3.9. TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sz_TimeKeeper_ja.html">4.3.10. sz_TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_CG_EigenVector_ja.html">4.3.11. Time_CG_EigenVector.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="energy_ja.html">4.3.12. energy.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.13. Lanczos_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TPQ_Step_ja.html">4.3.14. Time_TPQ_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Norm_rand_ja.html">4.3.15. Norm_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_rand_ja.html">4.3.16. SS_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_rand_ja.html">4.3.17. Flct_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TE_Step_ja.html">4.3.18. Time_TE_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Norm_ja.html">4.3.19. Norm.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_ja.html">4.3.20. SS.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_ja.html">4.3.21. Flct.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Eigenvalue_ja.html">4.3.22. Eigenvalue.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="phys_ja.html">4.3.23. phys.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ham_ja.html">4.3.24. ham.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajs_ja.html">4.3.25. cisajs.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajscktalt_ja.html">4.3.26. cisajscktalt.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eigenvec_ja.html">4.3.27. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tmpvec_ja.html">4.3.28. tmpvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DynamicalGreen_ja.html">4.3.29. DynamicalGreen.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recalcvec_ja.html">4.3.30. recalcvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TMcomponents_ja.html">4.3.31. TMcomponents.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="excitedvec_ja.html">4.3.32. excitedvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_ja.html">4.3.33. residual.dat</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
+  <li><a href="index_outputfiles_ja.html">4.3. 出力ファイル</a><ul>
+      <li>Previous: <a href="energy_ja.html" title="前の章へ">4.3.12. energy.dat</a></li>
+      <li>Next: <a href="Time_TPQ_Step_ja.html" title="次の章へ">4.3.14. Time_TPQ_Step.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_ja/Lanczos_Step_ja.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

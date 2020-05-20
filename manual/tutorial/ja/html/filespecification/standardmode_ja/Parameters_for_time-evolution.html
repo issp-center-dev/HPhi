@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.1.7. 実時間発展計算に関するパラメータ &mdash; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
+    <link rel="up" title="4.1. スタンダードモード用入力ファイル" href="index_standardmode_ja.html" />
+    <link rel="next" title="4.2. エキスパートモード用入力ファイル" href="../expertmode_ja/index_expertmode_ja.html" />
+    <link rel="prev" title="4.1.6. 動的グリーン関数の計算に関するパラメータ" href="Parameters_for_the_dynamical_Greens_function.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>4.1.7. 実時間発展計算に関するパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">dt</span></code></p>
+<p><strong>形式 :</strong> 正の実数(デフォルトは<code class="docutils literal"><span class="pre">0.1</span></code>)</p>
+<p><strong>説明 :</strong> 時間ステップ幅。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">PumpType</span></code></p>
+<p><strong>形式 :</strong> 文字列(<code class="docutils literal"><span class="pre">&quot;Quench&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Pulse</span> <span class="pre">Laser&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>,
+<code class="docutils literal"><span class="pre">&quot;DC</span> <span class="pre">Laser&quot;</span></code>のいずれか。デフォルトは<code class="docutils literal"><span class="pre">&quot;Quench&quot;</span></code>)</p>
+<p><strong>説明 :</strong> 時間依存ハミルトニアンの種類を指定する。
+<code class="docutils literal"><span class="pre">&quot;Quench&quot;</span></code>では2体演算子
+<span class="math">\(U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}\)</span>が加えられる。
+<code class="docutils literal"><span class="pre">&quot;Pulse</span> <span class="pre">Laser&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;DC</span> <span class="pre">Laser&quot;</span></code>では、
+ホッピング項に
+<span class="math">\(-\sum_{i j \sigma} t_{i j} \exp[-i{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c^dagger_{i \sigma} c_{j \sigma}\)</span>
+のように位相因子が付く。
+ここで<span class="math">\({\bf A}(t)\)</span>はベクトルポテンシャルであり、
+<code class="docutils literal"><span class="pre">&quot;Pulse</span> <span class="pre">Laser&quot;</span></code>では
+<span class="math">\({\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]\)</span>、
+<code class="docutils literal"><span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>では
+<span class="math">\({\bf A}(t) = {\bf A}_0 \sin[\omega (t-t_0)]\)</span>、
+<code class="docutils literal"><span class="pre">&quot;DC</span> <span class="pre">Laser&quot;</span></code>では <span class="math">\({\bf A}(t) = {\bf A}_0 t\)</span>となる。</p>
+<p>また、各時刻でのベクトルポテンシャルと電場を図示するためのファイル
+<code class="docutils literal"><span class="pre">potential.dat</span></code>が出力される。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">Uquench</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトは<code class="docutils literal"><span class="pre">0.0</span></code>)</p>
+<p><strong>説明 :</strong> <span class="math">\(U_{\rm quench}\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">freq</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトは<code class="docutils literal"><span class="pre">0.1</span></code>)</p>
+<p><strong>説明 :</strong> <span class="math">\(\omega\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">tshift</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトは<code class="docutils literal"><span class="pre">0.0</span></code>)</p>
+<p><strong>説明 :</strong> <span class="math">\(t_0\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">tdump</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトは<code class="docutils literal"><span class="pre">0.1</span></code>)</p>
+<p><strong>説明 :</strong> <span class="math">\(t_{\rm dump}\)</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">VecPotW</span></code>, <code class="docutils literal"><span class="pre">VecPotL</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトはともに<code class="docutils literal"><span class="pre">0.0</span></code>)</p>
+<p><strong>説明 :</strong>
+時刻<span class="math">\(t=t_0\)</span>でのベクトルポテンシャル<span class="math">\({\bf A}_0\)</span>を
+逆格子のFractional coordinateで指定する。 逆格子ベクトルはFigs.
+<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-lattice"><span>図 4.1</span></a>, <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span>図 4.2</span></a>,
+<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-kagome"><span>図 4.3</span></a>, <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span>図 4.4</span></a>
+に表されている格子ベクトルと対応するものとなる。</p>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_ja.html">4.1.4. ハミルトニアンの各項の係数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.1.7. 実時間発展計算に関するパラメータ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_ja/index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_ja/index_outputfiles_ja.html">4.3. 出力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
+  <li><a href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul>
+      <li>Previous: <a href="Parameters_for_the_dynamical_Greens_function.html" title="前の章へ">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
+      <li>Next: <a href="../expertmode_ja/index_expertmode_ja.html" title="次の章へ">4.2. エキスパートモード用入力ファイル</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_time-evolution.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

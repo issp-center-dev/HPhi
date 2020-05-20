@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. What is \({\mathcal H}\Phi\)? &mdash; HΦ マニュアル  ドキュメント</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="index.html" />
+    <link rel="next" title="2. How to use \({\mathcal H}\Phi\)" href="howtouse/ho-index.html" />
+    <link rel="prev" title="\({\mathcal H}\Phi\) のドキュメントへようこそ！" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="what-is">
+<h1>1. What is <span class="math">\({\mathcal H}\Phi\)</span>?<a class="headerlink" href="#what-is" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id1">
+<h2>1.1. <span class="math">\({\mathcal H}\Phi\)</span> とは？<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>実験データと理論模型の解析結果との直接比較は、物質科学の研究プロセスの一つの核となっています。
+例えば、低エネルギー励起構造を反映する比熱の温度依存性や、帯磁率から見積もった有効スピン・モーメントおよびキュリー・ワイス温度等の実験データからその背後にある電子状態を理解するためには、理論模型の解析結果との比較が必要不可欠です。</p>
+<p>理論模型の解析手法としては、厳密対角化法&nbsp;<a class="footnote-reference" href="#id13" id="id2">[1]</a> が近似を用いず定量的な計算ができる
+最も信頼できる手法です。この目的のためには、東京工業大学の西森秀稔教授が作られた
+固有値問題ソルバパッケージ TITPACK が長年広く利用されてきました。
+これまでは計算機資源の制約もあり、その利用は比較的小さな系への適用に限られてきました。
+しかし、計算機の進歩によって、並列化を利用してハバード模型18格子点、
+スピン1/2の格子スピン模型36格子点程度の計算が容易に実行可能となっています。
+また、量子統計力学の発展&nbsp;<a class="footnote-reference" href="#id14" id="id3">[2]</a> <a class="footnote-reference" href="#id15" id="id4">[3]</a> <a class="footnote-reference" href="#id16" id="id5">[4]</a> <a class="footnote-reference" href="#id17" id="id6">[5]</a> により、
+基底状態計算と同程度のコストでの有限温度計算が可能となり、
+比熱や帯磁率の実験との定量的比較が十分可能となってきています&nbsp;<a class="footnote-reference" href="#id18" id="id7">[6]</a> 。
+これらの計算が可能になった背景には低バンド幅で多数の分散メモリ計算コアを持つ新しい計算機アーキテクチャがあり、
+その性能を最大限に生かしつつ、簡便に利用可能な新しいソフトウェアの登場が待たれていました。</p>
+<p>このような背景に基づき、汎用量子模型ソルバーパッケージ<span class="math">\({\mathcal H}\Phi\)</span>  は、
+ランチョス法に基づく量子多体模型の基底状態および低励起状態に対する厳密対角化法と、
+熱的純粋量子状態&nbsp;<a class="footnote-reference" href="#id17" id="id8">[5]</a> を基礎とした有限温度計算を、
+簡便かつ柔軟なユーザー・インターフェイスとともに並列実装されたアプリケーションを目指して開発されました。
+シンプルなハバード模型やハイゼンベルグ模型に始まり、
+多軌道ハバード模型やジャロシンスキー-守谷相互作用やキタエフ項のようにSU(2)対称性を破る
+相互作用を持つ量子スピン模型、さらに遍歴電子と局在スピンが結合した近藤格子模型まで、
+ユーザーの興味に応じて広汎な量子格子模型を解析することができます。
+基底状態および有限温度での内部エネルギーはもちろん、
+比熱や電荷・スピン構造因子を始めとする様々な物理量が計算可能となっています。
+実験研究者を含む幅広いユーザーに気楽にご利用いただければ幸いです。</p>
+<div class="section" id="id9">
+<h3>1.1.1. ライセンス<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="line-block">
+<div class="line">本ソフトウェアのプログラムパッケージおよびソースコード一式はGNU
+General Public License version 3（GPL v3）に準じて配布されています。
+<span class="math">\({\mathcal H}\Phi\)</span> (hphi)を引用する際には、以下の文献を引用してください。</div>
+<div class="line">Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji,
+Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. <strong>217</strong> (2017)
+180-192.</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>1.1.2. コピーライト<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><em>©2015- The University of Tokyo.</em> <em>All rights reserved.</em></div></blockquote>
+<p>本ソフトウェアは2015, 2016, 2017年度 東京大学物性研究所
+ソフトウェア高度化プロジェクトの支援を受け開発されており、その著作権は東京大学が所持しています。</p>
+</div>
+<div class="section" id="id11">
+<h3>1.1.3. 開発貢献者<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>本ソフトウェアは以下の開発貢献者により開発されています。</p>
+<ul class="simple">
+<li>ver.3.3 (2019/7/19 リリース)</li>
+<li>ver.3.2 (2019/4/27 リリース)</li>
+<li>ver.3.1 (2018/9/3 リリース)<ul>
+<li>開発者<ul>
+<li>三澤 貴宏 (東京大学 物性研究所)</li>
+<li>河村 光晶 (東京大学 物性研究所)</li>
+<li>吉見 一慶 (東京大学 物性研究所)</li>
+<li>井戸 康太 (東京大学大学院 工学系研究科)</li>
+<li>山地 洋平 (東京大学大学院 工学系研究科)</li>
+<li>藤堂 眞治 (東京大学 理学系研究科)</li>
+<li>小西 優祐 (株式会社 アカデメイア)</li>
+</ul>
+</li>
+<li>プロジェクトコーディネーター<ul>
+<li>川島 直輝 (東京大学 物性研究所)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ver.3.0 (2017/12/25 リリース)<ul>
+<li>開発者<ul>
+<li>三澤 貴宏 (東京大学 物性研究所)</li>
+<li>河村 光晶 (東京大学 物性研究所)</li>
+<li>吉見 一慶 (東京大学 物性研究所)</li>
+<li>井戸 康太 (東京大学大学院 工学系研究科)</li>
+<li>山地 洋平 (東京大学大学院 工学系研究科)</li>
+<li>藤堂 眞治 (東京大学 理学系研究科)</li>
+</ul>
+</li>
+<li>プロジェクトコーディネーター<ul>
+<li>川島 直輝 (東京大学 物性研究所)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ver.2.0 (2017/4/11リリース)</li>
+<li>ver.1.2 (2016/11/14リリース)</li>
+<li>ver.1.1 (2016/5/13リリース)</li>
+<li>ver.1.0 (2016/4/5リリース)<ul>
+<li>開発者<ul>
+<li>三澤 貴宏 (東京大学大学院 物性研究所)</li>
+<li>河村 光晶 (東京大学 物性研究所)</li>
+<li>吉見 一慶 (東京大学 物性研究所)</li>
+<li>山地 洋平 (東京大学大学院 工学系研究科)</li>
+<li>藤堂 眞治 (東京大学 理学系研究科)</li>
+</ul>
+</li>
+<li>プロジェクトコーディネーター<ul>
+<li>川島 直輝 (東京大学 物性研究所)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="section" id="id12">
+<h4>動作環境<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>以下の環境で動作することを確認しています。</p>
+<ul class="simple">
+<li>東京大学物性研究所スーパーコンピューターシステムB「sekirei」、システムC「enaga」</li>
+<li>富士通 FX-10および京コンピューター</li>
+<li>Linux PC + intelコンパイラ</li>
+<li>Linux PC + gcc</li>
+<li>Mac + gcc</li>
+</ul>
+<table class="docutils footnote" frame="void" id="id13" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>E. Dagotto, Rev. Mod. Phys. <strong>66</strong>, 763-840 (1994).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id14" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>M. Imada, M. Takahashi, Journal of the Physical Society of Japan <strong>55</strong>, 3354-3361 (1986).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id15" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>J. Jaklič, P. Prelovšek, Phys. Rev. B <strong>49</strong>, 5065-5068 (1994).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id16" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td>A. Hams, H. De Raedt, Phys. Rev. E <strong>62</strong>, 4365-4377 (2000).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id17" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id6">1</a>, <a class="fn-backref" href="#id8">2</a>)</em> S. Sugiura, A. Shimizu, Phys. Rev. Lett. <strong>108</strong>, 240401 (2012).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id18" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[6]</a></td><td>Y. Yamaji, Y. Nomura, M. Kurita, R. Arita, M. Imada, Phys. Rev. Lett. <strong>113</strong>, 107201 (2014).</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">1.1. <span class="math">\({\mathcal H}\Phi\)</span> とは？</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">1.1.1. ライセンス</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">1.1.2. コピーライト</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">1.1.3. 開発貢献者</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="前の章へ"><span class="math">\({\mathcal H}\Phi\)</span> のドキュメントへようこそ！</a></li>
+      <li>Next: <a href="howtouse/ho-index.html" title="次の章へ">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/introduction_ja.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

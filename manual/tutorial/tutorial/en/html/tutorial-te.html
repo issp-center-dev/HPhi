@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4. Tutorials for real-time evolution &mdash; HΦ Documentation  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="index.html" />
+    <link rel="next" title="5. Tutorial for calculations of dynamical properties" href="tutorial-dynamical.html" />
+    <link rel="prev" title="3. Tutorial for finite-temperature calculations" href="tutorial-finiteT.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tutorials-for-real-time-evolution">
+<h1>4. Tutorials for real-time evolution<a class="headerlink" href="#tutorials-for-real-time-evolution" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="u-quench-in-hubbard-model">
+<h2>4.1. U quench in Hubbard model<a class="headerlink" href="#u-quench-in-hubbard-model" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s solve the following U quench in 2D Hubbard model at half filling.</p>
+<div class="math">
+\[H(\tau) = -t \sum_{\langle i,j\rangle , \sigma}(c_{i\sigma}^{\dagger}c_{j\sigma}+{\rm H.c.})
+  +U \sum_{i} n_{i\uparrow}n_{i\downarrow}
+  +U_{\rm quench} h(\tau) \sum_{i} n_{i\uparrow}n_{i\downarrow}\]</div>
+<p><span class="math">\(h(\tau)\)</span> means the step function.
+The input files (stan1.in and stan2.in) are as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>stan1.in
+
+model = &quot;Hubbard&quot;
+method = &quot;CG&quot;
+lattice = &quot;square&quot;
+a0W =  2
+a0L =  2
+a1W =  2
+a1L = -2
+J = 0.5
+2Sz = 0
+t = 1.0
+U = 4.0
+nelec = 8
+EigenvecIO = &quot;out&quot;
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre>stan2.in
+
+model = &quot;Hubbard&quot;
+method = &quot;Time-Evolution&quot;
+lattice = &quot;square&quot;
+a0W =  2
+a0L =  2
+a1W =  2
+a1L = -2
+2Sz = 0
+t = 1.0
+U = 4.0
+nelec = 8
+PumpType = &quot;Quench&quot;
+Uquench = -8
+EigenvecIO = &quot;in&quot;
+dt = 0.01
+lanczos_max = 1000
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan1.in
+HPhi -s stan2.in
+</pre></div>
+</div>
+<div class="section" id="check-norm-and-energy">
+<h3>4.1.1. Check norm and energy<a class="headerlink" href="#check-norm-and-energy" title="Permalink to this headline">¶</a></h3>
+<p>Unitary dynamics of the norm of a wavefunction should be conserved during the real-time evolution.
+Using gnuplot, check the dynamics of the norm for this problem</p>
+<div class="highlight-none"><div class="highlight"><pre>plot &quot;output/Norm.dat&quot; u 1:2 w l
+</pre></div>
+</div>
+<p>In sudden U-quench simulations, the total energy should be conserved for <span class="math">\(\tau&gt;0\)</span>.
+Using gnuplot, check whether the energy is conserved during the real-time evolution</p>
+<div class="highlight-none"><div class="highlight"><pre>plot &quot;output/SS.dat&quot; u 1:2 w l
+</pre></div>
+</div>
+</div>
+<div class="section" id="dynamics-of-double-occupation">
+<h3>4.1.2. Dynamics of double occupation<a class="headerlink" href="#dynamics-of-double-occupation" title="Permalink to this headline">¶</a></h3>
+<p>The double occupation <span class="math">\(D=\sum_i \langle n_{i\uparrow}n_{i\downarrow} \rangle\)</span> is not conserved because <span class="math">\([D, H] \neq 0\)</span>.
+You can check the dynamics of <span class="math">\(D\)</span> by executing the following command on gnuplot</p>
+<div class="highlight-none"><div class="highlight"><pre>plot &quot;output/SS.dat&quot; u 1:4 w l
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dynamical-phase-transition-in-1d-transverse-field-ising-model">
+<h2>4.2. Dynamical phase transition in 1D transverse-field Ising model<a class="headerlink" href="#dynamical-phase-transition-in-1d-transverse-field-ising-model" title="Permalink to this headline">¶</a></h2>
+<p>Dynamical phase transition (DPT) is a phase transition due to nonequilibrium process such as sudden quench.
+In this section, we introduce the DPT in 1D transverse Ising model, which is one of the famous examples for the DPT.
+The details are found in this paper (M. Heyl, A. Polkovnikov, and S. Kehrein, Phys. Rev. Lett. <strong>110</strong>, 135704 (2013)).</p>
+<div class="math">
+\[H = J \sum_{\langle i,j\rangle} S^z_{i} S^z_{j} + \Gamma \sum_{i} S^x_i\]</div>
+<div class="section" id="ground-state">
+<h3>4.2.1. Ground state<a class="headerlink" href="#ground-state" title="Permalink to this headline">¶</a></h3>
+<p>First, you need to obtain the initial state for simulations of the real-time dynamics.
+Please make the following input file (stan1.in)</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;SpinGC&quot;
+method = &quot;CG&quot;
+lattice = &quot;chain&quot;
+L = 12
+Jz = -1.0
+Gamma = 0.1
+h = 1e-5
+EigenvecIO = &quot;out&quot;
+</pre></div>
+</div>
+<p>and run the following command</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan1.in
+</pre></div>
+</div>
+<p>Check the total magnetization along <span class="math">\(z\)</span>-direction <span class="math">\(M_z = \sum_i \langle S^z_i \rangle\)</span> in &#8220;output/zvo_energy.dat&#8221;.</p>
+<p>Question: If a longitudinal magnetic field <span class="math">\(h\)</span> in stan1.in becomes 0, what happens?</p>
+</div>
+<div class="section" id="quench">
+<h3>4.2.2. <span class="math">\(\Gamma\)</span> quench<a class="headerlink" href="#quench" title="Permalink to this headline">¶</a></h3>
+<p>After obtaining the ground state, you can perform simulations for <span class="math">\(\Gamma\)</span> quench in the 1D transverse-field Ising model.
+Make the following input file (stan2.in)</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;SpinGC&quot;
+method = &quot;Time-Evolution&quot;
+lattice = &quot;chain&quot;
+L = 12
+Jz = -1.0
+Gamma = 0.2
+h = 1e-5
+EigenvecIO = &quot;in&quot;
+dt = 0.01
+lanczos_max = 1000
+</pre></div>
+</div>
+<p>In this case, <span class="math">\(\Gamma\)</span> quench from 0.1 to 0.2 will be performed by executing the following command</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan2.in
+</pre></div>
+</div>
+<p>Now you can check the real-time evolution of <span class="math">\(M_z\)</span> in &#8220;output/Flct.dat&#8221;.
+The result is plotted by executing the following command on gnuplot</p>
+<div class="highlight-none"><div class="highlight"><pre>gnuplot
+gnuplot&gt; set xlabel &quot;time t&quot;
+gnuplot&gt; set ylabel &quot;Magnetization per site |M_z/L|&quot;
+gnuplot&gt; p &quot;output/Flct.dat&quot; u 1:(abs($6/12)) w l tit &quot;Gamma=0.1 -&gt; 0.2&quot;
+</pre></div>
+</div>
+<p>One of the features of DPT in this model is that cusp structures in the dynamics of <span class="math">\(M_z\)</span> appears at the same intervals.
+The following figure is an example for several results for <span class="math">\(\Gamma\)</span> quench.
+You can see the cusp structure for <span class="math">\(\Gamma &gt; 0.5\)</span>.</p>
+<a class="reference internal image-reference" href="_images/Mz_DPT_1D_TIM.png"><img alt="_images/Mz_DPT_1D_TIM.png" class="align-center" src="_images/Mz_DPT_1D_TIM.png" style="width: 700px; height: 500px;" /></a>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial-1.html">1. Quick guide to <em>Standard</em> mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial-zero.html">2. Tutorial for calculations at zero temperature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial-finiteT.html">3. Tutorial for finite-temperature calculations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">4. Tutorials for real-time evolution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#u-quench-in-hubbard-model">4.1. U quench in Hubbard model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-norm-and-energy">4.1.1. Check norm and energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dynamics-of-double-occupation">4.1.2. Dynamics of double occupation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#dynamical-phase-transition-in-1d-transverse-field-ising-model">4.2. Dynamical phase transition in 1D transverse-field Ising model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ground-state">4.2.1. Ground state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quench">4.2.2. <span class="math">\(\Gamma\)</span> quench</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial-dynamical.html">5. Tutorial for calculations of dynamical properties</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial-finiteT.html" title="previous chapter">3. Tutorial for finite-temperature calculations</a></li>
+      <li>Next: <a href="tutorial-dynamical.html" title="next chapter">5. Tutorial for calculations of dynamical properties</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/tutorial-te.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
