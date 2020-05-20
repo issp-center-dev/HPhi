@@ -81,3 +81,7 @@ Using gnuplot, you can directly compare the two results ::
 
   plot "FullDiag.dat" u 1:2 w l,"ave_TPQ.dat" u 1:3:4 w e
 
+You can see the following output image.
+
+.. image:: ../../figs/finiteT.*
+   :align: center
