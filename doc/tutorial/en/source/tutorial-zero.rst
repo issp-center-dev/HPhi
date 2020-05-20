@@ -339,7 +339,7 @@ An input file for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
 Here, J (J') represents :math:`J_{1}` (:math:`J_{2}`).
 
 Calculations of spin structure factors for ground state
-"""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 First, we calculate the spin structure factors, which are defined as
 
 .. math::
@@ -379,7 +379,7 @@ As an example, we show :math:`S({\bf q})` for J1/J2=0 and 1 below.
    :align: center
 
 Calculations of spin structure factors for excited states
-"""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 By changing exct in stan.in, you can obtain several excited states.
 For those excited states, by changing **max_num=1** as ,for example, **max_num=4**,
 you can obtain  :math:`S({\bf q})` for the excited states.
