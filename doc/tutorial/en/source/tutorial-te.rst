@@ -140,10 +140,8 @@ One of the features of DPT in this model is that cusp structures in the dynamics
 The following figure is an example for several results for :math:`\Gamma` quench.
 You can see the cusp structure for :math:`\Gamma > 0.5`.
 
-.. image:: ../../figs/Mz_DPT_1D_TIM.pdf
+.. image:: ../../figs/Mz_DPT_1D_TIM.*
    :height: 500px
    :width: 700px
    :align: center
-
-
 
