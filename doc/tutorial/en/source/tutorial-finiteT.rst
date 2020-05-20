@@ -1,7 +1,7 @@
 Tutorial for finite-temperature calculations
-==============================
+==============================================
 Heisenberg chain (finite temperatures)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Here, we study the finite-temperature
 properties of spin 1/2 Heisenberg model on the chain.
