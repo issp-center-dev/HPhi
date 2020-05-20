@@ -441,8 +441,14 @@ Exercise
 By changing **pair.txt** and **input.txt**,
 you can treat your favorite models.
 For example, please try to make input files
-for the Kitaev model on the honeycomb lattice.
-We note that the Kitaev model can be used in the Standard mode.
+for the **Kitaev model** on the honeycomb lattice.
+We note that the **Kitaev model** can be used in the Standard mode.
+
+Another example is the **XY model** on the chain.
+In the standard model,
+you can also treat **XY model** by omitting
+"CoulombInter  coulombinter.def"  and
+"Hund  hund.def" in namelist.def.
 
 
 Use eigenvectors
