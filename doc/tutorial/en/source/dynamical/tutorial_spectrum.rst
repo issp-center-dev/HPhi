@@ -68,7 +68,7 @@ After finishing calculations, the spectrum :math:`G_{S_z S_z}({\bf Q} \equiv (\p
 
 You can see the following output image.
 
-.. image:: ../../figs/spectrum.*
+.. image:: ../../../figs/spectrum.*
    :height: 500px
    :width: 700px
    :align: center
