@@ -1,8 +1,3 @@
-Tutorial for calculations of dynamical properties
-==================================================
-
-.. include:: tutorial-spectrum.rst
-
 Hubbard chain (optical conductivity)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -57,3 +52,4 @@ you can obtain **optical.dat**.
 A way for plotting **optical.dat** is as follows  ::
 
  plot "optical.dat" u 1:(-($4+$8)/$1) w l
+

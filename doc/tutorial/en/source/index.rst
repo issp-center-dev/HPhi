@@ -28,8 +28,8 @@ Contents
    tutorial-1
    tutorial-zero
    tutorial-finiteT
-   tutorial-te
-   tutorial-dynamical
+   time_evolution/index
+   dynamical/index
 
 .. Indices and tables
 .. ==================
