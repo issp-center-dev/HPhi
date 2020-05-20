@@ -371,6 +371,10 @@ Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows
 
 Following the procedure, please see how :math:`S({\bf q})` changes
 by changing J'.
+As an example, we show :math:`S({\bf q})` for J1/J2=0 and 1 below.
+
+.. image:: ../../figs/J1J2_Sq.*
+   :align: center
 
 Calculations of spin structure factors for excited states
 """""""""""""""""""""""""""""""
