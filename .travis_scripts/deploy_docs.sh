@@ -33,6 +33,7 @@ echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 git clone git@github.com:${TRAVIS_REPO_SLUG} hphi-doc
 cd hphi-doc
+git checkout ${TRAVIS_BRANCH}
 mkdir build && cd build
 cmake -DDocument=ON ../
 make doc-ja-html
