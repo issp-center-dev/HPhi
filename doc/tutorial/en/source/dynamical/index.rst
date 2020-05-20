@@ -6,4 +6,5 @@ Tutorial for calculations of dynamical properties
 
    tutorial_spectrum
    tutorial_optical_conductivity
-   
+   tutorial_sqomega
+
