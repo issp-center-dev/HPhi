@@ -85,3 +85,6 @@ You can see the following output image.
 
 .. image:: ../../figs/finiteT.*
    :align: center
+
+Kitaev cluster (finite temperatures)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
