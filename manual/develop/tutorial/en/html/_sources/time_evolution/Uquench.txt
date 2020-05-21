@@ -20,7 +20,6 @@ The input files (stan1.in and stan2.in) are as follows ::
  a0L =  2
  a1W =  2
  a1L = -2
- J = 0.5
  2Sz = 0
  t = 1.0
  U = 4.0
