@@ -33,10 +33,12 @@ echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 git clone git@github.com:${TRAVIS_REPO_SLUG} hphi-doc
 cd hphi-doc
+git checkout ${TRAVIS_BRANCH}
 mkdir build && cd build
 cmake -DDocument=ON ../
 make doc-ja-html
 make doc-en-html
+make tutorial-en-html
 
 set +e
 
@@ -60,7 +62,7 @@ fi
 
 cd ${ROOTDIR}/hphi-doc/manual
 mkdir -p $docdir && cd $docdir
-for lang in ja en; do
+for lang in ja en tutorial/en; do
   rm -rf $lang/html
   mkdir -p $lang
   cp -r ${ROOTDIR}/hphi-doc/build/doc/${lang}/source/html $lang/html
