@@ -1,4 +1,0 @@
-&BANDS
-      prefix = 'sr2cuo3'
-       lsym = .false.
-/
