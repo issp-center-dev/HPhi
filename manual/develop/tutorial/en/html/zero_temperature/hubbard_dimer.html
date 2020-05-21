@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.2. Hubbard Dimer &mdash; HΦ Documentation  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="1. Tutorial for calculations at zero temperature" href="index.html" />
+    <link rel="next" title="1.3. Hubbard Trimer" href="hubbard_trimer.html" />
+    <link rel="prev" title="1.1. Spin 1/2 Dimer" href="spin_dimer.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hubbard-dimer">
+<h1>1.2. Hubbard Dimer<a class="headerlink" href="#hubbard-dimer" title="Permalink to this headline">¶</a></h1>
+<p>Let&#8217;s solve the following the Hubbard dimer model.</p>
+<div class="math">
+\[H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+{\rm H.c.})
+  +U(n_{0\uparrow}n_{0\downarrow}+n_{1\uparrow}n_{1\downarrow})\]</div>
+<p>The input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+method = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+L=2
+t = -0.5
+U = 4
+2Sz = 0
+nelec = 2
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+</pre></div>
+</div>
+<div class="section" id="check-the-energy">
+<h2>1.2.1. Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this headline">¶</a></h2>
+<p>For the Hubbard dimer at half filling with total Sz=0,
+energies are given as follows:</p>
+<blockquote>
+<div><span class="math">\(E=0,U,\frac{U}{2}\times(1\pm\sqrt{(1+(4t/U)^2)})\)</span></div></blockquote>
+<p>For example, by taking <span class="math">\(U=4,t=-1\)</span>, the
+energies are  given as follows:</p>
+<blockquote>
+<div><span class="math">\(E=-0.828427, 0, 4, 4.828427\)</span></div></blockquote>
+<p>It is note that simple mathematical calculations
+can be done using:</p>
+<div class="highlight-none"><div class="highlight"><pre>bc -l
+</pre></div>
+</div>
+<p>on the terminal.</p>
+</div>
+<div class="section" id="try-to-use-lobcg-method">
+<h2>1.2.2. Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this headline">¶</a></h2>
+<p>The input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+method = &quot;CG&quot;
+lattice = &quot;chain&quot;
+L=2
+t = -0.5
+U = 4
+2Sz = 0
+nelec = 2
+exct = 4
+</pre></div>
+</div>
+<p>Please check whether LOBCG method correctly
+reproduces the energies including the excited states.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Tutorial for calculations at zero temperature</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="spin_dimer.html">1.1. Spin 1/2 Dimer</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">1.2. Hubbard Dimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-the-energy">1.2.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#try-to-use-lobcg-method">1.2.2. Try to use LOBCG method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hubbard_trimer.html">1.3. Hubbard Trimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spin_chain.html">1.4. Heisenberg chain (zero temperature)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="J1J2.html">1.5. J1-J2 Heisenberg model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expert.html">1.6. How to use Expert mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vector.html">1.7. Use eigenvectors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../finite_temperature/index.html">2. Tutorial for finite-temperature calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_evolution/index.html">3. Tutorials for real-time evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dynamical/index.html">4. Tutorial for calculations of dynamical properties</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Tutorial for calculations at zero temperature</a><ul>
+      <li>Previous: <a href="spin_dimer.html" title="previous chapter">1.1. Spin 1/2 Dimer</a></li>
+      <li>Next: <a href="hubbard_trimer.html" title="next chapter">1.3. Hubbard Trimer</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/zero_temperature/hubbard_dimer.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

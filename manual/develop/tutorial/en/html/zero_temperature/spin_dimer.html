@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.1. Spin 1/2 Dimer &mdash; HΦ Documentation  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="1. Tutorial for calculations at zero temperature" href="index.html" />
+    <link rel="next" title="1.2. Hubbard Dimer" href="hubbard_dimer.html" />
+    <link rel="prev" title="1. Tutorial for calculations at zero temperature" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="spin-1-2-dimer">
+<h1>1.1. Spin 1/2 Dimer<a class="headerlink" href="#spin-1-2-dimer" title="Permalink to this headline">¶</a></h1>
+<p>Let&#8217;s solve the following spin 1/2 dimer model (2-site Heisenberg model).</p>
+<div class="math">
+\[H = J {\bf S}_{0}\cdot{\bf S}_{1}\]</div>
+<p>The input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;Spin&quot;
+method = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2Sz = 0
+2S  = 1
+</pre></div>
+</div>
+<p>It should be noted that the <code class="docutils literal"><span class="pre">L=2</span></code> chain has two sites connected by <em>two</em> bonds with each other, and so we let <code class="docutils literal"><span class="pre">J=0.5</span></code> to simulate the dimer model with <span class="math">\(J=1\)</span>.</p>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+</pre></div>
+</div>
+<div class="section" id="check-the-energy">
+<h2>1.1.1. Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this headline">¶</a></h2>
+<p>Please check whether the energies are given as follows.</p>
+<blockquote>
+<div><p><span class="math">\(E_{\rm min}=-3/4\)</span> (singlet)</p>
+<p><span class="math">\(E_{\rm max}=1/4\)</span> (triplet)</p>
+</div></blockquote>
+</div>
+<div class="section" id="check-s-dependence">
+<h2>1.1.2. Check S dependence<a class="headerlink" href="#check-s-dependence" title="Permalink to this headline">¶</a></h2>
+<p>By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1).
+Please check whether the energies are given as follows.</p>
+<blockquote>
+<div><p><span class="math">\(E_{\rm min}=-S(S+1)\)</span></p>
+<p><span class="math">\(E_{\rm max}=S^2\)</span></p>
+</div></blockquote>
+</div>
+<div class="section" id="add-magnetic-field-h">
+<h2>1.1.3. Add magnetic field H<a class="headerlink" href="#add-magnetic-field-h" title="Permalink to this headline">¶</a></h2>
+<p>By adding  H in stan.in, selecting model as &#8220;SpinGC&#8221;, and deleting &#8220;2Sz=0&#8221;
+you can examine the
+effects of the magnetic field in the dimer model.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+</pre></div>
+</div>
+<p>Please check whether the ground state becomes polarized state (Sz=1).</p>
+</div>
+<div class="section" id="try-to-use-lanczos-method">
+<h2>1.1.4. Try to use Lanczos method<a class="headerlink" href="#try-to-use-lanczos-method" title="Permalink to this headline">¶</a></h2>
+<p><strong>This is just a pedagogical example.</strong></p>
+<p>By selecting method as &#8220;Lanczos&#8221;
+you can perform the Lanczos calculations.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;Lanczos&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+</pre></div>
+</div>
+<p>This calculation will <strong>fail</strong>!
+Please think why the Lanczos method fails for the dimer.</p>
+</div>
+<div class="section" id="try-to-use-lobcg-method">
+<h2>1.1.5. Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this headline">¶</a></h2>
+<p>LOBCG is locally optimal block conjugate gradient method.
+By selecting method as &#8220;CG&#8221;,
+you can perform the LOBCG calculations.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;CG&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+</pre></div>
+</div>
+<p>In contrast to the Lanczos method,
+this calculation will work well !
+Please think why the CG method works well for the dimer.</p>
+<p>Please also check the excited states can
+be correctly obtained by using LOBCG method.
+An example of the input file (stan.in) is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L=2
+model = &quot;SpinGC&quot;
+method = &quot;CG&quot;
+lattice = &quot;chain&quot;
+J = 0.5
+2S  = 1
+H   = 2
+exct = 4
+</pre></div>
+</div>
+<p>Here, exct represents the number of excited states, which are
+obtained by the LOBCG method.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Tutorial for calculations at zero temperature</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">1.1. Spin 1/2 Dimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-the-energy">1.1.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-s-dependence">1.1.2. Check S dependence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-magnetic-field-h">1.1.3. Add magnetic field H</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#try-to-use-lanczos-method">1.1.4. Try to use Lanczos method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#try-to-use-lobcg-method">1.1.5. Try to use LOBCG method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hubbard_dimer.html">1.2. Hubbard Dimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hubbard_trimer.html">1.3. Hubbard Trimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spin_chain.html">1.4. Heisenberg chain (zero temperature)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="J1J2.html">1.5. J1-J2 Heisenberg model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expert.html">1.6. How to use Expert mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vector.html">1.7. Use eigenvectors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../finite_temperature/index.html">2. Tutorial for finite-temperature calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_evolution/index.html">3. Tutorials for real-time evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dynamical/index.html">4. Tutorial for calculations of dynamical properties</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Tutorial for calculations at zero temperature</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">1. Tutorial for calculations at zero temperature</a></li>
+      <li>Next: <a href="hubbard_dimer.html" title="next chapter">1.2. Hubbard Dimer</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/zero_temperature/spin_dimer.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
