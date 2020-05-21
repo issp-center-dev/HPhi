@@ -52,7 +52,7 @@ you can calculate :math:`S({\bf q})` from **output/zvo_cisajscktalt_eigen0.dat**
 
 Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows ::
  1. HPhi -sdrt stan.in
- 2. pyhton3 MakeGreen.def (input.txt is necessary)
+ 2. pyhton3 MakeGreen.py (input.txt is necessary)
  3. HPhi -e namelist.def 
  4. python3 CalcSq.py (input.txt is necessary)
  5. You can obtain **Sq_eigen0.dat** !!
