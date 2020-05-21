@@ -14,7 +14,7 @@ The input file (stan.in) is as follows::
  model = "Hubbard" 
  method = "FullDiag" 
  lattice = "chain" 
- L=2
+ L = 3
  t = -1
  U = 4
  2Sz = 0
