@@ -25,9 +25,8 @@ Contents
    :maxdepth: 3
    :numbered: 3
 
-   tutorial-1
-   tutorial-zero
-   tutorial-finiteT
+   zero_temperature/index
+   finite_temperature/index
    time_evolution/index
    dynamical/index
 
