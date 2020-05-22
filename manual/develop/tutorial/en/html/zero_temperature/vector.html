@@ -46,7 +46,7 @@
 In the standard mode, setting <code class="docutils literal"><span class="pre">EigenVecIO</span> <span class="pre">=</span> <span class="pre">&quot;Out&quot;</span></code> makes HPhi to write the calculated eigenvectors as <code class="docutils literal"><span class="pre">output/zvo_eigenvec_[index]_rank_[rank].dat</span></code>, where <code class="docutils literal"><span class="pre">[index]</span></code> is the index of the states (e.g., the ground state has <code class="docutils literal"><span class="pre">[index]</span> <span class="pre">=</span> <span class="pre">0</span></code>) and <code class="docutils literal"><span class="pre">[rank]</span></code> is the rank of the process.
 In the MPI parallelization with Npara processes, HPhi splits the whole Hilbert space into the Npara blocks and each process treats one of them.
 The file format is described in the <a class="reference external" href="http://issp-center-dev.github.io/HPhi/manual/master/en/html/filespecification/outputfiles_en/tmpvec_en.html">reference manual</a> .
-For example, the following python function reads the vector:</p>
+For example, the following python function (<code class="docutils literal"><span class="pre">samples/tutorial-1.7/read_gs.py</span></code>) reads the vector:</p>
 <div class="highlight-none"><div class="highlight"><pre>def read_gs(*, index=0, rank=0):
     import numpy as np
     from os.path import join
@@ -69,8 +69,10 @@ For example, the following python function reads the vector:</p>
 </div>
 <div class="section" id="exercise">
 <h2>1.7.1. Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h2>
-<p>Check the orthogonality of the eigenvectors calculated by the LOBCG method by calculating the norm and the inner-product of some of the eigenvectors.</p>
-<p>Hint: In the standard mode, the <code class="docutils literal"><span class="pre">exct</span></code> keyword controls the number of eigenvectors to be calculated.</p>
+<p>Check the orthogonality of the eigenvectors calculated by the LOBCG method by calculating the norm and the inner product of some of the eigenvectors.</p>
+<p><em>Hint</em> : In the standard mode, the <code class="docutils literal"><span class="pre">exct</span></code> keyword controls the number of eigenvectors to be calculated.</p>
+<p><em>Solution</em> : See <code class="docutils literal"><span class="pre">samples/tutorial-1.7/solution.py</span></code>.
+This script firstly generates the input file for calculating the ground state and the first excited state of the <span class="math">\(L=8\)</span> AFH chain with the LOBCG method, next invokes <code class="docutils literal"><span class="pre">HPhi</span></code>, then reads the vectors, and finally calculates the norms and the inner product.</p>
 </div>
 </div>
 
