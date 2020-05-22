@@ -139,3 +139,26 @@ where :math:`N_{\rm sample}` is the sample size (:math:`N_{\rm sample}=64`).
 Although the systematic errors in the estimation of temperatures exit in the mTPQ formalism,
 the exact hat capacity (the red curve in the above figure) is within
 the random sample distribution (estimated by :math:`\sqrt{\sigma^2}` and shown by the grey belt).
+
+For obtaining the results by the full diagonalization, 
+please use the following input file :: 
+ W=2
+ L=3
+ model = "SpinGC" 
+ method = "fulldiag"
+ lattice = "Honeycomb" 
+ J0x = -1.0
+ J0y = 0.0
+ J0z = 0.0
+ J1x = 0.0
+ J1y = -1.0
+ J1z = 0.0
+ J2x = 0.0
+ J2y = 0.0
+ J2z = -1.0
+ 2S=1
+ 
+Note that it takes several minute because the dimension of matrix is large (dimension is 4900 ).
+As in the Heisenberg chain,
+by using the python script **(Git/HPhi/tool/FiniteT/Finite.py)**,
+you can obtain the temperature dependence of the energy and the specific heat.
