@@ -1413,10 +1413,7 @@ shared (tmp_v0, tmp_v1, v1buf)
  return 0.0;
 #endif
 }/*double complex child_CisAit_GeneralSpin_MPIdouble*/
-<<<<<<< HEAD
 
-=======
->>>>>>> develop
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{jv}@f$ term in the
 grandcanonical general spin system when one of these site is in the inter process region
