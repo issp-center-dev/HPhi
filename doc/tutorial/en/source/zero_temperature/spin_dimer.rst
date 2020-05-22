@@ -59,7 +59,6 @@ Please check whether the ground state becomes polarized state (Sz=1).
 
 Try to use Lanczos method
 """""""""""""""""""""""""""""""
-**This is just a pedagogical example.**
 
 By selecting method as "Lanczos"
 you can perform the Lanczos calculations.
@@ -73,8 +72,14 @@ An example of the input file (stan.in) is as follows::
  2S  = 1
  H   = 2
 
-This calculation will **fail**! 
-Please think why the Lanczos method fails for the dimer. 
+Please check the Lanczos method reproduces the 
+energy (energy is output in ***output/zvo_energy.dat** ).
+
+**This is just a pedagogical example.**
+By changing H = 20 (very large magnetic field),
+please examine what will happen.
+This calculation may **fail**! 
+Please think why the Lanczos method fails for large magnetic field. 
 
 
 Try to use LOBCG method
@@ -92,13 +97,19 @@ An example of the input file (stan.in) is as follows::
  2S  = 1
  H   = 2
 
+Please check the LOBCG method reproduces the 
+energy (energy is output in ***output/zvo_energy.dat** ).
 
+**This is just a pedagogical example.**
+By changing H = 20 (very large magnetic field),
+please examine what will happen.
 In contrast to the Lanczos method, 
-this calculation will work well ! 
-Please think why the CG method works well for the dimer. 
+LOBCG will work well ! 
+Please think why the LOBCG method works well for the large magnetic field. 
 
 Please also check the excited states can
 be correctly obtained by using LOBCG method.
+(Please compare the energies obtained by the full diagonalization.)
 An example of the input file (stan.in) is as follows::
 
  L=2
