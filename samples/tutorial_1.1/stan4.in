@@ -1,0 +1,7 @@
+L=2
+model = "SpinGC"
+method = "Lanczos"
+lattice = "chain"
+J = 0.5
+2S  = 1
+H   = 2

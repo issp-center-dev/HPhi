@@ -1001,7 +1001,7 @@ int ReadDefFileIdxPara(
   char defname[D_FileNameMaxReadDef];
   char ctmp[D_CharTmpReadDef], ctmp2[256];
 
-  unsigned int i,j, idx, itype;
+  unsigned int i, idx, itype;
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
@@ -1019,7 +1019,6 @@ int ReadDefFileIdxPara(
   int icnt_trans=0;
   int iflg_trans=0;
   int icnt_interall=0;
-  int iflg_interall=0;
 
   unsigned int iloop=0;
 
@@ -1644,7 +1643,7 @@ int ReadDefFileIdxPara(
         if(X->NLaser>0){
           //printf("Read Start\n");
           while(fgetsMPI(ctmp2, 256, fp) != NULL){
-            sscanf(ctmp2, "%s %lf\n", &(ctmp), &(X->ParaLaser[idx]));
+            sscanf(ctmp2, "%s %lf\n", &(ctmp[0]), &(X->ParaLaser[idx]));
             //printf("[%d]:%f\n",idx,X->ParaLaser[idx]);
             idx++;
           }
@@ -2591,10 +2590,7 @@ void SetConvergenceFactor
   //In future, convergence facator can be set by a def file.
   int neps = -8;
   int nepsCG =-8;
-  int nbisec =-14;
   int nEnergy = -12;
-  int nShiftBeta=8;
-  int nepsvec12=-14;
   eps=pow(10.0, neps);
   eps_CG=pow(10.0, nepsCG);
   eps_Lanczos     = pow(10,-X->LanczosEps);

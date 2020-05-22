@@ -6,7 +6,7 @@ PairHop指定ファイル
 PairHopカップリングをハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。付け加える項は以下で与えられます。
 
-.. math:: H+=\sum_{i,j}J_{ij}^{\rm Pair} (c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{i \downarrow}^{\dagger}c_{j  \downarrow}+h.c.)
+.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm Pair} (c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{i \downarrow}^{\dagger}c_{j  \downarrow}+h.c.)
 
 以下にファイル例を記載します。
 

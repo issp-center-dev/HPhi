@@ -1,0 +1,10 @@
+model = "Hubbard"
+method = "CG"
+lattice = "chain"
+L = 6
+t = 1
+U = 10
+2Sz = 0
+nelec = 6
+exct = 1
+EigenVecIO  = "out"

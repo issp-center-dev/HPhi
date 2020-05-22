@@ -1,4 +1,4 @@
-動的グリーン関数の計算に関するパラメーター
+動的グリーン関数の計算に関するパラメータ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  ``CalcSpec``
@@ -29,11 +29,11 @@
    ``"down"``\ のいずれか。デフォルトは\ ``"SzSz"``)
 
    **説明 :** 計算する動的グリーン関数の種類を指定する。
-   ``"SzSz"``\ では\ :math:`\langle {\hat S}_{z q} {\hat S}_{z q}\rangle`\ 、
-   ``"S+S-"``\ では\ :math:`\langle {\hat S}^{+}_{q} {\hat S}^{-}_{q}\rangle`\ 、
-   ``"Density"``\ では\ :math:`\langle {\hat n}_{q} {\hat n}_{q}\rangle`\ 、
-   ``"up"``\ では\ :math:`\langle {\hat c}^{\dagger}_{q \uparrow} {\hat c}_{q \uparrow}\rangle`\ 、
-   ``"down"``\ では\ :math:`\langle {\hat c}^{\dagger}_{q \downarrow} {\hat c}_{q \downarrow}\rangle`
+   ``"SzSz"``\ では\ :math:`\langle {S}^z_{- \bf q} {S}^z_{\bf q}\rangle`\ 、
+   ``"S+S-"``\ では\ :math:`\langle S^{+}_{- \bf q} {S}^{-}_{\bf q}\rangle`\ 、
+   ``"Density"``\ では\ :math:`\langle {n}_{- \bf q} {n}_{\bf q}\rangle`\ 、
+   ``"up"``\ では\ :math:`\langle {c}^{\dagger}_{{\bf q} \uparrow} {c}_{{\bf q} \uparrow}\rangle`\ 、
+   ``"down"``\ では\ :math:`\langle {c}^{\dagger}_{{\bf q} \downarrow} {c}_{{\bf q} \downarrow}\rangle`
    となる。
 
 -  ``SpectrumQW``, ``SpectrumQL``
@@ -43,8 +43,15 @@
    **説明 :** 計算する動的グリーン関数の波数を Fractional
    coordinateで指定する。 逆格子ベクトルは
    :numref:`fig_chap04_1_lattice`, :numref:`fig_chap04_1_honeycomb`,
-   :numref:`fig_ladder`, :numref:`fig_kagome`
+   :numref:`fig_kagome`, :numref:`fig_ladder`
    に表されている格子ベクトルと対応するものとなる。
+
+-  ``OmegaOrg``
+
+   **形式 :** 実数(デフォルトは\ ``0.0``)
+
+   **説明 :**
+   動的グリーン関数を計算する際の振動数\ :math:`\omega`\ の実部の原点。
 
 -  ``OmegaMin``
 
@@ -74,7 +81,7 @@
 
 .. [#] https://github.com/issp-center-dev/Komega.
 .. [#] \S. Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan **77**, 114713 (2008).
-.. [#] \A. Frommer, Computing **70**, 87{109 (2003).
+.. [#] \A. Frommer, Computing **70**, 87-109 (2003).
 
 .. raw:: latex
 

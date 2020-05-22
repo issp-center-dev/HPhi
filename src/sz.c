@@ -98,8 +98,8 @@ int sz
   long unsigned int div_up;
 
   // [s] for general spin
-  long int *list_2_1_Sz;
-  long int *list_2_2_Sz;
+  long int *list_2_1_Sz = NULL;
+  long int *list_2_2_Sz = NULL;
   if(X->Def.iFlgGeneralSpin==TRUE){
     list_2_1_Sz = li_1d_allocate(X->Check.sdim+2);
     list_2_2_Sz = li_1d_allocate((X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);

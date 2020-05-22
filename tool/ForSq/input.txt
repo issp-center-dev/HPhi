@@ -1,0 +1,4 @@
+Lx 4
+Ly 4
+Lz 1
+orb_num 1

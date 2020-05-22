@@ -29,9 +29,6 @@
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 
-
-static unsigned long int mfint[7];/*for malloc*/
-
 ///
 /// \brief Set size of memories headers of output files.
 /// \param X [out] BindStruct to get headers of files.\n
@@ -56,9 +53,6 @@ void setmem_def
  struct BindStruct *X,
  struct BoostList *xBoost
  ) {
-  unsigned long int i = 0;
-  unsigned long int j = 0;
-  unsigned long int k = 0;
   X->Def.Tpow = lui_1d_allocate(2 * X->Def.Nsite + 2);
   X->Def.OrgTpow = lui_1d_allocate(2 * X->Def.Nsite + 2);
   X->Def.SiteToBit = li_1d_allocate(X->Def.Nsite + 1);
@@ -110,7 +104,6 @@ void setmem_def
 
   X->Def.ParaLaser = d_1d_allocate(X->Def.NLaser);
 
-  unsigned int ipivot, iarrayJ, ispin;
   xBoost->list_6spin_star = i_2d_allocate(xBoost->R0 * xBoost->num_pivot, 7);
   xBoost->list_6spin_pair = i_3d_allocate(xBoost->R0 * xBoost->num_pivot, 7, 15);
   xBoost->arrayJ = cd_3d_allocate(xBoost->NumarrayJ, 3, 3);

@@ -38,7 +38,7 @@ Eigenvalue.dat
 
    **形式 :** double型
 
-   **説明 :** エネルギー\ :math:`\langle H \rangle`\ 。
+   **説明 :** エネルギー\ :math:`\langle \mathcal{H} \rangle`\ 。
 
 .. raw:: latex
 

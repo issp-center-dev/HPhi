@@ -6,11 +6,11 @@ Ising指定ファイル
 Ising相互作用をハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。 電子系の場合には
 
-.. math:: H+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} )
+.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} )
 
 が付け加えられ、スピン系の場合には
 
-.. math:: H+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z
+.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z
 
 が付け加えられます。 以下にファイル例を記載します。
 

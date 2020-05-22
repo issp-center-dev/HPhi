@@ -52,6 +52,11 @@ int diag_magma_cmp(int xNsize, double complex **A,
       magma_int_t maxngpu = 0;
       magma_device_t *dummy;
       magma_getdevices(dummy, 9999, &maxngpu);
+      if(maxngpu <= 0) {
+          fprintf(stdout, "  Error: Your HPhi was built with a GPGPU library but NO GPU device is found.\n");
+          fprintf(stdout, "         To perform fulldiag calculation without GPU, set \"ngpu 0\" in \"calcmod.def\".\n");
+          exit(1);
+      }
       if(ngpu > maxngpu) {
         fprintf(stdout, "  Warning: ngpu is beyond maxgpu. ngpu = %d, maxngpu =  %d\n", ngpu, maxngpu);
         fprintf(stdout, "           MAGMA library executes maxngpu.\n\n");

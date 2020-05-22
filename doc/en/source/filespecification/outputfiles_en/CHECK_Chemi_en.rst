@@ -8,7 +8,7 @@ CHECK_Chemi.dat
 This file is outputted to check the input of chemical potential
 :math:`\mu_{i\sigma}`,
 
-.. math:: \mathcal H+=\sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}.
+.. math:: \sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}.
 
 An example of the file format is as follows.
 

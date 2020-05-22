@@ -289,7 +289,6 @@ int ConvertToList1GeneralSpin(
 )
 {
   long unsigned int ia, ib;
-  long unsigned int tmp_list;
   ia=org_ibit%ihlfbit;
   ib=org_ibit/ihlfbit;
   if(list_2_1[ia]*list_2_2[ib]==0){

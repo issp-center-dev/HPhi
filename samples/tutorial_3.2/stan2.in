@@ -1,0 +1,10 @@
+model = "SpinGC"
+method = "Time-Evolution"
+lattice = "chain"
+L = 12
+Jz = -1.0
+Gamma = 0.2
+h = 1e-5
+EigenvecIO = "in"
+dt = 0.01
+lanczos_max = 1000

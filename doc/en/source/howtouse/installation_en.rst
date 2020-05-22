@@ -14,7 +14,11 @@ You can obtain the :math:`{\mathcal H}\Phi` directory by typing
 .. tip::
 
  | Before using cmake for sekirei, you must type
- | ``source /home/issp/materiapps/tool/env.sh``
+ | ``module load cmake``
+ | :math:`{\mathcal H}\Phi` has been preinstalled on ISSP supercomputers.
+ | If you want to use this preinstalled version, please type
+ | ``source /home/issp/materiapps/hphi/hphivars.sh``
+.. | ``source /home/issp/materiapps/tool/env.sh``
 
 We can compile :math:`{\mathcal H}\Phi` as::
 

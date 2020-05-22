@@ -838,14 +838,14 @@ double complex child_CisAisCjtAjt_Hubbard_MPI(
 ) {
 #ifdef MPI
   double complex dam_pr = 0.0;
-  int iCheck;
-  unsigned long int tmp_ispin1;
+  unsigned long int tmp_ispin1 = 0;
   unsigned long int i_max = X->Check.idim_max;
-  unsigned long int tmp_off, j;
-  double complex dmv;
+  unsigned long int tmp_off = 0;
+  unsigned long int j = 0;
+  double complex dmv = 0.01;
 //    MPI_Status statusMPI;
 
-  iCheck = CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
+  int iCheck = CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
   if (iCheck != TRUE) return 0.0;
   
 #pragma omp parallel reduction(+:dam_pr) default(none) \
@@ -919,16 +919,17 @@ double complex child_CisAjtCkuAlv_Hubbard_MPI(
   double complex *tmp_v1//!<[inout] Initial wavefunction
 ) {
 #ifdef MPI
-  double complex dam_pr = 0;
+  double complex dam_pr = 0.0;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
   int iCheck, ierr, Fsgn;
   unsigned long int isite1, isite2, isite3, isite4;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Adiff, Bdiff;
-  double complex dmv;
+  double complex dmv = 0.0;
   unsigned long int origin, tmp_off, tmp_off2;
-  unsigned long int org_rankbit, ioff;
+  unsigned long int org_rankbit = 0;
+  unsigned long int ioff = 0;
   int iFlgHermite = FALSE;
   MPI_Status statusMPI;
 
@@ -1140,11 +1141,9 @@ double complex child_CisAjtCkuAku_Hubbard_MPI(
   unsigned long int j, Asum, Adiff;
   double complex dmv;
   unsigned long int origin, tmp_off;
-  unsigned long int org_rankbit;
+  unsigned long int org_rankbit = 0;
   MPI_Status statusMPI;
-  //printf("Deubg0-0: org_isite1=%d, org_ispin1=%d, org_isite2=%d, org_ispin2=%d, org_isite3=%d, org_ispin3=%d\n", org_isite1, org_ispin1,org_isite2, org_ispin2,org_isite3, org_ispin3);
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite3, org_ispin3, X, (long unsigned int) myrank, &origin);
-  //printf("iCheck=%d, myrank=%d, origin=%d\n", iCheck, myrank, origin);
 
   isite1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
   isite2 = X->Def.Tpow[2 * org_isite2 + org_ispin2];
@@ -1558,7 +1557,9 @@ double complex child_Cis_MPI(
 ) {
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
-  unsigned long int idim_max_buf, j, ioff;
+  unsigned long int idim_max_buf = 0;
+  unsigned long int j = 0;
+  unsigned long int ioff = 0;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
 
@@ -1637,7 +1638,9 @@ double complex child_Ajt_MPI(
 ){
 #ifdef MPI
   int mask2, state2, ierr, origin, bit2diff, Fsgn;
-  unsigned long int idim_max_buf, j, ioff;
+  unsigned long int idim_max_buf = 0;
+  unsigned long int j = 0;
+  unsigned long int ioff = 0;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
 

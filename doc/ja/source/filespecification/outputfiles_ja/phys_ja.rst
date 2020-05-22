@@ -41,13 +41,13 @@ phys.dat
 
    **形式 :** double型
 
-   **説明 :** エネルギーの期待値\ :math:`\langle H\rangle`\ 。
+   **説明 :** ハミルトニアンの期待値(エネルギー)\ :math:`\langle \mathcal{H}\rangle`\ 。
 
 -  :math:`[`\ double02\ :math:`]`
 
    **形式 :** double型
 
-   **説明 :** 粒子数の期待値\ :math:`\langle \hat{n}\rangle`\ 。
+   **説明 :** 粒子数の期待値\ :math:`\langle {n}\rangle`\ 。
 
 -  :math:`[`\ double03\ :math:`]`
 
@@ -67,7 +67,7 @@ phys.dat
 
    **説明 :** ダブロン
    :math:`\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle`
-   (ただし:math:`N_s`\ はサイト数)。
+   (ただし :math:`N_s`\ はサイト数)。
 
 .. raw:: latex
 

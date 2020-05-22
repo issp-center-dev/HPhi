@@ -842,7 +842,7 @@ double complex GC_CisAisCisAis_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
-  double complex dmv;
+  double complex dmv = 0.0;
   double complex dam_pr = 0;
   tmp_sgn = child_CisAis(j - 1, X, isite3);
   tmp_sgn *= child_CisAis(j - 1, X, isite1);

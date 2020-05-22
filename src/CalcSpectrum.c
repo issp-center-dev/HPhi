@@ -97,7 +97,7 @@ int CalcSpectrum(
     int i_stp;
     int iFlagListModified = FALSE;
     FILE *fp;
-    double dnorm;
+    double dnorm = 0.0;
 
     //ToDo: Nomega should be given as a parameter
     int Nomega;
@@ -317,33 +317,29 @@ int GetExcitedState
  struct BindStruct *X,
  double complex *tmp_v0,
  double complex *tmp_v1
-)
-{
-   if(X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0){
+) {
+  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
     fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
     return FALSE;
-    }
+  }
 
 
-    if(X->Def.NSingleExcitationOperator > 0){
-      if(GetSingleExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
-        return FALSE;
-      }
+  if (X->Def.NSingleExcitationOperator > 0) {
+    if (GetSingleExcitedState(X, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
     }
-    else if(X->Def.NPairExcitationOperator >0){
-      if(GetPairExcitedState(X,tmp_v0, tmp_v1)!=TRUE){
-        return FALSE;
-      }
+  } else if (X->Def.NPairExcitationOperator > 0) {
+    if (GetPairExcitedState(X, tmp_v0, tmp_v1) != TRUE) {
+      return FALSE;
     }
-    else {
-      long unsigned int j, idim_max;
-      idim_max = X->Check.idim_maxOrg;
-#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1) \
-  firstprivate(idim_max) private(j)
-      for (j = 1; j <= idim_max; j++) {
-        tmp_v0[j] = tmp_v1[j];
-      }
-    }
+  } else {
+    unsigned long int i_max, j;
+    i_max = X->Check.idim_maxOrg;
+#pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)  \
+  firstprivate(i_max) private(j)
+    for (j = 1; j <= i_max; j++) tmp_v0[j] = tmp_v1[j];
+  }
+
   return TRUE;
 }
 

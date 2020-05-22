@@ -6,11 +6,11 @@ Exchange指定ファイル
 Exchangeカップリングをハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。 電子系の場合には
 
-.. math:: H+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{j \downarrow}^{\dagger}c_{i  \downarrow}+c_ {i \downarrow}^{\dagger}c_{j\downarrow}c_{j \uparrow}^{\dagger}c_{i  \uparrow})
+.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{j \downarrow}^{\dagger}c_{i  \downarrow}+c_ {i \downarrow}^{\dagger}c_{j\downarrow}c_{j \uparrow}^{\dagger}c_{i  \uparrow})
 
 が付け加えられ、スピン系の場合には
 
-.. math:: H+=\sum_{i,j}J_{ij}^{\rm Ex} (S_i^+S_j^-+S_i^-S_j^+)
+.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm Ex} (S_i^+S_j^-+S_i^-S_j^+)
 
 が付け加えられます。 **スピン系の**\ :math:`(S_i^+S_j^-+S_i^-S_j^+)`\ **を
 電子系の演算子で書き直すと、** 

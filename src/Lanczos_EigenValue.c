@@ -67,7 +67,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
 
   double **tmp_mat;
   double *tmp_E;
-  int int_i, int_j, mfint[7];
+  int int_i, int_j;
   int iret=0;
   sprintf(sdt_2, cFileNameLanczosStep, X->Def.CDataFileHead);
 

@@ -49,20 +49,20 @@ SS\_rand.dat
 
    **形式 :** double型
 
-   **説明 :** エネルギーの期待値\ :math:`\langle H \rangle`\ 。
+   **説明 :** ハミルトニアンの期待値 (エネルギー)\ :math:`\langle \mathcal{H} \rangle`\ 。
 
 -  :math:`[`\ double03\ :math:`]`
 
    **形式 :** double型
 
    **説明 :**
-   ハミルトニアンの2乗の期待値\ :math:`\langle H^2 \rangle`\ 。
+   ハミルトニアンの2乗の期待値\ :math:`\langle \mathcal{H}^2 \rangle`\ 。
 
 -  :math:`[`\ double04\ :math:`]`
 
    **形式 :** double型
 
-   **説明 :** ダブロン
+   **説明 :** 
    ダブロンの期待値\ :math:`\sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle`
    。
 
@@ -70,14 +70,14 @@ SS\_rand.dat
 
    **形式 :** double型
 
-   **説明 :** 粒子数\ :math:`\langle {\hat n} \rangle`\ 。
+   **説明 :** 粒子数\ :math:`\langle {n} \rangle = \langle \sum_{i} n_i \rangle`\ 。
 
 -  :math:`[`\ int01\ :math:`]`
 
    **形式 :** int型
 
    **説明 :**
-   初期ランダムベクトルに\ :math:`(l-\hat{H}/N_{s})`\ (:math:`l`\ はModParaファイルの\ ``LargeValue``\ 、\ :math:`N_{s}`\ はサイト数)を作用させた回数。
+   初期ランダムベクトルに\ :math:`(l-\mathcal{H}/N_{s})`\ (:math:`l`\ はModParaファイルの\ ``LargeValue``\ 、\ :math:`N_{s}`\ はサイト数)を作用させた回数。
 
 
 .. raw:: latex

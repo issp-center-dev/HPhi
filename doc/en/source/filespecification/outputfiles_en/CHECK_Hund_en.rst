@@ -6,7 +6,7 @@ CHECK_Hund.dat
 This file is outputted to check the input of the Hund couplings
 :math:`J_{ij}^{\rm Hund}`,
 
-.. math:: \mathcal H += -\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}).
+.. math:: -\sum_{i,j}J_{ij}^{\rm Hund} (n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}).
 
 An example of the file format is as follows.
 
