@@ -1,0 +1,7 @@
+L       = 12
+model   = "Spin"
+method  = "TPQ"
+lattice = "chain"
+J = 1
+2Sz = 0
+2S  = 1
