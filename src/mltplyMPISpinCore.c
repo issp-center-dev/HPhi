@@ -34,31 +34,31 @@ General two body term:
   </tr>
   <tr>
     <td>@f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{ju}@f$</td>
-    <td>::GC_child_CisAisCjuAju_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
-    <td>::GC_child_CisAisCjuAju_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
-    <td>::X_child_CisAisCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
-    <td>::X_child_CisAisCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::GC_CisAisCjuAju_spin_MPIsingle, ::child_GC_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_CisAisCjuAju_spin_MPIdouble, ::child_GC_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::child_CisAisCjuAju_GeneralSpin_MPIsingle, ::child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::child_CisAisCjuAju_GeneralSpin_MPIsingle, ::child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
   </tr>
   <tr>
     <td>@f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{jv}@f$</td>
-    <td>::GC_child_CisAisCjuAjv_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
-    <td>::GC_child_CisAisCjuAjv_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
-    <td>::X_child_CisAisCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
-    <td>::X_child_CisAisCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::GC_CisAisCjuAjv_spin_MPIsingle, ::child_GC_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_CisAisCjuAjv_spin_MPIdouble, ::child_GC_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::child_CisAisCjuAjv_GeneralSpin_MPIsingle, ::child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::child_CisAisCjuAjv_GeneralSpin_MPIsingle, ::child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle</td>
   </tr>
   <tr>
     <td>@f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{ju}@f$</td>
-    <td>::GC_child_CisAitCjuAju_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
-    <td>::GC_child_CisAitCjuAju_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
-    <td>::X_child_CisAitCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle</td>
-    <td>::X_child_CisAitCjuAju_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle</td>
+    <td>::GC_CisAitCjuAju_spin_MPIsingle, ::child_GC_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_CisAitCjuAju_spin_MPIdouble, ::child_GC_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::child_CisAitCjuAju_GeneralSpin_MPIsingle, ::child_GC_CisAitCjuAju_GeneralSpin_MPIsingle</td>
+    <td>::child_CisAitCjuAju_GeneralSpin_MPIsingle, ::child_GC_CisAitCjuAju_GeneralSpin_MPIsingle</td>
   </tr>
   <tr>
     <td>@f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{jv}@f$</td>
-    <td>::GC_child_CisAitCjuAjv_spin_MPIsingle, ::X_GC_child_CisAisCjuAjv_spin_MPIsingle</td>
-    <td>::GC_child_CisAitCjuAjv_spin_MPIdouble, ::X_GC_child_CisAisCjuAjv_spin_MPIdouble</td>
-    <td>::X_child_CisAitCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle</td>
-    <td>::X_child_CisAitCjuAjv_GeneralSpin_MPIsingle, ::X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::GC_CisAitCjuAjv_spin_MPIsingle, ::child_GC_CisAisCjuAjv_spin_MPIsingle</td>
+    <td>::GC_CisAitCjuAjv_spin_MPIdouble, ::child_GC_CisAisCjuAjv_spin_MPIdouble</td>
+    <td>::child_CisAitCjuAjv_GeneralSpin_MPIsingle, ::child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle</td>
+    <td>::child_CisAitCjuAjv_GeneralSpin_MPIsingle, ::child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle</td>
   </tr>
 </table>
 */
@@ -76,7 +76,7 @@ General two body term:
        When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_CisAitCiuAiv_spin_MPIdouble(
+void GC_CisAitCiuAiv_spin_MPIdouble(
   unsigned long int i_int /**< [in] Interaction ID*/,
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
@@ -84,14 +84,14 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
 {
 #ifdef MPI
   double complex dam_pr;  
-  dam_pr =  X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+  dam_pr =  child_GC_CisAitCiuAiv_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0],  X->Def.InterAll_OffDiagonal[i_int][1], 
     X->Def.InterAll_OffDiagonal[i_int][3],  X->Def.InterAll_OffDiagonal[i_int][4], 
     X->Def.InterAll_OffDiagonal[i_int][5],  X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int],X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+}/*void GC_CisAitCiuAiv_spin_MPIdouble*/
 /**
 @brief @f$c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}@f$ term
        in Spin model + GC.
@@ -100,7 +100,7 @@ void GC_child_CisAitCiuAiv_spin_MPIdouble(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
+double complex child_GC_CisAitCiuAiv_spin_MPIdouble(
   int org_isite1,//!<[in] site i
   int org_ispin1,//!<[in] spin s
   int org_ispin2,//!<[in] spin t
@@ -125,7 +125,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
   }
   else {
     if (org_ispin1 == org_ispin4 && org_ispin2 == org_ispin3) { //CisAitCitAis=CisAis
-      dam_pr = X_GC_child_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
+      dam_pr = child_GC_CisAis_spin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
       return (dam_pr);
     }
     else { //CisAitCisAit=0
@@ -187,13 +187,13 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIdouble(
 #else
  return 0.0;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+}/*void GC_CisAitCiuAiv_spin_MPIdouble*/
 /**
 @brief Wrapper for calculating CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-void GC_child_CisAisCjuAjv_spin_MPIdouble(
+void GC_CisAisCjuAjv_spin_MPIdouble(
   unsigned long int i_int /**< [in] Interaction ID*/,
   struct BindStruct *X /**< [inout]*/,
   double complex *tmp_v0 /**< [out] Result v0 = H v1*/,
@@ -201,20 +201,20 @@ void GC_child_CisAisCjuAjv_spin_MPIdouble(
 ){
 #ifdef MPI
   double complex dam_pr;
-  dam_pr = X_GC_child_CisAisCjuAjv_spin_MPIdouble(
+  dam_pr = child_GC_CisAisCjuAjv_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
     X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+}/*void GC_CisAitCiuAiv_spin_MPIdouble*/
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
+double complex child_GC_CisAisCjuAjv_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -240,11 +240,11 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
   mask2 = (int)X->Def.Tpow[org_isite3];
   origin = myrank ^ mask2;
   state2 = (origin & mask2) / mask2;
-  num1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask1, org_ispin1);
+  num1 = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask1, org_ispin1);
   if (num1 != 0 && state2 == org_ispin4) {
     Jint = tmp_J;
   }
-  else if (X_SpinGC_CisAis(origin + 1, X, mask1, org_ispin1) == TRUE && state2 == org_ispin3) {
+  else if (child_SpinGC_CisAis(origin + 1, X, mask1, org_ispin1) == TRUE && state2 == org_ispin3) {
     Jint = conj(tmp_J);
     if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) Jint = 0;
   }
@@ -289,13 +289,13 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble(
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
+}/*double complex child_GC_CisAisCjuAjv_spin_MPIdouble*/
 /**
 @brief Wrapper for calculating CisAitCjuAju term in Spin model + GC
        When both site1 and site2 are in the inter process region.
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-void GC_child_CisAitCjuAju_spin_MPIdouble(
+void GC_CisAitCjuAju_spin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
@@ -304,20 +304,20 @@ void GC_child_CisAitCjuAju_spin_MPIdouble(
 {
 #ifdef MPI
   double complex dam_pr;
-  dam_pr = X_GC_child_CisAitCjuAju_spin_MPIdouble(
+  dam_pr = child_GC_CisAitCjuAju_spin_MPIdouble(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4], 
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIdouble*/
+}/*void GC_CisAitCiuAiv_spin_MPIdouble*/
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
+double complex child_GC_CisAitCjuAju_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -343,7 +343,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
   origin = myrank ^ mask1;
   state1 = (origin & mask1) / mask1;
   mask2 = (int)X->Def.Tpow[org_isite3];
-  num1 = X_SpinGC_CisAis(origin + 1, X, mask2, org_ispin3);
+  num1 = child_SpinGC_CisAis(origin + 1, X, mask2, org_ispin3);
   if (state1 == org_ispin2) {
     if (num1 != 0) {
       Jint = tmp_J;
@@ -353,7 +353,7 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
     }
   }/*if (state1 == org_ispin2)*/
   else {//state1 = org_ispin1
-    num1 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
+    num1 = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
     if (num1 != 0) {
       Jint = conj(tmp_J);
       if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
@@ -403,14 +403,14 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIdouble(
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAjv_spin_MPIdouble*/
+}/*double complex child_GC_CisAisCjuAjv_spin_MPIdouble*/
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
+double complex child_GC_CisAisCjuAju_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -427,8 +427,8 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
   double complex dmv, dam_pr;
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
-  num1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask1, org_ispin1);
-  num2 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask2, org_ispin3);
+  num1 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask1, org_ispin1);
+  num2 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, mask2, org_ispin3);
   
   dam_pr = 0.0;
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
@@ -459,14 +459,14 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIdouble(
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAju_spin_MPIdouble*/
+}/*double complex child_GC_CisAisCjuAju_spin_MPIdouble*/
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
+double complex child_GC_CisAisCjuAju_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -484,7 +484,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
   Jint = tmp_J;
   mask1 = (int)X->Def.Tpow[org_isite1];
   mask2 = (int)X->Def.Tpow[org_isite3];
-  num2 = X_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
+  num2 = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
 
   dam_pr = 0.0;
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, num1) \
@@ -493,7 +493,7 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
-        num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
+        num1 = child_SpinGC_CisAis(j, X, mask1, org_ispin1);
         dmv = Jint * num1 * num2 * tmp_v1[j];
         tmp_v0[j] += dmv;
         dam_pr += conj(tmp_v1[j]) * dmv;
@@ -501,14 +501,14 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
     }else if(X->Large.mode == H_CORR){
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
-        num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
+        num1 = child_SpinGC_CisAis(j, X, mask1, org_ispin1);
         dmv = Jint * num1 * num2 * tmp_v1[j];
         dam_pr += conj(tmp_v0[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
     }else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
-        num1 = X_SpinGC_CisAis(j, X, mask1, org_ispin1);
+        num1 = child_SpinGC_CisAis(j, X, mask1, org_ispin1);
         dmv = Jint * num1 * num2 * tmp_v1[j];
         dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
@@ -518,13 +518,13 @@ double complex X_GC_child_CisAisCjuAju_spin_MPIsingle(
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAju_spin_MPIdouble*/
+}/*double complex child_GC_CisAisCjuAju_spin_MPIdouble*/
 /**
 @brief Exchange and Pairlifting term in Spin model + GC
        When only site2 is in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_CisAitCiuAiv_spin_MPIsingle(
+void GC_CisAitCiuAiv_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
@@ -532,14 +532,14 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
 ){
 #ifdef MPI
   double complex dam_pr;  
-  dam_pr =X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+  dam_pr =child_GC_CisAitCiuAiv_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+}/*void GC_CisAitCiuAiv_spin_MPIsingle*/
 
 /**
 @brief Exchange and Pairlifting term in Spin model + GC
@@ -547,7 +547,7 @@ void GC_child_CisAitCiuAiv_spin_MPIsingle(
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
+double complex child_GC_CisAitCiuAiv_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -604,7 +604,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
       for (j = 0; j < idim_max_buf; j++) {
-        state1 = X_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
+        state1 = child_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
         if (state1 != 0) {
           dmv = Jint * v1buf[j + 1];
           tmp_v0[ioff + 1] += dmv;
@@ -614,7 +614,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
     }else if (X->Large.mode == H_CORR) {
 #pragma omp for
       for (j = 0; j < idim_max_buf; j++) {
-        state1 = X_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
+        state1 = child_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
         if (state1 != 0) {
           dmv = Jint * v1buf[j + 1];
           dam_pr += conj(tmp_v0[ioff + 1]) * dmv;
@@ -623,7 +623,7 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
     }else {
 #pragma omp for
       for (j = 0; j < idim_max_buf; j++) {
-        state1 = X_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
+        state1 = child_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
         if (state1 != 0) {
           dmv = Jint * v1buf[j + 1];
           dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
@@ -635,13 +635,13 @@ double complex X_GC_child_CisAitCiuAiv_spin_MPIsingle(
 #else
  return 0.0;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+}/*void GC_CisAitCiuAiv_spin_MPIsingle*/
 /**
 @brief Wrapper for CisAisCjuAjv term in Spin model + GC
        When only site2 is in the inter process region.
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-void GC_child_CisAisCjuAjv_spin_MPIsingle(
+void GC_CisAisCjuAjv_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
@@ -649,20 +649,20 @@ void GC_child_CisAisCjuAjv_spin_MPIsingle(
 ){
 #ifdef MPI
   double complex dam_pr;  
-  dam_pr =X_GC_child_CisAisCjuAjv_spin_MPIsingle(
+  dam_pr =child_GC_CisAisCjuAjv_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
     X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
+}/*void GC_CisAisCjuAjv_spin_MPIsingle*/
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When only site2 is in the inter process region.
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
+double complex child_GC_CisAisCjuAjv_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 2
   int org_isite3,//!<[in] Site 1
@@ -748,13 +748,13 @@ double complex X_GC_child_CisAisCjuAjv_spin_MPIsingle(
 #else
  return 0.0;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+}/*void GC_CisAitCiuAiv_spin_MPIsingle*/
 /**
 @brief Wrapper for CisAisCjuAjv term in Spin model + GC
        When only site2 is in the inter process region.
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-void GC_child_CisAitCjuAju_spin_MPIsingle(
+void GC_CisAitCjuAju_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
   double complex *tmp_v0,//!<[out] Result v0 = H v1
@@ -762,20 +762,20 @@ void GC_child_CisAitCjuAju_spin_MPIsingle(
 ){
 #ifdef MPI
   double complex dam_pr;  
-  dam_pr =X_GC_child_CisAitCjuAju_spin_MPIsingle(
+  dam_pr =child_GC_CisAitCjuAju_spin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, tmp_v0, tmp_v1);
   X->Large.prdct += dam_pr;
 #endif
-}/*void GC_child_CisAisCjuAjv_spin_MPIsingle*/
+}/*void GC_CisAisCjuAjv_spin_MPIsingle*/
 /**
 @brief CisAisCjuAjv term in Spin model + GC
        When only site2 is in the inter process region.
 @return @f$\langle v_1 | H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
+double complex child_GC_CisAitCjuAju_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -877,13 +877,13 @@ double complex X_GC_child_CisAitCjuAju_spin_MPIsingle(
 #else
  return 0.0;
 #endif
-}/*void GC_child_CisAitCiuAiv_spin_MPIsingle*/
+}/*void GC_CisAitCiuAiv_spin_MPIsingle*/
 /**
 @brief @f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{jv}@f$ term in Spin model.
  When both site1 and site3 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
+double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -952,13 +952,13 @@ private(j, dmv) shared (tmp_v0, tmp_v1, v1buf)
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble*/
+}/*double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble*/
 /**
 @brief @f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{ju}@f$ term in Spin model.
 When both site1 and site3 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
+double complex child_GC_CisAitCjuAju_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1028,13 +1028,13 @@ shared (tmp_v0, tmp_v1, v1buf)
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble*/
+}/*double complex child_GC_CisAitCjuAju_GeneralSpin_MPIdouble*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{it} c_{ju}^\dagger c_{jv}@f$ term in the
 grandcanonical general spin system when both site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1056,7 +1056,7 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 
   if (org_isite1 == org_isite3 && org_ispin1 == org_ispin4 &&
     org_ispin2 == org_ispin3) { //cisaitcitais=cisais && cisaitcitais =cisais
-    dam_pr = X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
+    dam_pr = child_GC_CisAis_GeneralSpin_MPIdouble(org_isite1, org_ispin1, tmp_J, X, tmp_v0, tmp_v1);
     return (dam_pr);
   }
   //cisaitcisait
@@ -1119,13 +1119,13 @@ double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble*/
+}/*double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble*/
  /**
  @brief Compute @f$c_{is}^\dagger c_{is} c_{ju}^\dagger c_{ju}@f$ term in the
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble(
+double complex child_GC_CisAisCjuAju_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1175,13 +1175,13 @@ shared (tmp_v0, tmp_v1)
 #else
   return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIdouble*/
+}/*double complex child_GC_CisAisCjuAju_GeneralSpin_MPIdouble*/
  /**
  @brief Compute @f$c_{is}^\dagger c_{it}@f$ term in the
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_CisAit_GeneralSpin_MPIdouble(
+double complex child_GC_CisAit_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1239,13 +1239,13 @@ shared (tmp_v0, tmp_v1, v1buf)
 #else
   return 0.0;
 #endif
-}/*double complex X_GC_child_CisAit_GeneralSpin_MPIdouble*/
+}/*double complex child_GC_CisAit_GeneralSpin_MPIdouble*/
  /**
  @brief Compute @f$c_{is}^\dagger c_{is}@f$ term in the
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_CisAis_GeneralSpin_MPIdouble(
+double complex child_GC_CisAis_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -1289,13 +1289,13 @@ shared (tmp_v0, tmp_v1)
 #else
   return 0.0;
 #endif
-}/*double complex X_GC_child_CisAis_GeneralSpin_MPIdouble*/
+}/*double complex child_GC_CisAis_GeneralSpin_MPIdouble*/
  /**
  @brief Compute @f$c_{is} c_{is}^\dagger@f$ term in the
  grandcanonical general spin system when both site is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_GC_child_AisCis_GeneralSpin_MPIdouble(
+double complex child_GC_AisCis_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -1339,13 +1339,13 @@ shared (tmp_v0, tmp_v1)
 #else
   return 0.0;
 #endif
-}/*double complex X_GC_child_AisCis_GeneralSpin_MPIdouble*/
+}/*double complex child_GC_AisCis_GeneralSpin_MPIdouble*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{it}@f$ term in the
 canonical general spin system when both site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAit_GeneralSpin_MPIdouble(
+double complex child_CisAit_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1413,14 +1413,14 @@ shared (tmp_v0, tmp_v1, v1buf)
 #else
  return 0.0;
 #endif
-}/*double complex X_child_CisAit_GeneralSpin_MPIdouble*/
+}/*double complex child_CisAit_GeneralSpin_MPIdouble*/
 
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{jv}@f$ term in the
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
+double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1493,13 +1493,13 @@ private(j, dmv, num1) shared (tmp_v0, tmp_v1, v1buf)
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle*/
+}/*double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{it}c_{ju}^\dagger c_{ju}@f$ term in the
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
+double complex child_GC_CisAitCjuAju_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1566,13 +1566,13 @@ shared (tmp_v0, tmp_v1, v1buf)
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle*/
+}/*double complex child_GC_CisAitCjuAju_GeneralSpin_MPIsingle*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{jv}@f$ term in the
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1650,13 +1650,13 @@ firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, off) shared (tmp
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle*/
+}/*double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{ju}@f$ term in the
 grandcanonical general spin system when one of these site is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle(
+double complex child_GC_CisAisCjuAju_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1704,13 +1704,13 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAisCjuAju_GeneralSpin_MPIsingle*/
+}/*double complex child_GC_CisAisCjuAju_GeneralSpin_MPIsingle*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{it}c_{ju}^\dagger c_{jv}@f$ term in the
 canonical general spin system when both sites are in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+double complex child_CisAitCjuAjv_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -1800,13 +1800,13 @@ private(j, dmv, off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
 #else
  return 0.0;
 #endif
-}/*double complex X_child_CisAitCjuAjv_GeneralSpin_MPIdouble*/
+}/*double complex child_CisAitCjuAjv_GeneralSpin_MPIdouble*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{ju}@f$ term in the
 canonical general spin system when both sites are in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble(
+double complex child_CisAisCjuAju_GeneralSpin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1869,13 +1869,13 @@ shared (tmp_v0, tmp_v1)
 #else
  return 0.0;
 #endif
-}/*double complex X_child_CisAisCjuAju_GeneralSpin_MPIdouble*/
+}/*double complex child_CisAisCjuAju_GeneralSpin_MPIdouble*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{ju}@f$ term in the
 canonical general spin system when one of these sites is in the inter process region
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 */
-double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle(
+double complex child_CisAisCjuAju_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -1925,13 +1925,13 @@ firstprivate(X, tmp_V, org_isite1, org_ispin1) private(j, dmv, num1) shared (tmp
 #else
  return 0.0;
 #endif
-}/*double complex X_child_CisAisCjuAju_GeneralSpin_MPIsingle*/
+}/*double complex child_CisAisCjuAju_GeneralSpin_MPIsingle*/
  /**
  @brief Compute @f$c_{is}^\dagger c_{it}c_{ju}^\dagger c_{jv}@f$ term in the
  canonical general spin system when one of these sites is in the inter process region
  @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
  */
-double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+double complex child_CisAitCjuAjv_GeneralSpin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -2021,14 +2021,14 @@ private(j, dmv, off, tmp_off) shared (tmp_v0, tmp_v1, list_1buf, v1buf)
 #else
   return 0.0;
 #endif
-}/*double complex X_child_CisAitCjuAjv_GeneralSpin_MPIsingle*/
+}/*double complex child_CisAitCjuAjv_GeneralSpin_MPIsingle*/
 /**
 @brief Hopping term in Spin + GC
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAit_spin_MPIdouble(
+double complex child_GC_CisAit_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -2100,14 +2100,14 @@ firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
 #else
  return 0.0;
 #endif
-}/*double complex  X_GC_child_CisAit_spin_MPIdouble*/
+}/*double complex  child_GC_CisAit_spin_MPIdouble*/
 /**
 @brief Hopping term in Spin + Canonical for CalcSpectrum
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_child_CisAit_spin_MPIdouble(
+double complex child_CisAit_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
@@ -2178,14 +2178,14 @@ shared(v1buf, tmp_v0)
 #else
  return 0.0;
 #endif
-}/*double complex  X_child_CisAit_spin_MPIdouble*/
+}/*double complex  child_CisAit_spin_MPIdouble*/
 /**
 @brief Hopping term in Spin + GC
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_CisAis_spin_MPIdouble(
+double complex child_GC_CisAis_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -2229,14 +2229,14 @@ double complex X_GC_child_CisAis_spin_MPIdouble(
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_CisAis_spin_MPIdouble*/
+}/*double complex child_GC_CisAis_spin_MPIdouble*/
 /**
 @brief Hopping term in Spin + GC
        When both site1 and site2 are in the inter process region.
 @return @f$\langle v_1| H_{\rm this} | v_1 \rangle@f$
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex X_GC_child_AisCis_spin_MPIdouble(
+double complex child_GC_AisCis_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_trans,//!<[in] Coupling constant
@@ -2280,4 +2280,4 @@ double complex X_GC_child_AisCis_spin_MPIdouble(
 #else
  return 0.0;
 #endif
-}/*double complex X_GC_child_AisCis_spin_MPIdouble*/
+}/*double complex child_GC_AisCis_spin_MPIdouble*/

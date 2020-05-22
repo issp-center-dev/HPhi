@@ -219,23 +219,23 @@ int expec_cisajs_HubbardGC(struct BindStruct *X, double complex *vec, FILE **_fp
                 }
             }
             else{
-                dam_pr =X_GC_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+                dam_pr =child_GC_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
             }
         }
         else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
             if(org_isite1<org_isite2){
-                dam_pr =X_GC_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+                dam_pr =child_GC_general_hopp_MPIsingle(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
             }
             else{
-                dam_pr =X_GC_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
+                dam_pr =child_GC_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
                 dam_pr = conj(dam_pr);
             }
         }
         else{
-            if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+            if(general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
                 return -1;
             }
-            dam_pr = GC_child_general_hopp(vec,vec,X,tmp_OneGreen);
+            dam_pr = GC_general_hopp(vec,vec,X,tmp_OneGreen);
         }
 
         dam_pr= SumMPI_dc(dam_pr);
@@ -305,20 +305,20 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
 
             }
             else{
-                dam_pr =X_child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+                dam_pr =child_general_hopp_MPIdouble(org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
             }
         }
         else if (org_isite2  > X->Def.Nsite || org_isite1  > X->Def.Nsite){
           if(org_isite1 < org_isite2){
-             dam_pr =X_child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
+             dam_pr =child_general_hopp_MPIsingle(org_isite1-1, org_sigma1,org_isite2-1, org_sigma2, -tmp_OneGreen, X, vec, vec);
             }
             else{
-            dam_pr = X_child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
+            dam_pr = child_general_hopp_MPIsingle(org_isite2-1, org_sigma2, org_isite1-1, org_sigma1, -tmp_OneGreen, X, vec, vec);
                 dam_pr = conj(dam_pr);
             }
         }
         else{
-          if(child_general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
+          if(general_hopp_GetInfo( X,org_isite1,org_isite2,org_sigma1,org_sigma2)!=0){
                 return -1;
             }
             if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
@@ -333,7 +333,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
                 }
             }
             else{
-                dam_pr = child_general_hopp(vec,vec,X,tmp_OneGreen);
+                dam_pr = general_hopp(vec,vec,X,tmp_OneGreen);
             }
         }
         dam_pr= SumMPI_dc(dam_pr);
@@ -392,7 +392,7 @@ int expec_cisajs_SpinHalf(struct BindStruct *X, double complex *vec, FILE **_fp)
             if(org_isite1==org_isite2){
                 if(org_isite1 > X->Def.Nsite){
                     is1_up = X->Def.Tpow[org_isite1 - 1];
-                    ibit1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+                    ibit1 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
                     dam_pr=0;
                     if(ibit1 !=0){
 #pragma omp parallel for reduction(+:dam_pr)default(none) shared(vec) \
@@ -405,7 +405,7 @@ int expec_cisajs_SpinHalf(struct BindStruct *X, double complex *vec, FILE **_fp)
                     dam_pr=0.0;
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
                     for(j=1;j<=i_max;j++){
-                        dam_pr+=X_Spin_CisAis(j,X, isite1,org_sigma1)*conj(vec[j])*vec[j];
+                        dam_pr+=child_Spin_CisAis(j,X, isite1,org_sigma1)*conj(vec[j])*vec[j];
                     }
                 }
             }
@@ -536,10 +536,10 @@ int expec_cisajs_SpinGCHalf(struct BindStruct *X, double complex *vec, FILE **_f
         if(org_isite1 == org_isite2){
             if(org_isite1 > X->Def.Nsite){
                 if(org_sigma1==org_sigma2){  // longitudinal magnetic field
-                    dam_pr += X_GC_child_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, vec, vec);
+                    dam_pr += child_GC_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, vec, vec);
                 }
                 else{  // transverse magnetic field
-                    dam_pr += X_GC_child_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, vec, vec);
+                    dam_pr += child_GC_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, vec, vec);
                 }
             }else{
                 isite1 = X->Def.Tpow[org_isite1-1];
@@ -548,13 +548,13 @@ int expec_cisajs_SpinGCHalf(struct BindStruct *X, double complex *vec, FILE **_f
                     // longitudinal magnetic field
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X) shared(vec)
                     for(j=1;j<=i_max;j++){
-                        dam_pr += X_SpinGC_CisAis(j, X, isite1, org_sigma1)*conj(vec[j])*vec[j];
+                        dam_pr += child_SpinGC_CisAis(j, X, isite1, org_sigma1)*conj(vec[j])*vec[j];
                     }
                 }else{
                     // transverse magnetic field
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, tmp_off) firstprivate(i_max, isite1, org_sigma2, X) shared(vec)
                     for(j=1;j<=i_max;j++){
-                        tmp_sgn  =  X_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);
+                        tmp_sgn  =  child_SpinGC_CisAit(j,X, isite1,org_sigma2,&tmp_off);
                         if(tmp_sgn !=0){
                             dam_pr  +=  tmp_sgn*conj(vec[tmp_off+1])*vec[j];
                         }
@@ -600,10 +600,10 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X, double complex *vec, FILE *
             if (org_isite1 > X->Def.Nsite) {
                 if (org_sigma1 == org_sigma2) {
 // longitudinal magnetic field
-                    dam_pr = X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, 1.0, X, vec, vec);
+                    dam_pr = child_GC_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, 1.0, X, vec, vec);
                 } else {
 // transverse magnetic field
-                    dam_pr = X_GC_child_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, 1.0, X,
+                    dam_pr = child_GC_CisAit_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, 1.0, X,
                                                                      vec, vec);
                 }
             } else {//org_isite1 <= X->Def.Nsite
