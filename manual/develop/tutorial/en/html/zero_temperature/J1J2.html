@@ -58,7 +58,7 @@ J = 1
 J&#39; = 1
 2S = 1
 2Sz = 0
-exct = 2
+exct = 4
 </pre></div>
 </div>
 <p>Here, J (J&#8217;) represents <span class="math">\(J_{1}\)</span> (<span class="math">\(J_{2}\)</span>).</p>
@@ -102,8 +102,11 @@ As an example, we show <span class="math">\(S({\bf q})\)</span> for J1/J2=0 and 
 <div class="section" id="calculations-of-spin-structure-factors-for-excited-states">
 <h2>1.5.2. Calculations of spin structure factors for excited states<a class="headerlink" href="#calculations-of-spin-structure-factors-for-excited-states" title="Permalink to this headline">¶</a></h2>
 <p>By changing exct in stan.in, you can obtain several excited states.
-For those excited states, by changing <strong>max_num=1</strong> as ,for example, <strong>max_num=4</strong>,
-you can obtain  <span class="math">\(S({\bf q})\)</span> for the excited states.</p>
+For those excited states, by changing <strong>max_num=1</strong> in CalcSq.py as,
+for example, <strong>max_num=4</strong>,
+you can obtain  <span class="math">\(S({\bf q})\)</span> for the excited states.
+As a practice for editing file, please try to edit CalcSq.py manually
+(open CalcSq.py, finding variable max_num =1, and changing max_num = 4).</p>
 <p>Please see how <span class="math">\(S({\bf q})\)</span> in the excited states
 changes by changing J&#8217;. For example, please check
 what is the nature of the

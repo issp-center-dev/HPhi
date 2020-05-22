@@ -96,7 +96,6 @@ H   = 2
 </div>
 <div class="section" id="try-to-use-lanczos-method">
 <h2>1.1.4. Try to use Lanczos method<a class="headerlink" href="#try-to-use-lanczos-method" title="Permalink to this headline">¶</a></h2>
-<p><strong>This is just a pedagogical example.</strong></p>
 <p>By selecting method as &#8220;Lanczos&#8221;
 you can perform the Lanczos calculations.
 An example of the input file (stan.in) is as follows:</p>
@@ -109,8 +108,13 @@ J = 0.5
 H   = 2
 </pre></div>
 </div>
-<p>This calculation will <strong>fail</strong>!
-Please think why the Lanczos method fails for the dimer.</p>
+<p>Please check the Lanczos method reproduces the
+energy (energy is output in <strong>*output/zvo_energy.dat</strong> ).</p>
+<p><strong>This is just a pedagogical example.</strong>
+By changing H = 20 (very large magnetic field),
+please examine what will happen.
+This calculation may <strong>fail</strong>!
+Please think why the Lanczos method fails for large magnetic field.</p>
 </div>
 <div class="section" id="try-to-use-lobcg-method">
 <h2>1.1.5. Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this headline">¶</a></h2>
@@ -127,11 +131,17 @@ J = 0.5
 H   = 2
 </pre></div>
 </div>
-<p>In contrast to the Lanczos method,
-this calculation will work well !
-Please think why the CG method works well for the dimer.</p>
+<p>Please check the LOBCG method reproduces the
+energy (energy is output in <strong>*output/zvo_energy.dat</strong> ).</p>
+<p><strong>This is just a pedagogical example.</strong>
+By changing H = 20 (very large magnetic field),
+please examine what will happen.
+In contrast to the Lanczos method,
+LOBCG will work well !
+Please think why the LOBCG method works well for the large magnetic field.</p>
 <p>Please also check the excited states can
 be correctly obtained by using LOBCG method.
+(Please compare the energies obtained by the full diagonalization.)
 An example of the input file (stan.in) is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>L=2
 model = &quot;SpinGC&quot;
