@@ -7,7 +7,7 @@ Let's solve the following the Hubbard dimer model.
  H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+{\rm H.c.})
    +U(n_{0\uparrow}n_{0\downarrow}+n_{1\uparrow}n_{1\downarrow})
 
-The input file (stan.in) is as follows::
+The input file (``samples/tutorial_1.2/stan1.in``) is as follows::
 
  model = "Hubbard" 
  method = "FullDiag" 
@@ -43,7 +43,7 @@ on the terminal.
 
 Try to use LOBCG method
 """""""""""""""""""""""""""""""
-The input file (stan.in) is as follows::
+The input file (``samples/tutorial_1.2/stan2.in``) is as follows::
 
  model = "Hubbard" 
  method = "CG" 

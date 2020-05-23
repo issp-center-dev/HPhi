@@ -8,7 +8,7 @@ properties of spin 1/2 Heisenberg model on the chain.
 
  H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}
 
-The input file (stan.in) for 12-site Heisenberg model is as follows::
+The input file (``samples/tutorial_2.1/stan1.in``) for 12-site Heisenberg model is as follows::
 
  L       = 12
  model   = "Spin" 
@@ -26,7 +26,7 @@ Full diagonalization
 """""""""""""""""""""""""""""""
 After executing the full diagonalization,
 all the eigen energies are output in **output/Eiegenvalue.dat**.
-By using the python script **(Git/HPhi/tool/FiniteT/Finite.py)**, 
+By using the python script **(``samples/tutorial_2.1/Finite.py``)**, 
 you can obtain the temperature dependence of the energy and the specific heat.
 
 You can execute **Finite.py** as follows ::
@@ -50,7 +50,7 @@ TPQ method (Sz=0)
 By selecting method as "TPQ",
 you can perform the finite-temperature calculations using the TPQ method.
 
-The input file (stan.in) for 12-site Heisenberg model is as follows::
+The input file (``samples/tutorial_2.1/stan2.in``) for 12-site Heisenberg model is as follows::
 
  L       = 12
  model   = "Spin" 
@@ -62,7 +62,7 @@ The input file (stan.in) for 12-site Heisenberg model is as follows::
 
 After performing the TPQ calculations,
 results are output in **output/SS_rand*.dat**.
-By using the python script **(Git/HPhi/tool/FiniteT/AveSSrand.py)**, 
+By using the python script **(``samples/tutorial_2.1/AveSSrand.py``)**, 
 you can obtain the temperature dependence of 
 physical quantities such as the energy and the specific heat.
 
@@ -90,7 +90,7 @@ By using the TPQ method, it is also possible
 to calculate the spin susceptibility by performing
 the calculations for all Sz sectors.
 
-The input file (stan.in) for 12-site Heisenberg model is as follows::
+The input file (``samples/tutorial_2.1/stan3.in``) for 12-site Heisenberg model is as follows::
 
  L       = 12
  model   = "SpinGC" 
@@ -105,7 +105,7 @@ Here, note that "model = Spin" is changed to "model = SpinGC" and
 After performing the TPQ calculations,
 temperature dependence of several physical
 quantities such as number of particel N and total Sz are output in **output/Flct_rand*.dat**.
-By using the python script **(Git/HPhi/tool/FiniteT/AveFlct.py)**, 
+By using the python script **(``samples/tutorial_2.1/AveFlct.py``)**, 
 you can obtain the temperature dependence of 
 physical quantities such as the energy and the spin susceptibility :math:`\chi`.
 Note that :math:`\chi` is defined as

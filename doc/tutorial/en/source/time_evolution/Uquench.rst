@@ -9,7 +9,7 @@ Let's solve the following U quench in 2D Hubbard model at half filling.
    +U_{\rm quench} h(\tau) \sum_{i} n_{i\uparrow}n_{i\downarrow}
 
 :math:`h(\tau)` means the step function.
-The input files (stan1.in and stan2.in) are as follows ::
+The input files (``samples/tutorial_3.1/stan1.in`` and ``samples/tutorial_3.1/stan2.in``) are as follows ::
 
  stan1.in
 
