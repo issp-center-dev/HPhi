@@ -1,0 +1,6 @@
+L =12
+model = "SpinGC" 
+method = "TPQ" 
+lattice = "chain" 
+J=1
+2S =1

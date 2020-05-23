@@ -45,7 +45,7 @@ The 1st row represents temperature, 2nd row represents the energy, and
 the 3rd row represents the specific heat defined 
 by :math:`C=(\langle E^2 \rangle-\langle E \rangle^2)/T^2`.
 
-TPQ method
+TPQ method (Sz=0)
 """""""""""""""""""""""""""""""
 By selecting method as "TPQ",
 you can perform the finite-temperature calculations using the TPQ method.
@@ -61,7 +61,7 @@ The input file (stan.in) for 12-site Heisenberg model is as follows::
  2S  = 1
 
 After performing the TPQ calculations,
-all the eigen energies are output in **output/SS_rand*.dat**.
+results are output in **output/SS_rand*.dat**.
 By using the python script **(Git/HPhi/tool/FiniteT/AveSSrand.py)**, 
 you can obtain the temperature dependence of 
 physical quantities such as the energy and the specific heat.
@@ -83,3 +83,58 @@ You can see the following output image.
 
 .. image:: ../../../figs/finiteT.*
    :align: center
+
+TPQ method (susceptibility)
+"""""""""""""""""""""""""""""""
+By using the TPQ method, it is also possible
+to calculate the spin susceptibility by performing
+the calculations for all Sz sectors.
+
+The input file (stan.in) for 12-site Heisenberg model is as follows::
+
+ L       = 12
+ model   = "SpinGC" 
+ method  = "TPQ" 
+ lattice = "chain"
+ J = 1
+ 2S  = 1
+
+Here, note that "model = Spin" is changed to "model = SpinGC" and
+"Sz = 0" is omitted.
+
+After performing the TPQ calculations,
+temperature dependence of several physical
+quantities such as number of particel N and total Sz are output in **output/Flct_rand*.dat**.
+By using the python script **(Git/HPhi/tool/FiniteT/AveFlct.py)**, 
+you can obtain the temperature dependence of 
+physical quantities such as the energy and the spin susceptibility :math:`\chi`.
+Note that :math:`\chi` is defined as
+
+.. math::
+  &\chi = \frac{\langle m_z^2\rangle-\langle m_z\rangle^2}{T} \\
+  &m_z = \sum_{i} S_{i}^{z}.
+
+
+Then, you can obtain **ave_Flct.dat** as follows ::
+
+ # temperature T    err of T  m_z         error of m_z susceptibility chi  err of chi   
+ 13.5876            0.00695   -0.00688    0.00955      0.21243             0.00184
+ 6.83615            0.00373   -0.00783    0.01067      0.40632             0.00414
+ 4.58603            0.00278   -0.00894    0.01251      0.58234             0.00694
+ 3.46113            0.00239   -0.01023    0.01474      0.74129             0.01021
+ 2.78624            0.00220   -0.01171    0.01713      0.88407             0.01383
+
+Using gnuplot, you can see the temperature dependence of :math:`\chi` :: 
+
+  se log x
+  se colors classic
+  se xlabel "T/J"
+  se ylabel "chi"
+  plot    "ave_Flct.dat"   u 1:5:6 w e lc rgb "#FFBBBB" ps 1 pt 6,\
+          "ave_Flct.dat"   u 1:5 w lp lt 1 ps 1 pt 6
+
+You can see the following output image.
+
+.. image:: ../../../figs/chi.*
+   :align: center
+
