@@ -13,11 +13,12 @@ else:
     print("path_to_HPhi: relative or absolute path to HPhi.")
     exit(1)
 
-
 #get all dictioary of tutorials
 dir_all = sorted(glob.glob("tutorial*"))
 current_dir = os.getcwd()
 for idx, dir_name in enumerate(dir_all):
+    #if dir_name != "tutorial_4.3":
+    #    continue
     print("#########Test {}/{}#############".format(idx+1, len(dir_all)))
     print("Check: {}".format(dir_name))
     dir_name = os.path.join(current_dir, dir_name) 
@@ -31,8 +32,8 @@ for idx, dir_name in enumerate(dir_all):
             for line in lines[1:]:
                 line = line.replace("$1", path_to_HPhi)
                 cmd = line.split()
-                print(cmd)
-                subprocess.call(cmd, stdout=subprocess.PIPE)
+                with open("std.out", "w") as fw:
+                    subprocess.call(cmd, stdout=fw)
         with open("check_file.txt", "r") as fr:
             lines = fr.readlines()
             bool_test = True
