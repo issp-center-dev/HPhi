@@ -136,7 +136,7 @@ while `C` obtained by the full diagonalization is shown by the red curve.
 The grey belt shows the standard deviation :math:`\sqrt{\sigma^2}`,
 and the cyan belt shows the standard error :math:`\sigma_E = \sqrt{\sigma^2/N_{\rm sample}}`,
 where :math:`N_{\rm sample}` is the sample size (:math:`N_{\rm sample}=64`).
-Although the systematic errors in the estimation of temperatures exit in the mTPQ formalism,
+Although the systematic errors in the estimation of temperatures exist in the mTPQ formalism,
 the exact hat capacity (the red curve in the above figure) is within
 the random sample distribution (estimated by :math:`\sqrt{\sigma^2}` and shown by the grey belt).
 
