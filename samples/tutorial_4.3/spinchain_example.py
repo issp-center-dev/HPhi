@@ -22,6 +22,18 @@
 
 import subprocess
 import math
+import sys
+import os
+
+#Set path(command) to Hphi
+if len(sys.argv) == 2:
+    path_to_HPhi = os.path.abspath(sys.argv[1])
+else:
+    print("Error")
+    print("Usage: python do_all.py path_to_HPhi.")
+    print("path_to_HPhi: relative or absolute path to HPhi.")
+    exit(1)
+
 
 L = 12
 f = open('StdFace.def','w')
@@ -35,14 +47,14 @@ J = 1.0
 """
 f.write(std_text)
 f.close()
-subprocess.call(['./HPhi','-sdry','StdFace.def'])
+subprocess.call([path_to_HPhi,'-sdry','StdFace.def'])
 
 f = open('calcmod.def','a')
 f.write('OutputEigenVec 1\n')
 f.close()
 
 # first run (get eigenvalues, eigenvectors)
-subprocess.call(['./Hphi','-e','namelist.def'])
+subprocess.call([path_to_HPhi,'-e','namelist.def'])
 # get the ground-state energy
 f = open('output/zvo_energy.dat','r')
 energy = 0.0
@@ -79,9 +91,8 @@ NCisAitCjtAjs      %i
         f.write('%i 1 %i 1 0 %f %f\n' % (j,j,-wr,-wi))        
     f.close()
     print('Wavenumber %i\n' % (i))
-    subprocess.call(['./HPhi','-e','namelist.def'])
+    subprocess.call([path_to_HPhi,'-e','namelist.def'])
     subprocess.call(['cp','output/zvo_DynamicalGreen.dat','spectrum%i.dat' % (i)])
-
 f = open('spectrum.dat','w')
 for i in range(1, L):
     g = open('spectrum%i.dat' % (i % L),'r')
@@ -93,5 +104,6 @@ for i in range(1, L):
 subprocess.call(["mv", "spectrum.dat", "spectrum.dat.bak"])
 subprocess.call(["rm spectrum*.dat"], shell=True)
 subprocess.call(["mv", "spectrum.dat.bak", "spectrum.dat"])
+subprocess.call(["cp", "spectrum.dat", "output/spectrum.dat"])
 
 f.close()
