@@ -44,6 +44,6 @@ for idx, dir_name in enumerate(dir_all):
         elapsed_time = time.time() - start
         print ("elapsed_time:{0}".format(elapsed_time) + "[sec]")
         if bool_test is True:
-            print("Success to do {}".format(dir_name))
+            print("  OK  : {}".format(dir_name))
     else:
-        print("Error: run.sh does not exist in {}".format(dir_name))
+        print("Error : run.sh does not exist in {}".format(dir_name))
