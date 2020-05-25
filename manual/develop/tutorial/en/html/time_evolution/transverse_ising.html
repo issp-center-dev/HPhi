@@ -50,7 +50,7 @@ The details are found in this paper (M. Heyl, A. Polkovnikov, and S. Kehrein, Ph
 <div class="section" id="ground-state">
 <h2>3.2.1. Ground state<a class="headerlink" href="#ground-state" title="Permalink to this headline">¶</a></h2>
 <p>First, you need to obtain the initial state for simulations of the real-time dynamics.
-Please make the following input file (stan1.in)</p>
+Please make the following input file (<code class="docutils literal"><span class="pre">samples/tutorial_3.2/stan1.in</span></code>)</p>
 <div class="highlight-none"><div class="highlight"><pre>model = &quot;SpinGC&quot;
 method = &quot;CG&quot;
 lattice = &quot;chain&quot;
@@ -71,7 +71,7 @@ EigenvecIO = &quot;out&quot;
 <div class="section" id="quench">
 <h2>3.2.2. <span class="math">\(\Gamma\)</span> quench<a class="headerlink" href="#quench" title="Permalink to this headline">¶</a></h2>
 <p>After obtaining the ground state, you can perform simulations for <span class="math">\(\Gamma\)</span> quench in the 1D transverse-field Ising model.
-Make the following input file (stan2.in)</p>
+Make the following input file (<code class="docutils literal"><span class="pre">samples/tutorial_3.1/stan2.in</span></code>)</p>
 <div class="highlight-none"><div class="highlight"><pre>model = &quot;SpinGC&quot;
 method = &quot;Time-Evolution&quot;
 lattice = &quot;chain&quot;

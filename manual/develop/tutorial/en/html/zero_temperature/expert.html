@@ -46,12 +46,13 @@
 arbitrary Hamiltonians with any one-body potentials and the two-body interactions.
 By taking spin 1/2 system as an example,
 we explain how to prepare input files.
-For spin 1/2 system, we prepare simple python scripts (<strong>HPhi/tool/ExpertSpin/MakeDef.py</strong>)that
-can generate the input files for general Hamiltonians, which are defined as</p>
+For spin 1/2 system, we prepare simple python scripts (<code class="docutils literal"><span class="pre">samples/tutorial_1.6/MakeDef.py</span></code>)
+that can generate the input files for general Hamiltonians, which are defined as</p>
 <div class="math">
 \[{\mathcal H}=\sum_{i,j} J_{i,j}^{\alpha,\beta} {\bf S}_{i}^{\alpha} {\bf S}_{j}^{\beta}.\]</div>
-<p>To use <em>MakeDef.py</em>, it is necessary to prepare two input files,
-<strong>input.txt</strong> and <strong>pair.txt</strong>.</p>
+<p>Note tat <code class="docutils literal"><span class="pre">samples/tutorial_1.6/read.py</span></code> and <code class="docutils literal"><span class="pre">samples/tutorial_1.6/hphi_io.py</span></code> are necessary for <strong>MakeDef.py</strong>.
+To use <em>MakeDef.py</em>, it is necessary to prepare two input files,
+<strong>input.txt</strong> and <strong>pair.txt</strong> (examples of them are available in <code class="docutils literal"><span class="pre">samples/tutorial_1.6</span></code> ).</p>
 <p>In <strong>input.txt</strong>, two parameters <strong>Ns</strong> (number of sites) and <strong>exct</strong> (number of excited states)
 are specified.</p>
 <p>Below is an example of <strong>input.txt</strong> for 2 site Heisenberg model</p>

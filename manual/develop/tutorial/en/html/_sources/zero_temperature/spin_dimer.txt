@@ -6,7 +6,7 @@ Let's solve the following spin 1/2 dimer model (2-site Heisenberg model).
 
  H = J {\bf S}_{0}\cdot{\bf S}_{1}
 
-The input file (stan.in) is as follows::
+The input file (``samples/tutorial_1.1/stan1.in``) is as follows::
 
  L=2
  model = "Spin" 
@@ -32,7 +32,7 @@ Please check whether the energies are given as follows.
 
 Check S dependence
 """""""""""""""""""""""""""""""
-By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1).
+By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1, see ``samples/tutorial_1.1/stan2.in``).
 Please check whether the energies are given as follows.
 
  :math:`E_{\rm min}=-S(S+1)` 
@@ -44,7 +44,7 @@ Add magnetic field H
 By adding  H in stan.in, selecting model as "SpinGC", and deleting "2Sz=0" 
 you can examine the 
 effects of the magnetic field in the dimer model.
-An example of the input file (stan.in) is as follows::
+An example of the input file (``samples/tutorial_1.1/stan3.in``) is as follows::
 
  L=2
  model = "SpinGC" 
@@ -62,7 +62,7 @@ Try to use Lanczos method
 
 By selecting method as "Lanczos"
 you can perform the Lanczos calculations.
-An example of the input file (stan.in) is as follows::
+An example of the input file (``samples/tutorial_1.1/stan4.in``) is as follows::
 
  L=2
  model = "SpinGC" 
@@ -87,7 +87,7 @@ Try to use LOBCG method
 LOBCG is locally optimal block conjugate gradient method.
 By selecting method as "CG",
 you can perform the LOBCG calculations.
-An example of the input file (stan.in) is as follows::
+An example of the input file (``samples/tutorial_1.1/stan5a.in``) is as follows::
 
  L=2
  model = "SpinGC" 
@@ -110,7 +110,7 @@ Please think why the LOBCG method works well for the large magnetic field.
 Please also check the excited states can
 be correctly obtained by using LOBCG method.
 (Please compare the energies obtained by the full diagonalization.)
-An example of the input file (stan.in) is as follows::
+An example of the input file (``samples/tutorial_1.1/stan5b.in``) is as follows::
 
  L=2
  model = "SpinGC" 

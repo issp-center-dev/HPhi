@@ -48,7 +48,7 @@ Its Hamiltonian is defined as</p>
 <div class="math">
 \[{\mathcal H}=J_{1}\sum_{\langle i,j\rangle }{\bf S}_{i}\cdot{\bf S}_{j}+J_{2}\sum_{\langle\langle i,j\rangle\rangle }{\bf S}_{i}\cdot{\bf S}_{j},\]</div>
 <p>where <span class="math">\(J_{1}\)</span> (<span class="math">\(J_{2}\)</span>) represents the nearest (next-nearest) neighbor interactions.</p>
-<p>An input file for treating <span class="math">\(J_{1}-J_{2}\)</span> Heisenberg model is given as</p>
+<p>An input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.5/stan1.in</span></code>) for treating <span class="math">\(J_{1}-J_{2}\)</span> Heisenberg model is given as</p>
 <div class="highlight-none"><div class="highlight"><pre>model = &quot;Spin&quot;
 method = &quot;CG&quot;
 lattice = &quot;square&quot;
@@ -69,9 +69,9 @@ exct = 4
 \[S({\bf q})=\frac{1}{N_{\rm s}}\sum_{i,j} {\bf S}_{i}\cdot{\bf S}_{j}\]</div>
 <p>To calculate <span class="math">\(S({\bf q})\)</span>, it is necessary to prepare
 a proper input file for two-body Green functions.
-By using a python script <strong>MakeGreen.py</strong> (HPhi/tool/ForSq/MakeGreen.py),
+By using a python script <strong>MakeGreen.py</strong> (<code class="docutils literal"><span class="pre">samples/tutorial_1.5/MakeGreen.py</span></code>),
 you can generate <strong>greentwo.def</strong> for calculating <span class="math">\(S({\bf q})\)</span>.
-To use  <strong>MakeGreen.py</strong> , an input file for specifying lattice geometry (<strong>input.txt</strong>) is necessary,
+To use  <strong>MakeGreen.py</strong> , an input file for specifying lattice geometry (<strong>input.txt</strong>, <code class="docutils literal"><span class="pre">samples/tutorial_1.5/input.txt</span></code>) is necessary,
 whose form is given as follows</p>
 <div class="highlight-none"><div class="highlight"><pre>Lx 4
 Ly 4
@@ -80,7 +80,7 @@ orb_num 1
 </pre></div>
 </div>
 <p>Here, Lx (orb_num) represents the length of the x direction (number of orbitals).</p>
-<p>By using a python script <strong>CalcSq.py</strong> (HPhi/tool/ForSq/CalcSq.py),
+<p>By using a python script <strong>CalcSq.py</strong> (<code class="docutils literal"><span class="pre">samples/tutorial_1.5/CalcSq.py</span></code>),
 you can calculate <span class="math">\(S({\bf q})\)</span> from <strong>output/zvo_cisajscktalt_eigen0.dat</strong>.</p>
 <dl class="docutils">
 <dt>Procedure for calculating and visualizing <span class="math">\(S({\bf q})\)</span> is given as follows ::</dt>

@@ -57,7 +57,7 @@ is defined as</p>
 <div class="math">
 \[\sigma_{\rm reg}(\omega)=\frac{I(\omega,\eta)+I(-\omega,-\eta)}{\omega N_{s}},\]</div>
 <p>where <span class="math">\(N_{\rm s}\)</span> is the number of sites.</p>
-<p>An input file (stan.in) for 6-site Hubbard model is as follows:</p>
+<p>An input file (<code class="docutils literal"><span class="pre">samples/tutorial_4.2/stan1.in</span></code>) for 6-site Hubbard model is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
 method = &quot;CG&quot;
 lattice = &quot;chain&quot;
@@ -71,12 +71,15 @@ EigenVecIO  = &quot;out&quot;
 </pre></div>
 </div>
 <p>Scripts for calculating the optical conductivity are
-available at <strong>HPhi/tool/ForOpticalConductivity</strong>.</p>
+available at <strong>``samples/tutorial_4.2/``</strong>.</p>
 <p>By performing the all-in-one script (All.sh),</p>
 <div class="highlight-none"><div class="highlight"><pre>sh ./All.sh
 </pre></div>
 </div>
-<p>you can obtain <strong>optical.dat</strong>.</p>
+<p>you can obtain <strong>optical.dat</strong>.
+Note that <code class="docutils literal"><span class="pre">samples/tutorial_4.2/OpticalSpectrum.py</span></code>,``samples/tutorial_4.1/lattice.py``,
+<code class="docutils literal"><span class="pre">samples/tutorial_4.2/lattice.py</span></code>, and <code class="docutils literal"><span class="pre">samples/tutorial_4.2/input.txt</span></code>
+are necessary.</p>
 <p>A way for plotting <strong>optical.dat</strong> is as follows</p>
 <div class="highlight-none"><div class="highlight"><pre>plot &quot;optical.dat&quot; u 1:(-($4+$8)/$1) w l
 </pre></div>

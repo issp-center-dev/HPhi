@@ -45,7 +45,7 @@
 <p>Let&#8217;s solve the following spin 1/2 Heisenberg model on the chain.</p>
 <div class="math">
 \[H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}\]</div>
-<p>The input file (stan.in) for 16-site Heisenberg model is as follows:</p>
+<p>The input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.4/stan1.in</span></code>) for 16-site Heisenberg model is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>L       = 16
 model   = &quot;Spin&quot;
 method  = &quot;CG&quot;
@@ -67,7 +67,7 @@ J = 1
 </div>
 <div class="section" id="obtaining-the-excited-state">
 <h2>1.4.2. Obtaining the excited state<a class="headerlink" href="#obtaining-the-excited-state" title="Permalink to this headline">¶</a></h2>
-<p>By adding <strong>exct=2</strong>, you can obtain the 2 low-energy states.
+<p>By adding <strong>exct=2</strong>, you can obtain the 2 low-energy states (<code class="docutils literal"><span class="pre">samples/tutorial_1.4/stan2.in</span></code>).
 Please check the energies.</p>
 <div class="math">
 \[E_{0}= -7.142296\]\[E_{1}= -6.872107\]</div>
@@ -78,14 +78,14 @@ Please check the energies.</p>
 as <span class="math">\(\Delta=E_{1}-E_{0}\)</span>. For 16-site,
 we obtain <span class="math">\(\Delta\sim 0.2701\)</span>.</p>
 <p>Please examine how <span class="math">\(\Delta\)</span> behaves
-as a function of system size L.
+as a function of system size L (<code class="docutils literal"><span class="pre">samples/tutorial_1.4/stan3.in</span></code> for L=20).
 (available system size on PC may be L=24)</p>
 </div>
 <div class="section" id="haldane-gap">
 <h2>1.4.4. Haldane gap<a class="headerlink" href="#haldane-gap" title="Permalink to this headline">¶</a></h2>
 <p>By performing a similar calculations for S=1 system,
 please examine  how <span class="math">\(\Delta\)</span> behaves
-as a function of system size L.
+as a function of system size L (<code class="docutils literal"><span class="pre">samples/tutorial_1.4/stan4.in</span></code>).
 It is known that the finite spin gap exists even
 in the thermodynamic limit (<span class="math">\(L=\infty\)</span>).
 This spin gap is often called Haldane gap.</p>

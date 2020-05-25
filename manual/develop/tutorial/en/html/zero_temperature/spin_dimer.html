@@ -45,7 +45,7 @@
 <p>Let&#8217;s solve the following spin 1/2 dimer model (2-site Heisenberg model).</p>
 <div class="math">
 \[H = J {\bf S}_{0}\cdot{\bf S}_{1}\]</div>
-<p>The input file (stan.in) is as follows:</p>
+<p>The input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.1/stan1.in</span></code>) is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>L=2
 model = &quot;Spin&quot;
 method = &quot;FullDiag&quot;
@@ -70,7 +70,7 @@ J = 0.5
 </div>
 <div class="section" id="check-s-dependence">
 <h2>1.1.2. Check S dependence<a class="headerlink" href="#check-s-dependence" title="Permalink to this headline">¶</a></h2>
-<p>By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1).
+<p>By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1, see <code class="docutils literal"><span class="pre">samples/tutorial_1.1/stan2.in</span></code>).
 Please check whether the energies are given as follows.</p>
 <blockquote>
 <div><p><span class="math">\(E_{\rm min}=-S(S+1)\)</span></p>
@@ -82,7 +82,7 @@ Please check whether the energies are given as follows.</p>
 <p>By adding  H in stan.in, selecting model as &#8220;SpinGC&#8221;, and deleting &#8220;2Sz=0&#8221;
 you can examine the
 effects of the magnetic field in the dimer model.
-An example of the input file (stan.in) is as follows:</p>
+An example of the input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.1/stan3.in</span></code>) is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>L=2
 model = &quot;SpinGC&quot;
 method = &quot;FullDiag&quot;
@@ -98,7 +98,7 @@ H   = 2
 <h2>1.1.4. Try to use Lanczos method<a class="headerlink" href="#try-to-use-lanczos-method" title="Permalink to this headline">¶</a></h2>
 <p>By selecting method as &#8220;Lanczos&#8221;
 you can perform the Lanczos calculations.
-An example of the input file (stan.in) is as follows:</p>
+An example of the input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.1/stan4.in</span></code>) is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>L=2
 model = &quot;SpinGC&quot;
 method = &quot;Lanczos&quot;
@@ -121,7 +121,7 @@ Please think why the Lanczos method fails for large magnetic field.</p>
 <p>LOBCG is locally optimal block conjugate gradient method.
 By selecting method as &#8220;CG&#8221;,
 you can perform the LOBCG calculations.
-An example of the input file (stan.in) is as follows:</p>
+An example of the input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.1/stan5a.in</span></code>) is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>L=2
 model = &quot;SpinGC&quot;
 method = &quot;CG&quot;
@@ -142,7 +142,7 @@ Please think why the LOBCG method works well for the large magnetic field.</p>
 <p>Please also check the excited states can
 be correctly obtained by using LOBCG method.
 (Please compare the energies obtained by the full diagonalization.)
-An example of the input file (stan.in) is as follows:</p>
+An example of the input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.1/stan5b.in</span></code>) is as follows:</p>
 <div class="highlight-none"><div class="highlight"><pre>L=2
 model = &quot;SpinGC&quot;
 method = &quot;CG&quot;
