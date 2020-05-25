@@ -1,0 +1,2484 @@
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+######  Input Parameter of Standard Intarface  ######
+
+  Open Standard-Mode Inputfile StdFace.def 
+
+  KEYWORD : l                    | VALUE : 12 
+  KEYWORD : model                | VALUE : Spin 
+  KEYWORD : method               | VALUE : Lanczos 
+  KEYWORD : lattice              | VALUE : chain 
+  KEYWORD : j                    | VALUE : 1.0 
+  KEYWORD : 2sz                  | VALUE : 0 
+  KEYWORD : 2s                   | VALUE : 1 
+
+#######  Construct Model  #######
+
+    CDataFileHead = zvo         ######  DEFAULT VALUE IS USED  ######
+  @ Lattice Size & Shape
+
+                a = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Wlength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+          Llength = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wx = 1.00000     ######  DEFAULT VALUE IS USED  ######
+               Wy = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Lx = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               Ly = 1.00000     ######  DEFAULT VALUE IS USED  ######
+           phase0 = 0.00000     ######  DEFAULT VALUE IS USED  ######
+                L = 12 
+
+  @ Super-Lattice setting
+
+                L = 12        
+                W = 1         
+           Height = 1           ######  DEFAULT VALUE IS USED  ######
+   Number of Cell = 12
+
+  @ Hamiltonian 
+
+                h = 0.00000     ######  DEFAULT VALUE IS USED  ######
+            Gamma = 0.00000     ######  DEFAULT VALUE IS USED  ######
+               2S = 1         
+                D = 0.00000     ######  DEFAULT VALUE IS USED  ######
+              J0x = 1.00000   
+              J0y = 1.00000   
+              J0z = 1.00000   
+
+  @ Numerical conditions
+
+       LargeValue = 2.25000     ######  DEFAULT VALUE IS USED  ######
+
+######  Print Expert input files  ######
+
+    locspn.def is written.
+      trans.def is written.
+    coulombinter.def is written.
+    hund.def is written.
+    exchange.def is written.
+      Lanczos_max = 2000        ######  DEFAULT VALUE IS USED  ######
+       initial_iv = -1          ######  DEFAULT VALUE IS USED  ######
+             exct = 1           ######  DEFAULT VALUE IS USED  ######
+       LanczosEps = 14          ######  DEFAULT VALUE IS USED  ######
+    LanczosTarget = 2           ######  DEFAULT VALUE IS USED  ######
+           NumAve = 5           ######  DEFAULT VALUE IS USED  ######
+    ExpecInterval = 20          ######  DEFAULT VALUE IS USED  ######
+           NOmega = 200         ######  DEFAULT VALUE IS USED  ######
+         OmegaMax = 27.00000    ######  DEFAULT VALUE IS USED  ######
+         OmegaMin = -27.00000   ######  DEFAULT VALUE IS USED  ######
+         OmegaOrg = 0.00000     ######  DEFAULT VALUE IS USED  ######
+          OmegaIm = 0.02000     ######  DEFAULT VALUE IS USED  ######
+              2Sz = 0  
+     modpara.def is written.
+
+  @ Spectrum
+
+       SpectrumQW = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQL = 0.00000     ######  DEFAULT VALUE IS USED  ######
+       SpectrumQH = 0.00000     ######  DEFAULT VALUE IS USED  ######
+     SpectrumType = szsz        ######  DEFAULT VALUE IS USED  ######
+        pair.def is written.
+
+
+  @ CalcMod
+
+          Restart = none        ######  DEFAULT VALUE IS USED  ######
+   InitialVecType = c           ######  DEFAULT VALUE IS USED  ######
+       EigenVecIO = none        ######  DEFAULT VALUE IS USED  ######
+         HamIO = none        ######  DEFAULT VALUE IS USED  ######
+         CalcSpec = none        ######  DEFAULT VALUE IS USED  ######
+         OutputExcitedVec = none        ######  DEFAULT VALUE IS USED  ######
+     calcmod.def is written.
+
+      ioutputmode = 1           ######  DEFAULT VALUE IS USED  ######
+    greenone.def is written.
+    greentwo.def is written.
+    namelist.def is written.
+
+######  Input files are generated.  ######
+
+Dry run is Finished. 
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+######  Start: Calculate Lanczos Eigenvalue.  ######
+
+  initial_mode=1 (random): iv = -1 i_max=924 k_exct =1 
+
+  LanczosStep  E[1] E[2] E[3] E[4] Target:E[3] E_Max/Nsite
+  stp = 2 -2.0398436994 1.0544449219 xxxxxxxxxx xxxxxxxxx xxxxxxxxx xxxxxxxxx 
+  stp = 3 -3.2121085624 -0.5664140143 1.7426330754 0.0000000000 1.7426330754 0.1452194229
+  stp = 4 -4.0815629889 -1.8208688902 0.3537196885 2.1610729641 0.3537196885 0.1800894137
+  stp = 5 -4.6470452787 -2.7013602327 -0.8210807151 0.9308977707 -0.8210807151 0.1996197810
+  stp = 6 -4.9764100042 -3.3448921482 -1.6954675505 -0.0365278204 -1.6954675505 0.2113378370
+  stp = 7 -5.1552249779 -3.8161157927 -2.3740915520 -0.9194923398 -2.3740915520 0.2191660009
+  stp = 8 -5.2492960411 -4.1604693769 -2.9116655949 -1.6133304882 -2.9116655949 0.2242234019
+  stp = 9 -5.3158510210 -4.4767479449 -3.3892092260 -2.1898122764 -3.3892092260 0.2286298372
+  stp = 10 -5.3531288983 -4.6645676808 -3.6546460664 -2.5506751143 -3.6546460664 0.2329157644
+  stp = 11 -5.3685025162 -4.7537438542 -3.8314187059 -2.9198511260 -3.8314187059 0.2364009761
+  stp = 12 -5.3766858751 -4.8214870605 -4.0710441196 -3.3580286160 -4.0710441196 0.2391906167
+  stp = 13 -5.3823892237 -4.8988233862 -4.3644071365 -3.6144370562 -4.3644071365 0.2416588608
+  stp = 14 -5.3854538954 -4.9609332601 -4.5137957273 -3.7268312846 -4.5137957273 0.2437196871
+  stp = 15 -5.3866452455 -4.9929046961 -4.5752231127 -3.8087861151 -4.5752231127 0.2453748835
+  stp = 16 -5.3871116015 -5.0097321631 -4.6113185742 -3.9264867701 -4.6113185742 0.2467764906
+  stp = 17 -5.3872717910 -5.0178085225 -4.6346117317 -4.0761279410 -4.6346117317 0.2478230731
+  stp = 18 -5.3873392169 -5.0228694290 -4.6578517342 -4.2555699549 -4.6578517342 0.2485240159
+  stp = 19 -5.3873733763 -5.0270980181 -4.6951449534 -4.4345727536 -4.6951449534 0.2490084822
+  stp = 20 -5.3873862676 -5.0297955580 -4.7362818107 -4.5178726501 -4.7362818107 0.2493509083
+  stp = 21 -5.3873897196 -5.0309115817 -4.7587890250 -4.5450284394 -4.7587890250 0.2495784562
+  stp = 22 -5.3873905941 -5.0313113343 -4.7687219896 -4.5559279293 -4.7687219896 0.2497358388
+  stp = 23 -5.3873908332 -5.0314617409 -4.7734618304 -4.5617567991 -4.7734618304 0.2498469670
+  stp = 24 -5.3873908972 -5.0315169927 -4.7757398975 -4.5652516327 -4.7757398975 0.2499191350
+  stp = 25 -5.3873909127 -5.0315352849 -4.7767373689 -4.5672678506 -4.7767373689 0.2499572523
+  stp = 26 -5.3873909164 -5.0315411026 -4.7771541933 -4.5683972791 -4.7771541933 0.2499768535
+  stp = 27 -5.3873909172 -5.0315427628 -4.7773080414 -4.5689511579 -4.7773080414 0.2499869855
+  stp = 28 -5.3873909174 -5.0315432666 -4.7773677122 -4.5692329155 -4.7773677122 0.2499935075
+  stp = 29 -5.3873909174 -5.0315433754 -4.7773838227 -4.5693296274 -4.7773838227 0.2499971315
+  stp = 30 -5.3873909174 -5.0315433969 -4.7773876893 -4.5693579971 -4.7773876893 0.2499987928
+  stp = 31 -5.3873909174 -5.0315434020 -4.7773888180 -4.5693680860 -4.7773888180 0.2499994851
+  stp = 32 -5.3873909174 -5.0315434033 -4.7773891804 -4.5693720857 -4.7773891804 0.2499997737
+  stp = 33 -5.3873909174 -5.0315434036 -4.7773892879 -4.5693735534 -4.7773892879 0.2499998981
+  stp = 34 -5.3873909174 -5.0315434037 -4.7773893194 -4.5693740834 -4.7773893194 0.2499999535
+  stp = 35 -5.3873909174 -5.0315434037 -4.7773893296 -4.5693742947 -4.7773893296 0.2499999787
+  stp = 36 -5.3873909174 -5.0315434037 -4.7773893325 -4.5693743696 -4.7773893325 0.2499999895
+  stp = 37 -5.3873909174 -5.0315434037 -4.7773893334 -4.5693743979 -4.7773893334 0.2499999953
+  stp = 38 -5.3873909174 -5.0315434037 -4.7773893336 -4.5693744071 -4.7773893336 0.2499999981
+  stp = 39 -5.3873909174 -5.0315434037 -4.7773893337 -4.5693744095 -4.7773893337 0.2499999993
+  stp = 40 -5.3873909174 -5.0315434037 -4.7773893337 -4.5693744103 -4.7773893337 0.2499999997
+  stp = 41 -5.3873909174 -5.0315434037 -4.7773893337 -4.5693744106 -4.7773893337 0.2499999999
+  stp = 42 -5.3873909174 -5.0315434037 -4.7773893337 -4.5693744108 -4.7773893337 0.2500000000
+  stp = 43 -5.3873909174 -5.0315434037 -4.7773893337 -4.5693744108 -4.7773893337 0.2500000000
+  stp = 44 -5.3873909174 -5.0315434037 -4.7773893337 -4.5693744108 -4.7773893337 0.2500000000
+  stp = 45 -5.3873909174 -5.0315434037 -4.7773893337 -4.5693744108 -4.7773893337 0.2500000000
+  Lanczos EigenValue in vec12 = -5.3873909174 
+ 
+######  End  : Calculate Lanczos EigenValue.  ######
+
+######  Start: Calculate Lanczos Eigenvec.  ######
+
+  Start: Calculate Lanczos Eigenvector.
+  End  : Calculate Lanczos Eigenvector.
+  Start: Calculate Energy.
+  End  : Calculate Energy.
+
+  Accuracy check !!!
+  LanczosEnergy = -5.38739091744521e+00 
+  EnergyByVec   = -5.38739091744520e+00 
+  diff_ene      = 4.94587324352536e-16 
+  var           = 1.46887376670881e-15 
+  Accuracy of Lanczos vectors is enough.
+
+
+######  End  : Calculate Lanczos EigenVec.  ######
+
+  Start: Calculate one body Green functions.
+  End  : Calculate one body Green functions.
+
+  Start: Calculate two bodies Green functions.
+  End  : Calculate two bodies Green functions.
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.6936001854  0.7882522441 
+  stp = 20 / 924 -0.4450236596  0.6293612475 
+  stp = 30 / 924 -0.0969871073  1.1972229527 
+  stp = 40 / 924 1.5030474374  0.5117494753 
+  stp = 50 / 924 0.6394913862  1.3544287620 
+  stp = 60 / 924 0.1672020296  1.2282146295 
+  stp = 70 / 924 0.2534544625  1.1273798052 
+  stp = 80 / 924 -1.0302584712  1.1789927115 
+  stp = 90 / 924 -2.0568020151  1.7274464971 
+  stp = 100 / 924 -0.2575888292  1.7156385514 
+  stp = 110 / 924 0.5232632144  1.6084345217 
+  stp = 120 / 924 -2.0063712808  1.7550479938 
+  stp = 130 / 924 -0.1179523389  1.5832688198 
+  stp = 140 / 924 -1.6542838669  2.3959548097 
+  stp = 150 / 924 -0.7754980951  1.6356695351 
+  stp = 160 / 924 -1.1741319468  1.7152967883 
+  stp = 170 / 924 -0.9048422782  2.0666314125 
+  stp = 180 / 924 -2.0191281570  2.0750359553 
+  stp = 190 / 924 -0.4323824887  1.4402736222 
+  stp = 200 / 924 -0.5244458873  1.3010259870 
+  stp = 210 / 924 -0.8375027903  1.6946423191 
+  stp = 220 / 924 -1.2380633588  1.5460895512 
+  stp = 230 / 924 -0.9933517815  1.7369615621 
+  stp = 240 / 924 -0.3197375620  1.9252888129 
+  stp = 250 / 924 -0.8443665748  1.3462681541 
+  stp = 260 / 924 -0.8923798841  1.7890005316 
+  stp = 270 / 924 -1.0731123126  2.2262087094 
+  stp = 280 / 924 -1.1278523381  1.2629589156 
+  stp = 290 / 924 -0.5383915835  1.6062706217 
+  stp = 300 / 924 -0.6806327479  1.6333889418 
+  stp = 310 / 924 -0.7342341896  1.3514074149 
+  stp = 320 / 924 -0.3408495219  1.3294836020 
+  stp = 330 / 924 -0.0856662955  1.2652687468 
+  stp = 340 / 924 -1.4862070224  1.6423489151 
+  stp = 350 / 924 -0.5079425901  1.8502827182 
+  stp = 360 / 924 -1.0745831297  1.8826272159 
+  stp = 370 / 924 0.2307902865  1.2706521671 
+  stp = 380 / 924 -0.4567715754  1.4827724457 
+  stp = 390 / 924 -0.7009672804  1.4774800040 
+  stp = 400 / 924 -1.3817692885  1.7158857670 
+  stp = 410 / 924 -1.7010255185  1.8872359991 
+  stp = 420 / 924 0.2160081043  1.8942214086 
+  stp = 430 / 924 -0.0693225896  1.3235148753 
+  stp = 440 / 924 -1.8455256608  1.6605113599 
+  stp = 450 / 924 0.1079846567  1.6691954866 
+  stp = 460 / 924 0.1479267225  1.0111327655 
+  stp = 470 / 924 -1.3348189793  1.5658426254 
+  stp = 480 / 924 0.1029117235  1.5242165898 
+  stp = 490 / 924 -0.9353552946  1.7565037111 
+  stp = 500 / 924 -1.5119306675  2.3216312189 
+  stp = 510 / 924 -0.4927243710  1.9299720277 
+  stp = 520 / 924 -0.2396910143  1.3512203789 
+  stp = 530 / 924 0.3792240527  1.5356169413 
+  stp = 540 / 924 -1.1409183837  1.3258829016 
+  stp = 550 / 924 -0.2273922262  1.7224265039 
+  stp = 560 / 924 -0.5788838037  2.0567486316 
+  stp = 570 / 924 -0.5884799825  1.5247857555 
+  stp = 580 / 924 -2.1192737864  1.5123028951 
+  stp = 590 / 924 -1.5471451638  1.7784520636 
+  stp = 600 / 924 -2.2582547091  2.5645946779 
+  stp = 610 / 924 -0.3398459948  1.5286702206 
+  stp = 620 / 924 -0.1855544189  1.0041584263 
+  stp = 630 / 924 -1.5412749446  1.5146407773 
+  stp = 640 / 924 -0.8553437709  1.5889689359 
+  stp = 650 / 924 0.0679443021  1.5393166131 
+  stp = 660 / 924 -0.2602104251  1.4513940217 
+  stp = 670 / 924 -0.3101732096  2.2103791902 
+  stp = 680 / 924 -0.6513422305  1.3140875878 
+  stp = 690 / 924 -1.2534811151  2.1901556114 
+  stp = 700 / 924 0.1683211456  1.7821815543 
+  stp = 710 / 924 -2.5058272582  2.4705210805 
+  stp = 720 / 924 -0.4978557252  1.9570013233 
+  stp = 730 / 924 -1.3252075068  1.4047965063 
+  stp = 740 / 924 -1.3825313461  2.1496802936 
+  stp = 750 / 924 -0.7695082979  1.9542438405 
+  stp = 760 / 924 -1.7498568530  1.8576561286 
+  stp = 770 / 924 0.6526517476  1.8560143931 
+  stp = 780 / 924 -0.5381635710  1.5087689927 
+  stp = 790 / 924 -0.8176970014  1.3274551033 
+  stp = 800 / 924 -0.2141791557  1.0942052690 
+  stp = 810 / 924 -1.8720162402  1.5011349477 
+  stp = 820 / 924 -1.3103510416  2.1534849451 
+  stp = 830 / 924 -0.5996735304  1.8605183172 
+  stp = 840 / 924 -1.7506969054  1.3085101073 
+  stp = 850 / 924 -0.4079742721  1.6260664184 
+  stp = 860 / 924 -0.3094462880  1.1493743243 
+  stp = 870 / 924 -0.8110006781  1.4800787651 
+  stp = 880 / 924 0.0757992334  1.5792892747 
+  stp = 890 / 924 -0.7331206168  1.8264911131 
+  stp = 900 / 924 -0.7265511914  1.1961052151 
+  stp = 910 / 924 0.1702306724  1.9754307153 
+  stp = 920 / 924 -0.1703799739  1.0625635333 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.1797567657  1.6060368223 
+  stp = 20 / 924 0.6310176934  0.6843024354 
+  stp = 30 / 924 0.1007274676  1.7112166220 
+  stp = 40 / 924 -1.0114591069  0.4485775280 
+  stp = 50 / 924 -0.1269179445  1.0682021685 
+  stp = 60 / 924 -1.2897902048  1.4616770505 
+  stp = 70 / 924 -0.0219781082  1.4668175542 
+  stp = 80 / 924 -0.1926143119  1.6421942119 
+  stp = 90 / 924 -0.1255580355  1.4852504147 
+  stp = 100 / 924 -0.1571540198  1.3748092236 
+  stp = 110 / 924 -0.4575022079  1.3661155367 
+  stp = 120 / 924 -0.2923944749  1.5001732817 
+  stp = 130 / 924 -1.7007823330  2.1417032756 
+  stp = 140 / 924 -0.6060394305  1.4545854072 
+  stp = 150 / 924 -1.1955987118  1.8028158141 
+  stp = 160 / 924 -0.9069125112  2.3508447341 
+  stp = 170 / 924 -0.5377411746  1.5022990534 
+  stp = 180 / 924 -0.0820700676  1.4841953073 
+  stp = 190 / 924 -0.1294550034  1.2027894462 
+  stp = 200 / 924 -1.5479688462  2.2757309684 
+  stp = 210 / 924 -0.1300552734  1.7864243084 
+  stp = 220 / 924 -0.9166025876  1.4574182989 
+  stp = 230 / 924 -0.4936735985  1.6812754959 
+  stp = 240 / 924 -1.0993060348  2.0588602274 
+  stp = 250 / 924 -2.1931226988  1.9941878887 
+  stp = 260 / 924 -0.2843927703  1.3162216207 
+  stp = 270 / 924 -0.5494855720  1.8952729746 
+  stp = 280 / 924 -0.7641512329  1.8874007048 
+  stp = 290 / 924 -1.6029131095  2.4901628256 
+  stp = 300 / 924 -0.6961276512  1.7827562815 
+  stp = 310 / 924 -0.2053399905  1.7754434388 
+  stp = 320 / 924 -0.0059719315  1.6574996837 
+  stp = 330 / 924 -0.1815812544  1.2626390504 
+  stp = 340 / 924 -1.9127652885  1.8441615089 
+  stp = 350 / 924 -0.4764189064  1.9661926082 
+  stp = 360 / 924 0.1585536230  1.4221422391 
+  stp = 370 / 924 -0.9143638881  1.8869341742 
+  stp = 380 / 924 -1.3049508809  1.7860644720 
+  stp = 390 / 924 -0.8833476074  2.2266977006 
+  stp = 400 / 924 -1.3126140914  1.6995970870 
+  stp = 410 / 924 -0.8060164428  1.3956828719 
+  stp = 420 / 924 -0.0494323934  1.2612076735 
+  stp = 430 / 924 0.2281985594  1.5752561647 
+  stp = 440 / 924 -0.6834265665  1.8027894744 
+  stp = 450 / 924 -0.3186100217  1.7684102796 
+  stp = 460 / 924 -0.9400940080  1.3870507796 
+  stp = 470 / 924 0.1673760189  1.7527416571 
+  stp = 480 / 924 -0.3809568772  1.6169958946 
+  stp = 490 / 924 -1.4620381634  1.9787425882 
+  stp = 500 / 924 -0.3790612946  1.8530003839 
+  stp = 510 / 924 -0.8043407244  1.5248295286 
+  stp = 520 / 924 -0.2730116103  1.6617881486 
+  stp = 530 / 924 -2.0990492022  1.8461961288 
+  stp = 540 / 924 -0.2829312831  1.8162420945 
+  stp = 550 / 924 -0.7182278988  1.8153542560 
+  stp = 560 / 924 -1.0032105777  2.1927435890 
+  stp = 570 / 924 -0.8476731612  1.4014107453 
+  stp = 580 / 924 -0.4935705292  1.6828673832 
+  stp = 590 / 924 -1.1726034448  1.5674384506 
+  stp = 600 / 924 -0.5542372220  1.4969135489 
+  stp = 610 / 924 0.3131502356  1.2137799354 
+  stp = 620 / 924 -1.1029680974  2.1947951800 
+  stp = 630 / 924 -0.5151461030  1.7268669567 
+  stp = 640 / 924 -1.2164154097  1.9743446624 
+  stp = 650 / 924 -1.2801953598  2.1080447264 
+  stp = 660 / 924 0.1692219618  1.0161666225 
+  stp = 670 / 924 -0.1852372185  1.4674919501 
+  stp = 680 / 924 -0.2792382861  1.2957458305 
+  stp = 690 / 924 -1.5349837845  1.6267959469 
+  stp = 700 / 924 -0.2476456379  1.4388437756 
+  stp = 710 / 924 -2.5868429130  1.9992530117 
+  stp = 720 / 924 -0.2699110982  1.7380388963 
+  stp = 730 / 924 -1.5441388904  1.5713570942 
+  stp = 740 / 924 -1.4759600302  2.5579453148 
+  stp = 750 / 924 -1.5558649756  2.8461311628 
+  stp = 760 / 924 -0.3710432772  1.1038959164 
+  stp = 770 / 924 -0.3930721207  0.7455190006 
+  stp = 780 / 924 -0.8808788929  2.3036063652 
+  stp = 790 / 924 -1.6781603579  1.7419603131 
+  stp = 800 / 924 -0.9324750447  1.6644012609 
+  stp = 810 / 924 -2.1578212432  1.9721887316 
+  stp = 820 / 924 -1.1366207412  1.6354771029 
+  stp = 830 / 924 -1.0391427955  1.6121500821 
+  stp = 840 / 924 -0.2258346940  1.9030984509 
+  stp = 850 / 924 -2.0359462672  1.8678143105 
+  stp = 860 / 924 -0.7609320665  0.7740501548 
+  stp = 870 / 924 -0.5107564466  1.5287122729 
+  stp = 880 / 924 -0.3491399180  1.2264744460 
+  stp = 890 / 924 -0.4821699871  1.3448924919 
+  stp = 900 / 924 -2.2674979585  1.6808852954 
+  stp = 910 / 924 -1.2341285258  1.3966832769 
+  stp = 920 / 924 -0.7422196127  1.6040492261 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.0878672590  1.0569091235 
+  stp = 20 / 924 0.2294220804  0.5230077727 
+  stp = 30 / 924 -0.6187088524  1.7678495715 
+  stp = 40 / 924 -0.3360109868  0.3551185176 
+  stp = 50 / 924 1.0531869454  1.5248122143 
+  stp = 60 / 924 -0.7612659674  2.0891694413 
+  stp = 70 / 924 -1.1068458220  1.4467288607 
+  stp = 80 / 924 -0.9090560352  1.2936445779 
+  stp = 90 / 924 -0.4635221911  1.6213723878 
+  stp = 100 / 924 -0.9628166481  1.7645800525 
+  stp = 110 / 924 -0.5011677999  1.2658593243 
+  stp = 120 / 924 0.0053909926  1.4918298520 
+  stp = 130 / 924 -1.4883338547  1.6664410727 
+  stp = 140 / 924 -2.4206345194  2.6608106121 
+  stp = 150 / 924 0.0424963188  1.6275820073 
+  stp = 160 / 924 -0.8753123285  1.3888907486 
+  stp = 170 / 924 -0.8264544475  1.7228300301 
+  stp = 180 / 924 -0.2893959615  1.4195579342 
+  stp = 190 / 924 -0.5375076645  1.2999414051 
+  stp = 200 / 924 -0.4249280889  1.7999076869 
+  stp = 210 / 924 -1.3127660300  1.6820479509 
+  stp = 220 / 924 -0.5918548135  1.4954381283 
+  stp = 230 / 924 -0.7596464838  1.5946716008 
+  stp = 240 / 924 -1.8975275067  1.8248929023 
+  stp = 250 / 924 -0.7196998611  1.3024282072 
+  stp = 260 / 924 -0.0815265732  1.4372426138 
+  stp = 270 / 924 -2.1490939928  1.9000374423 
+  stp = 280 / 924 -0.4584241073  1.5419901711 
+  stp = 290 / 924 -1.5920919017  1.7654472608 
+  stp = 300 / 924 -0.5271211764  1.8626331906 
+  stp = 310 / 924 -1.6987814009  1.8316074067 
+  stp = 320 / 924 -0.7267506420  1.2903440341 
+  stp = 330 / 924 -1.6842060840  2.1827377315 
+  stp = 340 / 924 -0.9161359468  2.0854044887 
+  stp = 350 / 924 -2.0840556043  2.3122465565 
+  stp = 360 / 924 -0.6506269362  1.8694491676 
+  stp = 370 / 924 0.0010221906  1.5223928669 
+  stp = 380 / 924 -0.4330534427  1.1718965391 
+  stp = 390 / 924 -0.1812536520  1.4790426757 
+  stp = 400 / 924 -0.5781862068  1.2268238592 
+  stp = 410 / 924 -0.6488660252  1.5636294982 
+  stp = 420 / 924 -0.4659190366  1.5050419163 
+  stp = 430 / 924 -0.5177100235  1.1373622567 
+  stp = 440 / 924 -0.4481305272  1.5357867229 
+  stp = 450 / 924 -0.0488962713  1.9630982374 
+  stp = 460 / 924 -1.3111961231  2.0594808669 
+  stp = 470 / 924 0.0037236152  2.0356432246 
+  stp = 480 / 924 -0.5748513248  1.7616992601 
+  stp = 490 / 924 -0.0484679128  0.9710619034 
+  stp = 500 / 924 -0.8293330109  2.3325316371 
+  stp = 510 / 924 -1.8965084595  1.3832224489 
+  stp = 520 / 924 -1.4912281203  1.5893690778 
+  stp = 530 / 924 -0.5307052964  1.7310914500 
+  stp = 540 / 924 -0.7181327386  1.2330301255 
+  stp = 550 / 924 -0.5770626087  1.7334383228 
+  stp = 560 / 924 -1.2074639463  1.3981634445 
+  stp = 570 / 924 1.0447710722  1.5750653191 
+  stp = 580 / 924 -1.3348935630  1.6951538885 
+  stp = 590 / 924 -1.5722320414  2.2352494228 
+  stp = 600 / 924 -0.1814182599  1.7793080692 
+  stp = 610 / 924 -0.6202236328  1.6913512298 
+  stp = 620 / 924 -1.3807168565  2.0288951781 
+  stp = 630 / 924 -1.0732917104  2.0369988764 
+  stp = 640 / 924 0.1987325428  1.1794193638 
+  stp = 650 / 924 -0.9088464703  1.8546958547 
+  stp = 660 / 924 -0.3208467818  1.8730052092 
+  stp = 670 / 924 -1.6111193025  1.5203518805 
+  stp = 680 / 924 -0.0970497547  1.7570315201 
+  stp = 690 / 924 -1.6403071674  1.4703344829 
+  stp = 700 / 924 -0.4750807505  1.8054052613 
+  stp = 710 / 924 -0.3011976361  1.5936156265 
+  stp = 720 / 924 -0.0813595009  1.4720457275 
+  stp = 730 / 924 -0.8980701926  1.4242338643 
+  stp = 740 / 924 -0.0920271096  1.4318290991 
+  stp = 750 / 924 -2.0794767689  1.3413265100 
+  stp = 760 / 924 -1.5347321247  1.6703298863 
+  stp = 770 / 924 -0.4971935496  1.7668185844 
+  stp = 780 / 924 -1.5090000973  1.6342904874 
+  stp = 790 / 924 -0.3321035445  1.7536885945 
+  stp = 800 / 924 -0.8389300601  1.7042426878 
+  stp = 810 / 924 -0.3656374746  1.2720018085 
+  stp = 820 / 924 -0.2276032764  1.7487651632 
+  stp = 830 / 924 0.1953325450  1.6191897193 
+  stp = 840 / 924 -0.5824050463  1.8234957223 
+  stp = 850 / 924 -0.8272664690  1.7051298963 
+  stp = 860 / 924 -0.2220328075  1.4112553311 
+  stp = 870 / 924 -1.2876017196  1.5634898941 
+  stp = 880 / 924 -0.2352361491  1.7441202190 
+  stp = 890 / 924 -1.6953759335  1.3765721019 
+  stp = 900 / 924 0.0157565752  1.6597734856 
+  stp = 910 / 924 -0.8720672977  1.5745895922 
+  stp = 920 / 924 -1.8541304990  1.7872567621 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.0652638513  0.7881274038 
+  stp = 20 / 924 -3.2344877941  2.3570918849 
+  stp = 30 / 924 -1.1191888091  0.4777352493 
+  stp = 40 / 924 -0.4861111664  2.7622370749 
+  stp = 50 / 924 -1.8512069718  1.5130075652 
+  stp = 60 / 924 -0.6102176830  1.2235543486 
+  stp = 70 / 924 -0.5563483346  1.6733074286 
+  stp = 80 / 924 -0.9685352320  1.5190656373 
+  stp = 90 / 924 -0.0535981949  1.4515113806 
+  stp = 100 / 924 -0.5383545029  1.8328938392 
+  stp = 110 / 924 -0.2781340286  1.4215616354 
+  stp = 120 / 924 -0.1822868333  1.3572284769 
+  stp = 130 / 924 -0.9225604712  1.4826723934 
+  stp = 140 / 924 -1.3230790039  1.6016041700 
+  stp = 150 / 924 -0.7878375827  1.5964372235 
+  stp = 160 / 924 -0.7079441109  1.5827781921 
+  stp = 170 / 924 -0.4790275849  1.6977057902 
+  stp = 180 / 924 -1.9005633592  1.7810711285 
+  stp = 190 / 924 -0.1121344937  1.2671388829 
+  stp = 200 / 924 -0.4728587421  1.5609313126 
+  stp = 210 / 924 -2.6936618686  2.0627250566 
+  stp = 220 / 924 -1.4416711755  1.7063413967 
+  stp = 230 / 924 -1.0834311703  1.6644485607 
+  stp = 240 / 924 -0.2559244400  1.4463133001 
+  stp = 250 / 924 -0.9280972373  1.7067793350 
+  stp = 260 / 924 -1.6702046226  1.9722707517 
+  stp = 270 / 924 -1.2627184859  1.8015467763 
+  stp = 280 / 924 -0.3131917346  1.1669510956 
+  stp = 290 / 924 -0.3800581516  1.5334730297 
+  stp = 300 / 924 -1.4137418212  1.9432463784 
+  stp = 310 / 924 0.0384243190  1.4043859085 
+  stp = 320 / 924 -0.9784883711  1.4583844964 
+  stp = 330 / 924 -0.0661318678  1.6203068827 
+  stp = 340 / 924 0.1091538987  1.8784627585 
+  stp = 350 / 924 -0.8100149736  2.1732046174 
+  stp = 360 / 924 0.2106964561  1.4502417609 
+  stp = 370 / 924 0.0237163531  1.5519637818 
+  stp = 380 / 924 -0.7570568790  1.1445678180 
+  stp = 390 / 924 -0.2033992404  1.7778184517 
+  stp = 400 / 924 -1.6651767024  1.7560843988 
+  stp = 410 / 924 -0.2319118297  1.2176656281 
+  stp = 420 / 924 -0.9469793272  1.3395910745 
+  stp = 430 / 924 0.4502076378  1.7429383328 
+  stp = 440 / 924 -0.9287673035  1.5881230534 
+  stp = 450 / 924 -0.1684343440  1.3206001995 
+  stp = 460 / 924 -1.1861183162  1.6252190666 
+  stp = 470 / 924 -0.4911528356  1.4420807950 
+  stp = 480 / 924 -0.4628219729  1.7359573494 
+  stp = 490 / 924 -0.4431504465  1.7770182237 
+  stp = 500 / 924 -0.1592511617  1.0619000380 
+  stp = 510 / 924 -0.8724847104  1.5385313653 
+  stp = 520 / 924 -0.5681462823  1.3625378137 
+  stp = 530 / 924 -0.6630379029  1.9091124734 
+  stp = 540 / 924 -1.3147717169  1.3466712514 
+  stp = 550 / 924 -0.0605614795  1.4220864445 
+  stp = 560 / 924 -0.9320944977  1.4476356266 
+  stp = 570 / 924 -1.5542200835  1.7493780135 
+  stp = 580 / 924 -0.5062447690  1.2102419430 
+  stp = 590 / 924 -0.6417823051  0.9214630814 
+  stp = 600 / 924 -0.3236659797  1.5482276618 
+  stp = 610 / 924 -2.4234867540  1.6947837738 
+  stp = 620 / 924 -1.1582561682  1.7776915954 
+  stp = 630 / 924 -1.2444940482  1.4380237439 
+  stp = 640 / 924 -1.4194319777  1.7385869976 
+  stp = 650 / 924 0.3297277876  1.7160515893 
+  stp = 660 / 924 -0.8323843026  1.6034328826 
+  stp = 670 / 924 -1.3505825584  1.9585860491 
+  stp = 680 / 924 0.0440126236  1.5124279123 
+  stp = 690 / 924 -0.3549191477  1.4370705108 
+  stp = 700 / 924 -1.0131215370  1.3331634680 
+  stp = 710 / 924 -0.5411774705  1.2610047269 
+  stp = 720 / 924 -0.6457740907  1.7881933185 
+  stp = 730 / 924 -0.9421058252  1.3503090207 
+  stp = 740 / 924 -1.4631519507  1.9341021452 
+  stp = 750 / 924 -1.2232840172  1.6897213484 
+  stp = 760 / 924 -1.9884182662  2.0928508812 
+  stp = 770 / 924 0.2727468922  1.3437966519 
+  stp = 780 / 924 -0.9167709861  1.4882894159 
+  stp = 790 / 924 -1.1522254297  1.1312598957 
+  stp = 800 / 924 -0.9850627718  1.4782826172 
+  stp = 810 / 924 -0.5958177314  1.6894367794 
+  stp = 820 / 924 -0.5960679081  1.5167084784 
+  stp = 830 / 924 -0.2089852650  1.4964786263 
+  stp = 840 / 924 0.8056045910  1.1419029163 
+  stp = 850 / 924 -0.3981837394  1.3465598927 
+  stp = 860 / 924 -0.3758074018  1.6703914968 
+  stp = 870 / 924 -0.2478424820  1.3238429217 
+  stp = 880 / 924 -0.3678903424  1.1509025317 
+  stp = 890 / 924 -1.8539835471  1.5074566183 
+  stp = 900 / 924 -0.0964852738  1.7433144845 
+  stp = 910 / 924 -0.9729189786  2.0494507359 
+  stp = 920 / 924 -1.2536582976  1.6603549502 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.6803219734  1.1525247341 
+  stp = 20 / 924 -0.4760995603  1.4275122771 
+  stp = 30 / 924 -1.6989931776  1.4183877613 
+  stp = 40 / 924 -2.5923978569  0.6936953876 
+  stp = 50 / 924 1.1503862324  1.6236513094 
+  stp = 60 / 924 -1.1192909171  2.6891344780 
+  stp = 70 / 924 -1.7042670499  1.8100209467 
+  stp = 80 / 924 0.5548020426  1.6644395223 
+  stp = 90 / 924 0.4021953658  1.5537052520 
+  stp = 100 / 924 -0.1039317754  2.1585469466 
+  stp = 110 / 924 0.1007639611  1.3088667871 
+  stp = 120 / 924 -1.1279483304  2.4353079973 
+  stp = 130 / 924 -1.6310216713  1.7756353126 
+  stp = 140 / 924 -0.9899826562  1.5239871481 
+  stp = 150 / 924 -0.2124728762  1.2200847583 
+  stp = 160 / 924 -0.2912531078  1.4434507368 
+  stp = 170 / 924 -1.9793459735  2.2544165114 
+  stp = 180 / 924 -1.4877110769  2.3154582475 
+  stp = 190 / 924 -1.2144965638  2.1166028443 
+  stp = 200 / 924 0.2688033379  1.3187751943 
+  stp = 210 / 924 -0.0556550016  1.2914984132 
+  stp = 220 / 924 -0.9972792179  1.7324870966 
+  stp = 230 / 924 -0.7618051542  1.4162894053 
+  stp = 240 / 924 -0.8083370723  1.5540010138 
+  stp = 250 / 924 -1.6797351180  1.7094360728 
+  stp = 260 / 924 -1.8945438140  2.4366341919 
+  stp = 270 / 924 -1.4146465035  1.7976415906 
+  stp = 280 / 924 -0.2475010947  1.6628818414 
+  stp = 290 / 924 -0.9409853719  1.2552017444 
+  stp = 300 / 924 -0.7887899016  1.8598527955 
+  stp = 310 / 924 -1.0459739916  2.1262842780 
+  stp = 320 / 924 -1.1228926235  1.7606238969 
+  stp = 330 / 924 -0.6931623927  1.7055609818 
+  stp = 340 / 924 -1.9833803928  2.5797144203 
+  stp = 350 / 924 0.0276940773  1.4515691268 
+  stp = 360 / 924 -0.1221055736  1.4174214868 
+  stp = 370 / 924 -0.2318349354  1.3277343464 
+  stp = 380 / 924 -0.7899618538  1.2283802798 
+  stp = 390 / 924 -1.1032598440  1.4520325204 
+  stp = 400 / 924 -0.2779085066  1.9135604811 
+  stp = 410 / 924 -0.5789218368  1.2034999634 
+  stp = 420 / 924 -1.8143448315  2.0447199991 
+  stp = 430 / 924 -1.0923431701  1.9496309815 
+  stp = 440 / 924 -0.2625219076  1.7305843607 
+  stp = 450 / 924 -0.0744141558  1.4419760979 
+  stp = 460 / 924 -3.0867775692  1.8009967976 
+  stp = 470 / 924 -0.8695277604  1.5487393590 
+  stp = 480 / 924 -0.8326546375  1.4897213938 
+  stp = 490 / 924 -0.8734793416  1.6258065862 
+  stp = 500 / 924 -0.0158870298  1.4207093016 
+  stp = 510 / 924 -1.5130498154  2.0681009913 
+  stp = 520 / 924 -0.2217514881  1.5642570485 
+  stp = 530 / 924 -1.0953314803  2.1116886347 
+  stp = 540 / 924 -1.0379806215  1.4748863993 
+  stp = 550 / 924 -0.4834928464  1.5097787364 
+  stp = 560 / 924 0.0829727941  2.0118272126 
+  stp = 570 / 924 -1.9783955549  1.4843082681 
+  stp = 580 / 924 -0.5126118284  1.7599956616 
+  stp = 590 / 924 -0.2785622495  1.0498333068 
+  stp = 600 / 924 -0.9056001360  2.1547582060 
+  stp = 610 / 924 -0.5274227445  0.9709468363 
+  stp = 620 / 924 0.1919120589  2.0365468924 
+  stp = 630 / 924 -0.6351355311  1.7054985273 
+  stp = 640 / 924 -0.5447942511  1.3314989355 
+  stp = 650 / 924 -1.1588678843  1.4268810052 
+  stp = 660 / 924 -1.4251991290  1.6006274518 
+  stp = 670 / 924 -0.6691900103  2.3396320458 
+  stp = 680 / 924 0.3203006087  1.4414067230 
+  stp = 690 / 924 -2.1185218617  1.9495737281 
+  stp = 700 / 924 -0.8125934747  1.9487564947 
+  stp = 710 / 924 -0.9249012309  1.5071413879 
+  stp = 720 / 924 -1.1595334649  1.3523705843 
+  stp = 730 / 924 -0.4888911834  1.7551817041 
+  stp = 740 / 924 -1.0004298558  1.6763399643 
+  stp = 750 / 924 -1.0858031007  1.4232418290 
+  stp = 760 / 924 -0.7979156411  1.9297260404 
+  stp = 770 / 924 -1.8485501093  2.2117298161 
+  stp = 780 / 924 -0.1562889505  1.4279570127 
+  stp = 790 / 924 -0.5512978844  1.4161055189 
+  stp = 800 / 924 -1.1024506157  1.6089086578 
+  stp = 810 / 924 -0.2725375225  1.5624432624 
+  stp = 820 / 924 -0.1735863749  1.5827896608 
+  stp = 830 / 924 -0.7191949727  2.2632173913 
+  stp = 840 / 924 0.1035401004  1.5198336556 
+  stp = 850 / 924 -0.2005395838  1.5218327487 
+  stp = 860 / 924 -0.4785640258  1.9479109340 
+  stp = 870 / 924 -1.4759252050  1.6902839176 
+  stp = 880 / 924 -0.9173363351  1.6704395041 
+  stp = 890 / 924 -0.0863990808  1.3033256408 
+  stp = 900 / 924 -0.5429970043  0.8385651937 
+  stp = 910 / 924 -1.5070449266  1.6340752482 
+  stp = 920 / 924 -2.0847611151  2.3923295804 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 0.0323170757  0.9178168573 
+  stp = 20 / 924 0.1624450427  0.3632123897 
+  stp = 30 / 924 -1.7291897845  2.6388164591 
+  stp = 40 / 924 -1.9181330167  1.6555295431 
+  stp = 50 / 924 -0.3891302765  1.5716116439 
+  stp = 60 / 924 -0.3915262889  1.4486433851 
+  stp = 70 / 924 -1.5149301313  2.0963916070 
+  stp = 80 / 924 -0.3240155569  1.6958218046 
+  stp = 90 / 924 0.0956884843  1.6104910474 
+  stp = 100 / 924 -0.9771590799  1.8242635882 
+  stp = 110 / 924 -0.5673330469  1.3902334289 
+  stp = 120 / 924 -0.5900537629  1.4067295019 
+  stp = 130 / 924 -0.6829252381  1.2866746008 
+  stp = 140 / 924 -0.6417349891  1.4155857844 
+  stp = 150 / 924 -0.5766181274  1.4838870246 
+  stp = 160 / 924 -0.1508681694  1.7360579591 
+  stp = 170 / 924 -0.9436482666  1.5311869333 
+  stp = 180 / 924 -0.0791381921  1.3084525762 
+  stp = 190 / 924 -0.2469084799  1.5036385734 
+  stp = 200 / 924 -1.0719057285  1.3351737801 
+  stp = 210 / 924 -1.0160934673  1.7577522034 
+  stp = 220 / 924 0.0284819890  1.7333528405 
+  stp = 230 / 924 -1.3580999811  1.7203314220 
+  stp = 240 / 924 0.2046161334  1.2506884596 
+  stp = 250 / 924 -3.0136212310  2.3822765895 
+  stp = 260 / 924 -1.7072585451  2.2223068426 
+  stp = 270 / 924 0.1368608384  1.5712709232 
+  stp = 280 / 924 -0.4010804188  1.5749024971 
+  stp = 290 / 924 -1.8722870631  1.9390356531 
+  stp = 300 / 924 -1.7438068757  2.6206416913 
+  stp = 310 / 924 -0.2651082315  1.6080659943 
+  stp = 320 / 924 -1.2975942826  1.5565077657 
+  stp = 330 / 924 -1.1545939120  1.5992938807 
+  stp = 340 / 924 -0.8894721771  2.1559853014 
+  stp = 350 / 924 -0.3322581616  1.5871845023 
+  stp = 360 / 924 -0.4830034970  1.4605314621 
+  stp = 370 / 924 -1.1127849482  2.1556627906 
+  stp = 380 / 924 -1.1116566481  1.6242097894 
+  stp = 390 / 924 -1.6405628363  1.4613277340 
+  stp = 400 / 924 -0.9273497970  1.0259971308 
+  stp = 410 / 924 -0.9434561803  1.9515640066 
+  stp = 420 / 924 -0.1278198092  1.1157640689 
+  stp = 430 / 924 -2.6935879915  2.0373842385 
+  stp = 440 / 924 -1.2673550117  1.4289386547 
+  stp = 450 / 924 0.0143840204  1.1735806947 
+  stp = 460 / 924 -0.5805699423  1.2888878665 
+  stp = 470 / 924 -0.3964202708  1.4599017813 
+  stp = 480 / 924 -1.8542564583  1.6512001870 
+  stp = 490 / 924 -1.6407665705  2.2981375066 
+  stp = 500 / 924 -1.0969465700  2.0605277700 
+  stp = 510 / 924 -0.7599497368  1.2236559451 
+  stp = 520 / 924 -0.0831467483  1.5740068111 
+  stp = 530 / 924 -0.5833699238  1.4903339372 
+  stp = 540 / 924 -0.9656031692  1.8409141058 
+  stp = 550 / 924 -0.3179818111  1.3217974067 
+  stp = 560 / 924 -0.1902992990  1.3658752395 
+  stp = 570 / 924 0.1013551061  1.8476786682 
+  stp = 580 / 924 -0.2645939353  1.5683143071 
+  stp = 590 / 924 -0.8115113565  1.2179058338 
+  stp = 600 / 924 -0.5453682557  1.7747620516 
+  stp = 610 / 924 -0.1165334058  1.2860187960 
+  stp = 620 / 924 0.2914437279  1.3837252136 
+  stp = 630 / 924 -0.0759460988  1.3155372272 
+  stp = 640 / 924 -2.5883004629  2.3289028329 
+  stp = 650 / 924 -2.2173073821  1.6914767075 
+  stp = 660 / 924 -0.7497804163  1.6281977173 
+  stp = 670 / 924 -0.5078026141  1.6937037716 
+  stp = 680 / 924 -2.0309552636  2.2177796463 
+  stp = 690 / 924 -0.1578098175  1.3225843711 
+  stp = 700 / 924 -0.3196878208  1.4064240701 
+  stp = 710 / 924 -0.8956147613  1.1792989590 
+  stp = 720 / 924 -2.6718942789  2.4992616619 
+  stp = 730 / 924 -0.3540858583  1.3706518021 
+  stp = 740 / 924 -1.4673188577  2.7885300244 
+  stp = 750 / 924 -0.8192902675  1.2811071618 
+  stp = 760 / 924 -1.2622053903  2.1644614158 
+  stp = 770 / 924 -0.4717214435  1.8208748973 
+  stp = 780 / 924 -0.0247621882  1.1717737142 
+  stp = 790 / 924 -0.0456348355  1.7223377625 
+  stp = 800 / 924 -0.7921981001  1.6713039088 
+  stp = 810 / 924 -0.9370455515  1.2189446146 
+  stp = 820 / 924 -0.4281116793  1.7304454992 
+  stp = 830 / 924 -0.8566591041  1.9268077701 
+  stp = 840 / 924 0.0878077476  1.5500110912 
+  stp = 850 / 924 -0.3368425838  1.3794792342 
+  stp = 860 / 924 -1.1056257984  1.6014723636 
+  stp = 870 / 924 -0.1206017207  1.4701803485 
+  stp = 880 / 924 -1.8754828263  2.0184170541 
+  stp = 890 / 924 -0.7534053017  1.7156873105 
+  stp = 900 / 924 -0.6131274547  1.9688316334 
+  stp = 910 / 924 -1.1921970966  1.3930047109 
+  stp = 920 / 924 -0.4989539635  1.4502085208 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.6803220009  1.1525247008 
+  stp = 20 / 924 -0.2302168480  0.9861879995 
+  stp = 30 / 924 -1.2588111462  1.4773692397 
+  stp = 40 / 924 -2.4503664373  0.6118278494 
+  stp = 50 / 924 0.9286692268  1.9449679600 
+  stp = 60 / 924 -2.5882400521  2.5763614780 
+  stp = 70 / 924 -1.6731286325  2.0629002776 
+  stp = 80 / 924 0.5458284577  1.5476537015 
+  stp = 90 / 924 0.2635867195  1.5361392975 
+  stp = 100 / 924 -0.0533401175  2.2120605364 
+  stp = 110 / 924 0.2893493205  1.2069833786 
+  stp = 120 / 924 -0.2417990559  1.7484769659 
+  stp = 130 / 924 -0.7100529929  1.4712295310 
+  stp = 140 / 924 -0.6880913596  1.4844317371 
+  stp = 150 / 924 -0.6856255974  1.2671672401 
+  stp = 160 / 924 -0.0439546137  1.1794212216 
+  stp = 170 / 924 -0.5471615193  1.2871188316 
+  stp = 180 / 924 -0.0563093186  1.6224828803 
+  stp = 190 / 924 -0.3197239336  1.4598717338 
+  stp = 200 / 924 -0.1467459457  1.6855583139 
+  stp = 210 / 924 0.1757725448  1.4878903261 
+  stp = 220 / 924 -0.5635154390  1.3396505428 
+  stp = 230 / 924 -1.1804445982  1.9709853503 
+  stp = 240 / 924 -1.0718971202  1.5796292910 
+  stp = 250 / 924 -1.5898670743  1.7531610571 
+  stp = 260 / 924 -0.2072478646  1.5159519630 
+  stp = 270 / 924 -1.2601518081  2.3680817303 
+  stp = 280 / 924 -0.4523065948  1.5412987611 
+  stp = 290 / 924 -0.7138667556  1.5918884199 
+  stp = 300 / 924 0.1183416081  1.3865627644 
+  stp = 310 / 924 -1.0731348537  2.3031832071 
+  stp = 320 / 924 -1.5902910461  1.8603835640 
+  stp = 330 / 924 -1.2367468522  1.7678190394 
+  stp = 340 / 924 -0.4374731073  1.8335962081 
+  stp = 350 / 924 -0.1601661445  1.2773444296 
+  stp = 360 / 924 -0.9033052741  1.4505823260 
+  stp = 370 / 924 -0.3061146309  1.5906607051 
+  stp = 380 / 924 -1.8453062857  1.8190669147 
+  stp = 390 / 924 -0.1456988741  1.4570787973 
+  stp = 400 / 924 -0.2284586546  1.1779359236 
+  stp = 410 / 924 -1.1058982958  1.7987422921 
+  stp = 420 / 924 -3.3438729230  2.0680394571 
+  stp = 430 / 924 -1.1929924186  1.4223267970 
+  stp = 440 / 924 -0.6220398390  1.7597184675 
+  stp = 450 / 924 0.5091774291  1.5194574836 
+  stp = 460 / 924 -1.7167440888  1.9769383399 
+  stp = 470 / 924 -0.5127165510  1.3817257983 
+  stp = 480 / 924 -0.4111948481  1.7800389701 
+  stp = 490 / 924 -0.6370027812  1.6866671760 
+  stp = 500 / 924 -0.3107021851  1.3609738256 
+  stp = 510 / 924 -0.6803236975  1.8597667099 
+  stp = 520 / 924 0.5318304527  1.6902504105 
+  stp = 530 / 924 0.3386772445  1.8479321159 
+  stp = 540 / 924 -1.0293567392  1.7505165562 
+  stp = 550 / 924 -0.2300085181  1.4088263208 
+  stp = 560 / 924 -1.1381513792  1.6139355786 
+  stp = 570 / 924 -0.3688642971  1.3120046900 
+  stp = 580 / 924 -0.8100524291  1.5722929786 
+  stp = 590 / 924 -0.5141054297  1.5498294848 
+  stp = 600 / 924 -0.6351522011  1.4957890317 
+  stp = 610 / 924 -1.6053447119  2.2531577269 
+  stp = 620 / 924 -0.5288802809  1.5316993450 
+  stp = 630 / 924 0.0025070445  1.5986608874 
+  stp = 640 / 924 -0.6071290305  1.9308994887 
+  stp = 650 / 924 -1.1930497075  1.7009856048 
+  stp = 660 / 924 -0.8413511527  2.0787130942 
+  stp = 670 / 924 0.0470426190  1.2255799644 
+  stp = 680 / 924 -0.1205604540  0.8787165390 
+  stp = 690 / 924 -0.3151109737  2.0093893378 
+  stp = 700 / 924 -0.7296388724  1.1703853850 
+  stp = 710 / 924 -0.2755123426  1.6697503266 
+  stp = 720 / 924 -0.1751413610  1.7135156223 
+  stp = 730 / 924 -0.2135158497  2.0927618996 
+  stp = 740 / 924 -1.1004872199  2.0685284868 
+  stp = 750 / 924 -0.6121174721  1.3745772881 
+  stp = 760 / 924 -2.2575413382  2.0776789258 
+  stp = 770 / 924 0.3696259220  1.3598147519 
+  stp = 780 / 924 -1.1533558128  2.1714681101 
+  stp = 790 / 924 0.1035628045  1.4904349784 
+  stp = 800 / 924 -2.1118435119  2.2513528683 
+  stp = 810 / 924 -0.8630276344  2.0437073103 
+  stp = 820 / 924 0.3918497278  1.9373100374 
+  stp = 830 / 924 -0.8336227120  1.5380759576 
+  stp = 840 / 924 -1.5577159440  2.0401617833 
+  stp = 850 / 924 0.1093413120  1.8246449033 
+  stp = 860 / 924 -0.4629341163  1.1916485239 
+  stp = 870 / 924 -1.8609937580  2.9106780744 
+  stp = 880 / 924 0.3130377099  1.3059193516 
+  stp = 890 / 924 -0.1004145240  1.2360561272 
+  stp = 900 / 924 -0.6788104085  1.3361725273 
+  stp = 910 / 924 -1.2123749729  2.1288774463 
+  stp = 920 / 924 -1.5477474168  1.4549330785 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.0652640318  0.7881271881 
+  stp = 20 / 924 -3.0661225022  2.4112703767 
+  stp = 30 / 924 -2.0276176253  0.5543017730 
+  stp = 40 / 924 -0.3747858527  2.7034572404 
+  stp = 50 / 924 -1.9040384083  1.4827515229 
+  stp = 60 / 924 -0.7602205021  1.1149169409 
+  stp = 70 / 924 -0.5665012907  1.7339730668 
+  stp = 80 / 924 -0.9283575735  1.5570063802 
+  stp = 90 / 924 -0.2110355754  1.4545131672 
+  stp = 100 / 924 -0.6878121724  1.9431873790 
+  stp = 110 / 924 -0.2638619407  1.3920968229 
+  stp = 120 / 924 -0.6797464883  1.4506609931 
+  stp = 130 / 924 -0.3781456549  1.3872491567 
+  stp = 140 / 924 -0.7612937774  1.4130683786 
+  stp = 150 / 924 -1.1003862831  2.1089109522 
+  stp = 160 / 924 -1.0072167735  1.7200447702 
+  stp = 170 / 924 -0.5413848903  1.3729626886 
+  stp = 180 / 924 -0.1468481122  1.5328405029 
+  stp = 190 / 924 0.2446403769  1.1206733356 
+  stp = 200 / 924 -0.5978110708  1.4548697075 
+  stp = 210 / 924 -1.1830202842  1.9459307473 
+  stp = 220 / 924 -1.2186491107  1.5580390583 
+  stp = 230 / 924 0.0311110035  1.8946236493 
+  stp = 240 / 924 -0.1192968908  1.6975071253 
+  stp = 250 / 924 -1.0055608944  1.5159756581 
+  stp = 260 / 924 -1.0882896389  1.7908646724 
+  stp = 270 / 924 -0.5148800610  1.6604906289 
+  stp = 280 / 924 -0.1284515484  1.7700367634 
+  stp = 290 / 924 -0.7789969076  1.7752234085 
+  stp = 300 / 924 -0.8049740027  1.8298113953 
+  stp = 310 / 924 -1.4936166476  2.0199872195 
+  stp = 320 / 924 -1.1982122504  1.4952619663 
+  stp = 330 / 924 -0.7552291127  1.7853348769 
+  stp = 340 / 924 -0.6368154003  2.0446199142 
+  stp = 350 / 924 0.2749350740  1.2658446897 
+  stp = 360 / 924 -0.3478626753  1.2343746759 
+  stp = 370 / 924 -1.5858981612  2.0707913960 
+  stp = 380 / 924 -0.0779252382  1.3216731983 
+  stp = 390 / 924 -0.9436659552  2.3235228724 
+  stp = 400 / 924 -0.7949954053  1.3692778219 
+  stp = 410 / 924 -1.1245377738  2.2429479365 
+  stp = 420 / 924 -0.5775201606  1.3326272053 
+  stp = 430 / 924 -1.3596497296  1.4077949166 
+  stp = 440 / 924 -0.0924387663  1.5888036446 
+  stp = 450 / 924 -0.1162553920  1.6132647153 
+  stp = 460 / 924 -1.8099338970  2.1651857264 
+  stp = 470 / 924 -1.6568091579  1.6850772697 
+  stp = 480 / 924 -0.2483476618  1.8574161247 
+  stp = 490 / 924 -0.6936378105  1.6975540961 
+  stp = 500 / 924 0.3093753670  1.4714178235 
+  stp = 510 / 924 0.0874762921  1.5815915614 
+  stp = 520 / 924 -0.9541449983  1.4680259919 
+  stp = 530 / 924 -0.8449233831  1.5450208069 
+  stp = 540 / 924 -1.4287123958  2.1801147822 
+  stp = 550 / 924 0.1647833458  1.7661173871 
+  stp = 560 / 924 -2.0835480440  1.7606800247 
+  stp = 570 / 924 -1.0349966505  1.2901266436 
+  stp = 580 / 924 -0.3186455506  1.7203078824 
+  stp = 590 / 924 -0.4587949937  1.0408134260 
+  stp = 600 / 924 0.2638575866  1.4816545442 
+  stp = 610 / 924 -0.2657711986  1.4288355529 
+  stp = 620 / 924 -0.4968245963  1.8176802124 
+  stp = 630 / 924 -1.5726256943  2.1321604956 
+  stp = 640 / 924 -0.7974017221  2.3087255222 
+  stp = 650 / 924 -0.2894515001  1.7626369479 
+  stp = 660 / 924 -0.3777025816  1.4959823295 
+  stp = 670 / 924 -1.2544105953  1.5683447513 
+  stp = 680 / 924 -0.9111967155  1.4398007441 
+  stp = 690 / 924 -1.9963790455  1.5019412738 
+  stp = 700 / 924 -0.2078349883  2.0157122438 
+  stp = 710 / 924 -3.2703874497  1.9134142695 
+  stp = 720 / 924 -0.2956101815  1.8370484034 
+  stp = 730 / 924 -1.4178162637  2.0951488431 
+  stp = 740 / 924 0.1408417948  1.2648889736 
+  stp = 750 / 924 -0.7729153228  1.2415603297 
+  stp = 760 / 924 -1.3912128927  1.9578905029 
+  stp = 770 / 924 -0.0196989859  1.1991561697 
+  stp = 780 / 924 -2.2428207499  1.7313988415 
+  stp = 790 / 924 -1.4412872978  1.2597885209 
+  stp = 800 / 924 -0.7279270918  1.8733448894 
+  stp = 810 / 924 -0.5565157635  1.9656560004 
+  stp = 820 / 924 -0.6327560863  1.7253084459 
+  stp = 830 / 924 -1.2208177587  1.6886218120 
+  stp = 840 / 924 -0.4442899030  1.1128799390 
+  stp = 850 / 924 -0.7578960331  1.4504490507 
+  stp = 860 / 924 -2.4303302547  2.6290200442 
+  stp = 870 / 924 -1.1709491722  1.5282653731 
+  stp = 880 / 924 0.0295025858  1.6562377999 
+  stp = 890 / 924 -0.7907006585  1.4385577192 
+  stp = 900 / 924 -0.9759594881  1.6126026722 
+  stp = 910 / 924 -0.3307860585  1.1565573936 
+  stp = 920 / 924 -1.0808005537  1.9524757951 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.0878672936  1.0569091062 
+  stp = 20 / 924 0.2075495753  0.5227645293 
+  stp = 30 / 924 -0.4933085038  1.9543435679 
+  stp = 40 / 924 -0.9513090759  0.3873458874 
+  stp = 50 / 924 1.0277325949  1.4581161882 
+  stp = 60 / 924 -0.4815378774  1.9695205592 
+  stp = 70 / 924 -1.0457810296  1.4204364109 
+  stp = 80 / 924 -0.9260862304  1.2800518522 
+  stp = 90 / 924 -0.8415151508  1.6998977061 
+  stp = 100 / 924 -0.1890213233  1.8796072271 
+  stp = 110 / 924 -0.4615400034  1.2611610186 
+  stp = 120 / 924 0.2916788165  1.5991842855 
+  stp = 130 / 924 -1.7700294064  1.9463164739 
+  stp = 140 / 924 -0.5216724750  1.2591908092 
+  stp = 150 / 924 -1.4464648020  2.4345992376 
+  stp = 160 / 924 -0.4232285234  1.3348455665 
+  stp = 170 / 924 -0.3523967550  1.1506937367 
+  stp = 180 / 924 -0.5841521377  1.4126610115 
+  stp = 190 / 924 -0.0836082475  1.1544846584 
+  stp = 200 / 924 0.3592559448  1.4746516433 
+  stp = 210 / 924 -0.3647925504  1.1966943658 
+  stp = 220 / 924 -0.4210716726  1.8381952615 
+  stp = 230 / 924 -0.6517778283  1.7258347140 
+  stp = 240 / 924 -1.6051553107  1.6462494169 
+  stp = 250 / 924 -0.5619653504  1.5102502279 
+  stp = 260 / 924 -1.0055807697  1.5195910668 
+  stp = 270 / 924 -0.2011616498  1.3044753313 
+  stp = 280 / 924 -0.3802435581  1.7291713071 
+  stp = 290 / 924 -0.4231393236  1.8119631377 
+  stp = 300 / 924 -2.6206954076  2.2183185804 
+  stp = 310 / 924 -0.0638222623  1.7482572093 
+  stp = 320 / 924 -0.6834958108  1.8611961638 
+  stp = 330 / 924 -0.6427531150  1.4578845926 
+  stp = 340 / 924 -0.0803949593  1.5014002395 
+  stp = 350 / 924 -0.6233230126  1.7890787633 
+  stp = 360 / 924 0.0553656512  1.0361612338 
+  stp = 370 / 924 -1.1671054319  1.5845283464 
+  stp = 380 / 924 -0.0363752594  1.8850277909 
+  stp = 390 / 924 -2.3758566851  1.7955075831 
+  stp = 400 / 924 0.2696551913  1.5655291529 
+  stp = 410 / 924 0.0266591836  1.7206911264 
+  stp = 420 / 924 -0.5272789158  0.9578991757 
+  stp = 430 / 924 -0.1138183898  1.1152428129 
+  stp = 440 / 924 -1.0367039119  2.0817580030 
+  stp = 450 / 924 0.0258383829  1.7522228871 
+  stp = 460 / 924 -0.5051328766  1.5909751800 
+  stp = 470 / 924 -0.5249954526  1.4070475967 
+  stp = 480 / 924 -1.5059924077  1.5539118984 
+  stp = 490 / 924 -0.6011026993  2.5332619274 
+  stp = 500 / 924 -0.8705150664  1.5996481578 
+  stp = 510 / 924 0.2550964884  1.7030305122 
+  stp = 520 / 924 -0.7277604194  1.3008971633 
+  stp = 530 / 924 -0.1474200210  1.3446261735 
+  stp = 540 / 924 -0.7764666488  1.5164650401 
+  stp = 550 / 924 -1.1594151406  1.2671273521 
+  stp = 560 / 924 0.2769673571  1.4213697206 
+  stp = 570 / 924 -0.6271760663  2.1910986484 
+  stp = 580 / 924 -0.4470446666  1.2676751885 
+  stp = 590 / 924 -0.0699659121  1.6229369089 
+  stp = 600 / 924 -0.7186594714  1.2513715647 
+  stp = 610 / 924 -2.4221538639  2.1405070417 
+  stp = 620 / 924 -0.7179837579  1.3600304863 
+  stp = 630 / 924 -0.3889450539  1.3556413199 
+  stp = 640 / 924 -0.8849736321  1.6660699895 
+  stp = 650 / 924 -2.3727253452  1.8294603019 
+  stp = 660 / 924 -1.8754789670  1.7001895781 
+  stp = 670 / 924 -0.3357308086  1.6511325646 
+  stp = 680 / 924 -1.4768225328  1.3864947865 
+  stp = 690 / 924 -1.2696941578  1.9648404384 
+  stp = 700 / 924 -0.1575383583  0.9996840462 
+  stp = 710 / 924 -0.2188923287  1.1950261493 
+  stp = 720 / 924 -1.0066234176  1.2429110275 
+  stp = 730 / 924 -1.7379115236  2.1871109747 
+  stp = 740 / 924 -1.5516207932  1.4627803310 
+  stp = 750 / 924 -1.2325100061  2.3348394764 
+  stp = 760 / 924 -0.1846699704  1.4765418637 
+  stp = 770 / 924 -0.4418776041  1.6645446491 
+  stp = 780 / 924 -0.6271010593  1.6390673726 
+  stp = 790 / 924 -0.6149251071  1.2563873658 
+  stp = 800 / 924 -0.3552296961  1.5943453794 
+  stp = 810 / 924 -0.9504753626  2.4045546151 
+  stp = 820 / 924 -0.7037534797  1.4110365302 
+  stp = 830 / 924 -1.4891306746  1.9902971415 
+  stp = 840 / 924 -0.8917642162  1.7858795892 
+  stp = 850 / 924 0.0101402016  1.9193374696 
+  stp = 860 / 924 -0.7271429325  1.4719931502 
+  stp = 870 / 924 -1.8081087248  2.0913480038 
+  stp = 880 / 924 -0.0963487994  1.4753026805 
+  stp = 890 / 924 -0.3810900468  1.3488771084 
+  stp = 900 / 924 -0.7440867361  2.4704040649 
+  stp = 910 / 924 0.0024930952  0.8501279085 
+  stp = 920 / 924 -1.1175214701  1.4386422955 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.1797568847  1.6060368280 
+  stp = 20 / 924 0.5811340111  0.6402089588 
+  stp = 30 / 924 -0.3801152616  1.9753108381 
+  stp = 40 / 924 -1.5944813949  0.4598169944 
+  stp = 50 / 924 -0.0029132663  1.0666217712 
+  stp = 60 / 924 -1.0821936821  1.4383882992 
+  stp = 70 / 924 -0.2313796980  1.3328672460 
+  stp = 80 / 924 -0.3186347452  1.6035481751 
+  stp = 90 / 924 -0.2851455007  1.4150033335 
+  stp = 100 / 924 -0.3850350874  1.6531875511 
+  stp = 110 / 924 -0.2068728680  1.3309910687 
+  stp = 120 / 924 -0.5331044835  1.5021974156 
+  stp = 130 / 924 -1.0419938021  1.7319438076 
+  stp = 140 / 924 -1.6881418470  2.1368526323 
+  stp = 150 / 924 -1.1681564081  1.7744249361 
+  stp = 160 / 924 -1.7353045479  2.3685106547 
+  stp = 170 / 924 -0.4892443081  1.5257802566 
+  stp = 180 / 924 -1.6262251901  1.6016826880 
+  stp = 190 / 924 0.2709529715  1.3465248088 
+  stp = 200 / 924 -1.4142679545  1.9902060777 
+  stp = 210 / 924 0.1607146891  1.0666017694 
+  stp = 220 / 924 -1.7485075427  2.3023383839 
+  stp = 230 / 924 -0.8915773378  1.7003380880 
+  stp = 240 / 924 -0.8953856127  1.4837414583 
+  stp = 250 / 924 -0.4280329542  1.6547127183 
+  stp = 260 / 924 -0.3319298262  1.8025250090 
+  stp = 270 / 924 -0.3252413791  1.1948314831 
+  stp = 280 / 924 -1.3794378286  1.7798961726 
+  stp = 290 / 924 0.0991924473  1.6655246674 
+  stp = 300 / 924 -0.6330074650  1.6493832138 
+  stp = 310 / 924 -0.7407247807  1.8509613643 
+  stp = 320 / 924 -0.9280807313  1.7337054672 
+  stp = 330 / 924 -0.2830885126  1.8089938022 
+  stp = 340 / 924 -0.7058906848  1.8352308341 
+  stp = 350 / 924 -0.7937282511  1.4502949296 
+  stp = 360 / 924 -1.3479726631  1.4713595305 
+  stp = 370 / 924 -0.7860298430  1.9237917327 
+  stp = 380 / 924 -1.5455587713  2.2495668961 
+  stp = 390 / 924 -2.0025280430  1.4665788170 
+  stp = 400 / 924 -0.5447233767  1.1954592932 
+  stp = 410 / 924 -0.6934881380  1.8155787626 
+  stp = 420 / 924 0.3982642329  1.4270714969 
+  stp = 430 / 924 -2.0380823732  1.7840991933 
+  stp = 440 / 924 -2.1274436607  2.2303719504 
+  stp = 450 / 924 -0.4966907875  1.7018759188 
+  stp = 460 / 924 -0.9701253594  1.6252594106 
+  stp = 470 / 924 -0.7457135850  2.2348592376 
+  stp = 480 / 924 -1.4175528951  1.7940749333 
+  stp = 490 / 924 -1.1392361843  1.6507150007 
+  stp = 500 / 924 -0.7470249360  1.2722640846 
+  stp = 510 / 924 -0.4248749623  1.5673771712 
+  stp = 520 / 924 -0.6084945066  1.7607296788 
+  stp = 530 / 924 -1.5254275797  1.6867833086 
+  stp = 540 / 924 -2.1879828978  1.8653431793 
+  stp = 550 / 924 -0.2826423656  1.3851510878 
+  stp = 560 / 924 -1.1772821625  2.3525495105 
+  stp = 570 / 924 -0.2918482297  1.5939019822 
+  stp = 580 / 924 -0.3242297966  1.4286376276 
+  stp = 590 / 924 -0.8784529185  1.8440939004 
+  stp = 600 / 924 -0.0408039946  1.8905944542 
+  stp = 610 / 924 -0.1857474027  2.6340381544 
+  stp = 620 / 924 -1.0634828882  2.4517401416 
+  stp = 630 / 924 -1.9191716164  1.9656330672 
+  stp = 640 / 924 -0.2036494123  1.1427446236 
+  stp = 650 / 924 -1.5162814424  0.9969420445 
+  stp = 660 / 924 -0.8663846953  1.8668197826 
+  stp = 670 / 924 -1.1058599148  1.9768639982 
+  stp = 680 / 924 0.2558721705  1.1863599363 
+  stp = 690 / 924 -1.4300142158  1.1803674709 
+  stp = 700 / 924 -1.0979575628  1.3891742911 
+  stp = 710 / 924 -0.8009968858  1.7549742140 
+  stp = 720 / 924 -0.9390547193  1.5399192397 
+  stp = 730 / 924 0.1005272356  1.5711041880 
+  stp = 740 / 924 -0.8954222683  1.2213437608 
+  stp = 750 / 924 -2.2696190954  1.7680078437 
+  stp = 760 / 924 -1.3862348607  1.5291773635 
+  stp = 770 / 924 0.5569775883  1.1730159827 
+  stp = 780 / 924 -1.4672934207  1.9518822774 
+  stp = 790 / 924 0.0278509635  1.0357795831 
+  stp = 800 / 924 -1.5307372278  1.4650224122 
+  stp = 810 / 924 -0.5909498133  1.5787614612 
+  stp = 820 / 924 -0.8335924384  2.5786865442 
+  stp = 830 / 924 0.0440478884  1.0532904376 
+  stp = 840 / 924 -1.2475592087  1.4915456761 
+  stp = 850 / 924 -0.3509651987  1.5451188520 
+  stp = 860 / 924 -3.0261242206  1.8684600119 
+  stp = 870 / 924 -1.3560350962  1.4793350785 
+  stp = 880 / 924 -0.9650468203  1.9511985133 
+  stp = 890 / 924 -2.1397322905  2.2306930556 
+  stp = 900 / 924 0.1286383560  1.3456496828 
+  stp = 910 / 924 -2.1463861699  1.4845375904 
+  stp = 920 / 924 -0.4460391190  1.6268064980 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+                                                                
+      ,ammmmmmmmmmmmmmb,,        Welcome to the                 
+    ,@@` dm          mb  ===m                                    
+  ,@@` d@@@@@@@@@@@@@@@@b Pm,    @@          @@        @@       
+ d@  d@@@ @@@ @@@@@@ @@@@b ~@a   @@          @@     @@@@@@@@    
+d@   @@@@ ^^^ @@@@ m m @@@   @,  @@          @@   @@@  @@  @@@  
+@    @@@@_@@@_@@@@mm mm@@@   @|  @@mmmmmmmmmm@@  @@    @@    @@ 
+P@    9@@@@@@@@@@@@@@@@@P    @~  @@@@@@@@@@@@@@  @@    @@    @@ 
+ @@      ~~9@@@@@@PPP~      @P   @@          @@   @@@  @@  @@@  
+  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    
+    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       
+        ~~9@@@@@@@@@  ~                                         
+           9@P~~~9@P             Version 3.3.1    
+                                                                
+
+
+#####  Parallelization Info.  #####
+
+  OpenMP threads : 1
+  MPI PEs : 1 
+
+  Read File 'namelist.def'.
+  Read File 'calcmod.def' for CalcMod.
+  Read File 'modpara.def' for ModPara.
+  Read File 'locspn.def' for LocSpin.
+  Read File 'trans.def' for Trans.
+  Read File 'coulombinter.def' for CoulombInter.
+  Read File 'hund.def' for Hund.
+  Read File 'exchange.def' for Exchange.
+  Read File 'greenone.def' for OneBodyG.
+  Read File 'greentwo.def' for TwoBodyG.
+  Read File 'pair.def' for PairExcitation.
+
+######  Definition files are correct.  ######
+
+  Read File 'locspn.def'.
+  Read File 'trans.def'.
+  Read File 'coulombinter.def'.
+  Read File 'hund.def'.
+  Read File 'exchange.def'.
+  Read File 'greenone.def'.
+  Read File 'greentwo.def'.
+  Read File 'pair.def'.
+
+######  Indices and Parameters of Definition files(*.def) are complete.  ######
+
+
+Frequency range:
+  Omega Max. :     0.00000e+00     1.00000e-01
+  Omega Min. :    -1.00000e+01     1.00000e-01
+  Num. of Omega : 100
+  MAX DIMENSION idim_max=924 
+  APPROXIMATE REQUIRED MEMORY  max_mem=0.000041 GB 
+
+
+######  MPI site separation summary  ######
+
+  INTRA process site
+    Site    Bit
+       0       2
+       1       2
+       2       2
+       3       2
+       4       2
+       5       2
+       6       2
+       7       2
+       8       2
+       9       2
+      10       2
+      11       2
+
+  INTER process site
+    Site    Bit
+
+  Process element info
+    Process       Dimension   Nup  Ndown  Nelec  Total2Sz   State
+          0             924     6      6     12         0   
+
+   Total dimension : 924
+
+
+######  LARGE ALLOCATE FINISH !  ######
+
+  Start: Calculate HilbertNum for fixed Sz. 
+  End  : Calculate HilbertNum for fixed Sz. 
+
+  Start: An Eigenvector is inputted in CalcSpectrum.
+  End:   An Input vector is inputted in CalcSpectrum.
+
+  Start: Calculating an excited vector.
+  End:   Calculating an excited vector.
+
+  Start: Calculate diagaonal components of Hamiltonian. 
+  End  : Calculate diagaonal components of Hamiltonian. 
+
+  Start: Calculating a spectrum.
+
+    Start: Calculate tridiagonal matrix components.
+  Step / Step_max alpha beta 
+  stp = 10 / 924 -0.6936002317  0.7882522026 
+  stp = 20 / 924 -0.4234214208  0.6757298232 
+  stp = 30 / 924 0.0244930149  1.2796813392 
+  stp = 40 / 924 0.6563105361  0.3202985386 
+  stp = 50 / 924 0.8668329323  1.2726006231 
+  stp = 60 / 924 0.1222320064  1.4465069124 
+  stp = 70 / 924 -0.9702921853  2.4498233962 
+  stp = 80 / 924 -1.4278491650  1.4199334588 
+  stp = 90 / 924 0.0778083995  1.1116196029 
+  stp = 100 / 924 -1.1565564260  1.8778053571 
+  stp = 110 / 924 0.4204749226  1.4769819452 
+  stp = 120 / 924 0.3565350248  1.3417471929 
+  stp = 130 / 924 -0.5860694829  1.0892363666 
+  stp = 140 / 924 -2.7301784884  2.1462541260 
+  stp = 150 / 924 -0.7645048404  2.2092064395 
+  stp = 160 / 924 -0.8682231727  1.6591673246 
+  stp = 170 / 924 -0.5482225136  1.4369716572 
+  stp = 180 / 924 -0.2906528034  1.2597404498 
+  stp = 190 / 924 -1.5826624900  2.1030708896 
+  stp = 200 / 924 -0.1641612216  1.6824516846 
+  stp = 210 / 924 -0.3306869092  1.6442552873 
+  stp = 220 / 924 -0.6837222124  1.8606032735 
+  stp = 230 / 924 -0.3356642489  1.8140105575 
+  stp = 240 / 924 -0.3513609066  2.0040059492 
+  stp = 250 / 924 -0.2566431333  1.3005904781 
+  stp = 260 / 924 -0.6053151556  1.5535098095 
+  stp = 270 / 924 -0.4467822872  1.7502803839 
+  stp = 280 / 924 0.5056397402  1.4918402193 
+  stp = 290 / 924 -1.0281848153  2.0608488550 
+  stp = 300 / 924 -0.2773407764  1.4388002090 
+  stp = 310 / 924 -0.0750089289  1.3716228953 
+  stp = 320 / 924 -0.9653013891  1.7173159365 
+  stp = 330 / 924 -1.8343773081  2.3594754096 
+  stp = 340 / 924 -0.0463230353  1.1566126343 
+  stp = 350 / 924 -0.6108309591  1.5474356206 
+  stp = 360 / 924 -0.3949879990  1.5491179477 
+  stp = 370 / 924 -2.1241425711  2.1379655396 
+  stp = 380 / 924 -1.1894303175  1.4079845949 
+  stp = 390 / 924 -1.3803684254  1.7070307704 
+  stp = 400 / 924 -0.3423098767  1.1609807076 
+  stp = 410 / 924 -0.9659933212  1.6304486410 
+  stp = 420 / 924 0.3714085973  1.5859969099 
+  stp = 430 / 924 -1.1791393728  1.2711449128 
+  stp = 440 / 924 -0.1480568467  1.4279058044 
+  stp = 450 / 924 -0.8681482986  1.6115146466 
+  stp = 460 / 924 0.2105199556  1.4400473461 
+  stp = 470 / 924 -0.7761393297  1.5458577824 
+  stp = 480 / 924 -1.3683993954  1.5553122558 
+  stp = 490 / 924 -0.3262478279  1.9055885644 
+  stp = 500 / 924 0.1006806406  1.2860993026 
+  stp = 510 / 924 -0.8597727639  2.1370914290 
+  stp = 520 / 924 -0.8801328429  2.2785531989 
+  stp = 530 / 924 -0.9849387379  2.0578877523 
+  stp = 540 / 924 -1.1608659514  1.1260856621 
+  stp = 550 / 924 -0.2190337891  1.6251173649 
+  stp = 560 / 924 -1.3934873380  1.9153997513 
+  stp = 570 / 924 -0.5014200729  1.4429620211 
+  stp = 580 / 924 -0.5792777491  1.2976083971 
+  stp = 590 / 924 -0.7328684504  1.6614062898 
+  stp = 600 / 924 -0.4994870596  1.8134043710 
+  stp = 610 / 924 -1.2284053806  1.7508027570 
+  stp = 620 / 924 -2.1219781441  1.2266266689 
+  stp = 630 / 924 -0.3982568006  1.2985564918 
+  stp = 640 / 924 -0.6864251136  1.5644663426 
+  stp = 650 / 924 -1.4763134451  1.4095167530 
+  stp = 660 / 924 -1.6112846595  1.4071354330 
+  stp = 670 / 924 -0.2292232506  2.0910403128 
+  stp = 680 / 924 -0.9432538534  1.9409300693 
+  stp = 690 / 924 -0.0828579141  1.4135185657 
+  stp = 700 / 924 0.0909041134  1.5107674881 
+  stp = 710 / 924 -2.8816927747  2.3048953710 
+  stp = 720 / 924 -0.0273773183  1.7796631186 
+  stp = 730 / 924 -1.0371282276  1.8546385680 
+  stp = 740 / 924 -1.1111958022  1.0449171111 
+  stp = 750 / 924 -1.8714133756  1.6708032342 
+  stp = 760 / 924 -0.3031588882  1.1672995362 
+  stp = 770 / 924 -1.6972896004  2.2811971934 
+  stp = 780 / 924 -1.8406539873  1.9972704292 
+  stp = 790 / 924 -0.9037666828  1.6099198463 
+  stp = 800 / 924 0.7992907847  1.1579250915 
+  stp = 810 / 924 -0.0693218906  1.6432087740 
+  stp = 820 / 924 -1.0282120715  1.3294730469 
+  stp = 830 / 924 0.1577763290  1.3570398823 
+  stp = 840 / 924 0.1019240735  2.1232835335 
+  stp = 850 / 924 0.1565904196  1.4539966608 
+  stp = 860 / 924 -1.6158574213  2.6426236205 
+  stp = 870 / 924 -0.2085756576  1.8689688633 
+  stp = 880 / 924 -0.8296578132  1.4512649016 
+  stp = 890 / 924 -0.6071801757  1.3718289310 
+  stp = 900 / 924 -1.2452878552  1.6051219389 
+  stp = 910 / 924 -1.4968414218  1.4444736845 
+  stp = 920 / 924 0.0071714005  0.9638766421 
+    End:   Calculate tridiagonal matrix components.
+
+    Start: Caclulate spectrum from tridiagonal matrix components.
+    End:   Caclulate spectrum from tridiagonal matrix components.
+
+  End:  Calculating a spectrum.
+
+Wavenumber 1
+
+Wavenumber 2
+
+Wavenumber 3
+
+Wavenumber 4
+
+Wavenumber 5
+
+Wavenumber 6
+
+Wavenumber 7
+
+Wavenumber 8
+
+Wavenumber 9
+
+Wavenumber 10
+
+Wavenumber 11
+

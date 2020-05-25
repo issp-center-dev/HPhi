@@ -11,7 +11,7 @@ The details are found in this paper (M. Heyl, A. Polkovnikov, and S. Kehrein, Ph
 Ground state
 """""""""""""
 First, you need to obtain the initial state for simulations of the real-time dynamics.
-Please make the following input file (stan1.in) ::
+Please make the following input file (``samples/tutorial_3.2/stan1.in``) ::
 
  model = "SpinGC"
  method = "CG"
@@ -33,7 +33,7 @@ Question: If a longitudinal magnetic field :math:`h` in stan1.in becomes 0, what
 :math:`\Gamma` quench
 """"""""""""""""""""""
 After obtaining the ground state, you can perform simulations for :math:`\Gamma` quench in the 1D transverse-field Ising model.
-Make the following input file (stan2.in) ::
+Make the following input file (``samples/tutorial_3.1/stan2.in``) ::
 
  model = "SpinGC" 
  method = "Time-Evolution"

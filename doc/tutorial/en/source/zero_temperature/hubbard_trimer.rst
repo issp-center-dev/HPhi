@@ -9,7 +9,7 @@ Let's solve the following the Hubbard trimer model
    +c_{2\sigma}^{\dagger}c_{0\sigma}+{\rm H.c.})
    +U\sum_{i}(n_{i\uparrow}n_{i\downarrow})
 
-The input file (stan.in) is as follows::
+The input file (``samples/tutorial_1.3/stan1.in``) is as follows::
 
  model = "Hubbard" 
  method = "FullDiag" 

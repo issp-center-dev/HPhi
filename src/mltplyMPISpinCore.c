@@ -141,7 +141,7 @@ double complex child_GC_CisAitCiuAiv_spin_MPIdouble(
   }
   else if (state1 == org_ispin1 && state2 == org_ispin3) {
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
       Jint = 0;
     }
   }
@@ -169,8 +169,13 @@ double complex child_GC_CisAitCiuAiv_spin_MPIdouble(
         tmp_v0[j] += dmv;
         dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }
-    else {
+    }else if(X->Large.mode == H_CORR){
+#pragma omp for
+      for (j = 1; j <= idim_max_buf; j++) {
+        dmv = Jint * v1buf[j];
+        dam_pr += conj(tmp_v0[j]) * dmv;
+      }/*for (j = 1; j <= idim_max_buf; j++)*/
+    }else {
 #pragma omp for
       for (j = 1; j <= idim_max_buf; j++) {
         dmv = Jint * v1buf[j];
@@ -241,7 +246,7 @@ double complex child_GC_CisAisCjuAjv_spin_MPIdouble(
   }
   else if (child_SpinGC_CisAis(origin + 1, X, mask1, org_ispin1) == TRUE && state2 == org_ispin3) {
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) Jint = 0;
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) Jint = 0;
   }
   else {
     return 0.0;
@@ -265,8 +270,14 @@ double complex child_GC_CisAisCjuAjv_spin_MPIdouble(
       tmp_v0[j] += dmv;
       dam_pr += conj(tmp_v1[j]) * dmv;
     }
-  }
-  else {
+  }else if(X->Large.mode == H_CORR){
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
+  firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
+    for (j = 1; j <= idim_max_buf; j++) {
+      dmv = Jint * v1buf[j];
+      dam_pr += conj(tmp_v0[j]) * dmv;
+    }
+  }else {
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, Jint, X) shared(v1buf, tmp_v1, tmp_v0)
     for (j = 1; j <= idim_max_buf; j++) {
@@ -345,7 +356,7 @@ double complex child_GC_CisAitCjuAju_spin_MPIdouble(
     num1 = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, mask2, org_ispin3);
     if (num1 != 0) {
       Jint = conj(tmp_J);
-      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+      if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
         Jint = 0;
       }
     }
@@ -374,8 +385,13 @@ double complex child_GC_CisAitCjuAju_spin_MPIdouble(
         tmp_v0[j] += dmv;
         dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= idim_max_buf; j++)*/
-    }
-    else {
+    }else if(X->Large.mode == H_CORR){
+#pragma omp for
+      for (j = 1; j <= idim_max_buf; j++) {
+        dmv = Jint * v1buf[j];
+        dam_pr += conj(tmp_v0[j]) * dmv;
+      }/*for (j = 1; j <= idim_max_buf; j++)*/
+    }else {
 #pragma omp for
       for (j = 1; j <= idim_max_buf; j++) {
         dmv = Jint * v1buf[j];
@@ -425,8 +441,13 @@ double complex child_GC_CisAisCjuAju_spin_MPIdouble(
         tmp_v0[j] += dmv;
         dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++) */
-    }
-    else {
+    }else if(X->Large.mode == H_CORR){
+#pragma omp for
+      for (j = 1; j <= X->Check.idim_max; j++) {
+        dmv = num1 * num2 * tmp_v1[j] * tmp_J;
+        dam_pr += conj(tmp_v0[j]) * dmv;
+      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+    }else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = num1 * num2 * tmp_v1[j] * tmp_J;
@@ -477,8 +498,14 @@ double complex child_GC_CisAisCjuAju_spin_MPIsingle(
         tmp_v0[j] += dmv;
         dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-    }
-    else {
+    }else if(X->Large.mode == H_CORR){
+#pragma omp for
+      for (j = 1; j <= X->Check.idim_max; j++) {
+        num1 = child_SpinGC_CisAis(j, X, mask1, org_ispin1);
+        dmv = Jint * num1 * num2 * tmp_v1[j];
+        dam_pr += conj(tmp_v0[j]) * dmv;
+      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+    }else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         num1 = child_SpinGC_CisAis(j, X, mask1, org_ispin1);
@@ -513,6 +540,7 @@ void GC_CisAitCiuAiv_spin_MPIsingle(
   X->Large.prdct += dam_pr;
 #endif
 }/*void GC_CisAitCiuAiv_spin_MPIsingle*/
+
 /**
 @brief Exchange and Pairlifting term in Spin model + GC
        When only site2 is in the inter process region.
@@ -550,7 +578,7 @@ double complex child_GC_CisAitCiuAiv_spin_MPIsingle(
   else if (state2 == org_ispin3) {
     state1check = (unsigned long int) org_ispin1;
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
       Jint = 0;
     }
   }
@@ -583,8 +611,16 @@ double complex child_GC_CisAitCiuAiv_spin_MPIsingle(
           dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
         }/*if (state1 != 0)*/
       }/*for (j = 0; j < idim_max_buf; j++)*/
-    }
-    else {
+    }else if (X->Large.mode == H_CORR) {
+#pragma omp for
+      for (j = 0; j < idim_max_buf; j++) {
+        state1 = child_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
+        if (state1 != 0) {
+          dmv = Jint * v1buf[j + 1];
+          dam_pr += conj(tmp_v0[ioff + 1]) * dmv;
+        }/*if (state1 != 0)*/
+      }/*for (j = 0; j < idim_max_buf; j++)*/
+    }else {
 #pragma omp for
       for (j = 0; j < idim_max_buf; j++) {
         state1 = child_SpinGC_CisAit(j + 1, X, mask1, state1check, &ioff);
@@ -655,7 +691,7 @@ double complex child_GC_CisAisCjuAjv_spin_MPIsingle(
   else if (state2 == org_ispin3) {
     state1check = (unsigned long int) org_ispin1;
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_CORR ||X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) {
       Jint = 0;
     }
   }
@@ -688,8 +724,16 @@ double complex child_GC_CisAisCjuAjv_spin_MPIsingle(
           dam_pr += conj(tmp_v1[j + 1]) * dmv;
         }/*if (state1 == state1check)*/
       }/*for (j = 0; j < idim_max_buf; j++)*/
-    }
-    else {
+    }else if(X->Large.mode == H_CORR){
+#pragma omp for
+      for (j = 0; j < idim_max_buf; j++) {
+        state1 = (j & mask1) / mask1;
+        if (state1 == state1check) {
+          dmv = Jint * v1buf[j + 1];
+          dam_pr += conj(tmp_v0[j + 1]) * dmv;
+        }/*if (state1 == state1check)*/
+      }/*for (j = 0; j < idim_max_buf; j++)*/
+    }else {
 #pragma omp for
       for (j = 0; j < idim_max_buf; j++) {
         state1 = (j & mask1) / mask1;
@@ -782,7 +826,23 @@ double complex child_GC_CisAitCjuAju_spin_MPIsingle(
         tmp_v0[ioff + 1] += dmv;
         dam_pr += conj(tmp_v1[ioff + 1]) * dmv;
       }/*for (j = 0; j < X->Check.idim_max; j++)*/
+    }else if (X->Large.mode == H_CORR) {
+#pragma omp for
+      for (j = 0; j < X->Check.idim_max; j++) {
+
+        state1 = (j & mask1) / mask1;
+        ioff = j ^ mask1;
+        if (state1 == state1check) {
+          dmv = Jint * tmp_v1[j + 1];
+        }
+        else {
+          dmv = 0.0;
+        }
+        dam_pr += conj(tmp_v0[ioff + 1]) * dmv;
+      }/*for (j = 0; j < X->Check.idim_max; j++)*/
     }
+
+
     else if (X->Large.mode == M_CORR) {
 #pragma omp for
       for (j = 0; j < X->Check.idim_max; j++) {
@@ -855,7 +915,7 @@ double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble(
         X->Def.Tpow) == TRUE)
       {
         tmp_V = conj(tmp_J);
-        if(X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+        if(X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
       }/*BitCheckGeneral(off, org_isite1 + 1, org_ispin1)*/
       else return 0.0;
     }/*GetOffCompGeneralSpin(myrank, org_isite3 + 1, org_ispin4, org_ispin3, &off)*/
@@ -923,7 +983,7 @@ double complex child_GC_CisAitCjuAju_GeneralSpin_MPIdouble(
       X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
   }
   else if (GetOffCompGeneralSpin((unsigned long int) myrank, org_isite1 + 1, org_ispin1, org_ispin2,
     &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
@@ -1020,7 +1080,7 @@ double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble(
       if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin2, org_ispin1, &off, X->Def.SiteToBit,
                                       X->Def.Tpow) == TRUE) {
         tmp_V = conj(tmp_J);
-        if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+        if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
       }
       else return 0.0;
     }
@@ -1143,7 +1203,7 @@ double complex child_GC_CisAit_GeneralSpin_MPIdouble(
     org_isite1 + 1, org_ispin2, org_ispin1, &off,
     X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     tmp_V = conj(tmp_trans);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
   }
   else return 0.0;
 
@@ -1313,7 +1373,7 @@ double complex child_CisAit_GeneralSpin_MPIdouble(
                                  org_isite1 + 1, org_ispin2, org_ispin1, &off,
                                  X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     tmp_V = conj(tmp_trans);
-    if (X->Large.mode == M_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode ==M_CALCSPEC) tmp_V = 0.0;
   }
   else return 0.0;
   
@@ -1353,6 +1413,7 @@ shared (tmp_v0, tmp_v1, v1buf)
  return 0.0;
 #endif
 }/*double complex child_CisAit_GeneralSpin_MPIdouble*/
+
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}c_{ju}^\dagger c_{jv}@f$ term in the
 grandcanonical general spin system when one of these site is in the inter process region
@@ -1388,7 +1449,7 @@ double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle(
     X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
     isite = org_isite1 + 1;
     IniSpin = org_ispin1;
   }
@@ -1542,7 +1603,7 @@ double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle(
     X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
     isite = org_isite1 + 1;
     IniSpin = org_ispin1;
     FinSpin = org_ispin2;
@@ -1687,7 +1748,7 @@ double complex child_CisAitCjuAjv_GeneralSpin_MPIdouble(
  if (GetOffCompGeneralSpin(tmp_off, org_isite1 + 1, org_ispin2, org_ispin1, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
    {
      tmp_V = conj(tmp_J);
-     if(X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC){
+     if(X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC){
        tmp_V=0.0;
      }
    }
@@ -1900,7 +1961,7 @@ double complex child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     org_isite3 + 1, org_ispin4, org_ispin3, &off, X->Def.SiteToBit, X->Def.Tpow) == TRUE)
   {
     tmp_V = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
     isite = org_isite1 + 1;
     IniSpin = org_ispin1;
     FinSpin = org_ispin2;
@@ -1992,7 +2053,7 @@ double complex child_GC_CisAit_spin_MPIdouble(
   }
   else if(state1 == org_ispin1) {
     trans = conj(tmp_trans);
-    if(X->Large.mode == M_CORR|| X->Large.mode ==M_CALCSPEC){
+    if(X->Large.mode == M_CORR || X->Large.mode == H_CORR|| X->Large.mode ==M_CALCSPEC || X->Large.mode == M_MLTPLY2){
       trans = 0.0;
     }
   }
@@ -2013,15 +2074,20 @@ double complex child_GC_CisAit_spin_MPIdouble(
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv) \
 firstprivate(idim_max_buf, trans, X) shared(v1buf, tmp_v1, tmp_v0)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC || X->Large.mode == M_MLTPLY2) {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = trans * v1buf[j];
         tmp_v0[j] += dmv;
         dam_pr += conj(tmp_v1[j]) * dmv;
       }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-    }
-    else {
+    }else if (X->Large.mode == H_CORR) {
+#pragma omp for
+      for (j = 1; j <= X->Check.idim_max; j++) {
+        dmv = trans * v1buf[j];
+        dam_pr += conj(tmp_v0[j]) * dmv;
+      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+    }else {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = trans * v1buf[j];
@@ -2145,8 +2211,12 @@ double complex child_GC_CisAis_spin_MPIdouble(
           tmp_v0[j] += tmp_v1[j] * tmp_trans;
           dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
         }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-      }
-      else {
+      }else if (X->Large.mode == H_CORR){
+#pragma omp for
+        for (j = 1; j <= X->Check.idim_max; j++) {
+          dam_pr += tmp_trans * conj(tmp_v0[j]) * tmp_v1[j];
+        }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+      }else {
 #pragma omp for
         for (j = 1; j <= X->Check.idim_max; j++) {
           dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
@@ -2192,8 +2262,12 @@ double complex child_GC_AisCis_spin_MPIdouble(
           tmp_v0[j] += tmp_v1[j] * tmp_trans;
           dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];
         }/*for (j = 1; j <= X->Check.idim_max; j++)*/
-      }
-      else {
+      } else if (X->Large.mode == H_CORR) { //
+#pragma omp for
+        for (j = 1; j <= X->Check.idim_max; j++) {
+          dam_pr    += tmp_trans * conj(tmp_v0[j]) * tmp_v1[j];
+        }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+      }else {
 #pragma omp for
         for (j = 1; j <= X->Check.idim_max; j++) {
           dam_pr += tmp_trans * conj(tmp_v1[j]) * tmp_v1[j];

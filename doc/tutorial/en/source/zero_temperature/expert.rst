@@ -4,15 +4,16 @@ If you prepare input files, you can perform calculations for
 arbitrary Hamiltonians with any one-body potentials and the two-body interactions.   
 By taking spin 1/2 system as an example,
 we explain how to prepare input files.
-For spin 1/2 system, we prepare simple python scripts (**HPhi/tool/ExpertSpin/MakeDef.py**)that
-can generate the input files for general Hamiltonians, which are defined as
+For spin 1/2 system, we prepare simple python scripts (``samples/tutorial_1.6/MakeDef.py``) 
+that can generate the input files for general Hamiltonians, which are defined as
 
 .. math::
 
   {\mathcal H}=\sum_{i,j} J_{i,j}^{\alpha,\beta} {\bf S}_{i}^{\alpha} {\bf S}_{j}^{\beta}.
 
+Note tat ``samples/tutorial_1.6/read.py`` and ``samples/tutorial_1.6/hphi_io.py`` are necessary for **MakeDef.py**.
 To use *MakeDef.py*, it is necessary to prepare two input files,
-**input.txt** and **pair.txt**. 
+**input.txt** and **pair.txt** (examples of them are available in ``samples/tutorial_1.6`` ). 
 
 In **input.txt**, two parameters **Ns** (number of sites) and **exct** (number of excited states)
 are specified.

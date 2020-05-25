@@ -10,7 +10,7 @@ Its Hamiltonian is defined as
 
 where :math:`J_{1}` (:math:`J_{2}`) represents the nearest (next-nearest) neighbor interactions.
 
-An input file for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
+An input file (``samples/tutorial_1.5/stan1.in``) for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
 
  model = "Spin" 
  method = "CG" 
@@ -35,9 +35,9 @@ First, we calculate the spin structure factors, which are defined as
 
 To calculate :math:`S({\bf q})`, it is necessary to prepare
 a proper input file for two-body Green functions.
-By using a python script **MakeGreen.py** (HPhi/tool/ForSq/MakeGreen.py),
+By using a python script **MakeGreen.py** (``samples/tutorial_1.5/MakeGreen.py``),
 you can generate **greentwo.def** for calculating :math:`S({\bf q})`.
-To use  **MakeGreen.py** , an input file for specifying lattice geometry (**input.txt**) is necessary,
+To use  **MakeGreen.py** , an input file for specifying lattice geometry (**input.txt**, ``samples/tutorial_1.5/input.txt``) is necessary,
 whose form is given as follows ::
 
  Lx 4
@@ -47,7 +47,7 @@ whose form is given as follows ::
 
 Here, Lx (orb_num) represents the length of the x direction (number of orbitals).
 
-By using a python script **CalcSq.py** (HPhi/tool/ForSq/CalcSq.py),
+By using a python script **CalcSq.py** (``samples/tutorial_1.5/CalcSq.py``),
 you can calculate :math:`S({\bf q})` from **output/zvo_cisajscktalt_eigen0.dat**.
 
 Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows ::
