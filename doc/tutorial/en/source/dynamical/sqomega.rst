@@ -21,7 +21,9 @@ The spectrum function can be calculated by following steps.
 3. Calculate spectrum function.
 
 See the manual for details. To simply do above steps, we prepare the
-script file ``spinchain_example.py`` in https://github.com/issp-center-dev/HPhi-gallery/tree/master/Spin/HeisenbergSpectrum . In the following, we show the
+script file ``samples/tutorial_4.3/spinchain_example.py`` 
+.. in https://github.com/issp-center-dev/HPhi-gallery/tree/master/Spin/HeisenbergSpectrum. 
+In the following, we show the
 procedure to obtain the specrum function by using the script file.
 
 1. Execute the script file (``spinchain_example.py``)

@@ -38,6 +38,10 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spingc_honey.sh
 )
 add_test(
+  NAME lanczos_spingc_hcor
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spingc_hcor.sh
+)
+add_test(
   NAME lanczos_genspingc_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_genspingc_ladder.sh
 )
@@ -87,6 +91,10 @@ add_test(
 add_test(
   NAME lobcg_spingc_honey
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spingc_honey.sh
+)
+add_test(
+  NAME lobcg_spingc_hcor
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spingc_hcor.sh
 )
 add_test(
   NAME lobcg_genspingc_ladder

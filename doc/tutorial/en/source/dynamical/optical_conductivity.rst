@@ -26,7 +26,7 @@ is defined as
 
 where :math:`N_{\rm s}` is the number of sites.
 
-An input file (stan.in) for 6-site Hubbard model is as follows::
+An input file (``samples/tutorial_4.2/stan1.in``) for 6-site Hubbard model is as follows::
 
  model = "Hubbard" 
  method = "CG" 
@@ -41,13 +41,16 @@ An input file (stan.in) for 6-site Hubbard model is as follows::
 
 
 Scripts for calculating the optical conductivity are 
-available at **HPhi/tool/ForOpticalConductivity**.
+available at **``samples/tutorial_4.2/``**.
   
 By performing the all-in-one script (All.sh),  ::
 
  sh ./All.sh
 
 you can obtain **optical.dat**.
+Note that ``samples/tutorial_4.2/OpticalSpectrum.py``,``samples/tutorial_4.1/lattice.py``,
+``samples/tutorial_4.2/lattice.py``, and ``samples/tutorial_4.2/input.txt`` 
+are necessary.
 
 A way for plotting **optical.dat** is as follows  ::
 

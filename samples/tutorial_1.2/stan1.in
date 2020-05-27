@@ -1,0 +1,8 @@
+model = "Hubbard"
+method = "FullDiag"
+lattice = "chain"
+L=2
+t = -0.5
+U = 4
+2Sz = 0
+nelec = 2

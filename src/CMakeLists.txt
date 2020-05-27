@@ -7,6 +7,7 @@ endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")
 add_subdirectory(komega)
 
 include_directories(include)
+include_directories(${STDFACE_DIR})
 add_definitions(-D_HPhi)
 add_definitions(-DDSFMT_MEXP=19937)
 
@@ -23,7 +24,19 @@ set(SOURCES_PHYS expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c phys.c 
 
 set(SOURCES_COMMON common/setmemory.c)
 
-set(SOURCES_STDFACE StdFace/ChainLattice.c StdFace/FCOrtho.c StdFace/HoneycombLattice.c StdFace/Kagome.c StdFace/Ladder.c StdFace/Orthorhombic.c StdFace/Pyrochlore.c StdFace/SquareLattice.c StdFace/StdFace_main.c StdFace/StdFace_ModelUtil.c StdFace/TriangularLattice.c StdFace/Wannier90.c)
+set(SOURCES_STDFACE
+${STDFACE_DIR}/src/ChainLattice.c
+${STDFACE_DIR}/src/FCOrtho.c
+${STDFACE_DIR}/src/HoneycombLattice.c
+${STDFACE_DIR}/src/Kagome.c
+${STDFACE_DIR}/src/Ladder.c
+${STDFACE_DIR}/src/Orthorhombic.c
+${STDFACE_DIR}/src/Pyrochlore.c
+${STDFACE_DIR}/src/SquareLattice.c
+${STDFACE_DIR}/src/StdFace_main.c
+${STDFACE_DIR}/src/StdFace_ModelUtil.c
+${STDFACE_DIR}/src/TriangularLattice.c
+${STDFACE_DIR}/src/Wannier90.c)
 
 add_executable(HPhi ${SOURCES} ${SOURCES_LANCZOS} ${SOURCES_CG} ${SOURCES_TPQ} ${SOURCES_SPECTRUM} ${SOURCES_TEM} ${SOURCES_MLTPLY} ${SOURCES_DIAG} ${SOURCES_PHYS} ${SOURCES_STDFACE} ${SOURCES_COMMON})
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)

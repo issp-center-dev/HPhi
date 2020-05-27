@@ -8,7 +8,7 @@ Let's solve the following Hubbard model on the square lattice.
  H = -t \sum_{\langle i,j\rangle , \sigma}(c_{i\sigma}^{\dagger}c_{j\sigma}+{\rm H.c.})+U \sum_{i} n_{i\uparrow}n_{i\downarrow}
 
 
-The input files (stan1.in and stan2.in) for 8-site Hubbard model are as follows ::
+The input files (``samples/tutorial_4.1/stan1.in`` and ``samples/tutorial_4.1/stan2.in``) for 8-site Hubbard model are as follows ::
 
  stan1.in
 

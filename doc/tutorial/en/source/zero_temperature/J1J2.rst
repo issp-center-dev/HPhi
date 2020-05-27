@@ -10,7 +10,7 @@ Its Hamiltonian is defined as
 
 where :math:`J_{1}` (:math:`J_{2}`) represents the nearest (next-nearest) neighbor interactions.
 
-An input file for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
+An input file (``samples/tutorial_1.5/stan1.in``) for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
 
  model = "Spin" 
  method = "CG" 
@@ -21,7 +21,7 @@ An input file for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
  J' = 1
  2S = 1
  2Sz = 0
- exct = 2
+ exct = 4
 
 Here, J (J') represents :math:`J_{1}` (:math:`J_{2}`).
 
@@ -35,9 +35,9 @@ First, we calculate the spin structure factors, which are defined as
 
 To calculate :math:`S({\bf q})`, it is necessary to prepare
 a proper input file for two-body Green functions.
-By using a python script **MakeGreen.py** (HPhi/tool/ForSq/MakeGreen.py),
+By using a python script **MakeGreen.py** (``samples/tutorial_1.5/MakeGreen.py``),
 you can generate **greentwo.def** for calculating :math:`S({\bf q})`.
-To use  **MakeGreen.py** , an input file for specifying lattice geometry (**input.txt**) is necessary,
+To use  **MakeGreen.py** , an input file for specifying lattice geometry (**input.txt**, ``samples/tutorial_1.5/input.txt``) is necessary,
 whose form is given as follows ::
 
  Lx 4
@@ -47,12 +47,12 @@ whose form is given as follows ::
 
 Here, Lx (orb_num) represents the length of the x direction (number of orbitals).
 
-By using a python script **CalcSq.py** (HPhi/tool/ForSq/CalcSq.py),
+By using a python script **CalcSq.py** (``samples/tutorial_1.5/CalcSq.py``),
 you can calculate :math:`S({\bf q})` from **output/zvo_cisajscktalt_eigen0.dat**.
 
 Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows ::
  1. HPhi -sdrt stan.in
- 2. pyhton3 MakeGreen.def (input.txt is necessary)
+ 2. pyhton3 MakeGreen.py (input.txt is necessary)
  3. HPhi -e namelist.def 
  4. python3 CalcSq.py (input.txt is necessary)
  5. You can obtain **Sq_eigen0.dat** !!
@@ -68,8 +68,11 @@ As an example, we show :math:`S({\bf q})` for J1/J2=0 and 1 below.
 Calculations of spin structure factors for excited states
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 By changing exct in stan.in, you can obtain several excited states.
-For those excited states, by changing **max_num=1** as ,for example, **max_num=4**,
+For those excited states, by changing **max_num=1** in CalcSq.py as,
+for example, **max_num=4**,
 you can obtain  :math:`S({\bf q})` for the excited states.
+As a practice for editing file, please try to edit CalcSq.py manually 
+(open CalcSq.py, finding variable max_num =1, and changing max_num = 4).
 
 Please see how :math:`S({\bf q})` in the excited states 
 changes by changing J'. For example, please check 
