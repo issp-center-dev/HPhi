@@ -199,8 +199,12 @@ int expec_cisajscktaltdc
   }
   
   fclose(fp);
-  fclose(fp_2);
-  fclose(fp_3);
+  if(X->Def.NTBody>0){
+    fclose(fp_2);
+  }
+  if(X->Def.NFBody>0){
+    fclose(fp_3);
+  }
   
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){
