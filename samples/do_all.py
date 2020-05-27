@@ -33,6 +33,10 @@ for idx, dir_name in enumerate(dir_all):
             for line in lines[1:]:
                 line = line.replace("$1", path_to_HPhi)
                 cmd = line.split()
+                if not cmd:
+                    continue
+                if cmd[0].startswith('#'):
+                    continue
                 with open("std.out", "w") as fw:
                     subprocess.call(cmd, stdout=fw)
         with open("check_file.txt", "r") as fr:
