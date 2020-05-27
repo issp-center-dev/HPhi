@@ -1,4 +1,4 @@
-L       = 16
+L       = 10
 model   = "Spin"
 method  = "CG"
 lattice = "chain"
