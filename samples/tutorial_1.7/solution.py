@@ -20,8 +20,10 @@ def create_input():
 
 
 if __name__ == "__main__":
+    import sys
+    HPhi = sys.argv[1] if len(sys.argv) > 1 else "HPhi"
     create_input()
-    cmd = ["HPhi", "-s", "std.in"]
+    cmd = [HPhi, "-s", "std.in"]
     subprocess.call(cmd)
     print()
 
