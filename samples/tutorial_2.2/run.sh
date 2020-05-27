@@ -2,5 +2,3 @@
 $1 -s stan1.in
 $1 -s stan2a.in
 python3 AveSSrand.py
-#$1 -s stan2b.in
-#python3 Finite.py

@@ -15,4 +15,4 @@ J2z = -1.0
 2S=1
 Lanczos_max = 3000 
 LargeValue = 4.0 
-//NumAve = 64
+NumAve = 64

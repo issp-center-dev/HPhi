@@ -15,7 +15,7 @@ else:
 
 #get all dictioary of tutorials
 #dir_all = sorted(glob.glob("tutorial*"))
-dir_all = sorted(glob.glob("tutorial_2.2"))
+dir_all = sorted(glob.glob("tutorial_4.2"))
 current_dir = os.getcwd()
 for idx, dir_name in enumerate(dir_all):
     #if dir_name != "tutorial_4.3":
