@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.3.13. Lanczos_Step.dat &#8212; HΦ Documentation  documentation</title>
+    <title>4.3.13. Lanczos_Step.dat &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
+    <link rel="up" title="4.3. Output files" href="index_outputfiles_en.html" />
     <link rel="next" title="4.3.14. Time_TPQ_Step.dat" href="Time_TPQ_Step_en.html" />
     <link rel="prev" title="4.3.12. energy.dat" href="energy_en.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="lanczos-step-dat">
@@ -54,7 +48,7 @@ information for calculating the eigenvector by Lanczos method. An
 example of the file format for the Lanczos method is shown as follows.</div>
 <div class="line">For <code class="docutils literal"><span class="pre">method=&quot;Lanczos&quot;</span></code></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>LanczosStep  E[1] E[2] E[3] E[4] Target:E[3] E_Max/Nsite
+<div class="highlight-none"><div class="highlight"><pre>LanczosStep  E[1] E[2] E[3] E[4] Target:E[3] E_Max/Nsite
 stp = 2 1.2149586211 14.6560471044 xxxxxxxxxx xxxxxxxxx 0.0000000000 xxxxxxxxx
 stp=4 -5.6626980051 3.1523174817 12.4860778911 21.2322666770 12.4860778911 2.6540333346
 stp=6 -8.5113374325 -2.3219709559 4.3459108959 11.5079386600 4.3459108959 3.0307814358
@@ -69,7 +63,7 @@ stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.
 <div class="line-block">
 <div class="line">For <code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>  Step   Residual-2-norm     Threshold      Energy
+<div class="highlight-none"><div class="highlight"><pre>  Step   Residual-2-norm     Threshold      Energy
       1     6.79819e+00     8.19743e-07    7.86586e+00     8.19743e+00     8.02804e+00
       2     7.47402e+00     3.69905e-07    3.35827e+00     3.63546e+00     3.69905e+00
       3     5.30943e+00     2.44472e-07   -2.44472e+00    -2.23296e+00    -1.95487e+00
@@ -92,7 +86,7 @@ stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.
 <div class="section" id="file-format">
 <span id="file-format-28"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">For``method=”Lanczos”``</p>
+<li><p class="first">For``method=&#8221;Lanczos&#8221;``</p>
 <p>stp= [int01] [double01]
 [double02] [double03]
 [double04] [double-a]
@@ -101,7 +95,7 @@ stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.
 <li><p class="first">For <code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code></p>
 <p>[int01] [double-c]
 [double-d] [double01]
-[double02] …</p>
+[double02] ...</p>
 </li>
 </ul>
 </div>
@@ -114,7 +108,7 @@ stp=88 -10.4543987874 -9.8960493865 -9.7550111859 -9.7407358084 -9.7550111859 3.
 method.</p>
 </li>
 <li><p class="first">[double01], [double02],
-[double03], [double04] …</p>
+[double03], [double04] ...</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> Eigenvalues computed with the Lanczos or LOBCG
 method (ascending order). Four and <code class="docutils literal"><span class="pre">exct</span></code> eigenvalues are printed
@@ -155,7 +149,6 @@ absolute value of the energy of the ground state.</p>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -170,6 +163,11 @@ absolute value of the energy of the ground state.</p>
 
 
 
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
@@ -195,7 +193,7 @@ absolute value of the energy of the ground state.</p>
 <li class="toctree-l3"><a class="reference internal" href="sz_TimeKeeper_en.html">4.3.10. sz_TimeKeeper.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Time_CG_EigenVector_en.html">4.3.11. Time_CG_EigenVector.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="energy_en.html">4.3.12. energy.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.13. Lanczos_Step.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.13. Lanczos_Step.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Time_TPQ_Step_en.html">4.3.14. Time_TPQ_Step.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Norm_rand_en.html">4.3.15. Norm_rand.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="SS_rand_en.html">4.3.16. SS_rand.dat</a></li>
@@ -215,6 +213,7 @@ absolute value of the energy of the ground state.</p>
 <li class="toctree-l3"><a class="reference internal" href="recalcvec_en.html">4.3.30. recalcvec.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="TMcomponents_en.html">4.3.31. TMcomponents.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="excitedvec_en.html">4.3.32. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_en.html">4.3.33. residual.dat</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>
@@ -242,11 +241,14 @@ absolute value of the energy of the ground state.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -257,11 +259,11 @@ absolute value of the energy of the ground state.</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_en/Lanczos_Step_en.rst.txt"
+      <a href="../../_sources/filespecification/outputfiles_en/Lanczos_Step_en.txt"
           rel="nofollow">Page source</a>
     </div>
 

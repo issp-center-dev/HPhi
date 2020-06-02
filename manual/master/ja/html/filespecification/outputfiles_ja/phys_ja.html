@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.3.23. phys.dat &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>4.3.23. phys.dat &mdash; HΦ マニュアル  ドキュメント</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,34 +17,28 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="索引" href="../../genindex.html" />
-    <link rel="search" title="検索" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
+    <link rel="up" title="4.3. 出力ファイル" href="index_outputfiles_ja.html" />
     <link rel="next" title="4.3.24. ham.dat" href="ham_ja.html" />
     <link rel="prev" title="4.3.22. Eigenvalue.dat" href="Eigenvalue_ja.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="phys-dat">
@@ -52,7 +46,7 @@
 <div class="line-block">
 <div class="line">(FullDiagでのみ出力)全対角法で計算したエネルギーと物理量を出力します。エネルギーの低い基底エネルギーから順に出力されます。以下にファイル例を記載します。</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>&lt;H&gt;         &lt;N&gt;        &lt;Sz&gt;       &lt;S2&gt;       &lt;D&gt;
+<div class="highlight-none"><div class="highlight"><pre>&lt;H&gt;         &lt;N&gt;        &lt;Sz&gt;       &lt;S2&gt;       &lt;D&gt;
  -4.814170   0.000000   0.000000  -0.000000   0.590568
  -3.796850   0.000000   0.000000   1.333333   0.423804
 …
@@ -82,11 +76,11 @@
 <ul>
 <li><p class="first"><span class="math">\([\)</span>double01<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> エネルギーの期待値<span class="math">\(\langle H\rangle\)</span>。</p>
+<p><strong>説明 :</strong> ハミルトニアンの期待値(エネルギー)<span class="math">\(\langle \mathcal{H}\rangle\)</span>。</p>
 </li>
 <li><p class="first"><span class="math">\([\)</span>double02<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> 粒子数の期待値<span class="math">\(\langle \hat{n}\rangle\)</span>。</p>
+<p><strong>説明 :</strong> 粒子数の期待値<span class="math">\(\langle {n}\rangle\)</span>。</p>
 </li>
 <li><p class="first"><span class="math">\([\)</span>double03<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
@@ -100,7 +94,7 @@
 <p><strong>形式 :</strong> double型</p>
 <p><strong>説明 :</strong> ダブロン
 <span class="math">\(\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle\)</span>
-(ただし:math:<cite>N_s</cite>はサイト数)。</p>
+(ただし <span class="math">\(N_s\)</span>はサイト数)。</p>
 </li>
 </ul>
 </div>
@@ -108,7 +102,6 @@
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -124,10 +117,15 @@
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
@@ -158,7 +156,7 @@
 <li class="toctree-l3"><a class="reference internal" href="SS_ja.html">4.3.20. SS.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Flct_ja.html">4.3.21. Flct.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Eigenvalue_ja.html">4.3.22. Eigenvalue.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.23. phys.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.23. phys.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ham_ja.html">4.3.24. ham.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cisajs_ja.html">4.3.25. cisajs.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cisajscktalt_ja.html">4.3.26. cisajscktalt.dat</a></li>
@@ -168,6 +166,7 @@
 <li class="toctree-l3"><a class="reference internal" href="recalcvec_ja.html">4.3.30. recalcvec.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="TMcomponents_ja.html">4.3.31. TMcomponents.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="excitedvec_ja.html">4.3.32. excitedvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_ja.html">4.3.33. residual.dat</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
@@ -195,11 +194,14 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -210,11 +212,11 @@
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_ja/phys_ja.rst.txt"
+      <a href="../../_sources/filespecification/outputfiles_ja/phys_ja.txt"
           rel="nofollow">Page source</a>
     </div>
 

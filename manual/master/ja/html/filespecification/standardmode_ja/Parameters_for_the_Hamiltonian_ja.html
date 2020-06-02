@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.1.4. ハミルトニアンの各項の係数 &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>4.1.4. ハミルトニアンの各項の係数 &mdash; HΦ マニュアル  ドキュメント</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,34 +17,28 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="索引" href="../../genindex.html" />
-    <link rel="search" title="検索" href="../../search.html" />
-    <link rel="next" title="4.1.5. 計算条件のパラメーター" href="Parameters_for_the_numerical_condition.html" />
-    <link rel="prev" title="4.1.3. 保存量に関するパラメーター" href="Parameters_for_conserved_quantities_ja.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
+    <link rel="up" title="4.1. スタンダードモード用入力ファイル" href="index_standardmode_ja.html" />
+    <link rel="next" title="4.1.5. 計算条件のパラメータ" href="Parameters_for_the_numerical_condition.html" />
+    <link rel="prev" title="4.1.3. 保存量に関するパラメータ" href="Parameters_for_conserved_quantities_ja.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="id1">
@@ -94,9 +88,9 @@ Hubbardおよび近藤格子模型でのオンサイトクーロン積分を指�
 <p>下記の非局所項は、梯子格子の場合とそれ以外(１次元鎖、矩形格子、三角格子、蜂の巣格子、カゴメ格子)
 の場合で指定の仕方が異なります。
 また、各格子で指定可能なパラメーターを
-Table <a class="reference internal" href="#table-interactions"><span class="std std-numref">表 4.1</span></a> に表します。</p>
-<span id="table-interactions"></span><table border="1" class="docutils" id="id3">
-<caption><span class="caption-number">表 4.1 </span><span class="caption-text">各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。</span><a class="headerlink" href="#id3" title="このテーブルへのパーマリンク">¶</a></caption>
+Table <a class="reference internal" href="#table-interactions"><span>TABLE 4.1</span></a> に表します。</p>
+<table border="1" class="docutils" id="id3">
+<span id="table-interactions"></span><caption><span class="caption-number">TABLE 4.1 </span><span class="caption-text">各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。</span><a class="headerlink" href="#id3" title="このテーブルへのパーマリンク">¶</a></caption>
 <colgroup>
 <col width="14%" />
 <col width="14%" />
@@ -217,17 +211,17 @@ Table <a class="reference internal" href="#table-interactions"><span class="std 
 </table>
 </div>
 <div class="section" id="fig-ladder">
-<h2>非局所項 [ 梯子格子 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span class="std std-numref">図 4.4</span></a> )]<a class="headerlink" href="#fig-ladder" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2>非局所項 [ 梯子格子 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span>図 4.4</span></a> )]<a class="headerlink" href="#fig-ladder" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
 <li><p class="first"><code class="docutils literal"><span class="pre">t0</span></code>, <code class="docutils literal"><span class="pre">t1</span></code>, <code class="docutils literal"><span class="pre">t1'</span></code>, <code class="docutils literal"><span class="pre">t2</span></code>, <code class="docutils literal"><span class="pre">t2'</span></code></p>
 <p><strong>形式 :</strong> 複素数</p>
 <p><strong>説明 :</strong> 梯子格子でのホッピング
-(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span class="std std-numref">図 4.4</span></a> 参照)を指定します。</p>
+(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span>図 4.4</span></a> 参照)を指定します。</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">V0</span></code>, <code class="docutils literal"><span class="pre">V1</span></code>, <code class="docutils literal"><span class="pre">V1'</span></code>, <code class="docutils literal"><span class="pre">V2</span></code>, <code class="docutils literal"><span class="pre">V2'</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong> 梯子格子でのオフサイトクーロン積分
-(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span class="std std-numref">図 4.2</span></a> 参照)を指定します。</p>
+(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span>図 4.2</span></a> 参照)を指定します。</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">J0x</span></code>, <code class="docutils literal"><span class="pre">J0y</span></code>, <code class="docutils literal"><span class="pre">J0z</span></code>, <code class="docutils literal"><span class="pre">J0xy</span></code>, <code class="docutils literal"><span class="pre">J0yx</span></code>, <code class="docutils literal"><span class="pre">J0xz</span></code>, <code class="docutils literal"><span class="pre">J0zx</span></code>,
 <code class="docutils literal"><span class="pre">J0yz</span></code>, <code class="docutils literal"><span class="pre">J0zy</span></code></p>
@@ -244,7 +238,7 @@ Table <a class="reference internal" href="#table-interactions"><span class="std 
 <li><p class="first"><code class="docutils literal"><span class="pre">J2'x</span></code>, <code class="docutils literal"><span class="pre">J2'y</span></code>, <code class="docutils literal"><span class="pre">J2'z</span></code>, <code class="docutils literal"><span class="pre">J2'xy</span></code>, <code class="docutils literal"><span class="pre">J2'yx</span></code>, <code class="docutils literal"><span class="pre">J2'xz</span></code>,
 <code class="docutils literal"><span class="pre">J2'zx</span></code>, <code class="docutils literal"><span class="pre">J2'yz</span></code>, <code class="docutils literal"><span class="pre">J2'zy</span></code>.</p>
 <p><strong>形式 :</strong> 実数</p>
-<p><strong>説明 :</strong> 梯子格子でのスピン相互作用 (<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span class="std std-numref">図 4.4</span></a> 参照)
+<p><strong>説明 :</strong> 梯子格子でのスピン相互作用 (<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span>図 4.4</span></a> 参照)
 を指定します。
 また対角項について、例えば<code class="docutils literal"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>を指定する代わりに
 パラメータ<code class="docutils literal"><span class="pre">J0</span></code>を指定すると
@@ -255,7 +249,7 @@ Table <a class="reference internal" href="#table-interactions"><span class="std 
 </ul>
 </div>
 <div class="section" id="fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome">
-<h2>非局所項 [梯子格子以外 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-lattice"><span class="std std-numref">図 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span class="std std-numref">図 4.2</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-kagome"><span class="std std-numref">図 4.3</span></a> )]<a class="headerlink" href="#fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2>非局所項 [梯子格子以外 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-lattice"><span>図 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span>図 4.2</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-kagome"><span>図 4.3</span></a> )]<a class="headerlink" href="#fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
 <li><p class="first"><code class="docutils literal"><span class="pre">t</span></code>, <code class="docutils literal"><span class="pre">t0</span></code>, <code class="docutils literal"><span class="pre">t1</span></code>, <code class="docutils literal"><span class="pre">t2</span></code></p>
 <p><strong>形式 :</strong> 複素数</p>
@@ -404,7 +398,7 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 <code class="docutils literal"><span class="pre">J''</span></code>を指定した上で<code class="docutils literal"><span class="pre">J''x,</span> <span class="pre">J''y,</span> <span class="pre">J''z</span></code>も指定した場合は<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">phase0</span></code>, <code class="docutils literal"><span class="pre">phase1</span></code></p>
-<p><strong>形式 :</strong> 実数 (デフォルトでは``0.0``)</p>
+<p><strong>形式 :</strong> 実数 (デフォルトでは <code class="docutils literal"><span class="pre">0.0</span></code>)</p>
 <p><strong>説明 :</strong>
 計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます
 (単位: 度)。
@@ -412,9 +406,9 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 １次元系では<code class="docutils literal"><span class="pre">phase0</span></code>のみ使用できます。
 例えば、<span class="math">\(i\)</span>サイトから<span class="math">\(j\)</span>サイトへのホッピングで、
 正の方向に境界をまたいだ場合には次のようになります。</p>
-<div class="math" id="equation-filespecification/standardmode_ja/Parameters_for_the_Hamiltonian_ja:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-filespecification/standardmode_ja/Parameters_for_the_Hamiltonian_ja:0" title="この数式へのパーマリンク">¶</a></span>\[\exp(i \times {\rm phase0}\times\pi/180) \times t {\hat c}_{j \sigma}^\dagger {\hat c}_{i \sigma}
-+ \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {\hat c}_{i \sigma}^\dagger {\hat c}_{j \sigma}\]</div>
+<div class="math">
+\[\exp(i \times {\rm phase0}\times\pi/180) \times t {c}_{j \sigma}^\dagger {c}_{i \sigma}
++ \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {c}_{i \sigma}^\dagger {c}_{j \sigma}\]</div>
 </li>
 </ul>
 </div>
@@ -422,7 +416,6 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -438,23 +431,28 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメーター</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.4. ハミルトニアンの各項の係数</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメーター</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメーター</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.1.4. ハミルトニアンの各項の係数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメータ</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../expertmode_ja/index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a></li>
@@ -474,8 +472,8 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
   <li><a href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul>
-      <li>Previous: <a href="Parameters_for_conserved_quantities_ja.html" title="前の章へ">4.1.3. 保存量に関するパラメーター</a></li>
-      <li>Next: <a href="Parameters_for_the_numerical_condition.html" title="次の章へ">4.1.5. 計算条件のパラメーター</a></li>
+      <li>Previous: <a href="Parameters_for_conserved_quantities_ja.html" title="前の章へ">4.1.3. 保存量に関するパラメータ</a></li>
+      <li>Next: <a href="Parameters_for_the_numerical_condition.html" title="次の章へ">4.1.5. 計算条件のパラメータ</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -484,11 +482,14 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -499,11 +500,11 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_Hamiltonian_ja.rst.txt"
+      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_Hamiltonian_ja.txt"
           rel="nofollow">Page source</a>
     </div>
 

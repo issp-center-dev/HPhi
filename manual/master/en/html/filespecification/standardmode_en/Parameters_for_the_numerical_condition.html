@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.1.5. Parameters for the numerical condition &#8212; HΦ Documentation  documentation</title>
+    <title>4.1.5. Parameters for the numerical condition &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
+    <link rel="up" title="4.1. Input files for Standard mode" href="index_standardmode_en.html" />
     <link rel="next" title="4.1.6. Parameters for the dynamical Green’s function" href="Parameters_for_the_dynamical_Greens_function.html" />
     <link rel="prev" title="4.1.4. Parameters for the Hamiltonian" href="Parameters_for_the_Hamiltonian_en.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="parameters-for-the-numerical-condition">
@@ -64,7 +58,7 @@ after the calculation finishes, <code class="docutils literal"><span class="pre"
 calculation with the restart-file generated in the previous run,
 <code class="docutils literal"><span class="pre">&quot;Restart&quot;</span></code> for <code class="docutils literal"><span class="pre">&quot;Restart_out&quot;</span></code> + <code class="docutils literal"><span class="pre">&quot;Restart_in&quot;</span></code>.</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">anczos_max</span></code></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Positive integer (default value: <code class="docutils literal"><span class="pre">2000</span></code>)</p>
 <p><strong>Description :</strong> The upper limit of the Lanczos/LOBCG/BiCG step and
 the number of steps for TPQ/Time=evolution are specified with this
@@ -91,7 +85,7 @@ the random vector is used as the initial vector.</p>
 the random vector is used as the initial vector.</p>
 </li>
 </ul>
-<p>See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a> for details of setting an
+<p>See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span>Algorithm</span></a> for details of setting an
 initial vector.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">exct</span></code></p>
@@ -111,7 +105,7 @@ satisfied.</p>
 <p><strong>Description :</strong> The convergence criterion for the Lanczos method is
 specified with this parameter. If the difference between the old and
 the new target eigenvalue falls below
-<span class="math">\(10^{- LanczosEps|}\)</span>, the Lanczos step will finish. For
+<span class="math">\(10^{- {\tt LanczosEps}}\)</span>, the Lanczos step will finish. For
 <code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code>, we assume the calculation is converged when the
 2-norm of the residual vector becomes smaller than
 <span class="math">\(10^{-{\tt LanczosEps}/2}\)</span>.</p>
@@ -124,7 +118,7 @@ becomes the ground state.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double (the default value is provided below)</p>
-<p><strong>Description :</strong> (Only for TPQ) <span class="math">\(l\)</span> as <span class="math">\(l=\hat{\mathcal H}/N_{s}\)</span>
+<p><strong>Description :</strong> (Only for TPQ) <span class="math">\(l\)</span> as <span class="math">\(l-{\mathcal H}/N_{s}\)</span>
 is used in the TPQ calculation. Usually, the largest eigenvalue of
 the Hamiltonian is used as <span class="math">\(l\)</span>. Thus, the default value of
 <span class="math">\(l\)</span> is taken as the summation of the absolute values of each
@@ -157,7 +151,7 @@ is computed at all <span class="math">\(i, j, \sigma, \sigma'\)</span>, and
 is computed at all
 <span class="math">\(i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4\)</span>.</p>
 <p>In a spin system, the indices are specified as those of the
-Bogoliubov representation (see <a class="reference internal" href="../../algorithm/Bogoliubov_en.html#sec-sec-bogoliubov-rep"><span class="std std-ref">Bogoliubov representation</span></a> ).</p>
+Bogoliubov representation (see <a class="reference internal" href="../../algorithm/Bogoliubov_en.html#sec-sec-bogoliubov-rep"><span>Bogoliubov representation</span></a> ).</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">InitialVecType</span></code></p>
 <p><strong>Type :</strong> Character (choose from <code class="docutils literal"><span class="pre">&quot;C&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;R&quot;</span></code>. <code class="docutils literal"><span class="pre">&quot;C&quot;</span></code> as a
@@ -175,7 +169,7 @@ file and using it in the subsequent calculation (such as the Green’s
 function).</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">HamIO</span></code></p>
-<p><strong>Type :</strong> String (choose from <code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal"><span class="pre">In</span></code>.
+<p><strong>Type :</strong> String (choose from <code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;In&quot;</span></code>.
 <code class="docutils literal"><span class="pre">&quot;None&quot;</span></code> as a default)</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> (Only used in Full Diag mode)</div>
@@ -189,7 +183,7 @@ function).</p>
 <p><strong>Type :</strong> String (choose from <code class="docutils literal"><span class="pre">&quot;None&quot;</span></code> or <code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>.
 <code class="docutils literal"><span class="pre">&quot;None&quot;</span></code> as a default)</p>
 <div class="line-block">
-<div class="line"><strong>Description :</strong>  (Only used in the mode to calculate dynamical green’s functions)</div>
+<div class="line"><strong>Description :</strong>  (Only used in the mode to calculate dynamical green&#8217;s functions)</div>
 <div class="line">The mode to output the excited vector is specified.</div>
 <div class="line"><code class="docutils literal"><span class="pre">None</span></code>: not output the excited vector.</div>
 <div class="line"><code class="docutils literal"><span class="pre">Out</span></code>: output the excited vector.</div>
@@ -200,7 +194,6 @@ function).</p>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -216,6 +209,11 @@ function).</p>
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
@@ -230,7 +228,7 @@ function).</p>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_en.html">4.1.2. Parameters for the lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_en.html">4.1.3. Parameters for conserved quantities</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_en.html">4.1.4. Parameters for the Hamiltonian</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.5. Parameters for the numerical condition</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.1.5. Parameters for the numerical condition</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. Parameters for the dynamical Green’s function</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. Parameters for time-evolution</a></li>
 </ul>
@@ -262,11 +260,14 @@ function).</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -277,11 +278,11 @@ function).</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/standardmode_en/Parameters_for_the_numerical_condition.rst.txt"
+      <a href="../../_sources/filespecification/standardmode_en/Parameters_for_the_numerical_condition.txt"
           rel="nofollow">Page source</a>
     </div>
 

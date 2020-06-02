@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8.3. Input parameters for Standard mode &#8212; HΦ Documentation  documentation</title>
+    <title>8.3. Input parameters for Standard mode &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,59 +17,33 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="8. Downfolding with Wannier functions" href="index.html" />
     <link rel="next" title="8.4. File format" href="format.html" />
     <link rel="prev" title="8.2. Tutorial" href="tutorial.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="input-parameters-for-standard-mode">
 <h1>8.3. Input parameters for Standard mode<a class="headerlink" href="#input-parameters-for-standard-mode" title="Permalink to this headline">¶</a></h1>
 <p>We show the following example of the input file.</p>
-<p><a class="reference download internal" href="../_downloads/stan.in" download=""><code class="xref download docutils literal"><span class="pre">stan.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
-lattice = &quot;wannier90&quot;
-a0w = 2
-a0l = 0
-a0h = 2
-a1w = 0
-a1l = 2
-a1h = 2
-a2w = 1
-a2l = 0
-a2h = 0
-method = &quot;CG&quot;
-2Sz = 0
-nelec = 4
-exct = 1
-cutoff_t = 0.2
-cutoff_u = 0.4
-cutoff_j = 0.1
-</pre></div>
-</div>
+<p><code class="xref download docutils literal"><span class="pre">stan.in</span></code></p>
 <p>The input parameters for the Standard mode to perform calculation
 of the downfolded model are as follows:</p>
 <ul>
@@ -139,7 +113,7 @@ We ignore these integrals smaller than cutoff values.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">cutoff_JW</span></code>, <code class="docutils literal"><span class="pre">cutoff_JL</span></code>, <code class="docutils literal"><span class="pre">cutoff_JH</span></code></p>
 <p><strong>Type :</strong></p>
-<p><strong>Default :</strong>  <code class="docutils literal"><span class="pre">cutoff_tW</span> <span class="pre">=</span> <span class="pre">int((W-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tL=int((L-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tH=int((Height-1)/2)</span></code> and others are set to <code class="docutils literal"><span class="pre">0</span></code>.</p>
+<p><strong>Default :</strong>  <code class="docutils literal"><span class="pre">cutoff_tW</span> <span class="pre">=</span> <span class="pre">int((W-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tL=int((L-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tH=int((Height-1)/2)</span></code> (when <code class="docutils literal"><span class="pre">W</span></code> , <code class="docutils literal"><span class="pre">L</span></code> and <code class="docutils literal"><span class="pre">Height</span></code> are not defined, the values are set to 0) and others are set to <code class="docutils literal"><span class="pre">0</span></code>.</p>
 <p><strong>Description :</strong> The cutoff parameters for the hopping, Coulomb, exchange integrals.
 We ignore these integrals that have lattice vector <span class="math">\({\bf R}\)</span> larger than these values.</p>
 </li>
@@ -157,8 +131,8 @@ The distances are computed from the position of the Wannier center and  unit lat
 <p>To avoid double countings in analyzing the lattice model,
 one body correction is done by subtracting the following terms from one body terms:</p>
 <blockquote>
-<div><div class="math" id="equation-wannier/parameter:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-wannier/parameter:0" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+<div><div class="math">
+\[\begin{split}\begin{aligned}
 t_{mm}^{\rm DC}({\bf 0}) &amp;\equiv \alpha U_{mm}({\bf 0}) D_{mm}({\bf 0})
 + \sum_{({\bf R}, n) \neq ({\bf 0}, m)} U_{m n} ({\bf R})D_{nn}({\bf 0})\\
 &amp; - (1-\alpha) \sum_{({\bf R}, n) \neq ({\bf 0}, 0)} J_{m n}({\bf R}) D_{nn}({\bf R}),\\
@@ -198,7 +172,6 @@ It is noted that the charge densities are assumed not to depend on spin componen
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -213,6 +186,11 @@ It is noted that the charge densities are assumed not to depend on spin componen
 
 
 
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
@@ -229,7 +207,7 @@ It is noted that the charge densities are assumed not to depend on spin componen
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Downfolding with Wannier functions</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. Tutorial</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">8.3. Input parameters for Standard mode</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">8.3. Input parameters for Standard mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html">8.4. File format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
 </ul>
@@ -250,11 +228,14 @@ It is noted that the charge densities are assumed not to depend on spin componen
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -265,11 +246,11 @@ It is noted that the charge densities are assumed not to depend on spin componen
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/wannier/parameter.rst.txt"
+      <a href="../_sources/wannier/parameter.txt"
           rel="nofollow">Page source</a>
     </div>
 

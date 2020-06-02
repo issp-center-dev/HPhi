@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>5.3. Finite-temperature calculations by the TPQ method &#8212; HΦ Documentation  documentation</title>
+    <title>5.3. Finite-temperature calculations by the TPQ method &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="5. Algorithm" href="al-index.html" />
     <link rel="next" title="5.4. Dynamical Green’s function" href="DynamicalGreen_en.html" />
     <link rel="prev" title="5.2. Full Diagonalization method" href="FullDiagonalization_en.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="finite-temperature-calculations-by-the-tpq-method">
@@ -61,15 +55,15 @@ which offers the simplest method for calculating finite-temperature properties.<
 By operating <span class="math">\((l-\hat{\mathcal H }/N_{s})^{k}\)</span>(<span class="math">\(l\)</span> is constant and <span class="math">\(N_{s}\)</span> represents the number of sites)
 to <span class="math">\(|\psi_{0}\rangle\)</span>,
 we obtain the <span class="math">\(k\)</span>th TPQ states as</p>
-<div class="math" id="equation-algorithm/TPQ_en:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-algorithm/TPQ_en:0" title="Permalink to this equation">¶</a></span>\[|\psi_{k}\rangle \equiv \frac{(l-\hat{\mathcal H }/N_{s})|\psi_{k-1}\rangle}{|(l-\hat{\mathcal H }/N_{s})|\psi_{k-1}\rangle|}.\]</div>
+<div class="math">
+\[|\psi_{k}\rangle \equiv \frac{(l-\hat{\mathcal H }/N_{s})|\psi_{k-1}\rangle}{|(l-\hat{\mathcal H }/N_{s})|\psi_{k-1}\rangle|}.\]</div>
 <p>From <span class="math">\(|\psi_{k}\rangle\)</span>, we estimate the corresponding inverse temperature <span class="math">\(\beta_{k}\)</span> as</p>
-<div class="math" id="equation-algorithm/TPQ_en:1">
-<span class="eqno">(2)<a class="headerlink" href="#equation-algorithm/TPQ_en:1" title="Permalink to this equation">¶</a></span>\[\beta_{k}\sim \frac{2k/N_{s}}{l-u_{k}}, u_{k} = \langle \psi_{k}|\hat{\mathcal H }|\psi_{k}\rangle/N_{s},\]</div>
+<div class="math">
+\[\beta_{k}\sim \frac{2k/N_{s}}{l-u_{k}}, u_{k} = \langle \psi_{k}|\hat{\mathcal H }|\psi_{k}\rangle/N_{s},\]</div>
 <p>where <span class="math">\(u_{k}\)</span> is the internal energy.
 The arbitrary local physical properties at <span class="math">\(\beta_{k}\)</span> are also estimated as</p>
-<div class="math" id="equation-algorithm/TPQ_en:2">
-<span class="eqno">(3)<a class="headerlink" href="#equation-algorithm/TPQ_en:2" title="Permalink to this equation">¶</a></span>\[\langle \hat{A}\rangle_{\beta_{k}} =  \langle \psi_{k}|\hat{A}|\psi_{k}\rangle/N_{s}.\]</div>
+<div class="math">
+\[\langle \hat{A}\rangle_{\beta_{k}} =  \langle \psi_{k}|\hat{A}|\psi_{k}\rangle/N_{s}.\]</div>
 <p>In a finite-size system,
 error is caused by the choice of the initial random vector.
 To estimate the average value and error of the physical properties,
@@ -79,8 +73,8 @@ we perform some independent calculations by changing <span class="math">\(|\psi_
 <div class="section" id="initial-vector">
 <h3><strong>Initial vector</strong><a class="headerlink" href="#initial-vector" title="Permalink to this headline">¶</a></h3>
 <p>For the TPQ method, the initial vector is given by using a random generator, i.e., the coefficients of all the components for the initial vector are given by random numbers. The seed is calculated as</p>
-<div class="math" id="equation-algorithm/TPQ_en:3">
-<span class="eqno">(4)<a class="headerlink" href="#equation-algorithm/TPQ_en:3" title="Permalink to this equation">¶</a></span>\[123432+(n_{\rm run}+1)\times  |r_s|+k_{\rm Thread}+N_{\rm Thread} \times k_{\rm Process},\]</div>
+<div class="math">
+\[123432+(n_{\rm run}+1)\times  |r_s|+k_{\rm Thread}+N_{\rm Thread} \times k_{\rm Process},\]</div>
 <p>where <span class="math">\(r_s\)</span> is the number given by an input file and <span class="math">\(n_{\rm run}\)</span> is the number of runs. <span class="math">\(r_s\)</span> and the maximum value of <span class="math">\(n_{\rm run}\)</span> are defined by <code class="docutils literal"><span class="pre">initial_iv</span></code> and <code class="docutils literal"><span class="pre">NumAve</span></code> in an input file for Standard mode or a ModPara file for Expert mode, respectively. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT) <a class="footnote-reference" href="#id4" id="id2">[2]</a> . We can select the type of initial vector as a real number or complex number by using <code class="docutils literal"><span class="pre">InitialVecType</span></code> in a ModPara file.
 <span class="math">\(k_{\rm Thread}, N_{\rm Thread}, and k_{\rm Process}\)</span> indicate
 the thread ID, number of threads, process ID, respectively;
@@ -103,7 +97,6 @@ the initial vector depends both on <code class="docutils literal"><span class="p
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -119,6 +112,11 @@ the initial vector depends both on <code class="docutils literal"><span class="p
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
@@ -131,7 +129,7 @@ the initial vector depends both on <code class="docutils literal"><span class="p
 <li class="toctree-l1 current"><a class="reference internal" href="al-index.html">5. Algorithm</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Lanczos_en.html">5.1. Lanczos method</a></li>
 <li class="toctree-l2"><a class="reference internal" href="FullDiagonalization_en.html">5.2. Full Diagonalization method</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">5.3. Finite-temperature calculations by the TPQ method</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">5.3. Finite-temperature calculations by the TPQ method</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#details-of-implementation">5.3.1. Details of implementation</a></li>
 </ul>
 </li>
@@ -159,11 +157,14 @@ the initial vector depends both on <code class="docutils literal"><span class="p
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -174,11 +175,11 @@ the initial vector depends both on <code class="docutils literal"><span class="p
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/algorithm/TPQ_en.rst.txt"
+      <a href="../_sources/algorithm/TPQ_en.txt"
           rel="nofollow">Page source</a>
     </div>
 

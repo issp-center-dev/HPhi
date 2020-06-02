@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. What is \({\mathcal H}\Phi\)? &#8212; HΦ Documentation  documentation</title>
+    <title>1. What is \({\mathcal H}\Phi\)? &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,40 +17,33 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="index.html" />
     <link rel="next" title="2. How to use \({\mathcal H}\Phi\)" href="howtouse/ho-index.html" />
     <link rel="prev" title="Welcome to \({\mathcal H}\Phi\)‘s documentation!" href="index.html" />
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="what-is">
 <h1>1. What is <span class="math">\({\mathcal H}\Phi\)</span>?<a class="headerlink" href="#what-is" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>1.1. What is <span class="math">\({\mathcal H}\Phi\)</span>?<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Comparison between experimental observation and theoretical analysis is a crucial step in condensed-matter physics research. The temperature dependence of specific heat and magnetic susceptibility, for example, has been studied to extract the nature of low energy excitations of and magnetic interactions between electrons, respectively, through comparison with theories such as Landau’s Fermi liquid theory and the Curie-Weiss law.</p>
+<p>Comparison between experimental observation and theoretical analysis is a crucial step in condensed-matter physics research. The temperature dependence of specific heat and magnetic susceptibility, for example, has been studied to extract the nature of low energy excitations of and magnetic interactions between electrons, respectively, through comparison with theories such as Landau&#8217;s Fermi liquid theory and the Curie-Weiss law.</p>
 <p>For the flexible and quantitative comparison of theoretical and  experimental data, the exact diagonalization approach <a class="footnote-reference" href="#id9" id="id2">[1]</a> is one of the most reliable numerical tools that requires no approximation or inspiration of genius. For the last few decades, a numerical diagonalization package for quantum spin Hamiltonians, TITPACK, developed by Prof. Hidetoshi Nishimori of Tokyo Institute of Technology, has been widely used in the condensed-matter physics community. Nevertheless, limited computational resources have hindered the ability of non-expert users to apply the package to quantum systems with a large number of electrons or spins.</p>
 <p>In contrast, the recent and rapid development of a parallel computing infrastructure has opened up new avenues for user-friendly larger scale diagonalizations up to 18-site Hubbard clusters or 36 <span class="math">\(S=1/2\)</span> quantum spins. In addition, recent advances in quantum statistical mechanics <a class="footnote-reference" href="#id10" id="id3">[2]</a> <a class="footnote-reference" href="#id11" id="id4">[3]</a> <a class="footnote-reference" href="#id12" id="id5">[4]</a> <a class="footnote-reference" href="#id13" id="id6">[5]</a> allow the finite temperature properties of quantum many-body systems to be calculated at computational costs similar to those of the calculations of ground state properties, which also allows theoretical results for the temperature dependence of, for example, specific heat and magnetic susceptibility, to be compared with experimental results quantitatively <a class="footnote-reference" href="#id14" id="id7">[6]</a> . To utilize the parallel computing infrastructure with narrow bandwidth and distributed-memory architectures, efficient, user-friendly, and highly parallelized diagonalization packages are highly desirable.</p>
 <p><span class="math">\({\mathcal H}\Phi\)</span>, a flexible diagonalization package for solving quantum lattice Hamiltonians, has been developed as a descendant of the pioneering package TITPACK. The Lanczos method for calculations of the ground state and a few excited states properties, as well as finite temperature calculations based on thermal pure quantum states <a class="footnote-reference" href="#id13" id="id8">[5]</a> , are implemented in the <span class="math">\({\mathcal H}\Phi\)</span> package, with an easy-to-use and flexible user interface. By using <span class="math">\({\mathcal H}\Phi\)</span>, you can analyze a wide range of quantum lattice Hamiltonians including simple Hubbard and Heisenberg models, multi-band extensions of the Hubbard model, exchange couplings that break the SU(2) symmetry of quantum spins, such as Dzyaloshinskii-Moriya and Kitaev interactions, and Kondo lattice models describing itinerant electrons coupled with quantum spins. <span class="math">\({\mathcal H}\Phi\)</span> calculates a variety of physical quantities, such as internal energy at zero temperature or finite temperatures, temperature dependence of specific heat, and charge/spin structure factors. A broad spectrum of users including experimental scientists is cordially welcome.</p>
@@ -61,25 +54,18 @@
 <div class="section" id="copyright">
 <h3>1.1.2. Copyright<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h3>
 <p>© <em>2015- The University of Tokyo. All rights reserved.</em>
-This software was developed with the support of “<em>Project for advancement of software usability in materials science</em>” of The Institute for Solid State Physics, The University of Tokyo.</p>
+This software was developed with the support of &#8220;<em>Project for advancement of software usability in materials science</em>&#8221; of The Institute for Solid State Physics, The University of Tokyo.</p>
 </div>
 <div class="section" id="contributors">
 <h3>1.1.3. Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h3>
 <p>This software was developed by the following contributors.</p>
 <ul>
-<li><p class="first">ver.3.2 (released on 2019/4/27)</p>
-</li>
-<li><p class="first">ver.3.1 (released on 2018/9/3)</p>
+<li><p class="first">ver.3.4 (released on 2020/6/2)</p>
 <ul>
 <li><p class="first">Developers</p>
 <ul>
 <li><div class="first line-block">
-<div class="line">Takahiro Misawa</div>
-<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
-</div>
-</li>
-<li><div class="first line-block">
-<div class="line">Kazuyoshi Yoshimi</div>
+<div class="line">Kota Ido</div>
 <div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
 </div>
 </li>
@@ -89,8 +75,18 @@ This software was developed with the support of “<em>Project for advancement o
 </div>
 </li>
 <li><div class="first line-block">
-<div class="line">Kota Ido</div>
-<div class="line">(Department of Applied Physics, The University of Tokyo)</div>
+<div class="line">Yuichi Motoyama</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line">Kazuyoshi Yoshimi</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line">Takahiro Misawa</div>
+<div class="line">(Waseda Research Institute for Science and Engineering (RISE), Waseda University)</div>
 </div>
 </li>
 <li><div class="first line-block">
@@ -120,6 +116,12 @@ This software was developed with the support of “<em>Project for advancement o
 </ul>
 </li>
 </ul>
+</li>
+<li><p class="first">ver.3.3 (released on 2019/7/19)</p>
+</li>
+<li><p class="first">ver.3.2 (released on 2019/4/27)</p>
+</li>
+<li><p class="first">ver.3.1 (released on 2018/9/3)</p>
 </li>
 <li><p class="first">ver.3.0 (released on 2017/12/22)</p>
 <ul>
@@ -223,8 +225,8 @@ This software was developed with the support of “<em>Project for advancement o
 <h2>1.2. Operating environment<a class="headerlink" href="#operating-environment" title="Permalink to this headline">¶</a></h2>
 <p><span class="math">\({\mathcal H}\Phi\)</span> was tested on the following platforms</p>
 <ul class="simple">
-<li>The supercomputer system-B “sekirei” and system-C “enaga” in ISSP</li>
-<li>Fujitsu FX-10 and K computer</li>
+<li>The supercomputer system-B &#8220;sekirei&#8221; and system-C &#8220;enaga&#8221; in ISSP</li>
+<li>Fujitsu FX-10</li>
 <li>Linux PC + Intel compiler</li>
 <li>Linux PC + GCC.</li>
 <li>Mac + GCC.</li>
@@ -270,7 +272,6 @@ This software was developed with the support of “<em>Project for advancement o
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -286,12 +287,17 @@ This software was developed with the support of “<em>Project for advancement o
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">1.1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#license">1.1.1. License</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#copyright">1.1.2. Copyright</a></li>
@@ -314,7 +320,7 @@ This software was developed with the support of “<em>Project for advancement o
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to <span class="math">\({\mathcal H}\Phi\)</span>‘s documentation!</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to <span class="math">\({\mathcal H}\Phi\)</span>&#8216;s documentation!</a></li>
       <li>Next: <a href="howtouse/ho-index.html" title="next chapter">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
   </ul></li>
 </ul>
@@ -322,11 +328,14 @@ This software was developed with the support of “<em>Project for advancement o
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -337,11 +346,11 @@ This software was developed with the support of “<em>Project for advancement o
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="_sources/introduction_en.rst.txt"
+      <a href="_sources/introduction_en.txt"
           rel="nofollow">Page source</a>
     </div>
 

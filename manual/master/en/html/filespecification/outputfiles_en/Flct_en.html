@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.3.21. Flct.dat &#8212; HΦ Documentation  documentation</title>
+    <title>4.3.21. Flct.dat &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
+    <link rel="up" title="4.3. Output files" href="index_outputfiles_en.html" />
     <link rel="next" title="4.3.22. Eigenvalue.dat" href="Eigenvalue_en.html" />
     <link rel="prev" title="4.3.20. SS.dat" href="SS_en.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="flct-dat">
@@ -55,7 +49,7 @@ doublon, and <span class="math">\(S_z\)</span>. In the restart calculation, the 
 added to the previous file. An example of the file format is as
 follows.</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span> # time, N, N^2, D, D^2, Sz, Sz^2, step_i
+<div class="highlight-none"><div class="highlight"><pre> # time, N, N^2, D, D^2, Sz, Sz^2, step_i
 0.0000000000000000 7.9999999999999991 63.9999999999999929 ...
 0.0100000000000000 8.0000000000000604 64.0000000000004832 ...
 0.0200000000000000 8.0000000000000018 64.0000000000000142 ...
@@ -97,12 +91,12 @@ follows.</div>
 <li><p class="first">[double02]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> A total particle number
-<span class="math">\(\sum_{i} \langle \hat{n}_i \rangle\)</span>.</p>
+<span class="math">\(\sum_{i} \langle {n}_i \rangle\)</span>.</p>
 </li>
 <li><p class="first">[double03]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> The expected value of the square of the particle
-number <span class="math">\(\langle (\sum_{i} \hat{n}_i)^2 \rangle\)</span>.</p>
+number <span class="math">\(\langle (\sum_{i} {n}_i)^2 \rangle\)</span>.</p>
 </li>
 <li><p class="first">[double04]</p>
 <p><strong>Type :</strong> Double</p>
@@ -118,14 +112,14 @@ number <span class="math">\(\langle (\sum_{i} \hat{n}_i)^2 \rangle\)</span>.</p>
 </li>
 <li><p class="first">[double06]</p>
 <p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> The expected value of <span class="math">\(S_z\)</span>
-<span class="math">\(\frac{1}{N_s} \sum_{i}\langle \hat{S}_i^z\rangle\)</span> (<span class="math">\(N_s\)</span>
+<p><strong>Description :</strong> The expected value of <span class="math">\(S_z\)</span>,
+<span class="math">\(\frac{1}{N_s} \sum_{i}\langle {S}_i^z\rangle\)</span> (<span class="math">\(N_s\)</span>
 is the total number of sites).</p>
 </li>
 <li><p class="first">[double07]</p>
 <p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> The expected value of the square of <span class="math">\(S_z\)</span>
-<span class="math">\(\frac{1}{N_s} \langle (\sum_{i} \hat{S}_i^z)^2\rangle\)</span>
+<p><strong>Description :</strong> The expected value of the square of <span class="math">\(S_z\)</span>,
+<span class="math">\(\frac{1}{N_s} \langle (\sum_{i} {S}_i^z)^2\rangle\)</span>
 (<span class="math">\(N_s\)</span> is the total number of sites).</p>
 </li>
 <li><p class="first">[int01]</p>
@@ -138,7 +132,6 @@ is the total number of sites).</p>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -153,6 +146,11 @@ is the total number of sites).</p>
 
 
 
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
@@ -186,7 +184,7 @@ is the total number of sites).</p>
 <li class="toctree-l3"><a class="reference internal" href="Time_TE_Step_en.html">4.3.18. Time_TE_Step.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Norm_en.html">4.3.19. Norm.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="SS_en.html">4.3.20. SS.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.21. Flct.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.21. Flct.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Eigenvalue_en.html">4.3.22. Eigenvalue.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="phys_en.html">4.3.23. phys.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ham_en.html">4.3.24. ham.dat</a></li>
@@ -198,6 +196,7 @@ is the total number of sites).</p>
 <li class="toctree-l3"><a class="reference internal" href="recalcvec_en.html">4.3.30. recalcvec.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="TMcomponents_en.html">4.3.31. TMcomponents.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="excitedvec_en.html">4.3.32. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_en.html">4.3.33. residual.dat</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>
@@ -225,11 +224,14 @@ is the total number of sites).</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -240,11 +242,11 @@ is the total number of sites).</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_en/Flct_en.rst.txt"
+      <a href="../../_sources/filespecification/outputfiles_en/Flct_en.txt"
           rel="nofollow">Page source</a>
     </div>
 
