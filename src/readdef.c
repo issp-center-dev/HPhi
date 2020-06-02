@@ -64,7 +64,9 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "SpectrumVec",
   "Laser",
   "TEOneBody",
-  "TETwoBody"
+  "TETwoBody",
+  "ThreeBodyG",
+  "FourBodyG"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -719,6 +721,19 @@ int ReadDefFileNInt(
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &(X->NCisAjtCkuAlvDC));
             break;
+      case KWThreeBodyG:
+        /* Read cisajscktaltdc.def--------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NTBody));
+            break;
+      case KWFourBodyG:
+        /* Read cisajscktaltdc.def--------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NFBody));
+            break;
+ 
       case KWLaser:
         /* Read laser.def--------------------------------*/
         fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
@@ -990,8 +1005,8 @@ int ReadDefFileIdxPara(
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
-  int isite1, isite2, isite3, isite4;
-  int isigma1, isigma2, isigma3, isigma4;
+  int isite1, isite2, isite3, isite4,isite5,isite6,isite7,isite8;
+  int isigma1, isigma2, isigma3, isigma4,isigma5,isigma6,isigma7,isigma8;
   double dvalue_re, dvalue_im;
   double dArrayValue_re[3]; 
   int icnt_diagonal=0;
@@ -1495,6 +1510,132 @@ int ReadDefFileIdxPara(
         }
       }
       break;
+
+    case KWThreeBodyG:
+      /*cisajscktaltdc.def--------------------------------*/
+      if(X->NTBody>0){
+        while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NTBody){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
+          sscanf(ctmp2, "%d %d %d %d %d %d %d %d %d %d %d %d\n",
+                 &isite1,
+                 &isigma1,
+                 &isite2,
+                 &isigma2,
+                 &isite3,
+                 &isigma3,
+                 &isite4,
+                 &isigma4,
+                 &isite5,
+                 &isigma5,
+                 &isite6,
+                 &isigma6
+                 );
+          /*
+          if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
+            if(CheckFormatForSpinInt(isite1, isite2, isite3, isite4)!=0){
+                exitMPI(-1);
+              //X->NCisAjtCkuAlvDC--;
+              //continue;
+            }
+          }
+          */
+
+          X->TBody[idx][0]  = isite1;
+          X->TBody[idx][1]  = isigma1;
+          X->TBody[idx][2]  = isite2;
+          X->TBody[idx][3]  = isigma2;
+          X->TBody[idx][4]  = isite3;
+          X->TBody[idx][5]  = isigma3;
+          X->TBody[idx][6]  = isite4;
+          X->TBody[idx][7]  = isigma4;
+          X->TBody[idx][8]  = isite5;
+          X->TBody[idx][9]  = isigma5;
+          X->TBody[idx][10] = isite6;
+          X->TBody[idx][11] = isigma6;
+
+          /*
+          if(CheckQuadSite(isite1, isite2, isite3, isite4,X->Nsite) !=0){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          */
+          idx++;
+        }
+      }
+      break;
+
+      case KWFourBodyG:
+      /*cisajscktaltdc.def--------------------------------*/
+      if(X->NFBody>0){
+        while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NFBody){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
+          sscanf(ctmp2, "%d %d %d %d %d %d %d %d %d %d %d %d  %d %d %d %d\n",
+                 &isite1,
+                 &isigma1,
+                 &isite2,
+                 &isigma2,
+                 &isite3,
+                 &isigma3,
+                 &isite4,
+                 &isigma4,
+                 &isite5,
+                 &isigma5,
+                 &isite6,
+                 &isigma6,
+                 &isite7,
+                 &isigma7,
+                 &isite8,
+                 &isigma8
+                 );
+          /*
+          if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
+            if(CheckFormatForSpinInt(isite1, isite2, isite3, isite4)!=0){
+                exitMPI(-1);
+              //X->NCisAjtCkuAlvDC--;
+              //continue;
+            }
+          }
+          */
+
+          X->FBody[idx][0]  = isite1;
+          X->FBody[idx][1]  = isigma1;
+          X->FBody[idx][2]  = isite2;
+          X->FBody[idx][3]  = isigma2;
+          X->FBody[idx][4]  = isite3;
+          X->FBody[idx][5]  = isigma3;
+          X->FBody[idx][6]  = isite4;
+          X->FBody[idx][7]  = isigma4;
+          X->FBody[idx][8]  = isite5;
+          X->FBody[idx][9]  = isigma5;
+          X->FBody[idx][10] = isite6;
+          X->FBody[idx][11] = isigma6;
+          X->FBody[idx][12] = isite7;
+          X->FBody[idx][13] = isigma7;
+          X->FBody[idx][14] = isite8;
+          X->FBody[idx][15] = isigma8;
+          //printf("%d \n",isite8);
+
+          /*
+          if(CheckQuadSite(isite1, isite2, isite3, isite4,X->Nsite) !=0){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          */
+          idx++;
+        }
+      }
+      break;
+
+
+
 
       case KWLaser:
         //printf("KWLaser\n");
@@ -2561,6 +2702,8 @@ void InitializeInteractionNum
   X->NInterAll=0;
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
+  X->NTBody=0;
+  X->NFBody=0;
   X->NSingleExcitationOperator=0;
   X->NPairExcitationOperator=0;
   //[s] Time Evolution

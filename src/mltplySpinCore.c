@@ -380,6 +380,7 @@ double complex GC_pairlift_spin_element(
     return dam_pr;
   }
 }/*double complex GC_pairlift_spin_element*/
+
 //[s]Spin
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}@f$ term of 
@@ -444,8 +445,14 @@ double complex GC_CisAisCisAis_spin_element(
     dmv = tmp_v1[j] * tmp_sgn * tmp_V;
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
       tmp_v0[j] += dmv;
+      dam_pr = conj(tmp_v1[j]) * dmv;
+    }else if(X->Large.mode == H_CORR){
+      dam_pr = conj(tmp_v0[j]) * dmv;
+      //printf("j=%d tmp_v1=%lf tmp_V=%lf \n",j,creal(tmp_v1[j]),creal(tmp_V));
+      //printf("j=%d tmp_v0=%lf dmv=%lf \n",j,creal(tmp_v0[j]),creal(dmv));
+    }else{
+      dam_pr = conj(tmp_v1[j]) * dmv;
     }
-    dam_pr = conj(tmp_v1[j]) * dmv;
   }
   return dam_pr;
 }/*double complex GC_CisAisCisAis_spin_element*/
@@ -478,8 +485,12 @@ double complex GC_CisAisCitAiu_spin_element(
       dmv = tmp_v1[j] * tmp_sgn * tmp_V;
       if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
         tmp_v0[*tmp_off + 1] += dmv;
+        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
+      }else if(X->Large.mode == H_CORR){
+        dam_pr = conj(tmp_v0[*tmp_off+1]) * dmv;
+      }else{
+        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
       }
-      dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
     }/*if (tmp_sgn != 0)*/
   }/*if (tmp_sgn != 0)*/
   return dam_pr;
@@ -513,8 +524,12 @@ double complex GC_CisAitCiuAiu_spin_element(
       dmv = tmp_v1[j] * tmp_sgn * tmp_V;
       if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
         tmp_v0[*tmp_off + 1] += dmv;
+        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
+      }else if(X->Large.mode == H_CORR){
+        dam_pr = conj(tmp_v0[*tmp_off+1]) * dmv;
+      }else{
+        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
       }
-      dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
     }/*if (tmp_sgn != 0)*/
   }/*if (tmp_sgn != 0)*/
   return dam_pr;
@@ -549,8 +564,12 @@ double complex GC_CisAitCiuAiv_spin_element(
       dmv = tmp_v1[j] * tmp_sgn * tmp_V;
       if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
         tmp_v0[*tmp_off_2 + 1] += dmv;
+        dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
+      }else if(X->Large.mode == H_CORR){
+        dam_pr = conj(tmp_v0[*tmp_off_2+1]) * dmv;
+      }else{
+        dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
       }
-      dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
     }/*if (tmp_sgn != 0)*/
   }/*if (tmp_sgn != 0)*/
   return dam_pr;
