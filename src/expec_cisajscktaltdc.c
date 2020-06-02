@@ -152,11 +152,19 @@ int expec_cisajscktaltdc
   if(childfopenMPI(sdt, "w", &fp)!=0){
     return -1;
   }
-  if(childfopenMPI(sdt_2, "w", &fp_2)!=0){
-    return -1;
+  if(X->Def.NTBody>0){
+    if(childfopenMPI(sdt_2, "w", &fp_2)!=0){
+      return -1;
+    }
+  }else{
+    fp_2 = fp;
   }
-  if(childfopenMPI(sdt_3, "w", &fp_3)!=0){
-    return -1;
+  if(X->Def.NFBody>0){
+    if(childfopenMPI(sdt_3, "w", &fp_3)!=0){
+      return -1;
+    }
+  }else{
+    fp_3 = fp;
   }
 
   switch(X->Def.iCalcModel){
@@ -191,8 +199,12 @@ int expec_cisajscktaltdc
   }
   
   fclose(fp);
-  fclose(fp_2);
-  fclose(fp_3);
+  if(X->Def.NTBody>0){
+    fclose(fp_2);
+  }
+  if(X->Def.NFBody>0){
+    fclose(fp_3);
+  }
   
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){
@@ -863,8 +875,12 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
         info = expec_cisajscktalt_SpinGCHalf(X,vec, _fp);
-        info = expec_Threebody_SpinGCHalf(X,vec, _fp_2);
-        info = expec_Fourbody_SpinGCHalf(X,vec,_fp_3);
+        if(X->Def.NTBody>0){
+          info = expec_Threebody_SpinGCHalf(X,vec, _fp_2);
+        } 
+        if(X->Def.NFBody>0){
+          info = expec_Fourbody_SpinGCHalf(X,vec,_fp_3);
+        }
     } else {
         info=expec_cisajscktalt_SpinGCGeneral(X,vec, _fp);
     }
