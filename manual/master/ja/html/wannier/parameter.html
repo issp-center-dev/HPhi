@@ -44,7 +44,27 @@
   <div class="section" id="id1">
 <h1>8.3. スタンダードモードの入力パラメーター<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>以下に入力ファイルの例を示す.</p>
-<p><code class="xref download docutils literal"><span class="pre">stan.in</span></code></p>
+<p><a class="reference download internal" href="../_downloads/stan.in" download=""><code class="xref download docutils literal"><span class="pre">stan.in</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+lattice = &quot;wannier90&quot;
+a0w = 2
+a0l = 0
+a0h = 2
+a1w = 0
+a1l = 2
+a1h = 2
+a2w = 1
+a2l = 0
+a2h = 0
+method = &quot;CG&quot;
+2Sz = 0
+nelec = 4
+exct = 1
+cutoff_t = 0.2
+cutoff_u = 0.4
+cutoff_j = 0.1
+</pre></div>
+</div>
 <p>Wannier関数を用いたダウンフォールディングに特有のパラメーター設定は次の通りである.</p>
 <ul>
 <li><p class="first">格子</p>
