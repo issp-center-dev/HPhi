@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8.3. スタンダードモードの入力パラメーター &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>8.3. スタンダードモードの入力パラメーター &mdash; HΦ マニュアル  ドキュメント</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,60 +17,34 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../index.html" />
+    <link rel="up" title="8. Wannier関数を用いたダウンフォールディング" href="index.html" />
     <link rel="next" title="8.4. ファイルフォーマット" href="format.html" />
     <link rel="prev" title="8.2. チュートリアル" href="tutorial.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="id1">
 <h1>8.3. スタンダードモードの入力パラメーター<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>以下に入力ファイルの例を示す.</p>
-<p><a class="reference download internal" href="../_downloads/stan.in" download=""><code class="xref download docutils literal"><span class="pre">stan.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
-lattice = &quot;wannier90&quot;
-a0w = 2
-a0l = 0
-a0h = 2
-a1w = 0
-a1l = 2
-a1h = 2
-a2w = 1
-a2l = 0
-a2h = 0
-method = &quot;CG&quot;
-2Sz = 0
-nelec = 4
-exct = 1
-cutoff_t = 0.2
-cutoff_u = 0.4
-cutoff_j = 0.1
-</pre></div>
-</div>
+<p><code class="xref download docutils literal"><span class="pre">stan.in</span></code></p>
 <p>Wannier関数を用いたダウンフォールディングに特有のパラメーター設定は次の通りである.</p>
 <ul>
 <li><p class="first">格子</p>
@@ -149,7 +123,7 @@ mVMC でのみ利用可能.
 <li><p class="first"><code class="docutils literal"><span class="pre">cutoff_JW</span></code>, <code class="docutils literal"><span class="pre">cutoff_JL</span></code>, <code class="docutils literal"><span class="pre">cutoff_JH</span></code></p>
 <blockquote>
 <div><p><strong>形式 :</strong> 整数.</p>
-<p><strong>デフォルト値 :</strong> <code class="docutils literal"><span class="pre">cutoff_tW</span> <span class="pre">=</span> <span class="pre">int((W-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tL=int((L-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tH=int((Height-1)/2)</span></code> に指定される. それ以外は0.</p>
+<p><strong>デフォルト値 :</strong> <code class="docutils literal"><span class="pre">cutoff_tW</span> <span class="pre">=</span> <span class="pre">int((W-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tL=int((L-1)/2)</span></code>, <code class="docutils literal"><span class="pre">cutoff_tH=int((Height-1)/2)</span></code> に指定される(ただし, <code class="docutils literal"><span class="pre">W</span></code>, <code class="docutils literal"><span class="pre">L</span></code>, <code class="docutils literal"><span class="pre">Height</span></code> が指定されていない場合は0). それ以外は0.</p>
 <p>ホッピング, Coulomb積分, 交換積分に対して,
 これらの値を越える並進ベクトル <span class="math">\({\bf R}\)</span> を持つものを無視するようにする.</p>
 </div></blockquote>
@@ -167,8 +141,8 @@ mVMC でのみ利用可能.
 <li><p class="first">一体補正に関するパラメータ</p>
 <p>一体補正では一体項に対して下記の項を差し引くことで、模型を解く際のダブルカウンティングを避けることが可能となる.</p>
 <blockquote>
-<div><div class="math" id="equation-wannier/parameter:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-wannier/parameter:0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+<div><div class="math">
+\[\begin{split}\begin{aligned}
 t_{mm}^{\rm DC}({\bf 0}) &amp;\equiv \alpha U_{mm}({\bf 0}) D_{mm}({\bf 0})
 + \sum_{({\bf R}, n) \neq ({\bf 0}, m)} U_{m n} ({\bf R})D_{nn}({\bf 0})\\
 &amp; - (1-\alpha) \sum_{({\bf R}, n) \neq ({\bf 0}, 0)} J_{m n}({\bf R}) D_{nn}({\bf R}),\\
@@ -205,7 +179,6 @@ D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -221,10 +194,15 @@ D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
@@ -236,7 +214,7 @@ D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. 概要</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. チュートリアル</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">8.3. スタンダードモードの入力パラメーター</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">8.3. スタンダードモードの入力パラメーター</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html">8.4. ファイルフォーマット</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
 </ul>
@@ -257,11 +235,14 @@ D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -272,11 +253,11 @@ D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/wannier/parameter.rst.txt"
+      <a href="../_sources/wannier/parameter.txt"
           rel="nofollow">Page source</a>
     </div>
 

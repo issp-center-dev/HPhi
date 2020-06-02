@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to \({\mathcal H}\Phi\)‘s tutorial! &mdash; HΦ Tutorial  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Tutorial  documentation" href="#" />
+    <link rel="next" title="1. Tutorial for calculations at zero temperature" href="zero_temperature/index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-s-tutorial">
+<h1>Welcome to <span class="math">\({\mathcal H}\Phi\)</span>&#8216;s tutorial!<a class="headerlink" href="#welcome-to-s-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="about">
+<h2>About <span class="math">\({\mathcal H}\Phi\)</span><a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<p>A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins. The Lanczos algorithm for finding ground states and newly developed Lanczos-based algorithm for finite-temperature properties of these models are implemented for parallel computing. A broad spectrum of users including experimental researchers is cordially welcome.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>This package is distributed under GNU General Public License version 3 (GPL v3) or later.</p>
+<p>We kindly ask you to cite the article</p>
+<p>Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji, Synge Todo, and Naoki Kawashima</p>
+<blockquote>
+<div><a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0010465517301200">Comp. Phys. Commun. 217 (2017) 180-192</a>.</div></blockquote>
+<p>in publications that include results obtained using this software.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="zero_temperature/index.html">1. Tutorial for calculations at zero temperature</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="zero_temperature/spin_dimer.html">1.1. Spin 1/2 Dimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_dimer.html#check-the-energy">1.1.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_dimer.html#check-s-dependence">1.1.2. Check S dependence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_dimer.html#add-magnetic-field-h">1.1.3. Add magnetic field H</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_dimer.html#try-to-use-lanczos-method">1.1.4. Try to use Lanczos method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_dimer.html#try-to-use-lobcg-method">1.1.5. Try to use LOBCG method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="zero_temperature/hubbard_dimer.html">1.2. Hubbard Dimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/hubbard_dimer.html#check-the-energy">1.2.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/hubbard_dimer.html#try-to-use-lobcg-method">1.2.2. Try to use LOBCG method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="zero_temperature/hubbard_trimer.html">1.3. Hubbard Trimer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/hubbard_trimer.html#ferromagnetic-ground-state">1.3.1. Ferromagnetic ground state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/hubbard_trimer.html#effects-of-transfer-integrals">1.3.2. Effects of transfer integrals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="zero_temperature/spin_chain.html">1.4. Heisenberg chain (zero temperature)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_chain.html#check-the-energy">1.4.1. Check the energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_chain.html#obtaining-the-excited-state">1.4.2. Obtaining the excited state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_chain.html#size-dependence-of-the-spin-gap">1.4.3. Size dependence of the spin gap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/spin_chain.html#haldane-gap">1.4.4. Haldane gap</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="zero_temperature/J1J2.html">1.5. J1-J2 Heisenberg model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/J1J2.html#calculations-of-spin-structure-factors-for-ground-state">1.5.1. Calculations of spin structure factors for ground state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/J1J2.html#calculations-of-spin-structure-factors-for-excited-states">1.5.2. Calculations of spin structure factors for excited states</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="zero_temperature/expert.html">1.6. How to use Expert mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/expert.html#exercise">1.6.1. Exercise</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="zero_temperature/vector.html">1.7. Use eigenvectors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero_temperature/vector.html#exercise">1.7.1. Exercise</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="finite_temperature/index.html">2. Tutorial for finite-temperature calculations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="finite_temperature/spin_chain.html">2.1. Heisenberg chain (finite temperatures)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="finite_temperature/spin_chain.html#full-diagonalization">2.1.1. Full diagonalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="finite_temperature/spin_chain.html#tpq-method-sz-0">2.1.2. TPQ method (Sz=0)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="finite_temperature/spin_chain.html#tpq-method-susceptibility">2.1.3. TPQ method (susceptibility)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="finite_temperature/Kitaev.html">2.2. Kitaev cluster (finite temperatures)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="finite_temperature/Kitaev.html#lattice-structure-and-eigen-states-of-the-kitaev-cluster">2.2.1. Lattice structure and eigen states of the Kitaev cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="finite_temperature/Kitaev.html#convergence-of-the-microcanonical-tpq">2.2.2. Convergence of the microcanonical TPQ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="time_evolution/index.html">3. Tutorials for real-time evolution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="time_evolution/Uquench.html">3.1. U quench in Hubbard model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="time_evolution/Uquench.html#check-norm-and-energy">3.1.1. Check norm and energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="time_evolution/Uquench.html#dynamics-of-double-occupation">3.1.2. Dynamics of double occupation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="time_evolution/transverse_ising.html">3.2. Dynamical phase transition in 1D transverse-field Ising model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="time_evolution/transverse_ising.html#ground-state">3.2.1. Ground state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="time_evolution/transverse_ising.html#quench">3.2.2. <span class="math">\(\Gamma\)</span> quench</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamical/index.html">4. Tutorial for calculations of dynamical properties</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dynamical/spectrum.html">4.1. Dynamical spin structure factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamical/optical_conductivity.html">4.2. Hubbard chain (optical conductivity)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamical/sqomega.html">4.3. Spectrum calculation for 12-site one-dimeinsional Heisenberg chain model.</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="#">
+    <img class="logo" src="_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="zero_temperature/index.html">1. Tutorial for calculations at zero temperature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="finite_temperature/index.html">2. Tutorial for finite-temperature calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_evolution/index.html">3. Tutorials for real-time evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamical/index.html">4. Tutorial for calculations of dynamical properties</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="zero_temperature/index.html" title="next chapter">1. Tutorial for calculations at zero temperature</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020-, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/index.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

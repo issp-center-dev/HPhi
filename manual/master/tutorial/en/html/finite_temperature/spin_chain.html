@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1. Heisenberg chain (finite temperatures) &mdash; HΦ Tutorial  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Tutorial  documentation" href="../index.html" />
+    <link rel="up" title="2. Tutorial for finite-temperature calculations" href="index.html" />
+    <link rel="next" title="2.2. Kitaev cluster (finite temperatures)" href="Kitaev.html" />
+    <link rel="prev" title="2. Tutorial for finite-temperature calculations" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="heisenberg-chain-finite-temperatures">
+<h1>2.1. Heisenberg chain (finite temperatures)<a class="headerlink" href="#heisenberg-chain-finite-temperatures" title="Permalink to this headline">¶</a></h1>
+<p>Here, we study the finite-temperature
+properties of spin 1/2 Heisenberg model on the chain.</p>
+<div class="math">
+\[H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}\]</div>
+<p>The input file (<code class="docutils literal"><span class="pre">samples/tutorial_2.1/stan1.in</span></code>) for 12-site Heisenberg model is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L       = 12
+model   = &quot;Spin&quot;
+method  = &quot;FullDiag&quot;
+lattice = &quot;chain&quot;
+J = 1
+2Sz = 0
+2S  = 1
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+</pre></div>
+</div>
+<div class="section" id="full-diagonalization">
+<h2>2.1.1. Full diagonalization<a class="headerlink" href="#full-diagonalization" title="Permalink to this headline">¶</a></h2>
+<p>After executing the full diagonalization,
+all the eigen energies are output in <strong>output/Eiegenvalue.dat</strong>.
+By using the python script <strong>(``samples/tutorial_2.1/Finite.py``)</strong>,
+you can obtain the temperature dependence of the energy and the specific heat.</p>
+<p>You can execute <strong>Finite.py</strong> as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>python3 Finite.py
+</pre></div>
+</div>
+<p>Then, you can obtain <strong>FullDiag.dat</strong> as follows</p>
+<div class="highlight-none"><div class="highlight"><pre>0.000100  -5.3873909174000003    0.0000000000000000
+0.000150  -5.3873909174000003    0.0000000000000000
+0.000200  -5.3873909174000003    0.0000000000000000
+0.000250  -5.3873909174000003    0.0000000000000000
+0.000300  -5.3873909174000003    0.0000000000000000
+</pre></div>
+</div>
+<p>The 1st row represents temperature, 2nd row represents the energy, and
+the 3rd row represents the specific heat defined
+by <span class="math">\(C=(\langle E^2 \rangle-\langle E \rangle^2)/T^2\)</span>.</p>
+</div>
+<div class="section" id="tpq-method-sz-0">
+<h2>2.1.2. TPQ method (Sz=0)<a class="headerlink" href="#tpq-method-sz-0" title="Permalink to this headline">¶</a></h2>
+<p>By selecting method as &#8220;TPQ&#8221;,
+you can perform the finite-temperature calculations using the TPQ method.</p>
+<p>The input file (<code class="docutils literal"><span class="pre">samples/tutorial_2.1/stan2.in</span></code>) for 12-site Heisenberg model is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L       = 12
+model   = &quot;Spin&quot;
+method  = &quot;TPQ&quot;
+lattice = &quot;chain&quot;
+J = 1
+2Sz = 0
+2S  = 1
+</pre></div>
+</div>
+<p>After performing the TPQ calculations,
+results are output in <strong>output/SS_rand*.dat</strong>.
+By using the python script <strong>(``samples/tutorial_2.1/AveSSrand.py``)</strong>,
+you can obtain the temperature dependence of
+physical quantities such as the energy and the specific heat.</p>
+<p>Then, you can obtain <strong>ave_TPQ.dat</strong> as follows</p>
+<div class="highlight-none"><div class="highlight"><pre># temperature T    err of T  Energy E    error of E  specific heat C  err of C
+30.17747           0.02022   -0.35489    0.04044     0.00264          8.1126-05
+15.10875           0.01016   -0.43500    0.04065     0.01068          0.0003182
+10.08598           0.00681   -0.51592    0.04086     0.02423          0.0007030
+7.574693           0.00513   -0.59754    0.04106     0.04335          0.0012311
+6.067978           0.00412   -0.67978    0.04123     0.06808          0.0019053
+</pre></div>
+</div>
+<p>Using gnuplot, you can directly compare the two results</p>
+<div class="highlight-none"><div class="highlight"><pre>plot &quot;FullDiag.dat&quot; u 1:2 w l,&quot;ave_TPQ.dat&quot; u 1:3:4 w e
+</pre></div>
+</div>
+<p>You can see the following output image.</p>
+<img alt="../_images/finiteT.png" class="align-center" src="../_images/finiteT.png" />
+</div>
+<div class="section" id="tpq-method-susceptibility">
+<h2>2.1.3. TPQ method (susceptibility)<a class="headerlink" href="#tpq-method-susceptibility" title="Permalink to this headline">¶</a></h2>
+<p>By using the TPQ method, it is also possible
+to calculate the spin susceptibility by performing
+the calculations for all Sz sectors.</p>
+<p>The input file (<code class="docutils literal"><span class="pre">samples/tutorial_2.1/stan3.in</span></code>) for 12-site Heisenberg model is as follows:</p>
+<div class="highlight-none"><div class="highlight"><pre>L       = 12
+model   = &quot;SpinGC&quot;
+method  = &quot;TPQ&quot;
+lattice = &quot;chain&quot;
+J = 1
+2S  = 1
+</pre></div>
+</div>
+<p>Here, note that &#8220;model = Spin&#8221; is changed to &#8220;model = SpinGC&#8221; and
+&#8220;Sz = 0&#8221; is omitted.</p>
+<p>After performing the TPQ calculations,
+temperature dependence of several physical
+quantities such as number of particel N and total Sz are output in <strong>output/Flct_rand*.dat</strong>.
+By using the python script <strong>(``samples/tutorial_2.1/AveFlct.py``)</strong>,
+you can obtain the temperature dependence of
+physical quantities such as the energy and the spin susceptibility <span class="math">\(\chi\)</span>.
+Note that <span class="math">\(\chi\)</span> is defined as</p>
+<div class="math">
+\[\begin{split}&amp;\chi = \frac{\langle m_z^2\rangle-\langle m_z\rangle^2}{T} \\
+&amp;m_z = \sum_{i} S_{i}^{z}.\end{split}\]</div>
+<p>Then, you can obtain <strong>ave_Flct.dat</strong> as follows</p>
+<div class="highlight-none"><div class="highlight"><pre># temperature T    err of T  m_z         error of m_z susceptibility chi  err of chi
+13.5876            0.00695   -0.00688    0.00955      0.21243             0.00184
+6.83615            0.00373   -0.00783    0.01067      0.40632             0.00414
+4.58603            0.00278   -0.00894    0.01251      0.58234             0.00694
+3.46113            0.00239   -0.01023    0.01474      0.74129             0.01021
+2.78624            0.00220   -0.01171    0.01713      0.88407             0.01383
+</pre></div>
+</div>
+<p>Using gnuplot, you can see the temperature dependence of <span class="math">\(\chi\)</span></p>
+<div class="highlight-none"><div class="highlight"><pre>se log x
+se colors classic
+se xlabel &quot;T/J&quot;
+se ylabel &quot;chi&quot;
+plot    &quot;ave_Flct.dat&quot;   u 1:5:6 w e lc rgb &quot;#FFBBBB&quot; ps 1 pt 6,\
+        &quot;ave_Flct.dat&quot;   u 1:5 w lp lt 1 ps 1 pt 6
+</pre></div>
+</div>
+<p>You can see the following output image.</p>
+<img alt="../_images/chi.png" class="align-center" src="../_images/chi.png" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../zero_temperature/index.html">1. Tutorial for calculations at zero temperature</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Tutorial for finite-temperature calculations</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">2.1. Heisenberg chain (finite temperatures)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#full-diagonalization">2.1.1. Full diagonalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tpq-method-sz-0">2.1.2. TPQ method (Sz=0)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tpq-method-susceptibility">2.1.3. TPQ method (susceptibility)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Kitaev.html">2.2. Kitaev cluster (finite temperatures)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../time_evolution/index.html">3. Tutorials for real-time evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dynamical/index.html">4. Tutorial for calculations of dynamical properties</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">2. Tutorial for finite-temperature calculations</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">2. Tutorial for finite-temperature calculations</a></li>
+      <li>Next: <a href="Kitaev.html" title="next chapter">2.2. Kitaev cluster (finite temperatures)</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020-, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/finite_temperature/spin_chain.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

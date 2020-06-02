@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.2.1. List file for the input files &#8212; HΦ Documentation  documentation</title>
+    <title>4.2.1. List file for the input files &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,45 +17,39 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
+    <link rel="up" title="4.2. Input files for Expert mode" href="index_expertmode_en.html" />
     <link rel="next" title="4.2.2. CalcMod file" href="CalcMod_file_en.html" />
     <link rel="prev" title="4.2. Input files for Expert mode" href="index_expertmode_en.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="list-file-for-the-input-files">
 <span id="subsec-inputfilelist"></span><h1>4.2.1. List file for the input files<a class="headerlink" href="#list-file-for-the-input-files" title="Permalink to this headline">¶</a></h1>
 <p>This file determines the input filenames, which are correlated with the keywords. The file format is as follows.</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>CalcMod  calcmod.def
+<div class="highlight-none"><div class="highlight"><pre>CalcMod  calcmod.def
 ModPara  modpara.def
 LocSpin  zlocspn.def
 Trans    ztransfer.def
 InterAll zinterall.def
 OneBodyG zcisajs.def
-TwoBodyG    zcisajscktaltdc.def
+TwoBodyG zcisajscktaltdc.def
 </pre></div>
 </div>
 <div class="section" id="file-format">
@@ -81,15 +75,15 @@ keywords.</p>
 <ul class="simple">
 <li>After setting keywords at [string01], the half-width state is needed
 for writing a filename. You can set the filename freely.</li>
-<li>Keywords for input files are shown in <a class="reference internal" href="#table-4-2"><span class="std std-numref">Table 4.2</span></a></li>
-<li>Essential keywords are “CalcMod”, “ModPara”, and “LocSpin”.</li>
+<li>Keywords for input files are shown in <a class="reference internal" href="#table-4-2"><span>Table 4.2</span></a></li>
+<li>Essential keywords are “CalcMod&#8221;, “ModPara&#8221;, and “LocSpin&#8221;.</li>
 <li>Keywords can be set in random order.</li>
 <li>If the keywords or filenames are incorrect, the program is
 terminated.</li>
-<li>When the head of a line is “#”, the line is skipped.</li>
+<li>When the head of a line is &#8220;#&#8221;, the line is skipped.</li>
 </ul>
-<span id="table-4-2"></span><table border="1" class="colwidths-given docutils" id="id1">
-<caption><span class="caption-number">Table 4.2 </span><span class="caption-text">List of the definition files</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<table border="1" class="docutils" id="id1">
+<span id="table-4-2"></span><caption><span class="caption-number">Table 4.2 </span><span class="caption-text">List of the definition files</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col width="17%" />
 <col width="83%" />
@@ -134,7 +128,7 @@ terminated.</li>
 <td>Ising interactions</td>
 </tr>
 <tr class="row-odd"><td>PairLift</td>
-<td>Pair lift couplings.</td>
+<td>Pair lift couplings</td>
 </tr>
 <tr class="row-even"><td>OneBodyG</td>
 <td>Output components for one-body Green’s functions <span class="math">\(\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle\)</span></td>
@@ -151,6 +145,12 @@ terminated.</li>
 <tr class="row-even"><td>SpectrumVec</td>
 <td>An input vector to calculate a restart vector</td>
 </tr>
+<tr class="row-odd"><td>OneBodyTE</td>
+<td>Time-dependent transfer integrals</td>
+</tr>
+<tr class="row-even"><td>TwoBodyTE</td>
+<td>Time-dependent two-body interactions</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -158,7 +158,6 @@ terminated.</li>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -174,6 +173,11 @@ terminated.</li>
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
@@ -185,7 +189,7 @@ terminated.</li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.2.1. List file for the input files</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.2.1. List file for the input files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CalcMod_file_en.html">4.2.2. CalcMod file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ModPara_file_en.html">4.2.3. ModPara file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="LocSpin_file_en.html">4.2.4. LocSpin file</a></li>
@@ -233,11 +237,14 @@ terminated.</li>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -248,11 +255,11 @@ terminated.</li>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/expertmode_en/List_file_for_the_input_files_en.rst.txt"
+      <a href="../../_sources/filespecification/expertmode_en/List_file_for_the_input_files_en.txt"
           rel="nofollow">Page source</a>
     </div>
 

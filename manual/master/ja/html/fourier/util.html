@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>7.4. greenr2k ユーティリティの動作について &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>7.4. greenr2k ユーティリティの動作について &mdash; HΦ マニュアル  ドキュメント</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,45 +17,39 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../index.html" />
+    <link rel="up" title="7. 相関関数のFourier変換ユーティリティー" href="index.html" />
     <link rel="next" title="7.5. Contact" href="contact.html" />
     <link rel="prev" title="7.3. ファイルフォーマット" href="format.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="greenr2k">
 <h1>7.4. <code class="docutils literal"><span class="pre">greenr2k</span></code> ユーティリティの動作について<a class="headerlink" href="#greenr2k" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>このユーティリティーは, 次のようにして使う.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="si">${</span><span class="nv">PATH</span><span class="si">}</span>/greenr2k <span class="si">${</span><span class="nv">NAMELIST</span><span class="si">}</span> <span class="si">${</span><span class="nv">GEOMETRY</span><span class="si">}</span>
+<div class="highlight-bash"><div class="highlight"><pre>$ <span class="si">${</span><span class="nv">PATH</span><span class="si">}</span>/greenr2k <span class="si">${</span><span class="nv">NAMELIST</span><span class="si">}</span> <span class="si">${</span><span class="nv">GEOMETRY</span><span class="si">}</span>
 </pre></div>
 </div>
 <p>ここで, <code class="docutils literal"><span class="pre">${PATH}</span></code> は <code class="docutils literal"><span class="pre">fourier</span></code> ユーティリティのバイナリのあるディレクトリのパス,
 ${NAMELIST}は <span class="math">\({\mathcal H}\Phi\)</span>/mVMC の NameList インプットファイル名,
-${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span class="std std-ref">サイトの位置と軌道のインデックス, k 点</span></a> ファイルへのパスである.</p>
+${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span>サイトの位置と軌道のインデックス, k 点</span></a> ファイルへのパスである.</p>
 <p><span class="math">\({\mathcal H}\Phi\)</span> の各モード
 (Lanczos, TPQ, 全対角化, LOBCG)および mVMC のどの計算で得られた
 相関関数のFourier変換を行うかによって, 動作が若干異なる.
@@ -96,13 +90,13 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 <code class="docutils literal"><span class="pre">fourier</span></code> ユーティリティーはそれらのファイルを読み込み,
 各試行に対してFourier変換を行った後,
 それらの実部, 虚部ごとに平均値</p>
-<div class="math" id="equation-fourier/util:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-fourier/util:0" title="この数式へのパーマリンク">¶</a></span>\[\begin{align}
+<div class="math">
+\[\begin{align}
 \langle A \rangle = \frac{1}{N_{\rm Try}} \sum_{i=1}^{N_{\rm Try}} A_i
 \end{align}\]</div>
 <p>および標準誤差</p>
-<div class="math" id="equation-fourier/util:1">
-<span class="eqno">(2)<a class="headerlink" href="#equation-fourier/util:1" title="この数式へのパーマリンク">¶</a></span>\[\begin{align}
+<div class="math">
+\[\begin{align}
 \delta A = \frac{1}{N_{\rm Try} - 1}
 \sqrt{\frac{1}{N_{\rm Try}} \sum_{i=1}^{N_{\rm Try}} (A_i - \langle A \rangle)^2}
 \end{align}\]</div>
@@ -113,7 +107,6 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -129,10 +122,15 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
@@ -144,7 +142,7 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 <li class="toctree-l2"><a class="reference internal" href="overview.html">7.1. 概要</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html">7.2. チュートリアル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html">7.3. ファイルフォーマット</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">7.4. <code class="docutils literal"><span class="pre">greenr2k</span></code> ユーティリティの動作について</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">7.4. <code class="docutils literal"><span class="pre">greenr2k</span></code> ユーティリティの動作について</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#hphi-lanczos">7.4.1. HPhi-Lanczos</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hphi-tpq">7.4.2. HPhi-TPQ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hphi-lobcg">7.4.3. HPhi-全対角化およびLOBCG</a></li>
@@ -171,11 +169,14 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -186,11 +187,11 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/fourier/util.rst.txt"
+      <a href="../_sources/fourier/util.txt"
           rel="nofollow">Page source</a>
     </div>
 

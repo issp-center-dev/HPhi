@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>5.1. Lanczos method &#8212; HΦ Documentation  documentation</title>
+    <title>5.1. Lanczos method &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
+    <link rel="up" title="5. Algorithm" href="al-index.html" />
     <link rel="next" title="5.2. Full Diagonalization method" href="FullDiagonalization_en.html" />
     <link rel="prev" title="5. Algorithm" href="al-index.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="lanczos-method">
@@ -71,14 +65,14 @@ is called the Krylov subspace.
 The initial vector is represented by the superposition
 of the eigenvectors
 <span class="math">\(\boldsymbol{e}_{i}\)</span> (the corresponding eigenvalues are <span class="math">\(E_{i}\)</span>) of <span class="math">\(\hat{\mathcal H }\)</span> as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-algorithm/Lanczos_en:0" title="Permalink to this equation">¶</a></span>\[\boldsymbol{x}_{0}=\sum_{i}a_{i}\boldsymbol{e}_{i}.\]</div>
+<div class="math">
+\[\boldsymbol{x}_{0}=\sum_{i}a_{i}\boldsymbol{e}_{i}.\]</div>
 <p>Here, <span class="math">\(E_{0}\)</span> denotes the maximum absolute values of the eigenvalues.
 We note that all the eigenvalues are real numbers because the Hamiltonian is Hermitian.
 By operating <span class="math">\(\hat{\mathcal H }^{n}\)</span> to the initial vector,
 we obtain the relation as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:1">
-<span class="eqno">(2)<a class="headerlink" href="#equation-algorithm/Lanczos_en:1" title="Permalink to this equation">¶</a></span>\[\hat{\mathcal H }^{n}\boldsymbol{x}_{0}=E_{0}^{n}\Big[ a_{0}\boldsymbol{e}_{0}+\sum_{i\neq0}\left(\frac{E_{i}}{E_{0}}\right)^na_{i}\boldsymbol{e}_{i}\Big].\]</div>
+<div class="math">
+\[\hat{\mathcal H }^{n}\boldsymbol{x}_{0}=E_{0}^{n}\Big[ a_{0}\boldsymbol{e}_{0}+\sum_{i\neq0}\left(\frac{E_{i}}{E_{0}}\right)^na_{i}\boldsymbol{e}_{i}\Big].\]</div>
 <p>This relation indicates that
 the eigenvector of <span class="math">\(E_{0}\)</span> becomes dominant for sufficiently large <span class="math">\(n\)</span>.
 In the Lanczos method,
@@ -92,16 +86,16 @@ We define an initial vector and associated components as
 <span class="math">\(\beta_{0}=0,\boldsymbol{x}_{-1}=0\)</span>.
 From this initial condition,
 we can obtain the normalized orthogonal basis:</p>
-<div class="math" id="equation-algorithm/Lanczos_en:2">
-<span class="eqno">(3)<a class="headerlink" href="#equation-algorithm/Lanczos_en:2" title="Permalink to this equation">¶</a></span>\[\begin{split}\alpha_{k} &amp;= (\hat{\mathcal H }\boldsymbol{v}_{k},\boldsymbol{v}_{k}), \\
+<div class="math">
+\[\begin{split}\alpha_{k} &amp;= (\hat{\mathcal H }\boldsymbol{v}_{k},\boldsymbol{v}_{k}), \\
 \boldsymbol{w}   &amp;= \hat{\mathcal H }\boldsymbol{v}_{k}-\beta_{k}\boldsymbol{v}_{k-1}-\alpha_{k}\boldsymbol{v}_{k}, \\
 \beta_{k+1} &amp;= |\boldsymbol{w}|, \\
 \boldsymbol{v}_{k+1} &amp;= \frac{\boldsymbol{v}_{k}}{|\boldsymbol{v}_{k}|}.\\\end{split}\]</div>
 <p>From these definitions, it it obvious that <span class="math">\(\alpha_{k}\)</span>, <span class="math">\(\beta_{k}\)</span> are real numbers.</p>
 <p>In the subspace spanned by these normalized orthogonal basis,
 the Hamiltonian is transformed as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:3">
-<span class="eqno">(4)<a class="headerlink" href="#equation-algorithm/Lanczos_en:3" title="Permalink to this equation">¶</a></span>\[T_{n}=V_{n}^{\dagger}\hat{\mathcal H } V_{n}.\]</div>
+<div class="math">
+\[T_{n}=V_{n}^{\dagger}\hat{\mathcal H } V_{n}.\]</div>
 <p>Here,
 <span class="math">\(V_{n}\)</span> is a matrix whose column vectors are <span class="math">\(\boldsymbol{v}_{i}(i=0,1,\dots,n-1)\)</span>.
 <span class="math">\(T_{n}\)</span> is a tridiagonal matrix and its diagonal elements
@@ -146,8 +140,8 @@ to the initial vector <span class="math">\(\boldsymbol{y}_{0}\)</span>,
 we can obtain the accurate eigenvector for <span class="math">\(E_{n}\)</span>.</p>
 <p>From <span class="math">\((\hat{\mathcal H }-E_{n})^{-1}\boldsymbol{y}_{0}\)</span>,
 we obtain linear simultaneous equations such as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:4">
-<span class="eqno">(5)<a class="headerlink" href="#equation-algorithm/Lanczos_en:4" title="Permalink to this equation">¶</a></span>\[\boldsymbol{y}_{k}=(\hat{\mathcal H }-E_{n})\boldsymbol{y}_{k+1}.\]</div>
+<div class="math">
+\[\boldsymbol{y}_{k}=(\hat{\mathcal H }-E_{n})\boldsymbol{y}_{k+1}.\]</div>
 <p>By solving this equation using the
 conjugate gradient method (CG method),
 we obtain the eigenvector.
@@ -168,15 +162,15 @@ additional vectors.</p>
 <div><ul>
 <li><p class="first">For canonical ensemble and <code class="docutils literal"><span class="pre">initial_iv</span></code><span class="math">\(\geq 0\)</span>
 A component of a target of the Hilbert space is given by</p>
-<div class="math" id="equation-algorithm/Lanczos_en:5">
-<span class="eqno">(6)<a class="headerlink" href="#equation-algorithm/Lanczos_en:5" title="Permalink to this equation">¶</a></span>\[(N_{\rm dim}/2 + r_s ) \% N_{\rm dim},\]</div>
+<div class="math">
+\[(N_{\rm dim}/2 + r_s ) \% N_{\rm dim},\]</div>
 <p>where <span class="math">\(N_{\rm dim}\)</span> is the total number of the Hilbert spaces and <span class="math">\(N_{\rm dim}/2\)</span> is added to avoid selecting a special Hilbert space for a default value <code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(=1\)</span>.
 When the type of initial vector is selected as a real number, the coefficient value is given by <span class="math">\(1\)</span>, while when it is selected as a complex number, the value is given by <span class="math">\((1+i)/\sqrt{2}\)</span>.</p>
 </li>
 <li><p class="first">For a grand canonical ensemble or <code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(&lt;0\)</span>
 The initial vector is given by using a random generator, i.e., the coefficients of all the components for the initial vector are given by random numbers. The seed is calculated as</p>
-<div class="math" id="equation-algorithm/Lanczos_en:6">
-<span class="eqno">(7)<a class="headerlink" href="#equation-algorithm/Lanczos_en:6" title="Permalink to this equation">¶</a></span>\[123432+|r_s|,\]</div>
+<div class="math">
+\[123432+|r_s|,\]</div>
 <p>where <span class="math">\(r_s\)</span> is the number given by an input file and <span class="math">\(n_{\rm run}\)</span> is the number of runs. The maximum value of <span class="math">\(n_{\rm run}\)</span> is defined by <code class="docutils literal"><span class="pre">NumAve</span></code> in an input file for Standard mode or a ModPara file for Expert mode. Random numbers are generated by using SIMD-oriented Fast Mersenne Twister (dSFMT) <a class="footnote-reference" href="#id11" id="id6">[5]</a> .</p>
 </li>
 </ul>
@@ -248,7 +242,6 @@ This frequently accelerates the convergence.</p>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -264,6 +257,11 @@ This frequently accelerates the convergence.</p>
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
@@ -274,7 +272,7 @@ This frequently accelerates the convergence.</p>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="al-index.html">5. Algorithm</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">5.1. Lanczos method</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">5.1. Lanczos method</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#details-of-lanczos-method">5.1.1. Details of Lanczos method</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#inverse-iteration-method">5.1.2. Inverse iteration method</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#details-of-implementation">5.1.3. Details of implementation</a></li>
@@ -306,11 +304,14 @@ This frequently accelerates the convergence.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -321,11 +322,11 @@ This frequently accelerates the convergence.</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/algorithm/Lanczos_en.rst.txt"
+      <a href="../_sources/algorithm/Lanczos_en.txt"
           rel="nofollow">Page source</a>
     </div>
 

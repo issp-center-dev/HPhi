@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.2.3. ModPara file &#8212; HΦ Documentation  documentation</title>
+    <title>4.2.3. ModPara file &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
+    <link rel="up" title="4.2. Input files for Expert mode" href="index_expertmode_en.html" />
     <link rel="next" title="4.2.4. LocSpin file" href="LocSpin_file_en.html" />
     <link rel="prev" title="4.2.2. CalcMod file" href="CalcMod_file_en.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="modpara-file">
@@ -52,7 +46,7 @@
 <div class="line">This file determines the parameters for calculation. The file format
 is as follows.</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>--------------------
+<div class="highlight-none"><div class="highlight"><pre>--------------------
 Model_Parameters   0
 --------------------
 VMC_Cal_Parameters
@@ -120,7 +114,7 @@ shown.</p>
 <p><strong>Type :</strong> String (a blank parameter is not allowed)</p>
 <p><strong>Description :</strong> A header for output files. For example, the output
 filename for one-body Green’s function becomes
-“<strong>xxx_Lanczos_cisajs.dat</strong>” (xxx are the characters set by
+&#8220;<strong>xxx_Lanczos_cisajs.dat</strong>&#8221; (xxx are the characters set by
 <code class="docutils literal"><span class="pre">CDataFileHead</span></code>).</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">Nsite</span></code></p>
@@ -160,15 +154,15 @@ the random vector is used as the initial vector.</p>
 the random vector is used as the initial vector.</p>
 </li>
 </ul>
-<p>See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a> for details of setting an
+<p>See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span>Algorithm</span></a> for details of setting an
 initial vector.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">CalcHS</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
-<p><strong>Description :</strong> If CalcHS=1, an efficient algorithm for generating
+<p><strong>Description :</strong> If <code class="docutils literal"><span class="pre">CalcHS=1</span></code>, an efficient algorithm for generating
 the restricted Hilbert space with the specified quantum number is
 used (Details of algorithm is shown in
-<a class="reference external" href="http://qlms.github.io/HPhi/develop/tips.pdf">http://qlms.github.io/HPhi/develop/tips.pdf</a> [in Japanese]). Default
+<a class="reference external" href="http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf">http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf</a> [in Japanese]). Default
 value is 1 and the efficient algorithm is used.</p>
 </li>
 </ul>
@@ -218,7 +212,7 @@ and a first excited state when <code class="docutils literal"><span class="pre">
 <p><strong>Description :</strong> The maximum number of iteration steps in the
 calculation. When the convergence within the specified accuracy is
 satisfied, the calculation is completed before a step reaches
-Lanczos_max. In the case of restart calculation, <code class="docutils literal"><span class="pre">Lanczos_max</span></code>
+<code class="docutils literal"><span class="pre">Lanczos_max</span></code>. In the case of restart calculation, <code class="docutils literal"><span class="pre">Lanczos_max</span></code>
 must be larger than that of the previous calculation.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">LanczosEps</span></code></p>
@@ -241,7 +235,7 @@ must be larger than that of the previous calculation.</p>
 <li><p class="first"><code class="docutils literal"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> An integer giving <span class="math">\(l\)</span> of
-<span class="math">\(l=\hat{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
+<span class="math">\(l-{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">NumAve</span></code></p>
 <p><strong>Type :</strong> Int</p>
@@ -309,8 +303,8 @@ specified with this parameter. In the case of restart calculation,
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> An integer giving the expansion order <span class="math">\(n\)</span> for
 real time evolution method;</p>
-<div class="math" id="equation-filespecification/expertmode_en/ModPara_file_en:0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-filespecification/expertmode_en/ModPara_file_en:0" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n .\]</div>
+<div class="math">
+\[\exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n .\]</div>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">ExpecInterval</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -335,7 +329,6 @@ file.</div>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -351,6 +344,11 @@ file.</div>
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
@@ -364,7 +362,7 @@ file.</div>
 <li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="List_file_for_the_input_files_en.html">4.2.1. List file for the input files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CalcMod_file_en.html">4.2.2. CalcMod file</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.2.3. ModPara file</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.2.3. ModPara file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="LocSpin_file_en.html">4.2.4. LocSpin file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Trans_file_en.html">4.2.5. Trans file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="InterAll_file_en.html">4.2.6. InterAll file</a></li>
@@ -410,11 +408,14 @@ file.</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -425,11 +426,11 @@ file.</div>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/expertmode_en/ModPara_file_en.rst.txt"
+      <a href="../../_sources/filespecification/expertmode_en/ModPara_file_en.txt"
           rel="nofollow">Page source</a>
     </div>
 

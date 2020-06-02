@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.1.7. Parameters for time-evolution &#8212; HΦ Documentation  documentation</title>
+    <title>4.1.7. Parameters for time-evolution &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
+    <link rel="up" title="4.1. Input files for Standard mode" href="index_standardmode_en.html" />
     <link rel="next" title="4.2. Input files for Expert mode" href="../expertmode_en/index_expertmode_en.html" />
     <link rel="prev" title="4.1.6. Parameters for the dynamical Green’s function" href="Parameters_for_the_dynamical_Greens_function.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="parameters-for-time-evolution">
@@ -61,7 +55,7 @@
 <span class="math">\(U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}\)</span> is
 added. For <code class="docutils literal"><span class="pre">&quot;Pulse</span> <span class="pre">Laser&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>, and <code class="docutils literal"><span class="pre">&quot;DC</span> <span class="pre">Laser&quot;</span></code>, the
 hopping term is modulated as
-<span class="math">\(-\sum_{i j \sigma} t_{i j} \exp[-{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c_{i \sigma} c_{j \sigma}\)</span>,
+<span class="math">\(-\sum_{i j \sigma} t_{i j} \exp[-{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c^\dagger_{i \sigma} c_{j \sigma}\)</span>,
 where <span class="math">\({\bf A}(t)\)</span> is the vector potential which is defined as
 <span class="math">\({\bf A}(t) = {\bf A}_0 \exp[-(t-t_0)^2/(2 t_{\rm dump}^2)] \cos[\omega (t-t_0)]\)</span>,
 <span class="math">\({\bf A}(t) = {\bf A}_0 \sin[\omega (t-t_0)]\)</span>, and
@@ -91,15 +85,14 @@ and the electrical field at each time step.</p>
 <p><strong>Description :</strong> The vector potential (fractional coordinate of the
 reciprocal space) at <span class="math">\(t=t_0\)</span>. The reciprocal lattice vector is
 computed from the direct lattice vector shown in
-<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span class="std std-numref">Fig. 4.2</span></a> ,
-<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> .</p>
+<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span>Fig. 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span>Fig. 4.2</span></a> ,
+<a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span>Fig. 4.3</span></a>, <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span>Fig. 4.4</span></a> .</p>
 </li>
 </ul>
 </div>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -114,6 +107,11 @@ computed from the direct lattice vector shown in
 
 
 
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
@@ -131,7 +129,7 @@ computed from the direct lattice vector shown in
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_en.html">4.1.4. Parameters for the Hamiltonian</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. Parameters for the numerical condition</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. Parameters for the dynamical Green’s function</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.7. Parameters for time-evolution</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.1.7. Parameters for time-evolution</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
@@ -161,11 +159,14 @@ computed from the direct lattice vector shown in
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -176,11 +177,11 @@ computed from the direct lattice vector shown in
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/standardmode_en/Parameters_for_time-evolution.rst.txt"
+      <a href="../../_sources/filespecification/standardmode_en/Parameters_for_time-evolution.txt"
           rel="nofollow">Page source</a>
     </div>
 

@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.4. 基本的な使い方 &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>2.4. 基本的な使い方 &mdash; HΦ マニュアル  ドキュメント</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,34 +17,28 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../index.html" />
+    <link rel="up" title="2. How to use \({\mathcal H}\Phi\)" href="ho-index.html" />
     <link rel="next" title="3. チュートリアル" href="../tutorial/tu-index.html" />
     <link rel="prev" title="2.3. ディレクトリ構成" href="directorystructure_ja.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="id1">
@@ -68,7 +62,7 @@
 モデル(HeisenbergモデルやHubbardモデル)や格子(正方格子など)を指定し、
 それらに対するいくつかのパラメーター(最近接<span class="math">\(\cdot\)</span>次近接スピン結合やオンサイトクーロン積分など)と
 計算手法(Lanczos法、TPQ法など)を設定します。 各ファイルは
-<a class="reference internal" href="prerequisite_ja.html#ch-prerequisite"><span class="std std-ref">How to use HPhi</span></a> に従い記載してください。</div></blockquote>
+<a class="reference internal" href="prerequisite_ja.html#ch-prerequisite"><span>How to use HPhi</span></a> に従い記載してください。</div></blockquote>
 <ol class="arabic simple" start="3">
 <li>実行</li>
 </ol>
@@ -87,21 +81,21 @@
 プロセス数をジョブ投入コマンドの引数として与える場合があります。
 詳しくはお使いのシステムのマニュアルをご参照ください。
 プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。
-詳細は <a class="reference internal" href="#subsec-process"><span class="std std-ref">プロセス数の設定</span></a> を参照ください。</p>
+詳細は <a class="reference internal" href="#subsec-process"><span>プロセス数の設定</span></a> を参照ください。</p>
 </div></blockquote>
 <ol class="arabic simple" start="4">
 <li>途中経過</li>
 </ol>
 <blockquote>
 <div>計算実行の経過についてoutputフォルダにログファイルが出力されます。
-出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</div></blockquote>
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span>出力ファイル</span></a> を参考にしてください。</div></blockquote>
 <ol class="arabic simple" start="5">
 <li>最終結果</li>
 </ol>
 <blockquote>
 <div>計算が正常終了した場合、
 計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
-出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</div></blockquote>
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span>出力ファイル</span></a> を参考にしてください。</div></blockquote>
 </div></blockquote>
 <div class="admonition tip">
 <p class="first admonition-title">ちなみに</p>
@@ -127,8 +121,8 @@
 </ol>
 <blockquote>
 <div>エキスパートモードでは、ハミルトニアンのすべての項を記述する詳細入力ファイルと計算条件のファイル、
-]およびそれらのファイル名のリストファイルを作成します。各ファイルは
-<a class="reference internal" href="../filespecification/expertmode_ja/index_expertmode_ja.html#ch-howtoexpert"><span class="std std-ref">エキスパートモード用入力ファイル</span></a> に従い記載してください。</div></blockquote>
+およびそれらのファイル名のリストファイルを作成します。各ファイルは
+<a class="reference internal" href="../filespecification/expertmode_ja/index_expertmode_ja.html#ch-howtoexpert"><span>エキスパートモード用入力ファイル</span></a> に従い記載してください。</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">注釈</p>
 <div class="last line-block">
@@ -146,7 +140,7 @@
 <li>シリアル/OpenMP並列</li>
 </ul>
 <blockquote>
-<div><code class="docutils literal"><span class="pre">$</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file\_name</span></code></div></blockquote>
+<div><code class="docutils literal"><span class="pre">$</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file_name</span></code></div></blockquote>
 <ul class="simple">
 <li>MPI並列/ハイブリッド並列</li>
 </ul>
@@ -154,7 +148,7 @@
 <div><div class="line-block">
 <div class="line"><code class="docutils literal"><span class="pre">$</span> <span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">number_of_processes</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file_name</span></code></div>
 <div class="line">プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。</div>
-<div class="line">詳細は <a class="reference internal" href="#subsec-process"><span class="std std-ref">プロセス数の設定</span></a> を参照ください。</div>
+<div class="line">詳細は <a class="reference internal" href="#subsec-process"><span>プロセス数の設定</span></a> を参照ください。</div>
 </div>
 </div></blockquote>
 </div></blockquote>
@@ -164,13 +158,13 @@
 </ol>
 <blockquote>
 <div>計算実行の経過についてoutputフォルダにログファイルが出力されます。
-出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</div></blockquote>
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span>出力ファイル</span></a> を参考にしてください。</div></blockquote>
 <ol class="arabic simple" start="5">
 <li>最終結果</li>
 </ol>
 <blockquote class="last">
 <div>計算が正常終了した場合、計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
-出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</div></blockquote>
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span>出力ファイル</span></a> を参考にしてください。</div></blockquote>
 </dd>
 </dl>
 </div>
@@ -205,18 +199,18 @@
 <li>電子系及び近藤格子系</li>
 </ul>
 <blockquote>
-<div><a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span class="std std-ref">CalcModファイル</span></a> の <strong>CalcMod</strong>ファイルで、<code class="docutils literal"><span class="pre">CalcModel</span></code>としてfermion
+<div><a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span>CalcModファイル</span></a> の <strong>CalcMod</strong>ファイルで、<code class="docutils literal"><span class="pre">CalcModel</span></code>としてfermion
 Hubbard模型、近藤模型を選択した場合は、プロセス数が<span class="math">\(4^n\)</span>となるように設定してください。</div></blockquote>
 <ul class="simple">
 <li>スピン系</li>
 </ul>
 <blockquote>
-<div><p><a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span class="std std-ref">CalcModファイル</span></a> の <strong>CalcMod</strong>ファイルで、<code class="docutils literal"><span class="pre">CalcModel</span></code>としてスピン模型を選択した場合は、
-<a class="reference internal" href="../filespecification/expertmode_ja/LocSpin_file_ja.html#subsec-locspn"><span class="std std-ref">LocSpin指定ファイル</span></a> の<strong>LocSpin</strong>ファイルを参考にプロセス数を指定する必要があります。
+<div><p><a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span>CalcModファイル</span></a> の <strong>CalcMod</strong>ファイルで、<code class="docutils literal"><span class="pre">CalcModel</span></code>としてスピン模型を選択した場合は、
+<a class="reference internal" href="../filespecification/expertmode_ja/LocSpin_file_ja.html#subsec-locspn"><span>LocSpin指定ファイル</span></a> の<strong>LocSpin</strong>ファイルを参考にプロセス数を指定する必要があります。
 許容されるプロセス数は、サイト数の大きいものから順に局在スピンの状態数(<code class="docutils literal"><span class="pre">2S</span></code>+1)を掛けたもので指定されます。</p>
 <p>例えば、<strong>LocSpin</strong>ファイルが</p>
 </div></blockquote>
-<div class="highlight-none"><div class="highlight"><pre><span></span>================================
+<div class="highlight-none"><div class="highlight"><pre>================================
 NlocalSpin     3
 ================================
 ========i_0IteElc_2S ======
@@ -241,7 +235,6 @@ NlocalSpin     3
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -257,17 +250,22 @@ NlocalSpin     3
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="prerequisite_ja.html">2.1. 要件</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_ja.html">2.2. インストール方法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="directorystructure_ja.html">2.3. ディレクトリ構成</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">2.4. 基本的な使い方</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">2.4. 基本的な使い方</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id2">2.4.1. スタンダードモード</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id3">2.4.2. エキスパートモード</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#subsec-process">2.4.3. プロセス数の設定</a></li>
@@ -298,11 +296,14 @@ NlocalSpin     3
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -313,11 +314,11 @@ NlocalSpin     3
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/howtouse/basicusage_ja.rst.txt"
+      <a href="../_sources/howtouse/basicusage_ja.txt"
           rel="nofollow">Page source</a>
     </div>
 

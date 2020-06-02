@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>7.2. チュートリアル &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>7.2. チュートリアル &mdash; HΦ マニュアル  ドキュメント</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,34 +17,28 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../index.html" />
+    <link rel="up" title="7. 相関関数のFourier変換ユーティリティー" href="index.html" />
     <link rel="next" title="7.3. ファイルフォーマット" href="format.html" />
     <link rel="prev" title="7.1. 概要" href="overview.html" />
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="tutorial">
@@ -56,7 +50,7 @@
 <li><p class="first"><span class="math">\({\mathcal H}\Phi\)</span> の場合</p>
 <p>基底状態および相関関数の計算を行う.
 入力ファイルは次の通り.</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>a0w = 2
+<div class="highlight-none"><div class="highlight"><pre>a0w = 2
 a0l = 2
 a1w = -2
 a1l = 2
@@ -69,14 +63,14 @@ nelec = 8
 2Sz=0
 </pre></div>
 </div>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ HPhi -s input
+<div class="highlight-bash"><div class="highlight"><pre>$ HPhi -s input
 </pre></div>
 </div>
 </li>
 <li><p class="first">mVMC の場合</p>
 <p>まず変分波動関数の最適化を行う.
 入力ファイルは次の通り.</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>a0w = 2
+<div class="highlight-none"><div class="highlight"><pre>a0w = 2
 a0l = 2
 a1w = -2
 a1l = 2
@@ -88,15 +82,15 @@ nelec = 8
 2Sz=0
 </pre></div>
 </div>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ vmc.out -s input
+<div class="highlight-bash"><div class="highlight"><pre>$ vmc.out -s input
 </pre></div>
 </div>
 <p>相関関数を計算するために, 入力ファイルに以下の行を付け加える.</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>NVMCCalMode = 1
+<div class="highlight-none"><div class="highlight"><pre>NVMCCalMode = 1
 </pre></div>
 </div>
 <p>相関関数を計算する.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ vmc.out -s input output/zqp_opt.dat
+<div class="highlight-bash"><div class="highlight"><pre>$ vmc.out -s input output/zqp_opt.dat
 </pre></div>
 </div>
 </li>
@@ -107,15 +101,15 @@ nelec = 8
 <ul class="simple">
 <li>StdFace.def (mVMC/<span class="math">\({\mathcal H}\Phi\)</span> のマニュアル参照)</li>
 <li>zqp_opt.dat (mVMCのマニュアル参照)</li>
-<li>greenone.def (<a class="reference internal" href="format.html#greenindex"><span class="std std-ref">計算する相関関数のインデックスの指定</span></a>)</li>
-<li>greentwo.def (<a class="reference internal" href="format.html#greenindex"><span class="std std-ref">計算する相関関数のインデックスの指定</span></a>)</li>
+<li>greenone.def (<a class="reference internal" href="format.html#greenindex"><span>計算する相関関数のインデックスの指定</span></a>)</li>
+<li>greentwo.def (<a class="reference internal" href="format.html#greenindex"><span>計算する相関関数のインデックスの指定</span></a>)</li>
 </ul>
 </div>
 <div class="section" id="id2">
 <h2>7.2.2. 相関関数のフーリエ変換<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>ユーティリティプログラム <code class="docutils literal"><span class="pre">greenr2k</span></code> を使って,
 相関関数をフーリエ変関する.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">echo</span> <span class="s2">&quot;4 20</span>
+<div class="highlight-bash"><div class="highlight"><pre>$ <span class="nb">echo</span> <span class="s2">&quot;4 20</span>
 <span class="s2">G 0 0 0</span>
 <span class="s2">X 0.5 0 0</span>
 <span class="s2">M 0.5 0.5 0</span>
@@ -128,19 +122,19 @@ $ greenr2k namelist.def geometry.dat
 フーリエ変換された相関関数が出力される.</p>
 <p>関連するファイル</p>
 <ul class="simple">
-<li>output/zvo_cisajs_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
-<li>output/zvo_cisajs.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
-<li>output/zvo_cisajscktalt_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
-<li>output/zvo_cisajscktalt.dat (<a class="reference internal" href="format.html#zvocisajs"><span class="std std-ref">サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
-<li>geometry.dat (<a class="reference internal" href="format.html#geometry"><span class="std std-ref">サイトの位置と軌道のインデックス, k 点</span></a>)</li>
-<li>output/zvo_corr*.dat (<a class="reference internal" href="format.html#zvocorr"><span class="std std-ref">k パス上での相関関数</span></a>)</li>
+<li>output/zvo_cisajs_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span>サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
+<li>output/zvo_cisajs.dat (<a class="reference internal" href="format.html#zvocisajs"><span>サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
+<li>output/zvo_cisajscktalt_001.dat (<a class="reference internal" href="format.html#zvocisajs"><span>サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
+<li>output/zvo_cisajscktalt.dat (<a class="reference internal" href="format.html#zvocisajs"><span>サイト表示の1体および2体相関関数の計算結果</span></a>)</li>
+<li>geometry.dat (<a class="reference internal" href="format.html#geometry"><span>サイトの位置と軌道のインデックス, k 点</span></a>)</li>
+<li>output/zvo_corr*.dat (<a class="reference internal" href="format.html#zvocorr"><span>k パス上での相関関数</span></a>)</li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h2>7.2.3. 相関関数のプロット<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>gnuplotを使って,
 相関関数を <span class="math">\(k\)</span> 空間でプロットする.</p>
-<div class="highlight-gnuplot"><div class="highlight"><pre><span></span><span class="k">load</span> <span class="s">&quot;kpath.gp&quot;</span>
+<div class="highlight-gnuplot"><div class="highlight"><pre><span class="k">load</span> <span class="s">&quot;kpath.gp&quot;</span>
 <span class="k">plot</span> <span class="s">&quot;output/zvo_corr_eigen0.dat&quot;</span> <span class="nb">u</span> <span class="mi">1</span><span class="o">:</span><span class="mi">12</span> <span class="nb">w</span> <span class="n">l</span>
 </pre></div>
 </div>
@@ -151,15 +145,14 @@ $ greenr2k namelist.def geometry.dat
 </div>
 <p>関連するファイル</p>
 <ul class="simple">
-<li>kpath.gp (<a class="reference internal" href="format.html#gnuplot"><span class="std std-ref">gnuplot スクリプト</span></a>)</li>
-<li>output/zvo_corr*.dat (<a class="reference internal" href="format.html#zvocorr"><span class="std std-ref">k パス上での相関関数</span></a>)</li>
+<li>kpath.gp (<a class="reference internal" href="format.html#gnuplot"><span>gnuplot スクリプト</span></a>)</li>
+<li>output/zvo_corr*.dat (<a class="reference internal" href="format.html#zvocorr"><span>k パス上での相関関数</span></a>)</li>
 </ul>
 </div>
 </div>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -175,10 +168,15 @@ $ greenr2k namelist.def geometry.dat
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
@@ -188,7 +186,7 @@ $ greenr2k namelist.def geometry.dat
 <li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">7. 相関関数のFourier変換ユーティリティー</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">7.1. 概要</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">7.2. チュートリアル</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="">7.2. チュートリアル</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#hphi-vmc-out">7.2.1. HPhi/vmc.out の実行</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">7.2.2. 相関関数のフーリエ変換</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id3">7.2.3. 相関関数のプロット</a></li>
@@ -216,11 +214,14 @@ $ greenr2k namelist.def geometry.dat
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -231,11 +232,11 @@ $ greenr2k namelist.def geometry.dat
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../_sources/fourier/tutorial.rst.txt"
+      <a href="../_sources/fourier/tutorial.txt"
           rel="nofollow">Page source</a>
     </div>
 

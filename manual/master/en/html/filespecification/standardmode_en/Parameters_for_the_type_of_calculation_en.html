@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.1.1. Parameters for the type of calculation &#8212; HΦ Documentation  documentation</title>
+    <title>4.1.1. Parameters for the type of calculation &mdash; HΦ Documentation  documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,33 +17,27 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
+    <link rel="up" title="4.1. Input files for Standard mode" href="index_standardmode_en.html" />
     <link rel="next" title="4.1.2. Parameters for the lattice" href="Parameters_for_the_lattice_en.html" />
     <link rel="prev" title="4.1. Input files for Standard mode" href="index_standardmode_en.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="parameters-for-the-type-of-calculation">
@@ -57,30 +51,30 @@
 the expressions above denote the canonical ensemble of the Fermion in
 the Hubbard model</p>
 <div class="math" id="equation-fml4_1_hubbard">
-<span class="eqno">(1)<a class="headerlink" href="#equation-fml4_1_hubbard" title="Permalink to this equation">¶</a></span>\[\mathcal H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
-- \sum_{i \neq j \sigma} t_{i j} c^\dagger_{i \sigma} c_{j \sigma}
+<span class="eqno">(1)</span>\[\mathcal H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
+- \sum_{i \neq j, \sigma} t_{i j} c^\dagger_{i \sigma} c_{j \sigma}
 + \sum_{i} U n_{i \uparrow} n_{i \downarrow}
 + \sum_{i \neq j} V_{i j} n_{i} n_{j},\]</div>
 <p>the canonical ensemble in the Spin
-model(<span class="math">\(\{\sigma_1, \sigma_2\}={x, y, z}\)</span>)</p>
+model(<span class="math">\(\{\alpha, \beta\}=\{x, y, z\}\)</span>)</p>
 <div class="math" id="equation-fml4_1_spin">
-<span class="eqno">(2)<a class="headerlink" href="#equation-fml4_1_spin" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathcal H &amp;= -h \sum_{i} S_{i z} - \Gamma \sum_{i} S_{i x} + D \sum_{i} S_{i z} S_{i z}
+<span class="eqno">(2)</span>\[\begin{split}\mathcal H &amp;= -h \sum_{i} S^z_{i} - \Gamma \sum_{i} S^x_{i} + D \sum_{i} S^z_{i} S^z_{i}
 \nonumber \\
-&amp;+ \sum_{i j, \sigma_1}J_{i j \sigma_1} S_{i \sigma_1} S_{j \sigma_1}+ \sum_{i j, \sigma_1 \neq \sigma_2} J_{i j \sigma_1 \sigma_2} S_{i \sigma_1} S_{j \sigma_2} ,\end{split}\]</div>
+&amp;+ \sum_{i j, \alpha}J_{i j \alpha} S^\alpha_{i} S^\alpha_{j}+ \sum_{i j, \alpha \neq \beta} J_{i j \alpha \beta} S_{i}^\alpha S_{j}^\beta,\end{split}\]</div>
 <p>the canonical ensemble in the Kondo lattice model</p>
 <div class="math" id="equation-fml4_1_kondo">
-<span class="eqno">(3)<a class="headerlink" href="#equation-fml4_1_kondo" title="Permalink to this equation">¶</a></span>\[\mathcal H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
+<span class="eqno">(3)</span>\[\mathcal H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 - t \sum_{\langle i j \rangle \sigma} c^\dagger_{i \sigma} c_{j \sigma}
 + \frac{J}{2} \sum_{i} \left\{
 S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 + S_{i}^{-} c_{i \uparrow}^\dagger c_{i \downarrow}
-+ S_{i z} (n_{i \uparrow} - n_{i \downarrow})
++ S_{i}^z (n_{i \uparrow} - n_{i \downarrow})
 \right\},\]</div>
 <p>the grand canonical ensemble of the Fermion in the Hubbard model
-[Eqn. <a class="reference internal" href="#equation-fml4_1_hubbard">(1)</a> ], the grand canonical
-ensemble in the Spin model [Eqn. <a class="reference internal" href="#equation-fml4_1_spin">(2)</a> ],
+[Eqn. <a href="#equation-fml4_1_hubbard">(1)</a> ], the grand canonical
+ensemble in the Spin model [Eqn. <a href="#equation-fml4_1_spin">(2)</a> ],
 and the grand canonical ensemble in the Kondo lattice model
-[Eqn. <a class="reference internal" href="#equation-fml4_1_kondo">(3)</a> ], respectively.</p>
+[Eqn. <a href="#equation-fml4_1_kondo">(3)</a> ], respectively.</p>
 <p>When <code class="docutils literal"><span class="pre">model=&quot;SpinGCCMA&quot;</span></code>, by using a more efficient algorithm <a class="footnote-reference" href="#id9" id="id2">[2]</a>,
 <span class="math">\({\mathcal H}\Phi\)</span> calculates a system that is the same as <code class="docutils literal"><span class="pre">&quot;SpinGC&quot;</span></code>.
 However, supported models and MPI processes are highly limited. See
@@ -90,7 +84,7 @@ However, supported models and MPI processes are highly limited. See
 <ul>
 <li><p class="first"><code class="docutils literal"><span class="pre">method</span></code></p>
 <p><strong>Type :</strong> String (choose from <code class="docutils literal"><span class="pre">&quot;Lanczos&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;TPQ&quot;</span></code>,
-<code class="docutils literal"><span class="pre">&quot;Full</span> <span class="pre">Diag&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;CG&quot;</span></code>, <code class="docutils literal"><span class="pre">Time</span> <span class="pre">Evolution</span></code>)</p>
+<code class="docutils literal"><span class="pre">&quot;Full</span> <span class="pre">Diag&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;CG&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Time</span> <span class="pre">Evolution&quot;</span></code>)</p>
 <p><strong>Description :</strong> The calculation type is specified with this
 parameter; the above expressions above denote the single eigenstate
 calculation by using the Lanczos method, at the finite-temperature by
@@ -110,16 +104,16 @@ is employed with the help of the <span class="math">\(K\omega\)</span> library
 <li><p class="first"><code class="docutils literal"><span class="pre">lattice</span></code></p>
 <p><strong>Type :</strong> String (choose from <code class="docutils literal"><span class="pre">&quot;Chain</span> <span class="pre">Lattice&quot;</span></code>,
 <code class="docutils literal"><span class="pre">&quot;Square</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Triangular</span> <span class="pre">Lattice&quot;</span></code>,
-<code class="docutils literal"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Ladder&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Kagome&quot;</span></code>)</p>
+<code class="docutils literal"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Kagome&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Ladder&quot;</span></code>)</p>
 <p><strong>Description :</strong> The lattice shape is specified with this parameter;
-the expressions above denote the one-dimensional chain lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> (a)),
-the two-dimensional square lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> (b)),
-the two-dimensional triangular lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> (c)),
-the two-dimensional anisotropic honeycomb lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span class="std std-numref">Fig. 4.2</span></a> ),
-the ladder lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> ),
-and the Kagome Lattice( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> ) respectively.</p>
+the expressions above denote the one-dimensional chain lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span>Fig. 4.1</span></a> (a)),
+the two-dimensional square lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span>Fig. 4.1</span></a> (b)),
+the two-dimensional triangular lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span>Fig. 4.1</span></a> (c)),
+the two-dimensional anisotropic honeycomb lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span>Fig. 4.2</span></a> ),
+the Kagome Lattice( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span>Fig. 4.3</span></a> ),
+and the ladder lattice ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span>Fig. 4.4</span></a> ) respectively.</p>
 <p>In <code class="docutils literal"><span class="pre">method=&quot;SpinGCCMA&quot;</span></code>, only <code class="docutils literal"><span class="pre">&quot;Chain</span> <span class="pre">Lattice&quot;</span></code>,
-<code class="docutils literal"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Ladder&quot;</span></code>, and <code class="docutils literal"><span class="pre">&quot;Kagome&quot;</span></code> are
+<code class="docutils literal"><span class="pre">&quot;Honeycomb</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Kagome&quot;</span></code>, and <code class="docutils literal"><span class="pre">&quot;Ladder&quot;</span></code> are
 supported. The limits of <span class="math">\(L\)</span>, <span class="math">\(W\)</span>, and the number of MPI
 processes (<span class="math">\(N_{\rm proc}\)</span>) are as follows:</p>
 <ul>
@@ -132,13 +126,13 @@ condition <span class="math">\(n\geq1\)</span>), <span class="math">\(N_{\rm pro
 <p><span class="math">\(W=3, L \geq 2\)</span>, <span class="math">\(N_{\rm proc} \leq 2(L=2)\)</span>,
 <span class="math">\(N_{\rm proc} \leq 64(L&gt;2)\)</span>.</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">&quot;Ladder&quot;</span></code></p>
-<p><span class="math">\(W=2, L = 2n\)</span> (where <span class="math">\(n\)</span> is an integer number under
-the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm proc} \leq 2^{L-4}\)</span>.</p>
-</li>
 <li><p class="first"><code class="docutils literal"><span class="pre">&quot;Kagome&quot;</span></code></p>
 <p><span class="math">\(W=3, L \geq 2\)</span>, <span class="math">\(N_{\rm proc} \leq 1(L=2)\)</span>,
 <span class="math">\(N_{\rm proc} \leq 512(L&gt;2)\)</span>.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">&quot;Ladder&quot;</span></code></p>
+<p><span class="math">\(W=2, L = 2n\)</span> (where <span class="math">\(n\)</span> is an integer number under
+the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm proc} \leq 2^{L-4}\)</span>.</p>
 </li>
 </ul>
 </li>
@@ -170,7 +164,7 @@ the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm
 <table class="docutils footnote" frame="void" id="id12" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>A.Frommer, Computing <strong>70</strong>, 87{109 (2003).</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>A.Frommer, Computing <strong>70</strong>, 87-109 (2003).</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id13" rules="none">
@@ -189,7 +183,6 @@ the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -205,6 +198,11 @@ the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
 
 
 
@@ -215,7 +213,7 @@ the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.1. Parameters for the type of calculation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.1.1. Parameters for the type of calculation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_en.html">4.1.2. Parameters for the lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_en.html">4.1.3. Parameters for conserved quantities</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_en.html">4.1.4. Parameters for the Hamiltonian</a></li>
@@ -251,11 +249,14 @@ the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -266,11 +267,11 @@ the condition <span class="math">\(n\geq4\)</span>), <span class="math">\(N_{\rm
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/standardmode_en/Parameters_for_the_type_of_calculation_en.rst.txt"
+      <a href="../../_sources/filespecification/standardmode_en/Parameters_for_the_type_of_calculation_en.txt"
           rel="nofollow">Page source</a>
     </div>
 

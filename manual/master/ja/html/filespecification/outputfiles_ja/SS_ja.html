@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.3.20. SS.dat &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>4.3.20. SS.dat &mdash; HΦ マニュアル  ドキュメント</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,34 +17,28 @@
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="索引" href="../../genindex.html" />
-    <link rel="search" title="検索" href="../../search.html" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
+    <link rel="up" title="4.3. 出力ファイル" href="index_outputfiles_ja.html" />
     <link rel="next" title="4.3.21. Flct.dat" href="Flct_ja.html" />
     <link rel="prev" title="4.3.19. Norm.dat" href="Norm_ja.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body>
-  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="ss-dat">
@@ -52,7 +46,7 @@
 <div class="line-block">
 <div class="line">(実時間発展法でのみ出力)実時間発展法での各ステップ毎の計算結果を出力します。以下にファイル例を示します。</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span> # time, energy, phys_var, phys_doublon, phys_num, step_i
+<div class="highlight-none"><div class="highlight"><pre> # time, energy, phys_var, phys_doublon, phys_num, step_i
 0.0000000000000000  -6.0412438187293001 38.8635272290786489 ...
 0.0100000000000000  -5.9310482979751606 37.9593669819686923 ...
 0.0200000000000000  -5.8287182777288828 37.1390062697724801 ...
@@ -91,12 +85,12 @@
 </li>
 <li><p class="first"><span class="math">\([\)</span>double02<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> エネルギーの期待値<span class="math">\(\langle H \rangle\)</span>。</p>
+<p><strong>説明 :</strong> ハミルトニアンの期待値(エネルギー)<span class="math">\(\langle \mathcal{H} \rangle\)</span>。</p>
 </li>
 <li><p class="first"><span class="math">\([\)</span>double03<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
 <p><strong>説明 :</strong>
-ハミルトニアンの2乗の期待値<span class="math">\(\langle H^2 \rangle\)</span>。</p>
+ハミルトニアンの2乗の期待値<span class="math">\(\langle \mathcal{H}^2 \rangle\)</span>。</p>
 </li>
 <li><p class="first"><span class="math">\([\)</span>double04<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
@@ -106,7 +100,7 @@
 </li>
 <li><p class="first"><span class="math">\([\)</span>double05<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> 粒子数<span class="math">\(\langle {\hat n} \rangle\)</span>。</p>
+<p><strong>説明 :</strong> 粒子数<span class="math">\(\langle \sum_i n_i \rangle\)</span>。</p>
 </li>
 <li><p class="first"><span class="math">\([\)</span>int01<span class="math">\(]\)</span></p>
 <p><strong>形式 :</strong> int型</p>
@@ -118,7 +112,6 @@
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -134,10 +127,15 @@
 
 
 
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
 
 
 
-<h3>ナビゲーション</h3>
+
+<h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
@@ -165,7 +163,7 @@
 <li class="toctree-l3"><a class="reference internal" href="Flct_rand_ja.html">4.3.17. Flct_rand.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Time_TE_Step_ja.html">4.3.18. Time_TE_Step.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Norm_ja.html">4.3.19. Norm.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.20. SS.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.20. SS.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Flct_ja.html">4.3.21. Flct.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Eigenvalue_ja.html">4.3.22. Eigenvalue.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="phys_ja.html">4.3.23. phys.dat</a></li>
@@ -178,6 +176,7 @@
 <li class="toctree-l3"><a class="reference internal" href="recalcvec_ja.html">4.3.30. recalcvec.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="TMcomponents_ja.html">4.3.31. TMcomponents.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="excitedvec_ja.html">4.3.32. excitedvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_ja.html">4.3.33. residual.dat</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
@@ -205,11 +204,14 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>クイック検索</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="検索" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -220,11 +222,11 @@
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_ja/SS_ja.rst.txt"
+      <a href="../../_sources/filespecification/outputfiles_ja/SS_ja.txt"
           rel="nofollow">Page source</a>
     </div>
 
