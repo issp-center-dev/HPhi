@@ -6,9 +6,10 @@ import cmath
 import read    #using read.py#
 import hphi_io #using hphi_io.py#
 
-cnt_name   = "input"
-output_dir = "dir_"+"{}".format(cnt_name)
-os.makedirs(output_dir,exist_ok=True)
+#cnt_name   = "input"
+#output_dir = "dir_"+"{}".format(cnt_name)
+output_dir = ""
+#os.makedirs(output_dir,exist_ok=True)
 tmp_sdt  = "pair.txt"
 num      = read.func_count(tmp_sdt)
 #[s] set input.
