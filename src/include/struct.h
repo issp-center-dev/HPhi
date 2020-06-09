@@ -183,6 +183,9 @@ struct DefineList {
   int **FBody;/**<@brief [DefineList::NCisAjtCkuAlvDC][4] Indices of two-body correlation function. malloc in setmem_def().*/
   unsigned int NFBody;/**<@brief Number of indices of two-body correlation function.*/
 
+  int **SBody;/**<@brief [DefineList::NCisAjtCkuAlvDC][4] Indices of two-body correlation function. malloc in setmem_def().*/
+  unsigned int NSBody;/**<@brief Number of indices of two-body correlation function.*/
+
   int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
                                  Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
   unsigned int NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
