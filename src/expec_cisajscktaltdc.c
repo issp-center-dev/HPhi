@@ -49,7 +49,7 @@ int expec_cisajscktalt_Spin(struct BindStruct *X,double complex *vec, FILE **_fp
 int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
-int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3);
+int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3,FILE **_fp_4);
 int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
@@ -203,7 +203,7 @@ int expec_cisajscktaltdc
     break;
 
   case SpinGC:
-      if(expec_cisajscktalt_SpinGC(X, vec, &fp,&fp_2,&fp_3)!=0){
+      if(expec_cisajscktalt_SpinGC(X, vec, &fp,&fp_2,&fp_3,&fp_4)!=0){
           return -1;
       }
     break;
@@ -220,7 +220,7 @@ int expec_cisajscktaltdc
     fclose(fp_3);
   }
   if(X->Def.NSBody>0){
-    fclose(fp_3);
+    fclose(fp_4);
   }
   
   if(X->Def.iCalcType==Lanczos){
@@ -288,7 +288,16 @@ int Rearray_Interactions(
   long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
   long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
 
-  if(type==4){
+  if(type==6){
+    tmp_org_isite1   = X->Def.SBody[i][0]+1;
+    tmp_org_sigma1   = X->Def.SBody[i][1];
+    tmp_org_isite2   = X->Def.SBody[i][2]+1;
+    tmp_org_sigma2   = X->Def.SBody[i][3];
+    tmp_org_isite3   = X->Def.SBody[i][4]+1;
+    tmp_org_sigma3   = X->Def.SBody[i][5];
+    tmp_org_isite4   = X->Def.SBody[i][6]+1;
+    tmp_org_sigma4   = X->Def.SBody[i][7];
+  }else if(type==4){
     tmp_org_isite1   = X->Def.FBody[i][0]+1;
     tmp_org_sigma1   = X->Def.FBody[i][1];
     tmp_org_isite2   = X->Def.FBody[i][2]+1;
@@ -904,6 +913,7 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
     i_max=X->Check.idim_max;
 
     for(i=0;i<X->Def.NSBody;i++){
+        //printf("%d %d \n",i,X->Def.NSBody);
         vec_pr_0 = cd_1d_allocate(i_max + 1);
         vec_pr_1 = cd_1d_allocate(i_max + 1);
         vec_pr_2 = cd_1d_allocate(i_max + 1);
@@ -971,7 +981,7 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
         mltplyHalfSpinGC_mini(X,tmp_org_isite5-1,tmp_org_sigma5,tmp_org_isite6-1,tmp_org_sigma6,vec_pr,vec_pr_2);
         X->Large.mode = H_CORR;
 
-        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,4)!=0){
+        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,6)!=0){
             //error message will be added
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
@@ -1078,7 +1088,7 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
  * @retval -1 abnormally finished
  *
  */
-int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3){
+int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3,FILE **_fp_4){
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
         info = expec_cisajscktalt_SpinGCHalf(X,vec, _fp);
@@ -1089,7 +1099,7 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
           info = expec_Fourbody_SpinGCHalf(X,vec,_fp_3);
         }
         if(X->Def.NSBody>0){
-          info = expec_Sixbody_SpinGCHalf(X,vec,_fp_3);
+          info = expec_Sixbody_SpinGCHalf(X,vec,_fp_4);
         }
     } else {
         info=expec_cisajscktalt_SpinGCGeneral(X,vec, _fp);

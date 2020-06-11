@@ -66,7 +66,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "TEOneBody",
   "TETwoBody",
   "ThreeBodyG",
-  "FourBodyG"
+  "FourBodyG",
+  "SixBodyG"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
