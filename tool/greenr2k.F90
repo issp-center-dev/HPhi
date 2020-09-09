@@ -696,7 +696,6 @@ SUBROUTINE read_corrfile()
            END DO ! ir = 1, nr
         END DO ! jorb = 1, norb
      END DO ! iorb = 1, norb
-     write(*,*) cor(:,3,1,1,1)
      !
      ! For mVMC
      !
