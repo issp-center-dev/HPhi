@@ -44,7 +44,7 @@ EOF
 
 
 
-${MPIRUN} ../../src/HPhi -sdry stan.in
+../../src/HPhi -sdry stan.in
 
 echo   "ThreeBodyG  green3.def" >> namelist.def
 echo   "FourBodyG   green4.def" >> namelist.def
