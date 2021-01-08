@@ -4,6 +4,8 @@ enable_testing()
 project(HPhi NONE)
 option(USE_SCALAPACK "Use Scalapack" OFF)
 
+set(CMAKE_C_FLAGS "-Wall")
+
 if(CONFIG)
   message(STATUS "Loading configration: " ${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)
   include(${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)
@@ -26,28 +28,37 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_MACOSX_RPATH 1)
 
-# git submodule update
-# ref: https://cliutils.gitlab.io/modern-cmake/chapters/projects/submodule.html
-find_package(Git QUIET)
-if(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-  set(STDFACE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace/submodule")
-  # Update submodules as needed
-  if(GIT_SUBMODULE_UPDATE)
-    message(STATUS "Submodule update")
-    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-      message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+if(NOT STDFACE_DIR)
+  # git submodule update
+  # ref: https://cliutils.gitlab.io/modern-cmake/chapters/projects/submodule.html
+  find_package(Git QUIET)
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace/clone")
+    set(STDFACE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace/clone")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace")
+  elseif(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+    set(STDFACE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace/submodule")
+    # Update submodules as needed
+    if(GIT_SUBMODULE_UPDATE)
+      message(STATUS "Submodule update")
+      execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+      if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+        message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+      endif()
     endif()
+  else()
+    set(STDFACE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace/clone")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace")
   endif()
 
   if(NOT EXISTS "${STDFACE_DIR}/CMakeLists.txt")
-    message(FATAL_ERROR "The submodule StdFace were not downloaded! GIT_SUBMODULE_UPDATE was turned off or failed. Please update submodules and try again.")
+    message(FATAL_ERROR "Automatic download of the submodule StdFace failed! Please run 'sh ${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace/download.sh' to download manually.")
   endif()
 else()
-  set(STDFACE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace/clone")
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/StdFace")
+  if(NOT EXISTS "${STDFACE_DIR}/CMakeLists.txt")
+    message(FATAL_ERROR "STDFACE_DIR is manually set to ${STDFACE_DIR}, but ${STDFACE_DIR}/CMakeLists.txt does not exists")
+  endif()
 endif()
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Intel")
