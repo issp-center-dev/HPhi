@@ -3,6 +3,8 @@ MODULE fourier_val
   IMPLICIT NONE
   !
   INTEGER,SAVE :: &
+  & interval, &
+  & numave, &
   & nkg(3), & ! k-grid for momentum ditribution
   & nk_line, & ! Numberof along each k line
   & nnode, & ! Number of node of k-path
@@ -86,10 +88,11 @@ CONTAINS
 !
 SUBROUTINE read_filename()
   !
-  USE fourier_val, ONLY : file_one, file_two, filehead, nsite, nwfc, filetail, calctype
+  USE fourier_val, ONLY : file_one, file_two, filehead, nsite, nwfc, &
+  &                       filetail, calctype, numave, interval
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, lanczos_max, numave, interval, irun, istep, iwfc, idx_start
+  INTEGER :: fi = 10, lanczos_max, irun, istep, iwfc, idx_start
   CHARACTER(256) :: modpara, calcmod, keyname, namelist
   !
   WRITE(*,*) 
@@ -220,8 +223,8 @@ SUBROUTINE read_filename()
      ALLOCATE(filetail(nwfc))
      !
      iwfc = 0
-     DO irun = 0, numave - 1
-        DO istep = 0, lanczos_max - 1
+     DO istep = 0, lanczos_max - 1
+        DO irun = 0, numave - 1
            IF(MOD(istep, interval) == 0) THEN
               iwfc = iwfc + 1
               WRITE(filetail(iwfc),'(a,i0,a,i0,a)') &
@@ -368,7 +371,7 @@ SUBROUTINE read_geometry()
   !
   ! Compute Reciprocal Lattice Vector
   !
-  recipr(1:3,1:3) = direct(1:3,1:3)
+  recipr(1:3,1:3) = transpose(direct(1:3,1:3))
   CALL dgetrf(3, 3, recipr, 3, Ipiv, ii)
   CALL dgetri(3, recipr, 3, ipiv, work, 10, ii)
   WRITE(*,*) "    Reciplocal lattice vector :"
@@ -609,10 +612,10 @@ END SUBROUTINE read_corrindx
 SUBROUTINE read_corrfile()
   !
   USE fourier_val, ONLY : filehead, filetail, nwfc, calctype, &  
-  &                       ncor1, ncor2, indx, cor, norb, nr
+  &                       ncor1, ncor2, indx, cor, norb, nr, irv
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, icor, itmp(8), iwfc, iorb, jorb, ir
+  INTEGER :: fi = 10, icor, itmp(8), iwfc, iorb, jorb, ir, ir0
   COMPLEX(8),ALLOCATABLE :: cor0(:)
   REAL(8) :: cor0_r(2)
   CHARACTER(256) :: filename
@@ -621,6 +624,13 @@ SUBROUTINE read_corrfile()
   ALLOCATE(cor0(0:MAX(ncor1,ncor2)))
   cor(1:nr,1:6,1:norb,1:norb,1:nwfc) = CMPLX(0d0, 0d0, KIND(1d0))
   cor0(0) = CMPLX(0d0, 0d0, KIND(1d0))
+  !
+  DO ir = 1, nr
+     IF(all(irv(1:3, 1, ir) == 0)) THEN
+        ir0 = ir
+        EXIT
+     END IF
+  END DO
   !
   DO iwfc = 1, nwfc
      !
@@ -672,8 +682,8 @@ SUBROUTINE read_corrfile()
               &                            + cor0(indx(ir, 6, jorb, iorb))
               !
               cor(ir, 3, jorb, iorb, iwfc) = cor(ir, 3,   jorb, iorb, iwfc) &
-              &                        - SUM(cor(ir, 1:2, jorb, iorb, iwfc)) &
-              &                        * SUM(cor(ir, 1:2, jorb, iorb, iwfc))
+              &                       - SUM(cor(ir0, 1:2, iorb, iorb, iwfc)) &
+              &                       * SUM(cor(ir0, 1:2, jorb, jorb, iwfc))
               !
               cor(ir, 4, jorb, iorb, iwfc) = cor0(indx(ir, 3, jorb, iorb)) &
               &                            - cor0(indx(ir, 4, jorb, iorb)) &
@@ -735,7 +745,7 @@ SUBROUTINE fourier_cor()
         fmat(ik,ir) = CMPLX(0d0, 0d0, KIND(1d0))
         DO ireq = 1, nreq(ir)
            theta = - tpi * DOT_PRODUCT(kvec(1:3,ik), DBLE(irv(1:3,ireq,ir))) &
-           &     + tpi * phase(ireq,ir)
+           &     + phase(ireq,ir)
            fmat(ik,ir) = fmat(ik,ir) + CMPLX(COS(theta), SIN(theta), KIND(1d0))
         END DO
         fmat(ik,ir) = fmat(ik,ir) / DBLE(nreq(ir))
@@ -756,11 +766,11 @@ END SUBROUTINE fourier_cor
 !
 SUBROUTINE output_cor()
   !
-  USE fourier_val, ONLY : cor_k, nk, nnode, knode, nk_line, kname, norb, &
-  &                       nwfc, recipr, filehead, filetail, calctype, nkg
+  USE fourier_val, ONLY : cor_k, nk, nnode, knode, nk_line, kname, norb, interval, &
+  &                       nwfc, recipr, filehead, filetail, calctype, nkg, numave
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, iwfc, inode, iorb, jorb, ii, ikk
+  INTEGER :: fo = 20, ik, iwfc, inode, iorb, jorb, ii, ikk, iwfc1, iwfc2, istep
   REAL(8) :: dk(3), dk_cart(3), xk(nk), &
   &          xk_label(nnode), klength
   CHARACTER(256) :: filename
@@ -790,61 +800,73 @@ SUBROUTINE output_cor()
   !
   WRITE(*,*) "  Correlation in k-space : ", TRIM(filehead) // "_corr", "*.dat"
   !
-  IF(calctype == 4) THEN
+  IF(calctype == 1 .OR. calctype == 4) THEN
      !
-     ! mVMC
+     ! TPQ/mVMC
      !
      ALLOCATE(cor_ave(ikk,6,norb,norb), cor_err(ikk,6,norb,norb))
      !
-     ! Average
-     !
-     cor_ave(1:ikk,1:6,1:norb,1:norb) = SUM(cor_k(1:ikk,1:6,1:norb,1:norb,1:nwfc), 5) / DBLE(nwfc)
-     !
-     ! Variance
-     !
-     cor_err(1:ikk,1:6,1:norb,1:norb) = 0d0
-     DO iwfc = 1, nwfc
-        cor_err(1:ikk,1:6,1:norb,1:norb) = cor_err(1:ikk,1:6,1:norb,1:norb) &
-        & + CMPLX( DBLE(cor_k(1:ikk,1:6,1:norb,1:norb,iwfc) - cor_ave(1:ikk,1:6,1:norb,1:norb))**2, &
-        &         AIMAG(cor_k(1:ikk,1:6,1:norb,1:norb,iwfc) - cor_ave(1:ikk,1:6,1:norb,1:norb))**2, &
-        &         KIND(0d0))
-     END DO
-     !
-     ! Standard Error
-     !
-     IF(nwfc == 1) THEN
-        cor_err(1:ikk,1:6,1:norb,1:norb) = CMPLX(0d0, 0d0, KIND(0d0))
-     ELSE
-        cor_err(1:ikk,1:6,1:norb,1:norb) = CMPLX(SQRT( DBLE(cor_err(1:ikk,1:6,1:norb,1:norb))), &
-        &                                       SQRT(AIMAG(cor_err(1:ikk,1:6,1:norb,1:norb))), KIND(0d0)) &
-        &                               / SQRT(DBLE(nwfc * (nwfc - 1)))
-     END IF
-     !
-     filename = TRIM(filehead) // "_corr.dat"
-     OPEN(fo, file = TRIM(filename))
-     !
-     WRITE(fo,*) "# k-length[1]"
-     ii = 1
-     DO iorb = 1, norb
-        DO jorb = 1, norb
-           WRITE(fo,'(a,i3,a,i3)') "# Orbital", iorb, " to Orbital", jorb
-           WRITE(fo,'(a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a)') &
-           & "#  UpUp[", ii+1, ",", ii+2, ",", ii+13, ",", ii+14, &
-           & "] (Re. Im. Err.) DownDown[", ii+3, ",", ii+4, ",", ii+15, ",", ii+16, "]"
-           WRITE(fo,'(a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a)') &
-           & "#  Density[", ii+5, ",", ii+6, ",", ii+17, ",", ii+18, &
-           & "] SzSz[", ii+7, ",", ii+8, ",", ii+19, ",", ii+20, &
-           & "] S+S-[", ii+9, ",", ii+10, ",", ii+21, ",", ii+22, &
-           & "] S.S[", ii+11, ",", ii+12, ",", ii+23, ",", ii+24, "]"
-           ii = ii+24
+     DO istep = 1, nwfc / numave
+        !
+        iwfc1 = numave*(istep-1) + 1
+        iwfc2 = numave*istep
+        !
+        ! Average
+        !
+        cor_ave(1:ikk,1:6,1:norb,1:norb) = SUM(cor_k(1:ikk,1:6,1:norb,1:norb,&
+        &                                      iwfc1:iwfc2), 5) / DBLE(numave)
+        !
+        ! Variance
+        !
+        cor_err(1:ikk,1:6,1:norb,1:norb) = 0d0
+        DO iwfc = iwfc1, iwfc2
+           cor_err(1:ikk,1:6,1:norb,1:norb) = cor_err(1:ikk,1:6,1:norb,1:norb) &
+           & + CMPLX( DBLE(cor_k(1:ikk,1:6,1:norb,1:norb,iwfc) - cor_ave(1:ikk,1:6,1:norb,1:norb))**2, &
+           &         AIMAG(cor_k(1:ikk,1:6,1:norb,1:norb,iwfc) - cor_ave(1:ikk,1:6,1:norb,1:norb))**2, &
+           &         KIND(0d0))
         END DO
-     END DO
-     !
-     DO ik = 1, ikk
-        WRITE(fo,'(1000e15.5)') cor_ave(ik,1:6, 1:norb, 1:norb), cor_err(ik,1:6, 1:norb, 1:norb)
-     END DO
-     !
-     CLOSE(fo)
+        !
+        ! Standard Error
+        !
+        IF(numave == 1) THEN
+           cor_err(1:ikk,1:6,1:norb,1:norb) = CMPLX(0d0, 0d0, KIND(0d0))
+        ELSE
+           cor_err(1:ikk,1:6,1:norb,1:norb) = CMPLX(SQRT( DBLE(cor_err(1:ikk,1:6,1:norb,1:norb))), &
+           &                                       SQRT(AIMAG(cor_err(1:ikk,1:6,1:norb,1:norb))), KIND(0d0)) &
+           &                               / SQRT(DBLE(numave * (numave - 1)))
+        END IF
+        !
+        IF(calctype == 1)THEN
+           WRITE(filename,'(a,a,i0,a)') TRIM(filehead), "_corr_step", interval*(istep-1), ".dat"
+        ELSE 
+           filename = TRIM(filehead) // "_corr.dat"
+        END IF
+        OPEN(fo, file = TRIM(filename))
+        !
+        WRITE(fo,*) "# k-length[1]"
+        ii = 1
+        DO iorb = 1, norb
+           DO jorb = 1, norb
+              WRITE(fo,'(a,i3,a,i3)') "# Orbital", iorb, " to Orbital", jorb
+              WRITE(fo,'(a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a)') &
+              & "#  UpUp[", ii+1, ",", ii+2, ",", ii+13, ",", ii+14, &
+              & "] (Re. Im. Err.) DownDown[", ii+3, ",", ii+4, ",", ii+15, ",", ii+16, "]"
+              WRITE(fo,'(a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a)') &
+              & "#  Density[", ii+5, ",", ii+6, ",", ii+17, ",", ii+18, &
+              & "] SzSz[", ii+7, ",", ii+8, ",", ii+19, ",", ii+20, &
+              & "] S+S-[", ii+9, ",", ii+10, ",", ii+21, ",", ii+22, &
+              & "] S.S[", ii+11, ",", ii+12, ",", ii+23, ",", ii+24, "]"
+              ii = ii+24
+           END DO
+        END DO
+        !
+        DO ik = 1, ikk
+           WRITE(fo,'(1000e15.5)') xk(ik), cor_ave(ik,1:6, 1:norb, 1:norb), cor_err(ik,1:6, 1:norb, 1:norb)
+        END DO
+        !
+        CLOSE(fo)
+        !
+     END DO ! istep = 1, nwfc / numave
      !
      DEALLOCATE(cor_ave, cor_err)
      !
