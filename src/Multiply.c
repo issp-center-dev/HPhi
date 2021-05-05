@@ -156,7 +156,7 @@ int MultiplyForCanonicalTPQ
   i_max=X->Check.idim_max;
   // mltply is in expec_energy.c v0=H*v1
   tmp1 *= -0.5 * delta_tau;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, dt, tmp1, tmp2)
+#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, tmp2)
   for (i = 1; i <= i_max; i++) {
       tmp2 =  v0[i];
       v0[i] = v1[i] + tmp1 * tmp2;  //v0=[1+(-0.5*dt*H)]*v1
@@ -177,7 +177,7 @@ int MultiplyForCanonicalTPQ
     }
   }
   dnorm=0.0;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0) firstprivate(i_max, dt)
+#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0) firstprivate(i_max)
   for(i = 1; i <= i_max; i++){
     dnorm += conj(v0[i])*v0[i];
   }
