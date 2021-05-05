@@ -18,6 +18,7 @@
 #include "expec_energy_flct.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "MakeIniVec.h"
 #include "CalcByCanonicalTPQ.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -147,12 +148,12 @@ int CalcByCanonicalTPQ(
         TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
       }
       /**@brief
-      Initialize v1 and compute v0 = H*v1
+      Initialize v1 and v0 = v1
       */
-      FirstMultiply(rand_i, &(X->Bind));
+      MakeIniVec(rand_i, &(X->Bind)); 
       /*[s] tau*/
       inv_temp  = 0.0;
-      delta_tau = 0.01;
+      delta_tau = 1.0/LargeValue;
       /*[e] tau*/
       StopTimer(3100);
       if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
@@ -181,39 +182,22 @@ int CalcByCanonicalTPQ(
       StopTimer(3400);
       if(iret !=0) return -1;
 
-      /**@brief
-      Compute v1=0, and compute v0 = H*v1
-      */
+      
       StartTimer(3200);
       iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
       StopTimer(3200);
       if(iret !=0) return -1;
-      step_i += 1;
-      inv_temp = 0+delta_tau; /* (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);*/
+      inv_temp = 0; /* (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);*/
       StartTimer(3600);
-      if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
-        return -1;
-      }
-      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
-              X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
-      fclose(fp);
-// for norm
-      if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
-        return -1;
-      }
-      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
-      fclose(fp);
 // for fluctuations
-/*
       if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
         return -1;
       }
       fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
       fclose(fp);
-*/
 //
       StopTimer(3600);
-      step_i +=1;
+      step_i += 1;
       X->Bind.Def.istep = step_i;
       step_iO=0;
     }
@@ -228,7 +212,7 @@ int CalcByCanonicalTPQ(
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
       StopTimer(3600);
       StartTimer(3500);
-      MultiplyForCanonicalTPQ(&(X->Bind),delta_tau); // v0=H*v1
+      MultiplyForCanonicalTPQ(&(X->Bind),delta_tau); // v0=exp[-delta_tau*H/2]*v1 in 4th order
       StopTimer(3500);
 
       StartTimer(3200);
@@ -238,6 +222,7 @@ int CalcByCanonicalTPQ(
 //
       //inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
       inv_temp  += delta_tau;
+      //temp      = 1.0/inv_temp;
 
       StartTimer(3600);
       if(childfopenMPI(sdt_phys, "a", &fp)!=0){

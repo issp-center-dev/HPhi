@@ -37,7 +37,7 @@
 /// \version 0.1
 /// \author Takahiro Misawa (The University of Tokyo)
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
-int FirstMultiply(int rand_i, struct BindStruct *X) {
+int MakeIniVec(int rand_i, struct BindStruct *X) {
 
   long int i, i_max;
   double complex dnorm;
@@ -104,29 +104,5 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
-  StartTimer(3102);
-  if(expec_energy_flct(X) !=0){ //v1 <- v0 and v0 = H*v1
-    StopTimer(3102);
-    return -1;
-  }
-  StopTimer(3102);
-#pragma omp parallel for default(none) private(i) shared(v0, v1, list_1) firstprivate(i_max, Ns, LargeValue, myrank)
-  for(i = 1; i <= i_max; i++){
-    v0[i]=LargeValue*v1[i]-v0[i]/Ns;
-  }
-
-  dnorm=0.0;
-#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max) reduction(+: dnorm)
-  for(i=1;i<=i_max;i++){
-    dnorm += conj(v0[i])*v0[i];
-  }
-  dnorm = SumMPI_dc(dnorm);
-  dnorm=sqrt(dnorm);
-  global_norm = dnorm;
-#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)
-  for(i=1;i<=i_max;i++){
-    v0[i] = v0[i]/dnorm;
-  }
-  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStepEnd, "a", rand_i, step_i);
   return 0;
 }
