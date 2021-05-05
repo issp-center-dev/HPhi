@@ -125,6 +125,7 @@ int expec_cisajscktaltdc
     break;
 
   case TPQCalc:
+  case cTPQ:
     step=X->Def.istep;
     rand_i=X->Def.irand;
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecTwoBodyGStart, "a", rand_i, step);

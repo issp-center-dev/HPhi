@@ -138,3 +138,55 @@ int MultiplyForTEM
   }
   return 0;
 }
+
+int MultiplyForCanonicalTPQ
+(
+ struct BindStruct *X, double delta_tau
+ )
+{
+
+  long int i,i_max;
+  int coef;
+  double complex dnorm = 0.0;
+  double complex tmp1  = 1.0;
+  double complex tmp2  = 0.0;
+  //double dt=X->Def.Param.TimeSlice;
+
+  //Make |v0> = |psi(tau+delta_tau)> from |v1> = |psi(tau)> and |v0> = H |psi(tau)>
+  i_max=X->Check.idim_max;
+  // mltply is in expec_energy.c v0=H*v1
+  tmp1 *= -0.5 * delta_tau;
+#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, dt, tmp1, tmp2)
+  for (i = 1; i <= i_max; i++) {
+      tmp2 =  v0[i];
+      v0[i] = v1[i] + tmp1 * tmp2;  //v0=[1+(-0.5*dt*H)]*v1
+      v1[i] = tmp2;
+      v2[i] = 0.0 + I * 0.0;
+  }
+  //for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
+  /*NB coef_max should be determined*/
+  for (coef = 2; coef <= 4; coef++) {
+    tmp1 *= (-0.5 * delta_tau) / (double complex) coef;
+    //v2 = H*v1 = H^coef |psi(t)>
+    mltply(X, v2, v1);
+#pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
+    for (i = 1; i <= i_max; i++) {
+      v0[i] += tmp1 * v2[i];
+      v1[i] = v2[i];
+      v2[i] = 0.0 + I * 0.0;
+    }
+  }
+  dnorm=0.0;
+#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0) firstprivate(i_max, dt)
+  for(i = 1; i <= i_max; i++){
+    dnorm += conj(v0[i])*v0[i];
+  }
+  dnorm=SumMPI_dc(dnorm);
+  dnorm=sqrt(dnorm);
+  global_norm = dnorm;
+#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)
+  for(i=1;i<=i_max;i++){
+    v0[i] = v0[i]/dnorm;
+  }
+  return 0;
+}
