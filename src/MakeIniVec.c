@@ -45,11 +45,13 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
   int mythread;
+  double rand_X,rand_Y;
+  double complex rand_Z1,rand_Z2;
 
   Ns = 1.0*X->Def.NsiteMPI;
   i_max = X->Check.idim_max;
 
-#pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt) \
+#pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \
         shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \
         firstprivate(i_max)
   {
@@ -76,8 +78,19 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 #pragma omp for
       for (i = 1; i <= i_max; i++)
         v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
-    }/*if (X->Def.iInitialVecType == 0)*/
-    else {
+    /*if (X->Def.iInitialVecType == 0)*/
+    }else if (X->Def.iInitialVecType == -1) {
+    StartTimer(3101);
+#pragma omp for 
+      for (i = 1; i <= i_max; i++){
+        rand_X   = dsfmt_genrand_close_open(&dsfmt);
+        rand_Y   = dsfmt_genrand_close_open(&dsfmt);
+        rand_Z1  = sqrt(-2.0*log(rand_X))*cos(2.0*M_PI*rand_Y);
+        rand_Z2  = sqrt(-2.0*log(rand_X))*sin(2.0*M_PI*rand_Y);
+        v1[i]    = rand_Z1+I*rand_Z2;
+      } 
+    /*if (X->Def.iInitialVecType == -1)*/
+    }else {
 #pragma omp for
       for (i = 1; i <= i_max; i++)
           v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);

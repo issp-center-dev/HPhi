@@ -165,7 +165,7 @@ int MultiplyForCanonicalTPQ
   }
   //for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
   /*NB coef_max should be determined*/
-  for (coef = 2; coef <= 8; coef++) {
+  for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
     tmp1 *= (-0.5 * delta_tau) / (double complex) coef;
     //v2 = H*v1 = H^coef |psi(t)>
     mltply(X, v2, v1);
