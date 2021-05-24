@@ -21,4 +21,4 @@ Bogoliubov表現
   \sqrt{S(S+1) - \sigma(\sigma+1)} 
   c_{i \sigma}^\dagger c_{i \sigma+1}
 
-
+HPhiでは最も大きな :math:`\sigma` の状態のインデックスを0とします。

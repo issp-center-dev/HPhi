@@ -90,7 +90,7 @@ diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$
 cp stan1.in stan2.in
 cat >> stan2.in <<EOF
 CalcSpec = "Normal"
-SpectrumType = "Up"
+SpectrumType = "Down"
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
@@ -110,7 +110,7 @@ diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$
 cp stan1.in stan2.in
 cat >> stan2.in <<EOF
 CalcSpec = "Normal"
-SpectrumType = "Down"
+SpectrumType = "Up"
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in

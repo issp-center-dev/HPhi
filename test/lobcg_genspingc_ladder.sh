@@ -12,7 +12,7 @@ lattice = "ladder"
 J0 = 1.0
 J1 = 1.0
 2S = 3
-h=0.01
+h=-0.01
 exct = 3
 EOF
 

@@ -13,7 +13,7 @@ method = "CG"
 lattice = "Triangular"
 t = 1.0
 U = 4.0
-h = 3.0
+h = -3.0
 exct = 2
 EOF
 
