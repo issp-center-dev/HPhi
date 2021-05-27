@@ -40,7 +40,7 @@ cat > reference.dat <<EOF
   -0.2767335797116458 
 EOF
 paste output/zvo_energy.dat reference.dat > paste.dat
-diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)*($2-$3))} END{printf "%8.6f", diff}' paste.dat`
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)*($2-$3))} END{printf "%8.5f", diff}' paste.dat`
 test "${diff}" = "0.00000"
 echo "${diff}"
 
