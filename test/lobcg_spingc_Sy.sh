@@ -15,7 +15,7 @@ J1xz = 1
 J2yz = 2
 h = 0.2
 Gamma =  0.5
-exct = 3
+exct = 1
 EOF
 
 ${MPIRUN} ../../src/HPhi -sdry stan.in
@@ -35,22 +35,13 @@ ${MPIRUN} ../../src/HPhi -e namelist.def
 
 cat > reference.dat <<EOF
   0
-  -5.5492800776068787 
+  -5.5492800776055233 
   0.0000000000000000 
-  -0.2767358227140751 
-
-  1
-  -5.5019406311606600 
-  0.0000000000000000 
-  -0.2815535307637156 
-
-  2
-  -5.4175356131670966 
-  0.0000000000000000 
-  -0.2128267310211485 
+  -0.2767335797116458 
 EOF
 paste output/zvo_energy.dat reference.dat > paste.dat
 diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$3)*($2-$3))} END{printf "%8.6f", diff}' paste.dat`
 test "${diff}" = "0.000000"
+echo "${diff}"
 
 exit $?
