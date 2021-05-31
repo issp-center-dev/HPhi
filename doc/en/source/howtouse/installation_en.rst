@@ -56,3 +56,13 @@ After compilation,
 an execute :math:`{\mathcal H}\Phi` in the ``src`` folder.
 Please note that we must delete the ``build`` folder and
 repeat the above operations when we change the compiler.
+
+
+.. tip::
+
+ | CMake automatically trys to download StdFace package (https://github.com/issp-center-dev/StdFace, parser for standard mode),
+ | but this may fail due to network problem (e.g., IP unreachable)
+ | In such a case, please run ``sh src/StdFace/download.sh`` to download manually.
+ |
+ | If you want to use StdFace downloaded into another directory,
+ | pass ``-DSTDFACE_DIR=<path_to_stdface>`` to cmake command.

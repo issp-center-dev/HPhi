@@ -18,140 +18,137 @@
 #define HPHI_LOGMESSAGE_H
 
 //readdef.c
-const char* cReadFileNamelist;
-const char* cReadFile;
-const char* cReadDefStart;
-const char* cReadDefFinish;
+extern const char* cReadFileNamelist;
+extern const char* cReadFile;
+extern const char* cReadDefStart;
+extern const char* cReadDefFinish;
 
 //sz.c
-const char* cStateLocSpin;
-const char* cStateNupNdown;
-const char* cInitalSz;
-const char* cOMPSzStart;
-const char* cOMPSzMid;
-const char* cOMPSzFinish;
-const char* cReadSzStart;
-const char* cReadSzEnd;
+extern const char* cStateLocSpin;
+extern const char* cStateNupNdown;
+extern const char* cInitalSz;
+extern const char* cOMPSzStart;
+extern const char* cOMPSzMid;
+extern const char* cOMPSzFinish;
+extern const char* cReadSzStart;
+extern const char* cReadSzEnd;
 
 //CalcByLanczos.c
-const char* cReadEigenVecStart;
-const char* cReadEigenVecFinish;
-const char* cOutputEigenVecStart;
-const char* cOutputEigenVecFinish;
+extern const char* cReadEigenVecStart;
+extern const char* cReadEigenVecFinish;
+extern const char* cOutputEigenVecStart;
+extern const char* cOutputEigenVecFinish;
 
 
 //CG_EigenVector.c
-const char* cLogCG_EigenVecStart;
-const char* cLogCG_EigenVecEnd;
-const char* cCG_EigenVecStart;
-const char* cCG_EigenVecFinish;
+extern const char* cLogCG_EigenVecStart;
+extern const char* cLogCG_EigenVecEnd;
+extern const char* cCG_EigenVecStart;
+extern const char* cCG_EigenVecFinish;
 
 //diagonalcalc.c
-const char* cDiagonalCalcStart;
-const char* cDiagonalCalcFinish;
+extern const char* cDiagonalCalcStart;
+extern const char* cDiagonalCalcFinish;
 
 //calcspectrum.c
-const char* c_InputEigenVectorStart;
-const char* c_InputEigenVectorEnd;
-const char* c_CalcExcitedStateStart;
-const char* c_CalcExcitedStateEnd;
-const char* c_CalcSpectrumStart;
-const char* c_CalcSpectrumEnd;
-const char* c_GetTridiagonalStart;
-const char* c_GetTridiagonalEnd;
-const char* c_CalcSpectrumFromTridiagonalStart;
-const char* c_CalcSpectrumFromTridiagonalEnd;
-const char* c_OutputSpectrumRecalcvecStart;
-const char* c_OutputSpectrumRecalcvecEnd;
-const char* c_InputSpectrumRecalcvecStart;
-const char* c_InputSpectrumRecalcvecEnd;
+extern const char* c_InputEigenVectorStart;
+extern const char* c_InputEigenVectorEnd;
+extern const char* c_CalcExcitedStateStart;
+extern const char* c_CalcExcitedStateEnd;
+extern const char* c_CalcSpectrumStart;
+extern const char* c_CalcSpectrumEnd;
+extern const char* c_GetTridiagonalStart;
+extern const char* c_GetTridiagonalEnd;
+extern const char* c_CalcSpectrumFromTridiagonalStart;
+extern const char* c_CalcSpectrumFromTridiagonalEnd;
+extern const char* c_OutputSpectrumRecalcvecStart;
+extern const char* c_OutputSpectrumRecalcvecEnd;
+extern const char* c_InputSpectrumRecalcvecStart;
+extern const char* c_InputSpectrumRecalcvecEnd;
 
 //calcspectrum in Lanczos_Eigenvalue.c
-const char* c_Lanczos_SpectrumStep;
-
+extern const char* c_Lanczos_SpectrumStep;
 
 //FirstMultiply.c, Multiply.c
-const char* cTPQStep;
-const char* cTPQStepEnd;
+extern const char* cTPQStep;
+extern const char* cTPQStepEnd;
 
 //CalcByTEM.c
-const char* cTEStep;
-const char* cTEStepEnd;
-
+extern const char* cTEStep;
+extern const char* cTEStepEnd;
 
 //Lanczos_EigenValue.c
-const char* cLogLanczos_EigenValueNotConverged;
-const char* cLanczos_EigenValueStart;
-const char* cLanczos_EigenValueStep;
-const char* cLanczos_EigenValueFinish;
+extern const char* cLogLanczos_EigenValueNotConverged;
+extern const char* cLanczos_EigenValueStart;
+extern const char* cLanczos_EigenValueStep;
+extern const char* cLanczos_EigenValueFinish;
 
 //Lanczos_EigenVector.c
-const char* cLogLanczos_EigenVectorStart;
-const char* cLogLanczos_EigenVectorEnd;
-const char* cLanczos_EigenVectorStart;
-const char* cLanczos_EigenVectorFinish;
+extern const char* cLogLanczos_EigenVectorStart;
+extern const char* cLogLanczos_EigenVectorEnd;
+extern const char* cLanczos_EigenVectorStart;
+extern const char* cLanczos_EigenVectorFinish;
 
 //expec.c
-const char* cExpecStart;
-const char* cExpecEnd;
-const char* cTPQExpecStart;
-const char* cTPQExpecEnd;
+extern const char* cExpecStart;
+extern const char* cExpecEnd;
+extern const char* cTPQExpecStart;
+extern const char* cTPQExpecEnd;
 
 //expec_cisajs.c
-const char* cLogLanczosExpecOneBodyGStart;
-const char* cLogCGExpecOneBodyGStart;
-const char* cLogLanczosExpecOneBodyGEnd;
-const char* cLogCGExpecOneBodyGEnd;
+extern const char* cLogLanczosExpecOneBodyGStart;
+extern const char* cLogCGExpecOneBodyGStart;
+extern const char* cLogLanczosExpecOneBodyGEnd;
+extern const char* cLogCGExpecOneBodyGEnd;
 
-const char* cLanczosExpecOneBodyGFinish;
-const char* cLanczosExpecOneBodyGStart;
-const char* cTPQExpecOneBodyGStart;
-const char* cTPQExpecOneBodyGFinish;
-const char* cCGExpecOneBodyGStart;
-const char* cCGExpecOneBodyGFinish;
-const char* cTEExpecOneBodyGStart;
-const char* cTEExpecOneBodyGFinish;
+extern const char* cLanczosExpecOneBodyGFinish;
+extern const char* cLanczosExpecOneBodyGStart;
+extern const char* cTPQExpecOneBodyGStart;
+extern const char* cTPQExpecOneBodyGFinish;
+extern const char* cCGExpecOneBodyGStart;
+extern const char* cCGExpecOneBodyGFinish;
+extern const char* cTEExpecOneBodyGStart;
+extern const char* cTEExpecOneBodyGFinish;
 
 //expec_cisajucktaltdc.c
-const char*  cLogLanczosExpecTwoBodyGStart;
-const char*  cLogLanczosExpecTwoBodyGFinish;
-const char*  cLanczosExpecTwoBodyGStart;
-const char*  cLogCGExpecTwoBodyGFinish;
-const char*  cLanczosExpecTwoBodyGFinish;
-const char*  cCGExpecTwoBodyGStart;
-const char*  cCGExpecTwoBodyGFinish;
-const char*  cTPQExpecTwoBodyGStart;
-const char*  cTPQExpecTwoBodyGFinish;
-const char*  cTEExpecTwoBodyGStart;
-const char*  cTEExpecTwoBodyGFinish;
+extern const char*  cLogLanczosExpecTwoBodyGStart;
+extern const char*  cLogLanczosExpecTwoBodyGFinish;
+extern const char*  cLanczosExpecTwoBodyGStart;
+extern const char*  cLogCGExpecTwoBodyGFinish;
+extern const char*  cLanczosExpecTwoBodyGFinish;
+extern const char*  cCGExpecTwoBodyGStart;
+extern const char*  cCGExpecTwoBodyGFinish;
+extern const char*  cTPQExpecTwoBodyGStart;
+extern const char*  cTPQExpecTwoBodyGFinish;
+extern const char*  cTEExpecTwoBodyGStart;
+extern const char*  cTEExpecTwoBodyGFinish;
 
 //expec_energy.c
-const char* cLogExpecEnergyStart;
-const char* cLogExpecEnergyEnd;
+extern const char* cLogExpecEnergyStart;
+extern const char* cLogExpecEnergyEnd;
 
 //CalcByTPQ.c
-const char* cLogTPQRand;
-const char* cLogSSRand;
-const char* cLogNormRand;
-const char* cLogFlctRand;
-const char* cLogTPQStep;
-const char* cLogTPQEnd;
+extern const char* cLogTPQRand;
+extern const char* cLogSSRand;
+extern const char* cLogNormRand;
+extern const char* cLogFlctRand;
+extern const char* cLogTPQStep;
+extern const char* cLogTPQEnd;
 
 //CalcByTEM.c
-const char* cLogTEStep;
-const char* cLogSS;
-const char* cLogNorm;
-const char* cLogFlct;
+extern const char* cLogTEStep;
+extern const char* cLogSS;
+extern const char* cLogNorm;
+extern const char* cLogFlct;
 
-const char* cLogInputVecStart;
-const char* cLogInputVecFinish;
-const char* cLogOutputVecStart;
-const char* cLogOutputVecFinish;
-const char* cOutputVecStart;
-const char* cOutputVecFinish;
-
+extern const char* cLogInputVecStart;
+extern const char* cLogInputVecFinish;
+extern const char* cLogOutputVecStart;
+extern const char* cLogOutputVecFinish;
+extern const char* cOutputVecStart;
+extern const char* cOutputVecFinish;
 
 //FirstMultiply.c
-const char* cLogCheckInitComplex;
-const char* cLogCheckInitReal;
+extern const char* cLogCheckInitComplex;
+extern const char* cLogCheckInitReal;
 #endif /* HPHI_LOGMESSAGE_H */

@@ -19,7 +19,7 @@ J2x =  0.0
 J2y =  0.0
 J2z = -1.0
 2S=1
-h=1.0
+h=-1.0
 EOF
 
 cat > green3.def <<EOF

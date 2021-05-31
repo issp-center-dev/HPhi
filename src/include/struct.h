@@ -25,6 +25,8 @@
 #ifndef HPHI_STRUCT_H
 #define HPHI_STRUCT_H
 
+#include "Common.h"
+
 /*=================================================================================================*/
 //For TEM
 struct ParamList {
@@ -435,7 +437,7 @@ struct TimeKeepStruct {
 };/*struct TimeKeepStruct*/
 
 /*global variables---------------------------------------------*/
-struct EDMainCalStruct X;
+extern struct EDMainCalStruct X;
 /*-------------------------------------------------------------*/
 
 #endif /* HPHI_STRUCT_H */
