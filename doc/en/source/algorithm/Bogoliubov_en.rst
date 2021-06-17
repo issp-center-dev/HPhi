@@ -23,4 +23,4 @@ The spin operators are written by using creation\/annihilation operators:
   \sqrt{S(S+1) - \sigma(\sigma+1)} 
   c_{i \sigma}^\dagger c_{i \sigma+1}
 
-
+In HPhi, the index of the highest-:math:`\sigma` state is 0.

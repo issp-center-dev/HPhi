@@ -93,6 +93,10 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spingc_honey.sh
 )
 add_test(
+  NAME lobcg_spingc_Sy
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spingc_Sy.sh
+)
+add_test(
   NAME lobcg_spingc_hcor
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spingc_hcor.sh
 )
