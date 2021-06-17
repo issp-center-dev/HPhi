@@ -176,7 +176,7 @@ int expec_cisajscktaltdc
       return -1;
     }
   }else{
-    fp_3 = fp;
+    fp_4 = fp;
   }
 
 
