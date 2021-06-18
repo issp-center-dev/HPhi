@@ -888,7 +888,7 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
 }
 
 /**
- * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
+ * @brief Child function to calculate six-body green's functions for 1/2 Spin GC model
  *
  * @param X [in] data list for calculation
  * @param vec [in] eigenvectors
@@ -1108,7 +1108,7 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
 }
 
 /**
- * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
+ * @brief Child function to calculate four-body green's functions for 1/2 Spin GC model
  *
  * @param X [in] data list for calculation
  * @param vec [in] eigenvectors
@@ -1268,7 +1268,7 @@ int expec_Fourbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_
 
 
 /**
- * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
+ * @brief Child function to calculate three-body green's functions for 1/2 Spin GC model
  *
  * @param X [in] data list for calculation
  * @param vec [in] eigenvectors
