@@ -49,7 +49,7 @@ int expec_cisajscktalt_Spin(struct BindStruct *X,double complex *vec, FILE **_fp
 int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
-int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3);
+int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3,FILE **_fp_4);
 int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
@@ -91,15 +91,15 @@ int expec_cisajscktaltdc
  )
 {
 
-  FILE *fp,*fp_2,*fp_3;
-  char sdt[D_FileNameMax],sdt_2[D_FileNameMax],sdt_3[D_FileNameMax],*tmp_char;
+  FILE *fp,*fp_2,*fp_3,*fp_4;
+  char sdt[D_FileNameMax],sdt_2[D_FileNameMax],sdt_3[D_FileNameMax],sdt_4[D_FileNameMax],*tmp_char;
   long unsigned int irght,ilft,ihfbit;
 
   //For TPQ
   int step=0;
   int rand_i=0;
 
-  if(X->Def.NCisAjtCkuAlvDC < 1 && X->Def.NTBody < 1 && X->Def.NFBody < 1) return 0;
+  if(X->Def.NCisAjtCkuAlvDC < 1 && X->Def.NTBody < 1 && X->Def.NFBody < 1 && X->Def.NSBody < 1) return 0;
   X->Large.mode=M_CORR;
 
   if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
@@ -113,12 +113,14 @@ int expec_cisajscktaltdc
       sprintf(sdt, cFileName2BGreen_Lanczos, X->Def.CDataFileHead);
       sprintf(sdt_2, cFileName3BGreen_Lanczos, X->Def.CDataFileHead);
       sprintf(sdt_3, cFileName4BGreen_Lanczos, X->Def.CDataFileHead);
+      sprintf(sdt_4, cFileName6BGreen_Lanczos, X->Def.CDataFileHead);
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecTwoBodyGStart,"a");
       fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }else if(X->Def.St==1){
       sprintf(sdt, cFileName2BGreen_CG, X->Def.CDataFileHead);
       sprintf(sdt_2, cFileName3BGreen_Lanczos, X->Def.CDataFileHead);
       sprintf(sdt_3, cFileName4BGreen_Lanczos, X->Def.CDataFileHead);
+      sprintf(sdt_4, cFileName6BGreen_Lanczos, X->Def.CDataFileHead);
         TimeKeeper(X, cFileNameTimeKeep, cCGExpecTwoBodyGStart,"a");
       fprintf(stdoutMPI, "%s", cLogLanczosExpecTwoBodyGStart);
     }
@@ -131,6 +133,7 @@ int expec_cisajscktaltdc
     sprintf(sdt, cFileName2BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
     sprintf(sdt_2, cFileName3BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
     sprintf(sdt_3, cFileName4BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
+    sprintf(sdt_4, cFileName6BGreen_TPQ, X->Def.CDataFileHead, rand_i, step);
     break;
 
   case TimeEvolution:
@@ -139,6 +142,7 @@ int expec_cisajscktaltdc
     sprintf(sdt, cFileName2BGreen_TE, X->Def.CDataFileHead, step);
     sprintf(sdt_2, cFileName3BGreen_TE, X->Def.CDataFileHead, step);
     sprintf(sdt_3, cFileName4BGreen_TE, X->Def.CDataFileHead, step);
+    sprintf(sdt_4, cFileName6BGreen_TE, X->Def.CDataFileHead, step);
     break;
 
   case FullDiag:
@@ -146,6 +150,7 @@ int expec_cisajscktaltdc
     sprintf(sdt,  cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     sprintf(sdt_2,cFileName3BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     sprintf(sdt_3,cFileName4BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
+    sprintf(sdt_4,cFileName6BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
 
@@ -166,6 +171,15 @@ int expec_cisajscktaltdc
   }else{
     fp_3 = fp;
   }
+  if(X->Def.NSBody>0){
+    if(childfopenMPI(sdt_4, "w", &fp_4)!=0){
+      return -1;
+    }
+  }else{
+    fp_4 = fp;
+  }
+
+
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
@@ -189,7 +203,7 @@ int expec_cisajscktaltdc
     break;
 
   case SpinGC:
-      if(expec_cisajscktalt_SpinGC(X, vec, &fp,&fp_2,&fp_3)!=0){
+      if(expec_cisajscktalt_SpinGC(X, vec, &fp,&fp_2,&fp_3,&fp_4)!=0){
           return -1;
       }
     break;
@@ -204,6 +218,9 @@ int expec_cisajscktaltdc
   }
   if(X->Def.NFBody>0){
     fclose(fp_3);
+  }
+  if(X->Def.NSBody>0){
+    fclose(fp_4);
   }
   
   if(X->Def.iCalcType==Lanczos){
@@ -271,7 +288,16 @@ int Rearray_Interactions(
   long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4;
   long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4;
 
-  if(type==4){
+  if(type==6){
+    tmp_org_isite1   = X->Def.SBody[i][0]+1;
+    tmp_org_sigma1   = X->Def.SBody[i][1];
+    tmp_org_isite2   = X->Def.SBody[i][2]+1;
+    tmp_org_sigma2   = X->Def.SBody[i][3];
+    tmp_org_isite3   = X->Def.SBody[i][4]+1;
+    tmp_org_sigma3   = X->Def.SBody[i][5];
+    tmp_org_isite4   = X->Def.SBody[i][6]+1;
+    tmp_org_sigma4   = X->Def.SBody[i][7];
+  }else if(type==4){
     tmp_org_isite1   = X->Def.FBody[i][0]+1;
     tmp_org_sigma1   = X->Def.FBody[i][1];
     tmp_org_isite2   = X->Def.FBody[i][2]+1;
@@ -862,6 +888,197 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
 }
 
 /**
+ * @brief Child function to calculate six-body green's functions for 1/2 Spin GC model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
+int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp){
+    long unsigned int i,j;
+    long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4,tmp_org_isite5,tmp_org_isite6,tmp_org_isite7,tmp_org_isite8,tmp_org_isite9,tmp_org_isite10,tmp_org_isite11,tmp_org_isite12;
+    long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4,tmp_org_sigma5,tmp_org_sigma6,tmp_org_sigma7,tmp_org_sigma8,tmp_org_sigma9,tmp_org_sigma10,tmp_org_sigma11,tmp_org_sigma12;
+    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6,org_isite7,org_isite8,org_isite9,org_isite10,org_isite11,org_isite12;
+    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6,org_sigma7,org_sigma8,org_sigma9,org_sigma10,org_sigma11,org_sigma12;
+    long unsigned int isA_up, isB_up;
+    long unsigned int tmp_off=0;
+    double complex tmp_V;
+    double complex dam_pr;
+    double complex *vec_pr,*vec_pr_0,*vec_pr_1,*vec_pr_2;
+
+    long int i_max;
+    i_max=X->Check.idim_max;
+
+    for(i=0;i<X->Def.NSBody;i++){
+        //printf("%d %d \n",i,X->Def.NSBody);
+        vec_pr_0 = cd_1d_allocate(i_max + 1);
+        vec_pr_1 = cd_1d_allocate(i_max + 1);
+        vec_pr_2 = cd_1d_allocate(i_max + 1);
+        vec_pr   = cd_1d_allocate(i_max + 1);
+
+        tmp_org_isite1   = X->Def.SBody[i][0]+1;
+        tmp_org_sigma1   = X->Def.SBody[i][1];
+        tmp_org_isite2   = X->Def.SBody[i][2]+1;
+        tmp_org_sigma2   = X->Def.SBody[i][3];
+        /**/
+        tmp_org_isite3   = X->Def.SBody[i][4]+1;
+        tmp_org_sigma3   = X->Def.SBody[i][5];
+        tmp_org_isite4   = X->Def.SBody[i][6]+1;
+        tmp_org_sigma4   = X->Def.SBody[i][7];
+        /**/
+        tmp_org_isite5   = X->Def.SBody[i][8]+1;
+        tmp_org_sigma5   = X->Def.SBody[i][9];
+        tmp_org_isite6   = X->Def.SBody[i][10]+1;
+        tmp_org_sigma6   = X->Def.SBody[i][11];
+        /**/
+        tmp_org_isite7   = X->Def.SBody[i][12]+1;
+        tmp_org_sigma7   = X->Def.SBody[i][13];
+        tmp_org_isite8   = X->Def.SBody[i][14]+1;
+        tmp_org_sigma8   = X->Def.SBody[i][15];
+        /**/
+        tmp_org_isite9   = X->Def.SBody[i][16]+1;
+        tmp_org_sigma9   = X->Def.SBody[i][17];
+        tmp_org_isite10  = X->Def.SBody[i][18]+1;
+        tmp_org_sigma10  = X->Def.SBody[i][19];
+        /**/
+        tmp_org_isite11  = X->Def.SBody[i][20]+1;
+        tmp_org_sigma11  = X->Def.SBody[i][21];
+        tmp_org_isite12  = X->Def.SBody[i][22]+1;
+        tmp_org_sigma12  = X->Def.SBody[i][23];
+ 
+        /**/
+        org_isite5   = X->Def.SBody[i][8]+1;
+        org_sigma5   = X->Def.SBody[i][9];
+        org_isite6   = X->Def.SBody[i][10]+1;
+        org_sigma6   = X->Def.SBody[i][11];
+        /**/
+        org_isite7   = X->Def.SBody[i][12]+1;
+        org_sigma7   = X->Def.SBody[i][13];
+        org_isite8   = X->Def.SBody[i][14]+1;
+        org_sigma8   = X->Def.SBody[i][15];
+        /**/
+        org_isite9   = X->Def.SBody[i][16]+1;
+        org_sigma9   = X->Def.SBody[i][17];
+        org_isite10  = X->Def.SBody[i][18]+1;
+        org_sigma10  = X->Def.SBody[i][19];
+        /**/
+        org_isite11  = X->Def.SBody[i][20]+1;
+        org_sigma11  = X->Def.SBody[i][21];
+        org_isite12  = X->Def.SBody[i][22]+1;
+        org_sigma12  = X->Def.SBody[i][23];
+
+        X->Large.mode = M_MLTPLY;
+        /* |vec_pr_0>= c11a12|vec>*/
+        mltplyHalfSpinGC_mini(X,tmp_org_isite11-1,tmp_org_sigma11,tmp_org_isite12-1,tmp_org_sigma12,vec_pr_0,vec);
+        /* |vec_pr_1>= c9a10|vec_pr_0>*/
+        mltplyHalfSpinGC_mini(X,tmp_org_isite9-1,tmp_org_sigma9,tmp_org_isite10-1,tmp_org_sigma10,vec_pr_1,vec_pr_0);
+        /* |vec_pr_2>= c7a8|vec_pr_1>*/
+        mltplyHalfSpinGC_mini(X,tmp_org_isite7-1,tmp_org_sigma7,tmp_org_isite8-1,tmp_org_sigma8,vec_pr_2,vec_pr_1);
+        /* |vec_pr>= c5a6|vec_pr_2>*/
+        mltplyHalfSpinGC_mini(X,tmp_org_isite5-1,tmp_org_sigma5,tmp_org_isite6-1,tmp_org_sigma6,vec_pr,vec_pr_2);
+        X->Large.mode = H_CORR;
+
+        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,6)!=0){
+            //error message will be added
+            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
+            continue;
+        }
+        /*
+        printf("check: %d %d %d %d %d %d %d %d %d %d %d %d \n",
+        org_isite1-1,org_sigma1 ,org_isite2-1,org_sigma2,
+        org_isite3-1,org_sigma3 ,org_isite4-1,org_sigma4,
+        org_isite5-1,org_sigma5 ,org_isite6-1,org_sigma6
+        );
+        */
+       
+        dam_pr=0.0;
+        if(org_isite1>X->Def.Nsite && org_isite3>X->Def.Nsite){ //org_isite3 >= org_isite1 > Nsite
+           //printf("D-MPI \n");
+            if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                dam_pr += child_GC_CisAisCjuAju_spin_MPIdouble( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_isite1 ==org_isite3 && org_sigma1 ==org_sigma4 && org_sigma2 ==org_sigma3){ //diagonal (for spin: cuadcdau=cuau)
+                dam_pr += child_GC_CisAis_spin_MPIdouble((org_isite1-1), org_sigma1, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr += child_GC_CisAisCjuAjv_spin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                dam_pr += child_GC_CisAitCjuAju_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr +=  child_GC_CisAitCiuAiv_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+        }
+        else if(org_isite3>X->Def.Nsite || org_isite1>X->Def.Nsite){ //org_isite3 > Nsite >= org_isite1
+           //printf("S-MPI \n");
+            if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                dam_pr += child_GC_CisAisCjuAju_spin_MPIsingle( (org_isite1-1), org_sigma1, (org_isite3-1), org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr += child_GC_CisAisCjuAjv_spin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                dam_pr += child_GC_CisAitCjuAju_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr +=  child_GC_CisAitCiuAiv_spin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+        }
+        else{
+            if(org_isite1==org_isite2 && org_isite3==org_isite4){
+                isA_up = X->Def.Tpow[org_isite2-1];
+                isB_up = X->Def.Tpow[org_isite4-1];
+                if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j,i) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr +=GC_CisAisCisAis_spin_element(j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, vec, vec_pr, X);
+                    }
+                }else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr += GC_CisAisCitAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec_pr, X, &tmp_off);
+                    }
+                }else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr += GC_CisAitCiuAiu_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec_pr, X, &tmp_off);
+                    }
+                }else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                    dam_pr = 0.0;
+#pragma omp parallel for default(none) reduction(+:dam_pr) private(j) firstprivate(i_max,X,isA_up,isB_up,org_sigma2,org_sigma4,tmp_off,tmp_V) shared(vec,vec_pr)
+                    for(j=1;j<=i_max;j++){
+                        dam_pr += GC_CisAitCiuAiv_spin_element(j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, vec, vec_pr, X, &tmp_off);
+                    }
+                }
+            }
+        }
+        dam_pr = SumMPI_dc(dam_pr);
+        fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld  %4ld %4ld %4ld %4ld  %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",
+        tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, 
+        tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,
+        tmp_org_isite5-1, tmp_org_sigma5, tmp_org_isite6-1, tmp_org_sigma6,
+        tmp_org_isite7-1, tmp_org_sigma7, tmp_org_isite8-1, tmp_org_sigma8,
+        tmp_org_isite9-1, tmp_org_sigma9, tmp_org_isite10-1, tmp_org_sigma10,
+        tmp_org_isite11-1, tmp_org_sigma11, tmp_org_isite12-1, tmp_org_sigma12,
+        creal(dam_pr),cimag(dam_pr));
+        free_cd_1d_allocate(vec_pr);
+        free_cd_1d_allocate(vec_pr_0);
+        free_cd_1d_allocate(vec_pr_1);
+        free_cd_1d_allocate(vec_pr_2);
+    }
+    return 0;
+}
+
+
+
+/**
  * @brief Parent function to calculate two-body green's functions for Spin GC model
  *
  * @param X [in] data list for calculation
@@ -871,7 +1088,7 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
  * @retval -1 abnormally finished
  *
  */
-int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3){
+int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3,FILE **_fp_4){
     int info=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
         info = expec_cisajscktalt_SpinGCHalf(X,vec, _fp);
@@ -881,6 +1098,9 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
         if(X->Def.NFBody>0){
           info = expec_Fourbody_SpinGCHalf(X,vec,_fp_3);
         }
+        if(X->Def.NSBody>0){
+          info = expec_Sixbody_SpinGCHalf(X,vec,_fp_4);
+        }
     } else {
         info=expec_cisajscktalt_SpinGCGeneral(X,vec, _fp);
     }
@@ -888,7 +1108,7 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
 }
 
 /**
- * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
+ * @brief Child function to calculate four-body green's functions for 1/2 Spin GC model
  *
  * @param X [in] data list for calculation
  * @param vec [in] eigenvectors
@@ -1048,7 +1268,7 @@ int expec_Fourbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_
 
 
 /**
- * @brief Child function to calculate two-body green's functions for 1/2 Spin GC model
+ * @brief Child function to calculate three-body green's functions for 1/2 Spin GC model
  *
  * @param X [in] data list for calculation
  * @param vec [in] eigenvectors

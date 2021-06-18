@@ -101,6 +101,10 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spingc_hcor.sh
 )
 add_test(
+  NAME lobcg_spingc_6body
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spingc_6body.sh
+)
+add_test(
   NAME lobcg_genspingc_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_genspingc_ladder.sh
 )
