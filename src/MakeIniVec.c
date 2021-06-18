@@ -20,23 +20,24 @@
 #include "CalcTime.h"
 
 /**
- * @file   FirstMultiply.c
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @version 0.1
- * @brief  Multiplication @f$ v_0 = H v_1 @f$ at the first step for TPQ mode (@f$ v_1 @f$ is the random or inputted vector).
+ * @file   MakeIniVec.c
+ * @author Takahiro Misawa (BAQIS)
+ * @version 3.4
+ * @brief  Generating the random initial vectors for TPQ  mode (@f$ v_1=v_0 @f$ is the random or inputted vector).
  *
  */
 
 ///
-/// \brief Multiplication @f$ v_0 = H v_1 @f$ at the first step for TPQ mode (@f$ v_1 @f$ is the random or inputted vector).
-/// \param rand_i [in] A rundom number seed for giving the initial vector @f$ v_1 @f$.
-/// \param X [in] Struct to get information of the vector @f$ v_1 @f$ for the first step calculation.
-/// \retval -1 fail the multiplication @f$ v_0 = H v_1 @f$.
-/// \retval 0 succeed the multiplication @f$ v_0 = H v_1 @f$.
-/// \version 0.1
-/// \author Takahiro Misawa (The University of Tokyo)
-/// \author Kazuyoshi Yoshimi (The University of Tokyo)
+/// \brief  Generating the random initial vectors for TPQ  mode (@f$ v_1=v_0 @f$ is the random or inputted vector).
+/// \param rand_i [in] A random number seed for giving the initial vector @f$ v_1=v_0 @f$.
+/// \param X [in] Struct to get necessary information.
+/// \retval -1 fail generating the random initial vectors.
+/// \retval 0 succeed in generating the random initial vectors.
+/// \version 3.4
+/// \author Takahiro Misawa (BAQIS)
+/*Note: X->Def.iInitialVecType == 0: All components are given by random complex numbers x+i*y, x = [-1,1),y=[-1,1]*/
+/*Note: X->Def.iInitialVecType ==-1: random vectors on the 2*i_max complex sphere*/
+/*Note: X->Def.iInitialVecType == others: All components are given by random real numbers x, x=[-1,1)*/
 int MakeIniVec(int rand_i, struct BindStruct *X) {
 
   long int i, i_max;
@@ -60,7 +61,6 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
       v0[i] = 0.0;
       v1[i] = 0.0;
     }
-
     /*
     Initialise MT
     */
@@ -69,19 +69,18 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 #else
     mythread = 0;
 #endif
-    u_long_i = 123432 + (rand_i + 1)*labs(X->Def.initial_iv) + mythread + nthreads * myrank;
+    u_long_i = 123432 + (rand_i+1)*labs(X->Def.initial_iv) + mythread + nthreads * myrank;
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
     if (X->Def.iInitialVecType == 0) {
-  
-    StartTimer(3101);
-#pragma omp for
+      StartTimer(3101);
+      #pragma omp for
       for (i = 1; i <= i_max; i++)
         v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
-    /*if (X->Def.iInitialVecType == 0)*/
+      /*if (X->Def.iInitialVecType == 0)*/
     }else if (X->Def.iInitialVecType == -1) {
-    StartTimer(3101);
-#pragma omp for 
+      StartTimer(3101);
+      #pragma omp for 
       for (i = 1; i <= i_max; i++){
         rand_X   = dsfmt_genrand_close_open(&dsfmt);
         rand_Y   = dsfmt_genrand_close_open(&dsfmt);
@@ -91,16 +90,13 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
       } 
     /*if (X->Def.iInitialVecType == -1)*/
     }else {
-#pragma omp for
+      #pragma omp for
       for (i = 1; i <= i_max; i++)
-          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+         v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
     }
     StopTimer(3101);
-
   }/*#pragma omp parallel*/
-  /*
-    Normalize v
-  */
+  /*Normalize v*/
   dnorm=0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
   for(i=1;i<=i_max;i++){

@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "FirstMultiply.h"
 #include "expec_energy_flct.h"
+#include "MakeIniVec.h"
 #include "common/setmemory.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
@@ -49,58 +50,10 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   Ns = 1.0*X->Def.NsiteMPI;
   i_max = X->Check.idim_max;
 
-#pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt) \
-        shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \
-        firstprivate(i_max)
-  {
-#pragma omp for
-    for (i = 1; i <= i_max; i++) {
-      v0[i] = 0.0;
-      v1[i] = 0.0;
-    }
-
-    /*
-    Initialise MT
-    */
-#ifdef _OPENMP
-    mythread = omp_get_thread_num();
-#else
-    mythread = 0;
-#endif
-    u_long_i = 123432 + (rand_i + 1)*labs(X->Def.initial_iv) + mythread + nthreads * myrank;
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);
-
-    if (X->Def.iInitialVecType == 0) {
-  
-    StartTimer(3101);
-#pragma omp for
-      for (i = 1; i <= i_max; i++)
-        v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
-    }/*if (X->Def.iInitialVecType == 0)*/
-    else {
-#pragma omp for
-      for (i = 1; i <= i_max; i++)
-          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
-    }
-    StopTimer(3101);
-
-  }/*#pragma omp parallel*/
-  /*
-    Normalize v
+  /**@brief
+  Initialize v1 and v0 = v1
   */
-  dnorm=0.0;
-#pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) 
-  for(i=1;i<=i_max;i++){
-    dnorm += conj(v1[i])*v1[i];
-  }
-  dnorm = SumMPI_dc(dnorm);
-  dnorm=sqrt(dnorm);
-  global_1st_norm = dnorm;
-#pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm)
-  for(i=1;i<=i_max;i++){
-    v1[i] = v1[i]/dnorm;
-    v0[i] = v1[i];
-  }
+  MakeIniVec(rand_i,X);
   
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    

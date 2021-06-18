@@ -178,7 +178,7 @@ int setmem_large
     list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
     v0 = cd_1d_allocate(X->Check.idim_max + 1);
     v1 = cd_1d_allocate(X->Check.idim_max + 1);
-  if (X->Def.iCalcType == TimeEvolution) {
+  if (X->Def.iCalcType == TimeEvolution || X->Def.iCalcType == cTPQ) {
       v2 = cd_1d_allocate(X->Check.idim_max + 1);
   } else {
       v2 = cd_1d_allocate(1);
@@ -186,11 +186,6 @@ int setmem_large
 #ifdef MPI
     v1buf = cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
-  if (X->Def.iCalcType == cTPQ) {
-      v2 = cd_1d_allocate(X->Check.idim_max + 1); /*only for cTPQ*/
-  }else{
-      v2 = cd_1d_allocate(1);
-  }
   if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ) {
       vg = cd_1d_allocate(1);
   } else {
