@@ -11,6 +11,13 @@ if(MPI_Fortran_FOUND)
   link_directories(${MPI_Fortran_LIBRARY_DIRS})
   include_directories(${MPI_Fortran_INCLUDE_PATH})
 endif(MPI_Fortran_FOUND)
+
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_Fortran_COMPILER_VERSION VERSION_GREATER_EQUAL 10.0.0)
+    add_definitions("-fallow-argument-mismatch")
+  endif()
+endif()
+
 add_library(komega ${SOURCES_KOMEGA})
 target_link_libraries(komega ${LAPACK_LIBRARIES} m)
 if(MPI_Fortran_FOUND)

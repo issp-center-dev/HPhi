@@ -417,7 +417,7 @@ int LOBPCG_Main(
       dnorm = sqrt(creal(VecProdMPI(i_max, wxp[0][ie], wxp[0][ie])));
       if (dnorm > dnormmax) dnormmax = dnorm;
 
-      if (stp /= 1) {
+      if (stp != 1) {
         /**@brief
         <li>Preconditioning (Point Jacobi): @f${\bf w}={\hat T}^{-1} {\bf w}@f$</li>
         */

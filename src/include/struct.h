@@ -25,6 +25,8 @@
 #ifndef HPHI_STRUCT_H
 #define HPHI_STRUCT_H
 
+#include "Common.h"
+
 /*=================================================================================================*/
 //For TEM
 struct ParamList {
@@ -174,14 +176,17 @@ struct DefineList {
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
 
-  int **CisAjtCkuAlvDC;/**<@brief [DefineList::NCisAjtCkuAlvDC][4] Indices of two-body correlation function. malloc in setmem_def().*/
+  int **CisAjtCkuAlvDC;/**<@brief [DefineList::NCisAjtCkuAlvDC][8] Indices of two-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjtCkuAlvDC;/**<@brief Number of indices of two-body correlation function.*/
 
-  int **TBody;/**<@brief [DefineList::NCisAjtCkuAlvDC][4] Indices of two-body correlation function. malloc in setmem_def().*/
-  unsigned int NTBody;/**<@brief Number of indices of two-body correlation function.*/
+  int **TBody;/**<@brief [DefineList::TBody][12] Indices of three-body correlation function. malloc in setmem_def().*/
+  unsigned int NTBody;/**<@brief Number of indices of three-body correlation function.*/
 
-  int **FBody;/**<@brief [DefineList::NCisAjtCkuAlvDC][4] Indices of two-body correlation function. malloc in setmem_def().*/
-  unsigned int NFBody;/**<@brief Number of indices of two-body correlation function.*/
+  int **FBody;/**<@brief [DefineList::FBody][16] Indices of four-body correlation function. malloc in setmem_def().*/
+  unsigned int NFBody;/**<@brief Number of indices of four-body correlation function.*/
+
+  int **SBody;/**<@brief [DefineList::SBody][24] Indices of six-body correlation function. malloc in setmem_def().*/
+  unsigned int NSBody;/**<@brief Number of indices of six-body correlation function.*/
 
   int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
                                  Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
@@ -435,7 +440,7 @@ struct TimeKeepStruct {
 };/*struct TimeKeepStruct*/
 
 /*global variables---------------------------------------------*/
-struct EDMainCalStruct X;
+extern struct EDMainCalStruct X;
 /*-------------------------------------------------------------*/
 
 #endif /* HPHI_STRUCT_H */

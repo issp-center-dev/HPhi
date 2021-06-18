@@ -24,6 +24,7 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "mltply.h"
 
 /**
  * @file   CalcByLanczos.c
@@ -58,6 +59,8 @@ int CalcByLanczos(
   char sdt[D_FileNameMax];
   double diff_ene,var;
   long int i_max=0;
+  long int i;
+  double dnorm;
   FILE *fp;
   size_t byte_size;
 
@@ -155,7 +158,7 @@ int CalcByLanczos(
       if(iret != 0) return(FALSE);
     }
   }
-  else{// X->Bind.Def.iInputEigenVec=true :input v1:
+  else if(X->Bind.Def.iInputEigenVec==1){// X->Bind.Def.iInputEigenVec=true :input v1:
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     StartTimer(4800);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
@@ -179,6 +182,45 @@ int CalcByLanczos(
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
     if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
   }
+  else if(X->Bind.Def.iInputEigenVec==2){// X->Bind.Def.iInputEigenVec=true :input v1:
+    fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
+    StartTimer(4800);
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
+    StartTimer(4801);
+    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct-1, myrank);
+    childfopenALL(sdt, "rb", &fp);
+    if(fp==NULL){
+      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
+      exitMPI(-1);
+    }
+    byte_size = fread(&step_i, sizeof(int), 1, fp);
+    byte_size = fread(&i_max, sizeof(long int), 1, fp);
+    if(i_max != X->Bind.Check.idim_max){
+      fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+      exitMPI(-1);
+    }
+    byte_size = fread(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+    fclose(fp);
+    StopTimer(4801);
+    StopTimer(4800);
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
+    if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+    /*[s]mltply*/
+    mltply(&(X->Bind), v0, v1); // v0+=H*v1
+    /*[e]mltply*/
+    dnorm = 0.0;
+#pragma omp parallel for reduction(+:dnorm) default(none) private(i) shared(v0) firstprivate(i_max)
+    for (i = 1; i <= i_max; i++) {
+       dnorm += conj(v0[i]) * (v0[i]);
+    }
+    dnorm=SumMPI_dc(dnorm);
+    dnorm = sqrt(dnorm);
+#pragma omp parallel for default(none) private(i) shared(v0,v1,dnorm) firstprivate(i_max)
+    for (i = 1; i <= i_max; i++) {
+        v1[i]=v0[i]/dnorm;
+    }
+  }
+
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
   // v1 is eigen vector
