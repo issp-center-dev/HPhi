@@ -22,11 +22,11 @@
 
 /**
  * @file   Multiply.c
- * @author Takahiro Misawa (The University of Tokyo)
+ * @author Takahiro Misawa (BAQIS)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * @author Kota Ido (The University of Tokyo)
  *
- * @brief  File for giving multiplying functions to the wave vectors for TPQ and TE method
+ * @brief File for giving multiplying functions to the wave vectors for TPQ (mTPQ and cTPQ) and TE method
  *
  */
 
@@ -139,6 +139,16 @@ int MultiplyForTEM
   return 0;
 }
 
+/**
+ * @brief  Function of multiplying Hamiltonian for the cTPQ calculation.
+ *
+ * Make @f$ |v_0 \rangle = |\psi(tau+dtau) \rangle @f$ from @f$ |v_1 \rangle = | \psi(tau) \rangle  @f$ and @f$ |v_0 \rangle = H |\psi(tau) \rangle @f$.
+ * @param X [in] data list for calculation (idim_max and TimeSlice)
+ *
+ * @retval 0  normally finished
+ * @retval -1 unnormally finished
+ */
+
 int MultiplyForCanonicalTPQ
 (
  struct BindStruct *X, double delta_tau
@@ -166,8 +176,8 @@ int MultiplyForCanonicalTPQ
   //for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
   /*NB coef_max should be determined*/
   for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
-    tmp1 *= (-0.5 * delta_tau) / (double complex) coef;
-    //v2 = H*v1 = H^coef |psi(t)>
+    tmp1 *= (-0.5 * delta_tau) / (double ) coef;
+    //v2 = H*v1 = H^coef |psi(tau)>
     mltply(X, v2, v1);
 #pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
     for (i = 1; i <= i_max; i++) {

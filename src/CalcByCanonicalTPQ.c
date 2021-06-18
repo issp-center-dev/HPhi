@@ -26,26 +26,22 @@
 
 
 /**
- * @file   CalcByTPQ.c
- * @version 0.1, 0.2
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- *
- * @brief  File for givinvg functions of TPQ method
- *
+ * @file   CalcByCanonicalTPQ.c 
+ * @version 3.4
+ * @author Takahiro Misawa (BAQIS)
+ * @brief  File for giving functions of the canonical TPQ (cTPQ) method
  *
  */
 
 /** 
  * 
- * @brief A main function to calculate physical quqntities by TPQ method
+ * @brief A main function to calculate physical quqntities by the cTPQ method
  *
  * @param [in] NumAve  Number of samples
  * @param [in] ExpecInterval interval steps between the steps to calculate physical quantities
  * @param [in,out] X CalcStruct list for getting and giving calculation information
  * 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Takahiro Misawa (BAQIS)
  *
  * @retval 0 normally finished
  * @retval -1 unnormally finished
