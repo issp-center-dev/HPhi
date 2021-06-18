@@ -68,6 +68,12 @@ int CalcByCanonicalTPQ(
   
   rand_max = NumAve;
   step_spin = ExpecInterval;
+  if (X->Bind.Def.Param.ExpandCoef==0){
+     X->Bind.Def.Param.ExpandCoef=10;   
+     fprintf(stdout, "In cTPQ calc., the default value of ExpandCoef (=10) is used. \n");
+  }else{
+     fprintf(stdout, "In cTPQ calc., ExpandCoef is specified as %d. \n",X->Bind.Def.Param.ExpandCoef);
+  }
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){

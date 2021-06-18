@@ -173,6 +173,7 @@ int MultiplyForCanonicalTPQ
       v1[i] = tmp2;
       v2[i] = 0.0 + I * 0.0;
   }
+  //printf("%d \n",X->Def.Param.ExpandCoef);
   //for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
   /*NB coef_max should be determined*/
   for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
