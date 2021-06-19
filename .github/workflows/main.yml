@@ -36,13 +36,20 @@ jobs:
         run: |
           brew install openmpi scalapack
 
+      - name: pip
+        run: python -m pip install numpy
+
       - name: make workspace
         run: cmake -E make_directory ${{runner.workspace}}/build
 
       - name: cmake
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: cmake -DCMAKE_VERBOSE_MAKEFILE=ON $GITHUB_WORKSPACE
+        run: |
+          if [ ${{ runner.os  }} = "macOS" ]; then
+            FC=gfortran-11
+          fi
+          cmake -DCMAKE_VERBOSE_MAKEFILE=ON $GITHUB_WORKSPACE
 
       - name: build
         working-directory: ${{runner.workspace}}/build
