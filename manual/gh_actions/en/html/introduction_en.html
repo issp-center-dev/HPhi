@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>1. What is \({\mathcal H}\Phi\)? &#8212; HΦ Documentation  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. How to use \({\mathcal H}\Phi\)" href="howtouse/ho-index.html" />
+    <link rel="prev" title="Welcome to \({\mathcal H}\Phi\)’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="what-is-mathcal-h-phi">
+<h1><span class="section-number">1. </span>What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?<a class="headerlink" href="#what-is-mathcal-h-phi" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><span class="section-number">1.1. </span>What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Comparison between experimental observation and theoretical analysis is a crucial step in condensed-matter physics research. The temperature dependence of specific heat and magnetic susceptibility, for example, has been studied to extract the nature of low energy excitations of and magnetic interactions between electrons, respectively, through comparison with theories such as Landau’s Fermi liquid theory and the Curie-Weiss law.</p>
+<p>For the flexible and quantitative comparison of theoretical and  experimental data, the exact diagonalization approach <a class="footnote-reference brackets" href="#id9" id="id2">1</a> is one of the most reliable numerical tools that requires no approximation or inspiration of genius. For the last few decades, a numerical diagonalization package for quantum spin Hamiltonians, TITPACK, developed by Prof. Hidetoshi Nishimori of Tokyo Institute of Technology, has been widely used in the condensed-matter physics community. Nevertheless, limited computational resources have hindered the ability of non-expert users to apply the package to quantum systems with a large number of electrons or spins.</p>
+<p>In contrast, the recent and rapid development of a parallel computing infrastructure has opened up new avenues for user-friendly larger scale diagonalizations up to 18-site Hubbard clusters or 36 <span class="math notranslate nohighlight">\(S=1/2\)</span> quantum spins. In addition, recent advances in quantum statistical mechanics <a class="footnote-reference brackets" href="#id10" id="id3">2</a> <a class="footnote-reference brackets" href="#id11" id="id4">3</a> <a class="footnote-reference brackets" href="#id12" id="id5">4</a> <a class="footnote-reference brackets" href="#id13" id="id6">5</a> allow the finite temperature properties of quantum many-body systems to be calculated at computational costs similar to those of the calculations of ground state properties, which also allows theoretical results for the temperature dependence of, for example, specific heat and magnetic susceptibility, to be compared with experimental results quantitatively <a class="footnote-reference brackets" href="#id14" id="id7">6</a> . To utilize the parallel computing infrastructure with narrow bandwidth and distributed-memory architectures, efficient, user-friendly, and highly parallelized diagonalization packages are highly desirable.</p>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, a flexible diagonalization package for solving quantum lattice Hamiltonians, has been developed as a descendant of the pioneering package TITPACK. The Lanczos method for calculations of the ground state and a few excited states properties, as well as finite temperature calculations based on thermal pure quantum states <a class="footnote-reference brackets" href="#id13" id="id8">5</a> , are implemented in the <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> package, with an easy-to-use and flexible user interface. By using <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, you can analyze a wide range of quantum lattice Hamiltonians including simple Hubbard and Heisenberg models, multi-band extensions of the Hubbard model, exchange couplings that break the SU(2) symmetry of quantum spins, such as Dzyaloshinskii-Moriya and Kitaev interactions, and Kondo lattice models describing itinerant electrons coupled with quantum spins. <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> calculates a variety of physical quantities, such as internal energy at zero temperature or finite temperatures, temperature dependence of specific heat, and charge/spin structure factors. A broad spectrum of users including experimental scientists is cordially welcome.</p>
+<section id="license">
+<h3><span class="section-number">1.1.1. </span>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
+<p>The distribution of the program package and the source codes for <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> follow GNU General Public License version 3 (GPL v3) or later. We hope that you cite the reference, <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0010465517301200?via%3Dihub">Comp. Phys. Commun. 217 (2017) 180-192</a> , when you publish the results using <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> (hphi).</p>
+</section>
+<section id="copyright">
+<h3><span class="section-number">1.1.2. </span>Copyright<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h3>
+<p>© <em>2015- The University of Tokyo. All rights reserved.</em>
+This software was developed with the support of &quot;<em>Project for advancement of software usability in materials science</em>&quot; of The Institute for Solid State Physics, The University of Tokyo.</p>
+</section>
+<section id="contributors">
+<h3><span class="section-number">1.1.3. </span>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h3>
+<p>This software was developed by the following contributors.</p>
+<ul>
+<li><p>ver.3.4 (released on 2020/6/2)</p>
+<ul>
+<li><p>Developers</p>
+<ul>
+<li><div class="line-block">
+<div class="line">Kota Ido</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Mitsuaki Kawamura</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Yuichi Motoyama</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Kazuyoshi Yoshimi</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Takahiro Misawa</div>
+<div class="line">(Waseda Research Institute for Science and Engineering (RISE), Waseda University)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Youhei Yamaji</div>
+<div class="line">(Department of Applied Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Synge Todo</div>
+<div class="line">(Department of Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Yusuke Konishi</div>
+<div class="line">(Academeia Co., Ltd.)</div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Project coordinator</p>
+<ul>
+<li><div class="line-block">
+<div class="line">Naoki Kawashima</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>ver.3.3 (released on 2019/7/19)</p></li>
+<li><p>ver.3.2 (released on 2019/4/27)</p></li>
+<li><p>ver.3.1 (released on 2018/9/3)</p></li>
+<li><p>ver.3.0 (released on 2017/12/22)</p>
+<ul>
+<li><p>Developers</p>
+<ul>
+<li><div class="line-block">
+<div class="line">Takahiro Misawa</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Kazuyoshi Yoshimi</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Mitsuaki Kawamura</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Kota Ido</div>
+<div class="line">(Department of Applied Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Youhei Yamaji</div>
+<div class="line">(Department of Applied Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Synge Todo</div>
+<div class="line">(Department of Physics, The University of Tokyo)</div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Project coordinator</p>
+<ul>
+<li><div class="line-block">
+<div class="line">Naoki Kawashima</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>ver.2.0 (released on 2017/4/11)</p></li>
+<li><p>ver.1.2 (released on 2016/11/14)</p></li>
+<li><p>ver.1.1 (released on 2016/5/13)</p></li>
+<li><p>ver.1.0 (released on 2016/4/5)</p>
+<ul>
+<li><p>Developers</p>
+<ul>
+<li><div class="line-block">
+<div class="line">Takahiro Misawa</div>
+<div class="line">(Department of Applied Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Kazuyoshi Yoshimi</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Mitsuaki Kawamura</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Youhei Yamaji</div>
+<div class="line">(Department of Applied Physics, The University of Tokyo)</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Synge Todo</div>
+<div class="line">(Department of Physics, The University of Tokyo)</div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Project coordinator</p>
+<ul>
+<li><div class="line-block">
+<div class="line">Naoki Kawashima</div>
+<div class="line">(The Institute for Solid State Physics, The University of Tokyo)</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="operating-environment">
+<h2><span class="section-number">1.2. </span>Operating environment<a class="headerlink" href="#operating-environment" title="Permalink to this headline">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> was tested on the following platforms</p>
+<ul class="simple">
+<li><p>The supercomputer system-B &quot;sekirei&quot; and system-C &quot;enaga&quot; in ISSP</p></li>
+<li><p>Fujitsu FX-10</p></li>
+<li><p>Linux PC + Intel compiler</p></li>
+<li><p>Linux PC + GCC.</p></li>
+<li><p>Mac + GCC.</p></li>
+</ul>
+<dl class="footnote brackets">
+<dt class="label" id="id9"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>E. Dagotto, Rev. Mod. Phys. <strong>66</strong>, 763-840 (1994).</p>
+</dd>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
+<dd><p>M. Imada, M. Takahashi, Journal of the Physical Society of Japan <strong>55</strong>, 3354-3361 (1986).</p>
+</dd>
+<dt class="label" id="id11"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
+<dd><p>J. Jaklič, P. Prelovšek, Phys. Rev. B <strong>49</strong>, 5065-5068 (1994).</p>
+</dd>
+<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id5">4</a></span></dt>
+<dd><p>A. Hams, H. De Raedt, Phys. Rev. E <strong>62</strong>, 4365-4377 (2000).</p>
+</dd>
+<dt class="label" id="id13"><span class="brackets">5</span><span class="fn-backref">(<a href="#id6">1</a>,<a href="#id8">2</a>)</span></dt>
+<dd><p>S. Sugiura, A. Shimizu, Phys. Rev. Lett. <strong>108</strong>, 240401 (2012).</p>
+</dd>
+<dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id7">6</a></span></dt>
+<dd><p>Y. Yamaji, Y. Nomura, M. Kurita, R. Arita, M. Imada, Phys. Rev. Lett. <strong>113</strong>, 107201 (2014).</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">1.1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#license">1.1.1. License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#copyright">1.1.2. Copyright</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contributors">1.1.3. Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#operating-environment">1.2. Operating environment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>’s documentation!</a></li>
+      <li>Next: <a href="howtouse/ho-index.html" title="next chapter"><span class="section-number">2. </span>How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/introduction_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.1.6. 動的グリーン関数の計算に関するパラメータ &#8212; HΦ マニュアル  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="next" title="4.1.7. 実時間発展計算に関するパラメータ" href="Parameters_for_time-evolution.html" />
+    <link rel="prev" title="4.1.5. 計算条件のパラメータ" href="Parameters_for_the_numerical_condition.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">4.1.6. </span>動的グリーン関数の計算に関するパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code></p>
+<p><strong>形式 :</strong> 文字列(<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Normal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;NoIteration&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code>。デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>)</p>
+<p><strong>説明 :</strong> 動的グリーン関数の計算に関する設定を行う。
+<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>では動的グリーン関数を計算しない。
+<code class="docutils literal notranslate"><span class="pre">&quot;Normal&quot;</span></code>では一から動的グリーン関数の計算を始める。
+<code class="docutils literal notranslate"><span class="pre">&quot;NoIteration&quot;</span></code>では、前回の反復回数と同じところまで反復させる。
+このとき、ハミルトニアン-ベクトル積演算は行われないため、
+計算コストは非常に軽いが、十分な精度が出せない場合がある。
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code>では一から計算を始めて、
+反復が終了した時点で再計算用のデータをファイル出力する。
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>では再計算用のデータをファイルから受け取り途中から計算を始める。
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code>では再計算用のデータをファイルから受け取り途中から計算を始め、
+反復が終了した時点で再計算用のデータをファイル出力する。
+スペクトル計算において使用される手法はパラメーター<code class="docutils literal notranslate"><span class="pre">method</span></code>で指定されます。
+(<code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>とした場合には
+付属している<span class="math notranslate nohighlight">\(K\omega\)</span>ライブラリ <a class="footnote-reference brackets" href="#id5" id="id2">1</a> が呼び出され、
+シードスイッチ <a class="footnote-reference brackets" href="#id6" id="id3">2</a> 付きシフト双共役勾配法 <a class="footnote-reference brackets" href="#id7" id="id4">3</a> が使われます。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumType</span></code></p>
+<p><strong>形式 :</strong> 文字列(<code class="docutils literal notranslate"><span class="pre">&quot;SzSz&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;S+S-&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Density&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;up&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;down&quot;</span></code>のいずれか。デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;SzSz&quot;</span></code>)</p>
+<p><strong>説明 :</strong> 計算する動的グリーン関数の種類を指定する。
+<code class="docutils literal notranslate"><span class="pre">&quot;SzSz&quot;</span></code>では<span class="math notranslate nohighlight">\(\langle {S}^z_{- \bf q} {S}^z_{\bf q}\rangle\)</span>、
+<code class="docutils literal notranslate"><span class="pre">&quot;S+S-&quot;</span></code>では<span class="math notranslate nohighlight">\(\langle S^{+}_{- \bf q} {S}^{-}_{\bf q}\rangle\)</span>、
+<code class="docutils literal notranslate"><span class="pre">&quot;Density&quot;</span></code>では<span class="math notranslate nohighlight">\(\langle {n}_{- \bf q} {n}_{\bf q}\rangle\)</span>、
+<code class="docutils literal notranslate"><span class="pre">&quot;up&quot;</span></code>では<span class="math notranslate nohighlight">\(\langle {c}^{\dagger}_{{\bf q} \uparrow} {c}_{{\bf q} \uparrow}\rangle\)</span>、
+<code class="docutils literal notranslate"><span class="pre">&quot;down&quot;</span></code>では<span class="math notranslate nohighlight">\(\langle {c}^{\dagger}_{{\bf q} \downarrow} {c}_{{\bf q} \downarrow}\rangle\)</span>
+となる。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumQW</span></code>, <code class="docutils literal notranslate"><span class="pre">SpectrumQL</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトはともに<code class="docutils literal notranslate"><span class="pre">0.0</span></code>)</p>
+<p><strong>説明 :</strong> 計算する動的グリーン関数の波数を Fractional
+coordinateで指定する。 逆格子ベクトルは
+<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-lattice"><span class="std std-numref">図 4.1</span></a>, <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span class="std std-numref">図 4.2</span></a>,
+<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-kagome"><span class="std std-numref">図 4.3</span></a>, <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span class="std std-numref">図 4.4</span></a>
+に表されている格子ベクトルと対応するものとなる。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトは<code class="docutils literal notranslate"><span class="pre">0.0</span></code>)</p>
+<p><strong>説明 :</strong>
+動的グリーン関数を計算する際の振動数<span class="math notranslate nohighlight">\(\omega\)</span>の実部の原点。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code></p>
+<p><strong>形式 :</strong>
+実数(デフォルトは<code class="docutils literal notranslate"><span class="pre">-LargeValue</span></code><span class="math notranslate nohighlight">\(\times\)</span>サイト数)</p>
+<p><strong>説明 :</strong> 計算する動的グリーン関数の振動数の実部の下限。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OmegaMax</span></code></p>
+<p><strong>形式 :</strong>
+実数(デフォルトは<code class="docutils literal notranslate"><span class="pre">LargeValue</span></code><span class="math notranslate nohighlight">\(\times\)</span>サイト数)</p>
+<p><strong>説明 :</strong> 計算する動的グリーン関数の振動数の実部の上限。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OmegaIm</span></code></p>
+<p><strong>形式 :</strong> 実数(デフォルトは<code class="docutils literal notranslate"><span class="pre">0.01*LargeValue</span></code>)</p>
+<p><strong>説明 :</strong> 計算する動的グリーン関数の振動数の虚部。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NOmega</span></code></p>
+<p><strong>形式 :</strong> 正の整数(デフォルトは<code class="docutils literal notranslate"><span class="pre">200</span></code>)</p>
+<p><strong>説明 :</strong> 計算する動的グリーン関数の振動数のグリッド数。</p>
+</li>
+</ul>
+<dl class="footnote brackets">
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p><a class="reference external" href="https://github.com/issp-center-dev/Komega">https://github.com/issp-center-dev/Komega</a>.</p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
+<dd><p>S. Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan <strong>77</strong>, 114713 (2008).</p>
+</dd>
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
+<dd><p>A. Frommer, Computing <strong>70</strong>, 87-109 (2003).</p>
+</dd>
+</dl>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_ja.html">4.1.4. ハミルトニアンの各項の係数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメータ</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメータ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_ja/index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_ja/index_outputfiles_ja.html">4.3. 出力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_standardmode_ja.html"><span class="section-number">4.1. </span>スタンダードモード用入力ファイル</a><ul>
+      <li>Previous: <a href="Parameters_for_the_numerical_condition.html" title="前の章へ"><span class="section-number">4.1.5. </span>計算条件のパラメータ</a></li>
+      <li>Next: <a href="Parameters_for_time-evolution.html" title="次の章へ"><span class="section-number">4.1.7. </span>実時間発展計算に関するパラメータ</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_dynamical_Greens_function.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

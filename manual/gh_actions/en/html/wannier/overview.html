@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>8.1. Overview &#8212; HΦ Documentation  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="8.2. Tutorial" href="tutorial.html" />
+    <link rel="prev" title="8. Downfolding with Wannier functions" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="overview">
+<h1><span class="section-number">8.1. </span>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>In this document, we introduce how we compute downfolded models
+with mVMC or <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> in conjunction to
+<a class="reference external" href="https://sites.google.com/view/kazuma7k6r">RESPACK</a>.
+In RESPACK, the screened direct integrals <span class="math notranslate nohighlight">\(U_{mn}({\bf R},\omega)\)</span> and the screened exchanged integrals <span class="math notranslate nohighlight">\(J_{mn}({\bf R},\omega)\)</span> are given as follows:</p>
+<div class="math notranslate nohighlight" id="equation-wannier-overview-0">
+<span class="eqno">(8.1)<a class="headerlink" href="#equation-wannier-overview-0" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+U_{mn}({\bf R},\omega)&amp;=&amp;\int_V d{\bf r} \int_V  d{\bf r'}
+w_{m{\bf 0}}^*({\bf r}) w_{m{\bf 0}}({\bf r})
+W({\bf r,r'},\omega)
+w_{n{\bf R}}^*({\bf r'}) w_{n{\bf R}}({\bf r'}),\nonumber\\
+J_{mn}({\bf R},\omega)&amp;=&amp;\int_V  d{\bf r}\int_V d{\bf r'}
+w_{m{\bf 0}}^*({\bf r}) w_{n{\bf R}}({\bf r})
+W({\bf r,r'},\omega)
+w_{n{\bf R}}^*({\bf r'}) w_{m{\bf 0}}({\bf r'}).
+\end{aligned}\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(V\)</span> is the volume of the crystal, <span class="math notranslate nohighlight">\(w_ {i {\bf R}}({\bf r})\)</span> is the <span class="math notranslate nohighlight">\(i\)</span> -th wannier function at <span class="math notranslate nohighlight">\(\bf R\)</span> -th cell, <span class="math notranslate nohighlight">\(W({\bf r,r'}, \omega)\)</span> is the screened Coulomb interactions, respectively. In the following, the components at <span class="math notranslate nohighlight">\(\omega=0\)</span> are only considered. Then, the Hamiltonian of the two-body interactions are given as follows:</p>
+<div class="math notranslate nohighlight" id="equation-wannier-overview-1">
+<span class="eqno">(8.2)<a class="headerlink" href="#equation-wannier-overview-1" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+{\cal H}_{\rm int} &amp;= \frac{1}{2}\sum_{\sigma\rho }\sum_{ij}\sum_{nm} \Bigl[ U_{mn}({\bf R}_{ij})c_{im, \sigma}^{\dagger}c_{jn, \rho}^{\dagger}c_{jn, \rho}c_{im, \sigma}\nonumber\\
+&amp;+ J_{mn}({\bf R}_{ij})(c_{im, \sigma}^{\dagger}c_{jn,\rho}^{\dagger}c_{im,\rho}c_{jn,\sigma} + c_{im, \sigma}^{\dagger}c_{im,\rho}^{\dagger}c_{jn,\rho}c_{jn,\sigma}  )\Bigr],
+\end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\({\bf R}_{ij} \equiv {\bf R}_i-{\bf R}_j\)</span> . Since mVMC and <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> cannot directly treat the following type of interactions <span class="math notranslate nohighlight">\({c_{i, \sigma}^{\dagger}c_{j, \rho}^{\dagger}c_{k, \rho'}c_{l, \sigma'}}\)</span> , the Hamiltonian must be rewritten as follows:</p>
+<div class="math notranslate nohighlight" id="equation-wannier-overview-2">
+<span class="eqno">(8.3)<a class="headerlink" href="#equation-wannier-overview-2" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+{\cal H}_{\rm int} &amp;= \sum_{i,m} U_{mm}({\bf 0})n_{im,\uparrow} n_{im, \downarrow} +\sum_{(i,m)&lt;(j,n)}U_{mn}({\bf R}_{ij})n_{im}n_{jn}\nonumber\\
+&amp; - \sum_{(i,m)&lt;(j,n)}J_{mn}({\bf R}_{ij})(n_{im, \uparrow}n_{jn,\uparrow}+n_{im, \downarrow}n_{jn,\downarrow}) \nonumber\\
+&amp; + \sum_{(i,m)&lt;(j,n)}J_{mn}({\bf R}_{ij})(c_{im, \uparrow}^{\dagger}c_{jn,\downarrow}^{\dagger}c_{im,\downarrow}c_{jn,\uparrow}+{\rm h.c.}) \nonumber\\
+&amp; + \sum_{(i,m)&lt;(j,n)}J_{mn}({\bf R}_{ij}) (c_{im, \uparrow}^{\dagger}c_{im,\downarrow}^{\dagger}c_{jn,\downarrow}c_{jn,\uparrow} + {\rm h.c.} ).
+\end{aligned}\end{split}\]</div>
+<p>The lattice model is defined by the following Hamiltonian:</p>
+<div class="math notranslate nohighlight" id="equation-wannier-overview-3">
+<span class="eqno">(8.4)<a class="headerlink" href="#equation-wannier-overview-3" title="Permalink to this equation">¶</a></span>\[\begin{aligned}
+{\cal H} &amp;=
+\sum_{m,n, i, j,\sigma}
+\left[t_{mn}({\bf R}_{ij}) - t_{mn}^{\rm DC}({\bf R}_{ij})\right] c_{im \sigma}^{\dagger} c_{jn \sigma}
++ {\cal H}_{int},
+\end{aligned}\]</div>
+<p>where  <span class="math notranslate nohighlight">\(t_{mn}^{\rm DC}({\bf R}_{ij})\)</span> is the one-body correction term given as:</p>
+<div class="math notranslate nohighlight" id="equation-wannier-overview-4">
+<span class="eqno">(8.5)<a class="headerlink" href="#equation-wannier-overview-4" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+t_{mm}^{\rm DC}({\bf 0}) &amp;\equiv \alpha U_{mm}({\bf 0}) D_{mm}({\bf 0})
++ \sum_{({\bf R}, n) \neq ({\bf 0}, m)} U_{m n} ({\bf R})D_{nn}({\bf 0})\\
+&amp; - (1-\alpha) \sum_{({\bf R}, n) \neq ({\bf 0}, 0)} J_{m n}({\bf R}) D_{nn}({\bf R}),\\
+t_{mn}^{\rm DC}({\bf R}_{ij}) &amp;\equiv \frac{1}{2} J_{mn}({\bf R}_{ij}) \left(D_{nm}({\bf R}_{ji}) + 2 {\rm Re} [D_{nm}({\bf R}_{ji})]\right)\\
+&amp;-\frac{1}{2}  U_{mn}({\bf R}_{ij}) D_{nm}({\bf R}_{ji}),
+\quad ({\bf R}_{ij}, m) \neq ({\bf 0}, n),
+\\
+D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
+\left\langle c_{im \sigma}^{\dagger} c_{jn \sigma}\right\rangle_{\rm KS},
+\end{aligned}\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(t_{mm}^{\rm DC}({\bf 0})\)</span> is the term to correct the chemical potntial, <span class="math notranslate nohighlight">\(t_{mn}^{\rm DC}({\bf R}_{ij})\)</span> is term to correct transfer integrals
+. These terms are introduced to avoid double counting in analyzing the lattice model. To adopt theses corrections or not can be selected by the option <code class="docutils literal notranslate"><span class="pre">doublecounting</span></code> in the input file. The strength of <span class="math notranslate nohighlight">\(U_{Rij}\)</span> and <span class="math notranslate nohighlight">\(J_{Rij}\)</span> can be controled by multiplying tuning parameters <span class="math notranslate nohighlight">\(\lambda_U, \lambda_J\)</span>. For details, see <code class="docutils literal notranslate"><span class="pre">Input</span> <span class="pre">parameters</span> <span class="pre">for</span> <span class="pre">Standard</span> <span class="pre">mode</span></code>.</p>
+<section id="prerequisite">
+<h2><span class="section-number">8.1.1. </span>Prerequisite<a class="headerlink" href="#prerequisite" title="Permalink to this headline">¶</a></h2>
+<p>We compute the Kohn-Sham orbitals with
+<a class="reference external" href="http://www.quantum-espresso.org/">QuantumESPRESSO</a>
+or
+<a class="reference external" href="http://xtapp.cp.is.s.u-tokyo.ac.jp/">xTAPP</a>,
+and obtain the Wannier function, the dielectric function,
+the effective interaction with RESPACK,
+and simulate quantum lattice models with
+mVMC or <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.
+Therefore, these programs must be available in our machine.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Downfolding with Wannier functions</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.1. Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisite">8.1.1. Prerequisite</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter.html">8.3. Input parameters for Standard mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html">8.4. File format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">8. </span>Downfolding with Wannier functions</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><span class="section-number">8. </span>Downfolding with Wannier functions</a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter"><span class="section-number">8.2. </span>Tutorial</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/wannier/overview.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
