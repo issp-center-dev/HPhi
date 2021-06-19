@@ -1,9 +1,9 @@
-name: Test
+name: CI
 
 on: [push]
 
 jobs:
-  build:
+  ctest:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -46,8 +46,8 @@ jobs:
         working-directory: ${{runner.workspace}}/build
         shell: bash
         run: |
-          if [ ${{ runner.os  }} = "macOS" ]; then
-            FC=gfortran-11
+          if [ ${{ runner.os }} = "macOS" ] ; then
+            export FC=gfortran-11
           fi
           cmake -DCMAKE_VERBOSE_MAKEFILE=ON $GITHUB_WORKSPACE
 
