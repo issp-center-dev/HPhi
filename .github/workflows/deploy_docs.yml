@@ -1,0 +1,77 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - gh_actions  # test branch
+      - '!gh-pages'
+    tags: '*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v3.x
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        path: main
+
+    - name: Checkout gh-pages
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+        path: gh-pages
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sphinx
+
+    - name: Build
+      run: |
+        cd ${GITHUB_WORKSPACE}/main/
+        cmake -E make_directory build
+        cd build
+        cmake -DDocument=ON -DENABLE_MPI=OFF -DENABLE_SCALAPACK=OFF ../
+        make doc-ja-html doc-en-html tutorial-en-html
+
+    - name: Deploy Configuration
+      run: |
+          mkdir ~/.ssh
+          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+          echo "${{ secrets.GH_ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
+
+    - name: Push
+      env:
+        GIT_USER: "HPhi Developers"
+        GIT_EMAIL: "qlms-dev@issp.u-tokyo.ac.jp"
+        TARGET_NAME: ${{ env.GITHUB_REF_SLUG }}
+      run: |
+          cd ${GITHUB_WORKSPACE}
+          for lang in ja en tutorial/en; do
+            rm -rf "gh-pages/manual/${TARGET_NAME}/${lang}"
+            mkdir -p "gh-pages/manual/${TARGET_NAME}/${lang}"
+            cp -r "main/build/docs/sphinx/${lang}/html" "gh-pages/manual/${TARGET_NAME}/${lang}"
+          done
+          cd gh-pages
+          git config --local user.name "${GIT_USER}"
+          git config --local user.email "${GIT_EMAIL}"
+          git remote set-url origin git@github.com:${GITHUB_REPOSITORY}.git
+          git add manual
+          if git commit -m "Deploy docs to ${TARGET_NAME} by GitHub Actions triggered by ${GITHUB_SHA}"
+          then
+            git push origin gh-pages
+          else
+            echo "Nothing to deploy"
+          fi
