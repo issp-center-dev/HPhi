@@ -62,7 +62,7 @@ jobs:
           for lang in ja en tutorial/en; do
             rm -rf "gh-pages/manual/${TARGET_NAME}/${lang}"
             mkdir -p "gh-pages/manual/${TARGET_NAME}/${lang}"
-            cp -r "main/build/docs/sphinx/${lang}/html" "gh-pages/manual/${TARGET_NAME}/${lang}"
+            cp -r "main/build/doc/${lang}/source/html" "gh-pages/manual/${TARGET_NAME}/${lang}"
           done
           cd gh-pages
           git config --local user.name "${GIT_USER}"
