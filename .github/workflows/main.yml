@@ -16,9 +16,10 @@ jobs:
             mpisize: 4
           - os: macos-10.15
             mpisize: 16
+      fail-fast: false
 
     env:
-      MPIRUN: "mpiexec --oversubscribed -np ${{ matrix.mpisize }}"
+      MPIRUN: "mpiexec --oversubscribe -np ${{ matrix.mpisize }}"
       OMP_NUM_THREADS: ${{ matrix.ompsize }}
 
     steps:
