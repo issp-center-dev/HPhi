@@ -1,55 +1,49 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4.3.24. ham.dat &mdash; HΦ Documentation  documentation</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
-    <link rel="up" title="4.3. Output files" href="index_outputfiles_en.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.3.24. ham.dat &#8212; HΦ Documentation  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.3.25. cisajs.dat" href="cisajs_en.html" />
     <link rel="prev" title="4.3.23. phys.dat" href="phys_en.html" />
    
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="ham-dat">
-<span id="subsec-ham"></span><h1>4.3.24. ham.dat<a class="headerlink" href="#ham-dat" title="Permalink to this headline">¶</a></h1>
+  <section id="ham-dat">
+<span id="subsec-ham"></span><h1><span class="section-number">4.3.24. </span>ham.dat<a class="headerlink" href="#ham-dat" title="Permalink to this headline">¶</a></h1>
 <div class="line-block">
-<div class="line">(For the FullDiag method) When <code class="docutils literal"><span class="pre">OutputHam=1</span></code> in the <code class="docutils literal"><span class="pre">CalcMod</span></code>
-file, the Hamiltonian calculated by <span class="math">\({\mathcal H}\Phi\)</span> is outputted by the
+<div class="line">(For the FullDiag method) When <code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code> in the <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>
+file, the Hamiltonian calculated by <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> is outputted by the
 MatrixMarket format. The recalculation by using this file can be down
-when <code class="docutils literal"><span class="pre">InputHam=1</span></code> in the <code class="docutils literal"><span class="pre">CalcMod</span></code> file. An example of the file
+when <code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> in the <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> file. An example of the file
 format is as follows.</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre>%%%%MatrixMarket matrix coordinate complex hermitian
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>%%%%MatrixMarket matrix coordinate complex hermitian
 28 28 56
 1 1 1.000000 0.000000
 2 1 0.500000 0.000000
@@ -62,49 +56,50 @@ format is as follows.</div>
     …
 </pre></div>
 </div>
-<div class="section" id="file-name">
+<section id="file-name">
 <span id="file-name-15"></span><h2>File name<a class="headerlink" href="#file-name" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>##_ham.dat</li>
+<li><p>##_ham.dat</p></li>
 </ul>
 <p>## indicates [string02] in a ModPara file.</p>
-</div>
-<div class="section" id="file-format">
+</section>
+<section id="file-format">
 <span id="file-format-39"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Line 1: Header</li>
-<li>Line 2:
-[int01] [int02] [int03]</li>
-<li>Lines3-:[int04] [int05] [double01] [double02]</li>
+<li><p>Line 1: Header</p></li>
+<li><p>Line 2:
+[int01] [int02] [int03]</p></li>
+<li><p>Lines3-:[int04] [int05] [double01] [double02]</p></li>
 </ul>
-</div>
-<div class="section" id="parameters">
+</section>
+<section id="parameters">
 <span id="parameters-39"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">[int01]</p>
+<li><p>[int01]</p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> Number of rows of Hamiltonian.</p>
 </li>
-<li><p class="first">[int02]</p>
+<li><p>[int02]</p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> Number of columns of Hamiltonian.</p>
 </li>
-<li><p class="first">[int03]</p>
+<li><p>[int03]</p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> Number of nonzero elements of Hamiltonian.</p>
 </li>
-<li><p class="first">[double01], [double02]</p>
+<li><p>[double01], [double02]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> The value of Hamiltonian;
 [double01] and [double02]
 represent real and imaginary part of the Hamiltonian, respectively.</p>
 </li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -120,18 +115,13 @@ represent real and imaginary part of the Hamiltonian, respectively.</p>
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
 
 
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -160,7 +150,7 @@ represent real and imaginary part of the Hamiltonian, respectively.</p>
 <li class="toctree-l3"><a class="reference internal" href="Flct_en.html">4.3.21. Flct.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Eigenvalue_en.html">4.3.22. Eigenvalue.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="phys_en.html">4.3.23. phys.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.24. ham.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.24. ham.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cisajs_en.html">4.3.25. cisajs.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cisajscktalt_en.html">4.3.26. cisajscktalt.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eigenvec_en.html">4.3.27. eigenvec.dat</a></li>
@@ -185,28 +175,33 @@ represent real and imaginary part of the Hamiltonian, respectively.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../fi-index.html">4. File specification</a><ul>
-  <li><a href="index_outputfiles_en.html">4.3. Output files</a><ul>
-      <li>Previous: <a href="phys_en.html" title="previous chapter">4.3.23. phys.dat</a></li>
-      <li>Next: <a href="cisajs_en.html" title="next chapter">4.3.25. cisajs.dat</a></li>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="phys_en.html" title="previous chapter"><span class="section-number">4.3.23. </span>phys.dat</a></li>
+      <li>Next: <a href="cisajs_en.html" title="next chapter"><span class="section-number">4.3.25. </span>cisajs.dat</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -215,11 +210,11 @@ represent real and imaginary part of the Hamiltonian, respectively.</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_en/ham_en.txt"
+      <a href="../../_sources/filespecification/outputfiles_en/ham_en.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

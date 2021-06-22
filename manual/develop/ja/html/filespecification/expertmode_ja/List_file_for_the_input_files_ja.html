@@ -1,52 +1,46 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="ja">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4.2.1. 入力ファイル指定用ファイル &mdash; HΦ マニュアル  ドキュメント</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
-    <link rel="up" title="4.2. エキスパートモード用入力ファイル" href="index_expertmode_ja.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.2.1. 入力ファイル指定用ファイル &#8212; HΦ マニュアル  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.2.2. CalcModファイル" href="CalcMod_file_ja.html" />
     <link rel="prev" title="4.2. エキスパートモード用入力ファイル" href="index_expertmode_ja.html" />
    
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="subsec-inputfilelist">
-<span id="id1"></span><h1>4.2.1. 入力ファイル指定用ファイル<a class="headerlink" href="#subsec-inputfilelist" title="このヘッドラインへのパーマリンク">¶</a></h1>
+  <section id="subsec-inputfilelist">
+<span id="id1"></span><h1><span class="section-number">4.2.1. </span>入力ファイル指定用ファイル<a class="headerlink" href="#subsec-inputfilelist" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <div class="line-block">
 <div class="line">計算で使用する入力ファイル一式を指定します。ファイル形式に関しては、以下のようなフォーマットをしています。</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre>CalcMod  calcmod.def
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CalcMod  calcmod.def
 ModPara  modpara.def
 LocSpin  zlocspn.def
 Trans    ztransfer.def
@@ -58,111 +52,112 @@ TwoBodyG zcisajscktaltdc.def
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<div class="section" id="id2">
+<section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>[string01] [string02]</p>
-</div>
-<div class="section" id="id3">
+</section>
+<section id="id3">
 <h2>パラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><span class="math">\([\)</span>string01<span class="math">\(]\)</span></p>
+<li><p><span class="math notranslate nohighlight">\([\)</span>string01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> string型 (固定)</p>
 <p><strong>説明 :</strong> キーワードを指定します。</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>string02<span class="math">\(]\)</span></p>
+<li><p><span class="math notranslate nohighlight">\([\)</span>string02<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> string型</p>
 <p><strong>説明 :</strong> キーワードにひも付けられるファイル名を指定します(任意)。</p>
 </li>
 </ul>
-</div>
-<div class="section" id="id4">
+</section>
+<section id="id4">
 <h2>使用ルール<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
 <ul class="simple">
-<li>キーワードを記載後、半角空白を開けた後にファイル名を書きます。ファイル名は自由に設定できます。</li>
-<li>必ず指定しなければいけないパラメータはCalcMod, ModPara,
-LocSpinです。</li>
-<li>各キーワードは順不同に記述できます。</li>
-<li>指定したキーワード、ファイルが存在しない場合はエラー終了します。</li>
-<li><span class="math">\(\#\)</span>で始まる行は読み飛ばされます。</li>
-<li>ファイル読込用キーワードは <a class="reference internal" href="#table-4-2"><span>TABLE 4.2</span></a> により指定します。</li>
+<li><p>キーワードを記載後、半角空白を開けた後にファイル名を書きます。ファイル名は自由に設定できます。</p></li>
+<li><p>必ず指定しなければいけないパラメータはCalcMod, ModPara,
+LocSpinです。</p></li>
+<li><p>各キーワードは順不同に記述できます。</p></li>
+<li><p>指定したキーワード、ファイルが存在しない場合はエラー終了します。</p></li>
+<li><p><span class="math notranslate nohighlight">\(\#\)</span>で始まる行は読み飛ばされます。</p></li>
+<li><p>ファイル読込用キーワードは <a class="reference internal" href="#table-4-2"><span class="std std-numref">表 4.2</span></a> により指定します。</p></li>
 </ul>
-<table border="1" class="docutils" id="id5">
-<span id="table-4-2"></span><caption><span class="caption-number">TABLE 4.2 </span><span class="caption-text">定義ファイル一覧</span><a class="headerlink" href="#id5" title="このテーブルへのパーマリンク">¶</a></caption>
+<span id="table-4-2"></span><table class="colwidths-given docutils align-default" id="id5">
+<caption><span class="caption-number">表 4.2 </span><span class="caption-text">定義ファイル一覧</span><a class="headerlink" href="#id5" title="このテーブルへのパーマリンク">¶</a></caption>
 <colgroup>
-<col width="17%" />
-<col width="83%" />
+<col style="width: 17%" />
+<col style="width: 83%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Keywords</th>
-<th class="head">指定ファイルの概要</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Keywords</p></th>
+<th class="head"><p>指定ファイルの概要</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>CalcMod</td>
-<td>計算モードに関する指定をします。</td>
+<tbody>
+<tr class="row-even"><td><p>CalcMod</p></td>
+<td><p>計算モードに関する指定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>ModPara</td>
-<td>計算で用いるパラメータの指定をします。</td>
+<tr class="row-odd"><td><p>ModPara</p></td>
+<td><p>計算で用いるパラメータの指定をします。</p></td>
 </tr>
-<tr class="row-even"><td>LocSpin</td>
-<td>各サイトに対して遍歴電子もしくは局在スピンの指定をします。</td>
+<tr class="row-even"><td><p>LocSpin</p></td>
+<td><p>各サイトに対して遍歴電子もしくは局在スピンの指定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>Trans</td>
-<td>一般的一体相互作用に関する設定をします。</td>
+<tr class="row-odd"><td><p>Trans</p></td>
+<td><p>一般的一体相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td>InterAll</td>
-<td>一般的二体相互作用に関する設定をします。</td>
+<tr class="row-even"><td><p>InterAll</p></td>
+<td><p>一般的二体相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>CoulombIntra</td>
-<td>内部クーロン相互作用に関する設定をします。</td>
+<tr class="row-odd"><td><p>CoulombIntra</p></td>
+<td><p>内部クーロン相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td>CoulombInter</td>
-<td>サイト間クーロン相互作用に関する設定をします。</td>
+<tr class="row-even"><td><p>CoulombInter</p></td>
+<td><p>サイト間クーロン相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>Hund</td>
-<td>フント結合に関する設定をします。</td>
+<tr class="row-odd"><td><p>Hund</p></td>
+<td><p>フント結合に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td>PairHop</td>
-<td>ペアホッピングに関する設定をします。</td>
+<tr class="row-even"><td><p>PairHop</p></td>
+<td><p>ペアホッピングに関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>Exchange</td>
-<td>交換相互作用に関する設定をします。</td>
+<tr class="row-odd"><td><p>Exchange</p></td>
+<td><p>交換相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td>Ising</td>
-<td>イジング相互作用に関する設定をします。</td>
+<tr class="row-even"><td><p>Ising</p></td>
+<td><p>イジング相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>PairLift</td>
-<td>ペアリフト相互作用に関する設定をします。</td>
+<tr class="row-odd"><td><p>PairLift</p></td>
+<td><p>ペアリフト相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td>OneBodyG</td>
-<td>出力する一体グリーン関数 <span class="math">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle\)</span> に関する設定をします。</td>
+<tr class="row-even"><td><p>OneBodyG</p></td>
+<td><p>出力する一体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle\)</span> に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>TwoBodyG</td>
-<td>出力する二体グリーン関数 <span class="math">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle\)</span>に関する設定をします。</td>
+<tr class="row-odd"><td><p>TwoBodyG</p></td>
+<td><p>出力する二体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle\)</span>に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td>SingleExcitation</td>
-<td>一体励起状態の生成演算子に関する指定をします。</td>
+<tr class="row-even"><td><p>SingleExcitation</p></td>
+<td><p>一体励起状態の生成演算子に関する指定をします。</p></td>
 </tr>
-<tr class="row-odd"><td>PairExcitation</td>
-<td>二体励起状態の生成演算子に関する指定をします。</td>
+<tr class="row-odd"><td><p>PairExcitation</p></td>
+<td><p>二体励起状態の生成演算子に関する指定をします。</p></td>
 </tr>
-<tr class="row-even"><td>SpectrumVec</td>
-<td>スペクトル関数を計算するためのリスタート用の入力ベクトルを指定します。</td>
+<tr class="row-even"><td><p>SpectrumVec</p></td>
+<td><p>スペクトル関数を計算するためのリスタート用の入力ベクトルを指定します。</p></td>
 </tr>
-<tr class="row-odd"><td>OneBodyTE</td>
-<td>各時刻で付加される一体型の演算子に関する設定をします。</td>
+<tr class="row-odd"><td><p>OneBodyTE</p></td>
+<td><p>各時刻で付加される一体型の演算子に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td>TwoBodyTE</td>
-<td>各時刻で付加される二体型の演算子に関する設定をします。</td>
+<tr class="row-even"><td><p>TwoBodyTE</p></td>
+<td><p>各時刻で付加される二体型の演算子に関する設定をします。</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -178,23 +173,18 @@ LocSpinです。</li>
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
 
 
 
-
-<h3>Navigation</h3>
+<h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="">4.2.1. 入力ファイル指定用ファイル</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.2.1. 入力ファイル指定用ファイル</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CalcMod_file_ja.html">4.2.2. CalcModファイル</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ModPara_file_ja.html">4.2.3. ModParaファイル</a></li>
 <li class="toctree-l3"><a class="reference internal" href="LocSpin_file_ja.html">4.2.4. LocSpin指定ファイル</a></li>
@@ -230,28 +220,33 @@ LocSpinです。</li>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
-  <li><a href="index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a><ul>
-      <li>Previous: <a href="index_expertmode_ja.html" title="前の章へ">4.2. エキスパートモード用入力ファイル</a></li>
-      <li>Next: <a href="CalcMod_file_ja.html" title="次の章へ">4.2.2. CalcModファイル</a></li>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_expertmode_ja.html"><span class="section-number">4.2. </span>エキスパートモード用入力ファイル</a><ul>
+      <li>Previous: <a href="index_expertmode_ja.html" title="前の章へ"><span class="section-number">4.2. </span>エキスパートモード用入力ファイル</a></li>
+      <li>Next: <a href="CalcMod_file_ja.html" title="次の章へ"><span class="section-number">4.2.2. </span>CalcModファイル</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>クイック検索</h3>
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="検索" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    モジュール、クラス、または関数名を入力してください
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -260,11 +255,11 @@ LocSpinです。</li>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/expertmode_ja/List_file_for_the_input_files_ja.txt"
+      <a href="../../_sources/filespecification/expertmode_ja/List_file_for_the_input_files_ja.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

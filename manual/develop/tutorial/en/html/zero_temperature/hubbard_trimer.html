@@ -1,55 +1,49 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>1.3. Hubbard Trimer &mdash; HΦ Tutorial  documentation</title>
-    
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ Tutorial  documentation" href="../index.html" />
-    <link rel="up" title="1. Tutorial for calculations at zero temperature" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>1.3. Hubbard Trimer &#8212; HΦ Tutorial  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="1.4. Heisenberg chain (zero temperature)" href="spin_chain.html" />
     <link rel="prev" title="1.2. Hubbard Dimer" href="hubbard_dimer.html" />
    
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="hubbard-trimer">
-<h1>1.3. Hubbard Trimer<a class="headerlink" href="#hubbard-trimer" title="Permalink to this headline">¶</a></h1>
-<p>Let&#8217;s solve the following the Hubbard trimer model
+  <section id="hubbard-trimer">
+<h1><span class="section-number">1.3. </span>Hubbard Trimer<a class="headerlink" href="#hubbard-trimer" title="Permalink to this headline">¶</a></h1>
+<p>Let’s solve the following the Hubbard trimer model
 (Hubbard model on a triangle).</p>
-<div class="math">
-\[H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+c_{1\sigma}^{\dagger}c_{2\sigma}
+<div class="math notranslate nohighlight" id="equation-zero-temperature-hubbard-trimer-0">
+<span class="eqno">(1.3)<a class="headerlink" href="#equation-zero-temperature-hubbard-trimer-0" title="Permalink to this equation">¶</a></span>\[H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+c_{1\sigma}^{\dagger}c_{2\sigma}
   +c_{2\sigma}^{\dagger}c_{0\sigma}+{\rm H.c.})
   +U\sum_{i}(n_{i\uparrow}n_{i\downarrow})\]</div>
-<p>The input file (<code class="docutils literal"><span class="pre">samples/tutorial_1.3/stan1.in</span></code>) is as follows:</p>
-<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+<p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.3/stan1.in</span></code>) is as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
 method = &quot;FullDiag&quot;
 lattice = &quot;chain&quot;
 L = 3
@@ -61,11 +55,11 @@ nelec = 2
 </div>
 <p>Note that the filling is not half filling.</p>
 <p>You can execute HPhi as follows</p>
-<div class="highlight-none"><div class="highlight"><pre>HPhi -s stan.in
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HPhi -s stan.in
 </pre></div>
 </div>
-<div class="section" id="ferromagnetic-ground-state">
-<h2>1.3.1. Ferromagnetic ground state<a class="headerlink" href="#ferromagnetic-ground-state" title="Permalink to this headline">¶</a></h2>
+<section id="ferromagnetic-ground-state">
+<h2><span class="section-number">1.3.1. </span>Ferromagnetic ground state<a class="headerlink" href="#ferromagnetic-ground-state" title="Permalink to this headline">¶</a></h2>
 <p>For the Hubbard model on a triangle with one hole,
 it is known that the <strong>perfect ferromagnetism</strong> becomes ground state.
 Please check that.</p>
@@ -73,17 +67,17 @@ Please check that.</p>
 ferromagnetism, please see
 <strong>Hal Tasaki, Kotai Butsuri, Vol. 31, 173 (1996)</strong>.
 This is one of the simplest example of the
-Nagaoka&#8217;s ferromagnetism.</p>
-</div>
-<div class="section" id="effects-of-transfer-integrals">
-<h2>1.3.2. Effects of transfer integrals<a class="headerlink" href="#effects-of-transfer-integrals" title="Permalink to this headline">¶</a></h2>
+Nagaoka’s ferromagnetism.</p>
+</section>
+<section id="effects-of-transfer-integrals">
+<h2><span class="section-number">1.3.2. </span>Effects of transfer integrals<a class="headerlink" href="#effects-of-transfer-integrals" title="Permalink to this headline">¶</a></h2>
 <p>Please the effects of the sign of
 the transfer integrals.
 <strong>For example, what happens if you take t = 1 ?</strong></p>
 <p>Another interesting example is by changing
 the transfer integrals between site 0 and site 2.
 Following an example of the <strong>trans.def</strong></p>
-<div class="highlight-none"><div class="highlight"><pre>========================
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>========================
 NTransfer      12
 ========================
 ========i_j_s_tijs======
@@ -106,11 +100,12 @@ NTransfer      12
 U dependence of the ground state.
 Is there phase transition between singlet ground state and
 the perfect ferromagnetism ?</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -126,11 +121,6 @@ the perfect ferromagnetism ?</p>
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
 
 
 
@@ -139,7 +129,7 @@ the perfect ferromagnetism ?</p>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Tutorial for calculations at zero temperature</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="spin_dimer.html">1.1. Spin 1/2 Dimer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hubbard_dimer.html">1.2. Hubbard Dimer</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">1.3. Hubbard Trimer</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.3. Hubbard Trimer</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#ferromagnetic-ground-state">1.3.1. Ferromagnetic ground state</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#effects-of-transfer-integrals">1.3.2. Effects of transfer integrals</a></li>
 </ul>
@@ -159,26 +149,31 @@ the perfect ferromagnetism ?</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">1. Tutorial for calculations at zero temperature</a><ul>
-      <li>Previous: <a href="hubbard_dimer.html" title="previous chapter">1.2. Hubbard Dimer</a></li>
-      <li>Next: <a href="spin_chain.html" title="next chapter">1.4. Heisenberg chain (zero temperature)</a></li>
+  <li><a href="index.html"><span class="section-number">1. </span>Tutorial for calculations at zero temperature</a><ul>
+      <li>Previous: <a href="hubbard_dimer.html" title="previous chapter"><span class="section-number">1.2. </span>Hubbard Dimer</a></li>
+      <li>Next: <a href="spin_chain.html" title="next chapter"><span class="section-number">1.4. </span>Heisenberg chain (zero temperature)</a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -187,11 +182,11 @@ the perfect ferromagnetism ?</p>
       &copy;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/zero_temperature/hubbard_trimer.txt"
+      <a href="../_sources/zero_temperature/hubbard_trimer.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

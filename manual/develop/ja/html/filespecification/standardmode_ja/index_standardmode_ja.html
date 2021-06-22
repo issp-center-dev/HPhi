@@ -1,50 +1,44 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="ja">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4.1. スタンダードモード用入力ファイル &mdash; HΦ マニュアル  ドキュメント</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
-    <link rel="up" title="4. ファイルフォーマット" href="../fi-index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.1. スタンダードモード用入力ファイル &#8212; HΦ マニュアル  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.1.1. 計算の種類に関する必須パラメータ" href="Parameters_for_the_type_of_calculation_ja.html" />
     <link rel="prev" title="4. ファイルフォーマット" href="../fi-index.html" />
    
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="id1">
-<h1>4.1. スタンダードモード用入力ファイル<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+  <section id="id1">
+<h1><span class="section-number">4.1. </span>スタンダードモード用入力ファイル<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>スタンダードモード用入力ファイルは次のような格好をしています。</p>
-<div class="highlight-none"><div class="highlight"><pre>W = 2
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>W = 2
 L = 4
 model = &quot;spin&quot;
 method = &quot;Lanczos&quot;
@@ -66,20 +60,20 @@ J&#39;=-0.5
 <div class="line"><strong>大まかなルールは次のとおりです。</strong></div>
 </div>
 <ul class="simple">
-<li>各行にはひと組ずつキーワード(<code class="docutils literal"><span class="pre">=</span></code>の前)と
-パラメータ(<code class="docutils literal"><span class="pre">=</span></code>の後)が書かれており間は<code class="docutils literal"><span class="pre">=</span></code>で区切られています。</li>
-<li>各キーワードは順不同に記述できます。</li>
-<li>空白行、または<code class="docutils literal"><span class="pre">//</span></code>で始まる行(コメントアウト)は読み飛ばされます。</li>
-<li>各キーワード、パラメータの大文字<span class="math">\(\cdot\)</span>小文字は区別されません。
-ダブルクオート、空白は無視されます。</li>
+<li><p>各行にはひと組ずつキーワード(<code class="docutils literal notranslate"><span class="pre">=</span></code>の前)と
+パラメータ(<code class="docutils literal notranslate"><span class="pre">=</span></code>の後)が書かれており間は<code class="docutils literal notranslate"><span class="pre">=</span></code>で区切られています。</p></li>
+<li><p>各キーワードは順不同に記述できます。</p></li>
+<li><p>空白行、または<code class="docutils literal notranslate"><span class="pre">//</span></code>で始まる行(コメントアウト)は読み飛ばされます。</p></li>
+<li><p>各キーワード、パラメータの大文字<span class="math notranslate nohighlight">\(\cdot\)</span>小文字は区別されません。
+ダブルクオート、空白は無視されます。</p></li>
 </ul>
 <ul>
-<li><div class="first line-block">
+<li><div class="line-block">
 <div class="line">パラメータには三種類あります。</div>
-<div class="line">1.&nbsp;必ず指定しなければいけないパラメータ&nbsp;(もし存在しない場合には、 <span class="math">\({\mathcal H}\Phi\)</span> のエラーメッセージが出力され、プログラムは終了します)</div>
-<div class="line">2.&nbsp;指定しない場合デフォルト値が使われるパラメータ&nbsp;(もし存在しない場合は、デフォルト値が使用されます)</div>
-<div class="line">3.&nbsp;使われないパラメータ&nbsp;(使われないパラメータが指定された場合には&#8221;入力ファイルをチェックするように&#8221;というメッセージが表示され、プログラムは終了します。)</div>
-<div class="line">例えば、ハイゼンベルグ模型でトランスファー積分 <span class="math">\(t\)</span> を指定した場合が相当します。 もし &#8220;model=spin&#8221; とした場合には、  &#8220;<span class="math">\(t\)</span>&#8221; は使用できません。</div>
+<div class="line">1. 必ず指定しなければいけないパラメータ (もし存在しない場合には、 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のエラーメッセージが出力され、プログラムは終了します)</div>
+<div class="line">2. 指定しない場合デフォルト値が使われるパラメータ (もし存在しない場合は、デフォルト値が使用されます)</div>
+<div class="line">3. 使われないパラメータ (使われないパラメータが指定された場合には&quot;入力ファイルをチェックするように&quot;というメッセージが表示され、プログラムは終了します。)</div>
+<div class="line">例えば、ハイゼンベルグ模型でトランスファー積分 <span class="math notranslate nohighlight">\(t\)</span> を指定した場合が相当します。 もし &quot;model=spin&quot; とした場合には、  &quot;<span class="math notranslate nohighlight">\(t\)</span>&quot; は使用できません。</div>
 </div>
 </li>
 </ul>
@@ -95,10 +89,11 @@ J&#39;=-0.5
 <li class="toctree-l1"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメータ</a></li>
 </ul>
 </div>
-</div>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -114,21 +109,16 @@ J&#39;=-0.5
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
 
 
 
-
-<h3>Navigation</h3>
+<h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">4.1. スタンダードモード用入力ファイル</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.1. スタンダードモード用入力ファイル</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
@@ -153,26 +143,31 @@ J&#39;=-0.5
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
-      <li>Previous: <a href="../fi-index.html" title="前の章へ">4. ファイルフォーマット</a></li>
-      <li>Next: <a href="Parameters_for_the_type_of_calculation_ja.html" title="次の章へ">4.1.1. 計算の種類に関する必須パラメータ</a></li>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+      <li>Previous: <a href="../fi-index.html" title="前の章へ"><span class="section-number">4. </span>ファイルフォーマット</a></li>
+      <li>Next: <a href="Parameters_for_the_type_of_calculation_ja.html" title="次の章へ"><span class="section-number">4.1.1. </span>計算の種類に関する必須パラメータ</a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>クイック検索</h3>
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="検索" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    モジュール、クラス、または関数名を入力してください
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -181,11 +176,11 @@ J&#39;=-0.5
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/standardmode_ja/index_standardmode_ja.txt"
+      <a href="../../_sources/filespecification/standardmode_ja/index_standardmode_ja.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

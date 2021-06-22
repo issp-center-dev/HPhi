@@ -1,190 +1,182 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="ja">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4.1.5. 計算条件のパラメータ &mdash; HΦ マニュアル  ドキュメント</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
-    <link rel="up" title="4.1. スタンダードモード用入力ファイル" href="index_standardmode_ja.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.1.5. 計算条件のパラメータ &#8212; HΦ マニュアル  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.1.6. 動的グリーン関数の計算に関するパラメータ" href="Parameters_for_the_dynamical_Greens_function.html" />
     <link rel="prev" title="4.1.4. ハミルトニアンの各項の係数" href="Parameters_for_the_Hamiltonian_ja.html" />
    
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="id1">
-<h1>4.1.5. 計算条件のパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+  <section id="id1">
+<h1><span class="section-number">4.1.5. </span>計算条件のパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">2S</span></code></p>
-<p><strong>形式 :</strong> 正の整数(デフォルト値は<code class="docutils literal"><span class="pre">1</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">2S</span></code></p>
+<p><strong>形式 :</strong> 正の整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 <p><strong>説明 :</strong>
-スピン模型での局在スピンの大きさ<span class="math">\(S\)</span>の2倍を指定します。 (例/
-<span class="math">\(1/2\)</span>スピンならば<code class="docutils literal"><span class="pre">1</span></code>)</p>
+スピン模型での局在スピンの大きさ<span class="math notranslate nohighlight">\(S\)</span>の2倍を指定します。 (例/
+<span class="math notranslate nohighlight">\(1/2\)</span>スピンならば<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">Restart</span></code></p>
-<p><strong>形式 :</strong> 文字列(<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Restart_out&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Restart_in&quot;</span></code>,
-<code class="docutils literal"><span class="pre">&quot;Restart&quot;</span></code>のいずれか。デフォルトは<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">Restart</span></code></p>
+<p><strong>形式 :</strong> 文字列(<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code>のいずれか。デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>)</p>
 <p><strong>説明 :</strong> 再計算に関する設定を行う。
-<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>では再計算に関連するファイル出力をしない。
-<code class="docutils literal"><span class="pre">&quot;Restart_out&quot;</span></code>では一から計算を始めて、
+<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>では再計算に関連するファイル出力をしない。
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code>では一から計算を始めて、
 反復が終了した時点で再計算用のデータをファイル出力する。
-<code class="docutils literal"><span class="pre">&quot;Restart_in&quot;</span></code>では再計算用のデータをファイルから受け取り途中から計算を始める。
-<code class="docutils literal"><span class="pre">&quot;Restart&quot;</span></code>では再計算用のデータをファイルから受け取り途中から計算を始め、
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>では再計算用のデータをファイルから受け取り途中から計算を始める。
+<code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code>では再計算用のデータをファイルから受け取り途中から計算を始め、
 反復が終了した時点で再計算用のデータをファイル出力する。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">Lanczos_max</span></code></p>
-<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal"><span class="pre">2000</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
+<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">2000</span></code>)</p>
 <p><strong>説明 :</strong> ランチョスステップの上限、LOBCGステップの上限、
 TPQステップ数、時間発展ステップ数、BiCGステップの上限を指定します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">initial_iv</span></code></p>
-<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal"><span class="pre">-1</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
+<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p>
 <p><strong>説明 :</strong> 初期条件のベクトルを与えます。</p>
 <ul>
-<li><p class="first">ランチョス法</p>
+<li><p>ランチョス法</p>
 <ul>
-<li><p class="first">カノニカル集団かつ <code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(\geq 0\)</span>の場合</p>
+<li><p>カノニカル集団かつ <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(\geq 0\)</span>の場合</p>
 <p>ノンゼロの成分が指定されます。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">initial_iv</span></code> <span class="math">\(&lt; 0\)</span>の場合</p>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(&lt; 0\)</span>の場合</p></li>
 </ul>
 <blockquote>
 <div><p>乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。なお、グランドカノニカルの場合は初期状態として多くの状態を持つよう、こちらの様式が適用されます。</p>
 </div></blockquote>
 </li>
-<li><p class="first">TPQ法</p>
+<li><p>TPQ法</p>
 <p>乱数のシードが指定され、全ての成分に対して係数がランダムに与えられます。</p>
 </li>
 </ul>
-<p>初期ベクトル設定の詳細については、<a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span>アルゴリズム</span></a> を参照ください。</p>
+<p>初期ベクトル設定の詳細については、<a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">アルゴリズム</span></a> を参照ください。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">exct</span></code></p>
-<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal"><span class="pre">1</span></code>)</p>
-<p><strong>説明 :</strong> <code class="docutils literal"><span class="pre">method=&quot;Lancoz&quot;</span></code>ではエネルギーの低いものから数えて、
+<li><p><code class="docutils literal notranslate"><span class="pre">exct</span></code></p>
+<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<p><strong>説明 :</strong> <code class="docutils literal notranslate"><span class="pre">method=&quot;Lancoz&quot;</span></code>ではエネルギーの低いものから数えて、
 何番目の固有状態を計算するかを指定します。
-<code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code>の時には求める固有状態の本数を指定します。</p>
-<p><strong>Note</strong>: <code class="docutils literal"><span class="pre">nvec</span></code> <span class="math">\(&gt;=\)</span> <code class="docutils literal"><span class="pre">exct</span></code> を満たす必要があります。</p>
+<code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>の時には求める固有状態の本数を指定します。</p>
+<p><strong>Note</strong>: <code class="docutils literal notranslate"><span class="pre">nvec</span></code> <span class="math notranslate nohighlight">\(&gt;=\)</span> <code class="docutils literal notranslate"><span class="pre">exct</span></code> を満たす必要があります。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">LanczosEps</span></code></p>
-<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal"><span class="pre">14</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
+<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">14</span></code>)</p>
 <p><strong>説明 :</strong> ランチョスの収束判定条件を指定します。
 ひとつ前のステップの固有値との相対誤差が,
-<span class="math">\(10^{-{\tt LanczosEps}}\)</span>以下になったら収束したと判断します。
-<code class="docutils literal"><span class="pre">method=&quot;CG&quot;</span></code>の時には残差ベクトルの2-ノルムが
-<span class="math">\(10^{-{\tt LanczosEps}/2}\)</span>以下になったら収束したと判断します。</p>
+<span class="math notranslate nohighlight">\(10^{-{\tt LanczosEps}}\)</span>以下になったら収束したと判断します。
+<code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>の時には残差ベクトルの2-ノルムが
+<span class="math notranslate nohighlight">\(10^{-{\tt LanczosEps}/2}\)</span>以下になったら収束したと判断します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">LanczosTarget</span></code></p>
-<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal"><span class="pre">2</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">LanczosTarget</span></code></p>
+<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">2</span></code>)</p>
 <p><strong>説明 :</strong> エネルギーの低いものから数えて、
 何番目の固有値でランチョスの収束判定を行うかを指定します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">LargeValue</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>形式 :</strong> 実数(デフォルト値は下記参照)</p>
 <p><strong>説明 :</strong>
-(TPQ法のみで使用) <span class="math">\(l-\mathcal{H}/N_{s}\)</span>の<span class="math">\(l\)</span>。
+(TPQ法のみで使用) <span class="math notranslate nohighlight">\(l-\mathcal{H}/N_{s}\)</span>の<span class="math notranslate nohighlight">\(l\)</span>。
 ハミルトニアンの各項の係数の絶対値の総和をサイト数で割ったものがデフォルト値になります。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">NumAve</span></code></p>
-<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal"><span class="pre">5</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
+<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">5</span></code>)</p>
 <p><strong>説明 :</strong> (TPQ法のみで使用)独立なrunを何回行うかを指定します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">ExpecInterval</span></code></p>
-<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal"><span class="pre">20</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code></p>
+<p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">20</span></code>)</p>
 <p><strong>説明 :</strong>
 (TPQ法のみで使用)相関関数の計算を何回のTPQステップおきに行うかの指定。
 頻度を上げると計算コストが増大するので注意してください。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">OutputMode</span></code></p>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputMode</span></code></p></li>
 </ul>
 <blockquote>
-<div><dl class="docutils">
-<dt><strong>形式 :</strong> <code class="docutils literal"><span class="pre">&quot;none&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;correlation&quot;</span></code>,</dt>
-<dd><p class="first"><code class="docutils literal"><span class="pre">&quot;full&quot;</span></code>のいずれか(デフォルトは<code class="docutils literal"><span class="pre">correlation</span></code>)</p>
-<p class="last"><strong>説明 :</strong> 計算を行う相関関数を指定します。
-<code class="docutils literal"><span class="pre">&quot;none&quot;</span></code>の場合は相関関数を計算しません。
-<code class="docutils literal"><span class="pre">&quot;correlation&quot;</span></code>を指定した場合には、付属のユーティリティ
-<code class="docutils literal"><span class="pre">fourier</span></code>でサポートするものに対応した相関関数を計算します。
-詳しくは<code class="docutils literal"><span class="pre">doc/fourier/</span></code>内のマニュアルを参照してください。
-<code class="docutils literal"><span class="pre">&quot;full&quot;</span></code>を指定した場合には、
-1体部分はすべての<span class="math">\(i, j, \sigma, \sigma'\)</span>について
-<span class="math">\(\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle\)</span>を、
-2体部分はすべての<span class="math">\(i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4\)</span>について
-<span class="math">\(\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_{i_4 \sigma_4} \rangle\)</span>
+<div><dl>
+<dt><strong>形式 :</strong> <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;correlation&quot;</span></code>,</dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;full&quot;</span></code>のいずれか(デフォルトは<code class="docutils literal notranslate"><span class="pre">correlation</span></code>)</p>
+<p><strong>説明 :</strong> 計算を行う相関関数を指定します。
+<code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>の場合は相関関数を計算しません。
+<code class="docutils literal notranslate"><span class="pre">&quot;correlation&quot;</span></code>を指定した場合には、付属のユーティリティ
+<code class="docutils literal notranslate"><span class="pre">fourier</span></code>でサポートするものに対応した相関関数を計算します。
+詳しくは<code class="docutils literal notranslate"><span class="pre">doc/fourier/</span></code>内のマニュアルを参照してください。
+<code class="docutils literal notranslate"><span class="pre">&quot;full&quot;</span></code>を指定した場合には、
+1体部分はすべての<span class="math notranslate nohighlight">\(i, j, \sigma, \sigma'\)</span>について
+<span class="math notranslate nohighlight">\(\langle c_{i \sigma}^{\dagger}c_{j \sigma'} \rangle\)</span>を、
+2体部分はすべての<span class="math notranslate nohighlight">\(i_1, i_2, i_3, i_4, \sigma_1, \sigma_2, \sigma_3, \sigma_4\)</span>について
+<span class="math notranslate nohighlight">\(\langle c_{i_1 \sigma_1}^{\dagger}c_{i_2 \sigma_2} c_{i_3 \sigma_3}^{\dagger}c_{i_4 \sigma_4} \rangle\)</span>
 を計算します。
 スピン系の演算子はBogoliubov表現により生成消滅演算子で表されています。
-詳しくは <a class="reference internal" href="../../algorithm/Bogoliubov_ja.html#sec-sec-bogoliubov-rep"><span>Bogoliubov表現</span></a> をご覧ください。</p>
+詳しくは <a class="reference internal" href="../../algorithm/Bogoliubov_ja.html#sec-sec-bogoliubov-rep"><span class="std std-ref">Bogoliubov表現</span></a> をご覧ください。</p>
 </dd>
 </dl>
 </div></blockquote>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">InitialVecType</span></code></p>
-<p><strong>形式 :</strong> 文字 (<code class="docutils literal"><span class="pre">&quot;C&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;R&quot;</span></code>のいずれか。
-デフォルトは<code class="docutils literal"><span class="pre">&quot;C&quot;</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code></p>
+<p><strong>形式 :</strong> 文字 (<code class="docutils literal notranslate"><span class="pre">&quot;C&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;R&quot;</span></code>のいずれか。
+デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;C&quot;</span></code>)</p>
 <p><strong>説明 :</strong> 固有ベクトルの初期値の型を指定する。
-<code class="docutils literal"><span class="pre">C</span></code>では複素数型、<code class="docutils literal"><span class="pre">R</span></code>では実数型とする。</p>
+<code class="docutils literal notranslate"><span class="pre">C</span></code>では複素数型、<code class="docutils literal notranslate"><span class="pre">R</span></code>では実数型とする。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">EigenVecIO</span></code></p>
-<p><strong>形式 :</strong> 文字列(<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;In&quot;</span></code>のいずれか。
-デフォルトは<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">EigenVecIO</span></code></p>
+<p><strong>形式 :</strong> 文字列(<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;In&quot;</span></code>のいずれか。
+デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>)</p>
 <p><strong>説明 :</strong> 固有ベクトルの入出力を指定する。
-<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>では固有ベクトルの入出力を行わない。
-<code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>では求めた固有ベクトルをファイルに出力する。
-<code class="docutils literal"><span class="pre">&quot;In&quot;</span></code>では固有ベクトルをファイルから取り出し、
+<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>では固有ベクトルの入出力を行わない。
+<code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>では求めた固有ベクトルをファイルに出力する。
+<code class="docutils literal notranslate"><span class="pre">&quot;In&quot;</span></code>では固有ベクトルをファイルから取り出し、
 その後の計算(動的グリーン関数など)を行う。</p>
 </li>
 </ul>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">OutputIO</span></code></p>
-<p><strong>形式 :</strong> 文字列 (<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;In&quot;</span></code>のいずれか。
-デフォルトは<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputIO</span></code></p>
+<p><strong>形式 :</strong> 文字列 (<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;In&quot;</span></code>のいずれか。
+デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>)</p>
 <p><strong>説明 :</strong> (FullDiagのみ有効) ハミルトニアンの入出力を指定します。
-<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>では 入出力なし。
-<code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>では出力あり。
-<code class="docutils literal"><span class="pre">&quot;In&quot;</span></code>では入力あり。</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>では 入出力なし。
+<code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>では出力あり。
+<code class="docutils literal notranslate"><span class="pre">&quot;In&quot;</span></code>では入力あり。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">OutputExcitedVec</span></code></p>
-<p><strong>形式 :</strong> 文字列 (<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>のいずれか。
-デフォルトは<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>
+<p><strong>形式 :</strong> 文字列 (<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>のいずれか。
+デフォルトは<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>)</p>
 <p><strong>説明 :</strong> (動的グリーン関数を計算するモードの場合のみ有効) 励起ベクトルの出力の指定を行います。
-<code class="docutils literal"><span class="pre">&quot;None&quot;</span></code>では 出力なし。
-<code class="docutils literal"><span class="pre">&quot;Out&quot;</span></code>では出力あり。</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>では 出力なし。
+<code class="docutils literal notranslate"><span class="pre">&quot;Out&quot;</span></code>では出力あり。</p>
 </li>
 </ul>
-</div>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -200,18 +192,13 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
 
 
 
-
-<h3>Navigation</h3>
+<h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
@@ -219,7 +206,7 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_ja.html">4.1.4. ハミルトニアンの各項の係数</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="">4.1.5. 計算条件のパラメータ</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.5. 計算条件のパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメータ</a></li>
 </ul>
@@ -239,28 +226,33 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
-  <li><a href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul>
-      <li>Previous: <a href="Parameters_for_the_Hamiltonian_ja.html" title="前の章へ">4.1.4. ハミルトニアンの各項の係数</a></li>
-      <li>Next: <a href="Parameters_for_the_dynamical_Greens_function.html" title="次の章へ">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_standardmode_ja.html"><span class="section-number">4.1. </span>スタンダードモード用入力ファイル</a><ul>
+      <li>Previous: <a href="Parameters_for_the_Hamiltonian_ja.html" title="前の章へ"><span class="section-number">4.1.4. </span>ハミルトニアンの各項の係数</a></li>
+      <li>Next: <a href="Parameters_for_the_dynamical_Greens_function.html" title="次の章へ"><span class="section-number">4.1.6. </span>動的グリーン関数の計算に関するパラメータ</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>クイック検索</h3>
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="検索" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    モジュール、クラス、または関数名を入力してください
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -269,11 +261,11 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_numerical_condition.txt"
+      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_numerical_condition.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
