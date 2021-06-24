@@ -96,6 +96,7 @@ void setmem_def
 
   X->Def.TBody = i_2d_allocate(X->Def.NTBody, 12);
   X->Def.FBody = i_2d_allocate(X->Def.NFBody, 16);
+  X->Def.SBody = i_2d_allocate(X->Def.NSBody, 24);
 
   X->Def.SingleExcitationOperator = i_2d_allocate(X->Def.NSingleExcitationOperator, 3);
   X->Def.ParaSingleExcitationOperator = cd_1d_allocate(X->Def.NSingleExcitationOperator);

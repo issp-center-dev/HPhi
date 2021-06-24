@@ -46,6 +46,7 @@ const char* cFileName2BGreen_Lanczos="%s_cisajscktalt.dat";
 const char* cFileName2BGreen_CG="%s_cisajscktalt.dat";
 const char* cFileName3BGreen_Lanczos="%s_ThreeBody.dat";
 const char* cFileName4BGreen_Lanczos="%s_FourBody.dat";
+const char* cFileName6BGreen_Lanczos="%s_SixBody.dat";
 const char* cFileNameTimeEV_CG="Time_EigenVector.dat";
 const char* cFileNameListModel="ListForModel_Ns%d_Nup%dNdown%d.dat";
 const char* cFileNameOutputEigen="%s_eigenvec_%d_rank_%d.dat";
@@ -63,10 +64,12 @@ const char* cFileName1BGreen_TPQ="%s_cisajs_set%dstep%d.dat";
 const char* cFileName2BGreen_TPQ="%s_cisajscktalt_set%dstep%d.dat";
 const char* cFileName3BGreen_TPQ="%s_ThreeBody_set%dstep%d.dat";
 const char* cFileName4BGreen_TPQ="%s_FourBody_set%dstep%d.dat";
+const char* cFileName6BGreen_TPQ="%s_SixBody_set%dstep%d.dat";
 const char* cFileName1BGreen_TE="%s_cisajs_step%d.dat";
 const char* cFileName2BGreen_TE="%s_cisajscktalt_step%d.dat";
 const char* cFileName3BGreen_TE="%s_ThreeBody_step%d.dat";
 const char* cFileName4BGreen_TE="%s_FourBody_step%d.dat";
+const char* cFileName6BGreen_TE="%s_SixBody_step%d.dat";
 const char* cFileNameOutputVector="tmpvec_set%d_rank_%d.dat";
 const char* cFileNameInputVector="tmpvec_set%d_rank_%d.dat";
 
@@ -83,6 +86,7 @@ const char* cFileName1BGreen_FullDiag="%s_cisajs_eigen%d.dat";
 const char* cFileName2BGreen_FullDiag="%s_cisajscktalt_eigen%d.dat";
 const char* cFileName3BGreen_FullDiag="%s_ThreeBody_eigen%d.dat";
 const char* cFileName4BGreen_FullDiag="%s_FourBody_eigen%d.dat";
+const char* cFileName6BGreen_FullDiag="%s_SixBody_eigen%d.dat";
 const char* cFileNamePhys_FullDiag_Ham="%s_Ham.dat";
 
 //For Spectrum
