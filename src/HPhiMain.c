@@ -25,6 +25,7 @@
 #include <CalcByTPQ.h>
 #include <CalcSpectrum.h>
 #include <check.h>
+#include "CalcByCanonicalTPQ.h"
 #include "CalcByTEM.h"
 #include "readdef.h"
 #include "StdFace_main.h"
@@ -319,6 +320,16 @@ int main(int argc, char* argv[]){
         }
         StopTimer(3000);
       break;
+
+      case cTPQ:
+        StartTimer(3000);        
+        if (CalcByCanonicalTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
+          StopTimer(3000);
+          exitMPI(-3);
+        }
+        StopTimer(3000);
+      break;
+
 
       case TimeEvolution:
         if(CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)!=0){

@@ -341,7 +341,7 @@ int ReadcalcmodFile(
     return (-1);
   }
   
-  if(ValidateValue(X->iInitialVecType, 0, NUM_SETINITAILVEC-1)){
+  if(ValidateValue(X->iInitialVecType, -1, NUM_SETINITAILVEC-1)){
     fprintf(stdoutMPI, cErrSetIniVec, defname);
     return (-1);
   }

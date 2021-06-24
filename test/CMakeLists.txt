@@ -230,3 +230,28 @@ add_test(
   NAME te_kondo_chain_interall
   COMMAND ${CMAKE_SOURCE_DIR}/test/te_kondo_chain_interall.sh ${CMAKE_SOURCE_DIR}
 )
+#
+#mTPQ
+#
+add_test(
+  NAME tpq_spin_kagome
+  COMMAND ${CMAKE_SOURCE_DIR}/test/tpq_spin_kagome.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME tpq_spin_kagome_randomsphere
+  COMMAND ${CMAKE_SOURCE_DIR}/test/tpq_spin_kagome_randomsphere.sh ${CMAKE_SOURCE_DIR}
+)
+
+#
+#cTPQ
+#
+add_test(
+  NAME ctpq_spin_kagome
+  COMMAND ${CMAKE_SOURCE_DIR}/test/ctpq_spin_kagome.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME ctpq_spin_kagome_randomsphere
+  COMMAND ${CMAKE_SOURCE_DIR}/test/ctpq_spin_kagome_randomsphere.sh ${CMAKE_SOURCE_DIR}
+)
+
+

@@ -14,16 +14,10 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
+#include "Common.h"
 
-int Multiply
-(
- struct BindStruct *X
- );
-
-int MultiplyForTEM(
-        struct BindStruct *X
-);
-
-int MultiplyForCanonicalTPQ(
-        struct BindStruct *X,double delta_tau
+int CalcByCanonicalTPQ(
+              const int NumAve,
+              const int ExpecInterval,
+              struct EDMainCalStruct *X
 );

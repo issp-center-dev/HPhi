@@ -18,12 +18,13 @@
 #define HPHI_DEFCOMMON_H
 
 /*!< CalcType */
-#define NUM_CALCTYPE 5
+#define NUM_CALCTYPE 6
 #define Lanczos 0 /*!< CalcType is Exact Diagonalization method.*/
 #define TPQCalc 1 /*!< CalcType is TPQ calculation.*/
 #define FullDiag 2 /*!< CalcType is Full Diagonalization method.*/
 #define CG 3 /*!< CalcType is CG method */
 #define TimeEvolution 4 /*!< CalcType is Time Evolution method*/
+#define cTPQ 5 /*!< CalcType is canonical TPQ*/
 
 /*!< CalcModel */
 #define NUM_CALCMODEL 6 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted. SpinlessFermion and SpinlessFermionGC are not yet supported*/

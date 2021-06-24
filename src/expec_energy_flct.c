@@ -44,6 +44,7 @@ int expec_energy_flct(struct BindStruct *X){
     TimeKeeper(X, cFileNameTimeKeep, cExpecStart, "a");
     break;
   case TPQCalc:
+  case cTPQ:
   case TimeEvolution:
 #ifdef _DEBUG
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
