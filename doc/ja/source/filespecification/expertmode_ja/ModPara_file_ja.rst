@@ -220,7 +220,9 @@ TPQ法で使用するパラメータ
    **形式 :** double型 (実数)
 
    **説明 :**
-   TPQで使用する\ :math:`l-\mathcal H/N_{s}`\ の\ :math:`l`\ を指定する整数。
+   TPQで使用する\ :math:`l-\mathcal H/N_{s}`\ の\ :math:`l`\ を指定する実数。
+   cTPQ計算では, :math:`l` は虚時間発展の刻み幅として使われます(:math:`\Delta\tau=1/l`). 
+   cTPQ計算の詳細は :ref:`Ch:algorithm` を参照してください.
 
 -  ``NumAve``
 
@@ -235,6 +237,16 @@ TPQ法で使用するパラメータ
    **説明 :**
    相関関数の計算を何回のTPQステップおきに行うかの指定する整数。
    頻度を上げると計算コストが増大するので注意してください。
+
+*  ``ExpandCoef``
+
+   **Type :** Int (自然数)
+
+   **Description :** cTPQ計算における展開次数を指定する整数です(:math:`n_{\rm max}`);
+
+   .. math:: U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .
+
+   詳しくは, :ref:`Ch:algorithm`を参照してください.
 
  
 

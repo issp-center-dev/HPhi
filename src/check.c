@@ -239,6 +239,7 @@ int check(struct BindStruct *X){
       }
       break;
     case TPQCalc:
+    case cTPQ:
       switch (X->Def.iCalcModel) {
         case Hubbard:
         case HubbardNConserved:
