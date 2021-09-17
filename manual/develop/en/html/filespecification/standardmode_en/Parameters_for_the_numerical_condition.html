@@ -112,11 +112,13 @@ becomes the ground state.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double (the default value is provided below)</p>
-<p><strong>Description :</strong> (Only for TPQ) <span class="math notranslate nohighlight">\(l\)</span> as <span class="math notranslate nohighlight">\(l-{\mathcal H}/N_{s}\)</span>
-is used in the TPQ calculation. Usually, the largest eigenvalue of
+<p><strong>Description :</strong> (Only for TPQ) <span class="math notranslate nohighlight">\(l\)</span> as <span class="math notranslate nohighlight">\((l-{\mathcal H}/N_{s})\)</span>
+is used in the mTPQ calculation. Usually, the largest eigenvalue of
 the Hamiltonian is used as <span class="math notranslate nohighlight">\(l\)</span>. Thus, the default value of
 <span class="math notranslate nohighlight">\(l\)</span> is taken as the summation of the absolute values of each
-coefficient in the Hamiltonian divided by the number of sites.</p>
+coefficient in the Hamiltonian divided by the number of sites.
+In the cTPQ calculation, <code class="docutils literal notranslate"><span class="pre">LargeValue</span></code> is used as <span class="math notranslate nohighlight">\(\Delta\tau=1/LargeValue\)</span>.
+The definition of <span class="math notranslate nohighlight">\(\Delta\tau\)</span> is explained in <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a>.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
 <p><strong>Type :</strong> Positive integer (default value: <code class="docutils literal notranslate"><span class="pre">5</span></code>)</p>
@@ -251,7 +253,7 @@ function).</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -273,7 +275,7 @@ function).</p>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -105,7 +105,9 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
 <p><strong>形式 :</strong> 実数(デフォルト値は下記参照)</p>
 <p><strong>説明 :</strong>
 (TPQ法のみで使用) <span class="math notranslate nohighlight">\(l-\mathcal{H}/N_{s}\)</span>の<span class="math notranslate nohighlight">\(l\)</span>。
-ハミルトニアンの各項の係数の絶対値の総和をサイト数で割ったものがデフォルト値になります。</p>
+ハミルトニアンの各項の係数の絶対値の総和をサイト数で割ったものがデフォルト値になります。
+cTPQ計算では, <code class="docutils literal notranslate"><span class="pre">LargeValue</span></code> は虚時間発展の刻み幅として使われます( <span class="math notranslate nohighlight">\(\Delta\tau=1/LargeValue\)</span>).
+<span class="math notranslate nohighlight">\(\Delta\tau\)</span> の定義はアルゴリズムの章を見てください(<a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">アルゴリズム</span></a>) 。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
 <p><strong>形式 :</strong> 整数(デフォルト値は<code class="docutils literal notranslate"><span class="pre">5</span></code>)</p>
@@ -239,7 +241,7 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
     </form>
     </div>
@@ -261,7 +263,7 @@ TPQステップ数、時間発展ステップ数、BiCGステップの上限を�
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

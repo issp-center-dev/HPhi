@@ -39,12 +39,13 @@
             
   <h1 id="search-documentation">検索</h1>
   
-  <div id="fallback" class="admonition warning">
-  <script>$('#fallback').hide();</script>
+  <noscript>
+  <div class="admonition warning">
   <p>
     検索機能を使うには JavaScript を有効にしてください。
   </p>
   </div>
+  </noscript>
   
   
   <p>
@@ -54,7 +55,7 @@
   
   
   <form action="" method="get">
-    <input type="text" name="q" aria-labelledby="search-documentation" value="" />
+    <input type="text" name="q" aria-labelledby="search-documentation" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     <input type="submit" value="検索" />
     <span id="search-progress" style="padding-left: 10px"></span>
   </form>
@@ -121,7 +122,7 @@
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

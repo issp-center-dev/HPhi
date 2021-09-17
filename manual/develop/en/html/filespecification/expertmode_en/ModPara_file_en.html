@@ -217,8 +217,8 @@ the 2-norm of the residual vector becomes smaller than
 </li>
 </ul>
 </section>
-<section id="tpq-method">
-<h2>TPQ method<a class="headerlink" href="#tpq-method" title="Permalink to this headline">¶</a></h2>
+<section id="tpq-mtpq-ctpq-method">
+<h2>TPQ (mTPQ/cTPQ) method<a class="headerlink" href="#tpq-mtpq-ctpq-method" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -229,7 +229,9 @@ must be larger than that of the previous calculation.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> An integer giving <span class="math notranslate nohighlight">\(l\)</span> of
-<span class="math notranslate nohighlight">\(l-{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
+<span class="math notranslate nohighlight">\(l-{\mathcal H}/N_{s}\)</span> used in the mTPQ method.
+In the cTPQ method,  <span class="math notranslate nohighlight">\(l\)</span> is used as the width of the imaginary-time evolution, i.e.,
+<span class="math notranslate nohighlight">\(\Delta\tau=1/l\)</span>. See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a> for the details of the cTPQ method.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
 <p><strong>Type :</strong> Int</p>
@@ -243,6 +245,14 @@ for the TPQ method.</p>
 calculating the correlation functions in the TPQ method.</div>
 <div class="line"><strong>Note:</strong> A small interval increases the time cost of calculations.</div>
 </div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
+<p><strong>Type :</strong> Int (positive integer)</p>
+<p><strong>Description :</strong> An integer giving the expansion order <span class="math notranslate nohighlight">\(n_{\rm max}\)</span> for
+cTPQ method;</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-0">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-0" title="Permalink to this equation">¶</a></span>\[U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .\]</div>
+<p>See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a> for the details of the cTPQ method.</p>
 </li>
 </ul>
 </section>
@@ -296,9 +306,9 @@ specified with this parameter. In the case of restart calculation,
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> An integer giving the expansion order <span class="math notranslate nohighlight">\(n\)</span> for
-real time evolution method;</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-0">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-0" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n .\]</div>
+real-time evolution method;</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-1">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-1" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.\]</div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -399,7 +409,7 @@ file.</div>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -421,7 +431,7 @@ file.</div>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

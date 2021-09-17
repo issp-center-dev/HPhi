@@ -88,10 +88,11 @@ CalcEigenVec 0
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> 計算手法の指定を行います。</div>
 <div class="line">0: Lanczos法</div>
-<div class="line">1: TPQを利用した有限温度解析</div>
+<div class="line">1: mTPQ計算</div>
 <div class="line">2: 全対角化</div>
 <div class="line">3: LOBCG法</div>
 <div class="line">4: 実時間発展</div>
+<div class="line">5: cTPQ計算</div>
 <div class="line">を選択することができます。</div>
 </div>
 </li>
@@ -124,9 +125,10 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 <li><p><code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <div class="line-block">
-<div class="line"><strong>説明 :</strong> 固有ベクトルの初期値の型の指定を行います。</div>
-<div class="line">0: 複素数</div>
-<div class="line">1: 実数</div>
+<div class="line"><strong>説明 :</strong> 固有ベクトル(<span class="math notranslate nohighlight">\(v0\)</span>)の初期値の型の指定を行います。</div>
+<div class="line">-1:実部、虚部ともに正規分布乱数で与えられます。したがって,規格化した初期ベクトルは <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> 次元の超球面上に一様分布したものとなります。</div>
+<div class="line">0: 複素数(<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]\in[-1:1]\)</span> ).</div>
+<div class="line">1: 実数(<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]=0\)</span>).</div>
 <div class="line">から選択することが出来ます。</div>
 </div>
 </li>
@@ -283,7 +285,7 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
     </form>
     </div>
@@ -305,7 +307,7 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

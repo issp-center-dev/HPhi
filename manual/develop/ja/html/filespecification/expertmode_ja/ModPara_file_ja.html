@@ -209,7 +209,9 @@ ExpecInterval  20
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>形式 :</strong> double型 (実数)</p>
 <p><strong>説明 :</strong>
-TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s}\)</span>の<span class="math notranslate nohighlight">\(l\)</span>を指定する整数。</p>
+TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s}\)</span>の<span class="math notranslate nohighlight">\(l\)</span>を指定する実数。
+cTPQ計算では, <span class="math notranslate nohighlight">\(l\)</span> は虚時間発展の刻み幅として使われます(<span class="math notranslate nohighlight">\(\Delta\tau=1/l\)</span>).
+cTPQ計算の詳細は <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">アルゴリズム</span></a> を参照してください.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
@@ -222,9 +224,18 @@ TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s
 頻度を上げると計算コストが増大するので注意してください。</p>
 </li>
 </ul>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
+<p><strong>Type :</strong> Int (自然数)</p>
+<p><strong>Description :</strong> cTPQ計算における展開次数を指定する整数です(<span class="math notranslate nohighlight">\(n_{\rm max}\)</span>);</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-modpara-file-ja-0">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-ja-modpara-file-ja-0" title="この数式へのパーマリンク">¶</a></span>\[U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .\]</div>
+<p>詳しくは, :ref:<a href="#id5"><span class="problematic" id="id6">`</span></a>Ch:algorithm`を参照してください.</p>
+</li>
+</ul>
 </section>
-<section id="id5">
-<h2>動的グリーン関数の計算で使用するパラメータ<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<section id="id7">
+<h2>動的グリーン関数の計算で使用するパラメータ<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
 <p><strong>形式 :</strong> complex型 (複素数)</p>
@@ -261,8 +272,8 @@ TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s
 </li>
 </ul>
 </section>
-<section id="id6">
-<h2>実時間発展法で使用するパラメータ<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<section id="id8">
+<h2>実時間発展法で使用するパラメータ<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
@@ -272,8 +283,8 @@ TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> 微小時間<span class="math notranslate nohighlight">\(\Delta t\)</span>に対して実時間発展を行う際の</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-modpara-file-ja-0">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-ja-modpara-file-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\exp\left(-i \cal H \Delta t \right) \approx \sum_{n=0}^{N}\frac{1}{n!}\left(-i \cal H \Delta t \right)^n\]</div>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-modpara-file-ja-1">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-filespecification-expertmode-ja-modpara-file-ja-1" title="この数式へのパーマリンク">¶</a></span>\[\exp\left(-i \cal H \Delta t \right) \approx \sum_{n=0}^{N}\frac{1}{n!}\left(-i \cal H \Delta t \right)^n\]</div>
 </li>
 </ul>
 <blockquote>
@@ -372,7 +383,7 @@ TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
     </form>
     </div>
@@ -394,7 +405,7 @@ TPQで使用する<span class="math notranslate nohighlight">\(l-\mathcal H/N_{s
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

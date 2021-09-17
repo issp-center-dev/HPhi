@@ -83,9 +83,11 @@ terminated.</p></li>
 <div class="line"><strong>Description :</strong> Select the method for calculation from the
 following list:</div>
 <div class="line">0: Lanczos method</div>
-<div class="line">1: Analysis of the physical properties by using TPQ</div>
-<div class="line">2: Full diagonalization method.</div>
-<div class="line">3: LOBCG for the ground state.</div>
+<div class="line">1: mTPQ method</div>
+<div class="line">2: Full diagonalization method</div>
+<div class="line">3: LOBCG for the ground state</div>
+<div class="line">4: Time-evolution</div>
+<div class="line">5: cTPQ method</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcModel</span></code></p>
@@ -122,9 +124,12 @@ to calculate eigenvectors).</div>
 <li><p><code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code></p>
 <p><strong>Type :</strong> Int (default value: 0)</p>
 <div class="line-block">
-<div class="line"><strong>Description :</strong> Select the type of an initial vector:</div>
-<div class="line">0: Complex type</div>
-<div class="line">1: Real type.</div>
+<div class="line"><strong>Description :</strong> Select the type of an initial vector (<span class="math notranslate nohighlight">\(v0\)</span>):</div>
+<div class="line">-1: Real part (<span class="math notranslate nohighlight">\({\rm Re}[v0]]\)</span>) and imaginary part  (<span class="math notranslate nohighlight">\({\rm Re}[v0]]\)</span>) of the initial
+vector are give as the normally distributed random numbers. Thus, the normalized initial vectors are uniformly distributed
+on the <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> dimensional super sphere (<span class="math notranslate nohighlight">\(N_{\rm H}\)</span> is the dimension of the Hilbert space).</div>
+<div class="line">0: Complex type (<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]\in[-1:1]\)</span> ).</div>
+<div class="line">1: Real type (<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]=0\)</span>).</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputEigenVec</span></code></p>
@@ -286,7 +291,7 @@ to calculate eigenvectors).</div>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -308,7 +313,7 @@ to calculate eigenvectors).</div>
       &copy;2019, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
