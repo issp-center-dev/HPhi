@@ -6,12 +6,12 @@ Heisenberg模型
 
 以下のチュートリアルはディレクトリ ::
 
- samples/CG/Heisenberg/
+ samples/old/CG/Heisenberg/
  
 内で行います。
 Heisenberg模型におけるサンプル入力ファイルは ::
 
- samples/CG/Heisenberg/stan.in
+ samples/old/CG/Heisenberg/stan.in
 
 にあります。
 この例では2次元正方格子のHeisenberg模型(最近接サイト間の反強磁性的スピン結合のみを持つ)
@@ -331,4 +331,4 @@ Eigenvalue.datには固有値番号およびエネルギー固有値が出力さ
 その他の系でのチュートリアル
 ---------------------------------
 
- ``samples/Standard/`` 以下にはこの他にも様々なチュートリアルが置いてあります。それぞれのチュートリアルの内容や手順については、各フォルダにある ``README.md`` をご覧ください。
+ ``samples`` 以下にはこの他にも様々なチュートリアルが置いてあります。それぞれのチュートリアルの内容や手順については、各フォルダにある ``README.md`` または `チュートリアル向けの説明資料 <https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html>`_ をご覧ください。
