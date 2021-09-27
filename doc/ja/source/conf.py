@@ -154,7 +154,7 @@ latex_documents = [
      u'University of Tokyo', 'manual', 'True'),
 ]
 
-latex_docclass =  {'manual': 'jsbook'}
+# latex_docclass =  {'manual': 'jsbook'}
 latex_logo = "../../figs/logo_HPhi.png"
 
 # -- Options for manual page output ---------------------------------------
