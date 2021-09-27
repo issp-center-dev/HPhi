@@ -30,9 +30,9 @@ You can install HΦ and also get a manual for HΦ from a [release note](https://
 The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 ([GPL v3](http://www.gnu.org/licenses/gpl-3.0.en.html)).
 
 ## Official page
-[HPhi portal site](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en)
-[User-Manual](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en/doc/manual)
-[HPhi tutorial] (https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html)
+- [HPhi portal site](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en)
+- [User-Manual](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en/doc/manual)
+- [HPhi tutorial](https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html)
 
 ## Author
 Youhei Yamaji, Takahiro Misawa, Synge Todo, Kota Ido, Yuichi Motoyama, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Naoki Kawashima.
