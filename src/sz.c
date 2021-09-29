@@ -470,9 +470,6 @@ int sz
           }
         }//omp parallel
         free_lui_1d_allocate(jbthread);
-for(ib=0;ib<X->Check.sdim;ib++){
-  printf("%ld %ld\n", ib, list_jb[ib]);
-}
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
