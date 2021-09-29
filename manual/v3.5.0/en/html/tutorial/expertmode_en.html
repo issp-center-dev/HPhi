@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.2. Quick guide to Expert mode &#8212; HΦ Documentation 3.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.3. Fourier transformation of correlation functions" href="fourier_en.html" />
+    <link rel="prev" title="3.1. Quick guide to Standard mode" href="standardmode_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="quick-guide-to-expert-mode">
+<h1><span class="section-number">3.2. </span>Quick guide to <em>Expert</em> mode<a class="headerlink" href="#quick-guide-to-expert-mode" title="Permalink to this headline">¶</a></h1>
+<p>For Expert mode, the following input files are needed.</p>
+<ol class="arabic simple">
+<li><p>A file list for input files</p></li>
+<li><p>Files for basic parameters</p></li>
+<li><p>Files for constructing Hamiltonian</p></li>
+<li><p>Files for setting output components.</p></li>
+</ol>
+<p>The process after calculation is the same as in Standard mode.
+In this section, we demonstrate Expert mode in the directory where
+the tutorial at the previous section was performed.</p>
+<section id="file-list-for-input-files">
+<h2><span class="section-number">3.2.1. </span>File list for input files<a class="headerlink" href="#file-list-for-input-files" title="Permalink to this headline">¶</a></h2>
+<p>In namelist.def, the types of input files and filenames are defined as shown below. By writing the keyword and filenames at each line, the types of files are distinguished. The details of namelist.def are shown in <a class="reference internal" href="../filespecification/expertmode_en/List_file_for_the_input_files_en.html#subsec-inputfilelist"><span class="std std-ref">List file for the input files</span></a>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>       ModPara  modpara.def
+       LocSpin  locspn.def
+  CoulombInter  coulombinter.def
+          Hund  hund.def
+      Exchange  exchange.def
+      OneBodyG  greenone.def
+      TwoBodyG  greentwo.def
+       CalcMod  calcmod.def
+PairExcitation  pair.def
+   SpectrumVec  zvo_eigenvec_0
+</pre></div>
+</div>
+</section>
+<section id="files-for-basic-parameters">
+<h2><span class="section-number">3.2.2. </span>Files for basic parameters<a class="headerlink" href="#files-for-basic-parameters" title="Permalink to this headline">¶</a></h2>
+<p>In this subsection, we show how to set a calculation mode, the parameters for the calculation, and the positions of the localized spins.</p>
+<section id="setting-a-calculation-mode">
+<h3><strong>Setting a calculation mode</strong><a class="headerlink" href="#setting-a-calculation-mode" title="Permalink to this headline">¶</a></h3>
+<p>The calculation mode is set in a CalcMod file (in this sample file, calcmod.def). The contents of the files are as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, ...
+#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, ...
+#Restart = 0:None, 1:Save, 2:Restart&amp;Save, 3:Restart
+#CalcSpec = 0:None, 1:Normal, 2:No H*Phi, 3:Save, ...
+CalcType   3
+CalcModel   1
+ReStart   0
+CalcSpec   0
+CalcEigenVec   0
+InitialVecType   0
+InputEigenVec   0
+</pre></div>
+</div>
+<p>We select a calculation method in CalcType and a target model in CalcModel. In this sample, we set the Lanczos method as a calculation method and the target model as the spin system (canonical ensemble). The details of a CalcMod file are shown in <a class="reference internal" href="../filespecification/expertmode_en/CalcMod_file_en.html#subsec-calcmod"><span class="std std-ref">CalcMod file</span></a>.</p>
+</section>
+<section id="setting-parameters-for-calculation">
+<h3><strong>Setting parameters for calculation</strong><a class="headerlink" href="#setting-parameters-for-calculation" title="Permalink to this headline">¶</a></h3>
+<p>The parameters for the calculation are set in a ModPara file(in this sample, modpara.def). The contents of this file are as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--------------------
+Model_Parameters   0
+--------------------
+HPhi_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite          16
+2Sz            0
+Lanczos_max    2000
+initial_iv     -1
+exct           1
+LanczosEps     14
+LanczosTarget  2
+LargeValue     4.500000000000000e+00
+NumAve         5
+ExpecInterval  20
+NOmega         200
+OmegaMax       7.200000000000000e+01     4.000000000000000e-02
+OmegaMin       -7.200000000000000e+01    4.000000000000000e-02
+OmegaOrg       0.0 0.0
+</pre></div>
+</div>
+<p>In this file, we set the parameters for the calculation, such as the site number, the total number of conduction electrons, the total <span class="math notranslate nohighlight">\(S_z\)</span> and the number of Lanczos steps. The details of the ModPara file are shown in <a class="reference internal" href="../filespecification/expertmode_en/ModPara_file_en.html#subsec-modpara"><span class="std std-ref">ModPara file</span></a>.</p>
+</section>
+<section id="setting-positions-of-localized-spins">
+<h3><strong>Setting positions of localized spins</strong><a class="headerlink" href="#setting-positions-of-localized-spins" title="Permalink to this headline">¶</a></h3>
+<p>The positions <span class="math notranslate nohighlight">\(S\)</span> of the localized spins are defined by a LocSpin file (in this sample, locspn.def). The contents of the files are as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>================================
+NlocalSpin    16
+================================
+========i_0IteElc_1LocSpn ======
+================================
+    0      1
+    1      1
+    2      1
+    3      1
+    4      1
+    5      1
+...
+</pre></div>
+</div>
+<p>When CalcModel in a CalcMod file is set as the spin system, all the sites are automatically treated as localized spins. The details of a LocSpin file are shown in <a class="reference internal" href="../filespecification/expertmode_en/LocSpin_file_en.html#subsec-locspn"><span class="std std-ref">LocSpin file</span></a>.</p>
+</section>
+</section>
+<section id="files-for-constructing-hamiltonian">
+<h2><span class="section-number">3.2.3. </span>Files for constructing Hamiltonian<a class="headerlink" href="#files-for-constructing-hamiltonian" title="Permalink to this headline">¶</a></h2>
+<p>After setting the basic parameters, we create input files for constructing the Hamiltonian. Since the calculations are performed by using the representation of the fermion operators in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, we must rewrite the spin operator. For example,  in the case of <span class="math notranslate nohighlight">\(S = 1/2\)</span>, we rewrite the equation by using the relation</p>
+<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-en-0">
+<span class="eqno">(3.2)<a class="headerlink" href="#equation-tutorial-expertmode-en-0" title="Permalink to this equation">¶</a></span>\[\begin{split}S^z_{i}&amp;=(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})/2,\\
+S^+_{i}&amp;=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
+S^-_{i}&amp;=c_{i\downarrow}^{\dagger}c_{i\uparrow}.\end{split}\]</div>
+<section id="setting-transfer-integrals">
+<h3><strong>Setting transfer integrals</strong><a class="headerlink" href="#setting-transfer-integrals" title="Permalink to this headline">¶</a></h3>
+<p>In a Trans file (in this sample, zTrans.def), we set the transfer part of the Hamiltonian,</p>
+<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-en-1">
+<span class="eqno">(3.3)<a class="headerlink" href="#equation-tutorial-expertmode-en-1" title="Permalink to this equation">¶</a></span>\[\mathcal{H} +=-\sum_{ij\sigma_1\sigma2}
+t_{ij\sigma_1\sigma2}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}.\]</div>
+<p>The contents of the files are as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>========================
+NTransfer       0
+========================
+========i_j_s_tijs======
+========================
+</pre></div>
+</div>
+<p>We can use this term when an electric magnetic field is added in the spin system. For example, when a magnetic field is added at a site 1 such as <span class="math notranslate nohighlight">\(-0.5 S_z^{(1)}\)</span> for <span class="math notranslate nohighlight">\(S=1/2\)</span>, this term can be rewritten as <span class="math notranslate nohighlight">\(-0.5/2(c_{1\uparrow}^{\dagger}c_{1\uparrow}-c_{1\downarrow}^{\dagger}c_{1\downarrow})\)</span>. Thus, the input file becomes as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>========================
+NTransfer      1
+========================
+========i_j_s_tijs======
+========================
+1 0 1 0 -0.25 0
+1 1 1 1 0.25 0
+</pre></div>
+</div>
+<p>The details for a Trans file are shown in <a class="reference internal" href="../filespecification/expertmode_en/Trans_file_en.html#subsec-trans"><span class="std std-ref">Trans file</span></a>.</p>
+</section>
+<section id="setting-general-two-body-interactions">
+<h3><strong>Setting general two-body interactions</strong><a class="headerlink" href="#setting-general-two-body-interactions" title="Permalink to this headline">¶</a></h3>
+<p>In an InterAll file (in this sample, zInterall.def), we set the general two-body interaction part of the Hamiltonian,</p>
+<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-en-2">
+<span class="eqno">(3.4)<a class="headerlink" href="#equation-tutorial-expertmode-en-2" title="Permalink to this equation">¶</a></span>\[\mathcal{H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.\]</div>
+<p>The contents of the files are as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>======================
+NInterAll      96
+======================
+========zInterAll=====
+======================
+    0     0     0     0     1     0     1     0   0.500000  0.000000
+    0     0     0     0     1     1     1     1  -0.500000  0.000000
+    0     1     0     1     1     0     1     0  -0.500000  0.000000
+    0     1     0     1     1     1     1     1   0.500000  0.000000
+    0     0     0     1     1     1     1     0   1.000000  0.000000
+    0     1     0     0     1     0     1     1   1.000000  0.000000
+...
+</pre></div>
+</div>
+<p>Here, we explain the interaction between site <span class="math notranslate nohighlight">\(i\)</span> and site <span class="math notranslate nohighlight">\(j\)</span> in the case of <span class="math notranslate nohighlight">\(S = 1/2\)</span>, for simplicity. Using fermion operators, the interaction terms for the spin operators can be rewritten as</p>
+<div class="math notranslate nohighlight" id="equation-tutorial-expertmode-en-3">
+<span class="eqno">(3.5)<a class="headerlink" href="#equation-tutorial-expertmode-en-3" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathcal{H}_{i,i+1}&amp;=J(S^x_{i}S^x_{i+1}+S^y_{i}S^y_{i+1}+S^z_{i}S^z_{i+1}) \nonumber\\
+&amp;=J \left( \frac{1}{2}S^+_{i}S^-_{i+1}+\frac{1}{2}S^-_{i}S^+_{i+1}+S^z_{i}S^z_{i+1} \right) \nonumber\\
+&amp;=J \left[ \frac{1}{2}c_{i\uparrow}^{\dagger}c_{i\downarrow}c_{i+1\downarrow}^{\dagger}c_{i+1\uparrow}+\frac{1}{2}c_{i\downarrow}^{\dagger}c_{i\uparrow}c_{i+1\uparrow}^{\dagger}c_{i+1\downarrow}+\frac{1}{4}(c_{i\uparrow}^{\dagger}c_{i\uparrow}-c_{i\downarrow}^{\dagger}c_{i\downarrow})(c_{i+1\uparrow}^{\dagger}c_{i+1\uparrow}-c_{i+1\downarrow}^{\dagger}c_{i+1\downarrow}) \right]. \nonumber\end{split}\]</div>
+<p>Thus, the interaction <span class="math notranslate nohighlight">\(S^z_{i}S^z_{i+1}\)</span> for <span class="math notranslate nohighlight">\(J=2\)</span> can be written as</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i     0     i     0    i+1     0    i+1     0   0.500000  0.000000
+i     0     i     0    i+1     1    i+1     1  -0.500000  0.000000
+i     1     i     1    i+1     0    i+1     0  -0.500000  0.000000
+i     1     i     1    i+1     1    i+1     1   0.500000  0.000000
+</pre></div>
+</div>
+<p>in the format of an InterAll file. The other terms can be written as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i     0     i     1    i+1     1    i+1     0   1.000000  0.000000
+i     1     i     0    i+1     0    i+1     1   1.000000  0.000000
+</pre></div>
+</div>
+<p>There are other file formats for constructing the Hamiltonian. The details of the input formats of two-body interactions are shown in <a class="reference internal" href="../filespecification/expertmode_en/InterAll_file_en.html#subsec-interall"><span class="std std-ref">InterAll file</span></a> - <a class="reference internal" href="../filespecification/expertmode_en/PairLift_file_en.html#subsec-pairlift"><span class="std std-ref">PairLift file</span></a>.</p>
+</section>
+</section>
+<section id="setting-output-components">
+<h2><span class="section-number">3.2.4. </span>Setting output components<a class="headerlink" href="#setting-output-components" title="Permalink to this headline">¶</a></h2>
+<p>In OneBodyG and TwoBodyG files, the indices of one-body and two-body Green’s functions are defined, respectively.</p>
+<section id="setting-indices-of-one-body-green-s-functions">
+<h3><strong>Setting indices of one-body Green’s functions</strong><a class="headerlink" href="#setting-indices-of-one-body-green-s-functions" title="Permalink to this headline">¶</a></h3>
+<p>In a OneBodyG file (in this sample, greenone.def), the indices of <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2} \rangle\)</span> are defined. The contents of files are as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>===============================
+NCisAjs         32
+===============================
+======== Green functions ======
+===============================
+   0     0     0     0
+   0     1     0     1
+   1     0     1     0
+   1     1     1     1
+   2     0     2     0
+...
+</pre></div>
+</div>
+<p>The details of the input formats of a OneBodyG file are shown in <a class="reference internal" href="../filespecification/expertmode_en/OneBodyG_file_en.html#subsec-onebodyg"><span class="std std-ref">OneBodyG file</span></a>.</p>
+</section>
+<section id="setting-indices-of-two-body-green-s-functions">
+<h3><strong>Setting indices of two-body Green’s functions</strong><a class="headerlink" href="#setting-indices-of-two-body-green-s-functions" title="Permalink to this headline">¶</a></h3>
+<p>In the TwoBodyG file (in this sample, greentwo.def), the indices of <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4} \rangle\)</span> are defined. The contents of this file are as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>=============================================
+NCisAjsCktAltDC       1024
+=============================================
+======== Green functions for Sq AND Nq ======
+=============================================
+   0     0     0     0     0     0     0     0
+   0     0     0     0     0     1     0     1
+   0     0     0     0     1     0     1     0
+   0     0     0     0     1     1     1     1
+   0     0     0     0     2     0     2     0
+...
+</pre></div>
+</div>
+<p>The details of the input formats of the TwoBodyG file are shown in <a class="reference internal" href="../filespecification/expertmode_en/TwoBodyG_file_en.html#subsec-twobodyg"><span class="std std-ref">TwoBodyG file</span></a>.</p>
+</section>
+</section>
+<section id="running">
+<h2><span class="section-number">3.2.5. </span>Running<a class="headerlink" href="#running" title="Permalink to this headline">¶</a></h2>
+<p>After creating all the input files above, we are ready to run a program. For Expert mode, we must set an option &quot;-e&quot; and a file name list (in this sample, namelist.def) as arguments to run <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ Path/HPhi -e namelist.def
+</pre></div>
+</div>
+<p>The process after the calculation is the same as that of Standard mode.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tu-index.html">3. Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="standardmode_en.html">3.1. Quick guide to <em>Standard</em> mode</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.2. Quick guide to <em>Expert</em> mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file-list-for-input-files">3.2.1. File list for input files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#files-for-basic-parameters">3.2.2. Files for basic parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#files-for-constructing-hamiltonian">3.2.3. Files for constructing Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-output-components">3.2.4. Setting output components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running">3.2.5. Running</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fourier_en.html">3.3. Fourier transformation of correlation functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="tu-index.html"><span class="section-number">3. </span>Tutorial</a><ul>
+      <li>Previous: <a href="standardmode_en.html" title="previous chapter"><span class="section-number">3.1. </span>Quick guide to <em>Standard</em> mode</a></li>
+      <li>Next: <a href="fourier_en.html" title="next chapter"><span class="section-number">3.3. </span>Fourier transformation of correlation functions</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/tutorial/expertmode_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

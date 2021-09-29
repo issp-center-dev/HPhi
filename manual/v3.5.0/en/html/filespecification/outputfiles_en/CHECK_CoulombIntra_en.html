@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.3.3. CHECK_CoulombIntra.dat &#8212; HΦ Documentation 3.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.3.4. CHECK_Hund.dat" href="CHECK_Hund_en.html" />
+    <link rel="prev" title="4.3.2. CHECK_InterAll.dat" href="CHECK_InterAll_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="check-coulombintra-dat">
+<h1><span class="section-number">4.3.3. </span>CHECK_CoulombIntra.dat<a class="headerlink" href="#check-coulombintra-dat" title="Permalink to this headline">¶</a></h1>
+<p>This file is outputted to check the input of the on-site interactions
+<span class="math notranslate nohighlight">\(U_i\)</span>,</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-outputfiles-en-check-coulombintra-en-0">
+<span class="eqno">(4.22)<a class="headerlink" href="#equation-filespecification-outputfiles-en-check-coulombintra-en-0" title="Permalink to this equation">¶</a></span>\[\mathcal \sum_{i} U_i n_{i\uparrow} n_{i \downarrow}.\]</div>
+<p>An example of the file format is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i=0 isite1=1 tmp_V=4.000000
+i=1 isite1=2 tmp_V=4.000000
+i=2 isite1=3 tmp_V=4.000000
+i=3 isite1=4 tmp_V=4.000000
+i=4 isite1=5 tmp_V=4.000000
+i=5 isite1=6 tmp_V=4.000000
+</pre></div>
+</div>
+<section id="file-format">
+<span id="file-format-22"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>i=[int01] isite1=[int02]
+tmp_V=[double01]</p></li>
+</ul>
+</section>
+<section id="parameters">
+<span id="parameters-22"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>[int01]</p>
+<p><strong>Type :</strong> Int</p>
+<p><strong>Description :</strong> The counted number of inputting terms.</p>
+</li>
+<li><p>[int02]</p>
+<p><strong>Type :</strong> Int</p>
+<p><strong>Description :</strong> An integer for showing the site index of
+<span class="math notranslate nohighlight">\(U_i\)</span>.</p>
+</li>
+<li><p>[double01]</p>
+<p><strong>Type :</strong> Double</p>
+<p><strong>Description :</strong> A value for <span class="math notranslate nohighlight">\(U_i\)</span>.</p>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_en.html">4.3. Output files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Chemi_en.html">4.3.1. CHECK_Chemi.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_InterAll_en.html">4.3.2. CHECK_InterAll.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.3. CHECK_CoulombIntra.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Hund_en.html">4.3.4. CHECK_Hund.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_INTER_U_en.html">4.3.5. CHECK_INTER_U.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Memory_en.html">4.3.6. CHECK_Memory.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="WarningOnTransfer_en.html">4.3.7. WarningOnTransfer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CalcTimer_en.html">4.3.8. CalcTimer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TimeKeeper_en.html">4.3.9. TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sz_TimeKeeper_en.html">4.3.10. sz_TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_CG_EigenVector_en.html">4.3.11. Time_CG_EigenVector.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="energy_en.html">4.3.12. energy.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lanczos_Step_en.html">4.3.13. Lanczos_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TPQ_Step_en.html">4.3.14. Time_TPQ_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Norm_rand_en.html">4.3.15. Norm_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_rand_en.html">4.3.16. SS_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_rand_en.html">4.3.17. Flct_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TE_Step_en.html">4.3.18. Time_TE_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Norm_en.html">4.3.19. Norm.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_en.html">4.3.20. SS.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_en.html">4.3.21. Flct.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Eigenvalue_en.html">4.3.22. Eigenvalue.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="phys_en.html">4.3.23. phys.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ham_en.html">4.3.24. ham.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajs_en.html">4.3.25. cisajs.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajscktalt_en.html">4.3.26. cisajscktalt.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eigenvec_en.html">4.3.27. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tmpvec_en.html">4.3.28. tmpvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DynamicalGreen_en.html">4.3.29. DynamicalGreen.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recalcvec_en.html">4.3.30. recalcvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TMcomponents_en.html">4.3.31. TMcomponents.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="excitedvec_en.html">4.3.32. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_en.html">4.3.33. residual.dat</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="CHECK_InterAll_en.html" title="previous chapter"><span class="section-number">4.3.2. </span>CHECK_InterAll.dat</a></li>
+      <li>Next: <a href="CHECK_Hund_en.html" title="next chapter"><span class="section-number">4.3.4. </span>CHECK_Hund.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_en/CHECK_CoulombIntra_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

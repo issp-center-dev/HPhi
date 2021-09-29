@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.1.2. 格子に関するパラメータ &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="next" title="4.1.3. 保存量に関するパラメータ" href="Parameters_for_conserved_quantities_ja.html" />
+    <link rel="prev" title="4.1.1. 計算の種類に関する必須パラメータ" href="Parameters_for_the_type_of_calculation_ja.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">4.1.2. </span>格子に関するパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<section id="fig-chap04-1-lattice-a">
+<h2>1次元鎖 [ <a class="reference internal" href="#fig-chap04-1-lattice"><span class="std std-numref">図 4.1</span></a> (a)]<a class="headerlink" href="#fig-chap04-1-lattice-a" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">L</span></code></p>
+<p><strong>形式 :</strong> 自然数</p>
+<p><strong>説明 :</strong> 鎖の長さを指定します.</p>
+<figure class="align-default" id="fig-chap04-1-lattice">
+<img alt="(a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図. ホッピング積分、オフサイトクーロン積分、スピン結合は、 再近接サイト間(マゼンタの実線)ではそれぞれ\ :math:`t,V,J`\ となり、 次近接サイト間(緑の破線)ではそれぞれ\ :math:`t',V',J'`\ となります。" src="../../_images/chap04_1_lattice.png" />
+<figcaption>
+<p><span class="caption-number">図 4.1 </span><span class="caption-text">(a)1次元鎖、(b)2次元正方格子、(c)2次元三角格子の模式図.
+ホッピング積分、オフサイトクーロン積分、スピン結合は、
+再近接サイト間(マゼンタの実線)ではそれぞれ<span class="math notranslate nohighlight">\(t,V,J\)</span>となり、
+次近接サイト間(緑の破線)ではそれぞれ<span class="math notranslate nohighlight">\(t',V',J'\)</span>となります。</span><a class="headerlink" href="#fig-chap04-1-lattice" title="この画像へのパーマリンク">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-chap04-1-honeycomb">
+<img alt="2次元異方的蜂の巣格子の模式図. ホッピング積分、オフサイトクーロン積分、スピン結合は、 ボンドの方向によって異なります。" src="../../_images/chap04_1_honeycomb.png" />
+<figcaption>
+<p><span class="caption-number">図 4.2 </span><span class="caption-text">2次元異方的蜂の巣格子の模式図.
+ホッピング積分、オフサイトクーロン積分、スピン結合は、
+ボンドの方向によって異なります。</span><a class="headerlink" href="#fig-chap04-1-honeycomb" title="この画像へのパーマリンク">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-kagome">
+<img alt="カゴメ格子の模式図." src="../../_images/kagome.png" />
+<figcaption>
+<p><span class="caption-number">図 4.3 </span><span class="caption-text">カゴメ格子の模式図.</span><a class="headerlink" href="#fig-kagome" title="この画像へのパーマリンク">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-ladder">
+<img alt="梯子格子の模式図." src="../../_images/ladder.png" />
+<figcaption>
+<p><span class="caption-number">図 4.4 </span><span class="caption-text">梯子格子の模式図.</span><a class="headerlink" href="#fig-ladder" title="この画像へのパーマリンク">¶</a></p>
+</figcaption>
+</figure>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h2>梯子格子 ( <a class="reference internal" href="#fig-ladder"><span class="std std-numref">図 4.4</span></a> )<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">L</span></code></p>
+<p><strong>形式 :</strong> 自然数</p>
+<p><strong>説明 :</strong> 梯子の長さを指定します.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">W</span></code></p>
+<p><strong>形式 :</strong> 自然数</p>
+<p><strong>説明 :</strong> 梯子の本数を指定します.</p>
+</li>
+</ul>
+<blockquote>
+<div><figure class="align-default" id="fig-chap04-1-unitlattice">
+<a class="reference internal image-reference" href="../../_images/chap04_1_unitlattice.png"><img alt="三角格子において、\ :math:`{\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)`\ とした場合のセル形状。 :math:`{\vec a}_0`\ (マゼンタ)および :math:`{\vec a}_1`\ (グリーン) で囲まれた部分(サイト数は20)が計算するセルとなる。" src="../../_images/chap04_1_unitlattice.png" style="width: 622.0px; height: 350.0px;" /></a>
+<figcaption>
+<p><span class="caption-number">図 4.5 </span><span class="caption-text">三角格子において、<span class="math notranslate nohighlight">\({\vec a}_0 = (6, 2), {\vec a}_1 = (2, 4)\)</span>とした場合のセル形状。
+<span class="math notranslate nohighlight">\({\vec a}_0\)</span>(マゼンタ)および <span class="math notranslate nohighlight">\({\vec a}_1\)</span>(グリーン)
+で囲まれた部分(サイト数は20)が計算するセルとなる。</span><a class="headerlink" href="#fig-chap04-1-unitlattice" title="この画像へのパーマリンク">¶</a></p>
+</figcaption>
+</figure>
+</div></blockquote>
+<p>矩形格子 [ <a class="reference internal" href="#fig-chap04-1-lattice"><span class="std std-numref">図 4.1</span></a> (b)], 三角格子 [ <a class="reference internal" href="#fig-chap04-1-lattice"><span class="std std-numref">図 4.1</span></a> (c)],
+蜂の巣格子 [ <a class="reference internal" href="#fig-chap04-1-honeycomb"><span class="std std-numref">図 4.2</span></a> ], カゴメ格子 [ <a class="reference internal" href="#fig-kagome"><span class="std std-numref">図 4.3</span></a> ]</p>
+<p>これらの格子では、標準の単位胞(図中の黒の破線を参照)を用いて格子形状を指定する方法と、
+それらとは別の方向に格子ベクトルを取る方法が選択できます。
+ただし、<code class="docutils literal notranslate"><span class="pre">model=SpinGCCMA</span></code>の時には前者のみが使えます。
+また、両方を指定した場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">W</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code></p></li>
+</ul>
+<blockquote>
+<div><p><strong>形式 :</strong> 自然数</p>
+<p><strong>説明 :</strong> 標準の単位胞の並び方を指定します。</p>
+</div></blockquote>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">a0W</span></code>, <code class="docutils literal notranslate"><span class="pre">a0L</span></code>, <code class="docutils literal notranslate"><span class="pre">a1W</span></code>, <code class="docutils literal notranslate"><span class="pre">a1L</span></code></p>
+<p><strong>形式 :</strong> 自然数</p>
+<p><strong>説明 :</strong>
+格子を指定する2本のベクトル(<span class="math notranslate nohighlight">\({\vec a}_0, {\vec a}_1\)</span>)
+を指定します (<a class="reference internal" href="#fig-chap04-1-unitlattice"><span class="std std-numref">図 4.5</span></a>)。
+これらのベクトルは標準の並進ベクトルを基底とした座標(Fractional
+coordinate) で指定されます。</p>
+</li>
+</ul>
+<p>スタンダードモードで出力される<code class="docutils literal notranslate"><span class="pre">lattice.gp</span></code>というファイルを使うと、
+自分の意図した通りの格子のとり方になっているかどうかを確かめる事が出来ます。
+このファイルは、次のようにして<code class="docutils literal notranslate"><span class="pre">gnuplot</span></code>に読み込ませることが出来ます。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ gnuplot lattice.gp
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメータ</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.2. 格子に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_Hamiltonian_ja.html">4.1.4. ハミルトニアンの各項の係数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメータ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_ja/index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_ja/index_outputfiles_ja.html">4.3. 出力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_standardmode_ja.html"><span class="section-number">4.1. </span>スタンダードモード用入力ファイル</a><ul>
+      <li>Previous: <a href="Parameters_for_the_type_of_calculation_ja.html" title="前の章へ"><span class="section-number">4.1.1. </span>計算の種類に関する必須パラメータ</a></li>
+      <li>Next: <a href="Parameters_for_conserved_quantities_ja.html" title="次の章へ"><span class="section-number">4.1.3. </span>保存量に関するパラメータ</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_lattice_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.3.19. Norm.dat &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="next" title="4.3.20. SS.dat" href="SS_ja.html" />
+    <link rel="prev" title="4.3.18. Time_TE_Step.dat" href="Time_TE_Step_ja.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="norm-dat">
+<span id="subsec-normte"></span><h1><span class="section-number">4.3.19. </span>Norm.dat<a class="headerlink" href="#norm-dat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="line-block">
+<div class="line">(実時間発展法でのみ出力)
+実時間発展法でのタイムステップ毎のログを出力します。以下にファイル例を示します。</div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> # time, norm, step_i
+0.0000000000000000 0.9999999999999994 0
+0.0100000000000000 1.0000233421898765 1
+0.0200000000000000 1.0000211100654208 2
+0.0300000000000000 1.0000182214014706 3
+0.0400000000000000 1.0000148460317946 4
+0.0500000000000000 1.0000111372562455 5
+0.0600000000000000 1.0000072252313270 6
+0.0700000000000000 1.0000032174168609 7
+0.0800000000000000 0.9999992048382456 8
+0.0900000000000000 0.9999952720176869 9
+0.1000000000000000 0.9999915078951970 10
+</pre></div>
+</div>
+<section id="id1">
+<h2>ファイル名<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>Norm.dat</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>ファイル形式<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span> <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>
+<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>パラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong> 時間<span class="math notranslate nohighlight">\(t\)</span>。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong>
+実時間発展法で計算される時刻<span class="math notranslate nohighlight">\(t\)</span>での波動関数(ベクトル)のノルム。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> int型</p>
+<p><strong>説明 :</strong> タイムステップ数。</p>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_ja/index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_ja.html">4.3. 出力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Chemi_ja.html">4.3.1. CHECK_Chemi.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_InterAll_ja.html">4.3.2. CHECK_InterAll.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_CoulombIntra_ja.html">4.3.3. CHECK_CoulombIntra.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Hund_ja.html">4.3.4. CHECK_Hund.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_INTER_U_ja.html">4.3.5. CHECK_INTER_U.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Memory_ja.html">4.3.6. CHECK_Memory.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="WarningOnTransfer_ja.html">4.3.7. WarningOnTransfer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CalcTimer_ja.html">4.3.8. CalcTimer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TimeKeeper_ja.html">4.3.9. TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sz_TimeKeeper_ja.html">4.3.10. sz_TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_CG_EigenVector_ja.html">4.3.11. Time_CG_EigenVector.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="energy_ja.html">4.3.12. energy.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lanczos_Step_ja.html">4.3.13. Lanczos_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TPQ_Step_ja.html">4.3.14. Time_TPQ_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Norm_rand_ja.html">4.3.15. Norm_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_rand_ja.html">4.3.16. SS_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_rand_ja.html">4.3.17. Flct_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TE_Step_ja.html">4.3.18. Time_TE_Step.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.19. Norm.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_ja.html">4.3.20. SS.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_ja.html">4.3.21. Flct.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Eigenvalue_ja.html">4.3.22. Eigenvalue.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="phys_ja.html">4.3.23. phys.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ham_ja.html">4.3.24. ham.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajs_ja.html">4.3.25. cisajs.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajscktalt_ja.html">4.3.26. cisajscktalt.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eigenvec_ja.html">4.3.27. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tmpvec_ja.html">4.3.28. tmpvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DynamicalGreen_ja.html">4.3.29. DynamicalGreen.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recalcvec_ja.html">4.3.30. recalcvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TMcomponents_ja.html">4.3.31. TMcomponents.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="excitedvec_ja.html">4.3.32. excitedvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_ja.html">4.3.33. residual.dat</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../error_ja/error_ja.html">4.4. エラーメッセージ一覧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_outputfiles_ja.html"><span class="section-number">4.3. </span>出力ファイル</a><ul>
+      <li>Previous: <a href="Time_TE_Step_ja.html" title="前の章へ"><span class="section-number">4.3.18. </span>Time_TE_Step.dat</a></li>
+      <li>Next: <a href="SS_ja.html" title="次の章へ"><span class="section-number">4.3.20. </span>SS.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_ja/Norm_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
